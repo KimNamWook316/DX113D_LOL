@@ -34,11 +34,11 @@
     <Filter Include="02. Editor\99. Util">
       <UniqueIdentifier>{3059ee0a-904a-4dce-99bc-bdbf0552da89}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. Editor\02. Wiget">
+    <Filter Include="02. Editor\02. Widget">
       <UniqueIdentifier>{9c6b686c-06ac-46e5-b031-9e2bb01cec1a}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. Editor\02. Widget\01. Inspector">
-      <UniqueIdentifier>{eec75064-28ad-47a5-8a60-7e80121d3ba3}</UniqueIdentifier>
+      <UniqueIdentifier>{0448f91d-2d59-413f-bdd4-9efed9f33ed0}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -90,16 +90,40 @@
     <ClCompile Include="EditorUtil.cpp">
       <Filter>02. Editor\99. Util</Filter>
     </ClCompile>
-    <ClCompile Include="Window\ComponentHierarchyWindow.cpp">
+    <ClCompile Include="Window\AnimationEditor.cpp">
       <Filter>02. Editor\01. Window</Filter>
     </ClCompile>
+    <ClCompile Include="Widget\AnimationMeshComponentWidget.cpp">
+      <Filter>02. Editor\02. Widget\01. Inspector</Filter>
+    </ClCompile>
+    <ClCompile Include="Widget\SceneComponentWidget.cpp">
+      <Filter>02. Editor\02. Widget\01. Inspector</Filter>
+    </ClCompile>
+    <ClCompile Include="Widget\StaticMeshComponentWidget.cpp">
+      <Filter>02. Editor\02. Widget\01. Inspector</Filter>
+    </ClCompile>
+    <ClCompile Include="Widget\TransformWidget.cpp">
+      <Filter>02. Editor\02. Widget\01. Inspector</Filter>
+    </ClCompile>
+    <ClCompile Include="Widget\GameObjectWidget.cpp">
+      <Filter>02. Editor\02. Widget\01. Inspector</Filter>
+    </ClCompile>
+    <ClCompile Include="Widget\ObjectComponentWidget.cpp">
+      <Filter>02. Editor\02. Widget\01. Inspector</Filter>
+    </ClCompile>
+    <ClCompile Include="Window\ObjectComponentCreateModal.cpp">
+      <Filter>02. Editor\02. Widget</Filter>
+    </ClCompile>
     <ClCompile Include="Window\ObjectCreateModal.cpp">
-      <Filter>02. Editor\100. Wiget</Filter>
+      <Filter>02. Editor\02. Widget</Filter>
     </ClCompile>
-    <ClCompile Include="Window\ComponentCreateModal.cpp">
-      <Filter>02. Editor\100. Wiget</Filter>
+    <ClCompile Include="Window\SceneComponentCreateModal.cpp">
+      <Filter>02. Editor\02. Widget</Filter>
     </ClCompile>
-    <ClCompile Include="Window\AnimationEditor.cpp">
+    <ClCompile Include="Window\ObjectComponentWindow.cpp">
+      <Filter>02. Editor\01. Window</Filter>
+    </ClCompile>
+    <ClCompile Include="Window\SceneComponentHierarchyWindow.cpp">
       <Filter>02. Editor\01. Window</Filter>
     </ClCompile>
   </ItemGroup>
@@ -155,17 +179,44 @@
     <ClInclude Include="EditorUtil.h">
       <Filter>02. Editor\99. Util</Filter>
     </ClInclude>
-    <ClInclude Include="Window\ObjectCreateModal.h">
-      <Filter>02. Editor\100. Wiget</Filter>
-    </ClInclude>
-    <ClInclude Include="Window\ComponentCreateModal.h">
-      <Filter>02. Editor\100. Wiget</Filter>
-    </ClInclude>
     <ClInclude Include="Window\AnimationEditor.h">
       <Filter>02. Editor\01. Window</Filter>
     </ClInclude>
     <ClInclude Include="Utils.h">
       <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Widget\AnimationMeshComponentWidget.h">
+      <Filter>02. Editor\02. Widget\01. Inspector</Filter>
+    </ClInclude>
+    <ClInclude Include="Widget\SceneComponentWidget.h">
+      <Filter>02. Editor\02. Widget\01. Inspector</Filter>
+    </ClInclude>
+    <ClInclude Include="Widget\StaticMeshComponentWidget.h">
+      <Filter>02. Editor\02. Widget\01. Inspector</Filter>
+    </ClInclude>
+    <ClInclude Include="Widget\TransformWidget.h">
+      <Filter>02. Editor\02. Widget\01. Inspector</Filter>
+    </ClInclude>
+    <ClInclude Include="Widget\GameObjectWidget.h">
+      <Filter>02. Editor\02. Widget\01. Inspector</Filter>
+    </ClInclude>
+    <ClInclude Include="Widget\ObjectComponentWidget.h">
+      <Filter>02. Editor\02. Widget\01. Inspector</Filter>
+    </ClInclude>
+    <ClInclude Include="Window\ObjectComponentCreateModal.h">
+      <Filter>02. Editor\02. Widget</Filter>
+    </ClInclude>
+    <ClInclude Include="Window\ObjectCreateModal.h">
+      <Filter>02. Editor\02. Widget</Filter>
+    </ClInclude>
+    <ClInclude Include="Window\SceneComponentCreateModal.h">
+      <Filter>02. Editor\02. Widget</Filter>
+    </ClInclude>
+    <ClInclude Include="Window\ObjectComponentWindow.h">
+      <Filter>02. Editor\01. Window</Filter>
+    </ClInclude>
+    <ClInclude Include="Window\SceneComponentHierarchyWindow.h">
+      <Filter>02. Editor\01. Window</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
