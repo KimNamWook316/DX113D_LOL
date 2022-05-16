@@ -1,0 +1,181 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="소스 파일">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="헤더 파일">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="리소스 파일">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="01. Scene">
+      <UniqueIdentifier>{82e46a67-4ecc-404c-b361-3b0b7a3b658e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Editor">
+      <UniqueIdentifier>{e55fe2d6-975f-4dfb-885f-745bffbf5be5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Object">
+      <UniqueIdentifier>{b4dd5703-332c-4dd0-82b7-3f33832b07d9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. Thread">
+      <UniqueIdentifier>{2dc62fc4-9fad-4a4b-b210-87e87fcd9922}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. Thread\01. FBXConvert">
+      <UniqueIdentifier>{1cf8c518-7273-48b6-b408-bc7442c6106a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Editor\01. Window">
+      <UniqueIdentifier>{4b3a1018-d889-4e4c-bfc7-bd576f0009cd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Editor\99. Util">
+      <UniqueIdentifier>{3059ee0a-904a-4dce-99bc-bdbf0552da89}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Editor\100. Wiget">
+      <UniqueIdentifier>{9c6b686c-06ac-46e5-b031-9e2bb01cec1a}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="EditorManager.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\DefaultScene.cpp">
+      <Filter>01. Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\Player2D.cpp">
+      <Filter>03. Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\SpriteEditObject.cpp">
+      <Filter>03. Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\DragObject.cpp">
+      <Filter>03. Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Thread\FBXConvertThread.cpp">
+      <Filter>04. Thread\01. FBXConvert</Filter>
+    </ClCompile>
+    <ClCompile Include="Window\DetailWindow.cpp">
+      <Filter>02. Editor\01. Window</Filter>
+    </ClCompile>
+    <ClCompile Include="Window\EditorMenu.cpp">
+      <Filter>02. Editor\01. Window</Filter>
+    </ClCompile>
+    <ClCompile Include="Window\FileBrowser.cpp">
+      <Filter>02. Editor\01. Window</Filter>
+    </ClCompile>
+    <ClCompile Include="Window\ObjectHierarchy.cpp">
+      <Filter>02. Editor\01. Window</Filter>
+    </ClCompile>
+    <ClCompile Include="Window\ObjectHierarchyWindow.cpp">
+      <Filter>02. Editor\01. Window</Filter>
+    </ClCompile>
+    <ClCompile Include="Window\SpriteWindow.cpp">
+      <Filter>02. Editor\01. Window</Filter>
+    </ClCompile>
+    <ClCompile Include="Window\TileMapWindow.cpp">
+      <Filter>02. Editor\01. Window</Filter>
+    </ClCompile>
+    <ClCompile Include="Window\FBXConvertWindow.cpp">
+      <Filter>02. Editor\01. Window</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorUtil.cpp">
+      <Filter>02. Editor\99. Util</Filter>
+    </ClCompile>
+    <ClCompile Include="Window\ComponentHierarchyWindow.cpp">
+      <Filter>02. Editor\01. Window</Filter>
+    </ClCompile>
+    <ClCompile Include="Window\ObjectCreateModal.cpp">
+      <Filter>02. Editor\100. Wiget</Filter>
+    </ClCompile>
+    <ClCompile Include="Window\ComponentCreateModal.cpp">
+      <Filter>02. Editor\100. Wiget</Filter>
+    </ClCompile>
+    <ClCompile Include="Window\AnimationEditor.cpp">
+      <Filter>02. Editor\01. Window</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="EditorManager.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\DefaultScene.h">
+      <Filter>01. Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\Player2D.h">
+      <Filter>03. Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\SpriteEditObject.h">
+      <Filter>03. Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\DragObject.h">
+      <Filter>03. Object</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorInfo.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Thread\FBXConvertThread.h">
+      <Filter>04. Thread\01. FBXConvert</Filter>
+    </ClInclude>
+    <ClInclude Include="Window\DetailWindow.h">
+      <Filter>02. Editor\01. Window</Filter>
+    </ClInclude>
+    <ClInclude Include="Window\EditorMenu.h">
+      <Filter>02. Editor\01. Window</Filter>
+    </ClInclude>
+    <ClInclude Include="Window\FileBrowser.h">
+      <Filter>02. Editor\01. Window</Filter>
+    </ClInclude>
+    <ClInclude Include="Window\ObjectHierarchy.h">
+      <Filter>02. Editor\01. Window</Filter>
+    </ClInclude>
+    <ClInclude Include="Window\ObjectHierarchyWindow.h">
+      <Filter>02. Editor\01. Window</Filter>
+    </ClInclude>
+    <ClInclude Include="Window\SpriteWindow.h">
+      <Filter>02. Editor\01. Window</Filter>
+    </ClInclude>
+    <ClInclude Include="Window\TileMapWindow.h">
+      <Filter>02. Editor\01. Window</Filter>
+    </ClInclude>
+    <ClInclude Include="Window\FBXConvertWindow.h">
+      <Filter>02. Editor\01. Window</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorUtil.h">
+      <Filter>02. Editor\99. Util</Filter>
+    </ClInclude>
+    <ClInclude Include="Window\ComponentHierarchyWindow.h">
+      <Filter>02. Editor\01. Window</Filter>
+    </ClInclude>
+    <ClInclude Include="Window\ObjectCreateModal.h">
+      <Filter>02. Editor\100. Wiget</Filter>
+    </ClInclude>
+    <ClInclude Include="Window\ComponentCreateModal.h">
+      <Filter>02. Editor\100. Wiget</Filter>
+    </ClInclude>
+    <ClInclude Include="Window\AnimationEditor.h">
+      <Filter>02. Editor\01. Window</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Editor.rc">
+      <Filter>리소스 파일</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="icon1.ico">
+      <Filter>리소스 파일</Filter>
+    </Image>
+  </ItemGroup>
+</Project>
