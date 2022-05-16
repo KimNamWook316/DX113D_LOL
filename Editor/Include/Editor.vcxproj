@@ -173,13 +173,13 @@
     <ClCompile Include="Object\SpriteEditObject.cpp" />
     <ClCompile Include="Scene\DefaultScene.cpp" />
     <ClCompile Include="Window\AnimationEditor.cpp" />
-    <ClCompile Include="Window\ComponentCreateModal.cpp" />
-    <ClCompile Include="Window\ComponentHierarchyWindow.cpp" />
     <ClCompile Include="Thread\FBXConvertThread.cpp" />
     <ClCompile Include="Window\DetailWindow.cpp" />
     <ClCompile Include="Window\EditorMenu.cpp" />
     <ClCompile Include="Window\FBXConvertWindow.cpp" />
     <ClCompile Include="Window\FileBrowser.cpp" />
+    <ClCompile Include="Window\ObjectComponentCreateModal.cpp" />
+    <ClCompile Include="Window\ObjectComponentWindow.cpp" />
     <ClCompile Include="Window\ObjectCreateModal.cpp" />
     <ClCompile Include="Window\ObjectHierarchy.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
@@ -188,6 +188,8 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="Window\ObjectHierarchyWindow.cpp" />
+    <ClCompile Include="Window\SceneComponentCreateModal.cpp" />
+    <ClCompile Include="Window\SceneComponentHierarchyWindow.cpp" />
     <ClCompile Include="Window\SpriteWindow.cpp" />
     <ClCompile Include="Window\TileMapWindow.cpp" />
   </ItemGroup>
@@ -202,13 +204,13 @@
     <ClInclude Include="Scene\DefaultScene.h" />
     <ClInclude Include="Utils.h" />
     <ClInclude Include="Window\AnimationEditor.h" />
-    <ClInclude Include="Window\ComponentCreateModal.h" />
-    <ClInclude Include="Window\ComponentHierarchyWindow.h" />
     <ClInclude Include="Thread\FBXConvertThread.h" />
     <ClInclude Include="Window\DetailWindow.h" />
     <ClInclude Include="Window\EditorMenu.h" />
     <ClInclude Include="Window\FBXConvertWindow.h" />
     <ClInclude Include="Window\FileBrowser.h" />
+    <ClInclude Include="Window\ObjectComponentCreateModal.h" />
+    <ClInclude Include="Window\ObjectComponentWindow.h" />
     <ClInclude Include="Window\ObjectCreateModal.h" />
     <ClInclude Include="Window\ObjectHierarchy.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
@@ -217,6 +219,8 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="Window\ObjectHierarchyWindow.h" />
+    <ClInclude Include="Window\SceneComponentCreateModal.h" />
+    <ClInclude Include="Window\SceneComponentHierarchyWindow.h" />
     <ClInclude Include="Window\SpriteWindow.h" />
     <ClInclude Include="Window\TileMapWindow.h" />
   </ItemGroup>

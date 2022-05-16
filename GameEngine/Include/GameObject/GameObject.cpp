@@ -90,6 +90,8 @@ bool CGameObject::DeleteChildObj(const std::string& Name)
 	{
 		if (m_vecChildObject[i]->GetName() == Name)
 		{
+			CGameObject* DeleteTarget = m_vecChildObject[i];
+
 			auto	iter = m_vecChildObject.begin() + i;     
 
 			if ((*iter)->m_vecChildObject.size() > 0)
@@ -108,6 +110,8 @@ bool CGameObject::DeleteChildObj(const std::string& Name)
 
 			else
 				m_vecChildObject.erase(iter);
+
+			m_Scene->EraseObjFromList(DeleteTarget);
 
 			return true;
 		}

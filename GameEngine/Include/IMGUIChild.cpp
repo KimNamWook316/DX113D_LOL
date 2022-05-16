@@ -45,4 +45,6 @@ void CIMGUIChild::ClearWidget()
 	{
 		SAFE_DELETE(mVecChild[i]);
 	}
+
+	mVecChild.clear();
 }

@@ -99,6 +99,24 @@ public:
 		return nullptr;
 	}
 
+	bool EraseObjFromList(CGameObject* Target)
+	{
+		auto iter = m_ObjList.begin();
+		auto iterEnd = m_ObjList.end();
+
+		for (; iter != iterEnd; ++iter)
+		{
+			if (*iter == Target)
+			{
+				m_ObjList.erase(iter);
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+
 public:
 	void Start();
 	void Update(float DeltaTime);

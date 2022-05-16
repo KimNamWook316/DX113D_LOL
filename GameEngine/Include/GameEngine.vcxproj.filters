@@ -804,11 +804,11 @@
     <ClCompile Include="GameObject\Champion.cpp">
       <Filter>04. GameObject\01. LoLObject</Filter>
     </ClCompile>
-    <ClCompile Include="IMGUITable.cpp">
+    <ClCompile Include="IMGUIImageButton.cpp">
       <Filter>01. Engine\08. IMGUI\03. Widget</Filter>
     </ClCompile>
-    <ClCompile Include="IMGUISlideBar.cpp">
-      <Filter>소스 파일</Filter>
+    <ClCompile Include="IMGUITable.cpp">
+      <Filter>01. Engine\08. IMGUI\03. Widget</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1370,14 +1370,11 @@
     <ClInclude Include="GameObject\Champion.h">
       <Filter>04. GameObject\01. LoLObject</Filter>
     </ClInclude>
-    <ClInclude Include="IMGUIPractice_OBJ.h">
+    <ClInclude Include="IMGUIImageButton.h">
       <Filter>01. Engine\08. IMGUI\03. Widget</Filter>
     </ClInclude>
     <ClInclude Include="IMGUITable.h">
       <Filter>01. Engine\08. IMGUI\03. Widget</Filter>
-    </ClInclude>
-    <ClInclude Include="IMGUISlideBar.h">
-      <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -19,12 +19,6 @@ protected:
 	ImVec2			m_ImageEnd;
 	ImVec4			m_Tint;
 	ImVec4			m_BorderColor;
-	int				m_ClickStack;
-	float			m_AccTime;
-	class CTimer*	m_Timer;
-
-	std::function<void(CIMGUIImage* Image)> m_ClickCallback;
-	std::function<void(CIMGUIImage* Image)> m_DoubleClickCallback;
 
 public:
 	void SetImageStart(float x, float y)
@@ -57,18 +51,5 @@ public:
 public:
 	virtual bool Init();
 	virtual void Render();
-
-public:
-	template <typename T>
-	void SetClickCallback(T* Obj, void (T::* Func)(T* Obj))
-	{
-		m_ClickCallback = std::bind(Func, Obj);
-	}
-
-	template <typename T>
-	void SetDoubleClickCallback(T* Obj, void(T::* Func)(T* Obj))
-	{
-		m_DoubleClickCallback = std::bind(Func, Obj, std::placeholders_1);
-	}
 };
 

@@ -34,7 +34,7 @@
     <Filter Include="02. Editor\99. Util">
       <UniqueIdentifier>{3059ee0a-904a-4dce-99bc-bdbf0552da89}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. Editor\100. Wiget">
+    <Filter Include="02. Editor\02. Wiget">
       <UniqueIdentifier>{9c6b686c-06ac-46e5-b031-9e2bb01cec1a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -87,16 +87,22 @@
     <ClCompile Include="EditorUtil.cpp">
       <Filter>02. Editor\99. Util</Filter>
     </ClCompile>
-    <ClCompile Include="Window\ComponentHierarchyWindow.cpp">
-      <Filter>02. Editor\01. Window</Filter>
-    </ClCompile>
     <ClCompile Include="Window\ObjectCreateModal.cpp">
-      <Filter>02. Editor\100. Wiget</Filter>
-    </ClCompile>
-    <ClCompile Include="Window\ComponentCreateModal.cpp">
-      <Filter>02. Editor\100. Wiget</Filter>
+      <Filter>02. Editor\02. Wiget</Filter>
     </ClCompile>
     <ClCompile Include="Window\AnimationEditor.cpp">
+      <Filter>02. Editor\01. Window</Filter>
+    </ClCompile>
+    <ClCompile Include="Window\ObjectComponentCreateModal.cpp">
+      <Filter>02. Editor\02. Wiget</Filter>
+    </ClCompile>
+    <ClCompile Include="Window\SceneComponentCreateModal.cpp">
+      <Filter>02. Editor\02. Wiget</Filter>
+    </ClCompile>
+    <ClCompile Include="Window\ObjectComponentWindow.cpp">
+      <Filter>02. Editor\01. Window</Filter>
+    </ClCompile>
+    <ClCompile Include="Window\SceneComponentHierarchyWindow.cpp">
       <Filter>02. Editor\01. Window</Filter>
     </ClCompile>
   </ItemGroup>
@@ -152,20 +158,26 @@
     <ClInclude Include="EditorUtil.h">
       <Filter>02. Editor\99. Util</Filter>
     </ClInclude>
-    <ClInclude Include="Window\ComponentHierarchyWindow.h">
-      <Filter>02. Editor\01. Window</Filter>
-    </ClInclude>
     <ClInclude Include="Window\ObjectCreateModal.h">
-      <Filter>02. Editor\100. Wiget</Filter>
-    </ClInclude>
-    <ClInclude Include="Window\ComponentCreateModal.h">
-      <Filter>02. Editor\100. Wiget</Filter>
+      <Filter>02. Editor\02. Wiget</Filter>
     </ClInclude>
     <ClInclude Include="Window\AnimationEditor.h">
       <Filter>02. Editor\01. Window</Filter>
     </ClInclude>
     <ClInclude Include="Utils.h">
       <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Window\ObjectComponentCreateModal.h">
+      <Filter>02. Editor\02. Wiget</Filter>
+    </ClInclude>
+    <ClInclude Include="Window\SceneComponentCreateModal.h">
+      <Filter>02. Editor\02. Wiget</Filter>
+    </ClInclude>
+    <ClInclude Include="Window\ObjectComponentWindow.h">
+      <Filter>02. Editor\01. Window</Filter>
+    </ClInclude>
+    <ClInclude Include="Window\SceneComponentHierarchyWindow.h">
+      <Filter>02. Editor\01. Window</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
