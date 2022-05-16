@@ -1,10 +1,11 @@
 #pragma once
 #include "IMGUIWidget.h"
 class CIMGUISameLine :
-    public CIMGUIWidget
+	public CIMGUIWidget
 {
 	friend class CIMGUIWindow;
 	friend class CIMGUIPopUpModal;
+	friend class CIMGUIWidgetList;
 
 protected:
 	CIMGUISameLine();

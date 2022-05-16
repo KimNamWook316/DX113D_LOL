@@ -15,10 +15,10 @@ protected:
 
 protected:
 	CSharedPtr<class CTexture>	m_Texture;
-	ImVec2		m_ImageStart;
-	ImVec2		m_ImageEnd;
-	ImVec4		m_Tint;
-	ImVec4		m_BorderColor;
+	ImVec2			m_ImageStart;
+	ImVec2			m_ImageEnd;
+	ImVec4			m_Tint;
+	ImVec4			m_BorderColor;
 
 public:
 	void SetImageStart(float x, float y)

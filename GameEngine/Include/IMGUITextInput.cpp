@@ -1,6 +1,6 @@
 #include "IMGUITextInput.h"
 
-CIMGUITextInput::CIMGUITextInput()	:
+CIMGUITextInput::CIMGUITextInput() :
 	m_TextType(ImGuiText_Type::String),
 	m_Text{},
 	m_wText{},
@@ -21,6 +21,8 @@ CIMGUITextInput::~CIMGUITextInput()
 
 bool CIMGUITextInput::Init()
 {
+	CIMGUIWidget::Init();
+
 	return true;
 }
 
@@ -28,6 +30,7 @@ void CIMGUITextInput::Render()
 {
 	bool	Input = false;
 
+	ImGui::PushID(m_WidgetID);
 	ImGui::PushItemWidth(m_Size.x);
 
 	if (m_MultiLine)
@@ -79,4 +82,6 @@ void CIMGUITextInput::Render()
 			m_InputCallback();
 	}
 
+	ImGui::PopID();
 }
+

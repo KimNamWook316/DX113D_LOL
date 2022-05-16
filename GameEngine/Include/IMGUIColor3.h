@@ -1,7 +1,7 @@
 #pragma once
 #include "IMGUIWidget.h"
 class CIMGUIColor3 :
-    public CIMGUIWidget
+	public CIMGUIWidget
 {
 public:
 	CIMGUIColor3();
@@ -12,60 +12,58 @@ public:
 	virtual void Render() override;
 
 public:
-	void SetRGB(Vector3 color)
+	void SetRGB(const Vector3& color)
 	{
-		mValue[0] = color.x;
-		mValue[1] = color.y;
-		mValue[2] = color.z;
+		mValue = color;
 	}
 
 	void SetRGB(const float r, const float g, const float b)
 	{
-		mValue[0] = r;
-		mValue[1] = g;
-		mValue[2] = b;
+		mValue = Vector3(r, g, b);
 	}
 
 	void SetR(const float r)
 	{
-		mValue[0] = r;
+		mValue.x = r;
 	}
 
 	void SetG(const float g)
 	{
-		mValue[1] = g;
+		mValue.y = g;
 	}
 
 	void SetB(const float b)
 	{
-		mValue[2] = b;
+		mValue.z = b;
 	}
 
 public:
 	float GetR() const
 	{
-		return mValue[0];
+		return mValue.x;
 	}
 
 	float GetG() const
 	{
-		return mValue[1];
+		return mValue.y;
 	}
 
 	float GetB() const
 	{
-		return mValue[2];
+		return mValue.z;
 	}
 
 public:
 	template <typename T>
-	void SetCallBack(T* obj, void(T::* func)(float[3]))
+	void SetCallBack(T* obj, void(T::* func)(const Vector3&))
 	{
 		mCallBack = std::bind(func, obj, std::placeholders::_1);
 	}
 
 protected:
-	float mValue[3];
-	std::function<void(float[3])> mCallBack;
+	Vector3 mValue;
+	std::function<void(const Vector3&)> mCallBack;
 };
+
+
 

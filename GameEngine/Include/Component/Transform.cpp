@@ -7,7 +7,7 @@
 #include "CameraComponent.h"
 #include "../Engine.h"
 
-CTransform::CTransform()	:
+CTransform::CTransform() :
 	m_Parent(nullptr),
 	m_Scene(nullptr),
 	m_Object(nullptr),
@@ -52,6 +52,8 @@ void CTransform::InheritScale(bool Current)
 		m_WorldScale = m_RelativeScale * m_Parent->GetWorldScale();
 
 	m_UpdateScale = true;
+
+	CallChangeScaleCallBack();
 
 	// 자식이 있을 경우 모두 갱신해준다.
 	size_t	Size = m_vecChild.size();
@@ -104,6 +106,8 @@ void CTransform::InheritRotation(bool Current)
 
 	m_UpdateRot = true;
 
+	CallChangeRotCallBack();
+
 	// 자식이 있을 경우 모두 갱신해준다.
 	size_t	Size = m_vecChild.size();
 
@@ -152,6 +156,8 @@ void CTransform::InheritParentRotationPos(bool Current)
 
 	m_UpdatePos = true;
 
+	CallChangePosCallBack();
+
 	// 자식이 있을 경우 모두 갱신해준다.
 	size_t	Size = m_vecChild.size();
 
@@ -167,6 +173,8 @@ void CTransform::InheritWorldScale(bool Current)
 		m_RelativeScale = m_WorldScale / m_Parent->GetWorldScale();
 
 	m_UpdateScale = true;
+
+	CallChangeScaleCallBack();
 
 	// 자식이 있을 경우 모두 갱신해준다.
 	size_t	Size = m_vecChild.size();
@@ -219,6 +227,8 @@ void CTransform::InheritWorldRotation(bool Current)
 
 	m_UpdateRot = true;
 
+	CallChangeRotCallBack();
+
 	// 자식이 있을 경우 모두 갱신해준다.
 	size_t	Size = m_vecChild.size();
 
@@ -257,7 +267,7 @@ void CTransform::InheritParentRotationWorldPos(bool Current)
 			Vector3	ParentPos = m_Parent->GetWorldPos();
 
 			memcpy(&matRot._41, &ParentPos, sizeof(Vector3));
-			
+
 			matRot.Inverse();
 
 			m_RelativePos = m_WorldPos.TransformCoord(matRot);
@@ -271,6 +281,8 @@ void CTransform::InheritParentRotationWorldPos(bool Current)
 	}
 
 	m_UpdatePos = true;
+
+	CallChangePosCallBack();
 
 	// 자식이 있을 경우 모두 갱신해준다.
 	size_t	Size = m_vecChild.size();
@@ -674,3 +686,82 @@ void CTransform::Load(FILE* File)
 	fread(&m_Pivot, sizeof(Vector3), 1, File);
 	fread(&m_MeshSize, sizeof(Vector3), 1, File);
 }
+
+void CTransform::CallChangePosCallBack()
+{
+	auto iter = m_PosChangeCallBackList.begin();
+	auto iterEnd = m_PosChangeCallBackList.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		(*iter).Func(m_WorldPos, m_RelativePos);
+	}
+}
+
+void CTransform::CallChangeRotCallBack()
+{
+	auto iter = m_RotChangeCallBackList.begin();
+	auto iterEnd = m_RotChangeCallBackList.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		(*iter).Func(m_WorldRot, m_RelativeRot);
+	}
+}
+
+void CTransform::CallChangeScaleCallBack()
+{
+	auto iter = m_ScaleChangeCallBackList.begin();
+	auto iterEnd = m_ScaleChangeCallBackList.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		(*iter).Func(m_WorldScale, m_RelativeScale);
+	}
+}
+
+void CTransform::DeleteChangePosCallBack(void* Callee)
+{
+	auto iter = m_PosChangeCallBackList.begin();
+	auto iterEnd = m_PosChangeCallBackList.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		if ((*iter).Callee == Callee)
+		{
+			m_PosChangeCallBackList.erase(iter);
+			return;
+		}
+	}
+}
+
+void CTransform::DeleteChangeScaleCallBack(void* Callee)
+{
+	auto iter = m_ScaleChangeCallBackList.begin();
+	auto iterEnd = m_ScaleChangeCallBackList.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		if ((*iter).Callee == Callee)
+		{
+			m_ScaleChangeCallBackList.erase(iter);
+			return;
+		}
+	}
+}
+
+void CTransform::DeleteChangeRotCallBack(void* Callee)
+{
+	auto iter = m_RotChangeCallBackList.begin();
+	auto iterEnd = m_RotChangeCallBackList.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		if ((*iter).Callee == Callee)
+		{
+			m_RotChangeCallBackList.erase(iter);
+			return;
+		}
+	}
+}
+

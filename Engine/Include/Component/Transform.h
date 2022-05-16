@@ -2,6 +2,12 @@
 
 #include "../GameInfo.h"
 
+struct TransformCallBack
+{
+	void* Callee;
+	std::function<void(const Vector3&, const Vector3&)> Func; // World, Relative 순서로 인자에 넣어줌
+};
+
 class CTransform
 {
 	friend class CSceneComponent;
@@ -21,6 +27,11 @@ private:
 	std::vector<CTransform*>	m_vecChild;
 	class CTransformConstantBuffer* m_CBuffer;
 	Transform_State		m_State;
+
+	// P, R, S 변경 시 콜백되는 함수 리스트
+	std::list<TransformCallBack> m_ScaleChangeCallBackList;
+	std::list<TransformCallBack> m_PosChangeCallBackList;
+	std::list<TransformCallBack> m_RotChangeCallBackList;
 
 private:
 	bool	m_InheritScale;
@@ -108,6 +119,41 @@ public:
 	Vector3 GetRelativeAxis(AXIS Axis)
 	{
 		return m_RelativeAxis[Axis];
+	}
+
+	bool IsInheritScale() const
+	{
+		return m_InheritScale;
+	}
+
+	bool IsInheritRotX() const
+	{
+		return m_InheritRotX;
+	}
+
+	bool IsInheritRotY() const
+	{
+		return m_InheritRotY;
+	}
+
+	bool IsInheritRotZ() const
+	{
+		return m_InheritRotZ;
+	}
+
+	bool IsInheritPosX() const
+	{
+		return m_InheritParentRotationPosX;
+	}
+
+	bool IsInheritPosY() const
+	{
+		return m_InheritParentRotationPosY;
+	}
+
+	bool IsInheritPosZ() const
+	{
+		return m_InheritParentRotationPosZ;
 	}
 
 public:
@@ -230,5 +276,45 @@ public:
 	CTransform* Clone();
 	void Save(FILE* File);
 	void Load(FILE* File);
+
+	// CallBack
+private:
+	void CallChangePosCallBack();
+	void CallChangeRotCallBack();
+	void CallChangeScaleCallBack();
+
+public:
+	void DeleteChangePosCallBack(void* Callee);
+	void DeleteChangeScaleCallBack(void* Callee);
+	void DeleteChangeRotCallBack(void* Callee);
+
+public:
+	template <typename T>
+	void AddChangeScaleCallBack(T* Obj, void(T::* Func)(const Vector3&, const Vector3&))
+	{
+		TransformCallBack CallBack;
+		CallBack.Callee = Obj;
+		CallBack.Func = std::bind(Func, Obj, std::placeholders::_1, std::placeholders::_2);
+		m_ScaleChangeCallBackList.push_back(CallBack);
+	}
+
+	template <typename T>
+	void AddChangeRotCallBack(T* Obj, void(T::* Func)(const Vector3&, const Vector3&))
+	{
+		TransformCallBack CallBack;
+		CallBack.Callee = Obj;
+		CallBack.Func = std::bind(Func, Obj, std::placeholders::_1, std::placeholders::_2);
+		m_RotChangeCallBackList.push_back(CallBack);
+	}
+
+	template <typename T>
+	void AddChangePosCallBack(T* Obj, void(T::* Func)(const Vector3&, const Vector3&))
+	{
+		TransformCallBack CallBack;
+		CallBack.Callee = Obj;
+		CallBack.Func = std::bind(Func, Obj, std::placeholders::_1, std::placeholders::_2);
+		m_PosChangeCallBackList.push_back(CallBack);
+	}
 };
+
 

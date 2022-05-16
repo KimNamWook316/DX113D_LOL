@@ -3,7 +3,7 @@
 #include "IMGUIWidget.h"
 
 class CIMGUIInputFloat3 :
-    public CIMGUIWidget
+	public CIMGUIWidget
 {
 public:
 	CIMGUIInputFloat3();
@@ -16,31 +16,27 @@ public:
 public:
 	void SetVal(const Vector3& value)
 	{
-		mValue[0] = value.x;
-		mValue[1] = value.y;
-		mValue[2] = value.z;
+		mValue = value;
 	}
 
 	void SetVal(const float x, const float y, const float z)
 	{
-		mValue[0] = x;
-		mValue[1] = y;
-		mValue[2] = z;
+		mValue = Vector3(x, y, z);
 	}
 
 	void SetX(const float x)
 	{
-		mValue[0] = x;
+		mValue.x = x;
 	}
 
 	void SetY(const float y)
 	{
-		mValue[1] = y;
+		mValue.y = y;
 	}
 
 	void SetZ(const float z)
 	{
-		mValue[2] = z;
+		mValue.z = z;
 	}
 
 	void EnableInputRange(bool bEnable)
@@ -52,7 +48,7 @@ public:
 	{
 		mMin = val;
 	}
-	
+
 	void SetMax(const float val)
 	{
 		mMax = val;
@@ -61,36 +57,37 @@ public:
 public:
 	float GetX() const
 	{
-		return mValue[0];
+		return mValue.x;
 	}
 
 	float GetY() const
 	{
-		return mValue[1];
+		return mValue.y;
 	}
 
 	float GetZ() const
 	{
-		return mValue[2];
+		return mValue.z;
 	}
 
-	Vector3 GetValue() const
+	const Vector3& GetValue() const
 	{
-		return Vector3(mValue[0], mValue[1], mValue[2]);
+		return mValue;
 	}
 
 public:
 	template <typename T>
-	void SetCallBack(T* obj, void(T::* func)(float[3]))
+	void SetCallBack(T* obj, void(T::* func)(const Vector3&))
 	{
 		mCallBack = std::bind(func, obj, std::placeholders::_1);
 	}
 
 protected:
-	float mValue[3];
-	std::function<void(float[3])> mCallBack;
+	Vector3 mValue;
+	std::function<void(const Vector3&)> mCallBack;
 	bool mbInputRange;
 	float mMin;
 	float mMax;
 };
+
 

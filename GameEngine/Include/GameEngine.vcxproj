@@ -82,6 +82,7 @@
     <ClCompile Include="IMGUISeperator.cpp" />
     <ClCompile Include="IMGUISliderFloat.cpp" />
     <ClCompile Include="IMGUISliderInt.cpp" />
+    <ClCompile Include="IMGUITable.cpp" />
     <ClCompile Include="IMGUITestWindow.cpp" />
     <ClCompile Include="IMGUIText.cpp" />
     <ClCompile Include="IMGUITextInput.cpp" />
@@ -265,6 +266,7 @@
     <ClInclude Include="IMGUISeperator.h" />
     <ClInclude Include="IMGUISliderFloat.h" />
     <ClInclude Include="IMGUISliderInt.h" />
+    <ClInclude Include="IMGUITable.h" />
     <ClInclude Include="IMGUITestWindow.h" />
     <ClInclude Include="IMGUIText.h" />
     <ClInclude Include="IMGUITextInput.h" />

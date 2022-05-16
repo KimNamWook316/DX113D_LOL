@@ -5,7 +5,7 @@
 #include "IMGUIChild.h"
 
 class CFileBrowser :
-    public CIMGUIWindow
+	public CIMGUIWindow
 {
 public:
 	CFileBrowser();
@@ -32,4 +32,3 @@ public:
 	void FileClickCallback(class CIMGUIImage* Image);
 
 };
-

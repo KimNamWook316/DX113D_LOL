@@ -14,6 +14,8 @@ CIMGUIComboBox::~CIMGUIComboBox()
 
 bool CIMGUIComboBox::Init()
 {
+    CIMGUIWidget::Init();
+
     m_PrevViewName = m_Name;
 
     return true;
@@ -21,6 +23,7 @@ bool CIMGUIComboBox::Init()
 
 void CIMGUIComboBox::Render()
 {
+    ImGui::PushID(m_WidgetID);
     ImGui::PushItemWidth(m_Size.x);
 
     if (ImGui::BeginCombo(m_Name.c_str(), m_PrevViewName.c_str(), m_Flag))
@@ -47,5 +50,6 @@ void CIMGUIComboBox::Render()
 
         ImGui::EndCombo();
     }
-}
 
+    ImGui::PopID();
+}

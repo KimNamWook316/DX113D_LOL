@@ -31,7 +31,7 @@
 
 DEFINITION_SINGLE(CEditorManager)
 
-CEditorManager::CEditorManager()	:
+CEditorManager::CEditorManager() :
 	m_EditMode(EditMode::Scene),
 	m_DragObj(nullptr),
 	m_CameraMoveSpeed(1000.f)
@@ -108,7 +108,7 @@ bool CEditorManager::Init(HINSTANCE hInst)
 	m_ObjectComponentWindow = CIMGUIManager::GetInst()->AddWindow<CObjectComponentWindow>(OBJECTCOMPONENT_LIST);
 	//m_AnimationEditor = CIMGUIManager::GetInst()->AddWindow<CAnimationEditor>(ANIMATION_EDITOR);
 
-	CFBXConvertWindow* win = CIMGUIManager::GetInst()->AddWindow<CFBXConvertWindow>("FBXConverter");
+	CFBXConvertWindow* win = CIMGUIManager::GetInst()->AddWindow<CFBXConvertWindow>(FBX_CONVERTOR);
 
 	CRenderManager::GetInst()->CreateLayer("DragLayer", INT_MAX);
 
@@ -304,3 +304,4 @@ void CEditorManager::CreateAnimInstance(CSpriteComponent* Sprite, size_t Type)
 		Sprite->LoadAnimationInstance<CAnimationSequence2DInstance>();
 	}
 }
+

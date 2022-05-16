@@ -1,18 +1,13 @@
 #include "IMGUIWidgetList.h"
 
-CIMGUIWidgetList::CIMGUIWidgetList()	:
+CIMGUIWidgetList::CIMGUIWidgetList() :
 	mSize(0)
 {
 }
 
 CIMGUIWidgetList::~CIMGUIWidgetList()
 {
-	size_t size = mVecChild.size();
-
-	for (size_t i = 0; i < size; ++i)
-	{
-		SAFE_DELETE(mVecChild[i]);
-	}
+	ClearWidget();
 }
 
 bool CIMGUIWidgetList::Init()
@@ -26,6 +21,16 @@ void CIMGUIWidgetList::Render()
 	for (size_t i = 0; i < mSize; ++i)
 	{
 		mVecChild[i]->Render();
+	}
+}
+
+void CIMGUIWidgetList::ClearWidget()
+{
+	size_t size = mVecChild.size();
+
+	for (size_t i = 0; i < size; ++i)
+	{
+		SAFE_DELETE(mVecChild[i]);
 	}
 }
 
@@ -45,3 +50,4 @@ void CIMGUIWidgetList::DeleteWidget(CIMGUIWidget* widget)
 		}
 	}
 }
+

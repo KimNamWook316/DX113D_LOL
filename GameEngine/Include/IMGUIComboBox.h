@@ -3,10 +3,11 @@
 #include "IMGUIWidget.h"
 
 class CIMGUIComboBox :
-    public CIMGUIWidget
+	public CIMGUIWidget
 {
 	friend class CIMGUIWindow;
 	friend class CIMGUIPopUpModal;
+	friend class CIMGUIWidgetList;
 
 protected:
 	CIMGUIComboBox();
@@ -122,4 +123,3 @@ public:
 		m_SelectCallback = std::bind(Func, Obj, std::placeholders::_1, std::placeholders::_2);
 	}
 };
-

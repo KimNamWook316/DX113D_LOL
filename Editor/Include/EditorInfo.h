@@ -12,6 +12,7 @@
 #define SCENECOMPONENT_CREATE_POPUPMODAL	"SceneComponentCreatePopUpModal"
 #define OBJECTCOMPONENT_CREATE_POPUPMODAL	"ObjectComponentCreatePopUpModal"
 #define ANIMATION_EDITOR					"AnimationEditor"
+#define FBX_CONVERTOR		"FBXConverter"
 
 
 #define SINGLELINE_NUMICON	5
@@ -52,4 +53,5 @@ struct LoadingMessage
 	bool Complete;
 	std::string Message;
 };
+
 

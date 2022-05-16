@@ -12,7 +12,7 @@ struct MaterialTextureInfo
     int             Register;
     int             ShaderType;
 
-    MaterialTextureInfo()   :
+    MaterialTextureInfo() :
         SamplerType(Sampler_Type::Linear),
         Register(0),
         ShaderType((int)Buffer_Shader_Type::Pixel)
@@ -87,6 +87,36 @@ public:
     unsigned int GetTextureHeight(int TextureIndex = 0)  const
     {
         return m_TextureInfo[TextureIndex].Texture->GetHeight();
+    }
+
+    const Vector4& GetBaseColor() const
+    {
+        return m_BaseColor;
+    }
+
+    const Vector4& GetAmbientColor() const
+    {
+        return m_AmbientColor;
+    }
+
+    const Vector4& GetSpecularColor() const
+    {
+        return m_SpecularColor;
+    }
+
+    const Vector4& GetEmissiveColor() const
+    {
+        return m_EmissiveColor;
+    }
+
+    float GetSpecularPower() const
+    {
+        return m_SpecularColor.w;
+    }
+
+    float GetOpacity() const
+    {
+        return m_Opacity;
     }
 
     bool EmptyTexture() const

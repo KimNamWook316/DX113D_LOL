@@ -22,7 +22,9 @@ protected:
 	class CIMGUIWindow* m_Owner;
 	ImVec2			m_Size;
 	ImColor			m_Color;
-	ImFont*			m_Font;
+	ImFont* m_Font;
+	int				m_WidgetID; // Window내에서 Widget이 가지고 있는 고유한 ID값
+	bool			m_Render; // Render 여부
 
 public:
 	void SetOwner(class CIMGUIWindow* Owner)
@@ -72,8 +74,14 @@ public:
 		m_Color.Value.w = a / 255.f;
 	}
 
+	void SetRender(bool Render)
+	{
+		m_Render = Render;
+	}
+
 public:
 	virtual bool Init();
 	virtual void Render();
 };
+
 

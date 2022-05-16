@@ -4,32 +4,32 @@
 #include "../Component/ObjectComponent.h"
 
 class CGameObject :
-    public CRef
+	public CRef
 {
-    friend class CScene;
+	friend class CScene;
 
 protected:
-    CGameObject();
-    CGameObject(const CGameObject& obj);
-    virtual ~CGameObject();
+	CGameObject();
+	CGameObject(const CGameObject& obj);
+	virtual ~CGameObject();
 
 protected:
-    class CScene* m_Scene;
+	class CScene* m_Scene;
 
 public:
-    class CScene* GetScene()    const
-    {
-        return m_Scene;
-    }
+	class CScene* GetScene()    const
+	{
+		return m_Scene;
+	}
 
 public:
-    void SetScene(class CScene* Scene);
+	void SetScene(class CScene* Scene);
 	virtual void Destroy();
 
 protected:
-    CSharedPtr<CSceneComponent> m_RootComponent;
+	CSharedPtr<CSceneComponent> m_RootComponent;
 	std::list<CSceneComponent*>	m_SceneComponentList;
-    std::vector<CSharedPtr<CObjectComponent>>   m_vecObjectComponent;
+	std::vector<CSharedPtr<CObjectComponent>>   m_vecObjectComponent;
 
 	CGameObject* m_Parent;
 	std::vector<CSharedPtr<CGameObject>>   m_vecChildObject;
@@ -42,10 +42,10 @@ public:
 	// 실제로 지우진 않고, 나는 부모를 nullptr로 만들고, 부모에게 내 자신을 자식 목록에서 지우게 함
 	void ClearParent();
 
-    void SetRootComponent(CSceneComponent* Component)
-    {
-        m_RootComponent = Component;
-    }
+	void SetRootComponent(CSceneComponent* Component)
+	{
+		m_RootComponent = Component;
+	}
 
 	CSceneComponent* GetRootComponent()	const
 	{
@@ -74,6 +74,8 @@ public:
 	}
 
 	void GetAllSceneComponentsName(std::vector<FindComponentName>& vecNames);
+	void GetAllSceneComponentsPointer(std::vector<CSceneComponent*>& OutVecSceneComp);
+	void GetAllObjectComponentsPointer(std::vector<CObjectComponent*>& OutVecObjComp);
 
 	void SetLifeSpan(float LifeSpan)
 	{
@@ -81,15 +83,15 @@ public:
 	}
 
 public:
-    virtual void Start();
-    virtual bool Init();
-    virtual void Update(float DeltaTime);
-    virtual void PostUpdate(float DeltaTime);
+	virtual void Start();
+	virtual bool Init();
+	virtual void Update(float DeltaTime);
+	virtual void PostUpdate(float DeltaTime);
 	void AddCollision();
-    virtual void PrevRender();
-    virtual void Render();
-    virtual void PostRender();
-    virtual CGameObject* Clone();
+	virtual void PrevRender();
+	virtual void Render();
+	virtual void PostRender();
+	virtual CGameObject* Clone();
 	virtual void Save(FILE* File);
 	virtual void Load(FILE* File);
 	virtual void Save(const char* FullPath);
@@ -102,20 +104,20 @@ public:
 	void Move(const Vector3& EndPos);
 
 public:
-    template <typename T>
-    T* CreateComponent(const std::string& Name)
-    {
-        T* Component = new T;
+	template <typename T>
+	T* CreateComponent(const std::string& Name)
+	{
+		T* Component = new T;
 
-        Component->SetName(Name);
-        Component->SetScene(m_Scene);
-        Component->SetGameObject(this);
+		Component->SetName(Name);
+		Component->SetScene(m_Scene);
+		Component->SetGameObject(this);
 
-        if (!Component->Init())
-        {
-            SAFE_RELEASE(Component);
-            return nullptr;
-        }
+		if (!Component->Init())
+		{
+			SAFE_RELEASE(Component);
+			return nullptr;
+		}
 
 		if (Component->GetComponentType() == Component_Type::ObjectComponent)
 			m_vecObjectComponent.push_back((class CObjectComponent*)Component);
@@ -128,8 +130,8 @@ public:
 				m_RootComponent = (class CSceneComponent*)Component;
 		}
 
-        return Component;
-    }
+		return Component;
+	}
 
 
 	template <typename T>
@@ -666,4 +668,6 @@ public:
 		m_RootComponent->AddWorldPos(x, y, z);
 	}
 };
+
+
 

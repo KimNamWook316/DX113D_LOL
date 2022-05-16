@@ -807,9 +807,6 @@
     <ClCompile Include="IMGUITable.cpp">
       <Filter>01. Engine\08. IMGUI\03. Widget</Filter>
     </ClCompile>
-    <ClCompile Include="IMGUISlideBar.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Device.h">
@@ -1370,14 +1367,8 @@
     <ClInclude Include="GameObject\Champion.h">
       <Filter>04. GameObject\01. LoLObject</Filter>
     </ClInclude>
-    <ClInclude Include="IMGUIPractice_OBJ.h">
-      <Filter>01. Engine\08. IMGUI\03. Widget</Filter>
-    </ClInclude>
     <ClInclude Include="IMGUITable.h">
       <Filter>01. Engine\08. IMGUI\03. Widget</Filter>
-    </ClInclude>
-    <ClInclude Include="IMGUISlideBar.h">
-      <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

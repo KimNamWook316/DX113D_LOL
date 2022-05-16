@@ -19,9 +19,19 @@ protected:
     std::vector<CSharedPtr<CMaterial>> m_vecMaterialSlot;
 
 public:
+    CStaticMesh* GetMesh() const
+    {
+        return m_Mesh;
+    }
+
     CMaterial* GetMaterial(int Index = 0)    const
     {
         return m_vecMaterialSlot[Index];
+    }
+
+    int GetMaterialSlotSize() const
+    {
+        return (int)m_vecMaterialSlot.size();
     }
 
 public:
@@ -70,4 +80,5 @@ public:
     virtual void Save(FILE* File);
     virtual void Load(FILE* File);
 };
+
 

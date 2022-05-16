@@ -12,10 +12,9 @@
 #include "Scene/SceneManager.h"
 #include "GameObject/GameObject.h"
 
-CObjectHierarchyWindow::CObjectHierarchyWindow()	:
+CObjectHierarchyWindow::CObjectHierarchyWindow() :
 	m_Root(nullptr),
 	m_ObjectDeleteButton(nullptr)
-
 {
 }
 
@@ -133,6 +132,9 @@ void CObjectHierarchyWindow::OnSetSelectNode(CIMGUITree* SelectNode)
 void CObjectHierarchyWindow::OnDragDropSrc(CIMGUITree* SrcTree)
 {
 	if (m_SelectNode == m_Root || m_DragSrc == m_Root)
+
+
+
 		return;
 
 	m_DragSrc = SrcTree;
@@ -149,7 +151,6 @@ void CObjectHierarchyWindow::OnDragDropDest(CIMGUITree* DestTree, const std::str
 	{
 		CScene* CurrentScene = CSceneManager::GetInst()->GetScene();
 
-		
 		CGameObject* SrcObj = CurrentScene->FindObject(m_DragSrc->GetName());
 		CGameObject* DestObj = CurrentScene->FindObject(m_DragDest->GetName());
 
@@ -158,3 +159,4 @@ void CObjectHierarchyWindow::OnDragDropDest(CIMGUITree* DestTree, const std::str
 		DestObj->AddChildObject(SrcObj);
 	}
 }
+

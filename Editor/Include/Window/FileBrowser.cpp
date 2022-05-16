@@ -54,7 +54,6 @@ void CFileBrowser::Update(float DeltaTime)
 
 			CIMGUIImage* DirImage = Child->AddWidget<CIMGUIImage>("DirectoryImage", 80.f, 80.f);
 			DirImage->SetTexture("DirectoryImage", TEXT("Directory.png"));
-			DirImage->SetClickCallback<CFileBrowser>(this, &CFileBrowser::FileClickCallback);
 
 			CIMGUIText* DirName = Child->AddWidget<CIMGUIText>("DirName");
 			DirName->SetText(m_vecDirName[i].c_str());

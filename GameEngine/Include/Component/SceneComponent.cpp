@@ -21,7 +21,7 @@ CSceneComponent::CSceneComponent()
 	m_LayerName = "Default";
 }
 
-CSceneComponent::CSceneComponent(const CSceneComponent& com)	:
+CSceneComponent::CSceneComponent(const CSceneComponent& com) :
 	CComponent(com)
 {
 	*this = com;
@@ -85,6 +85,17 @@ void CSceneComponent::GetAllSceneComponentsName(std::vector<FindComponentName>& 
 	for (size_t i = 0; i < Size; ++i)
 	{
 		m_vecChild[i]->GetAllSceneComponentsName(vecNames);
+	}
+}
+
+void CSceneComponent::GetAllSceneComponentsPointer(std::vector<CSceneComponent*>& OutVecSceneComp)
+{
+	OutVecSceneComp.push_back(this);
+
+	size_t Size = m_vecChild.size();
+	for (size_t i = 0; i < Size; ++i)
+	{
+		m_vecChild[i]->GetAllSceneComponentsPointer(OutVecSceneComp);
 	}
 }
 
@@ -208,7 +219,7 @@ bool CSceneComponent::ReplaceComponent(CSceneComponent* DestNode)
 	m_Transform->m_Parent = destTransformParent;
 	DestNode->m_Transform->m_Parent = srcTransformParent;
 
-	if(!srcParent)
+	if (!srcParent)
 	{
 		// Parent 가 없다면 지금 노드가 Root Node -> Root Component 로 세팅
 		m_Object->SetRootComponent(DestNode);
@@ -499,3 +510,4 @@ void CSceneComponent::Load(FILE* File)
 		m_vecChild.push_back((CSceneComponent*)Component);
 	}
 }
+

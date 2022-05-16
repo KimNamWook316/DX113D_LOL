@@ -19,6 +19,20 @@ protected:
 	bool		m_ModalPopup;
 	std::vector<class CIMGUIWidget*>	m_vecPopupWidget;
 
+protected:
+	int m_WidgetID; // Window의 Widget마다 가지고 있는 고유 ID를 발급해주기 위한 변수
+
+public:
+	int GetWidgetID()	const
+	{
+		return m_WidgetID;
+	}
+
+	void IncreaseWidgetID()
+	{
+		++m_WidgetID;
+	}
+
 public:
 	void SetName(const std::string& Name)
 	{
@@ -93,4 +107,5 @@ public:
 		return Widget;
 	}
 };
+
 

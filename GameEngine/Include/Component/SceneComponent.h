@@ -4,20 +4,20 @@
 #include "Transform.h"
 
 class CSceneComponent :
-    public CComponent
+	public CComponent
 {
-    friend class CGameObject;
+	friend class CGameObject;
 
 protected:
-    CSceneComponent();
-    CSceneComponent(const CSceneComponent& com);
-    virtual ~CSceneComponent();
+	CSceneComponent();
+	CSceneComponent(const CSceneComponent& com);
+	virtual ~CSceneComponent();
 
 protected:
-    CTransform* m_Transform;
-    CSceneComponent* m_Parent;
-    std::vector<CSharedPtr<CSceneComponent>>    m_vecChild;
-    bool    m_Render;
+	CTransform* m_Transform;
+	CSceneComponent* m_Parent;
+	std::vector<CSharedPtr<CSceneComponent>>    m_vecChild;
+	bool    m_Render;
 	std::string		m_LayerName;
 
 public:
@@ -31,10 +31,10 @@ public:
 		return m_LayerName;
 	}
 
-    bool IsRender() const
-    {
-        return m_Render;
-    }
+	bool IsRender() const
+	{
+		return m_Render;
+	}
 
 public:
 	void SetLayerName(const std::string& Name)
@@ -45,35 +45,36 @@ public:
 public:
 	void SetSceneComponent(class CGameObject* Object);
 	void GetAllSceneComponentsName(std::vector<FindComponentName>& vecNames);
-	virtual void Destroy(); 
-	void DestroySingle(); 
+	virtual void Destroy() override;
+	void DestroySingle();
+	void GetAllSceneComponentsPointer(std::vector<CSceneComponent*>& OutVecSceneComp);
 
 public:
-    virtual void SetScene(class CScene* Scene);
-    virtual void SetGameObject(class CGameObject* Object);
+	virtual void SetScene(class CScene* Scene);
+	virtual void SetGameObject(class CGameObject* Object);
 
 public:
-    void AddChild(CSceneComponent* Child);
-    bool DeleteChild(CSceneComponent* Child);
-    bool DeleteChild(const std::string& Name);
+	void AddChild(CSceneComponent* Child);
+	bool DeleteChild(CSceneComponent* Child);
+	bool DeleteChild(const std::string& Name);
 	bool ReplaceComponent(CSceneComponent* DestNode);
-	bool DeleteComponent(); 
+	bool DeleteComponent();
 	size_t GetChildCounet()	const;
-    CSceneComponent* FindComponent(const std::string& Name);
+	CSceneComponent* FindComponent(const std::string& Name);
 
 	// 부모에게 나를 자식목록에서 지우게하고, 현재 노드도 m_Parent = nullptr
 	void ClearParent();
 
 public:
-    virtual void Start();
-    virtual bool Init();
-    virtual void Update(float DeltaTime);
-    virtual void PostUpdate(float DeltaTime);
+	virtual void Start();
+	virtual bool Init();
+	virtual void Update(float DeltaTime);
+	virtual void PostUpdate(float DeltaTime);
 	virtual void CheckCollision();
-    virtual void PrevRender();
-    virtual void Render();
-    virtual void PostRender();
-    virtual CSceneComponent* Clone();
+	virtual void PrevRender();
+	virtual void Render();
+	virtual void PostRender();
+	virtual CSceneComponent* Clone();
 	virtual void Save(FILE* File);
 	virtual void Load(FILE* File);
 

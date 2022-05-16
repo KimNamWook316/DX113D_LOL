@@ -1,7 +1,7 @@
 #include "IMGUIColor4.h"
 
-CIMGUIColor4::CIMGUIColor4()	:
-	mValue{0.f, 0.f, 0.f, 0.f}
+CIMGUIColor4::CIMGUIColor4() :
+	mValue{ 0.f, 0.f, 0.f, 0.f }
 {
 }
 
@@ -16,8 +16,11 @@ bool CIMGUIColor4::Init()
 
 void CIMGUIColor4::Render()
 {
-	if (ImGui::ColorEdit4(m_Name.c_str(), mValue))
+	float value[4] = { mValue.x, mValue.y, mValue.z, mValue.z };
+	if (ImGui::ColorEdit4(m_Name.c_str(), value))
 	{
+		memcpy(&mValue, value, sizeof(float) * 4);
+
 		if (mCallBack)
 		{
 			mCallBack(mValue);

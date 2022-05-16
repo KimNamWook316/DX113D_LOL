@@ -10,10 +10,11 @@ enum class ImGuiText_Type
 };
 
 class CIMGUITextInput :
-    public CIMGUIWidget
+	public CIMGUIWidget
 {
 	friend class CIMGUIWindow;
 	friend class CIMGUIPopUpModal;
+	friend class CIMGUIWidgetList;
 
 protected:
 	CIMGUITextInput();

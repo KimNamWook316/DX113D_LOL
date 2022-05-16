@@ -2,7 +2,7 @@
 #include "IMGUIWidget.h"
 #include "IMGUIManager.h"
 
-CIMGUIWindow::CIMGUIWindow()	:
+CIMGUIWindow::CIMGUIWindow() :
 	m_Open(true),
 	m_WindowFlag(ImGuiWindowFlags_NoCollapse),
 	m_ModalPopup(false)
@@ -102,6 +102,11 @@ void CIMGUIWindow::Update(float DeltaTime)
 
 	for (size_t i = 0; i < Size; ++i)
 	{
+		if (!m_vecWidget[i]->m_Render)
+		{
+			continue;
+		}
+
 		m_vecWidget[i]->Render();
 	}
 
@@ -109,3 +114,4 @@ void CIMGUIWindow::Update(float DeltaTime)
 
 	ImGui::End();
 }
+

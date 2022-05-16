@@ -4,7 +4,7 @@
 #include "../PathManager.h"
 #include "../Component/NavAgent.h"
 
-CGameObject::CGameObject()	:
+CGameObject::CGameObject() :
 	m_Scene(nullptr),
 	m_Parent(nullptr),
 	m_LifeSpan(0.f)
@@ -52,7 +52,7 @@ void CGameObject::Destroy()
 {
 	CRef::Destroy();
 
-	if(m_RootComponent)
+	if (m_RootComponent)
 		m_RootComponent->Destroy();
 
 	size_t	Size = m_vecObjectComponent.size();
@@ -90,7 +90,7 @@ bool CGameObject::DeleteChildObj(const std::string& Name)
 	{
 		if (m_vecChildObject[i]->GetName() == Name)
 		{
-			auto	iter = m_vecChildObject.begin() + i;     
+			auto	iter = m_vecChildObject.begin() + i;
 
 			if ((*iter)->m_vecChildObject.size() > 0)
 			{
@@ -174,6 +174,26 @@ void CGameObject::GetAllSceneComponentsName(std::vector<FindComponentName>& vecN
 		return;
 
 	m_RootComponent->GetAllSceneComponentsName(vecNames);
+}
+
+void CGameObject::GetAllSceneComponentsPointer(std::vector<CSceneComponent*>& OutVecSceneComp)
+{
+	if (!m_RootComponent)
+	{
+		return;
+	}
+
+	m_RootComponent->GetAllSceneComponentsPointer(OutVecSceneComp);
+}
+
+void CGameObject::GetAllObjectComponentsPointer(std::vector<CObjectComponent*>& OutVecObjComp)
+{
+	size_t Size = m_vecObjectComponent.size();
+
+	for (size_t i = 0; i < Size; ++i)
+	{
+		OutVecObjComp.push_back(m_vecObjectComponent[i]);
+	}
 }
 
 void CGameObject::Start()
@@ -418,3 +438,4 @@ void CGameObject::Move(const Vector3& EndPos)
 		}
 	}
 }
+
