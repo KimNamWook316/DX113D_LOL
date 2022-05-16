@@ -65,6 +65,7 @@
     <ClCompile Include="IMGUIComboBox.cpp" />
     <ClCompile Include="IMGUIDummy.cpp" />
     <ClCompile Include="IMGUIImage.cpp" />
+    <ClCompile Include="IMGUIImageButton.cpp" />
     <ClCompile Include="IMGUIInputFloat.cpp" />
     <ClCompile Include="IMGUIInputFloat2.cpp" />
     <ClCompile Include="IMGUIInputFloat3.cpp" />
@@ -248,6 +249,7 @@
     <ClInclude Include="IMGUIComboBox.h" />
     <ClInclude Include="IMGUIDummy.h" />
     <ClInclude Include="IMGUIImage.h" />
+    <ClInclude Include="IMGUIImageButton.h" />
     <ClInclude Include="IMGUIInfo.h" />
     <ClInclude Include="IMGUIInputFloat.h" />
     <ClInclude Include="IMGUIInputFloat2.h" />
