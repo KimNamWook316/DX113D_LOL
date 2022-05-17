@@ -1,0 +1,229 @@
+
+#include "MainSceneMode.h"
+#include "Scene/Scene.h"
+#include "Scene/SceneResource.h"
+#include "Scene/Viewport.h"
+#include "../Object/Player.h"
+#include "../Object/LandScapeObj.h"
+#include "GameObject/LightObj.h"
+#include "Component/LightComponent.h"
+#include "Resource/Material/Material.h"
+
+CMainSceneMode::CMainSceneMode()
+{
+	SetTypeID<CMainSceneMode>();
+}
+
+CMainSceneMode::~CMainSceneMode()
+{
+}
+
+bool CMainSceneMode::Init()
+{
+	LoadMesh();
+
+	CreateMaterial();
+
+	CreateAnimationSequence();
+
+	CreateParticle();
+
+	if (m_LoadingFunction)
+		m_LoadingFunction(false, 0.3f);
+
+	CPlayer* Player = m_Scene->CreateGameObject<CPlayer>("Player");
+
+	SetPlayerObject(Player);
+
+
+	CLandScapeObj* LandScape = m_Scene->CreateGameObject<CLandScapeObj>("LandScape");
+
+	CLightObj* Light = m_Scene->CreateGameObject<CLightObj>("Light1");
+
+	((CLightComponent*)Light->GetRootComponent())->SetRelativePos(-3.f, 5.f, 0.f);
+	((CLightComponent*)Light->GetRootComponent())->SetLightType(Light_Type::Point);
+	((CLightComponent*)Light->GetRootComponent())->SetDistance(10.f);
+	((CLightComponent*)Light->GetRootComponent())->SetAtt3(0.02f);
+	((CLightComponent*)Light->GetRootComponent())->SetColor(Vector4(1.f, 0.f, 0.f, 1.f));
+
+	CLightObj* Light2 = m_Scene->CreateGameObject<CLightObj>("Light2");
+
+	((CLightComponent*)Light2->GetRootComponent())->SetRelativePos(3.f, 5.f, 0.f);
+	((CLightComponent*)Light2->GetRootComponent())->SetLightType(Light_Type::Point);
+	((CLightComponent*)Light2->GetRootComponent())->SetDistance(10.f);
+	((CLightComponent*)Light2->GetRootComponent())->SetAtt3(0.02f);
+	((CLightComponent*)Light2->GetRootComponent())->SetColor(Vector4(0.f, 1.f, 0.f, 1.f));
+
+	Vector3 LandScapeScale = LandScape->GetWorldScale();
+
+	Player->SetWorldPos(LandScapeScale.x * 0.5f, LandScapeScale.y, LandScapeScale.z * 0.5f);
+
+	return true;
+}
+
+void CMainSceneMode::LoadMesh()
+{
+	m_Scene->GetResource()->LoadMesh(Mesh_Type::Animation, "PlayerMesh",
+		TEXT("singed_attack1_test.fbx"));
+
+	CMesh* Mesh = m_Scene->GetResource()->FindMesh("PlayerMesh");
+
+	/*CSharedPtr<CMaterial>	Mtrl = Mesh->GetMaterial(2);
+
+	Mtrl->AddTexture(3, (int)Buffer_Shader_Type::Pixel,
+		"CageEmv", TEXT("Player_Default.fbm/DXT1_cage003_EM.dds"),
+		MESH_PATH);
+
+	for (int i = 0; i < Mesh->GetMaterialSlots()->size(); ++i)
+	{
+		Mtrl = Mesh->GetMaterial(i);
+
+		Mtrl->SetEmissiveColor(1.f, 1.f, 1.f, 1.f);
+	}*/
+
+	m_Scene->GetResource()->LoadSkeleton("PlayerSkeleton",
+		TEXT("singed_attack1_test.bne"), MESH_PATH);
+
+	m_Scene->GetResource()->SetMeshSkeleton("PlayerMesh", "PlayerSkeleton");
+
+	m_Scene->GetResource()->LoadAnimationSequence(true, "PlayerIdle",
+		TEXT("singed_attack1_test.sqc"), MESH_PATH);
+
+	m_Scene->GetResource()->LoadAnimationSequence(false, "PlayerAttack",
+		TEXT("singed_attack1_test.sqc"), MESH_PATH);
+
+	m_Scene->GetResource()->LoadAnimationSequence(true, "PlayerWalk",
+		TEXT("singed_attack1_test.sqc"), MESH_PATH);
+}
+
+void CMainSceneMode::CreateMaterial()
+{
+	m_Scene->GetResource()->CreateMaterial<CMaterial>("LandScape");
+
+	CMaterial* Material = m_Scene->GetResource()->FindMaterial("LandScape");
+
+	Material->AddTexture(0, (int)Buffer_Shader_Type::Pixel,
+		"LandScapeSplat1Dif", TEXT("LandScape/ROCK_01+MOSS_COLOR_1.png"));
+	Material->AddTexture(1, (int)Buffer_Shader_Type::Pixel,
+		"LandScapeSplat1Nrm", TEXT("LandScape/ROCK_01+MOSS_NRM.png"));
+	Material->AddTexture(2, (int)Buffer_Shader_Type::Pixel,
+		"LandScapeSplat1Spc", TEXT("LandScape/ROCK_01+MOSS_SPEC.png"));
+
+	std::vector<TCHAR*>	vecDiffuseFileName;
+	std::vector<TCHAR*>	vecNormalFileName;
+	std::vector<TCHAR*>	vecSpecularFileName;
+	std::vector<TCHAR*>	vecAlphaFileName;
+
+	TCHAR* FileName = new TCHAR[MAX_PATH];
+	memset(FileName, 0, sizeof(TCHAR) * MAX_PATH);
+	lstrcpy(FileName, TEXT("LandScape/RoadAlpha1.bmp"));
+	vecAlphaFileName.push_back(FileName);
+
+	FileName = new TCHAR[MAX_PATH];
+	memset(FileName, 0, sizeof(TCHAR) * MAX_PATH);
+	lstrcpy(FileName, TEXT("LandScape/GrassFirstAlpha.bmp"));
+	vecAlphaFileName.push_back(FileName);
+
+	FileName = new TCHAR[MAX_PATH];
+	memset(FileName, 0, sizeof(TCHAR) * MAX_PATH);
+	lstrcpy(FileName, TEXT("LandScape/SandBaseAlpha.bmp"));
+	vecAlphaFileName.push_back(FileName);
+
+	FileName = new TCHAR[MAX_PATH];
+	memset(FileName, 0, sizeof(TCHAR) * MAX_PATH);
+	lstrcpy(FileName, TEXT("LandScape/WaterBaseAlpha.bmp"));
+	vecAlphaFileName.push_back(FileName);
+
+
+	FileName = new TCHAR[MAX_PATH];
+	memset(FileName, 0, sizeof(TCHAR) * MAX_PATH);
+	lstrcpy(FileName, TEXT("LandScape/BD_Terrain_Cave_01.dds"));
+	vecDiffuseFileName.push_back(FileName);
+
+	FileName = new TCHAR[MAX_PATH];
+	memset(FileName, 0, sizeof(TCHAR) * MAX_PATH);
+	lstrcpy(FileName, TEXT("LandScape/BD_Terrain_Cave_01_NRM.bmp"));
+	vecNormalFileName.push_back(FileName);
+
+	FileName = new TCHAR[MAX_PATH];
+	memset(FileName, 0, sizeof(TCHAR) * MAX_PATH);
+	lstrcpy(FileName, TEXT("LandScape/BD_Terrain_Cave_01_SPEC.bmp"));
+	vecSpecularFileName.push_back(FileName);
+
+
+	FileName = new TCHAR[MAX_PATH];
+	memset(FileName, 0, sizeof(TCHAR) * MAX_PATH);
+	lstrcpy(FileName, TEXT("LandScape/BD_Terrain_Cliff05.dds"));
+	vecDiffuseFileName.push_back(FileName);
+
+	FileName = new TCHAR[MAX_PATH];
+	memset(FileName, 0, sizeof(TCHAR) * MAX_PATH);
+	lstrcpy(FileName, TEXT("LandScape/BD_Terrain_Cliff05_NRM.bmp"));
+	vecNormalFileName.push_back(FileName);
+
+	FileName = new TCHAR[MAX_PATH];
+	memset(FileName, 0, sizeof(TCHAR) * MAX_PATH);
+	lstrcpy(FileName, TEXT("LandScape/BD_Terrain_Cliff05_SPEC.bmp"));
+	vecSpecularFileName.push_back(FileName);
+
+
+	FileName = new TCHAR[MAX_PATH];
+	memset(FileName, 0, sizeof(TCHAR) * MAX_PATH);
+	lstrcpy(FileName, TEXT("LandScape/Terrain_Cliff_15_Large.dds"));
+	vecDiffuseFileName.push_back(FileName);
+
+	FileName = new TCHAR[MAX_PATH];
+	memset(FileName, 0, sizeof(TCHAR) * MAX_PATH);
+	lstrcpy(FileName, TEXT("LandScape/Terrain_Cliff_15_Large_NRM.bmp"));
+	vecNormalFileName.push_back(FileName);
+
+	FileName = new TCHAR[MAX_PATH];
+	memset(FileName, 0, sizeof(TCHAR) * MAX_PATH);
+	lstrcpy(FileName, TEXT("LandScape/Terrain_Cliff_15_Large_SPEC.bmp"));
+	vecSpecularFileName.push_back(FileName);
+
+
+	FileName = new TCHAR[MAX_PATH];
+	memset(FileName, 0, sizeof(TCHAR) * MAX_PATH);
+	lstrcpy(FileName, TEXT("LandScape/Terrain_Pebbles_01.dds"));
+	vecDiffuseFileName.push_back(FileName);
+
+	FileName = new TCHAR[MAX_PATH];
+	memset(FileName, 0, sizeof(TCHAR) * MAX_PATH);
+	lstrcpy(FileName, TEXT("LandScape/Terrain_Pebbles_01_NRM.bmp"));
+	vecNormalFileName.push_back(FileName);
+
+	FileName = new TCHAR[MAX_PATH];
+	memset(FileName, 0, sizeof(TCHAR) * MAX_PATH);
+	lstrcpy(FileName, TEXT("LandScape/Terrain_Pebbles_01_SPEC.bmp"));
+	vecSpecularFileName.push_back(FileName);
+
+	Material->AddTextureArray(30, (int)Buffer_Shader_Type::Pixel,
+		"SplatDiffuse", vecDiffuseFileName);
+	Material->AddTextureArray(31, (int)Buffer_Shader_Type::Pixel,
+		"SplatNormal", vecNormalFileName);
+	Material->AddTextureArray(32, (int)Buffer_Shader_Type::Pixel,
+		"SplatSpecular", vecSpecularFileName);
+	Material->AddTextureArray(33, (int)Buffer_Shader_Type::Pixel,
+		"SplatAlpha", vecAlphaFileName);
+
+	SAFE_DELETE_ARRAY_VECLIST(vecDiffuseFileName);
+	SAFE_DELETE_ARRAY_VECLIST(vecNormalFileName);
+	SAFE_DELETE_ARRAY_VECLIST(vecSpecularFileName);
+	SAFE_DELETE_ARRAY_VECLIST(vecAlphaFileName);
+
+	Material->SetShader("LandScapeShader");
+
+	Material->EnableBump();
+	Material->EnableSpecularTex();
+	Material->SetSpecularPower(2.5f);
+}
+
+void CMainSceneMode::CreateAnimationSequence()
+{
+}
+
+void CMainSceneMode::CreateParticle()
+{
+}
+
