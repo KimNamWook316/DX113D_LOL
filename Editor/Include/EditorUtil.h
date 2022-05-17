@@ -13,7 +13,7 @@ public:
 	// 해당 경로에 존재하는 모든 파일 이름과 디렉토리 이름들을 가져옴
 	static void GetAllFilenames(const std::string& PathName, std::vector<std::string>& vecFileNames,
 		std::vector<std::string>& vecDirNames);
-	static void GetAllFilenameFullPath(const std::string& FullPath, std::vector<std::string>& vecFileNames,
+	static void GetAllFilenamesFullPath(const std::string& FullPath, std::vector<std::string>& vecFileNames,
 		std::vector<std::string>& vecDirNames);
 
 	// 해당 디렉토리에 존재하고, 확장자와 일치하는 파일들의 풀 경로를 리턴함
@@ -30,6 +30,7 @@ public:
 
 	static size_t ObjectTypeIndexToTypeid(int TypeIndex);
 	static size_t SceneComponentTypeIndexToTypeid(int TypeIndex);
+	static size_t ObjectComponentTypeIndexToTypeid(int TypeIndex);
 
 private:
 	static bool CompareExt(const char* FullPath, const char ExtFilter[_MAX_EXT]);

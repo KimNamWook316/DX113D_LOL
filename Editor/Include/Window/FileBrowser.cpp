@@ -15,7 +15,8 @@
 namespace fs = std::filesystem;
 
 CFileBrowser::CFileBrowser()	:
-	m_UpdatePath(true)
+	m_UpdatePath(true),
+	m_UpdateFullPath(false)
 {
 	m_InitialPath = ROOT_PATH;
 }
@@ -36,11 +37,15 @@ void CFileBrowser::Update(float DeltaTime)
 {
 	CIMGUIWindow::Update(DeltaTime);
 
-	if (m_UpdatePath)
+	if (m_UpdatePath || m_UpdateFullPath)
 	{
 		ClearWidget();
 
-		CEditorUtil::GetAllFilenames(m_InitialPath, m_vecFileName, m_vecDirName);
+		if(m_UpdatePath)
+			CEditorUtil::GetAllFilenames(m_InitialPath, m_vecFileName, m_vecDirName);
+
+		else if(m_UpdateFullPath)
+			CEditorUtil::GetAllFilenamesFullPath(m_InitialFullPath, m_vecFileName, m_vecDirName);
 
 		size_t Count = m_vecDirName.size();
 
@@ -97,6 +102,7 @@ void CFileBrowser::Update(float DeltaTime)
 		}
 
 		m_UpdatePath = false;
+		m_UpdateFullPath = false;
 	}
 
 	//m_vecWidget.clear();
@@ -106,6 +112,12 @@ void CFileBrowser::SetInitialPath(const std::string& Path)
 {
 	m_InitialPath = Path;
 	m_UpdatePath = true;
+}
+
+void CFileBrowser::SetInitialFullPath(const std::string& FullPath)
+{
+	m_InitialFullPath = FullPath;
+	m_UpdateFullPath = true;
 }
 
 //std::string CFileBrowser::FilterFileName(const std::string& FullPath)

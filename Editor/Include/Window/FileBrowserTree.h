@@ -12,6 +12,7 @@ public:
 private:
 	std::vector<std::string>	m_vecCurrentPathDir;
 	std::string					m_CurrentPath;
+	std::string					m_CurrentFullPath;
 	class CIMGUITree*			m_Root;
 	class CIMGUIText*			m_CurrentPathText;
 

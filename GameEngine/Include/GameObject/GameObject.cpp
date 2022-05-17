@@ -145,6 +145,25 @@ void CGameObject::ClearParent()
 	m_Parent = nullptr;
 }
 
+bool CGameObject::DeleteObjectComponent(const std::string& Name)
+{
+	size_t Count = m_vecObjectComponent.size();
+
+	for (size_t i = 0; i < Count; ++i)
+	{
+		if (m_vecObjectComponent[i]->GetName() == Name)
+		{
+			auto iter = m_vecObjectComponent.begin();
+			std::advance(iter, i);
+
+			m_vecObjectComponent.erase(iter);
+			return true;
+		}
+	}
+
+	return false;
+}
+
 CComponent* CGameObject::FindComponent(const std::string& Name)
 {
 	{

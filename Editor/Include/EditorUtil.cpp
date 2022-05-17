@@ -9,6 +9,7 @@
 #include "Component/LandScape.h"
 #include "Component/AnimationMeshComponent.h"
 #include "Component/StaticMeshComponent.h"
+#include "Component/PaperBurnComponent.h"
 
 #include <fstream>
 #include <iostream>
@@ -67,7 +68,7 @@ void CEditorUtil::GetAllFilenames(const std::string& PathName, std::vector<std::
 	}
 }
 
-void CEditorUtil::GetAllFilenameFullPath(const std::string& FullPath, std::vector<std::string>& vecFileNames, std::vector<std::string>& vecDirNames)
+void CEditorUtil::GetAllFilenamesFullPath(const std::string& FullPath, std::vector<std::string>& vecFileNames, std::vector<std::string>& vecDirNames)
 {
 	fs::path p = FullPath;
 
@@ -234,6 +235,27 @@ size_t CEditorUtil::SceneComponentTypeIndexToTypeid(int TypeIndex)
 		return typeid(CLightComponent).hash_code();
 	case 5:
 		return typeid(CSceneComponent).hash_code();
+	}
+
+	return -1;
+}
+
+size_t CEditorUtil::ObjectComponentTypeIndexToTypeid(int TypeIndex)
+{
+	switch (TypeIndex)
+	{
+	case 0:
+		return typeid(CPaperBurnComponent).hash_code();
+	//case 1:
+	//	return typeid(CStaticMeshComponent).hash_code();
+	//case 2:
+	//	return typeid(CLandScape).hash_code();
+	//case 3:
+	//	return typeid(CArm).hash_code();
+	//case 4:
+	//	return typeid(CLightComponent).hash_code();
+	//case 5:
+	//	return typeid(CSceneComponent).hash_code();
 	}
 
 	return -1;

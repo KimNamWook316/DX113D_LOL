@@ -181,19 +181,18 @@
     <ClCompile Include="Window\AnimationEditor.cpp" />
     <ClCompile Include="Thread\FBXConvertThread.cpp" />
     <ClCompile Include="Window\DetailWindow.cpp" />
-    <ClCompile Include="Window\EditorMenu.cpp" />
+    <ClCompile Include="Window\EditorMenu.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="Window\FBXConvertWindow.cpp" />
     <ClCompile Include="Window\FileBrowser.cpp" />
     <ClCompile Include="Window\FileBrowserTree.cpp" />
     <ClCompile Include="Window\ObjectComponentCreateModal.cpp" />
     <ClCompile Include="Window\ObjectComponentWindow.cpp" />
     <ClCompile Include="Window\ObjectCreateModal.cpp" />
-    <ClCompile Include="Window\ObjectHierarchy.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="Window\ObjectHierarchyWindow.cpp" />
     <ClCompile Include="Window\SceneComponentCreateModal.cpp" />
     <ClCompile Include="Window\SceneComponentHierarchyWindow.cpp" />
@@ -219,19 +218,18 @@
     <ClInclude Include="Window\AnimationEditor.h" />
     <ClInclude Include="Thread\FBXConvertThread.h" />
     <ClInclude Include="Window\DetailWindow.h" />
-    <ClInclude Include="Window\EditorMenu.h" />
+    <ClInclude Include="Window\EditorMenu.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="Window\FBXConvertWindow.h" />
     <ClInclude Include="Window\FileBrowser.h" />
     <ClInclude Include="Window\FileBrowserTree.h" />
     <ClInclude Include="Window\ObjectComponentCreateModal.h" />
     <ClInclude Include="Window\ObjectComponentWindow.h" />
     <ClInclude Include="Window\ObjectCreateModal.h" />
-    <ClInclude Include="Window\ObjectHierarchy.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
-    </ClInclude>
     <ClInclude Include="Window\ObjectHierarchyWindow.h" />
     <ClInclude Include="Window\SceneComponentCreateModal.h" />
     <ClInclude Include="Window\SceneComponentHierarchyWindow.h" />

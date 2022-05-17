@@ -75,9 +75,6 @@
     <ClCompile Include="Window\FileBrowser.cpp">
       <Filter>02. Editor\01. Window</Filter>
     </ClCompile>
-    <ClCompile Include="Window\ObjectHierarchy.cpp">
-      <Filter>02. Editor\01. Window</Filter>
-    </ClCompile>
     <ClCompile Include="Window\ObjectHierarchyWindow.cpp">
       <Filter>02. Editor\01. Window</Filter>
     </ClCompile>
@@ -165,9 +162,6 @@
       <Filter>02. Editor\01. Window</Filter>
     </ClInclude>
     <ClInclude Include="Window\FileBrowser.h">
-      <Filter>02. Editor\01. Window</Filter>
-    </ClInclude>
-    <ClInclude Include="Window\ObjectHierarchy.h">
       <Filter>02. Editor\01. Window</Filter>
     </ClInclude>
     <ClInclude Include="Window\ObjectHierarchyWindow.h">

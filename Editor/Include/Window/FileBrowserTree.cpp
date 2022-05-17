@@ -54,15 +54,22 @@ void CFileBrowserTree::OnOpenBrowserTree(CIMGUITree* Tree)
 		return;
 
 	// open한 디렉토리의 경로안에 있는 디렉토리 목록들을 다시 받아와서 Tree의 Child로 넣어준다
-	const PathInfo* Info = CPathManager::GetInst()->FindPath(m_CurrentPath);
-	std::string FullPath = Info->PathMultibyte;
+	const PathInfo* Info = CPathManager::GetInst()->FindPath(Tree->GetName());
 
-	// 클릭한 TreeNode 내부까지의 경로
-	FullPath += Tree->GetName();
+	if(Info)
+		m_CurrentFullPath = Info->PathMultibyte;
+
+	else
+	{
+		// 클릭한 TreeNode 내부까지의 경로
+		m_CurrentFullPath += Tree->GetName();
+		m_CurrentFullPath += "\\";
+	}
+
 	std::vector<std::string> vecFileName;
 	std::vector<std::string> vecDirName;
 
-	CEditorUtil::GetAllFilenameFullPath(FullPath, vecFileName, vecDirName);
+	CEditorUtil::GetAllFilenamesFullPath(m_CurrentFullPath, vecFileName, vecDirName);
 
 	size_t Count = vecDirName.size();
 
@@ -78,7 +85,26 @@ void CFileBrowserTree::OnShowFileBrowser(CIMGUITree* Tree)
 {
 	CFileBrowser* FileBrowser = (CFileBrowser*)CIMGUIManager::GetInst()->FindIMGUIWindow(FILE_BROWSER);
 
+	std::string NewPath = Tree->GetName();
+
+	const PathInfo* Info = CPathManager::GetInst()->FindPath(NewPath);
+
+
 	// FileBrowser창 Path Update
-	//FileBrowser->SetInitialPath()
+	if (!Info)
+	{
+		const std::string OriginPath = FileBrowser->GetInitialPath();
+
+		const PathInfo* PrevPathInfo = CPathManager::GetInst()->FindPath(OriginPath);
+		std::string NewFullPath = PrevPathInfo->PathMultibyte + NewPath + "\\";
+
+		FileBrowser->SetInitialFullPath(NewFullPath);
+		return;
+	}
+
+	else
+	{
+		FileBrowser->SetInitialPath(NewPath);
+	}
 }
 
