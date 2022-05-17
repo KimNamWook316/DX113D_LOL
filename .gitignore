@@ -6,6 +6,7 @@
 *.pdb
 *.dll
 *.suo
+*.idb
 Client3D/Bin/Texture/
 Client3D/Bin/Mesh/
 Client3D/Bin/Sound/

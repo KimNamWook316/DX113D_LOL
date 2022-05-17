@@ -6,6 +6,7 @@
 #include "../Scene/Navigation3DManager.h"
 #include "CameraComponent.h"
 #include "../Engine.h"
+#include "../Resource/Animation/SkeletonSokcet.h"
 
 CTransform::CTransform() :
 	m_Parent(nullptr),
@@ -25,7 +26,8 @@ CTransform::CTransform() :
 	m_CBuffer(nullptr),
 	m_RelativeScale(1.f, 1.f, 1.f),
 	m_WorldScale(1.f, 1.f, 1.f),
-	m_State(Transform_State::None)
+	m_State(Transform_State::None),
+	m_Socket(nullptr)
 {
 	for (int i = 0; i < AXIS_MAX; ++i)
 	{
@@ -612,6 +614,62 @@ void CTransform::PostUpdate(float DeltaTime)
 
 	if (m_UpdateScale || m_UpdateRot || m_UpdatePos)
 		m_matWorld = m_matScale * m_matRot * m_matPos;
+
+	// 소켓이 있을 경우 부모로 소켓을 곱해준다.
+	if (m_Socket)
+	{
+		if (m_UpdateScale)
+		{
+			m_matScale.Scaling(m_RelativeScale);
+		}
+		
+		if (m_UpdateRot)
+		{
+			m_matRot.Rotation(m_RelativeRot);
+		}
+
+		if (m_UpdatePos)
+		{
+			m_matPos.Translation(m_RelativePos);
+		}
+
+		if (m_UpdateScale || m_UpdateRot || m_UpdatePos)
+		{
+			m_matWorld = m_matScale * m_matRot * m_matPos;
+		}
+
+		// Local World * Socket ( Socket Local Transform * Bone * Parent World ) = Final World
+		m_matWorld *= m_Socket->GetSocketMatrix();
+	}
+	else
+	{
+		Vector3 WorldPos = m_WorldPos;
+
+		if (CEngine::GetInst()->GetEngineSpace() == Engine_Space::Space2D)
+		{
+			WorldPos.z = WorldPos.y / 30000.f * 1000.f;
+		}
+
+		if (m_UpdateScale)
+		{
+			m_matScale.Scaling(m_WorldScale);
+		}
+		
+		if (m_UpdateRot)
+		{
+			m_matRot.Rotation(m_WorldRot);
+		}
+
+		if (m_UpdatePos)
+		{
+			m_matPos.Translation(m_WorldPos);
+		}
+
+		if (m_UpdateScale || m_UpdateRot || m_UpdatePos)
+		{
+			m_matWorld = m_matScale * m_matRot * m_matPos;
+		}
+	}
 }
 
 void CTransform::SetTransform()

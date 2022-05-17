@@ -32,6 +32,8 @@ public:
 	// Load한 파일 본래의 Name 을 세팅
 	bool LoadAnimationSequenceFullPathMultibyteSetOriginFileName(bool Loop, std::string& Name, const char* FullPath);
 	CAnimationSequence* FindAnimationSequence(const std::string& Name);
+	bool AddSocket(const std::string& SkeletonName, const std::string& BoneName, const std::string& SocketName,
+		const Vector3& Offset = Vector3::Zero, const Vector3& OffsetRot = Vector3::Zero);
 	void ReleaseSequence(const std::string& Name);
 
 

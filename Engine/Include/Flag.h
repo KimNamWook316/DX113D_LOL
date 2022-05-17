@@ -139,7 +139,9 @@ enum class Collider_Type
 {
 	Box2D,
 	Circle,
-	Pixel
+	Pixel,
+	Sphere,
+	Box3D
 };
 
 enum class Camera_Type

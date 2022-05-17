@@ -1,8 +1,10 @@
+
 #include "Player.h"
 #include "PlayerAnimation.h"
 #include "Input.h"
 #include "Scene/Scene.h"
 #include "Scene/Navigation3DManager.h"
+#include "Weapon.h"
 
 CPlayer::CPlayer()
 {
@@ -43,8 +45,15 @@ bool CPlayer::Init()
 	m_Mesh->SetRelativeScale(0.02f, 0.02f, 0.02f);
 
 	m_Arm->SetOffset(0.f, 2.f, 0.f);
-	m_Arm->SetRelativeRotation(90.f, 0.f, 0.f);
-	m_Arm->SetTargetDistance(50.f);
+	m_Arm->SetRelativeRotation(25.f, 0.f, 0.f);
+	m_Arm->SetTargetDistance(10.f);
+
+
+
+	m_Weapon = m_Scene->CreateGameObject<CWeapon>("Weapon");
+
+	m_Mesh->AddChild(m_Weapon, "Weapon");
+
 
 
 	CInput::GetInst()->SetKeyCallback<CPlayer>("MoveFront", KeyState_Push,
@@ -135,3 +144,4 @@ void CPlayer::Attack(float DeltaTime)
 	m_Animation->ChangeAnimation("Attack");
 	m_Animation->SetIdleEnable(false);
 }
+
