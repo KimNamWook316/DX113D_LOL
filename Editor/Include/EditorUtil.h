@@ -13,6 +13,8 @@ public:
 	// 해당 경로에 존재하는 모든 파일 이름과 디렉토리 이름들을 가져옴
 	static void GetAllFilenames(const std::string& PathName, std::vector<std::string>& vecFileNames,
 		std::vector<std::string>& vecDirNames);
+	static void GetAllFilenameFullPath(const std::string& FullPath, std::vector<std::string>& vecFileNames,
+		std::vector<std::string>& vecDirNames);
 
 	// 해당 디렉토리에 존재하고, 확장자와 일치하는 파일들의 풀 경로를 리턴함
 	static void GetAllFileFullPathInDir(const char* TargetDir, std::vector<std::string>& OutVecFullPath,

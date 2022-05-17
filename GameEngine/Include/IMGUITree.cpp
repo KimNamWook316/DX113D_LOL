@@ -8,7 +8,8 @@ CIMGUITree::CIMGUITree()	:
 	mParent(nullptr),
 	m_GlobalID(-1),
 	m_Selected(false),
-	m_Enable(true)
+	m_Enable(true),
+	m_Open(false)
 {
 	m_Flag |= ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
 	m_DefaultFlag = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
@@ -262,6 +263,17 @@ void CIMGUITree::Render()
 	// if문 안으로 들어가면 무조건 하나(ex 제일 위에 TreeNode)의 ID골라서 그거 Selected Flag 추가해주기
 	if (ImGui::TreeNodeEx(m_Name.c_str(), m_Flag))
 	{
+		if (!m_Open)
+		{
+			m_Open = true;
+
+			auto iter = m_OpenCallbackList.begin();
+			auto iterEnd = m_OpenCallbackList.end();
+
+			for (; iter != iterEnd; ++iter)
+				(*iter)(this);
+		}
+		
 		if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
 		{
 			ImGui::SetDragDropPayload("DND_DEMO_CELL", &m_GlobalID, sizeof(int));
@@ -340,6 +352,9 @@ void CIMGUITree::Render()
 
 	else
 	{
+		if (m_Open)
+			m_Open = false;
+
 		if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
 		{
 			ImGui::SetDragDropPayload("DND_DEMO_CELL", &m_GlobalID, sizeof(int));

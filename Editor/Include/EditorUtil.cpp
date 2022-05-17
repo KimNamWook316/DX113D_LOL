@@ -67,6 +67,34 @@ void CEditorUtil::GetAllFilenames(const std::string& PathName, std::vector<std::
 	}
 }
 
+void CEditorUtil::GetAllFilenameFullPath(const std::string& FullPath, std::vector<std::string>& vecFileNames, std::vector<std::string>& vecDirNames)
+{
+	fs::path p = FullPath;
+
+	fs::directory_iterator itr(p);
+
+	while (itr != fs::end(itr))
+	{
+		const fs::directory_entry& entry = *itr;
+
+		fs::path iterpath = entry.path();
+
+		bool isDirectory = fs::is_directory(iterpath);
+
+		std::string fullPath = entry.path().string();
+
+		std::string fileName = FilterFileName(fullPath);
+
+		if (isDirectory)
+			vecDirNames.push_back(fileName);
+
+		else
+			vecFileNames.push_back(fileName);
+
+		++itr;
+	}
+}
+
 void CEditorUtil::GetAllFileFullPathInDir(const char* TargetDir, std::vector<std::string>& OutVecFullPath, const char* ExtFilter)
 {
 	fs::directory_iterator itr(TargetDir);

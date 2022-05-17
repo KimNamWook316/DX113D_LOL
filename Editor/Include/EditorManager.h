@@ -20,6 +20,7 @@ private:
 	//class CObjectHierarchy* m_ObjectHierarchy;
 	//class CTileMapWindow* m_TileMapWindow;
 	class CFileBrowser* m_FileBrowser;
+	class CFileBrowserTree* m_FileBrowserTree;
 	class CObjectHierarchyWindow* m_ObjectHierarchyWindow;
 	class CSceneComponentHierarchyWindow* m_ComponentHierarchyWindow;
 	class CObjectComponentWindow* m_ObjectComponentWindow;

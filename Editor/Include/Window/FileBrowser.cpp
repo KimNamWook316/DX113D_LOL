@@ -2,10 +2,11 @@
 #include "FileBrowser.h"
 #include "PathManager.h"
 #include "IMGUIText.h"
-#include "IMGUIImage.h"
+#include "IMGUIImageButton.h"
 #include "IMGUISameline.h"
 #include "../EditorUtil.h"
 #include "../EditorInfo.h"
+#include "Resource/ResourceManager.h"
 
 #include <fstream>
 #include <iostream>
@@ -50,13 +51,18 @@ void CFileBrowser::Update(float DeltaTime)
 		for (size_t i = 0; i < Count; ++i, ++TotalCount)
 		{
 			std::string Name = m_vecDirName[i] + "ICon";
-			CIMGUIChild* Child = AddWidget<CIMGUIChild>(Name);
+			CIMGUIChild* Child = AddWidget<CIMGUIChild>(Name, 100.f, 130.f);
 
-			CIMGUIImage* DirImage = Child->AddWidget<CIMGUIImage>("DirectoryImage", 80.f, 80.f);
-			DirImage->SetTexture("DirectoryImage", TEXT("Directory.png"));
+			CIMGUIImageButton* DirImage = Child->AddWidget<CIMGUIImageButton>(m_vecDirName[i]);
+
+			CTexture* Texture = CResourceManager::GetInst()->FindTexture(DIRECTORY_IMAGE);
+			DirImage->SetTexture(Texture);
+			DirImage->SetSize(Texture->GetWidth(), Texture->GetHeight());
 
 			CIMGUIText* DirName = Child->AddWidget<CIMGUIText>("DirName");
 			DirName->SetText(m_vecDirName[i].c_str());
+
+			DirImage->SetDoubleClickCallback<CFileBrowser>(this, &CFileBrowser::SetInitialPath);
 
 			if (TotalCount < (int)SINGLELINE_NUMICON - 1)
 				Child->SetSameLine(true);
@@ -71,10 +77,13 @@ void CFileBrowser::Update(float DeltaTime)
 		for (size_t i = 0; i < Count; ++i, ++TotalCount)
 		{
 			std::string Name = m_vecFileName[i] + "ICon";
-			CIMGUIChild* Child = AddWidget<CIMGUIChild>(Name);
+			CIMGUIChild* Child = AddWidget<CIMGUIChild>(Name, 100.f, 130.f);
 
-			CIMGUIImage* FileImage = Child->AddWidget<CIMGUIImage>("FileImage", 80.f, 80.f);
-			FileImage->SetTexture("FileImage", TEXT("FileImage.png"));
+			CIMGUIImageButton* FileImage = Child->AddWidget<CIMGUIImageButton>(m_vecFileName[i]);
+
+			CTexture* Texture = CResourceManager::GetInst()->FindTexture(FILE_IMAGE);
+			FileImage->SetTexture(Texture);
+			FileImage->SetSize(Texture->GetWidth(), Texture->GetHeight());
 
 			CIMGUIText* FileName = Child->AddWidget<CIMGUIText>("FileName");
 			FileName->SetText(m_vecFileName[i].c_str());
@@ -93,9 +102,10 @@ void CFileBrowser::Update(float DeltaTime)
 	//m_vecWidget.clear();
 }
 
-void CFileBrowser::SetInitialPath(const std::string& Name)
+void CFileBrowser::SetInitialPath(const std::string& Path)
 {
-	m_InitialPath = Name;
+	m_InitialPath = Path;
+	m_UpdatePath = true;
 }
 
 //std::string CFileBrowser::FilterFileName(const std::string& FullPath)
@@ -118,12 +128,18 @@ void CFileBrowser::SetInitialPath(const std::string& Name)
 
 void CFileBrowser::ClearWidget()
 {
-	size_t size = m_vecChild.size();
+	size_t size = m_vecWidget.size();
 
 	for (size_t i = 0; i < size; ++i)
 	{
-		SAFE_DELETE(m_vecChild[i]);
+		SAFE_DELETE(m_vecWidget[i]);
 	}
+
+
+	m_vecChild.clear();
+	m_vecDirName.clear();
+	m_vecFileName.clear();
+	m_vecWidget.clear();
 }
 
 void CFileBrowser::FileClickCallback(CIMGUIImage* Image)
