@@ -32,6 +32,8 @@ void CIMGUIWidgetList::ClearWidget()
 	{
 		SAFE_DELETE(mVecChild[i]);
 	}
+
+	mVecChild.clear();
 }
 
 void CIMGUIWidgetList::DeleteWidget(CIMGUIWidget* widget)

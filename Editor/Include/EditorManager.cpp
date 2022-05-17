@@ -8,11 +8,6 @@
 #include "Component/CameraComponent.h"
 #include "Input.h"
 #include "IMGUIManager.h"
-#include "Window/SpriteWindow.h"
-#include "Window/DetailWindow.h"
-#include "Window/EditorMenu.h"
-#include "Window/ObjectHierarchy.h"
-#include "Window/TileMapWindow.h"
 #include "Object/DragObject.h"
 #include "Render/RenderManager.h"
 #include "Object/SpriteEditObject.h"
@@ -29,6 +24,7 @@
 #include "Window/FileBrowserTree.h"
 //#include "Window/AnimationEditor.h"
 #include "Window/FBXConvertWindow.h"
+#include "Window/InspectorWindow.h"
 
 DEFINITION_SINGLE(CEditorManager)
 
@@ -89,20 +85,6 @@ bool CEditorManager::Init(HINSTANCE hInst)
 	CSceneManager::GetInst()->SetCreateComponentFunction<CEditorManager>(this, &CEditorManager::CreateComponent);
 	CSceneManager::GetInst()->SetCreateAnimInstanceFunction<CEditorManager>(this, &CEditorManager::CreateAnimInstance);
 
-	/*CInput::GetInst()->CreateKey("MoveUp", 'W');
-	CInput::GetInst()->CreateKey("MoveDown", 'S');
-	CInput::GetInst()->CreateKey("RotationZInv", 'A');
-	CInput::GetInst()->CreateKey("RotationZ", 'D');
-	CInput::GetInst()->CreateKey("Attack", VK_SPACE);
-	CInput::GetInst()->CreateKey("Attack1", VK_LBUTTON);*/
-
-	// IMGUI로 에디터에서 사용할 윈도우를 만들어준다.
-		/*m_SpriteWindow = CIMGUIManager::GetInst()->AddWindow<CSpriteWindow>("SpriteWindow");
-		m_DetailWindow = CIMGUIManager::GetInst()->AddWindow<CDetailWindow>("DetailWindow");
-		m_EditorMenu = CIMGUIManager::GetInst()->AddWindow<CEditorMenu>("EditorMenu");
-		m_ObjectHierarchy = CIMGUIManager::GetInst()->AddWindow<CObjectHierarchy>("ObjectHierarchy");
-		m_TileMapWindow = CIMGUIManager::GetInst()->AddWindow<CTileMapWindow>("TileMapWindow");*/
-
 	CResourceManager::GetInst()->LoadTexture(DIRECTORY_IMAGE, TEXT("Directory.png"));
 	CResourceManager::GetInst()->LoadTexture(FILE_IMAGE, TEXT("FileImage.png"));
 
@@ -111,6 +93,7 @@ bool CEditorManager::Init(HINSTANCE hInst)
 	m_ComponentHierarchyWindow = CIMGUIManager::GetInst()->AddWindow<CSceneComponentHierarchyWindow>(SCENECOMPONENT_HIERARCHY);
 	m_ObjectComponentWindow = CIMGUIManager::GetInst()->AddWindow<CObjectComponentWindow>(OBJECTCOMPONENT_LIST);
 	m_FileBrowserTree = CIMGUIManager::GetInst()->AddWindow<CFileBrowserTree>(FILE_BROWSERTREE);
+	m_InspectorWindow = CIMGUIManager::GetInst()->AddWindow<CInspectorWindow>(INSPECTOR);
 	//m_AnimationEditor = CIMGUIManager::GetInst()->AddWindow<CAnimationEditor>(ANIMATION_EDITOR);
 
 	CFBXConvertWindow* win = CIMGUIManager::GetInst()->AddWindow<CFBXConvertWindow>(FBX_CONVERTOR);

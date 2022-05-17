@@ -34,6 +34,11 @@ void CObjectComponentWindow::Update(float DeltaTime)
 	CIMGUIWindow::Update(DeltaTime);
 }
 
+void CObjectComponentWindow::OnRenameComponent(const std::string& NewName, const std::string& PrevName)
+{
+	m_ComponentListBox->ChangeItem(NewName, PrevName);
+}
+
 void CObjectComponentWindow::OnCreateComponentPopUp()
 {
 	if (!m_ComponentCreateModal)

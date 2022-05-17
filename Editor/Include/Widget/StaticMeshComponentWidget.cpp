@@ -10,6 +10,7 @@
 #include "IMGUIInputFloat.h"
 #include "IMGUIComboBox.h"
 #include "IMGUIDummy.h"
+#include "IMGUITree.h"
 #include "Component/StaticMeshComponent.h"
 #include "Engine.h"
 #include "PathManager.h"
@@ -39,26 +40,30 @@ bool CStaticMeshComponentWidget::Init()
 	CSceneComponentWidget::Init();
 
 	// AddWidget
-	CIMGUIText* Text = AddWidget<CIMGUIText>("Text");
-	Text->SetText("Static Mesh Component");
+	m_ComponentTypeText->SetText("StaticMesh Component");
 
-	m_MeshName = AddWidget<CIMGUITextInput>("Mesh Name");
-	AddWidget<CIMGUISameLine>("Line");
-	m_LoadMeshButton = AddWidget<CIMGUIButton>("Load", 0.f, 0.f);
+	// 최상위 트리
+	CIMGUITree* m_RootTree = AddWidget<CIMGUITree>("Static Mesh Variable");
 
-	m_MaterialSlotCombo = AddWidget<CIMGUIComboBox>("Material Slot");
-	m_BaseColorEdit = AddWidget<CIMGUIColor3>("BaseColor");
-	m_AmbientColorEdit = AddWidget<CIMGUIColor3>("Ambient");
-	m_SpecularColorEdit = AddWidget<CIMGUIColor3>("Specluar");
-	m_SpecluarPowerEdit = AddWidget<CIMGUIInputFloat>("Specluar Power");
-	m_EmissiveColorEdit = AddWidget<CIMGUIColor3>("Emissive");
-	m_TransparencyEdit = AddWidget<CIMGUICheckBox>("Enable Transparency");
-	m_OpacityEdit = AddWidget<CIMGUISliderFloat>("Opacity");
+	m_MeshName = m_RootTree->AddWidget<CIMGUITextInput>("Mesh Name");
+	m_RootTree->AddWidget<CIMGUISameLine>("Line");
+	m_LoadMeshButton = m_RootTree->AddWidget<CIMGUIButton>("Load", 0.f, 0.f);
+
+	m_MaterialSlotCombo = m_RootTree->AddWidget<CIMGUIComboBox>("Material Slot");
+	m_BaseColorEdit = m_RootTree->AddWidget<CIMGUIColor3>("BaseColor");
+	m_AmbientColorEdit = m_RootTree->AddWidget<CIMGUIColor3>("Ambient");
+	m_SpecularColorEdit = m_RootTree->AddWidget<CIMGUIColor3>("Specluar");
+	m_SpecluarPowerEdit = m_RootTree->AddWidget<CIMGUIInputFloat>("Specluar Power");
+	m_EmissiveColorEdit = m_RootTree->AddWidget<CIMGUIColor3>("Emissive");
+	m_TransparencyEdit = m_RootTree->AddWidget<CIMGUICheckBox>("Enable Transparency");
+	m_OpacityEdit = m_RootTree->AddWidget<CIMGUISliderFloat>("Opacity");
+	
+	AddWidget<CIMGUISeperator>("Sep");
 
 	// Initial Setting
 	m_MeshName->ReadOnly(true);
 	m_MeshName->SetHintText("Mesh Name");
-	m_TransparencyEdit->AddCheckInfo("Enable");
+	m_TransparencyEdit->AddCheckInfo("Transparency");
 	m_OpacityEdit->SetMin(0.f);
 	m_OpacityEdit->SetMax(1.f);
 
@@ -81,12 +86,16 @@ void CStaticMeshComponentWidget::SetSceneComponent(CSceneComponent* Com)
 	CSceneComponentWidget::SetSceneComponent(Com);
 
 	CStaticMeshComponent* MeshCom = (CStaticMeshComponent*)m_Component.Get();
-	m_MeshName->SetText(MeshCom->GetMesh()->GetName().c_str());
 
-	int MatSlotSize = MeshCom->GetMaterialSlotSize();
-	for (int i = 0; i < MatSlotSize; ++i)
+	if (MeshCom->GetMesh())
 	{
-		m_MaterialSlotCombo->AddItem(MeshCom->GetMaterial(i)->GetName());
+		m_MeshName->SetText(MeshCom->GetMesh()->GetName().c_str());
+
+		int MatSlotSize = MeshCom->GetMaterialSlotSize();
+		for (int i = 0; i < MatSlotSize; ++i)
+		{
+			m_MaterialSlotCombo->AddItem(MeshCom->GetMaterial(i)->GetName());
+		}
 	}
 }
 
@@ -122,61 +131,85 @@ void CStaticMeshComponentWidget::OnSelectMaterialSlotCombo(int Idx, const char* 
 {
 	CStaticMeshComponent* MeshCom = (CStaticMeshComponent*)m_Component.Get();
 
-	CMaterial* Mat = MeshCom->GetMaterial(Idx);
-	
-	m_BaseColorEdit->SetRGB(Mat->GetBaseColor().x, Mat->GetBaseColor().y, Mat->GetBaseColor().z);
-	m_AmbientColorEdit->SetRGB(Mat->GetBaseColor().x, Mat->GetBaseColor().y, Mat->GetBaseColor().z);
-	m_SpecularColorEdit->SetRGB(Mat->GetBaseColor().x, Mat->GetBaseColor().y, Mat->GetBaseColor().z);
-	m_EmissiveColorEdit->SetRGB(Mat->GetBaseColor().x, Mat->GetBaseColor().y, Mat->GetBaseColor().z);
-	m_SpecluarPowerEdit->SetVal(Mat->GetSpecularPower());
-	m_OpacityEdit->SetValue(Mat->GetOpacity());
+	if (MeshCom->GetMesh())
+	{
+		CMaterial* Mat = MeshCom->GetMaterial(Idx);
+
+		m_BaseColorEdit->SetRGB(Mat->GetBaseColor().x, Mat->GetBaseColor().y, Mat->GetBaseColor().z);
+		m_AmbientColorEdit->SetRGB(Mat->GetBaseColor().x, Mat->GetBaseColor().y, Mat->GetBaseColor().z);
+		m_SpecularColorEdit->SetRGB(Mat->GetBaseColor().x, Mat->GetBaseColor().y, Mat->GetBaseColor().z);
+		m_EmissiveColorEdit->SetRGB(Mat->GetBaseColor().x, Mat->GetBaseColor().y, Mat->GetBaseColor().z);
+		m_SpecluarPowerEdit->SetVal(Mat->GetSpecularPower());
+		m_OpacityEdit->SetValue(Mat->GetOpacity());
+	}
 }
 
 void CStaticMeshComponentWidget::OnEditBaseColor(const Vector3& Color)
 {
 	CStaticMeshComponent* MeshCom = (CStaticMeshComponent*)m_Component.Get();
 
-	MeshCom->SetBaseColor(Vector4(Color.x, Color.y, Color.z, 1.f), m_MaterialSlotCombo->GetSelectIndex());
+	if (MeshCom->GetMesh())
+	{
+		MeshCom->SetBaseColor(Vector4(Color.x, Color.y, Color.z, 1.f), m_MaterialSlotCombo->GetSelectIndex());
+	}
 }
 
 void CStaticMeshComponentWidget::OnEditAmbientColor(const Vector3& Color)
 {
 	CStaticMeshComponent* MeshCom = (CStaticMeshComponent*)m_Component.Get();
 
-	MeshCom->SetAmbientColor(Vector4(Color.x, Color.y, Color.z, 1.f), m_MaterialSlotCombo->GetSelectIndex());
+	if (MeshCom->GetMesh())
+	{
+		MeshCom->SetAmbientColor(Vector4(Color.x, Color.y, Color.z, 1.f), m_MaterialSlotCombo->GetSelectIndex());
+	}
 }
 
 void CStaticMeshComponentWidget::OnEditSpecluarColor(const Vector3& Color)
 {
 	CStaticMeshComponent* MeshCom = (CStaticMeshComponent*)m_Component.Get();
 
-	MeshCom->SetSpecularColor(Vector4(Color.x, Color.y, Color.z, 1.f), m_MaterialSlotCombo->GetSelectIndex());
+	if (MeshCom->GetMesh())
+	{
+		MeshCom->SetSpecularColor(Vector4(Color.x, Color.y, Color.z, 1.f), m_MaterialSlotCombo->GetSelectIndex());
+	}
 }
 
 void CStaticMeshComponentWidget::OnEditSpecluarPower(float Power)
 {
 	CStaticMeshComponent* MeshCom = (CStaticMeshComponent*)m_Component.Get();
 
-	MeshCom->SetSpecularPower(Power, m_MaterialSlotCombo->GetSelectIndex());
+	if (MeshCom->GetMesh())
+	{
+		MeshCom->SetSpecularPower(Power, m_MaterialSlotCombo->GetSelectIndex());
+	}
 }
 
 void CStaticMeshComponentWidget::OnEditEmissiveColor(const Vector3& Color)
 {
 	CStaticMeshComponent* MeshCom = (CStaticMeshComponent*)m_Component.Get();
 
-	MeshCom->SetEmissiveColor(Vector4(Color.x, Color.y, Color.z, 1.f), m_MaterialSlotCombo->GetSelectIndex());
+	if (MeshCom->GetMesh())
+	{
+		MeshCom->SetEmissiveColor(Vector4(Color.x, Color.y, Color.z, 1.f), m_MaterialSlotCombo->GetSelectIndex());
+	}
 }
 
 void CStaticMeshComponentWidget::OnCheckTransparency(int Idx, bool Check)
 {
 	CStaticMeshComponent* MeshCom = (CStaticMeshComponent*)m_Component.Get();
 
-	MeshCom->SetTransparency(Check, m_MaterialSlotCombo->GetSelectIndex());
+	if (MeshCom->GetMesh())
+	{
+		MeshCom->SetTransparency(Check, m_MaterialSlotCombo->GetSelectIndex());
+	}
 }
 
 void CStaticMeshComponentWidget::OnEditOpacity(float Opacity)
 {
 	CStaticMeshComponent* MeshCom = (CStaticMeshComponent*)m_Component.Get();
 
-	MeshCom->SetOpacity(Opacity, m_MaterialSlotCombo->GetSelectIndex());
+	if (MeshCom->GetMesh())
+	{
+		MeshCom->SetOpacity(Opacity, m_MaterialSlotCombo->GetSelectIndex());
+	}
 }

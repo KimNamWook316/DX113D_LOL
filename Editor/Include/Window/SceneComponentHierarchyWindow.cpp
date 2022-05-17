@@ -89,6 +89,12 @@ void CSceneComponentHierarchyWindow::Update(float DeltaTime)
 	//FindSelectNode(m_Root);
 }
 
+void CSceneComponentHierarchyWindow::OnRenameComponent(const std::string& NewName, const std::string& PrevName)
+{
+	CIMGUITree* Node = m_Root->FindChild(PrevName);
+	Node->SetName(NewName);
+}
+
 void CSceneComponentHierarchyWindow::OnCreateComponentPopUp()
 {
 	if (!m_ComponentCreateModal)
@@ -199,7 +205,7 @@ void CSceneComponentHierarchyWindow::OnUpdateSceneComponetWindow(CIMGUITree* Sel
 
 	std::string Name = RootComp->GetName();
 
-	CIMGUITree* RootTreeNode = m_Root->GetNode(Name);
+	CIMGUITree* RootTreeNode = m_Root->FindChild(Name);
 
 	RootTreeNode->EnableAll();
 

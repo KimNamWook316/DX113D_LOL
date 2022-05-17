@@ -31,7 +31,6 @@ public:
     }
 
 public:
-    CIMGUITree* GetNode(const std::string& name);
     CIMGUITree* GetNode(const int idx);
 
 public:

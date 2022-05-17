@@ -7,6 +7,9 @@
 #include "IMGUISeperator.h"
 #include "IMGUIDummy.h"
 #include "Component/ObjectComponent.h"
+#include "IMGUIManager.h"
+#include "../Window/ObjectComponentWindow.h"
+#include "../EditorInfo.h"
 
 CObjectComponentWidget::CObjectComponentWidget() :
 	m_NameInput(nullptr),
@@ -50,11 +53,22 @@ void CObjectComponentWidget::SetObjectComponent(CObjectComponent* Com)
 
 	m_EnableCheckBox->SetCheck(0, m_Component->IsEnable());
 	m_NameInput->SetText(m_Component->GetName().c_str());
+	m_PrevName = m_NameInput->GetName();
+}
+
+void CObjectComponentWidget::OnGameObjectEnable(bool Enable)
+{
+	m_EnableCheckBox->SetCheck(0, Enable);
 }
 
 void CObjectComponentWidget::OnClickRenameButton()
 {
+	// Hierachy °»½Å
+	CObjectComponentWindow* Window = (CObjectComponentWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(OBJECTCOMPONENT_LIST);
+	Window->OnRenameComponent(m_NameInput->GetTextMultibyte(), m_PrevName);
+
 	m_Component->SetName(m_NameInput->GetTextMultibyte());
+	m_PrevName = m_NameInput->GetTextMultibyte();
 }
 
 void CObjectComponentWidget::OnCheckEnableCheckBox(int Idx, bool Check)

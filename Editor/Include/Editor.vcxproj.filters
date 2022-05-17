@@ -66,25 +66,10 @@
     <ClCompile Include="Thread\FBXConvertThread.cpp">
       <Filter>04. Thread\01. FBXConvert</Filter>
     </ClCompile>
-    <ClCompile Include="Window\DetailWindow.cpp">
-      <Filter>02. Editor\01. Window</Filter>
-    </ClCompile>
-    <ClCompile Include="Window\EditorMenu.cpp">
-      <Filter>02. Editor\01. Window</Filter>
-    </ClCompile>
     <ClCompile Include="Window\FileBrowser.cpp">
       <Filter>02. Editor\01. Window</Filter>
     </ClCompile>
-    <ClCompile Include="Window\ObjectHierarchy.cpp">
-      <Filter>02. Editor\01. Window</Filter>
-    </ClCompile>
     <ClCompile Include="Window\ObjectHierarchyWindow.cpp">
-      <Filter>02. Editor\01. Window</Filter>
-    </ClCompile>
-    <ClCompile Include="Window\SpriteWindow.cpp">
-      <Filter>02. Editor\01. Window</Filter>
-    </ClCompile>
-    <ClCompile Include="Window\TileMapWindow.cpp">
       <Filter>02. Editor\01. Window</Filter>
     </ClCompile>
     <ClCompile Include="Window\FBXConvertWindow.cpp">
@@ -132,6 +117,9 @@
     <ClCompile Include="Window\SceneComponentCreateModal.cpp">
       <Filter>02. Editor\02. Widget\02. Hierarchy</Filter>
     </ClCompile>
+    <ClCompile Include="Window\InspectorWindow.cpp">
+      <Filter>02. Editor\01. Window</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EditorManager.h">
@@ -158,25 +146,10 @@
     <ClInclude Include="Thread\FBXConvertThread.h">
       <Filter>04. Thread\01. FBXConvert</Filter>
     </ClInclude>
-    <ClInclude Include="Window\DetailWindow.h">
-      <Filter>02. Editor\01. Window</Filter>
-    </ClInclude>
-    <ClInclude Include="Window\EditorMenu.h">
-      <Filter>02. Editor\01. Window</Filter>
-    </ClInclude>
     <ClInclude Include="Window\FileBrowser.h">
       <Filter>02. Editor\01. Window</Filter>
     </ClInclude>
-    <ClInclude Include="Window\ObjectHierarchy.h">
-      <Filter>02. Editor\01. Window</Filter>
-    </ClInclude>
     <ClInclude Include="Window\ObjectHierarchyWindow.h">
-      <Filter>02. Editor\01. Window</Filter>
-    </ClInclude>
-    <ClInclude Include="Window\SpriteWindow.h">
-      <Filter>02. Editor\01. Window</Filter>
-    </ClInclude>
-    <ClInclude Include="Window\TileMapWindow.h">
       <Filter>02. Editor\01. Window</Filter>
     </ClInclude>
     <ClInclude Include="Window\FBXConvertWindow.h">
@@ -226,6 +199,9 @@
     </ClInclude>
     <ClInclude Include="Window\SceneComponentCreateModal.h">
       <Filter>02. Editor\02. Widget\02. Hierarchy</Filter>
+    </ClInclude>
+    <ClInclude Include="Window\InspectorWindow.h">
+      <Filter>02. Editor\01. Window</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

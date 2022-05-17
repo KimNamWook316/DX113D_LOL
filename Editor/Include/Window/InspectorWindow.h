@@ -14,6 +14,8 @@ public:
 
 public:
     void OnSelectGameObject(class CGameObject* Obj);
+    void OnCreateSceneComponent(class CSceneComponent* Com);
+    void OnCreateObjectComponent(class CObjectComponent* Com);
     void OnClearGameObject();
 
 private:

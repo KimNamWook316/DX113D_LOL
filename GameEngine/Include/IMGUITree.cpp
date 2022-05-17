@@ -32,27 +32,6 @@ CIMGUITree::~CIMGUITree()
 	}
 }
 
-CIMGUITree* CIMGUITree::GetNode(const std::string& name)
-{
-	if (m_Name == name)
-	{
-		return this;
-	}
-
-	size_t size = mVecChild.size();
-	for (size_t i = 0; i < size; ++i)
-	{
-		CIMGUITree* result = mVecChild[i]->GetNode(name);
-
-		if (result)
-		{
-			return result;
-		}
-	}
-
-	return nullptr;
-}
-
 CIMGUITree* CIMGUITree::GetNode(const int idx)
 {
 	if ((int)(mVecChild.size()) - 1 < idx)
@@ -63,8 +42,15 @@ CIMGUITree* CIMGUITree::GetNode(const int idx)
 
 CIMGUITree* CIMGUITree::FindChild(const std::string& Name)
 {
+	if (m_Name == Name)
+	{
+		return this;
+	}
+
 	if (mVecChild.empty())
+	{
 		return nullptr;
+	}
 	
 	size_t ChildSize = mVecChild.size();
 

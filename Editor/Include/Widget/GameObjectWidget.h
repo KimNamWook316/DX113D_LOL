@@ -14,6 +14,8 @@ public:
 
 public:
     void ClearComponentWidget();
+    void CreateSceneComponentWidget(class CSceneComponent* Com);
+    void CreateObjectComponentWidget(class CObjectComponent* Com);
 
 public:
     void SetGameObject(class CGameObject* Obj);
@@ -23,10 +25,6 @@ public:
     {
         return m_Object;
     }
-
-private:
-    void CreateSceneComponentWidget(class CSceneComponent* Com);
-    void CreateObjectComponentWidget(class CObjectComponent* Com);
 
 private:
     void OnClickRenameButton();
