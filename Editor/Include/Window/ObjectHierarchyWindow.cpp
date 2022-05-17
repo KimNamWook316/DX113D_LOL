@@ -14,7 +14,8 @@
 
 CObjectHierarchyWindow::CObjectHierarchyWindow() :
 	m_Root(nullptr),
-	m_ObjectDeleteButton(nullptr)
+	m_ObjectDeleteButton(nullptr),
+	m_SelectObject(nullptr)
 {
 }
 
@@ -31,6 +32,11 @@ CObjectHierarchyWindow::~CObjectHierarchyWindow()
 CIMGUITree* CObjectHierarchyWindow::GetRoot() const
 {
 	return m_Root;
+}
+
+CGameObject* CObjectHierarchyWindow::GetSelectObject() const
+{
+	return m_SelectObject;
 }
 
 bool CObjectHierarchyWindow::Init()
@@ -127,14 +133,12 @@ CIMGUITree* CObjectHierarchyWindow::GetSelectNode() const
 void CObjectHierarchyWindow::OnSetSelectNode(CIMGUITree* SelectNode)
 {
 	m_SelectNode = SelectNode;
+	m_SelectObject = CSceneManager::GetInst()->GetScene()->FindObject(m_SelectNode->GetName());
 }
 
 void CObjectHierarchyWindow::OnDragDropSrc(CIMGUITree* SrcTree)
 {
 	if (m_SelectNode == m_Root || m_DragSrc == m_Root)
-
-
-
 		return;
 
 	m_DragSrc = SrcTree;

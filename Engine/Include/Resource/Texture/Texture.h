@@ -37,6 +37,7 @@ class CTexture :
     public CRef
 {
 	friend class CTextureManager;
+	friend class CIMGUIImageButton;
 
 protected:
 	CTexture();

@@ -14,6 +14,7 @@ private:
 	class CIMGUIButton* m_ObjectCreatePopUpButton;
 	class CObjectCreateModal* m_ObjectCreateModal;
 	class CIMGUIButton* m_ObjectDeleteButton;
+	class CGameObject* m_SelectObject;
 
 	class CIMGUITree* m_Root;
 	class CIMGUITree* m_SelectNode;
@@ -22,6 +23,7 @@ private:
 
 public:
 	class CIMGUITree* GetRoot()	const;
+	class CGameObject* GetSelectObject()	const;
 
 public:
 	virtual bool Init();

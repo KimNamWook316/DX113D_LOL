@@ -1,7 +1,6 @@
 #pragma once
 
 #include "IMGUIWindow.h"
-#include "IMGUIMenuItem.h"
 #include "IMGUIChild.h"
 
 class CFileBrowser :
@@ -17,18 +16,21 @@ private:
 	std::vector<CIMGUIChild*>	m_vecChild;
 
 	bool						m_UpdatePath;
+	std::string					m_InitialPath;
+
+
+	void SetUpdatePath(bool Update)
+	{
+		m_UpdatePath = Update;
+	}
 
 public:
 	virtual bool Init();
 	virtual void Update(float DeltaTime);
 
-private:
-	std::string m_InitialPath;
-
 public:
-	void SetInitialPath(const std::string& Name);
+	void SetInitialPath(const std::string& Path);
 	void ClearWidget();
 	// 파일(또는 디렉토리) 이미지를 클릭하면 호출되는 콜백
 	void FileClickCallback(class CIMGUIImage* Image);
-
 };

@@ -6,13 +6,17 @@
 #define SCENECOMPONENT_HIERARCHY			"SceneComponentHierarchy"
 #define OBJECTCOMPONENT_LIST				"ObjectComponentList"
 #define FILE_BROWSER						"FileBrowser"
+#define FILE_BROWSERTREE					"FileBrowserTree"
 #define LOG_OUTPUT							"LogOutput"
 #define INSPECTOR							"Inspector"
 #define OBJECTCREATE_POPUPMODAL				"ObjectCreatePopUpModal"
 #define SCENECOMPONENT_CREATE_POPUPMODAL	"SceneComponentCreatePopUpModal"
 #define OBJECTCOMPONENT_CREATE_POPUPMODAL	"ObjectComponentCreatePopUpModal"
 #define ANIMATION_EDITOR					"AnimationEditor"
-#define FBX_CONVERTOR		"FBXConverter"
+#define FBX_CONVERTOR						"FBXConverter"
+
+#define DIRECTORY_IMAGE						"DirectoryImage"
+#define FILE_IMAGE							"FileImage"
 
 
 #define SINGLELINE_NUMICON	5
