@@ -27,6 +27,7 @@ private:
 	std::vector<CTransform*>	m_vecChild;
 	class CTransformConstantBuffer* m_CBuffer;
 	Transform_State		m_State;
+	class CSkeletonSocket* m_Socket;
 
 	// P, R, S 변경 시 콜백되는 함수 리스트
 	std::list<TransformCallBack> m_ScaleChangeCallBackList;
@@ -46,6 +47,11 @@ private:
 	bool	m_UpdatePos;
 
 public:
+	void SetSocket(class CSkeletonSocket* Socket)
+	{
+		m_Socket = Socket;
+	}
+
 	void SetTransformState(Transform_State State)
 	{
 		m_State = State;
@@ -180,6 +186,9 @@ private:
 	Vector3	m_WorldScale;
 	Vector3	m_WorldRot;
 	Vector3	m_WorldPos;
+	Vector3	m_OriginWorldScale;
+	Vector3	m_OriginWorldRot;
+	Vector3	m_OriginWorldPos;
 	Vector3	m_WorldAxis[AXIS_MAX];
 	Vector3	m_Pivot;
 	Vector3	m_MeshSize;

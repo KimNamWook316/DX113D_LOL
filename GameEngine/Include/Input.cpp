@@ -227,24 +227,57 @@ void CInput::UpdateMouse(float DeltaTime)
 	GetCursorPos(&MouseWindowPos);
 	ScreenToClient(m_hWnd, &MouseWindowPos);
 
-	Vector2	Ratio = CDevice::GetInst()->GetViewportAspectRatio();
-
-	Vector2	MousePos = Vector2(MouseWindowPos.x * Ratio.x, MouseWindowPos.y * Ratio.y);
-
-	MousePos.y = CDevice::GetInst()->GetResolution().Height - MousePos.y;
-
-	m_MouseMove = MousePos - m_MousePos;
-
-	m_MousePos = MousePos;
-	m_MouseWorldPos = m_MousePos;
-
 	// 2D일때는 월드공간에서의 마우스 좌표를 구한다.
 	// 카메라를 얻어온다
 	if (CEngine::GetInst()->GetEngineSpace() == Engine_Space::Space2D)
 	{
 		CCameraComponent* Camera = CSceneManager::GetInst()->GetScene()->GetCameraManager()->GetCurrentCamera();
 
+		Vector2	Ratio = CDevice::GetInst()->GetViewportAspectRatio();
+
+		Vector2	MousePos = Vector2(MouseWindowPos.x * Ratio.x, MouseWindowPos.y * Ratio.y);
+
+		MousePos.y = CDevice::GetInst()->GetResolution().Height - MousePos.y;
+
+		m_MouseMove = MousePos - m_MousePos;
+
+		m_MousePos = MousePos;
+		m_MouseWorldPos = m_MousePos;
+
 		m_MouseWorldPos += Camera->GetLeftBottom();
+	}
+	// 3D
+	else
+	{
+		CCameraComponent* Camera = CSceneManager::GetInst()->GetScene()->GetCameraManager()->GetCurrentCamera();
+
+		Vector2 Ratio = CDevice::GetInst()->GetViewportAspectRatio();
+		Vector2	MousePos = Vector2(MouseWindowPos.x * Ratio.x, MouseWindowPos.y * Ratio.y);
+
+		m_MouseUIPos = MousePos;
+		m_MouseUIPos = CDevice::GetInst()->GetResolution().Height - m_MouseUIPos.y;
+
+		m_MouseMove = MousePos - m_MousePos;
+
+		m_MousePos = MousePos;
+		m_MouseWorldPos = m_MousePos;
+
+		// -1 ~ 1 사이로 변환
+		m_Ray.Dir.x = m_MousePos.x / CDevice::GetInst()->GetResolution().Width;
+		m_Ray.Dir.y = m_MousePos.y / CDevice::GetInst()->GetResolution().Height;
+
+		m_Ray.Dir.x *= 2.f - 1.f;
+		m_Ray.Dir.y *= -2.f + 1.f;
+
+		Matrix MatProj = Camera->GetProjMatrix();
+
+		// 투영의 역행렬 곱해준다.
+		m_Ray.Dir.x /= MatProj._11;
+		m_Ray.Dir.y /= MatProj._22;
+		m_Ray.Dir.z = 1.f;
+
+		m_Ray.Dir.Normalize();
+		m_Ray.Pos = Vector3::Zero;
 	}
 }
 

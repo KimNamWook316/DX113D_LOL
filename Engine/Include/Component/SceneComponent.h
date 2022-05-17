@@ -19,6 +19,7 @@ protected:
 	std::vector<CSharedPtr<CSceneComponent>>    m_vecChild;
 	bool    m_Render;
 	std::string		m_LayerName;
+	class CSkeletonSocket* m_Socket;
 
 public:
 	CTransform* GetTransform()	const
@@ -54,7 +55,8 @@ public:
 	virtual void SetGameObject(class CGameObject* Object);
 
 public:
-	void AddChild(CSceneComponent* Child);
+	virtual void AddChild(CSceneComponent* Child, const std::string& SocketName = "");
+	virtual void AddChild(class CGameObject* Child, const std::string& SocketName = "");
 	bool DeleteChild(CSceneComponent* Child);
 	bool DeleteChild(const std::string& Name);
 	bool ReplaceComponent(CSceneComponent* DestNode);

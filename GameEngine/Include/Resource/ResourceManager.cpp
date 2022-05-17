@@ -571,6 +571,11 @@ CSkeleton* CResourceManager::FindSkeleton(const std::string& Name)
 	return m_AnimationManager3D->FindSkeleton(Name);
 }
 
+bool CResourceManager::AddSocket(const std::string& SkeletonName, const std::string& BoneName, const std::string& SocketName, const Vector3& Offset, const Vector3& OffsetRot)
+{
+	return m_AnimationManager3D->AddSocket(SkeletonName, BoneName, SocketName, Offset, OffsetRot);
+}
+
 void CResourceManager::ReleaseSkeleton(const std::string& Name)
 {
 	m_AnimationManager3D->ReleaseSkeleton(Name);

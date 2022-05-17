@@ -269,3 +269,8 @@ void CColliderComponent::Load(FILE* File)
 	fread(&m_Min, sizeof(Vector3), 1, File);
 	fread(&m_Max, sizeof(Vector3), 1, File);
 }
+
+bool CColliderComponent::CollisionRay(const Ray& Ray)
+{
+	return false;
+}

@@ -109,6 +109,7 @@ public:
     virtual void Load(FILE* File);
     virtual bool Collision(CColliderComponent* Dest) = 0;
     virtual bool CollisionMouse(const Vector2& MousePos) = 0;
+    virtual bool CollisionRay(const Ray& Ray);
 
 public:
     template <typename T>

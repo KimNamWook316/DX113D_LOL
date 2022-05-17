@@ -42,6 +42,9 @@
     <ClInclude Include="Object\LandScapeObj.h">
       <Filter>02. Object</Filter>
     </ClInclude>
+    <ClInclude Include="Object\Weapon.h">
+      <Filter>02. Object</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Client3D.rc">
@@ -70,6 +73,9 @@
       <Filter>02. Object</Filter>
     </ClCompile>
     <ClCompile Include="Object\LandScapeObj.cpp">
+      <Filter>02. Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\Weapon.cpp">
       <Filter>02. Object</Filter>
     </ClCompile>
   </ItemGroup>

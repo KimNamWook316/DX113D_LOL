@@ -33,6 +33,7 @@
     <ClCompile Include="Component\ColliderCircle.cpp" />
     <ClCompile Include="Component\ColliderComponent.cpp" />
     <ClCompile Include="Component\ColliderPixel.cpp" />
+    <ClCompile Include="Component\ColliderSphere.cpp" />
     <ClCompile Include="Component\Component.cpp" />
     <ClCompile Include="Component\LandScape.cpp" />
     <ClCompile Include="Component\LightComponent.cpp" />
@@ -113,6 +114,7 @@
     <ClCompile Include="Resource\Animation\AnimationSequence.cpp" />
     <ClCompile Include="Resource\Animation\AnimationSequence2D.cpp" />
     <ClCompile Include="Resource\Animation\Skeleton.cpp" />
+    <ClCompile Include="Resource\Animation\SkeletonSokcet.cpp" />
     <ClCompile Include="Resource\Excel\ExcelData.cpp" />
     <ClCompile Include="Resource\Excel\ExcelManager.cpp" />
     <ClCompile Include="Resource\Font\FontManager.cpp" />
@@ -213,6 +215,7 @@
     <ClInclude Include="Component\ColliderCircle.h" />
     <ClInclude Include="Component\ColliderComponent.h" />
     <ClInclude Include="Component\ColliderPixel.h" />
+    <ClInclude Include="Component\ColliderSphere.h" />
     <ClInclude Include="Component\Component.h" />
     <ClInclude Include="Component\LandScape.h" />
     <ClInclude Include="Component\LightComponent.h" />
@@ -298,6 +301,7 @@
     <ClInclude Include="Resource\Animation\AnimationSequence.h" />
     <ClInclude Include="Resource\Animation\AnimationSequence2D.h" />
     <ClInclude Include="Resource\Animation\Skeleton.h" />
+    <ClInclude Include="Resource\Animation\SkeletonSokcet.h" />
     <ClInclude Include="Resource\Excel\ExcelData.h" />
     <ClInclude Include="Resource\Excel\ExcelManager.h" />
     <ClInclude Include="Resource\Font\FontManager.h" />

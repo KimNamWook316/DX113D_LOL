@@ -163,6 +163,8 @@ public:	// =================== Sequence3D =====================
 	bool LoadSkeletonMultibyte(const std::string& Name, const char* FileName,
 		const std::string& PathName = ANIMATION_PATH);
 	bool LoadSkeletonFullPathMultibyte(const std::string& Name, const char* FullPath);
+	bool AddSocket(const std::string& SkeletonName, const std::string& BoneName, const std::string& SocketName,
+		const Vector3& Offset = Vector3::Zero, const Vector3& OffsetRot = Vector3::Zero);
 	CSkeleton* FindSkeleton(const std::string& Name);
 };
 
