@@ -5,6 +5,8 @@
 #include "IMGUIDummy.h"
 #include "../EditorUtil.h"
 #include "PathManager.h"
+#include "FileBrowser.h"
+#include "IMGUIManager.h"
 
 CFileBrowserTree::CFileBrowserTree()
 {
@@ -66,11 +68,17 @@ void CFileBrowserTree::OnOpenBrowserTree(CIMGUITree* Tree)
 
 	for (size_t i = 0; i < Count; ++i)
 	{
-		Tree->AddChild(vecDirName[i]);
+		CIMGUITree* ChildTreeNode = Tree->AddChild(vecDirName[i]);
+		ChildTreeNode->AddOpenCallback<CFileBrowserTree>(this, &CFileBrowserTree::OnOpenBrowserTree);
+		ChildTreeNode->AddSelectCallback<CFileBrowserTree>(this, &CFileBrowserTree::OnShowFileBrowser);
 	}
 }
 
 void CFileBrowserTree::OnShowFileBrowser(CIMGUITree* Tree)
 {
+	CFileBrowser* FileBrowser = (CFileBrowser*)CIMGUIManager::GetInst()->FindIMGUIWindow(FILE_BROWSER);
+
+	// FileBrowserâ Path Update
+	//FileBrowser->SetInitialPath()
 }
 
