@@ -112,6 +112,10 @@ bool CAnimationEditor::Init()
 	m_AnimationPlayBtn = AddWidget<CIMGUIButton>("Object Play", 100.f, 30.f);
 	m_AnimationPlayBtn->SetClickCallback<CAnimationEditor>(this, &CAnimationEditor::OnPlayAnimation);
 
+	m_SaveAnimationInstanceBtn = AddWidget<CIMGUIButton>("Save Instance", 100.f, 30.f);
+	m_SaveAnimationInstanceBtn->SetClickCallback<CAnimationEditor>(this, &CAnimationEditor::OnSaveAnimationInstance);
+	
+
 	return true;
 }
 
@@ -168,6 +172,10 @@ void CAnimationEditor::OnPlayAnimation()
 		RootMeshComponent->GetAnimationInstance()->Play();
 }
 
+void CAnimationEditor::OnSaveAnimationInstance()
+{
+}
+
 void CAnimationEditor::OnAnimationFrameInputCallback()
 {
 	if (!m_Animation || !m_Animation->GetCurrentAnimation())
@@ -186,10 +194,9 @@ void CAnimationEditor::OnAnimationFrameInputCallback()
 	m_FrameInput->SetInt(InputFrame);
 
 	// Input 의 Frame 으로 Animation Frame 정보를 세팅해준다.
-	m_Animation->SetCurrentAnimationFrameIdx(InputFrame);
+	// m_Animation->SetCurrentAnimationFrameIdx(InputFrame);
+	m_Animation->SetEditorStopTargetFrame(InputFrame );
 
-	// 먼저 일단 Animation 을 멈춘다.
-	m_Animation->Stop();
 }
 
 void CAnimationEditor::OnAnimationSliderIntCallback(int CurrentFrame)

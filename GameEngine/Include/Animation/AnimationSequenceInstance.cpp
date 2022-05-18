@@ -47,7 +47,7 @@ CAnimationSequenceInstance::CAnimationSequenceInstance(const CAnimationSequenceI
 
 	m_Skeleton = Anim.m_Skeleton;
 
-
+	m_EditorStopAnimation = false;
 
 	m_mapAnimation.clear();
 
@@ -77,8 +77,6 @@ CAnimationSequenceInstance::CAnimationSequenceInstance(const CAnimationSequenceI
 	Desc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
 
 	CDevice::GetInst()->GetDevice()->CreateBuffer(&Desc, nullptr, &m_BoneDataBuffer);
-
-
 }
 
 CAnimationSequenceInstance::~CAnimationSequenceInstance()
@@ -95,6 +93,28 @@ CAnimationSequenceInstance::~CAnimationSequenceInstance()
 	{
 		SAFE_DELETE(iter->second);
 	}
+}
+
+void CAnimationSequenceInstance::SetEditorStopTargetFrame(int Frame)
+{
+	if (!m_CurrentAnimation)
+		return;
+
+	// 기존에 Stop 해두던 Animation 을 Play 시킨다.
+	if (!m_PlayAnimation)
+		m_PlayAnimation = true;
+
+	m_EditorStopTargetFrame = Frame;
+
+	// 해당 Frame 이전으로 세팅해둔다.
+	// int PrevFrame = Frame - 1;
+	// if (PrevFrame < 0)
+	//	PrevFrame = m_CurrentAnimation->GetAnimationSequence()->GetEndFrame();
+
+	// SetCurrentAnimationFrameIdx(PrevFrame);
+	SetCurrentAnimationFrameIdx(Frame);
+
+	m_EditorStopAnimation = true;
 }
 
 void CAnimationSequenceInstance::SetSkeleton(CSkeleton* Skeleton)
@@ -378,6 +398,12 @@ void CAnimationSequenceInstance::Update(float DeltaTime)
 		int	FrameIndex = (int)(AnimationTime / m_CurrentAnimation->m_FrameTime);
 
 		m_CurrentAnimation->GetAnimationSequence()->m_CurrentFrameIdx = FrameIndex;
+
+		// Editor 상에서 의도한 위치의 Frame 에서 멈추게 한다.
+		if (m_EditorStopAnimation && FrameIndex == m_EditorStopTargetFrame)
+		{
+			m_PlayAnimation = false;
+		}
 
 		int	NextFrameIndex = FrameIndex + 1;
 

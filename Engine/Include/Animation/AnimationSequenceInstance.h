@@ -37,7 +37,7 @@ protected:
 
 	// Animation Editor ¡∂¿€
 	bool m_EditorStopAnimation;
-	bool m_EditorStopTargetFrame;
+	int m_EditorStopTargetFrame;
 
 public:
 	size_t GetTypeID()	const
@@ -70,6 +70,9 @@ public:
 	void Play()
 	{
 		m_PlayAnimation = true;
+
+		if (m_EditorStopAnimation)
+			m_EditorStopAnimation = false;
 	}
 
 	void Stop()
@@ -87,6 +90,7 @@ public:
 		return m_CurrentAnimation;
 	}
 
+	void SetEditorStopTargetFrame(int Frame);
 	void SetSkeleton(class CSkeleton* Skeleton);
 	void GetAnimationSequenceNames(std::vector<std::string>& VecSequenceNames);
 	void SetCurrentAnimationFrameIdx(int Idx);

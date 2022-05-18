@@ -35,6 +35,7 @@ private:
 	class CIMGUIButton* m_AnimationPlayBtn;
 	class CIMGUITextInput* m_NewAnimSeqName;
 	class CIMGUITextInput* m_NewAnimSeqDataKeyName;
+	class CIMGUIButton* m_SaveAnimationInstanceBtn;
 private :
 	class CAnim3DObject* m_3DTestObject;
 	class CAnimationSequenceInstance* m_Animation;
@@ -51,7 +52,7 @@ private :
 	void OnCreateSample3DObject();
 	void OnSetPlayEngineDeltaTime();
 	void OnPlayAnimation();
+	void OnSaveAnimationInstance();
 	void OnApplyAnimationSlider(CAnimationSequence* Sequence);
-
 };
 
