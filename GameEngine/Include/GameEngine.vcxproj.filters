@@ -274,6 +274,9 @@
     <Filter Include="02. Resource\05. Animation\02. 3D">
       <UniqueIdentifier>{2e16266c-f24c-494a-8be7-d2f6ddec3b71}</UniqueIdentifier>
     </Filter>
+    <Filter Include="99. Util">
+      <UniqueIdentifier>{88dedb62-816d-497a-9914-d558eac24e8e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Device.cpp">
@@ -818,6 +821,9 @@
     </ClCompile>
     <ClCompile Include="Component\Frustum.cpp">
       <Filter>05. Component\01. SceneComponent\03. Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineUtil.cpp">
+      <Filter>99. Util</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1393,6 +1399,9 @@
     </ClInclude>
     <ClInclude Include="Component\Frustum.h">
       <Filter>05. Component\01. SceneComponent\03. Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineUtil.h">
+      <Filter>99. Util</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

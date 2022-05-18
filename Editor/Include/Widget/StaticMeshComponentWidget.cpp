@@ -43,7 +43,7 @@ bool CStaticMeshComponentWidget::Init()
 	m_ComponentTypeText->SetText("StaticMesh Component");
 
 	// 최상위 트리
-	CIMGUITree* m_RootTree = AddWidget<CIMGUITree>("Static Mesh Variable");
+	CIMGUITree* m_RootTree = AddWidget<CIMGUITree>("Static Mesh Variables");
 
 	m_MeshName = m_RootTree->AddWidget<CIMGUITextInput>("Mesh Name");
 	m_RootTree->AddWidget<CIMGUISameLine>("Line");

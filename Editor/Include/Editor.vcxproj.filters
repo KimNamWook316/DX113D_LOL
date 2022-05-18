@@ -43,6 +43,12 @@
     <Filter Include="02. Editor\02. Widget\02. Hierarchy">
       <UniqueIdentifier>{65834f17-a890-43e6-a336-ac0d50c2b64f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. Editor\02. Widget\01. Inspector\01. SceneComponent">
+      <UniqueIdentifier>{47894265-e399-46ef-9d4c-fd1b7868d503}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Editor\02. Widget\01. Inspector\02. ObjectComponent">
+      <UniqueIdentifier>{7b9c547d-0ea7-4639-a712-17d44c387f64}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EditorManager.cpp">
@@ -81,22 +87,7 @@
     <ClCompile Include="Window\AnimationEditor.cpp">
       <Filter>02. Editor\01. Window</Filter>
     </ClCompile>
-    <ClCompile Include="Widget\AnimationMeshComponentWidget.cpp">
-      <Filter>02. Editor\02. Widget\01. Inspector</Filter>
-    </ClCompile>
-    <ClCompile Include="Widget\SceneComponentWidget.cpp">
-      <Filter>02. Editor\02. Widget\01. Inspector</Filter>
-    </ClCompile>
-    <ClCompile Include="Widget\StaticMeshComponentWidget.cpp">
-      <Filter>02. Editor\02. Widget\01. Inspector</Filter>
-    </ClCompile>
-    <ClCompile Include="Widget\TransformWidget.cpp">
-      <Filter>02. Editor\02. Widget\01. Inspector</Filter>
-    </ClCompile>
     <ClCompile Include="Widget\GameObjectWidget.cpp">
-      <Filter>02. Editor\02. Widget\01. Inspector</Filter>
-    </ClCompile>
-    <ClCompile Include="Widget\ObjectComponentWidget.cpp">
       <Filter>02. Editor\02. Widget\01. Inspector</Filter>
     </ClCompile>
     <ClCompile Include="Window\ObjectComponentWindow.cpp">
@@ -119,6 +110,24 @@
     </ClCompile>
     <ClCompile Include="Window\InspectorWindow.cpp">
       <Filter>02. Editor\01. Window</Filter>
+    </ClCompile>
+    <ClCompile Include="Widget\ObjectComponentWidget.cpp">
+      <Filter>02. Editor\02. Widget\01. Inspector\02. ObjectComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Widget\SceneComponentWidget.cpp">
+      <Filter>02. Editor\02. Widget\01. Inspector\01. SceneComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Widget\StaticMeshComponentWidget.cpp">
+      <Filter>02. Editor\02. Widget\01. Inspector\01. SceneComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Widget\TransformWidget.cpp">
+      <Filter>02. Editor\02. Widget\01. Inspector\01. SceneComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Widget\AnimationMeshWidget.cpp">
+      <Filter>02. Editor\02. Widget\01. Inspector\01. SceneComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Widget\LightComponentWidget.cpp">
+      <Filter>02. Editor\02. Widget\01. Inspector\01. SceneComponent</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -164,22 +173,7 @@
     <ClInclude Include="Utils.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="Widget\AnimationMeshComponentWidget.h">
-      <Filter>02. Editor\02. Widget\01. Inspector</Filter>
-    </ClInclude>
-    <ClInclude Include="Widget\SceneComponentWidget.h">
-      <Filter>02. Editor\02. Widget\01. Inspector</Filter>
-    </ClInclude>
-    <ClInclude Include="Widget\StaticMeshComponentWidget.h">
-      <Filter>02. Editor\02. Widget\01. Inspector</Filter>
-    </ClInclude>
-    <ClInclude Include="Widget\TransformWidget.h">
-      <Filter>02. Editor\02. Widget\01. Inspector</Filter>
-    </ClInclude>
     <ClInclude Include="Widget\GameObjectWidget.h">
-      <Filter>02. Editor\02. Widget\01. Inspector</Filter>
-    </ClInclude>
-    <ClInclude Include="Widget\ObjectComponentWidget.h">
       <Filter>02. Editor\02. Widget\01. Inspector</Filter>
     </ClInclude>
     <ClInclude Include="Window\ObjectComponentWindow.h">
@@ -202,6 +196,24 @@
     </ClInclude>
     <ClInclude Include="Window\InspectorWindow.h">
       <Filter>02. Editor\01. Window</Filter>
+    </ClInclude>
+    <ClInclude Include="Widget\ObjectComponentWidget.h">
+      <Filter>02. Editor\02. Widget\01. Inspector\02. ObjectComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Widget\SceneComponentWidget.h">
+      <Filter>02. Editor\02. Widget\01. Inspector\01. SceneComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Widget\StaticMeshComponentWidget.h">
+      <Filter>02. Editor\02. Widget\01. Inspector\01. SceneComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Widget\TransformWidget.h">
+      <Filter>02. Editor\02. Widget\01. Inspector\01. SceneComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Widget\AnimationMeshWidget.h">
+      <Filter>02. Editor\02. Widget\01. Inspector\01. SceneComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Widget\LightComponentWidget.h">
+      <Filter>02. Editor\02. Widget\01. Inspector\01. SceneComponent</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

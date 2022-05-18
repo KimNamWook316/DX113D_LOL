@@ -7,6 +7,7 @@
 *.dll
 *.suo
 *.idb
+*.ini
 Client3D/Bin/Texture/
 Client3D/Bin/Mesh/
 Client3D/Bin/Sound/
