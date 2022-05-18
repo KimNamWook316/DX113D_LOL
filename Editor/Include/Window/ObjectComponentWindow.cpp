@@ -4,6 +4,10 @@
 #include "IMGUIButton.h"
 #include "ObjectComponentCreateModal.h"
 #include "../EditorInfo.h"
+#include "ObjectHierarchyWindow.h"
+#include "IMGUIManager.h"
+#include "GameObject/GameObject.h"
+#include "IMGUISameLine.h"
 
 CObjectComponentWindow::CObjectComponentWindow()	:
 	m_ComponentCreatePopUpButton(nullptr),
@@ -25,6 +29,11 @@ bool CObjectComponentWindow::Init()
 
 	m_ComponentCreatePopUpButton = AddWidget<CIMGUIButton>("Create", 50.f, 20.f);
 	m_ComponentCreatePopUpButton->SetClickCallback<CObjectComponentWindow>(this, &CObjectComponentWindow::OnCreateComponentPopUp);
+
+	CIMGUISameLine* Line = AddWidget<CIMGUISameLine>("Line");
+
+	m_ComponentDeleteButton = AddWidget<CIMGUIButton>("Delete", 50.f, 20.f);
+	m_ComponentDeleteButton->SetClickCallback<CObjectComponentWindow>(this, &CObjectComponentWindow::OnDeleteComponent);
 
 	return true;
 }
@@ -58,6 +67,35 @@ std::string CObjectComponentWindow::GetComponentNameInput() const
 	return m_ComponentCreateModal->GetComponentNameInput();
 }
 
-//void CObjectComponentWindow::FindSelectComponent(CIMGUITree* RootNode)
-//{
-//}
+int CObjectComponentWindow::AddObjectComponent(const std::string& Name)
+{
+	int Count = m_ComponentListBox->GetItemCount();
+	m_ComponentListBox->AddItem(Name);
+
+	return Count;
+}
+
+void CObjectComponentWindow::OnSelectComponent(int Index, const char* Label)
+{
+
+}
+
+void CObjectComponentWindow::OnDeleteComponent()
+{
+	CObjectHierarchyWindow* Window = (CObjectHierarchyWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(OBJECT_HIERARCHY);
+
+	CGameObject* Obj = Window->GetSelectObject();
+
+	std::string SelectItem = m_ComponentListBox->GetSelectItem();
+	int Index = m_ComponentListBox->GetSelectIndex();
+
+	CObjectComponent* DeleteComp = (CObjectComponent*)Obj->FindComponent(SelectItem);
+
+	if (!DeleteComp)
+		return;
+
+	Obj->DeleteObjectComponent(SelectItem);
+
+	m_ComponentListBox->DeleteItem(Index);
+}
+

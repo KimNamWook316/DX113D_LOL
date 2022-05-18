@@ -8,6 +8,10 @@
 #include "Scene/SceneManager.h"
 #include "../EditorUtil.h"
 #include "Flag.h"
+#include "ObjectHierarchyWindow.h"
+#include "IMGUIManager.h"
+#include "Component/PaperBurnComponent.h"
+#include "ObjectComponentWindow.h"
 
 CObjectComponentCreateModal::CObjectComponentCreateModal()	:
 	m_ComponentCombo(nullptr),
@@ -63,5 +67,37 @@ void CObjectComponentCreateModal::OnCreateComponent()
 	strcpy_s(Name, m_NameTextInput->GetTextMultibyte());
 
 	CScene* CurrentScene = CSceneManager::GetInst()->GetScene();
+
+	CObjectHierarchyWindow* Window = (CObjectHierarchyWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(OBJECT_HIERARCHY);
+
+	if (!Window)
+		return;
+
+	if (Window->GetSelectNode() == Window->GetRoot())
+		return;
+
+	CGameObject* SelectObject = Window->GetSelectObject();
+
+	if (!SelectObject)
+		return;
+
+	int Index = m_ComponentCombo->GetSelectIndex();
+
+	size_t Typeid = CEditorUtil::ObjectComponentTypeIndexToTypeid(Index);
+
+	if (Typeid == typeid(CPaperBurnComponent).hash_code())
+		CObjectComponent* Com = SelectObject->CreateComponent<CPaperBurnComponent>(Name);
+
+	
+
+	CObjectComponentWindow* ComponentWindow = (CObjectComponentWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(OBJECTCOMPONENT_LIST);
+
+	// 오브젝트에 속한 SceneComponent를 2개 이상 생성할 때 반드시 2번째 Component부터는 1번째 생성한 SceneComponent(=RootNode) 밑으로 넣어줘야한다
+	// 그렇게 하지 않으면 지금 Engine코드상 2번째 추가된 SceneComponent는 계층 구조에 속하지 못하고 그냥 CGameObject::m_SceneComponentList에만 들어가있다
+	if (ComponentWindow)
+	{
+		int Index = ComponentWindow->AddObjectComponent(Name);
+		ComponentWindow->SetSelectCallback(Index, &CObjectComponentWindow::OnSelectComponent);
+	}
 
 }
