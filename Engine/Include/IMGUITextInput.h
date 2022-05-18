@@ -15,6 +15,7 @@ class CIMGUITextInput :
 	friend class CIMGUIWindow;
 	friend class CIMGUIPopUpModal;
 	friend class CIMGUIWidgetList;
+	friend class CIMGUITree;
 
 protected:
 	CIMGUITextInput();

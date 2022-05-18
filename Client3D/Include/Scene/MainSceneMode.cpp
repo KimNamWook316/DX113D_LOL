@@ -54,17 +54,17 @@ bool CMainSceneMode::Init()
 	((CLightComponent*)Light2->GetRootComponent())->SetAtt3(0.02f);
 	((CLightComponent*)Light2->GetRootComponent())->SetColor(Vector4(0.f, 1.f, 0.f, 1.f));
 
-	Vector3 LandScapeScale = LandScape->GetWorldScale();
-
-	Player->SetWorldPos(LandScapeScale.x * 0.5f, LandScapeScale.y, LandScapeScale.z * 0.5f);
-
 	return true;
 }
 
 void CMainSceneMode::LoadMesh()
 {
 	m_Scene->GetResource()->LoadMesh(Mesh_Type::Animation, "PlayerMesh",
-		TEXT("singed_attack1_test.fbx"));
+		TEXT("Player_Default.msh"));
+
+
+	m_Scene->GetResource()->LoadMesh(Mesh_Type::Static, "Blade",
+		TEXT("Blade.msh"));
 
 	CMesh* Mesh = m_Scene->GetResource()->FindMesh("PlayerMesh");
 
@@ -82,18 +82,21 @@ void CMainSceneMode::LoadMesh()
 	}*/
 
 	m_Scene->GetResource()->LoadSkeleton("PlayerSkeleton",
-		TEXT("singed_attack1_test.bne"), MESH_PATH);
+		TEXT("Player_Default.bne"), MESH_PATH);
+
+	m_Scene->GetResource()->AddSocket("PlayerSkeleton", "bone11",
+		"Weapon");
 
 	m_Scene->GetResource()->SetMeshSkeleton("PlayerMesh", "PlayerSkeleton");
 
 	m_Scene->GetResource()->LoadAnimationSequence(true, "PlayerIdle",
-		TEXT("singed_attack1_test.sqc"), MESH_PATH);
+		TEXT("Player_Default.sqc"), MESH_PATH);
 
 	m_Scene->GetResource()->LoadAnimationSequence(false, "PlayerAttack",
-		TEXT("singed_attack1_test.sqc"), MESH_PATH);
+		TEXT("PlayerAttack.sqc"), MESH_PATH);
 
 	m_Scene->GetResource()->LoadAnimationSequence(true, "PlayerWalk",
-		TEXT("singed_attack1_test.sqc"), MESH_PATH);
+		TEXT("PlayerWalk.sqc"), MESH_PATH);
 }
 
 void CMainSceneMode::CreateMaterial()

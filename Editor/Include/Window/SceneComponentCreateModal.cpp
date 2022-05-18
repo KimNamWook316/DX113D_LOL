@@ -10,6 +10,7 @@
 #include "Scene/SceneManager.h"
 #include "IMGUIManager.h"
 #include "SceneComponentHierarchyWindow.h"
+#include "InspectorWindow.h"
 #include "IMGUITree.h"
 #include "ObjectHierarchyWindow.h"
 #include "Component/AnimationMeshComponent.h"
@@ -95,26 +96,32 @@ void CSceneComponentCreateModal::OnCreateComponent()
 
 	size_t Typeid = CEditorUtil::SceneComponentTypeIndexToTypeid(Index);
 
+	CSceneComponent* Com = nullptr;
+
+	// TODO : 컴포넌트 추가될때마다 추가
 	if (Typeid == typeid(CAnimationMeshComponent).hash_code())
-		SelectObject->CreateComponent<CAnimationMeshComponent>(Name);
+		Com = SelectObject->CreateComponent<CAnimationMeshComponent>(Name);
 
 	else if (Typeid == typeid(CStaticMeshComponent).hash_code())
-		SelectObject->CreateComponent<CStaticMeshComponent>(Name);
+		Com = SelectObject->CreateComponent<CStaticMeshComponent>(Name);
 
 	else if (Typeid == typeid(CLandScape).hash_code())
-		SelectObject->CreateComponent<CLandScape>(Name);
+		Com = SelectObject->CreateComponent<CLandScape>(Name);
 
 	else if (Typeid == typeid(CArm).hash_code())
-		SelectObject->CreateComponent<CArm>(Name);
+		Com = SelectObject->CreateComponent<CArm>(Name);
 
 	else if (Typeid == typeid(CLightComponent).hash_code())
-		SelectObject->CreateComponent<CLightComponent>(Name);
+		Com = SelectObject->CreateComponent<CLightComponent>(Name);
 
 	else if (Typeid == typeid(CSceneComponent).hash_code())
-		SelectObject->CreateComponent<CSceneComponent>(Name);
-
+		Com = SelectObject->CreateComponent<CSceneComponent>(Name);
 
 	CSceneComponentHierarchyWindow* ComponentWindow = (CSceneComponentHierarchyWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(SCENECOMPONENT_HIERARCHY);
+
+	// Inspector Window 갱신
+	CInspectorWindow* Inspector = (CInspectorWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(INSPECTOR);
+	Inspector->OnCreateSceneComponent(Com);
 
 	// 오브젝트에 속한 SceneComponent를 2개 이상 생성할 때 반드시 2번째 Component부터는 1번째 생성한 SceneComponent(=RootNode) 밑으로 넣어줘야한다
 	// 그렇게 하지 않으면 지금 Engine코드상 2번째 추가된 SceneComponent는 계층 구조에 속하지 못하고 그냥 CGameObject::m_SceneComponentList에만 들어가있다
@@ -125,7 +132,6 @@ void CSceneComponentCreateModal::OnCreateComponent()
 		Child->SetDragDropSourceCallback<CSceneComponentHierarchyWindow>(ComponentWindow, &CSceneComponentHierarchyWindow::OnDragDropSrc);
 		Child->SetDragDropDestCallback<CSceneComponentHierarchyWindow>(ComponentWindow, &CSceneComponentHierarchyWindow::OnDragDropDest);
 	}
-
 }
 
 

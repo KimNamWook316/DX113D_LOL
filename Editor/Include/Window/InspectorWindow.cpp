@@ -40,6 +40,16 @@ void CInspectorWindow::OnSelectGameObject(CGameObject* Obj)
 	m_ObjWidget->SetGameObject(Obj);
 }
 
+void CInspectorWindow::OnCreateSceneComponent(CSceneComponent* Com)
+{
+	m_ObjWidget->CreateSceneComponentWidget(Com);
+}
+
+void CInspectorWindow::OnCreateObjectComponent(CObjectComponent* Com)
+{
+	m_ObjWidget->CreateObjectComponentWidget(Com);
+}
+
 void CInspectorWindow::OnClearGameObject()
 {
 	m_ObjWidget->SetRender(false);

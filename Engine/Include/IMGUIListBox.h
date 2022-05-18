@@ -78,6 +78,41 @@ public:
 		}
 	}
 
+	void ChangeItem(const std::string& NewItem, const std::string& PrevItem)
+	{
+		size_t	Size = m_vecItem.size();
+
+		for (size_t i = 0; i < Size; ++i)
+		{
+			if (m_vecItem[i] == PrevItem)
+			{
+				m_vecItem[i] = NewItem;
+				
+				wchar_t	wItem[1024] = {};
+				char	ItemUTF8[1024] = {};
+
+				std::string New = m_vecItem[i];
+
+				int	Length = MultiByteToWideChar(CP_ACP, 0, New.c_str(), -1, 0, 0);
+				MultiByteToWideChar(CP_ACP, 0, New.c_str(), -1, wItem, Length);
+
+				// UTF8로 변환한다.
+				Length = WideCharToMultiByte(CP_UTF8, 0, wItem, -1, 0, 0, 0, 0);
+				WideCharToMultiByte(CP_UTF8, 0, wItem, -1, ItemUTF8, Length, 0, 0);
+
+				m_vecItemUTF8[i] = ItemUTF8;
+
+				if (m_Sort)
+				{
+					std::sort(m_vecItem.begin(), m_vecItem.end());
+					std::sort(m_vecItemUTF8.begin(), m_vecItemUTF8.end());
+				}
+
+				return;
+			}
+		}
+	}
+
 	void SetPageItemCount(int Count)
 	{
 		m_PageItemCount = Count;

@@ -5,7 +5,8 @@
 #include "../Resource/Shader/Standard2DConstantBuffer.h"
 #include "../Scene/SceneManager.h"
 
-CSceneComponent::CSceneComponent()
+CSceneComponent::CSceneComponent() :
+	m_Culling(false)
 {
 	SetTypeID<CSceneComponent>();
 	m_ComponentType = Component_Type::SceneComponent;
@@ -144,7 +145,7 @@ void CSceneComponent::SetGameObject(CGameObject* Object)
 	}
 }
 
-void CSceneComponent::AddChild(CSceneComponent* Child)
+void CSceneComponent::AddChild(CSceneComponent* Child, const std::string& SocketName)
 {
 	Child->m_Parent = this;
 
@@ -153,6 +154,21 @@ void CSceneComponent::AddChild(CSceneComponent* Child)
 	Child->m_Transform->m_Parent = m_Transform;
 
 	m_Transform->m_vecChild.push_back(Child->m_Transform);
+
+	// 애니메이션 메쉬 컴포넌트일 경우에만 Socket을 처리한다.
+}
+
+void CSceneComponent::AddChild(CGameObject* Child, const std::string& SocketName)
+{
+	CSceneComponent* ChildComponent = Child->GetRootComponent();
+
+	ChildComponent->m_Parent = this;
+
+	m_vecChild.push_back(ChildComponent);
+
+	ChildComponent->m_Transform->m_Parent = m_Transform;
+
+	m_Transform->m_vecChild.push_back(ChildComponent->m_Transform);
 }
 
 bool CSceneComponent::DeleteChild(CSceneComponent* Child)
@@ -426,7 +442,7 @@ void CSceneComponent::CheckCollision()
 
 void CSceneComponent::PrevRender()
 {
-	if (m_Render)
+	if (m_Render && !m_Culling)
 		CRenderManager::GetInst()->AddRenderList(this);
 
 	size_t	Size = m_vecChild.size();

@@ -6,8 +6,12 @@
 #include "IMGUISameLine.h"
 #include "IMGUISeperator.h"
 #include "IMGUIDummy.h"
+#include "IMGUITree.h"
 #include "Component/SceneComponent.h"
 #include "../Widget/TransformWidget.h"
+#include "IMGUIManager.h"
+#include "../Window/SceneComponentHierarchyWindow.h"
+#include "../EditorInfo.h"
 
 CSceneComponentWidget::CSceneComponentWidget()	:
 	m_NameInput(nullptr),
@@ -26,20 +30,20 @@ bool CSceneComponentWidget::Init()
 	CIMGUIWidgetList::Init();
 	
 	// AddWidget
-	CIMGUIText* Text = AddWidget<CIMGUIText>("Text");
-	Text->SetText("Component Name");
+	m_ComponentTypeText = AddWidget<CIMGUIText>("CompTypeText");
+	m_ComponentTypeText->SetText("SceneComponent");
 
-	AddWidget<CIMGUIDummy>("Dummy", 50.f);
 	AddWidget<CIMGUISameLine>("Line");
 
 	m_EnableCheckBox = AddWidget<CIMGUICheckBox>("Enable");
 	m_EnableCheckBox->AddCheckInfo("Enable");
 
-	m_NameInput = AddWidget<CIMGUITextInput>("Component Name Input");
+	m_NameInput = AddWidget<CIMGUITextInput>("Name");
 	AddWidget<CIMGUISameLine>("Line");
 	m_RenameButton = AddWidget<CIMGUIButton>("Rename", 0.f, 0.f);
 
-	m_TransformWidget = AddWidget<CTransformWidget>("Transform");
+	CIMGUITree* TransformTree = AddWidget<CIMGUITree>("Transform");
+	m_TransformWidget = TransformTree->AddWidget<CTransformWidget>("Transform");
 
 	// CallBack
 	m_RenameButton->SetClickCallback(this, &CSceneComponentWidget::OnClickRenameButton);
@@ -56,11 +60,23 @@ void CSceneComponentWidget::SetSceneComponent(CSceneComponent* Com)
 	m_EnableCheckBox->SetCheck(0, m_Component->IsEnable());
 	m_NameInput->SetText(m_Component->GetName().c_str());
 	m_TransformWidget->SetTransform(m_Component->GetTransform());
+
+	m_PrevName = m_Component->GetName();
+}
+
+void CSceneComponentWidget::OnGameObjectEnable(bool Enable)
+{
+	m_EnableCheckBox->SetCheck(0, Enable);
 }
 
 void CSceneComponentWidget::OnClickRenameButton()
 {
+	// Hierachy °»½Å
+	CSceneComponentHierarchyWindow* Window = (CSceneComponentHierarchyWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(SCENECOMPONENT_HIERARCHY);
+	Window->OnRenameComponent(m_NameInput->GetTextMultibyte(), m_PrevName);
+
 	m_Component->SetName(m_NameInput->GetTextMultibyte());
+	m_PrevName = m_NameInput->GetTextMultibyte();
 }
 
 void CSceneComponentWidget::OnCheckEnableCheckBox(int Idx, bool Check)

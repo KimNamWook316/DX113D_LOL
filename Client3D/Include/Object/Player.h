@@ -21,6 +21,7 @@ private:
     CSharedPtr<CCameraComponent>        m_Camera;
     Vector3     m_Velocity;
     class CPlayerAnimation* m_Animation;
+    CSharedPtr<class CWeapon>   m_Weapon;
 
 public:
     virtual bool Init();
@@ -35,4 +36,5 @@ private:
     void RotationY(float DeltaTime);
     void Attack(float DeltaTime);
 };
+
 

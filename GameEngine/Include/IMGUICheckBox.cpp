@@ -21,11 +21,15 @@ CIMGUICheckBox::~CIMGUICheckBox()
 
 bool CIMGUICheckBox::Init()
 {
+    CIMGUIWidget::Init();
+
     return true;
 }
 
 void CIMGUICheckBox::Render()
 {
+    ImGui::PushID(m_WidgetID);
+
     size_t size = mVecCheckInfo.size();
 
     int count = 0;
@@ -57,4 +61,6 @@ void CIMGUICheckBox::Render()
             }
         }
     }
+
+    ImGui::PopID();
 }

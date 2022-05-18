@@ -20,6 +20,7 @@ public:
 	virtual void Update(float DeltaTime);
 
 public:
+	void OnRenameComponent(const std::string& NewName, const std::string& PrevName);
 	// Component 생성 팝업창 띄워주는 콜백
 	void OnCreateComponentPopUp();
 	std::string GetComponentNameInput()	const;

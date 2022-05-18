@@ -68,6 +68,8 @@ public:
     void SetTexture(int MaterialIndex, int Index, int Register, int ShaderType, const std::string& Name, const std::vector<TCHAR*>& vecFileName, const std::string& PathName = TEXTURE_PATH);
 
 public:
+    virtual void AddChild(CSceneComponent* Child, const std::string& SocketName = "");
+    virtual void AddChild(class CGameObject* Child, const std::string& SocketName = "");
     virtual void Start();
     virtual bool Init();
     virtual void Update(float DeltaTime);

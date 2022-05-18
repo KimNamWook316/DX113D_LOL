@@ -34,6 +34,8 @@ public:
 	virtual void Update(float DeltaTime);
 
 public:
+	// Inspector에서 GameObject 이름 변경되었을 때 호출
+	void OnRenameComponent(const std::string& NewName, const std::string& PrevName);
 	// Component 생성 팝업창 띄워주는 콜백
 	void OnCreateComponentPopUp();
 	// Component 생성 팝업창내에서 Create버튼 누르면 호출되는 콜백

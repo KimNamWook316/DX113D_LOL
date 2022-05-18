@@ -337,6 +337,20 @@ CSkeleton* CAnimationManager3D::FindSkeleton(const std::string& Name)
 	return iter->second;
 }
 
+bool CAnimationManager3D::AddSocket(const std::string& SkeletonName,
+	const std::string& BoneName, const std::string& SocketName,
+	const Vector3& Offset, const Vector3& OffsetRot)
+{
+	CSkeleton* Skeleton = FindSkeleton(SkeletonName);
+
+	if (!Skeleton)
+		return false;
+
+	Skeleton->AddSocket(BoneName, SocketName, Offset, OffsetRot);
+
+	return true;
+}
+
 void CAnimationManager3D::ReleaseSkeleton(const std::string& Name)
 {
 	auto	iter = m_mapSkeleton.find(Name);

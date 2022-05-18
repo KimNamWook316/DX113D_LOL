@@ -10,6 +10,9 @@
 #include "Component/StaticMeshComponent.h"
 #include "../Widget/StaticMeshComponentWidget.h"
 #include "../Widget/ObjectComponentWidget.h"
+#include "../Window/ObjectHierarchyWindow.h"
+#include "IMGUIManager.h"
+#include "../EditorInfo.h"
 
 CGameObjectWidget::CGameObjectWidget()	:
 	m_NameInput(nullptr),
@@ -28,15 +31,14 @@ bool CGameObjectWidget::Init()
 	CIMGUIText* Text = AddWidget<CIMGUIText>("Text");
 	Text->SetText("GameObject Name");
 
-	AddWidget<CIMGUIDummy>("Dummy", 50.f);
 	AddWidget<CIMGUISameLine>("Line");
 
 	m_EnableCheckBox = AddWidget<CIMGUICheckBox>("ObjEnable");
 	m_EnableCheckBox->AddCheckInfo("Enable");
 
-	m_NameInput = AddWidget<CIMGUITextInput>("GameObjNameInput");
+	m_NameInput = AddWidget<CIMGUITextInput>("Name");
 	AddWidget<CIMGUISameLine>("Line");
-	m_RenameButton = AddWidget<CIMGUIButton>("Obj Rename", 0.f, 0.f);
+	m_RenameButton = AddWidget<CIMGUIButton>("Rename", 0.f, 0.f);
 
 	AddWidget<CIMGUISeperator>("Sep");
 
@@ -57,6 +59,8 @@ void CGameObjectWidget::ClearComponentWidget()
 		SAFE_DELETE(*iter);
 	}
 
+	m_SceneComponentWidgetList.clear();
+
 	auto iterO = m_ObjectComponentWidgetList.begin();
 	auto iterOEnd = m_ObjectComponentWidgetList.end();
 
@@ -64,6 +68,10 @@ void CGameObjectWidget::ClearComponentWidget()
 	{
 		SAFE_DELETE(*iterO);
 	}
+
+	m_ObjectComponentWidgetList.clear();
+	
+	mVecChild.resize(7);
 }
 
 void CGameObjectWidget::SetGameObject(CGameObject* Obj)
@@ -128,9 +136,29 @@ void CGameObjectWidget::CreateObjectComponentWidget(CObjectComponent* Com)
 void CGameObjectWidget::OnClickRenameButton()
 {
 	m_Object->SetName(m_NameInput->GetTextMultibyte());
+
+	// Hierachy °»½Å
+	CObjectHierarchyWindow* Hierachy = (CObjectHierarchyWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(OBJECT_HIERARCHY);
+	Hierachy->OnRenameObject(m_NameInput->GetTextMultibyte());
 }
 
 void CGameObjectWidget::OnCheckEnableCheckBox(int Idx, bool Check)
 {
 	m_Object->Enable(Check);
+
+	auto iter = m_SceneComponentWidgetList.begin();
+	auto iterEnd = m_SceneComponentWidgetList.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		(*iter)->OnGameObjectEnable(Check);
+	}
+
+	auto iterO = m_ObjectComponentWidgetList.begin();
+	auto iterOEnd = m_ObjectComponentWidgetList.end();
+
+	for (; iterO != iterOEnd; ++iterO)
+	{
+		(*iterO)->OnGameObjectEnable(Check);
+	}
 }

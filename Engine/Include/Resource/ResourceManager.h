@@ -194,6 +194,8 @@ public:
 	bool LoadSkeletonFullPathMultibyte(const std::string& Name, const char* FullPath,
 		class CScene* Scene = nullptr);
 	CSkeleton* FindSkeleton(const std::string& Name);
+	bool AddSocket(const std::string& SkeletonName, const std::string& BoneName, const std::string& SocketName,
+		const Vector3& Offset = Vector3::Zero, const Vector3& OffsetRot = Vector3::Zero);
 	void ReleaseSkeleton(const std::string& Name);
 
 public:	// =================== Excel =====================

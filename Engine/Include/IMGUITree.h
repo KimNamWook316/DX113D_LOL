@@ -31,7 +31,6 @@ public:
     }
 
 public:
-    CIMGUITree* GetNode(const std::string& name);
     CIMGUITree* GetNode(const int idx);
 
 public:
@@ -105,6 +104,7 @@ protected:
 
     int m_GlobalID;
     bool m_Selected;
+    bool m_Open;
     // false면 Window에서 출력 안함
     bool m_Enable;
     ImGuiTreeNodeFlags  m_Flag;
@@ -114,8 +114,14 @@ protected:
     std::function<void(class CIMGUITree*, const std::string&, const std::string&)> m_DragDropDestCallback;
 
     std::list<std::function<void(class CIMGUITree*)>> m_SelectCallbackList;
+    std::list<std::function<void(class CIMGUITree*)>> m_OpenCallbackList;
 
 public:
+    bool IsOpen()   const
+    {
+        return m_Open;
+    }
+
     void SetEnable(bool Enable)
     {
         m_Enable = Enable;
@@ -169,6 +175,12 @@ public:
     void AddSelectCallback(T* Obj, void(T::* Func)(class CIMGUITree*))
     {
         m_SelectCallbackList.push_back(std::bind(Func, Obj, std::placeholders::_1));
+    }
+
+    template <typename T>
+    void AddOpenCallback(T* Obj, void(T::* Func)(class CIMGUITree*))
+    {
+        m_OpenCallbackList.push_back(std::bind(Func, Obj, std::placeholders::_1));
     }
 };
 

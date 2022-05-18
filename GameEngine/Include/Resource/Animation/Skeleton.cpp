@@ -2,7 +2,7 @@
 #include "../../Device.h"
 #include "../../PathManager.h"
 #include "../Shader/StructuredBuffer.h"
-//#include "BoneSocket.h"
+#include "SkeletonSokcet.h"
 
 CSkeleton::CSkeleton() :
 	m_pOffsetMatrixBuffer(nullptr),
@@ -23,16 +23,16 @@ CSkeleton::CSkeleton(const CSkeleton& skeleton)
 
 	m_pOffsetMatrixBuffer = nullptr;
 
-	//m_BoneSocket.clear();
+	m_BoneSocket.clear();
 
-	/*size_t	Size = skeleton.m_BoneSocket.size();
+	size_t	Size = skeleton.m_BoneSocket.size();
 
 	for (size_t i = 0; i < Size; ++i)
 	{
-		CBoneSocket* Socket = skeleton.m_BoneSocket[i]->Clone();
+		CSkeletonSocket* Socket = skeleton.m_BoneSocket[i]->Clone();
 
 		m_BoneSocket.push_back(Socket);
-	}*/
+	}
 }
 
 CSkeleton::~CSkeleton()
@@ -46,14 +46,14 @@ CSkeleton::~CSkeleton()
 
 	m_vecBones.clear();
 
-	/*size_t	Size = m_BoneSocket.size();
+	size_t	Size = m_BoneSocket.size();
 
 	for (size_t i = 0; i < Size; ++i)
 	{
 		SAFE_DELETE(m_BoneSocket[i]);
 	}
 
-	m_BoneSocket.clear();*/
+	m_BoneSocket.clear();
 }
 
 size_t CSkeleton::GetBoneCount() const
@@ -111,18 +111,19 @@ const Matrix& CSkeleton::GetBoneMatrix(int iIndex) const
 	return m_vecBones[iIndex]->matBone;
 }
 
-//CBoneSocket* CSkeleton::GetSocket(const std::string& Name)
-//{
-//	size_t	Size = m_BoneSocket.size();
-//
-//	for (size_t i = 0; i < Size; ++i)
-//	{
-//		if (m_BoneSocket[i]->m_Name == Name)
-//			return m_BoneSocket[i];
-//	}
-//
-//	return nullptr;
-//}
+CSkeletonSocket* CSkeleton::GetSocket(const std::string& Name)
+{
+	size_t	Size = m_BoneSocket.size();
+
+	for (size_t i = 0; i < Size; ++i)
+	{
+		if (m_BoneSocket[i]->m_Name == Name)
+			return m_BoneSocket[i];
+	}
+
+	return nullptr;
+}
+
 
 void CSkeleton::AddBone(Bone* pBone)
 {
@@ -270,22 +271,21 @@ void CSkeleton::ResetShader()
 	m_pOffsetMatrixBuffer->ResetShader();
 }
 
-//void CSkeleton::AddSocket(const std::string& BoneName, const std::string& SocketName, const Vector3& Offset,
-//	const Vector3& OffsetRot)
-//{
-//	if (!CheckBone(BoneName))
-//		return;
-//
-//	CBoneSocket* Socket = new CBoneSocket;
-//
-//	Socket->m_BoneName = BoneName;
-//	Socket->m_Name = SocketName;
-//	Socket->m_Offset = Offset;
-//	Socket->m_OffsetRot = OffsetRot;
-//	Socket->m_BoneIndex = GetBoneIndex(BoneName);
-//
-//	m_BoneSocket.push_back(Socket);
-//}
+void CSkeleton::AddSocket(const std::string& BoneName, const std::string& SocketName, const Vector3& Offset, const Vector3& OffsetRot)
+{
+	if (!CheckBone(BoneName))
+		return;
+
+	CSkeletonSocket* Socket = new CSkeletonSocket;
+
+	Socket->m_BoneName = BoneName;
+	Socket->m_Name = SocketName;
+	Socket->m_Offset = Offset;
+	Socket->m_OffsetRot = OffsetRot;
+	Socket->m_BoneIndex = GetBoneIndex(BoneName);
+
+	m_BoneSocket.push_back(Socket);
+}
 
 void CSkeleton::Update(float fTime, const std::vector<Matrix>& vecBoneMatrix, const Matrix& matWorld)
 {
@@ -293,8 +293,7 @@ void CSkeleton::Update(float fTime, const std::vector<Matrix>& vecBoneMatrix, co
 
 	for (size_t i = 0; i < Size; ++i)
 	{
-		// m_BoneSocket[i]->Update(vecBoneMatrix[m_BoneSocket[i]->m_BoneIndex] * matWorld);
-		//m_BoneSocket[i]->Update(vecBoneMatrix[m_BoneSocket[i]->m_BoneIndex]);
+		m_BoneSocket[i]->Update(vecBoneMatrix[m_BoneSocket[i]->m_BoneIndex] * matWorld);
 	}
 }
 

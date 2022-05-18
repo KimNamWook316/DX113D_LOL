@@ -34,7 +34,7 @@ private:
 	std::vector<Bone*>				m_vecBones;
 	class CStructuredBuffer* m_pOffsetMatrixBuffer;
 	class CScene* m_Scene;
-	//std::vector<class CBoneSocket*>	m_BoneSocket;
+	std::vector<class CSkeletonSocket*>	m_BoneSocket;
 
 public:
 	size_t GetBoneCount()	const;
@@ -44,7 +44,7 @@ public:
 	bool CheckBone(const std::string& Name)	const;
 	const Matrix& GetBoneMatrix(const std::string& strName)	const;
 	const Matrix& GetBoneMatrix(int iIndex)	const;
-	//class CBoneSocket* GetSocket(const std::string& Name);
+	class CSkeletonSocket* GetSocket(const std::string& Name);
 
 public:
 	void AddBone(Bone* pBone);
@@ -54,8 +54,8 @@ public:
 	bool LoadSkeletonFullPath(class CScene* pScene, const std::string& strName, const char* pFullPath);
 	void SetShader();
 	void ResetShader();
-	//void AddSocket(const std::string& BoneName, const std::string& SocketName,
-	//	const Vector3& Offset = Vector3::Zero, const Vector3& OffsetRot = Vector3::Zero);
+	void AddSocket(const std::string& BoneName, const std::string& SocketName,
+		const Vector3& Offset = Vector3::Zero, const Vector3& OffsetRot = Vector3::Zero);
 	void Update(float fTime, const std::vector<Matrix>& vecBoneMatrix, const Matrix& matWorld);
 	CSkeleton* Clone();
 };

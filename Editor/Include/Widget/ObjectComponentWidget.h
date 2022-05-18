@@ -16,6 +16,9 @@ public:
     // 반드시 Init 이후 이 함수 호출해야 함
     void SetObjectComponent(class CObjectComponent* Com);
 
+public:
+    void OnGameObjectEnable(bool Enable);
+
 private:
     void OnClickRenameButton();
     void OnCheckEnableCheckBox(int Idx, bool Check);
@@ -25,5 +28,6 @@ protected:
     class CIMGUITextInput* m_NameInput;
     class CIMGUIButton* m_RenameButton;
     class CIMGUICheckBox* m_EnableCheckBox;
+    std::string m_PrevName;
 };
 

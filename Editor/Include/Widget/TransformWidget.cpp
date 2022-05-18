@@ -5,6 +5,7 @@
 #include "IMGUITree.h"
 #include "IMGUIInputFloat3.h"
 #include "IMGUISameLine.h"
+#include "IMGUIDummy.h"
 
 CTransformWidget::CTransformWidget()	:
 	m_Transform(nullptr),
@@ -37,7 +38,7 @@ bool CTransformWidget::Init()
 
 	// AddWidget
 	CIMGUIText* Text = AddWidget<CIMGUIText>("Text");
-	Text->SetText("Transform");
+	Text->SetText("Inheritance");
 
 	m_InheritCheckBox = AddWidget<CIMGUICheckBox>("Inherit", 0.f, 0.f);
 	m_InheritCheckBox->SetColNum(4);
@@ -48,6 +49,8 @@ bool CTransformWidget::Init()
 	m_InheritCheckBox->AddCheckInfo("PosX");
 	m_InheritCheckBox->AddCheckInfo("PosY");
 	m_InheritCheckBox->AddCheckInfo("PosZ");
+
+	AddWidget<CIMGUIDummy>("Dummy", 0.f, 0.f);
 
 	m_WorldTree = AddWidget<CIMGUITree>("World Transform");
 	m_WorldPosInput = m_WorldTree->AddWidget<CIMGUIInputFloat3>("Position");

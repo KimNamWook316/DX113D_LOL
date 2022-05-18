@@ -17,15 +17,20 @@ public:
     // SceneComponent 상속 위젯 만들때마다 오버라이드 해야 함
     virtual void SetSceneComponent(class CSceneComponent* Com);
 
+public:
+    void OnGameObjectEnable(bool Enable);
+
 private:
     void OnClickRenameButton();
     void OnCheckEnableCheckBox(int Idx, bool Check);
 
 protected:
     CSharedPtr<class CSceneComponent> m_Component;
+    class CIMGUIText* m_ComponentTypeText;
     class CIMGUITextInput* m_NameInput;
     class CIMGUIButton* m_RenameButton;
     class CIMGUICheckBox* m_EnableCheckBox;
     class CTransformWidget* m_TransformWidget;
+    std::string m_PrevName;
 };
 

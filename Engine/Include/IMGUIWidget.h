@@ -13,7 +13,7 @@ class CIMGUIWidget
 	friend class CIMGUIMainMenuBar;
 	friend class CIMGUIBeginMenu;
 
-protected:
+public:
 	CIMGUIWidget();
 	virtual ~CIMGUIWidget();
 

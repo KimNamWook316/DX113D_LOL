@@ -5,6 +5,7 @@
 #include "../Render/RenderManager.h"
 #include "../Resource/Shader/Standard2DConstantBuffer.h"
 #include "../Animation/AnimationSequenceInstance.h"
+#include "../GameObject/GameObject.h"
 
 CAnimationMeshComponent::CAnimationMeshComponent()
 {
@@ -334,4 +335,31 @@ void CAnimationMeshComponent::Load(FILE* File)
 	}
 
 	CSceneComponent::Load(File);
+}
+void CAnimationMeshComponent::AddChild(CSceneComponent* Child,
+	const std::string& SocketName)
+{
+	CSceneComponent::AddChild(Child, SocketName);
+
+	if (m_Skeleton && SocketName != "")
+	{
+		m_Socket = m_Skeleton->GetSocket(SocketName);
+
+		Child->GetTransform()->SetSocket(m_Socket);
+	}
+}
+
+void CAnimationMeshComponent::AddChild(CGameObject* Child,
+	const std::string& SocketName)
+{
+	CSceneComponent::AddChild(Child, SocketName);
+
+	if (m_Skeleton && SocketName != "")
+	{
+		m_Socket = m_Skeleton->GetSocket(SocketName);
+
+		CSceneComponent* ChildComponent = Child->GetRootComponent();
+
+		ChildComponent->GetTransform()->SetSocket(m_Socket);
+	}
 }

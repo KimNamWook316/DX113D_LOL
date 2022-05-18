@@ -8,7 +8,8 @@ CIMGUITree::CIMGUITree()	:
 	mParent(nullptr),
 	m_GlobalID(-1),
 	m_Selected(false),
-	m_Enable(true)
+	m_Enable(true),
+	m_Open(false)
 {
 	m_Flag |= ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
 	m_DefaultFlag = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
@@ -31,27 +32,6 @@ CIMGUITree::~CIMGUITree()
 	}
 }
 
-CIMGUITree* CIMGUITree::GetNode(const std::string& name)
-{
-	if (m_Name == name)
-	{
-		return this;
-	}
-
-	size_t size = mVecChild.size();
-	for (size_t i = 0; i < size; ++i)
-	{
-		CIMGUITree* result = mVecChild[i]->GetNode(name);
-
-		if (result)
-		{
-			return result;
-		}
-	}
-
-	return nullptr;
-}
-
 CIMGUITree* CIMGUITree::GetNode(const int idx)
 {
 	if ((int)(mVecChild.size()) - 1 < idx)
@@ -62,8 +42,15 @@ CIMGUITree* CIMGUITree::GetNode(const int idx)
 
 CIMGUITree* CIMGUITree::FindChild(const std::string& Name)
 {
+	if (m_Name == Name)
+	{
+		return this;
+	}
+
 	if (mVecChild.empty())
+	{
 		return nullptr;
+	}
 	
 	size_t ChildSize = mVecChild.size();
 
@@ -262,6 +249,17 @@ void CIMGUITree::Render()
 	// if문 안으로 들어가면 무조건 하나(ex 제일 위에 TreeNode)의 ID골라서 그거 Selected Flag 추가해주기
 	if (ImGui::TreeNodeEx(m_Name.c_str(), m_Flag))
 	{
+		if (!m_Open)
+		{
+			m_Open = true;
+
+			auto iter = m_OpenCallbackList.begin();
+			auto iterEnd = m_OpenCallbackList.end();
+
+			for (; iter != iterEnd; ++iter)
+				(*iter)(this);
+		}
+		
 		if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
 		{
 			ImGui::SetDragDropPayload("DND_DEMO_CELL", &m_GlobalID, sizeof(int));
@@ -340,6 +338,9 @@ void CIMGUITree::Render()
 
 	else
 	{
+		if (m_Open)
+			m_Open = false;
+
 		if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
 		{
 			ImGui::SetDragDropPayload("DND_DEMO_CELL", &m_GlobalID, sizeof(int));

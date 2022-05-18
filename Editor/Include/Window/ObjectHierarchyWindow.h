@@ -14,6 +14,7 @@ private:
 	class CIMGUIButton* m_ObjectCreatePopUpButton;
 	class CObjectCreateModal* m_ObjectCreateModal;
 	class CIMGUIButton* m_ObjectDeleteButton;
+	class CGameObject* m_SelectObject;
 
 	class CIMGUITree* m_Root;
 	class CIMGUITree* m_SelectNode;
@@ -22,12 +23,16 @@ private:
 
 public:
 	class CIMGUITree* GetRoot()	const;
+	class CGameObject* GetSelectObject()	const;
 
 public:
 	virtual bool Init();
 	virtual void Update(float DeltaTime);
 
 public:
+	// Inspector에서 GameObject 이름 변경되었을 때 호출
+	void OnRenameObject(const std::string& Name);
+
 	// 오브젝트 생성 팝업창 띄워주는 콜백
 	void OnCreateObjectPopUp();
 	void OnDeleteObject();
