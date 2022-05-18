@@ -23,5 +23,8 @@ public:
 public:
 	void OnOpenBrowserTree(class CIMGUITree* Tree);
 	void OnShowFileBrowser(class CIMGUITree* Tree);
+
+private:
+	void GetFullPath(const std::string& Path, std::string& NewFullPath);
 };
 

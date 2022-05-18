@@ -56,14 +56,17 @@ void CFileBrowserTree::OnOpenBrowserTree(CIMGUITree* Tree)
 	// open한 디렉토리의 경로안에 있는 디렉토리 목록들을 다시 받아와서 Tree의 Child로 넣어준다
 	const PathInfo* Info = CPathManager::GetInst()->FindPath(Tree->GetName());
 
-	if(Info)
+	if (Info)
+	{
 		m_CurrentFullPath = Info->PathMultibyte;
+		m_CurrentPath = Tree->GetName();
+	}
 
 	else
 	{
-		// 클릭한 TreeNode 내부까지의 경로
-		m_CurrentFullPath += Tree->GetName();
-		m_CurrentFullPath += "\\";
+		std::string NewFullPath;
+		// 클릭한 TreeNode 내부까지의 경로가 PathManager에 없는 경로라면 거기까지의 풀 경로를 새로 만들어줘야 한다
+		GetFullPath(Tree->GetName(), NewFullPath);
 	}
 
 	std::vector<std::string> vecFileName;
@@ -106,5 +109,12 @@ void CFileBrowserTree::OnShowFileBrowser(CIMGUITree* Tree)
 	{
 		FileBrowser->SetInitialPath(NewPath);
 	}
+}
+
+void CFileBrowserTree::GetFullPath(const std::string& Path, std::string& NewFullPath)
+{
+	const PathInfo* Info = CPathManager::GetInst()->FindPath(ROOT_PATH);
+
+	//std::vector<
 }
 
