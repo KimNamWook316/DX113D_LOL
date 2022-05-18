@@ -35,6 +35,9 @@ protected:
 	float	m_ChangeTimeAcc;
 	float	m_ChangeTime;
 
+	// Animation Editor ¡∂¿€
+	bool m_EditorStopAnimation;
+	bool m_EditorStopTargetFrame;
 
 public:
 	size_t GetTypeID()	const

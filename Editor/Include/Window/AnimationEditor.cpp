@@ -27,7 +27,8 @@ CAnimationEditor::CAnimationEditor()
 
 CAnimationEditor::~CAnimationEditor()
 {
-	SAFE_DELETE(m_Animation);
+	// 이 Animation 은 실제 3DTestObject 에서 얻어온 Animation 이다. 
+	// SAFE_DELETE(m_Animation);
 }
 
 bool CAnimationEditor::Init()
