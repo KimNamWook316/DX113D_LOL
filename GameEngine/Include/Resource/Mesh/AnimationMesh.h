@@ -24,6 +24,7 @@ public:
 	void SetSkeleton(const std::string& Name, const TCHAR* FileName,
 		const std::string& PathName = MESH_PATH);
 	virtual bool LoadMeshFullPathMultibyte(const char* FullPath);
+	virtual bool LoadMeshFullPathMultibyte(std::string& OutName, const char* FullPath) override;
 	virtual bool ConvertFBXLocalFileMultiByte(const char* FullPath);
 
 public:

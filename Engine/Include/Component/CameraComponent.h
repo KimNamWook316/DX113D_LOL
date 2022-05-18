@@ -1,5 +1,7 @@
 #pragma once
+
 #include "SceneComponent.h"
+
 class CCameraComponent :
 	public CSceneComponent
 {
@@ -19,6 +21,7 @@ protected:
 	float		m_Distance;
 	Resolution	m_RS;
 	Vector2		m_Ratio;
+	class CFrustum* m_Frustum;
 
 public:
 	Resolution GetResolution()	const
@@ -99,6 +102,10 @@ public:
 			m_Ratio.y = y;
 		}
 	}
+
+public:
+	bool FrustumInPoint(const Vector3& Point);
+	bool FrustumInSphere(const SphereInfo& Sphere);
 
 private:
 	void CreateProjectionMatrix();

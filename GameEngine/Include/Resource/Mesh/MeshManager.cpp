@@ -190,6 +190,20 @@ bool CMeshManager::LoadMesh(Mesh_Type Type, const std::string& Name,
 	return LoadMeshFullPath(Type, Name, FullPath, Scene);
 }
 
+bool CMeshManager::LoadMesh(std::string& OutName, Mesh_Type Type, const TCHAR* FileName, const std::string& PathName, CScene* Scene)
+{
+	TCHAR	FullPath[MAX_PATH] = {};
+
+	const PathInfo* Info = CPathManager::GetInst()->FindPath(PathName);
+
+	if (Info)
+		lstrcpy(FullPath, Info->Path);
+
+	lstrcat(FullPath, FileName);
+
+	return LoadMeshFullPath(OutName, Type, FullPath, Scene);
+}
+
 bool CMeshManager::LoadMeshFullPath(Mesh_Type Type, 
 	const std::string& Name, const TCHAR* FullPath, class CScene* Scene)
 {
@@ -209,6 +223,24 @@ bool CMeshManager::LoadMeshFullPath(Mesh_Type Type,
 	return LoadMeshFullPathMultibyte(Type, Name, FullPathMultibyte, Scene);
 }
 
+bool CMeshManager::LoadMeshFullPath(std::string& OutName, Mesh_Type Type, const TCHAR* FullPath, CScene* Scene)
+{
+	char	FullPathMultibyte[MAX_PATH] = {};
+
+#ifdef UNICODE
+
+	int	ConvertLength = WideCharToMultiByte(CP_ACP, 0, FullPath, -1, nullptr, 0, nullptr, nullptr);
+	WideCharToMultiByte(CP_ACP, 0, FullPath, -1, FullPathMultibyte, ConvertLength, nullptr, nullptr);
+
+#else
+
+	strcpy_s(FullPathMultibyte, FullPath);
+
+#endif // UNICODE
+
+	return LoadMeshFullPathMultibyte(OutName,Type, FullPathMultibyte, Scene);
+}
+
 bool CMeshManager::LoadMeshMultibyte(Mesh_Type Type,
 	const std::string& Name, const char* FileName, 
 	const std::string& PathName, class CScene* Scene)
@@ -223,6 +255,20 @@ bool CMeshManager::LoadMeshMultibyte(Mesh_Type Type,
 	strcat_s(FullPath, FileName);
 
 	return LoadMeshFullPathMultibyte(Type, Name, FullPath, Scene);
+}
+
+bool CMeshManager::LoadMeshMultibyte(std::string& OutName, Mesh_Type Type, const char* FileName, const std::string& PathName, CScene* Scene)
+{
+	char	FullPath[MAX_PATH] = {};
+
+	const PathInfo* Info = CPathManager::GetInst()->FindPath(PathName);
+
+	if (Info)
+		strcpy_s(FullPath, Info->PathMultibyte);
+
+	strcat_s(FullPath, FileName);
+
+	return LoadMeshFullPathMultibyte(OutName, Type, FullPath, Scene);
 }
 
 bool CMeshManager::LoadMeshFullPathMultibyte(Mesh_Type Type, const std::string& Name, const char* FullPath, class CScene* Scene)
@@ -256,6 +302,38 @@ bool CMeshManager::LoadMeshFullPathMultibyte(Mesh_Type Type, const std::string& 
 
 	m_mapMesh.insert(std::make_pair(Name, Mesh));
 
+	return true;
+}
+
+bool CMeshManager::LoadMeshFullPathMultibyte(std::string& OutName, Mesh_Type Type, const char* FullPath, CScene* Scene)
+{
+	CMesh* Mesh = nullptr;
+
+	switch (Type)
+	{
+	case Mesh_Type::Static:
+		Mesh = new CStaticMesh;
+		break;
+	case Mesh_Type::Animation:
+		Mesh = new CAnimationMesh;
+		break;
+	}
+
+	Mesh->SetScene(Scene);
+
+	if (!Mesh->LoadMeshFullPathMultibyte(OutName, FullPath))
+	{
+		SAFE_RELEASE(Mesh);
+		return false;
+	}
+
+	if (FindMesh(OutName))
+	{
+		SAFE_RELEASE(Mesh);
+		return true;
+	}
+
+	m_mapMesh.insert(std::make_pair(OutName, Mesh));
 	return true;
 }
 

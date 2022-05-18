@@ -104,7 +104,7 @@ Vertex3DOutput Standard3DVS(Vertex3D input)
                 input.Binormal, input.BlendWeight, input.BlendIndex);
     
     
-    float3 Pos = Info.Pos - g_Pivot * g_MeshSize;
+    float3 Pos = Info.Pos;
 
     output.ProjPos = mul(float4(Pos, 1.f), g_matWVP);
     output.Pos = output.ProjPos;

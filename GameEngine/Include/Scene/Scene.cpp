@@ -4,6 +4,7 @@
 #include "SceneManager.h"
 #include "../Component/CameraComponent.h"
 #include "../GameObject/SkyObject.h"
+#include "../Input.h"
 
 CScene::CScene()
 {
@@ -167,9 +168,30 @@ void CScene::PostUpdate(float DeltaTime)
 	iter = m_ObjList.begin();
 	iterEnd = m_ObjList.end();
 
+	m_RenderComponentList.clear();
+
 	for (; iter != iterEnd; ++iter)
 	{
 		(*iter)->AddCollision();
+
+		const std::list<CSceneComponent*>& List = (*iter)->GetSceneComponents();
+
+		auto iter1 = List.begin();
+		auto iter1End = List.end();
+
+		for (; iter1 != iter1End; ++iter1)
+		{
+			if ((*iter1)->GetRender() && !(*iter1)->GetCulling())
+			{
+				m_RenderComponentList.push_back(*iter1);
+			}
+		}
+	}
+
+	// 출력되는 물체를 정렬한다.
+	if (m_RenderComponentList.size() >= 2)
+	{
+		m_RenderComponentList.sort(SortRenderList);
 	}
 
 	// 포함된 충돌체들을 이용해서 충돌처리를 진행한다.
@@ -270,4 +292,28 @@ void CScene::LoadFullPath(const char* FullPath)
 	}
 
 	fclose(File);
+}
+
+bool CScene::Picking(CGameObject*& Result)
+{
+	CCameraComponent* Camera = m_CameraManager->GetCurrentCamera();
+
+	Ray	ray = CInput::GetInst()->GetRay(Camera->GetViewMatrix());
+
+	auto	iter = m_RenderComponentList.begin();
+	auto	iterEnd = m_RenderComponentList.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+	}
+
+	return false;
+}
+
+bool CScene::SortRenderList(CSceneComponent* Src, CSceneComponent* Dest)
+{
+	SphereInfo	SrcInfo = Src->GetSphereInfoViewSpace();
+	SphereInfo	DestInfo = Dest->GetSphereInfoViewSpace();
+
+	return SrcInfo.Center.Length() - SrcInfo.Radius > DestInfo.Center.Length() - DestInfo.Radius;
 }

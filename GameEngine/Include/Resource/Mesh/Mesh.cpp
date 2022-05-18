@@ -9,7 +9,9 @@
 #include "FBXLoader.h"
 
 CMesh::CMesh()	:
-	m_Scene(nullptr)
+	m_Scene(nullptr),
+	m_Min(FLT_MAX,FLT_MAX,FLT_MAX),
+	m_Max(FLT_MAX,FLT_MAX,FLT_MAX)
 {
 }
 
@@ -109,6 +111,20 @@ bool CMesh::LoadMesh(const TCHAR* FileName,
 	return LoadMeshFullPath(FullPath);
 }
 
+bool CMesh::LoadMesh(std::string& OutName, const TCHAR* FileName, const std::string& PathName)
+{
+	const PathInfo* Path = CPathManager::GetInst()->FindPath(PathName);
+
+	TCHAR FullPath[MAX_PATH] = {};
+
+	if (Path)
+		lstrcpy(FullPath, Path->Path);
+
+	lstrcat(FullPath, FileName);
+
+	return LoadMeshFullPath(OutName, FullPath);
+}
+
 bool CMesh::LoadMeshFullPath(const TCHAR* FullPath)
 {
 	char    FullPathMultibyte[MAX_PATH] = {};
@@ -117,6 +133,16 @@ bool CMesh::LoadMeshFullPath(const TCHAR* FullPath)
 	WideCharToMultiByte(CP_ACP, 0, FullPath, -1, FullPathMultibyte, Length, 0, 0);
 
 	return LoadMeshFullPathMultibyte(FullPathMultibyte);
+}
+
+bool CMesh::LoadMeshFullPath(std::string& OutName, const TCHAR* FullPath)
+{
+	char    FullPathMultibyte[MAX_PATH] = {};
+
+	int Length = WideCharToMultiByte(CP_ACP, 0, FullPath, -1, 0, 0, 0, 0);
+	WideCharToMultiByte(CP_ACP, 0, FullPath, -1, FullPathMultibyte, Length, 0, 0);
+
+	return LoadMeshFullPathMultibyte(OutName, FullPathMultibyte);
 }
 
 bool CMesh::LoadMeshMultibyte(const char* FileName,
@@ -134,7 +160,26 @@ bool CMesh::LoadMeshMultibyte(const char* FileName,
 	return LoadMeshFullPathMultibyte(FullPath);
 }
 
+bool CMesh::LoadMeshMultibyte(std::string& OutName, const char* FileName, const std::string& PathName)
+{
+	const PathInfo* Path = CPathManager::GetInst()->FindPath(PathName);
+
+	char FullPath[MAX_PATH] = {};
+
+	if (Path)
+		strcpy_s(FullPath, Path->PathMultibyte);
+
+	strcat_s(FullPath, FileName);
+
+	return LoadMeshFullPathMultibyte(OutName, FullPath);
+}
+
 bool CMesh::LoadMeshFullPathMultibyte(const char* FullPath)
+{
+	return false;
+}
+
+bool CMesh::LoadMeshFullPathMultibyte(std::string& OutName, const char* FullPath)
 {
 	return false;
 }

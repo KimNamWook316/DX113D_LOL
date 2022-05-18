@@ -816,6 +816,9 @@
     <ClCompile Include="Resource\Animation\SkeletonSokcet.cpp">
       <Filter>02. Resource\05. Animation\02. 3D</Filter>
     </ClCompile>
+    <ClCompile Include="Component\Frustum.cpp">
+      <Filter>05. Component\01. SceneComponent\03. Camera</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Device.h">
@@ -1387,6 +1390,9 @@
     </ClInclude>
     <ClInclude Include="Resource\Animation\SkeletonSokcet.h">
       <Filter>02. Resource\05. Animation\02. 3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Frustum.h">
+      <Filter>05. Component\01. SceneComponent\03. Camera</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

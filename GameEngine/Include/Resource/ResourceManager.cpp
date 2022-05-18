@@ -110,11 +110,20 @@ bool CResourceManager::CreateMesh(Mesh_Type Type,
 		Fmt, Scene);
 }
 
+bool CResourceManager::LoadMesh(std::string& OutName, Mesh_Type Type, const TCHAR* FileName, const std::string& PathName, CScene* Scene)
+{
+	return m_MeshManager->LoadMesh(OutName, Type, FileName, PathName, Scene);
+}
 
 bool CResourceManager::LoadMesh(Mesh_Type Type, const std::string& Name,
 	const TCHAR* FileName, const std::string& PathName, class CScene* Scene)
 {
 	return m_MeshManager->LoadMesh(Type, Name, FileName, PathName, Scene);
+}
+
+bool CResourceManager::LoadMeshFullPath(std::string& OutName, Mesh_Type Type, const TCHAR* FullPath, CScene* Scene)
+{
+	return m_MeshManager->LoadMeshFullPath(OutName, Type, FullPath, Scene);
 }
 
 bool CResourceManager::LoadMeshFullPath(Mesh_Type Type, const std::string& Name,
@@ -123,14 +132,23 @@ bool CResourceManager::LoadMeshFullPath(Mesh_Type Type, const std::string& Name,
 	return m_MeshManager->LoadMeshFullPath(Type, Name, FullPath, Scene);
 }
 
+bool CResourceManager::LoadMeshMultibyte(std::string& OutName, Mesh_Type Type, const char* FileName, const std::string& PathName, CScene* Scene)
+{
+	return m_MeshManager->LoadMeshMultibyte(OutName, Type, FileName, PathName, Scene);
+}
+
 bool CResourceManager::LoadMeshMultibyte(Mesh_Type Type, const std::string& Name,
 	const char* FileName, const std::string& PathName, class CScene* Scene)
 {
 	return m_MeshManager->LoadMeshMultibyte(Type, Name, FileName, PathName, Scene);
 }
 
-bool CResourceManager::LoadMeshFullPathMultibyte(
-	Mesh_Type Type, const std::string& Name, const char* FullPath, class CScene* Scene)
+bool CResourceManager::LoadMeshFullPathMultibyte(std::string& OutName, Mesh_Type Type, const char* FullPath, CScene* Scene)
+{
+	return m_MeshManager->LoadMeshFullPathMultibyte(OutName, Type, FullPath, Scene);
+}
+
+bool CResourceManager::LoadMeshFullPathMultibyte(Mesh_Type Type, const std::string& Name, const char* FullPath, class CScene* Scene)
 {
 	return m_MeshManager->LoadMeshFullPathMultibyte(Type, Name, FullPath, Scene);
 }

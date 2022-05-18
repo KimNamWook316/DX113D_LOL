@@ -114,16 +114,8 @@ void CStaticMeshComponentWidget::OnClickLoadMesh()
 
 	if (GetOpenFileName(&OpenFile) != 0)
 	{
-		TCHAR   FileName[MAX_PATH] = {};
-
-		_wsplitpath_s(FilePath, 0, 0, 0, 0, FileName, MAX_PATH, 0, 0);
-
-		char    ConvertFileName[MAX_PATH] = {};
-
-		int Length = WideCharToMultiByte(CP_ACP, 0, FileName, -1, 0, 0, 0, 0);
-		WideCharToMultiByte(CP_ACP, 0, FileName, -1, ConvertFileName, Length, 0, 0);
-
-		// TODO : 메쉬 로드
+		std::string MeshName;
+		CSceneManager::GetInst()->GetScene()->GetResource()->LoadMeshFullPath(MeshName, Mesh_Type::Static, FilePath);
 	}
 }
 

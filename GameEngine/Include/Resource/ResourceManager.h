@@ -36,12 +36,20 @@ public:	// =================== Mesh =====================
 		D3D11_PRIMITIVE_TOPOLOGY Primitive, void* IdxData = nullptr, int IdxSize = 0, int IdxCount = 0,
 		D3D11_USAGE IdxUsage = D3D11_USAGE_DEFAULT, DXGI_FORMAT Fmt = DXGI_FORMAT_UNKNOWN,
 		class CScene* Scene = nullptr);
+	bool LoadMesh(std::string& OutName, Mesh_Type Type,const TCHAR* FileName,
+		const std::string& PathName = MESH_PATH, class CScene* Scene = nullptr);
 	bool LoadMesh(Mesh_Type Type, const std::string& Name, const TCHAR* FileName,
 		const std::string& PathName = MESH_PATH, class CScene* Scene = nullptr);
+	bool LoadMeshFullPath(std::string& OutName,Mesh_Type Type,
+		const TCHAR* FullPath, class CScene* Scene = nullptr);
 	bool LoadMeshFullPath(Mesh_Type Type, const std::string& Name,
 		const TCHAR* FullPath, class CScene* Scene = nullptr);
+	bool LoadMeshMultibyte(std::string& OutName, Mesh_Type Type, const char* FileName,
+		const std::string& PathName = MESH_PATH, class CScene* Scene = nullptr);
 	bool LoadMeshMultibyte(Mesh_Type Type, const std::string& Name, const char* FileName,
 		const std::string& PathName = MESH_PATH, class CScene* Scene = nullptr);
+	bool LoadMeshFullPathMultibyte(std::string& OutName, Mesh_Type Type,
+		const char* FullPath, class CScene* Scene = nullptr);
 	bool LoadMeshFullPathMultibyte(Mesh_Type Type, const std::string& Name,
 		const char* FullPath, class CScene* Scene = nullptr);
 	bool SetMeshSkeleton(const std::string& Name, const std::string& SkeletonName);

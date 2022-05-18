@@ -35,6 +35,7 @@
     <ClCompile Include="Component\ColliderPixel.cpp" />
     <ClCompile Include="Component\ColliderSphere.cpp" />
     <ClCompile Include="Component\Component.cpp" />
+    <ClCompile Include="Component\Frustum.cpp" />
     <ClCompile Include="Component\LandScape.cpp" />
     <ClCompile Include="Component\LightComponent.cpp" />
     <ClCompile Include="Component\NavAgent.cpp" />
@@ -217,6 +218,7 @@
     <ClInclude Include="Component\ColliderPixel.h" />
     <ClInclude Include="Component\ColliderSphere.h" />
     <ClInclude Include="Component\Component.h" />
+    <ClInclude Include="Component\Frustum.h" />
     <ClInclude Include="Component\LandScape.h" />
     <ClInclude Include="Component\LightComponent.h" />
     <ClInclude Include="Component\NavAgent.h" />
