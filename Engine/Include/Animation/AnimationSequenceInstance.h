@@ -86,7 +86,7 @@ public:
 
 	void SetSkeleton(class CSkeleton* Skeleton);
 	void GetAnimationSequenceNames(std::vector<std::string>& VecSequenceNames);
-
+	void SetCurrentAnimationFrameIdx(int Idx);
 public:
 	void AddAnimation(const std::string& SequenceName, const std::string& Name, bool Loop = true, float PlayTime = 1.f,
 		float PlayScale = 1.f);

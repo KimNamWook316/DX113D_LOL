@@ -816,9 +816,6 @@
     <ClCompile Include="Resource\Animation\SkeletonSokcet.cpp">
       <Filter>02. Resource\05. Animation\02. 3D</Filter>
     </ClCompile>
-    <ClCompile Include="Animation\SkeletonSocket.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="Component\Frustum.cpp">
       <Filter>05. Component\01. SceneComponent\03. Camera</Filter>
     </ClCompile>
@@ -1393,9 +1390,6 @@
     </ClInclude>
     <ClInclude Include="Resource\Animation\SkeletonSokcet.h">
       <Filter>02. Resource\05. Animation\02. 3D</Filter>
-    </ClInclude>
-    <ClInclude Include="Animation\SkeletonSocket.h">
-      <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Component\Frustum.h">
       <Filter>05. Component\01. SceneComponent\03. Camera</Filter>

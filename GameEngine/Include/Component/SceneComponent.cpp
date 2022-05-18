@@ -4,6 +4,8 @@
 #include "../GameObject/GameObject.h"
 #include "../Resource/Shader/Standard2DConstantBuffer.h"
 #include "../Scene/SceneManager.h"
+#include "../Scene/CameraManager.h"
+#include "CameraComponent.h"
 
 CSceneComponent::CSceneComponent() :
 	m_Culling(false)
@@ -20,6 +22,8 @@ CSceneComponent::CSceneComponent() :
 	m_Parent = nullptr;
 
 	m_LayerName = "Default";
+
+	m_Culling = false;
 }
 
 CSceneComponent::CSceneComponent(const CSceneComponent& com) :
@@ -34,6 +38,8 @@ CSceneComponent::CSceneComponent(const CSceneComponent& com) :
 	m_Transform->m_Owner = this;
 
 	m_Parent = nullptr;
+
+	m_Culling = false;
 
 	m_vecChild.clear();
 
@@ -56,6 +62,20 @@ CSceneComponent::CSceneComponent(const CSceneComponent& com) :
 CSceneComponent::~CSceneComponent()
 {
 	SAFE_DELETE(m_Transform);
+}
+
+SphereInfo CSceneComponent::GetSphereInfoViewSpace() const
+{
+	SphereInfo Info;
+
+	CCameraComponent* Camera = m_Scene->GetCameraManager()->GetCurrentCamera();
+
+	Info.Center = m_SphereInfo.Center * GetWorldScale() + GetWorldPos();
+	Info.Radius = m_SphereInfo.Radius;
+
+	Info.Center = Info.Center.TransformCoord(Camera->GetViewMatrix());
+
+	return Info;
 }
 
 void CSceneComponent::SetSceneComponent(CGameObject* Object)
@@ -432,6 +452,19 @@ void CSceneComponent::PostUpdate(float DeltaTime)
 
 void CSceneComponent::CheckCollision()
 {
+	if (m_Render)
+	{
+		SphereInfo Info;
+
+		Info.Center = m_SphereInfo.Center * GetWorldScale() + GetWorldPos();
+		Info.Radius = (GetMeshSize() * GetWorldScale()).Length() / 2.f;
+		m_SphereInfo.Radius = Info.Radius;
+
+		CCameraComponent* Camera = m_Scene->GetCameraManager()->GetCurrentCamera();
+
+		m_Culling = Camera->FrustumInSphere(Info);
+	}
+
 	size_t	Size = m_vecChild.size();
 
 	for (size_t i = 0; i < Size; ++i)
@@ -443,7 +476,9 @@ void CSceneComponent::CheckCollision()
 void CSceneComponent::PrevRender()
 {
 	if (m_Render && !m_Culling)
+	{
 		CRenderManager::GetInst()->AddRenderList(this);
+	}
 
 	size_t	Size = m_vecChild.size();
 

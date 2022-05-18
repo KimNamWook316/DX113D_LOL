@@ -111,6 +111,14 @@ void CAnimationSequenceInstance::GetAnimationSequenceNames(std::vector<std::stri
 	}
 }
 
+void CAnimationSequenceInstance::SetCurrentAnimationFrameIdx(int Idx)
+{
+	if (!m_CurrentAnimation)
+		return;
+
+	m_CurrentAnimation->GetAnimationSequence()->m_CurrentFrameIdx = Idx;
+}
+
 void CAnimationSequenceInstance::AddAnimation(const std::string& SequenceName,
 	const std::string& Name, bool Loop,
 	float PlayTime, float PlayScale)
@@ -360,6 +368,8 @@ void CAnimationSequenceInstance::Update(float DeltaTime)
 		// 수정자 : 이도경 / 내용 : AnimationSequence가 아닌 AnimationSequenceInstance의 멤버 사용하는 것으로 수정
 		// 날짜 : 22.05.02
 		int	FrameIndex = (int)(AnimationTime / m_CurrentAnimation->m_FrameTime);
+
+		m_CurrentAnimation->GetAnimationSequence()->m_CurrentFrameIdx = FrameIndex;
 
 		int	NextFrameIndex = FrameIndex + 1;
 

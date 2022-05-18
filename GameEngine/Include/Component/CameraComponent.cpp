@@ -1,6 +1,6 @@
-
 #include "CameraComponent.h"
 #include "../Device.h"
+#include "Frustum.h"
 
 CCameraComponent::CCameraComponent()
 {
@@ -10,6 +10,8 @@ CCameraComponent::CCameraComponent()
 	m_CameraType = Camera_Type::Camera3D;
 	m_ViewAngle = 90.f;
 	m_Distance = 1000.f;
+
+	m_Frustum = new CFrustum;
 }
 
 CCameraComponent::CCameraComponent(const CCameraComponent& com) :
@@ -21,10 +23,23 @@ CCameraComponent::CCameraComponent(const CCameraComponent& com) :
 	m_ViewAngle = com.m_ViewAngle;
 	m_Distance = com.m_Distance;
 	m_RS = com.m_RS;
+	
+	m_Frustum = new CFrustum;
 }
 
 CCameraComponent::~CCameraComponent()
 {
+	SAFE_DELETE(m_Frustum);
+}
+
+bool CCameraComponent::FrustumInPoint(const Vector3& Point)
+{
+	return m_Frustum->FrustumInPoint(Point);
+}
+
+bool CCameraComponent::FrustumInSphere(const SphereInfo& Sphere)
+{
+	return m_Frustum->FrustumInSphere(Sphere);
 }
 
 void CCameraComponent::CreateProjectionMatrix()

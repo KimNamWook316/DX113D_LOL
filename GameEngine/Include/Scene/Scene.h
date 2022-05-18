@@ -33,6 +33,8 @@ private:
 	bool		m_Start;
 	bool		m_Change;
 
+	std::list<class CSceneComponent*> m_RenderComponentList;
+
 public:
 	void SetAutoChange(bool Change)
 	{
@@ -127,6 +129,9 @@ public:
 	void LoadFullPath(const char* FullPath);
 
 public:
+	bool Picking(CGameObject*& Result);
+
+public:
 	template <typename T>
 	bool CreateSceneMode()
 	{
@@ -199,5 +204,8 @@ public:
 
 		return Obj;
 	}
+
+private:
+	static bool SortRenderList(class CSceneComponent* Src, class CSceneComponent* Dest);
 };
 

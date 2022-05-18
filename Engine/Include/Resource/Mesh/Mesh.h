@@ -31,6 +31,16 @@ protected:
 	Mesh_Type	m_MeshType;
 
 public:
+	Vector3 GetMin() const
+	{
+		return m_Min;
+	}
+
+	Vector3 GetMax() const
+	{
+		return m_Max;
+	}
+
 	const std::vector<CSharedPtr<CMaterial>>* GetMaterialSlots()	const
 	{
 		return &m_vecMaterialSlot;
@@ -53,9 +63,13 @@ public:
 		D3D11_PRIMITIVE_TOPOLOGY Primitive, void* IdxData = nullptr, int IdxSize = 0, int IdxCount = 0,
 		D3D11_USAGE IdxUsage = D3D11_USAGE_DEFAULT, DXGI_FORMAT Fmt = DXGI_FORMAT_UNKNOWN);
 	bool LoadMesh(const TCHAR* FileName, const std::string& PathName = MESH_PATH);
+	bool LoadMesh(std::string& OutName, const TCHAR* FileName, const std::string& PathName = MESH_PATH);
 	bool LoadMeshFullPath(const TCHAR* FullPath);
+	bool LoadMeshFullPath(std::string& OutName, const TCHAR* FullPath);
 	bool LoadMeshMultibyte(const char* FileName, const std::string& PathName = MESH_PATH);
+	bool LoadMeshMultibyte(std::string& OutName, const char* FileName, const std::string& PathName = MESH_PATH);
 	virtual bool LoadMeshFullPathMultibyte(const char* FullPath);
+	virtual bool LoadMeshFullPathMultibyte(std::string& OutName, const char* FullPath);
 	virtual bool Init();
 	virtual void Render();
 	virtual void Render(int SlotNumber);

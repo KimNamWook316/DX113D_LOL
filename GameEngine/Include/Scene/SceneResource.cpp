@@ -126,6 +126,20 @@ bool CSceneResource::CreateMesh(Mesh_Type Type,
 	return true;
 }
 
+bool CSceneResource::LoadMesh(std::string& OutName, Mesh_Type Type, const TCHAR* FileName, const std::string& PathName)
+{
+	if (!CResourceManager::GetInst()->LoadMesh(Type, OutName, FileName, PathName, m_Scene))
+		return false;
+
+	if (FindMesh(OutName))
+	{
+		return true;
+	}
+
+	m_mapMesh.insert(std::make_pair(OutName, CResourceManager::GetInst()->FindMesh(OutName)));
+	return true;
+}
+
 bool CSceneResource::LoadMesh(Mesh_Type Type, const std::string& Name,
 	const TCHAR* FileName, const std::string& PathName)
 {
@@ -137,6 +151,20 @@ bool CSceneResource::LoadMesh(Mesh_Type Type, const std::string& Name,
 
 	m_mapMesh.insert(std::make_pair(Name, CResourceManager::GetInst()->FindMesh(Name)));
 
+	return true;
+}
+
+bool CSceneResource::LoadMeshFullPath(std::string& OutName, Mesh_Type Type, const TCHAR* FullPath)
+{
+	if (!CResourceManager::GetInst()->LoadMeshFullPath(Type, OutName, FullPath, m_Scene))
+		return false;
+
+	if (FindMesh(OutName))
+	{
+		return true;
+	}
+
+	m_mapMesh.insert(std::make_pair(OutName, CResourceManager::GetInst()->FindMesh(OutName)));
 	return true;
 }
 
@@ -154,6 +182,20 @@ bool CSceneResource::LoadMeshFullPath(Mesh_Type Type, const std::string& Name,
 	return true;
 }
 
+bool CSceneResource::LoadMeshMultibyte(std::string& OutName, Mesh_Type Type, const char* FileName, const std::string& PathName)
+{
+	if (!CResourceManager::GetInst()->LoadMeshMultibyte(Type, OutName, FileName, PathName, m_Scene))
+		return false;
+
+	if (FindMesh(OutName))
+	{
+		return true;
+	}
+
+	m_mapMesh.insert(std::make_pair(OutName, CResourceManager::GetInst()->FindMesh(OutName)));
+	return true;
+}
+
 bool CSceneResource::LoadMeshMultibyte(Mesh_Type Type, const std::string& Name, const char* FileName, const std::string& PathName)
 {
 	if (FindMesh(Name))
@@ -164,6 +206,20 @@ bool CSceneResource::LoadMeshMultibyte(Mesh_Type Type, const std::string& Name, 
 
 	m_mapMesh.insert(std::make_pair(Name, CResourceManager::GetInst()->FindMesh(Name)));
 
+	return true;
+}
+
+bool CSceneResource::LoadMeshFullPathMultibyte(std::string& OutName, Mesh_Type Type, const char* FullPath)
+{
+	if (!CResourceManager::GetInst()->LoadMeshFullPathMultibyte(Type, OutName, FullPath, m_Scene))
+		return false;
+
+	if (FindMesh(OutName))
+	{
+		return true;
+	}
+
+	m_mapMesh.insert(std::make_pair(OutName, CResourceManager::GetInst()->FindMesh(OutName)));
 	return true;
 }
 

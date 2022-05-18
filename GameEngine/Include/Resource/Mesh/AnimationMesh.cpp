@@ -58,6 +58,31 @@ bool CAnimationMesh::LoadMeshFullPathMultibyte(const char* FullPath)
 	return LoadMeshFile(FullPath);
 }
 
+bool CAnimationMesh::LoadMeshFullPathMultibyte(std::string& OutName, const char* FullPath)
+{
+    char    Ext[_MAX_EXT] = {};
+
+    _splitpath_s(FullPath, 0, 0, 0, 0, 0, 0, Ext, _MAX_EXT);
+    _strupr_s(Ext);
+
+    if (strcmp(Ext, ".FBX") == 0)
+    {
+        CFBXLoader  Loader;
+
+        if (!Loader.LoadFBX(FullPath))
+            return false;
+
+        return ConvertFBX(&Loader, FullPath);
+    }
+
+    bool Success = false;
+    Success = LoadMeshFile(FullPath);
+
+    OutName = m_Name;
+
+    return Success;
+}
+
 bool CAnimationMesh::ConvertFBXLocalFileMultiByte(const char* FullPath)
 {
 	char Ext[_MAX_EXT] = {};

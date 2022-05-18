@@ -10,7 +10,9 @@
 CLandScape::CLandScape() :
 	m_CountX(0),
 	m_CountZ(0),
-	m_CBuffer(nullptr)
+	m_CBuffer(nullptr),
+	m_Min(FLT_MAX, FLT_MAX, FLT_MAX),
+	m_Max(FLT_MIN, FLT_MIN, FLT_MIN)
 {
 	SetTypeID<CLandScape>();
 	m_Render = true;
@@ -134,9 +136,30 @@ void CLandScape::CreateLandScape(const std::string& Name,
 
 			m_vecPos.push_back(Vtx.Pos);
 
+			if (m_Min.x > Vtx.Pos.x)
+				m_Min.x = Vtx.Pos.x;
+
+			if (m_Min.y > Vtx.Pos.y)
+				m_Min.y = Vtx.Pos.y;
+
+			if (m_Min.z > Vtx.Pos.z)
+				m_Min.z = Vtx.Pos.z;
+
+			if (m_Max.x < Vtx.Pos.x)
+				m_Max.x = Vtx.Pos.x;
+
+			if (m_Max.y < Vtx.Pos.y)
+				m_Max.y = Vtx.Pos.y;
+
+			if (m_Max.z < Vtx.Pos.z)
+				m_Max.z = Vtx.Pos.z;
+
 			m_vecVtx.push_back(Vtx);
 		}
 	}
+
+	SetMeshSize(m_Max - m_Min);
+	m_SphereInfo.Center = (m_Max + m_Min) / 2.f;
 
 	// 인덱스 정보 만들기
 	// 면 법선은 삼각형 수만큼 만들어져야 한다.

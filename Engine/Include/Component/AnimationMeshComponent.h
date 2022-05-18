@@ -104,6 +104,28 @@ public:
             m_Animation->SetSkeleton(m_Skeleton);
     }
 
+    CAnimationSequenceInstance* CreateBasicAnimationInstance()
+    {
+        CAnimationSequenceInstance* Anim = new CAnimationSequenceInstance;
+
+        Anim->SetScene(m_Scene);
+        Anim->SetOwner(this);
+
+        if (!Anim->Init())
+        {
+            SAFE_DELETE(Anim);
+            return nullptr;
+        }
+
+        SAFE_DELETE(m_Animation);
+
+        m_Animation = Anim;
+
+        if (m_Skeleton)
+            m_Animation->SetSkeleton(m_Skeleton);
+
+        return Anim;
+    }
 
     template <typename T>
     void LoadAnimationInstance()

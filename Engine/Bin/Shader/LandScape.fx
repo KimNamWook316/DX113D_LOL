@@ -86,7 +86,7 @@ Vertex3DOutput LandScapeVS(Vertex3D input)
 {
 	Vertex3DOutput output = (Vertex3DOutput) 0;
     
-	float3 Pos = input.Pos - g_Pivot * g_MeshSize;
+	float3 Pos = input.Pos;
 
 	output.ProjPos = mul(float4(Pos, 1.f), g_matWVP);
 	output.Pos = output.ProjPos;

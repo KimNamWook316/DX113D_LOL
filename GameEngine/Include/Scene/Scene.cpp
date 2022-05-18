@@ -4,6 +4,7 @@
 #include "SceneManager.h"
 #include "../Component/CameraComponent.h"
 #include "../GameObject/SkyObject.h"
+#include "../Input.h"
 
 CScene::CScene()
 {
@@ -167,10 +168,34 @@ void CScene::PostUpdate(float DeltaTime)
 	iter = m_ObjList.begin();
 	iterEnd = m_ObjList.end();
 
+	m_RenderComponentList.clear();
+
 	for (; iter != iterEnd; ++iter)
 	{
 		(*iter)->AddCollision();
+
+		const std::list<CSceneComponent*>& List = (*iter)->GetSceneComponents();
+
+		auto iter1 = List.begin();
+		auto iter1End = List.end();
+
+		for (; iter1 != iter1End; ++iter1)
+		{
+			if ((*iter1)->GetRender() && !(*iter1)->GetCulling())
+			{
+				m_RenderComponentList.push_back(*iter1);
+			}
+		}
 	}
+
+	// 출력되는 물체를 정렬한다.
+	if (m_RenderComponentList.size() >= 2)
+	{
+		m_RenderComponentList.sort(SortRenderList);
+	}
+
+	CGameObject* PickedObj = nullptr;
+	bool bPicked = Picking(PickedObj);
 
 	// 포함된 충돌체들을 이용해서 충돌처리를 진행한다.
 	m_Collision->Collision(DeltaTime);
@@ -270,4 +295,54 @@ void CScene::LoadFullPath(const char* FullPath)
 	}
 
 	fclose(File);
+}
+
+bool CScene::Picking(CGameObject*& Result)
+{
+	CCameraComponent* Camera = m_CameraManager->GetCurrentCamera();
+
+	Ray	RayWorld = CInput::GetInst()->GetRay(Camera->GetViewMatrix());
+
+	auto	iter = m_RenderComponentList.begin();
+	auto	iterEnd = m_RenderComponentList.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		SphereInfo Info = (*iter)->GetSphereInfo();
+
+		Vector3 RayToSphere = Info.Center - RayWorld.Pos;
+
+		// Case1 : 구 안에 광선의 시작점이 위치한 경우
+		if (RayToSphere.Length() < Info.Radius)
+		{
+			Result = (*iter)->GetGameObject();
+			return true;
+		}
+
+		// Case2 : 구 밖에 광선의 시작점이 위치하고, 구를 지나치지 않는 경우
+		if (RayWorld.Dir.Dot(RayToSphere) < 0)
+		{
+			continue;
+		}
+
+		// Case3 : 구 밖에 광선의 시작점이 위치하고, 구를 지나치는 경우 (판별식 사용)
+		float disc = 4 * (RayToSphere.Dot(RayWorld.Dir) * RayToSphere.Dot(RayWorld.Dir)) 
+			- 4 * (RayToSphere.Dot(RayToSphere)) + 4 *(Info.Radius * Info.Radius);
+
+		if(disc >= 0)
+		{
+			(*iter)->GetGameObject();
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool CScene::SortRenderList(CSceneComponent* Src, CSceneComponent* Dest)
+{
+	SphereInfo	SrcInfo = Src->GetSphereInfoViewSpace();
+	SphereInfo	DestInfo = Dest->GetSphereInfoViewSpace();
+
+	return SrcInfo.Center.Length() - SrcInfo.Radius > DestInfo.Center.Length() - DestInfo.Radius;
 }

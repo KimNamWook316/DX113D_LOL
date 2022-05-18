@@ -27,11 +27,16 @@ private:
 	class CIMGUITextInput* m_FrameInput;
 	class CIMGUIButton* m_FrameDelBtn;
 	class CIMGUIButton* m_FramePopDelBtn;
-	class CIMGUISliderFloat* m_FrameSlider;
+	class CIMGUISliderInt* m_FrameSlider;
 	
 	class CIMGUIButton* m_AnimSeqLoadBtn;
+	class CIMGUIButton* m_CreateSample3DBtn;
+	class CIMGUIButton* m_DeltaTimePlayBtn;
+	class CIMGUIButton* m_AnimationPlayBtn;
 	class CIMGUITextInput* m_NewAnimSeqName;
+	class CIMGUITextInput* m_NewAnimSeqDataKeyName;
 private :
+	class CAnim3DObject* m_3DTestObject;
 	class CAnimationSequenceInstance* m_Animation;
 public:
 	virtual bool Init();
@@ -41,5 +46,12 @@ private :
 	void OnAddAnimationSequence();
 	void OnClickAnimationSequence(int, const char*);
 	void OnRefreshAnimationClipTable(class CAnimationSequence* SequenceData);
+	void OnAnimationSliderIntCallback(int);
+	void OnAnimationFrameInputCallback();
+	void OnCreateSample3DObject();
+	void OnSetPlayEngineDeltaTime();
+	void OnPlayAnimation();
+	void OnApplyAnimationSlider(CAnimationSequence* Sequence);
+
 };
 
