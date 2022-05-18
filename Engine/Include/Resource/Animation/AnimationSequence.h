@@ -67,6 +67,7 @@ private:
 	float						m_PlayScale;
 	int							m_StartFrame;
 	int							m_EndFrame;
+	int							m_CurrentFrameIdx;
 	int							m_FrameLength;
 	int							m_FrameMode;
 	int							m_ChangeFrame;
@@ -76,6 +77,10 @@ private:
 	class CStructuredBuffer* m_KeyFrameBuffer;
 
 public:
+	int GetCurrentFrameIdx() const
+	{
+		return m_CurrentFrameIdx;
+	}
 	int GetKeyFrameCount()	const
 	{
 		return m_FrameLength;

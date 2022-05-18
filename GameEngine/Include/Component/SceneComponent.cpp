@@ -7,7 +7,8 @@
 #include "../Scene/CameraManager.h"
 #include "CameraComponent.h"
 
-CSceneComponent::CSceneComponent()
+CSceneComponent::CSceneComponent() :
+	m_Culling(false)
 {
 	SetTypeID<CSceneComponent>();
 	m_ComponentType = Component_Type::SceneComponent;

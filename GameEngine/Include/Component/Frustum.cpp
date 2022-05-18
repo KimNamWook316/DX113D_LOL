@@ -20,6 +20,7 @@ CFrustum::~CFrustum()
 
 void CFrustum::Update(Matrix MatVP)
 {
+	// 우리는 결과적으로 World 공간에서의 평면이 필요하다
 
 	// 역행렬
 	MatVP.Inverse();
@@ -56,6 +57,7 @@ void CFrustum::Update(Matrix MatVP)
 	// Far
 	m_Plane[(int)Frustum_Plane_Dir::Far] = XMPlaneFromPoints(Pos[5].Convert(), Pos[4].Convert(),
 		Pos[6].Convert());
+
 }
 
 bool CFrustum::FrustumInPoint(const Vector3& Point)

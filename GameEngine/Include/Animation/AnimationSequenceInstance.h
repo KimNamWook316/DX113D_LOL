@@ -35,6 +35,9 @@ protected:
 	float	m_ChangeTimeAcc;
 	float	m_ChangeTime;
 
+	// Animation Editor ¡∂¿€
+	bool m_EditorStopAnimation;
+	bool m_EditorStopTargetFrame;
 
 public:
 	size_t GetTypeID()	const
@@ -86,7 +89,7 @@ public:
 
 	void SetSkeleton(class CSkeleton* Skeleton);
 	void GetAnimationSequenceNames(std::vector<std::string>& VecSequenceNames);
-
+	void SetCurrentAnimationFrameIdx(int Idx);
 public:
 	void AddAnimation(const std::string& SequenceName, const std::string& Name, bool Loop = true, float PlayTime = 1.f,
 		float PlayScale = 1.f);

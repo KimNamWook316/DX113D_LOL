@@ -9,6 +9,9 @@
 #include "Component/LandScape.h"
 #include "Component/AnimationMeshComponent.h"
 #include "Component/StaticMeshComponent.h"
+#include "Component/PaperBurnComponent.h"
+
+#include "IMGUITree.h"
 
 #include <fstream>
 #include <iostream>
@@ -67,7 +70,7 @@ void CEditorUtil::GetAllFilenames(const std::string& PathName, std::vector<std::
 	}
 }
 
-void CEditorUtil::GetAllFilenameFullPath(const std::string& FullPath, std::vector<std::string>& vecFileNames, std::vector<std::string>& vecDirNames)
+void CEditorUtil::GetAllFilenamesFullPath(const std::string& FullPath, std::vector<std::string>& vecFileNames, std::vector<std::string>& vecDirNames)
 {
 	fs::path p = FullPath;
 
@@ -138,7 +141,33 @@ void CEditorUtil::GetAllFileFullPathInDir(const char* TargetDir, std::vector<std
 	}
 }
 
-// Imgui Demo Window를 띄워주는 함수
+
+void CEditorUtil::GetFullPathDirectory(CIMGUITree* CurrentDir, std::list<std::string>& Output)
+{
+	while (CurrentDir->GetParent() != nullptr)
+	{
+		Output.push_front(CurrentDir->GetName());
+		CurrentDir = CurrentDir->GetParent();
+	}
+}
+
+std::string CEditorUtil::MergeFullPath(const std::list<std::string> DirNames)
+{
+	const PathInfo* Info = CPathManager::GetInst()->FindPath(ROOT_PATH);
+
+	std::string FullPath = Info->PathMultibyte;
+
+	auto iter = DirNames.begin();
+	auto iterEnd = DirNames.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		FullPath += (*iter);
+		FullPath += "\\";
+	}
+
+	return FullPath;
+}
 
 void CEditorUtil::ShowDemo()
 {
@@ -239,16 +268,41 @@ size_t CEditorUtil::SceneComponentTypeIndexToTypeid(int TypeIndex)
 	return -1;
 }
 
+size_t CEditorUtil::ObjectComponentTypeIndexToTypeid(int TypeIndex)
+{
+	switch (TypeIndex)
+	{
+	case 0:
+		return typeid(CPaperBurnComponent).hash_code();
+	//case 1:
+	//	return typeid(CStaticMeshComponent).hash_code();
+	//case 2:
+	//	return typeid(CLandScape).hash_code();
+	//case 3:
+	//	return typeid(CArm).hash_code();
+	//case 4:
+	//	return typeid(CLightComponent).hash_code();
+	//case 5:
+	//	return typeid(CSceneComponent).hash_code();
+	}
+
+	return -1;
+}
+
 bool CEditorUtil::CompareExt(const char* FullPath, const char ExtFilter[_MAX_EXT])
 {
 	char FullPathExt[_MAX_EXT] = {};
+	char FilterBuf[_MAX_EXT] = {};
+
+	strcpy_s(FilterBuf, ExtFilter);
+	_strupr_s(FilterBuf);
 
 	int Len = strlen(FullPath);
 
 	strncpy_s(FullPathExt, FullPath + Len - 4, 4);
 	_strupr_s(FullPathExt);
 
-	return (strcmp(ExtFilter, FullPathExt) == 0);
+	return (strcmp(FilterBuf, FullPathExt) == 0);
 }
 
 std::string LoLObjectToString(LoLObject Object)

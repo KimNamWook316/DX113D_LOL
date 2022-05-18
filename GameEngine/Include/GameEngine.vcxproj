@@ -24,7 +24,8 @@
     <ClCompile Include="Animation\AnimationSequence2DInstance.cpp" />
     <ClCompile Include="Animation\AnimationSequenceData.cpp" />
     <ClCompile Include="Animation\AnimationSequenceInstance.cpp" />
-    <ClCompile Include="EngineUtil.cpp" />
+    <ClCompile Include="Animation\SkeletonSocket.cpp" />
+	<ClCompile Include="EngineUtil.cpp" />
     <ClCompile Include="Collision\Collision.cpp" />
     <ClCompile Include="Collision\CollisionManager.cpp" />
     <ClCompile Include="Component\AnimationMeshComponent.cpp" />
@@ -208,6 +209,7 @@
     <ClInclude Include="Animation\AnimationSequence2DInstance.h" />
     <ClInclude Include="Animation\AnimationSequenceData.h" />
     <ClInclude Include="Animation\AnimationSequenceInstance.h" />
+    <ClInclude Include="Animation\SkeletonSocket.h" />
     <ClInclude Include="Collision\Collision.h" />
     <ClInclude Include="Collision\CollisionManager.h" />
     <ClInclude Include="Component\AnimationMeshComponent.h" />

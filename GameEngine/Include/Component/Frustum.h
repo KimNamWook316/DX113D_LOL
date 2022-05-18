@@ -20,7 +20,6 @@ class CFrustum
 private:
 	CFrustum();
 	~CFrustum();
-
 public:
 	void Update(Matrix MatVP);
 	bool FrustumInPoint(const Vector3& Point);

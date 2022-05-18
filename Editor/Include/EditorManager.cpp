@@ -22,7 +22,7 @@
 #include "Window/ObjectComponentWindow.h"
 #include "Window/FileBrowser.h"
 #include "Window/FileBrowserTree.h"
-//#include "Window/AnimationEditor.h"
+#include "Window/AnimationEditor.h"
 #include "Window/FBXConvertWindow.h"
 #include "Window/InspectorWindow.h"
 
@@ -94,7 +94,7 @@ bool CEditorManager::Init(HINSTANCE hInst)
 	m_ObjectComponentWindow = CIMGUIManager::GetInst()->AddWindow<CObjectComponentWindow>(OBJECTCOMPONENT_LIST);
 	m_FileBrowserTree = CIMGUIManager::GetInst()->AddWindow<CFileBrowserTree>(FILE_BROWSERTREE);
 	m_InspectorWindow = CIMGUIManager::GetInst()->AddWindow<CInspectorWindow>(INSPECTOR);
-	//m_AnimationEditor = CIMGUIManager::GetInst()->AddWindow<CAnimationEditor>(ANIMATION_EDITOR);
+	m_AnimationEditor = CIMGUIManager::GetInst()->AddWindow<CAnimationEditor>(ANIMATION_EDITOR);
 
 	CFBXConvertWindow* win = CIMGUIManager::GetInst()->AddWindow<CFBXConvertWindow>(FBX_CONVERTOR);
 

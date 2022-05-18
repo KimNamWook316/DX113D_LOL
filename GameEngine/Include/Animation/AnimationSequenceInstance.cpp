@@ -18,7 +18,9 @@ CAnimationSequenceInstance::CAnimationSequenceInstance() :
 	m_GlobalTime(0.f),
 	m_SequenceProgress(0.f),
 	m_ChangeTimeAcc(0.f),
-	m_ChangeTime(0.2f)
+	m_ChangeTime(0.2f),
+	m_EditorStopAnimation(false),
+	m_EditorStopTargetFrame(-1)
 {
 	SetTypeID<CAnimationSequenceInstance>();
 }
@@ -109,6 +111,20 @@ void CAnimationSequenceInstance::GetAnimationSequenceNames(std::vector<std::stri
 	{
 		VecSequenceNames.push_back(iter->first);
 	}
+}
+
+void CAnimationSequenceInstance::SetCurrentAnimationFrameIdx(int Idx)
+{
+	if (!m_CurrentAnimation)
+		return;
+
+	// m_GlobalTime += DeltaTime * m_CurrentAnimation->m_PlayScale;
+	// float	AnimationTime = m_GlobalTime + m_CurrentAnimation->m_Sequence->m_StartTime;
+
+	// Global Time 도 해당 위치로 맞춰준다.
+	m_GlobalTime = (Idx) * m_CurrentAnimation->m_FrameTime;
+
+	m_CurrentAnimation->GetAnimationSequence()->m_CurrentFrameIdx = Idx;
 }
 
 void CAnimationSequenceInstance::AddAnimation(const std::string& SequenceName,
@@ -360,6 +376,8 @@ void CAnimationSequenceInstance::Update(float DeltaTime)
 		// 수정자 : 이도경 / 내용 : AnimationSequence가 아닌 AnimationSequenceInstance의 멤버 사용하는 것으로 수정
 		// 날짜 : 22.05.02
 		int	FrameIndex = (int)(AnimationTime / m_CurrentAnimation->m_FrameTime);
+
+		m_CurrentAnimation->GetAnimationSequence()->m_CurrentFrameIdx = FrameIndex;
 
 		int	NextFrameIndex = FrameIndex + 1;
 
