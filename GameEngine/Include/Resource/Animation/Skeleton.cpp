@@ -289,13 +289,13 @@ void CSkeleton::ResetShader()
 
 void CSkeleton::Update(float fTime, const std::vector<Matrix>& vecBoneMatrix, const Matrix& matWorld)
 {
-	//size_t	Size = m_BoneSocket.size();
+	size_t	Size = m_BoneSocket.size();
 
-	//for (size_t i = 0; i < Size; ++i)
-	//{
-	//	m_BoneSocket[i]->Update(vecBoneMatrix[m_BoneSocket[i]->m_BoneIndex] * matWorld);
-	//	//m_BoneSocket[i]->Update(vecBoneMatrix[m_BoneSocket[i]->m_BoneIndex]);
-	//}
+	for (size_t i = 0; i < Size; ++i)
+	{
+		// m_BoneSocket[i]->Update(vecBoneMatrix[m_BoneSocket[i]->m_BoneIndex] * matWorld);
+		//m_BoneSocket[i]->Update(vecBoneMatrix[m_BoneSocket[i]->m_BoneIndex]);
+	}
 }
 
 CSkeleton* CSkeleton::Clone()

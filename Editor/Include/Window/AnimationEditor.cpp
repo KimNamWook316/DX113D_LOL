@@ -67,16 +67,6 @@ bool CAnimationEditor::Init()
 	// Animation Instance 객체 생성
 	m_Animation = new CAnimationSequenceInstance;
 
-	/*
-	if (m_Skeleton)
-	m_Animation->SetSkeleton(m_Skeleton);
-	*/
-
-	if (!m_Animation->Init())
-	{
-		SAFE_DELETE(m_Animation);
-		return false;
-	}
 
 	// Table Key 값 정보 세팅
 	m_AnimInfoTable->MakeKey(AnimationClipInfoKeys::FrameRange);

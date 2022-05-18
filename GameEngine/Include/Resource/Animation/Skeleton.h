@@ -34,7 +34,8 @@ private:
 	std::vector<Bone*>				m_vecBones;
 	class CStructuredBuffer* m_pOffsetMatrixBuffer;
 	class CScene* m_Scene;
-	//std::vector<class CBoneSocket*>	m_BoneSocket;
+	// 하나의 Skeleton 에 여러개의 Bone Socket 을 등록해서 사용할 것이다.
+	std::vector<class CBoneSocket*>	m_BoneSocket;
 
 public:
 	size_t GetBoneCount()	const;

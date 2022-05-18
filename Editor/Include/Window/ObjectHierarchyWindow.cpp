@@ -132,9 +132,6 @@ void CObjectHierarchyWindow::OnSetSelectNode(CIMGUITree* SelectNode)
 void CObjectHierarchyWindow::OnDragDropSrc(CIMGUITree* SrcTree)
 {
 	if (m_SelectNode == m_Root || m_DragSrc == m_Root)
-
-
-
 		return;
 
 	m_DragSrc = SrcTree;
