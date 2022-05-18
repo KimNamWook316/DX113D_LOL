@@ -114,8 +114,6 @@ void CStaticMeshComponentWidget::OnClickLoadMesh()
 
 	if (GetOpenFileName(&OpenFile) != 0)
 	{
-		std::string MeshName;
-		CSceneManager::GetInst()->GetScene()->GetResource()->LoadMeshFullPath(MeshName, Mesh_Type::Static, FilePath);
 	}
 }
 
