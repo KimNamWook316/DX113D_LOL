@@ -194,6 +194,9 @@ void CScene::PostUpdate(float DeltaTime)
 		m_RenderComponentList.sort(SortRenderList);
 	}
 
+	CGameObject* PickedObj = nullptr;
+	bool bPicked = Picking(PickedObj);
+
 	// 포함된 충돌체들을 이용해서 충돌처리를 진행한다.
 	m_Collision->Collision(DeltaTime);
 }
@@ -298,13 +301,39 @@ bool CScene::Picking(CGameObject*& Result)
 {
 	CCameraComponent* Camera = m_CameraManager->GetCurrentCamera();
 
-	Ray	ray = CInput::GetInst()->GetRay(Camera->GetViewMatrix());
+	Ray	RayWorld = CInput::GetInst()->GetRay(Camera->GetViewMatrix());
 
 	auto	iter = m_RenderComponentList.begin();
 	auto	iterEnd = m_RenderComponentList.end();
 
 	for (; iter != iterEnd; ++iter)
 	{
+		SphereInfo Info = (*iter)->GetSphereInfo();
+
+		Vector3 RayToSphere = Info.Center - RayWorld.Pos;
+
+		// Case1 : 구 안에 광선의 시작점이 위치한 경우
+		if (RayToSphere.Length() < Info.Radius)
+		{
+			Result = (*iter)->GetGameObject();
+			return true;
+		}
+
+		// Case2 : 구 밖에 광선의 시작점이 위치하고, 구를 지나치지 않는 경우
+		if (RayWorld.Dir.Dot(RayToSphere) < 0)
+		{
+			continue;
+		}
+
+		// Case3 : 구 밖에 광선의 시작점이 위치하고, 구를 지나치는 경우 (판별식 사용)
+		float disc = 4 * (RayToSphere.Dot(RayWorld.Dir) * RayToSphere.Dot(RayWorld.Dir)) 
+			- 4 * (RayToSphere.Dot(RayToSphere)) + 4 *(Info.Radius * Info.Radius);
+
+		if(disc >= 0)
+		{
+			(*iter)->GetGameObject();
+			return true;
+		}
 	}
 
 	return false;
