@@ -190,6 +190,7 @@
     <ClCompile Include="Window\FBXConvertWindow.cpp" />
     <ClCompile Include="Window\FileBrowser.cpp" />
     <ClCompile Include="Window\FileBrowserTree.cpp" />
+    <ClCompile Include="Window\InspectorWindow.cpp" />
     <ClCompile Include="Window\ObjectComponentCreateModal.cpp" />
     <ClCompile Include="Window\ObjectComponentWindow.cpp" />
     <ClCompile Include="Window\ObjectCreateModal.cpp" />
@@ -227,6 +228,7 @@
     <ClInclude Include="Window\FBXConvertWindow.h" />
     <ClInclude Include="Window\FileBrowser.h" />
     <ClInclude Include="Window\FileBrowserTree.h" />
+    <ClInclude Include="Window\InspectorWindow.h" />
     <ClInclude Include="Window\ObjectComponentCreateModal.h" />
     <ClInclude Include="Window\ObjectComponentWindow.h" />
     <ClInclude Include="Window\ObjectCreateModal.h" />

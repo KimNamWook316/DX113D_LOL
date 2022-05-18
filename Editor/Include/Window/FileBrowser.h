@@ -48,4 +48,6 @@ public:
 	void ClearWidget();
 	// 파일(또는 디렉토리) 이미지를 클릭하면 호출되는 콜백
 	void FileClickCallback(class CIMGUIImage* Image);
+
+	void OnDragSrcImageButton(const std::string& FileName);
 };

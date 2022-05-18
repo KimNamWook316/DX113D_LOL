@@ -19,6 +19,7 @@ protected:
 	int				m_PressCount;
 
 	std::function<void(const std::string&)> m_DoubleClickCallback;
+	std::function<void(const std::string&)> m_DragSrcCallback;
 
 public:
 	void SetBackgroundColor(const ImVec4& Color)
@@ -50,5 +51,10 @@ public:
 		m_DoubleClickCallback = std::bind(Func, Obj, std::placeholders::_1);
 	}
 
+	template <typename T>
+	void SetDragSrcCallback(T* Obj, void(T::* Func)(const std::string&))
+	{
+		m_DragSrcCallback = std::bind(Func, Obj, std::placeholders::_1);
+	}
 };
 

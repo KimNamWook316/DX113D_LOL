@@ -129,6 +129,9 @@
     <ClCompile Include="Window\SceneComponentCreateModal.cpp">
       <Filter>02. Editor\02. Widget\02. Hierarchy</Filter>
     </ClCompile>
+    <ClCompile Include="Window\InspectorWindow.cpp">
+      <Filter>02. Editor\01. Window</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EditorManager.h">
@@ -220,6 +223,9 @@
     </ClInclude>
     <ClInclude Include="Window\SceneComponentCreateModal.h">
       <Filter>02. Editor\02. Widget\02. Hierarchy</Filter>
+    </ClInclude>
+    <ClInclude Include="Window\InspectorWindow.h">
+      <Filter>02. Editor\01. Window</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

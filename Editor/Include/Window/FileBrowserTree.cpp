@@ -8,6 +8,7 @@
 #include "FileBrowser.h"
 #include "IMGUIManager.h"
 
+
 CFileBrowserTree::CFileBrowserTree()
 {
 	m_CurrentPath = ROOT_PATH;
@@ -29,13 +30,14 @@ bool CFileBrowserTree::Init()
 
 	m_Root = AddWidget<CIMGUITree>("Root");
 	std::vector<std::string>	Tmp; // 사용하지 않을 벡터
+	std::vector<std::string> vecCurrentPathDir;
 
-	CEditorUtil::GetAllFilenames(m_CurrentPath, Tmp, m_vecCurrentPathDir);
+	CEditorUtil::GetAllFilenames(m_CurrentPath, Tmp, vecCurrentPathDir);
 
-	size_t Count = m_vecCurrentPathDir.size();
+	size_t Count = vecCurrentPathDir.size();
 	for (size_t i = 0; i < Count; ++i)
 	{
-		CIMGUITree* ChildTreeNode = m_Root->AddChild(m_vecCurrentPathDir[i]);
+		CIMGUITree* ChildTreeNode = m_Root->AddChild(vecCurrentPathDir[i]);
 		ChildTreeNode->AddOpenCallback<CFileBrowserTree>(this, &CFileBrowserTree::OnOpenBrowserTree);
 		ChildTreeNode->AddSelectCallback<CFileBrowserTree>(this, &CFileBrowserTree::OnShowFileBrowser);
 	}
@@ -64,9 +66,13 @@ void CFileBrowserTree::OnOpenBrowserTree(CIMGUITree* Tree)
 
 	else
 	{
-		std::string NewFullPath;
-		// 클릭한 TreeNode 내부까지의 경로가 PathManager에 없는 경로라면 거기까지의 풀 경로를 새로 만들어줘야 한다
-		GetFullPath(Tree->GetName(), NewFullPath);
+		std::list<std::string>	AllDirNames;
+
+		CEditorUtil::GetFullPathDirectory(Tree, AllDirNames);
+
+		// 위에 AllDirNames라는 리스트에서 얻어온 폴더들로 이루어진 경로들을 Root 풀 경로와 결합해준다
+		m_CurrentFullPath = CEditorUtil::MergeFullPath(AllDirNames);
+		m_CurrentPath.clear();
 	}
 
 	std::vector<std::string> vecFileName;
@@ -96,12 +102,7 @@ void CFileBrowserTree::OnShowFileBrowser(CIMGUITree* Tree)
 	// FileBrowser창 Path Update
 	if (!Info)
 	{
-		const std::string OriginPath = FileBrowser->GetInitialPath();
-
-		const PathInfo* PrevPathInfo = CPathManager::GetInst()->FindPath(OriginPath);
-		std::string NewFullPath = PrevPathInfo->PathMultibyte + NewPath + "\\";
-
-		FileBrowser->SetInitialFullPath(NewFullPath);
+		FileBrowser->SetInitialFullPath(m_CurrentFullPath);
 		return;
 	}
 
@@ -111,10 +112,4 @@ void CFileBrowserTree::OnShowFileBrowser(CIMGUITree* Tree)
 	}
 }
 
-void CFileBrowserTree::GetFullPath(const std::string& Path, std::string& NewFullPath)
-{
-	const PathInfo* Info = CPathManager::GetInst()->FindPath(ROOT_PATH);
-
-	//std::vector<
-}
 

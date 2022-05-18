@@ -7,6 +7,8 @@
 #include "../EditorUtil.h"
 #include "../EditorInfo.h"
 #include "Resource/ResourceManager.h"
+#include "IMGUIManager.h"
+#include "FileBrowserTree.h"
 
 #include <fstream>
 #include <iostream>
@@ -89,6 +91,7 @@ void CFileBrowser::Update(float DeltaTime)
 			CTexture* Texture = CResourceManager::GetInst()->FindTexture(FILE_IMAGE);
 			FileImage->SetTexture(Texture);
 			FileImage->SetSize(Texture->GetWidth(), Texture->GetHeight());
+			FileImage->SetDragSrcCallback<CFileBrowser>(this, &CFileBrowser::OnDragSrcImageButton);
 
 			CIMGUIText* FileName = Child->AddWidget<CIMGUIText>("FileName");
 			FileName->SetText(m_vecFileName[i].c_str());
@@ -104,7 +107,6 @@ void CFileBrowser::Update(float DeltaTime)
 		m_UpdatePath = false;
 		m_UpdateFullPath = false;
 	}
-
 	//m_vecWidget.clear();
 }
 
@@ -119,24 +121,6 @@ void CFileBrowser::SetInitialFullPath(const std::string& FullPath)
 	m_InitialFullPath = FullPath;
 	m_UpdateFullPath = true;
 }
-
-//std::string CFileBrowser::FilterFileName(const std::string& FullPath)
-//{
-//	size_t len = FullPath.length();
-//
-//	std::string FileName;
-//
-//	for (size_t i = len - 1; i >= 0; --i)
-//	{
-//		if (FullPath[i] == '\\' || FullPath[i] == '/')
-//		{
-//			FileName = FullPath.substr(i + 1);
-//			return FileName;
-//		}
-//	}
-//
-//	return FileName;
-//}
 
 void CFileBrowser::ClearWidget()
 {
@@ -157,4 +141,16 @@ void CFileBrowser::ClearWidget()
 void CFileBrowser::FileClickCallback(CIMGUIImage* Image)
 {
 
+}
+
+void CFileBrowser::OnDragSrcImageButton(const std::string& FileName)
+{
+	bool IsMeshFile = CEditorUtil::CompareExt(FileName.c_str(), ".msh");
+
+	if (!IsMeshFile)
+		return;
+
+	CFileBrowserTree* FileBrowserTree = (CFileBrowserTree*)CIMGUIManager::GetInst()->FindIMGUIWindow(FILE_BROWSERTREE);
+
+	std::string CurrentFullPath = FileBrowserTree->GetCurrentFullPath();
 }

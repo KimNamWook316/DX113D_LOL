@@ -11,6 +11,8 @@
 #include "Component/StaticMeshComponent.h"
 #include "Component/PaperBurnComponent.h"
 
+#include "IMGUITree.h"
+
 #include <fstream>
 #include <iostream>
 #include <filesystem>
@@ -139,7 +141,33 @@ void CEditorUtil::GetAllFileFullPathInDir(const char* TargetDir, std::vector<std
 	}
 }
 
-// Imgui Demo Window를 띄워주는 함수
+
+void CEditorUtil::GetFullPathDirectory(CIMGUITree* CurrentDir, std::list<std::string>& Output)
+{
+	while (CurrentDir->GetParent() != nullptr)
+	{
+		Output.push_front(CurrentDir->GetName());
+		CurrentDir = CurrentDir->GetParent();
+	}
+}
+
+std::string CEditorUtil::MergeFullPath(const std::list<std::string> DirNames)
+{
+	const PathInfo* Info = CPathManager::GetInst()->FindPath(ROOT_PATH);
+
+	std::string FullPath = Info->PathMultibyte;
+
+	auto iter = DirNames.begin();
+	auto iterEnd = DirNames.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		FullPath += (*iter);
+		FullPath += "\\";
+	}
+
+	return FullPath;
+}
 
 void CEditorUtil::ShowDemo()
 {
@@ -264,13 +292,17 @@ size_t CEditorUtil::ObjectComponentTypeIndexToTypeid(int TypeIndex)
 bool CEditorUtil::CompareExt(const char* FullPath, const char ExtFilter[_MAX_EXT])
 {
 	char FullPathExt[_MAX_EXT] = {};
+	char FilterBuf[_MAX_EXT] = {};
+
+	strcpy_s(FilterBuf, ExtFilter);
+	_strupr_s(FilterBuf);
 
 	int Len = strlen(FullPath);
 
 	strncpy_s(FullPathExt, FullPath + Len - 4, 4);
 	_strupr_s(FullPathExt);
 
-	return (strcmp(ExtFilter, FullPathExt) == 0);
+	return (strcmp(FilterBuf, FullPathExt) == 0);
 }
 
 std::string LoLObjectToString(LoLObject Object)

@@ -79,9 +79,22 @@ void CIMGUIImageButton::Render()
 		// TODO : msh 파일일 경우에만 FullPath를 Inspector의 TextInput으로 Drag & Drop으로 가져갈 수 있게 하기
 		// EditorUtil.h에 CompareExt로 확장자 비교하면 됨.
 		// FullPath는 SetDragDropPayload의 2번째 인자로 넣어서 넘겨줘보자
-
+		if (m_DragSrcCallback)
+			m_DragSrcCallback(m_Name);
 
 		ImGui::EndDragDropSource();
+	}
+
+	if (ImGui::BeginDragDropTarget())
+	{
+		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("DND_DEMO_CELL"))
+		{
+			IM_ASSERT(payload->DataSize == sizeof(int));
+			char* payload_n = (char*)payload->Data;
+
+
+		}
+		ImGui::EndDragDropTarget();
 	}
 
 	ImGui::PopID();

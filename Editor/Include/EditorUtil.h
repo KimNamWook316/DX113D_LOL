@@ -20,6 +20,14 @@ public:
 	static void GetAllFileFullPathInDir(const char* TargetDir, std::vector<std::string>& OutVecFullPath,
 		const char* ExtFilter = nullptr);
 
+	// 디렉토리 이름을 m_Name으로 가지고 있는 Tree를 첫번째 인자로 주면 Root부터 그 디렉토리 경로까지 모든 디렉토리를 뽑아준다
+	// (ex.Bin\\Texture\\Monster 경로면 list에 Bin, Texture, Monster를 넣어준다)
+	static void GetFullPathDirectory(class CIMGUITree* CurrentDir, std::list<std::string>& Output);
+
+	// 디렉토리 이름들을 list로 넘겨주면 Root Full경로와 더해서 최종 풀경로를 만들어준다
+	// (ex. list에 Texture, Monster라는 이름의 TreeNode가 있으면, [Editor 프로젝트까지 로컬 풀경로]\Editor\Bin\Texture\Monster 를 만들어준다)
+	static std::string MergeFullPath(const std::list<std::string> DirNames);
+
 	// Imgui Demo Window를 띄워주는 함수
 	static void ShowDemo();
 
@@ -32,7 +40,7 @@ public:
 	static size_t SceneComponentTypeIndexToTypeid(int TypeIndex);
 	static size_t ObjectComponentTypeIndexToTypeid(int TypeIndex);
 
-private:
+public:
 	static bool CompareExt(const char* FullPath, const char ExtFilter[_MAX_EXT]);
 
 };
