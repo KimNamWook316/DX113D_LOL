@@ -274,6 +274,9 @@
     <Filter Include="02. Resource\05. Animation\02. 3D">
       <UniqueIdentifier>{2e16266c-f24c-494a-8be7-d2f6ddec3b71}</UniqueIdentifier>
     </Filter>
+    <Filter Include="99. Util">
+      <UniqueIdentifier>{88dedb62-816d-497a-9914-d558eac24e8e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Device.cpp">

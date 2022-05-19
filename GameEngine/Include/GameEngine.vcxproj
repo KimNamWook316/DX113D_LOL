@@ -25,6 +25,7 @@
     <ClCompile Include="Animation\AnimationSequenceData.cpp" />
     <ClCompile Include="Animation\AnimationSequenceInstance.cpp" />
     <ClCompile Include="Animation\SkeletonSocket.cpp" />
+	<ClCompile Include="EngineUtil.cpp" />
     <ClCompile Include="Collision\Collision.cpp" />
     <ClCompile Include="Collision\CollisionManager.cpp" />
     <ClCompile Include="Component\AnimationMeshComponent.cpp" />
@@ -240,6 +241,7 @@
     <ClInclude Include="Device.h" />
     <ClInclude Include="Engine.h" />
     <ClInclude Include="EngineMath.h" />
+    <ClInclude Include="EngineUtil.h" />
     <ClInclude Include="Flag.h" />
     <ClInclude Include="GameInfo.h" />
     <ClInclude Include="GameObject\Champion.h" />

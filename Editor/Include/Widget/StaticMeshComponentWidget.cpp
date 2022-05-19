@@ -43,20 +43,20 @@ bool CStaticMeshComponentWidget::Init()
 	m_ComponentTypeText->SetText("StaticMesh Component");
 
 	// 최상위 트리
-	CIMGUITree* m_RootTree = AddWidget<CIMGUITree>("Static Mesh Variable");
+	CIMGUITree* m_RootTree = AddWidget<CIMGUITree>("Static Mesh Variables");
 
 	m_MeshName = m_RootTree->AddWidget<CIMGUITextInput>("Mesh Name");
 	m_RootTree->AddWidget<CIMGUISameLine>("Line");
 	m_LoadMeshButton = m_RootTree->AddWidget<CIMGUIButton>("Load", 0.f, 0.f);
 
-	m_MaterialSlotCombo = m_RootTree->AddWidget<CIMGUIComboBox>("Material Slot");
-	m_BaseColorEdit = m_RootTree->AddWidget<CIMGUIColor3>("BaseColor");
-	m_AmbientColorEdit = m_RootTree->AddWidget<CIMGUIColor3>("Ambient");
-	m_SpecularColorEdit = m_RootTree->AddWidget<CIMGUIColor3>("Specluar");
-	m_SpecluarPowerEdit = m_RootTree->AddWidget<CIMGUIInputFloat>("Specluar Power");
-	m_EmissiveColorEdit = m_RootTree->AddWidget<CIMGUIColor3>("Emissive");
-	m_TransparencyEdit = m_RootTree->AddWidget<CIMGUICheckBox>("Enable Transparency");
-	m_OpacityEdit = m_RootTree->AddWidget<CIMGUISliderFloat>("Opacity");
+	m_MaterialSlotCombo = m_RootTree->AddWidget<CIMGUIComboBox>("Material Slot", 200.f);
+	m_BaseColorEdit = m_RootTree->AddWidget<CIMGUIColor3>("BaseColor", 200.f);
+	m_AmbientColorEdit = m_RootTree->AddWidget<CIMGUIColor3>("Ambient", 200.f);
+	m_SpecularColorEdit = m_RootTree->AddWidget<CIMGUIColor3>("Specluar", 200.f);
+	m_SpecluarPowerEdit = m_RootTree->AddWidget<CIMGUIInputFloat>("Specluar Power", 200.f);
+	m_EmissiveColorEdit = m_RootTree->AddWidget<CIMGUIColor3>("Emissive", 200.f);
+	m_TransparencyEdit = m_RootTree->AddWidget<CIMGUICheckBox>("Enable Transparency", 200.f);
+	m_OpacityEdit = m_RootTree->AddWidget<CIMGUISliderFloat>("Opacity", 200.f);
 	
 	AddWidget<CIMGUISeperator>("Sep");
 
@@ -89,13 +89,7 @@ void CStaticMeshComponentWidget::SetSceneComponent(CSceneComponent* Com)
 
 	if (MeshCom->GetMesh())
 	{
-		m_MeshName->SetText(MeshCom->GetMesh()->GetName().c_str());
-
-		int MatSlotSize = MeshCom->GetMaterialSlotSize();
-		for (int i = 0; i < MatSlotSize; ++i)
-		{
-			m_MaterialSlotCombo->AddItem(MeshCom->GetMaterial(i)->GetName());
-		}
+		RefreshMeshWidget(MeshCom->GetMesh());
 	}
 }
 
@@ -114,6 +108,17 @@ void CStaticMeshComponentWidget::OnClickLoadMesh()
 
 	if (GetOpenFileName(&OpenFile) != 0)
 	{
+		std::string MeshName;
+		if (!CSceneManager::GetInst()->GetScene()->GetResource()->LoadMeshFullPath(MeshName, Mesh_Type::Static, FilePath))
+		{
+			MessageBox(nullptr, TEXT("메쉬 로드 실패"), TEXT("실패"), MB_OK);
+		}
+
+		CMesh* Mesh = CSceneManager::GetInst()->GetScene()->GetResource()->FindMesh(MeshName);
+
+		static_cast<CStaticMeshComponent*>(m_Component.Get())->SetMesh((CStaticMesh*)Mesh);
+
+		RefreshMeshWidget(Mesh);
 	}
 }
 
@@ -201,5 +206,30 @@ void CStaticMeshComponentWidget::OnEditOpacity(float Opacity)
 	if (MeshCom->GetMesh())
 	{
 		MeshCom->SetOpacity(Opacity, m_MaterialSlotCombo->GetSelectIndex());
+	}
+}
+
+void CStaticMeshComponentWidget::RefreshMeshWidget(CMesh* Mesh)
+{
+	CStaticMeshComponent* MeshCom = (CStaticMeshComponent*)m_Component.Get();
+
+	m_MeshName->SetText(MeshCom->GetMesh()->GetName().c_str());
+
+	std::string AutoName;
+
+	int MatSlotSize = MeshCom->GetMaterialSlotSize();
+	for (int i = 0; i < MatSlotSize; ++i)
+	{
+		// Material 이름이 없을 경우 자동으로 이름 지정
+		if (MeshCom->GetMaterial(i)->GetName().empty())
+		{
+			AutoName = "Material" + std::to_string(i);
+			m_MaterialSlotCombo->AddItem(AutoName);
+			AutoName.clear();
+		}
+		else
+		{
+			m_MaterialSlotCombo->AddItem(MeshCom->GetMaterial(i)->GetName());
+		}
 	}
 }

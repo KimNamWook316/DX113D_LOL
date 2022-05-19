@@ -2,12 +2,12 @@
 
 #include "SceneComponentWidget.h"
 
-class CStaticMeshComponentWidget final :
+class CAnimationMeshWidget :
     public CSceneComponentWidget
 {
 public:
-    CStaticMeshComponentWidget();
-    virtual ~CStaticMeshComponentWidget();
+    CAnimationMeshWidget();
+    virtual ~CAnimationMeshWidget();
 
 public:
     virtual bool Init() override;
@@ -32,6 +32,7 @@ private:
 private:
     class CIMGUITextInput* m_MeshName;
     class CIMGUIButton* m_LoadMeshButton;
+
     class CIMGUIComboBox* m_MaterialSlotCombo;
     class CIMGUIColor3* m_BaseColorEdit;
     class CIMGUIColor3* m_AmbientColorEdit;

@@ -53,14 +53,14 @@ bool CTransformWidget::Init()
 	AddWidget<CIMGUIDummy>("Dummy", 0.f, 0.f);
 
 	m_WorldTree = AddWidget<CIMGUITree>("World Transform");
-	m_WorldPosInput = m_WorldTree->AddWidget<CIMGUIInputFloat3>("Position");
-	m_WorldRotInput = m_WorldTree->AddWidget<CIMGUIInputFloat3>("Rotation");
-	m_WorldScaleInput = m_WorldTree->AddWidget<CIMGUIInputFloat3>("Scale");
+	m_WorldPosInput = m_WorldTree->AddWidget<CIMGUIInputFloat3>("Position", 150.f);
+	m_WorldRotInput = m_WorldTree->AddWidget<CIMGUIInputFloat3>("Rotation", 150.f);
+	m_WorldScaleInput = m_WorldTree->AddWidget<CIMGUIInputFloat3>("Scale", 150.f);
 
 	m_RelativeTree = AddWidget<CIMGUITree>("Relative Transform");
-	m_RelativePosInput = m_RelativeTree->AddWidget<CIMGUIInputFloat3>("Position");
-	m_RelativeRotInput = m_RelativeTree->AddWidget<CIMGUIInputFloat3>("Rotation");
-	m_RelativeScaleInput = m_RelativeTree->AddWidget<CIMGUIInputFloat3>("Scale");
+	m_RelativePosInput = m_RelativeTree->AddWidget<CIMGUIInputFloat3>("Position", 150.f);
+	m_RelativeRotInput = m_RelativeTree->AddWidget<CIMGUIInputFloat3>("Rotation", 150.f);
+	m_RelativeScaleInput = m_RelativeTree->AddWidget<CIMGUIInputFloat3>("Scale", 150.f);
 
 	// CallBack
 	m_InheritCheckBox->SetCallBackIdx(this, &CTransformWidget::OnCheckInherit);
