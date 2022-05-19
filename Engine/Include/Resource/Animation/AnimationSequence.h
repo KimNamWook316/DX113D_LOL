@@ -133,7 +133,7 @@ public:
 public:
 	void SetPlayScale(float fScale);
 	void SetPlayTime(float fTime);
-
+	BoneKeyFrame* DeleteAnimationFrame(int Index);
 public:
 	bool CreateSequence(bool bLoop, struct _tagFbxAnimationClip* pClip);
 	bool CreateSequence(const std::string& strName, bool bLoop,

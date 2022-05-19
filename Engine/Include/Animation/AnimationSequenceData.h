@@ -39,7 +39,12 @@ private:
 public:
 	void Save(FILE* File);
 	void Load(FILE* File);
-
+public :
+	void SetPlayTime(float Time);
+	void SetPlayScale(float Scale)
+	{
+		m_PlayScale = Scale;
+	}
 public:
 	const std::string& GetName()	const
 	{

@@ -44,19 +44,6 @@ bool CAnim3DObject::Init()
 	m_Arm->SetRelativeRotation(10.f, 0.f, 0.f);
 	m_Arm->SetTargetDistance(10.f);
 
-
-	CInput::GetInst()->SetKeyCallback<CAnim3DObject>("MoveFront", KeyState_Push,
-		this, &CAnim3DObject::MoveFront);
-	CInput::GetInst()->SetKeyCallback<CAnim3DObject>("MoveBack", KeyState_Push,
-		this, &CAnim3DObject::MoveBack);
-	CInput::GetInst()->SetKeyCallback<CAnim3DObject>("RotationYInv", KeyState_Push,
-		this, &CAnim3DObject::RotationYInv);
-	CInput::GetInst()->SetKeyCallback<CAnim3DObject>("RotationY", KeyState_Push,
-		this, &CAnim3DObject::RotationY);
-
-	CInput::GetInst()->SetKeyCallback<CAnim3DObject>("Attack1", KeyState_Down,
-		this, &CAnim3DObject::Attack);
-
 	SetWorldPos(1.f, 1.f, 1.f);
 
 	return true;

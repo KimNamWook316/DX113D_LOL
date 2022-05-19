@@ -76,6 +76,10 @@ bool CAnimationEditor::Init()
 	m_FrameInput->SetTextType(ImGuiText_Type::Int);
 	m_FrameInput->SetCallback<CAnimationEditor>(this, &CAnimationEditor::OnAnimationFrameInputCallback);
 
+	// Frame Delete
+	m_FrameDelBtn = AddWidget<CIMGUIButton>("Delete Frame", 100.f, 30.f);
+	m_FrameDelBtn->SetClickCallback<CAnimationEditor>(this, &CAnimationEditor::OnDeleteAnimFrame);
+
 	// Btns
 	m_AnimSeqLoadBtn = AddWidget<CIMGUIButton>("AddSequences", 100.f, 30.f);
 	m_AnimSeqLoadBtn->SetClickCallback<CAnimationEditor>(this, &CAnimationEditor::OnAddAnimationSequence);
@@ -118,10 +122,20 @@ bool CAnimationEditor::Init()
 	m_LoadAnimationInstanceBtn = AddWidget<CIMGUIButton>("Load Instance", 100.f, 30.f);
 	m_LoadAnimationInstanceBtn->SetClickCallback<CAnimationEditor>(this, &CAnimationEditor::OnLoadAnimationInstance);
 
+	// Play Scale 조정
+	m_PlayScaleInput = AddWidget<CIMGUITextInput>("Play Scale Input", 200.f, 30.f);
+	m_PlayScaleInput->SetHideName(true);
+	m_PlayScaleInput->SetTextType(ImGuiText_Type::Float);
+
 	m_PlayScaleEditBtn = AddWidget<CIMGUIButton>("Edit Scale", 100.f, 30.f);
 	m_PlayScaleEditBtn->SetClickCallback<CAnimationEditor>(this, &CAnimationEditor::OnEditAnimPlayScale);
 	
-	m_PlayTimeEditBtn = AddWidget<CIMGUIButton>("Edit Scale", 100.f, 30.f);
+	// Play Time 조정
+	m_PlayTimeInput = AddWidget<CIMGUITextInput>("Play Time Input", 200.f, 30.f);
+	m_PlayTimeInput->SetHideName(true);
+	m_PlayTimeInput->SetTextType(ImGuiText_Type::Float);
+
+	m_PlayTimeEditBtn = AddWidget<CIMGUIButton>("Edit Time", 100.f, 30.f);
 	m_PlayTimeEditBtn->SetClickCallback<CAnimationEditor>(this, &CAnimationEditor::OnEditAnimPlayTime);
 
 	return true;
@@ -279,6 +293,13 @@ void CAnimationEditor::OnLoadAnimationInstance()
 
 		m_CurAnimComboBox->SetSelectIndex(CurAnimIdx);
 
+		// 현재 Select 된 Animation 의 최소, 최대 Frame 으로 Frame Slider 범위 세팅
+		m_FrameSlider->SetMin(m_Animation->GetCurrentAnimation()->GetAnimationSequence()->GetStartFrame());
+		m_FrameSlider->SetMax(m_Animation->GetCurrentAnimation()->GetAnimationSequence()->GetEndFrame());
+
+		// Table 정보 세팅
+		OnRefreshAnimationClipTable(m_Animation->GetCurrentAnimation()->GetAnimationSequence());
+
 		// 현재 Scene에 모든 Sequence 내용을 추가한다.
 		m_Animation->AddAnimationSequenceToSceneResource();
 
@@ -329,9 +350,33 @@ void CAnimationEditor::OnApplyAnimationSlider(CAnimationSequence* Sequence)
 
 void CAnimationEditor::OnEditAnimPlayTime()
 {
+	if (!m_Animation || !m_Animation->GetCurrentAnimation())
+		return;
+
+	// if (m_PlayTimeInput->Empty())
+	//	return;
+
+	m_Animation->GetCurrentAnimation()->GetAnimationSequence()->SetPlayTime(m_PlayTimeInput->GetValueFloat());
+	m_Animation->GetCurrentAnimation()->SetPlayTime(m_PlayTimeInput->GetValueFloat());
+
+	OnRefreshAnimationClipTable(m_Animation->GetCurrentAnimation()->GetAnimationSequence());
 }
 
 void CAnimationEditor::OnEditAnimPlayScale()
+{
+	if (!m_Animation || !m_Animation->GetCurrentAnimation())
+		return;
+
+	// if (m_PlayScaleInput->Empty())
+	//	return;
+
+	m_Animation->GetCurrentAnimation()->GetAnimationSequence()->SetPlayScale(m_PlayScaleInput->GetValueFloat());
+	m_Animation->GetCurrentAnimation()->SetPlayScale(m_PlayScaleInput->GetValueFloat());
+
+	OnRefreshAnimationClipTable(m_Animation->GetCurrentAnimation()->GetAnimationSequence());
+}
+
+void CAnimationEditor::OnDeleteAnimFrame()
 {
 }
 

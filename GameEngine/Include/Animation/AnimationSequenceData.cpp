@@ -79,3 +79,10 @@ void CAnimationSequenceData::Load(FILE* File)
 
 	m_Sequence->Load(File);
 }
+
+void CAnimationSequenceData::SetPlayTime(float Time)
+{
+	m_PlayTime = Time;
+
+	m_FrameTime = m_PlayTime / m_Sequence->GetFrameLength();
+}

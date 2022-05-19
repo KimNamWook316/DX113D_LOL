@@ -26,7 +26,6 @@ private:
 
 	class CIMGUITextInput* m_FrameInput;
 	class CIMGUIButton* m_FrameDelBtn;
-	class CIMGUIButton* m_FramePopDelBtn;
 	class CIMGUISliderInt* m_FrameSlider;
 	
 	class CIMGUIButton* m_AnimSeqLoadBtn;
@@ -38,7 +37,9 @@ private:
 	class CIMGUIButton* m_SaveAnimationInstanceBtn;
 	class CIMGUIButton* m_LoadAnimationInstanceBtn;
 
+	class CIMGUITextInput* m_PlayScaleInput;
 	class CIMGUIButton* m_PlayScaleEditBtn;
+	class CIMGUITextInput* m_PlayTimeInput;
 	class CIMGUIButton* m_PlayTimeEditBtn;
 private :
 	class CAnim3DObject* m_3DTestObject;
@@ -63,5 +64,6 @@ private :
 	void OnApplyAnimationSlider(CAnimationSequence* Sequence);
 	void OnEditAnimPlayTime();
 	void OnEditAnimPlayScale();
+	void OnDeleteAnimFrame();
 };
 

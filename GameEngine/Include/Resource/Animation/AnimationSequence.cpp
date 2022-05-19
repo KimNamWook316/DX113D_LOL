@@ -241,8 +241,8 @@ void CAnimationSequence::Load(FILE* pFile)
 
 	m_KeyFrameBuffer = new CStructuredBuffer;
 
-	m_KeyFrameBuffer->Init("KeyFrameBuffer", sizeof(AnimationFrameTrans),
-		vecFrameTrans.size(), 13, true, (int)Buffer_Shader_Type::Compute);
+	m_KeyFrameBuffer->Init("KeyFrameBuffer", (unsigned int)sizeof(AnimationFrameTrans),
+		(unsigned int)vecFrameTrans.size(), 13, true, (int)Buffer_Shader_Type::Compute);
 
 	m_KeyFrameBuffer->UpdateBuffer(&vecFrameTrans[0],
 		vecFrameTrans.size());
@@ -460,6 +460,20 @@ void CAnimationSequence::SetPlayTime(float fTime)
 			pKeyFrame->dTime = j * m_FrameTime;
 		}
 	}
+}
+
+BoneKeyFrame* CAnimationSequence::DeleteAnimationFrame(int Index)
+{
+	if (Index < 0 || Index >= m_vecKeyFrame.size())
+	{
+		assert(false);
+		return nullptr;
+	}
+
+	BoneKeyFrame* DeleteFrame = m_vecKeyFrame[Index];
+	m_vecKeyFrame.erase(m_vecKeyFrame.begin() + Index);
+
+	return DeleteFrame;
 }
 
 bool CAnimationSequence::CreateSequence(bool bLoop,
