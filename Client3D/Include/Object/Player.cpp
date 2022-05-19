@@ -95,6 +95,13 @@ void CPlayer::Update(float DeltaTime)
 	{
 		m_Animation->ChangeAnimation("Idle");
 	}
+
+	CGameObject* PickObj = nullptr;
+
+	if (m_Scene->Picking(PickObj))
+	{
+		int a = 0;
+	}
 }
 
 void CPlayer::PostUpdate(float DeltaTime)

@@ -456,8 +456,18 @@ void CSceneComponent::CheckCollision()
 	{
 		SphereInfo Info;
 
-		Info.Center = m_SphereInfo.Center * GetWorldScale() + GetWorldPos();
-		Info.Radius = (GetMeshSize() * GetWorldScale()).Length() / 2.f;
+		Info.Center = m_SphereInfo.Center.TransformCoord(GetWorldMatrix());
+
+		Vector3 Radius;
+		Radius.x = GetMeshSize().Length();
+		Radius.y = GetMeshSize().Length();
+		Radius.z = GetMeshSize().Length();
+		Radius = Radius.TransformCoord(GetWorldMatrix());
+
+		Info.Radius = Radius.x > Radius.y ? Radius.x : Radius.y;
+		Info.Radius = Info.Radius > Radius.z ? Info.Radius : Radius.z;
+		Info.Radius /= 2.f;
+
 		m_SphereInfo.Radius = Info.Radius;
 
 		CCameraComponent* Camera = m_Scene->GetCameraManager()->GetCurrentCamera();

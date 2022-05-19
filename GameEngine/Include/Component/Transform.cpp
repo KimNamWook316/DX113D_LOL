@@ -598,23 +598,6 @@ void CTransform::PostUpdate(float DeltaTime)
 		}
 	}
 
-	Vector3	WorldPos = m_WorldPos;
-
-	if (CEngine::GetInst()->GetEngineSpace() == Engine_Space::Space2D)
-		WorldPos.z = WorldPos.y / 30000.f * 1000.f;
-
-	if (m_UpdateScale)
-		m_matScale.Scaling(m_WorldScale);
-
-	if (m_UpdateRot)
-		m_matRot.Rotation(m_WorldRot);
-
-	if (m_UpdatePos)
-		m_matPos.Translation(WorldPos);
-
-	if (m_UpdateScale || m_UpdateRot || m_UpdatePos)
-		m_matWorld = m_matScale * m_matRot * m_matPos;
-
 	// 소켓이 있을 경우 부모로 소켓을 곱해준다.
 	if (m_Socket)
 	{
@@ -690,6 +673,11 @@ void CTransform::SetTransform()
 void CTransform::ComputeWorld()
 {
 	m_matWorld = m_matScale * m_matRot * m_matPos;
+
+	if (m_Socket)
+	{
+		m_matWorld *= m_Socket->GetSocketMatrix();
+	}
 }
 
 CTransform* CTransform::Clone()
