@@ -792,6 +792,18 @@ CAnimationSequence* CSceneResource::FindAnimationSequence(const std::string& Nam
 	return iter->second;
 }
 
+void CSceneResource::AddSequenceInfo(CAnimationSequence* Sequence)
+{
+	CAnimationSequence* Anim = FindAnimationSequence(Sequence->GetName());
+
+	if (Anim)
+		return;
+
+	// 여기서 ResourceManager 에 까지 넣어줄 필요는 없는 것일까 ?
+
+	m_mapSequence.insert(std::make_pair(Sequence->GetName(), Sequence));
+}
+
 bool CSceneResource::LoadSkeleton(const std::string& Name,
 	const TCHAR* FileName, const std::string& PathName)
 {

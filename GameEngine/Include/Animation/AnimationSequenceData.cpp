@@ -41,6 +41,8 @@ void CAnimationSequenceData::Save(FILE* File)
 	Length = (int)SequenceName.length();
 	fwrite(&Length, sizeof(int), 1, File);
 	fwrite(SequenceName.c_str(), sizeof(char), Length, File);
+
+	m_Sequence->Save(File);
 }
 
 void CAnimationSequenceData::Load(FILE* File)
@@ -66,4 +68,6 @@ void CAnimationSequenceData::Load(FILE* File)
 	fread(SequenceName, sizeof(char), Length, File);
 
 	m_SequenceName = SequenceName;
+
+	m_Sequence->Load(File);
 }

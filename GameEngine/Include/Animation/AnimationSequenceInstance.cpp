@@ -2,6 +2,7 @@
 #include "AnimationSequenceInstance.h"
 #include "../Scene/Scene.h"
 #include "../Scene/SceneResource.h"
+#include "../Scene/SceneManager.h"
 #include "../Component/AnimationMeshComponent.h"
 #include "../Resource/Animation/AnimationSequence.h"
 #include "../Resource/Shader/AnimationUpdateConstantBuffer.h"
@@ -305,6 +306,67 @@ void CAnimationSequenceInstance::ChangeAnimation(const std::string& Name)
 	m_ChangeAnimation->m_Time = 0.f;
 }
 
+void CAnimationSequenceInstance::ClearAnimationSequence()
+{	
+	// 현재 Animation은 null로
+	m_CurrentAnimation = nullptr;
+
+	// 나머지는 모두 지워주기
+	auto iter = m_mapAnimation.begin();
+	auto iterEnd = m_mapAnimation.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		// SAFE_DELETE(iter->second);
+		SAFE_DELETE(iter->second);
+	}
+	m_mapAnimation.clear();
+}
+
+void CAnimationSequenceInstance::GatherSequenceNames(std::vector<std::string>& vecString)
+{
+	auto iter = m_mapAnimation.begin();
+	auto iterEnd = m_mapAnimation.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		vecString.push_back(iter->first);
+	}
+}
+
+void CAnimationSequenceInstance::AddAnimationSequenceToSceneResource()
+{
+	CSceneResource* Resource = CSceneManager::GetInst()->GetScene()->GetResource();
+
+	auto iter = m_mapAnimation.begin();
+	auto iterEnd = m_mapAnimation.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		
+	}
+}
+
+int CAnimationSequenceInstance::GetCurrentAnimationOrder()
+{
+	if (!m_CurrentAnimation)
+		return -1;
+
+	int Idx = 0;
+
+	auto iter = m_mapAnimation.begin();
+	auto iterEnd = m_mapAnimation.end();
+	for (; iter != iterEnd; ++iter)
+	{
+		if (iter->second == m_CurrentAnimation)
+			break;
+		Idx += 1;
+	}
+
+	return Idx;
+	return 0;
+}
+
 void CAnimationSequenceInstance::Start()
 {
 	if (m_Scene)
@@ -602,6 +664,148 @@ void CAnimationSequenceInstance::Load(FILE* File)
 
 	//if (m_Scene)
 	//	m_CBuffer = m_Scene->GetResource()->GetAnimation2DCBuffer();
+}
+
+bool CAnimationSequenceInstance::SaveAnimationFullPath(const char* FullPath)
+{
+	FILE* pFile;
+	fopen_s(&pFile, FullPath, "wb");
+	if (!pFile)
+		return false;
+
+	fwrite(&m_TypeID, sizeof(size_t), 1, pFile);
+	fwrite(&m_PlayAnimation, sizeof(bool), 1, pFile);
+
+	int Length = (int)m_AnimInstanceName.length();
+	fwrite(&Length, sizeof(int), 1, pFile);
+	fwrite(m_AnimInstanceName.c_str(), sizeof(char), Length, pFile);
+
+	size_t AnimationSize = m_mapAnimation.size();
+	fwrite(&AnimationSize, sizeof(size_t), 1, pFile);
+
+	auto iter = m_mapAnimation.begin();
+	auto iterEnd = m_mapAnimation.end();
+	size_t  SequenceDataNameLength = -1;
+	for (; iter != iterEnd; ++iter)
+	{
+		SequenceDataNameLength = strlen(iter->first.c_str());
+		fwrite(&SequenceDataNameLength, sizeof(int), 1, pFile);
+
+		// Animation Key 저장
+		fwrite(iter->first.c_str(), sizeof(char), SequenceDataNameLength, pFile);
+		iter->second->Save(pFile);
+	}
+
+	// Current Animation
+	bool CurrentAnimEnable = false;
+	if (m_CurrentAnimation)
+		CurrentAnimEnable = true;
+	fwrite(&CurrentAnimEnable, sizeof(bool), 1, pFile);
+
+	if (m_CurrentAnimation)
+	{
+		// Current Anim Length
+		Length = (int)m_CurrentAnimation->m_Name.length();
+		fwrite(&Length, sizeof(int), 1, pFile);
+		fwrite(m_CurrentAnimation->m_Name.c_str(), sizeof(char), Length, pFile);
+	}
+
+	fclose(pFile);
+
+	return true;
+}
+
+bool CAnimationSequenceInstance::LoadAnimationFullPath(const char* FullPath)
+{
+	FILE* pFile;
+
+	fopen_s(&pFile, FullPath, "rb");
+
+	if (!pFile)
+		return false;
+
+	fread(&m_TypeID, sizeof(size_t), 1, pFile);
+	fread(&m_PlayAnimation, sizeof(bool), 1, pFile);
+
+	int Length = 0;
+	fread(&Length, sizeof(int), 1, pFile);
+	char Name[MAX_PATH] = {};
+	fread(Name, sizeof(char), Length, pFile);
+	m_AnimInstanceName = Name;
+
+	size_t AnimationSize = -1;
+	fread(&AnimationSize, sizeof(size_t), 1, pFile);
+
+
+	// m_mapAnimation.clear();
+	// m_CurrentAnimation = nullptr;
+
+	for (int i = 0; i < AnimationSize; i++)
+	{
+		int SequenceDataKeyNameLength = 0;
+		char SequenceDataNameKey[MAX_PATH] = {};
+
+		// - CAnimationSequence2DData
+		// Key Name 저장 
+		fread(&SequenceDataKeyNameLength, sizeof(int), 1, pFile);
+		fread(SequenceDataNameKey, sizeof(char), SequenceDataKeyNameLength, pFile);
+
+		// CAnimationSequence2DData 를 저장하기 ===============================
+		CAnimationSequenceData* SequenceData = new CAnimationSequenceData;
+
+		SequenceData->Load(pFile);
+		// Scene이 있냐 없냐에 따라
+		// Scene Resource, ResourceManager에 해당 Sequence를 추가해주어야 한다
+		/*
+		if (m_Scene)
+		{
+			m_Scene->GetResource()->AddSequence2D(Sequence2DData->m_Sequence);
+		}
+		else
+		{
+			CResourceManager::GetInst()->AddSequence2D(Sequence2DData->m_Sequence);
+		}
+		*/
+
+		// 중복 추가 방지
+		if (FindAnimation(SequenceDataNameKey))
+		{
+			SAFE_DELETE(SequenceData);
+			continue;
+		}
+
+		if (m_mapAnimation.empty())
+		{
+			m_CurrentAnimation = SequenceData;
+		}
+
+		m_mapAnimation.insert(std::make_pair(SequenceDataNameKey, SequenceData));
+
+	}
+
+	// Current Animation Info
+	bool CurrentAnimEnable = false;
+	fread(&CurrentAnimEnable, sizeof(bool), 1, pFile);
+
+	if (CurrentAnimEnable)
+	{
+		int CurAnimNameLength = -1;
+		fread(&CurAnimNameLength, sizeof(int), 1, pFile);
+		char CurAnimName[MAX_PATH] = {};
+		fread(CurAnimName, sizeof(char), CurAnimNameLength, pFile);
+
+		CAnimationSequenceData* FoundAnimation = FindAnimation(CurAnimName);
+
+		// 이름 자체가 잘못 저장된 것일 수도 있어서 해당 내용이 없을 수도 있다.
+		if (FoundAnimation)
+		{
+			m_CurrentAnimation = FoundAnimation;
+		}
+	}
+
+	fclose(pFile);
+
+	return true;
 }
 
 CAnimationSequenceData* CAnimationSequenceInstance::FindAnimation(const std::string& Name)

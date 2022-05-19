@@ -128,6 +128,8 @@ public:
 	bool LoadFullPath(const TCHAR* pFullPath);
 	bool LoadFullPathMultibyte(const char* pFullPath);
 
+	virtual void Save(FILE* pFile);
+	virtual void Load(FILE* pFile);
 public:
 	void SetPlayScale(float fScale);
 	void SetPlayTime(float fTime);

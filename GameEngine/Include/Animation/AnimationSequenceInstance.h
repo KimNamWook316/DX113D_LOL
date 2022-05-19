@@ -13,6 +13,7 @@ public:
 protected:
 	size_t		m_TypeID;
 	class CAnimationMeshComponent* m_Owner;
+	std::string m_AnimInstanceName;
 	class CScene* m_Scene;
 	std::unordered_map<std::string, CAnimationSequenceData*>	m_mapAnimation;
 	CAnimationSequenceData* m_CurrentAnimation;
@@ -105,6 +106,10 @@ public:
 	void SetCurrentAnimation(const std::string& Name);
 	void ChangeAnimation(const std::string& Name);
 	bool CheckCurrentAnimation(const std::string& Name);
+	void ClearAnimationSequence();
+	void GatherSequenceNames(std::vector<std::string>& vecString);
+	void AddAnimationSequenceToSceneResource();
+	int GetCurrentAnimationOrder();
 public:
 	virtual void Start();
 	virtual bool Init();
@@ -114,7 +119,8 @@ public:
 	virtual CAnimationSequenceInstance* Clone();
 	virtual void Save(FILE* File);
 	virtual void Load(FILE* File);
-
+	bool SaveAnimationFullPath(const char* FullPath);
+	bool LoadAnimationFullPath(const char* FullPath);
 private:
 	CAnimationSequenceData* FindAnimation(const std::string& Name);
 

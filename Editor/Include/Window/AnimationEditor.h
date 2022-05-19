@@ -36,13 +36,15 @@ private:
 	class CIMGUITextInput* m_NewAnimSeqName;
 	class CIMGUITextInput* m_NewAnimSeqDataKeyName;
 	class CIMGUIButton* m_SaveAnimationInstanceBtn;
+	class CIMGUIButton* m_LoadAnimationInstanceBtn;
 private :
 	class CAnim3DObject* m_3DTestObject;
 	class CAnimationSequenceInstance* m_Animation;
 public:
 	virtual bool Init();
 	virtual void Update(float DeltaTime);
-
+private :
+	void OnClearExistingAnimationSeqInfos();
 private :
 	void OnAddAnimationSequence();
 	void OnClickAnimationSequence(int, const char*);
@@ -53,6 +55,7 @@ private :
 	void OnSetPlayEngineDeltaTime();
 	void OnPlayAnimation();
 	void OnSaveAnimationInstance();
+	void OnLoadAnimationInstance();
 	void OnApplyAnimationSlider(CAnimationSequence* Sequence);
 };
 

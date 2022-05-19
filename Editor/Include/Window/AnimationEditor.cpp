@@ -115,6 +115,9 @@ bool CAnimationEditor::Init()
 	m_SaveAnimationInstanceBtn = AddWidget<CIMGUIButton>("Save Instance", 100.f, 30.f);
 	m_SaveAnimationInstanceBtn->SetClickCallback<CAnimationEditor>(this, &CAnimationEditor::OnSaveAnimationInstance);
 	
+	m_LoadAnimationInstanceBtn = AddWidget<CIMGUIButton>("Load Instance", 100.f, 30.f);
+	m_LoadAnimationInstanceBtn->SetClickCallback<CAnimationEditor>(this, &CAnimationEditor::OnLoadAnimationInstance);
+
 
 	return true;
 }
@@ -129,6 +132,20 @@ void CAnimationEditor::Update(float DeltaTime)
 		int NextAnimationIdx = m_Animation->GetCurrentAnimation()->GetAnimationSequence()->GetCurrentFrameIdx();
 		OnAnimationSliderIntCallback(NextAnimationIdx);
 	}
+}
+
+void CAnimationEditor::OnClearExistingAnimationSeqInfos()
+{
+	if (!m_Animation)
+		return;
+
+	m_Animation->ClearAnimationSequence();
+
+	// Combo Box Clear
+	m_CurAnimComboBox->Clear();
+
+	// Table Claer
+	m_AnimInfoTable->ClearContents();
 }
 
 void CAnimationEditor::OnCreateSample3DObject()
@@ -174,6 +191,98 @@ void CAnimationEditor::OnPlayAnimation()
 
 void CAnimationEditor::OnSaveAnimationInstance()
 {
+	if (!m_Animation || !m_Animation->GetCurrentAnimation())
+		return;
+
+	TCHAR FiilePath[MAX_PATH] = {};
+
+	OPENFILENAME OpenFile = {};
+	OpenFile.lStructSize = sizeof(OPENFILENAME);
+	OpenFile.hwndOwner = CEngine::GetInst()->GetWindowHandle();
+	OpenFile.lpstrFilter = TEXT("All Files\0*.*\0.Animation File\0*.anim");
+	OpenFile.lpstrFile = FiilePath;
+	OpenFile.nMaxFile = MAX_PATH;
+	OpenFile.lpstrInitialDir = CPathManager::GetInst()->FindPath(ANIMATION_PATH)->Path;
+
+	if (GetSaveFileName(&OpenFile) != 0)
+	{
+		char FilePathMultibyte[MAX_PATH] = {};
+		int  ConvertLength = WideCharToMultiByte(CP_ACP, 0, FiilePath, -1, nullptr, 0, nullptr, nullptr);
+		WideCharToMultiByte(CP_ACP, 0, FiilePath, -1, FilePathMultibyte, ConvertLength, nullptr, nullptr);
+
+		m_Animation->SaveAnimationFullPath(FilePathMultibyte);
+
+	}
+}
+
+void CAnimationEditor::OnLoadAnimationInstance()
+{
+	TCHAR FilePath[MAX_PATH] = {};
+
+	OPENFILENAME OpenFile = {};
+	OpenFile.lStructSize = sizeof(OPENFILENAME);
+	OpenFile.hwndOwner = CEngine::GetInst()->GetWindowHandle();
+	OpenFile.lpstrFilter = TEXT("All Files\0*.*\0.Animation File\0*.anim");
+	OpenFile.lpstrFile = FilePath;
+	OpenFile.nMaxFile = MAX_PATH;
+	OpenFile.lpstrInitialDir = CPathManager::GetInst()->FindPath(ANIMATION_PATH)->Path;
+
+	if (GetOpenFileName(&OpenFile) != 0)
+	{
+		char FilePathMultibyte[MAX_PATH] = {};
+		int ConvertLength = WideCharToMultiByte(CP_ACP, 0, FilePath, -1, 0, 0, 0, 0);
+		WideCharToMultiByte(CP_ACP, 0, FilePath, -1, FilePathMultibyte, ConvertLength, 0, 0);
+
+		if (!m_Animation)
+			OnCreateSample3DObject();
+		else
+		{
+			// 기존 Animation List에 보여지던 , 즉, 현재 Animation에 Added 되었던 모든 Sequence 정보를 지워준다
+			OnClearExistingAnimationSeqInfos();
+		}
+
+		m_Animation->LoadAnimationFullPath(FilePathMultibyte);
+
+		// CurrentAnimation 이 없다면,
+		if (!m_Animation->GetCurrentAnimation())
+			return;
+
+		// CameraObject 생성하기
+		// CEditorManager::GetInst()->CreateCameraObject();
+
+		// Animation Key Name 조정을 한다. (혹시나 이름이 잘못 저장되어 있을 수도 있으므로 )
+		// m_Animation->AdjustSequence2DKeyName();
+
+		// ComboBox 에 모든 Seq 내용을 추가해준다
+		m_CurAnimComboBox->Clear();
+
+		int Size = m_Animation->GetAnimationCount();
+		std::vector<std::string> vecSeqNames;
+		vecSeqNames.reserve(Size);
+
+		m_Animation->GatherSequenceNames(vecSeqNames);
+
+		for (int i = 0; i < Size; i++)
+		{
+			m_CurAnimComboBox->AddItem(vecSeqNames[i]);
+		}
+
+		// Current Animation 정보로 세팅한다.
+		int CurAnimIdx = m_Animation->GetCurrentAnimationOrder();
+		if (CurAnimIdx == -1)
+			return;
+
+		m_CurAnimComboBox->SetSelectIndex(CurAnimIdx);
+
+		// 현재 Scene에 모든 Sequence 내용을 추가한다.
+		m_Animation->AddAnimationSequenceToSceneResource();
+
+		// 현재 Scene의 정보를 m_Scene으로 지정해준다
+		m_Animation->SetScene(CSceneManager::GetInst()->GetScene());
+
+		// Animation을 시작한다..
+		m_Animation->Play();
+	}
 }
 
 void CAnimationEditor::OnAnimationFrameInputCallback()

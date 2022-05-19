@@ -124,6 +124,130 @@ bool CAnimationSequence::SaveFullPath(const TCHAR* pFullPath)
 	return SaveFullPathMultibyte(strFullPath);
 }
 
+
+void CAnimationSequence::Save(FILE* pFile)
+{
+	CRef::Save(pFile);
+
+	size_t	iLength = m_Name.length();
+	fwrite(&iLength, sizeof(size_t), 1, pFile);
+	fwrite(m_Name.c_str(), sizeof(char), iLength, pFile);
+
+	fwrite(&m_Loop, sizeof(bool), 1, pFile);
+	fwrite(&m_StartTime, sizeof(float), 1, pFile);
+	fwrite(&m_EndTime, sizeof(float), 1, pFile);
+	fwrite(&m_TimeLength, sizeof(float), 1, pFile);
+	fwrite(&m_FrameTime, sizeof(float), 1, pFile);
+	fwrite(&m_PlayTime, sizeof(float), 1, pFile);
+	fwrite(&m_PlayScale, sizeof(float), 1, pFile);
+	fwrite(&m_StartFrame, sizeof(int), 1, pFile);
+	fwrite(&m_EndFrame, sizeof(int), 1, pFile);
+	fwrite(&m_FrameLength, sizeof(int), 1, pFile);
+	fwrite(&m_FrameMode, sizeof(int), 1, pFile);
+	fwrite(&m_ChangeFrame, sizeof(int), 1, pFile);
+
+	size_t	iCount = m_vecKeyFrame.size();
+
+	fwrite(&iCount, sizeof(size_t), 1, pFile);
+
+	for (size_t i = 0; i < iCount; ++i)
+	{
+		fwrite(&m_vecKeyFrame[i]->iBoneIndex, sizeof(int), 1,
+			pFile);
+
+		size_t	iFrameCount = m_vecKeyFrame[i]->vecKeyFrame.size();
+
+		fwrite(&iFrameCount, sizeof(size_t), 1, pFile);
+
+		for (size_t j = 0; j < iFrameCount; ++j)
+		{
+			fwrite(&m_vecKeyFrame[i]->vecKeyFrame[j]->dTime, sizeof(double), 1, pFile);
+			fwrite(&m_vecKeyFrame[i]->vecKeyFrame[j]->vPos, sizeof(Vector3), 1, pFile);
+			fwrite(&m_vecKeyFrame[i]->vecKeyFrame[j]->vScale, sizeof(Vector3), 1, pFile);
+			fwrite(&m_vecKeyFrame[i]->vecKeyFrame[j]->vRot, sizeof(Vector4), 1, pFile);
+		}
+	}
+}
+
+void CAnimationSequence::Load(FILE* pFile)
+{
+	CRef::Load(pFile);
+
+
+	size_t	iLength = 0;
+	fread(&iLength, sizeof(size_t), 1, pFile);
+	char	strName[256] = {};
+	fread(strName, sizeof(char), iLength, pFile);
+
+	SetName(strName);
+
+	bool	bLoop = true;
+	fread(&bLoop, sizeof(bool), 1, pFile);
+	m_Loop = bLoop;
+	fread(&m_StartTime, sizeof(float), 1, pFile);
+	fread(&m_EndTime, sizeof(float), 1, pFile);
+	fread(&m_TimeLength, sizeof(float), 1, pFile);
+	fread(&m_FrameTime, sizeof(float), 1, pFile);
+	fread(&m_PlayTime, sizeof(float), 1, pFile);
+	fread(&m_PlayScale, sizeof(float), 1, pFile);
+	fread(&m_StartFrame, sizeof(int), 1, pFile);
+	fread(&m_EndFrame, sizeof(int), 1, pFile);
+	fread(&m_FrameLength, sizeof(int), 1, pFile);
+	fread(&m_FrameMode, sizeof(int), 1, pFile);
+	fread(&m_ChangeFrame, sizeof(int), 1, pFile);
+
+	size_t	iCount = 0;
+
+	fread(&iCount, sizeof(size_t), 1, pFile);
+
+	std::vector<AnimationFrameTrans>	vecFrameTrans;
+	vecFrameTrans.resize(iCount * m_FrameLength);
+
+	for (size_t i = 0; i < iCount; ++i)
+	{
+		BoneKeyFrame* pBoneKeyFrame = new BoneKeyFrame;
+		m_vecKeyFrame.push_back(pBoneKeyFrame);
+
+		fread(&pBoneKeyFrame->iBoneIndex, sizeof(int), 1,
+			pFile);
+
+		size_t	iBoneFrameCount = 0;
+
+		fread(&iBoneFrameCount, sizeof(size_t), 1, pFile);
+
+		for (size_t j = 0; j < iBoneFrameCount; ++j)
+		{
+			KeyFrame* pKeyFrame = new KeyFrame;
+			pBoneKeyFrame->vecKeyFrame.push_back(pKeyFrame);
+
+			fread(&pKeyFrame->dTime, sizeof(double), 1, pFile);
+			fread(&pKeyFrame->vPos, sizeof(Vector3), 1, pFile);
+			fread(&pKeyFrame->vScale, sizeof(Vector3), 1, pFile);
+			fread(&pKeyFrame->vRot, sizeof(Vector4), 1, pFile);
+
+			if (j < m_FrameLength)
+			{
+				AnimationFrameTrans	tFrame = {};
+				tFrame.vScale = Vector4(pKeyFrame->vScale.x, pKeyFrame->vScale.y,
+					pKeyFrame->vScale.z, 1.f);
+				tFrame.vTranslate = Vector4(pKeyFrame->vPos.x, pKeyFrame->vPos.y,
+					pKeyFrame->vPos.z, 1.f);
+				tFrame.qRot = pKeyFrame->vRot;
+
+				vecFrameTrans[i * m_FrameLength + j] = tFrame;
+			}
+		}
+	}
+
+	m_KeyFrameBuffer = new CStructuredBuffer;
+
+	m_KeyFrameBuffer->Init("KeyFrameBuffer", sizeof(AnimationFrameTrans),
+		vecFrameTrans.size(), 13, true, (int)Buffer_Shader_Type::Compute);
+
+	m_KeyFrameBuffer->UpdateBuffer(&vecFrameTrans[0],
+		vecFrameTrans.size());
+}
+
 bool CAnimationSequence::SaveFullPathMultibyte(
 	const char* pFullPath)
 {
@@ -440,7 +564,7 @@ bool CAnimationSequence::CreateSequence(bool bLoop,
 		vecFrameTrans.size(), 13, true, (int)Buffer_Shader_Type::Compute);
 
 	m_KeyFrameBuffer->UpdateBuffer(&vecFrameTrans[0],
-		vecFrameTrans.size());
+		(int)vecFrameTrans.size());
 
 	if (strlen(m_FullPath) != 0)
 	{
