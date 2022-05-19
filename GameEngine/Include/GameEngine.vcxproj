@@ -60,6 +60,8 @@
     <ClCompile Include="GameObject\Minion.cpp" />
     <ClCompile Include="GameObject\MovingObject.cpp" />
     <ClCompile Include="GameObject\SkyObject.cpp" />
+    <ClCompile Include="ImCurveEdit.cpp" />
+    <ClCompile Include="ImGradient.cpp" />
     <ClCompile Include="imgui.cpp" />
     <ClCompile Include="IMGUIButton.cpp" />
     <ClCompile Include="IMGUICheckBox.cpp" />
@@ -95,6 +97,7 @@
     <ClCompile Include="IMGUIWidget.cpp" />
     <ClCompile Include="IMGUIWidgetList.cpp" />
     <ClCompile Include="IMGUIWindow.cpp" />
+    <ClCompile Include="ImGuizmo.cpp" />
     <ClCompile Include="imgui_demo.cpp" />
     <ClCompile Include="imgui_draw.cpp" />
     <ClCompile Include="imgui_impl_dx11.cpp" />
@@ -249,6 +252,8 @@
     <ClInclude Include="GameObject\MovingObject.h" />
     <ClInclude Include="GameObject\SkyObject.h" />
     <ClInclude Include="imconfig.h" />
+    <ClInclude Include="ImCurveEdit.h" />
+    <ClInclude Include="ImGradient.h" />
     <ClInclude Include="imgui.h" />
     <ClInclude Include="IMGUIButton.h" />
     <ClInclude Include="IMGUICheckBox.h" />
@@ -285,12 +290,15 @@
     <ClInclude Include="IMGUIWidget.h" />
     <ClInclude Include="IMGUIWidgetList.h" />
     <ClInclude Include="IMGUIWindow.h" />
+    <ClInclude Include="ImGuizmo.h" />
     <ClInclude Include="imgui_impl_dx11.h" />
     <ClInclude Include="imgui_impl_win32.h" />
     <ClInclude Include="imgui_internal.h" />
+    <ClInclude Include="ImSequencer.h" />
     <ClInclude Include="imstb_rectpack.h" />
     <ClInclude Include="imstb_textedit.h" />
     <ClInclude Include="imstb_truetype.h" />
+    <ClInclude Include="ImZoomSlider.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="Matrix.h" />
     <ClInclude Include="Navigation3D.h" />
