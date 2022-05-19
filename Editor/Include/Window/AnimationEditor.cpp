@@ -29,6 +29,28 @@ CAnimationEditor::~CAnimationEditor()
 {
 	// 이 Animation 은 실제 3DTestObject 에서 얻어온 Animation 이다. 
 	// SAFE_DELETE(m_Animation);
+
+
+	// Delete 하여 얻어온 BoneKeyFrame 정보를 지워준다.
+	while (!m_StackDeleteFrame.empty())
+	{
+		BoneKeyFrame* BoneFrame = m_StackDeleteFrame.top().second;
+		m_StackDeleteFrame.pop();
+
+		for (int i = 0; i < BoneFrame->vecKeyFrame.size(); ++i)
+		{
+			SAFE_DELETE(BoneFrame->vecKeyFrame[i]);
+		}
+		/*
+		for (int i = 0; i < BoneFrame->vecKeyFrame.size(); ++i)
+		{
+			--m_vecKeyFrame[i]->iRefCount;
+
+			if (m_vecKeyFrame[i]->iRefCount == 0)
+				delete	m_vecKeyFrame[i];
+		}
+		*/
+	}
 }
 
 bool CAnimationEditor::Init()
@@ -77,25 +99,35 @@ bool CAnimationEditor::Init()
 	m_FrameInput->SetCallback<CAnimationEditor>(this, &CAnimationEditor::OnAnimationFrameInputCallback);
 
 	// Frame Delete
-	m_FrameDelBtn = AddWidget<CIMGUIButton>("Delete Frame", 100.f, 30.f);
-	m_FrameDelBtn->SetClickCallback<CAnimationEditor>(this, &CAnimationEditor::OnDeleteAnimFrame);
+	// m_DeleteFrameInput = AddWidget<CIMGUITextInput>("Delete Target Frame", 100.f, 30.f);
+	// m_DeleteFrameInput->SetTextType(ImGuiText_Type::Int);
+	// m_FrameDelBtn = AddWidget<CIMGUIButton>("Delete Frame", 100.f, 30.f);
+	// m_FrameDelBtn->SetClickCallback<CAnimationEditor>(this, &CAnimationEditor::OnDeleteAnimFrame);
 
 	// Btns
-	m_AnimSeqLoadBtn = AddWidget<CIMGUIButton>("AddSequences", 100.f, 30.f);
-	m_AnimSeqLoadBtn->SetClickCallback<CAnimationEditor>(this, &CAnimationEditor::OnAddAnimationSequence);
+	m_AnimSequenceAddBtn = AddWidget<CIMGUIButton>("AddSequences", 100.f, 30.f);
+	m_AnimSequenceAddBtn->SetClickCallback<CAnimationEditor>(this, &CAnimationEditor::OnAddAnimationSequence);
 
 	// ex) ZedIdle.sqc --> 
 	CIMGUIText* HelpText = AddWidget<CIMGUIText>("Anim Seq Load Btn Help Text", 100.f, 30.f);
 	HelpText->SetText("ex)  'ZedIdle' -- > ('ZedIdle', 'ZedIdle.sqc') 를 SceneResource, ResourceManager의 m_mapSequence 에 저장");
 	HelpText->SetIsHelpMode(true);
-
 	m_NewAnimSeqName = AddWidget<CIMGUITextInput>("Sequence Name", 200.f, 30.f);;
+
+
 	HelpText = AddWidget<CIMGUIText>("Anim Seq Load Btn Help Text", 100.f, 30.f);
 	HelpText->SetText("ex) 'Idle' --> m_Animation->AddAnimation('ZedIdle', 'Idle') 형태로, Key값으로 AnimationInstance 에 정보 추가");
 	HelpText->SetIsHelpMode(true);
-
 	m_NewAnimSeqDataKeyName = AddWidget<CIMGUITextInput>("Sequence  Key", 200.f, 30.f);;
 
+	// Animation Instance Key Name 수정 기능
+	HelpText = AddWidget<CIMGUIText>("Anim Key Name Edit Help", 100.f, 30.f);
+	HelpText->SetText("ex) 'EditIdle' --> m_Animation->AddAnimation('ZedIdle', 'Idle') 으로 인해 만들어진 m_mapAnimationSequence['Idle'] = 'ZedIdle' 을  m_mapAnimationSequence['EditIdle'] = 'ZedIdle' 로 Key 값 수정 ");
+	HelpText->SetIsHelpMode(true);
+	m_EditAnimSeqDataKeyName = AddWidget<CIMGUITextInput>("Edit Sequence Key", 200.f, 30.f);;
+
+	m_EditAnimKeyBtn = AddWidget<CIMGUIButton>("Edit Anim Key Btn", 100.f, 30.f);
+	m_EditAnimKeyBtn->SetClickCallback<CAnimationEditor>(this, &CAnimationEditor::OnEditAnimSequenceKey);
 
 	// Table Key 값 정보 세팅
 	m_AnimInfoTable->MakeKey(AnimationClipInfoKeys::FrameRange);
@@ -170,11 +202,16 @@ void CAnimationEditor::OnClearExistingAnimationSeqInfos()
 void CAnimationEditor::OnCreateSample3DObject()
 {
 	// 기존에 것 지워주고
+	/*
 	if (m_3DTestObject)
 	{
 		m_3DTestObject->Destroy();
 		m_CurAnimComboBox->Clear();
 	}
+	*/
+	
+	if (m_3DTestObject)
+		return;
 
 	m_3DTestObject = CSceneManager::GetInst()->GetScene()->CreateGameObject<CAnim3DObject>("3D Test");
 
@@ -248,9 +285,19 @@ void CAnimationEditor::OnLoadAnimationInstance()
 
 	if (GetOpenFileName(&OpenFile) != 0)
 	{
+		char	Ext[_MAX_EXT] = {};
+
 		char FilePathMultibyte[MAX_PATH] = {};
 		int ConvertLength = WideCharToMultiByte(CP_ACP, 0, FilePath, -1, 0, 0, 0, 0);
 		WideCharToMultiByte(CP_ACP, 0, FilePath, -1, FilePathMultibyte, ConvertLength, 0, 0);
+
+		_splitpath_s(FilePathMultibyte, nullptr, 0, nullptr, 0, nullptr, 0, Ext, _MAX_EXT);
+
+		_strupr_s(Ext);
+
+		// 확장자 .anim 이 아니라면 return;
+		if (strcmp(Ext, ".ANIM") != 0)
+			return;
 
 		if (!m_Animation)
 			OnCreateSample3DObject();
@@ -376,9 +423,46 @@ void CAnimationEditor::OnEditAnimPlayScale()
 	OnRefreshAnimationClipTable(m_Animation->GetCurrentAnimation()->GetAnimationSequence());
 }
 
+void CAnimationEditor::OnEditAnimSequenceKey()
+{
+	if (!m_Animation || !m_Animation->GetCurrentAnimation())
+		return;
+
+	// 기존 Animation 이 저장된 Key 값
+
+	// New Key 값
+	// EditCurrentSequenceKeyName
+	if (!m_Animation->EditCurrentSequenceKeyName(m_EditAnimSeqDataKeyName->GetTextUTF8(), m_CurAnimComboBox->GetSelectItem()))
+	{
+		assert(false);
+		return;
+	}
+
+	// Combo Box 내용 Refresh
+	OnRefreshAnimationComboBox();
+}
+
+/*
 void CAnimationEditor::OnDeleteAnimFrame()
 {
+	if (!m_Animation || !m_Animation->GetCurrentAnimation())
+		return;
+
+	int DeleteFrameIdx = m_DeleteFrameInput->GetValueInt();
+
+	// if (m_PlayScaleInput->Empty())
+	//	return;
+	BoneKeyFrame* DeleteBoneFrame = m_Animation->GetCurrentAnimation()->GetAnimationSequence()->DeleteAnimationFrame(DeleteFrameIdx);
+	
+	m_StackDeleteFrame.push(std::make_pair(DeleteFrameIdx, DeleteBoneFrame));
+
+	// Frame Slider
+	OnRefreshFrameSliderInfo(m_Animation->GetCurrentAnimation()->GetAnimationSequence());
+
+	// Anim Table
+	OnRefreshAnimationClipTable(m_Animation->GetCurrentAnimation()->GetAnimationSequence());
 }
+*/
 
 void CAnimationEditor::OnSetPlayEngineDeltaTime()
 {
@@ -493,4 +577,28 @@ void CAnimationEditor::OnRefreshAnimationClipTable(CAnimationSequence* Sequence)
 	m_AnimInfoTable->AddData(AnimationClipInfoKeys::PlayTime, Sequence->GetPlayTime());
 	m_AnimInfoTable->AddData(AnimationClipInfoKeys::FrameTime, Sequence->GetFrameTime());
 	m_AnimInfoTable->AddData(AnimationClipInfoKeys::PlayScale, Sequence->GetPlayScale());
+}
+
+void CAnimationEditor::OnRefreshFrameSliderInfo(CAnimationSequence* Sequence)
+{
+	if (!Sequence)
+		return;
+
+	m_FrameSlider->SetMin(Sequence->GetStartFrame());
+	m_FrameSlider->SetMax(Sequence->GetEndFrame());
+}
+
+void CAnimationEditor::OnRefreshAnimationComboBox()
+{
+	if (!m_Animation || !m_Animation->GetCurrentAnimation())
+		return;
+
+	m_CurAnimComboBox->Clear();
+
+	std::vector<std::string> vecCurKeyNames;
+
+	m_Animation->GatherSequenceNames(vecCurKeyNames);
+
+	for (const auto& name : vecCurKeyNames)
+		m_CurAnimComboBox->AddItem(name);
 }

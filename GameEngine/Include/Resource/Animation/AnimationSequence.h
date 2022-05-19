@@ -75,6 +75,7 @@ private:
 	std::vector<BoneKeyFrame*>	m_vecKeyFrame;
 	char						m_FullPath[MAX_PATH];
 	class CStructuredBuffer* m_KeyFrameBuffer;
+	std::vector<AnimationFrameTrans> m_vecFrameTrans;
 
 public:
 	int GetCurrentFrameIdx() const

@@ -148,6 +148,37 @@ void CAnimationSequenceInstance::SetCurrentAnimationFrameIdx(int Idx)
 	m_CurrentAnimation->GetAnimationSequence()->m_CurrentFrameIdx = Idx;
 }
 
+bool CAnimationSequenceInstance::EditCurrentSequenceKeyName(const std::string& NewKey, const std::string& PrevKey)
+{
+	if (!m_CurrentAnimation)
+		return false;
+
+	// 다시 Combo Box 같은 것 Refresch
+	auto iter = m_mapAnimation.find(PrevKey);
+
+	if (iter == m_mapAnimation.end())
+		return false;
+
+	CAnimationSequenceData* PrevAnim = iter->second;
+
+	CAnimationSequenceData* NewAnim = new CAnimationSequenceData;
+
+	NewAnim->m_Sequence = PrevAnim->GetAnimationSequence();
+	NewAnim->m_Name = PrevAnim->GetName();
+	NewAnim->m_Loop = PrevAnim->m_Loop;
+	NewAnim->m_PlayTime = PrevAnim->m_PlayTime;
+	NewAnim->m_PlayScale = PrevAnim->m_PlayScale;
+	NewAnim->m_FrameTime = PrevAnim->m_FrameTime;
+
+	// 기존 것은 지워준다.
+	m_mapAnimation.erase(iter);
+
+	// 새로운 사항을 추가한다.
+	m_mapAnimation.insert(std::make_pair(NewKey, NewAnim));
+
+	return true;
+}
+
 void CAnimationSequenceInstance::AddAnimation(const std::string& SequenceName,
 	const std::string& Name, bool Loop,
 	float PlayTime, float PlayScale)

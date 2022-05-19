@@ -40,6 +40,9 @@ private:
 	std::vector<CSharedPtr<CRenderTarget>>	m_vecGBuffer;
 	std::vector<CSharedPtr<CRenderTarget>>	m_vecLightBuffer;
 
+	// Animation Editor Buffer
+	CSharedPtr<CRenderTarget>	m_AnimationEditorBuffer;
+
 public:
 	class CStandard2DConstantBuffer* GetStandard2DCBuffer()	const
 	{
