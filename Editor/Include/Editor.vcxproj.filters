@@ -120,6 +120,9 @@
     <ClCompile Include="Window\InspectorWindow.cpp">
       <Filter>02. Editor\01. Window</Filter>
     </ClCompile>
+    <ClCompile Include="Object\Anim3DObject.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EditorManager.h">
@@ -202,6 +205,9 @@
     </ClInclude>
     <ClInclude Include="Window\InspectorWindow.h">
       <Filter>02. Editor\01. Window</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\Anim3DObject.h">
+      <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

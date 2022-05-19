@@ -819,6 +819,18 @@
     <ClCompile Include="Component\Frustum.cpp">
       <Filter>05. Component\01. SceneComponent\03. Camera</Filter>
     </ClCompile>
+    <ClCompile Include="Animation\SkeletonSocket.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="ImCurveEdit.cpp">
+      <Filter>01. Engine\08. IMGUI\01. Lib</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGradient.cpp">
+      <Filter>01. Engine\08. IMGUI\01. Lib</Filter>
+    </ClCompile>
+    <ClCompile Include="ImGuizmo.cpp">
+      <Filter>01. Engine\08. IMGUI\01. Lib</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Device.h">
@@ -1393,6 +1405,24 @@
     </ClInclude>
     <ClInclude Include="Component\Frustum.h">
       <Filter>05. Component\01. SceneComponent\03. Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation\SkeletonSocket.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="ImCurveEdit.h">
+      <Filter>01. Engine\08. IMGUI\01. Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGradient.h">
+      <Filter>01. Engine\08. IMGUI\01. Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGuizmo.h">
+      <Filter>01. Engine\08. IMGUI\01. Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="ImSequencer.h">
+      <Filter>01. Engine\08. IMGUI\01. Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="ImZoomSlider.h">
+      <Filter>01. Engine\08. IMGUI\01. Lib</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
