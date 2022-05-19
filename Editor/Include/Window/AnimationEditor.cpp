@@ -118,6 +118,11 @@ bool CAnimationEditor::Init()
 	m_LoadAnimationInstanceBtn = AddWidget<CIMGUIButton>("Load Instance", 100.f, 30.f);
 	m_LoadAnimationInstanceBtn->SetClickCallback<CAnimationEditor>(this, &CAnimationEditor::OnLoadAnimationInstance);
 
+	m_PlayScaleEditBtn = AddWidget<CIMGUIButton>("Edit Scale", 100.f, 30.f);
+	m_PlayScaleEditBtn->SetClickCallback<CAnimationEditor>(this, &CAnimationEditor::OnEditAnimPlayScale);
+	
+	m_PlayTimeEditBtn = AddWidget<CIMGUIButton>("Edit Scale", 100.f, 30.f);
+	m_PlayTimeEditBtn->SetClickCallback<CAnimationEditor>(this, &CAnimationEditor::OnEditAnimPlayTime);
 
 	return true;
 }
@@ -320,6 +325,14 @@ void CAnimationEditor::OnApplyAnimationSlider(CAnimationSequence* Sequence)
 
 	m_FrameSlider->SetMin(Sequence->GetStartFrame());
 	m_FrameSlider->SetMax(Sequence->GetEndFrame());
+}
+
+void CAnimationEditor::OnEditAnimPlayTime()
+{
+}
+
+void CAnimationEditor::OnEditAnimPlayScale()
+{
 }
 
 void CAnimationEditor::OnSetPlayEngineDeltaTime()

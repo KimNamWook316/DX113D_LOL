@@ -37,9 +37,13 @@ private:
 	class CIMGUITextInput* m_NewAnimSeqDataKeyName;
 	class CIMGUIButton* m_SaveAnimationInstanceBtn;
 	class CIMGUIButton* m_LoadAnimationInstanceBtn;
+
+	class CIMGUIButton* m_PlayScaleEditBtn;
+	class CIMGUIButton* m_PlayTimeEditBtn;
 private :
 	class CAnim3DObject* m_3DTestObject;
 	class CAnimationSequenceInstance* m_Animation;
+	class std::stack<AnimationFrameData> m_StackDeleteFrame;
 public:
 	virtual bool Init();
 	virtual void Update(float DeltaTime);
@@ -57,5 +61,7 @@ private :
 	void OnSaveAnimationInstance();
 	void OnLoadAnimationInstance();
 	void OnApplyAnimationSlider(CAnimationSequence* Sequence);
+	void OnEditAnimPlayTime();
+	void OnEditAnimPlayScale();
 };
 

@@ -28,6 +28,36 @@ public:
 	{
 		return m_BufferData.Distance;
 	}
+	
+	const Vector4& GetLightColor() const
+	{
+		return m_BufferData.Color;
+	}
+
+	float GetLightAngleIn() const
+	{
+		return m_BufferData.AngleIn;
+	}
+
+	float GetLightAngleOut() const
+	{
+		return m_BufferData.AngleOut;
+	}
+
+	float GetLightAtt1() const
+	{
+		return m_BufferData.Att1;
+	}
+
+	float GetLightAtt2() const
+	{
+		return m_BufferData.Att2;
+	}
+
+	float GetLightAtt3() const
+	{
+		return m_BufferData.Att3;
+	}
 
 public:
 	void SetColor(const Vector4& Color)

@@ -35,6 +35,7 @@ public:
 	bool AddSocket(const std::string& SkeletonName, const std::string& BoneName, const std::string& SocketName,
 		const Vector3& Offset = Vector3::Zero, const Vector3& OffsetRot = Vector3::Zero);
 	void ReleaseSequence(const std::string& Name);
+	CAnimationSequence* CreateBasicAnimationSequence(const std::string& Name);
 
 
 	bool LoadSkeleton(const std::string& Name, const TCHAR* FileName,

@@ -38,7 +38,8 @@ public:
 	{
 		SphereInfo Info;
 		
-		Info.Center = m_SphereInfo.Center * GetWorldScale() + GetWorldPos();
+		// Info.Center = m_SphereInfo.Center * GetWorldScale() + GetWorldPos();
+		Info.Center = m_SphereInfo.Center.TransformCoord(GetWorldMatrix());
 		Info.Radius = m_SphereInfo.Radius;
 
 		return Info;

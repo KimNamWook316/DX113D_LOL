@@ -243,6 +243,29 @@ void CAnimationManager3D::ReleaseSequence(const std::string& Name)
 	}
 }
 
+CAnimationSequence* CAnimationManager3D::CreateBasicAnimationSequence(const std::string& Name)
+{
+	CAnimationSequence* Sequence = new CAnimationSequence;
+
+	// Sequence->m_Scene = Scene;
+
+	/*
+	if (!Sequence->CreateSequenceMultibyte(FullPath))
+	{
+		SAFE_DELETE(Sequence);
+		return false;
+	}
+	*/
+	
+
+	Sequence->m_Loop = true;
+	Sequence->SetName(Name);
+
+	m_mapSequence.insert(std::make_pair(Name, Sequence));
+
+	return Sequence;
+}
+
 bool CAnimationManager3D::LoadSkeleton(const std::string& Name, 
 	const TCHAR* FileName, const std::string& PathName, CScene* Scene)
 {

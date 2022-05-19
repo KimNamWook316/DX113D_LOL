@@ -27,6 +27,9 @@ private:
     void OnEditOpacity(float Opacity);
 
 private:
+    void RefreshMeshWidget(class CMesh* Mesh);
+
+private:
     class CIMGUITextInput* m_MeshName;
     class CIMGUIButton* m_LoadMeshButton;
     class CIMGUIComboBox* m_MaterialSlotCombo;

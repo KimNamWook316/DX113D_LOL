@@ -173,8 +173,9 @@
     <ClCompile Include="Object\Player2D.cpp" />
     <ClCompile Include="Object\SpriteEditObject.cpp" />
     <ClCompile Include="Scene\DefaultScene.cpp" />
-    <ClCompile Include="Widget\AnimationMeshComponentWidget.cpp" />
+    <ClCompile Include="Widget\AnimationMeshWidget.cpp" />
     <ClCompile Include="Widget\GameObjectWidget.cpp" />
+    <ClCompile Include="Widget\LightComponentWidget.cpp" />
     <ClCompile Include="Widget\ObjectComponentWidget.cpp" />
     <ClCompile Include="Widget\SceneComponentWidget.cpp" />
     <ClCompile Include="Widget\StaticMeshComponentWidget.cpp" />
@@ -203,8 +204,9 @@
     <ClInclude Include="resource.h" />
     <ClInclude Include="Scene\DefaultScene.h" />
     <ClInclude Include="Utils.h" />
-    <ClInclude Include="Widget\AnimationMeshComponentWidget.h" />
+    <ClInclude Include="Widget\AnimationMeshWidget.h" />
     <ClInclude Include="Widget\GameObjectWidget.h" />
+    <ClInclude Include="Widget\LightComponentWidget.h" />
     <ClInclude Include="Widget\ObjectComponentWidget.h" />
     <ClInclude Include="Widget\SceneComponentWidget.h" />
     <ClInclude Include="Widget\StaticMeshComponentWidget.h" />

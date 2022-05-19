@@ -63,6 +63,8 @@ public:
 		m_SceneComponentList.push_back(Component);
 	}
 
+	bool DeleteObjectComponent(const std::string& Name);
+
 	class CComponent* FindComponent(const std::string& Name);
 	template <typename T>
 	T* FindComponentFromType()

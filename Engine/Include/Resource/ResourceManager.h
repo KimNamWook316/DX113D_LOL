@@ -189,6 +189,7 @@ public:
 	bool LoadAnimationSequenceFullPathMultibyte(bool Loop, const std::string& Name, const char* FullPath, class CScene* Scene = nullptr);
 	bool LoadAnimationSequenceFullPathMultibyteSetOriginFileName(bool Loop, std::string& Name, const char* FullPath);
 	CAnimationSequence* FindAnimationSequence(const std::string& Name);
+	CAnimationSequence* CreateBasicAnimationSequence(const std::string& Name);
 	void ReleaseAnimationSequence3D(const std::string& Name);
 
 	bool LoadSkeleton(const std::string& Name, const TCHAR* FileName,
