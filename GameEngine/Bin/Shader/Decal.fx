@@ -42,16 +42,18 @@ PS_OUTPUT_DECAL DecalPS(VS_OUTPUT_DECAL input)
     
 	float4 Depth = g_GBufferDepth.Sample(g_BaseSmp, ScreenUV);
     
+	// a == 0 이면, 물체가 출력되지 않은 지점이라는 것 -> 데칼이 입혀질 일이 없음
 	if (Depth.a == 0.f)
 		clip(-1);
     
 	float4 Pos;
+	// 원근 나누기 전의 투영공간의 좌표로 변환
 	Pos.x = (ScreenUV.x * 2.f - 1.f) * Depth.g;
 	Pos.y = (ScreenUV.y * -2.f + 1.f) * Depth.g;
 	Pos.z = Depth.r * Depth.g;
 	Pos.w = Depth.g;
     
-    // 로컬 공간을 만든다.
+    // 출력되어 있는 물체의 데칼 기준 로컬 공간에서의 좌표를 얻는다.
 	float3 LocalPos = mul(Pos, g_matInvWVP).xyz;
     
     // DecalMesh의 로컬 크기는 -0.5 ~ 0.5 사이이므로 이 영역을 벗어나면
