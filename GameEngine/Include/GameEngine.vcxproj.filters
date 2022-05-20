@@ -834,6 +834,15 @@
     <ClCompile Include="ImGuizmo.cpp">
       <Filter>01. Engine\08. IMGUI\01. Lib</Filter>
     </ClCompile>
+    <ClCompile Include="EngineUtil.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="IMGUIGizmo.cpp">
+      <Filter>01. Engine\08. IMGUI\03. Widget</Filter>
+    </ClCompile>
+    <ClCompile Include="IMGUIGrid.cpp">
+      <Filter>01. Engine\08. IMGUI\03. Widget</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Device.h">
@@ -1426,6 +1435,15 @@
     </ClInclude>
     <ClInclude Include="ImZoomSlider.h">
       <Filter>01. Engine\08. IMGUI\01. Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineUtil.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="IMGUIGizmo.h">
+      <Filter>01. Engine\08. IMGUI\03. Widget</Filter>
+    </ClInclude>
+    <ClInclude Include="IMGUIGrid.h">
+      <Filter>01. Engine\08. IMGUI\03. Widget</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

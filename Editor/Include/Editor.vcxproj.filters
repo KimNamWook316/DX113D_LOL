@@ -49,6 +49,12 @@
     <Filter Include="02. Editor\02. Widget\01. Inspector\02. ObjectComponent">
       <UniqueIdentifier>{7b9c547d-0ea7-4639-a712-17d44c387f64}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03. Object\01 .2D">
+      <UniqueIdentifier>{ceb50a8d-684f-437c-9559-ea9b91c749eb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Object\02. 3D">
+      <UniqueIdentifier>{2c1cca55-7696-4a5e-9ed6-9811d19f240b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EditorManager.cpp">
@@ -59,15 +65,6 @@
     </ClCompile>
     <ClCompile Include="Scene\DefaultScene.cpp">
       <Filter>01. Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="Object\Player2D.cpp">
-      <Filter>03. Object</Filter>
-    </ClCompile>
-    <ClCompile Include="Object\SpriteEditObject.cpp">
-      <Filter>03. Object</Filter>
-    </ClCompile>
-    <ClCompile Include="Object\DragObject.cpp">
-      <Filter>03. Object</Filter>
     </ClCompile>
     <ClCompile Include="Thread\FBXConvertThread.cpp">
       <Filter>04. Thread\01. FBXConvert</Filter>
@@ -132,6 +129,18 @@
     <ClCompile Include="Object\Anim3DObject.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="Object\DragObject.cpp">
+      <Filter>03. Object\01 .2D</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\Player2D.cpp">
+      <Filter>03. Object\01 .2D</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\SpriteEditObject.cpp">
+      <Filter>03. Object\01 .2D</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\3DCameraObject.cpp">
+      <Filter>03. Object\02. 3D</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EditorManager.h">
@@ -139,15 +148,6 @@
     </ClInclude>
     <ClInclude Include="Scene\DefaultScene.h">
       <Filter>01. Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="Object\Player2D.h">
-      <Filter>03. Object</Filter>
-    </ClInclude>
-    <ClInclude Include="Object\SpriteEditObject.h">
-      <Filter>03. Object</Filter>
-    </ClInclude>
-    <ClInclude Include="Object\DragObject.h">
-      <Filter>03. Object</Filter>
     </ClInclude>
     <ClInclude Include="resource.h">
       <Filter>헤더 파일</Filter>
@@ -220,6 +220,18 @@
     </ClInclude>
     <ClInclude Include="Object\Anim3DObject.h">
       <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\DragObject.h">
+      <Filter>03. Object\01 .2D</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\Player2D.h">
+      <Filter>03. Object\01 .2D</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\SpriteEditObject.h">
+      <Filter>03. Object\01 .2D</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\3DCameraObject.h">
+      <Filter>03. Object\02. 3D</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

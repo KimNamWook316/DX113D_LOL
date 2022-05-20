@@ -25,7 +25,7 @@
     <ClCompile Include="Animation\AnimationSequenceData.cpp" />
     <ClCompile Include="Animation\AnimationSequenceInstance.cpp" />
     <ClCompile Include="Animation\SkeletonSocket.cpp" />
-	<ClCompile Include="EngineUtil.cpp" />
+    <ClCompile Include="EngineUtil.cpp" />
     <ClCompile Include="Collision\Collision.cpp" />
     <ClCompile Include="Collision\CollisionManager.cpp" />
     <ClCompile Include="Component\AnimationMeshComponent.cpp" />
@@ -70,6 +70,8 @@
     <ClCompile Include="IMGUIColor4.cpp" />
     <ClCompile Include="IMGUIComboBox.cpp" />
     <ClCompile Include="IMGUIDummy.cpp" />
+    <ClCompile Include="IMGUIGizmo.cpp" />
+    <ClCompile Include="IMGUIGrid.cpp" />
     <ClCompile Include="IMGUIImage.cpp" />
     <ClCompile Include="IMGUIImageButton.cpp" />
     <ClCompile Include="IMGUIInputFloat.cpp" />
@@ -262,6 +264,8 @@
     <ClInclude Include="IMGUIColor4.h" />
     <ClInclude Include="IMGUIComboBox.h" />
     <ClInclude Include="IMGUIDummy.h" />
+    <ClInclude Include="IMGUIGizmo.h" />
+    <ClInclude Include="IMGUIGrid.h" />
     <ClInclude Include="IMGUIImage.h" />
     <ClInclude Include="IMGUIImageButton.h" />
     <ClInclude Include="IMGUIInfo.h" />
