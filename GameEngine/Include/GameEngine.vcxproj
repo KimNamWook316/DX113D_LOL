@@ -25,7 +25,8 @@
     <ClCompile Include="Animation\AnimationSequenceData.cpp" />
     <ClCompile Include="Animation\AnimationSequenceInstance.cpp" />
     <ClCompile Include="Animation\SkeletonSocket.cpp" />
-	<ClCompile Include="EngineUtil.cpp" />
+    <ClCompile Include="Component\DecalComponent.cpp" />
+    <ClCompile Include="EngineUtil.cpp" />
     <ClCompile Include="Collision\Collision.cpp" />
     <ClCompile Include="Collision\CollisionManager.cpp" />
     <ClCompile Include="Component\AnimationMeshComponent.cpp" />
@@ -224,6 +225,7 @@
     <ClInclude Include="Component\ColliderPixel.h" />
     <ClInclude Include="Component\ColliderSphere.h" />
     <ClInclude Include="Component\Component.h" />
+    <ClInclude Include="Component\DecalComponent.h" />
     <ClInclude Include="Component\Frustum.h" />
     <ClInclude Include="Component\LandScape.h" />
     <ClInclude Include="Component\LightComponent.h" />
@@ -449,6 +451,7 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Effect</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
     </FxCompile>
+    <FxCompile Include="..\Bin\Shader\Decal.fx" />
     <FxCompile Include="..\Bin\Shader\LandScape.fx">
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">LandScapeVS</EntryPointName>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Effect</ShaderType>

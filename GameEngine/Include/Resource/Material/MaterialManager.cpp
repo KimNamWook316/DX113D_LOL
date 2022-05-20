@@ -43,6 +43,25 @@ bool CMaterialManager::Init()
 
 	Mtrl->AddTexture(20, (int)Buffer_Shader_Type::Pixel, "DefaultSky", TEXT("Sky/Sky.dds"));
 
+	CreateMaterial<CMaterial>("DefaultDecal");
+
+	Mtrl = FindMaterial("DefaultDecal");
+
+	Mtrl->SetShader("DecalShader");
+
+	Mtrl->AddTexture(0, (int)Buffer_Shader_Type::Pixel,
+		"DefaultDecal", TEXT("Decal/Decal.png"));
+	Mtrl->AddTexture(1, (int)Buffer_Shader_Type::Pixel,
+		"DefaultDecalNormal", TEXT("Decal/Decal_NRM.png"));
+	Mtrl->AddTexture(2, (int)Buffer_Shader_Type::Pixel,
+		"DefaultDecalSpecular", TEXT("Decal/Decal_SPEC.png"));
+
+	CreateMaterial<CMaterial>("DebugDecal");
+
+	Mtrl = FindMaterial("DebugDecal");
+
+	Mtrl->SetShader("DebugDecalShader");
+
 	return true;
 }
 
