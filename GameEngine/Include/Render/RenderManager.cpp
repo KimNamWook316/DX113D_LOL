@@ -115,14 +115,20 @@ bool CRenderManager::Init()
 	m_RenderLayerList.push_back(Layer);
 
 	Layer = new RenderLayer;
-	Layer->Name = "Particle";
+	Layer->Name = "Decal";
 	Layer->LayerPriority = 2;
 
 	m_RenderLayerList.push_back(Layer);
 
 	Layer = new RenderLayer;
-	Layer->Name = "ScreenWidgetComponent";
+	Layer->Name = "Particle";
 	Layer->LayerPriority = 3;
+
+	m_RenderLayerList.push_back(Layer);
+
+	Layer = new RenderLayer;
+	Layer->Name = "ScreenWidgetComponent";
+	Layer->LayerPriority = 4;
 
 	m_RenderLayerList.push_back(Layer);
 
@@ -149,31 +155,59 @@ bool CRenderManager::Init()
 		RS.Width, RS.Height, DXGI_FORMAT_R32G32B32A32_FLOAT))
 		return false;
 
+	if (!CResourceManager::GetInst()->CreateTarget("GBuffer4",
+		RS.Width, RS.Height, DXGI_FORMAT_R32G32B32A32_FLOAT))
+		return false;
+
+	if (!CResourceManager::GetInst()->CreateTarget("GBuffer5",
+		RS.Width, RS.Height, DXGI_FORMAT_R32G32B32A32_FLOAT))
+		return false;
+
 	CRenderTarget* GBufferTarget = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("Diffuse");
 	GBufferTarget->SetPos(Vector3(0.f, 0.f, 0.f));
-	GBufferTarget->SetScale(Vector3(150.f, 150.f, 1.f));
+	GBufferTarget->SetScale(Vector3(100.f, 100.f, 1.f));
 	GBufferTarget->SetDebugRender(true);
 	m_vecGBuffer.push_back(GBufferTarget);
 
 	GBufferTarget = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("GBuffer1");
-	GBufferTarget->SetPos(Vector3(0.f, 150.f, 0.f));
-	GBufferTarget->SetScale(Vector3(150.f, 150.f, 1.f));
+	GBufferTarget->SetPos(Vector3(0.f, 100.f, 0.f));
+	GBufferTarget->SetScale(Vector3(100.f, 100.f, 1.f));
 	GBufferTarget->SetDebugRender(true);
 	m_vecGBuffer.push_back(GBufferTarget);
 
 	GBufferTarget = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("GBuffer2");
-	GBufferTarget->SetPos(Vector3(0.f, 300.f, 0.f));
-	GBufferTarget->SetScale(Vector3(150.f, 150.f, 1.f));
+	GBufferTarget->SetPos(Vector3(0.f, 200.f, 0.f));
+	GBufferTarget->SetScale(Vector3(100.f, 100.f, 1.f));
 	GBufferTarget->SetDebugRender(true);
 	m_vecGBuffer.push_back(GBufferTarget);
 
 	GBufferTarget = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("GBuffer3");
-	GBufferTarget->SetPos(Vector3(0.f, 450.f, 0.f));
-	GBufferTarget->SetScale(Vector3(150.f, 150.f, 1.f));
+	GBufferTarget->SetPos(Vector3(0.f, 300.f, 0.f));
+	GBufferTarget->SetScale(Vector3(100.f, 100.f, 1.f));
 	GBufferTarget->SetDebugRender(true);
 	m_vecGBuffer.push_back(GBufferTarget);
 
+	GBufferTarget = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("GBuffer4");
+	GBufferTarget->SetPos(Vector3(0.f, 400.f, 0.f));
+	GBufferTarget->SetScale(Vector3(100.f, 100.f, 1.f));
+	GBufferTarget->SetDebugRender(true);
+	m_vecGBuffer.push_back(GBufferTarget);
 
+	GBufferTarget = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("GBuffer5");
+	GBufferTarget->SetPos(Vector3(0.f, 500.f, 0.f));
+	GBufferTarget->SetScale(Vector3(100.f, 100.f, 1.f));
+	GBufferTarget->SetDebugRender(true);
+	m_vecGBuffer.push_back(GBufferTarget);
+
+	// Decal은 이미 생성된 렌더타겟에 렌더한다.
+	GBufferTarget = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("Diffuse");
+	m_vecDecal.push_back(GBufferTarget);
+
+	GBufferTarget = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("GBuffer1");
+	m_vecDecal.push_back(GBufferTarget);
+
+	GBufferTarget = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("GBuffer3");
+	m_vecDecal.push_back(GBufferTarget);
 
 	if (!CResourceManager::GetInst()->CreateTarget("LightDif",
 		RS.Width, RS.Height, DXGI_FORMAT_R32G32B32A32_FLOAT))
@@ -188,20 +222,20 @@ bool CRenderManager::Init()
 		return false;
 
 	CRenderTarget* LightTarget = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("LightDif");
-	LightTarget->SetPos(Vector3(150.f, 0.f, 0.f));
-	LightTarget->SetScale(Vector3(150.f, 150.f, 1.f));
+	LightTarget->SetPos(Vector3(100.f, 0.f, 0.f));
+	LightTarget->SetScale(Vector3(100.f, 100.f, 1.f));
 	LightTarget->SetDebugRender(true);
 	m_vecLightBuffer.push_back(LightTarget);
 
 	LightTarget = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("LightSpc");
-	LightTarget->SetPos(Vector3(150.f, 150.f, 0.f));
-	LightTarget->SetScale(Vector3(150.f, 150.f, 1.f));
+	LightTarget->SetPos(Vector3(100.f, 100.f, 0.f));
+	LightTarget->SetScale(Vector3(100.f, 100.f, 1.f));
 	LightTarget->SetDebugRender(true);
 	m_vecLightBuffer.push_back(LightTarget);
 
 	LightTarget = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("LightEmv");
-	LightTarget->SetPos(Vector3(150.f, 300.f, 0.f));
-	LightTarget->SetScale(Vector3(150.f, 150.f, 1.f));
+	LightTarget->SetPos(Vector3(100.f, 200.f, 0.f));
+	LightTarget->SetScale(Vector3(100.f, 100.f, 1.f));
 	LightTarget->SetDebugRender(true);
 	m_vecLightBuffer.push_back(LightTarget);
 
@@ -212,8 +246,8 @@ bool CRenderManager::Init()
 		return false;
 
 	CRenderTarget* FinalScreenTarget = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("FinalScreen");
-	FinalScreenTarget->SetPos(Vector3(300.f, 0.f, 0.f));
-	FinalScreenTarget->SetScale(Vector3(150.f, 150.f, 1.f));
+	FinalScreenTarget->SetPos(Vector3(200.f, 0.f, 0.f));
+	FinalScreenTarget->SetScale(Vector3(100.f, 100.f, 1.f));
 	FinalScreenTarget->SetDebugRender(true);
 
 	m_LightBlendShader = CResourceManager::GetInst()->FindShader("LightBlendShader");
@@ -251,6 +285,9 @@ void CRenderManager::Render()
 
 	// GBuffer를 만들어낸다.
 	RenderGBuffer();
+
+	// Decal을 그려낸다.
+	RenderDecal();
 
 	// 조명 누적버퍼를 만들어낸다.
 	RenderLightAcc();
@@ -354,6 +391,53 @@ void CRenderManager::RenderGBuffer()
 
 	SAFE_RELEASE(PrevDepthTarget);
 	for (size_t i = 0; i < GBufferSize; ++i)
+	{
+		SAFE_RELEASE(vecPrevTarget[i]);
+	}
+}
+
+void CRenderManager::RenderDecal()
+{
+	std::vector<ID3D11RenderTargetView*>	vecTarget;
+	std::vector<ID3D11RenderTargetView*>	vecPrevTarget;
+	ID3D11DepthStencilView* PrevDepthTarget = nullptr;
+
+	size_t	DecalSize = m_vecDecal.size();
+
+	vecPrevTarget.resize(DecalSize);
+
+	for (size_t i = 0; i < DecalSize; ++i)
+	{
+		vecTarget.push_back(m_vecDecal[i]->GetTargetView());
+	}
+
+	// 현재 지정되어 있는 렌더타겟과 깊이타겟을 얻어온다.
+	CDevice::GetInst()->GetContext()->OMGetRenderTargets((unsigned int)DecalSize,
+		&vecPrevTarget[0], &PrevDepthTarget);
+
+	CDevice::GetInst()->GetContext()->OMSetRenderTargets((unsigned int)DecalSize,
+		&vecTarget[0], PrevDepthTarget);
+
+	m_vecGBuffer[2]->SetTargetShader(10);
+	m_vecGBuffer[4]->SetTargetShader(11);
+	m_vecGBuffer[5]->SetTargetShader(12);
+
+	for (int j = 0; j < m_RenderLayerList[2]->RenderCount; ++j)
+	{
+		m_RenderLayerList[2]->RenderList[j]->Render();
+	}
+
+
+	m_vecGBuffer[2]->ResetTargetShader(10);
+	m_vecGBuffer[4]->ResetTargetShader(11);
+	m_vecGBuffer[5]->ResetTargetShader(12);
+
+
+	CDevice::GetInst()->GetContext()->OMSetRenderTargets((unsigned int)DecalSize,
+		&vecPrevTarget[0], PrevDepthTarget);
+
+	SAFE_RELEASE(PrevDepthTarget);
+	for (size_t i = 0; i < DecalSize; ++i)
 	{
 		SAFE_RELEASE(vecPrevTarget[i]);
 	}

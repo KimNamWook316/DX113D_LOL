@@ -56,11 +56,14 @@ bool CMaterialManager::Init()
 	Mtrl->AddTexture(2, (int)Buffer_Shader_Type::Pixel,
 		"DefaultDecalSpecular", TEXT("Decal/Decal_SPEC.png"));
 
+	Mtrl->EnableBump();
+	Mtrl->EnableSpecularTex();
+
 	CreateMaterial<CMaterial>("DebugDecal");
 
 	Mtrl = FindMaterial("DebugDecal");
 
-	Mtrl->SetShader("DebugDecalShader");
+	Mtrl->SetShader("DecalDebugShader");
 
 	return true;
 }

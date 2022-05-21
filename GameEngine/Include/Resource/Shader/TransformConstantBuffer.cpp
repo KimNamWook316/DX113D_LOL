@@ -29,6 +29,7 @@ void CTransformConstantBuffer::UpdateCBuffer()
 	m_BufferData.matWVP = m_BufferData.matWV * m_BufferData.matProj;
 	m_BufferData.matVP = m_BufferData.matView * m_BufferData.matProj;
 	m_BufferData.matInvWVP = m_BufferData.matWVP;
+	m_BufferData.matInvWVP.Inverse();
 
 	// Shader에서 사용할 수 있게 하기 위해서는 여기에서의 행렬을 전치해주어서 넘겨주어야 한다.
 	m_BufferData.matWorld.Transpose();

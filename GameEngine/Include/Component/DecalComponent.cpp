@@ -18,6 +18,8 @@ CDecalComponent::CDecalComponent() :
 {
 	SetTypeID<CDecalComponent>();
 	m_Render = true;
+
+	m_LayerName = "Decal";
 }
 
 CDecalComponent::CDecalComponent(const CDecalComponent& com) :
@@ -198,7 +200,6 @@ void CDecalComponent::Render()
 	m_DebugMaterial->Reset();
 
 #endif // _DEBUG
-
 }
 
 void CDecalComponent::PostRender()

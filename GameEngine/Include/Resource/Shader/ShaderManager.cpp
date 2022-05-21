@@ -20,6 +20,8 @@
 #include "LightBlendRenderShader.h"
 #include "SkyShader.h"
 #include "LandScapeShader.h"
+#include "DecalShader.h"
+#include "DecalDebugShader.h"
 
 CShaderManager::CShaderManager()
 {
@@ -104,6 +106,14 @@ bool CShaderManager::Init()
 
 
 	if (!CreateShader<CLandScapeShader>("LandScapeShader"))
+		return false;
+
+
+	if (!CreateShader<CDecalShader>("DecalShader"))
+		return false;
+
+
+	if (!CreateShader<CDecalDebugShader>("DecalDebugShader"))
 		return false;
 
 

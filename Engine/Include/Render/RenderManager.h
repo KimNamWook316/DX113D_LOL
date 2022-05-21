@@ -38,6 +38,7 @@ private:
 
 	// GBuffer
 	std::vector<CSharedPtr<CRenderTarget>>	m_vecGBuffer;
+	std::vector<CSharedPtr<CRenderTarget>>	m_vecDecal;
 	std::vector<CSharedPtr<CRenderTarget>>	m_vecLightBuffer;
 
 	// Animation Editor Buffer
@@ -66,6 +67,7 @@ public:
 
 private:
 	void RenderGBuffer();
+	void RenderDecal();
 	void RenderLightAcc();
 	void RenderLightBlend();
 	void RenderFinalScreen();

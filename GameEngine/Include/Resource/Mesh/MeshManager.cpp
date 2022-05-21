@@ -170,6 +170,7 @@ bool CMeshManager::Init()
 		&CubeLineIdx[0], sizeof(int), 24,
 		D3D11_USAGE_DEFAULT, DXGI_FORMAT_R32_UINT);
 
+
 	return true;
 }
 

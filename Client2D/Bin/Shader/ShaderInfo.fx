@@ -10,6 +10,8 @@ struct PSOutput_GBuffer
     float4 GBuffer1 : SV_Target1;
     float4 GBuffer2 : SV_Target2;
     float4 GBuffer3 : SV_Target3;
+	float4 GBuffer4 : SV_Target4;
+	float4 GBuffer5 : SV_Target5;
 };
 
 cbuffer Transform : register(b0)
@@ -21,6 +23,7 @@ cbuffer Transform : register(b0)
 	matrix	g_matWV;
 	matrix	g_matWVP;
 	matrix	g_matVP;
+	matrix	g_matInvWVP;
 	float3	g_Pivot;
 	float	g_TransformEmpty1;
 	float3	g_MeshSize;

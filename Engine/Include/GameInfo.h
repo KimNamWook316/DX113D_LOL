@@ -190,6 +190,7 @@ struct TransformCBuffer
 	Matrix	matWV;
 	Matrix	matWVP;
 	Matrix	matVP;
+	Matrix	matInvWVP;
 	Vector3	Pivot;
 	float	Empty1;
 	Vector3	MeshSize;

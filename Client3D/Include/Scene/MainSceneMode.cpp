@@ -5,6 +5,7 @@
 #include "Scene/Viewport.h"
 #include "../Object/Player.h"
 #include "../Object/LandScapeObj.h"
+#include "../Object/DecalObj.h"
 #include "GameObject/LightObj.h"
 #include "Component/LightComponent.h"
 #include "Resource/Material/Material.h"
@@ -37,6 +38,11 @@ bool CMainSceneMode::Init()
 
 
 	CLandScapeObj* LandScape = m_Scene->CreateGameObject<CLandScapeObj>("LandScape");
+
+
+	CDecalObj* Decal = m_Scene->CreateGameObject<CDecalObj>("Decal");
+
+
 
 	CLightObj* Light = m_Scene->CreateGameObject<CLightObj>("Light1");
 
