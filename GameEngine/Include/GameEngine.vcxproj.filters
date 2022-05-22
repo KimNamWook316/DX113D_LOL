@@ -277,6 +277,15 @@
     <Filter Include="99. Util">
       <UniqueIdentifier>{88dedb62-816d-497a-9914-d558eac24e8e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="05. Component\02. ObjectComponent\03. BehaviorTree">
+      <UniqueIdentifier>{d3acfada-4fc6-402f-aac5-d772e7270ab6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. Component\02. ObjectComponent\03. BehaviorTree\01. Node">
+      <UniqueIdentifier>{3d0df6aa-26c6-4213-acc1-9929f319f8ce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. Component\02. ObjectComponent\04. State">
+      <UniqueIdentifier>{7d67a580-e05e-40da-939f-45595e4bc94b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Device.cpp">
@@ -833,6 +842,45 @@
     </ClCompile>
     <ClCompile Include="ImGuizmo.cpp">
       <Filter>01. Engine\08. IMGUI\01. Lib</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineUtil.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\Node\ActionNode.cpp">
+      <Filter>05. Component\02. ObjectComponent\03. BehaviorTree\01. Node</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\Node\CompositeNode.cpp">
+      <Filter>05. Component\02. ObjectComponent\03. BehaviorTree\01. Node</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\Node\IdleNode.cpp">
+      <Filter>05. Component\02. ObjectComponent\03. BehaviorTree\01. Node</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\Node\Node.cpp">
+      <Filter>05. Component\02. ObjectComponent\03. BehaviorTree\01. Node</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\Node\RunNode.cpp">
+      <Filter>05. Component\02. ObjectComponent\03. BehaviorTree\01. Node</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\Node\SelectorNode.cpp">
+      <Filter>05. Component\02. ObjectComponent\03. BehaviorTree\01. Node</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\Node\SequenceNode.cpp">
+      <Filter>05. Component\02. ObjectComponent\03. BehaviorTree\01. Node</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\Node\ConditionNode.cpp">
+      <Filter>05. Component\02. ObjectComponent\03. BehaviorTree\01. Node</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\StateComponent.cpp">
+      <Filter>05. Component\02. ObjectComponent\04. State</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\State.cpp">
+      <Filter>05. Component\02. ObjectComponent\04. State</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\BehaviorTree.cpp">
+      <Filter>05. Component\02. ObjectComponent\03. BehaviorTree</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\Node\MoveInputCheckNode.cpp">
+      <Filter>05. Component\02. ObjectComponent\03. BehaviorTree\01. Node</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1426,6 +1474,45 @@
     </ClInclude>
     <ClInclude Include="ImZoomSlider.h">
       <Filter>01. Engine\08. IMGUI\01. Lib</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineUtil.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\ActionNode.h">
+      <Filter>05. Component\02. ObjectComponent\03. BehaviorTree\01. Node</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\CompositeNode.h">
+      <Filter>05. Component\02. ObjectComponent\03. BehaviorTree\01. Node</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\IdleNode.h">
+      <Filter>05. Component\02. ObjectComponent\03. BehaviorTree\01. Node</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\Node.h">
+      <Filter>05. Component\02. ObjectComponent\03. BehaviorTree\01. Node</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\RunNode.h">
+      <Filter>05. Component\02. ObjectComponent\03. BehaviorTree\01. Node</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\SelectorNode.h">
+      <Filter>05. Component\02. ObjectComponent\03. BehaviorTree\01. Node</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\SequenceNode.h">
+      <Filter>05. Component\02. ObjectComponent\03. BehaviorTree\01. Node</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\ConditionNode.h">
+      <Filter>05. Component\02. ObjectComponent\03. BehaviorTree\01. Node</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\State.h">
+      <Filter>05. Component\02. ObjectComponent\04. State</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\StateComponent.h">
+      <Filter>05. Component\02. ObjectComponent\04. State</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\BehaviorTree.h">
+      <Filter>05. Component\02. ObjectComponent\03. BehaviorTree</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\MoveInputCheckNode.h">
+      <Filter>05. Component\02. ObjectComponent\03. BehaviorTree\01. Node</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

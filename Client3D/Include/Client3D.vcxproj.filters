@@ -45,6 +45,12 @@
     <ClInclude Include="Object\Weapon.h">
       <Filter>02. Object</Filter>
     </ClInclude>
+    <ClInclude Include="Object\Alistar.h">
+      <Filter>02. Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\AlistarAnimation.h">
+      <Filter>02. Object</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Client3D.rc">
@@ -76,6 +82,12 @@
       <Filter>02. Object</Filter>
     </ClCompile>
     <ClCompile Include="Object\Weapon.cpp">
+      <Filter>02. Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\Alistar.cpp">
+      <Filter>02. Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\AlistarAnimation.cpp">
       <Filter>02. Object</Filter>
     </ClCompile>
   </ItemGroup>

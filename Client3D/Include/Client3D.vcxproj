@@ -159,6 +159,8 @@
   <ItemGroup>
     <ClInclude Include="Client3D.h" />
     <ClInclude Include="ClientManager3D.h" />
+    <ClInclude Include="Object\Alistar.h" />
+    <ClInclude Include="Object\AlistarAnimation.h" />
     <ClInclude Include="Object\LandScapeObj.h" />
     <ClInclude Include="Object\Player.h" />
     <ClInclude Include="Object\PlayerAnimation.h" />
@@ -175,6 +177,8 @@
   <ItemGroup>
     <ClCompile Include="ClientManager3D.cpp" />
     <ClCompile Include="main3D.cpp" />
+    <ClCompile Include="Object\Alistar.cpp" />
+    <ClCompile Include="Object\AlistarAnimation.cpp" />
     <ClCompile Include="Object\LandScapeObj.cpp" />
     <ClCompile Include="Object\Player.cpp" />
     <ClCompile Include="Object\PlayerAnimation.cpp" />

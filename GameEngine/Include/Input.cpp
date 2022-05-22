@@ -124,6 +124,18 @@ KeyInfo* CInput::FindKeyInfo(const std::string& Name)
 	return iter->second;
 }
 
+const keyState CInput::FindKeyState(const char Key)
+{
+	char Convert;
+
+	if (m_InputType == Input_Type::Direct)
+	{
+		Convert = ConvertKey(Key);
+	}
+			
+	return m_vecKeyState[Convert];
+}
+
 bool CInput::InitWindow()
 {
 	return true;
