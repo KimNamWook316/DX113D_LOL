@@ -298,6 +298,18 @@ void CRenderManager::Render()
 	// 조명처리된 최종 화면을 백버퍼에 그려낸다.
 	RenderFinalScreen();
 
+	// 파티클 레이어 출력
+	for (int j = 0; j < m_RenderLayerList[3]->RenderCount; ++j)
+	{
+		m_RenderLayerList[3]->RenderList[j]->Render();
+	}
+
+	// Screen Widget 출려
+	for (int j = 0; j < m_RenderLayerList[4]->RenderCount; ++j)
+	{
+		m_RenderLayerList[4]->RenderList[j]->Render();
+	}
+
 	// 조명 정보를 Shader로 넘겨준다.
 	//CSceneManager::GetInst()->GetScene()->GetLightManager()->SetShader();
 
@@ -441,6 +453,46 @@ void CRenderManager::RenderDecal()
 	{
 		SAFE_RELEASE(vecPrevTarget[i]);
 	}
+
+	// 디버깅 출력
+#ifdef _DEBUG
+
+	std::vector<ID3D11RenderTargetView*>	vecTarget1;
+	std::vector<ID3D11RenderTargetView*>	vecPrevTarget1;
+	ID3D11DepthStencilView* PrevDepthTarget1 = nullptr;
+
+	size_t	GBufferSize = m_vecGBuffer.size();
+
+	vecPrevTarget1.resize(GBufferSize);
+
+	for (size_t i = 0; i < GBufferSize; ++i)
+	{
+		vecTarget1.push_back(m_vecGBuffer[i]->GetTargetView());
+	}
+
+	// 현재 지정되어 있는 렌더타겟과 깊이타겟을 얻어온다.
+	CDevice::GetInst()->GetContext()->OMGetRenderTargets((unsigned int)GBufferSize,
+		&vecPrevTarget1[0], &PrevDepthTarget1);
+
+	CDevice::GetInst()->GetContext()->OMSetRenderTargets((unsigned int)GBufferSize,
+		&vecTarget1[0], PrevDepthTarget1);
+
+	for (int j = 0; j < m_RenderLayerList[2]->RenderCount; ++j)
+	{
+		m_RenderLayerList[2]->RenderList[j]->RenderDebug();
+	}
+
+
+	CDevice::GetInst()->GetContext()->OMSetRenderTargets((unsigned int)GBufferSize,
+		&vecPrevTarget1[0], PrevDepthTarget1);
+
+	SAFE_RELEASE(PrevDepthTarget1);
+	for (size_t i = 0; i < GBufferSize; ++i)
+	{
+		SAFE_RELEASE(vecPrevTarget1[i]);
+	}
+
+#endif // _DEBUG
 }
 
 void CRenderManager::RenderLightAcc()

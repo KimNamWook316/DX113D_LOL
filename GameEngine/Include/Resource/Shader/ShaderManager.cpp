@@ -22,6 +22,7 @@
 #include "LandScapeShader.h"
 #include "DecalShader.h"
 #include "DecalDebugShader.h"
+#include "BillboardShader.h"
 
 CShaderManager::CShaderManager()
 {
@@ -115,6 +116,11 @@ bool CShaderManager::Init()
 
 	if (!CreateShader<CDecalDebugShader>("DecalDebugShader"))
 		return false;
+
+
+	if (!CreateShader<CBillboardShader>("BillboardShader"))
+		return false;
+
 
 
 	// =================== 상수버퍼 ===================

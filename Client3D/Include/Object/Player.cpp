@@ -25,7 +25,7 @@ CPlayer::~CPlayer()
 
 bool CPlayer::Init()
 {
-	m_Mesh = CreateComponent<CAnimationMeshComponent>("Mesh");
+	m_Mesh = CreateComponent<CAnimationMeshComponent>("PlayerMesh");
 	m_Arm = CreateComponent<CArm>("Arm");
 	m_Camera = CreateComponent<CCameraComponent>("Camera");
 
@@ -38,6 +38,10 @@ bool CPlayer::Init()
 	m_Camera->SetInheritRotZ(true);
 
 	m_Mesh->SetMesh("PlayerMesh");
+	m_Mesh->SetReceiveDecal(false);
+
+
+
 	m_Mesh->CreateAnimationInstance<CPlayerAnimation>();
 
 	m_Animation = (CPlayerAnimation*)m_Mesh->GetAnimationInstance();
@@ -96,6 +100,8 @@ void CPlayer::Update(float DeltaTime)
 		m_Animation->ChangeAnimation("Idle");
 	}
 
+
+
 	CGameObject* PickObj = nullptr;
 
 	if (m_Scene->Picking(PickObj))
@@ -151,4 +157,5 @@ void CPlayer::Attack(float DeltaTime)
 	m_Animation->ChangeAnimation("Attack");
 	m_Animation->SetIdleEnable(false);
 }
+
 

@@ -16,6 +16,7 @@ CMaterial::CMaterial() :
 	m_Animation3D(false),
 	m_SpecularTex(false),
 	m_EmissiveTex(false),
+	m_RecieveDecal(false),
 	m_Bump(false),
 	m_Scene(nullptr),
 	m_CBuffer(nullptr),
@@ -86,6 +87,13 @@ void CMaterial::EnableEmissiveTex()
 	m_EmissiveTex = true;
 
 	m_CBuffer->SetEmissiveTex(true);
+}
+
+void CMaterial::EnableDecal(bool Decal)
+{
+	m_RecieveDecal = Decal;
+
+	m_CBuffer->SetReceiveDecal(Decal);
 }
 
 void CMaterial::SetRenderState(CRenderState* State)

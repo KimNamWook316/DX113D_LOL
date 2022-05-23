@@ -68,5 +68,10 @@ public:
 	{
 		m_BufferData.EmissiveTex = Enable ? 1 : 0;
 	}
+
+	void SetReceiveDecal(bool Enable)
+	{
+		m_BufferData.ReceiveDecal = Enable ? 1 : 0;
+	}
 };
 

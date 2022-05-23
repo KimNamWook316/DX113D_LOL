@@ -75,7 +75,16 @@ PS_OUTPUT_DECAL DecalPS(VS_OUTPUT_DECAL input)
 	if (Color.a == 0.f)
 		clip(-1);
     
-	float3 Tangent = g_GBufferTangent.Load(TargetPos, 0).rgb;
+	float4 TangentColor = g_GBufferTangent.Load(TargetPos, 0);
+	int ReceiveDecal = TangentColor.a;
+
+	// 현재 버퍼에 그려진 픽셀이 데칼을 적용받지 않는 물체의 픽셀이라면
+	if (ReceiveDecal == 0)
+	{
+		clip(-1);
+	}
+	
+	float3 Tangent = TangentColor.rgb;
 	float3 Binormal = g_GBufferBinormal.Load(TargetPos, 0).rgb;
 	float3 Normal = normalize(cross(Tangent, Binormal));
     

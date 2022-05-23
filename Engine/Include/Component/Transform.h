@@ -44,6 +44,7 @@ private:
 	bool	m_InheritParentRotationPosZ;
 	bool	m_UpdateScale;
 	bool	m_UpdateRot;
+	bool	m_UpdateRotAxis; // 주어진 축 기준 회전으로 업데이트 여부
 	bool	m_UpdatePos;
 
 public:
@@ -265,6 +266,7 @@ public:
 	void SetWorldRotationZ(float z);
 	void SetWorldPos(const Vector3& Pos);
 	void SetWorldPos(float x, float y, float z);
+	void SetRotationAxis(const Vector3& OriginDir, const Vector3& View);
 	void AddWorldScale(const Vector3& Scale);
 	void AddWorldScale(float x, float y, float z);
 	void AddWorldRotation(const Vector3& Rot);

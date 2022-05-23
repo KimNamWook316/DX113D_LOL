@@ -65,6 +65,16 @@ bool CMaterialManager::Init()
 
 	Mtrl->SetShader("DecalDebugShader");
 
+	CreateMaterial<CMaterial>("Billboard");
+
+	Mtrl = FindMaterial("Billboard");
+
+	Mtrl->SetShader("BillboardShader");
+
+	Texture = CResourceManager::GetInst()->FindTexture("EngineTexture");
+
+	Mtrl->AddTexture(0, (int)Buffer_Shader_Type::Pixel, "EngineTexture", Texture);
+
 	return true;
 }
 

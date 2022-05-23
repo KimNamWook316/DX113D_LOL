@@ -62,6 +62,8 @@ public:
 		m_FadeLoop = Loop;
 	}
 
+	void SetMaterial(CMaterial* Material);
+
 public:
 	virtual void Start();
 	virtual bool Init();
@@ -69,6 +71,7 @@ public:
 	virtual void PostUpdate(float DeltaTime);
 	virtual void PrevRender();
 	virtual void Render();
+	virtual void RenderDebug();
 	virtual void PostRender();
 	virtual CDecalComponent* Clone();
 	virtual void Save(FILE* File);

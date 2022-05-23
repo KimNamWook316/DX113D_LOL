@@ -50,6 +50,11 @@ CDecalComponent::~CDecalComponent()
 {
 }
 
+void CDecalComponent::SetMaterial(CMaterial* Material)
+{
+	m_Material = Material;
+}
+
 void CDecalComponent::Start()
 {
 	CSceneComponent::Start();
@@ -190,15 +195,19 @@ void CDecalComponent::Render()
 	m_Mesh->Render();
 
 	m_Material->Reset();
+}
 
+void CDecalComponent::RenderDebug()
+{
 #ifdef _DEBUG
+
+	CSceneComponent::RenderDebug();
 
 	m_DebugMaterial->Render();
 
 	m_DebugMesh->Render();
 
 	m_DebugMaterial->Reset();
-
 #endif // _DEBUG
 }
 

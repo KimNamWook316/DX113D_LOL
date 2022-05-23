@@ -163,6 +163,7 @@
     <ClInclude Include="Object\LandScapeObj.h" />
     <ClInclude Include="Object\Player.h" />
     <ClInclude Include="Object\PlayerAnimation.h" />
+    <ClInclude Include="Object\Portal.h" />
     <ClInclude Include="Object\Weapon.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Scene\MainSceneMode.h" />
@@ -180,6 +181,7 @@
     <ClCompile Include="Object\LandScapeObj.cpp" />
     <ClCompile Include="Object\Player.cpp" />
     <ClCompile Include="Object\PlayerAnimation.cpp" />
+    <ClCompile Include="Object\Portal.cpp" />
     <ClCompile Include="Object\Weapon.cpp" />
     <ClCompile Include="Scene\MainSceneMode.cpp" />
   </ItemGroup>

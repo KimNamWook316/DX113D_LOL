@@ -283,6 +283,12 @@
     <Filter Include="02. Resource\02. Shader\02. ShaderClass\14. Decal">
       <UniqueIdentifier>{3604b661-dc4c-4441-94a8-7ef3849874ff}</UniqueIdentifier>
     </Filter>
+    <Filter Include="05. Component\01. SceneComponent\11. BillBoard">
+      <UniqueIdentifier>{79884da5-4326-4a7a-8e4a-a7bca69615da}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Resource\02. Shader\02. ShaderClass\15. BillBoard">
+      <UniqueIdentifier>{63d2d28c-3a5c-479e-baf4-77417f66247f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Device.cpp">
@@ -851,6 +857,12 @@
     </ClCompile>
     <ClCompile Include="Resource\Shader\DecalShader.cpp">
       <Filter>02. Resource\02. Shader\02. ShaderClass\14. Decal</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\BillboardComponent.cpp">
+      <Filter>05. Component\01. SceneComponent\11. BillBoard</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Shader\BillboardShader.cpp">
+      <Filter>02. Resource\02. Shader\02. ShaderClass\15. BillBoard</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1457,6 +1469,12 @@
     <ClInclude Include="Resource\Shader\DecalShader.h">
       <Filter>02. Resource\02. Shader\02. ShaderClass\14. Decal</Filter>
     </ClInclude>
+    <ClInclude Include="Component\BillboardComponent.h">
+      <Filter>05. Component\01. SceneComponent\11. BillBoard</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Shader\BillboardShader.h">
+      <Filter>02. Resource\02. Shader\02. ShaderClass\15. BillBoard</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\Shader\ColorMesh.fx">
@@ -1496,6 +1514,9 @@
       <Filter>02. Resource\02. Shader\01. HLSL</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\Shader\Decal.fx">
+      <Filter>02. Resource\02. Shader\01. HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\Shader\Billboard.fx">
       <Filter>02. Resource\02. Shader\01. HLSL</Filter>
     </FxCompile>
   </ItemGroup>

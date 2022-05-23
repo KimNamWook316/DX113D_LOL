@@ -42,7 +42,8 @@ cbuffer Material : register(b1)
     int		g_MtrlAnimation3DEnable;
     int		g_MtrlSpecularTex;
     int		g_MtrlEmissiveTex;
-	float2	g_MtrlEmpty;
+	int		g_MtrlReceiveDecal;
+	float	g_MtrlEmpty;
 };
 
 cbuffer Standard2D : register(b2)

@@ -24,7 +24,6 @@ protected:
 	class CAnimationUpdateConstantBuffer* m_AnimationUpdateCBuffer;
 	class CStructuredBuffer* m_OutputBuffer;	// 애니메이션 결과 저장용 버퍼
 	class CStructuredBuffer* m_BoneBuffer;
-	ID3D11Buffer* m_BoneDataBuffer;
 	std::vector<Matrix>	m_vecBoneMatrix;
 	CSharedPtr<class CSkeleton>	m_Skeleton;
 

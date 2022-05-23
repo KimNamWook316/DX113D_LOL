@@ -21,6 +21,7 @@ bool CWeapon::Init()
 	m_Mesh = CreateComponent<CStaticMeshComponent>("Mesh");
 
 	m_Mesh->SetMesh("Blade");
+	m_Mesh->SetReceiveDecal(false);
 
 	return true;
 }

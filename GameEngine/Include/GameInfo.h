@@ -225,7 +225,8 @@ struct MaterialCBuffer
 	int		Animation3DEnable;
 	int		SpecularTex;
 	int		EmissiveTex;
-	Vector2	Empty;
+	int		ReceiveDecal;
+	float	Empty;
 };
 
 struct AnimationFrameData

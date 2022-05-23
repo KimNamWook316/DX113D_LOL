@@ -22,6 +22,7 @@ protected:
 	class CSkeletonSocket* m_Socket;
 	SphereInfo m_SphereInfo;
 	bool m_Culling;
+	bool m_ReceiveDecal;
 
 public:
 	bool GetRender() const
@@ -68,6 +69,11 @@ public:
 	}
 
 public:
+	void SetReceiveDecal(bool Decal)
+	{
+		m_ReceiveDecal = Decal;
+	}
+
 	void SetLayerName(const std::string& Name)
 	{
 		m_LayerName = Name;
@@ -105,6 +111,7 @@ public:
 	virtual void CheckCollision();
 	virtual void PrevRender();
 	virtual void Render();
+	virtual void RenderDebug();
 	virtual void PostRender();
 	virtual CSceneComponent* Clone();
 	virtual void Save(FILE* File);

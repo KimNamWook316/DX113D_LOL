@@ -15,7 +15,6 @@ CAnimationSequenceInstance::CAnimationSequenceInstance() :
 	m_Scene(nullptr),
 	m_Owner(nullptr),
 	m_PlayAnimation(true),
-	m_BoneDataBuffer(nullptr),
 	m_GlobalTime(0.f),
 	m_SequenceProgress(0.f),
 	m_ChangeTimeAcc(0.f),
@@ -70,19 +69,10 @@ CAnimationSequenceInstance::CAnimationSequenceInstance(const CAnimationSequenceI
 
 		m_mapAnimation.insert(std::make_pair(iter->first, Data));
 	}
-
-	D3D11_BUFFER_DESC	Desc = {};
-
-	Desc.ByteWidth = sizeof(Matrix) * (unsigned int)m_Skeleton->GetBoneCount();
-	Desc.Usage = D3D11_USAGE_STAGING;
-	Desc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
-
-	CDevice::GetInst()->GetDevice()->CreateBuffer(&Desc, nullptr, &m_BoneDataBuffer);
 }
 
 CAnimationSequenceInstance::~CAnimationSequenceInstance()
 {
-	SAFE_RELEASE(m_BoneDataBuffer);
 	SAFE_DELETE(m_OutputBuffer);
 	SAFE_DELETE(m_BoneBuffer);
 	SAFE_DELETE(m_AnimationUpdateCBuffer);
@@ -424,15 +414,9 @@ void CAnimationSequenceInstance::Start()
 	m_BoneBuffer = new CStructuredBuffer;
 
 	m_BoneBuffer->Init("OutputBone", sizeof(Matrix),
-		(unsigned int)m_Skeleton->GetBoneCount(), 1);
-
-	D3D11_BUFFER_DESC	Desc = {};
-
-	Desc.ByteWidth = sizeof(Matrix) * (unsigned int)m_Skeleton->GetBoneCount();
-	Desc.Usage = D3D11_USAGE_STAGING;
-	Desc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
-
-	CDevice::GetInst()->GetDevice()->CreateBuffer(&Desc, nullptr, &m_BoneDataBuffer);
+		(unsigned int)m_Skeleton->GetBoneCount(), 1,
+		D3D11_USAGE_DEFAULT, D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_UNORDERED_ACCESS,
+		D3D11_CPU_ACCESS_READ, false);
 }
 
 bool CAnimationSequenceInstance::Init()
@@ -599,16 +583,18 @@ void CAnimationSequenceInstance::Update(float DeltaTime)
 		m_GlobalTime = 0.f;
 	}
 
-	// 구조화 버퍼에 있는 본 정보를 DataBuffer로 복사한다.
-	CDevice::GetInst()->GetContext()->CopyResource(m_BoneDataBuffer, m_BoneBuffer->GetBuffer());
+ //	// 구조화 버퍼에 있는 본 정보를 DataBuffer로 복사한다.
+ //	CDevice::GetInst()->GetContext()->CopyResource(m_BoneDataBuffer, m_BoneBuffer->GetBuffer());
 
 	D3D11_MAPPED_SUBRESOURCE	Map = {};
 
-	CDevice::GetInst()->GetContext()->Map(m_BoneDataBuffer, 0, D3D11_MAP_READ, 0, &Map);
+	// Usage가 Default임에도 불구하고 Cpu에서 Read Access를 가질 수 있는 버그를 이용
+	CDevice::GetInst()->GetContext()->Map(m_BoneBuffer->GetBuffer(), 0, D3D11_MAP_READ, 0, &Map);
 
 	memcpy(&m_vecBoneMatrix[0], Map.pData, sizeof(Matrix) * m_vecBoneMatrix.size());;
 
-	CDevice::GetInst()->GetContext()->Unmap(m_BoneDataBuffer, 0);
+	CDevice::GetInst()->GetContext()->Unmap(m_BoneBuffer->GetBuffer(), 0);
+
 	m_Skeleton->Update(DeltaTime, m_vecBoneMatrix, m_Owner->GetWorldMatrix());
 }
 

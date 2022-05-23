@@ -274,6 +274,8 @@ void CAnimationMeshComponent::Render()
 
 	for (size_t i = 0; i < Size; ++i)
 	{
+		m_vecMaterialSlot[i]->EnableDecal(m_ReceiveDecal);
+
 		m_vecMaterialSlot[i]->Render();
 
 		m_Mesh->Render((int)i);

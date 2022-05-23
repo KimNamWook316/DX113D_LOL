@@ -168,6 +168,8 @@ void CSpriteComponent::Render()
 		m_Animation->SetShader();
 	}
 
+	m_Material->EnableDecal(m_ReceiveDecal);
+
 	m_Material->Render();
 
 	m_Mesh->Render();

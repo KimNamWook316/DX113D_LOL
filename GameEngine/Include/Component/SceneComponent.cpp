@@ -14,6 +14,8 @@ CSceneComponent::CSceneComponent() :
 	m_ComponentType = Component_Type::SceneComponent;
 	m_Render = false;
 
+	m_ReceiveDecal = true;
+
 	m_Transform = new CTransform;
 
 	m_Transform->m_Owner = this;
@@ -499,6 +501,14 @@ void CSceneComponent::PrevRender()
 }
 
 void CSceneComponent::Render()
+{
+	m_Transform->SetTransform();
+
+	CRenderManager::GetInst()->GetStandard2DCBuffer()->SetAnimation2DEnable(false);
+	CRenderManager::GetInst()->GetStandard2DCBuffer()->UpdateCBuffer();
+}
+
+void CSceneComponent::RenderDebug()
 {
 	m_Transform->SetTransform();
 

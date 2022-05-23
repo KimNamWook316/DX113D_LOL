@@ -61,6 +61,7 @@ protected:
     bool        m_SpecularTex;
     bool        m_EmissiveTex;
     bool        m_Bump;
+    bool        m_RecieveDecal;
     CMaterialConstantBuffer* m_CBuffer;
     CSharedPtr<class CRenderState>  m_RenderStateArray[(int)RenderState_Type::Max];
     std::list<RenderCallback*>    m_RenderCallback;
@@ -128,6 +129,7 @@ public:
     void EnableAnimation3D();
     void EnableSpecularTex();
     void EnableEmissiveTex();
+    void EnableDecal(bool Decal);
 
 public:
     void SetRenderState(class CRenderState* State);

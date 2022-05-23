@@ -6,6 +6,7 @@
 #include "../Object/Player.h"
 #include "../Object/LandScapeObj.h"
 #include "../Object/DecalObj.h"
+#include "../Object/Portal.h"
 #include "GameObject/LightObj.h"
 #include "Component/LightComponent.h"
 #include "Resource/Material/Material.h"
@@ -41,6 +42,8 @@ bool CMainSceneMode::Init()
 
 
 	CDecalObj* Decal = m_Scene->CreateGameObject<CDecalObj>("Decal");
+
+	CPortal* Portal = m_Scene->CreateGameObject<CPortal>("Portal");
 
 
 
@@ -235,4 +238,5 @@ void CMainSceneMode::CreateAnimationSequence()
 void CMainSceneMode::CreateParticle()
 {
 }
+
 

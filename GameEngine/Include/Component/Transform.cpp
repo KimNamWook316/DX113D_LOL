@@ -22,6 +22,7 @@ CTransform::CTransform() :
 	m_InheritParentRotationPosZ(true),
 	m_UpdateScale(true),
 	m_UpdateRot(true),
+	m_UpdateRotAxis(false),
 	m_UpdatePos(true),
 	m_CBuffer(nullptr),
 	m_RelativeScale(1.f, 1.f, 1.f),
@@ -497,6 +498,18 @@ void CTransform::SetWorldPos(float x, float y, float z)
 	SetWorldPos(Pos);
 }
 
+void CTransform::SetRotationAxis(const Vector3& OriginDir, const Vector3& View)
+{
+	m_UpdateRotAxis = true;
+
+	Vector3 Axis = OriginDir.Cross(View);
+	Axis.Normalize();
+
+	float Angle = OriginDir.Angle(View);
+
+	m_matRot = XMMatrixRotationAxis(Axis.Convert(), DegreeToRadian(Angle));
+}
+
 void CTransform::AddWorldScale(const Vector3& Scale)
 {
 	m_WorldScale += Scale;
@@ -606,7 +619,8 @@ void CTransform::PostUpdate(float DeltaTime)
 			m_matScale.Scaling(m_RelativeScale);
 		}
 		
-		if (m_UpdateRot)
+		// 축 기준 회전을 적용받는 경우, Rotaton Matrix가 이미 계산되어 있다.
+		if (m_UpdateRot && !m_UpdateRotAxis)
 		{
 			m_matRot.Rotation(m_RelativeRot);
 		}
@@ -616,7 +630,7 @@ void CTransform::PostUpdate(float DeltaTime)
 			m_matPos.Translation(m_RelativePos);
 		}
 
-		if (m_UpdateScale || m_UpdateRot || m_UpdatePos)
+		if (m_UpdateScale || m_UpdateRot || m_UpdateRotAxis || m_UpdatePos )
 		{
 			m_matWorld = m_matScale * m_matRot * m_matPos;
 		}
@@ -638,7 +652,7 @@ void CTransform::PostUpdate(float DeltaTime)
 			m_matScale.Scaling(m_WorldScale);
 		}
 		
-		if (m_UpdateRot)
+		if (m_UpdateRot && !m_UpdateRotAxis)
 		{
 			m_matRot.Rotation(m_WorldRot);
 		}
@@ -648,7 +662,7 @@ void CTransform::PostUpdate(float DeltaTime)
 			m_matPos.Translation(m_WorldPos);
 		}
 
-		if (m_UpdateScale || m_UpdateRot || m_UpdatePos)
+		if (m_UpdateScale || m_UpdateRot || m_UpdateRotAxis || m_UpdatePos)
 		{
 			m_matWorld = m_matScale * m_matRot * m_matPos;
 		}
