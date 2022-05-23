@@ -37,7 +37,7 @@ public:
 		m_Object = Object;
 	}
 
-	void SetOperationMode(ImGuizmo::OPERATION& Operation)
+	void SetOperationMode(ImGuizmo::OPERATION Operation)
 	{
 		m_Operation = Operation;
 	}

@@ -32,6 +32,9 @@ bool C3DCameraObject::Init()
 	m_Camera->SetInheritRotX(true);
 	m_Camera->SetInheritRotY(true);
 	m_Camera->SetInheritRotZ(true);
+	m_Camera->SetInheritParentRotationPosX(true);
+	m_Camera->SetInheritParentRotationPosY(true);
+	m_Camera->SetInheritParentRotationPosZ(true);
 
 	m_Camera->SetCameraType(Camera_Type::Camera3D);
 	m_Camera->SetViewAngle(27.f);
@@ -55,6 +58,18 @@ bool C3DCameraObject::Init()
 	m_Scene->GetCameraManager()->SetCurrentCamera(m_Camera);
 
 	return true;
+}
+
+void C3DCameraObject::Update(float DeltaTime)
+{
+	CGameObject::Update(DeltaTime);
+
+	if (CInput::GetInst()->GetWheelDir())
+	{
+		Vector3 AxisZ = m_Camera->GetWorldAxis(AXIS::AXIS_Z);
+		AxisZ *= CInput::GetInst()->GetWheelDir() * -EDITOR_CAM_SPEED;
+		m_Camera->AddWorldPos(AxisZ);
+	}
 }
 
 void C3DCameraObject::OnDragMove(float DeltaTime)

@@ -14,6 +14,7 @@ protected:
 
 public:
 	bool Init() override;
+	void Update(float DeltaTime) override;
 
 private:
 	void OnDragMove(float DeltaTime);
