@@ -25,6 +25,7 @@
 #include "Window/AnimationEditor.h"
 #include "Window/FBXConvertWindow.h"
 #include "Window/InspectorWindow.h"
+#include "Window/BehaviorTreeMenuBar.h"
 
 DEFINITION_SINGLE(CEditorManager)
 
@@ -79,7 +80,6 @@ bool CEditorManager::Init(HINSTANCE hInst)
 		return false;
 	}
 
-
 	CSceneManager::GetInst()->SetCreateSceneModeFunction<CEditorManager>(this, &CEditorManager::CreateSceneMode);
 	CSceneManager::GetInst()->SetCreateObjectFunction<CEditorManager>(this, &CEditorManager::CreateObject);
 	CSceneManager::GetInst()->SetCreateComponentFunction<CEditorManager>(this, &CEditorManager::CreateComponent);
@@ -97,6 +97,9 @@ bool CEditorManager::Init(HINSTANCE hInst)
 	m_AnimationEditor = CIMGUIManager::GetInst()->AddWindow<CAnimationEditor>(ANIMATION_EDITOR);
 
 	CFBXConvertWindow* win = CIMGUIManager::GetInst()->AddWindow<CFBXConvertWindow>(FBX_CONVERTOR);
+
+	CBehaviorTreeMenuBar* BTBar = CIMGUIManager::GetInst()->AddWindow<CBehaviorTreeMenuBar>("BehaviorTree");
+
 
 	CRenderManager::GetInst()->CreateLayer("DragLayer", INT_MAX);
 

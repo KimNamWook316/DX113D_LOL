@@ -49,6 +49,9 @@
     <Filter Include="02. Editor\02. Widget\01. Inspector\02. ObjectComponent">
       <UniqueIdentifier>{7b9c547d-0ea7-4639-a712-17d44c387f64}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. Editor\02. Widget\03. BehaviorTree">
+      <UniqueIdentifier>{0c580bd2-d20a-4128-95cf-b6f800d37d8e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EditorManager.cpp">
@@ -128,6 +131,12 @@
     </ClCompile>
     <ClCompile Include="Widget\LightComponentWidget.cpp">
       <Filter>02. Editor\02. Widget\01. Inspector\01. SceneComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\Anim3DObject.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Window\BehaviorTreeMenuBar.cpp">
+      <Filter>02. Editor\01. Window</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -214,6 +223,12 @@
     </ClInclude>
     <ClInclude Include="Widget\LightComponentWidget.h">
       <Filter>02. Editor\02. Widget\01. Inspector\01. SceneComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\Anim3DObject.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Window\BehaviorTreeMenuBar.h">
+      <Filter>02. Editor\01. Window</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

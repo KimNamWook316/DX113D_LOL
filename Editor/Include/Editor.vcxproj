@@ -182,6 +182,7 @@
     <ClCompile Include="Widget\TransformWidget.cpp" />
     <ClCompile Include="Window\AnimationEditor.cpp" />
     <ClCompile Include="Thread\FBXConvertThread.cpp" />
+    <ClCompile Include="Window\BehaviorTreeMenuBar.cpp" />
     <ClCompile Include="Window\FBXConvertWindow.cpp" />
     <ClCompile Include="Window\FileBrowser.cpp" />
     <ClCompile Include="Window\FileBrowserTree.cpp" />
@@ -213,6 +214,7 @@
     <ClInclude Include="Widget\TransformWidget.h" />
     <ClInclude Include="Window\AnimationEditor.h" />
     <ClInclude Include="Thread\FBXConvertThread.h" />
+    <ClInclude Include="Window\BehaviorTreeMenuBar.h" />
     <ClInclude Include="Window\FBXConvertWindow.h" />
     <ClInclude Include="Window\FileBrowser.h" />
     <ClInclude Include="Window\FileBrowserTree.h" />
