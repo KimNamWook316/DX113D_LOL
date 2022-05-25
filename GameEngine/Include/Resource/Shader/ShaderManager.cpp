@@ -23,6 +23,8 @@
 #include "DecalShader.h"
 #include "DecalDebugShader.h"
 #include "BillboardShader.h"
+#include "Mesh3DNoLightShader.h"
+#include "AnimEditorShader.h"
 
 CShaderManager::CShaderManager()
 {
@@ -37,76 +39,61 @@ bool CShaderManager::Init()
 	if (!CreateShader<CColorMeshShader>("ColorMeshShader"))
 		return false;
 
-
 	if (!CreateShader<CPosMeshShader>("PosMeshShader"))
 		return false;
-
 
 	if (!CreateShader<CMesh2DShader>("Mesh2DShader"))
 		return false;
 
-
 	if (!CreateShader<CColliderShader>("ColliderShader"))
 		return false;
-
 
 	if (!CreateShader<CColliderPixelShader>("ColliderPixelShader"))
 		return false;
 
-
 	if (!CreateShader<CWidgetShader>("WidgetShader"))
 		return false;
-
 
 	if (!CreateShader<CProgressBarShader>("ProgressBarShader"))
 		return false;
 
-
 	if (!CreateShader<CNumberShader>("NumberShader"))
 		return false;
-
 
 	if (!CreateShader<CParticleUpdateShader>("ParticleUpdateShader"))
 		return false;
 
-
 	if (!CreateShader<CParticleRenderShader>("ParticleRenderShader"))
 		return false;
-
 
 	if (!CreateShader<CTileMapShader>("TileMapShader"))
 		return false;
 
-
 	if (!CreateShader<CStandard3DShader>("Standard3DShader"))
 		return false;
-
 
 	if (!CreateShader<CAnimationUpdateShader>("AnimationUpdateShader"))
 		return false;
 
-
 	if (!CreateShader<CRenderTargetShader>("RenderTargetShader"))
 		return false;
-
 
 	if (!CreateShader<CLightAccShader>("LightAccShader"))
 		return false;
 
-
 	if (!CreateShader<CLightBlendShader>("LightBlendShader"))
 		return false;
-
 
 	if (!CreateShader<CLightBlendRenderShader>("LightBlendRenderShader"))
 		return false;
 
-
 	if (!CreateShader<CSkyShader>("SkyShader"))
 		return false;
 
-
 	if (!CreateShader<CLandScapeShader>("LandScapeShader"))
+		return false;
+
+	if (!CreateShader<CMesh3DNoLightShader>("Mesh3DNoLightShader"))
 		return false;
 
 
@@ -121,6 +108,8 @@ bool CShaderManager::Init()
 	if (!CreateShader<CBillboardShader>("BillboardShader"))
 		return false;
 
+	if (!CreateShader<CAnimEditorShader>("AnimEditorShader"))
+		return false;
 
 
 	// =================== 상수버퍼 ===================

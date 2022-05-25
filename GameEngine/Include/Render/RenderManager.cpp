@@ -132,6 +132,12 @@ bool CRenderManager::Init()
 
 	m_RenderLayerList.push_back(Layer);
 
+	Layer = new RenderLayer;
+	Layer->Name = "AnimationEditorLayer";
+	Layer->LayerPriority = 5;
+
+	m_RenderLayerList.push_back(Layer);
+
 	m_DepthDisable = m_RenderStateManager->FindRenderState("DepthDisable");
 	m_AlphaBlend = m_RenderStateManager->FindRenderState("AlphaBlend");
 	m_LightAccBlend = m_RenderStateManager->FindRenderState("LightAcc");
@@ -240,7 +246,6 @@ bool CRenderManager::Init()
 	m_vecLightBuffer.push_back(LightTarget);
 
 
-
 	if (!CResourceManager::GetInst()->CreateTarget("FinalScreen",
 		RS.Width, RS.Height, DXGI_FORMAT_R32G32B32A32_FLOAT))
 		return false;
@@ -252,6 +257,29 @@ bool CRenderManager::Init()
 
 	m_LightBlendShader = CResourceManager::GetInst()->FindShader("LightBlendShader");
 	m_LightBlendRenderShader = CResourceManager::GetInst()->FindShader("LightBlendRenderShader");
+	m_NoLightRenderShader = CResourceManager::GetInst()->FindShader("Mesh3DNoLightShader");
+
+	// Animation Editor 용 Render Target 
+	if (!CResourceManager::GetInst()->CreateTarget("AnimationEditorPrevProcess",
+		RS.Width, RS.Height, DXGI_FORMAT_R32G32B32A32_FLOAT))
+		return false;
+
+	m_AnimRenderTargetPrevProcess = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("AnimationEditorPrevProcess");
+	m_AnimRenderTargetPrevProcess->SetPos(Vector3(450.f, 100.f, 0.f));
+	m_AnimRenderTargetPrevProcess->SetScale(Vector3(150.f, 150.f, 1.f));
+	m_AnimRenderTargetPrevProcess->SetDebugRender(false);
+
+	// Animation Editor 용 Mesh 최종 출력 
+	m_AnimRenderShader = CResourceManager::GetInst()->FindShader("AnimEditorShader");
+
+	if (!CResourceManager::GetInst()->CreateTarget("AnimationEditor",
+		RS.Width, RS.Height, DXGI_FORMAT_R32G32B32A32_FLOAT))
+		return false;
+
+	m_AnimationRenderTarget = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("AnimationEditor");
+	m_AnimationRenderTarget->SetPos(Vector3(600.f, 100.f, 0.f));
+	m_AnimationRenderTarget->SetScale(Vector3(150.f, 150.f, 1.f));
+	m_AnimationRenderTarget->SetDebugRender(false);
 
 
 	return true;
@@ -284,19 +312,23 @@ void CRenderManager::Render()
 	SkyObj->Render();
 
 	// GBuffer를 만들어낸다.
-	RenderGBuffer();
+	// RenderGBuffer();
 
 	// Decal을 그려낸다.
 	RenderDecal();
 
 	// 조명 누적버퍼를 만들어낸다.
-	RenderLightAcc();
+	// RenderLightAcc();
 
 	// 조명 누적버퍼와 GBuffer를 이용하여 최종화면을 만들어낸다.
-	RenderLightBlend();
+	// RenderLightBlend();
 
 	// 조명처리된 최종 화면을 백버퍼에 그려낸다.
-	RenderFinalScreen();
+	// RenderFinalScreen();
+
+	// Animation Editor Animation Instance 제작용 Render Target
+	RenderAnimationEditorPrevProcess();
+	RenderAnimationEditor();
 
 	// 파티클 레이어 출력
 	for (int j = 0; j < m_RenderLayerList[3]->RenderCount; ++j)
@@ -347,11 +379,8 @@ void CRenderManager::Render()
 
 	CSceneManager::GetInst()->GetScene()->GetViewport()->Render();
 
-
 	// 디버깅용 렌더타겟을 출력한다.
-	CResourceManager::GetInst()->RenderTarget();
-
-
+	// CResourceManager::GetInst()->RenderTarget();
 
 	// 마우스 출력
 	CWidgetWindow* MouseWidget = CEngine::GetInst()->GetMouseWidget();
@@ -396,7 +425,6 @@ void CRenderManager::RenderGBuffer()
 			m_RenderLayerList[i]->RenderList[j]->Render();
 		}
 	}
-
 
 	CDevice::GetInst()->GetContext()->OMSetRenderTargets((unsigned int)GBufferSize,
 		&vecPrevTarget[0], PrevDepthTarget);
@@ -555,6 +583,7 @@ void CRenderManager::RenderLightBlend()
 {
 	CRenderTarget* FinalScreenTarget = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("FinalScreen");
 
+	// Light 혼합을 할 때에도, RenderTarget 을 바꿔서 처리한다.
 	FinalScreenTarget->ClearTarget();
 
 	FinalScreenTarget->SetTarget(nullptr);
@@ -568,8 +597,7 @@ void CRenderManager::RenderLightBlend()
 
 	m_DepthDisable->SetState();
 
-
-
+	// 아래코드를 사용한 이유는, Null Buffer 를 사용하기 때문이다.
 	UINT Offset = 0;
 	CDevice::GetInst()->GetContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 	CDevice::GetInst()->GetContext()->IASetVertexBuffers(0, 0, nullptr, nullptr, &Offset);
@@ -594,12 +622,14 @@ void CRenderManager::RenderFinalScreen()
 
 	FinalScreenTarget->SetTargetShader(21);
 
+	// RenderLightBlend 와 달리, 여기서는 Render Target 을 변경하지 않는다.
+	// 기존의 Back Buffer 에 그려내는 원리이다.
+
 	m_LightBlendRenderShader->SetShader();
 
 	m_DepthDisable->SetState();
 
-
-
+	// 마지막 그리기 또한 Null Buffer 를 사용하여 그려낸다.
 	UINT Offset = 0;
 	CDevice::GetInst()->GetContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 	CDevice::GetInst()->GetContext()->IASetVertexBuffers(0, 0, nullptr, nullptr, &Offset);
@@ -607,10 +637,80 @@ void CRenderManager::RenderFinalScreen()
 
 	CDevice::GetInst()->GetContext()->Draw(4, 0);
 
-
 	m_DepthDisable->ResetState();
 
 	FinalScreenTarget->ResetTargetShader(21);
+}
+
+void CRenderManager::RenderAnimationEditorPrevProcess()
+{
+	int AnimationEditorLayerIdx = GetRenderLayerIndex("AnimationEditorLayer");
+
+	// 만~약에 해당 Layer 의 Idx 가 정해져 있지 않다면
+	if (AnimationEditorLayerIdx == -1)
+		return;
+
+	// Animation Edtior 상에서 Animation Editor 제작 중이지 않다면
+	if (m_RenderLayerList[AnimationEditorLayerIdx]->RenderCount <= 0)
+		return;
+
+	// Render Target 교체
+	m_AnimRenderTargetPrevProcess->ClearTarget();
+
+	m_AnimRenderTargetPrevProcess->SetTarget(nullptr);
+
+	m_NoLightRenderShader->SetShader();
+
+	m_DepthDisable->SetState();
+
+	// m_AnimationRenderTarget->SetTargetShader(55);
+
+	for (int j = 0; j < m_RenderLayerList[AnimationEditorLayerIdx]->RenderCount; ++j)
+	{
+		m_RenderLayerList[AnimationEditorLayerIdx]->RenderList[j]->Render();
+	}
+
+	// m_AnimationRenderTarget->ResetTargetShader(55);
+
+	m_DepthDisable->ResetState();
+
+	m_AnimRenderTargetPrevProcess->ResetTarget();
+}
+
+void CRenderManager::RenderAnimationEditor()
+{
+	// m_AnimRenderTargetPrevProcess 에 기록된 , Pixel 정보 + Null Buffer 를 이용하여 최종 실제 Rendering
+	// RenderAnimationEditorPrevProcess 에서는 실제 Mesh 의 Skinning 처리를 정점 셰이더 단에서 해야 했기 때문에 
+	// Null Buffer 를 사용하면 안되었다.
+
+	// 위에서 세팅해준 m_AnimRenderTargetPrevProcess 의 RenderTarget 정보를 넘겨준다.
+	m_AnimRenderTargetPrevProcess->SetTargetShader(55);
+
+	// Render Target 교체
+	m_AnimationRenderTarget->ClearTarget();
+
+	m_AnimationRenderTarget->SetTarget(nullptr);
+
+	// RenderLightBlend 와 달리, 여기서는 Render Target 을 변경하지 않는다.
+	// 기존의 Back Buffer 에 그려내는 원리이다.
+
+	m_AnimRenderShader->SetShader();
+
+	m_DepthDisable->SetState();
+
+	// 마지막 그리기 또한 Null Buffer 를 사용하여 그려낸다.
+	UINT Offset = 0;
+	CDevice::GetInst()->GetContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+	CDevice::GetInst()->GetContext()->IASetVertexBuffers(0, 0, nullptr, nullptr, &Offset);
+	CDevice::GetInst()->GetContext()->IASetIndexBuffer(nullptr, DXGI_FORMAT_UNKNOWN, 0);
+
+	CDevice::GetInst()->GetContext()->Draw(4, 0);
+
+	m_DepthDisable->ResetState();
+
+	m_AnimationRenderTarget->ResetTarget();
+
+	m_AnimRenderTargetPrevProcess->ResetTargetShader(55);
 }
 
 void CRenderManager::SetBlendFactor(const std::string& Name, float r, float g,
@@ -632,6 +732,17 @@ bool CRenderManager::CreateBlendState(const std::string& Name,
 	bool AlphaToCoverageEnable, bool IndependentBlendEnable)
 {
 	return m_RenderStateManager->CreateBlendState(Name, AlphaToCoverageEnable, IndependentBlendEnable);
+}
+
+int CRenderManager::GetRenderLayerIndex(const std::string& TargetName)
+{
+	for (size_t j = 0; j < m_RenderLayerList.size(); ++j)
+	{
+		if (m_RenderLayerList[j]->Name == TargetName)
+			return j;
+	}
+
+	return -1;
 }
 
 CRenderState* CRenderManager::FindRenderState(const std::string& Name)

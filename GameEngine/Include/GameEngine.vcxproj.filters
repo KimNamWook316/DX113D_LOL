@@ -289,6 +289,12 @@
     <Filter Include="02. Resource\02. Shader\02. ShaderClass\15. BillBoard">
       <UniqueIdentifier>{63d2d28c-3a5c-479e-baf4-77417f66247f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. Resource\02. Shader\02. ShaderClass\13. Mesh3DNoLight">
+      <UniqueIdentifier>{e2f187ed-530a-4437-94c1-b505f40746b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Resource\02. Shader\02. ShaderClass\14. AnimEditor">
+      <UniqueIdentifier>{9cc26f9b-e79c-4efd-8de5-51ea76d6929b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Device.cpp">
@@ -863,6 +869,15 @@
     </ClCompile>
     <ClCompile Include="Resource\Shader\BillboardShader.cpp">
       <Filter>02. Resource\02. Shader\02. ShaderClass\15. BillBoard</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineUtil.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Shader\Mesh3DNoLightShader.cpp">
+      <Filter>02. Resource\02. Shader\02. ShaderClass\13. Mesh3DNoLight</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Shader\AnimEditorShader.cpp">
+      <Filter>02. Resource\02. Shader\02. ShaderClass\14. AnimEditor</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1474,6 +1489,15 @@
     </ClInclude>
     <ClInclude Include="Resource\Shader\BillboardShader.h">
       <Filter>02. Resource\02. Shader\02. ShaderClass\15. BillBoard</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineUtil.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Shader\Mesh3DNoLightShader.h">
+      <Filter>02. Resource\02. Shader\02. ShaderClass\13. Mesh3DNoLight</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Shader\AnimEditorShader.h">
+      <Filter>02. Resource\02. Shader\02. ShaderClass\14. AnimEditor</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

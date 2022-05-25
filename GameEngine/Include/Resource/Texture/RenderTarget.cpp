@@ -24,7 +24,7 @@ CRenderTarget::~CRenderTarget()
 }
 
 bool CRenderTarget::CreateTarget(const std::string& Name, 
-	unsigned int Width, unsigned int Height, DXGI_FORMAT PixelFormat)
+	unsigned int Width, unsigned int Height, DXGI_FORMAT PixelFormat, bool MultiSample)
 {
 	SetName(Name);
 
@@ -35,8 +35,17 @@ bool CRenderTarget::CreateTarget(const std::string& Name,
 	Desc.Height = Height;
 	Desc.ArraySize = 1;
 	Desc.MipLevels = 1;
-	Desc.SampleDesc.Count = 4;
-	Desc.SampleDesc.Quality = 0;
+	if (MultiSample)
+	{
+		Desc.SampleDesc.Count = 4;
+		Desc.SampleDesc.Quality = 0;
+	}
+	else
+	{
+		Desc.SampleDesc.Count = 0;
+		Desc.SampleDesc.Quality = 1;
+	}
+
 	Desc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
 	Desc.Format = PixelFormat;
 	Desc.Usage = D3D11_USAGE_DEFAULT;
@@ -48,6 +57,7 @@ bool CRenderTarget::CreateTarget(const std::string& Name,
 
 	Info->Width = Width;
 	Info->Height = Height;
+	Info->TextureResource = m_TargetTex;
 	m_vecTextureInfo.push_back(Info);
 
 	m_TargetTex->QueryInterface(__uuidof(IDXGISurface), (void**)&m_Surface);
@@ -60,16 +70,20 @@ bool CRenderTarget::CreateTarget(const std::string& Name,
 		nullptr, &m_TargetView)))
 		return false;
 
-	//m_ClearColor[0] = 1.f;
-	//m_ClearColor[1] = 1.f;
-	//m_ClearColor[2] = 1.f;
-	//m_ClearColor[3] = 1.f;
+	// m_ClearColor[0] = 1.f;
+	// m_ClearColor[1] = 1.f;
+	// m_ClearColor[2] = 1.f;
+	// m_ClearColor[3] = 1.f;
 
 	return true;
 }
 
 void CRenderTarget::ClearTarget()
 {
+	// m_ClearColor[0] = 1.f;
+	// m_ClearColor[1] = 1.f;
+	// m_ClearColor[2] = 1.f;
+	// m_ClearColor[3] = 1.f;
 	CDevice::GetInst()->GetContext()->ClearRenderTargetView(m_TargetView, m_ClearColor);
 }
 

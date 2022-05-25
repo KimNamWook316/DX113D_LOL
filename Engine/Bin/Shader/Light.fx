@@ -24,7 +24,7 @@ Texture2DMS<float4> g_LightSpcTex : register(t19);
 Texture2DMS<float4> g_LightEmvTex : register(t20);
 
 Texture2DMS<float4> g_LightBlendTex : register(t21);
-
+Texture2DMS<float4> g_AnimEditorRenderTex : register(t55);
 
 
 LightResult ComputeLight(float3 Pos, float3 Normal, float4 MaterialColor)
@@ -144,14 +144,25 @@ PS_OUTPUT_LIGHTACC LightAccPS(VS_OUTPUT_LIGHTACC input)
     float3 ViewNormal = GBuffer1Color.xyz;
     
     LightResult result = ComputeLight(ViewPos, ViewNormal, GBuffer3Color);
+
+    float rim = saturate(dot(normalize(ViewNormal), ViewPos));
+    // float fresnel = pow(1 - rim, 0.05);
+    float fresnel = 1 - pow(rim, 2) * 0.5;
     
     output.Dif.rgb = result.Dif + result.Amb;
     output.Spc.rgb = result.Spc;
+    // output.Spc.rgb = saturate(result.Spc + fresnel) * g_LightColor;
     output.Emv.rgb = result.Emv;
-    
+
+    float Alpha = 0.f;
+
     output.Dif.a = 1.f;
     output.Spc.a = 1.f;
     output.Emv.a = 1.f;
+
+    // output.Dif.a *= fresnel;
+    // output.Spc.a *= fresnel;
+    // output.Emv.a *= fresnel;
     
     
     return output;
@@ -172,6 +183,8 @@ PSOutput_Single LightBlendPS(VS_OUTPUT_LIGHTACC input)
 	
     float4 LightDiffuseColor = g_LightDifTex.Load(TargetPos, 0);
     
+    LightDiffuseColor.a = 0.5f;
+
     if (LightDiffuseColor.a == 0.f)
         clip(-1);    
     
@@ -182,11 +195,11 @@ PSOutput_Single LightBlendPS(VS_OUTPUT_LIGHTACC input)
     output.Color.rgb = GBufferDiffuseColor.rgb * LightDiffuseColor.rgb +
         LightSpecularColor.rgb + LightEmissiveColor.rgb;
     output.Color.a = GBufferDiffuseColor.a;
+
     
     return output;
 
 }
-
 
 PSOutput_Single LightBlendRenderPS(VS_OUTPUT_LIGHTACC input)
 {
@@ -208,5 +221,29 @@ PSOutput_Single LightBlendRenderPS(VS_OUTPUT_LIGHTACC input)
     
     output.Color = LightBlendColor;
     
+    
+    return output;
+}
+
+PSOutput_Single AnimEditorRenderPS(VS_OUTPUT_LIGHTACC input)
+{
+    PSOutput_Single output = (PSOutput_Single)0;
+
+    float2 UV;
+    UV.x = input.ProjPos.x / input.ProjPos.w * 0.5f + 0.5f;
+    UV.y = input.ProjPos.y / input.ProjPos.w * -0.5f + 0.5f;
+
+    int2 TargetPos = (int2) 0;
+
+    TargetPos.x = (int)(UV.x * g_Resolution.x);
+    TargetPos.y = (int)(UV.y * g_Resolution.y);
+
+    float4 AnimRenderColor = g_AnimEditorRenderTex.Load(TargetPos, 0);
+
+    if (AnimRenderColor.a == 0.f)
+        clip(-1);
+
+    output.Color = AnimRenderColor;
+
     return output;
 }

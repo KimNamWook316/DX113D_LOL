@@ -20,8 +20,10 @@
 #include "Engine.h"
 #include "Device.h"
 #include "../Object/Anim3DObject.h"
+#include "Render/RenderManager.h"
 
-CAnimationEditor::CAnimationEditor()
+CAnimationEditor::CAnimationEditor() :
+	m_RenderTargetSet(false)
 {
 }
 
@@ -101,8 +103,10 @@ bool CAnimationEditor::Init()
 	// Frame Delete
 	// m_DeleteFrameInput = AddWidget<CIMGUITextInput>("Delete Target Frame", 100.f, 30.f);
 	// m_DeleteFrameInput->SetTextType(ImGuiText_Type::Int);
-	// m_FrameDelBtn = AddWidget<CIMGUIButton>("Delete Frame", 100.f, 30.f);
-	// m_FrameDelBtn->SetClickCallback<CAnimationEditor>(this, &CAnimationEditor::OnDeleteAnimFrame);
+
+	// Delete Anim Sequence
+	m_DeleteAnimSequenceBtn = AddWidget<CIMGUIButton>("Delete Sequence", 100.f, 30.f);
+	m_DeleteAnimSequenceBtn->SetClickCallback<CAnimationEditor>(this, &CAnimationEditor::OnDeleteAnimationSequenceData);
 
 	// Btns
 	m_AnimSequenceAddBtn = AddWidget<CIMGUIButton>("AddSequences", 100.f, 30.f);
@@ -128,6 +132,10 @@ bool CAnimationEditor::Init()
 
 	m_EditAnimKeyBtn = AddWidget<CIMGUIButton>("Edit Anim Key Btn", 100.f, 30.f);
 	m_EditAnimKeyBtn->SetClickCallback<CAnimationEditor>(this, &CAnimationEditor::OnEditAnimSequenceKey);
+
+	// 별도 Render Target
+	m_AnimationRenderTarget = AddWidget<CIMGUIImage>("Render Target", 400.f, 400.f);
+	m_AnimationRenderTarget->SetRenderTargetImage(true);
 
 	// Table Key 값 정보 세팅
 	m_AnimInfoTable->MakeKey(AnimationClipInfoKeys::FrameRange);
@@ -182,6 +190,14 @@ void CAnimationEditor::Update(float DeltaTime)
 	{
 		int NextAnimationIdx = m_Animation->GetCurrentAnimation()->GetAnimationSequence()->GetCurrentFrameIdx();
 		OnAnimationSliderIntCallback(NextAnimationIdx);
+	} 
+
+	// 별도 RenderTarget 세팅 (처음 한번만)
+	if (!m_RenderTargetSet)
+	{
+		m_AnimationRenderTarget->SetTexture(CRenderManager::GetInst()->GetAnimationRenderTarget());
+		// m_AnimationRenderTarget->SetTexture(CResourceManager::GetInst()->FindTexture("FinalScreen"));
+		m_RenderTargetSet = true;
 	}
 }
 
@@ -267,7 +283,6 @@ void CAnimationEditor::OnSaveAnimationInstance()
 		WideCharToMultiByte(CP_ACP, 0, FiilePath, -1, FilePathMultibyte, ConvertLength, nullptr, nullptr);
 
 		m_Animation->SaveAnimationFullPath(FilePathMultibyte);
-
 	}
 }
 
@@ -300,7 +315,15 @@ void CAnimationEditor::OnLoadAnimationInstance()
 			return;
 
 		if (!m_Animation)
+		{
+			// ex) singed_spell2.sqc 를 선택했다면
+			// 같은 폴더 목록 내에서 singed_spell2.msh / singed_spell2.bne 를 Load 하여 세팅한다.
+			// singed_spell2.msh -> singed_spell2_mesh 라는 이름으로
+			// singed_spell2.bne -> singed_spell2_skeleton 이라는 이름으로
+
+
 			OnCreateSample3DObject();
+		}
 		else
 		{
 			// 기존 Animation List에 보여지던 , 즉, 현재 Animation에 Added 되었던 모든 Sequence 정보를 지워준다
@@ -395,6 +418,84 @@ void CAnimationEditor::OnApplyAnimationSlider(CAnimationSequence* Sequence)
 	m_FrameSlider->SetMax(Sequence->GetEndFrame());
 }
 
+bool CAnimationEditor::LoadElementsForSqcLoading(const char* SqcFileName)
+{
+	// 만약 Mesh Load 과정에서 필요한 Texture가 없다면 
+			// ex) FBX Convert 이후, singed_spell2.sqc 가 있다면, 같은 경로내에 singed_spell2.fbm 이라는 디렉토리가 존재해야 한다.
+			// 만약 해당 Folder 가 존재하지 않는다면, Mesh를 Load 하더라도 Texture 가 없다고 뜰 것이다
+	char TextFolderExt[10] = ".fbm";
+	char TextFolderName[MAX_PATH] = {};
+	// TCHAR MshTCHARFileName[MAX_PATH] = {};
+
+	strcpy_s(TextFolderName, SqcFileName);
+	strcat_s(TextFolderName, TextFolderExt);
+
+	std::filesystem::path MeshTextureFolderPath(TextFolderName);
+
+	if (!std::filesystem::exists(MeshTextureFolderPath))
+	{
+		MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT(".fbm Folder Does Not Exist"), NULL, MB_OK);
+		return false;
+	}
+
+	// ex) singed_spell2.sqc 를 선택했다면
+	// 같은 폴더 목록 내에서 singed_spell2.msh / singed_spell2.bne 를 Load 하여 세팅한다.
+	// singed_spell2.msh -> singed_spell2_mesh 라는 이름으로
+	// singed_spell2.bne -> singed_spell2_skeleton 이라는 이름으로
+
+	// Load Mesh
+	std::string LoadedMeshName = SqcFileName;
+	LoadedMeshName.append("_mesh");
+
+	// 해당 이름을 3d Test Object 에서 가져와서 사용할 것이다.
+	m_3DTestObjectMeshName = LoadedMeshName;
+
+	char MeshExt[10] = ".msh";
+
+	char MshFileName[MAX_PATH] = {};
+	TCHAR MshTCHARFileName[MAX_PATH] = {};
+
+	strcpy_s(MshFileName, SqcFileName);
+	strcat_s(MshFileName, MeshExt);
+
+	int ConvertLength = MultiByteToWideChar(CP_ACP, 0, MshFileName, -1, 0, 0);
+	MultiByteToWideChar(CP_ACP, 0, MshFileName, -1, MshTCHARFileName, ConvertLength);
+
+	if (!CSceneManager::GetInst()->GetScene()->GetResource()->LoadMesh(Mesh_Type::Animation, LoadedMeshName,
+		MshTCHARFileName, MESH_PATH))
+	{
+		MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT(".msh Load Failure"), NULL, MB_OK);
+		return false;
+	}
+
+	// Bne (Skeleton) Load
+	char BneExt[10] = ".bne";
+
+	std::string LoadedBneName = SqcFileName;
+	LoadedBneName.append("_skeleton");
+
+	char BneFileName[MAX_PATH] = {};
+	TCHAR BneTCHARFileName[MAX_PATH] = {};
+
+	strcpy_s(BneFileName, SqcFileName);
+	strcat_s(BneFileName, BneExt);
+
+	ConvertLength = MultiByteToWideChar(CP_ACP, 0, BneFileName, -1, 0, 0);
+	MultiByteToWideChar(CP_ACP, 0, BneFileName, -1, BneTCHARFileName, ConvertLength);
+
+	if (!CSceneManager::GetInst()->GetScene()->GetResource()->LoadSkeleton(LoadedBneName, BneTCHARFileName, MESH_PATH))
+	{
+		MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT(".bne Load Failure"), NULL, MB_OK);
+		return false;
+	}
+
+	// Mesh 에 해당 Skeleton 세팅
+	CSceneManager::GetInst()->GetScene()->GetResource()->SetMeshSkeleton(LoadedMeshName, LoadedBneName);
+
+
+	return true;
+}
+
 void CAnimationEditor::OnEditAnimPlayTime()
 {
 	if (!m_Animation || !m_Animation->GetCurrentAnimation())
@@ -438,6 +539,20 @@ void CAnimationEditor::OnEditAnimSequenceKey()
 		return;
 	}
 
+	// 바꿔준 이름의 Animation 을  Current Animation 으로 세팅한다.
+	m_Animation->SetCurrentAnimation(m_EditAnimSeqDataKeyName->GetTextUTF8());
+
+	// Combo Box 내용 Refresh
+	OnRefreshAnimationComboBox();
+}
+
+void CAnimationEditor::OnDeleteAnimationSequenceData()
+{
+	if (!m_Animation)
+		return;
+
+	m_Animation->DeleteCurrentAnimation();
+	
 	// Combo Box 내용 Refresh
 	OnRefreshAnimationComboBox();
 }
@@ -492,12 +607,32 @@ void CAnimationEditor::OnAddAnimationSequence()
 
 	if (GetOpenFileName(&OpenFile) != 0)
 	{
+		char	Ext[_MAX_EXT] = {};
+		char SqcFileName[MAX_PATH] = {};
 		char FilePathMultibyte[MAX_PATH] = {};
+
 		int ConvertLength = WideCharToMultiByte(CP_ACP, 0, LoadFilePath, -1, 0, 0, 0, 0);
 		WideCharToMultiByte(CP_ACP, 0, LoadFilePath, -1, FilePathMultibyte, ConvertLength, 0, 0);
 
+		_splitpath_s(FilePathMultibyte, nullptr, 0, nullptr, 0, SqcFileName, MAX_PATH, Ext, _MAX_EXT);
+
+		_strupr_s(Ext);
+
+		// 확장자 .sqc 이 아니라면 return;
+		if (strcmp(Ext, ".SQC") != 0)
+			return;
+
+
+
 		if (!m_Animation)
+		{
+			if (!LoadElementsForSqcLoading(SqcFileName))
+				return;
+			
+			// Create Object
 			OnCreateSample3DObject();
+		}
+
 
 		// 이름 중복 X --> Key 이름 중복
 		if (m_Animation->FindAnimation(m_NewAnimSeqDataKeyName->GetTextUTF8()))
@@ -590,8 +725,10 @@ void CAnimationEditor::OnRefreshFrameSliderInfo(CAnimationSequence* Sequence)
 
 void CAnimationEditor::OnRefreshAnimationComboBox()
 {
-	if (!m_Animation || !m_Animation->GetCurrentAnimation())
+	if (!m_Animation)
 		return;
+
+	int SeletedIdx = m_CurAnimComboBox->GetSelectIndex();
 
 	m_CurAnimComboBox->Clear();
 
@@ -601,4 +738,13 @@ void CAnimationEditor::OnRefreshAnimationComboBox()
 
 	for (const auto& name : vecCurKeyNames)
 		m_CurAnimComboBox->AddItem(name);
+
+	if (m_CurAnimComboBox->Empty())
+		return;
+
+	if (SeletedIdx < m_CurAnimComboBox->GetItemCount())
+		m_CurAnimComboBox->SetSelectIndex(SeletedIdx);
+	else
+		m_CurAnimComboBox->SetSelectIndex(m_CurAnimComboBox->GetItemCount() - 1);
+
 }

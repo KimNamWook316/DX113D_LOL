@@ -27,7 +27,6 @@ struct Vertex3DOutput
     float3 Binormal : BINORMAL;
 };
 
-
 StructuredBuffer<matrix> g_SkinningBoneMatrixArray : register(t106);
 
 struct SkinningInfo
@@ -171,6 +170,57 @@ PSOutput_GBuffer Standard3DPS(Vertex3DOutput input)
         EmissiveColor = g_EmissiveTexture.Sample(g_BaseSmp, input.UV).xxxx;
     
     output.GBuffer3.a = ConvertColor(EmissiveColor);
+
+    return output;
+}
+
+/*
+VertexUVOutput RenderTargetVS(VertexUV input)
+{
+    VertexUVOutput output = (VertexUVOutput)0;
+
+    output.Pos = mul(float4(input.Pos, 1.f), g_matWidgetWP);
+    output.UV = input.UV;
+
+    return output;
+}
+
+PSOutput_Single RenderTargetPS(VertexUVOutput input)
+{
+    PSOutput_Single output = (PSOutput_Single)0;
+
+    int2 Pos = (int2)0;
+
+    Pos.x = (int)(input.UV.x * g_Resolution.x);
+    Pos.y = (int)(input.UV.y * g_Resolution.y);
+
+    float4 BaseTextureColor = g_TargetTex.Load(Pos, 0);
+
+    if (BaseTextureColor.a == 0.f)
+        clip(-1);
+
+    output.Color = BaseTextureColor;
+
+    return output;
+}
+*/
+
+PSOutput_Single StandardNoLight3DPS(Vertex3DOutput input)
+{
+    PSOutput_Single output = (PSOutput_Single)0;
+
+    //LightResult LightInfo = ComputeLight(input.ViewPos, input.Normal,
+    //    input.Tangent, input.Binormal, input.UV);
+
+    // float4 BaseTextureColor = g_BaseTexture.Sample(g_BaseSmp, input.UV);
+    float4 BaseTextureColor = g_BaseTexture.Sample(g_BaseSmp, input.UV);
+
+    if (BaseTextureColor.a == 0.f || g_MtrlOpacity == 0.f)
+        clip(-1);
+
+    output.Color.rgb = BaseTextureColor.rgb;// * (LightInfo.Dif + LightInfo.Amb) + LightInfo.Spc + LightInfo.Emv;
+
+    output.Color.a = BaseTextureColor.a * g_MtrlOpacity;
 
     return output;
 }

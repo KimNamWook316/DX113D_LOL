@@ -42,12 +42,19 @@ private:
 	std::vector<CSharedPtr<CRenderTarget>>	m_vecLightBuffer;
 
 	// Animation Editor Buffer
-	CSharedPtr<CRenderTarget>	m_AnimationEditorBuffer;
+	CSharedPtr<class CShader> m_NoLightRenderShader; // m_AnimRenderTargetPrevProcess 에 그려내기 위한 Shader 
+	CSharedPtr<class CShader> m_AnimRenderShader;    // 
+	CSharedPtr<CRenderTarget>	m_AnimRenderTargetPrevProcess; // Skinning 처리 이후, 해당 출력을, 별도의 RenderTarget 에 그려낸다.
+	CSharedPtr<CRenderTarget>	m_AnimationRenderTarget; // Null Buffer 를 활용, m_AnimRenderTargetPrevProcess 에 기록된 사항 출력
 
 public:
 	class CStandard2DConstantBuffer* GetStandard2DCBuffer()	const
 	{
 		return m_Standard2DCBuffer;
+	}
+	CRenderTarget* GetAnimationRenderTarget() const
+	{
+		return m_AnimationRenderTarget;
 	}
 
 public:
@@ -63,16 +70,14 @@ public:
 public:
 	bool Init();
 	void Render();
-
-
 private:
 	void RenderGBuffer();
 	void RenderDecal();
 	void RenderLightAcc();
 	void RenderLightBlend();
 	void RenderFinalScreen();
-
-
+	void RenderAnimationEditorPrevProcess();
+	void RenderAnimationEditor();
 	// Render State
 public:
 	void SetBlendFactor(const std::string& Name, float r, float g, float b, float a);
@@ -82,7 +87,8 @@ public:
 		D3D11_BLEND_OP BlendOpAlpha = D3D11_BLEND_OP_ADD,
 		UINT8 RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL);
 	bool CreateBlendState(const std::string& Name, bool AlphaToCoverageEnable, bool IndependentBlendEnable);
-
+private :
+	int GetRenderLayerIndex(const std::string& Name);
 public:
 	class CRenderState* FindRenderState(const std::string& Name);
 

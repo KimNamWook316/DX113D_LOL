@@ -2,6 +2,8 @@
 #include "Input.h"
 #include "Scene/Scene.h"
 #include "Scene/Navigation3DManager.h"
+#include "../EditorManager.h"
+#include "../Window/AnimationEditor.h"
 
 CAnim3DObject::CAnim3DObject()
 {
@@ -23,6 +25,8 @@ CAnim3DObject::~CAnim3DObject()
 bool CAnim3DObject::Init()
 {
 	m_Mesh = CreateComponent<CAnimationMeshComponent>("Mesh");
+	m_Mesh->SetLayerName("AnimationEditorLayer");
+	
 	m_Arm = CreateComponent<CArm>("Arm");
 	m_Camera = CreateComponent<CCameraComponent>("Camera");
 
@@ -34,6 +38,11 @@ bool CAnim3DObject::Init()
 	m_Camera->SetInheritRotZ(true);
 
 	m_Mesh->SetMesh("PlayerMesh");
+	// m_Mesh->SetMesh(CEditorManager::GetInst()->GetAnimationEditor()->Get3DTestObjectMeshName());
+
+	// GBuffer 가 아니라, 바로 Animation Editor 용 Render Target 에 그려내기 위해 Shader 를 다른 것으로 세팅한다.
+	// --> 그런데 이 코드가 있으면 오류가 난다.
+	m_Mesh->SetMaterialShader("Mesh3DNoLightShader");
 
 	// m_Mesh->CreateAnimationInstance<CAnim3DObjectAnimation>();
 	// m_Animation = (CAnim3DObjectAnimation*)m_Mesh->GetAnimationInstance();
@@ -61,7 +70,7 @@ void CAnim3DObject::Update(float DeltaTime)
 		m_Arm->SetTargetDistance(Length);
 	}
 
-	// m_Arm->AddRelativeRotationY(90.f * DeltaTime);
+	// m_Arm->AddRelativeRotationY(30.f * DeltaTime);
 
 	/*
 	if (m_Velocity.Length() > 0.f)

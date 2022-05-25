@@ -137,7 +137,6 @@ public:
     void SetTransparency(bool Enable);
     void SetOpacity(float Opacity);
     void AddOpacity(float Opacity);
-
 public:
     void SetBaseColor(const Vector4& Color);
     void SetBaseColor(float r, float g, float b, float a);
@@ -169,6 +168,7 @@ public:
 
 public:
     void SetShader(const std::string& Name);
+    void SetShader(CGraphicShader* Shader);
     void Render();
     void Reset();
     CMaterial* Clone()  const;

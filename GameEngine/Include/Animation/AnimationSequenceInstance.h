@@ -95,6 +95,7 @@ public:
 	void GetAnimationSequenceNames(std::vector<std::string>& VecSequenceNames);
 	void SetCurrentAnimationFrameIdx(int Idx);
 	bool EditCurrentSequenceKeyName(const std::string& NewKey, const std::string& PrevKey);
+	void DeleteCurrentAnimation();
 public:
 	void AddAnimation(const std::string& SequenceName, const std::string& Name, bool Loop = true, float PlayTime = 1.f,
 		float PlayScale = 1.f);

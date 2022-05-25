@@ -151,22 +151,42 @@ bool CAnimationSequenceInstance::EditCurrentSequenceKeyName(const std::string& N
 
 	CAnimationSequenceData* PrevAnim = iter->second;
 
-	CAnimationSequenceData* NewAnim = new CAnimationSequenceData;
-
-	NewAnim->m_Sequence = PrevAnim->GetAnimationSequence();
-	NewAnim->m_Name = PrevAnim->GetName();
-	NewAnim->m_Loop = PrevAnim->m_Loop;
-	NewAnim->m_PlayTime = PrevAnim->m_PlayTime;
-	NewAnim->m_PlayScale = PrevAnim->m_PlayScale;
-	NewAnim->m_FrameTime = PrevAnim->m_FrameTime;
+	// 새로운 이름으로 넣어준다.
+	m_mapAnimation.insert(std::make_pair(NewKey, PrevAnim));
 
 	// 기존 것은 지워준다.
 	m_mapAnimation.erase(iter);
 
-	// 새로운 사항을 추가한다.
-	m_mapAnimation.insert(std::make_pair(NewKey, NewAnim));
-
 	return true;
+}
+
+void CAnimationSequenceInstance::DeleteCurrentAnimation()
+{
+	if (!m_CurrentAnimation)
+		return;
+
+	auto iter = m_mapAnimation.begin();
+	auto iterEnd = m_mapAnimation.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		if (iter->second == m_CurrentAnimation)
+		{
+			SAFE_DELETE(iter->second);
+			m_mapAnimation.erase(iter);
+			break;
+		}
+	}
+
+	if (!m_mapAnimation.empty())
+	{
+		iter = m_mapAnimation.begin();
+		m_CurrentAnimation = iter->second;
+	}
+	else
+	{
+		m_CurrentAnimation = nullptr;
+	}
 }
 
 void CAnimationSequenceInstance::AddAnimation(const std::string& SequenceName,

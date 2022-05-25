@@ -54,7 +54,8 @@ public:
     void SetTransparency(bool Enable, int Index = 0);
     void SetOpacity(float Opacity, int Index = 0);
     void AddOpacity(float Opacity, int Index = 0);
-
+public :
+    void SetMaterialShader(const std::string& Name);
 public:
     void AddTexture(int MaterialIndex, int Register, int ShaderType, const std::string& Name, class CTexture* Texture);
     void AddTexture(int MaterialIndex, int Register, int ShaderType, const std::string& Name, const TCHAR* FileName, const std::string& PathName = TEXTURE_PATH);

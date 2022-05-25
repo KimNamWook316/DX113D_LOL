@@ -180,6 +180,20 @@ void CAnimationMeshComponent::AddOpacity(float Opacity, int Index)
 	m_vecMaterialSlot[Index]->AddOpacity(Opacity);
 }
 
+void CAnimationMeshComponent::SetMaterialShader(const std::string& Name)
+{
+	CGraphicShader* Shader = dynamic_cast<CGraphicShader*>(CResourceManager::GetInst()->FindShader(Name));
+
+	if (!Shader)
+		return;
+
+	int Size = (int)m_vecMaterialSlot.size();
+	for (int i = 0; i < Size; ++i)
+	{
+		m_vecMaterialSlot[i]->SetShader(Shader);
+	}
+}
+
 void CAnimationMeshComponent::AddTexture(int MaterialIndex, int Register, int ShaderType, const std::string& Name, CTexture* Texture)
 {
 	m_vecMaterialSlot[MaterialIndex]->AddTexture(Register, ShaderType, Name, Texture);

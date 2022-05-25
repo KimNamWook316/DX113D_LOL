@@ -141,6 +141,7 @@
     <ClCompile Include="Resource\Shader\AnimationUpdateConstantBuffer.cpp" />
     <ClCompile Include="Resource\Shader\AnimationUpdateShader.cpp" />
     <ClCompile Include="Resource\Shader\BillboardShader.cpp" />
+    <ClCompile Include="Resource\Shader\AnimEditorShader.cpp" />
     <ClCompile Include="Resource\Shader\ColliderConstantBuffer.cpp" />
     <ClCompile Include="Resource\Shader\ColliderPixelShader.cpp" />
     <ClCompile Include="Resource\Shader\ColliderShader.cpp" />
@@ -160,6 +161,7 @@
     <ClCompile Include="Resource\Shader\LightConstantBuffer.cpp" />
     <ClCompile Include="Resource\Shader\MaterialConstantBuffer.cpp" />
     <ClCompile Include="Resource\Shader\Mesh2DShader.cpp" />
+    <ClCompile Include="Resource\Shader\Mesh3DNoLightShader.cpp" />
     <ClCompile Include="Resource\Shader\NumberShader.cpp" />
     <ClCompile Include="Resource\Shader\PaperBurnConstantBuffer.cpp" />
     <ClCompile Include="Resource\Shader\ParticleConstantBuffer.cpp" />
@@ -342,6 +344,7 @@
     <ClInclude Include="Resource\Shader\AnimationUpdateConstantBuffer.h" />
     <ClInclude Include="Resource\Shader\AnimationUpdateShader.h" />
     <ClInclude Include="Resource\Shader\BillboardShader.h" />
+    <ClInclude Include="Resource\Shader\AnimEditorShader.h" />
     <ClInclude Include="Resource\Shader\ColliderConstantBuffer.h" />
     <ClInclude Include="Resource\Shader\ColliderPixelShader.h" />
     <ClInclude Include="Resource\Shader\ColliderShader.h" />
@@ -361,6 +364,7 @@
     <ClInclude Include="Resource\Shader\LightConstantBuffer.h" />
     <ClInclude Include="Resource\Shader\MaterialConstantBuffer.h" />
     <ClInclude Include="Resource\Shader\Mesh2DShader.h" />
+    <ClInclude Include="Resource\Shader\Mesh3DNoLightShader.h" />
     <ClInclude Include="Resource\Shader\NumberShader.h" />
     <ClInclude Include="Resource\Shader\PaperBurnConstantBuffer.h" />
     <ClInclude Include="Resource\Shader\ParticleConstantBuffer.h" />

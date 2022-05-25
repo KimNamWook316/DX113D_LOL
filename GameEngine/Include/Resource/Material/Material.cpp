@@ -494,6 +494,14 @@ void CMaterial::SetShader(const std::string& Name)
 	m_Shader = (CGraphicShader*)CResourceManager::GetInst()->FindShader(Name);
 }
 
+void CMaterial::SetShader(CGraphicShader* Shader)
+{
+	if (!Shader)
+		return;
+
+	m_Shader = Shader;
+}
+
 void CMaterial::Render()
 {
 	if (m_Shader)

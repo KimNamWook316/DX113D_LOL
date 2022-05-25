@@ -24,7 +24,7 @@ bool CDefaultScene::Init()
 
     // Animation Editor  Test ¿ë Object, Mesh
     m_Scene->GetResource()->LoadMesh(Mesh_Type::Animation, "PlayerMesh",
-        TEXT("singed_attack1.msh"));
+        TEXT("singed_attack1.msh"), MESH_PATH);
 
     CMesh* Mesh = m_Scene->GetResource()->FindMesh("PlayerMesh");
 

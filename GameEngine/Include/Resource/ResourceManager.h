@@ -104,7 +104,7 @@ public:	// =================== Texture =====================
 		const std::string& PathName = TEXTURE_PATH);
 	bool LoadTextureFullPath(const std::string& Name, const std::vector<TCHAR*>& vecFullPath);
 	bool CreateTarget(const std::string& Name, unsigned int Width,
-		unsigned int Height, DXGI_FORMAT PixelFormat);
+		unsigned int Height, DXGI_FORMAT PixelFormat, bool MultiSample = true);
 	class CTexture* FindTexture(const std::string& Name);
 	bool LoadTextureArray(const std::string& Name, const std::vector<TCHAR*>& vecFileName,
 		const std::string& PathName = TEXTURE_PATH);

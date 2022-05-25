@@ -47,7 +47,10 @@ public:
 	{
 		return m_ComponentHierarchyWindow;
 	}
-
+	class CAnimationEditor* GetAnimationEditor()	const
+	{
+		return m_AnimationEditor;
+	}
 	EditMode GetEditMode()
 	{
 		return m_EditMode;
