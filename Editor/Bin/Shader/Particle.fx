@@ -51,7 +51,10 @@ struct ParticleInfoShared
 };
 
 RWStructuredBuffer<ParticleInfo>		g_ParticleArray	: register(u0);
-RWStructuredBuffer<ParticleInfoShared>	g_ParticleShare	: register(u1);
+RWStructuredBuffer<ParticleInfoShared> g_ParticleShare : register(u1);
+
+Texture2DMS<float4> g_GBufferDepth : register(t10);
+
 
 float3x3 ComputeRotationMatrix(float3 Angle)
 {
@@ -316,16 +319,34 @@ void ParticleGS(point VertexParticleOutput input[1],
 
 PSOutput_Single ParticlePS(GeometryParticleOutput input)
 {
-	PSOutput_Single	output = (PSOutput_Single)0;
+	PSOutput_Single output = (PSOutput_Single) 0;
 
-	float4	Color = g_BaseTexture.Sample(g_BaseSmp, input.UV);
+	float4 Color = g_BaseTexture.Sample(g_BaseSmp, input.UV);
 
 	if (Color.a == 0.f || input.Color.a == 0.f)
 		clip(-1);
+    
+	float2 ScreenUV = input.ProjPos.xy / input.ProjPos.w;
+	ScreenUV = ScreenUV * float2(0.5f, -0.5f) + float2(0.5f, 0.5f);
+    
+	int2 TargetPos = (int2) 0;
+	
+	TargetPos.x = (int) (ScreenUV.x * g_Resolution.x);
+	TargetPos.y = (int) (ScreenUV.y * g_Resolution.y);
+    
+	float4 Depth = g_GBufferDepth.Load(TargetPos, 0);
+    
+	float Alpha = 1.f;
+    
+	if (Depth.a > 0.f)
+		Alpha = (Depth.g - input.ProjPos.w) / 0.5f;
+    
+	Alpha = clamp(Alpha, 0.f, 1.f);
 
 	Color = PaperBurn2D(Color * input.Color, input.UV);
 	
-    output.Color = Color;
+	output.Color = Color;
+	output.Color.a = Color.a * g_MtrlOpacity * Alpha;
 
 	return output;
 }

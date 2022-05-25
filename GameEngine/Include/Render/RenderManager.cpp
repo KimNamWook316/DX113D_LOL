@@ -12,6 +12,7 @@
 #include "../Engine.h"
 #include "../Device.h"
 #include "../Resource/Shader/Shader.h"
+#include "RenderInstancing.h"
 
 DEFINITION_SINGLE(CRenderManager)
 
@@ -28,6 +29,14 @@ CRenderManager::~CRenderManager()
 
 	for (; iter != iterEnd; ++iter)
 	{
+		auto	iter1 = (*iter)->mapInstancing.begin();
+		auto	iter1End = (*iter)->mapInstancing.end();
+
+		for (; iter1 != iter1End; ++iter1)
+		{
+			SAFE_DELETE(iter1->second);
+		}
+
 		SAFE_DELETE((*iter));
 	}
 
@@ -298,11 +307,19 @@ void CRenderManager::Render()
 	// 조명처리된 최종 화면을 백버퍼에 그려낸다.
 	RenderFinalScreen();
 
+	m_vecGBuffer[2]->SetShader(10, (int)Buffer_Shader_Type::Pixel, 0);
+
+	m_AlphaBlend->SetState();
+
 	// 파티클 레이어 출력
 	for (int j = 0; j < m_RenderLayerList[3]->RenderCount; ++j)
 	{
 		m_RenderLayerList[3]->RenderList[j]->Render();
 	}
+
+	m_AlphaBlend->ResetState();
+
+	m_vecGBuffer[2]->ResetShader(10, (int)Buffer_Shader_Type::Pixel, 0);
 
 	// Screen Widget 출려
 	for (int j = 0; j < m_RenderLayerList[4]->RenderCount; ++j)

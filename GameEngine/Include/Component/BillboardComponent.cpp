@@ -54,6 +54,7 @@ bool CBillboardComponent::Init()
 	// Sprite Mesh의 Pivot만 조정해서 사용
 	SetPivot(0.5f, 0.5f, 0.f);
 	SetRelativeScale(1.f, 1.f, 1.f);
+	SetMeshSize(1.f, 1.f, 0.f);
 
 	return true;
 }

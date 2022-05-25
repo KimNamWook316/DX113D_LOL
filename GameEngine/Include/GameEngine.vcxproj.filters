@@ -864,6 +864,9 @@
     <ClCompile Include="Resource\Shader\BillboardShader.cpp">
       <Filter>02. Resource\02. Shader\02. ShaderClass\15. BillBoard</Filter>
     </ClCompile>
+    <ClCompile Include="Render\RenderInstancing.cpp">
+      <Filter>06. Render</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Device.h">
@@ -1474,6 +1477,9 @@
     </ClInclude>
     <ClInclude Include="Resource\Shader\BillboardShader.h">
       <Filter>02. Resource\02. Shader\02. ShaderClass\15. BillBoard</Filter>
+    </ClInclude>
+    <ClInclude Include="Render\RenderInstancing.h">
+      <Filter>06. Render</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

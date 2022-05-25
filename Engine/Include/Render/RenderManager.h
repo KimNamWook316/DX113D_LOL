@@ -8,6 +8,7 @@ struct RenderLayer
 	std::string		Name;
 	int				LayerPriority;
 	std::vector<class CSceneComponent*>	RenderList;
+	std::unordered_map<size_t, class CRenderInstancing*> mapInstancing;
 	int				RenderCount;
 
 	RenderLayer()

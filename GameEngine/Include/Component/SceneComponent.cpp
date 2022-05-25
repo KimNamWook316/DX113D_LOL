@@ -14,6 +14,8 @@ CSceneComponent::CSceneComponent() :
 	m_ComponentType = Component_Type::SceneComponent;
 	m_Render = false;
 
+	m_Instancing = false;
+
 	m_ReceiveDecal = true;
 
 	m_Transform = new CTransform;
@@ -36,6 +38,8 @@ CSceneComponent::CSceneComponent(const CSceneComponent& com) :
 
 	m_Transform->m_Parent = nullptr;
 	m_Transform->m_vecChild.clear();
+
+	m_Instancing = false;
 
 	m_Transform->m_Owner = this;
 

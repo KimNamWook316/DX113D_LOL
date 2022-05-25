@@ -489,6 +489,29 @@ void CMaterial::SetPaperBurn(bool Enable)
 	m_CBuffer->SetPaperBurn(Enable);
 }
 
+bool CMaterial::CheckMaterial(CMaterial* Material)
+{
+	size_t Size = m_TextureInfo.size();
+	size_t Size1 = Material->m_TextureInfo.size();
+
+	if (Size != Size1)
+	{
+		return false;
+	}
+
+	for (size_t i = 0; i < Size; ++i)
+	{
+		for (size_t j = 0; j < Size1; ++j)
+		{
+			if (m_TextureInfo[i].Texture != m_TextureInfo[j].Texture)
+			{
+				return false;
+			}
+		}
+	}
+	return true;
+}
+
 void CMaterial::SetShader(const std::string& Name)
 {
 	m_Shader = (CGraphicShader*)CResourceManager::GetInst()->FindShader(Name);
