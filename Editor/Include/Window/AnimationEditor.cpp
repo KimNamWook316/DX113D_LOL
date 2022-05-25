@@ -1,6 +1,7 @@
 #include "AnimationEditor.h"
 #include "IMGUIButton.h"
 #include "IMGUIComboBox.h"
+#include "IMGUICheckBox.h"
 #include "IMGUIDummy.h"
 #include "IMGUIImage.h"
 #include "IMGUILabel.h"
@@ -61,81 +62,145 @@ bool CAnimationEditor::Init()
 		return false;
 
 	// Anim Name
-	CIMGUILabel* Label = AddWidget<CIMGUILabel>("Anim Name", 100.f, 30.f);
-	Label->SetColor(0, 0, 255);
-	Label->SetAlign(0.5f, 0.0f);
-
-	CIMGUISameLine* Line = AddWidget<CIMGUISameLine>("Line");
-	Line->SetOffsetX(150.f);
-
+	// CIMGUILabel* Label = AddWidget<CIMGUILabel>("Anim Name", 100.f, 30.f);
+	// Label->SetColor(0, 0, 255);
+	// Label->SetAlign(0.5f, 0.0f);
+	
 	m_CurAnimComboBox = AddWidget<CIMGUIComboBox>("Anim List Combo Box", 300.f, 30.f);
 	m_CurAnimComboBox->SetHideName(true);
 	m_CurAnimComboBox->SetSelectCallback<CAnimationEditor>(this, &CAnimationEditor::OnClickAnimationSequence);
 
-	// Animation Clip + Table
-	Label = AddWidget<CIMGUILabel>("Anim Clip Info", 100.f, 30.f);
-	Label->SetColor(0, 0, 255);
-	Label->SetAlign(0.5f, 0.0f);
-
-	m_AnimInfoTable = AddWidget<CIMGUITable>("AnimTable", 600.f, 200.f);
-
-	// Frame Slide 
-	Label = AddWidget<CIMGUILabel>("Frame Slide", 100.f, 30.f);
-	Label->SetColor(0, 0, 255);
-	Label->SetAlign(0.5f, 0.0f);
-
-	Line = AddWidget<CIMGUISameLine>("Line");
-	Line->SetOffsetX(150.f);
-
-	m_FrameSlider = AddWidget<CIMGUISliderInt>("Frame Slider", 100.f, 30.f);
-	m_FrameSlider->SetCallBack<CAnimationEditor>(this, &CAnimationEditor::OnAnimationSliderIntCallback);
-
-	// Frame Input
 	CIMGUIDummy* Dummy = AddWidget<CIMGUIDummy>("Dummy", 100.f, 30.f);
 
-	Line = AddWidget<CIMGUISameLine>("Line");
-	Line->SetOffsetX(150.f);
+	// 별도 Render Target
+	m_AnimationRenderTarget = AddWidget<CIMGUIImage>("Render Target", 400.f, 400.f);
+	m_AnimationRenderTarget->SetRenderTargetImage(true);
+
+	// Clip Info
+	m_AnimInfoTable = AddWidget<CIMGUITable>("AnimTable", 600.f, 200.f);
+
+	// Frame Slider 
+	m_FrameSlider = AddWidget<CIMGUISliderInt>("Frame Slider", 100.f, 30.f);
+	m_FrameSlider->SetCallBack<CAnimationEditor>(this, &CAnimationEditor::OnAnimationSliderIntCallback);
 
 	m_FrameInput = AddWidget<CIMGUITextInput>("Frame Input", 100.f, 30.f);
 	m_FrameInput->SetTextType(ImGuiText_Type::Int);
 	m_FrameInput->SetCallback<CAnimationEditor>(this, &CAnimationEditor::OnAnimationFrameInputCallback);
 
-	// Frame Delete
-	// m_DeleteFrameInput = AddWidget<CIMGUITextInput>("Delete Target Frame", 100.f, 30.f);
-	// m_DeleteFrameInput->SetTextType(ImGuiText_Type::Int);
+	// Edit  -------------------------------------------------------
+	Dummy = AddWidget<CIMGUIDummy>("Dummy", 100.f, 30.f);
 
-	// Delete Anim Sequence
-	m_DeleteAnimSequenceBtn = AddWidget<CIMGUIButton>("Delete Sequence", 100.f, 30.f);
-	m_DeleteAnimSequenceBtn->SetClickCallback<CAnimationEditor>(this, &CAnimationEditor::OnDeleteAnimationSequenceData);
+	// Play Scale 조정
+	m_PlayScaleInput = AddWidget<CIMGUITextInput>("Play Scale Input", 100.f, 30.f);
+	m_PlayScaleInput->SetHideName(true);
+	m_PlayScaleInput->SetTextType(ImGuiText_Type::Float);
 
-	// Btns
-	m_AnimSequenceAddBtn = AddWidget<CIMGUIButton>("AddSequences", 100.f, 30.f);
-	m_AnimSequenceAddBtn->SetClickCallback<CAnimationEditor>(this, &CAnimationEditor::OnAddAnimationSequence);
+	CIMGUISameLine* Line = AddWidget<CIMGUISameLine>("Line");
+	Line->SetOffsetX(110.f);
 
-	// ex) ZedIdle.sqc --> 
-	CIMGUIText* HelpText = AddWidget<CIMGUIText>("Anim Seq Load Btn Help Text", 100.f, 30.f);
-	HelpText->SetText("ex)  'ZedIdle' -- > ('ZedIdle', 'ZedIdle.sqc') 를 SceneResource, ResourceManager의 m_mapSequence 에 저장");
-	HelpText->SetIsHelpMode(true);
-	m_NewAnimSeqName = AddWidget<CIMGUITextInput>("Sequence Name", 200.f, 30.f);;
+	m_PlayScaleEditBtn = AddWidget<CIMGUIButton>("Edit Scale", 100.f, 30.f);
+	m_PlayScaleEditBtn->SetClickCallback<CAnimationEditor>(this, &CAnimationEditor::OnEditAnimPlayScale);
 
+	Line = AddWidget<CIMGUISameLine>("Line");
+	Line->SetOffsetX(215.f);
 
-	HelpText = AddWidget<CIMGUIText>("Anim Seq Load Btn Help Text", 100.f, 30.f);
-	HelpText->SetText("ex) 'Idle' --> m_Animation->AddAnimation('ZedIdle', 'Idle') 형태로, Key값으로 AnimationInstance 에 정보 추가");
-	HelpText->SetIsHelpMode(true);
-	m_NewAnimSeqDataKeyName = AddWidget<CIMGUITextInput>("Sequence  Key", 200.f, 30.f);;
+	// Play Time 조정
+	m_PlayTimeInput = AddWidget<CIMGUITextInput>("Play Time Input", 100.f, 30.f);
+	m_PlayTimeInput->SetHideName(true);
+	m_PlayTimeInput->SetTextType(ImGuiText_Type::Float);
+
+	Line = AddWidget<CIMGUISameLine>("Line");
+	Line->SetOffsetX(320.f);
+
+	m_PlayTimeEditBtn = AddWidget<CIMGUIButton>("Edit Time", 100.f, 30.f);
+	m_PlayTimeEditBtn->SetClickCallback<CAnimationEditor>(this, &CAnimationEditor::OnEditAnimPlayTime);
 
 	// Animation Instance Key Name 수정 기능
-	HelpText = AddWidget<CIMGUIText>("Anim Key Name Edit Help", 100.f, 30.f);
-	HelpText->SetText("ex) 'EditIdle' --> m_Animation->AddAnimation('ZedIdle', 'Idle') 으로 인해 만들어진 m_mapAnimationSequence['Idle'] = 'ZedIdle' 을  m_mapAnimationSequence['EditIdle'] = 'ZedIdle' 로 Key 값 수정 ");
-	HelpText->SetIsHelpMode(true);
-	m_EditAnimSeqDataKeyName = AddWidget<CIMGUITextInput>("Edit Sequence Key", 200.f, 30.f);;
+	m_EditAnimSeqDataKeyName = AddWidget<CIMGUITextInput>("Edit Sequence Key", 100.f, 30.f);
+	m_EditAnimSeqDataKeyName->SetHideName(true);
 
-	m_EditAnimKeyBtn = AddWidget<CIMGUIButton>("Edit Anim Key Btn", 100.f, 30.f);
+	Line = AddWidget<CIMGUISameLine>("Line");
+	Line->SetOffsetX(110.f);
+
+	m_EditAnimKeyBtn = AddWidget<CIMGUIButton>("Edit Key", 100.f, 30.f);
 	m_EditAnimKeyBtn->SetClickCallback<CAnimationEditor>(this, &CAnimationEditor::OnEditAnimSequenceKey);
 
-	// 별도 Render Target
-	m_AnimationRenderTarget = AddWidget<CIMGUIImage>("Render Target", 400.f, 400.f);
-	m_AnimationRenderTarget->SetRenderTargetImage(true);
+	Line = AddWidget<CIMGUISameLine>("Line");
+	Line->SetOffsetX(220.f);
+
+	CIMGUIText* HelpText = AddWidget<CIMGUIText>("Anim Key Name Edit Help", 100.f, 30.f);
+	HelpText->SetText("ex) 'EditIdle' --> m_Animation->AddAnimation('ZedIdle', 'Idle') 으로 인해 만들어진 m_mapAnimationSequence['Idle'] = 'ZedIdle' 을 \n m_mapAnimationSequence['EditIdle'] = 'ZedIdle' 로 Key 값 수정 ");
+	HelpText->SetIsHelpMode(true);
+
+	// 각종 체크 박스들 
+	// m_CreateSample3DBtn = AddWidget<CIMGUIButton>("Sample3DBtn", 100.f, 30.f);
+	// m_CreateSample3DBtn->SetClickCallback<CAnimationEditor>(this, &CAnimationEditor::OnCreateSample3DObject);
+
+	// m_DeltaTimePlayBtn = AddWidget<CIMGUIButton>("Engine Play", 100.f, 30.f);
+	// m_DeltaTimePlayBtn->SetClickCallback<CAnimationEditor>(this, &CAnimationEditor::OnSetPlayEngineDeltaTime);
+	// m_AnimationPlayBtn = AddWidget<CIMGUIButton>("Object Play", 100.f, 30.f);
+	// m_AnimationPlayBtn->SetClickCallback<CAnimationEditor>(this, &CAnimationEditor::OnPlayAnimation);
+
+	m_DeltaTimeCheckBtn = AddWidget<CIMGUICheckBox>("Engine Play", 100.f, 30.f);
+	m_DeltaTimeCheckBtn->AddCheckInfo("Engine Play");
+	m_DeltaTimeCheckBtn->SetCallBackLabel<CAnimationEditor>(this, &CAnimationEditor::OnSetPlayEngineDeltaTime);
+	// m_DeltaTimeCheckBtn->SetClickCallback<CAnimationEditor>(this, &CAnimationEditor::OnSetPlayEngineDeltaTime);
+
+	Line = AddWidget<CIMGUISameLine>("Line");
+	Line->SetOffsetX(130.f);
+
+	m_AnimationCheckBtn = AddWidget<CIMGUICheckBox>("Object Play", 100.f, 30.f);
+	m_AnimationCheckBtn->AddCheckInfo("Anim Play");
+	m_AnimationCheckBtn->SetCallBackLabel<CAnimationEditor>(this, &CAnimationEditor::OnPlayAnimation);
+	// m_AnimationCheckBtn->SetClickCallback<CAnimationEditor>(this, &CAnimationEditor::OnPlayAnimation);
+
+	Line = AddWidget<CIMGUISameLine>("Line");
+	Line->SetOffsetX(255.f);
+
+	m_RotationCheckBtn = AddWidget<CIMGUICheckBox>("Camera Rotation", 100.f, 30.f);
+	m_RotationCheckBtn->AddCheckInfo("Rotate");
+	m_RotationCheckBtn->SetCallBackLabel<CAnimationEditor>(this, &CAnimationEditor::OnRotateAnimationCamera);
+
+	// Sequence Start ---------------------------------------
+	Dummy = AddWidget<CIMGUIDummy>("Dummy", 100.f, 30.f);
+
+	HelpText = AddWidget<CIMGUIText>("Anim Seq Load Btn Help Text", 100.f, 30.f);
+	HelpText->SetText("ex)  'ZedIdle' -- > ('ZedIdle', 'ZedIdle.sqc') ? \n SceneResource, ResourceManager의 m_mapSequence 에 저장");
+	HelpText->SetIsHelpMode(true);
+
+	m_NewAnimSeqName = AddWidget<CIMGUITextInput>("Sequence Name", 100.f, 30.f);
+
+	HelpText = AddWidget<CIMGUIText>("Anim Seq Load Btn Help Text", 100.f, 30.f);
+	HelpText->SetText("ex) 'Idle' --> m_Animation->AddAnimation('ZedIdle', 'Idle') ? \n ZedIdle 를 Key값으로 AnimationInstance 에 정보 추가");
+	HelpText->SetIsHelpMode(true);
+
+	m_NewAnimSeqDataKeyName = AddWidget<CIMGUITextInput>("Sequence  Key", 100.f, 30.f);
+
+	// Sequence Related Btns
+	HelpText = AddWidget<CIMGUIText>("Anim Seq Load Btn Help Text", 100.f, 30.f);
+	HelpText->SetText("같은 경로에 .msh , .bne, .fbm(폴더) 가 존재해야 한다. \n ex) Idle1.sqc 를 Add 하려면, Idle1.msh, Idle1.bne, Idle1.fbm이 같은 경로 내에 존재해야 한다.");
+	HelpText->SetIsHelpMode(true);
+
+	m_AnimSequenceAddBtn = AddWidget<CIMGUIButton>("Add Seq", 100.f, 30.f);
+	m_AnimSequenceAddBtn->SetClickCallback<CAnimationEditor>(this, &CAnimationEditor::OnAddAnimationSequence);
+
+	Line = AddWidget<CIMGUISameLine>("Line");
+	Line->SetOffsetX(110.f);
+
+	m_DeleteAnimSequenceBtn = AddWidget<CIMGUIButton>("Delete Seq", 100.f, 30.f);
+	m_DeleteAnimSequenceBtn->SetClickCallback<CAnimationEditor>(this, &CAnimationEditor::OnDeleteAnimationSequenceData);
+
+	Line = AddWidget<CIMGUISameLine>("Line");
+	Line->SetOffsetX(215.f);
+
+	m_SaveAnimationInstanceBtn = AddWidget<CIMGUIButton>("Save Instance", 100.f, 30.f);
+	m_SaveAnimationInstanceBtn->SetClickCallback<CAnimationEditor>(this, &CAnimationEditor::OnSaveAnimationInstance);
+
+	Line = AddWidget<CIMGUISameLine>("Line");
+	Line->SetOffsetX(320.f);
+
+	m_LoadAnimationInstanceBtn = AddWidget<CIMGUIButton>("Load Instance", 100.f, 30.f);
+	m_LoadAnimationInstanceBtn->SetClickCallback<CAnimationEditor>(this, &CAnimationEditor::OnLoadAnimationInstance);
 
 	// Table Key 값 정보 세팅
 	m_AnimInfoTable->MakeKey(AnimationClipInfoKeys::FrameRange);
@@ -144,39 +209,6 @@ bool CAnimationEditor::Init()
 	m_AnimInfoTable->MakeKey(AnimationClipInfoKeys::PlayTime);
 	m_AnimInfoTable->MakeKey(AnimationClipInfoKeys::FrameTime);
 	m_AnimInfoTable->MakeKey(AnimationClipInfoKeys::PlayScale);
-
-
-	// Animation Instance 객체 생성
-	m_CreateSample3DBtn = AddWidget<CIMGUIButton>("Sample3DBtn", 100.f, 30.f);
-	m_CreateSample3DBtn->SetClickCallback<CAnimationEditor>(this, &CAnimationEditor::OnCreateSample3DObject);
-
-	m_DeltaTimePlayBtn = AddWidget<CIMGUIButton>("Engine Play", 100.f, 30.f);
-	m_DeltaTimePlayBtn->SetClickCallback<CAnimationEditor>(this, &CAnimationEditor::OnSetPlayEngineDeltaTime);
-
-	m_AnimationPlayBtn = AddWidget<CIMGUIButton>("Object Play", 100.f, 30.f);
-	m_AnimationPlayBtn->SetClickCallback<CAnimationEditor>(this, &CAnimationEditor::OnPlayAnimation);
-
-	m_SaveAnimationInstanceBtn = AddWidget<CIMGUIButton>("Save Instance", 100.f, 30.f);
-	m_SaveAnimationInstanceBtn->SetClickCallback<CAnimationEditor>(this, &CAnimationEditor::OnSaveAnimationInstance);
-	
-	m_LoadAnimationInstanceBtn = AddWidget<CIMGUIButton>("Load Instance", 100.f, 30.f);
-	m_LoadAnimationInstanceBtn->SetClickCallback<CAnimationEditor>(this, &CAnimationEditor::OnLoadAnimationInstance);
-
-	// Play Scale 조정
-	m_PlayScaleInput = AddWidget<CIMGUITextInput>("Play Scale Input", 200.f, 30.f);
-	m_PlayScaleInput->SetHideName(true);
-	m_PlayScaleInput->SetTextType(ImGuiText_Type::Float);
-
-	m_PlayScaleEditBtn = AddWidget<CIMGUIButton>("Edit Scale", 100.f, 30.f);
-	m_PlayScaleEditBtn->SetClickCallback<CAnimationEditor>(this, &CAnimationEditor::OnEditAnimPlayScale);
-	
-	// Play Time 조정
-	m_PlayTimeInput = AddWidget<CIMGUITextInput>("Play Time Input", 200.f, 30.f);
-	m_PlayTimeInput->SetHideName(true);
-	m_PlayTimeInput->SetTextType(ImGuiText_Type::Float);
-
-	m_PlayTimeEditBtn = AddWidget<CIMGUIButton>("Edit Time", 100.f, 30.f);
-	m_PlayTimeEditBtn->SetClickCallback<CAnimationEditor>(this, &CAnimationEditor::OnEditAnimPlayTime);
 
 	return true;
 }
@@ -235,15 +267,9 @@ void CAnimationEditor::OnCreateSample3DObject()
 	m_Animation = dynamic_cast<CAnimationMeshComponent*>(m_3DTestObject->GetRootComponent())->CreateBasicAnimationInstance();
 
 	m_Animation->Start();
-
-	// 3DTestObject 의 Camera Object 를 Scene의 Current Camera 로 세팅한다.
-	if (CSceneManager::GetInst()->GetScene()->GetCameraManager()->GetCurrentCamera() != m_3DTestObject->GetCamera())
-	{
-		CSceneManager::GetInst()->GetScene()->GetCameraManager()->SetCurrentCamera(m_3DTestObject->GetCamera());
-	}
 }
 
-void CAnimationEditor::OnPlayAnimation()
+void CAnimationEditor::OnPlayAnimation(const char* Lable, bool Enable)
 {
 	if (!m_3DTestObject)
 		return;
@@ -255,10 +281,23 @@ void CAnimationEditor::OnPlayAnimation()
 
 	bool IsAnimPlay = RootMeshComponent->GetAnimationInstance()->IsPlay();
 
-	if (IsAnimPlay)
+	// if (IsAnimPlay)
+	if (!Enable)
 		RootMeshComponent->GetAnimationInstance()->Stop();
 	else
 		RootMeshComponent->GetAnimationInstance()->Play();
+}
+
+void CAnimationEditor::OnRotateAnimationCamera(const char*, bool Enable)
+{
+	if (!m_3DTestObject)
+		return;
+
+	// if (IsAnimPlay)
+	if (!Enable)
+		m_3DTestObject->SetCameraRot(true);
+	else
+		m_3DTestObject->SetCameraRot(false);
 }
 
 void CAnimationEditor::OnSaveAnimationInstance()
@@ -579,11 +618,12 @@ void CAnimationEditor::OnDeleteAnimFrame()
 }
 */
 
-void CAnimationEditor::OnSetPlayEngineDeltaTime()
+void CAnimationEditor::OnSetPlayEngineDeltaTime(const char* Lable, bool Enable)
 {
-	bool IsEnginePlay = CEngine::GetInst()->IsPlay();
+	// bool IsEnginePlay = CEngine::GetInst()->IsPlay();
 
-	if (IsEnginePlay)
+	// if (IsEnginePlay)
+	if (!Enable)
 		CEngine::GetInst()->SetPlay(false);
 	else
 		CEngine::GetInst()->SetPlay(true);
@@ -654,16 +694,7 @@ void CAnimationEditor::OnAddAnimationSequence()
 		m_Animation->AddAnimation(m_NewAnimSeqName->GetTextUTF8(), m_NewAnimSeqDataKeyName->GetTextUTF8());
 
 		// Combo Box 정보 갱신
-		std::vector<std::string> vecSequenceNames = {};
-		m_Animation->GetAnimationSequenceNames(vecSequenceNames);
-
-		m_CurAnimComboBox->Clear();
-
-		for (const auto& name : vecSequenceNames)
-			m_CurAnimComboBox->AddItem(name);
-
-		// Load 한 Sequence 로 내용 Setting 되기
-		m_CurAnimComboBox->SetSelectIndex(m_CurAnimComboBox->GetItemCount() - 1);
+		OnRefreshAnimationComboBox();
 
 		OnRefreshAnimationClipTable(LoadedSequence);
 
@@ -728,6 +759,7 @@ void CAnimationEditor::OnRefreshAnimationComboBox()
 	if (!m_Animation)
 		return;
 
+	// 맨 처음 Sequence를 추가하는 상황이라면
 	int SeletedIdx = m_CurAnimComboBox->GetSelectIndex();
 
 	m_CurAnimComboBox->Clear();
@@ -743,7 +775,13 @@ void CAnimationEditor::OnRefreshAnimationComboBox()
 		return;
 
 	if (SeletedIdx < m_CurAnimComboBox->GetItemCount())
-		m_CurAnimComboBox->SetSelectIndex(SeletedIdx);
+	{
+		// 처음 Animation 을 추가하는 상황이라면
+		if (SeletedIdx == -1)
+			m_CurAnimComboBox->SetSelectIndex(0);
+		else 
+			m_CurAnimComboBox->SetSelectIndex(SeletedIdx);
+	}
 	else
 		m_CurAnimComboBox->SetSelectIndex(m_CurAnimComboBox->GetItemCount() - 1);
 

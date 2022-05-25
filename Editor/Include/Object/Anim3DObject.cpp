@@ -55,6 +55,15 @@ bool CAnim3DObject::Init()
 
 	SetWorldPos(1.f, 1.f, 1.f);
 
+	// Animation Editor Camera 에 적용받는 대상으로 세팅하기
+	m_RootComponent->SetAnimationEditorTargetEnable(true);
+
+	// 3DTestObject 의 Camera Object 를 Scene의 Animation Current Camera 로 세팅한다.
+	if (m_Scene->GetCameraManager()->GetCurrentCamera() != m_Camera)
+	{
+		m_Scene->GetCameraManager()->SetAnimationEditorCamera(m_Camera);
+	}
+
 	return true;
 }
 
@@ -65,12 +74,15 @@ void CAnim3DObject::Update(float DeltaTime)
 	if (CInput::GetInst()->GetWheelDir())
 	{
 		float Length = m_Arm->GetTargetDistance() +
-			CInput::GetInst()->GetWheelDir() * 0.1f;
+			CInput::GetInst()->GetWheelDir() * 0.3f;
 
 		m_Arm->SetTargetDistance(Length);
 	}
 
-	m_Arm->AddRelativeRotationY(30.f * DeltaTime);
+	if (m_IsCameraRot)
+	{
+		m_Arm->AddRelativeRotationY(30.f * DeltaTime);
+	}
 
 	/*
 	if (m_Velocity.Length() > 0.f)

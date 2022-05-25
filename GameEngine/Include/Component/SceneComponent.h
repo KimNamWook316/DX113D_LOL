@@ -90,6 +90,11 @@ public:
 		m_LayerName = Name;
 	}
 
+	void SetAnimationEditorTargetEnable(bool Enable)
+	{
+		m_Transform->SetAnimationEditorTargetEnable(Enable);
+	}
+
 public:
 	void SetSceneComponent(class CGameObject* Object);
 	void GetAllSceneComponentsName(std::vector<FindComponentName>& vecNames);

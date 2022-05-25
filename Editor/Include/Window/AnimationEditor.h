@@ -36,8 +36,11 @@ private:
 	// Animation Seq 지우기
 	class CIMGUIButton* m_DeleteAnimSequenceBtn;
 	// Animation Play 여부
-	class CIMGUIButton* m_DeltaTimePlayBtn;
-	class CIMGUIButton* m_AnimationPlayBtn;
+	// class CIMGUIButton* m_DeltaTimePlayBtn;
+	// class CIMGUIButton* m_AnimationPlayBtn;
+	class CIMGUICheckBox* m_DeltaTimeCheckBtn;
+	class CIMGUICheckBox* m_AnimationCheckBtn;
+	class CIMGUICheckBox* m_RotationCheckBtn;
 	// New Anim Names
 	class CIMGUITextInput* m_NewAnimSeqName;
 	class CIMGUITextInput* m_NewAnimSeqDataKeyName;
@@ -79,8 +82,9 @@ private :
 	void OnAnimationFrameInputCallback();
 	// Play
 	void OnCreateSample3DObject();
-	void OnSetPlayEngineDeltaTime();
-	void OnPlayAnimation();
+	void OnSetPlayEngineDeltaTime(const char*, bool);
+	void OnPlayAnimation(const char*, bool);
+	void OnRotateAnimationCamera(const char*, bool);
 	// Save Load
 	void OnSaveAnimationInstance();
 	void OnLoadAnimationInstance();

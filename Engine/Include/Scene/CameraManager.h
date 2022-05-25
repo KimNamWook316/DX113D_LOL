@@ -18,6 +18,8 @@ private:
 	CSharedPtr<CCameraComponent>	m_CurrentCamera;
 	CSharedPtr<CCameraComponent>	m_KeepCamera;
 	CSharedPtr<CCameraComponent>	m_UICamera;
+private :
+	CSharedPtr<CCameraComponent>	m_AnimationEditorCamera;
 
 public:
 	CCameraComponent* GetCurrentCamera()	const
@@ -30,9 +32,19 @@ public:
 		return m_UICamera;
 	}
 
+	CCameraComponent* GetAnimationEditorCamera()	const
+	{
+		return m_AnimationEditorCamera;
+	}
+
 	void SetCurrentCamera(CCameraComponent* Camera)
 	{
 		m_CurrentCamera = Camera;
+	}
+
+	void SetAnimationEditorCamera(CCameraComponent* Camera)
+	{
+		m_AnimationEditorCamera = Camera;
 	}
 
 	void KeepCamera()

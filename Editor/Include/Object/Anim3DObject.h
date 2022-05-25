@@ -20,7 +20,12 @@ private:
     CSharedPtr<CCameraComponent>        m_Camera;
     Vector3     m_Velocity;
     class CAnimationSequenceInstance* m_Animation;
-
+    bool m_IsCameraRot;
+public :
+    void SetCameraRot(bool Enable)
+    {
+        m_IsCameraRot = Enable;
+    }
 public:
     virtual bool Init();
     virtual void Update(float DeltaTime);

@@ -23,6 +23,7 @@ CTransform::CTransform() :
 	m_UpdateScale(true),
 	m_UpdateRot(true),
 	m_UpdateRotAxis(false),
+	m_IsAnimationEditorTarget(false),
 	m_UpdatePos(true),
 	m_CBuffer(nullptr),
 	m_RelativeScale(1.f, 1.f, 1.f),
@@ -674,6 +675,11 @@ void CTransform::SetTransform()
 	m_CBuffer->SetWorldMatrix(m_matWorld);
 
 	CCameraComponent* Camera = m_Scene->GetCameraManager()->GetCurrentCamera();
+
+	if (m_IsAnimationEditorTarget)
+	{
+		Camera = m_Scene->GetCameraManager()->GetAnimationEditorCamera();
+	}
 
 	m_CBuffer->SetViewMatrix(Camera->GetViewMatrix());
 	m_CBuffer->SetProjMatrix(Camera->GetProjMatrix());

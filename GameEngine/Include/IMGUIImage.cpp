@@ -18,6 +18,8 @@ CIMGUIImage::CIMGUIImage()	:
 
 CIMGUIImage::~CIMGUIImage()
 {
+	SAFE_RELEASE(m_TexResource);
+	SAFE_RELEASE(m_ShaderResourceView);
 }
 
 void CIMGUIImage::SetTexture(const std::string& Name, const TCHAR* FileName, const std::string& PathName)
