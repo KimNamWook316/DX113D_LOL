@@ -879,6 +879,9 @@
     <ClCompile Include="Resource\Shader\AnimEditorShader.cpp">
       <Filter>02. Resource\02. Shader\02. ShaderClass\14. AnimEditor</Filter>
     </ClCompile>
+    <ClCompile Include="Render\RenderInstancing.cpp">
+      <Filter>06. Render</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Device.h">
@@ -1498,6 +1501,9 @@
     </ClInclude>
     <ClInclude Include="Resource\Shader\AnimEditorShader.h">
       <Filter>02. Resource\02. Shader\02. ShaderClass\14. AnimEditor</Filter>
+    </ClInclude>
+    <ClInclude Include="Render\RenderInstancing.h">
+      <Filter>06. Render</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

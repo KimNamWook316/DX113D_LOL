@@ -114,6 +114,7 @@
     <ClCompile Include="Render\BlendState.cpp" />
     <ClCompile Include="Render\DepthStencilState.cpp" />
     <ClCompile Include="Render\RasterizerState.cpp" />
+    <ClCompile Include="Render\RenderInstancing.cpp" />
     <ClCompile Include="Render\RenderManager.cpp" />
     <ClCompile Include="Render\RenderState.cpp" />
     <ClCompile Include="Render\RenderStateManager.cpp" />
@@ -316,6 +317,7 @@
     <ClInclude Include="Render\BlendState.h" />
     <ClInclude Include="Render\DepthStencilState.h" />
     <ClInclude Include="Render\RasterizerState.h" />
+    <ClInclude Include="Render\RenderInstancing.h" />
     <ClInclude Include="Render\RenderManager.h" />
     <ClInclude Include="Render\RenderState.h" />
     <ClInclude Include="Render\RenderStateManager.h" />

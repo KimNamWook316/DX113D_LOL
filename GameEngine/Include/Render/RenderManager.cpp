@@ -12,6 +12,7 @@
 #include "../Engine.h"
 #include "../Device.h"
 #include "../Resource/Shader/Shader.h"
+#include "RenderInstancing.h"
 
 DEFINITION_SINGLE(CRenderManager)
 
@@ -28,6 +29,14 @@ CRenderManager::~CRenderManager()
 
 	for (; iter != iterEnd; ++iter)
 	{
+		auto	iter1 = (*iter)->mapInstancing.begin();
+		auto	iter1End = (*iter)->mapInstancing.end();
+
+		for (; iter1 != iter1End; ++iter1)
+		{
+			SAFE_DELETE(iter1->second);
+		}
+
 		SAFE_DELETE((*iter));
 	}
 
@@ -330,11 +339,19 @@ void CRenderManager::Render()
 	RenderAnimationEditorPrevProcess();
 	RenderAnimationEditor();
 
+	m_vecGBuffer[2]->SetShader(10, (int)Buffer_Shader_Type::Pixel, 0);
+
+	m_AlphaBlend->SetState();
+
 	// 파티클 레이어 출력
 	for (int j = 0; j < m_RenderLayerList[3]->RenderCount; ++j)
 	{
 		m_RenderLayerList[3]->RenderList[j]->Render();
 	}
+
+	m_AlphaBlend->ResetState();
+
+	m_vecGBuffer[2]->ResetShader(10, (int)Buffer_Shader_Type::Pixel, 0);
 
 	// Screen Widget 출려
 	for (int j = 0; j < m_RenderLayerList[4]->RenderCount; ++j)
@@ -661,7 +678,7 @@ void CRenderManager::RenderAnimationEditorPrevProcess()
 
 	m_NoLightRenderShader->SetShader();
 
-	m_DepthDisable->SetState();
+	// m_DepthDisable->SetState();
 
 	// m_AnimationRenderTarget->SetTargetShader(55);
 
@@ -672,7 +689,7 @@ void CRenderManager::RenderAnimationEditorPrevProcess()
 
 	// m_AnimationRenderTarget->ResetTargetShader(55);
 
-	m_DepthDisable->ResetState();
+	// m_DepthDisable->ResetState();
 
 	m_AnimRenderTargetPrevProcess->ResetTarget();
 }
@@ -696,7 +713,7 @@ void CRenderManager::RenderAnimationEditor()
 
 	m_AnimRenderShader->SetShader();
 
-	m_DepthDisable->SetState();
+	// m_DepthDisable->SetState();
 
 	// 마지막 그리기 또한 Null Buffer 를 사용하여 그려낸다.
 	UINT Offset = 0;
@@ -706,7 +723,7 @@ void CRenderManager::RenderAnimationEditor()
 
 	CDevice::GetInst()->GetContext()->Draw(4, 0);
 
-	m_DepthDisable->ResetState();
+	// m_DepthDisable->ResetState();
 
 	m_AnimationRenderTarget->ResetTarget();
 

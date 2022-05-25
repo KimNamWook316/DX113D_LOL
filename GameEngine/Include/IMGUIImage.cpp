@@ -61,8 +61,9 @@ void CIMGUIImage::CreateTexture(unsigned int Width, unsigned int Height)
 	Desc.Height = Height;
 	Desc.ArraySize = 1;
 	Desc.MipLevels = 1;
-	Desc.SampleDesc.Count = 1;
-	Desc.BindFlags = D3D11_BIND_RENDER_TARGET;
+	Desc.SampleDesc.Count = 4;
+	Desc.SampleDesc.Quality = 0;
+	Desc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
 	// Desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 	Desc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
 	Desc.Usage = D3D11_USAGE_DEFAULT;
@@ -108,8 +109,9 @@ void CIMGUIImage::Render()
 			ImVec2	StartUV = ImVec2(m_ImageStart.x / Width, m_ImageStart.y / Height);
 			ImVec2	EndUV = ImVec2(m_ImageEnd.x / Width, m_ImageEnd.y / Height);
 
-			ImGui::Image(m_Texture->GetResource(), m_Size, StartUV, EndUV, m_Tint, m_BorderColor);
-			/*
+			// ImGui::Image(m_Texture->GetResource(), m_Size, StartUV, EndUV, m_Tint, m_BorderColor);
+			// ImGui::ImageButton(m_Texture->GetResource(), m_Size, StartUV, EndUV);
+		
 			// if (!m_IsRenderTargetImage)
 			if (!m_IsRenderTargetImage)
 			{
@@ -133,7 +135,7 @@ void CIMGUIImage::Render()
 				// ImGui::Image(m_Texture->GetResource(), m_Size, StartUV, EndUV, m_Tint, m_BorderColor);
 				ImGui::Image(m_ShaderResourceView, m_Size, StartUV, EndUV, m_Tint, m_BorderColor);
 			}
-			*/
+			
 		}
 	}
 }

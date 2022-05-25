@@ -23,8 +23,14 @@ protected:
 	SphereInfo m_SphereInfo;
 	bool m_Culling;
 	bool m_ReceiveDecal;
+	bool m_Instancing;
 
 public:
+	bool GetInstancing() const
+	{
+		return m_Instancing;
+	}
+
 	bool GetRender() const
 	{
 		return m_Render;
@@ -69,6 +75,11 @@ public:
 	}
 
 public:
+	void SetInstancing(bool Instancing)
+	{
+		m_Instancing = Instancing;
+	}
+
 	void SetReceiveDecal(bool Decal)
 	{
 		m_ReceiveDecal = Decal;

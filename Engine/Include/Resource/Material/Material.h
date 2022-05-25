@@ -165,6 +165,7 @@ public:
 
 public:
     void SetPaperBurn(bool Enable);
+    bool CheckMaterial(CMaterial* Material);
 
 public:
     void SetShader(const std::string& Name);

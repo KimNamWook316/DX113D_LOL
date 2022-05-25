@@ -148,13 +148,13 @@ PSOutput_GBuffer Standard3DPS(Vertex3DOutput input)
     
     output.GBuffer3.r = ConvertColor(g_MtrlBaseColor);
     output.GBuffer3.g = ConvertColor(g_MtrlAmbientColor);
-       
-	output.GBuffer4.rgb = input.Tangent.xyz;
-	output.GBuffer4.a = g_MtrlReceiveDecal;
     
-	output.GBuffer5.rgb = input.Binormal.xyz;
-	output.GBuffer5.a = 1.f;
-     
+    output.GBuffer4.rgb = input.Tangent.xyz;
+    output.GBuffer4.a = 1.f;
+    
+    output.GBuffer5.rgb = input.Binormal.xyz;
+    output.GBuffer5.a = 1.f;
+    
     float4 SpecularColor = g_MtrlSpecularColor.xyzw;
 	
     if (g_MtrlSpecularTex)
@@ -168,7 +168,8 @@ PSOutput_GBuffer Standard3DPS(Vertex3DOutput input)
 	
     if (g_MtrlEmissiveTex)
         EmissiveColor = g_EmissiveTexture.Sample(g_BaseSmp, input.UV).xxxx;
-    
+
+    // output.GBuffer3.a = ConvertColor(EmissiveColor* ReflectColor * fresnel);
     output.GBuffer3.a = ConvertColor(EmissiveColor);
 
     return output;

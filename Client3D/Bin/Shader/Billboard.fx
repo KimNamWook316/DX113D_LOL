@@ -14,6 +14,7 @@ struct VertexUVOutput
 	// SV가 붙으면 System Value이다. 이 값은 레지스터에 저장만 하고
 	// 가져다 사용하면 안된다.
 	float4 Pos : SV_POSITION;
+	float4 ProjPos : POSITION;
 	float2 UV : TEXCOORD;
 	float2 OriginUV : TEXCOORD1;
 };
@@ -25,6 +26,8 @@ cbuffer Animation2D : register(b10)
 	int g_Animation2DType;
 	float3 g_Animation2DEmpty;
 };
+
+Texture2DMS<float4> g_GBufferDepth : register(t10);
 
 #define	TextureAtlas	0
 #define	TextureFrame	1
@@ -53,7 +56,8 @@ VertexUVOutput BillboardVS(VertexUV input)
 
 	float3 Pos = input.Pos - g_Pivot * g_MeshSize;
 
-	output.Pos = mul(float4(Pos, 1.f), g_matWVP);
+	output.ProjPos = mul(float4(Pos, 1.f), g_matWVP);
+	output.Pos = output.ProjPos;
 
 	if (g_Animation2DEnable == 0)
 		output.UV = input.UV;
@@ -73,10 +77,30 @@ PSOutput_Single BillboardPS(VertexUVOutput input)
 
 	if (BaseTextureColor.a == 0.f || g_MtrlOpacity == 0.f)
 		clip(-1);
+
+	float2 ScreenUV = input.ProjPos.xy / input.ProjPos.w;
+	ScreenUV = ScreenUV * float2(0.5f, -0.5f) + float2(0.5, 0.5f);
+
+	int2 TargetPos = (int2)0;
+	TargetPos.x = (int) (ScreenUV.x * g_Resolution.x);
+	TargetPos.y = (int) (ScreenUV.y * g_Resolution.y);
+
+	float4 Depth = g_GBufferDepth.Load(TargetPos, 0);
+
+	float Alpha = 1.f;
+
+	// Depth의 Alpha채널이 0인 경우 -> GBuffer에 쓰이지 않았다는 뜻
+	// z값이 가까워질수록 Alpha가 줄어든다.
+	if (Depth.a > 0.f)
+	{
+		Alpha = (Depth.g - input.ProjPos.w) / 0.5f;
+	}
+
+	Alpha = clamp(Alpha, 0, 1.f);
     
 	output.Color = BaseTextureColor * g_MtrlBaseColor;
 
-	output.Color.a = BaseTextureColor.a * g_MtrlOpacity;
+	output.Color.a = BaseTextureColor.a * g_MtrlOpacity * Alpha;
 
 	return output;
 }
