@@ -321,19 +321,19 @@ void CRenderManager::Render()
 	SkyObj->Render();
 
 	// GBuffer를 만들어낸다.
-	// RenderGBuffer();
+	RenderGBuffer();
 
 	// Decal을 그려낸다.
 	RenderDecal();
 
 	// 조명 누적버퍼를 만들어낸다.
-	// RenderLightAcc();
+	RenderLightAcc();
 
 	// 조명 누적버퍼와 GBuffer를 이용하여 최종화면을 만들어낸다.
-	// RenderLightBlend();
+	RenderLightBlend();
 
 	// 조명처리된 최종 화면을 백버퍼에 그려낸다.
-	// RenderFinalScreen();
+	RenderFinalScreen();
 
 	// Animation Editor Animation Instance 제작용 Render Target
 	RenderAnimationEditorPrevProcess();

@@ -40,12 +40,9 @@ bool CMainSceneMode::Init()
 
 	CLandScapeObj* LandScape = m_Scene->CreateGameObject<CLandScapeObj>("LandScape");
 
-
 	CDecalObj* Decal = m_Scene->CreateGameObject<CDecalObj>("Decal");
 
 	CPortal* Portal = m_Scene->CreateGameObject<CPortal>("Portal");
-
-
 
 	CLightObj* Light = m_Scene->CreateGameObject<CLightObj>("Light1");
 

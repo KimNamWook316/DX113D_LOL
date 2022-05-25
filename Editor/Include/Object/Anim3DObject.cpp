@@ -70,7 +70,7 @@ void CAnim3DObject::Update(float DeltaTime)
 		m_Arm->SetTargetDistance(Length);
 	}
 
-	// m_Arm->AddRelativeRotationY(30.f * DeltaTime);
+	m_Arm->AddRelativeRotationY(30.f * DeltaTime);
 
 	/*
 	if (m_Velocity.Length() > 0.f)
