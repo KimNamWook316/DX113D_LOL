@@ -89,11 +89,13 @@ PSOutput_Single BillboardPS(VertexUVOutput input)
 
 	float Alpha = 1.f;
 
+	// 둘의 깊이 차이가 작다는 것은, 거의 붙어있다는 것
+	// 이때, Bill Board 가 거의 안보여야 한다.
 	// Depth의 Alpha채널이 0인 경우 -> GBuffer에 쓰이지 않았다는 뜻
 	// z값이 가까워질수록 Alpha가 줄어든다.
 	if (Depth.a > 0.f)
 	{
-		Alpha = (Depth.g - input.ProjPos.w) / 0.5f;
+		Alpha = (Depth.a - input.ProjPos.w) / 0.5f;
 	}
 
 	Alpha = clamp(Alpha, 0, 1.f);

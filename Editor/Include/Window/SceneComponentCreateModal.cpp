@@ -15,6 +15,8 @@
 #include "ObjectHierarchyWindow.h"
 #include "Component/AnimationMeshComponent.h"
 #include "Component/StaticMeshComponent.h"
+#include "Component/ParticleComponent.h"
+#include "Resource/Particle/Particle.h"
 #include "Component/Arm.h"
 #include "Component/LandScape.h"
 
@@ -116,6 +118,28 @@ void CSceneComponentCreateModal::OnCreateComponent()
 
 	else if (Typeid == typeid(CSceneComponent).hash_code())
 		Com = SelectObject->CreateComponent<CSceneComponent>(Name);
+
+	else if (Typeid == typeid(CParticleComponent).hash_code())
+	{
+		Com = SelectObject->CreateComponent<CParticleComponent>(Name);
+
+		// 기본 Particle Setting, 현재 Component 에 Particle Setting 하기
+		// 1) Particle Material 세팅
+		CSceneManager::GetInst()->GetScene()->GetResource()->CreateMaterial<CMaterial>("BasicParticleMaterial");
+		CMaterial* Material = CSceneManager::GetInst()->GetScene()->GetResource()->FindMaterial("BasicParticleMaterial");
+		Material->AddTexture(0, (int)Buffer_Shader_Type::Pixel, "Bubble", TEXT("Particle/Bubbles99px.png"));
+		Material->SetShader("ParticleRenderShader");
+		Material->SetRenderState("AlphaBlend");
+		Material->AddTexture(0, (int)Buffer_Shader_Type::Pixel, "Bubble", TEXT("Particle/Bubbles99px.png"));
+		
+		// 2) Particle 제작
+		CSceneManager::GetInst()->GetScene()->GetResource()->CreateParticle("BasicParticle");
+		CParticle* Particle = CSceneManager::GetInst()->GetScene()->GetResource()->FindParticle("BasicParticle");
+		Material = CSceneManager::GetInst()->GetScene()->GetResource()->FindMaterial("BasicParticleMaterial");
+		Particle->SetMaterial(Material);
+
+		dynamic_cast<CParticleComponent*>(Com)->SetParticle("BasicParticle");
+	}
 
 	CSceneComponentHierarchyWindow* ComponentWindow = (CSceneComponentHierarchyWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(SCENECOMPONENT_HIERARCHY);
 

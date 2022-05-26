@@ -10,6 +10,7 @@
 #include "Component/AnimationMeshComponent.h"
 #include "Component/StaticMeshComponent.h"
 #include "Component/PaperBurnComponent.h"
+#include "Component/ParticleComponent.h"
 
 #include "IMGUITree.h"
 
@@ -211,6 +212,8 @@ std::string CEditorUtil::SceneComponent3DTypeToString(SceneComponent3DType Type)
 		return "LightComponent";
 	case SceneComponent3DType::SceneComponent:
 		return "SceneComponent";
+	case SceneComponent3DType::ParticleComponent:
+		return "ParticleComponent";
 	}
 
 	return "";
@@ -263,6 +266,8 @@ size_t CEditorUtil::SceneComponentTypeIndexToTypeid(int TypeIndex)
 		return typeid(CLightComponent).hash_code();
 	case 5:
 		return typeid(CSceneComponent).hash_code();
+	case 6:
+		return typeid(CParticleComponent).hash_code();
 	}
 
 	return -1;

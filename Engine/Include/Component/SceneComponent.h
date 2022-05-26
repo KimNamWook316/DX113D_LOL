@@ -2,6 +2,20 @@
 
 #include "Component.h"
 #include "Transform.h"
+#include "../Resource/Mesh/Mesh.h"
+#include "../Resource/Material/Material.h"
+
+struct InstancingCheckCount
+{
+	std::string LayerName;
+	CMesh* Mesh;
+	std::list<class CSceneComponent*> InstancingList;
+
+	InstancingCheckCount() :
+		Mesh(nullptr)
+	{
+	}
+};
 
 class CSceneComponent :
 	public CComponent
@@ -24,8 +38,25 @@ protected:
 	bool m_Culling;
 	bool m_ReceiveDecal;
 	bool m_Instancing;
+	static std::list<InstancingCheckCount*> m_InstancingCheckList;
 
 public:
+	static const std::list<InstancingCheckCount*>* GetInstancingCheckList()
+	{
+		return &m_InstancingCheckList;
+	}
+
+	static void DestroyInstancingCheckList()
+	{
+		auto	iter = m_InstancingCheckList.begin();
+		auto	iterEnd = m_InstancingCheckList.end();
+
+		for (; iter != iterEnd; ++iter)
+		{
+			SAFE_DELETE((*iter));
+		}
+	}
+
 	bool GetInstancing() const
 	{
 		return m_Instancing;

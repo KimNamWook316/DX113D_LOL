@@ -31,6 +31,11 @@ protected:
 	Mesh_Type	m_MeshType;
 
 public:
+	Mesh_Type GetMeshType() const
+	{
+		return m_MeshType;
+	}
+
 	Vector3 GetMin() const
 	{
 		return m_Min;

@@ -9,9 +9,11 @@
 #include "IMGUIDummy.h"
 #include "Component/StaticMeshComponent.h"
 #include "Component/LightComponent.h"
+#include "Component/ParticleComponent.h"
 #include "../Widget/StaticMeshComponentWidget.h"
 #include "../Widget/LightComponentWidget.h"
 #include "../Widget/ObjectComponentWidget.h"
+#include "../Widget/ParticleComponentWidget.h"
 #include "../Window/ObjectHierarchyWindow.h"
 #include "IMGUIManager.h"
 #include "../EditorInfo.h"
@@ -120,6 +122,10 @@ void CGameObjectWidget::CreateSceneComponentWidget(CSceneComponent* Com)
 	else if (TypeID == typeid(CLightComponent).hash_code())
 	{
 	 	Widget = AddWidget<CLightComponentWidget>("LightWidget");
+	}
+	else if (TypeID == typeid(CParticleComponent).hash_code())
+	{
+		Widget = AddWidget<CParticleComponentWidget>("ParticleWidget");
 	}
 	else
 	{

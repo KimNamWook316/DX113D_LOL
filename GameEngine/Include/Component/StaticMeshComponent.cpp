@@ -27,6 +27,45 @@ CStaticMeshComponent::CStaticMeshComponent(const CStaticMeshComponent& com) :
 
 CStaticMeshComponent::~CStaticMeshComponent()
 {
+	auto	iter = m_InstancingCheckList.begin();
+	auto	iterEnd = m_InstancingCheckList.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		if ((*iter)->Mesh == m_Mesh)
+		{
+			auto	iter1 = (*iter)->InstancingList.begin();
+			auto	iter1End = (*iter)->InstancingList.end();
+
+			for (; iter1 != iter1End; ++iter1)
+			{
+				if (*iter1 == this)
+				{
+					(*iter)->InstancingList.erase(iter1);
+
+					if ((*iter)->InstancingList.size() < 10)
+					{
+						auto	iter2 = (*iter)->InstancingList.begin();
+						auto	iter2End = (*iter)->InstancingList.end();
+
+						for (; iter2 != iter2End; ++iter2)
+						{
+							(*iter2)->SetInstancing(false);
+						}
+					}
+					break;
+				}
+			}
+
+			if ((*iter)->InstancingList.empty())
+			{
+				SAFE_DELETE((*iter));
+				m_InstancingCheckList.erase(iter);
+			}
+
+			break;
+		}
+	}
 }
 
 void CStaticMeshComponent::SetMesh(const std::string& Name)
@@ -50,6 +89,55 @@ void CStaticMeshComponent::SetMesh(const std::string& Name)
 
 	SetMeshSize(m_Mesh->GetMax() - m_Mesh->GetMin());
 	m_SphereInfo.Center = (m_Mesh->GetMax() + m_Mesh->GetMin()) / 2.f;
+
+	auto	iter1 = m_InstancingCheckList.begin();
+	auto	iter1End = m_InstancingCheckList.end();
+
+	bool	Add = false;
+
+	for (; iter1 != iter1End; ++iter1)
+	{
+		if ((*iter1)->Mesh == m_Mesh)
+		{
+			bool	InstancingEnable = (*iter1)->InstancingList.back()->GetInstancing();
+
+			(*iter1)->InstancingList.push_back(this);
+			Add = true;
+
+			// 인스턴싱 개수를 판단한다.
+			if (InstancingEnable)
+				SetInstancing(InstancingEnable);
+
+			else
+			{
+				if ((*iter1)->InstancingList.size() == 10)
+				{
+					auto	iter2 = (*iter1)->InstancingList.begin();
+					auto	iter2End = (*iter1)->InstancingList.end();
+
+					for (; iter2 != iter2End; ++iter2)
+					{
+						(*iter2)->SetInstancing(true);
+					}
+
+					m_Instancing = true;
+				}
+			}
+
+			break;
+		}
+	}
+
+	if (!Add)
+	{
+		InstancingCheckCount* CheckCount = new InstancingCheckCount;
+
+		m_InstancingCheckList.push_back(CheckCount);
+
+		CheckCount->InstancingList.push_back(this);
+		CheckCount->Mesh = m_Mesh;
+		CheckCount->LayerName = "Default";
+	}
 }
 
 void CStaticMeshComponent::SetMesh(CStaticMesh* Mesh)
@@ -73,6 +161,55 @@ void CStaticMeshComponent::SetMesh(CStaticMesh* Mesh)
 
 	SetMeshSize(m_Mesh->GetMax() - m_Mesh->GetMin());
 	m_SphereInfo.Center = (m_Mesh->GetMax() + m_Mesh->GetMin()) / 2.f;
+
+	auto	iter1 = m_InstancingCheckList.begin();
+	auto	iter1End = m_InstancingCheckList.end();
+
+	bool	Add = false;
+
+	for (; iter1 != iter1End; ++iter1)
+	{
+		if ((*iter1)->Mesh == m_Mesh)
+		{
+			bool	InstancingEnable = (*iter1)->InstancingList.back()->GetInstancing();
+
+			(*iter1)->InstancingList.push_back(this);
+			Add = true;
+
+			// 인스턴싱 개수를 판단한다.
+			if (InstancingEnable)
+				SetInstancing(InstancingEnable);
+
+			else
+			{
+				if ((*iter1)->InstancingList.size() == 10)
+				{
+					auto	iter2 = (*iter1)->InstancingList.begin();
+					auto	iter2End = (*iter1)->InstancingList.end();
+
+					for (; iter2 != iter2End; ++iter2)
+					{
+						(*iter2)->SetInstancing(true);
+					}
+
+					m_Instancing = true;
+				}
+			}
+
+			break;
+		}
+	}
+
+	if (!Add)
+	{
+		InstancingCheckCount* CheckCount = new InstancingCheckCount;
+
+		m_InstancingCheckList.push_back(CheckCount);
+
+		CheckCount->InstancingList.push_back(this);
+		CheckCount->Mesh = m_Mesh;
+		CheckCount->LayerName = "Default";
+	}
 }
 
 void CStaticMeshComponent::SetMaterial(CMaterial* Material, int Index)
