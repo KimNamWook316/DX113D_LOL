@@ -73,8 +73,9 @@ bool CAnimationEditor::Init()
 	CIMGUIDummy* Dummy = AddWidget<CIMGUIDummy>("Dummy", 100.f, 30.f);
 
 	// 별도 Render Target
-	m_AnimationRenderTarget = AddWidget<CIMGUIImage>("Render Target", 400.f, 400.f);
+	m_AnimationRenderTarget = AddWidget<CIMGUIImage>("Render Target", 500.f, 500.f);
 	m_AnimationRenderTarget->SetRenderTargetImage(true);
+	m_AnimationRenderTarget->SetBorderColor(10.f, 10.f, 255.f);
 
 	// Clip Info
 	m_AnimInfoTable = AddWidget<CIMGUITable>("AnimTable", 600.f, 200.f);
@@ -129,17 +130,10 @@ bool CAnimationEditor::Init()
 	Line->SetOffsetX(220.f);
 
 	CIMGUIText* HelpText = AddWidget<CIMGUIText>("Anim Key Name Edit Help", 100.f, 30.f);
-	HelpText->SetText("ex) 'EditIdle' --> m_Animation->AddAnimation('ZedIdle', 'Idle') 으로 인해 만들어진 m_mapAnimationSequence['Idle'] = 'ZedIdle' 을 \n m_mapAnimationSequence['EditIdle'] = 'ZedIdle' 로 Key 값 수정 ");
+	HelpText->SetText("ex) 'EditIdle' --> 기존의 m_Animation->AddAnimation('ZedIdle', 'Idle') 으로 인해 만들어진 m_mapAnimationSequence['Idle'] = 'ZedIdle' 을 \n m_mapAnimationSequence['EditIdle'] = 'ZedIdle' 로 Key 값 수정 ");
 	HelpText->SetIsHelpMode(true);
 
 	// 각종 체크 박스들 
-	// m_CreateSample3DBtn = AddWidget<CIMGUIButton>("Sample3DBtn", 100.f, 30.f);
-	// m_CreateSample3DBtn->SetClickCallback<CAnimationEditor>(this, &CAnimationEditor::OnCreateSample3DObject);
-
-	// m_DeltaTimePlayBtn = AddWidget<CIMGUIButton>("Engine Play", 100.f, 30.f);
-	// m_DeltaTimePlayBtn->SetClickCallback<CAnimationEditor>(this, &CAnimationEditor::OnSetPlayEngineDeltaTime);
-	// m_AnimationPlayBtn = AddWidget<CIMGUIButton>("Object Play", 100.f, 30.f);
-	// m_AnimationPlayBtn->SetClickCallback<CAnimationEditor>(this, &CAnimationEditor::OnPlayAnimation);
 
 	m_DeltaTimeCheckBtn = AddWidget<CIMGUICheckBox>("Engine Play", 100.f, 30.f);
 	m_DeltaTimeCheckBtn->AddCheckInfo("Engine Play");
@@ -147,7 +141,7 @@ bool CAnimationEditor::Init()
 	// m_DeltaTimeCheckBtn->SetClickCallback<CAnimationEditor>(this, &CAnimationEditor::OnSetPlayEngineDeltaTime);
 
 	Line = AddWidget<CIMGUISameLine>("Line");
-	Line->SetOffsetX(130.f);
+	Line->SetOffsetX(110.f);
 
 	m_AnimationCheckBtn = AddWidget<CIMGUICheckBox>("Object Play", 100.f, 30.f);
 	m_AnimationCheckBtn->AddCheckInfo("Anim Play");
@@ -155,23 +149,26 @@ bool CAnimationEditor::Init()
 	// m_AnimationCheckBtn->SetClickCallback<CAnimationEditor>(this, &CAnimationEditor::OnPlayAnimation);
 
 	Line = AddWidget<CIMGUISameLine>("Line");
-	Line->SetOffsetX(255.f);
+	Line->SetOffsetX(215.f);
 
 	m_RotationCheckBtn = AddWidget<CIMGUICheckBox>("Camera Rotation", 100.f, 30.f);
 	m_RotationCheckBtn->AddCheckInfo("Rotate");
 	m_RotationCheckBtn->SetCallBackLabel<CAnimationEditor>(this, &CAnimationEditor::OnRotateAnimationCamera);
 
+	Line = AddWidget<CIMGUISameLine>("Line");
+	Line->SetOffsetX(320.f);
+
 	// Sequence Start ---------------------------------------
 	Dummy = AddWidget<CIMGUIDummy>("Dummy", 100.f, 30.f);
 
 	HelpText = AddWidget<CIMGUIText>("Anim Seq Load Btn Help Text", 100.f, 30.f);
-	HelpText->SetText("ex)  'ZedIdle' -- > ('ZedIdle', 'ZedIdle.sqc') ? \n SceneResource, ResourceManager의 m_mapSequence 에 저장");
+	HelpText->SetText("ex)  'ZedIdle' -- > pair('ZedIdle', 'ZedIdle.sqc') 형태로 \n SceneResource, ResourceManager의 m_mapSequence 에 저장");
 	HelpText->SetIsHelpMode(true);
 
 	m_NewAnimSeqName = AddWidget<CIMGUITextInput>("Sequence Name", 100.f, 30.f);
 
 	HelpText = AddWidget<CIMGUIText>("Anim Seq Load Btn Help Text", 100.f, 30.f);
-	HelpText->SetText("ex) 'Idle' --> m_Animation->AddAnimation('ZedIdle', 'Idle') ? \n ZedIdle 를 Key값으로 AnimationInstance 에 정보 추가");
+	HelpText->SetText("ex) 'Idle' --> m_Animation->AddAnimation('ZedIdle', 'Idle') ? \n ZedIdle 이름의 Animation Sequence 를 \n 'Idle' 이라는 이름의 Key값으로 AnimationInstance 에 정보 추가");
 	HelpText->SetIsHelpMode(true);
 
 	m_NewAnimSeqDataKeyName = AddWidget<CIMGUITextInput>("Sequence  Key", 100.f, 30.f);
@@ -294,7 +291,7 @@ void CAnimationEditor::OnRotateAnimationCamera(const char*, bool Enable)
 		return;
 
 	// if (IsAnimPlay)
-	if (!Enable)
+	if (Enable)
 		m_3DTestObject->SetCameraRot(true);
 	else
 		m_3DTestObject->SetCameraRot(false);

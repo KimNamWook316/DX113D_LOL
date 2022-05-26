@@ -90,11 +90,6 @@ public:
 		m_LayerName = Name;
 	}
 
-	void SetAnimationEditorTargetEnable(bool Enable)
-	{
-		m_Transform->SetAnimationEditorTargetEnable(Enable);
-	}
-
 public:
 	void SetSceneComponent(class CGameObject* Object);
 	void GetAllSceneComponentsName(std::vector<FindComponentName>& vecNames);
@@ -132,7 +127,8 @@ public:
 	virtual CSceneComponent* Clone();
 	virtual void Save(FILE* File);
 	virtual void Load(FILE* File);
-
+public :
+	virtual void RenderAnimationEditor();
 
 public:	// Transform
 	void SetInheritScale(bool Inherit)

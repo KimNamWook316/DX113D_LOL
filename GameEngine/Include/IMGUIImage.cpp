@@ -78,11 +78,6 @@ void CIMGUIImage::CreateTexture(unsigned int Width, unsigned int Height)
 	if (FAILED(CDevice::GetInst()->GetDevice()->CreateShaderResourceView(
 		m_TexResource, nullptr, &m_ShaderResourceView)))
 		return ;
-
-	// m_ClearColor[0] = 1.f;
-	// m_ClearColor[1] = 1.f;
-	// m_ClearColor[2] = 1.f;
-	// m_ClearColor[3] = 1.f;
 }
 
 void CIMGUIImage::SetCopyTargetTexture(ID3D11Texture2D* CopyTargetTexture)
@@ -111,14 +106,12 @@ void CIMGUIImage::Render()
 			ImVec2	StartUV = ImVec2(m_ImageStart.x / Width, m_ImageStart.y / Height);
 			ImVec2	EndUV = ImVec2(m_ImageEnd.x / Width, m_ImageEnd.y / Height);
 
-			// ImGui::Image(m_Texture->GetResource(), m_Size, StartUV, EndUV, m_Tint, m_BorderColor);
-			// ImGui::ImageButton(m_Texture->GetResource(), m_Size, StartUV, EndUV);
-		
-			// if (!m_IsRenderTargetImage)
+			// 일반 Texture Rendering
 			if (!m_IsRenderTargetImage)
 			{
 				ImGui::Image(m_Texture->GetResource(), m_Size, StartUV, EndUV, m_Tint, m_BorderColor);
 			}
+			// Render Target 가져와서 Rendering
 			else
 			{
 				m_CopyTargetTexResource = m_Texture->GetTextureResource();
@@ -134,7 +127,6 @@ void CIMGUIImage::Render()
 				// Target Texture 복사 
 				CDevice::GetInst()->GetContext()->CopyResource(m_TexResource, m_CopyTargetTexResource);
 
-				// ImGui::Image(m_Texture->GetResource(), m_Size, StartUV, EndUV, m_Tint, m_BorderColor);
 				ImGui::Image(m_ShaderResourceView, m_Size, StartUV, EndUV, m_Tint, m_BorderColor);
 			}
 			

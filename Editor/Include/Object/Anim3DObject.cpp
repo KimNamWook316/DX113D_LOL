@@ -56,13 +56,11 @@ bool CAnim3DObject::Init()
 	SetWorldPos(1.f, 1.f, 1.f);
 
 	// Animation Editor Camera 에 적용받는 대상으로 세팅하기
-	m_RootComponent->SetAnimationEditorTargetEnable(true);
+	// m_RootComponent->SetAnimationEditorTargetEnable(true);
 
 	// 3DTestObject 의 Camera Object 를 Scene의 Animation Current Camera 로 세팅한다.
-	if (m_Scene->GetCameraManager()->GetCurrentCamera() != m_Camera)
-	{
-		m_Scene->GetCameraManager()->SetAnimationEditorCamera(m_Camera);
-	}
+	m_Scene->GetCameraManager()->SetAnimationEditorCamera(m_Camera);
+	// m_Scene->GetCameraManager()->SetCurrentCamera(m_Camera);
 
 	return true;
 }
@@ -81,7 +79,7 @@ void CAnim3DObject::Update(float DeltaTime)
 
 	if (m_IsCameraRot)
 	{
-		m_Arm->AddRelativeRotationY(30.f * DeltaTime);
+		m_Arm->AddRelativeRotationY(45.f * DeltaTime);
 	}
 
 	/*

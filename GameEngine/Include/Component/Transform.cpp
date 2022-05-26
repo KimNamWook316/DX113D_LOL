@@ -23,7 +23,6 @@ CTransform::CTransform() :
 	m_UpdateScale(true),
 	m_UpdateRot(true),
 	m_UpdateRotAxis(false),
-	m_IsAnimationEditorTarget(false),
 	m_UpdatePos(true),
 	m_CBuffer(nullptr),
 	m_RelativeScale(1.f, 1.f, 1.f),
@@ -676,11 +675,6 @@ void CTransform::SetTransform()
 
 	CCameraComponent* Camera = m_Scene->GetCameraManager()->GetCurrentCamera();
 
-	if (m_IsAnimationEditorTarget)
-	{
-		Camera = m_Scene->GetCameraManager()->GetAnimationEditorCamera();
-	}
-
 	m_CBuffer->SetViewMatrix(Camera->GetViewMatrix());
 	m_CBuffer->SetProjMatrix(Camera->GetProjMatrix());
 
@@ -751,6 +745,22 @@ void CTransform::Load(FILE* File)
 	fread(&m_WorldAxis, sizeof(Vector3), AXIS_MAX, File);
 	fread(&m_Pivot, sizeof(Vector3), 1, File);
 	fread(&m_MeshSize, sizeof(Vector3), 1, File);
+}
+
+void CTransform::SetAnimationTransform()
+{
+	m_CBuffer->SetWorldMatrix(m_matWorld);
+
+	// CCameraComponent* Camera = m_Scene->GetCameraManager()->GetCurrentCamera();
+	CCameraComponent * Camera = m_Scene->GetCameraManager()->GetAnimationEditorCamera();
+
+	m_CBuffer->SetViewMatrix(Camera->GetViewMatrix());
+	m_CBuffer->SetProjMatrix(Camera->GetProjMatrix());
+
+	m_CBuffer->SetPivot(m_Pivot);
+	m_CBuffer->SetMeshSize(m_MeshSize);
+
+	m_CBuffer->UpdateCBuffer();
 }
 
 void CTransform::CallChangePosCallBack()

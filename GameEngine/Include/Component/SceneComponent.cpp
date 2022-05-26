@@ -586,3 +586,11 @@ void CSceneComponent::Load(FILE* File)
 	}
 }
 
+void CSceneComponent::RenderAnimationEditor()
+{
+	m_Transform->SetAnimationTransform();
+
+	CRenderManager::GetInst()->GetStandard2DCBuffer()->SetAnimation2DEnable(false);
+	CRenderManager::GetInst()->GetStandard2DCBuffer()->UpdateCBuffer();
+}
+

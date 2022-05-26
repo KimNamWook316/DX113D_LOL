@@ -46,13 +46,7 @@ private:
 	bool	m_UpdateRot;
 	bool	m_UpdateRotAxis; // 주어진 축 기준 회전으로 업데이트 여부
 	bool	m_UpdatePos;
-private :
-	bool m_IsAnimationEditorTarget;
 public:
-	void SetAnimationEditorTargetEnable(bool Enable)
-	{
-		m_IsAnimationEditorTarget = Enable;
-	}
 	void SetSocket(class CSkeletonSocket* Socket)
 	{
 		m_Socket = Socket;
@@ -292,6 +286,10 @@ public:
 	CTransform* Clone();
 	void Save(FILE* File);
 	void Load(FILE* File);
+
+	// Animation Editor Set Transform
+public : 
+	void SetAnimationTransform();
 
 	// CallBack
 private:

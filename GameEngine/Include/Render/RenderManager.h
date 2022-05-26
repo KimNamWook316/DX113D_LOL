@@ -43,10 +43,8 @@ private:
 	std::vector<CSharedPtr<CRenderTarget>>	m_vecLightBuffer;
 
 	// Animation Editor Buffer
-	CSharedPtr<class CShader> m_NoLightRenderShader; // m_AnimRenderTargetPrevProcess 에 그려내기 위한 Shader 
-	CSharedPtr<class CShader> m_AnimRenderShader;    // 
-	CSharedPtr<CRenderTarget>	m_AnimRenderTargetPrevProcess; // Skinning 처리 이후, 해당 출력을, 별도의 RenderTarget 에 그려낸다.
-	CSharedPtr<CRenderTarget>	m_AnimationRenderTarget; // Null Buffer 를 활용, m_AnimRenderTargetPrevProcess 에 기록된 사항 출력
+	CSharedPtr<class CShader> m_Mesh3DNoLightRenderShader; // m_AnimEditorRenderTarget 에 그려내기 위한 Shader 
+	CSharedPtr<CRenderTarget>	m_AnimEditorRenderTarget; // Skinning 처리 이후, 해당 출력을, 별도의 RenderTarget 에 그려낸다.
 
 public:
 	class CStandard2DConstantBuffer* GetStandard2DCBuffer()	const
@@ -55,7 +53,8 @@ public:
 	}
 	CRenderTarget* GetAnimationRenderTarget() const
 	{
-		return m_AnimationRenderTarget;
+		return m_AnimEditorRenderTarget;
+		// return m_AnimationRenderTarget;
 	}
 
 public:
@@ -78,7 +77,6 @@ private:
 	void RenderLightBlend();
 	void RenderFinalScreen();
 	void RenderAnimationEditorPrevProcess();
-	void RenderAnimationEditor();
 	// Render State
 public:
 	void SetBlendFactor(const std::string& Name, float r, float g, float b, float a);

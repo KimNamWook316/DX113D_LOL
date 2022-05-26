@@ -36,8 +36,6 @@ private:
 	// Animation Seq 지우기
 	class CIMGUIButton* m_DeleteAnimSequenceBtn;
 	// Animation Play 여부
-	// class CIMGUIButton* m_DeltaTimePlayBtn;
-	// class CIMGUIButton* m_AnimationPlayBtn;
 	class CIMGUICheckBox* m_DeltaTimeCheckBtn;
 	class CIMGUICheckBox* m_AnimationCheckBtn;
 	class CIMGUICheckBox* m_RotationCheckBtn;
