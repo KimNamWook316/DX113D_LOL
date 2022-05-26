@@ -60,7 +60,6 @@ public:
 	// Render Target 을 그려내기 위한 세팅
 public : 
 	void CreateTexture(unsigned int Width, unsigned int Height);
-	void SetCopyTargetTexture(ID3D11Texture2D* CopyTargetTexture);
 public:
 	virtual bool Init();
 	virtual void Render();

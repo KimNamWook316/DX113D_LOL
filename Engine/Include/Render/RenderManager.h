@@ -82,7 +82,7 @@ private:
 	void RenderLightAcc();
 	void RenderLightBlend();
 	void RenderFinalScreen();
-	void RenderAnimationEditorPrevProcess();
+	void RenderAnimationEditor();
 	// Render State
 public:
 	void SetBlendFactor(const std::string& Name, float r, float g, float b, float a);
