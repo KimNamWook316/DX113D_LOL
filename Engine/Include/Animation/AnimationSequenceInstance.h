@@ -107,7 +107,7 @@ public:
 	void SetCurrentAnimation(const std::string& Name);
 	void ChangeAnimation(const std::string& Name);
 	bool CheckCurrentAnimation(const std::string& Name);
-	void ClearAnimationSequence();
+	void ClearAnimationSequenceFromAnimationEditor();
 	void GatherSequenceNames(std::vector<std::string>& vecString);
 	void AddAnimationSequenceToSceneResource();
 	int GetCurrentAnimationOrder();

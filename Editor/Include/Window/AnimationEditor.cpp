@@ -235,7 +235,7 @@ void CAnimationEditor::OnClearExistingAnimationSeqInfos()
 	if (!m_Animation)
 		return;
 
-	m_Animation->ClearAnimationSequence();
+	m_Animation->ClearAnimationSequenceFromAnimationEditor();
 
 	// Combo Box Clear
 	m_CurAnimComboBox->Clear();
@@ -246,15 +246,6 @@ void CAnimationEditor::OnClearExistingAnimationSeqInfos()
 
 void CAnimationEditor::OnCreateSample3DObject()
 {
-	// 기존에 것 지워주고
-	/*
-	if (m_3DTestObject)
-	{
-		m_3DTestObject->Destroy();
-		m_CurAnimComboBox->Clear();
-	}
-	*/
-	
 	if (m_3DTestObject)
 		return;
 
@@ -405,7 +396,7 @@ void CAnimationEditor::OnLoadAnimationInstance()
 		OnRefreshAnimationClipTable(m_Animation->GetCurrentAnimation()->GetAnimationSequence());
 
 		// 현재 Scene에 모든 Sequence 내용을 추가한다.
-		m_Animation->AddAnimationSequenceToSceneResource();
+		// m_Animation->AddAnimationSequenceToSceneResource();
 
 		// 현재 Scene의 정보를 m_Scene으로 지정해준다
 		m_Animation->SetScene(CSceneManager::GetInst()->GetScene());

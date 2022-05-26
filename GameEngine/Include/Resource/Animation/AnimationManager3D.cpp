@@ -232,7 +232,7 @@ CAnimationSequence* CAnimationManager3D::FindAnimationSequence(const std::string
 	return iter->second;
 }
 
-void CAnimationManager3D::ReleaseSequence(const std::string& Name)
+void CAnimationManager3D::ReleaseSequence(const std::string& Name) 
 {
 	auto	iter = m_mapSequence.find(Name);
 
@@ -264,6 +264,21 @@ CAnimationSequence* CAnimationManager3D::CreateBasicAnimationSequence(const std:
 	m_mapSequence.insert(std::make_pair(Name, Sequence));
 
 	return Sequence;
+}
+
+void CAnimationManager3D::DeleteSequence(const std::string& Name)
+{
+	auto iter = m_mapSequence.begin();
+	auto iterEnd = m_mapSequence.end();
+	
+	for (; iter != iterEnd; ++iter)
+	{
+		if (iter->second->GetName() == Name)
+		{
+			m_mapSequence.erase(iter);
+			break;
+		}
+	}
 }
 
 bool CAnimationManager3D::LoadSkeleton(const std::string& Name, 

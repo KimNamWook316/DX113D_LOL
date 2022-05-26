@@ -191,6 +191,7 @@ public:
 	CAnimationSequence* FindAnimationSequence(const std::string& Name);
 	CAnimationSequence* CreateBasicAnimationSequence(const std::string& Name);
 	void ReleaseAnimationSequence3D(const std::string& Name);
+	void DeleteSequence3D(const std::string& Name);
 
 	bool LoadSkeleton(const std::string& Name, const TCHAR* FileName,
 		const std::string& PathName = ANIMATION_PATH,

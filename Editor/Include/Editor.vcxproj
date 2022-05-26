@@ -177,6 +177,7 @@
     <ClCompile Include="Widget\GameObjectWidget.cpp" />
     <ClCompile Include="Widget\LightComponentWidget.cpp" />
     <ClCompile Include="Widget\ObjectComponentWidget.cpp" />
+    <ClCompile Include="Widget\ParticleComponentWidget.cpp" />
     <ClCompile Include="Widget\SceneComponentWidget.cpp" />
     <ClCompile Include="Widget\StaticMeshComponentWidget.cpp" />
     <ClCompile Include="Widget\TransformWidget.cpp" />
@@ -209,6 +210,7 @@
     <ClInclude Include="Widget\GameObjectWidget.h" />
     <ClInclude Include="Widget\LightComponentWidget.h" />
     <ClInclude Include="Widget\ObjectComponentWidget.h" />
+    <ClInclude Include="Widget\ParticleComponentWidget.h" />
     <ClInclude Include="Widget\SceneComponentWidget.h" />
     <ClInclude Include="Widget\StaticMeshComponentWidget.h" />
     <ClInclude Include="Widget\TransformWidget.h" />

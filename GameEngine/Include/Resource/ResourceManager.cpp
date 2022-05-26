@@ -568,6 +568,11 @@ void CResourceManager::ReleaseAnimationSequence3D(const std::string& Name)
 	m_AnimationManager3D->ReleaseSequence(Name);
 }
 
+void CResourceManager::DeleteSequence3D(const std::string& Name)
+{
+	m_AnimationManager3D->DeleteSequence(Name);
+}
+
 bool CResourceManager::LoadSkeleton(const std::string& Name, 
 	const TCHAR* FileName, const std::string& PathName, CScene* Scene)
 {

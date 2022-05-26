@@ -35,7 +35,6 @@ private:
 	bool	m_Loop;
 	std::function<void()>	m_EndFunction;
 	std::vector<AnimationNotify*>	m_vecNotify;
-
 public:
 	void Save(FILE* File);
 	void Load(FILE* File);

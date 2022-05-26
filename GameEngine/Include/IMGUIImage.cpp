@@ -85,10 +85,6 @@ void CIMGUIImage::CreateTexture(unsigned int Width, unsigned int Height)
 	SAFE_RELEASE(m_Surface);
 }
 
-void CIMGUIImage::SetCopyTargetTexture(ID3D11Texture2D* CopyTargetTexture)
-{
-}
-
 bool CIMGUIImage::Init()
 {
 	SetTexture("DefaultUI", TEXT("DefaultUI.png"));

@@ -283,10 +283,10 @@ bool CRenderManager::Init()
 		RS.Width, RS.Height, DXGI_FORMAT_R32G32B32A32_FLOAT))
 		return false;
 
-	m_AnimEditorRenderTarget = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("ParticleEffectRenderTarget");
-	m_AnimEditorRenderTarget->SetPos(Vector3(600.f, 100.f, 0.f));
-	m_AnimEditorRenderTarget->SetScale(Vector3(150.f, 150.f, 1.f));
-	m_AnimEditorRenderTarget->SetDebugRender(false);
+	// m_AnimEditorRenderTarget = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("ParticleEffectRenderTarget");
+	// m_AnimEditorRenderTarget->SetPos(Vector3(600.f, 100.f, 0.f));
+	// m_AnimEditorRenderTarget->SetScale(Vector3(150.f, 150.f, 1.f));
+	// m_AnimEditorRenderTarget->SetDebugRender(false);
 
 
 	return true;
@@ -334,8 +334,7 @@ void CRenderManager::Render()
 	RenderFinalScreen();
 
 	// Animation Editor Animation Instance Á¦ÀÛ¿ë Render Target
-	RenderAnimationEditorPrevProcess();
-	// RenderAnimationEditor();
+	RenderAnimationEditor();
 
 	m_vecGBuffer[2]->SetShader(10, (int)Buffer_Shader_Type::Pixel, 0);
 
@@ -657,7 +656,7 @@ void CRenderManager::RenderFinalScreen()
 	FinalScreenTarget->ResetTargetShader(21);
 }
 
-void CRenderManager::RenderAnimationEditorPrevProcess()
+void CRenderManager::RenderAnimationEditor()
 {
 	int AnimationEditorLayerIdx = GetRenderLayerIndex("AnimationEditorLayer");
 

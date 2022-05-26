@@ -347,21 +347,28 @@ void CAnimationSequenceInstance::ChangeAnimation(const std::string& Name)
 	m_ChangeAnimation->m_Time = 0.f;
 }
 
-void CAnimationSequenceInstance::ClearAnimationSequence()
+void CAnimationSequenceInstance::ClearAnimationSequenceFromAnimationEditor()
 {	
-	// 현재 Animation은 null로
-	m_CurrentAnimation = nullptr;
-
 	// 나머지는 모두 지워주기
 	auto iter = m_mapAnimation.begin();
 	auto iterEnd = m_mapAnimation.end();
 
 	for (; iter != iterEnd; ++iter)
 	{
-		// SAFE_DELETE(iter->second);
+		// Animation Sequence 들은 Ref Count가 2 여서, SequenceData 는 지워져도
+		// Sequence 는 지워지지 않을 수도 있다.
+		// 따라서 Ref Count 를 미리 1 감소시켜야 한다.
+		// Resource Manager 에서 해당 Sequence 를 지워줄 것이다.
+		// iter->second->m_Sequence->m_RefCount -= 1;
+
+		CResourceManager::GetInst()->DeleteSequence3D(iter->second->m_Sequence->GetName());
+
 		SAFE_DELETE(iter->second);
 	}
 	m_mapAnimation.clear();
+
+	// 현재 Animation은 null로
+	m_CurrentAnimation = nullptr;
 }
 
 void CAnimationSequenceInstance::GatherSequenceNames(std::vector<std::string>& vecString)

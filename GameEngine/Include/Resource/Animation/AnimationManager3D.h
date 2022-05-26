@@ -36,7 +36,7 @@ public:
 		const Vector3& Offset = Vector3::Zero, const Vector3& OffsetRot = Vector3::Zero);
 	void ReleaseSequence(const std::string& Name);
 	CAnimationSequence* CreateBasicAnimationSequence(const std::string& Name);
-
+	void DeleteSequence(const std::string& Name);
 
 	bool LoadSkeleton(const std::string& Name, const TCHAR* FileName,
 		const std::string& PathName = ANIMATION_PATH,
