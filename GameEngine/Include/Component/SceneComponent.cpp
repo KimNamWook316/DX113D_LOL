@@ -7,6 +7,8 @@
 #include "../Scene/CameraManager.h"
 #include "CameraComponent.h"
 
+std::list<InstancingCheckCount*> CSceneComponent::m_InstancingCheckList;
+
 CSceneComponent::CSceneComponent() :
 	m_Culling(false)
 {
@@ -491,7 +493,7 @@ void CSceneComponent::CheckCollision()
 
 void CSceneComponent::PrevRender()
 {
-	if (m_Render && !m_Culling)
+	if (m_Render && !m_Culling && !m_Instancing)
 	{
 		CRenderManager::GetInst()->AddRenderList(this);
 	}

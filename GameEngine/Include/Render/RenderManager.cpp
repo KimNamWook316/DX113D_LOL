@@ -5,6 +5,7 @@
 #include "RenderStateManager.h"
 #include "../Resource/Shader/Standard2DConstantBuffer.h"
 #include "../Resource/ResourceManager.h"
+#include "../Resource/Mesh/Mesh.h"
 #include "RenderState.h"
 #include "../Scene/SceneManager.h"
 #include "../Scene/Scene.h"
@@ -12,7 +13,6 @@
 #include "../Engine.h"
 #include "../Device.h"
 #include "../Resource/Shader/Shader.h"
-#include "RenderInstancing.h"
 
 DEFINITION_SINGLE(CRenderManager)
 
@@ -29,14 +29,6 @@ CRenderManager::~CRenderManager()
 
 	for (; iter != iterEnd; ++iter)
 	{
-		auto	iter1 = (*iter)->mapInstancing.begin();
-		auto	iter1End = (*iter)->mapInstancing.end();
-
-		for (; iter1 != iter1End; ++iter1)
-		{
-			SAFE_DELETE(iter1->second);
-		}
-
 		SAFE_DELETE((*iter));
 	}
 
@@ -65,11 +57,7 @@ void CRenderManager::AddRenderList(CSceneComponent* Component)
 	if (!Layer)
 		return;
 
-	if (Layer->RenderCount == (int)Layer->RenderList.size())
-		Layer->RenderList.resize(Layer->RenderCount * 2);
-
-	Layer->RenderList[Layer->RenderCount] = Component;
-	++Layer->RenderCount;
+	Layer->RenderList.push_back(Component);
 }
 
 void CRenderManager::CreateLayer(const std::string& Name, int Priority)
@@ -302,7 +290,16 @@ void CRenderManager::Render()
 
 		for (; iter != iterEnd; ++iter)
 		{
-			(*iter)->RenderCount = 0;
+			(*iter)->RenderList.clear();
+			(*iter)->InstancingIndex = 0;
+
+			auto iter1 = (*iter)->m_vecInstancing.begin();
+			auto iter1End = (*iter)->m_vecInstancing.end();
+
+			for (; iter1 != iter1End; ++iter1)
+			{
+				(*iter1)->RenderList.clear();
+			}
 		}
 	}
 
@@ -314,6 +311,55 @@ void CRenderManager::Render()
 		{
 			(*iter)->PrevRender();
 		}	
+	}
+
+	{
+		const std::list<InstancingCheckCount*>* InstancingList = CSceneComponent::GetInstancingCheckList();
+
+		auto	iter = InstancingList->begin();
+		auto	iterEnd = InstancingList->end();
+
+		for (; iter != iterEnd; ++iter)
+		{
+			if ((*iter)->InstancingList.size() >= 10)
+			{
+				RenderLayer* Layer = nullptr;
+
+				size_t	Size = m_RenderLayerList.size();
+
+				for (size_t i = 0; i < Size; ++i)
+				{
+					if (m_RenderLayerList[i]->Name == (*iter)->LayerName)
+					{
+						Layer = m_RenderLayerList[i];
+						break;
+					}
+				}
+
+				if (Layer)
+				{
+					if (Layer->m_vecInstancing.size() == Layer->InstancingIndex)
+					{
+						Layer->m_vecInstancing.resize(Layer->InstancingIndex * 2);
+
+						for (int i = 0; i < Layer->InstancingIndex; ++i)
+						{
+							Layer->m_vecInstancing[Layer->InstancingIndex + i] = new RenderInstancingList;
+						}
+					}
+
+					auto	iter1 = (*iter)->InstancingList.begin();
+					auto	iter1End = (*iter)->InstancingList.end();
+
+					for (; iter1 != iter1End; ++iter1)
+					{
+						Layer->m_vecInstancing[Layer->InstancingIndex]->RenderList.push_back(*iter1);
+					}
+
+					++Layer->InstancingIndex;
+				}
+			}
+		}
 	}
 
 	// 환경맵 출력
@@ -344,19 +390,25 @@ void CRenderManager::Render()
 	m_AlphaBlend->SetState();
 
 	// 파티클 레이어 출력
-	for (int j = 0; j < m_RenderLayerList[3]->RenderCount; ++j)
+	auto	iter = m_RenderLayerList[3]->RenderList.begin();
+	auto	iterEnd = m_RenderLayerList[3]->RenderList.end();
+
+	for (; iter != iterEnd; ++iter)
 	{
-		m_RenderLayerList[3]->RenderList[j]->Render();
+		(*iter)->Render();
 	}
 
 	m_AlphaBlend->ResetState();
 
 	m_vecGBuffer[2]->ResetShader(10, (int)Buffer_Shader_Type::Pixel, 0);
 
-	// Screen Widget 출려
-	for (int j = 0; j < m_RenderLayerList[4]->RenderCount; ++j)
+	// Screen Widget 출력
+	iter = m_RenderLayerList[4]->RenderList.begin();
+	iterEnd = m_RenderLayerList[4]->RenderList.end();
+
+	for (; iter != iterEnd; ++iter)
 	{
-		m_RenderLayerList[4]->RenderList[j]->Render();
+		(*iter)->Render();
 	}
 
 	// 조명 정보를 Shader로 넘겨준다.
@@ -376,14 +428,17 @@ void CRenderManager::Render()
 	}*/
 
 	{
-		auto	iter = m_RenderLayerList.begin();
-		auto	iterEnd = m_RenderLayerList.end();
+		auto	iter1 = m_RenderLayerList.begin();
+		auto	iter1End = m_RenderLayerList.end();
 
-		for (; iter != iterEnd; ++iter)
+		for (; iter1 != iter1End; ++iter1)
 		{
-			for (int i = 0; i < (*iter)->RenderCount; ++i)
+			auto	iter2 = (*iter1)->RenderList.begin();
+			auto	iter2End = (*iter1)->RenderList.end();
+
+			for (; iter2 != iter2End; ++iter2)
 			{
-				(*iter)->RenderList[i]->PostRender();
+				(*iter2)->PostRender();
 			}
 		}
 	}
@@ -437,9 +492,23 @@ void CRenderManager::RenderGBuffer()
 
 	for (size_t i = 0; i <= 1; ++i)
 	{
-		for (int j = 0; j < m_RenderLayerList[i]->RenderCount; ++j)
+		auto	iter = m_RenderLayerList[i]->RenderList.begin();
+		auto	iterEnd = m_RenderLayerList[i]->RenderList.end();
+
+		for (; iter != iterEnd; ++iter)
 		{
-			m_RenderLayerList[i]->RenderList[j]->Render();
+			(*iter)->Render();
+		}
+	}
+
+	for (int i = 0; i < m_RenderLayerList[1]->InstancingIndex; ++i)
+	{
+		auto	iter = m_RenderLayerList[1]->m_vecInstancing[i]->RenderList.begin();
+		auto	iterEnd = m_RenderLayerList[1]->m_vecInstancing[i]->RenderList.end();
+
+		for (; iter != iterEnd; ++iter)
+		{
+			(*iter)->Render();
 		}
 	}
 
@@ -479,11 +548,13 @@ void CRenderManager::RenderDecal()
 	m_vecGBuffer[4]->SetTargetShader(11);
 	m_vecGBuffer[5]->SetTargetShader(12);
 
-	for (int j = 0; j < m_RenderLayerList[2]->RenderCount; ++j)
-	{
-		m_RenderLayerList[2]->RenderList[j]->Render();
-	}
+	auto	iter = m_RenderLayerList[2]->RenderList.begin();
+	auto	iterEnd = m_RenderLayerList[2]->RenderList.end();
 
+	for (; iter != iterEnd; ++iter)
+	{
+		(*iter)->Render();
+	}
 
 	m_vecGBuffer[2]->ResetTargetShader(10);
 	m_vecGBuffer[4]->ResetTargetShader(11);
@@ -522,11 +593,13 @@ void CRenderManager::RenderDecal()
 	CDevice::GetInst()->GetContext()->OMSetRenderTargets((unsigned int)GBufferSize,
 		&vecTarget1[0], PrevDepthTarget1);
 
-	for (int j = 0; j < m_RenderLayerList[2]->RenderCount; ++j)
-	{
-		m_RenderLayerList[2]->RenderList[j]->RenderDebug();
-	}
+	iter = m_RenderLayerList[2]->RenderList.begin();
+	iterEnd = m_RenderLayerList[2]->RenderList.end();
 
+	for (; iter != iterEnd; ++iter)
+	{
+		(*iter)->RenderDebug();
+	}
 
 	CDevice::GetInst()->GetContext()->OMSetRenderTargets((unsigned int)GBufferSize,
 		&vecPrevTarget1[0], PrevDepthTarget1);
@@ -661,38 +734,40 @@ void CRenderManager::RenderFinalScreen()
 
 void CRenderManager::RenderAnimationEditorPrevProcess()
 {
-	int AnimationEditorLayerIdx = GetRenderLayerIndex("AnimationEditorLayer");
+	// TODO : 주석 해제 필요
 
-	// 만~약에 해당 Layer 의 Idx 가 정해져 있지 않다면
-	if (AnimationEditorLayerIdx == -1)
-		return;
-
-	// Animation Edtior 상에서 Animation Editor 제작 중이지 않다면
-	if (m_RenderLayerList[AnimationEditorLayerIdx]->RenderCount <= 0)
-		return;
-
-	// Render Target 교체
-	m_AnimRenderTargetPrevProcess->ClearTarget();
-
-	m_AnimRenderTargetPrevProcess->SetTarget(nullptr);
-
-	m_NoLightRenderShader->SetShader();
-
-	// m_DepthDisable->SetState();
-
-	// m_AnimationRenderTarget->SetTargetShader(55);
-
-	for (int j = 0; j < m_RenderLayerList[AnimationEditorLayerIdx]->RenderCount; ++j)
-	{
-		m_RenderLayerList[AnimationEditorLayerIdx]->RenderList[j]->Render();
-	}
-
-	// m_AnimationRenderTarget->ResetTargetShader(55);
-
-	// m_DepthDisable->ResetState();
-
-	m_AnimRenderTargetPrevProcess->ResetTarget();
-}
+ //	int AnimationEditorLayerIdx = GetRenderLayerIndex("AnimationEditorLayer");
+ //
+ //	// 만~약에 해당 Layer 의 Idx 가 정해져 있지 않다면
+ //	if (AnimationEditorLayerIdx == -1)
+ //		return;
+ //
+ //	// Animation Edtior 상에서 Animation Editor 제작 중이지 않다면
+ //	if (m_RenderLayerList[AnimationEditorLayerIdx]->RenderCount <= 0)
+ //		return;
+ //
+ //	// Render Target 교체
+ //	m_AnimRenderTargetPrevProcess->ClearTarget();
+ //
+ //	m_AnimRenderTargetPrevProcess->SetTarget(nullptr);
+ //
+ //	m_NoLightRenderShader->SetShader();
+ //
+ //	// m_DepthDisable->SetState();
+ //
+ //	// m_AnimationRenderTarget->SetTargetShader(55);
+ //
+ //	for (int j = 0; j < m_RenderLayerList[AnimationEditorLayerIdx]->RenderCount; ++j)
+ //	{
+ //		m_RenderLayerList[AnimationEditorLayerIdx]->RenderList[j]->Render();
+ //	}
+ //
+ //	// m_AnimationRenderTarget->ResetTargetShader(55);
+ //
+ //	// m_DepthDisable->ResetState();
+ //
+ //	m_AnimRenderTargetPrevProcess->ResetTarget();
+ }
 
 void CRenderManager::RenderAnimationEditor()
 {

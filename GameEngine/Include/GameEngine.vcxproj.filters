@@ -852,9 +852,6 @@
     <ClCompile Include="ImGuizmo.cpp">
       <Filter>01. Engine\08. IMGUI\01. Lib</Filter>
     </ClCompile>
-    <ClCompile Include="EngineUtil.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="Component\DecalComponent.cpp">
       <Filter>05. Component\01. SceneComponent\10. Decal</Filter>
     </ClCompile>
@@ -879,8 +876,8 @@
     <ClCompile Include="Resource\Shader\AnimEditorShader.cpp">
       <Filter>02. Resource\02. Shader\02. ShaderClass\14. AnimEditor</Filter>
     </ClCompile>
-    <ClCompile Include="Render\RenderInstancing.cpp">
-      <Filter>06. Render</Filter>
+    <ClCompile Include="EngineUtil.cpp">
+      <Filter>99. Util</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1475,9 +1472,6 @@
     <ClInclude Include="ImZoomSlider.h">
       <Filter>01. Engine\08. IMGUI\01. Lib</Filter>
     </ClInclude>
-    <ClInclude Include="EngineUtil.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="Component\DecalComponent.h">
       <Filter>05. Component\01. SceneComponent\10. Decal</Filter>
     </ClInclude>
@@ -1502,8 +1496,8 @@
     <ClInclude Include="Resource\Shader\AnimEditorShader.h">
       <Filter>02. Resource\02. Shader\02. ShaderClass\14. AnimEditor</Filter>
     </ClInclude>
-    <ClInclude Include="Render\RenderInstancing.h">
-      <Filter>06. Render</Filter>
+    <ClInclude Include="EngineUtil.h">
+      <Filter>99. Util</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -7,6 +7,7 @@
 #include "../Object/LandScapeObj.h"
 #include "../Object/DecalObj.h"
 #include "../Object/Portal.h"
+#include "../Object/BonObj.h"
 #include "GameObject/LightObj.h"
 #include "Component/LightComponent.h"
 #include "Resource/Material/Material.h"
@@ -44,6 +45,13 @@ bool CMainSceneMode::Init()
 
 	CPortal* Portal = m_Scene->CreateGameObject<CPortal>("Portal");
 
+	for (int i = 0; i < 30; ++i)
+	{
+		CBonObj* BonObj = m_Scene->CreateGameObject<CBonObj>("BonObj");
+
+		BonObj->SetWorldPos(i * 3.f, 4.f, 10.f);
+	}
+
 	CLightObj* Light = m_Scene->CreateGameObject<CLightObj>("Light1");
 
 	((CLightComponent*)Light->GetRootComponent())->SetRelativePos(-3.f, 5.f, 0.f);
@@ -71,6 +79,9 @@ void CMainSceneMode::LoadMesh()
 
 	m_Scene->GetResource()->LoadMesh(Mesh_Type::Static, "Blade",
 		TEXT("Blade.msh"));
+
+	m_Scene->GetResource()->LoadMesh(Mesh_Type::Static, "BonObj",
+		TEXT("BonObj.msh"));
 
 	CMesh* Mesh = m_Scene->GetResource()->FindMesh("PlayerMesh");
 

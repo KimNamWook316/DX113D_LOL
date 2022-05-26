@@ -3,19 +3,41 @@
 #include "../GameInfo.h"
 #include "../Resource/Texture/RenderTarget.h"
 
+struct RenderInstancingList
+{
+	std::list<class CSceneComponent*> RenderList;
+};
+
 struct RenderLayer
 {
 	std::string		Name;
 	int				LayerPriority;
-	std::vector<class CSceneComponent*>	RenderList;
-	std::unordered_map<size_t, class CRenderInstancing*> mapInstancing;
+	std::list<class CSceneComponent*> RenderList;
+	std::vector<RenderInstancingList*> m_vecInstancing;
+	int				InstancingIndex;
 	int				RenderCount;
 
 	RenderLayer()
 	{
 		LayerPriority = 0;
 		RenderCount = 0;
-		RenderList.resize(500);
+		InstancingIndex = 0;
+		m_vecInstancing.resize(30);
+
+		for (int i = 0; i < 30; ++i)
+		{
+			m_vecInstancing[i] = new RenderInstancingList;
+		}
+	}
+
+	~RenderLayer()
+	{
+		size_t Size = m_vecInstancing.size();
+
+		for (size_t i = 0; i < Size; ++i)
+		{
+			SAFE_DELETE(m_vecInstancing[i]);
+		}
 	}
 };
 
