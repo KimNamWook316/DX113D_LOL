@@ -25,6 +25,7 @@ private:
 	class CSceneComponentHierarchyWindow* m_ComponentHierarchyWindow;
 	class CObjectComponentWindow* m_ObjectComponentWindow;
 	class CAnimationEditor* m_AnimationEditor;
+	class CEffectEditor* m_EffectEditor;
 	class CInspectorWindow* m_InspectorWindow;
 
 	bool				m_MousePush;

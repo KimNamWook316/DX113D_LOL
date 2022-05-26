@@ -25,6 +25,7 @@
 #include "Window/AnimationEditor.h"
 #include "Window/FBXConvertWindow.h"
 #include "Window/InspectorWindow.h"
+#include "Window/EffectEditor.h"
 
 DEFINITION_SINGLE(CEditorManager)
 
@@ -95,6 +96,7 @@ bool CEditorManager::Init(HINSTANCE hInst)
 	// m_FileBrowserTree = CIMGUIManager::GetInst()->AddWindow<CFileBrowserTree>(FILE_BROWSERTREE);
 	m_InspectorWindow = CIMGUIManager::GetInst()->AddWindow<CInspectorWindow>(INSPECTOR);
 	m_AnimationEditor = CIMGUIManager::GetInst()->AddWindow<CAnimationEditor>(ANIMATION_EDITOR);
+	m_EffectEditor = CIMGUIManager::GetInst()->AddWindow<CEffectEditor>(ANIMATION_EDITOR);
 
 	CFBXConvertWindow* win = CIMGUIManager::GetInst()->AddWindow<CFBXConvertWindow>(FBX_CONVERTOR);
 

@@ -42,9 +42,13 @@ private:
 	std::vector<CSharedPtr<CRenderTarget>>	m_vecDecal;
 	std::vector<CSharedPtr<CRenderTarget>>	m_vecLightBuffer;
 
-	// Animation Editor Buffer
+	// Animation Editor 
 	CSharedPtr<class CShader> m_Mesh3DNoLightRenderShader; // m_AnimEditorRenderTarget 에 그려내기 위한 Shader 
 	CSharedPtr<CRenderTarget>	m_AnimEditorRenderTarget; // Skinning 처리 이후, 해당 출력을, 별도의 RenderTarget 에 그려낸다.
+
+	// Particle Editor
+	CSharedPtr<class CShader> m_ParticleShader; // m_AnimEditorRenderTarget 에 그려내기 위한 Shader 
+	CSharedPtr<CRenderTarget>	m_ParticleEffectEditorRenderTarget; // Skinning 처리 이후, 해당 출력을, 별도의 RenderTarget 에 그려낸다.
 
 public:
 	class CStandard2DConstantBuffer* GetStandard2DCBuffer()	const
@@ -54,9 +58,11 @@ public:
 	CRenderTarget* GetAnimationRenderTarget() const
 	{
 		return m_AnimEditorRenderTarget;
-		// return m_AnimationRenderTarget;
 	}
-
+	CRenderTarget* GetParticleEffectRenderTarget() const
+	{
+		return m_ParticleEffectEditorRenderTarget;
+	}
 public:
 	void SetObjectList(const std::list<CSharedPtr<class CGameObject>>* List)
 	{

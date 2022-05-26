@@ -269,28 +269,25 @@ bool CRenderManager::Init()
 	m_Mesh3DNoLightRenderShader = CResourceManager::GetInst()->FindShader("Mesh3DNoLightShader");
 
 	// Animation Editor 용 Render Target 
-	if (!CResourceManager::GetInst()->CreateTarget("AnimationEditorPrevProcess",
+	if (!CResourceManager::GetInst()->CreateTarget("AnimationEditorRenderTarget",
 		RS.Width, RS.Height, DXGI_FORMAT_R32G32B32A32_FLOAT))
 		return false;
 
-	m_AnimEditorRenderTarget = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("AnimationEditorPrevProcess");
+	m_AnimEditorRenderTarget = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("AnimationEditorRenderTarget");
 	m_AnimEditorRenderTarget->SetPos(Vector3(450.f, 100.f, 0.f));
 	m_AnimEditorRenderTarget->SetScale(Vector3(150.f, 150.f, 1.f));
 	m_AnimEditorRenderTarget->SetDebugRender(false);
 
-	// Animation Editor 용 Mesh 최종 출력 
-	/*
-	m_AnimRenderShader = CResourceManager::GetInst()->FindShader("AnimEditorShader");
-
-	if (!CResourceManager::GetInst()->CreateTarget("AnimationEditor",
+	// Animation Editor 용 Render Target 
+	if (!CResourceManager::GetInst()->CreateTarget("ParticleEffectRenderTarget",
 		RS.Width, RS.Height, DXGI_FORMAT_R32G32B32A32_FLOAT))
 		return false;
 
-	m_AnimationRenderTarget = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("AnimationEditor");
-	m_AnimationRenderTarget->SetPos(Vector3(600.f, 100.f, 0.f));
-	m_AnimationRenderTarget->SetScale(Vector3(150.f, 150.f, 1.f));
-	m_AnimationRenderTarget->SetDebugRender(false);
-	*/
+	m_AnimEditorRenderTarget = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("ParticleEffectRenderTarget");
+	m_AnimEditorRenderTarget->SetPos(Vector3(600.f, 100.f, 0.f));
+	m_AnimEditorRenderTarget->SetScale(Vector3(150.f, 150.f, 1.f));
+	m_AnimEditorRenderTarget->SetDebugRender(false);
+
 
 	return true;
 }
@@ -673,11 +670,11 @@ void CRenderManager::RenderAnimationEditorPrevProcess()
 		return;
 
 	// Render Target 교체
-	m_AnimRenderTargetPrevProcess->ClearTarget();
+	m_AnimEditorRenderTarget->ClearTarget();
 
-	m_AnimRenderTargetPrevProcess->SetTarget(nullptr);
+	m_AnimEditorRenderTarget->SetTarget(nullptr);
 
-	m_NoLightRenderShader->SetShader();
+	m_Mesh3DNoLightRenderShader->SetShader();
 
 	// m_DepthDisable->SetState();
 
@@ -693,7 +690,7 @@ void CRenderManager::RenderAnimationEditorPrevProcess()
 
 	// m_DepthDisable->ResetState();
 
-	m_AnimRenderTargetPrevProcess->ResetTarget();
+	m_AnimEditorRenderTarget->ResetTarget();
 }
 
 void CRenderManager::SetBlendFactor(const std::string& Name, float r, float g,
