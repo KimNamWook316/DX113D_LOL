@@ -56,6 +56,9 @@ void CIMGUIImage::SetTexture(CTexture* Texture)
 
 void CIMGUIImage::CreateTexture(unsigned int Width, unsigned int Height)
 {
+	SAFE_RELEASE(m_TexResource);
+	SAFE_RELEASE(m_ShaderResourceView);
+
 	// Target용 Texture 생성
 	D3D11_TEXTURE2D_DESC	Desc = {};
 
@@ -78,6 +81,8 @@ void CIMGUIImage::CreateTexture(unsigned int Width, unsigned int Height)
 	if (FAILED(CDevice::GetInst()->GetDevice()->CreateShaderResourceView(
 		m_TexResource, nullptr, &m_ShaderResourceView)))
 		return ;
+
+	SAFE_RELEASE(m_Surface);
 }
 
 void CIMGUIImage::SetCopyTargetTexture(ID3D11Texture2D* CopyTargetTexture)
@@ -125,6 +130,8 @@ void CIMGUIImage::Render()
 				}
 
 				// Target Texture 복사 
+				// SAFE_RELEASE(m_TexResource);
+
 				CDevice::GetInst()->GetContext()->CopyResource(m_TexResource, m_CopyTargetTexResource);
 
 				ImGui::Image(m_ShaderResourceView, m_Size, StartUV, EndUV, m_Tint, m_BorderColor);

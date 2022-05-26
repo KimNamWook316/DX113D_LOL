@@ -384,7 +384,7 @@ void CAnimationSequenceInstance::AddAnimationSequenceToSceneResource()
 
 	for (; iter != iterEnd; ++iter)
 	{
-		
+		// Scene 에 추가할지 말지 고민중
 	}
 }
 

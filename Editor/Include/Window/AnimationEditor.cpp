@@ -356,8 +356,6 @@ void CAnimationEditor::OnLoadAnimationInstance()
 			// 같은 폴더 목록 내에서 singed_spell2.msh / singed_spell2.bne 를 Load 하여 세팅한다.
 			// singed_spell2.msh -> singed_spell2_mesh 라는 이름으로
 			// singed_spell2.bne -> singed_spell2_skeleton 이라는 이름으로
-
-
 			OnCreateSample3DObject();
 		}
 		else
