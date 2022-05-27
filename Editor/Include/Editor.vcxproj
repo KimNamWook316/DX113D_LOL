@@ -167,6 +167,7 @@
   <ItemGroup>
     <ClCompile Include="EditorManager.cpp" />
     <ClCompile Include="EditorUtil.cpp" />
+    <ClCompile Include="GraphEditor.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Object\3DCameraObject.cpp" />
     <ClCompile Include="Object\3DParticleCamera.cpp" />
@@ -185,6 +186,13 @@
     <ClCompile Include="Widget\TransformWidget.cpp" />
     <ClCompile Include="Window\AnimationEditor.cpp" />
     <ClCompile Include="Thread\FBXConvertThread.cpp" />
+    <ClCompile Include="Window\BehaviorTreeMenuBar.cpp" />
+    <ClCompile Include="Window\BehaviorTreeWindow.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="Window\EffectEditor.cpp" />
     <ClCompile Include="Window\FBXConvertWindow.cpp" />
     <ClCompile Include="Window\FileBrowser.cpp" />
@@ -202,6 +210,7 @@
     <ClInclude Include="EditorInfo.h" />
     <ClInclude Include="EditorManager.h" />
     <ClInclude Include="EditorUtil.h" />
+    <ClInclude Include="GraphEditor.h" />
     <ClInclude Include="Object\3DCameraObject.h" />
     <ClInclude Include="Object\3DParticleCamera.h" />
     <ClInclude Include="Object\Anim3DObject.h" />
@@ -221,6 +230,13 @@
     <ClInclude Include="Widget\TransformWidget.h" />
     <ClInclude Include="Window\AnimationEditor.h" />
     <ClInclude Include="Thread\FBXConvertThread.h" />
+    <ClInclude Include="Window\BehaviorTreeMenuBar.h" />
+    <ClInclude Include="Window\BehaviorTreeWindow.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="Window\EffectEditor.h" />
     <ClInclude Include="Window\FBXConvertWindow.h" />
     <ClInclude Include="Window\FileBrowser.h" />

@@ -107,22 +107,22 @@ void CSceneComponentCreateModal::OnCreateComponent()
 
 	// TODO : 컴포넌트 추가될때마다 추가
 	if (Typeid == typeid(CAnimationMeshComponent).hash_code())
-		Com = SelectObject->CreateComponent<CAnimationMeshComponent>(Name);
+		Com = SelectObject->CreateComponentAddChild<CAnimationMeshComponent>(Name);
 
 	else if (Typeid == typeid(CStaticMeshComponent).hash_code())
-		Com = SelectObject->CreateComponent<CStaticMeshComponent>(Name);
+		Com = SelectObject->CreateComponentAddChild<CStaticMeshComponent>(Name);
 
 	else if (Typeid == typeid(CLandScape).hash_code())
-		Com = SelectObject->CreateComponent<CLandScape>(Name);
+		Com = SelectObject->CreateComponentAddChild<CLandScape>(Name);
 
 	else if (Typeid == typeid(CArm).hash_code())
-		Com = SelectObject->CreateComponent<CArm>(Name);
+		Com = SelectObject->CreateComponentAddChild<CArm>(Name);
 
 	else if (Typeid == typeid(CLightComponent).hash_code())
-		Com = SelectObject->CreateComponent<CLightComponent>(Name);
+		Com = SelectObject->CreateComponentAddChild<CLightComponent>(Name);
 
 	else if (Typeid == typeid(CSceneComponent).hash_code())
-		Com = SelectObject->CreateComponent<CSceneComponent>(Name);
+		Com = SelectObject->CreateComponentAddChild<CSceneComponent>(Name);
 
 	else if (Typeid == typeid(CParticleComponent).hash_code())
 		Com = SelectObject->CreateComponent<CParticleComponent>(Name);
@@ -140,11 +140,27 @@ void CSceneComponentCreateModal::OnCreateComponent()
 	CInspectorWindow* Inspector = (CInspectorWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(INSPECTOR);
 	Inspector->OnCreateSceneComponent(Com);
 
-	// 오브젝트에 속한 SceneComponent를 2개 이상 생성할 때 반드시 2번째 Component부터는 1번째 생성한 SceneComponent(=RootNode) 밑으로 넣어줘야한다
-	// 그렇게 하지 않으면 지금 Engine코드상 2번째 추가된 SceneComponent는 계층 구조에 속하지 못하고 그냥 CGameObject::m_SceneComponentList에만 들어가있다
+
 	if (ComponentWindow)
 	{
-		CIMGUITree* Child = ComponentWindow->GetRoot()->AddChild(Name);
+		// TODO : 이미 Root Component가 있는 상태에서 SceneComponent가 추가됐을때 RootComponent의 자식 Component로 들어갈테니
+		// GUI상에서도 Root의 자식으로 들어가는것 반영하기
+
+		CIMGUITree* Child = nullptr; 
+
+		// Control flow가 여기 들어올때면 엔진 상에서 이미 GameObject의 Component가 추가된 하고 여기로 들어오므로
+		// GameObject의 SceneComponent 개수가 2개 이상이면서 Root Component가 존재할때가 Root의 자식으로 지금 추가하려는 Component를 넣어줘야 할 때 이다
+		if (SelectObject->GetRootComponent() && SelectObject->GetSceneComponentCount() > 1)
+		{
+			const std::string& RootName = SelectObject->GetRootComponent()->GetName();
+			CIMGUITree* RootComponent = ComponentWindow->GetRoot()->FindChild(RootName);
+
+			Child = RootComponent->AddChild(Name);
+		}
+
+		else
+			Child = ComponentWindow->GetRoot()->AddChild(Name);
+
 		Child->AddSelectCallback<CSceneComponentHierarchyWindow>(ComponentWindow, &CSceneComponentHierarchyWindow::OnSetSelectNode);
 		Child->SetDragDropSourceCallback<CSceneComponentHierarchyWindow>(ComponentWindow, &CSceneComponentHierarchyWindow::OnDragDropSrc);
 		Child->SetDragDropDestCallback<CSceneComponentHierarchyWindow>(ComponentWindow, &CSceneComponentHierarchyWindow::OnDragDropDest);

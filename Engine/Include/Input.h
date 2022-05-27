@@ -130,8 +130,9 @@ public:
 	bool SetAltKey(const std::string& Name, bool State);
 	bool SetShiftKey(const std::string& Name, bool State);
 
-private:
+public:
 	KeyInfo* FindKeyInfo(const std::string& Name);
+	const keyState FindKeyState(const char Key);
 
 private:
 	bool InitWindow();

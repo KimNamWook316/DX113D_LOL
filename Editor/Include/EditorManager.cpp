@@ -27,7 +27,7 @@
 #include "Window/InspectorWindow.h"
 #include "Window/EffectEditor.h"
 #include "Window/ToolWindow.h"
-
+#include "Window/BehaviorTreeMenuBar.h"
 #include "Object/3DCameraObject.h"
 
 DEFINITION_SINGLE(CEditorManager)
@@ -82,7 +82,6 @@ bool CEditorManager::Init(HINSTANCE hInst)
 		return false;
 	}
 
-
 	CSceneManager::GetInst()->SetCreateSceneModeFunction<CEditorManager>(this, &CEditorManager::CreateSceneMode);
 	CSceneManager::GetInst()->SetCreateObjectFunction<CEditorManager>(this, &CEditorManager::CreateObject);
 	CSceneManager::GetInst()->SetCreateComponentFunction<CEditorManager>(this, &CEditorManager::CreateComponent);
@@ -101,6 +100,9 @@ bool CEditorManager::Init(HINSTANCE hInst)
 	m_EffectEditor = CIMGUIManager::GetInst()->AddWindow<CEffectEditor>(ANIMATION_EDITOR);
 	m_ToolWindow = CIMGUIManager::GetInst()->AddWindow<CToolWindow>(TOOL);
 	//CFBXConvertWindow* win = CIMGUIManager::GetInst()->AddWindow<CFBXConvertWindow>(FBX_CONVERTOR);
+
+	//CBehaviorTreeMenuBar* BTBar = CIMGUIManager::GetInst()->AddWindow<CBehaviorTreeMenuBar>("BehaviorTree");
+
 
 	CRenderManager::GetInst()->CreateLayer("DragLayer", INT_MAX);
 

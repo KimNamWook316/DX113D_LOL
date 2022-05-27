@@ -15,7 +15,8 @@ private:
 	class CIMGUIButton*					m_ComponentDeleteButton;
 	class CObjectComponentCreateModal*	m_ComponentCreateModal;
 	class CIMGUIListBox*				m_ComponentListBox;
-
+	int m_SelectIndex;
+	std::string m_SelectLabel;
 
 public:
 	virtual bool Init();
@@ -29,6 +30,19 @@ public:
 	int AddObjectComponent(const std::string& Name);
 	void OnSelectComponent(int Index, const char* Label);
 	void OnDeleteComponent();
+
+public:
+	int GetSelectIndex()	const
+	{
+		return m_SelectIndex;
+	}
+
+	std::string GetSelectLabel()	const
+	{
+		return m_SelectLabel;
+	}
+
+
 
 public:
 	template <typename T>

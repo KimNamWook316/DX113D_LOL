@@ -295,6 +295,12 @@
     <Filter Include="02. Resource\02. Shader\02. ShaderClass\14. AnimEditor">
       <UniqueIdentifier>{9cc26f9b-e79c-4efd-8de5-51ea76d6929b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="05. Component\02. ObjectComponent\03. StateComponent">
+      <UniqueIdentifier>{57332d8e-c02b-4f7c-94c0-6d83896ee020}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. Component\02. ObjectComponent\03. StateComponent\01. Node">
+      <UniqueIdentifier>{04fec20f-0f5d-419c-8188-686137c76e7e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Device.cpp">
@@ -890,6 +896,39 @@
     </ClCompile>
     <ClCompile Include="IMGUIGrid.cpp">
       <Filter>01. Engine\08. IMGUI\03. Widget</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\Node\ActionNode.cpp">
+      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\Node\CompositeNode.cpp">
+      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\Node\ConditionNode.cpp">
+      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\Node\IdleNode.cpp">
+      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\Node\MoveInputCheckNode.cpp">
+      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\Node\Node.cpp">
+      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\Node\RunNode.cpp">
+      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\Node\SelectorNode.cpp">
+      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\Node\SequenceNode.cpp">
+      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\StateComponent.cpp">
+      <Filter>05. Component\02. ObjectComponent\03. StateComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\BehaviorTree.cpp">
+      <Filter>05. Component\02. ObjectComponent\03. StateComponent</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1522,6 +1561,39 @@
     </ClInclude>
     <ClInclude Include="IMGUIGrid.h">
       <Filter>01. Engine\08. IMGUI\03. Widget</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\ActionNode.h">
+      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\CompositeNode.h">
+      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\ConditionNode.h">
+      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\IdleNode.h">
+      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\MoveInputCheckNode.h">
+      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\Node.h">
+      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\RunNode.h">
+      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\SelectorNode.h">
+      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\SequenceNode.h">
+      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\StateComponent.h">
+      <Filter>05. Component\02. ObjectComponent\03. StateComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\BehaviorTree.h">
+      <Filter>05. Component\02. ObjectComponent\03. StateComponent</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

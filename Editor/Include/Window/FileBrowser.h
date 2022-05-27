@@ -21,6 +21,7 @@ private:
 	bool						m_UpdateFullPath;
 	std::string					m_InitialFullPath;
 
+	size_t						m_SingleLineIconNum;
 
 public:
 	void SetUpdatePath(bool Update)

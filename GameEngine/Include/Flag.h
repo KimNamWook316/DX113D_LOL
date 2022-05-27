@@ -262,6 +262,7 @@ enum class SceneComponent3DType
 enum class ObjectComponent3DType
 {
 	PaperBurnComponent,
+	StateComponent,
 	Max
 };
 
@@ -270,4 +271,45 @@ enum class Transform_State
 	None,
 	Ground,
 	Falling
+};
+
+enum class NodeResult
+{
+	Node_True,
+	Node_False,
+	Node_None,
+	Max
+};
+
+enum CrowdControl
+{
+	Airborne = 0x1,
+	Restraint = 0x2,
+	Stun = 0x4,
+	KnockBack = 0x8,
+	Silence = 0x10,
+	Fear = 0x20,
+	Taunt = 0x40,
+	Fascination = 0x80,
+	Transition = 0x100,
+	Slow = 0x200
+};
+
+enum LeafNode
+{
+	InputQCheck,
+	InputWCheck,
+	InputECheck,
+	InputRCheck,
+	InputDCheck,
+	InputFCheck,
+	MouseRightInputCheck,
+	SkillQ,
+	SkillW,
+	SkillE,
+	SkillR,
+	SpellD,
+	SpellF,
+	Move,
+	Max
 };

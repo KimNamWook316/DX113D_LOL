@@ -347,8 +347,13 @@ void CAnimationSequenceInstance::ChangeAnimation(const std::string& Name)
 	m_ChangeAnimation->m_Time = 0.f;
 }
 
+bool CAnimationSequenceInstance::CheckCurrentAnimation(const std::string& Name)
+{
+	return m_CurrentAnimation->m_Name == Name;
+}
+
 void CAnimationSequenceInstance::ClearAnimationSequenceFromAnimationEditor()
-{	
+{
 	// 나머지는 모두 지워주기
 	auto iter = m_mapAnimation.begin();
 	auto iterEnd = m_mapAnimation.end();
@@ -414,7 +419,6 @@ int CAnimationSequenceInstance::GetCurrentAnimationOrder()
 	return Idx;
 	return 0;
 }
-
 void CAnimationSequenceInstance::Start()
 {
 	if (m_Scene)

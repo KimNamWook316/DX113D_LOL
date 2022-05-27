@@ -106,6 +106,8 @@ void CSceneComponentHierarchyWindow::OnCreateComponentPopUp()
 
 		if (State == PopUpModalState::Closed)
 			m_ComponentCreateModal->SetPopUpModalState(PopUpModalState::Open);
+
+		m_ComponentCreateModal->SetRender(true);
 	}
 }
 
@@ -209,6 +211,44 @@ void CSceneComponentHierarchyWindow::OnUpdateSceneComponetWindow(CIMGUITree* Sel
 
 	RootTreeNode->EnableAll();
 
+}
+
+void CSceneComponentHierarchyWindow::OnClearComponents(const std::string& RootComponentName)
+{
+	size_t Count = m_Root->GetChildCount();
+
+	for (size_t i = 0; i < Count; ++i)
+	{
+		CIMGUITree* RootComponent = m_Root->FindChild(RootComponentName);
+
+		if (RootComponent)
+		{
+			RootComponent->Delete();
+		}
+	}
+
+	CObjectHierarchyWindow* ObjWindow = (CObjectHierarchyWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(OBJECT_HIERARCHY);
+
+	CGameObject* SelectObj = ObjWindow->GetSelectObject();
+
+	for (size_t i = 0; i < Count;)
+	{
+		CIMGUITree* Node = m_Root->GetNode(i);
+
+		if (Node)
+		{
+			CComponent* Comp = SelectObj->FindComponent(Node->GetName());
+
+			if (Comp)
+			{
+				Node->Delete();
+				Count = m_Root->GetChildCount();
+			}
+
+			else
+				++i;
+		}
+	}
 }
 
 void CSceneComponentHierarchyWindow::OnSetSelectNode(CIMGUITree* Tree)

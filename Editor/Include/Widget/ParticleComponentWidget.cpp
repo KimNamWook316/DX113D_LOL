@@ -223,6 +223,21 @@ void CParticleComponentWidget::OnSetParticleMaterialSetting(CSceneComponent* Com
 
     // 반드시 3D 로 세팅한다.
     Particle->Set2D(false);
+    Particle->SetSpawnCountMax(1000);
+    Particle->SetLifeTimeMin(70.f);
+    Particle->SetLifeTimeMax(80.f);
+    Particle->SetScaleMin(Vector3(20.f, 20.f, 1.f));
+    Particle->SetScaleMax(Vector3(50.f, 50.f, 1.f));
+    Particle->SetSpeedMin(100.f);
+    Particle->SetSpeedMax(300.f);
+    Particle->SetMoveDir(Vector3(0.f, 1.f, 0.f));
+    Particle->SetStartMin(Vector3(-30.f, -30.f, 0.f));
+    Particle->SetStartMax(Vector3(30.f, 30.f, 0.f));
+    Particle->SetColorMin(Vector4(0.2f, 0.1f, 0.8f, 1.f));
+    Particle->SetColorMax(Vector4(0.2f, 0.1f, 0.8f, 1.f));
+    Particle->SetMoveAngle(Vector3(0.f, 0.f, 30.f));
+    Particle->SetGravity(true);
+    // Particle->SetMove(true);
 
     // Layer 를 세팅한다.
     Com->SetLayerName("ParticleEditorLayer");
