@@ -1,5 +1,7 @@
 #pragma once
+
 #include "IMGUIWindow.h"
+
 class CBehaviorTreeMenuBar :
     public CIMGUIWindow
 {
@@ -8,7 +10,7 @@ public:
 	virtual ~CBehaviorTreeMenuBar();
 
 private:
-	class CIMGUIPopUpModal* m_NodeEditorModal;
+	class CBehaviorTreeWindow* m_TreeEditorWindow;
 
 public:
 	virtual bool Init();

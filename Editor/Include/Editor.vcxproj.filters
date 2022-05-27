@@ -138,6 +138,12 @@
     <ClCompile Include="Window\BehaviorTreeMenuBar.cpp">
       <Filter>02. Editor\01. Window</Filter>
     </ClCompile>
+    <ClCompile Include="Window\BehaviorTreeWindow.cpp">
+      <Filter>02. Editor\01. Window</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphEditor.cpp">
+      <Filter>02. Editor\99. Util</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EditorManager.h">
@@ -229,6 +235,12 @@
     </ClInclude>
     <ClInclude Include="Window\BehaviorTreeMenuBar.h">
       <Filter>02. Editor\01. Window</Filter>
+    </ClInclude>
+    <ClInclude Include="Window\BehaviorTreeWindow.h">
+      <Filter>02. Editor\01. Window</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphEditor.h">
+      <Filter>02. Editor\99. Util</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

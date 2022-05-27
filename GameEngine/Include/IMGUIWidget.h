@@ -79,6 +79,11 @@ public:
 		m_Render = Render;
 	}
 
+	bool IsRender()	const
+	{
+		return m_Render;
+	}
+
 public:
 	virtual bool Init();
 	virtual void Render();

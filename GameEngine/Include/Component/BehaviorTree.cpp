@@ -7,7 +7,7 @@
 CBehaviorTree::CBehaviorTree() :
 	m_Root(nullptr)
 {
-
+	
 }
 
 CBehaviorTree::CBehaviorTree(const CBehaviorTree& Tree)

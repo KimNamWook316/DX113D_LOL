@@ -10,6 +10,7 @@
 #include "Component/AnimationMeshComponent.h"
 #include "Component/StaticMeshComponent.h"
 #include "Component/PaperBurnComponent.h"
+#include "Component/StateComponent.h"
 
 #include "IMGUITree.h"
 
@@ -222,7 +223,8 @@ std::string CEditorUtil::ObjectComponent3DTypeToString(ObjectComponent3DType Typ
 	{
 	case ObjectComponent3DType::PaperBurnComponent:
 		return "PaperBurnComponent";
-
+	case ObjectComponent3DType::StateComponent:
+		return "StateComponent";
 	}
 
 	return "";
@@ -274,8 +276,8 @@ size_t CEditorUtil::ObjectComponentTypeIndexToTypeid(int TypeIndex)
 	{
 	case 0:
 		return typeid(CPaperBurnComponent).hash_code();
-	//case 1:
-	//	return typeid(CStaticMeshComponent).hash_code();
+	case 1:
+		return typeid(CStateComponent).hash_code();
 	//case 2:
 	//	return typeid(CLandScape).hash_code();
 	//case 3:

@@ -11,7 +11,8 @@
 
 CObjectComponentWindow::CObjectComponentWindow()	:
 	m_ComponentCreatePopUpButton(nullptr),
-	m_ComponentCreateModal(nullptr)
+	m_ComponentCreateModal(nullptr),
+	m_SelectIndex(-1)
 {
 }
 
@@ -77,7 +78,8 @@ int CObjectComponentWindow::AddObjectComponent(const std::string& Name)
 
 void CObjectComponentWindow::OnSelectComponent(int Index, const char* Label)
 {
-
+	m_SelectIndex = Index;
+	m_SelectLabel = Label;
 }
 
 void CObjectComponentWindow::OnDeleteComponent()

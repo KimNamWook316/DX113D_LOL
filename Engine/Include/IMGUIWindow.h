@@ -13,6 +13,8 @@ protected:
 	bool	m_Open;
 	int		m_WindowFlag;
 	std::vector<class CIMGUIWidget*>	m_vecWidget;
+	Vector2 m_WindowSize;
+	Vector2 m_WindowStartPos;
 
 protected:
 	std::string	m_PopupTitle;
@@ -31,6 +33,16 @@ public:
 	void IncreaseWidgetID()
 	{
 		++m_WidgetID;
+	}
+
+	const Vector2& GetWindowSize()	const
+	{
+		return m_WindowSize;
+	}
+
+	const Vector2& GetWindowStartPos()	const
+	{
+		return m_WindowStartPos;
 	}
 
 public:

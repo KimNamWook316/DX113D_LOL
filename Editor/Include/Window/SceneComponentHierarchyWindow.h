@@ -53,6 +53,9 @@ public:
 	// Object Hierarchy Window에서 새로운 Object를 선택할때마다 SceneComponentWindow에 목록을 갱신 
 	void OnUpdateSceneComponetWindow(class CIMGUITree* SelectObjectNode);
 
+	// Object Hierarchy Window에서 Object가 Delete되면 SceneComponentHierarchyWindow에 Component들 전부 제거
+	void OnClearComponents(const std::string& RootComponentName);
+
 	void OnSetSelectNode(CIMGUITree* Tree);
 	void OnDeleteComponent();
 };

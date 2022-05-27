@@ -14,6 +14,7 @@
 #define OBJECTCOMPONENT_CREATE_POPUPMODAL	"ObjectComponentCreatePopUpModal"
 #define ANIMATION_EDITOR					"AnimationEditor"
 #define FBX_CONVERTOR						"FBXConverter"
+#define BEHAVIORTREE_WINDOW					"BehaviorTreeWindow"
 
 #define DIRECTORY_IMAGE						"DirectoryImage"
 #define FILE_IMAGE							"FileImage"
@@ -21,8 +22,8 @@
 
 #define SINGLELINE_NUMICON	5
 
-#define ICON_SIZEX			50.f
-#define ICON_SIZEY			50.f
+#define ICON_SIZEX			100.f
+#define ICON_SIZEY			130.f
 
 enum class CreateObject_Type
 {

@@ -18,7 +18,8 @@ namespace fs = std::filesystem;
 
 CFileBrowser::CFileBrowser()	:
 	m_UpdatePath(true),
-	m_UpdateFullPath(false)
+	m_UpdateFullPath(false),
+	m_SingleLineIconNum(5)
 {
 	m_InitialPath = ROOT_PATH;
 }
@@ -39,6 +40,26 @@ void CFileBrowser::Update(float DeltaTime)
 {
 	CIMGUIWindow::Update(DeltaTime);
 
+	size_t Num = GetWindowSize().x / ICON_SIZEX;
+	bool Update = false;
+
+
+	// 윈도우 사이즈 변경되면 SingleLineIcon 개수 바꿔서 새로 그려주기
+	if (m_SingleLineIconNum != Num)
+	{
+		m_SingleLineIconNum = Num;
+
+		if (m_InitialPath.length() > 0)
+		{
+			m_UpdatePath = true;
+		}
+
+		else
+		{
+			m_UpdateFullPath = true;
+		}
+	}
+
 	if (m_UpdatePath || m_UpdateFullPath)
 	{
 		ClearWidget();
@@ -58,7 +79,7 @@ void CFileBrowser::Update(float DeltaTime)
 		for (size_t i = 0; i < Count; ++i, ++TotalCount)
 		{
 			std::string Name = m_vecDirName[i] + "ICon";
-			CIMGUIChild* Child = AddWidget<CIMGUIChild>(Name, 100.f, 130.f);
+			CIMGUIChild* Child = AddWidget<CIMGUIChild>(Name, ICON_SIZEX, ICON_SIZEY);
 
 			CIMGUIImageButton* DirImage = Child->AddWidget<CIMGUIImageButton>(m_vecDirName[i]);
 
@@ -71,7 +92,7 @@ void CFileBrowser::Update(float DeltaTime)
 
 			DirImage->SetDoubleClickCallback<CFileBrowser>(this, &CFileBrowser::SetInitialPath);
 
-			if (TotalCount < (int)SINGLELINE_NUMICON - 1)
+			if (TotalCount < (int)Num - 1)
 				Child->SetSameLine(true);
 			else
 				TotalCount = -1;
@@ -84,7 +105,7 @@ void CFileBrowser::Update(float DeltaTime)
 		for (size_t i = 0; i < Count; ++i, ++TotalCount)
 		{
 			std::string Name = m_vecFileName[i] + "ICon";
-			CIMGUIChild* Child = AddWidget<CIMGUIChild>(Name, 100.f, 130.f);
+			CIMGUIChild* Child = AddWidget<CIMGUIChild>(Name, ICON_SIZEX, ICON_SIZEY);
 
 			CIMGUIImageButton* FileImage = Child->AddWidget<CIMGUIImageButton>(m_vecFileName[i]);
 
@@ -96,7 +117,7 @@ void CFileBrowser::Update(float DeltaTime)
 			CIMGUIText* FileName = Child->AddWidget<CIMGUIText>("FileName");
 			FileName->SetText(m_vecFileName[i].c_str());
 
-			if (TotalCount < (int)SINGLELINE_NUMICON - 1)
+			if (TotalCount < (int)Num - 1)
 				Child->SetSameLine(true);
 			else
 				TotalCount = -1;
@@ -113,12 +134,14 @@ void CFileBrowser::Update(float DeltaTime)
 void CFileBrowser::SetInitialPath(const std::string& Path)
 {
 	m_InitialPath = Path;
+	m_InitialFullPath.clear();
 	m_UpdatePath = true;
 }
 
 void CFileBrowser::SetInitialFullPath(const std::string& FullPath)
 {
 	m_InitialFullPath = FullPath;
+	m_InitialPath.clear();
 	m_UpdateFullPath = true;
 }
 

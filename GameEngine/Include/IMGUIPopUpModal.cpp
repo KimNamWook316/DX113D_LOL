@@ -31,6 +31,7 @@ void CIMGUIPopUpModal::Render()
 
     if (ImGui::BeginPopupModal(m_Name.c_str(), NULL, ImGuiWindowFlags_AlwaysAutoResize))
     {
+        m_Render = true;
 		size_t size = mVecChild.size();
 		for (size_t i = 0; i < size; ++i)
 		{
@@ -41,7 +42,9 @@ void CIMGUIPopUpModal::Render()
         {
             ImGui::CloseCurrentPopup();
             m_State = PopUpModalState::Closed;
+            m_Render = false;
         }
+
         ImGui::EndPopup();
     }
 }

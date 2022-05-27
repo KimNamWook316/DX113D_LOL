@@ -6,6 +6,8 @@
 CStateComponent::CStateComponent()	:
 	m_BehaviorTree(nullptr)
 {
+	SetTypeID<CStateComponent>();
+
 	m_BehaviorTree = new CBehaviorTree;
 	m_BehaviorTree->m_Owner = this;
 }

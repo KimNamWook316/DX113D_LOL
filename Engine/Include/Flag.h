@@ -262,6 +262,7 @@ enum class SceneComponent3DType
 enum class ObjectComponent3DType
 {
 	PaperBurnComponent,
+	StateComponent,
 	Max
 };
 
@@ -292,4 +293,23 @@ enum CrowdControl
 	Fascination = 0x80,
 	Transition = 0x100,
 	Slow = 0x200
+};
+
+enum LeafNode
+{
+	InputQCheck,
+	InputWCheck,
+	InputECheck,
+	InputRCheck,
+	InputDCheck,
+	InputFCheck,
+	MouseRightInputCheck,
+	SkillQ,
+	SkillW,
+	SkillE,
+	SkillR,
+	SpellD,
+	SpellF,
+	Move,
+	Max
 };

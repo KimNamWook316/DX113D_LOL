@@ -11,6 +11,7 @@
 #include "ObjectHierarchyWindow.h"
 #include "IMGUIManager.h"
 #include "Component/PaperBurnComponent.h"
+#include "Component/StateComponent.h"
 #include "ObjectComponentWindow.h"
 
 CObjectComponentCreateModal::CObjectComponentCreateModal()	:
@@ -87,7 +88,8 @@ void CObjectComponentCreateModal::OnCreateComponent()
 
 	if (Typeid == typeid(CPaperBurnComponent).hash_code())
 		CObjectComponent* Com = SelectObject->CreateComponent<CPaperBurnComponent>(Name);
-
+	else if (Typeid == typeid(CStateComponent).hash_code())
+		CObjectComponent* Com = SelectObject->CreateComponent<CStateComponent>(Name);
 	
 
 	CObjectComponentWindow* ComponentWindow = (CObjectComponentWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(OBJECTCOMPONENT_LIST);

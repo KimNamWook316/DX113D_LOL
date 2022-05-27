@@ -28,7 +28,7 @@ CEngine::CEngine()	:
 	m_GlobalAccTime(0.f)
 {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-	//_CrtSetBreakAlloc(7587);
+	//_CrtSetBreakAlloc(200);
 
 	//m_ClearColor[1] = 1.f; 
 }
@@ -94,32 +94,25 @@ bool CEngine::Init(HINSTANCE hInst, HWND hWnd,
 
 	m_Timer = new CTimer;
 
-	// Device �ʱ�ȭ
 	if (!CDevice::GetInst()->Init(m_hWnd, Width, Height, WindowMode))
 		return false;
 
 	if (!CPathManager::GetInst()->Init())
 		return false;
 
-	// ���ҽ� ������ �ʱ�ȭ
 	if (!CResourceManager::GetInst()->Init())
 		return false;
 
-	// �浹 ������ �ʱ�ȭ
 	if (!CCollisionManager::GetInst()->Init())
 		return false;
 
-	// �Է� ������ �ʱ�ȭ
 	if (!CInput::GetInst()->Init(m_hInst, m_hWnd))
 		return false;
 
-
-	// IMGUI ������ �ʱ�ȭ
 	if (!CIMGUIManager::GetInst()->Init(m_hWnd))
 		return false;
 
 
-	// ������ ������ �ʱ�ȭ
 	if (!CRenderManager::GetInst()->Init())
 		return false;
 
@@ -130,11 +123,11 @@ bool CEngine::Init(HINSTANCE hInst, HWND hWnd,
 
 	m_GlobalCBuffer->SetResolution(m_RS);
 
-	// ��� ������ �ʱ�ȭ
+
 	if (!CSceneManager::GetInst()->Init())
 		return false;
 
-	// ���� ���� ����ȭ���� ����
+
 	m_RandomBuffer = new CStructuredBuffer;
 
 	m_RandomBuffer->Init("RandomBuffer", sizeof(float), 10000, 10, true);
@@ -173,26 +166,17 @@ int CEngine::Run()
 
 	while (m_Loop)
 	{
-		// GetMessage�� �޼����� ���� ��� �ٸ����� �� �� ����.
-		// �޼����� �ö����� ����ϰ� �ִ� �ð��� �������� ����Ÿ���̶�� �Ѵ�.
-		// ������ �޼����� �ִ� �ð����� ���� �ð��� �ξ� ���.
-		// �׷��� ������ �������� ����Ÿ�ӵ��� ������ ���۵� �� �ְ� �����Ѵ�.
-		// PeekMessage�� �޼���ť���� �޼����� ���´�.
-		// �׷��� ���� �޼����� ���ٸ� false�� �����ϸ鼭 �ٷ� ����������
-		// �޼����� �ִٸ� true�� �����ϸ鼭 �ش� �޼����� �����´�.
+
 		if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
 		{
-			// WM_KEYDOWN �̶�� �޼����� �ִ�. �̴� Ű���� Ű�� �������� �߻��Ǵ� �޼���
-			// �̴�. TranslateMessage �Լ������� �޼����� �������ָ� WM_KEYDOWN ������
-			// �Ǵ����ְ� ������ Ű�� ���� Ű������ �Ǵ��ؼ� �Ϲ� ���� Ű��� WM_CHAR���
-			// �޽����� ���� �޼��� ť�� �߰����ְ� �ȴ�.
+
 			TranslateMessage(&msg);
 
-			// DispatchMessage �Լ��� �޼����� ������ ���ν����� �����ش�.
+
 			DispatchMessage(&msg);
 		}
 
-		// �����찡 ����Ÿ���� ��� ����� ������ �ȴ�.
+
 		else
 		{
 			Logic();
@@ -321,28 +305,25 @@ ATOM CEngine::Register(const TCHAR* Name, int IconID)
 
 	wcex.cbSize = sizeof(WNDCLASSEX);
 
-	// �۾������� �ٲ� �ٽ� �׸��Բ� ���ش�. ���ο� ���� ��� �ٽ� �׸���.
+
 	wcex.style = CS_HREDRAW | CS_VREDRAW;
 
-	// �޼����� ť�� �������� �ش� �޼����� �������� ������ �޼����� ���ڷ� �����ؼ�
-	// ȣ������ �Լ��� �����Ѵ�.
+
 	wcex.lpfnWndProc = WndProc;
 	wcex.cbClsExtra = 0;
 	wcex.cbWndExtra = 0;
 
-	// Window Instance�� �����Ѵ�.
+
 	wcex.hInstance = m_hInst;
 
-	// ���������� ��������� ����� ������ �̹����� �����Ѵ�.
+
 	wcex.hIcon = LoadIcon(m_hInst, MAKEINTRESOURCE(IconID));
 
 
 	wcex.hCursor = LoadCursor(nullptr, IDC_ARROW);
 	wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
 	wcex.lpszMenuName = nullptr;
-	// �����ڵ� ���ڿ��� ����Ҷ� L"" �� �ٿ��� ����� �Ѵ�.
-	// TEXT ��ũ�δ� "" �տ� L �� �ٿ��� L"" �� ������ش�.
-	// �����ڵ��϶��� �̷��� ���ְ� multibyte  �϶��� �׳� "" �� ������ش�.
+
 	wcex.lpszClassName = Name;
 	wcex.hIconSm = LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IconID));
 
@@ -359,26 +340,21 @@ BOOL CEngine::Create(const TCHAR* Name)
 		return FALSE;
 	}
 	
-	// Ŭ���̾�Ʈ ������ 1280, 720���� ������ش�.
-	// RECT : �簢���� ǥ���ϴ� ����ü�̴�.
-	// left, top, right, bottom 4���� ������ �����Ǿ� �ִ�.
+
 	RECT    rc = { 0, 0, (LONG)m_RS.Width, (LONG)m_RS.Height };
 	
-	// 1������ : Ŭ���̾�Ʈ ������ ũ�⸦ �����Ѵ�.
-	// �� �Լ��� �Ϸ�Ǹ� rc���� ���� Ŭ���̾�Ʈ ������ ���ϴ� ũ�� �� �� �ִ�
-	// ��ü �������� left, top, right, bottom ������ ������ �ȴ�.
+
 	AdjustWindowRect(&rc, WS_OVERLAPPEDWINDOW, FALSE);
 
-	// ������ ���� Rect�� �̿��ؼ� ������ ũ�⸦ �����Ѵ�.
+
 	SetWindowPos(m_hWnd, HWND_TOPMOST, 0, 0, rc.right - rc.left,
 		rc.bottom - rc.top,
 		SWP_NOZORDER);
 
-	// SW_SHOW : ������â�� ȭ�鿡 �����ش�.
-	// SW_HIDE : â�� ����� ������ ȭ�鿡 �����ִ°� �ƴϴ�.
+
 	ShowWindow(m_hWnd, SW_SHOW);
 
-	// UpdateWindow �Լ��� ������ �κ��� �ִٸ� �����϶�� ������ �����ִ� �Լ��̴�.
+
 	UpdateWindow(m_hWnd);
 
 	return TRUE;
@@ -397,7 +373,7 @@ LRESULT CEngine::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	{
 		PAINTSTRUCT ps;
 
-		// HDC : ȭ�鿡 ����ϱ� ���� �׸��� �����̴�.
+
 		HDC hdc = BeginPaint(hWnd, &ps);
 
 		EndPaint(hWnd, &ps);

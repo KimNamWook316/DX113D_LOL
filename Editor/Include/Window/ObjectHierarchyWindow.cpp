@@ -1,5 +1,6 @@
 
 #include "ObjectHierarchyWindow.h"
+#include "SceneComponentHierarchyWindow.h"
 #include "IMGUITree.h"
 #include "../EditorUtil.h"
 #include "IMGUIButton.h"
@@ -90,12 +91,15 @@ void CObjectHierarchyWindow::OnCreateObjectPopUp()
 
 		if (State == PopUpModalState::Closed)
 			m_ObjectCreateModal->SetPopUpModalState(PopUpModalState::Open);
+
+		m_ObjectCreateModal->SetRender(true);
 	}
 }
 
 void CObjectHierarchyWindow::OnDeleteObject()
 {
 	CObjectHierarchyWindow* Window = (CObjectHierarchyWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(OBJECT_HIERARCHY);
+	CSceneComponentHierarchyWindow* CompWindow = (CSceneComponentHierarchyWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(SCENECOMPONENT_HIERARCHY);
 
 	std::string SelectObjName = Window->GetSelectNode()->GetName();
 
@@ -105,6 +109,8 @@ void CObjectHierarchyWindow::OnDeleteObject()
 	Obj->DeleteObj();
 
 	// GUI상에서 노드 제거
+	CompWindow->OnClearComponents(Obj->GetRootComponent()->GetName());
+
 	m_SelectNode->Delete();
 }
 
