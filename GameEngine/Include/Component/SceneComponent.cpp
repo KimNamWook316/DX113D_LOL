@@ -572,3 +572,28 @@ void CSceneComponent::Load(FILE* File)
 	}
 }
 
+void CSceneComponent::SetUpdateByMat(bool UpdateByMat)
+{
+	m_Transform->SetUpdateByMat(UpdateByMat);
+}
+
+void CSceneComponent::DecomposeWorld()
+{
+	m_Transform->DecomposeWorld();
+}
+
+void CSceneComponent::AddWorldPosByLocalAxis(AXIS Axis, float Amount)
+{
+	m_Transform->AddWorldPosByLocalAxis(Axis, Amount);
+}
+
+void CSceneComponent::AddWorldPosByLocalAxis(const Vector3& Pos)
+{
+	m_Transform->AddWorldPosByLocalAxis(Pos);
+}
+
+void CSceneComponent::SetTransformByWorldMatrix(const Matrix& matTRS)
+{
+	m_Transform->SetTransformByWorldMatrix(matTRS);
+}
+

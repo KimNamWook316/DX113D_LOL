@@ -5,11 +5,7 @@
 class CIMGUIImage :
     public CIMGUIWidget
 {
-	friend class CIMGUIWindow;
-	friend class CIMGUIWidgetList;
-	friend class CIMGUIChild;
-
-protected:
+public:
 	CIMGUIImage();
 	virtual ~CIMGUIImage();
 

@@ -462,3 +462,28 @@ void CGameObject::Move(const Vector3& EndPos)
 	}
 }
 
+void CGameObject::SetUpdateByMat(bool UpdateByMat)
+{
+	m_RootComponent->SetUpdateByMat(UpdateByMat);
+}
+
+void CGameObject::DecomposeWorld()
+{
+	m_RootComponent->DecomposeWorld();
+}
+
+void CGameObject::SetTransformByWorldMatrix(const Matrix& matTRS)
+{
+	m_RootComponent->SetTransformByWorldMatrix(matTRS);
+}
+
+void CGameObject::AddWorldPosByLocalAxis(AXIS Axis, float Amount)
+{
+	m_RootComponent->AddWorldPosByLocalAxis(Axis, Amount);
+}
+
+void CGameObject::AddWorldPosByLocalAxis(const Vector3& Pos)
+{
+	m_RootComponent->AddWorldPosByLocalAxis(Pos);
+}
+

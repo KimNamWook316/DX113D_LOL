@@ -7,11 +7,16 @@
 
 CIMGUIGizmo::CIMGUIGizmo() :
 	m_Object(nullptr),
+	m_Using(false),
 	m_Scale(1.f, 1.f, 1.f),
 	m_Rot(0.f, 0.f, 0.f),
-	m_Pos(0.f, 0.f, 0.f)
+	m_Pos(0.f, 0.f, 0.f),
+	m_PrevScale(1.f, 1.f, 1.f),
+	m_PrevRot(0.f, 0.f, 0.f),
+	m_PrevPos(0.f, 0.f, 0.f)
 {
 	m_Operation = ImGuizmo::OPERATION::TRANSLATE;
+	m_Mode = ImGuizmo::MODE::WORLD;
 	m_matWorld.Identity();
 }
 
@@ -31,39 +36,40 @@ void CIMGUIGizmo::Render()
 	CCameraComponent* Camera = CSceneManager::GetInst()->GetScene()->GetCameraManager()->GetCurrentCamera();
 
 	Matrix matScale, matRot, matTrans;
+
 	matScale.Identity();
 	matRot.Identity();
 	matTrans.Identity();
 
-	matScale.Scaling(m_Scale);
-	matRot.Rotation(m_Rot);
-	matTrans.Translation(m_Pos);
+	m_matWorld = matScale * matRot * matTrans;
+
+	if (m_Object && m_Object->GetRootComponent())
+	{
+		m_matWorld = m_Object->GetWorldMatrix();
+	}
 
 	Matrix matView, matProj;
-	m_matWorld = matScale * matRot * matTrans;
 
 	matView = Camera->GetViewMatrix();
 	matProj = Camera->GetProjMatrix();
 
  	ImGuizmo::Manipulate((float*)&matView, (float*)&matProj, m_Operation,
- 		ImGuizmo::MODE::WORLD, (float*)&m_matWorld);
+ 		m_Mode, (float*)&m_matWorld);
 
 	if (ImGuizmo::IsUsing() && m_Object)
 	{
-		ImGuizmo::DecomposeMatrixToComponents((float*)&m_matWorld, (float*)&m_Pos,
-			(float*)&m_Rot, (float*)&m_Scale);
-
-		switch (m_Operation)
+		// Gizmo가 사용 중일때는 Transform에 World Matrix를 직접 넣는 방식으로 제어한다.
+		m_Object->SetTransformByWorldMatrix(m_matWorld);
+		m_Using = true;
+	}
+	else
+	{
+		if (m_Using)
 		{
-		case ImGuizmo::OPERATION::TRANSLATE:
-			m_Object->SetWorldPos(m_Pos);
-			break;
-		case ImGuizmo::OPERATION::ROTATE:
-			m_Object->SetWorldRotation(m_Rot);
-			break;
-		case ImGuizmo::OPERATION::SCALE:
-			m_Object->SetWorldScale(m_Scale);
-			break;
+			// Gizmo사용이 끝나면, 다시 Scale, Pos, Rot 값으로 World Matirx를 구성하게 돌려놓는다.
+			m_Object->SetUpdateByMat(false);
+			m_Object->DecomposeWorld();
+			m_Using = false;
 		}
 	}
 }

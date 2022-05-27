@@ -193,6 +193,7 @@
     <ClCompile Include="Window\ObjectHierarchyWindow.cpp" />
     <ClCompile Include="Window\SceneComponentCreateModal.cpp" />
     <ClCompile Include="Window\SceneComponentHierarchyWindow.cpp" />
+    <ClCompile Include="Window\ToolWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EditorInfo.h" />
@@ -225,6 +226,7 @@
     <ClInclude Include="Window\ObjectHierarchyWindow.h" />
     <ClInclude Include="Window\SceneComponentCreateModal.h" />
     <ClInclude Include="Window\SceneComponentHierarchyWindow.h" />
+    <ClInclude Include="Window\ToolWindow.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Editor.rc" />

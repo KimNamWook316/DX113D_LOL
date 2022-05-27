@@ -3,12 +3,7 @@
 class CIMGUISameLine :
 	public CIMGUIWidget
 {
-	friend class CIMGUIWindow;
-	friend class CIMGUIPopUpModal;
-	friend class CIMGUIWidgetList;
-	friend class CIMGUITree;
-
-protected:
+public:
 	CIMGUISameLine();
 	virtual ~CIMGUISameLine();
 

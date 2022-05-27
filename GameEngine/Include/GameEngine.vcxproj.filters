@@ -834,13 +834,16 @@
     <ClCompile Include="ImGuizmo.cpp">
       <Filter>01. Engine\08. IMGUI\01. Lib</Filter>
     </ClCompile>
-    <ClCompile Include="EngineUtil.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="IMGUIGizmo.cpp">
       <Filter>01. Engine\08. IMGUI\03. Widget</Filter>
     </ClCompile>
     <ClCompile Include="IMGUIGrid.cpp">
+      <Filter>01. Engine\08. IMGUI\03. Widget</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineUtil.cpp">
+      <Filter>99. Util</Filter>
+    </ClCompile>
+    <ClCompile Include="IMGUICollapsingHeader.cpp">
       <Filter>01. Engine\08. IMGUI\03. Widget</Filter>
     </ClCompile>
   </ItemGroup>
@@ -1436,13 +1439,16 @@
     <ClInclude Include="ImZoomSlider.h">
       <Filter>01. Engine\08. IMGUI\01. Lib</Filter>
     </ClInclude>
-    <ClInclude Include="EngineUtil.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="IMGUIGizmo.h">
       <Filter>01. Engine\08. IMGUI\03. Widget</Filter>
     </ClInclude>
     <ClInclude Include="IMGUIGrid.h">
+      <Filter>01. Engine\08. IMGUI\03. Widget</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineUtil.h">
+      <Filter>99. Util</Filter>
+    </ClInclude>
+    <ClInclude Include="IMGUICollapsingHeader.h">
       <Filter>01. Engine\08. IMGUI\03. Widget</Filter>
     </ClInclude>
   </ItemGroup>

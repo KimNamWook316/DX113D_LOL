@@ -17,6 +17,7 @@
 #include "Component/StaticMeshComponent.h"
 #include "Component/Arm.h"
 #include "Component/LandScape.h"
+#include "ToolWindow.h"
 
 CSceneComponentCreateModal::CSceneComponentCreateModal() :
 	//m_SceneComponentCreatePopUp(nullptr),

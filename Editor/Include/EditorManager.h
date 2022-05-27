@@ -26,6 +26,7 @@ private:
 	class CObjectComponentWindow* m_ObjectComponentWindow;
 	class CAnimationEditor* m_AnimationEditor;
 	class CInspectorWindow* m_InspectorWindow;
+	class CToolWindow* m_ToolWindow;
 
 	class C3DCameraObject* m_CameraObject;
 

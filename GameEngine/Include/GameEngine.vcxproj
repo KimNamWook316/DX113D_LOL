@@ -66,6 +66,7 @@
     <ClCompile Include="IMGUIButton.cpp" />
     <ClCompile Include="IMGUICheckBox.cpp" />
     <ClCompile Include="IMGUIChild.cpp" />
+    <ClCompile Include="IMGUICollapsingHeader.cpp" />
     <ClCompile Include="IMGUIColor3.cpp" />
     <ClCompile Include="IMGUIColor4.cpp" />
     <ClCompile Include="IMGUIComboBox.cpp" />
@@ -260,6 +261,7 @@
     <ClInclude Include="IMGUIButton.h" />
     <ClInclude Include="IMGUICheckBox.h" />
     <ClInclude Include="IMGUIChild.h" />
+    <ClInclude Include="IMGUICollapsingHeader.h" />
     <ClInclude Include="IMGUIColor3.h" />
     <ClInclude Include="IMGUIColor4.h" />
     <ClInclude Include="IMGUIComboBox.h" />

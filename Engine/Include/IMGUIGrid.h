@@ -5,9 +5,7 @@
 class CIMGUIGrid :
     public CIMGUIWidget
 {
-	friend class CIMGUIWindow;
-
-private:
+public:
 	CIMGUIGrid();
 	~CIMGUIGrid();
 

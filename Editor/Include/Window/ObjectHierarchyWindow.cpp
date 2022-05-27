@@ -14,8 +14,7 @@
 #include "Scene/SceneManager.h"
 #include "GameObject/GameObject.h"
 #include "InspectorWindow.h"
-
-#include "Input.h"
+#include "ToolWindow.h"
 
 CObjectHierarchyWindow::CObjectHierarchyWindow() :
 	m_Root(nullptr),
@@ -62,19 +61,6 @@ bool CObjectHierarchyWindow::Init()
 	m_ObjectDeleteButton->SetClickCallback<CObjectHierarchyWindow>(this, &CObjectHierarchyWindow::OnDeleteObject);
 
 	m_vecObjectTree.push_back(m_Root);
-
-	m_Grid = AddWidget<CIMGUIGrid>("Grid", 100.f);
-	m_Gizmo = AddWidget<CIMGUIGizmo>("Gizmo");
-
-	// 디버그용 임시 키
-	CInput::GetInst()->CreateKey("Q", 'Q');
-	CInput::GetInst()->CreateKey("W", 'W');
-	CInput::GetInst()->CreateKey("E", 'E');
-
-	// 디버그용 임시 키
-	CInput::GetInst()->SetKeyCallback("Q", KeyState_Down, this, &CObjectHierarchyWindow::OnQDown);
-	CInput::GetInst()->SetKeyCallback("W", KeyState_Down, this, &CObjectHierarchyWindow::OnWDown);
-	CInput::GetInst()->SetKeyCallback("E", KeyState_Down, this, &CObjectHierarchyWindow::OnEDown);
 	return true;
 }
 
@@ -89,22 +75,6 @@ void CObjectHierarchyWindow::Update(float DeltaTime)
 	// 매 프레임마다 Tree를 순회하면서 m_SelectNode에 지금 선택된 노드를 갱신해줌
 	//FindSelectNode(m_Root);
 }
-
-void CObjectHierarchyWindow::OnQDown(float DetlaTime)
-{
-	m_Gizmo->SetOperationMode(ImGuizmo::OPERATION::TRANSLATE);
-}
-
-void CObjectHierarchyWindow::OnWDown(float DetlaTime)
-{
-	m_Gizmo->SetOperationMode(ImGuizmo::OPERATION::ROTATE);
-}
-
-void CObjectHierarchyWindow::OnEDown(float DetlaTime)
-{
-	m_Gizmo->SetOperationMode(ImGuizmo::OPERATION::SCALE);
-}
-
 void CObjectHierarchyWindow::OnRenameObject(const std::string& Name)
 {
 	m_SelectNode->SetName(Name);
@@ -174,10 +144,7 @@ void CObjectHierarchyWindow::OnSetSelectNode(CIMGUITree* SelectNode)
 
 	if (m_SelectObject->GetRootComponent())
 	{
-		m_Gizmo->SetGameObject(m_SelectObject);
-		m_Gizmo->SetScale(m_SelectObject->GetWorldScale());
-		m_Gizmo->SetPos(m_SelectObject->GetWorldPos());
-		m_Gizmo->SetRot(m_SelectObject->GetWorldRot());
+		static_cast<CToolWindow*>(CIMGUIManager::GetInst()->FindIMGUIWindow(TOOL))->SetGizmoObject(m_SelectObject);
 	}
 
 	static_cast<CInspectorWindow*>(CIMGUIManager::GetInst()->FindIMGUIWindow(INSPECTOR))->OnSelectGameObject(m_SelectObject);

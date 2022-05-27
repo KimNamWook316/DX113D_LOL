@@ -21,9 +21,6 @@ private:
 	class CIMGUITree* m_DragSrc;
 	class CIMGUITree* m_DragDest;
 
-	class CIMGUIGizmo* m_Gizmo;
-	class CIMGUIGrid* m_Grid;
-
 public:
 	class CIMGUITree* GetRoot()	const;
 	class CGameObject* GetSelectObject()	const;
@@ -31,12 +28,6 @@ public:
 public:
 	virtual bool Init();
 	virtual void Update(float DeltaTime);
-
-public:
-	// 디버그용 임시 키
-	void OnQDown(float DetlaTime);
-	void OnWDown(float DetlaTime);
-	void OnEDown(float DetlaTime);
 
 
 public:

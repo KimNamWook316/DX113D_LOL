@@ -8,23 +8,6 @@
 #include "../Engine.h"
 #include "../Resource/Animation/SkeletonSokcet.h"
 
-static float NormalizeAngle(float angle)
-{
-	while (angle > 360)
-		angle -= 360;
-	while (angle < 0)
-		angle += 360;
-	return angle;
-}
-
-static Vector3 NormalizeAngles(Vector3 angles)
-{
-	angles.x = NormalizeAngle(angles.x);
-	angles.y = NormalizeAngle(angles.y);
-	angles.z = NormalizeAngle(angles.z);
-	return angles;
-}
-
 CTransform::CTransform() :
 	m_Parent(nullptr),
 	m_Scene(nullptr),
@@ -75,7 +58,7 @@ void CTransform::InheritScale(bool Current)
 
 	CallChangeScaleCallBack();
 
-	// ÀÚ½ÄÀÌ ÀÖÀ» °æ¿ì ¸ðµÎ °»½ÅÇØÁØ´Ù.
+	// ìžì‹ì´ ìžˆì„ ê²½ìš° ëª¨ë‘ ê°±ì‹ í•´ì¤€ë‹¤.
 	size_t	Size = m_vecChild.size();
 
 	for (size_t i = 0; i < Size; ++i)
@@ -128,7 +111,7 @@ void CTransform::InheritRotation(bool Current)
 
 	CallChangeRotCallBack();
 
-	// ÀÚ½ÄÀÌ ÀÖÀ» °æ¿ì ¸ðµÎ °»½ÅÇØÁØ´Ù.
+	// ìžì‹ì´ ìžˆì„ ê²½ìš° ëª¨ë‘ ê°±ì‹ í•´ì¤€ë‹¤.
 	size_t	Size = m_vecChild.size();
 
 	for (size_t i = 0; i < Size; ++i)
@@ -178,7 +161,7 @@ void CTransform::InheritParentRotationPos(bool Current)
 
 	CallChangePosCallBack();
 
-	// ÀÚ½ÄÀÌ ÀÖÀ» °æ¿ì ¸ðµÎ °»½ÅÇØÁØ´Ù.
+	// ìžì‹ì´ ìžˆì„ ê²½ìš° ëª¨ë‘ ê°±ì‹ í•´ì¤€ë‹¤.
 	size_t	Size = m_vecChild.size();
 
 	for (size_t i = 0; i < Size; ++i)
@@ -196,7 +179,7 @@ void CTransform::InheritWorldScale(bool Current)
 
 	CallChangeScaleCallBack();
 
-	// ÀÚ½ÄÀÌ ÀÖÀ» °æ¿ì ¸ðµÎ °»½ÅÇØÁØ´Ù.
+	// ìžì‹ì´ ìžˆì„ ê²½ìš° ëª¨ë‘ ê°±ì‹ í•´ì¤€ë‹¤.
 	size_t	Size = m_vecChild.size();
 
 	for (size_t i = 0; i < Size; ++i)
@@ -249,7 +232,7 @@ void CTransform::InheritWorldRotation(bool Current)
 
 	CallChangeRotCallBack();
 
-	// ÀÚ½ÄÀÌ ÀÖÀ» °æ¿ì ¸ðµÎ °»½ÅÇØÁØ´Ù.
+	// ìžì‹ì´ ìžˆì„ ê²½ìš° ëª¨ë‘ ê°±ì‹ í•´ì¤€ë‹¤.
 	size_t	Size = m_vecChild.size();
 
 	for (size_t i = 0; i < Size; ++i)
@@ -304,7 +287,7 @@ void CTransform::InheritParentRotationWorldPos(bool Current)
 
 	CallChangePosCallBack();
 
-	// ÀÚ½ÄÀÌ ÀÖÀ» °æ¿ì ¸ðµÎ °»½ÅÇØÁØ´Ù.
+	// ìžì‹ì´ ìžˆì„ ê²½ìš° ëª¨ë‘ ê°±ì‹ í•´ì¤€ë‹¤.
 	size_t	Size = m_vecChild.size();
 
 	for (size_t i = 0; i < Size; ++i)
@@ -447,11 +430,48 @@ void CTransform::AddRelativePos(float x, float y, float z)
 	AddRelativePos(Pos);
 }
 
-void CTransform::SetTransformByWorldMatrix(const Matrix& matTRS)
+void CTransform::SetTransformByWorldMatrix(Matrix matTRS)
 {
 	m_UpdateByMat = true;
-	
-	m_matWorld = matTRS;
+ //	m_WorldScale.x = matTRS[0][0];
+ //	m_WorldScale.y = matTRS[1][1];
+ //	m_WorldScale.z = matTRS[2][2];
+
+	Vector3 r1, r2, r3;
+	memcpy(&r1, &matTRS[0][0], sizeof(Vector3));
+	memcpy(&r2, &matTRS[1][0], sizeof(Vector3));
+	memcpy(&r3, &matTRS[2][0], sizeof(Vector3));
+
+	m_WorldScale.x = r1.Length();
+	m_WorldScale.y = r2.Length();
+	m_WorldScale.z = r3.Length();
+
+	memcpy(&m_WorldPos, &matTRS[3][0], sizeof(Vector3));
+
+	r1.Normalize();
+	r2.Normalize();
+	r3.Normalize();
+
+	m_WorldRot.x = RadianToDegree(atan2f(r2.z, r3.z));
+	m_WorldRot.y = RadianToDegree(atan2f(-r1.z, sqrtf(r2.z * r2.z + r3.z * r3.z)));
+	m_WorldRot.z = RadianToDegree(atan2f(r1.y, r1.x));
+
+	m_RelativePos = m_WorldPos;
+	m_RelativeScale = m_WorldScale;
+	m_RelativeRot = m_WorldRot;
+
+	if (m_Parent)
+	{
+		m_RelativePos = m_Parent->GetWorldPos() - m_RelativePos;
+		m_RelativeScale = m_RelativeScale / m_Parent->GetWorldScale();
+		m_RelativeRot = m_Parent->GetWorldRot() - m_RelativeRot;
+	}
+
+	m_matScale.Translation(m_WorldScale);
+	m_matPos.Translation(m_WorldPos);
+	m_matRot.Translation(m_WorldRot);
+
+	ComputeWorld();
 }
 
 void CTransform::SetWorldScale(const Vector3& Scale)
@@ -590,18 +610,6 @@ void CTransform::AddWorldPos(float x, float y, float z)
 	AddWorldPos(Pos);
 }
 
-void CTransform::AddWorldPosByLocalAxis(AXIS Axis, float Amount)
-{
-	Vector3 Move =  m_WorldAxis[Axis] * Amount;
-	AddWorldPos(Move);
-}
-
-void CTransform::AddWorldPosByLocalAxis(const Vector3& Pos)
-{
-	Vector3 Move = m_WorldAxis[AXIS::AXIS_X] * Pos.x + m_WorldAxis[AXIS::AXIS_Y] * Pos.y + m_WorldAxis[AXIS::AXIS_Z] * Pos.z;
-	AddWorldPos(Pos);
-}
-
 void CTransform::Start()
 {
 	InheritScale(true);
@@ -622,11 +630,6 @@ void CTransform::Update(float DeltaTime)
 
 void CTransform::PostUpdate(float DeltaTime)
 {
-	if (m_UpdateByMat)
-	{
-		return;
-	}
-
 	if (m_State == Transform_State::Ground)
 	{
 		float Height = m_Scene->GetNavigation3DManager()->GetY(m_WorldPos);
@@ -640,7 +643,7 @@ void CTransform::PostUpdate(float DeltaTime)
 		}
 	}
 
-	// ¼ÒÄÏÀÌ ÀÖÀ» °æ¿ì ºÎ¸ð·Î ¼ÒÄÏÀ» °öÇØÁØ´Ù.
+	// ì†Œì¼“ì´ ìžˆì„ ê²½ìš° ë¶€ëª¨ë¡œ ì†Œì¼“ì„ ê³±í•´ì¤€ë‹¤.
 	if (m_Socket)
 	{
 		if (m_UpdateScale)
@@ -719,76 +722,6 @@ void CTransform::ComputeWorld()
 	if (m_Socket)
 	{
 		m_matWorld *= m_Socket->GetSocketMatrix();
-	}
-}
-
-void CTransform::DecomposeWorld()
-{
-	XMVECTOR vScale;
-	XMVECTOR vRotQ;
-	XMVECTOR vPos;
-	XMMatrixDecompose(&vScale, &vRotQ, &vPos, m_matWorld.m);
-
-	m_WorldScale = vScale;
-	m_WorldPos = vPos;
-
-	// Quaternion to Euler Angle
-	// ÃâÃ³ http://www.littlecandle.co.kr/bbs/board.php?bo_table=codingnote&wr_id=174&page=2
-	float w, x, y, z;
-	w = vRotQ.m128_f32[3];
-	x = vRotQ.m128_f32[0];
-	y = vRotQ.m128_f32[1];
-	z = vRotQ.m128_f32[2];
-
-	float sqW = w * w;
-	float sqX = x * x;
-	float sqY = y * y;
-	float sqZ = z * z;
-	float unit = sqX + sqY + sqZ + sqW;
-	float test = x * w - y * z;
-	Vector3 v;
-
-	if (test > 0.4955f * unit)
-	{
-		v.y = 2.f * atan2f(y, x);
-		v.x = PI / 2.f;
-		v.z = 0;
-		v = v * (180.f / PI);
-	}
-	else if (test < -0.4995f * unit)
-	{
-		v.x = -2.f * atan2f(y, x);
-		v.x = -PI / 2.f;
-		v.z = 0;
-		v = v * (180.f / PI);
-	}
-	else
-	{
-		Vector4 Quat(w, z, x, y);
-		v.y = (float)atan2f(2.f * Quat.x * Quat.w + 2.f * Quat.y * Quat.z, 1.f - 2.f * (Quat.z * Quat.z + Quat.w + Quat.w)); // Yaw
-		v.x = (float)asinf(2.f * (Quat.x * Quat.z - Quat.w * Quat.y)); // Pitch
-		v.z = (float)atan2(2.f * Quat.x * Quat.y + 2.f * Quat.z * Quat.w, 1.f - 2.f * (Quat.y * Quat.y + Quat.z * Quat.z)); // Roll
-		v = v * (180.f / PI);
-	}
-	NormalizeAngles(v);
-	m_WorldRot = v;
-
-	m_RelativePos = m_WorldPos;
-	m_RelativeScale = m_WorldScale;
-	m_RelativeRot = m_WorldRot;
-
-	if (m_Parent)
-	{
-		m_RelativePos = m_Parent->GetWorldPos() - m_RelativePos;
-		m_RelativeScale = m_RelativeScale / m_Parent->GetWorldScale();
-		m_RelativeRot = m_Parent->GetWorldRot() - m_RelativeRot;
-	}
-
-	if (m_vecChild.size() > 0)
-	{
-		InheritParentRotationPos(true);
-		InheritRotation(true);
-		InheritScale(true);
 	}
 }
 

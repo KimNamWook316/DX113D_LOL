@@ -141,6 +141,9 @@
     <ClCompile Include="Object\3DCameraObject.cpp">
       <Filter>03. Object\02. 3D</Filter>
     </ClCompile>
+    <ClCompile Include="Window\ToolWindow.cpp">
+      <Filter>02. Editor\01. Window</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EditorManager.h">
@@ -232,6 +235,9 @@
     </ClInclude>
     <ClInclude Include="Object\3DCameraObject.h">
       <Filter>03. Object\02. 3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Window\ToolWindow.h">
+      <Filter>02. Editor\01. Window</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

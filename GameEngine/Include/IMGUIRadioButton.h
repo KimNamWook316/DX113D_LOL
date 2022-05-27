@@ -35,6 +35,17 @@ public:
         mVecCheckInfo.push_back(info);
     }
 public:
+    void SetCheck(int idx, bool check)
+    {
+        if (idx >= mVecCheckInfo.size())
+        {
+            return;
+        }
+
+        mVecCheckInfo[idx]->bCheck = check;
+        mCheckItemIdx = idx;
+    }
+
     // 여러 개 버튼을 한 줄에 배치할 경우 줄 수를 지정하는 기능
     void SetColNum(const int val)
     {

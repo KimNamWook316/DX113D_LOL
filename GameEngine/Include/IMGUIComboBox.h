@@ -5,12 +5,7 @@
 class CIMGUIComboBox :
 	public CIMGUIWidget
 {
-	friend class CIMGUIWindow;
-	friend class CIMGUIPopUpModal;
-	friend class CIMGUIWidgetList;
-	friend class CIMGUITree;
-
-protected:
+public:
 	CIMGUIComboBox();
 	virtual ~CIMGUIComboBox();
 

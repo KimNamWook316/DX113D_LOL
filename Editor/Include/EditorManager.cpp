@@ -25,6 +25,7 @@
 #include "Window/AnimationEditor.h"
 #include "Window/FBXConvertWindow.h"
 #include "Window/InspectorWindow.h"
+#include "Window/ToolWindow.h"
 
 #include "Object/3DCameraObject.h"
 
@@ -95,6 +96,7 @@ bool CEditorManager::Init(HINSTANCE hInst)
 	m_ObjectComponentWindow = CIMGUIManager::GetInst()->AddWindow<CObjectComponentWindow>(OBJECTCOMPONENT_LIST);
 	//m_FileBrowserTree = CIMGUIManager::GetInst()->AddWindow<CFileBrowserTree>(FILE_BROWSERTREE);
 	m_InspectorWindow = CIMGUIManager::GetInst()->AddWindow<CInspectorWindow>(INSPECTOR);
+	m_ToolWindow = CIMGUIManager::GetInst()->AddWindow<CToolWindow>(TOOL);
 	//m_AnimationEditor = CIMGUIManager::GetInst()->AddWindow<CAnimationEditor>(ANIMATION_EDITOR);
 
 	//CFBXConvertWindow* win = CIMGUIManager::GetInst()->AddWindow<CFBXConvertWindow>(FBX_CONVERTOR);
