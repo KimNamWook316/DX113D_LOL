@@ -65,6 +65,12 @@ public:
         mbMultiCheck = bMultiCheck;
     }
 
+    // 항상 하나 이상이 체크되어 있어야 하는지 여부
+    void AlwaysCheck(bool Check)
+    {
+        mAlwaysCheck = Check;
+    }
+
 public:
     bool GetCheck(const int idx) const
     {
@@ -86,6 +92,7 @@ protected:
     std::function<void(const char*, bool)> mCallBack;
     
     bool mbMultiCheck;
+    bool mAlwaysCheck; // 항상 하나 이상이 체크되어 있어야 한다면
     int mCheckItemIdx;
 };
 

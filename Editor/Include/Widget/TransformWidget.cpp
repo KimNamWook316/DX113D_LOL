@@ -1,5 +1,5 @@
 #include "TransformWidget.h"
-#include "Component/Transform.h"
+#include "Component/SceneComponent.h"
 #include "IMGUIText.h"
 #include "IMGUICheckBox.h"
 #include "IMGUITree.h"
@@ -8,9 +8,9 @@
 #include "IMGUIDummy.h"
 
 CTransformWidget::CTransformWidget()	:
-	m_Transform(nullptr),
 	m_InheritCheckBox(nullptr),
 	m_WorldTree(nullptr),
+	m_Transform(nullptr),
 	m_RelativeTree(nullptr),
 	m_WorldPosInput(nullptr),
 	m_WorldRotInput(nullptr),
@@ -24,7 +24,7 @@ CTransformWidget::CTransformWidget()	:
 CTransformWidget::~CTransformWidget()
 {
 	// CallBack 삭제
-	if (m_Transform)
+	if (m_SceneComponent)
 	{
 		m_Transform->DeleteChangePosCallBack(this);
 		m_Transform->DeleteChangeRotCallBack(this);
@@ -71,20 +71,12 @@ bool CTransformWidget::Init()
 	m_RelativeRotInput->SetCallBack(this, &CTransformWidget::OnChangeRelativeRot);
 	m_RelativeScaleInput->SetCallBack(this, &CTransformWidget::OnChangeRelativeScale);
 
-	// Transform 에서 값 변경시 위젯 갱신해주는 콜백 등록
-	if (m_Transform)
-	{
-		m_Transform->AddChangePosCallBack(this, &CTransformWidget::OnChangeTransformPos);
-		m_Transform->AddChangeRotCallBack(this, &CTransformWidget::OnChangeTransformRot);
-		m_Transform->AddChangeScaleCallBack(this, &CTransformWidget::OnChangeTransformScale);
-	}
-
 	return true;
 }
 
-void CTransformWidget::SetTransform(CTransform* Trans)
+void CTransformWidget::SetSceneCompoent(CSceneComponent* Component)
 {
-	m_Transform = Trans;
+	m_Transform = Component->GetTransform();
 
 	m_InheritCheckBox->SetCheck(0, m_Transform->IsInheritScale());
 	m_InheritCheckBox->SetCheck(1, m_Transform->IsInheritRotX());
@@ -101,6 +93,11 @@ void CTransformWidget::SetTransform(CTransform* Trans)
 	m_RelativePosInput->SetVal(m_Transform->GetRelativePos());
 	m_RelativeRotInput->SetVal(m_Transform->GetRelativeRot());
 	m_RelativeScaleInput->SetVal(m_Transform->GetRelativeScale());
+
+	// Transform 에서 값 변경시 위젯 갱신해주는 콜백 등록
+	m_Transform->AddChangePosCallBack(this, &CTransformWidget::OnChangeTransformPos);
+	m_Transform->AddChangeRotCallBack(this, &CTransformWidget::OnChangeTransformRot);
+	m_Transform->AddChangeScaleCallBack(this, &CTransformWidget::OnChangeTransformScale);
 }
 
 void CTransformWidget::OnChangeTransformScale(const Vector3& WorldScale, const Vector3& RelativeScale)

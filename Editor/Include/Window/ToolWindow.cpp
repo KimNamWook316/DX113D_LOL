@@ -31,11 +31,13 @@ bool CToolWindow::Init()
 	m_GizmoTransformMode->AddCheckInfo("Local");
 	m_GizmoTransformMode->AddCheckInfo("World");
 	m_GizmoTransformMode->SetCheck(1, true);
+	m_GizmoTransformMode->AlwaysCheck(true);
 
 	m_GizmoOperationMode->AddCheckInfo("Translation");
 	m_GizmoOperationMode->AddCheckInfo("Rotation");
 	m_GizmoOperationMode->AddCheckInfo("Scale");
 	m_GizmoOperationMode->SetCheck(0, true);
+	m_GizmoOperationMode->AlwaysCheck(true);
 
 	m_GizmoTransformMode->SetCallBack(this, &CToolWindow::OnSelectGizmoTransformMode);
 	m_GizmoOperationMode->SetCallBack(this, &CToolWindow::OnSelectGizmoOperationMode);
@@ -56,9 +58,6 @@ bool CToolWindow::Init()
 void CToolWindow::SetGizmoObject(CGameObject* Object)
 {
 	m_Gizmo->SetGameObject(Object);
-	m_Gizmo->SetScale(Object->GetWorldScale());
-	m_Gizmo->SetPos(Object->GetWorldPos());
-	m_Gizmo->SetRot(Object->GetWorldRot());
 }
 
 void CToolWindow::OnSelectGizmoOperationMode(const char* Label, bool Check)

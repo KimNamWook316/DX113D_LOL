@@ -790,6 +790,10 @@ void CTransform::DecomposeWorld()
 		InheritRotation(true);
 		InheritScale(true);
 	}
+
+	CallChangePosCallBack();
+	CallChangeRotCallBack();
+	CallChangeScaleCallBack();
 }
 
 CTransform* CTransform::Clone()

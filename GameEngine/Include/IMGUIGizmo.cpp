@@ -7,13 +7,7 @@
 
 CIMGUIGizmo::CIMGUIGizmo() :
 	m_Object(nullptr),
-	m_Using(false),
-	m_Scale(1.f, 1.f, 1.f),
-	m_Rot(0.f, 0.f, 0.f),
-	m_Pos(0.f, 0.f, 0.f),
-	m_PrevScale(1.f, 1.f, 1.f),
-	m_PrevRot(0.f, 0.f, 0.f),
-	m_PrevPos(0.f, 0.f, 0.f)
+	m_Using(false)
 {
 	m_Operation = ImGuizmo::OPERATION::TRANSLATE;
 	m_Mode = ImGuizmo::MODE::WORLD;
@@ -73,3 +67,4 @@ void CIMGUIGizmo::Render()
 		}
 	}
 }
+
