@@ -8,6 +8,23 @@
 #include "../Engine.h"
 #include "../Resource/Animation/SkeletonSokcet.h"
 
+static float NormalizeAngle(float angle)
+{
+	while (angle > 360)
+		angle -= 360;
+	while (angle < 0)
+		angle += 360;
+	return angle;
+}
+
+static Vector3 NormalizeAngles(Vector3 angles)
+{
+	angles.x = NormalizeAngle(angles.x);
+	angles.y = NormalizeAngle(angles.y);
+	angles.z = NormalizeAngle(angles.z);
+	return angles;
+}
+
 CTransform::CTransform() :
 	m_Parent(nullptr),
 	m_Scene(nullptr),
@@ -22,12 +39,14 @@ CTransform::CTransform() :
 	m_InheritParentRotationPosZ(true),
 	m_UpdateScale(true),
 	m_UpdateRot(true),
+	m_UpdateRotAxis(false),
 	m_UpdatePos(true),
 	m_CBuffer(nullptr),
 	m_RelativeScale(1.f, 1.f, 1.f),
 	m_WorldScale(1.f, 1.f, 1.f),
 	m_State(Transform_State::None),
-	m_Socket(nullptr)
+	m_Socket(nullptr),
+	m_UpdateByMat(false)
 {
 	for (int i = 0; i < AXIS_MAX; ++i)
 	{
@@ -46,6 +65,21 @@ CTransform::CTransform(const CTransform& transform)
 CTransform::~CTransform()
 {
 	SAFE_DELETE(m_CBuffer);
+}
+
+void CTransform::SetInstancingInfo(Instancing3DInfo* Info)
+{
+	CCameraComponent* Camera = m_Scene->GetCameraManager()->GetCurrentCamera();
+	Matrix	matWV = m_matWorld * Camera->GetViewMatrix();
+
+	Info->matWV = matWV;
+
+	Matrix	matWVP = matWV * Camera->GetProjMatrix();
+
+	Info->matWVP = matWVP;
+
+	Info->matWV.Transpose();
+	Info->matWVP.Transpose();
 }
 
 void CTransform::InheritScale(bool Current)
@@ -429,6 +463,13 @@ void CTransform::AddRelativePos(float x, float y, float z)
 	AddRelativePos(Pos);
 }
 
+void CTransform::SetTransformByWorldMatrix(const Matrix& matTRS)
+{
+	m_UpdateByMat = true;
+	
+	m_matWorld = matTRS;
+}
+
 void CTransform::SetWorldScale(const Vector3& Scale)
 {
 	m_WorldScale = Scale;
@@ -495,6 +536,18 @@ void CTransform::SetWorldPos(float x, float y, float z)
 	Vector3	Pos(x, y, z);
 
 	SetWorldPos(Pos);
+}
+
+void CTransform::SetRotationAxis(const Vector3& OriginDir, const Vector3& View)
+{
+	m_UpdateRotAxis = true;
+
+	Vector3 Axis = OriginDir.Cross(View);
+	Axis.Normalize();
+
+	float Angle = OriginDir.Angle(View);
+
+	m_matRot = XMMatrixRotationAxis(Axis.Convert(), DegreeToRadian(Angle));
 }
 
 void CTransform::AddWorldScale(const Vector3& Scale)
@@ -565,6 +618,18 @@ void CTransform::AddWorldPos(float x, float y, float z)
 	AddWorldPos(Pos);
 }
 
+void CTransform::AddWorldPosByLocalAxis(AXIS Axis, float Amount)
+{
+	Vector3 Move =  m_WorldAxis[Axis] * Amount;
+	AddWorldPos(Move);
+}
+
+void CTransform::AddWorldPosByLocalAxis(const Vector3& Pos)
+{
+	Vector3 Move = m_WorldAxis[AXIS::AXIS_X] * Pos.x + m_WorldAxis[AXIS::AXIS_Y] * Pos.y + m_WorldAxis[AXIS::AXIS_Z] * Pos.z;
+	AddWorldPos(Pos);
+}
+
 void CTransform::Start()
 {
 	InheritScale(true);
@@ -585,6 +650,11 @@ void CTransform::Update(float DeltaTime)
 
 void CTransform::PostUpdate(float DeltaTime)
 {
+	if (m_UpdateByMat)
+	{
+		return;
+	}
+
 	if (m_State == Transform_State::Ground)
 	{
 		float Height = m_Scene->GetNavigation3DManager()->GetY(m_WorldPos);
@@ -598,23 +668,6 @@ void CTransform::PostUpdate(float DeltaTime)
 		}
 	}
 
-	Vector3	WorldPos = m_WorldPos;
-
-	if (CEngine::GetInst()->GetEngineSpace() == Engine_Space::Space2D)
-		WorldPos.z = WorldPos.y / 30000.f * 1000.f;
-
-	if (m_UpdateScale)
-		m_matScale.Scaling(m_WorldScale);
-
-	if (m_UpdateRot)
-		m_matRot.Rotation(m_WorldRot);
-
-	if (m_UpdatePos)
-		m_matPos.Translation(WorldPos);
-
-	if (m_UpdateScale || m_UpdateRot || m_UpdatePos)
-		m_matWorld = m_matScale * m_matRot * m_matPos;
-
 	// 소켓이 있을 경우 부모로 소켓을 곱해준다.
 	if (m_Socket)
 	{
@@ -623,7 +676,8 @@ void CTransform::PostUpdate(float DeltaTime)
 			m_matScale.Scaling(m_RelativeScale);
 		}
 		
-		if (m_UpdateRot)
+		// 축 기준 회전을 적용받는 경우, Rotaton Matrix가 이미 계산되어 있다.
+		if (m_UpdateRot && !m_UpdateRotAxis)
 		{
 			m_matRot.Rotation(m_RelativeRot);
 		}
@@ -633,7 +687,7 @@ void CTransform::PostUpdate(float DeltaTime)
 			m_matPos.Translation(m_RelativePos);
 		}
 
-		if (m_UpdateScale || m_UpdateRot || m_UpdatePos)
+		if (m_UpdateScale || m_UpdateRot || m_UpdateRotAxis || m_UpdatePos )
 		{
 			m_matWorld = m_matScale * m_matRot * m_matPos;
 		}
@@ -655,7 +709,7 @@ void CTransform::PostUpdate(float DeltaTime)
 			m_matScale.Scaling(m_WorldScale);
 		}
 		
-		if (m_UpdateRot)
+		if (m_UpdateRot && !m_UpdateRotAxis)
 		{
 			m_matRot.Rotation(m_WorldRot);
 		}
@@ -665,7 +719,7 @@ void CTransform::PostUpdate(float DeltaTime)
 			m_matPos.Translation(m_WorldPos);
 		}
 
-		if (m_UpdateScale || m_UpdateRot || m_UpdatePos)
+		if (m_UpdateScale || m_UpdateRot || m_UpdateRotAxis || m_UpdatePos)
 		{
 			m_matWorld = m_matScale * m_matRot * m_matPos;
 		}
@@ -690,6 +744,85 @@ void CTransform::SetTransform()
 void CTransform::ComputeWorld()
 {
 	m_matWorld = m_matScale * m_matRot * m_matPos;
+
+	if (m_Socket)
+	{
+		m_matWorld *= m_Socket->GetSocketMatrix();
+	}
+}
+
+void CTransform::DecomposeWorld()
+{
+	XMVECTOR vScale;
+	XMVECTOR vRotQ;
+	XMVECTOR vPos;
+	XMMatrixDecompose(&vScale, &vRotQ, &vPos, m_matWorld.m);
+
+	m_WorldScale = vScale;
+	m_WorldPos = vPos;
+
+	// Quaternion to Euler Angle
+	// 출처 http://www.littlecandle.co.kr/bbs/board.php?bo_table=codingnote&wr_id=174&page=2
+	float w, x, y, z;
+	w = vRotQ.m128_f32[3];
+	x = vRotQ.m128_f32[0];
+	y = vRotQ.m128_f32[1];
+	z = vRotQ.m128_f32[2];
+
+	float sqW = w * w;
+	float sqX = x * x;
+	float sqY = y * y;
+	float sqZ = z * z;
+	float unit = sqX + sqY + sqZ + sqW;
+	float test = x * w - y * z;
+	Vector3 v;
+
+	if (test > 0.4955f * unit)
+	{
+		v.y = 2.f * atan2f(y, x);
+		v.x = PI / 2.f;
+		v.z = 0;
+		v = v * (180.f / PI);
+	}
+	else if (test < -0.4995f * unit)
+	{
+		v.x = -2.f * atan2f(y, x);
+		v.x = -PI / 2.f;
+		v.z = 0;
+		v = v * (180.f / PI);
+	}
+	else
+	{
+		Vector4 Quat(w, z, x, y);
+		v.y = (float)atan2f(2.f * Quat.x * Quat.w + 2.f * Quat.y * Quat.z, 1.f - 2.f * (Quat.z * Quat.z + Quat.w + Quat.w)); // Yaw
+		v.x = (float)asinf(2.f * (Quat.x * Quat.z - Quat.w * Quat.y)); // Pitch
+		v.z = (float)atan2(2.f * Quat.x * Quat.y + 2.f * Quat.z * Quat.w, 1.f - 2.f * (Quat.y * Quat.y + Quat.z * Quat.z)); // Roll
+		v = v * (180.f / PI);
+	}
+	NormalizeAngles(v);
+	m_WorldRot = v;
+
+	m_RelativePos = m_WorldPos;
+	m_RelativeScale = m_WorldScale;
+	m_RelativeRot = m_WorldRot;
+
+	if (m_Parent)
+	{
+		m_RelativePos = m_Parent->GetWorldPos() - m_RelativePos;
+		m_RelativeScale = m_RelativeScale / m_Parent->GetWorldScale();
+		m_RelativeRot = m_Parent->GetWorldRot() - m_RelativeRot;
+	}
+
+	if (m_vecChild.size() > 0)
+	{
+		InheritParentRotationPos(true);
+		InheritRotation(true);
+		InheritScale(true);
+	}
+
+	CallChangePosCallBack();
+	CallChangeRotCallBack();
+	CallChangeScaleCallBack();
 }
 
 CTransform* CTransform::Clone()
@@ -743,6 +876,22 @@ void CTransform::Load(FILE* File)
 	fread(&m_WorldAxis, sizeof(Vector3), AXIS_MAX, File);
 	fread(&m_Pivot, sizeof(Vector3), 1, File);
 	fread(&m_MeshSize, sizeof(Vector3), 1, File);
+}
+
+void CTransform::SetAnimationTransform()
+{
+	m_CBuffer->SetWorldMatrix(m_matWorld);
+
+	// CCameraComponent* Camera = m_Scene->GetCameraManager()->GetCurrentCamera();
+	CCameraComponent * Camera = m_Scene->GetCameraManager()->GetAnimationEditorCamera();
+
+	m_CBuffer->SetViewMatrix(Camera->GetViewMatrix());
+	m_CBuffer->SetProjMatrix(Camera->GetProjMatrix());
+
+	m_CBuffer->SetPivot(m_Pivot);
+	m_CBuffer->SetMeshSize(m_MeshSize);
+
+	m_CBuffer->UpdateCBuffer();
 }
 
 void CTransform::CallChangePosCallBack()

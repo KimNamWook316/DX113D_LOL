@@ -109,6 +109,56 @@ bool CStructuredBuffer::Init(const std::string& Name, unsigned int Size, unsigne
 	return true;
 }
 
+bool CStructuredBuffer::Init(const std::string& Name, unsigned int Size, unsigned int Count, int Register, 
+	D3D11_USAGE Usage, UINT BindFlag, UINT CpuFlag, bool Dynamic, int StructuredBufferShaderType)
+{
+	SAFE_RELEASE(m_SRV);
+	SAFE_RELEASE(m_UAV);
+	SAFE_RELEASE(m_Buffer);
+
+	m_Dynamic = Dynamic;
+	m_Name = Name;
+	m_Size = Size;
+	m_Count = Count;
+	m_Register = Register;
+	m_StructuredBufferShaderType = StructuredBufferShaderType;
+
+	m_Desc.ByteWidth = m_Size * m_Count;
+	m_Desc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
+	m_Desc.StructureByteStride = m_Size;
+
+	m_Desc.BindFlags = BindFlag;
+	m_Desc.Usage = Usage;
+	m_Desc.CPUAccessFlags = CpuFlag;
+
+	if (FAILED(CDevice::GetInst()->GetDevice()->CreateBuffer(&m_Desc, nullptr, &m_Buffer)))
+		return false;
+
+	D3D11_SHADER_RESOURCE_VIEW_DESC	SRVDesc = {};
+
+	SRVDesc.Format = DXGI_FORMAT_UNKNOWN;
+	SRVDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFEREX;
+	SRVDesc.BufferEx.FirstElement = 0;
+	SRVDesc.BufferEx.Flags = 0;
+	SRVDesc.BufferEx.NumElements = m_Count;
+
+	if (FAILED(CDevice::GetInst()->GetDevice()->CreateShaderResourceView(m_Buffer, &SRVDesc, &m_SRV)))
+		return false;
+
+	D3D11_UNORDERED_ACCESS_VIEW_DESC	UAVDesc = {};
+
+	UAVDesc.Format = DXGI_FORMAT_UNKNOWN;
+	UAVDesc.ViewDimension = D3D11_UAV_DIMENSION_BUFFER;
+	UAVDesc.Buffer.FirstElement = 0;
+	UAVDesc.Buffer.Flags = 0;
+	UAVDesc.Buffer.NumElements = m_Count;
+
+	if (FAILED(CDevice::GetInst()->GetDevice()->CreateUnorderedAccessView(m_Buffer, &UAVDesc, &m_UAV)))
+		return false;
+
+	return true;
+}
+
 void CStructuredBuffer::UpdateBuffer(void* Data, int Count)
 {
 	if (!m_Dynamic)

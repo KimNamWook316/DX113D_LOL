@@ -33,6 +33,11 @@ public:
         return m_Animation;
     }
 
+    int GetMaterialSlotCount() const
+    {
+        return (int)m_vecMaterialSlot.size();
+    }
+
 public:
     void SetMesh(const std::string& Name);
     void SetMesh(CAnimationMesh* Mesh);
@@ -54,7 +59,8 @@ public:
     void SetTransparency(bool Enable, int Index = 0);
     void SetOpacity(float Opacity, int Index = 0);
     void AddOpacity(float Opacity, int Index = 0);
-
+public :
+    void SetMaterialShader(const std::string& Name);
 public:
     void AddTexture(int MaterialIndex, int Register, int ShaderType, const std::string& Name, class CTexture* Texture);
     void AddTexture(int MaterialIndex, int Register, int ShaderType, const std::string& Name, const TCHAR* FileName, const std::string& PathName = TEXTURE_PATH);
@@ -81,6 +87,9 @@ public:
     virtual void Save(FILE* File);
     virtual void Load(FILE* File);
 
+    // Animation Editor Render
+public :
+    virtual void RenderAnimationEditor() override;
 public:
     template <typename T>
     void CreateAnimationInstance()

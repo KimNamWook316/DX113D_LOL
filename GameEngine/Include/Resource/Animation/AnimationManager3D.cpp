@@ -232,7 +232,7 @@ CAnimationSequence* CAnimationManager3D::FindAnimationSequence(const std::string
 	return iter->second;
 }
 
-void CAnimationManager3D::ReleaseSequence(const std::string& Name)
+void CAnimationManager3D::ReleaseSequence(const std::string& Name) 
 {
 	auto	iter = m_mapSequence.find(Name);
 
@@ -240,6 +240,44 @@ void CAnimationManager3D::ReleaseSequence(const std::string& Name)
 	{
 		if (iter->second->GetRefCount() == 1)
 			m_mapSequence.erase(iter);
+	}
+}
+
+CAnimationSequence* CAnimationManager3D::CreateBasicAnimationSequence(const std::string& Name)
+{
+	CAnimationSequence* Sequence = new CAnimationSequence;
+
+	// Sequence->m_Scene = Scene;
+
+	/*
+	if (!Sequence->CreateSequenceMultibyte(FullPath))
+	{
+		SAFE_DELETE(Sequence);
+		return false;
+	}
+	*/
+	
+
+	Sequence->m_Loop = true;
+	Sequence->SetName(Name);
+
+	m_mapSequence.insert(std::make_pair(Name, Sequence));
+
+	return Sequence;
+}
+
+void CAnimationManager3D::DeleteSequence(const std::string& Name)
+{
+	auto iter = m_mapSequence.begin();
+	auto iterEnd = m_mapSequence.end();
+	
+	for (; iter != iterEnd; ++iter)
+	{
+		if (iter->second->GetName() == Name)
+		{
+			m_mapSequence.erase(iter);
+			break;
+		}
 	}
 }
 

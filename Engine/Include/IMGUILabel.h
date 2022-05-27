@@ -3,9 +3,7 @@
 class CIMGUILabel :
     public CIMGUIWidget
 {
-	friend class CIMGUIWindow;
-
-protected:
+public:
 	CIMGUILabel();
 	virtual ~CIMGUILabel();
 

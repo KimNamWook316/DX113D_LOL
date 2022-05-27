@@ -217,7 +217,7 @@ void CStaticMeshComponentWidget::RefreshMeshWidget(CMesh* Mesh)
 
 	std::string AutoName;
 
-	int MatSlotSize = MeshCom->GetMaterialSlotSize();
+	int MatSlotSize = MeshCom->GetMaterialSlotCount();
 	for (int i = 0; i < MatSlotSize; ++i)
 	{
 		// Material 이름이 없을 경우 자동으로 이름 지정

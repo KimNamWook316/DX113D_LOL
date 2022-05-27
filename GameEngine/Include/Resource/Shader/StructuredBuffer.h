@@ -37,6 +37,9 @@ public:
 public:
 	bool Init(const std::string& Name, unsigned int Size, unsigned int Count, int Register, bool Dynamic = false,
 		int StructuredBufferShaderType = (int)Buffer_Shader_Type::Compute);
+	bool Init(const std::string& Name, unsigned int Size, unsigned int Count, int Register,
+		D3D11_USAGE Usage, UINT BindFlag, UINT CpuFlag, bool Dynamic = false,
+		int StructuredBufferShaderType = (int)Buffer_Shader_Type::Compute);
 	void UpdateBuffer(void* Data, int Count);
 	CStructuredBuffer* Clone();
 	void SetShader();

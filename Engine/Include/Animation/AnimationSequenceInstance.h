@@ -13,6 +13,7 @@ public:
 protected:
 	size_t		m_TypeID;
 	class CAnimationMeshComponent* m_Owner;
+	std::string m_AnimInstanceName;
 	class CScene* m_Scene;
 	std::unordered_map<std::string, CAnimationSequenceData*>	m_mapAnimation;
 	CAnimationSequenceData* m_CurrentAnimation;
@@ -23,7 +24,6 @@ protected:
 	class CAnimationUpdateConstantBuffer* m_AnimationUpdateCBuffer;
 	class CStructuredBuffer* m_OutputBuffer;	// 애니메이션 결과 저장용 버퍼
 	class CStructuredBuffer* m_BoneBuffer;
-	ID3D11Buffer* m_BoneDataBuffer;
 	std::vector<Matrix>	m_vecBoneMatrix;
 	CSharedPtr<class CSkeleton>	m_Skeleton;
 
@@ -37,7 +37,7 @@ protected:
 
 	// Animation Editor 조작
 	bool m_EditorStopAnimation;
-	bool m_EditorStopTargetFrame;
+	int m_EditorStopTargetFrame;
 
 public:
 	size_t GetTypeID()	const
@@ -70,6 +70,9 @@ public:
 	void Play()
 	{
 		m_PlayAnimation = true;
+
+		if (m_EditorStopAnimation)
+			m_EditorStopAnimation = false;
 	}
 
 	void Stop()
@@ -87,9 +90,12 @@ public:
 		return m_CurrentAnimation;
 	}
 
+	void SetEditorStopTargetFrame(int Frame);
 	void SetSkeleton(class CSkeleton* Skeleton);
 	void GetAnimationSequenceNames(std::vector<std::string>& VecSequenceNames);
 	void SetCurrentAnimationFrameIdx(int Idx);
+	bool EditCurrentSequenceKeyName(const std::string& NewKey, const std::string& PrevKey);
+	void DeleteCurrentAnimation();
 public:
 	void AddAnimation(const std::string& SequenceName, const std::string& Name, bool Loop = true, float PlayTime = 1.f,
 		float PlayScale = 1.f);
@@ -101,6 +107,10 @@ public:
 	void SetCurrentAnimation(const std::string& Name);
 	void ChangeAnimation(const std::string& Name);
 	bool CheckCurrentAnimation(const std::string& Name);
+	void ClearAnimationSequenceFromAnimationEditor();
+	void GatherSequenceNames(std::vector<std::string>& vecString);
+	void AddAnimationSequenceToSceneResource();
+	int GetCurrentAnimationOrder();
 public:
 	virtual void Start();
 	virtual bool Init();
@@ -110,7 +120,8 @@ public:
 	virtual CAnimationSequenceInstance* Clone();
 	virtual void Save(FILE* File);
 	virtual void Load(FILE* File);
-
+	bool SaveAnimationFullPath(const char* FullPath);
+	bool LoadAnimationFullPath(const char* FullPath);
 private:
 	CAnimationSequenceData* FindAnimation(const std::string& Name);
 

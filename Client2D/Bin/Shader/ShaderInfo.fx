@@ -10,6 +10,8 @@ struct PSOutput_GBuffer
     float4 GBuffer1 : SV_Target1;
     float4 GBuffer2 : SV_Target2;
     float4 GBuffer3 : SV_Target3;
+    float4 GBuffer4 : SV_Target4;
+    float4 GBuffer5 : SV_Target5;
 };
 
 cbuffer Transform : register(b0)
@@ -21,6 +23,7 @@ cbuffer Transform : register(b0)
 	matrix	g_matWV;
 	matrix	g_matWVP;
 	matrix	g_matVP;
+    matrix g_matInvWVP;
 	float3	g_Pivot;
 	float	g_TransformEmpty1;
 	float3	g_MeshSize;
@@ -114,6 +117,8 @@ Texture2D<float4>		g_NoiseTexture	: register(t100);
 Texture2D				g_PaperBurnTexture	: register(t101);
 
 StructuredBuffer<float>	g_RandBuffer	: register(t90);
+
+TextureCube g_SkyTex : register(t20);
 
 static const float2 g_NullPos[4] =
 {
@@ -256,6 +261,7 @@ float3 ComputeBumpNormal(float3 Normal, float3 Tangent, float3 Binormal,
 		
 		// 색상은 0 ~ 1 사이이므로 -1 ~ 1 사이의 법선벡터로 만들어준다.
         float3 ConvertNormal = NormalColor.xyz * 2.f - 1.f;
+
 		// z는 무조건 + 방향으로 만들어준다.
         ConvertNormal.z = 1.f;
         ConvertNormal = normalize(ConvertNormal);

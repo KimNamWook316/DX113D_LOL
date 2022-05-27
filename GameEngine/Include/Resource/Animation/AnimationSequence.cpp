@@ -124,6 +124,130 @@ bool CAnimationSequence::SaveFullPath(const TCHAR* pFullPath)
 	return SaveFullPathMultibyte(strFullPath);
 }
 
+
+void CAnimationSequence::Save(FILE* pFile)
+{
+	CRef::Save(pFile);
+
+	size_t	iLength = m_Name.length();
+	fwrite(&iLength, sizeof(size_t), 1, pFile);
+	fwrite(m_Name.c_str(), sizeof(char), iLength, pFile);
+
+	fwrite(&m_Loop, sizeof(bool), 1, pFile);
+	fwrite(&m_StartTime, sizeof(float), 1, pFile);
+	fwrite(&m_EndTime, sizeof(float), 1, pFile);
+	fwrite(&m_TimeLength, sizeof(float), 1, pFile);
+	fwrite(&m_FrameTime, sizeof(float), 1, pFile);
+	fwrite(&m_PlayTime, sizeof(float), 1, pFile);
+	fwrite(&m_PlayScale, sizeof(float), 1, pFile);
+	fwrite(&m_StartFrame, sizeof(int), 1, pFile);
+	fwrite(&m_EndFrame, sizeof(int), 1, pFile);
+	fwrite(&m_FrameLength, sizeof(int), 1, pFile);
+	fwrite(&m_FrameMode, sizeof(int), 1, pFile);
+	fwrite(&m_ChangeFrame, sizeof(int), 1, pFile);
+
+	size_t	iCount = m_vecKeyFrame.size();
+
+	fwrite(&iCount, sizeof(size_t), 1, pFile);
+
+	for (size_t i = 0; i < iCount; ++i)
+	{
+		fwrite(&m_vecKeyFrame[i]->iBoneIndex, sizeof(int), 1,
+			pFile);
+
+		size_t	iFrameCount = m_vecKeyFrame[i]->vecKeyFrame.size();
+
+		fwrite(&iFrameCount, sizeof(size_t), 1, pFile);
+
+		for (size_t j = 0; j < iFrameCount; ++j)
+		{
+			fwrite(&m_vecKeyFrame[i]->vecKeyFrame[j]->dTime, sizeof(double), 1, pFile);
+			fwrite(&m_vecKeyFrame[i]->vecKeyFrame[j]->vPos, sizeof(Vector3), 1, pFile);
+			fwrite(&m_vecKeyFrame[i]->vecKeyFrame[j]->vScale, sizeof(Vector3), 1, pFile);
+			fwrite(&m_vecKeyFrame[i]->vecKeyFrame[j]->vRot, sizeof(Vector4), 1, pFile);
+		}
+	}
+}
+
+void CAnimationSequence::Load(FILE* pFile)
+{
+	CRef::Load(pFile);
+
+
+	size_t	iLength = 0;
+	fread(&iLength, sizeof(size_t), 1, pFile);
+	char	strName[256] = {};
+	fread(strName, sizeof(char), iLength, pFile);
+
+	SetName(strName);
+
+	bool	bLoop = true;
+	fread(&bLoop, sizeof(bool), 1, pFile);
+	m_Loop = bLoop;
+	fread(&m_StartTime, sizeof(float), 1, pFile);
+	fread(&m_EndTime, sizeof(float), 1, pFile);
+	fread(&m_TimeLength, sizeof(float), 1, pFile);
+	fread(&m_FrameTime, sizeof(float), 1, pFile);
+	fread(&m_PlayTime, sizeof(float), 1, pFile);
+	fread(&m_PlayScale, sizeof(float), 1, pFile);
+	fread(&m_StartFrame, sizeof(int), 1, pFile);
+	fread(&m_EndFrame, sizeof(int), 1, pFile);
+	fread(&m_FrameLength, sizeof(int), 1, pFile);
+	fread(&m_FrameMode, sizeof(int), 1, pFile);
+	fread(&m_ChangeFrame, sizeof(int), 1, pFile);
+
+	size_t	iCount = 0;
+
+	fread(&iCount, sizeof(size_t), 1, pFile);
+
+	// std::vector<AnimationFrameTrans>	m_vecFrameTrans;
+	m_vecFrameTrans.resize(iCount * m_FrameLength);
+
+	for (size_t i = 0; i < iCount; ++i)
+	{
+		BoneKeyFrame* pBoneKeyFrame = new BoneKeyFrame;
+		m_vecKeyFrame.push_back(pBoneKeyFrame);
+
+		fread(&pBoneKeyFrame->iBoneIndex, sizeof(int), 1,
+			pFile);
+
+		size_t	iBoneFrameCount = 0;
+
+		fread(&iBoneFrameCount, sizeof(size_t), 1, pFile);
+
+		for (size_t j = 0; j < iBoneFrameCount; ++j)
+		{
+			KeyFrame* pKeyFrame = new KeyFrame;
+			pBoneKeyFrame->vecKeyFrame.push_back(pKeyFrame);
+
+			fread(&pKeyFrame->dTime, sizeof(double), 1, pFile);
+			fread(&pKeyFrame->vPos, sizeof(Vector3), 1, pFile);
+			fread(&pKeyFrame->vScale, sizeof(Vector3), 1, pFile);
+			fread(&pKeyFrame->vRot, sizeof(Vector4), 1, pFile);
+
+			if (j < m_FrameLength)
+			{
+				AnimationFrameTrans	tFrame = {};
+				tFrame.vScale = Vector4(pKeyFrame->vScale.x, pKeyFrame->vScale.y,
+					pKeyFrame->vScale.z, 1.f);
+				tFrame.vTranslate = Vector4(pKeyFrame->vPos.x, pKeyFrame->vPos.y,
+					pKeyFrame->vPos.z, 1.f);
+				tFrame.qRot = pKeyFrame->vRot;
+
+				m_vecFrameTrans[i * m_FrameLength + j] = tFrame;
+			}
+		}
+	}
+
+	m_KeyFrameBuffer = new CStructuredBuffer;
+
+	m_KeyFrameBuffer->Init("KeyFrameBuffer", (unsigned int)sizeof(AnimationFrameTrans),
+		(unsigned int)m_vecFrameTrans.size(), 13, true, (int)Buffer_Shader_Type::Compute);
+
+	m_KeyFrameBuffer->UpdateBuffer(&m_vecFrameTrans[0],
+		(unsigned int)m_vecFrameTrans.size());
+}
+
 bool CAnimationSequence::SaveFullPathMultibyte(
 	const char* pFullPath)
 {
@@ -257,8 +381,8 @@ bool CAnimationSequence::LoadFullPathMultibyte(const char* pFullPath)
 
 	fread(&iCount, sizeof(size_t), 1, pFile);
 
-	std::vector<AnimationFrameTrans>	vecFrameTrans;
-	vecFrameTrans.resize(iCount * m_FrameLength);
+	std::vector<AnimationFrameTrans>	m_vecFrameTrans;
+	m_vecFrameTrans.resize(iCount * m_FrameLength);
 
 	for (size_t i = 0; i < iCount; ++i)
 	{
@@ -291,7 +415,7 @@ bool CAnimationSequence::LoadFullPathMultibyte(const char* pFullPath)
 					pKeyFrame->vPos.z, 1.f);
 				tFrame.qRot = pKeyFrame->vRot;
 
-				vecFrameTrans[i * m_FrameLength + j] = tFrame;
+				m_vecFrameTrans[i * m_FrameLength + j] = tFrame;
 			}
 		}
 	}
@@ -299,10 +423,10 @@ bool CAnimationSequence::LoadFullPathMultibyte(const char* pFullPath)
 	m_KeyFrameBuffer = new CStructuredBuffer;
 
 	m_KeyFrameBuffer->Init("KeyFrameBuffer", sizeof(AnimationFrameTrans),
-		vecFrameTrans.size(), 13, true, (int)Buffer_Shader_Type::Compute);
+		m_vecFrameTrans.size(), 13, true, (int)Buffer_Shader_Type::Compute);
 
-	m_KeyFrameBuffer->UpdateBuffer(&vecFrameTrans[0],
-		vecFrameTrans.size());
+	m_KeyFrameBuffer->UpdateBuffer(&m_vecFrameTrans[0],
+		(unsigned int)m_vecFrameTrans.size());
 
 	fclose(pFile);
 
@@ -336,6 +460,45 @@ void CAnimationSequence::SetPlayTime(float fTime)
 			pKeyFrame->dTime = j * m_FrameTime;
 		}
 	}
+}
+
+BoneKeyFrame* CAnimationSequence::DeleteAnimationFrame(int Index)
+{
+	if (Index < 0 || Index >= m_vecKeyFrame.size())
+	{
+		assert(false);
+		return nullptr;
+	}
+
+	BoneKeyFrame* DeleteFrame = m_vecKeyFrame[Index];
+	m_vecKeyFrame.erase(m_vecKeyFrame.begin() + Index);
+
+	// End Frame, FrameLength 정보도 세팅
+	m_EndFrame = m_vecKeyFrame.size() - 1;
+	m_FrameLength = m_EndFrame - m_StartFrame + 1;
+	m_FrameTime = m_PlayTime / m_FrameLength;
+
+	size_t DeleteEndIdx = 0;
+	size_t DeleteStIdx = 0;
+
+	for (size_t i = 0; i <= Index; ++i)
+	{
+		if (i < Index)
+			DeleteStIdx += m_vecKeyFrame[Index]->vecKeyFrame.size();
+
+		DeleteEndIdx += m_vecKeyFrame[Index]->vecKeyFrame.size();
+	}
+
+	auto iter = m_vecFrameTrans.begin();
+	m_vecFrameTrans.erase(iter + DeleteStIdx, iter + DeleteEndIdx);
+
+	m_KeyFrameBuffer->Init("KeyFrameBuffer", (unsigned int)sizeof(AnimationFrameTrans),
+		(unsigned int)m_vecFrameTrans.size(), 13, true, (int)Buffer_Shader_Type::Compute);
+
+	m_KeyFrameBuffer->UpdateBuffer(&m_vecFrameTrans[0],
+		(unsigned int)m_vecFrameTrans.size());
+
+	return DeleteFrame;
 }
 
 bool CAnimationSequence::CreateSequence(bool bLoop,
@@ -372,8 +535,8 @@ bool CAnimationSequence::CreateSequence(bool bLoop,
 
 	m_FrameTime = m_PlayTime / m_FrameLength;
 
-	std::vector<AnimationFrameTrans>	vecFrameTrans;
-	vecFrameTrans.resize(pClip->vecBoneKeyFrame.size() * m_FrameLength);
+	std::vector<AnimationFrameTrans>	m_vecFrameTrans;
+	m_vecFrameTrans.resize(pClip->vecBoneKeyFrame.size() * m_FrameLength);
 
 	// 본 3개 키프레임 5개일 경우
 	// 본0키0|본0키1|본0키2|본0키3|본0키4|본1키0|본1키1|본1키2|본1키3|본1키4|본2키0|본2키1|본2키2|본2키3|본2키4
@@ -426,7 +589,7 @@ bool CAnimationSequence::CreateSequence(bool bLoop,
 					pKeyFrame->vPos.z, 1.f);
 				tFrame.qRot = pKeyFrame->vRot;
 
-				vecFrameTrans[i * m_FrameLength + j] = tFrame;
+				m_vecFrameTrans[i * m_FrameLength + j] = tFrame;
 			}
 
 			else
@@ -436,11 +599,11 @@ bool CAnimationSequence::CreateSequence(bool bLoop,
 
 	m_KeyFrameBuffer = new CStructuredBuffer;
 
-	m_KeyFrameBuffer->Init("KeyFrameBuffer", sizeof(AnimationFrameTrans),
-		vecFrameTrans.size(), 13, true, (int)Buffer_Shader_Type::Compute);
+	m_KeyFrameBuffer->Init("KeyFrameBuffer", (unsigned int)sizeof(AnimationFrameTrans),
+		(unsigned int)m_vecFrameTrans.size(), 13, true, (int)Buffer_Shader_Type::Compute);
 
-	m_KeyFrameBuffer->UpdateBuffer(&vecFrameTrans[0],
-		vecFrameTrans.size());
+	m_KeyFrameBuffer->UpdateBuffer(&m_vecFrameTrans[0],
+		(int)m_vecFrameTrans.size());
 
 	if (strlen(m_FullPath) != 0)
 	{
@@ -506,8 +669,8 @@ bool CAnimationSequence::CreateSequenceConvertFBX(bool bLoop, _tagFbxAnimationCl
 
 	m_FrameTime = m_PlayTime / m_FrameLength;
 
-	std::vector<AnimationFrameTrans>	vecFrameTrans;
-	vecFrameTrans.resize(pClip->vecBoneKeyFrame.size() * m_FrameLength);
+	std::vector<AnimationFrameTrans>	m_vecFrameTrans;
+	m_vecFrameTrans.resize(pClip->vecBoneKeyFrame.size() * m_FrameLength);
 
 	// 본 3개 키프레임 5개일 경우
 	// 본0키0|본0키1|본0키2|본0키3|본0키4|본1키0|본1키1|본1키2|본1키3|본1키4|본2키0|본2키1|본2키2|본2키3|본2키4
@@ -560,7 +723,7 @@ bool CAnimationSequence::CreateSequenceConvertFBX(bool bLoop, _tagFbxAnimationCl
 					pKeyFrame->vPos.z, 1.f);
 				tFrame.qRot = pKeyFrame->vRot;
 
-				vecFrameTrans[i * m_FrameLength + j] = tFrame;
+				m_vecFrameTrans[i * m_FrameLength + j] = tFrame;
 			}
 
 			else
@@ -577,7 +740,7 @@ bool CAnimationSequence::CreateSequenceConvertFBX(bool bLoop, _tagFbxAnimationCl
 		char	strAnimPath[MAX_PATH] = {};
 		strcpy_s(strAnimPath, m_FullPath);
 
-		int	iLength = strlen(strAnimPath);
+		int	iLength = (int)strlen(strAnimPath);
 		for (int i = iLength - 1; i >= 0; --i)
 		{
 			// aa/bb.exe 9개, 2번인덱스 3 ~ 8번까지 제거
@@ -623,8 +786,8 @@ bool CAnimationSequence::CreateSequence(
 	m_EndTime = fPlayTime;
 	m_TimeLength = fPlayTime;
 
-	std::vector<AnimationFrameTrans>	vecFrameTrans;
-	vecFrameTrans.resize(vecFrame.size() * m_FrameLength);
+	std::vector<AnimationFrameTrans>	m_vecFrameTrans;
+	m_vecFrameTrans.resize(vecFrame.size() * m_FrameLength);
 
 	// 키 프레임 수만큼 반복하며 각각의 프레임을 보간할 행렬 정보를 위치, 크기, 회전정보로
 	// 뽑아온다.
@@ -661,7 +824,7 @@ bool CAnimationSequence::CreateSequence(
 						pKeyFrame->vPos.z, 1.f);
 					tFrame.qRot = pKeyFrame->vRot;
 
-					vecFrameTrans[i * m_FrameLength + j] = tFrame;
+					m_vecFrameTrans[i * m_FrameLength + j] = tFrame;
 				}
 
 				else
@@ -672,11 +835,11 @@ bool CAnimationSequence::CreateSequence(
 
 	m_KeyFrameBuffer = new CStructuredBuffer;
 
-	m_KeyFrameBuffer->Init("KeyFrameBuffer", sizeof(AnimationFrameTrans),
-		vecFrameTrans.size(), 13, true, (int)Buffer_Shader_Type::Compute);
+	m_KeyFrameBuffer->Init("KeyFrameBuffer", (unsigned int)sizeof(AnimationFrameTrans),
+		(unsigned int)m_vecFrameTrans.size(), 13, true, (int)Buffer_Shader_Type::Compute);
 
-	m_KeyFrameBuffer->UpdateBuffer(&vecFrameTrans[0],
-		vecFrameTrans.size());
+	m_KeyFrameBuffer->UpdateBuffer(&m_vecFrameTrans[0],
+		(unsigned int)m_vecFrameTrans.size());
 
 	return true;
 }

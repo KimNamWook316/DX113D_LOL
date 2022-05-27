@@ -467,3 +467,44 @@ bool CCollision::CollisionPixelToPoint(CollisionResult& SrcResult, CollisionResu
 
 	return Result;
 }
+
+bool CCollision::CollisionRayToSphere(Vector3& HitPoint, const Ray& ray, const SphereInfo& Sphere)
+{
+	Vector3 M = ray.Pos - Sphere.Center;
+
+	float b = 2.f * M.Dot(ray.Dir);
+	float c = M.Dot(M) - Sphere.Radius * Sphere.Radius;
+
+	float Det = b * b - 4.f * c;
+
+	// 교점이 없는 경우
+	if (Det < 0.f)
+	{
+		return false;
+	}
+
+	Det = sqrtf(Det);
+
+	float t1, t2;
+
+	t1 = (-b + Det) / 2.f;
+	t2 = (-b - Det) / 2.f;
+
+	// 두 교점 모두 Ray 진행방향의 뒤에 있는 경우
+	if (t1 < 0 && t2 < 0)
+	{
+		return false;
+	}
+
+	// Ray에서 가까운 교점을 기준으로 HitPoint 생성
+	float Dist = t1 < t2 ? t1: t2;
+
+	if (Dist < 0.f)
+	{
+		Dist = t2;
+	}
+
+	HitPoint = ray.Pos + ray.Dir * Dist;
+
+	return true;
+}

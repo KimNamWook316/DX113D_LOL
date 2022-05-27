@@ -25,19 +25,9 @@
     <ClCompile Include="Animation\AnimationSequenceData.cpp" />
     <ClCompile Include="Animation\AnimationSequenceInstance.cpp" />
     <ClCompile Include="Animation\SkeletonSocket.cpp" />
-    <ClCompile Include="Component\BehaviorTree.cpp" />
-    <ClCompile Include="Component\Node\ActionNode.cpp" />
-    <ClCompile Include="Component\Node\CompositeNode.cpp" />
-    <ClCompile Include="Component\Node\ConditionNode.cpp" />
-    <ClCompile Include="Component\Node\IdleNode.cpp" />
-    <ClCompile Include="Component\Node\MoveInputCheckNode.cpp" />
-    <ClCompile Include="Component\Node\Node.cpp" />
-    <ClCompile Include="Component\Node\RunNode.cpp" />
-    <ClCompile Include="Component\Node\SelectorNode.cpp" />
-    <ClCompile Include="Component\Node\SequenceNode.cpp" />
-    <ClCompile Include="Component\State.cpp" />
-    <ClCompile Include="Component\StateComponent.cpp" />
-    <ClCompile Include="EngineUtil.cpp" />
+    <ClCompile Include="Component\BillboardComponent.cpp" />
+    <ClCompile Include="Component\DecalComponent.cpp" />
+	<ClCompile Include="EngineUtil.cpp" />
     <ClCompile Include="Collision\Collision.cpp" />
     <ClCompile Include="Collision\CollisionManager.cpp" />
     <ClCompile Include="Component\AnimationMeshComponent.cpp" />
@@ -78,10 +68,13 @@
     <ClCompile Include="IMGUIButton.cpp" />
     <ClCompile Include="IMGUICheckBox.cpp" />
     <ClCompile Include="IMGUIChild.cpp" />
+    <ClCompile Include="IMGUICollapsingHeader.cpp" />
     <ClCompile Include="IMGUIColor3.cpp" />
     <ClCompile Include="IMGUIColor4.cpp" />
     <ClCompile Include="IMGUIComboBox.cpp" />
     <ClCompile Include="IMGUIDummy.cpp" />
+    <ClCompile Include="IMGUIGizmo.cpp" />
+    <ClCompile Include="IMGUIGrid.cpp" />
     <ClCompile Include="IMGUIImage.cpp" />
     <ClCompile Include="IMGUIImageButton.cpp" />
     <ClCompile Include="IMGUIInputFloat.cpp" />
@@ -150,6 +143,8 @@
     <ClCompile Include="Resource\Shader\Animation2DConstantBuffer.cpp" />
     <ClCompile Include="Resource\Shader\AnimationUpdateConstantBuffer.cpp" />
     <ClCompile Include="Resource\Shader\AnimationUpdateShader.cpp" />
+    <ClCompile Include="Resource\Shader\BillboardShader.cpp" />
+    <ClCompile Include="Resource\Shader\AnimEditorShader.cpp" />
     <ClCompile Include="Resource\Shader\ColliderConstantBuffer.cpp" />
     <ClCompile Include="Resource\Shader\ColliderPixelShader.cpp" />
     <ClCompile Include="Resource\Shader\ColliderShader.cpp" />
@@ -157,6 +152,8 @@
     <ClCompile Include="Resource\Shader\ComputeShader.cpp" />
     <ClCompile Include="Resource\Shader\ConstantBuffer.cpp" />
     <ClCompile Include="Resource\Shader\ConstantBufferBase.cpp" />
+    <ClCompile Include="Resource\Shader\DecalDebugShader.cpp" />
+    <ClCompile Include="Resource\Shader\DecalShader.cpp" />
     <ClCompile Include="Resource\Shader\GlobalConstantBuffer.cpp" />
     <ClCompile Include="Resource\Shader\GraphicShader.cpp" />
     <ClCompile Include="Resource\Shader\LandScapeConstantBuffer.cpp" />
@@ -167,6 +164,7 @@
     <ClCompile Include="Resource\Shader\LightConstantBuffer.cpp" />
     <ClCompile Include="Resource\Shader\MaterialConstantBuffer.cpp" />
     <ClCompile Include="Resource\Shader\Mesh2DShader.cpp" />
+    <ClCompile Include="Resource\Shader\Mesh3DNoLightShader.cpp" />
     <ClCompile Include="Resource\Shader\NumberShader.cpp" />
     <ClCompile Include="Resource\Shader\PaperBurnConstantBuffer.cpp" />
     <ClCompile Include="Resource\Shader\ParticleConstantBuffer.cpp" />
@@ -180,6 +178,7 @@
     <ClCompile Include="Resource\Shader\ShaderManager.cpp" />
     <ClCompile Include="Resource\Shader\SkyShader.cpp" />
     <ClCompile Include="Resource\Shader\Standard2DConstantBuffer.cpp" />
+    <ClCompile Include="Resource\Shader\Standard3DInstancingShader.cpp" />
     <ClCompile Include="Resource\Shader\Standard3DShader.cpp" />
     <ClCompile Include="Resource\Shader\StructuredBuffer.cpp" />
     <ClCompile Include="Resource\Shader\TileMapConstantBuffer.cpp" />
@@ -229,7 +228,7 @@
     <ClInclude Include="Collision\CollisionManager.h" />
     <ClInclude Include="Component\AnimationMeshComponent.h" />
     <ClInclude Include="Component\Arm.h" />
-    <ClInclude Include="Component\BehaviorTree.h" />
+    <ClInclude Include="Component\BillboardComponent.h" />
     <ClInclude Include="Component\CameraComponent.h" />
     <ClInclude Include="Component\ColliderBox2D.h" />
     <ClInclude Include="Component\ColliderCircle.h" />
@@ -237,26 +236,16 @@
     <ClInclude Include="Component\ColliderPixel.h" />
     <ClInclude Include="Component\ColliderSphere.h" />
     <ClInclude Include="Component\Component.h" />
+    <ClInclude Include="Component\DecalComponent.h" />
     <ClInclude Include="Component\Frustum.h" />
     <ClInclude Include="Component\LandScape.h" />
     <ClInclude Include="Component\LightComponent.h" />
     <ClInclude Include="Component\NavAgent.h" />
-    <ClInclude Include="Component\Node\ActionNode.h" />
-    <ClInclude Include="Component\Node\CompositeNode.h" />
-    <ClInclude Include="Component\Node\ConditionNode.h" />
-    <ClInclude Include="Component\Node\IdleNode.h" />
-    <ClInclude Include="Component\Node\MoveInputCheckNode.h" />
-    <ClInclude Include="Component\Node\Node.h" />
-    <ClInclude Include="Component\Node\RunNode.h" />
-    <ClInclude Include="Component\Node\SelectorNode.h" />
-    <ClInclude Include="Component\Node\SequenceNode.h" />
     <ClInclude Include="Component\ObjectComponent.h" />
     <ClInclude Include="Component\PaperBurnComponent.h" />
     <ClInclude Include="Component\ParticleComponent.h" />
     <ClInclude Include="Component\SceneComponent.h" />
     <ClInclude Include="Component\SpriteComponent.h" />
-    <ClInclude Include="Component\State.h" />
-    <ClInclude Include="Component\StateComponent.h" />
     <ClInclude Include="Component\StaticMeshComponent.h" />
     <ClInclude Include="Component\Tile.h" />
     <ClInclude Include="Component\TileMapComponent.h" />
@@ -282,10 +271,13 @@
     <ClInclude Include="IMGUIButton.h" />
     <ClInclude Include="IMGUICheckBox.h" />
     <ClInclude Include="IMGUIChild.h" />
+    <ClInclude Include="IMGUICollapsingHeader.h" />
     <ClInclude Include="IMGUIColor3.h" />
     <ClInclude Include="IMGUIColor4.h" />
     <ClInclude Include="IMGUIComboBox.h" />
     <ClInclude Include="IMGUIDummy.h" />
+    <ClInclude Include="IMGUIGizmo.h" />
+    <ClInclude Include="IMGUIGrid.h" />
     <ClInclude Include="IMGUIImage.h" />
     <ClInclude Include="IMGUIImageButton.h" />
     <ClInclude Include="IMGUIInfo.h" />
@@ -358,6 +350,8 @@
     <ClInclude Include="Resource\Shader\Animation2DConstantBuffer.h" />
     <ClInclude Include="Resource\Shader\AnimationUpdateConstantBuffer.h" />
     <ClInclude Include="Resource\Shader\AnimationUpdateShader.h" />
+    <ClInclude Include="Resource\Shader\BillboardShader.h" />
+    <ClInclude Include="Resource\Shader\AnimEditorShader.h" />
     <ClInclude Include="Resource\Shader\ColliderConstantBuffer.h" />
     <ClInclude Include="Resource\Shader\ColliderPixelShader.h" />
     <ClInclude Include="Resource\Shader\ColliderShader.h" />
@@ -365,6 +359,8 @@
     <ClInclude Include="Resource\Shader\ComputeShader.h" />
     <ClInclude Include="Resource\Shader\ConstantBuffer.h" />
     <ClInclude Include="Resource\Shader\ConstantBufferBase.h" />
+    <ClInclude Include="Resource\Shader\DecalDebugShader.h" />
+    <ClInclude Include="Resource\Shader\DecalShader.h" />
     <ClInclude Include="Resource\Shader\GlobalConstantBuffer.h" />
     <ClInclude Include="Resource\Shader\GraphicShader.h" />
     <ClInclude Include="Resource\Shader\LandScapeConstantBuffer.h" />
@@ -375,6 +371,7 @@
     <ClInclude Include="Resource\Shader\LightConstantBuffer.h" />
     <ClInclude Include="Resource\Shader\MaterialConstantBuffer.h" />
     <ClInclude Include="Resource\Shader\Mesh2DShader.h" />
+    <ClInclude Include="Resource\Shader\Mesh3DNoLightShader.h" />
     <ClInclude Include="Resource\Shader\NumberShader.h" />
     <ClInclude Include="Resource\Shader\PaperBurnConstantBuffer.h" />
     <ClInclude Include="Resource\Shader\ParticleConstantBuffer.h" />
@@ -388,6 +385,7 @@
     <ClInclude Include="Resource\Shader\ShaderManager.h" />
     <ClInclude Include="Resource\Shader\SkyShader.h" />
     <ClInclude Include="Resource\Shader\Standard2DConstantBuffer.h" />
+    <ClInclude Include="Resource\Shader\Standard3DInstancingShader.h" />
     <ClInclude Include="Resource\Shader\Standard3DShader.h" />
     <ClInclude Include="Resource\Shader\StructuredBuffer.h" />
     <ClInclude Include="Resource\Shader\TileMapConstantBuffer.h" />
@@ -445,6 +443,14 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Effect</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
+    <FxCompile Include="..\Bin\Shader\Billboard.fx">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">BillboardVS</EntryPointName>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">BillboardVS</EntryPointName>
+    </FxCompile>
     <FxCompile Include="..\Bin\Shader\Collider.fx">
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">ColliderMeshVS</EntryPointName>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Effect</ShaderType>
@@ -472,6 +478,14 @@
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">ColorMeshVS</EntryPointName>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Effect</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="..\Bin\Shader\Decal.fx">
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">DecalVS</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">DecalVS</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="..\Bin\Shader\LandScape.fx">
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">LandScapeVS</EntryPointName>

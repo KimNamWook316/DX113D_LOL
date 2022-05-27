@@ -8,11 +8,14 @@
 #include "Flag.h"
 #include "IMGUISameLine.h"
 #include "IMGUIDummy.h"
+#include "IMGUIGizmo.h"
+#include "IMGUIGrid.h"
 #include "ObjectCreateModal.h"
 #include "IMGUIManager.h"
 #include "Scene/SceneManager.h"
 #include "GameObject/GameObject.h"
 #include "InspectorWindow.h"
+#include "ToolWindow.h"
 
 CObjectHierarchyWindow::CObjectHierarchyWindow() :
 	m_Root(nullptr),
@@ -59,7 +62,6 @@ bool CObjectHierarchyWindow::Init()
 	m_ObjectDeleteButton->SetClickCallback<CObjectHierarchyWindow>(this, &CObjectHierarchyWindow::OnDeleteObject);
 
 	m_vecObjectTree.push_back(m_Root);
-
 	return true;
 }
 
@@ -74,7 +76,6 @@ void CObjectHierarchyWindow::Update(float DeltaTime)
 	// 매 프레임마다 Tree를 순회하면서 m_SelectNode에 지금 선택된 노드를 갱신해줌
 	//FindSelectNode(m_Root);
 }
-
 void CObjectHierarchyWindow::OnRenameObject(const std::string& Name)
 {
 	m_SelectNode->SetName(Name);
@@ -146,6 +147,11 @@ void CObjectHierarchyWindow::OnSetSelectNode(CIMGUITree* SelectNode)
 {
 	m_SelectNode = SelectNode;
 	m_SelectObject = CSceneManager::GetInst()->GetScene()->FindObject(m_SelectNode->GetName());
+
+	if (m_SelectObject->GetRootComponent())
+	{
+		static_cast<CToolWindow*>(CIMGUIManager::GetInst()->FindIMGUIWindow(TOOL))->SetGizmoObject(m_SelectObject);
+	}
 
 	static_cast<CInspectorWindow*>(CIMGUIManager::GetInst()->FindIMGUIWindow(INSPECTOR))->OnSelectGameObject(m_SelectObject);
 }

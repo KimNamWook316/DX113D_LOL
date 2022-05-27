@@ -24,6 +24,10 @@ private:
 	float					m_Filter;
 
 public:
+	void SetInstancingInfo(Instancing3DInfo* Info)
+	{
+		m_CBuffer->SetInstancingInfo(Info);
+	}
 	void StartPaperBurn();
 	void SetMaterial(class CMaterial* Material);
 	void SetInverse(bool Enable);

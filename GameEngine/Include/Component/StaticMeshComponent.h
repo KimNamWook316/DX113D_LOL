@@ -29,7 +29,7 @@ public:
         return m_vecMaterialSlot[Index];
     }
 
-    int GetMaterialSlotSize() const
+    int GetMaterialSlotCount() const
     {
         return (int)m_vecMaterialSlot.size();
     }

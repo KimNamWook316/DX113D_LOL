@@ -12,6 +12,9 @@ struct TextureResourceInfo
 	char* PathName;
 	TCHAR* FullPath;
 
+	// 아래 변수는 현재 RenderTarget.cpp 의 CreateTarget 에서만 세팅해주는 중 (Editor 에서 Render Target 가져올 때 사용)
+	ID3D11Texture2D* TextureResource;
+
 	TextureResourceInfo()	:
 		Image(nullptr),
 		SRV(nullptr),
@@ -50,6 +53,10 @@ protected:
 	ID3D11ShaderResourceView* m_ArraySRV;
 
 public:
+	ID3D11Texture2D* GetTextureResource(int Index = 0) const
+	{
+		return m_vecTextureInfo[Index]->TextureResource;
+	}
 	ID3D11ShaderResourceView* GetResource(int Index = 0)	const
 	{
 		return m_vecTextureInfo[Index]->SRV;

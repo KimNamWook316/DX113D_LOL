@@ -37,7 +37,10 @@ void CIMGUIRadioButton::Render()
         {
             if (mVecCheckInfo[i]->bCheck)
             {
-                mVecCheckInfo[i]->bCheck = false;
+                if (!mAlwaysCheck)
+                {
+					mVecCheckInfo[i]->bCheck = false;
+                }
             }
             else
             {

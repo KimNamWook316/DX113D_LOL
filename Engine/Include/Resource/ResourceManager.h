@@ -104,7 +104,7 @@ public:	// =================== Texture =====================
 		const std::string& PathName = TEXTURE_PATH);
 	bool LoadTextureFullPath(const std::string& Name, const std::vector<TCHAR*>& vecFullPath);
 	bool CreateTarget(const std::string& Name, unsigned int Width,
-		unsigned int Height, DXGI_FORMAT PixelFormat);
+		unsigned int Height, DXGI_FORMAT PixelFormat, bool MultiSample = true);
 	class CTexture* FindTexture(const std::string& Name);
 	bool LoadTextureArray(const std::string& Name, const std::vector<TCHAR*>& vecFileName,
 		const std::string& PathName = TEXTURE_PATH);
@@ -189,7 +189,9 @@ public:
 	bool LoadAnimationSequenceFullPathMultibyte(bool Loop, const std::string& Name, const char* FullPath, class CScene* Scene = nullptr);
 	bool LoadAnimationSequenceFullPathMultibyteSetOriginFileName(bool Loop, std::string& Name, const char* FullPath);
 	CAnimationSequence* FindAnimationSequence(const std::string& Name);
+	CAnimationSequence* CreateBasicAnimationSequence(const std::string& Name);
 	void ReleaseAnimationSequence3D(const std::string& Name);
+	void DeleteSequence3D(const std::string& Name);
 
 	bool LoadSkeleton(const std::string& Name, const TCHAR* FileName,
 		const std::string& PathName = ANIMATION_PATH,

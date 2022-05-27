@@ -61,9 +61,16 @@ protected:
     bool        m_SpecularTex;
     bool        m_EmissiveTex;
     bool        m_Bump;
+    bool        m_RecieveDecal;
     CMaterialConstantBuffer* m_CBuffer;
     CSharedPtr<class CRenderState>  m_RenderStateArray[(int)RenderState_Type::Max];
     std::list<RenderCallback*>    m_RenderCallback;
+
+public:
+    CMaterialConstantBuffer* GetCBuffer()   const
+    {
+        return m_CBuffer;
+    }
 
 private:
     void SetConstantBuffer(class CMaterialConstantBuffer* Buffer)
@@ -128,6 +135,7 @@ public:
     void EnableAnimation3D();
     void EnableSpecularTex();
     void EnableEmissiveTex();
+    void EnableDecal(bool Decal);
 
 public:
     void SetRenderState(class CRenderState* State);
@@ -135,7 +143,6 @@ public:
     void SetTransparency(bool Enable);
     void SetOpacity(float Opacity);
     void AddOpacity(float Opacity);
-
 public:
     void SetBaseColor(const Vector4& Color);
     void SetBaseColor(float r, float g, float b, float a);
@@ -164,10 +171,13 @@ public:
 
 public:
     void SetPaperBurn(bool Enable);
+    bool CheckMaterial(CMaterial* Material);
 
 public:
     void SetShader(const std::string& Name);
+    void SetShader(CGraphicShader* Shader);
     void Render();
+    void RenderTexture();
     void Reset();
     CMaterial* Clone()  const;
     void Save(FILE* File);

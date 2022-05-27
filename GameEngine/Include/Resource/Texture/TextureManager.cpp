@@ -86,6 +86,10 @@ void CTextureManager::RenderTarget(CMesh* Mesh, CShader* Shader)
 
 		CRenderTarget* Target = (CRenderTarget*)iter->second.Get();
 
+		bool True = true;
+		if (iter->first == "AnimationEditor")
+			True = true;
+
 		if (Target->m_DebugRender)
 		{
 			Vector3	Pos = Target->m_Pos;
@@ -109,7 +113,6 @@ void CTextureManager::RenderTarget(CMesh* Mesh, CShader* Shader)
 			Shader->SetShader();
 
 			Mesh->Render();
-
 
 			Target->ResetTargetShader();
 		}
@@ -201,7 +204,7 @@ bool CTextureManager::LoadTextureFullPath(const std::string& Name,
 
 bool CTextureManager::CreateTarget(const std::string& Name, 
 	unsigned int Width, unsigned int Height, 
-	DXGI_FORMAT PixelFormat)
+	DXGI_FORMAT PixelFormat, bool MultiSample)
 {
 	CRenderTarget* Texture = (CRenderTarget*)FindTexture(Name);
 
@@ -210,7 +213,7 @@ bool CTextureManager::CreateTarget(const std::string& Name,
 
 	Texture = new CRenderTarget;
 
-	if (!Texture->CreateTarget(Name, Width, Height, PixelFormat))
+	if (!Texture->CreateTarget(Name, Width, Height, PixelFormat, MultiSample))
 	{
 		SAFE_RELEASE(Texture);
 		return false;

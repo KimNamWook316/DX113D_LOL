@@ -2,6 +2,20 @@
 
 #include "Component.h"
 #include "Transform.h"
+#include "../Resource/Mesh/Mesh.h"
+#include "../Resource/Material/Material.h"
+
+struct InstancingCheckCount
+{
+	std::string LayerName;
+	CMesh* Mesh;
+	std::list<class CSceneComponent*> InstancingList;
+
+	InstancingCheckCount() :
+		Mesh(nullptr)
+	{
+	}
+};
 
 class CSceneComponent :
 	public CComponent
@@ -22,8 +36,34 @@ protected:
 	class CSkeletonSocket* m_Socket;
 	SphereInfo m_SphereInfo;
 	bool m_Culling;
+	bool m_ReceiveDecal;
+	bool m_Instancing;
+	static std::list<InstancingCheckCount*> m_InstancingCheckList;
 
 public:
+	void SetInstancingInfo(Instancing3DInfo* Info);
+
+	static const std::list<InstancingCheckCount*>* GetInstancingCheckList()
+	{
+		return &m_InstancingCheckList;
+	}
+
+	static void DestroyInstancingCheckList()
+	{
+		auto	iter = m_InstancingCheckList.begin();
+		auto	iterEnd = m_InstancingCheckList.end();
+
+		for (; iter != iterEnd; ++iter)
+		{
+			SAFE_DELETE((*iter));
+		}
+	}
+
+	bool GetInstancing() const
+	{
+		return m_Instancing;
+	}
+
 	bool GetRender() const
 	{
 		return m_Render;
@@ -38,7 +78,8 @@ public:
 	{
 		SphereInfo Info;
 		
-		Info.Center = m_SphereInfo.Center * GetWorldScale() + GetWorldPos();
+		// Info.Center = m_SphereInfo.Center * GetWorldScale() + GetWorldPos();
+		Info.Center = m_SphereInfo.Center.TransformCoord(GetWorldMatrix());
 		Info.Radius = m_SphereInfo.Radius;
 
 		return Info;
@@ -67,6 +108,16 @@ public:
 	}
 
 public:
+	void SetInstancing(bool Instancing)
+	{
+		m_Instancing = Instancing;
+	}
+
+	void SetReceiveDecal(bool Decal)
+	{
+		m_ReceiveDecal = Decal;
+	}
+
 	void SetLayerName(const std::string& Name)
 	{
 		m_LayerName = Name;
@@ -104,13 +155,24 @@ public:
 	virtual void CheckCollision();
 	virtual void PrevRender();
 	virtual void Render();
+	virtual void RenderDebug();
 	virtual void PostRender();
 	virtual CSceneComponent* Clone();
 	virtual void Save(FILE* File);
 	virtual void Load(FILE* File);
-
+public :
+	virtual void RenderAnimationEditor();
 
 public:	// Transform
+	void SetUpdateByMat(bool UpdateByMat);
+	void DecomposeWorld();
+
+	// 자신의 축 기준으로 이동
+	void AddWorldPosByLocalAxis(AXIS Axis, float Amount);
+	void AddWorldPosByLocalAxis(const Vector3& Pos);
+
+	void SetTransformByWorldMatrix(const Matrix& matTRS);
+
 	void SetInheritScale(bool Inherit)
 	{
 		m_Transform->SetInheritScale(Inherit);

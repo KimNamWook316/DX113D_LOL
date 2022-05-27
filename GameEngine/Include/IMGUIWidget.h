@@ -5,13 +5,7 @@
 class CIMGUIWidget
 {
 	friend class CIMGUIWindow;
-	friend class CIMGUIChild;
-	friend class CIMGUIPopUpModal;
 	friend class CIMGUITree;
-	friend class CIMGUIWidgetList;
-	friend class CIMGUIInputFloat3;
-	friend class CIMGUIMainMenuBar;
-	friend class CIMGUIBeginMenu;
 
 public:
 	CIMGUIWidget();

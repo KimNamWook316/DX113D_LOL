@@ -31,6 +31,11 @@ protected:
 	Mesh_Type	m_MeshType;
 
 public:
+	Mesh_Type GetMeshType() const
+	{
+		return m_MeshType;
+	}
+
 	Vector3 GetMin() const
 	{
 		return m_Min;
@@ -74,7 +79,10 @@ public:
 	virtual void Render();
 	virtual void Render(int SlotNumber);
 	virtual void RenderInstancing(int Count);
+	virtual void RenderInstancing(int Count, int SlotNumber);
 	virtual void RenderInstancing(ID3D11Buffer* InstancingBuffer, unsigned int InstanceSize, int Count);
+	virtual void RenderInstancing(ID3D11Buffer* InstancingBuffer, unsigned int InstanceSize, int Count,
+		int SlotNumber);
 
 protected:
 	bool CreateBuffer(Buffer_Type Type, void* Data, int Size, int Count,

@@ -7,12 +7,18 @@
 #include "../Scene/CameraManager.h"
 #include "CameraComponent.h"
 
+std::list<InstancingCheckCount*> CSceneComponent::m_InstancingCheckList;
+
 CSceneComponent::CSceneComponent() :
 	m_Culling(false)
 {
 	SetTypeID<CSceneComponent>();
 	m_ComponentType = Component_Type::SceneComponent;
 	m_Render = false;
+
+	m_Instancing = false;
+
+	m_ReceiveDecal = true;
 
 	m_Transform = new CTransform;
 
@@ -34,6 +40,8 @@ CSceneComponent::CSceneComponent(const CSceneComponent& com) :
 
 	m_Transform->m_Parent = nullptr;
 	m_Transform->m_vecChild.clear();
+
+	m_Instancing = false;
 
 	m_Transform->m_Owner = this;
 
@@ -62,6 +70,11 @@ CSceneComponent::CSceneComponent(const CSceneComponent& com) :
 CSceneComponent::~CSceneComponent()
 {
 	SAFE_DELETE(m_Transform);
+}
+
+void CSceneComponent::SetInstancingInfo(Instancing3DInfo* Info)
+{
+	m_Transform->SetInstancingInfo(Info);
 }
 
 SphereInfo CSceneComponent::GetSphereInfoViewSpace() const
@@ -456,8 +469,18 @@ void CSceneComponent::CheckCollision()
 	{
 		SphereInfo Info;
 
-		Info.Center = m_SphereInfo.Center * GetWorldScale() + GetWorldPos();
-		Info.Radius = (GetMeshSize() * GetWorldScale()).Length() / 2.f;
+		Info.Center = m_SphereInfo.Center.TransformCoord(GetWorldMatrix());
+
+		Vector3 Radius;
+		Radius.x = GetMeshSize().Length();
+		Radius.y = GetMeshSize().Length();
+		Radius.z = GetMeshSize().Length();
+		Radius = Radius.TransformCoord(GetWorldMatrix());
+
+		Info.Radius = Radius.x > Radius.y ? Radius.x : Radius.y;
+		Info.Radius = Info.Radius > Radius.z ? Info.Radius : Radius.z;
+		Info.Radius /= 2.f;
+
 		m_SphereInfo.Radius = Info.Radius;
 
 		CCameraComponent* Camera = m_Scene->GetCameraManager()->GetCurrentCamera();
@@ -475,7 +498,7 @@ void CSceneComponent::CheckCollision()
 
 void CSceneComponent::PrevRender()
 {
-	if (m_Render && !m_Culling)
+	if (m_Render && !m_Culling && !m_Instancing)
 	{
 		CRenderManager::GetInst()->AddRenderList(this);
 	}
@@ -489,6 +512,14 @@ void CSceneComponent::PrevRender()
 }
 
 void CSceneComponent::Render()
+{
+	m_Transform->SetTransform();
+
+	CRenderManager::GetInst()->GetStandard2DCBuffer()->SetAnimation2DEnable(false);
+	CRenderManager::GetInst()->GetStandard2DCBuffer()->UpdateCBuffer();
+}
+
+void CSceneComponent::RenderDebug()
 {
 	m_Transform->SetTransform();
 
@@ -560,5 +591,38 @@ void CSceneComponent::Load(FILE* File)
 
 		m_vecChild.push_back((CSceneComponent*)Component);
 	}
+}
+
+void CSceneComponent::RenderAnimationEditor()
+{
+	m_Transform->SetAnimationTransform();
+
+	CRenderManager::GetInst()->GetStandard2DCBuffer()->SetAnimation2DEnable(false);
+	CRenderManager::GetInst()->GetStandard2DCBuffer()->UpdateCBuffer();
+}
+
+void CSceneComponent::SetUpdateByMat(bool UpdateByMat)
+{
+	m_Transform->SetUpdateByMat(UpdateByMat);
+}
+
+void CSceneComponent::DecomposeWorld()
+{
+	m_Transform->DecomposeWorld();
+}
+
+void CSceneComponent::AddWorldPosByLocalAxis(AXIS Axis, float Amount)
+{
+	m_Transform->AddWorldPosByLocalAxis(Axis, Amount);
+}
+
+void CSceneComponent::AddWorldPosByLocalAxis(const Vector3& Pos)
+{
+	m_Transform->AddWorldPosByLocalAxis(Pos);
+}
+
+void CSceneComponent::SetTransformByWorldMatrix(const Matrix& matTRS)
+{
+	m_Transform->SetTransformByWorldMatrix(matTRS);
 }
 

@@ -1,6 +1,7 @@
 
 #include "AnimationSequenceData.h"
 #include "../Resource/Animation/AnimationSequence.h"
+#include "../Resource/ResourceManager.h"
 
 CAnimationSequenceData::CAnimationSequenceData() :
 	m_Time(0.f),
@@ -41,6 +42,8 @@ void CAnimationSequenceData::Save(FILE* File)
 	Length = (int)SequenceName.length();
 	fwrite(&Length, sizeof(int), 1, File);
 	fwrite(SequenceName.c_str(), sizeof(char), Length, File);
+
+	m_Sequence->Save(File);
 }
 
 void CAnimationSequenceData::Load(FILE* File)
@@ -66,4 +69,20 @@ void CAnimationSequenceData::Load(FILE* File)
 	fread(SequenceName, sizeof(char), Length, File);
 
 	m_SequenceName = SequenceName;
+
+	m_Sequence = CResourceManager::GetInst()->FindAnimationSequence(m_SequenceName);
+
+	if (!m_Sequence)
+	{
+		m_Sequence = CResourceManager::GetInst()->CreateBasicAnimationSequence(m_SequenceName);
+	}
+
+	m_Sequence->Load(File);
+}
+
+void CAnimationSequenceData::SetPlayTime(float Time)
+{
+	m_PlayTime = Time;
+
+	m_FrameTime = m_PlayTime / m_Sequence->GetFrameLength();
 }

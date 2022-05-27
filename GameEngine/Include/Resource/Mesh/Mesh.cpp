@@ -757,6 +757,33 @@ void CMesh::RenderInstancing(int Count)
 	}
 }
 
+void CMesh::RenderInstancing(int Count, int SlotNumber)
+{
+	unsigned int	Stride = (unsigned int)m_vecMeshSlot[SlotNumber]->VB->Size;
+	unsigned int	Offset = 0;
+
+	CDevice::GetInst()->GetContext()->IASetPrimitiveTopology(m_vecMeshSlot[SlotNumber]->Primitive);
+	CDevice::GetInst()->GetContext()->IASetVertexBuffers(0, 1,
+		&m_vecMeshSlot[SlotNumber]->VB->Buffer, &Stride, &Offset);
+
+	if (m_vecMeshSlot[SlotNumber]->IB)
+	{
+		CDevice::GetInst()->GetContext()->IASetIndexBuffer(
+			m_vecMeshSlot[SlotNumber]->IB->Buffer,
+			m_vecMeshSlot[SlotNumber]->IB->Fmt, 0);
+		CDevice::GetInst()->GetContext()->DrawIndexedInstanced(
+			m_vecMeshSlot[SlotNumber]->IB->Count, Count, 0, 0, 0);
+	}
+
+	else
+	{
+		CDevice::GetInst()->GetContext()->IASetIndexBuffer(
+			nullptr, DXGI_FORMAT_UNKNOWN, 0);
+		CDevice::GetInst()->GetContext()->DrawInstanced(
+			m_vecMeshSlot[SlotNumber]->VB->Count, Count, 0, 0);
+	}
+}
+
 void CMesh::RenderInstancing(ID3D11Buffer* InstancingBuffer, unsigned int InstanceSize, int Count)
 {
 	size_t	Size = m_vecContainer.size();
@@ -793,5 +820,34 @@ void CMesh::RenderInstancing(ID3D11Buffer* InstancingBuffer, unsigned int Instan
 			CDevice::GetInst()->GetContext()->DrawInstanced(
 				m_vecContainer[i]->VB.Count, Count, 0, 0);
 		}
+	}
+}
+
+void CMesh::RenderInstancing(ID3D11Buffer* InstancingBuffer, unsigned int InstanceSize, int Count, int SlotNumber)
+{
+	unsigned int	Stride[2] = { (unsigned int)m_vecMeshSlot[SlotNumber]->VB->Size, InstanceSize };
+	unsigned int	Offset[2] = {};
+
+	ID3D11Buffer* Buffer[2] = { m_vecMeshSlot[SlotNumber]->VB->Buffer , InstancingBuffer };
+
+	CDevice::GetInst()->GetContext()->IASetPrimitiveTopology(m_vecMeshSlot[SlotNumber]->Primitive);
+	CDevice::GetInst()->GetContext()->IASetVertexBuffers(0, 2,
+		Buffer, Stride, Offset);
+
+	if (m_vecMeshSlot[SlotNumber]->IB)
+	{
+		CDevice::GetInst()->GetContext()->IASetIndexBuffer(
+			m_vecMeshSlot[SlotNumber]->IB->Buffer,
+			m_vecMeshSlot[SlotNumber]->IB->Fmt, 0);
+		CDevice::GetInst()->GetContext()->DrawIndexedInstanced(
+			m_vecMeshSlot[SlotNumber]->IB->Count, Count, 0, 0, 0);
+	}
+
+	else
+	{
+		CDevice::GetInst()->GetContext()->IASetIndexBuffer(
+			nullptr, DXGI_FORMAT_UNKNOWN, 0);
+		CDevice::GetInst()->GetContext()->DrawInstanced(
+			m_vecMeshSlot[SlotNumber]->VB->Count, Count, 0, 0);
 	}
 }

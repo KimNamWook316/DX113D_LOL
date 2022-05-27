@@ -30,5 +30,7 @@ public:
 		const CircleInfo& CircleInfo, const Vector2& Point);
 	static bool CollisionPixelToPoint(CollisionResult& SrcResult, CollisionResult& DestResult,
 		const PixelInfo& PixelInfo, const Vector2& Point);
+
+	static bool CollisionRayToSphere(Vector3& HitPoint, const Ray& ray, const SphereInfo& Sphere);
 };
 

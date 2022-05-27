@@ -3,6 +3,7 @@
 #include "IMGUIWindow.h"
 #include "IMGUITestWindow.h"
 #include "PathManager.h"
+#include "ImGuizmo.h"
 
 DEFINITION_SINGLE(CIMGUIManager)
 
@@ -76,6 +77,7 @@ void CIMGUIManager::Update(float DeltaTime)
 	ImGui_ImplWin32_NewFrame();
 
 	ImGui::NewFrame();
+	ImGuizmo::BeginFrame();
 
 	//ImGui::PushFont(m_CurrentFont);
 

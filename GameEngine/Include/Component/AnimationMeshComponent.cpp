@@ -35,6 +35,46 @@ CAnimationMeshComponent::CAnimationMeshComponent(const CAnimationMeshComponent& 
 
 CAnimationMeshComponent::~CAnimationMeshComponent()
 {
+	auto	iter = m_InstancingCheckList.begin();
+	auto	iterEnd = m_InstancingCheckList.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		if ((*iter)->Mesh == m_Mesh)
+		{
+			auto	iter1 = (*iter)->InstancingList.begin();
+			auto	iter1End = (*iter)->InstancingList.end();
+
+			for (; iter1 != iter1End; ++iter1)
+			{
+				if (*iter1 == this)
+				{
+					(*iter)->InstancingList.erase(iter1);
+
+					if ((*iter)->InstancingList.size() < 10)
+					{
+						auto	iter2 = (*iter)->InstancingList.begin();
+						auto	iter2End = (*iter)->InstancingList.end();
+
+						for (; iter2 != iter2End; ++iter2)
+						{
+							(*iter2)->SetInstancing(false);
+						}
+					}
+					break;
+				}
+			}
+
+			if ((*iter)->InstancingList.empty())
+			{
+				SAFE_DELETE((*iter));
+				m_InstancingCheckList.erase(iter);
+			}
+
+			break;
+		}
+	}
+
 	SAFE_DELETE(m_Animation);
 }
 
@@ -65,6 +105,57 @@ void CAnimationMeshComponent::SetMesh(const std::string& Name)
 	SetMeshSize(m_Mesh->GetMax() - m_Mesh->GetMin());
 
 	m_SphereInfo.Center = (m_Mesh->GetMax() + m_Mesh->GetMin()) / 2.f;
+
+	auto	iter1 = m_InstancingCheckList.begin();
+	auto	iter1End = m_InstancingCheckList.end();
+
+	bool	Add = false;
+
+	for (; iter1 != iter1End; ++iter1)
+	{
+		if ((*iter1)->Mesh == m_Mesh)
+		{
+			bool	InstancingEnable = (*iter1)->InstancingList.back()->GetInstancing();
+
+			(*iter1)->InstancingList.push_back(this);
+			Add = true;
+
+			// 인스턴싱 개수를 판단한다.
+			if (InstancingEnable)
+			{
+				SetInstancing(InstancingEnable);
+			}
+
+			else
+			{
+				if ((*iter1)->InstancingList.size() == 10)
+				{
+					auto	iter2 = (*iter1)->InstancingList.begin();
+					auto	iter2End = (*iter1)->InstancingList.end();
+
+					for (; iter2 != iter2End; ++iter2)
+					{
+						(*iter2)->SetInstancing(true);
+					}
+
+					m_Instancing = true;
+				}
+			}
+
+			break;
+		}
+	}
+
+	if (!Add)
+	{
+		InstancingCheckCount* CheckCount = new InstancingCheckCount;
+
+		m_InstancingCheckList.push_back(CheckCount);
+
+		CheckCount->InstancingList.push_back(this);
+		CheckCount->Mesh = m_Mesh;
+		CheckCount->LayerName = "Default";
+	}
 }
 
 void CAnimationMeshComponent::SetMesh(CAnimationMesh* Mesh)
@@ -94,6 +185,55 @@ void CAnimationMeshComponent::SetMesh(CAnimationMesh* Mesh)
 	SetMeshSize(m_Mesh->GetMax() - m_Mesh->GetMin());
 
 	m_SphereInfo.Center = (m_Mesh->GetMax() + m_Mesh->GetMin()) / 2.f;
+
+	auto	iter1 = m_InstancingCheckList.begin();
+	auto	iter1End = m_InstancingCheckList.end();
+
+	bool	Add = false;
+
+	for (; iter1 != iter1End; ++iter1)
+	{
+		if ((*iter1)->Mesh == m_Mesh)
+		{
+			bool	InstancingEnable = (*iter1)->InstancingList.back()->GetInstancing();
+
+			(*iter1)->InstancingList.push_back(this);
+			Add = true;
+
+			// 인스턴싱 개수를 판단한다.
+			if (InstancingEnable)
+				SetInstancing(InstancingEnable);
+
+			else
+			{
+				if ((*iter1)->InstancingList.size() == 10)
+				{
+					auto	iter2 = (*iter1)->InstancingList.begin();
+					auto	iter2End = (*iter1)->InstancingList.end();
+
+					for (; iter2 != iter2End; ++iter2)
+					{
+						(*iter2)->SetInstancing(true);
+					}
+
+					m_Instancing = true;
+				}
+			}
+
+			break;
+		}
+	}
+
+	if (!Add)
+	{
+		InstancingCheckCount* CheckCount = new InstancingCheckCount;
+
+		m_InstancingCheckList.push_back(CheckCount);
+
+		CheckCount->InstancingList.push_back(this);
+		CheckCount->Mesh = m_Mesh;
+		CheckCount->LayerName = "Default";
+	}
 }
 
 void CAnimationMeshComponent::SetMaterial(CMaterial* Material, int Index)
@@ -178,6 +318,20 @@ void CAnimationMeshComponent::SetOpacity(float Opacity, int Index)
 void CAnimationMeshComponent::AddOpacity(float Opacity, int Index)
 {
 	m_vecMaterialSlot[Index]->AddOpacity(Opacity);
+}
+
+void CAnimationMeshComponent::SetMaterialShader(const std::string& Name)
+{
+	CGraphicShader* Shader = dynamic_cast<CGraphicShader*>(CResourceManager::GetInst()->FindShader(Name));
+
+	if (!Shader)
+		return;
+
+	int Size = (int)m_vecMaterialSlot.size();
+	for (int i = 0; i < Size; ++i)
+	{
+		m_vecMaterialSlot[i]->SetShader(Shader);
+	}
 }
 
 void CAnimationMeshComponent::AddTexture(int MaterialIndex, int Register, int ShaderType, const std::string& Name, CTexture* Texture)
@@ -274,6 +428,8 @@ void CAnimationMeshComponent::Render()
 
 	for (size_t i = 0; i < Size; ++i)
 	{
+		m_vecMaterialSlot[i]->EnableDecal(m_ReceiveDecal);
+
 		m_vecMaterialSlot[i]->Render();
 
 		m_Mesh->Render((int)i);
@@ -343,6 +499,32 @@ void CAnimationMeshComponent::Load(FILE* File)
 	}
 
 	CSceneComponent::Load(File);
+}
+void CAnimationMeshComponent::RenderAnimationEditor()
+{
+	CSceneComponent::RenderAnimationEditor();
+
+	if (!m_Mesh)
+		return;
+
+	if (m_Animation)
+		m_Animation->SetShader();
+
+	size_t	Size = m_vecMaterialSlot.size();
+
+	for (size_t i = 0; i < Size; ++i)
+	{
+		m_vecMaterialSlot[i]->EnableDecal(m_ReceiveDecal);
+
+		m_vecMaterialSlot[i]->Render();
+
+		m_Mesh->Render((int)i);
+
+		m_vecMaterialSlot[i]->Reset();
+	}
+
+	if (m_Animation)
+		m_Animation->ResetShader();
 }
 void CAnimationMeshComponent::AddChild(CSceneComponent* Child,
 	const std::string& SocketName)

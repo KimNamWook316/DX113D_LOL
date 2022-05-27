@@ -5,10 +5,12 @@
 #include "Scene/Viewport.h"
 #include "../Object/Player.h"
 #include "../Object/LandScapeObj.h"
+#include "../Object/DecalObj.h"
+#include "../Object/Portal.h"
+#include "../Object/BonObj.h"
 #include "GameObject/LightObj.h"
 #include "Component/LightComponent.h"
 #include "Resource/Material/Material.h"
-#include "../Object/Alistar.h"
 
 CMainSceneMode::CMainSceneMode()
 {
@@ -32,16 +34,23 @@ bool CMainSceneMode::Init()
 	if (m_LoadingFunction)
 		m_LoadingFunction(false, 0.3f);
 
-	//CPlayer* Player = m_Scene->CreateGameObject<CPlayer>("Player");
-
-	//SetPlayerObject(Player);
-
-	CAlistar* Player = m_Scene->CreateGameObject<CAlistar>("Alistar");
+	CPlayer* Player = m_Scene->CreateGameObject<CPlayer>("Player");
 
 	SetPlayerObject(Player);
 
 
 	CLandScapeObj* LandScape = m_Scene->CreateGameObject<CLandScapeObj>("LandScape");
+
+	CDecalObj* Decal = m_Scene->CreateGameObject<CDecalObj>("Decal");
+
+	CPortal* Portal = m_Scene->CreateGameObject<CPortal>("Portal");
+
+	for (int i = 0; i < 30; ++i)
+	{
+		CBonObj* BonObj = m_Scene->CreateGameObject<CBonObj>("BonObj");
+
+		BonObj->SetWorldPos(i * 3.f, 4.f, 10.f);
+	}
 
 	CLightObj* Light = m_Scene->CreateGameObject<CLightObj>("Light1");
 
@@ -64,17 +73,17 @@ bool CMainSceneMode::Init()
 
 void CMainSceneMode::LoadMesh()
 {
-	m_Scene->GetResource()->LoadMesh(Mesh_Type::Animation, "AlistarMesh",
-		TEXT("Alistar_Idle.msh"));
-
-	//m_Scene->GetResource()->LoadMesh(Mesh_Type::Animation, "AlistarMesh",
-	//	TEXT("Alistar_Run.fbx"));
+	m_Scene->GetResource()->LoadMesh(Mesh_Type::Animation, "PlayerMesh",
+		TEXT("Player_Default.msh"));
 
 
 	m_Scene->GetResource()->LoadMesh(Mesh_Type::Static, "Blade",
 		TEXT("Blade.msh"));
 
-	// CMesh* Mesh = m_Scene->GetResource()->FindMesh("PlayerMesh");
+	m_Scene->GetResource()->LoadMesh(Mesh_Type::Static, "BonObj",
+		TEXT("BonObj.msh"));
+
+	CMesh* Mesh = m_Scene->GetResource()->FindMesh("PlayerMesh");
 
 	/*CSharedPtr<CMaterial>	Mtrl = Mesh->GetMaterial(2);
 
@@ -89,25 +98,22 @@ void CMainSceneMode::LoadMesh()
 		Mtrl->SetEmissiveColor(1.f, 1.f, 1.f, 1.f);
 	}*/
 
-	m_Scene->GetResource()->LoadSkeleton("AlistarSkeleton",
-		TEXT("Alistar_Idle.bne"), MESH_PATH);
+	m_Scene->GetResource()->LoadSkeleton("PlayerSkeleton",
+		TEXT("Player_Default.bne"), MESH_PATH);
 
-	//m_Scene->GetResource()->AddSocket("PlayerSkeleton", "bone11",
-	//	"Weapon");
+	m_Scene->GetResource()->AddSocket("PlayerSkeleton", "bone11",
+		"Weapon");
 
-	m_Scene->GetResource()->SetMeshSkeleton("AlistarMesh", "AlistarSkeleton");
+	m_Scene->GetResource()->SetMeshSkeleton("PlayerMesh", "PlayerSkeleton");
 
-	m_Scene->GetResource()->LoadAnimationSequence(true, "Alistar_Idle",
-		TEXT("Alistar_Idle.sqc"), MESH_PATH);
+	m_Scene->GetResource()->LoadAnimationSequence(true, "PlayerIdle",
+		TEXT("Player_Default.sqc"), MESH_PATH);
 
-	m_Scene->GetResource()->LoadAnimationSequence(true, "Alistar_Run",
-		TEXT("Alistar_Run.sqc"), MESH_PATH);
+	m_Scene->GetResource()->LoadAnimationSequence(false, "PlayerAttack",
+		TEXT("PlayerAttack.sqc"), MESH_PATH);
 
-	//m_Scene->GetResource()->LoadAnimationSequence(false, "PlayerAttack",
-	//	TEXT("PlayerAttack.sqc"), MESH_PATH);
-
-	//m_Scene->GetResource()->LoadAnimationSequence(true, "PlayerWalk",
-	//	TEXT("PlayerWalk.sqc"), MESH_PATH);
+	m_Scene->GetResource()->LoadAnimationSequence(true, "PlayerWalk",
+		TEXT("PlayerWalk.sqc"), MESH_PATH);
 }
 
 void CMainSceneMode::CreateMaterial()
@@ -240,4 +246,5 @@ void CMainSceneMode::CreateAnimationSequence()
 void CMainSceneMode::CreateParticle()
 {
 }
+
 

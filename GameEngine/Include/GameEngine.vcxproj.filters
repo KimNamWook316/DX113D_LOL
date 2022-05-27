@@ -277,14 +277,23 @@
     <Filter Include="99. Util">
       <UniqueIdentifier>{88dedb62-816d-497a-9914-d558eac24e8e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="05. Component\02. ObjectComponent\03. BehaviorTree">
-      <UniqueIdentifier>{d3acfada-4fc6-402f-aac5-d772e7270ab6}</UniqueIdentifier>
+    <Filter Include="05. Component\01. SceneComponent\10. Decal">
+      <UniqueIdentifier>{ad74889f-6a94-479d-9d3a-34327c6d4d1d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="05. Component\02. ObjectComponent\03. BehaviorTree\01. Node">
-      <UniqueIdentifier>{3d0df6aa-26c6-4213-acc1-9929f319f8ce}</UniqueIdentifier>
+    <Filter Include="02. Resource\02. Shader\02. ShaderClass\14. Decal">
+      <UniqueIdentifier>{3604b661-dc4c-4441-94a8-7ef3849874ff}</UniqueIdentifier>
     </Filter>
-    <Filter Include="05. Component\02. ObjectComponent\04. State">
-      <UniqueIdentifier>{7d67a580-e05e-40da-939f-45595e4bc94b}</UniqueIdentifier>
+    <Filter Include="05. Component\01. SceneComponent\11. BillBoard">
+      <UniqueIdentifier>{79884da5-4326-4a7a-8e4a-a7bca69615da}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Resource\02. Shader\02. ShaderClass\15. BillBoard">
+      <UniqueIdentifier>{63d2d28c-3a5c-479e-baf4-77417f66247f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Resource\02. Shader\02. ShaderClass\13. Mesh3DNoLight">
+      <UniqueIdentifier>{e2f187ed-530a-4437-94c1-b505f40746b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Resource\02. Shader\02. ShaderClass\14. AnimEditor">
+      <UniqueIdentifier>{9cc26f9b-e79c-4efd-8de5-51ea76d6929b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -843,44 +852,44 @@
     <ClCompile Include="ImGuizmo.cpp">
       <Filter>01. Engine\08. IMGUI\01. Lib</Filter>
     </ClCompile>
+    <ClCompile Include="Component\DecalComponent.cpp">
+      <Filter>05. Component\01. SceneComponent\10. Decal</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Shader\DecalDebugShader.cpp">
+      <Filter>02. Resource\02. Shader\02. ShaderClass\14. Decal</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Shader\DecalShader.cpp">
+      <Filter>02. Resource\02. Shader\02. ShaderClass\14. Decal</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\BillboardComponent.cpp">
+      <Filter>05. Component\01. SceneComponent\11. BillBoard</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Shader\BillboardShader.cpp">
+      <Filter>02. Resource\02. Shader\02. ShaderClass\15. BillBoard</Filter>
+    </ClCompile>
     <ClCompile Include="EngineUtil.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="Component\Node\ActionNode.cpp">
-      <Filter>05. Component\02. ObjectComponent\03. BehaviorTree\01. Node</Filter>
+    <ClCompile Include="Resource\Shader\Mesh3DNoLightShader.cpp">
+      <Filter>02. Resource\02. Shader\02. ShaderClass\13. Mesh3DNoLight</Filter>
     </ClCompile>
-    <ClCompile Include="Component\Node\CompositeNode.cpp">
-      <Filter>05. Component\02. ObjectComponent\03. BehaviorTree\01. Node</Filter>
+    <ClCompile Include="Resource\Shader\AnimEditorShader.cpp">
+      <Filter>02. Resource\02. Shader\02. ShaderClass\14. AnimEditor</Filter>
     </ClCompile>
-    <ClCompile Include="Component\Node\IdleNode.cpp">
-      <Filter>05. Component\02. ObjectComponent\03. BehaviorTree\01. Node</Filter>
+    <ClCompile Include="EngineUtil.cpp">
+      <Filter>99. Util</Filter>
     </ClCompile>
-    <ClCompile Include="Component\Node\Node.cpp">
-      <Filter>05. Component\02. ObjectComponent\03. BehaviorTree\01. Node</Filter>
+    <ClCompile Include="Resource\Shader\Standard3DInstancingShader.cpp">
+      <Filter>02. Resource\02. Shader\02. ShaderClass\07. Standard3D</Filter>
     </ClCompile>
-    <ClCompile Include="Component\Node\RunNode.cpp">
-      <Filter>05. Component\02. ObjectComponent\03. BehaviorTree\01. Node</Filter>
+    <ClCompile Include="IMGUICollapsingHeader.cpp">
+      <Filter>01. Engine\08. IMGUI\03. Widget</Filter>
     </ClCompile>
-    <ClCompile Include="Component\Node\SelectorNode.cpp">
-      <Filter>05. Component\02. ObjectComponent\03. BehaviorTree\01. Node</Filter>
+    <ClCompile Include="IMGUIGizmo.cpp">
+      <Filter>01. Engine\08. IMGUI\03. Widget</Filter>
     </ClCompile>
-    <ClCompile Include="Component\Node\SequenceNode.cpp">
-      <Filter>05. Component\02. ObjectComponent\03. BehaviorTree\01. Node</Filter>
-    </ClCompile>
-    <ClCompile Include="Component\Node\ConditionNode.cpp">
-      <Filter>05. Component\02. ObjectComponent\03. BehaviorTree\01. Node</Filter>
-    </ClCompile>
-    <ClCompile Include="Component\StateComponent.cpp">
-      <Filter>05. Component\02. ObjectComponent\04. State</Filter>
-    </ClCompile>
-    <ClCompile Include="Component\State.cpp">
-      <Filter>05. Component\02. ObjectComponent\04. State</Filter>
-    </ClCompile>
-    <ClCompile Include="Component\BehaviorTree.cpp">
-      <Filter>05. Component\02. ObjectComponent\03. BehaviorTree</Filter>
-    </ClCompile>
-    <ClCompile Include="Component\Node\MoveInputCheckNode.cpp">
-      <Filter>05. Component\02. ObjectComponent\03. BehaviorTree\01. Node</Filter>
+    <ClCompile Include="IMGUIGrid.cpp">
+      <Filter>01. Engine\08. IMGUI\03. Widget</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1475,44 +1484,44 @@
     <ClInclude Include="ImZoomSlider.h">
       <Filter>01. Engine\08. IMGUI\01. Lib</Filter>
     </ClInclude>
+    <ClInclude Include="Component\DecalComponent.h">
+      <Filter>05. Component\01. SceneComponent\10. Decal</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Shader\DecalDebugShader.h">
+      <Filter>02. Resource\02. Shader\02. ShaderClass\14. Decal</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Shader\DecalShader.h">
+      <Filter>02. Resource\02. Shader\02. ShaderClass\14. Decal</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\BillboardComponent.h">
+      <Filter>05. Component\01. SceneComponent\11. BillBoard</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Shader\BillboardShader.h">
+      <Filter>02. Resource\02. Shader\02. ShaderClass\15. BillBoard</Filter>
+    </ClInclude>
     <ClInclude Include="EngineUtil.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="Component\Node\ActionNode.h">
-      <Filter>05. Component\02. ObjectComponent\03. BehaviorTree\01. Node</Filter>
+    <ClInclude Include="Resource\Shader\Mesh3DNoLightShader.h">
+      <Filter>02. Resource\02. Shader\02. ShaderClass\13. Mesh3DNoLight</Filter>
     </ClInclude>
-    <ClInclude Include="Component\Node\CompositeNode.h">
-      <Filter>05. Component\02. ObjectComponent\03. BehaviorTree\01. Node</Filter>
+    <ClInclude Include="Resource\Shader\AnimEditorShader.h">
+      <Filter>02. Resource\02. Shader\02. ShaderClass\14. AnimEditor</Filter>
     </ClInclude>
-    <ClInclude Include="Component\Node\IdleNode.h">
-      <Filter>05. Component\02. ObjectComponent\03. BehaviorTree\01. Node</Filter>
+    <ClInclude Include="EngineUtil.h">
+      <Filter>99. Util</Filter>
     </ClInclude>
-    <ClInclude Include="Component\Node\Node.h">
-      <Filter>05. Component\02. ObjectComponent\03. BehaviorTree\01. Node</Filter>
+    <ClInclude Include="Resource\Shader\Standard3DInstancingShader.h">
+      <Filter>02. Resource\02. Shader\02. ShaderClass\07. Standard3D</Filter>
     </ClInclude>
-    <ClInclude Include="Component\Node\RunNode.h">
-      <Filter>05. Component\02. ObjectComponent\03. BehaviorTree\01. Node</Filter>
+    <ClInclude Include="IMGUICollapsingHeader.h">
+      <Filter>01. Engine\08. IMGUI\03. Widget</Filter>
     </ClInclude>
-    <ClInclude Include="Component\Node\SelectorNode.h">
-      <Filter>05. Component\02. ObjectComponent\03. BehaviorTree\01. Node</Filter>
+    <ClInclude Include="IMGUIGizmo.h">
+      <Filter>01. Engine\08. IMGUI\03. Widget</Filter>
     </ClInclude>
-    <ClInclude Include="Component\Node\SequenceNode.h">
-      <Filter>05. Component\02. ObjectComponent\03. BehaviorTree\01. Node</Filter>
-    </ClInclude>
-    <ClInclude Include="Component\Node\ConditionNode.h">
-      <Filter>05. Component\02. ObjectComponent\03. BehaviorTree\01. Node</Filter>
-    </ClInclude>
-    <ClInclude Include="Component\State.h">
-      <Filter>05. Component\02. ObjectComponent\04. State</Filter>
-    </ClInclude>
-    <ClInclude Include="Component\StateComponent.h">
-      <Filter>05. Component\02. ObjectComponent\04. State</Filter>
-    </ClInclude>
-    <ClInclude Include="Component\BehaviorTree.h">
-      <Filter>05. Component\02. ObjectComponent\03. BehaviorTree</Filter>
-    </ClInclude>
-    <ClInclude Include="Component\Node\MoveInputCheckNode.h">
-      <Filter>05. Component\02. ObjectComponent\03. BehaviorTree\01. Node</Filter>
+    <ClInclude Include="IMGUIGrid.h">
+      <Filter>01. Engine\08. IMGUI\03. Widget</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1550,6 +1559,12 @@
       <Filter>02. Resource\02. Shader\01. HLSL</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\Shader\LandScape.fx">
+      <Filter>02. Resource\02. Shader\01. HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\Shader\Decal.fx">
+      <Filter>02. Resource\02. Shader\01. HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\Shader\Billboard.fx">
       <Filter>02. Resource\02. Shader\01. HLSL</Filter>
     </FxCompile>
   </ItemGroup>

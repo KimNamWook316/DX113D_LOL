@@ -45,10 +45,13 @@
     <ClInclude Include="Object\Weapon.h">
       <Filter>02. Object</Filter>
     </ClInclude>
-    <ClInclude Include="Object\Alistar.h">
+    <ClInclude Include="Object\DecalObj.h">
       <Filter>02. Object</Filter>
     </ClInclude>
-    <ClInclude Include="Object\AlistarAnimation.h">
+    <ClInclude Include="Object\Portal.h">
+      <Filter>02. Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\BonObj.h">
       <Filter>02. Object</Filter>
     </ClInclude>
   </ItemGroup>
@@ -84,10 +87,13 @@
     <ClCompile Include="Object\Weapon.cpp">
       <Filter>02. Object</Filter>
     </ClCompile>
-    <ClCompile Include="Object\Alistar.cpp">
+    <ClCompile Include="Object\DecalObj.cpp">
       <Filter>02. Object</Filter>
     </ClCompile>
-    <ClCompile Include="Object\AlistarAnimation.cpp">
+    <ClCompile Include="Object\Portal.cpp">
+      <Filter>02. Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\BonObj.cpp">
       <Filter>02. Object</Filter>
     </ClCompile>
   </ItemGroup>

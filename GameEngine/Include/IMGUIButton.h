@@ -3,12 +3,7 @@
 class CIMGUIButton :
 	public CIMGUIWidget
 {
-	friend class CIMGUIWindow;
-	friend class CIMGUIPopUpModal;
-	friend class CIMGUIWidgetList;
-	friend class CIMGUITree;
-
-protected:
+public:
 	CIMGUIButton();
 	virtual ~CIMGUIButton();
 

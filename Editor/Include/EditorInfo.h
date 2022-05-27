@@ -14,6 +14,7 @@
 #define OBJECTCOMPONENT_CREATE_POPUPMODAL	"ObjectComponentCreatePopUpModal"
 #define ANIMATION_EDITOR					"AnimationEditor"
 #define FBX_CONVERTOR						"FBXConverter"
+#define TOOL								"Tool"
 #define BEHAVIORTREE_WINDOW					"BehaviorTreeWindow"
 
 #define DIRECTORY_IMAGE						"DirectoryImage"

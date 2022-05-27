@@ -22,6 +22,11 @@ protected:
 	Vector3	m_Pos;
 
 public:
+	bool IsDebugRender() const
+	{
+		return m_DebugRender;
+	}
+
 	IDXGISurface* GetSurface()	const
 	{
 		return m_Surface;
@@ -54,7 +59,7 @@ public:
 
 public:
 	bool CreateTarget(const std::string& Name, unsigned int Width,
-		unsigned int Height, DXGI_FORMAT PixelFormat);
+		unsigned int Height, DXGI_FORMAT PixelFormat, bool Multisample = true);
 	void ClearTarget();
 	void SetTarget(ID3D11DepthStencilView* DepthView);
 	void ResetTarget();

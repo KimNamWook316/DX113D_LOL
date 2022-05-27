@@ -3,11 +3,7 @@
 class CIMGUIText :
 	public CIMGUIWidget
 {
-	friend class CIMGUIWindow;
-	friend class CIMGUIWidgetList;
-	friend class CIMGUIChild;
-
-protected:
+public:
 	CIMGUIText();
 	virtual ~CIMGUIText();
 

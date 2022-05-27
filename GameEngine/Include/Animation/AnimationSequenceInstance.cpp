@@ -2,6 +2,7 @@
 #include "AnimationSequenceInstance.h"
 #include "../Scene/Scene.h"
 #include "../Scene/SceneResource.h"
+#include "../Scene/SceneManager.h"
 #include "../Component/AnimationMeshComponent.h"
 #include "../Resource/Animation/AnimationSequence.h"
 #include "../Resource/Shader/AnimationUpdateConstantBuffer.h"
@@ -14,7 +15,6 @@ CAnimationSequenceInstance::CAnimationSequenceInstance() :
 	m_Scene(nullptr),
 	m_Owner(nullptr),
 	m_PlayAnimation(true),
-	m_BoneDataBuffer(nullptr),
 	m_GlobalTime(0.f),
 	m_SequenceProgress(0.f),
 	m_ChangeTimeAcc(0.f),
@@ -47,7 +47,7 @@ CAnimationSequenceInstance::CAnimationSequenceInstance(const CAnimationSequenceI
 
 	m_Skeleton = Anim.m_Skeleton;
 
-
+	m_EditorStopAnimation = false;
 
 	m_mapAnimation.clear();
 
@@ -69,21 +69,10 @@ CAnimationSequenceInstance::CAnimationSequenceInstance(const CAnimationSequenceI
 
 		m_mapAnimation.insert(std::make_pair(iter->first, Data));
 	}
-
-	D3D11_BUFFER_DESC	Desc = {};
-
-	Desc.ByteWidth = sizeof(Matrix) * (unsigned int)m_Skeleton->GetBoneCount();
-	Desc.Usage = D3D11_USAGE_STAGING;
-	Desc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
-
-	CDevice::GetInst()->GetDevice()->CreateBuffer(&Desc, nullptr, &m_BoneDataBuffer);
-
-
 }
 
 CAnimationSequenceInstance::~CAnimationSequenceInstance()
 {
-	SAFE_RELEASE(m_BoneDataBuffer);
 	SAFE_DELETE(m_OutputBuffer);
 	SAFE_DELETE(m_BoneBuffer);
 	SAFE_DELETE(m_AnimationUpdateCBuffer);
@@ -95,6 +84,28 @@ CAnimationSequenceInstance::~CAnimationSequenceInstance()
 	{
 		SAFE_DELETE(iter->second);
 	}
+}
+
+void CAnimationSequenceInstance::SetEditorStopTargetFrame(int Frame)
+{
+	if (!m_CurrentAnimation)
+		return;
+
+	// 기존에 Stop 해두던 Animation 을 Play 시킨다.
+	if (!m_PlayAnimation)
+		m_PlayAnimation = true;
+
+	m_EditorStopTargetFrame = Frame;
+
+	// 해당 Frame 이전으로 세팅해둔다.
+	// int PrevFrame = Frame - 1;
+	// if (PrevFrame < 0)
+	//	PrevFrame = m_CurrentAnimation->GetAnimationSequence()->GetEndFrame();
+
+	// SetCurrentAnimationFrameIdx(PrevFrame);
+	SetCurrentAnimationFrameIdx(Frame);
+
+	m_EditorStopAnimation = true;
 }
 
 void CAnimationSequenceInstance::SetSkeleton(CSkeleton* Skeleton)
@@ -125,6 +136,57 @@ void CAnimationSequenceInstance::SetCurrentAnimationFrameIdx(int Idx)
 	m_GlobalTime = (Idx) * m_CurrentAnimation->m_FrameTime;
 
 	m_CurrentAnimation->GetAnimationSequence()->m_CurrentFrameIdx = Idx;
+}
+
+bool CAnimationSequenceInstance::EditCurrentSequenceKeyName(const std::string& NewKey, const std::string& PrevKey)
+{
+	if (!m_CurrentAnimation)
+		return false;
+
+	// 다시 Combo Box 같은 것 Refresch
+	auto iter = m_mapAnimation.find(PrevKey);
+
+	if (iter == m_mapAnimation.end())
+		return false;
+
+	CAnimationSequenceData* PrevAnim = iter->second;
+
+	// 새로운 이름으로 넣어준다.
+	m_mapAnimation.insert(std::make_pair(NewKey, PrevAnim));
+
+	// 기존 것은 지워준다.
+	m_mapAnimation.erase(iter);
+
+	return true;
+}
+
+void CAnimationSequenceInstance::DeleteCurrentAnimation()
+{
+	if (!m_CurrentAnimation)
+		return;
+
+	auto iter = m_mapAnimation.begin();
+	auto iterEnd = m_mapAnimation.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		if (iter->second == m_CurrentAnimation)
+		{
+			SAFE_DELETE(iter->second);
+			m_mapAnimation.erase(iter);
+			break;
+		}
+	}
+
+	if (!m_mapAnimation.empty())
+	{
+		iter = m_mapAnimation.begin();
+		m_CurrentAnimation = iter->second;
+	}
+	else
+	{
+		m_CurrentAnimation = nullptr;
+	}
 }
 
 void CAnimationSequenceInstance::AddAnimation(const std::string& SequenceName,
@@ -290,6 +352,73 @@ bool CAnimationSequenceInstance::CheckCurrentAnimation(const std::string& Name)
 	return m_CurrentAnimation->m_Name == Name;
 }
 
+void CAnimationSequenceInstance::ClearAnimationSequenceFromAnimationEditor()
+{
+	// 나머지는 모두 지워주기
+	auto iter = m_mapAnimation.begin();
+	auto iterEnd = m_mapAnimation.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		// Animation Sequence 들은 Ref Count가 2 여서, SequenceData 는 지워져도
+		// Sequence 는 지워지지 않을 수도 있다.
+		// 따라서 Ref Count 를 미리 1 감소시켜야 한다.
+		// Resource Manager 에서 해당 Sequence 를 지워줄 것이다.
+		// iter->second->m_Sequence->m_RefCount -= 1;
+
+		CResourceManager::GetInst()->DeleteSequence3D(iter->second->m_Sequence->GetName());
+
+		SAFE_DELETE(iter->second);
+	}
+	m_mapAnimation.clear();
+
+	// 현재 Animation은 null로
+	m_CurrentAnimation = nullptr;
+}
+
+void CAnimationSequenceInstance::GatherSequenceNames(std::vector<std::string>& vecString)
+{
+	auto iter = m_mapAnimation.begin();
+	auto iterEnd = m_mapAnimation.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		vecString.push_back(iter->first);
+	}
+}
+
+void CAnimationSequenceInstance::AddAnimationSequenceToSceneResource()
+{
+	CSceneResource* Resource = CSceneManager::GetInst()->GetScene()->GetResource();
+
+	auto iter = m_mapAnimation.begin();
+	auto iterEnd = m_mapAnimation.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		// Scene 에 추가할지 말지 고민중
+	}
+}
+
+int CAnimationSequenceInstance::GetCurrentAnimationOrder()
+{
+	if (!m_CurrentAnimation)
+		return -1;
+
+	int Idx = 0;
+
+	auto iter = m_mapAnimation.begin();
+	auto iterEnd = m_mapAnimation.end();
+	for (; iter != iterEnd; ++iter)
+	{
+		if (iter->second == m_CurrentAnimation)
+			break;
+		Idx += 1;
+	}
+
+	return Idx;
+	return 0;
+}
 void CAnimationSequenceInstance::Start()
 {
 	if (m_Scene)
@@ -316,15 +445,9 @@ void CAnimationSequenceInstance::Start()
 	m_BoneBuffer = new CStructuredBuffer;
 
 	m_BoneBuffer->Init("OutputBone", sizeof(Matrix),
-		(unsigned int)m_Skeleton->GetBoneCount(), 1);
-
-	D3D11_BUFFER_DESC	Desc = {};
-
-	Desc.ByteWidth = sizeof(Matrix) * (unsigned int)m_Skeleton->GetBoneCount();
-	Desc.Usage = D3D11_USAGE_STAGING;
-	Desc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
-
-	CDevice::GetInst()->GetDevice()->CreateBuffer(&Desc, nullptr, &m_BoneDataBuffer);
+		(unsigned int)m_Skeleton->GetBoneCount(), 1,
+		D3D11_USAGE_DEFAULT, D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_UNORDERED_ACCESS,
+		D3D11_CPU_ACCESS_READ, false);
 }
 
 bool CAnimationSequenceInstance::Init()
@@ -383,6 +506,12 @@ void CAnimationSequenceInstance::Update(float DeltaTime)
 		int	FrameIndex = (int)(AnimationTime / m_CurrentAnimation->m_FrameTime);
 
 		m_CurrentAnimation->GetAnimationSequence()->m_CurrentFrameIdx = FrameIndex;
+
+		// Editor 상에서 의도한 위치의 Frame 에서 멈추게 한다.
+		if (m_EditorStopAnimation && FrameIndex == m_EditorStopTargetFrame)
+		{
+			m_PlayAnimation = false;
+		}
 
 		int	NextFrameIndex = FrameIndex + 1;
 
@@ -485,16 +614,18 @@ void CAnimationSequenceInstance::Update(float DeltaTime)
 		m_GlobalTime = 0.f;
 	}
 
-	// 구조화 버퍼에 있는 본 정보를 DataBuffer로 복사한다.
-	CDevice::GetInst()->GetContext()->CopyResource(m_BoneDataBuffer, m_BoneBuffer->GetBuffer());
+ //	// 구조화 버퍼에 있는 본 정보를 DataBuffer로 복사한다.
+ //	CDevice::GetInst()->GetContext()->CopyResource(m_BoneDataBuffer, m_BoneBuffer->GetBuffer());
 
 	D3D11_MAPPED_SUBRESOURCE	Map = {};
 
-	CDevice::GetInst()->GetContext()->Map(m_BoneDataBuffer, 0, D3D11_MAP_READ, 0, &Map);
+	// Usage가 Default임에도 불구하고 Cpu에서 Read Access를 가질 수 있는 버그를 이용
+	CDevice::GetInst()->GetContext()->Map(m_BoneBuffer->GetBuffer(), 0, D3D11_MAP_READ, 0, &Map);
 
 	memcpy(&m_vecBoneMatrix[0], Map.pData, sizeof(Matrix) * m_vecBoneMatrix.size());;
 
-	CDevice::GetInst()->GetContext()->Unmap(m_BoneDataBuffer, 0);
+	CDevice::GetInst()->GetContext()->Unmap(m_BoneBuffer->GetBuffer(), 0);
+
 	m_Skeleton->Update(DeltaTime, m_vecBoneMatrix, m_Owner->GetWorldMatrix());
 }
 
@@ -581,6 +712,148 @@ void CAnimationSequenceInstance::Load(FILE* File)
 
 	//if (m_Scene)
 	//	m_CBuffer = m_Scene->GetResource()->GetAnimation2DCBuffer();
+}
+
+bool CAnimationSequenceInstance::SaveAnimationFullPath(const char* FullPath)
+{
+	FILE* pFile;
+	fopen_s(&pFile, FullPath, "wb");
+	if (!pFile)
+		return false;
+
+	fwrite(&m_TypeID, sizeof(size_t), 1, pFile);
+	fwrite(&m_PlayAnimation, sizeof(bool), 1, pFile);
+
+	int Length = (int)m_AnimInstanceName.length();
+	fwrite(&Length, sizeof(int), 1, pFile);
+	fwrite(m_AnimInstanceName.c_str(), sizeof(char), Length, pFile);
+
+	size_t AnimationSize = m_mapAnimation.size();
+	fwrite(&AnimationSize, sizeof(size_t), 1, pFile);
+
+	auto iter = m_mapAnimation.begin();
+	auto iterEnd = m_mapAnimation.end();
+	size_t  SequenceDataNameLength = -1;
+	for (; iter != iterEnd; ++iter)
+	{
+		SequenceDataNameLength = strlen(iter->first.c_str());
+		fwrite(&SequenceDataNameLength, sizeof(int), 1, pFile);
+
+		// Animation Key 저장
+		fwrite(iter->first.c_str(), sizeof(char), SequenceDataNameLength, pFile);
+		iter->second->Save(pFile);
+	}
+
+	// Current Animation
+	bool CurrentAnimEnable = false;
+	if (m_CurrentAnimation)
+		CurrentAnimEnable = true;
+	fwrite(&CurrentAnimEnable, sizeof(bool), 1, pFile);
+
+	if (m_CurrentAnimation)
+	{
+		// Current Anim Length
+		Length = (int)m_CurrentAnimation->m_Name.length();
+		fwrite(&Length, sizeof(int), 1, pFile);
+		fwrite(m_CurrentAnimation->m_Name.c_str(), sizeof(char), Length, pFile);
+	}
+
+	fclose(pFile);
+
+	return true;
+}
+
+bool CAnimationSequenceInstance::LoadAnimationFullPath(const char* FullPath)
+{
+	FILE* pFile;
+
+	fopen_s(&pFile, FullPath, "rb");
+
+	if (!pFile)
+		return false;
+
+	fread(&m_TypeID, sizeof(size_t), 1, pFile);
+	fread(&m_PlayAnimation, sizeof(bool), 1, pFile);
+
+	int Length = 0;
+	fread(&Length, sizeof(int), 1, pFile);
+	char Name[MAX_PATH] = {};
+	fread(Name, sizeof(char), Length, pFile);
+	m_AnimInstanceName = Name;
+
+	size_t AnimationSize = -1;
+	fread(&AnimationSize, sizeof(size_t), 1, pFile);
+
+
+	// m_mapAnimation.clear();
+	// m_CurrentAnimation = nullptr;
+
+	for (int i = 0; i < AnimationSize; i++)
+	{
+		int SequenceDataKeyNameLength = 0;
+		char SequenceDataNameKey[MAX_PATH] = {};
+
+		// - CAnimationSequence2DData
+		// Key Name 저장 
+		fread(&SequenceDataKeyNameLength, sizeof(int), 1, pFile);
+		fread(SequenceDataNameKey, sizeof(char), SequenceDataKeyNameLength, pFile);
+
+		// CAnimationSequence2DData 를 저장하기 ===============================
+		CAnimationSequenceData* SequenceData = new CAnimationSequenceData;
+
+		SequenceData->Load(pFile);
+		// Scene이 있냐 없냐에 따라
+		// Scene Resource, ResourceManager에 해당 Sequence를 추가해주어야 한다
+		/*
+		if (m_Scene)
+		{
+			m_Scene->GetResource()->AddSequence2D(Sequence2DData->m_Sequence);
+		}
+		else
+		{
+			CResourceManager::GetInst()->AddSequence2D(Sequence2DData->m_Sequence);
+		}
+		*/
+
+		// 중복 추가 방지
+		if (FindAnimation(SequenceDataNameKey))
+		{
+			SAFE_DELETE(SequenceData);
+			continue;
+		}
+
+		if (m_mapAnimation.empty())
+		{
+			m_CurrentAnimation = SequenceData;
+		}
+
+		m_mapAnimation.insert(std::make_pair(SequenceDataNameKey, SequenceData));
+
+	}
+
+	// Current Animation Info
+	bool CurrentAnimEnable = false;
+	fread(&CurrentAnimEnable, sizeof(bool), 1, pFile);
+
+	if (CurrentAnimEnable)
+	{
+		int CurAnimNameLength = -1;
+		fread(&CurAnimNameLength, sizeof(int), 1, pFile);
+		char CurAnimName[MAX_PATH] = {};
+		fread(CurAnimName, sizeof(char), CurAnimNameLength, pFile);
+
+		CAnimationSequenceData* FoundAnimation = FindAnimation(CurAnimName);
+
+		// 이름 자체가 잘못 저장된 것일 수도 있어서 해당 내용이 없을 수도 있다.
+		if (FoundAnimation)
+		{
+			m_CurrentAnimation = FoundAnimation;
+		}
+	}
+
+	fclose(pFile);
+
+	return true;
 }
 
 CAnimationSequenceData* CAnimationSequenceInstance::FindAnimation(const std::string& Name)
