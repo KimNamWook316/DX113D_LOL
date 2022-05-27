@@ -47,8 +47,14 @@ private:
 	bool	m_UpdateRotAxis; // 주어진 축 기준 회전으로 업데이트 여부
 	bool	m_UpdatePos;
 
+	bool	m_UpdateByMat;
+
 public:
 	void SetInstancingInfo(Instancing3DInfo* Info);
+	void SetUpdateByMat(bool UpdateByMat)
+	{
+		m_UpdateByMat = UpdateByMat;
+	}
 
 	void SetSocket(class CSkeletonSocket* Socket)
 	{
@@ -259,6 +265,7 @@ public:
 	}
 
 public:
+	void SetTransformByWorldMatrix(const Matrix& matTRS);
 	void SetWorldScale(const Vector3& Scale);
 	void SetWorldScale(float x, float y, float z);
 	void SetWorldRotation(const Vector3& Rot);
@@ -279,6 +286,10 @@ public:
 	void AddWorldPos(const Vector3& Pos);
 	void AddWorldPos(float x, float y, float z);
 
+	// 자신의 축 기준으로 이동
+	void AddWorldPosByLocalAxis(AXIS Axis, float Amount);
+	void AddWorldPosByLocalAxis(const Vector3& Pos);
+
 public:
 	void Start();
 	void Init();
@@ -286,6 +297,7 @@ public:
 	void PostUpdate(float DeltaTime);
 	void SetTransform();
 	void ComputeWorld();
+	void DecomposeWorld();
 	CTransform* Clone();
 	void Save(FILE* File);
 	void Load(FILE* File);

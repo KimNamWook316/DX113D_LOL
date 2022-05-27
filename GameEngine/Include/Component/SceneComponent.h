@@ -164,6 +164,15 @@ public :
 	virtual void RenderAnimationEditor();
 
 public:	// Transform
+	void SetUpdateByMat(bool UpdateByMat);
+	void DecomposeWorld();
+
+	// 자신의 축 기준으로 이동
+	void AddWorldPosByLocalAxis(AXIS Axis, float Amount);
+	void AddWorldPosByLocalAxis(const Vector3& Pos);
+
+	void SetTransformByWorldMatrix(const Matrix& matTRS);
+
 	void SetInheritScale(bool Inherit)
 	{
 		m_Transform->SetInheritScale(Inherit);

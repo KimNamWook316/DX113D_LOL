@@ -35,6 +35,17 @@ public:
         mVecCheckInfo.push_back(info);
     }
 public:
+    void SetCheck(int idx, bool check)
+    {
+        if (idx >= mVecCheckInfo.size())
+        {
+            return;
+        }
+
+        mVecCheckInfo[idx]->bCheck = check;
+        mCheckItemIdx = idx;
+    }
+
     // 여러 개 버튼을 한 줄에 배치할 경우 줄 수를 지정하는 기능
     void SetColNum(const int val)
     {
@@ -52,6 +63,12 @@ public:
     void SetMultiCheck(const bool bMultiCheck)
     {
         mbMultiCheck = bMultiCheck;
+    }
+
+    // 항상 하나 이상이 체크되어 있어야 하는지 여부
+    void AlwaysCheck(bool Check)
+    {
+        mAlwaysCheck = Check;
     }
 
 public:
@@ -75,6 +92,7 @@ protected:
     std::function<void(const char*, bool)> mCallBack;
     
     bool mbMultiCheck;
+    bool mAlwaysCheck; // 항상 하나 이상이 체크되어 있어야 한다면
     int mCheckItemIdx;
 };
 

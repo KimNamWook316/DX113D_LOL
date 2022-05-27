@@ -5,8 +5,6 @@
 class CIMGUISliderFloat :
     public CIMGUIWidget
 {
-	friend class CIMGUIWindow;
-	friend class CIMGUIPopUpModal;
 public:
 	CIMGUISliderFloat();
 	virtual ~CIMGUISliderFloat();

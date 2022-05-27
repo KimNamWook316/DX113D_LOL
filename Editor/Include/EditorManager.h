@@ -27,6 +27,9 @@ private:
 	class CAnimationEditor* m_AnimationEditor;
 	class CEffectEditor* m_EffectEditor;
 	class CInspectorWindow* m_InspectorWindow;
+	class CToolWindow* m_ToolWindow;
+
+	class C3DCameraObject* m_CameraObject;
 
 	bool				m_MousePush;
 	float				m_CameraMoveSpeed;
@@ -79,6 +82,9 @@ public:
 	class CGameObject* CreateObject(class CScene* Scene, size_t Type);
 	class CComponent* CreateComponent(class CGameObject* Obj, size_t Type);
 	void CreateAnimInstance(class CSpriteComponent* Sprite, size_t Type);
+	
+private:
+	void CreateEditorCamera();
 
 	DECLARE_SINGLE(CEditorManager)
 };

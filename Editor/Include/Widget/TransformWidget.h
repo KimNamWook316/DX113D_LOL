@@ -14,7 +14,7 @@ public:
 
 public:
     // 반드시 Init 이후 이 함수 호출해야 함
-    void SetTransform(class CTransform* Trans);
+    void SetSceneCompoent(class CSceneComponent* Component);
 
 // Transform에서 호출
 public:
@@ -33,6 +33,7 @@ private:
     void OnChangeRelativeScale(const Vector3& Scale);
 
 private:
+    CSharedPtr<class CSceneComponent> m_SceneComponent;
     class CTransform* m_Transform;
 
     class CIMGUICheckBox* m_InheritCheckBox;

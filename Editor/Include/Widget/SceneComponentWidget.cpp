@@ -59,7 +59,7 @@ void CSceneComponentWidget::SetSceneComponent(CSceneComponent* Com)
 
 	m_EnableCheckBox->SetCheck(0, m_Component->IsEnable());
 	m_NameInput->SetText(m_Component->GetName().c_str());
-	m_TransformWidget->SetTransform(m_Component->GetTransform());
+	m_TransformWidget->SetSceneCompoent(m_Component);
 
 	m_PrevName = m_Component->GetName();
 }

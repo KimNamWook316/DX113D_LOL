@@ -29,6 +29,7 @@ public:
 	virtual bool Init();
 	virtual void Update(float DeltaTime);
 
+
 public:
 	// Inspector에서 GameObject 이름 변경되었을 때 호출
 	void OnRenameObject(const std::string& Name);

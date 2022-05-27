@@ -882,6 +882,15 @@
     <ClCompile Include="Resource\Shader\Standard3DInstancingShader.cpp">
       <Filter>02. Resource\02. Shader\02. ShaderClass\07. Standard3D</Filter>
     </ClCompile>
+    <ClCompile Include="IMGUICollapsingHeader.cpp">
+      <Filter>01. Engine\08. IMGUI\03. Widget</Filter>
+    </ClCompile>
+    <ClCompile Include="IMGUIGizmo.cpp">
+      <Filter>01. Engine\08. IMGUI\03. Widget</Filter>
+    </ClCompile>
+    <ClCompile Include="IMGUIGrid.cpp">
+      <Filter>01. Engine\08. IMGUI\03. Widget</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Device.h">
@@ -1504,6 +1513,15 @@
     </ClInclude>
     <ClInclude Include="Resource\Shader\Standard3DInstancingShader.h">
       <Filter>02. Resource\02. Shader\02. ShaderClass\07. Standard3D</Filter>
+    </ClInclude>
+    <ClInclude Include="IMGUICollapsingHeader.h">
+      <Filter>01. Engine\08. IMGUI\03. Widget</Filter>
+    </ClInclude>
+    <ClInclude Include="IMGUIGizmo.h">
+      <Filter>01. Engine\08. IMGUI\03. Widget</Filter>
+    </ClInclude>
+    <ClInclude Include="IMGUIGrid.h">
+      <Filter>01. Engine\08. IMGUI\03. Widget</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
