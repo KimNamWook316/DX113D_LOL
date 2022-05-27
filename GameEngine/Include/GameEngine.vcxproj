@@ -27,7 +27,7 @@
     <ClCompile Include="Animation\SkeletonSocket.cpp" />
     <ClCompile Include="Component\BillboardComponent.cpp" />
     <ClCompile Include="Component\DecalComponent.cpp" />
-    <ClCompile Include="EngineUtil.cpp" />
+	<ClCompile Include="EngineUtil.cpp" />
     <ClCompile Include="Collision\Collision.cpp" />
     <ClCompile Include="Collision\CollisionManager.cpp" />
     <ClCompile Include="Component\AnimationMeshComponent.cpp" />
@@ -68,10 +68,13 @@
     <ClCompile Include="IMGUIButton.cpp" />
     <ClCompile Include="IMGUICheckBox.cpp" />
     <ClCompile Include="IMGUIChild.cpp" />
+    <ClCompile Include="IMGUICollapsingHeader.cpp" />
     <ClCompile Include="IMGUIColor3.cpp" />
     <ClCompile Include="IMGUIColor4.cpp" />
     <ClCompile Include="IMGUIComboBox.cpp" />
     <ClCompile Include="IMGUIDummy.cpp" />
+    <ClCompile Include="IMGUIGizmo.cpp" />
+    <ClCompile Include="IMGUIGrid.cpp" />
     <ClCompile Include="IMGUIImage.cpp" />
     <ClCompile Include="IMGUIImageButton.cpp" />
     <ClCompile Include="IMGUIInputFloat.cpp" />
@@ -175,6 +178,7 @@
     <ClCompile Include="Resource\Shader\ShaderManager.cpp" />
     <ClCompile Include="Resource\Shader\SkyShader.cpp" />
     <ClCompile Include="Resource\Shader\Standard2DConstantBuffer.cpp" />
+    <ClCompile Include="Resource\Shader\Standard3DInstancingShader.cpp" />
     <ClCompile Include="Resource\Shader\Standard3DShader.cpp" />
     <ClCompile Include="Resource\Shader\StructuredBuffer.cpp" />
     <ClCompile Include="Resource\Shader\TileMapConstantBuffer.cpp" />
@@ -267,10 +271,13 @@
     <ClInclude Include="IMGUIButton.h" />
     <ClInclude Include="IMGUICheckBox.h" />
     <ClInclude Include="IMGUIChild.h" />
+    <ClInclude Include="IMGUICollapsingHeader.h" />
     <ClInclude Include="IMGUIColor3.h" />
     <ClInclude Include="IMGUIColor4.h" />
     <ClInclude Include="IMGUIComboBox.h" />
     <ClInclude Include="IMGUIDummy.h" />
+    <ClInclude Include="IMGUIGizmo.h" />
+    <ClInclude Include="IMGUIGrid.h" />
     <ClInclude Include="IMGUIImage.h" />
     <ClInclude Include="IMGUIImageButton.h" />
     <ClInclude Include="IMGUIInfo.h" />
@@ -378,6 +385,7 @@
     <ClInclude Include="Resource\Shader\ShaderManager.h" />
     <ClInclude Include="Resource\Shader\SkyShader.h" />
     <ClInclude Include="Resource\Shader\Standard2DConstantBuffer.h" />
+    <ClInclude Include="Resource\Shader\Standard3DInstancingShader.h" />
     <ClInclude Include="Resource\Shader\Standard3DShader.h" />
     <ClInclude Include="Resource\Shader\StructuredBuffer.h" />
     <ClInclude Include="Resource\Shader\TileMapConstantBuffer.h" />

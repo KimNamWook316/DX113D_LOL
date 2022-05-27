@@ -27,9 +27,5 @@ public:
 	void DisconnetParent();
 	// 새로운 부모 밑으로 들어간다면 새로운 부모 Component로 하여금 나를 자식 목록에서 추가하도록 하는 함수
 	void SetParent();
-
-private :
-	// Particle Editor 생성 위한 코드
-	void OnSetParticleEffectEditorSetting(CSceneComponent* Com);
 };
 

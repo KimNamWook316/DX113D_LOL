@@ -527,3 +527,29 @@ struct SphereInfo
 	Vector3 Min;
 	Vector3 Max;
 };
+
+struct Instancing3DInfo
+{
+	Matrix matWV;
+	Matrix matWVP;
+	Vector4 MtrlBaseColor;
+	Vector4 MtrlAmbientColor;
+	Vector4 MtrlSpecularColor;
+	Vector4 MtrlEmissiveColor;
+	float MtrlOpacity;
+	int MtrlPaperBurnEnable;
+	int MtrlBumpEnable;
+	int MtrlAnimation3DEnable;
+	int MtrlSpecularTex;
+	int MtrlEmissiveTex;
+	int MtrlReceiveDecal;
+	float PaperBurnFilter;
+	int PaperBurnInverse;
+	float PaperBurnInFilter;
+	float PaperBurnOutFilter;
+	float PaperBurnCenterFilter;
+	Vector4 PaperBurnInLineColor;
+	Vector4 PaperBurnOutLineColor;
+	Vector4 PaperBurnCenterLineColor;
+};
+

@@ -5,9 +5,7 @@
 class CIMGUIListBox :
     public CIMGUIWidget
 {
-	friend class CIMGUIWindow;
-
-protected:
+public:
 	CIMGUIListBox();
 	virtual ~CIMGUIListBox();
 

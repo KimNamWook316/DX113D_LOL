@@ -78,6 +78,15 @@ public:
 				return (T*)*iter;
 		}
 
+		auto	iter1 = m_vecObjectComponent.begin();
+		auto	iter1End = m_vecObjectComponent.end();
+
+		for (; iter1 != iter1End; ++iter1)
+		{
+			if ((*iter1)->CheckType<T>())
+				return (T*)(*iter1).Get();
+		}
+
 		return nullptr;
 	}
 
@@ -167,6 +176,14 @@ public:
 
 
 public:	// =============== 저주받은 Transform 영역 ===============
+	void SetUpdateByMat(bool UpdateByMat);
+	void DecomposeWorld();
+	void SetTransformByWorldMatrix(const Matrix& matTRS);
+
+	// 자신의 축 기준으로 이동
+	void AddWorldPosByLocalAxis(AXIS Axis, float Amount);
+	void AddWorldPosByLocalAxis(const Vector3& Pos);
+
 	void SetInheritScale(bool Inherit)
 	{
 		if (!m_RootComponent)

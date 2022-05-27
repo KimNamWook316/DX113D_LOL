@@ -150,6 +150,13 @@ bool CAnimationEditor::Init()
 	m_RotationCheckBtn->AddCheckInfo("Rotate");
 	m_RotationCheckBtn->SetCallBackLabel<CAnimationEditor>(this, &CAnimationEditor::OnRotateAnimationCamera);
 
+	Line = AddWidget<CIMGUISameLine>("Line");
+	Line->SetOffsetX(310.f);
+
+	m_ZoomEnableBtn = AddWidget<CIMGUICheckBox>("Camera Zoom In", 90.f, 30.f);
+	m_ZoomEnableBtn->AddCheckInfo("Zoom");
+	m_ZoomEnableBtn->SetCallBackLabel<CAnimationEditor>(this, &CAnimationEditor::OnZoomAnimationCamera);
+
 	// Sequence Start ---------------------------------------
 	HelpText = AddWidget<CIMGUIText>("Anim Seq Load Btn Help Text", 90.f, 30.f);
 	HelpText->SetText("ex)  'ZedIdle' -- > pair('ZedIdle', 'ZedIdle.sqc') 형태로 \n SceneResource, ResourceManager의 m_mapSequence 에 저장");
@@ -273,9 +280,13 @@ void CAnimationEditor::OnRotateAnimationCamera(const char*, bool Enable)
 
 	// if (IsAnimPlay)
 	if (Enable)
-		m_3DTestObject->SetCameraRot(true);
+		m_3DTestObject->SetCameraZoom(true);
 	else
-		m_3DTestObject->SetCameraRot(false);
+		m_3DTestObject->SetCameraZoom(false);
+}
+
+void CAnimationEditor::OnZoomAnimationCamera(const char*, bool)
+{
 }
 
 void CAnimationEditor::OnSaveAnimationInstance()

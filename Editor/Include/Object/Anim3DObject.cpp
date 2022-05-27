@@ -5,7 +5,8 @@
 #include "../EditorManager.h"
 #include "../Window/AnimationEditor.h"
 
-CAnim3DObject::CAnim3DObject()
+CAnim3DObject::CAnim3DObject() :
+	m_IsCameraZoom(false)
 {
 	SetTypeID<CAnim3DObject>();
 }
@@ -33,15 +34,15 @@ bool CAnim3DObject::Init()
 	m_Mesh->AddChild(m_Arm);
 	m_Arm->AddChild(m_Camera);
 
+	// 아래 SetMesh Sample 코드
+	// m_Mesh->SetMesh("PlayerMesh");
 	m_Camera->SetInheritRotX(true);
 	m_Camera->SetInheritRotY(true);
 	m_Camera->SetInheritRotZ(true);
 
-	// m_Mesh->SetMesh("PlayerMesh");
 	m_Mesh->SetMesh(CEditorManager::GetInst()->GetAnimationEditor()->Get3DTestObjectMeshName());
 
 	// GBuffer 가 아니라, 바로 Animation Editor 용 Render Target 에 그려내기 위해 Shader 를 다른 것으로 세팅한다.
-	// --> 그런데 이 코드가 있으면 오류가 난다.
 	m_Mesh->SetMaterialShader("Mesh3DNoLightShader");
 
 	// m_Mesh->CreateAnimationInstance<CAnim3DObjectAnimation>();
@@ -69,7 +70,7 @@ void CAnim3DObject::Update(float DeltaTime)
 {
 	CGameObject::Update(DeltaTime);
 
-	if (CInput::GetInst()->GetWheelDir())
+	if (CInput::GetInst()->GetWheelDir() && m_IsCameraZoom)
 	{
 		float Length = m_Arm->GetTargetDistance() +
 			CInput::GetInst()->GetWheelDir() * 0.3f;

@@ -13,6 +13,9 @@ public:
     // 반드시 Init 이후 이 함수 호출해야 함
     // SceneComponent 상속 위젯 만들때마다 오버라이드 해야 함
     virtual void SetSceneComponent(class CSceneComponent* Com) override;
+private :
+    class C3DParticleCamera* m_ParticleCamera;
+    class CGameObject* m_ParticleCameraTargetObj;
 private:
     class CIMGUIInputFloat* m_DurationEdit;
 
@@ -79,5 +82,9 @@ private :
 
     // void OnGravityAccelEdit();
     // void OnStartDelayEdit();
+private :
+    // Particle 기본 세팅
+    void OnSetParticleMaterialSetting(CSceneComponent* Com);
+    void OnSetCameraSetting();
 };
 

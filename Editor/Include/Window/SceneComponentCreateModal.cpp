@@ -19,6 +19,7 @@
 #include "Resource/Particle/Particle.h"
 #include "Component/Arm.h"
 #include "Component/LandScape.h"
+#include "ToolWindow.h"
 
 CSceneComponentCreateModal::CSceneComponentCreateModal() :
 	//m_SceneComponentCreatePopUp(nullptr),
@@ -94,6 +95,10 @@ void CSceneComponentCreateModal::OnCreateComponent()
 	if (!SelectObject)
 		return;
 
+	// Object의 루트로 들어가는지 확인
+	// 아래 Gizmo에 Object 넣어주기 위해 필요
+	bool IsRoot = !(SelectObject->GetRootComponent());
+
 	int Index = m_ComponentCombo->GetSelectIndex();
 
 	size_t Typeid = CEditorUtil::SceneComponentTypeIndexToTypeid(Index);
@@ -120,12 +125,16 @@ void CSceneComponentCreateModal::OnCreateComponent()
 		Com = SelectObject->CreateComponent<CSceneComponent>(Name);
 
 	else if (Typeid == typeid(CParticleComponent).hash_code())
-	{
 		Com = SelectObject->CreateComponent<CParticleComponent>(Name);
-		OnSetParticleEffectEditorSetting(Com);
-	}
-
+	
 	CSceneComponentHierarchyWindow* ComponentWindow = (CSceneComponentHierarchyWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(SCENECOMPONENT_HIERARCHY);
+
+	// Root Node로 들어가는 경우, Gizmo에 Object갱신
+	if (IsRoot)
+	{
+		CToolWindow* ToolWindow = (CToolWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(TOOL);
+		ToolWindow->SetGizmoObject(SelectObject);
+	}
 
 	// Inspector Window 갱신
 	CInspectorWindow* Inspector = (CInspectorWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(INSPECTOR);
@@ -140,32 +149,6 @@ void CSceneComponentCreateModal::OnCreateComponent()
 		Child->SetDragDropSourceCallback<CSceneComponentHierarchyWindow>(ComponentWindow, &CSceneComponentHierarchyWindow::OnDragDropSrc);
 		Child->SetDragDropDestCallback<CSceneComponentHierarchyWindow>(ComponentWindow, &CSceneComponentHierarchyWindow::OnDragDropDest);
 	}
-}
-
-void CSceneComponentCreateModal::OnSetParticleEffectEditorSetting(CSceneComponent* Com)
-{
-	// 기본 Particle Setting, 현재 Component 에 Particle Setting 하기
-	// 1) Particle Material 세팅
-	CSceneManager::GetInst()->GetScene()->GetResource()->CreateMaterial<CMaterial>("BasicParticleMaterial");
-	CMaterial* Material = CSceneManager::GetInst()->GetScene()->GetResource()->FindMaterial("BasicParticleMaterial");
-	Material->AddTexture(0, (int)Buffer_Shader_Type::Pixel, "Bubble", TEXT("Particle/Bubbles99px.png"));
-	Material->SetShader("ParticleRenderShader");
-	Material->SetRenderState("AlphaBlend");
-	Material->AddTexture(0, (int)Buffer_Shader_Type::Pixel, "Bubble", TEXT("Particle/Bubbles99px.png"));
-
-	// 2) Particle 제작
-	CSceneManager::GetInst()->GetScene()->GetResource()->CreateParticle("BasicParticle");
-	CParticle* Particle = CSceneManager::GetInst()->GetScene()->GetResource()->FindParticle("BasicParticle");
-	Material = CSceneManager::GetInst()->GetScene()->GetResource()->FindMaterial("BasicParticleMaterial");
-	Particle->SetMaterial(Material);
-
-	// 반드시 3D 로 세팅한다.
-	Particle->Set2D(false);
-
-	// Layer 를 세팅한다.
-	Com->SetLayerName("ParticleEditorLayer");
-
-	dynamic_cast<CParticleComponent*>(Com)->SetParticle("BasicParticle");
 }
 
 

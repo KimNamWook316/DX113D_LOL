@@ -66,6 +66,12 @@ protected:
     CSharedPtr<class CRenderState>  m_RenderStateArray[(int)RenderState_Type::Max];
     std::list<RenderCallback*>    m_RenderCallback;
 
+public:
+    CMaterialConstantBuffer* GetCBuffer()   const
+    {
+        return m_CBuffer;
+    }
+
 private:
     void SetConstantBuffer(class CMaterialConstantBuffer* Buffer)
     {
@@ -171,6 +177,7 @@ public:
     void SetShader(const std::string& Name);
     void SetShader(CGraphicShader* Shader);
     void Render();
+    void RenderTexture();
     void Reset();
     CMaterial* Clone()  const;
     void Save(FILE* File);

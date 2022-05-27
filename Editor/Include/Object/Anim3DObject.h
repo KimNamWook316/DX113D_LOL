@@ -21,10 +21,15 @@ private:
     Vector3     m_Velocity;
     class CAnimationSequenceInstance* m_Animation;
     bool m_IsCameraRot;
+    bool m_IsCameraZoom;
 public :
     void SetCameraRot(bool Enable)
     {
         m_IsCameraRot = Enable;
+    }
+    void SetCameraZoom(bool Enable)
+    {
+        m_IsCameraZoom = Enable;
     }
 public:
     virtual bool Init();

@@ -19,6 +19,18 @@ public:
 	virtual CPaperBurnConstantBuffer* Clone();
 
 public:
+	void SetInstancingInfo(Instancing3DInfo* Info)
+	{
+		Info->PaperBurnInLineColor = m_BufferData.InLineColor;
+		Info->PaperBurnOutLineColor = m_BufferData.OutLineColor;
+		Info->PaperBurnCenterLineColor = m_BufferData.CenterLineColor;
+		Info->PaperBurnFilter = m_BufferData.Filter;
+		Info->PaperBurnInverse = m_BufferData.Inverse;
+		Info->PaperBurnInFilter = m_BufferData.InFilter;
+		Info->PaperBurnOutFilter = m_BufferData.OutFilter;
+		Info->PaperBurnCenterFilter = m_BufferData.CenterFilter;
+	}
+
 	void SetInColor(const Vector4& Color)
 	{
 		m_BufferData.InLineColor = Color;

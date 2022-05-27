@@ -72,6 +72,11 @@ CSceneComponent::~CSceneComponent()
 	SAFE_DELETE(m_Transform);
 }
 
+void CSceneComponent::SetInstancingInfo(Instancing3DInfo* Info)
+{
+	m_Transform->SetInstancingInfo(Info);
+}
+
 SphereInfo CSceneComponent::GetSphereInfoViewSpace() const
 {
 	SphereInfo Info;
@@ -594,6 +599,31 @@ void CSceneComponent::RenderAnimationEditor()
 
 	CRenderManager::GetInst()->GetStandard2DCBuffer()->SetAnimation2DEnable(false);
 	CRenderManager::GetInst()->GetStandard2DCBuffer()->UpdateCBuffer();
+}
+
+void CSceneComponent::SetUpdateByMat(bool UpdateByMat)
+{
+	m_Transform->SetUpdateByMat(UpdateByMat);
+}
+
+void CSceneComponent::DecomposeWorld()
+{
+	m_Transform->DecomposeWorld();
+}
+
+void CSceneComponent::AddWorldPosByLocalAxis(AXIS Axis, float Amount)
+{
+	m_Transform->AddWorldPosByLocalAxis(Axis, Amount);
+}
+
+void CSceneComponent::AddWorldPosByLocalAxis(const Vector3& Pos)
+{
+	m_Transform->AddWorldPosByLocalAxis(Pos);
+}
+
+void CSceneComponent::SetTransformByWorldMatrix(const Matrix& matTRS)
+{
+	m_Transform->SetTransformByWorldMatrix(matTRS);
 }
 
 void CSceneComponent::RenderParticleEffectEditor()

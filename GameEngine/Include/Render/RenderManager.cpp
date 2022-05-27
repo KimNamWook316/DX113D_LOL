@@ -1,6 +1,8 @@
 
 #include "RenderManager.h"
 #include "../GameObject/GameObject.h"
+#include "../Component/StaticMeshComponent.h"
+#include "../Component/AnimationMeshComponent.h"
 #include "../Component/SceneComponent.h"
 #include "RenderStateManager.h"
 #include "../Resource/Shader/Standard2DConstantBuffer.h"
@@ -13,6 +15,7 @@
 #include "../Engine.h"
 #include "../Device.h"
 #include "../Resource/Shader/Shader.h"
+#include "../Component/PaperBurnComponent.h"
 
 DEFINITION_SINGLE(CRenderManager)
 
@@ -261,6 +264,7 @@ bool CRenderManager::Init()
 	m_LightBlendShader = CResourceManager::GetInst()->FindShader("LightBlendShader");
 	m_LightBlendRenderShader = CResourceManager::GetInst()->FindShader("LightBlendRenderShader");
 	m_Mesh3DNoLightRenderShader = CResourceManager::GetInst()->FindShader("Mesh3DNoLightShader");
+	m_Standard3DInstancingShader = CResourceManager::GetInst()->FindShader("Standard3DInstancingShader");
 
 	// Animation Editor 용 Render Target 
 	if (!CResourceManager::GetInst()->CreateTarget("AnimationEditorRenderTarget",
@@ -355,10 +359,33 @@ void CRenderManager::Render()
 					auto	iter1 = (*iter)->InstancingList.begin();
 					auto	iter1End = (*iter)->InstancingList.end();
 
+					// 인스턴싱 해야 할 "한 메쉬를 공유하는" SceneComponent의 개수가 인스턴싱용 구조화 버퍼의 최대 Count를 넘어선 경우
+					// 버퍼의 크기를 키워 재생성한다.
+					if ((*iter)->InstancingList.size() > Layer->m_vecInstancing[Layer->InstancingIndex]->BufferCount)
+					{
+						int Count = Layer->m_vecInstancing[Layer->InstancingIndex]->BufferCount * 1.5f;
+
+						// 기존 크기의 1.5배보다 씬 컴포넌트 수가 많을 경우
+						if ((*iter)->InstancingList.size() > Count)
+						{
+							Count = (int)((*iter)->InstancingList.size());
+						}
+
+						SAFE_DELETE(Layer->m_vecInstancing[Layer->InstancingIndex]->Buffer);
+
+						Layer->m_vecInstancing[Layer->InstancingIndex]->Buffer = new CStructuredBuffer;
+					
+						Layer->m_vecInstancing[Layer->InstancingIndex]->Buffer->Init("InstancinfBuffer", sizeof(Instancing3DInfo),
+							Count, 40, true, (int)Buffer_Shader_Type::Vertex | (int)Buffer_Shader_Type::Pixel);
+					}
+
+					// SceneComponent를 인스턴싱 리스트에 채워준다.
 					for (; iter1 != iter1End; ++iter1)
 					{
 						Layer->m_vecInstancing[Layer->InstancingIndex]->RenderList.push_back(*iter1);
 					}
+
+					Layer->m_vecInstancing[Layer->InstancingIndex]->Mesh = (*iter)->Mesh;
 
 					++Layer->InstancingIndex;
 				}
@@ -509,12 +536,75 @@ void CRenderManager::RenderGBuffer()
 
 	for (int i = 0; i < m_RenderLayerList[1]->InstancingIndex; ++i)
 	{
-		auto	iter = m_RenderLayerList[1]->m_vecInstancing[i]->RenderList.begin();
-		auto	iterEnd = m_RenderLayerList[1]->m_vecInstancing[i]->RenderList.end();
-
-		for (; iter != iterEnd; ++iter)
+		// Material Slot 수를 얻어와서 Slot 수만큼 반복해 Draw Call한다.
+		int SlotCount = 0;
+		if (m_RenderLayerList[1]->m_vecInstancing[i]->Mesh->GetMeshType() == Mesh_Type::Static)
 		{
-			(*iter)->Render();
+			SlotCount = ((CStaticMeshComponent*)m_RenderLayerList[1]->m_vecInstancing[i]->RenderList.back())->GetMaterialSlotCount();
+		}
+		else if (m_RenderLayerList[1]->m_vecInstancing[i]->Mesh->GetMeshType() == Mesh_Type::Animation)
+		{
+			SlotCount = ((CAnimationMeshComponent*)m_RenderLayerList[1]->m_vecInstancing[i]->RenderList.back())->GetMaterialSlotCount();
+		}
+
+		for (int j = 0; j < SlotCount; ++j)
+		{
+			auto iter = m_RenderLayerList[1]->m_vecInstancing[i]->RenderList.begin();
+			auto iterEnd = m_RenderLayerList[1]->m_vecInstancing[i]->RenderList.end();
+
+			std::vector<Instancing3DInfo> vecInfo;
+			vecInfo.reserve(m_RenderLayerList[1]->m_vecInstancing[i]->RenderList.size());
+
+			CMaterial* Material = nullptr;
+
+			for (; iter != iterEnd; ++iter)
+			{
+				if (m_RenderLayerList[1]->m_vecInstancing[i]->Mesh->GetMeshType() == Mesh_Type::Static)
+				{
+					Material = ((CStaticMeshComponent*)(*iter))->GetMaterial(j);
+				}
+				else if (m_RenderLayerList[1]->m_vecInstancing[i]->Mesh->GetMeshType() == Mesh_Type::Animation)
+				{
+					Material = ((CAnimationMeshComponent*)(*iter))->GetMaterial(j);
+				}
+
+				Instancing3DInfo Info = {};
+
+				(*iter)->SetInstancingInfo(&Info);
+				Material->GetCBuffer()->SetInstancingInfo(&Info);
+
+				// PaperBurn이 적용되어야 한다면
+				if (Info.MtrlPaperBurnEnable == TRUE)
+				{
+					CPaperBurnComponent* PaperBurn = (*iter)->GetGameObject()->FindComponentFromType<CPaperBurnComponent>();
+					if (PaperBurn)
+					{
+						PaperBurn->SetInstancingInfo(&Info);
+					}
+				}
+
+				vecInfo.push_back(Info);
+			}
+
+			if (Material)
+			{
+				Material->RenderTexture();
+			}
+
+			m_Standard3DInstancingShader->SetShader();
+
+			m_RenderLayerList[1]->m_vecInstancing[i]->Buffer->UpdateBuffer(&vecInfo[0], (int)vecInfo.size());
+
+			m_RenderLayerList[1]->m_vecInstancing[i]->Buffer->SetShader();
+
+			m_RenderLayerList[1]->m_vecInstancing[i]->Mesh->RenderInstancing((int)vecInfo.size(), j);
+
+			m_RenderLayerList[1]->m_vecInstancing[i]->Buffer->ResetShader();
+
+			if (Material)
+			{
+				Material->Reset();
+			}
 		}
 	}
 
@@ -789,11 +879,14 @@ void CRenderManager::RenderParticleEffectEditor()
 
 	m_ParticleEffectEditorRenderTarget->SetTarget(nullptr);
 
-	for (int j = 0; j < m_RenderLayerList[ParticleEffectEditorLayerIdx]->RenderCount; ++j)
+	auto iter = m_RenderLayerList[ParticleEffectEditorLayerIdx]->RenderList.begin();
+	auto iterEnd = m_RenderLayerList[ParticleEffectEditorLayerIdx]->RenderList.end();
+
+	for (; iter != iterEnd; ++iter)
 	{
-		// m_RenderLayerList[AnimationEditorLayerIdx]->RenderList[j]->Render();
-		// m_RenderLayerList[ParticleEffectEditorLayerIdx]->RenderList[j]->RenderParticleEffectEditor();
+		(*iter)->RenderParticleEffectEditor();
 	}
+
 
 	m_ParticleEffectEditorRenderTarget->ResetTarget();
 }

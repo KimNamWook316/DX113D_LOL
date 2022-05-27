@@ -26,13 +26,17 @@
 #include "Window/FBXConvertWindow.h"
 #include "Window/InspectorWindow.h"
 #include "Window/EffectEditor.h"
+#include "Window/ToolWindow.h"
+
+#include "Object/3DCameraObject.h"
 
 DEFINITION_SINGLE(CEditorManager)
 
 CEditorManager::CEditorManager() :
 	m_EditMode(EditMode::Scene),
 	m_DragObj(nullptr),
-	m_CameraMoveSpeed(1000.f)
+	m_CameraMoveSpeed(1000.f),
+	m_CameraObject(nullptr)
 {
 }
 
@@ -71,8 +75,6 @@ void CEditorManager::SetEditMode(EditMode Mode)
 
 bool CEditorManager::Init(HINSTANCE hInst)
 {
-	CEngine::GetInst()->SetPlay(false);
-
 	if (!CEngine::GetInst()->Init(hInst, TEXT("GameEngine"),
 		1280, 720, IDI_ICON1))
 	{
@@ -89,7 +91,7 @@ bool CEditorManager::Init(HINSTANCE hInst)
 	CResourceManager::GetInst()->LoadTexture(DIRECTORY_IMAGE, TEXT("Directory.png"));
 	CResourceManager::GetInst()->LoadTexture(FILE_IMAGE, TEXT("FileImage.png"));
 
-	// m_FileBrowser = CIMGUIManager::GetInst()->AddWindow<CFileBrowser>(FILE_BROWSER);
+	m_FileBrowser = CIMGUIManager::GetInst()->AddWindow<CFileBrowser>(FILE_BROWSER);
 	m_ObjectHierarchyWindow = CIMGUIManager::GetInst()->AddWindow<CObjectHierarchyWindow>(OBJECT_HIERARCHY);
 	m_ComponentHierarchyWindow = CIMGUIManager::GetInst()->AddWindow<CSceneComponentHierarchyWindow>(SCENECOMPONENT_HIERARCHY);
 	m_ObjectComponentWindow = CIMGUIManager::GetInst()->AddWindow<CObjectComponentWindow>(OBJECTCOMPONENT_LIST);
@@ -97,8 +99,8 @@ bool CEditorManager::Init(HINSTANCE hInst)
 	m_InspectorWindow = CIMGUIManager::GetInst()->AddWindow<CInspectorWindow>(INSPECTOR);
 	m_AnimationEditor = CIMGUIManager::GetInst()->AddWindow<CAnimationEditor>(ANIMATION_EDITOR);
 	m_EffectEditor = CIMGUIManager::GetInst()->AddWindow<CEffectEditor>(ANIMATION_EDITOR);
-
-	CFBXConvertWindow* win = CIMGUIManager::GetInst()->AddWindow<CFBXConvertWindow>(FBX_CONVERTOR);
+	m_ToolWindow = CIMGUIManager::GetInst()->AddWindow<CToolWindow>(TOOL);
+	//CFBXConvertWindow* win = CIMGUIManager::GetInst()->AddWindow<CFBXConvertWindow>(FBX_CONVERTOR);
 
 	CRenderManager::GetInst()->CreateLayer("DragLayer", INT_MAX);
 
@@ -122,6 +124,8 @@ bool CEditorManager::Init(HINSTANCE hInst)
 	CInput::GetInst()->CreateKey("MoveDown", 'S');
 	CInput::GetInst()->CreateKey("RotationZInv", 'A');
 	CInput::GetInst()->CreateKey("RotationZ", 'D');
+
+	m_CameraObject = CSceneManager::GetInst()->GetScene()->CreateGameObject<C3DCameraObject>("EditorCamera");
 
 	return true;
 }
@@ -293,5 +297,9 @@ void CEditorManager::CreateAnimInstance(CSpriteComponent* Sprite, size_t Type)
 	{
 		Sprite->LoadAnimationInstance<CAnimationSequence2DInstance>();
 	}
+}
+
+void CEditorManager::CreateEditorCamera()
+{
 }
 

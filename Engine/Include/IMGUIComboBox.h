@@ -5,12 +5,7 @@
 class CIMGUIComboBox :
 	public CIMGUIWidget
 {
-	friend class CIMGUIWindow;
-	friend class CIMGUIPopUpModal;
-	friend class CIMGUIWidgetList;
-	friend class CIMGUITree;
-
-protected:
+public:
 	CIMGUIComboBox();
 	virtual ~CIMGUIComboBox();
 
@@ -92,6 +87,11 @@ public:
 		m_vecItemUTF8.clear();
 	}
 
+	bool Empty()
+	{
+		return m_vecItem.empty();
+	}
+
 	void Sort(bool bSort)
 	{
 		m_Sort = bSort;
@@ -112,11 +112,6 @@ public:
 	{
 		m_SelectIndex = Index;
 		m_PrevViewName = m_vecItemUTF8[Index];
-	}
-
-	bool Empty()
-	{
-		return m_vecItem.empty();
 	}
 
 public:

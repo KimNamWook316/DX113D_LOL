@@ -4,11 +4,7 @@
 class CIMGUITable :
     public CIMGUIWidget
 {
-    friend class CIMGUIPopUpModal;
-    friend class CIMGUIWindow;
-    friend class CIMGUIWidgetList;
-    friend class CIMGUIChild;
-protected:
+public:
     CIMGUITable();
     virtual ~CIMGUITable() override;
 private :

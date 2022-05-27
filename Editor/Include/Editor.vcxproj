@@ -168,6 +168,8 @@
     <ClCompile Include="EditorManager.cpp" />
     <ClCompile Include="EditorUtil.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Object\3DCameraObject.cpp" />
+    <ClCompile Include="Object\3DParticleCamera.cpp" />
     <ClCompile Include="Object\Anim3DObject.cpp" />
     <ClCompile Include="Object\DragObject.cpp" />
     <ClCompile Include="Object\Player2D.cpp" />
@@ -194,11 +196,14 @@
     <ClCompile Include="Window\ObjectHierarchyWindow.cpp" />
     <ClCompile Include="Window\SceneComponentCreateModal.cpp" />
     <ClCompile Include="Window\SceneComponentHierarchyWindow.cpp" />
+    <ClCompile Include="Window\ToolWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EditorInfo.h" />
     <ClInclude Include="EditorManager.h" />
     <ClInclude Include="EditorUtil.h" />
+    <ClInclude Include="Object\3DCameraObject.h" />
+    <ClInclude Include="Object\3DParticleCamera.h" />
     <ClInclude Include="Object\Anim3DObject.h" />
     <ClInclude Include="Object\DragObject.h" />
     <ClInclude Include="Object\Player2D.h" />
@@ -227,6 +232,7 @@
     <ClInclude Include="Window\ObjectHierarchyWindow.h" />
     <ClInclude Include="Window\SceneComponentCreateModal.h" />
     <ClInclude Include="Window\SceneComponentHierarchyWindow.h" />
+    <ClInclude Include="Window\ToolWindow.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Editor.rc" />

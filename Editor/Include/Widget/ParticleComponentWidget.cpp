@@ -6,11 +6,15 @@
 #include "IMGUIInputFloat3.h"
 #include "IMGUIText.h"
 #include "IMGUIButton.h"
+#include "../EditorInfo.h"
+#include "../EditorUtil.h"
 #include "IMGUICheckBox.h"
 #include "IMGUISameLine.h"
 #include "IMGUISeperator.h"
 #include "IMGUIImage.h"
 #include "IMGUISliderFloat.h"
+#include "../Window/ObjectHierarchyWindow.h"
+#include "IMGUIManager.h"
 #include "IMGUIColor3.h"
 #include "IMGUIColor4.h"
 #include "IMGUIInputFloat.h"
@@ -23,6 +27,7 @@
 #include "PathManager.h"
 #include "Scene/Scene.h"
 #include "Scene/SceneManager.h"
+#include "../Object/3DParticleCamera.h"
 #include "Render/RenderManager.h"
 
 CParticleComponentWidget::CParticleComponentWidget()
@@ -39,6 +44,12 @@ bool CParticleComponentWidget::Init()
 
     // AddWidget
     m_ComponentTypeText->SetText("Particle Component");
+
+    // Material , Particle 세팅
+    OnSetParticleMaterialSetting(m_Component);
+
+    // Camera 세팅
+    OnSetCameraSetting();
 
     // 최상위 트리
     CIMGUITree* m_RootTree = AddWidget<CIMGUITree>("Particle Variables");
@@ -191,4 +202,64 @@ void CParticleComponentWidget::OnMoveDirEdit(const Vector3& Dir)
 void CParticleComponentWidget::OnMoveAngleEdit(const Vector3& Angle)
 {
     dynamic_cast<CParticleComponent*>(m_Component.Get())->GetParticle()->SetMoveAngle(Angle);
+}
+
+void CParticleComponentWidget::OnSetParticleMaterialSetting(CSceneComponent* Com)
+{
+    // 기본 Particle Setting, 현재 Component 에 Particle Setting 하기
+    // 1) Particle Material 세팅
+    CSceneManager::GetInst()->GetScene()->GetResource()->CreateMaterial<CMaterial>("BasicParticleMaterial");
+    CMaterial* Material = CSceneManager::GetInst()->GetScene()->GetResource()->FindMaterial("BasicParticleMaterial");
+    Material->AddTexture(0, (int)Buffer_Shader_Type::Pixel, "Bubble", TEXT("Particle/Bubbles99px.png"));
+    Material->SetShader("ParticleRenderShader");
+    Material->SetRenderState("AlphaBlend");
+    Material->AddTexture(0, (int)Buffer_Shader_Type::Pixel, "Bubble", TEXT("Particle/Bubbles99px.png"));
+
+    // 2) Particle 제작
+    CSceneManager::GetInst()->GetScene()->GetResource()->CreateParticle("BasicParticle");
+    CParticle* Particle = CSceneManager::GetInst()->GetScene()->GetResource()->FindParticle("BasicParticle");
+    Material = CSceneManager::GetInst()->GetScene()->GetResource()->FindMaterial("BasicParticleMaterial");
+    Particle->SetMaterial(Material);
+
+    // 반드시 3D 로 세팅한다.
+    Particle->Set2D(false);
+
+    // Layer 를 세팅한다.
+    Com->SetLayerName("ParticleEditorLayer");
+
+    dynamic_cast<CParticleComponent*>(Com)->SetParticle("BasicParticle");
+}
+
+void CParticleComponentWidget::OnSetCameraSetting()
+{
+    // Camera Object 생성
+    m_ParticleCamera = CSceneManager::GetInst()->GetScene()->CreateGameObject<C3DParticleCamera>("ParticleCamera");
+
+    CObjectHierarchyWindow* Window = (CObjectHierarchyWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(OBJECT_HIERARCHY);
+
+    if (!Window)
+        return;
+
+    if (Window->GetSelectNode() == Window->GetRoot())
+        return;
+
+    std::string ObjName = Window->GetSelectNode()->GetName();
+
+    CGameObject* SelectObject = CSceneManager::GetInst()->GetScene()->FindObject(ObjName);
+
+    if (!SelectObject)
+        return;
+
+    // Particle Component Object 위치에 Sample Object 생성
+    // 실제 Camera 는 이 Sample Object 를 바라보는 형태가 될 것이다.
+    m_ParticleCameraTargetObj = CSceneManager::GetInst()->GetScene()->CreateGameObject<CGameObject>("CameraTarget");
+    m_ParticleCameraTargetObj->SetWorldPos(SelectObject->GetWorldPos());
+
+
+    // 해당 Object 를 Target 으로 세팅하기
+    m_ParticleCamera->SetTargetObject(m_ParticleCameraTargetObj);
+    m_ParticleCamera->SetTargetDistance(10.f);
+
+    // Particle Effect Camera 로 세팅
+    CSceneManager::GetInst()->GetScene()->GetCameraManager()->SetParticleEditorCamera(m_ParticleCamera->GetCamera());
 }

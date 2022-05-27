@@ -53,6 +53,11 @@ public:
 		m_AnimationEditorCamera = Camera;
 	}
 
+	void SetParticleEditorCamera(CCameraComponent* Camera)
+	{
+		m_ParticleEffectEditorCamera = Camera;
+	}
+
 	void KeepCamera()
 	{
 		m_KeepCamera = m_CurrentCamera;

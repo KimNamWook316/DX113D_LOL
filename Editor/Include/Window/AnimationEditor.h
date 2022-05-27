@@ -39,6 +39,7 @@ private:
 	class CIMGUICheckBox* m_DeltaTimeCheckBtn;
 	class CIMGUICheckBox* m_AnimationCheckBtn;
 	class CIMGUICheckBox* m_RotationCheckBtn;
+	class CIMGUICheckBox* m_ZoomEnableBtn;
 	// New Anim Names
 	class CIMGUITextInput* m_NewAnimSeqName;
 	class CIMGUITextInput* m_NewAnimSeqDataKeyName;
@@ -84,6 +85,7 @@ private :
 	void OnSetPlayEngineDeltaTime(const char*, bool);
 	void OnPlayAnimation(const char*, bool);
 	void OnRotateAnimationCamera(const char*, bool);
+	void OnZoomAnimationCamera(const char*, bool);
 	// Save Load
 	void OnSaveAnimationInstance();
 	void OnLoadAnimationInstance();
