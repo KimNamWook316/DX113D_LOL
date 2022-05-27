@@ -226,6 +226,29 @@ void CSceneComponentHierarchyWindow::OnClearComponents(const std::string& RootCo
 			RootComponent->Delete();
 		}
 	}
+
+	CObjectHierarchyWindow* ObjWindow = (CObjectHierarchyWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(OBJECT_HIERARCHY);
+
+	CGameObject* SelectObj = ObjWindow->GetSelectObject();
+
+	for (size_t i = 0; i < Count;)
+	{
+		CIMGUITree* Node = m_Root->GetNode(i);
+
+		if (Node)
+		{
+			CComponent* Comp = SelectObj->FindComponent(Node->GetName());
+
+			if (Comp)
+			{
+				Node->Delete();
+				Count = m_Root->GetChildCount();
+			}
+
+			else
+				++i;
+		}
+	}
 }
 
 void CSceneComponentHierarchyWindow::OnSetSelectNode(CIMGUITree* Tree)

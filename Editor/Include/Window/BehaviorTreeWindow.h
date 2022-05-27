@@ -181,7 +181,6 @@ struct GraphEditorDelegate : public GraphEditor::Delegate
     // Graph datas
     static const inline GraphEditor::Template mTemplates[] =
     {
-
         // Sequence Node Template
         {
             IM_COL32(140, 140, 160, 255),

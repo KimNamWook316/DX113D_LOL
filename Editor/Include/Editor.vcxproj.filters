@@ -150,6 +150,15 @@
     <ClCompile Include="Window\ToolWindow.cpp">
       <Filter>02. Editor\01. Window</Filter>
     </ClCompile>
+    <ClCompile Include="Window\BehaviorTreeMenuBar.cpp">
+      <Filter>02. Editor\01. Window</Filter>
+    </ClCompile>
+    <ClCompile Include="Window\BehaviorTreeWindow.cpp">
+      <Filter>02. Editor\01. Window</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphEditor.cpp">
+      <Filter>02. Editor\01. Window</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EditorManager.h">
@@ -249,6 +258,15 @@
       <Filter>03. Object\02. 3D</Filter>
     </ClInclude>
     <ClInclude Include="Window\ToolWindow.h">
+      <Filter>02. Editor\01. Window</Filter>
+    </ClInclude>
+    <ClInclude Include="Window\BehaviorTreeMenuBar.h">
+      <Filter>02. Editor\01. Window</Filter>
+    </ClInclude>
+    <ClInclude Include="Window\BehaviorTreeWindow.h">
+      <Filter>02. Editor\01. Window</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphEditor.h">
       <Filter>02. Editor\01. Window</Filter>
     </ClInclude>
   </ItemGroup>

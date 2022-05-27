@@ -77,7 +77,17 @@ public:
 			if ((*iter)->CheckType<T>())
 				return (T*)*iter;
 		}
-return nullptr;
+
+		auto	iter1 = m_vecObjectComponent.begin();
+		auto	iter1End = m_vecObjectComponent.end();
+
+		for (; iter1 != iter1End; ++iter1)
+		{
+			if ((*iter1)->CheckType<T>())
+				return (T*)(*iter1).Get();
+		}
+
+		return nullptr;
 	}
 
 	template <typename T>
@@ -98,6 +108,10 @@ return nullptr;
 	void GetAllSceneComponentsName(std::vector<FindComponentName>& vecNames);
 	void GetAllSceneComponentsPointer(std::vector<CSceneComponent*>& OutVecSceneComp);
 	void GetAllObjectComponentsPointer(std::vector<CObjectComponent*>& OutVecObjComp);
+	size_t GetSceneComponentCount()	const
+	{
+		return m_SceneComponentList.size();
+	}
 
 	void SetLifeSpan(float LifeSpan)
 	{
@@ -155,6 +169,38 @@ public:
 		return Component;
 	}
 
+	// Root가 이미 있으면 Root의 자식 Component로 자동으로 들어가게 하는 함수
+	template <typename T>
+	T* CreateComponentAddChild(const std::string& Name)
+	{
+		T* Component = new T;
+
+		Component->SetName(Name);
+		Component->SetScene(m_Scene);
+		Component->SetGameObject(this);
+
+		if (!Component->Init())
+		{
+			SAFE_RELEASE(Component);
+			return nullptr;
+		}
+
+		if (Component->GetComponentType() == Component_Type::ObjectComponent)
+			m_vecObjectComponent.push_back((class CObjectComponent*)Component);
+
+		else
+		{
+			m_SceneComponentList.push_back((class CSceneComponent*)Component);
+
+			if (!m_RootComponent)
+				m_RootComponent = (class CSceneComponent*)Component;
+
+			else
+				m_RootComponent->AddChild((class CSceneComponent*)Component);
+		}
+
+		return Component;
+	}
 
 	template <typename T>
 	T* LoadComponent()

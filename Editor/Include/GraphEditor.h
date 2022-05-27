@@ -87,6 +87,15 @@ struct ViewState
 
 struct Template
 {
+    ~Template()
+    {
+        if (mInputNames)
+            delete[] mInputNames;
+
+        if (mOutputNames)
+            delete[] mOutputNames;
+    }
+
     ImU32 mHeaderColor;
     ImU32 mBackgroundColor;
     ImU32 mBackgroundColorOver;

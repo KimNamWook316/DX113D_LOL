@@ -28,7 +28,7 @@ CEngine::CEngine()	:
 	m_GlobalAccTime(0.f)
 {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-	//_CrtSetBreakAlloc(200);
+	//_CrtSetBreakAlloc(230);
 
 	//m_ClearColor[1] = 1.f; 
 }
