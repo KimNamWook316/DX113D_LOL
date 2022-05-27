@@ -19,6 +19,21 @@ public:
 	virtual CMaterialConstantBuffer* Clone();
 
 public:
+	void SetInstancingInfo(Instancing3DInfo* Info)
+	{
+		Info->MtrlBaseColor = m_BufferData.BaseColor;
+		Info->MtrlAmbientColor = m_BufferData.AmbientColor;
+		Info->MtrlSpecularColor = m_BufferData.SpecularColor;
+		Info->MtrlEmissiveColor = m_BufferData.EmissiveColor;
+		Info->MtrlOpacity = m_BufferData.Opacity;
+		Info->MtrlPaperBurnEnable = m_BufferData.PaperBurnEnable;
+		Info->MtrlBumpEnable = m_BufferData.BumpEnable;
+		Info->MtrlAnimation3DEnable = m_BufferData.Animation3DEnable;
+		Info->MtrlSpecularTex = m_BufferData.SpecularTex;
+		Info->MtrlEmissiveTex = m_BufferData.EmissiveTex;
+		Info->MtrlReceiveDecal = m_BufferData.ReceiveDecal;
+	}
+
 	void SetBaseColor(const Vector4& BaseColor)
 	{
 		m_BufferData.BaseColor = BaseColor;

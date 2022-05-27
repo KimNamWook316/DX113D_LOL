@@ -41,6 +41,8 @@ protected:
 	static std::list<InstancingCheckCount*> m_InstancingCheckList;
 
 public:
+	void SetInstancingInfo(Instancing3DInfo* Info);
+
 	static const std::list<InstancingCheckCount*>* GetInstancingCheckList()
 	{
 		return &m_InstancingCheckList;

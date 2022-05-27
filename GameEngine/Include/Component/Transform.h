@@ -46,7 +46,10 @@ private:
 	bool	m_UpdateRot;
 	bool	m_UpdateRotAxis; // 주어진 축 기준 회전으로 업데이트 여부
 	bool	m_UpdatePos;
+
 public:
+	void SetInstancingInfo(Instancing3DInfo* Info);
+
 	void SetSocket(class CSkeletonSocket* Socket)
 	{
 		m_Socket = Socket;

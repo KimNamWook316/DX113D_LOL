@@ -2,10 +2,31 @@
 
 #include "../GameInfo.h"
 #include "../Resource/Texture/RenderTarget.h"
+#include "../Resource/Shader/StructuredBuffer.h"
 
 struct RenderInstancingList
 {
 	std::list<class CSceneComponent*> RenderList;
+	class CMesh* Mesh;
+	CStructuredBuffer* Buffer;
+	int BufferCount; // 인스턴싱할 Scene Component의 개수
+
+	RenderInstancingList()
+	{
+		Mesh = nullptr;
+
+		Buffer = new CStructuredBuffer;
+
+		Buffer->Init("InstancingBuffer", sizeof(Instancing3DInfo), 100, 40, true, 
+			(int)Buffer_Shader_Type::Vertex | (int)Buffer_Shader_Type::Pixel);
+
+		BufferCount = 100;
+	}
+
+	~RenderInstancingList()
+	{
+		SAFE_DELETE(Buffer);
+	}
 };
 
 struct RenderLayer
@@ -55,9 +76,7 @@ private:
 	class CRenderState* m_LightAccBlend;
 	CSharedPtr<class CShader> m_LightBlendShader;
 	CSharedPtr<class CShader> m_LightBlendRenderShader;
-
-	// 인스턴싱용 구조화 버퍼를 만들어준다.
-	std::vector<class CStructuredBuffer*>	m_vecInstancingBuffer;
+	CSharedPtr<class CShader> m_Standard3DInstancingShader;
 
 	// GBuffer
 	std::vector<CSharedPtr<CRenderTarget>>	m_vecGBuffer;

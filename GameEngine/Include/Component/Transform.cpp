@@ -49,6 +49,21 @@ CTransform::~CTransform()
 	SAFE_DELETE(m_CBuffer);
 }
 
+void CTransform::SetInstancingInfo(Instancing3DInfo* Info)
+{
+	CCameraComponent* Camera = m_Scene->GetCameraManager()->GetCurrentCamera();
+	Matrix	matWV = m_matWorld * Camera->GetViewMatrix();
+
+	Info->matWV = matWV;
+
+	Matrix	matWVP = matWV * Camera->GetProjMatrix();
+
+	Info->matWVP = matWVP;
+
+	Info->matWV.Transpose();
+	Info->matWVP.Transpose();
+}
+
 void CTransform::InheritScale(bool Current)
 {
 	if (m_Parent && m_InheritScale)

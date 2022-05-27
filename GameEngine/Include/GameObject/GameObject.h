@@ -78,6 +78,15 @@ public:
 				return (T*)*iter;
 		}
 
+		auto	iter1 = m_vecObjectComponent.begin();
+		auto	iter1End = m_vecObjectComponent.end();
+
+		for (; iter1 != iter1End; ++iter1)
+		{
+			if ((*iter1)->CheckType<T>())
+				return (T*)(*iter1).Get();
+		}
+
 		return nullptr;
 	}
 

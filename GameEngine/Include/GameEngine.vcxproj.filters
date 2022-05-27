@@ -879,6 +879,9 @@
     <ClCompile Include="EngineUtil.cpp">
       <Filter>99. Util</Filter>
     </ClCompile>
+    <ClCompile Include="Resource\Shader\Standard3DInstancingShader.cpp">
+      <Filter>02. Resource\02. Shader\02. ShaderClass\07. Standard3D</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Device.h">
@@ -1498,6 +1501,9 @@
     </ClInclude>
     <ClInclude Include="EngineUtil.h">
       <Filter>99. Util</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Shader\Standard3DInstancingShader.h">
+      <Filter>02. Resource\02. Shader\02. ShaderClass\07. Standard3D</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

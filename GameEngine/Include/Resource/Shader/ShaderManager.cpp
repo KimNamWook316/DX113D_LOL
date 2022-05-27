@@ -25,6 +25,7 @@
 #include "BillboardShader.h"
 #include "Mesh3DNoLightShader.h"
 #include "AnimEditorShader.h"
+#include "Standard3DInstancingShader.h"
 
 CShaderManager::CShaderManager()
 {
@@ -111,6 +112,11 @@ bool CShaderManager::Init()
 	if (!CreateShader<CAnimEditorShader>("AnimEditorShader"))
 		return false;
 
+	if (!CreateShader<CStandard3DInstancingShader>("Standard3DInstancingShader"))
+	{
+		assert(false);
+		return false;
+	}
 
 	// =================== 상수버퍼 ===================
 	CreateConstantBuffer("TransformCBuffer", sizeof(TransformCBuffer), 0,

@@ -72,6 +72,11 @@ CSceneComponent::~CSceneComponent()
 	SAFE_DELETE(m_Transform);
 }
 
+void CSceneComponent::SetInstancingInfo(Instancing3DInfo* Info)
+{
+	m_Transform->SetInstancingInfo(Info);
+}
+
 SphereInfo CSceneComponent::GetSphereInfoViewSpace() const
 {
 	SphereInfo Info;
