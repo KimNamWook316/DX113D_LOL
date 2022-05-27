@@ -55,6 +55,11 @@ public:
 		return m_Time;
 	}
 
+	float GetAnimationPlayScale()	const
+	{
+		return m_PlayScale;
+	}
+
 	class CAnimationSequence* GetAnimationSequence()	const
 	{
 		return m_Sequence;

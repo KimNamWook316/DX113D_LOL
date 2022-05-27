@@ -73,6 +73,7 @@ private :
 	void OnRefreshAnimationClipTable(class CAnimationSequence* SequenceData);
 	void OnRefreshFrameSliderInfo(class CAnimationSequence* SequenceData);
 	void OnRefreshAnimationComboBox();
+	void OnRefreshScaleAndTimeInputInfo();
 	void OnClearExistingAnimationSeqInfos();
 	void OnAddAnimationSequence();
 	void OnClickAnimationSequence(int, const char*);

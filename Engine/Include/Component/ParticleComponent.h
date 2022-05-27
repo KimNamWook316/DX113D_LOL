@@ -34,7 +34,11 @@ public:
 	void SetParticle(const std::string& Name);
 	void SetParticle(CParticle* Particle);
 	void SetSpawnTime(float Time);
-
+public :
+	CParticle* GetParticle() const
+	{
+		return m_Particle;
+	}
 
 public:
 	virtual void Start();

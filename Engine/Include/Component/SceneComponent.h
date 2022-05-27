@@ -160,6 +160,7 @@ public:
 	virtual void Load(FILE* File);
 public :
 	virtual void RenderAnimationEditor();
+	virtual void RenderParticleEffectEditor();
 
 public:	// Transform
 	void SetInheritScale(bool Inherit)

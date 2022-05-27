@@ -596,3 +596,11 @@ void CSceneComponent::RenderAnimationEditor()
 	CRenderManager::GetInst()->GetStandard2DCBuffer()->UpdateCBuffer();
 }
 
+void CSceneComponent::RenderParticleEffectEditor()
+{
+	m_Transform->SetParticleEffectEditorTransform();
+
+	CRenderManager::GetInst()->GetStandard2DCBuffer()->SetAnimation2DEnable(false);
+	CRenderManager::GetInst()->GetStandard2DCBuffer()->UpdateCBuffer();
+}
+

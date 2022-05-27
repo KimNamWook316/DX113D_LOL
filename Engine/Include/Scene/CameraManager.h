@@ -20,6 +20,7 @@ private:
 	CSharedPtr<CCameraComponent>	m_UICamera;
 private :
 	CSharedPtr<CCameraComponent>	m_AnimationEditorCamera;
+	CSharedPtr<CCameraComponent>	m_ParticleEffectEditorCamera;
 
 public:
 	CCameraComponent* GetCurrentCamera()	const
@@ -35,6 +36,11 @@ public:
 	CCameraComponent* GetAnimationEditorCamera()	const
 	{
 		return m_AnimationEditorCamera;
+	}
+
+	CCameraComponent* GetParticleEffectEditorCamera()	const
+	{
+		return m_ParticleEffectEditorCamera;
 	}
 
 	void SetCurrentCamera(CCameraComponent* Camera)

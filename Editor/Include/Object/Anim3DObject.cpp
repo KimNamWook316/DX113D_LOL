@@ -37,8 +37,8 @@ bool CAnim3DObject::Init()
 	m_Camera->SetInheritRotY(true);
 	m_Camera->SetInheritRotZ(true);
 
-	m_Mesh->SetMesh("PlayerMesh");
-	// m_Mesh->SetMesh(CEditorManager::GetInst()->GetAnimationEditor()->Get3DTestObjectMeshName());
+	// m_Mesh->SetMesh("PlayerMesh");
+	m_Mesh->SetMesh(CEditorManager::GetInst()->GetAnimationEditor()->Get3DTestObjectMeshName());
 
 	// GBuffer 가 아니라, 바로 Animation Editor 용 Render Target 에 그려내기 위해 Shader 를 다른 것으로 세팅한다.
 	// --> 그런데 이 코드가 있으면 오류가 난다.

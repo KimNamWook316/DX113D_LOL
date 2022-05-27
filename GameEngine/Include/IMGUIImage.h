@@ -9,7 +9,7 @@ class CIMGUIImage :
 	friend class CIMGUIWidgetList;
 	friend class CIMGUIChild;
 
-protected:
+public:
 	CIMGUIImage();
 	virtual ~CIMGUIImage();
 

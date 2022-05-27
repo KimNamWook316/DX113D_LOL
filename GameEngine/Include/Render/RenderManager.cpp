@@ -135,6 +135,12 @@ bool CRenderManager::Init()
 
 	m_RenderLayerList.push_back(Layer);
 
+	Layer = new RenderLayer;
+	Layer->Name = "ParticleEditorLayer";
+	Layer->LayerPriority = 6;
+
+	m_RenderLayerList.push_back(Layer);
+
 	m_DepthDisable = m_RenderStateManager->FindRenderState("DepthDisable");
 	m_AlphaBlend = m_RenderStateManager->FindRenderState("AlphaBlend");
 	m_LightAccBlend = m_RenderStateManager->FindRenderState("LightAcc");
@@ -271,10 +277,10 @@ bool CRenderManager::Init()
 		RS.Width, RS.Height, DXGI_FORMAT_R32G32B32A32_FLOAT))
 		return false;
 
-	// m_AnimEditorRenderTarget = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("ParticleEffectRenderTarget");
-	// m_AnimEditorRenderTarget->SetPos(Vector3(600.f, 100.f, 0.f));
-	// m_AnimEditorRenderTarget->SetScale(Vector3(150.f, 150.f, 1.f));
-	// m_AnimEditorRenderTarget->SetDebugRender(false);
+	m_ParticleEffectEditorRenderTarget = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("ParticleEffectRenderTarget");
+	m_ParticleEffectEditorRenderTarget->SetPos(Vector3(600.f, 100.f, 0.f));
+	m_ParticleEffectEditorRenderTarget->SetScale(Vector3(150.f, 150.f, 1.f));
+	m_ParticleEffectEditorRenderTarget->SetDebugRender(false);
 
 
 	return true;
@@ -381,6 +387,9 @@ void CRenderManager::Render()
 
 	// Animation Editor Animation Instance 제작용 Render Target
 	RenderAnimationEditor();
+
+	// Particle Effect Editor 제작용 Render Target
+	RenderParticleEffectEditor();
 
 	m_vecGBuffer[2]->SetShader(10, (int)Buffer_Shader_Type::Pixel, 0);
 
@@ -738,7 +747,7 @@ void CRenderManager::RenderAnimationEditor()
 		return;
 
 	// Animation Edtior 상에서 Animation Editor 제작 중이지 않다면
-	if (m_RenderLayerList[AnimationEditorLayerIdx]->RenderCount <= 0)
+	if (m_RenderLayerList[AnimationEditorLayerIdx]->RenderList.size() <= 0)
 		return;
 
 	// Render Target 교체
@@ -752,14 +761,42 @@ void CRenderManager::RenderAnimationEditor()
 
 	// m_AnimationRenderTarget->SetTargetShader(55);
 
-	for (int j = 0; j < m_RenderLayerList[AnimationEditorLayerIdx]->RenderCount; ++j)
+	auto iter = m_RenderLayerList[AnimationEditorLayerIdx]->RenderList.begin();
+	auto iterEnd = m_RenderLayerList[AnimationEditorLayerIdx]->RenderList.end();
+
+	for (; iter != iterEnd; ++iter)
 	{
-		// m_RenderLayerList[AnimationEditorLayerIdx]->RenderList[j]->Render();
-		// m_RenderLayerList[AnimationEditorLayerIdx]->RenderList[j]->RenderAnimationEditor();
+		(*iter)->RenderAnimationEditor();
 	}
 
 	m_AnimEditorRenderTarget->ResetTarget();
  }
+
+void CRenderManager::RenderParticleEffectEditor()
+{
+	int ParticleEffectEditorLayerIdx = GetRenderLayerIndex("ParticleEffectRenderTarget");
+
+	// 만~약에 해당 Layer 의 Idx 가 정해져 있지 않다면
+	if (ParticleEffectEditorLayerIdx == -1)
+		return;
+
+	// Animation Edtior 상에서 Animation Editor 제작 중이지 않다면
+	if (m_RenderLayerList[ParticleEffectEditorLayerIdx]->RenderList.size() <= 0)
+		return;
+
+	// Render Target 교체
+	m_ParticleEffectEditorRenderTarget->ClearTarget();
+
+	m_ParticleEffectEditorRenderTarget->SetTarget(nullptr);
+
+	for (int j = 0; j < m_RenderLayerList[ParticleEffectEditorLayerIdx]->RenderCount; ++j)
+	{
+		// m_RenderLayerList[AnimationEditorLayerIdx]->RenderList[j]->Render();
+		// m_RenderLayerList[ParticleEffectEditorLayerIdx]->RenderList[j]->RenderParticleEffectEditor();
+	}
+
+	m_ParticleEffectEditorRenderTarget->ResetTarget();
+}
 
 void CRenderManager::SetBlendFactor(const std::string& Name, float r, float g,
 	float b, float a)
