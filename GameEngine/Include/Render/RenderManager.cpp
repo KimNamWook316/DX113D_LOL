@@ -7,7 +7,7 @@
 #include "RenderStateManager.h"
 #include "../Resource/Shader/Standard2DConstantBuffer.h"
 #include "../Resource/ResourceManager.h"
-#include "../Resource/Mesh/Mesh.h"
+#include "../Resource/Mesh/AnimationMesh.h"
 #include "RenderState.h"
 #include "../Scene/SceneManager.h"
 #include "../Scene/Scene.h"
@@ -404,6 +404,12 @@ void CRenderManager::Render()
 					// Mesh 정보 세팅
 					Layer->m_vecInstancing[Layer->InstancingIndex]->Mesh = (*iter)->Mesh;
 
+					if ((*iter)->Mesh->CheckType<CAnimationMesh>())
+					{
+						Layer->m_vecInstancing[Layer->InstancingIndex]->Animation = true;
+						Layer->m_vecInstancing[Layer->InstancingIndex]->CBuffer->SetBoneCount(((CAnimationMesh*)(*iter)->Mesh)->GetBoneCount());
+					}
+
 					++Layer->InstancingIndex;
 				}
 			}
@@ -551,110 +557,7 @@ void CRenderManager::RenderGBuffer()
 		}
 	}
 
-	// 이제 Default Layer 에 있는 Instancing집단. 들을 순회할 것이다.
-	for (int i = 0; i < m_RenderLayerList[1]->InstancingIndex; ++i)
-	{
-		// Material Slot 수만큼 반복한다.
-		int	SlotCount = 0;
-
-		// 현재 우리는 Static Mesh Component, Animation Mesh Component 를 
-		// 분리해서 Instancing 하고 있다.
-		// 그렇다면, 두 Component 를 구분해야 하는데
-		// 해당 Instancing 집단이 공유하는 Mesh 종류로 구분할 것이다.
-		if (m_RenderLayerList[1]->m_vecInstancing[i]->Mesh->GetMeshType() == Mesh_Type::Static)
-		{
-			SlotCount = ((CStaticMeshComponent*)m_RenderLayerList[1]->m_vecInstancing[i]->RenderList.back())->GetMaterialSlotCount();
-		}
-
-		else if (m_RenderLayerList[1]->m_vecInstancing[i]->Mesh->GetMeshType() == Mesh_Type::Animation)
-		{
-			SlotCount = ((CAnimationMeshComponent*)m_RenderLayerList[1]->m_vecInstancing[i]->RenderList.back())->GetMaterialSlotCount();
-		}
-
-		// 그리고, 현재 해당 Component 들이 공유하는 Mesh Class 내 Material 개수를 가져온다.
-		// 해당 Material 개수만큼 반복할 것이다.
-		for (int j = 0; j < SlotCount; ++j)
-		{
-			// m_RenderLayerList[1]->m_vecInstancing[i] -> Default Layer 내 Instancing 으로 그릴 하나의 집단
-			// 그 집단 내에 있는 Component 하나하나를 순회할 것이다.
-			auto	iter = m_RenderLayerList[1]->m_vecInstancing[i]->RenderList.begin();
-			auto	iterEnd = m_RenderLayerList[1]->m_vecInstancing[i]->RenderList.end();
-
-			// Instancing3DInfo 는 Shader 측에서 구조화 버퍼 배열의 원소 이다.
-			// Instancing3DInfo 하나가, 실제로 그릴 Mesh 하나.를 의미한다.
-			// vecInfo 가 그렇다면, 구조화 버퍼 하나에 대응될 것이다.
-			std::vector<Instancing3DInfo>	vecInfo;
-			vecInfo.reserve(m_RenderLayerList[1]->m_vecInstancing[i]->RenderList.size());
-
-			CMaterial* Material = nullptr;
-
-			// Component 하나하나를 순회할 것이다.
-			for (; iter != iterEnd; ++iter)
-			{
-				if (m_RenderLayerList[1]->m_vecInstancing[i]->Mesh->GetMeshType() == Mesh_Type::Static)
-				{
-					Material = ((CStaticMeshComponent*)(*iter))->GetMaterial(j);
-				}
-
-				else if (m_RenderLayerList[1]->m_vecInstancing[i]->Mesh->GetMeshType() == Mesh_Type::Animation)
-				{
-					Material = ((CAnimationMeshComponent*)(*iter))->GetMaterial(j);
-				}
-
-				// 여기서 Material 는 Null 이 나올 수 없다.
-				// 현재 같은 Mesh 를 공유하는 Component 를 순회하고 있고
-				// 이에 따라 같은 Mesh 안에는 당연히 Material 개수가 동일할 것이기 때문이다.
-
-				Instancing3DInfo	Info = {};
-
-				// 해당 Component 를 통해 구조화 버퍼. 하나의 원소. 인 Info 에 정보를 채워준다.
-				// (SceneComponent 내 , Transform 정보를 채워준다.)
-				(*iter)->SetInstancingInfo(&Info);
-
-				// 상수 버퍼 를 통해 구조화 버퍼. 하나의 원소. 인 Info 에 정보를 채워준다.
-				// Material 정보를 채워준다.
-				Material->GetCBuffer()->SetInstancingInfo(&Info);
-
-				// 페이퍼번 정보
-				// 페이퍼번을 하는 경우에만, PaperBurn 상수 버퍼에 있는 내용을 채워준다.
-				if (Info.MtrlPaperBurnEnable == 1)
-				{
-					CPaperBurnComponent* PaperBurn = (*iter)->GetGameObject()->FindComponentFromType<CPaperBurnComponent>();
-					if (PaperBurn)
-					{
-						PaperBurn->SetInstancingInfo(&Info);
-					}
-				}
-
-				vecInfo.push_back(Info);
-			}
-
-			// Material 내 Texture 만 넘겨주는 로직을 하나 만들 것이다.
-			if (Material)
-				Material->RenderTexture();
-
-			// Standard3D.fx 내 Instncing Shader 코드를 세팅한다.
-			m_Standard3DInstancingShader->SetShader();
-
-			// 구조화 버퍼 정보를 Update 해준다.
-			m_RenderLayerList[1]->m_vecInstancing[i]->Buffer->UpdateBuffer(&vecInfo[0],
-				(int)vecInfo.size());
-
-			// 구조화 버퍼 Shader 코드를 세팅해준다.
-			m_RenderLayerList[1]->m_vecInstancing[i]->Buffer->SetShader();
-
-			// 집단 내 물체 개수 + Material Slot Idx 정보를 넘겨서 Render Instancing 해준다.
-			m_RenderLayerList[1]->m_vecInstancing[i]->Mesh->RenderInstancing((int)vecInfo.size(), j);
-
-
-			m_RenderLayerList[1]->m_vecInstancing[i]->Buffer->ResetShader();
-
-
-			if (Material)
-				Material->Reset();
-
-		}
-	}
+	RenderDefaultInstancing();
 
 	CDevice::GetInst()->GetContext()->OMSetRenderTargets((unsigned int)GBufferSize,
 		&vecPrevTarget[0], PrevDepthTarget);
@@ -974,6 +877,99 @@ int CRenderManager::GetRenderLayerIndex(const std::string& TargetName)
 CRenderState* CRenderManager::FindRenderState(const std::string& Name)
 {
 	return m_RenderStateManager->FindRenderState(Name);
+}
+
+void CRenderManager::RenderDefaultInstancing()
+{
+	for (int i = 0; i < m_RenderLayerList[1]->InstancingIndex; ++i)
+	{
+		// Material Slot 수만큼 반복한다.
+		int	SlotCount = 0;
+		if (m_RenderLayerList[1]->m_vecInstancing[i]->Mesh->GetMeshType() == Mesh_Type::Static)
+		{
+			SlotCount = ((CStaticMeshComponent*)m_RenderLayerList[1]->m_vecInstancing[i]->RenderList.back())->GetMaterialSlotCount();
+		}
+
+		else if (m_RenderLayerList[1]->m_vecInstancing[i]->Mesh->GetMeshType() == Mesh_Type::Animation)
+		{
+			SlotCount = ((CAnimationMeshComponent*)m_RenderLayerList[1]->m_vecInstancing[i]->RenderList.back())->GetMaterialSlotCount();
+		}
+
+		for (int j = 0; j < SlotCount; ++j)
+		{
+			auto	iter = m_RenderLayerList[1]->m_vecInstancing[i]->RenderList.begin();
+			auto	iterEnd = m_RenderLayerList[1]->m_vecInstancing[i]->RenderList.end();
+
+			std::vector<Instancing3DInfo>	vecInfo;
+			vecInfo.reserve(m_RenderLayerList[1]->m_vecInstancing[i]->RenderList.size());
+
+			CMaterial* Material = nullptr;
+
+			for (; iter != iterEnd; ++iter)
+			{
+				if (m_RenderLayerList[1]->m_vecInstancing[i]->Mesh->GetMeshType() == Mesh_Type::Static)
+				{
+					Material = ((CStaticMeshComponent*)(*iter))->GetMaterial(j);
+				}
+
+				else if (m_RenderLayerList[1]->m_vecInstancing[i]->Mesh->GetMeshType() == Mesh_Type::Animation)
+				{
+					Material = ((CAnimationMeshComponent*)(*iter))->GetMaterial(j);
+				}
+
+				Instancing3DInfo	Info = {};
+
+				(*iter)->SetInstancingInfo(&Info);
+				Material->GetCBuffer()->SetInstancingInfo(&Info);
+
+				// 페이퍼번 정보
+				if (Info.MtrlPaperBurnEnable == 1)
+				{
+					CPaperBurnComponent* PaperBurn = (*iter)->GetGameObject()->FindComponentFromType<CPaperBurnComponent>();
+					if (PaperBurn)
+					{
+						PaperBurn->SetInstancingInfo(&Info);
+					}
+				}
+
+				vecInfo.push_back(Info);
+			}
+
+			if (Material)
+				Material->RenderTexture();
+
+			if (m_RenderLayerList[1]->m_vecInstancing[i]->Animation)
+			{
+				((CAnimationMesh*)m_RenderLayerList[1]->m_vecInstancing[i]->Mesh)->SetBoneShader();
+			}
+
+			m_Standard3DInstancingShader->SetShader();
+
+			m_RenderLayerList[1]->m_vecInstancing[i]->CBuffer->UpdateCBuffer();
+
+			m_RenderLayerList[1]->m_vecInstancing[i]->Buffer->UpdateBuffer(&vecInfo[0],
+				(int)vecInfo.size());
+
+			m_RenderLayerList[1]->m_vecInstancing[i]->Buffer->SetShader();
+
+			m_RenderLayerList[1]->m_vecInstancing[i]->Mesh->RenderInstancing((int)vecInfo.size(), j);
+
+
+			m_RenderLayerList[1]->m_vecInstancing[i]->Buffer->ResetShader();
+
+
+
+			if (m_RenderLayerList[1]->m_vecInstancing[i]->Animation)
+			{
+				((CAnimationMesh*)m_RenderLayerList[1]->m_vecInstancing[i]->Mesh)->ResetBoneShader();
+			}
+
+
+			if (Material)
+				Material->Reset();
+
+		}
+	}
 }
 
 bool CRenderManager::Sortlayer(RenderLayer* Src, RenderLayer* Dest)

@@ -13,6 +13,8 @@ CAnimationMeshComponent::CAnimationMeshComponent()
 	m_Render = true;
 	m_Animation = nullptr;
 	m_Transform->SetTransformState(Transform_State::Ground);
+	
+	m_InstanceID = 0;
 }
 
 CAnimationMeshComponent::CAnimationMeshComponent(const CAnimationMeshComponent& com) :
@@ -27,10 +29,14 @@ CAnimationMeshComponent::CAnimationMeshComponent(const CAnimationMeshComponent& 
 		m_vecMaterialSlot.push_back(com.m_vecMaterialSlot[i]->Clone());
 	}
 
-	m_Skeleton = com.m_Skeleton;
+	m_Skeleton = com.m_Skeleton->Clone();
 
 	if (com.m_Animation)
+	{
 		m_Animation = com.m_Animation->Clone();
+		m_Animation->SetSkeleton(m_Skeleton);
+		m_Animation->SetInstancingBoneBuffer(m_Mesh->GetBoneBuffer());
+	}
 }
 
 CAnimationMeshComponent::~CAnimationMeshComponent()
@@ -58,7 +64,21 @@ CAnimationMeshComponent::~CAnimationMeshComponent()
 
 						for (; iter2 != iter2End; ++iter2)
 						{
+							((CAnimationMeshComponent*)(*iter2))->SetInstanceID(0);
 							(*iter2)->SetInstancing(false);
+						}
+					}
+					else
+					{
+						auto	iter2 = (*iter)->InstancingList.begin();
+						auto	iter2End = (*iter)->InstancingList.end();
+
+						int ID = 0;
+
+						for (; iter2 != iter2End; ++iter2, ++ID)
+						{
+							((CAnimationMeshComponent*)(*iter2))->SetInstanceID(ID);
+							(*iter2)->SetInstancing(true);
 						}
 					}
 					break;
@@ -82,10 +102,13 @@ void CAnimationMeshComponent::SetMesh(const std::string& Name)
 {
 	m_Mesh = (CAnimationMesh*)m_Scene->GetResource()->FindMesh(Name);
 
-	m_Skeleton = m_Mesh->GetSkeleton();
+	m_Skeleton = m_Mesh->GetSkeleton()->Clone();
 
 	if (m_Animation)
+	{
 		m_Animation->SetSkeleton(m_Skeleton);
+		m_Animation->SetInstancingBoneBuffer(m_Mesh->GetBoneBuffer());
+	}
 
 	m_vecMaterialSlot.clear();
 
@@ -124,6 +147,7 @@ void CAnimationMeshComponent::SetMesh(const std::string& Name)
 			if (InstancingEnable)
 			{
 				SetInstancing(InstancingEnable);
+				m_InstanceID = (int)(*iter1)->InstancingList.size() - 1;
 			}
 
 			else
@@ -133,8 +157,10 @@ void CAnimationMeshComponent::SetMesh(const std::string& Name)
 					auto	iter2 = (*iter1)->InstancingList.begin();
 					auto	iter2End = (*iter1)->InstancingList.end();
 
-					for (; iter2 != iter2End; ++iter2)
+					int ID = 0;
+					for (; iter2 != iter2End; ++iter2, ++ID)
 					{
+						((CAnimationMeshComponent*)(*iter2))->SetInstanceID(ID);
 						(*iter2)->SetInstancing(true);
 					}
 
@@ -162,10 +188,13 @@ void CAnimationMeshComponent::SetMesh(CAnimationMesh* Mesh)
 {
 	m_Mesh = Mesh;
 
-	m_Skeleton = m_Mesh->GetSkeleton();
+	m_Skeleton = m_Mesh->GetSkeleton()->Clone();
 
 	if (m_Animation)
+	{
 		m_Animation->SetSkeleton(m_Skeleton);
+		m_Animation->SetInstancingBoneBuffer(m_Mesh->GetBoneBuffer());
+	}
 
 	m_vecMaterialSlot.clear();
 
@@ -202,7 +231,10 @@ void CAnimationMeshComponent::SetMesh(CAnimationMesh* Mesh)
 
 			// 인스턴싱 개수를 판단한다.
 			if (InstancingEnable)
+			{
 				SetInstancing(InstancingEnable);
+				m_InstanceID = (int)(*iter1)->InstancingList.size() - 1;
+			}
 
 			else
 			{
@@ -211,8 +243,10 @@ void CAnimationMeshComponent::SetMesh(CAnimationMesh* Mesh)
 					auto	iter2 = (*iter1)->InstancingList.begin();
 					auto	iter2End = (*iter1)->InstancingList.end();
 
-					for (; iter2 != iter2End; ++iter2)
+					int ID = 0;
+					for (; iter2 != iter2End; ++iter2, ++ID)
 					{
+						((CAnimationMeshComponent*)(*iter2))->SetInstanceID(ID);
 						(*iter2)->SetInstancing(true);
 					}
 

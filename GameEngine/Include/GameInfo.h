@@ -553,3 +553,9 @@ struct Instancing3DInfo
 	Vector4 PaperBurnCenterLineColor;
 };
 
+struct InstancingCBuffer
+{
+	int InstancingBoneCount;
+	Vector3 InstancingEmpty;
+};
+

@@ -4,8 +4,10 @@
 #include "../Animation/Skeleton.h"
 #include "../../Scene/Scene.h"
 #include "../../Scene/SceneResource.h"
+#include "../Shader/StructuredBuffer.h"
 
-CAnimationMesh::CAnimationMesh()
+CAnimationMesh::CAnimationMesh()	:
+	m_InstancingCount(100)
 {
 	SetTypeID<CAnimationMesh>();
 	m_MeshType = Mesh_Type::Animation;
@@ -13,6 +15,22 @@ CAnimationMesh::CAnimationMesh()
 
 CAnimationMesh::~CAnimationMesh()
 {
+	SAFE_DELETE(m_BoneBuffer);
+}
+
+int CAnimationMesh::GetBoneCount() const
+{
+	return m_Skeleton->GetBoneCount();
+}
+
+void CAnimationMesh::SetBoneShader()
+{
+	m_BoneBuffer->SetShader(106, (int)Buffer_Shader_Type::Vertex);
+}
+
+void CAnimationMesh::ResetBoneShader()
+{
+	m_BoneBuffer->ResetShader(106, (int)Buffer_Shader_Type::Vertex);
 }
 
 // fbx
@@ -24,6 +42,9 @@ bool CAnimationMesh::Init()
 void CAnimationMesh::SetSkeleton(CSkeleton* Skeleton)
 {
 	m_Skeleton = Skeleton;
+
+	m_BoneBuffer = new CStructuredBuffer;
+	m_BoneBuffer->Init("OutputBone", sizeof(Matrix), (unsigned int)m_Skeleton->GetBoneCount() * m_InstancingCount, 2);
 }
 
 void CAnimationMesh::SetSkeleton(const std::string& Name, const TCHAR* FileName, const std::string& PathName)
@@ -36,6 +57,9 @@ void CAnimationMesh::SetSkeleton(const std::string& Name, const TCHAR* FileName,
 	WideCharToMultiByte(CP_ACP, 0, FileName, -1, FileNameMultibyte, Length, 0, 0);
 
 	m_Skeleton->LoadSkeleton(m_Scene, Name, FileNameMultibyte, PathName);
+
+	m_BoneBuffer = new CStructuredBuffer;
+	m_BoneBuffer->Init("OutputBone", sizeof(Matrix), (unsigned int)m_Skeleton->GetBoneCount() * m_InstancingCount, 2);
 }
 
 bool CAnimationMesh::LoadMeshFullPathMultibyte(const char* FullPath)
@@ -196,6 +220,9 @@ bool CAnimationMesh::ConvertFBX(CFBXLoader* Loader, const char* FullPath)
 		strcpy_s(SkeletonPath, FullPath);
 		memcpy(&SkeletonPath[iLength - 3], "bne", 3);
 		m_Skeleton->SaveSkeletonFullPath(SkeletonPath);
+
+		m_BoneBuffer = new CStructuredBuffer;
+		m_BoneBuffer->Init("OutputBone", sizeof(Matrix), (unsigned int)m_Skeleton->GetBoneCount() * m_InstancingCount, 2);
 	}
 
 	return true;

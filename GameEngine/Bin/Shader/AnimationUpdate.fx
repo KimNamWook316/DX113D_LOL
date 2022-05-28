@@ -214,8 +214,9 @@ struct FrameTrans
 StructuredBuffer<FrameTrans> g_FrameTransArray : register(t13);
 StructuredBuffer<matrix> g_OffsetArray : register(t14);
 StructuredBuffer<FrameTrans> g_ChangeFrameTransArray : register(t15);
-RWStructuredBuffer<matrix> g_BoneMatrixArray : register(u0);
-RWStructuredBuffer<matrix> g_BoneSocketMatrixArray : register(u1);
+RWStructuredBuffer<matrix> g_BoneMatrixArray : register(u0);                // AnimInstance::m_OutputBuffer
+RWStructuredBuffer<matrix> g_BoneSocketMatrixArray : register(u1);          // AnimInstance::m_BoneBuffer
+RWStructuredBuffer<matrix> g_InstancingBoneMatrixArray : register(u2);      // AnimationMesh::m_BoneBuffer
 
 cbuffer AnimationUpdateCBuffer : register(b11)
 {
@@ -260,8 +261,10 @@ void AnimationUpdateCS(int3 ThreadID : SV_DispatchThreadID)
 
     matrix matOffset = transpose(g_OffsetArray[ThreadID.x]);
 
-    g_BoneMatrixArray[g_AnimRowIndex * g_AnimBoneCount + ThreadID.x] = mul(matOffset, matBone);
+    g_BoneMatrixArray[ThreadID.x] = mul(matOffset, matBone);
     g_BoneSocketMatrixArray[ThreadID.x] = transpose(matBone);
+
+	g_InstancingBoneMatrixArray[g_AnimRowIndex * g_AnimBoneCount + ThreadID.x] = mul(matOffset, matBone);
 }
 
 

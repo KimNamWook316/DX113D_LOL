@@ -54,6 +54,12 @@
     <ClInclude Include="Object\BonObj.h">
       <Filter>02. Object</Filter>
     </ClInclude>
+    <ClInclude Include="Object\Monster.h">
+      <Filter>02. Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\MonsterAnimation.h">
+      <Filter>02. Object</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Client3D.rc">
@@ -94,6 +100,12 @@
       <Filter>02. Object</Filter>
     </ClCompile>
     <ClCompile Include="Object\BonObj.cpp">
+      <Filter>02. Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\Monster.cpp">
+      <Filter>02. Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\MonsterAnimation.cpp">
       <Filter>02. Object</Filter>
     </ClCompile>
   </ItemGroup>

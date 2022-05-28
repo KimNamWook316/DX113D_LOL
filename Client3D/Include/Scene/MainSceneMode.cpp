@@ -7,6 +7,7 @@
 #include "../Object/LandScapeObj.h"
 #include "../Object/DecalObj.h"
 #include "../Object/Portal.h"
+#include "../Object/Monster.h"
 #include "../Object/BonObj.h"
 #include "GameObject/LightObj.h"
 #include "Component/LightComponent.h"
@@ -50,6 +51,16 @@ bool CMainSceneMode::Init()
 		CBonObj* BonObj = m_Scene->CreateGameObject<CBonObj>("BonObj");
 
 		BonObj->SetWorldPos(i * 3.f, 4.f, 10.f);
+	}
+
+	for (int i = 0; i < 5; ++i)
+	{
+		for (int j = 0; j < 5; ++j)
+		{
+			CMonster* Monster = m_Scene->CreateGameObject<CMonster>("Monster");
+
+			Monster->SetWorldPos(j * 3.f + 10.f, 5.f, i * 3.f + 10.f);
+		}
 	}
 
 	CLightObj* Light = m_Scene->CreateGameObject<CLightObj>("Light1");

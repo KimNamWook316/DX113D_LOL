@@ -81,7 +81,7 @@ struct InstancingInfo
 	float4 g_PaperBurnCenterLineColor;
 };
 
-StructuredBuffer<InstancingInfo> g_StaticMeshInfoArray : register(t40);
+StructuredBuffer<InstancingInfo> g_InstancingInfoArray : register(t40);
 //
 
 StructuredBuffer<matrix> g_SkinningBoneMatrixArray : register(t106);
@@ -128,43 +128,6 @@ SkinningInfo Skinning(float3 Pos, float3 Normal, float3 Tangent, float3 Binormal
     
     
     return Info;
-
-}
-
-SkinningInfo SkinningInstancing(float3 Pos, float3 Normal, float3 Tangent, float3 Binormal,
-    float4 BlendWeight, float4 BlendIndex, uint InstanceID)
-{
-	SkinningInfo Info = (SkinningInfo) 0;
-    
-	if (g_StaticMeshInfoArray[InstanceID].g_MtrlAnimation3DEnable == 0)
-	{
-		Info.Pos = Pos;
-		Info.Normal = Normal;
-		Info.Tangent = Tangent;
-		Info.Binormal = Binormal;
-        
-		return Info;
-	}
-    
-	for (int i = 0; i < 4; ++i)
-	{
-		if (BlendWeight[i] == 0.f)
-			continue;
-        
-		matrix matBone = g_SkinningBoneMatrixArray[(int) BlendIndex[i]];
-        
-		Info.Pos += (mul(float4(Pos, 1.f), matBone) * BlendWeight[i]).xyz;
-		Info.Normal += (mul(float4(Normal, 0.f), matBone) * BlendWeight[i]).xyz;
-		Info.Tangent += (mul(float4(Tangent, 0.f), matBone) * BlendWeight[i]).xyz;
-		Info.Binormal += (mul(float4(Binormal, 0.f), matBone) * BlendWeight[i]).xyz;
-	}
-    
-	Info.Normal = normalize(Info.Normal);
-	Info.Tangent = normalize(Info.Tangent);
-	Info.Binormal = normalize(Info.Binormal);
-    
-    
-	return Info;
 
 }
 
@@ -269,6 +232,43 @@ PSOutput_GBuffer Standard3DPS(Vertex3DOutput input)
     return output;
 }
 
+SkinningInfo SkinningInstancing(float3 Pos, float3 Normal, float3 Tangent, float3 Binormal,
+    float4 BlendWeight, float4 BlendIndex, uint InstanceID)
+{
+	SkinningInfo Info = (SkinningInfo) 0;
+    
+	if (g_InstancingInfoArray[InstanceID].g_MtrlAnimation3DEnable == 0)
+	{
+		Info.Pos = Pos;
+		Info.Normal = Normal;
+		Info.Tangent = Tangent;
+		Info.Binormal = Binormal;
+        
+		return Info;
+	}
+    
+	for (int i = 0; i < 4; ++i)
+	{
+		if (BlendWeight[i] == 0.f)
+			continue;
+        
+		matrix matBone = g_SkinningBoneMatrixArray[(InstanceID * g_InstancingBoneCount) + (int) BlendIndex[i]];
+        
+		Info.Pos += (mul(float4(Pos, 1.f), matBone) * BlendWeight[i]).xyz;
+		Info.Normal += (mul(float4(Normal, 0.f), matBone) * BlendWeight[i]).xyz;
+		Info.Tangent += (mul(float4(Tangent, 0.f), matBone) * BlendWeight[i]).xyz;
+		Info.Binormal += (mul(float4(Binormal, 0.f), matBone) * BlendWeight[i]).xyz;
+	}
+    
+	Info.Normal = normalize(Info.Normal);
+	Info.Tangent = normalize(Info.Tangent);
+	Info.Binormal = normalize(Info.Binormal);
+    
+    
+	return Info;
+
+}
+
 // Instancing
 Vertex3DOutputInstancing Standard3DInstancingVS(Vertex3DInstancing input)
 {
@@ -281,18 +281,18 @@ Vertex3DOutputInstancing Standard3DInstancingVS(Vertex3DInstancing input)
     
 	float3 Pos = Info.Pos;
 
-	output.ProjPos = mul(float4(Pos, 1.f), g_StaticMeshInfoArray[input.InstanceID].matWVP);
+	output.ProjPos = mul(float4(Pos, 1.f), g_InstancingInfoArray[input.InstanceID].matWVP);
 	output.Pos = output.ProjPos;
     
     // 뷰공간의 위치를 만들어준다.
-	output.ViewPos = mul(float4(Pos, 1.f), g_StaticMeshInfoArray[input.InstanceID].matWV).xyz;
+	output.ViewPos = mul(float4(Pos, 1.f), g_InstancingInfoArray[input.InstanceID].matWV).xyz;
     
     // 뷰 공간의 Normal을 만들어준다.
-	output.Normal = normalize(mul(float4(Info.Normal, 0.f), g_StaticMeshInfoArray[input.InstanceID].matWV).xyz);
+	output.Normal = normalize(mul(float4(Info.Normal, 0.f), g_InstancingInfoArray[input.InstanceID].matWV).xyz);
     // 뷰 공간의 Tangent을 만들어준다.
-	output.Tangent = normalize(mul(float4(Info.Tangent, 0.f), g_StaticMeshInfoArray[input.InstanceID].matWV).xyz);
+	output.Tangent = normalize(mul(float4(Info.Tangent, 0.f), g_InstancingInfoArray[input.InstanceID].matWV).xyz);
     // 뷰 공간의 Binormal을 만들어준다.
-	output.Binormal = normalize(mul(float4(Info.Binormal, 0.f), g_StaticMeshInfoArray[input.InstanceID].matWV).xyz);
+	output.Binormal = normalize(mul(float4(Info.Binormal, 0.f), g_InstancingInfoArray[input.InstanceID].matWV).xyz);
 	output.UV = input.UV;
 
 	return output;
@@ -303,7 +303,7 @@ float3 ComputeBumpNormalInstancing(float3 Normal, float3 Tangent, float3 Binorma
 {
 	float3 result = Normal;
 	
-	if (g_StaticMeshInfoArray[InstanceID].g_MtrlBumpEnable == 1)
+	if (g_InstancingInfoArray[InstanceID].g_MtrlBumpEnable == 1)
 	{
 		float4 NormalColor = g_NormalTexture.Sample(g_BaseSmp, UV);
 		
@@ -340,42 +340,42 @@ PSOutput_GBuffer Standard3DInstancingPS(Vertex3DOutputInstancing input)
 
 	float4 BaseTextureColor = g_BaseTexture.Sample(g_BaseSmp, input.UV);
 
-	if (BaseTextureColor.a == 0.f || g_StaticMeshInfoArray[input.InstanceID].g_MtrlOpacity == 0.f)
+	if (BaseTextureColor.a == 0.f || g_InstancingInfoArray[input.InstanceID].g_MtrlOpacity == 0.f)
 		clip(-1);
     
 	output.Diffuse.rgb = BaseTextureColor.rgb; // * (LightInfo.Dif + LightInfo.Amb) + LightInfo.Spc + LightInfo.Emv;
 
-	output.Diffuse.a = BaseTextureColor.a * g_StaticMeshInfoArray[input.InstanceID].g_MtrlOpacity;
+	output.Diffuse.a = BaseTextureColor.a * g_InstancingInfoArray[input.InstanceID].g_MtrlOpacity;
     
 	output.GBuffer1.rgb = ComputeBumpNormalInstancing(input.Normal, input.Tangent, input.Binormal, input.UV, input.InstanceID);
 	output.GBuffer1.a = 1.f;
     
 	output.GBuffer2.r = input.ProjPos.z / input.ProjPos.w;
 	output.GBuffer2.g = input.ProjPos.w;
-	output.GBuffer2.b = g_StaticMeshInfoArray[input.InstanceID].g_MtrlSpecularColor.w;
+	output.GBuffer2.b = g_InstancingInfoArray[input.InstanceID].g_MtrlSpecularColor.w;
 	output.GBuffer2.a = 1.f;
     
-	output.GBuffer3.r = ConvertColor(g_StaticMeshInfoArray[input.InstanceID].g_MtrlBaseColor);
-	output.GBuffer3.g = ConvertColor(g_StaticMeshInfoArray[input.InstanceID].g_MtrlAmbientColor);
+	output.GBuffer3.r = ConvertColor(g_InstancingInfoArray[input.InstanceID].g_MtrlBaseColor);
+	output.GBuffer3.g = ConvertColor(g_InstancingInfoArray[input.InstanceID].g_MtrlAmbientColor);
     
 	output.GBuffer4.rgb = input.Tangent.xyz;
-	output.GBuffer4.a = g_StaticMeshInfoArray[input.InstanceID].g_MtrlReceiveDecal;
+	output.GBuffer4.a = g_InstancingInfoArray[input.InstanceID].g_MtrlReceiveDecal;
     
 	output.GBuffer5.rgb = input.Binormal.xyz;
 	output.GBuffer5.a = 1.f;
     
-	float4 SpecularColor = g_StaticMeshInfoArray[input.InstanceID].g_MtrlSpecularColor.xyzw;
+	float4 SpecularColor = g_InstancingInfoArray[input.InstanceID].g_MtrlSpecularColor.xyzw;
 	
-	if (g_StaticMeshInfoArray[input.InstanceID].g_MtrlSpecularTex)
+	if (g_InstancingInfoArray[input.InstanceID].g_MtrlSpecularTex)
 		SpecularColor = g_SpecularTexture.Sample(g_BaseSmp, input.UV).xxxx;
 	
 	SpecularColor = float4(0.5f, 0.5f, 0.5f, 1.f);
     
 	output.GBuffer3.b = ConvertColor(SpecularColor);
     
-	float4 EmissiveColor = g_StaticMeshInfoArray[input.InstanceID].g_MtrlEmissiveColor.xyzw;
+	float4 EmissiveColor = g_InstancingInfoArray[input.InstanceID].g_MtrlEmissiveColor.xyzw;
 	
-	if (g_StaticMeshInfoArray[input.InstanceID].g_MtrlEmissiveTex)
+	if (g_InstancingInfoArray[input.InstanceID].g_MtrlEmissiveTex)
 		EmissiveColor = g_EmissiveTexture.Sample(g_BaseSmp, input.UV).xxxx;
     
 	output.GBuffer3.a = ConvertColor(EmissiveColor);

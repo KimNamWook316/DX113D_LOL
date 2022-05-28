@@ -256,7 +256,6 @@ enum class SceneComponent3DType
 	ArmComponent,
 	LightComponent,
 	SceneComponent,
-	ParticleComponent,
 	Max
 };
 

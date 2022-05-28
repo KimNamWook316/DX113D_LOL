@@ -577,7 +577,7 @@ void CAnimationSequenceInstance::Update(float DeltaTime)
 		m_ChangeAnimation->m_Sequence->SetChangeShader();
 	}
 
-	m_AnimationUpdateCBuffer->SetRowIndex(0);
+	m_AnimationUpdateCBuffer->SetRowIndex(m_Owner->GetInstanceID());
 
 	m_OutputBuffer->SetShader();
 
@@ -587,11 +587,15 @@ void CAnimationSequenceInstance::Update(float DeltaTime)
 
 	m_BoneBuffer->SetShader();
 
+	m_InstancingBoneBuffer->SetShader();
+
 	m_CurrentAnimation->m_Sequence->SetShader();
 
 	unsigned int GroupX = (unsigned int)m_Skeleton->GetBoneCount() / 256 + 1;
 
 	m_AnimationUpdateShader->Excute(GroupX, 1, 1);
+
+	m_InstancingBoneBuffer->ResetShader();
 
 	m_BoneBuffer->ResetShader();
 
