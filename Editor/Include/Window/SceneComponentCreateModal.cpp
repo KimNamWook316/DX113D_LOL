@@ -125,27 +125,8 @@ void CSceneComponentCreateModal::OnCreateComponent()
 		Com = SelectObject->CreateComponentAddChild<CSceneComponent>(Name);
 
 	else if (Typeid == typeid(CParticleComponent).hash_code())
-	{
-		Com = SelectObject->CreateComponentAddChild<CParticleComponent>(Name);
-
-		// 기본 Particle Setting, 현재 Component 에 Particle Setting 하기
-		// 1) Particle Material 세팅
-		CSceneManager::GetInst()->GetScene()->GetResource()->CreateMaterial<CMaterial>("BasicParticleMaterial");
-		CMaterial* Material = CSceneManager::GetInst()->GetScene()->GetResource()->FindMaterial("BasicParticleMaterial");
-		Material->AddTexture(0, (int)Buffer_Shader_Type::Pixel, "Bubble", TEXT("Particle/Bubbles99px.png"));
-		Material->SetShader("ParticleRenderShader");
-		Material->SetRenderState("AlphaBlend");
-		Material->AddTexture(0, (int)Buffer_Shader_Type::Pixel, "Bubble", TEXT("Particle/Bubbles99px.png"));
-		
-		// 2) Particle 제작
-		CSceneManager::GetInst()->GetScene()->GetResource()->CreateParticle("BasicParticle");
-		CParticle* Particle = CSceneManager::GetInst()->GetScene()->GetResource()->FindParticle("BasicParticle");
-		Material = CSceneManager::GetInst()->GetScene()->GetResource()->FindMaterial("BasicParticleMaterial");
-		Particle->SetMaterial(Material);
-
-		dynamic_cast<CParticleComponent*>(Com)->SetParticle("BasicParticle");
-	}
-
+		Com = SelectObject->CreateComponent<CParticleComponent>(Name);
+	
 	CSceneComponentHierarchyWindow* ComponentWindow = (CSceneComponentHierarchyWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(SCENECOMPONENT_HIERARCHY);
 
 	// Root Node로 들어가는 경우, Gizmo에 Object갱신

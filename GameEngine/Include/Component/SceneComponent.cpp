@@ -626,3 +626,11 @@ void CSceneComponent::SetTransformByWorldMatrix(const Matrix& matTRS)
 	m_Transform->SetTransformByWorldMatrix(matTRS);
 }
 
+void CSceneComponent::RenderParticleEffectEditor()
+{
+	m_Transform->SetParticleEffectEditorTransform();
+
+	CRenderManager::GetInst()->GetStandard2DCBuffer()->SetAnimation2DEnable(false);
+	CRenderManager::GetInst()->GetStandard2DCBuffer()->UpdateCBuffer();
+}
+

@@ -24,6 +24,7 @@ protected:
 	class CAnimationUpdateConstantBuffer* m_AnimationUpdateCBuffer;
 	class CStructuredBuffer* m_OutputBuffer;	// 애니메이션 결과 저장용 버퍼
 	class CStructuredBuffer* m_BoneBuffer;
+	class CStructuredBuffer* m_InstancingBoneBuffer;
 	std::vector<Matrix>	m_vecBoneMatrix;
 	CSharedPtr<class CSkeleton>	m_Skeleton;
 
@@ -40,6 +41,11 @@ protected:
 	int m_EditorStopTargetFrame;
 
 public:
+	void SetInstancingBoneBuffer(class CStructuredBuffer* Buffer)
+	{
+		m_InstancingBoneBuffer = Buffer;
+	}
+
 	size_t GetTypeID()	const
 	{
 		return m_TypeID;

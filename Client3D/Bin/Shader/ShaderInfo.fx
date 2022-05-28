@@ -88,6 +88,12 @@ cbuffer LightCBuffer : register(b5)
     float3 g_LightEmpty;
 };
 
+cbuffer InstancingCBuffer : register(b6)
+{
+	int g_InstancingBoneCount;
+	float3 g_InstancingEmpty;
+};
+
 struct LightResult
 {
     float3 Dif;

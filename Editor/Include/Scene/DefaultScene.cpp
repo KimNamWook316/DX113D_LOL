@@ -23,25 +23,25 @@ bool CDefaultScene::Init()
 
 
     // Animation Editor  Test ¿ë Object, Mesh
-    m_Scene->GetResource()->LoadMesh(Mesh_Type::Animation, "PlayerMesh",
-        TEXT("singed_attack1.msh"), MESH_PATH);
-
-    CMesh* Mesh = m_Scene->GetResource()->FindMesh("PlayerMesh");
-
-    m_Scene->GetResource()->LoadSkeleton("PlayerSkeleton",
-        TEXT("singed_attack1.bne"), MESH_PATH);
-
-    m_Scene->GetResource()->SetMeshSkeleton("PlayerMesh", "PlayerSkeleton");
-
-    m_Scene->GetResource()->LoadAnimationSequence(true, "PlayerIdle",
-        TEXT("singed_attack1.sqc"), MESH_PATH);
-
-    m_Scene->GetResource()->LoadAnimationSequence(false, "PlayerAttack",
-        TEXT("singed_attack1.sqc"), MESH_PATH);
-
-    m_Scene->GetResource()->LoadAnimationSequence(true, "PlayerWalk",
-        TEXT("singed_attack1.sqc"), MESH_PATH);
-
+   // m_Scene->GetResource()->LoadMesh(Mesh_Type::Animation, "PlayerMesh",
+   //     TEXT("singed_attack1.msh"), MESH_PATH);
+   // 
+   // CMesh* Mesh = m_Scene->GetResource()->FindMesh("PlayerMesh");
+   // 
+   // m_Scene->GetResource()->LoadSkeleton("PlayerSkeleton",
+   //     TEXT("singed_attack1.bne"), MESH_PATH);
+   // 
+   // m_Scene->GetResource()->SetMeshSkeleton("PlayerMesh", "PlayerSkeleton");
+   // 
+   // m_Scene->GetResource()->LoadAnimationSequence(true, "PlayerIdle",
+   //     TEXT("singed_attack1.sqc"), MESH_PATH);
+   // 
+   // m_Scene->GetResource()->LoadAnimationSequence(false, "PlayerAttack",
+   //     TEXT("singed_attack1.sqc"), MESH_PATH);
+   // 
+   // m_Scene->GetResource()->LoadAnimationSequence(true, "PlayerWalk",
+   //     TEXT("singed_attack1.sqc"), MESH_PATH);
+   // 
     return true;
 }
 

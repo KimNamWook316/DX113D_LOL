@@ -99,7 +99,7 @@ bool CAnimationEditor::Init()
 	m_PlayScaleEditBtn->SetClickCallback<CAnimationEditor>(this, &CAnimationEditor::OnEditAnimPlayScale);
 
 	Line = AddWidget<CIMGUISameLine>("Line");
-	Line->SetOffsetX(105.f);
+	Line->SetOffsetX(155.f);
 
 	// Play Time 조정
 	m_PlayTimeInput = AddWidget<CIMGUITextInput>("Play Time Input", 50.f, 30.f);
@@ -107,7 +107,7 @@ bool CAnimationEditor::Init()
 	m_PlayTimeInput->SetTextType(ImGuiText_Type::Float);
 
 	Line = AddWidget<CIMGUISameLine>("Line");
-	Line->SetOffsetX(170.f);
+	Line->SetOffsetX(210.f);
 
 	m_PlayTimeEditBtn = AddWidget<CIMGUIButton>("Edit Time", 90.f, 30.f);
 	m_PlayTimeEditBtn->SetClickCallback<CAnimationEditor>(this, &CAnimationEditor::OnEditAnimPlayTime);
@@ -117,13 +117,13 @@ bool CAnimationEditor::Init()
 	m_EditAnimSeqDataKeyName->SetHideName(true);
 
 	Line = AddWidget<CIMGUISameLine>("Line");
-	Line->SetOffsetX(110.f);
+	Line->SetOffsetX(60.f);
 
 	m_EditAnimKeyBtn = AddWidget<CIMGUIButton>("Edit Key", 90.f, 30.f);
 	m_EditAnimKeyBtn->SetClickCallback<CAnimationEditor>(this, &CAnimationEditor::OnEditAnimSequenceKey);
 
 	Line = AddWidget<CIMGUISameLine>("Line");
-	Line->SetOffsetX(100.f);
+	Line->SetOffsetX(160.f);
 
 	CIMGUIText* HelpText = AddWidget<CIMGUIText>("Anim Key Name Edit Help", 90.f, 30.f);
 	HelpText->SetText("ex) 'EditIdle' --> 기존의 m_Animation->AddAnimation('ZedIdle', 'Idle') 으로 인해 만들어진 m_mapAnimationSequence['Idle'] = 'ZedIdle' 을 \n m_mapAnimationSequence['EditIdle'] = 'ZedIdle' 로 Key 값 수정 ");
@@ -149,6 +149,13 @@ bool CAnimationEditor::Init()
 	m_RotationCheckBtn = AddWidget<CIMGUICheckBox>("Camera Rotation", 90.f, 30.f);
 	m_RotationCheckBtn->AddCheckInfo("Rotate");
 	m_RotationCheckBtn->SetCallBackLabel<CAnimationEditor>(this, &CAnimationEditor::OnRotateAnimationCamera);
+
+	Line = AddWidget<CIMGUISameLine>("Line");
+	Line->SetOffsetX(310.f);
+
+	m_ZoomEnableBtn = AddWidget<CIMGUICheckBox>("Camera Zoom In", 90.f, 30.f);
+	m_ZoomEnableBtn->AddCheckInfo("Zoom");
+	m_ZoomEnableBtn->SetCallBackLabel<CAnimationEditor>(this, &CAnimationEditor::OnZoomAnimationCamera);
 
 	// Sequence Start ---------------------------------------
 	HelpText = AddWidget<CIMGUIText>("Anim Seq Load Btn Help Text", 90.f, 30.f);
@@ -273,9 +280,13 @@ void CAnimationEditor::OnRotateAnimationCamera(const char*, bool Enable)
 
 	// if (IsAnimPlay)
 	if (Enable)
-		m_3DTestObject->SetCameraRot(true);
+		m_3DTestObject->SetCameraZoom(true);
 	else
-		m_3DTestObject->SetCameraRot(false);
+		m_3DTestObject->SetCameraZoom(false);
+}
+
+void CAnimationEditor::OnZoomAnimationCamera(const char*, bool)
+{
 }
 
 void CAnimationEditor::OnSaveAnimationInstance()
@@ -351,6 +362,8 @@ void CAnimationEditor::OnLoadAnimationInstance()
 		if (!m_Animation->GetCurrentAnimation())
 			return;
 
+
+
 		// CameraObject 생성하기
 		// CEditorManager::GetInst()->CreateCameraObject();
 
@@ -390,6 +403,9 @@ void CAnimationEditor::OnLoadAnimationInstance()
 
 		// 현재 Scene의 정보를 m_Scene으로 지정해준다
 		m_Animation->SetScene(CSceneManager::GetInst()->GetScene());
+
+		// Animation Play Scale, Time
+		OnRefreshScaleAndTimeInputInfo();
 
 		// Animation을 시작한다..
 		m_Animation->Play();
@@ -674,6 +690,8 @@ void CAnimationEditor::OnAddAnimationSequence()
 
 		OnRefreshAnimationClipTable(LoadedSequence);
 
+		OnRefreshScaleAndTimeInputInfo();
+
 		// Frame Slider 의 최대 최소 값 세팅하기
 		m_FrameSlider->SetMin(LoadedSequence->GetStartFrame());
 		m_FrameSlider->SetMax(LoadedSequence->GetEndFrame());
@@ -761,4 +779,13 @@ void CAnimationEditor::OnRefreshAnimationComboBox()
 	else
 		m_CurAnimComboBox->SetSelectIndex(m_CurAnimComboBox->GetItemCount() - 1);
 
+}
+
+void CAnimationEditor::OnRefreshScaleAndTimeInputInfo()
+{
+	if (!m_Animation || !m_Animation->GetCurrentAnimation())
+		return;
+
+	m_PlayScaleInput->SetFloat(m_Animation->GetCurrentAnimation()->GetAnimationPlayScale());
+	m_PlayTimeInput->SetFloat(m_Animation->GetCurrentAnimation()->GetAnimationTime());
 }

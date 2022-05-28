@@ -2,6 +2,7 @@
 
 #include "../GameInfo.h"
 #include "../Resource/Texture/RenderTarget.h"
+#include "../Resource/Shader/InstancingCBuffer.h"
 #include "../Resource/Shader/StructuredBuffer.h"
 
 struct RenderInstancingList
@@ -10,10 +11,13 @@ struct RenderInstancingList
 	class CMesh* Mesh;
 	CStructuredBuffer* Buffer;
 	int BufferCount; // 인스턴싱할 Scene Component의 개수
+	CInstancingCBuffer* CBuffer;
+	bool Animation;
 
 	RenderInstancingList()
 	{
 		Mesh = nullptr;
+		Animation = false;
 
 		Buffer = new CStructuredBuffer;
 
@@ -21,10 +25,14 @@ struct RenderInstancingList
 			(int)Buffer_Shader_Type::Vertex | (int)Buffer_Shader_Type::Pixel);
 
 		BufferCount = 100;
+
+		CBuffer = new CInstancingCBuffer;
+		CBuffer->Init();
 	}
 
 	~RenderInstancingList()
 	{
+		SAFE_DELETE(CBuffer);
 		SAFE_DELETE(Buffer);
 	}
 };
@@ -124,6 +132,7 @@ private:
 	void RenderLightBlend();
 	void RenderFinalScreen();
 	void RenderAnimationEditor();
+	void RenderParticleEffectEditor();
 	// Render State
 public:
 	void SetBlendFactor(const std::string& Name, float r, float g, float b, float a);
@@ -133,10 +142,14 @@ public:
 		D3D11_BLEND_OP BlendOpAlpha = D3D11_BLEND_OP_ADD,
 		UINT8 RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL);
 	bool CreateBlendState(const std::string& Name, bool AlphaToCoverageEnable, bool IndependentBlendEnable);
-private :
-	int GetRenderLayerIndex(const std::string& Name);
 public:
 	class CRenderState* FindRenderState(const std::string& Name);
+
+private:
+	void RenderDefaultInstancing();
+
+private :
+	int GetRenderLayerIndex(const std::string& Name);
 
 private:
 	static bool Sortlayer(RenderLayer* Src, RenderLayer* Dest);

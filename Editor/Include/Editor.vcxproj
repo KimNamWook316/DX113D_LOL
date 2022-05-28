@@ -170,6 +170,7 @@
     <ClCompile Include="GraphEditor.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Object\3DCameraObject.cpp" />
+    <ClCompile Include="Object\3DParticleCamera.cpp" />
     <ClCompile Include="Object\Anim3DObject.cpp" />
     <ClCompile Include="Object\DragObject.cpp" />
     <ClCompile Include="Object\Player2D.cpp" />
@@ -211,6 +212,7 @@
     <ClInclude Include="EditorUtil.h" />
     <ClInclude Include="GraphEditor.h" />
     <ClInclude Include="Object\3DCameraObject.h" />
+    <ClInclude Include="Object\3DParticleCamera.h" />
     <ClInclude Include="Object\Anim3DObject.h" />
     <ClInclude Include="Object\DragObject.h" />
     <ClInclude Include="Object\Player2D.h" />

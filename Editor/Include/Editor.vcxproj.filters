@@ -150,6 +150,9 @@
     <ClCompile Include="Window\ToolWindow.cpp">
       <Filter>02. Editor\01. Window</Filter>
     </ClCompile>
+    <ClCompile Include="Object\3DParticleCamera.cpp">
+      <Filter>03. Object\02. 3D</Filter>
+    </ClCompile>
     <ClCompile Include="Window\BehaviorTreeMenuBar.cpp">
       <Filter>02. Editor\01. Window</Filter>
     </ClCompile>
@@ -268,6 +271,9 @@
     </ClInclude>
     <ClInclude Include="GraphEditor.h">
       <Filter>02. Editor\01. Window</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\3DParticleCamera.h">
+      <Filter>03. Object\02. 3D</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

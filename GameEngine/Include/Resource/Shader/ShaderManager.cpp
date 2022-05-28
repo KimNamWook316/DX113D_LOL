@@ -163,6 +163,9 @@ bool CShaderManager::Init()
 	CreateConstantBuffer("LandScapeCBuffer", sizeof(LandScapeCBuffer), 11,
 		(int)Buffer_Shader_Type::Graphic);
 
+	CreateConstantBuffer("InstancingCBuffer", sizeof(InstancingCBuffer), 6,
+		(int)Buffer_Shader_Type::Vertex | (int)Buffer_Shader_Type::Pixel);
+
 	return true;
 }
 

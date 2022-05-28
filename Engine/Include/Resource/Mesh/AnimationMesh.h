@@ -11,12 +11,24 @@ protected:
 
 private:
 	CSharedPtr<class CSkeleton>	m_Skeleton;
+	class CStructuredBuffer* m_BoneBuffer;
+	int m_InstancingCount;
 
 public:
 	class CSkeleton* GetSkeleton()	const
 	{
 		return m_Skeleton;
 	}
+
+	int GetBoneCount() const;
+
+	class CStructuredBuffer* GetBoneBuffer() const
+	{
+		return m_BoneBuffer;
+	}
+
+	void SetBoneShader();
+	void ResetBoneShader();
 
 public:
 	virtual bool Init();

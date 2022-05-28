@@ -162,6 +162,8 @@
     <ClInclude Include="Object\BonObj.h" />
     <ClInclude Include="Object\DecalObj.h" />
     <ClInclude Include="Object\LandScapeObj.h" />
+    <ClInclude Include="Object\Monster.h" />
+    <ClInclude Include="Object\MonsterAnimation.h" />
     <ClInclude Include="Object\Player.h" />
     <ClInclude Include="Object\PlayerAnimation.h" />
     <ClInclude Include="Object\Portal.h" />
@@ -181,6 +183,8 @@
     <ClCompile Include="Object\BonObj.cpp" />
     <ClCompile Include="Object\DecalObj.cpp" />
     <ClCompile Include="Object\LandScapeObj.cpp" />
+    <ClCompile Include="Object\Monster.cpp" />
+    <ClCompile Include="Object\MonsterAnimation.cpp" />
     <ClCompile Include="Object\Player.cpp" />
     <ClCompile Include="Object\PlayerAnimation.cpp" />
     <ClCompile Include="Object\Portal.cpp" />

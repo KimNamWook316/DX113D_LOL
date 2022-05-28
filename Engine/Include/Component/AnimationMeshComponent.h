@@ -21,8 +21,19 @@ protected:
     std::vector<CSharedPtr<CMaterial>> m_vecMaterialSlot;
     CSharedPtr<CSkeleton>   m_Skeleton;
     class CAnimationSequenceInstance* m_Animation;
+    int     m_InstanceID;
 
 public:
+    void SetInstanceID(int ID)
+    {
+        m_InstanceID = ID;
+    }
+
+    int GetInstanceID() const
+    {
+        return m_InstanceID;
+    }
+
     CMaterial* GetMaterial(int Index = 0)    const
     {
         return m_vecMaterialSlot[Index];
@@ -111,6 +122,9 @@ public:
 
         if (m_Skeleton)
             m_Animation->SetSkeleton(m_Skeleton);
+
+        if (m_Mesh)
+            m_Animation->SetInstancingBoneBuffer(m_Mesh->GetBoneBuffer());
     }
 
     CAnimationSequenceInstance* CreateBasicAnimationInstance()
@@ -133,6 +147,9 @@ public:
         if (m_Skeleton)
             m_Animation->SetSkeleton(m_Skeleton);
 
+        if (m_Mesh)
+            m_Animation->SetInstancingBoneBuffer(m_Mesh->GetBoneBuffer());
+
         return Anim;
     }
 
@@ -150,6 +167,9 @@ public:
 
         if (m_Skeleton)
             m_Animation->SetSkeleton(m_Skeleton);
+
+        if (m_Mesh)
+            m_Animation->SetInstancingBoneBuffer(m_Mesh->GetBoneBuffer());
     }
 };
 

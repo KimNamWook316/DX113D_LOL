@@ -167,6 +167,7 @@
     <ClCompile Include="Resource\Shader\DecalShader.cpp" />
     <ClCompile Include="Resource\Shader\GlobalConstantBuffer.cpp" />
     <ClCompile Include="Resource\Shader\GraphicShader.cpp" />
+    <ClCompile Include="Resource\Shader\InstancingCBuffer.cpp" />
     <ClCompile Include="Resource\Shader\LandScapeConstantBuffer.cpp" />
     <ClCompile Include="Resource\Shader\LandScapeShader.cpp" />
     <ClCompile Include="Resource\Shader\LightAccShader.cpp" />
@@ -385,6 +386,7 @@
     <ClInclude Include="Resource\Shader\DecalShader.h" />
     <ClInclude Include="Resource\Shader\GlobalConstantBuffer.h" />
     <ClInclude Include="Resource\Shader\GraphicShader.h" />
+    <ClInclude Include="Resource\Shader\InstancingCBuffer.h" />
     <ClInclude Include="Resource\Shader\LandScapeConstantBuffer.h" />
     <ClInclude Include="Resource\Shader\LandScapeShader.h" />
     <ClInclude Include="Resource\Shader\LightAccShader.h" />

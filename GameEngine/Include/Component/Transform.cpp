@@ -882,8 +882,22 @@ void CTransform::SetAnimationTransform()
 {
 	m_CBuffer->SetWorldMatrix(m_matWorld);
 
-	// CCameraComponent* Camera = m_Scene->GetCameraManager()->GetCurrentCamera();
 	CCameraComponent * Camera = m_Scene->GetCameraManager()->GetAnimationEditorCamera();
+
+	m_CBuffer->SetViewMatrix(Camera->GetViewMatrix());
+	m_CBuffer->SetProjMatrix(Camera->GetProjMatrix());
+
+	m_CBuffer->SetPivot(m_Pivot);
+	m_CBuffer->SetMeshSize(m_MeshSize);
+
+	m_CBuffer->UpdateCBuffer();
+}
+
+void CTransform::SetParticleEffectEditorTransform()
+{
+	m_CBuffer->SetWorldMatrix(m_matWorld);
+
+	CCameraComponent* Camera = m_Scene->GetCameraManager()->GetParticleEffectEditorCamera();
 
 	m_CBuffer->SetViewMatrix(Camera->GetViewMatrix());
 	m_CBuffer->SetProjMatrix(Camera->GetProjMatrix());

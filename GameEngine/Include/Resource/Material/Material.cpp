@@ -59,6 +59,14 @@ void CMaterial::CreateConstantBuffer()
 	m_CBuffer = new CMaterialConstantBuffer;
 
 	m_CBuffer->Init();
+
+	m_CBuffer->SetBaseColor(m_BaseColor);
+	m_CBuffer->SetAmbientColor(m_AmbientColor);
+	m_CBuffer->SetSpecularColor(m_SpecularColor);
+	m_CBuffer->SetEmissiveColor(m_EmissiveColor);
+	m_CBuffer->SetOpacity(m_Opacity);
+
+	m_CBuffer->UpdateCBuffer();
 }
 
 void CMaterial::EnableBump()
@@ -693,6 +701,12 @@ void CMaterial::Load(FILE* File)
 	m_CBuffer->SetBump(m_Bump);
 	m_CBuffer->SetSpecularTex(m_SpecularTex);
 	m_CBuffer->SetEmissiveTex(m_EmissiveTex);
+
+	m_CBuffer->SetBaseColor(m_BaseColor);
+	m_CBuffer->SetAmbientColor(m_AmbientColor);
+	m_CBuffer->SetSpecularColor(m_SpecularColor);
+	m_CBuffer->SetEmissiveColor(m_EmissiveColor);
+	m_CBuffer->SetOpacity(m_Opacity);
 
 	for (int i = 0; i < (int)RenderState_Type::Max; ++i)
 	{

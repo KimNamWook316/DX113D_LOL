@@ -305,6 +305,7 @@ public:
 	// Animation Editor Set Transform
 public : 
 	void SetAnimationTransform();
+	void SetParticleEffectEditorTransform();
 
 	// CallBack
 private:
