@@ -6,6 +6,9 @@
 #include "Scene/Navigation3DManager.h"
 #include "Weapon.h"
 
+#include "../d3dx10math.h"
+
+
 CPlayer::CPlayer()
 {
 	SetTypeID<CPlayer>();
@@ -108,6 +111,10 @@ void CPlayer::Update(float DeltaTime)
 	{
 		int a = 0;
 	}
+
+	//bool IsIntersect = D3DXIntersectTri()
+	
+	
 }
 
 void CPlayer::PostUpdate(float DeltaTime)

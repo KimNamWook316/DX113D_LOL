@@ -60,6 +60,9 @@ bool CBehaviorTreeWindow::Init()
 {
 	CIMGUIWindow::Init();
 
+    if (m_StateComponent)
+        m_StateComponent->SetTreeUpdate(false);
+
 	return true;
 }
 
@@ -182,9 +185,30 @@ void CBehaviorTreeWindow::Update(float DeltaTime)
         //OnAddNodeButton(m_TextUTF8, m_TypeSelectIndex, m_ActionSelectIndex);
     }
 
+    ImGui::SameLine();
+
+    ImGui::Dummy(ImVec2(100.f, 20.f));
+
+    ImGui::SameLine();
+
+    if (ImGui::Button("Run"))
+    {
+        if (m_StateComponent)
+            m_StateComponent->SetTreeUpdate(true);
+    }
+
+    ImGui::SameLine();
+
+    if (ImGui::Button("Stop"))
+    {
+        if (m_StateComponent)
+            m_StateComponent->SetTreeUpdate(false);
+    }
+
     GraphEditor::Show(m_Delegate, m_Option, m_ViewState, true, &fit);
 
     ImGui::End();
+
 
     //CIMGUIWindow::Update(DeltaTime);
 }
@@ -254,11 +278,13 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
 
         break;
     }
+
     case 3:
     {
 
         break;
     }
+
     }
 
     if (!m_StateComponent->GetBehaviorTree()->GetRootNode())

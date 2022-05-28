@@ -78,7 +78,7 @@ void CMainSceneMode::LoadMesh()
 
 
 	m_Scene->GetResource()->LoadMesh(Mesh_Type::Static, "Blade",
-		TEXT("Blade.msh"));
+		TEXT("Blade.FBX"));
 
 	m_Scene->GetResource()->LoadMesh(Mesh_Type::Static, "BonObj",
 		TEXT("BonObj.msh"));

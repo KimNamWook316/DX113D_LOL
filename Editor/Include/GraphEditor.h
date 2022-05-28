@@ -89,11 +89,11 @@ struct Template
 {
     ~Template()
     {
-        if (mInputNames)
-            delete[] mInputNames;
+        //if (mInputNames)
+        //    delete[] mInputNames;
 
-        if (mOutputNames)
-            delete[] mOutputNames;
+        //if (mOutputNames)
+        //    delete[] mOutputNames;
     }
 
     ImU32 mHeaderColor;

@@ -4,7 +4,8 @@
 #include "State.h"
 
 CStateComponent::CStateComponent()	:
-	m_BehaviorTree(nullptr)
+	m_BehaviorTree(nullptr),
+	m_TreeUpdate(true)
 {
 	SetTypeID<CStateComponent>();
 
@@ -44,7 +45,8 @@ void CStateComponent::Update(float DeltaTime)
 		(*iter)->Update(DeltaTime);
 	}
 
-	m_BehaviorTree->Update(DeltaTime);
+	if(m_TreeUpdate)
+		m_BehaviorTree->Update(DeltaTime);
 }
 
 void CStateComponent::PostUpdate(float DeltaTime)
@@ -57,7 +59,8 @@ void CStateComponent::PostUpdate(float DeltaTime)
 		(*iter)->PostUpdate(DeltaTime);
 	}
 
-	m_BehaviorTree->PostUpdate(DeltaTime);
+	if (m_TreeUpdate)
+		m_BehaviorTree->PostUpdate(DeltaTime);
 
 }
 

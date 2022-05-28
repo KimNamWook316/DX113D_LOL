@@ -59,8 +59,10 @@ void CBehaviorTreeMenuBar::Update(float DeltaTime)
 							if (!m_TreeEditorWindow)
 							{
 								m_TreeEditorWindow = CIMGUIManager::GetInst()->AddWindow<CBehaviorTreeWindow>(BEHAVIORTREE_WINDOW);
+							
 								m_TreeEditorWindow->Open();
 								m_TreeEditorWindow->SetStateComponent((CStateComponent*)Component);
+								m_TreeEditorWindow->GetStateComponent()->SetTreeUpdate(false);
 								((CStateComponent*)Component)->SetAnimationMeshComponent(AnimMeshComp);
 							}
 
