@@ -89,11 +89,11 @@ struct Template
 {
     ~Template()
     {
-        if (mInputNames)
-            delete[] mInputNames;
+        //if (mInputNames)
+        //    delete[] mInputNames;
 
-        if (mOutputNames)
-            delete[] mOutputNames;
+        //if (mOutputNames)
+        //    delete[] mOutputNames;
     }
 
     ImU32 mHeaderColor;
@@ -113,6 +113,7 @@ struct Node
     TemplateIndex mTemplateIndex;
     ImRect mRect;
     bool mSelected{ false };
+    class CNode* TreeNode;
 };
 
 struct Link
@@ -145,7 +146,7 @@ struct Delegate
     virtual const Template GetTemplate(TemplateIndex index) = 0;
 
     virtual const size_t GetNodeCount() = 0;
-    virtual const Node GetNode(NodeIndex index) = 0;
+    virtual Node GetNode(NodeIndex index) = 0;
     
     virtual const size_t GetLinkCount() = 0;
     virtual const Link GetLink(LinkIndex index) = 0;

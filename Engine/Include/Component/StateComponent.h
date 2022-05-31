@@ -27,6 +27,18 @@ protected:
 	std::list<class CState*>	m_StateList;
 	class CBehaviorTree*		m_BehaviorTree;
 	class CAnimationMeshComponent* m_AnimationMeshComp;
+	bool							m_TreeUpdate;
+
+public:
+	void SetTreeUpdate(bool Update)
+	{
+		m_TreeUpdate = Update;
+	}
+
+	bool IsTreeUpdate()	const
+	{
+		return m_TreeUpdate;
+	}
 
 public:
 	void SetAnimationMeshComponent(class CAnimationMeshComponent* Mesh);

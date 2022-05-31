@@ -936,6 +936,18 @@
     <ClCompile Include="Resource\Shader\InstancingCBuffer.cpp">
       <Filter>02. Resource\02. Shader\03. ConstantBuffer\14. Instancing</Filter>
     </ClCompile>
+    <ClCompile Include="Component\Node\InputQCheckNode.cpp">
+      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\Node\SkillQNode.cpp">
+      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\Node\SkillWNode.cpp">
+      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\Node\InputWCheckNode.cpp">
+      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Device.h">
@@ -1603,6 +1615,18 @@
     </ClInclude>
     <ClInclude Include="Resource\Shader\InstancingCBuffer.h">
       <Filter>02. Resource\02. Shader\03. ConstantBuffer\14. Instancing</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\InputQCheckNode.h">
+      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\SkillQNode.h">
+      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\SkillWNode.h">
+      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\InputWCheckNode.h">
+      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

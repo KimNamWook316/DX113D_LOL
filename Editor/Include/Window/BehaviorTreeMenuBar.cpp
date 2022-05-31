@@ -19,6 +19,28 @@ CBehaviorTreeMenuBar::CBehaviorTreeMenuBar()	:
 
 CBehaviorTreeMenuBar::~CBehaviorTreeMenuBar()
 {
+	if (!m_TreeEditorWindow)
+	{
+		GraphEditorDelegate Delegate;
+
+		size_t Count = Delegate.GetTemplateCount();
+
+		for (size_t i = 0; i < Count; ++i)
+		{
+			GraphEditor::Template tmp = Delegate.GetTemplate(i);
+			if (tmp.mInputNames)
+			{
+				SAFE_DELETE_ARRAY(tmp.mInputNames);
+			}
+
+			if (tmp.mOutputNames)
+			{
+				SAFE_DELETE_ARRAY(tmp.mOutputNames);
+			}
+		}
+
+		Delegate.m_IsCleared = true;
+	}
 }
 
 bool CBehaviorTreeMenuBar::Init()
@@ -59,8 +81,10 @@ void CBehaviorTreeMenuBar::Update(float DeltaTime)
 							if (!m_TreeEditorWindow)
 							{
 								m_TreeEditorWindow = CIMGUIManager::GetInst()->AddWindow<CBehaviorTreeWindow>(BEHAVIORTREE_WINDOW);
+							
 								m_TreeEditorWindow->Open();
 								m_TreeEditorWindow->SetStateComponent((CStateComponent*)Component);
+								m_TreeEditorWindow->GetStateComponent()->SetTreeUpdate(false);
 								((CStateComponent*)Component)->SetAnimationMeshComponent(AnimMeshComp);
 							}
 

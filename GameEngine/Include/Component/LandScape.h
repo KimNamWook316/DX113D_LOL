@@ -1,5 +1,13 @@
 #pragma once
 #include "SceneComponent.h"
+
+struct Polygon
+{
+	Vector3 v1;
+	Vector3 v2;
+	Vector3 v3;
+};
+
 class CLandScape :
 	public CSceneComponent
 {
@@ -54,6 +62,7 @@ public:
 
 public:
 	float GetHeight(const Vector3& Pos);
+	bool CheckInArea(const Vector3& StartPos, const Vector3& EndPos, Vector3& OutPos);
 
 public:
 	virtual void Start();
@@ -71,6 +80,8 @@ public:
 private:
 	void ComputeNormal();
 	void ComputeTangent();
+
+	static bool SortHeight(struct Polygon Src, struct Polygon Dest);
 };
 
 

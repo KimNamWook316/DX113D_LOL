@@ -63,6 +63,36 @@ public:
 		m_SceneComponentList.push_back(Component);
 	}
 
+	void DeleteSceneComponent(CSceneComponent* Component)
+	{
+		auto iter = m_SceneComponentList.begin();
+		auto iterEnd = m_SceneComponentList.end();
+
+		for (; iter != iterEnd; ++iter)
+		{
+			if ((*iter) == Component)
+			{
+				m_SceneComponentList.erase(iter);
+				return;
+			}
+		}
+	}
+
+	void DeleteSceneComponent(const std::string& Name)
+	{
+		auto iter = m_SceneComponentList.begin();
+		auto iterEnd = m_SceneComponentList.end();
+
+		for (; iter != iterEnd; ++iter)
+		{
+			if ((*iter)->GetName() == Name)
+			{
+				m_SceneComponentList.erase(iter);
+				return;
+			}
+		}
+	}
+
 	bool DeleteObjectComponent(const std::string& Name);
 
 	class CComponent* FindComponent(const std::string& Name);
