@@ -2,9 +2,12 @@
 #include "LandScapeObj.h"
 #include "Scene/Scene.h"
 #include "Input.h"
-#include "d3dx10math.h"
+#include "Device.h"
+#include "Player.h"
 
-CLandScapeObj::CLandScapeObj()
+
+CLandScapeObj::CLandScapeObj()	:
+	m_FrameCount(0)
 {
 	SetTypeID<CLandScapeObj>();
 }
@@ -44,45 +47,50 @@ void CLandScapeObj::PostUpdate(float DeltaTime)
 {
 	CGameObject::PostUpdate(DeltaTime);
 
-	Vector3 LeftBottom = m_LandScape->GetMin();
-	Vector3 RightTop = m_LandScape->GetMax();
+	///// 지형 Picking Test /////
+	//++m_FrameCount;
 
-	float LeftTopHeight = m_LandScape->GetHeight(Vector3(LeftBottom.x, 0.f, RightTop.z));
-	Vector3 LeftTop = Vector3(LeftBottom.x, LeftTopHeight, RightTop.z);
-
-	float RightBottomHeight = m_LandScape->GetHeight(Vector3(RightTop.x, 0.f, LeftBottom.z));
-	Vector3 RightBottom = Vector3(RightTop.x, RightBottomHeight, LeftBottom.z);
-
-	Matrix matWorld = m_LandScape->GetTransform()->GetWorldMatrix();
-
-	CCameraComponent* CurrentCamera = m_Scene->GetCameraManager()->GetCurrentCamera();
-	Matrix matView = CurrentCamera->GetViewMatrix();
-	Ray ray = CInput::GetInst()->GetRay(matWorld);
-
-	LeftBottom = LeftBottom.TransformCoord(matWorld);
-	LeftBottom = LeftBottom.TransformCoord(matView);
-	RightBottom = RightBottom.TransformCoord(matWorld);
-	RightBottom = RightBottom.TransformCoord(matView);
-	LeftTop = LeftBottom.TransformCoord(matWorld);
-	LeftTop = LeftBottom.TransformCoord(matView);
-
-	float* pU = nullptr;
-	float* pV = nullptr;
-	float* pDist = nullptr;
-	
-	const D3DXVECTOR3 p0 = { LeftBottom.x, LeftBottom.y, LeftBottom.z };
-	const D3DXVECTOR3 p1 = { LeftBottom.x, LeftBottom.y, LeftBottom.z };
-	const D3DXVECTOR3 p2 = { LeftBottom.x, LeftBottom.y, LeftBottom.z };
-
-	const D3DXVECTOR3 rayPos = { ray.Pos.x, ray.Pos.y, ray.Pos.z };
-	
-	const D3DXVECTOR3 rayDir = { ray.Dir.x, ray.Dir.y, ray.Dir.z };
-
-	//bool Intersect = D3DXIntersectTri(&p0, &p1, &p2, &rayPos, &rayDir, pU, pV, pDist);
-
-	//if (Intersect)
+	//if (CInput::GetInst()->GetMouseLButtonClick() && m_FrameCount > 20)
 	//{
-	//	int a = 3;
+	//	// TODO : LandScape 밖에 클릭하면 피킹 지점 찾지 않도록 예외 처리
+
+	//	CCameraComponent* Current = m_Scene->GetCameraManager()->GetCurrentCamera();
+
+	//	Matrix ProjMat = Current->GetProjMatrix();
+	//	Matrix ViewMat = Current->GetViewMatrix();
+
+
+	//	Ray ray = CInput::GetInst()->GetRay(ViewMat);
+	//	Vector3 RayDir = ray.Dir;
+	//	Vector3 RayStartPos = ray.Pos;
+
+	//	float Step = 0.1f;
+
+	//	while (true)
+	//	{
+	//		Vector3 Point_I1 = RayStartPos;
+	//		Vector3 Point_I2 = RayStartPos + RayDir * Step;
+
+	//		float Height1 = m_LandScape->GetHeight(Point_I1);
+	//		float Height2 = m_LandScape->GetHeight(Point_I2);
+
+	//		Vector3 ResultPos;
+
+	//		if (m_LandScape->CheckInArea(Point_I1, Point_I2, ResultPos))
+	//		{
+	//			m_FrameCount = 0;
+
+	//			CPlayer* Player = (CPlayer*)m_Scene->GetPlayerObject();
+	//			//Player->SetWorldPos((Point_I1.x + Point_I2.x) / 2.f, 0.f, (Point_I1.z + Point_I2.z) / 2.f);
+	//			Player->SetWorldPos(ResultPos.x, ResultPos.y, ResultPos.z);
+	//			break;
+	//		}
+	//		
+	//		else
+	//		{
+	//			RayStartPos = Point_I2;
+	//		}
+	//	}
 	//}
 }
 

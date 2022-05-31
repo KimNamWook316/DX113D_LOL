@@ -5,7 +5,8 @@
 #include "Node/ActionNode.h"
 
 CBehaviorTree::CBehaviorTree() :
-	m_Root(nullptr)
+	m_Root(nullptr),
+	m_CurrentNode(nullptr)
 {
 	
 }
@@ -23,6 +24,16 @@ CBehaviorTree::~CBehaviorTree()
 	{
 		SAFE_DELETE(*iter);
 	}
+}
+
+CNode* CBehaviorTree::GetCurrentNode() const
+{
+	return m_CurrentNode;
+}
+
+void CBehaviorTree::SetCurrentNode(CNode* CurrentNode)
+{
+	m_CurrentNode = CurrentNode;
 }
 
 void CBehaviorTree::SetAnimationMeshComponent(CAnimationMeshComponent* Mesh)
@@ -81,7 +92,10 @@ void CBehaviorTree::Update(float DeltaTime)
 
 void CBehaviorTree::PostUpdate(float DeltaTime)
 {
-	if (m_Root)
+	if (m_CurrentNode)
+		m_CurrentNode->Invoke(DeltaTime);
+
+	else if (m_Root)
 	{
 		m_Root->Invoke(DeltaTime);
 	}

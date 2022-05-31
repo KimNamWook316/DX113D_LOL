@@ -5,8 +5,8 @@
 #include "Scene/Scene.h"
 #include "Scene/Navigation3DManager.h"
 #include "Weapon.h"
+#include "Component/StateComponent.h"
 
-#include "../d3dx10math.h"
 
 
 CPlayer::CPlayer()
@@ -52,7 +52,7 @@ bool CPlayer::Init()
 	m_Mesh->SetRelativeScale(0.02f, 0.02f, 0.02f);
 
 	m_Arm->SetOffset(0.f, 2.f, 0.f);
-	m_Arm->SetRelativeRotation(25.f, 0.f, 0.f);
+	m_Arm->SetRelativeRotation(40.f, 0.f, 0.f);
 	m_Arm->SetTargetDistance(10.f);
 
 
@@ -60,6 +60,14 @@ bool CPlayer::Init()
 	m_Weapon = m_Scene->CreateGameObject<CWeapon>("Weapon");
 
 	m_Mesh->AddChild(m_Weapon, "Weapon");
+
+
+	// Behavior Tree Test
+	//
+	//CStateComponent* Comp = CreateComponent<CStateComponent>("PlayerStateComponent");
+	//Comp->CreateTreeNode<CSelectorNode>("Root");
+	//Comp->
+	//
 
 
 
@@ -111,9 +119,6 @@ void CPlayer::Update(float DeltaTime)
 	{
 		int a = 0;
 	}
-
-	//bool IsIntersect = D3DXIntersectTri()
-	
 	
 }
 
@@ -121,11 +126,11 @@ void CPlayer::PostUpdate(float DeltaTime)
 {
 	CGameObject::PostUpdate(DeltaTime);
 
-	//Vector3	Pos = GetWorldPos();
+	Vector3	Pos = GetWorldPos();
 
-	//Pos.y = m_Scene->GetNavigation3DManager()->GetY(Pos);
+	Pos.y = m_Scene->GetNavigation3DManager()->GetY(Pos);
 
-	//SetWorldPos(Pos);
+	SetWorldPos(Pos);
 
 	m_Velocity = Vector3::Zero;
 }

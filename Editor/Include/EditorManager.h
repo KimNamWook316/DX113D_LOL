@@ -28,6 +28,7 @@ private:
 	class CEffectEditor* m_EffectEditor;
 	class CInspectorWindow* m_InspectorWindow;
 	class CToolWindow* m_ToolWindow;
+	class CBehaviorTreeMenuBar* m_BehaviorTreeMenuBar;
 
 	class C3DCameraObject* m_CameraObject;
 

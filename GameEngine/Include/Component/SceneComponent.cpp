@@ -335,6 +335,19 @@ bool CSceneComponent::DeleteComponent()
 {
 	if (!m_Parent)
 	{
+		auto iter = m_Object->GetSceneComponents().begin();
+		auto iterEnd = m_Object->GetSceneComponents().end();
+
+		for (; iter != iterEnd; ++iter)
+		{
+			if ((*iter) == this)
+			{
+				m_Object->DeleteSceneComponent(this);
+				break;
+			}
+		}
+
+
 		// 루트노드를 지우는 경우, 그냥 모두 Destroy
 		Destroy();
 		m_Object->SetRootComponent(nullptr);

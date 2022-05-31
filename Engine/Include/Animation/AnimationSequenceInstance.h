@@ -19,6 +19,7 @@ protected:
 	CAnimationSequenceData* m_CurrentAnimation;
 	CAnimationSequenceData* m_ChangeAnimation;
 	bool		m_PlayAnimation;
+	bool		m_AnimEnd;
 
 	CSharedPtr<class CComputeShader>	m_AnimationUpdateShader;
 	class CAnimationUpdateConstantBuffer* m_AnimationUpdateCBuffer;
@@ -41,6 +42,11 @@ protected:
 	int m_EditorStopTargetFrame;
 
 public:
+	bool IsCurrentAnimEnd()	const	// Loop아닌 시퀀스가 끝났는지
+	{
+		return m_AnimEnd;
+	}
+
 	void SetInstancingBoneBuffer(class CStructuredBuffer* Buffer)
 	{
 		m_InstancingBoneBuffer = Buffer;

@@ -20,7 +20,8 @@ CAnimationSequenceInstance::CAnimationSequenceInstance() :
 	m_ChangeTimeAcc(0.f),
 	m_ChangeTime(0.2f),
 	m_EditorStopAnimation(false),
-	m_EditorStopTargetFrame(-1)
+	m_EditorStopTargetFrame(-1),
+	m_AnimEnd(false)
 {
 	SetTypeID<CAnimationSequenceInstance>();
 }
@@ -565,6 +566,9 @@ void CAnimationSequenceInstance::Update(float DeltaTime)
 					m_CurrentAnimation->m_vecNotify[i]->Call = false;
 				}
 			}
+
+			else
+				m_AnimEnd = true;
 		}
 	}
 

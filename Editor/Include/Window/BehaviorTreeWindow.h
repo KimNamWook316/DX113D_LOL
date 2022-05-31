@@ -5,6 +5,8 @@
 #include "imgui.h"
 #include "../GraphEditor.h"
 #include "Component/Node/Node.h"
+#include "Component/Node/CompositeNode.h"
+#include "Component/BehaviorTree.h"
 
 static ImVec2 operator+(const ImVec2& a, const ImVec2& b)
 {
@@ -57,15 +59,27 @@ template <typename T, typename ... U> Array(T, U...)->Array<T, 1 + sizeof...(U)>
 
 struct GraphEditorDelegate : public GraphEditor::Delegate
 {
+    ~GraphEditorDelegate()
+    {
+        size_t Count = mNodes.size();
+
+        for (size_t i = 0; i < Count; ++i)
+        {
+            if (mNodes[i].name)
+                delete[] mNodes[i].name;
+        }
+    }
+
     struct Node
     {
-        const char* name;
+        char* name;
         GraphEditor::TemplateIndex templateIndex;
         float x, y;
         bool mSelected;
         CNode* BehaviorTreeNode;
     };
 
+    bool m_IsCleared = false;
 
     bool AllowedLink(GraphEditor::NodeIndex from, GraphEditor::NodeIndex to) override
     {
@@ -96,6 +110,20 @@ struct GraphEditorDelegate : public GraphEditor::Delegate
 
     void AddLink(GraphEditor::NodeIndex inputNodeIndex, GraphEditor::SlotIndex inputSlotIndex, GraphEditor::NodeIndex outputNodeIndex, GraphEditor::SlotIndex outputSlotIndex) override
     {
+        GraphEditorDelegate::Node SrcNode = GetNode((int)inputNodeIndex);
+        GraphEditorDelegate::Node DestNode = GetNode((int)outputNodeIndex);
+
+        // Action Node나 Condition Node가 부모가 되면 안됨
+        if (SrcNode.templateIndex == 2 || SrcNode.templateIndex == 3)
+            return;
+
+        CBehaviorTree* Tree = DestNode.BehaviorTreeNode->GetOwner();
+
+        CCompositeNode* ParentNode = (CCompositeNode*)Tree->FindNode(SrcNode.name);
+        CNode* ChildNode = Tree->FindNode(DestNode.name);
+
+        ParentNode->AddChild(ChildNode);
+
         mLinks.push_back({ inputNodeIndex, inputSlotIndex, outputNodeIndex, outputSlotIndex });
     }
 
@@ -118,6 +146,9 @@ struct GraphEditorDelegate : public GraphEditor::Delegate
 
     const size_t GetTemplateCount() override
     {
+        if (mTemplates == nullptr)
+            return 0;
+
         return sizeof(mTemplates) / sizeof(GraphEditor::Template);
     }
 
@@ -131,7 +162,7 @@ struct GraphEditorDelegate : public GraphEditor::Delegate
         return mNodes.size();
     }
 
-    const GraphEditor::Node GetNode(GraphEditor::NodeIndex index) override
+    GraphEditor::Node GetNode(GraphEditor::NodeIndex index) override
     {
         const auto& myNode = mNodes[index];
         return GraphEditor::Node
@@ -139,8 +170,13 @@ struct GraphEditorDelegate : public GraphEditor::Delegate
             myNode.name,
             myNode.templateIndex,
             ImRect(ImVec2(myNode.x, myNode.y), ImVec2(myNode.x + 100, myNode.y + 100)), // 노드별 사이즈
-            myNode.mSelected
+            myNode.mSelected,
         };
+    }
+
+    GraphEditorDelegate::Node GetNode(int Index)
+    {
+        return mNodes[Index];
     }
 
     const size_t GetLinkCount() override
@@ -153,12 +189,17 @@ struct GraphEditorDelegate : public GraphEditor::Delegate
         return mLinks[index];
     }
 
-    void AddNode(const char* Name, GraphEditor::TemplateIndex TemplateIndex, float PosX, float PosY, bool mSelected, CNode* TreeNode)
+    void AddNode(const std::string& Name, GraphEditor::TemplateIndex TemplateIndex, float PosX, float PosY, bool mSelected, CNode* TreeNode)
     {
-        Node NewNode;
+        Node NewNode = {};
 
-        NewNode.name = Name;
-        NewNode.templateIndex = TemplateIndex;
+        NewNode.name = new char[256];
+
+        size_t Length = Name.length();
+        for(size_t i = 0 ; i < Length; ++i)
+            NewNode.name[i] = Name[i];
+        NewNode.name[Length] = '\0';
+
         NewNode.x = PosX;
         NewNode.y = PosY;
         NewNode.mSelected = mSelected;
@@ -179,7 +220,7 @@ struct GraphEditorDelegate : public GraphEditor::Delegate
     }
 
     // Graph datas
-    static const inline GraphEditor::Template mTemplates[] =
+    static inline GraphEditor::Template mTemplates[] =
     {
         // Sequence Node Template
         {
@@ -300,6 +341,8 @@ private:
     std::vector<std::string>	m_vecNodeType;
     std::vector<std::string>	m_vecNodeAction;
     std::string m_PrevViewName;
+    std::string m_LeafNodePrevViewName;
+    std::string m_InputNodeName; 
 
     class CStateComponent* m_StateComponent;
 
@@ -319,9 +362,11 @@ public:
 public:
     void SetStateComponent(class CStateComponent* Com);
     class CStateComponent* GetStateComponent() const;
+    void OnAddLink(class CNode* ParentNode, class CNode* ChildNode);
 
 private:
-    void OnAddNodeButton(const char* Name, int TypeIndex, int ActionIndex, class CNode* Node);
+    void OnAddNodeButton(const char* Name, int TypeIndex, int ActionIndex);
+
 
     void SetHintText(const char* Text)
     {

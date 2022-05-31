@@ -7,6 +7,8 @@
 #include "../Resource/Material/Material.h"
 #include "../Resource/Shader/LandScapeConstantBuffer.h"
 
+#include "../d3dx10math.h"
+
 CLandScape::CLandScape() :
 	m_CountX(0),
 	m_CountZ(0),
@@ -310,6 +312,173 @@ float CLandScape::GetHeight(const Vector3& Pos)
 	return Y[0] + (Y[3] - Y[2]) * RatioX + (Y[2] - Y[0]) * RatioZ;
 }
 
+bool CLandScape::CheckInArea(const Vector3& StartPos, const Vector3& EndPos, Vector3& OutPos)
+{
+	////////// StartPos //////////
+	Vector3	Convert = (StartPos - GetWorldPos()) / GetWorldScale();
+
+	// z 좌표 역으로 계산
+	Convert.z = m_CountZ - 1 - Convert.z;
+
+	int	StartIndexX = (int)Convert.x;
+	int	StartIndexZ = (int)Convert.z;
+
+	if (StartIndexX < 0 || StartIndexX >= m_CountX || StartIndexZ < 0 || StartIndexZ >= m_CountZ - 1)
+		return false;
+
+	int	StartPosIndex = StartIndexZ * m_CountX + StartIndexX;
+
+	float	RatioX = Convert.x - StartIndexX;
+	float	RatioZ = Convert.z - StartIndexZ;
+
+	float	Y[4] =
+	{
+		m_vecPos[StartPosIndex].y,
+		m_vecPos[StartPosIndex + 1].y,
+		m_vecPos[StartPosIndex + m_CountX].y,
+		m_vecPos[StartPosIndex + m_CountX + 1].y
+	};
+
+	// 우상단 삼각형
+	if (RatioX > RatioZ)
+	{
+		float LandScapeHeight = Y[0] + (Y[1] - Y[0]) * RatioX + (Y[3] - Y[1]) * RatioZ;
+
+		if (StartPos.y < LandScapeHeight || StartPos.y - LandScapeHeight > 0.3f)
+			return false;
+	}
+
+	else
+	{
+		float LandScapeHeight = Y[0] + (Y[3] - Y[2]) * RatioX + (Y[2] - Y[0]) * RatioZ;
+
+		if (StartPos.y < LandScapeHeight || StartPos.y - LandScapeHeight > 0.3f)
+			return false;
+	}
+
+	////////// EndPos //////////
+	Convert = (EndPos - GetWorldPos()) / GetWorldScale();
+
+	// z 좌표 역으로 계산
+	Convert.z = m_CountZ - 1 - Convert.z;
+
+	int	EndIndexX = (int)Convert.x;
+	int	EndIndexZ = (int)Convert.z;
+
+	if (EndIndexX < 0 || EndIndexX >= m_CountX || EndIndexZ < 0 || EndIndexZ >= m_CountZ - 1)
+		return false;
+
+	int	EndPosIndex = EndIndexZ * m_CountX + EndIndexX;
+
+	RatioX = Convert.x - EndIndexX;
+	RatioZ = Convert.z - EndIndexZ;
+
+	float	EndY[4] =
+	{
+		m_vecPos[EndPosIndex].y,
+		m_vecPos[EndPosIndex + 1].y,
+		m_vecPos[EndPosIndex + m_CountX].y,
+		m_vecPos[EndPosIndex + m_CountX + 1].y
+	};
+
+	// 우상단 삼각형
+	if (RatioX > RatioZ)
+	{
+		float LandScapeHeight = EndY[0] + (EndY[1] - EndY[0]) * RatioX + (EndY[3] - EndY[1]) * RatioZ;
+
+		if (EndPos.y > LandScapeHeight || LandScapeHeight - EndPos.y > 0.3f)
+			return false;
+	}
+
+	else
+	{
+		float LandScapeHeight = EndY[0] + (EndY[3] - EndY[2]) * RatioX + (EndY[2] - EndY[0]) * RatioZ;
+
+		if (EndPos.y > LandScapeHeight || LandScapeHeight - EndPos.y > 0.3f)
+			return false;
+	}
+
+	std::vector<struct Polygon> vecPolygon;
+
+	int Start = StartPosIndex < EndPosIndex ? StartPosIndex : EndPosIndex;
+	int End = StartPosIndex < EndPosIndex ? EndPosIndex : StartPosIndex;
+
+	for (int i = 0; i <= End - Start; ++i)
+	{
+		struct Polygon pol;
+
+		// 우상단 삼각형
+		pol.v1 = Vector3(m_vecPos[StartPosIndex + i]);
+		pol.v2 = Vector3(m_vecPos[StartPosIndex + i + 1]);
+		pol.v3 = Vector3(m_vecPos[StartPosIndex + m_CountX + i + 1]);
+		
+		vecPolygon.push_back(pol);
+
+		// 좌하단 삼각형
+		pol.v1 = Vector3(m_vecPos[StartPosIndex + i]);
+		pol.v2 = Vector3(m_vecPos[StartPosIndex + m_CountX + i + 1]);
+		pol.v3 = Vector3(m_vecPos[StartPosIndex + m_CountX + i]);
+
+		vecPolygon.push_back(pol);
+	}
+
+	// 모아놓은 polygon 루프 돌면서 StartPos와 EndPos를 잇는 직선이 vecPolygon안에 있는 polygon들 중에 
+	// intersect하는게 있다면 바로 그걸 OutPos에 할당하고 리턴
+	size_t Count = vecPolygon.size();
+
+	Vector3 RayDirection = EndPos - StartPos;
+
+	for (size_t i = 0; i < Count; ++i)
+	{
+		Vector3 p1 = vecPolygon[i].v1;
+		Vector3 p2 = vecPolygon[i].v2;
+		Vector3 p3 = vecPolygon[i].v3;
+
+		Vector3 WorldPos = GetWorldPos();
+		Vector3 WorldScale = GetWorldScale();
+
+		p1 = p1 * WorldScale + WorldPos;
+		p2 = p2 * WorldScale + WorldPos;
+		p3 = p3 * WorldScale + WorldPos;
+
+		Vector3 Edge1 = p2 - p1;
+		Vector3 Edge2 = p3 - p1;
+
+		Vector3 Normal = Edge1.Cross(Edge2);
+
+		// Normal.X(x - p1.x) + Normal.Y(y - p1.y) + Normal.Z(z - p1.z) = 0
+		// 평면의 방정식이 ax + by + cz + d 일때, a는 Normal.x, b는 Normal.y, c는 Normal.z
+		// d는 -Normal.X * p1.x - Normal.Y * p1.y - Normal.Z * p1.z
+		float Coff_a = Normal.x;
+		float Coff_b = Normal.y;
+		float Coff_c = Normal.z;
+		float Coff_d = -Normal.x * p1.x - Normal.y * p1.y - Normal.z * p1.z;
+
+		XMVECTOR Plane = { Coff_a, Coff_b, Coff_c, Coff_d };
+
+		// polygon 세 점의 월드좌표
+		XMVECTOR XMVec1 = (p1 * WorldScale + WorldPos).Convert();
+		XMVECTOR XMVec2 = (p2 * WorldScale + WorldPos).Convert();
+		XMVECTOR XMVec3 = (p3 * WorldScale + WorldPos).Convert();
+
+		XMVECTOR Result = XMPlaneIntersectLine(Plane, StartPos.Convert(), EndPos.Convert());
+
+		// Intersect하는 polygon을 찾지 못했을 때
+		if (isnan(Result.m128_f32[0]) && isnan(Result.m128_f32[1]) && isnan(Result.m128_f32[2]))
+		{
+			return true;
+		}
+
+		OutPos.x = Result.m128_f32[0];
+		OutPos.y = Result.m128_f32[1];
+		OutPos.z = Result.m128_f32[2];
+
+	}
+
+	return true;
+}
+
+
 void CLandScape::Start()
 {
 	CSceneComponent::Start();
@@ -453,4 +622,12 @@ void CLandScape::ComputeTangent()
 		m_vecVtx[idx1].Binormal.Normalize();
 		m_vecVtx[idx2].Binormal.Normalize();
 	}
+}
+
+bool CLandScape::SortHeight(struct Polygon Src, struct Polygon Dest)
+{
+	float SrcHeight = (Src.v1.y + Src.v2.y + Src.v3.y) / 3.f;
+	float DestHeight = (Dest.v1.y + Dest.v2.y + Dest.v3.y) / 3.f;
+
+	return SrcHeight > DestHeight;
 }

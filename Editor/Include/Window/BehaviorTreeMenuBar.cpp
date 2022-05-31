@@ -19,6 +19,28 @@ CBehaviorTreeMenuBar::CBehaviorTreeMenuBar()	:
 
 CBehaviorTreeMenuBar::~CBehaviorTreeMenuBar()
 {
+	if (!m_TreeEditorWindow)
+	{
+		GraphEditorDelegate Delegate;
+
+		size_t Count = Delegate.GetTemplateCount();
+
+		for (size_t i = 0; i < Count; ++i)
+		{
+			GraphEditor::Template tmp = Delegate.GetTemplate(i);
+			if (tmp.mInputNames)
+			{
+				SAFE_DELETE_ARRAY(tmp.mInputNames);
+			}
+
+			if (tmp.mOutputNames)
+			{
+				SAFE_DELETE_ARRAY(tmp.mOutputNames);
+			}
+		}
+
+		Delegate.m_IsCleared = true;
+	}
 }
 
 bool CBehaviorTreeMenuBar::Init()

@@ -16,8 +16,15 @@ private:
     class CNode* m_Root;
     class CStateComponent* m_Owner;
     std::list<class CNode*> m_NodeList;
+    class CNode* m_CurrentNode; // 이번 프레임에는 Root가 아닌 CurrentNode부터 순회해야할때
+
 
     class CAnimationMeshComponent* m_AnimationMeshComp;
+    
+public:
+    class CNode* GetCurrentNode()   const;
+    void SetCurrentNode(class CNode* CurrentNode);
+
 
 public:
     void SetAnimationMeshComponent(class CAnimationMeshComponent* Mesh);
