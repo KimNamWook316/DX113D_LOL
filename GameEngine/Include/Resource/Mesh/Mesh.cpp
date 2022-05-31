@@ -656,6 +656,233 @@ bool CMesh::LoadMesh(FILE* File)
 	return true;
 }
 
+bool CMesh::ConvertFBXReleaseSequence(CFBXLoader* Loader, const char* FullPath)
+{
+	const std::vector<std::vector<PFBXMATERIAL>>* vecMaterials = Loader->GetMaterials();
+	const std::vector<PFBXMESHCONTAINER>* vecContainers = Loader->GetMeshContainers();
+
+	auto    iter = vecContainers->begin();
+	auto    iterEnd = vecContainers->end();
+
+	bool    BumpEnable = false;
+	bool    AnimationEnable = false;
+
+	std::vector<std::vector<bool>>  vecEmptyIndex;
+
+	int ContainerIndex = 0;
+
+	for (; iter != iterEnd; ++iter, ++ContainerIndex)
+	{
+		MeshContainer* Container = new MeshContainer;
+
+		m_vecContainer.push_back(Container);
+
+		std::vector<bool>    vecEmpty;
+		vecEmptyIndex.push_back(vecEmpty);
+
+		if ((*iter)->Bump)
+			BumpEnable = true;
+
+		if ((*iter)->Animation)
+			AnimationEnable = true;
+
+		std::vector<Vertex3D>   vecVtx;
+
+		size_t  VtxCount = (*iter)->vecPos.size();
+
+		vecVtx.resize(VtxCount);
+
+		for (size_t i = 0; i < VtxCount; ++i)
+		{
+			Vertex3D    Vtx = {};
+
+			Vtx.Pos = (*iter)->vecPos[i];
+			Vtx.Normal = (*iter)->vecNormal[i];
+			Vtx.UV = (*iter)->vecUV[i];
+
+			if (BumpEnable)
+			{
+				if (!(*iter)->vecTangent.empty())
+					Vtx.Tangent = (*iter)->vecTangent[i];
+
+				if (!(*iter)->vecBinormal.empty())
+					Vtx.Binormal = (*iter)->vecBinormal[i];
+			}
+
+			if (!(*iter)->vecBlendWeight.empty() && AnimationEnable)
+			{
+				Vtx.BlendWeight = (*iter)->vecBlendWeight[i];
+				Vtx.BlendIndex = (*iter)->vecBlendIndex[i];
+			}
+
+			vecVtx[i] = Vtx;
+		}
+
+		// Mesh의 Vertex 생성
+		if (!CreateBuffer(Buffer_Type ::Vertex,
+			&vecVtx[0], sizeof(Vertex3D), (int)vecVtx.size(),
+			D3D11_USAGE_DEFAULT, &Container->VB.Buffer))
+			return false;
+
+		Container->VB.Size = sizeof(Vertex3D);
+		Container->VB.Count = (int)vecVtx.size();
+		Container->VB.Data = new char[Container->VB.Size * Container->VB.Count];
+		memcpy(Container->VB.Data, &vecVtx[0], Container->VB.Size * Container->VB.Count);
+
+		Container->Primitive = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+
+		size_t  IdxCount = (*iter)->vecIndices.size();
+
+		for (size_t i = 0; i < IdxCount; ++i)
+		{
+			// 인덱스 버퍼를 채워줄 데이터가 없다면 해당 서브셋은 폐기한다.
+			if ((*iter)->vecIndices[i].empty())
+			{
+				vecEmptyIndex[ContainerIndex].push_back(false);
+				continue;
+			}
+
+			vecEmptyIndex[ContainerIndex].push_back(true);
+
+			MeshSlot* Slot = new MeshSlot;
+
+			m_vecMeshSlot.push_back(Slot);
+
+			Slot->VB = &Container->VB;
+			Slot->Primitive = Container->Primitive;
+			
+			IndexBuffer IdxBuffer = {};
+
+			Container->vecIB.push_back(IdxBuffer);
+
+			if (!CreateBuffer(Buffer_Type::Index,
+				&(*iter)->vecIndices[i][0], sizeof(UINT),
+				(int)(*iter)->vecIndices[i].size(),
+				D3D11_USAGE_DEFAULT, &Container->vecIB[i].Buffer))
+				return false;
+
+			Container->vecIB[i].Size = sizeof(UINT);
+			Container->vecIB[i].Count = (int)(*iter)->vecIndices[i].size();
+			Container->vecIB[i].Fmt = DXGI_FORMAT_R32_UINT;
+			Container->vecIB[i].Data = new char[Container->vecIB[i].Size * Container->vecIB[i].Count];
+
+			memcpy(Container->vecIB[i].Data, &(*iter)->vecIndices[i][0],
+				Container->vecIB[i].Size * Container->vecIB[i].Count);
+
+			Slot->IB = &Container->vecIB[i];
+		}
+	}
+
+
+	// 재질 정보를 읽어온다.
+	auto    iterM = vecMaterials->begin();
+	auto    iterMEnd = vecMaterials->end();
+
+	ContainerIndex = 0;
+
+	for (; iterM != iterMEnd; ++iterM, ++ContainerIndex)
+	{
+		// 서브셋 수만큼 반복한다.
+		size_t  Size = (*iterM).size();
+
+		for (size_t i = 0; i < Size; ++i)
+		{
+			if (!vecEmptyIndex[ContainerIndex][i])
+				continue;
+
+			PFBXMATERIAL    Mtrl = (*iterM)[i];
+
+			CMaterial* Material = new CMaterial;
+
+			Material->SetBaseColor(Mtrl->BaseColor);
+			Material->SetAmbientColor(Mtrl->Amb);
+			Material->SetSpecularColor(Mtrl->Spc);
+			Material->SetEmissiveColor(Mtrl->Emv);
+			Material->SetSpecularPower(Mtrl->Shininess);
+
+			Material->SetShader("Standard3DShader");
+
+			AddMaterialSlot(Material);
+
+			// Texture
+			char    FileName[MAX_PATH] = {};
+			_splitpath_s(Mtrl->DifTex.c_str(), 0, 0, 0, 0, FileName, MAX_PATH, 0, 0);
+
+			TCHAR   FullPath[MAX_PATH] = {};
+
+#ifdef UNICODE
+			int PathLength = MultiByteToWideChar(CP_ACP, 0, Mtrl->DifTex.c_str(),
+				-1, 0, 0);
+			MultiByteToWideChar(CP_ACP, 0, Mtrl->DifTex.c_str(), -1, FullPath, PathLength);
+#else
+			strcpy_s(FullPath, Mtrl->DifTex.c_str());
+#endif // UNICODE
+
+			Material->AddTextureFullPath(0, (int)Buffer_Shader_Type::Pixel,
+				FileName, FullPath);
+
+			if (!Mtrl->BumpTex.empty())
+			{
+				Material->m_Bump = true;
+				memset(FileName, 0, MAX_PATH);
+				_splitpath_s(Mtrl->BumpTex.c_str(), 0, 0, 0, 0, FileName, MAX_PATH, 0, 0);
+
+				memset(FullPath, 0, sizeof(TCHAR) * MAX_PATH);
+
+#ifdef UNICODE
+				int PathLength = MultiByteToWideChar(CP_ACP, 0, Mtrl->BumpTex.c_str(),
+					-1, 0, 0);
+				MultiByteToWideChar(CP_ACP, 0, Mtrl->BumpTex.c_str(), -1, FullPath, PathLength);
+#else
+				strcpy_s(FullPath, Mtrl->BumpTex.c_str());
+#endif // UNICODE
+
+				Material->AddTextureFullPath(1, (int)Buffer_Shader_Type::Pixel,
+					FileName, FullPath);
+			}
+
+			if (!Mtrl->SpcTex.empty())
+			{
+				memset(FileName, 0, MAX_PATH);
+				_splitpath_s(Mtrl->SpcTex.c_str(), 0, 0, 0, 0, FileName, MAX_PATH, 0, 0);
+
+				memset(FullPath, 0, sizeof(TCHAR) * MAX_PATH);
+
+#ifdef UNICODE
+				int PathLength = MultiByteToWideChar(CP_ACP, 0, Mtrl->SpcTex.c_str(),
+					-1, 0, 0);
+				MultiByteToWideChar(CP_ACP, 0, Mtrl->SpcTex.c_str(), -1, FullPath, PathLength);
+#else
+				strcpy_s(FullPath, Mtrl->SpcTex.c_str());
+#endif // UNICODE
+
+				Material->AddTextureFullPath(2, (int)Buffer_Shader_Type::Pixel,
+					FileName, FullPath);
+
+				Material->m_SpecularTex = true;
+			}
+
+			if (BumpEnable)
+				Material->m_Bump = true;
+
+			if (AnimationEnable)
+				Material->m_Animation3D = true;
+		}
+	}
+
+
+	// 자체포맷으로 저장해준다.
+	char    MeshFullPath[MAX_PATH] = {};
+
+	strcpy_s(MeshFullPath, FullPath);
+	int PathLength = (int)strlen(MeshFullPath);
+	memcpy(&MeshFullPath[PathLength - 3], "msh", 3);
+
+	SaveMeshFile(MeshFullPath);
+
+	return true;
+}
+
 void CMesh::Render()
 {
 	size_t	Size = m_vecContainer.size();

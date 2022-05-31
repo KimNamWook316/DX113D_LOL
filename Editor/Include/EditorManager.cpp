@@ -99,7 +99,7 @@ bool CEditorManager::Init(HINSTANCE hInst)
 	m_AnimationEditor = CIMGUIManager::GetInst()->AddWindow<CAnimationEditor>(ANIMATION_EDITOR);
 	m_EffectEditor = CIMGUIManager::GetInst()->AddWindow<CEffectEditor>(ANIMATION_EDITOR);
 	m_ToolWindow = CIMGUIManager::GetInst()->AddWindow<CToolWindow>(TOOL);
-	//CFBXConvertWindow* win = CIMGUIManager::GetInst()->AddWindow<CFBXConvertWindow>(FBX_CONVERTOR);
+	CFBXConvertWindow* win = CIMGUIManager::GetInst()->AddWindow<CFBXConvertWindow>(FBX_CONVERTOR);
 
 	//CBehaviorTreeMenuBar* BTBar = CIMGUIManager::GetInst()->AddWindow<CBehaviorTreeMenuBar>("BehaviorTree");
 
