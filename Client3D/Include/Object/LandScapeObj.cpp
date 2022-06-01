@@ -48,7 +48,7 @@ void CLandScapeObj::PostUpdate(float DeltaTime)
 	CGameObject::PostUpdate(DeltaTime);
 
 	///// ÁöÇü Picking Test /////
-	TerrainPicking();
+	//TerrainPicking();
 }
 
 CLandScapeObj* CLandScapeObj::Clone()
