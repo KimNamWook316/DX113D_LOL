@@ -314,12 +314,6 @@ float CLandScape::GetHeight(const Vector3& Pos)
 
 bool CLandScape::CheckInArea(const Vector3& StartPos, const Vector3& EndPos, Vector3& OutPos)
 {
-	if (StartPos.x > m_Max.x || StartPos.x < m_Min.x)
-		return false;
-
-	if (StartPos.z > m_Max.z || StartPos.x < m_Min.z)
-		return false;
-
 	////////// StartPos //////////
 	Vector3	Convert = (StartPos - GetWorldPos()) / GetWorldScale();
 
@@ -403,6 +397,18 @@ bool CLandScape::CheckInArea(const Vector3& StartPos, const Vector3& EndPos, Vec
 		if (EndPos.y > LandScapeHeight || LandScapeHeight - EndPos.y > 0.3f)
 			return false;
 	}
+
+	if (StartPos.x < m_Min.x && EndPos.x - StartPos.x <= 0.f)
+		return false;
+
+	if (StartPos.z < m_Min.z && EndPos.z - StartPos.z <= 0.f)
+		return false;
+
+	if (StartPos.x > m_Max.x && EndPos.x - StartPos.x >= 0.f)
+		return false;
+
+	if (StartPos.z > m_Max.z && EndPos.z - StartPos.z >= 0.f)
+		return false;
 
 	std::vector<struct Polygon> vecPolygon;
 

@@ -183,7 +183,7 @@ void CPlayer::Attack(float DeltaTime)
 
 bool CPlayer::IsBoxRayCollision()
 {
-	/*++m_FrameCount;
+	++m_FrameCount;
 
 	if (CInput::GetInst()->GetMouseLButtonClick() && m_FrameCount > 20)
 	{
@@ -206,7 +206,7 @@ bool CPlayer::IsBoxRayCollision()
 		CCollision::CollisionRayToBox3D(HitPoint, ray, Info);
 
 		m_FrameCount = 0;
-	}*/
+	}
 
 	return true;
 }
