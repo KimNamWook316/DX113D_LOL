@@ -1,7 +1,7 @@
 #include "IMGUITable.h"
 
 CIMGUITable::CIMGUITable() :
-    m_MaxElemCnt(3) ,
+    m_MaxElemCnt(1) ,
     TEXT_BASE_HEIGHT(ImGui::GetTextLineHeightWithSpacing() * 30),
     m_TableHeight(TEXT_BASE_HEIGHT),
     m_TableWidth(0),

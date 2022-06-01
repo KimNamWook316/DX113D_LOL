@@ -883,6 +883,7 @@ void CTransform::SetAnimationTransform()
 	m_CBuffer->SetWorldMatrix(m_matWorld);
 
 	CCameraComponent * Camera = m_Scene->GetCameraManager()->GetAnimationEditorCamera();
+	// CCameraComponent * Camera = m_Scene->GetCameraManager()->GetCurrentCamera();
 
 	m_CBuffer->SetViewMatrix(Camera->GetViewMatrix());
 	m_CBuffer->SetProjMatrix(Camera->GetProjMatrix());

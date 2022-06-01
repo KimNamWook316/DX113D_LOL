@@ -33,6 +33,7 @@ public :
     }
 public:
     virtual bool Init();
+    virtual void Start();
     virtual void Update(float DeltaTime);
     virtual void PostUpdate(float DeltaTime);
     virtual CAnim3DObject* Clone();
@@ -43,7 +44,8 @@ private:
     void RotationYInv(float DeltaTime);
     void RotationY(float DeltaTime);
     void Attack(float DeltaTime);
-
+private  :
+    void SetMeshAndMaterialInfo();
 public:
     CCameraComponent* GetCamera() const
     {

@@ -190,6 +190,25 @@ void CAnimationSequenceInstance::DeleteCurrentAnimation()
 	}
 }
 
+const std::string& CAnimationSequenceInstance::GetCurrentAnimationKeyName()
+{
+	if (!m_CurrentAnimation)
+	{
+		assert(false);
+		return nullptr;
+	}
+
+	// TODO: 여기에 return 문을 삽입합니다.
+	auto iter = m_mapAnimation.begin();
+	auto iterEnd = m_mapAnimation.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		if (iter->second == m_CurrentAnimation)
+			return iter->first;
+	}
+}
+
 void CAnimationSequenceInstance::AddAnimation(const std::string& SequenceName,
 	const std::string& Name, bool Loop,
 	float PlayTime, float PlayScale)

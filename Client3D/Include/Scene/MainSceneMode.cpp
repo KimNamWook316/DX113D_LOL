@@ -87,7 +87,6 @@ void CMainSceneMode::LoadMesh()
 	m_Scene->GetResource()->LoadMesh(Mesh_Type::Animation, "PlayerMesh",
 		TEXT("Player_Default.msh"));
 
-
 	m_Scene->GetResource()->LoadMesh(Mesh_Type::Static, "Blade",
 		TEXT("Blade.FBX"));
 

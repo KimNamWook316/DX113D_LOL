@@ -129,6 +129,11 @@ void CAnimationSequence::Save(FILE* pFile)
 {
 	CRef::Save(pFile);
 
+	// Full Path 정보 저장
+	size_t PathLength = strlen(m_FullPath);
+	fwrite(&PathLength, sizeof(size_t), 1, pFile);
+	fwrite(m_FullPath, sizeof(char), PathLength, pFile);
+
 	size_t	iLength = m_Name.length();
 	fwrite(&iLength, sizeof(size_t), 1, pFile);
 	fwrite(m_Name.c_str(), sizeof(char), iLength, pFile);
@@ -173,6 +178,10 @@ void CAnimationSequence::Load(FILE* pFile)
 {
 	CRef::Load(pFile);
 
+	// Full Path 정보 저장
+	size_t PathLength;
+	fread(&PathLength, sizeof(size_t), 1, pFile);
+	fread(m_FullPath, sizeof(char), PathLength, pFile);
 
 	size_t	iLength = 0;
 	fread(&iLength, sizeof(size_t), 1, pFile);
@@ -355,6 +364,8 @@ bool CAnimationSequence::LoadFullPathMultibyte(const char* pFullPath)
 	if (!pFile)
 		return false;
 
+	strcpy_s(m_FullPath, pFullPath);
+
 	size_t	iLength = 0;
 	fread(&iLength, sizeof(size_t), 1, pFile);
 	char	strName[256] = {};
@@ -433,6 +444,20 @@ bool CAnimationSequence::LoadFullPathMultibyte(const char* pFullPath)
 	return true;
 }
 
+const char* CAnimationSequence::GetSequenceFileNameMultibyte()
+{
+	char	Ext[_MAX_EXT] = {};
+	char FileName[MAX_PATH] = {};
+	char FileNameFullName[MAX_PATH] = {};
+
+	_splitpath_s(m_FullPath, nullptr, 0, nullptr, 0, FileName, MAX_PATH, Ext, _MAX_EXT);
+
+	strcpy_s(FileNameFullName, FileName);
+	// strcat_s(FileNameFullName, Ext);
+
+	return FileNameFullName;
+}
+
 void CAnimationSequence::SetPlayScale(float fScale)
 {
 	m_PlayScale = fScale;
@@ -460,6 +485,11 @@ void CAnimationSequence::SetPlayTime(float fTime)
 			pKeyFrame->dTime = j * m_FrameTime;
 		}
 	}
+}
+
+void CAnimationSequence::SetAnimationFullPathMultibyte(const char* pFullPath)
+{
+	strcpy_s(m_FullPath, pFullPath);
 }
 
 BoneKeyFrame* CAnimationSequence::DeleteAnimationFrame(int Index)

@@ -8,12 +8,14 @@
 #include "IMGUISeperator.h"
 #include "IMGUIDummy.h"
 #include "Component/StaticMeshComponent.h"
+#include "Component/AnimationMeshComponent.h"
 #include "Component/LightComponent.h"
 #include "Component/ParticleComponent.h"
 #include "../Widget/StaticMeshComponentWidget.h"
 #include "../Widget/LightComponentWidget.h"
 #include "../Widget/ObjectComponentWidget.h"
 #include "../Widget/ParticleComponentWidget.h"
+#include "../Widget/AnimationMeshWidget.h"
 #include "../Window/ObjectHierarchyWindow.h"
 #include "IMGUIManager.h"
 #include "../EditorInfo.h"
@@ -118,6 +120,10 @@ void CGameObjectWidget::CreateSceneComponentWidget(CSceneComponent* Com)
 	if (TypeID == typeid(CStaticMeshComponent).hash_code())
 	{
 	 	Widget = AddWidget<CStaticMeshComponentWidget>("StaticMeshWidget");
+	}
+	if (TypeID == typeid(CAnimationMeshComponent).hash_code())
+	{
+		Widget = AddWidget<CAnimationMeshWidget>("AnimationMeshWidget");
 	}
 	else if (TypeID == typeid(CLightComponent).hash_code())
 	{

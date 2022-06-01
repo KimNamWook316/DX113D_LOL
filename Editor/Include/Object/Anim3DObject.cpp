@@ -39,31 +39,21 @@ bool CAnim3DObject::Init()
 	m_Camera->SetInheritRotX(true);
 	m_Camera->SetInheritRotY(true);
 	m_Camera->SetInheritRotZ(true);
-
-	m_Mesh->SetMesh(CEditorManager::GetInst()->GetAnimationEditor()->Get3DTestObjectMeshName());
-
-	// GBuffer 가 아니라, 바로 Animation Editor 용 Render Target 에 그려내기 위해 Shader 를 다른 것으로 세팅한다.
-	m_Mesh->SetMaterialShader("Mesh3DNoLightShader");
-
-	// m_Mesh->CreateAnimationInstance<CAnim3DObjectAnimation>();
-	// m_Animation = (CAnim3DObjectAnimation*)m_Mesh->GetAnimationInstance();
-
-	m_Mesh->SetRelativeScale(0.02f, 0.02f, 0.02f);
+	m_Camera->SetCameraType(Camera_Type::Camera3D);
+	m_Camera->SetViewAngle(27.f);
+	// m_Camera->AddRelativePos(0.f, 30.f, -30.f);
 
 	m_Arm->SetOffset(0.f, 2.f, 0.f);
-	m_Arm->SetRelativeRotation(10.f, 0.f, 0.f);
+	m_Arm->SetRelativeRotation(40.f, 0.f, 0.f);
 	m_Arm->SetTargetDistance(10.f);
 
-	SetWorldPos(1.f, 1.f, 1.f);
-
-	// Animation Editor Camera 에 적용받는 대상으로 세팅하기
-	// m_RootComponent->SetAnimationEditorTargetEnable(true);
-
-	// 3DTestObject 의 Camera Object 를 Scene의 Animation Current Camera 로 세팅한다.
-	m_Scene->GetCameraManager()->SetAnimationEditorCamera(m_Camera);
-	// m_Scene->GetCameraManager()->SetCurrentCamera(m_Camera);
-
 	return true;
+}
+
+void CAnim3DObject::Start()
+{
+	CGameObject::Start();
+
 }
 
 void CAnim3DObject::Update(float DeltaTime)
@@ -148,4 +138,27 @@ void CAnim3DObject::Attack(float DeltaTime)
 		m_Animation->SetIdleEnable(false);
 	}
 	*/
+}
+
+void CAnim3DObject::SetMeshAndMaterialInfo()
+{
+
+	// 3DTestObject 의 Camera Object 를 Scene의 Animation Current Camera 로 세팅한다.
+	m_Scene->GetCameraManager()->SetAnimationEditorCamera(m_Camera);
+
+	m_Mesh->SetMesh(CEditorManager::GetInst()->GetAnimationEditor()->Get3DTestObjectMeshName());
+
+	// GBuffer 가 아니라, 바로 Animation Editor 용 Render Target 에 그려내기 위해 Shader 를 다른 것으로 세팅한다.
+	m_Mesh->SetMaterialShader("Mesh3DNoLightShader");
+
+	// m_Mesh->CreateAnimationInstance<CAnim3DObjectAnimation>();
+	// m_Animation = (CAnim3DObjectAnimation*)m_Mesh->GetAnimationInstance();
+
+	m_Mesh->SetRelativeScale(0.02f, 0.02f, 0.02f);
+
+	m_Arm->SetOffset(0.f, 2.f, 0.f);
+	m_Arm->SetRelativeRotation(10.f, 0.f, 0.f);
+	m_Arm->SetTargetDistance(10.f);
+
+	SetWorldPos(1.f, 1.f, 1.f);
 }
