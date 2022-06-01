@@ -246,7 +246,7 @@ bool CAnimationMesh::LoadMesh(FILE* File)
 
 bool CAnimationMesh::ConvertFBXReleaseSequence(CFBXLoader* Loader, const char* FullPath)
 {
-	if (!CMesh::ConvertFBX(Loader, FullPath))
+	if (!CMesh::ConvertFBXReleaseSequence(Loader, FullPath))
 		return false;
 
     // 局聪皋捞记 贸府

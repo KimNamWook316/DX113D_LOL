@@ -46,6 +46,6 @@ public:
 
 private:
 	// 에디터에서 FBX 변환 툴에서만 사용, 애니메이션 시퀀스 저장하고 나서 바로 Release함
-	bool ConvertFBXReleaseSequence(class CFBXLoader* Loader, const char* FullPath);
+	virtual bool ConvertFBXReleaseSequence(class CFBXLoader* Loader, const char* FullPath) override;
 };
 
