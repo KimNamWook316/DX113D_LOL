@@ -29,6 +29,16 @@ public:
         SetWorldScale(m_Info.AxisLen[0] * 2.f, m_Info.AxisLen[1] * 2.f, m_Info.AxisLen[2] * 2.f);
     }
 
+    Vector3 GetExtent() const
+    {
+        Vector3 Extent;
+
+        Extent.x = m_Info.AxisLen[0];
+        Extent.y = m_Info.AxisLen[1];
+        Extent.z = m_Info.AxisLen[2];
+
+        return Extent;
+    }
 
 public:
     virtual void Start();

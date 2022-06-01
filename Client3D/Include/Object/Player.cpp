@@ -9,7 +9,8 @@
 #include "Component/ColliderBox3D.h"
 #include "Collision/Collision.h"
 
-CPlayer::CPlayer()
+CPlayer::CPlayer()	:
+	m_FrameCount(0)
 {
 	SetTypeID<CPlayer>();
 }
@@ -140,17 +141,8 @@ void CPlayer::PostUpdate(float DeltaTime)
 
 	// Ray vs Box Test Code //
 
-	CCameraComponent* CurrentCamera = m_Scene->GetCameraManager()->GetCurrentCamera();
-	Matrix matView = CurrentCamera->GetViewMatrix();
-	Ray ray = CInput::GetInst()->GetRay(matView);
-
-	Box3DInfo Info = {};
-	Vector3 BoxWorldPos = m_Body->GetWorldPos();
-	Info.Axis[0] = m_Mesh->GetWorldAxis(AXIS::AXIS_X);
-	Info.Axis[1] = m_Mesh->GetWorldAxis(AXIS::AXIS_Y);
-	Info.Axis[2] = m_Mesh->GetWorldAxis(AXIS::AXIS_Z);
+	//IsBoxRayCollision();
 	
-	//CCollision::CollisionRayToBox3D();
 	//////////////////////////
 }
 
@@ -187,6 +179,36 @@ void CPlayer::Attack(float DeltaTime)
 {
 	m_Animation->ChangeAnimation("Attack");
 	m_Animation->SetIdleEnable(false);
+}
+
+bool CPlayer::IsBoxRayCollision()
+{
+	/*++m_FrameCount;
+
+	if (CInput::GetInst()->GetMouseLButtonClick() && m_FrameCount > 20)
+	{
+		CCameraComponent* CurrentCamera = m_Scene->GetCameraManager()->GetCurrentCamera();
+		Matrix matView = CurrentCamera->GetViewMatrix();
+		Ray ray = CInput::GetInst()->GetRay(matView);
+
+		Box3DInfo Info = m_Body->GetInfo();
+		Matrix WorldMat = m_Body->GetWorldMatrix();
+
+		Info.Center = Info.Center.TransformCoord(WorldMat);
+		Info.Axis[0] = Info.Axis[0].TransformCoord(WorldMat);
+		Info.Axis[1] = Info.Axis[1].TransformCoord(WorldMat);
+		Info.Axis[2] = Info.Axis[2].TransformCoord(WorldMat);
+		Info.Min = Info.Min.TransformCoord(WorldMat);
+		Info.Max = Info.Max.TransformCoord(WorldMat);
+
+		Vector3 HitPoint;
+
+		CCollision::CollisionRayToBox3D(HitPoint, ray, Info);
+
+		m_FrameCount = 0;
+	}*/
+
+	return true;
 }
 
 

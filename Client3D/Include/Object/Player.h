@@ -23,6 +23,7 @@ private:
     class CPlayerAnimation* m_Animation;
     CSharedPtr<class CWeapon>   m_Weapon;
     class CColliderBox3D* m_Body;
+    int m_FrameCount;
 
 public:
     virtual bool Init();
@@ -36,6 +37,9 @@ private:
     void RotationYInv(float DeltaTime);
     void RotationY(float DeltaTime);
     void Attack(float DeltaTime);
+
+    // For Test
+    bool IsBoxRayCollision();
 };
 
 

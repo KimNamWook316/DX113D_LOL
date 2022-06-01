@@ -739,7 +739,36 @@ bool CCollision::CollisionRayToSphere(Vector3& HitPoint, const Ray& ray, const S
 
 bool CCollision::CollisionRayToBox3D(Vector3& HitPoint, const Ray& ray, const Box3DInfo& Box)
 {
-	return false;
+	XMVECTOR StartPos = ray.Pos.Convert();
+	XMVECTOR EndPos = (ray.Pos + ray.Dir * 100.f).Convert();
+
+	Vector3 FrontPlaneP1 = Vector3(Box.Center.x - Box.AxisLen[0], Box.Center.y + Box.AxisLen[1], Box.Center.z - Box.AxisLen[2]);
+	Vector3 FrontPlaneP2 = Vector3(Box.Center.x + Box.AxisLen[0], Box.Center.y + Box.AxisLen[1], Box.Center.z - Box.AxisLen[2]);
+	Vector3 FrontPlaneP3 = Vector3(Box.Center.x + Box.AxisLen[0], Box.Center.y - Box.AxisLen[1], Box.Center.z - Box.AxisLen[2]);
+
+	Vector3 FrontPlaneNormal = (FrontPlaneP2 - FrontPlaneP1).Cross(FrontPlaneP3 - FrontPlaneP2);
+	FrontPlaneNormal.Normalize();
+
+	float Coff_a = FrontPlaneNormal.x;
+	float Coff_b = FrontPlaneNormal.y;
+	float Coff_c = FrontPlaneNormal.z;
+	float Coff_d = -FrontPlaneNormal.x * FrontPlaneP1.x - FrontPlaneNormal.y * FrontPlaneP2.y - FrontPlaneNormal.z * FrontPlaneP3.z;
+
+	XMVECTOR Plane = { Coff_a, Coff_b, Coff_c, Coff_d };
+
+	XMVECTOR XMVec1 = FrontPlaneP1.Convert();
+	XMVECTOR XMVec2 = FrontPlaneP2.Convert();
+	XMVECTOR XMVec3 = FrontPlaneP3.Convert();
+
+	//XMVECTOR Result = XMPlaneIntersectTri(Plane, StartPos, EndPos);
+
+	//// Intersect하는 polygon을 찾지 못했을 때
+	//if (isnan(Result.m128_f32[0]) && isnan(Result.m128_f32[1]) && isnan(Result.m128_f32[2]))
+	//{
+	//	return false;
+	//}
+
+	return true;
 }
 
 
