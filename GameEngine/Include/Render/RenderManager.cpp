@@ -1,0 +1,1021 @@
+
+#include "RenderManager.h"
+#include "../GameObject/GameObject.h"
+#include "../Component/StaticMeshComponent.h"
+#include "../Component/AnimationMeshComponent.h"
+#include "../Component/SceneComponent.h"
+#include "RenderStateManager.h"
+#include "../Resource/Shader/Standard2DConstantBuffer.h"
+#include "../Resource/ResourceManager.h"
+#include "../Resource/Mesh/AnimationMesh.h"
+#include "RenderState.h"
+#include "../Scene/SceneManager.h"
+#include "../Scene/Scene.h"
+#include "../Scene/Viewport.h"
+#include "../Engine.h"
+#include "../Device.h"
+#include "../Resource/Shader/Shader.h"
+#include "../Component/PaperBurnComponent.h"
+
+DEFINITION_SINGLE(CRenderManager)
+
+CRenderManager::CRenderManager()	:
+	m_RenderStateManager(nullptr),
+	m_Standard2DCBuffer(nullptr)
+{
+}
+
+CRenderManager::~CRenderManager()
+{
+	auto	iter = m_RenderLayerList.begin();
+	auto	iterEnd = m_RenderLayerList.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		SAFE_DELETE((*iter));
+	}
+
+	m_RenderLayerList.clear();
+
+	SAFE_DELETE(m_Standard2DCBuffer);
+	SAFE_DELETE(m_RenderStateManager);
+}
+
+void CRenderManager::AddRenderList(CSceneComponent* Component)
+{
+	RenderLayer* Layer = nullptr;
+
+	auto	iter = m_RenderLayerList.begin();
+	auto	iterEnd = m_RenderLayerList.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		if ((*iter)->Name == Component->GetLayerName())
+		{
+			Layer = *iter;
+			break;
+		}
+	}
+
+	if (!Layer)
+		return;
+
+	Layer->RenderList.push_back(Component);
+}
+
+void CRenderManager::CreateLayer(const std::string& Name, int Priority)
+{
+	RenderLayer* Layer = new RenderLayer;
+	Layer->Name = Name;
+	Layer->LayerPriority = Priority;
+
+	m_RenderLayerList.push_back(Layer);
+
+	sort(m_RenderLayerList.begin(), m_RenderLayerList.end(), CRenderManager::Sortlayer);
+}
+
+void CRenderManager::SetLayerPriority(const std::string& Name, int Priority)
+{
+	auto	iter = m_RenderLayerList.begin();
+	auto	iterEnd = m_RenderLayerList.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		if ((*iter)->Name == Name)
+		{
+			(*iter)->LayerPriority = Priority;
+			break;
+		}
+	}
+
+	sort(m_RenderLayerList.begin(), m_RenderLayerList.end(), CRenderManager::Sortlayer);
+}
+
+bool CRenderManager::Init()
+{
+	m_RenderStateManager = new CRenderStateManager;
+
+	m_RenderStateManager->Init();
+
+	m_Standard2DCBuffer = new CStandard2DConstantBuffer;
+
+	m_Standard2DCBuffer->Init();
+
+	// 기본 레이어 생성
+	RenderLayer* Layer = new RenderLayer;
+	Layer->Name = "Back";
+	Layer->LayerPriority = 0;
+
+	m_RenderLayerList.push_back(Layer);
+
+	Layer = new RenderLayer;
+	Layer->Name = "Default";
+	Layer->LayerPriority = 1;
+
+	m_RenderLayerList.push_back(Layer);
+
+	Layer = new RenderLayer;
+	Layer->Name = "Decal";
+	Layer->LayerPriority = 2;
+
+	m_RenderLayerList.push_back(Layer);
+
+	Layer = new RenderLayer;
+	Layer->Name = "Particle";
+	Layer->LayerPriority = 3;
+
+	m_RenderLayerList.push_back(Layer);
+
+	Layer = new RenderLayer;
+	Layer->Name = "ScreenWidgetComponent";
+	Layer->LayerPriority = 4;
+
+	m_RenderLayerList.push_back(Layer);
+
+	Layer = new RenderLayer;
+	Layer->Name = "AnimationEditorLayer";
+	Layer->LayerPriority = 5;
+
+	m_RenderLayerList.push_back(Layer);
+
+	Layer = new RenderLayer;
+	Layer->Name = "ParticleEditorLayer";
+	Layer->LayerPriority = 6;
+
+	m_RenderLayerList.push_back(Layer);
+
+	m_DepthDisable = m_RenderStateManager->FindRenderState("DepthDisable");
+	m_AlphaBlend = m_RenderStateManager->FindRenderState("AlphaBlend");
+	m_LightAccBlend = m_RenderStateManager->FindRenderState("LightAcc");
+
+	// 디퍼드 렌더링용 타겟 생성
+	Resolution RS = CDevice::GetInst()->GetResolution();
+
+	if (!CResourceManager::GetInst()->CreateTarget("Diffuse",
+		RS.Width, RS.Height, DXGI_FORMAT_R8G8B8A8_UNORM))
+		return false;
+
+	if (!CResourceManager::GetInst()->CreateTarget("GBuffer1",
+		RS.Width, RS.Height, DXGI_FORMAT_R32G32B32A32_FLOAT))
+		return false;
+
+	if (!CResourceManager::GetInst()->CreateTarget("GBuffer2",
+		RS.Width, RS.Height, DXGI_FORMAT_R32G32B32A32_FLOAT))
+		return false;
+
+	if (!CResourceManager::GetInst()->CreateTarget("GBuffer3",
+		RS.Width, RS.Height, DXGI_FORMAT_R32G32B32A32_FLOAT))
+		return false;
+
+	if (!CResourceManager::GetInst()->CreateTarget("GBuffer4",
+		RS.Width, RS.Height, DXGI_FORMAT_R32G32B32A32_FLOAT))
+		return false;
+
+	if (!CResourceManager::GetInst()->CreateTarget("GBuffer5",
+		RS.Width, RS.Height, DXGI_FORMAT_R32G32B32A32_FLOAT))
+		return false;
+
+	CRenderTarget* GBufferTarget = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("Diffuse");
+	GBufferTarget->SetPos(Vector3(0.f, 0.f, 0.f));
+	GBufferTarget->SetScale(Vector3(100.f, 100.f, 1.f));
+	GBufferTarget->SetDebugRender(true);
+	m_vecGBuffer.push_back(GBufferTarget);
+
+	GBufferTarget = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("GBuffer1");
+	GBufferTarget->SetPos(Vector3(0.f, 100.f, 0.f));
+	GBufferTarget->SetScale(Vector3(100.f, 100.f, 1.f));
+	GBufferTarget->SetDebugRender(true);
+	m_vecGBuffer.push_back(GBufferTarget);
+
+	GBufferTarget = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("GBuffer2");
+	GBufferTarget->SetPos(Vector3(0.f, 200.f, 0.f));
+	GBufferTarget->SetScale(Vector3(100.f, 100.f, 1.f));
+	GBufferTarget->SetDebugRender(true);
+	m_vecGBuffer.push_back(GBufferTarget);
+
+	GBufferTarget = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("GBuffer3");
+	GBufferTarget->SetPos(Vector3(0.f, 300.f, 0.f));
+	GBufferTarget->SetScale(Vector3(100.f, 100.f, 1.f));
+	GBufferTarget->SetDebugRender(true);
+	m_vecGBuffer.push_back(GBufferTarget);
+
+	GBufferTarget = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("GBuffer4");
+	GBufferTarget->SetPos(Vector3(0.f, 400.f, 0.f));
+	GBufferTarget->SetScale(Vector3(100.f, 100.f, 1.f));
+	GBufferTarget->SetDebugRender(true);
+	m_vecGBuffer.push_back(GBufferTarget);
+
+	GBufferTarget = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("GBuffer5");
+	GBufferTarget->SetPos(Vector3(0.f, 500.f, 0.f));
+	GBufferTarget->SetScale(Vector3(100.f, 100.f, 1.f));
+	GBufferTarget->SetDebugRender(true);
+	m_vecGBuffer.push_back(GBufferTarget);
+
+	// Decal은 이미 생성된 렌더타겟에 렌더한다.
+	GBufferTarget = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("Diffuse");
+	m_vecDecal.push_back(GBufferTarget);
+
+	GBufferTarget = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("GBuffer1");
+	m_vecDecal.push_back(GBufferTarget);
+
+	GBufferTarget = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("GBuffer3");
+	m_vecDecal.push_back(GBufferTarget);
+
+	if (!CResourceManager::GetInst()->CreateTarget("LightDif",
+		RS.Width, RS.Height, DXGI_FORMAT_R32G32B32A32_FLOAT))
+		return false;
+
+	if (!CResourceManager::GetInst()->CreateTarget("LightSpc",
+		RS.Width, RS.Height, DXGI_FORMAT_R32G32B32A32_FLOAT))
+		return false;
+
+	if (!CResourceManager::GetInst()->CreateTarget("LightEmv",
+		RS.Width, RS.Height, DXGI_FORMAT_R32G32B32A32_FLOAT))
+		return false;
+
+	CRenderTarget* LightTarget = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("LightDif");
+	LightTarget->SetPos(Vector3(100.f, 0.f, 0.f));
+	LightTarget->SetScale(Vector3(100.f, 100.f, 1.f));
+	LightTarget->SetDebugRender(true);
+	m_vecLightBuffer.push_back(LightTarget);
+
+	LightTarget = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("LightSpc");
+	LightTarget->SetPos(Vector3(100.f, 100.f, 0.f));
+	LightTarget->SetScale(Vector3(100.f, 100.f, 1.f));
+	LightTarget->SetDebugRender(true);
+	m_vecLightBuffer.push_back(LightTarget);
+
+	LightTarget = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("LightEmv");
+	LightTarget->SetPos(Vector3(100.f, 200.f, 0.f));
+	LightTarget->SetScale(Vector3(100.f, 100.f, 1.f));
+	LightTarget->SetDebugRender(true);
+	m_vecLightBuffer.push_back(LightTarget);
+
+
+	if (!CResourceManager::GetInst()->CreateTarget("FinalScreen",
+		RS.Width, RS.Height, DXGI_FORMAT_R32G32B32A32_FLOAT))
+		return false;
+
+	CRenderTarget* FinalScreenTarget = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("FinalScreen");
+	FinalScreenTarget->SetPos(Vector3(200.f, 0.f, 0.f));
+	FinalScreenTarget->SetScale(Vector3(100.f, 100.f, 1.f));
+	FinalScreenTarget->SetDebugRender(true);
+
+	m_LightBlendShader = CResourceManager::GetInst()->FindShader("LightBlendShader");
+	m_LightBlendRenderShader = CResourceManager::GetInst()->FindShader("LightBlendRenderShader");
+	m_Mesh3DNoLightRenderShader = CResourceManager::GetInst()->FindShader("Mesh3DNoLightShader");
+	m_Standard3DInstancingShader = CResourceManager::GetInst()->FindShader("Standard3DInstancingShader");
+
+	// Animation Editor 용 Render Target 
+	if (!CResourceManager::GetInst()->CreateTarget("AnimationEditorRenderTarget",
+		RS.Width, RS.Height, DXGI_FORMAT_R32G32B32A32_FLOAT))
+		return false;
+
+	m_AnimEditorRenderTarget = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("AnimationEditorRenderTarget");
+	m_AnimEditorRenderTarget->SetPos(Vector3(450.f, 100.f, 0.f));
+	m_AnimEditorRenderTarget->SetScale(Vector3(150.f, 150.f, 1.f));
+	m_AnimEditorRenderTarget->SetDebugRender(false);
+
+	// Animation Editor 용 Render Target 
+	if (!CResourceManager::GetInst()->CreateTarget("ParticleEffectRenderTarget",
+		RS.Width, RS.Height, DXGI_FORMAT_R32G32B32A32_FLOAT))
+		return false;
+
+	// 지우지 마세요 ! (Particle Effect Editor 용 Render Target )
+	// m_ParticleEffectEditorRenderTarget = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("ParticleEffectRenderTarget");
+	// m_ParticleEffectEditorRenderTarget->SetPos(Vector3(600.f, 100.f, 0.f));
+	// m_ParticleEffectEditorRenderTarget->SetScale(Vector3(150.f, 150.f, 1.f));
+	// m_ParticleEffectEditorRenderTarget->SetDebugRender(false);
+
+
+	// Map 출력용 변수들
+
+	return true;
+}
+
+void CRenderManager::Render()
+{
+	{
+		auto	iter = m_RenderLayerList.begin();
+		auto	iterEnd = m_RenderLayerList.end();
+
+		for (; iter != iterEnd; ++iter)
+		{
+			(*iter)->RenderList.clear();
+			(*iter)->InstancingIndex = 0;
+
+			auto iter1 = (*iter)->m_vecInstancing.begin();
+			auto iter1End = (*iter)->m_vecInstancing.end();
+
+			for (; iter1 != iter1End; ++iter1)
+			{
+				(*iter1)->RenderList.clear();
+			}
+		}
+	}
+
+	{
+		auto	iter = m_ObjectList->begin();
+		auto	iterEnd = m_ObjectList->end();
+
+		for (; iter != iterEnd; ++iter)
+		{
+			(*iter)->PrevRender();
+		}	
+	}
+
+	{
+		const std::list<InstancingCheckCount*>* InstancingList = CSceneComponent::GetInstancingCheckList();
+
+		auto	iter = InstancingList->begin();
+		auto	iterEnd = InstancingList->end();
+
+		for (; iter != iterEnd; ++iter)
+		{
+			// (*iter) 는 하나의 Mesh 를 공통으로 사용하는 SceneComponent 집단
+			// 10개 이상이라면, 해당 SceneComponent 들은 이제 Instancing 으로 그려줘야 한다.
+			if ((*iter)->InstancingList.size() >= 10)
+			{
+				RenderLayer* Layer = nullptr;
+
+				size_t	Size = m_RenderLayerList.size();
+
+				// 모든 Render Layer 들을 돌면서, 현재 Scene Component 집단들이 속한 Layer 를 찾아낸다
+				for (size_t i = 0; i < Size; ++i)
+				{
+					if (m_RenderLayerList[i]->Name == (*iter)->LayerName)
+					{
+						Layer = m_RenderLayerList[i];
+						break;
+					}
+				}
+
+				if (Layer)
+				{
+					// 각 Layer 에는 m_vecInstancing 이 있다.
+					// 하나의 Layer 안에서도, 여러 Set 물체들을 Instancing 으로 그려야 할 필요가 있다.
+					// ex) 사과 30개 집단, 포도 30개 집단
+					// InstancingIndex 은 현재 해당 Layer 내 Instancing 으로 그릴 집단 개수 - 1. 의 값을 지니고 있다
+					// 그런데 만일 새롭게 Instancing 으로 그릴 물체 집단을 추가해야 하는데
+					// 해당 집단. 들의 vector 가 Size 가 없다면, 다시 Size 를 재할당해줘야 한다.
+					if (Layer->m_vecInstancing.size() == Layer->InstancingIndex)
+					{
+						Layer->m_vecInstancing.resize(Layer->InstancingIndex * 2);
+
+						for (int i = 0; i < Layer->InstancingIndex; ++i)
+						{
+							Layer->m_vecInstancing[Layer->InstancingIndex + i] = new RenderInstancingList;
+						}
+					}
+
+					// (*iter)->InstancingList 는, 해당 물체 집단.의 물체 목록. 들이 들어있다.
+					// 실제 Instancing 으로 그려주기 위해서는, 해당 물체들을 하나의 구조화 버퍼에 정보를 모아서
+					// 출력해야 한다.
+					// 즉, 당연히 해당 물체 집단을 담는 구조화 버퍼의 크기는, 당연히 물체 집단 전체 크기보다 크거나 같아야 한다.
+					// 만약, 구조화 버퍼의 크기가 작다면, 기존 크기 * 1.5 배 로 재할당 해줘야 한다.
+					if ((*iter)->InstancingList.size() > Layer->m_vecInstancing[Layer->InstancingIndex]->BufferCount)
+					{
+						int	Count = Layer->m_vecInstancing[Layer->InstancingIndex]->BufferCount * 1.5f;
+
+						// 할당 개수 조정
+						if ((*iter)->InstancingList.size() > Count)
+							Count = (int)(*iter)->InstancingList.size();
+
+						// 기존 구조화 버퍼를 해제한다.
+						SAFE_DELETE(Layer->m_vecInstancing[Layer->InstancingIndex]->Buffer);
+
+						// 구조화 버퍼를 재할당해준다.
+						Layer->m_vecInstancing[Layer->InstancingIndex]->Buffer = new CStructuredBuffer;
+
+						Layer->m_vecInstancing[Layer->InstancingIndex]->Buffer->Init("InstancingBuffer", sizeof(Instancing3DInfo),
+							Count, 40, true,
+							(int)Buffer_Shader_Type::Vertex || (int)Buffer_Shader_Type::Pixel);
+					}
+
+					// 이제 해당 물체 집단. 그 안에 있는 물체 하나하나를 순회할 것이다.
+					auto	iter1 = (*iter)->InstancingList.begin();
+					auto	iter1End = (*iter)->InstancingList.end();
+
+					// 이제 RenderLayer 내 , 특정 집단 공간에
+					// 각 물체 하나하나를 Render List 에 넣어줄 것이다.
+					for (; iter1 != iter1End; ++iter1)
+					{
+						// 구조화 버퍼에 정보를 채울 수 있는 함수를 만들어서 정보를 채워준다.
+						Layer->m_vecInstancing[Layer->InstancingIndex]->RenderList.push_back(*iter1);
+					}
+
+					// Mesh 정보 세팅
+					Layer->m_vecInstancing[Layer->InstancingIndex]->Mesh = (*iter)->Mesh;
+
+					if ((*iter)->Mesh->CheckType<CAnimationMesh>())
+					{
+						Layer->m_vecInstancing[Layer->InstancingIndex]->Animation = true;
+						Layer->m_vecInstancing[Layer->InstancingIndex]->CBuffer->SetBoneCount(((CAnimationMesh*)(*iter)->Mesh)->GetBoneCount());
+					}
+
+					++Layer->InstancingIndex;
+				}
+			}
+		}
+	}
+
+	// 환경맵 출력
+	CSharedPtr<CGameObject> SkyObj = CSceneManager::GetInst()->GetScene()->GetSkyObject();
+	SkyObj->Render();
+
+	// GBuffer를 만들어낸다.
+	RenderGBuffer();
+
+	// Decal을 그려낸다.
+	RenderDecal();
+
+	// 조명 누적버퍼를 만들어낸다.
+	RenderLightAcc();
+
+	// 조명 누적버퍼와 GBuffer를 이용하여 최종화면을 만들어낸다.
+	RenderLightBlend();
+
+	// 조명처리된 최종 화면을 백버퍼에 그려낸다.
+	RenderFinalScreen();
+
+	// Animation Editor Animation Instance 제작용 Render Target
+	RenderAnimationEditor();
+
+	// Particle Effect Editor 제작용 Render Target
+	// RenderParticleEffectEditor();
+
+	m_vecGBuffer[2]->SetShader(10, (int)Buffer_Shader_Type::Pixel, 0);
+
+	m_AlphaBlend->SetState();
+
+	// 파티클 레이어 출력
+	auto	iter = m_RenderLayerList[3]->RenderList.begin();
+	auto	iterEnd = m_RenderLayerList[3]->RenderList.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		(*iter)->Render();
+	}
+
+	m_AlphaBlend->ResetState();
+
+	m_vecGBuffer[2]->ResetShader(10, (int)Buffer_Shader_Type::Pixel, 0);
+
+	// Screen Widget 출력
+	iter = m_RenderLayerList[4]->RenderList.begin();
+	iterEnd = m_RenderLayerList[4]->RenderList.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		(*iter)->Render();
+	}
+
+	// 조명 정보를 Shader로 넘겨준다.
+	//CSceneManager::GetInst()->GetScene()->GetLightManager()->SetShader();
+
+	/*{
+		auto	iter = m_RenderLayerList.begin();
+		auto	iterEnd = m_RenderLayerList.end();
+
+		for (; iter != iterEnd; ++iter)
+		{
+			for (int i = 0; i < (*iter)->RenderCount; ++i)
+			{
+				(*iter)->RenderList[i]->Render();
+			}
+		}
+	}*/
+
+	{
+		auto	iter1 = m_RenderLayerList.begin();
+		auto	iter1End = m_RenderLayerList.end();
+
+		for (; iter1 != iter1End; ++iter1)
+		{
+			auto	iter2 = (*iter1)->RenderList.begin();
+			auto	iter2End = (*iter1)->RenderList.end();
+
+			for (; iter2 != iter2End; ++iter2)
+			{
+				(*iter2)->PostRender();
+			}
+		}
+	}
+
+
+	// Widget 출력
+	m_DepthDisable->SetState();
+
+	m_AlphaBlend->SetState();
+
+	CSceneManager::GetInst()->GetScene()->GetViewport()->Render();
+
+	// 디버깅용 렌더타겟을 출력한다.
+	// CResourceManager::GetInst()->RenderTarget();
+
+	// 마우스 출력
+	CWidgetWindow* MouseWidget = CEngine::GetInst()->GetMouseWidget();
+
+	if (MouseWidget)
+		MouseWidget->Render();
+
+	m_AlphaBlend->ResetState();
+
+	m_DepthDisable->ResetState();
+}
+
+void CRenderManager::RenderGBuffer()
+{
+	// 현재 백버퍼로 렌더타겟이 지정되어 있다.
+	// 이를 GBuffer 렌더타겟으로 교체해야 한다.
+	std::vector<ID3D11RenderTargetView*>	vecTarget;
+	std::vector<ID3D11RenderTargetView*>	vecPrevTarget;
+	ID3D11DepthStencilView* PrevDepthTarget = nullptr;
+
+	size_t	GBufferSize = m_vecGBuffer.size();
+
+	vecPrevTarget.resize(GBufferSize);
+
+	for (size_t i = 0; i < GBufferSize; ++i)
+	{
+		m_vecGBuffer[i]->ClearTarget();
+		vecTarget.push_back(m_vecGBuffer[i]->GetTargetView());
+	}
+
+	// 현재 지정되어 있는 렌더타겟과 깊이타겟을 얻어온다.
+	CDevice::GetInst()->GetContext()->OMGetRenderTargets((unsigned int)GBufferSize,
+		&vecPrevTarget[0], &PrevDepthTarget);
+
+	CDevice::GetInst()->GetContext()->OMSetRenderTargets((unsigned int)GBufferSize,
+		&vecTarget[0], PrevDepthTarget);
+
+	for (size_t i = 0; i <= 1; ++i)
+	{
+		auto	iter = m_RenderLayerList[i]->RenderList.begin();
+		auto	iterEnd = m_RenderLayerList[i]->RenderList.end();
+
+		for (; iter != iterEnd; ++iter)
+		{
+			(*iter)->Render();
+
+		}
+	}
+
+	RenderDefaultInstancing();
+
+	CDevice::GetInst()->GetContext()->OMSetRenderTargets((unsigned int)GBufferSize,
+		&vecPrevTarget[0], PrevDepthTarget);
+
+	SAFE_RELEASE(PrevDepthTarget);
+	for (size_t i = 0; i < GBufferSize; ++i)
+	{
+		SAFE_RELEASE(vecPrevTarget[i]);
+	}
+}
+
+void CRenderManager::RenderDecal()
+{
+	std::vector<ID3D11RenderTargetView*>	vecTarget;
+	std::vector<ID3D11RenderTargetView*>	vecPrevTarget;
+	ID3D11DepthStencilView* PrevDepthTarget = nullptr;
+
+	size_t	DecalSize = m_vecDecal.size();
+
+	vecPrevTarget.resize(DecalSize);
+
+	for (size_t i = 0; i < DecalSize; ++i)
+	{
+		vecTarget.push_back(m_vecDecal[i]->GetTargetView());
+	}
+
+	// 현재 지정되어 있는 렌더타겟과 깊이타겟을 얻어온다.
+	CDevice::GetInst()->GetContext()->OMGetRenderTargets((unsigned int)DecalSize,
+		&vecPrevTarget[0], &PrevDepthTarget);
+
+	CDevice::GetInst()->GetContext()->OMSetRenderTargets((unsigned int)DecalSize,
+		&vecTarget[0], PrevDepthTarget);
+
+	m_vecGBuffer[2]->SetTargetShader(10);
+	m_vecGBuffer[4]->SetTargetShader(11);
+	m_vecGBuffer[5]->SetTargetShader(12);
+
+	auto	iter = m_RenderLayerList[2]->RenderList.begin();
+	auto	iterEnd = m_RenderLayerList[2]->RenderList.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		(*iter)->Render();
+	}
+
+	m_vecGBuffer[2]->ResetTargetShader(10);
+	m_vecGBuffer[4]->ResetTargetShader(11);
+	m_vecGBuffer[5]->ResetTargetShader(12);
+
+
+	CDevice::GetInst()->GetContext()->OMSetRenderTargets((unsigned int)DecalSize,
+		&vecPrevTarget[0], PrevDepthTarget);
+
+	SAFE_RELEASE(PrevDepthTarget);
+	for (size_t i = 0; i < DecalSize; ++i)
+	{
+		SAFE_RELEASE(vecPrevTarget[i]);
+	}
+
+	// 디버깅 출력
+#ifdef _DEBUG
+
+	std::vector<ID3D11RenderTargetView*>	vecTarget1;
+	std::vector<ID3D11RenderTargetView*>	vecPrevTarget1;
+	ID3D11DepthStencilView* PrevDepthTarget1 = nullptr;
+
+	size_t	GBufferSize = m_vecGBuffer.size();
+
+	vecPrevTarget1.resize(GBufferSize);
+
+	for (size_t i = 0; i < GBufferSize; ++i)
+	{
+		vecTarget1.push_back(m_vecGBuffer[i]->GetTargetView());
+	}
+
+	// 현재 지정되어 있는 렌더타겟과 깊이타겟을 얻어온다.
+	CDevice::GetInst()->GetContext()->OMGetRenderTargets((unsigned int)GBufferSize,
+		&vecPrevTarget1[0], &PrevDepthTarget1);
+
+	CDevice::GetInst()->GetContext()->OMSetRenderTargets((unsigned int)GBufferSize,
+		&vecTarget1[0], PrevDepthTarget1);
+
+	iter = m_RenderLayerList[2]->RenderList.begin();
+	iterEnd = m_RenderLayerList[2]->RenderList.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		(*iter)->RenderDebug();
+	}
+
+	CDevice::GetInst()->GetContext()->OMSetRenderTargets((unsigned int)GBufferSize,
+		&vecPrevTarget1[0], PrevDepthTarget1);
+
+	SAFE_RELEASE(PrevDepthTarget1);
+	for (size_t i = 0; i < GBufferSize; ++i)
+	{
+		SAFE_RELEASE(vecPrevTarget1[i]);
+	}
+
+#endif // _DEBUG
+}
+
+void CRenderManager::RenderLightAcc()
+{
+	std::vector<ID3D11RenderTargetView*>	vecTarget;
+	std::vector<ID3D11RenderTargetView*>	vecPrevTarget;
+	ID3D11DepthStencilView* PrevDepthTarget = nullptr;
+
+	size_t	LightBufferSize = m_vecLightBuffer.size();
+
+	vecPrevTarget.resize(LightBufferSize);
+
+	for (size_t i = 0; i < LightBufferSize; ++i)
+	{
+		m_vecLightBuffer[i]->ClearTarget();
+		vecTarget.push_back(m_vecLightBuffer[i]->GetTargetView());
+	}
+
+	// 현재 지정되어 있는 렌더타겟과 깊이타겟을 얻어온다.
+	CDevice::GetInst()->GetContext()->OMGetRenderTargets((unsigned int)LightBufferSize,
+		&vecPrevTarget[0], &PrevDepthTarget);
+
+	CDevice::GetInst()->GetContext()->OMSetRenderTargets((unsigned int)LightBufferSize,
+		&vecTarget[0], PrevDepthTarget);
+
+
+	m_LightAccBlend->SetState();
+
+	m_DepthDisable->SetState();
+
+
+	m_vecGBuffer[0]->SetTargetShader(14);
+	m_vecGBuffer[1]->SetTargetShader(15);
+	m_vecGBuffer[2]->SetTargetShader(16);
+	m_vecGBuffer[3]->SetTargetShader(17);
+
+	CSceneManager::GetInst()->GetScene()->GetLightManager()->Render();
+
+	m_vecGBuffer[0]->ResetTargetShader(14);
+	m_vecGBuffer[1]->ResetTargetShader(15);
+	m_vecGBuffer[2]->ResetTargetShader(16);
+	m_vecGBuffer[3]->ResetTargetShader(17);
+
+	m_DepthDisable->ResetState();
+
+	m_LightAccBlend->ResetState();
+
+
+	CDevice::GetInst()->GetContext()->OMSetRenderTargets((unsigned int)LightBufferSize,
+		&vecPrevTarget[0], PrevDepthTarget);
+
+	SAFE_RELEASE(PrevDepthTarget);
+	for (size_t i = 0; i < LightBufferSize; ++i)
+	{
+		SAFE_RELEASE(vecPrevTarget[i]);
+	}
+}
+
+void CRenderManager::RenderLightBlend()
+{
+	CRenderTarget* FinalScreenTarget = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("FinalScreen");
+
+	// Light 혼합을 할 때에도, RenderTarget 을 바꿔서 처리한다.
+	FinalScreenTarget->ClearTarget();
+
+	FinalScreenTarget->SetTarget(nullptr);
+
+	m_vecGBuffer[0]->SetTargetShader(14);
+	m_vecLightBuffer[0]->SetTargetShader(18);
+	m_vecLightBuffer[1]->SetTargetShader(19);
+	m_vecLightBuffer[2]->SetTargetShader(20);
+
+	m_LightBlendShader->SetShader();
+
+	m_DepthDisable->SetState();
+
+	// 아래코드를 사용한 이유는, Null Buffer 를 사용하기 때문이다.
+	UINT Offset = 0;
+	CDevice::GetInst()->GetContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+	CDevice::GetInst()->GetContext()->IASetVertexBuffers(0, 0, nullptr, nullptr, &Offset);
+	CDevice::GetInst()->GetContext()->IASetIndexBuffer(nullptr, DXGI_FORMAT_UNKNOWN, 0);
+
+	CDevice::GetInst()->GetContext()->Draw(4, 0);
+
+
+	m_DepthDisable->ResetState();
+
+	m_vecGBuffer[0]->ResetTargetShader(14);
+	m_vecLightBuffer[0]->ResetTargetShader(18);
+	m_vecLightBuffer[1]->ResetTargetShader(19);
+	m_vecLightBuffer[2]->ResetTargetShader(20);
+
+	FinalScreenTarget->ResetTarget();
+}
+
+void CRenderManager::RenderFinalScreen()
+{
+	CRenderTarget* FinalScreenTarget = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("FinalScreen");
+
+	FinalScreenTarget->SetTargetShader(21);
+
+	// RenderLightBlend 와 달리, 여기서는 Render Target 을 변경하지 않는다.
+	// 기존의 Back Buffer 에 그려내는 원리이다.
+
+	m_LightBlendRenderShader->SetShader();
+
+	m_DepthDisable->SetState();
+
+	// 마지막 그리기 또한 Null Buffer 를 사용하여 그려낸다.
+	UINT Offset = 0;
+	CDevice::GetInst()->GetContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+	CDevice::GetInst()->GetContext()->IASetVertexBuffers(0, 0, nullptr, nullptr, &Offset);
+	CDevice::GetInst()->GetContext()->IASetIndexBuffer(nullptr, DXGI_FORMAT_UNKNOWN, 0);
+
+	CDevice::GetInst()->GetContext()->Draw(4, 0);
+
+	m_DepthDisable->ResetState();
+
+	FinalScreenTarget->ResetTargetShader(21);
+}
+
+void CRenderManager::RenderAnimationEditor()
+{
+	int AnimationEditorLayerIdx = GetRenderLayerIndex("AnimationEditorLayer");
+
+	// 만~약에 해당 Layer 의 Idx 가 정해져 있지 않다면
+	if (AnimationEditorLayerIdx == -1)
+		return;
+
+	// Animation Edtior 상에서 Animation Editor 제작 중이지 않다면
+	if (m_RenderLayerList[AnimationEditorLayerIdx]->RenderList.size() <= 0)
+		return;
+
+	// Render Target 교체
+	m_AnimEditorRenderTarget->ClearTarget();
+
+	m_AnimEditorRenderTarget->SetTarget(nullptr);
+
+	m_Mesh3DNoLightRenderShader->SetShader();
+
+	// m_DepthDisable->SetState();
+
+	// m_AnimationRenderTarget->SetTargetShader(55);
+
+	auto iter = m_RenderLayerList[AnimationEditorLayerIdx]->RenderList.begin();
+	auto iterEnd = m_RenderLayerList[AnimationEditorLayerIdx]->RenderList.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		(*iter)->RenderAnimationEditor();
+	}
+
+	m_AnimEditorRenderTarget->ResetTarget();
+ }
+
+
+void CRenderManager::SetBlendFactor(const std::string& Name, float r, float g,
+	float b, float a)
+{
+	m_RenderStateManager->SetBlendFactor(Name, r, g, b, a);
+}
+
+void CRenderManager::AddBlendInfo(const std::string& Name, bool BlendEnable,
+	D3D11_BLEND SrcBlend, D3D11_BLEND DestBlend, D3D11_BLEND_OP BlendOp, 
+	D3D11_BLEND SrcBlendAlpha, D3D11_BLEND DestBlendAlpha, 
+	D3D11_BLEND_OP BlendOpAlpha, UINT8 RenderTargetWriteMask)
+{
+	m_RenderStateManager->AddBlendInfo(Name, BlendEnable, SrcBlend, DestBlend,
+		BlendOp, SrcBlendAlpha, DestBlendAlpha, BlendOpAlpha, RenderTargetWriteMask);
+}
+
+bool CRenderManager::CreateBlendState(const std::string& Name, 
+	bool AlphaToCoverageEnable, bool IndependentBlendEnable)
+{
+	return m_RenderStateManager->CreateBlendState(Name, AlphaToCoverageEnable, IndependentBlendEnable);
+}
+
+int CRenderManager::GetRenderLayerIndex(const std::string& TargetName)
+{
+	for (size_t j = 0; j < m_RenderLayerList.size(); ++j)
+	{
+		if (m_RenderLayerList[j]->Name == TargetName)
+			return j;
+	}
+
+	return -1;
+}
+
+CRenderState* CRenderManager::FindRenderState(const std::string& Name)
+{
+	return m_RenderStateManager->FindRenderState(Name);
+}
+
+void CRenderManager::RenderDefaultInstancing()
+{
+	// 이제 Default Layer 에 있는 Instancing집단. 들을 순회할 것이다.
+	for (int i = 0; i < m_RenderLayerList[1]->InstancingIndex; ++i)
+	{
+		// Material Slot 수만큼 반복한다.
+		int	SlotCount = 0;
+
+		// 현재 우리는 Static Mesh Component, Animation Mesh Component 를 
+		// 분리해서 Instancing 하고 있다.
+		// 그렇다면, 두 Component 를 구분해야 하는데
+		// 해당 Instancing 집단이 공유하는 Mesh 종류로 구분할 것이다.
+		if (m_RenderLayerList[1]->m_vecInstancing[i]->Mesh->GetMeshType() == Mesh_Type::Static)
+		{
+			SlotCount = ((CStaticMeshComponent*)m_RenderLayerList[1]->m_vecInstancing[i]->RenderList.back())->GetMaterialSlotCount();
+		}
+
+		else if (m_RenderLayerList[1]->m_vecInstancing[i]->Mesh->GetMeshType() == Mesh_Type::Animation)
+		{
+			SlotCount = ((CAnimationMeshComponent*)m_RenderLayerList[1]->m_vecInstancing[i]->RenderList.back())->GetMaterialSlotCount();
+		}
+
+		// 그리고, 현재 해당 Component 들이 공유하는 Mesh Class 내 Material 개수를 가져온다.
+		// 해당 Material 개수만큼 반복할 것이다.
+		for (int j = 0; j < SlotCount; ++j)
+		{
+			// m_RenderLayerList[1]->m_vecInstancing[i] -> Default Layer 내 Instancing 으로 그릴 하나의 집단
+			// 그 집단 내에 있는 Component 하나하나를 순회할 것이다.
+			auto	iter = m_RenderLayerList[1]->m_vecInstancing[i]->RenderList.begin();
+			auto	iterEnd = m_RenderLayerList[1]->m_vecInstancing[i]->RenderList.end();
+
+			// Instancing3DInfo 는 Shader 측에서 구조화 버퍼 배열의 원소 이다.
+			// Instancing3DInfo 하나가, 실제로 그릴 Mesh 하나.를 의미한다.
+			// vecInfo 가 그렇다면, 구조화 버퍼 하나에 대응될 것이다.
+			std::vector<Instancing3DInfo>	vecInfo;
+			vecInfo.reserve(m_RenderLayerList[1]->m_vecInstancing[i]->RenderList.size());
+
+			CMaterial* Material = nullptr;
+
+			// Component 하나하나를 순회할 것이다.
+			for (; iter != iterEnd; ++iter)
+			{
+				if (m_RenderLayerList[1]->m_vecInstancing[i]->Mesh->GetMeshType() == Mesh_Type::Static)
+				{
+					Material = ((CStaticMeshComponent*)(*iter))->GetMaterial(j);
+				}
+
+				else if (m_RenderLayerList[1]->m_vecInstancing[i]->Mesh->GetMeshType() == Mesh_Type::Animation)
+				{
+					Material = ((CAnimationMeshComponent*)(*iter))->GetMaterial(j);
+				}
+
+				// 여기서 Material 는 Null 이 나올 수 없다.
+				// 현재 같은 Mesh 를 공유하는 Component 를 순회하고 있고
+				// 이에 따라 같은 Mesh 안에는 당연히 Material 개수가 동일할 것이기 때문이다.
+				Instancing3DInfo	Info = {};
+
+				// 해당 Component 를 통해 구조화 버퍼. 하나의 원소. 인 Info 에 정보를 채워준다.
+				// (SceneComponent 내 , Transform 정보를 채워준다.)
+				(*iter)->SetInstancingInfo(&Info);
+
+				// 상수 버퍼 를 통해 구조화 버퍼. 하나의 원소. 인 Info 에 정보를 채워준다.
+				// Material 정보를 채워준다.
+				Material->GetCBuffer()->SetInstancingInfo(&Info);
+
+				// 페이퍼번 정보
+				// 페이퍼번을 하는 경우에만, PaperBurn 상수 버퍼에 있는 내용을 채워준다.
+				if (Info.MtrlPaperBurnEnable == 1)
+				{
+					CPaperBurnComponent* PaperBurn = (*iter)->GetGameObject()->FindComponentFromType<CPaperBurnComponent>();
+					if (PaperBurn)
+					{
+						PaperBurn->SetInstancingInfo(&Info);
+					}
+				}
+
+				vecInfo.push_back(Info);
+			}
+
+			// Material 내 Texture 만 넘겨주는 로직을 하나 만들 것이다.
+			if (Material)
+				Material->RenderTexture();
+
+			// 106번 레지스터에 Standard3D.fx 에서 Shader Resource View 용도로 넘겨준다.
+			// Instancing 으로 그리는 모든 Component 들, 그 안의 각각의 Skeleton이 있고
+			// 그 안에 각각의 Bone 이 있다
+			// 그 모든 Bone 을 일차원 배열 안에 모아둔 형태가 될 것이다.
+			if (m_RenderLayerList[1]->m_vecInstancing[i]->Animation)
+			{
+				((CAnimationMesh*)m_RenderLayerList[1]->m_vecInstancing[i]->Mesh)->SetBoneShader();
+			}
+
+			// Standard3D.fx 내 Instncing Shader 코드를 세팅한다.
+			// 즉, 현재 코드를 통해서는 m_Standard3DInstancingVS, m_Standard3DInstancingPS 를 통해 Render 하려는 것이다.
+			m_Standard3DInstancingShader->SetShader();
+
+			// 각 Animation Mesh Component Instancing 에서 사용되는 Bone 개수에 대한 정보를 넘겨줄 것이다.
+			m_RenderLayerList[1]->m_vecInstancing[i]->CBuffer->UpdateCBuffer();
+
+			// 구조화 버퍼 정보를 Update 해준다.
+			// 40 번 레지스터, g_InstancingInfoArray 정보를 Update 하는 것이다.
+			// 현재 Instancing 으로 그리는 물체 개수만큼의 Instancing3DInfo 구조체 정보가 넘어갈 것이다.
+			m_RenderLayerList[1]->m_vecInstancing[i]->Buffer->UpdateBuffer(&vecInfo[0],
+				(int)vecInfo.size());
+
+			m_RenderLayerList[1]->m_vecInstancing[i]->Buffer->SetShader();
+
+			m_RenderLayerList[1]->m_vecInstancing[i]->Mesh->RenderInstancing((int)vecInfo.size(), j);
+
+			m_RenderLayerList[1]->m_vecInstancing[i]->Buffer->ResetShader();
+
+
+			if (m_RenderLayerList[1]->m_vecInstancing[i]->Animation)
+			{
+				((CAnimationMesh*)m_RenderLayerList[1]->m_vecInstancing[i]->Mesh)->ResetBoneShader();
+			}
+
+			if (Material)
+				Material->Reset();
+
+		}
+	}
+}
+
+bool CRenderManager::Sortlayer(RenderLayer* Src, RenderLayer* Dest)
+{
+	return Src->LayerPriority < Dest->LayerPriority;
+}
+
+
+/*
+void CRenderManager::RenderParticleEffectEditor()
+{
+	int ParticleEffectEditorLayerIdx = GetRenderLayerIndex("ParticleEditorLayer");
+
+	// 만~약에 해당 Layer 의 Idx 가 정해져 있지 않다면
+	if (ParticleEffectEditorLayerIdx == -1)
+		return;
+
+	// Animation Edtior 상에서 Animation Editor 제작 중이지 않다면
+	if (m_RenderLayerList[ParticleEffectEditorLayerIdx]->RenderList.size() <= 0)
+		return;
+
+	// Render Target 교체
+	m_ParticleEffectEditorRenderTarget->ClearTarget();
+
+	m_ParticleEffectEditorRenderTarget->SetTarget(nullptr);
+
+	auto iter = m_RenderLayerList[ParticleEffectEditorLayerIdx]->RenderList.begin();
+	auto iterEnd = m_RenderLayerList[ParticleEffectEditorLayerIdx]->RenderList.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		(*iter)->RenderParticleEffectEditor();
+	}
+
+	CSharedPtr<CGameObject> SkyObj = CSceneManager::GetInst()->GetScene()->GetSkyObject();
+	SkyObj->GetRootComponent()->RenderParticleEffectEditor();
+
+	// Sample Sky 그리기
+
+	m_ParticleEffectEditorRenderTarget->ResetTarget();
+}
+*/

@@ -1,0 +1,85 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="EditorManager.cpp" />
+    <ClCompile Include="EditorUtil.cpp" />
+    <ClCompile Include="GraphEditor.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="Object\3DCameraObject.cpp" />
+    <ClCompile Include="Object\Anim3DObject.cpp" />
+    <ClCompile Include="Object\DragObject.cpp" />
+    <ClCompile Include="Object\Player2D.cpp" />
+    <ClCompile Include="Object\SpriteEditObject.cpp" />
+    <ClCompile Include="Scene\DefaultScene.cpp" />
+    <ClCompile Include="Widget\AnimationMeshWidget.cpp" />
+    <ClCompile Include="Widget\GameObjectWidget.cpp" />
+    <ClCompile Include="Widget\LightComponentWidget.cpp" />
+    <ClCompile Include="Widget\ObjectComponentWidget.cpp" />
+    <ClCompile Include="Widget\ParticleComponentWidget.cpp" />
+    <ClCompile Include="Widget\SceneComponentWidget.cpp" />
+    <ClCompile Include="Widget\StaticMeshComponentWidget.cpp" />
+    <ClCompile Include="Widget\TransformWidget.cpp" />
+    <ClCompile Include="Window\AnimationEditor.cpp" />
+    <ClCompile Include="Thread\FBXConvertThread.cpp" />
+    <ClCompile Include="Window\BehaviorTreeMenuBar.cpp" />
+    <ClCompile Include="Window\BehaviorTreeWindow.cpp" />
+    <ClCompile Include="Window\EffectEditor.cpp" />
+    <ClCompile Include="Window\FBXConvertWindow.cpp" />
+    <ClCompile Include="Window\FileBrowser.cpp" />
+    <ClCompile Include="Window\FileBrowserTree.cpp" />
+    <ClCompile Include="Window\InspectorWindow.cpp" />
+    <ClCompile Include="Window\ObjectComponentCreateModal.cpp" />
+    <ClCompile Include="Window\ObjectComponentWindow.cpp" />
+    <ClCompile Include="Window\ObjectCreateModal.cpp" />
+    <ClCompile Include="Window\ObjectHierarchyWindow.cpp" />
+    <ClCompile Include="Window\SceneComponentCreateModal.cpp" />
+    <ClCompile Include="Window\SceneComponentHierarchyWindow.cpp" />
+    <ClCompile Include="Window\ToolWindow.cpp" />
+    <ClCompile Include="Object\Sample3DParticle.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="EditorInfo.h" />
+    <ClInclude Include="EditorManager.h" />
+    <ClInclude Include="EditorUtil.h" />
+    <ClInclude Include="GraphEditor.h" />
+    <ClInclude Include="Object\3DCameraObject.h" />
+    <ClInclude Include="Object\Anim3DObject.h" />
+    <ClInclude Include="Object\DragObject.h" />
+    <ClInclude Include="Object\Player2D.h" />
+    <ClInclude Include="Object\SpriteEditObject.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="Scene\DefaultScene.h" />
+    <ClInclude Include="Utils.h" />
+    <ClInclude Include="Widget\AnimationMeshWidget.h" />
+    <ClInclude Include="Widget\GameObjectWidget.h" />
+    <ClInclude Include="Widget\LightComponentWidget.h" />
+    <ClInclude Include="Widget\ObjectComponentWidget.h" />
+    <ClInclude Include="Widget\ParticleComponentWidget.h" />
+    <ClInclude Include="Widget\SceneComponentWidget.h" />
+    <ClInclude Include="Widget\StaticMeshComponentWidget.h" />
+    <ClInclude Include="Widget\TransformWidget.h" />
+    <ClInclude Include="Window\AnimationEditor.h" />
+    <ClInclude Include="Thread\FBXConvertThread.h" />
+    <ClInclude Include="Window\BehaviorTreeMenuBar.h" />
+    <ClInclude Include="Window\BehaviorTreeWindow.h" />
+    <ClInclude Include="Window\EffectEditor.h" />
+    <ClInclude Include="Window\FBXConvertWindow.h" />
+    <ClInclude Include="Window\FileBrowser.h" />
+    <ClInclude Include="Window\FileBrowserTree.h" />
+    <ClInclude Include="Window\InspectorWindow.h" />
+    <ClInclude Include="Window\ObjectComponentCreateModal.h" />
+    <ClInclude Include="Window\ObjectComponentWindow.h" />
+    <ClInclude Include="Window\ObjectCreateModal.h" />
+    <ClInclude Include="Window\ObjectHierarchyWindow.h" />
+    <ClInclude Include="Window\SceneComponentCreateModal.h" />
+    <ClInclude Include="Window\SceneComponentHierarchyWindow.h" />
+    <ClInclude Include="Window\ToolWindow.h" />
+    <ClInclude Include="Object\Sample3DParticle.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Editor.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="icon1.ico" />
+  </ItemGroup>
+</Project>
