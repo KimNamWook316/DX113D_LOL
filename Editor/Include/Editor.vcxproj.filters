@@ -1,85 +1,289 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="EditorManager.cpp" />
-    <ClCompile Include="EditorUtil.cpp" />
-    <ClCompile Include="GraphEditor.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="Object\3DCameraObject.cpp" />
-    <ClCompile Include="Object\Anim3DObject.cpp" />
-    <ClCompile Include="Object\DragObject.cpp" />
-    <ClCompile Include="Object\Player2D.cpp" />
-    <ClCompile Include="Object\SpriteEditObject.cpp" />
-    <ClCompile Include="Scene\DefaultScene.cpp" />
-    <ClCompile Include="Widget\AnimationMeshWidget.cpp" />
-    <ClCompile Include="Widget\GameObjectWidget.cpp" />
-    <ClCompile Include="Widget\LightComponentWidget.cpp" />
-    <ClCompile Include="Widget\ObjectComponentWidget.cpp" />
-    <ClCompile Include="Widget\ParticleComponentWidget.cpp" />
-    <ClCompile Include="Widget\SceneComponentWidget.cpp" />
-    <ClCompile Include="Widget\StaticMeshComponentWidget.cpp" />
-    <ClCompile Include="Widget\TransformWidget.cpp" />
-    <ClCompile Include="Window\AnimationEditor.cpp" />
-    <ClCompile Include="Thread\FBXConvertThread.cpp" />
-    <ClCompile Include="Window\BehaviorTreeMenuBar.cpp" />
-    <ClCompile Include="Window\BehaviorTreeWindow.cpp" />
-    <ClCompile Include="Window\EffectEditor.cpp" />
-    <ClCompile Include="Window\FBXConvertWindow.cpp" />
-    <ClCompile Include="Window\FileBrowser.cpp" />
-    <ClCompile Include="Window\FileBrowserTree.cpp" />
-    <ClCompile Include="Window\InspectorWindow.cpp" />
-    <ClCompile Include="Window\ObjectComponentCreateModal.cpp" />
-    <ClCompile Include="Window\ObjectComponentWindow.cpp" />
-    <ClCompile Include="Window\ObjectCreateModal.cpp" />
-    <ClCompile Include="Window\ObjectHierarchyWindow.cpp" />
-    <ClCompile Include="Window\SceneComponentCreateModal.cpp" />
-    <ClCompile Include="Window\SceneComponentHierarchyWindow.cpp" />
-    <ClCompile Include="Window\ToolWindow.cpp" />
-    <ClCompile Include="Object\Sample3DParticle.cpp" />
+    <Filter Include="소스 파일">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="헤더 파일">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="리소스 파일">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="01. Scene">
+      <UniqueIdentifier>{82e46a67-4ecc-404c-b361-3b0b7a3b658e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Editor">
+      <UniqueIdentifier>{e55fe2d6-975f-4dfb-885f-745bffbf5be5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Object">
+      <UniqueIdentifier>{b4dd5703-332c-4dd0-82b7-3f33832b07d9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. Thread">
+      <UniqueIdentifier>{2dc62fc4-9fad-4a4b-b210-87e87fcd9922}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. Thread\01. FBXConvert">
+      <UniqueIdentifier>{1cf8c518-7273-48b6-b408-bc7442c6106a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Editor\01. Window">
+      <UniqueIdentifier>{4b3a1018-d889-4e4c-bfc7-bd576f0009cd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Editor\99. Util">
+      <UniqueIdentifier>{3059ee0a-904a-4dce-99bc-bdbf0552da89}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Editor\02. Widget">
+      <UniqueIdentifier>{9c6b686c-06ac-46e5-b031-9e2bb01cec1a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Editor\02. Widget\01. Inspector">
+      <UniqueIdentifier>{0448f91d-2d59-413f-bdd4-9efed9f33ed0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Editor\02. Widget\02. Hierarchy">
+      <UniqueIdentifier>{65834f17-a890-43e6-a336-ac0d50c2b64f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Editor\02. Widget\01. Inspector\01. SceneComponent">
+      <UniqueIdentifier>{47894265-e399-46ef-9d4c-fd1b7868d503}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Editor\02. Widget\01. Inspector\02. ObjectComponent">
+      <UniqueIdentifier>{7b9c547d-0ea7-4639-a712-17d44c387f64}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Object\01 .2D">
+      <UniqueIdentifier>{ceb50a8d-684f-437c-9559-ea9b91c749eb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Object\02. 3D">
+      <UniqueIdentifier>{2c1cca55-7696-4a5e-9ed6-9811d19f240b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="EditorInfo.h" />
-    <ClInclude Include="EditorManager.h" />
-    <ClInclude Include="EditorUtil.h" />
-    <ClInclude Include="GraphEditor.h" />
-    <ClInclude Include="Object\3DCameraObject.h" />
-    <ClInclude Include="Object\Anim3DObject.h" />
-    <ClInclude Include="Object\DragObject.h" />
-    <ClInclude Include="Object\Player2D.h" />
-    <ClInclude Include="Object\SpriteEditObject.h" />
-    <ClInclude Include="resource.h" />
-    <ClInclude Include="Scene\DefaultScene.h" />
-    <ClInclude Include="Utils.h" />
-    <ClInclude Include="Widget\AnimationMeshWidget.h" />
-    <ClInclude Include="Widget\GameObjectWidget.h" />
-    <ClInclude Include="Widget\LightComponentWidget.h" />
-    <ClInclude Include="Widget\ObjectComponentWidget.h" />
-    <ClInclude Include="Widget\ParticleComponentWidget.h" />
-    <ClInclude Include="Widget\SceneComponentWidget.h" />
-    <ClInclude Include="Widget\StaticMeshComponentWidget.h" />
-    <ClInclude Include="Widget\TransformWidget.h" />
-    <ClInclude Include="Window\AnimationEditor.h" />
-    <ClInclude Include="Thread\FBXConvertThread.h" />
-    <ClInclude Include="Window\BehaviorTreeMenuBar.h" />
-    <ClInclude Include="Window\BehaviorTreeWindow.h" />
-    <ClInclude Include="Window\EffectEditor.h" />
-    <ClInclude Include="Window\FBXConvertWindow.h" />
-    <ClInclude Include="Window\FileBrowser.h" />
-    <ClInclude Include="Window\FileBrowserTree.h" />
-    <ClInclude Include="Window\InspectorWindow.h" />
-    <ClInclude Include="Window\ObjectComponentCreateModal.h" />
-    <ClInclude Include="Window\ObjectComponentWindow.h" />
-    <ClInclude Include="Window\ObjectCreateModal.h" />
-    <ClInclude Include="Window\ObjectHierarchyWindow.h" />
-    <ClInclude Include="Window\SceneComponentCreateModal.h" />
-    <ClInclude Include="Window\SceneComponentHierarchyWindow.h" />
-    <ClInclude Include="Window\ToolWindow.h" />
-    <ClInclude Include="Object\Sample3DParticle.h" />
+    <ClCompile Include="EditorManager.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene\DefaultScene.cpp">
+      <Filter>01. Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Thread\FBXConvertThread.cpp">
+      <Filter>04. Thread\01. FBXConvert</Filter>
+    </ClCompile>
+    <ClCompile Include="Window\FileBrowser.cpp">
+      <Filter>02. Editor\01. Window</Filter>
+    </ClCompile>
+    <ClCompile Include="Window\ObjectHierarchyWindow.cpp">
+      <Filter>02. Editor\01. Window</Filter>
+    </ClCompile>
+    <ClCompile Include="Window\FBXConvertWindow.cpp">
+      <Filter>02. Editor\01. Window</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorUtil.cpp">
+      <Filter>02. Editor\99. Util</Filter>
+    </ClCompile>
+    <ClCompile Include="Window\AnimationEditor.cpp">
+      <Filter>02. Editor\01. Window</Filter>
+    </ClCompile>
+    <ClCompile Include="Widget\GameObjectWidget.cpp">
+      <Filter>02. Editor\02. Widget\01. Inspector</Filter>
+    </ClCompile>
+    <ClCompile Include="Window\ObjectComponentWindow.cpp">
+      <Filter>02. Editor\01. Window</Filter>
+    </ClCompile>
+    <ClCompile Include="Window\SceneComponentHierarchyWindow.cpp">
+      <Filter>02. Editor\01. Window</Filter>
+    </ClCompile>
+    <ClCompile Include="Window\FileBrowserTree.cpp">
+      <Filter>02. Editor\01. Window</Filter>
+    </ClCompile>
+    <ClCompile Include="Window\ObjectComponentCreateModal.cpp">
+      <Filter>02. Editor\02. Widget\02. Hierarchy</Filter>
+    </ClCompile>
+    <ClCompile Include="Window\ObjectCreateModal.cpp">
+      <Filter>02. Editor\02. Widget\02. Hierarchy</Filter>
+    </ClCompile>
+    <ClCompile Include="Window\SceneComponentCreateModal.cpp">
+      <Filter>02. Editor\02. Widget\02. Hierarchy</Filter>
+    </ClCompile>
+    <ClCompile Include="Window\InspectorWindow.cpp">
+      <Filter>02. Editor\01. Window</Filter>
+    </ClCompile>
+    <ClCompile Include="Widget\ObjectComponentWidget.cpp">
+      <Filter>02. Editor\02. Widget\01. Inspector\02. ObjectComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Widget\SceneComponentWidget.cpp">
+      <Filter>02. Editor\02. Widget\01. Inspector\01. SceneComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Widget\StaticMeshComponentWidget.cpp">
+      <Filter>02. Editor\02. Widget\01. Inspector\01. SceneComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Widget\TransformWidget.cpp">
+      <Filter>02. Editor\02. Widget\01. Inspector\01. SceneComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Widget\AnimationMeshWidget.cpp">
+      <Filter>02. Editor\02. Widget\01. Inspector\01. SceneComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Widget\LightComponentWidget.cpp">
+      <Filter>02. Editor\02. Widget\01. Inspector\01. SceneComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\Anim3DObject.cpp">
+      <Filter>03. Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Window\EffectEditor.cpp">
+      <Filter>02. Editor\01. Window</Filter>
+    </ClCompile>
+    <ClCompile Include="Widget\ParticleComponentWidget.cpp">
+      <Filter>02. Editor\02. Widget\01. Inspector\01. SceneComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\DragObject.cpp">
+      <Filter>03. Object\01 .2D</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\Player2D.cpp">
+      <Filter>03. Object\01 .2D</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\SpriteEditObject.cpp">
+      <Filter>03. Object\01 .2D</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\3DCameraObject.cpp">
+      <Filter>03. Object\02. 3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Window\ToolWindow.cpp">
+      <Filter>02. Editor\01. Window</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\3DParticleCamera.cpp">
+      <Filter>03. Object\02. 3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Window\BehaviorTreeMenuBar.cpp">
+      <Filter>02. Editor\01. Window</Filter>
+    </ClCompile>
+    <ClCompile Include="Window\BehaviorTreeWindow.cpp">
+      <Filter>02. Editor\01. Window</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphEditor.cpp">
+      <Filter>02. Editor\01. Window</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="Editor.rc" />
+    <ClInclude Include="EditorManager.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\DefaultScene.h">
+      <Filter>01. Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorInfo.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Thread\FBXConvertThread.h">
+      <Filter>04. Thread\01. FBXConvert</Filter>
+    </ClInclude>
+    <ClInclude Include="Window\FileBrowser.h">
+      <Filter>02. Editor\01. Window</Filter>
+    </ClInclude>
+    <ClInclude Include="Window\ObjectHierarchyWindow.h">
+      <Filter>02. Editor\01. Window</Filter>
+    </ClInclude>
+    <ClInclude Include="Window\FBXConvertWindow.h">
+      <Filter>02. Editor\01. Window</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorUtil.h">
+      <Filter>02. Editor\99. Util</Filter>
+    </ClInclude>
+    <ClInclude Include="Window\AnimationEditor.h">
+      <Filter>02. Editor\01. Window</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Widget\GameObjectWidget.h">
+      <Filter>02. Editor\02. Widget\01. Inspector</Filter>
+    </ClInclude>
+    <ClInclude Include="Window\ObjectComponentWindow.h">
+      <Filter>02. Editor\01. Window</Filter>
+    </ClInclude>
+    <ClInclude Include="Window\SceneComponentHierarchyWindow.h">
+      <Filter>02. Editor\01. Window</Filter>
+    </ClInclude>
+    <ClInclude Include="Window\FileBrowserTree.h">
+      <Filter>02. Editor\01. Window</Filter>
+    </ClInclude>
+    <ClInclude Include="Window\ObjectComponentCreateModal.h">
+      <Filter>02. Editor\02. Widget\02. Hierarchy</Filter>
+    </ClInclude>
+    <ClInclude Include="Window\ObjectCreateModal.h">
+      <Filter>02. Editor\02. Widget\02. Hierarchy</Filter>
+    </ClInclude>
+    <ClInclude Include="Window\SceneComponentCreateModal.h">
+      <Filter>02. Editor\02. Widget\02. Hierarchy</Filter>
+    </ClInclude>
+    <ClInclude Include="Window\InspectorWindow.h">
+      <Filter>02. Editor\01. Window</Filter>
+    </ClInclude>
+    <ClInclude Include="Widget\ObjectComponentWidget.h">
+      <Filter>02. Editor\02. Widget\01. Inspector\02. ObjectComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Widget\SceneComponentWidget.h">
+      <Filter>02. Editor\02. Widget\01. Inspector\01. SceneComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Widget\StaticMeshComponentWidget.h">
+      <Filter>02. Editor\02. Widget\01. Inspector\01. SceneComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Widget\TransformWidget.h">
+      <Filter>02. Editor\02. Widget\01. Inspector\01. SceneComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Widget\AnimationMeshWidget.h">
+      <Filter>02. Editor\02. Widget\01. Inspector\01. SceneComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Widget\LightComponentWidget.h">
+      <Filter>02. Editor\02. Widget\01. Inspector\01. SceneComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\Anim3DObject.h">
+      <Filter>03. Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Window\EffectEditor.h">
+      <Filter>02. Editor\01. Window</Filter>
+    </ClInclude>
+    <ClInclude Include="Widget\ParticleComponentWidget.h">
+      <Filter>02. Editor\02. Widget\01. Inspector\01. SceneComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\DragObject.h">
+      <Filter>03. Object\01 .2D</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\Player2D.h">
+      <Filter>03. Object\01 .2D</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\SpriteEditObject.h">
+      <Filter>03. Object\01 .2D</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\3DCameraObject.h">
+      <Filter>03. Object\02. 3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Window\ToolWindow.h">
+      <Filter>02. Editor\01. Window</Filter>
+    </ClInclude>
+    <ClInclude Include="Window\BehaviorTreeMenuBar.h">
+      <Filter>02. Editor\01. Window</Filter>
+    </ClInclude>
+    <ClInclude Include="Window\BehaviorTreeWindow.h">
+      <Filter>02. Editor\01. Window</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphEditor.h">
+      <Filter>02. Editor\01. Window</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\3DParticleCamera.h">
+      <Filter>03. Object\02. 3D</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="icon1.ico" />
+    <ResourceCompile Include="Editor.rc">
+      <Filter>리소스 파일</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="icon1.ico">
+      <Filter>리소스 파일</Filter>
+    </Image>
   </ItemGroup>
 </Project>

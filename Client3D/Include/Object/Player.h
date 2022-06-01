@@ -23,8 +23,6 @@ private:
     class CPlayerAnimation* m_Animation;
     CSharedPtr<class CWeapon>   m_Weapon;
 
-    bool m_Stop;
-
 public:
     virtual bool Init();
     virtual void Update(float DeltaTime);

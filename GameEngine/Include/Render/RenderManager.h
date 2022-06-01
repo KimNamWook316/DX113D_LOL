@@ -96,7 +96,9 @@ private:
 	CSharedPtr<CRenderTarget>	m_AnimEditorRenderTarget; // Skinning 처리 이후, 해당 출력을, 별도의 RenderTarget 에 그려낸다.
 
 	// Particle Editor
-	// CSharedPtr<CRenderTarget>	m_ParticleEffectEditorRenderTarget; // Skinning 처리 이후, 해당 출력을, 별도의 RenderTarget 에 그려낸다.
+	CSharedPtr<class CShader> m_ParticleShader; // m_AnimEditorRenderTarget 에 그려내기 위한 Shader 
+	CSharedPtr<CRenderTarget>	m_ParticleEffectEditorRenderTarget; // Skinning 처리 이후, 해당 출력을, 별도의 RenderTarget 에 그려낸다.
+
 public:
 	class CStandard2DConstantBuffer* GetStandard2DCBuffer()	const
 	{
@@ -106,10 +108,10 @@ public:
 	{
 		return m_AnimEditorRenderTarget;
 	}
-	// CRenderTarget* GetParticleEffectRenderTarget() const
-	// {
-	// 	return m_ParticleEffectEditorRenderTarget;
-	// }
+	CRenderTarget* GetParticleEffectRenderTarget() const
+	{
+		return m_ParticleEffectEditorRenderTarget;
+	}
 public:
 	void SetObjectList(const std::list<CSharedPtr<class CGameObject>>* List)
 	{
@@ -130,8 +132,7 @@ private:
 	void RenderLightBlend();
 	void RenderFinalScreen();
 	void RenderAnimationEditor();
-	// void RenderParticleEffectEditor();
-	// 
+	void RenderParticleEffectEditor();
 	// Render State
 public:
 	void SetBlendFactor(const std::string& Name, float r, float g, float b, float a);

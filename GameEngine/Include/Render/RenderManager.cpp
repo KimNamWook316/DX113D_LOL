@@ -442,7 +442,6 @@ void CRenderManager::Render()
 	RenderAnimationEditor();
 
 	// Particle Effect Editor 제작용 Render Target
-	// RenderParticleEffectEditor();
 
 	m_vecGBuffer[2]->SetShader(10, (int)Buffer_Shader_Type::Pixel, 0);
 
@@ -817,6 +816,34 @@ void CRenderManager::RenderAnimationEditor()
 	m_AnimEditorRenderTarget->ResetTarget();
  }
 
+void CRenderManager::RenderParticleEffectEditor()
+{
+	int ParticleEffectEditorLayerIdx = GetRenderLayerIndex("ParticleEffectRenderTarget");
+
+	// 만~약에 해당 Layer 의 Idx 가 정해져 있지 않다면
+	if (ParticleEffectEditorLayerIdx == -1)
+		return;
+
+	// Animation Edtior 상에서 Animation Editor 제작 중이지 않다면
+	if (m_RenderLayerList[ParticleEffectEditorLayerIdx]->RenderList.size() <= 0)
+		return;
+
+	// Render Target 교체
+	m_ParticleEffectEditorRenderTarget->ClearTarget();
+
+	m_ParticleEffectEditorRenderTarget->SetTarget(nullptr);
+
+	auto iter = m_RenderLayerList[ParticleEffectEditorLayerIdx]->RenderList.begin();
+	auto iterEnd = m_RenderLayerList[ParticleEffectEditorLayerIdx]->RenderList.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		(*iter)->RenderParticleEffectEditor();
+	}
+
+
+	m_ParticleEffectEditorRenderTarget->ResetTarget();
+}
 
 void CRenderManager::SetBlendFactor(const std::string& Name, float r, float g,
 	float b, float a)
@@ -964,13 +991,16 @@ void CRenderManager::RenderDefaultInstancing()
 
 			m_RenderLayerList[1]->m_vecInstancing[i]->Mesh->RenderInstancing((int)vecInfo.size(), j);
 
+
 			m_RenderLayerList[1]->m_vecInstancing[i]->Buffer->ResetShader();
+
 
 
 			if (m_RenderLayerList[1]->m_vecInstancing[i]->Animation)
 			{
 				((CAnimationMesh*)m_RenderLayerList[1]->m_vecInstancing[i]->Mesh)->ResetBoneShader();
 			}
+
 
 			if (Material)
 				Material->Reset();

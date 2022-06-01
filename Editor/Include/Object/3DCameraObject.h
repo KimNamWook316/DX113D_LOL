@@ -21,7 +21,6 @@ private:
 	void OnDragRotate(float DeltaTime);
 	void OnZoomIn(float DetlaTime);
 	void OnZoomOut(float DetlaTime);
-public :
 
 private:
 	CSharedPtr<class CSceneComponent> m_FocusPoint;

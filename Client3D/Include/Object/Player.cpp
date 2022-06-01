@@ -94,7 +94,7 @@ void CPlayer::Update(float DeltaTime)
 	if (CInput::GetInst()->GetWheelDir())
 	{
 		float Length = m_Arm->GetTargetDistance() +
-			CInput::GetInst()->GetWheelDir() * 0.5f;
+			CInput::GetInst()->GetWheelDir() * 0.1f;
 
 		m_Arm->SetTargetDistance(Length);
 	}

@@ -5,11 +5,14 @@
 #include "IMGUIInputFloat3.h"
 #include "IMGUIText.h"
 #include "IMGUIButton.h"
+#include "../EditorInfo.h"
+#include "../EditorUtil.h"
 #include "IMGUICheckBox.h"
 #include "IMGUISameLine.h"
 #include "IMGUISeperator.h"
 #include "IMGUIImage.h"
 #include "IMGUISliderFloat.h"
+#include "../Window/ObjectHierarchyWindow.h"
 #include "IMGUIManager.h"
 #include "IMGUIColor3.h"
 #include "IMGUIColor4.h"
@@ -24,6 +27,7 @@
 #include "PathManager.h"
 #include "Scene/Scene.h"
 #include "Scene/SceneManager.h"
+#include "../Object/3DParticleCamera.h"
 #include "Render/RenderManager.h"
 #include "Component/ParticleComponent.h"
 #include "Component/SceneComponent.h"
@@ -50,6 +54,12 @@ bool CParticleComponentWidget::Init()
 
     // AddWidget
     m_ComponentTypeText->SetText("Particle Component");
+
+    // Material , Particle 세팅
+    OnSetParticleMaterialSetting(m_Component);
+
+    // Camera 세팅
+    // OnSetCameraSetting();
 
     // 최상위 트리
     CIMGUITree* m_RootTree = AddWidget<CIMGUITree>("Particle Variables");
@@ -104,6 +114,13 @@ bool CParticleComponentWidget::Init()
     m_ColorMaxEdit = m_RootTree->AddWidget<CIMGUIColor4>("Color Max", 200.f);
     m_ColorMaxEdit->SetCallBack(this, &CParticleComponentWidget::OnColorMaxEdit);
 
+    m_IsMoveEdit = m_RootTree->AddWidget<CIMGUICheckBox>("Move", 100.f);
+    m_IsMoveEdit->AddCheckInfo("Move");
+    m_IsMoveEdit->SetCallBackLabel<CParticleComponentWidget>(this, &CParticleComponentWidget::OnIsMoveEdit);
+
+    m_IsGravityEdit = m_RootTree->AddWidget<CIMGUICheckBox>("Gravity", 100.f);
+    m_IsGravityEdit->AddCheckInfo("Gravity");
+    m_IsGravityEdit->SetCallBackLabel<CParticleComponentWidget>(this, &CParticleComponentWidget::OnIsGravityEdit);
     // m_Is3DEdit = m_RootTree->AddWidget<CIMGUICheckBox>("Load", 200.f);
 
     m_MoveDirEdit = m_RootTree->AddWidget<CIMGUIInputFloat3>("Move Dir", 200.f);
@@ -148,7 +165,7 @@ void CParticleComponentWidget::SetSceneComponent(CSceneComponent* Com)
 void CParticleComponentWidget::OnSaveParticleObjectButton()
 {
 }
-
+   
 void CParticleComponentWidget::OnLoadParticleObjectButton()
 {
 }
@@ -295,6 +312,7 @@ void CParticleComponentWidget::OnSetParticleMaterialSetting(CSceneComponent* Com
     Material->AddTexture(0, (int)Buffer_Shader_Type::Pixel, "Bubble", TEXT("Particle/Bubbles99px.png"));
     Material->SetShader("ParticleRenderShader");
     Material->SetRenderState("AlphaBlend");
+    Material->AddTexture(0, (int)Buffer_Shader_Type::Pixel, "Bubble", TEXT("Particle/Bubbles99px.png"));
 
     // 2) Particle 제작
     CSceneManager::GetInst()->GetScene()->GetResource()->CreateParticle("BasicParticle");

@@ -39,13 +39,14 @@ bool CMainSceneMode::Init()
 
 	SetPlayerObject(Player);
 
+
 	CLandScapeObj* LandScape = m_Scene->CreateGameObject<CLandScapeObj>("LandScape");
 
 	CDecalObj* Decal = m_Scene->CreateGameObject<CDecalObj>("Decal");
 
 	CPortal* Portal = m_Scene->CreateGameObject<CPortal>("Portal");
 
-	for (int i = 0; i < 1; ++i)
+	for (int i = 0; i < 30; ++i)
 	{
 		CBonObj* BonObj = m_Scene->CreateGameObject<CBonObj>("BonObj");
 
@@ -86,6 +87,7 @@ void CMainSceneMode::LoadMesh()
 	m_Scene->GetResource()->LoadMesh(Mesh_Type::Animation, "PlayerMesh",
 		TEXT("Player_Default.msh"));
 
+
 	m_Scene->GetResource()->LoadMesh(Mesh_Type::Static, "Blade",
 		TEXT("Blade.FBX"));
 
@@ -109,18 +111,18 @@ void CMainSceneMode::LoadMesh()
 
 	m_Scene->GetResource()->LoadSkeleton("PlayerSkeleton",
 		TEXT("Player_Default.bne"), MESH_PATH);
-	
+
 	m_Scene->GetResource()->AddSocket("PlayerSkeleton", "bone11",
 		"Weapon");
-	
+
 	m_Scene->GetResource()->SetMeshSkeleton("PlayerMesh", "PlayerSkeleton");
-	
+
 	m_Scene->GetResource()->LoadAnimationSequence(true, "PlayerIdle",
 		TEXT("Player_Default.sqc"), MESH_PATH);
-	
+
 	m_Scene->GetResource()->LoadAnimationSequence(false, "PlayerAttack",
-		TEXT("Player_Default.sqc"), MESH_PATH);
-	
+		TEXT("PlayerAttack.sqc"), MESH_PATH);
+
 	m_Scene->GetResource()->LoadAnimationSequence(true, "PlayerWalk",
 		TEXT("PlayerWalk.sqc"), MESH_PATH);
 

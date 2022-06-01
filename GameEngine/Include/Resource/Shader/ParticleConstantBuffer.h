@@ -3,7 +3,7 @@
 #include "ConstantBufferBase.h"
 
 class CParticleConstantBuffer :
-	public CConstantBufferBase
+    public CConstantBufferBase
 {
 public:
 	CParticleConstantBuffer();

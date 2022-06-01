@@ -217,7 +217,7 @@ PSOutput_GBuffer Standard3DPS(Vertex3DOutput input)
     if (g_MtrlSpecularTex)
         SpecularColor = g_SpecularTexture.Sample(g_BaseSmp, input.UV).xxxx;
 	
-    // SpecularColor = float4(1.0f, 1.0f, 1.0f, 1.f);
+    SpecularColor = float4(0.5f, 0.5f, 0.5f, 1.f);
     
     output.GBuffer3.b = ConvertColor(SpecularColor);
     
@@ -235,39 +235,40 @@ PSOutput_GBuffer Standard3DPS(Vertex3DOutput input)
 SkinningInfo SkinningInstancing(float3 Pos, float3 Normal, float3 Tangent, float3 Binormal,
     float4 BlendWeight, float4 BlendIndex, uint InstanceID)
 {
-    SkinningInfo Info = (SkinningInfo)0;
-
-    if (g_InstancingInfoArray[InstanceID].g_MtrlAnimation3DEnable == 0)
-    {
-        Info.Pos = Pos;
-        Info.Normal = Normal;
-        Info.Tangent = Tangent;
-        Info.Binormal = Binormal;
-
-        return Info;
-    }
-
-    for (int i = 0; i < 4; ++i)
-    {
-        if (BlendWeight[i] == 0.f)
-            continue;
-
-        matrix matBone = g_SkinningBoneMatrixArray[(InstanceID * g_InstancingBoneCount) + (int)BlendIndex[i]];
-
-        Info.Pos += (mul(float4(Pos, 1.f), matBone) * BlendWeight[i]).xyz;
-        Info.Normal += (mul(float4(Normal, 0.f), matBone) * BlendWeight[i]).xyz;
-        Info.Tangent += (mul(float4(Tangent, 0.f), matBone) * BlendWeight[i]).xyz;
-        Info.Binormal += (mul(float4(Binormal, 0.f), matBone) * BlendWeight[i]).xyz;
-    }
-
-    Info.Normal = normalize(Info.Normal);
-    Info.Tangent = normalize(Info.Tangent);
-    Info.Binormal = normalize(Info.Binormal);
-
-
-    return Info;
+	SkinningInfo Info = (SkinningInfo) 0;
+    
+	if (g_InstancingInfoArray[InstanceID].g_MtrlAnimation3DEnable == 0)
+	{
+		Info.Pos = Pos;
+		Info.Normal = Normal;
+		Info.Tangent = Tangent;
+		Info.Binormal = Binormal;
+        
+		return Info;
+	}
+    
+	for (int i = 0; i < 4; ++i)
+	{
+		if (BlendWeight[i] == 0.f)
+			continue;
+        
+		matrix matBone = g_SkinningBoneMatrixArray[(InstanceID * g_InstancingBoneCount) + (int) BlendIndex[i]];
+        
+		Info.Pos += (mul(float4(Pos, 1.f), matBone) * BlendWeight[i]).xyz;
+		Info.Normal += (mul(float4(Normal, 0.f), matBone) * BlendWeight[i]).xyz;
+		Info.Tangent += (mul(float4(Tangent, 0.f), matBone) * BlendWeight[i]).xyz;
+		Info.Binormal += (mul(float4(Binormal, 0.f), matBone) * BlendWeight[i]).xyz;
+	}
+    
+	Info.Normal = normalize(Info.Normal);
+	Info.Tangent = normalize(Info.Tangent);
+	Info.Binormal = normalize(Info.Binormal);
+    
+    
+	return Info;
 
 }
+
 // Instancing
 Vertex3DOutputInstancing Standard3DInstancingVS(Vertex3DInstancing input)
 {
