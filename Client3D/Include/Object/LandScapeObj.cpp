@@ -71,7 +71,7 @@ void CLandScapeObj::TerrainPicking()
 		Vector3 RayDir = ray.Dir;
 		Vector3 RayStartPos = ray.Pos;
 
-		float Step = 0.1f;
+		float Step = 0.05f;
 
 		while (true)
 		{
@@ -94,10 +94,16 @@ void CLandScapeObj::TerrainPicking()
 			}
 
 			// LandScape 밖에 클릭하면 피킹 지점 찾지 않도록 예외 처리
-			else if (Point_I1.x > m_LandScape->GetMax().x || Point_I1.x < m_LandScape->GetMin().x)
+			if (Point_I1.x < m_LandScape->GetMin().x && ray.Dir.x <= 0.f)
 				return;
 
-			else if (Point_I1.z > m_LandScape->GetMax().z || Point_I1.x < m_LandScape->GetMin().z)
+			if (Point_I1.z < m_LandScape->GetMin().z && ray.Dir.z <= 0.f)
+				return;
+
+			if (Point_I1.x > m_LandScape->GetMax().x && ray.Dir.x >= 0.f)
+				return;
+
+			if (Point_I1.z > m_LandScape->GetMax().z && ray.Dir.z >= 0.f)
 				return;
 
 			else
