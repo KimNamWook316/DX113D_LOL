@@ -2,6 +2,7 @@
 #include "../Component/ColliderBox2D.h"
 #include "../Component/ColliderCircle.h"
 #include "../Component/ColliderPixel.h"
+#include "../Component/ColliderBox3D.h"
 
 bool CCollision::CollisionBox2DToBox2D(CColliderBox2D* Src, CColliderBox2D* Dest)
 {
@@ -104,6 +105,30 @@ bool CCollision::CollisionCircleToPixel(CColliderCircle* Src, CColliderPixel* De
 
 		return true;
 	}
+
+	return false;
+}
+
+bool CCollision::CollisionBox3DToBox3D(CColliderBox3D* Src, CColliderBox3D* Dest)
+{
+	CollisionResult	srcResult, destResult;
+
+	if (CollisionBox3DToBox3D(srcResult, destResult, Src->GetInfo(), Dest->GetInfo()))
+	{
+		srcResult.Src = Src;
+		srcResult.Dest = Dest;
+
+		destResult.Src = Dest;
+		destResult.Dest = Src;
+
+		Src->m_Result = srcResult;
+		Dest->m_Result = destResult;
+
+
+		return true;
+	}
+
+
 
 	return false;
 }
@@ -468,6 +493,209 @@ bool CCollision::CollisionPixelToPoint(CollisionResult& SrcResult, CollisionResu
 	return Result;
 }
 
+bool CCollision::CollisionBox3DToBox3D(CollisionResult& SrcResult, CollisionResult& DestResult, const Box3DInfo& boundingBox, const Box3DInfo& targetBox)
+{
+	double c[3][3];
+	double absC[3][3];
+	double d[3];
+	double r0, r1, r;
+	int i;
+	const double cutoff = 0.999999;
+	bool existsParallelPair = false;
+	Vector3 diff = boundingBox.Center - targetBox.Center;
+
+	// 분리축 : Src의 x축
+	for (i = 0; i < 3; ++i)
+	{
+		c[0][i] = boundingBox.Axis[0].Dot(targetBox.Axis[i]);
+
+		absC[0][i] = abs(c[0][i]);
+
+		if (absC[0][i] > cutoff)
+			existsParallelPair = true;
+	}
+
+	d[0] = diff.Dot(targetBox.Axis[0]);
+
+	r = abs(d[0]);
+	r0 = targetBox.AxisLen[0];
+	r1 = targetBox.AxisLen[0] * absC[0][0] + targetBox.AxisLen[1] * absC[0][1] + targetBox.AxisLen[2] * absC[0][2];
+
+	if (r > r0 + r1)
+	{
+		return false;
+	}
+
+	// 분리축 : Src의 y축
+	for (i = 0; i < 3; ++i)
+	{
+		c[1][i] = boundingBox.Axis[1].Dot(targetBox.Axis[i]);
+
+		absC[1][i] = abs(c[1][i]);
+		if (absC[1][i] > cutoff)
+			existsParallelPair = true;
+	}
+
+	d[1] = diff.Dot(targetBox.Axis[1]);
+
+	r = abs(d[1]);
+	r0 = boundingBox.AxisLen[1];
+	r1 = targetBox.AxisLen[0] * absC[1][0] + targetBox.AxisLen[1] * absC[1][1] + targetBox.AxisLen[2] * absC[1][2];
+
+	if (r > r0 + r1)
+	{
+		return false;
+	}
+
+	// 분리축 : Src의 z축
+	for (i = 0; i < 3; ++i)
+	{
+		c[2][i] = boundingBox.Axis[2].Dot(targetBox.Axis[i]);
+		absC[2][i] = abs(c[2][i]);
+		if (absC[2][i] > cutoff)
+			existsParallelPair = true;
+	}
+
+	d[2] = diff.Dot(boundingBox.Axis[2]);
+
+	r = abs(d[2]);
+	r0 = boundingBox.AxisLen[2];
+	r1 = targetBox.AxisLen[0] * absC[2][0] + targetBox.AxisLen[1] * absC[2][1] + targetBox.AxisLen[2] * absC[2][2];
+
+	if (r > r0 + r1)
+	{
+		return false;
+	}
+
+	// 분리축 : Dest의 x축
+	r = abs(diff.Dot(targetBox.Axis[0]));
+	r0 = boundingBox.AxisLen[0] * absC[0][0] + boundingBox.AxisLen[1] * absC[1][0] + boundingBox.AxisLen[2] * absC[2][0];
+	r1 = targetBox.AxisLen[0];
+
+	if (r > r0 + r1)
+	{
+		return false;
+	}
+
+	// 분리축 : Dest의 y축
+	r = abs(diff.Dot(targetBox.Axis[1]));
+	r0 = boundingBox.AxisLen[0] * absC[0][1] + boundingBox.AxisLen[1] * absC[1][1] + boundingBox.AxisLen[2] * absC[2][1];
+	r1 = targetBox.AxisLen[1];
+
+	if (r > r0 + r1)
+	{
+		return false;
+	}
+
+	// 분리축 : Dest의 z축
+	r = abs(diff.Dot(targetBox.Axis[2]));
+	r0 = boundingBox.AxisLen[0] * absC[0][2] + boundingBox.AxisLen[1] * absC[1][2] + boundingBox.AxisLen[2] * absC[2][2];
+	r1 = targetBox.AxisLen[2];
+
+	if (r > r0 + r1)
+	{
+		return false;
+	}
+
+	if (existsParallelPair == true)
+	{
+		return true;
+	}
+
+
+	// 분리축 : Cross(Src x축, Dest x축)
+	r = abs(d[2] * c[1][0] - d[1] * c[2][0]);
+	r0 = boundingBox.AxisLen[1] * absC[2][0] + boundingBox.AxisLen[2] * absC[1][0];
+	r1 = targetBox.AxisLen[1] * absC[0][2] + targetBox.AxisLen[2] * absC[0][1];
+
+	if (r > r0 + r1)
+	{
+		return false;
+	}
+
+	// 분리축 : Cross(Src x축, Dest y축)
+	r = abs(d[2] * c[1][1] - d[1] * c[2][1]);
+	r0 = boundingBox.AxisLen[1] * absC[2][1] + boundingBox.AxisLen[2] * absC[1][1];
+	r1 = targetBox.AxisLen[0] * absC[0][2] + targetBox.AxisLen[2] * absC[0][0];
+
+	if (r > r0 + r1)
+	{
+		return false;
+	}
+
+	// 분리축 : Cross(Src x축, Dest z축)
+	r = abs(d[2] * c[1][2] - d[1] * c[2][2]);
+	r0 = boundingBox.AxisLen[1] * absC[2][2] + boundingBox.AxisLen[2] * absC[1][2];
+	r1 = targetBox.AxisLen[0] * absC[0][1] + targetBox.AxisLen[1] * absC[0][0];
+
+	if (r > r0 + r1)
+	{
+		return false;
+	}
+
+	// 분리축 : Cross(Src y축 , Dest x축)
+	r = abs(d[0] * c[2][0] - d[2] * c[0][0]);
+	r0 = boundingBox.AxisLen[0] * absC[2][0] + boundingBox.AxisLen[2] * absC[0][0];
+	r1 = targetBox.AxisLen[1] * absC[1][2] + targetBox.AxisLen[2] * absC[1][1];
+
+	if (r > r0 + r1)
+	{
+		return false;
+	}
+
+	// 분리축 : Cross(Src y축 , Dest y축)
+	r = abs(d[0] * c[2][1] - d[2] * c[0][1]);
+	r0 = boundingBox.AxisLen[0] * absC[2][1] + boundingBox.AxisLen[2] * absC[0][1];
+	r1 = targetBox.AxisLen[0] * absC[1][2] + targetBox.AxisLen[2] * absC[1][0];
+
+	if (r > r0 + r1)
+	{
+		return false;
+	}
+
+	// 분리축 : Cross(Src y축 , Dest z축)
+	r = abs(d[0] * c[2][2] - d[2] * c[0][2]);
+	r0 = boundingBox.AxisLen[0] * absC[2][2] + boundingBox.AxisLen[2] * absC[0][2];
+	r1 = targetBox.AxisLen[0] * absC[1][1] + targetBox.AxisLen[1] * absC[1][0];
+
+	if (r > r0 + r1)
+	{
+		return false;
+	}
+
+	// 분리축 : Cross(Src z축 , Dest x축)
+	r = abs(d[1] * c[0][0] - d[0] * c[1][0]);
+	r0 = boundingBox.AxisLen[0] * absC[1][0] + boundingBox.AxisLen[1] * absC[0][0];
+	r1 = targetBox.AxisLen[1] * absC[2][2] + targetBox.AxisLen[2] * absC[2][1];
+
+	if (r > r0 + r1)
+	{
+		return false;
+	}
+
+	// 분리축 : Cross(Src z축 , Dest y축)
+	r = abs(d[1] * c[0][1] - d[0] * c[1][1]);
+	r0 = boundingBox.AxisLen[0] * absC[1][1] + boundingBox.AxisLen[1] * absC[0][1];
+	r1 = targetBox.AxisLen[0] * absC[2][2] + targetBox.AxisLen[2] * absC[2][0];
+
+	if (r > r0 + r1)
+	{
+		return false;
+	}
+
+	// 분리축 : Cross(Src z축 , Dest z축)
+	r = abs(d[1] * c[0][2] - d[0] * c[1][2]);
+	r0 = boundingBox.AxisLen[0] * absC[1][2] + boundingBox.AxisLen[1] * absC[0][2];
+	r1 = targetBox.AxisLen[0] * absC[2][1] + targetBox.AxisLen[1] * absC[2][0];
+
+	if (r > r0 + r1)
+	{
+		return false;
+	}
+
+	return true;
+}
+
 bool CCollision::CollisionRayToSphere(Vector3& HitPoint, const Ray& ray, const SphereInfo& Sphere)
 {
 	Vector3 M = ray.Pos - Sphere.Center;
@@ -507,4 +735,15 @@ bool CCollision::CollisionRayToSphere(Vector3& HitPoint, const Ray& ray, const S
 	HitPoint = ray.Pos + ray.Dir * Dist;
 
 	return true;
+}
+
+bool CCollision::CollisionRayToBox3D(Vector3& HitPoint, const Ray& ray, const Box3DInfo& Box)
+{
+	return false;
+}
+
+
+bool CCollision::CollisionBox3DToSphere(Vector3& HitPoint, const Box3DInfo& Box, const SphereInfo& Sphere)
+{
+	return false;
 }

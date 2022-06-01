@@ -22,6 +22,7 @@ private:
     Vector3     m_Velocity;
     class CPlayerAnimation* m_Animation;
     CSharedPtr<class CWeapon>   m_Weapon;
+    class CColliderBox3D* m_Body;
 
 public:
     virtual bool Init();

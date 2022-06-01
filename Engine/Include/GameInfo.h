@@ -286,6 +286,15 @@ struct Box2DInfo
 	Vector2	Max;
 };
 
+struct Box3DInfo
+{
+	Vector3 Center;
+	Vector3	Axis[3];
+	float	AxisLen[3];
+	Vector3	Min;
+	Vector3	Max;
+};
+
 struct CircleInfo
 {
 	Vector2	Center;

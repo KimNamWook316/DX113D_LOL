@@ -948,6 +948,9 @@
     <ClCompile Include="Component\Node\InputWCheckNode.cpp">
       <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node</Filter>
     </ClCompile>
+    <ClCompile Include="Component\ColliderBox3D.cpp">
+      <Filter>05. Component\01. SceneComponent\02. Collider</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Device.h">
@@ -1627,6 +1630,9 @@
     </ClInclude>
     <ClInclude Include="Component\Node\InputWCheckNode.h">
       <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\ColliderBox3D.h">
+      <Filter>05. Component\01. SceneComponent\02. Collider</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

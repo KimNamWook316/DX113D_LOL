@@ -6,8 +6,8 @@
 #include "Scene/Navigation3DManager.h"
 #include "Weapon.h"
 #include "Component/StateComponent.h"
-
-
+#include "Component/ColliderBox3D.h"
+#include "Collision/Collision.h"
 
 CPlayer::CPlayer()
 {
@@ -31,8 +31,10 @@ bool CPlayer::Init()
 	m_Mesh = CreateComponent<CAnimationMeshComponent>("PlayerMesh");
 	m_Arm = CreateComponent<CArm>("Arm");
 	m_Camera = CreateComponent<CCameraComponent>("Camera");
+	m_Body = CreateComponent<CColliderBox3D>("Body");
 
 	m_Mesh->AddChild(m_Arm);
+
 
 	m_Arm->AddChild(m_Camera);
 
@@ -55,19 +57,20 @@ bool CPlayer::Init()
 	m_Arm->SetRelativeRotation(40.f, 0.f, 0.f);
 	m_Arm->SetTargetDistance(10.f);
 
-
-
 	m_Weapon = m_Scene->CreateGameObject<CWeapon>("Weapon");
 
 	m_Mesh->AddChild(m_Weapon, "Weapon");
 
 
-	// Behavior Tree Test
-	//
-	//CStateComponent* Comp = CreateComponent<CStateComponent>("PlayerStateComponent");
-	//Comp->CreateTreeNode<CSelectorNode>("Root");
-	//Comp->
-	//
+
+	// ColliderBox3D Test
+	m_Mesh->AddChild(m_Body);
+
+	m_Body->SetInheritRotX(true);
+	m_Body->SetInheritRotY(true);
+	m_Body->SetInheritRotZ(true);
+	m_Body->SetExtent(1.f, 1.f, 1.f);
+	m_Body->SetOffset(0.f, 2.f, 0.f);
 
 
 
@@ -133,6 +136,22 @@ void CPlayer::PostUpdate(float DeltaTime)
 	SetWorldPos(Pos);
 
 	m_Velocity = Vector3::Zero;
+
+
+	// Ray vs Box Test Code //
+
+	CCameraComponent* CurrentCamera = m_Scene->GetCameraManager()->GetCurrentCamera();
+	Matrix matView = CurrentCamera->GetViewMatrix();
+	Ray ray = CInput::GetInst()->GetRay(matView);
+
+	Box3DInfo Info = {};
+	Vector3 BoxWorldPos = m_Body->GetWorldPos();
+	Info.Axis[0] = m_Mesh->GetWorldAxis(AXIS::AXIS_X);
+	Info.Axis[1] = m_Mesh->GetWorldAxis(AXIS::AXIS_Y);
+	Info.Axis[2] = m_Mesh->GetWorldAxis(AXIS::AXIS_Z);
+	
+	//CCollision::CollisionRayToBox3D();
+	//////////////////////////
 }
 
 CPlayer* CPlayer::Clone()
