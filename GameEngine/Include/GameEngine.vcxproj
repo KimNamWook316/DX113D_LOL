@@ -108,6 +108,7 @@
     <ClCompile Include="IMGUIRadioButton.cpp" />
     <ClCompile Include="IMGUISameLine.cpp" />
     <ClCompile Include="IMGUISeperator.cpp" />
+    <ClCompile Include="IMGUISetRect.cpp" />
     <ClCompile Include="IMGUISliderFloat.cpp" />
     <ClCompile Include="IMGUISliderInt.cpp" />
     <ClCompile Include="IMGUITable.cpp" />
@@ -332,6 +333,7 @@
     <ClInclude Include="IMGUIRadioButton.h" />
     <ClInclude Include="IMGUISameLine.h" />
     <ClInclude Include="IMGUISeperator.h" />
+    <ClInclude Include="IMGUISetRect.h" />
     <ClInclude Include="IMGUISliderFloat.h" />
     <ClInclude Include="IMGUISliderInt.h" />
     <ClInclude Include="IMGUITable.h" />
