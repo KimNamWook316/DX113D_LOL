@@ -434,3 +434,40 @@ PSOutput_Single StandardNoLight3DPS(Vertex3DOutput input)
 
     return output;
 }
+
+PSOutput_GBuffer Standard3DWireFramePS(Vertex3DOutput input)
+{
+    PSOutput_GBuffer output = (PSOutput_GBuffer) 0;
+    
+	float4 BaseTextureColor = float4(0.f, 1.f, 0.f, 1.f);
+    
+    output.Diffuse = BaseTextureColor; // * (LightInfo.Dif + LightInfo.Amb) + LightInfo.Spc + LightInfo.Emv;
+    
+    output.GBuffer1.rgb = input.Normal;
+    output.GBuffer1.a = 1.f;
+    
+    output.GBuffer2.r = input.ProjPos.z / input.ProjPos.w;
+    output.GBuffer2.g = input.ProjPos.w;
+    output.GBuffer2.b = 1.f;
+    output.GBuffer2.a = 1.f;
+    
+	output.GBuffer3.r = float4(0.f, 1.f, 0.f, 1.f);
+	output.GBuffer3.r = float4(0.f, 1.f, 0.f, 1.f);
+    
+    output.GBuffer4.rgb = input.Tangent.xyz;
+    output.GBuffer4.a = 1.f;
+    
+    output.GBuffer5.rgb = input.Binormal.xyz;
+    output.GBuffer5.a = 1.f;
+    
+	float4 SpecularColor = float4(0.f, 1.f, 0.f, 1.f);
+	
+    output.GBuffer3.b = ConvertColor(SpecularColor);
+    
+	float4 EmissiveColor = float4(0.f, 1.f, 0.f, 1.f);
+    
+    output.GBuffer3.a = ConvertColor(EmissiveColor);
+
+    return output;
+
+}

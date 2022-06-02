@@ -60,6 +60,11 @@ void CToolWindow::SetGizmoObject(CGameObject* Object)
 	m_Gizmo->SetGameObject(Object);
 }
 
+void CToolWindow::SetGizmoComponent(CSceneComponent* SceneComp)
+{
+	m_Gizmo->SetComponent(SceneComp);
+}
+
 void CToolWindow::OnSelectGizmoOperationMode(const char* Label, bool Check)
 {
 	if (strcmp(Label, "Translation") == 0)

@@ -18,7 +18,12 @@ public:
 public:
 	void SetGameObject(class CGameObject* Object)
 	{
-		m_Object = Object;
+		m_Component = Object->GetRootComponent();
+	}
+
+	void SetComponent(class CSceneComponent* Component)
+	{
+		m_Component = Component;
 	}
 
 	void SetOperationMode(ImGuizmo::OPERATION Operation)
@@ -36,7 +41,8 @@ private:
 
 	ImGuizmo::OPERATION m_Operation;
 	ImGuizmo::MODE m_Mode;
-	class CGameObject* m_Object;
+
+	class CSceneComponent* m_Component;
 
 	bool m_Using;
 };

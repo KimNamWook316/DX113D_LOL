@@ -178,6 +178,7 @@
     <ClCompile Include="Scene\DefaultScene.cpp" />
     <ClCompile Include="Widget\AnimationMeshWidget.cpp" />
     <ClCompile Include="Widget\GameObjectWidget.cpp" />
+    <ClCompile Include="Widget\LandScapeWidget.cpp" />
     <ClCompile Include="Widget\LightComponentWidget.cpp" />
     <ClCompile Include="Widget\ObjectComponentWidget.cpp" />
     <ClCompile Include="Widget\ParticleComponentWidget.cpp" />
@@ -222,6 +223,7 @@
     <ClInclude Include="Utils.h" />
     <ClInclude Include="Widget\AnimationMeshWidget.h" />
     <ClInclude Include="Widget\GameObjectWidget.h" />
+    <ClInclude Include="Widget\LandScapeWidget.h" />
     <ClInclude Include="Widget\LightComponentWidget.h" />
     <ClInclude Include="Widget\ObjectComponentWidget.h" />
     <ClInclude Include="Widget\ParticleComponentWidget.h" />

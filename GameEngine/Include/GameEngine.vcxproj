@@ -196,6 +196,7 @@
     <ClCompile Include="Resource\Shader\Standard2DConstantBuffer.cpp" />
     <ClCompile Include="Resource\Shader\Standard3DInstancingShader.cpp" />
     <ClCompile Include="Resource\Shader\Standard3DShader.cpp" />
+    <ClCompile Include="Resource\Shader\Standard3DWireFrameShader.cpp" />
     <ClCompile Include="Resource\Shader\StructuredBuffer.cpp" />
     <ClCompile Include="Resource\Shader\TileMapConstantBuffer.cpp" />
     <ClCompile Include="Resource\Shader\TileMapShader.cpp" />
@@ -419,6 +420,7 @@
     <ClInclude Include="Resource\Shader\Standard2DConstantBuffer.h" />
     <ClInclude Include="Resource\Shader\Standard3DInstancingShader.h" />
     <ClInclude Include="Resource\Shader\Standard3DShader.h" />
+    <ClInclude Include="Resource\Shader\Standard3DWireFrameShader.h" />
     <ClInclude Include="Resource\Shader\StructuredBuffer.h" />
     <ClInclude Include="Resource\Shader\TileMapConstantBuffer.h" />
     <ClInclude Include="Resource\Shader\TileMapShader.h" />

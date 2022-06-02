@@ -60,6 +60,7 @@ public:	// =================== Mesh =====================
 	bool SetMeshSkeleton(const std::string& Name, class CSkeleton* Skeleton);
 
 	CMesh* FindMesh(const std::string& Name);
+	void ReleaseMesh(const std::string& Name);
 
 
 public:	// =================== Shader =====================

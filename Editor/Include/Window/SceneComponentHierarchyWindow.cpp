@@ -12,6 +12,7 @@
 #include "SceneComponentCreateModal.h"
 #include "IMGUIManager.h"
 #include "ObjectHierarchyWindow.h"
+#include "ToolWindow.h"
 #include "Scene/SceneManager.h"
 
 CSceneComponentHierarchyWindow::CSceneComponentHierarchyWindow() :
@@ -254,6 +255,14 @@ void CSceneComponentHierarchyWindow::OnClearComponents(const std::string& RootCo
 void CSceneComponentHierarchyWindow::OnSetSelectNode(CIMGUITree* Tree)
 {
 	m_SelectNode = Tree;
+
+	// Gizmo 현재 선택된 컴포넌트 업데이트
+	CObjectHierarchyWindow* Window = (CObjectHierarchyWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(OBJECT_HIERARCHY);
+	std::string SelectObjName = Window->GetSelectNode()->GetName();
+	CGameObject* Obj = CSceneManager::GetInst()->GetScene()->FindObject(SelectObjName);
+	CSceneComponent* Comp = (CSceneComponent*)Obj->FindComponent(m_SelectNode->GetName());
+
+	((CToolWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(TOOL))->SetGizmoComponent(Comp);
 }
 
 void CSceneComponentHierarchyWindow::OnDeleteComponent()

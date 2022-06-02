@@ -18,6 +18,7 @@ public:
 
 public:
 	void SetGizmoObject(class CGameObject* Object);
+	void SetGizmoComponent(class CSceneComponent* SceneComp);
 
 public:
 	// 디버그용 임시 키
