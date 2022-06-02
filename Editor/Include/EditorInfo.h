@@ -13,6 +13,7 @@
 #define SCENECOMPONENT_CREATE_POPUPMODAL	"SceneComponentCreatePopUpModal"
 #define OBJECTCOMPONENT_CREATE_POPUPMODAL	"ObjectComponentCreatePopUpModal"
 #define ANIMATION_EDITOR					"AnimationEditor"
+#define PARTICLE_EDITOR						"ParticleEditor"
 #define FBX_CONVERTOR						"FBXConverter"
 #define TOOL								"Tool"
 #define BEHAVIORTREE_WINDOW					"BehaviorTreeWindow"

@@ -82,6 +82,22 @@ void CTransform::SetInstancingInfo(Instancing3DInfo* Info)
 	Info->matWVP.Transpose();
 }
 
+void CTransform::SetInstancingShadowInfo(Instancing3DInfo* Info)
+{
+	CCameraComponent* Camera = m_Scene->GetCameraManager()->GetCurrentCamera();
+
+	Matrix matWV = m_matWorld * Camera->GetShadowViewMatrix();
+
+	Info->matWV = matWV;
+
+	Matrix matWVP = matWV * Camera->GetShadowProjMatrix();
+
+	Info->matWVP = matWVP;
+
+	Info->matWV.Transpose();
+	Info->matWVP.Transpose();
+}
+
 void CTransform::InheritScale(bool Current)
 {
 	if (m_Parent && m_InheritScale)
@@ -734,6 +750,21 @@ void CTransform::SetTransform()
 
 	m_CBuffer->SetViewMatrix(Camera->GetViewMatrix());
 	m_CBuffer->SetProjMatrix(Camera->GetProjMatrix());
+
+	m_CBuffer->SetPivot(m_Pivot);
+	m_CBuffer->SetMeshSize(m_MeshSize);
+
+	m_CBuffer->UpdateCBuffer();
+}
+
+void CTransform::SetTransformShadow()
+{
+	m_CBuffer->SetWorldMatrix(m_matWorld);
+
+	CCameraComponent* Camera = m_Scene->GetCameraManager()->GetCurrentCamera();
+
+	m_CBuffer->SetViewMatrix(Camera->GetShadowViewMatrix());
+	m_CBuffer->SetProjMatrix(Camera->GetShadowProjMatrix());
 
 	m_CBuffer->SetPivot(m_Pivot);
 	m_CBuffer->SetMeshSize(m_MeshSize);

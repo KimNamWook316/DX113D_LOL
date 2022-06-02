@@ -20,6 +20,17 @@ private:
 	std::list<CSharedPtr<CLightComponent>>	m_LightList;
 
 public:
+	class CGameObject* GetGlobalLight() const
+	{
+		return m_GlobalLight;
+	}
+
+	class CLightComponent* GetGlobalLightComponent() const
+	{
+		return m_GlobalLightComponent;
+	}
+
+public:
 	void AddLight(CLightComponent* Light);
 	void DeleteLight(CLightComponent* Light);
 	void DeleteLight(const std::string& Name);

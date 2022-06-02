@@ -716,18 +716,15 @@ void CLandScape::Render()
 
 	size_t	Size = m_vecMaterialSlot.size();
 
-	if (Size > 0)
+	for (size_t i = 0; i < Size; ++i)
 	{
-		for (size_t i = 0; i < Size; ++i)
-		{
-			m_vecMaterialSlot[i]->EnableDecal(m_ReceiveDecal);
+		m_vecMaterialSlot[i]->EnableDecal(m_ReceiveDecal);
 
-			m_vecMaterialSlot[i]->Render();
+		m_vecMaterialSlot[i]->Render();
 
-			m_Mesh->Render((int)i);
+		m_Mesh->Render((int)i);
 
-			m_vecMaterialSlot[i]->Reset();
-		}
+		m_vecMaterialSlot[i]->Reset();
 	}
 
 	// WireFrame Render
@@ -740,6 +737,25 @@ void CLandScape::Render()
 		m_Mesh->Render();
 
 		m_WireFrameState->ResetState();
+	}
+}
+
+void CLandScape::RenderShadowMap()
+{
+	CSceneComponent::RenderShadowMap();
+
+	if (!m_Mesh)
+	{
+		return;
+	}
+
+	m_CBuffer->UpdateCBuffer();
+
+	size_t	Size = m_vecMaterialSlot.size();
+
+	for (size_t i = 0; i < Size; ++i)
+	{
+		m_Mesh->Render((int)i);
 	}
 }
 

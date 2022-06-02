@@ -123,7 +123,7 @@ void CGameObjectWidget::CreateSceneComponentWidget(CSceneComponent* Com)
 	{
 	 	Widget = AddWidget<CStaticMeshComponentWidget>("StaticMeshWidget");
 	}
-	if (TypeID == typeid(CAnimationMeshComponent).hash_code())
+	else if (TypeID == typeid(CAnimationMeshComponent).hash_code())
 	{
 		Widget = AddWidget<CAnimationMeshWidget>("AnimationMeshWidget");
 	}

@@ -93,6 +93,7 @@ public:
     virtual void PostUpdate(float DeltaTime);
     virtual void PrevRender();
     virtual void Render();
+    virtual void RenderShadowMap();
     virtual void PostRender();
     virtual CAnimationMeshComponent* Clone();
     virtual void Save(FILE* File);
@@ -154,7 +155,7 @@ public:
     }
 
     template <typename T>
-    void LoadAnimationInstance()
+    T* LoadAnimationInstance()
     {
         T* Anim = new T;
 
@@ -170,6 +171,8 @@ public:
 
         if (m_Mesh)
             m_Animation->SetInstancingBoneBuffer(m_Mesh->GetBoneBuffer());
+
+        return Anim;
     }
 };
 

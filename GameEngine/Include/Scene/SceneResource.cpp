@@ -373,12 +373,12 @@ bool CSceneResource::LoadTextureFullPath(const std::string& Name,
 
 bool CSceneResource::CreateTarget(const std::string& Name, 
 	unsigned int Width, unsigned int Height, 
-	DXGI_FORMAT PixelFormat)
+	DXGI_FORMAT PixelFormat, DXGI_FORMAT DepthFormat)
 {
 	if (FindTexture(Name))
 		return true;
 
-	if (!CResourceManager::GetInst()->CreateTarget(Name, Width, Height, PixelFormat))
+	if (!CResourceManager::GetInst()->CreateTarget(Name, Width, Height, PixelFormat, true, DepthFormat))
 		return false;
 
 	m_mapTexture.insert(std::make_pair(Name, CResourceManager::GetInst()->FindTexture(Name)));

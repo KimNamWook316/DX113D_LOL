@@ -10,6 +10,7 @@ struct RenderInstancingList
 	std::list<class CSceneComponent*> RenderList;
 	class CMesh* Mesh;
 	CStructuredBuffer* Buffer;
+	CStructuredBuffer* ShadowBuffer;
 	int BufferCount; // 인스턴싱할 Scene Component의 개수
 	CInstancingCBuffer* CBuffer;
 	bool Animation;
@@ -26,6 +27,11 @@ struct RenderInstancingList
 
 		BufferCount = 100;
 
+		ShadowBuffer = new CStructuredBuffer;
+
+		ShadowBuffer->Init("InstancingShadowBuffer", sizeof(Instancing3DInfo), 100, 40, true,
+			(int)Buffer_Shader_Type::Vertex | (int)Buffer_Shader_Type::Pixel);
+
 		CBuffer = new CInstancingCBuffer;
 		CBuffer->Init();
 	}
@@ -33,6 +39,7 @@ struct RenderInstancingList
 	~RenderInstancingList()
 	{
 		SAFE_DELETE(CBuffer);
+		SAFE_DELETE(ShadowBuffer);
 		SAFE_DELETE(Buffer);
 	}
 };
@@ -91,6 +98,13 @@ private:
 	std::vector<CSharedPtr<CRenderTarget>>	m_vecDecal;
 	std::vector<CSharedPtr<CRenderTarget>>	m_vecLightBuffer;
 
+	// Shadow
+	bool m_Shadow;
+	CSharedPtr<CRenderTarget> m_ShadowMapTarget;
+	CSharedPtr<class CShader> m_ShadowMapShader;
+	CSharedPtr<class CShader> m_ShadowMapInstancingShader;
+	float m_ShadowLightDistance;
+
 	// Animation Editor 
 	CSharedPtr<class CShader> m_Mesh3DNoLightRenderShader; // m_AnimEditorRenderTarget 에 그려내기 위한 Shader 
 	CSharedPtr<CRenderTarget>	m_AnimEditorRenderTarget; // Skinning 처리 이후, 해당 출력을, 별도의 RenderTarget 에 그려낸다.
@@ -100,6 +114,11 @@ private:
 	CSharedPtr<CRenderTarget>	m_ParticleEffectEditorRenderTarget; // Skinning 처리 이후, 해당 출력을, 별도의 RenderTarget 에 그려낸다.
 
 public:
+	float GetShadowLightDistance() const
+	{
+		return m_ShadowLightDistance;
+	}
+
 	class CStandard2DConstantBuffer* GetStandard2DCBuffer()	const
 	{
 		return m_Standard2DCBuffer;
@@ -125,7 +144,9 @@ public:
 public:
 	bool Init();
 	void Render();
+
 private:
+	void RenderShadowMap();
 	void RenderGBuffer();
 	void RenderDecal();
 	void RenderLightAcc();
@@ -146,7 +167,9 @@ public:
 	class CRenderState* FindRenderState(const std::string& Name);
 
 private:
+	void RenderDefaultInstancingInfo();
 	void RenderDefaultInstancing();
+	void RenderDefaultInstancingShadow();
 
 private :
 	int GetRenderLayerIndex(const std::string& Name);

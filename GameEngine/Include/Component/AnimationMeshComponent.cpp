@@ -475,6 +475,32 @@ void CAnimationMeshComponent::Render()
 		m_Animation->ResetShader();
 }
 
+void CAnimationMeshComponent::RenderShadowMap()
+{
+	CSceneComponent::RenderShadowMap();
+
+	if (!m_Mesh)
+	{
+		return;
+	}
+
+	if (m_Animation)
+	{
+		m_Animation->SetShader();
+	}
+
+	size_t Size = m_vecMaterialSlot.size();
+	for (size_t i = 0; i < Size; ++i)
+	{
+		m_Mesh->Render((int)i);
+	}
+
+	if (m_Animation)
+	{
+		m_Animation->ResetShader();
+	}
+}
+
 void CAnimationMeshComponent::PostRender()
 {
 	CSceneComponent::PostRender();

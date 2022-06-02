@@ -20,7 +20,7 @@ bool CToolWindow::Init()
 	CIMGUIWindow::Init();
 
 	m_GizmoBlock = AddWidget<CIMGUICollapsingHeader>("Gizmo", 200.f);
-	//m_Grid = AddWidget<CIMGUIGrid>("Grid", 100.f);
+	m_Grid = AddWidget<CIMGUIGrid>("Grid", 100.f);
 	m_Gizmo = AddWidget<CIMGUIGizmo>("Gimzo");
 	m_GizmoTransformMode = m_GizmoBlock->AddWidget<CIMGUIRadioButton>("Transform");
 	m_GizmoOperationMode = m_GizmoBlock->AddWidget<CIMGUIRadioButton>("Operation");
