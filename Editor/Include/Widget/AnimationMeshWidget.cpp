@@ -18,6 +18,7 @@
 #include "IMGUIColor4.h"
 #include "IMGUIInputFloat.h"
 #include "IMGUITable.h"
+#include "IMGUITableElemList.h"
 #include "IMGUIComboBox.h"
 #include "IMGUIDummy.h"
 #include "IMGUITree.h"
@@ -64,31 +65,32 @@ bool CAnimationMeshWidget::Init()
     m_CurrentAnimSequence = m_RootTree->AddWidget<CIMGUITextInput>("Current Sqc", 90.f, 30.f);
 
     // Load & Save
-    m_LoadAnimInstanceBtn = m_RootTree->AddWidget<CIMGUIButton>("Load", 60.f, 30.f);
+    m_LoadAnimInstanceBtn = m_RootTree->AddWidget<CIMGUIButton>("Load", 60.f, 20.f);
 	m_LoadAnimInstanceBtn->SetClickCallback<CAnimationMeshWidget>(this, &CAnimationMeshWidget::OnLoadAnimationInstance);
 
     CIMGUISameLine* Line = m_RootTree->AddWidget<CIMGUISameLine>("Line");
-    Line->SetOffsetX(70.f);
+    Line->SetOffsetX(95.f);
 
-    m_SaveAnimInstanceBtn = m_RootTree->AddWidget<CIMGUIButton>("Save", 60.f, 30.f);
+    m_SaveAnimInstanceBtn = m_RootTree->AddWidget<CIMGUIButton>("Save", 60.f, 20.f);
 
     // Text Input
-    m_ReNameSequenceBtn = m_RootTree->AddWidget<CIMGUIButton>("Edit", 30.f, 30.f);
-    m_NewNameInput = m_RootTree->AddWidget<CIMGUITextInput>("Key Name", 80.f, 30.f);
-    Line = m_RootTree->AddWidget<CIMGUISameLine>("Line");
-    Line->SetOffsetX(90.f);
+    // m_ReNameSequenceBtn = m_RootTree->AddWidget<CIMGUIButton>("Edit", 30.f, 20.f);
+	// 
+    // Line = m_RootTree->AddWidget<CIMGUISameLine>("Line");
+    // Line->SetOffsetX(65.f);
+	// 
+    // m_NewNameInput = m_RootTree->AddWidget<CIMGUITextInput>("Edit Key Name", 80.f, 30.f);
+
 
     // Anim Table
-    m_AnimInfoTable = m_RootTree->AddWidget<CIMGUITable>("AnimTable", 200.f, 150.f);
-
-	m_AnimInfoTable->MakeKey(AnimationClipInfoKeys::AnimSeqKey);
-	m_AnimInfoTable->MakeKey(AnimationClipInfoKeys::AnimSeqFileName);
+	m_AnimInfoTable = m_RootTree->AddWidget<CIMGUITableElemList>("TestTable", 200.f, 150.f);
 
 	return true;
 }
 
 void CAnimationMeshWidget::SetSceneComponent(CSceneComponent* Com)
 {
+	CSceneComponentWidget::SetSceneComponent(Com);
 }
 
 void CAnimationMeshWidget::OnClickLoadMesh()
@@ -157,7 +159,10 @@ void CAnimationMeshWidget::OnLoadAnimationInstance()
 		if (m_Animation)
 		{
 			ClearExistingAnimationSeqInfos();
-			SAFE_DELETE(m_Animation);
+
+			dynamic_cast<CAnimationMeshComponent*>(m_Component.Get())->DeleteAnimationInstance();
+
+			m_Animation = nullptr;
 		}
 
 		m_Animation = dynamic_cast<CAnimationMeshComponent*>(m_Component.Get())->LoadAnimationInstance<CAnimationSequenceInstance>();
@@ -168,9 +173,15 @@ void CAnimationMeshWidget::OnLoadAnimationInstance()
 		if (!m_Animation->GetCurrentAnimation() || !LoadElementsForSqcLoading())
 		{
 			ClearExistingAnimationSeqInfos();
-			SAFE_DELETE(m_Animation);
+
+			dynamic_cast<CAnimationMeshComponent*>(m_Component.Get())->DeleteAnimationInstance();
+			m_Animation = nullptr;
+
 			return;
 		}
+
+		// Animation 관련 정보를 모두 정상적으로 Load 했다면 Start 함수 호출하여, 필요한 정보 세팅
+		m_Animation->Start();
 
 		// Current Animation 정보로 세팅한다.
 		int CurAnimIdx = m_Animation->GetCurrentAnimationOrder();
@@ -221,11 +232,8 @@ void CAnimationMeshWidget::OnRefreshAnimationInfo()
 	{
 		CAnimationSequenceData* Sequence = iter->second;
 
-		for (int i = 0; i < Size; i++)
-		{
-			m_AnimInfoTable->AddData(AnimationClipInfoKeys::AnimSeqKey, iter->first);
-			m_AnimInfoTable->AddData(AnimationClipInfoKeys::AnimSeqFileName, Sequence->GetAnimationSequence()->GetSequenceFileNameMultibyte());
-		}
+		m_AnimInfoTable->AddData(AnimationClipInfoKeys::AnimSeqKey, iter->first);
+		m_AnimInfoTable->AddData(AnimationClipInfoKeys::AnimSeqFileName, Sequence->GetAnimationSequence()->GetSequenceFileNameMultibyte());
 	}
 	
 }
@@ -233,8 +241,12 @@ void CAnimationMeshWidget::OnRefreshAnimationInfo()
 bool CAnimationMeshWidget::LoadElementsForSqcLoading()
 {
 	// const char* SqcFileName
-	const char* SqcFileName = "";
-	// const char* SqcFileName = m_Animation->GetCurrentAnimation()->GetAnimationSequence()->GetSequenceFileNameMultibyte();
+	// const char* SqcFileName = "";
+	const char* ConstSqcFileName = m_Animation->GetCurrentAnimation()->GetAnimationSequence()->GetSequenceFileNameMultibyte();
+
+	char SqcFileName[MAX_PATH] = {};
+
+	strcpy_s(SqcFileName, ConstSqcFileName);
 
 	// 만약 Mesh Load 과정에서 필요한 Texture가 없다면 
 	// ex) FBX Convert 이후, singed_spell2.sqc 가 있다면, 같은 경로내에 singed_spell2.fbm 이라는 디렉토리가 존재해야 한다.
@@ -245,9 +257,9 @@ bool CAnimationMeshWidget::LoadElementsForSqcLoading()
 
 	strcpy_s(TextFolderName, SqcFileName);
 	strcat_s(TextFolderName, TextFolderExt);
-
+	
 	std::filesystem::path MeshTextureFolderPath(TextFolderName);
-
+	
 	if (!std::filesystem::exists(MeshTextureFolderPath))
 	{
 		MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT(".fbm Folder Does Not Exist"), NULL, MB_OK);
@@ -310,7 +322,7 @@ bool CAnimationMeshWidget::LoadElementsForSqcLoading()
 	// 현재 Load 한 Mesh 를 세팅
 	dynamic_cast<CAnimationMeshComponent*>(m_Component.Get())->SetMesh(m_LoadedMeshName);
 
-	return false;
+	return true;
 }
 
 void CAnimationMeshWidget::ClearExistingAnimationSeqInfos()

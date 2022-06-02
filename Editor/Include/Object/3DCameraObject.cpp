@@ -5,7 +5,7 @@
 #include "Scene/Scene.h"
 #include "Scene/CameraManager.h"
 
-#define EDITOR_CAM_SPEED 0.8f
+#define EDITOR_CAM_SPEED 4.0f
 
 C3DCameraObject::C3DCameraObject()
 {

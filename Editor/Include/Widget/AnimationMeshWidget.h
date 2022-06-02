@@ -10,7 +10,7 @@ public:
     virtual ~CAnimationMeshWidget();
 private :
     // Anim Clip Table
-    class CIMGUITable* m_AnimInfoTable;
+    class CIMGUITableElemList* m_AnimInfoTable;
     class CIMGUITextInput* m_CurrentAnimSequence;
 
     // Anim Instance

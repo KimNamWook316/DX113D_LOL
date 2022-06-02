@@ -43,9 +43,9 @@ bool CAnim3DObject::Init()
 	m_Camera->SetViewAngle(27.f);
 	// m_Camera->AddRelativePos(0.f, 30.f, -30.f);
 
-	m_Arm->SetOffset(0.f, 2.f, 0.f);
-	m_Arm->SetRelativeRotation(40.f, 0.f, 0.f);
-	m_Arm->SetTargetDistance(10.f);
+	// m_Arm->SetOffset(0.f, 2.f, 0.f);
+	// m_Arm->SetRelativeRotation(40.f, 0.f, 0.f);
+	// m_Arm->SetTargetDistance(10.f);
 
 	return true;
 }
