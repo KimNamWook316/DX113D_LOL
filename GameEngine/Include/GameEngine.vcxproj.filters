@@ -948,8 +948,11 @@
     <ClCompile Include="Component\Node\InputWCheckNode.cpp">
       <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node</Filter>
     </ClCompile>
-    <ClCompile Include="Component\ColliderBox3D.cpp">
+	<ClCompile Include="Component\ColliderBox3D.cpp">
       <Filter>05. Component\01. SceneComponent\02. Collider</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Shader\Standard3DWireFrameShader.cpp">
+      <Filter>02. Resource\02. Shader\02. ShaderClass\07. Standard3D</Filter>
     </ClCompile>
     <ClCompile Include="IMGUITableElemList.cpp">
       <Filter>01. Engine\08. IMGUI\03. Widget</Filter>

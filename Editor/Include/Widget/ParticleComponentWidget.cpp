@@ -55,11 +55,6 @@ bool CParticleComponentWidget::Init()
     // AddWidget
     m_ComponentTypeText->SetText("Particle Component");
 
-    // Material , Particle 세팅
-    OnSetParticleMaterialSetting(m_Component);
-
-    // Camera 세팅
-    // OnSetCameraSetting();
 
     // 최상위 트리
     CIMGUITree* m_RootTree = AddWidget<CIMGUITree>("Particle Variables");
@@ -121,6 +116,11 @@ bool CParticleComponentWidget::Init()
     m_IsGravityEdit = m_RootTree->AddWidget<CIMGUICheckBox>("Gravity", 100.f);
     m_IsGravityEdit->AddCheckInfo("Gravity");
     m_IsGravityEdit->SetCallBackLabel<CParticleComponentWidget>(this, &CParticleComponentWidget::OnIsGravityEdit);
+
+    m_IsRandomMoveEdit = m_RootTree->AddWidget<CIMGUICheckBox>("Random", 100.f);
+    m_IsRandomMoveEdit->AddCheckInfo("Random");
+    m_IsRandomMoveEdit->SetCallBackLabel<CParticleComponentWidget>(this, &CParticleComponentWidget::OnIsRandomMoveEdit);
+
     // m_Is3DEdit = m_RootTree->AddWidget<CIMGUICheckBox>("Load", 200.f);
 
     m_MoveDirEdit = m_RootTree->AddWidget<CIMGUIInputFloat3>("Move Dir", 200.f);
@@ -145,6 +145,9 @@ bool CParticleComponentWidget::Init()
 
     m_SetMaterialTextureButton = m_RootTree->AddWidget<CIMGUIButton>("Set Texture", 100.f, 30.f);
     m_SetMaterialTextureButton->SetClickCallback<CParticleComponentWidget>(this, &CParticleComponentWidget::OnSetParticleTexture);
+
+    // Camera 세팅
+    // OnSetCameraSetting();
 
 	return true;
 }
@@ -239,6 +242,11 @@ void CParticleComponentWidget::OnIsMoveEdit(const char*, bool Enable)
 void CParticleComponentWidget::OnIsGravityEdit(const char*, bool Enable)
 {
     dynamic_cast<CParticleComponent*>(m_Component.Get())->GetCBuffer()->SetGravity(Enable);
+}
+
+void CParticleComponentWidget::OnIsRandomMoveEdit(const char*, bool Enable)
+{
+    dynamic_cast<CParticleComponent*>(m_Component.Get())->GetCBuffer()->SetApplyRandom(Enable);
 }
 
 void CParticleComponentWidget::OnMoveDirEdit(const Vector3& Dir)

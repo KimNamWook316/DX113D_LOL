@@ -26,6 +26,7 @@
 #include "Mesh3DNoLightShader.h"
 #include "AnimEditorShader.h"
 #include "Standard3DInstancingShader.h"
+#include "Standard3DWireFrameShader.h"
 
 CShaderManager::CShaderManager()
 {
@@ -113,6 +114,12 @@ bool CShaderManager::Init()
 		return false;
 
 	if (!CreateShader<CStandard3DInstancingShader>("Standard3DInstancingShader"))
+	{
+		assert(false);
+		return false;
+	}
+
+	if (!CreateShader<CStandard3DWireFrameShader>("Standard3DWireFrameShader"))
 	{
 		assert(false);
 		return false;

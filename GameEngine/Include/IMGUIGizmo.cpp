@@ -6,7 +6,7 @@
 #include "Component/CameraComponent.h"
 
 CIMGUIGizmo::CIMGUIGizmo() :
-	m_Object(nullptr),
+	m_Component(nullptr),
 	m_Using(false)
 {
 	m_Operation = ImGuizmo::OPERATION::TRANSLATE;
@@ -37,9 +37,9 @@ void CIMGUIGizmo::Render()
 
 	m_matWorld = matScale * matRot * matTrans;
 
-	if (m_Object && m_Object->GetRootComponent())
+	if (m_Component)
 	{
-		m_matWorld = m_Object->GetWorldMatrix();
+		m_matWorld = m_Component->GetWorldMatrix();
 	}
 
 	Matrix matView, matProj;
@@ -50,10 +50,10 @@ void CIMGUIGizmo::Render()
  	ImGuizmo::Manipulate((float*)&matView, (float*)&matProj, m_Operation,
  		m_Mode, (float*)&m_matWorld);
 
-	if (ImGuizmo::IsUsing() && m_Object)
+	if (ImGuizmo::IsUsing() && m_Component)
 	{
 		// Gizmo가 사용 중일때는 Transform에 World Matrix를 직접 넣는 방식으로 제어한다.
-		m_Object->SetTransformByWorldMatrix(m_matWorld);
+		m_Component->SetTransformByWorldMatrix(m_matWorld);
 		m_Using = true;
 	}
 	else
@@ -61,8 +61,8 @@ void CIMGUIGizmo::Render()
 		if (m_Using)
 		{
 			// Gizmo사용이 끝나면, 다시 Scale, Pos, Rot 값으로 World Matirx를 구성하게 돌려놓는다.
-			m_Object->SetUpdateByMat(false);
-			m_Object->DecomposeWorld();
+			m_Component->SetUpdateByMat(false);
+			m_Component->DecomposeWorld();
 			m_Using = false;
 		}
 	}
