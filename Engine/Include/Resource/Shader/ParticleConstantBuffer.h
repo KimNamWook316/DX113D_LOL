@@ -29,6 +29,11 @@ public:
 		return m_BufferData.StartMax;
 	}
 
+	int GetApplyRandom() const
+	{
+		return m_BufferData.ApplyRandom;
+	}
+
 	int GetSpawnCount()	const
 	{
 		return m_BufferData.SpawnCountMax;
@@ -55,6 +60,11 @@ public:
 	const Vector3& GetScaleMin()
 	{
 		return m_BufferData.ScaleMin;
+	}
+
+	const Vector3& GetRotationAngle()
+	{
+		return m_BufferData.RotationAngle;
 	}
 
 	const Vector3& GetScaleMax()
@@ -132,6 +142,11 @@ public:
 		m_BufferData.StartMax = StartMax;
 	}
 
+	void SetRotationAngle(const Vector3& Angle)
+	{
+		m_BufferData.RotationAngle = Angle;
+	}
+
 	void SetSpawnCountMax(unsigned int Count)
 	{
 		m_BufferData.SpawnCountMax = Count;
@@ -185,6 +200,11 @@ public:
 	void SetGravity(bool Gravity)
 	{
 		m_BufferData.Gravity = Gravity ? 1 : 0;
+	}
+
+	void SetApplyRandom(bool Enable)
+	{
+		m_BufferData.ApplyRandom = Enable;
 	}
 
 	void SetMoveDir(const Vector3& MoveDir)

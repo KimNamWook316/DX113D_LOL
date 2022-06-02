@@ -560,6 +560,10 @@ void CAnimationMeshComponent::RenderAnimationEditor()
 	if (m_Animation)
 		m_Animation->ResetShader();
 }
+void CAnimationMeshComponent::DeleteAnimationInstance()
+{
+	SAFE_DELETE(m_Animation);
+}
 void CAnimationMeshComponent::AddChild(CSceneComponent* Child,
 	const std::string& SocketName)
 {

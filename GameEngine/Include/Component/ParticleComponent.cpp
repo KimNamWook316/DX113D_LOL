@@ -164,6 +164,9 @@ void CParticleComponent::PostUpdate(float DeltaTime)
 	m_CBuffer->SetStartMin(StartMin);
 	m_CBuffer->SetStartMax(StartMax);
 
+	// Rotation Angle 정보를 세팅한다. Transform 의 정보로 만들어낼 것이다.
+	m_CBuffer->SetRotationAngle(GetWorldRot());
+
 	m_CBuffer->UpdateCBuffer();
 
 	size_t	BufferCount = m_vecStructuredBuffer.size();

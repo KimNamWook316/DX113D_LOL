@@ -72,6 +72,11 @@ public:
 		return m_CBuffer;
 	}
 
+	int GetApplyRandom() const
+	{
+		return m_CBuffer->GetApplyRandom();
+	}
+
 	int GetSpawnCountMax()	const
 	{
 		return m_SpawnCountMax;
@@ -117,6 +122,11 @@ public:
 	const Vector3& GetScaleMax()
 	{
 		return m_CBuffer->GetScaleMax();
+	}
+
+	const Vector3& GetRotationAngle()
+	{
+		return m_CBuffer->GetRotationAngle();
 	}
 
 	float GetLifeTimeMin()
@@ -197,6 +207,11 @@ public:
 	void SetStartMax(const Vector3& StartMax)
 	{
 		m_CBuffer->SetStartMax(StartMax);
+	}
+
+	void SetRotationAngle(const Vector3& Angle)
+	{
+		m_CBuffer->SetRotationAngle(Angle);
 	}
 
 	void SetSpawnCountMax(unsigned int Count);

@@ -10,7 +10,7 @@ class CAnimationMeshComponent :
     public CSceneComponent
 {
     friend class CGameObject;
-
+    friend class CAnimationMeshWidget;
 protected:
     CAnimationMeshComponent();
     CAnimationMeshComponent(const CAnimationMeshComponent& com);
@@ -101,6 +101,9 @@ public:
     // Animation Editor Render
 public :
     virtual void RenderAnimationEditor() override;
+    // Animation Mesh Widget
+private :
+    void DeleteAnimationInstance();
 public:
     template <typename T>
     void CreateAnimationInstance()
@@ -171,7 +174,7 @@ public:
         if (m_Mesh)
             m_Animation->SetInstancingBoneBuffer(m_Mesh->GetBoneBuffer());
 
-        return m_Animation;
+        return Anim;
     }
 };
 
