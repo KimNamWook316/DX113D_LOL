@@ -55,7 +55,8 @@ public:
 
 public:
 	bool Init();
-
+	virtual void Save(FILE* File);
+	virtual void Load(FILE* File);
 public:
 	void AddStructuredBuffer(const std::string& Name, unsigned int Size, unsigned int Count,
 		int Register, bool Dynamic = false,
@@ -75,7 +76,103 @@ public:
 	{
 		return m_SpawnCountMax;
 	}
+	const Vector3& GetStartMin()	const
+	{
+		return m_CBuffer->GetStartMin();
+	}
 
+	const Vector3& GetStartMax()	const
+	{
+		return m_CBuffer->GetStartMax();
+	}
+
+	int GetSpawnCount()	const
+	{
+		return m_CBuffer->GetSpawnCount();
+	}
+	bool GetSpawnEnable()
+	{
+		return m_CBuffer->GetSpawnEnable();
+	}
+	const Vector3& GetStartMin()
+	{
+		return m_CBuffer->GetStartMin();
+	}
+
+	const Vector3& GetStartMax()
+	{
+		return m_CBuffer->GetStartMax();
+	}
+
+	unsigned int GetSpawnCountMax()
+	{
+		return m_CBuffer->GetSpawnCountMax();
+	}
+
+	const Vector3& GetScaleMin()
+	{
+		return m_CBuffer->GetScaleMin();
+	}
+
+	const Vector3& GetScaleMax()
+	{
+		return m_CBuffer->GetScaleMax();
+	}
+
+	float GetLifeTimeMin()
+	{
+		return m_CBuffer->GetLifeTimeMin();
+	}
+
+	float GetLifeTimeMax()
+	{
+		return m_CBuffer->GetLifeTimeMax();
+	}
+
+	const Vector4& GetColorMin()
+	{
+		return m_CBuffer->GetColorMin();
+	}
+
+	const Vector4& GetColorMax()
+	{
+		return m_CBuffer->GetColorMax();
+	}
+
+	float GetSpeedMin()
+	{
+		return m_CBuffer->GetSpeedMin();
+	}
+
+	float GetSpeedMax()
+	{
+		return m_CBuffer->GetSpeedMax();
+	}
+
+	bool GetMove()
+	{
+		return m_CBuffer->GetMove();
+	}
+
+	bool GetGravity()
+	{
+		return m_CBuffer->GetGravity();
+	}
+
+	const Vector3& GetMoveDir()
+	{
+		return m_CBuffer->GetMoveDir();
+	}
+
+	bool Is2D()
+	{
+		return m_CBuffer->Is2D();
+	}
+
+	const Vector3& GetMoveAngle()
+	{
+		return m_CBuffer->GetMoveAngle();
+	}
 public:
 	void SetMaterial(CMaterial* Material)
 	{

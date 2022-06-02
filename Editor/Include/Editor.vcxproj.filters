@@ -126,9 +126,6 @@
     <ClCompile Include="Widget\LightComponentWidget.cpp">
       <Filter>02. Editor\02. Widget\01. Inspector\01. SceneComponent</Filter>
     </ClCompile>
-    <ClCompile Include="Object\Anim3DObject.cpp">
-      <Filter>03. Object</Filter>
-    </ClCompile>
     <ClCompile Include="Window\EffectEditor.cpp">
       <Filter>02. Editor\01. Window</Filter>
     </ClCompile>
@@ -162,7 +159,7 @@
     <ClCompile Include="GraphEditor.cpp">
       <Filter>02. Editor\01. Window</Filter>
     </ClCompile>
-    <ClCompile Include="Widget\LandScapeWidget.cpp">
+	<ClCompile Include="Widget\LandScapeWidget.cpp">
       <Filter>02. Editor\02. Widget\01. Inspector\01. SceneComponent</Filter>
     </ClCompile>
   </ItemGroup>
@@ -242,9 +239,6 @@
     <ClInclude Include="Widget\LightComponentWidget.h">
       <Filter>02. Editor\02. Widget\01. Inspector\01. SceneComponent</Filter>
     </ClInclude>
-    <ClInclude Include="Object\Anim3DObject.h">
-      <Filter>03. Object</Filter>
-    </ClInclude>
     <ClInclude Include="Window\EffectEditor.h">
       <Filter>02. Editor\01. Window</Filter>
     </ClInclude>
@@ -277,9 +271,6 @@
     </ClInclude>
     <ClInclude Include="Object\3DParticleCamera.h">
       <Filter>03. Object\02. 3D</Filter>
-    </ClInclude>
-    <ClInclude Include="Widget\LandScapeWidget.h">
-      <Filter>02. Editor\02. Widget\01. Inspector\01. SceneComponent</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

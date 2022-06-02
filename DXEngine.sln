@@ -7,7 +7,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "01. Client", "01. Client", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "02. Engine", "02. Engine", "{F81C4DF8-1CD5-41AC-96E5-509604FED9A5}"
 	ProjectSection(SolutionItems) = preProject
-		Copy.bat = Copy.bat
 		exclude.txt = exclude.txt
 	EndProjectSection
 EndProject
@@ -16,14 +15,8 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GameEngine", "GameEngine\Include\GameEngine.vcxproj", "{6AEBF8C5-6304-4B0F-B2A4-3208A366BB25}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Client3D", "Client3D\Include\Client3D.vcxproj", "{9C670454-43B5-4016-BAD0-C099172E15D4}"
-	ProjectSection(ProjectDependencies) = postProject
-		{6AEBF8C5-6304-4B0F-B2A4-3208A366BB25} = {6AEBF8C5-6304-4B0F-B2A4-3208A366BB25}
-	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Editor", "Editor\Include\Editor.vcxproj", "{1510DA17-B58F-438D-AEE8-EB5A08803B38}"
-	ProjectSection(ProjectDependencies) = postProject
-		{6AEBF8C5-6304-4B0F-B2A4-3208A366BB25} = {6AEBF8C5-6304-4B0F-B2A4-3208A366BB25}
-	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

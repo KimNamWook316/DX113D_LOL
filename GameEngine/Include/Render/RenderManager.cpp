@@ -281,11 +281,14 @@ bool CRenderManager::Init()
 		RS.Width, RS.Height, DXGI_FORMAT_R32G32B32A32_FLOAT))
 		return false;
 
-	m_ParticleEffectEditorRenderTarget = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("ParticleEffectRenderTarget");
-	m_ParticleEffectEditorRenderTarget->SetPos(Vector3(600.f, 100.f, 0.f));
-	m_ParticleEffectEditorRenderTarget->SetScale(Vector3(150.f, 150.f, 1.f));
-	m_ParticleEffectEditorRenderTarget->SetDebugRender(false);
+	// 지우지 마세요 ! (Particle Effect Editor 용 Render Target )
+	// m_ParticleEffectEditorRenderTarget = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("ParticleEffectRenderTarget");
+	// m_ParticleEffectEditorRenderTarget->SetPos(Vector3(600.f, 100.f, 0.f));
+	// m_ParticleEffectEditorRenderTarget->SetScale(Vector3(150.f, 150.f, 1.f));
+	// m_ParticleEffectEditorRenderTarget->SetDebugRender(false);
 
+
+	// Map 출력용 변수들
 
 	return true;
 }
@@ -439,7 +442,6 @@ void CRenderManager::Render()
 	RenderAnimationEditor();
 
 	// Particle Effect Editor 제작용 Render Target
-	RenderParticleEffectEditor();
 
 	m_vecGBuffer[2]->SetShader(10, (int)Buffer_Shader_Type::Pixel, 0);
 
@@ -554,6 +556,7 @@ void CRenderManager::RenderGBuffer()
 		for (; iter != iterEnd; ++iter)
 		{
 			(*iter)->Render();
+
 		}
 	}
 
@@ -881,10 +884,16 @@ CRenderState* CRenderManager::FindRenderState(const std::string& Name)
 
 void CRenderManager::RenderDefaultInstancing()
 {
+	// 이제 Default Layer 에 있는 Instancing집단. 들을 순회할 것이다.
 	for (int i = 0; i < m_RenderLayerList[1]->InstancingIndex; ++i)
 	{
 		// Material Slot 수만큼 반복한다.
 		int	SlotCount = 0;
+
+		// 현재 우리는 Static Mesh Component, Animation Mesh Component 를 
+		// 분리해서 Instancing 하고 있다.
+		// 그렇다면, 두 Component 를 구분해야 하는데
+		// 해당 Instancing 집단이 공유하는 Mesh 종류로 구분할 것이다.
 		if (m_RenderLayerList[1]->m_vecInstancing[i]->Mesh->GetMeshType() == Mesh_Type::Static)
 		{
 			SlotCount = ((CStaticMeshComponent*)m_RenderLayerList[1]->m_vecInstancing[i]->RenderList.back())->GetMaterialSlotCount();
@@ -895,16 +904,24 @@ void CRenderManager::RenderDefaultInstancing()
 			SlotCount = ((CAnimationMeshComponent*)m_RenderLayerList[1]->m_vecInstancing[i]->RenderList.back())->GetMaterialSlotCount();
 		}
 
+		// 그리고, 현재 해당 Component 들이 공유하는 Mesh Class 내 Material 개수를 가져온다.
+		// 해당 Material 개수만큼 반복할 것이다.
 		for (int j = 0; j < SlotCount; ++j)
 		{
+			// m_RenderLayerList[1]->m_vecInstancing[i] -> Default Layer 내 Instancing 으로 그릴 하나의 집단
+			// 그 집단 내에 있는 Component 하나하나를 순회할 것이다.
 			auto	iter = m_RenderLayerList[1]->m_vecInstancing[i]->RenderList.begin();
 			auto	iterEnd = m_RenderLayerList[1]->m_vecInstancing[i]->RenderList.end();
 
+			// Instancing3DInfo 는 Shader 측에서 구조화 버퍼 배열의 원소 이다.
+			// Instancing3DInfo 하나가, 실제로 그릴 Mesh 하나.를 의미한다.
+			// vecInfo 가 그렇다면, 구조화 버퍼 하나에 대응될 것이다.
 			std::vector<Instancing3DInfo>	vecInfo;
 			vecInfo.reserve(m_RenderLayerList[1]->m_vecInstancing[i]->RenderList.size());
 
 			CMaterial* Material = nullptr;
 
+			// Component 하나하나를 순회할 것이다.
 			for (; iter != iterEnd; ++iter)
 			{
 				if (m_RenderLayerList[1]->m_vecInstancing[i]->Mesh->GetMeshType() == Mesh_Type::Static)
@@ -917,12 +934,21 @@ void CRenderManager::RenderDefaultInstancing()
 					Material = ((CAnimationMeshComponent*)(*iter))->GetMaterial(j);
 				}
 
+				// 여기서 Material 는 Null 이 나올 수 없다.
+				// 현재 같은 Mesh 를 공유하는 Component 를 순회하고 있고
+				// 이에 따라 같은 Mesh 안에는 당연히 Material 개수가 동일할 것이기 때문이다.
 				Instancing3DInfo	Info = {};
 
+				// 해당 Component 를 통해 구조화 버퍼. 하나의 원소. 인 Info 에 정보를 채워준다.
+				// (SceneComponent 내 , Transform 정보를 채워준다.)
 				(*iter)->SetInstancingInfo(&Info);
+
+				// 상수 버퍼 를 통해 구조화 버퍼. 하나의 원소. 인 Info 에 정보를 채워준다.
+				// Material 정보를 채워준다.
 				Material->GetCBuffer()->SetInstancingInfo(&Info);
 
 				// 페이퍼번 정보
+				// 페이퍼번을 하는 경우에만, PaperBurn 상수 버퍼에 있는 내용을 채워준다.
 				if (Info.MtrlPaperBurnEnable == 1)
 				{
 					CPaperBurnComponent* PaperBurn = (*iter)->GetGameObject()->FindComponentFromType<CPaperBurnComponent>();
@@ -935,18 +961,29 @@ void CRenderManager::RenderDefaultInstancing()
 				vecInfo.push_back(Info);
 			}
 
+			// Material 내 Texture 만 넘겨주는 로직을 하나 만들 것이다.
 			if (Material)
 				Material->RenderTexture();
 
+			// 106번 레지스터에 Standard3D.fx 에서 Shader Resource View 용도로 넘겨준다.
+			// Instancing 으로 그리는 모든 Component 들, 그 안의 각각의 Skeleton이 있고
+			// 그 안에 각각의 Bone 이 있다
+			// 그 모든 Bone 을 일차원 배열 안에 모아둔 형태가 될 것이다.
 			if (m_RenderLayerList[1]->m_vecInstancing[i]->Animation)
 			{
 				((CAnimationMesh*)m_RenderLayerList[1]->m_vecInstancing[i]->Mesh)->SetBoneShader();
 			}
 
+			// Standard3D.fx 내 Instncing Shader 코드를 세팅한다.
+			// 즉, 현재 코드를 통해서는 m_Standard3DInstancingVS, m_Standard3DInstancingPS 를 통해 Render 하려는 것이다.
 			m_Standard3DInstancingShader->SetShader();
 
+			// 각 Animation Mesh Component Instancing 에서 사용되는 Bone 개수에 대한 정보를 넘겨줄 것이다.
 			m_RenderLayerList[1]->m_vecInstancing[i]->CBuffer->UpdateCBuffer();
 
+			// 구조화 버퍼 정보를 Update 해준다.
+			// 40 번 레지스터, g_InstancingInfoArray 정보를 Update 하는 것이다.
+			// 현재 Instancing 으로 그리는 물체 개수만큼의 Instancing3DInfo 구조체 정보가 넘어갈 것이다.
 			m_RenderLayerList[1]->m_vecInstancing[i]->Buffer->UpdateBuffer(&vecInfo[0],
 				(int)vecInfo.size());
 
@@ -976,3 +1013,39 @@ bool CRenderManager::Sortlayer(RenderLayer* Src, RenderLayer* Dest)
 {
 	return Src->LayerPriority < Dest->LayerPriority;
 }
+
+
+/*
+void CRenderManager::RenderParticleEffectEditor()
+{
+	int ParticleEffectEditorLayerIdx = GetRenderLayerIndex("ParticleEditorLayer");
+
+	// 만~약에 해당 Layer 의 Idx 가 정해져 있지 않다면
+	if (ParticleEffectEditorLayerIdx == -1)
+		return;
+
+	// Animation Edtior 상에서 Animation Editor 제작 중이지 않다면
+	if (m_RenderLayerList[ParticleEffectEditorLayerIdx]->RenderList.size() <= 0)
+		return;
+
+	// Render Target 교체
+	m_ParticleEffectEditorRenderTarget->ClearTarget();
+
+	m_ParticleEffectEditorRenderTarget->SetTarget(nullptr);
+
+	auto iter = m_RenderLayerList[ParticleEffectEditorLayerIdx]->RenderList.begin();
+	auto iterEnd = m_RenderLayerList[ParticleEffectEditorLayerIdx]->RenderList.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		(*iter)->RenderParticleEffectEditor();
+	}
+
+	CSharedPtr<CGameObject> SkyObj = CSceneManager::GetInst()->GetScene()->GetSkyObject();
+	SkyObj->GetRootComponent()->RenderParticleEffectEditor();
+
+	// Sample Sky 그리기
+
+	m_ParticleEffectEditorRenderTarget->ResetTarget();
+}
+*/

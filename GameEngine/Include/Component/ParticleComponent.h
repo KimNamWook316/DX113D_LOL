@@ -29,16 +29,27 @@ protected:
 	ParticleInfoShared						m_InfoShared;
 	float									m_SpawnTime;
 	float									m_SpawnTimeMax;
-
+	bool  m_BillBoardEffect;
 public:
 	void SetParticle(const std::string& Name);
 	void SetParticle(CParticle* Particle);
 	void SetSpawnTime(float Time);
 public :
+	CParticleConstantBuffer* GetCBuffer() const
+	{
+		return m_CBuffer;
+	}
 	CParticle* GetParticle() const
 	{
 		return m_Particle;
 	}
+public :
+	void SetBillBoardEffect(bool Enable)
+	{
+		m_BillBoardEffect = Enable;
+	}
+private :
+	void ApplyBillBoardEffect();
 
 public:
 	virtual void Start();
@@ -47,6 +58,7 @@ public:
 	virtual void PostUpdate(float DeltaTime);
 	virtual void PrevRender();
 	virtual void Render();
+	virtual void RenderParticleEffectEditor();
 	virtual void PostRender();
 	virtual CParticleComponent* Clone();
 	virtual void Save(FILE* File);

@@ -4,6 +4,7 @@
 #include "../Shader/ShaderManager.h"
 #include "../../Scene/Scene.h"
 #include "../../Scene/SceneResource.h"
+#include "../../Scene/SceneManager.h"
 #include "../ResourceManager.h"
 
 CParticle::CParticle()	:
@@ -49,6 +50,81 @@ bool CParticle::Init()
 	AddStructuredBuffer("ParticleInfoShared", sizeof(ParticleInfoShared), 1, 1);
 
 	return true;
+}
+
+void CParticle::Save(FILE* File)
+{
+	CRef::Save(File);
+
+	bool MaterialEnable = false;
+
+	if (m_Material)
+		MaterialEnable = true;
+
+	fwrite(&MaterialEnable, sizeof(bool), 1, File);
+
+	if (MaterialEnable)
+	{
+		m_Material->Save(File);
+	}
+
+	if (m_UpdateShader)
+	{
+		// 이름 저장
+		std::string	UpdateShaderName = m_UpdateShader->GetName();
+		int	 ShaderNameLength = (int)UpdateShaderName.length();
+		fwrite(&ShaderNameLength, sizeof(int), 1, File);
+		fwrite(UpdateShaderName.c_str(), sizeof(char), ShaderNameLength, File);
+	}
+
+	fwrite(&m_Info, sizeof(ParticleInfo), 1, File);
+	fwrite(&m_InfoShare, sizeof(ParticleInfoShared), 1, File);
+
+	// 상수 버퍼 저장 X
+
+	fwrite(&m_2D, sizeof(bool), 1, File);
+	fwrite(&m_SpawnCountMax, sizeof(int), 1, File);
+}
+
+void CParticle::Load(FILE* File)
+{
+	CRef::Load(File);
+
+	// Material
+	bool	MaterialEnable = false;
+	fread(&MaterialEnable, sizeof(bool), 1, File);
+
+	if (MaterialEnable)
+	{
+		m_Material = CSceneManager::GetInst()->GetScene()->GetResource()->CreateMaterialEmpty<CMaterial>();
+		m_Material->Load(File);
+	}
+
+	if (m_UpdateShader)
+	{
+		// 이름 저장
+		char	ShaderName[256] = {};
+		int	 ShaderNameLength = 0;
+		fread(&ShaderNameLength, sizeof(int), 1, File);
+		fread(ShaderName, sizeof(char), ShaderNameLength, File);
+
+		m_UpdateShader = (CParticleUpdateShader*)CResourceManager::GetInst()->FindShader(ShaderName);
+	}
+
+	fread(&m_Info, sizeof(ParticleInfo), 1, File);
+	fread(&m_InfoShare, sizeof(ParticleInfoShared), 1, File);
+
+	// 상수 버퍼 저장 X
+	m_CBuffer = new CParticleConstantBuffer;
+	m_CBuffer->Init();
+
+	m_SpawnTime = 0;
+	fread(&m_2D, sizeof(bool), 1, File);
+	fread(&m_SpawnCountMax, sizeof(int), 1, File);
+
+	// 구조화 버퍼 세팅
+	AddStructuredBuffer("ParticleInfo", sizeof(ParticleInfo), m_SpawnCountMax, 0);
+	AddStructuredBuffer("ParticleInfoShared", sizeof(ParticleInfoShared), 1, 1);
 }
 
 void CParticle::AddStructuredBuffer(const std::string& Name, unsigned int Size, unsigned int Count, 

@@ -27,6 +27,7 @@
     <ClCompile Include="Animation\SkeletonSocket.cpp" />
     <ClCompile Include="Component\BehaviorTree.cpp" />
     <ClCompile Include="Component\BillboardComponent.cpp" />
+    <ClCompile Include="Component\ColliderBox3D.cpp" />
     <ClCompile Include="Component\DecalComponent.cpp" />
     <ClCompile Include="Component\Node\ActionNode.cpp" />
     <ClCompile Include="Component\Node\CompositeNode.cpp" />
@@ -249,6 +250,7 @@
     <ClInclude Include="Component\BillboardComponent.h" />
     <ClInclude Include="Component\CameraComponent.h" />
     <ClInclude Include="Component\ColliderBox2D.h" />
+    <ClInclude Include="Component\ColliderBox3D.h" />
     <ClInclude Include="Component\ColliderCircle.h" />
     <ClInclude Include="Component\ColliderComponent.h" />
     <ClInclude Include="Component\ColliderPixel.h" />
@@ -623,6 +625,7 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\Copy.bat" />
     <None Include="Resource\Texture\DirectXTex.inl" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
@@ -696,6 +699,7 @@
     <IntDir>../BinObj/</IntDir>
     <TargetName>$(ProjectName)_Debug</TargetName>
     <IncludePath>Resource/Mesh/;Resource/Mesh/fbxsdk/;$(IncludePath)</IncludePath>
+    <PostBuildEventUseInBuild>true</PostBuildEventUseInBuild>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>

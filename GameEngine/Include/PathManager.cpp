@@ -66,6 +66,7 @@ bool CPathManager::Init()
     AddPath(SOUND_PATH, TEXT("Sound\\"));
     AddPath(MESH_PATH, TEXT("Mesh\\"));
     AddPath(EXCEL_PATH, TEXT("Excel\\"));
+    AddPath(PARTICLE_PATH, TEXT("Texture\\Particle\\"));
 
     return true;
 }

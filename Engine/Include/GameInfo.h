@@ -58,6 +58,7 @@
 #define	SCENE_PATH		"Scene"
 #define	SOUND_PATH		"Sound"
 #define	MESH_PATH		"Mesh"
+#define	PARTICLE_PATH		"Particle"
 #define	EXCEL_PATH		"Excel"
 
 #define	SAFE_DELETE(p)	if(p)	{ delete p; p = nullptr; }
@@ -284,6 +285,15 @@ struct Box2DInfo
 	Vector2	Length;
 	Vector2	Min;
 	Vector2	Max;
+};
+
+struct Box3DInfo
+{
+	Vector3 Center;
+	Vector3	Axis[3];
+	float	AxisLen[3];
+	Vector3	Min;
+	Vector3	Max;
 };
 
 struct CircleInfo

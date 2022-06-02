@@ -154,7 +154,7 @@ public:
     }
 
     template <typename T>
-    void LoadAnimationInstance()
+    T* LoadAnimationInstance()
     {
         T* Anim = new T;
 
@@ -170,6 +170,8 @@ public:
 
         if (m_Mesh)
             m_Animation->SetInstancingBoneBuffer(m_Mesh->GetBoneBuffer());
+
+        return m_Animation;
     }
 };
 

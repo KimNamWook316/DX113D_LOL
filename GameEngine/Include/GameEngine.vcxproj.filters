@@ -948,6 +948,9 @@
     <ClCompile Include="Component\Node\InputWCheckNode.cpp">
       <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node</Filter>
     </ClCompile>
+	<ClCompile Include="Component\ColliderBox3D.cpp">
+      <Filter>05. Component\01. SceneComponent\02. Collider</Filter>
+    </ClCompile>
     <ClCompile Include="Resource\Shader\Standard3DWireFrameShader.cpp">
       <Filter>02. Resource\02. Shader\02. ShaderClass\07. Standard3D</Filter>
     </ClCompile>
@@ -1631,9 +1634,6 @@
     <ClInclude Include="Component\Node\InputWCheckNode.h">
       <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node</Filter>
     </ClInclude>
-    <ClInclude Include="Resource\Shader\Standard3DWireFrameShader.h">
-      <Filter>02. Resource\02. Shader\02. ShaderClass\07. Standard3D</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\Shader\ColorMesh.fx">
@@ -1682,6 +1682,9 @@
   <ItemGroup>
     <None Include="Resource\Texture\DirectXTex.inl">
       <Filter>02. Resource\04. Texture</Filter>
+    </None>
+    <None Include="..\..\Copy.bat">
+      <Filter>소스 파일</Filter>
     </None>
   </ItemGroup>
 </Project>

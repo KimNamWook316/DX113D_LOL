@@ -577,6 +577,18 @@ bool CLandScape::CheckInArea(const Vector3& StartPos, const Vector3& EndPos, Vec
 			return false;
 	}
 
+	if (StartPos.x < m_Min.x && EndPos.x - StartPos.x <= 0.f)
+		return false;
+
+	if (StartPos.z < m_Min.z && EndPos.z - StartPos.z <= 0.f)
+		return false;
+
+	if (StartPos.x > m_Max.x && EndPos.x - StartPos.x >= 0.f)
+		return false;
+
+	if (StartPos.z > m_Max.z && EndPos.z - StartPos.z >= 0.f)
+		return false;
+
 	std::vector<struct Polygon> vecPolygon;
 
 	int Start = StartPosIndex < EndPosIndex ? StartPosIndex : EndPosIndex;
@@ -624,6 +636,7 @@ bool CLandScape::CheckInArea(const Vector3& StartPos, const Vector3& EndPos, Vec
 		Vector3 Edge2 = p3 - p1;
 
 		Vector3 Normal = Edge1.Cross(Edge2);
+		Normal.Normalize();
 
 		// Normal.X(x - p1.x) + Normal.Y(y - p1.y) + Normal.Z(z - p1.z) = 0
 		// 평면의 방정식이 ax + by + cz + d 일때, a는 Normal.x, b는 Normal.y, c는 Normal.z
@@ -636,9 +649,12 @@ bool CLandScape::CheckInArea(const Vector3& StartPos, const Vector3& EndPos, Vec
 		XMVECTOR Plane = { Coff_a, Coff_b, Coff_c, Coff_d };
 
 		// polygon 세 점의 월드좌표
-		XMVECTOR XMVec1 = (p1 * WorldScale + WorldPos).Convert();
-		XMVECTOR XMVec2 = (p2 * WorldScale + WorldPos).Convert();
-		XMVECTOR XMVec3 = (p3 * WorldScale + WorldPos).Convert();
+		//XMVECTOR XMVec1 = (p1 * WorldScale + WorldPos).Convert();
+		//XMVECTOR XMVec2 = (p2 * WorldScale + WorldPos).Convert();
+		//XMVECTOR XMVec3 = (p3 * WorldScale + WorldPos).Convert();
+		XMVECTOR XMVec1 = p1.Convert();
+		XMVECTOR XMVec2 = p2.Convert();
+		XMVECTOR XMVec3 = p3.Convert();
 
 		XMVECTOR Result = XMPlaneIntersectLine(Plane, StartPos.Convert(), EndPos.Convert());
 

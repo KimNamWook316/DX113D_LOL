@@ -23,6 +23,9 @@ public:
     virtual void Update(float DeltaTime);
     virtual void PostUpdate(float DeltaTime);
     virtual CLandScapeObj* Clone();
+
+private:
+    void TerrainPicking();
 };
 
 

@@ -2,23 +2,14 @@
 #include "IMGUIWindow.h"
 #include <filesystem>
 
-namespace AnimationClipInfoKeys
-{
-	const std::string FrameRange = "Frame Range";
-	const std::string FrameLength = "Frame Length";
-	const std::string FrameMode = "Frame Mode"; // 24, 30, 60
-	const std::string PlayTime = "Play Time";
-	const std::string FrameTime = "Frame Time";
-	const std::string PlayScale = "Play Scale";
-};
 
 class CAnimationEditor :
-    public CIMGUIWindow
+	public CIMGUIWindow
 {
 	friend class CEditorManager;
 public:
-    CAnimationEditor();
-     ~CAnimationEditor();
+	CAnimationEditor();
+	~CAnimationEditor();
 
 private:
 	// Anim Combo Box
@@ -56,12 +47,11 @@ private:
 	// Render Target
 	bool m_RenderTargetSet;
 	class CIMGUIImage* m_AnimationRenderTarget;
-private :
+private:
 	class CAnim3DObject* m_3DTestObject;
 	std::string m_3DTestObjectMeshName;
 	class CAnimationSequenceInstance* m_Animation;
-	class std::stack<std::pair<int, class BoneKeyFrame*>> m_StackDeleteFrame;
-public :
+public:
 	const std::string& Get3DTestObjectMeshName() const
 	{
 		return m_3DTestObjectMeshName;
@@ -69,7 +59,7 @@ public :
 public:
 	virtual bool Init();
 	virtual void Update(float DeltaTime);
-private :
+private:
 	// Refresh 
 	void OnRefreshAnimationClipTable(class CAnimationSequence* SequenceData);
 	void OnRefreshFrameSliderInfo(class CAnimationSequence* SequenceData);
@@ -91,6 +81,7 @@ private :
 	void OnLoadAnimationInstance();
 	void OnApplyAnimationSlider(CAnimationSequence* Sequence);
 	bool LoadElementsForSqcLoading(const char* SqcFileName);
+	void SetMeshMaterialReadyForAnimation();
 	// Edit
 	void OnEditAnimPlayTime();
 	void OnEditAnimPlayScale();

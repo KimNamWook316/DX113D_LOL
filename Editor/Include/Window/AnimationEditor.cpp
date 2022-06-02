@@ -35,25 +35,25 @@ CAnimationEditor::~CAnimationEditor()
 
 
 	// Delete 하여 얻어온 BoneKeyFrame 정보를 지워준다.
-	while (!m_StackDeleteFrame.empty())
-	{
-		BoneKeyFrame* BoneFrame = m_StackDeleteFrame.top().second;
-		m_StackDeleteFrame.pop();
-
-		for (int i = 0; i < BoneFrame->vecKeyFrame.size(); ++i)
-		{
-			SAFE_DELETE(BoneFrame->vecKeyFrame[i]);
-		}
-		/*
-		for (int i = 0; i < BoneFrame->vecKeyFrame.size(); ++i)
-		{
-			--m_vecKeyFrame[i]->iRefCount;
-
-			if (m_vecKeyFrame[i]->iRefCount == 0)
-				delete	m_vecKeyFrame[i];
-		}
-		*/
-	}
+	// while (!m_StackDeleteFrame.empty())
+	// {
+	// 	BoneKeyFrame* BoneFrame = m_StackDeleteFrame.top().second;
+	// 	m_StackDeleteFrame.pop();
+	// 
+	// 	for (int i = 0; i < BoneFrame->vecKeyFrame.size(); ++i)
+	// 	{
+	// 		SAFE_DELETE(BoneFrame->vecKeyFrame[i]);
+	// 	}
+	// 	/*
+	// 	for (int i = 0; i < BoneFrame->vecKeyFrame.size(); ++i)
+	// 	{
+	// 		--m_vecKeyFrame[i]->iRefCount;
+	// 
+	// 		if (m_vecKeyFrame[i]->iRefCount == 0)
+	// 			delete	m_vecKeyFrame[i];
+	// 	}
+	// 	*/
+	// }
 }
 
 bool CAnimationEditor::Init()
@@ -65,7 +65,7 @@ bool CAnimationEditor::Init()
 	// CIMGUILabel* Label = AddWidget<CIMGUILabel>("Anim Name", 100.f, 30.f);
 	// Label->SetColor(0, 0, 255);
 	// Label->SetAlign(0.5f, 0.0f);
-	
+
 	m_CurAnimComboBox = AddWidget<CIMGUIComboBox>("Anim List Combo Box", 300.f, 30.f);
 	m_CurAnimComboBox->SetHideName(true);
 	m_CurAnimComboBox->SetSelectCallback<CAnimationEditor>(this, &CAnimationEditor::OnClickAnimationSequence);
@@ -73,7 +73,7 @@ bool CAnimationEditor::Init()
 	// 별도 Render Target
 	m_AnimationRenderTarget = AddWidget<CIMGUIImage>("Render Target", 500.f, 500.f);
 	m_AnimationRenderTarget->SetRenderTargetImage(true);
-	m_AnimationRenderTarget->SetBorderColor(10.f, 10.f, 255.f);
+	m_AnimationRenderTarget->SetBorderColor(10, 10, 255);
 
 	// Clip Info
 	m_AnimInfoTable = AddWidget<CIMGUITable>("AnimTable", 600.f, 200.f);
@@ -185,13 +185,13 @@ bool CAnimationEditor::Init()
 	m_DeleteAnimSequenceBtn->SetClickCallback<CAnimationEditor>(this, &CAnimationEditor::OnDeleteAnimationSequenceData);
 
 	Line = AddWidget<CIMGUISameLine>("Line");
-	Line->SetOffsetX(205.f);
+	Line->SetOffsetX(195.f);
 
 	m_SaveAnimationInstanceBtn = AddWidget<CIMGUIButton>("Save Instance", 90.f, 30.f);
 	m_SaveAnimationInstanceBtn->SetClickCallback<CAnimationEditor>(this, &CAnimationEditor::OnSaveAnimationInstance);
 
 	Line = AddWidget<CIMGUISameLine>("Line");
-	Line->SetOffsetX(310.f);
+	Line->SetOffsetX(295.f);
 
 	m_LoadAnimationInstanceBtn = AddWidget<CIMGUIButton>("Load Instance", 90.f, 30.f);
 	m_LoadAnimationInstanceBtn->SetClickCallback<CAnimationEditor>(this, &CAnimationEditor::OnLoadAnimationInstance);
@@ -216,7 +216,7 @@ void CAnimationEditor::Update(float DeltaTime)
 	{
 		int NextAnimationIdx = m_Animation->GetCurrentAnimation()->GetAnimationSequence()->GetCurrentFrameIdx();
 		OnAnimationSliderIntCallback(NextAnimationIdx);
-	} 
+	}
 
 	// 별도 RenderTarget 세팅 (처음 한번만)
 	if (!m_RenderTargetSet)
@@ -246,12 +246,10 @@ void CAnimationEditor::OnCreateSample3DObject()
 	if (m_3DTestObject)
 		return;
 
-	m_3DTestObject = CSceneManager::GetInst()->GetScene()->CreateGameObject<CAnim3DObject>("3D Test");
+	m_3DTestObject = CSceneManager::GetInst()->GetScene()->CreateGameObject<CAnim3DObject>("3DObject");
 
 	// 3DTest Object의 Animation 정보를 가져온다.
 	m_Animation = dynamic_cast<CAnimationMeshComponent*>(m_3DTestObject->GetRootComponent())->CreateBasicAnimationInstance();
-
-	m_Animation->Start();
 }
 
 void CAnimationEditor::OnPlayAnimation(const char* Lable, bool Enable)
@@ -280,13 +278,21 @@ void CAnimationEditor::OnRotateAnimationCamera(const char*, bool Enable)
 
 	// if (IsAnimPlay)
 	if (Enable)
+		m_3DTestObject->SetCameraRot(true);
+	else
+		m_3DTestObject->SetCameraRot(false);
+}
+
+void CAnimationEditor::OnZoomAnimationCamera(const char*, bool Enable)
+{
+	if (!m_3DTestObject)
+		return;
+
+	// if (IsAnimPlay)
+	if (Enable)
 		m_3DTestObject->SetCameraZoom(true);
 	else
 		m_3DTestObject->SetCameraZoom(false);
-}
-
-void CAnimationEditor::OnZoomAnimationCamera(const char*, bool)
-{
 }
 
 void CAnimationEditor::OnSaveAnimationInstance()
@@ -362,7 +368,11 @@ void CAnimationEditor::OnLoadAnimationInstance()
 		if (!m_Animation->GetCurrentAnimation())
 			return;
 
+		if (!LoadElementsForSqcLoading(m_Animation->GetCurrentAnimation()->GetAnimationSequence()->GetSequenceFileNameMultibyte()))
+			return;
 
+		// Set Material, Mesh Info
+		SetMeshMaterialReadyForAnimation();
 
 		// CameraObject 생성하기
 		// CEditorManager::GetInst()->CreateCameraObject();
@@ -431,7 +441,7 @@ void CAnimationEditor::OnAnimationFrameInputCallback()
 
 	// Input 의 Frame 으로 Animation Frame 정보를 세팅해준다.
 	// m_Animation->SetCurrentAnimationFrameIdx(InputFrame);
-	m_Animation->SetEditorStopTargetFrame(InputFrame );
+	m_Animation->SetEditorStopTargetFrame(InputFrame);
 
 }
 
@@ -527,6 +537,12 @@ bool CAnimationEditor::LoadElementsForSqcLoading(const char* SqcFileName)
 	return true;
 }
 
+void CAnimationEditor::SetMeshMaterialReadyForAnimation()
+{
+	m_3DTestObject->SetMeshAndMaterialInfo();
+	m_Animation->Start();
+}
+
 void CAnimationEditor::OnEditAnimPlayTime()
 {
 	if (!m_Animation || !m_Animation->GetCurrentAnimation())
@@ -583,7 +599,7 @@ void CAnimationEditor::OnDeleteAnimationSequenceData()
 		return;
 
 	m_Animation->DeleteCurrentAnimation();
-	
+
 	// Combo Box 내용 Refresh
 	OnRefreshAnimationComboBox();
 }
@@ -599,7 +615,7 @@ void CAnimationEditor::OnDeleteAnimFrame()
 	// if (m_PlayScaleInput->Empty())
 	//	return;
 	BoneKeyFrame* DeleteBoneFrame = m_Animation->GetCurrentAnimation()->GetAnimationSequence()->DeleteAnimationFrame(DeleteFrameIdx);
-	
+
 	m_StackDeleteFrame.push(std::make_pair(DeleteFrameIdx, DeleteBoneFrame));
 
 	// Frame Slider
@@ -654,17 +670,17 @@ void CAnimationEditor::OnAddAnimationSequence()
 		if (strcmp(Ext, ".SQC") != 0)
 			return;
 
-
-
 		if (!m_Animation)
 		{
 			if (!LoadElementsForSqcLoading(SqcFileName))
 				return;
-			
+
 			// Create Object
 			OnCreateSample3DObject();
-		}
 
+			// Set Material, Mesh Info
+			SetMeshMaterialReadyForAnimation();
+		}
 
 		// 이름 중복 X --> Key 이름 중복
 		if (m_Animation->FindAnimation(m_NewAnimSeqDataKeyName->GetTextUTF8()))
@@ -681,6 +697,8 @@ void CAnimationEditor::OnAddAnimationSequence()
 			return;
 
 		CAnimationSequence* LoadedSequence = CSceneManager::GetInst()->GetScene()->GetResource()->FindAnimationSequence(m_NewAnimSeqName->GetTextUTF8());
+
+		LoadedSequence->SetAnimationFullPathMultibyte(FilePathMultibyte);
 
 		// 현재 
 		m_Animation->AddAnimation(m_NewAnimSeqName->GetTextUTF8(), m_NewAnimSeqDataKeyName->GetTextUTF8());
@@ -773,7 +791,7 @@ void CAnimationEditor::OnRefreshAnimationComboBox()
 		// 처음 Animation 을 추가하는 상황이라면
 		if (SeletedIdx == -1)
 			m_CurAnimComboBox->SetSelectIndex(0);
-		else 
+		else
 			m_CurAnimComboBox->SetSelectIndex(SeletedIdx);
 	}
 	else

@@ -44,3 +44,15 @@ public:
 	static bool CompareExt(const char* FullPath, const char ExtFilter[_MAX_EXT]);
 
 };
+
+namespace AnimationClipInfoKeys
+{
+	const std::string FrameRange = "Frame Range";
+	const std::string FrameLength = "Frame Length";
+	const std::string FrameMode = "Frame Mode"; // 24, 30, 60
+	const std::string PlayTime = "Play Time";
+	const std::string FrameTime = "Frame Time";
+	const std::string PlayScale = "Play Scale";
+	const std::string AnimSeqKey = "Seq Key";
+	const std::string AnimSeqFileName = "Seq File Name";
+};
