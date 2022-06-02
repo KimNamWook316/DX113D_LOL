@@ -101,6 +101,7 @@ public:
 	virtual void PostUpdate(float DeltaTime);
 	virtual void PrevRender();
 	virtual void Render();
+	virtual void RenderShadowMap();
 	virtual void PostRender();
 	virtual CLandScape* Clone();
 	virtual void Save(FILE* File);

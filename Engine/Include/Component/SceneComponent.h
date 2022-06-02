@@ -42,6 +42,7 @@ protected:
 
 public:
 	void SetInstancingInfo(Instancing3DInfo* Info);
+	void SetInstancingShadowInfo(Instancing3DInfo* Info);
 
 	static const std::list<InstancingCheckCount*>* GetInstancingCheckList()
 	{
@@ -155,6 +156,7 @@ public:
 	virtual void CheckCollision();
 	virtual void PrevRender();
 	virtual void Render();
+	virtual void RenderShadowMap();
 	virtual void RenderDebug();
 	virtual void PostRender();
 	virtual CSceneComponent* Clone();

@@ -31,6 +31,8 @@ CEngine::CEngine()	:
 	//_CrtSetBreakAlloc(230);
 
 	//m_ClearColor[1] = 1.f; 
+	srand(unsigned int(GetTickCount()));
+	rand();
 }
 
 CEngine::~CEngine()

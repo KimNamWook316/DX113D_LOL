@@ -77,6 +77,11 @@ void CSceneComponent::SetInstancingInfo(Instancing3DInfo* Info)
 	m_Transform->SetInstancingInfo(Info);
 }
 
+void CSceneComponent::SetInstancingShadowInfo(Instancing3DInfo* Info)
+{
+	m_Transform->SetInstancingShadowInfo(Info);
+}
+
 SphereInfo CSceneComponent::GetSphereInfoViewSpace() const
 {
 	SphereInfo Info;
@@ -530,6 +535,11 @@ void CSceneComponent::Render()
 
 	CRenderManager::GetInst()->GetStandard2DCBuffer()->SetAnimation2DEnable(false);
 	CRenderManager::GetInst()->GetStandard2DCBuffer()->UpdateCBuffer();
+}
+
+void CSceneComponent::RenderShadowMap()
+{
+	m_Transform->SetTransformShadow();
 }
 
 void CSceneComponent::RenderDebug()

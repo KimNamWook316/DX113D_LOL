@@ -51,6 +51,8 @@ private:
 
 public:
 	void SetInstancingInfo(Instancing3DInfo* Info);
+	void SetInstancingShadowInfo(Instancing3DInfo* Info);
+
 	void SetUpdateByMat(bool UpdateByMat)
 	{
 		m_UpdateByMat = UpdateByMat;
@@ -296,6 +298,7 @@ public:
 	void Update(float DeltaTime);
 	void PostUpdate(float DeltaTime);
 	void SetTransform();
+	void SetTransformShadow();
 	void ComputeWorld();
 	void DecomposeWorld();
 	CTransform* Clone();

@@ -241,9 +241,10 @@ bool CResourceManager::LoadTextureFullPath(const std::string& Name, const std::v
 }
 
 bool CResourceManager::CreateTarget(const std::string& Name, unsigned int Width, 
-	unsigned int Height, DXGI_FORMAT PixelFormat, bool MultiSample)
+	unsigned int Height, DXGI_FORMAT PixelFormat, bool MultiSample, 
+	DXGI_FORMAT DepthFormat)
 {
-	return m_TextureManager->CreateTarget(Name, Width, Height, PixelFormat, MultiSample);
+	return m_TextureManager->CreateTarget(Name, Width, Height, PixelFormat, MultiSample, DepthFormat);
 }
 
 bool CResourceManager::LoadTextureArray(const std::string& Name, const std::vector<TCHAR*>& vecFileName, const std::string& PathName)

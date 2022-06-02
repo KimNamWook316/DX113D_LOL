@@ -27,6 +27,8 @@
 #include "AnimEditorShader.h"
 #include "Standard3DInstancingShader.h"
 #include "Standard3DWireFrameShader.h"
+#include "ShadowMapShader.h"
+#include "ShadowMapInstancingShader.h"
 
 CShaderManager::CShaderManager()
 {
@@ -124,6 +126,12 @@ bool CShaderManager::Init()
 		assert(false);
 		return false;
 	}
+
+	if (!CreateShader<CShadowMapShader>("ShadowMapShader"))
+		return false;
+
+	if (!CreateShader<CShadowMapInstancingShader>("ShadowMapInstancingShader"))
+		return false;
 
 	// =================== 상수버퍼 ===================
 	CreateConstantBuffer("TransformCBuffer", sizeof(TransformCBuffer), 0,

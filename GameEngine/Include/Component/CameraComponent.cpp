@@ -1,6 +1,11 @@
 #include "CameraComponent.h"
 #include "../Device.h"
 #include "Frustum.h"
+#include "../Scene/Scene.h"
+#include "../Scene/LightManager.h"
+#include "LightComponent.h"
+#include "../Render/RenderManager.h"
+#include "Arm.h"
 
 CCameraComponent::CCameraComponent()
 {
@@ -58,6 +63,42 @@ void CCameraComponent::CreateProjectionMatrix()
 		break;
 	}
 
+	m_matProj = XMMatrixPerspectiveFovLH(DegreeToRadian(m_ViewAngle),
+		(float)m_RS.Width / (float)m_RS.Height, 0.1f, m_Distance);
+}
+
+void CCameraComponent::ComputeShadowView()
+{
+	CLightComponent* GlobalLight = m_Scene->GetLightManager()->GetGlobalLightComponent();
+
+	m_matShadowView.Identity();
+
+	for (int i = 0; i < AXIS::AXIS_MAX; ++i)
+	{
+		Vector3 Axis = GlobalLight->GetWorldAxis((AXIS)i);
+		memcpy(&m_matShadowView[i][0], &Axis, sizeof(Vector3));
+	}
+
+	m_matShadowView.Transpose();
+
+	Vector3 TargetPos;
+
+	if (m_Parent->CheckType<CArm>())
+	{
+		CArm* Parent = (CArm*)(m_Parent);
+
+		TargetPos = GetWorldPos() + GetWorldAxis(AXIS_Z) * Parent->GetTargetDistance();
+	}
+
+	float ShadowLightDistance = CRenderManager::GetInst()->GetShadowLightDistance();
+
+	Vector3 Pos = TargetPos - GlobalLight->GetWorldAxis(AXIS_Z) * ShadowLightDistance;
+
+	for (int i = 0; i < AXIS::AXIS_MAX; ++i)
+	{
+		Vector3 Axis = GlobalLight->GetWorldAxis((AXIS)i);
+		m_matShadowView[3][i] = Pos.Dot(Axis);
+	}
 }
 
 void CCameraComponent::Start()

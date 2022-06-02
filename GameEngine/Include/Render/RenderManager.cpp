@@ -21,7 +21,9 @@ DEFINITION_SINGLE(CRenderManager)
 
 CRenderManager::CRenderManager()	:
 	m_RenderStateManager(nullptr),
-	m_Standard2DCBuffer(nullptr)
+	m_Standard2DCBuffer(nullptr),
+	m_Shadow(true),
+	m_ShadowLightDistance(20.f)
 {
 }
 
@@ -261,11 +263,6 @@ bool CRenderManager::Init()
 	FinalScreenTarget->SetScale(Vector3(100.f, 100.f, 1.f));
 	FinalScreenTarget->SetDebugRender(true);
 
-	m_LightBlendShader = CResourceManager::GetInst()->FindShader("LightBlendShader");
-	m_LightBlendRenderShader = CResourceManager::GetInst()->FindShader("LightBlendRenderShader");
-	m_Mesh3DNoLightRenderShader = CResourceManager::GetInst()->FindShader("Mesh3DNoLightShader");
-	m_Standard3DInstancingShader = CResourceManager::GetInst()->FindShader("Standard3DInstancingShader");
-
 	// Animation Editor 용 Render Target 
 	if (!CResourceManager::GetInst()->CreateTarget("AnimationEditorRenderTarget",
 		RS.Width, RS.Height, DXGI_FORMAT_R32G32B32A32_FLOAT))
@@ -289,6 +286,26 @@ bool CRenderManager::Init()
 
 
 	// Map 출력용 변수들
+
+	// Shadow
+	if (!CResourceManager::GetInst()->CreateTarget("ShadowMap", RS.Width, RS.Height,
+		DXGI_FORMAT_R32G32B32A32_FLOAT, true, DXGI_FORMAT_D24_UNORM_S8_UINT))
+	{
+		assert(false);
+		return false;
+	}
+
+	m_ShadowMapTarget = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("ShadowMap");
+	m_ShadowMapTarget->SetPos(Vector3(300.f, 0.f, 0.f));
+	m_ShadowMapTarget->SetScale(Vector3(100.f, 100.f, 1.f));
+	m_ShadowMapTarget->SetDebugRender(true);
+
+	m_LightBlendShader = CResourceManager::GetInst()->FindShader("LightBlendShader");
+	m_LightBlendRenderShader = CResourceManager::GetInst()->FindShader("LightBlendRenderShader");
+	m_Mesh3DNoLightRenderShader = CResourceManager::GetInst()->FindShader("Mesh3DNoLightShader");
+	m_Standard3DInstancingShader = CResourceManager::GetInst()->FindShader("Standard3DInstancingShader");
+	m_ShadowMapShader = CResourceManager::GetInst()->FindShader("ShadowMapShader");
+	m_ShadowMapInstancingShader = CResourceManager::GetInst()->FindShader("ShadowMapInstancingShader");
 
 	return true;
 }
@@ -423,6 +440,12 @@ void CRenderManager::Render()
 	CSharedPtr<CGameObject> SkyObj = CSceneManager::GetInst()->GetScene()->GetSkyObject();
 	SkyObj->Render();
 
+	// 인스턴싱 정보를 만든다.
+	RenderDefaultInstancingInfo();
+
+	// 그림자 맵을 만든다.
+	RenderShadowMap();
+
 	// GBuffer를 만들어낸다.
 	RenderGBuffer();
 
@@ -521,6 +544,29 @@ void CRenderManager::Render()
 	m_AlphaBlend->ResetState();
 
 	m_DepthDisable->ResetState();
+}
+
+void CRenderManager::RenderShadowMap()
+{
+	m_ShadowMapTarget->ClearTarget();
+	m_ShadowMapTarget->SetTarget();
+	
+	m_ShadowMapShader->SetShader();
+
+	for (size_t i = 0; i <= 1; ++i)
+	{
+		auto iter = m_RenderLayerList[i]->RenderList.begin();
+		auto iterEnd = m_RenderLayerList[i]->RenderList.end();
+
+		for (; iter != iterEnd; ++iter)
+		{
+			(*iter)->RenderShadowMap();
+		}
+	}
+
+	RenderDefaultInstancingShadow();
+
+	m_ShadowMapTarget->ResetTarget();
 }
 
 void CRenderManager::RenderGBuffer()
@@ -882,6 +928,80 @@ CRenderState* CRenderManager::FindRenderState(const std::string& Name)
 	return m_RenderStateManager->FindRenderState(Name);
 }
 
+void CRenderManager::RenderDefaultInstancingInfo()
+{
+	for (int i = 0; i < m_RenderLayerList[1]->InstancingIndex; ++i)
+	{
+		// Material Slot 수만큼 반복한다.
+		int	SlotCount = 0;
+		if (m_RenderLayerList[1]->m_vecInstancing[i]->Mesh->GetMeshType() == Mesh_Type::Static)
+		{
+			SlotCount = ((CStaticMeshComponent*)m_RenderLayerList[1]->m_vecInstancing[i]->RenderList.back())->GetMaterialSlotCount();
+		}
+
+		else if (m_RenderLayerList[1]->m_vecInstancing[i]->Mesh->GetMeshType() == Mesh_Type::Animation)
+		{
+			SlotCount = ((CAnimationMeshComponent*)m_RenderLayerList[1]->m_vecInstancing[i]->RenderList.back())->GetMaterialSlotCount();
+		}
+
+		for (int j = 0; j < SlotCount; ++j)
+		{
+			auto	iter = m_RenderLayerList[1]->m_vecInstancing[i]->RenderList.begin();
+			auto	iterEnd = m_RenderLayerList[1]->m_vecInstancing[i]->RenderList.end();
+
+			std::vector<Instancing3DInfo>	vecInfo;
+			vecInfo.reserve(m_RenderLayerList[1]->m_vecInstancing[i]->RenderList.size());
+
+			// ShadowBuffer
+			std::vector<Instancing3DInfo>	vecShadowInfo;
+			vecShadowInfo.reserve(m_RenderLayerList[1]->m_vecInstancing[i]->RenderList.size());
+
+			CMaterial* Material = nullptr;
+
+			for (; iter != iterEnd; ++iter)
+			{
+				if (m_RenderLayerList[1]->m_vecInstancing[i]->Mesh->GetMeshType() == Mesh_Type::Static)
+				{
+					Material = ((CStaticMeshComponent*)(*iter))->GetMaterial(j);
+				}
+
+				else if (m_RenderLayerList[1]->m_vecInstancing[i]->Mesh->GetMeshType() == Mesh_Type::Animation)
+				{
+					Material = ((CAnimationMeshComponent*)(*iter))->GetMaterial(j);
+				}
+
+				Instancing3DInfo	Info = {};
+
+				(*iter)->SetInstancingInfo(&Info);
+				Material->GetCBuffer()->SetInstancingInfo(&Info);
+
+				// 페이퍼번 정보
+				if (Info.MtrlPaperBurnEnable == 1)
+				{
+					CPaperBurnComponent* PaperBurn = (*iter)->GetGameObject()->FindComponentFromType<CPaperBurnComponent>();
+					if (PaperBurn)
+					{
+						PaperBurn->SetInstancingInfo(&Info);
+					}
+				}
+
+				vecInfo.push_back(Info);
+
+				Instancing3DInfo	ShadowInfo = {};
+
+				(*iter)->SetInstancingShadowInfo(&ShadowInfo);
+
+				vecShadowInfo.push_back(ShadowInfo);
+			}
+
+			m_RenderLayerList[1]->m_vecInstancing[i]->Buffer->UpdateBuffer(&vecInfo[0],
+				(int)vecInfo.size());
+			m_RenderLayerList[1]->m_vecInstancing[i]->ShadowBuffer->UpdateBuffer(&vecShadowInfo[0],
+				(int)vecShadowInfo.size());
+		}
+	}
+}
+
 void CRenderManager::RenderDefaultInstancing()
 {
 	// 이제 Default Layer 에 있는 Instancing집단. 들을 순회할 것이다.
@@ -908,57 +1028,16 @@ void CRenderManager::RenderDefaultInstancing()
 		// 해당 Material 개수만큼 반복할 것이다.
 		for (int j = 0; j < SlotCount; ++j)
 		{
-			// m_RenderLayerList[1]->m_vecInstancing[i] -> Default Layer 내 Instancing 으로 그릴 하나의 집단
-			// 그 집단 내에 있는 Component 하나하나를 순회할 것이다.
-			auto	iter = m_RenderLayerList[1]->m_vecInstancing[i]->RenderList.begin();
-			auto	iterEnd = m_RenderLayerList[1]->m_vecInstancing[i]->RenderList.end();
-
-			// Instancing3DInfo 는 Shader 측에서 구조화 버퍼 배열의 원소 이다.
-			// Instancing3DInfo 하나가, 실제로 그릴 Mesh 하나.를 의미한다.
-			// vecInfo 가 그렇다면, 구조화 버퍼 하나에 대응될 것이다.
-			std::vector<Instancing3DInfo>	vecInfo;
-			vecInfo.reserve(m_RenderLayerList[1]->m_vecInstancing[i]->RenderList.size());
-
 			CMaterial* Material = nullptr;
 
-			// Component 하나하나를 순회할 것이다.
-			for (; iter != iterEnd; ++iter)
+			if (m_RenderLayerList[1]->m_vecInstancing[i]->Mesh->GetMeshType() == Mesh_Type::Static)
 			{
-				if (m_RenderLayerList[1]->m_vecInstancing[i]->Mesh->GetMeshType() == Mesh_Type::Static)
-				{
-					Material = ((CStaticMeshComponent*)(*iter))->GetMaterial(j);
-				}
+				Material = ((CStaticMeshComponent*)m_RenderLayerList[1]->m_vecInstancing[i]->RenderList.back())->GetMaterial(j);
+			}
 
-				else if (m_RenderLayerList[1]->m_vecInstancing[i]->Mesh->GetMeshType() == Mesh_Type::Animation)
-				{
-					Material = ((CAnimationMeshComponent*)(*iter))->GetMaterial(j);
-				}
-
-				// 여기서 Material 는 Null 이 나올 수 없다.
-				// 현재 같은 Mesh 를 공유하는 Component 를 순회하고 있고
-				// 이에 따라 같은 Mesh 안에는 당연히 Material 개수가 동일할 것이기 때문이다.
-				Instancing3DInfo	Info = {};
-
-				// 해당 Component 를 통해 구조화 버퍼. 하나의 원소. 인 Info 에 정보를 채워준다.
-				// (SceneComponent 내 , Transform 정보를 채워준다.)
-				(*iter)->SetInstancingInfo(&Info);
-
-				// 상수 버퍼 를 통해 구조화 버퍼. 하나의 원소. 인 Info 에 정보를 채워준다.
-				// Material 정보를 채워준다.
-				Material->GetCBuffer()->SetInstancingInfo(&Info);
-
-				// 페이퍼번 정보
-				// 페이퍼번을 하는 경우에만, PaperBurn 상수 버퍼에 있는 내용을 채워준다.
-				if (Info.MtrlPaperBurnEnable == 1)
-				{
-					CPaperBurnComponent* PaperBurn = (*iter)->GetGameObject()->FindComponentFromType<CPaperBurnComponent>();
-					if (PaperBurn)
-					{
-						PaperBurn->SetInstancingInfo(&Info);
-					}
-				}
-
-				vecInfo.push_back(Info);
+			else if (m_RenderLayerList[1]->m_vecInstancing[i]->Mesh->GetMeshType() == Mesh_Type::Animation)
+			{
+				Material = ((CAnimationMeshComponent*)m_RenderLayerList[1]->m_vecInstancing[i]->RenderList.back())->GetMaterial(j);
 			}
 
 			// Material 내 Texture 만 넘겨주는 로직을 하나 만들 것이다.
@@ -981,19 +1060,11 @@ void CRenderManager::RenderDefaultInstancing()
 			// 각 Animation Mesh Component Instancing 에서 사용되는 Bone 개수에 대한 정보를 넘겨줄 것이다.
 			m_RenderLayerList[1]->m_vecInstancing[i]->CBuffer->UpdateCBuffer();
 
-			// 구조화 버퍼 정보를 Update 해준다.
-			// 40 번 레지스터, g_InstancingInfoArray 정보를 Update 하는 것이다.
-			// 현재 Instancing 으로 그리는 물체 개수만큼의 Instancing3DInfo 구조체 정보가 넘어갈 것이다.
-			m_RenderLayerList[1]->m_vecInstancing[i]->Buffer->UpdateBuffer(&vecInfo[0],
-				(int)vecInfo.size());
-
 			m_RenderLayerList[1]->m_vecInstancing[i]->Buffer->SetShader();
 
-			m_RenderLayerList[1]->m_vecInstancing[i]->Mesh->RenderInstancing((int)vecInfo.size(), j);
-
+			m_RenderLayerList[1]->m_vecInstancing[i]->Mesh->RenderInstancing((int)m_RenderLayerList[1]->m_vecInstancing[i]->RenderList.size(), j);
 
 			m_RenderLayerList[1]->m_vecInstancing[i]->Buffer->ResetShader();
-
 
 
 			if (m_RenderLayerList[1]->m_vecInstancing[i]->Animation)
@@ -1005,6 +1076,50 @@ void CRenderManager::RenderDefaultInstancing()
 			if (Material)
 				Material->Reset();
 
+		}
+	}
+}
+
+void CRenderManager::RenderDefaultInstancingShadow()
+{
+	for (int i = 0; i < m_RenderLayerList[1]->InstancingIndex; ++i)
+	{
+		// Material Slot 수만큼 반복한다.
+		int	SlotCount = 0;
+		if (m_RenderLayerList[1]->m_vecInstancing[i]->Mesh->GetMeshType() == Mesh_Type::Static)
+		{
+			SlotCount = ((CStaticMeshComponent*)m_RenderLayerList[1]->m_vecInstancing[i]->RenderList.back())->GetMaterialSlotCount();
+		}
+
+		else if (m_RenderLayerList[1]->m_vecInstancing[i]->Mesh->GetMeshType() == Mesh_Type::Animation)
+		{
+			SlotCount = ((CAnimationMeshComponent*)m_RenderLayerList[1]->m_vecInstancing[i]->RenderList.back())->GetMaterialSlotCount();
+		}
+
+		for (int j = 0; j < SlotCount; ++j)
+		{
+			if (m_RenderLayerList[1]->m_vecInstancing[i]->Animation)
+			{
+				((CAnimationMesh*)m_RenderLayerList[1]->m_vecInstancing[i]->Mesh)->SetBoneShader();
+			}
+
+			m_ShadowMapInstancingShader->SetShader();
+
+			m_RenderLayerList[1]->m_vecInstancing[i]->CBuffer->UpdateCBuffer();
+
+			m_RenderLayerList[1]->m_vecInstancing[i]->ShadowBuffer->SetShader();
+
+			m_RenderLayerList[1]->m_vecInstancing[i]->Mesh->RenderInstancing((int)m_RenderLayerList[1]->m_vecInstancing[i]->RenderList.size(), j);
+
+
+			m_RenderLayerList[1]->m_vecInstancing[i]->ShadowBuffer->ResetShader();
+
+
+
+			if (m_RenderLayerList[1]->m_vecInstancing[i]->Animation)
+			{
+				((CAnimationMesh*)m_RenderLayerList[1]->m_vecInstancing[i]->Mesh)->ResetBoneShader();
+			}
 		}
 	}
 }

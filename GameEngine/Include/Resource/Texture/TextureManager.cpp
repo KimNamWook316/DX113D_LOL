@@ -204,7 +204,7 @@ bool CTextureManager::LoadTextureFullPath(const std::string& Name,
 
 bool CTextureManager::CreateTarget(const std::string& Name, 
 	unsigned int Width, unsigned int Height, 
-	DXGI_FORMAT PixelFormat, bool MultiSample)
+	DXGI_FORMAT PixelFormat, bool MultiSample, DXGI_FORMAT DepthFormat)
 {
 	CRenderTarget* Texture = (CRenderTarget*)FindTexture(Name);
 
@@ -213,7 +213,7 @@ bool CTextureManager::CreateTarget(const std::string& Name,
 
 	Texture = new CRenderTarget;
 
-	if (!Texture->CreateTarget(Name, Width, Height, PixelFormat, MultiSample))
+	if (!Texture->CreateTarget(Name, Width, Height, PixelFormat, MultiSample, DepthFormat))
 	{
 		SAFE_RELEASE(Texture);
 		return false;
