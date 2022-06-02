@@ -951,6 +951,9 @@
     <ClCompile Include="Component\ColliderBox3D.cpp">
       <Filter>05. Component\01. SceneComponent\02. Collider</Filter>
     </ClCompile>
+    <ClCompile Include="IMGUITableElemList.cpp">
+      <Filter>01. Engine\08. IMGUI\03. Widget</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Device.h">
@@ -1633,6 +1636,9 @@
     </ClInclude>
     <ClInclude Include="Component\ColliderBox3D.h">
       <Filter>05. Component\01. SceneComponent\02. Collider</Filter>
+    </ClInclude>
+    <ClInclude Include="IMGUITableElemList.h">
+      <Filter>01. Engine\08. IMGUI\03. Widget</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
