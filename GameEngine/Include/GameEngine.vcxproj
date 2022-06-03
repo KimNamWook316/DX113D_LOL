@@ -181,6 +181,7 @@
     <ClCompile Include="Resource\Shader\LightBlendRenderShader.cpp" />
     <ClCompile Include="Resource\Shader\LightBlendShader.cpp" />
     <ClCompile Include="Resource\Shader\LightConstantBuffer.cpp" />
+    <ClCompile Include="Resource\Shader\LightForwardConstantBuffer.cpp" />
     <ClCompile Include="Resource\Shader\MaterialConstantBuffer.cpp" />
     <ClCompile Include="Resource\Shader\Mesh2DShader.cpp" />
     <ClCompile Include="Resource\Shader\Mesh3DNoLightShader.cpp" />
@@ -207,6 +208,8 @@
     <ClCompile Include="Resource\Shader\TileMapConstantBuffer.cpp" />
     <ClCompile Include="Resource\Shader\TileMapShader.cpp" />
     <ClCompile Include="Resource\Shader\TransformConstantBuffer.cpp" />
+    <ClCompile Include="Resource\Shader\Transparent3DShader.cpp" />
+    <ClCompile Include="Resource\Shader\TransparentInstancing3DShader.cpp" />
     <ClCompile Include="Resource\Shader\WidgetConstantBuffer.cpp" />
     <ClCompile Include="Resource\Shader\WidgetShader.cpp" />
     <ClCompile Include="Resource\Sound\Sound.cpp" />
@@ -411,6 +414,7 @@
     <ClInclude Include="Resource\Shader\LightBlendRenderShader.h" />
     <ClInclude Include="Resource\Shader\LightBlendShader.h" />
     <ClInclude Include="Resource\Shader\LightConstantBuffer.h" />
+    <ClInclude Include="Resource\Shader\LightForwardConstantBuffer.h" />
     <ClInclude Include="Resource\Shader\MaterialConstantBuffer.h" />
     <ClInclude Include="Resource\Shader\Mesh2DShader.h" />
     <ClInclude Include="Resource\Shader\Mesh3DNoLightShader.h" />
@@ -437,6 +441,8 @@
     <ClInclude Include="Resource\Shader\TileMapConstantBuffer.h" />
     <ClInclude Include="Resource\Shader\TileMapShader.h" />
     <ClInclude Include="Resource\Shader\TransformConstantBuffer.h" />
+    <ClInclude Include="Resource\Shader\Transparent3DShader.h" />
+    <ClInclude Include="Resource\Shader\TransparentInstancing3DShader.h" />
     <ClInclude Include="Resource\Shader\WidgetConstantBuffer.h" />
     <ClInclude Include="Resource\Shader\WidgetShader.h" />
     <ClInclude Include="Resource\Sound\Sound.h" />
@@ -626,6 +632,14 @@
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">TileMapVS</EntryPointName>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Effect</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="..\Bin\Shader\Transparent3D.fx">
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Transparent3DVS</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Transparent3DVS</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="..\Bin\Shader\Widget.fx">
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">WidgetVS</EntryPointName>

@@ -28,6 +28,16 @@ public:
 	{
 		return m_BufferData.Distance;
 	}
+
+	const Vector3& GetLightPos() const
+	{
+		return m_BufferData.Pos;
+	}
+
+	const Vector3& GetLightDir() const
+	{
+		return m_BufferData.Dir;
+	}
 	
 	const Vector4& GetLightColor() const
 	{

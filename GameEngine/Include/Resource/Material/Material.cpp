@@ -118,7 +118,13 @@ void CMaterial::SetRenderState(const std::string& Name)
 void CMaterial::SetTransparency(bool Enable)
 {
 	if (Enable)
+	{
 		m_RenderStateArray[(int)RenderState_Type::Blend] = CRenderManager::GetInst()->FindRenderState("AlphaBlend");
+	}
+	else
+	{
+		m_RenderStateArray[(int)RenderState_Type::Blend] = nullptr;
+	}
 }
 
 void CMaterial::SetOpacity(float Opacity)

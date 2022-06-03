@@ -195,7 +195,7 @@ void CStaticMeshComponentWidget::OnCheckTransparency(int Idx, bool Check)
 
 	if (MeshCom->GetMesh())
 	{
-		MeshCom->SetTransparency(Check, m_MaterialSlotCombo->GetSelectIndex());
+		MeshCom->SetTransparency(Check, Idx);
 	}
 }
 

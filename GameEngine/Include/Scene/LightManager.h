@@ -19,6 +19,12 @@ private:
 private:
 	std::list<CSharedPtr<CLightComponent>>	m_LightList;
 
+	// 투명 오브젝트들을 위한 Forward Rendering용 멤버
+private:
+	class CLightForwardConstantBuffer* m_CBuffer;
+	class CStructuredBuffer* m_LightListBuffer;
+	std::vector<LightCBuffer> m_LightListBufferData;
+
 public:
 	class CGameObject* GetGlobalLight() const
 	{
@@ -43,5 +49,10 @@ public:
 	void SetShader();
 	void Destroy();
 	void Render();
+	void SetForwardRenderShader();
+	void ResetForwardRenderShader();
+
+private:
+	void CreateLightListBuffer();
 };
 

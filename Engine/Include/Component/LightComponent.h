@@ -28,6 +28,16 @@ public:
 		return m_CBuffer->GetLightDistance();
 	}
 
+	const Vector3& GetLightPos() const
+	{
+		return m_CBuffer->GetLightPos();
+	}
+
+	const Vector3& GetLightDir() const
+	{
+		return m_CBuffer->GetLightDir();
+	}
+	
 	const Vector4& GetLightColor() const
 	{
 		return m_CBuffer->GetLightColor();

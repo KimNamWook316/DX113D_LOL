@@ -11,6 +11,7 @@
 #include "Component/Node/SkillQNode.h"
 #include "Component/Node/InputWCheckNode.h"
 #include "Component/Node/SkillWNode.h"
+#include "Flag.h"
 
 CBehaviorTreeWindow::CBehaviorTreeWindow()  :
     m_Select(false),

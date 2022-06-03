@@ -226,6 +226,78 @@ void CStaticMeshComponent::AddMaterial(CMaterial* Material)
 	m_vecMaterialSlot[m_vecMaterialSlot.size() - 1]->SetScene(m_Scene);
 }
 
+bool CStaticMeshComponent::SetCustomShader(const std::string& Name)
+{
+	m_CustomShader = m_Scene->GetResource()->FindShader(Name);
+
+	if (!m_CustomShader)
+	{
+		assert(false);
+		return false;
+	}
+
+	// 현재 반투명상태인 Material 체크
+	size_t Size = m_vecMaterialSlot.size();
+
+	std::vector<bool> vecTransparent;
+	vecTransparent.resize(Size);
+
+	for (size_t i = 0; i < Size; ++i)
+	{
+		if (m_vecMaterialSlot[i]->IsTransparent())
+		{
+			vecTransparent[i] = true;
+		}
+	}
+
+	// 반투명 상태가 아닌 Material들에 Custom Shader 적용
+	for (size_t i = 0; i < Size; ++i)
+	{
+		if (false == vecTransparent[i])
+		{
+			m_vecMaterialSlot[i]->SetShader((CGraphicShader*)(m_CustomShader.Get()));
+		}
+	}
+
+	return true;
+}
+
+bool CStaticMeshComponent::SetCustomTransparencyShader(const std::string& Name)
+{
+	m_CustomTransparentShader = m_Scene->GetResource()->FindShader(Name);
+
+	if (!m_CustomTransparentShader)
+	{
+		assert(false);
+		return false;
+	}
+
+	// 현재 반투명상태인 Material 체크
+	size_t Size = m_vecMaterialSlot.size();
+
+	std::vector<bool> vecTransparent;
+	vecTransparent.resize(Size);
+
+	for (size_t i = 0; i < Size; ++i)
+	{
+		if (m_vecMaterialSlot[i]->IsTransparent())
+		{
+			vecTransparent[i] = true;
+		}
+	}
+
+	// 반투명 상태인 Material들에 Custom Shader 적용
+	for (size_t i = 0; i < Size; ++i)
+	{
+		if (vecTransparent[i])
+		{
+			m_vecMaterialSlot[i]->SetShader((CGraphicShader*)(m_CustomTransparentShader.Get()));
+		}
+	}
+
+	return true;
+}
+
 void CStaticMeshComponent::SetBaseColor(const Vector4& Color, int Index)
 {
 	m_vecMaterialSlot[Index]->SetBaseColor(Color);
@@ -283,7 +355,90 @@ void CStaticMeshComponent::SetRenderState(const std::string& Name, int Index)
 
 void CStaticMeshComponent::SetTransparency(bool Enable, int Index)
 {
-	m_vecMaterialSlot[Index]->SetTransparency(Enable);
+	if (Enable)
+	{
+		// 한 Material이라도 반투명이라면 반투명 Layer에서 렌더해야 한다.
+		m_LayerName = "Transparency";
+
+		// 반투명시 적용되어야 할 커스텀 쉐이더가 있는 경우
+		if (m_CustomTransparentShader)
+		{
+			m_vecMaterialSlot[Index]->SetShader((CGraphicShader*)m_CustomTransparentShader.Get());
+		}
+		// 없는 경우 Default Transparent Shader로 렌더
+		else
+		{
+			m_vecMaterialSlot[Index]->SetShader("Transparent3DShader");
+		}
+
+		m_vecMaterialSlot[Index]->SetTransparency(Enable);
+	}
+	else
+	{
+		m_vecMaterialSlot[Index]->SetTransparency(Enable);
+
+		// 커스텀 쉐이더가 있는 경우
+		if (m_CustomShader)
+		{
+			m_vecMaterialSlot[Index]->SetShader((CGraphicShader*)m_CustomShader.Get());
+		}
+		// 없는 경우 Default 3D Shader로 렌더
+		else
+		{
+			m_vecMaterialSlot[Index]->SetShader("Standard3DShader");
+		}
+
+		// 하나의 Material이라도 반투명이라면, 레이어를 Transparency 레이어로 유지한다.
+		size_t Size = m_vecMaterialSlot.size();
+		for (size_t i = 0; i < Size; ++i)
+		{
+			if (m_vecMaterialSlot[i]->IsTransparent())
+			{
+				return;
+			}
+		}
+
+		// 모두 다 불투명 상태라면, Default Layer로 바꾼다.
+		m_LayerName = "Default";
+	}
+}
+
+void CStaticMeshComponent::SetTransparencyAllMaterial(bool Enable)
+{
+	size_t Size = m_vecMaterialSlot.size();
+
+	if (Enable)
+	{
+		m_LayerName = "Transparency";
+
+		for (size_t i = 0; i < Size; ++i)
+		{
+			if (m_CustomTransparentShader)
+			{
+				m_vecMaterialSlot[i]->SetShader((CGraphicShader*)m_CustomTransparentShader.Get());
+			}
+			else
+			{
+				m_vecMaterialSlot[i]->SetShader("Standard3DShader");
+			}
+		}
+	}
+	else
+	{
+		m_LayerName = "Default";
+
+		for (size_t i = 0; i < Size; ++i)
+		{
+			if (m_CustomShader)
+			{
+				m_vecMaterialSlot[i]->SetShader((CGraphicShader*)m_CustomShader.Get());
+			}
+			else
+			{
+				m_vecMaterialSlot[i]->SetShader("Transparent3DShader");
+			}
+		}
+	}
 }
 
 void CStaticMeshComponent::SetOpacity(float Opacity, int Index)

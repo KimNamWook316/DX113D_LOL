@@ -18,6 +18,10 @@ protected:
     CSharedPtr<CStaticMesh> m_Mesh;
     std::vector<CSharedPtr<CMaterial>> m_vecMaterialSlot;
 
+    // Editor, Client단에서 Custom Shader를 적용할 경우 적용할 Shader
+    CSharedPtr<class CShader> m_CustomShader;
+    CSharedPtr<class CShader> m_CustomTransparentShader;
+
 public:
     CStaticMesh* GetMesh() const
     {
@@ -41,6 +45,10 @@ public:
     void AddMaterial(CMaterial* Material);
 
 public:
+    bool SetCustomShader(const std::string& Name);
+    bool SetCustomTransparencyShader(const std::string& Name);
+
+public:
     void SetBaseColor(const Vector4& Color, int Index = 0);
     void SetBaseColor(float r, float g, float b, float a, int Index = 0);
     void SetAmbientColor(const Vector4& Color, int Index = 0);
@@ -53,6 +61,7 @@ public:
     void SetRenderState(class CRenderState* State, int Index = 0);
     void SetRenderState(const std::string& Name, int Index = 0);
     void SetTransparency(bool Enable, int Index = 0);
+    void SetTransparencyAllMaterial(bool Enable);
     void SetOpacity(float Opacity, int Index = 0);
     void AddOpacity(float Opacity, int Index = 0);
 
