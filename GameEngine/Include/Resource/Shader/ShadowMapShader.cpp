@@ -15,7 +15,7 @@ bool CShadowMapShader::Init()
 	if (!LoadVertexShader("Standard3DShadowMapVS", TEXT("ShadowMap.fx"), SHADER_PATH))
 		return false;
 
-	if (!LoadPixelShader("Standard3DShadowPS", TEXT("ShadowMap.fx"), SHADER_PATH))
+	if (!LoadPixelShader("Standard3DShadowMapPS", TEXT("ShadowMap.fx"), SHADER_PATH))
 		return false;
 
 	AddInputDesc("POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0);

@@ -668,7 +668,7 @@ bool CTexture::CreateResourceArray()
 	Desc.Format = m_vecTextureInfo[0]->Image->GetMetadata().format;
 	Desc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2DARRAY;
 	Desc.Texture2DArray.MostDetailedMip = 0;
-	Desc.Texture2DArray.MipLevels = m_vecTextureInfo[0]->Image->GetMetadata().mipLevels;
+	Desc.Texture2DArray.MipLevels = (UINT)m_vecTextureInfo[0]->Image->GetMetadata().mipLevels;
 	Desc.Texture2DArray.FirstArraySlice = 0;
 	Desc.Texture2DArray.ArraySize = Count;
 

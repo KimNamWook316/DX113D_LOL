@@ -104,6 +104,7 @@ private:
 	CSharedPtr<class CShader> m_ShadowMapShader;
 	CSharedPtr<class CShader> m_ShadowMapInstancingShader;
 	float m_ShadowLightDistance;
+	class CShadowCBuffer* m_ShadowCBuffer;
 
 	// Animation Editor 
 	CSharedPtr<class CShader> m_Mesh3DNoLightRenderShader; // m_AnimEditorRenderTarget 에 그려내기 위한 Shader 

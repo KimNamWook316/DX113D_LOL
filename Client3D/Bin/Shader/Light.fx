@@ -24,8 +24,18 @@ Texture2DMS<float4> g_LightSpcTex : register(t19);
 Texture2DMS<float4> g_LightEmvTex : register(t20);
 
 Texture2DMS<float4> g_LightBlendTex : register(t21);
-Texture2DMS<float4> g_AnimEditorRenderTex : register(t55);
+Texture2DMS<float4> g_ShadowMapTex : register(t22);
 
+cbuffer ShadowCBuffer : register(b10)
+{
+	matrix g_matShadowVP;
+	matrix g_matShadowInvVP;
+	float g_ShadowBias;
+	float2 g_ShadowResolution;
+	float g_ShadowEmpty;
+};
+
+Texture2DMS<float4> g_AnimEditorRenderTex : register(t55);
 
 LightResult ComputeLight(float3 Pos, float3 Normal, float4 MaterialColor)
 {
@@ -108,64 +118,53 @@ VS_OUTPUT_LIGHTACC LightAccVS(uint VertexID : SV_VertexID)
 
 PS_OUTPUT_LIGHTACC LightAccPS(VS_OUTPUT_LIGHTACC input)
 {
-    PS_OUTPUT_LIGHTACC output = (PS_OUTPUT_LIGHTACC) 0;
+	PS_OUTPUT_LIGHTACC output = (PS_OUTPUT_LIGHTACC) 0;
     
-    float2 UV;
-    UV.x = input.ProjPos.x / input.ProjPos.w * 0.5f + 0.5f;
-    UV.y = input.ProjPos.y / input.ProjPos.w * -0.5f + 0.5f;
+	float2 UV;
+	UV.x = input.ProjPos.x / input.ProjPos.w * 0.5f + 0.5f;
+	UV.y = input.ProjPos.y / input.ProjPos.w * -0.5f + 0.5f;
     
-    int2 TargetPos = (int2) 0;
+	int2 TargetPos = (int2) 0;
 	
-    TargetPos.x = (int) (UV.x * g_Resolution.x);
-    TargetPos.y = (int) (UV.y * g_Resolution.y);
+	TargetPos.x = (int) (UV.x * g_Resolution.x);
+	TargetPos.y = (int) (UV.y * g_Resolution.y);
 	
-    float4 GBufferDiffuseColor = g_GBufferDiffuseTex.Load(TargetPos, 0);
+	float4 GBufferDiffuseColor = g_GBufferDiffuseTex.Load(TargetPos, 0);
     
-    if (GBufferDiffuseColor.a == 0.f)
-        clip(-1);
+	if (GBufferDiffuseColor.a == 0.f)
+		clip(-1);
     
-    float4 GBuffer1Color = g_GBuffer1Tex.Load(TargetPos, 0);
-    float4 GBuffer2Color = g_GBuffer2Tex.Load(TargetPos, 0);
-    float4 GBuffer3Color = g_GBuffer3Tex.Load(TargetPos, 0);
+	float4 GBuffer1Color = g_GBuffer1Tex.Load(TargetPos, 0);
+	float4 GBuffer2Color = g_GBuffer2Tex.Load(TargetPos, 0);
+	float4 GBuffer3Color = g_GBuffer3Tex.Load(TargetPos, 0);
     
     // uv를 이용해서 위치를 구해준다.
     // 먼저 투영 공간의 위치를 구해준다.
-    float4 ProjPos;
-    ProjPos.x = UV.x * 2.f - 1.f;
-    ProjPos.y = UV.y * -2.f + 1.f;
-    ProjPos.z = GBuffer2Color.r;
-    ProjPos.w = 1.f;
+	float4 ProjPos;
+	ProjPos.x = UV.x * 2.f - 1.f;
+	ProjPos.y = UV.y * -2.f + 1.f;
+	ProjPos.z = GBuffer2Color.r;
+	ProjPos.w = 1.f;
     
-    ProjPos *= GBuffer2Color.g;
+	ProjPos *= GBuffer2Color.g;
     
     // 뷰공간의 위치를 구한다.
-    float3 ViewPos = mul(ProjPos, g_matInvProj).xyz;
+	float3 ViewPos = mul(ProjPos, g_matInvProj).xyz;
     
-    float3 ViewNormal = GBuffer1Color.xyz;
+	float3 ViewNormal = GBuffer1Color.xyz;
     
-    LightResult result = ComputeLight(ViewPos, ViewNormal, GBuffer3Color);
-
-    float rim = saturate(dot(normalize(ViewNormal), ViewPos));
-    // float fresnel = pow(1 - rim, 0.05);
-    float fresnel = 1 - pow(rim, 2) * 0.5;
+	LightResult result = ComputeLight(ViewPos, ViewNormal, GBuffer3Color);
     
-    output.Dif.rgb = result.Dif + result.Amb;
-    output.Spc.rgb = result.Spc;
-    // output.Spc.rgb = saturate(result.Spc + fresnel) * g_LightColor;
-    output.Emv.rgb = result.Emv;
-
-    float Alpha = 0.f;
-
-    output.Dif.a = 1.f;
-    output.Spc.a = 1.f;
-    output.Emv.a = 1.f;
-
-    // output.Dif.a *= fresnel;
-    // output.Spc.a *= fresnel;
-    // output.Emv.a *= fresnel;
+	output.Dif.rgb = result.Dif + result.Amb;
+	output.Spc.rgb = result.Spc;
+	output.Emv.rgb = result.Emv;
+    
+	output.Dif.a = 1.f;
+	output.Spc.a = 1.f;
+	output.Emv.a = 1.f;
     
     
-    return output;
+	return output;
 }
 
 PSOutput_Single LightBlendPS(VS_OUTPUT_LIGHTACC input)
@@ -180,17 +179,55 @@ PSOutput_Single LightBlendPS(VS_OUTPUT_LIGHTACC input)
 	
     TargetPos.x = (int) (UV.x * g_Resolution.x);
     TargetPos.y = (int) (UV.y * g_Resolution.y);
+
+	float4 GBufferDiffuseColor = g_GBufferDiffuseTex.Load(TargetPos, 0);
+
+    if (GBufferDiffuseColor.a == 0.f)
+	{
+		clip(-1);
+	}
 	
     float4 LightDiffuseColor = g_LightDifTex.Load(TargetPos, 0);
-    
-    LightDiffuseColor.a = 0.5f;
-
-    if (LightDiffuseColor.a == 0.f)
-        clip(-1);    
-    
-    float4 GBufferDiffuseColor = g_GBufferDiffuseTex.Load(TargetPos, 0);
     float4 LightSpecularColor = g_LightSpcTex.Load(TargetPos, 0);
     float4 LightEmissiveColor = g_LightEmvTex.Load(TargetPos, 0);
+
+ //    if (LightDiffuseColor.a == 0.f)
+ //        clip(-1);    
+	float4 GBuffer2Color = g_GBuffer2Tex.Load(TargetPos, 0);
+
+	float4 ProjPos;
+	ProjPos.x = UV.x * 2.f - 1.f;
+	ProjPos.y = UV.y * -2.f + 1.f;
+	ProjPos.z = GBuffer2Color.r;
+	ProjPos.w = 1.f;
+
+	ProjPos *= GBuffer2Color.g;
+
+    // 월드공간 변환
+	float3 WorldPos = mul(ProjPos, g_matInvVP).xyz;
+
+    // 조명공간 변환
+	float4 ShadowPos = mul(float4(WorldPos, 1.f), g_matShadowVP);
+
+	float2 ShadowUV;
+	ShadowUV.x = ShadowPos.x / ShadowPos.w * 0.5f + 0.5f;
+	ShadowUV.y = ShadowPos.y / ShadowPos.w * -0.5f + 0.5f;
+
+	int2 ShadowTargetPos = (int2)0;
+
+	ShadowTargetPos.x = (int) (ShadowUV.x * g_ShadowResolution.x);
+	ShadowTargetPos.y = (int) (ShadowUV.y * g_ShadowResolution.y);
+
+	float4 ShadowMap = g_ShadowMapTex.Load(ShadowTargetPos, 0);
+
+    if (ShadowMap.a > 0.f)
+	{
+        if (ShadowPos.z + g_ShadowBias > ShadowMap.r * ShadowPos.w)
+		{
+			LightDiffuseColor.rgb *= 0.2f;
+			LightSpecularColor.rgb *= 0.f;
+		}
+	}
     
     output.Color.rgb = GBufferDiffuseColor.rgb * LightDiffuseColor.rgb +
         LightSpecularColor.rgb + LightEmissiveColor.rgb;

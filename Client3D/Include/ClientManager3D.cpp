@@ -131,4 +131,3 @@ CComponent* CClientManager3D::CreateComponent(CGameObject* Obj, size_t Type)
 
 	return nullptr;
 }
-

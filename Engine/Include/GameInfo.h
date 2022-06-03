@@ -50,7 +50,9 @@
 
 #pragma comment(lib, "fmod64_vc.lib")
 
-// Path
+#define SHADOWMAP_WIDTH		2048.f
+#define SHADOWMAP_HEIGHT	2048.f
+
 #define	ROOT_PATH		"Root"
 #define	SHADER_PATH		"Shader"
 #define	TEXTURE_PATH	"Texture"
@@ -216,6 +218,7 @@ struct TransformCBuffer
 	Matrix	matWV;
 	Matrix	matWVP;
 	Matrix	matVP;
+	Matrix	matInvVP;
 	Matrix	matInvWVP;
 	Vector3	Pivot;
 	float	Empty1;

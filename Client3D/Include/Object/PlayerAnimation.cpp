@@ -25,7 +25,7 @@ bool CPlayerAnimation::Init()
 	AddAnimation("PlayerAttack", "Attack", false);
 	AddAnimation("PlayerWalk", "Walk");
 
-	//SetEndFunction<CPlayerAnimation>("Attack", this, &CPlayerAnimation::AttackEnd);
+	SetEndFunction<CPlayerAnimation>("Attack", this, &CPlayerAnimation::AttackEnd);
 
 	return true;
 }
@@ -37,6 +37,6 @@ CPlayerAnimation* CPlayerAnimation::Clone()
 
 void CPlayerAnimation::AttackEnd()
 {
-	//ChangeAnimation("Idle");
-	//m_Idle = true;
+	ChangeAnimation("Idle");
+	m_Idle = true;
 }

@@ -195,6 +195,7 @@
     <ClCompile Include="Resource\Shader\RenderTargetShader.cpp" />
     <ClCompile Include="Resource\Shader\Shader.cpp" />
     <ClCompile Include="Resource\Shader\ShaderManager.cpp" />
+    <ClCompile Include="Resource\Shader\ShadowCBuffer.cpp" />
     <ClCompile Include="Resource\Shader\ShadowMapInstancingShader.cpp" />
     <ClCompile Include="Resource\Shader\ShadowMapShader.cpp" />
     <ClCompile Include="Resource\Shader\SkyShader.cpp" />
@@ -424,6 +425,7 @@
     <ClInclude Include="Resource\Shader\RenderTargetShader.h" />
     <ClInclude Include="Resource\Shader\Shader.h" />
     <ClInclude Include="Resource\Shader\ShaderManager.h" />
+    <ClInclude Include="Resource\Shader\ShadowCBuffer.h" />
     <ClInclude Include="Resource\Shader\ShadowMapInstancingShader.h" />
     <ClInclude Include="Resource\Shader\ShadowMapShader.h" />
     <ClInclude Include="Resource\Shader\SkyShader.h" />

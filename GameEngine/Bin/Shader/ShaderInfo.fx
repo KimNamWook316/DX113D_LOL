@@ -23,6 +23,7 @@ cbuffer Transform : register(b0)
 	matrix	g_matWV;
 	matrix	g_matWVP;
 	matrix	g_matVP;
+	matrix	g_matInvVP;
     matrix g_matInvWVP;
 	float3	g_Pivot;
 	float	g_TransformEmpty1;

@@ -120,7 +120,7 @@ Vertex3DOutput Standard3DShadowMapVS(Vertex3D input)
 }
 
 
-PSOutput_Single Standard3DShadowPS(Vertex3DOutput input)
+PSOutput_Single Standard3DShadowMapPS(Vertex3DOutput input)
 {
 	PSOutput_Single output = (PSOutput_Single) 0;
     
