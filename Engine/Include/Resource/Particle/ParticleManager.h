@@ -18,5 +18,15 @@ public:
 	bool CreateParticle(const std::string& Name);
 	CParticle* FindParticle(const std::string& Name);
 	void ReleaseParticle(const std::string& Name);
+
+	template <typename T>
+	T* CreateParticleEmpty()
+	{
+		T* Particle = new T;
+
+		// Particle->SetConstantBuffer(m_CBuffer);
+
+		return Particle;
+	}
 };
 

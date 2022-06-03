@@ -35,25 +35,25 @@ CAnimationEditor::~CAnimationEditor()
 
 
 	// Delete 하여 얻어온 BoneKeyFrame 정보를 지워준다.
-	while (!m_StackDeleteFrame.empty())
-	{
-		BoneKeyFrame* BoneFrame = m_StackDeleteFrame.top().second;
-		m_StackDeleteFrame.pop();
-
-		for (int i = 0; i < BoneFrame->vecKeyFrame.size(); ++i)
-		{
-			SAFE_DELETE(BoneFrame->vecKeyFrame[i]);
-		}
-		/*
-		for (int i = 0; i < BoneFrame->vecKeyFrame.size(); ++i)
-		{
-			--m_vecKeyFrame[i]->iRefCount;
-
-			if (m_vecKeyFrame[i]->iRefCount == 0)
-				delete	m_vecKeyFrame[i];
-		}
-		*/
-	}
+	// while (!m_StackDeleteFrame.empty())
+	// {
+	// 	BoneKeyFrame* BoneFrame = m_StackDeleteFrame.top().second;
+	// 	m_StackDeleteFrame.pop();
+	// 
+	// 	for (int i = 0; i < BoneFrame->vecKeyFrame.size(); ++i)
+	// 	{
+	// 		SAFE_DELETE(BoneFrame->vecKeyFrame[i]);
+	// 	}
+	// 	/*
+	// 	for (int i = 0; i < BoneFrame->vecKeyFrame.size(); ++i)
+	// 	{
+	// 		--m_vecKeyFrame[i]->iRefCount;
+	// 
+	// 		if (m_vecKeyFrame[i]->iRefCount == 0)
+	// 			delete	m_vecKeyFrame[i];
+	// 	}
+	// 	*/
+	// }
 }
 
 bool CAnimationEditor::Init()
@@ -73,7 +73,7 @@ bool CAnimationEditor::Init()
 	// 별도 Render Target
 	m_AnimationRenderTarget = AddWidget<CIMGUIImage>("Render Target", 500.f, 500.f);
 	m_AnimationRenderTarget->SetRenderTargetImage(true);
-	m_AnimationRenderTarget->SetBorderColor(10.f, 10.f, 255.f);
+	m_AnimationRenderTarget->SetBorderColor(10, 10, 255);
 
 	// Clip Info
 	m_AnimInfoTable = AddWidget<CIMGUITable>("AnimTable", 600.f, 200.f);
@@ -185,13 +185,13 @@ bool CAnimationEditor::Init()
 	m_DeleteAnimSequenceBtn->SetClickCallback<CAnimationEditor>(this, &CAnimationEditor::OnDeleteAnimationSequenceData);
 
 	Line = AddWidget<CIMGUISameLine>("Line");
-	Line->SetOffsetX(205.f);
+	Line->SetOffsetX(200.f);
 
 	m_SaveAnimationInstanceBtn = AddWidget<CIMGUIButton>("Save Instance", 90.f, 30.f);
 	m_SaveAnimationInstanceBtn->SetClickCallback<CAnimationEditor>(this, &CAnimationEditor::OnSaveAnimationInstance);
 
 	Line = AddWidget<CIMGUISameLine>("Line");
-	Line->SetOffsetX(310.f);
+	Line->SetOffsetX(300.f);
 
 	m_LoadAnimationInstanceBtn = AddWidget<CIMGUIButton>("Load Instance", 90.f, 30.f);
 	m_LoadAnimationInstanceBtn->SetClickCallback<CAnimationEditor>(this, &CAnimationEditor::OnLoadAnimationInstance);

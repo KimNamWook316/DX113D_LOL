@@ -2,12 +2,16 @@
 #include "ParticleComponent.h"
 #include "../Scene/Scene.h"
 #include "../Scene/SceneResource.h"
+#include "../Scene/SceneManager.h"
+#include "../Scene/CameraManager.h"
+#include "../Component/CameraComponent.h"
 #include "../Resource/Shader/StructuredBuffer.h"
 
 CParticleComponent::CParticleComponent()	:
 	m_SpawnTime(0.f),
 	m_SpawnTimeMax(0.01f),
 	m_Info{},
+	m_BillBoardEffect(false),
 	m_InfoShared{},
 	m_CBuffer(nullptr)
 {
@@ -94,7 +98,21 @@ void CParticleComponent::SetSpawnTime(float Time)
 {
 	m_SpawnTimeMax = Time;
 
-	//m_Particle->SetSpawnTime(m_SpawnTimeMax);
+	// m_Particle->SetSpawnTime(m_SpawnTimeMax);
+}
+
+void CParticleComponent::ApplyBillBoardEffect()
+{
+	Vector3 CameraPos = CSceneManager::GetInst()->GetScene()->GetCameraManager()->GetCurrentCamera()->GetWorldPos();
+
+	Vector3 View = CameraPos - GetWorldPos();
+
+	View.Normalize();
+
+	// float 
+	Vector3 OriginDir = Vector3(0.f, 0.f, -1.f);
+
+	m_Transform->SetRotationAxis(OriginDir, View);
 }
 
 void CParticleComponent::Start()
@@ -123,6 +141,12 @@ void CParticleComponent::Update(float DeltaTime)
 
 	else
 		m_CBuffer->SetSpawnEnable(0);
+
+	// 추가 : Particle 도 BillBoard 를 적용하기위해 OBJ 가 추가
+	if (m_BillBoardEffect)
+	{
+		ApplyBillBoardEffect();
+	}
 }
 
 void CParticleComponent::PostUpdate(float DeltaTime)
@@ -172,6 +196,32 @@ void CParticleComponent::PrevRender()
 	CSceneComponent::PrevRender();
 }
 
+void CParticleComponent::RenderParticleEffectEditor()
+{
+	CSceneComponent::RenderParticleEffectEditor();
+
+	size_t	BufferCount = m_vecStructuredBuffer.size();
+
+	for (size_t i = 0; i < BufferCount; ++i)
+	{
+		m_vecStructuredBuffer[i]->SetShader(30 + (int)i, (int)Buffer_Shader_Type::Geometry);
+	}
+
+	if (m_Material)
+		m_Material->Render();
+
+	// 인스턴싱을 이용해서 그려준다.
+	m_Mesh->RenderInstancing(m_CBuffer->GetSpawnCount());
+
+	for (size_t i = 0; i < BufferCount; ++i)
+	{
+		m_vecStructuredBuffer[i]->ResetShader(30 + (int)i, (int)Buffer_Shader_Type::Geometry);
+	}
+
+	if (m_Material)
+		m_Material->Reset();
+}
+
 void CParticleComponent::Render()
 {
 	CSceneComponent::Render();
@@ -215,9 +265,38 @@ CParticleComponent* CParticleComponent::Clone()
 void CParticleComponent::Save(FILE* File)
 {
 	CSceneComponent::Save(File);
+
+	// Mesh
+	std::string	MeshName = m_Mesh->GetName();
+	int	Length = (int)MeshName.length();
+	fwrite(&Length, sizeof(int), 1, File);
+	fwrite(MeshName.c_str(), sizeof(char), Length, File);
+
+	// Particle
+	m_Particle->Save(File);
+
+	fwrite(&m_BillBoardEffect, sizeof(bool), 1, File);
+	fwrite(&m_SpawnTimeMax, sizeof(float), 1, File);
 }
 
 void CParticleComponent::Load(FILE* File)
 {
 	CSceneComponent::Load(File);
+
+	// Mesh
+	char	MeshName[256] = {};
+	int	Length = 0;
+	fread(&Length, sizeof(int), 1, File);
+	fread(MeshName, sizeof(char), Length, File);
+	m_Mesh = (CSpriteMesh*)m_Scene->GetResource()->FindMesh(MeshName);
+
+	// Particle 생성
+	m_Particle = CSceneManager::GetInst()->GetScene()->GetResource()->CreateParticleEmpty<CParticle>();
+	m_Particle->Load(File);
+
+	// Particle Load 를 통해 각종 정보 세팅
+	SetParticle(m_Particle);
+
+	fread(&m_BillBoardEffect, sizeof(bool), 1, File);
+	fread(&m_SpawnTimeMax, sizeof(float), 1, File);
 }

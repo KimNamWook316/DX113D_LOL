@@ -33,7 +33,89 @@ public:
 	{
 		return m_BufferData.SpawnCountMax;
 	}
+	bool GetSpawnEnable()
+	{
+		return m_BufferData.SpawnEnable;
+	}
+	const Vector3& GetStartMin()
+	{
+		return m_BufferData.StartMin;
+	}
 
+	const Vector3& GetStartMax()
+	{
+		return m_BufferData.StartMax;
+	}
+
+	unsigned int GetSpawnCountMax()
+	{
+		return m_BufferData.SpawnCountMax;
+	}
+
+	const Vector3& GetScaleMin()
+	{
+		return m_BufferData.ScaleMin;
+	}
+
+	const Vector3& GetScaleMax()
+	{
+		return m_BufferData.ScaleMax;
+	}
+
+	float GetLifeTimeMin()
+	{
+		return m_BufferData.LifeTimeMin;
+	}
+
+	float GetLifeTimeMax()
+	{
+		return m_BufferData.LifeTimeMax;
+	}
+
+	const Vector4& GetColorMin()
+	{
+		return m_BufferData.ColorMin;
+	}
+
+	const Vector4& GetColorMax()
+	{
+		return m_BufferData.ColorMax;
+	}
+
+	float GetSpeedMin()
+	{
+		return m_BufferData.SpeedMin;
+	}
+
+	float GetSpeedMax()
+	{
+		return m_BufferData.SpeedMax;
+	}
+
+	bool GetMove()
+	{
+		return m_BufferData.Move == 1 ? true : false;
+	}
+
+	bool GetGravity()
+	{
+		return m_BufferData.Gravity == 1 ? true : false;
+	}
+
+	const Vector3& GetMoveDir()
+	{
+		return m_BufferData.MoveDir;
+	}
+
+	bool Is2D()
+	{
+		return m_BufferData.Is2D == 1 ? true : false;
+	}
+
+	const Vector3& GetMoveAngle()
+	{
+		return m_BufferData.MoveAngle;
+	}
 public:
 	void SetSpawnEnable(unsigned int Count)
 	{

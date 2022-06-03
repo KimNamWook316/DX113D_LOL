@@ -58,6 +58,7 @@
 #define	SCENE_PATH		"Scene"
 #define	SOUND_PATH		"Sound"
 #define	MESH_PATH		"Mesh"
+#define	PARTICLE_PATH		"Particle"
 #define	EXCEL_PATH		"Excel"
 
 #define	SAFE_DELETE(p)	if(p)	{ delete p; p = nullptr; }

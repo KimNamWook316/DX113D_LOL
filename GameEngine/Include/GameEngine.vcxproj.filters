@@ -1683,5 +1683,8 @@
     <None Include="Resource\Texture\DirectXTex.inl">
       <Filter>02. Resource\04. Texture</Filter>
     </None>
+    <None Include="..\..\Copy.bat">
+      <Filter>소스 파일</Filter>
+    </None>
   </ItemGroup>
 </Project>

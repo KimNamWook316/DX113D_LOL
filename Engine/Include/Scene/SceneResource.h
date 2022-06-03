@@ -150,6 +150,12 @@ public:	// =================== Particle =====================
 	bool CreateParticle(const std::string& Name);
 	CParticle* FindParticle(const std::string& Name);
 
+	template <typename T>
+	T* CreateParticleEmpty()
+	{
+		return CResourceManager::GetInst()->CreateParticleEmpty<T>();
+	}
+
 public:	// =================== Sequence3D =====================
 	bool LoadAnimationSequence(const std::string& Name, bool Loop,
 		struct _tagFbxAnimationClip* Clip);

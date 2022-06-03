@@ -56,6 +56,10 @@ public:
 	{
 		return m_AnimationEditor;
 	}
+	class C3DCameraObject* Get3DCameraObject()	const
+	{
+		return m_CameraObject;
+	}
 	EditMode GetEditMode()
 	{
 		return m_EditMode;

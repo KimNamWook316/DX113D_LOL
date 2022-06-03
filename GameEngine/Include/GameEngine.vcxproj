@@ -623,6 +623,7 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\Copy.bat" />
     <None Include="Resource\Texture\DirectXTex.inl" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
@@ -696,6 +697,7 @@
     <IntDir>../BinObj/</IntDir>
     <TargetName>$(ProjectName)_Debug</TargetName>
     <IncludePath>Resource/Mesh/;Resource/Mesh/fbxsdk/;$(IncludePath)</IncludePath>
+    <PostBuildEventUseInBuild>true</PostBuildEventUseInBuild>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>

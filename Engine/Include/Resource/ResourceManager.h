@@ -173,7 +173,11 @@ public:	// =================== Particle =====================
 	bool CreateParticle(const std::string& Name);
 	CParticle* FindParticle(const std::string& Name);
 	void ReleaseParticle(const std::string& Name);
-
+	template <typename T>
+	T* CreateParticleEmpty()
+	{
+		return m_ParticleManager->CreateParticleEmpty<T>();
+	}
 public:
 	bool LoadAnimationSequenceConvertFBX(const std::string& Name, bool bLoop, struct _tagFbxAnimationClip* pClip);
 	bool LoadAnimationSequence(const std::string& Name, bool Loop,

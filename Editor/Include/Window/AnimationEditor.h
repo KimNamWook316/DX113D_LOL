@@ -60,7 +60,6 @@ private :
 	class CAnim3DObject* m_3DTestObject;
 	std::string m_3DTestObjectMeshName;
 	class CAnimationSequenceInstance* m_Animation;
-	class std::stack<std::pair<int, class BoneKeyFrame*>> m_StackDeleteFrame;
 public :
 	const std::string& Get3DTestObjectMeshName() const
 	{

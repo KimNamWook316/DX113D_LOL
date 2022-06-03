@@ -45,6 +45,11 @@ public:
 	}
 
 public:
+	const Vector4& GetRGBA() const
+	{
+		return mValue;
+	}
+
 	float GetR() const
 	{
 		return mValue.x;
