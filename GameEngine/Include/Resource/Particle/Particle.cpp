@@ -124,13 +124,13 @@ void CParticle::Load(FILE* File)
 	// 상수 버퍼 저장 X
 	m_CBuffer = new CParticleConstantBuffer;
 	m_CBuffer->Init();
+	// 상수 버퍼 Load
+	m_CBuffer->Load(File);
 
 	m_SpawnTime = 0;
 	fread(&m_2D, sizeof(bool), 1, File);
 	fread(&m_SpawnCountMax, sizeof(int), 1, File);
 
-	// 상수 버퍼 Load
-	m_CBuffer->Load(File);
 
 	// 구조화 버퍼 세팅
 	AddStructuredBuffer("ParticleInfo", sizeof(ParticleInfo), m_SpawnCountMax, 0);

@@ -211,7 +211,6 @@ void CSceneComponentHierarchyWindow::OnUpdateSceneComponetWindow(CIMGUITree* Sel
 	CIMGUITree* RootTreeNode = m_Root->FindChild(Name);
 
 	RootTreeNode->EnableAll();
-
 }
 
 void CSceneComponentHierarchyWindow::OnClearComponents(const std::string& RootComponentName)
@@ -280,6 +279,4 @@ void CSceneComponentHierarchyWindow::OnDeleteComponent()
 
 	if (DeleteComp)
 		DeleteComp->DeleteComponent();
-
-	
 }

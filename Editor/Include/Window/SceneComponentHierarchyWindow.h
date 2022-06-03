@@ -20,6 +20,12 @@ private:
 	class CIMGUITree* m_DragSrc;
 	class CIMGUITree* m_DragDest;
 
+public :
+	class CSceneComponentCreateModal* GetSceneComponentCreateModal() const
+	{
+		return m_ComponentCreateModal;
+	}
+
 public:
 	class CIMGUITree* GetRoot()	const;
 

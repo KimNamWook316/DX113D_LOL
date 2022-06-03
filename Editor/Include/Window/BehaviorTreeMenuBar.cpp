@@ -213,6 +213,5 @@ void CBehaviorTreeMenuBar::OnLoadGameObject()
 		WideCharToMultiByte(CP_ACP, 0, LoadFilePath, -1, FilePathMultibyte, ConvertLength, 0, 0);
 
 		CEditorManager::GetInst()->GetObjectHierarchyWindow()->GetObjectCreateModal()->OnCreateObject(FilePathMultibyte);
-
 	}
 }

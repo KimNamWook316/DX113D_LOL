@@ -11,6 +11,7 @@
 #include "IMGUIManager.h"
 #include "ObjectHierarchyWindow.h"
 #include "SceneComponentHierarchyWindow.h"
+#include "SceneComponentCreateModal.h"
 #include "IMGUITree.h"
 #include "GameObject/Champion.h"
 #include "GameObject/Minion.h"
@@ -146,5 +147,12 @@ void CObjectCreateModal::OnCreateObject(const char* FullPathMultibyte)
 		NewNode->AddSelectCallback<CSceneComponentHierarchyWindow>(SceneCompWindow, &CSceneComponentHierarchyWindow::OnUpdateSceneComponetWindow);
 		NewNode->SetDragDropSourceCallback<CObjectHierarchyWindow>(Window, &CObjectHierarchyWindow::OnDragDropSrc);
 		NewNode->SetDragDropDestCallback<CObjectHierarchyWindow>(Window, &CObjectHierarchyWindow::OnDragDropDest);
+
+		// 해당 노드를 Select Node 로 세팅한다.
+		Window->OnSetSelectNode(NewNode);
+
+		// 해당 Object 의 Root Component 로 Widget 구성
+		CSceneComponentHierarchyWindow* ComponentWindow = (CSceneComponentHierarchyWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(SCENECOMPONENT_HIERARCHY);
+		ComponentWindow->GetSceneComponentCreateModal()->OnLoadComponent(LoadedObject);
 	}
 }

@@ -166,4 +166,57 @@ void CSceneComponentCreateModal::OnCreateComponent()
 	}
 }
 
+void CSceneComponentCreateModal::OnLoadComponent(CGameObject* SelectObject)
+{
+	if (!SelectObject)
+		return;
+
+	// Object의 루트로 들어가는지 확인
+	// 아래 Gizmo에 Object 넣어주기 위해 필요
+	bool IsRoot = !(SelectObject->GetRootComponent());
+
+	CSceneComponent* Com = SelectObject->GetRootComponent();
+
+	CSceneComponentHierarchyWindow* ComponentWindow = (CSceneComponentHierarchyWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(SCENECOMPONENT_HIERARCHY);
+
+	// Root Node로 들어가는 경우, Gizmo에 Object갱신
+	if (IsRoot)
+	{
+		CToolWindow* ToolWindow = (CToolWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(TOOL);
+		ToolWindow->SetGizmoObject(SelectObject);
+	}
+
+	// Inspector Window 갱신
+	CInspectorWindow* Inspector = (CInspectorWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(INSPECTOR);
+	Inspector->OnCreateSceneComponent(Com);
+
+	if (ComponentWindow)
+	{
+		char Name[256] = {};
+		strcpy_s(Name, Com->GetName().c_str());
+
+
+		// TODO : 이미 Root Component가 있는 상태에서 SceneComponent가 추가됐을때 RootComponent의 자식 Component로 들어갈테니
+		// GUI상에서도 Root의 자식으로 들어가는것 반영하기
+		CIMGUITree* Child = nullptr;
+
+		// Control flow가 여기 들어올때면 엔진 상에서 이미 GameObject의 Component가 추가된 하고 여기로 들어오므로
+		// GameObject의 SceneComponent 개수가 2개 이상이면서 Root Component가 존재할때가 Root의 자식으로 지금 추가하려는 Component를 넣어줘야 할 때 이다
+		if (SelectObject->GetRootComponent() && SelectObject->GetSceneComponentCount() > 1)
+		{
+			const std::string& RootName = SelectObject->GetRootComponent()->GetName();
+			CIMGUITree* RootComponent = ComponentWindow->GetRoot()->FindChild(RootName);
+
+			Child = RootComponent->AddChild(Name);
+		}
+
+		else
+			Child = ComponentWindow->GetRoot()->AddChild(Name);
+
+		Child->AddSelectCallback<CSceneComponentHierarchyWindow>(ComponentWindow, &CSceneComponentHierarchyWindow::OnSetSelectNode);
+		Child->SetDragDropSourceCallback<CSceneComponentHierarchyWindow>(ComponentWindow, &CSceneComponentHierarchyWindow::OnDragDropSrc);
+		Child->SetDragDropDestCallback<CSceneComponentHierarchyWindow>(ComponentWindow, &CSceneComponentHierarchyWindow::OnDragDropDest);
+	}
+}
+
 
