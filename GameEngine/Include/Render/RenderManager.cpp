@@ -292,7 +292,7 @@ bool CRenderManager::Init()
 	// Map 출력용 변수들
 
 	// Shadow
-	if (!CResourceManager::GetInst()->CreateTarget("ShadowMap", RS.Width, RS.Height,
+	if (!CResourceManager::GetInst()->CreateTarget("ShadowMap", SHADOWMAP_WIDTH, SHADOWMAP_HEIGHT,
 		DXGI_FORMAT_R32G32B32A32_FLOAT, true, DXGI_FORMAT_D24_UNORM_S8_UINT))
 	{
 		assert(false);
@@ -1035,10 +1035,6 @@ void CRenderManager::RenderDefaultInstancing()
 		// Material Slot 수만큼 반복한다.
 		int	SlotCount = 0;
 
-		// 현재 우리는 Static Mesh Component, Animation Mesh Component 를 
-		// 분리해서 Instancing 하고 있다.
-		// 그렇다면, 두 Component 를 구분해야 하는데
-		// 해당 Instancing 집단이 공유하는 Mesh 종류로 구분할 것이다.
 		if (m_RenderLayerList[1]->m_vecInstancing[i]->Mesh->GetMeshType() == Mesh_Type::Static)
 		{
 			SlotCount = ((CStaticMeshComponent*)m_RenderLayerList[1]->m_vecInstancing[i]->RenderList.back())->GetMaterialSlotCount();
@@ -1049,8 +1045,6 @@ void CRenderManager::RenderDefaultInstancing()
 			SlotCount = ((CAnimationMeshComponent*)m_RenderLayerList[1]->m_vecInstancing[i]->RenderList.back())->GetMaterialSlotCount();
 		}
 
-		// 그리고, 현재 해당 Component 들이 공유하는 Mesh Class 내 Material 개수를 가져온다.
-		// 해당 Material 개수만큼 반복할 것이다.
 		for (int j = 0; j < SlotCount; ++j)
 		{
 			CMaterial* Material = nullptr;
@@ -1065,24 +1059,16 @@ void CRenderManager::RenderDefaultInstancing()
 				Material = ((CAnimationMeshComponent*)m_RenderLayerList[1]->m_vecInstancing[i]->RenderList.back())->GetMaterial(j);
 			}
 
-			// Material 내 Texture 만 넘겨주는 로직을 하나 만들 것이다.
 			if (Material)
 				Material->RenderTexture();
 
-			// 106번 레지스터에 Standard3D.fx 에서 Shader Resource View 용도로 넘겨준다.
-			// Instancing 으로 그리는 모든 Component 들, 그 안의 각각의 Skeleton이 있고
-			// 그 안에 각각의 Bone 이 있다
-			// 그 모든 Bone 을 일차원 배열 안에 모아둔 형태가 될 것이다.
 			if (m_RenderLayerList[1]->m_vecInstancing[i]->Animation)
 			{
 				((CAnimationMesh*)m_RenderLayerList[1]->m_vecInstancing[i]->Mesh)->SetBoneShader();
 			}
 
-			// Standard3D.fx 내 Instncing Shader 코드를 세팅한다.
-			// 즉, 현재 코드를 통해서는 m_Standard3DInstancingVS, m_Standard3DInstancingPS 를 통해 Render 하려는 것이다.
 			m_Standard3DInstancingShader->SetShader();
 
-			// 각 Animation Mesh Component Instancing 에서 사용되는 Bone 개수에 대한 정보를 넘겨줄 것이다.
 			m_RenderLayerList[1]->m_vecInstancing[i]->CBuffer->UpdateCBuffer();
 
 			m_RenderLayerList[1]->m_vecInstancing[i]->Buffer->SetShader();
