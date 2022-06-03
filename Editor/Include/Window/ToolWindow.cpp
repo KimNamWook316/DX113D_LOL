@@ -1,6 +1,8 @@
 #include "ToolWindow.h"
 #include "IMGUISetRect.h"
 #include "Input.h"
+#include "../EditorManager.h"
+#include "../Object/3DCameraObject.h"
 
 CToolWindow::CToolWindow()	:
 	m_GizmoBlock(nullptr),
@@ -40,8 +42,18 @@ bool CToolWindow::Init()
 	m_GizmoOperationMode->SetCheck(0, true);
 	m_GizmoOperationMode->AlwaysCheck(true);
 
+	m_EditorCameraBlock = AddWidget<CIMGUICollapsingHeader>("Editor Camera", 200.f);
+	m_CameraSpeed = m_EditorCameraBlock->AddWidget<CIMGUISliderFloat>("Speed");
+
+	// Initial Value
+	m_CameraSpeed->SetMin(0.f);
+	m_CameraSpeed->SetMax(10.f);
+	m_CameraSpeed->SetValue(CEditorManager::GetInst()->Get3DCameraObject()->GetCameraSpeed());
+
+	// CallBack
 	m_GizmoTransformMode->SetCallBack(this, &CToolWindow::OnSelectGizmoTransformMode);
 	m_GizmoOperationMode->SetCallBack(this, &CToolWindow::OnSelectGizmoOperationMode);
+	m_CameraSpeed->SetCallBack(this, &CToolWindow::OnChangeCameraSpeed);
 
 	// 디버그용 임시 키
 	CInput::GetInst()->CreateKey("Z", 'Z');
@@ -92,6 +104,11 @@ void CToolWindow::OnSelectGizmoTransformMode(const char* Label, bool Check)
 	{
 		m_Gizmo->SetMode(ImGuizmo::MODE::WORLD);
 	}
+}
+
+void CToolWindow::OnChangeCameraSpeed(float Speed)
+{
+	CEditorManager::GetInst()->Get3DCameraObject()->SetCameraSpeed(Speed);
 }
 
 void CToolWindow::OnQDown(float DetlaTime)
