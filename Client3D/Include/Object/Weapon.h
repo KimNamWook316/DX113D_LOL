@@ -23,4 +23,3 @@ public:
     virtual CWeapon* Clone();
 };
 
-

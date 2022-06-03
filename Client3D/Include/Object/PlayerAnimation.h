@@ -3,7 +3,7 @@
 #include "Animation/AnimationSequenceInstance.h"
 
 class CPlayerAnimation :
-    public CAnimationSequenceInstance
+	public CAnimationSequenceInstance
 {
 public:
 	CPlayerAnimation();

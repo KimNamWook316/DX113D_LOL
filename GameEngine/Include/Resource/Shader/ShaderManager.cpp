@@ -29,6 +29,7 @@
 #include "Standard3DWireFrameShader.h"
 #include "ShadowMapShader.h"
 #include "ShadowMapInstancingShader.h"
+#include "ShadowCBuffer.h"
 
 CShaderManager::CShaderManager()
 {
@@ -180,6 +181,9 @@ bool CShaderManager::Init()
 
 	CreateConstantBuffer("InstancingCBuffer", sizeof(InstancingCBuffer), 6,
 		(int)Buffer_Shader_Type::Vertex | (int)Buffer_Shader_Type::Pixel);
+
+	CreateConstantBuffer("ShadowCBuffer", sizeof(ShadowCBuffer), 10,
+		(int)Buffer_Shader_Type::Graphic);
 
 	return true;
 }

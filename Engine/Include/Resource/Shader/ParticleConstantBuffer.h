@@ -24,14 +24,14 @@ public:
 		return m_BufferData.StartMin;
 	}
 
-	const Vector3& GetStartMax()	const
-	{
-		return m_BufferData.StartMax;
-	}
-
 	int GetApplyRandom() const
 	{
 		return m_BufferData.ApplyRandom;
+	}
+
+	const Vector3& GetStartMax()	const
+	{
+		return m_BufferData.StartMax;
 	}
 
 	int GetSpawnCount()	const
@@ -200,11 +200,6 @@ public:
 	void SetGravity(bool Gravity)
 	{
 		m_BufferData.Gravity = Gravity ? 1 : 0;
-	}
-
-	void SetApplyRandom(bool Enable)
-	{
-		m_BufferData.ApplyRandom = Enable;
 	}
 
 	void SetMoveDir(const Vector3& MoveDir)

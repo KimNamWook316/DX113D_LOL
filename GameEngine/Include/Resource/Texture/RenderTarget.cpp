@@ -96,6 +96,8 @@ bool CRenderTarget::CreateTarget(const std::string& Name,
 
 		if (FAILED(CDevice::GetInst()->GetDevice()->CreateDepthStencilView(DepthBuffer, nullptr, &m_DepthView)))
 			return false;
+
+		SAFE_RELEASE(DepthBuffer);
 	}
 
 	return true;

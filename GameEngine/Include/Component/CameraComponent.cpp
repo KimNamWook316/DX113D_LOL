@@ -63,8 +63,8 @@ void CCameraComponent::CreateProjectionMatrix()
 		break;
 	}
 
-	m_matProj = XMMatrixPerspectiveFovLH(DegreeToRadian(m_ViewAngle),
-		(float)m_RS.Width / (float)m_RS.Height, 0.1f, m_Distance);
+	m_matShadowProj = XMMatrixPerspectiveFovLH(DegreeToRadian(m_ViewAngle),
+		SHADOWMAP_WIDTH / SHADOWMAP_HEIGHT, 0.1f, m_Distance);
 }
 
 void CCameraComponent::ComputeShadowView()
@@ -93,6 +93,8 @@ void CCameraComponent::ComputeShadowView()
 	float ShadowLightDistance = CRenderManager::GetInst()->GetShadowLightDistance();
 
 	Vector3 Pos = TargetPos - GlobalLight->GetWorldAxis(AXIS_Z) * ShadowLightDistance;
+
+	Pos *= -1.f;
 
 	for (int i = 0; i < AXIS::AXIS_MAX; ++i)
 	{

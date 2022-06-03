@@ -25,6 +25,12 @@ bool CMonsterAnimation::Init()
 	AddAnimation("PlayerAttack", "Attack", false);
 	AddAnimation("PlayerWalk", "Walk");
 
+	std::string	Name[3] = { "Idle", "Attack", "Walk" };
+
+	int Rand = rand() % 3;
+
+	SetCurrentAnimation(Name[Rand]);
+
 	return true;
 }
 

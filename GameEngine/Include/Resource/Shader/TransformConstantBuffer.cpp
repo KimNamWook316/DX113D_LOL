@@ -28,6 +28,8 @@ void CTransformConstantBuffer::UpdateCBuffer()
 	m_BufferData.matWV = m_BufferData.matWorld * m_BufferData.matView;
 	m_BufferData.matWVP = m_BufferData.matWV * m_BufferData.matProj;
 	m_BufferData.matVP = m_BufferData.matView * m_BufferData.matProj;
+	m_BufferData.matInvVP = m_BufferData.matVP;
+	m_BufferData.matInvVP.Inverse();
 	m_BufferData.matInvWVP = m_BufferData.matWVP;
 	m_BufferData.matInvWVP.Inverse();
 
@@ -39,6 +41,7 @@ void CTransformConstantBuffer::UpdateCBuffer()
 	m_BufferData.matWV.Transpose();
 	m_BufferData.matWVP.Transpose();
 	m_BufferData.matVP.Transpose();
+	m_BufferData.matInvVP.Transpose();
 	m_BufferData.matInvWVP.Transpose();
 
 	m_Buffer->UpdateBuffer(&m_BufferData);

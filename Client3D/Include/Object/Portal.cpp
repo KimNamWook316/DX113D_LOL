@@ -21,7 +21,7 @@ bool CPortal::Init()
 	m_Billboard = CreateComponent<CBillboardComponent>("CBillboard");
 
 	SetWorldPos(15.f, 0.f, 13.f);
-	SetWorldScale(3.f, 3.f, 1.f);
+	SetWorldScale(5.f, 5.f, 1.f);
 
 	return true;
 }

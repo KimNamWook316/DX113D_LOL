@@ -16,6 +16,7 @@
 #include "../Device.h"
 #include "../Resource/Shader/Shader.h"
 #include "../Component/PaperBurnComponent.h"
+#include "../Resource/Shader/ShadowCBuffer.h"
 
 DEFINITION_SINGLE(CRenderManager)
 
@@ -23,12 +24,15 @@ CRenderManager::CRenderManager()	:
 	m_RenderStateManager(nullptr),
 	m_Standard2DCBuffer(nullptr),
 	m_Shadow(true),
-	m_ShadowLightDistance(20.f)
+	m_ShadowLightDistance(20.f),
+	m_ShadowCBuffer(nullptr)
 {
 }
 
 CRenderManager::~CRenderManager()
 {
+	SAFE_DELETE(m_ShadowCBuffer);
+
 	auto	iter = m_RenderLayerList.begin();
 	auto	iterEnd = m_RenderLayerList.end();
 
@@ -307,6 +311,9 @@ bool CRenderManager::Init()
 	m_ShadowMapShader = CResourceManager::GetInst()->FindShader("ShadowMapShader");
 	m_ShadowMapInstancingShader = CResourceManager::GetInst()->FindShader("ShadowMapInstancingShader");
 
+	m_ShadowCBuffer = new CShadowCBuffer;
+	m_ShadowCBuffer->Init();
+
 	return true;
 }
 
@@ -392,7 +399,7 @@ void CRenderManager::Render()
 					// 만약, 구조화 버퍼의 크기가 작다면, 기존 크기 * 1.5 배 로 재할당 해줘야 한다.
 					if ((*iter)->InstancingList.size() > Layer->m_vecInstancing[Layer->InstancingIndex]->BufferCount)
 					{
-						int	Count = Layer->m_vecInstancing[Layer->InstancingIndex]->BufferCount * 1.5f;
+						int	Count = (int)Layer->m_vecInstancing[Layer->InstancingIndex]->BufferCount * 1.5f;
 
 						// 할당 개수 조정
 						if ((*iter)->InstancingList.size() > Count)
@@ -400,13 +407,20 @@ void CRenderManager::Render()
 
 						// 기존 구조화 버퍼를 해제한다.
 						SAFE_DELETE(Layer->m_vecInstancing[Layer->InstancingIndex]->Buffer);
+						SAFE_DELETE(Layer->m_vecInstancing[Layer->InstancingIndex]->ShadowBuffer);
 
 						// 구조화 버퍼를 재할당해준다.
 						Layer->m_vecInstancing[Layer->InstancingIndex]->Buffer = new CStructuredBuffer;
 
 						Layer->m_vecInstancing[Layer->InstancingIndex]->Buffer->Init("InstancingBuffer", sizeof(Instancing3DInfo),
 							Count, 40, true,
-							(int)Buffer_Shader_Type::Vertex || (int)Buffer_Shader_Type::Pixel);
+							(int)Buffer_Shader_Type::Vertex | (int)Buffer_Shader_Type::Pixel);
+
+						Layer->m_vecInstancing[Layer->InstancingIndex]->ShadowBuffer = new CStructuredBuffer;
+
+						Layer->m_vecInstancing[Layer->InstancingIndex]->Buffer->Init("InstancingShadowBuffer", sizeof(Instancing3DInfo),
+							Count, 40, true,
+							(int)Buffer_Shader_Type::Vertex | (int)Buffer_Shader_Type::Pixel);
 					}
 
 					// 이제 해당 물체 집단. 그 안에 있는 물체 하나하나를 순회할 것이다.
@@ -533,7 +547,7 @@ void CRenderManager::Render()
 	CSceneManager::GetInst()->GetScene()->GetViewport()->Render();
 
 	// 디버깅용 렌더타겟을 출력한다.
-	// CResourceManager::GetInst()->RenderTarget();
+	CResourceManager::GetInst()->RenderTarget();
 
 	// 마우스 출력
 	CWidgetWindow* MouseWidget = CEngine::GetInst()->GetMouseWidget();
@@ -775,13 +789,22 @@ void CRenderManager::RenderLightBlend()
 	FinalScreenTarget->SetTarget(nullptr);
 
 	m_vecGBuffer[0]->SetTargetShader(14);
+	m_vecGBuffer[2]->SetTargetShader(16);
 	m_vecLightBuffer[0]->SetTargetShader(18);
 	m_vecLightBuffer[1]->SetTargetShader(19);
 	m_vecLightBuffer[2]->SetTargetShader(20);
+	m_ShadowMapTarget->SetTargetShader(22);
 
 	m_LightBlendShader->SetShader();
 
 	m_DepthDisable->SetState();
+
+	CScene* Scene = CSceneManager::GetInst()->GetScene();
+	Matrix matView = Scene->GetCameraManager()->GetCurrentCamera()->GetShadowViewMatrix();
+	Matrix matProj = Scene->GetCameraManager()->GetCurrentCamera()->GetShadowViewMatrix();
+
+	m_ShadowCBuffer->SetShadowVP(matView * matProj);
+	m_ShadowCBuffer->UpdateCBuffer();
 
 	// 아래코드를 사용한 이유는, Null Buffer 를 사용하기 때문이다.
 	UINT Offset = 0;
@@ -795,9 +818,11 @@ void CRenderManager::RenderLightBlend()
 	m_DepthDisable->ResetState();
 
 	m_vecGBuffer[0]->ResetTargetShader(14);
+	m_vecGBuffer[2]->ResetTargetShader(16);
 	m_vecLightBuffer[0]->ResetTargetShader(18);
 	m_vecLightBuffer[1]->ResetTargetShader(19);
 	m_vecLightBuffer[2]->ResetTargetShader(20);
+	m_ShadowMapTarget->ResetTargetShader(22);
 
 	FinalScreenTarget->ResetTarget();
 }
