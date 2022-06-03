@@ -83,6 +83,26 @@ void CColliderBox3D::PostUpdate(float DeltaTime)
 	m_Info.AxisLen[1] = GetWorldScale().y / 2.f;
 	m_Info.AxisLen[2] = GetWorldScale().z / 2.f;
 
+
+	m_Info.Min.x = m_Info.Center.x - m_Info.Axis[0].x * m_Info.AxisLen[0];
+	m_Info.Min.y = m_Info.Center.y - m_Info.Axis[1].y * m_Info.AxisLen[1];
+	m_Info.Min.z = m_Info.Center.z - m_Info.Axis[2].z * m_Info.AxisLen[2];
+
+	m_Info.Max.x = m_Info.Center.x + m_Info.Axis[0].x * m_Info.AxisLen[0];
+	m_Info.Max.y = m_Info.Center.y + m_Info.Axis[1].y * m_Info.AxisLen[1];
+	m_Info.Max.z = m_Info.Center.z + m_Info.Axis[2].z * m_Info.AxisLen[2];
+	
+	float MinX = min(m_Info.Min.x, m_Info.Max.x);
+	float MinY = min(m_Info.Min.y, m_Info.Max.y);
+	float MinZ = min(m_Info.Min.z, m_Info.Max.z);
+
+	float MaxX = max(m_Info.Min.x, m_Info.Max.x);
+	float MaxY = max(m_Info.Min.y, m_Info.Max.y);
+	float MaxZ = max(m_Info.Min.z, m_Info.Max.z);
+
+	m_Info.Min = Vector3(MinX, MinY, MinZ);
+	m_Info.Max = Vector3(MaxX, MaxY, MaxZ);
+
 }
 
 void CColliderBox3D::PrevRender()
