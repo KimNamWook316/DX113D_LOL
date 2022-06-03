@@ -43,6 +43,7 @@ private:
 
     class CIMGUICheckBox* m_IsMoveEdit;
     class CIMGUICheckBox* m_IsGravityEdit;
+    class CIMGUICheckBox* m_IsRandomMoveEdit;
     // class CIMGUICheckBox* m_Is3DEdit;
 
     class CIMGUIInputFloat3* m_MoveDirEdit;
@@ -89,6 +90,7 @@ private :
 
     void OnIsMoveEdit(const char*, bool);
     void OnIsGravityEdit(const char*, bool);
+    void OnIsRandomMoveEdit(const char*, bool);
 
     void OnMoveDirEdit(const Vector3& Dir);
     void OnMoveAngleEdit(const Vector3& Angle);

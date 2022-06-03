@@ -27,6 +27,8 @@ bool CRenderStateManager::Init()
 
 	CreateDepthStencilState("SkyDepth", true, D3D11_DEPTH_WRITE_MASK_ZERO, D3D11_COMPARISON_LESS_EQUAL);
 
+	CreateRasterizerState("Wireframe", D3D11_FILL_WIREFRAME);
+
 	return true;
 }
 

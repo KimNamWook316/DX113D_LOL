@@ -42,6 +42,8 @@ void CCameraManager::Update(float DeltaTime)
 {
 	if (m_CurrentCamera->GetName() == "DefaultCamera")
 		m_CurrentCamera->Update(DeltaTime);
+
+	m_CurrentCamera->ComputeShadowView();
 }
 
 void CCameraManager::PostUpdate(float DeltaTime)

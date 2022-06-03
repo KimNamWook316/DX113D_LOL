@@ -50,6 +50,9 @@
 
 #pragma comment(lib, "fmod64_vc.lib")
 
+#define SHADOWMAP_WIDTH		2048.f
+#define SHADOWMAP_HEIGHT	2048.f
+
 #define	ROOT_PATH		"Root"
 #define	SHADER_PATH		"Shader"
 #define	TEXTURE_PATH	"Texture"
@@ -191,6 +194,7 @@ struct TransformCBuffer
 	Matrix	matWV;
 	Matrix	matWVP;
 	Matrix	matVP;
+	Matrix	matInvVP;
 	Matrix	matInvWVP;
 	Vector3	Pivot;
 	float	Empty1;
@@ -374,7 +378,9 @@ struct	ParticleCBuffer
 	Vector3	MoveDir;		// 이동을 한다면 기준이 될 이동 방향
 	int		Is2D;			// 2D용 파티클인지
 	Vector3	MoveAngle;	// 이동을 한다면 기준이 될 방향으로부터 x, y, z 에 저장된 각도만큼 틀어진 랜덤한 방향을 구한다.
+	int ApplyRandom;
 	float	Empty;
+	Vector3 RotationAngle;
 };
 
 struct ParticleInfo
@@ -397,6 +403,7 @@ struct ParticleInfoShared
 	Vector4	ColorMin;
 	Vector4	ColorMax;
 	int		GravityEnable;
+	Vector3  RotationAngle;
 };
 
 struct GlobalCBuffer

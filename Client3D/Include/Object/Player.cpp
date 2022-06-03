@@ -5,12 +5,8 @@
 #include "Scene/Scene.h"
 #include "Scene/Navigation3DManager.h"
 #include "Weapon.h"
-#include "Component/StateComponent.h"
-#include "Component/ColliderBox3D.h"
-#include "Collision/Collision.h"
 
-CPlayer::CPlayer()	:
-	m_FrameCount(0)
+CPlayer::CPlayer()
 {
 	SetTypeID<CPlayer>();
 }
@@ -32,10 +28,8 @@ bool CPlayer::Init()
 	m_Mesh = CreateComponent<CAnimationMeshComponent>("PlayerMesh");
 	m_Arm = CreateComponent<CArm>("Arm");
 	m_Camera = CreateComponent<CCameraComponent>("Camera");
-	m_Body = CreateComponent<CColliderBox3D>("Body");
 
 	m_Mesh->AddChild(m_Arm);
-
 
 	m_Arm->AddChild(m_Camera);
 
@@ -54,24 +48,15 @@ bool CPlayer::Init()
 
 	m_Mesh->SetRelativeScale(0.02f, 0.02f, 0.02f);
 
-	m_Arm->SetOffset(0.f, 0.f, 0.f);
+	m_Arm->SetOffset(0.f, 2.f, 0.f);
 	m_Arm->SetRelativeRotation(25.f, 0.f, 0.f);
 	m_Arm->SetTargetDistance(10.f);
+
+
 
 	m_Weapon = m_Scene->CreateGameObject<CWeapon>("Weapon");
 
 	m_Mesh->AddChild(m_Weapon, "Weapon");
-
-
-
-	// ColliderBox3D Test
-	m_Mesh->AddChild(m_Body);
-
-	m_Body->SetInheritRotX(true);
-	m_Body->SetInheritRotY(true);
-	m_Body->SetInheritRotZ(true);
-	m_Body->SetExtent(0.5f, 0.5f, 0.5f);
-	m_Body->SetOffset(0.f, 2.f, 0.f);
 
 
 
@@ -123,27 +108,19 @@ void CPlayer::Update(float DeltaTime)
 	{
 		int a = 0;
 	}
-	
 }
 
 void CPlayer::PostUpdate(float DeltaTime)
 {
 	CGameObject::PostUpdate(DeltaTime);
 
-	Vector3	Pos = GetWorldPos();
+	//Vector3	Pos = GetWorldPos();
 
-	Pos.y = m_Scene->GetNavigation3DManager()->GetY(Pos);
+	//Pos.y = m_Scene->GetNavigation3DManager()->GetY(Pos);
 
-	SetWorldPos(Pos);
+	//SetWorldPos(Pos);
 
 	m_Velocity = Vector3::Zero;
-
-
-	// Ray vs Box Test Code //
-
-	//IsBoxRayCollision();
-	
-	//////////////////////////
 }
 
 CPlayer* CPlayer::Clone()
@@ -180,41 +157,3 @@ void CPlayer::Attack(float DeltaTime)
 	m_Animation->ChangeAnimation("Attack");
 	m_Animation->SetIdleEnable(false);
 }
-
-bool CPlayer::IsBoxRayCollision()
-{
-	++m_FrameCount;
-
-	if (CInput::GetInst()->GetMouseLButtonClick() && m_FrameCount > 20)
-	{
-		CCameraComponent* CurrentCamera = m_Scene->GetCameraManager()->GetCurrentCamera();
-		Matrix matView = CurrentCamera->GetViewMatrix();
-		Ray ray = CInput::GetInst()->GetRay(matView);
-
-		Box3DInfo Info = m_Body->GetInfo();
-		//Matrix WorldMat = m_Body->GetWorldMatrix();
-
-		//Info.Center = Info.Center.TransformCoord(WorldMat);
-		//Info.Axis[0] = Info.Axis[0].TransformCoord(WorldMat);
-		//Info.Axis[0].Normalize();
-
-		//Info.Axis[1] = Info.Axis[1].TransformCoord(WorldMat);
-		//Info.Axis[1].Normalize();
-
-		//Info.Axis[2] = Info.Axis[2].TransformCoord(WorldMat);
-		//Info.Axis[2].Normalize();
-
-		//Info.Min = Info.Min.TransformCoord(WorldMat);
-		//Info.Max = Info.Max.TransformCoord(WorldMat);
-
-		Vector3 HitPoint;
-
-		CCollision::CollisionRayToBox3D(HitPoint, ray, Info);
-
-		m_FrameCount = 0;
-	}
-
-	return true;
-}
-
-

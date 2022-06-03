@@ -6,6 +6,9 @@
 #include "../Scene/Navigation3DManager.h"
 #include "../Resource/Material/Material.h"
 #include "../Resource/Shader/LandScapeConstantBuffer.h"
+#include "../Render/RenderManager.h"
+#include "../Render/RenderState.h"
+#include "../Render/RenderStateManager.h"
 
 #include "../d3dx10math.h"
 
@@ -14,10 +17,14 @@ CLandScape::CLandScape() :
 	m_CountZ(0),
 	m_CBuffer(nullptr),
 	m_Min(FLT_MAX, FLT_MAX, FLT_MAX),
-	m_Max(FLT_MIN, FLT_MIN, FLT_MIN)
+	m_Max(FLT_MIN, FLT_MIN, FLT_MIN),
+	m_YFactor(30.f),
+	m_Create(false)
 {
 	SetTypeID<CLandScape>();
 	m_Render = true;
+
+	m_DebugRender = true;
 }
 
 CLandScape::CLandScape(const CLandScape& com) :
@@ -38,72 +45,21 @@ CLandScape::~CLandScape()
 	SAFE_DELETE(m_CBuffer);
 }
 
-void CLandScape::CreateLandScape(const std::string& Name,
-	int CountX, int CountZ, const TCHAR* HeightMap,
-	const std::string& PathName)
+void CLandScape::CreateLandScape(const std::string& Name, int CountX, int CountZ, CTexture* HeightMapTexture, float YFactor)
 {
 	m_CountX = CountX;
 	m_CountZ = CountZ;
 
+	m_PrevYFactor = YFactor;
+	m_YFactor = YFactor;
+
 	std::vector<float>	vecY;
 
 	// 이미지 형태의 HeightMap파일 경로가 주어진 경우 높이값을 이미지로부터 얻어온다.
-	if (HeightMap)
+	if (HeightMapTexture)
 	{
-		TCHAR	FullPath[MAX_PATH] = {};
-
-		const PathInfo* Path = CPathManager::GetInst()->FindPath(PathName);
-
-		if (Path)
-			lstrcpy(FullPath, Path->Path);
-		lstrcat(FullPath, HeightMap);
-
-		ScratchImage	Img;
-
-		char	Ext[_MAX_EXT] = {};
-		char	FullPathMultibyte[MAX_PATH] = {};
-
-#ifdef UNICODE
-
-		int	ConvertLength = WideCharToMultiByte(CP_ACP, 0, FullPath, -1, nullptr, 0, nullptr, nullptr);
-		WideCharToMultiByte(CP_ACP, 0, FullPath, -1, FullPathMultibyte, ConvertLength, nullptr, nullptr);
-
-#else
-
-		strcpy_s(FullPathMultibyte, FullPath);
-
-#endif // UNICODE
-
-		_splitpath_s(FullPathMultibyte, nullptr, 0, nullptr, 0, nullptr, 0, Ext, _MAX_EXT);
-
-		_strupr_s(Ext);
-
-		if (strcmp(Ext, ".DDS") == 0)
-		{
-			if (FAILED(LoadFromDDSFile(FullPath, DDS_FLAGS_NONE, nullptr, Img)))
-			{
-				return;
-			}
-		}
-
-		else if (strcmp(Ext, ".TGA") == 0)
-		{
-			if (FAILED(LoadFromTGAFile(FullPath, nullptr, Img)))
-			{
-				return;
-			}
-		}
-
-		else
-		{
-			if (FAILED(LoadFromWICFile(FullPath, WIC_FLAGS_NONE, nullptr, Img)))
-			{
-				return;
-			}
-		}
-
 		// 픽셀 값을 꺼내온다.
-		const Image* PixelInfo = Img.GetImages();
+		const Image* PixelInfo = HeightMapTexture->GetScratchImage()->GetImages();
 
 		for (size_t i = 0; i < PixelInfo->height; ++i)
 		{
@@ -112,8 +68,8 @@ void CLandScape::CreateLandScape(const std::string& Name,
 				// rgba 1byte씩 저장되어 있으므로, 1pixel씩 접근하려면 index가 4의 배수로 늘어나야 함
 				int	PixelIndex = (int)i * (int)PixelInfo->width * 4 + (int)j * 4;
 
-				// Y값이 너무 커지는것을 방지하기 위해 60으로 나누어준다.
-				float	Y = PixelInfo->pixels[PixelIndex] / 30.f;
+				// Y값이 너무 커지는 것을 막기 위해 나누어준다.
+				float	Y = PixelInfo->pixels[PixelIndex] / m_YFactor;
 
 				vecY.push_back(Y);
 			}
@@ -134,7 +90,7 @@ void CLandScape::CreateLandScape(const std::string& Name,
 			Vtx.Pos = Vector3((float)j, vecY[i *(int)m_CountX + j],
 				(float)m_CountZ - i - 1);
 			Vtx.UV = Vector2(j / (float)(m_CountX - 1),
-				i / (float)m_CountZ - 1);
+				i / (float)m_CountZ - 1);\
 
 			m_vecPos.push_back(Vtx.Pos);
 
@@ -234,7 +190,221 @@ void CLandScape::CreateLandScape(const std::string& Name,
 
 	m_Mesh = (CStaticMesh*)m_Scene->GetResource()->FindMesh(Name);
 
+	m_MeshName = Name;
+
 	m_Scene->GetNavigation3DManager()->SetNavData(this);
+
+	m_WireFrameState = CRenderManager::GetInst()->FindRenderState("Wireframe");
+
+	m_Create = true;
+}
+
+void CLandScape::CreateLandScape(const std::string& Name,
+	int CountX, int CountZ, const TCHAR* HeightMap,
+	const std::string& PathName, float YFactor)
+{
+	m_CountX = CountX;
+	m_CountZ = CountZ;
+
+	m_PrevYFactor = YFactor;
+	m_YFactor = YFactor;
+
+	std::vector<float>	vecY;
+
+	// 이미지 형태의 HeightMap파일 경로가 주어진 경우 높이값을 이미지로부터 얻어온다.
+	if (HeightMap)
+	{
+		TCHAR	FullPath[MAX_PATH] = {};
+
+		const PathInfo* Path = CPathManager::GetInst()->FindPath(PathName);
+
+		if (Path)
+			lstrcpy(FullPath, Path->Path);
+		lstrcat(FullPath, HeightMap);
+
+		ScratchImage	Img;
+
+		char	Ext[_MAX_EXT] = {};
+		char	FullPathMultibyte[MAX_PATH] = {};
+
+#ifdef UNICODE
+
+		int	ConvertLength = WideCharToMultiByte(CP_ACP, 0, FullPath, -1, nullptr, 0, nullptr, nullptr);
+		WideCharToMultiByte(CP_ACP, 0, FullPath, -1, FullPathMultibyte, ConvertLength, nullptr, nullptr);
+
+#else
+
+		strcpy_s(FullPathMultibyte, FullPath);
+
+#endif // UNICODE
+
+		_splitpath_s(FullPathMultibyte, nullptr, 0, nullptr, 0, nullptr, 0, Ext, _MAX_EXT);
+
+		_strupr_s(Ext);
+
+		if (strcmp(Ext, ".DDS") == 0)
+		{
+			if (FAILED(LoadFromDDSFile(FullPath, DDS_FLAGS_NONE, nullptr, Img)))
+			{
+				return;
+			}
+		}
+
+		else if (strcmp(Ext, ".TGA") == 0)
+		{
+			if (FAILED(LoadFromTGAFile(FullPath, nullptr, Img)))
+			{
+				return;
+			}
+		}
+
+		else
+		{
+			if (FAILED(LoadFromWICFile(FullPath, WIC_FLAGS_NONE, nullptr, Img)))
+			{
+				return;
+			}
+		}
+
+		// 픽셀 값을 꺼내온다.
+		const Image* PixelInfo = Img.GetImages();
+
+		for (size_t i = 0; i < PixelInfo->height; ++i)
+		{
+			for (size_t j = 0; j < PixelInfo->width; ++j)
+			{
+				// rgba 1byte씩 저장되어 있으므로, 1pixel씩 접근하려면 index가 4의 배수로 늘어나야 함
+				int	PixelIndex = (int)i * (int)PixelInfo->width * 4 + (int)j * 4;
+
+				// Y값이 너무 커지는 것을 막기 위해 나누어준다.
+				float	Y = PixelInfo->pixels[PixelIndex] / m_YFactor;
+
+				vecY.push_back(Y);
+			}
+		}
+	}
+
+	// 높이 맵 파일이 없는 경우
+	else
+		vecY.resize(CountX * CountZ);
+
+	// Vertex 생성
+	for (int i = 0; i < m_CountZ; ++i)
+	{
+		for (int j = 0; j < m_CountX; ++j)
+		{
+			Vertex3D	Vtx = {};
+
+			Vtx.Pos = Vector3((float)j, vecY[i *(int)m_CountX + j],
+				(float)m_CountZ - i - 1);
+			Vtx.UV = Vector2(j / (float)(m_CountX - 1),
+				i / (float)m_CountZ - 1);\
+
+			m_vecPos.push_back(Vtx.Pos);
+
+			if (m_Min.x > Vtx.Pos.x)
+				m_Min.x = Vtx.Pos.x;
+
+			if (m_Min.y > Vtx.Pos.y)
+				m_Min.y = Vtx.Pos.y;
+
+			if (m_Min.z > Vtx.Pos.z)
+				m_Min.z = Vtx.Pos.z;
+
+			if (m_Max.x < Vtx.Pos.x)
+				m_Max.x = Vtx.Pos.x;
+
+			if (m_Max.y < Vtx.Pos.y)
+				m_Max.y = Vtx.Pos.y;
+
+			if (m_Max.z < Vtx.Pos.z)
+				m_Max.z = Vtx.Pos.z;
+
+			m_vecVtx.push_back(Vtx);
+		}
+	}
+
+	SetMeshSize(m_Max - m_Min);
+	m_SphereInfo.Center = (m_Max + m_Min) / 2.f;
+
+	// 인덱스 정보 만들기
+	// 면 법선은 삼각형 수만큼 만들어져야 한다.
+	Vector3	TrianglePos[3];
+	Vector3	Edge1, Edge2;
+	unsigned int	TriIndex = 0;
+
+	// 사각형 수 * 2
+	m_vecFaceNormal.resize((m_CountX - 1) * (m_CountZ - 1) * 2);
+
+	for (unsigned int i = 0; i < m_CountZ - 1; ++i)
+	{
+		for (unsigned int j = 0; j < m_CountX - 1; ++j)
+		{
+			unsigned int	Index = i * m_CountX + j;
+
+			// 사각형의 우 상단 삼각형
+			m_vecIndex.push_back(Index);
+			m_vecIndex.push_back(Index + 1);
+			m_vecIndex.push_back(Index + m_CountX + 1);
+
+			TrianglePos[0] = m_vecVtx[Index].Pos;
+			TrianglePos[1] = m_vecVtx[Index + 1].Pos;
+			TrianglePos[2] = m_vecVtx[Index + m_CountX + 1].Pos;
+
+			Edge1 = TrianglePos[1] - TrianglePos[0];
+			Edge2 = TrianglePos[2] - TrianglePos[0];
+
+			Edge1.Normalize();
+			Edge2.Normalize();
+
+			m_vecFaceNormal[TriIndex] = Edge1.Cross(Edge2);
+			m_vecFaceNormal[TriIndex].Normalize();
+
+			++TriIndex;
+
+
+			// 사각형의 좌 하단 삼각형
+			m_vecIndex.push_back(Index);
+			m_vecIndex.push_back(Index + m_CountX + 1);
+			m_vecIndex.push_back(Index + m_CountX);
+
+			TrianglePos[0] = m_vecVtx[Index].Pos;
+			TrianglePos[1] = m_vecVtx[Index + m_CountX + 1].Pos;
+			TrianglePos[2] = m_vecVtx[Index + m_CountX].Pos;
+
+			Edge1 = TrianglePos[1] - TrianglePos[0];
+			Edge2 = TrianglePos[2] - TrianglePos[0];
+
+			Edge1.Normalize();
+			Edge2.Normalize();
+
+			m_vecFaceNormal[TriIndex] = Edge1.Cross(Edge2);
+			m_vecFaceNormal[TriIndex].Normalize();
+
+			++TriIndex;
+		}
+	}
+
+	ComputeNormal();
+
+	ComputeTangent();
+
+	// 메쉬를 만든다.
+	m_Scene->GetResource()->CreateMesh(Mesh_Type::Static, Name,
+		&m_vecVtx[0], sizeof(Vertex3D), (int)m_vecVtx.size(),
+		D3D11_USAGE_DEFAULT, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST,
+		&m_vecIndex[0], sizeof(int), (int)m_vecIndex.size(),
+		D3D11_USAGE_DEFAULT, DXGI_FORMAT_R32_UINT);
+
+	m_Mesh = (CStaticMesh*)m_Scene->GetResource()->FindMesh(Name);
+
+	m_MeshName = Name;
+
+	m_Scene->GetNavigation3DManager()->SetNavData(this);
+
+	m_WireFrameState = CRenderManager::GetInst()->FindRenderState("Wireframe");
+
+	m_Create = true;
 }
 
 void CLandScape::SetMaterial(CMaterial* Material, int Index)
@@ -277,6 +447,15 @@ void CLandScape::SetDetailLevel(float Level)
 void CLandScape::SetSplatCount(int Count)
 {
 	m_CBuffer->SetSplatCount(Count);
+}
+
+void CLandScape::SetYFactor(float YFactor)
+{
+	m_PrevYFactor = m_YFactor;
+
+	m_YFactor = YFactor;
+
+	RecreateY();
 }
 
 float CLandScape::GetHeight(const Vector3& Pos)
@@ -506,6 +685,8 @@ bool CLandScape::Init()
 
 	m_CBuffer->Init();
 
+	m_WireFrameShader = m_Scene->GetResource()->FindShader("Standard3DWireFrameShader");
+
 	return true;
 }
 
@@ -544,6 +725,37 @@ void CLandScape::Render()
 		m_Mesh->Render((int)i);
 
 		m_vecMaterialSlot[i]->Reset();
+	}
+
+	// WireFrame Render
+	if (m_DebugRender)
+	{
+		m_WireFrameShader->SetShader();
+
+		m_WireFrameState->SetState();
+
+		m_Mesh->Render();
+
+		m_WireFrameState->ResetState();
+	}
+}
+
+void CLandScape::RenderShadowMap()
+{
+	CSceneComponent::RenderShadowMap();
+
+	if (!m_Mesh)
+	{
+		return;
+	}
+
+	m_CBuffer->UpdateCBuffer();
+
+	size_t	Size = m_vecMaterialSlot.size();
+
+	for (size_t i = 0; i < Size; ++i)
+	{
+		m_Mesh->Render((int)i);
 	}
 }
 
@@ -638,6 +850,108 @@ void CLandScape::ComputeTangent()
 		m_vecVtx[idx1].Binormal.Normalize();
 		m_vecVtx[idx2].Binormal.Normalize();
 	}
+}
+
+void CLandScape::RecreateY()
+{
+	// Vertex Y 값 변경
+	for (int i = 0; i < m_CountZ; ++i)
+	{
+		for (int j = 0; j < m_CountX; ++j)
+		{
+			int Index = i * (int)m_CountX + j;
+
+			float PrevY = m_vecVtx[Index].Pos.y;
+			float AfterY = (PrevY * m_PrevYFactor) / m_YFactor;
+
+			m_vecVtx[Index].Pos.y = AfterY;
+
+			if (m_Min.y > AfterY)
+				m_Min.y = AfterY;
+
+			if (m_Max.y < AfterY)
+				m_Max.y = AfterY;
+		}
+	}
+
+	SetMeshSize(m_Max - m_Min);
+	m_SphereInfo.Center = (m_Max + m_Min) / 2.f;
+
+	// Normal, Tangent, Binormal 재생성
+	Vector3	TrianglePos[3];
+	Vector3	Edge1, Edge2;
+	unsigned int	TriIndex = 0;
+
+	// 사각형 수 * 2
+	m_vecFaceNormal.clear();
+
+	m_vecFaceNormal.resize((m_CountX - 1) * (m_CountZ - 1) * 2);
+
+	for (unsigned int i = 0; i < m_CountZ - 1; ++i)
+	{
+		for (unsigned int j = 0; j < m_CountX - 1; ++j)
+		{
+			unsigned int	Index = i * m_CountX + j;
+
+			// 사각형의 우 상단 삼각형
+			m_vecIndex.push_back(Index);
+			m_vecIndex.push_back(Index + 1);
+			m_vecIndex.push_back(Index + m_CountX + 1);
+
+			TrianglePos[0] = m_vecVtx[Index].Pos;
+			TrianglePos[1] = m_vecVtx[Index + 1].Pos;
+			TrianglePos[2] = m_vecVtx[Index + m_CountX + 1].Pos;
+
+			Edge1 = TrianglePos[1] - TrianglePos[0];
+			Edge2 = TrianglePos[2] - TrianglePos[0];
+
+			Edge1.Normalize();
+			Edge2.Normalize();
+
+			m_vecFaceNormal[TriIndex] = Edge1.Cross(Edge2);
+			m_vecFaceNormal[TriIndex].Normalize();
+
+			++TriIndex;
+
+			// 사각형의 좌 하단 삼각형
+			m_vecIndex.push_back(Index);
+			m_vecIndex.push_back(Index + m_CountX + 1);
+			m_vecIndex.push_back(Index + m_CountX);
+
+			TrianglePos[0] = m_vecVtx[Index].Pos;
+			TrianglePos[1] = m_vecVtx[Index + m_CountX + 1].Pos;
+			TrianglePos[2] = m_vecVtx[Index + m_CountX].Pos;
+
+			Edge1 = TrianglePos[1] - TrianglePos[0];
+			Edge2 = TrianglePos[2] - TrianglePos[0];
+
+			Edge1.Normalize();
+			Edge2.Normalize();
+
+			m_vecFaceNormal[TriIndex] = Edge1.Cross(Edge2);
+			m_vecFaceNormal[TriIndex].Normalize();
+
+			++TriIndex;
+		}
+	}
+
+	ComputeNormal();
+
+	ComputeTangent();
+
+	// 기존 메쉬 Release
+	m_Mesh = nullptr;
+	m_Scene->GetResource()->ReleaseMesh(m_MeshName);
+	CResourceManager::GetInst()->ReleaseMesh(m_MeshName);
+
+	// 새로운 메쉬 생성
+	m_Scene->GetResource()->CreateMesh(Mesh_Type::Static, m_MeshName,
+		&m_vecVtx[0], sizeof(Vertex3D), (int)m_vecVtx.size(),
+		D3D11_USAGE_DEFAULT, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST,
+		&m_vecIndex[0], sizeof(int), (int)m_vecIndex.size(),
+		D3D11_USAGE_DEFAULT, DXGI_FORMAT_R32_UINT);
+
+	m_Mesh = (CStaticMesh*)m_Scene->GetResource()->FindMesh(m_MeshName);
 }
 
 bool CLandScape::SortHeight(struct Polygon Src, struct Polygon Dest)

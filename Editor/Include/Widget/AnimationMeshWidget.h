@@ -8,7 +8,21 @@ class CAnimationMeshWidget :
 public:
     CAnimationMeshWidget();
     virtual ~CAnimationMeshWidget();
+private :
+    // Anim Clip Table
+    class CIMGUITableElemList* m_AnimInfoTable;
+    class CIMGUITextInput* m_CurrentAnimSequence;
 
+    // Anim Instance
+    class CIMGUIButton* m_LoadAnimInstanceBtn;
+    class CIMGUIButton* m_SaveAnimInstanceBtn;
+    
+    // Seq Name
+    class CIMGUITextInput* m_NewNameInput;
+    class CIMGUIButton* m_ReNameSequenceBtn;
+private :
+    class CAnimationSequenceInstance* m_Animation;
+    std::string m_LoadedMeshName;
 public:
     virtual bool Init() override;
     
@@ -25,7 +39,14 @@ private:
     void OnEditEmissiveColor(const Vector3& Color);
     void OnCheckTransparency(int Idx, bool Check);
     void OnEditOpacity(float Opacity);
-
+private :
+    void OnLoadAnimationInstance();
+    void OnSaveAnimationInstance();
+    void OnEditAnimationKeyName();
+public :
+    void OnRefreshAnimationInfo();
+    bool LoadElementsForSqcLoading();
+    void ClearExistingAnimationSeqInfos();
 private:
     void RefreshMeshWidget(class CMesh* Mesh);
 

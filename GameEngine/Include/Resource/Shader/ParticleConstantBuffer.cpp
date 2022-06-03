@@ -16,6 +16,7 @@ CParticleConstantBuffer::CParticleConstantBuffer() :
 	m_BufferData.SpeedMax = 3.f;
 	m_BufferData.StartMin = Vector3(-10.f, -10.f, 0.f);
 	m_BufferData.StartMax = Vector3(10.f, 10.f, 0.f);
+	m_BufferData.ApplyRandom = 1;
 }
 
 CParticleConstantBuffer::CParticleConstantBuffer(const CParticleConstantBuffer& Buffer) :

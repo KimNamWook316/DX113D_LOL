@@ -390,6 +390,22 @@ void CStaticMeshComponent::Render()
 	}
 }
 
+void CStaticMeshComponent::RenderShadowMap()
+{
+	CSceneComponent::RenderShadowMap();
+
+	if (!m_Mesh)
+	{
+		return;
+	}
+
+	size_t Size = m_vecMaterialSlot.size();
+	for (size_t i = 0; i < Size; ++i)
+	{
+		m_Mesh->Render((int)i);
+	}
+}
+
 void CStaticMeshComponent::PostRender()
 {
 	CSceneComponent::PostRender();

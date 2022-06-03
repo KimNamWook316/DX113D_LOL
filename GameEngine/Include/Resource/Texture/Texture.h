@@ -61,6 +61,10 @@ public:
 	{
 		return m_vecTextureInfo[Index]->SRV;
 	}
+	ScratchImage* GetScratchImage(int Index = 0) const
+	{
+		return m_vecTextureInfo[Index]->Image;
+	}
 
 	Image_Type GetImageType()	const
 	{

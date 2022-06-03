@@ -12,6 +12,7 @@ protected:
 protected:
 	ID3D11RenderTargetView* m_TargetView;
 	ID3D11Texture2D* m_TargetTex;
+	ID3D11DepthStencilView* m_DepthView;
 	ID3D11RenderTargetView* m_PrevTargetView;
 	ID3D11DepthStencilView* m_PrevDepthView;
 	IDXGISurface* m_Surface;
@@ -59,9 +60,11 @@ public:
 
 public:
 	bool CreateTarget(const std::string& Name, unsigned int Width,
-		unsigned int Height, DXGI_FORMAT PixelFormat, bool Multisample = true);
+		unsigned int Height, DXGI_FORMAT PixelFormat, bool Multisample = true,
+		DXGI_FORMAT DepthFormat = DXGI_FORMAT_UNKNOWN);
 	void ClearTarget();
 	void SetTarget(ID3D11DepthStencilView* DepthView);
+	void SetTarget();
 	void ResetTarget();
 	void SetTargetShader();
 	void ResetTargetShader();

@@ -9,13 +9,15 @@ CRenderTarget::CRenderTarget()	:
 	m_PrevDepthView(nullptr),
 	m_Surface(nullptr),
 	m_ClearColor{},
-	m_DebugRender(false)
+	m_DebugRender(false),
+	m_DepthView(nullptr)
 {
 	m_ImageType = Image_Type::RenderTarget;
 }
 
 CRenderTarget::~CRenderTarget()
 {
+	SAFE_RELEASE(m_DepthView);
 	SAFE_RELEASE(m_Surface);
 	SAFE_RELEASE(m_PrevDepthView);
 	SAFE_RELEASE(m_PrevTargetView);
@@ -24,7 +26,8 @@ CRenderTarget::~CRenderTarget()
 }
 
 bool CRenderTarget::CreateTarget(const std::string& Name, 
-	unsigned int Width, unsigned int Height, DXGI_FORMAT PixelFormat, bool MultiSample)
+	unsigned int Width, unsigned int Height, DXGI_FORMAT PixelFormat, bool MultiSample,
+	DXGI_FORMAT DepthFormat)
 {
 	SetName(Name);
 
@@ -70,21 +73,44 @@ bool CRenderTarget::CreateTarget(const std::string& Name,
 		nullptr, &m_TargetView)))
 		return false;
 
-	// m_ClearColor[0] = 1.f;
-	// m_ClearColor[1] = 1.f;
-	// m_ClearColor[2] = 1.f;
-	// m_ClearColor[3] = 1.f;
+	if (DepthFormat != DXGI_FORMAT_UNKNOWN)
+	{
+		// 깊이버퍼를 만든다.
+		D3D11_TEXTURE2D_DESC DepthDesc = {};
+
+		DepthDesc.Width = Width;
+		DepthDesc.Height = Height;
+		DepthDesc.ArraySize = 1;
+
+		DepthDesc.Format = DepthFormat;
+		DepthDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+		DepthDesc.Usage = D3D11_USAGE_DEFAULT;
+		DepthDesc.SampleDesc.Count = 4;
+		DepthDesc.SampleDesc.Quality = 0;
+		DepthDesc.MipLevels = 1;
+
+		ID3D11Texture2D* DepthBuffer = nullptr;
+
+		if (FAILED(CDevice::GetInst()->GetDevice()->CreateTexture2D(&DepthDesc, nullptr, &DepthBuffer)))
+			return false;
+
+		if (FAILED(CDevice::GetInst()->GetDevice()->CreateDepthStencilView(DepthBuffer, nullptr, &m_DepthView)))
+			return false;
+
+		SAFE_RELEASE(DepthBuffer);
+	}
 
 	return true;
 }
 
 void CRenderTarget::ClearTarget()
 {
-	// m_ClearColor[0] = 1.f;
-	// m_ClearColor[1] = 1.f;
-	// m_ClearColor[2] = 1.f;
-	// m_ClearColor[3] = 1.f;
 	CDevice::GetInst()->GetContext()->ClearRenderTargetView(m_TargetView, m_ClearColor);
+
+	if (m_DepthView)
+	{
+		CDevice::GetInst()->GetContext()->ClearDepthStencilView(m_DepthView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.f, 0);
+	}
 }
 
 void CRenderTarget::SetTarget(ID3D11DepthStencilView* DepthView)
@@ -95,6 +121,18 @@ void CRenderTarget::SetTarget(ID3D11DepthStencilView* DepthView)
 
 	if (DepthView)
 		Depth = DepthView;
+
+	CDevice::GetInst()->GetContext()->OMSetRenderTargets(1, &m_TargetView, Depth);
+}
+
+void CRenderTarget::SetTarget()
+{
+	CDevice::GetInst()->GetContext()->OMGetRenderTargets(1, &m_PrevTargetView, &m_PrevDepthView);
+
+	ID3D11DepthStencilView* Depth = m_PrevDepthView;
+
+	if (m_DepthView)
+		Depth = m_DepthView;
 
 	CDevice::GetInst()->GetContext()->OMSetRenderTargets(1, &m_TargetView, Depth);
 }

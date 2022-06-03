@@ -13,6 +13,7 @@
 #include "Component/LightComponent.h"
 #include "Resource/Material/Material.h"
 
+
 CMainSceneMode::CMainSceneMode()
 {
 	SetTypeID<CMainSceneMode>();
@@ -89,7 +90,7 @@ void CMainSceneMode::LoadMesh()
 
 
 	m_Scene->GetResource()->LoadMesh(Mesh_Type::Static, "Blade",
-		TEXT("Blade.FBX"));
+		TEXT("Blade.msh"));
 
 	m_Scene->GetResource()->LoadMesh(Mesh_Type::Static, "BonObj",
 		TEXT("BonObj.msh"));
@@ -125,15 +126,6 @@ void CMainSceneMode::LoadMesh()
 
 	m_Scene->GetResource()->LoadAnimationSequence(true, "PlayerWalk",
 		TEXT("PlayerWalk.sqc"), MESH_PATH);
-
-	m_Scene->GetResource()->LoadAnimationSequence(true, "Alistar_SkillQ",
-		TEXT("Alistar_SkillQ.sqc"), MESH_PATH);
-
-	m_Scene->GetResource()->LoadAnimationSequence(true, "Alistar_SkillW",
-		TEXT("Alistar_SkillW.sqc"), MESH_PATH);
-
-	m_Scene->GetResource()->LoadAnimationSequence(true, "Alistar_SkillR",
-		TEXT("Alistar_SkillR.sqc"), MESH_PATH);
 }
 
 void CMainSceneMode::CreateMaterial()

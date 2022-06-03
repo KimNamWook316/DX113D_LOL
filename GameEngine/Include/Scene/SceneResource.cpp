@@ -265,6 +265,20 @@ CMesh* CSceneResource::FindMesh(const std::string& Name)
 	return iter->second;
 }
 
+void CSceneResource::ReleaseMesh(const std::string& Name)
+{
+	auto	iter = m_mapMesh.find(Name);
+
+	if (iter != m_mapMesh.end())
+	{
+		// 이 리소스 삭제를 요청한 객체와 리소스 매니저,SceneResource에서만 들고 있다면 erase
+		if (iter->second->GetRefCount() <= 3)
+		{
+			m_mapMesh.erase(iter);
+		}
+	}
+}
+
 CShader* CSceneResource::FindShader(const std::string& Name)
 {
 	auto	iter = m_mapShader.find(Name);
@@ -359,12 +373,12 @@ bool CSceneResource::LoadTextureFullPath(const std::string& Name,
 
 bool CSceneResource::CreateTarget(const std::string& Name, 
 	unsigned int Width, unsigned int Height, 
-	DXGI_FORMAT PixelFormat)
+	DXGI_FORMAT PixelFormat, DXGI_FORMAT DepthFormat)
 {
 	if (FindTexture(Name))
 		return true;
 
-	if (!CResourceManager::GetInst()->CreateTarget(Name, Width, Height, PixelFormat))
+	if (!CResourceManager::GetInst()->CreateTarget(Name, Width, Height, PixelFormat, true, DepthFormat))
 		return false;
 
 	m_mapTexture.insert(std::make_pair(Name, CResourceManager::GetInst()->FindTexture(Name)));

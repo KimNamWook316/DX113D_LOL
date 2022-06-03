@@ -17,7 +17,9 @@ public:
 	void Update(float DeltaTime) override;
 
 private:
+	void OnDragMoveStart(float DeltaTime);
 	void OnDragMove(float DeltaTime);
+	void OnDragMoveEnd(float DeltaTime);
 	void OnDragRotate(float DeltaTime);
 	void OnZoomIn(float DetlaTime);
 	void OnZoomOut(float DetlaTime);
@@ -25,5 +27,7 @@ private:
 private:
 	CSharedPtr<class CSceneComponent> m_FocusPoint;
 	CSharedPtr<class CCameraComponent> m_Camera;
+
+	Vector3 m_MoveStartCamPos;
 };
 

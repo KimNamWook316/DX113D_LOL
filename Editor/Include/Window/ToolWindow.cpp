@@ -1,5 +1,5 @@
 #include "ToolWindow.h"
-
+#include "IMGUISetRect.h"
 #include "Input.h"
 
 CToolWindow::CToolWindow()	:
@@ -21,6 +21,7 @@ bool CToolWindow::Init()
 
 	m_GizmoBlock = AddWidget<CIMGUICollapsingHeader>("Gizmo", 200.f);
 	//m_Grid = AddWidget<CIMGUIGrid>("Grid", 100.f);
+	AddWidget<CIMGUISetRect>("GridRect"); // Gizmo가 그려지기 위한 배경
 	m_Gizmo = AddWidget<CIMGUIGizmo>("Gimzo");
 	m_GizmoTransformMode = m_GizmoBlock->AddWidget<CIMGUIRadioButton>("Transform");
 	m_GizmoOperationMode = m_GizmoBlock->AddWidget<CIMGUIRadioButton>("Operation");
@@ -58,6 +59,11 @@ bool CToolWindow::Init()
 void CToolWindow::SetGizmoObject(CGameObject* Object)
 {
 	m_Gizmo->SetGameObject(Object);
+}
+
+void CToolWindow::SetGizmoComponent(CSceneComponent* SceneComp)
+{
+	m_Gizmo->SetComponent(SceneComp);
 }
 
 void CToolWindow::OnSelectGizmoOperationMode(const char* Label, bool Check)

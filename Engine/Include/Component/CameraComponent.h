@@ -17,6 +17,8 @@ protected:
 	Camera_Type m_CameraType;
 	Matrix      m_matView;
 	Matrix      m_matProj;
+	Matrix      m_matShadowView;
+	Matrix      m_matShadowProj;
 	float		m_ViewAngle;
 	float		m_Distance;
 	Resolution	m_RS;
@@ -42,6 +44,16 @@ public:
 	Matrix GetProjMatrix()	const
 	{
 		return m_matProj;
+	}
+
+	Matrix GetShadowViewMatrix()	const
+	{
+		return m_matShadowView;
+	}
+
+	Matrix GetShadowProjMatrix()	const
+	{
+		return m_matShadowProj;
 	}
 
 	Vector2 GetLeftBottom()	const
@@ -109,6 +121,9 @@ public:
 
 private:
 	void CreateProjectionMatrix();
+
+public:
+	void ComputeShadowView();
 
 public:
 	virtual void Start();

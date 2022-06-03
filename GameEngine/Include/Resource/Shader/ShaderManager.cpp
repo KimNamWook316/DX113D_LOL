@@ -26,6 +26,10 @@
 #include "Mesh3DNoLightShader.h"
 #include "AnimEditorShader.h"
 #include "Standard3DInstancingShader.h"
+#include "Standard3DWireFrameShader.h"
+#include "ShadowMapShader.h"
+#include "ShadowMapInstancingShader.h"
+#include "ShadowCBuffer.h"
 
 CShaderManager::CShaderManager()
 {
@@ -118,6 +122,18 @@ bool CShaderManager::Init()
 		return false;
 	}
 
+	if (!CreateShader<CStandard3DWireFrameShader>("Standard3DWireFrameShader"))
+	{
+		assert(false);
+		return false;
+	}
+
+	if (!CreateShader<CShadowMapShader>("ShadowMapShader"))
+		return false;
+
+	if (!CreateShader<CShadowMapInstancingShader>("ShadowMapInstancingShader"))
+		return false;
+
 	// =================== 상수버퍼 ===================
 	CreateConstantBuffer("TransformCBuffer", sizeof(TransformCBuffer), 0,
 		(int)Buffer_Shader_Type::Graphic);
@@ -165,6 +181,9 @@ bool CShaderManager::Init()
 
 	CreateConstantBuffer("InstancingCBuffer", sizeof(InstancingCBuffer), 6,
 		(int)Buffer_Shader_Type::Vertex | (int)Buffer_Shader_Type::Pixel);
+
+	CreateConstantBuffer("ShadowCBuffer", sizeof(ShadowCBuffer), 10,
+		(int)Buffer_Shader_Type::Graphic);
 
 	return true;
 }

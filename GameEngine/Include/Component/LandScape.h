@@ -32,6 +32,14 @@ protected:
 	Vector3 m_Min;
 	Vector3 m_Max;
 
+	std::string m_MeshName;
+	float m_YFactor;
+	float m_PrevYFactor;
+	bool m_DebugRender;
+	CSharedPtr<class CShader> m_WireFrameShader;
+	CSharedPtr<CRenderState> m_WireFrameState;
+	bool m_Create;
+
 public:
 	const Vector3& GetMin()	const
 	{
@@ -48,17 +56,39 @@ public:
 		return m_vecMaterialSlot[Index];
 	}
 
+	float GetYFactor() const
+	{
+		return m_YFactor;
+	}
+
+	bool IsCreate() const
+	{
+		return m_Create;
+	}
+
+	void SetDebugRender(bool Debug)
+	{
+		m_DebugRender = Debug;
+	}
+
 public:
 	void CreateLandScape(const std::string& Name,
 		int CountX, int CountZ,
+		CTexture* HeightMapTexture,
+		float YFactor = 30.f);
+	void CreateLandScape(const std::string& Name,
+		int CountX, int CountZ,
 		const TCHAR* HeightMap = nullptr,
-		const std::string& PathName = TEXTURE_PATH);
+		const std::string& PathName = TEXTURE_PATH,
+		float YFactor = 30.f);
 	void SetMaterial(class CMaterial* Material, int Index = 0);
 	void SetMaterial(const std::string& Name, int Index = 0);
 	void AddMaterial(class CMaterial* Material);
 	void AddMaterial(const std::string& Name);
 	void SetDetailLevel(float Level);
 	void SetSplatCount(int Count);
+
+	void SetYFactor(float YFactor);
 
 public:
 	float GetHeight(const Vector3& Pos);
@@ -71,15 +101,17 @@ public:
 	virtual void PostUpdate(float DeltaTime);
 	virtual void PrevRender();
 	virtual void Render();
+	virtual void RenderShadowMap();
 	virtual void PostRender();
 	virtual CLandScape* Clone();
 	virtual void Save(FILE* File);
 	virtual void Load(FILE* File);
 
-
 private:
 	void ComputeNormal();
 	void ComputeTangent();
+
+	void RecreateY();
 
 	static bool SortHeight(struct Polygon Src, struct Polygon Dest);
 };

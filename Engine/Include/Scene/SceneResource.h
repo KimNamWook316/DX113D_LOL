@@ -60,6 +60,7 @@ public:	// =================== Mesh =====================
 	bool SetMeshSkeleton(const std::string& Name, class CSkeleton* Skeleton);
 
 	CMesh* FindMesh(const std::string& Name);
+	void ReleaseMesh(const std::string& Name);
 
 
 public:	// =================== Shader =====================
@@ -111,7 +112,7 @@ public:	// =================== Texture =====================
 		const std::string& PathName = TEXTURE_PATH);
 	bool LoadTextureFullPath(const std::string& Name, const std::vector<TCHAR*>& vecFullPath);
 	bool CreateTarget(const std::string& Name, unsigned int Width,
-		unsigned int Height, DXGI_FORMAT PixelFormat);
+		unsigned int Height, DXGI_FORMAT PixelFormat, DXGI_FORMAT DepthFormat = DXGI_FORMAT_UNKNOWN);
 	bool LoadTextureArray(const std::string& Name, const std::vector<TCHAR*>& vecFileName,
 		const std::string& PathName = TEXTURE_PATH);
 	bool LoadTextureArrayFullPath(const std::string& Name, const std::vector<TCHAR*>& vecFullPath);

@@ -7,20 +7,29 @@ cbuffer	ParticleCBuffer : register(b11)
 	float3	g_ParticleStartMin;		// 파티클이 생성될 영역의 Min
 	float3	g_ParticleStartMax;		// 파티클이 생성될 영역의 Max
 	uint	g_ParticleSpawnCountMax;	// 생성될 파티클의 최대
+	
 	float3	g_ParticleScaleMin;		// 생성될 파티클 크기의 Min
 	float	g_ParticleLifeTimeMin;	// 생성될 파티클이 살아있을 최소시간
+	
 	float3	g_ParticleScaleMax;		// 새성될 파티클 크기의 Max
 	float	g_ParticleLifeTimeMax;	// 생성될 파티클이 살아있을 최대시간
+	
 	float4	g_ParticleColorMin;		// 생성될 파티클의 색상 Min
 	float4	g_ParticleColorMax;		// 생성될 파티클의 색상 Max
+	
 	float	g_ParticleSpeedMin;		// 파티클의 최소 이동속도
 	float	g_ParticleSpeedMax;		// 파티클의 최대 이동속도
 	int		g_ParticleMove;			// 이동을 하는지 안하는지
 	int		g_ParticleGravity;		// 중력 적용을 받는지 안받는지
+	
 	float3	g_ParticleMoveDir;		// 이동을 한다면 기준이 될 이동 방향
 	int		g_Particle2D;			// 2D용 파티클인지
+	
 	float3	g_ParticleMoveAngle;	// 이동을 한다면 기준이 될 방향으로부터 x, y, z 에 저장된 각도만큼 틀어진 랜덤한 방향을 구한다.
-	float	g_ParticleEmpty;
+	float	g_ApplyRandom;
+	
+	float3 g_ParticleRotationAngle;
+	int g_ParticleEmpty;
 };
 
 #define	GRAVITY	9.8f
@@ -48,6 +57,8 @@ struct ParticleInfoShared
 	float4	ColorMax;
 
 	int		GravityEnable;
+
+	float3 RotationAngle;
 };
 
 RWStructuredBuffer<ParticleInfo>		g_ParticleArray	: register(u0);
@@ -122,6 +133,8 @@ void ParticleUpdate(uint3 ThreadID : SV_DispatchThreadID)
 	g_ParticleShare[0].ColorMin = g_ParticleColorMin;
 	g_ParticleShare[0].ColorMax = g_ParticleColorMax;
 	g_ParticleShare[0].GravityEnable = g_ParticleGravity;
+	g_ParticleShare[0].RotationAngle = g_ParticleRotationAngle;
+
 
 	// 동작되는 스레드의 수가 생성되는 파티클의 최대 수 보다 크거나 같다면
 	// 잘못된 인덱스로 동작하기 때문에 처리를 안해준다.
@@ -152,19 +165,29 @@ void ParticleUpdate(uint3 ThreadID : SV_DispatchThreadID)
 
 		// 살려야 하는 파티클이라면 파티클 생성정보를 만들어낸다.
 		float	key = ThreadID.x / g_ParticleSpawnCountMax;
-
 		float3	RandomPos = float3(Rand(key), Rand(2.142f), Rand(key * 3.f));
 		float	Rand = (RandomPos.x + RandomPos.y + RandomPos.z) / 3.f;
-
-		float3	StartRange = g_ParticleStartMax - g_ParticleStartMin;
-
-		g_ParticleArray[ThreadID.x].WorldPos = RandomPos * StartRange + g_ParticleStartMin;
 
 		g_ParticleArray[ThreadID.x].FallTime = 0.f;
 		g_ParticleArray[ThreadID.x].FallStartY = g_ParticleArray[ThreadID.x].WorldPos.y;
 
 		g_ParticleArray[ThreadID.x].LifeTime = 0.f;
-		g_ParticleArray[ThreadID.x].LifeTimeMax = Rand * (g_ParticleLifeTimeMax - g_ParticleLifeTimeMin) + g_ParticleLifeTimeMin;
+		g_ParticleArray[ThreadID.x].LifeTimeMax = (g_ParticleLifeTimeMax - g_ParticleLifeTimeMin) + g_ParticleLifeTimeMin;
+
+		// Random 생성 체크를 한다면
+		if (g_ApplyRandom == 1)
+		{
+			float3	StartRange = g_ParticleStartMax - g_ParticleStartMin;
+
+			g_ParticleArray[ThreadID.x].WorldPos = RandomPos * StartRange + g_ParticleStartMin;
+			g_ParticleArray[ThreadID.x].LifeTimeMax = Rand * (g_ParticleLifeTimeMax - g_ParticleLifeTimeMin) + g_ParticleLifeTimeMin;
+		}
+		else
+		{
+			// 제자리에서 만들어지도록 한다.
+			g_ParticleArray[ThreadID.x].WorldPos = float3(0.f, 0.f, 0.f);
+		}
+
 
 		if (g_ParticleMove == 1)
 		{
@@ -172,13 +195,13 @@ void ParticleUpdate(uint3 ThreadID : SV_DispatchThreadID)
 
 			float3x3 matRot = ComputeRotationMatrix(ConvertAngle);
 
+			// 현재 Rot 상으로는, Particle Rotation 기능만 수행중이다.
 			float3	Dir = normalize(mul(g_ParticleMoveDir, matRot));
 
 			g_ParticleArray[ThreadID.x].Speed = Rand * (g_ParticleSpeedMax - g_ParticleSpeedMin) + g_ParticleSpeedMin;
 			g_ParticleArray[ThreadID.x].Dir = Dir;
 		}
 	}
-	
 	// 현재 생성이 되어 있는 파티클일 경우
 	else
 	{
@@ -211,7 +234,6 @@ void ParticleUpdate(uint3 ThreadID : SV_DispatchThreadID)
 			g_ParticleArray[ThreadID.x].WorldPos.x += MovePos.x;
 			g_ParticleArray[ThreadID.x].WorldPos.z += MovePos.z;
 		}
-
 		else
 			g_ParticleArray[ThreadID.x].WorldPos += MovePos;
 
@@ -296,12 +318,15 @@ void ParticleGS(point VertexParticleOutput input[1],
 	float4	Color = lerp(g_ParticleShareSRV[0].ColorMin, g_ParticleShareSRV[0].ColorMax,
 		float4(Ratio, Ratio, Ratio, Ratio));
 
+	float3x3 matRot = ComputeRotationMatrix(g_ParticleShareSRV[0].RotationAngle);
+
 	// 4개의 최종 정점정보를 만들어준다.
 	for (int i = 0; i < 4; ++i)
 	{
-		float3	WorldPos = g_ParticleArraySRV[InstanceID].WorldPos + g_ParticleLocalPos[i] * Scale;
+		float3	WorldPos = g_ParticleArraySRV[InstanceID].WorldPos + mul(g_ParticleLocalPos[i] * Scale ,matRot);
 
 		OutputArray[i].ProjPos = mul(float4(WorldPos, 1.f), g_matVP);
+		// OutputArray[i].ProjPos.xyz = mul(OutputArray[i].ProjPos.xyz, matRot);
 		OutputArray[i].Pos = OutputArray[i].ProjPos;
 		OutputArray[i].Color = Color;
 	}

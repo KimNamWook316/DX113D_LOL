@@ -25,6 +25,7 @@
     <ClCompile Include="Animation\AnimationSequenceData.cpp" />
     <ClCompile Include="Animation\AnimationSequenceInstance.cpp" />
     <ClCompile Include="Animation\SkeletonSocket.cpp" />
+    <ClCompile Include="IMGUITableElemList.cpp" />
     <ClCompile Include="Component\BehaviorTree.cpp" />
     <ClCompile Include="Component\BillboardComponent.cpp" />
     <ClCompile Include="Component\ColliderBox3D.cpp" />
@@ -108,6 +109,7 @@
     <ClCompile Include="IMGUIRadioButton.cpp" />
     <ClCompile Include="IMGUISameLine.cpp" />
     <ClCompile Include="IMGUISeperator.cpp" />
+    <ClCompile Include="IMGUISetRect.cpp" />
     <ClCompile Include="IMGUISliderFloat.cpp" />
     <ClCompile Include="IMGUISliderInt.cpp" />
     <ClCompile Include="IMGUITable.cpp" />
@@ -193,10 +195,14 @@
     <ClCompile Include="Resource\Shader\RenderTargetShader.cpp" />
     <ClCompile Include="Resource\Shader\Shader.cpp" />
     <ClCompile Include="Resource\Shader\ShaderManager.cpp" />
+    <ClCompile Include="Resource\Shader\ShadowCBuffer.cpp" />
+    <ClCompile Include="Resource\Shader\ShadowMapInstancingShader.cpp" />
+    <ClCompile Include="Resource\Shader\ShadowMapShader.cpp" />
     <ClCompile Include="Resource\Shader\SkyShader.cpp" />
     <ClCompile Include="Resource\Shader\Standard2DConstantBuffer.cpp" />
     <ClCompile Include="Resource\Shader\Standard3DInstancingShader.cpp" />
     <ClCompile Include="Resource\Shader\Standard3DShader.cpp" />
+    <ClCompile Include="Resource\Shader\Standard3DWireFrameShader.cpp" />
     <ClCompile Include="Resource\Shader\StructuredBuffer.cpp" />
     <ClCompile Include="Resource\Shader\TileMapConstantBuffer.cpp" />
     <ClCompile Include="Resource\Shader\TileMapShader.cpp" />
@@ -241,6 +247,7 @@
     <ClInclude Include="Animation\AnimationSequenceData.h" />
     <ClInclude Include="Animation\AnimationSequenceInstance.h" />
     <ClInclude Include="Animation\SkeletonSocket.h" />
+    <ClInclude Include="IMGUITableElemList.h" />
     <ClInclude Include="Collision\Collision.h" />
     <ClInclude Include="Collision\CollisionManager.h" />
     <ClInclude Include="Component\AnimationMeshComponent.h" />
@@ -329,6 +336,7 @@
     <ClInclude Include="IMGUIRadioButton.h" />
     <ClInclude Include="IMGUISameLine.h" />
     <ClInclude Include="IMGUISeperator.h" />
+    <ClInclude Include="IMGUISetRect.h" />
     <ClInclude Include="IMGUISliderFloat.h" />
     <ClInclude Include="IMGUISliderInt.h" />
     <ClInclude Include="IMGUITable.h" />
@@ -417,10 +425,14 @@
     <ClInclude Include="Resource\Shader\RenderTargetShader.h" />
     <ClInclude Include="Resource\Shader\Shader.h" />
     <ClInclude Include="Resource\Shader\ShaderManager.h" />
+    <ClInclude Include="Resource\Shader\ShadowCBuffer.h" />
+    <ClInclude Include="Resource\Shader\ShadowMapInstancingShader.h" />
+    <ClInclude Include="Resource\Shader\ShadowMapShader.h" />
     <ClInclude Include="Resource\Shader\SkyShader.h" />
     <ClInclude Include="Resource\Shader\Standard2DConstantBuffer.h" />
     <ClInclude Include="Resource\Shader\Standard3DInstancingShader.h" />
     <ClInclude Include="Resource\Shader\Standard3DShader.h" />
+    <ClInclude Include="Resource\Shader\Standard3DWireFrameShader.h" />
     <ClInclude Include="Resource\Shader\StructuredBuffer.h" />
     <ClInclude Include="Resource\Shader\TileMapConstantBuffer.h" />
     <ClInclude Include="Resource\Shader\TileMapShader.h" />
@@ -570,6 +582,14 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="..\Bin\Shader\ShadowMap.fx">
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Standard3DShadowMapVS</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Standard3DShadowMapVS</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="..\Bin\Shader\Sky.fx">
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">SkyVS</EntryPointName>

@@ -40,4 +40,3 @@ CWeapon* CWeapon::Clone()
 {
 	return new CWeapon(*this);
 }
-

@@ -5,7 +5,7 @@
 #include "Scene/Scene.h"
 #include "Scene/CameraManager.h"
 
-#define EDITOR_CAM_SPEED 0.8f
+#define EDITOR_CAM_SPEED 4.0f
 
 C3DCameraObject::C3DCameraObject()
 {
@@ -48,7 +48,9 @@ bool C3DCameraObject::Init()
 
 	// Ctrl + Mouse L Drag -> 시점 이동 
 	CInput::GetInst()->SetCtrlKey("CameraMove", true);
+	CInput::GetInst()->SetKeyCallback("CameraMove", KeyState_Down, this, &C3DCameraObject::OnDragMoveStart);
 	CInput::GetInst()->SetKeyCallback("CameraMove", KeyState_Push, this, &C3DCameraObject::OnDragMove);
+	CInput::GetInst()->SetKeyCallback("CameraMove", KeyState_Up, this, &C3DCameraObject::OnDragMoveEnd);
 
 	// Ctrl + Mouse R  Drag -> 시점 회전
 	CInput::GetInst()->SetCtrlKey("CameraRot", true);
@@ -68,8 +70,13 @@ void C3DCameraObject::Update(float DeltaTime)
 	{
 		Vector3 AxisZ = m_Camera->GetWorldAxis(AXIS::AXIS_Z);
 		AxisZ *= CInput::GetInst()->GetWheelDir() * -EDITOR_CAM_SPEED;
-		m_Camera->AddWorldPos(AxisZ);
+		AddWorldPos(AxisZ);
 	}
+}
+
+void C3DCameraObject::OnDragMoveStart(float DeltaTime)
+{
+	m_MoveStartCamPos = m_Camera->GetWorldPos();
 }
 
 void C3DCameraObject::OnDragMove(float DeltaTime)
@@ -79,6 +86,14 @@ void C3DCameraObject::OnDragMove(float DeltaTime)
 	moveAmount *= EDITOR_CAM_SPEED;
 
 	m_Camera->AddRelativePos(moveAmount);
+}
+
+void C3DCameraObject::OnDragMoveEnd(float DeltaTime)
+{
+	Vector3 CamMove = m_Camera->GetWorldPos() - m_MoveStartCamPos;
+
+	AddWorldPos(CamMove);
+	m_Camera->AddWorldPos(CamMove * -1.f);
 }
 
 void C3DCameraObject::OnDragRotate(float DeltaTime)

@@ -97,7 +97,7 @@ bool CEditorManager::Init(HINSTANCE hInst)
 	m_FileBrowserTree = CIMGUIManager::GetInst()->AddWindow<CFileBrowserTree>(FILE_BROWSERTREE);
 	m_InspectorWindow = CIMGUIManager::GetInst()->AddWindow<CInspectorWindow>(INSPECTOR);
 	m_AnimationEditor = CIMGUIManager::GetInst()->AddWindow<CAnimationEditor>(ANIMATION_EDITOR);
-	m_EffectEditor = CIMGUIManager::GetInst()->AddWindow<CEffectEditor>(ANIMATION_EDITOR);
+	m_EffectEditor = CIMGUIManager::GetInst()->AddWindow<CEffectEditor>(PARTICLE_EDITOR);
 	m_ToolWindow = CIMGUIManager::GetInst()->AddWindow<CToolWindow>(TOOL);
 	CFBXConvertWindow* win = CIMGUIManager::GetInst()->AddWindow<CFBXConvertWindow>(FBX_CONVERTOR);
 

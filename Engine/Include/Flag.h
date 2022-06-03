@@ -256,7 +256,6 @@ enum class SceneComponent3DType
 	ArmComponent,
 	LightComponent,
 	SceneComponent,
-	ParticleComponent,
 	Max
 };
 
@@ -296,7 +295,7 @@ enum CrowdControl
 	Slow = 0x200
 };
 
-enum ConditionNode
+enum LeafNode
 {
 	InputQCheck,
 	InputWCheck,
@@ -305,10 +304,6 @@ enum ConditionNode
 	InputDCheck,
 	InputFCheck,
 	MouseRightInputCheck,
-};
-
-enum ActionNode
-{
 	SkillQ,
 	SkillW,
 	SkillE,
@@ -316,4 +311,5 @@ enum ActionNode
 	SpellD,
 	SpellF,
 	Move,
+	Max
 };

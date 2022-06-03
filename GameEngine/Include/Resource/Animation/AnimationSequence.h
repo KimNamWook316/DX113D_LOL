@@ -128,12 +128,13 @@ public:
 	bool LoadMultibyte(const char* pFileName, const std::string& strPathName = MESH_PATH);
 	bool LoadFullPath(const TCHAR* pFullPath);
 	bool LoadFullPathMultibyte(const char* pFullPath);
-
+	const char* GetSequenceFileNameMultibyte();
 	virtual void Save(FILE* pFile);
 	virtual void Load(FILE* pFile);
 public:
 	void SetPlayScale(float fScale);
 	void SetPlayTime(float fTime);
+	void SetAnimationFullPathMultibyte(const char* pFullPath);
 	BoneKeyFrame* DeleteAnimationFrame(int Index);
 public:
 	bool CreateSequence(bool bLoop, struct _tagFbxAnimationClip* pClip);

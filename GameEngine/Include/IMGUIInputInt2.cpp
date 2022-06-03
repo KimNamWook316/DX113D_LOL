@@ -14,11 +14,15 @@ CIMGUIInputInt2::~CIMGUIInputInt2()
 
 bool CIMGUIInputInt2::Init()
 {
+	CIMGUIWidget::Init();
+
 	return true;
 }
 
 void CIMGUIInputInt2::Render()
 {
+	ImGui::PushID(m_WidgetID);
+
 	if (ImGui::InputInt2(m_Name.c_str(), mValue))
 	{
 		// 최대, 최소값이 있을 경우
@@ -42,4 +46,6 @@ void CIMGUIInputInt2::Render()
 			mCallBack(mValue);
 		}
 	}
+
+	ImGui::PopID();
 }

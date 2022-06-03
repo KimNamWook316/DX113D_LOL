@@ -42,6 +42,11 @@ protected:
 	int m_EditorStopTargetFrame;
 
 public:
+	std::unordered_map<std::string, CAnimationSequenceData*>& GetAnimationSequenceMap()
+	{
+		return m_mapAnimation;
+	}
+
 	bool IsCurrentAnimEnd()	const	// Loop아닌 시퀀스가 끝났는지
 	{
 		return m_AnimEnd;
@@ -108,6 +113,8 @@ public:
 	void SetCurrentAnimationFrameIdx(int Idx);
 	bool EditCurrentSequenceKeyName(const std::string& NewKey, const std::string& PrevKey);
 	void DeleteCurrentAnimation();
+	const std::string& GetCurrentAnimationKeyName();
+
 public:
 	void AddAnimation(const std::string& SequenceName, const std::string& Name, bool Loop = true, float PlayTime = 1.f,
 		float PlayScale = 1.f);
