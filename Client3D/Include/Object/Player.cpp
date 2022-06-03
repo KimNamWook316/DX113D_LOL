@@ -54,8 +54,8 @@ bool CPlayer::Init()
 
 	m_Mesh->SetRelativeScale(0.02f, 0.02f, 0.02f);
 
-	m_Arm->SetOffset(0.f, 2.f, 0.f);
-	m_Arm->SetRelativeRotation(40.f, 0.f, 0.f);
+	m_Arm->SetOffset(0.f, 0.f, 0.f);
+	m_Arm->SetRelativeRotation(25.f, 0.f, 0.f);
 	m_Arm->SetTargetDistance(10.f);
 
 	m_Weapon = m_Scene->CreateGameObject<CWeapon>("Weapon");
@@ -70,7 +70,7 @@ bool CPlayer::Init()
 	m_Body->SetInheritRotX(true);
 	m_Body->SetInheritRotY(true);
 	m_Body->SetInheritRotZ(true);
-	m_Body->SetExtent(1.f, 1.f, 1.f);
+	m_Body->SetExtent(0.5f, 0.5f, 0.5f);
 	m_Body->SetOffset(0.f, 2.f, 0.f);
 
 
@@ -192,14 +192,20 @@ bool CPlayer::IsBoxRayCollision()
 		Ray ray = CInput::GetInst()->GetRay(matView);
 
 		Box3DInfo Info = m_Body->GetInfo();
-		Matrix WorldMat = m_Body->GetWorldMatrix();
+		//Matrix WorldMat = m_Body->GetWorldMatrix();
 
-		Info.Center = Info.Center.TransformCoord(WorldMat);
-		Info.Axis[0] = Info.Axis[0].TransformCoord(WorldMat);
-		Info.Axis[1] = Info.Axis[1].TransformCoord(WorldMat);
-		Info.Axis[2] = Info.Axis[2].TransformCoord(WorldMat);
-		Info.Min = Info.Min.TransformCoord(WorldMat);
-		Info.Max = Info.Max.TransformCoord(WorldMat);
+		//Info.Center = Info.Center.TransformCoord(WorldMat);
+		//Info.Axis[0] = Info.Axis[0].TransformCoord(WorldMat);
+		//Info.Axis[0].Normalize();
+
+		//Info.Axis[1] = Info.Axis[1].TransformCoord(WorldMat);
+		//Info.Axis[1].Normalize();
+
+		//Info.Axis[2] = Info.Axis[2].TransformCoord(WorldMat);
+		//Info.Axis[2].Normalize();
+
+		//Info.Min = Info.Min.TransformCoord(WorldMat);
+		//Info.Max = Info.Max.TransformCoord(WorldMat);
 
 		Vector3 HitPoint;
 
