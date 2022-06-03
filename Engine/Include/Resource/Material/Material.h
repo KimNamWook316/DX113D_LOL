@@ -180,8 +180,8 @@ public:
     void RenderTexture();
     void Reset();
     CMaterial* Clone()  const;
-    void Save(FILE* File);
-    void Load(FILE* File);
+    bool Save(FILE* File);
+    bool Load(FILE* File);
 
 public:
     template <typename T>

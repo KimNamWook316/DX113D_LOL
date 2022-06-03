@@ -133,18 +133,22 @@ CColliderCircle* CColliderCircle::Clone()
 	return new CColliderCircle(*this);
 }
 
-void CColliderCircle::Save(FILE* File)
+bool CColliderCircle::Save(FILE* File)
 {
 	CColliderComponent::Save(File);
 
 	fwrite(&m_Info, sizeof(CircleInfo), 1, File);
+
+	return true;
 }
 
-void CColliderCircle::Load(FILE* File)
+bool CColliderCircle::Load(FILE* File)
 {
 	CColliderComponent::Load(File);
 
 	fread(&m_Info, sizeof(CircleInfo), 1, File);
+
+	return true;
 }
 
 bool CColliderCircle::Collision(CColliderComponent* Dest)

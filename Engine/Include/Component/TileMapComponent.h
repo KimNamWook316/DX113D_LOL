@@ -137,8 +137,8 @@ public:
     virtual void Render();
     virtual void PostRender();
     virtual CTileMapComponent* Clone();
-    virtual void Save(FILE* File);
-    virtual void Load(FILE* File);
+    virtual bool Save(FILE* File);
+    virtual bool Load(FILE* File);
 
 public:
     void SetWorldInfo();

@@ -70,18 +70,22 @@ CArm* CArm::Clone()
 	return new CArm(*this);
 }
 
-void CArm::Save(FILE* File)
+bool CArm::Save(FILE* File)
 {
 	fwrite(&m_TargetDistance, sizeof(float), 1, File);
 	fwrite(&m_Offset, sizeof(Vector3), 1, File);
 
 	CSceneComponent::Save(File);
+
+	return true;
 }
 
-void CArm::Load(FILE* File)
+bool CArm::Load(FILE* File)
 {
 	fread(&m_TargetDistance, sizeof(float), 1, File);
 	fread(&m_Offset, sizeof(Vector3), 1, File);
 
 	CSceneComponent::Load(File);
+
+	return true;
 }

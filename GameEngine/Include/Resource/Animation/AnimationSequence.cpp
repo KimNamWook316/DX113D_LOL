@@ -125,7 +125,7 @@ bool CAnimationSequence::SaveFullPath(const TCHAR* pFullPath)
 }
 
 
-void CAnimationSequence::Save(FILE* pFile)
+bool CAnimationSequence::Save(FILE* pFile)
 {
 	CRef::Save(pFile);
 
@@ -172,9 +172,11 @@ void CAnimationSequence::Save(FILE* pFile)
 			fwrite(&m_vecKeyFrame[i]->vecKeyFrame[j]->vRot, sizeof(Vector4), 1, pFile);
 		}
 	}
+
+	return true;
 }
 
-void CAnimationSequence::Load(FILE* pFile)
+bool CAnimationSequence::Load(FILE* pFile)
 {
 	CRef::Load(pFile);
 
@@ -255,6 +257,8 @@ void CAnimationSequence::Load(FILE* pFile)
 
 	m_KeyFrameBuffer->UpdateBuffer(&m_vecFrameTrans[0],
 		(unsigned int)m_vecFrameTrans.size());
+
+	return true;
 }
 
 bool CAnimationSequence::SaveFullPathMultibyte(

@@ -77,6 +77,7 @@ bool CPathManager::Init()
     AddPath(RESOURCE_SOUND_PATH, TEXT("Resource\\Sound\\"));
     AddPath(RESOURCE_MESH_PATH, TEXT("Resource\\Mesh\\"));
     AddPath(RESOURCE_EXCEL_PATH, TEXT("Resource\\Excel\\"));
+    AddPath(ENGINE_RESOURCE_OBJECT_PATH, TEXT("Resource\\Object\\"));
     AddPath(RESOURCE_PARTICLE_PATH, TEXT("Resource\\Texture\\Particle\\"));
 
     // Engine Path ¸¸µé±â

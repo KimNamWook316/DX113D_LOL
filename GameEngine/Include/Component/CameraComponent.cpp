@@ -242,7 +242,7 @@ CCameraComponent* CCameraComponent::Clone()
 	return new CCameraComponent(*this);
 }
 
-void CCameraComponent::Save(FILE* File)
+bool CCameraComponent::Save(FILE* File)
 {
 	fwrite(&m_CameraType, sizeof(Camera_Type), 1, File);
 	fwrite(&m_matView, sizeof(Matrix), 1, File);
@@ -252,9 +252,11 @@ void CCameraComponent::Save(FILE* File)
 	fwrite(&m_RS, sizeof(Resolution), 1, File);
 	
 	CSceneComponent::Save(File);
+
+	return true;
 }
 
-void CCameraComponent::Load(FILE* File)
+bool CCameraComponent::Load(FILE* File)
 {
 	fread(&m_CameraType, sizeof(Camera_Type), 1, File);
 	fread(&m_matView, sizeof(Matrix), 1, File);
@@ -264,4 +266,6 @@ void CCameraComponent::Load(FILE* File)
 	fread(&m_RS, sizeof(Resolution), 1, File);
 
 	CSceneComponent::Load(File);
+
+	return true;
 }

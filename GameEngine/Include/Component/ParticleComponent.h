@@ -61,7 +61,7 @@ public:
 	virtual void RenderParticleEffectEditor();
 	virtual void PostRender();
 	virtual CParticleComponent* Clone();
-	virtual void Save(FILE* File);
-	virtual void Load(FILE* File);
+	virtual bool Save(FILE* File);
+	virtual bool Load(FILE* File);
 };
 

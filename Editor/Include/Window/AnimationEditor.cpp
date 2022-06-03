@@ -486,7 +486,7 @@ bool CAnimationEditor::LoadElementsForSqcLoading(const char* SqcFileName)
 
 	// Load Mesh
 	std::string LoadedMeshName = SqcFileName;
-	LoadedMeshName.append("_mesh");
+	// LoadedMeshName.append("_mesh");
 
 	// 해당 이름을 3d Test Object 에서 가져와서 사용할 것이다.
 	m_3DTestObjectMeshName = LoadedMeshName;

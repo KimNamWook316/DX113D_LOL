@@ -60,6 +60,8 @@ public:	// =================== Mesh =====================
 
 	void ReleaseMesh(const std::string& Name);
 
+	// Editor Manager 상에서, 특정 sqc, msh, bne 을 로드할 때 사용하는 함수
+	bool LoadMeshTextureBoneInfo(const char* ConstMeshFileName, const std::string& PathName = MESH_PATH);
 	
 public:	// =================== Shader =====================
 	template <typename T>

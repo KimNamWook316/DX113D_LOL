@@ -769,16 +769,20 @@ CLandScape* CLandScape::Clone()
 	return new CLandScape(*this);
 }
 
-void CLandScape::Save(FILE* File)
+bool CLandScape::Save(FILE* File)
 {
 	CSceneComponent::Save(File);
+
+	return true;
 }
 
-void CLandScape::Load(FILE* File)
+bool CLandScape::Load(FILE* File)
 {
 	CSceneComponent::Load(File);
 
 	m_Scene->GetNavigation3DManager()->SetNavData(this);
+
+	return true;
 }
 
 void CLandScape::ComputeNormal()

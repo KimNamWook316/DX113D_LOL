@@ -16,8 +16,8 @@ protected:
 	size_t		m_TypeID;
 
 public:
-	virtual void Save(FILE* File);
-	virtual void Load(FILE* File);
+	virtual bool Save(FILE* File);
+	virtual bool Load(FILE* File);
 
 public:
 	virtual void Enable(bool bEnable)

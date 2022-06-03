@@ -129,8 +129,8 @@ public:
 	bool LoadFullPath(const TCHAR* pFullPath);
 	bool LoadFullPathMultibyte(const char* pFullPath);
 	const char* GetSequenceFileNameMultibyte();
-	virtual void Save(FILE* pFile);
-	virtual void Load(FILE* pFile);
+	virtual bool Save(FILE* pFile);
+	virtual bool Load(FILE* pFile);
 public:
 	void SetPlayScale(float fScale);
 	void SetPlayTime(float fTime);

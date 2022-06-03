@@ -416,7 +416,7 @@ CStaticMeshComponent* CStaticMeshComponent::Clone()
 	return new CStaticMeshComponent(*this);
 }
 
-void CStaticMeshComponent::Save(FILE* File)
+bool CStaticMeshComponent::Save(FILE* File)
 {
 	std::string	MeshName = m_Mesh->GetName();
 
@@ -435,9 +435,11 @@ void CStaticMeshComponent::Save(FILE* File)
 	}
 
 	CSceneComponent::Save(File);
+
+	return true;
 }
 
-void CStaticMeshComponent::Load(FILE* File)
+bool CStaticMeshComponent::Load(FILE* File)
 {
 	char	MeshName[256] = {};
 
@@ -464,4 +466,6 @@ void CStaticMeshComponent::Load(FILE* File)
 	}
 
 	CSceneComponent::Load(File);
+
+	return true;
 }

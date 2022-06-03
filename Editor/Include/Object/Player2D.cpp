@@ -68,16 +68,20 @@ CPlayer2D* CPlayer2D::Clone()
 	return new CPlayer2D(*this);
 }
 
-void CPlayer2D::Save(FILE* File)
+bool CPlayer2D::Save(FILE* File)
 {
 	CGameObject::Save(File);
+
+	return true;
 }
 
-void CPlayer2D::Load(FILE* File)
+bool CPlayer2D::Load(FILE* File)
 {
 	CGameObject::Load(File);
 
 	m_Sprite = (CSpriteComponent*)FindComponent("PlayerSprite");
+
+	return true;
 }
 
 void CPlayer2D::MoveUp(float DeltaTime)

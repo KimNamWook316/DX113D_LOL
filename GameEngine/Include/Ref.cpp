@@ -12,7 +12,7 @@ CRef::~CRef()
 {
 }
 
-void CRef::Save(FILE* File)
+bool CRef::Save(FILE* File)
 {
 	int	Length = (int)m_Name.length();
 	fwrite(&Length, sizeof(int), 1, File);
@@ -21,9 +21,11 @@ void CRef::Save(FILE* File)
 	fwrite(&m_Enable, sizeof(bool), 1, File);
 	fwrite(&m_Active, sizeof(bool), 1, File);
 	fwrite(&m_TypeID, sizeof(size_t), 1, File);
+
+	return true;
 }
 
-void CRef::Load(FILE* File)
+bool CRef::Load(FILE* File)
 {
 	int	Length = 0;
 	fread(&Length, sizeof(int), 1, File);
@@ -36,4 +38,6 @@ void CRef::Load(FILE* File)
 	fread(&m_Enable, sizeof(bool), 1, File);
 	fread(&m_Active, sizeof(bool), 1, File);
 	fread(&m_TypeID, sizeof(size_t), 1, File);
+
+	return true;
 }

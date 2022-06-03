@@ -50,7 +50,7 @@ public:
     virtual void Render() = 0;
     virtual void PostRender() = 0;
     virtual CComponent* Clone() = 0;
-    virtual void Save(FILE* File);
-    virtual void Load(FILE* File);
+    virtual bool Save(FILE* File);
+    virtual bool Load(FILE* File);
 };
 

@@ -296,18 +296,22 @@ CColliderPixel* CColliderPixel::Clone()
 	return new CColliderPixel(*this);
 }
 
-void CColliderPixel::Save(FILE* File)
+bool CColliderPixel::Save(FILE* File)
 {
 	CColliderComponent::Save(File);
 
 	fwrite(&m_Info, sizeof(CircleInfo), 1, File);
+
+	return true;
 }
 
-void CColliderPixel::Load(FILE* File)
+bool CColliderPixel::Load(FILE* File)
 {
 	CColliderComponent::Load(File);
 
 	fread(&m_Info, sizeof(CircleInfo), 1, File);
+
+	return true;
 }
 
 bool CColliderPixel::Collision(CColliderComponent* Dest)

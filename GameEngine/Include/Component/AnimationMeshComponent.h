@@ -96,8 +96,8 @@ public:
     virtual void RenderShadowMap();
     virtual void PostRender();
     virtual CAnimationMeshComponent* Clone();
-    virtual void Save(FILE* File);
-    virtual void Load(FILE* File);
+    virtual bool Save(FILE* File);
+    virtual bool Load(FILE* File);
 
     // Animation Editor Render
 public :

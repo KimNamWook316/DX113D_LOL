@@ -55,8 +55,8 @@ public:
 
 public:
 	bool Init();
-	virtual void Save(FILE* File) override;
-	virtual void Load(FILE* File) override;
+	virtual bool Save(FILE* File) override;
+	virtual bool Load(FILE* File) override;
 public:
 	void AddStructuredBuffer(const std::string& Name, unsigned int Size, unsigned int Count,
 		int Register, bool Dynamic = false,

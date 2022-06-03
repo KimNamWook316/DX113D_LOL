@@ -105,8 +105,8 @@ public:
     virtual void Render();
     virtual void PostRender();
     virtual CColliderComponent* Clone();
-    virtual void Save(FILE* File);
-    virtual void Load(FILE* File);
+    virtual bool Save(FILE* File);
+    virtual bool Load(FILE* File);
     virtual bool Collision(CColliderComponent* Dest) = 0;
     virtual bool CollisionMouse(const Vector2& MousePos) = 0;
     virtual bool CollisionRay(const Ray& Ray);

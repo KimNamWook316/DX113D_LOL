@@ -117,8 +117,8 @@ public:
 	virtual void Render();
 	virtual void PostRender();
 	virtual CLightComponent* Clone();
-	virtual void Save(FILE* File);
-	virtual void Load(FILE* File);
+	virtual bool Save(FILE* File);
+	virtual bool Load(FILE* File);
 
 public:
 	void SetShader();

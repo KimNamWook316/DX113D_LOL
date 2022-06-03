@@ -559,7 +559,7 @@ CSceneComponent* CSceneComponent::Clone()
 	return new CSceneComponent(*this);
 }
 
-void CSceneComponent::Save(FILE* File)
+bool CSceneComponent::Save(FILE* File)
 {
 	CComponent::Save(File);
 
@@ -582,9 +582,11 @@ void CSceneComponent::Save(FILE* File)
 
 		m_vecChild[i]->Save(File);
 	}
+
+	return true;
 }
 
-void CSceneComponent::Load(FILE* File)
+bool CSceneComponent::Load(FILE* File)
 {
 	CComponent::Load(File);
 
@@ -614,6 +616,8 @@ void CSceneComponent::Load(FILE* File)
 
 		m_vecChild.push_back((CSceneComponent*)Component);
 	}
+
+	return true;
 }
 
 void CSceneComponent::RenderAnimationEditor()

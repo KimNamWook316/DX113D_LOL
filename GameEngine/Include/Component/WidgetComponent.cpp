@@ -144,14 +144,18 @@ CWidgetComponent* CWidgetComponent::Clone()
 	return new CWidgetComponent(*this);
 }
 
-void CWidgetComponent::Save(FILE* File)
+bool CWidgetComponent::Save(FILE* File)
 {
 
 	CSceneComponent::Save(File);
+
+	return true;
 }
 
-void CWidgetComponent::Load(FILE* File)
+bool CWidgetComponent::Load(FILE* File)
 {
 
 	CSceneComponent::Load(File);
+
+	return true;
 }

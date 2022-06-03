@@ -52,7 +52,7 @@ bool CParticle::Init()
 	return true;
 }
 
-void CParticle::Save(FILE* File)
+bool CParticle::Save(FILE* File)
 {
 	CRef::Save(File);
 
@@ -88,9 +88,11 @@ void CParticle::Save(FILE* File)
 
 	fwrite(&m_2D, sizeof(bool), 1, File);
 	fwrite(&m_SpawnCountMax, sizeof(int), 1, File);
+
+	return true;
 }
 
-void CParticle::Load(FILE* File)
+bool CParticle::Load(FILE* File)
 {
 	CRef::Load(File);
 
@@ -135,6 +137,8 @@ void CParticle::Load(FILE* File)
 	// 구조화 버퍼 세팅
 	AddStructuredBuffer("ParticleInfo", sizeof(ParticleInfo), m_SpawnCountMax, 0);
 	AddStructuredBuffer("ParticleInfoShared", sizeof(ParticleInfoShared), 1, 1);
+
+	return true;
 }
 
 void CParticle::AddStructuredBuffer(const std::string& Name, unsigned int Size, unsigned int Count, 

@@ -187,7 +187,7 @@ CSpriteComponent* CSpriteComponent::Clone()
 	return new CSpriteComponent(*this);
 }
 
-void CSpriteComponent::Save(FILE* File)
+bool CSpriteComponent::Save(FILE* File)
 {
 	std::string	MeshName = m_Mesh->GetName();
 
@@ -214,9 +214,11 @@ void CSpriteComponent::Save(FILE* File)
 	}
 
 	CSceneComponent::Save(File);
+
+	return true;
 }
 
-void CSpriteComponent::Load(FILE* File)
+bool CSpriteComponent::Load(FILE* File)
 {
 	char	MeshName[256] = {};
 
@@ -246,4 +248,6 @@ void CSpriteComponent::Load(FILE* File)
 	}
 
 	CSceneComponent::Load(File);
+
+	return true;
 }

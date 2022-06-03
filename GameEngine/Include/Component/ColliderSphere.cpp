@@ -125,18 +125,22 @@ CColliderSphere* CColliderSphere::Clone()
 	return new CColliderSphere(*this);
 }
 
-void CColliderSphere::Save(FILE* File)
+bool CColliderSphere::Save(FILE* File)
 {
 	CColliderComponent::Save(File);
 
 	fwrite(&m_Info, sizeof(SphereInfo), 1, File);
+
+	return true;
 }
 
-void CColliderSphere::Load(FILE* File)
+bool CColliderSphere::Load(FILE* File)
 {
 	CColliderComponent::Load(File);
 
 	fread(&m_Info, sizeof(SphereInfo), 1, File);
+
+	return true;
 }
 
 bool CColliderSphere::Collision(CColliderComponent* Dest)

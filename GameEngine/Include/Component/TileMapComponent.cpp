@@ -885,7 +885,7 @@ CTileMapComponent* CTileMapComponent::Clone()
 	return new CTileMapComponent(*this);
 }
 
-void CTileMapComponent::Save(FILE* File)
+bool CTileMapComponent::Save(FILE* File)
 {
 	std::string	MeshName = m_BackMesh->GetName();
 
@@ -927,9 +927,11 @@ void CTileMapComponent::Save(FILE* File)
 	}
 
 	CSceneComponent::Save(File);
+
+	return true;
 }
 
-void CTileMapComponent::Load(FILE* File)
+bool CTileMapComponent::Load(FILE* File)
 {
 	char	MeshName[256] = {};
 
@@ -1008,6 +1010,8 @@ void CTileMapComponent::Load(FILE* File)
 
 
 	CSceneComponent::Load(File);
+
+	return true;
 }
 
 void CTileMapComponent::SetWorldInfo()

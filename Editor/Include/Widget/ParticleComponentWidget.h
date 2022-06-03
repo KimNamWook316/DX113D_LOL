@@ -17,9 +17,6 @@ private :
     // class C3DParticleCamera* m_ParticleCamera;
     // class CGameObject* m_ParticleCameraTargetObj;
 private:
-    class CIMGUIButton* m_SaveButton;
-    class CIMGUIButton* m_LoadButton;
-
     class CIMGUIInputFloat* m_SpawnTimeMaxEdit;
     // class CIMGUIButton* m_RestartButton;
 

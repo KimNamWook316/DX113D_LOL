@@ -616,7 +616,7 @@ CMaterial* CMaterial::Clone()	const
 	return new CMaterial(*this);
 }
 
-void CMaterial::Save(FILE* File)
+bool CMaterial::Save(FILE* File)
 {
 	std::string	ShaderName = m_Shader->GetName();
 
@@ -672,9 +672,11 @@ void CMaterial::Save(FILE* File)
 
 		m_TextureInfo[i].Texture->Save(File);
 	}
+
+	return true;
 }
 
-void CMaterial::Load(FILE* File)
+bool CMaterial::Load(FILE* File)
 {
 	CreateConstantBuffer();
 
@@ -837,5 +839,7 @@ void CMaterial::Load(FILE* File)
 			m_TextureInfo[i].Texture = CResourceManager::GetInst()->FindTexture(TexName);
 		}
 	}
+
+	return true;
 }
 

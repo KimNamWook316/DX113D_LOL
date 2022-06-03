@@ -324,7 +324,7 @@ CGameObject* CGameObject::Clone()
 	return new CGameObject(*this);
 }
 
-void CGameObject::Save(FILE* File)
+bool CGameObject::Save(FILE* File)
 {
 	CRef::Save(File);
 
@@ -356,9 +356,11 @@ void CGameObject::Save(FILE* File)
 
 		m_vecObjectComponent[i]->Save(File);
 	}
+
+	return true;
 }
 
-void CGameObject::Load(FILE* File)
+bool CGameObject::Load(FILE* File)
 {
 	CRef::Load(File);
 
@@ -372,7 +374,8 @@ void CGameObject::Load(FILE* File)
 
 		CSceneManager::GetInst()->CallCreateComponent(this, TypeID);
 
-		m_RootComponent->Load(File);
+		if (!m_RootComponent->Load(File))
+			return false;
 	}
 
 	int	ObjComponentCount = 0;
@@ -386,41 +389,49 @@ void CGameObject::Load(FILE* File)
 
 		CComponent* Component = CSceneManager::GetInst()->CallCreateComponent(this, TypeID);
 
-		Component->Load(File);
+		if (!Component->Load(File))
+			return false;
 
 		m_vecObjectComponent.push_back((CObjectComponent*)Component);
 	}
+
+	return true;
 }
 
-void CGameObject::Save(const char* FullPath)
+bool CGameObject::Save(const char* FullPath)
 {
 	FILE* File = nullptr;
 
 	fopen_s(&File, FullPath, "wb");
 
 	if (!File)
-		return;
+		return false;
 
 	Save(File);
 
 	fclose(File);
+
+	return true;
 }
 
-void CGameObject::Load(const char* FullPath)
+bool CGameObject::Load(const char* FullPath)
 {
 	FILE* File = nullptr;
 
 	fopen_s(&File, FullPath, "rb");
 
 	if (!File)
-		return;
+		return false;
 
-	Load(File);
+	if (!Load(File))
+		return false;
 
 	fclose(File);
+
+	return true;
 }
 
-void CGameObject::Save(const char* FileName, const std::string& PathName)
+bool CGameObject::Save(const char* FileName, const std::string& PathName)
 {
 	char	FullPath[MAX_PATH] = {};
 
@@ -432,9 +443,11 @@ void CGameObject::Save(const char* FileName, const std::string& PathName)
 	strcat_s(FullPath, FileName);
 
 	Save(FullPath);
+
+	return true;
 }
 
-void CGameObject::Load(const char* FileName, const std::string& PathName)
+bool CGameObject::Load(const char* FileName, const std::string& PathName)
 {
 	char	FullPath[MAX_PATH] = {};
 
@@ -445,7 +458,10 @@ void CGameObject::Load(const char* FileName, const std::string& PathName)
 
 	strcat_s(FullPath, FileName);
 
-	Load(FullPath);
+	if (!Load(FullPath))
+		return false;
+
+	return true;
 }
 
 void CGameObject::Move(const Vector3& EndPos)

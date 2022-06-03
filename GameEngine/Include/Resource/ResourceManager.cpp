@@ -1,5 +1,8 @@
 
 #include "ResourceManager.h"
+#include "../Engine.h"
+#include "../PathManager.h"
+#include <filesystem>
 
 DEFINITION_SINGLE(CResourceManager)
 
@@ -182,6 +185,99 @@ CMesh* CResourceManager::FindMesh(const std::string& Name)
 void CResourceManager::ReleaseMesh(const std::string& Name)
 {
 	m_MeshManager->ReleaseMesh(Name);
+}
+
+bool CResourceManager::LoadMeshTextureBoneInfo(const char* ConstMeshFileName, const std::string& PathName)
+{
+	const PathInfo* Path = CPathManager::GetInst()->FindPath(PathName);
+
+	char	FullPath[MAX_PATH] = {};
+
+	if (Path)
+		strcpy_s(FullPath, Path->PathMultibyte);
+
+	// Mesh File Loading
+	char MeshFileFullPath[MAX_PATH] = {};
+	TCHAR MeshTCHARFileFullPath[MAX_PATH] = {};
+
+	char MeshFileName[MAX_PATH] = {};
+	TCHAR MeshTCHARFileName[MAX_PATH] = {};
+
+	char MeshExt[10] = ".msh";
+
+	// Mesh File Path
+	strcpy_s(MeshFileFullPath, FullPath);
+	strcat_s(MeshFileFullPath, ConstMeshFileName);
+	strcat_s(MeshFileFullPath, MeshExt);
+
+	// Mesh File Name
+	strcat_s(MeshFileName, ConstMeshFileName);
+	strcat_s(MeshFileName, MeshExt);
+
+	// Load Mesh
+	std::string LoadedMeshName = ConstMeshFileName;
+	LoadedMeshName.append("_mesh");
+
+	int ConvertLength = MultiByteToWideChar(CP_ACP, 0, MeshFileName, -1, 0, 0);
+	MultiByteToWideChar(CP_ACP, 0, MeshFileName, -1, MeshTCHARFileName, ConvertLength);
+
+	if (!LoadMesh(Mesh_Type::Animation, LoadedMeshName,
+		MeshTCHARFileName, MESH_PATH))
+	{
+		MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT(".msh Load Failure"), NULL, MB_OK);
+		return false;
+	}
+
+
+	// 만약 Mesh Load 과정에서 필요한 Texture가 없다면 
+	// ex) FBX Convert 이후, singed_spell2.sqc 가 있다면, 같은 경로내에 singed_spell2.fbm 이라는 디렉토리가 존재해야 한다.
+	// 만약 해당 Folder 가 존재하지 않는다면, Mesh를 Load 하더라도 Texture 가 없다고 뜰 것이다
+	char TextFolderExt[10] = ".fbm";
+	char TextFolderName[MAX_PATH] = {};
+	// TCHAR MshTCHARFileName[MAX_PATH] = {};
+
+	strcpy_s(TextFolderName, MeshFileName);
+	strcat_s(TextFolderName, TextFolderExt);
+
+	std::filesystem::path MeshTextureFolderPath(TextFolderName);
+
+	if (!std::filesystem::exists(MeshTextureFolderPath))
+	{
+		MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT(".fbm Folder Does Not Exist"), NULL, MB_OK);
+		return false;
+	}
+
+	// ex) singed_spell2.sqc 를 선택했다면
+	// 같은 폴더 목록 내에서 singed_spell2.msh / singed_spell2.bne 를 Load 하여 세팅한다.
+	// singed_spell2.msh -> singed_spell2_mesh 라는 이름으로
+	// singed_spell2.bne -> singed_spell2_skeleton 이라는 이름으로
+
+
+	// Bne (Skeleton) Load
+	char BneExt[10] = ".bne";
+
+	std::string LoadedBneName = MeshFileName;
+	LoadedBneName.append("_skeleton");
+
+	char BneFileName[MAX_PATH] = {};
+	TCHAR BneTCHARFileName[MAX_PATH] = {};
+
+	strcpy_s(BneFileName, MeshFileName);
+	strcat_s(BneFileName, BneExt);
+
+	ConvertLength = MultiByteToWideChar(CP_ACP, 0, BneFileName, -1, 0, 0);
+	MultiByteToWideChar(CP_ACP, 0, BneFileName, -1, BneTCHARFileName, ConvertLength);
+
+	if (!LoadSkeleton(LoadedBneName, BneTCHARFileName, MESH_PATH))
+	{
+		MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT(".bne Load Failure"), NULL, MB_OK);
+		return false;
+	}
+
+	// Mesh 에 해당 Skeleton 세팅
+	SetMeshSkeleton(LoadedMeshName, LoadedBneName);
+
+	return true;
 }
 
 CShader* CResourceManager::FindShader(const std::string& Name)

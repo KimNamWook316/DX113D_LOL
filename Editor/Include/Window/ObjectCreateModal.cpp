@@ -128,7 +128,8 @@ void CObjectCreateModal::OnCreateObject(const char* FullPathMultibyte)
 
 	CGameObject* LoadedObject = CSceneManager::GetInst()->GetScene()->LoadGameObject<CGameObject>();
 
-	LoadedObject->Load(FullPathMultibyte);
+	if (!LoadedObject->Load(FullPathMultibyte))
+		return;
 
 	CIMGUITree* NewObjectTree = nullptr;
 

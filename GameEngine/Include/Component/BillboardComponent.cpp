@@ -111,12 +111,16 @@ CBillboardComponent* CBillboardComponent::Clone()
 	return new CBillboardComponent(*this);
 }
 
-void CBillboardComponent::Save(FILE* File)
+bool CBillboardComponent::Save(FILE* File)
 {
 	CSceneComponent::Save(File);
+
+	return true;
 }
 
-void CBillboardComponent::Load(FILE* File)
+bool CBillboardComponent::Load(FILE* File)
 {
 	CSceneComponent::Load(File);
+
+	return true;
 }

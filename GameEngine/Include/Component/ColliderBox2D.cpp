@@ -162,18 +162,22 @@ CColliderBox2D* CColliderBox2D::Clone()
 	return new CColliderBox2D(*this);
 }
 
-void CColliderBox2D::Save(FILE* File)
+bool CColliderBox2D::Save(FILE* File)
 {
 	CColliderComponent::Save(File);
 
 	fwrite(&m_Info, sizeof(Box2DInfo), 1, File);
+
+	return true;
 }
 
-void CColliderBox2D::Load(FILE* File)
+bool CColliderBox2D::Load(FILE* File)
 {
 	CColliderComponent::Load(File);
 
 	fread(&m_Info, sizeof(Box2DInfo), 1, File);
+
+	return true;
 }
 
 bool CColliderBox2D::Collision(CColliderComponent* Dest)

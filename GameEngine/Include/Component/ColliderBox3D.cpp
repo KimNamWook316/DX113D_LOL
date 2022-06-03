@@ -141,12 +141,15 @@ CColliderBox3D* CColliderBox3D::Clone()
 	return new CColliderBox3D(*this);
 }
 
-void CColliderBox3D::Save(FILE* File)
+bool CColliderBox3D::Save(FILE* File)
 {
+
+	return true;
 }
 
-void CColliderBox3D::Load(FILE* File)
+bool CColliderBox3D::Load(FILE* File)
 {
+	return true;
 }
 
 bool CColliderBox3D::Collision(CColliderComponent* Dest)

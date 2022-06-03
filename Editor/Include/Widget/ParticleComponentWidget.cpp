@@ -55,16 +55,8 @@ bool CParticleComponentWidget::Init()
     // AddWidget
     m_ComponentTypeText->SetText("Particle Component");
 
-
     // 최상위 트리
     CIMGUITree* m_RootTree = AddWidget<CIMGUITree>("Particle Variables");
-
-    m_SaveButton = m_RootTree->AddWidget<CIMGUIButton>("Save", 70.f);
-
-    CIMGUISameLine* Line = m_RootTree->AddWidget<CIMGUISameLine>("Line");
-    Line->SetOffsetX(75.f);
-
-    m_LoadButton = m_RootTree->AddWidget<CIMGUIButton>("Load", 70.f);
 
     // Particle Texture
     m_ParticleTexture = m_RootTree->AddWidget<CIMGUIImage>("Render Target", 200.f, 200.f);
@@ -131,17 +123,6 @@ bool CParticleComponentWidget::Init()
 
     // m_GravityAccelEdit = m_RootTree->AddWidget<CIMGUIInputFloat>("Gravity Accel", 100.f);
     // m_StartDelayEdit = m_RootTree->AddWidget<CIMGUIInputFloat>("Start Delay T// ", 100.f);
-
-    // 각종 체크 박스들 
-    m_IsMoveEdit = m_RootTree->AddWidget<CIMGUICheckBox>("Move", 200.f);
-    m_IsMoveEdit->AddCheckInfo("Move");
-    m_IsMoveEdit->SetCallBackLabel<CParticleComponentWidget>(this, &CParticleComponentWidget::OnIsMoveEdit);
-    m_IsMoveEdit->SetCheck(0, true);
-
-    m_IsGravityEdit = m_RootTree->AddWidget<CIMGUICheckBox>("Gravity", 200.f);
-    m_IsGravityEdit->AddCheckInfo("Gravity");
-    m_IsGravityEdit->SetCallBackLabel<CParticleComponentWidget>(this, &CParticleComponentWidget::OnIsGravityEdit);
-    m_IsGravityEdit->SetCheck(0, true);
 
     m_SetMaterialTextureButton = m_RootTree->AddWidget<CIMGUIButton>("Set Texture", 100.f, 30.f);
     m_SetMaterialTextureButton->SetClickCallback<CParticleComponentWidget>(this, &CParticleComponentWidget::OnSetParticleTexture);
@@ -419,6 +400,8 @@ void CParticleComponentWidget::OnReflectCurrentParticleSetting()
     dynamic_cast<CParticleComponent*>(m_Component.Get())->GetParticle()->SetGravity(m_IsGravityEdit->GetCheck(0));
 
     dynamic_cast<CParticleComponent*>(m_Component.Get())->GetParticle()->SetMove(m_IsMoveEdit->GetCheck(0));
+
+    dynamic_cast<CParticleComponent*>(m_Component.Get())->GetParticle()->SetApplyRandom(m_IsRandomMoveEdit->GetCheck(0));
 }
 
 /*

@@ -221,12 +221,16 @@ CDecalComponent* CDecalComponent::Clone()
 	return new CDecalComponent(*this);
 }
 
-void CDecalComponent::Save(FILE* File)
+bool CDecalComponent::Save(FILE* File)
 {
 	CSceneComponent::Save(File);
+
+	return true;
 }
 
-void CDecalComponent::Load(FILE* File)
+bool CDecalComponent::Load(FILE* File)
 {
 	CSceneComponent::Load(File);
+
+	return true;
 }

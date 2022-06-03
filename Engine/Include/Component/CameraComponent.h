@@ -134,7 +134,7 @@ public:
 	virtual void Render();
 	virtual void PostRender();
 	virtual CCameraComponent* Clone();
-	virtual void Save(FILE* File);
-	virtual void Load(FILE* File);
+	virtual bool Save(FILE* File);
+	virtual bool Load(FILE* File);
 };
 

@@ -40,8 +40,8 @@ public:
     virtual void Render();
     virtual void PostRender();
     virtual CColliderPixel* Clone();
-    virtual void Save(FILE* File);
-    virtual void Load(FILE* File);
+    virtual bool Save(FILE* File);
+    virtual bool Load(FILE* File);
     virtual bool Collision(CColliderComponent* Dest);
     virtual bool CollisionMouse(const Vector2& MousePos);
 };

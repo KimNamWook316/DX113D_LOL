@@ -265,7 +265,7 @@ CParticleComponent* CParticleComponent::Clone()
 	return new CParticleComponent(*this);
 }
 
-void CParticleComponent::Save(FILE* File)
+bool CParticleComponent::Save(FILE* File)
 {
 	CSceneComponent::Save(File);
 
@@ -280,9 +280,11 @@ void CParticleComponent::Save(FILE* File)
 
 	fwrite(&m_BillBoardEffect, sizeof(bool), 1, File);
 	fwrite(&m_SpawnTimeMax, sizeof(float), 1, File);
+
+	return true;
 }
 
-void CParticleComponent::Load(FILE* File)
+bool CParticleComponent::Load(FILE* File)
 {
 	CSceneComponent::Load(File);
 
@@ -302,4 +304,6 @@ void CParticleComponent::Load(FILE* File)
 
 	fread(&m_BillBoardEffect, sizeof(bool), 1, File);
 	fread(&m_SpawnTimeMax, sizeof(float), 1, File);
+
+	return true;
 }

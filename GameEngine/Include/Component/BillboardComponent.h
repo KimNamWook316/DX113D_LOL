@@ -33,7 +33,7 @@ public:
 	virtual void RenderDebug();
 	virtual void PostRender();
 	virtual CBillboardComponent* Clone();
-	virtual void Save(FILE* File);
-	virtual void Load(FILE* File);
+	virtual bool Save(FILE* File);
+	virtual bool Load(FILE* File);
 };
 

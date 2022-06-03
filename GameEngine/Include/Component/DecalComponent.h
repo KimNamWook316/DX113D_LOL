@@ -74,7 +74,7 @@ public:
 	virtual void RenderDebug();
 	virtual void PostRender();
 	virtual CDecalComponent* Clone();
-	virtual void Save(FILE* File);
-	virtual void Load(FILE* File);
+	virtual bool Save(FILE* File);
+	virtual bool Load(FILE* File);
 };
 

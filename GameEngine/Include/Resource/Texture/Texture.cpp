@@ -753,7 +753,7 @@ void CTexture::ResetShader(int Register, int ShaderType, int Index)
 		CDevice::GetInst()->GetContext()->CSSetShaderResources(Register, 1, &SRV);
 }
 
-void CTexture::Save(FILE* pFile)
+bool CTexture::Save(FILE* pFile)
 {
 	int	Length = (int)m_Name.length();
 	fwrite(&Length, sizeof(int), 1, pFile);
@@ -782,4 +782,6 @@ void CTexture::Save(FILE* pFile)
 		fwrite(&PathSize, sizeof(int), 1, pFile);
 		fwrite(m_vecTextureInfo[i]->PathName, sizeof(char), PathSize, pFile);
 	}
+
+	return true;
 }

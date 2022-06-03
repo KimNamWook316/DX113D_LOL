@@ -250,7 +250,7 @@ CColliderComponent* CColliderComponent::Clone()
 	return nullptr;
 }
 
-void CColliderComponent::Save(FILE* File)
+bool CColliderComponent::Save(FILE* File)
 {
 	CSceneComponent::Save(File);
 
@@ -258,9 +258,11 @@ void CColliderComponent::Save(FILE* File)
 	fwrite(&m_Offset, sizeof(Vector3), 1, File);
 	fwrite(&m_Min, sizeof(Vector3), 1, File);
 	fwrite(&m_Max, sizeof(Vector3), 1, File);
+
+	return true;
 }
 
-void CColliderComponent::Load(FILE* File)
+bool CColliderComponent::Load(FILE* File)
 {
 	CSceneComponent::Load(File);
 
@@ -268,6 +270,8 @@ void CColliderComponent::Load(FILE* File)
 	fread(&m_Offset, sizeof(Vector3), 1, File);
 	fread(&m_Min, sizeof(Vector3), 1, File);
 	fread(&m_Max, sizeof(Vector3), 1, File);
+
+	return true;
 }
 
 bool CColliderComponent::CollisionRay(const Ray& Ray)

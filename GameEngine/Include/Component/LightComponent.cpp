@@ -97,14 +97,18 @@ CLightComponent* CLightComponent::Clone()
 	return new CLightComponent(*this);
 }
 
-void CLightComponent::Save(FILE* File)
+bool CLightComponent::Save(FILE* File)
 {
 	CSceneComponent::Save(File);
+
+	return true;
 }
 
-void CLightComponent::Load(FILE* File)
+bool CLightComponent::Load(FILE* File)
 {
 	CSceneComponent::Load(File);
+
+	return true;
 }
 
 void CLightComponent::SetShader()

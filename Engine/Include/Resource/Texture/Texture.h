@@ -104,7 +104,7 @@ private:
 public:
 	void SetShader(int Register, int ShaderType, int Index);
 	void ResetShader(int Register, int ShaderType, int Index);
-	void Save(FILE* pFile);
+	bool Save(FILE* pFile);
 
 };
 

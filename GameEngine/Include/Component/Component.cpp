@@ -43,16 +43,20 @@ bool CComponent::Init()
 	return true;
 }
 
-void CComponent::Save(FILE* File)
+bool CComponent::Save(FILE* File)
 {
 	CRef::Save(File);
 
 	fwrite(&m_ComponentType, sizeof(Component_Type), 1, File);
+
+	return true;
 }
 
-void CComponent::Load(FILE* File)
+bool CComponent::Load(FILE* File)
 {
 	CRef::Load(File);
 
 	fread(&m_ComponentType, sizeof(Component_Type), 1, File);
+
+	return true;
 }

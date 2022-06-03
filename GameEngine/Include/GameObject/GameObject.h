@@ -158,12 +158,12 @@ public:
 	virtual void Render();
 	virtual void PostRender();
 	virtual CGameObject* Clone();
-	virtual void Save(FILE* File);
-	virtual void Load(FILE* File);
-	virtual void Save(const char* FullPath);
-	virtual void Load(const char* FullPath);
-	virtual void Save(const char* FileName, const std::string& PathName);
-	virtual void Load(const char* FileName, const std::string& PathName);
+	virtual bool Save(FILE* File);
+	virtual bool Load(FILE* File);
+	virtual bool Save(const char* FullPath);
+	virtual bool Load(const char* FullPath);
+	virtual bool Save(const char* FileName, const std::string& PathName);
+	virtual bool Load(const char* FileName, const std::string& PathName);
 
 public:
 	// NavAgent가 있을 경우에 동작한다.

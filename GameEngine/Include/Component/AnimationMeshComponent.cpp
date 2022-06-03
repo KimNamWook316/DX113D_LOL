@@ -102,6 +102,12 @@ void CAnimationMeshComponent::SetMesh(const std::string& Name)
 {
 	m_Mesh = (CAnimationMesh*)m_Scene->GetResource()->FindMesh(Name);
 
+	if (!m_Mesh)
+		return;
+
+	// Editor Save, Load 과정에서 필요한 부분을 세팅
+	m_Mesh->SetName(Name);
+
 	m_Skeleton = m_Mesh->GetSkeleton()->Clone();
 
 	if (m_Animation)
@@ -511,7 +517,7 @@ CAnimationMeshComponent* CAnimationMeshComponent::Clone()
 	return new CAnimationMeshComponent(*this);
 }
 
-void CAnimationMeshComponent::Save(FILE* File)
+bool CAnimationMeshComponent::Save(FILE* File)
 {
 	std::string	MeshName = m_Mesh->GetName();
 
@@ -530,9 +536,11 @@ void CAnimationMeshComponent::Save(FILE* File)
 	}
 
 	CSceneComponent::Save(File);
+
+	return true;
 }
 
-void CAnimationMeshComponent::Load(FILE* File)
+bool CAnimationMeshComponent::Load(FILE* File)
 {
 	char	MeshName[256] = {};
 
@@ -540,6 +548,13 @@ void CAnimationMeshComponent::Load(FILE* File)
 
 	fread(&Length, sizeof(int), 1, File);
 	fread(MeshName, sizeof(char), Length, File);
+
+	// 여기서 혹시 모르니 해당 Mesh , Bne, Texture File 들을 세팅해둔다
+	// Mesh Name 과 실제 File Name 은 일치하는 상태이다.
+	CResourceManager::GetInst()->LoadMeshTextureBoneInfo(MeshName);
+
+	if ((CAnimationMesh*)m_Scene->GetResource()->FindMesh(MeshName))
+		return false;
 
 	SetMesh(MeshName);
 
@@ -559,6 +574,8 @@ void CAnimationMeshComponent::Load(FILE* File)
 	}
 
 	CSceneComponent::Load(File);
+
+	return true;
 }
 void CAnimationMeshComponent::RenderAnimationEditor()
 {
