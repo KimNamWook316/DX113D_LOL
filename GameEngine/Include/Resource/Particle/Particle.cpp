@@ -57,16 +57,19 @@ void CParticle::Save(FILE* File)
 	CRef::Save(File);
 
 	bool MaterialEnable = false;
-
 	if (m_Material)
 		MaterialEnable = true;
-
 	fwrite(&MaterialEnable, sizeof(bool), 1, File);
 
 	if (MaterialEnable)
 	{
 		m_Material->Save(File);
 	}
+
+	bool UpdateShaderEnable = false;
+	if (m_UpdateShader)
+		UpdateShaderEnable = true;
+	fwrite(&UpdateShaderEnable, sizeof(bool), 1, File);
 
 	if (m_UpdateShader)
 	{
@@ -80,7 +83,8 @@ void CParticle::Save(FILE* File)
 	fwrite(&m_Info, sizeof(ParticleInfo), 1, File);
 	fwrite(&m_InfoShare, sizeof(ParticleInfoShared), 1, File);
 
-	// 상수 버퍼 저장 X
+	// 상수 버퍼 저장 
+	m_CBuffer->Save(File);
 
 	fwrite(&m_2D, sizeof(bool), 1, File);
 	fwrite(&m_SpawnCountMax, sizeof(int), 1, File);
@@ -100,7 +104,10 @@ void CParticle::Load(FILE* File)
 		m_Material->Load(File);
 	}
 
-	if (m_UpdateShader)
+	bool UpdateShaderEnable = false;
+	fread(&UpdateShaderEnable, sizeof(bool), 1, File);
+
+	if (UpdateShaderEnable)
 	{
 		// 이름 저장
 		char	ShaderName[256] = {};
@@ -121,6 +128,9 @@ void CParticle::Load(FILE* File)
 	m_SpawnTime = 0;
 	fread(&m_2D, sizeof(bool), 1, File);
 	fread(&m_SpawnCountMax, sizeof(int), 1, File);
+
+	// 상수 버퍼 Load
+	m_CBuffer->Load(File);
 
 	// 구조화 버퍼 세팅
 	AddStructuredBuffer("ParticleInfo", sizeof(ParticleInfo), m_SpawnCountMax, 0);

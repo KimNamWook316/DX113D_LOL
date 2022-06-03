@@ -254,8 +254,6 @@ public:
 		return Component;
 	}
 
-
-
 public:	// =============== 저주받은 Transform 영역 ===============
 	void SetUpdateByMat(bool UpdateByMat);
 	void DecomposeWorld();

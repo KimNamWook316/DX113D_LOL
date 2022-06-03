@@ -25,10 +25,15 @@ public:
 	class CIMGUITree* GetRoot()	const;
 	class CGameObject* GetSelectObject()	const;
 
+public :
+	CObjectCreateModal* GetObjectCreateModal() const
+	{
+		return m_ObjectCreateModal;
+	}
+
 public:
 	virtual bool Init();
 	virtual void Update(float DeltaTime);
-
 
 public:
 	// Inspector에서 GameObject 이름 변경되었을 때 호출

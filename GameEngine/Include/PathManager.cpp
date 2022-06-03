@@ -68,6 +68,64 @@ bool CPathManager::Init()
     AddPath(EXCEL_PATH, TEXT("Excel\\"));
     AddPath(PARTICLE_PATH, TEXT("Texture\\Particle\\"));
 
+    // Resource Path
+    AddPath(RESOURCE_SHADER_PATH, TEXT("Resource\\Shader\\"));
+    AddPath(RESOURCE_TEXTURE_PATH, TEXT("Resource\\Texture\\"));
+    AddPath(RESOURCE_FONT_PATH, TEXT("Resource\\Font\\"));
+    AddPath(RESOURCE_ANIMATION_PATH, TEXT("Resource\\Animation\\"));
+    AddPath(RESOURCE_SCENE_PATH, TEXT("Resource\\Scene\\"));
+    AddPath(RESOURCE_SOUND_PATH, TEXT("Resource\\Sound\\"));
+    AddPath(RESOURCE_MESH_PATH, TEXT("Resource\\Mesh\\"));
+    AddPath(RESOURCE_EXCEL_PATH, TEXT("Resource\\Excel\\"));
+    AddPath(RESOURCE_PARTICLE_PATH, TEXT("Resource\\Texture\\Particle\\"));
+
+    // Engine Path 만들기
+    TCHAR EnginePath[MAX_PATH] = {};
+    GetModuleFileName(nullptr, EnginePath, MAX_PATH);
+
+    int EnginePathLength = lstrlen(EnginePath);
+
+    int Count = 0;
+
+    for (int i = EnginePathLength - 1; i > 0; --i)
+    {
+        if (EnginePath[i] == '\\')
+        {
+            Count += 1;
+
+            if (Count == 3)
+            {
+                memset(&EnginePath[i + 1], 0, sizeof(TCHAR) * (EnginePathLength - i - 1));
+                break;
+            }
+        }
+    }
+
+    PathInfo* GameEngineInfo = new PathInfo;
+
+    lstrcpy(GameEngineInfo->Path, EnginePath);
+
+#ifdef UNICODE
+    // 유니코드 문자열을 멀티바이트 문자열로 변환한다.
+    int ConvertEngineLength = WideCharToMultiByte(CP_ACP, 0, EnginePath, -1, nullptr, 0, nullptr, nullptr);
+
+    WideCharToMultiByte(CP_ACP, 0, EnginePath, -1,
+        GameEngineInfo->PathMultibyte, ConvertEngineLength, nullptr, nullptr);
+#else
+    strcpy_s(Info->PathMultibyte, Path);
+#endif // UNICODE
+
+    m_mapPath.insert(std::make_pair(ENGINE_ROOT_PATH, GameEngineInfo));
+    
+    AddPath(ENGINE_RESOURCE_SHADER_PATH, TEXT("GameEngine\\Include\\Resource\\Shader\\"), ENGINE_ROOT_PATH);
+    AddPath(ENGINE_RESOURCE_TEXTURE_PATH, TEXT("GameEngine\\Include\\Resource\\Texture\\"), ENGINE_ROOT_PATH);
+    AddPath(ENGINE_RESOURCE_FONT_PATH, TEXT("GameEngine\\Include\\Resource\\Font\\"), ENGINE_ROOT_PATH);
+    AddPath(ENGINE_RESOURCE_ANIMATION_PATH, TEXT("GameEngine\\Include\\Resource\\Animation\\"), ENGINE_ROOT_PATH);
+    AddPath(ENGINE_RESOURCE_SCENE_PATH, TEXT("GameEngine\\Include\\Resource\\Scene\\"), ENGINE_ROOT_PATH);
+    AddPath(ENGINE_RESOURCE_SOUND_PATH, TEXT("GameEngine\\Include\\Resource\\Sound\\"), ENGINE_ROOT_PATH);
+    AddPath(ENGINE_RESOURCE_SEQUENCE_PATH, TEXT("GameEngine\\Include\\Resource\\Sequence\\"), ENGINE_ROOT_PATH);
+    AddPath(ENGINE_RESOURCE_OBJECT_PATH, TEXT("GameEngine\\Include\\Resource\\Object\\"), ENGINE_ROOT_PATH);
+
     return true;
 }
 

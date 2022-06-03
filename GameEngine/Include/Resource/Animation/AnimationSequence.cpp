@@ -492,45 +492,6 @@ void CAnimationSequence::SetAnimationFullPathMultibyte(const char* pFullPath)
 	strcpy_s(m_FullPath, pFullPath);
 }
 
-BoneKeyFrame* CAnimationSequence::DeleteAnimationFrame(int Index)
-{
-	if (Index < 0 || Index >= m_vecKeyFrame.size())
-	{
-		assert(false);
-		return nullptr;
-	}
-
-	BoneKeyFrame* DeleteFrame = m_vecKeyFrame[Index];
-	m_vecKeyFrame.erase(m_vecKeyFrame.begin() + Index);
-
-	// End Frame, FrameLength 정보도 세팅
-	m_EndFrame = m_vecKeyFrame.size() - 1;
-	m_FrameLength = m_EndFrame - m_StartFrame + 1;
-	m_FrameTime = m_PlayTime / m_FrameLength;
-
-	size_t DeleteEndIdx = 0;
-	size_t DeleteStIdx = 0;
-
-	for (size_t i = 0; i <= Index; ++i)
-	{
-		if (i < Index)
-			DeleteStIdx += m_vecKeyFrame[Index]->vecKeyFrame.size();
-
-		DeleteEndIdx += m_vecKeyFrame[Index]->vecKeyFrame.size();
-	}
-
-	auto iter = m_vecFrameTrans.begin();
-	m_vecFrameTrans.erase(iter + DeleteStIdx, iter + DeleteEndIdx);
-
-	m_KeyFrameBuffer->Init("KeyFrameBuffer", (unsigned int)sizeof(AnimationFrameTrans),
-		(unsigned int)m_vecFrameTrans.size(), 13, true, (int)Buffer_Shader_Type::Compute);
-
-	m_KeyFrameBuffer->UpdateBuffer(&m_vecFrameTrans[0],
-		(unsigned int)m_vecFrameTrans.size());
-
-	return DeleteFrame;
-}
-
 bool CAnimationSequence::CreateSequence(bool bLoop,
 	_tagFbxAnimationClip* pClip)
 {

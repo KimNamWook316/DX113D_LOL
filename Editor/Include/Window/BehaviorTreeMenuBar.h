@@ -15,5 +15,8 @@ private:
 public:
 	virtual bool Init();
 	virtual void Update(float DeltaTime);
+private :
+	void OnSaveGameObject(class CGameObject* Object);
+	void OnLoadGameObject();
 };
 

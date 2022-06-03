@@ -60,7 +60,6 @@ bool CObjectCreateModal::Init()
 void CObjectCreateModal::Update(float DeltaTime)
 {
 	CIMGUIPopUpModal::Render();
-
 }
 
 std::string CObjectCreateModal::GetObjectNameInput() const
@@ -80,7 +79,6 @@ void CObjectCreateModal::OnCreateObject()
 	CIMGUITree* NewObjectTree = nullptr;
 
 	CGameObject* NewObject = nullptr;
-
 
 	char Name[256] = {};
 	strcpy_s(Name, m_NameTextInput->GetTextMultibyte());
@@ -104,6 +102,39 @@ void CObjectCreateModal::OnCreateObject()
 	else if (Typeid == typeid(CMinion).hash_code())
 		NewObject = CurrentScene->CreateGameObject<CMinion>(Name);
 
+	// 차후, Loading 을 위해서 ObjectCombo Select Index 정보를 저장해준다.
+	// NewObject->SetEditorObjectModalIndex(Index);
+
+	CObjectHierarchyWindow* Window = (CObjectHierarchyWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(OBJECT_HIERARCHY);
+	CSceneComponentHierarchyWindow* SceneCompWindow = (CSceneComponentHierarchyWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(SCENECOMPONENT_HIERARCHY);
+
+	if (Window)
+	{
+		CIMGUITree* NewNode = Window->GetRoot()->AddChild(Name);
+		NewNode->AddSelectCallback<CObjectHierarchyWindow>(Window, &CObjectHierarchyWindow::OnSetSelectNode);
+		NewNode->AddSelectCallback<CSceneComponentHierarchyWindow>(SceneCompWindow, &CSceneComponentHierarchyWindow::OnUpdateSceneComponetWindow);
+		NewNode->SetDragDropSourceCallback<CObjectHierarchyWindow>(Window, &CObjectHierarchyWindow::OnDragDropSrc);
+		NewNode->SetDragDropDestCallback<CObjectHierarchyWindow>(Window, &CObjectHierarchyWindow::OnDragDropDest);
+	}
+}
+
+void CObjectCreateModal::OnCreateObject(const char* FullPathMultibyte)
+{
+	CScene* CurrentScene = CSceneManager::GetInst()->GetScene();
+
+	if (!CurrentScene)
+		return;
+
+	CGameObject* LoadedObject = CSceneManager::GetInst()->GetScene()->LoadGameObject<CGameObject>();
+
+	LoadedObject->Load(FullPathMultibyte);
+
+	CIMGUITree* NewObjectTree = nullptr;
+
+	CGameObject* NewObject = nullptr;
+
+	char Name[256] = {};
+	strcpy_s(Name, LoadedObject->GetName().c_str());
 
 	CObjectHierarchyWindow* Window = (CObjectHierarchyWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(OBJECT_HIERARCHY);
 	CSceneComponentHierarchyWindow* SceneCompWindow = (CSceneComponentHierarchyWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(SCENECOMPONENT_HIERARCHY);

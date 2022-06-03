@@ -55,8 +55,8 @@ public:
 
 public:
 	bool Init();
-	virtual void Save(FILE* File);
-	virtual void Load(FILE* File);
+	virtual void Save(FILE* File) override;
+	virtual void Load(FILE* File) override;
 public:
 	void AddStructuredBuffer(const std::string& Name, unsigned int Size, unsigned int Count,
 		int Register, bool Dynamic = false,
@@ -204,6 +204,7 @@ public:
 		m_CBuffer->SetStartMin(StartMin);
 	}
 
+
 	void SetStartMax(const Vector3& StartMax)
 	{
 		m_CBuffer->SetStartMax(StartMax);
@@ -269,6 +270,11 @@ public:
 	void SetMoveDir(const Vector3& MoveDir)
 	{
 		m_CBuffer->SetMoveDir(MoveDir);
+	}
+
+	void SetApplyRandom(bool Enable)
+	{
+		m_CBuffer->SetApplyRandom(Enable);
 	}
 
 	void Set2D(bool Is2D)

@@ -1,8 +1,11 @@
 
 #include "BehaviorTreeMenuBar.h"
+#include "ObjectCreateModal.h"
 #include "IMGUIBeginMenu.h"
 #include "../EditorUtil.h"
+#include "../EditorManager.h"
 #include "IMGUIPopUpModal.h"
+#include "Engine.h"
 #include "IMGUIManager.h"
 #include "BehaviorTreeWindow.h"
 #include "ObjectComponentWindow.h"
@@ -11,6 +14,9 @@
 #include "GameObject/GameObject.h"
 #include "Component/StateComponent.h"
 #include "Component/AnimationMeshComponent.h"
+#include "PathManager.h"
+#include "Scene/Scene.h"
+#include "Scene/SceneManager.h"
 
 CBehaviorTreeMenuBar::CBehaviorTreeMenuBar()	:
 	m_TreeEditorWindow(nullptr)
@@ -95,8 +101,43 @@ void CBehaviorTreeMenuBar::Update(float DeltaTime)
 						}
 					}
 				}
-
 			}
+
+			ImGui::EndMenu();
+		}
+
+		if (ImGui::BeginMenu("File"))
+		{
+			if (ImGui::MenuItem("Save Scene"))
+			{
+				
+			}
+			if (ImGui::MenuItem("Load Scene"))
+			{
+				
+			}
+			if (ImGui::MenuItem("Save GameObject"))
+			{
+				// CObjectComponentWindow* ComponentWindow = (CObjectComponentWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(OBJECTCOMPONENT_LIST);
+				CObjectHierarchyWindow* ObjectWindow = (CObjectHierarchyWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(OBJECT_HIERARCHY);
+
+				if (ObjectWindow)
+				{
+					CGameObject* Obj = ObjectWindow->GetSelectObject();
+					OnSaveGameObject(Obj);
+				}
+			}
+			if (ImGui::MenuItem("Load GameObject"))
+			{
+				// CObjectComponentWindow* ComponentWindow = (CObjectComponentWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(OBJECTCOMPONENT_LIST);
+				CObjectHierarchyWindow* ObjectWindow = (CObjectHierarchyWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(OBJECT_HIERARCHY);
+
+				if (ObjectWindow)
+				{
+					OnLoadGameObject();
+				}
+			}
+
 
 			ImGui::EndMenu();
 		}
@@ -105,4 +146,73 @@ void CBehaviorTreeMenuBar::Update(float DeltaTime)
 	}
 
 	//CEditorUtil::ShowDemo();
+}
+
+void CBehaviorTreeMenuBar::OnSaveGameObject(CGameObject* Object)
+{
+	if (!Object)
+		return;
+
+	TCHAR FileFullPath[MAX_PATH] = {};
+	OPENFILENAME OpenFile = {};
+	OpenFile.lStructSize = sizeof(OPENFILENAME);
+	OpenFile.lpstrFile = FileFullPath;
+	OpenFile.nMaxFile = MAX_PATH;
+	// OpenFile.lpstrInitialDir = CPathManager::GetInst()->FindPath(RESOURCE_OBJECT_PATH)->Path;
+	OpenFile.lpstrFilter = TEXT("모든파일\0*.*\0*.GameObject File\0*.gobj");
+	OpenFile.hwndOwner = CEngine::GetInst()->GetWindowHandle();
+
+	if (GetSaveFileName(&OpenFile) != 0)
+	{
+		char FilePathMultibyte[MAX_PATH] = {};
+		int ConvertLength = WideCharToMultiByte(CP_ACP, 0, FileFullPath, -1, 0, 0, 0, 0);
+		WideCharToMultiByte(CP_ACP, 0, FileFullPath, -1, FilePathMultibyte, ConvertLength, 0, 0);
+
+		Object->Save(FilePathMultibyte);
+
+		// GameEngine 폴더에 저장하기
+		std::string ExtraFolderName = ENGINE_RESOURCE_OBJECT_PATH;
+		
+		const PathInfo* EngineSequenceFolder = CPathManager::GetInst()->FindPath(ExtraFolderName);
+		
+		// 파일 이름을 뽑아낸다.
+		char SavedFileName[MAX_PATH] = {};
+		char SavedExt[_MAX_EXT] = {};
+		_splitpath_s(FilePathMultibyte, nullptr, 0, nullptr, 0, SavedFileName, MAX_PATH, SavedExt, _MAX_EXT);
+		
+		// 최종 GameEngine 경로를 만든다.
+		char SavedGameEnginePath[MAX_PATH] = {};
+		strcpy_s(SavedGameEnginePath, EngineSequenceFolder->PathMultibyte);
+		strcat_s(SavedGameEnginePath, SavedFileName);
+		strcat_s(SavedGameEnginePath, SavedExt);
+		
+		// 현재 저장되는 경로와 다르다면, GameEngine 쪽에도 저장한다.
+		if (strcmp(EngineSequenceFolder->PathMultibyte, FilePathMultibyte) != 0)
+		{
+			Object->Save(SavedGameEnginePath);
+		}
+	}
+}
+
+void CBehaviorTreeMenuBar::OnLoadGameObject()
+{
+	TCHAR LoadFilePath[MAX_PATH] = {};
+	
+	OPENFILENAME OpenFile = {};
+	OpenFile.lStructSize = sizeof(OPENFILENAME);
+	OpenFile.lpstrFile = LoadFilePath;
+	OpenFile.nMaxFile = MAX_PATH;
+	OpenFile.hwndOwner = CEngine::GetInst()->GetWindowHandle();
+	OpenFile.lpstrFilter = TEXT("모든파일\0*.*\0*.GameObject File\0*.gobj");
+	OpenFile.lpstrInitialDir = CPathManager::GetInst()->FindPath(RESOURCE_OBJECT_PATH)->Path;
+	
+	if (GetOpenFileName(&OpenFile) != 0)
+	{
+		char FilePathMultibyte[MAX_PATH] = {};
+		int ConvertLength = WideCharToMultiByte(CP_ACP, 0, LoadFilePath, -1, 0, 0, 0, 0);
+		WideCharToMultiByte(CP_ACP, 0, LoadFilePath, -1, FilePathMultibyte, ConvertLength, 0, 0);
+
+		CEditorManager::GetInst()->GetObjectHierarchyWindow()->GetObjectCreateModal()->OnCreateObject(FilePathMultibyte);
+
+	}
 }

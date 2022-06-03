@@ -24,5 +24,8 @@ public:
 
 	// 오브젝트 생성 팝업창내에서 Create버튼 누르면 호출되는 콜백
 	void OnCreateObject();
+
+	// Load Object 시에, Type Index 를 받아서 Object 를 만들어내는 기능
+	void OnCreateObject(const char* FullPathMultibyte);
 };
 

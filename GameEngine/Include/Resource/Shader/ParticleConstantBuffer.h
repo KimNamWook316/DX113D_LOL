@@ -17,7 +17,9 @@ public:
 	virtual bool Init();
 	virtual void UpdateCBuffer();
 	virtual CParticleConstantBuffer* Clone();
-
+public  :
+	virtual void Save(FILE* File);
+	virtual void Load(FILE* File);
 public:
 	const Vector3& GetStartMin()	const
 	{
@@ -160,6 +162,11 @@ public:
 	void SetScaleMax(const Vector3& ScaleMax)
 	{
 		m_BufferData.ScaleMax = ScaleMax;
+	}
+
+	void SetApplyRandom(bool Enable)
+	{
+		m_BufferData.ApplyRandom = Enable;
 	}
 
 	void SetLifeTimeMin(float Min)

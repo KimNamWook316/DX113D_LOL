@@ -140,7 +140,6 @@ void CSceneComponentCreateModal::OnCreateComponent()
 	CInspectorWindow* Inspector = (CInspectorWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(INSPECTOR);
 	Inspector->OnCreateSceneComponent(Com);
 
-
 	if (ComponentWindow)
 	{
 		// TODO : 이미 Root Component가 있는 상태에서 SceneComponent가 추가됐을때 RootComponent의 자식 Component로 들어갈테니

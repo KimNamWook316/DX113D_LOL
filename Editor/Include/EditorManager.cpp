@@ -5,18 +5,17 @@
 #include "Scene/Scene.h"
 #include "Scene/DefaultScene.h"
 #include "Scene/CameraManager.h"
-#include "Component/CameraComponent.h"
 #include "Input.h"
 #include "IMGUIManager.h"
-#include "Object/DragObject.h"
+#include "Animation/AnimationSequence2DInstance.h"
 #include "Render/RenderManager.h"
-#include "Object/SpriteEditObject.h"
+// Component
+#include "Component/CameraComponent.h"
 #include "Component/SpriteComponent.h"
 #include "Component/StaticMeshComponent.h"
-#include "Animation/AnimationSequence2DInstance.h"
-#include "Object/Player2D.h"
-#include "Engine.h"
-
+#include "Component/ParticleComponent.h"
+#include "Component/AnimationMeshComponent.h"
+// Window
 #include "Window/ObjectHierarchyWindow.h"
 #include "Window/SceneComponentHierarchyWindow.h"
 #include "Window/ObjectComponentWindow.h"
@@ -28,6 +27,10 @@
 #include "Window/EffectEditor.h"
 #include "Window/ToolWindow.h"
 #include "Window/BehaviorTreeMenuBar.h"
+// Object
+#include "Object/DragObject.h"
+#include "Object/SpriteEditObject.h"
+#include "Object/Player2D.h"
 #include "Object/3DCameraObject.h"
 
 DEFINITION_SINGLE(CEditorManager)
@@ -263,30 +266,34 @@ CComponent* CEditorManager::CreateComponent(CGameObject* Obj, size_t Type)
 	if (Type == typeid(CSceneComponent).hash_code())
 	{
 		CComponent* Component = Obj->LoadComponent<CSceneComponent>();
-
 		return Component;
 	}
-
 	else if (Type == typeid(CSpriteComponent).hash_code())
 	{
 		CComponent* Component = Obj->LoadComponent<CSpriteComponent>();
-
 		return Component;
 	}
-
 	else if (Type == typeid(CStaticMeshComponent).hash_code())
 	{
 		CComponent* Component = Obj->LoadComponent<CStaticMeshComponent>();
-
 		return Component;
 	}
-
 	else if (Type == typeid(CTileMapComponent).hash_code())
 	{
 		CTileMapComponent* Component = Obj->LoadComponent<CTileMapComponent>();
-
 		Component->EnableEditMode(true);
-
+		return Component;
+	}
+	else if (Type == typeid(CParticleComponent).hash_code())
+	{
+		CParticleComponent* Component = Obj->LoadComponent<CParticleComponent>();
+		// Component->EnableEditMode(true);
+		return Component;
+	}
+	else if (Type == typeid(CAnimationMeshComponent).hash_code())
+	{
+		CAnimationMeshComponent* Component = Obj->LoadComponent<CAnimationMeshComponent>();
+		// Component->EnableEditMode(true);
 		return Component;
 	}
 

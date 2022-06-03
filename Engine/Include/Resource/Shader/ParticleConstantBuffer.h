@@ -17,21 +17,23 @@ public:
 	virtual bool Init();
 	virtual void UpdateCBuffer();
 	virtual CParticleConstantBuffer* Clone();
-
+public  :
+	virtual void Save(FILE* File);
+	virtual void Load(FILE* File);
 public:
 	const Vector3& GetStartMin()	const
 	{
 		return m_BufferData.StartMin;
 	}
 
-	const Vector3& GetStartMax()	const
-	{
-		return m_BufferData.StartMax;
-	}
-
 	int GetApplyRandom() const
 	{
 		return m_BufferData.ApplyRandom;
+	}
+
+	const Vector3& GetStartMax()	const
+	{
+		return m_BufferData.StartMax;
 	}
 
 	int GetSpawnCount()	const
@@ -162,6 +164,11 @@ public:
 		m_BufferData.ScaleMax = ScaleMax;
 	}
 
+	void SetApplyRandom(bool Enable)
+	{
+		m_BufferData.ApplyRandom = Enable;
+	}
+
 	void SetLifeTimeMin(float Min)
 	{
 		m_BufferData.LifeTimeMin = Min;
@@ -200,11 +207,6 @@ public:
 	void SetGravity(bool Gravity)
 	{
 		m_BufferData.Gravity = Gravity ? 1 : 0;
-	}
-
-	void SetApplyRandom(bool Enable)
-	{
-		m_BufferData.ApplyRandom = Enable;
 	}
 
 	void SetMoveDir(const Vector3& MoveDir)

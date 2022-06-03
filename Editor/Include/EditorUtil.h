@@ -37,6 +37,8 @@ public:
 	static std::string ObjectComponent3DTypeToString(ObjectComponent3DType Type);
 
 	static size_t ObjectTypeIndexToTypeid(int TypeIndex);
+	static int ObjectTypeIdToTypeIndex(size_t ObjectTypeID);
+
 	static size_t SceneComponentTypeIndexToTypeid(int TypeIndex);
 	static size_t ObjectComponentTypeIndexToTypeid(int TypeIndex);
 

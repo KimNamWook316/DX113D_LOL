@@ -251,6 +251,22 @@ size_t CEditorUtil::ObjectTypeIndexToTypeid(int TypeIndex)
 	return -1;
 }
 
+int CEditorUtil::ObjectTypeIdToTypeIndex(size_t ObjectTypeID)
+{
+	if (ObjectTypeID == typeid(CGameObject).hash_code())
+		return 0;
+	else if (ObjectTypeID == typeid(CMovingObject).hash_code())
+		return 1;
+	else if (ObjectTypeID == typeid(CMapObject).hash_code())
+		return 2;
+	else if (ObjectTypeID == typeid(CChampion).hash_code())
+		return 3;
+	else if (ObjectTypeID == typeid(CMinion).hash_code())
+		return 4;
+
+	return -1;
+}
+
 size_t CEditorUtil::SceneComponentTypeIndexToTypeid(int TypeIndex)
 {
 	switch (TypeIndex)

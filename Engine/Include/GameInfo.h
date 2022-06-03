@@ -50,6 +50,7 @@
 
 #pragma comment(lib, "fmod64_vc.lib")
 
+// Path
 #define	ROOT_PATH		"Root"
 #define	SHADER_PATH		"Shader"
 #define	TEXTURE_PATH	"Texture"
@@ -60,6 +61,30 @@
 #define	MESH_PATH		"Mesh"
 #define	PARTICLE_PATH		"Particle"
 #define	EXCEL_PATH		"Excel"
+#define	OBJECT_PATH		"Object"
+
+// Path
+#define	RESOURCE_SHADER_PATH		"ResourceShader"
+#define	RESOURCE_TEXTURE_PATH		"ResourceTexture"
+#define	RESOURCE_FONT_PATH			"ResourceFont"
+#define	RESOURCE_ANIMATION_PATH	"ResourceAnimation"
+#define	RESOURCE_SCENE_PATH		"ResourceScene"
+#define	RESOURCE_SOUND_PATH		"ResourceSound"
+#define	RESOURCE_MESH_PATH			"ResourceMesh"
+#define	RESOURCE_PARTICLE_PATH	"ResourceParticle"
+#define	RESOURCE_EXCEL_PATH			"ResourceExcel"
+#define	RESOURCE_OBJECT_PATH		"ResourceObject"
+
+// Engine Path 
+#define ENGINE_ROOT_PATH				"EngineRoot"
+#define	ENGINE_RESOURCE_SHADER_PATH			"EngineShader"
+#define	ENGINE_RESOURCE_TEXTURE_PATH			"EngineTexture"
+#define	ENGINE_RESOURCE_FONT_PATH				"EngineFont"
+#define	ENGINE_RESOURCE_ANIMATION_PATH		"EngineAnimation"
+#define	ENGINE_RESOURCE_SCENE_PATH				"EngineScene"
+#define	ENGINE_RESOURCE_SOUND_PATH			"EngineSound"
+#define	ENGINE_RESOURCE_SEQUENCE_PATH		"EngineSequence"
+#define	ENGINE_RESOURCE_OBJECT_PATH			"EngineObject"
 
 #define	SAFE_DELETE(p)	if(p)	{ delete p; p = nullptr; }
 #define	SAFE_DELETE_ARRAY(p)	if(p)	{ delete[] p; p = nullptr; }
@@ -374,9 +399,9 @@ struct	ParticleCBuffer
 	Vector3	MoveDir;		// 이동을 한다면 기준이 될 이동 방향
 	int		Is2D;			// 2D용 파티클인지
 	Vector3	MoveAngle;	// 이동을 한다면 기준이 될 방향으로부터 x, y, z 에 저장된 각도만큼 틀어진 랜덤한 방향을 구한다.
-	float	ApplyRandom;
+	int ApplyRandom;
+	float	Empty;
 	Vector3 RotationAngle;
-	float Emtpy;
 };
 
 struct ParticleInfo

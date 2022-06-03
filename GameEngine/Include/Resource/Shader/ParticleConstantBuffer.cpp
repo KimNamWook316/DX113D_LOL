@@ -45,3 +45,17 @@ CParticleConstantBuffer* CParticleConstantBuffer::Clone()
 {
 	return new CParticleConstantBuffer(*this);
 }
+
+void CParticleConstantBuffer::Save(FILE* File)
+{
+	// CRef::Save(File);
+
+	fwrite(&m_BufferData, sizeof(ParticleCBuffer), 1, File);
+}
+
+void CParticleConstantBuffer::Load(FILE* File)
+{
+	// CRef::Load(File);
+
+	fread(&m_BufferData, sizeof(ParticleCBuffer), 1, File);
+}
