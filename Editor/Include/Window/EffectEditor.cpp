@@ -44,10 +44,15 @@ bool CEffectEditor::Init()
     // SetComponentInfos();
 
     // ParticleEffectRenderTarget
-    m_ParticleRenderTarget = AddWidget<CIMGUIImage>("Render Target", 500.f, 500.f);
-    // m_ParticleRenderTarget->SetRenderTargetImage(true);
+    // m_ParticleRenderTarget = AddWidget<CIMGUIImage>("Render Target", 500.f, 500.f);
+    // // m_ParticleRenderTarget->SetRenderTargetImage(true);
     // m_ParticleRenderTarget->SetTexture(CRenderManager::GetInst()->GetParticleEffectRenderTarget());
-    m_ParticleRenderTarget->SetBorderColor(10, 10, 255);
+    // m_ParticleRenderTarget->SetBorderColor(10, 10, 255);
+    // m_ParticleRenderTarget->SetTableTitle("Render Target");
+
+    m_OpenPopUpScreenBtn = AddWidget<CIMGUIButton>("Set Texture", 100.f, 30.f);
+    m_OpenPopUpScreenBtn->SetClickCallback<CEffectEditor>(this, &CEffectEditor::OnSetParticleTexture);
+
 
     // Particle Texture
     m_ParticleTexture = AddWidget<CIMGUIImage>("Particle Texture", 200.f, 200.f);
@@ -55,6 +60,7 @@ bool CEffectEditor::Init()
     // m_ParticleRenderTarget->SetRenderTargetImage(true);
     // m_ParticleRenderTarget->SetTexture(CRenderManager::GetInst()->GetParticleEffectRenderTarget());
     m_ParticleTexture->SetBorderColor(10, 10, 255);
+    m_ParticleTexture->SetTableTitle("Texture");
 
     m_SpawnTimeMaxEdit = AddWidget<CIMGUIInputFloat>("Spawn Time", 100.f);
     m_SpawnTimeMaxEdit->SetCallBack(this, &CEffectEditor::OnSpawnTimeMaxEdit);
@@ -97,21 +103,18 @@ bool CEffectEditor::Init()
     m_IsMoveEdit->SetCallBackLabel<CEffectEditor>(this, &CEffectEditor::OnIsMoveEdit);
 
     CIMGUISameLine* Line = AddWidget<CIMGUISameLine>("Line");
-    Line->SetOffsetX(60.f);
+    Line->SetOffsetX(105.f);
 
     m_IsGravityEdit = AddWidget<CIMGUICheckBox>("Gravity", 100.f);
     m_IsGravityEdit->AddCheckInfo("Gravity");
     m_IsGravityEdit->SetCallBackLabel<CEffectEditor>(this, &CEffectEditor::OnIsGravityEdit);
 
     Line = AddWidget<CIMGUISameLine>("Line");
-    Line->SetOffsetX(60.f);
+    Line->SetOffsetX(210.f);
 
     m_IsRandomMoveEdit = AddWidget<CIMGUICheckBox>("Random", 100.f);
     m_IsRandomMoveEdit->AddCheckInfo("Random");
     m_IsRandomMoveEdit->SetCallBackLabel<CEffectEditor>(this, &CEffectEditor::OnIsRandomMoveEdit);
-
-    Line = AddWidget<CIMGUISameLine>("Line");
-    Line->SetOffsetX(60.f);
 
     // m_Is3DEdit = AddWidget<CIMGUICheckBox>("Load", 200.f);
 
@@ -131,6 +134,26 @@ bool CEffectEditor::Init()
     // OnSetCameraSetting();
 
 	return true;
+}
+
+void CEffectEditor::SetComInfos()
+{
+}
+
+void CEffectEditor::OnCreateParticlePopUp()
+{
+   // if (!m_ComponentCreateModal)
+   //     m_ComponentCreateModal = AddWidget<CObjectComponentCreateModal>(OBJECTCOMPONENT_CREATE_POPUPMODAL);
+   // 
+   // else
+   // {
+   //     PopUpModalState State = m_ComponentCreateModal->GetPopUpModalState();
+   // 
+   //     if (State == PopUpModalState::Closed)
+   //         m_ComponentCreateModal->SetPopUpModalState(PopUpModalState::Open);
+   // 
+   //     m_ComponentCreateModal->SetRender(true);
+   // }
 }
 
 

@@ -282,11 +282,10 @@ bool CRenderManager::Init()
 		RS.Width, RS.Height, DXGI_FORMAT_R32G32B32A32_FLOAT))
 		return false;
 
-	// 지우지 마세요 ! (Particle Effect Editor 용 Render Target )
-	// m_ParticleEffectEditorRenderTarget = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("ParticleEffectRenderTarget");
-	// m_ParticleEffectEditorRenderTarget->SetPos(Vector3(600.f, 100.f, 0.f));
-	// m_ParticleEffectEditorRenderTarget->SetScale(Vector3(150.f, 150.f, 1.f));
-	// m_ParticleEffectEditorRenderTarget->SetDebugRender(false);
+	m_ParticleEffectEditorRenderTarget = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("ParticleEffectRenderTarget");
+	m_ParticleEffectEditorRenderTarget->SetPos(Vector3(600.f, 100.f, 0.f));
+	m_ParticleEffectEditorRenderTarget->SetScale(Vector3(150.f, 150.f, 1.f));
+	m_ParticleEffectEditorRenderTarget->SetDebugRender(false);
 
 
 	// Map 출력용 변수들

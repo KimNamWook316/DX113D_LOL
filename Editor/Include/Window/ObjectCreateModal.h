@@ -26,6 +26,6 @@ public:
 	void OnCreateObject();
 
 	// Load Object 시에, Type Index 를 받아서 Object 를 만들어내는 기능
-	void OnCreateObject(const char* FullPathMultibyte);
+	class CGameObject* OnCreateObject(const char* FullPathMultibyte);
 };
 

@@ -48,6 +48,10 @@ public:
 	{
 		return m_ObjectHierarchyWindow;
 	}
+	class CObjectComponentWindow* GetObjectComponentWindow()	const
+	{
+		return m_ObjectComponentWindow;
+	}
 	class CSceneComponentHierarchyWindow* GetComponentHierarchyWindow()	const
 	{
 		return m_ComponentHierarchyWindow;
