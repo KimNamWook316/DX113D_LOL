@@ -15,6 +15,9 @@ public:
     virtual NodeResult OnUpdate(float DeltaTime);
     virtual NodeResult OnEnd(float DeltaTime);
 
+private:
+    int m_FrameCount;
+
 public:
     virtual bool Invoke(float DeltaTime);
 };

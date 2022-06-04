@@ -12,6 +12,7 @@
 #include "IMGUIManager.h"
 #include "Component/PaperBurnComponent.h"
 #include "Component/StateComponent.h"
+#include "Component/NavAgent.h"
 #include "ObjectComponentWindow.h"
 
 CObjectComponentCreateModal::CObjectComponentCreateModal()	:
@@ -90,7 +91,8 @@ void CObjectComponentCreateModal::OnCreateComponent()
 		CObjectComponent* Com = SelectObject->CreateComponent<CPaperBurnComponent>(Name);
 	else if (Typeid == typeid(CStateComponent).hash_code())
 		CObjectComponent* Com = SelectObject->CreateComponent<CStateComponent>(Name);
-	
+	else if (Typeid == typeid(CNavAgent).hash_code())
+		CObjectComponent* Com = SelectObject->CreateComponent<CNavAgent>(Name);
 
 	CObjectComponentWindow* ComponentWindow = (CObjectComponentWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(OBJECTCOMPONENT_LIST);
 

@@ -256,6 +256,7 @@ enum class SceneComponent3DType
 	ArmComponent,
 	LightComponent,
 	SceneComponent,
+	ParticleComponent,
 	Max
 };
 
@@ -263,6 +264,7 @@ enum class ObjectComponent3DType
 {
 	PaperBurnComponent,
 	StateComponent,
+	NavAgent,
 	Max
 };
 
@@ -295,7 +297,7 @@ enum CrowdControl
 	Slow = 0x200
 };
 
-enum LeafNode
+enum ConditionNode
 {
 	InputQCheck,
 	InputWCheck,
@@ -303,7 +305,11 @@ enum LeafNode
 	InputRCheck,
 	InputDCheck,
 	InputFCheck,
-	MouseRightInputCheck,
+	MoveInputCheckNode,
+};
+
+enum ActionNode
+{
 	SkillQ,
 	SkillW,
 	SkillE,
@@ -311,5 +317,5 @@ enum LeafNode
 	SpellD,
 	SpellF,
 	Move,
-	Max
+	MovePicking
 };

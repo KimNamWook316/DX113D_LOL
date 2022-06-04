@@ -18,13 +18,17 @@ private:
 	//std::vector<CNavigationThread*>	m_vecNavigationThread;
 	CSharedPtr<CLandScape>				m_NavData;
 	//CThreadQueue<NavResultData>			m_ResultQueue;
+	class CLandScape* m_LandScape;
 
 public:
 	void SetNavData(CLandScape* NavData);
 	void AddNavResult(const NavResultData& NavData);
+	void SetLandScape(class CLandScape* LandScape);
+	class CLandScape* GetLandScape()	const;
 
 public:
 	float GetY(const Vector3& Pos);
+	bool CheckPickingPoint(Vector3& OutPos);
 
 public:
 	void Start();

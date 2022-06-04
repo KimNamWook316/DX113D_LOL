@@ -2,6 +2,8 @@
 
 #include "../Component/SceneComponent.h"
 #include "../Component/ObjectComponent.h"
+#include "../Component/NavAgent.h"
+#include "../Scene/Navigation3DManager.h"
 
 class CGameObject :
 	public CRef
@@ -34,6 +36,7 @@ protected:
 	CGameObject* m_Parent;
 	std::vector<CSharedPtr<CGameObject>>   m_vecChildObject;
 	float		m_LifeSpan;
+	class CNavAgent* m_NavAgent;
 
 public:
 	void AddChildObject(CGameObject* Obj);
@@ -169,6 +172,13 @@ public:
 	// NavAgent가 있을 경우에 동작한다.
 	void Move(const Vector3& EndPos);
 
+	// m_NavAgent의 m_PathList에 TargetPos를 추가해준다
+	void AddPath(const Vector3& TargetPos);
+	
+public:
+	void SetNavManagerLandScape(class CLandScape* LandScape);
+
+
 public:
 	template <typename T>
 	T* CreateComponent(const std::string& Name)
@@ -186,10 +196,23 @@ public:
 		}
 
 		if (Component->GetComponentType() == Component_Type::ObjectComponent)
+		{
 			m_vecObjectComponent.push_back((class CObjectComponent*)Component);
+
+			if (Component->GetTypeID() == typeid(CNavAgent).hash_code())
+			{
+				m_NavAgent = (CNavAgent*)Component;
+				m_NavAgent->SetUpdateComponent(m_RootComponent);
+			}
+		}
 
 		else
 		{
+			if (Component->GetTypeID() == typeid(CLandScape).hash_code())
+			{
+				SetNavManagerLandScape((CLandScape*)Component);
+			}
+
 			m_SceneComponentList.push_back((class CSceneComponent*)Component);
 
 			if (!m_RootComponent)
@@ -216,11 +239,24 @@ public:
 		}
 
 		if (Component->GetComponentType() == Component_Type::ObjectComponent)
+		{
 			m_vecObjectComponent.push_back((class CObjectComponent*)Component);
+
+			if (Component->GetTypeID() == typeid(CNavAgent).hash_code())
+			{
+				m_NavAgent = (CNavAgent*)Component;
+				m_NavAgent->SetUpdateComponent(m_RootComponent);
+			}
+		}
 
 		else
 		{
 			m_SceneComponentList.push_back((class CSceneComponent*)Component);
+
+			if (Component->GetTypeID() == typeid(CLandScape).hash_code())
+			{
+				SetNavManagerLandScape((CLandScape*)Component);
+			}
 
 			if (!m_RootComponent)
 				m_RootComponent = (class CSceneComponent*)Component;

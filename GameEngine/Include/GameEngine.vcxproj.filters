@@ -975,6 +975,9 @@
     <ClCompile Include="Resource\Shader\ShadowCBuffer.cpp">
       <Filter>02. Resource\02. Shader\03. ConstantBuffer\15. ShadowMap</Filter>
     </ClCompile>
+    <ClCompile Include="Component\Node\MovePickingNode.cpp">
+      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Device.h">
@@ -1675,6 +1678,9 @@
     </ClInclude>
     <ClInclude Include="Resource\Shader\ShadowCBuffer.h">
       <Filter>02. Resource\02. Shader\03. ConstantBuffer\15. ShadowMap</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\MovePickingNode.h">
+      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
