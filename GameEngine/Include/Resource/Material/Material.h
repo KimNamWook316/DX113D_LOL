@@ -73,6 +73,11 @@ public:
         return m_CBuffer;
     }
 
+    const std::vector<MaterialTextureInfo>& GetTextureInfo() const
+    {
+        return m_TextureInfo;
+    }
+
 private:
     void SetConstantBuffer(class CMaterialConstantBuffer* Buffer)
     {
@@ -170,6 +175,9 @@ public:
     void SetTextureArrayFullPath(int Index, int Register, int ShaderType, const std::string& Name, const std::vector<TCHAR*>& vecFullPath);
     void SetTextureArray(int Index, int Register, int ShaderType, const std::string& Name, const std::vector<TCHAR*>& vecFileName, const std::string& PathName = TEXTURE_PATH);
 
+public :
+    // Texture  정보만 세팅하는 코드
+    void SetTextureInfoResource(int Index, class CTexture* Texture);
 public:
     void SetPaperBurn(bool Enable);
     bool CheckMaterial(CMaterial* Material);

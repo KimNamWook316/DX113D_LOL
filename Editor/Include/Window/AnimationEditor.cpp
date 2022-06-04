@@ -22,6 +22,7 @@
 #include "Device.h"
 #include "../Object/Anim3DObject.h"
 #include "Render/RenderManager.h"
+#include "Resource/ResourceManager.h"
 
 CAnimationEditor::CAnimationEditor() :
 	m_RenderTargetSet(false)
@@ -384,8 +385,19 @@ void CAnimationEditor::OnLoadAnimationInstance()
 		if (!m_Animation->GetCurrentAnimation())
 			return;
 
-		if (!LoadElementsForSqcLoading(m_Animation->GetCurrentAnimation()->GetAnimationSequence()->GetSequenceFileNameMultibyte()))
+		// if (!LoadElementsForSqcLoading(m_Animation->GetCurrentAnimation()->GetAnimationSequence()->GetSequenceFileNameMultibyte()))
+		// 	return;
+		// const char* CurSeqFileName = m_Animation->GetCurrentAnimation()->GetAnimationSequence()->GetSequenceFileNameMultibyte();
+		// if (!LoadElementsForSqcLoading(CurSeqFileName))
+		// 	return;
+
+		std::pair<bool, std::string> LoadResult = CResourceManager::GetInst()->LoadMeshTextureBoneInfo(m_Animation);
+
+		if (LoadResult.first == false)
 			return;
+
+		// 해당 이름을 3d Test Object 에서 가져와서 사용할 것이다.
+		m_3DTestObjectMeshName = LoadResult.second;
 
 		// Set Material, Mesh Info
 		SetMeshMaterialReadyForAnimation();
@@ -696,8 +708,9 @@ void CAnimationEditor::OnAddAnimationSequence()
 
 		if (!m_Animation)
 		{
-			if (!LoadElementsForSqcLoading(SqcFileName))
-				return;
+			// if (!LoadElementsForSqcLoading(SqcFileName))
+			// 	return;
+			if (!CResourceManager::GetInst()->LoadMeshTextureBoneInfo(SqcFileName).first)
 
 			// Create Object
 			OnCreateSample3DObject();

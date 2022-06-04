@@ -146,7 +146,9 @@ void CAnim3DObject::SetMeshAndMaterialInfo()
 	// 3DTestObject 의 Camera Object 를 Scene의 Animation Current Camera 로 세팅한다.
 	m_Scene->GetCameraManager()->SetAnimationEditorCamera(m_Camera);
 
-	m_Mesh->SetMesh(CEditorManager::GetInst()->GetAnimationEditor()->Get3DTestObjectMeshName());
+	const std::string& LoadedMeshName = CEditorManager::GetInst()->GetAnimationEditor()->Get3DTestObjectMeshName();
+
+	m_Mesh->SetMesh(LoadedMeshName);
 
 	// GBuffer 가 아니라, 바로 Animation Editor 용 Render Target 에 그려내기 위해 Shader 를 다른 것으로 세팅한다.
 	m_Mesh->SetMaterialShader("Mesh3DNoLightShader");

@@ -7,6 +7,7 @@
 #include "../../Render/RenderState.h"
 #include "../Shader/MaterialConstantBuffer.h"
 #include "MaterialManager.h"
+#include <filesystem>
 
 CMaterial::CMaterial() :
 	m_BaseColor(Vector4::White),
@@ -490,6 +491,11 @@ void CMaterial::SetTextureArray(int Index, int Register,
 	m_TextureInfo[Index].Name = Name;
 	m_TextureInfo[Index].Texture = CResourceManager::GetInst()->FindTexture(Name);
 	m_TextureInfo[Index].ShaderType = ShaderType;
+}
+
+void CMaterial::SetTextureInfoResource(int Index, CTexture* Texture)
+{
+	m_TextureInfo[Index].Texture = Texture;
 }
 
 void CMaterial::SetPaperBurn(bool Enable)
