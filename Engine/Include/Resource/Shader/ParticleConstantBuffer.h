@@ -164,11 +164,6 @@ public:
 		m_BufferData.ScaleMax = ScaleMax;
 	}
 
-	void SetApplyRandom(bool Enable)
-	{
-		m_BufferData.ApplyRandom = Enable;
-	}
-
 	void SetLifeTimeMin(float Min)
 	{
 		m_BufferData.LifeTimeMin = Min;

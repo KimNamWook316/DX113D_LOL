@@ -41,6 +41,8 @@ protected:
 	bool m_EditorStopAnimation;
 	int m_EditorStopTargetFrame;
 
+	// Saved FileName
+	char m_SavedFileName[MAX_PATH];
 public:
 	std::unordered_map<std::string, CAnimationSequenceData*>& GetAnimationSequenceMap()
 	{
@@ -68,6 +70,11 @@ public:
 		m_TypeID = typeid(T).hash_code();
 	}
 
+	void SetSavedFileName(const char* FileName)
+	{
+		strcpy_s(m_SavedFileName, FileName);
+	}
+
 	void SetScene(class CScene* Scene)
 	{
 		m_Scene = Scene;
@@ -78,6 +85,10 @@ public:
 		m_Owner = Owner;
 	}
 
+	const char* GetSavedFileName() const
+	{
+		return m_SavedFileName;
+	}
 
 	int GetAnimationCount()	const
 	{
@@ -141,6 +152,7 @@ public:
 	virtual void Load(FILE* File);
 	bool SaveAnimationFullPath(const char* FullPath);
 	bool LoadAnimationFullPath(const char* FullPath);
+	bool LoadAnimation(const char* FileName);
 private:
 	CAnimationSequenceData* FindAnimation(const std::string& Name);
 

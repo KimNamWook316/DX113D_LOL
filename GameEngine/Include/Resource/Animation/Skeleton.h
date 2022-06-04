@@ -24,6 +24,7 @@ class CSkeleton :
 	friend class CAnimationMesh;
 	friend class CAnimationSequence;
 	friend class CAnimationSequenceInstance;
+	friend class CAnimationMeshComponent;
 
 private:
 	CSkeleton();
