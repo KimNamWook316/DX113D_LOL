@@ -2,6 +2,7 @@
 #include "StateComponent.h"
 #include "BehaviorTree.h"
 #include "State.h"
+#include "../PathManager.h"
 
 CStateComponent::CStateComponent()	:
 	m_BehaviorTree(nullptr),
@@ -78,7 +79,88 @@ void CStateComponent::PostRender()
 
 CStateComponent* CStateComponent::Clone()
 {
-	return nullptr;
+	return new CStateComponent(*this);
+}
+
+bool CStateComponent::Save(FILE* File)
+{
+	m_BehaviorTree->Save(File);
+
+	return true;
+}
+
+bool CStateComponent::Save(const char* FullPath)
+{
+	FILE* File = nullptr;
+
+	fopen_s(&File, FullPath, "wb");
+
+	if (!File)
+		return false;
+
+	Save(File);
+
+	fclose(File);
+
+	return true;
+}
+
+bool CStateComponent::Save(const char* FileName, const std::string& PathName)
+{
+	char	FullPath[MAX_PATH] = {};
+
+	const PathInfo* Info = CPathManager::GetInst()->FindPath(PathName);
+
+	if (Info)
+		strcpy_s(FullPath, Info->PathMultibyte);
+
+	strcat_s(FullPath, FileName);
+
+	if (!Save(FullPath))
+		return false;
+
+	return true;
+}
+
+bool CStateComponent::Load(const char* FileName, const std::string& PathName)
+{
+	char	FullPath[MAX_PATH] = {};
+
+	const PathInfo* Info = CPathManager::GetInst()->FindPath(PathName);
+
+	if (Info)
+		strcpy_s(FullPath, Info->PathMultibyte);
+
+	strcat_s(FullPath, FileName);
+
+	if (!Load(FullPath))
+		return false;
+
+	return true;
+}
+
+bool CStateComponent::Load(const char* FullPath)
+{
+	FILE* File = nullptr;
+
+	fopen_s(&File, FullPath, "wb");
+
+	if (!File)
+		return false;
+
+	Load(File);
+
+	fclose(File);
+
+	return true;
+}
+
+
+bool CStateComponent::Load(FILE* File)
+{
+	m_BehaviorTree->Load(File);
+
+	return true;
 }
 
 void CStateComponent::SetAnimationMeshComponent(CAnimationMeshComponent* Mesh)

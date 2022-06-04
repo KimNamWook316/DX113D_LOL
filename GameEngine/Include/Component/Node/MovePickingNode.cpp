@@ -35,7 +35,14 @@ NodeResult CMovePickingNode::OnStart(float DeltaTime)
 
 NodeResult CMovePickingNode::OnUpdate(float DeltaTime)
 {
-	return NodeResult();
+	// 만약 NavAgent의 m_PathList가 비었다면 그때 return false
+	if (m_Object->IsNavAgentPathListEmpty())
+	{
+		m_IsEnd = true;
+		return NodeResult::Node_False;
+	}
+
+	return NodeResult::Node_True;
 }
 
 NodeResult CMovePickingNode::OnEnd(float DeltaTime)

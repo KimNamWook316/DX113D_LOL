@@ -3,6 +3,16 @@
 #include "BehaviorTree.h"
 #include "Node/Node.h"
 #include "Node/ActionNode.h"
+#include "Node/ConditionNode.h"
+#include "Node/SequenceNode.h"
+#include "Node/SelectorNode.h"
+#include "Node/RunNode.h"
+#include "Node/MoveInputCheckNode.h"
+#include "Node/MovePickingNode.h"
+#include "Node/SkillQNode.h"
+#include "Node/SkillWNode.h"
+//#include "Node/SkillENode.h"
+//#include "Node/SkillRNode.h"
 
 CBehaviorTree::CBehaviorTree() :
 	m_Root(nullptr),
@@ -114,7 +124,118 @@ void CBehaviorTree::PostRender()
 {
 }
 
+bool CBehaviorTree::Save(FILE* File)
+{
+	bool Root = false;
+
+	if (m_Root)
+		Root = true;
+
+	if (m_Root)
+	{
+		size_t	TypeID = m_Root->GetTypeID();
+		fwrite(&TypeID, sizeof(size_t), 1, File);
+
+		m_Root->Save(File);
+	}
+
+	return true;
+}
+
+bool CBehaviorTree::Load(FILE* File)
+{
+	bool Root = false;
+	fread(&Root, sizeof(bool), 1, File);
+
+	if (Root)
+	{
+		size_t	TypeID = 0;
+		fread(&TypeID, sizeof(size_t), 1, File);
+
+		if (!m_Root)
+		{
+			if (TypeID == typeid(CSequenceNode).hash_code())
+			{
+				m_Root = new CSequenceNode;
+			}
+
+			else if (TypeID == typeid(CSelectorNode).hash_code())
+			{
+				m_Root = new CSelectorNode;
+			}
+
+			m_Root->m_Owner = this;
+			m_Root->m_Parent = nullptr;
+		}
+
+		m_Root->Load(File);
+	}
+
+	return true;
+}
+
 CBehaviorTree* CBehaviorTree::Clone()
 {
 	return new CBehaviorTree(*this);
+}
+
+CNode* CBehaviorTree::LoadNode(CNode* Parent, size_t TypeID)
+{
+	//if (m_NodeCreateCallback)
+	//	return m_NodeCreateCallback(Parent, TypeID);
+
+	if (TypeID == typeid(CSelectorNode).hash_code())
+	{
+		CSelectorNode* NewNode = new CSelectorNode;
+		NewNode->SetParent(Parent);
+	}
+
+	else if (TypeID == typeid(CSequenceNode).hash_code())
+	{
+		CSequenceNode* NewNode = new CSequenceNode;
+		NewNode->SetParent(Parent);
+	}
+
+	else if (TypeID == typeid(CRunNode).hash_code())
+	{
+		CRunNode* NewNode = new CRunNode;
+		NewNode->SetParent(Parent);
+	}
+
+	else if (TypeID == typeid(CMovePickingNode).hash_code())
+	{
+		CMovePickingNode* NewNode = new CMovePickingNode;
+		NewNode->SetParent(Parent);
+	}
+
+	else if (TypeID == typeid(CMoveInputCheckNode).hash_code())
+	{
+		CMoveInputCheckNode* NewNode = new CMoveInputCheckNode;
+		NewNode->SetParent(Parent);
+	}
+
+	else if (TypeID == typeid(CSkillQNode).hash_code())
+	{
+		CSkillQNode* NewNode = new CSkillQNode;
+		NewNode->SetParent(Parent);
+	}
+
+	else if (TypeID == typeid(CSkillWNode).hash_code())
+	{
+		CSkillWNode* NewNode = new CSkillWNode;
+		NewNode->SetParent(Parent);
+	}
+
+	//else if (TypeID == typeid(CSkillENode).hash_code())
+	//{
+	//	CSkillENode* NewNode = new CSkillENode;
+	//	NewNode->SetParent(Parent);
+	//}
+
+	//else if (TypeID == typeid(CSkillRNode).hash_code())
+	//{
+	//	CSkillRNode* NewNode = new CSkillRNode;
+	//	NewNode->SetParent(Parent);
+	//}
+	return nullptr;
 }

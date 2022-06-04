@@ -66,6 +66,9 @@ bool CBehaviorTreeWindow::Init()
 
 void CBehaviorTreeWindow::Update(float DeltaTime)
 {
+    if (!m_Open)
+        return;
+
     GraphEditor::FitOnScreen fit = GraphEditor::FitOnScreen::Fit_None;
 
     ImGui::Begin("Graph Editor", NULL, 0);
@@ -78,6 +81,18 @@ void CBehaviorTreeWindow::Update(float DeltaTime)
     if (ImGui::Button("Fit selected nodes"))
     {
         fit = GraphEditor::FitOnScreen::Fit_SelectedNodes;
+    }
+
+
+    ImGui::SameLine();
+    ImGui::Dummy(ImVec2(150.f, 20.f));
+    ImGui::SameLine();
+
+    if (ImGui::Button("Close"))
+    {
+        m_Open = false;
+        ImGui::End();
+        return;
     }
 
     ImGui::PushID(m_WidgetID);

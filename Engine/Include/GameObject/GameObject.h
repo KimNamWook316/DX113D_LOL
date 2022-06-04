@@ -177,7 +177,7 @@ public:
 	
 public:
 	void SetNavManagerLandScape(class CLandScape* LandScape);
-
+	bool IsNavAgentPathListEmpty()	const;
 
 public:
 	template <typename T>

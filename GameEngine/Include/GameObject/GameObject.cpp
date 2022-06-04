@@ -492,6 +492,11 @@ void CGameObject::SetNavManagerLandScape(CLandScape* LandScape)
 	m_Scene->GetNavigation3DManager()->SetLandScape(LandScape);
 }
 
+bool CGameObject::IsNavAgentPathListEmpty() const
+{
+	return m_NavAgent->m_PathList.empty();
+}
+
 void CGameObject::SetUpdateByMat(bool UpdateByMat)
 {
 	m_RootComponent->SetUpdateByMat(UpdateByMat);

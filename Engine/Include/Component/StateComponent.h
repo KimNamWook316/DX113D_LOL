@@ -22,6 +22,12 @@ public:
 	virtual void Render() override;
 	virtual void PostRender() override;
 	virtual CStateComponent* Clone() override;
+	virtual bool Save(FILE* File);
+	virtual bool Save(const char* FullPath);
+	virtual bool Save(const char* FileName, const std::string& PathName);
+	virtual bool Load(FILE* File);
+	virtual bool Load(const char* FileName, const std::string& PathName);
+	virtual bool Load(const char* FullPath);
 
 protected:
 	std::list<class CState*>	m_StateList;
