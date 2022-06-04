@@ -891,6 +891,13 @@ void CAnimationMeshComponent::ChangeInstancingLayer()
 				}
 
 				DeleteOnOldLayer = true;
+
+				if ((*iter)->InstancingList.empty())
+				{
+					SAFE_DELETE(*iter);
+					iter = m_InstancingCheckList.erase(iter);
+					continue;
+				}
 			}
 		}
 
