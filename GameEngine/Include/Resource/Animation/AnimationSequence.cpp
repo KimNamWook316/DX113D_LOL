@@ -134,6 +134,11 @@ bool CAnimationSequence::Save(FILE* pFile)
 	fwrite(&PathLength, sizeof(size_t), 1, pFile);
 	fwrite(m_FullPath, sizeof(char), PathLength, pFile);
 
+	// FileName 정보 저장
+	size_t FileNameLength = strlen(m_FileName);
+	fwrite(&FileNameLength, sizeof(size_t), 1, pFile);
+	fwrite(m_FileName, sizeof(char), FileNameLength, pFile);
+
 	size_t	iLength = m_Name.length();
 	fwrite(&iLength, sizeof(size_t), 1, pFile);
 	fwrite(m_Name.c_str(), sizeof(char), iLength, pFile);
@@ -184,6 +189,11 @@ bool CAnimationSequence::Load(FILE* pFile)
 	size_t PathLength;
 	fread(&PathLength, sizeof(size_t), 1, pFile);
 	fread(m_FullPath, sizeof(char), PathLength, pFile);
+
+	// FileName 정보 저장
+	size_t FileNameLength;
+	fread(&FileNameLength, sizeof(size_t), 1, pFile);
+	fread(m_FileName, sizeof(char), FileNameLength, pFile);
 
 	size_t	iLength = 0;
 	fread(&iLength, sizeof(size_t), 1, pFile);
@@ -494,6 +504,11 @@ void CAnimationSequence::SetPlayTime(float fTime)
 void CAnimationSequence::SetAnimationFullPathMultibyte(const char* pFullPath)
 {
 	strcpy_s(m_FullPath, pFullPath);
+}
+
+void CAnimationSequence::SetAnimationFileNameMultibyte(const char* pFileName)
+{
+	strcpy_s(m_FileName, pFileName);
 }
 
 bool CAnimationSequence::CreateSequence(bool bLoop,

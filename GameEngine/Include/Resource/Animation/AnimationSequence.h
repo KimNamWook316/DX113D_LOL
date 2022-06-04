@@ -74,10 +74,15 @@ private:
 	bool						m_End;
 	std::vector<BoneKeyFrame*>	m_vecKeyFrame;
 	char						m_FullPath[MAX_PATH];
+	char						m_FileName[MAX_PATH];
 	class CStructuredBuffer* m_KeyFrameBuffer;
 	std::vector<AnimationFrameTrans> m_vecFrameTrans;
 
 public:
+	const char* GetFileName() const
+	{
+		return m_FileName;
+	}
 	int GetCurrentFrameIdx() const
 	{
 		return m_CurrentFrameIdx;
@@ -135,6 +140,7 @@ public:
 	void SetPlayScale(float fScale);
 	void SetPlayTime(float fTime);
 	void SetAnimationFullPathMultibyte(const char* pFullPath);
+	void SetAnimationFileNameMultibyte(const char* pFileName);
 public:
 	bool CreateSequence(bool bLoop, struct _tagFbxAnimationClip* pClip);
 	bool CreateSequence(const std::string& strName, bool bLoop,

@@ -83,7 +83,9 @@ public:
     void SetTexture(int MaterialIndex, int Index, int Register, int ShaderType, const std::string& Name, const TCHAR* FileName, const std::string& PathName = TEXTURE_PATH);
     void SetTextureFullPath(int MaterialIndex, int Index, int Register, int ShaderType, const std::string& Name, const TCHAR* FullPath);
     void SetTexture(int MaterialIndex, int Index, int Register, int ShaderType, const std::string& Name, const std::vector<TCHAR*>& vecFileName, const std::string& PathName = TEXTURE_PATH);
-
+private :
+    void LoadAnimationMeshInstanceFromFile(const char* AnimFileName);
+    bool DeleteInstancingCheckList();
 public:
     virtual void AddChild(CSceneComponent* Child, const std::string& SocketName = "");
     virtual void AddChild(class CGameObject* Child, const std::string& SocketName = "");

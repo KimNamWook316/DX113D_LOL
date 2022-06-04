@@ -187,7 +187,7 @@ void CResourceManager::ReleaseMesh(const std::string& Name)
 	m_MeshManager->ReleaseMesh(Name);
 }
 
-bool CResourceManager::LoadMeshTextureBoneInfo(const char* ConstMeshFileName, const std::string& PathName)
+std::pair<bool, std::string> CResourceManager::LoadMeshTextureBoneInfo(const char* ConstMeshFileName, const std::string& PathName)
 {
 	const PathInfo* Path = CPathManager::GetInst()->FindPath(PathName);
 
@@ -196,19 +196,10 @@ bool CResourceManager::LoadMeshTextureBoneInfo(const char* ConstMeshFileName, co
 	if (Path)
 		strcpy_s(FullPath, Path->PathMultibyte);
 
-	// Mesh File Loading
-	char MeshFileFullPath[MAX_PATH] = {};
-	TCHAR MeshTCHARFileFullPath[MAX_PATH] = {};
-
 	char MeshFileName[MAX_PATH] = {};
 	TCHAR MeshTCHARFileName[MAX_PATH] = {};
 
 	char MeshExt[10] = ".msh";
-
-	// Mesh File Path
-	strcpy_s(MeshFileFullPath, FullPath);
-	strcat_s(MeshFileFullPath, ConstMeshFileName);
-	strcat_s(MeshFileFullPath, MeshExt);
 
 	// Mesh File Name
 	strcat_s(MeshFileName, ConstMeshFileName);
@@ -225,7 +216,7 @@ bool CResourceManager::LoadMeshTextureBoneInfo(const char* ConstMeshFileName, co
 		MeshTCHARFileName, MESH_PATH))
 	{
 		MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT(".msh Load Failure"), NULL, MB_OK);
-		return false;
+		return std::make_pair(false, "");
 	}
 
 
@@ -236,15 +227,22 @@ bool CResourceManager::LoadMeshTextureBoneInfo(const char* ConstMeshFileName, co
 	char TextFolderName[MAX_PATH] = {};
 	// TCHAR MshTCHARFileName[MAX_PATH] = {};
 
-	strcpy_s(TextFolderName, MeshFileName);
-	strcat_s(TextFolderName, TextFolderExt);
+	char MeshFileFullPath[MAX_PATH] = {};
+	TCHAR MeshTCHARFileFullPath[MAX_PATH] = {};
+
+	// Mesh File Path
+	strcpy_s(MeshFileFullPath, FullPath);
+	strcat_s(MeshFileFullPath, ConstMeshFileName);
+
+	strcpy_s(TextFolderName, MeshFileFullPath);
+	strcat_s(TextFolderName, TextFolderExt); // .fbm 붙여주기
 
 	std::filesystem::path MeshTextureFolderPath(TextFolderName);
 
 	if (!std::filesystem::exists(MeshTextureFolderPath))
 	{
 		MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT(".fbm Folder Does Not Exist"), NULL, MB_OK);
-		return false;
+		return std::make_pair(false, "");
 	}
 
 	// ex) singed_spell2.sqc 를 선택했다면
@@ -256,13 +254,13 @@ bool CResourceManager::LoadMeshTextureBoneInfo(const char* ConstMeshFileName, co
 	// Bne (Skeleton) Load
 	char BneExt[10] = ".bne";
 
-	std::string LoadedBneName = MeshFileName;
+	std::string LoadedBneName = ConstMeshFileName;
 	LoadedBneName.append("_skeleton");
 
 	char BneFileName[MAX_PATH] = {};
 	TCHAR BneTCHARFileName[MAX_PATH] = {};
 
-	strcpy_s(BneFileName, MeshFileName);
+	strcpy_s(BneFileName, ConstMeshFileName);
 	strcat_s(BneFileName, BneExt);
 
 	ConvertLength = MultiByteToWideChar(CP_ACP, 0, BneFileName, -1, 0, 0);
@@ -271,13 +269,13 @@ bool CResourceManager::LoadMeshTextureBoneInfo(const char* ConstMeshFileName, co
 	if (!LoadSkeleton(LoadedBneName, BneTCHARFileName, MESH_PATH))
 	{
 		MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT(".bne Load Failure"), NULL, MB_OK);
-		return false;
+		return std::make_pair(false, "");
 	}
 
 	// Mesh 에 해당 Skeleton 세팅
 	SetMeshSkeleton(LoadedMeshName, LoadedBneName);
 
-	return true;
+	return std::make_pair(true, LoadedMeshName);;
 }
 
 CShader* CResourceManager::FindShader(const std::string& Name)

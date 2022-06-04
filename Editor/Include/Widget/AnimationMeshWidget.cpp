@@ -139,7 +139,7 @@ void CAnimationMeshWidget::OnLoadAnimationInstance()
 	OpenFile.lpstrFilter = TEXT("All Files\0*.*\0.Animation File\0*.anim");
 	OpenFile.lpstrFile = FilePath;
 	OpenFile.nMaxFile = MAX_PATH;
-	OpenFile.lpstrInitialDir = CPathManager::GetInst()->FindPath(ANIMATION_PATH)->Path;
+	OpenFile.lpstrInitialDir = CPathManager::GetInst()->FindPath(RESOURCE_ANIMATION_PATH)->Path;
 
 	if (GetOpenFileName(&OpenFile) != 0)
 	{
@@ -170,7 +170,9 @@ void CAnimationMeshWidget::OnLoadAnimationInstance()
 		m_Animation->LoadAnimationFullPath(FilePathMultibyte);
 
 		// CurrentAnimation 체크, + Msh, Skeleton 모두 Load 하기 
-		if (!m_Animation->GetCurrentAnimation() || !LoadElementsForSqcLoading())
+		bool LoadResult = LoadElementsForSqcLoading();
+
+		if (!m_Animation->GetCurrentAnimation() || LoadResult == false)
 		{
 			ClearExistingAnimationSeqInfos();
 
@@ -248,17 +250,19 @@ bool CAnimationMeshWidget::LoadElementsForSqcLoading()
 
 	strcpy_s(SqcFileName, ConstSqcFileName);
 
+	const PathInfo* Path = CPathManager::GetInst()->FindPath(MESH_PATH);
+
 	// 만약 Mesh Load 과정에서 필요한 Texture가 없다면 
 	// ex) FBX Convert 이후, singed_spell2.sqc 가 있다면, 같은 경로내에 singed_spell2.fbm 이라는 디렉토리가 존재해야 한다.
 	// 만약 해당 Folder 가 존재하지 않는다면, Mesh를 Load 하더라도 Texture 가 없다고 뜰 것이다
 	char TextFolderExt[10] = ".fbm";
-	char TextFolderName[MAX_PATH] = {};
-	// TCHAR MshTCHARFileName[MAX_PATH] = {};
+	char TextFolderPath[MAX_PATH] = {};
 
-	strcpy_s(TextFolderName, SqcFileName);
-	strcat_s(TextFolderName, TextFolderExt);
+	strcpy_s(TextFolderPath, Path->PathMultibyte);
+	strcat_s(TextFolderPath, SqcFileName);
+	strcat_s(TextFolderPath, TextFolderExt);
 	
-	std::filesystem::path MeshTextureFolderPath(TextFolderName);
+	std::filesystem::path MeshTextureFolderPath(TextFolderPath);
 	
 	if (!std::filesystem::exists(MeshTextureFolderPath))
 	{
@@ -318,6 +322,9 @@ bool CAnimationMeshWidget::LoadElementsForSqcLoading()
 
 	// Mesh 에 해당 Skeleton 세팅
 	CSceneManager::GetInst()->GetScene()->GetResource()->SetMeshSkeleton(LoadedMeshName, LoadedBneName);
+
+	// Mesh 를 바꾸기 전에 Mesh 를 공유하는 InstancingCheckingList 목록에서 제거
+	bool DeleteResult = dynamic_cast<CAnimationMeshComponent*>(m_Component.Get())->DeleteInstancingCheckList();
 
 	// 현재 Load 한 Mesh 를 세팅
 	dynamic_cast<CAnimationMeshComponent*>(m_Component.Get())->SetMesh(m_LoadedMeshName);

@@ -300,23 +300,39 @@ void CAnimationEditor::OnSaveAnimationInstance()
 	if (!m_Animation || !m_Animation->GetCurrentAnimation())
 		return;
 
-	TCHAR FiilePath[MAX_PATH] = {};
+	TCHAR FiileFullPath[MAX_PATH] = {};
 
 	OPENFILENAME OpenFile = {};
 	OpenFile.lStructSize = sizeof(OPENFILENAME);
 	OpenFile.hwndOwner = CEngine::GetInst()->GetWindowHandle();
 	OpenFile.lpstrFilter = TEXT("All Files\0*.*\0.Animation File\0*.anim");
-	OpenFile.lpstrFile = FiilePath;
+	OpenFile.lpstrFile = FiileFullPath;
 	OpenFile.nMaxFile = MAX_PATH;
 	OpenFile.lpstrInitialDir = CPathManager::GetInst()->FindPath(ANIMATION_PATH)->Path;
 
 	if (GetSaveFileName(&OpenFile) != 0)
 	{
-		char FilePathMultibyte[MAX_PATH] = {};
-		int  ConvertLength = WideCharToMultiByte(CP_ACP, 0, FiilePath, -1, nullptr, 0, nullptr, nullptr);
-		WideCharToMultiByte(CP_ACP, 0, FiilePath, -1, FilePathMultibyte, ConvertLength, nullptr, nullptr);
+		char FileFullPathMultibyte[MAX_PATH] = {};
+		char FileName[MAX_PATH] = {};
+		char FileExt[_MAX_EXT] = {};
+		int  ConvertLength = WideCharToMultiByte(CP_ACP, 0, FiileFullPath, -1, nullptr, 0, nullptr, nullptr);
 
-		m_Animation->SaveAnimationFullPath(FilePathMultibyte);
+		WideCharToMultiByte(CP_ACP, 0, FiileFullPath, -1, FileFullPathMultibyte, ConvertLength, nullptr, nullptr);
+
+		_splitpath_s(FileFullPathMultibyte, nullptr, 0, nullptr, 0, FileName, MAX_PATH, FileExt, _MAX_EXT);
+
+		_strupr_s(FileExt);
+
+		// 확장자 .anim 이 아니라면 return;
+		if (strcmp(FileExt, ".ANIM") != 0)
+		{
+			MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("EXT Has To Be .anim"), NULL, MB_OK);
+			return ;
+		}
+
+		m_Animation->SetSavedFileName(FileName);
+
+		m_Animation->SaveAnimationFullPath(FileFullPathMultibyte);
 	}
 }
 
@@ -462,16 +478,24 @@ void CAnimationEditor::OnApplyAnimationSlider(CAnimationSequence* Sequence)
 bool CAnimationEditor::LoadElementsForSqcLoading(const char* SqcFileName)
 {
 	// 만약 Mesh Load 과정에서 필요한 Texture가 없다면 
-			// ex) FBX Convert 이후, singed_spell2.sqc 가 있다면, 같은 경로내에 singed_spell2.fbm 이라는 디렉토리가 존재해야 한다.
-			// 만약 해당 Folder 가 존재하지 않는다면, Mesh를 Load 하더라도 Texture 가 없다고 뜰 것이다
+	// ex) FBX Convert 이후, singed_spell2.sqc 가 있다면, 같은 경로내에 singed_spell2.fbm 이라는 디렉토리가 존재해야 한다.
+	// 만약 해당 Folder 가 존재하지 않는다면, Mesh를 Load 하더라도 Texture 가 없다고 뜰 것이다
 	char TextFolderExt[10] = ".fbm";
-	char TextFolderName[MAX_PATH] = {};
-	// TCHAR MshTCHARFileName[MAX_PATH] = {};
+	char TextFolderFullPath[MAX_PATH] = {};
 
-	strcpy_s(TextFolderName, SqcFileName);
-	strcat_s(TextFolderName, TextFolderExt);
+	// RESOURCE_MESH_PATH 에 있는 정보로부터 불러올 것이다.
+	char MeshFileFullPath[MAX_PATH] = {};
+	
+	const PathInfo* Path = CPathManager::GetInst()->FindPath(MESH_PATH);
+	
+	if (Path)
+		strcpy_s(MeshFileFullPath, Path->PathMultibyte);
 
-	std::filesystem::path MeshTextureFolderPath(TextFolderName);
+	strcpy_s(TextFolderFullPath, MeshFileFullPath);
+	strcat_s(TextFolderFullPath, SqcFileName);
+	strcat_s(TextFolderFullPath, TextFolderExt);
+
+	std::filesystem::path MeshTextureFolderPath(TextFolderFullPath);
 
 	if (!std::filesystem::exists(MeshTextureFolderPath))
 	{
@@ -699,6 +723,7 @@ void CAnimationEditor::OnAddAnimationSequence()
 		CAnimationSequence* LoadedSequence = CSceneManager::GetInst()->GetScene()->GetResource()->FindAnimationSequence(m_NewAnimSeqName->GetTextUTF8());
 
 		LoadedSequence->SetAnimationFullPathMultibyte(FilePathMultibyte);
+		LoadedSequence->SetAnimationFileNameMultibyte(SqcFileName);
 
 		// 현재 
 		m_Animation->AddAnimation(m_NewAnimSeqName->GetTextUTF8(), m_NewAnimSeqDataKeyName->GetTextUTF8());
