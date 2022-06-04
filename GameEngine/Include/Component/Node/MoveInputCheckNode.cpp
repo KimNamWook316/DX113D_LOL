@@ -2,7 +2,9 @@
 #include "MoveInputCheckNode.h"
 #include "../../Input.h"
 
-CMoveInputCheckNode::CMoveInputCheckNode()
+
+CMoveInputCheckNode::CMoveInputCheckNode()	:
+	m_FrameCount(0)
 {
 }
 
@@ -16,16 +18,17 @@ CMoveInputCheckNode::~CMoveInputCheckNode()
 
 NodeResult CMoveInputCheckNode::OnStart(float DeltaTime)
 {
-	const keyState State = CInput::GetInst()->FindKeyState('W');
+	++m_FrameCount;
 
-	if (!State.State[KeyState_Up] && !State.State[KeyState_Down] && !State.State[KeyState_Push])
+	if (CInput::GetInst()->GetMouseRButtonClick() && m_FrameCount > 20)
 	{
-		return NodeResult::Node_False;
+		m_FrameCount = 0;
+		return NodeResult::Node_True;
 	}
 
 	else
 	{
-		return NodeResult::Node_True;
+		return NodeResult::Node_False;
 	}
 
 }

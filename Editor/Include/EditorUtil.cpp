@@ -13,6 +13,7 @@
 #include "Component/ParticleComponent.h"
 #include "Component/StateComponent.h"
 #include "IMGUITree.h"
+#include "Flag.h"
 
 #include <fstream>
 #include <iostream>
@@ -227,6 +228,8 @@ std::string CEditorUtil::ObjectComponent3DTypeToString(ObjectComponent3DType Typ
 		return "PaperBurnComponent";
 	case ObjectComponent3DType::StateComponent:
 		return "StateComponent";
+	case ObjectComponent3DType::NavAgent:
+		return "NavAgent";
 	}
 
 	return "";

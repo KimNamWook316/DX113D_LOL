@@ -24,6 +24,12 @@ public:
 	}
 
 public:
+	void AddTargetPos(const Vector3& TargetPos)
+	{
+		m_PathList.push_back(TargetPos);
+	}
+
+public:
 	virtual void Start();
 	virtual bool Init();
 	virtual void Update(float DeltaTime);

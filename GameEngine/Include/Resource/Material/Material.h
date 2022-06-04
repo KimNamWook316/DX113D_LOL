@@ -34,6 +34,7 @@ class CMaterial :
     friend class CMesh;
     friend class CStaticMeshComponent;
     friend class CAnimationMeshComponent;
+    friend class CLandScape;
 
 protected:
     CMaterial();

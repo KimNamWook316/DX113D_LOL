@@ -4,6 +4,8 @@
 #include "../Component/ColliderPixel.h"
 #include "../Component/ColliderBox3D.h"
 
+#define EPSILON 0.00001f
+
 bool CCollision::CollisionBox2DToBox2D(CColliderBox2D* Src, CColliderBox2D* Dest)
 {
 	CollisionResult	srcResult, destResult;
@@ -739,52 +741,191 @@ bool CCollision::CollisionRayToSphere(Vector3& HitPoint, const Ray& ray, const S
 
 bool CCollision::CollisionRayToBox3D(Vector3& HitPoint, const Ray& ray, const Box3DInfo& Box)
 {
-	float Step = 1.f;
+	float tMin = 0;
+	float tMax = FLT_MAX;
 
-	while (true)
+	Vector3 Delta = Box.Center - ray.Pos;
+	float D1;
+	float D2;
+
+	Vector3 n = Box.Axis[0];
+	
+	
+	// 평면의 방정식 Ax + By + Cz + D = 0
+	// D = -Ax - By - Cz
+	if (ray.Dir.x < 0)
 	{
-		Vector3 StartPosVec = ray.Pos;
-		Vector3 EndPosVec = ray.Pos + ray.Dir * Step;
-
-		XMVECTOR StartPos = ray.Pos.Convert();
-		XMVECTOR EndPos = (ray.Pos + ray.Dir * Step).Convert();
-
-		Vector3 FrontPlaneP1 = Vector3(Box.Center.x - Box.AxisLen[0], Box.Center.y + Box.AxisLen[1], Box.Center.z - Box.AxisLen[2]);
-		Vector3 FrontPlaneP2 = Vector3(Box.Center.x + Box.AxisLen[0], Box.Center.y + Box.AxisLen[1], Box.Center.z - Box.AxisLen[2]);
-		Vector3 FrontPlaneP3 = Vector3(Box.Center.x + Box.AxisLen[0], Box.Center.y - Box.AxisLen[1], Box.Center.z - Box.AxisLen[2]);
-
-		if (StartPosVec.x > Box.Max.x)
+		if (Box.Min.x > Box.Max.x)
 		{
+			// ray가 먼저 만나는 평면에서 상수 D
+			D1 = -Box.Axis[0].x * Box.Min.x - Box.Axis[0].y * Box.Min.y - Box.Axis[0].z * Box.Min.z;
+			// ray가 나중에 만나는 평면에서 상수 D
+			D2 = -Box.Axis[0].x * Box.Max.x - Box.Axis[0].y * Box.Max.y - Box.Axis[0].z * Box.Max.z;
 		}
 
-		Vector3 FrontPlaneNormal = (FrontPlaneP2 - FrontPlaneP1).Cross(FrontPlaneP3 - FrontPlaneP2);
-		FrontPlaneNormal.Normalize();
-
-		float Coff_a = FrontPlaneNormal.x;
-		float Coff_b = FrontPlaneNormal.y;
-		float Coff_c = FrontPlaneNormal.z;
-		float Coff_d = -FrontPlaneNormal.x * FrontPlaneP1.x - FrontPlaneNormal.y * FrontPlaneP2.y - FrontPlaneNormal.z * FrontPlaneP3.z;
-
-		XMVECTOR Plane = { Coff_a, Coff_b, Coff_c, Coff_d };
-
-		XMVECTOR XMVec1 = FrontPlaneP1.Convert();
-		XMVECTOR XMVec2 = FrontPlaneP2.Convert();
-		XMVECTOR XMVec3 = FrontPlaneP3.Convert();
-
-		XMVECTOR Result = XMPlaneIntersectLine(Plane, StartPos, EndPos);
-
-		// Intersect하는 polygon을 찾지 못했을 때
-		//if (isnan(Result.m128_f32[0]) && isnan(Result.m128_f32[1]) && isnan(Result.m128_f32[2]))
-		//{
-		//	continue
-		//}
-
-		//Step += Step;
-
-		return true;
+		else
+		{
+			// ray가 먼저 만나는 평면에서 상수 D
+			D1 = -Box.Axis[0].x * Box.Max.x - Box.Axis[0].y * Box.Max.y - Box.Axis[0].z * Box.Max.z;
+			// ray가 나중에 만나는 평면에서 상수 D
+			D2 = -Box.Axis[0].x * Box.Min.x - Box.Axis[0].y * Box.Min.y - Box.Axis[0].z * Box.Min.z;
+		}
 	}
 
-	return false;
+	else
+	{
+		if (Box.Min.x > Box.Max.x)
+		{
+			// ray가 먼저 만나는 평면에서 상수 D
+			D1 = -Box.Axis[0].x * Box.Max.x - Box.Axis[0].y * Box.Max.y - Box.Axis[0].z * Box.Max.z;
+			// ray가 나중에 만나는 평면에서 상수 D
+			D2 = -Box.Axis[0].x * Box.Min.x - Box.Axis[0].y * Box.Min.y - Box.Axis[0].z * Box.Min.z;
+		}
+
+		else
+		{
+			// ray가 먼저 만나는 평면에서 상수 D
+			D1 = -Box.Axis[0].x * Box.Min.x - Box.Axis[0].y * Box.Min.y - Box.Axis[0].z * Box.Min.z;
+			// ray가 나중에 만나는 평면에서 상수 D
+			D2 = -Box.Axis[0].x * Box.Max.x - Box.Axis[0].y * Box.Max.y - Box.Axis[0].z * Box.Max.z;
+		}
+	}
+
+	float Denominator = n.Dot(ray.Dir);
+
+	float t1 = (-n.Dot(ray.Pos) - D1) / Denominator;
+	float t2 = (-n.Dot(ray.Pos) - D2) / Denominator;
+
+	if (t1 > t2)
+		std::swap(t1, t2);
+
+	if (t2 < tMax)
+		tMax = t2;
+
+	if (t1 > tMin)
+		tMin = t1;
+
+	if (tMax < tMin)
+		return false;
+
+
+	n = Box.Axis[1];
+
+	if (ray.Dir.y < 0)
+	{
+		if (Box.Min.y > Box.Max.y)
+		{
+			// ray가 먼저 만나는 평면에서 상수 D
+			D1 = -Box.Axis[1].x * Box.Min.x - Box.Axis[1].y * Box.Min.y - Box.Axis[1].z * Box.Min.z;
+			// ray가 나중에 만나는 평면에서 상수 D
+			D2 = -Box.Axis[1].x * Box.Max.x - Box.Axis[1].y * Box.Max.y - Box.Axis[1].z * Box.Max.z;
+		}
+
+		else
+		{
+			// ray가 먼저 만나는 평면에서 상수 D
+			D1 = -Box.Axis[1].x * Box.Max.x - Box.Axis[1].y * Box.Max.y - Box.Axis[1].z * Box.Max.z;
+			// ray가 나중에 만나는 평면에서 상수 D
+			D2 = -Box.Axis[1].x * Box.Min.x - Box.Axis[1].y * Box.Min.y - Box.Axis[1].z * Box.Min.z;
+		}
+	}
+
+	else
+	{
+		if (Box.Min.y > Box.Max.y)
+		{
+			// ray가 먼저 만나는 평면에서 상수 D
+			D1 = -Box.Axis[1].x * Box.Max.x - Box.Axis[1].y * Box.Max.y - Box.Axis[1].z * Box.Max.z;
+			// ray가 나중에 만나는 평면에서 상수 D
+			D2 = -Box.Axis[1].x * Box.Min.x - Box.Axis[1].y * Box.Min.y - Box.Axis[1].z * Box.Min.z;
+		}
+
+		else
+		{
+			// ray가 먼저 만나는 평면에서 상수 D
+			D1 = -Box.Axis[1].x * Box.Min.x - Box.Axis[1].y * Box.Min.y - Box.Axis[1].z * Box.Min.z;
+			// ray가 나중에 만나는 평면에서 상수 D
+			D2 = -Box.Axis[1].x * Box.Max.x - Box.Axis[1].y * Box.Max.y - Box.Axis[1].z * Box.Max.z;
+		}
+	}
+
+	Denominator = n.Dot(ray.Dir);
+
+	t1 = (-n.Dot(ray.Pos) - D1) / Denominator;
+	t2 = (-n.Dot(ray.Pos) - D2) / Denominator;
+
+	if (t1 > t2)
+		std::swap(t1, t2);
+
+	if (t2 < tMax)
+		tMax = t2;
+
+	if (t1 > tMin)
+		tMin = t1;
+
+	if (tMax < tMin)
+		return false;
+
+
+	n = Box.Axis[2];
+
+	if (ray.Dir.z < 0)
+	{
+		if (Box.Min.z > Box.Max.z)
+		{
+			// ray가 먼저 만나는 평면에서 상수 D
+			D1 = -Box.Axis[2].x * Box.Min.x - Box.Axis[2].y * Box.Min.y - Box.Axis[2].z * Box.Min.z;
+			// ray가 나중에 만나는 평면에서 상수 D
+			D2 = -Box.Axis[2].x * Box.Max.x - Box.Axis[2].y * Box.Max.y - Box.Axis[2].z * Box.Max.z;
+		}
+
+		else
+		{
+			// ray가 먼저 만나는 평면에서 상수 D
+			D1 = -Box.Axis[2].x * Box.Max.x - Box.Axis[2].y * Box.Max.y - Box.Axis[2].z * Box.Max.z;
+			// ray가 나중에 만나는 평면에서 상수 D
+			D2 = -Box.Axis[2].x * Box.Min.x - Box.Axis[2].y * Box.Min.y - Box.Axis[2].z * Box.Min.z;
+		}
+	}
+
+	else
+	{
+		if (Box.Min.z > Box.Max.z)
+		{
+			// ray가 먼저 만나는 평면에서 상수 D
+			D1 = -Box.Axis[2].x * Box.Max.x - Box.Axis[2].y * Box.Max.y - Box.Axis[2].z * Box.Max.z;
+			// ray가 나중에 만나는 평면에서 상수 D
+			D2 = -Box.Axis[2].x * Box.Min.x - Box.Axis[2].y * Box.Min.y - Box.Axis[2].z * Box.Min.z;
+		}
+
+		else
+		{
+			// ray가 먼저 만나는 평면에서 상수 D
+			D1 = -Box.Axis[2].x * Box.Min.x - Box.Axis[2].y * Box.Min.y - Box.Axis[2].z * Box.Min.z;
+			// ray가 나중에 만나는 평면에서 상수 D
+			D2 = -Box.Axis[2].x * Box.Max.x - Box.Axis[2].y * Box.Max.y - Box.Axis[2].z * Box.Max.z;
+		}
+	}
+
+	Denominator = n.Dot(ray.Dir);
+
+	t1 = (-n.Dot(ray.Pos) - D1) / Denominator;
+	t2 = (-n.Dot(ray.Pos) - D2) / Denominator;
+
+	if (t1 > t2)
+		std::swap(t1, t2);
+
+	if (t2 < tMax)
+		tMax = t2;
+
+	if (t1 > tMin)
+		tMin = t1;
+
+	if (tMax < tMin)
+		return false;
+
+
+	return true;
 }
 
 

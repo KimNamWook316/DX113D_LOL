@@ -11,6 +11,8 @@
 #include "Component/Node/SkillQNode.h"
 #include "Component/Node/InputWCheckNode.h"
 #include "Component/Node/SkillWNode.h"
+#include "Component/Node/MoveInputCheckNode.h"
+#include "Component/Node/MovePickingNode.h"
 
 CBehaviorTreeWindow::CBehaviorTreeWindow()  :
     m_Select(false),
@@ -125,7 +127,8 @@ void CBehaviorTreeWindow::Update(float DeltaTime)
             m_vecNodeAction.push_back("InputR");
             m_vecNodeAction.push_back("InputD");
             m_vecNodeAction.push_back("InputF");
-            m_vecNodeAction.push_back("MoveInput");
+            m_vecNodeAction.push_back("Move");
+            m_vecNodeAction.push_back("MovePicking");
         }
 
         else if (m_TypeSelectIndex == 3)
@@ -291,6 +294,9 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
             break;
         case ActionNode::Move:
             break;
+        case ActionNode::MovePicking:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CMovePickingNode>(Name);
+            break;
         }
 
         break;
@@ -317,7 +323,8 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
             break;
         case ConditionNode::InputFCheck:
             break;
-        case ConditionNode::MouseRightInputCheck:
+        case ConditionNode::MoveInputCheckNode:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CMoveInputCheckNode>(Name);
             break;
 
         }
@@ -341,4 +348,5 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
 
 void CBehaviorTreeWindow::OnAddLink(CNode* ParentNode, CNode* ChildNode)
 {
+    int a = 3;
 }

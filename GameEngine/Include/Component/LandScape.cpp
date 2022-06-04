@@ -194,8 +194,6 @@ void CLandScape::CreateLandScape(const std::string& Name, int CountX, int CountZ
 
 	m_Scene->GetNavigation3DManager()->SetNavData(this);
 
-	m_WireFrameState = CRenderManager::GetInst()->FindRenderState("Wireframe");
-
 	m_Create = true;
 }
 
@@ -401,8 +399,6 @@ void CLandScape::CreateLandScape(const std::string& Name,
 	m_MeshName = Name;
 
 	m_Scene->GetNavigation3DManager()->SetNavData(this);
-
-	m_WireFrameState = CRenderManager::GetInst()->FindRenderState("Wireframe");
 
 	m_Create = true;
 }
@@ -686,6 +682,7 @@ bool CLandScape::Init()
 	m_CBuffer->Init();
 
 	m_WireFrameShader = m_Scene->GetResource()->FindShader("Standard3DWireFrameShader");
+	m_WireFrameState = CRenderManager::GetInst()->FindRenderState("Wireframe");
 
 	return true;
 }
@@ -773,6 +770,42 @@ bool CLandScape::Save(FILE* File)
 {
 	CSceneComponent::Save(File);
 
+	int Length = m_MeshName.length();
+	fwrite(&Length, sizeof(int), 1, File);
+	fwrite(m_MeshName.c_str(), sizeof(char), Length, File);
+
+	fwrite(&m_YFactor, sizeof(float), 1, File);
+	fwrite(&m_PrevYFactor, sizeof(float), 1, File);
+	fwrite(&m_DebugRender, sizeof(bool), 1, File);
+
+	fwrite(&m_CountX, sizeof(int), 1, File);
+	fwrite(&m_CountZ, sizeof(int), 1, File);
+
+	fwrite(&m_Min, sizeof(Vector3), 1, File);
+	fwrite(&m_Max, sizeof(Vector3), 1, File);
+
+	size_t Size = m_vecVtx.size();
+	fwrite(&Size, sizeof(size_t), 1, File);
+	for (size_t i = 0; i < Size; ++i)
+	{
+		fwrite(&m_vecVtx[i], sizeof(Vertex3D), 1, File);
+		fwrite(&m_vecPos[i], sizeof(Vector3), 1, File);
+	}
+
+	Size = m_vecIndex.size();
+	fwrite(&Size, sizeof(size_t), 1, File);
+	for (size_t i = 0; i < Size; ++i)
+	{
+		fwrite(&m_vecIndex[i], sizeof(unsigned int), 1, File);
+		fwrite(&m_vecFaceNormal[i], sizeof(Vector3), 1, File);
+	}
+
+	Size = m_vecMaterialSlot.size();
+	for (size_t i = 0; i < Size; ++i)
+	{
+		m_vecMaterialSlot[i]->Save(File);
+	}
+
 	return true;
 }
 
@@ -780,6 +813,71 @@ bool CLandScape::Load(FILE* File)
 {
 	CSceneComponent::Load(File);
 
+	char MeshName[128] = {};
+	int Length = 0;
+	fread(&Length, sizeof(int), 1, File);
+	fread(MeshName, sizeof(char), Length, File);
+	m_MeshName = MeshName;
+
+	fread(&m_YFactor, sizeof(float), 1, File);
+	fread(&m_PrevYFactor, sizeof(float), 1, File);
+	fread(&m_DebugRender, sizeof(bool), 1, File);
+
+	fread(&m_CountX, sizeof(int), 1, File);
+	fread(&m_CountZ, sizeof(int), 1, File);
+
+	fread(&m_Min, sizeof(Vector3), 1, File);
+	fread(&m_Max, sizeof(Vector3), 1, File);
+
+	size_t Size = m_vecVtx.size();
+	fread(&Size, sizeof(size_t), 1, File);
+
+	m_vecVtx.resize(Size);
+	m_vecPos.resize(Size);
+	for (size_t i = 0; i < Size; ++i)
+	{
+		fread(&m_vecVtx[i], sizeof(Vertex3D), 1, File);
+		fread(&m_vecPos[i], sizeof(Vector3), 1, File);
+	}
+
+	Size = m_vecIndex.size();
+	fread(&Size, sizeof(size_t), 1, File);
+
+	m_vecIndex.resize(Size);
+	m_vecFaceNormal.resize(Size);
+	for (size_t i = 0; i < Size; ++i)
+	{
+		fread(&m_vecIndex[i], sizeof(unsigned int), 1, File);
+		fread(&m_vecFaceNormal[i], sizeof(Vector3), 1, File);
+	}
+
+	Size = m_vecMaterialSlot.size();
+	m_vecMaterialSlot.resize(Size);
+	for (size_t i = 0; i < Size; ++i)
+	{
+		m_vecMaterialSlot[i] = new CMaterial;
+		m_vecMaterialSlot[i]->Load(File);
+	}
+
+	ComputeNormal();
+	ComputeTangent();
+
+	// 메쉬를 만든다.
+	m_Scene->GetResource()->CreateMesh(Mesh_Type::Static, m_MeshName,
+		&m_vecVtx[0], sizeof(Vertex3D), (int)m_vecVtx.size(),
+		D3D11_USAGE_DEFAULT, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST,
+		&m_vecIndex[0], sizeof(int), (int)m_vecIndex.size(),
+		D3D11_USAGE_DEFAULT, DXGI_FORMAT_R32_UINT);
+
+	m_Mesh = (CStaticMesh*)m_Scene->GetResource()->FindMesh(m_MeshName);
+
+	if (!m_Mesh)
+	{
+		assert(false);
+		return false;
+	}
+
+	m_Create = true;
 	m_Scene->GetNavigation3DManager()->SetNavData(this);
 
 	return true;

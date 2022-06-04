@@ -7,7 +7,8 @@
 CGameObject::CGameObject() :
 	m_Scene(nullptr),
 	m_Parent(nullptr),
-	m_LifeSpan(0.f)
+	m_LifeSpan(0.f),
+	m_NavAgent(nullptr)
 {
 	SetTypeID<CGameObject>();
 }
@@ -476,6 +477,19 @@ void CGameObject::Move(const Vector3& EndPos)
 			break;
 		}
 	}
+}
+
+void CGameObject::AddPath(const Vector3& TargetPos)
+{
+	if (m_NavAgent)
+	{
+		m_NavAgent->AddTargetPos(TargetPos);
+	}
+}
+
+void CGameObject::SetNavManagerLandScape(CLandScape* LandScape)
+{
+	m_Scene->GetNavigation3DManager()->SetLandScape(LandScape);
 }
 
 void CGameObject::SetUpdateByMat(bool UpdateByMat)
