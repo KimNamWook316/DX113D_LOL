@@ -116,6 +116,10 @@ public :
     // Animation Mesh Widget
 private :
     void DeleteAnimationInstance();
+
+private:
+    void ChangeInstancingLayer();
+
 public:
     template <typename T>
     void CreateAnimationInstance()

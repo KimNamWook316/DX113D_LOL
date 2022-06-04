@@ -136,6 +136,11 @@ void CMaterial::SetOpacity(float Opacity)
 
 	else if (m_Opacity > 1.f)
 		m_Opacity = 1.f;
+
+	if (m_CBuffer)
+	{
+		m_CBuffer->SetOpacity(m_Opacity);
+	}
 }
 
 void CMaterial::AddOpacity(float Opacity)
@@ -147,51 +152,101 @@ void CMaterial::AddOpacity(float Opacity)
 
 	else if (m_Opacity > 1.f)
 		m_Opacity = 1.f;
+
+	if (m_CBuffer)
+	{
+		m_CBuffer->SetOpacity(m_Opacity);
+	}
 }
 
 void CMaterial::SetBaseColor(const Vector4& Color)
 {
 	m_BaseColor = Color;
+
+	if (m_CBuffer)
+	{
+		m_CBuffer->SetBaseColor(m_BaseColor);
+	}
 }
 
 void CMaterial::SetBaseColor(float r, float g, float b, float a)
 {
 	m_BaseColor = Vector4(r, g, b, a);
+
+	if (m_CBuffer)
+	{
+		m_CBuffer->SetBaseColor(m_BaseColor);
+	}
 }
 
 void CMaterial::SetAmbientColor(const Vector4& Color)
 {
 	m_AmbientColor = Color;
+
+	if (m_CBuffer)
+	{
+		m_CBuffer->SetAmbientColor(m_AmbientColor);
+	}
 }
 
 void CMaterial::SetAmbientColor(float r, float g, float b, float a)
 {
 	m_AmbientColor = Vector4(r, g, b, a);
+
+	if (m_CBuffer)
+	{
+		m_CBuffer->SetAmbientColor(m_AmbientColor);
+	}
 }
 
 void CMaterial::SetSpecularColor(const Vector4& Color)
 {
 	m_SpecularColor = Color;
+
+	if (m_CBuffer)
+	{
+		m_CBuffer->SetSpecularColor(m_SpecularColor);
+	}
 }
 
 void CMaterial::SetSpecularColor(float r, float g, float b, float a)
 {
 	m_SpecularColor = Vector4(r, g, b, a);
+
+	if (m_CBuffer)
+	{
+		m_CBuffer->SetSpecularColor(m_SpecularColor);
+	}
 }
 
 void CMaterial::SetEmissiveColor(const Vector4& Color)
 {
 	m_EmissiveColor = Color;
+
+	if (m_CBuffer)
+	{
+		m_CBuffer->SetEmissiveColor(m_EmissiveColor);
+	}
 }
 
 void CMaterial::SetEmissiveColor(float r, float g, float b, float a)
 {
 	m_EmissiveColor = Vector4(r, g, b, a);
+
+	if (m_CBuffer)
+	{
+		m_CBuffer->SetEmissiveColor(m_EmissiveColor);
+	}
 }
 
 void CMaterial::SetSpecularPower(float Power)
 {
 	m_SpecularColor.w = Power;
+
+	if (m_CBuffer)
+	{
+		m_CBuffer->SetSpecularColor(m_SpecularColor);
+	}
 }
 
 void CMaterial::AddTexture(int Register, int ShaderType, const std::string& Name, CTexture* Texture)

@@ -316,6 +316,7 @@ bool CRenderManager::Init()
 	m_Standard3DInstancingShader = CResourceManager::GetInst()->FindShader("Standard3DInstancingShader");
 	m_ShadowMapShader = CResourceManager::GetInst()->FindShader("ShadowMapShader");
 	m_ShadowMapInstancingShader = CResourceManager::GetInst()->FindShader("ShadowMapInstancingShader");
+	m_Transparent3DInstancingShader = CResourceManager::GetInst()->FindShader("TransparentInstancing3DShader");
 
 	m_ShadowCBuffer = new CShadowCBuffer;
 	m_ShadowCBuffer->Init();
@@ -362,15 +363,12 @@ void CRenderManager::Render()
 
 		for (; iter != iterEnd; ++iter)
 		{
-			// (*iter) 는 하나의 Mesh 를 공통으로 사용하는 SceneComponent 집단
-			// 10개 이상이라면, 해당 SceneComponent 들은 이제 Instancing 으로 그려줘야 한다.
 			if ((*iter)->InstancingList.size() >= 10)
 			{
 				RenderLayer* Layer = nullptr;
 
 				size_t	Size = m_RenderLayerList.size();
 
-				// 모든 Render Layer 들을 돌면서, 현재 Scene Component 집단들이 속한 Layer 를 찾아낸다
 				for (size_t i = 0; i < Size; ++i)
 				{
 					if (m_RenderLayerList[i]->Name == (*iter)->LayerName)
@@ -382,12 +380,6 @@ void CRenderManager::Render()
 
 				if (Layer)
 				{
-					// 각 Layer 에는 m_vecInstancing 이 있다.
-					// 하나의 Layer 안에서도, 여러 Set 물체들을 Instancing 으로 그려야 할 필요가 있다.
-					// ex) 사과 30개 집단, 포도 30개 집단
-					// InstancingIndex 은 현재 해당 Layer 내 Instancing 으로 그릴 집단 개수 - 1. 의 값을 지니고 있다
-					// 그런데 만일 새롭게 Instancing 으로 그릴 물체 집단을 추가해야 하는데
-					// 해당 집단. 들의 vector 가 Size 가 없다면, 다시 Size 를 재할당해줘야 한다.
 					if (Layer->m_vecInstancing.size() == Layer->InstancingIndex)
 					{
 						Layer->m_vecInstancing.resize(Layer->InstancingIndex * 2);
@@ -398,24 +390,16 @@ void CRenderManager::Render()
 						}
 					}
 
-					// (*iter)->InstancingList 는, 해당 물체 집단.의 물체 목록. 들이 들어있다.
-					// 실제 Instancing 으로 그려주기 위해서는, 해당 물체들을 하나의 구조화 버퍼에 정보를 모아서
-					// 출력해야 한다.
-					// 즉, 당연히 해당 물체 집단을 담는 구조화 버퍼의 크기는, 당연히 물체 집단 전체 크기보다 크거나 같아야 한다.
-					// 만약, 구조화 버퍼의 크기가 작다면, 기존 크기 * 1.5 배 로 재할당 해줘야 한다.
 					if ((*iter)->InstancingList.size() > Layer->m_vecInstancing[Layer->InstancingIndex]->BufferCount)
 					{
 						int	Count = (int)Layer->m_vecInstancing[Layer->InstancingIndex]->BufferCount * 1.5f;
 
-						// 할당 개수 조정
 						if ((*iter)->InstancingList.size() > Count)
 							Count = (int)(*iter)->InstancingList.size();
 
-						// 기존 구조화 버퍼를 해제한다.
 						SAFE_DELETE(Layer->m_vecInstancing[Layer->InstancingIndex]->Buffer);
 						SAFE_DELETE(Layer->m_vecInstancing[Layer->InstancingIndex]->ShadowBuffer);
 
-						// 구조화 버퍼를 재할당해준다.
 						Layer->m_vecInstancing[Layer->InstancingIndex]->Buffer = new CStructuredBuffer;
 						Layer->m_vecInstancing[Layer->InstancingIndex]->Buffer->Init("InstancingBuffer", sizeof(Instancing3DInfo),
 							Count, 40, true,
@@ -427,19 +411,14 @@ void CRenderManager::Render()
 							(int)Buffer_Shader_Type::Vertex | (int)Buffer_Shader_Type::Pixel);
 					}
 
-					// 이제 해당 물체 집단. 그 안에 있는 물체 하나하나를 순회할 것이다.
 					auto	iter1 = (*iter)->InstancingList.begin();
 					auto	iter1End = (*iter)->InstancingList.end();
 
-					// 이제 RenderLayer 내 , 특정 집단 공간에
-					// 각 물체 하나하나를 Render List 에 넣어줄 것이다.
 					for (; iter1 != iter1End; ++iter1)
 					{
-						// 구조화 버퍼에 정보를 채울 수 있는 함수를 만들어서 정보를 채워준다.
 						Layer->m_vecInstancing[Layer->InstancingIndex]->RenderList.push_back(*iter1);
 					}
 
-					// Mesh 정보 세팅
 					Layer->m_vecInstancing[Layer->InstancingIndex]->Mesh = (*iter)->Mesh;
 
 					if ((*iter)->Mesh->CheckType<CAnimationMesh>())
@@ -1245,7 +1224,7 @@ void CRenderManager::RenderTransparentInstancing()
 
 		if (m_RenderLayerList[2]->m_vecInstancing[i]->Mesh->GetMeshType() == Mesh_Type::Static)
 		{
-			SlotCount = ((CStaticMeshComponent*)m_RenderLayerList[1]->m_vecInstancing[i]->RenderList.back())->GetMaterialSlotCount();
+			SlotCount = ((CStaticMeshComponent*)m_RenderLayerList[2]->m_vecInstancing[i]->RenderList.back())->GetMaterialSlotCount();
 		}
 
 		else if (m_RenderLayerList[2]->m_vecInstancing[i]->Mesh->GetMeshType() == Mesh_Type::Animation)
@@ -1281,7 +1260,7 @@ void CRenderManager::RenderTransparentInstancing()
 
 			m_RenderLayerList[2]->m_vecInstancing[i]->Buffer->SetShader();
 
-			m_RenderLayerList[2]->m_vecInstancing[i]->Mesh->RenderInstancing((int)m_RenderLayerList[1]->m_vecInstancing[i]->RenderList.size(), j);
+			m_RenderLayerList[2]->m_vecInstancing[i]->Mesh->RenderInstancing((int)m_RenderLayerList[2]->m_vecInstancing[i]->RenderList.size(), j);
 
 			m_RenderLayerList[2]->m_vecInstancing[i]->Buffer->ResetShader();
 

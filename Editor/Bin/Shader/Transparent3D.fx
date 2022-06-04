@@ -351,7 +351,6 @@ Vertex3DOutputInstancing TransparentInstancingVS(Vertex3DInstancing input)
     // 뷰 공간의 Binormal을 만들어준다.
 	output.Binormal = normalize(mul(float4(Info.Binormal, 0.f), g_InstancingInfoArray[input.InstanceID].matWV).xyz);
 	output.UV = input.UV;
-	output.InstanceID = input.InstanceID;
 
 	return output;
 }
@@ -388,6 +387,82 @@ float3 ComputeBumpNormalInstancing(float3 Normal, float3 Tangent, float3 Binorma
 	return result;
 }
 
+LightResult ComputeLightInstancing(LightInfo Info, float3 Pos, float3 Normal, float2 UV, uint InstanceID)
+{
+	LightResult result = (LightResult) 0;
+	
+	float3 LightDir = (float3) 0.f;
+	float Attn = 1.f;
+	
+	if (Info.LightType == LightTypeDir)
+	{
+		LightDir = -Info.LightDir;
+		LightDir = normalize(LightDir);
+	}
+	
+	
+	if (Info.LightType == LightTypePoint)
+	{
+		LightDir = Info.LightPos - Pos;
+		LightDir = normalize(LightDir);
+		
+		float Dist = distance(Info.LightPos, Pos);
+		
+		if (Dist > Info.LightDistance)
+			Attn = 0.f;
+		else
+			Attn = 1.f / (Info.LightAtt1 + Info.LightAtt2 * Dist + Info.LightAtt3 * (Dist * Dist));
+	}
+	
+	
+	if (Info.LightType == LightTypeSpot)
+	{
+	}
+	
+	float3 ViewNormal = Normal;
+	
+	// 내적값이 음수가 나오면 0이 반환되고 양수가 나오면 해당 값이 그대로 반환된다.
+	float Intensity = max(0.f, dot(ViewNormal, LightDir));
+    
+	float3 MtrlDif = g_InstancingInfoArray[InstanceID].g_MtrlBaseColor.rgb;
+	float3 MtrlAmb =  g_InstancingInfoArray[InstanceID].g_MtrlAmbientColor.rgb;
+
+	float3 MtrlSpc = g_InstancingInfoArray[InstanceID].g_MtrlSpecularColor.rgb;
+	if (g_MtrlSpecularTex)
+	{
+		MtrlSpc = g_SpecularTexture.Sample(g_BaseSmp, UV).rgb;
+	}
+	MtrlSpc = float4(0.5f, 0.5f, 0.5f, 1.f);
+	
+	float3 MtrlEmv = g_InstancingInfoArray[InstanceID].g_MtrlEmissiveColor.rgb;
+	if (g_MtrlEmissiveTex)
+	{
+		MtrlEmv = g_EmissiveTexture.Sample(g_BaseSmp, UV).rgb;
+	}
+
+
+	result.Dif = Info.LightColor.xyz * MtrlDif * Intensity * Attn;
+	result.Amb = Info.LightColor.xyz * 0.2f * MtrlAmb * Attn;
+	
+	float3 View = -Pos;
+	View = normalize(View);
+	
+	// 퐁 쉐이딩
+	float3 Reflect = 2.f * ViewNormal * dot(ViewNormal, LightDir) - LightDir;
+	Reflect = normalize(Reflect);
+	float SpcIntensity = max(0.f, dot(View, Reflect));
+	
+	// 블린-퐁 쉐이딩
+    //float3 Reflect = normalize(View + LightDir);
+    //float SpcIntensity = max(0.f, dot(ViewNormal, Reflect));
+	
+	result.Spc = Info.LightColor.xyz * MtrlSpc *
+		pow(SpcIntensity, g_InstancingInfoArray[InstanceID].g_MtrlSpecularColor.w) * Attn;
+	
+	result.Emv = MtrlEmv;
+	
+	return result;
+}
 
 PSOutput_Single TransparentInstancingPS(Vertex3DOutputInstancing input)
 {
@@ -409,7 +484,7 @@ PSOutput_Single TransparentInstancingPS(Vertex3DOutputInstancing input)
 	for (int i = 0; i < LightCount; ++i)
 	{
 		Info = g_LightInfoArray[i];
-		LResult = ComputeLight(Info, input.ViewPos, ViewNormal, input.UV);
+		LResult = ComputeLightInstancing(Info, input.ViewPos, ViewNormal, input.UV, input.InstanceID);
 		LAcc.Dif += LResult.Dif;
 		LAcc.Amb += LResult.Amb;
 		LAcc.Spc += LResult.Spc;
@@ -419,7 +494,7 @@ PSOutput_Single TransparentInstancingPS(Vertex3DOutputInstancing input)
 	output.Color.rgb = BaseTextureColor.rgb * (LAcc.Dif.rgb + LAcc.Amb.rgb) +
         LAcc.Spc.rgb + LAcc.Emv.rgb;
 
-	output.Color.a = g_MtrlOpacity;
+	output.Color.a = g_InstancingInfoArray[input.InstanceID].g_MtrlOpacity;
 
 	return output;
 }

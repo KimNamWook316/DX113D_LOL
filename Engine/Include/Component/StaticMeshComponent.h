@@ -89,6 +89,9 @@ public:
     virtual CStaticMeshComponent* Clone();
     virtual void Save(FILE* File);
     virtual void Load(FILE* File);
+
+private:
+    void ChangeInstancingLayer();
 };
 
 
