@@ -245,7 +245,12 @@ void CAnimationManager3D::ReleaseSequence(const std::string& Name)
 
 CAnimationSequence* CAnimationManager3D::CreateBasicAnimationSequence(const std::string& Name)
 {
-	CAnimationSequence* Sequence = new CAnimationSequence;
+	CAnimationSequence* Sequence = FindAnimationSequence(Name);
+
+	if (Sequence)
+		return Sequence;
+
+	Sequence = new CAnimationSequence;
 
 	// Sequence->m_Scene = Scene;
 

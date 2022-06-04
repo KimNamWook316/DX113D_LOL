@@ -119,12 +119,12 @@ void CObjectCreateModal::OnCreateObject()
 	}
 }
 
-void CObjectCreateModal::OnCreateObject(const char* FullPathMultibyte)
+CGameObject* CObjectCreateModal::OnCreateObject(const char* FullPathMultibyte)
 {
 	CScene* CurrentScene = CSceneManager::GetInst()->GetScene();
 
 	if (!CurrentScene)
-		return;
+		return nullptr;
 
 	// 확장자 확인
 	char	Ext[_MAX_EXT] = {};
@@ -138,17 +138,13 @@ void CObjectCreateModal::OnCreateObject(const char* FullPathMultibyte)
 	_strupr_s(Ext);
 
 	if (!strcmp(Ext, ".GOBJ") == 0)
-		return;
+		return nullptr;
 
 
 	CGameObject* LoadedObject = CSceneManager::GetInst()->GetScene()->LoadGameObject<CGameObject>();
 
 	if (!LoadedObject->Load(FullPathMultibyte))
-		return;
-
-	CIMGUITree* NewObjectTree = nullptr;
-
-	CGameObject* NewObject = nullptr;
+		return nullptr;
 
 	char Name[256] = {};
 	strcpy_s(Name, LoadedObject->GetName().c_str());
@@ -171,4 +167,6 @@ void CObjectCreateModal::OnCreateObject(const char* FullPathMultibyte)
 		CSceneComponentHierarchyWindow* ComponentWindow = (CSceneComponentHierarchyWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(SCENECOMPONENT_HIERARCHY);
 		ComponentWindow->GetSceneComponentCreateModal()->OnLoadComponent(LoadedObject);
 	}
+
+	return LoadedObject;
 }

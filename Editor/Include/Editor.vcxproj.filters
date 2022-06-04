@@ -55,6 +55,12 @@
     <Filter Include="03. Object\02. 3D">
       <UniqueIdentifier>{2c1cca55-7696-4a5e-9ed6-9811d19f240b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. Editor\02. Widget\03. Animation">
+      <UniqueIdentifier>{8a8bc87d-6ac3-4540-9175-948680ff83f3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Editor\02. Widget\03. Particle">
+      <UniqueIdentifier>{5a10618e-0203-4162-97ee-b4491396ccdd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EditorManager.cpp">
@@ -164,6 +170,12 @@
     </ClCompile>
     <ClCompile Include="Object\Anim3DObject.cpp">
       <Filter>03. Object\02. 3D</Filter>
+    </ClCompile>
+    <ClCompile Include="CParticlePopUpScreen.cpp">
+      <Filter>02. Editor\02. Widget\03. Particle</Filter>
+    </ClCompile>
+    <ClCompile Include="CAnimationPopUpScreen.cpp">
+      <Filter>02. Editor\02. Widget\03. Animation</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -280,6 +292,12 @@
     </ClInclude>
     <ClInclude Include="Widget\LandScapeWidget.h">
       <Filter>02. Editor\02. Widget\01. Inspector\01. SceneComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="CParticlePopUpScreen.h">
+      <Filter>02. Editor\02. Widget\03. Particle</Filter>
+    </ClInclude>
+    <ClInclude Include="CAnimationPopUpScreen.h">
+      <Filter>02. Editor\02. Widget\03. Animation</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
