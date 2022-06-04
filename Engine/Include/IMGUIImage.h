@@ -10,6 +10,7 @@ public:
 	virtual ~CIMGUIImage();
 
 protected:
+	std::string m_TableTitle;
 	CSharedPtr<class CTexture>	m_Texture;
 	ImVec2			m_ImageStart;
 	ImVec2			m_ImageEnd;
@@ -45,6 +46,10 @@ public:
 	void SetRenderTargetImage(bool Enable)
 	{
 		m_IsRenderTargetImage = Enable;
+	}
+	void SetTableTitle(const std::string& Title)
+	{
+		m_TableTitle = Title;
 	}
 
 public:

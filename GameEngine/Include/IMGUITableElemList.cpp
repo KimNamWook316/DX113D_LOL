@@ -88,7 +88,7 @@ void CIMGUITableElemList::AddData(const std::string& DataName, const std::string
     }
 }
 
-void CIMGUITableElemList::AddData(const std::string& DataName, const char* Val)
+void CIMGUITableElemList::AddData(const std::string& DataName, char* Val)
 {
     int KeyIdx = FindMapKeyIdxInVector(DataName);
 

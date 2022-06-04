@@ -41,7 +41,7 @@ public:
     void AddData(const std::string& DataName, float Val);
     void AddData(const std::string& DataName, bool Val);
     void AddData(const std::string& DataName, const std::string& Val);
-    void AddData(const std::string& DataName, const char* Val);
+    void AddData(const std::string& DataName, char* Val);
     void MakeKey(const std::string& DataName);
     void ClearAll();
     // 기존 Key 값은 남겨두고, Contents 내용들만 갈아낀다.

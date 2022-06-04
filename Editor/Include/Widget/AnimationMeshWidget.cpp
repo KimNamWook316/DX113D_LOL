@@ -65,13 +65,13 @@ bool CAnimationMeshWidget::Init()
     m_CurrentAnimSequence = m_RootTree->AddWidget<CIMGUITextInput>("Current Sqc", 90.f, 30.f);
 
     // Load & Save
-    m_LoadAnimInstanceBtn = m_RootTree->AddWidget<CIMGUIButton>("Load", 60.f, 20.f);
+    m_LoadAnimInstanceBtn = m_RootTree->AddWidget<CIMGUIButton>("Load Inst", 90.f, 20.f);
 	m_LoadAnimInstanceBtn->SetClickCallback<CAnimationMeshWidget>(this, &CAnimationMeshWidget::OnLoadAnimationInstance);
 
-    CIMGUISameLine* Line = m_RootTree->AddWidget<CIMGUISameLine>("Line");
-    Line->SetOffsetX(95.f);
+    // CIMGUISameLine* Line = m_RootTree->AddWidget<CIMGUISameLine>("Line");
+    // Line->SetOffsetX(125.f);
 
-    m_SaveAnimInstanceBtn = m_RootTree->AddWidget<CIMGUIButton>("Save", 60.f, 20.f);
+    // m_SaveAnimInstanceBtn = m_RootTree->AddWidget<CIMGUIButton>("Save", 60.f, 20.f);
 
     // Text Input
     // m_ReNameSequenceBtn = m_RootTree->AddWidget<CIMGUIButton>("Edit", 30.f, 20.f);
@@ -139,7 +139,7 @@ void CAnimationMeshWidget::OnLoadAnimationInstance()
 	OpenFile.lpstrFilter = TEXT("All Files\0*.*\0.Animation File\0*.anim");
 	OpenFile.lpstrFile = FilePath;
 	OpenFile.nMaxFile = MAX_PATH;
-	OpenFile.lpstrInitialDir = CPathManager::GetInst()->FindPath(RESOURCE_ANIMATION_PATH)->Path;
+	OpenFile.lpstrInitialDir = CPathManager::GetInst()->FindPath(MESH_PATH)->Path;
 
 	if (GetOpenFileName(&OpenFile) != 0)
 	{
@@ -235,7 +235,9 @@ void CAnimationMeshWidget::OnRefreshAnimationInfo()
 		CAnimationSequenceData* Sequence = iter->second;
 
 		m_AnimInfoTable->AddData(AnimationClipInfoKeys::AnimSeqKey, iter->first);
-		m_AnimInfoTable->AddData(AnimationClipInfoKeys::AnimSeqFileName, Sequence->GetAnimationSequence()->GetSequenceFileNameMultibyte());
+		
+		const char* FileName = Sequence->GetAnimationSequence()->GetSequenceFileNameMultibyte();
+		m_AnimInfoTable->AddData(AnimationClipInfoKeys::AnimSeqFileName, FileName);
 	}
 	
 }

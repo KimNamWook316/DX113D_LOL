@@ -97,7 +97,7 @@ bool CIMGUIImage::Init()
 
 void CIMGUIImage::Render()
 {
-	if (ImGui::CollapsingHeader("See Rendered Image"))
+	if (ImGui::CollapsingHeader(m_TableTitle.c_str()))
 	{
 		if (m_Texture)
 		{
