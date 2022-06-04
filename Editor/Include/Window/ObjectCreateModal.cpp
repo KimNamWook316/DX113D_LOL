@@ -126,6 +126,21 @@ void CObjectCreateModal::OnCreateObject(const char* FullPathMultibyte)
 	if (!CurrentScene)
 		return;
 
+	// 확장자 확인
+	char	Ext[_MAX_EXT] = {};
+	char FileName[MAX_PATH] = {};
+	char FilePathMultibyte[MAX_PATH] = {};
+
+	strcpy_s(FilePathMultibyte, FullPathMultibyte);
+
+	_splitpath_s(FilePathMultibyte, nullptr, 0, nullptr, 0, FileName, MAX_PATH, Ext, _MAX_EXT);
+
+	_strupr_s(Ext);
+
+	if (!strcmp(Ext, ".GOBJ") == 0)
+		return;
+
+
 	CGameObject* LoadedObject = CSceneManager::GetInst()->GetScene()->LoadGameObject<CGameObject>();
 
 	if (!LoadedObject->Load(FullPathMultibyte))

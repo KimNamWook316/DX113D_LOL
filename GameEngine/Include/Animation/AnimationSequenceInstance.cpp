@@ -10,6 +10,7 @@
 #include "../Resource/Animation/Skeleton.h"
 #include "../Resource/Shader/StructuredBuffer.h"
 #include "../Device.h"
+#include "../PathManager.h"
 
 CAnimationSequenceInstance::CAnimationSequenceInstance() :
 	m_Scene(nullptr),
@@ -195,7 +196,7 @@ const std::string& CAnimationSequenceInstance::GetCurrentAnimationKeyName()
 	if (!m_CurrentAnimation)
 	{
 		assert(false);
-		return nullptr;
+		return "";
 	}
 
 	// TODO: 여기에 return 문을 삽입합니다.
@@ -451,16 +452,22 @@ void CAnimationSequenceInstance::Start()
 		m_AnimationUpdateShader = (CComputeShader*)CResourceManager::GetInst()->FindShader("AnimationUpdateShader");
 	}
 
+	SAFE_DELETE(m_AnimationUpdateCBuffer);
+
 	m_AnimationUpdateCBuffer = new CAnimationUpdateConstantBuffer;
 
 	m_AnimationUpdateCBuffer->Init();
 
 	m_vecBoneMatrix.resize(m_Skeleton->GetBoneCount());
 
+	SAFE_DELETE(m_OutputBuffer);
+
 	m_OutputBuffer = new CStructuredBuffer;
 
 	m_OutputBuffer->Init("OutputBone", sizeof(Matrix),
 		(unsigned int)m_Skeleton->GetBoneCount(), 0);
+
+	SAFE_DELETE(m_BoneBuffer);
 
 	m_BoneBuffer = new CStructuredBuffer;
 
@@ -751,6 +758,10 @@ bool CAnimationSequenceInstance::SaveAnimationFullPath(const char* FullPath)
 	fwrite(&m_TypeID, sizeof(size_t), 1, pFile);
 	fwrite(&m_PlayAnimation, sizeof(bool), 1, pFile);
 
+	int FileNameLength = (int)strlen(m_SavedFileName);
+	fwrite(&FileNameLength, sizeof(int), 1, pFile);
+	fwrite(m_SavedFileName, sizeof(char), FileNameLength, pFile);
+
 	int Length = (int)m_AnimInstanceName.length();
 	fwrite(&Length, sizeof(int), 1, pFile);
 	fwrite(m_AnimInstanceName.c_str(), sizeof(char), Length, pFile);
@@ -797,10 +808,17 @@ bool CAnimationSequenceInstance::LoadAnimationFullPath(const char* FullPath)
 	fopen_s(&pFile, FullPath, "rb");
 
 	if (!pFile)
+	{
+		MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("No .anim File Found"), NULL, MB_OK);
 		return false;
+	}
 
 	fread(&m_TypeID, sizeof(size_t), 1, pFile);
 	fread(&m_PlayAnimation, sizeof(bool), 1, pFile);
+
+	int FileNameLength = 0;
+	fread(&FileNameLength, sizeof(int), 1, pFile);
+	fread(m_SavedFileName, sizeof(char), FileNameLength, pFile);
 
 	int Length = 0;
 	fread(&Length, sizeof(int), 1, pFile);
@@ -879,6 +897,27 @@ bool CAnimationSequenceInstance::LoadAnimationFullPath(const char* FullPath)
 	}
 
 	fclose(pFile);
+
+	return true;
+}
+
+bool CAnimationSequenceInstance::LoadAnimation(const char* FileName)
+{
+	const PathInfo* Path = CPathManager::GetInst()->FindPath(RESOURCE_ANIMATION_PATH);
+
+	char FileLoadFullPath[MAX_PATH] = {};
+
+	if (Path)
+		strcpy_s(FileLoadFullPath, Path->PathMultibyte);
+
+	strcat_s(FileLoadFullPath, FileName);
+
+	// 확장자 .anim File 도 붙여준다
+	char EXT[MAX_PATH] = ".anim";
+	strcat_s(FileLoadFullPath, EXT);
+
+	if (!LoadAnimationFullPath(FileLoadFullPath))
+		return false;
 
 	return true;
 }

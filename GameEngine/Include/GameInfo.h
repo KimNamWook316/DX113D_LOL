@@ -65,7 +65,8 @@
 #define	EXCEL_PATH		"Excel"
 #define	OBJECT_PATH		"Object"
 
-// Path
+// Inclue Path
+#define	RESOURCE_ROOT_PATH		"IncludeRoot"
 #define	RESOURCE_SHADER_PATH		"ResourceShader"
 #define	RESOURCE_TEXTURE_PATH		"ResourceTexture"
 #define	RESOURCE_FONT_PATH			"ResourceFont"

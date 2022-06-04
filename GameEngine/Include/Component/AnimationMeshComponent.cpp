@@ -41,59 +41,7 @@ CAnimationMeshComponent::CAnimationMeshComponent(const CAnimationMeshComponent& 
 
 CAnimationMeshComponent::~CAnimationMeshComponent()
 {
-	auto	iter = m_InstancingCheckList.begin();
-	auto	iterEnd = m_InstancingCheckList.end();
-
-	for (; iter != iterEnd; ++iter)
-	{
-		if ((*iter)->Mesh == m_Mesh)
-		{
-			auto	iter1 = (*iter)->InstancingList.begin();
-			auto	iter1End = (*iter)->InstancingList.end();
-
-			for (; iter1 != iter1End; ++iter1)
-			{
-				if (*iter1 == this)
-				{
-					(*iter)->InstancingList.erase(iter1);
-
-					if ((*iter)->InstancingList.size() < 10)
-					{
-						auto	iter2 = (*iter)->InstancingList.begin();
-						auto	iter2End = (*iter)->InstancingList.end();
-
-						for (; iter2 != iter2End; ++iter2)
-						{
-							((CAnimationMeshComponent*)(*iter2))->SetInstanceID(0);
-							(*iter2)->SetInstancing(false);
-						}
-					}
-					else
-					{
-						auto	iter2 = (*iter)->InstancingList.begin();
-						auto	iter2End = (*iter)->InstancingList.end();
-
-						int ID = 0;
-
-						for (; iter2 != iter2End; ++iter2, ++ID)
-						{
-							((CAnimationMeshComponent*)(*iter2))->SetInstanceID(ID);
-							(*iter2)->SetInstancing(true);
-						}
-					}
-					break;
-				}
-			}
-
-			if ((*iter)->InstancingList.empty())
-			{
-				SAFE_DELETE((*iter));
-				m_InstancingCheckList.erase(iter);
-			}
-
-			break;
-		}
-	}
+	DeleteInstancingCheckList();
 
 	SAFE_DELETE(m_Animation);
 }
@@ -108,6 +56,7 @@ void CAnimationMeshComponent::SetMesh(const std::string& Name)
 	// Editor Save, Load 과정에서 필요한 부분을 세팅
 	m_Mesh->SetName(Name);
 
+	// SAFE_DELETE(m_Skeleton);
 	m_Skeleton = m_Mesh->GetSkeleton()->Clone();
 
 	if (m_Animation)
@@ -419,6 +368,74 @@ void CAnimationMeshComponent::SetTexture(int MaterialIndex, int Index, int Regis
 	m_vecMaterialSlot[MaterialIndex]->SetTexture(Index, Register, ShaderType, Name, vecFileName, PathName);
 }
 
+void CAnimationMeshComponent::LoadAnimationMeshInstanceFromFile(const char* FileName)
+{
+
+}
+
+bool CAnimationMeshComponent::DeleteInstancingCheckList()
+{
+	bool Deleted = false;
+
+	auto	iter = m_InstancingCheckList.begin();
+	auto	iterEnd = m_InstancingCheckList.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		if ((*iter)->Mesh == m_Mesh)
+		{
+			auto	iter1 = (*iter)->InstancingList.begin();
+			auto	iter1End = (*iter)->InstancingList.end();
+
+			for (; iter1 != iter1End; ++iter1)
+			{
+				if (*iter1 == this)
+				{
+					Deleted = true;
+
+					(*iter)->InstancingList.erase(iter1);
+
+					if ((*iter)->InstancingList.size() < 10)
+					{
+						auto	iter2 = (*iter)->InstancingList.begin();
+						auto	iter2End = (*iter)->InstancingList.end();
+
+						for (; iter2 != iter2End; ++iter2)
+						{
+							((CAnimationMeshComponent*)(*iter2))->SetInstanceID(0);
+							(*iter2)->SetInstancing(false);
+						}
+					}
+					else
+					{
+						auto	iter2 = (*iter)->InstancingList.begin();
+						auto	iter2End = (*iter)->InstancingList.end();
+
+						int ID = 0;
+
+						for (; iter2 != iter2End; ++iter2, ++ID)
+						{
+							((CAnimationMeshComponent*)(*iter2))->SetInstanceID(ID);
+							(*iter2)->SetInstancing(true);
+						}
+					}
+					break;
+				}
+			}
+
+			if ((*iter)->InstancingList.empty())
+			{
+				SAFE_DELETE((*iter));
+				m_InstancingCheckList.erase(iter);
+			}
+
+			break;
+		}
+	}
+
+	return Deleted;
+}
+
 void CAnimationMeshComponent::Start()
 {
 	CSceneComponent::Start();
@@ -526,6 +543,16 @@ bool CAnimationMeshComponent::Save(FILE* File)
 	fwrite(&Length, sizeof(int), 1, File);
 	fwrite(MeshName.c_str(), sizeof(char), Length, File);
 
+	// Animation Sqc 관련 정보 Loading 함수
+	size_t	 SeqFileNameLength = strlen(m_Animation->GetCurrentAnimation()->GetAnimationSequence()->GetFileName());
+	fwrite(&SeqFileNameLength, sizeof(size_t), 1, File);
+	fwrite(m_Animation->GetCurrentAnimation()->GetAnimationSequence()->GetFileName(), sizeof(char), SeqFileNameLength, File);
+
+	// Animation File Name 이용해서 anim File 을 Load 할 것이다.
+	size_t	 AnimSavedFileNameLength = strlen(m_Animation->GetSavedFileName());
+	fwrite(&AnimSavedFileNameLength, sizeof(size_t), 1, File);
+	fwrite(m_Animation->GetSavedFileName(), sizeof(char), AnimSavedFileNameLength, File);
+
 	int	MaterialSlotCount = (int)m_vecMaterialSlot.size();
 
 	fwrite(&MaterialSlotCount, sizeof(int), 1, File);
@@ -549,14 +576,36 @@ bool CAnimationMeshComponent::Load(FILE* File)
 	fread(&Length, sizeof(int), 1, File);
 	fread(MeshName, sizeof(char), Length, File);
 
+	size_t	 SeqFileNameLength;
+	fread(&SeqFileNameLength, sizeof(size_t), 1, File);
+
+	char SeqFileName[MAX_PATH] = {};
+	fread(SeqFileName, sizeof(char), SeqFileNameLength, File);
+
+	// Animation File Name 이용해서 anim File 을 Load 할 것이다.
+	char AnimSavedFileName[MAX_PATH] = {};
+	size_t	 AnimSavedFileNameLength = 0;
+	fread(&AnimSavedFileNameLength, sizeof(size_t), 1, File);
+	fread(AnimSavedFileName,  sizeof(char), AnimSavedFileNameLength, File);
+
 	// 여기서 혹시 모르니 해당 Mesh , Bne, Texture File 들을 세팅해둔다
 	// Mesh Name 과 실제 File Name 은 일치하는 상태이다.
-	CResourceManager::GetInst()->LoadMeshTextureBoneInfo(MeshName);
-
-	if ((CAnimationMesh*)m_Scene->GetResource()->FindMesh(MeshName))
+	const std::pair<bool, std::string>& result = CResourceManager::GetInst()->LoadMeshTextureBoneInfo(SeqFileName);
+	if (!result.first)
 		return false;
 
-	SetMesh(MeshName);
+	// Animation Instance File 로 부터 세팅
+	LoadAnimationInstance<CAnimationSequenceInstance>();
+
+	// RESOURCE_ANIMATION_PATH 를 통해서 .anim File Load
+	if (!m_Animation->LoadAnimation(AnimSavedFileName))
+		return false;
+
+	// result.second 에는 위에서 저장해준 Mesh 이름이 들어있다.
+	SetMesh(result.second);
+
+	// Animation 에 필요한 정보 Start 함수를 호출하여 세팅
+	m_Animation->Start();
 
 	int	MaterialSlotCount = 0;
 

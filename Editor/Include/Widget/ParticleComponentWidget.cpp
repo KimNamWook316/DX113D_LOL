@@ -359,8 +359,8 @@ void CParticleComponentWidget::OnSetParticleMaterialSetting(CSceneComponent* Com
     // Particle 세팅
     dynamic_cast<CParticleComponent*>(Com)->SetParticle("BasicParticle");
     dynamic_cast<CParticleComponent*>(Com)->SetBillBoardEffect(true);
-    dynamic_cast<CParticleComponent*>(Com)->SetSpawnTime(0.05);
-    m_SpawnTimeMaxEdit->SetVal(0.05);
+    dynamic_cast<CParticleComponent*>(Com)->SetSpawnTime(0.05f);
+    m_SpawnTimeMaxEdit->SetVal(0.05f);
 
     // 기본 Z Pos 세팅
     Com->SetWorldPos(Com->GetWorldPos().x, Com->GetWorldPos().y, 10.f);

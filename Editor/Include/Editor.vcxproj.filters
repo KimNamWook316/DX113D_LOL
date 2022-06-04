@@ -165,9 +165,6 @@
     <ClCompile Include="Object\Anim3DObject.cpp">
       <Filter>03. Object\02. 3D</Filter>
     </ClCompile>
-    <ClCompile Include="Object\Sample3DParticle.cpp">
-      <Filter>03. Object\02. 3D</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EditorManager.h">
@@ -279,9 +276,6 @@
       <Filter>03. Object\02. 3D</Filter>
     </ClInclude>
     <ClInclude Include="Object\Anim3DObject.h">
-      <Filter>03. Object\02. 3D</Filter>
-    </ClInclude>
-    <ClInclude Include="Object\Sample3DParticle.h">
       <Filter>03. Object\02. 3D</Filter>
     </ClInclude>
     <ClInclude Include="Widget\LandScapeWidget.h">
