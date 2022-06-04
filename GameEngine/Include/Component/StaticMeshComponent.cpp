@@ -688,7 +688,7 @@ void CStaticMeshComponent::ChangeInstancingLayer()
 	bool AddOnNewLayer = false;
 	bool DeleteOnOldLayer = false;
 
-	for (; iter != iterEnd; ++iter)
+	for (; iter != iterEnd;)
 	{
 		if ((*iter)->Mesh == m_Mesh)
 		{
@@ -762,6 +762,13 @@ void CStaticMeshComponent::ChangeInstancingLayer()
 				}
 
 				DeleteOnOldLayer = true;
+
+				if ((*iter)->InstancingList.empty())
+				{
+					SAFE_DELETE(*iter);
+					iter = m_InstancingCheckList.erase(iter);
+					continue;
+				}
 			}
 		}
 
@@ -770,6 +777,8 @@ void CStaticMeshComponent::ChangeInstancingLayer()
 		{
 			break;
 		}
+
+		++iter;
 	}
 
 	// 이 컴포넌트가 속한 레이어에 처음 추가되는 경우
