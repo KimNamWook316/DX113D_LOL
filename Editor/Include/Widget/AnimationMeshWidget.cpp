@@ -139,7 +139,7 @@ void CAnimationMeshWidget::OnLoadAnimationInstance()
 	OpenFile.lpstrFilter = TEXT("All Files\0*.*\0.Animation File\0*.anim");
 	OpenFile.lpstrFile = FilePath;
 	OpenFile.nMaxFile = MAX_PATH;
-	OpenFile.lpstrInitialDir = CPathManager::GetInst()->FindPath(MESH_PATH)->Path;
+	OpenFile.lpstrInitialDir = CPathManager::GetInst()->FindPath(ANIMATION_PATH)->Path;
 
 	if (GetOpenFileName(&OpenFile) != 0)
 	{

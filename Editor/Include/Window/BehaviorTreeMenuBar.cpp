@@ -194,7 +194,7 @@ void CBehaviorTreeMenuBar::OnSaveGameObject(CGameObject* Object)
 	}
 }
 
-CGameObject* CBehaviorTreeMenuBar::OnLoadGameObject()
+void CBehaviorTreeMenuBar::OnLoadGameObject()
 {
 	TCHAR LoadFilePath[MAX_PATH] = {};
 	
@@ -212,6 +212,12 @@ CGameObject* CBehaviorTreeMenuBar::OnLoadGameObject()
 		int ConvertLength = WideCharToMultiByte(CP_ACP, 0, LoadFilePath, -1, 0, 0, 0, 0);
 		WideCharToMultiByte(CP_ACP, 0, LoadFilePath, -1, FilePathMultibyte, ConvertLength, 0, 0);
 
-		return CEditorManager::GetInst()->GetObjectHierarchyWindow()->GetObjectCreateModal()->OnCreateObject(FilePathMultibyte);
+		CGameObject* LoadedObject = CEditorManager::GetInst()->GetObjectHierarchyWindow()->GetObjectCreateModal()->OnCreateObject(FilePathMultibyte);
+
+		if (!LoadedObject)
+			return;
+
+		// Object Hierarchy GameObject 목록에 추가한다.
+		CEditorManager::GetInst()->GetObjectComponentWindow()->AddObjectComponent(LoadedObject->GetName());
 	}
 }

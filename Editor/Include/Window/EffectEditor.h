@@ -10,6 +10,7 @@ public:
     CEffectEditor();
     ~CEffectEditor();
 private:
+    class CIMGUIButton* m_OpenPopUpScreenBtn;
 private:
     class CIMGUIInputFloat* m_SpawnTimeMaxEdit;
     // class CIMGUIButton* m_RestartButton;
@@ -65,6 +66,7 @@ public :
     virtual bool Init() override;
 private :
     void SetComInfos();
+    void OnCreateParticlePopUp();
 private:
     void OnSaveParticleObjectButton();
     void OnLoadParticleObjectButton();

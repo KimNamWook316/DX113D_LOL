@@ -90,6 +90,7 @@ void CAnimationSequenceData::Load(FILE* File)
 		TempSequence->Load(File);
 		SAFE_DELETE(TempSequence);
 	}
+
 }
 
 void CAnimationSequenceData::SetPlayTime(float Time)
