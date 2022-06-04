@@ -264,6 +264,7 @@ enum class ObjectComponent3DType
 {
 	PaperBurnComponent,
 	StateComponent,
+	NavAgent,
 	Max
 };
 

@@ -60,6 +60,8 @@ void CObjectComponentWindow::OnCreateComponentPopUp()
 
 		if (State == PopUpModalState::Closed)
 			m_ComponentCreateModal->SetPopUpModalState(PopUpModalState::Open);
+
+		m_ComponentCreateModal->SetRender(true);
 	}
 }
 

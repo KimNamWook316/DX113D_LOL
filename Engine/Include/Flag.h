@@ -264,6 +264,7 @@ enum class ObjectComponent3DType
 {
 	PaperBurnComponent,
 	StateComponent,
+	NavAgent,
 	Max
 };
 
@@ -304,7 +305,7 @@ enum ConditionNode
 	InputRCheck,
 	InputDCheck,
 	InputFCheck,
-	MouseRightInputCheck,
+	MoveInputCheckNode,
 };
 
 enum ActionNode
@@ -316,4 +317,5 @@ enum ActionNode
 	SpellD,
 	SpellF,
 	Move,
+	MovePicking
 };

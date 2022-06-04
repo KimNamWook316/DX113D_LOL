@@ -31,6 +31,11 @@ public:
 		return m_BufferData.ApplyRandom;
 	}
 
+	void SetApplyRandom(bool Enable)
+	{
+		m_BufferData.ApplyRandom = Enable == 1 ? true : false;
+	}
+
 	const Vector3& GetStartMax()	const
 	{
 		return m_BufferData.StartMax;
