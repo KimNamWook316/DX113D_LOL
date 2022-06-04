@@ -194,7 +194,7 @@ void CBehaviorTreeMenuBar::OnSaveGameObject(CGameObject* Object)
 	}
 }
 
-void CBehaviorTreeMenuBar::OnLoadGameObject()
+CGameObject* CBehaviorTreeMenuBar::OnLoadGameObject()
 {
 	TCHAR LoadFilePath[MAX_PATH] = {};
 	
@@ -212,6 +212,6 @@ void CBehaviorTreeMenuBar::OnLoadGameObject()
 		int ConvertLength = WideCharToMultiByte(CP_ACP, 0, LoadFilePath, -1, 0, 0, 0, 0);
 		WideCharToMultiByte(CP_ACP, 0, LoadFilePath, -1, FilePathMultibyte, ConvertLength, 0, 0);
 
-		CEditorManager::GetInst()->GetObjectHierarchyWindow()->GetObjectCreateModal()->OnCreateObject(FilePathMultibyte);
+		return CEditorManager::GetInst()->GetObjectHierarchyWindow()->GetObjectCreateModal()->OnCreateObject(FilePathMultibyte);
 	}
 }

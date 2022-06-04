@@ -77,7 +77,9 @@ void CBehaviorTreeWindow::Update(float DeltaTime)
     {
         fit = GraphEditor::FitOnScreen::Fit_AllNodes;
     }
+
     ImGui::SameLine();
+
     if (ImGui::Button("Fit selected nodes"))
     {
         fit = GraphEditor::FitOnScreen::Fit_SelectedNodes;
@@ -349,6 +351,7 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
     }
 
     CNode* Node = m_StateComponent->GetBehaviorTree()->FindNode(Name);
+    Node->SetOwner(m_StateComponent->GetBehaviorTree());
 
     m_Delegate.AddNode(NodeName, idx, 0.f, 0.f, false, Node);
 

@@ -214,6 +214,11 @@ public:
 		m_BufferData.Is2D = Is2D ? 1 : 0;
 	}
 
+	void SetApplyRandom(bool Enable)
+	{
+		m_BufferData.ApplyRandom = (int)Enable;
+	}
+
 	void SetMoveAngle(const Vector3& MoveAngle)
 	{
 		m_BufferData.MoveAngle = MoveAngle;

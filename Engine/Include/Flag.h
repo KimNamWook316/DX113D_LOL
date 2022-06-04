@@ -305,7 +305,6 @@ enum ConditionNode
 	InputRCheck,
 	InputDCheck,
 	InputFCheck,
-	MouseRightInputCheck,
 	MoveInputCheckNode
 };
 
