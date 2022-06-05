@@ -32,6 +32,7 @@ protected:
 	Vector3	m_BlendScale;
 	Vector3	m_BlendPos;
 	Vector4	m_BlendRot;
+
 	float	m_GlobalTime;
 	float	m_SequenceProgress;
 	float	m_ChangeTimeAcc;

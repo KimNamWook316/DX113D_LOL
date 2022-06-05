@@ -567,7 +567,7 @@ bool CAnimationEditor::LoadElementsForSqcLoading(const char* SqcFileName)
 	}
 
 	// Mesh 에 해당 Skeleton 세팅
-	CSceneManager::GetInst()->GetScene()->GetResource()->SetMeshSkeleton(LoadedMeshName, LoadedBneName);
+	CSceneManager::GetInst()->GetScene()->GetResource()->SetMeshSkeleton(LoadedMeshName, LoadedBneName); //
 
 
 	return true;
@@ -687,7 +687,7 @@ void CAnimationEditor::OnAddAnimationSequence()
 	OpenFile.nMaxFile = MAX_PATH;
 	OpenFile.hwndOwner = CEngine::GetInst()->GetWindowHandle();
 	OpenFile.lpstrFilter = TEXT("모든파일\0*.*\0*.Scene File\0*.scn");
-	OpenFile.lpstrInitialDir = CPathManager::GetInst()->FindPath(ANIMATION_PATH)->Path;
+	OpenFile.lpstrInitialDir = CPathManager::GetInst()->FindPath(MESH_PATH)->Path;
 
 	if (GetOpenFileName(&OpenFile) != 0)
 	{
@@ -708,9 +708,15 @@ void CAnimationEditor::OnAddAnimationSequence()
 
 		if (!m_Animation)
 		{
-			// if (!LoadElementsForSqcLoading(SqcFileName))
+			// f (!LoadElementsForSqcLoading(SqcFileName))
 			// 	return;
-			if (!CResourceManager::GetInst()->LoadMeshTextureBoneInfo(SqcFileName).first)
+
+			std::pair<bool, std::string> LoadResult = CResourceManager::GetInst()->LoadMeshTextureBoneInfo(SqcFileName);
+
+			if (!LoadResult.first)
+				return;
+
+			m_3DTestObjectMeshName = LoadResult.second;
 
 			// Create Object
 			OnCreateSample3DObject();
@@ -719,7 +725,8 @@ void CAnimationEditor::OnAddAnimationSequence()
 			SetMeshMaterialReadyForAnimation();
 		}
 
-		// 이름 중복 X --> Key 이름 중복
+		// 이름 중복 X --> Key 이름 중복되는 Sequence 는 추가 X 
+		// ex) AnimationInstance --> ("ZedIdle", "Idle"); --> "ZedIdle" 이라는 Key 를 지닌 또 다른 Sqc 파일을 로드하면 안된다.
 		if (m_Animation->FindAnimation(m_NewAnimSeqDataKeyName->GetTextUTF8()))
 			return;
 

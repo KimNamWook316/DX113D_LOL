@@ -644,6 +644,8 @@ bool CMesh::LoadMesh(FILE* File)
 
 	fread(&MaterialCount, sizeof(int), 1, File);
 
+	bool CheckTextureExist = true;
+
 	for (int i = 0; i < MaterialCount; ++i)
 	{
 		CMaterial* Material = new CMaterial;
@@ -653,13 +655,13 @@ bool CMesh::LoadMesh(FILE* File)
 		Material->Load(File);
 
 		// 혹시나 Texture 정보를 제대로 Load 하지 못한 경우를 대비해야 한다.
-		CheckLoadedMaterialTexture(Material);
+		CheckTextureExist = CheckLoadedMaterialTexture(Material);
 	}
 
-	return true;
+	return CheckTextureExist;
 }
 
-void CMesh::CheckLoadedMaterialTexture(CMaterial* Material)
+bool CMesh::CheckLoadedMaterialTexture(CMaterial* Material)
 {
 	const std::vector<MaterialTextureInfo>& TextureInfo = Material->GetTextureInfo();
 
@@ -700,18 +702,30 @@ void CMesh::CheckLoadedMaterialTexture(CMaterial* Material)
 			// const char* FBMExt = "fbm";
 			const char* FBMExt = ".fbm";
 
-			strcat_s(MeshFileName, FBMExt);
+			char TextureFilePath[MAX_PATH] = {};
 
-			TCHAR TCHARMeshFileName[MAX_PATH] = {};
+			strcpy_s(TextureFilePath, MeshFileName);
+			strcat_s(TextureFilePath, FBMExt);
 
-			int ConvertLength = MultiByteToWideChar(CP_ACP, 0, MeshFileName, -1, 0, 0);
-			MultiByteToWideChar(CP_ACP, 0, MeshFileName, -1, TCHARMeshFileName, ConvertLength);
+			const char* FolderDash = "\\";
+			strcat_s(TextureFilePath, FolderDash);
+
+			// File 이름 붙이기
+			strcat_s(TextureFilePath, TextureInfo[i].Name.c_str());
+
+			// 확장자 이름 붙이기
+
+
+			TCHAR TCHARTexturePath[MAX_PATH] = {};
+
+			int ConvertLength = MultiByteToWideChar(CP_ACP, 0, TextureFilePath, -1, 0, 0);
+			MultiByteToWideChar(CP_ACP, 0, TextureFilePath, -1, TCHARTexturePath, ConvertLength);
 
 			// Path 정보도 추가 세팅해준다.
-			if (Material->m_Scene)
-				m_Scene->GetResource()->LoadTexture(TextureInfo[i].Name, TCHARMeshFileName, MESH_PATH);
+			if (m_Scene)
+				m_Scene->GetResource()->LoadTexture(TextureInfo[i].Name, TCHARTexturePath, MESH_PATH);
 			else
-				CResourceManager::GetInst()->LoadTexture(TextureInfo[i].Name, TCHARMeshFileName, MESH_PATH);
+				CResourceManager::GetInst()->LoadTexture(TextureInfo[i].Name, TCHARTexturePath, MESH_PATH);
 
 			CTexture* Texture = nullptr;
 
@@ -727,8 +741,24 @@ void CMesh::CheckLoadedMaterialTexture(CMaterial* Material)
 			}
 
 			Material->SetTextureInfoResource((int)i, Texture);
+
+			if (!Texture)
+			{
+				TCHAR FulllErrorMessage[MAX_PATH] = {};
+				TCHAR ErrorMessage[MAX_PATH] = TEXT("Texture Not Found While Loading Material (Mesh.cpp), Try Converting FBX Again");
+
+				lstrcpy(FulllErrorMessage, TCHARTexturePath);
+				lstrcat(FulllErrorMessage, ErrorMessage);
+
+				MessageBox(CEngine::GetInst()->GetWindowHandle(), FulllErrorMessage, NULL, MB_OK);
+				assert(false);
+
+				return false;
+			}
 		}
 	}
+
+	return true;
 }
 
 bool CMesh::ConvertFBXReleaseSequence(CFBXLoader* Loader, const char* FullPath)

@@ -200,6 +200,10 @@ std::pair<bool, std::string> CResourceManager::LoadMeshTextureBoneInfo(const cha
 	if (Path)
 		strcpy_s(FullPath, Path->PathMultibyte);
 
+	TCHAR TCHARPureFileName[MAX_PATH] = {};
+	int PureNameConvertLength = MultiByteToWideChar(CP_ACP, 0, ConstMeshFileName, -1, 0, 0);
+	MultiByteToWideChar(CP_ACP, 0, ConstMeshFileName, -1, TCHARPureFileName, PureNameConvertLength);
+
 	char MeshFileName[MAX_PATH] = {};
 	TCHAR MeshTCHARFileName[MAX_PATH] = {};
 
@@ -219,7 +223,12 @@ std::pair<bool, std::string> CResourceManager::LoadMeshTextureBoneInfo(const cha
 	if (!LoadMesh(Mesh_Type::Animation, LoadedMeshName,
 		MeshTCHARFileName, MESH_PATH))
 	{
-		MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT(".msh Load Failure"), NULL, MB_OK);
+		TCHAR FulllErrorMessage[MAX_PATH] = {};
+		TCHAR ErrorMessage[MAX_PATH] = TEXT(".msh Load Failure");
+		lstrcpy(FulllErrorMessage, TCHARPureFileName);
+		lstrcat(FulllErrorMessage, ErrorMessage);
+
+		MessageBox(CEngine::GetInst()->GetWindowHandle(), FulllErrorMessage, NULL, MB_OK);
 		return std::make_pair(false, "");
 	}
 
@@ -228,7 +237,7 @@ std::pair<bool, std::string> CResourceManager::LoadMeshTextureBoneInfo(const cha
 	// ex) FBX Convert 이후, singed_spell2.sqc 가 있다면, 같은 경로내에 singed_spell2.fbm 이라는 디렉토리가 존재해야 한다.
 	// 만약 해당 Folder 가 존재하지 않는다면, Mesh를 Load 하더라도 Texture 가 없다고 뜰 것이다
 	char TextFolderExt[10] = ".fbm";
-	char TextFolderName[MAX_PATH] = {};
+	char TextFilePath[MAX_PATH] = {};
 	// TCHAR MshTCHARFileName[MAX_PATH] = {};
 
 	char MeshFileFullPath[MAX_PATH] = {};
@@ -238,14 +247,20 @@ std::pair<bool, std::string> CResourceManager::LoadMeshTextureBoneInfo(const cha
 	strcpy_s(MeshFileFullPath, FullPath);
 	strcat_s(MeshFileFullPath, ConstMeshFileName);
 
-	strcpy_s(TextFolderName, MeshFileFullPath);
-	strcat_s(TextFolderName, TextFolderExt); // .fbm 붙여주기
+	strcpy_s(TextFilePath, MeshFileFullPath);
+	strcat_s(TextFilePath, TextFolderExt); // .fbm 붙여주기
 
-	std::filesystem::path MeshTextureFolderPath(TextFolderName);
+	std::filesystem::path MeshTextureFolderPath(TextFilePath);
 
 	if (!std::filesystem::exists(MeshTextureFolderPath))
 	{
-		MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT(".fbm Folder Does Not Exist"), NULL, MB_OK);
+		TCHAR FulllErrorMessage[MAX_PATH] = {};
+		TCHAR ErrorMessage[MAX_PATH] = TEXT(".fbm Folder Does Not Exist");
+
+		lstrcpy(FulllErrorMessage, TCHARPureFileName);
+		lstrcat(FulllErrorMessage, ErrorMessage);
+
+		MessageBox(CEngine::GetInst()->GetWindowHandle(), FulllErrorMessage, NULL, MB_OK);
 		return std::make_pair(false, "");
 	}
 
@@ -272,7 +287,13 @@ std::pair<bool, std::string> CResourceManager::LoadMeshTextureBoneInfo(const cha
 
 	if (!LoadSkeleton(LoadedBneName, BneTCHARFileName, MESH_PATH))
 	{
-		MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT(".bne Load Failure"), NULL, MB_OK);
+		TCHAR FulllErrorMessage[MAX_PATH] = {};
+		TCHAR ErrorMessage[MAX_PATH] = TEXT(".bne Load Failure");
+
+		lstrcpy(FulllErrorMessage, TCHARPureFileName);
+		lstrcat(FulllErrorMessage, ErrorMessage);
+
+		MessageBox(CEngine::GetInst()->GetWindowHandle(), FulllErrorMessage, NULL, MB_OK);
 		return std::make_pair(false, "");
 	}
 

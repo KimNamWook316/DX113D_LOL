@@ -217,7 +217,7 @@ void CBehaviorTreeMenuBar::OnLoadGameObject()
 		if (!LoadedObject)
 			return;
 
-		// Object Hierarchy GameObject 목록에 추가한다.
-		CEditorManager::GetInst()->GetObjectComponentWindow()->AddObjectComponent(LoadedObject->GetName());
+		// Object Hierarchy GameObject 목록에 추가한다.( X ) -> 여기 목록에 추가하면 안된다.
+		// CEditorManager::GetInst()->GetObjectComponentWindow()->AddObjectComponent(LoadedObject->GetName());
 	}
 }
