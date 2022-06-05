@@ -42,6 +42,10 @@ void CInspectorWindow::OnSelectGameObject(CGameObject* Obj)
 
 void CInspectorWindow::OnCreateSceneComponent(CSceneComponent* Com)
 {
+	// 중복 제거 (OBJ)
+	if (FindSceneComponent(Com))
+		return;
+
 	m_ObjWidget->CreateSceneComponentWidget(Com);
 }
 
@@ -55,4 +59,9 @@ void CInspectorWindow::OnClearGameObject()
 	m_ObjWidget->SetRender(false);
 	m_ObjWidget->ClearComponentWidget();
 	m_ObjWidget->SetGameObject(nullptr);
+}
+
+bool CInspectorWindow::FindSceneComponent(CSceneComponent* Com)
+{
+	return m_ObjWidget->FindSceneComponent(Com);
 }

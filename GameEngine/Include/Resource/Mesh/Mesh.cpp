@@ -275,7 +275,13 @@ bool CMesh::LoadMeshFile(const char* FullPath)
 	if (!File)
 		return false;
 
-	LoadMesh(File);
+	bool LoadResult = LoadMesh(File);
+
+	// if (LoadResult == false);
+	// {
+	// 	assert(false);
+	// 	return false;
+	// }
 
 	fclose(File);
 

@@ -157,6 +157,20 @@ void CGameObjectWidget::CreateObjectComponentWidget(CObjectComponent* Com)
 	// TODO : ÄÄÆ÷³ÍÆ®º° À§Á¬ Ãß°¡
 }
 
+bool CGameObjectWidget::FindSceneComponent(CSceneComponent* Com)
+{
+	auto iter = m_SceneComponentWidgetList.begin();
+	auto iterEnd = m_SceneComponentWidgetList.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		if ((*iter)->GetComponent() == Com)
+			return true;
+	}
+
+	return false;
+}
+
 void CGameObjectWidget::OnClickRenameButton()
 {
 	m_Object->SetName(m_NameInput->GetTextMultibyte());

@@ -458,6 +458,8 @@ void CAnimationSequenceInstance::Start()
 
 	m_AnimationUpdateCBuffer->Init();
 
+	m_vecBoneMatrix.clear();
+
 	m_vecBoneMatrix.resize(m_Skeleton->GetBoneCount());
 
 	SAFE_DELETE(m_OutputBuffer);
@@ -809,7 +811,29 @@ bool CAnimationSequenceInstance::LoadAnimationFullPath(const char* FullPath)
 
 	if (!pFile)
 	{
-		MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("No .anim File Found"), NULL, MB_OK);
+		char CopyFullPath[MAX_PATH] = {};
+
+		strcpy_s(CopyFullPath, FullPath);
+
+		char AnimationFileName[MAX_PATH] = {};
+		TCHAR TCHARAnimationFileName[MAX_PATH] = {};
+
+		_splitpath_s(CopyFullPath, nullptr, 0, nullptr, 0, AnimationFileName, MAX_PATH, nullptr, 0);
+
+#ifdef UNICODE
+		int ConvertLength = MultiByteToWideChar(CP_ACP, 0, AnimationFileName, -1, 0, 0);
+		MultiByteToWideChar(CP_ACP, 0, AnimationFileName, -1, TCHARAnimationFileName, ConvertLength);
+#else
+
+#endif
+
+		TCHAR FullErrorMessage[MAX_PATH] = {};
+		TCHAR ErrorMessage[MAX_PATH] = TEXT("File Not Found In Bin//Animation Folder");
+
+		lstrcpy(FullErrorMessage, TCHARAnimationFileName);
+		lstrcat(FullErrorMessage, ErrorMessage);
+
+		MessageBox(CEngine::GetInst()->GetWindowHandle(), FullErrorMessage, NULL, MB_OK);
 		return false;
 	}
 
@@ -903,7 +927,7 @@ bool CAnimationSequenceInstance::LoadAnimationFullPath(const char* FullPath)
 
 bool CAnimationSequenceInstance::LoadAnimation(const char* FileName)
 {
-	const PathInfo* Path = CPathManager::GetInst()->FindPath(RESOURCE_ANIMATION_PATH);
+	const PathInfo* Path = CPathManager::GetInst()->FindPath(ANIMATION_PATH);
 
 	char FileLoadFullPath[MAX_PATH] = {};
 

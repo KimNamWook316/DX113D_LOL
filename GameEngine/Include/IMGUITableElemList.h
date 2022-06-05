@@ -41,6 +41,7 @@ public:
     void AddData(const std::string& DataName, float Val);
     void AddData(const std::string& DataName, bool Val);
     void AddData(const std::string& DataName, const std::string& Val);
+    // 일반 const char* 을 받는 함수
     void AddData(const std::string& DataName, char* Val);
     void MakeKey(const std::string& DataName);
     void ClearAll();

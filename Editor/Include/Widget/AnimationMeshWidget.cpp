@@ -91,6 +91,16 @@ bool CAnimationMeshWidget::Init()
 void CAnimationMeshWidget::SetSceneComponent(CSceneComponent* Com)
 {
 	CSceneComponentWidget::SetSceneComponent(Com);
+
+	CAnimationSequenceInstance* Instance =  dynamic_cast<CAnimationMeshComponent*>(Com)->GetAnimationInstance();
+
+	if (Instance)
+	{
+		// m_Animation 은 어차피, Animation Mesh Component 가 가지고 있는 Animation Instance 에 대한 포인터만을 들고 있는 형태
+		m_Animation = Instance;
+
+		SetAnimationRelatedInfoToWidget(m_Animation);
+	}
 }
 
 void CAnimationMeshWidget::OnClickLoadMesh()
@@ -170,9 +180,10 @@ void CAnimationMeshWidget::OnLoadAnimationInstance()
 		m_Animation->LoadAnimationFullPath(FilePathMultibyte);
 
 		// CurrentAnimation 체크, + Msh, Skeleton 모두 Load 하기 
-		bool LoadResult = LoadElementsForSqcLoading();
+		// bool LoadResult = LoadElementsForSqcLoading();
+		std::pair<bool, std::string> LoadResult = CResourceManager::GetInst()->LoadMeshTextureBoneInfo(m_Animation);
 
-		if (!m_Animation->GetCurrentAnimation() || LoadResult == false)
+		if (!m_Animation->GetCurrentAnimation() || LoadResult.first == false)
 		{
 			ClearExistingAnimationSeqInfos();
 
@@ -182,29 +193,17 @@ void CAnimationMeshWidget::OnLoadAnimationInstance()
 			return;
 		}
 
+		m_LoadedMeshName = LoadResult.second;
+
+		// Mesh 를 바꾸기 전에 Mesh 를 공유하는 InstancingCheckingList 목록에서 제거 --> 아래 Set Mesh 에서 어차피 해준다.
+		// bool DeleteResult = dynamic_cast<CAnimationMeshComponent*>(m_Component.Get())->DeleteInstancingCheckList();
+		// 현재 Load 한 Mesh 를 세팅
+		dynamic_cast<CAnimationMeshComponent*>(m_Component.Get())->SetMesh(m_LoadedMeshName);
+
 		// Animation 관련 정보를 모두 정상적으로 Load 했다면 Start 함수 호출하여, 필요한 정보 세팅
 		m_Animation->Start();
 
-		// Current Animation 정보로 세팅한다.
-		int CurAnimIdx = m_Animation->GetCurrentAnimationOrder();
-
-		if (CurAnimIdx == -1)
-			return;
-
-		// Current Animation Key Name 을 Sequenc eKey Text 에 세팅
-		m_CurrentAnimSequence->SetText(m_Animation->GetCurrentAnimationKeyName().c_str());
-
-		// Table 정보 세팅
-		OnRefreshAnimationInfo();
-
-		// 현재 Scene의 정보를 m_Scene으로 지정해준다
-		m_Animation->SetScene(CSceneManager::GetInst()->GetScene());
-
-		// Engine 을 Play 한다.
-		CEngine::GetInst()->SetPlay(true);
-
-		// Animation을 시작한다
-		m_Animation->Play();
+		SetAnimationRelatedInfoToWidget(m_Animation);
 	}
 }
 
@@ -236,10 +235,42 @@ void CAnimationMeshWidget::OnRefreshAnimationInfo()
 
 		m_AnimInfoTable->AddData(AnimationClipInfoKeys::AnimSeqKey, iter->first);
 		
-		const char* FileName = Sequence->GetAnimationSequence()->GetSequenceFileNameMultibyte();
+		const char* CharFileName = Sequence->GetAnimationSequence()->GetSequenceFileNameMultibyte();
+
+		char FileName[MAX_PATH] = {};
+
+		strcpy_s(FileName, CharFileName);
+
 		m_AnimInfoTable->AddData(AnimationClipInfoKeys::AnimSeqFileName, FileName);
 	}
 	
+}
+
+void CAnimationMeshWidget::SetAnimationRelatedInfoToWidget(CAnimationSequenceInstance* AnimationInstance)
+{
+	if (!AnimationInstance)
+		return;
+
+	// Current Animation 정보로 세팅한다.
+	int CurAnimIdx = m_Animation->GetCurrentAnimationOrder();
+
+	if (CurAnimIdx == -1)
+		return;
+
+	// Current Animation Key Name 을 Sequenc eKey Text 에 세팅
+	m_CurrentAnimSequence->SetText(m_Animation->GetCurrentAnimationKeyName().c_str());
+
+	// Table 정보 세팅
+	OnRefreshAnimationInfo();
+
+	// 현재 Scene의 정보를 m_Scene으로 지정해준다
+	m_Animation->SetScene(CSceneManager::GetInst()->GetScene());
+
+	// Engine 을 Play 한다.
+	CEngine::GetInst()->SetPlay(true);
+
+	// Animation을 시작한다
+	m_Animation->Play();
 }
 
 bool CAnimationMeshWidget::LoadElementsForSqcLoading()

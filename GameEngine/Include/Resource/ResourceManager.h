@@ -62,7 +62,7 @@ public:	// =================== Mesh =====================
 
 	// Editor Manager 상에서, 특정 sqc, msh, bne 을 로드할 때 사용하는 함수
 	// 저장한 Mesh 이름과 성공 여부 bool 을 리턴한다.
-	std::pair<bool, std::string> LoadMeshTextureBoneInfo(const char* ConstMeshFileName, const std::string& PathName = MESH_PATH);
+	std::pair<bool, std::string> LoadMeshTextureBoneInfo(const char* ConstMeshFileName, bool IsLastSqcFile = true);
 	std::pair<bool, std::string> LoadMeshTextureBoneInfo(class CAnimationSequenceInstance* Instance);
 	
 public:	// =================== Shader =====================

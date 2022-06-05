@@ -88,6 +88,7 @@ void CIMGUITableElemList::AddData(const std::string& DataName, const std::string
     }
 }
 
+// 일반 const char* 을 받는 함수
 void CIMGUITableElemList::AddData(const std::string& DataName, char* Val)
 {
     int KeyIdx = FindMapKeyIdxInVector(DataName);

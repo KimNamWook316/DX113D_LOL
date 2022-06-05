@@ -48,11 +48,12 @@ CAnimationMeshComponent::~CAnimationMeshComponent()
 
 void CAnimationMeshComponent::SetMesh(const std::string& Name)
 {
-
-
 	CAnimationMesh* FoundMesh = (CAnimationMesh*)m_Scene->GetResource()->FindMesh(Name);
 
 	if (!FoundMesh)
+		return;
+
+	if (m_Mesh == FoundMesh)
 		return;
 
 	DeleteInstancingCheckList();
@@ -550,6 +551,7 @@ bool CAnimationMeshComponent::Save(FILE* File)
 	fwrite(MeshName.c_str(), sizeof(char), Length, File);
 
 	// Animation Sqc 관련 정보 Loading 함수
+	// size_t AnimationSequenceLength = 
 	size_t	 SeqFileNameLength = strlen(m_Animation->GetCurrentAnimation()->GetAnimationSequence()->GetFileName());
 	fwrite(&SeqFileNameLength, sizeof(size_t), 1, File);
 	fwrite(m_Animation->GetCurrentAnimation()->GetAnimationSequence()->GetFileName(), sizeof(char), SeqFileNameLength, File);
@@ -596,15 +598,21 @@ bool CAnimationMeshComponent::Load(FILE* File)
 
 	// 여기서 혹시 모르니 해당 Mesh , Bne, Texture File 들을 세팅해둔다
 	// Mesh Name 과 실제 File Name 은 일치하는 상태이다.
-	const std::pair<bool, std::string>& result = CResourceManager::GetInst()->LoadMeshTextureBoneInfo(SeqFileName);
-	if (!result.first)
-		return false;
+	// const std::pair<bool, std::string>& result = CResourceManager::GetInst()->LoadMeshTextureBoneInfo(SeqFileName);
+	// 
+	// if (!result.first)
+	// 	return false;
 
 	// Animation Instance File 로 부터 세팅
 	LoadAnimationInstance<CAnimationSequenceInstance>();
 
 	// RESOURCE_ANIMATION_PATH 를 통해서 .anim File Load
 	if (!m_Animation->LoadAnimation(AnimSavedFileName))
+		return false;
+
+	const std::pair<bool, std::string>& result = CResourceManager::GetInst()->LoadMeshTextureBoneInfo(m_Animation);
+
+	if (!result.first)
 		return false;
 
 	// result.second 에는 위에서 저장해준 Mesh 이름이 들어있다.

@@ -187,6 +187,14 @@ bool CAnimationEditor::Init()
 	m_DeleteAnimSequenceBtn->SetClickCallback<CAnimationEditor>(this, &CAnimationEditor::OnDeleteAnimationSequenceData);
 
 	// Animation Related Btns
+	HelpText = AddWidget<CIMGUIText>("Instance Save Btn Help Text", 90.f, 30.f);
+	HelpText->SetText("Bin\\Animation 폴더에 .anim 파일 확장자로 저장해야 한다.");
+	HelpText->SetIsHelpMode(true);
+
+	Line = AddWidget<CIMGUISameLine>("Line");
+	Line->SetOffsetX(100.f);
+
+	// Animation Related Btns
 	HelpText = AddWidget<CIMGUIText>("Instance Load Btn Help Text", 90.f, 30.f);
 	HelpText->SetText(".anim 파일을 Load 하려면, MESH_PATH (Bin//Mesh) 경로에 관련 .msh , .bne, .fbm(폴더) 가 존재해야 한다. \n ex) Alistar.anim 를 Load 하려면, \n MESH_PATH 에 Alistar_Idle.sqc, Alistar_Idle.msh, Alistar_Idle.fbm 등, \n Alistar Animation 과 관련된 파일들이 하나는 존재햐야 한다.");
 	HelpText->SetIsHelpMode(true);
@@ -389,8 +397,6 @@ void CAnimationEditor::OnLoadAnimationInstance()
 		if (!m_Animation->GetCurrentAnimation())
 			return;
 
-		// if (!LoadElementsForSqcLoading(m_Animation->GetCurrentAnimation()->GetAnimationSequence()->GetSequenceFileNameMultibyte()))
-		// 	return;
 		// const char* CurSeqFileName = m_Animation->GetCurrentAnimation()->GetAnimationSequence()->GetSequenceFileNameMultibyte();
 		// if (!LoadElementsForSqcLoading(CurSeqFileName))
 		// 	return;
