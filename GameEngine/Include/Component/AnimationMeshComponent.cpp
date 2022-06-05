@@ -48,10 +48,16 @@ CAnimationMeshComponent::~CAnimationMeshComponent()
 
 void CAnimationMeshComponent::SetMesh(const std::string& Name)
 {
-	m_Mesh = (CAnimationMesh*)m_Scene->GetResource()->FindMesh(Name);
 
-	if (!m_Mesh)
+
+	CAnimationMesh* FoundMesh = (CAnimationMesh*)m_Scene->GetResource()->FindMesh(Name);
+
+	if (!FoundMesh)
 		return;
+
+	DeleteInstancingCheckList();
+
+	m_Mesh = FoundMesh;
 
 	// Editor Save, Load 과정에서 필요한 부분을 세팅
 	m_Mesh->SetName(Name);

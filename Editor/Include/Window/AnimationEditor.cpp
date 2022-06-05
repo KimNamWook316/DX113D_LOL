@@ -72,9 +72,10 @@ bool CAnimationEditor::Init()
 	m_CurAnimComboBox->SetSelectCallback<CAnimationEditor>(this, &CAnimationEditor::OnClickAnimationSequence);
 
 	// 별도 Render Target
-	m_AnimationRenderTarget = AddWidget<CIMGUIImage>("Render Target", 500.f, 500.f);
+	m_AnimationRenderTarget = AddWidget<CIMGUIImage>("Render Target", 400.f, 400.f);
 	m_AnimationRenderTarget->SetRenderTargetImage(true);
 	m_AnimationRenderTarget->SetBorderColor(10, 10, 255);
+	m_AnimationRenderTarget->SetTableTitle("Render Target");
 
 	// Clip Info
 	m_AnimInfoTable = AddWidget<CIMGUITable>("AnimTable", 600.f, 200.f);
@@ -166,7 +167,7 @@ bool CAnimationEditor::Init()
 	m_NewAnimSeqName = AddWidget<CIMGUITextInput>("Sequence Name", 90.f, 30.f);
 
 	HelpText = AddWidget<CIMGUIText>("Anim Seq Load Btn Help Text", 90.f, 30.f);
-	HelpText->SetText("ex) 'Idle' --> m_Animation->AddAnimation('ZedIdle', 'Idle') ? \n ZedIdle 이름의 Animation Sequence 를 \n 'Idle' 이라는 이름의 Key값으로 AnimationInstance 에 정보 추가");
+	HelpText->SetText("ex) 'Idle' --> m_Animation->AddAnimation('ZedIdle', 'Idle') ? \n ZedIdle Key로 ResourceManager 의 mapSequence 에 저장된 Animation Sequence 를 \n 'Idle' 이라는 이름의 Key값으로 AnimationInstance 에 정보 추가");
 	HelpText->SetIsHelpMode(true);
 
 	m_NewAnimSeqDataKeyName = AddWidget<CIMGUITextInput>("Sequence  Key", 90.f, 30.f);
@@ -185,14 +186,16 @@ bool CAnimationEditor::Init()
 	m_DeleteAnimSequenceBtn = AddWidget<CIMGUIButton>("Delete Seq", 90.f, 30.f);
 	m_DeleteAnimSequenceBtn->SetClickCallback<CAnimationEditor>(this, &CAnimationEditor::OnDeleteAnimationSequenceData);
 
-	Line = AddWidget<CIMGUISameLine>("Line");
-	Line->SetOffsetX(195.f);
+	// Animation Related Btns
+	HelpText = AddWidget<CIMGUIText>("Instance Load Btn Help Text", 90.f, 30.f);
+	HelpText->SetText(".anim 파일을 Load 하려면, MESH_PATH (Bin//Mesh) 경로에 관련 .msh , .bne, .fbm(폴더) 가 존재해야 한다. \n ex) Alistar.anim 를 Load 하려면, \n MESH_PATH 에 Alistar_Idle.sqc, Alistar_Idle.msh, Alistar_Idle.fbm 등, \n Alistar Animation 과 관련된 파일들이 하나는 존재햐야 한다.");
+	HelpText->SetIsHelpMode(true);
 
 	m_SaveAnimationInstanceBtn = AddWidget<CIMGUIButton>("Save Instance", 90.f, 30.f);
 	m_SaveAnimationInstanceBtn->SetClickCallback<CAnimationEditor>(this, &CAnimationEditor::OnSaveAnimationInstance);
 
 	Line = AddWidget<CIMGUISameLine>("Line");
-	Line->SetOffsetX(295.f);
+	Line->SetOffsetX(100.f);
 
 	m_LoadAnimationInstanceBtn = AddWidget<CIMGUIButton>("Load Instance", 90.f, 30.f);
 	m_LoadAnimationInstanceBtn->SetClickCallback<CAnimationEditor>(this, &CAnimationEditor::OnLoadAnimationInstance);
@@ -316,6 +319,7 @@ void CAnimationEditor::OnSaveAnimationInstance()
 		char FileFullPathMultibyte[MAX_PATH] = {};
 		char FileName[MAX_PATH] = {};
 		char FileExt[_MAX_EXT] = {};
+
 		int  ConvertLength = WideCharToMultiByte(CP_ACP, 0, FiileFullPath, -1, nullptr, 0, nullptr, nullptr);
 
 		WideCharToMultiByte(CP_ACP, 0, FiileFullPath, -1, FileFullPathMultibyte, ConvertLength, nullptr, nullptr);

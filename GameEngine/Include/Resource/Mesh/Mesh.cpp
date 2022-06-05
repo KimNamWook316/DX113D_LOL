@@ -713,9 +713,14 @@ bool CMesh::CheckLoadedMaterialTexture(CMaterial* Material)
 			// File 이름 붙이기
 			strcat_s(TextureFilePath, TextureInfo[i].Name.c_str());
 
-			// 확장자 이름 붙이기
+			// 확장자 붙이기
+			char SavedFileExt[_MAX_EXT] = {};
 
+			_splitpath_s(TextureInfo[i].SavedFullPath.c_str(), nullptr, 0, nullptr, 0, nullptr, 0, SavedFileExt, _MAX_EXT);
 
+			strcat_s(TextureFilePath, SavedFileExt);
+
+			// TCHAR 형식으로 변환
 			TCHAR TCHARTexturePath[MAX_PATH] = {};
 
 			int ConvertLength = MultiByteToWideChar(CP_ACP, 0, TextureFilePath, -1, 0, 0);
@@ -734,7 +739,6 @@ bool CMesh::CheckLoadedMaterialTexture(CMaterial* Material)
 				Texture = m_Scene->GetResource()->FindTexture(TextureInfo[i].Name);
 				Material->SetTextureInfoResource((int)i, Texture);
 			}
-
 			else
 			{
 				Texture = CResourceManager::GetInst()->FindTexture(TextureInfo[i].Name);

@@ -12,6 +12,10 @@ struct MaterialTextureInfo
     int             Register;
     int             ShaderType;
 
+    // Animation Instance Load 과정 편의를 위해, Texture 들의 FullPath 정보들을 저장
+    // - 실제 Load 과정에서는 해당 FullPath 로 부터, File 이름, File Ext 정보를 추출하여 활용할 것이다.
+    std::string SavedFullPath;
+
     MaterialTextureInfo() :
         SamplerType(Sampler_Type::Linear),
         Register(0),
@@ -67,6 +71,9 @@ protected:
     CSharedPtr<class CRenderState>  m_RenderStateArray[(int)RenderState_Type::Max];
     std::list<RenderCallback*>    m_RenderCallback;
 
+protected :
+    std::vector<std::string> m_vecTextureFullPathInfos;
+    
 public:
     CMaterialConstantBuffer* GetCBuffer()   const
     {
