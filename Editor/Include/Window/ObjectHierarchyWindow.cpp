@@ -113,6 +113,10 @@ void CObjectHierarchyWindow::OnDeleteObject()
 	Obj->DeleteObj();
 
 	m_SelectNode->Delete();
+
+	// Inspector에서 제거
+	CInspectorWindow* Inspector = (CInspectorWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(INSPECTOR);
+	Inspector->OnDeleteGameObject();
 }
 
 //void CObjectHierarchyWindow::FindSelectNode(CIMGUITree* RootNode)
@@ -148,10 +152,7 @@ void CObjectHierarchyWindow::OnSetSelectNode(CIMGUITree* SelectNode)
 	m_SelectNode = SelectNode;
 	m_SelectObject = CSceneManager::GetInst()->GetScene()->FindObject(m_SelectNode->GetName());
 
-	if (m_SelectObject->GetRootComponent())
-	{
-		static_cast<CToolWindow*>(CIMGUIManager::GetInst()->FindIMGUIWindow(TOOL))->SetGizmoObject(m_SelectObject);
-	}
+	static_cast<CToolWindow*>(CIMGUIManager::GetInst()->FindIMGUIWindow(TOOL))->SetGizmoObject(m_SelectObject);
 
 	static_cast<CInspectorWindow*>(CIMGUIManager::GetInst()->FindIMGUIWindow(INSPECTOR))->OnSelectGameObject(m_SelectObject);
 }

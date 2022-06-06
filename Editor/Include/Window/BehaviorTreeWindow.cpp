@@ -328,9 +328,7 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
             break;
 
         }
-
     }
-
     }
 
     CNode* Node = m_StateComponent->GetBehaviorTree()->FindNode(Name);

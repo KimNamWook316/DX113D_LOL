@@ -20,6 +20,9 @@ public:
 public:
     void OnGameObjectEnable(bool Enable);
 
+public:
+    bool IsMyWidget(class CSceneComponent* Component);
+
 private:
     void OnClickRenameButton();
     void OnCheckEnableCheckBox(int Idx, bool Check);
