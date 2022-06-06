@@ -338,9 +338,6 @@ bool CGameObject::Save(FILE* File)
 {
 	CRef::Save(File);
 
-	fwrite(&m_ObjectType, sizeof(Object_Type), 1, File);
-	fwrite(&m_IsEnemy, sizeof(bool), 1, File);
-
 	if (m_RootComponent)
 	{
 		bool	Root = true;
@@ -357,6 +354,9 @@ bool CGameObject::Save(FILE* File)
 		bool	Root = false;
 		fwrite(&Root, sizeof(bool), 1, File);
 	}
+
+	fwrite(&m_ObjectType, sizeof(Object_Type), 1, File);
+	fwrite(&m_IsEnemy, sizeof(bool), 1, File);
 
 	int	ObjComponentCount = (int)m_vecObjectComponent.size();
 
@@ -380,9 +380,6 @@ bool CGameObject::Load(FILE* File)
 	bool	Root = false;
 	fread(&Root, sizeof(bool), 1, File);
 
-	fread(&m_ObjectType, sizeof(Object_Type), 1, File);
-	fread(&m_IsEnemy, sizeof(bool), 1, File);
-
 	if (Root)
 	{
 		size_t	TypeID = 0;
@@ -393,6 +390,9 @@ bool CGameObject::Load(FILE* File)
 		if (!m_RootComponent->Load(File))
 			return false;
 	}
+
+	fread(&m_ObjectType, sizeof(Object_Type), 1, File);
+	fread(&m_IsEnemy, sizeof(bool), 1, File);
 
 	int	ObjComponentCount = 0;
 
