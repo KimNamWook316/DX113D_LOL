@@ -321,6 +321,39 @@ bool CScene::Picking(CGameObject*& Result)
 	return false;
 }
 
+bool CScene::CheckSameName(const std::string& Name)
+{
+	auto iter = m_ObjList.begin();
+	auto iterEnd = m_ObjList.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		if ((*iter)->GetName() == Name)
+			return true;
+	}
+
+	return false;
+}
+
+CGameObject* CScene::FindNearChampion(const Vector3& MyPos, float Dist)
+{
+	auto iter = m_ObjList.begin();
+	auto iterEnd = m_ObjList.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		if ((*iter)->GetObjectType() == Object_Type::Champion)
+		{
+			Vector3 Pos = (*iter)->GetWorldPos();
+
+			if (Dist < abs(Pos.Distance(MyPos)))
+				return (*iter);
+		}
+	}
+
+	return nullptr;
+}
+
 bool CScene::SortRenderList(CSceneComponent* Src, CSceneComponent* Dest)
 {
 	SphereInfo	SrcInfo = Src->GetSphereInfoViewSpace();

@@ -64,7 +64,6 @@ public:
 	{
 		return m_TypeID;
 	}
-
 	template <typename T>
 	void SetTypeID()
 	{

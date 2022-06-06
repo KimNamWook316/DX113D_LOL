@@ -30,6 +30,7 @@ public:
 	int AddObjectComponent(const std::string& Name);
 	void OnSelectComponent(int Index, const char* Label);
 	void OnDeleteComponent();
+	void OnUpdateObjectComponetWindow(class CIMGUITree* SelectObjectNode);
 
 public:
 	int GetSelectIndex()	const
@@ -42,6 +43,10 @@ public:
 		return m_SelectLabel;
 	}
 
+	void ClearListBox()
+	{
+		m_ComponentListBox->Clear();
+	}
 
 
 public:

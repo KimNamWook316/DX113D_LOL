@@ -56,7 +56,7 @@ bool CNavigation3DManager::CheckPickingPoint(Vector3& OutPos)
 	Vector3 RayDir = ray.Dir;
 	Vector3 RayStartPos = ray.Pos;
 
-	float Step = 0.05f;
+	float Step = 0.1f;
 
 	while (true)
 	{

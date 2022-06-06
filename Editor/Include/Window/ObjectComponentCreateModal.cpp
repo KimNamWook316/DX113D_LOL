@@ -87,12 +87,18 @@ void CObjectComponentCreateModal::OnCreateComponent()
 
 	size_t Typeid = CEditorUtil::ObjectComponentTypeIndexToTypeid(Index);
 
+	size_t tmp = typeid(CNavAgent).hash_code();
+
 	if (Typeid == typeid(CPaperBurnComponent).hash_code())
 		CObjectComponent* Com = SelectObject->CreateComponent<CPaperBurnComponent>(Name);
 	else if (Typeid == typeid(CStateComponent).hash_code())
 		CObjectComponent* Com = SelectObject->CreateComponent<CStateComponent>(Name);
 	else if (Typeid == typeid(CNavAgent).hash_code())
-		CObjectComponent* Com = SelectObject->CreateComponent<CNavAgent>(Name);
+	{
+		CNavAgent* Com = SelectObject->CreateComponent<CNavAgent>(Name);
+		SelectObject->SetNavAgent(Com);
+		Com->SetUpdateComponent(SelectObject->GetRootComponent());
+	}
 
 	CObjectComponentWindow* ComponentWindow = (CObjectComponentWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(OBJECTCOMPONENT_LIST);
 

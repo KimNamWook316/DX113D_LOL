@@ -8,9 +8,12 @@ CGameObject::CGameObject() :
 	m_Scene(nullptr),
 	m_Parent(nullptr),
 	m_LifeSpan(0.f),
-	m_NavAgent(nullptr)
+	m_NavAgent(nullptr),
+	m_IsEnemy(false),
+	m_NoInterrupt(false)
 {
 	SetTypeID<CGameObject>();
+	m_ObjectType = Object_Type::None;
 }
 
 CGameObject::CGameObject(const CGameObject& obj)
@@ -76,11 +79,17 @@ void CGameObject::DeleteObj()
 	{
 		// 루트노드를 지우는 경우, 그냥 모두 Destroy
 		Destroy();
+		m_SceneComponentList.clear();
 
 		return;
 	}
 
-	m_Parent->DeleteChildObj(m_Name);
+	else
+	{
+		m_SceneComponentList.clear();
+		m_Parent->DeleteChildObj(m_Name);
+		Destroy();
+	}
 }
 
 bool CGameObject::DeleteChildObj(const std::string& Name)
@@ -346,6 +355,9 @@ bool CGameObject::Save(FILE* File)
 		fwrite(&Root, sizeof(bool), 1, File);
 	}
 
+	fwrite(&m_ObjectType, sizeof(Object_Type), 1, File);
+	fwrite(&m_IsEnemy, sizeof(bool), 1, File);
+
 	int	ObjComponentCount = (int)m_vecObjectComponent.size();
 
 	fwrite(&ObjComponentCount, sizeof(int), 1, File);
@@ -367,10 +379,6 @@ bool CGameObject::Load(FILE* File)
 
 	bool	Root = false;
 	fread(&Root, sizeof(bool), 1, File);
-
-	// 임시 코드
-	fread(&m_ObjectType, sizeof(Object_Type), 1, File);
-	fread(&m_IsEnemy, sizeof(bool), 1, File);
 
 	if (Root)
 	{
@@ -397,7 +405,7 @@ bool CGameObject::Load(FILE* File)
 		if (!Component->Load(File))
 			return false;
 
-		m_vecObjectComponent.push_back((CObjectComponent*)Component);
+		Component->SetGameObject(this);
 	}
 
 	return true;
@@ -494,9 +502,19 @@ void CGameObject::AddPath(const Vector3& TargetPos)
 	}
 }
 
+void CGameObject::ClearPath()
+{
+	m_NavAgent->m_PathList.clear();
+}
+
 void CGameObject::SetNavManagerLandScape(CLandScape* LandScape)
 {
 	m_Scene->GetNavigation3DManager()->SetLandScape(LandScape);
+}
+
+bool CGameObject::IsNavAgentPathListEmpty() const
+{
+	return m_NavAgent->m_PathList.empty();
 }
 
 void CGameObject::SetUpdateByMat(bool UpdateByMat)

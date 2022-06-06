@@ -23,6 +23,10 @@ protected:
     class CAnimationSequenceInstance* m_Animation;
     int     m_InstanceID;
 
+    // Editor, Client단에서 Custom Shader를 적용할 경우 적용할 Shader
+    CSharedPtr<class CShader> m_CustomShader;
+    CSharedPtr<class CShader> m_CustomTransparentShader;
+
 public:
     void SetInstanceID(int ID)
     {
@@ -56,6 +60,10 @@ public:
     void AddMaterial(CMaterial* Material);
 
 public:
+    bool SetCustomShader(const std::string& Name);
+    bool SetCustomTransparencyShader(const std::string& Name);
+
+public:
     void SetBaseColor(const Vector4& Color, int Index = 0);
     void SetBaseColor(float r, float g, float b, float a, int Index = 0);
     void SetAmbientColor(const Vector4& Color, int Index = 0);
@@ -68,10 +76,13 @@ public:
     void SetRenderState(class CRenderState* State, int Index = 0);
     void SetRenderState(const std::string& Name, int Index = 0);
     void SetTransparency(bool Enable, int Index = 0);
+    void SetTransparencyAllMaterial(bool Enable);
     void SetOpacity(float Opacity, int Index = 0);
     void AddOpacity(float Opacity, int Index = 0);
+
 public :
     void SetMaterialShader(const std::string& Name);
+
 public:
     void AddTexture(int MaterialIndex, int Register, int ShaderType, const std::string& Name, class CTexture* Texture);
     void AddTexture(int MaterialIndex, int Register, int ShaderType, const std::string& Name, const TCHAR* FileName, const std::string& PathName = TEXTURE_PATH);
@@ -100,6 +111,10 @@ public:
     virtual CAnimationMeshComponent* Clone();
     virtual bool Save(FILE* File);
     virtual bool Load(FILE* File);
+    virtual bool SaveFile(const char* FullPath);
+    virtual bool LoadFile(const char* FullPath);
+    bool LoadOnly(FILE* File);
+    bool SaveOnly(FILE* File);
 
     // Animation Editor Render
 public :
@@ -107,6 +122,10 @@ public :
     // Animation Mesh Widget
 private :
     void DeleteAnimationInstance();
+
+private:
+    void ChangeInstancingLayer();
+
 public:
     template <typename T>
     void CreateAnimationInstance()

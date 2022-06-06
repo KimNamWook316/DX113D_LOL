@@ -104,7 +104,7 @@ bool CAnimationEditor::Init()
 	CIMGUISameLine* Line = AddWidget<CIMGUISameLine>("Line");
 	Line->SetOffsetX(60.f);
 
-	m_PlayScaleEditBtn = AddWidget<CIMGUIButton>("Edit Scale", 90.f, 30.f);
+	m_PlayScaleEditBtn = AddWidget<CIMGUIButton>("Edit Scale", 90.f, 20.f);
 	m_PlayScaleEditBtn->SetClickCallback<CAnimationEditor>(this, &CAnimationEditor::OnEditAnimPlayScale);
 
 	Line = AddWidget<CIMGUISameLine>("Line");
@@ -118,25 +118,8 @@ bool CAnimationEditor::Init()
 	Line = AddWidget<CIMGUISameLine>("Line");
 	Line->SetOffsetX(210.f);
 
-	m_PlayTimeEditBtn = AddWidget<CIMGUIButton>("Edit Time", 90.f, 30.f);
+	m_PlayTimeEditBtn = AddWidget<CIMGUIButton>("Edit Time", 90.f, 20.f);
 	m_PlayTimeEditBtn->SetClickCallback<CAnimationEditor>(this, &CAnimationEditor::OnEditAnimPlayTime);
-
-	// Animation Instance Key Name 수정 기능
-	m_EditAnimSeqDataKeyName = AddWidget<CIMGUITextInput>("Edit Sequence Key", 50.f, 30.f);
-	m_EditAnimSeqDataKeyName->SetHideName(true);
-
-	Line = AddWidget<CIMGUISameLine>("Line");
-	Line->SetOffsetX(60.f);
-
-	m_EditAnimKeyBtn = AddWidget<CIMGUIButton>("Edit Key", 90.f, 30.f);
-	m_EditAnimKeyBtn->SetClickCallback<CAnimationEditor>(this, &CAnimationEditor::OnEditAnimSequenceKey);
-
-	Line = AddWidget<CIMGUISameLine>("Line");
-	Line->SetOffsetX(160.f);
-
-	CIMGUIText* HelpText = AddWidget<CIMGUIText>("Anim Key Name Edit Help", 90.f, 30.f);
-	HelpText->SetText("ex) 'EditIdle' --> 기존의 m_Animation->AddAnimation('ZedIdle', 'Idle') 으로 인해 만들어진 m_mapAnimationSequence['Idle'] = 'ZedIdle' 을 \n m_mapAnimationSequence['EditIdle'] = 'ZedIdle' 로 Key 값 수정 ");
-	HelpText->SetIsHelpMode(true);
 
 	// 각종 체크 박스들 
 	m_DeltaTimeCheckBtn = AddWidget<CIMGUICheckBox>("Engine Play", 90.f, 30.f);
@@ -167,7 +150,7 @@ bool CAnimationEditor::Init()
 	m_ZoomEnableBtn->SetCallBackLabel<CAnimationEditor>(this, &CAnimationEditor::OnZoomAnimationCamera);
 
 	// Sequence Make Widgets ----------------------------------------------------------------------------------------------------------------
-	HelpText = AddWidget<CIMGUIText>("Anim Seq Load Btn Help Text", 90.f, 30.f);
+	CIMGUIText* HelpText = AddWidget<CIMGUIText>("Anim Seq Load Btn Help Text", 90.f, 30.f);
 	HelpText->SetText("ex)  'ZedIdle' -- > pair('ZedIdle', 'ZedIdle.sqc') 형태로 \n SceneResource, ResourceManager의 m_mapSequence 에 저장");
 	HelpText->SetIsHelpMode(true);
 
@@ -176,6 +159,13 @@ bool CAnimationEditor::Init()
 
 	HelpText = AddWidget<CIMGUIText>("Anim Seq Load Btn Help Text", 90.f, 30.f);
 	HelpText->SetText("ex) 'Idle' --> m_Animation->AddAnimation('ZedIdle', 'Idle') ? \n ZedIdle Key로 ResourceManager 의 mapSequence 에 저장된 Animation Sequence 를 \n 'Idle' 이라는 이름의 Key값으로 AnimationInstance 에 정보 추가");
+	HelpText->SetIsHelpMode(true);
+
+	Line = AddWidget<CIMGUISameLine>("Line");
+	Line->SetOffsetX(200.f);
+
+	HelpText = AddWidget<CIMGUIText>("Anim Key Name Edit Help", 90.f, 30.f);
+	HelpText->SetText("ex) 'EditIdle' --> 기존의 m_Animation->AddAnimation('ZedIdle', 'Idle') 으로 인해 만들어진 m_mapAnimationSequence['Idle'] = 'ZedIdle' 을 \n m_mapAnimationSequence['EditIdle'] = 'ZedIdle' 로 Key 값 수정 ");
 	HelpText->SetIsHelpMode(true);
 
 	// Seq Name Inputs
@@ -189,6 +179,20 @@ bool CAnimationEditor::Init()
 	m_NewAnimSeqDataKeyName = AddWidget<CIMGUITextInput>("Sequence  Key", 90.f, 30.f);
 	m_NewAnimSeqDataKeyName->SetHideName(true);
 	m_NewAnimSeqDataKeyName->SetHintText("Anim Key");
+
+	Line = AddWidget<CIMGUISameLine>("Line");
+	Line->SetOffsetX(195.f);
+
+	// Animation Instance Key Name 수정 기능
+	m_EditAnimSeqDataKeyName = AddWidget<CIMGUITextInput>("Edit Sequence Key", 90.f, 30.f);
+	m_EditAnimSeqDataKeyName->SetHideName(true);
+	m_EditAnimSeqDataKeyName->SetHintText("Edit Key");
+
+	Line = AddWidget<CIMGUISameLine>("Line");
+	Line->SetOffsetX(290.f);
+
+	m_EditAnimKeyBtn = AddWidget<CIMGUIButton>("Edit Key", 90.f, 20.f);
+	m_EditAnimKeyBtn->SetClickCallback<CAnimationEditor>(this, &CAnimationEditor::OnEditAnimSequenceKey);
 
 	// Sequence Related Btns
 	HelpText = AddWidget<CIMGUIText>("Anim Seq Load Btn Help Text", 90.f, 30.f);
@@ -211,25 +215,25 @@ bool CAnimationEditor::Init()
 	HelpText->SetText(".anim 파일을 Load 하려면, MESH_PATH (Bin//Mesh) 경로에 관련 .msh , .bne, .fbm(폴더) 가 존재해야 한다. \n ex) Alistar.anim 를 Load 하려면, \n MESH_PATH 에 Alistar_Idle.sqc, Alistar_Idle.msh, Alistar_Idle.fbm 등, \n Alistar Animation 과 관련된 파일들이 하나는 존재햐야 한다.");
 	HelpText->SetIsHelpMode(true);
 
-	m_AnimSequenceAddBtn = AddWidget<CIMGUIButton>("Add Seq", 90.f, 30.f);
+	m_AnimSequenceAddBtn = AddWidget<CIMGUIButton>("Add Seq", 90.f, 20.f);
 	m_AnimSequenceAddBtn->SetClickCallback<CAnimationEditor>(this, &CAnimationEditor::OnAddAnimationSequence);
 
 	Line = AddWidget<CIMGUISameLine>("Line");
 	Line->SetOffsetX(100.f);
 
-	m_DeleteAnimSequenceBtn = AddWidget<CIMGUIButton>("Delete Seq", 90.f, 30.f);
+	m_DeleteAnimSequenceBtn = AddWidget<CIMGUIButton>("Delete Seq", 90.f, 20.f);
 	m_DeleteAnimSequenceBtn->SetClickCallback<CAnimationEditor>(this, &CAnimationEditor::OnDeleteAnimationSequenceData);
 
 	Line = AddWidget<CIMGUISameLine>("Line");
 	Line->SetOffsetX(195.f);
 
-	m_SaveAnimationInstanceBtn = AddWidget<CIMGUIButton>("Save Instance", 90.f, 30.f);
+	m_SaveAnimationInstanceBtn = AddWidget<CIMGUIButton>("Save Instance", 90.f, 20.f);
 	m_SaveAnimationInstanceBtn->SetClickCallback<CAnimationEditor>(this, &CAnimationEditor::OnSaveAnimationInstance);
 
 	Line = AddWidget<CIMGUISameLine>("Line");
 	Line->SetOffsetX(290.f);
 
-	m_LoadAnimationInstanceBtn = AddWidget<CIMGUIButton>("Load Instance", 90.f, 30.f);
+	m_LoadAnimationInstanceBtn = AddWidget<CIMGUIButton>("Load Instance", 90.f, 20.f);
 	m_LoadAnimationInstanceBtn->SetClickCallback<CAnimationEditor>(this, &CAnimationEditor::OnLoadAnimationInstance);
 
 	// Table Key 값 정보 세팅
@@ -252,6 +256,13 @@ bool CAnimationEditor::Init()
 	m_SavedAnimFileName = AddWidget<CIMGUITextInput>("Saved File Name", 150.f, 20.f);
 	m_SavedAnimFileName->SetHideName(true);
 	m_SavedAnimFileName->SetHintText("Saved File Name");
+
+	Line = AddWidget<CIMGUISameLine>("Line");
+	Line->SetOffsetX(160.f);
+
+	HelpText = AddWidget<CIMGUIText>("Anim Seq Load Btn Help Text", 90.f, 30.f);
+	HelpText->SetText("ZedIdle 이라고 하면, Bin/Animation 폴더에 ZedIdle.anim 이름으로 Animation Instance 저장");
+	HelpText->SetIsHelpMode(true);
 
 	m_CommonAnimSeqName = AddWidget<CIMGUITextInput>("Common Sqc Name", 150.f, 20.f);
 	m_CommonAnimSeqName->SetHideName(true);
@@ -431,15 +442,23 @@ void CAnimationEditor::OnLoadAnimationInstance()
 		char	Ext[_MAX_EXT] = {};
 
 		char FilePathMultibyte[MAX_PATH] = {};
+		char FileName[MAX_PATH] = {};
+
 		int ConvertLength = WideCharToMultiByte(CP_ACP, 0, FilePath, -1, 0, 0, 0, 0);
 		WideCharToMultiByte(CP_ACP, 0, FilePath, -1, FilePathMultibyte, ConvertLength, 0, 0);
 
-		_splitpath_s(FilePathMultibyte, nullptr, 0, nullptr, 0, nullptr, 0, Ext, _MAX_EXT);
+		_splitpath_s(FilePathMultibyte, nullptr, 0, nullptr, 0, FileName, MAX_PATH, Ext, _MAX_EXT);
 
 		_strupr_s(Ext);
 
 		// 확장자 .anim 이 아니라면 return;
 		if (strcmp(Ext, ".ANIM") != 0)
+			return;
+
+		// Animation .anim File 들은, .anim 파일 확장자로 저장된 
+		// 파일 이름으로 식별할 것이다.
+		// 같은 Animation File 을 Load 하는 것이라면 Skip
+		if (m_Animation && strcmp(FileName, m_Animation->GetSavedFileName()) == 0)
 			return;
 
 		if (!m_Animation)
@@ -513,6 +532,8 @@ void CAnimationEditor::OnLoadAnimationInstance()
 
 		// 현재 Scene에 모든 Sequence 내용을 추가한다.
 		// m_Animation->AddAnimationSequenceToSceneResource();
+
+		OnRefreshFrameSliderInfo(m_Animation->GetCurrentAnimation()->GetAnimationSequence());
 
 		// 현재 Scene의 정보를 m_Scene으로 지정해준다
 		m_Animation->SetScene(CSceneManager::GetInst()->GetScene());
@@ -1026,6 +1047,8 @@ void CAnimationEditor::OnClickAnimationSequence(int Index, const char* Name)
 
 	// Table 정보 갱신
 	OnRefreshAnimationClipTable(SequenceData->GetAnimationSequence());
+
+	OnRefreshFrameSliderInfo(SequenceData->GetAnimationSequence());
 
 	// 클릭한 Animation 으로 Current Animation 세팅
 	m_Animation->SetCurrentAnimation(Name);

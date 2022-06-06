@@ -68,3 +68,19 @@ void CIMGUIGizmo::Render()
 	}
 }
 
+void CIMGUIGizmo::SetGameObject(CGameObject* Object)
+{
+	if (!Object)
+	{
+		SetIdentity();
+		return;
+	}
+	else if (!Object->GetRootComponent())
+	{
+		SetIdentity();
+		return;
+	}
+
+	m_Component = Object->GetRootComponent();
+}
+

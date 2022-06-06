@@ -15,6 +15,9 @@
 #include "Component/StaticMeshComponent.h"
 #include "Component/ParticleComponent.h"
 #include "Component/AnimationMeshComponent.h"
+#include "Component/StateComponent.h"
+#include "Component/LandScape.h"
+#include "Component/StateComponent.h"
 // Window
 #include "Window/ObjectHierarchyWindow.h"
 #include "Window/SceneComponentHierarchyWindow.h"
@@ -85,6 +88,34 @@ bool CEditorManager::Init(HINSTANCE hInst)
 		return false;
 	}
 
+	CInput::GetInst()->CreateKey("MouseLButton", VK_LBUTTON);
+	CInput::GetInst()->SetKeyCallback("MouseLButton", KeyState_Down, this, &CEditorManager::MouseLButtonDown);
+	CInput::GetInst()->SetKeyCallback("MouseLButton", KeyState_Push, this, &CEditorManager::MouseLButtonPush);
+	CInput::GetInst()->SetKeyCallback("MouseLButton", KeyState_Up, this, &CEditorManager::MouseLButtonUp);
+
+	CInput::GetInst()->CreateKey("Up", VK_UP);
+	CInput::GetInst()->CreateKey("Down", VK_DOWN);
+	CInput::GetInst()->CreateKey("Left", VK_LEFT);
+	CInput::GetInst()->CreateKey("Right", VK_RIGHT);
+
+	CInput::GetInst()->SetKeyCallback("Up", KeyState_Push, this, &CEditorManager::KeyboardUp);
+	CInput::GetInst()->SetKeyCallback("Down", KeyState_Push, this, &CEditorManager::KeyboardDown);
+	CInput::GetInst()->SetKeyCallback("Left", KeyState_Push, this, &CEditorManager::KeyboardLeft);
+	CInput::GetInst()->SetKeyCallback("Right", KeyState_Push, this, &CEditorManager::KeyboardRight);
+
+	CInput::GetInst()->CreateKey("MoveUp", 'W');
+	CInput::GetInst()->CreateKey("MoveDown", 'S');
+	CInput::GetInst()->CreateKey("RotationZInv", 'A');
+	CInput::GetInst()->CreateKey("RotationZ", 'D');
+	CInput::GetInst()->CreateKey("SkillQ", 'Q');
+	CInput::GetInst()->CreateKey("SkillW", 'W');
+	CInput::GetInst()->CreateKey("SkillE", 'E');
+	CInput::GetInst()->CreateKey("SkillR", 'R');
+	CInput::GetInst()->CreateKey("SpellD", 'D');
+	CInput::GetInst()->CreateKey("SpellF", 'F');
+
+	m_CameraObject = CSceneManager::GetInst()->GetScene()->CreateGameObject<C3DCameraObject>("EditorCamera");
+
 	CSceneManager::GetInst()->SetCreateSceneModeFunction<CEditorManager>(this, &CEditorManager::CreateSceneMode);
 	CSceneManager::GetInst()->SetCreateObjectFunction<CEditorManager>(this, &CEditorManager::CreateObject);
 	CSceneManager::GetInst()->SetCreateComponentFunction<CEditorManager>(this, &CEditorManager::CreateComponent);
@@ -106,31 +137,9 @@ bool CEditorManager::Init(HINSTANCE hInst)
 
 	m_BehaviorTreeMenuBar = CIMGUIManager::GetInst()->AddWindow<CBehaviorTreeMenuBar>("BehaviorTree");
 
-
 	CRenderManager::GetInst()->CreateLayer("DragLayer", INT_MAX);
 
-	CInput::GetInst()->CreateKey("MouseLButton", VK_LBUTTON);
-	CInput::GetInst()->SetKeyCallback("MouseLButton", KeyState_Down, this, &CEditorManager::MouseLButtonDown);
-	CInput::GetInst()->SetKeyCallback("MouseLButton", KeyState_Push, this, &CEditorManager::MouseLButtonPush);
-	CInput::GetInst()->SetKeyCallback("MouseLButton", KeyState_Up, this, &CEditorManager::MouseLButtonUp);
 
-
-	CInput::GetInst()->CreateKey("Up", VK_UP);
-	CInput::GetInst()->CreateKey("Down", VK_DOWN);
-	CInput::GetInst()->CreateKey("Left", VK_LEFT);
-	CInput::GetInst()->CreateKey("Right", VK_RIGHT);
-
-	CInput::GetInst()->SetKeyCallback("Up", KeyState_Push, this, &CEditorManager::KeyboardUp);
-	CInput::GetInst()->SetKeyCallback("Down", KeyState_Push, this, &CEditorManager::KeyboardDown);
-	CInput::GetInst()->SetKeyCallback("Left", KeyState_Push, this, &CEditorManager::KeyboardLeft);
-	CInput::GetInst()->SetKeyCallback("Right", KeyState_Push, this, &CEditorManager::KeyboardRight);
-
-	CInput::GetInst()->CreateKey("MoveUp", 'W');
-	CInput::GetInst()->CreateKey("MoveDown", 'S');
-	CInput::GetInst()->CreateKey("RotationZInv", 'A');
-	CInput::GetInst()->CreateKey("RotationZ", 'D');
-
-	m_CameraObject = CSceneManager::GetInst()->GetScene()->CreateGameObject<C3DCameraObject>("EditorCamera");
 
 	return true;
 }
@@ -294,6 +303,24 @@ CComponent* CEditorManager::CreateComponent(CGameObject* Obj, size_t Type)
 	{
 		CAnimationMeshComponent* Component = Obj->LoadComponent<CAnimationMeshComponent>();
 		// Component->EnableEditMode(true);
+		return Component;
+	}
+	else if (Type == typeid(CLandScape).hash_code())
+	{
+		CLandScape* Component = Obj->LoadComponent<CLandScape>();
+		// Component->EnableEditMode(true);
+		return Component;
+	}
+
+	else if (Type == typeid(CStateComponent).hash_code())
+	{
+		CStateComponent* Component = Obj->LoadObjectComponent<CStateComponent>();
+		return Component;
+	}
+
+	else if (Type == typeid(CNavAgent).hash_code())
+	{
+		CNavAgent* Component = Obj->LoadObjectComponent<CNavAgent>();
 		return Component;
 	}
 

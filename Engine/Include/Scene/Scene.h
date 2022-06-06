@@ -130,6 +130,8 @@ public:
 
 public:
 	bool Picking(CGameObject*& Result);
+	bool CheckSameName(const std::string& Name);
+	CGameObject* FindNearChampion(const Vector3& MyPos, float Distance);
 
 public:
 	template <typename T>

@@ -446,6 +446,8 @@ static bool HandleConnections(ImDrawList* drawList,
                 if (inputToOutput)
                 {
                     // check loopback
+                    // EditingNodeIndex는 몇번째로 추가된 노드인지, EditingSlotIndex는 부모->자식으로 내려가는 slot중에 몇번째 slot인지(위에서부터 0번)
+                    // 링크의 Dest Node의 SlotIndex는 무조건 0번(Link를 받을 수 있는 Slot은 하나 뿐이니까)
                     Link nl;
                     if (editingInput)
                         nl = Link{nodeIndex, closestConn, editingNodeIndex, editingSlotIndex};

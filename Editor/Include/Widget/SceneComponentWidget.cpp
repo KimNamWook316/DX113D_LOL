@@ -60,13 +60,17 @@ void CSceneComponentWidget::SetSceneComponent(CSceneComponent* Com)
 	m_EnableCheckBox->SetCheck(0, m_Component->IsEnable());
 	m_NameInput->SetText(m_Component->GetName().c_str());
 	m_TransformWidget->SetSceneCompoent(m_Component);
-
 	m_PrevName = m_Component->GetName();
 }
 
 void CSceneComponentWidget::OnGameObjectEnable(bool Enable)
 {
 	m_EnableCheckBox->SetCheck(0, Enable);
+}
+
+bool CSceneComponentWidget::IsMyWidget(CSceneComponent* Component)
+{
+	return Component == m_Component.Get();
 }
 
 void CSceneComponentWidget::OnClickRenameButton()

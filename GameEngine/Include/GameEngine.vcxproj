@@ -25,7 +25,13 @@
     <ClCompile Include="Animation\AnimationSequenceData.cpp" />
     <ClCompile Include="Animation\AnimationSequenceInstance.cpp" />
     <ClCompile Include="Animation\SkeletonSocket.cpp" />
+    <ClCompile Include="Component\Node\FindEnemyChampion.cpp" />
+    <ClCompile Include="Component\Node\InputECheckNode.cpp" />
+    <ClCompile Include="Component\Node\InputRCheckNode.cpp" />
     <ClCompile Include="Component\Node\MovePickingNode.cpp" />
+    <ClCompile Include="Component\Node\NoInterruptNode.cpp" />
+    <ClCompile Include="Component\Node\SkillENode.cpp" />
+    <ClCompile Include="Component\Node\SkillRNode.cpp" />
     <ClCompile Include="IMGUITableElemList.cpp" />
     <ClCompile Include="Component\BehaviorTree.cpp" />
     <ClCompile Include="Component\BillboardComponent.cpp" />
@@ -182,6 +188,7 @@
     <ClCompile Include="Resource\Shader\LightBlendRenderShader.cpp" />
     <ClCompile Include="Resource\Shader\LightBlendShader.cpp" />
     <ClCompile Include="Resource\Shader\LightConstantBuffer.cpp" />
+    <ClCompile Include="Resource\Shader\LightForwardConstantBuffer.cpp" />
     <ClCompile Include="Resource\Shader\MaterialConstantBuffer.cpp" />
     <ClCompile Include="Resource\Shader\Mesh2DShader.cpp" />
     <ClCompile Include="Resource\Shader\Mesh3DNoLightShader.cpp" />
@@ -208,6 +215,8 @@
     <ClCompile Include="Resource\Shader\TileMapConstantBuffer.cpp" />
     <ClCompile Include="Resource\Shader\TileMapShader.cpp" />
     <ClCompile Include="Resource\Shader\TransformConstantBuffer.cpp" />
+    <ClCompile Include="Resource\Shader\Transparent3DShader.cpp" />
+    <ClCompile Include="Resource\Shader\TransparentInstancing3DShader.cpp" />
     <ClCompile Include="Resource\Shader\WidgetConstantBuffer.cpp" />
     <ClCompile Include="Resource\Shader\WidgetShader.cpp" />
     <ClCompile Include="Resource\Sound\Sound.cpp" />
@@ -248,7 +257,13 @@
     <ClInclude Include="Animation\AnimationSequenceData.h" />
     <ClInclude Include="Animation\AnimationSequenceInstance.h" />
     <ClInclude Include="Animation\SkeletonSocket.h" />
+    <ClInclude Include="Component\Node\FindEnemyChampion.h" />
+    <ClInclude Include="Component\Node\InputECheckNode.h" />
+    <ClInclude Include="Component\Node\InputRCheckNode.h" />
     <ClInclude Include="Component\Node\MovePickingNode.h" />
+    <ClInclude Include="Component\Node\NoInterruptNode.h" />
+    <ClInclude Include="Component\Node\SkillENode.h" />
+    <ClInclude Include="Component\Node\SkillRNode.h" />
     <ClInclude Include="IMGUITableElemList.h" />
     <ClInclude Include="Collision\Collision.h" />
     <ClInclude Include="Collision\CollisionManager.h" />
@@ -413,6 +428,7 @@
     <ClInclude Include="Resource\Shader\LightBlendRenderShader.h" />
     <ClInclude Include="Resource\Shader\LightBlendShader.h" />
     <ClInclude Include="Resource\Shader\LightConstantBuffer.h" />
+    <ClInclude Include="Resource\Shader\LightForwardConstantBuffer.h" />
     <ClInclude Include="Resource\Shader\MaterialConstantBuffer.h" />
     <ClInclude Include="Resource\Shader\Mesh2DShader.h" />
     <ClInclude Include="Resource\Shader\Mesh3DNoLightShader.h" />
@@ -439,6 +455,8 @@
     <ClInclude Include="Resource\Shader\TileMapConstantBuffer.h" />
     <ClInclude Include="Resource\Shader\TileMapShader.h" />
     <ClInclude Include="Resource\Shader\TransformConstantBuffer.h" />
+    <ClInclude Include="Resource\Shader\Transparent3DShader.h" />
+    <ClInclude Include="Resource\Shader\TransparentInstancing3DShader.h" />
     <ClInclude Include="Resource\Shader\WidgetConstantBuffer.h" />
     <ClInclude Include="Resource\Shader\WidgetShader.h" />
     <ClInclude Include="Resource\Sound\Sound.h" />
@@ -629,6 +647,14 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Effect</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
     </FxCompile>
+    <FxCompile Include="..\Bin\Shader\Transparent3D.fx">
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Transparent3DVS</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Transparent3DVS</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+    </FxCompile>
     <FxCompile Include="..\Bin\Shader\Widget.fx">
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">WidgetVS</EntryPointName>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Effect</ShaderType>
@@ -733,6 +759,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <MultiProcessorCompilation>false</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -751,6 +778,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <MultiProcessorCompilation>false</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -770,6 +798,7 @@
       <PreprocessorDefinitions>_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <MultiProcessorCompilation>false</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -788,6 +817,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <MultiProcessorCompilation>false</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>

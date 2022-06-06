@@ -17,11 +17,44 @@ protected:
 
 protected:
 	class CScene* m_Scene;
+	bool		m_NoInterrupt;	// 다른 State로 전환 불가능한 상태인지(ex. 특정 스킬 사용중에 다른 스킬을 쓸 수 없다)
+	Object_Type m_ObjectType;
+	bool		m_IsEnemy;
 
 public:
+	bool IsEnemy()	const
+	{
+		return m_IsEnemy;
+	}
+
+	void SetEnemy(bool Enemy)
+	{
+		m_IsEnemy = Enemy;
+	}
+
+	Object_Type GetObjectType()	const
+	{
+		return m_ObjectType;
+	}
+
+	void SetObjectType(Object_Type Type)
+	{
+		m_ObjectType = Type;
+	}
+
 	class CScene* GetScene()    const
 	{
 		return m_Scene;
+	}
+
+	bool IsNoInterrupt()	const
+	{
+		return m_NoInterrupt;
+	}
+
+	void SetNoInterrupt(bool Enable)
+	{
+		m_NoInterrupt = Enable;
 	}
 
 public:
@@ -37,8 +70,6 @@ protected:
 	std::vector<CSharedPtr<CGameObject>>   m_vecChildObject;
 	float		m_LifeSpan;
 	class CNavAgent* m_NavAgent;
-	Object_Type m_ObjectType;
-	bool      m_IsEnemy;
 public:
 	void AddChildObject(CGameObject* Obj);
 	void DeleteObj();
@@ -175,10 +206,15 @@ public:
 
 	// m_NavAgent의 m_PathList에 TargetPos를 추가해준다
 	void AddPath(const Vector3& TargetPos);
+	void ClearPath();
 	
 public:
+	void SetNavAgent(CNavAgent* Agent)
+	{
+		m_NavAgent = Agent;
+	}
 	void SetNavManagerLandScape(class CLandScape* LandScape);
-
+	bool IsNavAgentPathListEmpty()	const;
 
 public:
 	template <typename T>
@@ -267,6 +303,7 @@ public:
 		}
 
 		return Component;
+
 	}
 
 	template <typename T>
@@ -276,6 +313,7 @@ public:
 
 		Component->SetScene(m_Scene);
 		Component->SetGameObject(this);
+
 
 		if (Component->GetComponentType() == Component_Type::ObjectComponent)
 			m_vecObjectComponent.push_back((class CObjectComponent*)Component);
@@ -287,6 +325,20 @@ public:
 			if (!m_RootComponent)
 				m_RootComponent = Component;
 		}
+
+		return Component;
+	}
+
+	template <typename T>
+	T* LoadObjectComponent()
+	{
+		T* Component = new T;
+
+		Component->SetScene(m_Scene);
+		Component->SetGameObject(this);
+
+
+		m_vecObjectComponent.push_back((class CObjectComponent*)Component);
 
 		return Component;
 	}

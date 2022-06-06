@@ -8,11 +8,22 @@
 #include "Component/Node/ActionNode.h"
 #include "Component/Node/ConditionNode.h"
 #include "Component/Node/InputQCheckNode.h"
-#include "Component/Node/SkillQNode.h"
 #include "Component/Node/InputWCheckNode.h"
+#include "Component/Node/SkillQNode.h"
 #include "Component/Node/SkillWNode.h"
+#include "Component/Node/SkillENode.h"
+#include "Component/Node/SkillRNode.h"
+#include "Component/Node/InputQCheckNode.h"
+#include "Component/Node/InputWCheckNode.h"
+#include "Component/Node/InputECheckNode.h"
+#include "Component/Node/InputRCheckNode.h"
+#include "Component/Node/IdleNode.h"
 #include "Component/Node/MoveInputCheckNode.h"
 #include "Component/Node/MovePickingNode.h"
+#include "Component/Node/NoInterruptNode.h"
+#include "ObjectComponentWindow.h"
+#include "ObjectHierarchyWindow.h"
+#include "../EditorInfo.h"
 
 CBehaviorTreeWindow::CBehaviorTreeWindow()  :
     m_Select(false),
@@ -66,6 +77,30 @@ bool CBehaviorTreeWindow::Init()
 
 void CBehaviorTreeWindow::Update(float DeltaTime)
 {
+    if (!m_Open)
+        return;
+
+    CObjectComponentWindow* ObjCompWindow = (CObjectComponentWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(OBJECTCOMPONENT_LIST);
+    CObjectHierarchyWindow* ObjWindow = (CObjectHierarchyWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(OBJECT_HIERARCHY);
+
+
+    if (ObjWindow && ObjCompWindow)
+    {
+        CGameObject* SelectObj = ObjWindow->GetSelectObject();
+        CStateComponent* State = SelectObj->FindComponentFromType<CStateComponent>();
+
+        if (State)
+        {
+            // 만약 Object가 Load되고 처음 Behavior Tree를 열었다면 State Component가 갖고 있는 Behavior Tree안에 노드들이 Graph Editor에 하나도 나오지 않을테니
+            // Behavior Tree안에 노드들을 Graph Editor에 출력되게 해야한다
+            if (State->GetBehaviorTree()->GetRootNode() && m_Delegate.GetNodeCount() == 0)
+            {
+                UpdateLoadNode((CCompositeNode*)(State->GetBehaviorTree()->GetRootNode()));
+            }
+        }
+    }
+
+
     GraphEditor::FitOnScreen fit = GraphEditor::FitOnScreen::Fit_None;
 
     ImGui::Begin("Graph Editor", NULL, 0);
@@ -74,11 +109,14 @@ void CBehaviorTreeWindow::Update(float DeltaTime)
     {
         fit = GraphEditor::FitOnScreen::Fit_AllNodes;
     }
+
     ImGui::SameLine();
+
     if (ImGui::Button("Fit selected nodes"))
     {
         fit = GraphEditor::FitOnScreen::Fit_SelectedNodes;
     }
+
 
     ImGui::PushID(m_WidgetID);
     ImGui::PushItemWidth(150.f);
@@ -121,14 +159,15 @@ void CBehaviorTreeWindow::Update(float DeltaTime)
 
         if (m_TypeSelectIndex == 2)
         {
-            m_vecNodeAction.push_back("InputQ");
-            m_vecNodeAction.push_back("InputW");
-            m_vecNodeAction.push_back("InputE");
-            m_vecNodeAction.push_back("InputR");
-            m_vecNodeAction.push_back("InputD");
-            m_vecNodeAction.push_back("InputF");
+            m_vecNodeAction.push_back("SkillQ");
+            m_vecNodeAction.push_back("SkillW");
+            m_vecNodeAction.push_back("SkillE");
+            m_vecNodeAction.push_back("SkillR");
+            m_vecNodeAction.push_back("SpellD");
+            m_vecNodeAction.push_back("SpellF");
             m_vecNodeAction.push_back("Move");
             m_vecNodeAction.push_back("MovePicking");
+            m_vecNodeAction.push_back("Idle");
         }
 
         else if (m_TypeSelectIndex == 3)
@@ -140,6 +179,7 @@ void CBehaviorTreeWindow::Update(float DeltaTime)
             m_vecNodeAction.push_back("InputDCheck");
             m_vecNodeAction.push_back("InputFCheck");
             m_vecNodeAction.push_back("MouseRightInputCheck");
+            m_vecNodeAction.push_back("NoInterruptCheck");
         }
 
         ImGui::PushID(m_WidgetID + 1);
@@ -218,6 +258,18 @@ void CBehaviorTreeWindow::Update(float DeltaTime)
 
     ImGui::SameLine();
 
+    if (ImGui::Button("Delete Node"))
+    {
+        GraphEditorDelegate::Node node;
+        bool Result = m_Delegate.GetSelectedDelegateNode(node);
+        if (Result)
+        {
+            OnDeleteNodeButton(node.name);
+        }
+    }
+
+    ImGui::SameLine();
+
     ImGui::Dummy(ImVec2(100.f, 20.f));
 
     ImGui::SameLine();
@@ -234,6 +286,15 @@ void CBehaviorTreeWindow::Update(float DeltaTime)
     {
         if (m_StateComponent)
             m_StateComponent->SetTreeUpdate(false);
+    }
+
+    ImGui::SameLine();
+
+    if (ImGui::Button("Close"))
+    {
+        m_Open = false;
+        ImGui::End();
+        return;
     }
 
     GraphEditor::Show(m_Delegate, m_Option, m_ViewState, true, &fit);
@@ -285,8 +346,10 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
             NewTreeNode = m_StateComponent->CreateTreeNode<CSkillWNode>(Name);
             break;
         case ActionNode::SkillE:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CSkillENode>(Name);
             break;
         case ActionNode::SkillR:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CSkillRNode>(Name);
             break;
         case ActionNode::SpellD:
             break;
@@ -296,6 +359,9 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
             break;
         case ActionNode::MovePicking:
             NewTreeNode = m_StateComponent->CreateTreeNode<CMovePickingNode>(Name);
+            break;
+        case ActionNode::Idle:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CIdleNode>(Name);
             break;
         }
 
@@ -316,8 +382,10 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
             NewTreeNode = m_StateComponent->CreateTreeNode<CInputWCheckNode>(Name);
             break;
         case ConditionNode::InputECheck:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CInputECheckNode>(Name);
             break;
         case ConditionNode::InputRCheck:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CInputRCheckNode>(Name);
             break;
         case ConditionNode::InputDCheck:
             break;
@@ -326,16 +394,17 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
         case ConditionNode::MoveInputCheckNode:
             NewTreeNode = m_StateComponent->CreateTreeNode<CMoveInputCheckNode>(Name);
             break;
-
+        case ConditionNode::NoInterruptNode:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CNoInterruptNode>(Name);
+            break;
         }
-
+    }
     }
 
-    }
+    NewTreeNode->SetOwner(m_StateComponent->GetBehaviorTree());
+    NewTreeNode->SetObject(m_StateComponent->GetGameObject());
 
-    CNode* Node = m_StateComponent->GetBehaviorTree()->FindNode(Name);
-
-    m_Delegate.AddNode(NodeName, idx, 0.f, 0.f, false, Node);
+    m_Delegate.AddNode(NodeName, idx, 0.f, 0.f, false, NewTreeNode);
 
     if (!m_StateComponent->GetBehaviorTree()->GetRootNode())
     {
@@ -344,6 +413,186 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
 
     m_PrevViewName = "Select Node Type";
     m_LeafNodePrevViewName = "Select Node Action";
+}
+
+void CBehaviorTreeWindow::OnDeleteNodeButton(const char* Name)
+{
+    CBehaviorTree* Tree = m_StateComponent->GetBehaviorTree();
+
+    if (Name == Tree->GetRootNode()->GetName())
+    {
+        Tree->SetRoot(nullptr);
+    }
+
+	CNode* Node = Tree->FindNode(Name);
+
+	GraphEditorDelegate::Node node = m_Delegate.FindNode(Node->GetName());
+
+	int NodeIdx = node.NodeIndex;
+
+	// GUI상에서도 Node랑 (연결된 Link가 있다면)Link 지우기
+	m_Delegate.DelAllLink(NodeIdx);
+	m_Delegate.DeleteNode(NodeIdx);
+
+	// Node가 지워지면 Node의 NodeIndex랑 Link에 적힌 Input/Output Node Index도 바뀌어야한다
+	size_t NodeCount = m_Delegate.mNodes.size();
+
+	for (int i = 0; i < NodeCount; ++i)
+	{
+		if (m_Delegate.mNodes[i].NodeIndex > NodeIdx)
+			--m_Delegate.mNodes[i].NodeIndex;
+	}
+
+
+	size_t Count = m_Delegate.mLinks.size();
+	for (int i = 0; i < Count; ++i)
+	{
+		if (m_Delegate.mLinks[i].mInputNodeIndex > NodeIdx)
+			--m_Delegate.mLinks[i].mInputNodeIndex;
+
+		if (m_Delegate.mLinks[i].mOutputNodeIndex > NodeIdx)
+			--m_Delegate.mLinks[i].mOutputNodeIndex;
+	}
+
+	// Engine상에서도 지우기
+	if (Node)
+	{
+		Tree->DeleteNode(Node);
+	}
+
+}
+
+
+void CBehaviorTreeWindow::UpdateLoadNode(CCompositeNode* RootNode)
+{
+    int TypeIndex = -1;
+
+    if (RootNode->GetTypeID() == typeid(CSequenceNode).hash_code())
+    {
+        TypeIndex = 0;
+    }
+
+    else if (RootNode->GetTypeID() == typeid(CSelectorNode).hash_code())
+    {
+        TypeIndex = 1;
+    }
+
+    else if (RootNode->GetNodeType() == Node_Type::Action)
+    {
+        TypeIndex = 2;
+    }
+
+    else if (RootNode->GetNodeType() == Node_Type::Condition)
+    {
+        TypeIndex = 3;
+    }
+
+    m_Delegate.AddNode(RootNode->GetName(), TypeIndex, 0.f, 0.f, false, RootNode);
+    RootNode->SetOwner(m_StateComponent->GetBehaviorTree());
+    RootNode->SetObject(m_StateComponent->GetGameObject());
+
+    const std::list<CNode*> NodeList = RootNode->GetChildrenList();
+    auto iter = NodeList.begin();
+    auto iterEnd = NodeList.end();
+
+    int Idx = 0;
+    for (; iter != iterEnd; ++iter, ++Idx)
+    {
+        (*iter)->SetOwner(m_StateComponent->GetBehaviorTree());
+        (*iter)->SetObject(m_StateComponent->GetGameObject());
+        UpdateLoadNodeRecursive(*iter, 1, Idx);
+    }
+
+    UpdateLoadNodeLink(RootNode->GetOwner());
+}
+
+void CBehaviorTreeWindow::UpdateLoadNodeRecursive(CNode* Node, int Depth, int Height)
+{
+    int TypeIndex = -1;
+    std::list<CNode*> NodeList;
+
+    if (Node->GetTypeID() == typeid(CSequenceNode).hash_code())
+    {
+        TypeIndex = 0;
+        NodeList = ((CSequenceNode*)Node)->GetChildrenList();
+
+        auto iter = NodeList.begin();
+        auto iterEnd = NodeList.end();
+
+        int Idx = 0;
+        for (; iter != iterEnd; ++iter, ++Idx)
+        {
+            UpdateLoadNodeRecursive(*iter, Depth + 1, Idx);
+        }
+
+        m_Delegate.AddNode(Node->GetName(), TypeIndex, Depth * 100.f, Height * 100.f, false, Node);
+    }
+
+    else if (Node->GetTypeID() == typeid(CSelectorNode).hash_code())
+    {
+        TypeIndex = 1;
+        NodeList = ((CSelectorNode*)Node)->GetChildrenList();
+
+        auto iter = NodeList.begin();
+        auto iterEnd = NodeList.end();
+
+        int Idx = 0;
+        for (; iter != iterEnd; ++iter, ++Idx)
+        {
+            UpdateLoadNodeRecursive(*iter, Depth + 1, Idx);
+        }
+
+        m_Delegate.AddNode(Node->GetName(), TypeIndex, Depth * 100.f, Height * 100.f, false, Node);
+    }
+
+    else if (Node->GetNodeType() == Node_Type::Action)
+    {
+        TypeIndex = 2;
+        m_Delegate.AddNode(Node->GetName(), TypeIndex, Depth * 100.f, Height * 100.f, false, Node);
+    }
+
+    else if (Node->GetNodeType() == Node_Type::Condition)
+    {
+        TypeIndex = 3;
+        m_Delegate.AddNode(Node->GetName(), TypeIndex, Depth * 100.f, Height * 100.f, false, Node);
+    }
+}
+
+void CBehaviorTreeWindow::UpdateLoadNodeLink(CBehaviorTree* Tree)
+{
+    size_t Count = Tree->GetNodeCount();
+    size_t DelegateNodeCount = m_Delegate.GetNodeCount();
+    size_t LinkCount = m_Delegate.mLinks.size();
+
+    for (size_t i = 0; i < Count; ++i)
+    {
+        CNode* Node = Tree->GetNode(i);
+
+        if (Node->GetTypeID() == typeid(CSelectorNode).hash_code() || Node->GetTypeID() == typeid(CSequenceNode).hash_code())
+        {
+
+            for (size_t j = 0; j < DelegateNodeCount; ++j)
+            {
+                if (m_Delegate.GetDelegateNode(j).BehaviorTreeNode == Node)
+                {
+                    GraphEditorDelegate::Node SrcNode = m_Delegate.GetDelegateNode(j);
+
+                    const std::list<CNode*> ChildrenList = ((CCompositeNode*)Node)->GetChildrenList();
+
+                    auto iter = ChildrenList.begin();
+                    auto iterEnd = ChildrenList.end();
+
+                    int ChildIdx = 0;
+                    for (; iter != iterEnd; ++iter, ++ChildIdx)
+                    {
+                        GraphEditorDelegate::Node DestNode = m_Delegate.FindNode((*iter)->GetName());
+                        m_Delegate.LoadLink(SrcNode.NodeIndex, ChildIdx, DestNode.NodeIndex, 0);
+                    }
+                }
+            }
+        }
+
+    }
 }
 
 void CBehaviorTreeWindow::OnAddLink(CNode* ParentNode, CNode* ChildNode)

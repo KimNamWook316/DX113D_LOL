@@ -66,6 +66,7 @@ private :
 	class CIMGUIButton* m_SelectAnimInstanceFolderPath;
 	// Log
 	class CIMGUIChild* m_AnimInstanceConvertLog;
+	// ProgressBar
 	class CIMGUIProgressBar* m_AnimInstanceProgressBar;
 	// ภ๚ภๅวา Animation File Name
 	class CIMGUITextInput* m_SavedAnimFileName;

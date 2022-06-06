@@ -28,7 +28,6 @@ NodeResult CSkillQNode::OnStart(float DeltaTime)
 	if (m_AnimationMeshComp)
 	{
 		m_AnimationMeshComp->GetAnimationInstance()->ChangeAnimation(SequenceName);
-		m_Owner->SetCurrentNode(this);
 	}
 
 	return NodeResult::Node_True;

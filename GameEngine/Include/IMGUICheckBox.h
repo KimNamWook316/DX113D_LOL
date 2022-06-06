@@ -57,6 +57,29 @@ public:
         return mVecCheckInfo[idx]->bCheck;
     }
 
+    CheckInfo* GetInfo(const int idx) const
+    {
+        return mVecCheckInfo[idx];
+    }
+
+    size_t GetCount() const
+    {
+        return mVecCheckInfo.size();
+    }
+
+    int GetSelectIdx() const
+    {
+        size_t Count = mVecCheckInfo.size();
+        
+        for (size_t i = 0; i < Count; ++i)
+        {
+            if (mVecCheckInfo[i]->bCheck)
+                return i;
+        }
+
+        return -1;
+    }
+
 public:
     template <typename T>
     void SetCallBackLabel(T* obj, void(T::* func)(const char*, bool))
@@ -77,5 +100,6 @@ protected:
     float mSpacingX;
     std::function<void(const char*, bool)> mCallBackLabel;
     std::function<void(int, bool)> mCallBackIdx;
+    int SelectIdx;
 };
 

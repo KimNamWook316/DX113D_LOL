@@ -29,9 +29,14 @@ bool CInspectorWindow::Init()
 void CInspectorWindow::OnSelectGameObject(CGameObject* Obj)
 {
 	// 현재 선택된 게임오브젝트가 다시 선택된 경우
-	if (m_ObjWidget->GetGameObject() == Obj)
+	CGameObject* CurObject = m_ObjWidget->GetGameObject();
+
+	if (CurObject)
 	{
-		return;
+		if (m_ObjWidget->GetGameObject() == Obj)
+		{
+			return;
+		}
 	}
 
 	// Object Widget에 GameObject 세팅하면서 Inspector 갱신 
@@ -54,14 +59,17 @@ void CInspectorWindow::OnCreateObjectComponent(CObjectComponent* Com)
 	m_ObjWidget->CreateObjectComponentWidget(Com);
 }
 
-void CInspectorWindow::OnClearGameObject()
-{
-	m_ObjWidget->SetRender(false);
-	m_ObjWidget->ClearComponentWidget();
-	m_ObjWidget->SetGameObject(nullptr);
-}
-
 bool CInspectorWindow::FindSceneComponent(CSceneComponent* Com)
 {
 	return m_ObjWidget->FindSceneComponent(Com);
+}
+void CInspectorWindow::OnDeleteSceneComponent(CSceneComponent* Com)
+{
+	m_ObjWidget->DeleteSceneComponentWidget(Com);
+}
+
+void CInspectorWindow::OnDeleteGameObject()
+{
+	DeleteWidget("GameObjectInspector");
+	m_ObjWidget = nullptr;
 }

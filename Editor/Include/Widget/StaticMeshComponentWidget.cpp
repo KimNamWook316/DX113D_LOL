@@ -135,12 +135,18 @@ void CStaticMeshComponentWidget::OnSelectMaterialSlotCombo(int Idx, const char* 
 		m_SpecularColorEdit->SetRGB(Mat->GetBaseColor().x, Mat->GetBaseColor().y, Mat->GetBaseColor().z);
 		m_EmissiveColorEdit->SetRGB(Mat->GetBaseColor().x, Mat->GetBaseColor().y, Mat->GetBaseColor().z);
 		m_SpecluarPowerEdit->SetVal(Mat->GetSpecularPower());
+		m_TransparencyEdit->SetCheck(0, Mat->IsTransparent());
 		m_OpacityEdit->SetValue(Mat->GetOpacity());
 	}
 }
 
 void CStaticMeshComponentWidget::OnEditBaseColor(const Vector3& Color)
 {
+	if (m_MaterialSlotCombo->GetSelectIndex() == -1)
+	{ 
+		return;
+	}
+
 	CStaticMeshComponent* MeshCom = (CStaticMeshComponent*)m_Component.Get();
 
 	if (MeshCom->GetMesh())
@@ -151,6 +157,11 @@ void CStaticMeshComponentWidget::OnEditBaseColor(const Vector3& Color)
 
 void CStaticMeshComponentWidget::OnEditAmbientColor(const Vector3& Color)
 {
+	if (m_MaterialSlotCombo->GetSelectIndex() == -1)
+	{
+		return;
+	}
+
 	CStaticMeshComponent* MeshCom = (CStaticMeshComponent*)m_Component.Get();
 
 	if (MeshCom->GetMesh())
@@ -161,6 +172,11 @@ void CStaticMeshComponentWidget::OnEditAmbientColor(const Vector3& Color)
 
 void CStaticMeshComponentWidget::OnEditSpecluarColor(const Vector3& Color)
 {
+	if (m_MaterialSlotCombo->GetSelectIndex() == -1)
+	{
+		return;
+	}
+
 	CStaticMeshComponent* MeshCom = (CStaticMeshComponent*)m_Component.Get();
 
 	if (MeshCom->GetMesh())
@@ -171,6 +187,11 @@ void CStaticMeshComponentWidget::OnEditSpecluarColor(const Vector3& Color)
 
 void CStaticMeshComponentWidget::OnEditSpecluarPower(float Power)
 {
+	if (m_MaterialSlotCombo->GetSelectIndex() == -1)
+	{
+		return;
+	}
+
 	CStaticMeshComponent* MeshCom = (CStaticMeshComponent*)m_Component.Get();
 
 	if (MeshCom->GetMesh())
@@ -181,6 +202,11 @@ void CStaticMeshComponentWidget::OnEditSpecluarPower(float Power)
 
 void CStaticMeshComponentWidget::OnEditEmissiveColor(const Vector3& Color)
 {
+	if (m_MaterialSlotCombo->GetSelectIndex() == -1)
+	{
+		return;
+	}
+
 	CStaticMeshComponent* MeshCom = (CStaticMeshComponent*)m_Component.Get();
 
 	if (MeshCom->GetMesh())
@@ -191,16 +217,26 @@ void CStaticMeshComponentWidget::OnEditEmissiveColor(const Vector3& Color)
 
 void CStaticMeshComponentWidget::OnCheckTransparency(int Idx, bool Check)
 {
+	if (m_MaterialSlotCombo->GetSelectIndex() == -1)
+	{
+		return;
+	}
+
 	CStaticMeshComponent* MeshCom = (CStaticMeshComponent*)m_Component.Get();
 
 	if (MeshCom->GetMesh())
 	{
-		MeshCom->SetTransparency(Check, m_MaterialSlotCombo->GetSelectIndex());
+		MeshCom->SetTransparency(Check, Idx);
 	}
 }
 
 void CStaticMeshComponentWidget::OnEditOpacity(float Opacity)
 {
+	if (m_MaterialSlotCombo->GetSelectIndex() == -1)
+	{
+		return;
+	}
+
 	CStaticMeshComponent* MeshCom = (CStaticMeshComponent*)m_Component.Get();
 
 	if (MeshCom->GetMesh())

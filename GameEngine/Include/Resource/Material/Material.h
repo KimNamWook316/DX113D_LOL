@@ -134,6 +134,11 @@ public:
         return m_SpecularColor.w;
     }
 
+    bool IsTransparent() const
+    {
+        return m_RenderStateArray[(int)RenderState_Type::Blend];
+    }
+
     float GetOpacity() const
     {
         return m_Opacity;

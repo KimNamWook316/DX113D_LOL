@@ -224,6 +224,14 @@ bool CAnimationSequence::Load(FILE* pFile)
 	// std::vector<AnimationFrameTrans>	m_vecFrameTrans;
 	m_vecFrameTrans.resize(iCount * m_FrameLength);
 
+	// 기존의 m_vecKeyFrame 은 모두 지워준다.
+	size_t VecKeyFrameSize = m_vecKeyFrame.size();
+
+	for (size_t i = 0; i < VecKeyFrameSize; ++i)
+	{
+		SAFE_DELETE(m_vecKeyFrame[i]);
+	}
+
 	for (size_t i = 0; i < iCount; ++i)
 	{
 		BoneKeyFrame* pBoneKeyFrame = new BoneKeyFrame;

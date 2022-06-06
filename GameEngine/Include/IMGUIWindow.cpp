@@ -83,6 +83,24 @@ void CIMGUIWindow::EraseWidget(const std::string& Name)
 	}
 }
 
+void CIMGUIWindow::DeleteWidget(const std::string& Name)
+{
+	size_t Count = m_vecWidget.size();
+
+	for (size_t i = 0; i < Count; ++i)
+	{
+		if (m_vecWidget[i]->m_Name == Name)
+		{
+			SAFE_DELETE(m_vecWidget[i]);
+
+			auto iter = m_vecWidget.begin();
+			std::advance(iter, i);
+
+			m_vecWidget.erase(iter);
+		}
+	}
+}
+
 bool CIMGUIWindow::Init()
 {
 	return true;

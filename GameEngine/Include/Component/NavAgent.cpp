@@ -6,7 +6,7 @@
 #include "../GameObject/GameObject.h"
 
 CNavAgent::CNavAgent()	:
-	m_MoveSpeed(300.f)
+	m_MoveSpeed(100.f)
 {
 	SetTypeID<CNavAgent>();
 }
@@ -60,7 +60,26 @@ void CNavAgent::Update(float DeltaTime)
 			Vector3	Dir = TargetPos - Pos;
 			Dir.Normalize();
 
-			float	Dist = m_MoveSpeed * DeltaTime;
+			//Vector3 Rot = m_Object->GetWorldRot();
+			//Rot.Normalize();
+
+			//Vector3 Diff = Dir - Rot;
+
+			//if (abs(Diff.y) > 0.01f)
+			//{
+			//	if (Diff.y > 0.f)
+			//	{
+			//		m_Object->AddWorldRotationY(10.f * DeltaTime);
+			//	}
+
+			//	else
+			//	{
+			//		m_Object->AddWorldRotationY(-10.f * DeltaTime);
+			//	}
+			//}
+
+
+			float	Dist = 20.f * DeltaTime;
 
 			if (TargetDistance <= Dist)
 			{
@@ -92,6 +111,24 @@ void CNavAgent::PostRender()
 CNavAgent* CNavAgent::Clone()
 {
 	return new CNavAgent(*this);
+}
+
+bool CNavAgent::Save(FILE* File)
+{
+	CComponent::Save(File);
+
+	fwrite(&m_MoveSpeed, sizeof(float), 1, File);
+
+	return true;
+}
+
+bool CNavAgent::Load(FILE* File)
+{
+	CComponent::Load(File);
+
+	fread(&m_MoveSpeed, sizeof(float), 1, File);
+
+	return true;
 }
 
 void CNavAgent::PathResult(const std::list<Vector3>& PathList)
