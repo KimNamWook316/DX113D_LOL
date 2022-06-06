@@ -5,6 +5,8 @@
 #include "imgui.h"
 #include "../GraphEditor.h"
 #include "Component/Node/Node.h"
+#include "Component/Node/SequenceNode.h"
+#include "Component/Node/SelectorNode.h"
 #include "Component/Node/CompositeNode.h"
 #include "Component/BehaviorTree.h"
 
@@ -77,6 +79,7 @@ struct GraphEditorDelegate : public GraphEditor::Delegate
         float x, y;
         bool mSelected;
         CNode* BehaviorTreeNode;
+        int NodeIndex;
     };
 
     bool m_IsCleared = false;
@@ -110,8 +113,8 @@ struct GraphEditorDelegate : public GraphEditor::Delegate
 
     void AddLink(GraphEditor::NodeIndex inputNodeIndex, GraphEditor::SlotIndex inputSlotIndex, GraphEditor::NodeIndex outputNodeIndex, GraphEditor::SlotIndex outputSlotIndex) override
     {
-        GraphEditorDelegate::Node SrcNode = GetNode((int)inputNodeIndex);
-        GraphEditorDelegate::Node DestNode = GetNode((int)outputNodeIndex);
+        GraphEditorDelegate::Node SrcNode = GetDelegateNode((int)inputNodeIndex);
+        GraphEditorDelegate::Node DestNode = GetDelegateNode((int)outputNodeIndex);
 
         // Action Node나 Condition Node가 부모가 되면 안됨
         if (SrcNode.templateIndex == 2 || SrcNode.templateIndex == 3)
@@ -122,14 +125,80 @@ struct GraphEditorDelegate : public GraphEditor::Delegate
         CCompositeNode* ParentNode = (CCompositeNode*)Tree->FindNode(SrcNode.name);
         CNode* ChildNode = Tree->FindNode(DestNode.name);
 
-        ParentNode->AddChild(ChildNode);
+        if (inputSlotIndex == 0)
+            ParentNode->AddChildFront(ChildNode);
+        else
+            ParentNode->AddChild(ChildNode);
 
         mLinks.push_back({ inputNodeIndex, inputSlotIndex, outputNodeIndex, outputSlotIndex });
     }
 
+    // GameObject Load하고 맨 처음 Behavior Tree Window 열 때 호출
+    void LoadLink(GraphEditor::NodeIndex inputNodeIndex, GraphEditor::SlotIndex inputSlotIndex, GraphEditor::NodeIndex outputNodeIndex, GraphEditor::SlotIndex outputSlotIndex)
+    {
+        GraphEditorDelegate::Node SrcNode = GetDelegateNode((int)inputNodeIndex);
+        GraphEditorDelegate::Node DestNode = GetDelegateNode((int)outputNodeIndex);
+
+        // Action Node나 Condition Node가 부모가 되면 안됨
+        if (SrcNode.templateIndex == 2 || SrcNode.templateIndex == 3)
+            return;
+
+        mLinks.push_back({ inputNodeIndex, inputSlotIndex, outputNodeIndex, outputSlotIndex });
+    }
+
+
     void DelLink(GraphEditor::LinkIndex linkIndex) override
     {
+        int ParentNodeIdx = mLinks[linkIndex].mInputNodeIndex;
+        int ChildNodeIdx = mLinks[linkIndex].mOutputNodeIndex;
+
+        CNode* ParentNode = mNodes[ParentNodeIdx].BehaviorTreeNode;
+        CNode* ChildNode = mNodes[ChildNodeIdx].BehaviorTreeNode;
+
+        if (ChildNode->GetTypeID() == typeid(CSequenceNode).hash_code() || ChildNode->GetTypeID() == typeid(CSelectorNode).hash_code())
+        {
+            std::list<CNode*> GrandChildList = ((CCompositeNode*)ChildNode)->GetChildrenList();
+
+            auto iter = GrandChildList.begin();
+            auto iterEnd = GrandChildList.end();
+
+            for (; iter != iterEnd; ++iter)
+            {
+                (*iter)->SetParent(nullptr);
+            }
+        }
+        
+        ((CCompositeNode*)ParentNode)->DeleteChild(ChildNode);
+
         mLinks.erase(mLinks.begin() + linkIndex);
+    }
+
+    void DelAllLink(GraphEditor::NodeIndex NodeIndex)
+    {
+        size_t LinkCount = mLinks.size();
+
+        for (size_t i = 0; i < LinkCount; )
+        {
+            if (mLinks[i].mInputNodeIndex == NodeIndex || mLinks[i].mOutputNodeIndex == NodeIndex)
+            {
+                mLinks.erase(mLinks.begin() + i);
+                LinkCount = mLinks.size();
+                i = 0;
+            }
+
+            else
+                ++i;
+        }
+    }
+
+    void DeleteNode(GraphEditor::NodeIndex NodeIndex)
+    {
+        auto iter = mNodes.begin();
+        std::advance(iter, NodeIndex);
+
+        SAFE_DELETE_ARRAY((*iter).name);
+
+        mNodes.erase(mNodes.begin() + NodeIndex);
     }
 
     void CustomDraw(ImDrawList* drawList, ImRect rectangle, GraphEditor::NodeIndex nodeIndex) override
@@ -174,9 +243,25 @@ struct GraphEditorDelegate : public GraphEditor::Delegate
         };
     }
 
-    GraphEditorDelegate::Node GetNode(int Index)
+    GraphEditorDelegate::Node GetDelegateNode(int Index)
     {
         return mNodes[Index];
+    }
+
+    bool GetSelectedDelegateNode(GraphEditorDelegate::Node& Output)
+    {
+        size_t Count = mNodes.size();
+
+        for (size_t i = 0; i < Count; ++i)
+        {
+            if (mNodes[i].mSelected)
+            {
+                Output = mNodes[i];
+                return true;
+            }
+        }
+
+        return false;
     }
 
     const size_t GetLinkCount() override
@@ -204,6 +289,10 @@ struct GraphEditorDelegate : public GraphEditor::Delegate
         NewNode.y = PosY;
         NewNode.mSelected = mSelected;
         NewNode.BehaviorTreeNode = TreeNode;
+        NewNode.templateIndex = TemplateIndex;
+
+        size_t CurrentCount = mNodes.size();
+        NewNode.NodeIndex = CurrentCount;
 
         mNodes.push_back(NewNode);
     }
@@ -219,23 +308,31 @@ struct GraphEditorDelegate : public GraphEditor::Delegate
         }
     }
 
+    //void AddTemplateChild(GraphEditor::TemplateIndex TemplateIndex)
+    //{
+    //    ++mTemplates[TemplateIndex].mOutputCount;
+    //    mTemplates[TemplateIndex].mOutputColors = mTemplates[TemplateIndex - 1].mOutputColors;
+    //    std::string Name = "Child";
+    //    mTemplates[TemplateIndex].mOutputNames = Name.c_str();
+    //}
+
     // Graph datas
     static inline GraphEditor::Template mTemplates[] =
     {
-        // Sequence Node Template
+        // Sequence Node(2 Children) Template
         {
-            IM_COL32(140, 140, 160, 255),
-            IM_COL32(140, 100, 140, 255),
+            IM_COL32(140, 200, 160, 255),
+            IM_COL32(140, 200, 140, 255),
             IM_COL32(110, 110, 150, 255),
             1,
             Array{"Parent"},
             nullptr,
-            2,
-            Array{"Child0", "Child1"},
+            4,
+            Array{"Child0", "Child1", "Child2", "Child3"},
             nullptr
         },
 
-        // Selector Node Template
+        // Selector Node(2 Children) Template
         {
             IM_COL32(100, 140, 190, 255),
             IM_COL32(100, 100, 180, 255),
@@ -243,8 +340,8 @@ struct GraphEditorDelegate : public GraphEditor::Delegate
             1,
             Array{"Parent"},
             nullptr,
-            2,
-            Array{"Child0", "Child1"},
+            4,
+            Array{"Child0", "Child1", "Child2", "Child3"},
             nullptr
         },
 
@@ -366,7 +463,7 @@ public:
 
 private:
     void OnAddNodeButton(const char* Name, int TypeIndex, int ActionIndex);
-
+    void OnDeleteNodeButton(const char* Name);
 
     void SetHintText(const char* Text)
     {
@@ -382,5 +479,11 @@ private:
         Length = WideCharToMultiByte(CP_UTF8, 0, m_wHintText, -1, 0, 0, 0, 0);
         WideCharToMultiByte(CP_UTF8, 0, m_wHintText, -1, m_HintTextUTF8, Length, 0, 0);
     }
+
+public:
+    // GameObject가 로드됐을때 Graph Editor상에 노드들 갱신
+    void UpdateLoadNode(CCompositeNode* RootNode);
+    void UpdateLoadNodeLink(class CBehaviorTree* Tree);
+    void UpdateLoadNodeRecursive(CNode* Node, int Depth, int Height);
 };
 

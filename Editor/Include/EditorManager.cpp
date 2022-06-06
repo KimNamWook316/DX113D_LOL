@@ -15,6 +15,7 @@
 #include "Component/StaticMeshComponent.h"
 #include "Component/ParticleComponent.h"
 #include "Component/AnimationMeshComponent.h"
+#include "Component/StateComponent.h"
 // Window
 #include "Window/ObjectHierarchyWindow.h"
 #include "Window/SceneComponentHierarchyWindow.h"
@@ -129,6 +130,13 @@ bool CEditorManager::Init(HINSTANCE hInst)
 	CInput::GetInst()->CreateKey("MoveDown", 'S');
 	CInput::GetInst()->CreateKey("RotationZInv", 'A');
 	CInput::GetInst()->CreateKey("RotationZ", 'D');
+
+	CInput::GetInst()->CreateKey("SkillQ", 'Q');
+	CInput::GetInst()->CreateKey("SkillW", 'W');
+	CInput::GetInst()->CreateKey("SkillE", 'E');
+	CInput::GetInst()->CreateKey("SkillR", 'R');
+	CInput::GetInst()->CreateKey("SpellD", 'D');
+	CInput::GetInst()->CreateKey("SpellF", 'F');
 
 	m_CameraObject = CSceneManager::GetInst()->GetScene()->CreateGameObject<C3DCameraObject>("EditorCamera");
 
@@ -294,6 +302,18 @@ CComponent* CEditorManager::CreateComponent(CGameObject* Obj, size_t Type)
 	{
 		CAnimationMeshComponent* Component = Obj->LoadComponent<CAnimationMeshComponent>();
 		// Component->EnableEditMode(true);
+		return Component;
+	}
+
+	else if (Type == typeid(CStateComponent).hash_code())
+	{
+		CStateComponent* Component = Obj->LoadObjectComponent<CStateComponent>();
+		return Component;
+	}
+
+	else if (Type == typeid(CNavAgent).hash_code())
+	{
+		CNavAgent* Component = Obj->LoadObjectComponent<CNavAgent>();
 		return Component;
 	}
 

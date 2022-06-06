@@ -5,6 +5,7 @@
 CSelectorNode::CSelectorNode()
 {
 	SetTypeID(typeid(CSelectorNode).hash_code());
+	m_NodeType = Node_Type::Selector;
 }
 
 CSelectorNode::CSelectorNode(const CSelectorNode& Node)	:

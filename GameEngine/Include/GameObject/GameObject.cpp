@@ -11,6 +11,7 @@ CGameObject::CGameObject() :
 	m_NavAgent(nullptr)
 {
 	SetTypeID<CGameObject>();
+	m_NoInterrupt = false;
 }
 
 CGameObject::CGameObject(const CGameObject& obj)
@@ -76,11 +77,17 @@ void CGameObject::DeleteObj()
 	{
 		// 루트노드를 지우는 경우, 그냥 모두 Destroy
 		Destroy();
+		m_SceneComponentList.clear();
 
 		return;
 	}
 
-	m_Parent->DeleteChildObj(m_Name);
+	else
+	{
+		m_SceneComponentList.clear();
+		m_Parent->DeleteChildObj(m_Name);
+		Destroy();
+	}
 }
 
 bool CGameObject::DeleteChildObj(const std::string& Name)
@@ -393,7 +400,7 @@ bool CGameObject::Load(FILE* File)
 		if (!Component->Load(File))
 			return false;
 
-		m_vecObjectComponent.push_back((CObjectComponent*)Component);
+		Component->SetGameObject(this);
 	}
 
 	return true;
@@ -485,6 +492,11 @@ void CGameObject::AddPath(const Vector3& TargetPos)
 	{
 		m_NavAgent->AddTargetPos(TargetPos);
 	}
+}
+
+void CGameObject::ClearPath()
+{
+	m_NavAgent->m_PathList.clear();
 }
 
 void CGameObject::SetNavManagerLandScape(CLandScape* LandScape)

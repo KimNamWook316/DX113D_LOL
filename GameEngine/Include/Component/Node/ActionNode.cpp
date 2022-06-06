@@ -6,6 +6,7 @@ CActionNode::CActionNode()	:
 	m_AnimationMeshComp(nullptr)
 {
 	SetTypeID(typeid(CActionNode).hash_code());
+	m_NodeType = Node_Type::Action;
 }
 
 CActionNode::CActionNode(const CActionNode& Node)	:
@@ -32,11 +33,14 @@ bool CActionNode::Invoke(float DeltaTime)
 	if(!m_CallStart)
 		OnStart(DeltaTime);	
 
-	OnUpdate(DeltaTime);
+	NodeResult Result = OnUpdate(DeltaTime);
 
 	if (m_IsEnd)
 		OnEnd(DeltaTime);
 
-	return true;
+	if (Result == NodeResult::Node_True)
+		return true;
+	else
+		return false;
 }
 

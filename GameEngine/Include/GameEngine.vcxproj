@@ -25,7 +25,13 @@
     <ClCompile Include="Animation\AnimationSequenceData.cpp" />
     <ClCompile Include="Animation\AnimationSequenceInstance.cpp" />
     <ClCompile Include="Animation\SkeletonSocket.cpp" />
+    <ClCompile Include="Component\Node\FindEnemyChampion.cpp" />
+    <ClCompile Include="Component\Node\InputECheckNode.cpp" />
+    <ClCompile Include="Component\Node\InputRCheckNode.cpp" />
     <ClCompile Include="Component\Node\MovePickingNode.cpp" />
+    <ClCompile Include="Component\Node\NoInterruptNode.cpp" />
+    <ClCompile Include="Component\Node\SkillENode.cpp" />
+    <ClCompile Include="Component\Node\SkillRNode.cpp" />
     <ClCompile Include="IMGUITableElemList.cpp" />
     <ClCompile Include="Component\BehaviorTree.cpp" />
     <ClCompile Include="Component\BillboardComponent.cpp" />
@@ -248,7 +254,13 @@
     <ClInclude Include="Animation\AnimationSequenceData.h" />
     <ClInclude Include="Animation\AnimationSequenceInstance.h" />
     <ClInclude Include="Animation\SkeletonSocket.h" />
+    <ClInclude Include="Component\Node\FindEnemyChampion.h" />
+    <ClInclude Include="Component\Node\InputECheckNode.h" />
+    <ClInclude Include="Component\Node\InputRCheckNode.h" />
     <ClInclude Include="Component\Node\MovePickingNode.h" />
+    <ClInclude Include="Component\Node\NoInterruptNode.h" />
+    <ClInclude Include="Component\Node\SkillENode.h" />
+    <ClInclude Include="Component\Node\SkillRNode.h" />
     <ClInclude Include="IMGUITableElemList.h" />
     <ClInclude Include="Collision\Collision.h" />
     <ClInclude Include="Collision\CollisionManager.h" />

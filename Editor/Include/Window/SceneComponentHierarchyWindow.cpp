@@ -12,6 +12,7 @@
 #include "SceneComponentCreateModal.h"
 #include "IMGUIManager.h"
 #include "ObjectHierarchyWindow.h"
+#include "ObjectComponentWindow.h"
 #include "ToolWindow.h"
 #include "Scene/SceneManager.h"
 
@@ -248,7 +249,15 @@ void CSceneComponentHierarchyWindow::OnClearComponents(const std::string& RootCo
 			else
 				++i;
 		}
+
+		else
+			++i;
 	}
+
+	CObjectComponentWindow* ObjCompWindow = (CObjectComponentWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(OBJECTCOMPONENT_LIST);
+
+	if (ObjCompWindow)
+		ObjCompWindow->ClearListBox();
 }
 
 void CSceneComponentHierarchyWindow::OnSetSelectNode(CIMGUITree* Tree)

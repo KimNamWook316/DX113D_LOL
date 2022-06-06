@@ -194,7 +194,7 @@ void CBehaviorTreeMenuBar::OnSaveGameObject(CGameObject* Object)
 	}
 }
 
-void CBehaviorTreeMenuBar::OnLoadGameObject()
+CGameObject* CBehaviorTreeMenuBar::OnLoadGameObject()
 {
 	TCHAR LoadFilePath[MAX_PATH] = {};
 	
@@ -215,9 +215,29 @@ void CBehaviorTreeMenuBar::OnLoadGameObject()
 		CGameObject* LoadedObject = CEditorManager::GetInst()->GetObjectHierarchyWindow()->GetObjectCreateModal()->OnCreateObject(FilePathMultibyte);
 
 		if (!LoadedObject)
-			return;
+			return nullptr;
 
 		// Object Hierarchy GameObject 목록에 추가한다.
-		CEditorManager::GetInst()->GetObjectComponentWindow()->AddObjectComponent(LoadedObject->GetName());
+		//CEditorManager::GetInst()->GetObjectComponentWindow()->AddObjectComponent(LoadedObject->GetName());
+
+		std::vector<CObjectComponent*> vecObjComp;
+		LoadedObject->GetAllObjectComponentsPointer(vecObjComp);
+
+		size_t Count = vecObjComp.size();
+
+		for (size_t i = 0; i < Count; ++i)
+		{
+			CEditorManager::GetInst()->GetObjectComponentWindow()->AddObjectComponent(vecObjComp[i]->GetName());
+
+			if (vecObjComp[i]->GetTypeID() == typeid(CNavAgent).hash_code())
+			{
+				LoadedObject->SetNavAgent((CNavAgent*)vecObjComp[i]);
+				((CNavAgent*)vecObjComp[i])->SetUpdateComponent(LoadedObject->GetRootComponent());
+			}
+		}
+
+		return LoadedObject;
 	}
+
+	return nullptr;
 }

@@ -4,6 +4,7 @@
 
 CInputWCheckNode::CInputWCheckNode()
 {
+	SetTypeID(typeid(CInputWCheckNode).hash_code());
 }
 
 CInputWCheckNode::CInputWCheckNode(const CInputWCheckNode& Node)

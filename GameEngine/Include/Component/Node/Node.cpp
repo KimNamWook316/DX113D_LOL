@@ -57,4 +57,3 @@ bool CNode::Load(FILE* File)
 
 	return true;
 }
-

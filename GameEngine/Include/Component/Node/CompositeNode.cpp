@@ -49,6 +49,7 @@ bool CCompositeNode::Load(FILE* File)
 		size_t ChildTypeID = -1;
 		fread(&ChildTypeID, sizeof(size_t), 1, File);
 		CNode* Child = m_Owner->LoadNode(this, ChildTypeID);
+		m_Owner->AddNode(Child);
 		Child->Load(File);
 		AddChild(Child);
 	}

@@ -34,7 +34,20 @@ public:
     void SetRoot(class CNode* Node);
     CNode* FindNode(const std::string& Name);
     void AddNode(class CNode* Node);
+    void DeleteNode(class CNode* Node);
 
+    size_t GetNodeCount()   const
+    {
+        return m_NodeList.size();
+    }
+
+    CNode* GetNode(int Idx)
+    {
+        auto iter = m_NodeList.begin();
+        std::advance(iter, Idx);
+
+        return *iter;
+    }
 
 public:
     bool Init();

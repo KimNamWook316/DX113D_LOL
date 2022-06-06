@@ -1,14 +1,17 @@
 
 #include "StateComponent.h"
+#include "AnimationMeshComponent.h"
 #include "BehaviorTree.h"
 #include "State.h"
 #include "../PathManager.h"
+#include "../GameObject/GameObject.h"
 
 CStateComponent::CStateComponent()	:
 	m_BehaviorTree(nullptr),
-	m_TreeUpdate(true)
+	m_TreeUpdate(false)
 {
 	SetTypeID<CStateComponent>();
+	m_ComponentType = Component_Type::ObjectComponent;
 
 	m_BehaviorTree = new CBehaviorTree;
 	m_BehaviorTree->m_Owner = this;
@@ -17,6 +20,7 @@ CStateComponent::CStateComponent()	:
 CStateComponent::CStateComponent(const CStateComponent& com)	:
 	CObjectComponent(com)
 {
+
 }
 
 CStateComponent::~CStateComponent()
@@ -84,6 +88,8 @@ CStateComponent* CStateComponent::Clone()
 
 bool CStateComponent::Save(FILE* File)
 {
+	CComponent::Save(File);
+
 	m_BehaviorTree->Save(File);
 
 	return true;
@@ -158,6 +164,11 @@ bool CStateComponent::Load(const char* FullPath)
 
 bool CStateComponent::Load(FILE* File)
 {
+	CComponent::Load(File);
+
+	CAnimationMeshComponent* AnimMeshComp = m_Object->FindComponentFromType<CAnimationMeshComponent>();
+	m_BehaviorTree->SetAnimationMeshComponent(AnimMeshComp);
+
 	m_BehaviorTree->Load(File);
 
 	return true;

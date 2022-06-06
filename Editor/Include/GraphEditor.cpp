@@ -935,12 +935,6 @@ void Show(Delegate& delegate, const Options& options, ViewState& viewState, bool
 
                 bool overInput = (!inMinimap) && HandleConnections(drawList, nodeIndex, offset, viewState.mFactor, delegate, options, false, inputSlot, outputSlot, inMinimap);
 
-
-                if (overInput)
-                {
-                    int a = 3;
-                }
-
                 // shadow
                 /*
                 ImVec2 shadowOffset = ImVec2(30, 30);

@@ -8,7 +8,7 @@ class CNode
 {
 	friend class CBehaviorTree;
 
-protected:
+public:
 	CNode();
 	CNode(const CNode& Node);
 	virtual ~CNode() = 0;
@@ -22,8 +22,14 @@ protected:
 	class CBehaviorTree* m_Owner;
 	// Start를 최초로 한번 이미 호출 했는지
 	bool m_CallStart;
+	Node_Type   m_NodeType;
 
 public:
+	Node_Type GetNodeType()	const
+	{
+		return m_NodeType;
+	}
+
 	bool IsCallStart()
 	{
 		return m_CallStart;

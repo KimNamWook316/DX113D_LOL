@@ -14,6 +14,7 @@ private:
 	class CIMGUIComboBox* m_ObjectCombo;
 	class CIMGUITextInput* m_NameTextInput;
 	class CIMGUIButton* m_ObjectCreateButton;
+	class CIMGUICheckBox* m_ObjectTypeCheckBox;
 
 public:
 	virtual bool Init();
@@ -27,5 +28,7 @@ public:
 
 	// Load Object 시에, Type Index 를 받아서 Object 를 만들어내는 기능
 	class CGameObject* OnCreateObject(const char* FullPathMultibyte);
+
+	void SetObjectType(int Index, bool Boolean);
 };
 
