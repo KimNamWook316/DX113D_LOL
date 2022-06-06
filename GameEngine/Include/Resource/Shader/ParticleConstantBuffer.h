@@ -223,10 +223,5 @@ public:
 	{
 		m_BufferData.MoveAngle = MoveAngle;
 	}
-
-	void SetApplyRandom(bool Enable)
-	{
-		m_BufferData.ApplyRandom = Enable ? 1 : 0;
-	}
 };
 

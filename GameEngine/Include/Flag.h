@@ -307,6 +307,7 @@ enum ConditionNode
 	InputFCheck,
 	MoveInputCheckNode,
 	NoInterruptNode
+};
 
 enum ActionNode
 {
@@ -319,7 +320,6 @@ enum ActionNode
 	Move,
 	MovePicking,
 	Idle
-};
 };
 
 enum Node_Type

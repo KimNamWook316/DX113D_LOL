@@ -73,9 +73,3 @@ void CInspectorWindow::OnDeleteGameObject()
 	DeleteWidget("GameObjectInspector");
 	m_ObjWidget = nullptr;
 }
-void CInspectorWindow::OnClearGameObject()
-{
-	m_ObjWidget->SetRender(false);
-	m_ObjWidget->ClearComponentWidget();
-	m_ObjWidget->SetGameObject(nullptr);
-}

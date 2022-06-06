@@ -305,7 +305,12 @@ enum ConditionNode
 	InputRCheck,
 	InputDCheck,
 	InputFCheck,
-	MouseRightInputCheck,
+	MoveInputCheckNode,
+	NoInterruptNode
+};
+
+enum ActionNode
+{
 	SkillQ,
 	SkillW,
 	SkillE,
@@ -313,5 +318,22 @@ enum ConditionNode
 	SpellD,
 	SpellF,
 	Move,
-	Max
+	MovePicking,
+	Idle
+};
+
+enum Node_Type
+{
+	Sequence,
+	Selector,
+	Condition,
+	Action
+};
+
+enum class Object_Type
+{
+	Champion,
+	Minion,
+	Jungle,
+	MapObject
 };
