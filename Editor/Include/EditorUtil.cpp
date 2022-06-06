@@ -143,6 +143,25 @@ void CEditorUtil::GetAllFileFullPathInDir(const char* TargetDir, std::vector<std
 	}
 }
 
+void CEditorUtil::FilterSpecificNameIncludedFilePath(std::vector<std::string>& InputVecFullPath, std::vector<std::string>& ReturnVecFullPath, 
+	const char* IncludeName)
+{
+	ReturnVecFullPath.clear();
+	ReturnVecFullPath.reserve(InputVecFullPath.size());
+
+	size_t InputSize = InputVecFullPath.size();
+	
+	for (size_t i = 0; i < InputSize; ++i)
+	{
+		// Common Name 을 포함하고 있지 않다면 Skips
+		size_t nPos = InputVecFullPath[i].find(IncludeName);
+
+		if (nPos == std::string::npos)
+			continue;
+
+		ReturnVecFullPath.push_back(InputVecFullPath[i]);
+	}
+}
 
 void CEditorUtil::GetFullPathDirectory(CIMGUITree* CurrentDir, std::list<std::string>& Output)
 {

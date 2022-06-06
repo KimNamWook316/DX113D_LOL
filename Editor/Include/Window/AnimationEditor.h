@@ -1,5 +1,6 @@
 #pragma once
 #include "IMGUIWindow.h"
+#include "../EditorInfo.h"
 #include <filesystem>
 
 
@@ -7,6 +8,7 @@ class CAnimationEditor :
 	public CIMGUIWindow
 {
 	friend class CEditorManager;
+	friend class CAnimationInstanceConvertThread;
 public:
 	CAnimationEditor();
 	~CAnimationEditor();
@@ -47,15 +49,31 @@ private:
 	// Render Target
 	bool m_RenderTargetSet;
 	class CIMGUIImage* m_AnimationRenderTarget;
-	// --------------------------------------------------------------------
-private :
-	class CAnimationInstanceConvertThread* m_AnimInstanceConvertThread;
-	class CIMGUITextInput* m_Common;
-	class CIMGUIButton* m_ConvertAnimInstanceBtn;
 private:
 	class CAnim3DObject* m_3DTestObject;
 	std::string m_3DTestObjectMeshName;
 	class CAnimationSequenceInstance* m_Animation;
+	// --------------------------------------------------------------------
+private :
+	class CAnimationInstanceConvertThread* m_AnimInstanceConvertThread;
+	// 지정된 Folder
+	class CIMGUITextInput* m_AnimSeqcSrcFolderPath;
+	// 공통 File Name
+	class CIMGUITextInput* m_CommonAnimSeqName;
+	// Convert Btn
+	class CIMGUIButton* m_ConvertAnimInstanceBtn;
+	// Folder 지정
+	class CIMGUIButton* m_SelectAnimInstanceFolderPath;
+	// Log
+	class CIMGUIChild* m_AnimInstanceConvertLog;
+	class CIMGUIProgressBar* m_AnimInstanceProgressBar;
+	// 저장할 Animation File Name
+	class CIMGUITextInput* m_SavedAnimFileName;
+private :
+	std::vector<std::string> m_vecAnimationSeqFilesFullPath;
+	char m_SelectedSeqSrcsDirPath[MAX_PATH];
+	// Animation Instance 를 File형태로 저장하기 위해 임시적으로 사용하는 Dummy Animation Instance
+	class CAnimationSequenceInstance* m_DummyAnimation;
 public:
 	const std::string& Get3DTestObjectMeshName() const
 	{
@@ -95,5 +113,14 @@ private:
 	// Animation Sequence Delete -> 현재 코드상 BoneKeyFrame 을 하나 제거하는 형태이다.
 	// 그런데 이렇게 하면 Animation 이 이상하게 동작하게 된다. 아마도 
 	// void OnDeleteAnimFrame();
+
+	// Convert Animation Instance  Functions
+private :
+	void OnClickSetAnimSeqSrcDirButton();
+	void OnConvertSequencesIntoAnimationInstance();
+	void OnAnimInstanceConvertLoading(const LoadingMessage& msg);
+	// Helper Functions
+private :
+	void AddSequenceToDummyAnimationInstance(const char* FileFullPath);
 };
 

@@ -38,5 +38,6 @@ private:
 	std::function<void(const std::string&)> m_FailCallBack;
 	
 	int m_StartSize;
+
 };
 

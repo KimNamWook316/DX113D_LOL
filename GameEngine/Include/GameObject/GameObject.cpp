@@ -368,6 +368,10 @@ bool CGameObject::Load(FILE* File)
 	bool	Root = false;
 	fread(&Root, sizeof(bool), 1, File);
 
+	// 임시 코드
+	fread(&m_ObjectType, sizeof(Object_Type), 1, File);
+	fread(&m_IsEnemy, sizeof(bool), 1, File);
+
 	if (Root)
 	{
 		size_t	TypeID = 0;
@@ -425,7 +429,10 @@ bool CGameObject::Load(const char* FullPath)
 		return false;
 
 	if (!Load(File))
+	{
+		fclose(File);
 		return false;
+	}
 
 	fclose(File);
 

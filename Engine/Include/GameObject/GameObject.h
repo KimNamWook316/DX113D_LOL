@@ -37,7 +37,8 @@ protected:
 	std::vector<CSharedPtr<CGameObject>>   m_vecChildObject;
 	float		m_LifeSpan;
 	class CNavAgent* m_NavAgent;
-
+	Object_Type m_ObjectType;
+	bool      m_IsEnemy;
 public:
 	void AddChildObject(CGameObject* Obj);
 	void DeleteObj();
