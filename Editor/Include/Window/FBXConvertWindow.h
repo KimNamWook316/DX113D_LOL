@@ -42,4 +42,8 @@ private:
 	char m_SrcDirFullPath[MAX_PATH];
 
 	bool m_SingleFileMode;
+
+	// 특정 파일 이름 형식들만 Convert 시키기
+private :
+	CIMGUITextInput* m_SpecificFileNameInput;
 };

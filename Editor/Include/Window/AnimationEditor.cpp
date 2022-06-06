@@ -1,4 +1,4 @@
-#include "AnimationEditor.h"
+// IMGUI
 #include "IMGUIButton.h"
 #include "IMGUIComboBox.h"
 #include "IMGUICheckBox.h"
@@ -7,15 +7,19 @@
 #include "IMGUILabel.h"
 #include "IMGUIListBox.h"
 #include "IMGUISameLine.h"
+#include "IMGUIProgressBar.h"
+#include "IMGUIChild.h"
 #include "IMGUIText.h"
 #include "IMGUITable.h"
 #include "IMGUITextInput.h"
+#include "IMGUISliderFloat.h"
+#include "IMGUISliderInt.h"
+// Engine
+#include "AnimationEditor.h"
 #include "../EditorManager.h"
 #include "PathManager.h"
 #include "Scene/SceneManager.h"
 #include "Scene/Scene.h"
-#include "IMGUISliderFloat.h"
-#include "IMGUISliderInt.h"
 #include "Animation/AnimationSequenceInstance.h"
 #include "../EditorUtil.h"
 #include "Engine.h"
@@ -23,6 +27,7 @@
 #include "../Object/Anim3DObject.h"
 #include "Render/RenderManager.h"
 #include "Resource/ResourceManager.h"
+#include "../AnimationInstanceConvertThread.h"
 
 CAnimationEditor::CAnimationEditor() :
 	m_RenderTargetSet(false)
@@ -146,35 +151,62 @@ bool CAnimationEditor::Init()
 	// m_AnimationCheckBtn->SetClickCallback<CAnimationEditor>(this, &CAnimationEditor::OnPlayAnimation);
 
 	Line = AddWidget<CIMGUISameLine>("Line");
-	Line->SetOffsetX(215.f);
+	Line->SetOffsetX(205.f);
 
 	m_RotationCheckBtn = AddWidget<CIMGUICheckBox>("Camera Rotation", 90.f, 30.f);
 	m_RotationCheckBtn->AddCheckInfo("Rotate");
 	m_RotationCheckBtn->SetCallBackLabel<CAnimationEditor>(this, &CAnimationEditor::OnRotateAnimationCamera);
 
 	Line = AddWidget<CIMGUISameLine>("Line");
-	Line->SetOffsetX(310.f);
+	Line->SetOffsetX(280.f);
 
 	m_ZoomEnableBtn = AddWidget<CIMGUICheckBox>("Camera Zoom In", 90.f, 30.f);
 	m_ZoomEnableBtn->AddCheckInfo("Zoom");
 	m_ZoomEnableBtn->SetCallBackLabel<CAnimationEditor>(this, &CAnimationEditor::OnZoomAnimationCamera);
 
-	// Sequence Start ---------------------------------------
+	// Sequence Make Widgets ----------------------------------------------------------------------------------------------------------------
 	HelpText = AddWidget<CIMGUIText>("Anim Seq Load Btn Help Text", 90.f, 30.f);
 	HelpText->SetText("ex)  'ZedIdle' -- > pair('ZedIdle', 'ZedIdle.sqc') 형태로 \n SceneResource, ResourceManager의 m_mapSequence 에 저장");
 	HelpText->SetIsHelpMode(true);
 
-	m_NewAnimSeqName = AddWidget<CIMGUITextInput>("Sequence Name", 90.f, 30.f);
+	Line = AddWidget<CIMGUISameLine>("Line");
+	Line->SetOffsetX(100.f);
 
 	HelpText = AddWidget<CIMGUIText>("Anim Seq Load Btn Help Text", 90.f, 30.f);
 	HelpText->SetText("ex) 'Idle' --> m_Animation->AddAnimation('ZedIdle', 'Idle') ? \n ZedIdle Key로 ResourceManager 의 mapSequence 에 저장된 Animation Sequence 를 \n 'Idle' 이라는 이름의 Key값으로 AnimationInstance 에 정보 추가");
 	HelpText->SetIsHelpMode(true);
 
+	// Seq Name Inputs
+	m_NewAnimSeqName = AddWidget<CIMGUITextInput>("Sequence Name", 90.f, 30.f);
+	m_NewAnimSeqName->SetHideName(true);
+	m_NewAnimSeqName->SetHintText("Map Key");
+
+	Line = AddWidget<CIMGUISameLine>("Line");
+	Line->SetOffsetX(100.f);
+
 	m_NewAnimSeqDataKeyName = AddWidget<CIMGUITextInput>("Sequence  Key", 90.f, 30.f);
+	m_NewAnimSeqDataKeyName->SetHideName(true);
+	m_NewAnimSeqDataKeyName->SetHintText("Anim Key");
 
 	// Sequence Related Btns
 	HelpText = AddWidget<CIMGUIText>("Anim Seq Load Btn Help Text", 90.f, 30.f);
 	HelpText->SetText("같은 경로에 .msh , .bne, .fbm(폴더) 가 존재해야 한다. \n ex) Idle1.sqc 를 Add 하려면, Idle1.msh, Idle1.bne, Idle1.fbm이 같은 경로 내에 존재해야 한다.");
+	HelpText->SetIsHelpMode(true);
+
+	Line = AddWidget<CIMGUISameLine>("Line");
+	Line->SetOffsetX(195.f);
+
+	// Animation Related Btns
+	HelpText = AddWidget<CIMGUIText>("Instance Save Btn Help Text", 90.f, 30.f);
+	HelpText->SetText("Bin\\Animation 폴더에 .anim 파일 확장자로 저장해야 한다.");
+	HelpText->SetIsHelpMode(true);
+
+	Line = AddWidget<CIMGUISameLine>("Line");
+	Line->SetOffsetX(290.f);
+
+	// Animation Related Btns
+	HelpText = AddWidget<CIMGUIText>("Instance Load Btn Help Text", 90.f, 30.f);
+	HelpText->SetText(".anim 파일을 Load 하려면, MESH_PATH (Bin//Mesh) 경로에 관련 .msh , .bne, .fbm(폴더) 가 존재해야 한다. \n ex) Alistar.anim 를 Load 하려면, \n MESH_PATH 에 Alistar_Idle.sqc, Alistar_Idle.msh, Alistar_Idle.fbm 등, \n Alistar Animation 과 관련된 파일들이 하나는 존재햐야 한다.");
 	HelpText->SetIsHelpMode(true);
 
 	m_AnimSequenceAddBtn = AddWidget<CIMGUIButton>("Add Seq", 90.f, 30.f);
@@ -186,24 +218,14 @@ bool CAnimationEditor::Init()
 	m_DeleteAnimSequenceBtn = AddWidget<CIMGUIButton>("Delete Seq", 90.f, 30.f);
 	m_DeleteAnimSequenceBtn->SetClickCallback<CAnimationEditor>(this, &CAnimationEditor::OnDeleteAnimationSequenceData);
 
-	// Animation Related Btns
-	HelpText = AddWidget<CIMGUIText>("Instance Save Btn Help Text", 90.f, 30.f);
-	HelpText->SetText("Bin\\Animation 폴더에 .anim 파일 확장자로 저장해야 한다.");
-	HelpText->SetIsHelpMode(true);
-
 	Line = AddWidget<CIMGUISameLine>("Line");
-	Line->SetOffsetX(100.f);
-
-	// Animation Related Btns
-	HelpText = AddWidget<CIMGUIText>("Instance Load Btn Help Text", 90.f, 30.f);
-	HelpText->SetText(".anim 파일을 Load 하려면, MESH_PATH (Bin//Mesh) 경로에 관련 .msh , .bne, .fbm(폴더) 가 존재해야 한다. \n ex) Alistar.anim 를 Load 하려면, \n MESH_PATH 에 Alistar_Idle.sqc, Alistar_Idle.msh, Alistar_Idle.fbm 등, \n Alistar Animation 과 관련된 파일들이 하나는 존재햐야 한다.");
-	HelpText->SetIsHelpMode(true);
+	Line->SetOffsetX(195.f);
 
 	m_SaveAnimationInstanceBtn = AddWidget<CIMGUIButton>("Save Instance", 90.f, 30.f);
 	m_SaveAnimationInstanceBtn->SetClickCallback<CAnimationEditor>(this, &CAnimationEditor::OnSaveAnimationInstance);
 
 	Line = AddWidget<CIMGUISameLine>("Line");
-	Line->SetOffsetX(100.f);
+	Line->SetOffsetX(290.f);
 
 	m_LoadAnimationInstanceBtn = AddWidget<CIMGUIButton>("Load Instance", 90.f, 30.f);
 	m_LoadAnimationInstanceBtn->SetClickCallback<CAnimationEditor>(this, &CAnimationEditor::OnLoadAnimationInstance);
@@ -215,6 +237,44 @@ bool CAnimationEditor::Init()
 	m_AnimInfoTable->MakeKey(AnimationClipInfoKeys::PlayTime);
 	m_AnimInfoTable->MakeKey(AnimationClipInfoKeys::FrameTime);
 	m_AnimInfoTable->MakeKey(AnimationClipInfoKeys::PlayScale);
+
+	// Animation Instance Convert Widgets ----------------------------------------------------------------------------------------------------------------
+
+	CIMGUIDummy* Dummy = AddWidget<CIMGUIDummy>("Dummy", 200.f, 30.f);
+
+	// m_AnimInstanceConvertThread = new CAnimationInstanceConvertThread;
+	// m_AnimInstanceConvertThread->Init();
+	// m_AnimInstanceConvertThread->Start();
+	// m_AnimInstanceConvertThread->SetLoadingCallBack(this, &CAnimationEditor::OnAnimInstanceConvertLoading);
+
+	// Common Name
+	m_CommonAnimSeqName = AddWidget<CIMGUITextInput>("Common Sqc Name", 150.f, 20.f);
+	m_CommonAnimSeqName->SetHideName(true);
+	m_CommonAnimSeqName->SetHintText("Common Sqc Name");
+
+	Line = AddWidget<CIMGUISameLine>("Line");
+	Line->SetOffsetX(165.f);
+
+	m_SelectAnimInstanceFolderPath = AddWidget<CIMGUIButton>("Select Dir", 90.f, 20.f);
+	m_SelectAnimInstanceFolderPath->SetClickCallback<CAnimationEditor>(this, &CAnimationEditor::OnClickSetAnimSeqSrcDirButton);
+
+	Line = AddWidget<CIMGUISameLine>("Line");
+	Line->SetOffsetX(260.f);
+
+	m_ConvertAnimInstanceBtn = AddWidget<CIMGUIButton>("Make Inst", 90.f, 20.f);
+	m_ConvertAnimInstanceBtn->SetClickCallback<CAnimationEditor>(this, &CAnimationEditor::OnConvertSequencesIntoAnimationInstance);
+
+	// Folder Path
+	m_AnimSeqcSrcFolderPath = AddWidget<CIMGUITextInput>("Sqc Folder Path", 350.f, 20.f);
+	m_AnimSeqcSrcFolderPath->ReadOnly(true);
+	m_AnimSeqcSrcFolderPath->SetHideName(true);
+	m_AnimSeqcSrcFolderPath->SetHintText("Set .sqc Folder Path");
+
+	// Convert
+	m_AnimInstanceProgressBar = AddWidget<CIMGUIProgressBar>("", 350.f, 0.f);
+
+	m_AnimInstanceConvertLog = AddWidget<CIMGUIChild>("Log", 200.f, 200.f);
+	m_AnimInstanceConvertLog->EnableBorder(true);
 
 	return true;
 }
@@ -650,6 +710,152 @@ void CAnimationEditor::OnDeleteAnimationSequenceData()
 	OnRefreshAnimationComboBox();
 }
 
+void CAnimationEditor::OnClickSetAnimSeqSrcDirButton()
+{
+	if (m_CommonAnimSeqName->Empty())
+		return;
+
+	TCHAR Buf[MAX_PATH] = {};
+
+	BROWSEINFO Bi = {};
+
+	Bi.hwndOwner = CEngine::GetInst()->GetWindowHandle();
+	Bi.lpszTitle = TEXT("하나의 Instance 로 만들 Seq 파일들이 있는 폴더 선택");
+	Bi.ulFlags = BIF_USENEWUI | BIF_RETURNONLYFSDIRS | BIF_STATUSTEXT | BIF_VALIDATE;
+	Bi.lpfn = BrowseCallbackProc;
+	//	Bi.lParam = (LPARAM)InitialPath;
+
+	LPITEMIDLIST ItemIDList = ::SHBrowseForFolder(&Bi);
+
+	if (::SHGetPathFromIDList(ItemIDList, Buf))
+	{
+		int length = WideCharToMultiByte(CP_ACP, 0, Buf, -1, nullptr, 0, nullptr, 0);
+		WideCharToMultiByte(CP_ACP, 0, Buf, -1, m_SelectedSeqSrcsDirPath, length, nullptr, 0);
+		// strcat_s(m_SrcDirFullPath, "\\");
+
+		// ExtractAnimationSequenceFilesFullPath(m_SelectedSeqSrcsDirPath, m_vecAnimationSeqFilesFullPath);
+		std::vector<std::string> vecSeqFilesFullPath;
+
+		CEditorUtil::GetAllFileFullPathInDir(m_SelectedSeqSrcsDirPath, vecSeqFilesFullPath, ".sqc");
+		CEditorUtil::FilterSpecificNameIncludedFilePath(vecSeqFilesFullPath, m_vecAnimationSeqFilesFullPath, m_CommonAnimSeqName->GetTextUTF8());
+
+		// 하나도 찾아내지 못했다면.
+		if (m_vecAnimationSeqFilesFullPath.size() == 0)
+			return;
+
+		m_AnimSeqcSrcFolderPath->SetText(m_SelectedSeqSrcsDirPath);
+	}
+}
+
+// m_ConvertAnimInstanceBtn 의 Callback
+void CAnimationEditor::OnConvertSequencesIntoAnimationInstance()
+{
+	if (m_AnimSeqcSrcFolderPath->GetName() == "")
+		return;
+	
+	// 로그창 클리어
+	m_AnimInstanceConvertLog->ClearWidget();
+
+	CIMGUIText* StartText = m_AnimInstanceConvertLog->AddWidget<CIMGUIText>("Text");
+	StartText->SetText("Convert Start...");
+
+
+	// 모은 모든 녀석들로 Mesh Load 하고 
+	size_t Size = m_vecAnimationSeqFilesFullPath.size();
+
+	// 쓰레드에 수행 요청
+	for (size_t i = 0; i < Size; ++i)
+	{
+		m_AnimInstanceConvertThread->AddWork(m_vecAnimationSeqFilesFullPath[i]);
+	}
+}
+
+void CAnimationEditor::OnAnimInstanceConvertLoading(const LoadingMessage& msg)
+{
+	m_AnimInstanceProgressBar->SetPercent(msg.Percent);
+
+	CIMGUIText* Text = m_AnimInstanceConvertLog->AddWidget<CIMGUIText>("Text");
+
+	std::string LoadingMsg = "Add Success : " + msg.Message;
+
+	Text->SetText(LoadingMsg.c_str());
+
+	if (msg.Complete)
+	{
+		Text = m_AnimInstanceConvertLog->AddWidget<CIMGUIText>("OK");
+		Text->SetText("Complete!");
+		MessageBox(nullptr, TEXT("Instance Create 완료"), TEXT("완료"), MB_OK);
+	}
+}
+
+void CAnimationEditor::AddSequenceToDummyAnimationInstance(const char* FileFullPath)
+{
+	char FileFullPathCopy[MAX_PATH] = {};
+
+	strcpy_s(FileFullPathCopy, FileFullPath);
+
+	char SqcFileName[MAX_PATH] = {};
+	char SqcExt[_MAX_EXT] = {};
+
+	_splitpath_s(FileFullPathCopy, nullptr, 0, nullptr, 0, SqcFileName, MAX_PATH, SqcExt, _MAX_EXT);
+	
+	_strupr_s(SqcExt);
+	
+	// 확장자 .sqc 이 아니라면 return;
+	if (strcmp(SqcExt, ".SQC") != 0)
+		return;
+
+	if (!m_Animation)
+	{
+		std::pair<bool, std::string> LoadResult = CResourceManager::GetInst()->LoadMeshTextureBoneInfo(SqcFileName);
+	
+		if (!LoadResult.first)
+			return;
+	
+		m_3DTestObjectMeshName = LoadResult.second;
+	
+		// Create Object
+		OnCreateSample3DObject();
+	
+		// Set Material, Mesh Info
+		SetMeshMaterialReadyForAnimation();
+	}
+	
+	// 이름 중복 X --> Key 이름 중복되는 Sequence 는 추가 X 
+	// ex) AnimationInstance --> ("ZedIdle", "Idle"); --> "ZedIdle" 이라는 Key 를 지닌 또 다른 Sqc 파일을 로드하면 안된다.
+	if (m_Animation->FindAnimation(m_NewAnimSeqDataKeyName->GetTextUTF8()))
+		return;
+	
+	// Animation Seq Load
+	std::string FSequenceName;
+	
+	// Load 한 파일 본연의 이름을 가져와서 세팅한다.
+	bool ResultLoadSeq = CSceneManager::GetInst()->GetScene()->GetResource()->LoadAnimationSequenceFullPathMultibyte(true,
+		m_NewAnimSeqName->GetTextUTF8(), FileFullPath);
+	
+	if (!ResultLoadSeq)
+		return;
+	
+	CAnimationSequence* LoadedSequence = CSceneManager::GetInst()->GetScene()->GetResource()->FindAnimationSequence(m_NewAnimSeqName->GetTextUTF8());
+	
+	LoadedSequence->SetAnimationFullPathMultibyte(FileFullPath);
+	LoadedSequence->SetAnimationFileNameMultibyte(SqcFileName);
+	
+	// 현재 
+	m_Animation->AddAnimation(m_NewAnimSeqName->GetTextUTF8(), m_NewAnimSeqDataKeyName->GetTextUTF8());
+	
+	// Combo Box 정보 갱신
+	OnRefreshAnimationComboBox();
+	
+	OnRefreshAnimationClipTable(LoadedSequence);
+	
+	OnRefreshScaleAndTimeInputInfo();
+	
+	// Frame Slider 의 최대 최소 값 세팅하기
+	m_FrameSlider->SetMin(LoadedSequence->GetStartFrame());
+	m_FrameSlider->SetMax(LoadedSequence->GetEndFrame());
+}
+
 /*
 void CAnimationEditor::OnDeleteAnimFrame()
 {
@@ -702,69 +908,69 @@ void CAnimationEditor::OnAddAnimationSequence()
 	if (GetOpenFileName(&OpenFile) != 0)
 	{
 		char	Ext[_MAX_EXT] = {};
-		char SqcFileName[MAX_PATH] = {};
 		char FilePathMultibyte[MAX_PATH] = {};
+		char SqcFileName[MAX_PATH] = {};
 
 		int ConvertLength = WideCharToMultiByte(CP_ACP, 0, LoadFilePath, -1, 0, 0, 0, 0);
 		WideCharToMultiByte(CP_ACP, 0, LoadFilePath, -1, FilePathMultibyte, ConvertLength, 0, 0);
 
 		_splitpath_s(FilePathMultibyte, nullptr, 0, nullptr, 0, SqcFileName, MAX_PATH, Ext, _MAX_EXT);
-
+		
 		_strupr_s(Ext);
-
+		
 		// 확장자 .sqc 이 아니라면 return;
 		if (strcmp(Ext, ".SQC") != 0)
 			return;
-
+		
 		if (!m_Animation)
 		{
 			// f (!LoadElementsForSqcLoading(SqcFileName))
 			// 	return;
-
+		
 			std::pair<bool, std::string> LoadResult = CResourceManager::GetInst()->LoadMeshTextureBoneInfo(SqcFileName);
-
+		
 			if (!LoadResult.first)
 				return;
-
+		
 			m_3DTestObjectMeshName = LoadResult.second;
-
+		
 			// Create Object
 			OnCreateSample3DObject();
-
+		
 			// Set Material, Mesh Info
 			SetMeshMaterialReadyForAnimation();
 		}
-
+		
 		// 이름 중복 X --> Key 이름 중복되는 Sequence 는 추가 X 
 		// ex) AnimationInstance --> ("ZedIdle", "Idle"); --> "ZedIdle" 이라는 Key 를 지닌 또 다른 Sqc 파일을 로드하면 안된다.
 		if (m_Animation->FindAnimation(m_NewAnimSeqDataKeyName->GetTextUTF8()))
 			return;
-
+		
 		// Animation Seq Load
 		std::string FSequenceName;
-
+		
 		// Load 한 파일 본연의 이름을 가져와서 세팅한다.
 		bool ResultLoadSeq = CSceneManager::GetInst()->GetScene()->GetResource()->LoadAnimationSequenceFullPathMultibyte(true,
 			m_NewAnimSeqName->GetTextUTF8(), FilePathMultibyte);
-
+		
 		if (!ResultLoadSeq)
 			return;
-
+		
 		CAnimationSequence* LoadedSequence = CSceneManager::GetInst()->GetScene()->GetResource()->FindAnimationSequence(m_NewAnimSeqName->GetTextUTF8());
-
+		
 		LoadedSequence->SetAnimationFullPathMultibyte(FilePathMultibyte);
 		LoadedSequence->SetAnimationFileNameMultibyte(SqcFileName);
-
+		
 		// 현재 
 		m_Animation->AddAnimation(m_NewAnimSeqName->GetTextUTF8(), m_NewAnimSeqDataKeyName->GetTextUTF8());
-
+		
 		// Combo Box 정보 갱신
 		OnRefreshAnimationComboBox();
-
+		
 		OnRefreshAnimationClipTable(LoadedSequence);
-
+		
 		OnRefreshScaleAndTimeInputInfo();
-
+		
 		// Frame Slider 의 최대 최소 값 세팅하기
 		m_FrameSlider->SetMin(LoadedSequence->GetStartFrame());
 		m_FrameSlider->SetMax(LoadedSequence->GetEndFrame());
@@ -792,7 +998,6 @@ void CAnimationEditor::OnClickAnimationSequence(int Index, const char* Name)
 
 	// 클릭한 Animation 으로 Current Animation 세팅
 	m_Animation->SetCurrentAnimation(Name);
-
 }
 
 void CAnimationEditor::OnRefreshAnimationClipTable(CAnimationSequence* Sequence)
