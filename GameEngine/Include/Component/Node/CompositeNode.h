@@ -17,6 +17,12 @@ public:
         m_ChildrenList.emplace_back(node);
     }
 
+    void AddChildFront(CNode* node)
+    {
+        node->SetParent(this);
+        m_ChildrenList.push_front(node);
+    }
+
     void DeleteChild(CNode* Node)
     {
         auto iter = m_ChildrenList.begin();

@@ -335,5 +335,6 @@ enum class Object_Type
 	Champion,
 	Minion,
 	Jungle,
-	MapObject
+	MapObject,
+	None
 };

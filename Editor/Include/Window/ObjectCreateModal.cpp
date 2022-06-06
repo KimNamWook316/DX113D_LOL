@@ -63,6 +63,11 @@ bool CObjectCreateModal::Init()
 	m_ObjectTypeCheckBox->AddCheckInfo("Jungle");
 	m_ObjectTypeCheckBox->AddCheckInfo("MapObject");
 
+	Line = AddWidget<CIMGUISameLine>("Line");
+
+	m_EnemyCheckBox = AddWidget<CIMGUICheckBox>("Enemy Check");
+	m_EnemyCheckBox->AddCheckInfo("Enemy");
+
 	CIMGUIDummy* Dummy = AddWidget<CIMGUIDummy>("Dummy", 100.f, 40.f);
 
 	m_ObjectTypeCheckBox->SetCheck(0, true);
@@ -178,13 +183,6 @@ void CObjectCreateModal::OnCreateObject()
 	int Idx = -1;
 	int CheckIdx = m_ObjectTypeCheckBox->GetSelectIdx();
 
-
-	/*
-	Champion,
-	Minion,
-	Jungle,
-	MapObject
-	*/
 	switch (CheckIdx)
 	{
 	case 0:
@@ -199,8 +197,13 @@ void CObjectCreateModal::OnCreateObject()
 	case 3:
 		NewObject->SetObjectType(Object_Type::MapObject);
 		break;
-
 	}
+
+	Idx = -1;
+	bool IsEnemyCheck = m_EnemyCheckBox->GetCheck(0);
+
+	if (IsEnemyCheck)
+		NewObject->SetEnemy(true);
 
 	CObjectHierarchyWindow* Window = (CObjectHierarchyWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(OBJECT_HIERARCHY);
 	CSceneComponentHierarchyWindow* SceneCompWindow = (CSceneComponentHierarchyWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(SCENECOMPONENT_HIERARCHY);

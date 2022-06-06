@@ -8,10 +8,12 @@ CGameObject::CGameObject() :
 	m_Scene(nullptr),
 	m_Parent(nullptr),
 	m_LifeSpan(0.f),
-	m_NavAgent(nullptr)
+	m_NavAgent(nullptr),
+	m_IsEnemy(false),
+	m_NoInterrupt(false)
 {
 	SetTypeID<CGameObject>();
-	m_NoInterrupt = false;
+	m_ObjectType = Object_Type::None;
 }
 
 CGameObject::CGameObject(const CGameObject& obj)
@@ -336,6 +338,9 @@ bool CGameObject::Save(FILE* File)
 {
 	CRef::Save(File);
 
+	fwrite(&m_ObjectType, sizeof(Object_Type), 1, File);
+	fwrite(&m_IsEnemy, sizeof(bool), 1, File);
+
 	if (m_RootComponent)
 	{
 		bool	Root = true;
@@ -374,6 +379,9 @@ bool CGameObject::Load(FILE* File)
 
 	bool	Root = false;
 	fread(&Root, sizeof(bool), 1, File);
+
+	//fread(&m_ObjectType, sizeof(Object_Type), 1, File);
+	//fread(&m_IsEnemy, sizeof(bool), 1, File);
 
 	if (Root)
 	{

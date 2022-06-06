@@ -19,9 +19,9 @@ CFindEnemyChampion::~CFindEnemyChampion()
 
 NodeResult CFindEnemyChampion::OnStart(float DeltaTime)
 {
+
+
 	return NodeResult::Node_True;
-
-
 }
 
 NodeResult CFindEnemyChampion::OnUpdate(float DeltaTime)
