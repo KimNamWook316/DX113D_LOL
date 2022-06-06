@@ -152,10 +152,7 @@ void CObjectHierarchyWindow::OnSetSelectNode(CIMGUITree* SelectNode)
 	m_SelectNode = SelectNode;
 	m_SelectObject = CSceneManager::GetInst()->GetScene()->FindObject(m_SelectNode->GetName());
 
-	if (m_SelectObject->GetRootComponent())
-	{
-		static_cast<CToolWindow*>(CIMGUIManager::GetInst()->FindIMGUIWindow(TOOL))->SetGizmoObject(m_SelectObject);
-	}
+	static_cast<CToolWindow*>(CIMGUIManager::GetInst()->FindIMGUIWindow(TOOL))->SetGizmoObject(m_SelectObject);
 
 	static_cast<CInspectorWindow*>(CIMGUIManager::GetInst()->FindIMGUIWindow(INSPECTOR))->OnSelectGameObject(m_SelectObject);
 }

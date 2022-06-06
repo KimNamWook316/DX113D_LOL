@@ -16,10 +16,7 @@ public:
 	virtual void Render() override;
 
 public:
-	void SetGameObject(class CGameObject* Object)
-	{
-		m_Component = Object->GetRootComponent();
-	}
+	void SetGameObject(class CGameObject* Object);
 
 	void SetComponent(class CSceneComponent* Component)
 	{
@@ -34,6 +31,12 @@ public:
 	void SetMode(ImGuizmo::MODE Mode)
 	{
 		m_Mode = Mode;
+	}
+
+	void SetIdentity()
+	{
+		m_matWorld.Identity();
+		m_Component = nullptr;
 	}
 
 private:
