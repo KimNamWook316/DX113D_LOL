@@ -73,6 +73,8 @@ public:
 	class CIMGUIWidget* FindWidget(const std::string& Name);
 	// 갖고 있는 Widget을 m_vecWidget에서 지워주기만하고 메모리 해제는 하지 않는 함수
 	void EraseWidget(const std::string& Name);
+	
+	void DeleteWidget(const std::string& Name);
 
 public:
 	virtual bool Init();

@@ -113,6 +113,10 @@ void CObjectHierarchyWindow::OnDeleteObject()
 	Obj->DeleteObj();
 
 	m_SelectNode->Delete();
+
+	// Inspector에서 제거
+	CInspectorWindow* Inspector = (CInspectorWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(INSPECTOR);
+	Inspector->OnDeleteGameObject();
 }
 
 //void CObjectHierarchyWindow::FindSelectNode(CIMGUITree* RootNode)

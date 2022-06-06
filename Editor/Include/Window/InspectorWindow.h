@@ -17,6 +17,8 @@ public:
     void OnCreateSceneComponent(class CSceneComponent* Com);
     void OnCreateObjectComponent(class CObjectComponent* Com);
     void OnClearGameObject();
+    void OnDeleteSceneComponent(class CSceneComponent* Com);
+    void OnDeleteGameObject();
 
 private:
     class CGameObjectWidget* m_ObjWidget;

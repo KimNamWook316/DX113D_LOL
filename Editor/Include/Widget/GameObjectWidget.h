@@ -18,6 +18,9 @@ public:
     void CreateObjectComponentWidget(class CObjectComponent* Com);
 
 public:
+    void DeleteSceneComponentWidget(class CSceneComponent* Com);
+
+public:
     void SetGameObject(class CGameObject* Obj);
 
 public:

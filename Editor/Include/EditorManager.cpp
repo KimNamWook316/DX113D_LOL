@@ -15,6 +15,7 @@
 #include "Component/StaticMeshComponent.h"
 #include "Component/ParticleComponent.h"
 #include "Component/AnimationMeshComponent.h"
+#include "Component/LandScape.h"
 // Window
 #include "Window/ObjectHierarchyWindow.h"
 #include "Window/SceneComponentHierarchyWindow.h"
@@ -293,6 +294,12 @@ CComponent* CEditorManager::CreateComponent(CGameObject* Obj, size_t Type)
 	else if (Type == typeid(CAnimationMeshComponent).hash_code())
 	{
 		CAnimationMeshComponent* Component = Obj->LoadComponent<CAnimationMeshComponent>();
+		// Component->EnableEditMode(true);
+		return Component;
+	}
+	else if (Type == typeid(CLandScape).hash_code())
+	{
+		CLandScape* Component = Obj->LoadComponent<CLandScape>();
 		// Component->EnableEditMode(true);
 		return Component;
 	}
