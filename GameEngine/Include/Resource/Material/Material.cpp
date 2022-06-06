@@ -845,6 +845,11 @@ bool CMaterial::Save(FILE* File)
 		fwrite(&m_TextureInfo[i].Register, sizeof(int), 1, File);
 		fwrite(&m_TextureInfo[i].ShaderType, sizeof(int), 1, File);
 
+		// Saved FullPath 정보 저장
+		int	FullPathLength = (int)m_TextureInfo[i].SavedFullPath.length();
+		fwrite(&FullPathLength, sizeof(int), 1, File);
+		fwrite(m_TextureInfo[i].SavedFullPath.c_str(), sizeof(char), FullPathLength, File);
+
 		m_TextureInfo[i].Texture->Save(File);
 	}
 
@@ -923,6 +928,14 @@ bool CMaterial::Load(FILE* File)
 		fread(&m_TextureInfo[i].SamplerType, sizeof(Sampler_Type), 1, File);
 		fread(&m_TextureInfo[i].Register, sizeof(int), 1, File);
 		fread(&m_TextureInfo[i].ShaderType, sizeof(int), 1, File);
+
+		// Saved FullPath 정보 저장
+		int	FullPathLength = 0;
+		fread(&FullPathLength, sizeof(int), 1, File);
+
+		char	TextureSavedFullPath[256] = {};
+		fread(TextureSavedFullPath, sizeof(char), FullPathLength, File);
+		m_TextureInfo[i].SavedFullPath = TextureSavedFullPath;
 
 		int	TexNameLength = 0;
 		fread(&TexNameLength, sizeof(int), 1, File);

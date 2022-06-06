@@ -47,6 +47,11 @@ private:
 	// Render Target
 	bool m_RenderTargetSet;
 	class CIMGUIImage* m_AnimationRenderTarget;
+	// --------------------------------------------------------------------
+private :
+	class CAnimationInstanceConvertThread* m_AnimInstanceConvertThread;
+	class CIMGUITextInput* m_Common;
+	class CIMGUIButton* m_ConvertAnimInstanceBtn;
 private:
 	class CAnim3DObject* m_3DTestObject;
 	std::string m_3DTestObjectMeshName;

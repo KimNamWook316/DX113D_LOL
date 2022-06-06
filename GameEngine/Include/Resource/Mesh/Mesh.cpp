@@ -285,7 +285,7 @@ bool CMesh::LoadMeshFile(const char* FullPath)
 
 	fclose(File);
 
-	return true;
+	return LoadResult;
 }
 
 bool CMesh::ConvertFBX(CFBXLoader* Loader, const char* FullPath)
@@ -755,7 +755,7 @@ bool CMesh::CheckLoadedMaterialTexture(CMaterial* Material)
 			if (!Texture)
 			{
 				TCHAR FulllErrorMessage[MAX_PATH] = {};
-				TCHAR ErrorMessage[MAX_PATH] = TEXT("Texture Not Found While Loading Material (Mesh.cpp), Try Converting FBX Again");
+				TCHAR ErrorMessage[MAX_PATH] = TEXT("Texture Not Found In Bin\\Mesh Folder\n While Loading Material (Mesh.cpp), \nPut FBX Files In Bin\\Mesh And Convert Again");
 
 				lstrcpy(FulllErrorMessage, TCHARTexturePath);
 				lstrcat(FulllErrorMessage, ErrorMessage);
