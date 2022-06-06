@@ -5,9 +5,8 @@
 #include "Scene/Scene.h"
 #include "Scene/CameraManager.h"
 
-#define EDITOR_CAM_SPEED 4.0f
-
-C3DCameraObject::C3DCameraObject()
+C3DCameraObject::C3DCameraObject()	:
+	m_Speed(1.f)
 {
 	SetTypeID<C3DCameraObject>();
 }
@@ -69,7 +68,7 @@ void C3DCameraObject::Update(float DeltaTime)
 	if (CInput::GetInst()->GetWheelDir())
 	{
 		Vector3 AxisZ = m_Camera->GetWorldAxis(AXIS::AXIS_Z);
-		AxisZ *= CInput::GetInst()->GetWheelDir() * -EDITOR_CAM_SPEED;
+		AxisZ *= CInput::GetInst()->GetWheelDir() * -m_Speed;
 		AddWorldPos(AxisZ);
 	}
 }
@@ -83,7 +82,7 @@ void C3DCameraObject::OnDragMove(float DeltaTime)
 {
 	Vector3 moveAmount = Vector3(-1.f * CInput::GetInst()->GetMouseMove().x, CInput::GetInst()->GetMouseMove().y, 0.f);
 
-	moveAmount *= EDITOR_CAM_SPEED;
+	moveAmount *= m_Speed;
 
 	m_Camera->AddRelativePos(moveAmount);
 }
@@ -102,7 +101,7 @@ void C3DCameraObject::OnDragRotate(float DeltaTime)
 	
 	Vector3 Rotation = Vector3(moveAmount.y, moveAmount.x, 0.f);
 
-	Rotation  *= EDITOR_CAM_SPEED;
+	Rotation  *= m_Speed;
 
 	AddWorldRotation(Rotation);
 }

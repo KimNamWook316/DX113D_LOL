@@ -30,6 +30,8 @@
 #include "ShadowMapShader.h"
 #include "ShadowMapInstancingShader.h"
 #include "ShadowCBuffer.h"
+#include "Transparent3DShader.h"
+#include "TransparentInstancing3DShader.h"
 
 CShaderManager::CShaderManager()
 {
@@ -122,6 +124,18 @@ bool CShaderManager::Init()
 		return false;
 	}
 
+	if (!CreateShader<CTransparent3DShader>("Transparent3DShader"))
+	{
+		assert(false);
+		return false;
+	}
+
+	if (!CreateShader<CTransparentInstancing3DShader>("TransparentInstancing3DShader"))
+	{
+		assert(false);
+		return false;
+	}
+
 	if (!CreateShader<CStandard3DWireFrameShader>("Standard3DWireFrameShader"))
 	{
 		assert(false);
@@ -133,6 +147,8 @@ bool CShaderManager::Init()
 
 	if (!CreateShader<CShadowMapInstancingShader>("ShadowMapInstancingShader"))
 		return false;
+
+
 
 	// =================== 상수버퍼 ===================
 	CreateConstantBuffer("TransformCBuffer", sizeof(TransformCBuffer), 0,
@@ -178,6 +194,9 @@ bool CShaderManager::Init()
 
 	CreateConstantBuffer("LandScapeCBuffer", sizeof(LandScapeCBuffer), 11,
 		(int)Buffer_Shader_Type::Graphic);
+
+	CreateConstantBuffer("LightForwardCBuffer", sizeof(LightForwardCBuffer), 12,
+		(int)Buffer_Shader_Type::Pixel);
 
 	CreateConstantBuffer("InstancingCBuffer", sizeof(InstancingCBuffer), 6,
 		(int)Buffer_Shader_Type::Vertex | (int)Buffer_Shader_Type::Pixel);

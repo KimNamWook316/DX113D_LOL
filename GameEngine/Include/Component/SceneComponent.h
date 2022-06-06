@@ -108,6 +108,8 @@ public:
 		return m_Render;
 	}
 
+	float GetViewZ() const;
+
 public:
 	void SetInstancing(bool Instancing)
 	{
