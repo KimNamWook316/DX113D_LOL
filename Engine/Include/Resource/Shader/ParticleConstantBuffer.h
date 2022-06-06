@@ -31,11 +31,6 @@ public:
 		return m_BufferData.ApplyRandom;
 	}
 
-	void SetApplyRandom(bool Enable)
-	{
-		m_BufferData.ApplyRandom = Enable == 1 ? true : false;
-	}
-
 	const Vector3& GetStartMax()	const
 	{
 		return m_BufferData.StartMax;
@@ -217,6 +212,11 @@ public:
 	void Set2D(bool Is2D)
 	{
 		m_BufferData.Is2D = Is2D ? 1 : 0;
+	}
+
+	void SetApplyRandom(bool Enable)
+	{
+		m_BufferData.ApplyRandom = (int)Enable;
 	}
 
 	void SetMoveAngle(const Vector3& MoveAngle)

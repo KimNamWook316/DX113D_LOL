@@ -301,8 +301,8 @@ size_t CEditorUtil::ObjectComponentTypeIndexToTypeid(int TypeIndex)
 		return typeid(CPaperBurnComponent).hash_code();
 	case 1:
 		return typeid(CStateComponent).hash_code();
-	//case 2:
-	//	return typeid(CLandScape).hash_code();
+	case 2:
+		return typeid(CNavAgent).hash_code();
 	//case 3:
 	//	return typeid(CArm).hash_code();
 	//case 4:

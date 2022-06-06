@@ -38,6 +38,8 @@ public:
 	virtual void Render();
 	virtual void PostRender();
 	virtual CNavAgent* Clone();
+	virtual bool Save(FILE* File);
+	virtual bool Load(FILE* File);
 
 private:
 	void PathResult(const std::list<Vector3>& PathList);

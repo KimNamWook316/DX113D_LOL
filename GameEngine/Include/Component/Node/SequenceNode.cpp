@@ -5,6 +5,7 @@
 CSequenceNode::CSequenceNode()
 {
 	SetTypeID(typeid(CSequenceNode).hash_code());
+	m_NodeType = Node_Type::Sequence;
 }
 
 CSequenceNode::CSequenceNode(const CSequenceNode& Node)	:

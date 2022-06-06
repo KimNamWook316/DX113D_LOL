@@ -31,6 +31,8 @@
 #include "imgui.h"
 #include "imgui_internal.h"
 
+//#include "Component/Node/Node.h"
+
 namespace GraphEditor {
 
 typedef size_t NodeIndex;
@@ -114,6 +116,7 @@ struct Node
     ImRect mRect;
     bool mSelected{ false };
     class CNode* TreeNode;
+    int NodeIndex;
 };
 
 struct Link

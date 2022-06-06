@@ -3,6 +3,7 @@
 
 CConditionNode::CConditionNode()
 {
+	m_NodeType = Node_Type::Condition;
 }
 
 CConditionNode::CConditionNode(const CConditionNode& Node)	:
@@ -16,7 +17,6 @@ CConditionNode::~CConditionNode()
 
 bool CConditionNode::Invoke(float DeltaTime)
 {
-	
 	NodeResult Result =	OnStart(DeltaTime);
 
 	if (Result == NodeResult::Node_False)

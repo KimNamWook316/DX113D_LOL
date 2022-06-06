@@ -2,6 +2,10 @@
 #include "Scene/Scene.h"
 #include "Scene/SceneResource.h"
 #include "Resource/Material/Material.h"
+#include "Component/StateComponent.h"
+#include "Component/Node/SequenceNode.h"
+#include "Component/Node/MoveInputCheckNode.h"
+#include "Component/Node/MovePickingNode.h"
 
 CDefaultScene::CDefaultScene()
 {
@@ -42,6 +46,19 @@ bool CDefaultScene::Init()
    // m_Scene->GetResource()->LoadAnimationSequence(true, "PlayerWalk",
    //     TEXT("singed_attack1.sqc"), MESH_PATH);
    // 
+
+    //CGameObject* TestObj = m_Scene->CreateGameObject<CGameObject>("Test");
+    //CStateComponent* TestStateComp = TestObj->CreateComponent<CStateComponent>("TestState");
+    //CSequenceNode* Root = TestStateComp->CreateTreeNode<CSequenceNode>("Root");
+    //CMoveInputCheckNode* CheckNode = TestStateComp->CreateTreeNode<CMoveInputCheckNode>("Check");
+    //CMovePickingNode* MoveNode = TestStateComp->CreateTreeNode<CMovePickingNode>("Move");
+    //
+    //Root->AddChild(CheckNode);
+    //Root->AddChild(MoveNode);
+
+    //TestObj->Save("StateSaveLoadTest.gobj", MESH_PATH);
+    //TestObj->Load("StateSaveLoadTest.gobj", MESH_PATH);
+
     return true;
 }
 

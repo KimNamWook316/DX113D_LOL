@@ -130,6 +130,7 @@ public:
 
 public:
 	bool Picking(CGameObject*& Result);
+	bool CheckSameName(const std::string& Name);
 
 public:
 	template <typename T>

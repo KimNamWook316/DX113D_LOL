@@ -20,15 +20,20 @@ CIdleNode::~CIdleNode()
 
 NodeResult CIdleNode::OnStart(float DeltaTime)
 {
-	m_AnimationMeshComp = m_Owner->GetAnimationMeshComp();
-
-	std::string ChampionName = m_Object->GetName();
-
-	std::string SequenceName = ChampionName + "_" + "Idle";
-
-	if (m_AnimationMeshComp)
+	if (m_Object->IsNavAgentPathListEmpty())
 	{
-		m_AnimationMeshComp->GetAnimationInstance()->ChangeAnimation(SequenceName);
+		m_AnimationMeshComp = m_Owner->GetAnimationMeshComp();
+
+		std::string ChampionName = m_Object->GetName();
+
+		std::string SequenceName = ChampionName + "_" + "Idle";
+
+		if (m_AnimationMeshComp)
+		{
+			m_AnimationMeshComp->GetAnimationInstance()->ChangeAnimation(SequenceName);
+		}
+
+		m_Object->SetNoInterrupt(false);
 	}
 
 	return NodeResult::Node_True;
@@ -36,6 +41,8 @@ NodeResult CIdleNode::OnStart(float DeltaTime)
 
 NodeResult CIdleNode::OnUpdate(float DeltaTime)
 {
+	m_IsEnd = true;
+
 	return NodeResult::Node_True;
 }
 

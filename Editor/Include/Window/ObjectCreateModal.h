@@ -14,6 +14,7 @@ private:
 	class CIMGUIComboBox* m_ObjectCombo;
 	class CIMGUITextInput* m_NameTextInput;
 	class CIMGUIButton* m_ObjectCreateButton;
+	class CIMGUICheckBox* m_ObjectTypeCheckBox;
 
 public:
 	virtual bool Init();
@@ -26,5 +27,7 @@ public:
 	void OnCreateObject();
 
 	class CGameObject* OnCreateObject(const char* FullPathMultibyte);
+
+	void SetObjectType(int Index, bool Boolean);
 };
 

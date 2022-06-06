@@ -321,6 +321,20 @@ bool CScene::Picking(CGameObject*& Result)
 	return false;
 }
 
+bool CScene::CheckSameName(const std::string& Name)
+{
+	auto iter = m_ObjList.begin();
+	auto iterEnd = m_ObjList.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		if ((*iter)->GetName() == Name)
+			return true;
+	}
+
+	return false;
+}
+
 bool CScene::SortRenderList(CSceneComponent* Src, CSceneComponent* Dest)
 {
 	SphereInfo	SrcInfo = Src->GetSphereInfoViewSpace();

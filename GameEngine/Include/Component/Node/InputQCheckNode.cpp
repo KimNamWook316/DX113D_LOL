@@ -4,6 +4,7 @@
 
 CInputQCheckNode::CInputQCheckNode()
 {
+	SetTypeID(typeid(CInputQCheckNode).hash_code());
 }
 
 CInputQCheckNode::CInputQCheckNode(const CInputQCheckNode& Node)

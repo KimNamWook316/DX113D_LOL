@@ -34,7 +34,20 @@ public:
     void SetRoot(class CNode* Node);
     CNode* FindNode(const std::string& Name);
     void AddNode(class CNode* Node);
+    void DeleteNode(class CNode* Node);
 
+    size_t GetNodeCount()   const
+    {
+        return m_NodeList.size();
+    }
+
+    CNode* GetNode(int Idx)
+    {
+        auto iter = m_NodeList.begin();
+        std::advance(iter, Idx);
+
+        return *iter;
+    }
 
 public:
     bool Init();
@@ -44,7 +57,26 @@ public:
     void PrevRender();
     void Render();
     void PostRender();
+    bool Save(FILE* File);
+    bool Load(FILE* File);
     CBehaviorTree* Clone();
+
+private:
+    std::function<CNode* (CNode*, size_t)>   m_NodeCreateCallback;
+
+public:
+    CNode* LoadNode(CNode* Parent, size_t TypeID);
+
+    template <typename T>
+    void SetCreateNodeCallback(T* Obj, CNode*(T::* Func)(CNode* Parent, size_t TypeID))
+    {
+        m_NodeCreateCallback = std::bind(Func, Obj, std::placeholders::_1, std::placeholders::_2);
+    }
+
+
+
+public:
+    
 
    /* template <typename T>
     T* CreateNode(const std::string& Name)

@@ -6,8 +6,11 @@
 #include "../EditorInfo.h"
 #include "ObjectHierarchyWindow.h"
 #include "IMGUIManager.h"
-#include "GameObject/GameObject.h"
+#include "IMGUITree.h"
 #include "IMGUISameLine.h"
+#include "GameObject/GameObject.h"
+#include "Scene/Scene.h"
+#include "Scene/SceneManager.h"
 
 CObjectComponentWindow::CObjectComponentWindow()	:
 	m_ComponentCreatePopUpButton(nullptr),
@@ -101,5 +104,27 @@ void CObjectComponentWindow::OnDeleteComponent()
 	Obj->DeleteObjectComponent(SelectItem);
 
 	m_ComponentListBox->DeleteItem(Index);
+}
+
+void CObjectComponentWindow::OnUpdateObjectComponetWindow(CIMGUITree* SelectObjectNode)
+{
+	// 지금 Component Hierarchy Window에 출력되고 있는것들을 모두(최상위에 있는 "Components" TreeNode제외하고) Disable 처리
+	m_ComponentListBox->Clear();
+
+	CGameObject* Obj = CSceneManager::GetInst()->GetScene()->FindObject(SelectObjectNode->GetName());
+
+	if (!Obj)
+		return;
+
+	std::vector<CObjectComponent*> vecObjComp;
+
+	Obj->GetAllObjectComponentsPointer(vecObjComp);
+
+	size_t Count = vecObjComp.size();
+
+	for (size_t i = 0; i < Count; ++i)
+	{
+		m_ComponentListBox->AddItem(vecObjComp[i]->GetName());
+	}
 }
 

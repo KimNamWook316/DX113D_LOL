@@ -27,4 +27,5 @@ public:
 
 public:
     virtual bool Invoke(float DeltaTime) override;
+
 };
