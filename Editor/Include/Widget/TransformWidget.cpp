@@ -76,6 +76,7 @@ bool CTransformWidget::Init()
 
 void CTransformWidget::SetSceneCompoent(CSceneComponent* Component)
 {
+	m_SceneComponent = Component;
 	m_Transform = Component->GetTransform();
 
 	m_InheritCheckBox->SetCheck(0, m_Transform->IsInheritScale());

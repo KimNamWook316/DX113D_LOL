@@ -54,6 +54,12 @@ struct FBXConvertWorkData
 	std::string FBXFullPath;
 };
 
+struct AnimInstanceWorkData
+{
+	std::string AnimSequenceFileName;
+	std::string AnimSequenceFullPath;
+};
+
 struct LoadingMessage
 {
 	float Percent;

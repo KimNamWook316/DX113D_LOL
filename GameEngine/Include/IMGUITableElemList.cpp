@@ -29,6 +29,8 @@ void CIMGUITableElemList::AddData(const std::string& DataName, int Val)
     {
         m_vecDataInfo[KeyIdx].push_back(std::to_string(Val));
     }
+
+    CalculateMaxElemCount();
 }
 
 void CIMGUITableElemList::AddData(const std::string& DataName, float Val)
@@ -48,6 +50,7 @@ void CIMGUITableElemList::AddData(const std::string& DataName, float Val)
     {
         m_vecDataInfo[KeyIdx].push_back(std::to_string(Val));
     }
+    CalculateMaxElemCount();
 }
 
 void CIMGUITableElemList::AddData(const std::string& DataName, bool Val)
@@ -67,6 +70,8 @@ void CIMGUITableElemList::AddData(const std::string& DataName, bool Val)
     {
         m_vecDataInfo[KeyIdx].push_back(Val ? "True" : "False");
     }
+
+    CalculateMaxElemCount();
 }
 
 void CIMGUITableElemList::AddData(const std::string& DataName, const std::string& Val)
@@ -86,8 +91,11 @@ void CIMGUITableElemList::AddData(const std::string& DataName, const std::string
     {
         m_vecDataInfo[KeyIdx].push_back(Val);
     }
+
+    CalculateMaxElemCount();
 }
 
+// 일반 const char* 을 받는 함수
 void CIMGUITableElemList::AddData(const std::string& DataName, char* Val)
 {
     int KeyIdx = FindMapKeyIdxInVector(DataName);
@@ -105,6 +113,8 @@ void CIMGUITableElemList::AddData(const std::string& DataName, char* Val)
     {
         m_vecDataInfo[KeyIdx].push_back(Val);
     }
+
+    CalculateMaxElemCount();
 }
 
 void CIMGUITableElemList::MakeKey(const std::string& DataName)
@@ -118,6 +128,22 @@ void CIMGUITableElemList::MakeKey(const std::string& DataName)
 void CIMGUITableElemList::ClearAll()
 {
     m_mapDataInfo.clear();
+}
+
+void CIMGUITableElemList::CalculateMaxElemCount()
+{
+    auto iter = m_mapDataInfo.begin();
+    auto iterEnd = m_mapDataInfo.end();
+
+    int MaxElemCnt = 0;
+
+    for (; iter != iterEnd; ++iter)
+    {
+        if (iter->second.size() > MaxElemCnt)
+            MaxElemCnt = iter->second.size();
+    }
+
+    m_MaxElemSize = MaxElemCnt;
 }
 
 void CIMGUITableElemList::ClearContents()
@@ -205,7 +231,7 @@ void CIMGUITableElemList::Render()
         ImGuiListClipper clipper;
 
         // 행 개수
-        clipper.Begin((int)m_mapDataInfo.size());
+        clipper.Begin((int)m_MaxElemSize);
 
         while (clipper.Step())
         {

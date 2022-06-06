@@ -260,6 +260,8 @@ bool CAnimationSequence::Load(FILE* pFile)
 		}
 	}
 
+	SAFE_DELETE(m_KeyFrameBuffer);
+
 	m_KeyFrameBuffer = new CStructuredBuffer;
 
 	m_KeyFrameBuffer->Init("KeyFrameBuffer", (unsigned int)sizeof(AnimationFrameTrans),

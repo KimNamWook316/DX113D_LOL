@@ -69,6 +69,11 @@ void CSceneComponentWidget::OnGameObjectEnable(bool Enable)
 	m_EnableCheckBox->SetCheck(0, Enable);
 }
 
+bool CSceneComponentWidget::IsMyWidget(CSceneComponent* Component)
+{
+	return Component == m_Component.Get();
+}
+
 void CSceneComponentWidget::OnClickRenameButton()
 {
 	// Hierachy °»½Å

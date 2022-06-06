@@ -306,6 +306,7 @@ enum ConditionNode
 	InputDCheck,
 	InputFCheck,
 	MouseRightInputCheck,
+	MoveInputCheckNode,
 };
 
 enum ActionNode
@@ -317,4 +318,5 @@ enum ActionNode
 	SpellD,
 	SpellF,
 	Move,
+	MovePicking,
 };

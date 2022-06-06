@@ -16,6 +16,9 @@ public:
     void ClearComponentWidget();
     void CreateSceneComponentWidget(class CSceneComponent* Com);
     void CreateObjectComponentWidget(class CObjectComponent* Com);
+    bool FindSceneComponent(CSceneComponent* Com);
+public:
+    void DeleteSceneComponentWidget(class CSceneComponent* Com);
 
 public:
     void SetGameObject(class CGameObject* Obj);
