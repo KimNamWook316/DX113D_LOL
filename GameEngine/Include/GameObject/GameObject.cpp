@@ -380,8 +380,8 @@ bool CGameObject::Load(FILE* File)
 	bool	Root = false;
 	fread(&Root, sizeof(bool), 1, File);
 
-	//fread(&m_ObjectType, sizeof(Object_Type), 1, File);
-	//fread(&m_IsEnemy, sizeof(bool), 1, File);
+	fread(&m_ObjectType, sizeof(Object_Type), 1, File);
+	fread(&m_IsEnemy, sizeof(bool), 1, File);
 
 	if (Root)
 	{
