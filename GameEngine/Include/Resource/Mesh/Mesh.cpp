@@ -275,11 +275,17 @@ bool CMesh::LoadMeshFile(const char* FullPath)
 	if (!File)
 		return false;
 
-	LoadMesh(File);
+	bool LoadResult = LoadMesh(File);
+
+	// if (LoadResult == false);
+	// {
+	// 	assert(false);
+	// 	return false;
+	// }
 
 	fclose(File);
 
-	return true;
+	return LoadResult;
 }
 
 bool CMesh::ConvertFBX(CFBXLoader* Loader, const char* FullPath)
@@ -644,6 +650,8 @@ bool CMesh::LoadMesh(FILE* File)
 
 	fread(&MaterialCount, sizeof(int), 1, File);
 
+	bool CheckTextureExist = true;
+
 	for (int i = 0; i < MaterialCount; ++i)
 	{
 		CMaterial* Material = new CMaterial;
@@ -651,6 +659,113 @@ bool CMesh::LoadMesh(FILE* File)
 		m_vecMaterialSlot.push_back(Material);
 
 		Material->Load(File);
+
+		// 혹시나 Texture 정보를 제대로 Load 하지 못한 경우를 대비해야 한다.
+		CheckTextureExist = CheckLoadedMaterialTexture(Material);
+	}
+
+	return CheckTextureExist;
+}
+
+bool CMesh::CheckLoadedMaterialTexture(CMaterial* Material)
+{
+	const std::vector<MaterialTextureInfo>& TextureInfo = Material->GetTextureInfo();
+
+	size_t TextureNumber = TextureInfo.size();
+
+	for (size_t i = 0; i < TextureNumber; ++i)
+	{
+		// m_TextureInfo[i].Texture 를 찾아내지 못했다면
+		// 다른 Path 를 통해서 Load 를 시도해야 한다.
+		// 1) 해당 FILE Pointer 로 부터, File Path 경로를 뽑아온다.
+		// 2) ex) ~~~Bin//Mesh//A_Idle.msh 라면, 
+		// A_Idle 이라는 File 이름을 뽑아내고
+		// 3) ~~~Bin//Mesh//A_Idle.fbm 이라는 폴더를 찾아서, 해당 폴더 안의 TexName 의 Texture 로부터 Load 한다.
+		char MeshFullPath[MAX_PATH] = {};
+
+		strcpy_s(MeshFullPath, m_FullPath);
+
+		char MeshFileName[MAX_PATH] = {};
+
+		_splitpath_s(MeshFullPath, nullptr, 0, nullptr, 0, MeshFileName, MAX_PATH, nullptr, 0);
+
+
+		if (TextureInfo[i].Texture == nullptr)
+		{
+			int MeshFullPathLength = (int)strlen(MeshFullPath);
+
+			// for (int i = MeshFullPathLength - 1; i >= 0; i--)
+			// {
+			// 	// 해당 '.' 이후에는 'msh' 라는 확장자가 있다. 이것을 지워준다.
+			// 	if (MeshFullPath[i] == '.')
+			// 	{
+			// 		memset(&MeshFullPath[i + 1], 0, sizeof(char) * (MeshFullPathLength - i + 1));
+			// 		break;
+			// 	}
+			// }
+
+			// 해당 확장자는 , 현재 FBX Converter 를 이용하는 상황에서의 특수한 경우이다.
+			// const char* FBMExt = "fbm";
+			const char* FBMExt = ".fbm";
+
+			char TextureFilePath[MAX_PATH] = {};
+
+			strcpy_s(TextureFilePath, MeshFileName);
+			strcat_s(TextureFilePath, FBMExt);
+
+			const char* FolderDash = "\\";
+			strcat_s(TextureFilePath, FolderDash);
+
+			// File 이름 붙이기
+			strcat_s(TextureFilePath, TextureInfo[i].Name.c_str());
+
+			// 확장자 붙이기
+			char SavedFileExt[_MAX_EXT] = {};
+
+			_splitpath_s(TextureInfo[i].SavedFullPath.c_str(), nullptr, 0, nullptr, 0, nullptr, 0, SavedFileExt, _MAX_EXT);
+
+			strcat_s(TextureFilePath, SavedFileExt);
+
+			// TCHAR 형식으로 변환
+			TCHAR TCHARTexturePath[MAX_PATH] = {};
+
+			int ConvertLength = MultiByteToWideChar(CP_ACP, 0, TextureFilePath, -1, 0, 0);
+			MultiByteToWideChar(CP_ACP, 0, TextureFilePath, -1, TCHARTexturePath, ConvertLength);
+
+			// Path 정보도 추가 세팅해준다.
+			if (m_Scene)
+				m_Scene->GetResource()->LoadTexture(TextureInfo[i].Name, TCHARTexturePath, MESH_PATH);
+			else
+				CResourceManager::GetInst()->LoadTexture(TextureInfo[i].Name, TCHARTexturePath, MESH_PATH);
+
+			CTexture* Texture = nullptr;
+
+			if (m_Scene)
+			{
+				Texture = m_Scene->GetResource()->FindTexture(TextureInfo[i].Name);
+				Material->SetTextureInfoResource((int)i, Texture);
+			}
+			else
+			{
+				Texture = CResourceManager::GetInst()->FindTexture(TextureInfo[i].Name);
+			}
+
+			Material->SetTextureInfoResource((int)i, Texture);
+
+			if (!Texture)
+			{
+				TCHAR FulllErrorMessage[MAX_PATH] = {};
+				TCHAR ErrorMessage[MAX_PATH] = TEXT("Texture Not Found In Bin\\Mesh Folder\n While Loading Material (Mesh.cpp), \nPut FBX Files In Bin\\Mesh And Convert Again");
+
+				lstrcpy(FulllErrorMessage, TCHARTexturePath);
+				lstrcat(FulllErrorMessage, ErrorMessage);
+
+				MessageBox(CEngine::GetInst()->GetWindowHandle(), FulllErrorMessage, NULL, MB_OK);
+				assert(false);
+
+				return false;
+			}
+		}
 	}
 
 	return true;

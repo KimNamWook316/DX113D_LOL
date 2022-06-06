@@ -48,10 +48,17 @@ CAnimationMeshComponent::~CAnimationMeshComponent()
 
 void CAnimationMeshComponent::SetMesh(const std::string& Name)
 {
-	m_Mesh = (CAnimationMesh*)m_Scene->GetResource()->FindMesh(Name);
+	CAnimationMesh* FoundMesh = (CAnimationMesh*)m_Scene->GetResource()->FindMesh(Name);
 
-	if (!m_Mesh)
+	if (!FoundMesh)
 		return;
+
+	if (m_Mesh == FoundMesh)
+		return;
+
+	DeleteInstancingCheckList();
+
+	m_Mesh = FoundMesh;
 
 	// Editor Save, Load 과정에서 필요한 부분을 세팅
 	m_Mesh->SetName(Name);
@@ -93,6 +100,12 @@ void CAnimationMeshComponent::SetMesh(const std::string& Name)
 	{
 		if ((*iter1)->Mesh == m_Mesh)
 		{
+			// 반투명 상태일 경우 다른 레이어의 InstancingCheckList로 생성되어야 한다.
+			if (m_LayerName != (*iter1)->LayerName)
+			{
+				continue;
+			}
+
 			bool	InstancingEnable = (*iter1)->InstancingList.back()->GetInstancing();
 
 			(*iter1)->InstancingList.push_back(this);
@@ -135,7 +148,9 @@ void CAnimationMeshComponent::SetMesh(const std::string& Name)
 
 		CheckCount->InstancingList.push_back(this);
 		CheckCount->Mesh = m_Mesh;
-		CheckCount->LayerName = "Default";
+
+		// Default Or Transparent
+		CheckCount->LayerName = m_LayerName;
 	}
 }
 
@@ -179,6 +194,12 @@ void CAnimationMeshComponent::SetMesh(CAnimationMesh* Mesh)
 	{
 		if ((*iter1)->Mesh == m_Mesh)
 		{
+			// 반투명 상태일 경우 다른 레이어의 InstancingCheckList로 생성되어야 한다.
+			if (m_LayerName != (*iter1)->LayerName)
+			{
+				continue;
+			}
+
 			bool	InstancingEnable = (*iter1)->InstancingList.back()->GetInstancing();
 
 			(*iter1)->InstancingList.push_back(this);
@@ -221,7 +242,9 @@ void CAnimationMeshComponent::SetMesh(CAnimationMesh* Mesh)
 
 		CheckCount->InstancingList.push_back(this);
 		CheckCount->Mesh = m_Mesh;
-		CheckCount->LayerName = "Default";
+
+		// Default Or Transparent
+		CheckCount->LayerName = m_LayerName;
 	}
 }
 
@@ -237,6 +260,78 @@ void CAnimationMeshComponent::AddMaterial(CMaterial* Material)
 	m_vecMaterialSlot.push_back(Material->Clone());
 
 	m_vecMaterialSlot[m_vecMaterialSlot.size() - 1]->SetScene(m_Scene);
+}
+
+bool CAnimationMeshComponent::SetCustomShader(const std::string& Name)
+{
+	m_CustomShader = m_Scene->GetResource()->FindShader(Name);
+
+	if (!m_CustomShader)
+	{
+		assert(false);
+		return false;
+	}
+
+	// 현재 반투명상태인 Material 체크
+	size_t Size = m_vecMaterialSlot.size();
+
+	std::vector<bool> vecTransparent;
+	vecTransparent.resize(Size);
+
+	for (size_t i = 0; i < Size; ++i)
+	{
+		if (m_vecMaterialSlot[i]->IsTransparent())
+		{
+			vecTransparent[i] = true;
+		}
+	}
+
+	// 반투명 상태가 아닌 Material들에 Custom Shader 적용
+	for (size_t i = 0; i < Size; ++i)
+	{
+		if (false == vecTransparent[i])
+		{
+			m_vecMaterialSlot[i]->SetShader((CGraphicShader*)(m_CustomShader.Get()));
+		}
+	}
+
+	return true;
+}
+
+bool CAnimationMeshComponent::SetCustomTransparencyShader(const std::string& Name)
+{
+	m_CustomTransparentShader = m_Scene->GetResource()->FindShader(Name);
+
+	if (!m_CustomTransparentShader)
+	{
+		assert(false);
+		return false;
+	}
+
+	// 현재 반투명상태인 Material 체크
+	size_t Size = m_vecMaterialSlot.size();
+
+	std::vector<bool> vecTransparent;
+	vecTransparent.resize(Size);
+
+	for (size_t i = 0; i < Size; ++i)
+	{
+		if (m_vecMaterialSlot[i]->IsTransparent())
+		{
+			vecTransparent[i] = true;
+		}
+	}
+
+	// 반투명 상태인 Material들에 Custom Shader 적용
+	for (size_t i = 0; i < Size; ++i)
+	{
+		if (vecTransparent[i])
+		{
+			m_vecMaterialSlot[i]->SetShader((CGraphicShader*)(m_CustomTransparentShader.Get()));
+		}
+	}
+
+	return true;
 }
 
 void CAnimationMeshComponent::SetBaseColor(const Vector4& Color, int Index)
@@ -296,7 +391,133 @@ void CAnimationMeshComponent::SetRenderState(const std::string& Name, int Index)
 
 void CAnimationMeshComponent::SetTransparency(bool Enable, int Index)
 {
-	m_vecMaterialSlot[Index]->SetTransparency(Enable);
+	if (Enable)
+	{
+		// 한 Material이라도 반투명이라면 반투명 Layer에서 렌더해야 한다.
+		m_LayerName = "Transparency";
+
+		// 반투명시 적용되어야 할 커스텀 쉐이더가 있는 경우
+		if (m_CustomTransparentShader)
+		{
+			m_vecMaterialSlot[Index]->SetShader((CGraphicShader*)m_CustomTransparentShader.Get());
+		}
+		// 없는 경우 Default Transparent Shader로 렌더
+		else
+		{
+			m_vecMaterialSlot[Index]->SetShader("Transparent3DShader");
+		}
+
+		bool AlreadyTransparent = m_vecMaterialSlot[Index]->IsTransparent();
+
+		// 이전에 반투명 상태가 아니었을 경우에만 Enable 처리하고 레이어를 바꿈
+		if (!AlreadyTransparent)
+		{
+			m_vecMaterialSlot[Index]->SetTransparency(Enable);
+
+			// 인스턴싱 레이어를 바꾼다.
+			ChangeInstancingLayer();
+		}
+	}
+	else
+	{
+		bool AlreadyOpaque = !m_vecMaterialSlot[Index]->IsTransparent();
+
+		// 이전에 불투명 상태가 아니었을 경우에만 불투명 처리
+		if (!AlreadyOpaque)
+		{
+			m_vecMaterialSlot[Index]->SetTransparency(Enable);
+		}
+
+		// 커스텀 쉐이더가 있는 경우
+		if (m_CustomShader)
+		{
+			m_vecMaterialSlot[Index]->SetShader((CGraphicShader*)m_CustomShader.Get());
+		}
+		// 없는 경우 Default 3D Shader로 렌더
+		else
+		{
+			m_vecMaterialSlot[Index]->SetShader("Standard3DShader");
+		}
+
+		// 하나의 Material이라도 반투명이라면, 레이어를 Transparency 레이어로 유지한다.
+		size_t Size = m_vecMaterialSlot.size();
+		for (size_t i = 0; i < Size; ++i)
+		{
+			if (m_vecMaterialSlot[i]->IsTransparent())
+			{
+				return;
+			}
+		}
+
+		// 모두 다 불투명 상태라면, Default Layer로 바꾼다.
+		m_LayerName = "Default";
+
+		if (!AlreadyOpaque)
+		{
+			// 인스턴싱 레이어를 바꾼다.
+			ChangeInstancingLayer();
+		}
+	}
+}
+
+void CAnimationMeshComponent::SetTransparencyAllMaterial(bool Enable)
+{
+	size_t Size = m_vecMaterialSlot.size();
+
+	if (Enable)
+	{
+		bool AlreadyTransparent = m_LayerName == "Transparency";
+
+		if (!AlreadyTransparent)
+		{
+			m_LayerName = "Transparency";
+		}
+
+		for (size_t i = 0; i < Size; ++i)
+		{
+			if (m_CustomTransparentShader)
+			{
+				m_vecMaterialSlot[i]->SetShader((CGraphicShader*)m_CustomTransparentShader.Get());
+			}
+			else
+			{
+				m_vecMaterialSlot[i]->SetShader("Standard3DShader");
+			}
+		}
+
+		// 인스턴싱 레이어를 바꾼다.
+		if (!AlreadyTransparent)
+		{
+			ChangeInstancingLayer();
+		}
+	}
+	else
+	{
+		bool AlreadyOpaque = m_LayerName == "Default";
+
+		if (!AlreadyOpaque)
+		{
+			m_LayerName = "Default";
+		}
+
+		for (size_t i = 0; i < Size; ++i)
+		{
+			if (m_CustomShader)
+			{
+				m_vecMaterialSlot[i]->SetShader((CGraphicShader*)m_CustomShader.Get());
+			}
+			else
+			{
+				m_vecMaterialSlot[i]->SetShader("Transparent3DShader");
+			}
+		}
+
+		// 인스턴싱 레이어를 바꾼다.
+		if (!AlreadyOpaque)
+		{
+			ChangeInstancingLayer();
+		}
+	}
 }
 
 void CAnimationMeshComponent::SetOpacity(float Opacity, int Index)
@@ -544,6 +765,7 @@ bool CAnimationMeshComponent::Save(FILE* File)
 	fwrite(MeshName.c_str(), sizeof(char), Length, File);
 
 	// Animation Sqc 관련 정보 Loading 함수
+	// size_t AnimationSequenceLength = 
 	size_t	 SeqFileNameLength = strlen(m_Animation->GetCurrentAnimation()->GetAnimationSequence()->GetFileName());
 	fwrite(&SeqFileNameLength, sizeof(size_t), 1, File);
 	fwrite(m_Animation->GetCurrentAnimation()->GetAnimationSequence()->GetFileName(), sizeof(char), SeqFileNameLength, File);
@@ -590,15 +812,21 @@ bool CAnimationMeshComponent::Load(FILE* File)
 
 	// 여기서 혹시 모르니 해당 Mesh , Bne, Texture File 들을 세팅해둔다
 	// Mesh Name 과 실제 File Name 은 일치하는 상태이다.
-	const std::pair<bool, std::string>& result = CResourceManager::GetInst()->LoadMeshTextureBoneInfo(SeqFileName);
-	if (!result.first)
-		return false;
+	// const std::pair<bool, std::string>& result = CResourceManager::GetInst()->LoadMeshTextureBoneInfo(SeqFileName);
+	// 
+	// if (!result.first)
+	// 	return false;
 
 	// Animation Instance File 로 부터 세팅
 	LoadAnimationInstance<CAnimationSequenceInstance>();
 
 	// RESOURCE_ANIMATION_PATH 를 통해서 .anim File Load
 	if (!m_Animation->LoadAnimation(AnimSavedFileName))
+		return false;
+
+	const std::pair<bool, std::string>& result = CResourceManager::GetInst()->LoadMeshTextureBoneInfo(m_Animation);
+
+	if (!result.first)
 		return false;
 
 	// result.second 에는 위에서 저장해준 Mesh 이름이 들어있다.
@@ -626,6 +854,7 @@ bool CAnimationMeshComponent::Load(FILE* File)
 
 	return true;
 }
+
 void CAnimationMeshComponent::RenderAnimationEditor()
 {
 	CSceneComponent::RenderAnimationEditor();
@@ -652,10 +881,128 @@ void CAnimationMeshComponent::RenderAnimationEditor()
 	if (m_Animation)
 		m_Animation->ResetShader();
 }
+
 void CAnimationMeshComponent::DeleteAnimationInstance()
 {
 	SAFE_DELETE(m_Animation);
 }
+
+void CAnimationMeshComponent::ChangeInstancingLayer()
+{
+	auto iter = m_InstancingCheckList.begin();
+	auto iterEnd = m_InstancingCheckList.end();
+
+	bool CheckCountExist = false;
+
+	bool AddOnNewLayer = false;
+	bool DeleteOnOldLayer = false;
+
+	for (; iter != iterEnd; ++iter)
+	{
+		if ((*iter)->Mesh == m_Mesh)
+		{
+			// 같은 레이어일 경우 추가한다.
+			if ((*iter)->LayerName == m_LayerName)
+			{
+				CheckCountExist = true;
+
+				(*iter)->InstancingList.push_back(this);
+
+				auto iterInst = (*iter)->InstancingList.begin();
+				auto iterInstEnd = (*iter)->InstancingList.end();
+
+				// 이 컴포넌트를 추가하면서 인스턴싱으로 출력하게 되는 경우
+				if ((*iter)->InstancingList.size() == 10)
+				{
+					for (; iterInst != iterInstEnd; ++iterInst)
+					{
+						(*iterInst)->SetInstancing(true);
+					}
+				}
+				// 이미 인스턴싱 출력중인 경우
+				else if ((*iter)->InstancingList.size() > 10)
+				{
+					SetInstancing(true);
+				}
+				// 인스턴싱 하지 않는 경우
+				else
+				{
+					SetInstancing(false);
+				}
+
+				AddOnNewLayer = true;
+			}
+
+			// Layer가 다를 경우 해당 레이어에서 뺀다
+			else
+			{
+				// 이 컴포넌트가 빠지면서 인스턴싱을 하지 않게 처리해야 하는 경우
+				bool InstancingOff = (*iter)->InstancingList.size() == 10;
+
+				auto iterInst = (*iter)->InstancingList.begin();
+				auto iterInstEnd = (*iter)->InstancingList.end();
+
+				if (InstancingOff)
+				{
+					for (; iterInst != iterInstEnd;)
+					{
+						(*iterInst)->SetInstancing(false);
+
+						if ((*iterInst) == this)
+						{
+							iterInst = (*iter)->InstancingList.erase(iterInst);
+							continue;
+						}
+
+						++iterInst;
+					}
+				}
+				else
+				{
+					for (; iterInst != iterInstEnd; ++iterInst)
+					{
+						if ((*iterInst) == this)
+						{
+							// 현재 레이어의 인스턴싱 리스트에서 제거
+							(*iter)->InstancingList.erase(iterInst);
+							break;
+						}
+					}
+				}
+
+				DeleteOnOldLayer = true;
+
+				if ((*iter)->InstancingList.empty())
+				{
+					SAFE_DELETE(*iter);
+					iter = m_InstancingCheckList.erase(iter);
+					continue;
+				}
+			}
+		}
+
+		// 새 레이어에 넣고, 이전 레이어에서 빼는 작업 완료한 경우 루프 종료
+		if (AddOnNewLayer && DeleteOnOldLayer)
+		{
+			break;
+		}
+	}
+
+	// 이 컴포넌트가 속한 레이어에 처음 추가되는 경우
+	if (!CheckCountExist)
+	{
+		InstancingCheckCount* CheckCount = new InstancingCheckCount;
+
+		m_InstancingCheckList.push_back(CheckCount);
+
+		CheckCount->InstancingList.push_back(this);
+		CheckCount->LayerName = m_LayerName;
+		CheckCount->Mesh = m_Mesh;
+
+		SetInstancing(false);
+	}
+}
+
 void CAnimationMeshComponent::AddChild(CSceneComponent* Child,
 	const std::string& SocketName)
 {

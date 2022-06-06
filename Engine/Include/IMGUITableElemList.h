@@ -18,6 +18,7 @@ private:
     std::string m_TableTitle;
     float m_TableHeight;
     float m_TableWidth;
+    int m_MaxElemSize;
     std::unordered_map<std::string, std::vector<std::string>> m_mapDataInfo;
 
     // m_mapDataInfo 에 있는 내용이 vector 형식으로 들어가게 되는 것이다
@@ -41,9 +42,11 @@ public:
     void AddData(const std::string& DataName, float Val);
     void AddData(const std::string& DataName, bool Val);
     void AddData(const std::string& DataName, const std::string& Val);
+    // 일반 const char* 을 받는 함수
     void AddData(const std::string& DataName, char* Val);
     void MakeKey(const std::string& DataName);
     void ClearAll();
+    void CalculateMaxElemCount();
     // 기존 Key 값은 남겨두고, Contents 내용들만 갈아낀다.
     void ClearContents();
     int FindMapKeyIdxInVector(const std::string& Key);

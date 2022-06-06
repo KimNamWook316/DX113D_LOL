@@ -15,6 +15,7 @@
 #include "ObjectComponentWindow.h"
 #include "ToolWindow.h"
 #include "Scene/SceneManager.h"
+#include "InspectorWindow.h"
 
 CSceneComponentHierarchyWindow::CSceneComponentHierarchyWindow() :
 	m_Root(nullptr),
@@ -282,6 +283,9 @@ void CSceneComponentHierarchyWindow::OnDeleteComponent()
 	CGameObject* Obj = CSceneManager::GetInst()->GetScene()->FindObject(SelectObjName);
 
 	CSceneComponent* DeleteComp = (CSceneComponent*)Obj->FindComponent(m_SelectNode->GetName());
+	
+	// Inspector에서 Widget삭제
+	((CInspectorWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(INSPECTOR))->OnDeleteSceneComponent(DeleteComp);
 
 	// 루트 노드면 전부 삭제, 중간에 있는 노드면 그 노드 삭제하고 첫번째 자식 Component를 올리는 동작을 GUI상에서도 구현
 	m_SelectNode->Delete();

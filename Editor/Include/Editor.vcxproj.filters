@@ -61,6 +61,9 @@
     <Filter Include="02. Editor\02. Widget\03. Particle">
       <UniqueIdentifier>{5a10618e-0203-4162-97ee-b4491396ccdd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="04. Thread\02. AnimationInstanceConvert">
+      <UniqueIdentifier>{ed67269b-034a-4332-8943-5f7c9358cb92}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EditorManager.cpp">
@@ -176,6 +179,9 @@
     </ClCompile>
     <ClCompile Include="CAnimationPopUpScreen.cpp">
       <Filter>02. Editor\02. Widget\03. Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimationInstanceConvertThread.cpp">
+      <Filter>04. Thread\02. AnimationInstanceConvert</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -298,6 +304,9 @@
     </ClInclude>
     <ClInclude Include="CAnimationPopUpScreen.h">
       <Filter>02. Editor\02. Widget\03. Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimationInstanceConvertThread.h">
+      <Filter>04. Thread\02. AnimationInstanceConvert</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

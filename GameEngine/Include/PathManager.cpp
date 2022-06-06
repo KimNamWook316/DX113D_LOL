@@ -53,7 +53,7 @@ bool CPathManager::Init()
     WideCharToMultiByte(CP_ACP, 0, BinPath, -1,
         Info->PathMultibyte, ConvertLength, 0, 0);
 #else
-    strcpy_s(Info->PathMultibyte, Path);
+    strcpy_s(Info->PathMultibyte, BinPath);
 #endif // UNICODE
 
     m_mapPath.insert(std::make_pair(ROOT_PATH, Info));
@@ -67,6 +67,7 @@ bool CPathManager::Init()
     AddPath(MESH_PATH, TEXT("Mesh\\"));
     AddPath(EXCEL_PATH, TEXT("Excel\\"));
     AddPath(PARTICLE_PATH, TEXT("Texture\\Particle\\"));
+    AddPath(OBJECT_PATH, TEXT("Object\\"));
 
     // Resource Path
     TCHAR   IncludePath[MAX_PATH] = {};
@@ -99,7 +100,7 @@ bool CPathManager::Init()
     WideCharToMultiByte(CP_ACP, 0, IncludePath, -1,
         IncludeInfo->PathMultibyte, IncludeConvertLength, 0, 0);
 #else
-    strcpy_s(Info->PathMultibyte, Path);
+    strcpy_s(IncludeInfo->PathMultibyte, IncludePath);
 #endif // UNICODE
 
     m_mapPath.insert(std::make_pair(RESOURCE_ROOT_PATH, IncludeInfo));

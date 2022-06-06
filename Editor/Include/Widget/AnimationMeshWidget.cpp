@@ -91,6 +91,16 @@ bool CAnimationMeshWidget::Init()
 void CAnimationMeshWidget::SetSceneComponent(CSceneComponent* Com)
 {
 	CSceneComponentWidget::SetSceneComponent(Com);
+
+	CAnimationSequenceInstance* Instance =  dynamic_cast<CAnimationMeshComponent*>(Com)->GetAnimationInstance();
+
+	if (Instance)
+	{
+		// m_Animation 은 어차피, Animation Mesh Component 가 가지고 있는 Animation Instance 에 대한 포인터만을 들고 있는 형태
+		m_Animation = Instance;
+
+		SetAnimationRelatedInfoToWidget(m_Animation);
+	}
 }
 
 void CAnimationMeshWidget::OnClickLoadMesh()
@@ -170,9 +180,10 @@ void CAnimationMeshWidget::OnLoadAnimationInstance()
 		m_Animation->LoadAnimationFullPath(FilePathMultibyte);
 
 		// CurrentAnimation 체크, + Msh, Skeleton 모두 Load 하기 
-		bool LoadResult = LoadElementsForSqcLoading();
+		// bool LoadResult = LoadElementsForSqcLoading();
+		std::pair<bool, std::string> LoadResult = CResourceManager::GetInst()->LoadMeshTextureBoneInfo(m_Animation);
 
-		if (!m_Animation->GetCurrentAnimation() || LoadResult == false)
+		if (!m_Animation->GetCurrentAnimation() || LoadResult.first == false)
 		{
 			ClearExistingAnimationSeqInfos();
 
@@ -182,29 +193,17 @@ void CAnimationMeshWidget::OnLoadAnimationInstance()
 			return;
 		}
 
+		m_LoadedMeshName = LoadResult.second;
+
+		// Mesh 를 바꾸기 전에 Mesh 를 공유하는 InstancingCheckingList 목록에서 제거 --> 아래 Set Mesh 에서 어차피 해준다.
+		// bool DeleteResult = dynamic_cast<CAnimationMeshComponent*>(m_Component.Get())->DeleteInstancingCheckList();
+		// 현재 Load 한 Mesh 를 세팅
+		dynamic_cast<CAnimationMeshComponent*>(m_Component.Get())->SetMesh(m_LoadedMeshName);
+
 		// Animation 관련 정보를 모두 정상적으로 Load 했다면 Start 함수 호출하여, 필요한 정보 세팅
 		m_Animation->Start();
 
-		// Current Animation 정보로 세팅한다.
-		int CurAnimIdx = m_Animation->GetCurrentAnimationOrder();
-
-		if (CurAnimIdx == -1)
-			return;
-
-		// Current Animation Key Name 을 Sequenc eKey Text 에 세팅
-		m_CurrentAnimSequence->SetText(m_Animation->GetCurrentAnimationKeyName().c_str());
-
-		// Table 정보 세팅
-		OnRefreshAnimationInfo();
-
-		// 현재 Scene의 정보를 m_Scene으로 지정해준다
-		m_Animation->SetScene(CSceneManager::GetInst()->GetScene());
-
-		// Engine 을 Play 한다.
-		CEngine::GetInst()->SetPlay(true);
-
-		// Animation을 시작한다
-		m_Animation->Play();
+		SetAnimationRelatedInfoToWidget(m_Animation);
 	}
 }
 
@@ -236,94 +235,133 @@ void CAnimationMeshWidget::OnRefreshAnimationInfo()
 
 		m_AnimInfoTable->AddData(AnimationClipInfoKeys::AnimSeqKey, iter->first);
 		
-		const char* FileName = Sequence->GetAnimationSequence()->GetSequenceFileNameMultibyte();
+		const char* CharFileName = Sequence->GetAnimationSequence()->GetSequenceFileNameMultibyte();
+
+		char FileName[MAX_PATH] = {};
+
+		strcpy_s(FileName, CharFileName);
+
 		m_AnimInfoTable->AddData(AnimationClipInfoKeys::AnimSeqFileName, FileName);
 	}
 	
 }
 
+void CAnimationMeshWidget::SetAnimationRelatedInfoToWidget(CAnimationSequenceInstance* AnimationInstance)
+{
+	if (!AnimationInstance)
+		return;
+
+	// Current Animation 정보로 세팅한다.
+	int CurAnimIdx = m_Animation->GetCurrentAnimationOrder();
+
+	if (CurAnimIdx == -1)
+		return;
+
+	// Current Animation Key Name 을 Sequenc eKey Text 에 세팅
+	m_CurrentAnimSequence->SetText(m_Animation->GetCurrentAnimationKeyName().c_str());
+
+	// Table 정보 세팅
+	OnRefreshAnimationInfo();
+
+	// 현재 Scene의 정보를 m_Scene으로 지정해준다
+	m_Animation->SetScene(CSceneManager::GetInst()->GetScene());
+
+	// Engine 을 Play 한다.
+	CEngine::GetInst()->SetPlay(true);
+
+	// Animation을 시작한다
+	m_Animation->Play();
+}
+
 bool CAnimationMeshWidget::LoadElementsForSqcLoading()
 {
-	// const char* SqcFileName
-	// const char* SqcFileName = "";
-	const char* ConstSqcFileName = m_Animation->GetCurrentAnimation()->GetAnimationSequence()->GetSequenceFileNameMultibyte();
+	// // const char* SqcFileName
+	// // const char* SqcFileName = "";
+	// const char* ConstSqcFileName = m_Animation->GetCurrentAnimation()->GetAnimationSequence()->GetSequenceFileNameMultibyte();
+	// 
+	// char SqcFileName[MAX_PATH] = {};
+	// 
+	// strcpy_s(SqcFileName, ConstSqcFileName);
+	// 
+	// const PathInfo* Path = CPathManager::GetInst()->FindPath(MESH_PATH);
+	// 
+	// // 만약 Mesh Load 과정에서 필요한 Texture가 없다면 
+	// // ex) FBX Convert 이후, singed_spell2.sqc 가 있다면, 같은 경로내에 singed_spell2.fbm 이라는 디렉토리가 존재해야 한다.
+	// // 만약 해당 Folder 가 존재하지 않는다면, Mesh를 Load 하더라도 Texture 가 없다고 뜰 것이다
+	// char TextFolderExt[10] = ".fbm";
+	// char TextFolderPath[MAX_PATH] = {};
+	// 
+	// strcpy_s(TextFolderPath, Path->PathMultibyte);
+	// strcat_s(TextFolderPath, SqcFileName);
+	// strcat_s(TextFolderPath, TextFolderExt);
+	// 
+	// std::filesystem::path MeshTextureFolderPath(TextFolderPath);
+	// 
+	// if (!std::filesystem::exists(MeshTextureFolderPath))
+	// {
+	// 	MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT(".fbm Folder Does Not Exist"), NULL, MB_OK);
+	// 	return false;
+	// }
+	// 
+	// // ex) singed_spell2.sqc 를 선택했다면
+	// // 같은 폴더 목록 내에서 singed_spell2.msh / singed_spell2.bne 를 Load 하여 세팅한다.
+	// // singed_spell2.msh -> singed_spell2_mesh 라는 이름으로
+	// // singed_spell2.bne -> singed_spell2_skeleton 이라는 이름으로
+	// 
+	// // Load Mesh
+	// std::string LoadedMeshName = SqcFileName;
+	// LoadedMeshName.append("_mesh");
+	// 
+	// m_LoadedMeshName = LoadedMeshName;
+	// 
+	// char MeshExt[10] = ".msh";
+	// 
+	// char MshFileName[MAX_PATH] = {};
+	// TCHAR MshTCHARFileName[MAX_PATH] = {};
+	// 
+	// strcpy_s(MshFileName, SqcFileName);
+	// strcat_s(MshFileName, MeshExt);
+	// 
+	// int ConvertLength = MultiByteToWideChar(CP_ACP, 0, MshFileName, -1, 0, 0);
+	// MultiByteToWideChar(CP_ACP, 0, MshFileName, -1, MshTCHARFileName, ConvertLength);
+	// 
+	// if (!CSceneManager::GetInst()->GetScene()->GetResource()->LoadMesh(Mesh_Type::Animation, LoadedMeshName,
+	// 	MshTCHARFileName, MESH_PATH))
+	// {
+	// 	MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT(".msh Load Failure"), NULL, MB_OK);
+	// 	return false;
+	// }
+	// 
+	// // Bne (Skeleton) Load
+	// char BneExt[10] = ".bne";
+	// 
+	// std::string LoadedBneName = SqcFileName;
+	// LoadedBneName.append("_skeleton");
+	// 
+	// char BneFileName[MAX_PATH] = {};
+	// TCHAR BneTCHARFileName[MAX_PATH] = {};
+	// 
+	// strcpy_s(BneFileName, SqcFileName);
+	// strcat_s(BneFileName, BneExt);
+	// 
+	// ConvertLength = MultiByteToWideChar(CP_ACP, 0, BneFileName, -1, 0, 0);
+	// MultiByteToWideChar(CP_ACP, 0, BneFileName, -1, BneTCHARFileName, ConvertLength);
+	// 
+	// if (!CSceneManager::GetInst()->GetScene()->GetResource()->LoadSkeleton(LoadedBneName, BneTCHARFileName, MESH_PATH))
+	// {
+	// 	MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT(".bne Load Failure"), NULL, MB_OK);
+	// 	return false;
+	// }
+	// 
+	// // Mesh 에 해당 Skeleton 세팅
+	// CSceneManager::GetInst()->GetScene()->GetResource()->SetMeshSkeleton(LoadedMeshName, LoadedBneName);
 
-	char SqcFileName[MAX_PATH] = {};
+	std::pair<bool, std::string> Result = CResourceManager::GetInst()->LoadMeshTextureBoneInfo(m_Animation);
 
-	strcpy_s(SqcFileName, ConstSqcFileName);
-
-	const PathInfo* Path = CPathManager::GetInst()->FindPath(MESH_PATH);
-
-	// 만약 Mesh Load 과정에서 필요한 Texture가 없다면 
-	// ex) FBX Convert 이후, singed_spell2.sqc 가 있다면, 같은 경로내에 singed_spell2.fbm 이라는 디렉토리가 존재해야 한다.
-	// 만약 해당 Folder 가 존재하지 않는다면, Mesh를 Load 하더라도 Texture 가 없다고 뜰 것이다
-	char TextFolderExt[10] = ".fbm";
-	char TextFolderPath[MAX_PATH] = {};
-
-	strcpy_s(TextFolderPath, Path->PathMultibyte);
-	strcat_s(TextFolderPath, SqcFileName);
-	strcat_s(TextFolderPath, TextFolderExt);
-	
-	std::filesystem::path MeshTextureFolderPath(TextFolderPath);
-	
-	if (!std::filesystem::exists(MeshTextureFolderPath))
-	{
-		MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT(".fbm Folder Does Not Exist"), NULL, MB_OK);
+	if (!Result.first)
 		return false;
-	}
 
-	// ex) singed_spell2.sqc 를 선택했다면
-	// 같은 폴더 목록 내에서 singed_spell2.msh / singed_spell2.bne 를 Load 하여 세팅한다.
-	// singed_spell2.msh -> singed_spell2_mesh 라는 이름으로
-	// singed_spell2.bne -> singed_spell2_skeleton 이라는 이름으로
-
-	// Load Mesh
-	std::string LoadedMeshName = SqcFileName;
-	LoadedMeshName.append("_mesh");
-
-	m_LoadedMeshName = LoadedMeshName;
-
-	char MeshExt[10] = ".msh";
-
-	char MshFileName[MAX_PATH] = {};
-	TCHAR MshTCHARFileName[MAX_PATH] = {};
-
-	strcpy_s(MshFileName, SqcFileName);
-	strcat_s(MshFileName, MeshExt);
-
-	int ConvertLength = MultiByteToWideChar(CP_ACP, 0, MshFileName, -1, 0, 0);
-	MultiByteToWideChar(CP_ACP, 0, MshFileName, -1, MshTCHARFileName, ConvertLength);
-
-	if (!CSceneManager::GetInst()->GetScene()->GetResource()->LoadMesh(Mesh_Type::Animation, LoadedMeshName,
-		MshTCHARFileName, MESH_PATH))
-	{
-		MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT(".msh Load Failure"), NULL, MB_OK);
-		return false;
-	}
-
-	// Bne (Skeleton) Load
-	char BneExt[10] = ".bne";
-
-	std::string LoadedBneName = SqcFileName;
-	LoadedBneName.append("_skeleton");
-
-	char BneFileName[MAX_PATH] = {};
-	TCHAR BneTCHARFileName[MAX_PATH] = {};
-
-	strcpy_s(BneFileName, SqcFileName);
-	strcat_s(BneFileName, BneExt);
-
-	ConvertLength = MultiByteToWideChar(CP_ACP, 0, BneFileName, -1, 0, 0);
-	MultiByteToWideChar(CP_ACP, 0, BneFileName, -1, BneTCHARFileName, ConvertLength);
-
-	if (!CSceneManager::GetInst()->GetScene()->GetResource()->LoadSkeleton(LoadedBneName, BneTCHARFileName, MESH_PATH))
-	{
-		MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT(".bne Load Failure"), NULL, MB_OK);
-		return false;
-	}
-
-	// Mesh 에 해당 Skeleton 세팅
-	CSceneManager::GetInst()->GetScene()->GetResource()->SetMeshSkeleton(LoadedMeshName, LoadedBneName);
+	m_LoadedMeshName = Result.second;
 
 	// Mesh 를 바꾸기 전에 Mesh 를 공유하는 InstancingCheckingList 목록에서 제거
 	bool DeleteResult = dynamic_cast<CAnimationMeshComponent*>(m_Component.Get())->DeleteInstancingCheckList();

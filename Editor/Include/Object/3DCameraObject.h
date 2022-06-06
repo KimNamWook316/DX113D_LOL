@@ -16,6 +16,17 @@ public:
 	bool Init() override;
 	void Update(float DeltaTime) override;
 
+public:
+	float GetCameraSpeed() const
+	{
+		return m_Speed;
+	}
+
+	void SetCameraSpeed(float Speed)
+	{
+		m_Speed = Speed;
+	}
+
 private:
 	void OnDragMoveStart(float DeltaTime);
 	void OnDragMove(float DeltaTime);
@@ -29,5 +40,6 @@ private:
 	CSharedPtr<class CCameraComponent> m_Camera;
 
 	Vector3 m_MoveStartCamPos;
+	float m_Speed;
 };
 

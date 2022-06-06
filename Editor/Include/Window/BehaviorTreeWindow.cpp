@@ -21,7 +21,6 @@
 #include "Component/Node/MoveInputCheckNode.h"
 #include "Component/Node/MovePickingNode.h"
 #include "Component/Node/NoInterruptNode.h"
-
 #include "ObjectComponentWindow.h"
 #include "ObjectHierarchyWindow.h"
 #include "../EditorInfo.h"
@@ -399,9 +398,7 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
             NewTreeNode = m_StateComponent->CreateTreeNode<CNoInterruptNode>(Name);
             break;
         }
-
     }
-
     }
 
     NewTreeNode->SetOwner(m_StateComponent->GetBehaviorTree());

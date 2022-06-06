@@ -165,6 +165,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AnimationInstanceConvertThread.cpp" />
     <ClCompile Include="CAnimationPopUpScreen.cpp" />
     <ClCompile Include="CParticlePopUpScreen.cpp" />
     <ClCompile Include="EditorManager.cpp" />
@@ -210,6 +211,7 @@
     <ClCompile Include="Window\ToolWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AnimationInstanceConvertThread.h" />
     <ClInclude Include="CAnimationPopUpScreen.h" />
     <ClInclude Include="CParticlePopUpScreen.h" />
     <ClInclude Include="EditorInfo.h" />

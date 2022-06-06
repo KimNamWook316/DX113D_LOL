@@ -92,7 +92,8 @@ private:
 	CSharedPtr<class CShader> m_LightBlendShader;
 	CSharedPtr<class CShader> m_LightBlendRenderShader;
 	CSharedPtr<class CShader> m_Standard3DInstancingShader;
-
+	CSharedPtr<class CShader> m_Transparent3DInstancingShader;
+	
 	// GBuffer
 	std::vector<CSharedPtr<CRenderTarget>>	m_vecGBuffer;
 	std::vector<CSharedPtr<CRenderTarget>>	m_vecDecal;
@@ -152,6 +153,7 @@ private:
 	void RenderDecal();
 	void RenderLightAcc();
 	void RenderLightBlend();
+	void RenderTransparent();
 	void RenderFinalScreen();
 	void RenderAnimationEditor();
 	void RenderParticleEffectEditor();
@@ -171,12 +173,15 @@ private:
 	void RenderDefaultInstancingInfo();
 	void RenderDefaultInstancing();
 	void RenderDefaultInstancingShadow();
+	void RenderTransparentInstancingInfo();
+	void RenderTransparentInstancing();
 
 private :
 	int GetRenderLayerIndex(const std::string& Name);
 
 private:
 	static bool Sortlayer(RenderLayer* Src, RenderLayer* Dest);
+	static bool SortZ(CSceneComponent* Src, CSceneComponent* Dest);
 
 	DECLARE_SINGLE(CRenderManager)
 };

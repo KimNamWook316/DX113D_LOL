@@ -78,7 +78,7 @@ void CAnimationSequenceData::Load(FILE* File)
 		SequenceExist = true;
 
 	// 존재하지 않는 Sequence 라면, 새롭게 ResourceManager 항목에 추가해주고 Load
-	if (!m_Sequence)
+	if (SequenceExist == false)
 	{
 		m_Sequence = CResourceManager::GetInst()->CreateBasicAnimationSequence(m_SequenceName);
 		m_Sequence->Load(File);
@@ -88,7 +88,7 @@ void CAnimationSequenceData::Load(FILE* File)
 	{
 		CAnimationSequence* TempSequence = new CAnimationSequence;
 		TempSequence->Load(File);
-		SAFE_DELETE(TempSequence);
+		SAFE_DELETE(TempSequence)
 	}
 
 }

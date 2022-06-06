@@ -43,8 +43,9 @@ private :
     void OnLoadAnimationInstance();
     void OnSaveAnimationInstance();
     void OnEditAnimationKeyName();
-public :
     void OnRefreshAnimationInfo();
+public :
+    void SetAnimationRelatedInfoToWidget(class CAnimationSequenceInstance* AnimationInstance);
     bool LoadElementsForSqcLoading();
     void ClearExistingAnimationSeqInfos();
 private:

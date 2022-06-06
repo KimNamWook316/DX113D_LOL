@@ -313,6 +313,9 @@
     <Filter Include="05. Component\02. ObjectComponent\03. StateComponent\01. Node\01. SkillNode">
       <UniqueIdentifier>{40583e0a-97b3-475e-a2fb-9d9d2b58e854}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. Resource\02. Shader\03. ConstantBuffer\16. Transparent">
+      <UniqueIdentifier>{741d26ca-b1e4-4248-b278-431278359931}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Device.cpp">
@@ -998,6 +1001,15 @@
     </ClCompile>
     <ClCompile Include="Component\Node\FindEnemyChampion.cpp">
       <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Shader\LightForwardConstantBuffer.cpp">
+      <Filter>02. Resource\02. Shader\03. ConstantBuffer\12. Light</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Shader\Transparent3DShader.cpp">
+      <Filter>02. Resource\02. Shader\03. ConstantBuffer\16. Transparent</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Shader\TransparentInstancing3DShader.cpp">
+      <Filter>02. Resource\02. Shader\03. ConstantBuffer\16. Transparent</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1721,6 +1733,15 @@
     <ClInclude Include="Component\Node\FindEnemyChampion.h">
       <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node</Filter>
     </ClInclude>
+    <ClInclude Include="Resource\Shader\LightForwardConstantBuffer.h">
+      <Filter>02. Resource\02. Shader\03. ConstantBuffer\12. Light</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Shader\Transparent3DShader.h">
+      <Filter>02. Resource\02. Shader\03. ConstantBuffer\16. Transparent</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Shader\TransparentInstancing3DShader.h">
+      <Filter>02. Resource\02. Shader\03. ConstantBuffer\16. Transparent</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\Shader\ColorMesh.fx">
@@ -1766,6 +1787,9 @@
       <Filter>02. Resource\02. Shader\01. HLSL</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\Shader\ShadowMap.fx">
+      <Filter>02. Resource\02. Shader\01. HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\Shader\Transparent3D.fx">
       <Filter>02. Resource\02. Shader\01. HLSL</Filter>
     </FxCompile>
   </ItemGroup>

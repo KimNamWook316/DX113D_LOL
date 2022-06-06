@@ -258,7 +258,6 @@ PSOutput_Single LightBlendRenderPS(VS_OUTPUT_LIGHTACC input)
     
     output.Color = LightBlendColor;
     
-    
     return output;
 }
 

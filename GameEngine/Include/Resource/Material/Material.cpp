@@ -1,5 +1,6 @@
 
 #include "Material.h"
+#include "../../PathManager.h"
 #include "../ResourceManager.h"
 #include "../../Scene/Scene.h"
 #include "../../Scene/SceneResource.h"
@@ -7,6 +8,7 @@
 #include "../../Render/RenderState.h"
 #include "../Shader/MaterialConstantBuffer.h"
 #include "MaterialManager.h"
+#include <filesystem>
 
 CMaterial::CMaterial() :
 	m_BaseColor(Vector4::White),
@@ -118,7 +120,13 @@ void CMaterial::SetRenderState(const std::string& Name)
 void CMaterial::SetTransparency(bool Enable)
 {
 	if (Enable)
+	{
 		m_RenderStateArray[(int)RenderState_Type::Blend] = CRenderManager::GetInst()->FindRenderState("AlphaBlend");
+	}
+	else
+	{
+		m_RenderStateArray[(int)RenderState_Type::Blend] = nullptr;
+	}
 }
 
 void CMaterial::SetOpacity(float Opacity)
@@ -130,6 +138,11 @@ void CMaterial::SetOpacity(float Opacity)
 
 	else if (m_Opacity > 1.f)
 		m_Opacity = 1.f;
+
+	if (m_CBuffer)
+	{
+		m_CBuffer->SetOpacity(m_Opacity);
+	}
 }
 
 void CMaterial::AddOpacity(float Opacity)
@@ -141,51 +154,101 @@ void CMaterial::AddOpacity(float Opacity)
 
 	else if (m_Opacity > 1.f)
 		m_Opacity = 1.f;
+
+	if (m_CBuffer)
+	{
+		m_CBuffer->SetOpacity(m_Opacity);
+	}
 }
 
 void CMaterial::SetBaseColor(const Vector4& Color)
 {
 	m_BaseColor = Color;
+
+	if (m_CBuffer)
+	{
+		m_CBuffer->SetBaseColor(m_BaseColor);
+	}
 }
 
 void CMaterial::SetBaseColor(float r, float g, float b, float a)
 {
 	m_BaseColor = Vector4(r, g, b, a);
+
+	if (m_CBuffer)
+	{
+		m_CBuffer->SetBaseColor(m_BaseColor);
+	}
 }
 
 void CMaterial::SetAmbientColor(const Vector4& Color)
 {
 	m_AmbientColor = Color;
+
+	if (m_CBuffer)
+	{
+		m_CBuffer->SetAmbientColor(m_AmbientColor);
+	}
 }
 
 void CMaterial::SetAmbientColor(float r, float g, float b, float a)
 {
 	m_AmbientColor = Vector4(r, g, b, a);
+
+	if (m_CBuffer)
+	{
+		m_CBuffer->SetAmbientColor(m_AmbientColor);
+	}
 }
 
 void CMaterial::SetSpecularColor(const Vector4& Color)
 {
 	m_SpecularColor = Color;
+
+	if (m_CBuffer)
+	{
+		m_CBuffer->SetSpecularColor(m_SpecularColor);
+	}
 }
 
 void CMaterial::SetSpecularColor(float r, float g, float b, float a)
 {
 	m_SpecularColor = Vector4(r, g, b, a);
+
+	if (m_CBuffer)
+	{
+		m_CBuffer->SetSpecularColor(m_SpecularColor);
+	}
 }
 
 void CMaterial::SetEmissiveColor(const Vector4& Color)
 {
 	m_EmissiveColor = Color;
+
+	if (m_CBuffer)
+	{
+		m_CBuffer->SetEmissiveColor(m_EmissiveColor);
+	}
 }
 
 void CMaterial::SetEmissiveColor(float r, float g, float b, float a)
 {
 	m_EmissiveColor = Vector4(r, g, b, a);
+
+	if (m_CBuffer)
+	{
+		m_CBuffer->SetEmissiveColor(m_EmissiveColor);
+	}
 }
 
 void CMaterial::SetSpecularPower(float Power)
 {
 	m_SpecularColor.w = Power;
+
+	if (m_CBuffer)
+	{
+		m_CBuffer->SetSpecularColor(m_SpecularColor);
+	}
 }
 
 void CMaterial::AddTexture(int Register, int ShaderType, const std::string& Name, CTexture* Texture)
@@ -228,6 +291,29 @@ void CMaterial::AddTexture(int Register, int ShaderType, const std::string& Name
 	m_TextureInfo[Index].Name = Name;
 	m_TextureInfo[Index].Texture = Texture;
 	m_TextureInfo[Index].ShaderType = ShaderType;
+
+	// Full Path 정보 저장
+	const PathInfo* FoundPath = CPathManager::GetInst()->FindPath(PathName);
+
+	char FullPathMultibyte[MAX_PATH] = {};
+	TCHAR FullPath[MAX_PATH] = {};
+
+	if (FoundPath)
+		lstrcpy(FullPath, FoundPath->Path);
+
+	lstrcat(FullPath, FileName);
+
+#ifdef UNICODE
+	// 유니코드 문자열을 멀티바이트 문자열로 변환한다.
+	int ConvertLength = WideCharToMultiByte(CP_ACP, 0, FullPath, -1, nullptr, 0, nullptr, nullptr);
+
+	WideCharToMultiByte(CP_ACP, 0, FullPath, -1,
+		FullPathMultibyte, MAX_PATH, nullptr, nullptr);
+#else
+	strcpy_s(FullPathMultibyte, FullPath);
+#endif // UNICODE
+
+	m_TextureInfo[Index].SavedFullPath = FullPathMultibyte;
 }
 
 void CMaterial::AddTextureFullPath(int Register, int ShaderType,
@@ -259,6 +345,20 @@ void CMaterial::AddTextureFullPath(int Register, int ShaderType,
 	m_TextureInfo[Index].Name = Name;
 	m_TextureInfo[Index].Texture = Texture;
 	m_TextureInfo[Index].ShaderType = ShaderType;
+
+	char FullPathMultibyte[MAX_PATH] = {};
+
+#ifdef UNICODE
+	// 유니코드 문자열을 멀티바이트 문자열로 변환한다.
+	int ConvertLength = WideCharToMultiByte(CP_ACP, 0, FullPath, -1, nullptr, 0, nullptr, nullptr);
+
+	WideCharToMultiByte(CP_ACP, 0, FullPath, -1,
+		FullPathMultibyte, MAX_PATH, nullptr, nullptr);
+#else
+	strcpy_s(FullPathMultibyte, FullPath);
+#endif // UNICODE
+
+	m_TextureInfo[Index].SavedFullPath = FullPathMultibyte;
 }
 
 void CMaterial::AddTexture(int Register, int ShaderType,
@@ -291,6 +391,30 @@ void CMaterial::AddTexture(int Register, int ShaderType,
 	m_TextureInfo[Index].Name = Name;
 	m_TextureInfo[Index].Texture = Texture;
 	m_TextureInfo[Index].ShaderType = ShaderType;
+
+	// Full Path 정보 저장
+	const PathInfo* FoundPath = CPathManager::GetInst()->FindPath(PathName);
+
+	char FullPathMultibyte[MAX_PATH] = {};
+	TCHAR FullPath[MAX_PATH] = {};
+
+	if (FoundPath)
+		lstrcpy(FullPath, FoundPath->Path);
+
+	if (vecFileName.size() > 0)
+		lstrcat(FullPath, vecFileName[0]);
+
+#ifdef UNICODE
+	// 유니코드 문자열을 멀티바이트 문자열로 변환한다.
+	int ConvertLength = WideCharToMultiByte(CP_ACP, 0, FullPath, -1, nullptr, 0, nullptr, nullptr);
+
+	WideCharToMultiByte(CP_ACP, 0, FullPath, -1,
+		FullPathMultibyte, MAX_PATH, nullptr, nullptr);
+#else
+	strcpy_s(FullPathMultibyte, FullPath);
+#endif // UNICODE
+
+	m_TextureInfo[Index].SavedFullPath = FullPathMultibyte;
 }
 
 void CMaterial::AddTextureArrayFullPath(int Register, int ShaderType,
@@ -352,6 +476,30 @@ void CMaterial::AddTextureArray(int Register, int ShaderType, const std::string&
 	m_TextureInfo[Index].Name = Name;
 	m_TextureInfo[Index].Texture = Texture;
 	m_TextureInfo[Index].ShaderType = ShaderType;
+
+	// Full Path 정보 저장
+	const PathInfo* FoundPath = CPathManager::GetInst()->FindPath(PathName);
+
+	char FullPathMultibyte[MAX_PATH] = {};
+	TCHAR FullPath[MAX_PATH] = {};
+
+	if (FoundPath)
+		lstrcpy(FullPath, FoundPath->Path);
+
+	if (vecFileName.size() > 0)
+		lstrcat(FullPath, vecFileName[0]);
+
+#ifdef UNICODE
+	// 유니코드 문자열을 멀티바이트 문자열로 변환한다.
+	int ConvertLength = WideCharToMultiByte(CP_ACP, 0, FullPath, -1, nullptr, 0, nullptr, nullptr);
+
+	WideCharToMultiByte(CP_ACP, 0, FullPath, -1,
+		FullPathMultibyte, MAX_PATH, nullptr, nullptr);
+#else
+	strcpy_s(FullPathMultibyte, FullPath);
+#endif // UNICODE
+
+	m_TextureInfo[Index].SavedFullPath = FullPathMultibyte;
 }
 
 void CMaterial::SetTexture(int Index, int Register, int ShaderType, const std::string& Name, CTexture* Texture)
@@ -362,7 +510,8 @@ void CMaterial::SetTexture(int Index, int Register, int ShaderType, const std::s
 	m_TextureInfo[Index].ShaderType = ShaderType;
 }
 
-void CMaterial::SetTexture(int Index, int Register, int ShaderType, const std::string& Name, const TCHAR* FileName, const std::string& PathName)
+void CMaterial::SetTexture(int Index, int Register, int ShaderType, const std::string& Name, 
+	const TCHAR* FileName, const std::string& PathName)
 {
 	CTexture* Texture = nullptr;
 
@@ -386,6 +535,29 @@ void CMaterial::SetTexture(int Index, int Register, int ShaderType, const std::s
 	m_TextureInfo[Index].Name = Name;
 	m_TextureInfo[Index].Texture = Texture;
 	m_TextureInfo[Index].ShaderType = ShaderType;
+
+	// Full Path 정보 저장
+	const PathInfo* FoundPath = CPathManager::GetInst()->FindPath(PathName);
+
+	char FullPathMultibyte[MAX_PATH] = {};
+	TCHAR FullPath[MAX_PATH] = {};
+
+	if (FoundPath)
+		lstrcpy(FullPath, FoundPath->Path);
+
+	lstrcat(FullPath, FileName);
+
+#ifdef UNICODE
+	// 유니코드 문자열을 멀티바이트 문자열로 변환한다.
+	int ConvertLength = WideCharToMultiByte(CP_ACP, 0, FullPath, -1, nullptr, 0, nullptr, nullptr);
+
+	WideCharToMultiByte(CP_ACP, 0, FullPath, -1,
+		FullPathMultibyte, MAX_PATH, nullptr, nullptr);
+#else
+	strcpy_s(FullPathMultibyte, FullPath);
+#endif // UNICODE
+
+	m_TextureInfo[Index].SavedFullPath = FullPathMultibyte;
 }
 
 void CMaterial::SetTextureFullPath(int Index, int Register, int ShaderType,
@@ -415,6 +587,21 @@ void CMaterial::SetTextureFullPath(int Index, int Register, int ShaderType,
 	m_TextureInfo[Index].Name = Name;
 	m_TextureInfo[Index].Texture = CResourceManager::GetInst()->FindTexture(Name);
 	m_TextureInfo[Index].ShaderType = ShaderType;
+
+	// Full Path 정보 저장
+	char FullPathMultibyte[MAX_PATH] = {};
+
+#ifdef UNICODE
+	// 유니코드 문자열을 멀티바이트 문자열로 변환한다.
+	int ConvertLength = WideCharToMultiByte(CP_ACP, 0, FullPath, -1, nullptr, 0, nullptr, nullptr);
+
+	WideCharToMultiByte(CP_ACP, 0, FullPath, -1,
+		FullPathMultibyte, MAX_PATH, nullptr, nullptr);
+#else
+	strcpy_s(FullPathMultibyte, FullPath);
+#endif // UNICODE
+
+	m_TextureInfo[Index].SavedFullPath = FullPathMultibyte;
 }
 
 void CMaterial::SetTexture(int Index, int Register,
@@ -459,6 +646,25 @@ void CMaterial::SetTextureArrayFullPath(int Index, int Register,
 	m_TextureInfo[Index].Name = Name;
 	m_TextureInfo[Index].Texture = CResourceManager::GetInst()->FindTexture(Name);
 	m_TextureInfo[Index].ShaderType = ShaderType;
+
+	// Full Path 정보 저장
+	char FullPathMultibyte[MAX_PATH] = {};
+
+	if (vecFullPath.size() > 0)
+	{
+
+#ifdef UNICODE
+		// 유니코드 문자열을 멀티바이트 문자열로 변환한다.
+		int ConvertLength = WideCharToMultiByte(CP_ACP, 0, vecFullPath[0], -1, nullptr, 0, nullptr, nullptr);
+
+		WideCharToMultiByte(CP_ACP, 0, vecFullPath[0], -1,
+			FullPathMultibyte, MAX_PATH, nullptr, nullptr);
+#else
+		strcpy_s(FullPathMultibyte, FullPath);
+#endif // UNICODE
+	}
+
+	m_TextureInfo[Index].SavedFullPath = FullPathMultibyte;
 }
 
 void CMaterial::SetTextureArray(int Index, int Register,
@@ -490,6 +696,36 @@ void CMaterial::SetTextureArray(int Index, int Register,
 	m_TextureInfo[Index].Name = Name;
 	m_TextureInfo[Index].Texture = CResourceManager::GetInst()->FindTexture(Name);
 	m_TextureInfo[Index].ShaderType = ShaderType;
+
+	// Full Path 정보 저장
+	char FullPathMultibyte[MAX_PATH] = {};
+
+	const PathInfo* FoundPath = CPathManager::GetInst()->FindPath(PathName);
+
+	TCHAR FullPath[MAX_PATH] = {};
+
+	if (FoundPath)
+		lstrcpy(FullPath, FoundPath->Path);
+
+	if (vecFileName.size() > 0)
+		lstrcat(FullPath, vecFileName[0]);
+
+#ifdef UNICODE
+	// 유니코드 문자열을 멀티바이트 문자열로 변환한다.
+	int ConvertLength = WideCharToMultiByte(CP_ACP, 0, FullPath, -1, nullptr, 0, nullptr, nullptr);
+
+	WideCharToMultiByte(CP_ACP, 0, FullPath, -1,
+		FullPathMultibyte, MAX_PATH, nullptr, nullptr);
+#else
+	strcpy_s(FullPathMultibyte, FullPath);
+#endif // UNICODE
+
+	m_TextureInfo[Index].SavedFullPath = FullPathMultibyte;
+}
+
+void CMaterial::SetTextureInfoResource(int Index, CTexture* Texture)
+{
+	m_TextureInfo[Index].Texture = Texture;
 }
 
 void CMaterial::SetPaperBurn(bool Enable)
@@ -670,6 +906,11 @@ bool CMaterial::Save(FILE* File)
 		fwrite(&m_TextureInfo[i].Register, sizeof(int), 1, File);
 		fwrite(&m_TextureInfo[i].ShaderType, sizeof(int), 1, File);
 
+		// Saved FullPath 정보 저장
+		int	FullPathLength = (int)m_TextureInfo[i].SavedFullPath.length();
+		fwrite(&FullPathLength, sizeof(int), 1, File);
+		fwrite(m_TextureInfo[i].SavedFullPath.c_str(), sizeof(char), FullPathLength, File);
+
 		m_TextureInfo[i].Texture->Save(File);
 	}
 
@@ -748,6 +989,14 @@ bool CMaterial::Load(FILE* File)
 		fread(&m_TextureInfo[i].SamplerType, sizeof(Sampler_Type), 1, File);
 		fread(&m_TextureInfo[i].Register, sizeof(int), 1, File);
 		fread(&m_TextureInfo[i].ShaderType, sizeof(int), 1, File);
+
+		// Saved FullPath 정보 저장
+		int	FullPathLength = 0;
+		fread(&FullPathLength, sizeof(int), 1, File);
+
+		char	TextureSavedFullPath[256] = {};
+		fread(TextureSavedFullPath, sizeof(char), FullPathLength, File);
+		m_TextureInfo[i].SavedFullPath = TextureSavedFullPath;
 
 		int	TexNameLength = 0;
 		fread(&TexNameLength, sizeof(int), 1, File);

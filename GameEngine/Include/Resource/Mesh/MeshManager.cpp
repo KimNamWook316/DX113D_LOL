@@ -332,6 +332,7 @@ bool CMeshManager::LoadMeshFullPathMultibyte(Mesh_Type Type, const std::string& 
 
 	Mesh->SetName(Name);
 	Mesh->SetScene(Scene);
+	Mesh->SetFullPath(FullPath);
 
 	if (!Mesh->LoadMeshFullPathMultibyte(FullPath))
 	{

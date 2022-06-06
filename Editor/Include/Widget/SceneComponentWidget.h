@@ -20,10 +20,12 @@ public:
 public:
     void OnGameObjectEnable(bool Enable);
 
+public:
+    bool IsMyWidget(class CSceneComponent* Component);
+
 private:
     void OnClickRenameButton();
     void OnCheckEnableCheckBox(int Idx, bool Check);
-
 protected:
     CSharedPtr<class CSceneComponent> m_Component;
     class CIMGUIText* m_ComponentTypeText;
@@ -32,5 +34,10 @@ protected:
     class CIMGUICheckBox* m_EnableCheckBox;
     class CTransformWidget* m_TransformWidget;
     std::string m_PrevName;
+public :
+    CSceneComponent* GetComponent() const
+    {
+        return m_Component;
+    }
 };
 
