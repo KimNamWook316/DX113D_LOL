@@ -39,11 +39,17 @@ private:
     class CIMGUICheckBox* m_IsGravityEdit;
     class CIMGUICheckBox* m_IsRandomMoveEdit;
 
+    // Camera Related
     class CIMGUICheckBox* m_IsRotateEdit;
     class CIMGUISliderFloat* m_RotateSpeedSliderBar;
-
     class CIMGUICheckBox* m_IsZoomEdit;
     class CIMGUISliderFloat* m_ZoomSpeedSliderBar;
+
+    // 카메라의 Y 축 위치 (위로 갈지, 아래로 갈지 조정)
+    class CIMGUISliderFloat* m_CameraYOffsetBar;
+
+    // 카메라의 X 축 기준 회전 조정 (위를 볼지, 아래를 볼지)
+    class CIMGUISliderFloat* m_CameraXRotSlideBar;
 
     class CIMGUIInputFloat3* m_MoveDirEdit;
     class CIMGUIInputFloat3* m_MoveAngleEdit;
@@ -107,6 +113,9 @@ private:
 
     void OnIsCameraZoomEdit(const char*, bool);
     void OnSetCameraZoomSpeed(float Speed);
+
+    void OnSetCameraYOffset(float Offset);
+    void OnSetCameraXRot(float Rot);
 
     void OnMoveDirEdit(const Vector3& Dir);
     void OnMoveAngleEdit(const Vector3& Angle);

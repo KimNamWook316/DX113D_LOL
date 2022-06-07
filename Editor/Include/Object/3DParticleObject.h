@@ -33,6 +33,14 @@ public :
 	{
 		return m_IsCameraZoom; 
 	}
+	const Vector3& GetCameraRelativeRotation() const
+	{
+		return m_ParticleArm->GetRelativeRot();
+	}
+	const Vector3& GetCameraOfffset() const
+	{
+		return m_ParticleArm->GetOffset();
+	}
 public :
 	void SetCameraZoom(bool Enable) 
 	{
@@ -50,8 +58,18 @@ public :
 	{
 		m_CameraZoomSpeed = Speed;
 	}
+	void SetYOffset(float YOffset)
+	{
+		const Vector3& ArmOffset = m_ParticleArm->GetOffset();
+		m_ParticleArm->SetOffset(ArmOffset.x, YOffset, ArmOffset.y);
+	}
+	void SetRelativeRotationXPos (float XRot)
+	{
+		const Vector3& RelativeRotation = m_ParticleArm->GetRelativeRot();
+
+		m_ParticleArm->SetRelativeRotation(XRot, RelativeRotation.y, RelativeRotation.z);
+	}
 public:
 	bool Init() override;
 	void Update(float DeltaTime) override;
 };
-

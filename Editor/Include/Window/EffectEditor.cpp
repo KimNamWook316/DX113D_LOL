@@ -63,26 +63,8 @@ bool CEffectEditor::Init()
     m_LoadParticleBtn = AddWidget<CIMGUIButton>("Load Particle", 150.f, 20.f);
     m_LoadParticleBtn->SetClickCallback<CEffectEditor>(this, &CEffectEditor::OnLoadParticleClass);
 
-    // Camera , Movement
-    CIMGUITree* Tree = AddWidget<CIMGUITree>("Camera & Movement");
-
-    m_IsMoveEdit = Tree->AddWidget<CIMGUICheckBox>("Move", 80.f);
-    m_IsMoveEdit->AddCheckInfo("Move");
-    m_IsMoveEdit->SetCallBackLabel<CEffectEditor>(this, &CEffectEditor::OnIsMoveEdit);
-
-    Line = Tree->AddWidget<CIMGUISameLine>("Line");
-    Line->SetOffsetX(90.f);
-
-    m_IsGravityEdit = Tree->AddWidget<CIMGUICheckBox>("Gravity", 80.f);
-    m_IsGravityEdit->AddCheckInfo("Gravity");
-    m_IsGravityEdit->SetCallBackLabel<CEffectEditor>(this, &CEffectEditor::OnIsGravityEdit);
-
-    Line = Tree->AddWidget<CIMGUISameLine>("Line");
-    Line->SetOffsetX(170.f);
-
-    m_IsRandomMoveEdit = Tree->AddWidget<CIMGUICheckBox>("Random", 80.f);
-    m_IsRandomMoveEdit->AddCheckInfo("Random");
-    m_IsRandomMoveEdit->SetCallBackLabel<CEffectEditor>(this, &CEffectEditor::OnIsRandomMoveEdit);
+    // Camera
+    CIMGUITree* Tree = AddWidget<CIMGUITree>("Camera");
 
     // Rotate
     m_IsRotateEdit = Tree->AddWidget<CIMGUICheckBox>("Rotate", 80.f);
@@ -108,7 +90,33 @@ bool CEffectEditor::Init()
     m_ZoomSpeedSliderBar = Tree->AddWidget<CIMGUISliderFloat>("Zoom Speed", 100.f, 30.f);
     m_ZoomSpeedSliderBar->SetCallBack<CEffectEditor>(this, &CEffectEditor::OnSetCameraZoomSpeed);
     m_ZoomSpeedSliderBar->SetMin(0.2f);
-    m_ZoomSpeedSliderBar->SetMax(1.0f);
+    m_ZoomSpeedSliderBar->SetMax(50.f);
+
+    CIMGUIDummy* Dummy = Tree->AddWidget<CIMGUIDummy>("Dummy", 80.f, 30.f);
+
+    Line = Tree->AddWidget<CIMGUISameLine>("Line");
+    Line->SetOffsetX(100.f);
+
+    m_CameraYOffsetBar = Tree->AddWidget<CIMGUISliderFloat>("Camera Y Offset", 100.f, 30.f);
+    m_CameraYOffsetBar->SetCallBack<CEffectEditor>(this, &CEffectEditor::OnSetCameraYOffset);
+    m_CameraYOffsetBar->SetMin(-50.f);
+    m_CameraYOffsetBar->SetMax(50.f);
+
+    Dummy = Tree->AddWidget<CIMGUIDummy>("Dummy", 80.f, 30.f);
+
+    Line = Tree->AddWidget<CIMGUISameLine>("Line");
+    Line->SetOffsetX(100.f);
+
+    m_CameraXRotSlideBar = Tree->AddWidget<CIMGUISliderFloat>("Camera X Rot", 100.f, 30.f);
+    m_CameraXRotSlideBar->SetCallBack<CEffectEditor>(this, &CEffectEditor::OnSetCameraXRot);
+    m_CameraXRotSlideBar->SetMin(-88.f);
+    m_CameraXRotSlideBar->SetMax(88.f);
+
+    // 카메라의 Y 축 위치 (위로 갈지, 아래로 갈지 조정)
+    class CIMGUISliderFloat* m_CameraYOffsetBar;
+
+    // 카메라의 X 축 기준 회전 조정 (위를 볼지, 아래를 볼지)
+    class CIMGUISliderFloat* m_CameraXRotSlideBar;
 
     // ParticleEffectRenderTarget
     m_ParticleRenderTarget = AddWidget<CIMGUIImage>("Render Target", 500.f, 400.f);
@@ -124,6 +132,27 @@ bool CEffectEditor::Init()
     // m_ParticleRenderTarget->SetTexture(CRenderManager::GetInst()->GetParticleEffectRenderTarget());
     m_ParticleTexture->SetBorderColor(10, 10, 255);
     m_ParticleTexture->SetTableTitle("Texture");
+
+    // Movement
+    Tree = AddWidget<CIMGUITree>("Movement");
+
+    m_IsMoveEdit = Tree->AddWidget<CIMGUICheckBox>("Move", 80.f);
+    m_IsMoveEdit->AddCheckInfo("Move");
+    m_IsMoveEdit->SetCallBackLabel<CEffectEditor>(this, &CEffectEditor::OnIsMoveEdit);
+
+    Line = Tree->AddWidget<CIMGUISameLine>("Line");
+    Line->SetOffsetX(90.f);
+
+    m_IsGravityEdit = Tree->AddWidget<CIMGUICheckBox>("Gravity", 80.f);
+    m_IsGravityEdit->AddCheckInfo("Gravity");
+    m_IsGravityEdit->SetCallBackLabel<CEffectEditor>(this, &CEffectEditor::OnIsGravityEdit);
+
+    Line = Tree->AddWidget<CIMGUISameLine>("Line");
+    Line->SetOffsetX(170.f);
+
+    m_IsRandomMoveEdit = Tree->AddWidget<CIMGUICheckBox>("Random", 80.f);
+    m_IsRandomMoveEdit->AddCheckInfo("Random");
+    m_IsRandomMoveEdit->SetCallBackLabel<CEffectEditor>(this, &CEffectEditor::OnIsRandomMoveEdit);
 
     // Spawn Time, Spawn Count
     Tree  = AddWidget<CIMGUITree>("Spawn Time, Count");
@@ -355,6 +384,16 @@ void CEffectEditor::OnSetCameraZoomSpeed(float Speed)
     m_ParticleObject->SetCameraZoomSpeed(Speed);
 }
 
+void CEffectEditor::OnSetCameraYOffset(float Offset)
+{
+    m_ParticleObject->SetYOffset(Offset);
+}
+
+void CEffectEditor::OnSetCameraXRot(float Rot)
+{
+    m_ParticleObject->SetRelativeRotationXPos(Rot);
+}
+
 void CEffectEditor::OnMoveDirEdit(const Vector3& Dir)
 {
     // m_ParticleComponent->GetCBuffer()->SetMoveDir(Dir);
@@ -537,6 +576,9 @@ void CEffectEditor::SetGameObjectReady()
     m_BaseGroundObject->AddWorldRotationX(90.f);
 
     m_ParticleObject = CSceneManager::GetInst()->GetScene()->CreateGameObject<C3DParticleObject>("Particle Effect Base Ground");
+
+    m_CameraXRotSlideBar->SetValue(m_ParticleObject->GetCameraRelativeRotation().x);
+    m_CameraYOffsetBar->SetValue(m_ParticleObject->GetCameraOfffset().y);
 
     // m_ParticleSampleObject = CSceneManager::GetInst()->GetScene()->CreateGameObject<CGameObject>("Particle Object");
     // m_ParticleSampleObject->CreateComponent<CParticleComponent>("Particle Sprite");

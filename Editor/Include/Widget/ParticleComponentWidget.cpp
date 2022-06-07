@@ -27,7 +27,6 @@
 #include "PathManager.h"
 #include "Scene/Scene.h"
 #include "Scene/SceneManager.h"
-#include "../Object/3DParticleCamera.h"
 #include "Render/RenderManager.h"
 #include "Component/ParticleComponent.h"
 #include "Component/SceneComponent.h"
