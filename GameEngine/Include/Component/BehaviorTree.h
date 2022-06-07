@@ -59,6 +59,8 @@ public:
     void PostRender();
     bool Save(FILE* File);
     bool Load(FILE* File);
+    bool SaveOnly(FILE* File);
+    bool LoadOnly(FILE* File);
     CBehaviorTree* Clone();
 
 private:

@@ -131,6 +131,24 @@ bool CNavAgent::Load(FILE* File)
 	return true;
 }
 
+bool CNavAgent::SaveOnly(FILE* File)
+{
+	CComponent::SaveOnly(File);
+
+	fwrite(&m_MoveSpeed, sizeof(float), 1, File);
+
+	return true;
+}
+
+bool CNavAgent::LoadOnly(FILE* File)
+{
+	CComponent::LoadOnly(File);
+
+	fread(&m_MoveSpeed, sizeof(float), 1, File);
+
+	return true;
+}
+
 void CNavAgent::PathResult(const std::list<Vector3>& PathList)
 {
 	m_PathList.clear();

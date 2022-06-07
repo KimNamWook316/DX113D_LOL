@@ -492,5 +492,4 @@ PSOutput_GBuffer Standard3DWireFramePS(Vertex3DOutput input)
     output.GBuffer3.a = ConvertColor(EmissiveColor);
 
     return output;
-
 }
