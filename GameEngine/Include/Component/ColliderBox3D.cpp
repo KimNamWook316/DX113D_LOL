@@ -45,6 +45,14 @@ bool CColliderBox3D::Init()
 	m_Info.AxisLen[1] = 0.5f;
 	m_Info.AxisLen[2] = 0.5f;
 
+	m_Info.Min.x = m_Info.Center.x - m_Info.Axis[0].x * m_Info.AxisLen[0];
+	m_Info.Min.y = m_Info.Center.y - m_Info.Axis[1].y * m_Info.AxisLen[1];
+	m_Info.Min.z = m_Info.Center.z - m_Info.Axis[2].z * m_Info.AxisLen[2];
+
+	m_Info.Max.x = m_Info.Center.x + m_Info.Axis[0].x * m_Info.AxisLen[0];
+	m_Info.Max.y = m_Info.Center.y + m_Info.Axis[1].y * m_Info.AxisLen[1];
+	m_Info.Max.z = m_Info.Center.z + m_Info.Axis[2].z * m_Info.AxisLen[2];
+
 	SetInheritRotZ(true);
 
 	SetWorldScale(m_Info.AxisLen[0] * 2.f, m_Info.AxisLen[1] * 2.f, m_Info.AxisLen[2] * 2.f);
@@ -84,24 +92,29 @@ void CColliderBox3D::PostUpdate(float DeltaTime)
 	m_Info.AxisLen[2] = GetWorldScale().z / 2.f;
 
 
-	m_Info.Min.x = m_Info.Center.x - m_Info.Axis[0].x * m_Info.AxisLen[0];
-	m_Info.Min.y = m_Info.Center.y - m_Info.Axis[1].y * m_Info.AxisLen[1];
-	m_Info.Min.z = m_Info.Center.z - m_Info.Axis[2].z * m_Info.AxisLen[2];
+	//m_Info.Min.x = m_Info.Center.x - m_Info.Axis[0].x * m_Info.AxisLen[0];
+	//m_Info.Min.y = m_Info.Center.y - m_Info.Axis[1].y * m_Info.AxisLen[1];
+	//m_Info.Min.z = m_Info.Center.z - m_Info.Axis[2].z * m_Info.AxisLen[2];
 
-	m_Info.Max.x = m_Info.Center.x + m_Info.Axis[0].x * m_Info.AxisLen[0];
-	m_Info.Max.y = m_Info.Center.y + m_Info.Axis[1].y * m_Info.AxisLen[1];
-	m_Info.Max.z = m_Info.Center.z + m_Info.Axis[2].z * m_Info.AxisLen[2];
+	//m_Info.Max.x = m_Info.Center.x + m_Info.Axis[0].x * m_Info.AxisLen[0];
+	//m_Info.Max.y = m_Info.Center.y + m_Info.Axis[1].y * m_Info.AxisLen[1];
+	//m_Info.Max.z = m_Info.Center.z + m_Info.Axis[2].z * m_Info.AxisLen[2];
+	Matrix matRot;
+	matRot.Rotation(GetWorldRot());
+	m_Info.Min.TransformCoord(matRot);
+	m_Info.Max.TransformCoord(matRot);
 	
-	float MinX = min(m_Info.Min.x, m_Info.Max.x);
-	float MinY = min(m_Info.Min.y, m_Info.Max.y);
-	float MinZ = min(m_Info.Min.z, m_Info.Max.z);
+	int a = 3;
+	//float MinX = min(m_Info.Min.x, m_Info.Max.x);
+	//float MinY = min(m_Info.Min.y, m_Info.Max.y);
+	//float MinZ = min(m_Info.Min.z, m_Info.Max.z);
 
-	float MaxX = max(m_Info.Min.x, m_Info.Max.x);
-	float MaxY = max(m_Info.Min.y, m_Info.Max.y);
-	float MaxZ = max(m_Info.Min.z, m_Info.Max.z);
+	//float MaxX = max(m_Info.Min.x, m_Info.Max.x);
+	//float MaxY = max(m_Info.Min.y, m_Info.Max.y);
+	//float MaxZ = max(m_Info.Min.z, m_Info.Max.z);
 
-	m_Info.Min = Vector3(MinX, MinY, MinZ);
-	m_Info.Max = Vector3(MaxX, MaxY, MaxZ);
+	//m_Info.Min = Vector3(MinX, MinY, MinZ);
+	//m_Info.Max = Vector3(MaxX, MaxY, MaxZ);
 
 }
 
@@ -123,7 +136,7 @@ void CColliderBox3D::Render()
 
 	Matrix	matScale, matRot, matTrans;
 
-	matScale.Scaling(m_Info.AxisLen[0] * 2.f, m_Info.AxisLen[1] * 2.f, m_Info.AxisLen[2] * 2.f);
+	//matScale.Scaling(m_Info.AxisLen[0] * 2.f, m_Info.AxisLen[1] * 2.f, m_Info.AxisLen[2] * 2.f);
 	matRot.Rotation(GetWorldRot());
 	matTrans.Translation(m_Info.Center);
 

@@ -749,47 +749,55 @@ bool CCollision::CollisionRayToBox3D(Vector3& HitPoint, const Ray& ray, const Bo
 	float D2;
 
 	Vector3 n = Box.Axis[0];
-	
-	
+
+
 	// 평면의 방정식 Ax + By + Cz + D = 0
 	// D = -Ax - By - Cz
-	if (ray.Dir.x < 0)
-	{
-		if (Box.Min.x > Box.Max.x)
-		{
-			// ray가 먼저 만나는 평면에서 상수 D
-			D1 = -Box.Axis[0].x * Box.Min.x - Box.Axis[0].y * Box.Min.y - Box.Axis[0].z * Box.Min.z;
-			// ray가 나중에 만나는 평면에서 상수 D
-			D2 = -Box.Axis[0].x * Box.Max.x - Box.Axis[0].y * Box.Max.y - Box.Axis[0].z * Box.Max.z;
-		}
+	//if (ray.Dir.x < 0)
+	//{
+	//	if (Box.Min.x > Box.Max.x)
+	//	{
+	//		// ray가 먼저 만나는 평면에서 상수 D
+	//		D1 = -Box.Axis[0].x * Box.Min.x - Box.Axis[0].y * Box.Min.y - Box.Axis[0].z * Box.Min.z;
+	//		// ray가 나중에 만나는 평면에서 상수 D
+	//		D2 = -Box.Axis[0].x * Box.Max.x - Box.Axis[0].y * Box.Max.y - Box.Axis[0].z * Box.Max.z;
+	//	}
 
-		else
-		{
-			// ray가 먼저 만나는 평면에서 상수 D
-			D1 = -Box.Axis[0].x * Box.Max.x - Box.Axis[0].y * Box.Max.y - Box.Axis[0].z * Box.Max.z;
-			// ray가 나중에 만나는 평면에서 상수 D
-			D2 = -Box.Axis[0].x * Box.Min.x - Box.Axis[0].y * Box.Min.y - Box.Axis[0].z * Box.Min.z;
-		}
-	}
+	//	else
+	//	{
+	//		// ray가 먼저 만나는 평면에서 상수 D
+	//		D1 = -Box.Axis[0].x * Box.Max.x - Box.Axis[0].y * Box.Max.y - Box.Axis[0].z * Box.Max.z;
+	//		// ray가 나중에 만나는 평면에서 상수 D
+	//		D2 = -Box.Axis[0].x * Box.Min.x - Box.Axis[0].y * Box.Min.y - Box.Axis[0].z * Box.Min.z;
+	//	}
+	//}
 
-	else
-	{
-		if (Box.Min.x > Box.Max.x)
-		{
-			// ray가 먼저 만나는 평면에서 상수 D
-			D1 = -Box.Axis[0].x * Box.Max.x - Box.Axis[0].y * Box.Max.y - Box.Axis[0].z * Box.Max.z;
-			// ray가 나중에 만나는 평면에서 상수 D
-			D2 = -Box.Axis[0].x * Box.Min.x - Box.Axis[0].y * Box.Min.y - Box.Axis[0].z * Box.Min.z;
-		}
+	//else
+	//{
+	//	if (Box.Min.x > Box.Max.x)
+	//	{
+	//		// ray가 먼저 만나는 평면에서 상수 D
+	//		D1 = -Box.Axis[0].x * Box.Max.x - Box.Axis[0].y * Box.Max.y - Box.Axis[0].z * Box.Max.z;
+	//		// ray가 나중에 만나는 평면에서 상수 D
+	//		D2 = -Box.Axis[0].x * Box.Min.x - Box.Axis[0].y * Box.Min.y - Box.Axis[0].z * Box.Min.z;
+	//	}
 
-		else
-		{
-			// ray가 먼저 만나는 평면에서 상수 D
-			D1 = -Box.Axis[0].x * Box.Min.x - Box.Axis[0].y * Box.Min.y - Box.Axis[0].z * Box.Min.z;
-			// ray가 나중에 만나는 평면에서 상수 D
-			D2 = -Box.Axis[0].x * Box.Max.x - Box.Axis[0].y * Box.Max.y - Box.Axis[0].z * Box.Max.z;
-		}
-	}
+	//	else
+	//	{
+	//		// ray가 먼저 만나는 평면에서 상수 D
+	//		D1 = -Box.Axis[0].x * Box.Min.x - Box.Axis[0].y * Box.Min.y - Box.Axis[0].z * Box.Min.z;
+	//		// ray가 나중에 만나는 평면에서 상수 D
+	//		D2 = -Box.Axis[0].x * Box.Max.x - Box.Axis[0].y * Box.Max.y - Box.Axis[0].z * Box.Max.z;
+	//	}
+	//}
+
+	//// ray가 먼저 만나는 평면에서 상수 D
+	//D1 = -Box.Axis[0].x * Box.Min.x - Box.Axis[0].y * Box.Min.y - Box.Axis[0].z * Box.Min.z;
+	//// ray가 나중에 만나는 평면에서 상수 D
+	//D2 = -Box.Axis[0].x * Box.Max.x - Box.Axis[0].y * Box.Max.y - Box.Axis[0].z * Box.Max.z;
+	
+	D1 = Box.Min.x;
+	D2 = Box.Max.x;
 
 	float Denominator = n.Dot(ray.Dir);
 
@@ -811,43 +819,51 @@ bool CCollision::CollisionRayToBox3D(Vector3& HitPoint, const Ray& ray, const Bo
 
 	n = Box.Axis[1];
 
-	if (ray.Dir.y < 0)
-	{
-		if (Box.Min.y > Box.Max.y)
-		{
-			// ray가 먼저 만나는 평면에서 상수 D
-			D1 = -Box.Axis[1].x * Box.Min.x - Box.Axis[1].y * Box.Min.y - Box.Axis[1].z * Box.Min.z;
-			// ray가 나중에 만나는 평면에서 상수 D
-			D2 = -Box.Axis[1].x * Box.Max.x - Box.Axis[1].y * Box.Max.y - Box.Axis[1].z * Box.Max.z;
-		}
+	//if (ray.Dir.y < 0)
+	//{
+	//	if (Box.Min.y > Box.Max.y)
+	//	{
+	//		// ray가 먼저 만나는 평면에서 상수 D
+	//		D1 = -Box.Axis[1].x * Box.Min.x - Box.Axis[1].y * Box.Min.y - Box.Axis[1].z * Box.Min.z;
+	//		// ray가 나중에 만나는 평면에서 상수 D
+	//		D2 = -Box.Axis[1].x * Box.Max.x - Box.Axis[1].y * Box.Max.y - Box.Axis[1].z * Box.Max.z;
+	//	}
 
-		else
-		{
-			// ray가 먼저 만나는 평면에서 상수 D
-			D1 = -Box.Axis[1].x * Box.Max.x - Box.Axis[1].y * Box.Max.y - Box.Axis[1].z * Box.Max.z;
-			// ray가 나중에 만나는 평면에서 상수 D
-			D2 = -Box.Axis[1].x * Box.Min.x - Box.Axis[1].y * Box.Min.y - Box.Axis[1].z * Box.Min.z;
-		}
-	}
+	//	else
+	//	{
+	//		// ray가 먼저 만나는 평면에서 상수 D
+	//		D1 = -Box.Axis[1].x * Box.Max.x - Box.Axis[1].y * Box.Max.y - Box.Axis[1].z * Box.Max.z;
+	//		// ray가 나중에 만나는 평면에서 상수 D
+	//		D2 = -Box.Axis[1].x * Box.Min.x - Box.Axis[1].y * Box.Min.y - Box.Axis[1].z * Box.Min.z;
+	//	}
+	//}
 
-	else
-	{
-		if (Box.Min.y > Box.Max.y)
-		{
-			// ray가 먼저 만나는 평면에서 상수 D
-			D1 = -Box.Axis[1].x * Box.Max.x - Box.Axis[1].y * Box.Max.y - Box.Axis[1].z * Box.Max.z;
-			// ray가 나중에 만나는 평면에서 상수 D
-			D2 = -Box.Axis[1].x * Box.Min.x - Box.Axis[1].y * Box.Min.y - Box.Axis[1].z * Box.Min.z;
-		}
+	//else
+	//{
+	//	if (Box.Min.y > Box.Max.y)
+	//	{
+	//		// ray가 먼저 만나는 평면에서 상수 D
+	//		D1 = -Box.Axis[1].x * Box.Max.x - Box.Axis[1].y * Box.Max.y - Box.Axis[1].z * Box.Max.z;
+	//		// ray가 나중에 만나는 평면에서 상수 D
+	//		D2 = -Box.Axis[1].x * Box.Min.x - Box.Axis[1].y * Box.Min.y - Box.Axis[1].z * Box.Min.z;
+	//	}
 
-		else
-		{
-			// ray가 먼저 만나는 평면에서 상수 D
-			D1 = -Box.Axis[1].x * Box.Min.x - Box.Axis[1].y * Box.Min.y - Box.Axis[1].z * Box.Min.z;
-			// ray가 나중에 만나는 평면에서 상수 D
-			D2 = -Box.Axis[1].x * Box.Max.x - Box.Axis[1].y * Box.Max.y - Box.Axis[1].z * Box.Max.z;
-		}
-	}
+	//	else
+	//	{
+	//		// ray가 먼저 만나는 평면에서 상수 D
+	//		D1 = -Box.Axis[1].x * Box.Min.x - Box.Axis[1].y * Box.Min.y - Box.Axis[1].z * Box.Min.z;
+	//		// ray가 나중에 만나는 평면에서 상수 D
+	//		D2 = -Box.Axis[1].x * Box.Max.x - Box.Axis[1].y * Box.Max.y - Box.Axis[1].z * Box.Max.z;
+	//	}
+	//}
+
+	// ray가 먼저 만나는 평면에서 상수 D
+	//D1 = -Box.Axis[1].x * Box.Min.x - Box.Axis[1].y * Box.Min.y - Box.Axis[1].z * Box.Min.z;
+	//// ray가 나중에 만나는 평면에서 상수 D
+	//D2 = -Box.Axis[1].x * Box.Max.x - Box.Axis[1].y * Box.Max.y - Box.Axis[1].z * Box.Max.z;
+
+	D1 = Box.Min.y;
+	D2 = Box.Max.y;
 
 	Denominator = n.Dot(ray.Dir);
 
@@ -869,43 +885,52 @@ bool CCollision::CollisionRayToBox3D(Vector3& HitPoint, const Ray& ray, const Bo
 
 	n = Box.Axis[2];
 
-	if (ray.Dir.z < 0)
-	{
-		if (Box.Min.z > Box.Max.z)
-		{
-			// ray가 먼저 만나는 평면에서 상수 D
-			D1 = -Box.Axis[2].x * Box.Min.x - Box.Axis[2].y * Box.Min.y - Box.Axis[2].z * Box.Min.z;
-			// ray가 나중에 만나는 평면에서 상수 D
-			D2 = -Box.Axis[2].x * Box.Max.x - Box.Axis[2].y * Box.Max.y - Box.Axis[2].z * Box.Max.z;
-		}
+	//if (ray.Dir.z < 0)
+	//{
+	//	if (Box.Min.z > Box.Max.z)
+	//	{
+	//		// ray가 먼저 만나는 평면에서 상수 D
+	//		D1 = -Box.Axis[2].x * Box.Min.x - Box.Axis[2].y * Box.Min.y - Box.Axis[2].z * Box.Min.z;
+	//		// ray가 나중에 만나는 평면에서 상수 D
+	//		D2 = -Box.Axis[2].x * Box.Max.x - Box.Axis[2].y * Box.Max.y - Box.Axis[2].z * Box.Max.z;
+	//	}
 
-		else
-		{
-			// ray가 먼저 만나는 평면에서 상수 D
-			D1 = -Box.Axis[2].x * Box.Max.x - Box.Axis[2].y * Box.Max.y - Box.Axis[2].z * Box.Max.z;
-			// ray가 나중에 만나는 평면에서 상수 D
-			D2 = -Box.Axis[2].x * Box.Min.x - Box.Axis[2].y * Box.Min.y - Box.Axis[2].z * Box.Min.z;
-		}
-	}
+	//	else
+	//	{
+	//		// ray가 먼저 만나는 평면에서 상수 D
+	//		D1 = -Box.Axis[2].x * Box.Max.x - Box.Axis[2].y * Box.Max.y - Box.Axis[2].z * Box.Max.z;
+	//		// ray가 나중에 만나는 평면에서 상수 D
+	//		D2 = -Box.Axis[2].x * Box.Min.x - Box.Axis[2].y * Box.Min.y - Box.Axis[2].z * Box.Min.z;
+	//	}
+	//}
 
-	else
-	{
-		if (Box.Min.z > Box.Max.z)
-		{
-			// ray가 먼저 만나는 평면에서 상수 D
-			D1 = -Box.Axis[2].x * Box.Max.x - Box.Axis[2].y * Box.Max.y - Box.Axis[2].z * Box.Max.z;
-			// ray가 나중에 만나는 평면에서 상수 D
-			D2 = -Box.Axis[2].x * Box.Min.x - Box.Axis[2].y * Box.Min.y - Box.Axis[2].z * Box.Min.z;
-		}
+	//else
+	//{
+	//	if (Box.Min.z > Box.Max.z)
+	//	{
+	//		// ray가 먼저 만나는 평면에서 상수 D
+	//		D1 = -Box.Axis[2].x * Box.Max.x - Box.Axis[2].y * Box.Max.y - Box.Axis[2].z * Box.Max.z;
+	//		// ray가 나중에 만나는 평면에서 상수 D
+	//		D2 = -Box.Axis[2].x * Box.Min.x - Box.Axis[2].y * Box.Min.y - Box.Axis[2].z * Box.Min.z;
+	//	}
 
-		else
-		{
-			// ray가 먼저 만나는 평면에서 상수 D
-			D1 = -Box.Axis[2].x * Box.Min.x - Box.Axis[2].y * Box.Min.y - Box.Axis[2].z * Box.Min.z;
-			// ray가 나중에 만나는 평면에서 상수 D
-			D2 = -Box.Axis[2].x * Box.Max.x - Box.Axis[2].y * Box.Max.y - Box.Axis[2].z * Box.Max.z;
-		}
-	}
+	//	else
+	//	{
+	//		// ray가 먼저 만나는 평면에서 상수 D
+	//		D1 = -Box.Axis[2].x * Box.Min.x - Box.Axis[2].y * Box.Min.y - Box.Axis[2].z * Box.Min.z;
+	//		// ray가 나중에 만나는 평면에서 상수 D
+	//		D2 = -Box.Axis[2].x * Box.Max.x - Box.Axis[2].y * Box.Max.y - Box.Axis[2].z * Box.Max.z;
+	//	}
+	//}
+
+
+	// ray가 먼저 만나는 평면에서 상수 D
+	//D1 = -Box.Axis[2].x * Box.Min.x - Box.Axis[2].y * Box.Min.y - Box.Axis[2].z * Box.Min.z;
+	//// ray가 나중에 만나는 평면에서 상수 D
+	//D2 = -Box.Axis[2].x * Box.Max.x - Box.Axis[2].y * Box.Max.y - Box.Axis[2].z * Box.Max.z;
+
+	D1 = Box.Min.z;
+	D2 = Box.Max.z;
 
 	Denominator = n.Dot(ray.Dir);
 
