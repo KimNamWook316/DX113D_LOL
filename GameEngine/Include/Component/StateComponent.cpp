@@ -161,6 +161,28 @@ bool CStateComponent::Load(const char* FullPath)
 	return true;
 }
 
+bool CStateComponent::SaveOnly(FILE* File)
+{
+	CComponent::SaveOnly(File);
+
+	m_BehaviorTree->SaveOnly(File);
+
+	return true;
+}
+
+bool CStateComponent::LoadOnly(FILE* File)
+{
+	CComponent::LoadOnly(File);
+
+	m_BehaviorTree->LoadOnly(File);
+
+	m_AnimationMeshComp = m_Object->FindComponentFromType<CAnimationMeshComponent>();
+	m_BehaviorTree->m_Owner = this;
+	m_BehaviorTree->SetAnimationMeshComponent(m_AnimationMeshComp);
+
+	return true;
+}
+
 
 bool CStateComponent::Load(FILE* File)
 {

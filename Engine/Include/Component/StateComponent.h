@@ -28,6 +28,8 @@ public:
 	virtual bool Load(FILE* File);
 	virtual bool Load(const char* FileName, const std::string& PathName);
 	virtual bool Load(const char* FullPath);
+	virtual bool SaveOnly(FILE* File);
+	virtual bool LoadOnly(FILE* File);
 
 protected:
 	std::list<class CState*>	m_StateList;

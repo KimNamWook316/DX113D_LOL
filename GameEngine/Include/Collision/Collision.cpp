@@ -750,14 +750,6 @@ bool CCollision::CollisionRayToBox3D(Vector3& HitPoint, const Ray& ray, const Bo
 	float D2;
 
 	Vector3 n = Box.Axis[0];
-	
-	//D1 = Box.Min.x;
-	//D2 = Box.Max.x;
-
-	//float Denominator = n.Dot(ray.Dir);
-
-	//float t1 = (-n.Dot(ray.Pos) - D1) / Denominator;
-	//float t2 = (-n.Dot(ray.Pos) - D2) / Denominator;
 
 	float e = n.Dot(Delta);
 	float f = ray.Dir.Dot(n);

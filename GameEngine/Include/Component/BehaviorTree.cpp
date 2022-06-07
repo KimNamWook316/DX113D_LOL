@@ -208,6 +208,67 @@ bool CBehaviorTree::Load(FILE* File)
 	return true;
 }
 
+bool CBehaviorTree::SaveOnly(FILE* File)
+{
+	/*
+    std::list<class CNode*> m_NodeList;
+	*/
+
+	bool Root = false;
+	if (m_Root)
+	{
+		Root = true;
+		fwrite(&Root, sizeof(bool), 1, File);
+
+		int Length = m_Root->m_Name.length();
+
+		fwrite(&Length, sizeof(int), 1, File);
+
+		char Name[256] = {};
+		strcpy_s(Name, m_Root->m_Name.c_str());
+
+		fwrite(Name, sizeof(char), Length, File);
+		fwrite(&m_Root->m_TypeID, sizeof(size_t), 1, File);
+
+		fwrite(&m_Root->m_NodeType, sizeof(Node_Type), 1, File);
+
+		m_Root->SaveOnly(File);
+	}
+
+
+	return true;
+}
+
+bool CBehaviorTree::LoadOnly(FILE* File)
+{
+	bool Root = false;
+
+	fread(&Root, sizeof(bool), 1, File);
+
+	if (Root)
+	{
+		int Length = 0;
+		fread(&Length, sizeof(int), 1, File);
+
+		char Name[256] = {};
+		fread(Name, sizeof(char), Length, File);
+
+		size_t RootTypeID = 0;
+		fread(&RootTypeID, sizeof(size_t), 1, File);
+		Node_Type Type;
+
+		fread(&Type, sizeof(Node_Type), 1, File);
+
+		CNode* Root = LoadNode(nullptr, RootTypeID);
+		m_NodeList.push_back(Root);
+		m_Root = Root;
+
+		m_Root->LoadOnly(File);
+	}
+
+	return true;
+}
+
 CBehaviorTree* CBehaviorTree::Clone()
 {
 	return new CBehaviorTree(*this);
@@ -222,8 +283,8 @@ CNode* CBehaviorTree::LoadNode(CNode* Parent, size_t TypeID)
 	{
 		CSelectorNode* NewNode = new CSelectorNode;
 		NewNode->SetParent(Parent);
-		NewNode->SetOwner(Parent->GetOwner());
-		NewNode->SetObject(Parent->GetGameObject());
+		NewNode->SetOwner(this);
+		NewNode->SetObject(m_Owner->GetGameObject());
 		
 		return NewNode;
 	}
@@ -232,8 +293,8 @@ CNode* CBehaviorTree::LoadNode(CNode* Parent, size_t TypeID)
 	{
 		CSequenceNode* NewNode = new CSequenceNode;
 		NewNode->SetParent(Parent);
-		NewNode->SetOwner(Parent->GetOwner());
-		NewNode->SetObject(Parent->GetGameObject());
+		NewNode->SetOwner(this);
+		NewNode->SetObject(m_Owner->GetGameObject());
 
 		return NewNode;
 	}
@@ -242,8 +303,8 @@ CNode* CBehaviorTree::LoadNode(CNode* Parent, size_t TypeID)
 	{
 		CNoInterruptNode* NewNode = new CNoInterruptNode;
 		NewNode->SetParent(Parent);
-		NewNode->SetOwner(Parent->GetOwner());
-		NewNode->SetObject(Parent->GetGameObject());
+		NewNode->SetOwner(this);
+		NewNode->SetObject(m_Owner->GetGameObject());
 
 		return NewNode;
 	}
@@ -252,8 +313,8 @@ CNode* CBehaviorTree::LoadNode(CNode* Parent, size_t TypeID)
 	{
 		CIdleNode* NewNode = new CIdleNode;
 		NewNode->SetParent(Parent);
-		NewNode->SetOwner(Parent->GetOwner());
-		NewNode->SetObject(Parent->GetGameObject());
+		NewNode->SetOwner(this);
+		NewNode->SetObject(m_Owner->GetGameObject());
 
 		return NewNode;
 	}
@@ -262,8 +323,8 @@ CNode* CBehaviorTree::LoadNode(CNode* Parent, size_t TypeID)
 	{
 		CMovePickingNode* NewNode = new CMovePickingNode;
 		NewNode->SetParent(Parent);
-		NewNode->SetOwner(Parent->GetOwner());
-		NewNode->SetObject(Parent->GetGameObject());
+		NewNode->SetOwner(this);
+		NewNode->SetObject(m_Owner->GetGameObject());
 
 		return NewNode;
 	}
@@ -272,8 +333,8 @@ CNode* CBehaviorTree::LoadNode(CNode* Parent, size_t TypeID)
 	{
 		CMoveInputCheckNode* NewNode = new CMoveInputCheckNode;
 		NewNode->SetParent(Parent);
-		NewNode->SetOwner(Parent->GetOwner());
-		NewNode->SetObject(Parent->GetGameObject());
+		NewNode->SetOwner(this);
+		NewNode->SetObject(m_Owner->GetGameObject());
 
 		return NewNode;
 	}
@@ -282,8 +343,8 @@ CNode* CBehaviorTree::LoadNode(CNode* Parent, size_t TypeID)
 	{
 		CSkillQNode* NewNode = new CSkillQNode;
 		NewNode->SetParent(Parent);
-		NewNode->SetOwner(Parent->GetOwner());
-		NewNode->SetObject(Parent->GetGameObject());
+		NewNode->SetOwner(this);
+		NewNode->SetObject(m_Owner->GetGameObject());
 
 		return NewNode;
 	}
@@ -292,8 +353,8 @@ CNode* CBehaviorTree::LoadNode(CNode* Parent, size_t TypeID)
 	{
 		CSkillWNode* NewNode = new CSkillWNode;
 		NewNode->SetParent(Parent);
-		NewNode->SetOwner(Parent->GetOwner());
-		NewNode->SetObject(Parent->GetGameObject());
+		NewNode->SetOwner(this);
+		NewNode->SetObject(m_Owner->GetGameObject());
 
 		return NewNode;
 	}
@@ -302,8 +363,8 @@ CNode* CBehaviorTree::LoadNode(CNode* Parent, size_t TypeID)
 	{
 		CSkillENode* NewNode = new CSkillENode;
 		NewNode->SetParent(Parent);
-		NewNode->SetOwner(Parent->GetOwner());
-		NewNode->SetObject(Parent->GetGameObject());
+		NewNode->SetOwner(this);
+		NewNode->SetObject(m_Owner->GetGameObject());
 
 		return NewNode;
 	}
@@ -312,8 +373,8 @@ CNode* CBehaviorTree::LoadNode(CNode* Parent, size_t TypeID)
 	{
 		CSkillRNode* NewNode = new CSkillRNode;
 		NewNode->SetParent(Parent);
-		NewNode->SetOwner(Parent->GetOwner());
-		NewNode->SetObject(Parent->GetGameObject());
+		NewNode->SetOwner(this);
+		NewNode->SetObject(m_Owner->GetGameObject());
 
 		return NewNode;
 	}
@@ -322,8 +383,8 @@ CNode* CBehaviorTree::LoadNode(CNode* Parent, size_t TypeID)
 	{
 		CInputQCheckNode* NewNode = new CInputQCheckNode;
 		NewNode->SetParent(Parent);
-		NewNode->SetOwner(Parent->GetOwner());
-		NewNode->SetObject(Parent->GetGameObject());
+		NewNode->SetOwner(this);
+		NewNode->SetObject(m_Owner->GetGameObject());
 
 		return NewNode;
 	}
@@ -332,8 +393,8 @@ CNode* CBehaviorTree::LoadNode(CNode* Parent, size_t TypeID)
 	{
 		CInputWCheckNode* NewNode = new CInputWCheckNode;
 		NewNode->SetParent(Parent);
-		NewNode->SetOwner(Parent->GetOwner());
-		NewNode->SetObject(Parent->GetGameObject());
+		NewNode->SetOwner(this);
+		NewNode->SetObject(m_Owner->GetGameObject());
 
 		return NewNode;
 	}
@@ -342,8 +403,8 @@ CNode* CBehaviorTree::LoadNode(CNode* Parent, size_t TypeID)
 	{
 		CInputECheckNode* NewNode = new CInputECheckNode;
 		NewNode->SetParent(Parent);
-		NewNode->SetOwner(Parent->GetOwner());
-		NewNode->SetObject(Parent->GetGameObject());
+		NewNode->SetOwner(this);
+		NewNode->SetObject(m_Owner->GetGameObject());
 
 		return NewNode;
 	}
@@ -352,8 +413,8 @@ CNode* CBehaviorTree::LoadNode(CNode* Parent, size_t TypeID)
 	{
 		CInputRCheckNode* NewNode = new CInputRCheckNode;
 		NewNode->SetParent(Parent);
-		NewNode->SetOwner(Parent->GetOwner());
-		NewNode->SetObject(Parent->GetGameObject());
+		NewNode->SetOwner(this);
+		NewNode->SetObject(m_Owner->GetGameObject());
 
 		return NewNode;
 	}
