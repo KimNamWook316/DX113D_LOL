@@ -627,6 +627,39 @@ bool CSceneComponent::Load(FILE* File)
 	return true;
 }
 
+bool CSceneComponent::SaveOnly(FILE* File)
+{
+	CComponent::SaveOnly(File);
+
+	fwrite(&m_Render, sizeof(bool), 1, File);
+
+	int	Length = (int)m_LayerName.length();
+	fwrite(&Length, sizeof(int), 1, File);
+	fwrite(m_LayerName.c_str(), sizeof(char), Length, File);
+
+	m_Transform->Save(File);
+
+	return true;
+}
+
+bool CSceneComponent::LoadOnly(FILE* File)
+{
+	CComponent::LoadOnly(File);
+
+	fread(&m_Render, sizeof(bool), 1, File);
+
+	int	Length = 0;
+	char	LayerName[256] = {};
+	fread(&Length, sizeof(int), 1, File);
+	fread(LayerName, sizeof(char), Length, File);
+
+	m_LayerName = LayerName;
+
+	m_Transform->Load(File);
+
+	return true;
+}
+
 void CSceneComponent::RenderAnimationEditor()
 {
 	m_Transform->SetAnimationTransform();

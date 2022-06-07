@@ -50,6 +50,9 @@ public:
 	void OnSetSelectNode(CIMGUITree* Tree);
 	void OnDragDropSrc(class CIMGUITree* SrcTree);
 	void OnDragDropDest(class CIMGUITree* DestTree, const std::string& ParentName, const std::string& NewChildName);
+
+public:
+	class CGameObject* GetSelectGameObject();
 };
 
 

@@ -68,6 +68,7 @@ bool CPathManager::Init()
     AddPath(EXCEL_PATH, TEXT("Excel\\"));
     AddPath(PARTICLE_PATH, TEXT("Texture\\Particle\\"));
     AddPath(OBJECT_PATH, TEXT("Object\\"));
+    AddPath(COMPONENT_PATH, TEXT("Component\\"));
 
     // Resource Path
     TCHAR   IncludePath[MAX_PATH] = {};

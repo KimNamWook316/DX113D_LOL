@@ -32,6 +32,10 @@ public:
 	void OnDeleteComponent();
 	void OnUpdateObjectComponetWindow(class CIMGUITree* SelectObjectNode);
 
+	// Component Save&Load
+	void OnSaveComponent();
+	void OnLoadComponent();
+
 public:
 	int GetSelectIndex()	const
 	{

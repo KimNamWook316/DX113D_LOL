@@ -52,5 +52,7 @@ public:
     virtual CComponent* Clone() = 0;
     virtual bool Save(FILE* File);
     virtual bool Load(FILE* File);
+    virtual bool SaveOnly(FILE* File);
+    virtual bool LoadOnly(FILE* File);
 };
 

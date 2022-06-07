@@ -16,6 +16,8 @@
 #include "ToolWindow.h"
 #include "Scene/SceneManager.h"
 #include "InspectorWindow.h"
+#include "Engine.h"
+#include "PathManager.h"
 
 CSceneComponentHierarchyWindow::CSceneComponentHierarchyWindow() :
 	m_Root(nullptr),
@@ -266,23 +268,14 @@ void CSceneComponentHierarchyWindow::OnSetSelectNode(CIMGUITree* Tree)
 	m_SelectNode = Tree;
 
 	// Gizmo 현재 선택된 컴포넌트 업데이트
-	CObjectHierarchyWindow* Window = (CObjectHierarchyWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(OBJECT_HIERARCHY);
-	std::string SelectObjName = Window->GetSelectNode()->GetName();
-	CGameObject* Obj = CSceneManager::GetInst()->GetScene()->FindObject(SelectObjName);
-	CSceneComponent* Comp = (CSceneComponent*)Obj->FindComponent(m_SelectNode->GetName());
+	CSceneComponent* Comp = (CSceneComponent*)FindSelectComponent();
 
 	((CToolWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(TOOL))->SetGizmoComponent(Comp);
 }
 
 void CSceneComponentHierarchyWindow::OnDeleteComponent()
 {
-	CObjectHierarchyWindow* Window = (CObjectHierarchyWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(OBJECT_HIERARCHY);
-
-	std::string SelectObjName = Window->GetSelectNode()->GetName();
-
-	CGameObject* Obj = CSceneManager::GetInst()->GetScene()->FindObject(SelectObjName);
-
-	CSceneComponent* DeleteComp = (CSceneComponent*)Obj->FindComponent(m_SelectNode->GetName());
+	CSceneComponent* DeleteComp = (CSceneComponent*)FindSelectComponent();
 	
 	// Inspector에서 Widget삭제
 	((CInspectorWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(INSPECTOR))->OnDeleteSceneComponent(DeleteComp);
@@ -292,4 +285,143 @@ void CSceneComponentHierarchyWindow::OnDeleteComponent()
 
 	if (DeleteComp)
 		DeleteComp->DeleteComponent();
+}
+
+void CSceneComponentHierarchyWindow::OnSaveComponent()
+{
+	CComponent* SaveComponent = FindSelectComponent();
+
+	if (!SaveComponent)
+	{
+		MessageBox(nullptr, TEXT("선택된 컴포넌트 없음"), TEXT("Error"), MB_OK);
+		return;
+	}
+
+	TCHAR   FilePath[MAX_PATH] = {};
+
+	OPENFILENAME    OpenFile = {};
+
+	OpenFile.lStructSize = sizeof(OPENFILENAME);
+	OpenFile.hwndOwner = CEngine::GetInst()->GetWindowHandle();
+	OpenFile.lpstrFilter = TEXT("All File\0*.*\0");
+	OpenFile.lpstrFile = FilePath;
+	OpenFile.nMaxFile = MAX_PATH;
+	OpenFile.lpstrInitialDir = CPathManager::GetInst()->FindPath(COMPONENT_PATH)->Path;
+
+	if (GetSaveFileName(&OpenFile) != 0)
+	{
+		char FullPath[MAX_PATH] = {};
+
+		int Length = WideCharToMultiByte(CP_ACP, 0, FilePath, -1, 0, 0, 0, 0);
+		WideCharToMultiByte(CP_ACP, 0, FilePath, -1, FullPath, Length, 0, 0);
+
+		CGameObject* Object = SaveComponent->GetGameObject();
+		bool Ret = Object->SaveOnly(SaveComponent, FullPath);
+
+		if (!Ret)
+		{
+			MessageBox(nullptr, TEXT("컴포넌트 저장 실패"), TEXT("Error"), MB_OK);
+			return;
+		}
+
+		MessageBox(nullptr, TEXT("컴포넌트 저장 성공"), TEXT("Success"), MB_OK);
+	}
+}
+
+void CSceneComponentHierarchyWindow::OnLoadComponent()
+{
+	CObjectHierarchyWindow* Window = (CObjectHierarchyWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(OBJECT_HIERARCHY);
+
+	if (!Window)
+	{
+		return;
+	}
+
+	CGameObject* SelectObject = Window->GetSelectGameObject();
+
+	if (!SelectObject)
+	{
+		return;
+	}
+
+	TCHAR   FilePath[MAX_PATH] = {};
+
+	OPENFILENAME    OpenFile = {};
+
+	OpenFile.lStructSize = sizeof(OPENFILENAME);
+	OpenFile.hwndOwner = CEngine::GetInst()->GetWindowHandle();
+	OpenFile.lpstrFilter = TEXT("All File\0*.*\0");
+	OpenFile.lpstrFile = FilePath;
+	OpenFile.nMaxFile = MAX_PATH;
+	OpenFile.lpstrInitialDir = CPathManager::GetInst()->FindPath(COMPONENT_PATH)->Path;
+
+	if (GetOpenFileName(&OpenFile) != 0)
+	{
+		char FullPath[MAX_PATH] = {};
+
+		int Length = WideCharToMultiByte(CP_ACP, 0, FilePath, -1, 0, 0, 0, 0);
+		WideCharToMultiByte(CP_ACP, 0, FilePath, -1, FullPath, Length, 0, 0);
+
+		CComponent* LoadComp = nullptr;
+		bool Ret = SelectObject->LoadOnly(FullPath, LoadComp);
+
+		if (!Ret)
+		{
+			MessageBox(nullptr, TEXT("컴포넌트 로드 실패"), TEXT("Error"), MB_OK);
+			return;
+		}
+
+		// Hierachy Update
+		OnAddComponent(SelectObject, (CSceneComponent*)LoadComp);
+
+		// Insepctor Update
+		CInspectorWindow* Inspector = (CInspectorWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(INSPECTOR);
+
+		if (Inspector)
+		{
+			Inspector->OnCreateSceneComponent((CSceneComponent*)LoadComp);
+		}
+
+		MessageBox(nullptr, TEXT("컴포넌트 로드 성공"), TEXT("Success"), MB_OK);
+	}
+}
+
+CComponent* CSceneComponentHierarchyWindow::FindSelectComponent()
+{
+	CObjectHierarchyWindow* Window = (CObjectHierarchyWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(OBJECT_HIERARCHY);
+
+	if (!Window)
+	{
+		return nullptr;
+	}
+
+	std::string SelectObjName = Window->GetSelectNode()->GetName();
+
+	CGameObject* Obj = CSceneManager::GetInst()->GetScene()->FindObject(SelectObjName);
+
+	if (!Obj)
+	{
+		return nullptr;
+	}
+
+	CComponent* Comp = Obj->FindComponent(m_SelectNode->GetName());
+
+	return Comp;
+}
+
+void CSceneComponentHierarchyWindow::OnAddComponent(class CGameObject* Object, CSceneComponent* Component)
+{
+	if (!Object)
+	{
+		return;
+	}
+
+	if (Object->GetRootComponent() == Component)
+	{
+		m_Root->AddChild(Component->GetName());
+	}
+	else
+	{
+		m_Root->GetNode(0)->AddChild(Component->GetName());
+	}
 }

@@ -9,6 +9,7 @@
 #include "IMGUIManager.h"
 #include "BehaviorTreeWindow.h"
 #include "ObjectComponentWindow.h"
+#include "SceneComponentHierarchyWindow.h"
 #include "IMGUIManager.h"
 #include "ObjectHierarchyWindow.h"
 #include "GameObject/GameObject.h"
@@ -64,6 +65,78 @@ void CBehaviorTreeMenuBar::Update(float DeltaTime)
 
 	if (ImGui::BeginMainMenuBar())
 	{
+		if (ImGui::BeginMenu("File"))
+		{
+			if (ImGui::MenuItem("Save Scene"))
+			{
+				
+			}
+			if (ImGui::MenuItem("Load Scene"))
+			{
+				
+			}
+			if (ImGui::MenuItem("Save GameObject"))
+			{
+				// CObjectComponentWindow* ComponentWindow = (CObjectComponentWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(OBJECTCOMPONENT_LIST);
+				CObjectHierarchyWindow* ObjectWindow = (CObjectHierarchyWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(OBJECT_HIERARCHY);
+
+				if (ObjectWindow)
+				{
+					CGameObject* Obj = ObjectWindow->GetSelectObject();
+					OnSaveGameObject(Obj);
+				}
+			}
+			if (ImGui::MenuItem("Load GameObject"))
+			{
+				// CObjectComponentWindow* ComponentWindow = (CObjectComponentWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(OBJECTCOMPONENT_LIST);
+				CObjectHierarchyWindow* ObjectWindow = (CObjectHierarchyWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(OBJECT_HIERARCHY);
+
+				if (ObjectWindow)
+				{
+					OnLoadGameObject();
+				}
+			}
+			if (ImGui::MenuItem("Save SceneComponent"))
+			{
+				CSceneComponentHierarchyWindow* SceneComponentWindow = (CSceneComponentHierarchyWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(SCENECOMPONENT_HIERARCHY);
+
+				if (SceneComponentWindow)
+				{
+					SceneComponentWindow->OnSaveComponent();
+				}
+			}
+			if (ImGui::MenuItem("Load SceneComponent"))
+			{
+				CSceneComponentHierarchyWindow* SceneComponentWindow = (CSceneComponentHierarchyWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(SCENECOMPONENT_HIERARCHY);
+
+				if (SceneComponentWindow)
+				{
+					SceneComponentWindow->OnLoadComponent();
+				}
+
+			}
+			if (ImGui::MenuItem("Save ObjectComponent"))
+			{
+				CObjectComponentWindow* ObjList = (CObjectComponentWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(OBJECTCOMPONENT_LIST);
+
+				if (ObjList)
+				{
+					ObjList->OnSaveComponent();
+				}
+			}
+			if (ImGui::MenuItem("Load ObjectComponent"))
+			{
+				CObjectComponentWindow* ObjList = (CObjectComponentWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(OBJECTCOMPONENT_LIST);
+
+				if (ObjList)
+				{
+					ObjList->OnLoadComponent();
+				}
+			}
+
+			ImGui::EndMenu();
+		}
+
 		if (ImGui::BeginMenu("BehaviorTree"))
 		{
 			if (ImGui::MenuItem("Open Tree Editor"))
@@ -102,46 +175,8 @@ void CBehaviorTreeMenuBar::Update(float DeltaTime)
 					}
 				}
 			}
-
 			ImGui::EndMenu();
 		}
-
-		if (ImGui::BeginMenu("File"))
-		{
-			if (ImGui::MenuItem("Save Scene"))
-			{
-				
-			}
-			if (ImGui::MenuItem("Load Scene"))
-			{
-				
-			}
-			if (ImGui::MenuItem("Save GameObject"))
-			{
-				// CObjectComponentWindow* ComponentWindow = (CObjectComponentWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(OBJECTCOMPONENT_LIST);
-				CObjectHierarchyWindow* ObjectWindow = (CObjectHierarchyWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(OBJECT_HIERARCHY);
-
-				if (ObjectWindow)
-				{
-					CGameObject* Obj = ObjectWindow->GetSelectObject();
-					OnSaveGameObject(Obj);
-				}
-			}
-			if (ImGui::MenuItem("Load GameObject"))
-			{
-				// CObjectComponentWindow* ComponentWindow = (CObjectComponentWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(OBJECTCOMPONENT_LIST);
-				CObjectHierarchyWindow* ObjectWindow = (CObjectHierarchyWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(OBJECT_HIERARCHY);
-
-				if (ObjectWindow)
-				{
-					OnLoadGameObject();
-				}
-			}
-
-
-			ImGui::EndMenu();
-		}
-
 		ImGui::EndMainMenuBar();
 	}
 

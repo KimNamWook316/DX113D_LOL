@@ -164,6 +164,9 @@ public:
 	virtual CSceneComponent* Clone();
 	virtual bool Save(FILE* File);
 	virtual bool Load(FILE* File);
+    virtual bool SaveOnly(FILE* File) override;
+    virtual bool LoadOnly(FILE* File) override;
+
 public :
 	virtual void RenderAnimationEditor();
 	virtual void RenderParticleEffectEditor();
