@@ -22,9 +22,20 @@ private:
 	float			m_GlobalAccTime;
 	CSharedPtr<class CTexture>	m_GlobalNoiseTexture;
 	class CStructuredBuffer* m_RandomBuffer;
+	bool					m_EditMode;
 
 public:
 	void SetMouseState(Mouse_State State);
+
+	void EnableEditMode()
+	{
+		m_EditMode = true;
+	}
+
+	bool GetEditMode() const
+	{
+		return m_EditMode;
+	}
 
 	class CWidgetWindow* GetMouseWidget()	const
 	{

@@ -25,7 +25,8 @@ CEngine::CEngine()	:
 	m_MouseState(Mouse_State::Normal),
 	m_ShowCursorCount(0),
 	m_GlobalCBuffer(nullptr),
-	m_GlobalAccTime(0.f)
+	m_GlobalAccTime(0.f),
+	m_EditMode(false)
 {
 #if defined(DEBUG) || defined(_DEBUG)
 #define _CRTDBG_MAP_ALLOC
@@ -60,7 +61,10 @@ CEngine::~CEngine()
 
 	CResourceManager::DestroyInst();
 
-	CIMGUIManager::DestroyInst();
+	if (m_EditMode)
+	{
+		CIMGUIManager::DestroyInst();
+	}
 
 	CDevice::DestroyInst();
 
@@ -116,8 +120,11 @@ bool CEngine::Init(HINSTANCE hInst, HWND hWnd,
 	if (!CInput::GetInst()->Init(m_hInst, m_hWnd))
 		return false;
 
-	if (!CIMGUIManager::GetInst()->Init(m_hWnd))
-		return false;
+	if (m_EditMode)
+	{
+		if (!CIMGUIManager::GetInst()->Init(m_hWnd))
+			return false;
+	}
 
 
 	if (!CRenderManager::GetInst()->Init())
@@ -215,7 +222,10 @@ void CEngine::Logic()
 
 	m_GlobalCBuffer->UpdateCBuffer();
 
-	CIMGUIManager::GetInst()->Update(DeltaTime);
+	if (m_EditMode)
+	{
+		CIMGUIManager::GetInst()->Update(DeltaTime);
+	}
 
 	CResourceManager::GetInst()->Update();
 
@@ -298,7 +308,10 @@ bool CEngine::Render(float DeltaTime)
 	Mesh->Render();*/
 	CRenderManager::GetInst()->Render();
 
-	CIMGUIManager::GetInst()->Render();
+	if (m_EditMode)
+	{
+		CIMGUIManager::GetInst()->Render();
+	}
 
 
 	CDevice::GetInst()->Flip();

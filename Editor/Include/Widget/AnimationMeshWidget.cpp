@@ -23,7 +23,7 @@
 #include "IMGUIDummy.h"
 #include "IMGUITree.h"
 // Components
-#include "Component/StaticMeshComponent.h"
+#include "Component/AnimationMeshComponent.h"
 #include "Component/AnimationMeshComponent.h"
 #include "Engine.h"
 #include "PathManager.h"
@@ -60,11 +60,39 @@ bool CAnimationMeshWidget::Init()
 
     // 최상위 트리
     CIMGUITree* m_RootTree = AddWidget<CIMGUITree>("Animation Variables");
-
     m_CurrentAnimSequence = m_RootTree->AddWidget<CIMGUITextInput>("Current Sqc", 90.f, 30.f);
 
     // Load & Save
     m_LoadAnimInstanceBtn = m_RootTree->AddWidget<CIMGUIButton>("Load Inst", 90.f, 20.f);
+
+    // Anim Table
+	m_AnimInfoTable = m_RootTree->AddWidget<CIMGUITableElemList>("TestTable", 200.f, 150.f);
+
+	m_MaterialSlotCombo = m_RootTree->AddWidget<CIMGUIComboBox>("Material Slot", 200.f);
+	m_BaseColorEdit = m_RootTree->AddWidget<CIMGUIColor3>("BaseColor", 200.f);
+	m_AmbientColorEdit = m_RootTree->AddWidget<CIMGUIColor3>("Ambient", 200.f);
+	m_SpecularColorEdit = m_RootTree->AddWidget<CIMGUIColor3>("Specluar", 200.f);
+	m_SpecluarPowerEdit = m_RootTree->AddWidget<CIMGUIInputFloat>("Specluar Power", 200.f);
+	m_EmissiveColorEdit = m_RootTree->AddWidget<CIMGUIColor3>("Emissive", 200.f);
+	m_TransparencyEdit = m_RootTree->AddWidget<CIMGUICheckBox>("Enable Transparency", 200.f);
+	m_OpacityEdit = m_RootTree->AddWidget<CIMGUISliderFloat>("Opacity", 200.f);
+	
+	AddWidget<CIMGUISeperator>("Sep");
+
+	// Initial Setting
+	m_TransparencyEdit->AddCheckInfo("Transparency");
+	m_OpacityEdit->SetMin(0.f);
+	m_OpacityEdit->SetMax(1.f);
+
+	// CallBack
+	m_MaterialSlotCombo->SetSelectCallback(this, &CAnimationMeshWidget::OnSelectMaterialSlotCombo);
+	m_BaseColorEdit->SetCallBack(this, &CAnimationMeshWidget::OnEditBaseColor);
+	m_AmbientColorEdit->SetCallBack(this, &CAnimationMeshWidget::OnEditAmbientColor);
+	m_SpecularColorEdit->SetCallBack(this, &CAnimationMeshWidget::OnEditSpecluarColor);
+	m_EmissiveColorEdit->SetCallBack(this, &CAnimationMeshWidget::OnEditEmissiveColor);
+	m_SpecluarPowerEdit->SetCallBack(this, &CAnimationMeshWidget::OnEditSpecluarPower);
+	m_TransparencyEdit->SetCallBackIdx(this, &CAnimationMeshWidget::OnCheckTransparency);
+	m_OpacityEdit->SetCallBack(this, &CAnimationMeshWidget::OnEditOpacity);
 	m_LoadAnimInstanceBtn->SetClickCallback<CAnimationMeshWidget>(this, &CAnimationMeshWidget::OnLoadAnimationInstance);
 
     // CIMGUISameLine* Line = m_RootTree->AddWidget<CIMGUISameLine>("Line");
@@ -81,8 +109,6 @@ bool CAnimationMeshWidget::Init()
     // m_NewNameInput = m_RootTree->AddWidget<CIMGUITextInput>("Edit Key Name", 80.f, 30.f);
 
 
-    // Anim Table
-	m_AnimInfoTable = m_RootTree->AddWidget<CIMGUITableElemList>("TestTable", 200.f, 150.f);
 
 	return true;
 }
@@ -100,6 +126,13 @@ void CAnimationMeshWidget::SetSceneComponent(CSceneComponent* Com)
 
 		SetAnimationRelatedInfoToWidget(m_Animation);
 	}
+
+	CAnimationMeshComponent* MeshCom = (CAnimationMeshComponent*)m_Component.Get();
+
+	if (MeshCom->GetMesh())
+	{
+		RefreshMeshWidget(MeshCom->GetMesh());
+	}
 }
 
 void CAnimationMeshWidget::OnClickLoadMesh()
@@ -108,34 +141,125 @@ void CAnimationMeshWidget::OnClickLoadMesh()
 
 void CAnimationMeshWidget::OnSelectMaterialSlotCombo(int Idx, const char* Label)
 {
+	CAnimationMeshComponent* MeshCom = (CAnimationMeshComponent*)m_Component.Get();
+
+	if (MeshCom->GetMesh())
+	{
+		CMaterial* Mat = MeshCom->GetMaterial(Idx);
+
+		m_BaseColorEdit->SetRGB(Mat->GetBaseColor().x, Mat->GetBaseColor().y, Mat->GetBaseColor().z);
+		m_AmbientColorEdit->SetRGB(Mat->GetBaseColor().x, Mat->GetBaseColor().y, Mat->GetBaseColor().z);
+		m_SpecularColorEdit->SetRGB(Mat->GetBaseColor().x, Mat->GetBaseColor().y, Mat->GetBaseColor().z);
+		m_EmissiveColorEdit->SetRGB(Mat->GetBaseColor().x, Mat->GetBaseColor().y, Mat->GetBaseColor().z);
+		m_SpecluarPowerEdit->SetVal(Mat->GetSpecularPower());
+		m_TransparencyEdit->SetCheck(0, Mat->IsTransparent());
+		m_OpacityEdit->SetValue(Mat->GetOpacity());
+	}
 }
 
 void CAnimationMeshWidget::OnEditBaseColor(const Vector3& Color)
 {
+	if (m_MaterialSlotCombo->GetSelectIndex() == -1)
+	{ 
+		return;
+	}
+
+	CAnimationMeshComponent* MeshCom = (CAnimationMeshComponent*)m_Component.Get();
+
+	if (MeshCom->GetMesh())
+	{
+		MeshCom->SetBaseColor(Vector4(Color.x, Color.y, Color.z, 1.f), m_MaterialSlotCombo->GetSelectIndex());
+	}
 }
 
 void CAnimationMeshWidget::OnEditAmbientColor(const Vector3& Color)
 {
+	if (m_MaterialSlotCombo->GetSelectIndex() == -1)
+	{
+		return;
+	}
+
+	CAnimationMeshComponent* MeshCom = (CAnimationMeshComponent*)m_Component.Get();
+
+	if (MeshCom->GetMesh())
+	{
+		MeshCom->SetAmbientColor(Vector4(Color.x, Color.y, Color.z, 1.f), m_MaterialSlotCombo->GetSelectIndex());
+	}
 }
 
 void CAnimationMeshWidget::OnEditSpecluarColor(const Vector3& Color)
 {
+	if (m_MaterialSlotCombo->GetSelectIndex() == -1)
+	{
+		return;
+	}
+
+	CAnimationMeshComponent* MeshCom = (CAnimationMeshComponent*)m_Component.Get();
+
+	if (MeshCom->GetMesh())
+	{
+		MeshCom->SetSpecularColor(Vector4(Color.x, Color.y, Color.z, 1.f), m_MaterialSlotCombo->GetSelectIndex());
+	}
 }
 
 void CAnimationMeshWidget::OnEditSpecluarPower(float Power)
 {
+	if (m_MaterialSlotCombo->GetSelectIndex() == -1)
+	{
+		return;
+	}
+
+	CAnimationMeshComponent* MeshCom = (CAnimationMeshComponent*)m_Component.Get();
+
+	if (MeshCom->GetMesh())
+	{
+		MeshCom->SetSpecularPower(Power, m_MaterialSlotCombo->GetSelectIndex());
+	}
 }
 
 void CAnimationMeshWidget::OnEditEmissiveColor(const Vector3& Color)
 {
+	if (m_MaterialSlotCombo->GetSelectIndex() == -1)
+	{
+		return;
+	}
+
+	CAnimationMeshComponent* MeshCom = (CAnimationMeshComponent*)m_Component.Get();
+
+	if (MeshCom->GetMesh())
+	{
+		MeshCom->SetEmissiveColor(Vector4(Color.x, Color.y, Color.z, 1.f), m_MaterialSlotCombo->GetSelectIndex());
+	}
 }
 
 void CAnimationMeshWidget::OnCheckTransparency(int Idx, bool Check)
 {
+	if (m_MaterialSlotCombo->GetSelectIndex() == -1)
+	{
+		return;
+	}
+
+	CAnimationMeshComponent* MeshCom = (CAnimationMeshComponent*)m_Component.Get();
+
+	if (MeshCom->GetMesh())
+	{
+		MeshCom->SetTransparency(Check, Idx);
+	}
 }
 
 void CAnimationMeshWidget::OnEditOpacity(float Opacity)
 {
+	if (m_MaterialSlotCombo->GetSelectIndex() == -1)
+	{
+		return;
+	}
+
+	CAnimationMeshComponent* MeshCom = (CAnimationMeshComponent*)m_Component.Get();
+
+	if (MeshCom->GetMesh())
+	{
+		MeshCom->SetOpacity(Opacity, m_MaterialSlotCombo->GetSelectIndex());
+	}
 }
 
 void CAnimationMeshWidget::OnLoadAnimationInstance()
@@ -387,4 +511,24 @@ void CAnimationMeshWidget::ClearExistingAnimationSeqInfos()
 
 void CAnimationMeshWidget::RefreshMeshWidget(CMesh* Mesh)
 {
+	CAnimationMeshComponent* MeshCom = (CAnimationMeshComponent*)m_Component.Get();
+
+	std::string AutoName;
+
+	int MatSlotSize = MeshCom->GetMaterialSlotCount();
+	for (int i = 0; i < MatSlotSize; ++i)
+	{
+		// Material 이름이 없을 경우 자동으로 이름 지정
+		if (MeshCom->GetMaterial(i)->GetName().empty())
+		{
+			AutoName = "Material" + std::to_string(i);
+			m_MaterialSlotCombo->AddItem(AutoName);
+			AutoName.clear();
+		}
+		else
+		{
+			m_MaterialSlotCombo->AddItem(MeshCom->GetMaterial(i)->GetName());
+		}
+	}
+
 }

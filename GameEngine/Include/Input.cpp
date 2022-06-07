@@ -431,7 +431,10 @@ void CInput::UpdateKeyInfo(float DeltaTime)
 	{
 		unsigned char Key = iter->second->State.Key;
 
-		bool b = ImGui::GetIO().WantCaptureMouse;
+		if (CEngine::GetInst()->GetEditMode())
+		{
+			bool b = ImGui::GetIO().WantCaptureMouse;
+		}
 
 		if (m_vecKeyState[Key].State[KeyState_Down] &&
 			iter->second->Ctrl == m_Ctrl &&
@@ -440,8 +443,15 @@ void CInput::UpdateKeyInfo(float DeltaTime)
 		{
 			if (iter->second->Callback[KeyState_Down])
 			{
-				if (!ImGui::GetIO().WantCaptureMouse)
+				if (CEngine::GetInst()->GetEditMode())
+				{
+					if (!ImGui::GetIO().WantCaptureMouse)
+						iter->second->Callback[KeyState_Down](DeltaTime);
+				}
+				else
+				{
 					iter->second->Callback[KeyState_Down](DeltaTime);
+				}
 			}
 		}
 
@@ -453,8 +463,15 @@ void CInput::UpdateKeyInfo(float DeltaTime)
 		{
 			if (iter->second->Callback[KeyState_Push])
 			{
-				if (!ImGui::GetIO().WantCaptureMouse)
+				if (CEngine::GetInst()->GetEditMode())
+				{
+					if (!ImGui::GetIO().WantCaptureMouse)
+						iter->second->Callback[KeyState_Push](DeltaTime);
+				}
+				else
+				{
 					iter->second->Callback[KeyState_Push](DeltaTime);
+				}
 			}
 		}
 
@@ -464,10 +481,17 @@ void CInput::UpdateKeyInfo(float DeltaTime)
 			iter->second->Alt == m_Alt &&
 			iter->second->Shift == m_Shift)
 		{
-			if (iter->second->Callback[KeyState_Up])
+			if (CEngine::GetInst()->GetEditMode())
 			{
-				if (!ImGui::GetIO().WantCaptureMouse)
-					iter->second->Callback[KeyState_Up](DeltaTime);
+				if (iter->second->Callback[KeyState_Up])
+				{
+					if (!ImGui::GetIO().WantCaptureMouse)
+						iter->second->Callback[KeyState_Up](DeltaTime);
+				}
+			}
+			else 
+			{
+				iter->second->Callback[KeyState_Up](DeltaTime);
 			}
 		}
 	}

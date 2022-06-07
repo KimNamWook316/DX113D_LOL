@@ -185,3 +185,8 @@ void CObjectHierarchyWindow::OnDragDropDest(CIMGUITree* DestTree, const std::str
 	}
 }
 
+CGameObject* CObjectHierarchyWindow::GetSelectGameObject()
+{
+	return m_SelectObject;
+}
+

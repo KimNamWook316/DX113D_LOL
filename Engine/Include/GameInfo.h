@@ -50,8 +50,8 @@
 
 #pragma comment(lib, "fmod64_vc.lib")
 
-#define SHADOWMAP_WIDTH		2048.f
-#define SHADOWMAP_HEIGHT	2048.f
+#define SHADOWMAP_WIDTH		2560.f
+#define SHADOWMAP_HEIGHT	1440.f
 
 #define	ROOT_PATH		"Root"
 #define	SHADER_PATH		"Shader"
@@ -64,6 +64,7 @@
 #define	PARTICLE_PATH		"Particle"
 #define	EXCEL_PATH		"Excel"
 #define	OBJECT_PATH		"Object"
+#define	COMPONENT_PATH	"Component"
 
 // Inclue Path
 #define	RESOURCE_ROOT_PATH		"IncludeRoot"

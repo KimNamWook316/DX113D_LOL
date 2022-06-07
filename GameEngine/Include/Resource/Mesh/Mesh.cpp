@@ -993,6 +993,30 @@ bool CMesh::ConvertFBXReleaseSequence(CFBXLoader* Loader, const char* FullPath)
 	int PathLength = (int)strlen(MeshFullPath);
 	memcpy(&MeshFullPath[PathLength - 3], "msh", 3);
 
+	// 로드 시작 시점에서 메쉬 타입을 알 수 없기 때문에 여기서 결정해준다.
+	if (!AnimationEnable)
+	{
+		m_MeshType = Mesh_Type::Static;
+	}
+
+	// 파일 이름만 필터링해 MeshName으로 저장
+	char BufMeshName[128] = {};
+
+	int EndIdx = PathLength - 5;
+	int StartIdx = 0;
+
+	for (int i = EndIdx; i >= 0; --i)
+	{
+		if (MeshFullPath[i] == '\\' || MeshFullPath[i] == '\/')
+		{
+			StartIdx = i + 1; 
+			break;
+		}
+	}
+
+	memcpy(BufMeshName, &MeshFullPath[StartIdx], sizeof(char)* (EndIdx - StartIdx + 1));
+	m_Name = BufMeshName;
+
 	SaveMeshFile(MeshFullPath);
 
 	return true;

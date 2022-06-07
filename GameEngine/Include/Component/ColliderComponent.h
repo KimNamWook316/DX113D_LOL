@@ -38,12 +38,12 @@ public:
         return m_ColliderType;
     }
 
-    void SetOffset(const Vector3& Offset)
+    virtual void SetOffset(const Vector3& Offset)
     {
         m_Offset = Offset;
     }
 
-    void SetOffset(float x, float y, float z)
+    virtual void SetOffset(float x, float y, float z)
     {
         m_Offset = Vector3(x, y, z);
     }

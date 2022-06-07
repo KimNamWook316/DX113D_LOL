@@ -551,6 +551,15 @@ void CRenderManager::Render()
 
 void CRenderManager::RenderShadowMap()
 {
+	// 뷰포트 Shadowmap Textre와 일치하도록
+	D3D11_VIEWPORT VP = {};
+
+	VP.Width = SHADOWMAP_WIDTH;
+	VP.Height = SHADOWMAP_HEIGHT;
+	VP.MaxDepth = 1.f;
+
+	CDevice::GetInst()->GetContext()->RSSetViewports(1, &VP);
+
 	m_ShadowMapTarget->ClearTarget();
 	m_ShadowMapTarget->SetTarget();
 	
@@ -570,6 +579,14 @@ void CRenderManager::RenderShadowMap()
 	RenderDefaultInstancingShadow();
 
 	m_ShadowMapTarget->ResetTarget();
+
+	D3D11_VIEWPORT PrevVP = {};
+
+	PrevVP.Width = (float)CDevice::GetInst()->GetResolution().Width;
+	PrevVP.Height = (float)CDevice::GetInst()->GetResolution().Height;
+	PrevVP.MaxDepth = 1.f;
+
+	CDevice::GetInst()->GetContext()->RSSetViewports(1, &PrevVP);
 }
 
 void CRenderManager::RenderGBuffer()
@@ -1031,6 +1048,7 @@ void CRenderManager::RenderDefaultInstancingInfo()
 				Instancing3DInfo	ShadowInfo = {};
 
 				(*iter)->SetInstancingShadowInfo(&ShadowInfo);
+				Material->GetCBuffer()->SetInstancingInfo(&ShadowInfo);
 
 				vecShadowInfo.push_back(ShadowInfo);
 			}

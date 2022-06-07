@@ -65,5 +65,14 @@ public:
 
 	void OnSetSelectNode(CIMGUITree* Tree);
 	void OnDeleteComponent();
+
+	// Component Save&Load
+	void OnSaveComponent();
+	void OnLoadComponent();
+
+
+private:
+	class CComponent* FindSelectComponent();
+	void OnAddComponent(class CGameObject* Object, class CSceneComponent* Component);
 };
 

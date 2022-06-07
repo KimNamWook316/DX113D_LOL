@@ -11,6 +11,9 @@
 #include "GameObject/GameObject.h"
 #include "Scene/Scene.h"
 #include "Scene/SceneManager.h"
+#include "Engine.h"
+#include "PathManager.h"
+#include "InspectorWindow.h"
 
 CObjectComponentWindow::CObjectComponentWindow()	:
 	m_ComponentCreatePopUpButton(nullptr),
@@ -125,6 +128,124 @@ void CObjectComponentWindow::OnUpdateObjectComponetWindow(CIMGUITree* SelectObje
 	for (size_t i = 0; i < Count; ++i)
 	{
 		m_ComponentListBox->AddItem(vecObjComp[i]->GetName());
+	}
+}
+
+void CObjectComponentWindow::OnSaveComponent()
+{
+	if (m_SelectIndex == -1)
+	{
+		return;
+	}
+
+	CObjectHierarchyWindow* Window = (CObjectHierarchyWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(OBJECT_HIERARCHY);
+
+	if (!Window)
+	{
+		return;
+	}
+
+	CGameObject* SelectObject = Window->GetSelectGameObject();
+
+	if (!SelectObject)
+	{
+		return;
+	}
+
+	std::string Name = m_ComponentListBox->GetItem(m_SelectIndex);
+	CComponent* SaveComponent = SelectObject->FindComponent(Name);
+
+	if (!SaveComponent)
+	{
+		MessageBox(nullptr, TEXT("선택된 컴포넌트 없음"), TEXT("Error"), MB_OK);
+		return;
+	}
+
+	TCHAR   FilePath[MAX_PATH] = {};
+
+	OPENFILENAME    OpenFile = {};
+
+	OpenFile.lStructSize = sizeof(OPENFILENAME);
+	OpenFile.hwndOwner = CEngine::GetInst()->GetWindowHandle();
+	OpenFile.lpstrFilter = TEXT("All File\0*.*\0");
+	OpenFile.lpstrFile = FilePath;
+	OpenFile.nMaxFile = MAX_PATH;
+	OpenFile.lpstrInitialDir = CPathManager::GetInst()->FindPath(COMPONENT_PATH)->Path;
+
+	if (GetSaveFileName(&OpenFile) != 0)
+	{
+		char FullPath[MAX_PATH] = {};
+
+		int Length = WideCharToMultiByte(CP_ACP, 0, FilePath, -1, 0, 0, 0, 0);
+		WideCharToMultiByte(CP_ACP, 0, FilePath, -1, FullPath, Length, 0, 0);
+
+		bool Ret = SelectObject->SaveOnly(SaveComponent, FullPath);
+
+		if (!Ret)
+		{
+			MessageBox(nullptr, TEXT("컴포넌트 저장 실패"), TEXT("Error"), MB_OK);
+			return;
+		}
+
+		MessageBox(nullptr, TEXT("컴포넌트 저장 성공"), TEXT("Success"), MB_OK);
+	}
+}
+
+void CObjectComponentWindow::OnLoadComponent()
+{
+	CObjectHierarchyWindow* Window = (CObjectHierarchyWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(OBJECT_HIERARCHY);
+
+	if (!Window)
+	{
+		return;
+	}
+
+	CGameObject* SelectObject = Window->GetSelectGameObject();
+
+	if (!SelectObject)
+	{
+		return;
+	}
+
+	TCHAR   FilePath[MAX_PATH] = {};
+
+	OPENFILENAME    OpenFile = {};
+
+	OpenFile.lStructSize = sizeof(OPENFILENAME);
+	OpenFile.hwndOwner = CEngine::GetInst()->GetWindowHandle();
+	OpenFile.lpstrFilter = TEXT("All File\0*.*\0");
+	OpenFile.lpstrFile = FilePath;
+	OpenFile.nMaxFile = MAX_PATH;
+	OpenFile.lpstrInitialDir = CPathManager::GetInst()->FindPath(COMPONENT_PATH)->Path;
+
+	if (GetOpenFileName(&OpenFile) != 0)
+	{
+		char FullPath[MAX_PATH] = {};
+
+		int Length = WideCharToMultiByte(CP_ACP, 0, FilePath, -1, 0, 0, 0, 0);
+		WideCharToMultiByte(CP_ACP, 0, FilePath, -1, FullPath, Length, 0, 0);
+
+		CComponent* LoadComp = nullptr;
+		bool Ret = SelectObject->LoadOnly(FullPath, LoadComp);
+
+		if (!Ret)
+		{
+			MessageBox(nullptr, TEXT("컴포넌트 로드 실패"), TEXT("Error"), MB_OK);
+			return;
+		}
+
+		// List Update
+		m_ComponentListBox->AddItem(LoadComp->GetName());
+
+		// Insepctor Update
+		CInspectorWindow* Inspector = (CInspectorWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(INSPECTOR);
+
+		if (Inspector)
+		{
+			Inspector->OnCreateObjectComponent((CObjectComponent*)LoadComp);
+		}
+
+		MessageBox(nullptr, TEXT("컴포넌트 로드 성공"), TEXT("Success"), MB_OK);
 	}
 }
 
