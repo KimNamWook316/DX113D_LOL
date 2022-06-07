@@ -1048,7 +1048,7 @@ void CAnimationMeshComponent::ChangeInstancingLayer()
 	bool AddOnNewLayer = false;
 	bool DeleteOnOldLayer = false;
 
-	for (; iter != iterEnd; ++iter)
+	for (; iter != iterEnd;)
 	{
 		if ((*iter)->Mesh == m_Mesh)
 		{
@@ -1137,6 +1137,8 @@ void CAnimationMeshComponent::ChangeInstancingLayer()
 		{
 			break;
 		}
+
+		++iter;
 	}
 
 	// 이 컴포넌트가 속한 레이어에 처음 추가되는 경우
