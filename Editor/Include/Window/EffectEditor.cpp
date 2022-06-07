@@ -220,94 +220,112 @@ void CEffectEditor::OnLoadParticleObjectButton()
 
 void CEffectEditor::OnSpawnTimeMaxEdit(float Num)
 {
-    // m_ParticleComponent->SetSpawnTime(Num);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetParticle()->SetSpawnTime(m_SpawnTimeMaxEdit->GetVal());
 }
 
 void CEffectEditor::OnStartMinEdit(const Vector3& Pos)
 {
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetParticle()->SetStartMin(m_StartMinEdit->GetValue());
     // m_ParticleComponent->GetParticle()->SetStartMin(Pos);
 }
 
 void CEffectEditor::OnStartMaxEdit(const Vector3& Pos)
 {
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetParticle()->SetStartMax(m_StartMaxEdit->GetValue());
     // m_ParticleComponent->GetParticle()->SetStartMax(Pos);
 }
 
 void CEffectEditor::OnSpawnCountMaxEdit(int Num)
 {
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetParticle()->SetSpawnCountMax(m_SpawnCountMaxEdit->GetVal());
     // m_ParticleComponent->GetCBuffer()->SetSpawnCountMax(Num);
 }
 
 void CEffectEditor::OnScaleMinEdit(const Vector3& Scale)
 {
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetParticle()->SetScaleMin(m_ScaleMinEdit->GetValue());
     // m_ParticleComponent->GetCBuffer()->SetScaleMin(Scale);
 }
 
 void CEffectEditor::OnScaleMaxEdit(const Vector3& Scale)
 {
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetParticle()->SetScaleMax(m_ScaleMaxEdit->GetValue());
     // m_ParticleComponent->GetCBuffer()->SetScaleMax(Scale);
 }
 
 void CEffectEditor::OnLifeTimeMinEdit(float Num)
 {
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetParticle()->SetLifeTimeMin(m_LifeTimeMinEdit->GetVal());
     // m_ParticleComponent->GetCBuffer()->SetLifeTimeMin(Num);
 }
 
 void CEffectEditor::OnLifeTimeMaxEdit(float Num)
 {
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetParticle()->SetLifeTimeMax(m_LifeTimeMaxEdit->GetVal());
     // m_ParticleComponent->GetCBuffer()->SetLifeTimeMax(Num);
 }
 
 void CEffectEditor::OnSpeedMinEdit(float Num)
 {
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetParticle()->SetSpeedMin(m_SpeedMinEdit->GetVal());
     // m_ParticleComponent->GetCBuffer()->SetSpeedMin(Num);
 }
 
 void CEffectEditor::OnSpeedMaxEdit(float Num)
 {
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetParticle()->SetSpeedMax(m_SpeedMaxEdit->GetVal());
     // m_ParticleComponent->GetCBuffer()->SetSpeedMax(Num);
 }
 
 void CEffectEditor::OnColorMinEdit(const Vector4& Color)
 {
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetParticle()->SetColorMin(m_ColorMinEdit->GetRGBA());
     // m_ParticleComponent->GetCBuffer()->SetColorMin(Color);
 }
 
 void CEffectEditor::OnColorMaxEdit(const Vector4& Color)
 {
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetParticle()->SetColorMax(m_ColorMaxEdit->GetRGBA());
     // m_ParticleComponent->GetCBuffer()->SetColorMax(Color);
 }
 
 
 void CEffectEditor::OnIsMoveEdit(const char*, bool Enable)
 {
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetParticle()->SetMove(m_IsMoveEdit->GetCheck(0));
     // m_ParticleComponent->GetCBuffer()->SetMove(Enable);
 }
 
 void CEffectEditor::OnIsGravityEdit(const char*, bool Enable)
 {
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetParticle()->SetGravity(m_IsGravityEdit->GetCheck(0));
     // m_ParticleComponent->GetCBuffer()->SetGravity(Enable);
 }
 
 void CEffectEditor::OnIsRandomMoveEdit(const char*, bool Enable)
 {
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetParticle()->SetApplyRandom(m_IsRandomMoveEdit->GetCheck(0));
     // m_ParticleComponent->GetCBuffer()->SetApplyRandom(Enable);
 }
 
-void CEffectEditor::OnIsCameraRotateEdit(const char*, bool)
+void CEffectEditor::OnIsCameraRotateEdit(const char*, bool Enable)
 {
+    m_ParticleObject->SetCameraRotate(Enable);
 }
 
 void CEffectEditor::OnSetCameraRotateSpeed(float Speed)
 {
+    m_ParticleObject->SetCameraRotateSpeed(Speed);
 }
 
-void CEffectEditor::OnIsCameraZoomEdit(const char*, bool)
+void CEffectEditor::OnIsCameraZoomEdit(const char*, bool Enable)
 {
+    m_ParticleObject->SetCameraZoom(Enable);
 }
 
 void CEffectEditor::OnSetCameraZoomSpeed(float Speed)
 {
+    m_ParticleObject->SetCameraZoomSpeed(Speed);
 }
 
 void CEffectEditor::OnMoveDirEdit(const Vector3& Dir)
