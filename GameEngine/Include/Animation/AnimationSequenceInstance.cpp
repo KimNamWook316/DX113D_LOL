@@ -78,6 +78,7 @@ CAnimationSequenceInstance::~CAnimationSequenceInstance()
 	SAFE_DELETE(m_OutputBuffer);
 	SAFE_DELETE(m_BoneBuffer);
 	SAFE_DELETE(m_AnimationUpdateCBuffer);
+	// SAFE_DELETE(m_InstancingBoneBuffer);
 
 	auto	iter = m_mapAnimation.begin();
 	auto	iterEnd = m_mapAnimation.end();
@@ -365,7 +366,7 @@ void CAnimationSequenceInstance::ChangeAnimation(const std::string& Name)
 	}
 
 	m_ChangeAnimation = FindAnimation(Name);
-	m_ChangeAnimation->m_Time = 0.f;
+ 	m_ChangeAnimation->m_Time = 0.f;
 }
 
 bool CAnimationSequenceInstance::CheckCurrentAnimation(const std::string& Name)

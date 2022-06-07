@@ -40,8 +40,6 @@ bool CPlayer::Init()
 	m_Mesh->SetMesh("PlayerMesh");
 	m_Mesh->SetReceiveDecal(false);
 
-
-
 	m_Mesh->CreateAnimationInstance<CPlayerAnimation>();
 
 	m_Animation = (CPlayerAnimation*)m_Mesh->GetAnimationInstance();
@@ -53,11 +51,9 @@ bool CPlayer::Init()
 	m_Arm->SetTargetDistance(10.f);
 
 
-
 	m_Weapon = m_Scene->CreateGameObject<CWeapon>("Weapon");
 
 	m_Mesh->AddChild(m_Weapon, "Weapon");
-
 
 
 	CInput::GetInst()->SetKeyCallback<CPlayer>("MoveFront", KeyState_Push,

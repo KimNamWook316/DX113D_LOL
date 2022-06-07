@@ -467,6 +467,7 @@ void CRenderManager::Render()
 	RenderAnimationEditor();
 
 	// Particle Effect Editor 제작용 Render Target
+	RenderParticleEffectEditor();
 
 	m_vecGBuffer[2]->SetShader(10, (int)Buffer_Shader_Type::Pixel, 0);
 
@@ -904,7 +905,7 @@ void CRenderManager::RenderAnimationEditor()
 
 void CRenderManager::RenderParticleEffectEditor()
 {
-	int ParticleEffectEditorLayerIdx = GetRenderLayerIndex("ParticleEffectRenderTarget");
+	int ParticleEffectEditorLayerIdx = GetRenderLayerIndex("ParticleEditorLayer");
 
 	// 만~약에 해당 Layer 의 Idx 가 정해져 있지 않다면
 	if (ParticleEffectEditorLayerIdx == -1)

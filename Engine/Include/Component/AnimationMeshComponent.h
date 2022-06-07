@@ -190,11 +190,11 @@ public:
 
         m_Animation = Anim;
 
-        if (m_Skeleton)
-            m_Animation->SetSkeleton(m_Skeleton);
-
-        if (m_Mesh)
-            m_Animation->SetInstancingBoneBuffer(m_Mesh->GetBoneBuffer());
+       if (m_Skeleton)
+           m_Animation->SetSkeleton(m_Skeleton);
+       
+       if (m_Mesh)
+           m_Animation->SetInstancingBoneBuffer(m_Mesh->GetBoneBuffer());
 
         return Anim;
     }

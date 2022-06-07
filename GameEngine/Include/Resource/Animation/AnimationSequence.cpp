@@ -482,6 +482,103 @@ const char* CAnimationSequence::GetSequenceFileNameMultibyte()
 	return FileNameFullName;
 }
 
+void CAnimationSequence::DummyLoad(FILE* pFile)
+{
+	CRef::Load(pFile);
+
+	// Full Path 정보 저장
+	size_t PathLength;
+	fread(&PathLength, sizeof(size_t), 1, pFile);
+	fread(m_FullPath, sizeof(char), PathLength, pFile);
+
+	// FileName 정보 저장
+	size_t FileNameLength;
+	fread(&FileNameLength, sizeof(size_t), 1, pFile);
+	fread(m_FileName, sizeof(char), FileNameLength, pFile);
+
+	size_t	iLength = 0;
+	fread(&iLength, sizeof(size_t), 1, pFile);
+	char	strName[256] = {};
+	fread(strName, sizeof(char), iLength, pFile);
+
+	SetName(strName);
+
+	bool	bLoop = true;
+	fread(&bLoop, sizeof(bool), 1, pFile);
+	m_Loop = bLoop;
+	fread(&m_StartTime, sizeof(float), 1, pFile);
+	fread(&m_EndTime, sizeof(float), 1, pFile);
+	fread(&m_TimeLength, sizeof(float), 1, pFile);
+	fread(&m_FrameTime, sizeof(float), 1, pFile);
+	fread(&m_PlayTime, sizeof(float), 1, pFile);
+	fread(&m_PlayScale, sizeof(float), 1, pFile);
+	fread(&m_StartFrame, sizeof(int), 1, pFile);
+	fread(&m_EndFrame, sizeof(int), 1, pFile);
+	fread(&m_FrameLength, sizeof(int), 1, pFile);
+	fread(&m_FrameMode, sizeof(int), 1, pFile);
+	fread(&m_ChangeFrame, sizeof(int), 1, pFile);
+
+	size_t	iCount = 0;
+
+	fread(&iCount, sizeof(size_t), 1, pFile);
+
+	// std::vector<AnimationFrameTrans>	m_vecFrameTrans;
+	m_vecFrameTrans.resize(iCount * m_FrameLength);
+
+	// 기존의 m_vecKeyFrame 은 모두 지워준다.
+	size_t VecKeyFrameSize = m_vecKeyFrame.size();
+
+	for (size_t i = 0; i < VecKeyFrameSize; ++i)
+	{
+		SAFE_DELETE(m_vecKeyFrame[i]);
+	}
+
+	for (size_t i = 0; i < iCount; ++i)
+	{
+		BoneKeyFrame* pBoneKeyFrame = new BoneKeyFrame;
+		m_vecKeyFrame.push_back(pBoneKeyFrame);
+
+		fread(&pBoneKeyFrame->iBoneIndex, sizeof(int), 1,
+			pFile);
+
+		size_t	iBoneFrameCount = 0;
+
+		fread(&iBoneFrameCount, sizeof(size_t), 1, pFile);
+
+		for (size_t j = 0; j < iBoneFrameCount; ++j)
+		{
+			KeyFrame* pKeyFrame = new KeyFrame;
+			pBoneKeyFrame->vecKeyFrame.push_back(pKeyFrame);
+
+			fread(&pKeyFrame->dTime, sizeof(double), 1, pFile);
+			fread(&pKeyFrame->vPos, sizeof(Vector3), 1, pFile);
+			fread(&pKeyFrame->vScale, sizeof(Vector3), 1, pFile);
+			fread(&pKeyFrame->vRot, sizeof(Vector4), 1, pFile);
+
+			if (j < m_FrameLength)
+			{
+				AnimationFrameTrans	tFrame = {};
+				tFrame.vScale = Vector4(pKeyFrame->vScale.x, pKeyFrame->vScale.y,
+					pKeyFrame->vScale.z, 1.f);
+				tFrame.vTranslate = Vector4(pKeyFrame->vPos.x, pKeyFrame->vPos.y,
+					pKeyFrame->vPos.z, 1.f);
+				tFrame.qRot = pKeyFrame->vRot;
+
+				m_vecFrameTrans[i * m_FrameLength + j] = tFrame;
+			}
+		}
+	}
+
+	for (size_t i = 0; i < m_vecKeyFrame.size(); ++i)
+	{
+		--m_vecKeyFrame[i]->iRefCount;
+
+		SAFE_DELETE(m_vecKeyFrame[i]);
+	}
+
+	m_vecKeyFrame.clear();
+}
+
 void CAnimationSequence::SetPlayScale(float fScale)
 {
 	m_PlayScale = fScale;

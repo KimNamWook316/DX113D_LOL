@@ -63,6 +63,11 @@ void CSceneComponentHierarchyWindow::SetDragDest(CIMGUITree* DragDest)
 	m_DragDest = DragDest;
 }
 
+void CSceneComponentHierarchyWindow::ClearExistingHierarchy()
+{
+	m_Root->DeleteHierarchy();
+}
+
 bool CSceneComponentHierarchyWindow::Init()
 {
 	CIMGUIWindow::Init();

@@ -251,3 +251,24 @@ bool CSpriteComponent::Load(FILE* File)
 
 	return true;
 }
+
+void CSpriteComponent::RenderParticleEffectEditor()
+{
+	CSceneComponent::RenderParticleEffectEditor();
+
+	if (m_Animation)
+	{
+		CRenderManager::GetInst()->GetStandard2DCBuffer()->SetAnimation2DEnable(m_Animation->GetAnimationCount() > 0);
+		CRenderManager::GetInst()->GetStandard2DCBuffer()->UpdateCBuffer();
+
+		m_Animation->SetShader();
+	}
+
+	m_Material->EnableDecal(m_ReceiveDecal);
+
+	m_Material->Render();
+
+	m_Mesh->Render();
+
+	m_Material->Reset();
+}

@@ -29,7 +29,7 @@ bool CSkyObject::Init()
 
 	// FrontFace Culling 으로 안에서 밖으로 바라보는 시점에서도 Sky Mesh 출력을 수행하도록 한다.
 	// SkyDepth State에서는 최종 투영 변환된 z값의 출력 상한을 1과 같거나 작은 경우로 설정한다.
-	// Shader에서 이 메쉬의 z값을 무조건 1로 변경해줌
+	// Shader에서 이 메쉬의 z값을 무조건 1로 변경해줌.
 	Material->SetRenderState("FrontFaceCull");
 	Material->SetRenderState("SkyDepth");
 
