@@ -67,6 +67,7 @@ private :
     // class CStaticMeshComponent* m_BaseGroundComponent;
     // class CStaticMeshComponent* m_SkyComponent;
     class C3DParticleObject* m_ParticleObject;
+    class CGameObject* m_ParticleSampleObject;
     class CGameObject* m_BaseGroundObject;
     class CGameObject* m_SkyObject;
 public :

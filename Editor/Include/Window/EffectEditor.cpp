@@ -84,9 +84,31 @@ bool CEffectEditor::Init()
     m_IsRandomMoveEdit->AddCheckInfo("Random");
     m_IsRandomMoveEdit->SetCallBackLabel<CEffectEditor>(this, &CEffectEditor::OnIsRandomMoveEdit);
 
-    m_IsRotateEdit = Tree->AddWidget<CIMGUICheckBox>("Random", 80.f);
-    m_IsRotateEdit->AddCheckInfo("Random");
+    // Rotate
+    m_IsRotateEdit = Tree->AddWidget<CIMGUICheckBox>("Rotate", 80.f);
+    m_IsRotateEdit->AddCheckInfo("Rotate");
     m_IsRotateEdit->SetCallBackLabel<CEffectEditor>(this, &CEffectEditor::OnIsCameraRotateEdit);
+
+    Line = Tree->AddWidget<CIMGUISameLine>("Line");
+    Line->SetOffsetX(100.f);
+
+    m_RotateSpeedSliderBar = Tree->AddWidget<CIMGUISliderFloat>("Rotate Speed", 100.f, 30.f);
+    m_RotateSpeedSliderBar->SetCallBack<CEffectEditor>(this, &CEffectEditor::OnSetCameraRotateSpeed);
+    m_RotateSpeedSliderBar->SetMin(10.f);
+    m_RotateSpeedSliderBar->SetMax(90.f);
+
+    // Zoom
+    m_IsZoomEdit = Tree->AddWidget<CIMGUICheckBox>("Zoom", 80.f);
+    m_IsZoomEdit->AddCheckInfo("Zoom");
+    m_IsZoomEdit->SetCallBackLabel<CEffectEditor>(this, &CEffectEditor::OnIsCameraZoomEdit);
+
+    Line = Tree->AddWidget<CIMGUISameLine>("Line");
+    Line->SetOffsetX(100.f);
+
+    m_ZoomSpeedSliderBar = Tree->AddWidget<CIMGUISliderFloat>("Zoom Speed", 100.f, 30.f);
+    m_ZoomSpeedSliderBar->SetCallBack<CEffectEditor>(this, &CEffectEditor::OnSetCameraZoomSpeed);
+    m_ZoomSpeedSliderBar->SetMin(0.2f);
+    m_ZoomSpeedSliderBar->SetMax(1.0f);
 
     // ParticleEffectRenderTarget
     m_ParticleRenderTarget = AddWidget<CIMGUIImage>("Render Target", 500.f, 400.f);
@@ -185,6 +207,7 @@ bool CEffectEditor::Init()
     SetGameObjectReady();
 
     OnSetParticleMaterialSetting(m_ParticleObject->GetRootComponent());
+    // OnSetParticleMaterialSetting(m_ParticleSampleObject->GetRootComponent());
 
 	return true;
 }
@@ -315,6 +338,8 @@ void CEffectEditor::OnIsCameraRotateEdit(const char*, bool Enable)
 
 void CEffectEditor::OnSetCameraRotateSpeed(float Speed)
 {
+    m_RotateSpeedSliderBar->SetValue(Speed);
+
     m_ParticleObject->SetCameraRotateSpeed(Speed);
 }
 
@@ -325,6 +350,8 @@ void CEffectEditor::OnIsCameraZoomEdit(const char*, bool Enable)
 
 void CEffectEditor::OnSetCameraZoomSpeed(float Speed)
 {
+    m_ZoomSpeedSliderBar->SetValue(Speed);
+
     m_ParticleObject->SetCameraZoomSpeed(Speed);
 }
 
@@ -477,6 +504,7 @@ void CEffectEditor::OnReflectCurrentParticleSetting()
 {
     dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetParticle()->Set2D(false);
     dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetParticle()->SetSpawnCountMax(m_SpawnCountMaxEdit->GetVal());
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetParticle()->SetSpawnTime(m_SpawnTimeMaxEdit->GetVal());
     dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetParticle()->SetLifeTimeMin(m_LifeTimeMinEdit->GetVal());
     dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetParticle()->SetLifeTimeMax(m_LifeTimeMaxEdit->GetVal());
     dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetParticle()->SetScaleMin(m_ScaleMinEdit->GetValue());
@@ -506,7 +534,23 @@ void CEffectEditor::SetGameObjectReady()
     m_BaseGroundObject->CreateComponent<CSpriteComponent>("Simple Sprite");
     m_BaseGroundObject->GetRootComponent()->SetLayerName("ParticleEditorLayer");
     m_BaseGroundObject->SetWorldScale(100.f, 100.f, 1.f);
-    // m_BaseGroundObject->AddWorldRotationX(90.f);
+    m_BaseGroundObject->AddWorldRotationX(90.f);
 
     m_ParticleObject = CSceneManager::GetInst()->GetScene()->CreateGameObject<C3DParticleObject>("Particle Effect Base Ground");
+
+    // m_ParticleSampleObject = CSceneManager::GetInst()->GetScene()->CreateGameObject<CGameObject>("Particle Object");
+    // m_ParticleSampleObject->CreateComponent<CParticleComponent>("Particle Sprite");
+    // m_ParticleSampleObject->GetRootComponent()->SetLayerName("ParticleEditorLayer");
+    // 
+    // CCameraComponent* ParticleCamera = m_ParticleSampleObject->CreateComponent<CCameraComponent>("Particle Camera");
+    // m_ParticleSampleObject->GetRootComponent()->AddChild(ParticleCamera);
+    // 
+    // // Camera Setting
+    // CSceneManager::GetInst()->GetScene()->GetCameraManager()->SetParticleEditorCamera(ParticleCamera);
+    // 
+    // ParticleCamera->SetCameraType(Camera_Type::Camera3D);
+    // ParticleCamera->SetViewAngle(27.f);
+    // 
+    // ParticleCamera->AddRelativePos(0.f, 30.f, -100.f);
+    // ParticleCamera->SetRelativeRotationX(45.f); 
 }

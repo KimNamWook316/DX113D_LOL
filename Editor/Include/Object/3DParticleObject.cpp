@@ -6,10 +6,8 @@
 #include "Input.h"
 
 C3DParticleObject::C3DParticleObject() :
-    m_IsCameraRotate(false),
-    m_IsCameraZoom(false),
-    m_CameraRotateSpeed(30.f),
-    m_CameraZoomSpeed(0.5f)
+    m_IsCameraRotate(true),
+    m_IsCameraZoom(true)
 {
 }
 
@@ -26,68 +24,44 @@ bool C3DParticleObject::Init()
     if (!CGameObject::Init())
         return false;
 
-    // Root 
     m_ParticleComponent = CreateComponent<CParticleComponent>("Particle Sprite");
     m_ParticleComponent->SetLayerName("ParticleEditorLayer");
 
-    // m_ParticleComponent->SetWorldScale(20.f, 20.f, 20.f); // m_ParticleComponent->SetRelativeScale(0.02f, 0.02f, 0.02f);
-    m_ParticleComponent->SetRelativeScale(0.02f, 0.02f, 0.02f);
-
-    // Arm, Camera
     m_ParticleArm = CreateComponent<CArm>("Arm");
 
     m_ParticleCamera = CreateComponent<CCameraComponent>("Particle Camera");
 
+    // Component 아래 Arm
     m_ParticleComponent->AddChild(m_ParticleArm);
-    m_ParticleComponent->AddChild(m_ParticleCamera);
 
-    m_ParticleCamera->SetInheritRotX(true);
-    m_ParticleCamera->SetInheritRotY(true);
-    m_ParticleCamera->SetInheritRotZ(true);
-
+    // Arm 아래 Camera
     m_ParticleArm->AddChild(m_ParticleCamera);
 
     // Camera Setting
     CSceneManager::GetInst()->GetScene()->GetCameraManager()->SetParticleEditorCamera(m_ParticleCamera);
 
+    m_ParticleCamera->SetInheritRotX(true);
+    m_ParticleCamera->SetInheritRotY(true);
+    m_ParticleCamera->SetInheritRotZ(true);
 
     m_ParticleCamera->SetCameraType(Camera_Type::Camera3D);
     m_ParticleCamera->SetViewAngle(27.f);
 
-    // m_ParticleCamera->AddRelativePos(0.f, 50.f, -50.f);  // m_ParticleCamera->SetRelativeRotationX(45.f);
-
     m_ParticleArm->SetOffset(0.f, 2.f, 0.f);
     m_ParticleArm->SetRelativeRotation(45.f, 0.f, 0.f);
-    m_ParticleArm->SetTargetDistance(150.f);
-
-    /*
-    
-    m_ParticleObject = CSceneManager::GetInst()->GetScene()->CreateGameObject<CGameObject>("Particle Object");
-    m_ParticleObject->CreateComponent<CParticleComponent>("Particle Sprite");
-    m_ParticleObject->GetRootComponent()->SetLayerName("ParticleEditorLayer");
-
-    CCameraComponent* ParticleCamera = m_ParticleObject->CreateComponent<CCameraComponent>("Particle Camera");
-    m_ParticleObject->GetRootComponent()->AddChild(ParticleCamera);
-    
-    // Camera Setting
-    CSceneManager::GetInst()->GetScene()->GetCameraManager()->SetParticleEditorCamera(ParticleCamera);
-
-    ParticleCamera->SetCameraType(Camera_Type::Camera3D);
-    ParticleCamera->SetViewAngle(27.f);
-
-    ParticleCamera->AddRelativePos(0.f, 30.f, -100.f);
-    ParticleCamera->SetRelativeRotationX(45.f);*/
-
+    m_ParticleArm->SetTargetDistance(20.f);
 
 	return true;
 }
 
 void C3DParticleObject::Update(float DeltaTime)
 {
+    CGameObject::Update(DeltaTime);
+
     if (CInput::GetInst()->GetWheelDir() && m_IsCameraZoom)
     {
         float Length = m_ParticleArm->GetTargetDistance() +
-            CInput::GetInst()->GetWheelDir() * m_CameraZoomSpeed;
+            CInput::GetInst()->GetWheelDir() * 0.1f;
 
         m_ParticleArm->SetTargetDistance(Length);
     }
