@@ -64,6 +64,7 @@
 #define	PARTICLE_PATH		"Particle"
 #define	EXCEL_PATH		"Excel"
 #define	OBJECT_PATH		"Object"
+#define	COMPONENT_PATH	"Component"
 
 // Inclue Path
 #define	RESOURCE_ROOT_PATH		"IncludeRoot"

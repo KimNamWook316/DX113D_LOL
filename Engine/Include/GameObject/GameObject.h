@@ -200,6 +200,9 @@ public:
 	virtual bool Load(const char* FullPath);
 	virtual bool Save(const char* FileName, const std::string& PathName);
 	virtual bool Load(const char* FileName, const std::string& PathName);
+	virtual bool SaveOnly(CComponent* Component, const char* FullPath);
+	virtual bool SaveOnly(const std::string& ComponentName, const char* FullPath);
+	virtual bool LoadOnly(const char* FullPath, CComponent*& OutCom);
 
 public:
 	// NavAgent가 있을 경우에 동작한다.

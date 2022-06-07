@@ -480,6 +480,80 @@ bool CGameObject::Load(const char* FileName, const std::string& PathName)
 	return true;
 }
 
+bool CGameObject::SaveOnly(CComponent* Component, const char* FullPath)
+{
+	FILE* File = nullptr;
+
+	fopen_s(&File, FullPath, "wb");
+
+	if (!File)
+	{
+		assert(false);
+		return false;
+	}
+
+	size_t TypeID = Component->GetTypeID();
+	fwrite(&TypeID, sizeof(size_t), 1, File);
+
+	bool Ret = Component->SaveOnly(File);
+
+	fclose(File);
+
+	return Ret;
+}
+
+bool CGameObject::SaveOnly(const std::string& ComponentName, const char* FullPath)
+{
+	CComponent* Component = FindComponent(ComponentName);
+
+	if (!Component)
+	{
+		assert(false);
+		return false;
+	}
+
+	return SaveOnly(Component, FullPath);
+}
+
+bool CGameObject::LoadOnly(const char* FullPath, CComponent*& OutCom)
+{
+	FILE* File = nullptr;
+
+	fopen_s(&File, FullPath, "rb");
+
+	if (!File)
+	{
+		assert(false);
+		return false;
+	}
+
+	size_t TypeID = -1;
+	fread(&TypeID, sizeof(size_t), 1, File);
+
+	CComponent* Component = nullptr;
+	Component = CSceneManager::GetInst()->CallCreateComponent(this, TypeID);
+
+	if (!Component)
+	{
+		assert(false);
+		return false;
+	}
+
+	if (Component->GetComponentType() == Component_Type::SceneComponent && 
+		Component != m_RootComponent)
+	{
+		SetRootComponent((CSceneComponent*)Component);
+	}
+
+	bool Ret = Component->LoadOnly(File);
+
+	OutCom = Component;
+
+	fclose(File);
+
+	return Ret;
+}
+
 void CGameObject::Move(const Vector3& EndPos)
 {
 	size_t	Size = m_vecObjectComponent.size();

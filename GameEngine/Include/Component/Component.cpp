@@ -60,3 +60,17 @@ bool CComponent::Load(FILE* File)
 
 	return true;
 }
+
+bool CComponent::SaveOnly(FILE* File)
+{
+	CComponent::Save(File);
+
+	return true;
+}
+
+bool CComponent::LoadOnly(FILE* File)
+{
+	CComponent::Load(File);
+
+	return true;
+}

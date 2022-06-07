@@ -106,6 +106,8 @@ public:
 	virtual CLandScape* Clone();
 	virtual bool Save(FILE* File);
 	virtual bool Load(FILE* File);
+    virtual bool SaveOnly(FILE* File) override;
+    virtual bool LoadOnly(FILE* File) override;
 
 private:
 	void ComputeNormal();
