@@ -81,6 +81,8 @@ void CEditorManager::SetEditMode(EditMode Mode)
 
 bool CEditorManager::Init(HINSTANCE hInst)
 {
+	CEngine::GetInst()->EnableEditMode();
+
 	if (!CEngine::GetInst()->Init(hInst, TEXT("GameEngine"),
 		1280, 720, IDI_ICON1))
 	{
