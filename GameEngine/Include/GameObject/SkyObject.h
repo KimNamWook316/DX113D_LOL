@@ -7,6 +7,7 @@ class CSkyObject :
     public CGameObject
 {
     friend class CScene;
+    friend class CEffectEditor;
 
 protected:
     CSkyObject();

@@ -77,7 +77,7 @@ public:
     void SetTextureFullPath(int MaterialIndex, int Index, int Register, int ShaderType, const std::string& Name, const TCHAR* FullPath);
     void SetTexture(int MaterialIndex, int Index, int Register, int ShaderType, const std::string& Name, const std::vector<TCHAR*>& vecFileName, const std::string& PathName = TEXTURE_PATH);
 
-public:
+public :
     virtual void Start();
     virtual bool Init();
     virtual void Update(float DeltaTime);
@@ -89,7 +89,8 @@ public:
     virtual CStaticMeshComponent* Clone();
     virtual bool Save(FILE* File);
     virtual bool Load(FILE* File);
-
+public :
+    virtual void RenderParticleEffectEditor();
 private:
     void ChangeInstancingLayer();
 

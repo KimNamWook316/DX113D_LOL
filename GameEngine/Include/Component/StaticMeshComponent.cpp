@@ -618,6 +618,27 @@ void CStaticMeshComponent::RenderShadowMap()
 	}
 }
 
+void CStaticMeshComponent::RenderParticleEffectEditor()
+{
+	CSceneComponent::RenderParticleEffectEditor();
+
+	if (!m_Mesh)
+		return;
+
+	size_t	Size = m_vecMaterialSlot.size();
+
+	for (size_t i = 0; i < Size; ++i)
+	{
+		m_vecMaterialSlot[i]->EnableDecal(m_ReceiveDecal);
+
+		m_vecMaterialSlot[i]->Render();
+
+		m_Mesh->Render((int)i);
+
+		m_vecMaterialSlot[i]->Reset();
+	}
+}
+
 void CStaticMeshComponent::PostRender()
 {
 	CSceneComponent::PostRender();

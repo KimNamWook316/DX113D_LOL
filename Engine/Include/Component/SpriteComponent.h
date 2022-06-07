@@ -66,6 +66,9 @@ public:
     virtual bool Save(FILE* File);
     virtual bool Load(FILE* File);
 
+public :
+    virtual void RenderParticleEffectEditor();
+
 public:
     template <typename T>
     void CreateAnimationInstance()

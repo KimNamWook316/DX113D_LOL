@@ -156,9 +156,6 @@
     <ClCompile Include="Window\ToolWindow.cpp">
       <Filter>02. Editor\01. Window</Filter>
     </ClCompile>
-    <ClCompile Include="Object\3DParticleCamera.cpp">
-      <Filter>03. Object\02. 3D</Filter>
-    </ClCompile>
     <ClCompile Include="Window\BehaviorTreeMenuBar.cpp">
       <Filter>02. Editor\01. Window</Filter>
     </ClCompile>
@@ -174,14 +171,14 @@
     <ClCompile Include="Object\Anim3DObject.cpp">
       <Filter>03. Object\02. 3D</Filter>
     </ClCompile>
-    <ClCompile Include="CParticlePopUpScreen.cpp">
-      <Filter>02. Editor\02. Widget\03. Particle</Filter>
-    </ClCompile>
-    <ClCompile Include="CAnimationPopUpScreen.cpp">
-      <Filter>02. Editor\02. Widget\03. Animation</Filter>
-    </ClCompile>
     <ClCompile Include="AnimationInstanceConvertThread.cpp">
       <Filter>04. Thread\02. AnimationInstanceConvert</Filter>
+    </ClCompile>
+    <ClCompile Include="Window\ParticlePopUpScreen.cpp">
+      <Filter>02. Editor\02. Widget\03. Particle</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\3DParticleObject.cpp">
+      <Filter>03. Object\02. 3D</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -290,23 +287,20 @@
     <ClInclude Include="GraphEditor.h">
       <Filter>02. Editor\01. Window</Filter>
     </ClInclude>
-    <ClInclude Include="Object\3DParticleCamera.h">
-      <Filter>03. Object\02. 3D</Filter>
-    </ClInclude>
     <ClInclude Include="Object\Anim3DObject.h">
       <Filter>03. Object\02. 3D</Filter>
     </ClInclude>
     <ClInclude Include="Widget\LandScapeWidget.h">
       <Filter>02. Editor\02. Widget\01. Inspector\01. SceneComponent</Filter>
     </ClInclude>
-    <ClInclude Include="CParticlePopUpScreen.h">
-      <Filter>02. Editor\02. Widget\03. Particle</Filter>
-    </ClInclude>
-    <ClInclude Include="CAnimationPopUpScreen.h">
-      <Filter>02. Editor\02. Widget\03. Animation</Filter>
-    </ClInclude>
     <ClInclude Include="AnimationInstanceConvertThread.h">
       <Filter>04. Thread\02. AnimationInstanceConvert</Filter>
+    </ClInclude>
+    <ClInclude Include="Window\ParticlePopUpScreen.h">
+      <Filter>02. Editor\02. Widget\03. Particle</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\3DParticleObject.h">
+      <Filter>03. Object\02. 3D</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
