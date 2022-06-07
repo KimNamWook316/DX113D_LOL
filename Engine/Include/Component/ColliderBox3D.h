@@ -15,6 +15,20 @@ protected:
     Box3DInfo   m_Info;
 
 public:
+    virtual void SetOffset(const Vector3& Offset)
+    {
+        CColliderComponent::SetOffset(Offset);
+        m_Info.Min += Offset;
+        m_Info.Max += Offset;
+    }
+
+    virtual void SetOffset(float x, float y, float z)
+    {
+        CColliderComponent::SetOffset(x, y, z);
+        m_Info.Min += Vector3(x, y, z);
+        m_Info.Max += Vector3(x, y, z);
+    }
+
     Box3DInfo GetInfo() const
     {
         return m_Info;
