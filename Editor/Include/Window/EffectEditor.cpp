@@ -458,10 +458,80 @@ void CEffectEditor::OnSetParticleTexture()
 
 void CEffectEditor::OnSaveParticleClass()
 {
+    if (!m_ParticleObject || !dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetParticle())
+        return;
+
+    TCHAR FiileFullPath[MAX_PATH] = {};
+
+    OPENFILENAME OpenFile = {};
+    OpenFile.lStructSize = sizeof(OPENFILENAME);
+    OpenFile.hwndOwner = CEngine::GetInst()->GetWindowHandle();
+    OpenFile.lpstrFilter = TEXT("All Files\0*.*\0.Animation File\0*.anim");
+    OpenFile.lpstrFile = FiileFullPath;
+    OpenFile.nMaxFile = MAX_PATH;
+    OpenFile.lpstrInitialDir = CPathManager::GetInst()->FindPath(ANIMATION_PATH)->Path;
+
+    if (GetSaveFileName(&OpenFile) != 0)
+    {
+        char FileFullPathMultibyte[MAX_PATH] = {};
+        char FileName[MAX_PATH] = {};
+        char FileExt[_MAX_EXT] = {};
+
+        int  ConvertLength = WideCharToMultiByte(CP_ACP, 0, FiileFullPath, -1, nullptr, 0, nullptr, nullptr);
+
+        WideCharToMultiByte(CP_ACP, 0, FiileFullPath, -1, FileFullPathMultibyte, ConvertLength, nullptr, nullptr);
+
+        _splitpath_s(FileFullPathMultibyte, nullptr, 0, nullptr, 0, FileName, MAX_PATH, FileExt, _MAX_EXT);
+
+        _strupr_s(FileExt);
+
+        // 확장자 .anim 이 아니라면 return;
+        if (strcmp(FileExt, ".PRTC") != 0)
+        {
+            MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("EXT Has To Be .prtc"), NULL, MB_OK);
+            return;
+        }
+
+        CParticle* SavedParticle = dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetParticle();
+
+        // SavedParticle->SaveFile(FileFullPathMultibyte);
+    }
 }
 
 void CEffectEditor::OnLoadParticleClass()
 {
+    if (!m_ParticleObject || !dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetParticle())
+        return;
+
+    TCHAR FilePath[MAX_PATH] = {};
+
+    OPENFILENAME OpenFile = {};
+    OpenFile.lStructSize = sizeof(OPENFILENAME);
+    OpenFile.hwndOwner = CEngine::GetInst()->GetWindowHandle();
+    OpenFile.lpstrFilter = TEXT("All Files\0*.*\0.Animation File\0*.anim");
+    OpenFile.lpstrFile = FilePath;
+    OpenFile.nMaxFile = MAX_PATH;
+    OpenFile.lpstrInitialDir = CPathManager::GetInst()->FindPath(ANIMATION_PATH)->Path;
+
+    if (GetOpenFileName(&OpenFile) != 0)
+    {
+        char	Ext[_MAX_EXT] = {};
+
+        char FilePathMultibyte[MAX_PATH] = {};
+        char FileName[MAX_PATH] = {};
+
+        int ConvertLength = WideCharToMultiByte(CP_ACP, 0, FilePath, -1, 0, 0, 0, 0);
+        WideCharToMultiByte(CP_ACP, 0, FilePath, -1, FilePathMultibyte, ConvertLength, 0, 0);
+
+        _splitpath_s(FilePathMultibyte, nullptr, 0, nullptr, 0, FileName, MAX_PATH, Ext, _MAX_EXT);
+
+        _strupr_s(Ext);
+
+        // 확장자 .anim 이 아니라면 return;
+        if (strcmp(Ext, ".PRTC") != 0)
+            return;
+    }
+
 }
 
 void CEffectEditor::OnSetParticleMaterialSetting(CSceneComponent* Com)
