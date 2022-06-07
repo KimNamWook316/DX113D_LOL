@@ -608,3 +608,13 @@ struct InstancingCBuffer
 	Vector3 InstancingEmpty;
 };
 
+struct OutlineCBuffer
+{
+	float Thickness;
+	float DepthMultiplier;
+	float DepthBias;
+	float NormalMultiplier;
+	float NormalBias;
+	Vector3 Color;
+};
+

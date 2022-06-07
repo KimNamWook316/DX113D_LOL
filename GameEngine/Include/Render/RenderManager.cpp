@@ -17,6 +17,7 @@
 #include "../Resource/Shader/Shader.h"
 #include "../Component/PaperBurnComponent.h"
 #include "../Resource/Shader/ShadowCBuffer.h"
+#include "../Resource/Shader/OutlineConstantBuffer.h"
 
 DEFINITION_SINGLE(CRenderManager)
 
@@ -25,13 +26,15 @@ CRenderManager::CRenderManager()	:
 	m_Standard2DCBuffer(nullptr),
 	m_Shadow(true),
 	m_ShadowLightDistance(20.f),
-	m_ShadowCBuffer(nullptr)
+	m_ShadowCBuffer(nullptr),
+	m_OutlineCBuffer(nullptr)
 {
 }
 
 CRenderManager::~CRenderManager()
 {
 	SAFE_DELETE(m_ShadowCBuffer);
+	SAFE_DELETE(m_OutlineCBuffer);
 
 	auto	iter = m_RenderLayerList.begin();
 	auto	iterEnd = m_RenderLayerList.end();
@@ -263,7 +266,6 @@ bool CRenderManager::Init()
 	LightTarget->SetDebugRender(true);
 	m_vecLightBuffer.push_back(LightTarget);
 
-
 	if (!CResourceManager::GetInst()->CreateTarget("FinalScreen",
 		RS.Width, RS.Height, DXGI_FORMAT_R32G32B32A32_FLOAT))
 		return false;
@@ -293,6 +295,16 @@ bool CRenderManager::Init()
 	m_ParticleEffectEditorRenderTarget->SetScale(Vector3(150.f, 150.f, 1.f));
 	m_ParticleEffectEditorRenderTarget->SetDebugRender(false);
 
+	// Animation Editor 용 Render Target 
+	if (!CResourceManager::GetInst()->CreateTarget("OutlineRenderTarget",
+		RS.Width, RS.Height, DXGI_FORMAT_R32G32B32A32_FLOAT))
+		return false;
+
+	m_OutlineTarget = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("OutlineRenderTarget");
+	m_OutlineTarget->SetPos(Vector3(800.f, 0.f, 0.f));
+	m_OutlineTarget->SetScale(Vector3(300.f, 300.f, 1.f));
+	m_OutlineTarget->SetDebugRender(true);
+
 
 	// Map 출력용 변수들
 
@@ -316,9 +328,13 @@ bool CRenderManager::Init()
 	m_ShadowMapShader = CResourceManager::GetInst()->FindShader("ShadowMapShader");
 	m_ShadowMapInstancingShader = CResourceManager::GetInst()->FindShader("ShadowMapInstancingShader");
 	m_Transparent3DInstancingShader = CResourceManager::GetInst()->FindShader("TransparentInstancing3DShader");
+	m_OutLineShader = CResourceManager::GetInst()->FindShader("OutlineShader");
 
 	m_ShadowCBuffer = new CShadowCBuffer;
 	m_ShadowCBuffer->Init();
+
+	m_OutlineCBuffer = new COutlineConstantBuffer;
+	m_OutlineCBuffer->Init();
 
 	return true;
 }
@@ -450,6 +466,9 @@ void CRenderManager::Render()
 
 	// 조명 누적버퍼를 만들어낸다.
 	RenderLightAcc();
+
+	// 외곽선을 그린다.
+	RenderOutLine();
 
 	// 조명 누적버퍼와 GBuffer를 이용하여 최종화면을 만들어낸다.
 	RenderLightBlend();
@@ -799,6 +818,7 @@ void CRenderManager::RenderLightBlend()
 	m_vecLightBuffer[1]->SetTargetShader(19);
 	m_vecLightBuffer[2]->SetTargetShader(20);
 	m_ShadowMapTarget->SetTargetShader(22);
+	m_OutlineTarget->SetTargetShader(23);
 
 	m_LightBlendShader->SetShader();
 
@@ -828,8 +848,38 @@ void CRenderManager::RenderLightBlend()
 	m_vecLightBuffer[1]->ResetTargetShader(19);
 	m_vecLightBuffer[2]->ResetTargetShader(20);
 	m_ShadowMapTarget->ResetTargetShader(22);
+	m_OutlineTarget->ResetTargetShader(23);
 
 	FinalScreenTarget->ResetTarget();
+}
+
+void CRenderManager::RenderOutLine()
+{
+	m_OutlineTarget->ClearTarget();
+	m_OutlineTarget->SetTarget(nullptr);
+
+	m_vecGBuffer[0]->SetTargetShader(13);
+	m_vecGBuffer[1]->SetTargetShader(14);
+	m_vecGBuffer[2]->SetTargetShader(15);
+
+	m_DepthDisable->SetState();
+	m_OutlineCBuffer->UpdateCBuffer();
+	m_OutLineShader->SetShader();
+
+	UINT Offset = 0;
+	CDevice::GetInst()->GetContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+	CDevice::GetInst()->GetContext()->IASetVertexBuffers(0, 0, nullptr, nullptr, &Offset);
+	CDevice::GetInst()->GetContext()->IASetIndexBuffer(nullptr, DXGI_FORMAT_UNKNOWN, 0);
+
+	CDevice::GetInst()->GetContext()->Draw(4, 0);
+
+	m_DepthDisable->ResetState();
+
+	m_vecGBuffer[0]->SetTargetShader(13);
+	m_vecGBuffer[1]->ResetTargetShader(14);
+	m_vecGBuffer[2]->ResetTargetShader(15);
+
+	m_OutlineTarget->ResetTarget();
 }
 
 void CRenderManager::RenderTransparent()

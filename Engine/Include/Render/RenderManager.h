@@ -4,6 +4,7 @@
 #include "../Resource/Texture/RenderTarget.h"
 #include "../Resource/Shader/InstancingCBuffer.h"
 #include "../Resource/Shader/StructuredBuffer.h"
+#include "../Resource/Shader/OutlineConstantBuffer.h"
 
 struct RenderInstancingList
 {
@@ -107,6 +108,12 @@ private:
 	float m_ShadowLightDistance;
 	class CShadowCBuffer* m_ShadowCBuffer;
 
+	// OutLine
+	bool m_OutLine;
+	CSharedPtr<class CShader> m_OutLineShader;
+	class COutlineConstantBuffer* m_OutlineCBuffer;
+	CSharedPtr<CRenderTarget> m_OutlineTarget;
+
 	// Animation Editor 
 	CSharedPtr<class CShader> m_Mesh3DNoLightRenderShader; // m_AnimEditorRenderTarget 에 그려내기 위한 Shader 
 	CSharedPtr<CRenderTarget>	m_AnimEditorRenderTarget; // Skinning 처리 이후, 해당 출력을, 별도의 RenderTarget 에 그려낸다.
@@ -125,14 +132,52 @@ public:
 	{
 		return m_Standard2DCBuffer;
 	}
+
 	CRenderTarget* GetAnimationRenderTarget() const
 	{
 		return m_AnimEditorRenderTarget;
 	}
+
 	CRenderTarget* GetParticleEffectRenderTarget() const
 	{
 		return m_ParticleEffectEditorRenderTarget;
 	}
+
+	void SetOutlineThickness(float Val)
+	{
+		m_OutlineCBuffer->SetThickness(Val);
+	}
+
+	void SetOutlineDepthMultiplier(float Val)
+	{
+		m_OutlineCBuffer->SetDepthMultiplier(Val);
+	}
+
+	void SetOutlineDepthBias(float Val)
+	{
+		m_OutlineCBuffer->SetDepthBias(Val);
+	}
+
+	void SetOutlineNormalMultiplier(float Val)
+	{
+		m_OutlineCBuffer->SetNormalMultiplier(Val);
+	}
+
+	void SetOutlineNormalBias(float Val)
+	{
+		m_OutlineCBuffer->SetNormalBias(Val);
+	}
+
+	void SetOutlineColor(const Vector3& Color)
+	{
+		m_OutlineCBuffer->SetColor(Color);
+	}
+
+	void SetOutlineColor(const Vector4& Color)
+	{
+		m_OutlineCBuffer->SetColor(Color);
+	}
+
 public:
 	void SetObjectList(const std::list<CSharedPtr<class CGameObject>>* List)
 	{
@@ -153,6 +198,7 @@ private:
 	void RenderDecal();
 	void RenderLightAcc();
 	void RenderLightBlend();
+	void RenderOutLine();
 	void RenderTransparent();
 	void RenderFinalScreen();
 	void RenderAnimationEditor();

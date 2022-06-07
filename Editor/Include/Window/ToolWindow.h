@@ -6,6 +6,7 @@
 #include "IMGUIGrid.h"
 #include "IMGUIRadioButton.h"
 #include "IMGUISliderFloat.h"
+#include "IMGUIColor3.h"
 
 class CToolWindow :
     public CIMGUIWindow
@@ -31,6 +32,12 @@ private:
 	void OnSelectGizmoOperationMode(const char* Label, bool Check);
 	void OnSelectGizmoTransformMode(const char* Label, bool Check);
 	void OnChangeCameraSpeed(float Speed);
+	void OnChangeOutlineThickness(float Val);
+	void OnChangeOutlineDepthMultiply(float Val);
+	void OnChangeOutlineDepthBias(float Val);
+	void OnChangeOutlineNormalMultiply(float Val);
+	void OnChangeOutlineNormalBias(float Val);
+	void OnChangeOutlineColor(const Vector3& Color);
 
 private:
 	// Gizmo
@@ -43,5 +50,14 @@ private:
 	// Camera
 	CIMGUICollapsingHeader* m_EditorCameraBlock;
 	CIMGUISliderFloat* m_CameraSpeed;
+
+	// Render
+	CIMGUICollapsingHeader* m_RenderBlock;
+	CIMGUISliderFloat* m_OutlineThickness;
+	CIMGUISliderFloat* m_OutlineDepthMultiply;
+	CIMGUISliderFloat* m_OutlineDepthBias;
+	CIMGUISliderFloat* m_OutlineNormalMutliply;
+	CIMGUISliderFloat* m_OutlineNormalBias;
+	CIMGUIColor3* m_OutlineColor;
 };
 
