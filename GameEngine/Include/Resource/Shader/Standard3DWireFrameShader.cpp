@@ -11,7 +11,7 @@ CStandard3DWireFrameShader::~CStandard3DWireFrameShader()
 
 bool CStandard3DWireFrameShader::Init()
 {
-	if (!LoadVertexShader("Standard3DVS", TEXT("Standard3D.fx"), SHADER_PATH))
+	if (!LoadVertexShader("Standard3DWireFrameVS", TEXT("Standard3D.fx"), SHADER_PATH))
 		return false;
 
 	if (!LoadPixelShader("Standard3DWireFramePS", TEXT("Standard3D.fx"), SHADER_PATH))

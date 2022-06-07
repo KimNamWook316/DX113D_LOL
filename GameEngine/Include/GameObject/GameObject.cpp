@@ -391,6 +391,9 @@ bool CGameObject::Load(FILE* File)
 			return false;
 	}
 
+	fread(&m_ObjectType, sizeof(Object_Type), 1, File);
+	fread(&m_IsEnemy, sizeof(bool), 1, File);
+
 	int	ObjComponentCount = 0;
 
 	fread(&ObjComponentCount, sizeof(int), 1, File);

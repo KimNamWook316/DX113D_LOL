@@ -435,6 +435,29 @@ PSOutput_Single StandardNoLight3DPS(Vertex3DOutput input)
     return output;
 }
 
+Vertex3DOutput Standard3DWireFrameVS(Vertex3D input)
+{
+    Vertex3DOutput output = (Vertex3DOutput) 0;
+
+    float3 Pos = input.Pos;
+
+    output.ProjPos = mul(float4(Pos, 1.f), g_matWVP);
+    output.Pos = output.ProjPos;
+    
+    // 뷰공간의 위치를 만들어준다.
+    output.ViewPos = mul(float4(Pos, 1.f), g_matWV).xyz;
+    
+    // 뷰 공간의 Normal을 만들어준다.
+	output.Normal = normalize(mul(float4(input.Normal, 0.f), g_matWV).xyz);
+    // 뷰 공간의 Tangent을 만들어준다.
+    output.Tangent = normalize(mul(float4(input.Tangent, 0.f), g_matWV).xyz);
+    // 뷰 공간의 Binormal을 만들어준다.
+    output.Binormal = normalize(mul(float4(input.Binormal, 0.f), g_matWV).xyz);
+    output.UV = input.UV;
+
+    return output;
+}
+
 PSOutput_GBuffer Standard3DWireFramePS(Vertex3DOutput input)
 {
     PSOutput_GBuffer output = (PSOutput_GBuffer) 0;
@@ -469,5 +492,4 @@ PSOutput_GBuffer Standard3DWireFramePS(Vertex3DOutput input)
     output.GBuffer3.a = ConvertColor(EmissiveColor);
 
     return output;
-
 }
