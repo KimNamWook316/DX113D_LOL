@@ -128,6 +128,8 @@ private:
     void OnReflectCurrentParticleSetting();
     void SetGameObjectReady();
     void SetStartEditing();
+
+    // Helper 
     void SetParticleToParticleComponent(class CParticleComponent* Component, const char* ParticleName);
     void SetIMGUIReflectPartice(class CParticle* Particle);
 };

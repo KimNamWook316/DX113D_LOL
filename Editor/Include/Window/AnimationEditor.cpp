@@ -138,12 +138,17 @@ bool CAnimationEditor::Init()
 	Line = AddWidget<CIMGUISameLine>("Line");
 	Line->SetOffsetX(205.f);
 
+	m_LoopEnableBtn = AddWidget<CIMGUICheckBox>("Loop", 90.f, 30.f);
+	m_LoopEnableBtn->AddCheckInfo("Loop");
+	m_LoopEnableBtn->SetCallBackLabel<CAnimationEditor>(this, &CAnimationEditor::OnLoopAnimation);
+
+	// Camera
 	m_RotationCheckBtn = AddWidget<CIMGUICheckBox>("Camera Rotation", 90.f, 30.f);
 	m_RotationCheckBtn->AddCheckInfo("Rotate");
 	m_RotationCheckBtn->SetCallBackLabel<CAnimationEditor>(this, &CAnimationEditor::OnRotateAnimationCamera);
 
 	Line = AddWidget<CIMGUISameLine>("Line");
-	Line->SetOffsetX(280.f);
+	Line->SetOffsetX(110.f);
 
 	m_ZoomEnableBtn = AddWidget<CIMGUICheckBox>("Camera Zoom In", 90.f, 30.f);
 	m_ZoomEnableBtn->AddCheckInfo("Zoom");
@@ -381,6 +386,27 @@ void CAnimationEditor::OnZoomAnimationCamera(const char*, bool Enable)
 		m_3DTestObject->SetCameraZoom(true);
 	else
 		m_3DTestObject->SetCameraZoom(false);
+}
+
+void CAnimationEditor::OnLoopAnimation(const char*, bool Enable)
+{
+	if (!m_3DTestObject)
+		return;
+
+	CAnimationMeshComponent* RootMeshComponent = dynamic_cast<CAnimationMeshComponent*>(m_3DTestObject->GetRootComponent());
+
+	if (!RootMeshComponent)
+		return;
+
+	// RootMeshComponent->GetAnimationInstance()->SetLoop(Enable);
+
+	bool IsAnimPlay = RootMeshComponent->GetAnimationInstance()->IsPlay();
+
+	// if (IsAnimPlay)
+	if (!Enable)
+		RootMeshComponent->GetAnimationInstance()->Stop();
+	else
+		RootMeshComponent->GetAnimationInstance()->Play();
 }
 
 void CAnimationEditor::OnSaveAnimationInstance()

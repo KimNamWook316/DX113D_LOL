@@ -11,6 +11,8 @@ public:
 	// 풀경로를 넣어주면 파일 이름만 걸러서 리턴해줌
 	static std::string FilterFileName(const std::string& FullPath);
 
+	// 
+
 	// 해당 경로에 존재하는 모든 파일 이름과 디렉토리 이름들을 가져옴
 	static void GetAllFilenames(const std::string& PathName, std::vector<std::string>& vecFileNames,
 		std::vector<std::string>& vecDirNames);

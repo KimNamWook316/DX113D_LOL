@@ -145,7 +145,7 @@ bool CEditorManager::Init(HINSTANCE hInst)
 
 	m_BaseMenuBar = CIMGUIManager::GetInst()->AddWindow<CBaseMenuBar>("BehaviorTree");
 	m_MaterialEditor = CIMGUIManager::GetInst()->AddWindow<CMaterialEditor>("MaterialEditor");
-	// m_ResourceDisplayWindow = CIMGUIManager::GetInst()->AddWindow<CResourceDisplayWindow>("Resources");
+	m_ResourceDisplayWindow = CIMGUIManager::GetInst()->AddWindow<CResourceDisplayWindow>("Resources");
 
 	CRenderManager::GetInst()->CreateLayer("DragLayer", INT_MAX);
 

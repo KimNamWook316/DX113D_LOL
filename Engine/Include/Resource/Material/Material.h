@@ -224,7 +224,9 @@ public:
     CMaterial* Clone()  const;
     bool Save(FILE* File);
     bool Load(FILE* File);
-
+public  :
+    bool SaveFullPath(const char* FullPath);
+    bool LoadFullPath(const char* FullPath);
 public:
     template <typename T>
     void AddRenderCallback(T* Obj, void(T::* Func)())

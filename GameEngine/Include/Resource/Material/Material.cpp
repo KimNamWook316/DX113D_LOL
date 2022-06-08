@@ -725,6 +725,9 @@ void CMaterial::SetTextureArray(int Index, int Register,
 
 void CMaterial::SetTextureInfoResource(int Index, CTexture* Texture)
 {
+	if (!Texture)
+		return;
+
 	m_TextureInfo[Index].Texture = Texture;
 }
 
@@ -914,6 +917,9 @@ bool CMaterial::Save(FILE* File)
 		m_TextureInfo[i].Texture->Save(File);
 	}
 
+	// 외곽선 관련 값들 Save, Load 추가하기
+	// 
+
 	return true;
 }
 
@@ -1089,6 +1095,41 @@ bool CMaterial::Load(FILE* File)
 		}
 	}
 
+	// todo : 외곽선 관련 값들 Save, Load 추가하기
+
+
 	return true;
+}
+
+bool CMaterial::SaveFullPath(const char* FullPath)
+{
+	FILE* File = nullptr;
+
+	fopen_s(&File, FullPath, "wb");
+
+	if (!File)
+		return false;
+
+	bool Result = Save(File);
+
+	fclose(File);
+
+	return Result;
+}
+
+bool CMaterial::LoadFullPath(const char* FullPath)
+{
+	FILE* File = nullptr;
+
+	fopen_s(&File, FullPath, "wb");
+
+	if (!File)
+		return false;
+
+	bool Result = Load(File);
+
+	fclose(File);
+
+	return Result;
 }
 

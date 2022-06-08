@@ -109,6 +109,9 @@ void CIMGUITextInput::ApplyDropEffect()
 			// Drop 받은 내용을 TextType 에 맞게 변환할 것이다.
 			char* payload_n = (char*)payload->Data;
 
+			if (m_DropCallback)
+				m_DropCallback(payload_n);
+
 			switch (m_TextType)
 			{
 			case ImGuiText_Type::String:
@@ -132,6 +135,7 @@ void CIMGUITextInput::ApplyDropEffect()
 			}
 				break;
 			}
+
 
 		}
 		ImGui::EndDragDropTarget();

@@ -33,6 +33,7 @@ private:
 	class CIMGUICheckBox* m_AnimationCheckBtn;
 	class CIMGUICheckBox* m_RotationCheckBtn;
 	class CIMGUICheckBox* m_ZoomEnableBtn;
+	class CIMGUICheckBox* m_LoopEnableBtn;
 	// New Anim Names
 	class CIMGUITextInput* m_NewAnimSeqName;
 	class CIMGUITextInput* m_NewAnimSeqDataKeyName;
@@ -100,6 +101,8 @@ private:
 	void OnPlayAnimation(const char*, bool);
 	void OnRotateAnimationCamera(const char*, bool);
 	void OnZoomAnimationCamera(const char*, bool);
+	// Loop
+	void OnLoopAnimation(const char*, bool);
 	// Save Load
 	void OnSaveAnimationInstance();
 	void OnLoadAnimationInstance();

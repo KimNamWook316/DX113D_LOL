@@ -65,6 +65,7 @@
 #define	EXCEL_PATH		"Excel"
 #define	OBJECT_PATH		"Object"
 #define	COMPONENT_PATH	"Component"
+#define	MATERIAL_PATH	"Material"
 
 // Inclue Path
 #define	RESOURCE_ROOT_PATH		"IncludeRoot"
@@ -78,6 +79,7 @@
 #define	RESOURCE_PARTICLE_PATH	"ResourceParticle"
 #define	RESOURCE_EXCEL_PATH			"ResourceExcel"
 #define	RESOURCE_OBJECT_PATH		"ResourceObject"
+#define	RESOURCE_MATERIAL_PATH		"ResourceMaterial"
 
 // Engine Path 
 #define ENGINE_ROOT_PATH				"EngineRoot"
@@ -89,6 +91,7 @@
 #define	ENGINE_RESOURCE_SOUND_PATH			"EngineSound"
 #define	ENGINE_RESOURCE_SEQUENCE_PATH		"EngineSequence"
 #define	ENGINE_RESOURCE_OBJECT_PATH			"EngineObject"
+#define	ENGINE_RESOURCE_MATERIAL_PATH			"EngineMaterial"
 
 #define	SAFE_DELETE(p)	if(p)	{ delete p; p = nullptr; }
 #define	SAFE_DELETE_ARRAY(p)	if(p)	{ delete[] p; p = nullptr; }

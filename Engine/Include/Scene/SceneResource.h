@@ -82,7 +82,7 @@ public:	// =================== Shader =====================
 
 public:	// =================== Material =====================
 	CMaterial* FindMaterial(const std::string& Name);
-
+	CMaterial* LoadMaterialFullPathMultibyte(const char* FullPath);
 public:
 	template <typename T>
 	bool CreateMaterial(const std::string& Name)

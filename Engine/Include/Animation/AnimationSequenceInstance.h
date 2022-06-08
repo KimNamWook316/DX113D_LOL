@@ -134,6 +134,8 @@ public:
 	void SetPlayTime(const std::string& Name, float PlayTime);
 	void SetPlayScale(const std::string& Name, float PlayScale);
 	void SetLoop(const std::string& Name, bool Loop);
+	// 현재 Current Animation Loop 세팅
+	void SetLoop(bool Loop);
 	void SetCurrentAnimation(const std::string& Name);
 	void ChangeAnimation(const std::string& Name);
 	bool CheckCurrentAnimation(const std::string& Name);

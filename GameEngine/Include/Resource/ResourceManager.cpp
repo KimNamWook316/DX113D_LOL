@@ -380,6 +380,12 @@ CMaterialConstantBuffer* CResourceManager::GetMaterialConstantBuffer() const
 	return m_MaterialManager->GetMaterialConstantBuffer();
 }
 
+CMaterial* CResourceManager::LoadMaterialFullPathMultibyte(const char* FullPath, 
+	const std::string& NewMaterialName)
+{
+	return m_MaterialManager->LoadMaterialFullPathMultibyte(FullPath, NewMaterialName);
+}
+
 void CResourceManager::ReleaseMaterial(const std::string& Name)
 {
 	m_MaterialManager->ReleaseMaterial(Name);

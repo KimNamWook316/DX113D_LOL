@@ -334,6 +334,14 @@ void CAnimationSequenceInstance::SetLoop(const std::string& Name, bool Loop)
 	Anim->m_Loop = Loop;
 }
 
+void CAnimationSequenceInstance::SetLoop(bool Loop)
+{
+	if (!m_CurrentAnimation)
+		return;
+
+	m_CurrentAnimation->m_Loop = Loop;
+}
+
 void CAnimationSequenceInstance::SetCurrentAnimation(const std::string& Name)
 {
 	m_CurrentAnimation = FindAnimation(Name);

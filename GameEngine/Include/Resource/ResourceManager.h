@@ -84,12 +84,12 @@ public:	// =================== Shader =====================
 public:	// =================== Material =====================
 	CMaterial* FindMaterial(const std::string& Name);
 	CMaterialConstantBuffer* GetMaterialConstantBuffer()	const;
-
+	CMaterial* LoadMaterialFullPathMultibyte(const char* FullPath, const std::string& NewMaterialName);
 	void ReleaseMaterial(const std::string& Name);
 
 public:
 	template <typename T>
-	bool CreateMaterial(const std::string& Name)
+	T* CreateMaterial(const std::string& Name)
 	{
 		return m_MaterialManager->CreateMaterial<T>(Name);
 	}
