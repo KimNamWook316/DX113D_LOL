@@ -9,9 +9,15 @@ public:
 
 public:
     virtual bool Init();
+    virtual void Update(float DetaTime) override;
 
 private:
     bool LoadAnimationSequence2D();
     bool CreateMaterial();
+
+private:
+    class CGameObject* m_PickObj;
+    class CAnimationMeshComponent* m_PickAnimMesh;
+    class CStaticMeshComponent* m_PickStaticMesh;
 };
 

@@ -190,6 +190,10 @@ bool CRenderManager::Init()
 		RS.Width, RS.Height, DXGI_FORMAT_R32G32B32A32_FLOAT))
 		return false;
 
+	if (!CResourceManager::GetInst()->CreateTarget("GBufferOutlineInfo",
+		RS.Width, RS.Height, DXGI_FORMAT_R32G32B32A32_FLOAT))
+		return false;
+
 	CRenderTarget* GBufferTarget = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("Diffuse");
 	GBufferTarget->SetPos(Vector3(0.f, 0.f, 0.f));
 	GBufferTarget->SetScale(Vector3(100.f, 100.f, 1.f));
@@ -222,6 +226,12 @@ bool CRenderManager::Init()
 
 	GBufferTarget = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("GBuffer5");
 	GBufferTarget->SetPos(Vector3(0.f, 500.f, 0.f));
+	GBufferTarget->SetScale(Vector3(100.f, 100.f, 1.f));
+	GBufferTarget->SetDebugRender(true);
+	m_vecGBuffer.push_back(GBufferTarget);
+
+	GBufferTarget = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("GBufferOutlineInfo");
+	GBufferTarget->SetPos(Vector3(0.f, 600.f, 0.f));
 	GBufferTarget->SetScale(Vector3(100.f, 100.f, 1.f));
 	GBufferTarget->SetDebugRender(true);
 	m_vecGBuffer.push_back(GBufferTarget);
@@ -858,9 +868,11 @@ void CRenderManager::RenderOutLine()
 	m_OutlineTarget->ClearTarget();
 	m_OutlineTarget->SetTarget(nullptr);
 
+	// Diffuse, Normal, Depth, OutlineInfo
 	m_vecGBuffer[0]->SetTargetShader(13);
 	m_vecGBuffer[1]->SetTargetShader(14);
 	m_vecGBuffer[2]->SetTargetShader(15);
+	m_vecGBuffer[6]->SetTargetShader(16);
 
 	m_DepthDisable->SetState();
 	m_OutlineCBuffer->UpdateCBuffer();
@@ -878,6 +890,7 @@ void CRenderManager::RenderOutLine()
 	m_vecGBuffer[0]->SetTargetShader(13);
 	m_vecGBuffer[1]->ResetTargetShader(14);
 	m_vecGBuffer[2]->ResetTargetShader(15);
+	m_vecGBuffer[6]->ResetTargetShader(16);
 
 	m_OutlineTarget->ResetTarget();
 }

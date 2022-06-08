@@ -4,12 +4,10 @@
 COutlineConstantBuffer::COutlineConstantBuffer()	:
 	m_BufferData{}
 {
-	m_BufferData.Thickness = 1.f;
 	m_BufferData.DepthMultiplier = 1.f;
 	m_BufferData.DepthBias = 1.f;
 	m_BufferData.NormalMultiplier = 1.f;
 	m_BufferData.NormalBias = 10.f;
-	m_BufferData.Color = Vector3(1.f, 0.f, 0.f);
 }
 
 COutlineConstantBuffer::COutlineConstantBuffer(const COutlineConstantBuffer& Buffer)	:

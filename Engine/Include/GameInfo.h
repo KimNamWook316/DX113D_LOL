@@ -257,7 +257,9 @@ struct MaterialCBuffer
 	int		SpecularTex;
 	int		EmissiveTex;
 	int		ReceiveDecal;
-	float	Empty;
+	int		OutlineEnable;
+	float	OutlineThickness;
+	Vector3 OutlineColor;
 };
 
 struct AnimationFrameData
@@ -594,6 +596,10 @@ struct Instancing3DInfo
 	Vector4 PaperBurnInLineColor;
 	Vector4 PaperBurnOutLineColor;
 	Vector4 PaperBurnCenterLineColor;
+	int MtrlOutlineEnable;
+	float MtrlOutlineThickness;
+	Vector3 MtrlOutlineColor;
+	Vector3 Empty;
 };
 
 struct LightForwardCBuffer
@@ -610,11 +616,9 @@ struct InstancingCBuffer
 
 struct OutlineCBuffer
 {
-	float Thickness;
 	float DepthMultiplier;
 	float DepthBias;
 	float NormalMultiplier;
 	float NormalBias;
-	Vector3 Color;
 };
 

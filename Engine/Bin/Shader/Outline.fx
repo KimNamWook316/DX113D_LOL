@@ -3,16 +3,14 @@
 Texture2DMS<float4> g_GBufferDiffuse : register(t13);
 Texture2DMS<float4> g_GBufferNormal : register(t14);
 Texture2DMS<float4> g_GBufferDepth : register(t15);
-//Texture2DMS<float4> g_LightBlendTex : register(t16);
+Texture2DMS<float4> g_GBufferOutlineInfo : register(t16);
 
 cbuffer OutlineCBuffer : register (b10)
 {
-	float g_OutlineThickness;
 	float g_OutlineDepthMultiplier;
 	float g_OutlineDepthBias;
 	float g_OutlineNormalMultiplier;
 	float g_OutlineNormalBias;
-	float3 g_OutlineColor;
 };
 
 struct VS_OUTPUT_OUTLINE
@@ -63,8 +61,6 @@ PSOutput_Single OutlinePS(VS_OUTPUT_OUTLINE Input)
 {
 	PSOutput_Single Output = (PSOutput_Single) 0;
 
-	int3 Offset = int3(1,1,0) * g_OutlineThickness;
-
 	float2 UV = (float2) 0;
 	UV.x = Input.ProjPos.x / Input.ProjPos.w * 0.5f + 0.5f;
 	UV.y = Input.ProjPos.y / Input.ProjPos.w * -0.5f + 0.5f;
@@ -73,31 +69,38 @@ PSOutput_Single OutlinePS(VS_OUTPUT_OUTLINE Input)
 	TargetPos.x = (int) (UV.x * g_Resolution.x);
 	TargetPos.y = (int) (UV.y * g_Resolution.y);
 
+	float4 OutlineInfo = g_GBufferOutlineInfo.Load(TargetPos, 0);
 	float4 ScreenColor = g_GBufferDiffuse.Load(TargetPos, 0);
-	
 	float4 DepthColor = g_GBufferDepth.Load(TargetPos, 0);
 
-	if (DepthColor.a == 0.f)
+	// 굵기 계산
+	float Thickness = (float)(asuint(OutlineInfo.g)) + OutlineInfo.b;
+	int3 Offset = int3(1,1,0) * Thickness;
+
+	// GBuffer에 출력된 적 없는 픽셀
+	if (DepthColor.a == 0.f || OutlineInfo.a == 0.f)
 	{
 		clip(-1);
 	}
 
+	// Sobel Depth
 	float SobelDepth = SobelSampleDepth(TargetPos, Offset);
 	SobelDepth = pow(saturate(SobelDepth) * g_OutlineDepthMultiplier, g_OutlineDepthBias);
 
+ //	// Sobel Normal
  //	float3 SobelNormalVec = SobelSample(TargetPos, Offset);
  //	float SobelNormal = SobelNormalVec.x + SobelNormalVec.y + SobelNormalVec.z;
  //	SobelNormal = pow(SobelNormal * g_OutlineNormalMultiplier, g_OutlineNormalBias);
 
 	float SobelOutline = saturate(SobelDepth);
 	//float SobelOutline = saturate(max(SobelDepth, SobelNormal));
-	//float SobelOutline = saturate(SobelDepth);
 
-	float3 OutlineColor = lerp(ScreenColor.rgb, g_OutlineColor.rgb, 0.f);
-	float3 Color = lerp(ScreenColor.rgb, g_OutlineColor.rgb, SobelOutline);
+	// Outline 색상 보간
+	float4 Convert = ConvertColor(OutlineInfo.r);
+	float3 OutlineColor = lerp(ScreenColor.rgb, Convert.rgb, 0.f);
+	float3 Color = lerp(ScreenColor.rgb, Convert.rgb, SobelOutline);
 
 	Output.Color.rgb = Color;
-
 	Output.Color.a = SobelOutline;
 
 	return Output;

@@ -143,11 +143,6 @@ public:
 		return m_ParticleEffectEditorRenderTarget;
 	}
 
-	void SetOutlineThickness(float Val)
-	{
-		m_OutlineCBuffer->SetThickness(Val);
-	}
-
 	void SetOutlineDepthMultiplier(float Val)
 	{
 		m_OutlineCBuffer->SetDepthMultiplier(Val);
@@ -168,14 +163,24 @@ public:
 		m_OutlineCBuffer->SetNormalBias(Val);
 	}
 
-	void SetOutlineColor(const Vector3& Color)
+	float GetOutlineDepthMultiplier()
 	{
-		m_OutlineCBuffer->SetColor(Color);
+		return m_OutlineCBuffer->GetDepthMultiplier();
 	}
 
-	void SetOutlineColor(const Vector4& Color)
+	float GetOutlineDepthBias()
 	{
-		m_OutlineCBuffer->SetColor(Color);
+		return m_OutlineCBuffer->GetDepthBias();
+	}
+
+	float GetOutlineNormalMultiplier()
+	{
+		return m_OutlineCBuffer->GetNormalMultiplier();
+	}
+
+	float GetOutlineNormalBias()
+	{
+		return m_OutlineCBuffer->GetNormalBias();
 	}
 
 public:

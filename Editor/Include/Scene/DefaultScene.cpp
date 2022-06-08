@@ -7,7 +7,11 @@
 #include "Component/Node/MoveInputCheckNode.h"
 #include "Component/Node/MovePickingNode.h"
 
-CDefaultScene::CDefaultScene()
+#include "Component/AnimationMeshComponent.h"
+#include "Component/StaticMeshComponent.h"
+
+CDefaultScene::CDefaultScene()  :
+    m_PickObj(nullptr)
 {
     SetTypeID<CDefaultScene>();
 }
@@ -61,6 +65,56 @@ bool CDefaultScene::Init()
 
     return true;
 }
+
+void CDefaultScene::Update(float DetaTime)
+{
+ //    CGameObject* PickObj = nullptr;
+ //    bool Pick = m_Scene->Picking(PickObj);
+ //
+ //    if (!PickObj)
+ //    {
+ //        m_PickObj = nullptr;
+ //        m_PickAnimMesh = nullptr;
+ //        m_PickStaticMesh = nullptr;
+ //    }
+ //
+ //    if (PickObj)
+ //    {
+ //		if (PickObj == m_PickObj)
+ //		{
+ //			return;
+ //		}
+ //
+ //        if (m_PickAnimMesh)
+ //        {
+ //			m_PickAnimMesh->EnableOutline(false);
+ //        }
+ //        else if (m_PickStaticMesh)
+ //        {
+ //			m_PickStaticMesh->EnableOutline(false);
+ //        }
+ //        
+ //        m_PickAnimMesh = PickObj->FindComponentFromType<CAnimationMeshComponent>();
+ //
+ //        if (m_PickAnimMesh)
+ //        {
+ //            m_PickAnimMesh->EnableOutline(true);
+ //            m_PickAnimMesh->SetOutlineThickness(5.f);
+ //            m_PickAnimMesh->SetOutlineColor(Vector3(0.f, 0.5f, 0.8f));
+ //            return;
+ //        }
+ //
+ //        m_PickStaticMesh = PickObj->FindComponentFromType<CStaticMeshComponent>();
+ //
+ //        if (m_PickStaticMesh)
+ //        {
+ //            m_PickStaticMesh->EnableOutline(true);
+ //            m_PickStaticMesh->SetOutlineThickness(5.f);
+ //            m_PickStaticMesh->SetOutlineColor(Vector3(0.f, 0.5f, 0.8f));
+ //            return;
+ //        }
+ //    }
+ }
 
 bool CDefaultScene::LoadAnimationSequence2D()
 {

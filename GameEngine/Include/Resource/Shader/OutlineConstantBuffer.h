@@ -19,11 +19,6 @@ public:
 	virtual COutlineConstantBuffer* Clone();
 
 public:
-	void SetThickness(float Val)
-	{
-		m_BufferData.Thickness = Val;
-	}
-
 	void SetDepthMultiplier(float Val)
 	{
 		m_BufferData.DepthMultiplier = Val;
@@ -44,14 +39,25 @@ public:
 		m_BufferData.NormalBias = Val;
 	}
 
-	void SetColor(const Vector3& Color)
+public:
+	float GetDepthMultiplier()
 	{
-		m_BufferData.Color = Color;
+		return m_BufferData.DepthMultiplier;
 	}
 
-	void SetColor(const Vector4& Color)
+	float GetDepthBias()
 	{
-		m_BufferData.Color = Vector3(Color.x, Color.y, Color.z);
+		return m_BufferData.DepthBias;
+	}
+
+	float GetNormalMultiplier()
+	{
+		return m_BufferData.DepthMultiplier;
+	}
+
+	float GetNormalBias()
+	{
+		return m_BufferData.NormalBias;
 	}
 };
 

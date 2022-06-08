@@ -23,7 +23,10 @@ CMaterial::CMaterial() :
 	m_Scene(nullptr),
 	m_CBuffer(nullptr),
 	m_Opacity(1.f),
-	m_RenderStateArray{}
+	m_RenderStateArray{},
+	m_OutlineEnable(false),
+	m_OutlineThickness(1.f),
+	m_OutlineColor(Vector3(0.f, 0.f, 0.f))
 {
 	SetTypeID<CMaterial>();
 }
@@ -67,6 +70,9 @@ void CMaterial::CreateConstantBuffer()
 	m_CBuffer->SetSpecularColor(m_SpecularColor);
 	m_CBuffer->SetEmissiveColor(m_EmissiveColor);
 	m_CBuffer->SetOpacity(m_Opacity);
+	m_CBuffer->SetOutlineEnable(m_OutlineEnable);
+	m_CBuffer->SetOutlineThickness(m_OutlineThickness);
+	m_CBuffer->SetOutlineColor(m_OutlineColor);
 
 	m_CBuffer->UpdateCBuffer();
 }
@@ -248,6 +254,36 @@ void CMaterial::SetSpecularPower(float Power)
 	if (m_CBuffer)
 	{
 		m_CBuffer->SetSpecularColor(m_SpecularColor);
+	}
+}
+
+void CMaterial::EnableOutline(bool Enable)
+{
+	m_OutlineEnable = Enable;
+
+	if (m_CBuffer)
+	{
+		m_CBuffer->SetOutlineEnable(Enable);
+	}
+}
+
+void CMaterial::SetOutlineThickness(float Thickness)
+{
+	m_OutlineThickness = Thickness;
+
+	if (m_CBuffer)
+	{
+		m_CBuffer->SetOutlineThickness(Thickness);
+	}
+}
+
+void CMaterial::SetOutlineColor(const Vector3& Color)
+{
+	m_OutlineColor = Color;
+
+	if (m_CBuffer)
+	{
+		m_CBuffer->SetOutlineColor(Color);
 	}
 }
 
@@ -781,6 +817,9 @@ void CMaterial::Render()
 		m_CBuffer->SetSpecularColor(m_SpecularColor);
 		m_CBuffer->SetEmissiveColor(m_EmissiveColor);
 		m_CBuffer->SetOpacity(m_Opacity);
+		m_CBuffer->SetOutlineEnable(m_OutlineEnable);
+		m_CBuffer->SetOutlineThickness(m_OutlineThickness);
+		m_CBuffer->SetOutlineColor(m_OutlineColor);
 
 		m_CBuffer->UpdateCBuffer();
 	}

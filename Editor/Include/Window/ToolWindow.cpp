@@ -49,19 +49,15 @@ bool CToolWindow::Init()
 
 	// Outline
 	m_RenderBlock = AddWidget<CIMGUICollapsingHeader>("Render", 200.f);
-	m_OutlineThickness = m_RenderBlock->AddWidget<CIMGUISliderFloat>("Outline Thickness");
 	m_OutlineDepthMultiply = m_RenderBlock->AddWidget<CIMGUISliderFloat>("Outline Depth Multiplier");
 	m_OutlineDepthBias = m_RenderBlock->AddWidget<CIMGUISliderFloat>("Outline Depth Bias");
 	m_OutlineNormalMutliply = m_RenderBlock->AddWidget<CIMGUISliderFloat>("Outline Normal Mutiplier");
 	m_OutlineNormalBias = m_RenderBlock->AddWidget<CIMGUISliderFloat>("Outline Normal Bias");
-	m_OutlineColor = m_RenderBlock->AddWidget<CIMGUIColor3>("Outline Color");
 
 	// Initial Value
 	m_CameraSpeed->SetMin(0.f);
 	m_CameraSpeed->SetMax(10.f);
 	m_CameraSpeed->SetValue(CEditorManager::GetInst()->Get3DCameraObject()->GetCameraSpeed());
-	m_OutlineThickness->SetMin(1.f);
-	m_OutlineThickness->SetMax(10.f);
 	m_OutlineDepthMultiply->SetMin(0.1f);
 	m_OutlineDepthMultiply->SetMax(5.f);
 	m_OutlineDepthBias->SetMin(0.1f);
@@ -71,16 +67,19 @@ bool CToolWindow::Init()
 	m_OutlineNormalBias->SetMin(0.1f);
 	m_OutlineNormalBias->SetMax(50.f);
 
+	m_OutlineDepthMultiply->SetValue(CRenderManager::GetInst()->GetOutlineDepthMultiplier());
+	m_OutlineDepthBias->SetValue(CRenderManager::GetInst()->GetOutlineDepthBias());
+	m_OutlineNormalMutliply->SetValue(CRenderManager::GetInst()->GetOutlineNormalMultiplier());
+	m_OutlineNormalBias->SetValue(CRenderManager::GetInst()->GetOutlineNormalBias());
+
 	// CallBack
 	m_GizmoTransformMode->SetCallBack(this, &CToolWindow::OnSelectGizmoTransformMode);
 	m_GizmoOperationMode->SetCallBack(this, &CToolWindow::OnSelectGizmoOperationMode);
 	m_CameraSpeed->SetCallBack(this, &CToolWindow::OnChangeCameraSpeed);
-	m_OutlineThickness->SetCallBack(this, &CToolWindow::OnChangeOutlineThickness);
 	m_OutlineDepthMultiply->SetCallBack(this, &CToolWindow::OnChangeOutlineDepthMultiply);
 	m_OutlineDepthBias->SetCallBack(this, &CToolWindow::OnChangeOutlineDepthBias);
 	m_OutlineNormalMutliply->SetCallBack(this, &CToolWindow::OnChangeOutlineNormalMultiply);
 	m_OutlineNormalBias->SetCallBack(this, &CToolWindow::OnChangeOutlineNormalBias);
-	m_OutlineColor->SetCallBack(this, &CToolWindow::OnChangeOutlineColor);
 
 	// 디버그용 임시 키
 	CInput::GetInst()->CreateKey("Z", 'Z');
@@ -138,11 +137,6 @@ void CToolWindow::OnChangeCameraSpeed(float Speed)
 	CEditorManager::GetInst()->Get3DCameraObject()->SetCameraSpeed(Speed);
 }
 
-void CToolWindow::OnChangeOutlineThickness(float Val)
-{
-	CRenderManager::GetInst()->SetOutlineThickness(Val);
-}
-
 void CToolWindow::OnChangeOutlineDepthMultiply(float Val)
 {
 	CRenderManager::GetInst()->SetOutlineDepthMultiplier(Val);
@@ -161,11 +155,6 @@ void CToolWindow::OnChangeOutlineNormalMultiply(float Val)
 void CToolWindow::OnChangeOutlineNormalBias(float Val)
 {
 	CRenderManager::GetInst()->SetOutlineNormalBias(Val);
-}
-
-void CToolWindow::OnChangeOutlineColor(const Vector3& Color)
-{
-	CRenderManager::GetInst()->SetOutlineColor(Color);
 }
 
 void CToolWindow::OnQDown(float DetlaTime)
