@@ -94,20 +94,44 @@ void CIMGUITextInput::RenderText()
 
 void CIMGUITextInput::ApplyDropEffect()
 {
+	bool	Input = false;
+
+	// Drop 내용을 받는다.
 	if (ImGui::BeginDragDropTarget())
 	{
 		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("DND_DEMO_CELL"))
 		{
+			// char type 배수 
+			if (payload->DataSize % sizeof(char) != 0)
+				return;
+
 			// 일반적으로 IMGUIText Widget을 Drop 할 것이다.
-			// 그리고 IMGUIText 는 char[] 이기 때문에, char type 의 배수 크기인지 확인한다.
-			IM_ASSERT(payload->DataSize % sizeof(char) == 0);
+			// Drop 받은 내용을 TextType 에 맞게 변환할 것이다.
 			char* payload_n = (char*)payload->Data;
 
-			char AcceptedName[MAX_PATH] = {};
-			strcpy_s(AcceptedName, payload_n);
-			bool True = false;
-
-			// 들어온 Input 으로, Name 을 세팅
+			switch (m_TextType)
+			{
+			case ImGuiText_Type::String:
+			{
+				// 그리고 IMGUIText 는 char[] 이기 때문에, char type 의 배수 크기인지 확인한다.
+				strcpy_s(m_Text, payload_n);
+			}
+				break;
+			case ImGuiText_Type::Int:
+			{
+				std::string IntDrop = payload_n;
+				int FinalIntInput = std::stoi(IntDrop);
+				m_ValueInt = FinalIntInput;
+			}
+				break;
+			case ImGuiText_Type::Float:
+			{
+				std::string FloatDrop = payload_n;
+				float FinalIntInput = std::stof(FloatDrop);
+				m_ValueFloat = FinalIntInput;
+			}
+				break;
+			}
 
 		}
 		ImGui::EndDragDropTarget();

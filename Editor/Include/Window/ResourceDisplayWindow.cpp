@@ -22,7 +22,18 @@ bool CResourceDisplayWindow::Init()
 
 	m_vecResourceTapList.push_back(m_TextureList);
 
+	GatherLoadedTextureResources();
+	GatherLoadedMaterialResources();
 
 	return true;
+}
+
+void CResourceDisplayWindow::GatherLoadedTextureResources()
+{
+	// Texture Manager 에 Load 된 Texture 목록만 세팅할 것이다.
+}
+
+void CResourceDisplayWindow::GatherLoadedMaterialResources()
+{
 }
 
