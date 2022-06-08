@@ -3,6 +3,7 @@
 #include "Input.h"
 #include "../EditorManager.h"
 #include "../Object/3DCameraObject.h"
+#include "Render/RenderManager.h"
 
 CToolWindow::CToolWindow()	:
 	m_GizmoBlock(nullptr),
@@ -42,18 +43,43 @@ bool CToolWindow::Init()
 	m_GizmoOperationMode->SetCheck(0, true);
 	m_GizmoOperationMode->AlwaysCheck(true);
 
+	// Camera
 	m_EditorCameraBlock = AddWidget<CIMGUICollapsingHeader>("Editor Camera", 200.f);
 	m_CameraSpeed = m_EditorCameraBlock->AddWidget<CIMGUISliderFloat>("Speed");
+
+	// Outline
+	m_RenderBlock = AddWidget<CIMGUICollapsingHeader>("Render", 200.f);
+	m_OutlineDepthMultiply = m_RenderBlock->AddWidget<CIMGUISliderFloat>("Outline Depth Multiplier");
+	m_OutlineDepthBias = m_RenderBlock->AddWidget<CIMGUISliderFloat>("Outline Depth Bias");
+	m_OutlineNormalMutliply = m_RenderBlock->AddWidget<CIMGUISliderFloat>("Outline Normal Mutiplier");
+	m_OutlineNormalBias = m_RenderBlock->AddWidget<CIMGUISliderFloat>("Outline Normal Bias");
 
 	// Initial Value
 	m_CameraSpeed->SetMin(0.f);
 	m_CameraSpeed->SetMax(10.f);
 	m_CameraSpeed->SetValue(CEditorManager::GetInst()->Get3DCameraObject()->GetCameraSpeed());
+	m_OutlineDepthMultiply->SetMin(0.1f);
+	m_OutlineDepthMultiply->SetMax(5.f);
+	m_OutlineDepthBias->SetMin(0.1f);
+	m_OutlineDepthBias->SetMax(50.f);
+	m_OutlineNormalMutliply->SetMin(0.1f);
+	m_OutlineNormalMutliply->SetMax(5.f);
+	m_OutlineNormalBias->SetMin(0.1f);
+	m_OutlineNormalBias->SetMax(50.f);
+
+	m_OutlineDepthMultiply->SetValue(CRenderManager::GetInst()->GetOutlineDepthMultiplier());
+	m_OutlineDepthBias->SetValue(CRenderManager::GetInst()->GetOutlineDepthBias());
+	m_OutlineNormalMutliply->SetValue(CRenderManager::GetInst()->GetOutlineNormalMultiplier());
+	m_OutlineNormalBias->SetValue(CRenderManager::GetInst()->GetOutlineNormalBias());
 
 	// CallBack
 	m_GizmoTransformMode->SetCallBack(this, &CToolWindow::OnSelectGizmoTransformMode);
 	m_GizmoOperationMode->SetCallBack(this, &CToolWindow::OnSelectGizmoOperationMode);
 	m_CameraSpeed->SetCallBack(this, &CToolWindow::OnChangeCameraSpeed);
+	m_OutlineDepthMultiply->SetCallBack(this, &CToolWindow::OnChangeOutlineDepthMultiply);
+	m_OutlineDepthBias->SetCallBack(this, &CToolWindow::OnChangeOutlineDepthBias);
+	m_OutlineNormalMutliply->SetCallBack(this, &CToolWindow::OnChangeOutlineNormalMultiply);
+	m_OutlineNormalBias->SetCallBack(this, &CToolWindow::OnChangeOutlineNormalBias);
 
 	// 디버그용 임시 키
 	CInput::GetInst()->CreateKey("Z", 'Z');
@@ -109,6 +135,26 @@ void CToolWindow::OnSelectGizmoTransformMode(const char* Label, bool Check)
 void CToolWindow::OnChangeCameraSpeed(float Speed)
 {
 	CEditorManager::GetInst()->Get3DCameraObject()->SetCameraSpeed(Speed);
+}
+
+void CToolWindow::OnChangeOutlineDepthMultiply(float Val)
+{
+	CRenderManager::GetInst()->SetOutlineDepthMultiplier(Val);
+}
+
+void CToolWindow::OnChangeOutlineDepthBias(float Val)
+{
+	CRenderManager::GetInst()->SetOutlineDepthBias(Val);
+}
+
+void CToolWindow::OnChangeOutlineNormalMultiply(float Val)
+{
+	CRenderManager::GetInst()->SetOutlineNormalMultiplier(Val);
+}
+
+void CToolWindow::OnChangeOutlineNormalBias(float Val)
+{
+	CRenderManager::GetInst()->SetOutlineNormalBias(Val);
 }
 
 void CToolWindow::OnQDown(float DetlaTime)

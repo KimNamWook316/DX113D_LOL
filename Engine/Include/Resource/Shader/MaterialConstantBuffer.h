@@ -32,6 +32,9 @@ public:
 		Info->MtrlSpecularTex = m_BufferData.SpecularTex;
 		Info->MtrlEmissiveTex = m_BufferData.EmissiveTex;
 		Info->MtrlReceiveDecal = m_BufferData.ReceiveDecal;
+		Info->MtrlOutlineEnable = m_BufferData.OutlineEnable;
+		Info->MtrlOutlineThickness = m_BufferData.OutlineThickness;
+		Info->MtrlOutlineColor = m_BufferData.OutlineColor;
 	}
 
 	void SetBaseColor(const Vector4& BaseColor)
@@ -87,6 +90,21 @@ public:
 	void SetReceiveDecal(bool Enable)
 	{
 		m_BufferData.ReceiveDecal = Enable ? 1 : 0;
+	}
+
+	void SetOutlineEnable(bool Enable)
+	{
+		m_BufferData.OutlineEnable = Enable ? 1 : 0;
+	}
+
+	void SetOutlineThickness(float Thickness)
+	{
+		m_BufferData.OutlineThickness = Thickness;
+	}
+
+	void SetOutlineColor(const Vector3& Color)
+	{
+		m_BufferData.OutlineColor = Color;
 	}
 };
 

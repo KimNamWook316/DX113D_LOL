@@ -84,6 +84,9 @@ public:
     void SetTransparencyAllMaterial(bool Enable);
     void SetOpacity(float Opacity, int Index = 0);
     void AddOpacity(float Opacity, int Index = 0);
+    void EnableOutline(bool Enable, int Index = 0);
+    void SetOutlineThickness(float Thickness, int Index = 0);
+    void SetOutlineColor(const Vector3& Color, int Index = 0);
 
 public :
     void SetMaterialShader(const std::string& Name);
