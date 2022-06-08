@@ -47,25 +47,25 @@ bool CEffectEditor::Init()
 {
 
     // Btns
-    m_SetMaterialTextureButton = AddWidget<CIMGUIButton>("Set Texture", 150.f, 20.f);
+    m_SetMaterialTextureButton = AddWidget<CIMGUIButton>("Set Texture", 100.f, 20.f);
     m_SetMaterialTextureButton->SetClickCallback<CEffectEditor>(this, &CEffectEditor::OnSetParticleTexture);
 
     CIMGUISameLine* Line = AddWidget<CIMGUISameLine>("Line");
-    Line->SetOffsetX(165);
+    Line->SetOffsetX(105);
 
-    m_SaveParticleBtn = AddWidget<CIMGUIButton>("Save Particle", 150.f, 20.f);
+    m_SaveParticleBtn = AddWidget<CIMGUIButton>("Save Particle", 100.f, 20.f);
     m_SaveParticleBtn->SetClickCallback<CEffectEditor>(this, &CEffectEditor::OnSaveParticleClass);
 
     Line = AddWidget<CIMGUISameLine>("Line");
-    Line->SetOffsetX(320);
+    Line->SetOffsetX(210);
 
-    m_LoadParticleBtn = AddWidget<CIMGUIButton>("Load Particle", 150.f, 20.f);
+    m_LoadParticleBtn = AddWidget<CIMGUIButton>("Load Particle", 100.f, 20.f);
     m_LoadParticleBtn->SetClickCallback<CEffectEditor>(this, &CEffectEditor::OnLoadParticleClass);
 
     Line = AddWidget<CIMGUISameLine>("Line");
-    Line->SetOffsetX(485);
+    Line->SetOffsetX(315);
 
-    m_StartEditBtn = AddWidget<CIMGUIButton>("Start Edit", 150.f, 20.f);
+    m_StartEditBtn = AddWidget<CIMGUIButton>("Start Edit", 100.f, 20.f);
     m_StartEditBtn->SetClickCallback<CEffectEditor>(this, &CEffectEditor::SetStartEditing);
 
     // Camera

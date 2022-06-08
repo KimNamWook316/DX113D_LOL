@@ -71,6 +71,10 @@ protected:
     CSharedPtr<class CRenderState>  m_RenderStateArray[(int)RenderState_Type::Max];
     std::list<RenderCallback*>    m_RenderCallback;
 
+    // Outline
+    int m_OutlineEnable;
+    float m_OutlineThickness;
+    Vector3 m_OutlineColor;
 protected :
     std::vector<std::string> m_vecTextureFullPathInfos;
     
@@ -148,7 +152,24 @@ public:
     {
         return m_TextureInfo.empty();
     }
-
+public :
+    void SetOutLineEnable(bool Enable)
+    {
+        m_OutlineEnable = Enable;
+    }
+    void SetOutLineThickNess(float ThickNess)
+    {
+        m_OutlineThickness = ThickNess;
+    }
+    void SetOutLineColor(const Vector3& Color)
+    {
+        m_OutlineColor = Color;
+    }
+    void SetOutLineColor(float r, float g, float b)
+    {
+        m_OutlineColor = Vector3(r,g,b);
+    }
+public :
     void EnableBump();
     void EnableAnimation3D();
     void EnableSpecularTex();

@@ -141,12 +141,12 @@ bool CEditorManager::Init(HINSTANCE hInst)
 	m_ToolWindow = CIMGUIManager::GetInst()->AddWindow<CToolWindow>(TOOL);
 	CFBXConvertWindow* win = CIMGUIManager::GetInst()->AddWindow<CFBXConvertWindow>(FBX_CONVERTOR);
 
-	// m_BehaviorTreeMenuBar = CIMGUIManager::GetInst()->AddWindow<CBehaviorTreeMenuBar>("BehaviorTree");
 	m_BaseMenuBar = CIMGUIManager::GetInst()->AddWindow<CBaseMenuBar>("BehaviorTree");
 
 	CRenderManager::GetInst()->CreateLayer("DragLayer", INT_MAX);
 
-
+	// ±âÁ¸ µµ°æ¾¾ Behavior TreeMenu Bar
+	// m_BehaviorTreeMenuBar = CIMGUIManager::GetInst()->AddWindow<CBehaviorTreeMenuBar>("BehaviorTree");
 	return true;
 }
 

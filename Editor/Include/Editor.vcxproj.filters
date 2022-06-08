@@ -61,6 +61,18 @@
     <Filter Include="02. Editor\02. Widget\03. MenuBar">
       <UniqueIdentifier>{347fb316-6e8e-4be3-859b-172c6e8381e9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. Editor\01. Window\1. Resource">
+      <UniqueIdentifier>{4d521ff9-c393-4a5c-8ad7-71e8b99719b2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Editor\01. Window\2. Animation">
+      <UniqueIdentifier>{b97aabf2-f856-47eb-880b-59cc41868f7a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Editor\01. Window\3. Particle">
+      <UniqueIdentifier>{65199333-452b-4355-92fb-22f3958a21c9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Editor\01. Window\4. MenuBar">
+      <UniqueIdentifier>{d565fee9-2c53-4eaf-8d99-f39f6bbed48d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EditorManager.cpp">
@@ -86,9 +98,6 @@
     </ClCompile>
     <ClCompile Include="EditorUtil.cpp">
       <Filter>02. Editor\99. Util</Filter>
-    </ClCompile>
-    <ClCompile Include="Window\AnimationEditor.cpp">
-      <Filter>02. Editor\01. Window</Filter>
     </ClCompile>
     <ClCompile Include="Widget\GameObjectWidget.cpp">
       <Filter>02. Editor\02. Widget\01. Inspector</Filter>
@@ -132,9 +141,6 @@
     <ClCompile Include="Widget\LightComponentWidget.cpp">
       <Filter>02. Editor\02. Widget\01. Inspector\01. SceneComponent</Filter>
     </ClCompile>
-    <ClCompile Include="Window\EffectEditor.cpp">
-      <Filter>02. Editor\01. Window</Filter>
-    </ClCompile>
     <ClCompile Include="Widget\ParticleComponentWidget.cpp">
       <Filter>02. Editor\02. Widget\01. Inspector\01. SceneComponent</Filter>
     </ClCompile>
@@ -174,14 +180,29 @@
     <ClCompile Include="Object\3DParticleObject.cpp">
       <Filter>03. Object\02. 3D</Filter>
     </ClCompile>
-    <ClCompile Include="Window\BaseMenuBar.cpp">
-      <Filter>02. Editor\01. Window</Filter>
-    </ClCompile>
     <ClCompile Include="Widget\SaveLoadBeginMenu.cpp">
       <Filter>02. Editor\02. Widget\03. MenuBar</Filter>
     </ClCompile>
     <ClCompile Include="Widget\BehaviorTreeMenu.cpp">
       <Filter>02. Editor\02. Widget\03. MenuBar</Filter>
+    </ClCompile>
+    <ClCompile Include="Widget\ResourceMenu.cpp">
+      <Filter>02. Editor\02. Widget\03. MenuBar</Filter>
+    </ClCompile>
+    <ClCompile Include="Window\BaseMenuBar.cpp">
+      <Filter>02. Editor\01. Window\4. MenuBar</Filter>
+    </ClCompile>
+    <ClCompile Include="Window\AnimationEditor.cpp">
+      <Filter>02. Editor\01. Window\2. Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="Window\EffectEditor.cpp">
+      <Filter>02. Editor\01. Window\3. Particle</Filter>
+    </ClCompile>
+    <ClCompile Include="Window\MaterialEditor.cpp">
+      <Filter>02. Editor\01. Window\1. Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="Window\ResourceDisplayWindow.cpp">
+      <Filter>02. Editor\01. Window\1. Resource</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -211,9 +232,6 @@
     </ClInclude>
     <ClInclude Include="EditorUtil.h">
       <Filter>02. Editor\99. Util</Filter>
-    </ClInclude>
-    <ClInclude Include="Window\AnimationEditor.h">
-      <Filter>02. Editor\01. Window</Filter>
     </ClInclude>
     <ClInclude Include="Utils.h">
       <Filter>헤더 파일</Filter>
@@ -260,9 +278,6 @@
     <ClInclude Include="Widget\LightComponentWidget.h">
       <Filter>02. Editor\02. Widget\01. Inspector\01. SceneComponent</Filter>
     </ClInclude>
-    <ClInclude Include="Window\EffectEditor.h">
-      <Filter>02. Editor\01. Window</Filter>
-    </ClInclude>
     <ClInclude Include="Widget\ParticleComponentWidget.h">
       <Filter>02. Editor\02. Widget\01. Inspector\01. SceneComponent</Filter>
     </ClInclude>
@@ -302,14 +317,29 @@
     <ClInclude Include="Object\3DParticleObject.h">
       <Filter>03. Object\02. 3D</Filter>
     </ClInclude>
-    <ClInclude Include="Window\BaseMenuBar.h">
-      <Filter>02. Editor\01. Window</Filter>
-    </ClInclude>
     <ClInclude Include="Widget\SaveLoadBeginMenu.h">
       <Filter>02. Editor\02. Widget\03. MenuBar</Filter>
     </ClInclude>
     <ClInclude Include="Widget\BehaviorTreeMenu.h">
       <Filter>02. Editor\02. Widget\03. MenuBar</Filter>
+    </ClInclude>
+    <ClInclude Include="Widget\ResourceMenu.h">
+      <Filter>02. Editor\02. Widget\03. MenuBar</Filter>
+    </ClInclude>
+    <ClInclude Include="Window\BaseMenuBar.h">
+      <Filter>02. Editor\01. Window\4. MenuBar</Filter>
+    </ClInclude>
+    <ClInclude Include="Window\AnimationEditor.h">
+      <Filter>02. Editor\01. Window\2. Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="Window\EffectEditor.h">
+      <Filter>02. Editor\01. Window\3. Particle</Filter>
+    </ClInclude>
+    <ClInclude Include="Window\MaterialEditor.h">
+      <Filter>02. Editor\01. Window\1. Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="Window\ResourceDisplayWindow.h">
+      <Filter>02. Editor\01. Window\1. Resource</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

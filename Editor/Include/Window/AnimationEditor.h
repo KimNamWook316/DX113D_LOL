@@ -8,7 +8,7 @@ class CAnimationEditor :
 	public CIMGUIWindow
 {
 	friend class CEditorManager;
-	friend class CAnimationInstanceConvertThread;
+	// friend class CAnimationInstanceConvertThread;
 public:
 	CAnimationEditor();
 	~CAnimationEditor();
