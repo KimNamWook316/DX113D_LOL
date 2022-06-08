@@ -9,7 +9,8 @@ CIMGUITree::CIMGUITree()	:
 	m_GlobalID(-1),
 	m_Selected(false),
 	m_Enable(true),
-	m_Open(false)
+	m_Open(false),
+	m_DragDropEnable(true)
 {
 	m_Flag |= ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
 	m_DefaultFlag = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;

@@ -142,7 +142,9 @@ public:
 public:
 	virtual bool Init();
 	virtual void Render();
-
+private :
+	void RenderText();
+	void ApplyDropEffect();
 public:
 	template <typename T>
 	void SetCallback(T* Obj, void(T::* Func)())

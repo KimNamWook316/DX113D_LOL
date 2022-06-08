@@ -35,4 +35,16 @@ void CIMGUIText::Render()
     {
         ImGui::TextColored(m_Color.Value, m_TextUTF8);
     }
+
+    ApplyDragEffect();
+}
+
+void CIMGUIText::ApplyDragEffect()
+{
+    if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_SourceAllowNullID))
+    {
+        ImGui::SetDragDropPayload("DND_DEMO_CELL", m_TextUTF8, sizeof(char) * strlen(m_TextUTF8));
+
+        ImGui::EndDragDropSource();
+    }
 }
