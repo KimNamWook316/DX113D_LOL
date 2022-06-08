@@ -6,6 +6,7 @@ class C3DParticleObject :
     public CGameObject
 {
 	friend class CScene;
+	friend class CEffectEditor;
 
 protected:
 	C3DParticleObject();

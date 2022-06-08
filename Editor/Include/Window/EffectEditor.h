@@ -12,6 +12,7 @@ public:
 private:
     class CIMGUIButton* m_SaveParticleBtn;
     class CIMGUIButton* m_LoadParticleBtn;
+    class CIMGUIButton* m_StartEditBtn;
     class CParticlePopUpScreen* m_ParticlePopUpScreen;
 private:
     class CIMGUIInputFloat* m_SpawnTimeMaxEdit;
@@ -78,9 +79,6 @@ private :
     class CGameObject* m_SkyObject;
 public :
     virtual bool Init() override;
-private :
-    void SetComInfos();
-    void OnCreateParticlePopUp();
 private:
     void OnSaveParticleObjectButton();
     void OnLoadParticleObjectButton();
@@ -126,8 +124,11 @@ private:
     void OnLoadParticleClass();
 private:
     // Particle 기본 세팅
-    void OnSetParticleMaterialSetting(class CSceneComponent* Com);
+    void OnSetBasicParticleMaterialSetting(class CSceneComponent* Com);
     void OnReflectCurrentParticleSetting();
     void SetGameObjectReady();
+    void SetStartEditing();
+    void SetParticleToParticleComponent(class CParticleComponent* Component, const char* ParticleName);
+    void SetIMGUIReflectPartice(class CParticle* Particle);
 };
 

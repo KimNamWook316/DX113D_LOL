@@ -49,7 +49,7 @@ bool C3DParticleObject::Init()
 
     m_ParticleArm->SetOffset(0.f, 2.f, 0.f);
     m_ParticleArm->SetRelativeRotation(45.f, 0.f, 0.f);
-    m_ParticleArm->SetTargetDistance(20.f);
+    m_ParticleArm->SetTargetDistance(90.f);
 
 	return true;
 }
@@ -61,7 +61,7 @@ void C3DParticleObject::Update(float DeltaTime)
     if (CInput::GetInst()->GetWheelDir() && m_IsCameraZoom)
     {
         float Length = m_ParticleArm->GetTargetDistance() +
-            CInput::GetInst()->GetWheelDir() * 0.1f;
+            CInput::GetInst()->GetWheelDir() * m_CameraZoomSpeed;
 
         m_ParticleArm->SetTargetDistance(Length);
     }

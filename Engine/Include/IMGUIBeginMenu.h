@@ -17,27 +17,11 @@ public:
     virtual void Render() override;
 
 public:
-    template <typename T>
-    T* AddWidget(const std::string& name, const float width = 100.f, const float height = 100.f)
-    {
-		T* widget = new T;
-
-		widget->SetName(name);
-		widget->SetOwner(m_Owner);
-		widget->SetSize(width, height);
-
-		if (!widget->Init())
-		{
-			SAFE_DELETE(widget);
-			assert(false);
-			return nullptr;
-		}
-        m_vecChild.push_back(widget);
-        return widget;
-    }
+    class CIMGUIMenuItem* AddMenuItem(const std::string& name, const float width = 100.f, const float height = 100.f);
 
 protected:
-    std::vector<class CIMGUIWidget*> m_vecChild;
+    // std::vector<class CIMGUIWidget*> m_vecChild;
+    std::vector<class CIMGUIMenuItem*> m_vecMenuChild;
     size_t mSize;
 };
 

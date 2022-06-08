@@ -942,6 +942,8 @@ void CRenderManager::RenderParticleEffectEditor()
 
 	for (; iter != iterEnd; ++iter)
 	{
+		if (!(*iter)->IsEnable())
+			continue;
 		(*iter)->RenderParticleEffectEditor();
 	}
 

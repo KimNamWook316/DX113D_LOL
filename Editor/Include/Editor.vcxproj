@@ -178,16 +178,19 @@
     <ClCompile Include="Object\SpriteEditObject.cpp" />
     <ClCompile Include="Scene\DefaultScene.cpp" />
     <ClCompile Include="Widget\AnimationMeshWidget.cpp" />
+    <ClCompile Include="Widget\BehaviorTreeMenu.cpp" />
     <ClCompile Include="Widget\GameObjectWidget.cpp" />
     <ClCompile Include="Widget\LandScapeWidget.cpp" />
     <ClCompile Include="Widget\LightComponentWidget.cpp" />
     <ClCompile Include="Widget\ObjectComponentWidget.cpp" />
     <ClCompile Include="Widget\ParticleComponentWidget.cpp" />
+    <ClCompile Include="Widget\SaveLoadBeginMenu.cpp" />
     <ClCompile Include="Widget\SceneComponentWidget.cpp" />
     <ClCompile Include="Widget\StaticMeshComponentWidget.cpp" />
     <ClCompile Include="Widget\TransformWidget.cpp" />
     <ClCompile Include="Window\AnimationEditor.cpp" />
     <ClCompile Include="Thread\FBXConvertThread.cpp" />
+    <ClCompile Include="Window\BaseMenuBar.cpp" />
     <ClCompile Include="Window\BehaviorTreeMenuBar.cpp" />
     <ClCompile Include="Window\BehaviorTreeWindow.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
@@ -204,7 +207,6 @@
     <ClCompile Include="Window\ObjectComponentWindow.cpp" />
     <ClCompile Include="Window\ObjectCreateModal.cpp" />
     <ClCompile Include="Window\ObjectHierarchyWindow.cpp" />
-    <ClCompile Include="Window\ParticlePopUpScreen.cpp" />
     <ClCompile Include="Window\SceneComponentCreateModal.cpp" />
     <ClCompile Include="Window\SceneComponentHierarchyWindow.cpp" />
     <ClCompile Include="Window\ToolWindow.cpp" />
@@ -225,16 +227,19 @@
     <ClInclude Include="Scene\DefaultScene.h" />
     <ClInclude Include="Utils.h" />
     <ClInclude Include="Widget\AnimationMeshWidget.h" />
+    <ClInclude Include="Widget\BehaviorTreeMenu.h" />
     <ClInclude Include="Widget\GameObjectWidget.h" />
     <ClInclude Include="Widget\LandScapeWidget.h" />
     <ClInclude Include="Widget\LightComponentWidget.h" />
     <ClInclude Include="Widget\ObjectComponentWidget.h" />
     <ClInclude Include="Widget\ParticleComponentWidget.h" />
+    <ClInclude Include="Widget\SaveLoadBeginMenu.h" />
     <ClInclude Include="Widget\SceneComponentWidget.h" />
     <ClInclude Include="Widget\StaticMeshComponentWidget.h" />
     <ClInclude Include="Widget\TransformWidget.h" />
     <ClInclude Include="Window\AnimationEditor.h" />
     <ClInclude Include="Thread\FBXConvertThread.h" />
+    <ClInclude Include="Window\BaseMenuBar.h" />
     <ClInclude Include="Window\BehaviorTreeMenuBar.h" />
     <ClInclude Include="Window\BehaviorTreeWindow.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
@@ -251,7 +256,6 @@
     <ClInclude Include="Window\ObjectComponentWindow.h" />
     <ClInclude Include="Window\ObjectCreateModal.h" />
     <ClInclude Include="Window\ObjectHierarchyWindow.h" />
-    <ClInclude Include="Window\ParticlePopUpScreen.h" />
     <ClInclude Include="Window\SceneComponentCreateModal.h" />
     <ClInclude Include="Window\SceneComponentHierarchyWindow.h" />
     <ClInclude Include="Window\ToolWindow.h" />

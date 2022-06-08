@@ -153,7 +153,6 @@ void CBehaviorTreeMenuBar::Update(float DeltaTime)
 						CComponent* Component = Obj->FindObjectComponentFromType<CStateComponent>();
 						CAnimationMeshComponent* AnimMeshComp = Obj->FindComponentFromType<CAnimationMeshComponent>();
 
-
 						// Object Component Window에서 StateComponent가 선택됐을때만 Behavior Tree Window 열어주기
 						if (Component && AnimMeshComp)
 						{

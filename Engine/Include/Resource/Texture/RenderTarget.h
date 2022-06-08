@@ -43,6 +43,15 @@ public:
 		return m_matDebugWVP;
 	}
 
+public :
+	void SetClearColor(float r, float g, float b, float a)
+	{
+		m_ClearColor[0] = r;
+		m_ClearColor[1] = r;
+		m_ClearColor[0] = r;
+		m_ClearColor[0] = r;
+	}
+
 	void SetDebugRender(bool Render)
 	{
 		m_DebugRender = Render;

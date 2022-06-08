@@ -29,6 +29,7 @@ private:
 	class CInspectorWindow* m_InspectorWindow;
 	class CToolWindow* m_ToolWindow;
 	class CBehaviorTreeMenuBar* m_BehaviorTreeMenuBar;
+	class CBaseMenuBar* m_BaseMenuBar;
 
 	class C3DCameraObject* m_CameraObject;
 
