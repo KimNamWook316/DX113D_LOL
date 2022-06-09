@@ -23,7 +23,10 @@ CMaterial::CMaterial() :
 	m_Scene(nullptr),
 	m_CBuffer(nullptr),
 	m_Opacity(1.f),
-	m_RenderStateArray{}
+	m_RenderStateArray{},
+	m_OutlineEnable(false),
+	m_OutlineThickness(1.f),
+	m_OutlineColor(Vector3(0.f, 0.f, 0.f))
 {
 	SetTypeID<CMaterial>();
 }
@@ -67,6 +70,9 @@ void CMaterial::CreateConstantBuffer()
 	m_CBuffer->SetSpecularColor(m_SpecularColor);
 	m_CBuffer->SetEmissiveColor(m_EmissiveColor);
 	m_CBuffer->SetOpacity(m_Opacity);
+	m_CBuffer->SetOutlineEnable(m_OutlineEnable);
+	m_CBuffer->SetOutlineThickness(m_OutlineThickness);
+	m_CBuffer->SetOutlineColor(m_OutlineColor);
 
 	m_CBuffer->UpdateCBuffer();
 }
@@ -248,6 +254,36 @@ void CMaterial::SetSpecularPower(float Power)
 	if (m_CBuffer)
 	{
 		m_CBuffer->SetSpecularColor(m_SpecularColor);
+	}
+}
+
+void CMaterial::EnableOutline(bool Enable)
+{
+	m_OutlineEnable = Enable;
+
+	if (m_CBuffer)
+	{
+		m_CBuffer->SetOutlineEnable(Enable);
+	}
+}
+
+void CMaterial::SetOutlineThickness(float Thickness)
+{
+	m_OutlineThickness = Thickness;
+
+	if (m_CBuffer)
+	{
+		m_CBuffer->SetOutlineThickness(Thickness);
+	}
+}
+
+void CMaterial::SetOutlineColor(const Vector3& Color)
+{
+	m_OutlineColor = Color;
+
+	if (m_CBuffer)
+	{
+		m_CBuffer->SetOutlineColor(Color);
 	}
 }
 
@@ -725,6 +761,9 @@ void CMaterial::SetTextureArray(int Index, int Register,
 
 void CMaterial::SetTextureInfoResource(int Index, CTexture* Texture)
 {
+	if (!Texture)
+		return;
+
 	m_TextureInfo[Index].Texture = Texture;
 }
 
@@ -781,6 +820,9 @@ void CMaterial::Render()
 		m_CBuffer->SetSpecularColor(m_SpecularColor);
 		m_CBuffer->SetEmissiveColor(m_EmissiveColor);
 		m_CBuffer->SetOpacity(m_Opacity);
+		m_CBuffer->SetOutlineEnable(m_OutlineEnable);
+		m_CBuffer->SetOutlineThickness(m_OutlineThickness);
+		m_CBuffer->SetOutlineColor(m_OutlineColor);
 
 		m_CBuffer->UpdateCBuffer();
 	}
@@ -913,6 +955,9 @@ bool CMaterial::Save(FILE* File)
 
 		m_TextureInfo[i].Texture->Save(File);
 	}
+
+	// 외곽선 관련 값들 Save, Load 추가하기
+	// 
 
 	return true;
 }
@@ -1089,6 +1134,41 @@ bool CMaterial::Load(FILE* File)
 		}
 	}
 
+	// todo : 외곽선 관련 값들 Save, Load 추가하기
+
+
 	return true;
+}
+
+bool CMaterial::SaveFullPath(const char* FullPath)
+{
+	FILE* File = nullptr;
+
+	fopen_s(&File, FullPath, "wb");
+
+	if (!File)
+		return false;
+
+	bool Result = Save(File);
+
+	fclose(File);
+
+	return Result;
+}
+
+bool CMaterial::LoadFullPath(const char* FullPath)
+{
+	FILE* File = nullptr;
+
+	fopen_s(&File, FullPath, "wb");
+
+	if (!File)
+		return false;
+
+	bool Result = Load(File);
+
+	fclose(File);
+
+	return Result;
 }
 

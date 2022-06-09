@@ -66,6 +66,11 @@ public:
 		m_PopupTitle = Title;
 	}
 
+	bool IsOpen() const
+	{
+		return m_Open;
+	}
+
 public:
 	void Open();
 	void Close();

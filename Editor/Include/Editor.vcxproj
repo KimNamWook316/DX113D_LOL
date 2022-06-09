@@ -29,26 +29,26 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -166,31 +166,33 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AnimationInstanceConvertThread.cpp" />
-    <ClCompile Include="CAnimationPopUpScreen.cpp" />
-    <ClCompile Include="CParticlePopUpScreen.cpp" />
     <ClCompile Include="EditorManager.cpp" />
     <ClCompile Include="EditorUtil.cpp" />
     <ClCompile Include="GraphEditor.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Object\3DCameraObject.cpp" />
-    <ClCompile Include="Object\3DParticleCamera.cpp" />
+    <ClCompile Include="Object\3DParticleObject.cpp" />
     <ClCompile Include="Object\Anim3DObject.cpp" />
     <ClCompile Include="Object\DragObject.cpp" />
     <ClCompile Include="Object\Player2D.cpp" />
     <ClCompile Include="Object\SpriteEditObject.cpp" />
     <ClCompile Include="Scene\DefaultScene.cpp" />
     <ClCompile Include="Widget\AnimationMeshWidget.cpp" />
+    <ClCompile Include="Widget\BehaviorTreeMenu.cpp" />
+    <ClCompile Include="Widget\ResourceMenu.cpp" />
     <ClCompile Include="Widget\ColliderBox3DWidget.cpp" />
     <ClCompile Include="Widget\GameObjectWidget.cpp" />
     <ClCompile Include="Widget\LandScapeWidget.cpp" />
     <ClCompile Include="Widget\LightComponentWidget.cpp" />
     <ClCompile Include="Widget\ObjectComponentWidget.cpp" />
     <ClCompile Include="Widget\ParticleComponentWidget.cpp" />
+    <ClCompile Include="Widget\SaveLoadBeginMenu.cpp" />
     <ClCompile Include="Widget\SceneComponentWidget.cpp" />
     <ClCompile Include="Widget\StaticMeshComponentWidget.cpp" />
     <ClCompile Include="Widget\TransformWidget.cpp" />
     <ClCompile Include="Window\AnimationEditor.cpp" />
     <ClCompile Include="Thread\FBXConvertThread.cpp" />
+    <ClCompile Include="Window\BaseMenuBar.cpp" />
     <ClCompile Include="Window\BehaviorTreeMenuBar.cpp" />
     <ClCompile Include="Window\BehaviorTreeWindow.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
@@ -203,24 +205,24 @@
     <ClCompile Include="Window\FileBrowser.cpp" />
     <ClCompile Include="Window\FileBrowserTree.cpp" />
     <ClCompile Include="Window\InspectorWindow.cpp" />
+    <ClCompile Include="Window\MaterialEditor.cpp" />
     <ClCompile Include="Window\ObjectComponentCreateModal.cpp" />
     <ClCompile Include="Window\ObjectComponentWindow.cpp" />
     <ClCompile Include="Window\ObjectCreateModal.cpp" />
     <ClCompile Include="Window\ObjectHierarchyWindow.cpp" />
+    <ClCompile Include="Window\ResourceDisplayWindow.cpp" />
     <ClCompile Include="Window\SceneComponentCreateModal.cpp" />
     <ClCompile Include="Window\SceneComponentHierarchyWindow.cpp" />
     <ClCompile Include="Window\ToolWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimationInstanceConvertThread.h" />
-    <ClInclude Include="CAnimationPopUpScreen.h" />
-    <ClInclude Include="CParticlePopUpScreen.h" />
     <ClInclude Include="EditorInfo.h" />
     <ClInclude Include="EditorManager.h" />
     <ClInclude Include="EditorUtil.h" />
     <ClInclude Include="GraphEditor.h" />
     <ClInclude Include="Object\3DCameraObject.h" />
-    <ClInclude Include="Object\3DParticleCamera.h" />
+    <ClInclude Include="Object\3DParticleObject.h" />
     <ClInclude Include="Object\Anim3DObject.h" />
     <ClInclude Include="Object\DragObject.h" />
     <ClInclude Include="Object\Player2D.h" />
@@ -230,16 +232,20 @@
     <ClInclude Include="Utils.h" />
     <ClInclude Include="Widget\AnimationMeshWidget.h" />
     <ClInclude Include="Widget\ColliderBox3DWidget.h" />
+    <ClInclude Include="Widget\BehaviorTreeMenu.h" />
     <ClInclude Include="Widget\GameObjectWidget.h" />
     <ClInclude Include="Widget\LandScapeWidget.h" />
     <ClInclude Include="Widget\LightComponentWidget.h" />
     <ClInclude Include="Widget\ObjectComponentWidget.h" />
     <ClInclude Include="Widget\ParticleComponentWidget.h" />
+    <ClInclude Include="Widget\ResourceMenu.h" />
+    <ClInclude Include="Widget\SaveLoadBeginMenu.h" />
     <ClInclude Include="Widget\SceneComponentWidget.h" />
     <ClInclude Include="Widget\StaticMeshComponentWidget.h" />
     <ClInclude Include="Widget\TransformWidget.h" />
     <ClInclude Include="Window\AnimationEditor.h" />
     <ClInclude Include="Thread\FBXConvertThread.h" />
+    <ClInclude Include="Window\BaseMenuBar.h" />
     <ClInclude Include="Window\BehaviorTreeMenuBar.h" />
     <ClInclude Include="Window\BehaviorTreeWindow.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
@@ -252,10 +258,12 @@
     <ClInclude Include="Window\FileBrowser.h" />
     <ClInclude Include="Window\FileBrowserTree.h" />
     <ClInclude Include="Window\InspectorWindow.h" />
+    <ClInclude Include="Window\MaterialEditor.h" />
     <ClInclude Include="Window\ObjectComponentCreateModal.h" />
     <ClInclude Include="Window\ObjectComponentWindow.h" />
     <ClInclude Include="Window\ObjectCreateModal.h" />
     <ClInclude Include="Window\ObjectHierarchyWindow.h" />
+    <ClInclude Include="Window\ResourceDisplayWindow.h" />
     <ClInclude Include="Window\SceneComponentCreateModal.h" />
     <ClInclude Include="Window\SceneComponentHierarchyWindow.h" />
     <ClInclude Include="Window\ToolWindow.h" />

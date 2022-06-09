@@ -186,6 +186,18 @@ void CParticle::CloneStructuredBuffer(std::vector<CStructuredBuffer*>& vecBuffer
 	}
 }
 
+bool CParticle::SaveFile(const char* FullPath)
+{
+
+	return true;
+}
+
+bool CParticle::LoadFile(const char* FullPath)
+{
+
+	return true;
+}
+
 void CParticle::SetSpawnCountMax(unsigned int Count)
 {
 	m_CBuffer->SetSpawnCountMax(Count);

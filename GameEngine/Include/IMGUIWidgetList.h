@@ -10,14 +10,22 @@ public:
     CIMGUIWidgetList();
     virtual ~CIMGUIWidgetList();
 
+private:
+    bool m_ApplyHideEffect;
+public :
+    void SetApplyHideEffect(bool Enable)
+    {
+        m_ApplyHideEffect = Enable;
+    }
 public:
     virtual bool Init() override;
     virtual void Render() override;
-
+private :
+    void RenderHide();
+    void RenderNoHide();
 public:
     void ClearWidget();
     void DeleteWidget(CIMGUIWidget* widget);
-
 public:
     template <typename T>
     T* AddWidget(const std::string& name, const float width = 100.f, const float height = 100.f)

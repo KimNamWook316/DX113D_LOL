@@ -36,7 +36,7 @@ void CAnimationInstanceConvertThread::Run()
 		{
 			AnimInstanceWorkData Data = m_WorkQueue.front();
 		
-			CEditorManager::GetInst()->GetAnimationEditor()->AddSequenceToDummyAnimationInstance(Data.AnimSequenceFullPath.c_str());
+			// CEditorManager::GetInst()->GetAnimationEditor()->AddSequenceToDummyAnimationInstance(Data.AnimSequenceFullPath.c_str());
 		
 			LoadingMessage msg;
 			msg.Percent = 1.f - (float)((float)(m_WorkQueue.size() - 1) / (float)InitSize);

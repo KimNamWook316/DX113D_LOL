@@ -9,7 +9,8 @@ CIMGUITree::CIMGUITree()	:
 	m_GlobalID(-1),
 	m_Selected(false),
 	m_Enable(true),
-	m_Open(false)
+	m_Open(false),
+	m_DragDropEnable(true)
 {
 	m_Flag |= ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
 	m_DefaultFlag = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
@@ -260,7 +261,7 @@ void CIMGUITree::Render()
 				(*iter)(this);
 		}
 		
-		if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
+		if (m_DragDropEnable && ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
 		{
 			ImGui::SetDragDropPayload("DND_DEMO_CELL", &m_GlobalID, sizeof(int));
 
@@ -274,7 +275,7 @@ void CIMGUITree::Render()
 			ImGui::EndDragDropSource();
 		}
 
-		if (ImGui::BeginDragDropTarget())
+		if (m_DragDropEnable && ImGui::BeginDragDropTarget())
 		{
 			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("DND_DEMO_CELL"))
 			{
@@ -341,7 +342,7 @@ void CIMGUITree::Render()
 		if (m_Open)
 			m_Open = false;
 
-		if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
+		if (m_DragDropEnable && ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
 		{
 			ImGui::SetDragDropPayload("DND_DEMO_CELL", &m_GlobalID, sizeof(int));
 
@@ -355,7 +356,7 @@ void CIMGUITree::Render()
 			ImGui::EndDragDropSource();
 		}
 
-		if (ImGui::BeginDragDropTarget())
+		if (m_DragDropEnable && ImGui::BeginDragDropTarget())
 		{
 			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("DND_DEMO_CELL"))
 			{

@@ -125,7 +125,7 @@ void CObjectCreateModal::OnCreateObject()
 			for (size_t i = 0; i < Length; ++i)
 			{
 				if (strName[i] == '_')
-					UnderIdx = i;
+					UnderIdx = (int)i;
 
 				if (strName[i] == '0' || strName[i] == '1' || strName[i] == '2'
 					|| strName[i] == '3' || strName[i] == '4' || strName[i] == '5'
@@ -260,6 +260,7 @@ CGameObject* CObjectCreateModal::OnCreateObject(const char* FullPathMultibyte)
 
 	if (Window)
 	{
+		// 해당 Object 의 Root Component 로 Widget 구성
 		CIMGUITree* NewNode = Window->GetRoot()->AddChild(Name);
 		NewNode->AddSelectCallback<CObjectHierarchyWindow>(Window, &CObjectHierarchyWindow::OnSetSelectNode);
 		NewNode->AddSelectCallback<CSceneComponentHierarchyWindow>(SceneCompWindow, &CSceneComponentHierarchyWindow::OnUpdateSceneComponetWindow);

@@ -167,8 +167,10 @@ void CStaticMeshComponent::SetMesh(CStaticMesh* Mesh)
 		(*iter)->SetScene(m_Scene);
 	}
 
-	SetMeshSize(m_Mesh->GetMax() - m_Mesh->GetMin());
-	m_SphereInfo.Center = (m_Mesh->GetMax() + m_Mesh->GetMin()) / 2.f;
+	Vector3 Max = m_Mesh->GetMax();
+	Vector3 Min = m_Mesh->GetMin();
+	SetMeshSize(Max - Min);
+	m_SphereInfo.Center = (Max + Min) / 2.f;
 
 	auto	iter1 = m_InstancingCheckList.begin();
 	auto	iter1End = m_InstancingCheckList.end();
@@ -508,6 +510,21 @@ void CStaticMeshComponent::AddOpacity(float Opacity, int Index)
 	m_vecMaterialSlot[Index]->AddOpacity(Opacity);
 }
 
+void CStaticMeshComponent::EnableOutline(bool Enable, int Index)
+{
+	m_vecMaterialSlot[Index]->EnableOutline(Enable);
+}
+
+void CStaticMeshComponent::SetOutlineThickness(float Thickness, int Index)
+{
+	m_vecMaterialSlot[Index]->SetOutlineThickness(Thickness);
+}
+
+void CStaticMeshComponent::SetOutlineColor(const Vector3& Color, int Index)
+{
+	m_vecMaterialSlot[Index]->SetOutlineColor(Color);
+}
+
 void CStaticMeshComponent::AddTexture(int MaterialIndex, int Register, int ShaderType, const std::string& Name, CTexture* Texture)
 {
 	m_vecMaterialSlot[MaterialIndex]->AddTexture(Register, ShaderType, Name, Texture);
@@ -615,6 +632,27 @@ void CStaticMeshComponent::RenderShadowMap()
 	for (size_t i = 0; i < Size; ++i)
 	{
 		m_Mesh->Render((int)i);
+	}
+}
+
+void CStaticMeshComponent::RenderParticleEffectEditor()
+{
+	CSceneComponent::RenderParticleEffectEditor();
+
+	if (!m_Mesh)
+		return;
+
+	size_t	Size = m_vecMaterialSlot.size();
+
+	for (size_t i = 0; i < Size; ++i)
+	{
+		m_vecMaterialSlot[i]->EnableDecal(m_ReceiveDecal);
+
+		m_vecMaterialSlot[i]->Render();
+
+		m_Mesh->Render((int)i);
+
+		m_vecMaterialSlot[i]->Reset();
 	}
 }
 

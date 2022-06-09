@@ -64,6 +64,9 @@ public:
     void SetTransparencyAllMaterial(bool Enable);
     void SetOpacity(float Opacity, int Index = 0);
     void AddOpacity(float Opacity, int Index = 0);
+    void EnableOutline(bool Enable, int Index = 0);
+    void SetOutlineThickness(float Thickness, int Index = 0);
+    void SetOutlineColor(const Vector3& Color, int Index = 0);
 
 public:
     void AddTexture(int MaterialIndex, int Register, int ShaderType, const std::string& Name, class CTexture* Texture);
@@ -77,7 +80,7 @@ public:
     void SetTextureFullPath(int MaterialIndex, int Index, int Register, int ShaderType, const std::string& Name, const TCHAR* FullPath);
     void SetTexture(int MaterialIndex, int Index, int Register, int ShaderType, const std::string& Name, const std::vector<TCHAR*>& vecFileName, const std::string& PathName = TEXTURE_PATH);
 
-public:
+public :
     virtual void Start();
     virtual bool Init();
     virtual void Update(float DeltaTime);
@@ -89,7 +92,8 @@ public:
     virtual CStaticMeshComponent* Clone();
     virtual bool Save(FILE* File);
     virtual bool Load(FILE* File);
-
+public :
+    virtual void RenderParticleEffectEditor();
 private:
     void ChangeInstancingLayer();
 

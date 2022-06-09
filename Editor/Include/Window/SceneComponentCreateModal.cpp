@@ -200,6 +200,7 @@ void CSceneComponentCreateModal::OnLoadComponent(CGameObject* SelectObject)
 	if (Com)
 	{
 		Inspector->OnCreateSceneComponent(Com);
+
 		if (ComponentWindow)
 		{
 			char Name[256] = {};

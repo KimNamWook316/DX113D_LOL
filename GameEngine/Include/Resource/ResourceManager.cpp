@@ -380,6 +380,12 @@ CMaterialConstantBuffer* CResourceManager::GetMaterialConstantBuffer() const
 	return m_MaterialManager->GetMaterialConstantBuffer();
 }
 
+CMaterial* CResourceManager::LoadMaterialFullPathMultibyte(const char* FullPath, 
+	const std::string& NewMaterialName)
+{
+	return m_MaterialManager->LoadMaterialFullPathMultibyte(FullPath, NewMaterialName);
+}
+
 void CResourceManager::ReleaseMaterial(const std::string& Name)
 {
 	m_MaterialManager->ReleaseMaterial(Name);
@@ -393,6 +399,11 @@ bool CResourceManager::LoadTexture(const std::string& Name, const TCHAR* FileNam
 bool CResourceManager::LoadTextureFullPath(const std::string& Name, const TCHAR* FullPath)
 {
 	return m_TextureManager->LoadTextureFullPath(Name, FullPath);
+}
+
+CTexture* CResourceManager::LoadTextureFullPathMultibyte(const std::string& Name, const char* FullPath)
+{
+	return m_TextureManager->LoadTextureFullPathMultibyte(Name, FullPath);
 }
 
 bool CResourceManager::LoadTexture(const std::string& Name, const std::vector<TCHAR*>& vecFileName, const std::string& PathName)

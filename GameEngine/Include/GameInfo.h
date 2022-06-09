@@ -19,6 +19,8 @@
 #include <d2d1.h>
 #include <stack>
 #include <process.h>
+#include <utility>
+#include <optional>
 
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "dxguid.lib")
@@ -65,6 +67,7 @@
 #define	EXCEL_PATH		"Excel"
 #define	OBJECT_PATH		"Object"
 #define	COMPONENT_PATH	"Component"
+#define	MATERIAL_PATH	"Material"
 
 // Inclue Path
 #define	RESOURCE_ROOT_PATH		"IncludeRoot"
@@ -78,6 +81,7 @@
 #define	RESOURCE_PARTICLE_PATH	"ResourceParticle"
 #define	RESOURCE_EXCEL_PATH			"ResourceExcel"
 #define	RESOURCE_OBJECT_PATH		"ResourceObject"
+#define	RESOURCE_MATERIAL_PATH		"ResourceMaterial"
 
 // Engine Path 
 #define ENGINE_ROOT_PATH				"EngineRoot"
@@ -89,6 +93,7 @@
 #define	ENGINE_RESOURCE_SOUND_PATH			"EngineSound"
 #define	ENGINE_RESOURCE_SEQUENCE_PATH		"EngineSequence"
 #define	ENGINE_RESOURCE_OBJECT_PATH			"EngineObject"
+#define	ENGINE_RESOURCE_MATERIAL_PATH			"EngineMaterial"
 
 #define	SAFE_DELETE(p)	if(p)	{ delete p; p = nullptr; }
 #define	SAFE_DELETE_ARRAY(p)	if(p)	{ delete[] p; p = nullptr; }
@@ -257,7 +262,9 @@ struct MaterialCBuffer
 	int		SpecularTex;
 	int		EmissiveTex;
 	int		ReceiveDecal;
-	float	Empty;
+	int		OutlineEnable;
+	float	OutlineThickness;
+	Vector3 OutlineColor;
 };
 
 struct AnimationFrameData
@@ -594,6 +601,10 @@ struct Instancing3DInfo
 	Vector4 PaperBurnInLineColor;
 	Vector4 PaperBurnOutLineColor;
 	Vector4 PaperBurnCenterLineColor;
+	int MtrlOutlineEnable;
+	float MtrlOutlineThickness;
+	Vector3 MtrlOutlineColor;
+	Vector3 Empty;
 };
 
 struct LightForwardCBuffer
@@ -606,6 +617,14 @@ struct InstancingCBuffer
 {
 	int InstancingBoneCount;
 	Vector3 InstancingEmpty;
+};
+
+struct OutlineCBuffer
+{
+	float DepthMultiplier;
+	float DepthBias;
+	float NormalMultiplier;
+	float NormalBias;
 };
 
 struct ChampionInfo

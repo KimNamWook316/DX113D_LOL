@@ -84,6 +84,9 @@ public:
     void SetTransparencyAllMaterial(bool Enable);
     void SetOpacity(float Opacity, int Index = 0);
     void AddOpacity(float Opacity, int Index = 0);
+    void EnableOutline(bool Enable, int Index = 0);
+    void SetOutlineThickness(float Thickness, int Index = 0);
+    void SetOutlineColor(const Vector3& Color, int Index = 0);
 
 public :
     void SetMaterialShader(const std::string& Name);
@@ -195,11 +198,11 @@ public:
 
         m_Animation = Anim;
 
-        if (m_Skeleton)
-            m_Animation->SetSkeleton(m_Skeleton);
-
-        if (m_Mesh)
-            m_Animation->SetInstancingBoneBuffer(m_Mesh->GetBoneBuffer());
+       if (m_Skeleton)
+           m_Animation->SetSkeleton(m_Skeleton);
+       
+       if (m_Mesh)
+           m_Animation->SetInstancingBoneBuffer(m_Mesh->GetBoneBuffer());
 
         return Anim;
     }

@@ -98,3 +98,26 @@ void CMaterialManager::ReleaseMaterial(const std::string& Name)
 			m_mapMaterial.erase(iter);
 	}
 }
+
+CMaterial* CMaterialManager::LoadMaterialFullPathMultibyte(const char* FullPath, 
+	const std::string& NewMaterialName)
+{
+	CMaterial* FoundMaterial = FindMaterial(NewMaterialName);
+
+	if (FoundMaterial)
+		return FoundMaterial;
+
+	CMaterial* LoadedMaterial = CreateMaterialEmpty<CMaterial>();
+
+	LoadedMaterial->SetName(NewMaterialName);
+
+	if (!LoadedMaterial->LoadFullPath(FullPath))
+	{
+		SAFE_DELETE(LoadedMaterial);
+		return nullptr;
+	}
+	
+	m_mapMaterial.insert(std::make_pair(NewMaterialName, LoadedMaterial));
+
+	return LoadedMaterial;
+}

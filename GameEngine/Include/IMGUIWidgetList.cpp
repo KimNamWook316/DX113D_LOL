@@ -1,7 +1,8 @@
 #include "IMGUIWidgetList.h"
 
 CIMGUIWidgetList::CIMGUIWidgetList() :
-	mSize(0)
+	mSize(0),
+	m_ApplyHideEffect(false)
 {
 }
 
@@ -17,11 +18,33 @@ bool CIMGUIWidgetList::Init()
 
 void CIMGUIWidgetList::Render()
 {
+	if (m_ApplyHideEffect)
+		RenderHide();
+	else
+		RenderNoHide();
+}
+
+void CIMGUIWidgetList::RenderHide()
+{
+	if (ImGui::CollapsingHeader(m_Name.c_str()))
+	{
+		RenderNoHide();
+	}
+}
+
+void CIMGUIWidgetList::RenderNoHide()
+{
 	mSize = mVecChild.size();
+
 	for (size_t i = 0; i < mSize; ++i)
 	{
+		if (!mVecChild[i]->IsRender())
+		{
+			continue;
+		}
 		mVecChild[i]->Render();
 	}
+
 }
 
 void CIMGUIWidgetList::ClearWidget()

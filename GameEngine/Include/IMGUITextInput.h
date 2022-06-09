@@ -32,6 +32,7 @@ protected:
 	int			m_ValueInt;
 	float		m_ValueFloat;
 	std::function<void()>	m_InputCallback;
+	std::function<void(const std::string&)>	m_DropCallback;
 
 public:
 	int GetValueInt()	const
@@ -142,12 +143,20 @@ public:
 public:
 	virtual bool Init();
 	virtual void Render();
-
+private :
+	void RenderText();
+	void ApplyDropEffect();
 public:
 	template <typename T>
 	void SetCallback(T* Obj, void(T::* Func)())
 	{
 		m_InputCallback = std::bind(Func, Obj);
+	}
+
+	template<typename T>
+	void SetDropCallBack(T* Obj, void(T::* func)(const std::string&))
+	{
+		m_DropCallback = std::bind(func, Obj);
 	}
 };
 
