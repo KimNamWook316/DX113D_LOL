@@ -19,6 +19,7 @@
 #include "IMGUISliderInt.h"
 #include "IMGUITableElemList.h"
 // Window
+#include "../EditorUtil.h"
 #include "MaterialEditor.h"
 // Engine
 #include "Resource/Material/Material.h"
@@ -216,7 +217,7 @@ void CMaterialEditor::OnSetOutLineThickNess(float ThickNess)
 
 void CMaterialEditor::OnSetTextureBtn()
 {
-	if (!m_SelectedMaterial )
+	if (!m_SelectedMaterial || m_SetTextureInput->Empty())
 		return;
 
 	int SetTextureIndex = m_TextureIndex->GetVal();
@@ -228,11 +229,21 @@ void CMaterialEditor::OnSetTextureBtn()
 	}
 
 	// Drop 한 Input 안에 있는 Texture 정보 불러오기 
+	// Texture File 의 File 명을, Texture 를 저장하는 Key 값으로 사용할 것이다.
+	std::string TextureKeyName; 
+	std::optional<std::string> FoundResult = CEditorUtil::GetFullPathOfTargetFileNameInDir(TEXTURE_PATH, 
+		m_SetTextureInput->GetTextUTF8(), TextureKeyName);
+
+	// 찾지 못했다면 
+	if (!FoundResult.has_value())
+		return;
+	// 
 	// Editor Util 함수 안에, --> 특정 폴더, File 안에 이름 넣어주면, 다 돌면서, 파일 찾아주는 함수 제작
 	// 그렇게 해서 Full Path, File 이름 받아오고
 	// 이를 통해 ResourceManager, Texture Manager 에서 불러오기
 	// 그 안에서는 있으면 그대로 리턴, 없으면 Load 로직 세팅
-	CTexture* TargetTexture;
+
+	CTexture* TargetTexture = CResourceManager::GetInst()->LoadTextureFullPathMultibyte(TextureKeyName, FoundResult.value().c_str());
 
 	// if (TargetTexture == nullptr)
 	// 	return;

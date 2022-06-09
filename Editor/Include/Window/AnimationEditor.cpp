@@ -398,15 +398,15 @@ void CAnimationEditor::OnLoopAnimation(const char*, bool Enable)
 	if (!RootMeshComponent)
 		return;
 
-	// RootMeshComponent->GetAnimationInstance()->SetLoop(Enable);
+	RootMeshComponent->GetAnimationInstance()->SetLoop(!Enable);
 
-	bool IsAnimPlay = RootMeshComponent->GetAnimationInstance()->IsPlay();
-
-	// if (IsAnimPlay)
-	if (!Enable)
-		RootMeshComponent->GetAnimationInstance()->Stop();
-	else
-		RootMeshComponent->GetAnimationInstance()->Play();
+	// bool IsAnimPlay = RootMeshComponent->GetAnimationInstance()->IsPlay();
+	// 
+	// // if (IsAnimPlay)
+	// if (!Enable)
+	// 	RootMeshComponent->GetAnimationInstance()->Stop();
+	// else
+	// 	RootMeshComponent->GetAnimationInstance()->Play();
 }
 
 void CAnimationEditor::OnSaveAnimationInstance()

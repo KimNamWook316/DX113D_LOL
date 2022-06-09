@@ -205,6 +205,11 @@ bool CTexture::LoadTextureFullPath(const std::string& Name, const TCHAR* FullPat
 	return CreateResource(0);
 }
 
+bool CTexture::LoadTextureFullPathMultibyte(const std::string& Name, const char* FullPath)
+{
+	return false;
+}
+
 bool CTexture::LoadTexture(const std::string& Name, const std::vector<TCHAR*>& vecFileName,
 	const std::string& PathName)
 {

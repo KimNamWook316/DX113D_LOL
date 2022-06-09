@@ -190,6 +190,35 @@ std::string CEditorUtil::MergeFullPath(const std::list<std::string> DirNames)
 	return FullPath;
 }
 
+std::optional<std::string> CEditorUtil::GetFullPathOfTargetFileNameInDir(const std::string& PathName,
+	const std::string& TargetFileName, std::string& FileNameOnly)
+{
+	const PathInfo* Info = CPathManager::GetInst()->FindPath(PathName);
+
+	if (!Info)
+		return  std::nullopt;
+
+	char FolderName[MAX_PATH] = {};
+
+	strcpy_s(FolderName, Info->PathMultibyte);
+
+	fs::path TargetFolder(FolderName);
+	
+	for (const fs::directory_entry& entry :
+		fs::recursive_directory_iterator(TargetFolder))
+	{
+		const std::string& FileName = FilterFileName(entry.path().u8string());
+	
+		if (strcmp(FileName.c_str(), TargetFileName.c_str()))
+		{
+			FileNameOnly = fs::path(entry.path()).filename().u8string();
+			return entry.path().u8string();
+		}
+	}
+
+	return std::nullopt;
+}
+
 void CEditorUtil::ShowDemo()
 {
 	static bool Open = false;
