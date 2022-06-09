@@ -626,4 +626,3 @@ struct OutlineCBuffer
 	float NormalMultiplier;
 	float NormalBias;
 };
-
