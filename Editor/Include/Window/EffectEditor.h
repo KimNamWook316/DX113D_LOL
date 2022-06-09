@@ -10,7 +10,10 @@ public:
     CEffectEditor();
     ~CEffectEditor();
 private:
-    class CIMGUIButton* m_OpenPopUpScreenBtn;
+    class CIMGUIButton* m_SaveParticleBtn;
+    class CIMGUIButton* m_LoadParticleBtn;
+    class CIMGUIButton* m_StartEditBtn;
+    class CParticlePopUpScreen* m_ParticlePopUpScreen;
 private:
     class CIMGUIInputFloat* m_SpawnTimeMaxEdit;
     // class CIMGUIButton* m_RestartButton;
@@ -36,7 +39,18 @@ private:
     class CIMGUICheckBox* m_IsMoveEdit;
     class CIMGUICheckBox* m_IsGravityEdit;
     class CIMGUICheckBox* m_IsRandomMoveEdit;
-    // class CIMGUICheckBox* m_Is3DEdit;
+
+    // Camera Related
+    class CIMGUICheckBox* m_IsRotateEdit;
+    class CIMGUISliderFloat* m_RotateSpeedSliderBar;
+    class CIMGUICheckBox* m_IsZoomEdit;
+    class CIMGUISliderFloat* m_ZoomSpeedSliderBar;
+
+    // 카메라의 Y 축 위치 (위로 갈지, 아래로 갈지 조정)
+    class CIMGUISliderFloat* m_CameraYOffsetBar;
+
+    // 카메라의 X 축 기준 회전 조정 (위를 볼지, 아래를 볼지)
+    class CIMGUISliderFloat* m_CameraXRotSlideBar;
 
     class CIMGUIInputFloat3* m_MoveDirEdit;
     class CIMGUIInputFloat3* m_MoveAngleEdit;
@@ -59,14 +73,12 @@ private :
     // class CParticleComponent* m_ParticleComponent;
     // class CStaticMeshComponent* m_BaseGroundComponent;
     // class CStaticMeshComponent* m_SkyComponent;
-    class CGameObject* m_ParticleObject;
+    class C3DParticleObject* m_ParticleObject;
+    class CGameObject* m_ParticleSampleObject;
     class CGameObject* m_BaseGroundObject;
     class CGameObject* m_SkyObject;
 public :
     virtual bool Init() override;
-private :
-    void SetComInfos();
-    void OnCreateParticlePopUp();
 private:
     void OnSaveParticleObjectButton();
     void OnLoadParticleObjectButton();
@@ -94,16 +106,31 @@ private:
     void OnIsGravityEdit(const char*, bool);
     void OnIsRandomMoveEdit(const char*, bool);
 
+    void OnIsCameraRotateEdit(const char*, bool);
+    void OnSetCameraRotateSpeed(float Speed);
+
+    void OnIsCameraZoomEdit(const char*, bool);
+    void OnSetCameraZoomSpeed(float Speed);
+
+    void OnSetCameraYOffset(float Offset);
+    void OnSetCameraXRot(float Rot);
+
     void OnMoveDirEdit(const Vector3& Dir);
     void OnMoveAngleEdit(const Vector3& Angle);
 
     void OnSetParticleTexture();
 
-    // void OnGravityAccelEdit();
-    // void OnStartDelayEdit();
+    void OnSaveParticleClass();
+    void OnLoadParticleClass();
 private:
     // Particle 기본 세팅
-    void OnSetParticleMaterialSetting(class CSceneComponent* Com);
+    void OnSetBasicParticleMaterialSetting(class CSceneComponent* Com);
     void OnReflectCurrentParticleSetting();
+    void SetGameObjectReady();
+    void SetStartEditing();
+
+    // Helper 
+    void SetParticleToParticleComponent(class CParticleComponent* Component, const char* ParticleName);
+    void SetIMGUIReflectPartice(class CParticle* Particle);
 };
 

@@ -23,15 +23,15 @@ public:
 		return m_CBuffer;
 	}
 	void ReleaseMaterial(const std::string& Name);
-
+	CMaterial* LoadMaterialFullPathMultibyte(const char* FullPath, const std::string& NewMaterialName);
 public:
 	template <typename T>
-	bool CreateMaterial(const std::string& Name)
+	T* CreateMaterial(const std::string& Name)
 	{
 		T* Material = (T*)FindMaterial(Name);
 
 		if (Material)
-			return false;
+			return Material;
 
 		Material = new T;
 
@@ -41,7 +41,7 @@ public:
 
 		m_mapMaterial.insert(std::make_pair(Name, Material));
 
-		return true;
+		return Material;
 	}
 
 	template <typename T>

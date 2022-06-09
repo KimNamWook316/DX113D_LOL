@@ -65,7 +65,9 @@ public:
 		int Register, bool Dynamic = false,
 		int StructuredBufferShaderType = (int)Buffer_Shader_Type::Compute);
 	void CloneStructuredBuffer(std::vector<CStructuredBuffer*>& vecBuffer);
-
+public :
+	bool SaveFile(const char* FullPath);
+	bool LoadFile(const char* FullPath);
 public:
 	CParticleConstantBuffer* GetCBuffer()	const
 	{

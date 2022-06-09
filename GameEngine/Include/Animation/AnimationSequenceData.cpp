@@ -87,7 +87,7 @@ void CAnimationSequenceData::Load(FILE* File)
 	else
 	{
 		CAnimationSequence* TempSequence = new CAnimationSequence;
-		TempSequence->Load(File);
+		TempSequence->DummyLoad(File);
 		SAFE_DELETE(TempSequence)
 	}
 

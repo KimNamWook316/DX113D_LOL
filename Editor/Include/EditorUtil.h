@@ -33,6 +33,11 @@ public:
 	// (ex. list에 Texture, Monster라는 이름의 TreeNode가 있으면, [Editor 프로젝트까지 로컬 풀경로]\Editor\Bin\Texture\Monster 를 만들어준다)
 	static std::string MergeFullPath(const std::list<std::string> DirNames);
 
+	// 해당 디렉토리를 모두 순회하면서, 해당 (파일 이름 + 확장자) 와 일치하는 파일 "하나" 의 Full 경로를 리턴해준다.
+	// 또한 3번째 인자로, 확장자를 제외한, "파일 이름"만 받아올 수도 있다.
+	static std::optional<std::string> GetFullPathOfTargetFileNameInDir(const std::string& PathName, 
+		const std::string& TargetFileFullName, std::string& FileNameOnly);
+
 	// Imgui Demo Window를 띄워주는 함수
 	static void ShowDemo();
 

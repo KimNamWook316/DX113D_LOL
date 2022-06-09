@@ -135,4 +135,32 @@ void CIMGUIImage::Render()
 			
 		}
 	}
+
+	ApplyDropEffect();
+}
+
+void CIMGUIImage::ApplyDropEffect()
+{
+	// Drop 내용을 받는다.
+	if (ImGui::BeginDragDropTarget())
+	{
+		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("DND_DEMO_CELL"))
+		{
+			// char type 배수 
+			if (payload->DataSize % sizeof(char) != 0)
+				return;
+
+			// 해당 Image Widget 으로 볼 Texture 의 
+			char* payload_n = (char*)payload->Data;
+
+			// 1) Texture Manager 에 저장된 Texture 의 Key 를 볼 것이다.
+			// m_Texture = CResourceManager::GetInst()->FindTexture(Name);
+
+			// 2) 그대로 없다면, Hard Disk 에서 찾을 것이다.
+			// - 없으면 X
+			// - 있다면, 해당 Texture 를, File Name 으로 Add 하고 
+			// SetTexture(payload_n);
+		}
+		ImGui::EndDragDropTarget();
+	}
 }

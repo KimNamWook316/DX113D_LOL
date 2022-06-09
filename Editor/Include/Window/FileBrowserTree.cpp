@@ -38,6 +38,7 @@ bool CFileBrowserTree::Init()
 	for (size_t i = 0; i < Count; ++i)
 	{
 		CIMGUITree* ChildTreeNode = m_Root->AddChild(vecCurrentPathDir[i]);
+		ChildTreeNode->SetDragDropEnable(false);
 		ChildTreeNode->AddOpenCallback<CFileBrowserTree>(this, &CFileBrowserTree::OnOpenBrowserTree);
 		ChildTreeNode->AddSelectCallback<CFileBrowserTree>(this, &CFileBrowserTree::OnShowFileBrowser);
 	}
@@ -80,12 +81,25 @@ void CFileBrowserTree::OnOpenBrowserTree(CIMGUITree* Tree)
 
 	CEditorUtil::GetAllFilenamesFullPath(m_CurrentFullPath, vecFileName, vecDirName);
 
+	// 폴더 목록을 먼저 Add
 	size_t Count = vecDirName.size();
 
 	for (size_t i = 0; i < Count; ++i)
 	{
 		CIMGUITree* ChildTreeNode = Tree->AddChild(vecDirName[i]);
+		ChildTreeNode->SetDragDropEnable(false);
 		ChildTreeNode->AddOpenCallback<CFileBrowserTree>(this, &CFileBrowserTree::OnOpenBrowserTree);
+		ChildTreeNode->AddSelectCallback<CFileBrowserTree>(this, &CFileBrowserTree::OnShowFileBrowser);
+	}
+	
+	// 그 다음, 파일 목록을 Add
+	Count = vecFileName.size();
+
+	for (size_t i = 0; i < Count; ++i)
+	{
+		CIMGUITree* ChildTreeNode = Tree->AddChild(vecFileName[i]);
+		ChildTreeNode->SetDragDropEnable(false);
+		// ChildTreeNode->AddOpenCallback<CFileBrowserTree>(this, &CFileBrowserTree::OnOpenBrowserTree);
 		ChildTreeNode->AddSelectCallback<CFileBrowserTree>(this, &CFileBrowserTree::OnShowFileBrowser);
 	}
 }

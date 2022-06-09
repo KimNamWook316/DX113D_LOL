@@ -86,6 +86,8 @@ void CIMGUIManager::Update(float DeltaTime)
 
 	for (; iter != iterEnd; ++iter)
 	{
+		if (iter->second->IsOpen() == false)
+			continue;
 		iter->second->Update(DeltaTime);
 	}
 

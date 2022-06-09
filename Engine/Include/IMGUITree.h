@@ -8,7 +8,8 @@ class CIMGUITree :
 public:
     CIMGUITree();
     virtual ~CIMGUITree();
-
+private :
+    bool m_DragDropEnable;
 public:
     void SetParent(CIMGUITree* parent)
     {
@@ -29,7 +30,10 @@ public:
     {
         return mParent;
     }
-
+    void SetDragDropEnable(bool Enable)
+    {
+        m_DragDropEnable = Enable;
+    }
 public:
     CIMGUITree* GetNode(const int idx);
 

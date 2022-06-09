@@ -28,8 +28,14 @@ CEngine::CEngine()	:
 	m_GlobalAccTime(0.f),
 	m_EditMode(false)
 {
+#if defined(DEBUG) || defined(_DEBUG)
+#define _CRTDBG_MAP_ALLOC
+
+#include <crtdbg.h>
+
+#define new new(_CLIENT_BLOCK, __FILE__, __LINE__)
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-	//_CrtSetBreakAlloc(366236);
+#endif
 
 	//m_ClearColor[1] = 1.f; 
 	srand(unsigned int(GetTickCount()));
@@ -69,7 +75,6 @@ void CEngine::SetMouseState(Mouse_State State)
 {
 	if (m_MouseWidget[(int)m_MouseState])
 	{
-		// �ʱ�ȭ?
 	}
 
 	m_MouseState = State;

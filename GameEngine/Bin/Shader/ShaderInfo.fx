@@ -12,6 +12,7 @@ struct PSOutput_GBuffer
     float4 GBuffer3 : SV_Target3;
     float4 GBuffer4 : SV_Target4;
     float4 GBuffer5 : SV_Target5;
+	float4 GBufferOutline : SV_Target6;
 };
 
 cbuffer Transform : register(b0)
@@ -43,7 +44,10 @@ cbuffer Material : register(b1)
     int		g_MtrlAnimation3DEnable;
     int		g_MtrlSpecularTex;
     int		g_MtrlEmissiveTex;
-	float2	g_MtrlEmpty;
+	int		g_MtrlRecevieDecal;
+	int		g_MtrlOutlineEnable;
+	float	g_MtrlOutlineThickness; 
+	float3  g_MtrlOutlineColor;
 };
 
 cbuffer Standard2D : register(b2)
@@ -107,7 +111,7 @@ struct LightResult
 #define	LightTypePoint	1
 #define	LightTypeSpot	2
 
-
+#define OutlineThickMax 20.f
 
 SamplerState	g_PointSmp : register(s0);
 SamplerState	g_LinearSmp : register(s1);

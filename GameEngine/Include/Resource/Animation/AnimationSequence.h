@@ -136,6 +136,10 @@ public:
 	const char* GetSequenceFileNameMultibyte();
 	virtual bool Save(FILE* pFile);
 	virtual bool Load(FILE* pFile);
+public :
+	// 실제 Animation Sequence 를 생성하기 위한 Load 가 아니다.
+	// 그저 중간 Load 절차를 계속 유지시키기 위한 절차 (AnimationSequenceData Load 함수)
+	void DummyLoad(FILE* pFile);
 public:
 	void SetPlayScale(float fScale);
 	void SetPlayTime(float fTime);

@@ -84,12 +84,12 @@ public:	// =================== Shader =====================
 public:	// =================== Material =====================
 	CMaterial* FindMaterial(const std::string& Name);
 	CMaterialConstantBuffer* GetMaterialConstantBuffer()	const;
-
+	CMaterial* LoadMaterialFullPathMultibyte(const char* FullPath, const std::string& NewMaterialName);
 	void ReleaseMaterial(const std::string& Name);
 
 public:
 	template <typename T>
-	bool CreateMaterial(const std::string& Name)
+	T* CreateMaterial(const std::string& Name)
 	{
 		return m_MaterialManager->CreateMaterial<T>(Name);
 	}
@@ -104,6 +104,7 @@ public:	// =================== Texture =====================
 	bool LoadTexture(const std::string& Name, const TCHAR* FileName,
 		const std::string& PathName = TEXTURE_PATH);
 	bool LoadTextureFullPath(const std::string& Name, const TCHAR* FullPath);
+	class CTexture* LoadTextureFullPathMultibyte(const std::string& Name, const char* FullPath);
 	bool LoadTexture(const std::string& Name, const std::vector<TCHAR*>& vecFileName,
 		const std::string& PathName = TEXTURE_PATH);
 	bool LoadTextureFullPath(const std::string& Name, const std::vector<TCHAR*>& vecFullPath);

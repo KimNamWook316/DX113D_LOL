@@ -64,5 +64,7 @@ public :
 public:
 	virtual bool Init();
 	virtual void Render();
+private :
+	void ApplyDropEffect();
 };
 

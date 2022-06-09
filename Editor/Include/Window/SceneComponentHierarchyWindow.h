@@ -35,6 +35,7 @@ public:
 	void SetDragSrc(class CIMGUITree* DragSrc);
 	void SetDragDest(class CIMGUITree* DragDest);
 
+	void ClearExistingHierarchy();
 public:
 	virtual bool Init();
 	virtual void Update(float DeltaTime);
