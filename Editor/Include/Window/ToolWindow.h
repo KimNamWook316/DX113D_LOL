@@ -7,6 +7,8 @@
 #include "IMGUIRadioButton.h"
 #include "IMGUISliderFloat.h"
 #include "IMGUIColor3.h"
+#include "IMGUITree.h"
+#include "IMGUICheckBox.h"
 
 class CToolWindow :
     public CIMGUIWindow
@@ -36,6 +38,7 @@ private:
 	void OnChangeOutlineDepthBias(float Val);
 	void OnChangeOutlineNormalMultiply(float Val);
 	void OnChangeOutlineNormalBias(float Val);
+	void OnCheckGrayEnable(const char* Label, bool Check);
 
 private:
 	// Gizmo
@@ -55,5 +58,7 @@ private:
 	CIMGUISliderFloat* m_OutlineDepthBias;
 	CIMGUISliderFloat* m_OutlineNormalMutliply;
 	CIMGUISliderFloat* m_OutlineNormalBias;
+
+	CIMGUICheckBox* m_GrayEnable;
 };
 

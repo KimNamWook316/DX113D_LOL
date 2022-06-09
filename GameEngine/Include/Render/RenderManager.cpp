@@ -27,7 +27,8 @@ CRenderManager::CRenderManager()	:
 	m_Shadow(true),
 	m_ShadowLightDistance(20.f),
 	m_ShadowCBuffer(nullptr),
-	m_OutlineCBuffer(nullptr)
+	m_OutlineCBuffer(nullptr),
+	m_Gray(false)
 {
 }
 
@@ -285,6 +286,15 @@ bool CRenderManager::Init()
 	FinalScreenTarget->SetScale(Vector3(100.f, 100.f, 1.f));
 	FinalScreenTarget->SetDebugRender(true);
 
+	// Post-Processing용 Render Target
+	if (!CResourceManager::GetInst()->CreateTarget("PostProcessing",
+		RS.Width, RS.Height, DXGI_FORMAT_R32G32B32A32_FLOAT))
+		return false;
+	m_GrayTarget = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("PostProcessing");
+	m_GrayTarget->SetPos(Vector3(200.f, 0.f, 0.f));
+	m_GrayTarget->SetScale(Vector3(100.f, 100.f, 1.f));
+	m_GrayTarget->SetDebugRender(false);
+
 	// Animation Editor 용 Render Target 
 	if (!CResourceManager::GetInst()->CreateTarget("AnimationEditorRenderTarget",
 		RS.Width, RS.Height, DXGI_FORMAT_R32G32B32A32_FLOAT))
@@ -339,6 +349,7 @@ bool CRenderManager::Init()
 	m_ShadowMapInstancingShader = CResourceManager::GetInst()->FindShader("ShadowMapInstancingShader");
 	m_Transparent3DInstancingShader = CResourceManager::GetInst()->FindShader("TransparentInstancing3DShader");
 	m_OutLineShader = CResourceManager::GetInst()->FindShader("OutlineShader");
+	m_GrayShader = CResourceManager::GetInst()->FindShader("GrayShader");
 
 	m_ShadowCBuffer = new CShadowCBuffer;
 	m_ShadowCBuffer->Init();
@@ -459,9 +470,8 @@ void CRenderManager::Render()
 	}
 
 	// 환경맵 출력
-	CSharedPtr<CGameObject> SkyObj = CSceneManager::GetInst()->GetScene()->GetSkyObject();
-	SkyObj->Render();
-
+	RenderSkyBox();
+	
 	// 인스턴싱 정보를 만든다.
 	RenderDefaultInstancingInfo();
 
@@ -491,6 +501,11 @@ void CRenderManager::Render()
 
 	// 반투명한 오브젝트를 그린다.
 	RenderTransparent();
+
+	if (m_Gray)
+	{
+		RenderGray();
+	}
 
 	// Animation Editor Animation Instance 제작용 Render Target
 	RenderAnimationEditor();
@@ -576,6 +591,22 @@ void CRenderManager::Render()
 	m_AlphaBlend->ResetState();
 
 	m_DepthDisable->ResetState();
+}
+
+void CRenderManager::RenderSkyBox()
+{
+	CSharedPtr<CGameObject> SkyObj = CSceneManager::GetInst()->GetScene()->GetSkyObject();
+
+	if (m_Gray)
+	{
+		m_GrayTarget->ClearTarget();
+		m_GrayTarget->SetTarget();
+	}
+	SkyObj->Render();
+	if (m_Gray)
+	{
+		m_GrayTarget->ResetTarget();
+	}
 }
 
 void CRenderManager::RenderShadowMap()
@@ -903,6 +934,12 @@ void CRenderManager::RenderTransparent()
 		m_RenderLayerList[2]->RenderList.sort(CRenderManager::SortZ);
 	}
 
+	CRenderTarget* GrayTarget = nullptr;
+	if (m_Gray)
+	{
+		m_GrayTarget->SetTarget(nullptr);
+	}
+
 	m_AlphaBlend->SetState();
 
 	// 모든 Light정보 구조화 버퍼에 담아서 넘긴다.
@@ -921,6 +958,11 @@ void CRenderManager::RenderTransparent()
 
 	CSceneManager::GetInst()->GetScene()->GetLightManager()->ResetForwardRenderShader();
 	m_AlphaBlend->ResetState();
+
+	if (m_Gray)
+	{
+		m_GrayTarget->ResetTarget();
+	}
 }
 
 void CRenderManager::RenderFinalScreen()
@@ -929,8 +971,10 @@ void CRenderManager::RenderFinalScreen()
 
 	FinalScreenTarget->SetTargetShader(21);
 
-	// RenderLightBlend 와 달리, 여기서는 Render Target 을 변경하지 않는다.
-	// 기존의 Back Buffer 에 그려내는 원리이다.
+	if (m_Gray)
+	{
+		m_GrayTarget->SetTarget(nullptr);
+	}
 
 	m_LightBlendRenderShader->SetShader();
 
@@ -947,6 +991,11 @@ void CRenderManager::RenderFinalScreen()
 	m_DepthDisable->ResetState();
 
 	FinalScreenTarget->ResetTargetShader(21);
+
+	if (m_Gray)
+	{
+		m_GrayTarget->ResetTarget();
+	}
 }
 
 void CRenderManager::RenderAnimationEditor()
@@ -1369,6 +1418,24 @@ bool CRenderManager::Sortlayer(RenderLayer* Src, RenderLayer* Dest)
 bool CRenderManager::SortZ(CSceneComponent* Src, CSceneComponent* Dest)
 {
 	return Src->GetViewZ() < Dest->GetViewZ();
+}
+
+void CRenderManager::RenderGray()
+{
+	m_GrayTarget->SetTargetShader(21);
+	m_DepthDisable->SetState();
+
+	m_GrayShader->SetShader();
+
+	UINT Offset = 0;
+	CDevice::GetInst()->GetContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+	CDevice::GetInst()->GetContext()->IASetVertexBuffers(0, 0, nullptr, nullptr, &Offset);
+	CDevice::GetInst()->GetContext()->IASetIndexBuffer(nullptr, DXGI_FORMAT_UNKNOWN, 0);
+
+	CDevice::GetInst()->GetContext()->Draw(4, 0);
+
+	m_DepthDisable->ResetState();
+	m_GrayTarget->ResetTargetShader(21);
 }
 
 /*

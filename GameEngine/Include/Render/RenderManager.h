@@ -108,6 +108,11 @@ private:
 	float m_ShadowLightDistance;
 	class CShadowCBuffer* m_ShadowCBuffer;
 
+	// Grayscale
+	bool m_Gray;
+	CSharedPtr<CRenderTarget> m_GrayTarget;
+	CSharedPtr<class CShader> m_GrayShader;
+
 	// OutLine
 	bool m_OutLine;
 	CSharedPtr<class CShader> m_OutLineShader;
@@ -163,6 +168,11 @@ public:
 		m_OutlineCBuffer->SetNormalBias(Val);
 	}
 
+	void GrayEnable(bool Enable)
+	{
+		m_Gray = Enable;
+	}
+
 	float GetOutlineDepthMultiplier()
 	{
 		return m_OutlineCBuffer->GetDepthMultiplier();
@@ -183,6 +193,11 @@ public:
 		return m_OutlineCBuffer->GetNormalBias();
 	}
 
+	bool IsGray()
+	{
+		return m_Gray;
+	}
+
 public:
 	void SetObjectList(const std::list<CSharedPtr<class CGameObject>>* List)
 	{
@@ -198,6 +213,7 @@ public:
 	void Render();
 
 private:
+	void RenderSkyBox();
 	void RenderShadowMap();
 	void RenderGBuffer();
 	void RenderDecal();
@@ -206,8 +222,10 @@ private:
 	void RenderOutLine();
 	void RenderTransparent();
 	void RenderFinalScreen();
+	void RenderGray();
 	void RenderAnimationEditor();
 	void RenderParticleEffectEditor();
+
 	// Render State
 public:
 	void SetBlendFactor(const std::string& Name, float r, float g, float b, float a);
