@@ -67,6 +67,9 @@ protected:
     bool        m_EmissiveTex;
     bool        m_Bump;
     bool        m_RecieveDecal;
+	bool        m_OutlineEnable;
+	float       m_OutlineThickness;
+	Vector3     m_OutlineColor;
     CMaterialConstantBuffer* m_CBuffer;
     CSharedPtr<class CRenderState>  m_RenderStateArray[(int)RenderState_Type::Max];
     std::list<RenderCallback*>    m_RenderCallback;
@@ -148,6 +151,21 @@ public:
         return m_Opacity;
     }
 
+    bool IsOutlineEnable() const
+    {
+        return m_OutlineEnable;
+    }
+
+    float GetOutlineThickness() const 
+    {
+        return m_OutlineThickness;
+    }
+
+    const Vector3& GetOutlineColor() const
+    {
+        return m_OutlineColor;
+    }
+
     bool EmptyTexture() const
     {
         return m_TextureInfo.empty();
@@ -192,6 +210,9 @@ public:
     void SetEmissiveColor(const Vector4& Color);
     void SetEmissiveColor(float r, float g, float b, float a);
     void SetSpecularPower(float Power);
+    void EnableOutline(bool Enable);
+    void SetOutlineThickness(float Thickness);
+    void SetOutlineColor(const Vector3& Color);
 
 public:
     void AddTexture(int Register, int ShaderType, const std::string& Name, class CTexture* Texture);

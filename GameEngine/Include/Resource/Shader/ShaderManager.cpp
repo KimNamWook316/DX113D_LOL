@@ -32,6 +32,7 @@
 #include "ShadowCBuffer.h"
 #include "Transparent3DShader.h"
 #include "TransparentInstancing3DShader.h"
+#include "OutlineShader.h"
 
 CShaderManager::CShaderManager()
 {
@@ -148,6 +149,12 @@ bool CShaderManager::Init()
 	if (!CreateShader<CShadowMapInstancingShader>("ShadowMapInstancingShader"))
 		return false;
 
+	if (!CreateShader<COutlineShader>("OutlineShader"))
+	{
+		assert(false);
+		return false;
+	}
+
 
 
 	// =================== 상수버퍼 ===================
@@ -202,6 +209,9 @@ bool CShaderManager::Init()
 		(int)Buffer_Shader_Type::Vertex | (int)Buffer_Shader_Type::Pixel);
 
 	CreateConstantBuffer("ShadowCBuffer", sizeof(ShadowCBuffer), 10,
+		(int)Buffer_Shader_Type::Graphic);
+
+	CreateConstantBuffer("OutlineConstantBuffer", sizeof(OutlineCBuffer), 10,
 		(int)Buffer_Shader_Type::Graphic);
 
 	return true;

@@ -79,6 +79,10 @@ struct InstancingInfo
 	float4 g_PaperBurnInLineColor;
 	float4 g_PaperBurnOutLineColor;
 	float4 g_PaperBurnCenterLineColor;
+	int		g_MtrlOutlineEnable;
+	float	g_MtrlOutlineThickness; 
+	float3  g_MtrlOutlineColor;
+	float3  g_MtrlInstancingEmpty;
 };
 
 StructuredBuffer<InstancingInfo> g_InstancingInfoArray : register(t40);
@@ -228,6 +232,19 @@ PSOutput_GBuffer Standard3DPS(Vertex3DOutput input)
 
     // output.GBuffer3.a = ConvertColor(EmissiveColor* ReflectColor * fresnel);
     output.GBuffer3.a = ConvertColor(EmissiveColor);
+
+    if (g_MtrlOutlineEnable)
+	{
+		//output.GBufferOutline.rgb = g_MtrlOutlineColor;
+		output.GBufferOutline.r = ConvertColor(float4(g_MtrlOutlineColor, 0.f));
+
+		int Exp = 0;
+		float Frac = modf(g_MtrlOutlineThickness, Exp);
+
+		output.GBufferOutline.g = asfloat(Exp);
+		output.GBufferOutline.b = saturate(Frac);
+		output.GBufferOutline.a = 1.f;
+	}
 
     return output;
 }
@@ -379,6 +396,12 @@ PSOutput_GBuffer Standard3DInstancingPS(Vertex3DOutputInstancing input)
 		EmissiveColor = g_EmissiveTexture.Sample(g_BaseSmp, input.UV).xxxx;
     
 	output.GBuffer3.a = ConvertColor(EmissiveColor);
+
+    if (g_MtrlOutlineEnable)
+	{
+		output.GBufferOutline.rgb = g_InstancingInfoArray[input.InstanceID].g_MtrlOutlineColor;
+		output.GBufferOutline.a = g_InstancingInfoArray[input.InstanceID].g_MtrlOutlineThickness / OutlineThickMax;
+	}
 
 	return output;
 }
