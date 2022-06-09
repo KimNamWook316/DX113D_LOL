@@ -29,6 +29,11 @@ public:
 		m_PathList.push_back(TargetPos);
 	}
 
+	void ClearPathList()
+	{
+		m_PathList.clear();
+	}
+
 public:
 	virtual void Start();
 	virtual bool Init();

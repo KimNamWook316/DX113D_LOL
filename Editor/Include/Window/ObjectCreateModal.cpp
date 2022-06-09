@@ -272,7 +272,7 @@ CGameObject* CObjectCreateModal::OnCreateObject(const char* FullPathMultibyte)
 
 		// 해당 Object 의 Root Component 로 Widget 구성
 		CSceneComponentHierarchyWindow* ComponentWindow = (CSceneComponentHierarchyWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(SCENECOMPONENT_HIERARCHY);
-		ComponentWindow->GetSceneComponentCreateModal()->OnLoadComponent(LoadedObject);
+		ComponentWindow->GetSceneComponentCreateModal()->OnLoadComponentRecursive(LoadedObject);
 	}
 
 	return LoadedObject;

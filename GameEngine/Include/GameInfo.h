@@ -608,3 +608,13 @@ struct InstancingCBuffer
 	Vector3 InstancingEmpty;
 };
 
+struct ChampionInfo
+{
+	float MoveSpeed;
+	int Attack;
+	float AttackSpeed;
+	int Armor;
+	int AbilityPower;
+	int MagicResist;
+	int NormalAttackRange;
+};

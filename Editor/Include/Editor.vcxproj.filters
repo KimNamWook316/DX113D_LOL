@@ -183,6 +183,9 @@
     <ClCompile Include="AnimationInstanceConvertThread.cpp">
       <Filter>04. Thread\02. AnimationInstanceConvert</Filter>
     </ClCompile>
+    <ClCompile Include="Widget\ColliderBox3DWidget.cpp">
+      <Filter>02. Editor\02. Widget\01. Inspector\01. SceneComponent</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EditorManager.h">
@@ -307,6 +310,9 @@
     </ClInclude>
     <ClInclude Include="AnimationInstanceConvertThread.h">
       <Filter>04. Thread\02. AnimationInstanceConvert</Filter>
+    </ClInclude>
+    <ClInclude Include="Widget\ColliderBox3DWidget.h">
+      <Filter>02. Editor\02. Widget\01. Inspector\01. SceneComponent</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

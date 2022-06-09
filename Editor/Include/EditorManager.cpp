@@ -18,6 +18,8 @@
 #include "Component/StateComponent.h"
 #include "Component/LandScape.h"
 #include "Component/StateComponent.h"
+#include "Component/ColliderBox3D.h"
+#include "Component/ColliderSphere.h"
 // Window
 #include "Window/ObjectHierarchyWindow.h"
 #include "Window/SceneComponentHierarchyWindow.h"
@@ -140,6 +142,10 @@ bool CEditorManager::Init(HINSTANCE hInst)
 	m_BehaviorTreeMenuBar = CIMGUIManager::GetInst()->AddWindow<CBehaviorTreeMenuBar>("BehaviorTree");
 
 	CRenderManager::GetInst()->CreateLayer("DragLayer", INT_MAX);
+
+
+
+	CResourceManager::GetInst()->LoadCSV("LoLChampionInfo.csv");
 
 
 
@@ -310,6 +316,7 @@ CComponent* CEditorManager::CreateComponent(CGameObject* Obj, size_t Type)
 	else if (Type == typeid(CLandScape).hash_code())
 	{
 		CLandScape* Component = Obj->LoadComponent<CLandScape>();
+		CSceneManager::GetInst()->GetScene()->GetNavigation3DManager()->SetLandScape(Component);
 		// Component->EnableEditMode(true);
 		return Component;
 	}
@@ -323,6 +330,20 @@ CComponent* CEditorManager::CreateComponent(CGameObject* Obj, size_t Type)
 	else if (Type == typeid(CNavAgent).hash_code())
 	{
 		CNavAgent* Component = Obj->LoadObjectComponent<CNavAgent>();
+		return Component;
+	}
+
+	else if (Type == typeid(CColliderBox3D).hash_code())
+	{
+		CColliderBox3D* Component = Obj->LoadComponent<CColliderBox3D>();
+		// Component->EnableEditMode(true);
+		return Component;
+	}
+
+	else if (Type == typeid(CColliderSphere).hash_code())
+	{
+		CColliderSphere* Component = Obj->LoadComponent<CColliderSphere>();
+		// Component->EnableEditMode(true);
 		return Component;
 	}
 

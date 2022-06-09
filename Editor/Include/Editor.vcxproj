@@ -180,6 +180,7 @@
     <ClCompile Include="Object\SpriteEditObject.cpp" />
     <ClCompile Include="Scene\DefaultScene.cpp" />
     <ClCompile Include="Widget\AnimationMeshWidget.cpp" />
+    <ClCompile Include="Widget\ColliderBox3DWidget.cpp" />
     <ClCompile Include="Widget\GameObjectWidget.cpp" />
     <ClCompile Include="Widget\LandScapeWidget.cpp" />
     <ClCompile Include="Widget\LightComponentWidget.cpp" />
@@ -228,6 +229,7 @@
     <ClInclude Include="Scene\DefaultScene.h" />
     <ClInclude Include="Utils.h" />
     <ClInclude Include="Widget\AnimationMeshWidget.h" />
+    <ClInclude Include="Widget\ColliderBox3DWidget.h" />
     <ClInclude Include="Widget\GameObjectWidget.h" />
     <ClInclude Include="Widget\LandScapeWidget.h" />
     <ClInclude Include="Widget\LightComponentWidget.h" />

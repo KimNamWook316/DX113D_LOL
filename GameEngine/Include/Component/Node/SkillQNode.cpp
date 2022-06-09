@@ -30,14 +30,13 @@ NodeResult CSkillQNode::OnStart(float DeltaTime)
 		m_AnimationMeshComp->GetAnimationInstance()->ChangeAnimation(SequenceName);
 	}
 
+	m_Object->SetNoInterrupt(true);
+
 	return NodeResult::Node_True;
 }
 
 NodeResult CSkillQNode::OnUpdate(float DeltaTime)
 {
-	if (m_AnimationMeshComp->GetAnimationInstance()->IsCurrentAnimEnd())
-		m_IsEnd = true;
-
 	return NodeResult::Node_True;
 }
 

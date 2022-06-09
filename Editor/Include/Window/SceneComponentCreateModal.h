@@ -25,6 +25,8 @@ public:
 
 	// Load Object 시에 호출하는 함수 -> 이미 Load 된 GameObject 의 Root Component 로 Widget 및 트리 구성
 	void OnLoadComponent(class CGameObject* SelectObject);
+	void OnLoadComponentRecursive(class CGameObject* SelectObject);
+	void OnLoadChildComponentRecursive(class CSceneComponent* ParentComp, class CIMGUITree* ParentTreeNode);
 
 	// 부모 Component가 있다면 부모 Component로 하여금 나를 자식 목록에서 지우도록 하는 함수
 	void DisconnetParent();

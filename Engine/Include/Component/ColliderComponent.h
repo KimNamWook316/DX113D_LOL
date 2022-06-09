@@ -33,9 +33,19 @@ protected:
     class CColliderConstantBuffer* m_CBuffer;
 
 public:
+    const std::vector<int>& GetCurrentSections()    const
+    {
+        return m_vecSectionIndex;
+    }
+
     Collider_Type GetColliderType() const
     {
         return m_ColliderType;
+    }
+
+    const Vector3& GetOffset()  const
+    {
+        return m_Offset;
     }
 
     virtual void SetOffset(const Vector3& Offset)

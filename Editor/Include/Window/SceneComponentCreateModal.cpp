@@ -16,6 +16,8 @@
 #include "Component/AnimationMeshComponent.h"
 #include "Component/StaticMeshComponent.h"
 #include "Component/ParticleComponent.h"
+#include "Component/ColliderBox3D.h"
+#include "Component/ColliderSphere.h"
 #include "Resource/Particle/Particle.h"
 #include "Component/Arm.h"
 #include "Component/LandScape.h"
@@ -125,7 +127,13 @@ void CSceneComponentCreateModal::OnCreateComponent()
 		Com = SelectObject->CreateComponentAddChild<CSceneComponent>(Name);
 
 	else if (Typeid == typeid(CParticleComponent).hash_code())
-		Com = SelectObject->CreateComponent<CParticleComponent>(Name);
+		Com = SelectObject->CreateComponentAddChild<CParticleComponent>(Name);
+
+	else if (Typeid == typeid(CColliderBox3D).hash_code())
+		Com = SelectObject->CreateComponentAddChild<CColliderBox3D>(Name);
+
+	else if (Typeid == typeid(CColliderSphere).hash_code())
+		Com = SelectObject->CreateComponentAddChild<CColliderSphere>(Name);
 	
 	CSceneComponentHierarchyWindow* ComponentWindow = (CSceneComponentHierarchyWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(SCENECOMPONENT_HIERARCHY);
 
@@ -173,7 +181,7 @@ void CSceneComponentCreateModal::OnLoadComponent(CGameObject* SelectObject)
 
 	// Object의 루트로 들어가는지 확인
 	// 아래 Gizmo에 Object 넣어주기 위해 필요
-	bool IsRoot = !(SelectObject->GetRootComponent());
+	bool IsRoot = (SelectObject->GetRootComponent());
 
 	CSceneComponent* Com = SelectObject->GetRootComponent();
 
@@ -202,7 +210,7 @@ void CSceneComponentCreateModal::OnLoadComponent(CGameObject* SelectObject)
 			// GUI상에서도 Root의 자식으로 들어가는것 반영하기
 			CIMGUITree* Child = nullptr;
 
-			// Control flow가 여기 들어올때면 엔진 상에서 이미 GameObject의 Component가 추가된 하고 여기로 들어오므로
+			// Control flow가 여기 들어올때면 엔진 상에서 이미 GameObject의 Component가 추가되고나서 여기로 들어오므로
 			// GameObject의 SceneComponent 개수가 2개 이상이면서 Root Component가 존재할때가 Root의 자식으로 지금 추가하려는 Component를 넣어줘야 할 때 이다
 			if (SelectObject->GetRootComponent() && SelectObject->GetSceneComponentCount() > 1)
 			{
@@ -219,6 +227,78 @@ void CSceneComponentCreateModal::OnLoadComponent(CGameObject* SelectObject)
 			Child->SetDragDropSourceCallback<CSceneComponentHierarchyWindow>(ComponentWindow, &CSceneComponentHierarchyWindow::OnDragDropSrc);
 			Child->SetDragDropDestCallback<CSceneComponentHierarchyWindow>(ComponentWindow, &CSceneComponentHierarchyWindow::OnDragDropDest);
 		}
+	}
+}
+
+void CSceneComponentCreateModal::OnLoadComponentRecursive(CGameObject* SelectObject)
+{
+	if (!SelectObject)
+		return;
+
+	// Object의 루트로 들어가는지 확인
+	// 아래 Gizmo에 Object 넣어주기 위해 필요
+	bool IsRoot = (SelectObject->GetRootComponent());
+
+	CSceneComponent* Com = SelectObject->GetRootComponent();
+
+	CSceneComponentHierarchyWindow* ComponentWindow = (CSceneComponentHierarchyWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(SCENECOMPONENT_HIERARCHY);
+
+	// Root Node로 들어가는 경우, Gizmo에 Object갱신
+	if (IsRoot)
+	{
+		CToolWindow* ToolWindow = (CToolWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(TOOL);
+		ToolWindow->SetGizmoObject(SelectObject);
+	}
+
+	// Inspector Window 갱신
+	CInspectorWindow* Inspector = (CInspectorWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(INSPECTOR);
+
+	if (Com)
+	{
+		Inspector->OnCreateSceneComponent(Com);
+		if (ComponentWindow)
+		{
+			char Name[256] = {};
+			strcpy_s(Name, Com->GetName().c_str());
+
+
+			// TODO : 이미 Root Component가 있는 상태에서 SceneComponent가 추가됐을때 RootComponent의 자식 Component로 들어갈테니
+			// GUI상에서도 Root의 자식으로 들어가는것 반영하기
+			CIMGUITree* Child = nullptr;
+
+			// Control flow가 여기 들어올때면 엔진 상에서 이미 GameObject의 Component가 추가되고나서 여기로 들어오므로
+			// GameObject의 SceneComponent 개수가 2개 이상이면서 Root Component가 존재할때가 Root의 자식으로 지금 추가하려는 Component를 넣어줘야 할 때 이다
+			if (SelectObject->GetRootComponent())
+			{
+				const std::string& RootName = SelectObject->GetRootComponent()->GetName();
+				CIMGUITree* HierarchyRoot = ComponentWindow->GetRoot();
+
+				Child = HierarchyRoot->AddChild(Name);
+			}
+
+			OnLoadChildComponentRecursive(SelectObject->GetRootComponent(), Child);
+
+			Child->AddSelectCallback<CSceneComponentHierarchyWindow>(ComponentWindow, &CSceneComponentHierarchyWindow::OnSetSelectNode);
+			Child->SetDragDropSourceCallback<CSceneComponentHierarchyWindow>(ComponentWindow, &CSceneComponentHierarchyWindow::OnDragDropSrc);
+			Child->SetDragDropDestCallback<CSceneComponentHierarchyWindow>(ComponentWindow, &CSceneComponentHierarchyWindow::OnDragDropDest);
+		}
+	}
+}
+
+void CSceneComponentCreateModal::OnLoadChildComponentRecursive(class CSceneComponent* ParentComp, CIMGUITree* ParentTreeNode)
+{
+	size_t Count = ParentComp->GetChildCount();
+
+	for (size_t i = 0; i < Count; ++i)
+	{
+		ParentTreeNode->AddChild(ParentComp->GetChild(i)->GetName());
+	}
+
+	for (size_t i = 0; i < Count; ++i)
+	{
+		CSceneComponent* ChildCom = ParentComp->GetChild(i);
+		CIMGUITree* ChildTreeNode = ParentTreeNode->GetNode(i);
+		OnLoadChildComponentRecursive(ChildCom, ChildTreeNode);
 	}
 }
 

@@ -406,9 +406,14 @@ bool CSceneComponent::DeleteComponent()
 	return true;
 }
 
-size_t CSceneComponent::GetChildCounet() const
+size_t CSceneComponent::GetChildCount() const
 {
 	return m_vecChild.size();
+}
+
+CSceneComponent* CSceneComponent::GetChild(int Idx) const
+{
+	return m_vecChild[Idx];
 }
 
 CSceneComponent* CSceneComponent::FindComponent(const std::string& Name)
@@ -622,6 +627,11 @@ bool CSceneComponent::Load(FILE* File)
 		Component->Load(File);
 
 		m_vecChild.push_back((CSceneComponent*)Component);
+		((CSceneComponent*)Component)->m_Parent = this;
+
+		// m_Transform³¢¸®ÀÇ °èÃş±¸Á¶ Ãß°¡
+		m_Transform->m_vecChild.push_back(((CSceneComponent*)Component)->m_Transform);
+		((CSceneComponent*)Component)->m_Transform->m_Parent = m_Transform;
 	}
 
 	return true;

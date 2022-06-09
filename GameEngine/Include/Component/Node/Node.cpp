@@ -4,7 +4,8 @@
 
 CNode::CNode()	:
 	m_IsEnd(false),
-	m_CallStart(false)
+	m_CallStart(false),
+	m_AnimationMeshComp(nullptr)
 {
 	SetTypeID(typeid(CNode).hash_code());
 }
@@ -15,6 +16,16 @@ CNode::CNode(const CNode& Node)
 
 CNode::~CNode()
 {
+}
+
+void CNode::SetAnimationMeshComponent(CAnimationMeshComponent* AnimationMeshComp)
+{
+	m_AnimationMeshComp = AnimationMeshComp;
+}
+
+CAnimationMeshComponent* CNode::GetAnimationMeshComponent() const
+{
+	return m_AnimationMeshComp;
 }
 
 void CNode::SetOwner(CBehaviorTree* Owner)

@@ -10,8 +10,6 @@ protected:
     CActionNode(const CActionNode& Node);
     virtual ~CActionNode() = 0;
 
-protected:
-    class CAnimationMeshComponent* m_AnimationMeshComp;
 
 public:
     virtual NodeResult OnStart(float DeltaTime) = 0;
@@ -21,9 +19,9 @@ public:
 public:
     //virtual NodeResult OnStart(float DeltaTime);
 
-public:
-    void SetAnimationMeshComponent(class CAnimationMeshComponent* AnimationMeshComp);
-    class CAnimationMeshComponent* GetAnimationMeshComponent()  const;
+//public:
+//    void SetAnimationMeshComponent(class CAnimationMeshComponent* AnimationMeshComp);
+//    class CAnimationMeshComponent* GetAnimationMeshComponent()  const;
 
 public:
     virtual bool Invoke(float DeltaTime) override;
