@@ -53,6 +53,11 @@ public:
         return (int)m_vecMaterialSlot.size();
     }
 
+    CAnimationMesh* GetMesh() const
+    {
+        return m_Mesh;
+    }
+
 public:
     void SetMesh(const std::string& Name);
     void SetMesh(CAnimationMesh* Mesh);
