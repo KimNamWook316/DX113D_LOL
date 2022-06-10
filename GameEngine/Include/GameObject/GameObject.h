@@ -58,6 +58,17 @@ public:
 	}
 
 public:
+	void SetState(Transform_State State)
+	{
+		m_RootComponent->SetState(State);
+	}
+
+	const Transform_State& GetState()	const
+	{
+		return m_RootComponent->GetState();
+	}
+
+public:
 	void SetScene(class CScene* Scene);
 	virtual void Destroy();
 

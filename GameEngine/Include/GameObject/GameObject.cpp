@@ -551,6 +551,12 @@ bool CGameObject::LoadOnly(const char* FullPath, CComponent*& OutCom)
 
 	bool Ret = Component->LoadOnly(File);
 
+	if (Component->GetTypeID() == typeid(CNavAgent).hash_code())
+	{
+		m_NavAgent = (CNavAgent*)Component;
+		m_NavAgent->SetUpdateComponent(GetRootComponent());
+	}
+
 	OutCom = Component;
 
 	fclose(File);

@@ -34,7 +34,7 @@ NodeResult CFindEnemyChampion::OnEnd(float DeltaTime)
 	return NodeResult();
 }
 
-bool CFindEnemyChampion::Invoke(float DeltaTime)
+NodeResult CFindEnemyChampion::Invoke(float DeltaTime)
 {
 	return CConditionNode::Invoke(DeltaTime);
 }

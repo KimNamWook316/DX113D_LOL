@@ -52,6 +52,8 @@
 
 #pragma comment(lib, "fmod64_vc.lib")
 
+#define GRAVITY 9.8f
+
 #define SHADOWMAP_WIDTH		2560.f
 #define SHADOWMAP_HEIGHT	1440.f
 
@@ -619,6 +621,14 @@ struct InstancingCBuffer
 	Vector3 InstancingEmpty;
 };
 
+struct OutlineCBuffer
+{
+	float DepthMultiplier;
+	float DepthBias;
+	float NormalMultiplier;
+	float NormalBias;
+};
+
 struct ChampionInfo
 {
 	float MoveSpeed;
@@ -629,11 +639,9 @@ struct ChampionInfo
 	int MagicResist;
 	int NormalAttackRange;
 };
-struct OutlineCBuffer
-{
-	float DepthMultiplier;
-	float DepthBias;
-	float NormalMultiplier;
-	float NormalBias;
-};
 
+struct NotifyParameter
+{
+	class CGameObject* Object;	// 애니메이션 동작하는 본인
+	float Range;
+};

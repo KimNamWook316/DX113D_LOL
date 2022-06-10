@@ -24,6 +24,6 @@ public:
 //    class CAnimationMeshComponent* GetAnimationMeshComponent()  const;
 
 public:
-    virtual bool Invoke(float DeltaTime) override;
+    virtual NodeResult Invoke(float DeltaTime) override;
 
 };

@@ -281,7 +281,7 @@ enum class NodeResult
 {
 	Node_True,
 	Node_False,
-	Node_None,
+	Node_Running,
 	Max
 };
 

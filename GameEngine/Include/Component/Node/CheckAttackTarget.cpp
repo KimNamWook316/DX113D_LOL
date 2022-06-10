@@ -43,7 +43,7 @@ NodeResult CCheckAttackTarget::OnEnd(float DeltaTime)
 	return NodeResult();
 }
 
-bool CCheckAttackTarget::Invoke(float DeltaTime)
+NodeResult CCheckAttackTarget::Invoke(float DeltaTime)
 {
 	return CConditionNode::Invoke(DeltaTime);
 }

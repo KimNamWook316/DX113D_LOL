@@ -469,12 +469,19 @@ void CSceneCollision::CheckColliderSection()
 
 void CSceneCollision::CheckColliderSection3D()
 {
+	size_t Count = m_Section->vecSection.size();
+
+	for (size_t i = 0; i < Count; ++i)
+		m_Section->vecSection[i]->ClearPrevCollider();
+
 	auto	iter = m_ColliderList.begin();
 	auto	iterEnd = m_ColliderList.end();
 
 	for (; iter != iterEnd; ++iter)
 	{
 		CColliderComponent* Collider = *iter;
+
+		Collider->ClearPrevSectionIndex();
 
 		if (!Collider->IsEnable())
 			continue;
@@ -510,6 +517,8 @@ void CSceneCollision::CheckColliderSection3D()
 				int	Index = z * (m_Section->CountX) + x;
 
 				m_Section->vecSection[Index]->AddCollider(Collider);
+				m_Section->vecSection[Index]->AddPrevCollider(Collider);
+				Collider->AddPrevSectionIndex(Index);
 			}
 		}
 	}

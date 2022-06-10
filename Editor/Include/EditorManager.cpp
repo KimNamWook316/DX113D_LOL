@@ -41,6 +41,10 @@
 #include "Object/Player2D.h"
 #include "Object/3DCameraObject.h"
 
+#include "Component/State/StateManager.h"
+
+#include <sstream>
+
 DEFINITION_SINGLE(CEditorManager)
 
 CEditorManager::CEditorManager() :
@@ -154,7 +158,8 @@ bool CEditorManager::Init(HINSTANCE hInst)
 	// 기존 도경씨 Behavior TreeMenu Bar
 	// m_BehaviorTreeMenuBar = CIMGUIManager::GetInst()->AddWindow<CBehaviorTreeMenuBar>("BehaviorTree");
 
-	//CResourceManager::GetInst()->LoadCSV("LoLChampionInfo.csv");
+	ReadChampionSkillInfo();
+	ReadChampionNotify();
 
 	return true;
 }
@@ -367,5 +372,63 @@ void CEditorManager::CreateAnimInstance(CSpriteComponent* Sprite, size_t Type)
 
 void CEditorManager::CreateEditorCamera()
 {
+}
+
+void CEditorManager::SetChampionNotify(CAnimationSequenceInstance* Instance, const std::string& ChampionName)
+{
+	CExcelData* Data = CResourceManager::GetInst()->FindCSV("AnimationNotify");
+
+	if (!Data)
+		return;
+
+	CStateManager* StateManager = CSceneManager::GetInst()->GetStateManager();
+	
+	// TODO : 챔피언과 스킬이 추가될때마다 여기에 Notify 추가
+	if (ChampionName.find("Alistar") != std::string::npos)
+	{
+		Row* row = Data->GetRow("Alistar");
+
+		size_t Count = row->size();
+
+		for (size_t i = 0; i < Count; ++i)
+		{
+			std::stringstream ss;
+
+			ss << (*row)[i];
+
+			int Frame = 0;
+
+			ss >> Frame;
+			
+			// Q Skill
+			if (i == 0)
+			{
+				Instance->AddNotifyParam<CStateManager>("Alistar_SkillQ", "AlistarQAirborne", Frame, StateManager, &CStateManager::CheckAirborneTarget);
+
+				std::string StrRange = CResourceManager::GetInst()->FindCSV("SkillInfo")->FindData("Alistar", "QRange");
+				int Range = 0;
+				ss.clear();
+
+				ss << StrRange;
+				ss >> Range;
+				
+				Instance->SetNotifyParamRange("Alistar_SkillQ", "AlistarQAirborne", Range);
+			}
+			// W Skill
+			if (i == 1)
+				Instance->AddNotifyParam<CStateManager>("Airborne", "AlistarQAirborne", Frame, StateManager, &CStateManager::FindKnockBackTarget);
+		}
+
+	}
+}
+
+void CEditorManager::ReadChampionNotify()
+{
+	CResourceManager::GetInst()->LoadCSV("AnimationNotify.csv");
+}
+
+void CEditorManager::ReadChampionSkillInfo()
+{
+	CResourceManager::GetInst()->LoadCSV("SkillInfo.csv");
 }
 

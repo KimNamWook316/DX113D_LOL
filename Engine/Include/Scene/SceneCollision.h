@@ -56,6 +56,11 @@ private:
 	bool	m_WidgetClick;
 
 public:
+	CollisionSectionInfo* GetCollisionSectionInfo()	const
+	{
+		return m_Section;
+	}
+
 	int GetSectionCountX()	const
 	{
 		return m_Section->CountX;

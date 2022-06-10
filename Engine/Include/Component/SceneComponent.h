@@ -172,6 +172,17 @@ public :
 	virtual void RenderAnimationEditor();
 	virtual void RenderParticleEffectEditor();
 
+public:
+	void SetState(Transform_State State)
+	{
+		m_Transform->m_State = State;
+	}
+
+	const Transform_State& GetState()	const
+	{
+		return m_Transform->m_State;
+	}
+
 public:	// Transform
 	void SetUpdateByMat(bool UpdateByMat);
 	void DecomposeWorld();

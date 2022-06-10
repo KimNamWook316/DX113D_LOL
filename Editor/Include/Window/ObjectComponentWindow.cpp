@@ -33,6 +33,7 @@ bool CObjectComponentWindow::Init()
 	// 숫자 하드 코딩하지 말고, Window크기 알아서 Window크기에 Offset줘서 맞추기
 	m_ComponentListBox = AddWidget<CIMGUIListBox>("ObjectComponentList", 130.f, 200.f);
 	m_ComponentListBox->SetHideName(true);
+	m_ComponentListBox->SetSelectCallback<CObjectComponentWindow>(this, &CObjectComponentWindow::OnSelectComponent);
 
 	m_ComponentCreatePopUpButton = AddWidget<CIMGUIButton>("Create", 50.f, 20.f);
 	m_ComponentCreatePopUpButton->SetClickCallback<CObjectComponentWindow>(this, &CObjectComponentWindow::OnCreateComponentPopUp);

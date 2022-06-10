@@ -32,11 +32,21 @@ void CCollisionSection::Clear()
 	m_vecCollider.clear();
 }
 
+void CCollisionSection::ClearPrevCollider()
+{
+	m_vecPrevCollider.clear();
+}
+
 void CCollisionSection::AddCollider(CColliderComponent* Collider)
 {
 	m_vecCollider.push_back(Collider);
 
 	Collider->AddSectionIndex(m_Index);
+}
+
+void CCollisionSection::AddPrevCollider(CColliderComponent* Collider)
+{
+	m_vecPrevCollider.push_back(Collider);
 }
 
 void CCollisionSection::Collision(float DeltaTime)
@@ -120,6 +130,16 @@ CColliderComponent* CCollisionSection::CollisionMouse(bool Is2D, float DeltaTime
 	}
 
 	return nullptr;
+}
+
+CColliderComponent* CCollisionSection::GetCollider(int Idx) const
+{
+	return m_vecCollider[Idx];
+}
+
+CColliderComponent* CCollisionSection::GetPrevCollider(int Idx) const
+{
+	return m_vecPrevCollider[Idx];
 }
 
 int CCollisionSection::SortY(const void* Src, const void* Dest)

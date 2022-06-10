@@ -398,7 +398,7 @@ void CAnimationEditor::OnLoopAnimation(const char*, bool Enable)
 	if (!RootMeshComponent)
 		return;
 
-	RootMeshComponent->GetAnimationInstance()->SetLoop(!Enable);
+	RootMeshComponent->GetAnimationInstance()->SetLoop(Enable);
 
 	// bool IsAnimPlay = RootMeshComponent->GetAnimationInstance()->IsPlay();
 	// 

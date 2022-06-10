@@ -53,7 +53,6 @@ public:
 	class CAnimationMeshComponent* GetAnimationMeshComp()   const;
 
 public:
-	void AddState(class CState* State);
 	void AddState(const std::string& Name);
 
 	bool DeleteState(class CState* State);

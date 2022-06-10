@@ -133,9 +133,8 @@ NodeResult CMovePickingNode::OnStart(float DeltaTime)
 
 					Instance->ChangeAnimation(m_Object->GetName() + "_Run");
 
-					m_IsEnd = true;
-
-					return NodeResult::Node_True;
+					// 특정 오브젝트를 피킹한 경우 NormalAttackSequence로 가야하기 때문에 false를 리턴
+					return NodeResult::Node_False;
 				}
 			}
 
@@ -156,9 +155,8 @@ NodeResult CMovePickingNode::OnStart(float DeltaTime)
 
 					Instance->ChangeAnimation(m_Object->GetName() + "_Run");
 
-					m_IsEnd = true;
-
-					return NodeResult::Node_True;
+					// 특정 오브젝트를 피킹한 경우 NormalAttackSequence로 가야하기 때문에 false를 리턴
+					return NodeResult::Node_False;
 				}
 			}
 		}
@@ -171,7 +169,6 @@ NodeResult CMovePickingNode::OnStart(float DeltaTime)
 
 		Instance->ChangeAnimation(m_Object->GetName() + "_Run");
 
-		m_IsEnd = true;
 	}
 
 	return NodeResult::Node_True;
@@ -191,8 +188,6 @@ NodeResult CMovePickingNode::OnUpdate(float DeltaTime)
 		//m_Object->SetInterruptEnable(true);
 		return NodeResult::Node_False;
 	}
-
-	return NodeResult::Node_None;
 }
 
 NodeResult CMovePickingNode::OnEnd(float DeltaTime)
@@ -200,7 +195,7 @@ NodeResult CMovePickingNode::OnEnd(float DeltaTime)
 	return NodeResult::Node_True;
 }
 
-bool CMovePickingNode::Invoke(float DeltaTime)
+NodeResult CMovePickingNode::Invoke(float DeltaTime)
 {
 	return CActionNode::Invoke(DeltaTime);
 }

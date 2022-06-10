@@ -17,7 +17,7 @@ CActionNode::~CActionNode()
 {
 }
 
-bool CActionNode::Invoke(float DeltaTime)
+NodeResult CActionNode::Invoke(float DeltaTime)
 {
 	if(!m_CallStart)
 		OnStart(DeltaTime);	
@@ -27,9 +27,12 @@ bool CActionNode::Invoke(float DeltaTime)
 	if (m_IsEnd)
 		OnEnd(DeltaTime);
 
-	if (Result == NodeResult::Node_True)
-		return true;
-	else
-		return false;
+	//if (Result == NodeResult::Node_Running)
+	//{
+	//	m_Owner->SetCurrentNode(this);
+	//}
+
+	return Result;
+
 }
 

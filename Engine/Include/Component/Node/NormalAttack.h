@@ -16,6 +16,6 @@ protected:
     virtual NodeResult OnEnd(float DeltaTime);
 
 public:
-    virtual bool Invoke(float DeltaTime) override;
+    virtual NodeResult Invoke(float DeltaTime) override;
 };
 

@@ -51,7 +51,7 @@ NodeResult CIdleNode::OnEnd(float DeltaTime)
 	return NodeResult::Node_True;
 }
 
-bool CIdleNode::Invoke(float DeltaTime)
+NodeResult CIdleNode::Invoke(float DeltaTime)
 {
 	return CActionNode::Invoke(DeltaTime);
 }

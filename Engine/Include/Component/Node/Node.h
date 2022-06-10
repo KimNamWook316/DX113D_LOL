@@ -100,7 +100,7 @@ public:
 	}
 
 public:
-	virtual bool Invoke(float DeltaTime) = 0;
+	virtual NodeResult Invoke(float DeltaTime) = 0;
 
 public:
 	virtual NodeResult OnStart(float DeltaTime) = 0;

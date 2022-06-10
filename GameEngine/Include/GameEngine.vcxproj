@@ -36,6 +36,9 @@
     <ClCompile Include="Component\Node\SkillEndCheckNode.cpp" />
     <ClCompile Include="Component\Node\SkillENode.cpp" />
     <ClCompile Include="Component\Node\SkillRNode.cpp" />
+    <ClCompile Include="Component\State\AirBorneState.cpp" />
+    <ClCompile Include="Component\State\State.cpp" />
+    <ClCompile Include="Component\State\StateManager.cpp" />
     <ClCompile Include="IMGUITableElemList.cpp" />
     <ClCompile Include="Component\BehaviorTree.cpp" />
     <ClCompile Include="Component\BillboardComponent.cpp" />
@@ -274,6 +277,9 @@
     <ClInclude Include="Component\Node\SkillEndCheckNode.h" />
     <ClInclude Include="Component\Node\SkillENode.h" />
     <ClInclude Include="Component\Node\SkillRNode.h" />
+    <ClInclude Include="Component\State\AirBorneState.h" />
+    <ClInclude Include="Component\State\State.h" />
+    <ClInclude Include="Component\State\StateManager.h" />
     <ClInclude Include="IMGUITableElemList.h" />
     <ClInclude Include="Collision\Collision.h" />
     <ClInclude Include="Collision\CollisionManager.h" />

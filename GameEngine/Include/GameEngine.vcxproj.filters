@@ -1038,6 +1038,15 @@
     <ClCompile Include="Component\Node\InSkillCheck.cpp">
       <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node\01. SkillNode</Filter>
     </ClCompile>
+    <ClCompile Include="Component\State\AirBorneState.cpp">
+      <Filter>05. Component\02. ObjectComponent\03. StateComponent\02. State</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\State\State.cpp">
+      <Filter>05. Component\02. ObjectComponent\03. StateComponent\02. State</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\State\StateManager.cpp">
+      <Filter>05. Component\02. ObjectComponent\03. StateComponent\02. State</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Device.h">
@@ -1786,6 +1795,15 @@
     </ClInclude>
     <ClInclude Include="Component\Node\InSkillCheck.h">
       <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node\01. SkillNode</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\State\AirBorneState.h">
+      <Filter>05. Component\02. ObjectComponent\03. StateComponent\02. State</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\State\State.h">
+      <Filter>05. Component\02. ObjectComponent\03. StateComponent\02. State</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\State\StateManager.h">
+      <Filter>05. Component\02. ObjectComponent\03. StateComponent\02. State</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

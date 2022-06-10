@@ -39,7 +39,7 @@ NodeResult CInSkillCheck::OnEnd(float DeltaTime)
 	return NodeResult();
 }
 
-bool CInSkillCheck::Invoke(float DeltaTime)
+NodeResult CInSkillCheck::Invoke(float DeltaTime)
 {
 	return CConditionNode::Invoke(DeltaTime);
 }
