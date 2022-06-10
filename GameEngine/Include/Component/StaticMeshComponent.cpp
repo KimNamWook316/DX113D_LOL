@@ -675,6 +675,23 @@ bool CStaticMeshComponent::Save(FILE* File)
 	fwrite(&Length, sizeof(int), 1, File);
 	fwrite(MeshName.c_str(), sizeof(char), Length, File);
 
+	// Mesh Path 존재하는지
+	bool FullPathExist = false;
+	char MeshPath[MAX_PATH] = {};
+	strcpy_s(MeshPath, m_Mesh->GetFullPath());
+
+	Length = strlen(MeshPath);
+
+	FullPathExist = Length > 0 ? true : false;
+	fwrite(&FullPathExist, sizeof(bool), 1, File);
+
+	// Mesh Path 존재하는 경우 저장
+	if (FullPathExist)
+	{
+		fwrite(&Length, sizeof(int), 1, File);
+		fwrite(MeshPath, sizeof(char), Length, File);
+	}
+
 	int	MaterialSlotCount = (int)m_vecMaterialSlot.size();
 
 	fwrite(&MaterialSlotCount, sizeof(int), 1, File);
@@ -697,6 +714,19 @@ bool CStaticMeshComponent::Load(FILE* File)
 
 	fread(&Length, sizeof(int), 1, File);
 	fread(MeshName, sizeof(char), Length, File);
+
+	bool MeshFullPathExist = false;
+	fread(&MeshFullPathExist, sizeof(bool), 1, File);
+
+	// Mesh FullPath가 존재하면 로드
+	if (MeshFullPathExist)
+	{
+		char MeshFullPath[MAX_PATH] = {};
+		fread(&Length, sizeof(int), 1, File);
+		fread(&MeshFullPath, sizeof(char), Length, File);
+
+		m_Scene->GetResource()->LoadMeshFullPathMultibyte(Mesh_Type::Static, MeshName, MeshFullPath);
+	}
 
 	SetMesh(MeshName);
 
