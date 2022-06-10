@@ -384,9 +384,12 @@ void CIMGUITree::Render()
 		{
 			// File Browser 상의 File 정보를 IMGUITextInput 에 Drop 하기 위한 함수 추가 (OBJ)
 			{
-				int NameStrLength = (int)strlen(m_Name.c_str());
+				TCHAR DragText[MAX_PATH] = {};
 
-				ImGui::SetDragDropPayload(vIMGUIDragDropPayLoadName.TextDragDrop, m_Name.c_str(), sizeof(TCHAR) * NameStrLength);
+				int ConvertLength = MultiByteToWideChar(CP_ACP, 0, m_Name.c_str(), -1, 0, 0);
+				MultiByteToWideChar(CP_ACP, 0, m_Name.c_str(), -1, DragText, ConvertLength);
+
+				ImGui::SetDragDropPayload(vIMGUIDragDropPayLoadName.TextDragDrop, DragText, sizeof(DragText));
 
 				// Drag Drop Src TreeNode의 콜백
 				if (m_DragDropSourceCallback)

@@ -166,13 +166,13 @@ void CMaterialEditor::OnCreateMaterialCallback()
 
 	m_SelectedMaterial = NewMaterial;
 
-	RefreshMaterialDisplayInfo(m_SelectedMaterial);
+	RefreshMaterialDisplayInfo(m_SelectedMaterial, nullptr);
 
 	// 보여지는 Texture 정보 갱신
 	m_SetTexureImage->SetTexture(nullptr);
 
 	// Resource Info Window 정보 갱신하기
-	CEditorManager::GetInst()->GetResourceDisplayWindow()->GatherLoadedMaterialResources();
+	CEditorManager::GetInst()->GetResourceDisplayWindow()->RefreshLoadedMaterialResources();
 }
 
 void CMaterialEditor::OnDropAndCreateMaterialCallback(const std::string& MaterialName)
@@ -211,7 +211,7 @@ void CMaterialEditor::OnDropAndCreateMaterialCallback(const std::string& Materia
 
 	RefreshMaterialDisplayInfo(m_SelectedMaterial);
 
-	CEditorManager::GetInst()->GetResourceDisplayWindow()->GatherLoadedMaterialResources();
+	CEditorManager::GetInst()->GetResourceDisplayWindow()->RefreshLoadedMaterialResources();
 }
 
 void CMaterialEditor::OnDropAndSetShaderToMaterial(const std::string& DropShaderName)
@@ -275,6 +275,29 @@ void CMaterialEditor::OnSetTextureBtnWithString(const std::string& InputName)
 		return;
 	}
 
+	// 1) 먼저 Texture Manager 에서 해당 Key로 저장된 Texture 정보가 있는지를 저장하고
+	CTexture* TargetTexture = CResourceManager::GetInst()->FindTexture(InputName);
+
+	if (TargetTexture)
+	{
+
+		m_SelectedMaterial->SetTextureInfoResource(SetTextureIndex, TargetTexture);
+
+		// 현재 Texture 를 IMGUI Image 에 보여주기
+		m_SetTexureImage->SetTexture(TargetTexture);
+
+		RefreshMaterialDisplayInfo(m_SelectedMaterial);
+
+		// ResourceDisplay Window 에 있는 Texture 목록들 Resource Window 에 추가해서 보여주기
+		CEditorManager::GetInst()->GetResourceDisplayWindow()->RefreshLoadedTextureResources();
+
+		// 제대로 세팅되었다는 Message
+		MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Texture Set SuccessFully"), NULL, MB_OK);
+
+		return;
+	}
+
+	// 2) 그래도 없으면, Hard Disk 에서 불러와서 세팅한다.
 	// Drop 한 Input 안에 있는 Texture 정보 불러오기 
 	// Texture File 의 File 명을, Texture 를 저장하는 Key 값으로 사용할 것이다.
 	std::string TextureKeyName;
@@ -299,17 +322,17 @@ void CMaterialEditor::OnSetTextureBtnWithString(const std::string& InputName)
 		return;
 	}
 
-	CTexture* TargetTexture = CResourceManager::GetInst()->FindTexture(TextureKeyName);
+	TargetTexture = CResourceManager::GetInst()->FindTexture(TextureKeyName);
 
 	m_SelectedMaterial->SetTextureInfoResource(SetTextureIndex, TargetTexture);
 
 	// 현재 Texture 를 IMGUI Image 에 보여주기
 	m_SetTexureImage->SetTexture(TargetTexture);
 
-	RefreshMaterialDisplayInfo(m_SelectedMaterial);
+	RefreshMaterialDisplayInfo(m_SelectedMaterial, TargetTexture);
 
 	// ResourceDisplay Window 에 있는 Texture 목록들 Resource Window 에 추가해서 보여주기
-	CEditorManager::GetInst()->GetResourceDisplayWindow()->GatherLoadedTextureResources();
+	CEditorManager::GetInst()->GetResourceDisplayWindow()->RefreshLoadedTextureResources();
 
 	// 제대로 세팅되었다는 Message
 	MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Texture Set SuccessFully"), NULL, MB_OK);
@@ -341,7 +364,7 @@ void CMaterialEditor::OnAddTextureBtnWithString(const std::string& InputName)
 		RefreshMaterialDisplayInfo(m_SelectedMaterial);
 
 		// ResourceDisplay Window 에 있는 Texture 목록들 Resource Window 에 추가해서 보여주기
-		CEditorManager::GetInst()->GetResourceDisplayWindow()->GatherLoadedTextureResources();
+		CEditorManager::GetInst()->GetResourceDisplayWindow()->RefreshLoadedTextureResources();
 
 		// 제대로 세팅되었다는 Message
 		MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Texture Added SuccessFully"), NULL, MB_OK);
@@ -387,7 +410,7 @@ void CMaterialEditor::OnAddTextureBtnWithString(const std::string& InputName)
 	RefreshMaterialDisplayInfo(m_SelectedMaterial);
 
 	// ResourceDisplay Window 에 있는 Texture 목록들 Resource Window 에 추가해서 보여주기
-	CEditorManager::GetInst()->GetResourceDisplayWindow()->GatherLoadedTextureResources();
+	CEditorManager::GetInst()->GetResourceDisplayWindow()->RefreshLoadedTextureResources();
 
 	// 제대로 세팅되었다는 Message
 	MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Texture Added SuccessFully"), NULL, MB_OK);
@@ -480,11 +503,17 @@ void CMaterialEditor::OnLoadMaterial()
 		m_SelectedMaterial = LoadedMaterial;
 
 		RefreshMaterialDisplayInfo(m_SelectedMaterial);
+
+		// ResourceDisplay Window 에 있는 Texture 목록들 Resource Window 에 추가해서 보여주기
+		CEditorManager::GetInst()->GetResourceDisplayWindow()->RefreshLoadedTextureResources();
+		CEditorManager::GetInst()->GetResourceDisplayWindow()->RefreshLoadedMaterialResources();
 	}
 }
 
-void CMaterialEditor::RefreshMaterialDisplayInfo(class CMaterial* Material)
+void CMaterialEditor::RefreshMaterialDisplayInfo(class CMaterial* Material, class CTexture* Texture )
 {
+	// Material Editor =>
+
 	if (!Material)
 		return;
 
@@ -492,10 +521,16 @@ void CMaterialEditor::RefreshMaterialDisplayInfo(class CMaterial* Material)
 
 	const std::vector<MaterialTextureInfo>& MtrlTexture = Material->GetTextureInfo();
 
-	if (MtrlTexture.size() > 0)
+	// 따로 세팅해주고자 하는 Texture 가 없고, 현재 Material 이 Texture 를 들고 있다면
+	if (!Texture && MtrlTexture.size() > 0)
 	{
-		// Texture Image 맨 첫번째꺼 보여주기
-		m_SetTexureImage->SetTexture(MtrlTexture[0].Texture);
+		int LastTexIdx = MtrlTexture.size() - 1;
+		// Texture Image 맨 마지막 꺼 보여주기
+		m_SetTexureImage->SetTexture(MtrlTexture[LastTexIdx].Texture);
+	}
+	else
+	{
+		m_SetTexureImage->SetTexture(Texture);
 	}
 
 	// Texture Table 에 Texture 정보들 세팅

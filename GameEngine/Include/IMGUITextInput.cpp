@@ -104,15 +104,25 @@ void CIMGUITextInput::ApplyDropEffect()
 		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(vIMGUIDragDropPayLoadName.TextDragDrop))
 		{
 			// char type 배수 
-			if (payload->DataSize % sizeof(TCHAR) != 0)
+			size_t DroppedTextSize = payload->DataSize;
+			size_t DetNoSize = sizeof(TCHAR);
+			if (DroppedTextSize % DetNoSize != 0)
 				return;
 
 			// 일반적으로 IMGUIText Widget을 Drop 할 것이다.
 			// Drop 받은 내용을 TextType 에 맞게 변환할 것이다.
-			char* payload_n = (char*)payload->Data;
+			TCHAR* payload_n = (TCHAR*)payload->Data;
+
+			char DroppedTextMultibyte[MAX_PATH] = {};
+
+			int ConvertLength = WideCharToMultiByte(CP_UTF8, 0, payload_n, -1, 0, 0, 0, 0);
+			WideCharToMultiByte(CP_UTF8, 0, payload_n, -1, DroppedTextMultibyte, ConvertLength, 0, 0);
+
 
 			if (m_DropCallback)
-				m_DropCallback(payload_n);
+			{
+				m_DropCallback(DroppedTextMultibyte);
+			}
 
 			switch (m_TextType)
 			{
@@ -120,20 +130,20 @@ void CIMGUITextInput::ApplyDropEffect()
 			{
 				// 그리고 IMGUIText 는 char[] 이기 때문에, char type 의 배수 크기인지 확인한다.
 				char TextDrop[MAX_PATH] = {};
-				strcpy_s(TextDrop, payload_n);
+				strcpy_s(TextDrop, DroppedTextMultibyte);
 				SetText(TextDrop);
 			}
 				break;
 			case ImGuiText_Type::Int:
 			{
-				std::string IntDrop = payload_n;
+				std::string IntDrop = DroppedTextMultibyte;
 				int FinalIntInput = std::stoi(IntDrop);
 				m_ValueInt = FinalIntInput;
 			}
 				break;
 			case ImGuiText_Type::Float:
 			{
-				std::string FloatDrop = payload_n;
+				std::string FloatDrop = DroppedTextMultibyte;
 				float FinalIntInput = std::stof(FloatDrop);
 				m_ValueFloat = FinalIntInput;
 			}

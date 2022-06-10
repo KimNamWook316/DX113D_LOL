@@ -896,7 +896,7 @@ CMaterial* CMaterial::Clone()	const
 
 bool CMaterial::Save(FILE* File)
 {
-	std::string	ShaderName = "ShaderSetting";
+	std::string	ShaderName ;
 
 	if (m_Shader)
 		std::string	ShaderName = m_Shader->GetName();
@@ -916,24 +916,15 @@ bool CMaterial::Save(FILE* File)
 	fwrite(&m_EmissiveTex, sizeof(bool), 1, File);
 	fwrite(&m_Bump, sizeof(bool), 1, File);
 
-	int SampleWorld = 9876;
-	fwrite(&SampleWorld, sizeof(int), 1, File);
-
 	// 이 부분까지는 문제 X
 	for (int i = 0; i < (int)RenderState_Type::Max; ++i)
 	{
-		int SampleRender = 9876;
-		fwrite(&SampleRender, sizeof(int), 1, File);
-
 		bool	StateEnable = false;
 
 		if (m_RenderStateArray[i])
 			StateEnable = true;
 
 		fwrite(&StateEnable, sizeof(bool), 1, File);
-
-		int SampleWorld = 9876;
-		fwrite(&SampleWorld, sizeof(int), 1, File);
 
 		if (m_RenderStateArray[i])
 		{
@@ -1012,19 +1003,10 @@ bool CMaterial::Load(FILE* File)
 	m_CBuffer->SetEmissiveColor(m_EmissiveColor);
 	m_CBuffer->SetOpacity(m_Opacity);
 
-	int SampleWorld = -1;
-	fread(&SampleWorld, sizeof(int), 1, File);
-
 	for (int i = 0; i < (int)RenderState_Type::Max; ++i)
 	{
-		int SampleRender = 0;
-		fread(&SampleRender, sizeof(int), 1, File);
-
 		bool	StateEnable = true;
 		fread(&StateEnable, sizeof(bool), 1, File);
-
-		int SampleWorld = -1;
-		fread(&SampleWorld, sizeof(int), 1, File);
 
 		if (StateEnable)
 		{

@@ -24,7 +24,7 @@ private :
 public :
 	virtual bool Init() override;
 public  :
-	void GatherLoadedTextureResources();
-	void GatherLoadedMaterialResources();
+	void RefreshLoadedTextureResources();
+	void RefreshLoadedMaterialResources();
 };
 

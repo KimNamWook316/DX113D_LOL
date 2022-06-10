@@ -76,6 +76,6 @@ private :
 	void OnSaveMaterial();
 	void OnLoadMaterial();
 
-	void RefreshMaterialDisplayInfo(class CMaterial* Material);
+	void RefreshMaterialDisplayInfo(class CMaterial* Material, class CTexture* Texture = nullptr);
 };
 

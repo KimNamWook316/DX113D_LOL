@@ -32,13 +32,13 @@ bool CResourceDisplayWindow::Init()
 	m_MaterialList->SetApplyHideEffect(true);
 	m_vecResourceTapList.push_back(m_MaterialList);
 
-	GatherLoadedTextureResources();
-	GatherLoadedMaterialResources();
+	RefreshLoadedTextureResources();
+	RefreshLoadedMaterialResources();
 
 	return true;
 }
 
-void CResourceDisplayWindow::GatherLoadedTextureResources()
+void CResourceDisplayWindow::RefreshLoadedTextureResources()
 {
 	m_TextureList->ClearWidget();
 
@@ -54,7 +54,7 @@ void CResourceDisplayWindow::GatherLoadedTextureResources()
 	}
 }
 
-void CResourceDisplayWindow::GatherLoadedMaterialResources()
+void CResourceDisplayWindow::RefreshLoadedMaterialResources()
 {
 	m_MaterialList->ClearWidget();
 
