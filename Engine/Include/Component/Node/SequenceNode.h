@@ -13,7 +13,7 @@ public:
     virtual ~CSequenceNode();
 
 public:
-    virtual bool Invoke(float DeltaTime)   override;
+    virtual NodeResult Invoke(float DeltaTime)   override;
 
 public:
     virtual NodeResult OnStart(float DeltaTime);

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "AnimationSequenceData.h"
+#include "../Resource/Animation/AnimationSequence.h"
 
 class CAnimationSequenceInstance
 {
@@ -44,10 +45,58 @@ protected:
 
 	// Saved FileName
 	char m_SavedFileName[MAX_PATH];
+
 public:
+	void SetNotifyParam(const std::string& SequenceName, const std::string& NotifyName, const NotifyParameter& Param)
+	{
+		CAnimationSequenceData* Data = FindAnimation(SequenceName);
+
+		if (Data)
+		{
+			auto iter = Data->m_vecNotify.begin();
+			auto iterEnd = Data->m_vecNotify.end();
+
+			for (; iter != iterEnd; ++iter)
+			{
+				if ((*iter)->Name == NotifyName)
+				{
+					(*iter)->Param = Param;
+					return;
+				}
+			}
+
+		}
+	}
+
+	void SetNotifyParamRange(const std::string& SequenceName, const std::string& NotifyName, float Range)
+	{
+		CAnimationSequenceData* Data = FindAnimation(SequenceName);
+
+		if (Data)
+		{
+			auto iter = Data->m_vecNotify.begin();
+			auto iterEnd = Data->m_vecNotify.end();
+
+			for (; iter != iterEnd; ++iter)
+			{
+				if ((*iter)->Name == NotifyName)
+				{
+					(*iter)->Param.Range = Range;
+					return;
+				}
+			}
+
+		}
+	}
+
 	std::unordered_map<std::string, CAnimationSequenceData*>& GetAnimationSequenceMap()
 	{
 		return m_mapAnimation;
+	}
+
+	bool IsCurrentAnimLoop()	const
+	{
+		return m_CurrentAnimation->m_Loop;
 	}
 
 	bool IsCurrentAnimEnd()	const	// Loop아닌 시퀀스가 끝났는지
@@ -159,6 +208,9 @@ private:
 	CAnimationSequenceData* FindAnimation(const std::string& Name);
 
 public:
+	
+
+public:
 	template <typename T>
 	void SetEndFunction(const std::string& Name, T* Obj, void (T::* Func)())
 	{
@@ -180,6 +232,18 @@ public:
 			return;
 
 		Data->AddNotify<T>(NotifyName, Frame, Obj, Func);
+	}
+
+	template <typename T>
+	void AddNotifyParam(const std::string& Name, const std::string& NotifyName, int Frame,
+		T* Obj, void (T::* Func)(const NotifyParameter&))
+	{
+		CAnimationSequenceData* Data = FindAnimation(Name);
+
+		if (!Data)
+			return;
+
+		Data->AddNotifyParam<T>(NotifyName, Frame, Obj, Func);
 	}
 };
 

@@ -40,7 +40,7 @@ NodeResult CNoInterruptNode::OnEnd(float DeltaTime)
 	return NodeResult();
 }
 
-bool CNoInterruptNode::Invoke(float DeltaTime)
+NodeResult CNoInterruptNode::Invoke(float DeltaTime)
 {
 	return CConditionNode::Invoke(DeltaTime);
 }

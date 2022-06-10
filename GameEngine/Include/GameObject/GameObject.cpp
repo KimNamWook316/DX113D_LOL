@@ -10,7 +10,8 @@ CGameObject::CGameObject() :
 	m_LifeSpan(0.f),
 	m_NavAgent(nullptr),
 	m_IsEnemy(false),
-	m_NoInterrupt(false)
+	m_NoInterrupt(false),
+	m_AttackTarget(nullptr)
 {
 	SetTypeID<CGameObject>();
 	m_ObjectType = Object_Type::None;
@@ -549,6 +550,12 @@ bool CGameObject::LoadOnly(const char* FullPath, CComponent*& OutCom)
 	}
 
 	bool Ret = Component->LoadOnly(File);
+
+	if (Component->GetTypeID() == typeid(CNavAgent).hash_code())
+	{
+		m_NavAgent = (CNavAgent*)Component;
+		m_NavAgent->SetUpdateComponent(GetRootComponent());
+	}
 
 	OutCom = Component;
 

@@ -12,6 +12,8 @@
 #include "Component/PaperBurnComponent.h"
 #include "Component/ParticleComponent.h"
 #include "Component/StateComponent.h"
+#include "Component/ColliderBox3D.h"
+#include "Component/ColliderSphere.h"
 #include "IMGUITree.h"
 #include "Flag.h"
 
@@ -263,6 +265,10 @@ std::string CEditorUtil::SceneComponent3DTypeToString(SceneComponent3DType Type)
 		return "SceneComponent";
 	case SceneComponent3DType::ParticleComponent:
 		return "ParticleComponent";
+	case SceneComponent3DType::ColliderBox3D:
+		return "ColliderBox3D";
+	case SceneComponent3DType::ColliderSphere:
+		return "ColliderSphere";
 	}
 
 	return "";
@@ -336,6 +342,10 @@ size_t CEditorUtil::SceneComponentTypeIndexToTypeid(int TypeIndex)
 		return typeid(CSceneComponent).hash_code();
 	case 6:
 		return typeid(CParticleComponent).hash_code();
+	case 7:
+		return typeid(CColliderBox3D).hash_code();
+	case 8:
+		return typeid(CColliderSphere).hash_code();
 	}
 
 	return -1;

@@ -204,6 +204,9 @@
     <ClCompile Include="Window\ResourceDisplayWindow.cpp">
       <Filter>02. Editor\01. Window\1. Resource</Filter>
     </ClCompile>
+    <ClCompile Include="Widget\ColliderBox3DWidget.cpp">
+      <Filter>02. Editor\02. Widget\01. Inspector\01. SceneComponent</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EditorManager.h">
@@ -340,6 +343,9 @@
     </ClInclude>
     <ClInclude Include="Window\ResourceDisplayWindow.h">
       <Filter>02. Editor\01. Window\1. Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="Widget\ColliderBox3DWidget.h">
+      <Filter>02. Editor\02. Widget\01. Inspector\01. SceneComponent</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

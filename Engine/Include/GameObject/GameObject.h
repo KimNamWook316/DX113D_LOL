@@ -58,6 +58,17 @@ public:
 	}
 
 public:
+	void SetState(Transform_State State)
+	{
+		m_RootComponent->SetState(State);
+	}
+
+	const Transform_State& GetState()	const
+	{
+		return m_RootComponent->GetState();
+	}
+
+public:
 	void SetScene(class CScene* Scene);
 	virtual void Destroy();
 
@@ -70,6 +81,26 @@ protected:
 	std::vector<CSharedPtr<CGameObject>>   m_vecChildObject;
 	float		m_LifeSpan;
 	class CNavAgent* m_NavAgent;
+
+	CGameObject* m_AttackTarget;
+	ChampionInfo m_ChampionInfo;
+
+public:
+	const ChampionInfo& GetChampionInfo()	const
+	{
+		return m_ChampionInfo;
+	}
+
+	void SetAttackTarget(CGameObject* Target)
+	{
+		m_AttackTarget = Target;
+	}
+
+	CGameObject* GetAttackTarget()	const
+	{
+		return m_AttackTarget;
+	}
+
 public:
 	void AddChildObject(CGameObject* Obj);
 	void DeleteObj();
@@ -78,6 +109,20 @@ public:
 	void ClearParent();
 
 public:
+	bool CheckSceneComponent(CSceneComponent* Com)
+	{
+		auto iter = m_SceneComponentList.begin();
+		auto iterEnd = m_SceneComponentList.end();
+
+		for (; iter != iterEnd; ++iter)
+		{
+			if ((*iter) == Com)
+				return true;
+		}
+
+		return false;
+	}
+
 	const std::list<CSceneComponent*>& GetSceneComponents()	const
 	{
 		return m_SceneComponentList;
@@ -216,6 +261,12 @@ public:
 	{
 		m_NavAgent = Agent;
 	}
+
+	CNavAgent* GetNavAgent()	const
+	{
+		return m_NavAgent;
+	}
+
 	void SetNavManagerLandScape(class CLandScape* LandScape);
 	bool IsNavAgentPathListEmpty()	const;
 
@@ -305,6 +356,8 @@ public:
 				m_RootComponent->AddChild((class CSceneComponent*)Component);
 		}
 
+		Component->Start();
+
 		return Component;
 
 	}
@@ -328,6 +381,8 @@ public:
 			if (!m_RootComponent)
 				m_RootComponent = Component;
 		}
+
+		Component->Start();
 
 		return Component;
 	}

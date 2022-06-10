@@ -19,6 +19,7 @@ protected:
     Vector3         m_Min;
     Vector3         m_Max;
     std::vector<int>    m_vecSectionIndex;
+    std::vector<int>    m_vecPrevSectionIndex;
     std::list<CColliderComponent*>  m_PrevCollisionList;
     std::list<CColliderComponent*>  m_CurrentCollisionList; // 현재 프레임에 이전 영역에서 충돌된 목록
     CollisionProfile* m_Profile;
@@ -33,9 +34,24 @@ protected:
     class CColliderConstantBuffer* m_CBuffer;
 
 public:
+    const std::vector<int>& GetCurrentSections()    const
+    {
+        return m_vecSectionIndex;
+    }
+
+    const std::vector<int>& GetPrevSections()    const
+    {
+        return m_vecPrevSectionIndex;
+    }
+
     Collider_Type GetColliderType() const
     {
         return m_ColliderType;
+    }
+
+    const Vector3& GetOffset()  const
+    {
+        return m_Offset;
     }
 
     virtual void SetOffset(const Vector3& Offset)
@@ -71,6 +87,16 @@ public:
     void AddSectionIndex(int Index)
     {
         m_vecSectionIndex.push_back(Index);
+    }
+
+    void AddPrevSectionIndex(int Index)
+    {
+        m_vecPrevSectionIndex.push_back(Index);
+    }
+
+    void ClearPrevSectionIndex()
+    {
+        m_vecPrevSectionIndex.clear();
     }
 
     void CurrentSectionCheck()

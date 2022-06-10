@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Scene.h"
+#include "../Component/State/StateManager.h"
 
 class CSceneManager
 {
@@ -12,8 +13,14 @@ private:
 	std::function<CGameObject* (CScene*, size_t)>	m_CreateObjectCallback;
 	std::function<class CComponent* (CGameObject* Obj, size_t Type)>	m_CreateComponentCallback;
 	std::function<void(class CSpriteComponent* Sprite, size_t Type)>	m_CreateAnimInstanceCallback;
+	CStateManager* m_StateManager;
 
 public:
+	CStateManager* GetStateManager()	const
+	{
+		return m_StateManager;
+	}
+
 	CScene* GetScene()	const
 	{
 		return m_Scene;

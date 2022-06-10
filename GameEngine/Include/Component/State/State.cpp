@@ -1,7 +1,8 @@
 
 #include "State.h"
 
-CState::CState()
+CState::CState()	:
+	m_OwnerObject(nullptr)
 {
 }
 

@@ -144,7 +144,8 @@ public:
 	bool DeleteChild(const std::string& Name);
 	bool ReplaceComponent(CSceneComponent* DestNode);
 	bool DeleteComponent();
-	size_t GetChildCounet()	const;
+	size_t GetChildCount()	const;
+	CSceneComponent* GetChild(int Idx)	const;
 	CSceneComponent* FindComponent(const std::string& Name);
 
 	// 부모에게 나를 자식목록에서 지우게하고, 현재 노드도 m_Parent = nullptr
@@ -170,6 +171,17 @@ public:
 public :
 	virtual void RenderAnimationEditor();
 	virtual void RenderParticleEffectEditor();
+
+public:
+	void SetState(Transform_State State)
+	{
+		m_Transform->m_State = State;
+	}
+
+	const Transform_State& GetState()	const
+	{
+		return m_Transform->m_State;
+	}
 
 public:	// Transform
 	void SetUpdateByMat(bool UpdateByMat);

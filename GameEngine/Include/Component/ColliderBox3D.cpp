@@ -99,6 +99,8 @@ void CColliderBox3D::PostUpdate(float DeltaTime)
 	m_Info.Max.y = m_Info.Center.y + m_Info.AxisLen[1];
 	m_Info.Max.z = m_Info.Center.z + m_Info.AxisLen[2];
 
+	m_Min = m_Info.Min;
+	m_Max = m_Info.Max;
 
 	//m_Info.Min.x = m_Info.Center.x - m_Info.Axis[0].x * m_Info.AxisLen[0];
 	//m_Info.Min.y = m_Info.Center.y - m_Info.Axis[1].y * m_Info.AxisLen[1];
@@ -179,12 +181,34 @@ CColliderBox3D* CColliderBox3D::Clone()
 
 bool CColliderBox3D::Save(FILE* File)
 {
+	CColliderComponent::Save(File);
+
+	fwrite(&m_Info.Center, sizeof(Vector3), 1, File);
+	fwrite(&m_Info.Axis[0], sizeof(Vector3), 1, File);
+	fwrite(&m_Info.Axis[1], sizeof(Vector3), 1, File);
+	fwrite(&m_Info.Axis[2], sizeof(Vector3), 1, File);
+	fwrite(&m_Info.AxisLen[0], sizeof(float), 1, File);
+	fwrite(&m_Info.AxisLen[1], sizeof(float), 1, File);
+	fwrite(&m_Info.AxisLen[2], sizeof(float), 1, File);
 
 	return true;
 }
 
 bool CColliderBox3D::Load(FILE* File)
 {
+	CColliderComponent::Load(File);
+
+	fread(&m_Info.Center, sizeof(Vector3), 1, File);
+	fread(&m_Info.Axis[0], sizeof(Vector3), 1, File);
+	fread(&m_Info.Axis[1], sizeof(Vector3), 1, File);
+	fread(&m_Info.Axis[2], sizeof(Vector3), 1, File);
+	fread(&m_Info.AxisLen[0], sizeof(float), 1, File);
+	fread(&m_Info.AxisLen[1], sizeof(float), 1, File);
+	fread(&m_Info.AxisLen[2], sizeof(float), 1, File);
+
+	m_Info.Min = m_Min;
+	m_Info.Max = m_Max;
+
 	return true;
 }
 
@@ -207,3 +231,4 @@ bool CColliderBox3D::CollisionMouse(const Vector2& MousePos)
 {
 	return false;
 }
+

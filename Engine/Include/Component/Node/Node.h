@@ -23,6 +23,11 @@ protected:
 	// Start를 최초로 한번 이미 호출 했는지
 	bool m_CallStart;
 	Node_Type   m_NodeType;
+	class CAnimationMeshComponent* m_AnimationMeshComp;
+
+public:
+	void SetAnimationMeshComponent(class CAnimationMeshComponent* AnimationMeshComp);
+	class CAnimationMeshComponent* GetAnimationMeshComponent()  const;
 
 public:
 	Node_Type GetNodeType()	const
@@ -95,7 +100,7 @@ public:
 	}
 
 public:
-	virtual bool Invoke(float DeltaTime) = 0;
+	virtual NodeResult Invoke(float DeltaTime) = 0;
 
 public:
 	virtual NodeResult OnStart(float DeltaTime) = 0;

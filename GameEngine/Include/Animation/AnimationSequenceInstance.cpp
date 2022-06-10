@@ -364,7 +364,9 @@ void CAnimationSequenceInstance::ChangeAnimation(const std::string& Name)
 	if (m_CurrentAnimation->m_Name == Name)
 		return;
 
-	//m_CurrentAnimation->m_Time = 0.f;
+	m_AnimEnd = false;
+	m_CurrentAnimation->m_Time = 0.f;
+	m_CurrentAnimation->m_Sequence->m_CurrentFrameIdx = 0;
 
 	size_t	Size = m_CurrentAnimation->m_vecNotify.size();
 
@@ -583,8 +585,17 @@ void CAnimationSequenceInstance::Update(float DeltaTime)
 			if (!m_CurrentAnimation->m_vecNotify[i]->Call &&
 				m_CurrentAnimation->m_vecNotify[i]->Frame == FrameIndex)
 			{
-				m_CurrentAnimation->m_vecNotify[i]->Call = true;
-				m_CurrentAnimation->m_vecNotify[i]->Function();
+				if (m_CurrentAnimation->m_vecNotify[i]->Function)
+				{
+					m_CurrentAnimation->m_vecNotify[i]->Call = true;
+					m_CurrentAnimation->m_vecNotify[i]->Function();
+				}
+
+				if (m_CurrentAnimation->m_vecNotify[i]->FunctionParam)
+				{
+					m_CurrentAnimation->m_vecNotify[i]->Param.Object = m_Owner->GetGameObject();
+					m_CurrentAnimation->m_vecNotify[i]->FunctionParam(m_CurrentAnimation->m_vecNotify[i]->Param);
+				}
 			}
 		}
 

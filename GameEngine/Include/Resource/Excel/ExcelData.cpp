@@ -1,6 +1,8 @@
 #include "ExcelData.h"
 #include "../../PathManager.h"
 
+#include <fstream>
+
 CExcelData::CExcelData()
 {
 }
@@ -365,12 +367,14 @@ bool CExcelData::LoadCSVFullPath(const char* fullPath)
 		return false;
 	}
 
-	// name
 	char name[64] = {};
 	fgets(name, 64, fp);
+
 	int len = strlen(name);
 	name[len - 1] = '\0'; // , Á¦°Å
 	m_Name = name;
+
+	m_Name.erase(std::remove(m_Name.begin(), m_Name.end(), ','), m_Name.end());
 
 	// label
 	char buf[1024] = {};

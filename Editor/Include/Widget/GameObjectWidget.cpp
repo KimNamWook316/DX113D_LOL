@@ -12,6 +12,7 @@
 #include "Component/LightComponent.h"
 #include "Component/ParticleComponent.h"
 #include "Component/LandScape.h"
+#include "Component/ColliderBox3D.h"
 #include "../Widget/StaticMeshComponentWidget.h"
 #include "../Widget/LightComponentWidget.h"
 #include "../Widget/ObjectComponentWidget.h"
@@ -19,6 +20,7 @@
 #include "../Widget/AnimationMeshWidget.h"
 #include "../Window/ObjectHierarchyWindow.h"
 #include "../Widget/LandScapeWidget.h"
+#include "../Widget/ColliderBox3DWidget.h"
 #include "IMGUIManager.h"
 #include "../EditorInfo.h"
 
@@ -138,6 +140,10 @@ void CGameObjectWidget::CreateSceneComponentWidget(CSceneComponent* Com)
 	else if (TypeID == typeid(CLandScape).hash_code())
 	{
 		Widget = AddWidget<CLandScapeWidget>("LandScapeWidget");
+	}
+	else if (TypeID == typeid(CColliderBox3D).hash_code())
+	{
+		Widget = AddWidget<CColliderBox3DWidget>("ColliderBox3DWidget");
 	}
 	else
 	{

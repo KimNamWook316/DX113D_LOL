@@ -21,6 +21,10 @@
 #include "Component/Node/MoveInputCheckNode.h"
 #include "Component/Node/MovePickingNode.h"
 #include "Component/Node/NoInterruptNode.h"
+#include "Component/Node/CheckAttackTarget.h"
+#include "Component/Node/SkillEndCheckNode.h"
+#include "Component/Node/NormalAttack.h"
+#include "Component/Node/InSkillCheck.h"
 #include "ObjectComponentWindow.h"
 #include "ObjectHierarchyWindow.h"
 #include "../EditorInfo.h"
@@ -168,6 +172,7 @@ void CBehaviorTreeWindow::Update(float DeltaTime)
             m_vecNodeAction.push_back("Move");
             m_vecNodeAction.push_back("MovePicking");
             m_vecNodeAction.push_back("Idle");
+            m_vecNodeAction.push_back("NormalAttack");
         }
 
         else if (m_TypeSelectIndex == 3)
@@ -180,6 +185,9 @@ void CBehaviorTreeWindow::Update(float DeltaTime)
             m_vecNodeAction.push_back("InputFCheck");
             m_vecNodeAction.push_back("MouseRightInputCheck");
             m_vecNodeAction.push_back("NoInterruptCheck");
+            m_vecNodeAction.push_back("AttackTargetCheck");
+            m_vecNodeAction.push_back("SkillEndCheck");
+            m_vecNodeAction.push_back("InSkillCheck");
         }
 
         ImGui::PushID(m_WidgetID + 1);
@@ -334,6 +342,7 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
         break;
     case 2:
     {
+        // TODO : Action Node 종류 추가될 때 마다 추가
         enum ActionNode NodeActionClass;
         NodeActionClass = static_cast<ActionNode>(ActionIndex);
 
@@ -363,6 +372,9 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
         case ActionNode::Idle:
             NewTreeNode = m_StateComponent->CreateTreeNode<CIdleNode>(Name);
             break;
+        case ActionNode::NormalAttack:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CNormalAttack>(Name);
+            break;
         }
 
         break;
@@ -370,6 +382,7 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
 
     case 3:
     {
+        // TODO : Condition Node 종류 추가될 때 마다 추가
         enum ConditionNode NodeConditionlass;
         NodeConditionlass = static_cast<ConditionNode>(ActionIndex);
 
@@ -397,12 +410,22 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
         case ConditionNode::NoInterruptNode:
             NewTreeNode = m_StateComponent->CreateTreeNode<CNoInterruptNode>(Name);
             break;
+        case ConditionNode::AttackTargetCheck:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CCheckAttackTarget>(Name);
+            break;
+        case ConditionNode::SkillEndCheck:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CSkillEndCheckNode>(Name);
+            break;
+        case ConditionNode::InSkillCheck:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CInSkillCheck>(Name);
+            break;
         }
     }
     }
 
     NewTreeNode->SetOwner(m_StateComponent->GetBehaviorTree());
     NewTreeNode->SetObject(m_StateComponent->GetGameObject());
+    NewTreeNode->SetAnimationMeshComponent(m_StateComponent->GetAnimationMeshComp());
 
     m_Delegate.AddNode(NodeName, idx, 0.f, 0.f, false, NewTreeNode);
 

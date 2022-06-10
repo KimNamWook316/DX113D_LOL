@@ -30,25 +30,45 @@ NodeResult CSkillQNode::OnStart(float DeltaTime)
 		m_AnimationMeshComp->GetAnimationInstance()->ChangeAnimation(SequenceName);
 	}
 
+	m_Object->ClearPath();
+	m_Object->SetNoInterrupt(true);
+	m_CallStart = true;
+
 	return NodeResult::Node_True;
 }
 
 NodeResult CSkillQNode::OnUpdate(float DeltaTime)
 {
-	if (m_AnimationMeshComp->GetAnimationInstance()->IsCurrentAnimEnd())
-		m_IsEnd = true;
+	if (m_AnimationMeshComp->GetAnimationInstance()->CheckCurrentAnimation("Alistar_Idle"))
+	{
+		int a = 3;
+	}
 
-	return NodeResult::Node_True;
+	if (m_AnimationMeshComp->GetAnimationInstance()->IsCurrentAnimEnd())
+	{
+		m_Object->SetNoInterrupt(false);
+		m_IsEnd = true;
+		m_CallStart = false;
+		return NodeResult::Node_False;
+	}
+
+	else
+	{
+		m_Owner->SetCurrentNode(this);
+		m_Object->SetNoInterrupt(true);
+		return NodeResult::Node_Running;
+	}
 }
 
 NodeResult CSkillQNode::OnEnd(float DeltaTime)
 {
 	m_Owner->SetCurrentNode(nullptr);
+	m_IsEnd = false;
 
 	return NodeResult::Node_True;
 }
 
-bool CSkillQNode::Invoke(float DeltaTime)
+NodeResult CSkillQNode::Invoke(float DeltaTime)
 {
 	return CActionNode::Invoke(DeltaTime);
 }

@@ -14,14 +14,25 @@ struct CollisionSectionInfo
 	int		CountY;
 	int		CountZ;
 
+	//CollisionSectionInfo() :
+	//	CountX(1),
+	//	CountY(1),
+	//	CountZ(1),
+	//	SectionSize{1000.f, 1000.f, 1.f},
+	//	SectionTotalSize{1000.f, 1000.f, 1.f},
+	//	Min{-500.f, -500.f, -0.5f},
+	//	Max{ 500.f, 500.f, 0.5f }
+	//{
+	//}
+
 	CollisionSectionInfo() :
 		CountX(1),
 		CountY(1),
 		CountZ(1),
-		SectionSize{1000.f, 1000.f, 1.f},
-		SectionTotalSize{1000.f, 1000.f, 1.f},
-		Min{-500.f, -500.f, -0.5f},
-		Max{ 500.f, 500.f, 0.5f }
+		SectionSize{ 1000.f, 1000.f, 1.f },
+		SectionTotalSize{ 1000.f, 1000.f, 1.f },
+		Min{ 0.f, 0.f, 0.f },
+		Max{ 1000.f, 0.f, 1000.f }
 	{
 	}
 };
@@ -45,6 +56,22 @@ private:
 	bool	m_WidgetClick;
 
 public:
+	CollisionSectionInfo* GetCollisionSectionInfo()	const
+	{
+		return m_Section;
+	}
+
+	int GetSectionCountX()	const
+	{
+		return m_Section->CountX;
+	}
+
+	int GetSectionCountZ()	const
+	{
+		return m_Section->CountZ;
+	}
+
+public:
 	void Start();
 	bool Init();
 	bool CollisionWidget(float DeltaTime);
@@ -64,10 +91,17 @@ public:
 	void SetSectionMax(float x, float y, float z);
 	void SetSectionCount(int CountX, int CountY, int CountZ = 1);
 	void CreateSection();
+	void CreateSection3D();
 	void Clear();
 	void AddCollider(class CColliderComponent* Collider);
+	int GetSectionIndex(const Vector3& Pos);
+	int GetSectionIndexX(const Vector3& Pos);
+	int GetSectionIndexZ(const Vector3& Pos);
+	// 해당 Section에 들어있는 Collider를 모아놓은 vector를 리턴
+	const std::vector<CColliderComponent*>& GetSectionCollider(int Index);
 
 private:
 	void CheckColliderSection();
+	void CheckColliderSection3D();
 };
 

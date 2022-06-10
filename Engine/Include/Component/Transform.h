@@ -50,6 +50,16 @@ private:
 	bool	m_UpdateByMat;
 
 public:
+	void SetState(Transform_State State)
+	{
+		m_State = State;
+	}
+
+	const Transform_State& GetState()	const
+	{
+		return m_State;
+	}
+
 	void SetInstancingInfo(Instancing3DInfo* Info);
 	void SetInstancingShadowInfo(Instancing3DInfo* Info);
 

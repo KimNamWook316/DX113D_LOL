@@ -339,7 +339,7 @@ std::pair<bool, std::string> CResourceManager::LoadMeshTextureBoneInfo(CAnimatio
 			if (MapCnt == MapSize)
 				return std::make_pair(false, "");
 			else
-				return Result;
+				continue;
 		}
 		// 찾았다면 Return
 		else

@@ -2,9 +2,10 @@
 #include "StateComponent.h"
 #include "AnimationMeshComponent.h"
 #include "BehaviorTree.h"
-#include "State.h"
+#include "State/State.h"
 #include "../PathManager.h"
 #include "../GameObject/GameObject.h"
+#include "../Scene/SceneManager.h"
 
 CStateComponent::CStateComponent()	:
 	m_BehaviorTree(nullptr),
@@ -26,6 +27,14 @@ CStateComponent::CStateComponent(const CStateComponent& com)	:
 CStateComponent::~CStateComponent()
 {
 	SAFE_DELETE(m_BehaviorTree);
+
+	auto iter = m_StateList.begin();
+	auto iterEnd = m_StateList.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		SAFE_DELETE(*iter);
+	}
 }
 
 bool CStateComponent::Init()
@@ -45,9 +54,21 @@ void CStateComponent::Update(float DeltaTime)
 	auto iter = m_StateList.begin();
 	auto iterEnd = m_StateList.end();
 
-	for (; iter != iterEnd; ++iter)
+	for (; iter != iterEnd; )
 	{
 		(*iter)->Update(DeltaTime);
+
+		if ((*iter)->IsEnd())
+		{
+			(*iter)->OnEnd();
+			SAFE_DELETE(*iter);
+			iter = m_StateList.erase(iter);
+			iterEnd = m_StateList.end();
+			continue;
+		}
+
+		else
+			++iter;
 	}
 
 	if(m_TreeUpdate)
@@ -59,9 +80,21 @@ void CStateComponent::PostUpdate(float DeltaTime)
 	auto iter = m_StateList.begin();
 	auto iterEnd = m_StateList.end();
 
-	for (; iter != iterEnd; ++iter)
+	for (; iter != iterEnd; )
 	{
 		(*iter)->PostUpdate(DeltaTime);
+
+		if ((*iter)->IsEnd())
+		{
+			(*iter)->OnEnd();
+			SAFE_DELETE(*iter);
+			iter = m_StateList.erase(iter);
+			iterEnd = m_StateList.end();
+			continue;
+		}
+
+		else
+			++iter;
 	}
 
 	if (m_TreeUpdate)
@@ -209,23 +242,22 @@ CAnimationMeshComponent* CStateComponent::GetAnimationMeshComp() const
 	return m_AnimationMeshComp;
 }
 
-void CStateComponent::AddState(CState* State)
-{
-	m_StateList.push_back(State);
-
-	State->OnStart();
-}
-
 void CStateComponent::AddState(const std::string& Name)
 {
-	CState* State = FindState(Name);
+	CState* FindState = CSceneManager::GetInst()->GetStateManager()->FindState(Name);
 
-	if (!State)
-		return;
+	if (FindState)
+	{
+		CState* CloneState = FindState->Clone();
 
-	m_StateList.push_back(State);
+		CloneState->SetName(Name);
+		CloneState->SetOwner(this);
+		CloneState->SetOwnerObject(m_Object);
 
-	State->OnStart();
+		m_StateList.push_back(CloneState);
+
+		CloneState->OnStart();
+	}
 }
 
 bool CStateComponent::DeleteState(CState* State)
@@ -237,6 +269,7 @@ bool CStateComponent::DeleteState(CState* State)
 	{
 		if ((*iter) == State)
 		{
+			SAFE_DELETE(*iter);
 			m_StateList.erase(iter);
 			State->OnEnd();
 			return true;
@@ -260,6 +293,7 @@ bool CStateComponent::DeleteState(const std::string& Name)
 	{
 		if ((*iter) == State)
 		{
+			SAFE_DELETE(*iter);
 			m_StateList.erase(iter);
 			State->OnEnd();
 			return true;

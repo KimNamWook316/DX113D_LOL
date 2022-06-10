@@ -55,9 +55,9 @@ bool CSaveLoadBeginMenu::Init()
 	
 
 	m_SaveObjectComponentMenu = AddMenuItem("Save ObjectComponent");
-	m_SaveObjectMenu->SetClickCallBack(this, &CSaveLoadBeginMenu::OnSaveObjectComponentMenuCallback);
+	m_SaveObjectComponentMenu->SetClickCallBack(this, &CSaveLoadBeginMenu::OnSaveObjectComponentMenuCallback);
 	m_LoadObjectComponentMenu = AddMenuItem("Load ObjectComponent");
-	m_SaveObjectMenu->SetClickCallBack(this, &CSaveLoadBeginMenu::OnLoadObjectMenuCallback);
+	m_LoadObjectComponentMenu->SetClickCallBack(this, &CSaveLoadBeginMenu::OnLoadObjectComponentMenuCallback);
 
 	return true;
 }
@@ -150,7 +150,16 @@ void CSaveLoadBeginMenu::OnLoadObjectMenuCallback()
 		CGameObject* LoadedObject = CEditorManager::GetInst()->GetObjectHierarchyWindow()->GetObjectCreateModal()->OnCreateObject(FilePathMultibyte);
 
 		if (!LoadedObject)
-			return ;
+			return;
+
+		CAnimationMeshComponent* Comp = LoadedObject->FindComponentFromType<CAnimationMeshComponent>();
+
+		if (Comp)
+		{
+			CAnimationSequenceInstance* Instance = Comp->GetAnimationInstance();
+			if (Instance)
+				CEditorManager::GetInst()->SetChampionNotify(Instance, LoadedObject->GetName());
+		}
 
 		// Object Hierarchy GameObject 목록에 추가한다.
 		//CEditorManager::GetInst()->GetObjectComponentWindow()->AddObjectComponent(LoadedObject->GetName());
