@@ -156,7 +156,7 @@ public:
 	template<typename T>
 	void SetDropCallBack(T* Obj, void(T::* func)(const std::string&))
 	{
-		m_DropCallback = std::bind(func, Obj);
+		m_DropCallback = std::bind(func, Obj, std::placeholders::_1);
 	}
 };
 

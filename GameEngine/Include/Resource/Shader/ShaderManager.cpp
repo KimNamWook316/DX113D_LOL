@@ -33,6 +33,7 @@
 #include "Transparent3DShader.h"
 #include "TransparentInstancing3DShader.h"
 #include "OutlineShader.h"
+#include "GrayShader.h"
 
 CShaderManager::CShaderManager()
 {
@@ -155,6 +156,11 @@ bool CShaderManager::Init()
 		return false;
 	}
 
+	if (!CreateShader<CGrayShader>("GrayShader"))
+	{
+		assert(false);
+		return false;
+	}
 
 
 	// =================== 상수버퍼 ===================
@@ -212,7 +218,7 @@ bool CShaderManager::Init()
 		(int)Buffer_Shader_Type::Graphic);
 
 	CreateConstantBuffer("OutlineConstantBuffer", sizeof(OutlineCBuffer), 10,
-		(int)Buffer_Shader_Type::Graphic);
+		(int)Buffer_Shader_Type::Pixel);
 
 	return true;
 }
