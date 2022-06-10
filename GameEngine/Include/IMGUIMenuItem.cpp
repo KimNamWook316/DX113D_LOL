@@ -28,8 +28,8 @@ void CIMGUIMenuItem::Render()
     }
 
     // MenuItem 중에서 Check 표시를 사용할 것인지 아닌지를 선별하기 위한 변수
-    if (!m_EnableCheck)
-        mbSelect = false;
+    // if (!m_EnableCheck)
+    //     mbSelect = false;
 
     if (mbSelect)
     {

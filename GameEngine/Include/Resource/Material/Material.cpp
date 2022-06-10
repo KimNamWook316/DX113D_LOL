@@ -899,7 +899,7 @@ bool CMaterial::Save(FILE* File)
 	std::string	ShaderName ;
 
 	if (m_Shader)
-		std::string	ShaderName = m_Shader->GetName();
+		ShaderName = m_Shader->GetName();
 
 	int	Length = (int)ShaderName.length();
 

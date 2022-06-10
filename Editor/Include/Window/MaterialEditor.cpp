@@ -274,6 +274,8 @@ void CMaterialEditor::OnDropAndSetShaderToMaterial(const std::string& DropShader
 
 	// Shader Setting ÀÌÈÄ, Refresh
 	RefreshMaterialDisplayInfo(m_SelectedMaterial);
+
+	MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Shader Successfully Set"), NULL, MB_OK);
 }
 
 void CMaterialEditor::OnDropAndSetRenderStateToMaterial(const std::string& DropRenderStateName)
@@ -296,6 +298,8 @@ void CMaterialEditor::OnDropAndSetRenderStateToMaterial(const std::string& DropR
 	m_SelectedMaterial->SetRenderState(FoundRenderState);
 
 	RefreshMaterialDisplayInfo(m_SelectedMaterial);
+
+	MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("RenderState Successfully Set"), NULL, MB_OK);
 }
 
 void CMaterialEditor::OnIsOutLineEdit(const char*, bool Enable)
