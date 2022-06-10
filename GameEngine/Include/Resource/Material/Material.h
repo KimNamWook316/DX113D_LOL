@@ -92,6 +92,10 @@ public:
         return m_TextureInfo;
     }
 
+    const CSharedPtr<class CRenderState>* GetRenderStateArray() const
+    {
+        return m_RenderStateArray;
+    }
 private:
     void SetConstantBuffer(class CMaterialConstantBuffer* Buffer)
     {

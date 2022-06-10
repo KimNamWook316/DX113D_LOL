@@ -899,7 +899,7 @@ bool CMaterial::Save(FILE* File)
 	std::string	ShaderName ;
 
 	if (m_Shader)
-		std::string	ShaderName = m_Shader->GetName();
+		ShaderName = m_Shader->GetName();
 
 	int	Length = (int)ShaderName.length();
 
@@ -958,8 +958,6 @@ bool CMaterial::Save(FILE* File)
 
 		m_TextureInfo[i].Texture->Save(File);
 	}
-
-	m_OutlineThickness = 1.123456f;
 
 	// 외곽선 관련 값들 Save, Load 추가하기
 	fwrite(&m_OutlineEnable, sizeof(bool), 1, File);
@@ -1098,13 +1096,11 @@ bool CMaterial::Load(FILE* File)
 				{
 					m_Scene->GetResource()->LoadTexture(TexName, vecFileName[0].c_str(), PathName);
 				}
-
 				else
 				{
 					CResourceManager::GetInst()->LoadTexture(TexName, vecFileName[0].c_str(), PathName);
 				}
 			}
-
 			else
 			{
 			}
@@ -1113,7 +1109,6 @@ bool CMaterial::Load(FILE* File)
 			if (vecFileName.size() == 1)
 			{
 			}
-
 			else
 			{
 			}
@@ -1122,7 +1117,6 @@ bool CMaterial::Load(FILE* File)
 			if (vecFileName.size() == 1)
 			{
 			}
-
 			else
 			{
 			}

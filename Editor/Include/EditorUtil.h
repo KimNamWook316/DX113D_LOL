@@ -87,6 +87,7 @@ namespace MaterialTextureInfoKeys
 	const std::string Name = "Name";		   // MaterialTextureInfo 로 설정된 이름
 	 // MaterialTextureInfo->Texture->TextureResourceInfo 배열 내의 모든 Texture FileName 들 나열하기 
 	const std::string Textures[] = { "Texture1", "Texture2",  "Texture3",  "Texture4",  "Texture5",  "Texture6",  "Texture7"};
+	const std::string RenderState[] = {"Blend", "Rasterizer", "DepthStencil"};
 };
 
 

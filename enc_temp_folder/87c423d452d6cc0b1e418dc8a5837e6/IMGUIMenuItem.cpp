@@ -2,8 +2,7 @@
 
 CIMGUIMenuItem::CIMGUIMenuItem()    :
     mbSelect(false),
-    mbEnable(true),
-    m_EnableCheck(false)
+    mbEnable(true)
 {
 }
 
@@ -26,10 +25,6 @@ void CIMGUIMenuItem::Render()
     {
         ImGui::MenuItem(m_Name.c_str(), mShortCut.c_str(), &mbSelect, mbEnable);
     }
-
-    // MenuItem 중에서 Check 표시를 사용할 것인지 아닌지를 선별하기 위한 변수
-    // if (!m_EnableCheck)
-    //     mbSelect = false;
 
     if (mbSelect)
     {

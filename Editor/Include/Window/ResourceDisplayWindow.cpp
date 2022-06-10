@@ -6,6 +6,9 @@
 // Engine
 #include "Resource/Texture/TextureManager.h"
 #include "Resource/ResourceManager.h"
+#include "Render/RenderManager.h"
+#include "Render/RenderStateManager.h"
+#include "Resource/Shader/ShaderManager.h"
 
 CResourceDisplayWindow::CResourceDisplayWindow()
 {
@@ -32,8 +35,20 @@ bool CResourceDisplayWindow::Init()
 	m_MaterialList->SetApplyHideEffect(true);
 	m_vecResourceTapList.push_back(m_MaterialList);
 
+	// Shader List
+	m_ShaderList = AddWidget<CIMGUIWidgetList>("Shader", 100.f, 20.f);
+	m_ShaderList->SetApplyHideEffect(true);
+	m_vecResourceTapList.push_back(m_ShaderList);
+
+	// Sampler List
+	m_SamplerList = AddWidget<CIMGUIWidgetList>("Sampler", 100.f, 20.f);
+	m_SamplerList->SetApplyHideEffect(true);
+	m_vecResourceTapList.push_back(m_SamplerList);
+
 	RefreshLoadedTextureResources();
 	RefreshLoadedMaterialResources();
+	RefreshLoadedSamplerResources();
+	RefreshLoadedShaderResources();
 
 	return true;
 }
@@ -66,6 +81,38 @@ void CResourceDisplayWindow::RefreshLoadedMaterialResources()
 	for (; iter != iterEnd; ++iter)
 	{
 		CIMGUIText* AddedText = m_MaterialList->AddWidget<CIMGUIText>(iter->first);
+		AddedText->SetText(iter->first.c_str());
+	}
+}
+
+void CResourceDisplayWindow::RefreshLoadedSamplerResources()
+{
+	m_SamplerList->ClearWidget();
+
+	const std::unordered_map<std::string, CSharedPtr<class CRenderState>>& MapSampler = CRenderManager::GetInst()->GetRenderStateManager()->GetMapRenderState();
+	
+	auto iter = MapSampler.begin();
+	auto iterEnd = MapSampler.end();
+	
+	for (; iter != iterEnd; ++iter)
+	{
+		CIMGUIText* AddedText = m_SamplerList->AddWidget<CIMGUIText>(iter->first);
+		AddedText->SetText(iter->first.c_str());
+	}
+}
+
+void CResourceDisplayWindow::RefreshLoadedShaderResources()
+{
+	m_ShaderList->ClearWidget();
+
+	const std::unordered_map<std::string, CSharedPtr<class CShader>>& MapShader = CResourceManager::GetInst()->GetShaderManager()->GetMapShader();
+
+	auto iter = MapShader.begin();
+	auto iterEnd = MapShader.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		CIMGUIText* AddedText = m_ShaderList->AddWidget<CIMGUIText>(iter->first);
 		AddedText->SetText(iter->first.c_str());
 	}
 }
