@@ -23,14 +23,13 @@ public:
 	virtual void Update(float DeltaTime);
 
 public:
-	void OnRenameComponent(const std::string& NewName, const std::string& PrevName);
 	// Component 생성 팝업창 띄워주는 콜백
 	void OnCreateComponentPopUp();
-	std::string GetComponentNameInput()	const;
-	int AddObjectComponent(const std::string& Name);
-	void OnSelectComponent(int Index, const char* Label);
+	int OnCreateObjectComponent(const std::string& Name);
+	void OnRenameComponent(const std::string& NewName, const std::string& PrevName);
 	void OnDeleteComponent();
-	void OnUpdateObjectComponetWindow(class CIMGUITree* SelectObjectNode);
+	void OnRefreshObjectComponentList(class CGameObject* Object);
+	void OnSelectComponent(int Index, const char* Label);
 
 	// Component Save&Load
 	void OnSaveComponent();
@@ -51,15 +50,5 @@ public:
 	{
 		m_ComponentListBox->Clear();
 	}
-
-
-public:
-	template <typename T>
-	void SetSelectCallback(int Index, void(T::*Func)(int, const char*))
-	{
-		m_ComponentListBox->SetSelectCallback(this, &CObjectComponentWindow::OnSelectComponent);
-	}
-	// List에서 Select된 Component 선형 탐색
-	//void FindSelectComponent(class CIMGUITree* RootNode);
 };
 

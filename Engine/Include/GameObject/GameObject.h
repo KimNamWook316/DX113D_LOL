@@ -20,6 +20,8 @@ protected:
 	bool		m_NoInterrupt;	// 다른 State로 전환 불가능한 상태인지(ex. 특정 스킬 사용중에 다른 스킬을 쓸 수 없다)
 	Object_Type m_ObjectType;
 	bool		m_IsEnemy;
+	bool		m_ExcludeSceneSave;
+	bool		m_NoDestroyFromSceneChange;
 
 public:
 	bool IsEnemy()	const
@@ -55,6 +57,26 @@ public:
 	void SetNoInterrupt(bool Enable)
 	{
 		m_NoInterrupt = Enable;
+	}
+
+	void ExcludeFromSceneSave()
+	{
+		m_ExcludeSceneSave = true;
+	}
+
+	bool IsExcludeFromSceneSave() const
+	{
+		return m_ExcludeSceneSave;
+	}
+
+	void SetNoDestroyOnSceneChange(bool NoDestroy)
+	{
+		m_NoDestroyFromSceneChange = NoDestroy;
+	}
+
+	bool IsNoDestroyFromSceneChange() const
+	{
+		return m_NoDestroyFromSceneChange;
 	}
 
 public:

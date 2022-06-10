@@ -193,7 +193,6 @@
     <ClCompile Include="Window\AnimationEditor.cpp" />
     <ClCompile Include="Thread\FBXConvertThread.cpp" />
     <ClCompile Include="Window\BaseMenuBar.cpp" />
-    <ClCompile Include="Window\BehaviorTreeMenuBar.cpp" />
     <ClCompile Include="Window\BehaviorTreeWindow.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
@@ -246,7 +245,6 @@
     <ClInclude Include="Window\AnimationEditor.h" />
     <ClInclude Include="Thread\FBXConvertThread.h" />
     <ClInclude Include="Window\BaseMenuBar.h" />
-    <ClInclude Include="Window\BehaviorTreeMenuBar.h" />
     <ClInclude Include="Window\BehaviorTreeWindow.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>

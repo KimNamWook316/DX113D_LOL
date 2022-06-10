@@ -4,6 +4,9 @@
 #include "../EditorManager.h"
 #include "../Object/3DCameraObject.h"
 #include "Render/RenderManager.h"
+#include "Engine.h"
+#include "IMGUISameLine.h"
+#include "Scene/SceneManager.h"
 
 CToolWindow::CToolWindow()	:
 	m_GizmoBlock(nullptr),
@@ -21,6 +24,14 @@ CToolWindow::~CToolWindow()
 bool CToolWindow::Init()
 {
 	CIMGUIWindow::Init();
+
+	// Play Stop
+	CIMGUICollapsingHeader* PlayStopBlock = AddWidget<CIMGUICollapsingHeader>("Play", 200.f);
+	m_Play = PlayStopBlock->AddWidget<CIMGUIButton>("Play", 0.f, 0.f);
+	PlayStopBlock->AddWidget<CIMGUISameLine>("line");
+	m_Pause = PlayStopBlock->AddWidget<CIMGUIButton>("Pause", 0.f, 0.f);
+	PlayStopBlock->AddWidget<CIMGUISameLine>("line");
+	m_Stop = PlayStopBlock->AddWidget<CIMGUIButton>("Stop", 0.f, 0.f);
 
 	m_GizmoBlock = AddWidget<CIMGUICollapsingHeader>("Gizmo", 200.f);
 	//m_Grid = AddWidget<CIMGUIGrid>("Grid", 100.f);
@@ -55,7 +66,7 @@ bool CToolWindow::Init()
 	m_OutlineDepthBias = Tree->AddWidget<CIMGUISliderFloat>("Outline Depth Bias");
 	m_OutlineNormalMutliply = Tree->AddWidget<CIMGUISliderFloat>("Outline Normal Mutiplier");
 	m_OutlineNormalBias = Tree->AddWidget<CIMGUISliderFloat>("Outline Normal Bias");
-	// 
+	// Gray
 	Tree = m_RenderBlock->AddWidget<CIMGUITree>("Gray", 200.f);
 	m_GrayEnable = Tree->AddWidget<CIMGUICheckBox>("GrayShader Enable", 200.f);
 
@@ -91,6 +102,9 @@ bool CToolWindow::Init()
 	m_OutlineNormalMutliply->SetCallBack(this, &CToolWindow::OnChangeOutlineNormalMultiply);
 	m_OutlineNormalBias->SetCallBack(this, &CToolWindow::OnChangeOutlineNormalBias);
 	m_GrayEnable->SetCallBackLabel(this, &CToolWindow::OnCheckGrayEnable);
+	m_Play->SetClickCallback(this, &CToolWindow::OnClickPlay);
+	m_Pause->SetClickCallback(this, &CToolWindow::OnClickPause);
+	m_Stop->SetClickCallback(this, &CToolWindow::OnClickStop);
 
 	// 디버그용 임시 키
 	CInput::GetInst()->CreateKey("Z", 'Z');
@@ -171,6 +185,38 @@ void CToolWindow::OnChangeOutlineNormalBias(float Val)
 void CToolWindow::OnCheckGrayEnable(const char* Label, bool Check)
 {
 	CRenderManager::GetInst()->GrayEnable(Check);
+}
+
+void CToolWindow::OnClickPlay()
+{
+	bool Pause = CSceneManager::GetInst()->IsPause();
+
+	if (Pause)
+	{
+		CSceneManager::GetInst()->Resume();
+
+		m_Play->SetName("Play");
+	}
+	else
+	{
+		CSceneManager::GetInst()->Play();
+	}
+}
+
+void CToolWindow::OnClickPause()
+{
+	CSceneManager::GetInst()->Pause();
+
+	bool Pause = CSceneManager::GetInst()->IsPause();
+
+	if (Pause)
+	{
+		m_Play->SetName("Resume");
+	}
+}
+
+void CToolWindow::OnClickStop()
+{
 }
 
 void CToolWindow::OnQDown(float DetlaTime)

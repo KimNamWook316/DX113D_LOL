@@ -201,7 +201,7 @@ void CScene::PostUpdate(float DeltaTime)
 
 }
 
-void CScene::Save(const char* FileName, const std::string& PathName)
+bool CScene::Save(const char* FileName, const std::string& PathName)
 {
 	const PathInfo* Info = CPathManager::GetInst()->FindPath(PathName);
 
@@ -212,43 +212,57 @@ void CScene::Save(const char* FileName, const std::string& PathName)
 
 	strcat_s(FullPath, FileName);
 
-	SaveFullPath(FullPath);
+	return SaveFullPath(FullPath);
 }
 
-void CScene::SaveFullPath(const char* FullPath)
+bool CScene::SaveFullPath(const char* FullPath)
 {
 	FILE* File = nullptr;
 
 	fopen_s(&File, FullPath, "wb");
 
 	if (!File)
-		return;
+		return false;
 
 	size_t	SceneModeType = m_Mode->GetTypeID();
 
 	fwrite(&SceneModeType, sizeof(size_t), 1, File);
 
 	size_t	ObjCount = m_ObjList.size();
-
+	int ExcludeObjectCount = GetSaveExcludeObjectCount();
+	ObjCount -= (size_t)ExcludeObjectCount;
 	fwrite(&ObjCount, sizeof(size_t), 1, File);
+
+	bool Success = false;
 
 	auto	iter = m_ObjList.begin();
 	auto	iterEnd = m_ObjList.end();
 
 	for (; iter != iterEnd; ++iter)
 	{
+		if ((*iter)->IsExcludeFromSceneSave())
+		{
+			continue;
+		}
+
 		size_t	ObjType = (*iter)->GetTypeID();
 
 		fwrite(&ObjType, sizeof(size_t), 1, File);
 
-		(*iter)->Save(File);
+		Success = (*iter)->Save(File);
+
+		if (!Success)
+		{
+			fclose(File);
+			return false;
+		}
 	}
 
-
 	fclose(File);
+	return true;
 }
 
-void CScene::Load(const char* FileName, const std::string& PathName)
+bool CScene::Load(const char* FileName, const std::string& PathName)
 {
 	const PathInfo* Info = CPathManager::GetInst()->FindPath(PathName);
 
@@ -259,17 +273,17 @@ void CScene::Load(const char* FileName, const std::string& PathName)
 
 	strcat_s(FullPath, FileName);
 
-	LoadFullPath(FullPath);
+	return LoadFullPath(FullPath);
 }
 
-void CScene::LoadFullPath(const char* FullPath)
+bool CScene::LoadFullPath(const char* FullPath)
 {
 	FILE* File = nullptr;
 
 	fopen_s(&File, FullPath, "rb");
 
 	if (!File)
-		return;
+		return false;
 
 	m_ObjList.clear();
 
@@ -284,6 +298,8 @@ void CScene::LoadFullPath(const char* FullPath)
 
 	fread(&ObjCount, sizeof(size_t), 1, File);
 
+	bool Success = false;
+
 	for (size_t i = 0; i < ObjCount; ++i)
 	{
 		size_t	ObjType = 0;
@@ -291,10 +307,19 @@ void CScene::LoadFullPath(const char* FullPath)
 
 		CGameObject* Obj = CSceneManager::GetInst()->CallCreateObject(this, ObjType);
 
-		Obj->Load(File);
+		Success = Obj->Load(File);
+
+		if (!Success)
+		{
+			fclose(File);
+			return false;
+		}
+
+		Obj->SetScene(this);
 	}
 
 	fclose(File);
+	return true;
 }
 
 bool CScene::Picking(CGameObject*& Result)
@@ -355,6 +380,55 @@ CGameObject* CScene::FindNearChampion(const Vector3& MyPos, float Dist)
 	}
 
 	return nullptr;
+}
+
+void CScene::GetAllObjectsPointer(std::vector<CGameObject*>& vecOutObj)
+{
+	auto iter = m_ObjList.begin();
+	auto iterEnd = m_ObjList.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		vecOutObj.push_back(*iter);
+	}
+}
+
+void CScene::CloneAllNoDestroyObjects(std::list<CSharedPtr<CGameObject>>& OutList)
+{
+	auto iter = m_ObjList.begin();
+	auto iterEnd = m_ObjList.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		if ((*iter)->IsNoDestroyFromSceneChange())
+		{
+			OutList.push_back((*iter));
+		}
+	}
+}
+
+void CScene::AddObject(CGameObject* Object)
+{
+	Object->SetScene(this);
+	m_ObjList.push_back(Object);
+}
+
+int CScene::GetSaveExcludeObjectCount()
+{
+	int Count = 0;
+
+	auto iter = m_ObjList.begin();
+	auto iterEnd = m_ObjList.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		if ((*iter)->IsExcludeFromSceneSave())
+		{
+			++Count;
+		}
+	}
+
+	return Count;
 }
 
 bool CScene::SortRenderList(CSceneComponent* Src, CSceneComponent* Dest)

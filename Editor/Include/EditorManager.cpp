@@ -126,6 +126,7 @@ bool CEditorManager::Init(HINSTANCE hInst)
 	CInput::GetInst()->CreateKey("SpellF", 'F');
 
 	m_CameraObject = CSceneManager::GetInst()->GetScene()->CreateGameObject<C3DCameraObject>("EditorCamera");
+	m_CameraObject->SetNoDestroyOnSceneChange(true);
 
 	CSceneManager::GetInst()->SetCreateSceneModeFunction<CEditorManager>(this, &CEditorManager::CreateSceneMode);
 	CSceneManager::GetInst()->SetCreateObjectFunction<CEditorManager>(this, &CEditorManager::CreateObject);
@@ -154,7 +155,6 @@ bool CEditorManager::Init(HINSTANCE hInst)
 	m_ResourceDisplayWindow = CIMGUIManager::GetInst()->AddWindow<CResourceDisplayWindow>("Resources");
 
 	CRenderManager::GetInst()->CreateLayer("DragLayer", INT_MAX);
-
 	// ±âÁ¸ µµ°æ¾¾ Behavior TreeMenu Bar
 	// m_BehaviorTreeMenuBar = CIMGUIManager::GetInst()->AddWindow<CBehaviorTreeMenuBar>("BehaviorTree");
 

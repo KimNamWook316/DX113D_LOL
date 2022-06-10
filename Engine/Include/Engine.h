@@ -12,8 +12,6 @@ private:
 	static bool	m_Loop;
 	float		m_ClearColor[4];
 	class CTimer* m_Timer;
-	bool		m_Start;
-	bool		m_Play;
 	Engine_Space	m_Space;
 	int				m_ShowCursorCount;
 	Mouse_State		m_MouseState;
@@ -23,6 +21,10 @@ private:
 	CSharedPtr<class CTexture>	m_GlobalNoiseTexture;
 	class CStructuredBuffer* m_RandomBuffer;
 	bool					m_EditMode;
+
+	bool		m_Start;
+	bool		m_Play;
+	bool		m_Pause;
 
 public:
 	void SetMouseState(Mouse_State State);
@@ -57,9 +59,9 @@ public:
 		return m_Play;
 	}
 
-	void SetPlay(bool Play)
+	bool IsPause() const
 	{
-		m_Play = Play;
+		return m_Pause;
 	}
 
 	HWND GetWindowHandle()	const
@@ -95,6 +97,12 @@ public:
 		unsigned int Height, bool WindowMode = true);
 	int Run();
 	void Logic();
+
+public:
+	void Play();
+	void Pause();
+	void Resume();
+	void Stop();
 
 private:
 	bool Update(float DeltaTime);

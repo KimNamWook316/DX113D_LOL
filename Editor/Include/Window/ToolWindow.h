@@ -5,6 +5,7 @@
 #include "IMGUIGizmo.h"
 #include "IMGUIGrid.h"
 #include "IMGUIRadioButton.h"
+#include "IMGUIButton.h"
 #include "IMGUISliderFloat.h"
 #include "IMGUIColor3.h"
 #include "IMGUITree.h"
@@ -39,6 +40,9 @@ private:
 	void OnChangeOutlineNormalMultiply(float Val);
 	void OnChangeOutlineNormalBias(float Val);
 	void OnCheckGrayEnable(const char* Label, bool Check);
+	void OnClickPlay();
+	void OnClickPause();
+	void OnClickStop();
 
 private:
 	// Gizmo
@@ -58,7 +62,11 @@ private:
 	CIMGUISliderFloat* m_OutlineDepthBias;
 	CIMGUISliderFloat* m_OutlineNormalMutliply;
 	CIMGUISliderFloat* m_OutlineNormalBias;
-
 	CIMGUICheckBox* m_GrayEnable;
+
+	// PlayStop
+	CIMGUIButton* m_Play;
+	CIMGUIButton* m_Pause;
+	CIMGUIButton* m_Stop;
 };
 

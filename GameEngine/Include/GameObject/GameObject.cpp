@@ -11,6 +11,8 @@ CGameObject::CGameObject() :
 	m_NavAgent(nullptr),
 	m_IsEnemy(false),
 	m_NoInterrupt(false),
+	m_ExcludeSceneSave(false),
+	m_NoDestroyFromSceneChange(false),
 	m_AttackTarget(nullptr)
 {
 	SetTypeID<CGameObject>();
@@ -26,6 +28,8 @@ CGameObject::CGameObject(const CGameObject& obj)
 	if (obj.m_RootComponent)
 	{
 		m_RootComponent = obj.m_RootComponent->Clone();
+		
+		m_RootComponent->SetScene(m_Scene);
 
 		m_RootComponent->SetGameObject(this);
 
@@ -40,8 +44,12 @@ CGameObject::CGameObject(const CGameObject& obj)
 	{
 		m_vecObjectComponent.push_back(obj.m_vecObjectComponent[i]->Clone());
 
+		m_vecObjectComponent[i]->SetScene(m_Scene);
+
 		m_vecObjectComponent[i]->SetGameObject(this);
 	}
+	
+	m_Scene->AddObject(this);
 }
 
 CGameObject::~CGameObject()
@@ -51,6 +59,18 @@ CGameObject::~CGameObject()
 void CGameObject::SetScene(CScene* Scene)
 {
 	m_Scene = Scene;
+
+	if (m_RootComponent)
+	{
+		m_RootComponent->SetScene(Scene);
+	}
+
+	size_t Size = m_vecObjectComponent.size();
+
+	for (size_t i = 0; i < Size; ++i)
+	{
+		m_vecObjectComponent[i]->SetScene(Scene);
+	}
 }
 
 void CGameObject::Destroy()
@@ -410,6 +430,21 @@ bool CGameObject::Load(FILE* File)
 			return false;
 
 		Component->SetGameObject(this);
+	}
+
+	// NavAgent가 있을 경우, 처리해준다.
+	for (int i = 0; i < ObjComponentCount; ++i)
+	{
+		if (m_vecObjectComponent[i]->CheckType<CNavAgent>())
+		{
+			SetNavAgent((CNavAgent*)m_vecObjectComponent[i].Get());
+
+			if (m_RootComponent)
+			{
+				((CNavAgent*)m_vecObjectComponent[i].Get())->SetUpdateComponent(m_RootComponent);
+			}
+			break;
+		}
 	}
 
 	return true;

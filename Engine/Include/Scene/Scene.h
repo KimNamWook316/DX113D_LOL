@@ -28,7 +28,7 @@ private:
 	CNavigation3DManager* m_Nav3DManager;
 	CLightManager* m_LightManager;
 	CSharedPtr<CGameObject> m_SkyObject;
-	
+
 	std::list<CSharedPtr<CGameObject>>	m_ObjList;
 	bool		m_Start;
 	bool		m_Change;
@@ -123,15 +123,28 @@ public:
 	void Start();
 	void Update(float DeltaTime);
 	void PostUpdate(float DeltaTime);
-	void Save(const char* FileName, const std::string& PathName = SCENE_PATH);
-	void SaveFullPath(const char* FullPath);
-	void Load(const char* FileName, const std::string& PathName = SCENE_PATH);
-	void LoadFullPath(const char* FullPath);
+	bool Save(const char* FileName, const std::string& PathName = SCENE_PATH);
+	bool SaveFullPath(const char* FullPath);
+	bool Load(const char* FileName, const std::string& PathName = SCENE_PATH);
+	bool LoadFullPath(const char* FullPath);
 
 public:
 	bool Picking(CGameObject*& Result);
 	bool CheckSameName(const std::string& Name);
 	CGameObject* FindNearChampion(const Vector3& MyPos, float Distance);
+
+public:
+	void GetAllObjectsPointer(std::vector<CGameObject*>& vecOutObj);
+	void CloneAllNoDestroyObjects(std::list<CSharedPtr<CGameObject>>& OutList);
+	void AddObject(CGameObject* Object);
+
+	CGameObject* CreateEmtpyObject()
+	{
+		CGameObject* Obj = new CGameObject;
+		Obj->SetScene(this);
+		m_ObjList.push_back(Obj);
+		return Obj;
+	}
 
 public:
 	template <typename T>
@@ -208,6 +221,7 @@ public:
 	}
 
 private:
+	int GetSaveExcludeObjectCount();
 	static bool SortRenderList(class CSceneComponent* Src, class CSceneComponent* Dest);
 };
 

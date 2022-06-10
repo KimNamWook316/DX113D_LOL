@@ -37,5 +37,8 @@ private :
 
 	void OnSaveObjectComponentMenuCallback();
 	void OnLoadObjectComponentMenuCallback();
+
+private:
+	void RefreshWindow(class CGameObject* Object);
 };
 

@@ -8,6 +8,15 @@ CAnimationManager3D::CAnimationManager3D()
 
 CAnimationManager3D::~CAnimationManager3D()
 {
+	auto iter = m_mapSequence.begin();
+	auto iterEnd = m_mapSequence.end();
+
+	for (; iter != iterEnd;)
+	{
+		m_mapSequence.erase(iter);
+	}
+
+	m_mapSequence.empty();
 }
 
 bool CAnimationManager3D::Init()

@@ -39,6 +39,9 @@ public:
 	// Inspector에서 GameObject 이름 변경되었을 때 호출
 	void OnRenameObject(const std::string& Name);
 
+	//
+	void OnCreateObject(class CGameObject* Object);
+
 	// 오브젝트 생성 팝업창 띄워주는 콜백
 	void OnCreateObjectPopUp();
 	void OnDeleteObject();
@@ -50,6 +53,7 @@ public:
 	void OnSetSelectNode(CIMGUITree* Tree);
 	void OnDragDropSrc(class CIMGUITree* SrcTree);
 	void OnDragDropDest(class CIMGUITree* DestTree, const std::string& ParentName, const std::string& NewChildName);
+
 
 public:
 	class CGameObject* GetSelectGameObject();
