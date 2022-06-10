@@ -30,7 +30,7 @@ public:
 	void Update();
 	void RenderTarget();
 
-public :
+public:
 	const CTextureManager* GetTextureManager() const
 	{
 		return m_TextureManager;
