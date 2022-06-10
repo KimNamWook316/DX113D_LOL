@@ -31,6 +31,10 @@ public :
     {
         return m_IsCameraZoom;
     }
+    class CAnimationSequenceInstance* GetAnimationInstance() const
+    {
+        return m_Animation;
+    }
 public :
     void SetCameraRot(bool Enable)
     {

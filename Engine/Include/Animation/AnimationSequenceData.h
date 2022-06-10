@@ -47,6 +47,11 @@ public:
 		m_PlayScale = Scale;
 	}
 public:
+	bool IsLoop() const
+	{
+		return m_Loop;
+	}
+
 	const std::string& GetName()	const
 	{
 		return m_Name;
@@ -65,6 +70,11 @@ public:
 	float GetAnimationPlayScale()   const
 	{
 		return m_PlayScale;
+	}
+
+	float GetAnimationPlayTime()   const
+	{
+		return m_PlayTime;
 	}
 
 public:

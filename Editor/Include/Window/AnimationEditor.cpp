@@ -724,8 +724,10 @@ void CAnimationEditor::OnEditAnimPlayTime()
 	// if (m_PlayTimeInput->Empty())
 	//	return;
 
-	m_Animation->GetCurrentAnimation()->GetAnimationSequence()->SetPlayTime(m_PlayTimeInput->GetValueFloat());
-	m_Animation->GetCurrentAnimation()->SetPlayTime(m_PlayTimeInput->GetValueFloat());
+	float SetPlayTime = m_PlayTimeInput->GetValueFloat();
+
+	m_Animation->GetCurrentAnimation()->GetAnimationSequence()->SetPlayTime(SetPlayTime);
+	m_Animation->GetCurrentAnimation()->SetPlayTime(SetPlayTime);
 
 	OnRefreshAnimationClipTable(m_Animation->GetCurrentAnimation()->GetAnimationSequence());
 }
@@ -1101,6 +1103,9 @@ void CAnimationEditor::OnClickAnimationSequence(int Index, const char* Name)
 		return;
 	}
 
+	// 클릭한 Animation 으로 Current Animation 세팅
+	m_Animation->SetCurrentAnimation(Name);
+
 	// Table 정보 갱신
 	OnRefreshAnimationClipTable(SequenceData->GetAnimationSequence());
 
@@ -1110,10 +1115,7 @@ void CAnimationEditor::OnClickAnimationSequence(int Index, const char* Name)
 
 	OnRefreshScaleAndTimeInputInfo();
 
-	OnRefreshAnimationComboBox();
-
-	// 클릭한 Animation 으로 Current Animation 세팅
-	m_Animation->SetCurrentAnimation(Name);
+	OnRefreshCheckBoxInfo();
 }
 
 void CAnimationEditor::OnRefreshAnimationClipTable(CAnimationSequence* Sequence)
@@ -1181,8 +1183,11 @@ void CAnimationEditor::OnRefreshScaleAndTimeInputInfo()
 	if (!m_Animation || !m_Animation->GetCurrentAnimation())
 		return;
 
-	m_PlayScaleInput->SetFloat(m_Animation->GetCurrentAnimation()->GetAnimationPlayScale());
-	m_PlayTimeInput->SetFloat(m_Animation->GetCurrentAnimation()->GetAnimationTime());
+	float PlayScale = m_Animation->GetCurrentAnimation()->GetAnimationPlayScale();
+	m_PlayScaleInput->SetFloat(PlayScale);
+
+	float PlayTime = m_Animation->GetCurrentAnimation()->GetAnimationPlayTime();
+	m_PlayTimeInput->SetFloat(PlayTime);
 }
 
 void CAnimationEditor::OnRefreshCheckBoxInfo()
@@ -1197,5 +1202,5 @@ void CAnimationEditor::OnRefreshCheckBoxInfo()
 	m_AnimationCheckBtn->SetCheck(0, m_Animation->IsPlay());
 	m_RotationCheckBtn->SetCheck(0,m_3DTestObject->IsCameraRot());
 	m_ZoomEnableBtn->SetCheck(0, m_3DTestObject->IsCameraRot());
-	m_LoopEnableBtn->SetCheck(0, m_3DTestObject->IsCameraZoom());
+	m_LoopEnableBtn->SetCheck(0, m_Animation->GetCurrentAnimation()->IsLoop());
 }
