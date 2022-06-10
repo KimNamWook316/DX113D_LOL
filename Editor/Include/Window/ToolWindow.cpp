@@ -47,12 +47,17 @@ bool CToolWindow::Init()
 	m_EditorCameraBlock = AddWidget<CIMGUICollapsingHeader>("Editor Camera", 200.f);
 	m_CameraSpeed = m_EditorCameraBlock->AddWidget<CIMGUISliderFloat>("Speed");
 
+	// Render
 	// Outline
 	m_RenderBlock = AddWidget<CIMGUICollapsingHeader>("Render", 200.f);
-	m_OutlineDepthMultiply = m_RenderBlock->AddWidget<CIMGUISliderFloat>("Outline Depth Multiplier");
-	m_OutlineDepthBias = m_RenderBlock->AddWidget<CIMGUISliderFloat>("Outline Depth Bias");
-	m_OutlineNormalMutliply = m_RenderBlock->AddWidget<CIMGUISliderFloat>("Outline Normal Mutiplier");
-	m_OutlineNormalBias = m_RenderBlock->AddWidget<CIMGUISliderFloat>("Outline Normal Bias");
+	CIMGUITree* Tree = m_RenderBlock->AddWidget<CIMGUITree>("Outline", 200.f);
+	m_OutlineDepthMultiply = Tree->AddWidget<CIMGUISliderFloat>("Outline Depth Multiplier");
+	m_OutlineDepthBias = Tree->AddWidget<CIMGUISliderFloat>("Outline Depth Bias");
+	m_OutlineNormalMutliply = Tree->AddWidget<CIMGUISliderFloat>("Outline Normal Mutiplier");
+	m_OutlineNormalBias = Tree->AddWidget<CIMGUISliderFloat>("Outline Normal Bias");
+	// 
+	Tree = m_RenderBlock->AddWidget<CIMGUITree>("Gray", 200.f);
+	m_GrayEnable = Tree->AddWidget<CIMGUICheckBox>("GrayShader Enable", 200.f);
 
 	// Initial Value
 	m_CameraSpeed->SetMin(0.f);
@@ -71,6 +76,11 @@ bool CToolWindow::Init()
 	m_OutlineDepthBias->SetValue(CRenderManager::GetInst()->GetOutlineDepthBias());
 	m_OutlineNormalMutliply->SetValue(CRenderManager::GetInst()->GetOutlineNormalMultiplier());
 	m_OutlineNormalBias->SetValue(CRenderManager::GetInst()->GetOutlineNormalBias());
+	
+	m_GrayEnable->AddCheckInfo("Enable GrayShader");
+
+	bool IsGray = CRenderManager::GetInst()->IsGray();
+	m_GrayEnable->SetCheck(0, IsGray);
 
 	// CallBack
 	m_GizmoTransformMode->SetCallBack(this, &CToolWindow::OnSelectGizmoTransformMode);
@@ -80,6 +90,7 @@ bool CToolWindow::Init()
 	m_OutlineDepthBias->SetCallBack(this, &CToolWindow::OnChangeOutlineDepthBias);
 	m_OutlineNormalMutliply->SetCallBack(this, &CToolWindow::OnChangeOutlineNormalMultiply);
 	m_OutlineNormalBias->SetCallBack(this, &CToolWindow::OnChangeOutlineNormalBias);
+	m_GrayEnable->SetCallBackLabel(this, &CToolWindow::OnCheckGrayEnable);
 
 	// 디버그용 임시 키
 	CInput::GetInst()->CreateKey("Z", 'Z');
@@ -155,6 +166,11 @@ void CToolWindow::OnChangeOutlineNormalMultiply(float Val)
 void CToolWindow::OnChangeOutlineNormalBias(float Val)
 {
 	CRenderManager::GetInst()->SetOutlineNormalBias(Val);
+}
+
+void CToolWindow::OnCheckGrayEnable(const char* Label, bool Check)
+{
+	CRenderManager::GetInst()->GrayEnable(Check);
 }
 
 void CToolWindow::OnQDown(float DetlaTime)

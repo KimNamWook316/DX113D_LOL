@@ -40,7 +40,7 @@ NodeResult CInputWCheckNode::OnEnd(float DeltaTime)
 	return NodeResult();
 }
 
-bool CInputWCheckNode::Invoke(float DeltaTime)
+NodeResult CInputWCheckNode::Invoke(float DeltaTime)
 {
 	return CConditionNode::Invoke(DeltaTime);
 }

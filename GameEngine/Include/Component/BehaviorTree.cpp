@@ -20,6 +20,10 @@
 #include "Node/InputECheckNode.h"
 #include "Node/InputRCheckNode.h"
 #include "Node/NoInterruptNode.h"
+#include "Node/CheckAttackTarget.h"
+#include "Node/NormalAttack.h"
+#include "Node/SkillEndCheckNode.h"
+#include "Node/InSkillCheck.h"
 
 CBehaviorTree::CBehaviorTree() :
 	m_Root(nullptr),
@@ -279,13 +283,15 @@ CNode* CBehaviorTree::LoadNode(CNode* Parent, size_t TypeID)
 	//if (m_NodeCreateCallback)
 	//	return m_NodeCreateCallback(Parent, TypeID);
 
+	// TODO : Node 종류 추가될 때 마다 추가해주기
 	if (TypeID == typeid(CSelectorNode).hash_code())
 	{
 		CSelectorNode* NewNode = new CSelectorNode;
 		NewNode->SetParent(Parent);
 		NewNode->SetOwner(this);
 		NewNode->SetObject(m_Owner->GetGameObject());
-		
+		NewNode->SetAnimationMeshComponent(m_AnimationMeshComp);
+
 		return NewNode;
 	}
 
@@ -295,6 +301,7 @@ CNode* CBehaviorTree::LoadNode(CNode* Parent, size_t TypeID)
 		NewNode->SetParent(Parent);
 		NewNode->SetOwner(this);
 		NewNode->SetObject(m_Owner->GetGameObject());
+		NewNode->SetAnimationMeshComponent(m_AnimationMeshComp);
 
 		return NewNode;
 	}
@@ -305,6 +312,7 @@ CNode* CBehaviorTree::LoadNode(CNode* Parent, size_t TypeID)
 		NewNode->SetParent(Parent);
 		NewNode->SetOwner(this);
 		NewNode->SetObject(m_Owner->GetGameObject());
+		NewNode->SetAnimationMeshComponent(m_AnimationMeshComp);
 
 		return NewNode;
 	}
@@ -315,6 +323,7 @@ CNode* CBehaviorTree::LoadNode(CNode* Parent, size_t TypeID)
 		NewNode->SetParent(Parent);
 		NewNode->SetOwner(this);
 		NewNode->SetObject(m_Owner->GetGameObject());
+		NewNode->SetAnimationMeshComponent(m_AnimationMeshComp);
 
 		return NewNode;
 	}
@@ -325,6 +334,7 @@ CNode* CBehaviorTree::LoadNode(CNode* Parent, size_t TypeID)
 		NewNode->SetParent(Parent);
 		NewNode->SetOwner(this);
 		NewNode->SetObject(m_Owner->GetGameObject());
+		NewNode->SetAnimationMeshComponent(m_AnimationMeshComp);
 
 		return NewNode;
 	}
@@ -335,6 +345,7 @@ CNode* CBehaviorTree::LoadNode(CNode* Parent, size_t TypeID)
 		NewNode->SetParent(Parent);
 		NewNode->SetOwner(this);
 		NewNode->SetObject(m_Owner->GetGameObject());
+		NewNode->SetAnimationMeshComponent(m_AnimationMeshComp);
 
 		return NewNode;
 	}
@@ -345,6 +356,7 @@ CNode* CBehaviorTree::LoadNode(CNode* Parent, size_t TypeID)
 		NewNode->SetParent(Parent);
 		NewNode->SetOwner(this);
 		NewNode->SetObject(m_Owner->GetGameObject());
+		NewNode->SetAnimationMeshComponent(m_AnimationMeshComp);
 
 		return NewNode;
 	}
@@ -355,6 +367,7 @@ CNode* CBehaviorTree::LoadNode(CNode* Parent, size_t TypeID)
 		NewNode->SetParent(Parent);
 		NewNode->SetOwner(this);
 		NewNode->SetObject(m_Owner->GetGameObject());
+		NewNode->SetAnimationMeshComponent(m_AnimationMeshComp);
 
 		return NewNode;
 	}
@@ -365,6 +378,7 @@ CNode* CBehaviorTree::LoadNode(CNode* Parent, size_t TypeID)
 		NewNode->SetParent(Parent);
 		NewNode->SetOwner(this);
 		NewNode->SetObject(m_Owner->GetGameObject());
+		NewNode->SetAnimationMeshComponent(m_AnimationMeshComp);
 
 		return NewNode;
 	}
@@ -375,6 +389,7 @@ CNode* CBehaviorTree::LoadNode(CNode* Parent, size_t TypeID)
 		NewNode->SetParent(Parent);
 		NewNode->SetOwner(this);
 		NewNode->SetObject(m_Owner->GetGameObject());
+		NewNode->SetAnimationMeshComponent(m_AnimationMeshComp);
 
 		return NewNode;
 	}
@@ -385,6 +400,7 @@ CNode* CBehaviorTree::LoadNode(CNode* Parent, size_t TypeID)
 		NewNode->SetParent(Parent);
 		NewNode->SetOwner(this);
 		NewNode->SetObject(m_Owner->GetGameObject());
+		NewNode->SetAnimationMeshComponent(m_AnimationMeshComp);
 
 		return NewNode;
 	}
@@ -395,6 +411,7 @@ CNode* CBehaviorTree::LoadNode(CNode* Parent, size_t TypeID)
 		NewNode->SetParent(Parent);
 		NewNode->SetOwner(this);
 		NewNode->SetObject(m_Owner->GetGameObject());
+		NewNode->SetAnimationMeshComponent(m_AnimationMeshComp);
 
 		return NewNode;
 	}
@@ -405,6 +422,7 @@ CNode* CBehaviorTree::LoadNode(CNode* Parent, size_t TypeID)
 		NewNode->SetParent(Parent);
 		NewNode->SetOwner(this);
 		NewNode->SetObject(m_Owner->GetGameObject());
+		NewNode->SetAnimationMeshComponent(m_AnimationMeshComp);
 
 		return NewNode;
 	}
@@ -415,10 +433,54 @@ CNode* CBehaviorTree::LoadNode(CNode* Parent, size_t TypeID)
 		NewNode->SetParent(Parent);
 		NewNode->SetOwner(this);
 		NewNode->SetObject(m_Owner->GetGameObject());
+		NewNode->SetAnimationMeshComponent(m_AnimationMeshComp);
 
 		return NewNode;
 	}
 
+	else if (TypeID == typeid(CCheckAttackTarget).hash_code())
+	{
+		CCheckAttackTarget* NewNode = new CCheckAttackTarget;
+		NewNode->SetParent(Parent);
+		NewNode->SetOwner(this);
+		NewNode->SetObject(m_Owner->GetGameObject());
+		NewNode->SetAnimationMeshComponent(m_AnimationMeshComp);
+
+		return NewNode;
+	}
+
+	else if (TypeID == typeid(CNormalAttack).hash_code())
+	{
+		CNormalAttack* NewNode = new CNormalAttack;
+		NewNode->SetParent(Parent);
+		NewNode->SetOwner(this);
+		NewNode->SetObject(m_Owner->GetGameObject());
+		NewNode->SetAnimationMeshComponent(m_AnimationMeshComp);
+
+		return NewNode;
+	}
+
+	else if (TypeID == typeid(CSkillEndCheckNode).hash_code())
+	{
+		CSkillEndCheckNode* NewNode = new CSkillEndCheckNode;
+		NewNode->SetParent(Parent);
+		NewNode->SetOwner(this);
+		NewNode->SetObject(m_Owner->GetGameObject());
+		NewNode->SetAnimationMeshComponent(m_AnimationMeshComp);
+
+		return NewNode;
+	}
+
+	else if (TypeID == typeid(CInSkillCheck).hash_code())
+	{
+		CInSkillCheck* NewNode = new CInSkillCheck;
+		NewNode->SetParent(Parent);
+		NewNode->SetOwner(this);
+		NewNode->SetObject(m_Owner->GetGameObject());
+		NewNode->SetAnimationMeshComponent(m_AnimationMeshComp);
+
+		return NewNode;
+	}
 
 	return nullptr;
 }

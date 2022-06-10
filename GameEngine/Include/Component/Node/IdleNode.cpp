@@ -20,7 +20,7 @@ CIdleNode::~CIdleNode()
 
 NodeResult CIdleNode::OnStart(float DeltaTime)
 {
-	if (m_Object->IsNavAgentPathListEmpty())
+	if (m_Object->IsNavAgentPathListEmpty() && !m_Object->GetAttackTarget())
 	{
 		m_AnimationMeshComp = m_Owner->GetAnimationMeshComp();
 
@@ -51,7 +51,7 @@ NodeResult CIdleNode::OnEnd(float DeltaTime)
 	return NodeResult::Node_True;
 }
 
-bool CIdleNode::Invoke(float DeltaTime)
+NodeResult CIdleNode::Invoke(float DeltaTime)
 {
 	return CActionNode::Invoke(DeltaTime);
 }

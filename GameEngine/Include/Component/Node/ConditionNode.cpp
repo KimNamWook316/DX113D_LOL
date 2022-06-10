@@ -15,15 +15,15 @@ CConditionNode::~CConditionNode()
 {
 }
 
-bool CConditionNode::Invoke(float DeltaTime)
+NodeResult CConditionNode::Invoke(float DeltaTime)
 {
 	NodeResult Result =	OnStart(DeltaTime);
 
 	if (Result == NodeResult::Node_False)
-		return false;
+		return NodeResult::Node_False;
 
 	else if (Result == NodeResult::Node_True)
-		return true;
+		return NodeResult::Node_True;
 
-	return true;
+	return NodeResult::Node_False;
 }

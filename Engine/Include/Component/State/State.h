@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../GameInfo.h"
+#include "../../GameInfo.h"
 
 class CState
 {
@@ -10,7 +10,7 @@ public:
 	virtual ~CState() = 0;
 
 public:
-	virtual CState* Update(float deltaTime);
+	virtual void Update(float deltaTime) = 0;
 	virtual void PostUpdate(float deltaTime) = 0;
 	virtual CState* Clone() = 0;
 
@@ -34,8 +34,24 @@ public:
 		return m_Name;
 	}
 
+	void SetName(const std::string& Name)
+	{
+		m_Name = Name;
+	}
+
+	void SetOwnerObject(CGameObject* Object)
+	{
+		m_OwnerObject = Object;
+	}
+
+	CGameObject* GetOwnerObject()	const
+	{
+		return m_OwnerObject;
+	}
+
 protected:
 	class CStateComponent* m_Owner;
+	CGameObject* m_OwnerObject;
 	bool m_IsEnd;
 	std::string m_Name;
 };

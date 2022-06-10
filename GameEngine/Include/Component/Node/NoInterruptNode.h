@@ -16,6 +16,6 @@ public:
 
 
 public:
-    virtual bool Invoke(float DeltaTime);
+    virtual NodeResult Invoke(float DeltaTime);
 };
 

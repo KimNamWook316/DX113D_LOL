@@ -32,10 +32,11 @@ void CSceneCollision::Start()
 
 bool CSceneCollision::Init()
 {
-	SetSectionSize(1000.f, 1000.f, 1.f);
-	SetSectionCenter(0.f, 0.f, 0.f);
-	SetSectionCount(10, 10, 1);
-	CreateSection();
+	SetSectionSize(20.f, 1.f, 20.f);
+	SetSectionCenter(100.f, 0.f, 100.f);
+	//SetSectionCount(10, 10, 1);
+	SetSectionCount(10, 1, 10);
+	CreateSection3D();
 
 	return true;
 }
@@ -68,7 +69,8 @@ void CSceneCollision::Collision(float DeltaTime)
 	}
 
 	// 충돌체들을 각 자의 영역으로 포함시켜주도록 한다.
-	CheckColliderSection();
+	//CheckColliderSection();
+	//CheckColliderSection3D();
 
 	// 현재 충돌 영역이 겹치는지 판단한다.
 	iter = m_ColliderList.begin();
@@ -158,6 +160,41 @@ void CSceneCollision::CollisionMouse(float DeltaTime)
 
 		else
 		{
+			Vector2	MousePos = CInput::GetInst()->GetMousePos();
+
+			MousePos.x -= m_Section->Min.x;
+			MousePos.y -= m_Section->Min.y;
+
+			int	IndexX = 0, IndexZ = 0;
+
+			IndexX = (int)(MousePos.x / m_Section->SectionSize.x);
+			IndexZ = (int)(MousePos.y / m_Section->SectionSize.z);
+
+			IndexX = IndexX < 0 ? -1 : IndexX;
+			IndexZ = IndexZ < 0 ? -1 : IndexZ;
+
+			IndexX = IndexX >= m_Section->CountX ? -1 : IndexX;
+			IndexZ = IndexZ >= m_Section->CountZ ? -1 : IndexZ;
+
+			if (IndexX != -1 && IndexZ != -1)
+			{
+				CColliderComponent* ColliderMouse = m_Section->vecSection[IndexZ * m_Section->CountX + IndexX]->CollisionMouse(true, DeltaTime);
+
+				if (ColliderMouse)
+				{
+					MouseCollision = true;
+
+					if (ColliderMouse != m_MouseCollision)
+						ColliderMouse->CallCollisionMouseCallback(Collision_State::Begin);
+
+					if (m_MouseCollision && m_MouseCollision != ColliderMouse)
+					{
+						m_MouseCollision->CallCollisionMouseCallback(Collision_State::End);
+					}
+
+					m_MouseCollision = ColliderMouse;
+				}
+			}
 		}
 	}
 
@@ -301,6 +338,25 @@ void CSceneCollision::CreateSection()
 	}
 }
 
+void CSceneCollision::CreateSection3D()
+{
+	if (!m_Section)
+		m_Section = new CollisionSectionInfo;
+
+	for (int z = 0; z < m_Section->CountZ; ++z)
+	{
+		for (int x = 0; x < m_Section->CountX; ++x)
+		{
+			CCollisionSection* Section = new CCollisionSection;
+
+			Section->Init(x, 0, z, z * (m_Section->CountX) + x,
+				m_Section->Min, m_Section->Max, m_Section->SectionSize, m_Section->SectionTotalSize);
+
+			m_Section->vecSection.push_back(Section);
+		}
+	}
+}
+
 void CSceneCollision::Clear()
 {
 	size_t	Size = m_Section->vecSection.size();
@@ -316,6 +372,46 @@ void CSceneCollision::Clear()
 void CSceneCollision::AddCollider(CColliderComponent* Collider)
 {
 	m_ColliderList.push_back(Collider);
+}
+
+int CSceneCollision::GetSectionIndex(const Vector3& Pos)
+{
+	int	IndexX, IndexZ;
+
+	IndexX = (int)(Pos.x / m_Section->SectionSize.x);
+	IndexZ = (int)(Pos.z / m_Section->SectionSize.z);
+
+	IndexX = IndexX >= m_Section->CountX ? m_Section->CountX - 1 : IndexX;
+	IndexZ = IndexZ >= m_Section->CountZ ? m_Section->CountZ - 1 : IndexZ;
+
+	return IndexZ * m_Section->CountX + IndexX;
+}
+
+int CSceneCollision::GetSectionIndexX(const Vector3& Pos)
+{
+	int	IndexX;
+
+	IndexX = (int)(Pos.x / m_Section->SectionSize.x);
+
+	IndexX = IndexX >= m_Section->CountX ? m_Section->CountX - 1 : IndexX;
+
+	return IndexX;
+}
+
+int CSceneCollision::GetSectionIndexZ(const Vector3& Pos)
+{
+	int IndexZ;
+
+	IndexZ = (int)(Pos.z / m_Section->SectionSize.z);
+
+	IndexZ = IndexZ >= m_Section->CountZ ? m_Section->CountZ - 1 : IndexZ;
+
+	return IndexZ;
+}
+
+const std::vector<CColliderComponent*>& CSceneCollision::GetSectionCollider(int Index)
+{
+	return m_Section->vecSection[Index]->m_vecCollider;
 }
 
 void CSceneCollision::CheckColliderSection()
@@ -366,6 +462,63 @@ void CSceneCollision::CheckColliderSection()
 
 					m_Section->vecSection[Index]->AddCollider(Collider);
 				}
+			}
+		}
+	}
+}
+
+void CSceneCollision::CheckColliderSection3D()
+{
+	size_t Count = m_Section->vecSection.size();
+
+	for (size_t i = 0; i < Count; ++i)
+		m_Section->vecSection[i]->ClearPrevCollider();
+
+	auto	iter = m_ColliderList.begin();
+	auto	iterEnd = m_ColliderList.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		CColliderComponent* Collider = *iter;
+
+		Collider->ClearPrevSectionIndex();
+
+		if (!Collider->IsEnable())
+			continue;
+
+		Vector3	Min = Collider->GetMin();
+		Vector3	Max = Collider->GetMax();
+
+		Min -= m_Section->Min;
+		Max -= m_Section->Min;
+
+		int	IndexMinX, IndexMinZ;
+		int	IndexMaxX, IndexMaxZ;
+
+		IndexMinX = (int)(Min.x / m_Section->SectionSize.x);
+		IndexMinZ = (int)(Min.z / m_Section->SectionSize.z);
+
+		IndexMaxX = (int)(Max.x / m_Section->SectionSize.x);
+		IndexMaxZ = (int)(Max.z / m_Section->SectionSize.z);
+
+		IndexMinX = IndexMinX < 0 ? 0 : IndexMinX;
+		//IndexMinY = IndexMinY < 0 ? 0 : IndexMinY;
+		IndexMinZ = IndexMinZ < 0 ? 0 : IndexMinZ;
+
+		IndexMaxX = IndexMaxX >= m_Section->CountX ? m_Section->CountX - 1 : IndexMaxX;
+		//IndexMaxY = IndexMaxY >= m_Section->CountY ? m_Section->CountY - 1 : IndexMaxY;
+		IndexMaxZ = IndexMaxZ >= m_Section->CountZ ? m_Section->CountZ - 1 : IndexMaxZ;
+
+
+		for (int z = IndexMinZ; z <= IndexMaxZ; ++z)
+		{
+			for (int x = IndexMinX; x <= IndexMaxX; ++x)
+			{
+				int	Index = z * (m_Section->CountX) + x;
+
+				m_Section->vecSection[Index]->AddCollider(Collider);
+				m_Section->vecSection[Index]->AddPrevCollider(Collider);
+				Collider->AddPrevSectionIndex(Index);
 			}
 		}
 	}

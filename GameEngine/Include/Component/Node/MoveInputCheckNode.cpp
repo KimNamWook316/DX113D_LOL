@@ -34,7 +34,6 @@ NodeResult CMoveInputCheckNode::OnStart(float DeltaTime)
 	{
 		return NodeResult::Node_False;
 	}
-
 }
 
 NodeResult CMoveInputCheckNode::OnUpdate(float DeltaTime)
@@ -47,7 +46,7 @@ NodeResult CMoveInputCheckNode::OnEnd(float DeltaTime)
 	return NodeResult();
 }
 
-bool CMoveInputCheckNode::Invoke(float DeltaTime)
+NodeResult CMoveInputCheckNode::Invoke(float DeltaTime)
 {
 	return CConditionNode::Invoke(DeltaTime);
 }

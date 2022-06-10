@@ -8,6 +8,8 @@ struct AnimationNotify
 	int		Frame;
 	bool	Call;
 	std::function<void()>	Function;
+	std::function<void(NotifyParameter)>	FunctionParam;
+	NotifyParameter Param;
 
 	AnimationNotify() :
 		Frame(0),
@@ -38,7 +40,7 @@ private:
 public:
 	void Save(FILE* File);
 	void Load(FILE* File);
-public :
+public:
 	void SetPlayTime(float Time);
 	void SetPlayScale(float Scale)
 	{
@@ -55,14 +57,14 @@ public:
 		return m_Time;
 	}
 
-	float GetAnimationPlayScale()	const
-	{
-		return m_PlayScale;
-	}
-
 	class CAnimationSequence* GetAnimationSequence()	const
 	{
 		return m_Sequence;
+	}
+
+	float GetAnimationPlayScale()   const
+	{
+		return m_PlayScale;
 	}
 
 public:
@@ -80,6 +82,19 @@ public:
 		Notify->Name = Name;
 		Notify->Frame = Frame;
 		Notify->Function = std::bind(Func, Obj);
+
+		m_vecNotify.push_back(Notify);
+	}
+
+
+	template <typename T>
+	void AddNotifyParam(const std::string& Name, int Frame, T* Obj, void (T::* Func)(const NotifyParameter&))
+	{
+		AnimationNotify* Notify = new AnimationNotify;
+
+		Notify->Name = Name;
+		Notify->Frame = Frame;
+		Notify->FunctionParam = std::bind(Func, Obj, std::placeholders::_1);
 
 		m_vecNotify.push_back(Notify);
 	}

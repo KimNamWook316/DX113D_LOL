@@ -257,6 +257,8 @@ enum class SceneComponent3DType
 	LightComponent,
 	SceneComponent,
 	ParticleComponent,
+	ColliderBox3D,
+	ColliderSphere,
 	Max
 };
 
@@ -279,7 +281,7 @@ enum class NodeResult
 {
 	Node_True,
 	Node_False,
-	Node_None,
+	Node_Running,
 	Max
 };
 
@@ -306,7 +308,10 @@ enum ConditionNode
 	InputDCheck,
 	InputFCheck,
 	MoveInputCheckNode,
-	NoInterruptNode
+	NoInterruptNode,
+	AttackTargetCheck,
+	SkillEndCheck,
+	InSkillCheck
 };
 
 enum ActionNode
@@ -319,7 +324,8 @@ enum ActionNode
 	SpellF,
 	Move,
 	MovePicking,
-	Idle
+	Idle,
+	NormalAttack
 };
 
 enum Node_Type

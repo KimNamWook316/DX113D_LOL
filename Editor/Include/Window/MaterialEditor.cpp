@@ -286,7 +286,7 @@ void CMaterialEditor::OnSetTextureBtnWithString(const std::string& InputName)
 		// 현재 Texture 를 IMGUI Image 에 보여주기
 		m_SetTexureImage->SetTexture(TargetTexture);
 
-		RefreshMaterialDisplayInfo(m_SelectedMaterial);
+		RefreshMaterialDisplayInfo(m_SelectedMaterial, TargetTexture);
 
 		// ResourceDisplay Window 에 있는 Texture 목록들 Resource Window 에 추가해서 보여주기
 		CEditorManager::GetInst()->GetResourceDisplayWindow()->RefreshLoadedTextureResources();

@@ -49,7 +49,7 @@ NodeResult CSkillRNode::OnEnd(float DeltaTime)
 	return NodeResult::Node_True;
 }
 
-bool CSkillRNode::Invoke(float DeltaTime)
+NodeResult CSkillRNode::Invoke(float DeltaTime)
 {
 	return CActionNode::Invoke(DeltaTime);
 }

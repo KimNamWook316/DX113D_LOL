@@ -259,6 +259,24 @@ bool CColliderComponent::Save(FILE* File)
 	fwrite(&m_Min, sizeof(Vector3), 1, File);
 	fwrite(&m_Max, sizeof(Vector3), 1, File);
 
+	char MeshName[256] = {};
+
+	int Length = m_Mesh->GetName().length();
+	strcpy_s(MeshName, m_Mesh->GetName().c_str());
+
+	fwrite(&Length, sizeof(int), 1, File);
+
+	fwrite(MeshName, sizeof(char), Length, File);
+
+	Length = m_Shader->GetName().length();
+
+	char ShaderName[256] = {};
+	strcpy_s(ShaderName, m_Shader->GetName().c_str());
+
+	fwrite(&Length, sizeof(int), 1, File);
+	fwrite(ShaderName, sizeof(char), Length, File);
+
+
 	return true;
 }
 
@@ -270,6 +288,32 @@ bool CColliderComponent::Load(FILE* File)
 	fread(&m_Offset, sizeof(Vector3), 1, File);
 	fread(&m_Min, sizeof(Vector3), 1, File);
 	fread(&m_Max, sizeof(Vector3), 1, File);
+
+	char MeshName[256] = {};
+
+	int Length = 0;
+	fread(&Length, sizeof(int), 1, File);
+	fread(MeshName, sizeof(char), Length, File);
+
+	m_Mesh = CResourceManager::GetInst()->FindMesh(MeshName);
+	m_Mesh->SetName(MeshName);
+
+	Length = 0;
+	char ShaderName[256] = {};
+	fread(&Length, sizeof(int), 1, File);
+	fread(ShaderName, sizeof(char), Length, File);
+
+	m_Shader = CResourceManager::GetInst()->FindShader(ShaderName);
+
+	m_Shader->SetName(ShaderName);
+
+	SetCollisionProfile("Object");
+
+	m_CBuffer = new CColliderConstantBuffer;
+
+	m_CBuffer->Init();
+
+	m_CBuffer->SetColliderColor(Vector4(0.f, 1.f, 0.f, 1.f));
 
 	return true;
 }

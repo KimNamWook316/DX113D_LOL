@@ -16,7 +16,7 @@ public:
     virtual NodeResult OnEnd(float DeltaTime) = 0;
 
 public:
-    virtual bool Invoke(float DeltaTime) override;
+    virtual NodeResult Invoke(float DeltaTime) override;
 
 };
 

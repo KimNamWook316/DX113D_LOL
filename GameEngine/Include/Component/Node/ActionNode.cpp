@@ -2,8 +2,7 @@
 #include "ActionNode.h"
 #include "../BehaviorTree.h"
 
-CActionNode::CActionNode()	:
-	m_AnimationMeshComp(nullptr)
+CActionNode::CActionNode()
 {
 	SetTypeID(typeid(CActionNode).hash_code());
 	m_NodeType = Node_Type::Action;
@@ -18,17 +17,7 @@ CActionNode::~CActionNode()
 {
 }
 
-void CActionNode::SetAnimationMeshComponent(CAnimationMeshComponent* AnimationMeshComp)
-{
-	m_AnimationMeshComp = AnimationMeshComp;
-}
-
-CAnimationMeshComponent* CActionNode::GetAnimationMeshComponent() const
-{
-	return m_AnimationMeshComp;
-}
-
-bool CActionNode::Invoke(float DeltaTime)
+NodeResult CActionNode::Invoke(float DeltaTime)
 {
 	if(!m_CallStart)
 		OnStart(DeltaTime);	
@@ -38,9 +27,12 @@ bool CActionNode::Invoke(float DeltaTime)
 	if (m_IsEnd)
 		OnEnd(DeltaTime);
 
-	if (Result == NodeResult::Node_True)
-		return true;
-	else
-		return false;
+	//if (Result == NodeResult::Node_Running)
+	//{
+	//	m_Owner->SetCurrentNode(this);
+	//}
+
+	return Result;
+
 }
 

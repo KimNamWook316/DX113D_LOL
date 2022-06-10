@@ -98,8 +98,13 @@ public:
 	class CComponent* CreateComponent(class CGameObject* Obj, size_t Type);
 	void CreateAnimInstance(class CSpriteComponent* Sprite, size_t Type);
 	
+public:
+	void SetChampionNotify(class CAnimationSequenceInstance* Instance, const std::string& ChampionName);
+
 private:
 	void CreateEditorCamera();
+	void ReadChampionNotify();
+	void ReadChampionSkillInfo();
 
 	DECLARE_SINGLE(CEditorManager)
 };

@@ -137,6 +137,9 @@ void CScene::PostUpdate(float DeltaTime)
 
 	m_SkyObject->PostUpdate(DeltaTime);
 
+	// State Component에서 각 Collision Section별로 Collider를 얻어와야 해서 Component::PostUpdate하기 전에 이걸 먼저 해주도록 수정
+	m_Collision->CheckColliderSection3D();
+
 	auto	iter = m_ObjList.begin();
 	auto	iterEnd = m_ObjList.end();
 

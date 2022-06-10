@@ -271,11 +271,9 @@ CGameObject* CObjectCreateModal::OnCreateObject(const char* FullPathMultibyte)
 		// 해당 노드를 Select Node 로 세팅한다.
 		Window->OnSetSelectNode(NewNode);
 
-		// 기존에 추가되어 있던 SceneComponent 목록들을 비워주고, 새롭게 Load 한 Object 의 Scene Component 들로 다시 채워줄 것이다.
-		// SceneCompWindow->ClearExistingHierarchy();
-		SceneCompWindow->OnUpdateSceneComponetWindow(Window->GetRoot());
-
-		SceneCompWindow->GetSceneComponentCreateModal()->OnLoadComponent(LoadedObject);
+		// 해당 Object 의 Root Component 로 Widget 구성
+		CSceneComponentHierarchyWindow* ComponentWindow = (CSceneComponentHierarchyWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(SCENECOMPONENT_HIERARCHY);
+		ComponentWindow->GetSceneComponentCreateModal()->OnLoadComponentRecursive(LoadedObject);
 	}
 
 	return LoadedObject;

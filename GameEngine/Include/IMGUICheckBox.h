@@ -74,7 +74,7 @@ public:
         for (size_t i = 0; i < Count; ++i)
         {
             if (mVecCheckInfo[i]->bCheck)
-                return i;
+                return (int)i;
         }
 
         return -1;

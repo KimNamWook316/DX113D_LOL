@@ -49,7 +49,7 @@ NodeResult CRunNode::OnEnd(float DeltaTime)
 	return NodeResult::Node_True;
 }
 
-bool CRunNode::Invoke(float DeltaTime)
+NodeResult CRunNode::Invoke(float DeltaTime)
 {
 	return CActionNode::Invoke(DeltaTime);
 }
