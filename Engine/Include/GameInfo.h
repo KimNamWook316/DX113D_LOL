@@ -631,7 +631,6 @@ struct OutlineCBuffer
 	float NormalMultiplier;
 	float NormalBias;
 };
-
 struct ChampionInfo
 {
 	float MoveSpeed;
