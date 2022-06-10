@@ -42,9 +42,11 @@ CAirBorneState* CAirBorneState::Clone()
 void CAirBorneState::OnStart()
 {
 	m_OwnerObject->GetRootComponent()->GetTransform()->SetState(Transform_State::Falling);
+	m_OwnerObject->SetNoInterrupt(true);
 }
 
 void CAirBorneState::OnEnd()
 {
 	m_OwnerObject->GetRootComponent()->GetTransform()->SetState(Transform_State::Ground);
+	m_OwnerObject->SetNoInterrupt(false);
 }

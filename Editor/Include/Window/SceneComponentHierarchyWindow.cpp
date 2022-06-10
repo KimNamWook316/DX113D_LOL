@@ -281,7 +281,8 @@ void CSceneComponentHierarchyWindow::OnSetSelectNode(CIMGUITree* Tree)
 void CSceneComponentHierarchyWindow::OnDeleteComponent()
 {
 	CSceneComponent* DeleteComp = (CSceneComponent*)FindSelectComponent();
-	
+	CGameObject* Object = DeleteComp->GetGameObject();
+
 	// Inspector에서 Widget삭제
 	((CInspectorWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(INSPECTOR))->OnDeleteSceneComponent(DeleteComp);
 
@@ -290,6 +291,13 @@ void CSceneComponentHierarchyWindow::OnDeleteComponent()
 
 	if (DeleteComp)
 		DeleteComp->DeleteComponent();
+
+	// 지금 지워지는 Component가 RootComponent여서, 그 Component 지우고나면 RootComponent가 nullptr인 경우 
+	// RootComponent의 첫번째 
+	if (!Object->GetRootComponent())
+	{
+
+	}
 }
 
 void CSceneComponentHierarchyWindow::OnSaveComponent()

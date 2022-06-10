@@ -359,10 +359,32 @@ bool CSceneComponent::DeleteComponent()
 			}
 		}
 
+		if (m_vecChild.size() > 0)
+		{
+			CSceneComponent* FirstChild = m_vecChild[0];
+			
+			auto iter = m_vecChild.begin();
+			m_vecChild.erase(iter);
 
-		// 루트노드를 지우는 경우, 그냥 모두 Destroy
-		Destroy();
-		m_Object->SetRootComponent(nullptr);
+			m_Object->SetRootComponent(FirstChild);
+			
+			// 지금 지워질 Component의 첫번째 자식(= FirstChild) 제외한
+			// 나머지 Child들을 FirstChild의 자식으로 넣어준다
+			size_t Count = m_vecChild.size();
+			for (size_t i = 1; i < Count; ++i)
+			{
+				FirstChild->AddChild(m_vecChild[i]);
+			}
+
+			DestroySingle();
+		}
+
+		// 루트노드를 지우는데 자식이 하나도 없을 경우
+		else
+		{
+			Destroy();
+			m_Object->SetRootComponent(nullptr);
+		}
 		return true;
 	}
 
