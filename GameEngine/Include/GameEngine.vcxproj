@@ -363,6 +363,7 @@
     <ClInclude Include="IMGUIText.h" />
     <ClInclude Include="IMGUITextInput.h" />
     <ClInclude Include="IMGUITree.h" />
+    <ClInclude Include="IMGUIUtil.h" />
     <ClInclude Include="IMGUIWidget.h" />
     <ClInclude Include="IMGUIWidgetList.h" />
     <ClInclude Include="IMGUIWindow.h" />

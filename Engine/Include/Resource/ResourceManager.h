@@ -30,6 +30,16 @@ public:
 	void Update();
 	void RenderTarget();
 
+public :
+	const CTextureManager* GetTextureManager() const
+	{
+		return m_TextureManager;
+	}
+	const CMaterialManager* GetMaterialManager() const
+	{
+		return m_MaterialManager;
+	}
+
 public:	// =================== Mesh =====================
 	bool CreateMesh(Mesh_Type Type, const std::string& Name,
 		void* VtxData, int Size, int Count, D3D11_USAGE Usage,
@@ -104,7 +114,7 @@ public:	// =================== Texture =====================
 	bool LoadTexture(const std::string& Name, const TCHAR* FileName,
 		const std::string& PathName = TEXTURE_PATH);
 	bool LoadTextureFullPath(const std::string& Name, const TCHAR* FullPath);
-	class CTexture* LoadTextureFullPathMultibyte(const std::string& Name, const char* FullPath);
+	bool LoadTextureFullPathMultibyte(const std::string& Name, const char* FullPath);
 	bool LoadTexture(const std::string& Name, const std::vector<TCHAR*>& vecFileName,
 		const std::string& PathName = TEXTURE_PATH);
 	bool LoadTextureFullPath(const std::string& Name, const std::vector<TCHAR*>& vecFullPath);

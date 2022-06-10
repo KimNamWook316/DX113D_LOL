@@ -1,6 +1,7 @@
 
 #include "IMGUITree.h"
 #include "IMGUIManager.h"
+#include "IMGUIUtil.h"
 #include "IMGUIWindow.h"
 #include "Scene/SceneManager.h"
 
@@ -263,16 +264,36 @@ void CIMGUITree::Render()
 		
 		if (m_DragDropEnable && ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
 		{
-			ImGui::SetDragDropPayload("DND_DEMO_CELL", &m_GlobalID, sizeof(int));
+			// 기존에 도경님이 정의해둔 Drag Drop
+			{
+				ImGui::SetDragDropPayload("DND_DEMO_CELL", &m_GlobalID, sizeof(int));
 
-			// Drag Drop Src TreeNode의 콜백
-			if(m_DragDropSourceCallback)
-				m_DragDropSourceCallback(this);
+				// Drag Drop Src TreeNode의 콜백
+				if (m_DragDropSourceCallback)
+					m_DragDropSourceCallback(this);
 
-			// Staging 용도로 자신을 저장해두기
-			CIMGUIManager::GetInst()->SetStagingTree(this);
+				// Staging 용도로 자신을 저장해두기
+				CIMGUIManager::GetInst()->SetStagingTree(this);
 
-			ImGui::EndDragDropSource();
+				ImGui::EndDragDropSource();
+			}
+		}
+
+		if (m_DragDropEnable && ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
+		{
+			// File Browser 상의 File 정보를 IMGUITextInput 에 Drop 하기 위한 함수 추가 (OBJ)
+			{
+				ImGui::SetDragDropPayload(vIMGUIDragDropPayLoadName.TextDragDrop, m_Name.c_str(), sizeof(char) * strlen(m_Name.c_str()));
+
+				// Drag Drop Src TreeNode의 콜백
+				if (m_DragDropSourceCallback)
+					m_DragDropSourceCallback(this);
+
+				// Staging 용도로 자신을 저장해두기
+				CIMGUIManager::GetInst()->SetStagingTree(this);
+
+				ImGui::EndDragDropSource();
+			}
 		}
 
 		if (m_DragDropEnable && ImGui::BeginDragDropTarget())
@@ -344,17 +365,40 @@ void CIMGUITree::Render()
 
 		if (m_DragDropEnable && ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
 		{
-			ImGui::SetDragDropPayload("DND_DEMO_CELL", &m_GlobalID, sizeof(int));
+			// 기존에 IMGUITree 에 추가되었던 코드
+			{
+				ImGui::SetDragDropPayload("DND_DEMO_CELL", &m_GlobalID, sizeof(int));
 
-			// Staging 용도로 자신을 저장해두기
-			CIMGUIManager::GetInst()->SetStagingTree(this);
+				// Staging 용도로 자신을 저장해두기
+				CIMGUIManager::GetInst()->SetStagingTree(this);
 
-			// Drag Drop Src TreeNode의 콜백
-			if (m_DragDropSourceCallback)
-				m_DragDropSourceCallback(this);
+				// Drag Drop Src TreeNode의 콜백
+				if (m_DragDropSourceCallback)
+					m_DragDropSourceCallback(this);
 
-			ImGui::EndDragDropSource();
+				ImGui::EndDragDropSource();
+			}
 		}
+
+		if (m_DragDropEnable && ImGui::BeginDragDropSource(ImGuiDragDropFlags_None))
+		{
+			// File Browser 상의 File 정보를 IMGUITextInput 에 Drop 하기 위한 함수 추가 (OBJ)
+			{
+				int NameStrLength = (int)strlen(m_Name.c_str());
+
+				ImGui::SetDragDropPayload(vIMGUIDragDropPayLoadName.TextDragDrop, m_Name.c_str(), sizeof(TCHAR) * NameStrLength);
+
+				// Drag Drop Src TreeNode의 콜백
+				if (m_DragDropSourceCallback)
+					m_DragDropSourceCallback(this);
+
+				// Staging 용도로 자신을 저장해두기
+				CIMGUIManager::GetInst()->SetStagingTree(this);
+
+				ImGui::EndDragDropSource();
+			}
+		}
+		
 
 		if (m_DragDropEnable && ImGui::BeginDragDropTarget())
 		{
@@ -362,25 +406,25 @@ void CIMGUITree::Render()
 			{
 				IM_ASSERT(payload->DataSize == sizeof(int));
 				int payload_n = *(const int*)payload->Data;
-
+			
 				CIMGUITree* NewChild = CIMGUIManager::GetInst()->GetStagingTree();
 				CIMGUITree* NewChildOriginParent = NewChild->mParent;
-
+			
 				// 내가 나가게 될 Tree의 부모에게 나를 삭제하라고 하기
 				if (NewChildOriginParent)
 					NewChildOriginParent->DeleteChild(NewChild->m_Name);
 				// 내가 Tree의 루트라면 나를 갖고 있는 Window에서 나를 m_vecWidget에서 지워주기
 				else
 					m_Owner->EraseWidget(NewChild->m_Name);
-
+			
 				if (NewChild)
 				{
 					AddChild(NewChild);
-
+			
 					// DragDrop Dest TreeNode Callback
 					if (m_DragDropDestCallback)
 						m_DragDropDestCallback(this, m_Name, NewChild->m_Name);
-
+			
 					CIMGUIManager::GetInst()->SetStagingTree(nullptr);
 				}
 			}

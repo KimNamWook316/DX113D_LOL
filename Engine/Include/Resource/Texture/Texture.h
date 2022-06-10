@@ -53,6 +53,10 @@ protected:
 	ID3D11ShaderResourceView* m_ArraySRV;
 
 public:
+	const std::vector<TextureResourceInfo*>& GetVecTextureInfo() const
+	{
+		return m_vecTextureInfo;
+	}
 	ID3D11Texture2D* GetTextureResource(int Index = 0) const
 	{
 		return m_vecTextureInfo[Index]->TextureResource;
@@ -89,8 +93,9 @@ public:
 public:
 	bool LoadTexture(const std::string& Name, const TCHAR* FileName,
 		const std::string& PathName = TEXTURE_PATH);
+	// Default : Bin 폴더 뒷부분을 FileName 으로 세팅해준다.
 	bool LoadTextureFullPath(const std::string& Name, const TCHAR* FullPath);
-	bool LoadTextureFullPathMultibyte(const std::string& Name, const char* FullPath);
+	bool LoadTextureFullPathMultibyte(const std::string& Name, const char* FullPathMultibyte);
 	bool LoadTexture(const std::string& Name, const std::vector<TCHAR*>& vecFileName,
 		const std::string& PathName = TEXTURE_PATH);
 	bool LoadTextureFullPath(const std::string& Name, const std::vector<TCHAR*>& vecFullPath);

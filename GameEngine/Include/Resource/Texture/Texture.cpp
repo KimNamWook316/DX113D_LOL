@@ -205,9 +205,15 @@ bool CTexture::LoadTextureFullPath(const std::string& Name, const TCHAR* FullPat
 	return CreateResource(0);
 }
 
-bool CTexture::LoadTextureFullPathMultibyte(const std::string& Name, const char* FullPath)
+bool CTexture::LoadTextureFullPathMultibyte(const std::string& NewName, const char* FullPathMultibyte)
 {
-	return false;
+	TCHAR FullPath[MAX_PATH] = {};
+
+	// Multibyte 를 Wchar 로 바꿔서 호출해주기
+	int ConvertLength = MultiByteToWideChar(CP_ACP, 0, FullPathMultibyte, -1, 0, 0);
+	MultiByteToWideChar(CP_ACP, 0, FullPathMultibyte, -1, FullPath, ConvertLength);
+
+	return LoadTextureFullPath(NewName, FullPath);
 }
 
 bool CTexture::LoadTexture(const std::string& Name, const std::vector<TCHAR*>& vecFileName,

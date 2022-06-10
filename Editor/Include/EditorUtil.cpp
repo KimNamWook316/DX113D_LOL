@@ -15,6 +15,7 @@
 #include "IMGUITree.h"
 #include "Flag.h"
 
+
 #include <fstream>
 #include <iostream>
 #include <filesystem>
@@ -209,14 +210,59 @@ std::optional<std::string> CEditorUtil::GetFullPathOfTargetFileNameInDir(const s
 	{
 		const std::string& FileName = FilterFileName(entry.path().u8string());
 	
-		if (strcmp(FileName.c_str(), TargetFileName.c_str()))
+		if (strcmp(FileName.c_str(), TargetFileName.c_str()) == 0)
 		{
-			FileNameOnly = fs::path(entry.path()).filename().u8string();
+			GetFileNameOnly(fs::path(entry.path()).filename().u8string(), FileNameOnly);
+
 			return entry.path().u8string();
 		}
 	}
 
 	return std::nullopt;
+}
+
+bool CEditorUtil::GetFileExt(const std::string& FileName, std::string& ExtractedExt)
+{
+	size_t i = FileName.find('.');
+
+	if (i != std::string::npos)
+	{
+		ExtractedExt = FileName.substr(i+1, FileName.length() - i);
+		return true;
+	}
+
+	return false;
+}
+
+bool CEditorUtil::GetFileNameOnly(const std::string& FullFileName, std::string& ExtractedFileName)
+{
+	size_t i = FullFileName.find('.');
+
+	if (i != std::string::npos)
+	{
+		ExtractedFileName = FullFileName.substr(0, i);
+		return true;
+	}
+
+	return false;
+}
+
+bool CEditorUtil::GetFileNameAfterSlash(const std::string& FilePath, std::string& ExtractedFileName)
+{
+	int FilePathLength = (int)FilePath.size();
+
+	for (int i = FilePathLength - 1; i >= 0; --i)
+	{
+		if (FilePath[i] == '\\')
+		{
+			ExtractedFileName = FilePath.substr(i + 1, FilePath.size());
+			return true;
+		}
+	}
+
+	ExtractedFileName = FilePath;
+
+	return true;
 }
 
 void CEditorUtil::ShowDemo()
@@ -370,7 +416,7 @@ bool CEditorUtil::CompareExt(const char* FullPath, const char ExtFilter[_MAX_EXT
 	strcpy_s(FilterBuf, ExtFilter);
 	_strupr_s(FilterBuf);
 
-	int Len = strlen(FullPath);
+	int Len = (int)strlen(FullPath);
 
 	strncpy_s(FullPathExt, FullPath + Len - 4, 4);
 	_strupr_s(FullPathExt);

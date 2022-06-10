@@ -74,14 +74,14 @@ protected:
     CSharedPtr<class CRenderState>  m_RenderStateArray[(int)RenderState_Type::Max];
     std::list<RenderCallback*>    m_RenderCallback;
 
-    // Outline
-    int m_OutlineEnable;
-    float m_OutlineThickness;
-    Vector3 m_OutlineColor;
 protected :
     std::vector<std::string> m_vecTextureFullPathInfos;
     
 public:
+    CGraphicShader* GetShader() const
+    {
+        return m_Shader;
+    }
     CMaterialConstantBuffer* GetCBuffer()   const
     {
         return m_CBuffer;

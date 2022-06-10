@@ -74,3 +74,8 @@ public:
 	DECLARE_SINGLE(CIMGUIManager)
 };
 
+// namespace DragDropPayLoadName
+// {
+// 	const char* Default = "DND_DEMO_CELL";
+// 	const char* TextDragDrop = "DND_TEXT_CELL";
+// };

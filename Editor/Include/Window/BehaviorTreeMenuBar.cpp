@@ -113,7 +113,6 @@ void CBehaviorTreeMenuBar::Update(float DeltaTime)
 				{
 					SceneComponentWindow->OnLoadComponent();
 				}
-
 			}
 			if (ImGui::MenuItem("Save ObjectComponent"))
 			{

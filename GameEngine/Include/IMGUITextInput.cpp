@@ -1,4 +1,5 @@
 #include "IMGUITextInput.h"
+#include "IMGUIUtil.h"
 
 CIMGUITextInput::CIMGUITextInput() :
 	m_TextType(ImGuiText_Type::String),
@@ -99,10 +100,11 @@ void CIMGUITextInput::ApplyDropEffect()
 	// Drop 내용을 받는다.
 	if (ImGui::BeginDragDropTarget())
 	{
-		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("DND_DEMO_CELL"))
+		// if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("DND_DEMO_CELL"))
+		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(vIMGUIDragDropPayLoadName.TextDragDrop))
 		{
 			// char type 배수 
-			if (payload->DataSize % sizeof(char) != 0)
+			if (payload->DataSize % sizeof(TCHAR) != 0)
 				return;
 
 			// 일반적으로 IMGUIText Widget을 Drop 할 것이다.
@@ -117,7 +119,9 @@ void CIMGUITextInput::ApplyDropEffect()
 			case ImGuiText_Type::String:
 			{
 				// 그리고 IMGUIText 는 char[] 이기 때문에, char type 의 배수 크기인지 확인한다.
-				strcpy_s(m_Text, payload_n);
+				char TextDrop[MAX_PATH] = {};
+				strcpy_s(TextDrop, payload_n);
+				SetText(TextDrop);
 			}
 				break;
 			case ImGuiText_Type::Int:

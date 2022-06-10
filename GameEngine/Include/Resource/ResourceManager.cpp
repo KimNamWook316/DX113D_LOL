@@ -339,7 +339,7 @@ std::pair<bool, std::string> CResourceManager::LoadMeshTextureBoneInfo(CAnimatio
 			if (MapCnt == MapSize)
 				return std::make_pair(false, "");
 			else
-				return Result;
+				continue;
 		}
 		// 찾았다면 Return
 		else
@@ -401,7 +401,7 @@ bool CResourceManager::LoadTextureFullPath(const std::string& Name, const TCHAR*
 	return m_TextureManager->LoadTextureFullPath(Name, FullPath);
 }
 
-CTexture* CResourceManager::LoadTextureFullPathMultibyte(const std::string& Name, const char* FullPath)
+bool CResourceManager::LoadTextureFullPathMultibyte(const std::string& Name, const char* FullPath)
 {
 	return m_TextureManager->LoadTextureFullPathMultibyte(Name, FullPath);
 }

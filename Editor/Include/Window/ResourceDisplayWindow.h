@@ -23,7 +23,7 @@ private :
 	std::vector<class CIMGUIWidgetList*> m_vecResourceTapList;
 public :
 	virtual bool Init() override;
-private :
+public  :
 	void GatherLoadedTextureResources();
 	void GatherLoadedMaterialResources();
 };

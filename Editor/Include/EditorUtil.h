@@ -38,6 +38,16 @@ public:
 	static std::optional<std::string> GetFullPathOfTargetFileNameInDir(const std::string& PathName, 
 		const std::string& TargetFileFullName, std::string& FileNameOnly);
 
+	// 파일 이름 중에서 Extension만 리턴해주는 함수
+	static bool GetFileExt(const std::string& FileName, std::string& ExtractedExt);
+
+	// 파일 이름 중에서, Extension 만 제외하고, 파일 본래 이름을 가져다주는 함수
+	static bool GetFileNameOnly(const std::string& FullFileName, std::string& ExtractedFileName);
+
+	// 혹시나 "\\"가 경로에 있다면, 그 뒤의 파일 이름만을 뽑아내주는 함수
+	// 만약 아예 인자로 들어오는 FilePath 에 "\\" 이 존재하지 않는다면, 그냥 FilePath 원본 그대로를 세팅해준다.
+	static bool GetFileNameAfterSlash(const std::string& FilePath, std::string& ExtractedFileName);
+
 	// Imgui Demo Window를 띄워주는 함수
 	static void ShowDemo();
 
@@ -68,6 +78,17 @@ namespace AnimationClipInfoKeys
 	const std::string AnimSeqKey = "Seq Key";
 	const std::string AnimSeqFileName = "Seq File Name";
 };
+
+
+namespace MaterialTextureInfoKeys
+{
+	const std::string Index = "Index";			// MaterialTextureInfo 배열에서 몇번째 Idx 인지
+	const std::string Register = "Register";   // Register 
+	const std::string Name = "Name";		   // MaterialTextureInfo 로 설정된 이름
+	 // MaterialTextureInfo->Texture->TextureResourceInfo 배열 내의 모든 Texture FileName 들 나열하기 
+	const std::string Textures[] = { "Texture1", "Texture2",  "Texture3",  "Texture4",  "Texture5",  "Texture6",  "Texture7"};
+};
+
 
 // 출처 : https://pyoungon.tistory.com/25
 static int CALLBACK BrowseCallbackProc(HWND hWnd, UINT uMsg, LPARAM lParam, LPARAM lpData)

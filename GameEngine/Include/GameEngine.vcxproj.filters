@@ -1760,6 +1760,9 @@
     <ClInclude Include="Resource\Shader\OutlineShader.h">
       <Filter>02. Resource\02. Shader\02. ShaderClass\18. Outline</Filter>
     </ClInclude>
+    <ClInclude Include="IMGUIUtil.h">
+      <Filter>01. Engine\08. IMGUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\Shader\ColorMesh.fx">

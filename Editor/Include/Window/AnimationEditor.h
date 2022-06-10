@@ -12,7 +12,6 @@ class CAnimationEditor :
 public:
 	CAnimationEditor();
 	~CAnimationEditor();
-
 private:
 	// Anim Combo Box
 	class CIMGUIComboBox* m_CurAnimComboBox;
@@ -90,11 +89,8 @@ private:
 	void OnRefreshFrameSliderInfo(class CAnimationSequence* SequenceData);
 	void OnRefreshAnimationComboBox();
 	void OnRefreshScaleAndTimeInputInfo();
-	void OnClearExistingAnimationSeqInfos();
-	void OnAddAnimationSequence();
-	void OnClickAnimationSequence(int, const char*);
-	void OnAnimationSliderIntCallback(int);
-	void OnAnimationFrameInputCallback();
+	void OnRefreshCheckBoxInfo();
+
 	// Play
 	void OnCreateSample3DObject();
 	void OnSetPlayEngineDeltaTime(const char*, bool);
@@ -104,6 +100,7 @@ private:
 	// Loop
 	void OnLoopAnimation(const char*, bool);
 	// Save Load
+	void OnAddAnimationSequence();
 	void OnSaveAnimationInstance();
 	void OnLoadAnimationInstance();
 	void OnApplyAnimationSlider(CAnimationSequence* Sequence);
@@ -118,6 +115,11 @@ private:
 	// 그런데 이렇게 하면 Animation 이 이상하게 동작하게 된다. 아마도 
 	// void OnDeleteAnimFrame();
 
+// Helper Functions
+	void OnClearExistingAnimationSeqInfos();
+	void OnClickAnimationSequence(int, const char*);
+	void OnAnimationSliderIntCallback(int);
+	void OnAnimationFrameInputCallback();
 	// Convert Animation Instance  Functions
 private :
 	void OnClickSetAnimSeqSrcDirButton();

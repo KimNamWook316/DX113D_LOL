@@ -896,7 +896,10 @@ CMaterial* CMaterial::Clone()	const
 
 bool CMaterial::Save(FILE* File)
 {
-	std::string	ShaderName = m_Shader->GetName();
+	std::string	ShaderName = "ShaderSetting";
+
+	if (m_Shader)
+		std::string	ShaderName = m_Shader->GetName();
 
 	int	Length = (int)ShaderName.length();
 
@@ -913,14 +916,24 @@ bool CMaterial::Save(FILE* File)
 	fwrite(&m_EmissiveTex, sizeof(bool), 1, File);
 	fwrite(&m_Bump, sizeof(bool), 1, File);
 
+	int SampleWorld = 9876;
+	fwrite(&SampleWorld, sizeof(int), 1, File);
+
+	// 이 부분까지는 문제 X
 	for (int i = 0; i < (int)RenderState_Type::Max; ++i)
 	{
+		int SampleRender = 9876;
+		fwrite(&SampleRender, sizeof(int), 1, File);
+
 		bool	StateEnable = false;
 
 		if (m_RenderStateArray[i])
 			StateEnable = true;
 
 		fwrite(&StateEnable, sizeof(bool), 1, File);
+
+		int SampleWorld = 9876;
+		fwrite(&SampleWorld, sizeof(int), 1, File);
 
 		if (m_RenderStateArray[i])
 		{
@@ -934,7 +947,6 @@ bool CMaterial::Save(FILE* File)
 	}
 
 	int	TextureCount = (int)m_TextureInfo.size();
-
 	fwrite(&TextureCount, sizeof(int), 1, File);
 
 	for (int i = 0; i < TextureCount; ++i)
@@ -956,8 +968,12 @@ bool CMaterial::Save(FILE* File)
 		m_TextureInfo[i].Texture->Save(File);
 	}
 
+	m_OutlineThickness = 1.123456f;
+
 	// 외곽선 관련 값들 Save, Load 추가하기
-	// 
+	fwrite(&m_OutlineEnable, sizeof(bool), 1, File);
+	fwrite(&m_OutlineThickness, sizeof(float), 1, File);
+	fwrite(&m_OutlineColor, sizeof(Vector3), 1, File);
 
 	return true;
 }
@@ -996,16 +1012,25 @@ bool CMaterial::Load(FILE* File)
 	m_CBuffer->SetEmissiveColor(m_EmissiveColor);
 	m_CBuffer->SetOpacity(m_Opacity);
 
+	int SampleWorld = -1;
+	fread(&SampleWorld, sizeof(int), 1, File);
+
 	for (int i = 0; i < (int)RenderState_Type::Max; ++i)
 	{
-		bool	StateEnable = false;
+		int SampleRender = 0;
+		fread(&SampleRender, sizeof(int), 1, File);
 
+		bool	StateEnable = true;
 		fread(&StateEnable, sizeof(bool), 1, File);
+
+		int SampleWorld = -1;
+		fread(&SampleWorld, sizeof(int), 1, File);
 
 		if (StateEnable)
 		{
 			char	StateName[256] = {};
-			Length = 0;
+			
+			int  Length = 0;
 
 			fread(&Length, sizeof(int), 1, File);
 			fread(StateName, sizeof(char), Length, File);
@@ -1015,7 +1040,6 @@ bool CMaterial::Load(FILE* File)
 	}
 
 	int	TextureCount = 0;
-
 	fread(&TextureCount, sizeof(int), 1, File);
 
 	for (int i = 0; i < TextureCount; ++i)
@@ -1135,6 +1159,9 @@ bool CMaterial::Load(FILE* File)
 	}
 
 	// todo : 외곽선 관련 값들 Save, Load 추가하기
+	fread(&m_OutlineEnable, sizeof(bool), 1, File);
+	fread(&m_OutlineThickness, sizeof(float), 1, File);
+	fread(&m_OutlineColor, sizeof(Vector3), 1, File);
 
 
 	return true;
@@ -1160,7 +1187,7 @@ bool CMaterial::LoadFullPath(const char* FullPath)
 {
 	FILE* File = nullptr;
 
-	fopen_s(&File, FullPath, "wb");
+	fopen_s(&File, FullPath, "rb");
 
 	if (!File)
 		return false;
