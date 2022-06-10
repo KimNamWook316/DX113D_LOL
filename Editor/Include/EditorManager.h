@@ -32,7 +32,6 @@ private:
 	class CBaseMenuBar* m_BaseMenuBar;
 	class CMaterialEditor* m_MaterialEditor;
 	class CResourceDisplayWindow* m_ResourceDisplayWindow;
-
 	class C3DCameraObject* m_CameraObject;
 
 	bool				m_MousePush;
@@ -58,6 +57,10 @@ public:
 	class CSceneComponentHierarchyWindow* GetComponentHierarchyWindow()	const
 	{
 		return m_ComponentHierarchyWindow;
+	}
+	class CResourceDisplayWindow* GetResourceDisplayWindow() const
+	{
+		return m_ResourceDisplayWindow;
 	}
 	class CAnimationEditor* GetAnimationEditor()	const
 	{

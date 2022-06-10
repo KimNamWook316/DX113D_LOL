@@ -78,6 +78,10 @@ protected :
     std::vector<std::string> m_vecTextureFullPathInfos;
     
 public:
+    CGraphicShader* GetShader() const
+    {
+        return m_Shader;
+    }
     CMaterialConstantBuffer* GetCBuffer()   const
     {
         return m_CBuffer;

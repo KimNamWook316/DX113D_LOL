@@ -1,8 +1,6 @@
 
 #include "ShaderInfo.fx"
 
-
-
 struct VS_SKY_OUTPUT
 {
     float4 Pos : SV_Position;

@@ -285,6 +285,11 @@ bool CMesh::LoadMeshFile(const char* FullPath)
 
 	fclose(File);
 
+	if (LoadResult)
+	{
+		strcpy_s(m_FullPath, FullPath);
+	}
+
 	return LoadResult;
 }
 

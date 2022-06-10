@@ -160,7 +160,7 @@ bool CTextureManager::LoadTextureFullPath(const std::string& Name, const TCHAR* 
 	return true;
 }
 
-CTexture* CTextureManager::LoadTextureFullPathMultibyte(const std::string& Name, const char* FullPath)
+bool CTextureManager::LoadTextureFullPathMultibyte(const std::string& Name, const char* FullPath)
 {
 	CTexture* Texture = FindTexture(Name);
 
@@ -172,12 +172,12 @@ CTexture* CTextureManager::LoadTextureFullPathMultibyte(const std::string& Name,
 	if (!Texture->LoadTextureFullPathMultibyte(Name, FullPath))
 	{
 		SAFE_RELEASE(Texture);
-		return nullptr;
+		return false;
 	}
 
 	m_mapTexture.insert(std::make_pair(Name, Texture));
 
-	return Texture;
+	return true;
 }
 
 bool CTextureManager::LoadTexture(const std::string& Name, const std::vector<TCHAR*>& vecFileName,

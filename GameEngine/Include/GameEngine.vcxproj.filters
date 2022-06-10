@@ -322,8 +322,9 @@
     <Filter Include="02. Resource\02. Shader\02. ShaderClass\18. Outline">
       <UniqueIdentifier>{2e7b8961-6d78-4162-8ab8-a69e0662e584}</UniqueIdentifier>
     </Filter>
-    <Filter Include="05. Component\02. ObjectComponent\03. StateComponent\02. State">
-      <UniqueIdentifier>{00aa3306-2867-4814-80cb-a9b469f619ba}</UniqueIdentifier>
+
+    <Filter Include="02. Resource\02. Shader\02. ShaderClass\19. Gray">
+      <UniqueIdentifier>{bb3d5061-fa1a-421a-a2c5-0ce87adf34b3}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1046,6 +1047,9 @@
     </ClCompile>
     <ClCompile Include="Component\State\StateManager.cpp">
       <Filter>05. Component\02. ObjectComponent\03. StateComponent\02. State</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Shader\GrayShader.cpp">
+      <Filter>02. Resource\02. Shader\02. ShaderClass\19. Gray</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1805,6 +1809,9 @@
     <ClInclude Include="Component\State\StateManager.h">
       <Filter>05. Component\02. ObjectComponent\03. StateComponent\02. State</Filter>
     </ClInclude>
+    <ClInclude Include="Resource\Shader\GrayShader.h">
+      <Filter>02. Resource\02. Shader\02. ShaderClass\19. Gray</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\Shader\ColorMesh.fx">
@@ -1856,6 +1863,9 @@
       <Filter>02. Resource\02. Shader\01. HLSL</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\Shader\Outline.fx">
+      <Filter>02. Resource\02. Shader\01. HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\Shader\Gray.fx">
       <Filter>02. Resource\02. Shader\01. HLSL</Filter>
     </FxCompile>
   </ItemGroup>

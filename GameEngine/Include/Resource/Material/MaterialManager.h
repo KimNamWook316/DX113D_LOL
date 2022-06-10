@@ -14,7 +14,11 @@ private:
 private:
 	std::unordered_map<std::string, CSharedPtr<CMaterial>>	m_mapMaterial;
 	class CMaterialConstantBuffer* m_CBuffer;
-
+public :
+	const std::unordered_map<std::string, CSharedPtr<CMaterial>>& GetMapMaterial() const
+	{
+		return m_mapMaterial;
+	}
 public:
 	bool Init();
 	CMaterial* FindMaterial(const std::string& Name);

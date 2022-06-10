@@ -401,7 +401,7 @@ bool CResourceManager::LoadTextureFullPath(const std::string& Name, const TCHAR*
 	return m_TextureManager->LoadTextureFullPath(Name, FullPath);
 }
 
-CTexture* CResourceManager::LoadTextureFullPathMultibyte(const std::string& Name, const char* FullPath)
+bool CResourceManager::LoadTextureFullPathMultibyte(const std::string& Name, const char* FullPath)
 {
 	return m_TextureManager->LoadTextureFullPathMultibyte(Name, FullPath);
 }

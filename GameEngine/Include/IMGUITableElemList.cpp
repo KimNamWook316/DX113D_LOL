@@ -128,6 +128,7 @@ void CIMGUITableElemList::MakeKey(const std::string& DataName)
 void CIMGUITableElemList::ClearAll()
 {
     m_mapDataInfo.clear();
+    m_vecDataInfo.clear();
 }
 
 void CIMGUITableElemList::CalculateMaxElemCount()
@@ -154,6 +155,13 @@ void CIMGUITableElemList::ClearContents()
     for (; iter != iterEnd; ++iter)
     {
         iter->second.clear();
+    }
+
+    size_t vecSize = m_vecDataInfo.size();
+
+    for (size_t i = 0; i < vecSize; ++i)
+    {
+        m_vecDataInfo[i].clear();
     }
 }
 
@@ -243,7 +251,10 @@ void CIMGUITableElemList::Render()
                 {
                     ImGui::TableSetColumnIndex(column);
 
-                  ImGui::TextColored(m_Color.Value, m_vecDataInfo[column][row].c_str());
+                    if (m_vecDataInfo[column].size() > row)
+                    {
+                        ImGui::TextColored(m_Color.Value, m_vecDataInfo[column][row].c_str());
+                    }
                 }
             }
         }

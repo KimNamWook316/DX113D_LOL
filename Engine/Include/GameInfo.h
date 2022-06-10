@@ -40,6 +40,9 @@
 #include "Resource/Texture/DirectXTex.h"
 #include "fmod.hpp"
 
+// IMGUIWidget, IMGUIWindow 들이 사용하는 공통 정보
+// #include "IMGUIUtil.h"
+
 #ifdef _DEBUG
 
 #pragma comment(lib, "DirectXTex_Debug.lib")
@@ -628,7 +631,6 @@ struct OutlineCBuffer
 	float NormalMultiplier;
 	float NormalBias;
 };
-
 struct ChampionInfo
 {
 	float MoveSpeed;

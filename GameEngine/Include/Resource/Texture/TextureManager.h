@@ -15,6 +15,11 @@ private:
 	std::unordered_map<std::string, ID3D11SamplerState*>	m_mapSampler;
 	class CWidgetConstantBuffer* m_CBuffer;
 
+public :
+	const std::unordered_map<std::string, CSharedPtr<class CTexture>>& GetMapTexture() const
+	{
+		return m_mapTexture;
+	}
 public:
 	bool Init();
 	void RenderTarget(class CMesh* Mesh, class CShader* Shader);
@@ -22,7 +27,7 @@ public:
 	bool LoadTexture(const std::string& Name, const TCHAR* FileName,
 		const std::string& PathName = TEXTURE_PATH);
 	bool LoadTextureFullPath(const std::string& Name, const TCHAR* FullPath);
-	class CTexture* LoadTextureFullPathMultibyte(const std::string& Name, const char* FullPath);
+	bool LoadTextureFullPathMultibyte(const std::string& Name, const char* FullPath);
 	bool LoadTexture(const std::string& Name, const std::vector<TCHAR*>& vecFileName,
 		const std::string& PathName = TEXTURE_PATH);
 	bool LoadTextureFullPath(const std::string& Name, const std::vector<TCHAR*>& vecFullPath);

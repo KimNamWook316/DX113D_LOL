@@ -23,6 +23,19 @@ private:
     bool m_IsCameraRot;
     bool m_IsCameraZoom;
 public :
+    bool IsCameraRot() const
+    {
+        return m_IsCameraRot;
+    }
+    bool IsCameraZoom() const
+    {
+        return m_IsCameraZoom;
+    }
+    class CAnimationSequenceInstance* GetAnimationInstance() const
+    {
+        return m_Animation;
+    }
+public :
     void SetCameraRot(bool Enable)
     {
         m_IsCameraRot = Enable;

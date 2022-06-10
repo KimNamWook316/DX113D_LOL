@@ -9,8 +9,10 @@ class CMaterialEditor :
 public:
 	CMaterialEditor();
 	~CMaterialEditor();
+
 private :
 	class CMaterial* m_SelectedMaterial;
+
 private :
 	class CIMGUITextInput* m_NewMaterialName; // 동시에 파일 이름으로 저장될 것이다.
 	class CIMGUIButton* m_CreateMaterialBtn;
@@ -21,6 +23,9 @@ private :
 
 	// 해당 Material 의 정보를 보여주는 Info Table
 	class CIMGUITable* m_MtrlInfoTable;
+
+	// 현재 선택된 Texture 를 보여주는 Image 
+	class CIMGUIImage* m_SetTexureImage;
 
 	// Texture 목록을 보여주는 장소
 	class CIMGUITableElemList* m_TextureInfoTable;
@@ -57,17 +62,20 @@ private :
 	void OnCreateMaterialCallback();
 
 	void OnDropAndCreateMaterialCallback(const std::string&);
+	void OnDropAndSetShaderToMaterial(const std::string&);
 
 	void OnIsOutLineEdit(const char*, bool Enable);
 	void OnSetOutLineColor(const Vector3& Color);
 	void OnSetOutLineThickNess(float ThickNess);
 
 	void OnSetTextureBtn();
+	void OnSetTextureBtnWithString(const std::string&);
 	void OnAddTextureBtn();
+	void OnAddTextureBtnWithString(const std::string&);
 
 	void OnSaveMaterial();
 	void OnLoadMaterial();
 
-	void RefreshMaterialDisplayInfo(class CMaterial* Material);
+	void RefreshMaterialDisplayInfo(class CMaterial* Material, class CTexture* Texture = nullptr);
 };
 

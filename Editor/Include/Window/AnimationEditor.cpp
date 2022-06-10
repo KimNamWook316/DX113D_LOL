@@ -156,21 +156,28 @@ bool CAnimationEditor::Init()
 
 	// Sequence Make Widgets ----------------------------------------------------------------------------------------------------------------
 	CIMGUIText* HelpText = AddWidget<CIMGUIText>("Anim Seq Load Btn Help Text", 90.f, 30.f);
-	HelpText->SetText("ex)  'ZedIdle' -- > pair('ZedIdle', 'ZedIdle.sqc') 형태로 \n SceneResource, ResourceManager의 m_mapSequence 에 저장");
+	const char* AddSeqHelpText = R"(ex)  'ZedIdle' -- > pair('ZedIdle', 'ZedIdle.sqc') 형태로 
+	SceneResource, ResourceManager의 m_mapSequence 에 저장")";
+	HelpText->SetText(AddSeqHelpText);
 	HelpText->SetIsHelpMode(true);
 
 	Line = AddWidget<CIMGUISameLine>("Line");
 	Line->SetOffsetX(100.f);
 
 	HelpText = AddWidget<CIMGUIText>("Anim Seq Load Btn Help Text", 90.f, 30.f);
-	HelpText->SetText("ex) 'Idle' --> m_Animation->AddAnimation('ZedIdle', 'Idle') ? \n ZedIdle Key로 ResourceManager 의 mapSequence 에 저장된 Animation Sequence 를 \n 'Idle' 이라는 이름의 Key값으로 AnimationInstance 에 정보 추가");
+	const char* ResourceAnimKeyHelpText = R"(ex) 'Idle' --> m_Animation->AddAnimation('ZedIdle', 'Idle') ? 
+ZedIdle Key로 ResourceManager 의 mapSequence 에 저장된 Animation Sequence 를 
+'Idle' 이라는 이름의 Key값으로 AnimationInstance 에 정보 추가)";
+	HelpText->SetText(ResourceAnimKeyHelpText);
 	HelpText->SetIsHelpMode(true);
 
 	Line = AddWidget<CIMGUISameLine>("Line");
 	Line->SetOffsetX(200.f);
 
 	HelpText = AddWidget<CIMGUIText>("Anim Key Name Edit Help", 90.f, 30.f);
-	HelpText->SetText("ex) 'EditIdle' --> 기존의 m_Animation->AddAnimation('ZedIdle', 'Idle') 으로 인해 만들어진 m_mapAnimationSequence['Idle'] = 'ZedIdle' 을 \n m_mapAnimationSequence['EditIdle'] = 'ZedIdle' 로 Key 값 수정 ");
+	const char* AnimInstKeyHelpText = R"(ex) 'EditIdle' --> 기존의 m_Animation->AddAnimation('ZedIdle', 'Idle') 으로 인해 만들어진 m_mapAnimationSequence['Idle'] = 'ZedIdle' 을 
+m_mapAnimationSequence['EditIdle'] = 'ZedIdle' 로 Key 값 수정 )";
+	HelpText->SetText(AnimInstKeyHelpText);
 	HelpText->SetIsHelpMode(true);
 
 	// Seq Name Inputs
@@ -217,7 +224,11 @@ bool CAnimationEditor::Init()
 
 	// Animation Related Btns
 	HelpText = AddWidget<CIMGUIText>("Instance Load Btn Help Text", 90.f, 30.f);
-	HelpText->SetText(".anim 파일을 Load 하려면, MESH_PATH (Bin//Mesh) 경로에 관련 .msh , .bne, .fbm(폴더) 가 존재해야 한다. \n ex) Alistar.anim 를 Load 하려면, \n MESH_PATH 에 Alistar_Idle.sqc, Alistar_Idle.msh, Alistar_Idle.fbm 등, \n Alistar Animation 과 관련된 파일들이 하나는 존재햐야 한다.");
+	const char* InstLoadHelpText = R"(.anim 파일을 Load 하려면, MESH_PATH (Bin//Mesh) 경로에 관련 .msh , .bne, .fbm(폴더) 가 존재해야 한다. 
+ex) Alistar.anim 를 Load 하려면, 
+MESH_PATH 에 Alistar_Idle.sqc, Alistar_Idle.msh, Alistar_Idle.fbm 등, 
+Alistar Animation 과 관련된 파일들이 하나는 존재햐야 한다)";
+	HelpText->SetText(InstLoadHelpText);
 	HelpText->SetIsHelpMode(true);
 
 	m_AnimSequenceAddBtn = AddWidget<CIMGUIButton>("Add Seq", 90.f, 20.f);
@@ -558,17 +569,21 @@ void CAnimationEditor::OnLoadAnimationInstance()
 
 		// 현재 Scene에 모든 Sequence 내용을 추가한다.
 		// m_Animation->AddAnimationSequenceToSceneResource();
-
 		OnRefreshFrameSliderInfo(m_Animation->GetCurrentAnimation()->GetAnimationSequence());
 
 		// 현재 Scene의 정보를 m_Scene으로 지정해준다
 		m_Animation->SetScene(CSceneManager::GetInst()->GetScene());
 
+		// Refresh CheckBox Info
+		OnRefreshCheckBoxInfo();
+
 		// Animation Play Scale, Time
 		OnRefreshScaleAndTimeInputInfo();
 
+
 		// Animation을 시작한다..
 		m_Animation->Play();
+
 	}
 }
 
@@ -709,8 +724,10 @@ void CAnimationEditor::OnEditAnimPlayTime()
 	// if (m_PlayTimeInput->Empty())
 	//	return;
 
-	m_Animation->GetCurrentAnimation()->GetAnimationSequence()->SetPlayTime(m_PlayTimeInput->GetValueFloat());
-	m_Animation->GetCurrentAnimation()->SetPlayTime(m_PlayTimeInput->GetValueFloat());
+	float SetPlayTime = m_PlayTimeInput->GetValueFloat();
+
+	m_Animation->GetCurrentAnimation()->GetAnimationSequence()->SetPlayTime(SetPlayTime);
+	m_Animation->GetCurrentAnimation()->SetPlayTime(SetPlayTime);
 
 	OnRefreshAnimationClipTable(m_Animation->GetCurrentAnimation()->GetAnimationSequence());
 }
@@ -760,6 +777,17 @@ void CAnimationEditor::OnDeleteAnimationSequenceData()
 
 	// Combo Box 내용 Refresh
 	OnRefreshAnimationComboBox();
+
+	if (!m_Animation->GetCurrentAnimation())
+		return;
+
+	OnRefreshAnimationClipTable(m_Animation->GetCurrentAnimation()->GetAnimationSequence());
+
+	OnRefreshFrameSliderInfo(m_Animation->GetCurrentAnimation()->GetAnimationSequence());
+
+	OnRefreshScaleAndTimeInputInfo();
+
+	OnRefreshCheckBoxInfo();
 }
 
 void CAnimationEditor::OnClickSetAnimSeqSrcDirButton()
@@ -1043,11 +1071,15 @@ void CAnimationEditor::OnAddAnimationSequence()
 		m_Animation->AddAnimation(m_NewAnimSeqName->GetTextUTF8(), m_NewAnimSeqDataKeyName->GetTextUTF8());
 		
 		// Combo Box 정보 갱신
+		OnRefreshAnimationClipTable(LoadedSequence);
+
+		OnRefreshFrameSliderInfo(LoadedSequence);
+
 		OnRefreshAnimationComboBox();
 		
-		OnRefreshAnimationClipTable(LoadedSequence);
-		
 		OnRefreshScaleAndTimeInputInfo();
+
+		OnRefreshCheckBoxInfo();
 		
 		// Frame Slider 의 최대 최소 값 세팅하기
 		m_FrameSlider->SetMin(LoadedSequence->GetStartFrame());
@@ -1071,13 +1103,19 @@ void CAnimationEditor::OnClickAnimationSequence(int Index, const char* Name)
 		return;
 	}
 
+	// 클릭한 Animation 으로 Current Animation 세팅
+	m_Animation->SetCurrentAnimation(Name);
+
 	// Table 정보 갱신
 	OnRefreshAnimationClipTable(SequenceData->GetAnimationSequence());
 
 	OnRefreshFrameSliderInfo(SequenceData->GetAnimationSequence());
 
-	// 클릭한 Animation 으로 Current Animation 세팅
-	m_Animation->SetCurrentAnimation(Name);
+	OnRefreshAnimationComboBox();
+
+	OnRefreshScaleAndTimeInputInfo();
+
+	OnRefreshCheckBoxInfo();
 }
 
 void CAnimationEditor::OnRefreshAnimationClipTable(CAnimationSequence* Sequence)
@@ -1137,6 +1175,7 @@ void CAnimationEditor::OnRefreshAnimationComboBox()
 	else
 		m_CurAnimComboBox->SetSelectIndex(m_CurAnimComboBox->GetItemCount() - 1);
 
+
 }
 
 void CAnimationEditor::OnRefreshScaleAndTimeInputInfo()
@@ -1144,6 +1183,24 @@ void CAnimationEditor::OnRefreshScaleAndTimeInputInfo()
 	if (!m_Animation || !m_Animation->GetCurrentAnimation())
 		return;
 
-	m_PlayScaleInput->SetFloat(m_Animation->GetCurrentAnimation()->GetAnimationPlayScale());
-	m_PlayTimeInput->SetFloat(m_Animation->GetCurrentAnimation()->GetAnimationTime());
+	float PlayScale = m_Animation->GetCurrentAnimation()->GetAnimationPlayScale();
+	m_PlayScaleInput->SetFloat(PlayScale);
+
+	float PlayTime = m_Animation->GetCurrentAnimation()->GetAnimationPlayTime();
+	m_PlayTimeInput->SetFloat(PlayTime);
+}
+
+void CAnimationEditor::OnRefreshCheckBoxInfo()
+{
+	if (!m_3DTestObject)
+		return;
+
+	if (!m_Animation || !m_Animation->GetCurrentAnimation())
+		return;
+
+	m_DeltaTimeCheckBtn->SetCheck(0, CEngine::GetInst()->IsPlay());
+	m_AnimationCheckBtn->SetCheck(0, m_Animation->IsPlay());
+	m_RotationCheckBtn->SetCheck(0,m_3DTestObject->IsCameraRot());
+	m_ZoomEnableBtn->SetCheck(0, m_3DTestObject->IsCameraRot());
+	m_LoopEnableBtn->SetCheck(0, m_Animation->GetCurrentAnimation()->IsLoop());
 }

@@ -21,7 +21,6 @@
 #define DIRECTORY_IMAGE						"DirectoryImage"
 #define FILE_IMAGE							"FileImage"
 
-
 #define SINGLELINE_NUMICON	5
 
 #define ICON_SIZEX			100.f

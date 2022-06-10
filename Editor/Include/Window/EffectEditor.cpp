@@ -506,7 +506,7 @@ void CEffectEditor::OnLoadParticleClass()
         if (strcmp(Ext, ".PRTC") != 0)
             return;
     }
-
+    
 }
 
 void CEffectEditor::OnSetBasicParticleMaterialSetting(CSceneComponent* Com)
