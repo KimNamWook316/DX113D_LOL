@@ -44,7 +44,11 @@ void CIMGUITable::AddData(const std::string& DataName, const std::string& Val)
 {
     m_mapDataInfo[DataName].push_back(Val);
 
-    size_t VecSize = m_mapDataInfo[DataName].size();
+    std::vector<std::string> Data = m_mapDataInfo[DataName];
+
+    // size_t VecSize = m_mapDataInfo[DataName].size();
+    size_t VecSize = Data.size();
+
     if (VecSize > m_MaxElemCnt)
         m_MaxElemCnt = VecSize;
 }

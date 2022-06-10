@@ -30,7 +30,7 @@ public:
 	void Update();
 	void RenderTarget();
 
-public :
+public:
 	const CTextureManager* GetTextureManager() const
 	{
 		return m_TextureManager;
@@ -38,6 +38,10 @@ public :
 	const CMaterialManager* GetMaterialManager() const
 	{
 		return m_MaterialManager;
+	}
+	const CShaderManager* GetShaderManager() const
+	{
+		return m_ShaderManager;
 	}
 
 public:	// =================== Mesh =====================

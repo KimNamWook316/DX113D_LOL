@@ -126,7 +126,11 @@ private:
 	// Particle Editor
 	CSharedPtr<class CShader> m_ParticleShader; // m_AnimEditorRenderTarget 에 그려내기 위한 Shader 
 	CSharedPtr<CRenderTarget>	m_ParticleEffectEditorRenderTarget; // Skinning 처리 이후, 해당 출력을, 별도의 RenderTarget 에 그려낸다.
-
+public :
+	CRenderStateManager* GetRenderStateManager() const
+	{
+		return m_RenderStateManager;
+	}
 public:
 	float GetShadowLightDistance() const
 	{
