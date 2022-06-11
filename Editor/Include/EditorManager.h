@@ -58,6 +58,14 @@ public:
 	{
 		return m_ComponentHierarchyWindow;
 	}
+	class CEffectEditor* GetEffectEditor() const
+	{
+		return m_EffectEditor;
+	}
+	class CMaterialEditor* GetMaterialEditor() const
+	{
+		return m_MaterialEditor;
+	}
 	class CResourceDisplayWindow* GetResourceDisplayWindow() const
 	{
 		return m_ResourceDisplayWindow;

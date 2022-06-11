@@ -26,10 +26,6 @@ public:
         mbEnable = bEnable;
     }
 
-    void SetCheckEnable(bool Enable)
-    {
-        m_EnableCheck = Enable;
-    }
 
 public:
     bool IsSelected()
@@ -49,7 +45,5 @@ private:
     bool mbSelect;
     bool mbEnable;
     std::function<void()> mCallBack;
-private :
-    bool m_EnableCheck;
 };
 

@@ -41,7 +41,7 @@ bool CResourceDisplayWindow::Init()
 	m_vecResourceTapList.push_back(m_ShaderList);
 
 	// Sampler List
-	m_SamplerList = AddWidget<CIMGUIWidgetList>("Sampler", 100.f, 20.f);
+	m_SamplerList = AddWidget<CIMGUIWidgetList>("RenderState", 100.f, 20.f);
 	m_SamplerList->SetApplyHideEffect(true);
 	m_vecResourceTapList.push_back(m_SamplerList);
 

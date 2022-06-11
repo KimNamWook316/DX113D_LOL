@@ -199,14 +199,15 @@ void CMaterialEditor::OnCreateMaterialCallback()
 
 	CMaterial* NewMaterial = CResourceManager::GetInst()->CreateMaterial<CMaterial>(m_NewMaterialName->GetTextUTF8());
 
-	// 이미 선택된 내용이 있다면 Update
-	if (m_SelectedMaterial)
+	// 이미 선택된 Material 과 같다면 X
+	if (m_SelectedMaterial && m_SelectedMaterial == NewMaterial)
 	{
+		return;
 	}
 
 	m_SelectedMaterial = NewMaterial;
 
-	RefreshMaterialDisplayInfo(m_SelectedMaterial, nullptr);
+	RefreshMaterialDisplayInfo(m_SelectedMaterial);
 
 	// 보여지는 Texture 정보 갱신
 	m_SetTexureImage->SetTexture(nullptr);
@@ -640,13 +641,16 @@ void CMaterialEditor::RefreshMaterialDisplayInfo(class CMaterial* Material, clas
 	// Info Table 세팅
 	// Shader Name
 	CShader* Shader = Material->GetShader();
+
+	m_ShaderSetInput->ClearText();
+
 	if (Shader)
 		m_ShaderSetInput->SetText(Shader->GetName().c_str());
 	 
 	// TODO : Material 의 고유 정보 세팅 (현재로서는 필요한 것은 없어보인다)
 	// BaseColor, Ambient Color, Specular Color, EmmisiveColor
 	// m_MtrlInfoTable->Clear()
-	// m_MtrlInfoTable->AddData(AnimationClipInfoKeys::FrameRange, Sequence->GetStartFrame());
+	// m_MtrlInfoTable->AddData(AnimationClipInfoKeys::FrameTRange, Sequence->GetStartFrame());
 	// m_MtrlInfoTable->AddData(AnimationClipInfoKeys::FrameRange, Sequence->GetEndFrame());
 	// m_MtrlInfoTable->AddData(AnimationClipInfoKeys::FrameLength, Sequence->GetFrameLength());
 	// m_MtrlInfoTable->AddData(AnimationClipInfoKeys::FrameMode, Sequence->GetFrameMode());

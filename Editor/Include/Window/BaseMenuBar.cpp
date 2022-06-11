@@ -3,6 +3,7 @@
 #include "IMGUIBeginMenu.h"
 #include "../Widget/SaveLoadBeginMenu.h"
 #include "../Widget/BehaviorTreeMenu.h"
+#include "../Widget/ResourceMenu.h"
 
 CBaseMenuBar::CBaseMenuBar()
 {
@@ -23,6 +24,7 @@ bool CBaseMenuBar::Init()
 	// "File" -> Name 으로 세팅해준 것이, 실제 Menu Bar 에서 보여지는 이름이 된다.
 	m_SaveLoadBeginMenu = AddWidget<CSaveLoadBeginMenu>("File");
 	m_BehaviorTreeBeginMenu = AddWidget<CBehaviorTreeMenu>("BehaviorTree");
+	m_ResourceBeginMenu = AddWidget<CResourceMenu>("Resource");
 
 	return true;
 }

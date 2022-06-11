@@ -56,6 +56,7 @@ bool CSaveLoadBeginMenu::Init()
 	// Object Component
 	m_SaveObjectComponentMenu = AddMenuItem("Save ObjectComponent");
 	m_SaveObjectComponentMenu->SetClickCallBack(this, &CSaveLoadBeginMenu::OnSaveObjectComponentMenuCallback);
+	
 	m_LoadObjectComponentMenu = AddMenuItem("Load ObjectComponent");
 	m_LoadObjectComponentMenu->SetClickCallBack(this, &CSaveLoadBeginMenu::OnLoadObjectComponentMenuCallback);
 
