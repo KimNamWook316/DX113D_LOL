@@ -334,11 +334,12 @@ void CAnimationMeshWidget::OnLoadAnimationInstance()
 	if (GetOpenFileName(&OpenFile) != 0)
 	{
 		char	Ext[_MAX_EXT] = {};
-
+		char FileName[MAX_PATH] = {};
 		char FilePathMultibyte[MAX_PATH] = {};
+		
 		int ConvertLength = WideCharToMultiByte(CP_ACP, 0, FilePath, -1, 0, 0, 0, 0);
 		WideCharToMultiByte(CP_ACP, 0, FilePath, -1, FilePathMultibyte, ConvertLength, 0, 0);
-		_splitpath_s(FilePathMultibyte, nullptr, 0, nullptr, 0, nullptr, 0, Ext, _MAX_EXT);
+		_splitpath_s(FilePathMultibyte, nullptr, 0, nullptr, 0, FileName, MAX_PATH, Ext, _MAX_EXT);
 
 		_strupr_s(Ext);
 
@@ -346,6 +347,13 @@ void CAnimationMeshWidget::OnLoadAnimationInstance()
 		if (strcmp(Ext, ".ANIM") != 0)
 			return;
 
+		// Animation .anim File 들은, .anim 파일 확장자로 저장된 
+		// 파일 이름으로 식별할 것이다.
+		// 같은 Animation File 을 Load 하는 것이라면 Skip
+		if (m_Animation && strcmp(FileName, m_Animation->GetSavedFileName()) == 0)
+			return;
+
+		// 기존에 Load 해둔 Animation Instance 가 있다면 지워준다.
 		if (m_Animation)
 		{
 			ClearExistingAnimationSeqInfos();
