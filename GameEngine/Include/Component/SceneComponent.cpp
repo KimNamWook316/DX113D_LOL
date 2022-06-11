@@ -36,6 +36,8 @@ CSceneComponent::CSceneComponent(const CSceneComponent& com) :
 	CComponent(com)
 {
 	*this = com;
+	m_RefCount = 0;
+
 	m_Transform = com.m_Transform->Clone();
 
 	m_Transform->m_Parent = nullptr;

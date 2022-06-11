@@ -9,6 +9,7 @@ CAnim3DObject::CAnim3DObject() :
 	m_IsCameraZoom(false)
 {
 	SetTypeID<CAnim3DObject>();
+	m_ExcludeSceneSave = true;
 }
 
 CAnim3DObject::CAnim3DObject(const CAnim3DObject& obj) :

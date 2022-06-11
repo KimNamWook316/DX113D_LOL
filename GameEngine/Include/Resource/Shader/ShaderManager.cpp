@@ -41,6 +41,15 @@ CShaderManager::CShaderManager()
 
 CShaderManager::~CShaderManager()
 {
+	auto iter = m_mapShader.begin();
+	auto iterEnd = m_mapShader.end();
+
+	for (; iter != iterEnd;)
+	{
+		m_mapShader.erase(iter);
+	}
+
+	m_mapShader.empty();
 }
 
 bool CShaderManager::Init()

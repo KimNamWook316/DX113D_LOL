@@ -21,6 +21,7 @@ CEngine::CEngine()	:
 	m_Timer(nullptr),
 	m_Start(false),
 	m_Play(true),
+	m_Pause(false),
 	m_Space(Engine_Space::Space3D),
 	m_MouseState(Mouse_State::Normal),
 	m_ShowCursorCount(0),
@@ -212,7 +213,7 @@ void CEngine::Logic()
 
 	float	DeltaTime = m_Timer->GetDeltaTime();
 
-	if (!m_Play)
+	if (m_Pause)
 		DeltaTime = 0.f;
 
 	m_GlobalAccTime += DeltaTime;
@@ -242,10 +243,55 @@ void CEngine::Logic()
 	CInput::GetInst()->Clear();
 }
 
+void CEngine::Play()
+{
+	if (m_Play)
+	{
+		return;
+	}
+
+	m_Play = true;
+	m_Pause = false;
+}
+
+void CEngine::Pause()
+{
+	if (m_Pause || !m_Play)
+	{
+		return;
+	}
+
+	m_Pause = true;
+}
+
+void CEngine::Resume()
+{
+	if (!m_Pause || !m_Play)
+	{
+		return;
+	}
+
+	m_Pause = false;
+}
+
+void CEngine::Stop()
+{
+	if (!m_Play)
+	{
+		return;
+	}
+
+	m_Play = false;
+	m_Pause = false;
+}
+
 bool CEngine::Update(float DeltaTime)
 {
 	if (CSceneManager::GetInst()->Update(DeltaTime))
+	{
+		CIMGUIManager::GetInst()->Render();
 		return true;
+	}
 
 	if (m_MouseWidget[(int)m_MouseState])
 	{

@@ -49,7 +49,6 @@ CIMGUITree* CSceneComponentHierarchyWindow::GetDragSrc() const
 	return m_DragSrc;
 }
 
-
 CIMGUITree* CSceneComponentHierarchyWindow::GetDragDest() const
 {
 	return m_DragDest;
@@ -121,30 +120,6 @@ void CSceneComponentHierarchyWindow::OnCreateComponentPopUp()
 	}
 }
 
-
-//void CSceneComponentHierarchyWindow::FindSelectNode(CIMGUITree* RootNode)
-//{
-//	if (!RootNode)
-//		return;
-//
-//	if (RootNode->IsSelected())
-//	{
-//		m_SelectNode = RootNode;
-//		return;
-//	}
-//
-//	else
-//	{
-//		size_t Count = RootNode->GetChildCount();
-//
-//		if (Count > 0)
-//		{
-//			for (size_t i = 0; i < Count; ++i)
-//				FindSelectNode(RootNode->GetNode((int)i));
-//		}
-//	}
-//}
-
 void CSceneComponentHierarchyWindow::OnDragDropSrc(CIMGUITree* SrcTree)
 {
 	if (m_SelectNode == m_Root || m_DragSrc == m_Root)
@@ -195,31 +170,65 @@ void CSceneComponentHierarchyWindow::OnDragDropDest(CIMGUITree* DestTree, const 
 	}
 }
 
-void CSceneComponentHierarchyWindow::OnUpdateSceneComponetWindow(CIMGUITree* SelectObjectNode)
+void CSceneComponentHierarchyWindow::OnUpdateSceneComponentWindow(CGameObject* Object)
 {
-	// 지금 Component Hierarchy Window에 출력되고 있는것들을 모두(최상위에 있는 "Components" TreeNode제외하고) Disable 처리
-	size_t Count = m_Root->GetChildCount();
-
-	for (size_t i = 0; i < Count; ++i)
-	{
-		m_Root->GetNode(i)->DisableAll();
-	}
-
-	CGameObject* Obj = CSceneManager::GetInst()->GetScene()->FindObject(SelectObjectNode->GetName());
-
-	if (!Obj)
+	if (!Object)
 		return;
+
+	DisableCurrent();
 	
-	CSceneComponent* RootComp = Obj->GetRootComponent();
+	CSceneComponent* RootComp = Object->GetRootComponent();
 
 	if (!RootComp)
 		return;
 
 	std::string Name = RootComp->GetName();
-
 	CIMGUITree* RootTreeNode = m_Root->FindChild(Name);
-
 	RootTreeNode->EnableAll();
+}
+
+void CSceneComponentHierarchyWindow::OnCreateComponent(bool IsRoot, CSceneComponent* Component)
+{
+	if (!Component)
+	{
+		return;
+	}
+
+	std::string Name = Component->GetName();
+
+	CIMGUITree* NewNode = nullptr;
+
+	if (IsRoot)
+	{
+		NewNode = m_Root->AddChild(Name);
+	}
+	else
+	{
+		CIMGUITree* RootCompNode = m_Root->GetRoot();
+		NewNode = RootCompNode->AddChild(Name);
+	}
+
+	NewNode->AddSelectCallback(this, &CSceneComponentHierarchyWindow::OnSetSelectNode);
+	NewNode->SetDragDropSourceCallback(this, &CSceneComponentHierarchyWindow::OnDragDropSrc);
+	NewNode->SetDragDropDestCallback(this, &CSceneComponentHierarchyWindow::OnDragDropDest);
+}
+
+void CSceneComponentHierarchyWindow::OnLoadGameObject(CGameObject* Object)
+{
+	if (!Object || !Object->GetRootComponent())
+	{
+		return;
+	}
+
+	// 기존 Hierachy 비활성화
+	DisableCurrent();
+
+	CSceneComponent* Root = Object->GetRootComponent();
+	std::string RootName = Root->GetName();
+
+	// Hierachy 생성
+	CIMGUITree* RootComponentNode = m_Root->AddChild(RootName);
+	MakeHierachyRecursive(Root, RootComponentNode);
 }
 
 void CSceneComponentHierarchyWindow::OnClearComponents(const std::string& RootComponentName)
@@ -428,5 +437,40 @@ void CSceneComponentHierarchyWindow::OnAddComponent(class CGameObject* Object, C
 	else
 	{
 		m_Root->GetNode(0)->AddChild(Component->GetName());
+	}
+}
+
+void CSceneComponentHierarchyWindow::MakeHierachyRecursive(CSceneComponent* Parent, CIMGUITree* ParentTree)
+{
+	size_t Count = Parent->GetChildCount();
+
+	// CallBack 연결
+	ParentTree->AddSelectCallback(this, &CSceneComponentHierarchyWindow::OnSetSelectNode);
+	ParentTree->SetDragDropSourceCallback(this, &CSceneComponentHierarchyWindow::OnDragDropSrc);
+	ParentTree->SetDragDropDestCallback(this, &CSceneComponentHierarchyWindow::OnDragDropDest);
+
+	// Tree 생성
+	for (size_t i = 0; i < Count; ++i)
+	{
+		ParentTree->AddChild(Parent->GetChild(i)->GetName());
+	}
+
+	// 재귀적 생성
+	for (size_t i = 0; i < Count; ++i)
+	{
+		CSceneComponent* Child = Parent->GetChild(i);
+		CIMGUITree* ChildTree = ParentTree->GetNode(i);
+		MakeHierachyRecursive(Child, ChildTree);
+	}
+}
+
+void CSceneComponentHierarchyWindow::DisableCurrent()
+{
+	// 지금 Component Hierarchy Window에 출력되고 있는것들을 모두(최상위에 있는 "Components" TreeNode제외하고) Disable 처리
+	size_t Count = m_Root->GetChildCount();
+
+	for (size_t i = 0; i < Count; ++i)
+	{
+		m_Root->GetNode(i)->DisableAll();
 	}
 }

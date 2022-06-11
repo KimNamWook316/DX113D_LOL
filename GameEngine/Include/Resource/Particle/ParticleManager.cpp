@@ -7,6 +7,15 @@ CParticleManager::CParticleManager()
 
 CParticleManager::~CParticleManager()
 {
+	auto iter = m_mapParticle.begin();
+	auto iterEnd = m_mapParticle.end();
+
+	for (; iter != iterEnd;)
+	{
+		m_mapParticle.erase(iter);
+	}
+
+	m_mapParticle.empty();
 }
 
 bool CParticleManager::Init()

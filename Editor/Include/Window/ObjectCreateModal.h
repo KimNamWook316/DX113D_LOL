@@ -27,7 +27,7 @@ public:
 	// 오브젝트 생성 팝업창내에서 Create버튼 누르면 호출되는 콜백
 	void OnCreateObject();
 
-	class CGameObject* OnCreateObject(const char* FullPathMultibyte);
+	class CGameObject* OnCreateObject(class CGameObject* Object);
 
 	void SetObjectType(int Index, bool Boolean);
 };

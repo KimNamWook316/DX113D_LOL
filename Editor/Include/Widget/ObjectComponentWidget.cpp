@@ -28,7 +28,7 @@ bool CObjectComponentWidget::Init()
 	
 	// AddWidget
 	CIMGUIText* Text = AddWidget<CIMGUIText>("Text");
-	Text->SetText("GameObject Name");
+	Text->SetText("Object Component Name");
 
 	AddWidget<CIMGUIDummy>("Dummy", 50.f);
 	AddWidget<CIMGUISameLine>("Line");
@@ -36,9 +36,9 @@ bool CObjectComponentWidget::Init()
 	m_EnableCheckBox = AddWidget<CIMGUICheckBox>("ObjEnable");
 	m_EnableCheckBox->AddCheckInfo("Enable");
 
-	m_NameInput = AddWidget<CIMGUITextInput>("GameObjNameInput");
+	m_NameInput = AddWidget<CIMGUITextInput>("ObjectComponentNameInput");
 	AddWidget<CIMGUISameLine>("Line");
-	m_RenameButton = AddWidget<CIMGUIButton>("Obj Rename", 0.f, 0.f);
+	m_RenameButton = AddWidget<CIMGUIButton>("Rename", 0.f, 0.f);
 
 	// CallBack
 	m_RenameButton->SetClickCallback(this, &CObjectComponentWidget::OnClickRenameButton);

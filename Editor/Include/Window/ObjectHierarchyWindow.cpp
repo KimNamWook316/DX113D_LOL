@@ -16,6 +16,7 @@
 #include "GameObject/GameObject.h"
 #include "InspectorWindow.h"
 #include "ToolWindow.h"
+#include "ObjectComponentWindow.h"
 
 CObjectHierarchyWindow::CObjectHierarchyWindow() :
 	m_Root(nullptr),
@@ -79,6 +80,28 @@ void CObjectHierarchyWindow::Update(float DeltaTime)
 void CObjectHierarchyWindow::OnRenameObject(const std::string& Name)
 {
 	m_SelectNode->SetName(Name);
+}
+
+void CObjectHierarchyWindow::OnCreateObject(CGameObject* Object)
+{
+	std::string Name = Object->GetName();
+
+	// 노드 생성
+	CIMGUITree* NewNode = m_Root->AddChild(Name);
+
+	// 콜백 연결
+	NewNode->AddSelectCallback(this, &CObjectHierarchyWindow::OnSetSelectNode);
+	NewNode->SetDragDropSourceCallback(this, &CObjectHierarchyWindow::OnDragDropSrc);
+	NewNode->SetDragDropDestCallback(this, &CObjectHierarchyWindow::OnDragDropDest);
+
+	// 현재 선택 오브젝트로
+	m_SelectObject = Object;
+	m_SelectNode = NewNode;
+}
+
+void CObjectHierarchyWindow::Clear()
+{
+	m_Root->DeleteHierarchy();
 }
 
 void CObjectHierarchyWindow::OnCreateObjectPopUp()
@@ -152,9 +175,28 @@ void CObjectHierarchyWindow::OnSetSelectNode(CIMGUITree* SelectNode)
 	m_SelectNode = SelectNode;
 	m_SelectObject = CSceneManager::GetInst()->GetScene()->FindObject(m_SelectNode->GetName());
 
-	static_cast<CToolWindow*>(CIMGUIManager::GetInst()->FindIMGUIWindow(TOOL))->SetGizmoObject(m_SelectObject);
+	// Window 갱신
+	CToolWindow* ToolWindow = (CToolWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(TOOL);
+	CInspectorWindow* Inspector = (CInspectorWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(INSPECTOR);
+	CSceneComponentHierarchyWindow* SceneCompHierachy = (CSceneComponentHierarchyWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(SCENECOMPONENT_HIERARCHY);
+	CObjectComponentWindow* ObjectCompWindow = (CObjectComponentWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(OBJECTCOMPONENT_LIST);
 
-	static_cast<CInspectorWindow*>(CIMGUIManager::GetInst()->FindIMGUIWindow(INSPECTOR))->OnSelectGameObject(m_SelectObject);
+	if (ToolWindow)
+	{
+		ToolWindow->SetGizmoObject(m_SelectObject);
+	}
+	if (Inspector)
+	{
+		Inspector->OnSelectGameObject(m_SelectObject);
+	}
+	if (SceneCompHierachy)
+	{
+		SceneCompHierachy->OnUpdateSceneComponentWindow(m_SelectObject);
+	}
+	if (ObjectCompWindow)
+	{
+		ObjectCompWindow->OnRefreshObjectComponentList(m_SelectObject);
+	}
 }
 
 void CObjectHierarchyWindow::OnDragDropSrc(CIMGUITree* SrcTree)

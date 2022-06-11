@@ -11,6 +11,15 @@ CMeshManager::CMeshManager()
 
 CMeshManager::~CMeshManager()
 {
+	auto iter = m_mapMesh.begin();
+	auto iterEnd = m_mapMesh.end();
+
+	for (; iter != iterEnd;)
+	{
+		m_mapMesh.erase(iter);
+	}
+
+	m_mapMesh.empty();
 }
 
 bool CMeshManager::Init()

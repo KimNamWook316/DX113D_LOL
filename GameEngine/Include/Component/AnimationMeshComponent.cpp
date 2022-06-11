@@ -46,6 +46,20 @@ CAnimationMeshComponent::~CAnimationMeshComponent()
 	SAFE_DELETE(m_Animation);
 }
 
+void CAnimationMeshComponent::SetScene(CScene* Scene)
+{
+	CSceneComponent::SetScene(Scene);
+
+	if (m_Skeleton)
+	{
+		m_Skeleton->m_Scene = Scene;
+	}
+	if (m_Animation)
+	{
+		m_Animation->SetScene(Scene);
+	}
+}
+
 void CAnimationMeshComponent::SetMesh(const std::string& Name)
 {
 	CAnimationMesh* FoundMesh = (CAnimationMesh*)m_Scene->GetResource()->FindMesh(Name);
