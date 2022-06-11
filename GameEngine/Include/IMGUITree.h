@@ -2,6 +2,12 @@
 
 #include "IMGUIWidget.h"
 
+enum class TreeDropType
+{
+    Normal,
+    Text
+};
+
 class CIMGUITree :
     public CIMGUIWidget
 {
@@ -9,7 +15,7 @@ public:
     CIMGUITree();
     virtual ~CIMGUITree();
 private :
-    bool m_DragDropEnable;
+    TreeDropType m_DropType;
 public:
     void SetParent(CIMGUITree* parent)
     {
@@ -30,10 +36,7 @@ public:
     {
         return mParent;
     }
-    void SetDragDropEnable(bool Enable)
-    {
-        m_DragDropEnable = Enable;
-    }
+    
 public:
     CIMGUITree* GetNode(const int idx);
 
@@ -50,7 +53,6 @@ public:
 
     // 자신부터 시작해서 아래로 내려가면서 m_Selected = false로 해주는 함수
     void DeselectAll();
-
 
 public:
     void SetFlag(ImGuiTreeNodeFlags Flag)
@@ -73,6 +75,11 @@ public:
         return m_Selected;
     }
 
+    // Drop 형태
+    void SetTextDropType()
+    {
+        m_DropType = TreeDropType::Text;
+    }
 
 public:
     template <typename T>
@@ -186,5 +193,13 @@ public:
     {
         m_OpenCallbackList.push_back(std::bind(Func, Obj, std::placeholders::_1));
     }
+private :
+    void ApplyDropEffect();
+    void ApplyNormalDrop();
+    void ApplyTextDrop();
+private :
+    void ApplyDragEffect();
+    void ApplyNormalDrag();
+    void ApplyTextDrag();
 };
 

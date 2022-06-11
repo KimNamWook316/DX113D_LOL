@@ -207,6 +207,9 @@
     <ClCompile Include="Widget\ColliderBox3DWidget.cpp">
       <Filter>02. Editor\02. Widget\01. Inspector\01. SceneComponent</Filter>
     </ClCompile>
+    <ClCompile Include="Widget\UtilMenuBar.cpp">
+      <Filter>02. Editor\02. Widget\03. MenuBar</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EditorManager.h">
@@ -346,6 +349,9 @@
     </ClInclude>
     <ClInclude Include="Widget\ColliderBox3DWidget.h">
       <Filter>02. Editor\02. Widget\01. Inspector\01. SceneComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Widget\UtilMenuBar.h">
+      <Filter>02. Editor\02. Widget\03. MenuBar</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

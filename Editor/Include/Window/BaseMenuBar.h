@@ -10,10 +10,9 @@ public:
 
 private :
 	class CIMGUIBeginMenu* m_SaveLoadBeginMenu;
-	class CIMGUIBeginMenu* m_ParticleBeginMenu;
-	class CIMGUIBeginMenu* m_AnimationBeginMenu;
 	class CIMGUIBeginMenu* m_ResourceBeginMenu;
 	class CIMGUIBeginMenu* m_BehaviorTreeBeginMenu;
+	class CIMGUIBeginMenu* m_UtilBeginMenu;
 
 public:
 	virtual bool Init() override;

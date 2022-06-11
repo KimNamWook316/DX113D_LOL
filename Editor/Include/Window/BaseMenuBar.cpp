@@ -4,6 +4,7 @@
 #include "../Widget/SaveLoadBeginMenu.h"
 #include "../Widget/BehaviorTreeMenu.h"
 #include "../Widget/ResourceMenu.h"
+#include "../Widget/UtilMenuBar.h"
 
 CBaseMenuBar::CBaseMenuBar()
 {
@@ -25,6 +26,7 @@ bool CBaseMenuBar::Init()
 	m_SaveLoadBeginMenu = AddWidget<CSaveLoadBeginMenu>("File");
 	m_BehaviorTreeBeginMenu = AddWidget<CBehaviorTreeMenu>("BehaviorTree");
 	m_ResourceBeginMenu = AddWidget<CResourceMenu>("Resource");
+	m_UtilBeginMenu = AddWidget<CUtilMenuBar>("Util");
 
 	return true;
 }

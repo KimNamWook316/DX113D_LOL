@@ -37,8 +37,9 @@ bool CSaveLoadBeginMenu::Init()
 	// Scene
 	m_SaveSceneMenu = AddMenuItem("Save Scene");
 	m_SaveSceneMenu->SetClickCallBack(this, &CSaveLoadBeginMenu::OnSaveSceneMenuCallback);
+
 	m_LoadSceneMenu = AddMenuItem("Load Scene");
-	m_SaveSceneMenu->SetClickCallBack(this, &CSaveLoadBeginMenu::OnLoadSceneMenuCallback);
+	m_LoadSceneMenu->SetClickCallBack(this, &CSaveLoadBeginMenu::OnLoadSceneMenuCallback);
 
 	// Object
 	m_SaveObjectMenu = AddMenuItem("Save Object");
@@ -50,6 +51,7 @@ bool CSaveLoadBeginMenu::Init()
 	// Scene Component
 	m_SaveSceneComponentMenu = AddMenuItem("Save SceneComponent");
 	m_SaveSceneComponentMenu->SetClickCallBack(this, &CSaveLoadBeginMenu::OnSaveSceneComponentMenuCallback);
+
 	m_LoadSceneComponentMenu = AddMenuItem("Load SceneComponent");
 	m_LoadSceneComponentMenu->SetClickCallBack(this, &CSaveLoadBeginMenu::OnLoadSceneComponentMenuCallback);
 	
