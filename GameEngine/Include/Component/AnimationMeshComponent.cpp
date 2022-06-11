@@ -685,8 +685,8 @@ void CAnimationMeshComponent::Start()
 
 bool CAnimationMeshComponent::Init()
 {
-	//m_Mesh = (CSpriteMesh*)m_Scene->GetResource()->FindMesh("SpriteMesh");
-	//SetMaterial(m_Scene->GetResource()->FindMaterial("Color"));
+	// m_Mesh = (CSpriteMesh*)m_Scene->GetResource()->FindMesh("SpriteMesh");
+	// SetMaterial(m_Scene->GetResource()->FindMaterial("Color"));
 	AddMaterial(m_Scene->GetResource()->FindMaterial("Color"));
 
 	return true;

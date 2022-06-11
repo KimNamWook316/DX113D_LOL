@@ -98,7 +98,7 @@ public:	// =================== Shader =====================
 public:	// =================== Material =====================
 	CMaterial* FindMaterial(const std::string& Name);
 	CMaterialConstantBuffer* GetMaterialConstantBuffer()	const;
-	CMaterial* LoadMaterialFullPathMultibyte(const char* FullPath, const std::string& NewMaterialName);
+	CMaterial* LoadMaterialFullPathMultibyte(const char* FullPath);
 	void ReleaseMaterial(const std::string& Name);
 
 public:

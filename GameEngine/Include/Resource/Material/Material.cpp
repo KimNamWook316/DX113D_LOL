@@ -896,6 +896,9 @@ CMaterial* CMaterial::Clone()	const
 
 bool CMaterial::Save(FILE* File)
 {
+	// 새로 추가
+	CRef::Save(File);
+
 	std::string	ShaderName ;
 
 	if (m_Shader)
@@ -969,6 +972,9 @@ bool CMaterial::Save(FILE* File)
 
 bool CMaterial::Load(FILE* File)
 {
+	// 새로 추가
+	CRef::Load(File);
+
 	CreateConstantBuffer();
 
 	char	ShaderName[256] = {};

@@ -155,6 +155,11 @@ FileBrowser 에서 File을 Drag 해서 세팅한다.)";
 	// Load & Save Btn
 	Dummy = AddWidget<CIMGUIDummy>("Dummy", 150.f, 20.f);
 
+	HelpText = AddWidget<CIMGUIText>("SaveMtrl", 90.f, 30.f);
+	const char* SaveMtrlText = R"(ex) 저장하는 파일 이름은, Material 의 이름과 동일해야 한다.)";
+	HelpText->SetText(SaveMtrlText);
+	HelpText->SetIsHelpMode(true);
+
 	m_SaveMaterialBtn = AddWidget<CIMGUIButton>("Save Mtrl", 90.f, 20.f);
 	m_SaveMaterialBtn->SetClickCallback<CMaterialEditor>(this, &CMaterialEditor::OnSaveMaterial);
 
@@ -248,7 +253,7 @@ void CMaterialEditor::OnDropAndCreateMaterialCallback(const std::string& Materia
 
 	strcat_s(MaterialLoadFullPathMultibyte, MaterialName.c_str());
 
-	m_SelectedMaterial = CResourceManager::GetInst()->LoadMaterialFullPathMultibyte(MaterialLoadFullPathMultibyte, MaterialName);
+	m_SelectedMaterial = CResourceManager::GetInst()->LoadMaterialFullPathMultibyte(MaterialLoadFullPathMultibyte);
 
 	RefreshMaterialDisplayInfo(m_SelectedMaterial);
 
@@ -491,28 +496,39 @@ void CMaterialEditor::OnSaveMaterial()
 	if (!m_SelectedMaterial)
 		return;
 
-	TCHAR FiileFullPath[MAX_PATH] = {};
+	TCHAR FileFullPath[MAX_PATH] = {};
 
 	OPENFILENAME OpenFile = {};
 	OpenFile.lStructSize = sizeof(OPENFILENAME);
 	OpenFile.hwndOwner = CEngine::GetInst()->GetWindowHandle();
 	OpenFile.lpstrFilter = TEXT("All Files\0*.*\0.Animation File\0*.anim");
-	OpenFile.lpstrFile = FiileFullPath;
+	OpenFile.lpstrFile = FileFullPath;
 	OpenFile.nMaxFile = MAX_PATH;
 	OpenFile.lpstrInitialDir = CPathManager::GetInst()->FindPath(MATERIAL_PATH)->Path;
 
 	if (GetSaveFileName(&OpenFile) != 0)
 	{
+		char FileName[MAX_PATH];
+		char FileExt[MAX_PATH];
+
+		// Initial Name => Material 의 Name 으로 설정
+		TCHAR TCHARInitFilename[MAX_PATH] = {};
+		lstrcpy(TCHARInitFilename, CEditorUtil::ChangeMultibyteTextToTCHAR(m_SelectedMaterial->GetName()));
 
 		char FileFullPathMultibyte[MAX_PATH] = {};
-		char FileName[MAX_PATH] = {};
-		char FileExt[_MAX_EXT] = {};
+		strcpy_s(FileFullPathMultibyte, CEditorUtil::ChangeTCHARTextToMultibyte(FileFullPath));
 
-		int  ConvertLength = WideCharToMultiByte(CP_ACP, 0, FiileFullPath, -1, nullptr, 0, nullptr, nullptr);
+		CEditorUtil::ExtractFileNameAndExtFromPath(FileFullPathMultibyte, FileName, FileExt);
 
-		WideCharToMultiByte(CP_ACP, 0, FiileFullPath, -1, FileFullPathMultibyte, ConvertLength, nullptr, nullptr);
-
-		_splitpath_s(FileFullPathMultibyte, nullptr, 0, nullptr, 0, FileName, MAX_PATH, FileExt, _MAX_EXT);
+		// 현재 저장하는 Material 의 파일 이름과, Material 의 이름이 같은지를 확인한다.
+		if (strcmp(FileName, m_SelectedMaterial->GetName().c_str()) != 0)
+		{
+			TCHAR ErrorMessage[MAX_PATH] = {};
+			lstrcpy(ErrorMessage, TEXT("FileName Has To Be Same With Material Name : "));
+			lstrcat(ErrorMessage, TCHARInitFilename);
+			MessageBox(CEngine::GetInst()->GetWindowHandle(), ErrorMessage, NULL, MB_OK);
+			return;
+		}
 
 		_strupr_s(FileExt);
 
@@ -562,7 +578,7 @@ void CMaterialEditor::OnLoadMaterial()
 		}
 
 		// 파일 이름을, Material 을 저장하는 Key 값으로 활용할 것이다.
-		CMaterial* LoadedMaterial = CResourceManager::GetInst()->LoadMaterialFullPathMultibyte(FilePathMultibyte, FileName);
+		CMaterial* LoadedMaterial = CResourceManager::GetInst()->LoadMaterialFullPathMultibyte(FilePathMultibyte);
 
 		if (!LoadedMaterial)
 		{

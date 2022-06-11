@@ -27,7 +27,7 @@ public:
 		return m_CBuffer;
 	}
 	void ReleaseMaterial(const std::string& Name);
-	CMaterial* LoadMaterialFullPathMultibyte(const char* FullPath, const std::string& NewMaterialName);
+	CMaterial* LoadMaterialFullPathMultibyte(const char* FullPath);
 public:
 	template <typename T>
 	T* CreateMaterial(const std::string& Name)
