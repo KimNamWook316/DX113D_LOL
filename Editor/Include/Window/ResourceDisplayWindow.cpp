@@ -117,3 +117,7 @@ void CResourceDisplayWindow::RefreshLoadedShaderResources()
 	}
 }
 
+void CResourceDisplayWindow::RefreshAllDisplayInfos()
+{
+}
+

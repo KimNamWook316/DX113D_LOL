@@ -40,6 +40,7 @@
 #include "../Object/3DCameraObject.h"
 #include "../EditorManager.h"
 #include "AnimationMeshWidget.h"
+#include "../Window/ResourceDisplayWindow.h"
 // C++ 17
 #include <filesystem>
 
@@ -157,9 +158,9 @@ void CAnimationMeshWidget::OnSelectMaterialSlotCombo(int Idx, const char* Label)
 		CMaterial* Mat = MeshCom->GetMaterial(Idx);
 
 		m_BaseColorEdit->SetRGB(Mat->GetBaseColor().x, Mat->GetBaseColor().y, Mat->GetBaseColor().z);
-		m_AmbientColorEdit->SetRGB(Mat->GetBaseColor().x, Mat->GetBaseColor().y, Mat->GetBaseColor().z);
-		m_SpecularColorEdit->SetRGB(Mat->GetBaseColor().x, Mat->GetBaseColor().y, Mat->GetBaseColor().z);
-		m_EmissiveColorEdit->SetRGB(Mat->GetBaseColor().x, Mat->GetBaseColor().y, Mat->GetBaseColor().z);
+		m_AmbientColorEdit->SetRGB(Mat->GetAmbientColor().x, Mat->GetAmbientColor().y, Mat->GetAmbientColor().z);
+		m_SpecularColorEdit->SetRGB(Mat->GetSpecularColor().x, Mat->GetSpecularColor().y, Mat->GetSpecularColor().z);
+		m_EmissiveColorEdit->SetRGB(Mat->GetEmissiveColor().x, Mat->GetEmissiveColor().y, Mat->GetEmissiveColor().z);
 		m_SpecluarPowerEdit->SetVal(Mat->GetSpecularPower());
 		m_TransparencyEdit->SetCheck(0, Mat->IsTransparent());
 		m_OpacityEdit->SetValue(Mat->GetOpacity());
@@ -391,7 +392,16 @@ void CAnimationMeshWidget::OnLoadAnimationInstance()
 		// Animation 관련 정보를 모두 정상적으로 Load 했다면 Start 함수 호출하여, 필요한 정보 세팅
 		m_Animation->Start();
 
+		// Animation Inst 관련 IMGUI Update
 		SetAnimationRelatedInfoToWidget(m_Animation);
+
+		// Mesh, Material 관련 IMGUI Update
+		RefreshMeshWidget(dynamic_cast<CAnimationMeshComponent*>(m_Component.Get())->GetMesh());
+
+
+		// Resource Display Window Update 하기
+		CEditorManager::GetInst()->GetResourceDisplayWindow()->RefreshLoadedTextureResources();
+		CEditorManager::GetInst()->GetResourceDisplayWindow()->RefreshLoadedMaterialResources();
 	}
 }
 
@@ -581,6 +591,7 @@ void CAnimationMeshWidget::RefreshMeshWidget(CMesh* Mesh)
 	std::string AutoName;
 
 	int MatSlotSize = MeshCom->GetMaterialSlotCount();
+
 	for (int i = 0; i < MatSlotSize; ++i)
 	{
 		// Material 이름이 없을 경우 자동으로 이름 지정

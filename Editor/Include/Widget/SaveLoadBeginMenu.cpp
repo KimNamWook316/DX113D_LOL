@@ -1,24 +1,28 @@
-#include "SaveLoadBeginMenu.h"
-#include "IMGUIMenuItem.h"
-#include "../Window/BehaviorTreeMenuBar.h"
-#include "../Window/ObjectCreateModal.h"
-#include "IMGUIBeginMenu.h"
-#include "../EditorUtil.h"
-#include "../EditorManager.h"
-#include "IMGUIPopUpModal.h"
+// Engine
 #include "Engine.h"
-#include "IMGUIManager.h"
-#include "../Window/BehaviorTreeWindow.h"
-#include "../Window/ObjectComponentWindow.h"
-#include "../Window/SceneComponentHierarchyWindow.h"
-#include "IMGUIManager.h"
-#include "../Window/ObjectHierarchyWindow.h"
 #include "GameObject/GameObject.h"
 #include "Component/StateComponent.h"
 #include "Component/AnimationMeshComponent.h"
 #include "PathManager.h"
 #include "Scene/Scene.h"
 #include "Scene/SceneManager.h"
+// Window
+#include "../Window/BehaviorTreeWindow.h"
+#include "../Window/ObjectComponentWindow.h"
+#include "../Window/SceneComponentHierarchyWindow.h"
+#include "../Window/ObjectHierarchyWindow.h"
+#include "../Window/BehaviorTreeMenuBar.h"
+#include "../Window/ResourceDisplayWindow.h"
+#include "../Window/ObjectCreateModal.h"
+#include "../EditorUtil.h"
+#include "../EditorManager.h"
+// IMGUI
+#include "IMGUIManager.h"
+#include "SaveLoadBeginMenu.h"
+#include "IMGUIBeginMenu.h"
+#include "IMGUIMenuItem.h"
+#include "IMGUIPopUpModal.h"
+#include "IMGUIManager.h"
 
 
 CSaveLoadBeginMenu::CSaveLoadBeginMenu()
@@ -76,6 +80,9 @@ void CSaveLoadBeginMenu::OnSaveSceneMenuCallback()
 
 void CSaveLoadBeginMenu::OnLoadSceneMenuCallback()
 {
+	// 모든 Scene 을 로드하고나서, Resource Display Window Texture, Material 정보 Update
+	CEditorManager::GetInst()->GetResourceDisplayWindow()->RefreshLoadedTextureResources();
+	CEditorManager::GetInst()->GetResourceDisplayWindow()->RefreshLoadedMaterialResources();
 }
 
 void CSaveLoadBeginMenu::OnSaveObjectMenuCallback()
@@ -182,6 +189,10 @@ void CSaveLoadBeginMenu::OnLoadObjectMenuCallback()
 				((CNavAgent*)vecObjComp[i])->SetUpdateComponent(LoadedObject->GetRootComponent());
 			}
 		}
+
+		// Resource Display 에 있는 Texture, Material 정보 다시 Update
+		CEditorManager::GetInst()->GetResourceDisplayWindow()->RefreshLoadedTextureResources();
+		CEditorManager::GetInst()->GetResourceDisplayWindow()->RefreshLoadedMaterialResources();
 	}
 }
 

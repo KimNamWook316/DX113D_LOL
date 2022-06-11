@@ -800,26 +800,29 @@ bool CAnimationMeshComponent::Save(FILE* File)
 
 	const PathInfo* MaterialPath = CPathManager::GetInst()->FindPath(MATERIAL_PATH);
 
-	for (int i = 0; i < MaterialSlotCount; ++i)
+	for (int idx = 0; idx < MaterialSlotCount; ++idx)
 	{
-		// Animation Mesh Component 가 지니고 있는 Material 의 Name 을 저장하기
-		const std::string& MaterialName = m_vecMaterialSlot[i]->GetName();
-
-		int MtrlNameLength = (int)MaterialName.length();
-
-		fwrite(&MtrlNameLength, sizeof(int), 1, File);
-
-		fwrite(MaterialName.c_str(), sizeof(char), MtrlNameLength, File);
-
 		// Material 을 Bin/Material Path 에 저장하기
 		char MaterialBinPathMutlibyte[MAX_PATH] = {};
 
 		if (MaterialPath)
 			strcpy_s(MaterialBinPathMutlibyte, MaterialPath->PathMultibyte);
 
-		strcat_s(MaterialBinPathMutlibyte, MaterialName.c_str());
+		// Mesh Name + _Idx 
+		std::string SavedExtraMtrlName;
+		SavedExtraMtrlName.reserve(MeshName.length() * 2); 
+		SavedExtraMtrlName = MeshName + "_" + std::to_string(idx) + ".mtrl";;
 
-		m_vecMaterialSlot[i]->SaveFullPath(MaterialBinPathMutlibyte);
+		strcat_s(MaterialBinPathMutlibyte, SavedExtraMtrlName.c_str());
+
+		// Animation Mesh Component 가 차후 Load 해서 지녀야할 Material 의 Name 을 저장하기
+		int MtrlNameLength = (int)SavedExtraMtrlName.length();
+
+		fwrite(&MtrlNameLength, sizeof(int), 1, File);
+
+		fwrite(SavedExtraMtrlName.c_str(), sizeof(char), MtrlNameLength, File);
+
+		m_vecMaterialSlot[idx]->SaveFullPath(MaterialBinPathMutlibyte);
 	}
 
 	// 기존 코드
@@ -858,6 +861,29 @@ bool CAnimationMeshComponent::Load(FILE* File)
 	fread(&AnimSavedFileNameLength, sizeof(size_t), 1, File);
 	fread(AnimSavedFileName,  sizeof(char), AnimSavedFileNameLength, File);
 
+
+	// Animation Instance File 로 부터 세팅
+	LoadAnimationInstance<CAnimationSequenceInstance>();
+
+	// RESOURCE_ANIMATION_PATH 를 통해서 .anim File Load
+	if (!m_Animation->LoadAnimation(AnimSavedFileName))
+		return false;
+
+	// 이 코드를 , 아래에서 Material Load 보다 먼저 불러야 한다.
+	// 아래 Set Mesh 를 통해서, 기본적으로 ex) Alistar_Idle_mesh 파일 안에 있는 원본 Material 을 세팅하게 된다.
+	// 그런데, 실제 각 Animation Component 가 사용하는 Material 은, 즉, Animation Mesh Widget 에서 
+	// 세팅해준 변화 사항은, 원본 Material이 아니라, 별도 Material 파일에 저장해놓은 Material 을 사용한다.
+	const std::pair<bool, std::string>& result = CResourceManager::GetInst()->LoadMeshTextureBoneInfo(m_Animation);
+
+	if (!result.first)
+		return false;
+
+	// result.second 에는 위에서 저장해준 Mesh 이름이 들어있다.
+	SetMesh(result.second);
+
+	// Animation 에 필요한 정보 Start 함수를 호출하여 세팅
+	m_Animation->Start();
+
 	// 새로운 Test Code
 	int	MaterialSlotCount = -999;
 
@@ -865,24 +891,33 @@ bool CAnimationMeshComponent::Load(FILE* File)
 
 	const PathInfo* MaterialPath = CPathManager::GetInst()->FindPath(MATERIAL_PATH);
 
-	for (int i = 0; i < MaterialSlotCount; ++i)
+	m_vecMaterialSlot.clear();
+	
+	m_vecMaterialSlot.resize(MaterialSlotCount);
+
+	for (int idx = 0; idx < MaterialSlotCount; ++idx)
 	{
-		int MtrlNameLength = -999;
+		m_vecMaterialSlot[idx] = new CMaterial;
 
-		fread(&MtrlNameLength, sizeof(int), 1, File);
-
-		char LoadedMtrlName[MAX_PATH] = {};
-
-		fread(LoadedMtrlName, sizeof(char), MtrlNameLength, File);
-
+		// Material 을 Bin/Material Path 에 저장하기
 		char MaterialBinPathMutlibyte[MAX_PATH] = {};
 
 		if (MaterialPath)
 			strcpy_s(MaterialBinPathMutlibyte, MaterialPath->PathMultibyte);
 
-		strcat_s(MaterialBinPathMutlibyte, LoadedMtrlName);
+		// Mesh Name + _Idx 
+		char SavedExtraName[MAX_PATH] = {};
 
-		m_vecMaterialSlot[i]->LoadFullPath(MaterialBinPathMutlibyte);
+		// Animation Mesh Component 가 차후 Load 해서 지녀야할 Material 의 Name 을 저장하기
+		int MtrlNameLength = -999;
+
+		fread(&MtrlNameLength, sizeof(int), 1, File);
+
+		fread(SavedExtraName, sizeof(char), MtrlNameLength, File);
+
+		strcat_s(MaterialBinPathMutlibyte, SavedExtraName);
+
+		m_vecMaterialSlot[idx]->LoadFullPath(MaterialBinPathMutlibyte);
 	}
 
 	// 기존 코드
@@ -903,23 +938,7 @@ bool CAnimationMeshComponent::Load(FILE* File)
 
 	CSceneComponent::Load(File);
 
-	// Animation Instance File 로 부터 세팅
-	LoadAnimationInstance<CAnimationSequenceInstance>();
 
-	// RESOURCE_ANIMATION_PATH 를 통해서 .anim File Load
-	if (!m_Animation->LoadAnimation(AnimSavedFileName))
-		return false;
-
-	const std::pair<bool, std::string>& result = CResourceManager::GetInst()->LoadMeshTextureBoneInfo(m_Animation);
-
-	if (!result.first)
-		return false;
-
-	// result.second 에는 위에서 저장해준 Mesh 이름이 들어있다.
-	SetMesh(result.second);
-
-	// Animation 에 필요한 정보 Start 함수를 호출하여 세팅
-	m_Animation->Start();
 
 	return true;
 }
@@ -1049,7 +1068,9 @@ bool CAnimationMeshComponent::SaveOnly(FILE* pFile)
 	{
 		m_vecMaterialSlot[i]->Save(pFile);
 	}
+
 	// CSceneComponent::Save(pFile);
+
 	fclose(pFile);
 
 	return false;

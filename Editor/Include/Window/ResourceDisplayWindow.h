@@ -30,5 +30,6 @@ public  :
 	void RefreshLoadedMaterialResources();
 	void RefreshLoadedSamplerResources();
 	void RefreshLoadedShaderResources();
+	void RefreshAllDisplayInfos();
 };
 
