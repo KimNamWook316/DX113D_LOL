@@ -7,6 +7,12 @@
 #include "Engine.h"
 #include "IMGUISameLine.h"
 #include "Scene/SceneManager.h"
+#include "../Window/InspectorWindow.h"
+#include "../Window/ObjectComponentWindow.h"
+#include "../Window/SceneComponentHierarchyWindow.h"
+#include "../Window/ObjectHierarchyWindow.h"
+#include "IMGUIManager.h"
+#include "../EditorInfo.h":
 
 CToolWindow::CToolWindow()	:
 	m_GizmoBlock(nullptr),
@@ -27,6 +33,7 @@ bool CToolWindow::Init()
 
 	// Play Stop
 	CIMGUICollapsingHeader* PlayStopBlock = AddWidget<CIMGUICollapsingHeader>("Play", 200.f);
+	m_PlayState = PlayStopBlock->AddWidget<CIMGUIText>("Play", 0.f, 0.f);
 	m_Play = PlayStopBlock->AddWidget<CIMGUIButton>("Play", 0.f, 0.f);
 	PlayStopBlock->AddWidget<CIMGUISameLine>("line");
 	m_Pause = PlayStopBlock->AddWidget<CIMGUIButton>("Pause", 0.f, 0.f);
@@ -71,6 +78,17 @@ bool CToolWindow::Init()
 	m_GrayEnable = Tree->AddWidget<CIMGUICheckBox>("GrayShader Enable", 200.f);
 
 	// Initial Value
+	bool Play = CSceneManager::GetInst()->GetScene()->IsPlay();
+
+	if (Play)
+	{
+		m_PlayState->SetText("Current State : Playing");
+	}
+	else
+	{
+		m_PlayState->SetText("Current State : Paused");
+	}
+
 	m_CameraSpeed->SetMin(0.f);
 	m_CameraSpeed->SetMax(10.f);
 	m_CameraSpeed->SetValue(CEditorManager::GetInst()->Get3DCameraObject()->GetCameraSpeed());
@@ -117,6 +135,18 @@ bool CToolWindow::Init()
 	CInput::GetInst()->SetKeyCallback("C", KeyState_Down, this, &CToolWindow::OnEDown);
 
 	return true;
+}
+
+void CToolWindow::SetPlayText(bool Play)
+{
+	if (Play)
+	{
+		m_PlayState->SetText("Current State : Playing");
+	}
+	else
+	{
+		m_PlayState->SetText("Current State : Paused");
+	}
 }
 
 void CToolWindow::SetGizmoObject(CGameObject* Object)
@@ -189,34 +219,98 @@ void CToolWindow::OnCheckGrayEnable(const char* Label, bool Check)
 
 void CToolWindow::OnClickPlay()
 {
-	bool Pause = CSceneManager::GetInst()->IsPause();
+	CSceneManager::GetInst()->GetScene()->Play();
 
-	if (Pause)
-	{
-		CSceneManager::GetInst()->Resume();
-
-		m_Play->SetName("Play");
-	}
-	else
-	{
-		CSceneManager::GetInst()->Play();
-	}
+	m_PlayState->SetText("Current State : Playing");
 }
 
 void CToolWindow::OnClickPause()
 {
-	CSceneManager::GetInst()->Pause();
+	CSceneManager::GetInst()->GetScene()->Pause();
 
-	bool Pause = CSceneManager::GetInst()->IsPause();
-
-	if (Pause)
-	{
-		m_Play->SetName("Resume");
-	}
+	m_PlayState->SetText("Current State : Paused");
 }
 
 void CToolWindow::OnClickStop()
 {
+	bool Success = CSceneManager::GetInst()->ReloadScene();
+
+	if (Success)
+	{
+		ClearSceneRelatedWindows();
+
+		// Hierachy 갱신
+		std::vector<CGameObject*> vecObj;
+		CSceneManager::GetInst()->GetNextScene()->GetAllIncludeSaveObjectsPointer(vecObj);
+		RefreshSceneRelatedWindow(vecObj);
+
+		m_PlayState->SetText("Current State : Paused");
+	}
+}
+
+void CToolWindow::ClearSceneRelatedWindows()
+{
+	CObjectHierarchyWindow* ObjHierachy = (CObjectHierarchyWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(OBJECT_HIERARCHY);
+	CSceneComponentHierarchyWindow* SceneCompHierachy = (CSceneComponentHierarchyWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(SCENECOMPONENT_HIERARCHY);
+	CObjectComponentWindow* ObjCompWindow = (CObjectComponentWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(OBJECTCOMPONENT_LIST);
+	CInspectorWindow* Inspector = (CInspectorWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(INSPECTOR);
+
+	if (ObjHierachy)
+	{
+		ObjHierachy->Clear();
+	}
+	if (SceneCompHierachy)
+	{
+		SceneCompHierachy->ClearExistingHierarchy();
+	}
+	if (ObjCompWindow)
+	{
+		ObjCompWindow->Clear();
+	}
+	if (Inspector)
+	{
+		Inspector->OnDeleteGameObject();
+	}
+
+	SetGizmoObject(nullptr);
+}
+
+void CToolWindow::RefreshSceneRelatedWindow(CGameObject* Object)
+{
+	// Window 갱신
+	CObjectHierarchyWindow* ObjHierachy = (CObjectHierarchyWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(OBJECT_HIERARCHY);
+	CSceneComponentHierarchyWindow* SceneCompHierachy = (CSceneComponentHierarchyWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(SCENECOMPONENT_HIERARCHY);
+	CObjectComponentWindow* ObjCompWindow = (CObjectComponentWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(OBJECTCOMPONENT_LIST);
+	CInspectorWindow* Inspector = (CInspectorWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(INSPECTOR);
+
+	if (ObjHierachy)
+	{
+		ObjHierachy->OnCreateObject(Object);
+	}
+	if (SceneCompHierachy)
+	{
+		SceneCompHierachy->OnLoadGameObject(Object);
+	}
+	if (ObjCompWindow)
+	{
+		ObjCompWindow->OnRefreshObjectComponentList(Object);
+	}
+	if (Inspector)
+	{
+		Inspector->OnSelectGameObject(Object);
+	}
+
+	SetGizmoObject(Object);
+}
+
+void CToolWindow::RefreshSceneRelatedWindow(const std::vector<CGameObject*>& vecObj)
+{
+	size_t Size = vecObj.size();
+
+	for (size_t i = 0; i < Size; ++i)
+	{
+		RefreshSceneRelatedWindow(vecObj[i]);
+	}
 }
 
 void CToolWindow::OnQDown(float DetlaTime)

@@ -483,6 +483,8 @@ bool CGameObject::Load(const char* FullPath)
 
 	fclose(File);
 
+	Start();
+
 	return true;
 }
 
@@ -545,6 +547,7 @@ bool CGameObject::SaveOnly(const std::string& ComponentName, const char* FullPat
 {
 	CComponent* Component = FindComponent(ComponentName);
 
+
 	if (!Component)
 	{
 		assert(false);
@@ -591,6 +594,8 @@ bool CGameObject::LoadOnly(const char* FullPath, CComponent*& OutCom)
 		m_NavAgent = (CNavAgent*)Component;
 		m_NavAgent->SetUpdateComponent(GetRootComponent());
 	}
+
+	Component->Start();
 
 	OutCom = Component;
 

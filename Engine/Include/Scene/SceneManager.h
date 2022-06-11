@@ -15,8 +15,7 @@ private:
 	std::function<void(class CSpriteComponent* Sprite, size_t Type)>	m_CreateAnimInstanceCallback;
 	CStateManager* m_StateManager;
 
-	bool m_Play;
-	bool m_Pause;
+	char m_LoadedSceneFullPath[MAX_PATH];
 
 public:
 	CStateManager* GetStateManager()	const
@@ -62,16 +61,6 @@ public:
 			m_CreateAnimInstanceCallback(Sprite, Type);
 	}
 
-	bool IsPlay() const
-	{
-		return m_Play;
-	}
-
-	bool IsPause() const
-	{
-		return m_Pause;
-	}
-
 public:
 	void Start();
 	bool Init();
@@ -79,10 +68,7 @@ public:
 	bool PostUpdate(float DeltaTime);
 
 public:
-	void Play();
-	void Pause();
-	void Resume();
-	void Stop();
+	bool ReloadScene();
 
 public:
 	bool LoadNewScene(const char* FileName, const std::string& PathName = SCENE_PATH, bool ChangeNow = true);

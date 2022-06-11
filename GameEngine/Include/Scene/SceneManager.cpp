@@ -9,8 +9,6 @@ DEFINITION_SINGLE(CSceneManager)
 CSceneManager::CSceneManager()	:
 	m_Scene(nullptr),
 	m_NextScene(nullptr),
-	m_Play(true),
-	m_Pause(false),
 	m_StateManager(nullptr)
 {
 	InitializeCriticalSection(&m_Crt);
@@ -44,11 +42,6 @@ bool CSceneManager::Init()
 
 bool CSceneManager::Update(float DeltaTime)
 {
-	if (!m_Play || m_Pause)
-	{
-		return false;
-	}
-
 	m_Scene->Update(DeltaTime);
 
 	return ChangeScene();
@@ -56,56 +49,19 @@ bool CSceneManager::Update(float DeltaTime)
 
 bool CSceneManager::PostUpdate(float DeltaTime)
 {
-	if (!m_Play || m_Pause)
-	{
-		return false;
-	}
-
 	m_Scene->PostUpdate(DeltaTime);
 
 	return ChangeScene();
 }
 
-void CSceneManager::Play()
+bool CSceneManager::ReloadScene()
 {
-	if (m_Play)
+	if (strlen(m_LoadedSceneFullPath) == 0)
 	{
-		return;
+		return false;
 	}
 
-	m_Play = true;
-	m_Pause = false;
-}
-
-void CSceneManager::Pause()
-{
-	if (m_Pause || !m_Play)
-	{
-		return;
-	}
-
-	m_Pause = true;
-}
-
-void CSceneManager::Resume()
-{
-	if (!m_Pause || !m_Play)
-	{
-		return;
-	}
-
-	m_Pause = false;
-}
-
-void CSceneManager::Stop()
-{
-	if (!m_Play)
-	{
-		return;
-	}
-
-	m_Play = false;
-	m_Pause = false;
+	return LoadNewSceneFullPath(m_LoadedSceneFullPath, true);
 }
 
 bool CSceneManager::LoadNewScene(const char* FileName, const std::string& PathName, bool ChangeNow)
@@ -130,6 +86,13 @@ bool CSceneManager::LoadNewSceneFullPath(const char* FullPath, bool ChangeNow)
 	
 	bool LoadResult = m_NextScene->LoadFullPath(FullPath);
 
+	if (LoadResult)
+	{
+		strcpy_s(m_LoadedSceneFullPath, FullPath);
+	}
+
+	m_NextScene->m_Play = false;
+
 	return LoadResult;
 }
 
@@ -148,6 +111,7 @@ bool CSceneManager::ChangeScene()
 			m_Scene = m_NextScene;
 			m_NextScene = nullptr;
 
+			// 씬이 바뀌어도 파괴되지 않는 오브젝트들을 새로운 씬으로 옮김
 			auto iter = NoDestroyObjectCloneList.begin();
 			auto iterEnd = NoDestroyObjectCloneList.end();
 

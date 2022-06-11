@@ -30,6 +30,7 @@ public:
 	void OnDeleteComponent();
 	void OnRefreshObjectComponentList(class CGameObject* Object);
 	void OnSelectComponent(int Index, const char* Label);
+	void Clear();
 
 	// Component Save&Load
 	void OnSaveComponent();

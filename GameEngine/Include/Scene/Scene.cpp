@@ -28,6 +28,7 @@ CScene::CScene()
 	m_LightManager->m_Scene = this;
 
 	m_Start = false;
+	m_Play = true;
 
 	m_Collision->Init();
 	m_CameraManager->Init();
@@ -96,6 +97,11 @@ void CScene::Start()
 
 void CScene::Update(float DeltaTime)
 {
+	if (!m_Play)
+	{
+		DeltaTime = 0.f;
+	}
+
 	m_Mode->Update(DeltaTime);
 
 	auto	iter = m_ObjList.begin();
@@ -122,23 +128,32 @@ void CScene::Update(float DeltaTime)
 
 	m_CameraManager->Update(DeltaTime);
 
-	m_Viewport->Update(DeltaTime);
-
-	m_NavManager->Update(DeltaTime);
-
-	m_Nav3DManager->Update(DeltaTime);
+	if (m_Play)
+	{
+		m_Viewport->Update(DeltaTime);
+		m_NavManager->Update(DeltaTime);
+		m_Nav3DManager->Update(DeltaTime);
+	}
 
 	m_LightManager->Update(DeltaTime);
 }
 
 void CScene::PostUpdate(float DeltaTime)
 {
+	if (!m_Play)
+	{
+		DeltaTime = 0.f;
+	}
+
 	m_Mode->PostUpdate(DeltaTime);
 
 	m_SkyObject->PostUpdate(DeltaTime);
 
-	// State Component에서 각 Collision Section별로 Collider를 얻어와야 해서 Component::PostUpdate하기 전에 이걸 먼저 해주도록 수정
-	m_Collision->CheckColliderSection3D();
+	if (m_Play)
+	{
+		// State Component에서 각 Collision Section별로 Collider를 얻어와야 해서 Component::PostUpdate하기 전에 이걸 먼저 해주도록 수정
+		m_Collision->CheckColliderSection3D();
+	}
 
 	auto	iter = m_ObjList.begin();
 	auto	iterEnd = m_ObjList.end();
@@ -164,11 +179,10 @@ void CScene::PostUpdate(float DeltaTime)
 
 	m_CameraManager->PostUpdate(DeltaTime);
 
-	m_Viewport->PostUpdate(DeltaTime);
-
-	// 충돌체들을 충돌 영역에 포함시킨다.
-	iter = m_ObjList.begin();
-	iterEnd = m_ObjList.end();
+	if (m_Play)
+	{
+		m_Viewport->PostUpdate(DeltaTime);
+	}
 
 	m_RenderComponentList.clear();
 
@@ -196,9 +210,11 @@ void CScene::PostUpdate(float DeltaTime)
 		m_RenderComponentList.sort(SortRenderList);
 	}
 
-	// 포함된 충돌체들을 이용해서 충돌처리를 진행한다.
-	m_Collision->Collision(DeltaTime);
-
+	if (m_Play)
+	{
+		// 포함된 충돌체들을 이용해서 충돌처리를 진행한다.
+		m_Collision->Collision(DeltaTime);
+	}
 }
 
 bool CScene::Save(const char* FileName, const std::string& PathName)
@@ -389,6 +405,20 @@ void CScene::GetAllObjectsPointer(std::vector<CGameObject*>& vecOutObj)
 
 	for (; iter != iterEnd; ++iter)
 	{
+		vecOutObj.push_back(*iter);
+	}
+}
+
+void CScene::GetAllIncludeSaveObjectsPointer(std::vector<CGameObject*>& vecOutObj)
+{
+	auto iter = m_ObjList.begin();
+	auto iterEnd = m_ObjList.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		if ((*iter)->IsExcludeFromSceneSave())
+			continue;
+
 		vecOutObj.push_back(*iter);
 	}
 }

@@ -116,6 +116,14 @@ void CSaveLoadBeginMenu::OnLoadSceneMenuCallback()
 		int ConvertLength = WideCharToMultiByte(CP_ACP, 0, FileFullPath, -1, 0, 0, 0, 0);
 		WideCharToMultiByte(CP_ACP, 0, FileFullPath, -1, FilePathMultibyte, ConvertLength, 0, 0);
 
+		bool ValidExt = CEditorUtil::CompareExt(FilePathMultibyte, ".scn");
+
+		if (!ValidExt)
+		{
+			MessageBox(nullptr, TEXT("확장자명 다름"), TEXT("Error"), MB_OK);
+			return;
+		}
+
 		bool Success = CSceneManager::GetInst()->LoadNewSceneFullPath(FilePathMultibyte, true);
 
 		if (!Success)
@@ -123,23 +131,19 @@ void CSaveLoadBeginMenu::OnLoadSceneMenuCallback()
 			MessageBox(nullptr, TEXT("씬 로드 실패"), TEXT("Error"), MB_OK);
 			return;
 		}
+
+		// Scene 연관 윈도우 전부 초기화
+		ClearSceneRelatedWindows();
 		
 		// Hierachy 갱신
 		std::vector<CGameObject*> vecObj;
-		CSceneManager::GetInst()->GetNextScene()->GetAllObjectsPointer(vecObj);
+		CSceneManager::GetInst()->GetNextScene()->GetAllIncludeSaveObjectsPointer(vecObj);
+		RefreshSceneRelatedWindow(vecObj);
 
-		size_t Size = vecObj.size();
-		for (size_t i = 0; i < Size; ++i)
-		{
-			if (vecObj[i]->IsExcludeFromSceneSave())
-			{
-				continue;
-			}
+		// ToolWindow
+		CToolWindow* ToolWindow = (CToolWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(TOOL);
+		ToolWindow->SetPlayText(false);
 
-			RefreshWindow(vecObj[i]);
-		}
-
-		CScene* NewScene = CSceneManager::GetInst()->GetNextScene();
 		MessageBox(nullptr, TEXT("씬 로드 성공"), TEXT("Success"), MB_OK);
 	}
 }
@@ -211,9 +215,9 @@ void CSaveLoadBeginMenu::OnLoadObjectMenuCallback()
 			return;
 		}
 
-		RefreshWindow(NewObject);
+		RefreshSceneRelatedWindow(NewObject);
 
-		MessageBox(nullptr, TEXT("로드 성공"), TEXT("Error"), MB_OK);
+		MessageBox(nullptr, TEXT("로드 성공"), TEXT("Success"), MB_OK);
  	}
 }
 
@@ -257,7 +261,37 @@ void CSaveLoadBeginMenu::OnLoadObjectComponentMenuCallback()
 	}
 }
 
-void CSaveLoadBeginMenu::RefreshWindow(CGameObject* Object)
+void CSaveLoadBeginMenu::ClearSceneRelatedWindows()
+{
+	CObjectHierarchyWindow* ObjHierachy = (CObjectHierarchyWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(OBJECT_HIERARCHY);
+	CSceneComponentHierarchyWindow* SceneCompHierachy = (CSceneComponentHierarchyWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(SCENECOMPONENT_HIERARCHY);
+	CObjectComponentWindow* ObjCompWindow = (CObjectComponentWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(OBJECTCOMPONENT_LIST);
+	CToolWindow* ToolWindow = (CToolWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(TOOL);
+	CInspectorWindow* Inspector = (CInspectorWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(INSPECTOR);
+
+	if (ObjHierachy)
+	{
+		ObjHierachy->Clear();
+	}
+	if (SceneCompHierachy)
+	{
+		SceneCompHierachy->ClearExistingHierarchy();
+	}
+	if (ObjCompWindow)
+	{
+		ObjCompWindow->Clear();
+	}
+	if (ToolWindow)
+	{
+		ToolWindow->SetGizmoObject(nullptr);
+	}
+	if (Inspector)
+	{
+		Inspector->OnDeleteGameObject();
+	}
+}
+
+void CSaveLoadBeginMenu::RefreshSceneRelatedWindow(CGameObject* Object)
 {
 	// Window 갱신
 	CObjectHierarchyWindow* ObjHierachy = (CObjectHierarchyWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(OBJECT_HIERARCHY);
@@ -285,5 +319,15 @@ void CSaveLoadBeginMenu::RefreshWindow(CGameObject* Object)
 	if (Inspector)
 	{
 		Inspector->OnSelectGameObject(Object);
+	}
+}
+
+void CSaveLoadBeginMenu::RefreshSceneRelatedWindow(const std::vector<CGameObject*>& vecObj)
+{
+	size_t Size = vecObj.size();
+
+	for (size_t i = 0; i < Size; ++i)
+	{
+		RefreshSceneRelatedWindow(vecObj[i]);
 	}
 }

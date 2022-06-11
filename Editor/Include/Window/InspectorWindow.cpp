@@ -80,6 +80,6 @@ void CInspectorWindow::OnDeleteSceneComponent(CSceneComponent* Com)
 
 void CInspectorWindow::OnDeleteGameObject()
 {
-	DeleteWidget("GameObjectInspector");
-	m_ObjWidget = nullptr;
+	m_ObjWidget->ClearComponentWidget();
+	m_ObjWidget->SetRender(false);
 }

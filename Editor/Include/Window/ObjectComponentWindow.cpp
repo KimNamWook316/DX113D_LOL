@@ -86,6 +86,14 @@ void CObjectComponentWindow::OnSelectComponent(int Index, const char* Label)
 	m_SelectLabel = Label;
 }
 
+void CObjectComponentWindow::Clear()
+{
+	m_SelectIndex = -1;
+	m_SelectLabel = "";
+
+	m_ComponentListBox->Clear();
+}
+
 void CObjectComponentWindow::OnDeleteComponent()
 {
 	CObjectHierarchyWindow* Window = (CObjectHierarchyWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(OBJECT_HIERARCHY);

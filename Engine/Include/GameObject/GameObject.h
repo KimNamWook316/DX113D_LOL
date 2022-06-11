@@ -404,7 +404,7 @@ public:
 				m_RootComponent = Component;
 		}
 
-		Component->Start();
+		//Component->Start();
 
 		return Component;
 	}

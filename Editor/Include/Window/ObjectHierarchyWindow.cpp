@@ -16,6 +16,7 @@
 #include "GameObject/GameObject.h"
 #include "InspectorWindow.h"
 #include "ToolWindow.h"
+#include "ObjectComponentWindow.h"
 
 CObjectHierarchyWindow::CObjectHierarchyWindow() :
 	m_Root(nullptr),
@@ -98,6 +99,11 @@ void CObjectHierarchyWindow::OnCreateObject(CGameObject* Object)
 	m_SelectNode = NewNode;
 }
 
+void CObjectHierarchyWindow::Clear()
+{
+	m_Root->DeleteHierarchy();
+}
+
 void CObjectHierarchyWindow::OnCreateObjectPopUp()
 {
 	if (!m_ObjectCreateModal)
@@ -173,6 +179,7 @@ void CObjectHierarchyWindow::OnSetSelectNode(CIMGUITree* SelectNode)
 	CToolWindow* ToolWindow = (CToolWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(TOOL);
 	CInspectorWindow* Inspector = (CInspectorWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(INSPECTOR);
 	CSceneComponentHierarchyWindow* SceneCompHierachy = (CSceneComponentHierarchyWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(SCENECOMPONENT_HIERARCHY);
+	CObjectComponentWindow* ObjectCompWindow = (CObjectComponentWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(OBJECTCOMPONENT_LIST);
 
 	if (ToolWindow)
 	{
@@ -185,6 +192,10 @@ void CObjectHierarchyWindow::OnSetSelectNode(CIMGUITree* SelectNode)
 	if (SceneCompHierachy)
 	{
 		SceneCompHierachy->OnUpdateSceneComponentWindow(m_SelectObject);
+	}
+	if (ObjectCompWindow)
+	{
+		ObjectCompWindow->OnRefreshObjectComponentList(m_SelectObject);
 	}
 }
 

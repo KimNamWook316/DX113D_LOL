@@ -33,12 +33,24 @@ private:
 	bool		m_Start;
 	bool		m_Change;
 
+	bool m_Play;
+
 	std::list<class CSceneComponent*> m_RenderComponentList;
 
 public:
 	void SetAutoChange(bool Change)
 	{
 		m_Change = Change;
+	}
+
+	void Play()
+	{
+		m_Play = true;
+	}
+
+	void Pause()
+	{
+		m_Play = false;
 	}
 
 public:
@@ -85,6 +97,11 @@ public:
 	CGameObject* GetPlayerObject()	const
 	{
 		return m_Mode->GetPlayerObject();
+	}
+
+	bool IsPlay() const
+	{
+		return m_Play;
 	}
 
 	CGameObject* FindObject(const std::string& Name)
@@ -135,6 +152,7 @@ public:
 
 public:
 	void GetAllObjectsPointer(std::vector<CGameObject*>& vecOutObj);
+	void GetAllIncludeSaveObjectsPointer(std::vector<CGameObject*>& vecOutObj);
 	void CloneAllNoDestroyObjects(std::list<CSharedPtr<CGameObject>>& OutList);
 	void AddObject(CGameObject* Object);
 
