@@ -154,6 +154,8 @@ void CSaveLoadBeginMenu::OnLoadObjectMenuCallback()
 
 		CAnimationMeshComponent* Comp = LoadedObject->FindComponentFromType<CAnimationMeshComponent>();
 
+		CEditorManager::GetInst()->SetChampionInfo(LoadedObject, LoadedObject->GetName());
+
 		if (Comp)
 		{
 			CAnimationSequenceInstance* Instance = Comp->GetAnimationInstance();

@@ -64,6 +64,10 @@ void CStateComponent::Update(float DeltaTime)
 			SAFE_DELETE(*iter);
 			iter = m_StateList.erase(iter);
 			iterEnd = m_StateList.end();
+
+			if(m_StateList.empty())
+				m_Object->SetOntHit(false);
+
 			continue;
 		}
 
@@ -90,6 +94,10 @@ void CStateComponent::PostUpdate(float DeltaTime)
 			SAFE_DELETE(*iter);
 			iter = m_StateList.erase(iter);
 			iterEnd = m_StateList.end();
+
+			if (m_StateList.empty())
+				m_Object->SetOntHit(false);
+
 			continue;
 		}
 
@@ -229,6 +237,15 @@ bool CStateComponent::Load(FILE* File)
 	return true;
 }
 
+CState* CStateComponent::GetState(int Idx) const
+{
+	auto iter = m_StateList.begin();
+
+	std::advance(iter, Idx);
+
+	return *iter;
+}
+
 void CStateComponent::SetAnimationMeshComponent(CAnimationMeshComponent* Mesh)
 {
 	m_AnimationMeshComp = Mesh;
@@ -242,7 +259,7 @@ CAnimationMeshComponent* CStateComponent::GetAnimationMeshComp() const
 	return m_AnimationMeshComp;
 }
 
-void CStateComponent::AddState(const std::string& Name)
+CState* CStateComponent::AddState(const std::string& Name, CGameObject* SourceObject)
 {
 	CState* FindState = CSceneManager::GetInst()->GetStateManager()->FindState(Name);
 
@@ -253,11 +270,17 @@ void CStateComponent::AddState(const std::string& Name)
 		CloneState->SetName(Name);
 		CloneState->SetOwner(this);
 		CloneState->SetOwnerObject(m_Object);
+		CloneState->SetSourceObject(SourceObject);
 
 		m_StateList.push_back(CloneState);
 
 		CloneState->OnStart();
+
+		return CloneState;
 	}
+
+	else
+		return nullptr;
 }
 
 bool CStateComponent::DeleteState(CState* State)

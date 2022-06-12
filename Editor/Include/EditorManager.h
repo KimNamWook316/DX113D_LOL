@@ -100,6 +100,7 @@ public:
 	
 public:
 	void SetChampionNotify(class CAnimationSequenceInstance* Instance, const std::string& ChampionName);
+	void SetChampionInfo(class CGameObject* Object, const std::string& ChampionName);
 
 private:
 	void CreateEditorCamera();

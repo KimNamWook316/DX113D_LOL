@@ -35,6 +35,7 @@ public:
 	{
 		return m_TextureManager;
 	}
+
 	const CMaterialManager* GetMaterialManager() const
 	{
 		return m_MaterialManager;

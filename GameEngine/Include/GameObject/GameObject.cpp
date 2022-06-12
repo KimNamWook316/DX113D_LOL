@@ -11,7 +11,8 @@ CGameObject::CGameObject() :
 	m_NavAgent(nullptr),
 	m_IsEnemy(false),
 	m_NoInterrupt(false),
-	m_AttackTarget(nullptr)
+	m_NormalAttackTarget(nullptr),
+	m_OnHit(false)
 {
 	SetTypeID<CGameObject>();
 	m_ObjectType = Object_Type::None;

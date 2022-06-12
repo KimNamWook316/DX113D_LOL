@@ -32,12 +32,14 @@ public:
 private:
     void OnClickRenameButton();
     void OnCheckEnableCheckBox(int Idx, bool Check);
+    void OnCheckEnemyCheckBox(int Idx, bool Check);
 
 private:
     CSharedPtr<class CGameObject> m_Object;
     class CIMGUITextInput* m_NameInput;
     class CIMGUIButton* m_RenameButton;
     class CIMGUICheckBox* m_EnableCheckBox;
+    class CIMGUICheckBox* m_EnemyCheckBox;
 
     std::list<class CSceneComponentWidget*> m_SceneComponentWidgetList;
     std::list<class CObjectComponentWidget*> m_ObjectComponentWidgetList;

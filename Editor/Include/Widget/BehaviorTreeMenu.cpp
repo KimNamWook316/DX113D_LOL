@@ -15,6 +15,7 @@
 #include "GameObject/GameObject.h"
 #include "Component/StateComponent.h"
 #include "Component/AnimationMeshComponent.h"
+#include "Component/StaticMeshComponent.h"
 #include "PathManager.h"
 #include "Scene/Scene.h"
 #include "Scene/SceneManager.h"
@@ -76,10 +77,11 @@ void CBehaviorTreeMenu::OnOpenTreeEditorCallback()
 		{
 			CComponent* Component = Obj->FindObjectComponentFromType<CStateComponent>();
 			CAnimationMeshComponent* AnimMeshComp = Obj->FindComponentFromType<CAnimationMeshComponent>();
+			CStaticMeshComponent* StaticMeshComp = Obj->FindComponentFromType<CStaticMeshComponent>();
 
 
-			// Object Component Window에서 StateComponent가 선택됐을때만 Behavior Tree Window 열어주기
-			if (Component && AnimMeshComp)
+			// Object Component Window에서 StateComponent가 선택됐고 AnimationMeshComponent가 있거나 StaticMeshComponent가 있을때만 Behavior Tree Window 열어주기
+			if (Component && (AnimMeshComp || StaticMeshComp))
 			{
 				if (!m_TreeEditorWindow)
 				{
@@ -93,6 +95,22 @@ void CBehaviorTreeMenu::OnOpenTreeEditorCallback()
 
 				else
 				{
+					bool NeedUpdate = false;
+					CStateComponent* StateComp = (CStateComponent*)Component;
+
+					if (StateComp != m_TreeEditorWindow->GetStateComponent())
+					{
+						NeedUpdate = true;
+						m_TreeEditorWindow->Clear();
+					}
+
+					m_TreeEditorWindow->SetStateComponent(StateComp);
+
+					if (AnimMeshComp)
+						((CStateComponent*)Component)->SetAnimationMeshComponent(AnimMeshComp);
+
+					m_TreeEditorWindow->UpdateLoadNode((CCompositeNode*)(StateComp->GetBehaviorTree()->GetRootNode()));
+
 					m_TreeEditorWindow->Open();
 				}
 			}

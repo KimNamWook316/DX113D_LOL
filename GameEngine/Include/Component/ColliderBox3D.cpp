@@ -3,6 +3,7 @@
 #include "ColliderBox2D.h"
 #include "ColliderCircle.h"
 #include "ColliderPixel.h"
+#include "ColliderSphere.h"
 #include "../Collision/Collision.h"
 #include "../Scene/Scene.h"
 #include "../Scene/SceneResource.h"
@@ -224,6 +225,8 @@ bool CColliderBox3D::Collision(CColliderComponent* Dest)
 		//	return CCollision::CollisionBox2DToPixel(this, (CColliderPixel*)Dest);
 	case Collider_Type::Box3D:
 		return CCollision::CollisionBox3DToBox3D(this, (CColliderBox3D*)Dest);
+	case Collider_Type::Sphere:
+		return CCollision::CollisionBox3DToSphere(this, (CColliderSphere*)Dest);
 	}
 }
 

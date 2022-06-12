@@ -63,6 +63,7 @@ bool CObjectCreateModal::Init()
 	m_ObjectTypeCheckBox->AddCheckInfo("Minion");
 	m_ObjectTypeCheckBox->AddCheckInfo("Jungle");
 	m_ObjectTypeCheckBox->AddCheckInfo("MapObject");
+	m_ObjectTypeCheckBox->AddCheckInfo("Turret");
 
 	m_ObjectTypeCheckBox->SetCheck(0, true);
 	m_ObjectTypeCheckBox->AlwaysCheck(true);
@@ -73,8 +74,6 @@ bool CObjectCreateModal::Init()
 	m_EnemyCheckBox->AddCheckInfo("Enemy");
 
 	CIMGUIDummy* Dummy = AddWidget<CIMGUIDummy>("Dummy", 100.f, 40.f);
-
-	m_ObjectTypeCheckBox->SetCheck(0, true);
 
 	return true;
 }
@@ -187,6 +186,7 @@ void CObjectCreateModal::OnCreateObject()
 	int Idx = -1;
 	int CheckIdx = m_ObjectTypeCheckBox->GetCheckItemIdx();
 
+	// TODO : Object_Type 추가될 때 마다 추가
 	switch (CheckIdx)
 	{
 	case 0:
@@ -200,6 +200,9 @@ void CObjectCreateModal::OnCreateObject()
 		break;
 	case 3:
 		NewObject->SetObjectType(Object_Type::MapObject);
+		break;
+	case 4:
+		NewObject->SetObjectType(Object_Type::Turret);
 		break;
 	}
 

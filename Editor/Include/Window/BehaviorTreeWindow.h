@@ -149,8 +149,8 @@ struct GraphEditorDelegate : public GraphEditor::Delegate
 
     void DelLink(GraphEditor::LinkIndex linkIndex) override
     {
-        int ParentNodeIdx = mLinks[linkIndex].mInputNodeIndex;
-        int ChildNodeIdx = mLinks[linkIndex].mOutputNodeIndex;
+        int ParentNodeIdx = (int)mLinks[linkIndex].mInputNodeIndex;
+        int ChildNodeIdx = (int)mLinks[linkIndex].mOutputNodeIndex;
 
         CNode* ParentNode = mNodes[ParentNodeIdx].BehaviorTreeNode;
         CNode* ChildNode = mNodes[ChildNodeIdx].BehaviorTreeNode;
@@ -292,7 +292,7 @@ struct GraphEditorDelegate : public GraphEditor::Delegate
         NewNode.templateIndex = TemplateIndex;
 
         size_t CurrentCount = mNodes.size();
-        NewNode.NodeIndex = CurrentCount;
+        NewNode.NodeIndex = (int)CurrentCount;
 
         mNodes.push_back(NewNode);
     }
@@ -485,5 +485,6 @@ public:
     void UpdateLoadNode(CCompositeNode* RootNode);
     void UpdateLoadNodeLink(class CBehaviorTree* Tree);
     void UpdateLoadNodeRecursive(CNode* Node, int Depth, int Height);
+    void Clear();
 };
 

@@ -168,6 +168,10 @@ void CBehaviorTreeMenuBar::Update(float DeltaTime)
 							else
 							{
 								m_TreeEditorWindow->Open();
+								m_TreeEditorWindow->SetStateComponent((CStateComponent*)Component);
+
+								if(AnimMeshComp)
+									((CStateComponent*)Component)->SetAnimationMeshComponent(AnimMeshComp);
 							}
 						}
 					}

@@ -25,6 +25,8 @@
 #include "Component/Node/SkillEndCheckNode.h"
 #include "Component/Node/NormalAttack.h"
 #include "Component/Node/InSkillCheck.h"
+#include "Component/Node/CheckTurretAttackTarget.h"
+#include "Component/Node/CheckTurretAttackFrequency.h"
 #include "ObjectComponentWindow.h"
 #include "ObjectHierarchyWindow.h"
 #include "../EditorInfo.h"
@@ -101,6 +103,7 @@ void CBehaviorTreeWindow::Update(float DeltaTime)
             {
                 UpdateLoadNode((CCompositeNode*)(State->GetBehaviorTree()->GetRootNode()));
             }
+
         }
     }
 
@@ -188,6 +191,8 @@ void CBehaviorTreeWindow::Update(float DeltaTime)
             m_vecNodeAction.push_back("AttackTargetCheck");
             m_vecNodeAction.push_back("SkillEndCheck");
             m_vecNodeAction.push_back("InSkillCheck");
+            m_vecNodeAction.push_back("TurretAttackTargetCheck");
+            m_vecNodeAction.push_back("TurretAttackFrequencyCheck");
         }
 
         ImGui::PushID(m_WidgetID + 1);
@@ -419,6 +424,12 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
         case ConditionNode::InSkillCheck:
             NewTreeNode = m_StateComponent->CreateTreeNode<CInSkillCheck>(Name);
             break;
+        case ConditionNode::TurretAttackTargetCheck:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CCheckTurretAttackTarget>(Name);
+            break;
+        case ConditionNode::TurretAttackFrequencyCheck:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CCheckTurretAttackFrequency>(Name);
+            break;
         }
     }
     }
@@ -581,6 +592,21 @@ void CBehaviorTreeWindow::UpdateLoadNodeRecursive(CNode* Node, int Depth, int He
     }
 }
 
+void CBehaviorTreeWindow::Clear()
+{
+
+    m_Delegate.mLinks.clear();
+
+    size_t Count = m_Delegate.mNodes.size();
+
+    for (size_t i = 0; i < Count; ++i)
+    {
+        SAFE_DELETE_ARRAY(m_Delegate.mNodes[i].name);
+    }
+
+    m_Delegate.mNodes.clear();
+}
+
 void CBehaviorTreeWindow::UpdateLoadNodeLink(CBehaviorTree* Tree)
 {
     size_t Count = Tree->GetNodeCount();
@@ -589,14 +615,14 @@ void CBehaviorTreeWindow::UpdateLoadNodeLink(CBehaviorTree* Tree)
 
     for (size_t i = 0; i < Count; ++i)
     {
-        CNode* Node = Tree->GetNode(i);
+        CNode* Node = Tree->GetNode((int)i);
 
         if (Node->GetTypeID() == typeid(CSelectorNode).hash_code() || Node->GetTypeID() == typeid(CSequenceNode).hash_code())
         {
 
             for (size_t j = 0; j < DelegateNodeCount; ++j)
             {
-                if (m_Delegate.GetDelegateNode(j).BehaviorTreeNode == Node)
+                if (m_Delegate.GetDelegateNode((int)j).BehaviorTreeNode == Node)
                 {
                     GraphEditorDelegate::Node SrcNode = m_Delegate.GetDelegateNode(j);
 

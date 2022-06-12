@@ -1,13 +1,12 @@
 #pragma once
-
 #include "SceneComponentWidget.h"
 
-class CColliderBox3DWidget	:
-	public CSceneComponentWidget
+class CColliderComponentWidget :
+    public CSceneComponentWidget
 {
 public:
-	CColliderBox3DWidget();
-	~CColliderBox3DWidget();
+	CColliderComponentWidget();
+	~CColliderComponentWidget();
 
 public:
 	virtual bool Init() override;
@@ -17,6 +16,7 @@ public:
 
 private:
 	Vector3 m_Offset;
+	class CIMGUITree* m_OffsetTree;
 	class CIMGUIInputFloat3* m_OffsetInput;
 
 
