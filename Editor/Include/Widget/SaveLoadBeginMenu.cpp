@@ -190,9 +190,14 @@ void CSaveLoadBeginMenu::OnLoadObjectMenuCallback()
 			}
 		}
 
-		// Resource Display 에 있는 Texture, Material 정보 다시 Update
-		CEditorManager::GetInst()->GetResourceDisplayWindow()->RefreshLoadedTextureResources();
-		CEditorManager::GetInst()->GetResourceDisplayWindow()->RefreshLoadedMaterialResources();
+		// Resource Display 에 있는 Texture, Material 정보 다시 Update 
+		// 사실 아래 코드는 거의 쓸모 없다 => 어차피 각 Animation Mesh Component 등, Mesh 파일에서 불러온 Material 을 세팅할 때에는
+		// 공유되는 Material 이 사용되는 것이 아니기 때문이다.
+		// 따라서 Mesh Component 에서 각각이 별도로 사용하는 Material File 을 Load 한다고 하더라도
+		// 그냥 Mesh Component 만 사용할 뿐, 별도로 Material Manager 에 저장하는 것이 아니기 때문이다.
+		// (나중에 필요하면, Animation Mesh Component Load 과정에서 Material Manager, Texture Manager 에 추가해주기)
+		// CEditorManager::GetInst()->GetResourceDisplayWindow()->RefreshLoadedTextureResources();
+		// CEditorManager::GetInst()->GetResourceDisplayWindow()->RefreshLoadedMaterialResources();
 	}
 }
 
