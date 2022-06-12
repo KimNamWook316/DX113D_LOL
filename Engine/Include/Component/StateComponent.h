@@ -48,12 +48,24 @@ public:
 		return m_TreeUpdate;
 	}
 
+	bool IsStateListEmpty()
+	{
+		return m_StateList.empty();
+	}
+
+	size_t GetStateListSize()	const
+	{
+		return m_StateList.size();
+	}
+
+	class CState* GetState(int Idx) const;
+
 public:
 	void SetAnimationMeshComponent(class CAnimationMeshComponent* Mesh);
 	class CAnimationMeshComponent* GetAnimationMeshComp()   const;
 
 public:
-	void AddState(const std::string& Name);
+	CState* AddState(const std::string& Name, CGameObject* SourceObject);
 
 	bool DeleteState(class CState* State);
 	bool DeleteState(const std::string& Name);

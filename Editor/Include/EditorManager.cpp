@@ -422,6 +422,77 @@ void CEditorManager::SetChampionNotify(CAnimationSequenceInstance* Instance, con
 	}
 }
 
+void CEditorManager::SetChampionInfo(class CGameObject* Object, const std::string& ChampionName)
+{
+	CExcelData* Data = CResourceManager::GetInst()->FindCSV("LoLChampionInfo");
+
+	if (!Data)
+		return;
+
+	CStateManager* StateManager = CSceneManager::GetInst()->GetStateManager();
+
+	// TODO : 챔피언과 스킬이 추가될때마다 여기에 Notify 추가
+	if (ChampionName.find("Alistar") != std::string::npos)
+	{
+		Row* row = Data->GetRow("Alistar");
+
+		size_t Count = row->size();
+
+		for (size_t i = 0; i < Count; ++i)
+		{
+			std::stringstream ss;
+
+			ss << (*row)[i];
+
+			int Info = 0;
+
+			ss >> Info;
+
+			// TODO : LoLChampionInfo.csv에서 읽어오는 항목 늘어날 때 마다 추가해주기
+
+			// Move Speed
+			if (i == 0)
+				Object->SetChampionMoveSpeed(Info);
+			// Attack
+			else if (i == 1)
+				Object->SetChampionAttack(Info);
+
+			else if (i == 2)
+				Object->SetChampionAttackSpeed(Info);
+
+			else if (i == 3)
+			{
+
+			}
+
+			else if (i == 4)
+			{
+
+			}
+			else if (i == 5)
+			{
+
+			}
+
+			else if (i == 6)
+			{
+
+			}
+
+			else if (i == 7)
+			{
+				Object->SetChampionHP(Info);
+			}
+
+			else if (i == 8)
+			{
+
+			}
+		}
+
+	}
+}
+
 void CEditorManager::ReadChampionNotify()
 {
 	CResourceManager::GetInst()->LoadCSV("AnimationNotify.csv");

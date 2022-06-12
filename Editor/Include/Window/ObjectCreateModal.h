@@ -14,7 +14,7 @@ private:
 	class CIMGUIComboBox* m_ObjectCombo;
 	class CIMGUITextInput* m_NameTextInput;
 	class CIMGUIButton* m_ObjectCreateButton;
-	class CIMGUICheckBox* m_ObjectTypeCheckBox;
+	class CIMGUIRadioButton* m_ObjectTypeCheckBox;
 	class CIMGUICheckBox* m_EnemyCheckBox;
 
 public:

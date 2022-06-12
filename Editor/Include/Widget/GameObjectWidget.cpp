@@ -13,6 +13,7 @@
 #include "Component/ParticleComponent.h"
 #include "Component/LandScape.h"
 #include "Component/ColliderBox3D.h"
+#include "Component/ColliderSphere.h"
 #include "../Widget/StaticMeshComponentWidget.h"
 #include "../Widget/LightComponentWidget.h"
 #include "../Widget/ObjectComponentWidget.h"
@@ -20,7 +21,8 @@
 #include "../Widget/AnimationMeshWidget.h"
 #include "../Window/ObjectHierarchyWindow.h"
 #include "../Widget/LandScapeWidget.h"
-#include "../Widget/ColliderBox3DWidget.h"
+#include "../Widget/ColliderComponentWidget.h"
+#include "../Widget/ColliderSphereWidget.h"
 #include "IMGUIManager.h"
 #include "../EditorInfo.h"
 
@@ -50,11 +52,15 @@ bool CGameObjectWidget::Init()
 	AddWidget<CIMGUISameLine>("Line");
 	m_RenameButton = AddWidget<CIMGUIButton>("Rename", 0.f, 0.f);
 
+	m_EnemyCheckBox = AddWidget<CIMGUICheckBox>("IsEnemy");
+	m_EnemyCheckBox->AddCheckInfo("IsEnemy");
+
 	AddWidget<CIMGUISeperator>("Sep");
 
 	// CallBack
 	m_RenameButton->SetClickCallback(this, &CGameObjectWidget::OnClickRenameButton);
 	m_EnableCheckBox->SetCallBackIdx(this, &CGameObjectWidget::OnCheckEnableCheckBox);
+	m_EnemyCheckBox->SetCallBackIdx(this, &CGameObjectWidget::OnCheckEnemyCheckBox);
 
 	return true;
 }
@@ -81,12 +87,17 @@ void CGameObjectWidget::ClearComponentWidget()
 
 	m_ObjectComponentWidgetList.clear();
 	
-	mVecChild.resize(7);
+	mVecChild.resize(8);
 }
 
 void CGameObjectWidget::SetGameObject(CGameObject* Obj)
 {
 	m_Object = Obj;
+
+	if (m_Object->IsEnemy())
+		m_EnemyCheckBox->SetCheck(0, true);
+	else
+		m_EnemyCheckBox->SetCheck(0, false);
 
 	if (Obj)
 	{
@@ -143,7 +154,12 @@ void CGameObjectWidget::CreateSceneComponentWidget(CSceneComponent* Com)
 	}
 	else if (TypeID == typeid(CColliderBox3D).hash_code())
 	{
-		Widget = AddWidget<CColliderBox3DWidget>("ColliderBox3DWidget");
+		Widget = AddWidget<CColliderComponentWidget>("ColliderComponentWidget");
+	}
+	else if (TypeID == typeid(CColliderSphere).hash_code())
+	{
+		Widget = AddWidget<CColliderSphereWidget>("ColliderSphereWidget");
+
 	}
 	else
 	{
@@ -221,4 +237,9 @@ void CGameObjectWidget::OnCheckEnableCheckBox(int Idx, bool Check)
 	{
 		(*iterO)->OnGameObjectEnable(Check);
 	}
+}
+
+void CGameObjectWidget::OnCheckEnemyCheckBox(int Idx, bool Check)
+{
+	m_Object->SetEnemy(Check);
 }

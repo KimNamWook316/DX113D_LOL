@@ -168,6 +168,7 @@
     <ClCompile Include="AnimationInstanceConvertThread.cpp" />
     <ClCompile Include="EditorManager.cpp" />
     <ClCompile Include="EditorUtil.cpp" />
+    <ClCompile Include="GameManager.cpp" />
     <ClCompile Include="GraphEditor.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Object\3DCameraObject.cpp" />
@@ -179,8 +180,9 @@
     <ClCompile Include="Scene\DefaultScene.cpp" />
     <ClCompile Include="Widget\AnimationMeshWidget.cpp" />
     <ClCompile Include="Widget\BehaviorTreeMenu.cpp" />
+    <ClCompile Include="Widget\ColliderComponentWidget.cpp" />
+    <ClCompile Include="Widget\ColliderSphereWidget.cpp" />
     <ClCompile Include="Widget\ResourceMenu.cpp" />
-    <ClCompile Include="Widget\ColliderBox3DWidget.cpp" />
     <ClCompile Include="Widget\GameObjectWidget.cpp" />
     <ClCompile Include="Widget\LandScapeWidget.cpp" />
     <ClCompile Include="Widget\LightComponentWidget.cpp" />
@@ -219,6 +221,7 @@
     <ClInclude Include="EditorInfo.h" />
     <ClInclude Include="EditorManager.h" />
     <ClInclude Include="EditorUtil.h" />
+    <ClInclude Include="GameManager.h" />
     <ClInclude Include="GraphEditor.h" />
     <ClInclude Include="Object\3DCameraObject.h" />
     <ClInclude Include="Object\3DParticleObject.h" />
@@ -230,8 +233,9 @@
     <ClInclude Include="Scene\DefaultScene.h" />
     <ClInclude Include="Utils.h" />
     <ClInclude Include="Widget\AnimationMeshWidget.h" />
-    <ClInclude Include="Widget\ColliderBox3DWidget.h" />
     <ClInclude Include="Widget\BehaviorTreeMenu.h" />
+    <ClInclude Include="Widget\ColliderComponentWidget.h" />
+    <ClInclude Include="Widget\ColliderSphereWidget.h" />
     <ClInclude Include="Widget\GameObjectWidget.h" />
     <ClInclude Include="Widget\LandScapeWidget.h" />
     <ClInclude Include="Widget\LightComponentWidget.h" />

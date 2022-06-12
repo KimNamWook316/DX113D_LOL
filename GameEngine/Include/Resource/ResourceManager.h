@@ -30,6 +30,17 @@ public:
 	void Update();
 	void RenderTarget();
 
+public:
+	const CTextureManager* GetTextureManager() const
+	{
+		return m_TextureManager;
+	}
+
+	const CMaterialManager* GetMaterialManager() const
+	{
+		return m_MaterialManager;
+	}
+
 public:	// =================== Mesh =====================
 	bool CreateMesh(Mesh_Type Type, const std::string& Name,
 		void* VtxData, int Size, int Count, D3D11_USAGE Usage,

@@ -2,7 +2,8 @@
 #include "State.h"
 
 CState::CState()	:
-	m_OwnerObject(nullptr)
+	m_OwnerObject(nullptr),
+	m_SourceObject(nullptr)
 {
 }
 

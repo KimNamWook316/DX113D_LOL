@@ -45,6 +45,7 @@ public:
 		return m_vecPrevCollider.size();
 	}
 
+
 	class CColliderComponent* GetCollider(int Idx)	const;
 	class CColliderComponent* GetPrevCollider(int Idx)	const;
 

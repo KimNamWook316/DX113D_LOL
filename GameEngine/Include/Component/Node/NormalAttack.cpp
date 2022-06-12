@@ -65,7 +65,7 @@ NodeResult CNormalAttack::OnEnd(float DeltaTime)
 {
 	m_Owner->SetCurrentNode(nullptr);
 	m_IsEnd = false;
-	m_Object->SetAttackTarget(nullptr);
+	m_Object->SetNormalAttackTarget(nullptr);
 
 	return NodeResult::Node_True;
 }

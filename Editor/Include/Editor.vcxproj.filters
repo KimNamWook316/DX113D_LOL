@@ -73,6 +73,9 @@
     <Filter Include="02. Editor\01. Window\4. MenuBar">
       <UniqueIdentifier>{d565fee9-2c53-4eaf-8d99-f39f6bbed48d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="05. GameManager">
+      <UniqueIdentifier>{c29db2ae-b440-4633-9c63-011f3bcf3088}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EditorManager.cpp">
@@ -201,7 +204,13 @@
     <ClCompile Include="Window\ResourceDisplayWindow.cpp">
       <Filter>02. Editor\01. Window\1. Resource</Filter>
     </ClCompile>
-    <ClCompile Include="Widget\ColliderBox3DWidget.cpp">
+    <ClCompile Include="GameManager.cpp">
+      <Filter>05. GameManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Widget\ColliderSphereWidget.cpp">
+      <Filter>02. Editor\02. Widget\01. Inspector\01. SceneComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Widget\ColliderComponentWidget.cpp">
       <Filter>02. Editor\02. Widget\01. Inspector\01. SceneComponent</Filter>
     </ClCompile>
   </ItemGroup>
@@ -338,7 +347,13 @@
     <ClInclude Include="Window\ResourceDisplayWindow.h">
       <Filter>02. Editor\01. Window\1. Resource</Filter>
     </ClInclude>
-    <ClInclude Include="Widget\ColliderBox3DWidget.h">
+    <ClInclude Include="GameManager.h">
+      <Filter>05. GameManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Widget\ColliderSphereWidget.h">
+      <Filter>02. Editor\02. Widget\01. Inspector\01. SceneComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Widget\ColliderComponentWidget.h">
       <Filter>02. Editor\02. Widget\01. Inspector\01. SceneComponent</Filter>
     </ClInclude>
   </ItemGroup>

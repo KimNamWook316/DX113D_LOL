@@ -26,6 +26,8 @@
     <ClCompile Include="Animation\AnimationSequenceInstance.cpp" />
     <ClCompile Include="Animation\SkeletonSocket.cpp" />
     <ClCompile Include="Component\Node\CheckAttackTarget.cpp" />
+    <ClCompile Include="Component\Node\CheckTurretAttackFrequency.cpp" />
+    <ClCompile Include="Component\Node\CheckTurretAttackTarget.cpp" />
     <ClCompile Include="Component\Node\FindEnemyChampion.cpp" />
     <ClCompile Include="Component\Node\InputECheckNode.cpp" />
     <ClCompile Include="Component\Node\InputRCheckNode.cpp" />
@@ -37,6 +39,7 @@
     <ClCompile Include="Component\Node\SkillENode.cpp" />
     <ClCompile Include="Component\Node\SkillRNode.cpp" />
     <ClCompile Include="Component\State\AirBorneState.cpp" />
+    <ClCompile Include="Component\State\DamageState.cpp" />
     <ClCompile Include="Component\State\State.cpp" />
     <ClCompile Include="Component\State\StateManager.cpp" />
     <ClCompile Include="IMGUITableElemList.cpp" />
@@ -268,6 +271,8 @@
     <ClInclude Include="Animation\AnimationSequenceInstance.h" />
     <ClInclude Include="Animation\SkeletonSocket.h" />
     <ClInclude Include="Component\Node\CheckAttackTarget.h" />
+    <ClInclude Include="Component\Node\CheckTurretAttackFrequency.h" />
+    <ClInclude Include="Component\Node\CheckTurretAttackTarget.h" />
     <ClInclude Include="Component\Node\FindEnemyChampion.h" />
     <ClInclude Include="Component\Node\InputECheckNode.h" />
     <ClInclude Include="Component\Node\InputRCheckNode.h" />
@@ -279,6 +284,7 @@
     <ClInclude Include="Component\Node\SkillENode.h" />
     <ClInclude Include="Component\Node\SkillRNode.h" />
     <ClInclude Include="Component\State\AirBorneState.h" />
+    <ClInclude Include="Component\State\DamageState.h" />
     <ClInclude Include="Component\State\State.h" />
     <ClInclude Include="Component\State\StateManager.h" />
     <ClInclude Include="IMGUITableElemList.h" />

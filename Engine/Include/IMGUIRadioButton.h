@@ -77,6 +77,11 @@ public:
         return mVecCheckInfo[idx]->bCheck;
     }
 
+    int GetCheckItemIdx()   const
+    {
+        return mCheckItemIdx;
+    }
+
 public:
     template <typename T>
     void SetCallBack(T* obj, void(T::* func)(const char*, bool))

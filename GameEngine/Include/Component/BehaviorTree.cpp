@@ -24,6 +24,8 @@
 #include "Node/NormalAttack.h"
 #include "Node/SkillEndCheckNode.h"
 #include "Node/InSkillCheck.h"
+#include "Node/CheckTurretAttackTarget.h"
+#include "Node/CheckTurretAttackFrequency.h"
 
 CBehaviorTree::CBehaviorTree() :
 	m_Root(nullptr),
@@ -130,17 +132,33 @@ bool CBehaviorTree::Init()
 
 void CBehaviorTree::Update(float DeltaTime)
 {
+	CGameObject* OwnerObject = m_Owner->GetGameObject();
 
+	if (OwnerObject->GetObjectType() != Object_Type::Turret)
+	{
+		if (m_CurrentNode)
+			m_CurrentNode->Invoke(DeltaTime);
+
+		else if (m_Root)
+		{
+			m_Root->Invoke(DeltaTime);
+		}
+	}
 }
 
 void CBehaviorTree::PostUpdate(float DeltaTime)
 {
-	if (m_CurrentNode)
-		m_CurrentNode->Invoke(DeltaTime);
+	CGameObject* OwnerObject = m_Owner->GetGameObject();
 
-	else if (m_Root)
+	if (OwnerObject->GetObjectType() == Object_Type::Turret)
 	{
-		m_Root->Invoke(DeltaTime);
+		if (m_CurrentNode)
+			m_CurrentNode->Invoke(DeltaTime);
+
+		else if (m_Root)
+		{
+			m_Root->Invoke(DeltaTime);
+		}
 	}
 }
 
@@ -474,6 +492,28 @@ CNode* CBehaviorTree::LoadNode(CNode* Parent, size_t TypeID)
 	else if (TypeID == typeid(CInSkillCheck).hash_code())
 	{
 		CInSkillCheck* NewNode = new CInSkillCheck;
+		NewNode->SetParent(Parent);
+		NewNode->SetOwner(this);
+		NewNode->SetObject(m_Owner->GetGameObject());
+		NewNode->SetAnimationMeshComponent(m_AnimationMeshComp);
+
+		return NewNode;
+	}
+
+	else if (TypeID == typeid(CCheckTurretAttackTarget).hash_code())
+	{
+		CCheckTurretAttackTarget* NewNode = new CCheckTurretAttackTarget;
+		NewNode->SetParent(Parent);
+		NewNode->SetOwner(this);
+		NewNode->SetObject(m_Owner->GetGameObject());
+		NewNode->SetAnimationMeshComponent(m_AnimationMeshComp);
+
+		return NewNode;
+	}
+
+	else if (TypeID == typeid(CCheckTurretAttackFrequency).hash_code())
+	{
+		CCheckTurretAttackFrequency* NewNode = new CCheckTurretAttackFrequency;
 		NewNode->SetParent(Parent);
 		NewNode->SetOwner(this);
 		NewNode->SetObject(m_Owner->GetGameObject());

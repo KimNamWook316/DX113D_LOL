@@ -38,6 +38,9 @@ private:
 	std::list<class CSceneComponent*> m_RenderComponentList;
 
 public:
+	//void UpdateObjUpdateOrder();
+
+public:
 	void SetAutoChange(bool Change)
 	{
 		m_Change = Change;

@@ -384,6 +384,8 @@ void CAnimationMeshWidget::OnLoadAnimationInstance()
 		m_Animation->Start();
 
 		SetAnimationRelatedInfoToWidget(m_Animation);
+
+		RefreshMeshWidget(dynamic_cast<CAnimationMeshComponent*>(m_Component.Get())->GetMesh());
 	}
 }
 

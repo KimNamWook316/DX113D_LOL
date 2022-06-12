@@ -20,10 +20,21 @@ protected:
 	bool		m_NoInterrupt;	// 다른 State로 전환 불가능한 상태인지(ex. 특정 스킬 사용중에 다른 스킬을 쓸 수 없다)
 	Object_Type m_ObjectType;
 	bool		m_IsEnemy;
+	bool		m_OnHit; // 다른 챔피언으로부터 공격 당하거나 피해를 받고 있는 상황인지
 	bool		m_ExcludeSceneSave;
 	bool		m_NoDestroyFromSceneChange;
 
 public:
+	void SetOntHit(bool Hit)
+	{
+		m_OnHit = Hit;
+	}
+
+	bool GetOnHit()	const
+	{
+		return m_OnHit;
+	}
+
 	bool IsEnemy()	const
 	{
 		return m_IsEnemy;
@@ -104,23 +115,103 @@ protected:
 	float		m_LifeSpan;
 	class CNavAgent* m_NavAgent;
 
-	CGameObject* m_AttackTarget;
+	CGameObject* m_NormalAttackTarget;	// 챔피언의 평타 공격 대상 or 포탑이나 미니언의 공격 대상
+	std::list<CGameObject*> m_AttackTargetList;	// 광역스킬처럼 여러 오브젝트가 맞는 공격을 했을때 맞은 오브젝트들
 	ChampionInfo m_ChampionInfo;
 
 public:
+	CGameObject* GetNormalAttackTarget()	const
+	{
+		return m_NormalAttackTarget;
+	}
+
+	void SetNormalAttackTarget(CGameObject* Target)
+	{
+		m_NormalAttackTarget = Target;
+	}
+
+	// 다른 오브젝트로부터 데미지를 받는 함수
+	void GetDamage(int Damage)
+	{
+		m_ChampionInfo.HP -= Damage;
+	}
+
+	// 다른 오브젝트에게 데미지를 주는 함수
+	void SetDamage(CGameObject* Target, int Damage)
+	{
+		Target->GetDamage(Damage);
+	}
+
+	void SetChampionInfo(const ChampionInfo& Info)
+	{
+		m_ChampionInfo = Info;
+	}
+
+	void SetChampionHP(int HP)
+	{
+		m_ChampionInfo.HP = HP;
+	}
+
+	void SetChampionMP(int MP)
+	{
+		m_ChampionInfo.MP = MP;
+	}
+
+	void SetChampionMoveSpeed(float Speed)
+	{
+		m_ChampionInfo.MoveSpeed = Speed;
+	}
+	
+	void SetChampionAttackSpeed(float Speed)
+	{
+		m_ChampionInfo.AttackSpeed = Speed;
+	}
+
+	void SetChampionAttack(int Attack)
+	{
+		m_ChampionInfo.Attack = Attack;
+	}
+
+	// Ability Power, Armor 등등 추가
+
 	const ChampionInfo& GetChampionInfo()	const
 	{
 		return m_ChampionInfo;
 	}
 
-	void SetAttackTarget(CGameObject* Target)
+	void AddAttackTarget(CGameObject* Target)
 	{
-		m_AttackTarget = Target;
+		m_AttackTargetList.push_back(Target);
 	}
 
-	CGameObject* GetAttackTarget()	const
+	const std::list<CGameObject*>& GetAttackTargets()	const
 	{
-		return m_AttackTarget;
+		return m_AttackTargetList;
+	}
+
+	void ClearAttackTarget()
+	{
+		m_AttackTargetList.clear();
+	}
+
+	void EraseAttackTarget(CGameObject* Target)
+	{
+		auto iter = m_AttackTargetList.begin();
+		auto iterEnd = m_AttackTargetList.end();
+
+		for ( ; iter != iterEnd; ++iter)
+		{
+			if (*iter == Target)
+			{
+				iter = m_AttackTargetList.erase(iter);
+				return;
+			}
+		}
+	}
+
+	size_t GetAttackTargetCount()	const
+	{
+		return m_AttackTargetList.size();
 	}
 
 public:

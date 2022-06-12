@@ -39,11 +39,6 @@ NodeResult CSkillQNode::OnStart(float DeltaTime)
 
 NodeResult CSkillQNode::OnUpdate(float DeltaTime)
 {
-	if (m_AnimationMeshComp->GetAnimationInstance()->CheckCurrentAnimation("Alistar_Idle"))
-	{
-		int a = 3;
-	}
-
 	if (m_AnimationMeshComp->GetAnimationInstance()->IsCurrentAnimEnd())
 	{
 		m_Object->SetNoInterrupt(false);

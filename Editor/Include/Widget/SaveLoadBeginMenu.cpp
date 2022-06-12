@@ -205,6 +205,21 @@ void CSaveLoadBeginMenu::OnLoadObjectMenuCallback()
 			return;
 		}
 
+		CGameObject* LoadedObject = CEditorManager::GetInst()->GetObjectHierarchyWindow()->GetObjectCreateModal()->OnCreateObject(FilePathMultibyte);
+
+		if (!LoadedObject)
+			return;
+
+		CAnimationMeshComponent* Comp = LoadedObject->FindComponentFromType<CAnimationMeshComponent>();
+
+		CEditorManager::GetInst()->SetChampionInfo(LoadedObject, LoadedObject->GetName());
+		if (Comp)
+		{
+			CAnimationSequenceInstance* Instance = Comp->GetAnimationInstance();
+			if (Instance)
+				CEditorManager::GetInst()->SetChampionNotify(Instance, LoadedObject->GetName());
+		}
+
 		CGameObject* NewObject = CSceneManager::GetInst()->GetScene()->CreateEmtpyObject();
 
 		bool Success = NewObject->Load(FilePathMultibyte);

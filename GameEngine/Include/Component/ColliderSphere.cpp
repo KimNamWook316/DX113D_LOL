@@ -1,5 +1,6 @@
 
 #include "ColliderSphere.h"
+#include "ColliderBox3D.h"
 #include "../Collision/Collision.h"
 #include "../Scene/Scene.h"
 #include "../Scene/SceneResource.h"
@@ -148,8 +149,9 @@ bool CColliderSphere::Collision(CColliderComponent* Dest)
 	switch (Dest->GetColliderType())
 	{
 	case Collider_Type::Sphere:
-		break;
 		//return CCollision::CollisionBox2DToCircle((CColliderBox2D*)Dest, this);
+	case Collider_Type::Box3D:
+		return CCollision::CollisionBox3DToSphere((CColliderBox3D*)Dest, this);
 	}
 
 	return false;

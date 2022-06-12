@@ -20,7 +20,7 @@ CIdleNode::~CIdleNode()
 
 NodeResult CIdleNode::OnStart(float DeltaTime)
 {
-	if (m_Object->IsNavAgentPathListEmpty() && !m_Object->GetAttackTarget())
+	if (m_Object->IsNavAgentPathListEmpty() && !m_Object->GetNormalAttackTarget())
 	{
 		m_AnimationMeshComp = m_Owner->GetAnimationMeshComp();
 

@@ -640,6 +640,8 @@ struct ChampionInfo
 	int AbilityPower;
 	int MagicResist;
 	int NormalAttackRange;
+	int HP;
+	int MP;
 };
 
 struct NotifyParameter
