@@ -17,7 +17,8 @@ CMaterialManager::~CMaterialManager()
 
 	for (; iter != iterEnd;)
 	{
-		m_mapMaterial.erase(iter);
+		iter = m_mapMaterial.erase(iter);
+		iterEnd = m_mapMaterial.end();
 	}
 
 	m_mapMaterial.empty();

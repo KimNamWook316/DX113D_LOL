@@ -60,40 +60,6 @@ CScene::~CScene()
 	SAFE_DELETE(m_LightManager);
 }
 
-//void CScene::UpdateObjUpdateOrder()
-//{
-//	auto iter = m_ObjList.begin();
-//	auto iterEnd = m_ObjList.end();
-//
-//	int TurretCount = 0;
-//	for (; iter != iterEnd; ++iter)
-//	{
-//		if ((*iter)->GetObjectType() == Object_Type::Turret)
-//			++TurretCount;
-//	}
-//
-//	iter = m_ObjList.begin();
-//	iterEnd = m_ObjList.end();
-//
-//	while(true)
-//	{
-//		if ((*iter)->GetObjectType() == Object_Type::Turret)
-//		{
-//			CSharedPtr<CGameObject> Turret = *iter;
-//			m_ObjList.erase(iter);
-//			m_ObjList.push_back(Turret);
-//			iter = m_ObjList.begin();
-//			iterEnd = m_ObjList.end();
-//			--TurretCount;
-//		}
-//
-//		if (TurretCount == 0)
-//			return;
-//
-//		++iter;
-//	}
-//}
-
 void CScene::Start()
 {
 	m_Mode->Start();
@@ -137,12 +103,6 @@ void CScene::Update(float DeltaTime)
 	}
 
 	m_Mode->Update(DeltaTime);
-
-	// 포탑은 사거리 내에서 적 챔피언이 아군 챔피언을 공격하는지 최우선으로 판단해야하는데
-	// 그러기 위해선 포탑보다 다른 오브젝트들(ex. 챔피언, 미니언)이 먼저 Update돼서 해당 프레임에서
-	// 포탑보다 먼저 상태를 결정되어야 한다
-	// -> ObjList에서 포탑을 뒤로 보낸다
-	//UpdateObjUpdateOrder();
 
 	// State에서 각 Collision Section별로 Collider를 얻어와야 하는 경우가 있어서 (ex. CheckTurretAttackTarget)
 	// CComponent::Update하기 전에 이걸 먼저 해주도록 수정

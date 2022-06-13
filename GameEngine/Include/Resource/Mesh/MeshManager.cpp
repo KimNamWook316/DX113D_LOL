@@ -16,7 +16,8 @@ CMeshManager::~CMeshManager()
 
 	for (; iter != iterEnd;)
 	{
-		m_mapMesh.erase(iter);
+		iter = m_mapMesh.erase(iter);
+		iterEnd = m_mapMesh.end();
 	}
 
 	m_mapMesh.empty();

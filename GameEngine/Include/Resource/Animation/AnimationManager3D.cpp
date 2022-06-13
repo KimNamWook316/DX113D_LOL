@@ -13,7 +13,8 @@ CAnimationManager3D::~CAnimationManager3D()
 
 	for (; iter != iterEnd;)
 	{
-		m_mapSequence.erase(iter);
+		iter = m_mapSequence.erase(iter);
+		iterEnd = m_mapSequence.end();
 	}
 
 	m_mapSequence.empty();

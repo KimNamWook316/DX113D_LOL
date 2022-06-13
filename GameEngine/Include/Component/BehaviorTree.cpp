@@ -26,6 +26,7 @@
 #include "Node/InSkillCheck.h"
 #include "Node/CheckTurretAttackTarget.h"
 #include "Node/CheckTurretAttackFrequency.h"
+#include "Node/NegateNode.h"
 
 CBehaviorTree::CBehaviorTree() :
 	m_Root(nullptr),
@@ -520,6 +521,22 @@ CNode* CBehaviorTree::LoadNode(CNode* Parent, size_t TypeID)
 		NewNode->SetAnimationMeshComponent(m_AnimationMeshComp);
 
 		return NewNode;
+	}
+
+	else if (TypeID == typeid(CNegateNode).hash_code())
+	{
+		CNegateNode* NewNode = new CNegateNode;
+		NewNode->SetParent(Parent);
+		NewNode->SetOwner(this);
+		NewNode->SetObject(m_Owner->GetGameObject());
+		NewNode->SetAnimationMeshComponent(m_AnimationMeshComp);
+
+		return NewNode;
+	}
+
+	else if (TypeID == typeid(CDecoratorNode).hash_code())
+	{
+	int a = 3;
 	}
 
 	return nullptr;

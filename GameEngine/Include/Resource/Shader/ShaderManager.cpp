@@ -46,7 +46,8 @@ CShaderManager::~CShaderManager()
 
 	for (; iter != iterEnd;)
 	{
-		m_mapShader.erase(iter);
+		iter = m_mapShader.erase(iter);
+		iterEnd = m_mapShader.end();
 	}
 
 	m_mapShader.empty();
