@@ -32,6 +32,8 @@ void CColliderSphereWidget::SetSceneComponent(CSceneComponent* Com)
 	CColliderComponentWidget::SetSceneComponent(Com);
 
 	float Radius = ((CColliderSphere*)m_Component.Get())->GetInfo().Radius;
+
+	m_RadiusInput->SetVal(Radius);
 }
 
 void CColliderSphereWidget::OnChangeRadius(float Radius)

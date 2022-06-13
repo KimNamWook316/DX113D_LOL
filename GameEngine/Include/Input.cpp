@@ -450,7 +450,8 @@ void CInput::UpdateKeyInfo(float DeltaTime)
 				}
 				else
 				{
-					iter->second->Callback[KeyState_Down](DeltaTime);
+					if (iter->second->Callback[KeyState_Down])
+						iter->second->Callback[KeyState_Down](DeltaTime);
 				}
 			}
 		}
@@ -470,7 +471,8 @@ void CInput::UpdateKeyInfo(float DeltaTime)
 				}
 				else
 				{
-					iter->second->Callback[KeyState_Push](DeltaTime);
+					if(iter->second->Callback[KeyState_Push])
+						iter->second->Callback[KeyState_Push](DeltaTime);
 				}
 			}
 		}
@@ -491,7 +493,8 @@ void CInput::UpdateKeyInfo(float DeltaTime)
 			}
 			else 
 			{
-				iter->second->Callback[KeyState_Up](DeltaTime);
+				if(iter->second->Callback[KeyState_Up])
+					iter->second->Callback[KeyState_Up](DeltaTime);
 			}
 		}
 	}

@@ -38,13 +38,13 @@ bool CColliderSphere::Init()
 	if (!CColliderComponent::Init())
 		return false;
 
-	m_Info.Radius = 50.f;
+	m_Info.Radius = 10.f;
 
 	SetInheritRotZ(true);
 
 	SetWorldScale(m_Info.Radius, m_Info.Radius, m_Info.Radius);
 
-	m_Mesh = m_Scene->GetResource()->FindMesh("SpherePos");
+	m_Mesh = m_Scene->GetResource()->FindMesh("SphereLinePos");
 
 	return true;
 }

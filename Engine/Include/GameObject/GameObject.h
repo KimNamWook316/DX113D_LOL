@@ -23,7 +23,6 @@ protected:
 	bool		m_OnHit; // 다른 챔피언으로부터 공격 당하거나 피해를 받고 있는 상황인지
 	bool		m_ExcludeSceneSave;
 	bool		m_NoDestroyFromSceneChange;
-
 public:
 	void SetOntHit(bool Hit)
 	{

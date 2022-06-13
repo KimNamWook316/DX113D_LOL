@@ -347,3 +347,11 @@ enum class Object_Type
 	Turret,
 	None
 };
+
+enum class LoLLine
+{
+	Top,
+	Mid,
+	Bottom,
+	Max
+};

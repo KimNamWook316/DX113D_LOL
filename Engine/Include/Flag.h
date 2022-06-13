@@ -313,7 +313,7 @@ enum ConditionNode
 	SkillEndCheck,
 	InSkillCheck,
 	TurretAttackTargetCheck,
-	TurretAttackFrequencyCheck
+	TurretAttackFrequencyCheck,
 };
 
 enum ActionNode
@@ -346,4 +346,12 @@ enum class Object_Type
 	MapObject,
 	Turret,
 	None
+};
+
+enum class LoLLine
+{
+	Top,
+	Mid,
+	Bottom,
+	Max
 };

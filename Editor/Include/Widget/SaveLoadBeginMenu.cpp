@@ -205,21 +205,6 @@ void CSaveLoadBeginMenu::OnLoadObjectMenuCallback()
 			return;
 		}
 
-		CGameObject* LoadedObject = CEditorManager::GetInst()->GetObjectHierarchyWindow()->GetObjectCreateModal()->OnCreateObject(FilePathMultibyte);
-
-		if (!LoadedObject)
-			return;
-
-		CAnimationMeshComponent* Comp = LoadedObject->FindComponentFromType<CAnimationMeshComponent>();
-
-		CEditorManager::GetInst()->SetChampionInfo(LoadedObject, LoadedObject->GetName());
-		if (Comp)
-		{
-			CAnimationSequenceInstance* Instance = Comp->GetAnimationInstance();
-			if (Instance)
-				CEditorManager::GetInst()->SetChampionNotify(Instance, LoadedObject->GetName());
-		}
-
 		CGameObject* NewObject = CSceneManager::GetInst()->GetScene()->CreateEmtpyObject();
 
 		bool Success = NewObject->Load(FilePathMultibyte);
@@ -233,6 +218,17 @@ void CSaveLoadBeginMenu::OnLoadObjectMenuCallback()
 		RefreshSceneRelatedWindow(NewObject);
 
 		MessageBox(nullptr, TEXT("로드 성공"), TEXT("Success"), MB_OK);
+
+		CAnimationMeshComponent* Comp = NewObject->FindComponentFromType<CAnimationMeshComponent>();
+
+		CEditorManager::GetInst()->SetChampionInfo(NewObject, NewObject->GetName());
+
+		if (Comp)
+		{
+			CAnimationSequenceInstance* Instance = Comp->GetAnimationInstance();
+			if (Instance)
+				CEditorManager::GetInst()->SetChampionNotify(Instance, NewObject->GetName());
+		}
  	}
 }
 

@@ -861,7 +861,7 @@ bool CCollision::CollisionBox3DToSphere(Vector3& HitPoint, CColliderBox3D* Src, 
 	// Sphere를 Box중심 좌표계로 바꾸고 Box가 회전할때 Sphere의 중심도 같이 회전해서 AABB처럼 만들어준다
 	SphereInfo SphereInObbSpace;
 	SphereInObbSpace.Center = Sphere.Center - Box.Center;
-
+	SphereInObbSpace.Radius = Sphere.Radius;
 	Vector3 BoxRotMat = Src->GetWorldRot();
 
 	XMVECTOR Qut = XMQuaternionRotationRollPitchYaw(BoxRotMat.x, BoxRotMat.y, BoxRotMat.z);
@@ -871,18 +871,21 @@ bool CCollision::CollisionBox3DToSphere(Vector3& HitPoint, CColliderBox3D* Src, 
 
 	SphereInObbSpace.Center = SphereInObbSpace.Center.TransformNormal(matRot);
 
-	if (SphereInObbSpace.Center.x < -Box.AxisLen[0])
+	if (SphereInObbSpace.Center.x + SphereInObbSpace.Radius < -Box.AxisLen[0])
 		return false;
-	if (SphereInObbSpace.Center.x > Box.AxisLen[0])
+	if (SphereInObbSpace.Center.x - SphereInObbSpace.Radius > Box.AxisLen[0])
 		return false;
-	if (SphereInObbSpace.Center.y < -Box.AxisLen[1])
+	if (SphereInObbSpace.Center.y + SphereInObbSpace.Radius < -Box.AxisLen[1])
 		return false;
-	if (SphereInObbSpace.Center.y > Box.AxisLen[1])
+	if (SphereInObbSpace.Center.y - SphereInObbSpace.Radius > Box.AxisLen[1])
 		return false;
-	if (SphereInObbSpace.Center.z < -Box.AxisLen[2])
+	if (SphereInObbSpace.Center.z + SphereInObbSpace.Radius < -Box.AxisLen[2])
 		return false;
-	if (SphereInObbSpace.Center.z > Box.AxisLen[2])
+	if (SphereInObbSpace.Center.z - SphereInObbSpace.Radius > Box.AxisLen[2])
 		return false;
+
+
+	MessageBox(nullptr, TEXT("충돌"), TEXT("충돌"), MB_OK);
 
 	return true;
 }

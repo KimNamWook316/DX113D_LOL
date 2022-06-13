@@ -14,8 +14,7 @@ CGameObject::CGameObject() :
 	m_NormalAttackTarget(nullptr),
 	m_OnHit(false),
 	m_ExcludeSceneSave(false),
-	m_NoDestroyFromSceneChange(false),
-	m_AttackTarget(nullptr)
+	m_NoDestroyFromSceneChange(false)
 {
 	SetTypeID<CGameObject>();
 	m_ObjectType = Object_Type::None;
