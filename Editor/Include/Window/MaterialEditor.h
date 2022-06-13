@@ -32,20 +32,24 @@ private :
 
 	// 남욱씨가 말한 내용들 Setting 하는 장소
 	class CIMGUICheckBox* m_OutLineCheck;
-	class CIMGUIColor3* m_OutLineColor;
+	class CIMGUIColor3*      m_OutLineColor;
 	class CIMGUIInputFloat* m_OutLineThickNess;
 
 	// Shader 를 Drag, Drop 할 수 있는 장소
 	class CIMGUITextInput* m_ShaderSetInput;
+	
+	// Sampler State 를 확인하는 table
+	class CIMGUITable*       m_RenderStateInfoTable;
+	class CIMGUITextInput* m_RenderStateSetInput;
 
 	// Drop 해서 Set Texture 하기
 	class CIMGUITextInput* m_AddTextureInput; // 동시에 파일 이름으로 저장될 것이다.
-	class CIMGUIButton* m_AddTextureBtn;
+	class CIMGUIButton*     m_AddTextureBtn;
 
 	// Drop 해서 Add Texture 하기 
-	class CIMGUIInputInt* m_TextureIndex; // 동시에 파일 이름으로 저장될 것이다.
+	class CIMGUIInputInt*   m_TextureIndex; // 동시에 파일 이름으로 저장될 것이다.
 	class CIMGUITextInput* m_SetTextureInput; // 동시에 파일 이름으로 저장될 것이다.
-	class CIMGUIButton* m_SetTextureBtn;
+	class CIMGUIButton*     m_SetTextureBtn;
 
 	// Drop 해서 Image 보여주는 Image Widget
 	// 각종 Btn 들
@@ -61,8 +65,14 @@ public :
 private :
 	void OnCreateMaterialCallback();
 
+	// Render State
 	void OnDropAndCreateMaterialCallback(const std::string&);
+
+	// Shader
 	void OnDropAndSetShaderToMaterial(const std::string&);
+
+	// Render State
+	void OnDropAndSetRenderStateToMaterial(const std::string&);
 
 	void OnIsOutLineEdit(const char*, bool Enable);
 	void OnSetOutLineColor(const Vector3& Color);

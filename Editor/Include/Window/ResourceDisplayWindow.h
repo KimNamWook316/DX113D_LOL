@@ -17,6 +17,8 @@ private :
 	class CIMGUIWidgetList* m_TextureList;
 	// Shader
 	class CIMGUIWidgetList* m_ShaderList;
+	// Sampler
+	class CIMGUIWidgetList* m_SamplerList;
 	// Material
 	class CIMGUIWidgetList* m_MaterialList;
 private :
@@ -26,5 +28,7 @@ public :
 public  :
 	void RefreshLoadedTextureResources();
 	void RefreshLoadedMaterialResources();
+	void RefreshLoadedSamplerResources();
+	void RefreshLoadedShaderResources();
 };
 

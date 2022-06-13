@@ -92,6 +92,20 @@ public:
 		WideCharToMultiByte(CP_UTF8, 0, m_wHintText, -1, m_HintTextUTF8, Length, 0, 0);
 	}
 
+	void ClearText()
+	{
+		char		m_Text[1024];
+		wchar_t		m_wText[1024];
+		char		m_TextUTF8[1024];
+
+		if (m_TextType != ImGuiText_Type::String)
+			return;
+
+		memset(m_Text, 0, sizeof(m_Text));
+		memset(m_wText, 0, sizeof(m_wText));
+		memset(m_TextUTF8, 0, sizeof(m_TextUTF8));
+	}
+
 	void SetInt(int Value)
 	{
 		m_ValueInt = Value;

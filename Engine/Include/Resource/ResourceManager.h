@@ -39,6 +39,10 @@ public:
 	{
 		return m_MaterialManager;
 	}
+	const CShaderManager* GetShaderManager() const
+	{
+		return m_ShaderManager;
+	}
 
 public:	// =================== Mesh =====================
 	bool CreateMesh(Mesh_Type Type, const std::string& Name,
