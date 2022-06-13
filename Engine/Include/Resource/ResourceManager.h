@@ -31,11 +31,15 @@ public:
 	void RenderTarget();
 
 public:
+	const CMaterialManager* GetMaterialManager() const
+	{
+		return m_MaterialManager;
+	}
+
 	const CTextureManager* GetTextureManager() const
 	{
 		return m_TextureManager;
 	}
-
 	const CMaterialManager* GetMaterialManager() const
 	{
 		return m_MaterialManager;
