@@ -259,11 +259,11 @@ void CEffectEditor::OnLoadParticleObjectButton()
 
 void CEffectEditor::OnRestartParticleComponentButton()
 {
-    SAFE_DELETE(m_ParticleObject);
-    m_ParticleObject = CSceneManager::GetInst()->GetScene()->CreateGameObject<C3DParticleObject>("Particle Effect Base Ground");
-
+    // SAFE_DELETE(m_ParticleObject);
     m_CameraXRotSlideBar->SetValue(m_ParticleObject->GetCameraRelativeRotation().x);
     m_CameraYOffsetBar->SetValue(m_ParticleObject->GetCameraOfffset().y);
+
+    m_ParticleObject = CSceneManager::GetInst()->GetScene()->CreateGameObject<C3DParticleObject>("Particle Effect Base Ground");
 
     SetParticleToParticleComponent(dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent()), m_ParticleClass);
 }
@@ -613,6 +613,12 @@ void CEffectEditor::OnLoadParticleClass()
 
         m_ParticleClass->LoadFile(FilePathMultibyte);
 
+         // 필요한 Object 목록 세팅
+        SetGameObjectReady();
+
+        // 이미 Particle Object 가 만들어져 있다면 => Particle Editing 을 시작한 상태이므로
+        m_BaseGroundObject->GetRootComponent()->Enable(true);
+
         // Particle 을 보여주기 위한 Particle Component 를 만들어내고
         // m_Particle 에 세팅해주고
         m_ParticleObject = CSceneManager::GetInst()->GetScene()->CreateGameObject<C3DParticleObject>("Particle Effect Base Ground");
@@ -621,7 +627,8 @@ void CEffectEditor::OnLoadParticleClass()
         m_CameraYOffsetBar->SetValue(m_ParticleObject->GetCameraOfffset().y);
 
         SetParticleToParticleComponent(dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent()), m_ParticleClass);
-         
+
+  
         // IMGUI Update
         SetIMGUIReflectPartice(m_ParticleClass);
 
@@ -701,6 +708,10 @@ void CEffectEditor::SetGameObjectReady()
    // m_SkyObject->GetRootComponent()->SetLayerName("ParticleEditorLayer");
    // m_SkyObject->SetScene(CSceneManager::GetInst()->GetScene());
    // m_SkyObject->Init();
+
+    // 기존 Base Ground Object 는 지운다.
+    if (m_BaseGroundObject)
+        m_BaseGroundObject->Destroy();
 
     m_BaseGroundObject = CSceneManager::GetInst()->GetScene()->CreateGameObject<CGameObject>("Particle Effect Base Ground");
     m_BaseGroundObject->CreateComponent<CSpriteComponent>("Simple Sprite");
