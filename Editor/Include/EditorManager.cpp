@@ -20,6 +20,7 @@
 #include "Component/StateComponent.h"
 #include "Component/ColliderBox3D.h"
 #include "Component/ColliderSphere.h"
+#include "Component/TowerComponent.h"
 // Window
 #include "Window/ObjectHierarchyWindow.h"
 #include "Window/SceneComponentHierarchyWindow.h"
@@ -364,6 +365,13 @@ CComponent* CEditorManager::CreateComponent(CGameObject* Obj, size_t Type)
 	else if (Type == typeid(CColliderSphere).hash_code())
 	{
 		CColliderSphere* Component = Obj->LoadComponent<CColliderSphere>();
+		// Component->EnableEditMode(true);
+		return Component;
+	}
+
+	else if (Type == typeid(CTowerComponent).hash_code())
+	{
+		CTowerComponent* Component = Obj->LoadComponent<CTowerComponent>();
 		// Component->EnableEditMode(true);
 		return Component;
 	}

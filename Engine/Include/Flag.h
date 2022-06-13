@@ -259,6 +259,7 @@ enum class SceneComponent3DType
 	ParticleComponent,
 	ColliderBox3D,
 	ColliderSphere,
+	TowerComponent,
 	Max
 };
 
@@ -329,6 +330,10 @@ enum ActionNode
 	Idle,
 	NormalAttack
 };
+enum DecoratorNode
+{
+	Negate
+};
 
 enum Node_Type
 {
@@ -354,5 +359,7 @@ enum class LoLLine
 	Top,
 	Mid,
 	Bottom,
+	LeftTwin,
+	RightTwin,
 	Max
 };

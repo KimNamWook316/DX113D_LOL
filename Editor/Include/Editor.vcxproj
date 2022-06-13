@@ -166,10 +166,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AnimationInstanceConvertThread.cpp" />
+    <ClCompile Include="Component\TowerComponent.cpp" />
     <ClCompile Include="EditorManager.cpp" />
     <ClCompile Include="EditorUtil.cpp" />
-    <ClCompile Include="GameManager.cpp" />
     <ClCompile Include="GraphEditor.cpp" />
+    <ClCompile Include="LoLNavManager.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Object\3DCameraObject.cpp" />
     <ClCompile Include="Object\3DParticleObject.cpp" />
@@ -191,6 +192,7 @@
     <ClCompile Include="Widget\SaveLoadBeginMenu.cpp" />
     <ClCompile Include="Widget\SceneComponentWidget.cpp" />
     <ClCompile Include="Widget\StaticMeshComponentWidget.cpp" />
+    <ClCompile Include="Widget\TowerComponentWidget.cpp" />
     <ClCompile Include="Widget\TransformWidget.cpp" />
     <ClCompile Include="Widget\UtilMenuBar.cpp" />
     <ClCompile Include="Window\AnimationEditor.cpp" />
@@ -219,11 +221,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimationInstanceConvertThread.h" />
+    <ClInclude Include="Component\TowerComponent.h" />
     <ClInclude Include="EditorInfo.h" />
     <ClInclude Include="EditorManager.h" />
     <ClInclude Include="EditorUtil.h" />
-    <ClInclude Include="GameManager.h" />
     <ClInclude Include="GraphEditor.h" />
+    <ClInclude Include="LoLNavManager.h" />
     <ClInclude Include="Object\3DCameraObject.h" />
     <ClInclude Include="Object\3DParticleObject.h" />
     <ClInclude Include="Object\Anim3DObject.h" />
@@ -246,6 +249,7 @@
     <ClInclude Include="Widget\SaveLoadBeginMenu.h" />
     <ClInclude Include="Widget\SceneComponentWidget.h" />
     <ClInclude Include="Widget\StaticMeshComponentWidget.h" />
+    <ClInclude Include="Widget\TowerComponentWidget.h" />
     <ClInclude Include="Widget\TransformWidget.h" />
     <ClInclude Include="Widget\UtilMenuBar.h" />
     <ClInclude Include="Window\AnimationEditor.h" />

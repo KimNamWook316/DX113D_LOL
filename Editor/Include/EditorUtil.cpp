@@ -14,6 +14,7 @@
 #include "Component/StateComponent.h"
 #include "Component/ColliderBox3D.h"
 #include "Component/ColliderSphere.h"
+#include "Component/TowerComponent.h"
 #include "IMGUITree.h"
 #include "Flag.h"
 
@@ -379,6 +380,8 @@ std::string CEditorUtil::SceneComponent3DTypeToString(SceneComponent3DType Type)
 		return "ColliderBox3D";
 	case SceneComponent3DType::ColliderSphere:
 		return "ColliderSphere";
+	case SceneComponent3DType::TowerComponent:
+		return "TowerComponent";
 	}
 
 	return "";
@@ -456,6 +459,8 @@ size_t CEditorUtil::SceneComponentTypeIndexToTypeid(int TypeIndex)
 		return typeid(CColliderBox3D).hash_code();
 	case 8:
 		return typeid(CColliderSphere).hash_code();
+	case 9:
+		return typeid(CTowerComponent).hash_code();
 	}
 
 	return -1;
