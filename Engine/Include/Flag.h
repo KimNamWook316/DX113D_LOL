@@ -313,7 +313,7 @@ enum ConditionNode
 	SkillEndCheck,
 	InSkillCheck,
 	TurretAttackTargetCheck,
-	TurretAttackFrequencyCheck
+	TurretAttackFrequencyCheck,
 };
 
 enum ActionNode
