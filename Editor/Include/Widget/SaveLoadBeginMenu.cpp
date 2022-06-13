@@ -1,24 +1,28 @@
-#include "SaveLoadBeginMenu.h"
-#include "IMGUIMenuItem.h"
-#include "../Window/BehaviorTreeMenuBar.h"
-#include "../Window/ObjectCreateModal.h"
-#include "IMGUIBeginMenu.h"
-#include "../EditorUtil.h"
-#include "../EditorManager.h"
-#include "IMGUIPopUpModal.h"
+// Engine
 #include "Engine.h"
-#include "IMGUIManager.h"
-#include "../Window/BehaviorTreeWindow.h"
-#include "../Window/ObjectComponentWindow.h"
-#include "../Window/SceneComponentHierarchyWindow.h"
-#include "IMGUIManager.h"
-#include "../Window/ObjectHierarchyWindow.h"
 #include "GameObject/GameObject.h"
 #include "Component/StateComponent.h"
 #include "Component/AnimationMeshComponent.h"
 #include "PathManager.h"
 #include "Scene/Scene.h"
 #include "Scene/SceneManager.h"
+// Window
+#include "../Window/BehaviorTreeWindow.h"
+#include "../Window/ObjectComponentWindow.h"
+#include "../Window/SceneComponentHierarchyWindow.h"
+#include "../Window/ObjectHierarchyWindow.h"
+#include "../Window/BehaviorTreeMenuBar.h"
+#include "../Window/ResourceDisplayWindow.h"
+#include "../Window/ObjectCreateModal.h"
+#include "../EditorUtil.h"
+#include "../EditorManager.h"
+// IMGUI
+#include "IMGUIManager.h"
+#include "SaveLoadBeginMenu.h"
+#include "IMGUIBeginMenu.h"
+#include "IMGUIMenuItem.h"
+#include "IMGUIPopUpModal.h"
+#include "IMGUIManager.h"
 
 
 CSaveLoadBeginMenu::CSaveLoadBeginMenu()
@@ -37,8 +41,9 @@ bool CSaveLoadBeginMenu::Init()
 	// Scene
 	m_SaveSceneMenu = AddMenuItem("Save Scene");
 	m_SaveSceneMenu->SetClickCallBack(this, &CSaveLoadBeginMenu::OnSaveSceneMenuCallback);
+
 	m_LoadSceneMenu = AddMenuItem("Load Scene");
-	m_SaveSceneMenu->SetClickCallBack(this, &CSaveLoadBeginMenu::OnLoadSceneMenuCallback);
+	m_LoadSceneMenu->SetClickCallBack(this, &CSaveLoadBeginMenu::OnLoadSceneMenuCallback);
 
 	// Object
 	m_SaveObjectMenu = AddMenuItem("Save Object");
@@ -50,12 +55,14 @@ bool CSaveLoadBeginMenu::Init()
 	// Scene Component
 	m_SaveSceneComponentMenu = AddMenuItem("Save SceneComponent");
 	m_SaveSceneComponentMenu->SetClickCallBack(this, &CSaveLoadBeginMenu::OnSaveSceneComponentMenuCallback);
+
 	m_LoadSceneComponentMenu = AddMenuItem("Load SceneComponent");
 	m_LoadSceneComponentMenu->SetClickCallBack(this, &CSaveLoadBeginMenu::OnLoadSceneComponentMenuCallback);
 	
 	// Object Component
 	m_SaveObjectComponentMenu = AddMenuItem("Save ObjectComponent");
 	m_SaveObjectComponentMenu->SetClickCallBack(this, &CSaveLoadBeginMenu::OnSaveObjectComponentMenuCallback);
+	
 	m_LoadObjectComponentMenu = AddMenuItem("Load ObjectComponent");
 	m_LoadObjectComponentMenu->SetClickCallBack(this, &CSaveLoadBeginMenu::OnLoadObjectComponentMenuCallback);
 
@@ -73,6 +80,9 @@ void CSaveLoadBeginMenu::OnSaveSceneMenuCallback()
 
 void CSaveLoadBeginMenu::OnLoadSceneMenuCallback()
 {
+	// 모든 Scene 을 로드하고나서, Resource Display Window Texture, Material 정보 Update
+	CEditorManager::GetInst()->GetResourceDisplayWindow()->RefreshLoadedTextureResources();
+	CEditorManager::GetInst()->GetResourceDisplayWindow()->RefreshLoadedMaterialResources();
 }
 
 void CSaveLoadBeginMenu::OnSaveObjectMenuCallback()
@@ -179,6 +189,15 @@ void CSaveLoadBeginMenu::OnLoadObjectMenuCallback()
 				((CNavAgent*)vecObjComp[i])->SetUpdateComponent(LoadedObject->GetRootComponent());
 			}
 		}
+
+		// Resource Display 에 있는 Texture, Material 정보 다시 Update 
+		// 사실 아래 코드는 거의 쓸모 없다 => 어차피 각 Animation Mesh Component 등, Mesh 파일에서 불러온 Material 을 세팅할 때에는
+		// 공유되는 Material 이 사용되는 것이 아니기 때문이다.
+		// 따라서 Mesh Component 에서 각각이 별도로 사용하는 Material File 을 Load 한다고 하더라도
+		// 그냥 Mesh Component 만 사용할 뿐, 별도로 Material Manager 에 저장하는 것이 아니기 때문이다.
+		// (나중에 필요하면, Animation Mesh Component Load 과정에서 Material Manager, Texture Manager 에 추가해주기)
+		// CEditorManager::GetInst()->GetResourceDisplayWindow()->RefreshLoadedTextureResources();
+		// CEditorManager::GetInst()->GetResourceDisplayWindow()->RefreshLoadedMaterialResources();
 	}
 }
 

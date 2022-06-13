@@ -21,6 +21,7 @@ private :
 	bool m_IsCameraZoom;
 	float m_CameraRotateSpeed;
 	float m_CameraZoomSpeed;
+	bool m_RotateInv;
 public :
 	float GetCameraRotateSpeed() const
 	{
@@ -43,6 +44,10 @@ public :
 		return m_ParticleArm->GetOffset();
 	}
 public :
+	void SetRotateInv(bool Enable)
+	{
+		m_RotateInv = Enable;
+	}
 	void SetCameraZoom(bool Enable) 
 	{
 		m_IsCameraZoom = Enable;

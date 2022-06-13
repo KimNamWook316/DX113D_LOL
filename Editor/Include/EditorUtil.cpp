@@ -267,6 +267,70 @@ bool CEditorUtil::GetFileNameAfterSlash(const std::string& FilePath, std::string
 	return true;
 }
 
+const char* CEditorUtil::ChangeTCHARTextToMultibyte(TCHAR* TCHARText)
+{
+	char FilePathMultibyte[MAX_PATH] = {};
+
+	int ConvertLength = WideCharToMultiByte(CP_ACP, 0, TCHARText, -1, 0, 0, 0, 0);
+	WideCharToMultiByte(CP_ACP, 0, TCHARText, -1, FilePathMultibyte, ConvertLength, 0, 0);
+
+	return FilePathMultibyte;
+}
+
+// void CEditorUtil::ChangeMultibyteTextToTCHAR(const std::string& MText, std::wstring& TCHARTextResult)
+const TCHAR* CEditorUtil::ChangeMultibyteTextToTCHAR(const std::string& MText)
+{
+	TCHAR TCHARTextResult[MAX_PATH] = {};
+
+	int ConvertLength = MultiByteToWideChar(CP_ACP, 0, MText.c_str(), -1, 0, 0);
+	MultiByteToWideChar(CP_ACP, 0, MText.c_str(), -1, TCHARTextResult, ConvertLength);
+
+	return TCHARTextResult;
+}
+
+void CEditorUtil::ExtractFileNameAndExtFromPath(const std::string& FullPath, std::string& FileNameResult, std::string& ExtResult)
+{
+	char FileName[MAX_PATH] = {};
+	char FileExt[_MAX_EXT] = {};
+
+	_splitpath_s(FullPath.c_str(), nullptr, 0, nullptr, 0, FileName, MAX_PATH, FileExt, _MAX_EXT);
+
+	FileNameResult = FileName;
+	ExtResult = FileExt;
+}
+
+void CEditorUtil::ExtractFileNameAndExtFromPath(const std::string& FullPath, char* FileName, char* FileExt)
+{
+	_splitpath_s(FullPath.c_str(), nullptr, 0, nullptr, 0, FileName, MAX_PATH, FileExt, _MAX_EXT);
+}
+
+bool CEditorUtil::IsFileExistInDir(const std::string& PathName, const std::string& FileName)
+{
+	const PathInfo* Info = CPathManager::GetInst()->FindPath(PathName);
+
+	if (!Info)
+		return  false;
+
+	char FolderName[MAX_PATH] = {};
+
+	strcpy_s(FolderName, Info->PathMultibyte);
+
+	fs::path TargetFolder(FolderName);
+
+	for (const fs::directory_entry& entry :
+		fs::recursive_directory_iterator(TargetFolder))
+	{
+		const std::string& FileName = FilterFileName(entry.path().u8string());
+
+		if (strcmp(FileName.c_str(), FileName.c_str()) == 0)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
 void CEditorUtil::ShowDemo()
 {
 	static bool Open = false;

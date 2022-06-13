@@ -26,10 +26,6 @@ public:
         mbEnable = bEnable;
     }
 
-    void SetCheckEnable(bool Enable)
-    {
-        m_EnableCheck = Enable;
-    }
 
 public:
     bool IsSelected()

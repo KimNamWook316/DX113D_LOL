@@ -18,20 +18,29 @@ bool CIMGUIMenuItem::Init()
 
 void CIMGUIMenuItem::Render()
 {
-    if (mShortCut.empty())
-    {
-        ImGui::MenuItem(m_Name.c_str(), NULL, &mbSelect, mbEnable);
-    }
-    else
-    {
-        ImGui::MenuItem(m_Name.c_str(), mShortCut.c_str(), &mbSelect, mbEnable);
-    }
+    // 1) 기존에 사용되고 있었던 Render 함수 코드
+   // if (mShortCut.empty())
+   // {
+   //     ImGui::MenuItem(m_Name.c_str(), NULL, &mbSelect, mbEnable);
+   // }
+   // else
+   // {
+   //     ImGui::MenuItem(m_Name.c_str(), mShortCut.c_str(), &mbSelect, mbEnable);
+   // }
+   // 
+   // if (mbSelect)
+   // {
+   //     if (mCallBack)
+   //     {
+   //         mCallBack();
+   //         mbSelect = false;
+   //     }
+   // }
 
-    // MenuItem 중에서 Check 표시를 사용할 것인지 아닌지를 선별하기 위한 변수
-    // if (!m_EnableCheck)
-    //     mbSelect = false;
 
-    if (mbSelect)
+    // 2) 새롭게 반영한 Render 함수 코드
+    // - Why ? Load Scene Menu Bar 옆에만 계속 체크 표시가 된다.
+    if (ImGui::MenuItem(m_Name.c_str()))
     {
         if (mCallBack)
         {

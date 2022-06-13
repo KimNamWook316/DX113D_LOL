@@ -190,6 +190,7 @@
     <ClCompile Include="Widget\SceneComponentWidget.cpp" />
     <ClCompile Include="Widget\StaticMeshComponentWidget.cpp" />
     <ClCompile Include="Widget\TransformWidget.cpp" />
+    <ClCompile Include="Widget\UtilMenuBar.cpp" />
     <ClCompile Include="Window\AnimationEditor.cpp" />
     <ClCompile Include="Thread\FBXConvertThread.cpp" />
     <ClCompile Include="Window\BaseMenuBar.cpp" />
@@ -243,6 +244,7 @@
     <ClInclude Include="Widget\SceneComponentWidget.h" />
     <ClInclude Include="Widget\StaticMeshComponentWidget.h" />
     <ClInclude Include="Widget\TransformWidget.h" />
+    <ClInclude Include="Widget\UtilMenuBar.h" />
     <ClInclude Include="Window\AnimationEditor.h" />
     <ClInclude Include="Thread\FBXConvertThread.h" />
     <ClInclude Include="Window\BaseMenuBar.h" />

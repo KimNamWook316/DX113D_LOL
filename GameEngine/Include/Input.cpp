@@ -481,17 +481,20 @@ void CInput::UpdateKeyInfo(float DeltaTime)
 			iter->second->Alt == m_Alt &&
 			iter->second->Shift == m_Shift)
 		{
-			if (CEngine::GetInst()->GetEditMode())
+			// OBJ 가 수정
+			// 기존 오류 : iter->second->Callback[KeyState_Up] 가 존재하는지 검사하지도 않고
+			// else 에서 iter->second->Callback[KeyState_Up] 를 실행
+			if (iter->second->Callback[KeyState_Up])
 			{
-				if (iter->second->Callback[KeyState_Up])
+				if (CEngine::GetInst()->GetEditMode())
 				{
 					if (!ImGui::GetIO().WantCaptureMouse)
 						iter->second->Callback[KeyState_Up](DeltaTime);
 				}
-			}
-			else 
-			{
-				iter->second->Callback[KeyState_Up](DeltaTime);
+				else
+				{
+					iter->second->Callback[KeyState_Up](DeltaTime);
+				}
 			}
 		}
 	}

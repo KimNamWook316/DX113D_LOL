@@ -40,6 +40,7 @@
 #include "../Object/3DCameraObject.h"
 #include "../EditorManager.h"
 #include "AnimationMeshWidget.h"
+#include "../Window/ResourceDisplayWindow.h"
 // C++ 17
 #include <filesystem>
 
@@ -157,9 +158,9 @@ void CAnimationMeshWidget::OnSelectMaterialSlotCombo(int Idx, const char* Label)
 		CMaterial* Mat = MeshCom->GetMaterial(Idx);
 
 		m_BaseColorEdit->SetRGB(Mat->GetBaseColor().x, Mat->GetBaseColor().y, Mat->GetBaseColor().z);
-		m_AmbientColorEdit->SetRGB(Mat->GetBaseColor().x, Mat->GetBaseColor().y, Mat->GetBaseColor().z);
-		m_SpecularColorEdit->SetRGB(Mat->GetBaseColor().x, Mat->GetBaseColor().y, Mat->GetBaseColor().z);
-		m_EmissiveColorEdit->SetRGB(Mat->GetBaseColor().x, Mat->GetBaseColor().y, Mat->GetBaseColor().z);
+		m_AmbientColorEdit->SetRGB(Mat->GetAmbientColor().x, Mat->GetAmbientColor().y, Mat->GetAmbientColor().z);
+		m_SpecularColorEdit->SetRGB(Mat->GetSpecularColor().x, Mat->GetSpecularColor().y, Mat->GetSpecularColor().z);
+		m_EmissiveColorEdit->SetRGB(Mat->GetEmissiveColor().x, Mat->GetEmissiveColor().y, Mat->GetEmissiveColor().z);
 		m_SpecluarPowerEdit->SetVal(Mat->GetSpecularPower());
 		m_TransparencyEdit->SetCheck(0, Mat->IsTransparent());
 		m_OpacityEdit->SetValue(Mat->GetOpacity());
@@ -334,11 +335,12 @@ void CAnimationMeshWidget::OnLoadAnimationInstance()
 	if (GetOpenFileName(&OpenFile) != 0)
 	{
 		char	Ext[_MAX_EXT] = {};
-
+		char FileName[MAX_PATH] = {};
 		char FilePathMultibyte[MAX_PATH] = {};
+		
 		int ConvertLength = WideCharToMultiByte(CP_ACP, 0, FilePath, -1, 0, 0, 0, 0);
 		WideCharToMultiByte(CP_ACP, 0, FilePath, -1, FilePathMultibyte, ConvertLength, 0, 0);
-		_splitpath_s(FilePathMultibyte, nullptr, 0, nullptr, 0, nullptr, 0, Ext, _MAX_EXT);
+		_splitpath_s(FilePathMultibyte, nullptr, 0, nullptr, 0, FileName, MAX_PATH, Ext, _MAX_EXT);
 
 		_strupr_s(Ext);
 
@@ -346,6 +348,13 @@ void CAnimationMeshWidget::OnLoadAnimationInstance()
 		if (strcmp(Ext, ".ANIM") != 0)
 			return;
 
+		// Animation .anim File 들은, .anim 파일 확장자로 저장된 
+		// 파일 이름으로 식별할 것이다.
+		// 같은 Animation File 을 Load 하는 것이라면 Skip
+		if (m_Animation && strcmp(FileName, m_Animation->GetSavedFileName()) == 0)
+			return;
+
+		// 기존에 Load 해둔 Animation Instance 가 있다면 지워준다.
 		if (m_Animation)
 		{
 			ClearExistingAnimationSeqInfos();
@@ -383,7 +392,16 @@ void CAnimationMeshWidget::OnLoadAnimationInstance()
 		// Animation 관련 정보를 모두 정상적으로 Load 했다면 Start 함수 호출하여, 필요한 정보 세팅
 		m_Animation->Start();
 
+		// Animation Inst 관련 IMGUI Update
 		SetAnimationRelatedInfoToWidget(m_Animation);
+
+		// Mesh, Material 관련 IMGUI Update
+		RefreshMeshWidget(dynamic_cast<CAnimationMeshComponent*>(m_Component.Get())->GetMesh());
+
+
+		// Resource Display Window Update 하기
+		CEditorManager::GetInst()->GetResourceDisplayWindow()->RefreshLoadedTextureResources();
+		CEditorManager::GetInst()->GetResourceDisplayWindow()->RefreshLoadedMaterialResources();
 	}
 }
 
@@ -573,6 +591,7 @@ void CAnimationMeshWidget::RefreshMeshWidget(CMesh* Mesh)
 	std::string AutoName;
 
 	int MatSlotSize = MeshCom->GetMaterialSlotCount();
+
 	for (int i = 0; i < MatSlotSize; ++i)
 	{
 		// Material 이름이 없을 경우 자동으로 이름 지정

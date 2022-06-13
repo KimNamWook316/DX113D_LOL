@@ -5,11 +5,23 @@
 #include "../Shader/ParticleUpdateShader.h"
 #include "../Shader/ParticleConstantBuffer.h"
 
+struct ParticleSaveLoadStruct
+{
+	bool MaterialEnable;
+	char MaterialName[MAX_PATH];
+	bool UpdateShaderEnable;
+	char UpdateShaderName[MAX_PATH];
+	ParticleInfo Info;
+	ParticleInfoShared InfoShared;
+	bool Is2D;
+	int SpawnCountMax;
+};
+
 class CParticle :
 	public CRef
 {
 	friend class CParticleManager;
-
+	friend class  CEffectEditor;
 private:
 	CParticle();
 	CParticle(const CParticle& particle);
@@ -26,7 +38,7 @@ private:
 	float									m_SpawnTime;
 	bool									m_2D;
 	int										m_SpawnCountMax;
-
+	ParticleSaveLoadStruct       m_SaveLoadStruct;
 public:
 	CMaterial* CloneMaterial()	const
 	{
@@ -290,4 +302,3 @@ public:
 		m_CBuffer->SetMoveAngle(MoveAngle);
 	}
 };
-

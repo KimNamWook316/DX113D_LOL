@@ -7,7 +7,8 @@
 
 C3DParticleObject::C3DParticleObject() :
     m_IsCameraRotate(true),
-    m_IsCameraZoom(true)
+    m_IsCameraZoom(true),
+    m_RotateInv(false)
 {
 }
 
@@ -59,7 +60,7 @@ void C3DParticleObject::Update(float DeltaTime)
     CGameObject::Update(DeltaTime);
 
     if (CInput::GetInst()->GetWheelDir() && m_IsCameraZoom)
-    {
+    {  
         float Length = m_ParticleArm->GetTargetDistance() +
             CInput::GetInst()->GetWheelDir() * m_CameraZoomSpeed;
 
@@ -68,6 +69,11 @@ void C3DParticleObject::Update(float DeltaTime)
 
     if (m_IsCameraRotate)
     {
-        m_ParticleArm->AddRelativeRotationY(m_CameraRotateSpeed * DeltaTime);
+        float AddedRotationY = m_CameraRotateSpeed * DeltaTime;
+
+        if (m_RotateInv) 
+            AddedRotationY *= -1;
+
+        m_ParticleArm->AddRelativeRotationY(AddedRotationY);
     }
 }

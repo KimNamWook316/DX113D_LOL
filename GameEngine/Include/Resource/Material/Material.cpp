@@ -896,6 +896,9 @@ CMaterial* CMaterial::Clone()	const
 
 bool CMaterial::Save(FILE* File)
 {
+	// 새로 추가
+	CRef::Save(File);
+
 	std::string	ShaderName ;
 
 	if (m_Shader)
@@ -969,6 +972,9 @@ bool CMaterial::Save(FILE* File)
 
 bool CMaterial::Load(FILE* File)
 {
+	// 새로 추가
+	CRef::Load(File);
+
 	CreateConstantBuffer();
 
 	char	ShaderName[256] = {};
@@ -1143,6 +1149,270 @@ bool CMaterial::Load(FILE* File)
 	return true;
 }
 
+bool CMaterial::SaveMaterial(FILE* File)
+{
+	// 총 4번의 fwrite
+	// Ref::Save, MaterialSaveLoadStruct, TextureCount TextureSaveLoadStruct
+
+	// 새로 추가
+	CRef::Save(File);
+
+	MaterialSaveLoadStruct SaveStruct;
+
+	std::string	ShaderName;
+
+	if (m_Shader)
+		ShaderName = m_Shader->GetName();
+
+	int	Length = (int)ShaderName.length();
+	SaveStruct.ShaderNameLength = Length;
+	// fwrite(&Length, sizeof(int), 1, File);
+
+	// fwrite(ShaderName.c_str(), sizeof(char), Length, File);
+	strcpy_s(SaveStruct.ShaderName, ShaderName.c_str());
+
+	// fwrite(&m_BaseColor, sizeof(Vector4), 1, File);
+	SaveStruct.BaseColor = m_BaseColor; //
+	// fwrite(&m_AmbientColor, sizeof(Vector4), 1, File);
+	SaveStruct.AmbientColor = m_AmbientColor;
+	// fwrite(&m_SpecularColor, sizeof(Vector4), 1, File);
+	SaveStruct.SpecularColor = m_SpecularColor;
+	// fwrite(&m_EmissiveColor, sizeof(Vector4), 1, File);
+	SaveStruct.EmissiveColor = m_EmissiveColor;
+	// fwrite(&m_Opacity, sizeof(float), 1, File);
+	SaveStruct.Opacity = m_Opacity;
+	// fwrite(&m_Animation3D, sizeof(bool), 1, File);
+	SaveStruct.Animation3D = m_Animation3D;
+	// fwrite(&m_SpecularTex, sizeof(bool), 1, File);
+	SaveStruct.SpecularTex = m_SpecularTex;
+	// fwrite(&m_EmissiveTex, sizeof(bool), 1, File);
+	SaveStruct.EmissiveTex = m_EmissiveTex;
+	// fwrite(&m_Bump, sizeof(bool), 1, File);
+	SaveStruct.Bump = m_Bump;
+
+
+	// 외곽선 관련 값들 Save, Load 추가하기
+	// fwrite(&m_OutlineEnable, sizeof(bool), 1, File);
+	SaveStruct.OutlineEnable = m_OutlineEnable;
+	// fwrite(&m_OutlineThickness, sizeof(float), 1, File);
+	SaveStruct.OutlineThickness = m_OutlineThickness;
+	// fwrite(&m_OutlineColor, sizeof(Vector3), 1, File);
+	SaveStruct.OutlineColor = m_OutlineColor;
+
+	for (int i = 0; i < (int)RenderState_Type::Max; ++i)
+	{
+		bool	StateEnable = false;
+
+		if (m_RenderStateArray[i])
+			StateEnable = true;
+
+		SaveStruct.RenderStateSaveLoad[i].StateEnable = StateEnable;
+
+		if (StateEnable)
+		{
+			std::string	StateName = m_RenderStateArray[i]->GetName();
+
+			int	Length = (int)StateName.length();
+
+			SaveStruct.RenderStateSaveLoad[i].StateNameLength = Length;
+			strcpy_s(SaveStruct.RenderStateSaveLoad[i].StateName, StateName.c_str());
+		}
+	}
+
+	fwrite(&SaveStruct, sizeof(MaterialSaveLoadStruct), 1, File);
+
+	int	TextureCount = (int)m_TextureInfo.size();
+	fwrite(&TextureCount, sizeof(int), 1, File);
+
+	for (int i = 0; i < TextureCount; ++i)
+	{
+		TextureSaveLoadStruct TextureStruct;
+
+		int	Length = (int)m_TextureInfo[i].Name.length();
+		TextureStruct.TextureNameLength = Length;
+
+		strcpy_s(TextureStruct.TextureName, m_TextureInfo[i].Name.c_str());
+		TextureStruct.SamplerType = m_TextureInfo[i].SamplerType;
+		TextureStruct.Register = m_TextureInfo[i].Register;
+		TextureStruct.ShaderType = m_TextureInfo[i].ShaderType;
+
+		// Saved FullPath 정보 저장
+		int	FullPathLength = (int)m_TextureInfo[i].SavedFullPath.length();
+		TextureStruct.SaveFullPathLength = FullPathLength;
+
+		strcpy_s(TextureStruct.SaveFullPathInfo, m_TextureInfo[i].SavedFullPath.c_str());
+
+		// Texture Struct 정보 저장하기
+		fwrite(&TextureStruct, sizeof(TextureSaveLoadStruct), 1, File);
+
+		// Texture 정보 저장
+		m_TextureInfo[i].Texture->Save(File);
+	}
+
+	return true;
+}
+
+bool CMaterial::LoadMaterial(FILE* File)
+{
+	// 새로 추가
+	CRef::Load(File);
+
+	CreateConstantBuffer();
+
+	MaterialSaveLoadStruct SaveStruct;
+	fread(&SaveStruct, sizeof(MaterialSaveLoadStruct), 1, File);
+
+	char	ShaderName[256] = {};
+
+	int	Length = 0;
+
+	m_Shader = (CGraphicShader*)CResourceManager::GetInst()->FindShader(SaveStruct.ShaderName);
+
+	m_BaseColor = SaveStruct.BaseColor;
+	m_AmbientColor = SaveStruct.AmbientColor;
+	m_SpecularColor = SaveStruct.SpecularColor;
+	m_EmissiveColor = SaveStruct.EmissiveColor;
+	m_Opacity = SaveStruct.Opacity;
+	m_Animation3D = SaveStruct.Animation3D;
+	m_SpecularTex = SaveStruct.SpecularTex;
+	m_EmissiveTex = SaveStruct.EmissiveTex;
+	m_Bump = SaveStruct.Bump;
+
+	m_CBuffer->SetAnimation3D(m_Animation3D);
+	m_CBuffer->SetBump(m_Bump);
+	m_CBuffer->SetSpecularTex(m_SpecularTex);
+	m_CBuffer->SetEmissiveTex(m_EmissiveTex);
+
+	m_CBuffer->SetBaseColor(m_BaseColor);
+	m_CBuffer->SetAmbientColor(m_AmbientColor);
+	m_CBuffer->SetSpecularColor(m_SpecularColor);
+	m_CBuffer->SetEmissiveColor(m_EmissiveColor);
+	m_CBuffer->SetOpacity(m_Opacity);
+
+	for (int i = 0; i < (int)RenderState_Type::Max; ++i)
+	{
+		bool	StateEnable = SaveStruct.RenderStateSaveLoad[i].StateEnable;
+
+		if (StateEnable)
+		{
+			m_RenderStateArray[i] = CRenderManager::GetInst()->FindRenderState(SaveStruct.RenderStateSaveLoad[i].StateName);
+		}
+	}
+
+	// todo : 외곽선 관련 값들 Save, Load 추가하기
+	m_OutlineEnable = SaveStruct.OutlineEnable;
+	m_OutlineThickness = SaveStruct.OutlineThickness;
+	m_OutlineColor = SaveStruct.OutlineColor;
+
+	int	TextureCount = 0;
+	fread(&TextureCount, sizeof(int), 1, File);
+
+	for (int i = 0; i < TextureCount; ++i)
+	{
+		m_TextureInfo.push_back(MaterialTextureInfo());
+
+		TextureSaveLoadStruct TextureLoadStruct;
+
+		fread(&TextureLoadStruct, sizeof(TextureSaveLoadStruct), 1, File);
+
+		m_TextureInfo[i].Name = TextureLoadStruct.TextureName;
+		m_TextureInfo[i].SamplerType = TextureLoadStruct.SamplerType;
+		m_TextureInfo[i].Register = TextureLoadStruct.Register;
+		m_TextureInfo[i].ShaderType = TextureLoadStruct.ShaderType;
+		m_TextureInfo[i].SavedFullPath = TextureLoadStruct.SaveFullPathInfo;
+
+		// 이후는 Texture Load 파트 
+		int	TexNameLength = 0;
+		fread(&TexNameLength, sizeof(int), 1, File);
+		char	TexName[256] = {};
+		fread(TexName, sizeof(char), TexNameLength, File);
+
+		Image_Type	ImageType;
+		fread(&ImageType, sizeof(Image_Type), 1, File);
+
+		int	InfoCount = 0;
+
+		fread(&InfoCount, sizeof(int), 1, File);
+
+		std::vector<std::wstring>	vecFullPath;
+		std::vector<std::wstring>	vecFileName;
+		std::string	PathName;
+
+		for (int i = 0; i < InfoCount; ++i)
+		{
+			int	PathSize = 0;
+
+			fread(&PathSize, sizeof(int), 1, File);
+
+			TCHAR	FullPath[MAX_PATH] = {};
+			fread(FullPath, sizeof(TCHAR), PathSize, File);
+			vecFullPath.push_back(FullPath);
+
+			fread(&PathSize, sizeof(int), 1, File);
+
+			TCHAR	TexFileName[MAX_PATH] = {};
+			fread(TexFileName, sizeof(TCHAR), PathSize, File);
+			vecFileName.push_back(TexFileName);
+
+			fread(&PathSize, sizeof(int), 1, File);
+
+			char	TexPathName[MAX_PATH] = {};
+			fread(TexPathName, sizeof(char), PathSize, File);
+
+			PathName = TexPathName;
+		}
+
+		switch (ImageType)
+		{
+		case Image_Type::Atlas:
+			if (vecFileName.size() == 1)
+			{
+				if (m_Scene)
+				{
+					m_Scene->GetResource()->LoadTexture(TexName, vecFileName[0].c_str(), PathName);
+				}
+				else
+				{
+					CResourceManager::GetInst()->LoadTexture(TexName, vecFileName[0].c_str(), PathName);
+				}
+			}
+			else
+			{
+			}
+			break;
+		case Image_Type::Frame:
+			if (vecFileName.size() == 1)
+			{
+			}
+			else
+			{
+			}
+			break;
+		case Image_Type::Array:
+			if (vecFileName.size() == 1)
+			{
+			}
+			else
+			{
+			}
+			break;
+		}
+
+		if (m_Scene)
+		{
+			m_TextureInfo[i].Texture = m_Scene->GetResource()->FindTexture(TexName);
+		}
+
+		else
+		{
+			m_TextureInfo[i].Texture = CResourceManager::GetInst()->FindTexture(TexName);
+		}
+	}
+
+
+	return true;
+}
+
 bool CMaterial::SaveFullPath(const char* FullPath)
 {
 	FILE* File = nullptr;
@@ -1152,7 +1422,7 @@ bool CMaterial::SaveFullPath(const char* FullPath)
 	if (!File)
 		return false;
 
-	bool Result = Save(File);
+	bool Result = SaveMaterial(File);
 
 	fclose(File);
 
@@ -1168,7 +1438,7 @@ bool CMaterial::LoadFullPath(const char* FullPath)
 	if (!File)
 		return false;
 
-	bool Result = Load(File);
+	bool Result = LoadMaterial(File);
 
 	fclose(File);
 

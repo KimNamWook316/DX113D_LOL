@@ -433,6 +433,8 @@ bool CMesh::ConvertFBX(CFBXLoader* Loader, const char* FullPath)
 
 			Material->CreateConstantBuffer();
 
+			// OBJ 가 추가 => Material 의 이름 정보도 세팅해준다.
+
 			Material->SetBaseColor(Mtrl->BaseColor);
 			Material->SetAmbientColor(Mtrl->Amb);
 			Material->SetSpecularColor(Mtrl->Spc);

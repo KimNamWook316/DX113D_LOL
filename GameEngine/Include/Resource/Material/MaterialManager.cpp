@@ -99,25 +99,45 @@ void CMaterialManager::ReleaseMaterial(const std::string& Name)
 	}
 }
 
-CMaterial* CMaterialManager::LoadMaterialFullPathMultibyte(const char* FullPath, 
-	const std::string& NewMaterialName)
+CMaterial* CMaterialManager::LoadMaterialFullPathMultibyte(const char* FullPath)
 {
-	CMaterial* FoundMaterial = FindMaterial(NewMaterialName);
+	// 현재 자체적으로 만들어서 사용하는 Material 들의 경우
+	// .mtrl 파일 이름이 곧, Material 의 이름이다.
+	// 따라서, 해당 FullPath 에서 이름을 추출하여, 해당 Material 이 이미 Load되어 있는지 확인하는 과정을 거칠 것이다.
+
+	char FileName[MAX_PATH] = {};
+
+	_splitpath_s(FullPath, nullptr, 0, nullptr, 0, FileName, MAX_PATH, nullptr, 0);
+
+	const char* MaterialName = FileName;
+
+	CMaterial* FoundMaterial = FindMaterial(MaterialName);
 
 	if (FoundMaterial)
 		return FoundMaterial;
 
 	CMaterial* LoadedMaterial = CreateMaterialEmpty<CMaterial>();
 
-	LoadedMaterial->SetName(NewMaterialName);
 
 	if (!LoadedMaterial->LoadFullPath(FullPath))
 	{
 		SAFE_DELETE(LoadedMaterial);
 		return nullptr;
 	}
+
+	// LoadedMaterial->SetName(NewMaterialName);
 	
-	m_mapMaterial.insert(std::make_pair(NewMaterialName, LoadedMaterial));
+	m_mapMaterial.insert(std::make_pair(MaterialName, LoadedMaterial));
 
 	return LoadedMaterial;
+}
+
+void CMaterialManager::AddMaterial(CMaterial* Material)
+{
+	CMaterial* FoundMaterial = FindMaterial(Material->GetName());
+
+	if (FoundMaterial)
+		return;
+
+	m_mapMaterial.insert(std::make_pair(Material->GetName(), Material));
 }
