@@ -21,6 +21,8 @@ private :
 	class CIMGUIWidgetList* m_SamplerList;
 	// Material
 	class CIMGUIWidgetList* m_MaterialList;
+	// Particle
+	class CIMGUIWidgetList* m_ParticleList;
 private :
 	std::vector<class CIMGUIWidgetList*> m_vecResourceTapList;
 public :
@@ -28,8 +30,9 @@ public :
 public  :
 	void RefreshLoadedTextureResources();
 	void RefreshLoadedMaterialResources();
-	void RefreshLoadedSamplerResources();
+	void RefreshLoadedRenderStateResources();
 	void RefreshLoadedShaderResources();
+	void RefreshLoadedParticleResources();
 	void RefreshAllDisplayInfos();
 };
 

@@ -34,6 +34,7 @@
 #include "Scene/SceneManager.h"
 #include "Scene/Scene.h"
 #include "Render/RenderManager.h"
+#include "Resource/Particle/ParticleManager.h"
 #include "Scene/SceneResource.h"
 #include "GameObject/SkyObject.h"
 
@@ -47,28 +48,31 @@ CEffectEditor::~CEffectEditor()
 
 bool CEffectEditor::Init()
 {
-
-    // Btns
-    m_SetMaterialTextureButton = AddWidget<CIMGUIButton>("Set Texture", 100.f, 20.f);
-    m_SetMaterialTextureButton->SetClickCallback<CEffectEditor>(this, &CEffectEditor::OnSetParticleTexture);
+    // Save, Load
+    m_SaveParticleBtn = AddWidget<CIMGUIButton>("Save Particle", 90.f, 20.f);
+    m_SaveParticleBtn->SetClickCallback<CEffectEditor>(this, &CEffectEditor::OnSaveParticleClass);
 
     CIMGUISameLine* Line = AddWidget<CIMGUISameLine>("Line");
     Line->SetOffsetX(105);
 
-    m_SaveParticleBtn = AddWidget<CIMGUIButton>("Save Particle", 105.f, 20.f);
-    m_SaveParticleBtn->SetClickCallback<CEffectEditor>(this, &CEffectEditor::OnSaveParticleClass);
-
-    Line = AddWidget<CIMGUISameLine>("Line");
-    Line->SetOffsetX(215);
-
-    m_LoadParticleBtn = AddWidget<CIMGUIButton>("Load Particle", 100.f, 20.f);
+    m_LoadParticleBtn = AddWidget<CIMGUIButton>("Load Particle", 90.f, 20.f);
     m_LoadParticleBtn->SetClickCallback<CEffectEditor>(this, &CEffectEditor::OnLoadParticleClass);
 
-    Line = AddWidget<CIMGUISameLine>("Line");
-    Line->SetOffsetX(320);
+    // Set Texture
+    m_SetMaterialTextureButton = AddWidget<CIMGUIButton>("Set Texture", 90.f, 20.f);
+    m_SetMaterialTextureButton->SetClickCallback<CEffectEditor>(this, &CEffectEditor::OnSetParticleTexture);
 
-    m_StartEditBtn = AddWidget<CIMGUIButton>("Start Edit", 100.f, 20.f);
+    Line = AddWidget<CIMGUISameLine>("Line");
+    Line->SetOffsetX(105);
+
+    m_StartEditBtn = AddWidget<CIMGUIButton>("Start Edit", 90.f, 20.f);
     m_StartEditBtn->SetClickCallback<CEffectEditor>(this, &CEffectEditor::SetStartEditing);
+
+    Line = AddWidget<CIMGUISameLine>("Line");
+    Line->SetOffsetX(205);
+
+    m_RestartBtn = AddWidget<CIMGUIButton>("ReStart", 80.f, 20.f);
+    m_RestartBtn->SetClickCallback<CEffectEditor>(this, &CEffectEditor::OnRestartParticleComponentButton);
 
     // Camera
     CIMGUITree* Tree = AddWidget<CIMGUITree>("Camera");
@@ -81,6 +85,11 @@ bool CEffectEditor::Init()
     Line = Tree->AddWidget<CIMGUISameLine>("Line");
     Line->SetOffsetX(100.f);
 
+    m_IsRotateInv = Tree->AddWidget<CIMGUICheckBox>("Inv", 80.f);
+    m_IsRotateInv->AddCheckInfo("Inv");
+    m_IsRotateInv->SetCallBackLabel<CEffectEditor>(this, &CEffectEditor::OnCameraRotateInvEdit);
+
+
     m_RotateSpeedSliderBar = Tree->AddWidget<CIMGUISliderFloat>("Rotate Speed", 100.f, 20.f);
     m_RotateSpeedSliderBar->SetCallBack<CEffectEditor>(this, &CEffectEditor::OnSetCameraRotateSpeed);
     m_RotateSpeedSliderBar->SetMin(10.f);
@@ -91,28 +100,15 @@ bool CEffectEditor::Init()
     m_IsZoomEdit->AddCheckInfo("Zoom");
     m_IsZoomEdit->SetCallBackLabel<CEffectEditor>(this, &CEffectEditor::OnIsCameraZoomEdit);
 
-    Line = Tree->AddWidget<CIMGUISameLine>("Line");
-    Line->SetOffsetX(100.f);
-
     m_ZoomSpeedSliderBar = Tree->AddWidget<CIMGUISliderFloat>("Zoom Speed", 100.f, 20.f);
     m_ZoomSpeedSliderBar->SetCallBack<CEffectEditor>(this, &CEffectEditor::OnSetCameraZoomSpeed);
     m_ZoomSpeedSliderBar->SetMin(0.2f);
     m_ZoomSpeedSliderBar->SetMax(50.f);
 
-    CIMGUIDummy* Dummy = Tree->AddWidget<CIMGUIDummy>("Dummy", 80.f, 30.f);
-
-    Line = Tree->AddWidget<CIMGUISameLine>("Line");
-    Line->SetOffsetX(100.f);
-
     m_CameraYOffsetBar = Tree->AddWidget<CIMGUISliderFloat>("Camera Y Offset", 100.f, 20.f);
     m_CameraYOffsetBar->SetCallBack<CEffectEditor>(this, &CEffectEditor::OnSetCameraYOffset);
     m_CameraYOffsetBar->SetMin(-50.f);
     m_CameraYOffsetBar->SetMax(50.f);
-
-    Dummy = Tree->AddWidget<CIMGUIDummy>("Dummy", 80.f, 30.f);
-
-    Line = Tree->AddWidget<CIMGUISameLine>("Line");
-    Line->SetOffsetX(100.f);
 
     m_CameraXRotSlideBar = Tree->AddWidget<CIMGUISliderFloat>("Camera X Rot", 100.f, 20.f);
     m_CameraXRotSlideBar->SetCallBack<CEffectEditor>(this, &CEffectEditor::OnSetCameraXRot);
@@ -160,6 +156,14 @@ bool CEffectEditor::Init()
     m_IsRandomMoveEdit = Tree->AddWidget<CIMGUICheckBox>("Random", 80.f);
     m_IsRandomMoveEdit->AddCheckInfo("Random");
     m_IsRandomMoveEdit->SetCallBackLabel<CEffectEditor>(this, &CEffectEditor::OnIsRandomMoveEdit);
+
+    Line = Tree->AddWidget<CIMGUISameLine>("Line");
+    Line->SetOffsetX(260.f);
+
+    m_IsPauseResumeToggle = Tree->AddWidget<CIMGUICheckBox>("Toggle", 80.f);
+    m_IsPauseResumeToggle->AddCheckInfo("Toggle");
+    m_IsPauseResumeToggle->SetCallBackLabel<CEffectEditor>(this, &CEffectEditor::OnPauseResumeToggle);
+    m_IsPauseResumeToggle->SetCheck(0, true);
 
     // Spawn Time, Spawn Count
     Tree  = AddWidget<CIMGUITree>("Spawn Time, Count");
@@ -253,99 +257,182 @@ void CEffectEditor::OnLoadParticleObjectButton()
 {
 }
 
-void CEffectEditor::OnSpawnTimeMaxEdit(float Num)
+void CEffectEditor::OnRestartParticleComponentButton()
 {
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetParticle()->SetSpawnTime(m_SpawnTimeMaxEdit->GetVal());
+    SAFE_DELETE(m_ParticleObject);
+    m_ParticleObject = CSceneManager::GetInst()->GetScene()->CreateGameObject<C3DParticleObject>("Particle Effect Base Ground");
+
+    m_CameraXRotSlideBar->SetValue(m_ParticleObject->GetCameraRelativeRotation().x);
+    m_CameraYOffsetBar->SetValue(m_ParticleObject->GetCameraOfffset().y);
+
+    SetParticleToParticleComponent(dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent()), m_ParticleClass);
 }
 
+void CEffectEditor::OnSpawnTimeMaxEdit(float Num)
+{
+    if (!m_ParticleClass)
+        return;
+
+    m_ParticleClass->SetSpawnTime(m_SpawnTimeMaxEdit->GetVal());
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->SetSpawnTime(Num);
+}
+
+// StartMin, Max , SpawnCountMax 의 경우, Particle Component 에서 Particle 의 상수 버퍼로 부터 정보를 바로 얻어와서 Post Update 에서 계산
+// 따라서 Particle 의 상수 버퍼 정보를 바꿔주면 된다.
 void CEffectEditor::OnStartMinEdit(const Vector3& Pos)
 {
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetParticle()->SetStartMin(m_StartMinEdit->GetValue());
+    if (!m_ParticleClass)
+        return;
+
+    m_ParticleClass->SetStartMin(Pos);
     // m_ParticleComponent->GetParticle()->SetStartMin(Pos);
 }
 
 void CEffectEditor::OnStartMaxEdit(const Vector3& Pos)
 {
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetParticle()->SetStartMax(m_StartMaxEdit->GetValue());
+    if (!m_ParticleClass)
+        return;
+
+    m_ParticleClass->SetStartMax(Pos);
     // m_ParticleComponent->GetParticle()->SetStartMax(Pos);
 }
 
 void CEffectEditor::OnSpawnCountMaxEdit(int Num)
 {
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetParticle()->SetSpawnCountMax(m_SpawnCountMaxEdit->GetVal());
+    if (!m_ParticleClass)
+        return;
+
+    m_ParticleClass->SetSpawnCountMax(Num);
     // m_ParticleComponent->GetCBuffer()->SetSpawnCountMax(Num);
 }
 
 void CEffectEditor::OnScaleMinEdit(const Vector3& Scale)
 {
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetParticle()->SetScaleMin(m_ScaleMinEdit->GetValue());
-    // m_ParticleComponent->GetCBuffer()->SetScaleMin(Scale);
+    if (!m_ParticleClass)
+        return;
+
+    // m_ParticleClass->SetScaleMin(m_ScaleMinEdit->GetValue());
+    m_ParticleClass->SetScaleMin(Scale);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetScaleMin(Scale);
 }
 
 void CEffectEditor::OnScaleMaxEdit(const Vector3& Scale)
 {
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetParticle()->SetScaleMax(m_ScaleMaxEdit->GetValue());
+    if (!m_ParticleClass)
+        return;
+
+    m_ParticleClass->SetScaleMax(Scale);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetScaleMax(Scale);
     // m_ParticleComponent->GetCBuffer()->SetScaleMax(Scale);
 }
 
 void CEffectEditor::OnLifeTimeMinEdit(float Num)
 {
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetParticle()->SetLifeTimeMin(m_LifeTimeMinEdit->GetVal());
+    if (!m_ParticleClass)
+        return;
+
+    m_ParticleClass->SetLifeTimeMin(Num);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetLifeTimeMin(Num);
     // m_ParticleComponent->GetCBuffer()->SetLifeTimeMin(Num);
 }
 
 void CEffectEditor::OnLifeTimeMaxEdit(float Num)
 {
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetParticle()->SetLifeTimeMax(m_LifeTimeMaxEdit->GetVal());
+    if (!m_ParticleClass)
+        return;
+
+    m_ParticleClass->SetLifeTimeMax(Num);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetLifeTimeMax(Num);
     // m_ParticleComponent->GetCBuffer()->SetLifeTimeMax(Num);
 }
 
 void CEffectEditor::OnSpeedMinEdit(float Num)
 {
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetParticle()->SetSpeedMin(m_SpeedMinEdit->GetVal());
+    if (!m_ParticleClass)
+        return;
+
+    m_ParticleClass->SetSpeedMin(Num);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetSpeedMin(Num);
     // m_ParticleComponent->GetCBuffer()->SetSpeedMin(Num);
 }
 
 void CEffectEditor::OnSpeedMaxEdit(float Num)
 {
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetParticle()->SetSpeedMax(m_SpeedMaxEdit->GetVal());
+    if (!m_ParticleClass)
+        return;
+
+    m_ParticleClass->SetSpeedMax(Num);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetSpeedMax(Num);
     // m_ParticleComponent->GetCBuffer()->SetSpeedMax(Num);
 }
 
 void CEffectEditor::OnColorMinEdit(const Vector4& Color)
 {
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetParticle()->SetColorMin(m_ColorMinEdit->GetRGBA());
+    if (!m_ParticleClass)
+        return;
+
+    m_ParticleClass->SetColorMin(Color);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetColorMin(Color);
     // m_ParticleComponent->GetCBuffer()->SetColorMin(Color);
 }
 
 void CEffectEditor::OnColorMaxEdit(const Vector4& Color)
 {
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetParticle()->SetColorMax(m_ColorMaxEdit->GetRGBA());
+    if (!m_ParticleClass)
+        return;
+
+    m_ParticleClass->SetColorMax(Color);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetColorMax(Color);
     // m_ParticleComponent->GetCBuffer()->SetColorMax(Color);
 }
 
 
 void CEffectEditor::OnIsMoveEdit(const char*, bool Enable)
 {
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetParticle()->SetMove(m_IsMoveEdit->GetCheck(0));
+    if (!m_ParticleClass)
+        return;
+
+    m_ParticleClass->SetMove(Enable);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetMove(Enable);
     // m_ParticleComponent->GetCBuffer()->SetMove(Enable);
 }
 
 void CEffectEditor::OnIsGravityEdit(const char*, bool Enable)
 {
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetParticle()->SetGravity(m_IsGravityEdit->GetCheck(0));
+    if (!m_ParticleClass)
+        return;
+
+    m_ParticleClass->SetGravity(Enable);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGravity(Enable);
     // m_ParticleComponent->GetCBuffer()->SetGravity(Enable);
 }
 
 void CEffectEditor::OnIsRandomMoveEdit(const char*, bool Enable)
 {
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetParticle()->SetApplyRandom(m_IsRandomMoveEdit->GetCheck(0));
+    if (!m_ParticleClass)
+        return;
+
+    m_ParticleClass->SetApplyRandom(Enable);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetApplyRandom(Enable);
     // m_ParticleComponent->GetCBuffer()->SetApplyRandom(Enable);
+}
+
+void CEffectEditor::OnPauseResumeToggle(const char*, bool Enable)
+{
+    if (!m_ParticleClass)
+        return;
+
+    m_ParticleObject->GetRootComponent()->Enable(Enable);
 }
 
 void CEffectEditor::OnIsCameraRotateEdit(const char*, bool Enable)
 {
     m_ParticleObject->SetCameraRotate(Enable);
+}
+
+void CEffectEditor::OnCameraRotateInvEdit(const char*, bool Enable)
+{
+    m_ParticleObject->SetRotateInv(Enable);
 }
 
 void CEffectEditor::OnSetCameraRotateSpeed(float Speed)
@@ -379,12 +466,20 @@ void CEffectEditor::OnSetCameraXRot(float Rot)
 
 void CEffectEditor::OnMoveDirEdit(const Vector3& Dir)
 {
-    // m_ParticleComponent->GetCBuffer()->SetMoveDir(Dir);
+    if (!m_ParticleClass)
+        return;
+
+    m_ParticleClass->SetMoveDir(Dir);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetMoveDir(Dir);
 }
 
 void CEffectEditor::OnMoveAngleEdit(const Vector3& Angle)
 {
-    // m_ParticleComponent->GetCBuffer()->SetMoveAngle(Angle);
+    if (!m_ParticleClass)
+        return;
+
+    m_ParticleClass->SetMoveAngle(Angle);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetMoveAngle(Angle);
 }
 
 
@@ -475,16 +570,14 @@ void CEffectEditor::OnSaveParticleClass()
             return;
         }
 
-        CParticle* SavedParticle = dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetParticle();
-
-        SavedParticle->SaveFile(FileFullPathMultibyte);
+        m_ParticleClass->SaveFile(FileFullPathMultibyte);
     }
 }
 
 void CEffectEditor::OnLoadParticleClass()
 {
-    if (!m_ParticleObject || !dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetParticle())
-        return;
+   //  if (!m_ParticleObject || !dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetParticle())
+   //      return;
 
     TCHAR FilePath[MAX_PATH] = {};
 
@@ -494,7 +587,7 @@ void CEffectEditor::OnLoadParticleClass()
     OpenFile.lpstrFilter = TEXT("All Files\0*.*\0.Animation File\0*.anim");
     OpenFile.lpstrFile = FilePath;
     OpenFile.nMaxFile = MAX_PATH;
-    OpenFile.lpstrInitialDir = CPathManager::GetInst()->FindPath(ANIMATION_PATH)->Path;
+    OpenFile.lpstrInitialDir = CPathManager::GetInst()->FindPath(PARTICLE_PATH)->Path;
 
     if (GetOpenFileName(&OpenFile) != 0)
     {
@@ -513,6 +606,31 @@ void CEffectEditor::OnLoadParticleClass()
         // 확장자 .anim 이 아니라면 return;
         if (strcmp(Ext, ".PRTC") != 0)
             return;
+
+        SAFE_DELETE(m_ParticleClass);
+
+        m_ParticleClass = CResourceManager::GetInst()->CreateParticleEmpty<CParticle>();
+
+        m_ParticleClass->LoadFile(FilePathMultibyte);
+
+        // Particle 을 보여주기 위한 Particle Component 를 만들어내고
+        // m_Particle 에 세팅해주고
+        SAFE_DELETE(m_ParticleObject);
+        m_ParticleObject = CSceneManager::GetInst()->GetScene()->CreateGameObject<C3DParticleObject>("Particle Effect Base Ground");
+
+        m_CameraXRotSlideBar->SetValue(m_ParticleObject->GetCameraRelativeRotation().x);
+        m_CameraYOffsetBar->SetValue(m_ParticleObject->GetCameraOfffset().y);
+
+        SetParticleToParticleComponent(dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent()), m_ParticleClass);
+         
+        // IMGUI Update
+        SetIMGUIReflectPartice(m_ParticleClass);
+
+        // Particle Manager 의 Map 에 추가하기
+        CResourceManager::GetInst()->GetParticleManager()->AddParticle(m_ParticleClass);
+
+        // Resource Display Window 세팅하기
+        CEditorManager::GetInst()->GetResourceDisplayWindow()->RefreshLoadedParticleResources();
     }
     
 }
@@ -522,23 +640,28 @@ void CEffectEditor::OnSetBasicParticleMaterialSetting(CSceneComponent* Com)
     // 기본 Particle Setting, 현재 Component 에 Particle Setting 하기
     // 1) Particle Material 세팅
     CSceneManager::GetInst()->GetScene()->GetResource()->CreateMaterial<CMaterial>("BasicParticleMaterial");
-    CMaterial* Material = CSceneManager::GetInst()->GetScene()->GetResource()->FindMaterial("BasicParticleMaterial");
-    Material->AddTexture(0, (int)Buffer_Shader_Type::Pixel, "Bubble", TEXT("Particle/Bubbles99px.png"));
-    Material->SetShader("ParticleRenderShader");
-    Material->SetRenderState("AlphaBlend");
+    m_ParticleMaterial = CSceneManager::GetInst()->GetScene()->GetResource()->FindMaterial("BasicParticleMaterial");
+    m_ParticleMaterial->AddTexture(0, (int)Buffer_Shader_Type::Pixel, "Bubble", TEXT("Particle/Bubbles99px.png"));
+    m_ParticleMaterial->SetShader("ParticleRenderShader");
+    m_ParticleMaterial->SetRenderState("AlphaBlend");
 
     // 2) Particle 제작
     CSceneManager::GetInst()->GetScene()->GetResource()->CreateParticle("BasicParticle");
     m_ParticleClass = CSceneManager::GetInst()->GetScene()->GetResource()->FindParticle("BasicParticle");
-    Material = CSceneManager::GetInst()->GetScene()->GetResource()->FindMaterial("BasicParticleMaterial");
     if (!m_ParticleClass)
         return;
-    m_ParticleClass->SetMaterial(Material);
+    m_ParticleClass->SetMaterial(m_ParticleMaterial);
 
     SetIMGUIReflectPartice(m_ParticleClass);
 
     // 해당 정보들 UI 에 세팅하기
     SetParticleToParticleComponent(dynamic_cast<CParticleComponent*>(Com), "BasicParticle");
+
+
+    // Move 여부, Gravity 여부, Random 여부 세팅하기
+    m_IsMoveEdit->SetCheck(0, m_ParticleClass->GetCBuffer()->GetMove());
+    m_IsGravityEdit->SetCheck(0, m_ParticleClass->GetCBuffer()->GetGravity());
+    m_IsRandomMoveEdit->SetCheck(0, m_ParticleClass->GetCBuffer()->GetApplyRandom());
     
     // Particle 세팅
 
@@ -552,24 +675,24 @@ void CEffectEditor::OnSetBasicParticleMaterialSetting(CSceneComponent* Com)
 
 void CEffectEditor::OnReflectCurrentParticleSetting()
 {
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetParticle()->Set2D(false);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetParticle()->SetSpawnCountMax(m_SpawnCountMaxEdit->GetVal());
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetParticle()->SetSpawnTime(m_SpawnTimeMaxEdit->GetVal());
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetParticle()->SetLifeTimeMin(m_LifeTimeMinEdit->GetVal());
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetParticle()->SetLifeTimeMax(m_LifeTimeMaxEdit->GetVal());
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetParticle()->SetScaleMin(m_ScaleMinEdit->GetValue());
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetParticle()->SetScaleMax(m_ScaleMaxEdit->GetValue());
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetParticle()->SetSpeedMin(m_SpeedMinEdit->GetVal());
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetParticle()->SetSpeedMax(m_SpeedMaxEdit->GetVal());
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetParticle()->SetMoveDir(m_MoveDirEdit->GetValue());
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetParticle()->SetStartMin(m_StartMinEdit->GetValue());
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetParticle()->SetStartMax(m_StartMaxEdit->GetValue());
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetParticle()->SetColorMin(m_ColorMinEdit->GetRGBA());
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetParticle()->SetColorMax(m_ColorMaxEdit->GetRGBA());
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetParticle()->SetMoveAngle(m_MoveAngleEdit->GetValue());
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetParticle()->SetGravity(m_IsGravityEdit->GetCheck(0));
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetParticle()->SetMove(m_IsMoveEdit->GetCheck(0));
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetParticle()->SetApplyRandom(m_IsRandomMoveEdit->GetCheck(0));
+    // dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetParticle()->Set2D(false);
+    // dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetParticle()->SetSpawnCountMax(m_SpawnCountMaxEdit->GetVal());
+    // dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetParticle()->SetSpawnTime(m_SpawnTimeMaxEdit->GetVal());
+    // dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetParticle()->SetLifeTimeMin(m_LifeTimeMinEdit->GetVal());
+    // dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetParticle()->SetLifeTimeMax(m_LifeTimeMaxEdit->GetVal());
+    // dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetParticle()->SetScaleMin(m_ScaleMinEdit->GetValue());
+    // dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetParticle()->SetScaleMax(m_ScaleMaxEdit->GetValue());
+    // dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetParticle()->SetSpeedMin(m_SpeedMinEdit->GetVal());
+    // dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetParticle()->SetSpeedMax(m_SpeedMaxEdit->GetVal());
+    // dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetParticle()->SetMoveDir(m_MoveDirEdit->GetValue());
+    // dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetParticle()->SetStartMin(m_StartMinEdit->GetValue());
+    // dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetParticle()->SetStartMax(m_StartMaxEdit->GetValue());
+    // dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetParticle()->SetColorMin(m_ColorMinEdit->GetRGBA());
+    // dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetParticle()->SetColorMax(m_ColorMaxEdit->GetRGBA());
+    // dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetParticle()->SetMoveAngle(m_MoveAngleEdit->GetValue());
+    // dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetParticle()->SetGravity(m_IsGravityEdit->GetCheck(0));
+    // dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetParticle()->SetMove(m_IsMoveEdit->GetCheck(0));
+    // dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetParticle()->SetApplyRandom(m_IsRandomMoveEdit->GetCheck(0));
 }
 
 void CEffectEditor::SetGameObjectReady()
@@ -686,6 +809,8 @@ void CEffectEditor::OnDropMaterialToParticle(const std::string& InputName)
     // Resource Window Display Update
     CEditorManager::GetInst()->GetResourceDisplayWindow()->RefreshLoadedTextureResources();
     CEditorManager::GetInst()->GetResourceDisplayWindow()->RefreshLoadedMaterialResources();
+
+    m_ParticleMaterial = FoundMaterial;
 }
 
 void CEffectEditor::SetParticleToParticleComponent(CParticleComponent* Component,  const char* ParticleName)
@@ -694,6 +819,14 @@ void CEffectEditor::SetParticleToParticleComponent(CParticleComponent* Component
         return;
 
     Component->SetParticle(ParticleName);
+}
+
+void CEffectEditor::SetParticleToParticleComponent(CParticleComponent* Component, CParticle* Particle)
+{
+    if (!Component)
+        return;
+
+    Component->SetParticle(Particle);
 }
 
 void CEffectEditor::SetIMGUIReflectPartice(CParticle* Particle)

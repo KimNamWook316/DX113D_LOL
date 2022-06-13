@@ -599,7 +599,7 @@ void CMaterialEditor::OnLoadMaterial()
 		// ResourceDisplay Window 에 있는 Texture 목록들 Resource Window 에 추가해서 보여주기
 		CEditorManager::GetInst()->GetResourceDisplayWindow()->RefreshLoadedTextureResources();
 		CEditorManager::GetInst()->GetResourceDisplayWindow()->RefreshLoadedMaterialResources();
-		CEditorManager::GetInst()->GetResourceDisplayWindow()->RefreshLoadedSamplerResources();
+		CEditorManager::GetInst()->GetResourceDisplayWindow()->RefreshLoadedRenderStateResources();
 		CEditorManager::GetInst()->GetResourceDisplayWindow()->RefreshLoadedShaderResources();
 	}
 }

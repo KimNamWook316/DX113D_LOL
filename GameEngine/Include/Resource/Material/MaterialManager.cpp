@@ -131,3 +131,13 @@ CMaterial* CMaterialManager::LoadMaterialFullPathMultibyte(const char* FullPath)
 
 	return LoadedMaterial;
 }
+
+void CMaterialManager::AddMaterial(CMaterial* Material)
+{
+	CMaterial* FoundMaterial = FindMaterial(Material->GetName());
+
+	if (FoundMaterial)
+		return;
+
+	m_mapMaterial.insert(std::make_pair(Material->GetName(), Material));
+}

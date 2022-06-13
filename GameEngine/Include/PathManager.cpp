@@ -66,7 +66,7 @@ bool CPathManager::Init()
     AddPath(SOUND_PATH, TEXT("Sound\\"));
     AddPath(MESH_PATH, TEXT("Mesh\\"));
     AddPath(EXCEL_PATH, TEXT("Excel\\"));
-    AddPath(PARTICLE_PATH, TEXT("Particle\\"));
+    AddPath(PARTICLE_PATH, TEXT("ParticleOBJ\\"));
     AddPath(OBJECT_PATH, TEXT("Object\\"));
     AddPath(COMPONENT_PATH, TEXT("Component\\"));
     AddPath(MATERIAL_PATH, TEXT("Material\\"));
@@ -117,7 +117,7 @@ bool CPathManager::Init()
     // AddPath(RESOURCE_MESH_PATH, TEXT("Include\\Resource\\Mesh\\"));
     AddPath(RESOURCE_EXCEL_PATH, TEXT("Include\\Resource\\Excel\\"), RESOURCE_ROOT_PATH);
     AddPath(RESOURCE_OBJECT_PATH, TEXT("Include\\Resource\\Object\\"), RESOURCE_ROOT_PATH);
-    AddPath(RESOURCE_PARTICLE_PATH, TEXT("Include\\Resource\\Texture\\Particle\\"), RESOURCE_ROOT_PATH);
+    AddPath(RESOURCE_PARTICLE_PATH, TEXT("Include\\Resource\\Texture\\ParticleOBJ\\"), RESOURCE_ROOT_PATH);
 
     // Engine Path ¸¸µé±â ---
     TCHAR EnginePath[MAX_PATH] = {};

@@ -1172,7 +1172,7 @@ bool CMaterial::SaveMaterial(FILE* File)
 	strcpy_s(SaveStruct.ShaderName, ShaderName.c_str());
 
 	// fwrite(&m_BaseColor, sizeof(Vector4), 1, File);
-	SaveStruct.BaseColor = m_BaseColor;
+	SaveStruct.BaseColor = m_BaseColor; //
 	// fwrite(&m_AmbientColor, sizeof(Vector4), 1, File);
 	SaveStruct.AmbientColor = m_AmbientColor;
 	// fwrite(&m_SpecularColor, sizeof(Vector4), 1, File);

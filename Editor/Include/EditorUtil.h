@@ -58,6 +58,9 @@ public:
 	static void ExtractFileNameAndExtFromPath(const std::string& FullPath, std::string& FileName, std::string& Ext);
 	static void ExtractFileNameAndExtFromPath(const std::string& FullPath, char* FileName, char* Ext);
 
+	// 해당 Dir 경로에, 해당 Name 으로 된 파일이 존재하는지 판단해주는 함수
+	static bool IsFileExistInDir(const std::string& Path, const std::string& FileName);
+
 	// Imgui Demo Window를 띄워주는 함수
 	static void ShowDemo();
 

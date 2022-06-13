@@ -49,7 +49,6 @@ CParticleConstantBuffer* CParticleConstantBuffer::Clone()
 void CParticleConstantBuffer::Save(FILE* File)
 {
 	// CRef::Save(File);
-
 	fwrite(&m_BufferData, sizeof(ParticleCBuffer), 1, File);
 }
 

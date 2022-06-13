@@ -28,6 +28,7 @@ public:
 	}
 	void ReleaseMaterial(const std::string& Name);
 	CMaterial* LoadMaterialFullPathMultibyte(const char* FullPath);
+	void AddMaterial(CMaterial* Materal);
 public:
 	template <typename T>
 	T* CreateMaterial(const std::string& Name)
