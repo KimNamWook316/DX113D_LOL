@@ -355,7 +355,6 @@ void CMaterialEditor::OnSetTextureBtnWithString(const std::string& InputName)
 
 	if (TargetTexture)
 	{
-
 		m_SelectedMaterial->SetTextureInfoResource(SetTextureIndex, TargetTexture);
 
 		// 현재 Texture 를 IMGUI Image 에 보여주기
@@ -381,7 +380,14 @@ void CMaterialEditor::OnSetTextureBtnWithString(const std::string& InputName)
 
 	// 찾지 못했다면 
 	if (!FoundResult.has_value())
-		return;
+	{
+		// Texture Path가 아니라, Particle Path 에서도 한번 찾아본다.
+		FoundResult = CEditorUtil::GetFullPathOfTargetFileNameInDir(PARTICLE_PATH,
+			InputName, TextureKeyName);
+
+		if (!FoundResult.has_value())
+			return;
+	}
 	// 
 	// Editor Util 함수 안에, --> 특정 폴더, File 안에 이름 넣어주면, 다 돌면서, 파일 찾아주는 함수 제작
 	// 그렇게 해서 Full Path, File 이름 받아오고

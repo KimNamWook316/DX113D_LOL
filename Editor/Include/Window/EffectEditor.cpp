@@ -22,6 +22,8 @@
 #include "IMGUITree.h"
 // Window
 #include "EffectEditor.h"
+#include "../EditorManager.h"
+#include "../Window/ResourceDisplayWindow.h"
 // Object
 #include "../Object/3DParticleObject.h"
 // Engine
@@ -53,17 +55,17 @@ bool CEffectEditor::Init()
     CIMGUISameLine* Line = AddWidget<CIMGUISameLine>("Line");
     Line->SetOffsetX(105);
 
-    m_SaveParticleBtn = AddWidget<CIMGUIButton>("Save Particle", 100.f, 20.f);
+    m_SaveParticleBtn = AddWidget<CIMGUIButton>("Save Particle", 105.f, 20.f);
     m_SaveParticleBtn->SetClickCallback<CEffectEditor>(this, &CEffectEditor::OnSaveParticleClass);
 
     Line = AddWidget<CIMGUISameLine>("Line");
-    Line->SetOffsetX(210);
+    Line->SetOffsetX(215);
 
     m_LoadParticleBtn = AddWidget<CIMGUIButton>("Load Particle", 100.f, 20.f);
     m_LoadParticleBtn->SetClickCallback<CEffectEditor>(this, &CEffectEditor::OnLoadParticleClass);
 
     Line = AddWidget<CIMGUISameLine>("Line");
-    Line->SetOffsetX(315);
+    Line->SetOffsetX(320);
 
     m_StartEditBtn = AddWidget<CIMGUIButton>("Start Edit", 100.f, 20.f);
     m_StartEditBtn->SetClickCallback<CEffectEditor>(this, &CEffectEditor::SetStartEditing);
@@ -79,7 +81,7 @@ bool CEffectEditor::Init()
     Line = Tree->AddWidget<CIMGUISameLine>("Line");
     Line->SetOffsetX(100.f);
 
-    m_RotateSpeedSliderBar = Tree->AddWidget<CIMGUISliderFloat>("Rotate Speed", 100.f, 30.f);
+    m_RotateSpeedSliderBar = Tree->AddWidget<CIMGUISliderFloat>("Rotate Speed", 100.f, 20.f);
     m_RotateSpeedSliderBar->SetCallBack<CEffectEditor>(this, &CEffectEditor::OnSetCameraRotateSpeed);
     m_RotateSpeedSliderBar->SetMin(10.f);
     m_RotateSpeedSliderBar->SetMax(90.f);
@@ -92,7 +94,7 @@ bool CEffectEditor::Init()
     Line = Tree->AddWidget<CIMGUISameLine>("Line");
     Line->SetOffsetX(100.f);
 
-    m_ZoomSpeedSliderBar = Tree->AddWidget<CIMGUISliderFloat>("Zoom Speed", 100.f, 30.f);
+    m_ZoomSpeedSliderBar = Tree->AddWidget<CIMGUISliderFloat>("Zoom Speed", 100.f, 20.f);
     m_ZoomSpeedSliderBar->SetCallBack<CEffectEditor>(this, &CEffectEditor::OnSetCameraZoomSpeed);
     m_ZoomSpeedSliderBar->SetMin(0.2f);
     m_ZoomSpeedSliderBar->SetMax(50.f);
@@ -102,7 +104,7 @@ bool CEffectEditor::Init()
     Line = Tree->AddWidget<CIMGUISameLine>("Line");
     Line->SetOffsetX(100.f);
 
-    m_CameraYOffsetBar = Tree->AddWidget<CIMGUISliderFloat>("Camera Y Offset", 100.f, 30.f);
+    m_CameraYOffsetBar = Tree->AddWidget<CIMGUISliderFloat>("Camera Y Offset", 100.f, 20.f);
     m_CameraYOffsetBar->SetCallBack<CEffectEditor>(this, &CEffectEditor::OnSetCameraYOffset);
     m_CameraYOffsetBar->SetMin(-50.f);
     m_CameraYOffsetBar->SetMax(50.f);
@@ -112,7 +114,7 @@ bool CEffectEditor::Init()
     Line = Tree->AddWidget<CIMGUISameLine>("Line");
     Line->SetOffsetX(100.f);
 
-    m_CameraXRotSlideBar = Tree->AddWidget<CIMGUISliderFloat>("Camera X Rot", 100.f, 30.f);
+    m_CameraXRotSlideBar = Tree->AddWidget<CIMGUISliderFloat>("Camera X Rot", 100.f, 20.f);
     m_CameraXRotSlideBar->SetCallBack<CEffectEditor>(this, &CEffectEditor::OnSetCameraXRot);
     m_CameraXRotSlideBar->SetMin(-88.f);
     m_CameraXRotSlideBar->SetMax(88.f);
@@ -131,6 +133,12 @@ bool CEffectEditor::Init()
     // m_ParticleRenderTarget->SetTexture(CRenderManager::GetInst()->GetParticleEffectRenderTarget());
     m_ParticleTexture->SetBorderColor(10, 10, 255);
     m_ParticleTexture->SetTableTitle("Texture");
+
+    // Material
+    m_MaterialName = AddWidget<CIMGUITextInput>("Current Material", 150.f, 30.f);
+    m_MaterialName->SetHideName(true);
+    m_MaterialName->SetHintText("Current Material");
+    m_MaterialName->SetDropCallBack<CEffectEditor>(this, &CEffectEditor::OnDropMaterialToParticle);
 
     // Movement
     Tree = AddWidget<CIMGUITree>("Movement");
@@ -511,8 +519,6 @@ void CEffectEditor::OnLoadParticleClass()
 
 void CEffectEditor::OnSetBasicParticleMaterialSetting(CSceneComponent* Com)
 {
-    // 
-
     // 기본 Particle Setting, 현재 Component 에 Particle Setting 하기
     // 1) Particle Material 세팅
     CSceneManager::GetInst()->GetScene()->GetResource()->CreateMaterial<CMaterial>("BasicParticleMaterial");
@@ -520,15 +526,16 @@ void CEffectEditor::OnSetBasicParticleMaterialSetting(CSceneComponent* Com)
     Material->AddTexture(0, (int)Buffer_Shader_Type::Pixel, "Bubble", TEXT("Particle/Bubbles99px.png"));
     Material->SetShader("ParticleRenderShader");
     Material->SetRenderState("AlphaBlend");
-    Material->AddTexture(0, (int)Buffer_Shader_Type::Pixel, "Bubble", TEXT("Particle/Bubbles99px.png"));
 
     // 2) Particle 제작
     CSceneManager::GetInst()->GetScene()->GetResource()->CreateParticle("BasicParticle");
-    CParticle* Particle = CSceneManager::GetInst()->GetScene()->GetResource()->FindParticle("BasicParticle");
+    m_ParticleClass = CSceneManager::GetInst()->GetScene()->GetResource()->FindParticle("BasicParticle");
     Material = CSceneManager::GetInst()->GetScene()->GetResource()->FindMaterial("BasicParticleMaterial");
-    Particle->SetMaterial(Material);
+    if (!m_ParticleClass)
+        return;
+    m_ParticleClass->SetMaterial(Material);
 
-    SetIMGUIReflectPartice(Particle);
+    SetIMGUIReflectPartice(m_ParticleClass);
 
     // 해당 정보들 UI 에 세팅하기
     SetParticleToParticleComponent(dynamic_cast<CParticleComponent*>(Com), "BasicParticle");
@@ -537,6 +544,10 @@ void CEffectEditor::OnSetBasicParticleMaterialSetting(CSceneComponent* Com)
 
     // 기본 Z Pos 세팅
     Com->SetWorldPos(Com->GetWorldPos().x, Com->GetWorldPos().y, 10.f);
+
+    // Resource Window Display
+    CEditorManager::GetInst()->GetResourceDisplayWindow()->RefreshLoadedTextureResources();
+    CEditorManager::GetInst()->GetResourceDisplayWindow()->RefreshLoadedMaterialResources();
 }
 
 void CEffectEditor::OnReflectCurrentParticleSetting()
@@ -610,6 +621,71 @@ void CEffectEditor::SetStartEditing()
     m_CameraYOffsetBar->SetValue(m_ParticleObject->GetCameraOfffset().y);
 
     OnSetBasicParticleMaterialSetting(m_ParticleObject->GetRootComponent());
+}
+
+void CEffectEditor::OnDropMaterialToParticle(const std::string& InputName)
+{
+    if (!m_ParticleClass)
+    {
+        MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("No Particle Set"), NULL, MB_OK);
+        return;
+    }
+
+    // Key 값 형태로 Resource Manager 에서 먼저 찾는다.
+    CMaterial* FoundMaterial = CResourceManager::GetInst()->FindMaterial(InputName);
+
+    if (FoundMaterial)
+    {
+        // 해당 Material 의 Texture 를 불러와서 Image 에 세팅하기
+        // -> Material 을 Particle 에 세팅한다.
+        m_ParticleClass->SetMaterial(FoundMaterial);
+
+        // 해당 Material 의 Texture 를 불러와서 Image 에 세팅하기 => 첫번째 Texture 를 세팅해준다.
+        if (FoundMaterial->GetTextureInfo().size() > 0)
+            m_ParticleTexture->SetTexture(FoundMaterial->GetTexture());
+
+        // 제대로 세팅되었다는 Message
+        MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Material Set SuccessFully"), NULL, MB_OK);
+
+        return;
+    }
+
+    // 그 다음 하드 디스크에서 찾는다.
+    // Drop 한 Input 안에 있는 Texture 정보 불러오기 
+    // Texture File 의 File 명을, Texture 를 저장하는 Key 값으로 사용할 것이다.
+    std::string MaterialKeyName;
+
+    std::optional<std::string> FoundResult = CEditorUtil::GetFullPathOfTargetFileNameInDir(MATERIAL_PATH,
+        InputName, MaterialKeyName);
+
+    // 찾지 못했다면 
+    if (!FoundResult.has_value())
+    {
+        // New Texture Load Failure Message Box
+        MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Material Load Failure From HardDisk"), NULL, MB_OK);
+        return;
+    }
+
+    FoundMaterial = CResourceManager::GetInst()->LoadMaterialFullPathMultibyte(FoundResult.value().c_str());
+    
+    if (!FoundMaterial)
+    {
+        MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Material Load Failure From HardDisk"), NULL, MB_OK);
+        return;
+    }
+
+    m_ParticleClass->SetMaterial(FoundMaterial);
+
+    // 해당 Material 의 Texture 를 불러와서 Image 에 세팅하기 => 첫번째 Texture 를 세팅해준다.
+    if (FoundMaterial->GetTextureInfo().size() > 0)
+        m_ParticleTexture->SetTexture(FoundMaterial->GetTexture());
+
+    // 제대로 세팅되었다는 Message
+    MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Material Set SuccessFully"), NULL, MB_OK);
+
+    // Resource Window Display Update
+    CEditorManager::GetInst()->GetResourceDisplayWindow()->RefreshLoadedTextureResources();
+    CEditorManager::GetInst()->GetResourceDisplayWindow()->RefreshLoadedMaterialResources();
 }
 
 void CEffectEditor::SetParticleToParticleComponent(CParticleComponent* Component,  const char* ParticleName)

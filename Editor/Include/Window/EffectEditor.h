@@ -13,7 +13,6 @@ private:
     class CIMGUIButton* m_SaveParticleBtn;
     class CIMGUIButton* m_LoadParticleBtn;
     class CIMGUIButton* m_StartEditBtn;
-    class CParticlePopUpScreen* m_ParticlePopUpScreen;
 private:
     class CIMGUIInputFloat* m_SpawnTimeMaxEdit;
     // class CIMGUIButton* m_RestartButton;
@@ -35,6 +34,9 @@ private:
 
     class CIMGUIColor4* m_ColorMinEdit;
     class CIMGUIColor4* m_ColorMaxEdit;
+
+    // Material
+    class CIMGUITextInput* m_MaterialName;
 
     class CIMGUICheckBox* m_IsMoveEdit;
     class CIMGUICheckBox* m_IsGravityEdit;
@@ -69,6 +71,8 @@ private:
     // Render Target
     class CIMGUIImage* m_ParticleTexture;
     class CIMGUIImage* m_ParticleRenderTarget;
+private :
+    class CParticle* m_ParticleClass;
 private :
     // class CParticleComponent* m_ParticleComponent;
     // class CStaticMeshComponent* m_BaseGroundComponent;
@@ -128,6 +132,9 @@ private:
     void OnReflectCurrentParticleSetting();
     void SetGameObjectReady();
     void SetStartEditing();
+
+    // Material Setting
+    void OnDropMaterialToParticle(const std::string& InputName);
 
     // Helper 
     void SetParticleToParticleComponent(class CParticleComponent* Component, const char* ParticleName);
