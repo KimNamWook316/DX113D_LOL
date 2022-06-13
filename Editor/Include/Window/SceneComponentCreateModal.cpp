@@ -18,7 +18,7 @@
 #include "Component/ParticleComponent.h"
 #include "Component/ColliderBox3D.h"
 #include "Component/ColliderSphere.h"
-#include "../Component/TowerComponent.h"
+#include "../Component/BuildingComponent.h"
 #include "Resource/Particle/Particle.h"
 #include "Component/Arm.h"
 #include "Component/LandScape.h"
@@ -136,8 +136,8 @@ void CSceneComponentCreateModal::OnCreateComponent()
 	else if (Typeid == typeid(CColliderSphere).hash_code())
 		Com = SelectObject->CreateComponentAddChild<CColliderSphere>(Name);
 
-	else if (Typeid == typeid(CTowerComponent).hash_code())
-		Com = SelectObject->CreateComponentAddChild<CTowerComponent>(Name);
+	else if (Typeid == typeid(CBuildingComponent).hash_code())
+		Com = SelectObject->CreateComponentAddChild<CBuildingComponent>(Name);
 	
 	// Window °»½Å
 	CSceneComponentHierarchyWindow* ComponentWindow = (CSceneComponentHierarchyWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(SCENECOMPONENT_HIERARCHY);

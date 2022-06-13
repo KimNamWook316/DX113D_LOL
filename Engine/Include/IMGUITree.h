@@ -16,7 +16,19 @@ public:
     virtual ~CIMGUITree();
 private :
     TreeDropType m_DropType;
+    void* m_DataPtr; // Tree가 가리키는 Engine상에서 객체(ex. GameObject, SceneComponent 등등) -> 이름만으로 찾기에 위험하다고 판단되면 m_Data도 비교
+
 public:
+    void SetData(void* Data)
+    {
+        m_DataPtr = Data;
+    }
+
+    void* GetData() const
+    {
+        return m_DataPtr;
+    }
+
     void SetParent(CIMGUITree* parent)
     {
         mParent = parent;
@@ -42,8 +54,9 @@ public:
 
 public:
     CIMGUITree* FindChild(const std::string& Name);
-    CIMGUITree* AddChild(const std::string& name, const float width = 100.f, const float height = 100.f);
-    CIMGUITree* AddChild(CIMGUITree* Tree, const float width = 100.f, const float height = 100.f);
+    CIMGUITree* FindChild(const std::string& Name, void* DataPtr);
+    CIMGUITree* AddChild(const std::string& name, void* Data = nullptr, const float width = 100.f, const float height = 100.f);
+    CIMGUITree* AddChild(CIMGUITree* Tree, void* Data = nullptr, const float width = 100.f, const float height = 100.f);
     CIMGUITree* AddNewChild(CIMGUITree* Tree);
     void DeleteChild(const std::string& Name);
     CIMGUITree* DeleteHierarchy(); // 자식 Tree 구조 전부 삭제

@@ -63,7 +63,7 @@ bool CObjectCreateModal::Init()
 	m_ObjectTypeCheckBox->AddCheckInfo("Minion");
 	m_ObjectTypeCheckBox->AddCheckInfo("Jungle");
 	m_ObjectTypeCheckBox->AddCheckInfo("MapObject");
-	m_ObjectTypeCheckBox->AddCheckInfo("Turret");
+	m_ObjectTypeCheckBox->AddCheckInfo("Building");
 
 	m_ObjectTypeCheckBox->SetCheck(0, true);
 	m_ObjectTypeCheckBox->AlwaysCheck(true);
@@ -202,7 +202,7 @@ void CObjectCreateModal::OnCreateObject()
 		NewObject->SetObjectType(Object_Type::MapObject);
 		break;
 	case 4:
-		NewObject->SetObjectType(Object_Type::Turret);
+		NewObject->SetObjectType(Object_Type::Building);
 		break;
 	}
 

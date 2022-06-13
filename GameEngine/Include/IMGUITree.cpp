@@ -11,7 +11,8 @@ CIMGUITree::CIMGUITree() :
 	m_Selected(false),
 	m_Enable(true),
 	m_Open(false),
-	m_DropType(TreeDropType::Normal)
+	m_DropType(TreeDropType::Normal),
+	m_DataPtr(nullptr)
 {
 	m_Flag |= ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
 	m_DefaultFlag = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick | ImGuiTreeNodeFlags_SpanAvailWidth;
@@ -67,7 +68,32 @@ CIMGUITree* CIMGUITree::FindChild(const std::string& Name)
 	return nullptr;
 }
 
-CIMGUITree* CIMGUITree::AddChild(const std::string& name, const float width, const float height)
+CIMGUITree* CIMGUITree::FindChild(const std::string& Name, void* DataPtr)
+{
+	if (m_Name == Name && m_DataPtr == DataPtr)
+	{
+		return this;
+	}
+
+	if (mVecChild.empty())
+	{
+		return nullptr;
+	}
+
+	size_t ChildSize = mVecChild.size();
+
+	for (size_t i = 0; i < ChildSize; ++i)
+	{
+		CIMGUITree* Target = mVecChild[i]->FindChild(Name, DataPtr);
+
+		if (Target)
+			return Target;
+	}
+
+	return nullptr;
+}
+
+CIMGUITree* CIMGUITree::AddChild(const std::string& name, void* Data, const float width, const float height)
 {
 	CIMGUITree* tree = new CIMGUITree;
 
@@ -81,17 +107,28 @@ CIMGUITree* CIMGUITree::AddChild(const std::string& name, const float width, con
 		SAFE_DELETE(tree);
 		return nullptr;
 	}
+
+	if (Data)
+	{
+		tree->SetData(Data);
+	}
+
 	mVecChild.push_back(tree);
 	mVecRender.push_back(tree);
 	return tree;
 }
 
-CIMGUITree* CIMGUITree::AddChild(CIMGUITree* Tree, const float width, const float height)
+CIMGUITree* CIMGUITree::AddChild(CIMGUITree* Tree, void* Data, const float width, const float height)
 {
 	Tree->SetName(Tree->m_Name);
 	Tree->SetOwner(m_Owner);
 	Tree->SetSize(width, height);
 	Tree->SetParent(this);
+
+	if (Data)
+	{
+		m_DataPtr = Data;
+	}
 
 	mVecChild.push_back(Tree);
 	mVecRender.push_back(Tree);
