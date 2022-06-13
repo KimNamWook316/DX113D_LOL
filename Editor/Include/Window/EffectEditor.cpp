@@ -615,7 +615,6 @@ void CEffectEditor::OnLoadParticleClass()
 
         // Particle 을 보여주기 위한 Particle Component 를 만들어내고
         // m_Particle 에 세팅해주고
-        SAFE_DELETE(m_ParticleObject);
         m_ParticleObject = CSceneManager::GetInst()->GetScene()->CreateGameObject<C3DParticleObject>("Particle Effect Base Ground");
 
         m_CameraXRotSlideBar->SetValue(m_ParticleObject->GetCameraRelativeRotation().x);
@@ -733,6 +732,7 @@ void CEffectEditor::SetGameObjectReady()
 
 void CEffectEditor::SetStartEditing()
 {
+    // 이미 Particle Object 가 만들어져 있다면 => Particle Editing 을 시작한 상태이므로
     if (m_BaseGroundObject->GetRootComponent()->IsEnable() == false)
         m_BaseGroundObject->GetRootComponent()->Enable(true);
 
