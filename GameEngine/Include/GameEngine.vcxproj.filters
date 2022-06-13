@@ -310,9 +310,6 @@
     <Filter Include="02. Resource\02. Shader\03. ConstantBuffer\15. ShadowMap">
       <UniqueIdentifier>{94b1bc46-1c5b-4f28-a293-4d95ece7143f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="05. Component\02. ObjectComponent\03. StateComponent\01. Node\01. SkillNode">
-      <UniqueIdentifier>{40583e0a-97b3-475e-a2fb-9d9d2b58e854}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. Resource\02. Shader\02. ShaderClass\17. Transparent">
       <UniqueIdentifier>{25050ca1-b53f-4aa9-bc09-5892a528a9d7}</UniqueIdentifier>
     </Filter>
@@ -327,6 +324,15 @@
     </Filter>
     <Filter Include="05. Component\02. ObjectComponent\03. StateComponent\02. State">
       <UniqueIdentifier>{9720575c-7869-4ff5-93e9-95f71b175683}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. Component\02. ObjectComponent\03. StateComponent\01. Node\01. ConditionNode">
+      <UniqueIdentifier>{40583e0a-97b3-475e-a2fb-9d9d2b58e854}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. Component\02. ObjectComponent\03. StateComponent\01. Node\02. ActionNode">
+      <UniqueIdentifier>{51509ec2-f428-41a5-a675-9f6225719773}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. Component\02. ObjectComponent\03. StateComponent\01. Node\03. DecoratorNode">
+      <UniqueIdentifier>{7f567b65-b594-4333-be35-443a82f16874}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -924,25 +930,13 @@
     <ClCompile Include="IMGUIGrid.cpp">
       <Filter>01. Engine\08. IMGUI\03. Widget</Filter>
     </ClCompile>
-    <ClCompile Include="Component\Node\ActionNode.cpp">
-      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node</Filter>
-    </ClCompile>
     <ClCompile Include="Component\Node\CompositeNode.cpp">
       <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node</Filter>
     </ClCompile>
     <ClCompile Include="Component\Node\ConditionNode.cpp">
       <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node</Filter>
     </ClCompile>
-    <ClCompile Include="Component\Node\IdleNode.cpp">
-      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node</Filter>
-    </ClCompile>
-    <ClCompile Include="Component\Node\MoveInputCheckNode.cpp">
-      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node</Filter>
-    </ClCompile>
     <ClCompile Include="Component\Node\Node.cpp">
-      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node</Filter>
-    </ClCompile>
-    <ClCompile Include="Component\Node\RunNode.cpp">
       <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node</Filter>
     </ClCompile>
     <ClCompile Include="Component\Node\SelectorNode.cpp">
@@ -981,38 +975,17 @@
     <ClCompile Include="Resource\Shader\ShadowCBuffer.cpp">
       <Filter>02. Resource\02. Shader\03. ConstantBuffer\15. ShadowMap</Filter>
     </ClCompile>
-    <ClCompile Include="Component\Node\MovePickingNode.cpp">
-      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node</Filter>
-    </ClCompile>
-    <ClCompile Include="Component\Node\SkillQNode.cpp">
-      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node\01. SkillNode</Filter>
-    </ClCompile>
-    <ClCompile Include="Component\Node\SkillENode.cpp">
-      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node\01. SkillNode</Filter>
-    </ClCompile>
-    <ClCompile Include="Component\Node\SkillWNode.cpp">
-      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node\01. SkillNode</Filter>
-    </ClCompile>
     <ClCompile Include="Component\Node\InputWCheckNode.cpp">
-      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node\01. SkillNode</Filter>
+      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node\01. ConditionNode</Filter>
     </ClCompile>
     <ClCompile Include="Component\Node\InputQCheckNode.cpp">
-      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node\01. SkillNode</Filter>
+      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node\01. ConditionNode</Filter>
     </ClCompile>
     <ClCompile Include="Component\Node\InputECheckNode.cpp">
-      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node\01. SkillNode</Filter>
+      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node\01. ConditionNode</Filter>
     </ClCompile>
     <ClCompile Include="Component\Node\InputRCheckNode.cpp">
-      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node\01. SkillNode</Filter>
-    </ClCompile>
-    <ClCompile Include="Component\Node\SkillRNode.cpp">
-      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node\01. SkillNode</Filter>
-    </ClCompile>
-    <ClCompile Include="Component\Node\NoInterruptNode.cpp">
-      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node</Filter>
-    </ClCompile>
-    <ClCompile Include="Component\Node\FindEnemyChampion.cpp">
-      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node</Filter>
+      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node\01. ConditionNode</Filter>
     </ClCompile>
     <ClCompile Include="Resource\Shader\LightForwardConstantBuffer.cpp">
       <Filter>02. Resource\02. Shader\03. ConstantBuffer\12. Light</Filter>
@@ -1029,17 +1002,11 @@
     <ClCompile Include="Resource\Shader\OutlineShader.cpp">
       <Filter>02. Resource\02. Shader\02. ShaderClass\18. Outline</Filter>
     </ClCompile>
-    <ClCompile Include="Component\Node\NormalAttack.cpp">
-      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node</Filter>
-    </ClCompile>
-    <ClCompile Include="Component\Node\CheckAttackTarget.cpp">
-      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node</Filter>
-    </ClCompile>
     <ClCompile Include="Component\Node\SkillEndCheckNode.cpp">
-      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node\01. SkillNode</Filter>
+      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node\01. ConditionNode</Filter>
     </ClCompile>
     <ClCompile Include="Component\Node\InSkillCheck.cpp">
-      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node\01. SkillNode</Filter>
+      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node\01. ConditionNode</Filter>
     </ClCompile>
     <ClCompile Include="Resource\Shader\GrayShader.cpp">
       <Filter>02. Resource\02. Shader\02. ShaderClass\19. Gray</Filter>
@@ -1053,13 +1020,61 @@
     <ClCompile Include="Component\State\StateManager.cpp">
       <Filter>05. Component\02. ObjectComponent\03. StateComponent\02. State</Filter>
     </ClCompile>
-    <ClCompile Include="Component\Node\CheckTurretAttackTarget.cpp">
-      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node</Filter>
-    </ClCompile>
     <ClCompile Include="Component\State\DamageState.cpp">
       <Filter>05. Component\02. ObjectComponent\03. StateComponent\02. State</Filter>
     </ClCompile>
+    <ClCompile Include="Component\Node\SkillENode.cpp">
+      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node\02. ActionNode</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\Node\SkillQNode.cpp">
+      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node\02. ActionNode</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\Node\SkillRNode.cpp">
+      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node\02. ActionNode</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\Node\SkillWNode.cpp">
+      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node\02. ActionNode</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\Node\ActionNode.cpp">
+      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node\02. ActionNode</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\Node\CheckState.cpp">
+      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node\01. ConditionNode</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\Node\CheckAttackTarget.cpp">
+      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node\01. ConditionNode</Filter>
+    </ClCompile>
     <ClCompile Include="Component\Node\CheckTurretAttackFrequency.cpp">
+      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node\01. ConditionNode</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\Node\CheckTurretAttackTarget.cpp">
+      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node\01. ConditionNode</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\Node\FindEnemyChampion.cpp">
+      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node\01. ConditionNode</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\Node\IdleNode.cpp">
+      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node\02. ActionNode</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\Node\MoveInputCheckNode.cpp">
+      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node\01. ConditionNode</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\Node\MovePickingNode.cpp">
+      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node\02. ActionNode</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\Node\NegateNode.cpp">
+      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node\03. DecoratorNode</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\Node\NoInterruptNode.cpp">
+      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node\01. ConditionNode</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\Node\NormalAttack.cpp">
+      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node\02. ActionNode</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\Node\RunNode.cpp">
+      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node\02. ActionNode</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\Node\DecoratorNode.cpp">
       <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node</Filter>
     </ClCompile>
   </ItemGroup>
@@ -1694,25 +1709,13 @@
     <ClInclude Include="IMGUIGrid.h">
       <Filter>01. Engine\08. IMGUI\03. Widget</Filter>
     </ClInclude>
-    <ClInclude Include="Component\Node\ActionNode.h">
-      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node</Filter>
-    </ClInclude>
     <ClInclude Include="Component\Node\CompositeNode.h">
       <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node</Filter>
     </ClInclude>
     <ClInclude Include="Component\Node\ConditionNode.h">
       <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node</Filter>
     </ClInclude>
-    <ClInclude Include="Component\Node\IdleNode.h">
-      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node</Filter>
-    </ClInclude>
-    <ClInclude Include="Component\Node\MoveInputCheckNode.h">
-      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node</Filter>
-    </ClInclude>
     <ClInclude Include="Component\Node\Node.h">
-      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node</Filter>
-    </ClInclude>
-    <ClInclude Include="Component\Node\RunNode.h">
       <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node</Filter>
     </ClInclude>
     <ClInclude Include="Component\Node\SelectorNode.h">
@@ -1751,38 +1754,17 @@
     <ClInclude Include="Resource\Shader\ShadowCBuffer.h">
       <Filter>02. Resource\02. Shader\03. ConstantBuffer\15. ShadowMap</Filter>
     </ClInclude>
-    <ClInclude Include="Component\Node\MovePickingNode.h">
-      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node</Filter>
-    </ClInclude>
-    <ClInclude Include="Component\Node\SkillENode.h">
-      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node\01. SkillNode</Filter>
-    </ClInclude>
-    <ClInclude Include="Component\Node\SkillQNode.h">
-      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node\01. SkillNode</Filter>
-    </ClInclude>
-    <ClInclude Include="Component\Node\SkillWNode.h">
-      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node\01. SkillNode</Filter>
-    </ClInclude>
     <ClInclude Include="Component\Node\InputWCheckNode.h">
-      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node\01. SkillNode</Filter>
+      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node\01. ConditionNode</Filter>
     </ClInclude>
     <ClInclude Include="Component\Node\InputQCheckNode.h">
-      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node\01. SkillNode</Filter>
+      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node\01. ConditionNode</Filter>
     </ClInclude>
     <ClInclude Include="Component\Node\InputECheckNode.h">
-      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node\01. SkillNode</Filter>
+      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node\01. ConditionNode</Filter>
     </ClInclude>
     <ClInclude Include="Component\Node\InputRCheckNode.h">
-      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node\01. SkillNode</Filter>
-    </ClInclude>
-    <ClInclude Include="Component\Node\SkillRNode.h">
-      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node\01. SkillNode</Filter>
-    </ClInclude>
-    <ClInclude Include="Component\Node\NoInterruptNode.h">
-      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node</Filter>
-    </ClInclude>
-    <ClInclude Include="Component\Node\FindEnemyChampion.h">
-      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node</Filter>
+      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node\01. ConditionNode</Filter>
     </ClInclude>
     <ClInclude Include="Resource\Shader\LightForwardConstantBuffer.h">
       <Filter>02. Resource\02. Shader\03. ConstantBuffer\12. Light</Filter>
@@ -1799,17 +1781,11 @@
     <ClInclude Include="Resource\Shader\OutlineShader.h">
       <Filter>02. Resource\02. Shader\02. ShaderClass\18. Outline</Filter>
     </ClInclude>
-    <ClInclude Include="Component\Node\NormalAttack.h">
-      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node</Filter>
-    </ClInclude>
-    <ClInclude Include="Component\Node\CheckAttackTarget.h">
-      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node</Filter>
-    </ClInclude>
     <ClInclude Include="Component\Node\SkillEndCheckNode.h">
-      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node\01. SkillNode</Filter>
+      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node\01. ConditionNode</Filter>
     </ClInclude>
     <ClInclude Include="Component\Node\InSkillCheck.h">
-      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node\01. SkillNode</Filter>
+      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node\01. ConditionNode</Filter>
     </ClInclude>
     <ClInclude Include="Resource\Shader\GrayShader.h">
       <Filter>02. Resource\02. Shader\02. ShaderClass\19. Gray</Filter>
@@ -1826,13 +1802,61 @@
     <ClInclude Include="Component\State\StateManager.h">
       <Filter>05. Component\02. ObjectComponent\03. StateComponent\02. State</Filter>
     </ClInclude>
-    <ClInclude Include="Component\Node\CheckTurretAttackTarget.h">
-      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node</Filter>
-    </ClInclude>
     <ClInclude Include="Component\State\DamageState.h">
       <Filter>05. Component\02. ObjectComponent\03. StateComponent\02. State</Filter>
     </ClInclude>
+    <ClInclude Include="Component\Node\SkillENode.h">
+      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node\02. ActionNode</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\SkillQNode.h">
+      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node\02. ActionNode</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\SkillRNode.h">
+      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node\02. ActionNode</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\SkillWNode.h">
+      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node\02. ActionNode</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\ActionNode.h">
+      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node\02. ActionNode</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\CheckState.h">
+      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node\01. ConditionNode</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\CheckAttackTarget.h">
+      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node\01. ConditionNode</Filter>
+    </ClInclude>
     <ClInclude Include="Component\Node\CheckTurretAttackFrequency.h">
+      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node\01. ConditionNode</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\CheckTurretAttackTarget.h">
+      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node\01. ConditionNode</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\FindEnemyChampion.h">
+      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node\01. ConditionNode</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\IdleNode.h">
+      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node\02. ActionNode</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\MoveInputCheckNode.h">
+      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node\01. ConditionNode</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\MovePickingNode.h">
+      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node\02. ActionNode</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\NegateNode.h">
+      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node\03. DecoratorNode</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\NoInterruptNode.h">
+      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node\01. ConditionNode</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\NormalAttack.h">
+      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node\02. ActionNode</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\RunNode.h">
+      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node\02. ActionNode</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\DecoratorNode.h">
       <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node</Filter>
     </ClInclude>
   </ItemGroup>

@@ -33,7 +33,8 @@ CTextureManager::~CTextureManager()
 
 		for (; iter != iterEnd;)
 		{
-			m_mapTexture.erase(iter);
+			iter = m_mapTexture.erase(iter);
+			iterEnd = m_mapTexture.end();
 		}
 
 		m_mapTexture.empty();

@@ -335,7 +335,8 @@ enum Node_Type
 	Sequence,
 	Selector,
 	Condition,
-	Action
+	Action,
+	Decorator
 };
 
 enum class Object_Type

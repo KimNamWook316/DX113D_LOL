@@ -195,6 +195,7 @@ public:
 
 	void EraseAttackTarget(CGameObject* Target)
 	{
+
 		auto iter = m_AttackTargetList.begin();
 		auto iterEnd = m_AttackTargetList.end();
 
