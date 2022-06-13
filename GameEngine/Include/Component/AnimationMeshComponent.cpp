@@ -866,6 +866,23 @@ bool CAnimationMeshComponent::Load(FILE* File)
 	// // Animation 에 필요한 정보 Start 함수를 호출하여 세팅
 	// m_Animation->Start();
 
+	LoadAnimationInstance<CAnimationSequenceInstance>();
+
+	// RESOURCE_ANIMATION_PATH 를 통해서 .anim File Load
+	if (!m_Animation->LoadAnimation(AnimSavedFileName))
+		return false;
+
+	const std::pair<bool, std::string>& result = CResourceManager::GetInst()->LoadMeshTextureBoneInfo(m_Animation);
+
+	if (!result.first)
+		return false;
+
+	// result.second 에는 위에서 저장해준 Mesh 이름이 들어있다.
+	SetMesh(result.second);
+
+	// Animation 에 필요한 정보 Start 함수를 호출하여 세팅
+	m_Animation->Start();
+
 	int	MaterialSlotCount = 0;
 
 	fread(&MaterialSlotCount, sizeof(int), 1, File);
@@ -883,23 +900,6 @@ bool CAnimationMeshComponent::Load(FILE* File)
 
 	CSceneComponent::Load(File);
 
-	// Animation Instance File 로 부터 세팅
-	LoadAnimationInstance<CAnimationSequenceInstance>();
-
-	// RESOURCE_ANIMATION_PATH 를 통해서 .anim File Load
-	if (!m_Animation->LoadAnimation(AnimSavedFileName))
-		return false;
-
-	const std::pair<bool, std::string>& result = CResourceManager::GetInst()->LoadMeshTextureBoneInfo(m_Animation);
-
-	if (!result.first)
-		return false;
-
-	// result.second 에는 위에서 저장해준 Mesh 이름이 들어있다.
-	SetMesh(result.second);
-
-	// Animation 에 필요한 정보 Start 함수를 호출하여 세팅
-	m_Animation->Start();
 
 	return true;
 }
