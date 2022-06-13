@@ -8,6 +8,7 @@
 #include "Component/Node/SequenceNode.h"
 #include "Component/Node/SelectorNode.h"
 #include "Component/Node/CompositeNode.h"
+#include "Component/Node/DecoratorNode.h"
 #include "Component/BehaviorTree.h"
 
 static ImVec2 operator+(const ImVec2& a, const ImVec2& b)
@@ -122,13 +123,25 @@ struct GraphEditorDelegate : public GraphEditor::Delegate
 
         CBehaviorTree* Tree = DestNode.BehaviorTreeNode->GetOwner();
 
-        CCompositeNode* ParentNode = (CCompositeNode*)Tree->FindNode(SrcNode.name);
         CNode* ChildNode = Tree->FindNode(DestNode.name);
 
-        if (inputSlotIndex == 0)
-            ParentNode->AddChildFront(ChildNode);
-        else
-            ParentNode->AddChild(ChildNode);
+        // SrcNode가 Selector이거나 Sequence일때
+        if (SrcNode.templateIndex == 0 || SrcNode.templateIndex == 1)
+        {
+            CCompositeNode* ParentNode = (CCompositeNode*)Tree->FindNode(SrcNode.name);
+
+            if (inputSlotIndex == 0)
+                ParentNode->AddChildFront(ChildNode);
+            else
+                ParentNode->AddChild(ChildNode);
+        }
+
+        // SrcNode가 Decorator일 때
+        else if (SrcNode.templateIndex == 4)
+        {
+            CDecoratorNode* ParentNode = (CDecoratorNode*)Tree->FindNode(SrcNode.name);
+            ParentNode->SetChild(ChildNode);
+        }
 
         mLinks.push_back({ inputNodeIndex, inputSlotIndex, outputNodeIndex, outputSlotIndex });
     }
@@ -149,8 +162,8 @@ struct GraphEditorDelegate : public GraphEditor::Delegate
 
     void DelLink(GraphEditor::LinkIndex linkIndex) override
     {
-        int ParentNodeIdx = mLinks[linkIndex].mInputNodeIndex;
-        int ChildNodeIdx = mLinks[linkIndex].mOutputNodeIndex;
+        int ParentNodeIdx = (int)mLinks[linkIndex].mInputNodeIndex;
+        int ChildNodeIdx = (int)mLinks[linkIndex].mOutputNodeIndex;
 
         CNode* ParentNode = mNodes[ParentNodeIdx].BehaviorTreeNode;
         CNode* ChildNode = mNodes[ChildNodeIdx].BehaviorTreeNode;
@@ -292,7 +305,7 @@ struct GraphEditorDelegate : public GraphEditor::Delegate
         NewNode.templateIndex = TemplateIndex;
 
         size_t CurrentCount = mNodes.size();
-        NewNode.NodeIndex = CurrentCount;
+        NewNode.NodeIndex = (int)CurrentCount;
 
         mNodes.push_back(NewNode);
     }
@@ -308,6 +321,17 @@ struct GraphEditorDelegate : public GraphEditor::Delegate
         }
     }
 
+    Node& FindNode(CNode* Node)
+    {
+        size_t Count = mNodes.size();
+
+        for (size_t i = 0; i < Count; ++i)
+        {
+            if (mNodes[i].BehaviorTreeNode == Node)
+                return mNodes[i];
+        }
+    }
+
     //void AddTemplateChild(GraphEditor::TemplateIndex TemplateIndex)
     //{
     //    ++mTemplates[TemplateIndex].mOutputCount;
@@ -319,7 +343,7 @@ struct GraphEditorDelegate : public GraphEditor::Delegate
     // Graph datas
     static inline GraphEditor::Template mTemplates[] =
     {
-        // Sequence Node(2 Children) Template
+        // Sequence Node(4 Children) Template
         {
             IM_COL32(140, 200, 160, 255),
             IM_COL32(140, 200, 140, 255),
@@ -332,7 +356,7 @@ struct GraphEditorDelegate : public GraphEditor::Delegate
             nullptr
         },
 
-        // Selector Node(2 Children) Template
+        // Selector Node(4 Children) Template
         {
             IM_COL32(100, 140, 190, 255),
             IM_COL32(100, 100, 180, 255),
@@ -368,6 +392,19 @@ struct GraphEditorDelegate : public GraphEditor::Delegate
             nullptr,
             0,
             nullptr,
+            nullptr,
+        },
+
+        // Negate Node Templte
+        {
+            IM_COL32(190, 190, 190, 255),
+            IM_COL32(140, 170, 170, 255),
+            IM_COL32(150, 100, 90, 255),
+            1,
+            Array{"Parent"},
+            nullptr,
+            1,
+            Array{"Child0"},
             nullptr,
         }
     };
@@ -459,7 +496,6 @@ public:
 public:
     void SetStateComponent(class CStateComponent* Com);
     class CStateComponent* GetStateComponent() const;
-    void OnAddLink(class CNode* ParentNode, class CNode* ChildNode);
 
 private:
     void OnAddNodeButton(const char* Name, int TypeIndex, int ActionIndex);
@@ -485,5 +521,6 @@ public:
     void UpdateLoadNode(CCompositeNode* RootNode);
     void UpdateLoadNodeLink(class CBehaviorTree* Tree);
     void UpdateLoadNodeRecursive(CNode* Node, int Depth, int Height);
+    void Clear();
 };
 

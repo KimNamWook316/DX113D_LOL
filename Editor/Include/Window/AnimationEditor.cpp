@@ -990,9 +990,9 @@ void CAnimationEditor::OnSetPlayEngineDeltaTime(const char* Lable, bool Enable)
 
 	// if (IsEnginePlay)
 	if (!Enable)
-		CEngine::GetInst()->SetPlay(false);
+		CEngine::GetInst()->Pause();
 	else
-		CEngine::GetInst()->SetPlay(true);
+		CEngine::GetInst()->Play();
 }
 
 void CAnimationEditor::OnAddAnimationSequence()

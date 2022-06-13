@@ -126,6 +126,7 @@ bool CEditorManager::Init(HINSTANCE hInst)
 	CInput::GetInst()->CreateKey("SpellF", 'F');
 
 	m_CameraObject = CSceneManager::GetInst()->GetScene()->CreateGameObject<C3DCameraObject>("EditorCamera");
+	m_CameraObject->SetNoDestroyOnSceneChange(true);
 
 	CSceneManager::GetInst()->SetCreateSceneModeFunction<CEditorManager>(this, &CEditorManager::CreateSceneMode);
 	CSceneManager::GetInst()->SetCreateObjectFunction<CEditorManager>(this, &CEditorManager::CreateObject);
@@ -163,7 +164,6 @@ bool CEditorManager::Init(HINSTANCE hInst)
 	m_ResourceDisplayWindow->Close();
 
 	CRenderManager::GetInst()->CreateLayer("DragLayer", INT_MAX);
-
 	// 기존 도경씨 Behavior TreeMenu Bar
 	// m_BehaviorTreeMenuBar = CIMGUIManager::GetInst()->AddWindow<CBehaviorTreeMenuBar>("BehaviorTree");
 
@@ -426,6 +426,77 @@ void CEditorManager::SetChampionNotify(CAnimationSequenceInstance* Instance, con
 			// W Skill
 			if (i == 1)
 				Instance->AddNotifyParam<CStateManager>("Airborne", "AlistarQAirborne", Frame, StateManager, &CStateManager::FindKnockBackTarget);
+		}
+
+	}
+}
+
+void CEditorManager::SetChampionInfo(class CGameObject* Object, const std::string& ChampionName)
+{
+	CExcelData* Data = CResourceManager::GetInst()->FindCSV("LoLChampionInfo");
+
+	if (!Data)
+		return;
+
+	CStateManager* StateManager = CSceneManager::GetInst()->GetStateManager();
+
+	// TODO : 챔피언과 스킬이 추가될때마다 여기에 Notify 추가
+	if (ChampionName.find("Alistar") != std::string::npos)
+	{
+		Row* row = Data->GetRow("Alistar");
+
+		size_t Count = row->size();
+
+		for (size_t i = 0; i < Count; ++i)
+		{
+			std::stringstream ss;
+
+			ss << (*row)[i];
+
+			int Info = 0;
+
+			ss >> Info;
+
+			// TODO : LoLChampionInfo.csv에서 읽어오는 항목 늘어날 때 마다 추가해주기
+
+			// Move Speed
+			if (i == 0)
+				Object->SetChampionMoveSpeed(Info);
+			// Attack
+			else if (i == 1)
+				Object->SetChampionAttack(Info);
+
+			else if (i == 2)
+				Object->SetChampionAttackSpeed(Info);
+
+			else if (i == 3)
+			{
+
+			}
+
+			else if (i == 4)
+			{
+
+			}
+			else if (i == 5)
+			{
+
+			}
+
+			else if (i == 6)
+			{
+
+			}
+
+			else if (i == 7)
+			{
+				Object->SetChampionHP(Info);
+			}
+
+			else if (i == 8)
+			{
+
+			}
 		}
 
 	}

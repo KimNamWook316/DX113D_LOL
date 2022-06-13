@@ -311,7 +311,9 @@ enum ConditionNode
 	NoInterruptNode,
 	AttackTargetCheck,
 	SkillEndCheck,
-	InSkillCheck
+	InSkillCheck,
+	TurretAttackTargetCheck,
+	TurretAttackFrequencyCheck,
 };
 
 enum ActionNode
@@ -333,7 +335,8 @@ enum Node_Type
 	Sequence,
 	Selector,
 	Condition,
-	Action
+	Action,
+	Decorator
 };
 
 enum class Object_Type
@@ -342,5 +345,14 @@ enum class Object_Type
 	Minion,
 	Jungle,
 	MapObject,
+	Turret,
 	None
+};
+
+enum class LoLLine
+{
+	Top,
+	Mid,
+	Bottom,
+	Max
 };

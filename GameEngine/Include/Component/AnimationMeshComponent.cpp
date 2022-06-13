@@ -47,6 +47,20 @@ CAnimationMeshComponent::~CAnimationMeshComponent()
 	SAFE_DELETE(m_Animation);
 }
 
+void CAnimationMeshComponent::SetScene(CScene* Scene)
+{
+	CSceneComponent::SetScene(Scene);
+
+	if (m_Skeleton)
+	{
+		m_Skeleton->m_Scene = Scene;
+	}
+	if (m_Animation)
+	{
+		m_Animation->SetScene(Scene);
+	}
+}
+
 void CAnimationMeshComponent::SetMesh(const std::string& Name)
 {
 	CAnimationMesh* FoundMesh = (CAnimationMesh*)m_Scene->GetResource()->FindMesh(Name);
@@ -862,17 +876,12 @@ bool CAnimationMeshComponent::Load(FILE* File)
 	fread(AnimSavedFileName,  sizeof(char), AnimSavedFileNameLength, File);
 
 
-	// Animation Instance File 로 부터 세팅
 	LoadAnimationInstance<CAnimationSequenceInstance>();
 
 	// RESOURCE_ANIMATION_PATH 를 통해서 .anim File Load
 	if (!m_Animation->LoadAnimation(AnimSavedFileName))
 		return false;
 
-	// 이 코드를 , 아래에서 Material Load 보다 먼저 불러야 한다.
-	// 아래 Set Mesh 를 통해서, 기본적으로 ex) Alistar_Idle_mesh 파일 안에 있는 원본 Material 을 세팅하게 된다.
-	// 그런데, 실제 각 Animation Component 가 사용하는 Material 은, 즉, Animation Mesh Widget 에서 
-	// 세팅해준 변화 사항은, 원본 Material이 아니라, 별도 Material 파일에 저장해놓은 Material 을 사용한다.
 	const std::pair<bool, std::string>& result = CResourceManager::GetInst()->LoadMeshTextureBoneInfo(m_Animation);
 
 	if (!result.first)

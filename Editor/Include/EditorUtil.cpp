@@ -487,12 +487,20 @@ bool CEditorUtil::CompareExt(const char* FullPath, const char ExtFilter[_MAX_EXT
 	char FullPathExt[_MAX_EXT] = {};
 	char FilterBuf[_MAX_EXT] = {};
 
-	strcpy_s(FilterBuf, ExtFilter);
+	if (ExtFilter[0] == '.')
+	{
+		strcpy_s(FilterBuf, ExtFilter + 1);
+	}
+	else
+	{
+		strcpy_s(FilterBuf, ExtFilter);
+	}
 	_strupr_s(FilterBuf);
 
-	int Len = (int)strlen(FullPath);
+	int ExtLen = strlen(FilterBuf);
+	int Len = strlen(FullPath);
 
-	strncpy_s(FullPathExt, FullPath + Len - 4, 4);
+	strncpy_s(FullPathExt, FullPath + Len - ExtLen, 4);
 	_strupr_s(FullPathExt);
 
 	return (strcmp(FilterBuf, FullPathExt) == 0);

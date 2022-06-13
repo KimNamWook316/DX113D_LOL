@@ -76,6 +76,8 @@ void CLightManager::Start()
 void CLightManager::Init()
 {
 	m_GlobalLight = m_Scene->CreateGameObject<CGameObject>("GlobalLight");
+	m_GlobalLight->ExcludeFromSceneSave();
+	m_GlobalLight->SetNoDestroyOnSceneChange(true);
 
 	m_GlobalLightComponent = m_GlobalLight->CreateComponent<CLightComponent>("Light");
 

@@ -3,6 +3,7 @@
 #include "../Component/ColliderCircle.h"
 #include "../Component/ColliderPixel.h"
 #include "../Component/ColliderBox3D.h"
+#include "../Component/ColliderSphere.h"
 
 #define EPSILON 0.00001f
 
@@ -105,6 +106,18 @@ bool CCollision::CollisionCircleToPixel(CColliderCircle* Src, CColliderPixel* De
 		Src->m_Result = srcResult;
 		Dest->m_Result = destResult;
 
+		return true;
+	}
+
+	return false;
+}
+
+bool CCollision::CollisionBox3DToSphere(CColliderBox3D* Src, CColliderSphere* Dest)
+{
+	Vector3 HitPoint;
+
+	if (CollisionBox3DToSphere(HitPoint, Src, Src->GetInfo(), Dest->GetInfo()))
+	{
 		return true;
 	}
 
@@ -746,8 +759,8 @@ bool CCollision::CollisionRayToBox3D(Vector3& HitPoint, const Ray& ray, const Bo
 	float tMax = FLT_MAX;
 
 	Vector3 Delta = Box.Center - ray.Pos;
-	float D1;
-	float D2;
+	//float D1;
+	//float D2;
 
 	Vector3 n = Box.Axis[0];
 
@@ -843,7 +856,36 @@ bool CCollision::CollisionRayToBox3D(Vector3& HitPoint, const Ray& ray, const Bo
 }
 
 
-bool CCollision::CollisionBox3DToSphere(Vector3& HitPoint, const Box3DInfo& Box, const SphereInfo& Sphere)
+bool CCollision::CollisionBox3DToSphere(Vector3& HitPoint, CColliderBox3D* Src, const Box3DInfo& Box, const SphereInfo& Sphere)
 {
-	return false;
+	// Sphere를 Box중심 좌표계로 바꾸고 Box가 회전할때 Sphere의 중심도 같이 회전해서 AABB처럼 만들어준다
+	SphereInfo SphereInObbSpace;
+	SphereInObbSpace.Center = Sphere.Center - Box.Center;
+	SphereInObbSpace.Radius = Sphere.Radius;
+	Vector3 BoxRotMat = Src->GetWorldRot();
+
+	XMVECTOR Qut = XMQuaternionRotationRollPitchYaw(BoxRotMat.x, BoxRotMat.y, BoxRotMat.z);
+
+	Matrix	matRot;
+	matRot.RotationQuaternion(Qut);
+
+	SphereInObbSpace.Center = SphereInObbSpace.Center.TransformNormal(matRot);
+
+	if (SphereInObbSpace.Center.x + SphereInObbSpace.Radius < -Box.AxisLen[0])
+		return false;
+	if (SphereInObbSpace.Center.x - SphereInObbSpace.Radius > Box.AxisLen[0])
+		return false;
+	if (SphereInObbSpace.Center.y + SphereInObbSpace.Radius < -Box.AxisLen[1])
+		return false;
+	if (SphereInObbSpace.Center.y - SphereInObbSpace.Radius > Box.AxisLen[1])
+		return false;
+	if (SphereInObbSpace.Center.z + SphereInObbSpace.Radius < -Box.AxisLen[2])
+		return false;
+	if (SphereInObbSpace.Center.z - SphereInObbSpace.Radius > Box.AxisLen[2])
+		return false;
+
+
+	MessageBox(nullptr, TEXT("충돌"), TEXT("충돌"), MB_OK);
+
+	return true;
 }

@@ -37,5 +37,10 @@ private :
 
 	void OnSaveObjectComponentMenuCallback();
 	void OnLoadObjectComponentMenuCallback();
+
+private:
+	void ClearSceneRelatedWindows();
+	void RefreshSceneRelatedWindow(class CGameObject* Object);
+	void RefreshSceneRelatedWindow(const std::vector<CGameObject*>& vecObj);
 };
 

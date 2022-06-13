@@ -461,11 +461,11 @@ void CAnimationMeshWidget::SetAnimationRelatedInfoToWidget(CAnimationSequenceIns
 	// Table 정보 세팅
 	OnRefreshAnimationInfo();
 
-	// 현재 Scene의 정보를 m_Scene으로 지정해준다
-	m_Animation->SetScene(CSceneManager::GetInst()->GetScene());
+ //	// 현재 Scene의 정보를 m_Scene으로 지정해준다
+ //	m_Animation->SetScene(CSceneManager::GetInst()->GetScene());
 
 	// Engine 을 Play 한다.
-	CEngine::GetInst()->SetPlay(true);
+	CEngine::GetInst()->Play();
 
 	// Animation을 시작한다
 	m_Animation->Play();

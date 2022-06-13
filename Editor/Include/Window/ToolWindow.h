@@ -5,10 +5,12 @@
 #include "IMGUIGizmo.h"
 #include "IMGUIGrid.h"
 #include "IMGUIRadioButton.h"
+#include "IMGUIButton.h"
 #include "IMGUISliderFloat.h"
 #include "IMGUIColor3.h"
 #include "IMGUITree.h"
 #include "IMGUICheckBox.h"
+#include "IMGUIText.h"
 
 class CToolWindow :
     public CIMGUIWindow
@@ -21,6 +23,7 @@ public:
 	virtual bool Init();
 
 public:
+	void SetPlayText(bool Play);
 	void SetGizmoObject(class CGameObject* Object);
 	void SetGizmoComponent(class CSceneComponent* SceneComp);
 
@@ -39,6 +42,12 @@ private:
 	void OnChangeOutlineNormalMultiply(float Val);
 	void OnChangeOutlineNormalBias(float Val);
 	void OnCheckGrayEnable(const char* Label, bool Check);
+	void OnClickPlay();
+	void OnClickPause();
+	void OnClickStop();
+	void ClearSceneRelatedWindows();
+	void RefreshSceneRelatedWindow(class CGameObject* Object);
+	void RefreshSceneRelatedWindow(const std::vector<CGameObject*>& vecObj);
 
 private:
 	// Gizmo
@@ -58,7 +67,12 @@ private:
 	CIMGUISliderFloat* m_OutlineDepthBias;
 	CIMGUISliderFloat* m_OutlineNormalMutliply;
 	CIMGUISliderFloat* m_OutlineNormalBias;
-
 	CIMGUICheckBox* m_GrayEnable;
+
+	// PlayStop
+	CIMGUIText* m_PlayState;
+	CIMGUIButton* m_Play;
+	CIMGUIButton* m_Pause;
+	CIMGUIButton* m_Stop;
 };
 

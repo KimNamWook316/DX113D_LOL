@@ -72,12 +72,7 @@ void CObjectComponentWindow::OnCreateComponentPopUp()
 	}
 }
 
-std::string CObjectComponentWindow::GetComponentNameInput() const
-{
-	return m_ComponentCreateModal->GetComponentNameInput();
-}
-
-int CObjectComponentWindow::AddObjectComponent(const std::string& Name)
+int CObjectComponentWindow::OnCreateObjectComponent(const std::string& Name)
 {
 	int Count = m_ComponentListBox->GetItemCount();
 	m_ComponentListBox->AddItem(Name);
@@ -89,6 +84,14 @@ void CObjectComponentWindow::OnSelectComponent(int Index, const char* Label)
 {
 	m_SelectIndex = Index;
 	m_SelectLabel = Label;
+}
+
+void CObjectComponentWindow::Clear()
+{
+	m_SelectIndex = -1;
+	m_SelectLabel = "";
+
+	m_ComponentListBox->Clear();
 }
 
 void CObjectComponentWindow::OnDeleteComponent()
@@ -110,23 +113,20 @@ void CObjectComponentWindow::OnDeleteComponent()
 	m_ComponentListBox->DeleteItem(Index);
 }
 
-void CObjectComponentWindow::OnUpdateObjectComponetWindow(CIMGUITree* SelectObjectNode)
+void CObjectComponentWindow::OnRefreshObjectComponentList(CGameObject* Object)
 {
-	// 지금 Component Hierarchy Window에 출력되고 있는것들을 모두(최상위에 있는 "Components" TreeNode제외하고) Disable 처리
+	if (!Object)
+	{
+		return;
+	}
+
 	m_ComponentListBox->Clear();
 
-	CGameObject* Obj = CSceneManager::GetInst()->GetScene()->FindObject(SelectObjectNode->GetName());
-
-	if (!Obj)
-		return;
-
 	std::vector<CObjectComponent*> vecObjComp;
+	Object->GetAllObjectComponentsPointer(vecObjComp);
 
-	Obj->GetAllObjectComponentsPointer(vecObjComp);
-
-	size_t Count = vecObjComp.size();
-
-	for (size_t i = 0; i < Count; ++i)
+	size_t Size = vecObjComp.size();
+	for (size_t i = 0; i < Size; ++i)
 	{
 		m_ComponentListBox->AddItem(vecObjComp[i]->GetName());
 	}

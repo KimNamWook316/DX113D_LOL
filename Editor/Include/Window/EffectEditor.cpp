@@ -709,6 +709,7 @@ void CEffectEditor::SetGameObjectReady()
     m_BaseGroundObject->SetWorldScale(300.f, 300.f, 1.f);
     m_BaseGroundObject->AddWorldRotationX(90.f);
     m_BaseGroundObject->AddWorldPos(0.f, -30.f, 0.f);
+    m_BaseGroundObject->ExcludeFromSceneSave();
 
     // 처음에는 Enable 을 false 로 둬서 그리지 않게 한다.
     m_BaseGroundObject->GetRootComponent()->Enable(false);

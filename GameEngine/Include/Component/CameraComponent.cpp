@@ -83,11 +83,14 @@ void CCameraComponent::ComputeShadowView()
 
 	Vector3 TargetPos;
 
-	if (m_Parent->CheckType<CArm>())
+	if (m_Parent)
 	{
-		CArm* Parent = (CArm*)(m_Parent);
+		if (m_Parent->CheckType<CArm>())
+		{
+			CArm* Parent = (CArm*)(m_Parent);
 
-		TargetPos = GetWorldPos() + GetWorldAxis(AXIS_Z) * Parent->GetTargetDistance();
+			TargetPos = GetWorldPos() + GetWorldAxis(AXIS_Z) * Parent->GetTargetDistance();
+		}
 	}
 
 	float ShadowLightDistance = CRenderManager::GetInst()->GetShadowLightDistance();

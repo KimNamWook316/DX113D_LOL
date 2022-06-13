@@ -9,11 +9,24 @@ C3DCameraObject::C3DCameraObject()	:
 	m_Speed(1.f)
 {
 	SetTypeID<C3DCameraObject>();
+	m_ExcludeSceneSave = true;
 }
 
 C3DCameraObject::C3DCameraObject(const C3DCameraObject& obj)	:
 	CGameObject(obj)
 {
+	m_FocusPoint = (CSceneComponent*)FindComponent("Focus");
+	m_Camera = (CCameraComponent*)FindComponent("Camera");
+
+	// Ctrl + Mouse L Drag -> 시점 이동 
+	CInput::GetInst()->SetCtrlKey("CameraMove", true);
+	CInput::GetInst()->SetKeyCallback("CameraMove", KeyState_Down, this, &C3DCameraObject::OnDragMoveStart);
+	CInput::GetInst()->SetKeyCallback("CameraMove", KeyState_Push, this, &C3DCameraObject::OnDragMove);
+	CInput::GetInst()->SetKeyCallback("CameraMove", KeyState_Up, this, &C3DCameraObject::OnDragMoveEnd);
+
+	// Ctrl + Mouse R  Drag -> 시점 회전
+	CInput::GetInst()->SetCtrlKey("CameraRot", true);
+	CInput::GetInst()->SetKeyCallback("CameraRot", KeyState_Push, this, &C3DCameraObject::OnDragRotate);
 }
 
 C3DCameraObject::~C3DCameraObject()
@@ -55,10 +68,15 @@ bool C3DCameraObject::Init()
 	CInput::GetInst()->SetCtrlKey("CameraRot", true);
 	CInput::GetInst()->SetKeyCallback("CameraRot", KeyState_Push, this, &C3DCameraObject::OnDragRotate);
 
+	return true;
+}
+
+void C3DCameraObject::Start()
+{
+	CGameObject::Start();
+
 	// Main Camera로 설정
 	m_Scene->GetCameraManager()->SetCurrentCamera(m_Camera);
-
-	return true;
 }
 
 void C3DCameraObject::Update(float DeltaTime)

@@ -6,6 +6,9 @@
 #include "PathManager.h"
 #include "Scene/Scene.h"
 #include "Scene/SceneManager.h"
+#include "../EditorUtil.h"
+#include "../Window/ToolWindow.h"
+#include "../Window/InspectorWindow.h"
 // Window
 #include "../Window/BehaviorTreeWindow.h"
 #include "../Window/ObjectComponentWindow.h"
@@ -23,7 +26,6 @@
 #include "IMGUIMenuItem.h"
 #include "IMGUIPopUpModal.h"
 #include "IMGUIManager.h"
-
 
 CSaveLoadBeginMenu::CSaveLoadBeginMenu()
 {
@@ -76,18 +78,89 @@ void CSaveLoadBeginMenu::Render()
 
 void CSaveLoadBeginMenu::OnSaveSceneMenuCallback()
 {
+	TCHAR FileFullPath[MAX_PATH] = {};
+	OPENFILENAME OpenFile = {};
+	OpenFile.lStructSize = sizeof(OPENFILENAME);
+	OpenFile.lpstrFile = FileFullPath;
+	OpenFile.nMaxFile = MAX_PATH;
+	OpenFile.lpstrInitialDir = CPathManager::GetInst()->FindPath(SCENE_PATH)->Path;
+	OpenFile.lpstrFilter = TEXT("Scene File\0*.scn\0");
+	OpenFile.hwndOwner = CEngine::GetInst()->GetWindowHandle();
+
+	if (GetSaveFileName(&OpenFile) != 0)
+	{
+		char FilePathMultibyte[MAX_PATH] = {};
+		int ConvertLength = WideCharToMultiByte(CP_ACP, 0, FileFullPath, -1, 0, 0, 0, 0);
+		WideCharToMultiByte(CP_ACP, 0, FileFullPath, -1, FilePathMultibyte, ConvertLength, 0, 0);
+
+		bool Success = CSceneManager::GetInst()->GetScene()->SaveFullPath(FilePathMultibyte);
+
+		if (!Success)
+		{
+			MessageBox(nullptr, TEXT("씬 저장 실패"), TEXT("Error"), MB_OK);
+			return;
+		}
+		
+		MessageBox(nullptr, TEXT("씬 저장 성공"), TEXT("Success"), MB_OK);
+	}
 }
 
 void CSaveLoadBeginMenu::OnLoadSceneMenuCallback()
 {
-	// 모든 Scene 을 로드하고나서, Resource Display Window Texture, Material 정보 Update
-	CEditorManager::GetInst()->GetResourceDisplayWindow()->RefreshLoadedTextureResources();
-	CEditorManager::GetInst()->GetResourceDisplayWindow()->RefreshLoadedMaterialResources();
+	// TODO : Scene Load 직후 Scene Stop
+	TCHAR FileFullPath[MAX_PATH] = {};
+	OPENFILENAME OpenFile = {};
+	OpenFile.lStructSize = sizeof(OPENFILENAME);
+	OpenFile.lpstrFile = FileFullPath;
+	OpenFile.nMaxFile = MAX_PATH;
+	OpenFile.lpstrInitialDir = CPathManager::GetInst()->FindPath(SCENE_PATH)->Path;
+	OpenFile.lpstrFilter = TEXT("Scene File\0*.scn\0");
+	OpenFile.hwndOwner = CEngine::GetInst()->GetWindowHandle();
+
+	if (GetOpenFileName(&OpenFile) != 0)
+	{
+		char FilePathMultibyte[MAX_PATH] = {};
+		int ConvertLength = WideCharToMultiByte(CP_ACP, 0, FileFullPath, -1, 0, 0, 0, 0);
+		WideCharToMultiByte(CP_ACP, 0, FileFullPath, -1, FilePathMultibyte, ConvertLength, 0, 0);
+
+		bool ValidExt = CEditorUtil::CompareExt(FilePathMultibyte, ".scn");
+
+		if (!ValidExt)
+		{
+			MessageBox(nullptr, TEXT("확장자명 다름"), TEXT("Error"), MB_OK);
+			return;
+		}
+
+		bool Success = CSceneManager::GetInst()->LoadNewSceneFullPath(FilePathMultibyte, true);
+
+		if (!Success)
+		{
+			MessageBox(nullptr, TEXT("씬 로드 실패"), TEXT("Error"), MB_OK);
+			return;
+		}
+
+		// Scene 연관 윈도우 전부 초기화
+		ClearSceneRelatedWindows();
+		
+		// Hierachy 갱신
+		std::vector<CGameObject*> vecObj;
+		CSceneManager::GetInst()->GetNextScene()->GetAllIncludeSaveObjectsPointer(vecObj);
+		RefreshSceneRelatedWindow(vecObj);
+
+		// ToolWindow
+		CToolWindow* ToolWindow = (CToolWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(TOOL);
+		ToolWindow->SetPlayText(false);
+
+		MessageBox(nullptr, TEXT("씬 로드 성공"), TEXT("Success"), MB_OK);
+
+		// 모든 Scene 을 로드하고나서, Resource Display Window Texture, Material 정보 Update
+		CEditorManager::GetInst()->GetResourceDisplayWindow()->RefreshLoadedTextureResources();
+		CEditorManager::GetInst()->GetResourceDisplayWindow()->RefreshLoadedMaterialResources();
+	}
 }
 
 void CSaveLoadBeginMenu::OnSaveObjectMenuCallback()
 {
-	// CObjectComponentWindow* ComponentWindow = (CObjectComponentWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(OBJECTCOMPONENT_LIST);
 	CObjectHierarchyWindow* ObjectWindow = (CObjectHierarchyWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(OBJECT_HIERARCHY);
 
 	if (ObjectWindow)
@@ -113,81 +186,59 @@ void CSaveLoadBeginMenu::OnSaveObjectMenuCallback()
 			WideCharToMultiByte(CP_ACP, 0, FileFullPath, -1, FilePathMultibyte, ConvertLength, 0, 0);
 
 			Object->Save(FilePathMultibyte);
-
-			// GameEngine 폴더에 저장하기
-			// std::string ExtraFolderName = ENGINE_RESOURCE_OBJECT_PATH;
-			// 
-			// const PathInfo* EngineSequenceFolder = CPathManager::GetInst()->FindPath(ExtraFolderName);
-			// 
-			// // 파일 이름을 뽑아낸다.
-			// char SavedFileName[MAX_PATH] = {};
-			// char SavedExt[_MAX_EXT] = {};
-			// _splitpath_s(FilePathMultibyte, nullptr, 0, nullptr, 0, SavedFileName, MAX_PATH, SavedExt, _MAX_EXT);
-			// 
-			// // 최종 GameEngine 경로를 만든다.
-			// char SavedGameEnginePath[MAX_PATH] = {};
-			// strcpy_s(SavedGameEnginePath, EngineSequenceFolder->PathMultibyte);
-			// strcat_s(SavedGameEnginePath, SavedFileName);
-			// strcat_s(SavedGameEnginePath, SavedExt);
-			// 
-			// // 현재 저장되는 경로와 다르다면, GameEngine 쪽에도 저장한다.
-			// if (strcmp(EngineSequenceFolder->PathMultibyte, FilePathMultibyte) != 0)
-			// {
-			// 	Object->Save(SavedGameEnginePath);
-			// }
 		}
 	}
 }
 
 void CSaveLoadBeginMenu::OnLoadObjectMenuCallback()
 {
-	TCHAR LoadFilePath[MAX_PATH] = {};
-
+	// TODO : Scene Load 직후 Scene Stop
+	TCHAR FileFullPath[MAX_PATH] = {};
 	OPENFILENAME OpenFile = {};
 	OpenFile.lStructSize = sizeof(OPENFILENAME);
-	OpenFile.lpstrFile = LoadFilePath;
+	OpenFile.lpstrFile = FileFullPath;
 	OpenFile.nMaxFile = MAX_PATH;
-	OpenFile.hwndOwner = CEngine::GetInst()->GetWindowHandle();
-	OpenFile.lpstrFilter = TEXT("모든파일\0*.*\0*.GameObject File\0*.gobj");
 	OpenFile.lpstrInitialDir = CPathManager::GetInst()->FindPath(OBJECT_PATH)->Path;
+	OpenFile.lpstrFilter = TEXT("모든파일\0*.*\0*.GameObject File\0*.gobj");
+	OpenFile.hwndOwner = CEngine::GetInst()->GetWindowHandle();
 
 	if (GetOpenFileName(&OpenFile) != 0)
 	{
 		char FilePathMultibyte[MAX_PATH] = {};
-		int ConvertLength = WideCharToMultiByte(CP_ACP, 0, LoadFilePath, -1, 0, 0, 0, 0);
-		WideCharToMultiByte(CP_ACP, 0, LoadFilePath, -1, FilePathMultibyte, ConvertLength, 0, 0);
+		int ConvertLength = WideCharToMultiByte(CP_ACP, 0, FileFullPath, -1, 0, 0, 0, 0);
+		WideCharToMultiByte(CP_ACP, 0, FileFullPath, -1, FilePathMultibyte, ConvertLength, 0, 0);
 
-		CGameObject* LoadedObject = CEditorManager::GetInst()->GetObjectHierarchyWindow()->GetObjectCreateModal()->OnCreateObject(FilePathMultibyte);
+		bool ValidExt = CEditorUtil::CompareExt(FilePathMultibyte, "gobj");
 
-		if (!LoadedObject)
+		if (!ValidExt)
+		{
+			MessageBox(nullptr, TEXT("확장자명 다름"), TEXT("Error"), MB_OK);
 			return;
+		}
 
-		CAnimationMeshComponent* Comp = LoadedObject->FindComponentFromType<CAnimationMeshComponent>();
+		CGameObject* NewObject = CSceneManager::GetInst()->GetScene()->CreateEmtpyObject();
+
+		bool Success = NewObject->Load(FilePathMultibyte);
+
+		if (!Success)
+		{
+			MessageBox(nullptr, TEXT("로드 실패"), TEXT("Error"), MB_OK);
+			return;
+		}
+
+		RefreshSceneRelatedWindow(NewObject);
+
+		MessageBox(nullptr, TEXT("로드 성공"), TEXT("Success"), MB_OK);
+
+		CAnimationMeshComponent* Comp = NewObject->FindComponentFromType<CAnimationMeshComponent>();
+
+		CEditorManager::GetInst()->SetChampionInfo(NewObject, NewObject->GetName());
 
 		if (Comp)
 		{
 			CAnimationSequenceInstance* Instance = Comp->GetAnimationInstance();
 			if (Instance)
-				CEditorManager::GetInst()->SetChampionNotify(Instance, LoadedObject->GetName());
-		}
-
-		// Object Hierarchy GameObject 목록에 추가한다.
-		//CEditorManager::GetInst()->GetObjectComponentWindow()->AddObjectComponent(LoadedObject->GetName());
-
-		std::vector<CObjectComponent*> vecObjComp;
-		LoadedObject->GetAllObjectComponentsPointer(vecObjComp);
-
-		size_t Count = vecObjComp.size();
-
-		for (size_t i = 0; i < Count; ++i)
-		{
-			CEditorManager::GetInst()->GetObjectComponentWindow()->AddObjectComponent(vecObjComp[i]->GetName());
-
-			if (vecObjComp[i]->GetTypeID() == typeid(CNavAgent).hash_code())
-			{
-				LoadedObject->SetNavAgent((CNavAgent*)vecObjComp[i]);
-				((CNavAgent*)vecObjComp[i])->SetUpdateComponent(LoadedObject->GetRootComponent());
-			}
+				CEditorManager::GetInst()->SetChampionNotify(Instance, NewObject->GetName());
 		}
 
 		// Resource Display 에 있는 Texture, Material 정보 다시 Update 
@@ -238,5 +289,76 @@ void CSaveLoadBeginMenu::OnLoadObjectComponentMenuCallback()
 	if (ObjList)
 	{
 		ObjList->OnLoadComponent();
+	}
+}
+
+void CSaveLoadBeginMenu::ClearSceneRelatedWindows()
+{
+	CObjectHierarchyWindow* ObjHierachy = (CObjectHierarchyWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(OBJECT_HIERARCHY);
+	CSceneComponentHierarchyWindow* SceneCompHierachy = (CSceneComponentHierarchyWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(SCENECOMPONENT_HIERARCHY);
+	CObjectComponentWindow* ObjCompWindow = (CObjectComponentWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(OBJECTCOMPONENT_LIST);
+	CToolWindow* ToolWindow = (CToolWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(TOOL);
+	CInspectorWindow* Inspector = (CInspectorWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(INSPECTOR);
+
+	if (ObjHierachy)
+	{
+		ObjHierachy->Clear();
+	}
+	if (SceneCompHierachy)
+	{
+		SceneCompHierachy->ClearExistingHierarchy();
+	}
+	if (ObjCompWindow)
+	{
+		ObjCompWindow->Clear();
+	}
+	if (ToolWindow)
+	{
+		ToolWindow->SetGizmoObject(nullptr);
+	}
+	if (Inspector)
+	{
+		Inspector->OnDeleteGameObject();
+	}
+}
+
+void CSaveLoadBeginMenu::RefreshSceneRelatedWindow(CGameObject* Object)
+{
+	// Window 갱신
+	CObjectHierarchyWindow* ObjHierachy = (CObjectHierarchyWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(OBJECT_HIERARCHY);
+	CSceneComponentHierarchyWindow* SceneCompHierachy = (CSceneComponentHierarchyWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(SCENECOMPONENT_HIERARCHY);
+	CObjectComponentWindow* ObjCompWindow = (CObjectComponentWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(OBJECTCOMPONENT_LIST);
+	CToolWindow* ToolWindow = (CToolWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(TOOL);
+	CInspectorWindow* Inspector = (CInspectorWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(INSPECTOR);
+
+	if (ObjHierachy)
+	{
+		ObjHierachy->OnCreateObject(Object);
+	}
+	if (SceneCompHierachy)
+	{
+		SceneCompHierachy->OnLoadGameObject(Object);
+	}
+	if (ObjCompWindow)
+	{
+		ObjCompWindow->OnRefreshObjectComponentList(Object);
+	}
+	if (ToolWindow)
+	{
+		ToolWindow->SetGizmoObject(Object);
+	}
+	if (Inspector)
+	{
+		Inspector->OnSelectGameObject(Object);
+	}
+}
+
+void CSaveLoadBeginMenu::RefreshSceneRelatedWindow(const std::vector<CGameObject*>& vecObj)
+{
+	size_t Size = vecObj.size();
+
+	for (size_t i = 0; i < Size; ++i)
+	{
+		RefreshSceneRelatedWindow(vecObj[i]);
 	}
 }

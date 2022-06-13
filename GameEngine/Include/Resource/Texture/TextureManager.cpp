@@ -25,6 +25,20 @@ CTextureManager::~CTextureManager()
 	{
 		SAFE_RELEASE(iter->second);
 	}
+
+
+	{
+		auto iter = m_mapTexture.begin();
+		auto iterEnd = m_mapTexture.end();
+
+		for (; iter != iterEnd;)
+		{
+			iter = m_mapTexture.erase(iter);
+			iterEnd = m_mapTexture.end();
+		}
+
+		m_mapTexture.empty();
+	}
 }
 
 bool CTextureManager::Init()

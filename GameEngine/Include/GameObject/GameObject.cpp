@@ -11,7 +11,10 @@ CGameObject::CGameObject() :
 	m_NavAgent(nullptr),
 	m_IsEnemy(false),
 	m_NoInterrupt(false),
-	m_AttackTarget(nullptr)
+	m_NormalAttackTarget(nullptr),
+	m_OnHit(false),
+	m_ExcludeSceneSave(false),
+	m_NoDestroyFromSceneChange(false)
 {
 	SetTypeID<CGameObject>();
 	m_ObjectType = Object_Type::None;
@@ -26,6 +29,8 @@ CGameObject::CGameObject(const CGameObject& obj)
 	if (obj.m_RootComponent)
 	{
 		m_RootComponent = obj.m_RootComponent->Clone();
+		
+		m_RootComponent->SetScene(m_Scene);
 
 		m_RootComponent->SetGameObject(this);
 
@@ -40,8 +45,12 @@ CGameObject::CGameObject(const CGameObject& obj)
 	{
 		m_vecObjectComponent.push_back(obj.m_vecObjectComponent[i]->Clone());
 
+		m_vecObjectComponent[i]->SetScene(m_Scene);
+
 		m_vecObjectComponent[i]->SetGameObject(this);
 	}
+	
+	m_Scene->AddObject(this);
 }
 
 CGameObject::~CGameObject()
@@ -51,6 +60,18 @@ CGameObject::~CGameObject()
 void CGameObject::SetScene(CScene* Scene)
 {
 	m_Scene = Scene;
+
+	if (m_RootComponent)
+	{
+		m_RootComponent->SetScene(Scene);
+	}
+
+	size_t Size = m_vecObjectComponent.size();
+
+	for (size_t i = 0; i < Size; ++i)
+	{
+		m_vecObjectComponent[i]->SetScene(Scene);
+	}
 }
 
 void CGameObject::Destroy()
@@ -412,6 +433,21 @@ bool CGameObject::Load(FILE* File)
 		Component->SetGameObject(this);
 	}
 
+	// NavAgent가 있을 경우, 처리해준다.
+	for (int i = 0; i < ObjComponentCount; ++i)
+	{
+		if (m_vecObjectComponent[i]->CheckType<CNavAgent>())
+		{
+			SetNavAgent((CNavAgent*)m_vecObjectComponent[i].Get());
+
+			if (m_RootComponent)
+			{
+				((CNavAgent*)m_vecObjectComponent[i].Get())->SetUpdateComponent(m_RootComponent);
+			}
+			break;
+		}
+	}
+
 	return true;
 }
 
@@ -447,6 +483,8 @@ bool CGameObject::Load(const char* FullPath)
 	}
 
 	fclose(File);
+
+	Start();
 
 	return true;
 }
@@ -510,6 +548,7 @@ bool CGameObject::SaveOnly(const std::string& ComponentName, const char* FullPat
 {
 	CComponent* Component = FindComponent(ComponentName);
 
+
 	if (!Component)
 	{
 		assert(false);
@@ -556,6 +595,8 @@ bool CGameObject::LoadOnly(const char* FullPath, CComponent*& OutCom)
 		m_NavAgent = (CNavAgent*)Component;
 		m_NavAgent->SetUpdateComponent(GetRootComponent());
 	}
+
+	Component->Start();
 
 	OutCom = Component;
 

@@ -14,6 +14,7 @@ protected:
 
 public:
 	bool Init() override;
+	void Start() override;
 	void Update(float DeltaTime) override;
 
 public:

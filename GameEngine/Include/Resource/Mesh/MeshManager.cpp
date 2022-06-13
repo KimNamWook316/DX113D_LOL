@@ -11,6 +11,16 @@ CMeshManager::CMeshManager()
 
 CMeshManager::~CMeshManager()
 {
+	auto iter = m_mapMesh.begin();
+	auto iterEnd = m_mapMesh.end();
+
+	for (; iter != iterEnd;)
+	{
+		iter = m_mapMesh.erase(iter);
+		iterEnd = m_mapMesh.end();
+	}
+
+	m_mapMesh.empty();
 }
 
 bool CMeshManager::Init()
@@ -130,6 +140,29 @@ bool CMeshManager::Init()
 		D3D11_USAGE_DEFAULT, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST,
 		&vecSphereIndex[0], sizeof(int), vecSphereIndex.size(),
 		D3D11_USAGE_DEFAULT, DXGI_FORMAT_R32_UINT);
+
+
+	std::vector<Vertex3D>	vecColliderSphere;
+	std::vector<Vector3>	vecColliderSpherePos;
+	std::vector<int>		vecColliderSphereIndex;
+
+	CreateSphere(vecColliderSphere, vecColliderSphereIndex, 1.f, 2);
+
+	size_t	ColliderSphereSize = vecColliderSphere.size();
+	vecColliderSpherePos.resize(ColliderSphereSize);
+
+	for (size_t i = 0; i < ColliderSphereSize; ++i)
+	{
+		vecColliderSpherePos[i] = vecColliderSphere[i].Pos;
+	}
+
+	CreateMesh(Mesh_Type::Static, "SphereLinePos",
+		&vecColliderSpherePos[0], sizeof(Vector3), ColliderSphereSize,
+		D3D11_USAGE_DEFAULT, D3D11_PRIMITIVE_TOPOLOGY_LINELIST,
+		&vecColliderSphereIndex[0], sizeof(int), vecColliderSphereIndex.size(),
+		D3D11_USAGE_DEFAULT, DXGI_FORMAT_R32_UINT);
+
+
 
 	Vector3	CubePos[8] =
 	{

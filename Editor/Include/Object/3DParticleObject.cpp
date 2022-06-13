@@ -10,6 +10,8 @@ C3DParticleObject::C3DParticleObject() :
     m_IsCameraZoom(true),
     m_RotateInv(false)
 {
+    SetTypeID<C3DParticleObject>();
+    m_ExcludeSceneSave = true;
 }
 
 C3DParticleObject::C3DParticleObject(const C3DParticleObject& obj)

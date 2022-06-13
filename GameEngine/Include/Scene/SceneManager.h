@@ -15,6 +15,8 @@ private:
 	std::function<void(class CSpriteComponent* Sprite, size_t Type)>	m_CreateAnimInstanceCallback;
 	CStateManager* m_StateManager;
 
+	char m_LoadedSceneFullPath[MAX_PATH];
+
 public:
 	CStateManager* GetStateManager()	const
 	{
@@ -24,6 +26,11 @@ public:
 	CScene* GetScene()	const
 	{
 		return m_Scene;
+	}
+
+	CScene* GetNextScene() const
+	{
+		return m_NextScene;
 	}
 
 	void CallCreateSceneMode(CScene* Scene, size_t Type)
@@ -59,6 +66,13 @@ public:
 	bool Init();
 	bool Update(float DeltaTime);
 	bool PostUpdate(float DeltaTime);
+
+public:
+	bool ReloadScene();
+
+public:
+	bool LoadNewScene(const char* FileName, const std::string& PathName = SCENE_PATH, bool ChangeNow = true);
+	bool LoadNewSceneFullPath(const char* FullPath, bool ChangeNow = false);
 
 private:
 	bool ChangeScene();

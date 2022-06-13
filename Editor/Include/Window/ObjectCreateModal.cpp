@@ -17,6 +17,7 @@
 #include "GameObject/Champion.h"
 #include "GameObject/Minion.h"
 #include "GameObject/MapObject.h"
+#include "IMGUIRadioButton.h"
 #include "IMGUICheckBox.h"
 
 #include <sstream>
@@ -57,11 +58,15 @@ bool CObjectCreateModal::Init()
 	m_ObjectCreateButton = AddWidget<CIMGUIButton>("Create Button", 100.f, 20.f);
 	m_ObjectCreateButton->SetClickCallback<CObjectCreateModal>(this, &CObjectCreateModal::OnCreateObject);
 
-	m_ObjectTypeCheckBox = AddWidget<CIMGUICheckBox>("Object Type");
+	m_ObjectTypeCheckBox = AddWidget<CIMGUIRadioButton>("Object Type");
 	m_ObjectTypeCheckBox->AddCheckInfo("Champion");
 	m_ObjectTypeCheckBox->AddCheckInfo("Minion");
 	m_ObjectTypeCheckBox->AddCheckInfo("Jungle");
 	m_ObjectTypeCheckBox->AddCheckInfo("MapObject");
+	m_ObjectTypeCheckBox->AddCheckInfo("Turret");
+
+	m_ObjectTypeCheckBox->SetCheck(0, true);
+	m_ObjectTypeCheckBox->AlwaysCheck(true);
 
 	Line = AddWidget<CIMGUISameLine>("Line");
 
@@ -69,8 +74,6 @@ bool CObjectCreateModal::Init()
 	m_EnemyCheckBox->AddCheckInfo("Enemy");
 
 	CIMGUIDummy* Dummy = AddWidget<CIMGUIDummy>("Dummy", 100.f, 40.f);
-
-	m_ObjectTypeCheckBox->SetCheck(0, true);
 
 	return true;
 }
@@ -181,8 +184,9 @@ void CObjectCreateModal::OnCreateObject()
 	// 차후, Loading 을 위해서 ObjectCombo Select Index 정보를 저장해준다.
 	// NewObject->SetEditorObjectModalIndex(Index);
 	int Idx = -1;
-	int CheckIdx = m_ObjectTypeCheckBox->GetSelectIdx();
+	int CheckIdx = m_ObjectTypeCheckBox->GetCheckItemIdx();
 
+	// TODO : Object_Type 추가될 때 마다 추가
 	switch (CheckIdx)
 	{
 	case 0:
@@ -197,6 +201,9 @@ void CObjectCreateModal::OnCreateObject()
 	case 3:
 		NewObject->SetObjectType(Object_Type::MapObject);
 		break;
+	case 4:
+		NewObject->SetObjectType(Object_Type::Turret);
+		break;
 	}
 
 	Idx = -1;
@@ -205,79 +212,72 @@ void CObjectCreateModal::OnCreateObject()
 	if (IsEnemyCheck)
 		NewObject->SetEnemy(true);
 
-	CObjectHierarchyWindow* Window = (CObjectHierarchyWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(OBJECT_HIERARCHY);
-	CSceneComponentHierarchyWindow* SceneCompWindow = (CSceneComponentHierarchyWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(SCENECOMPONENT_HIERARCHY);
-	CObjectComponentWindow* ObjectCompWindow = (CObjectComponentWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(OBJECTCOMPONENT_LIST);
+	CObjectHierarchyWindow* ObjHierachy = (CObjectHierarchyWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(OBJECT_HIERARCHY);
 
-	if (Window)
+	if (ObjHierachy)
 	{
-		CIMGUITree* NewNode = Window->GetRoot()->AddChild(Name);
-		NewNode->AddSelectCallback<CObjectHierarchyWindow>(Window, &CObjectHierarchyWindow::OnSetSelectNode);
-		NewNode->AddSelectCallback<CSceneComponentHierarchyWindow>(SceneCompWindow, &CSceneComponentHierarchyWindow::OnUpdateSceneComponetWindow);
-		NewNode->AddSelectCallback<CObjectComponentWindow>(ObjectCompWindow, &CObjectComponentWindow::OnUpdateObjectComponetWindow);
-		NewNode->SetDragDropSourceCallback<CObjectHierarchyWindow>(Window, &CObjectHierarchyWindow::OnDragDropSrc);
-		NewNode->SetDragDropDestCallback<CObjectHierarchyWindow>(Window, &CObjectHierarchyWindow::OnDragDropDest);
+		ObjHierachy->OnCreateObject(NewObject);
 	}
 }
 
-CGameObject* CObjectCreateModal::OnCreateObject(const char* FullPathMultibyte)
-{
-	CScene* CurrentScene = CSceneManager::GetInst()->GetScene();
-
-	if (!CurrentScene)
-		return nullptr;
-
-	// 확장자 확인
-	char	Ext[_MAX_EXT] = {};
-	char FileName[MAX_PATH] = {};
-	char FilePathMultibyte[MAX_PATH] = {};
-
-	strcpy_s(FilePathMultibyte, FullPathMultibyte);
-
-	_splitpath_s(FilePathMultibyte, nullptr, 0, nullptr, 0, FileName, MAX_PATH, Ext, _MAX_EXT);
-
-	_strupr_s(Ext);
-
-	if (!strcmp(Ext, ".GOBJ") == 0)
-		return nullptr;
-
-
-	CGameObject* LoadedObject = CSceneManager::GetInst()->GetScene()->LoadGameObject<CGameObject>();
-
-	if (!LoadedObject->Load(FullPathMultibyte))
-		return nullptr;
-
-	CIMGUITree* NewObjectTree = nullptr;
-
-	CGameObject* NewObject = nullptr;
-
-	char Name[256] = {};
-	strcpy_s(Name, LoadedObject->GetName().c_str());
-
-	CObjectHierarchyWindow* Window = (CObjectHierarchyWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(OBJECT_HIERARCHY);
-	CSceneComponentHierarchyWindow* SceneCompWindow = (CSceneComponentHierarchyWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(SCENECOMPONENT_HIERARCHY);
-	CObjectComponentWindow* ObjCompWindow = (CObjectComponentWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(OBJECTCOMPONENT_LIST);
-
-	if (Window)
-	{
-		// 해당 Object 의 Root Component 로 Widget 구성
-		CIMGUITree* NewNode = Window->GetRoot()->AddChild(Name);
-		NewNode->AddSelectCallback<CObjectHierarchyWindow>(Window, &CObjectHierarchyWindow::OnSetSelectNode);
-		NewNode->AddSelectCallback<CSceneComponentHierarchyWindow>(SceneCompWindow, &CSceneComponentHierarchyWindow::OnUpdateSceneComponetWindow);
-		NewNode->AddSelectCallback<CObjectComponentWindow>(ObjCompWindow, &CObjectComponentWindow::OnUpdateObjectComponetWindow);
-		NewNode->SetDragDropSourceCallback<CObjectHierarchyWindow>(Window, &CObjectHierarchyWindow::OnDragDropSrc);
-		NewNode->SetDragDropDestCallback<CObjectHierarchyWindow>(Window, &CObjectHierarchyWindow::OnDragDropDest);
-
-		// 해당 노드를 Select Node 로 세팅한다.
-		Window->OnSetSelectNode(NewNode);
-
-		// 해당 Object 의 Root Component 로 Widget 구성
-		CSceneComponentHierarchyWindow* ComponentWindow = (CSceneComponentHierarchyWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(SCENECOMPONENT_HIERARCHY);
-		ComponentWindow->GetSceneComponentCreateModal()->OnLoadComponentRecursive(LoadedObject);
-	}
-
-	return LoadedObject;
-}
+ //CGameObject* CObjectCreateModal::OnCreateObject(const char* FullPathMultibyte)
+ //{
+ //	CScene* CurrentScene = CSceneManager::GetInst()->GetScene();
+ //
+ //	if (!CurrentScene)
+ //		return nullptr;
+ //
+ //	// 확장자 확인
+ //	char	Ext[_MAX_EXT] = {};
+ //	char FileName[MAX_PATH] = {};
+ //	char FilePathMultibyte[MAX_PATH] = {};
+ //
+ //	strcpy_s(FilePathMultibyte, FullPathMultibyte);
+ //
+ //	_splitpath_s(FilePathMultibyte, nullptr, 0, nullptr, 0, FileName, MAX_PATH, Ext, _MAX_EXT);
+ //
+ //	_strupr_s(Ext);
+ //
+ //	if (!strcmp(Ext, ".GOBJ") == 0)
+ //		return nullptr;
+ //
+ //
+ //	CGameObject* LoadedObject = CSceneManager::GetInst()->GetScene()->LoadGameObject<CGameObject>();
+ //
+ //	if (!LoadedObject->Load(FullPathMultibyte))
+ //		return nullptr;
+ //
+ //	CIMGUITree* NewObjectTree = nullptr;
+ //
+ //	CGameObject* NewObject = nullptr;
+ //
+ //	char Name[256] = {};
+ //	strcpy_s(Name, LoadedObject->GetName().c_str());
+ //
+ //	CObjectHierarchyWindow* Window = (CObjectHierarchyWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(OBJECT_HIERARCHY);
+ //	CSceneComponentHierarchyWindow* SceneCompWindow = (CSceneComponentHierarchyWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(SCENECOMPONENT_HIERARCHY);
+ //	CObjectComponentWindow* ObjCompWindow = (CObjectComponentWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(OBJECTCOMPONENT_LIST);
+ //
+ //	if (Window)
+ //	{
+ //		// 해당 Object 의 Root Component 로 Widget 구성
+ //		CIMGUITree* NewNode = Window->GetRoot()->AddChild(Name);
+ //		NewNode->AddSelectCallback<CObjectHierarchyWindow>(Window, &CObjectHierarchyWindow::OnSetSelectNode);
+ //		NewNode->AddSelectCallback<CSceneComponentHierarchyWindow>(SceneCompWindow, &CSceneComponentHierarchyWindow::OnUpdateSceneComponetWindow);
+ //		NewNode->AddSelectCallback<CObjectComponentWindow>(ObjCompWindow, &CObjectComponentWindow::OnUpdateObjectComponetWindow);
+ //		NewNode->SetDragDropSourceCallback<CObjectHierarchyWindow>(Window, &CObjectHierarchyWindow::OnDragDropSrc);
+ //		NewNode->SetDragDropDestCallback<CObjectHierarchyWindow>(Window, &CObjectHierarchyWindow::OnDragDropDest);
+ //
+ //		// 해당 노드를 Select Node 로 세팅한다.
+ //		Window->OnSetSelectNode(NewNode);
+ //
+ //		// 해당 Object 의 Root Component 로 Widget 구성
+ //		CSceneComponentHierarchyWindow* ComponentWindow = (CSceneComponentHierarchyWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(SCENECOMPONENT_HIERARCHY);
+ //		ComponentWindow->GetSceneComponentCreateModal()->OnLoadComponentRecursive(LoadedObject);
+ //	}
+ //
+ //	return LoadedObject;
+ //}
 
 void CObjectCreateModal::SetObjectType(int Index, bool Boolean)
 {

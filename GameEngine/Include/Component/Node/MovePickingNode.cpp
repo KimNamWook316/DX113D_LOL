@@ -126,7 +126,7 @@ NodeResult CMovePickingNode::OnStart(float DeltaTime)
 				// 피킹했는데 지형이 아닌 특정 오브젝트랑 충돌하는 경우
 				if (Collision)
 				{
-					m_Object->SetAttackTarget(vecTestCollider[i]->GetGameObject());
+					m_Object->SetNormalAttackTarget(vecTestCollider[i]->GetGameObject());
 					m_Object->ClearPath();
 					m_Object->AddPath(vecTestCollider[i]->GetGameObject()->GetWorldPos());
 					CAnimationSequenceInstance* Instance = m_Owner->GetAnimationMeshComp()->GetAnimationInstance();
@@ -148,7 +148,7 @@ NodeResult CMovePickingNode::OnStart(float DeltaTime)
 				// 피킹했는데 지형이 아닌 특정 오브젝트랑 충돌하는 경우
 				if (Collision)
 				{
-					m_Object->SetAttackTarget(vecTestCollider[i]->GetGameObject());
+					m_Object->SetNormalAttackTarget(vecTestCollider[i]->GetGameObject());
 					m_Object->ClearPath();
 					m_Object->AddPath(vecTestCollider[i]->GetGameObject()->GetWorldPos());
 					CAnimationSequenceInstance* Instance = m_Owner->GetAnimationMeshComp()->GetAnimationInstance();
@@ -162,7 +162,7 @@ NodeResult CMovePickingNode::OnStart(float DeltaTime)
 		}
 
 		// 특정 오브젝트가 아닌 지형을 피킹한 경우
-		m_Object->SetAttackTarget(nullptr);
+		m_Object->SetNormalAttackTarget(nullptr);
 		m_Object->ClearPath();
 		m_Object->AddPath(TargetPos);
 		CAnimationSequenceInstance* Instance = m_Owner->GetAnimationMeshComp()->GetAnimationInstance();

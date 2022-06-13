@@ -10,6 +10,16 @@ CAnimationManager::CAnimationManager()	:
 CAnimationManager::~CAnimationManager()
 {
 	SAFE_DELETE(m_Animation2DCBuffer);
+
+	auto iter = m_mapSequence2D.begin();
+	auto iterEnd = m_mapSequence2D.end();
+
+	for (; iter != iterEnd;)
+	{
+		m_mapSequence2D.erase(iter);
+	}
+
+	m_mapSequence2D.empty();
 }
 
 bool CAnimationManager::Init()

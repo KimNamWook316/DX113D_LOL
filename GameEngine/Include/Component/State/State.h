@@ -49,9 +49,20 @@ public:
 		return m_OwnerObject;
 	}
 
+	void SetSourceObject(CGameObject* Src)
+	{
+		m_SourceObject = Src;
+	}
+
+	CGameObject* GetSourceObject()	const
+	{
+		return m_SourceObject;
+	}
+
 protected:
 	class CStateComponent* m_Owner;
 	CGameObject* m_OwnerObject;
+	CGameObject* m_SourceObject; // 내가 이 State를 갖도록 하게 만든 Object 
 	bool m_IsEnd;
 	std::string m_Name;
 };

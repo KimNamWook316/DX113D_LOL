@@ -11,6 +11,17 @@ CMaterialManager::CMaterialManager()	:
 CMaterialManager::~CMaterialManager()
 {
 	SAFE_DELETE(m_CBuffer);
+
+	auto iter = m_mapMaterial.begin();
+	auto iterEnd = m_mapMaterial.end();
+
+	for (; iter != iterEnd;)
+	{
+		iter = m_mapMaterial.erase(iter);
+		iterEnd = m_mapMaterial.end();
+	}
+
+	m_mapMaterial.empty();
 }
 
 bool CMaterialManager::Init()

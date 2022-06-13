@@ -25,6 +25,9 @@
 #include "Component/Node/SkillEndCheckNode.h"
 #include "Component/Node/NormalAttack.h"
 #include "Component/Node/InSkillCheck.h"
+#include "Component/Node/CheckTurretAttackTarget.h"
+#include "Component/Node/CheckTurretAttackFrequency.h"
+#include "Component/Node/NegateNode.h"
 #include "ObjectComponentWindow.h"
 #include "ObjectHierarchyWindow.h"
 #include "../EditorInfo.h"
@@ -42,6 +45,7 @@ CBehaviorTreeWindow::CBehaviorTreeWindow()  :
     m_vecNodeType.push_back("Selector Node");
     m_vecNodeType.push_back("Action Node");
     m_vecNodeType.push_back("Condition Node");
+    m_vecNodeType.push_back("Decorator Node");
 
 }
 
@@ -101,6 +105,7 @@ void CBehaviorTreeWindow::Update(float DeltaTime)
             {
                 UpdateLoadNode((CCompositeNode*)(State->GetBehaviorTree()->GetRootNode()));
             }
+
         }
     }
 
@@ -157,7 +162,7 @@ void CBehaviorTreeWindow::Update(float DeltaTime)
 
 
     // 노드가 ActionNode이거나 Condition Node일 때 Invoke할 동작을 정하고 만들어야한다
-    if (m_TypeSelectIndex == 2 || m_TypeSelectIndex == 3)
+    if (m_TypeSelectIndex == 2 || m_TypeSelectIndex == 3 || m_TypeSelectIndex == 4)
     {
         m_vecNodeAction.clear();
 
@@ -188,6 +193,13 @@ void CBehaviorTreeWindow::Update(float DeltaTime)
             m_vecNodeAction.push_back("AttackTargetCheck");
             m_vecNodeAction.push_back("SkillEndCheck");
             m_vecNodeAction.push_back("InSkillCheck");
+            m_vecNodeAction.push_back("TurretAttackTargetCheck");
+            m_vecNodeAction.push_back("TurretAttackFrequencyCheck");
+        }
+
+        else if (m_TypeSelectIndex == 4)
+        {
+            m_vecNodeAction.push_back("Negate");
         }
 
         ImGui::PushID(m_WidgetID + 1);
@@ -419,8 +431,29 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
         case ConditionNode::InSkillCheck:
             NewTreeNode = m_StateComponent->CreateTreeNode<CInSkillCheck>(Name);
             break;
+        case ConditionNode::TurretAttackTargetCheck:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CCheckTurretAttackTarget>(Name);
+            break;
+        case ConditionNode::TurretAttackFrequencyCheck:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CCheckTurretAttackFrequency>(Name);
+            break;
         }
     }
+
+    case 4:
+    {
+        enum DecoratorNode NodeDecoratorClass;
+        NodeDecoratorClass = static_cast<DecoratorNode>(ActionIndex);
+
+        // TODO : Decorator Node 종류 추가될 때 마다 추가
+        switch (NodeDecoratorClass)
+        {
+        case DecoratorNode::Negate:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CNegateNode>(Name);
+            break;
+        }
+    }
+
     }
 
     NewTreeNode->SetOwner(m_StateComponent->GetBehaviorTree());
@@ -579,6 +612,30 @@ void CBehaviorTreeWindow::UpdateLoadNodeRecursive(CNode* Node, int Depth, int He
         TypeIndex = 3;
         m_Delegate.AddNode(Node->GetName(), TypeIndex, Depth * 100.f, Height * 100.f, false, Node);
     }
+
+    else if (Node->GetNodeType() == Node_Type::Decorator)
+    {
+        TypeIndex = 4;
+
+        UpdateLoadNodeRecursive(((CDecoratorNode*)Node)->GetChild(), Depth + 1, 0);
+
+        m_Delegate.AddNode(Node->GetName(), TypeIndex, Depth * 100.f, Height * 100.f, false, Node);
+    }
+}
+
+void CBehaviorTreeWindow::Clear()
+{
+
+    m_Delegate.mLinks.clear();
+
+    size_t Count = m_Delegate.mNodes.size();
+
+    for (size_t i = 0; i < Count; ++i)
+    {
+        SAFE_DELETE_ARRAY(m_Delegate.mNodes[i].name);
+    }
+
+    m_Delegate.mNodes.clear();
 }
 
 void CBehaviorTreeWindow::UpdateLoadNodeLink(CBehaviorTree* Tree)
@@ -589,14 +646,14 @@ void CBehaviorTreeWindow::UpdateLoadNodeLink(CBehaviorTree* Tree)
 
     for (size_t i = 0; i < Count; ++i)
     {
-        CNode* Node = Tree->GetNode(i);
+        CNode* Node = Tree->GetNode((int)i);
 
         if (Node->GetTypeID() == typeid(CSelectorNode).hash_code() || Node->GetTypeID() == typeid(CSequenceNode).hash_code())
         {
 
             for (size_t j = 0; j < DelegateNodeCount; ++j)
             {
-                if (m_Delegate.GetDelegateNode(j).BehaviorTreeNode == Node)
+                if (m_Delegate.GetDelegateNode((int)j).BehaviorTreeNode == Node)
                 {
                     GraphEditorDelegate::Node SrcNode = m_Delegate.GetDelegateNode(j);
 
@@ -608,17 +665,31 @@ void CBehaviorTreeWindow::UpdateLoadNodeLink(CBehaviorTree* Tree)
                     int ChildIdx = 0;
                     for (; iter != iterEnd; ++iter, ++ChildIdx)
                     {
-                        GraphEditorDelegate::Node DestNode = m_Delegate.FindNode((*iter)->GetName());
+                        //GraphEditorDelegate::Node DestNode = m_Delegate.FindNode((*iter)->GetName());
+                        GraphEditorDelegate::Node DestNode = m_Delegate.FindNode((*iter));
                         m_Delegate.LoadLink(SrcNode.NodeIndex, ChildIdx, DestNode.NodeIndex, 0);
                     }
                 }
             }
         }
 
+
+        else if (Node->GetNodeType() == Node_Type::Decorator)
+        {
+            for (size_t j = 0; j < DelegateNodeCount; ++j)
+            {
+                if (m_Delegate.GetDelegateNode((int)j).BehaviorTreeNode == Node)
+                {
+                    GraphEditorDelegate::Node SrcNode = m_Delegate.GetDelegateNode(j);
+
+                    CNode* DecoratorChild = ((CDecoratorNode*)Node)->GetChild();
+                    GraphEditorDelegate::Node DestNode = m_Delegate.FindNode(DecoratorChild);
+
+                    m_Delegate.LoadLink(SrcNode.NodeIndex, 0, DestNode.NodeIndex, 0);
+                }
+
+            }
+        }
     }
 }
 
-void CBehaviorTreeWindow::OnAddLink(CNode* ParentNode, CNode* ChildNode)
-{
-    int a = 3;
-}

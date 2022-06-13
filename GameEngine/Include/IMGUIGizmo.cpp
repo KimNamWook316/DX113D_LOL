@@ -84,3 +84,13 @@ void CIMGUIGizmo::SetGameObject(CGameObject* Object)
 	m_Component = Object->GetRootComponent();
 }
 
+void CIMGUIGizmo::SetComponent(CSceneComponent* Component)
+{
+	if (!Component)
+	{
+		SetIdentity();
+	}
+
+	m_Component = Component;
+}
+

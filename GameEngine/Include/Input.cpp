@@ -450,7 +450,8 @@ void CInput::UpdateKeyInfo(float DeltaTime)
 				}
 				else
 				{
-					iter->second->Callback[KeyState_Down](DeltaTime);
+					if (iter->second->Callback[KeyState_Down])
+						iter->second->Callback[KeyState_Down](DeltaTime);
 				}
 			}
 		}
@@ -470,7 +471,8 @@ void CInput::UpdateKeyInfo(float DeltaTime)
 				}
 				else
 				{
-					iter->second->Callback[KeyState_Push](DeltaTime);
+					if(iter->second->Callback[KeyState_Push])
+						iter->second->Callback[KeyState_Push](DeltaTime);
 				}
 			}
 		}
@@ -481,20 +483,18 @@ void CInput::UpdateKeyInfo(float DeltaTime)
 			iter->second->Alt == m_Alt &&
 			iter->second->Shift == m_Shift)
 		{
-			// OBJ 가 수정
-			// 기존 오류 : iter->second->Callback[KeyState_Up] 가 존재하는지 검사하지도 않고
-			// else 에서 iter->second->Callback[KeyState_Up] 를 실행
-			if (iter->second->Callback[KeyState_Up])
+			if (CEngine::GetInst()->GetEditMode())
 			{
-				if (CEngine::GetInst()->GetEditMode())
+				if (iter->second->Callback[KeyState_Up])
 				{
 					if (!ImGui::GetIO().WantCaptureMouse)
 						iter->second->Callback[KeyState_Up](DeltaTime);
 				}
-				else
-				{
+			}
+			else 
+			{
+				if(iter->second->Callback[KeyState_Up])
 					iter->second->Callback[KeyState_Up](DeltaTime);
-				}
 			}
 		}
 	}
