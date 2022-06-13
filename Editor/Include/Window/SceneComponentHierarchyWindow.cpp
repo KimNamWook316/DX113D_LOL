@@ -204,7 +204,7 @@ void CSceneComponentHierarchyWindow::OnCreateComponent(bool IsRoot, CSceneCompon
 	}
 	else
 	{
-		CIMGUITree* RootCompNode = m_Root->GetRoot();
+		CIMGUITree* RootCompNode = m_Root->GetNode(0);
 		NewNode = RootCompNode->AddChild(Name);
 	}
 
@@ -299,15 +299,14 @@ void CSceneComponentHierarchyWindow::OnDeleteComponent()
 	// 루트 노드면 전부 삭제, 중간에 있는 노드면 그 노드 삭제하고 첫번째 자식 Component를 올리는 동작을 GUI상에서도 구현
 	m_SelectNode->Delete();
 
+	CSceneComponent* NewRoot = nullptr;
 	if (DeleteComp)
-		DeleteComp->DeleteComponent();
-
-	// 지금 지워지는 Component가 RootComponent여서, 그 Component 지우고나면 RootComponent가 nullptr인 경우 
-	// RootComponent의 첫번째 
-	if (!Object->GetRootComponent())
 	{
-
+		NewRoot = DeleteComp->GetChild(0);
+		DeleteComp->DeleteComponent();
 	}
+
+	((CToolWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(TOOL))->SetGizmoComponent(NewRoot);
 }
 
 void CSceneComponentHierarchyWindow::OnSaveComponent()

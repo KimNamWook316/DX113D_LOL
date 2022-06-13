@@ -437,6 +437,11 @@ size_t CSceneComponent::GetChildCount() const
 
 CSceneComponent* CSceneComponent::GetChild(int Idx) const
 {
+	if (Idx < 0 || Idx >= m_vecChild.size())
+	{
+		return nullptr;
+	}
+
 	return m_vecChild[Idx];
 }
 
