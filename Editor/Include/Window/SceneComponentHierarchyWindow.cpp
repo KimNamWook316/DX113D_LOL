@@ -304,9 +304,6 @@ void CSceneComponentHierarchyWindow::OnDeleteComponent()
 	{
 		NewRoot = DeleteComp->GetChild(0);
 		DeleteComp->DeleteComponent();
-	}
-
-	((CToolWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(TOOL))->SetGizmoComponent(NewRoot);
 }
 
 void CSceneComponentHierarchyWindow::OnSaveComponent()

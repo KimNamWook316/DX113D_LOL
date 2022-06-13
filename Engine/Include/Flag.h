@@ -259,6 +259,7 @@ enum class SceneComponent3DType
 	ParticleComponent,
 	ColliderBox3D,
 	ColliderSphere,
+	TowerComponent,
 	Max
 };
 
@@ -359,5 +360,7 @@ enum class LoLLine
 	Top,
 	Mid,
 	Bottom,
+	LeftTwin,
+	RightTwin,
 	Max
 };
