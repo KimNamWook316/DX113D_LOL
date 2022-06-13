@@ -204,7 +204,7 @@ void CSceneComponentHierarchyWindow::OnCreateComponent(bool IsRoot, CSceneCompon
 	}
 	else
 	{
-		CIMGUITree* RootCompNode = m_Root->GetRoot();
+		CIMGUITree* RootCompNode = m_Root->GetNode(0);
 		NewNode = RootCompNode->AddChild(Name);
 	}
 
@@ -301,13 +301,6 @@ void CSceneComponentHierarchyWindow::OnDeleteComponent()
 
 	if (DeleteComp)
 		DeleteComp->DeleteComponent();
-
-	// 지금 지워지는 Component가 RootComponent여서, 그 Component 지우고나면 RootComponent가 nullptr인 경우 
-	// RootComponent의 첫번째 
-	if (!Object->GetRootComponent())
-	{
-
-	}
 }
 
 void CSceneComponentHierarchyWindow::OnSaveComponent()

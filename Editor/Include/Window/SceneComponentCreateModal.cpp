@@ -18,6 +18,7 @@
 #include "Component/ParticleComponent.h"
 #include "Component/ColliderBox3D.h"
 #include "Component/ColliderSphere.h"
+#include "../Component/TowerComponent.h"
 #include "Resource/Particle/Particle.h"
 #include "Component/Arm.h"
 #include "Component/LandScape.h"
@@ -99,7 +100,7 @@ void CSceneComponentCreateModal::OnCreateComponent()
 
 	// Object의 루트로 들어가는지 확인
 	// 아래 Gizmo에 Object 넣어주기 위해 필요
-	bool IsRoot = SelectObject->GetRootComponent();
+	bool HasRoot = SelectObject->GetRootComponent();
 
 	int Index = m_ComponentCombo->GetSelectIndex();
 
@@ -134,11 +135,16 @@ void CSceneComponentCreateModal::OnCreateComponent()
 
 	else if (Typeid == typeid(CColliderSphere).hash_code())
 		Com = SelectObject->CreateComponentAddChild<CColliderSphere>(Name);
+
+	else if (Typeid == typeid(CTowerComponent).hash_code())
+		Com = SelectObject->CreateComponentAddChild<CTowerComponent>(Name);
 	
 
 	// Window 갱신
 	CSceneComponentHierarchyWindow* ComponentWindow = (CSceneComponentHierarchyWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(SCENECOMPONENT_HIERARCHY);
 	CInspectorWindow* Inspector = (CInspectorWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(INSPECTOR);
+
+	bool IsRoot = SelectObject->GetRootComponent() == Com;
 
 	if (ComponentWindow)
 	{
@@ -150,7 +156,7 @@ void CSceneComponentCreateModal::OnCreateComponent()
 		Inspector->OnCreateSceneComponent(Com);
 	}
 
-	if (IsRoot)
+	if (HasRoot)
 	{
 		// Root Node로 들어가는 경우, Gizmo에 Object갱신
 		CToolWindow* ToolWindow = (CToolWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(TOOL);

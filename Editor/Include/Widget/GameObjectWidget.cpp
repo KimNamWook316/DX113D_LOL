@@ -14,6 +14,7 @@
 #include "Component/LandScape.h"
 #include "Component/ColliderBox3D.h"
 #include "Component/ColliderSphere.h"
+#include "../Component/TowerComponent.h"
 #include "../Widget/StaticMeshComponentWidget.h"
 #include "../Widget/LightComponentWidget.h"
 #include "../Widget/ObjectComponentWidget.h"
@@ -23,6 +24,7 @@
 #include "../Widget/LandScapeWidget.h"
 #include "../Widget/ColliderComponentWidget.h"
 #include "../Widget/ColliderSphereWidget.h"
+#include "../Widget/TowerComponentWidget.h"
 #include "IMGUIManager.h"
 #include "../EditorInfo.h"
 
@@ -159,7 +161,10 @@ void CGameObjectWidget::CreateSceneComponentWidget(CSceneComponent* Com)
 	else if (TypeID == typeid(CColliderSphere).hash_code())
 	{
 		Widget = AddWidget<CColliderSphereWidget>("ColliderSphereWidget");
-
+	}
+	else if (TypeID == typeid(CTowerComponent).hash_code())
+	{
+		Widget = AddWidget<CTowerComponentWidget>("TowerComponentWidget");
 	}
 	else
 	{

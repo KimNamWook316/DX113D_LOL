@@ -73,7 +73,10 @@
     <Filter Include="02. Editor\01. Window\4. MenuBar">
       <UniqueIdentifier>{d565fee9-2c53-4eaf-8d99-f39f6bbed48d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="05. GameManager">
+    <Filter Include="06. LoLComponent">
+      <UniqueIdentifier>{fbeb3de9-3b25-4cdf-9572-c12930aab8b7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. LoLNavManager">
       <UniqueIdentifier>{c29db2ae-b440-4633-9c63-011f3bcf3088}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -204,13 +207,19 @@
     <ClCompile Include="Window\ResourceDisplayWindow.cpp">
       <Filter>02. Editor\01. Window\1. Resource</Filter>
     </ClCompile>
-    <ClCompile Include="GameManager.cpp">
-      <Filter>05. GameManager</Filter>
-    </ClCompile>
     <ClCompile Include="Widget\ColliderSphereWidget.cpp">
       <Filter>02. Editor\02. Widget\01. Inspector\01. SceneComponent</Filter>
     </ClCompile>
     <ClCompile Include="Widget\ColliderComponentWidget.cpp">
+      <Filter>02. Editor\02. Widget\01. Inspector\01. SceneComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\TowerComponent.cpp">
+      <Filter>06. LoLComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="LoLNavManager.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Widget\TowerComponentWidget.cpp">
       <Filter>02. Editor\02. Widget\01. Inspector\01. SceneComponent</Filter>
     </ClCompile>
   </ItemGroup>
@@ -347,13 +356,19 @@
     <ClInclude Include="Window\ResourceDisplayWindow.h">
       <Filter>02. Editor\01. Window\1. Resource</Filter>
     </ClInclude>
-    <ClInclude Include="GameManager.h">
-      <Filter>05. GameManager</Filter>
-    </ClInclude>
     <ClInclude Include="Widget\ColliderSphereWidget.h">
       <Filter>02. Editor\02. Widget\01. Inspector\01. SceneComponent</Filter>
     </ClInclude>
     <ClInclude Include="Widget\ColliderComponentWidget.h">
+      <Filter>02. Editor\02. Widget\01. Inspector\01. SceneComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\TowerComponent.h">
+      <Filter>06. LoLComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="LoLNavManager.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Widget\TowerComponentWidget.h">
       <Filter>02. Editor\02. Widget\01. Inspector\01. SceneComponent</Filter>
     </ClInclude>
   </ItemGroup>
