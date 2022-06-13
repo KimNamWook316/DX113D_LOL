@@ -171,7 +171,25 @@ public:
 		m_ChampionInfo.Attack = Attack;
 	}
 
-	// Ability Power, Armor 등등 추가
+	void SetChampionArmor(int Armor)
+	{
+		m_ChampionInfo.Armor = Armor;
+	}
+
+	void SetChampionAbilityPower(int AbilityPower)
+	{
+		m_ChampionInfo.AbilityPower = AbilityPower;
+	}
+
+	void SetChampionMagicResist(int MagicResist)
+	{
+		m_ChampionInfo.MagicResist = MagicResist;
+	}
+
+	void SetChampionNormalAttackRange(int AttackRange)
+	{
+		m_ChampionInfo.NormalAttackRange = AttackRange;
+	}
 
 	const ChampionInfo& GetChampionInfo()	const
 	{

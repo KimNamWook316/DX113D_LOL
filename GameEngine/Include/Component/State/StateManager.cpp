@@ -100,7 +100,7 @@ void CStateManager::CheckAirborneTarget(const NotifyParameter& Param)
 	{
 		for (size_t j = MinIndexX; j <= MaxIndexZ; ++j)
 		{
-			vecTargetSection.push_back(i * SectionCountX + j);
+			vecTargetSection.push_back((int)(i * SectionCountX + j));
 		}
 	}
 

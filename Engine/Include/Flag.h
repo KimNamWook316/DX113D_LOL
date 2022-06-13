@@ -259,7 +259,7 @@ enum class SceneComponent3DType
 	ParticleComponent,
 	ColliderBox3D,
 	ColliderSphere,
-	TowerComponent,
+	BuildingComponent,
 	Max
 };
 
@@ -330,6 +330,7 @@ enum ActionNode
 	Idle,
 	NormalAttack
 };
+
 enum DecoratorNode
 {
 	Negate
@@ -350,7 +351,7 @@ enum class Object_Type
 	Minion,
 	Jungle,
 	MapObject,
-	Turret,
+	Building,
 	None
 };
 
@@ -361,5 +362,13 @@ enum class LoLLine
 	Bottom,
 	LeftTwin,
 	RightTwin,
+	None,
 	Max
+};
+
+enum class Building_Type
+{
+	Tower,
+	Inhibitor,
+	Nexus
 };
