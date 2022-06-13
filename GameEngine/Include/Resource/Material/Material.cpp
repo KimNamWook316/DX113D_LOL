@@ -959,9 +959,6 @@ bool CMaterial::Save(FILE* File)
 		m_TextureInfo[i].Texture->Save(File);
 	}
 
-	m_OutlineThickness = 1.123456f;
-
-	// 외곽선 관련 값들 Save, Load 추가하기
 	fwrite(&m_OutlineEnable, sizeof(bool), 1, File);
 	fwrite(&m_OutlineThickness, sizeof(float), 1, File);
 	fwrite(&m_OutlineColor, sizeof(Vector3), 1, File);
@@ -1140,11 +1137,9 @@ bool CMaterial::Load(FILE* File)
 		}
 	}
 
-	// todo : 외곽선 관련 값들 Save, Load 추가하기
 	fread(&m_OutlineEnable, sizeof(bool), 1, File);
 	fread(&m_OutlineThickness, sizeof(float), 1, File);
 	fread(&m_OutlineColor, sizeof(Vector3), 1, File);
-
 
 	return true;
 }
