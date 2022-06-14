@@ -264,6 +264,12 @@ void CEffectEditor::OnRestartParticleComponentButton()
     if (!m_ParticleClass)
         return;
 
+    // 기존에 존재하던 Particle Object 는 지워줘야 한다
+    if (m_ParticleObject)
+    {
+        m_ParticleObject->Destroy();
+    }
+
     BackUpParticleObjectInfo();
 
     m_ParticleObject = CSceneManager::GetInst()->GetScene()->CreateGameObject<C3DParticleObject>("Particle Effect Base Ground");
@@ -333,6 +339,7 @@ void CEffectEditor::OnScaleMaxEdit(const Vector3& Scale)
         return;
 
     m_ParticleClass->SetScaleMax(Scale);
+
     dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetScaleMax(Scale);
     // m_ParticleComponent->GetCBuffer()->SetScaleMax(Scale);
 }
@@ -749,8 +756,8 @@ void CEffectEditor::SetBasicDefaultParticleInfos(CParticle* Particle)
     Particle->SetSpawnTime(0.05f);
 
     // Life Time
-    Particle->SetLifeTimeMin(70.f);
-    Particle->SetLifeTimeMax(80.f);
+    Particle->SetLifeTimeMin(5.f);
+    Particle->SetLifeTimeMax(10.f);
 
     // Scale
     Particle->SetScaleMin(Vector3(20.f, 20.f, 1.f));
@@ -766,10 +773,10 @@ void CEffectEditor::SetBasicDefaultParticleInfos(CParticle* Particle)
 
     // Color Min, Max
     Particle->SetColorMin(Vector4(0.2f, 0.1f, 0.8f, 1.f));
-    Particle->SetColorMax(Vector4(0.2f, 0.1f, 0.8f, 1.f));
+    Particle->SetColorMax(Vector4(0.6f, 0.8f, 0.8f, 1.f));
 
     // Move Dir
-    Particle->SetMoveDir(Vector3(0.f, 1.f, 1.f)); // Z 축 방향으로도 이동할 수 있게 세팅한다.
+    Particle->SetMoveDir(Vector3(0.f, 1.f, 0.f)); 
     // Move Angle
     Particle->SetMoveAngle(Vector3(0.f, 0.f, 30.f));
 
