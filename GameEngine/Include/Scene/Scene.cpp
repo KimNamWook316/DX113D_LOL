@@ -246,12 +246,22 @@ bool CScene::SaveFullPath(const char* FullPath)
 	size_t	ObjCount = m_ObjList.size();
 	int ExcludeObjectCount = GetSaveExcludeObjectCount();
 	ObjCount -= (size_t)ExcludeObjectCount;
+
+	auto	iter = m_ObjList.begin();
+	auto	iterEnd = m_ObjList.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		if ((*iter)->GetParentObject())
+			--ObjCount;
+	}
+
 	fwrite(&ObjCount, sizeof(size_t), 1, File);
 
 	bool Success = false;
 
-	auto	iter = m_ObjList.begin();
-	auto	iterEnd = m_ObjList.end();
+	iter = m_ObjList.begin();
+	iterEnd = m_ObjList.end();
 
 	for (; iter != iterEnd; ++iter)
 	{
@@ -260,11 +270,17 @@ bool CScene::SaveFullPath(const char* FullPath)
 			continue;
 		}
 
+		if ((*iter)->GetParentObject())
+		{
+			continue;
+		}
+
 		size_t	ObjType = (*iter)->GetTypeID();
 
 		fwrite(&ObjType, sizeof(size_t), 1, File);
 
-		Success = (*iter)->Save(File);
+		//Success = (*iter)->Save(File);
+		Success = (*iter)->SaveHierarchy(File);
 
 		if (!Success)
 		{
@@ -322,7 +338,9 @@ bool CScene::LoadFullPath(const char* FullPath)
 
 		CGameObject* Obj = CSceneManager::GetInst()->CallCreateObject(this, ObjType);
 
-		Success = Obj->Load(File);
+		//Success = Obj->Load(File);
+		// 여기서 NextScene 포인터를 Obj->LoadHierarchy안으로 넘겨줘야 한다
+		Success = Obj->LoadHierarchy(File, this);
 
 		if (!Success)
 		{

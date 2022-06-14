@@ -9,6 +9,7 @@ class CGameObject :
 	public CRef
 {
 	friend class CScene;
+	friend class CSceneManager;
 
 protected:
 	CGameObject();
@@ -238,6 +239,10 @@ public:
 	bool DeleteChildObj(const std::string& Name);
 	// 실제로 지우진 않고, 나는 부모를 nullptr로 만들고, 부모에게 내 자신을 자식 목록에서 지우게 함
 	void ClearParent();
+	CGameObject* GetParentObject()	const
+	{
+		return m_Parent;
+	}
 
 public:
 	bool CheckSceneComponent(CSceneComponent* Com)
@@ -375,9 +380,25 @@ public:
 	virtual bool Load(const char* FullPath);
 	virtual bool Save(const char* FileName, const std::string& PathName);
 	virtual bool Load(const char* FileName, const std::string& PathName);
+	virtual bool SaveHierarchy(FILE* File); // 기존 GameObject의 Save는 Child Object를 Save하지 않아서 추가한 함수
+	virtual bool LoadHierarchy(FILE* File, CScene* NextScene = nullptr); // 기존 GameObject의 Load는 Child Object를 Load하지 않아서 추가한 함수
+	virtual bool SaveHierarchy(const char* FullPath); // 기존 GameObject의 Save는 Child Object를 Save하지 않아서 추가한 함수
+	virtual bool LoadHierarchy(const char* FullPath); // Load Scene을 할때는 새로운 Scene을 만들어서 그 Scene에 Load하므로 Scene이 인자로 필요
+
 	virtual bool SaveOnly(CComponent* Component, const char* FullPath);
 	virtual bool SaveOnly(const std::string& ComponentName, const char* FullPath);
 	virtual bool LoadOnly(const char* FullPath, CComponent*& OutCom);
+
+public:
+	size_t GetChildObjectCount()	const
+	{
+		return m_vecChildObject.size();
+	}
+
+	CGameObject* GetChildObject(int Index)	const
+	{
+		return m_vecChildObject[Index];
+	}
 
 public:
 	// NavAgent가 있을 경우에 동작한다.

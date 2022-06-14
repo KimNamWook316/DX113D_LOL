@@ -4,6 +4,7 @@
 #include "IMGUITree.h"
 #include "../EditorUtil.h"
 #include "IMGUIButton.h"
+#include "IMGUITree.h"
 #include "../EditorInfo.h"
 #include "Flag.h"
 #include "IMGUISameLine.h"
@@ -84,10 +85,16 @@ void CObjectHierarchyWindow::OnRenameObject(const std::string& Name)
 
 void CObjectHierarchyWindow::OnCreateObject(CGameObject* Object)
 {
+	// Parent가 있는(다른 Object의 자식 Object) Object는 그 Object의 최상위 Object가 OncreateObject를 호출했을때
+	// 자식들의 Tree노드까지 OnCreateObjectRecursive 함수로 하위로 다 넣어주므로 최상위 노드가 아닌 노드들은 이 함수를 바로 빠져 나간다
+	if (Object->GetParentObject())
+		return;
+
 	std::string Name = Object->GetName();
 
 	// 노드 생성
-	CIMGUITree* NewNode = m_Root->AddChild(Name);
+	CIMGUITree* NewNode = m_Root->AddChild(Name, Object);
+	NewNode->SetData(Object);
 
 	// 콜백 연결
 	NewNode->AddSelectCallback(this, &CObjectHierarchyWindow::OnSetSelectNode);
@@ -97,6 +104,38 @@ void CObjectHierarchyWindow::OnCreateObject(CGameObject* Object)
 	// 현재 선택 오브젝트로
 	m_SelectObject = Object;
 	m_SelectNode = NewNode;
+
+	size_t Count = Object->GetChildObjectCount();
+
+	for (size_t i = 0; i < Count; ++i)
+	{
+		OnCreateObjectRecursive(Object->GetChildObject(i), NewNode);
+	}
+}
+
+void CObjectHierarchyWindow::OnCreateObjectRecursive(CGameObject* Object, CIMGUITree* ParentTreeNode)
+{
+	std::string Name = Object->GetName();
+
+	// 노드 생성
+	CIMGUITree* NewNode = ParentTreeNode->AddChild(Name, Object);
+	NewNode->SetData(Object);
+
+	// 콜백 연결
+	NewNode->AddSelectCallback(this, &CObjectHierarchyWindow::OnSetSelectNode);
+	NewNode->SetDragDropSourceCallback(this, &CObjectHierarchyWindow::OnDragDropSrc);
+	NewNode->SetDragDropDestCallback(this, &CObjectHierarchyWindow::OnDragDropDest);
+
+	// 현재 선택 오브젝트로
+	m_SelectObject = Object;
+	m_SelectNode = NewNode;
+
+	size_t Count = Object->GetChildObjectCount();
+
+	for (size_t i = 0; i < Count; ++i)
+	{
+		OnCreateObjectRecursive(Object->GetChildObject(i), NewNode);
+	}
 }
 
 void CObjectHierarchyWindow::Clear()
