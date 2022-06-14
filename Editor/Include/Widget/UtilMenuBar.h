@@ -17,6 +17,5 @@ public:
 private:
 	void OnToggleFBXConvertWindow();
 	void OnToggleFileBrowser();
-	void OnToggleFileBrowserTree();
 };
 

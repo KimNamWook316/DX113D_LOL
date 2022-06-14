@@ -1,6 +1,12 @@
 #pragma once
 #include "IMGUIWindow.h"
 
+struct Particle3DObjectBackUpStruct
+{
+    bool IsCameraRotate;
+    bool IsRotateInv;
+};
+
 // Particle 을 제작하는 Editor
 class CEffectEditor :
     public CIMGUIWindow
@@ -138,6 +144,7 @@ private:
     // Particle 기본 세팅
     void OnSetBasicParticleMaterialSetting(class CSceneComponent* Com);
     void OnReflectCurrentParticleSetting();
+    void OnReflectCurrentCameraSetting();
     void SetGameObjectReady();
     void SetStartEditing();
 

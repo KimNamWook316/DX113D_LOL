@@ -24,8 +24,8 @@ bool CUtilMenuBar::Init()
 	m_FileBrowserTree->SetClickCallBack(this, &CUtilMenuBar::OnToggleFileBrowser);
 
 	// Object
-	m_FileBrowser = AddMenuItem("Tree File Browse");
-	m_FileBrowser->SetClickCallBack(this, &CUtilMenuBar::OnToggleFileBrowserTree);
+	// m_FileBrowser = AddMenuItem("Tree File Browse");
+	// m_FileBrowser->SetClickCallBack(this, &CUtilMenuBar::OnToggleFileBrowserTree);
 
 	return true;
 }
@@ -56,24 +56,11 @@ void CUtilMenuBar::OnToggleFileBrowser()
 	if (IsOpen)
 	{
 		CEditorManager::GetInst()->GetFileBrowser()->Close();
-	}
-	else
-	{
-		CEditorManager::GetInst()->GetFileBrowser()->Open();
-	}
-}
-
-void CUtilMenuBar::OnToggleFileBrowserTree()
-{
-	bool IsOpen = CEditorManager::GetInst()->GetFileBrowserTree()->IsOpen();
-
-	if (IsOpen)
-	{
 		CEditorManager::GetInst()->GetFileBrowserTree()->Close();
 	}
 	else
 	{
+		CEditorManager::GetInst()->GetFileBrowser()->Open();
 		CEditorManager::GetInst()->GetFileBrowserTree()->Open();
 	}
 }
-

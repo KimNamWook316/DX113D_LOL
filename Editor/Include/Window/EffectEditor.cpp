@@ -29,6 +29,7 @@
 // Engine
 #include "Component/ParticleComponent.h"
 #include "Component/SpriteComponent.h"
+#include "Component/Arm.h"
 #include "Engine.h"
 #include "PathManager.h"
 #include "Scene/SceneManager.h"
@@ -259,13 +260,34 @@ void CEffectEditor::OnLoadParticleObjectButton()
 
 void CEffectEditor::OnRestartParticleComponentButton()
 {
+    // 아직 시작도 안했다면 동작 X
+    if (!m_ParticleObject)
+        return;
+
     // SAFE_DELETE(m_ParticleObject);
     m_CameraXRotSlideBar->SetValue(m_ParticleObject->GetCameraRelativeRotation().x);
     m_CameraYOffsetBar->SetValue(m_ParticleObject->GetCameraOfffset().y);
 
+    float PrevArmTargetDist = m_ParticleObject->GetArmComponent()->GetTargetDistance();
+    float PrevYArmRot = m_ParticleObject->GetArmComponent()->GetRelativeRot().y;
+
     m_ParticleObject = CSceneManager::GetInst()->GetScene()->CreateGameObject<C3DParticleObject>("Particle Effect Base Ground");
 
     SetParticleToParticleComponent(dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent()), m_ParticleClass);
+
+    // 기존 카메라 설정을 Particle Object 에 그대로 반영해야 한다.
+    m_ParticleObject->GetRootComponent()->Enable(true);
+    m_ParticleObject->SetCameraRotate(m_IsRotateEdit->GetCheck(0));
+    m_ParticleObject->SetCameraZoom(m_IsZoomEdit->GetCheck(0));
+    m_ParticleObject->SetRotateInv(m_IsRotateInv->GetCheck(0));
+    m_ParticleObject->GetArmComponent()->SetOffset(0.f, m_CameraYOffsetBar->GetValue(), 0.f);
+    m_ParticleObject->GetArmComponent()->SetRelativeRotation(m_CameraXRotSlideBar->GetValue(), 0.f, 0.f);
+    m_ParticleObject->GetArmComponent()->SetTargetDistance(PrevArmTargetDist);
+    m_ParticleObject->GetArmComponent()->SetWorldRotationY(PrevYArmRot);
+
+    // m_ParticleObject->SetCameraZoomSpeed(Speed);
+    // m_ParticleObject->SetYOffset(Offset);
+    // m_ParticleObject->SetRelativeRotationXPos(Rot);
 }
 
 void CEffectEditor::OnSpawnTimeMaxEdit(float Num)
@@ -699,6 +721,10 @@ void CEffectEditor::OnReflectCurrentParticleSetting()
     // dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetParticle()->SetGravity(m_IsGravityEdit->GetCheck(0));
     // dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetParticle()->SetMove(m_IsMoveEdit->GetCheck(0));
     // dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetParticle()->SetApplyRandom(m_IsRandomMoveEdit->GetCheck(0));
+}
+
+void CEffectEditor::OnReflectCurrentCameraSetting()
+{
 }
 
 void CEffectEditor::SetGameObjectReady()

@@ -23,6 +23,14 @@ private :
 	float m_CameraZoomSpeed;
 	bool m_RotateInv;
 public :
+	class CArm* GetArmComponent() const
+	{
+		return m_ParticleArm;
+	}
+	class CCameraComponent* GetCameraComponent() const
+	{
+		return m_ParticleCamera;
+	}
 	float GetCameraRotateSpeed() const
 	{
 		return m_CameraRotateSpeed;
