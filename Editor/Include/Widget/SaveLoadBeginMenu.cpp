@@ -185,7 +185,8 @@ void CSaveLoadBeginMenu::OnSaveObjectMenuCallback()
 			int ConvertLength = WideCharToMultiByte(CP_ACP, 0, FileFullPath, -1, 0, 0, 0, 0);
 			WideCharToMultiByte(CP_ACP, 0, FileFullPath, -1, FilePathMultibyte, ConvertLength, 0, 0);
 
-			Object->Save(FilePathMultibyte);
+			//Object->Save(FilePathMultibyte);
+			Object->SaveHierarchy(FilePathMultibyte);
 		}
 	}
 }
@@ -218,7 +219,8 @@ void CSaveLoadBeginMenu::OnLoadObjectMenuCallback()
 
 		CGameObject* NewObject = CSceneManager::GetInst()->GetScene()->CreateEmtpyObject();
 
-		bool Success = NewObject->Load(FilePathMultibyte);
+		//bool Success = NewObject->Load(FilePathMultibyte);
+		bool Success = NewObject->LoadHierarchy(FilePathMultibyte);
 
 		if (!Success)
 		{

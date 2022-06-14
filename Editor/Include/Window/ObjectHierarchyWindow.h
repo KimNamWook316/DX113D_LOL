@@ -39,6 +39,7 @@ public:
 	// Inspector에서 GameObject 이름 변경되었을 때 호출
 	void OnRenameObject(const std::string& Name);
 	void OnCreateObject(class CGameObject* Object);
+	void OnCreateObjectRecursive(class CGameObject* Object, class CIMGUITree* ParentTreeNode);
 
 	void Clear();
 

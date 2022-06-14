@@ -81,6 +81,9 @@ void CBuildingComponentWidget::SetSceneComponent(CSceneComponent* Com)
 	case LoLLine::RightTwin:
 		m_BuildingLineRadioButton->SetCheck(4, true);
 		break;
+	case LoLLine::None:
+		m_BuildingLineRadioButton->SetCheck(5, true);
+		break;
 	}
 
 	switch (m_BuildingType)
@@ -140,6 +143,12 @@ void CBuildingComponentWidget::OnChangeBuildingLine(const char* Label, bool Chec
 	{
 		BuildingComp->SetBuildingLine(LoLLine::RightTwin);
 		m_BuildingLineRadioButton->SetCheck(4, true);
+	}
+
+	else if (strLabel == "None")
+	{
+		BuildingComp->SetBuildingLine(LoLLine::None);
+		m_BuildingLineRadioButton->SetCheck(5, true);
 	}
 }
 

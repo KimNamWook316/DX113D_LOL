@@ -3,6 +3,8 @@
 #include "../Render/RenderManager.h"
 #include "../Sync.h"
 #include "../PathManager.h"
+#include "../GameObject/SkyObject.h"
+#include "../GameObject/LightObj.h"
 
 DEFINITION_SINGLE(CSceneManager)
 
@@ -20,6 +22,28 @@ CSceneManager::~CSceneManager()
 	SAFE_DELETE(m_Scene);
 	SAFE_DELETE(m_NextScene);
 	SAFE_DELETE(m_StateManager);
+}
+
+CGameObject* CSceneManager::CreateObjectByTypeID(size_t TypeID)
+{
+	CGameObject* Child = nullptr;
+
+	if (TypeID == typeid(CGameObject).hash_code())
+	{
+		Child = new CGameObject;
+	}
+
+	else if (TypeID == typeid(CLightObj).hash_code())
+	{
+		Child = new CLightObj;
+	}
+
+	else if (TypeID == typeid(CSkyObject).hash_code())
+	{
+		Child = new CSkyObject;
+	}
+
+	return Child;
 }
 
 void CSceneManager::Start()

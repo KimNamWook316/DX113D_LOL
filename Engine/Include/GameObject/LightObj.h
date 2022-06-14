@@ -7,6 +7,7 @@ class CLightObj :
     public CGameObject
 {
     friend class CScene;
+    friend class CSceneManager;
 
 protected:
     CLightObj();

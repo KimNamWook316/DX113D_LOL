@@ -522,6 +522,173 @@ bool CGameObject::Load(const char* FileName, const std::string& PathName)
 	return true;
 }
 
+bool CGameObject::SaveHierarchy(FILE* File)
+{
+	CRef::Save(File);
+
+	size_t Count = m_vecChildObject.size();
+	fwrite(&Count, sizeof(size_t), 1, File);
+
+	for (size_t i = 0; i < Count; ++i)
+	{
+		size_t ChildTypeID = m_vecChildObject[i]->GetTypeID();
+		fwrite(&ChildTypeID, sizeof(size_t), 1, File);
+		m_vecChildObject[i]->SaveHierarchy(File);
+	}
+
+	if (m_RootComponent)
+	{
+		bool	Root = true;
+		fwrite(&Root, sizeof(bool), 1, File);
+
+		size_t	TypeID = m_RootComponent->GetTypeID();
+		fwrite(&TypeID, sizeof(size_t), 1, File);
+
+		m_RootComponent->Save(File);
+	}
+
+	else
+	{
+		bool	Root = false;
+		fwrite(&Root, sizeof(bool), 1, File);
+	}
+
+	fwrite(&m_ObjectType, sizeof(Object_Type), 1, File);
+	fwrite(&m_IsEnemy, sizeof(bool), 1, File);
+
+	int	ObjComponentCount = (int)m_vecObjectComponent.size();
+
+	fwrite(&ObjComponentCount, sizeof(int), 1, File);
+
+	for (int i = 0; i < ObjComponentCount; ++i)
+	{
+		size_t	TypeID = m_vecObjectComponent[i]->GetTypeID();
+		fwrite(&TypeID, sizeof(size_t), 1, File);
+
+		m_vecObjectComponent[i]->Save(File);
+	}
+
+	return true;
+}
+
+bool CGameObject::LoadHierarchy(FILE* File, CScene* NextScene)
+{
+	CRef::Load(File);
+
+	size_t ChildCount = 0;
+	fread(&ChildCount, sizeof(size_t), 1, File);
+
+	for (size_t i = 0; i < ChildCount; ++i)
+	{
+		size_t ChildTypeID = 0;
+		fread(&ChildTypeID, sizeof(size_t), 1, File);
+		CGameObject* Child = CSceneManager::GetInst()->CreateObjectByTypeID(ChildTypeID);
+
+		if (Child)
+		{
+			// CurrentScene이 아니라 NextScene에다가 AddObject해줘야 한다
+			NextScene->AddObject(Child);
+			AddChildObject(Child);
+			Child->LoadHierarchy(File);
+		}
+	}
+
+
+	bool	Root = false;
+	fread(&Root, sizeof(bool), 1, File);
+
+	if (Root)
+	{
+		size_t	TypeID = 0;
+		fread(&TypeID, sizeof(size_t), 1, File);
+
+		CSceneManager::GetInst()->CallCreateComponent(this, TypeID);
+
+		if(NextScene)
+			m_RootComponent->SetScene(NextScene);
+		else
+			m_RootComponent->SetScene(m_Scene);
+
+		if (!m_RootComponent->Load(File))
+			return false;
+	}
+
+	fread(&m_ObjectType, sizeof(Object_Type), 1, File);
+	fread(&m_IsEnemy, sizeof(bool), 1, File);
+
+	int	ObjComponentCount = 0;
+
+	fread(&ObjComponentCount, sizeof(int), 1, File);
+
+	for (int i = 0; i < ObjComponentCount; ++i)
+	{
+		size_t	TypeID = 0;
+		fread(&TypeID, sizeof(size_t), 1, File);
+
+		CComponent* Component = CSceneManager::GetInst()->CallCreateComponent(this, TypeID);
+
+		if (!Component->Load(File))
+			return false;
+
+		Component->SetGameObject(this);
+	}
+
+	// NavAgent가 있을 경우, 처리해준다.
+	for (int i = 0; i < ObjComponentCount; ++i)
+	{
+		if (m_vecObjectComponent[i]->CheckType<CNavAgent>())
+		{
+			SetNavAgent((CNavAgent*)m_vecObjectComponent[i].Get());
+
+			if (m_RootComponent)
+			{
+				((CNavAgent*)m_vecObjectComponent[i].Get())->SetUpdateComponent(m_RootComponent);
+			}
+			break;
+		}
+	}
+
+	return true;
+}
+
+bool CGameObject::SaveHierarchy(const char* FullPath)
+{
+	FILE* File = nullptr;
+
+	fopen_s(&File, FullPath, "wb");
+
+	if (!File)
+		return false;
+
+	SaveHierarchy(File);
+
+	fclose(File);
+
+	return true;
+}
+
+bool CGameObject::LoadHierarchy(const char* FullPath)
+{
+	FILE* File = nullptr;
+
+	fopen_s(&File, FullPath, "rb");
+
+	if (!File)
+		return false;
+
+	if (!LoadHierarchy(File))
+	{
+		fclose(File);
+		return false;
+	}
+
+	fclose(File);
+
+	Start();
+
+	return true;
+}
+
 bool CGameObject::SaveOnly(CComponent* Component, const char* FullPath)
 {
 	FILE* File = nullptr;
