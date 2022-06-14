@@ -52,7 +52,6 @@ LightResult ComputeLight(float3 Pos, float3 Normal, float4 MaterialColor)
         LightDir = normalize(LightDir);
     }
 	
-	
     if (g_LightType == LightTypePoint)
     {
         LightDir = g_LightPos - Pos;
@@ -65,7 +64,6 @@ LightResult ComputeLight(float3 Pos, float3 Normal, float4 MaterialColor)
         else
             Attn = 1.f / (g_LightAtt1 + g_LightAtt2 * Dist + g_LightAtt3 * (Dist * Dist));
     }
-	
 	
     if (g_LightType == LightTypeSpot)
     {

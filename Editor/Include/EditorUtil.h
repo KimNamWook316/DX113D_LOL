@@ -48,6 +48,19 @@ public:
 	// 만약 아예 인자로 들어오는 FilePath 에 "\\" 이 존재하지 않는다면, 그냥 FilePath 원본 그대로를 세팅해준다.
 	static bool GetFileNameAfterSlash(const std::string& FilePath, std::string& ExtractedFileName);
 
+	// TCHAR [] 형태의 Text 을 넣어주면, char [] (Multibyte) 형태 Text 리턴, 
+	static const char* ChangeTCHARTextToMultibyte(TCHAR* TCHARText);
+
+	// char [](Multibyte) 형태의 Text 을 넣어주면, TCHAR []  형태의 FullPath 문자열 리턴
+	static  const TCHAR* ChangeMultibyteTextToTCHAR(const std::string& MText);
+
+	// FullPath 넣어주면, FileName, Ext 만 뽑아주는 함수;
+	static void ExtractFileNameAndExtFromPath(const std::string& FullPath, std::string& FileName, std::string& Ext);
+	static void ExtractFileNameAndExtFromPath(const std::string& FullPath, char* FileName, char* Ext);
+
+	// 해당 Dir 경로에, 해당 Name 으로 된 파일이 존재하는지 판단해주는 함수
+	static bool IsFileExistInDir(const std::string& Path, const std::string& FileName);
+
 	// Imgui Demo Window를 띄워주는 함수
 	static void ShowDemo();
 
@@ -87,6 +100,7 @@ namespace MaterialTextureInfoKeys
 	const std::string Name = "Name";		   // MaterialTextureInfo 로 설정된 이름
 	 // MaterialTextureInfo->Texture->TextureResourceInfo 배열 내의 모든 Texture FileName 들 나열하기 
 	const std::string Textures[] = { "Texture1", "Texture2",  "Texture3",  "Texture4",  "Texture5",  "Texture6",  "Texture7"};
+	const std::string RenderState[] = {"Blend", "Rasterizer", "DepthStencil"};
 };
 
 

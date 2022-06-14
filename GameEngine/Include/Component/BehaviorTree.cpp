@@ -135,7 +135,7 @@ void CBehaviorTree::Update(float DeltaTime)
 {
 	CGameObject* OwnerObject = m_Owner->GetGameObject();
 
-	if (OwnerObject->GetObjectType() != Object_Type::Turret)
+	if (OwnerObject->GetObjectType() != Object_Type::Building)
 	{
 		if (m_CurrentNode)
 			m_CurrentNode->Invoke(DeltaTime);
@@ -151,7 +151,7 @@ void CBehaviorTree::PostUpdate(float DeltaTime)
 {
 	CGameObject* OwnerObject = m_Owner->GetGameObject();
 
-	if (OwnerObject->GetObjectType() == Object_Type::Turret)
+	if (OwnerObject->GetObjectType() == Object_Type::Building)
 	{
 		if (m_CurrentNode)
 			m_CurrentNode->Invoke(DeltaTime);

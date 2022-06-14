@@ -1,4 +1,8 @@
 #include "EngineUtil.h"
+#include "PathManager.h"
+#include <filesystem>
+
+namespace fs = std::filesystem;
 
 std::string CEngineUtil::LightTypeToString(Light_Type Type)
 {
@@ -33,4 +37,49 @@ Light_Type CEngineUtil::StringToLightType(const std::string& TypeString)
 		return Light_Type::Spot;
 	}
 	return (Light_Type)(-1);
+}
+
+bool CEngineUtil::IsFileExistInDir(const std::string& PathName, const std::string& TargetFileName)
+{
+	const PathInfo* Info = CPathManager::GetInst()->FindPath(PathName);
+
+	if (!Info)
+		return  false;
+
+	char FolderName[MAX_PATH] = {};
+
+	strcpy_s(FolderName, Info->PathMultibyte);
+
+	fs::path TargetFolder(FolderName);
+
+	for (const fs::directory_entry& entry :
+		fs::recursive_directory_iterator(TargetFolder))
+	{
+		const std::string& FileName = FilterFileName(entry.path().u8string());
+
+		if (strcmp(FileName.c_str(), TargetFileName.c_str()) == 0)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+std::string CEngineUtil::FilterFileName(const std::string& FullPath)
+{
+	size_t len = FullPath.length();
+
+	std::string FileName;
+
+	for (size_t i = len - 1; i >= 0; --i)
+	{
+		if (FullPath[i] == '\\' || FullPath[i] == '/')
+		{
+			FileName = FullPath.substr(i + 1);
+			return FileName;
+		}
+	}
+
+	return FileName;
 }

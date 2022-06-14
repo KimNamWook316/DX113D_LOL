@@ -60,6 +60,11 @@ public:
 		}
 	}
 
+	CSceneComponent* GetParent()	const
+	{
+		return m_Parent;
+	}
+
 	bool GetInstancing() const
 	{
 		return m_Instancing;

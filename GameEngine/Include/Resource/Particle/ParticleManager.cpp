@@ -60,3 +60,13 @@ void CParticleManager::ReleaseParticle(const std::string& Name)
 			m_mapParticle.erase(iter);
 	}
 }
+
+void CParticleManager::AddParticle(CParticle* Particle)
+{
+	CParticle* FoundParticle = FindParticle(Particle->GetName());
+	
+	if (FoundParticle)
+		return;
+
+	m_mapParticle.insert(std::make_pair(Particle->GetName(), Particle));
+}

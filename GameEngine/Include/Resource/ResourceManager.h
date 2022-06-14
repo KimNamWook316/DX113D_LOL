@@ -31,14 +31,21 @@ public:
 	void RenderTarget();
 
 public:
-	const CTextureManager* GetTextureManager() const
+	 CTextureManager* GetTextureManager() const
 	{
 		return m_TextureManager;
 	}
-
-	const CMaterialManager* GetMaterialManager() const
+	 CMaterialManager* GetMaterialManager() const
 	{
 		return m_MaterialManager;
+	}
+	 CShaderManager* GetShaderManager() const
+	{
+		return m_ShaderManager;
+	}
+	 CParticleManager* GetParticleManager() const
+	{
+		return m_ParticleManager;
 	}
 
 public:	// =================== Mesh =====================
@@ -95,7 +102,7 @@ public:	// =================== Shader =====================
 public:	// =================== Material =====================
 	CMaterial* FindMaterial(const std::string& Name);
 	CMaterialConstantBuffer* GetMaterialConstantBuffer()	const;
-	CMaterial* LoadMaterialFullPathMultibyte(const char* FullPath, const std::string& NewMaterialName);
+	CMaterial* LoadMaterialFullPathMultibyte(const char* FullPath);
 	void ReleaseMaterial(const std::string& Name);
 
 public:

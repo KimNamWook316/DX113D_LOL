@@ -20,6 +20,7 @@
 #include "Component/StateComponent.h"
 #include "Component/ColliderBox3D.h"
 #include "Component/ColliderSphere.h"
+#include "Component/BuildingComponent.h"
 // Window
 #include "Window/ObjectHierarchyWindow.h"
 #include "Window/SceneComponentHierarchyWindow.h"
@@ -136,23 +137,32 @@ bool CEditorManager::Init(HINSTANCE hInst)
 	CResourceManager::GetInst()->LoadTexture(DIRECTORY_IMAGE, TEXT("Directory.png"));
 	CResourceManager::GetInst()->LoadTexture(FILE_IMAGE, TEXT("FileImage.png"));
 
-	m_FileBrowser = CIMGUIManager::GetInst()->AddWindow<CFileBrowser>(FILE_BROWSER);
 	m_ObjectHierarchyWindow = CIMGUIManager::GetInst()->AddWindow<CObjectHierarchyWindow>(OBJECT_HIERARCHY);
 	m_ComponentHierarchyWindow = CIMGUIManager::GetInst()->AddWindow<CSceneComponentHierarchyWindow>(SCENECOMPONENT_HIERARCHY);
 	m_ObjectComponentWindow = CIMGUIManager::GetInst()->AddWindow<CObjectComponentWindow>(OBJECTCOMPONENT_LIST);
-	m_FileBrowserTree = CIMGUIManager::GetInst()->AddWindow<CFileBrowserTree>(FILE_BROWSERTREE);
+
 	m_InspectorWindow = CIMGUIManager::GetInst()->AddWindow<CInspectorWindow>(INSPECTOR);
+
+	m_FileBrowserTree = CIMGUIManager::GetInst()->AddWindow<CFileBrowserTree>(FILE_BROWSERTREE);
+	m_FileBrowser = CIMGUIManager::GetInst()->AddWindow<CFileBrowser>(FILE_BROWSER);
 	
 	m_AnimationEditor = CIMGUIManager::GetInst()->AddWindow<CAnimationEditor>(ANIMATION_EDITOR);
-	// m_AnimationEditor->Close();
+	m_AnimationEditor->Close();
 
 	m_EffectEditor = CIMGUIManager::GetInst()->AddWindow<CEffectEditor>(PARTICLE_EDITOR);
+	m_EffectEditor->Close();
+
 	m_ToolWindow = CIMGUIManager::GetInst()->AddWindow<CToolWindow>(TOOL);
-	CFBXConvertWindow* win = CIMGUIManager::GetInst()->AddWindow<CFBXConvertWindow>(FBX_CONVERTOR);
+
+	m_FBXConvertWindow = CIMGUIManager::GetInst()->AddWindow<CFBXConvertWindow>(FBX_CONVERTOR);
 
 	m_BaseMenuBar = CIMGUIManager::GetInst()->AddWindow<CBaseMenuBar>("BehaviorTree");
+	
 	m_MaterialEditor = CIMGUIManager::GetInst()->AddWindow<CMaterialEditor>("MaterialEditor");
+	m_MaterialEditor->Close();
+	
 	m_ResourceDisplayWindow = CIMGUIManager::GetInst()->AddWindow<CResourceDisplayWindow>("Resources");
+	m_ResourceDisplayWindow->Close();
 
 	CRenderManager::GetInst()->CreateLayer("DragLayer", INT_MAX);
 	// ±âÁ¸ µµ°æ¾¾ Behavior TreeMenu Bar
@@ -355,6 +365,13 @@ CComponent* CEditorManager::CreateComponent(CGameObject* Obj, size_t Type)
 	else if (Type == typeid(CColliderSphere).hash_code())
 	{
 		CColliderSphere* Component = Obj->LoadComponent<CColliderSphere>();
+		// Component->EnableEditMode(true);
+		return Component;
+	}
+
+	else if (Type == typeid(CBuildingComponent).hash_code())
+	{
+		CBuildingComponent* Component = Obj->LoadComponent<CBuildingComponent>();
 		// Component->EnableEditMode(true);
 		return Component;
 	}

@@ -6,6 +6,10 @@
 // Engine
 #include "Resource/Texture/TextureManager.h"
 #include "Resource/ResourceManager.h"
+#include "Render/RenderManager.h"
+#include "Render/RenderStateManager.h"
+#include "Resource/Shader/ShaderManager.h"
+#include "Resource/Particle/ParticleManager.h"
 
 CResourceDisplayWindow::CResourceDisplayWindow()
 {
@@ -32,8 +36,26 @@ bool CResourceDisplayWindow::Init()
 	m_MaterialList->SetApplyHideEffect(true);
 	m_vecResourceTapList.push_back(m_MaterialList);
 
+	// Shader List
+	m_ShaderList = AddWidget<CIMGUIWidgetList>("Shader", 100.f, 20.f);
+	m_ShaderList->SetApplyHideEffect(true);
+	m_vecResourceTapList.push_back(m_ShaderList);
+
+	// Sampler List
+	m_RenderStateList = AddWidget<CIMGUIWidgetList>("RenderState", 100.f, 20.f);
+	m_RenderStateList->SetApplyHideEffect(true);
+	m_vecResourceTapList.push_back(m_RenderStateList);
+
+	// Sampler List
+	m_ParticleList = AddWidget<CIMGUIWidgetList>("Particle", 100.f, 20.f);
+	m_ParticleList->SetApplyHideEffect(true);
+	m_vecResourceTapList.push_back(m_ParticleList);
+
 	RefreshLoadedTextureResources();
 	RefreshLoadedMaterialResources();
+	RefreshLoadedRenderStateResources();
+	RefreshLoadedShaderResources();
+	RefreshLoadedParticleResources();
 
 	return true;
 }
@@ -70,3 +92,56 @@ void CResourceDisplayWindow::RefreshLoadedMaterialResources()
 	}
 }
 
+
+
+void CResourceDisplayWindow::RefreshLoadedShaderResources()
+{
+	m_ShaderList->ClearWidget();
+
+	const std::unordered_map<std::string, CSharedPtr<class CShader>>& MapShader = CResourceManager::GetInst()->GetShaderManager()->GetMapShader();
+
+	auto iter = MapShader.begin();
+	auto iterEnd = MapShader.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		CIMGUIText* AddedText = m_ShaderList->AddWidget<CIMGUIText>(iter->first);
+		AddedText->SetText(iter->first.c_str());
+	}
+}
+
+void CResourceDisplayWindow::RefreshLoadedParticleResources()
+{
+	m_ParticleList->ClearWidget();
+
+	// const std::unordered_map<std::string, CSharedPtr<class CParticle>>& MapParticle = CRenderManager::GetInst()->GetParticleManager()->GetMapParticle();
+	// 
+	// auto iter = MapParticle.begin();
+	// auto iterEnd = MapParticle.end();
+	// 
+	// for (; iter != iterEnd; ++iter)
+	// {
+	// 	CIMGUIText* AddedText = m_ParticleList->AddWidget<CIMGUIText>(iter->first);
+	// 	AddedText->SetText(iter->first.c_str());
+	// }
+}
+
+void CResourceDisplayWindow::RefreshAllDisplayInfos()
+{
+}
+
+void CResourceDisplayWindow::RefreshLoadedRenderStateResources()
+{
+	m_RenderStateList->ClearWidget();
+
+	const std::unordered_map<std::string, CSharedPtr<class CRenderState>>& MapRenderState = CRenderManager::GetInst()->GetRenderStateManager()->GetMapRenderState();
+	
+	auto iter = MapRenderState.begin();
+	auto iterEnd = MapRenderState.end();
+	
+	for (; iter != iterEnd; ++iter)
+	{
+		CIMGUIText* AddedText = m_RenderStateList->AddWidget<CIMGUIText>(iter->first);
+		AddedText->SetText(iter->first.c_str());
+	}
+}

@@ -44,7 +44,11 @@ void CIMGUITable::AddData(const std::string& DataName, const std::string& Val)
 {
     m_mapDataInfo[DataName].push_back(Val);
 
-    size_t VecSize = m_mapDataInfo[DataName].size();
+    std::vector<std::string> Data = m_mapDataInfo[DataName];
+
+    // size_t VecSize = m_mapDataInfo[DataName].size();
+    size_t VecSize = Data.size();
+
     if (VecSize > m_MaxElemCnt)
         m_MaxElemCnt = VecSize;
 }
@@ -102,8 +106,12 @@ void CIMGUITable::Render()
         // Otherwise by default the table will fit all available space, like a BeginChild() call.
         ImVec2 outer_size = ImVec2(0.0f, m_TableHeight);
 
+        // "table_scrolly" 는 해당 Table Widget 의 Key
+        // - 하나의 Window 안에서, Table Widget 을 여러개 사용할 때
+        // - 아래의 Table ID 는 달라야 한다.
         // m_MaxElemCnt + 1 을 해주는 이유는, Column 에 iter->first , 즉, Key 값도 들어가야 하기 때문이다.
-        if (ImGui::BeginTable("table_scrolly", (int)m_MaxElemCnt + 1, flags, outer_size))
+        // if (ImGui::BeginTable("table_scrolly", (int)m_MaxElemCnt + 1, flags, outer_size))
+        if (ImGui::BeginTable(m_TableTitle.c_str(), (int)m_MaxElemCnt + 1, flags, outer_size))
         {
             ImGui::TableSetupScrollFreeze(0, 1); // Make top row always visible
 

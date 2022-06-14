@@ -877,6 +877,7 @@ void CAnimationEditor::OnConvertSequencesIntoAnimationInstance()
 	strcat_s(SavedFileNameMultibyte, m_SavedAnimFileName->GetTextUTF8());
 	strcat_s(SavedFileNameMultibyte, ".anim");
 
+	m_DummyAnimation->SetSavedFileName(m_SavedAnimFileName->GetTextUTF8());
 	m_DummyAnimation->SaveAnimationFullPath(SavedFileNameMultibyte);
 
 	SAFE_DELETE(m_DummyAnimation);

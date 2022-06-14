@@ -100,6 +100,7 @@ void CFileBrowserTree::OnOpenBrowserTree(CIMGUITree* Tree)
 		// (OBJ) 파일의 경우, File 이 가장 마지막 Tree (Widget) 이므로, Open 자체를 할 필요가 없다.
 		// 해당 Callback 을 세팅하면 오히려 오류가 난다.
 		// ChildTreeNode->AddOpenCallback<CFileBrowserTree>(this, &CFileBrowserTree::OnOpenBrowserTree);
+		ChildTreeNode->SetTextDropType();
 		ChildTreeNode->AddSelectCallback<CFileBrowserTree>(this, &CFileBrowserTree::OnShowFileBrowser);
 	}
 }

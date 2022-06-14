@@ -33,6 +33,7 @@ private:
 	class CMaterialEditor* m_MaterialEditor;
 	class CResourceDisplayWindow* m_ResourceDisplayWindow;
 	class C3DCameraObject* m_CameraObject;
+	class CFBXConvertWindow* m_FBXConvertWindow;
 
 	bool				m_MousePush;
 	float				m_CameraMoveSpeed;
@@ -46,6 +47,18 @@ public:
 	{
 		return m_DragObj;
 	}
+	class CFBXConvertWindow* GetFBXConvertWindow()	const
+	{
+		return m_FBXConvertWindow;
+	}
+	class CFileBrowser* GetFileBrowser()	const
+	{
+		return m_FileBrowser;
+	}
+	class CFileBrowserTree* GetFileBrowserTree()	const
+	{
+		return m_FileBrowserTree;
+	}
 	class CObjectHierarchyWindow* GetObjectHierarchyWindow()	const
 	{
 		return m_ObjectHierarchyWindow;
@@ -57,6 +70,14 @@ public:
 	class CSceneComponentHierarchyWindow* GetComponentHierarchyWindow()	const
 	{
 		return m_ComponentHierarchyWindow;
+	}
+	class CEffectEditor* GetEffectEditor() const
+	{
+		return m_EffectEditor;
+	}
+	class CMaterialEditor* GetMaterialEditor() const
+	{
+		return m_MaterialEditor;
 	}
 	class CResourceDisplayWindow* GetResourceDisplayWindow() const
 	{

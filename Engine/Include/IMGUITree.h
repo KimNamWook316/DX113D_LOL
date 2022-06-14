@@ -2,6 +2,12 @@
 
 #include "IMGUIWidget.h"
 
+enum class TreeDropType
+{
+    Normal,
+    Text
+};
+
 class CIMGUITree :
     public CIMGUIWidget
 {
@@ -9,8 +15,20 @@ public:
     CIMGUITree();
     virtual ~CIMGUITree();
 private :
-    bool m_DragDropEnable;
+    TreeDropType m_DropType;
+    void* m_DataPtr; // Tree가 가리키는 Engine상에서 객체(ex. GameObject, SceneComponent 등등) -> 이름만으로 찾기에 위험하다고 판단되면 m_Data도 비교
+
 public:
+    void SetData(void* Data)
+    {
+        m_DataPtr = Data;
+    }
+
+    void* GetData() const
+    {
+        return m_DataPtr;
+    }
+
     void SetParent(CIMGUITree* parent)
     {
         mParent = parent;
@@ -30,17 +48,15 @@ public:
     {
         return mParent;
     }
-    void SetDragDropEnable(bool Enable)
-    {
-        m_DragDropEnable = Enable;
-    }
+    
 public:
     CIMGUITree* GetNode(const int idx);
 
 public:
     CIMGUITree* FindChild(const std::string& Name);
-    CIMGUITree* AddChild(const std::string& name, const float width = 100.f, const float height = 100.f);
-    CIMGUITree* AddChild(CIMGUITree* Tree, const float width = 100.f, const float height = 100.f);
+    CIMGUITree* FindChild(const std::string& Name, void* DataPtr);
+    CIMGUITree* AddChild(const std::string& name, void* Data = nullptr, const float width = 100.f, const float height = 100.f);
+    CIMGUITree* AddChild(CIMGUITree* Tree, void* Data = nullptr, const float width = 100.f, const float height = 100.f);
     CIMGUITree* AddNewChild(CIMGUITree* Tree);
     void DeleteChild(const std::string& Name);
     CIMGUITree* DeleteHierarchy(); // 자식 Tree 구조 전부 삭제
@@ -50,7 +66,6 @@ public:
 
     // 자신부터 시작해서 아래로 내려가면서 m_Selected = false로 해주는 함수
     void DeselectAll();
-
 
 public:
     void SetFlag(ImGuiTreeNodeFlags Flag)
@@ -73,6 +88,11 @@ public:
         return m_Selected;
     }
 
+    // Drop 형태
+    void SetTextDropType()
+    {
+        m_DropType = TreeDropType::Text;
+    }
 
 public:
     template <typename T>
@@ -186,5 +206,13 @@ public:
     {
         m_OpenCallbackList.push_back(std::bind(Func, Obj, std::placeholders::_1));
     }
+private :
+    void ApplyDropEffect();
+    void ApplyNormalDrop();
+    void ApplyTextDrop();
+private :
+    void ApplyDragEffect();
+    void ApplyNormalDrag();
+    void ApplyTextDrag();
 };
 

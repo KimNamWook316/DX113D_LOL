@@ -4,6 +4,45 @@
 #include "../Texture/Texture.h"
 #include "../Shader/MaterialConstantBuffer.h"
 
+struct RenderStateSaveLoadStruct
+{
+    bool StateEnable;
+    int StateNameLength;
+    char StateName[MAX_PATH];
+};
+
+struct TextureSaveLoadStruct
+{
+    int TextureNameLength;
+    char TextureName[MAX_PATH];
+    Sampler_Type SamplerType;
+    int Register;
+    int ShaderType;
+    int SaveFullPathLength;
+    char SaveFullPathInfo[MAX_PATH];
+    CTexture* Texture;
+};
+
+struct MaterialSaveLoadStruct
+{
+    int ShaderNameLength;
+    char ShaderName[MAX_PATH];
+    Vector4 BaseColor;
+    Vector4 AmbientColor;
+    Vector4 SpecularColor;
+    Vector4 EmissiveColor;
+    float Opacity;
+    bool Animation3D;
+    bool SpecularTex;
+    bool EmissiveTex;
+    bool Bump;
+    RenderStateSaveLoadStruct RenderStateSaveLoad[(int)RenderState_Type::Max];
+    // int TextureCount;
+    bool OutlineEnable;
+    float OutlineThickness;
+    Vector3 OutlineColor;
+};
+
 struct MaterialTextureInfo
 {
     std::string     Name;
@@ -92,6 +131,10 @@ public:
         return m_TextureInfo;
     }
 
+    const CSharedPtr<class CRenderState>* GetRenderStateArray() const
+    {
+        return m_RenderStateArray;
+    }
 private:
     void SetConstantBuffer(class CMaterialConstantBuffer* Buffer)
     {
@@ -244,6 +287,8 @@ public:
     CMaterial* Clone()  const;
     bool Save(FILE* File);
     bool Load(FILE* File);
+    bool SaveMaterial(FILE* File);
+    bool LoadMaterial(FILE* File);
 public  :
     bool SaveFullPath(const char* FullPath);
     bool LoadFullPath(const char* FullPath);

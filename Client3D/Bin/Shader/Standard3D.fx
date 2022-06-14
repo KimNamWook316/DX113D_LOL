@@ -163,7 +163,6 @@ Vertex3DOutput Standard3DVS(Vertex3D input)
     SkinningInfo Info = Skinning(input.Pos, input.Normal, input.Tangent,
                 input.Binormal, input.BlendWeight, input.BlendIndex);
     
-    
     float3 Pos = Info.Pos;
 
     output.ProjPos = mul(float4(Pos, 1.f), g_matWVP);
@@ -174,10 +173,13 @@ Vertex3DOutput Standard3DVS(Vertex3D input)
     
     // 뷰 공간의 Normal을 만들어준다.
     output.Normal = normalize(mul(float4(Info.Normal, 0.f), g_matWV).xyz);
+
     // 뷰 공간의 Tangent을 만들어준다.
     output.Tangent = normalize(mul(float4(Info.Tangent, 0.f), g_matWV).xyz);
+
     // 뷰 공간의 Binormal을 만들어준다.
     output.Binormal = normalize(mul(float4(Info.Binormal, 0.f), g_matWV).xyz);
+
     output.UV = input.UV;
 
     return output;

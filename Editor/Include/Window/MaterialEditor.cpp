@@ -28,7 +28,9 @@
 #include "Resource/Material/Material.h"
 #include "Resource/ResourceManager.h"
 #include "PathManager.h"
+#include "Render/RenderManager.h"
 #include "Engine.h"
+#include "Render/RenderState.h"
 
 CMaterialEditor::CMaterialEditor()
 {
@@ -60,12 +62,34 @@ bool CMaterialEditor::Init()
 	m_SelectedMaterialName = AddWidget<CIMGUITextInput>("Current Mtrl Name", 150.f, 20.f);
 	m_SelectedMaterialName->SetDropCallBack(this, &CMaterialEditor::OnDropAndCreateMaterialCallback);
 
+	Line = AddWidget<CIMGUISameLine>("Line");
+	Line->SetOffsetX(310.f);
+
+	CIMGUIText* HelpText = AddWidget<CIMGUIText>("SelectMaterialHelpText", 90.f, 30.f);
+	const char* SelectMaterialHelpText = R"(ex)  현재 선택된 Material 이름을 보여준다. 
+ResourceWindow로부터 Drag,Drop 을 통해서, Material 을  볼수 있다.)";
+	HelpText->SetText(SelectMaterialHelpText);
+	HelpText->SetIsHelpMode(true);
+
 	m_SetTexureImage = AddWidget<CIMGUIImage>("Texture Image", 150.f, 150.f);
 	m_SetTexureImage->SetBorderColor(10, 10, 255);
 	m_SetTexureImage->SetTableTitle("Texture Image");
 
 	m_TextureInfoTable = AddWidget<CIMGUITableElemList>("Texture Info", 500.f, 150.f);
 	m_TextureInfoTable->SetTableTitle("Texture Info");
+
+	// Render State Info
+	m_RenderStateInfoTable = AddWidget<CIMGUITable>("Render State Info", 600.f, 200.f);
+	m_RenderStateInfoTable->SetTableTitle("RenderState Info");
+
+	// Render State Input
+	m_RenderStateSetInput = AddWidget<CIMGUITextInput>("RenderState Name", 150.f, 20.f);
+	m_RenderStateSetInput->SetHintText("Render State");
+	m_RenderStateSetInput->SetDropCallBack(this, &CMaterialEditor::OnDropAndSetRenderStateToMaterial);
+
+	m_ShaderSetInput = AddWidget<CIMGUITextInput>("Shader Name", 150.f, 20.f);
+	m_ShaderSetInput->SetHintText("Current Shader");
+	m_ShaderSetInput->SetDropCallBack(this, &CMaterialEditor::OnDropAndSetShaderToMaterial);
 
 	// m_MtrlInfoTable = AddWidget<CIMGUITable>("Mtrl Info", 200.f, 150.f);
 	// m_MtrlInfoTable->SetTableTitle("Mtrl Info");
@@ -79,10 +103,6 @@ bool CMaterialEditor::Init()
 
 	m_OutLineThickNess = AddWidget<CIMGUIInputFloat>("ThickNess", 150.f);
 	m_OutLineThickNess->SetCallBack<CMaterialEditor>(this, &CMaterialEditor::OnSetOutLineThickNess);
-
-	m_ShaderSetInput = AddWidget<CIMGUITextInput>("Shader Name", 150.f, 20.f);
-	m_ShaderSetInput->SetHintText("Current Shader");
-	m_ShaderSetInput->SetDropCallBack(this, &CMaterialEditor::OnDropAndSetShaderToMaterial);
 
 	// Add Texture
 	Dummy = AddWidget<CIMGUIDummy>("Dummy", 150.f, 20.f);
@@ -101,6 +121,17 @@ bool CMaterialEditor::Init()
 	m_SetTextureBtn = AddWidget<CIMGUIButton>("Set Texture", 90.f, 20.f);
 	m_SetTextureBtn->SetClickCallback<CMaterialEditor>(this, &CMaterialEditor::OnSetTextureBtn);
 
+	Line = AddWidget<CIMGUISameLine>("Line");
+	Line->SetOffsetX(260.f);
+
+	HelpText = AddWidget<CIMGUIText>("SetTextureHelpText", 90.f, 30.f);
+	const char* SetTextureHelpTexte = R"(ex) 몇번째 Index 의 Texture 를 세팅할지 정한다.
+그 다음 ResourceWindow 로부터 Key값을 이용하여 찾거나
+FileBrowser 에서 File을 Drag 해서 세팅한다.)";
+	HelpText->SetText(SetTextureHelpTexte);
+	HelpText->SetIsHelpMode(true);
+
+	// Add Texture
 	m_AddTextureInput = AddWidget<CIMGUITextInput>("Key Name", 150.f, 20.f);
 	m_AddTextureInput->SetHideName(true);
 	m_AddTextureInput->SetHintText("Key Name");
@@ -112,8 +143,22 @@ bool CMaterialEditor::Init()
 	m_AddTextureBtn = AddWidget<CIMGUIButton>("Add Texture", 90.f, 20.f);
 	m_AddTextureBtn->SetClickCallback<CMaterialEditor>(this, &CMaterialEditor::OnAddTextureBtn);
 
+	Line = AddWidget<CIMGUISameLine>("Line");
+	Line->SetOffsetX(260.f);
+
+	HelpText = AddWidget<CIMGUIText>("AddTextureHelpText", 90.f, 30.f);
+	const char* AddTextureHelpTexte = R"(ex)  ResourceWindow 로부터 Key값을 이용하여 찾거나
+FileBrowser 에서 File을 Drag 해서 세팅한다.)";
+	HelpText->SetText(AddTextureHelpTexte);
+	HelpText->SetIsHelpMode(true);
+
 	// Load & Save Btn
 	Dummy = AddWidget<CIMGUIDummy>("Dummy", 150.f, 20.f);
+
+	HelpText = AddWidget<CIMGUIText>("SaveMtrl", 90.f, 30.f);
+	const char* SaveMtrlText = R"(ex) 저장하는 파일 이름은, Material 의 이름과 동일해야 한다.)";
+	HelpText->SetText(SaveMtrlText);
+	HelpText->SetIsHelpMode(true);
 
 	m_SaveMaterialBtn = AddWidget<CIMGUIButton>("Save Mtrl", 90.f, 20.f);
 	m_SaveMaterialBtn->SetClickCallback<CMaterialEditor>(this, &CMaterialEditor::OnSaveMaterial);
@@ -159,14 +204,15 @@ void CMaterialEditor::OnCreateMaterialCallback()
 
 	CMaterial* NewMaterial = CResourceManager::GetInst()->CreateMaterial<CMaterial>(m_NewMaterialName->GetTextUTF8());
 
-	// 이미 선택된 내용이 있다면 Update
-	if (m_SelectedMaterial)
+	// 이미 선택된 Material 과 같다면 X
+	if (m_SelectedMaterial && m_SelectedMaterial == NewMaterial)
 	{
+		return;
 	}
 
 	m_SelectedMaterial = NewMaterial;
 
-	RefreshMaterialDisplayInfo(m_SelectedMaterial, nullptr);
+	RefreshMaterialDisplayInfo(m_SelectedMaterial);
 
 	// 보여지는 Texture 정보 갱신
 	m_SetTexureImage->SetTexture(nullptr);
@@ -207,7 +253,7 @@ void CMaterialEditor::OnDropAndCreateMaterialCallback(const std::string& Materia
 
 	strcat_s(MaterialLoadFullPathMultibyte, MaterialName.c_str());
 
-	m_SelectedMaterial = CResourceManager::GetInst()->LoadMaterialFullPathMultibyte(MaterialLoadFullPathMultibyte, MaterialName);
+	m_SelectedMaterial = CResourceManager::GetInst()->LoadMaterialFullPathMultibyte(MaterialLoadFullPathMultibyte);
 
 	RefreshMaterialDisplayInfo(m_SelectedMaterial);
 
@@ -231,6 +277,35 @@ void CMaterialEditor::OnDropAndSetShaderToMaterial(const std::string& DropShader
 	}
 
 	m_SelectedMaterial->SetShader(FoundShader);
+
+	// Shader Setting 이후, Refresh
+	RefreshMaterialDisplayInfo(m_SelectedMaterial);
+
+	MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Shader Successfully Set"), NULL, MB_OK);
+}
+
+void CMaterialEditor::OnDropAndSetRenderStateToMaterial(const std::string& DropRenderStateName)
+{
+	// 현재 Material 에 Render State Name 을 세팅한다.
+	// Shader Manager 에서 Key 값만 찾아서 세팅해주고
+	// 없으면 X
+	if (!m_SelectedMaterial)
+		return;
+
+	CRenderState* FoundRenderState = CRenderManager::GetInst()->FindRenderState(DropRenderStateName);
+
+	if (!FoundRenderState)
+	{
+		MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("No RenderState Exist To According Sampler Key"), NULL, MB_OK);
+		return;
+	}
+
+	// Render State Setting 이후 Refresh
+	m_SelectedMaterial->SetRenderState(FoundRenderState);
+
+	RefreshMaterialDisplayInfo(m_SelectedMaterial);
+
+	MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("RenderState Successfully Set"), NULL, MB_OK);
 }
 
 void CMaterialEditor::OnIsOutLineEdit(const char*, bool Enable)
@@ -280,7 +355,6 @@ void CMaterialEditor::OnSetTextureBtnWithString(const std::string& InputName)
 
 	if (TargetTexture)
 	{
-
 		m_SelectedMaterial->SetTextureInfoResource(SetTextureIndex, TargetTexture);
 
 		// 현재 Texture 를 IMGUI Image 에 보여주기
@@ -306,7 +380,14 @@ void CMaterialEditor::OnSetTextureBtnWithString(const std::string& InputName)
 
 	// 찾지 못했다면 
 	if (!FoundResult.has_value())
-		return;
+	{
+		// Texture Path가 아니라, Particle Path 에서도 한번 찾아본다.
+		FoundResult = CEditorUtil::GetFullPathOfTargetFileNameInDir(PARTICLE_PATH,
+			InputName, TextureKeyName);
+
+		if (!FoundResult.has_value())
+			return;
+	}
 	// 
 	// Editor Util 함수 안에, --> 특정 폴더, File 안에 이름 넣어주면, 다 돌면서, 파일 찾아주는 함수 제작
 	// 그렇게 해서 Full Path, File 이름 받아오고
@@ -421,28 +502,39 @@ void CMaterialEditor::OnSaveMaterial()
 	if (!m_SelectedMaterial)
 		return;
 
-	TCHAR FiileFullPath[MAX_PATH] = {};
+	TCHAR FileFullPath[MAX_PATH] = {};
 
 	OPENFILENAME OpenFile = {};
 	OpenFile.lStructSize = sizeof(OPENFILENAME);
 	OpenFile.hwndOwner = CEngine::GetInst()->GetWindowHandle();
 	OpenFile.lpstrFilter = TEXT("All Files\0*.*\0.Animation File\0*.anim");
-	OpenFile.lpstrFile = FiileFullPath;
+	OpenFile.lpstrFile = FileFullPath;
 	OpenFile.nMaxFile = MAX_PATH;
 	OpenFile.lpstrInitialDir = CPathManager::GetInst()->FindPath(MATERIAL_PATH)->Path;
 
 	if (GetSaveFileName(&OpenFile) != 0)
 	{
+		char FileName[MAX_PATH];
+		char FileExt[MAX_PATH];
+
+		// Initial Name => Material 의 Name 으로 설정
+		TCHAR TCHARInitFilename[MAX_PATH] = {};
+		lstrcpy(TCHARInitFilename, CEditorUtil::ChangeMultibyteTextToTCHAR(m_SelectedMaterial->GetName()));
 
 		char FileFullPathMultibyte[MAX_PATH] = {};
-		char FileName[MAX_PATH] = {};
-		char FileExt[_MAX_EXT] = {};
+		strcpy_s(FileFullPathMultibyte, CEditorUtil::ChangeTCHARTextToMultibyte(FileFullPath));
 
-		int  ConvertLength = WideCharToMultiByte(CP_ACP, 0, FiileFullPath, -1, nullptr, 0, nullptr, nullptr);
+		CEditorUtil::ExtractFileNameAndExtFromPath(FileFullPathMultibyte, FileName, FileExt);
 
-		WideCharToMultiByte(CP_ACP, 0, FiileFullPath, -1, FileFullPathMultibyte, ConvertLength, nullptr, nullptr);
-
-		_splitpath_s(FileFullPathMultibyte, nullptr, 0, nullptr, 0, FileName, MAX_PATH, FileExt, _MAX_EXT);
+		// 현재 저장하는 Material 의 파일 이름과, Material 의 이름이 같은지를 확인한다.
+		if (strcmp(FileName, m_SelectedMaterial->GetName().c_str()) != 0)
+		{
+			TCHAR ErrorMessage[MAX_PATH] = {};
+			lstrcpy(ErrorMessage, TEXT("FileName Has To Be Same With Material Name : "));
+			lstrcat(ErrorMessage, TCHARInitFilename);
+			MessageBox(CEngine::GetInst()->GetWindowHandle(), ErrorMessage, NULL, MB_OK);
+			return;
+		}
 
 		_strupr_s(FileExt);
 
@@ -492,7 +584,7 @@ void CMaterialEditor::OnLoadMaterial()
 		}
 
 		// 파일 이름을, Material 을 저장하는 Key 값으로 활용할 것이다.
-		CMaterial* LoadedMaterial = CResourceManager::GetInst()->LoadMaterialFullPathMultibyte(FilePathMultibyte, FileName);
+		CMaterial* LoadedMaterial = CResourceManager::GetInst()->LoadMaterialFullPathMultibyte(FilePathMultibyte);
 
 		if (!LoadedMaterial)
 		{
@@ -507,6 +599,8 @@ void CMaterialEditor::OnLoadMaterial()
 		// ResourceDisplay Window 에 있는 Texture 목록들 Resource Window 에 추가해서 보여주기
 		CEditorManager::GetInst()->GetResourceDisplayWindow()->RefreshLoadedTextureResources();
 		CEditorManager::GetInst()->GetResourceDisplayWindow()->RefreshLoadedMaterialResources();
+		CEditorManager::GetInst()->GetResourceDisplayWindow()->RefreshLoadedRenderStateResources();
+		CEditorManager::GetInst()->GetResourceDisplayWindow()->RefreshLoadedShaderResources();
 	}
 }
 
@@ -569,20 +663,46 @@ void CMaterialEditor::RefreshMaterialDisplayInfo(class CMaterial* Material, clas
 	// Info Table 세팅
 	// Shader Name
 	CShader* Shader = Material->GetShader();
+
+	m_ShaderSetInput->ClearText();
+
 	if (Shader)
 		m_ShaderSetInput->SetText(Shader->GetName().c_str());
 	 
 	// TODO : Material 의 고유 정보 세팅 (현재로서는 필요한 것은 없어보인다)
 	// BaseColor, Ambient Color, Specular Color, EmmisiveColor
 	// m_MtrlInfoTable->Clear()
-	// m_MtrlInfoTable->AddData(AnimationClipInfoKeys::FrameRange, Sequence->GetStartFrame());
+	// m_MtrlInfoTable->AddData(AnimationClipInfoKeys::FrameTRange, Sequence->GetStartFrame());
 	// m_MtrlInfoTable->AddData(AnimationClipInfoKeys::FrameRange, Sequence->GetEndFrame());
 	// m_MtrlInfoTable->AddData(AnimationClipInfoKeys::FrameLength, Sequence->GetFrameLength());
 	// m_MtrlInfoTable->AddData(AnimationClipInfoKeys::FrameMode, Sequence->GetFrameMode());
 	// m_MtrlInfoTable->AddData(AnimationClipInfoKeys::PlayTime, Sequence->GetPlayTime());
 	// m_MtrlInfoTable->AddData(AnimationClipInfoKeys::FrameTime, Sequence->GetFrameTime());
 	// m_MtrlInfoTable->AddData(AnimationClipInfoKeys::PlayScale, Sequence->GetPlayScale());
-	
+
+	// Sampler 정보를 세팅한다. -> Table 정보로 세팅
+	m_RenderStateInfoTable->ClearContents();
+
+	const CSharedPtr<class CRenderState>* RenderStateArray = Material->GetRenderStateArray();
+
+	for (int i = 0; i < (int)RenderState_Type::Max; ++i)
+	{
+		// if (RenderStateArray[i])
+		// {
+		std::string RenderStateName = "";
+
+		if (RenderStateArray[i])
+			RenderStateName = RenderStateArray[i]->GetName();
+
+		const std::string& TableKeyName = MaterialTextureInfoKeys::RenderState[i];
+
+		m_RenderStateInfoTable->AddData(TableKeyName, RenderStateName);
+		// }
+	}
+
+	// RenderState Input 을 Clear 해준다.
+	m_RenderStateSetInput->ClearText();
+
 	// OutLine 정보 세팅
 	m_OutLineCheck->SetCheck(0, Material->IsOutlineEnable());
 	m_OutLineColor->SetRGB(Material->GetOutlineColor());

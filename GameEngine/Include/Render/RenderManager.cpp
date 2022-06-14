@@ -298,7 +298,7 @@ bool CRenderManager::Init()
 	m_AnimEditorRenderTarget->SetScale(Vector3(150.f, 150.f, 1.f));
 	m_AnimEditorRenderTarget->SetDebugRender(false);
 
-	// Animation Editor 용 Render Target 
+	// Particle Editor 용 Render Target
 	if (!CResourceManager::GetInst()->CreateTarget("ParticleEffectRenderTarget",
 		RS.Width, RS.Height, DXGI_FORMAT_R32G32B32A32_FLOAT))
 		return false;
@@ -307,8 +307,9 @@ bool CRenderManager::Init()
 	m_ParticleEffectEditorRenderTarget->SetPos(Vector3(600.f, 100.f, 0.f));
 	m_ParticleEffectEditorRenderTarget->SetScale(Vector3(150.f, 150.f, 1.f));
 	m_ParticleEffectEditorRenderTarget->SetDebugRender(false);
+	m_ParticleEffectEditorRenderTarget->SetClearColor(1.f, 1.f, 1.f, 1.f);
 
-	// Animation Editor 용 Render Target 
+	// Outline 용 Render Target
 	if (!CResourceManager::GetInst()->CreateTarget("OutlineRenderTarget",
 		RS.Width, RS.Height, DXGI_FORMAT_R32G32B32A32_FLOAT))
 		return false;

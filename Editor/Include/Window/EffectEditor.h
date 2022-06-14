@@ -13,7 +13,8 @@ private:
     class CIMGUIButton* m_SaveParticleBtn;
     class CIMGUIButton* m_LoadParticleBtn;
     class CIMGUIButton* m_StartEditBtn;
-    class CParticlePopUpScreen* m_ParticlePopUpScreen;
+    class CIMGUIButton* m_RestartBtn;
+
 private:
     class CIMGUIInputFloat* m_SpawnTimeMaxEdit;
     // class CIMGUIButton* m_RestartButton;
@@ -36,12 +37,17 @@ private:
     class CIMGUIColor4* m_ColorMinEdit;
     class CIMGUIColor4* m_ColorMaxEdit;
 
+    // Material
+    class CIMGUITextInput* m_MaterialName;
+
     class CIMGUICheckBox* m_IsMoveEdit;
     class CIMGUICheckBox* m_IsGravityEdit;
     class CIMGUICheckBox* m_IsRandomMoveEdit;
+    class CIMGUICheckBox* m_IsPauseResumeToggle;
 
     // Camera Related
     class CIMGUICheckBox* m_IsRotateEdit;
+    class CIMGUICheckBox* m_IsRotateInv;
     class CIMGUISliderFloat* m_RotateSpeedSliderBar;
     class CIMGUICheckBox* m_IsZoomEdit;
     class CIMGUISliderFloat* m_ZoomSpeedSliderBar;
@@ -70,6 +76,9 @@ private:
     class CIMGUIImage* m_ParticleTexture;
     class CIMGUIImage* m_ParticleRenderTarget;
 private :
+    class CParticle* m_ParticleClass;
+    class CMaterial* m_ParticleMaterial;
+private :
     // class CParticleComponent* m_ParticleComponent;
     // class CStaticMeshComponent* m_BaseGroundComponent;
     // class CStaticMeshComponent* m_SkyComponent;
@@ -82,6 +91,7 @@ public :
 private:
     void OnSaveParticleObjectButton();
     void OnLoadParticleObjectButton();
+    void OnRestartParticleComponentButton();
 
     void OnSpawnTimeMaxEdit(float Num);
 
@@ -105,8 +115,10 @@ private:
     void OnIsMoveEdit(const char*, bool);
     void OnIsGravityEdit(const char*, bool);
     void OnIsRandomMoveEdit(const char*, bool);
+    void OnPauseResumeToggle(const char*, bool);
 
     void OnIsCameraRotateEdit(const char*, bool);
+    void OnCameraRotateInvEdit(const char*, bool);
     void OnSetCameraRotateSpeed(float Speed);
 
     void OnIsCameraZoomEdit(const char*, bool);
@@ -129,8 +141,12 @@ private:
     void SetGameObjectReady();
     void SetStartEditing();
 
+    // Material Setting
+    void OnDropMaterialToParticle(const std::string& InputName);
+
     // Helper 
     void SetParticleToParticleComponent(class CParticleComponent* Component, const char* ParticleName);
+    void SetParticleToParticleComponent(class CParticleComponent* Component, CParticle* Particle);
     void SetIMGUIReflectPartice(class CParticle* Particle);
 };
 

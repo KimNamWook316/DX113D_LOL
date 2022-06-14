@@ -26,6 +26,7 @@ public:
         mbEnable = bEnable;
     }
 
+
 public:
     bool IsSelected()
     {
@@ -44,5 +45,7 @@ private:
     bool mbSelect;
     bool mbEnable;
     std::function<void()> mCallBack;
+private :
+    bool m_EnableCheck;
 };
 
