@@ -290,7 +290,7 @@ void CEffectEditor::OnSpawnTimeMaxEdit(float Num)
     if (!m_ParticleClass)
         return;
 
-    m_ParticleClass->SetSpawnTime(Num);
+    m_ParticleClass->SetSpawnTimeMax(Num);
     dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->SetSpawnTime(Num);
 }
 
@@ -756,7 +756,7 @@ void CEffectEditor::SetBasicDefaultParticleInfos(CParticle* Particle)
 
     // Spawn Time, Count
     Particle->SetSpawnCountMax(1000);
-    Particle->SetSpawnTime(0.05f);
+    Particle->SetSpawnTimeMax(0.05f);
 
     // Life Time
     Particle->SetLifeTimeMin(5.f);
@@ -826,9 +826,6 @@ void CEffectEditor::OnDropMaterialToParticle(const std::string& InputName)
     if (FoundMaterial)
     {
         ApplyNewMaterial(FoundMaterial);
-        // 제대로 세팅되었다는 Message
-        MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Material Set SuccessFully"), NULL, MB_OK);
-
         return;
     }
 
@@ -857,10 +854,6 @@ void CEffectEditor::OnDropMaterialToParticle(const std::string& InputName)
     }
     
     ApplyNewMaterial(FoundMaterial);
-  
-    // 제대로 세팅되었다는 Message
-    MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Material Set SuccessFully"), NULL, MB_OK);
-
 }
 
 void CEffectEditor::ApplyNewMaterial(CMaterial* FoundMaterial)
@@ -943,7 +936,7 @@ void CEffectEditor::SetIMGUIReflectParticle(CParticle* Particle)
     Particle->Set2D(false);
 
     m_SpawnCountMaxEdit->SetVal(Particle->GetSpawnCountMax());
-    m_SpawnTimeMaxEdit->SetVal(Particle->GetSpawnTime());
+    m_SpawnTimeMaxEdit->SetVal(Particle->GetSpawnTimeMax());
 
     m_LifeTimeMinEdit->SetVal(Particle->GetLifeTimeMin());
     m_LifeTimeMaxEdit->SetVal(Particle->GetLifeTimeMax());

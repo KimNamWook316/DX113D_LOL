@@ -619,7 +619,7 @@ void CMaterialEditor::RefreshMaterialDisplayInfo(class CMaterial* Material, clas
 	// 따로 세팅해주고자 하는 Texture 가 없고, 현재 Material 이 Texture 를 들고 있다면
 	if (!Texture && MtrlTexture.size() > 0)
 	{
-		int LastTexIdx = MtrlTexture.size() - 1;
+		int LastTexIdx = (int)MtrlTexture.size() - 1;
 		// Texture Image 맨 마지막 꺼 보여주기
 		m_SetTexureImage->SetTexture(MtrlTexture[LastTexIdx].Texture);
 	}

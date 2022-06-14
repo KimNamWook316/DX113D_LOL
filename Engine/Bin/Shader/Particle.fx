@@ -176,8 +176,7 @@ void ParticleUpdate(uint3 ThreadID : SV_DispatchThreadID)
 
 		float3	StartRange = g_ParticleStartMax - g_ParticleStartMin;
 		g_ParticleArray[ThreadID.x].WorldPos = Rand * (g_ParticleStartMax - g_ParticleStartMin) + g_ParticleStartMin;
-		// 제자리에서 만들어지도록 한다.
-		// g_ParticleArray[ThreadID.x].WorldPos = float3(0.f, 0.f, 0.f);
+		
 
 		if (g_ParticleMove == 1)
 		{

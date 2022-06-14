@@ -319,7 +319,7 @@ std::pair<bool, std::string> CResourceManager::LoadMeshTextureBoneInfo(CAnimatio
 	auto iter = mapAnimInfo.begin();
 	auto iterEnd = mapAnimInfo.end();
 
-	int MapSize = mapAnimInfo.size();
+	int MapSize = (int)mapAnimInfo.size();
 	int MapCnt = 0;
 
 	for (; iter != iterEnd; ++iter)

@@ -12,9 +12,10 @@
 
 CParticle::CParticle()	:
 	m_CBuffer(nullptr),
-	m_SpawnTime(0.001f),
+	m_SpawnTimeMax(0.001f),
 	m_2D(true),
-	m_SpawnCountMax(100)
+	m_SpawnCountMax(100),
+	m_SaveLoadStruct{}
 {
 }
 
@@ -74,6 +75,7 @@ bool CParticle::Save(FILE* File)
 	m_SaveLoadStruct.InfoShared = m_InfoShare;
 	m_SaveLoadStruct.Is2D = m_2D;
 	m_SaveLoadStruct.SpawnCountMax = m_SpawnCountMax;
+	m_SaveLoadStruct.SpawnTimeMax = m_SpawnTimeMax;
 
 	fwrite(&m_SaveLoadStruct, sizeof(ParticleSaveLoadStruct), 1, File);
 
@@ -85,7 +87,12 @@ bool CParticle::Save(FILE* File)
 
 	if (m_SaveLoadStruct.MaterialEnable)
 	{
-		if (CEngineUtil::IsFileExistInDir(MATERIAL_PATH, m_Material->GetName()))
+		char MaterialFileName[MAX_PATH] = {};
+
+		strcpy_s(MaterialFileName, m_Material->GetName().c_str());
+		strcat_s(MaterialFileName, ".mtrl");
+
+		if (CEngineUtil::IsFileExistInDir(MATERIAL_PATH, MaterialFileName))
 			MtrlFileExist = true;
 	}
 
@@ -136,6 +143,7 @@ bool CParticle::Load(FILE* File)
 			strcpy_s(MaterialBinPathMutlibyte, MaterialPath->PathMultibyte);
 
 		strcat_s(MaterialBinPathMutlibyte, m_SaveLoadStruct.MaterialName);
+		strcat_s(MaterialBinPathMutlibyte, ".mtrl");
 
 		m_Material = CResourceManager::GetInst()->CreateMaterialEmpty<CMaterial>();
 
@@ -152,6 +160,7 @@ bool CParticle::Load(FILE* File)
 	m_InfoShare = m_SaveLoadStruct.InfoShared;
 	m_2D = m_SaveLoadStruct.Is2D;
 	m_SpawnCountMax = m_SaveLoadStruct.SpawnCountMax;
+	m_SpawnTimeMax = m_SaveLoadStruct.SpawnTimeMax;
 
 	// 4번째 Save, Load : 상수 버퍼 저장 
 	m_CBuffer = new CParticleConstantBuffer;

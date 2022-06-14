@@ -85,7 +85,7 @@ void CFileBrowser::Update(float DeltaTime)
 
 			CTexture* Texture = CResourceManager::GetInst()->FindTexture(DIRECTORY_IMAGE);
 			DirImage->SetTexture(Texture);
-			DirImage->SetSize(Texture->GetWidth(), Texture->GetHeight());
+			DirImage->SetSize((float)Texture->GetWidth(), (float)Texture->GetHeight());
 
 			CIMGUIText* DirName = Child->AddWidget<CIMGUIText>("DirName");
 			DirName->SetText(m_vecDirName[i].c_str());
@@ -111,7 +111,7 @@ void CFileBrowser::Update(float DeltaTime)
 
 			CTexture* Texture = CResourceManager::GetInst()->FindTexture(FILE_IMAGE);
 			FileImage->SetTexture(Texture);
-			FileImage->SetSize(Texture->GetWidth(), Texture->GetHeight());
+			FileImage->SetSize((float)Texture->GetWidth(), (float)Texture->GetHeight());
 			FileImage->SetDragSrcCallback<CFileBrowser>(this, &CFileBrowser::OnDragSrcImageButton);
 
 			CIMGUIText* FileName = Child->AddWidget<CIMGUIText>("FileName");

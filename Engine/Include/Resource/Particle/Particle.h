@@ -15,6 +15,7 @@ struct ParticleSaveLoadStruct
 	ParticleInfoShared InfoShared;
 	bool Is2D;
 	int SpawnCountMax;
+	float SpawnTimeMax;
 };
 
 class CParticle :
@@ -35,7 +36,7 @@ private:
 	ParticleInfo							m_Info;
 	ParticleInfoShared						m_InfoShare;
 	CParticleConstantBuffer*				m_CBuffer;
-	float									m_SpawnTime;
+	float									m_SpawnTimeMax;
 	bool									m_2D;
 	int										m_SpawnCountMax;
 	ParticleSaveLoadStruct       m_SaveLoadStruct;
@@ -60,9 +61,9 @@ public:
 		return m_CBuffer->Clone();
 	}
 
-	float GetSpawnTime()	const
+	float GetSpawnTimeMax()	const
 	{
-		return m_SpawnTime;
+		return m_SpawnTimeMax;
 	}
 
 public:
@@ -203,9 +204,9 @@ public:
 		m_Material = Material;
 	}
 
-	void SetSpawnTime(float SpawnTime)
+	void SetSpawnTimeMax(float SpawnTime)
 	{
-		m_SpawnTime = SpawnTime;
+		m_SpawnTimeMax = SpawnTime;
 	}
 
 	void SetSpawnEnable(unsigned int Count)

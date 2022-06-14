@@ -330,7 +330,7 @@ bool CRenderManager::Init()
 	// Map 출력용 변수들
 
 	// Shadow
-	if (!CResourceManager::GetInst()->CreateTarget("ShadowMap", SHADOWMAP_WIDTH, SHADOWMAP_HEIGHT,
+	if (!CResourceManager::GetInst()->CreateTarget("ShadowMap", (unsigned int)SHADOWMAP_WIDTH, (unsigned int)SHADOWMAP_HEIGHT,
 		DXGI_FORMAT_R32G32B32A32_FLOAT, true, DXGI_FORMAT_D24_UNORM_S8_UINT))
 	{
 		assert(false);
