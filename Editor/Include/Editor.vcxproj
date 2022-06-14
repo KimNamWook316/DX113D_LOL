@@ -166,11 +166,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AnimationInstanceConvertThread.cpp" />
-    <ClCompile Include="Component\TowerComponent.cpp" />
+    <ClCompile Include="Component\BuildingComponent.cpp" />
     <ClCompile Include="EditorManager.cpp" />
     <ClCompile Include="EditorUtil.cpp" />
     <ClCompile Include="GraphEditor.cpp" />
-    <ClCompile Include="LoLNavManager.cpp" />
+    <ClCompile Include="LoLBuildingManager.cpp" />
+    <ClCompile Include="LoLDataManager.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Object\3DCameraObject.cpp" />
     <ClCompile Include="Object\3DParticleObject.cpp" />
@@ -181,6 +182,7 @@
     <ClCompile Include="Scene\DefaultScene.cpp" />
     <ClCompile Include="Widget\AnimationMeshWidget.cpp" />
     <ClCompile Include="Widget\BehaviorTreeMenu.cpp" />
+    <ClCompile Include="Widget\BuildingComponentWidget.cpp" />
     <ClCompile Include="Widget\ColliderComponentWidget.cpp" />
     <ClCompile Include="Widget\ColliderSphereWidget.cpp" />
     <ClCompile Include="Widget\ResourceMenu.cpp" />
@@ -192,7 +194,6 @@
     <ClCompile Include="Widget\SaveLoadBeginMenu.cpp" />
     <ClCompile Include="Widget\SceneComponentWidget.cpp" />
     <ClCompile Include="Widget\StaticMeshComponentWidget.cpp" />
-    <ClCompile Include="Widget\TowerComponentWidget.cpp" />
     <ClCompile Include="Widget\TransformWidget.cpp" />
     <ClCompile Include="Widget\UtilMenuBar.cpp" />
     <ClCompile Include="Window\AnimationEditor.cpp" />
@@ -221,12 +222,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimationInstanceConvertThread.h" />
-    <ClInclude Include="Component\TowerComponent.h" />
+    <ClInclude Include="Component\BuildingComponent.h" />
     <ClInclude Include="EditorInfo.h" />
     <ClInclude Include="EditorManager.h" />
     <ClInclude Include="EditorUtil.h" />
     <ClInclude Include="GraphEditor.h" />
-    <ClInclude Include="LoLNavManager.h" />
+    <ClInclude Include="LoLBuildingManager.h" />
+    <ClInclude Include="LoLDataManager.h" />
     <ClInclude Include="Object\3DCameraObject.h" />
     <ClInclude Include="Object\3DParticleObject.h" />
     <ClInclude Include="Object\Anim3DObject.h" />
@@ -238,6 +240,7 @@
     <ClInclude Include="Utils.h" />
     <ClInclude Include="Widget\AnimationMeshWidget.h" />
     <ClInclude Include="Widget\BehaviorTreeMenu.h" />
+    <ClInclude Include="Widget\BuildingComponentWidget.h" />
     <ClInclude Include="Widget\ColliderComponentWidget.h" />
     <ClInclude Include="Widget\ColliderSphereWidget.h" />
     <ClInclude Include="Widget\GameObjectWidget.h" />
@@ -249,7 +252,6 @@
     <ClInclude Include="Widget\SaveLoadBeginMenu.h" />
     <ClInclude Include="Widget\SceneComponentWidget.h" />
     <ClInclude Include="Widget\StaticMeshComponentWidget.h" />
-    <ClInclude Include="Widget\TowerComponentWidget.h" />
     <ClInclude Include="Widget\TransformWidget.h" />
     <ClInclude Include="Widget\UtilMenuBar.h" />
     <ClInclude Include="Window\AnimationEditor.h" />

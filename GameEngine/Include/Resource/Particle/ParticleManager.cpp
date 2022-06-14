@@ -12,7 +12,8 @@ CParticleManager::~CParticleManager()
 
 	for (; iter != iterEnd;)
 	{
-		m_mapParticle.erase(iter);
+		iter = m_mapParticle.erase(iter);
+		iterEnd = m_mapParticle.end();
 	}
 
 	m_mapParticle.empty();

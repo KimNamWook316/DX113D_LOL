@@ -179,9 +179,19 @@ public:
 		m_BufferData.ColorMin = ColorMin;
 	}
 
+	void SetColorMin(float r, float g, float b, float a)
+	{
+		m_BufferData.ColorMin = Vector4(r,g,b,a);
+	}
+
 	void SetColorMax(const Vector4& ColorMax)
 	{
 		m_BufferData.ColorMax = ColorMax;
+	}
+
+	void SetColorMax(float r, float g, float b, float a)
+	{
+		m_BufferData.ColorMax = Vector4(r, g, b, a);
 	}
 
 	void SetSpeedMin(float SpeedMin)

@@ -4,7 +4,14 @@
 struct Particle3DObjectBackUpStruct
 {
     bool IsCameraRotate;
-    bool IsRotateInv;
+    bool IsCameraRotateInv;
+    bool IsCameraRotateSpeed;
+    bool IsCameraZoom;
+    float CameraZoomSpeed;
+    float CameraYOffset;
+    float CameraXRot;
+    float TargetDist;
+    float WorldRotY;
 };
 
 // Particle 을 제작하는 Editor
@@ -85,6 +92,9 @@ private :
     class CParticle* m_ParticleClass;
     class CMaterial* m_ParticleMaterial;
 private :
+    Particle3DObjectBackUpStruct m_BackUpStruct;
+    bool m_StartEdit;
+private :
     // class CParticleComponent* m_ParticleComponent;
     // class CStaticMeshComponent* m_BaseGroundComponent;
     // class CStaticMeshComponent* m_SkyComponent;
@@ -144,16 +154,31 @@ private:
     // Particle 기본 세팅
     void OnSetBasicParticleMaterialSetting(class CSceneComponent* Com);
     void OnReflectCurrentParticleSetting();
-    void OnReflectCurrentCameraSetting();
+
+    // Base Ground Object 준비시키기
     void SetGameObjectReady();
-    void SetStartEditing();
+
+    // 기본 Particle 정보 세팅하기
+    void SetBasicDefaultParticleInfos(class CParticle* Particle);
 
     // Material Setting
     void OnDropMaterialToParticle(const std::string& InputName);
 
-    // Helper 
+    // Particle Object 백업, 
+    void BackUpParticleObjectInfo();
+    void ReflectBackUpParticleObjectInfo();
+
+    // Edit 시작 하기 (기본 설정 세팅)
+    void SetStartEditing();
+
+    // Particle Component 에 Particle 세팅하기 
     void SetParticleToParticleComponent(class CParticleComponent* Component, const char* ParticleName);
     void SetParticleToParticleComponent(class CParticleComponent* Component, CParticle* Particle);
-    void SetIMGUIReflectPartice(class CParticle* Particle);
+
+    // IMGUI가 Particle 정보 반영하게 하기 
+    void SetIMGUIReflectParticle(class CParticle* Particle);
+
+    // IMGUI가 Paritlc Object 정보 반영하게 하기 
+    void SetIMGUIReflectObjectCamera();
 };
 

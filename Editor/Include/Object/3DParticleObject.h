@@ -39,6 +39,14 @@ public :
 	{
 		return m_IsCameraRotate;
 	}
+	bool IsCameraRotateInv() const
+	{
+		return m_RotateInv;
+	}
+	float GetCameraZoomSpeed() const
+	{
+		return m_CameraZoomSpeed;
+	}
 	bool IsCameraZoom() const
 	{
 		return m_IsCameraZoom; 
@@ -50,6 +58,10 @@ public :
 	const Vector3& GetCameraOfffset() const
 	{
 		return m_ParticleArm->GetOffset();
+	}
+	float GetCameraYOffset() const
+	{
+		return m_ParticleArm->GetOffset().y;
 	}
 public :
 	void SetRotateInv(bool Enable)
@@ -80,7 +92,6 @@ public :
 	void SetRelativeRotationXPos (float XRot)
 	{
 		const Vector3& RelativeRotation = m_ParticleArm->GetRelativeRot();
-
 		m_ParticleArm->SetRelativeRotation(XRot, RelativeRotation.y, RelativeRotation.z);
 	}
 public:

@@ -183,7 +183,7 @@ void CSceneComponentHierarchyWindow::OnUpdateSceneComponentWindow(CGameObject* O
 		return;
 
 	std::string Name = RootComp->GetName();
-	CIMGUITree* RootTreeNode = m_Root->FindChild(Name);
+	CIMGUITree* RootTreeNode = m_Root->FindChild(Name, Object->GetRootComponent());
 	RootTreeNode->EnableAll();
 }
 
@@ -201,11 +201,14 @@ void CSceneComponentHierarchyWindow::OnCreateComponent(bool IsRoot, CSceneCompon
 	if (IsRoot)
 	{
 		NewNode = m_Root->AddChild(Name);
+		NewNode->SetData(Component);
 	}
+
 	else
 	{
-		CIMGUITree* RootCompNode = m_Root->GetNode(0);
-		NewNode = RootCompNode->AddChild(Name);
+		// Component의 부모 Component를 IMGUITree상에서 찾아서 그 Tree의 ChildNode로 넣어줘야함
+		CIMGUITree* RootCompNode = m_Root->FindChild(Component->GetParent()->GetName(), Component->GetParent());
+		NewNode = RootCompNode->AddChild(Name, Component);
 	}
 
 	NewNode->AddSelectCallback(this, &CSceneComponentHierarchyWindow::OnSetSelectNode);
@@ -227,7 +230,7 @@ void CSceneComponentHierarchyWindow::OnLoadGameObject(CGameObject* Object)
 	std::string RootName = Root->GetName();
 
 	// Hierachy 생성
-	CIMGUITree* RootComponentNode = m_Root->AddChild(RootName);
+	CIMGUITree* RootComponentNode = m_Root->AddChild(RootName, Root);
 	MakeHierachyRecursive(Root, RootComponentNode);
 }
 
@@ -438,11 +441,11 @@ void CSceneComponentHierarchyWindow::OnAddComponent(class CGameObject* Object, C
 
 	if (Object->GetRootComponent() == Component)
 	{
-		m_Root->AddChild(Component->GetName());
+		m_Root->AddChild(Component->GetName(), Component);
 	}
 	else
 	{
-		m_Root->GetNode(0)->AddChild(Component->GetName());
+		m_Root->GetNode(0)->AddChild(Component->GetName(), Component);
 	}
 }
 
@@ -458,7 +461,7 @@ void CSceneComponentHierarchyWindow::MakeHierachyRecursive(CSceneComponent* Pare
 	// Tree 생성
 	for (size_t i = 0; i < Count; ++i)
 	{
-		ParentTree->AddChild(Parent->GetChild(i)->GetName());
+		ParentTree->AddChild(Parent->GetChild(i)->GetName(), Parent->GetChild(i));
 	}
 
 	// 재귀적 생성

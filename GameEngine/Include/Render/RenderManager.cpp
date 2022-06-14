@@ -314,7 +314,7 @@ bool CRenderManager::Init()
 	m_ParticleEffectEditorRenderTarget->SetPos(Vector3(600.f, 100.f, 0.f));
 	m_ParticleEffectEditorRenderTarget->SetScale(Vector3(150.f, 150.f, 1.f));
 	m_ParticleEffectEditorRenderTarget->SetDebugRender(false);
-	m_ParticleEffectEditorRenderTarget->SetClearColor(1.f, 1.f, 1.f, 1.f);
+	m_ParticleEffectEditorRenderTarget->SetClearColor(0.6f, 0.6f, 0.6f, 0.6f);
 
 	// Outline ¿ë Render Target
 	if (!CResourceManager::GetInst()->CreateTarget("OutlineRenderTarget",
@@ -1059,7 +1059,6 @@ void CRenderManager::RenderParticleEffectEditor()
 			continue;
 		(*iter)->RenderParticleEffectEditor();
 	}
-
 
 	m_ParticleEffectEditorRenderTarget->ResetTarget();
 }

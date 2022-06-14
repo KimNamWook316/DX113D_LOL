@@ -256,6 +256,16 @@ public:
 		m_CBuffer->SetColorMin(ColorMin);
 	}
 
+	void SetColorMin(float r, float g, float b, float a)
+	{
+		m_CBuffer->SetColorMin(r,g,b,a);
+	}
+
+	void SetColorMax(float r, float g, float b, float a)
+	{
+		m_CBuffer->SetColorMax(r, g, b, a);
+	}
+
 	void SetColorMax(const Vector4& ColorMax)
 	{
 		m_CBuffer->SetColorMax(ColorMax);
