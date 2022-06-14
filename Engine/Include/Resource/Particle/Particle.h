@@ -86,10 +86,10 @@ public:
 		return m_CBuffer;
 	}
 
-	int GetApplyRandom() const
-	{
-		return m_CBuffer->GetApplyRandom();
-	}
+	// int GetApplyRandom() const
+	// {
+	// 	return m_CBuffer->GetApplyRandom();
+	// }
 
 	int GetSpawnCountMax()	const
 	{
@@ -218,7 +218,6 @@ public:
 		m_CBuffer->SetStartMin(StartMin);
 	}
 
-
 	void SetStartMax(const Vector3& StartMax)
 	{
 		m_CBuffer->SetStartMax(StartMax);
@@ -258,17 +257,17 @@ public:
 
 	void SetColorMin(float r, float g, float b, float a)
 	{
-		m_CBuffer->SetColorMin(r,g,b,a);
-	}
-
-	void SetColorMax(float r, float g, float b, float a)
-	{
-		m_CBuffer->SetColorMax(r, g, b, a);
+		m_CBuffer->SetColorMin(r, g, b, a);
 	}
 
 	void SetColorMax(const Vector4& ColorMax)
 	{
 		m_CBuffer->SetColorMax(ColorMax);
+	}
+
+	void SetColorMax(float r, float g, float b, float a)
+	{
+		m_CBuffer->SetColorMax(r, g, b, a);
 	}
 
 	void SetSpeedMin(float SpeedMin)
@@ -296,10 +295,10 @@ public:
 		m_CBuffer->SetMoveDir(MoveDir);
 	}
 
-	void SetApplyRandom(bool Enable)
-	{
-		m_CBuffer->SetApplyRandom(Enable);
-	}
+	// void SetApplyRandom(bool Enable)
+	// {
+	// 	m_CBuffer->SetApplyRandom(Enable);
+	// }
 
 	void Set2D(bool Is2D)
 	{

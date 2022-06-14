@@ -26,10 +26,10 @@ cbuffer	ParticleCBuffer : register(b11)
 	int		g_Particle2D;			// 2D용 파티클인지
 	
 	float3	g_ParticleMoveAngle;	// 이동을 한다면 기준이 될 방향으로부터 x, y, z 에 저장된 각도만큼 틀어진 랜덤한 방향을 구한다.
-	float	g_ApplyRandom;
-	
+	float      g_ParticleEmpty;
+
 	float3 g_ParticleRotationAngle;
-	int g_ParticleEmpty;
+	float   g_ParticlEmpty1;
 };
 
 #define	GRAVITY	9.8f
@@ -174,20 +174,10 @@ void ParticleUpdate(uint3 ThreadID : SV_DispatchThreadID)
 		g_ParticleArray[ThreadID.x].LifeTime = 0.f;
 		g_ParticleArray[ThreadID.x].LifeTimeMax = (g_ParticleLifeTimeMax - g_ParticleLifeTimeMin) + g_ParticleLifeTimeMin;
 
-		// Random 생성 체크를 한다면
-		if (g_ApplyRandom == 1)
-		{
-			float3	StartRange = g_ParticleStartMax - g_ParticleStartMin;
-
-			g_ParticleArray[ThreadID.x].WorldPos = RandomPos * StartRange + g_ParticleStartMin;
-			g_ParticleArray[ThreadID.x].LifeTimeMax = Rand * (g_ParticleLifeTimeMax - g_ParticleLifeTimeMin) + g_ParticleLifeTimeMin;
-		}
-		else
-		{
-			// 제자리에서 만들어지도록 한다.
-			g_ParticleArray[ThreadID.x].WorldPos = float3(0.f, 0.f, 0.f);
-		}
-
+		float3	StartRange = g_ParticleStartMax - g_ParticleStartMin;
+		g_ParticleArray[ThreadID.x].WorldPos = Rand * (g_ParticleStartMax - g_ParticleStartMin) + g_ParticleStartMin;
+		// 제자리에서 만들어지도록 한다.
+		// g_ParticleArray[ThreadID.x].WorldPos = float3(0.f, 0.f, 0.f);
 
 		if (g_ParticleMove == 1)
 		{

@@ -26,11 +26,6 @@ public:
 		return m_BufferData.StartMin;
 	}
 
-	int GetApplyRandom() const
-	{
-		return m_BufferData.ApplyRandom;
-	}
-
 	const Vector3& GetStartMax()	const
 	{
 		return m_BufferData.StartMax;
@@ -179,9 +174,19 @@ public:
 		m_BufferData.ColorMin = ColorMin;
 	}
 
+	void SetColorMin(float r, float g, float b, float a)
+	{
+		m_BufferData.ColorMin = Vector4(r, g, b, a);
+	}
+
 	void SetColorMax(const Vector4& ColorMax)
 	{
 		m_BufferData.ColorMax = ColorMax;
+	}
+
+	void SetColorMax(float r, float g, float b, float a)
+	{
+		m_BufferData.ColorMax = Vector4(r, g, b, a);
 	}
 
 	void SetSpeedMin(float SpeedMin)
@@ -212,11 +217,6 @@ public:
 	void Set2D(bool Is2D)
 	{
 		m_BufferData.Is2D = Is2D ? 1 : 0;
-	}
-
-	void SetApplyRandom(bool Enable)
-	{
-		m_BufferData.ApplyRandom = (int)Enable;
 	}
 
 	void SetMoveAngle(const Vector3& MoveAngle)

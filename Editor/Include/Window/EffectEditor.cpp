@@ -155,12 +155,12 @@ bool CEffectEditor::Init()
     Line = Tree->AddWidget<CIMGUISameLine>("Line");
     Line->SetOffsetX(170.f);
 
-    m_IsRandomMoveEdit = Tree->AddWidget<CIMGUICheckBox>("Random", 80.f);
-    m_IsRandomMoveEdit->AddCheckInfo("Random");
-    m_IsRandomMoveEdit->SetCallBackLabel<CEffectEditor>(this, &CEffectEditor::OnIsRandomMoveEdit);
+    // m_IsRandomMoveEdit = Tree->AddWidget<CIMGUICheckBox>("Random", 80.f);
+    // m_IsRandomMoveEdit->AddCheckInfo("Random");
+    // m_IsRandomMoveEdit->SetCallBackLabel<CEffectEditor>(this, &CEffectEditor::OnIsRandomMoveEdit);
 
-    Line = Tree->AddWidget<CIMGUISameLine>("Line");
-    Line->SetOffsetX(260.f);
+    // Line = Tree->AddWidget<CIMGUISameLine>("Line");
+    // Line->SetOffsetX(260.f);
 
     m_IsPauseResumeToggle = Tree->AddWidget<CIMGUICheckBox>("Toggle", 80.f);
     m_IsPauseResumeToggle->AddCheckInfo("Toggle");
@@ -427,15 +427,15 @@ void CEffectEditor::OnIsGravityEdit(const char*, bool Enable)
     // m_ParticleComponent->GetCBuffer()->SetGravity(Enable);
 }
 
-void CEffectEditor::OnIsRandomMoveEdit(const char*, bool Enable)
-{
-    if (!m_ParticleClass)
-        return;
-
-    m_ParticleClass->SetApplyRandom(Enable);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetApplyRandom(Enable);
-    // m_ParticleComponent->GetCBuffer()->SetApplyRandom(Enable);
-}
+// void CEffectEditor::OnIsRandomMoveEdit(const char*, bool Enable)
+// {
+//     if (!m_ParticleClass)
+//         return;
+// 
+//     m_ParticleClass->SetApplyRandom(Enable); //
+//     dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetApplyRandom(Enable);
+//     // m_ParticleComponent->GetCBuffer()->SetApplyRandom(Enable);
+// }
 
 void CEffectEditor::OnPauseResumeToggle(const char*, bool Enable)
 {
@@ -637,17 +637,15 @@ void CEffectEditor::OnLoadParticleClass()
         m_ParticleClass = CResourceManager::GetInst()->CreateParticleEmpty<CParticle>();
         m_ParticleClass->LoadFile(FilePathMultibyte);
 
-         // 필요한 Object 목록 세팅
-        SetGameObjectReady();
-
         // 이전 Particle Object 의 카메라 관련 정보 백업
         BackUpParticleObjectInfo();
 
+         // 필요한 Object 목록 세팅 => Particle Object 도 세팅
+        SetGameObjectReady();
+
         // Particle Object Enable 처리
-        if (!m_ParticleObject)
-        {
-            m_ParticleObject = CSceneManager::GetInst()->GetScene()->CreateGameObject<C3DParticleObject>("Particle Effect Base Ground");
-        }
+        m_ParticleObject->Enable(true);
+        m_ParticleObject->GetRootComponent()->Enable(true);
 
         // 백업 내용 반영
         ReflectBackUpParticleObjectInfo();
@@ -727,6 +725,11 @@ void CEffectEditor::SetGameObjectReady()
    // m_SkyObject->Init();
 
     // Particle Object 생성
+    if (m_ParticleObject)
+    {
+        m_ParticleObject->Destroy();
+    }
+
     m_ParticleObject = CSceneManager::GetInst()->GetScene()->CreateGameObject<C3DParticleObject>("Particle Effect Base Ground");
     // 처음에는 Enable False 로 하여 보이지 않게 한다.
     m_ParticleObject->Enable(false);
@@ -786,7 +789,7 @@ void CEffectEditor::SetBasicDefaultParticleInfos(CParticle* Particle)
     // IsPauseResume -> 무조건 Enable true 로 시작 세팅한다.
     Particle->SetGravity(true);
     Particle->SetMove(true);
-    Particle->SetApplyRandom(true);
+    // Particle->SetApplyRandom(true);
     Particle->Enable(true);
 }
 
@@ -817,19 +820,12 @@ void CEffectEditor::OnDropMaterialToParticle(const std::string& InputName)
         return;
     }
 
-    // Key 값 형태로 Resource Manager 에서 먼저 찾는다.
+    // Key 값 형태로 Resource Manager 에서 Mateirla 을 먼저 찾는다.
     CMaterial* FoundMaterial = CResourceManager::GetInst()->FindMaterial(InputName);
 
     if (FoundMaterial)
     {
-        // 해당 Material 의 Texture 를 불러와서 Image 에 세팅하기
-        // -> Material 을 Particle 에 세팅한다.
-        m_ParticleClass->SetMaterial(FoundMaterial);
-
-        // 해당 Material 의 Texture 를 불러와서 Image 에 세팅하기 => 첫번째 Texture 를 세팅해준다.
-        if (FoundMaterial->GetTextureInfo().size() > 0)
-            m_ParticleTexture->SetTexture(FoundMaterial->GetTexture());
-
+        ApplyNewMaterial(FoundMaterial);
         // 제대로 세팅되었다는 Message
         MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Material Set SuccessFully"), NULL, MB_OK);
 
@@ -859,12 +855,28 @@ void CEffectEditor::OnDropMaterialToParticle(const std::string& InputName)
         MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Material Load Failure From HardDisk"), NULL, MB_OK);
         return;
     }
+    
+    ApplyNewMaterial(FoundMaterial);
+  
+    // 제대로 세팅되었다는 Message
+    MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Material Set SuccessFully"), NULL, MB_OK);
+
+}
+
+void CEffectEditor::ApplyNewMaterial(CMaterial* FoundMaterial)
+{
+    if (!FoundMaterial)
+        return;
 
     m_ParticleClass->SetMaterial(FoundMaterial);
+    m_ParticleMaterial = FoundMaterial;
 
     // 해당 Material 의 Texture 를 불러와서 Image 에 세팅하기 => 첫번째 Texture 를 세팅해준다.
     if (FoundMaterial->GetTextureInfo().size() > 0)
         m_ParticleTexture->SetTexture(FoundMaterial->GetTexture());
+
+    // Particle 의 Material 정보를 Particle Component 에 다시 반영한다.
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->SetMaterial(m_ParticleClass->CloneMaterial());
 
     // 제대로 세팅되었다는 Message
     MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Material Set SuccessFully"), NULL, MB_OK);
@@ -872,8 +884,6 @@ void CEffectEditor::OnDropMaterialToParticle(const std::string& InputName)
     // Resource Window Display Update
     CEditorManager::GetInst()->GetResourceDisplayWindow()->RefreshLoadedTextureResources();
     CEditorManager::GetInst()->GetResourceDisplayWindow()->RefreshLoadedMaterialResources();
-
-    m_ParticleMaterial = FoundMaterial;
 }
 
 void CEffectEditor::BackUpParticleObjectInfo()
@@ -955,7 +965,7 @@ void CEffectEditor::SetIMGUIReflectParticle(CParticle* Particle)
 
     m_IsGravityEdit->SetCheck(0, Particle->GetGravity());
     m_IsMoveEdit->SetCheck(0, Particle->GetMove());
-    m_IsRandomMoveEdit->SetCheck(0, Particle->GetApplyRandom());
+    // m_IsRandomMoveEdit->SetCheck(0, Particle->GetApplyRandom() == 1 ? true : false);
     m_IsPauseResumeToggle->SetCheck(0, true);
 }
 

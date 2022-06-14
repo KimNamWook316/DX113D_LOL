@@ -226,6 +226,7 @@ void CMaterialEditor::OnDropAndCreateMaterialCallback(const std::string& Materia
 	// 중복 방지
 	if (m_SelectedMaterial && m_SelectedMaterial->GetName() == MaterialName)
 		return;
+
 	// 들어온 Material Name
 
 	// 1) Key 값으로 이용해서 Material Manager 에서 세팅
