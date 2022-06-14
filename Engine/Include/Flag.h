@@ -330,11 +330,6 @@ enum ActionNode
 	NormalAttack
 };
 
-enum DecoratorNode
-{
-	Negate
-};
-
 enum Node_Type
 {
 	Sequence,
@@ -360,4 +355,9 @@ enum class LoLLine
 	Mid,
 	Bottom,
 	Max
+};
+
+enum DecoratorNode
+{
+	Negate,
 };

@@ -356,3 +356,8 @@ enum class LoLLine
 	Bottom,
 	Max
 };
+
+enum DecoratorNode
+{
+	Negate,
+};

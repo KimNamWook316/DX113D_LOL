@@ -1,6 +1,14 @@
 
 #include "ShaderInfo.fx"
 
+struct PS_OUTPUT_TRANSPARENT
+{
+	float4 ScreenColor : SV_Target;
+	float4 Normal : SV_Target1;
+	float4 Depth : SV_Target2;
+	float4 Outline : SV_Target3;
+};
+
 cbuffer LightForwardCBuffer : register(b12)
 {
 	int g_LightCount;
@@ -109,8 +117,11 @@ struct InstancingInfo
 	float4 g_PaperBurnInLineColor;
 	float4 g_PaperBurnOutLineColor;
 	float4 g_PaperBurnCenterLineColor;
+	int		g_MtrlOutlineEnable;
+	float	g_MtrlOutlineThickness; 
+	float3  g_MtrlOutlineColor;
+	float3  g_MtrlInstancingEmpty;
 };
-
 
 StructuredBuffer<InstancingInfo> g_InstancingInfoArray : register(t40);
 StructuredBuffer<LightInfo> g_LightInfoArray : register(t13);
@@ -254,9 +265,9 @@ Vertex3DOutput Transparent3DVS(Vertex3D input)
 	return output;
 }
 
-PSOutput_Single Transparent3DPS(Vertex3DOutput input)
+PS_OUTPUT_TRANSPARENT Transparent3DPS(Vertex3DOutput input)
 {
-	PSOutput_Single output = (PSOutput_Single) 0;
+	PS_OUTPUT_TRANSPARENT output = (PS_OUTPUT_TRANSPARENT) 0;
 
 	float4 BaseTextureColor = g_BaseTexture.Sample(g_BaseSmp, input.UV);
 
@@ -281,10 +292,35 @@ PSOutput_Single Transparent3DPS(Vertex3DOutput input)
 		LAcc.Emv += LResult.Emv;
 	}
 
-	output.Color.rgb = BaseTextureColor.rgb * (LAcc.Dif.rgb + LAcc.Amb.rgb) +
+	output.ScreenColor.rgb = BaseTextureColor.rgb * (LAcc.Dif.rgb + LAcc.Amb.rgb) +
         LAcc.Spc.rgb + LAcc.Emv.rgb;
 
-	output.Color.a = g_MtrlOpacity;
+	// ÇÈ¼¿ »ö»ó
+	output.ScreenColor.a = BaseTextureColor.a * g_MtrlOpacity;
+
+	// ³ë¸»
+	output.Normal.rgb = ViewNormal;
+	output.Normal.a = 1.f;
+
+	// ±íÀÌ
+	output.Depth.r = input.ProjPos.z / input.ProjPos.w;
+	output.Depth.g = input.ProjPos.w;
+	output.Depth.b = g_MtrlSpecularColor.w;
+	output.Depth.a = 1.f;
+
+	// ¿Ü°û¼± Á¤º¸
+    if (g_MtrlOutlineEnable == 1)
+	{
+		//output.GBufferOutline.rgb = g_MtrlOutlineColor;
+		output.Outline.r = ConvertColor(float4(g_MtrlOutlineColor, 0.f));
+
+		int Exp = 0;
+		float Frac = modf(g_MtrlOutlineThickness, Exp);
+
+		output.Outline.g = asfloat(Exp);
+		output.Outline.b = saturate(Frac);
+		output.Outline.a = 1.f;
+	}
 
 	return output;
 }
@@ -464,9 +500,9 @@ LightResult ComputeLightInstancing(LightInfo Info, float3 Pos, float3 Normal, fl
 	return result;
 }
 
-PSOutput_Single TransparentInstancingPS(Vertex3DOutputInstancing input)
+PS_OUTPUT_TRANSPARENT TransparentInstancingPS(Vertex3DOutputInstancing input)
 {
-	PSOutput_Single output = (PSOutput_Single) 0;
+	PS_OUTPUT_TRANSPARENT output = (PS_OUTPUT_TRANSPARENT) 0;
 
 	float4 BaseTextureColor = g_BaseTexture.Sample(g_BaseSmp, input.UV);
 
@@ -491,10 +527,34 @@ PSOutput_Single TransparentInstancingPS(Vertex3DOutputInstancing input)
 		LAcc.Emv += LResult.Emv;
 	}
 
-	output.Color.rgb = BaseTextureColor.rgb * (LAcc.Dif.rgb + LAcc.Amb.rgb) +
+	output.ScreenColor.rgb = BaseTextureColor.rgb * (LAcc.Dif.rgb + LAcc.Amb.rgb) +
         LAcc.Spc.rgb + LAcc.Emv.rgb;
 
-	output.Color.a = g_InstancingInfoArray[input.InstanceID].g_MtrlOpacity;
+	// ÇÈ¼¿ »ö»ó
+	output.ScreenColor.a = BaseTextureColor.a * g_InstancingInfoArray[input.InstanceID].g_MtrlOpacity;
 
+	// ³ë¸»
+	output.Normal.rgb = ViewNormal;
+	output.Normal.a = 1.f;
+
+	// ±íÀÌ
+	output.Depth.r = input.ProjPos.z / input.ProjPos.w;
+	output.Depth.g = input.ProjPos.w;
+	output.Depth.b = g_InstancingInfoArray[input.InstanceID].g_MtrlSpecularColor;
+	output.Depth.a = 1.f;
+
+	// ¿Ü°û¼± Á¤º¸
+	if (g_InstancingInfoArray[input.InstanceID].g_MtrlOutlineEnable == 1)
+	{
+		//output.GBufferOutline.rgb = g_MtrlOutlineColor;
+		output.Outline.r = ConvertColor(float4(g_InstancingInfoArray[input.InstanceID].g_MtrlOutlineColor, 0.f));
+
+		int Exp = 0;
+		float Frac = modf(g_InstancingInfoArray[input.InstanceID].g_MtrlOutlineThickness, Exp);
+
+		output.Outline.g = asfloat(Exp);
+		output.Outline.b = saturate(Frac);
+		output.Outline.a = 1.f;
+	}
 	return output;
 }

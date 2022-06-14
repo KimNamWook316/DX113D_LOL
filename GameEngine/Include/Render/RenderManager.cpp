@@ -28,7 +28,8 @@ CRenderManager::CRenderManager()	:
 	m_ShadowLightDistance(20.f),
 	m_ShadowCBuffer(nullptr),
 	m_OutlineCBuffer(nullptr),
-	m_Gray(false)
+	m_Gray(false),
+	m_AlphaBlendMRT(nullptr)
 {
 }
 
@@ -162,13 +163,14 @@ bool CRenderManager::Init()
 
 	m_DepthDisable = m_RenderStateManager->FindRenderState("DepthDisable");
 	m_AlphaBlend = m_RenderStateManager->FindRenderState("AlphaBlend");
+	m_AlphaBlendMRT = m_RenderStateManager->FindRenderState("AlphaBlend_MRT"); // Transparent Render 패스에서 사용
 	m_LightAccBlend = m_RenderStateManager->FindRenderState("LightAcc");
 
 	// 디퍼드 렌더링용 타겟 생성
 	Resolution RS = CDevice::GetInst()->GetResolution();
 
 	if (!CResourceManager::GetInst()->CreateTarget("Diffuse",
-		RS.Width, RS.Height, DXGI_FORMAT_R8G8B8A8_UNORM))
+		RS.Width, RS.Height, DXGI_FORMAT_R32G32B32A32_FLOAT))
 		return false;
 
 	if (!CResourceManager::GetInst()->CreateTarget("GBuffer1",
@@ -286,15 +288,6 @@ bool CRenderManager::Init()
 	FinalScreenTarget->SetScale(Vector3(100.f, 100.f, 1.f));
 	FinalScreenTarget->SetDebugRender(true);
 
-	// Post-Processing용 Render Target
-	if (!CResourceManager::GetInst()->CreateTarget("PostProcessing",
-		RS.Width, RS.Height, DXGI_FORMAT_R32G32B32A32_FLOAT))
-		return false;
-	m_GrayTarget = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("PostProcessing");
-	m_GrayTarget->SetPos(Vector3(200.f, 0.f, 0.f));
-	m_GrayTarget->SetScale(Vector3(100.f, 100.f, 1.f));
-	m_GrayTarget->SetDebugRender(false);
-
 	// Animation Editor 용 Render Target 
 	if (!CResourceManager::GetInst()->CreateTarget("AnimationEditorRenderTarget",
 		RS.Width, RS.Height, DXGI_FORMAT_R32G32B32A32_FLOAT))
@@ -320,11 +313,24 @@ bool CRenderManager::Init()
 		RS.Width, RS.Height, DXGI_FORMAT_R32G32B32A32_FLOAT))
 		return false;
 
+	// Outline Target
 	m_OutlineTarget = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("OutlineRenderTarget");
 	m_OutlineTarget->SetPos(Vector3(800.f, 0.f, 0.f));
 	m_OutlineTarget->SetScale(Vector3(300.f, 300.f, 1.f));
 	m_OutlineTarget->SetDebugRender(true);
 
+	// Transparent Target : FinalScreen, Normal, Depth, Outline
+	GBufferTarget = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("FinalScreen");
+	m_vecTransparent.push_back(GBufferTarget);
+
+	GBufferTarget = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("GBuffer1");
+	m_vecTransparent.push_back(GBufferTarget);
+
+	GBufferTarget = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("GBuffer2");
+	m_vecTransparent.push_back(GBufferTarget);
+
+	GBufferTarget = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("GBufferOutlineInfo");
+	m_vecTransparent.push_back(GBufferTarget);
 
 	// Map 출력용 변수들
 
@@ -487,14 +493,8 @@ void CRenderManager::Render()
 	// 조명 누적버퍼를 만들어낸다.
 	RenderLightAcc();
 
-	// 외곽선을 그린다.
-	RenderOutLine();
-
 	// 조명 누적버퍼와 GBuffer를 이용하여 최종화면을 만들어낸다.
 	RenderLightBlend();
-
-	// 조명처리된 최종 화면을 백버퍼에 그려낸다.
-	RenderFinalScreen();
 
 	// 반투명한 오브젝트들의 인스턴싱 정보 생성
 	RenderTransparentInstancingInfo();
@@ -502,6 +502,13 @@ void CRenderManager::Render()
 	// 반투명한 오브젝트를 그린다.
 	RenderTransparent();
 
+	// 외곽선을 그린다.
+	RenderOutLine();
+
+	// 반투명 오브젝트 + 조명처리 + 외곽선 처리된 최종 화면을 백버퍼에 그려낸다.
+	RenderFinalScreen();
+
+	// 흑백 효과
 	if (m_Gray)
 	{
 		RenderGray();
@@ -597,16 +604,14 @@ void CRenderManager::RenderSkyBox()
 {
 	CSharedPtr<CGameObject> SkyObj = CSceneManager::GetInst()->GetScene()->GetSkyObject();
 
-	if (m_Gray)
-	{
-		m_GrayTarget->ClearTarget();
-		m_GrayTarget->SetTarget();
-	}
+	CRenderTarget* FinalScreenTarget = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("FinalScreen");
+
+	FinalScreenTarget->ClearTarget();
+	FinalScreenTarget->SetTarget(nullptr);
+
 	SkyObj->Render();
-	if (m_Gray)
-	{
-		m_GrayTarget->ResetTarget();
-	}
+
+	FinalScreenTarget->ResetTarget();
 }
 
 void CRenderManager::RenderShadowMap()
@@ -849,9 +854,6 @@ void CRenderManager::RenderLightBlend()
 {
 	CRenderTarget* FinalScreenTarget = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("FinalScreen");
 
-	// Light 혼합을 할 때에도, RenderTarget 을 바꿔서 처리한다.
-	FinalScreenTarget->ClearTarget();
-
 	FinalScreenTarget->SetTarget(nullptr);
 
 	m_vecGBuffer[0]->SetTargetShader(14);
@@ -860,7 +862,6 @@ void CRenderManager::RenderLightBlend()
 	m_vecLightBuffer[1]->SetTargetShader(19);
 	m_vecLightBuffer[2]->SetTargetShader(20);
 	m_ShadowMapTarget->SetTargetShader(22);
-	m_OutlineTarget->SetTargetShader(23);
 
 	m_LightBlendShader->SetShader();
 
@@ -890,7 +891,6 @@ void CRenderManager::RenderLightBlend()
 	m_vecLightBuffer[1]->ResetTargetShader(19);
 	m_vecLightBuffer[2]->ResetTargetShader(20);
 	m_ShadowMapTarget->ResetTargetShader(22);
-	m_OutlineTarget->ResetTargetShader(23);
 
 	FinalScreenTarget->ResetTarget();
 }
@@ -900,13 +900,16 @@ void CRenderManager::RenderOutLine()
 	m_OutlineTarget->ClearTarget();
 	m_OutlineTarget->SetTarget(nullptr);
 
-	// Diffuse, Normal, Depth, OutlineInfo
-	m_vecGBuffer[0]->SetTargetShader(13);
+	// ScreenColor, Normal, Depth, OutlineInfo
+	CRenderTarget* FinalScreenTarget = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("FinalScreen");
+
+	FinalScreenTarget->SetTargetShader(13);
 	m_vecGBuffer[1]->SetTargetShader(14);
 	m_vecGBuffer[2]->SetTargetShader(15);
 	m_vecGBuffer[6]->SetTargetShader(16);
-
+	
 	m_DepthDisable->SetState();
+
 	m_OutlineCBuffer->UpdateCBuffer();
 	m_OutLineShader->SetShader();
 
@@ -917,30 +920,43 @@ void CRenderManager::RenderOutLine()
 
 	CDevice::GetInst()->GetContext()->Draw(4, 0);
 
-	m_DepthDisable->ResetState();
-
-	m_vecGBuffer[0]->SetTargetShader(13);
+	FinalScreenTarget->ResetTargetShader(13);
 	m_vecGBuffer[1]->ResetTargetShader(14);
 	m_vecGBuffer[2]->ResetTargetShader(15);
 	m_vecGBuffer[6]->ResetTargetShader(16);
 
 	m_OutlineTarget->ResetTarget();
+
+	m_DepthDisable->ResetState();
 }
 
 void CRenderManager::RenderTransparent()
 {
+	// z소팅
 	if (m_RenderLayerList[2]->RenderList.size() >= 2)
 	{
 		m_RenderLayerList[2]->RenderList.sort(CRenderManager::SortZ);
 	}
 
-	CRenderTarget* GrayTarget = nullptr;
-	if (m_Gray)
+	// 렌더타겟 설정
+	std::vector<ID3D11RenderTargetView*>	vecTarget;
+	std::vector<ID3D11RenderTargetView*>	vecPrevTarget;
+	ID3D11DepthStencilView* PrevDepthTarget = nullptr;
+
+	size_t	TransparentBufferSize = m_vecTransparent.size();
+
+	vecPrevTarget.resize(TransparentBufferSize);
+
+	for (size_t i = 0; i < TransparentBufferSize; ++i)
 	{
-		m_GrayTarget->SetTarget(nullptr);
+		vecTarget.push_back(m_vecTransparent[i]->GetTargetView());
 	}
 
-	m_AlphaBlend->SetState();
+	CDevice::GetInst()->GetContext()->OMGetRenderTargets((unsigned int)TransparentBufferSize,
+		&vecPrevTarget[0], &PrevDepthTarget);
+
+	CDevice::GetInst()->GetContext()->OMSetRenderTargets((unsigned int)TransparentBufferSize,
+		&vecTarget[0], PrevDepthTarget);
 
 	// 모든 Light정보 구조화 버퍼에 담아서 넘긴다.
 	CSceneManager::GetInst()->GetScene()->GetLightManager()->SetForwardRenderShader();
@@ -957,11 +973,15 @@ void CRenderManager::RenderTransparent()
 	RenderTransparentInstancing();
 
 	CSceneManager::GetInst()->GetScene()->GetLightManager()->ResetForwardRenderShader();
-	m_AlphaBlend->ResetState();
 
-	if (m_Gray)
+	// 타겟 초기화
+	CDevice::GetInst()->GetContext()->OMSetRenderTargets((unsigned int)TransparentBufferSize,
+		&vecPrevTarget[0], PrevDepthTarget);
+
+	SAFE_RELEASE(PrevDepthTarget);
+	for (size_t i = 0; i < TransparentBufferSize; ++i)
 	{
-		m_GrayTarget->ResetTarget();
+		SAFE_RELEASE(vecPrevTarget[i]);
 	}
 }
 
@@ -970,11 +990,7 @@ void CRenderManager::RenderFinalScreen()
 	CRenderTarget* FinalScreenTarget = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("FinalScreen");
 
 	FinalScreenTarget->SetTargetShader(21);
-
-	if (m_Gray)
-	{
-		m_GrayTarget->SetTarget(nullptr);
-	}
+	m_OutlineTarget->SetTargetShader(23);
 
 	m_LightBlendRenderShader->SetShader();
 
@@ -990,12 +1006,8 @@ void CRenderManager::RenderFinalScreen()
 
 	m_DepthDisable->ResetState();
 
+	m_OutlineTarget->ResetTargetShader(23);
 	FinalScreenTarget->ResetTargetShader(21);
-
-	if (m_Gray)
-	{
-		m_GrayTarget->ResetTarget();
-	}
 }
 
 void CRenderManager::RenderAnimationEditor()
@@ -1386,6 +1398,8 @@ void CRenderManager::RenderTransparentInstancing()
 				((CAnimationMesh*)m_RenderLayerList[2]->m_vecInstancing[i]->Mesh)->SetBoneShader();
 			}
 
+			m_AlphaBlendMRT->SetState();
+
 			m_Transparent3DInstancingShader->SetShader();
 
 			m_RenderLayerList[2]->m_vecInstancing[i]->CBuffer->UpdateCBuffer();
@@ -1396,6 +1410,7 @@ void CRenderManager::RenderTransparentInstancing()
 
 			m_RenderLayerList[2]->m_vecInstancing[i]->Buffer->ResetShader();
 
+			m_AlphaBlendMRT->ResetState();
 
 			if (m_RenderLayerList[2]->m_vecInstancing[i]->Animation)
 			{
@@ -1417,14 +1432,15 @@ bool CRenderManager::Sortlayer(RenderLayer* Src, RenderLayer* Dest)
 
 bool CRenderManager::SortZ(CSceneComponent* Src, CSceneComponent* Dest)
 {
-	return Src->GetViewZ() < Dest->GetViewZ();
+	return Src->GetViewZ() > Dest->GetViewZ();
 }
 
 void CRenderManager::RenderGray()
 {
-	m_GrayTarget->SetTargetShader(21);
-	m_DepthDisable->SetState();
+	CRenderTarget* FinalScreenTarget = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("FinalScreen");
+	FinalScreenTarget->SetTargetShader(21);
 
+	m_DepthDisable->SetState();
 	m_GrayShader->SetShader();
 
 	UINT Offset = 0;
@@ -1435,7 +1451,7 @@ void CRenderManager::RenderGray()
 	CDevice::GetInst()->GetContext()->Draw(4, 0);
 
 	m_DepthDisable->ResetState();
-	m_GrayTarget->ResetTargetShader(21);
+	FinalScreenTarget->ResetTargetShader(21);
 }
 
 /*

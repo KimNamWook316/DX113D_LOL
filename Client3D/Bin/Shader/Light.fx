@@ -25,6 +25,7 @@ Texture2DMS<float4> g_LightEmvTex : register(t20);
 
 Texture2DMS<float4> g_LightBlendTex : register(t21);
 Texture2DMS<float4> g_ShadowMapTex : register(t22);
+
 Texture2DMS<float4> g_OutlineTex : register(t23);
 
 cbuffer ShadowCBuffer : register(b10)
@@ -230,12 +231,13 @@ PSOutput_Single LightBlendPS(VS_OUTPUT_LIGHTACC input)
 		}
 	}
 
-	float4 OutlineColor = g_OutlineTex.Load(TargetPos, 0);
+	//float4 OutlineColor = g_OutlineTex.Load(TargetPos, 0);
 
-	output.Color.rgb = lerp(GBufferDiffuseColor.rgb * LightDiffuseColor.rgb +
-		LightSpecularColor.rgb + LightEmissiveColor.rgb, OutlineColor.rgb, OutlineColor.a);
+	output.Color.rgb = GBufferDiffuseColor.rgb * LightDiffuseColor.rgb + LightSpecularColor.rgb + LightEmissiveColor.rgb;
+ //    lerp(GBufferDiffuseColor.rgb * LightDiffuseColor.rgb +
+ //		LightSpecularColor.rgb + LightEmissiveColor.rgb, OutlineColor.rgb, OutlineColor.a);
 
-    output.Color.a = GBufferDiffuseColor.a;
+	output.Color.a = GBufferDiffuseColor.a;
     
     return output;
 }
@@ -257,9 +259,16 @@ PSOutput_Single LightBlendRenderPS(VS_OUTPUT_LIGHTACC input)
     
     if (LightBlendColor.a == 0.f)
         clip(-1);
-    
-    output.Color = LightBlendColor;
-    
+
+	output.Color = LightBlendColor;
+
+	float4 OutlineColor = g_OutlineTex.Load(TargetPos, 0);
+
+    if (OutlineColor.a > 0.f)
+	{
+		output.Color.rgb = lerp(LightBlendColor.rgb, OutlineColor.rgb, OutlineColor.a);
+	}
+
     return output;
 }
 
