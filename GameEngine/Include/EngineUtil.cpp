@@ -83,3 +83,187 @@ std::string CEngineUtil::FilterFileName(const std::string& FullPath)
 
 	return FileName;
 }
+
+std::string CEngineUtil::CollisionChannelToString(Collision_Channel eChannnel)
+{
+	std::string Out;
+
+	switch (eChannnel)
+	{
+	case Collision_Channel::Object:
+		Out = "Object";
+		break;
+	case Collision_Channel::Player:
+		Out = "Player";
+		break;
+	case Collision_Channel::Monster:
+		Out = "Monster";
+		break;
+	case Collision_Channel::PlayerAttack:
+		Out = "PlayerAttack";
+		break;
+	case Collision_Channel::MonsterAttack:
+		Out = "MonsterAttack";
+		break;
+	case Collision_Channel::Custom1:
+		Out = "Custom1";
+		break;
+	case Collision_Channel::Custom2:
+		Out = "Custom2";
+		break;
+	case Collision_Channel::Custom3:
+		Out = "Custom3";
+		break;
+	case Collision_Channel::Custom4:
+		Out = "Custom4";
+		break;
+	case Collision_Channel::Custom5:
+		Out = "Custom5";
+		break;
+	case Collision_Channel::Custom6:
+		Out = "Custom6";
+		break;
+	case Collision_Channel::Custom7:
+		Out = "Custom7";
+		break;
+	case Collision_Channel::Custom8:
+		Out = "Custom8";
+		break;
+	case Collision_Channel::Custom9:
+		Out = "Custom9";
+		break;
+	case Collision_Channel::Custom10:
+		Out = "Custom10";
+		break;
+	case Collision_Channel::Custom11:
+		Out = "Custom11";
+		break;
+	case Collision_Channel::Custom12:
+		Out = "Custom12";
+		break;
+	case Collision_Channel::Custom13:
+		Out = "Custom13";
+		break;
+	case Collision_Channel::Custom14:
+		Out = "Custom14";
+		break;
+	case Collision_Channel::Custom15:
+		Out = "Custom15";
+		break;
+	case Collision_Channel::Custom16:
+		Out = "Custom16";
+		break;
+	default:
+		assert(false);
+		break;
+	}
+
+	return Out;
+}
+
+Collision_Channel CEngineUtil::StringToCollisionChannel(const std::string& String)
+{
+	if (String == "Object")
+	{
+		return Collision_Channel::Object;
+	}
+	else if (String == "Player")
+	{
+		return Collision_Channel::Player;
+	}
+	else if (String == "PlayerAttack")
+	{
+		return Collision_Channel::PlayerAttack;
+	}
+	else if (String == "Monster")
+	{
+		return Collision_Channel::Monster;
+	}
+	else if (String == "MonsterAttack")
+	{
+		return Collision_Channel::MonsterAttack;
+	}
+	else if (String == "Custom1")
+	{
+		return Collision_Channel::Custom1;
+	}
+	else if (String == "Custom2")
+	{
+		return Collision_Channel::Custom2;
+	}
+	else if (String == "Custom3")
+	{
+		return Collision_Channel::Custom3;
+	}
+	else if (String == "Custom4")
+	{
+		return Collision_Channel::Custom4;
+	}
+	else if (String == "Custom5")
+	{
+		return Collision_Channel::Custom5;
+	}
+	else if (String == "Custom6")
+	{
+		return Collision_Channel::Custom6;
+	}
+	else if (String == "Custom7")
+	{
+		return Collision_Channel::Custom7;
+	}
+	else if (String == "Custom8")
+	{
+		return Collision_Channel::Custom8;
+	}
+	else if (String == "Custom9")
+	{
+		return Collision_Channel::Custom9;
+	}
+	else if (String == "Custom10")
+	{
+		return Collision_Channel::Custom10;
+	}
+	else if (String == "Custom11")
+	{
+		return Collision_Channel::Custom11;
+	}
+	else if (String == "Custom12")
+	{
+		return Collision_Channel::Custom12;
+	}
+	else if (String == "Custom13")
+	{
+		return Collision_Channel::Custom14;
+	}
+	else if (String == "Custom14")
+	{
+		return Collision_Channel::Custom14;
+	}
+	else if (String == "Custom15")
+	{
+		return Collision_Channel::Custom15;
+	}
+	else if (String == "Custom16")
+	{
+		return Collision_Channel::Custom16;
+	}
+	return (Collision_Channel)(-1);
+}
+
+Collision_Interaction CEngineUtil::StringToCollisionInteraction(const std::string& String)
+{
+	if (String == "TRUE")
+	{
+		return Collision_Interaction::Collision;
+	}
+	else
+	{
+		return Collision_Interaction::Ignore;
+	}
+}
+
+std::string CEngineUtil::BoolToString(bool Bool)
+{
+	std::string Ret = Bool ? "TRUE" : "FALSE";
+	return Ret;
+}

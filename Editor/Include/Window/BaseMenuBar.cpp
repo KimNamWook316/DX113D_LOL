@@ -5,6 +5,7 @@
 #include "../Widget/BehaviorTreeMenu.h"
 #include "../Widget/ResourceMenu.h"
 #include "../Widget/UtilMenuBar.h"
+#include "../Widget/DataMenu.h"
 
 CBaseMenuBar::CBaseMenuBar()
 {
@@ -27,6 +28,7 @@ bool CBaseMenuBar::Init()
 	m_BehaviorTreeBeginMenu = AddWidget<CBehaviorTreeMenu>("BehaviorTree");
 	m_ResourceBeginMenu = AddWidget<CResourceMenu>("Resource");
 	m_UtilBeginMenu = AddWidget<CUtilMenuBar>("Util");
+	m_DataBeginMenu = AddWidget<CDataMenu>("Data");
 
 	return true;
 }

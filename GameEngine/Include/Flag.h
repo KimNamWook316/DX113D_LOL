@@ -372,8 +372,3 @@ enum class Building_Type
 	Inhibitor,
 	Nexus
 };
-
-enum DecoratorNode
-{
-	Negate,
-};

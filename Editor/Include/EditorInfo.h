@@ -17,6 +17,7 @@
 #define FBX_CONVERTOR						"FBXConverter"
 #define TOOL								"Tool"
 #define BEHAVIORTREE_WINDOW					"BehaviorTreeWindow"
+#define	COLLISION_PROFILE					"CollisionProfileWindow"
 
 #define DIRECTORY_IMAGE						"DirectoryImage"
 #define FILE_IMAGE							"FileImage"
