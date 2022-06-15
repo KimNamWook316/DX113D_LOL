@@ -254,7 +254,7 @@ bool CCollisionManager::LoadProfileFromCSVFullPath(const char* FullPath)
 
 		CreateProfile(ProfileName, Channel, true);
 
-		for (int i = 1; i <= 15; ++i)
+		for (int i = 1; i <= (int)Collision_Channel::Max; ++i)
 		{
 			Collision_Channel InteractionChannel = (Collision_Channel)(i - 1);
 			SetCollisionState(ProfileName, InteractionChannel, CEngineUtil::StringToCollisionInteraction((*iterCSV->second)[i]));

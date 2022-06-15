@@ -231,10 +231,10 @@
     <ClCompile Include="Widget\BuildingComponentWidget.cpp">
       <Filter>02. Editor\02. Widget\01. Inspector\01. SceneComponent</Filter>
     </ClCompile>
-	<ClCompile Include="Window\EffectDisplayWindow.cpp">
+    <ClCompile Include="Window\EffectDisplayWindow.cpp">
       <Filter>02. Editor\01. Window\3. Particle</Filter>
     </ClCompile>
-	<ClCompile Include="Widget\DataMenu.cpp">
+    <ClCompile Include="Widget\DataMenu.cpp">
       <Filter>02. Editor\02. Widget\03. MenuBar</Filter>
     </ClCompile>
     <ClCompile Include="Window\CollisionProfileEditor.cpp">
@@ -394,6 +394,15 @@
     </ClInclude>
     <ClInclude Include="Widget\BuildingComponentWidget.h">
       <Filter>02. Editor\02. Widget\01. Inspector\01. SceneComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Window\CollisionProfileEditor.h">
+      <Filter>02. Editor\01. Window\5. CollisionProfile</Filter>
+    </ClInclude>
+    <ClInclude Include="Window\EffectDisplayWindow.h">
+      <Filter>02. Editor\01. Window\3. Particle</Filter>
+    </ClInclude>
+    <ClInclude Include="Widget\DataMenu.h">
+      <Filter>02. Editor\02. Widget\03. MenuBar</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
