@@ -8,6 +8,13 @@
 *.suo
 *.idb
 *.ini
+*.gobj
+*.anim
+*.mtrl
+*.msh
+*.bne
+*.sqc
+*.cmp
 Client3D/Bin/Texture/
 Client3D/Bin/Mesh/
 Client3D/Bin/Sound/
