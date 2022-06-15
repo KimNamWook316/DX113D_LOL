@@ -30,22 +30,44 @@ bool CMaterialManager::Init()
 
 	m_CBuffer->Init();
 
+	// Color Material
 	CreateMaterial<CMaterial>("Color");
 
 	CSharedPtr<CMaterial>	Mtrl = FindMaterial("Color");
 
 	Mtrl->SetShader("ColorMeshShader");
 
+	const char* Practice = "hellos";
+	size_t length = strlen(Practice);
+
+	// std::string_view ExtractName(std::string_view fileName)
+	// {
+	// 	return fileName.substr(fileName.find('r')));
+	// };
+
+	// ParticleEditorBaseGround Material
+	CreateMaterial<CMaterial>("ParticleEditorBaseGround");
+
+	Mtrl = FindMaterial("ParticleEditorBaseGround");
+
+	Mtrl->SetShader("Mesh2DShader");
+
+	CTexture* Texture = CResourceManager::GetInst()->FindTexture("DefaultBurnTexture");
+
+	Mtrl->AddTexture(0, (int)Buffer_Shader_Type::Pixel, "DefaultBurnTexture", Texture);
+
+	// Base Texture Material
 	CreateMaterial<CMaterial>("BaseTexture");
 
 	Mtrl = FindMaterial("BaseTexture");
 
 	Mtrl->SetShader("Mesh2DShader");
 
-	CTexture* Texture = CResourceManager::GetInst()->FindTexture("EngineTexture");
+	Texture = CResourceManager::GetInst()->FindTexture("EngineTexture");
 
 	Mtrl->AddTexture(0, (int)Buffer_Shader_Type::Pixel, "EngineTexture", Texture);
 
+	// Sky Material
 	CreateMaterial<CMaterial>("SkyMaterial");
 
 	Mtrl = FindMaterial("SkyMaterial");
@@ -54,6 +76,7 @@ bool CMaterialManager::Init()
 
 	Mtrl->AddTexture(20, (int)Buffer_Shader_Type::Pixel, "DefaultSky", TEXT("Sky/Sky.dds"));
 
+	// Default Decal Material
 	CreateMaterial<CMaterial>("DefaultDecal");
 
 	Mtrl = FindMaterial("DefaultDecal");
@@ -76,6 +99,7 @@ bool CMaterialManager::Init()
 
 	Mtrl->SetShader("DecalDebugShader");
 
+	// BillBoard Material
 	CreateMaterial<CMaterial>("Billboard");
 
 	Mtrl = FindMaterial("Billboard");

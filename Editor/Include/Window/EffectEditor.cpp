@@ -135,6 +135,24 @@ bool CEffectEditor::Init()
     m_MaterialName->SetHintText("Current Material");
     m_MaterialName->SetDropCallBack<CEffectEditor>(this, &CEffectEditor::OnDropMaterialToParticle);
 
+    // BaseTexture
+    Tree = AddWidget<CIMGUITree>("Ground Texture");
+    m_GroundTextureScale =  Tree->AddWidget<CIMGUISliderFloat>("Ground Texture", 100.f, 20.f);
+    m_GroundTextureScale->SetCallBack<CEffectEditor>(this, &CEffectEditor::OnEditBaseGroundSize);
+    m_GroundTextureScale->SetMin(10.f);
+    m_GroundTextureScale->SetMax(800.f);
+
+    // Bounce
+    Tree = AddWidget<CIMGUITree>("Bounce");
+    m_IsBounce = Tree->AddWidget<CIMGUICheckBox>("Bounce", 80.f);
+    m_IsBounce->AddCheckInfo("Bounce");
+    m_IsBounce->SetCallBackLabel<CEffectEditor>(this, &CEffectEditor::OnIsBounceEdit);
+
+    m_BounceResistance = Tree->AddWidget<CIMGUISliderFloat>("Bounce Resist", 100.f, 20.f);
+    m_BounceResistance->SetCallBack<CEffectEditor>(this, &CEffectEditor::OnEditBounceResistance);
+    m_BounceResistance->SetMin(0.01f);
+    m_BounceResistance->SetMax(0.99f);
+
     // Movement
     Tree = AddWidget<CIMGUITree>("Movement");
 
@@ -280,6 +298,30 @@ void CEffectEditor::OnRestartParticleComponentButton()
 
     // IMGUI가 Paritlc Object 정보 반영하게 하기 
     SetIMGUIReflectObjectCamera();
+}
+
+void CEffectEditor::OnEditBaseGroundSize(float Size)
+{
+    m_GroundTextureScale->SetValue(Size);
+    m_BaseGroundObject->SetWorldScale(Size, Size, 1.f);
+}
+
+void CEffectEditor::OnIsBounceEdit(const char*, bool Enable)
+{
+    if (!m_ParticleClass)
+        return;
+
+    m_ParticleClass->SetBounceEnable(Enable);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetBounceEnable(Enable);
+}
+
+void CEffectEditor::OnEditBounceResistance(float Resist)
+{
+    if (!m_ParticleClass)
+        return;
+
+    m_ParticleClass->SetBounceResistance(Resist);
+   dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetBounceResist(Resist);
 }
 
 void CEffectEditor::OnSpawnTimeMaxEdit(float Num)
@@ -743,6 +785,13 @@ void CEffectEditor::SetGameObjectReady()
         m_BaseGroundObject->AddWorldRotationX(90.f);
         m_BaseGroundObject->AddWorldPos(0.f, -30.f, 0.f);
         m_BaseGroundObject->ExcludeFromSceneSave();
+
+        CSpriteComponent* BaseGroundComponent = dynamic_cast<CSpriteComponent*>(m_BaseGroundObject->GetRootComponent());
+        BaseGroundComponent->SetMaterial(CResourceManager::GetInst()->FindMaterial("ParticleEditorBaseGround"));
+
+        // BaseGround Object 의 크기를 IMGUI 에 반영하기
+        const Vector3& WorldScale = m_BaseGroundObject->GetWorldScale();
+        m_GroundTextureScale->SetValue(WorldScale.x);
     }
 }
 
@@ -786,8 +835,11 @@ void CEffectEditor::SetBasicDefaultParticleInfos(CParticle* Particle)
     // IsPauseResume -> 무조건 Enable true 로 시작 세팅한다.
     Particle->SetGravity(true);
     Particle->SetMove(true);
-    // Particle->SetApplyRandom(true);
     Particle->Enable(true);
+
+    // Bounce
+    Particle->SetBounceEnable(false);
+    Particle->SetBounceResistance(0.98f);
 }
 
 void CEffectEditor::SetStartEditing()
@@ -955,8 +1007,11 @@ void CEffectEditor::SetIMGUIReflectParticle(CParticle* Particle)
 
     m_IsGravityEdit->SetCheck(0, Particle->GetGravity());
     m_IsMoveEdit->SetCheck(0, Particle->GetMove());
-    // m_IsRandomMoveEdit->SetCheck(0, Particle->GetApplyRandom() == 1 ? true : false);
     m_IsPauseResumeToggle->SetCheck(0, true);
+
+    // Bounce
+    m_IsBounce->SetCheck(0, Particle->IsBounceEnable() == 1 ? true : false);
+    m_BounceResistance->SetValue(Particle->GetBounceResistance());
 }
 
 void CEffectEditor::SetIMGUIReflectObjectCamera()

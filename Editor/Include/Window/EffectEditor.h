@@ -53,6 +53,9 @@ private:
     // Material
     class CIMGUITextInput* m_MaterialName;
 
+    // Ground Texture
+    class CIMGUISliderFloat* m_GroundTextureScale;
+
     class CIMGUICheckBox* m_IsMoveEdit;
     class CIMGUICheckBox* m_IsGravityEdit;
     // class CIMGUICheckBox* m_IsRandomMoveEdit;
@@ -64,6 +67,10 @@ private:
     class CIMGUISliderFloat* m_RotateSpeedSliderBar;
     class CIMGUICheckBox* m_IsZoomEdit;
     class CIMGUISliderFloat* m_ZoomSpeedSliderBar;
+
+    // Bounce Effect
+    class CIMGUICheckBox* m_IsBounce;
+    class CIMGUISliderFloat* m_BounceResistance; // 마찰력
 
     // 카메라의 Y 축 위치 (위로 갈지, 아래로 갈지 조정)
     class CIMGUISliderFloat* m_CameraYOffsetBar;
@@ -108,6 +115,12 @@ private:
     void OnSaveParticleObjectButton();
     void OnLoadParticleObjectButton();
     void OnRestartParticleComponentButton();
+
+    // Base Ground Size
+    void OnEditBaseGroundSize(float Speed);
+
+    void OnIsBounceEdit(const char*, bool);
+    void OnEditBounceResistance(float Speed);
 
     void OnSpawnTimeMaxEdit(float Num);
 

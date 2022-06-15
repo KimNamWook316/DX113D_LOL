@@ -123,7 +123,28 @@ public:
 	{
 		return m_BufferData.MoveAngle;
 	}
+
+	int IsBounceEnable() const
+	{
+		return m_BufferData.ParticleBounce;
+	}
+	
+	float GetParticleBounceResist() const
+	{
+		return m_BufferData.ParticleBounceResistance;
+	}
+
 public:
+	void SetBounceEnable(int Bounce)
+	{
+		m_BufferData.ParticleBounce = Bounce;
+	}
+
+	void SetBounceResist(float Bounce)
+	{
+		m_BufferData.ParticleBounceResistance = Bounce;
+	}
+
 	void SetSpawnEnable(unsigned int Count)
 	{
 		m_BufferData.SpawnEnable = Count;

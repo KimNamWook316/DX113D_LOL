@@ -198,7 +198,25 @@ public:
 	{
 		return m_CBuffer->GetMoveAngle();
 	}
+
+	int IsBounceEnable() const
+	{
+		return m_CBuffer->IsBounceEnable();
+	}
+
+	float GetBounceResistance() const
+	{
+		return m_CBuffer->GetParticleBounceResist();
+	}
 public:
+	void SetBounceEnable(bool Enable)
+	{
+		m_CBuffer->SetBounceEnable(Enable);
+	}
+	void SetBounceResistance(float Resist)
+	{
+		m_CBuffer->SetBounceResist(Resist);
+	}
 	void SetMaterial(CMaterial* Material)
 	{
 		m_Material = Material;

@@ -401,6 +401,7 @@ struct	ParticleCBuffer
 {
 	unsigned int	SpawnEnable;	// 현재 파티클 생성 여부
 	Vector3	StartMin;		// 파티클이 생성될 영역의 Min
+	
 	Vector3	StartMax;		// 파티클이 생성될 영역의 Max
 	unsigned int	SpawnCountMax;	// 생성될 파티클의 최대
 	
@@ -411,7 +412,6 @@ struct	ParticleCBuffer
 	float	LifeTimeMax;	// 생성될 파티클이 살아있을 최대시간
 	
 	Vector4	ColorMin;		// 생성될 파티클의 색상 Min
-	
 	Vector4	ColorMax;		// 생성될 파티클의 색상 Max
 	
 	float	SpeedMin;		// 파티클의 최소 이동속도
@@ -423,12 +423,12 @@ struct	ParticleCBuffer
 	int		Is2D;			// 2D용 파티클인지
 	
 	Vector3	MoveAngle;	// 이동을 한다면 기준이 될 방향으로부터 x, y, z 에 저장된 각도만큼 틀어진 랜덤한 방향을 구한다.
-	float Empty;
+	int ParticleBounce;
 	
 	Vector3 RotationAngle;
-	float	Empty1;
-
-	// int ApplyRandom;
+	float	ParticleBounceResistance;
+	// int     ParticleBounce;
+	// float	 ParticleBounceResistance;
 };
 
 struct ParticleInfo
@@ -437,10 +437,13 @@ struct ParticleInfo
 	Vector3	Dir;
 	float	Speed;
 	float	LifeTime;
+
 	float	LifeTimeMax;
 	int		Alive;
 	float	FallTime;
 	float	FallStartY;
+	
+	float  InitWorldPosY;
 };
 
 struct ParticleInfoShared
