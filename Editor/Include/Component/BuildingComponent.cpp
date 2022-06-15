@@ -1,5 +1,7 @@
 
 #include "BuildingComponent.h"
+#include "../LoLBuildingManager.h"
+#include "GameObject/GameObject.h"
 
 CBuildingComponent::CBuildingComponent() :
 	m_TowerOrder(1)
@@ -35,6 +37,15 @@ bool CBuildingComponent::Load(FILE* File)
 	fread(&m_TowerOrder, sizeof(int), 1, File);
 
 	CSceneComponent::Load(File);
+
+	// 적팀 건물 또는 아군 건물의 Root Object이다
+	if (m_BuildingType == Building_Type::Nexus)
+	{
+		if (m_Object->IsEnemy())
+			CLoLBuildingManager::GetInst()->SetEnemyNexus(m_Object);
+		else
+			CLoLBuildingManager::GetInst()->SetFriendNexus(m_Object);
+	}
 
 	return true;
 }

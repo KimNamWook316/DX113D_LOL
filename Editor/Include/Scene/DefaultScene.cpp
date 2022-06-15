@@ -10,6 +10,8 @@
 #include "Component/AnimationMeshComponent.h"
 #include "Component/StaticMeshComponent.h"
 
+#include "../LoLDataManager.h"
+
 CDefaultScene::CDefaultScene()  :
     m_PickObj(nullptr)
 {
@@ -18,11 +20,14 @@ CDefaultScene::CDefaultScene()  :
 
 CDefaultScene::~CDefaultScene()
 {
+    CLoLDataManager::DestroyInst();
 }
 
 bool CDefaultScene::Init()
 {
     CreateMaterial();
+
+    CLoLDataManager::GetInst()->Init();
 
     /*
     if (!LoadAnimationSequence2D())

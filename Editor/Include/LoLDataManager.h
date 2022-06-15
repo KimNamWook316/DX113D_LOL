@@ -15,6 +15,7 @@ public:
 private:
 	void ReadChampionNotify();
 	void ReadChampionSkillInfo();
+	void ReadMonsterNotify();
 
 public:
 	void SetChampionNotify(class CAnimationSequenceInstance* Instance, const std::string& ChampionName);

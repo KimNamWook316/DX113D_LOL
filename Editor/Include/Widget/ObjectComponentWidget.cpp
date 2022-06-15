@@ -27,16 +27,16 @@ bool CObjectComponentWidget::Init()
 	CIMGUIWidgetList::Init();
 	
 	// AddWidget
-	CIMGUIText* Text = AddWidget<CIMGUIText>("Text");
-	Text->SetText("Object Component Name");
+	m_ComponentTypeText = AddWidget<CIMGUIText>("Text");
+	m_ComponentTypeText->SetText("Object Component Name");
 
-	AddWidget<CIMGUIDummy>("Dummy", 50.f);
 	AddWidget<CIMGUISameLine>("Line");
 
 	m_EnableCheckBox = AddWidget<CIMGUICheckBox>("ObjEnable");
 	m_EnableCheckBox->AddCheckInfo("Enable");
 
 	m_NameInput = AddWidget<CIMGUITextInput>("ObjectComponentNameInput");
+	m_NameInput->SetHideName(true);
 	AddWidget<CIMGUISameLine>("Line");
 	m_RenameButton = AddWidget<CIMGUIButton>("Rename", 0.f, 0.f);
 

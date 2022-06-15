@@ -167,6 +167,14 @@
   <ItemGroup>
     <ClCompile Include="AnimationInstanceConvertThread.cpp" />
     <ClCompile Include="Component\BuildingComponent.cpp" />
+    <ClCompile Include="Component\ChampionAIComponent.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="Component\LoLDataComponent.cpp" />
+    <ClCompile Include="Component\MinionAIComponent.cpp" />
     <ClCompile Include="EditorManager.cpp" />
     <ClCompile Include="EditorUtil.cpp" />
     <ClCompile Include="GraphEditor.cpp" />
@@ -183,8 +191,15 @@
     <ClCompile Include="Widget\AnimationMeshWidget.cpp" />
     <ClCompile Include="Widget\BehaviorTreeMenu.cpp" />
     <ClCompile Include="Widget\BuildingComponentWidget.cpp" />
+    <ClCompile Include="Widget\ChampionAIComponentWidget.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="Widget\ColliderComponentWidget.cpp" />
     <ClCompile Include="Widget\ColliderSphereWidget.cpp" />
+    <ClCompile Include="Widget\MinionAIComponentWidget.cpp" />
     <ClCompile Include="Widget\ResourceMenu.cpp" />
     <ClCompile Include="Widget\GameObjectWidget.cpp" />
     <ClCompile Include="Widget\LandScapeWidget.cpp" />
@@ -223,6 +238,14 @@
   <ItemGroup>
     <ClInclude Include="AnimationInstanceConvertThread.h" />
     <ClInclude Include="Component\BuildingComponent.h" />
+    <ClInclude Include="Component\ChampionAIComponent.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="Component\LoLDataComponent.h" />
+    <ClInclude Include="Component\MinionAIComponent.h" />
     <ClInclude Include="EditorInfo.h" />
     <ClInclude Include="EditorManager.h" />
     <ClInclude Include="EditorUtil.h" />
@@ -241,11 +264,18 @@
     <ClInclude Include="Widget\AnimationMeshWidget.h" />
     <ClInclude Include="Widget\BehaviorTreeMenu.h" />
     <ClInclude Include="Widget\BuildingComponentWidget.h" />
+    <ClInclude Include="WIdget\ChampionAIComponentWidget.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="Widget\ColliderComponentWidget.h" />
     <ClInclude Include="Widget\ColliderSphereWidget.h" />
     <ClInclude Include="Widget\GameObjectWidget.h" />
     <ClInclude Include="Widget\LandScapeWidget.h" />
     <ClInclude Include="Widget\LightComponentWidget.h" />
+    <ClInclude Include="Widget\MinionAIComponentWidget.h" />
     <ClInclude Include="Widget\ObjectComponentWidget.h" />
     <ClInclude Include="Widget\ParticleComponentWidget.h" />
     <ClInclude Include="Widget\ResourceMenu.h" />

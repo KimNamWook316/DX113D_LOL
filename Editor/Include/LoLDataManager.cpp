@@ -22,6 +22,7 @@ void CLoLDataManager::Init()
 {
 	ReadChampionNotify();
 	ReadChampionSkillInfo();
+	ReadMonsterNotify();
 }
 
 void CLoLDataManager::ReadChampionNotify()
@@ -45,6 +46,18 @@ void CLoLDataManager::ReadChampionSkillInfo()
 	if (Data)
 	{
 		m_mapLoLData.insert(std::make_pair("SkillInfo", Data));
+	}
+}
+
+void CLoLDataManager::ReadMonsterNotify()
+{
+	CResourceManager::GetInst()->LoadCSV("MonsterNotify.csv");
+
+	CExcelData* Data = CResourceManager::GetInst()->FindCSV("MonsterNotify");
+
+	if (Data)
+	{
+		m_mapLoLData.insert(std::make_pair("MonsterNotify", Data));
 	}
 }
 

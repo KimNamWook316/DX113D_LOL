@@ -671,7 +671,7 @@ void CTransform::PostUpdate(float DeltaTime)
 		return;
 	}
 
-	if (m_State == Transform_State::Ground)
+	if (m_State == Transform_State::Ground && m_Object->GetObjectType() != Object_Type::Building)
 	{
 		float Height = m_Scene->GetNavigation3DManager()->GetY(m_WorldPos);
 

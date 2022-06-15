@@ -168,8 +168,8 @@ bool CEditorManager::Init(HINSTANCE hInst)
 	// ±âÁ¸ µµ°æ¾¾ Behavior TreeMenu Bar
 	// m_BehaviorTreeMenuBar = CIMGUIManager::GetInst()->AddWindow<CBehaviorTreeMenuBar>("BehaviorTree");
 
-	ReadChampionSkillInfo();
-	ReadChampionNotify();
+	//ReadChampionSkillInfo();
+	//ReadChampionNotify();
 
 	return true;
 }

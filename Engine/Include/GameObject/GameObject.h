@@ -21,19 +21,19 @@ protected:
 	bool		m_NoInterrupt;	// 다른 State로 전환 불가능한 상태인지(ex. 특정 스킬 사용중에 다른 스킬을 쓸 수 없다)
 	Object_Type m_ObjectType;
 	bool		m_IsEnemy;
-	bool		m_OnHit; // 다른 챔피언으로부터 공격 당하거나 피해를 받고 있는 상황인지
+	//bool		m_OnHit; // 다른 챔피언으로부터 공격 당하거나 피해를 받고 있는 상황인지
 	bool		m_ExcludeSceneSave;
 	bool		m_NoDestroyFromSceneChange;
 public:
-	void SetOntHit(bool Hit)
-	{
-		m_OnHit = Hit;
-	}
+	//void SetOntHit(bool Hit)
+	//{
+	//	m_OnHit = Hit;
+	//}
 
-	bool GetOnHit()	const
-	{
-		return m_OnHit;
-	}
+	//bool GetOnHit()	const
+	//{
+	//	return m_OnHit;
+	//}
 
 	bool IsEnemy()	const
 	{
@@ -349,6 +349,20 @@ public:
 		}
 
 		return nullptr;
+	}
+
+	template <typename T>
+	void FindAllObjectComponentFromType(std::vector<T*> vecComp)
+	{
+		auto	iter1 = m_vecObjectComponent.begin();
+		auto	iter1End = m_vecObjectComponent.end();
+
+		for (; iter1 != iter1End; ++iter1)
+		{
+			if ((*iter1)->CheckType<T>())
+				vecComp.push_back((T*)(*iter1).Get());
+		}
+
 	}
 
 	void GetAllSceneComponentsName(std::vector<FindComponentName>& vecNames);

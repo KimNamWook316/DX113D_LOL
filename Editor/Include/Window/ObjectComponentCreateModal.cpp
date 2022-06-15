@@ -13,7 +13,9 @@
 #include "Component/PaperBurnComponent.h"
 #include "Component/StateComponent.h"
 #include "Component/NavAgent.h"
+#include "../Component/MinionAIComponent.h"
 #include "ObjectComponentWindow.h"
+#include "../Window/InspectorWindow.h"
 
 CObjectComponentCreateModal::CObjectComponentCreateModal()	:
 	m_ComponentCombo(nullptr),
@@ -85,24 +87,37 @@ void CObjectComponentCreateModal::OnCreateComponent()
 
 	int Index = m_ComponentCombo->GetSelectIndex();
 
+	CObjectComponent* Com = nullptr;
+
 	// TODO : Object Component 추가될때마다 추가
 	size_t Typeid = CEditorUtil::ObjectComponentTypeIndexToTypeid(Index);
 
 	if (Typeid == typeid(CPaperBurnComponent).hash_code())
-		CObjectComponent* Com = SelectObject->CreateComponent<CPaperBurnComponent>(Name);
+		Com = SelectObject->CreateComponent<CPaperBurnComponent>(Name);
 	else if (Typeid == typeid(CStateComponent).hash_code())
-		CObjectComponent* Com = SelectObject->CreateComponent<CStateComponent>(Name);
+		Com = SelectObject->CreateComponent<CStateComponent>(Name);
 	else if (Typeid == typeid(CNavAgent).hash_code())
 	{
-		CNavAgent* Com = SelectObject->CreateComponent<CNavAgent>(Name);
-		SelectObject->SetNavAgent(Com);
-		Com->SetUpdateComponent(SelectObject->GetRootComponent());
+		Com = SelectObject->CreateComponent<CNavAgent>(Name);
+		SelectObject->SetNavAgent((CNavAgent*)Com);
+		((CNavAgent*)Com)->SetUpdateComponent(SelectObject->GetRootComponent());
 	}
+
+	else if (Typeid == typeid(CMinionAIComponent).hash_code())
+		Com = SelectObject->CreateComponent<CMinionAIComponent>(Name);
 
 	CObjectComponentWindow* ComponentWindow = (CObjectComponentWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(OBJECTCOMPONENT_LIST);
 
 	if (ComponentWindow)
 	{
 		int Index = ComponentWindow->OnCreateObjectComponent(Name);
+	}
+
+	// Insepctor Update
+	CInspectorWindow* Inspector = (CInspectorWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(INSPECTOR);
+
+	if (Inspector)
+	{
+		Inspector->OnCreateObjectComponent((CObjectComponent*)Com);
 	}
 }

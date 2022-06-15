@@ -15,6 +15,7 @@
 #include "Component/ColliderBox3D.h"
 #include "Component/ColliderSphere.h"
 #include "Component/BuildingComponent.h"
+#include "Component/MinionAIComponent.h"
 #include "IMGUITree.h"
 #include "Flag.h"
 
@@ -397,6 +398,8 @@ std::string CEditorUtil::ObjectComponent3DTypeToString(ObjectComponent3DType Typ
 		return "StateComponent";
 	case ObjectComponent3DType::NavAgent:
 		return "NavAgent";
+	case ObjectComponent3DType::MinionAIComponent:
+		return "MinionAIComponent";
 	}
 
 	return "";
@@ -466,6 +469,7 @@ size_t CEditorUtil::SceneComponentTypeIndexToTypeid(int TypeIndex)
 	return -1;
 }
 
+// TODO : ObjectComponent 종류 추가될 때 마다 추가
 size_t CEditorUtil::ObjectComponentTypeIndexToTypeid(int TypeIndex)
 {
 	switch (TypeIndex)
@@ -476,8 +480,8 @@ size_t CEditorUtil::ObjectComponentTypeIndexToTypeid(int TypeIndex)
 		return typeid(CStateComponent).hash_code();
 	case 2:
 		return typeid(CNavAgent).hash_code();
-	//case 3:
-	//	return typeid(CArm).hash_code();
+	case 3:
+		return typeid(CMinionAIComponent).hash_code();
 	//case 4:
 	//	return typeid(CLightComponent).hash_code();
 	//case 5:

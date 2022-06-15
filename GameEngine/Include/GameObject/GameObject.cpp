@@ -12,7 +12,6 @@ CGameObject::CGameObject() :
 	m_IsEnemy(false),
 	m_NoInterrupt(false),
 	m_NormalAttackTarget(nullptr),
-	m_OnHit(false),
 	m_ExcludeSceneSave(false),
 	m_NoDestroyFromSceneChange(false)
 {
@@ -589,7 +588,7 @@ bool CGameObject::LoadHierarchy(FILE* File, CScene* NextScene)
 			// CurrentScene이 아니라 NextScene에다가 AddObject해줘야 한다
 			NextScene->AddObject(Child);
 			AddChildObject(Child);
-			Child->LoadHierarchy(File);
+			Child->LoadHierarchy(File, NextScene);
 		}
 	}
 

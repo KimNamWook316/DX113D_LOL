@@ -14,6 +14,7 @@
 #include "Component/LandScape.h"
 #include "Component/ColliderBox3D.h"
 #include "Component/ColliderSphere.h"
+#include "../Component/MinionAIComponent.h"
 #include "../Component/BuildingComponent.h"
 #include "../Widget/StaticMeshComponentWidget.h"
 #include "../Widget/LightComponentWidget.h"
@@ -25,6 +26,7 @@
 #include "../Widget/ColliderComponentWidget.h"
 #include "../Widget/ColliderSphereWidget.h"
 #include "../Widget/BuildingComponentWidget.h"
+#include "../Widget/MinionAIComponentWidget.h"
 #include "IMGUIManager.h"
 #include "../EditorInfo.h"
 
@@ -181,7 +183,17 @@ void CGameObjectWidget::CreateObjectComponentWidget(CObjectComponent* Com)
 {
 	size_t TypeID = Com->GetTypeID();
 
-	// TODO : 컴포넌트별 위젯 추가
+	CObjectComponentWidget* Widget = nullptr;
+
+	if (TypeID == typeid(CMinionAIComponent).hash_code())
+	{
+		Widget = AddWidget<CMinionAIComponentWidget>("MinionAIComponentWidget");
+	}
+
+	// Component 넣어주면서 내부 Widget들 생성
+	Widget->SetObjectComponent(Com);
+
+	m_ObjectComponentWidgetList.push_back(Widget);
 }
 
 void CGameObjectWidget::DeleteSceneComponentWidget(CSceneComponent* Com)

@@ -268,6 +268,7 @@ enum class ObjectComponent3DType
 	PaperBurnComponent,
 	StateComponent,
 	NavAgent,
+	MinionAIComponent,
 	Max
 };
 
@@ -371,4 +372,13 @@ enum class Building_Type
 	Tower,
 	Inhibitor,
 	Nexus
+};
+
+enum class Minion_Type
+{
+	Melee,
+	Ranged,
+	Tank,
+	Super,
+	None
 };

@@ -16,6 +16,9 @@ private:
     bool CreateMaterial();
 
 private:
+    class CLoLDataManager* m_LoLDataManager;
+
+private:
     class CGameObject* m_PickObj;
     class CAnimationMeshComponent* m_PickAnimMesh;
     class CStaticMeshComponent* m_PickStaticMesh;

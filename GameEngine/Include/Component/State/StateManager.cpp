@@ -131,7 +131,7 @@ void CStateManager::CheckAirborneTarget(const NotifyParameter& Param)
 					CState* DamageState = StateComp->AddState("Damage", Param.Object);
 
 					((CDamageState*)DamageState)->SetDamage(1234); // TODO : 추후 csv로 스킬 데미지 정확하게 읽어와서 바꿔주기
-					CandidateObject->SetOntHit(true);
+					//CandidateObject->SetOntHit(true);
 				}
 			}
 		}

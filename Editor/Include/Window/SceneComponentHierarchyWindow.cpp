@@ -409,7 +409,10 @@ void CSceneComponentHierarchyWindow::OnLoadComponent()
 
 		if (Inspector)
 		{
-			Inspector->OnCreateSceneComponent((CSceneComponent*)LoadComp);
+			if(LoadComp->GetComponentType() == Component_Type::SceneComponent)
+				Inspector->OnCreateSceneComponent((CSceneComponent*)LoadComp);
+			else
+				Inspector->OnCreateObjectComponent((CObjectComponent*)LoadComp);
 		}
 
 		MessageBox(nullptr, TEXT("컴포넌트 로드 성공"), TEXT("Success"), MB_OK);

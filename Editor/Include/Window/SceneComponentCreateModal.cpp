@@ -152,7 +152,10 @@ void CSceneComponentCreateModal::OnCreateComponent()
 
 	if (Inspector)
 	{
-		Inspector->OnCreateSceneComponent(Com);
+		if (Com->GetComponentType() == Component_Type::SceneComponent)
+			Inspector->OnCreateSceneComponent((CSceneComponent*)Com);
+		else
+			Inspector->OnCreateObjectComponent((CObjectComponent*)Com);
 	}
 
 	if (HasRoot)

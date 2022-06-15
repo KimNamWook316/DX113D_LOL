@@ -228,6 +228,21 @@
     <ClCompile Include="Widget\BuildingComponentWidget.cpp">
       <Filter>02. Editor\02. Widget\01. Inspector\01. SceneComponent</Filter>
     </ClCompile>
+    <ClCompile Include="Widget\ChampionAIComponentWidget.cpp">
+      <Filter>02. Editor\02. Widget\01. Inspector\02. ObjectComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\ChampionAIComponent.cpp">
+      <Filter>06. LoLComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\LoLDataComponent.cpp">
+      <Filter>06. LoLComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\MinionAIComponent.cpp">
+      <Filter>06. LoLComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Widget\MinionAIComponentWidget.cpp">
+      <Filter>02. Editor\02. Widget\01. Inspector\02. ObjectComponent</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EditorManager.h">
@@ -382,6 +397,21 @@
     </ClInclude>
     <ClInclude Include="Widget\BuildingComponentWidget.h">
       <Filter>02. Editor\02. Widget\01. Inspector\01. SceneComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="WIdget\ChampionAIComponentWidget.h">
+      <Filter>02. Editor\02. Widget\01. Inspector\02. ObjectComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\ChampionAIComponent.h">
+      <Filter>06. LoLComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\LoLDataComponent.h">
+      <Filter>06. LoLComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\MinionAIComponent.h">
+      <Filter>06. LoLComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Widget\MinionAIComponentWidget.h">
+      <Filter>02. Editor\02. Widget\01. Inspector\02. ObjectComponent</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

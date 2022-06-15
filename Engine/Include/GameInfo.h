@@ -649,3 +649,10 @@ struct NotifyParameter
 	class CGameObject* Object;	// 애니메이션 동작하는 본인
 	float Range;
 };
+
+struct LoLData
+{
+	int HP;
+	int MP;
+	
+};
