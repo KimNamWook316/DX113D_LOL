@@ -72,6 +72,11 @@ private:
     class CIMGUICheckBox* m_IsBounce;
     class CIMGUISliderFloat* m_BounceResistance; // 마찰력
 
+    // Circle Generate
+    class CIMGUICheckBox* m_IsGenerateCircle;
+    class CIMGUISliderFloat* m_GenerateCircleRadius; // 마찰력
+    class CIMGUICheckBox* m_IsLoopGenerateCircle; // 마찰력
+
     // 카메라의 Y 축 위치 (위로 갈지, 아래로 갈지 조정)
     class CIMGUISliderFloat* m_CameraYOffsetBar;
 
@@ -119,8 +124,14 @@ private:
     // Base Ground Size
     void OnEditBaseGroundSize(float Speed);
 
+    // Bounce
     void OnIsBounceEdit(const char*, bool);
     void OnEditBounceResistance(float Speed);
+
+    // Generate Circle
+    void OnIsGenerateCircleEdit(const char*, bool);
+    void OnIsLoopGenerateCircleEdit(const char*, bool);
+    void OnEditGenerateCircleRadius(float Radius);
 
     void OnSpawnTimeMaxEdit(float Num);
 

@@ -30,6 +30,12 @@ cbuffer	ParticleCBuffer : register(b11)
 
 	float3 g_ParticleRotationAngle;
 	float   g_ParticleBounceResist;
+
+	int g_ParticleGenerateCircle;
+	float g_ParcticleGenerateRadius;
+
+	int g_LoopGenerateCircle;
+	float g_ParticleEmpty11;
 };
 
 /*
@@ -72,6 +78,7 @@ struct ParticleInfoShared
 	int		GravityEnable;
 
 	float3 RotationAngle;
+	float PrevCircleAngle;
 };
 
 RWStructuredBuffer<ParticleInfo>		g_ParticleArray	: register(u0);
@@ -187,6 +194,30 @@ void ParticleUpdate(uint3 ThreadID : SV_DispatchThreadID)
 		g_ParticleArray[ThreadID.x].WorldPos = Rand * (g_ParticleStartMax - g_ParticleStartMin) + g_ParticleStartMin;
 		g_ParticleArray[ThreadID.x].InitWorldPosY = g_ParticleArray[ThreadID.x].WorldPos.y;
 
+		// 원 모양 생성 => Generate Circle 을 하게 되면, Start Min, Max 가 무의미해지게 되는 것이다.
+		if (g_ParticleGenerateCircle == 1)
+		{
+			// 0.f, 0.f, 0.f 중심으로 원에 생성하기
+			float RandomAngle = 360.f * Rand;
+			float3 CirclePos = float3(0.f, 0.f, 0.f) + float3(cos(RandomAngle) * g_ParcticleGenerateRadius,
+				0.f, 
+				sin(RandomAngle) * g_ParcticleGenerateRadius);
+
+			g_ParticleArray[ThreadID.x].WorldPos = CirclePos;
+
+			// Loop 을 설정하게 되면, 차례대로 만들어지게 한다.
+			if (g_LoopGenerateCircle == 1)
+			{
+				float NextCircleAngle = g_ParticleShare[0].PrevCircleAngle + (360.f / g_ParticleSpawnCountMax);
+
+				CirclePos = float3(0.f, 0.f, 0.f) + float3(cos(NextCircleAngle) * g_ParcticleGenerateRadius,  0.f, sin(NextCircleAngle) * g_ParcticleGenerateRadius);
+
+				g_ParticleShare[0].PrevCircleAngle = NextCircleAngle;
+					// PrevCircleAngle
+				// g_ParticleShare[0].RotationAngle = g_ParticleRotationAngle;
+			}
+		}
+
 		g_ParticleArray[ThreadID.x].FallTime = 0.f;
 		g_ParticleArray[ThreadID.x].FallStartY = g_ParticleArray[ThreadID.x].WorldPos.y;
 
@@ -235,6 +266,7 @@ void ParticleUpdate(uint3 ThreadID : SV_DispatchThreadID)
 			g_ParticleArray[ThreadID.x].WorldPos.y = g_ParticleArray[ThreadID.x].FallStartY +
 				(Velocity - 0.5f * GRAVITY * g_ParticleArray[ThreadID.x].FallTime * g_ParticleArray[ThreadID.x].FallTime * 10.f);
 
+			// Bounce 효과를 낸다면 
 			if (g_ParticleBounce == 1)
 			{
 				if (g_ParticleArray[ThreadID.x].InitWorldPosY >= g_ParticleArray[ThreadID.x].WorldPos.y)
@@ -373,14 +405,15 @@ PSOutput_Single ParticlePS(GeometryParticleOutput input)
 	TargetPos.x = (int) (ScreenUV.x * g_Resolution.x);
 	TargetPos.y = (int) (ScreenUV.y * g_Resolution.y);
     
-	float4 Depth = g_GBufferDepth.Load(TargetPos, 0);
-    
+	// Soft Particle
+	// float4 Depth = g_GBufferDepth.Load(TargetPos, 0);
+    // 
 	float Alpha = 1.f;
-    
-	if (Depth.a > 0.f)
-		Alpha = (Depth.g - input.ProjPos.w) / 0.5f;
-    
-	Alpha = clamp(Alpha, 0.f, 1.f);
+    // 
+	// if (Depth.a > 0.f)
+	// 	Alpha = (Depth.g - input.ProjPos.w) / 0.5f;
+    // 
+	// Alpha = clamp(Alpha, 0.f, 1.f);
 
 	Color = PaperBurn2D(Color * input.Color, input.UV);
 	

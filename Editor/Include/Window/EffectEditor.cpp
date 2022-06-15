@@ -153,6 +153,23 @@ bool CEffectEditor::Init()
     m_BounceResistance->SetMin(0.01f);
     m_BounceResistance->SetMax(0.99f);
 
+    // Generate Circle
+    Tree = AddWidget<CIMGUITree>("Circle Generate");
+
+    m_IsGenerateCircle = Tree->AddWidget<CIMGUICheckBox>("Circle", 80.f);
+    m_IsGenerateCircle->AddCheckInfo("Circle");
+    m_IsGenerateCircle->SetCallBackLabel<CEffectEditor>(this, &CEffectEditor::OnIsGenerateCircleEdit);
+
+    m_GenerateCircleRadius = Tree->AddWidget<CIMGUISliderFloat>("Radius", 100.f, 20.f);
+    m_GenerateCircleRadius->SetCallBack<CEffectEditor>(this, &CEffectEditor::OnEditGenerateCircleRadius);
+    m_GenerateCircleRadius->SetMin(0.0f);
+    m_GenerateCircleRadius->SetMax(100.f);
+
+    m_IsLoopGenerateCircle = Tree->AddWidget<CIMGUICheckBox>("Loop", 80.f);
+    m_IsLoopGenerateCircle->AddCheckInfo("Loop");
+    m_IsLoopGenerateCircle->SetCallBackLabel<CEffectEditor>(this, &CEffectEditor::OnIsLoopGenerateCircleEdit);
+    
+
     // Movement
     Tree = AddWidget<CIMGUITree>("Movement");
 
@@ -322,6 +339,33 @@ void CEffectEditor::OnEditBounceResistance(float Resist)
 
     m_ParticleClass->SetBounceResistance(Resist);
    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetBounceResist(Resist);
+}
+
+void CEffectEditor::OnIsGenerateCircleEdit(const char*, bool Enable)
+{
+    if (!m_ParticleClass)
+        return;
+
+    m_ParticleClass->SetGenerateCircleEnable(Enable);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGenerateCircleEnable(Enable);
+}
+
+void CEffectEditor::OnIsLoopGenerateCircleEdit(const char*, bool Enable)
+{
+    if (!m_ParticleClass)
+        return;
+
+    m_ParticleClass->SetLoopGenerateCircle(Enable);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetLoopGenerateCircle(Enable);
+}
+
+void CEffectEditor::OnEditGenerateCircleRadius(float Radius)
+{
+    if (!m_ParticleClass)
+        return;
+
+    m_ParticleClass->SetGenerateCircleRadius(Radius);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGenerateCircleRadius(Radius);
 }
 
 void CEffectEditor::OnSpawnTimeMaxEdit(float Num)
@@ -1012,6 +1056,11 @@ void CEffectEditor::SetIMGUIReflectParticle(CParticle* Particle)
     // Bounce
     m_IsBounce->SetCheck(0, Particle->IsBounceEnable() == 1 ? true : false);
     m_BounceResistance->SetValue(Particle->GetBounceResistance());
+
+    // Generate Circle
+    m_IsGenerateCircle->SetCheck(0, Particle->IsGenerateCircle() == 1 ? true : false);
+    m_GenerateCircleRadius->SetValue(Particle->GetGenerateCircleRadius());
+    m_IsLoopGenerateCircle->SetCheck(0, Particle->IsLoopGenerateCircle());
 }
 
 void CEffectEditor::SetIMGUIReflectObjectCamera()

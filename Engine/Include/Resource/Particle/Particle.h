@@ -208,7 +208,31 @@ public:
 	{
 		return m_CBuffer->GetParticleBounceResist();
 	}
+	int IsGenerateCircle() const
+	{
+		return m_CBuffer->IsGenerateCircle();
+	}
+	float GetGenerateCircleRadius() const
+	{
+		return m_CBuffer->GetGenerateCircleRadius();
+	}
+	int IsLoopGenerateCircle() const
+	{
+		return m_CBuffer->IsLoopGenerateCircle();
+	}
 public:
+	void SetLoopGenerateCircle(bool Enable)
+	{
+		m_CBuffer->SetLoopGenerateCircle(Enable);
+	}
+	void SetGenerateCircleEnable(bool Enable)
+	{
+		m_CBuffer->SetGenerateCircleEnable(Enable);
+	}
+	void SetGenerateCircleRadius(float Radius)
+	{
+		m_CBuffer->SetGenerateCircleRadius(Radius);
+	}
 	void SetBounceEnable(bool Enable)
 	{
 		m_CBuffer->SetBounceEnable(Enable);

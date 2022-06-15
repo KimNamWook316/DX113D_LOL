@@ -134,7 +134,31 @@ public:
 		return m_BufferData.ParticleBounceResistance;
 	}
 
+	int IsGenerateCircle() const
+	{
+		return m_BufferData.IsGenerateCircle;
+	}
+	float GetGenerateCircleRadius() const
+	{
+		return m_BufferData.GenerateCircleRadius;
+	}
+	int IsLoopGenerateCircle() const
+	{
+		return m_BufferData.IsLoopGenerateCircle;
+	}
 public:
+	void SetLoopGenerateCircle(bool Enable)
+	{
+		m_BufferData.IsLoopGenerateCircle = Enable ? 1 : 0;
+	}
+	void SetGenerateCircleEnable(bool Enable)
+	{
+		m_BufferData.IsGenerateCircle = Enable ? 1 : 0;
+	}
+	void SetGenerateCircleRadius(float Radius)
+	{
+		m_BufferData.GenerateCircleRadius = Radius;
+	}
 	void SetBounceEnable(int Bounce)
 	{
 		m_BufferData.ParticleBounce = Bounce;

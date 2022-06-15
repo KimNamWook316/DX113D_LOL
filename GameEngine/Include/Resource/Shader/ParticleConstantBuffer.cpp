@@ -18,6 +18,10 @@ CParticleConstantBuffer::CParticleConstantBuffer() :
 	m_BufferData.StartMax = Vector3(10.f, 10.f, 0.f);
 	m_BufferData.ParticleBounce = 0;
 	m_BufferData.ParticleBounceResistance = 0.98f;
+
+	m_BufferData.IsGenerateCircle = 0;
+	m_BufferData.GenerateCircleRadius = 20.f;
+	m_BufferData.IsLoopGenerateCircle = 0;
 }
 
 CParticleConstantBuffer::CParticleConstantBuffer(const CParticleConstantBuffer& Buffer) :
