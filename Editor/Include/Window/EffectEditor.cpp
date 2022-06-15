@@ -118,17 +118,14 @@ bool CEffectEditor::Init()
     m_CameraXRotSlideBar->SetMax(88.f);
 
     // ParticleEffectRenderTarget
-    m_ParticleRenderTarget = AddWidget<CIMGUIImage>("Render Target", 500.f, 400.f);
-    m_ParticleRenderTarget->SetRenderTargetImage(true);
-    m_ParticleRenderTarget->SetTexture(CRenderManager::GetInst()->GetParticleEffectRenderTarget());
-    m_ParticleRenderTarget->SetBorderColor(10, 10, 255);
-    m_ParticleRenderTarget->SetTableTitle("Render Target");
+   // m_ParticleRenderTarget = AddWidget<CIMGUIImage>("Render Target", 500.f, 400.f);
+   // m_ParticleRenderTarget->SetRenderTargetImage(true);
+   // m_ParticleRenderTarget->SetTexture(CRenderManager::GetInst()->GetParticleEffectRenderTarget());
+   // m_ParticleRenderTarget->SetBorderColor(10, 10, 255);
+   // m_ParticleRenderTarget->SetTableTitle("Render Target");
 
     // Particle Texture
     m_ParticleTexture = AddWidget<CIMGUIImage>("Particle Texture", 200.f, 200.f);
-    // m_ParticleRenderTarget = AddWidget<CIMGUIImage>("Render Target", 500.f, 500.f);
-    // m_ParticleRenderTarget->SetRenderTargetImage(true);
-    // m_ParticleRenderTarget->SetTexture(CRenderManager::GetInst()->GetParticleEffectRenderTarget());
     m_ParticleTexture->SetBorderColor(10, 10, 255);
     m_ParticleTexture->SetTableTitle("Texture");
 

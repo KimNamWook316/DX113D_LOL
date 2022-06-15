@@ -228,6 +228,9 @@
     <ClCompile Include="Widget\BuildingComponentWidget.cpp">
       <Filter>02. Editor\02. Widget\01. Inspector\01. SceneComponent</Filter>
     </ClCompile>
+    <ClCompile Include="Window\EffectDisplayWindow.cpp">
+      <Filter>02. Editor\01. Window\3. Particle</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EditorManager.h">
@@ -382,6 +385,9 @@
     </ClInclude>
     <ClInclude Include="Widget\BuildingComponentWidget.h">
       <Filter>02. Editor\02. Widget\01. Inspector\01. SceneComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Window\EffectDisplayWindow.h">
+      <Filter>02. Editor\01. Window\3. Particle</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

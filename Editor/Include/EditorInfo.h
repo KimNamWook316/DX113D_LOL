@@ -14,6 +14,7 @@
 #define OBJECTCOMPONENT_CREATE_POPUPMODAL	"ObjectComponentCreatePopUpModal"
 #define ANIMATION_EDITOR					"AnimationEditor"
 #define PARTICLE_EDITOR						"ParticleEditor"
+#define PARTICLE_DISPLAYWINDOW						"ParticleDisplayWindow"
 #define FBX_CONVERTOR						"FBXConverter"
 #define TOOL								"Tool"
 #define BEHAVIORTREE_WINDOW					"BehaviorTreeWindow"

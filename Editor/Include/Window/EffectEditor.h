@@ -87,7 +87,7 @@ private:
 
     // Render Target
     class CIMGUIImage* m_ParticleTexture;
-    class CIMGUIImage* m_ParticleRenderTarget;
+    // class CIMGUIImage* m_ParticleRenderTarget;
 private :
     class CParticle* m_ParticleClass;
     class CMaterial* m_ParticleMaterial;

@@ -31,6 +31,7 @@
 #include "Window/FBXConvertWindow.h"
 #include "Window/InspectorWindow.h"
 #include "Window/EffectEditor.h"
+#include "Window/EffectDisplayWindow.h"
 #include "Window/ToolWindow.h"
 #include "Window/BehaviorTreeMenuBar.h"
 #include "Window/BaseMenuBar.h"
@@ -144,7 +145,9 @@ bool CEditorManager::Init(HINSTANCE hInst)
 	m_InspectorWindow = CIMGUIManager::GetInst()->AddWindow<CInspectorWindow>(INSPECTOR);
 
 	m_FileBrowserTree = CIMGUIManager::GetInst()->AddWindow<CFileBrowserTree>(FILE_BROWSERTREE);
+	m_FileBrowserTree->Close();
 	m_FileBrowser = CIMGUIManager::GetInst()->AddWindow<CFileBrowser>(FILE_BROWSER);
+	m_FileBrowser->Close();
 	
 	m_AnimationEditor = CIMGUIManager::GetInst()->AddWindow<CAnimationEditor>(ANIMATION_EDITOR);
 	m_AnimationEditor->Close();
@@ -152,9 +155,13 @@ bool CEditorManager::Init(HINSTANCE hInst)
 	m_EffectEditor = CIMGUIManager::GetInst()->AddWindow<CEffectEditor>(PARTICLE_EDITOR);
 	m_EffectEditor->Close();
 
+	m_EffectDisplayWindow = CIMGUIManager::GetInst()->AddWindow<CEffectDisplayWindow>(PARTICLE_DISPLAYWINDOW);
+	m_EffectDisplayWindow->Close();
+
 	m_ToolWindow = CIMGUIManager::GetInst()->AddWindow<CToolWindow>(TOOL);
 
 	m_FBXConvertWindow = CIMGUIManager::GetInst()->AddWindow<CFBXConvertWindow>(FBX_CONVERTOR);
+	m_FBXConvertWindow->Close();
 
 	m_BaseMenuBar = CIMGUIManager::GetInst()->AddWindow<CBaseMenuBar>("BehaviorTree");
 	

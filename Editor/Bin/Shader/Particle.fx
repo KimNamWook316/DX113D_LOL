@@ -304,7 +304,13 @@ void ParticleGS(point VertexParticleOutput input[1],
 	float3	Scale = lerp(g_ParticleShareSRV[0].ScaleMin, g_ParticleShareSRV[0].ScaleMax,
 		float3(Ratio, Ratio, Ratio));
 
-	float4	Color = lerp(g_ParticleShareSRV[0].ColorMin, g_ParticleShareSRV[0].ColorMax,
+	float4 ParticleColorMin = g_ParticleShareSRV[0].ColorMin;
+	ParticleColorMin.w = 1.f;
+
+	float4 ParticleColorMax = g_ParticleShareSRV[0].ColorMax;
+	ParticleColorMax.w = 0.9f;
+
+	float4	Color = lerp(ParticleColorMin, ParticleColorMax,
 		float4(Ratio, Ratio, Ratio, Ratio));
 
 	float3x3 matRot = ComputeRotationMatrix(g_ParticleShareSRV[0].RotationAngle);
