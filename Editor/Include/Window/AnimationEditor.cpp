@@ -338,6 +338,9 @@ void CAnimationEditor::OnClearExistingAnimationSeqInfos()
 
 	m_Animation->ClearAnimationSequenceFromAnimationEditor();
 
+	// Animation Mesh Component 에서 다시 새롭게 Animation Instance 를 만들어낸다.
+	m_Animation = dynamic_cast<CAnimationMeshComponent*>(m_3DTestObject->GetRootComponent())->CreateBasicAnimationInstance();
+
 	// Combo Box Clear
 	m_CurAnimComboBox->Clear();
 
@@ -512,6 +515,8 @@ void CAnimationEditor::OnLoadAnimationInstance()
 			OnClearExistingAnimationSeqInfos();
 		}
 
+		// TODO : Animation Instance 는 그냥 지워줘 버리면 안되나 ?
+
 		m_Animation->LoadAnimationFullPath(FilePathMultibyte);
 
 		// CurrentAnimation 이 없다면,
@@ -525,19 +530,16 @@ void CAnimationEditor::OnLoadAnimationInstance()
 		std::pair<bool, std::string> LoadResult = CResourceManager::GetInst()->LoadMeshTextureBoneInfo(m_Animation);
 
 		if (LoadResult.first == false)
+		{
+			MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Mesh, Texture, Skeleton Load Failure"), NULL, MB_OK);
 			return;
+		}
 
 		// 해당 이름을 3d Test Object 에서 가져와서 사용할 것이다.
 		m_3DTestObjectMeshName = LoadResult.second;
 
 		// Set Material, Mesh Info
 		SetMeshMaterialReadyForAnimation();
-
-		// CameraObject 생성하기
-		// CEditorManager::GetInst()->CreateCameraObject();
-
-		// Animation Key Name 조정을 한다. (혹시나 이름이 잘못 저장되어 있을 수도 있으므로 )
-		// m_Animation->AdjustSequence2DKeyName();
 
 		// ComboBox 에 모든 Seq 내용을 추가해준다
 		m_CurAnimComboBox->Clear();

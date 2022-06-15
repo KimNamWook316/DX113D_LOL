@@ -55,12 +55,10 @@ void CAnimationSequenceData::Load(FILE* File)
 	fread(Name, sizeof(char), Length, File);
 	m_Name = Name;
 
-
 	fread(&m_Time, sizeof(float), 1, File);
 	fread(&m_FrameTime, sizeof(float), 1, File);
 	fread(&m_PlayTime, sizeof(float), 1, File);
 	fread(&m_PlayScale, sizeof(float), 1, File);
-
 	fread(&m_Loop, sizeof(bool), 1, File);
 
 	Length = 0;
@@ -72,13 +70,8 @@ void CAnimationSequenceData::Load(FILE* File)
 
 	m_Sequence = CResourceManager::GetInst()->FindAnimationSequence(m_SequenceName);
 
-	bool SequenceExist = false;
-
-	if (m_Sequence)
-		SequenceExist = true;
-
 	// 존재하지 않는 Sequence 라면, 새롭게 ResourceManager 항목에 추가해주고 Load
-	if (SequenceExist == false)
+	if (!m_Sequence)
 	{
 		m_Sequence = CResourceManager::GetInst()->CreateBasicAnimationSequence(m_SequenceName);
 		m_Sequence->Load(File);

@@ -104,6 +104,22 @@ CSceneResource::~CSceneResource()
 			//CResourceManager::GetInst()->ReleaseParticle(Name);
 		}
 	}
+
+	{
+		auto	iter = m_mapSkeleton.begin();
+		auto	iterEnd = m_mapSkeleton.end();
+
+		for (; iter != iterEnd;)
+		{
+			std::string	Name = iter->first;
+
+			iter = m_mapSkeleton.erase(iter);
+
+			//CResourceManager::GetInst()->ReleaseParticle(Name);
+		}
+	}
+
+	
 }
 
 bool CSceneResource::CreateMesh(Mesh_Type Type,

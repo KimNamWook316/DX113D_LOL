@@ -45,6 +45,7 @@ CAnimationMeshComponent::~CAnimationMeshComponent()
 	DeleteInstancingCheckList();
 
 	SAFE_DELETE(m_Animation);
+	// SAFE_DELETE(m_Skeleton);
 }
 
 void CAnimationMeshComponent::SetScene(CScene* Scene)
@@ -66,9 +67,6 @@ void CAnimationMeshComponent::SetMesh(const std::string& Name)
 	CAnimationMesh* FoundMesh = (CAnimationMesh*)m_Scene->GetResource()->FindMesh(Name);
 
 	if (!FoundMesh)
-		return;
-
-	if (m_Mesh == FoundMesh)
 		return;
 
 	DeleteInstancingCheckList();
@@ -875,7 +873,6 @@ bool CAnimationMeshComponent::Load(FILE* File)
 	fread(&AnimSavedFileNameLength, sizeof(size_t), 1, File);
 	fread(AnimSavedFileName,  sizeof(char), AnimSavedFileNameLength, File);
 
-
 	LoadAnimationInstance<CAnimationSequenceInstance>();
 
 	// RESOURCE_ANIMATION_PATH 를 통해서 .anim File Load
@@ -901,7 +898,7 @@ bool CAnimationMeshComponent::Load(FILE* File)
 	const PathInfo* MaterialPath = CPathManager::GetInst()->FindPath(MATERIAL_PATH);
 
 	m_vecMaterialSlot.clear();
-	
+
 	m_vecMaterialSlot.resize(MaterialSlotCount);
 
 	for (int idx = 0; idx < MaterialSlotCount; ++idx)
@@ -1281,13 +1278,13 @@ void CAnimationMeshComponent::ChangeInstancingLayer()
 	if (!CheckCountExist)
 	{
 		InstancingCheckCount* CheckCount = new InstancingCheckCount;
-
+	
 		m_InstancingCheckList.push_back(CheckCount);
-
+	
 		CheckCount->InstancingList.push_back(this);
 		CheckCount->LayerName = m_LayerName;
 		CheckCount->Mesh = m_Mesh;
-
+	
 		SetInstancing(false);
 	}
 }

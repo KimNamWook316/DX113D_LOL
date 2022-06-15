@@ -29,6 +29,7 @@ protected:
 	class CStructuredBuffer* m_InstancingBoneBuffer;
 	std::vector<Matrix>	m_vecBoneMatrix;
 	CSharedPtr<class CSkeleton>	m_Skeleton;
+	// class CSkeleton*	m_Skeleton;
 
 	Vector3	m_BlendScale;
 	Vector3	m_BlendPos;

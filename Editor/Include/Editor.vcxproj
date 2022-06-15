@@ -89,8 +89,8 @@
     <LinkIncremental>true</LinkIncremental>
     <OutDir>../Bin/</OutDir>
     <IntDir>../BinObj/</IntDir>
-    <IncludePath>../../Engine/Include/;$(IncludePath)</IncludePath>
-    <LibraryPath>../Bin/;$(LibraryPath)</LibraryPath>
+    <IncludePath>../../Engine/Include/;C:\Program Files (x86)\Visual Leak Detector\include;$(IncludePath)</IncludePath>
+    <LibraryPath>../Bin/;C:\Program Files (x86)\Visual Leak Detector\lib\Win64;$(LibraryPath)</LibraryPath>
     <TargetName>$(ProjectName)_Debug</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
