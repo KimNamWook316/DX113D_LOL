@@ -37,6 +37,7 @@
 #include "Window/BaseMenuBar.h"
 #include "Window/MaterialEditor.h"
 #include "Window/ResourceDisplayWindow.h"
+#include "Window/CollisionProfileEditor.h"
 // Object
 #include "Object/DragObject.h"
 #include "Object/SpriteEditObject.h"
@@ -101,82 +102,20 @@ bool CEditorManager::Init(HINSTANCE hInst)
 		return false;
 	}
 
-	CInput::GetInst()->CreateKey("MouseLButton", VK_LBUTTON);
-	CInput::GetInst()->SetKeyCallback("MouseLButton", KeyState_Down, this, &CEditorManager::MouseLButtonDown);
-	CInput::GetInst()->SetKeyCallback("MouseLButton", KeyState_Push, this, &CEditorManager::MouseLButtonPush);
-	CInput::GetInst()->SetKeyCallback("MouseLButton", KeyState_Up, this, &CEditorManager::MouseLButtonUp);
+	// 에디터 키 생성
+	CreateKey();
 
-	CInput::GetInst()->CreateKey("Up", VK_UP);
-	CInput::GetInst()->CreateKey("Down", VK_DOWN);
-	CInput::GetInst()->CreateKey("Left", VK_LEFT);
-	CInput::GetInst()->CreateKey("Right", VK_RIGHT);
+	// 카메라 등 에디터 오브젝트 생성
+	CreateEditorObjects();
 
-	CInput::GetInst()->SetKeyCallback("Up", KeyState_Push, this, &CEditorManager::KeyboardUp);
-	CInput::GetInst()->SetKeyCallback("Down", KeyState_Push, this, &CEditorManager::KeyboardDown);
-	CInput::GetInst()->SetKeyCallback("Left", KeyState_Push, this, &CEditorManager::KeyboardLeft);
-	CInput::GetInst()->SetKeyCallback("Right", KeyState_Push, this, &CEditorManager::KeyboardRight);
-
-	CInput::GetInst()->CreateKey("MoveUp", 'W');
-	CInput::GetInst()->CreateKey("MoveDown", 'S');
-	CInput::GetInst()->CreateKey("RotationZInv", 'A');
-	CInput::GetInst()->CreateKey("RotationZ", 'D');
-	CInput::GetInst()->CreateKey("SkillQ", 'Q');
-	CInput::GetInst()->CreateKey("SkillW", 'W');
-	CInput::GetInst()->CreateKey("SkillE", 'E');
-	CInput::GetInst()->CreateKey("SkillR", 'R');
-	CInput::GetInst()->CreateKey("SpellD", 'D');
-	CInput::GetInst()->CreateKey("SpellF", 'F');
-
-	m_CameraObject = CSceneManager::GetInst()->GetScene()->CreateGameObject<C3DCameraObject>("EditorCamera");
-	m_CameraObject->SetNoDestroyOnSceneChange(true);
-
-	CSceneManager::GetInst()->SetCreateSceneModeFunction<CEditorManager>(this, &CEditorManager::CreateSceneMode);
-	CSceneManager::GetInst()->SetCreateObjectFunction<CEditorManager>(this, &CEditorManager::CreateObject);
-	CSceneManager::GetInst()->SetCreateComponentFunction<CEditorManager>(this, &CEditorManager::CreateComponent);
-	CSceneManager::GetInst()->SetCreateAnimInstanceFunction<CEditorManager>(this, &CEditorManager::CreateAnimInstance);
-
-	CResourceManager::GetInst()->LoadTexture(DIRECTORY_IMAGE, TEXT("Directory.png"));
-	CResourceManager::GetInst()->LoadTexture(FILE_IMAGE, TEXT("FileImage.png"));
-
-	m_ObjectHierarchyWindow = CIMGUIManager::GetInst()->AddWindow<CObjectHierarchyWindow>(OBJECT_HIERARCHY);
-	m_ComponentHierarchyWindow = CIMGUIManager::GetInst()->AddWindow<CSceneComponentHierarchyWindow>(SCENECOMPONENT_HIERARCHY);
-	m_ObjectComponentWindow = CIMGUIManager::GetInst()->AddWindow<CObjectComponentWindow>(OBJECTCOMPONENT_LIST);
-
-	m_InspectorWindow = CIMGUIManager::GetInst()->AddWindow<CInspectorWindow>(INSPECTOR);
-
-	m_FileBrowserTree = CIMGUIManager::GetInst()->AddWindow<CFileBrowserTree>(FILE_BROWSERTREE);
-	m_FileBrowserTree->Close();
-	m_FileBrowser = CIMGUIManager::GetInst()->AddWindow<CFileBrowser>(FILE_BROWSER);
-	m_FileBrowser->Close();
+	// 콜백 
+	SetEditorSceneCallBack();
 	
-	m_AnimationEditor = CIMGUIManager::GetInst()->AddWindow<CAnimationEditor>(ANIMATION_EDITOR);
-	m_AnimationEditor->Close();
+	// 리소스 로드
+	LoadEditorResources();
 
-	m_EffectEditor = CIMGUIManager::GetInst()->AddWindow<CEffectEditor>(PARTICLE_EDITOR);
-	m_EffectEditor->Close();
-
-	m_EffectDisplayWindow = CIMGUIManager::GetInst()->AddWindow<CEffectDisplayWindow>(PARTICLE_DISPLAYWINDOW);
-	m_EffectDisplayWindow->Close();
-
-	m_ToolWindow = CIMGUIManager::GetInst()->AddWindow<CToolWindow>(TOOL);
-
-	m_FBXConvertWindow = CIMGUIManager::GetInst()->AddWindow<CFBXConvertWindow>(FBX_CONVERTOR);
-	m_FBXConvertWindow->Close();
-
-	m_BaseMenuBar = CIMGUIManager::GetInst()->AddWindow<CBaseMenuBar>("BehaviorTree");
-	
-	m_MaterialEditor = CIMGUIManager::GetInst()->AddWindow<CMaterialEditor>("MaterialEditor");
-	m_MaterialEditor->Close();
-	
-	m_ResourceDisplayWindow = CIMGUIManager::GetInst()->AddWindow<CResourceDisplayWindow>("Resources");
-	m_ResourceDisplayWindow->Close();
-
-	CRenderManager::GetInst()->CreateLayer("DragLayer", INT_MAX);
-	// 기존 도경씨 Behavior TreeMenu Bar
-	// m_BehaviorTreeMenuBar = CIMGUIManager::GetInst()->AddWindow<CBehaviorTreeMenuBar>("BehaviorTree");
-
-	ReadChampionSkillInfo();
-	ReadChampionNotify();
+	// 각종 윈도우 생성
+	CreateWindows();
 
 	return true;
 }
@@ -392,6 +331,90 @@ void CEditorManager::CreateAnimInstance(CSpriteComponent* Sprite, size_t Type)
 	{
 		Sprite->LoadAnimationInstance<CAnimationSequence2DInstance>();
 	}
+}
+
+void CEditorManager::CreateKey()
+{
+	CInput::GetInst()->CreateKey("MouseLButton", VK_LBUTTON);
+	CInput::GetInst()->SetKeyCallback("MouseLButton", KeyState_Down, this, &CEditorManager::MouseLButtonDown);
+	CInput::GetInst()->SetKeyCallback("MouseLButton", KeyState_Push, this, &CEditorManager::MouseLButtonPush);
+	CInput::GetInst()->SetKeyCallback("MouseLButton", KeyState_Up, this, &CEditorManager::MouseLButtonUp);
+
+	CInput::GetInst()->CreateKey("Up", VK_UP);
+	CInput::GetInst()->CreateKey("Down", VK_DOWN);
+	CInput::GetInst()->CreateKey("Left", VK_LEFT);
+	CInput::GetInst()->CreateKey("Right", VK_RIGHT);
+
+	CInput::GetInst()->SetKeyCallback("Up", KeyState_Push, this, &CEditorManager::KeyboardUp);
+	CInput::GetInst()->SetKeyCallback("Down", KeyState_Push, this, &CEditorManager::KeyboardDown);
+	CInput::GetInst()->SetKeyCallback("Left", KeyState_Push, this, &CEditorManager::KeyboardLeft);
+	CInput::GetInst()->SetKeyCallback("Right", KeyState_Push, this, &CEditorManager::KeyboardRight);
+
+	CInput::GetInst()->CreateKey("MoveUp", 'W');
+	CInput::GetInst()->CreateKey("MoveDown", 'S');
+	CInput::GetInst()->CreateKey("RotationZInv", 'A');
+	CInput::GetInst()->CreateKey("RotationZ", 'D');
+	CInput::GetInst()->CreateKey("SkillQ", 'Q');
+	CInput::GetInst()->CreateKey("SkillW", 'W');
+	CInput::GetInst()->CreateKey("SkillE", 'E');
+	CInput::GetInst()->CreateKey("SkillR", 'R');
+	CInput::GetInst()->CreateKey("SpellD", 'D');
+	CInput::GetInst()->CreateKey("SpellF", 'F');
+}
+
+void CEditorManager::CreateEditorObjects()
+{
+	m_CameraObject = CSceneManager::GetInst()->GetScene()->CreateGameObject<C3DCameraObject>("EditorCamera");
+	m_CameraObject->SetNoDestroyOnSceneChange(true);
+}
+
+void CEditorManager::SetEditorSceneCallBack()
+{
+	CSceneManager::GetInst()->SetCreateSceneModeFunction<CEditorManager>(this, &CEditorManager::CreateSceneMode);
+	CSceneManager::GetInst()->SetCreateObjectFunction<CEditorManager>(this, &CEditorManager::CreateObject);
+	CSceneManager::GetInst()->SetCreateComponentFunction<CEditorManager>(this, &CEditorManager::CreateComponent);
+	CSceneManager::GetInst()->SetCreateAnimInstanceFunction<CEditorManager>(this, &CEditorManager::CreateAnimInstance);
+}
+
+void CEditorManager::LoadEditorResources()
+{
+	CResourceManager::GetInst()->LoadTexture(DIRECTORY_IMAGE, TEXT("Directory.png"));
+	CResourceManager::GetInst()->LoadTexture(FILE_IMAGE, TEXT("FileImage.png"));
+	ReadChampionSkillInfo();
+	ReadChampionNotify();
+}
+
+void CEditorManager::CreateWindows()
+{
+	m_ObjectHierarchyWindow = CIMGUIManager::GetInst()->AddWindow<CObjectHierarchyWindow>(OBJECT_HIERARCHY);
+	m_ComponentHierarchyWindow = CIMGUIManager::GetInst()->AddWindow<CSceneComponentHierarchyWindow>(SCENECOMPONENT_HIERARCHY);
+	m_ObjectComponentWindow = CIMGUIManager::GetInst()->AddWindow<CObjectComponentWindow>(OBJECTCOMPONENT_LIST);
+
+	m_InspectorWindow = CIMGUIManager::GetInst()->AddWindow<CInspectorWindow>(INSPECTOR);
+
+	m_FileBrowserTree = CIMGUIManager::GetInst()->AddWindow<CFileBrowserTree>(FILE_BROWSERTREE);
+	m_FileBrowser = CIMGUIManager::GetInst()->AddWindow<CFileBrowser>(FILE_BROWSER);
+	
+	m_AnimationEditor = CIMGUIManager::GetInst()->AddWindow<CAnimationEditor>(ANIMATION_EDITOR);
+	m_AnimationEditor->Close();
+
+	m_EffectEditor = CIMGUIManager::GetInst()->AddWindow<CEffectEditor>(PARTICLE_EDITOR);
+	m_EffectEditor->Close();
+
+	m_ToolWindow = CIMGUIManager::GetInst()->AddWindow<CToolWindow>(TOOL);
+
+	m_FBXConvertWindow = CIMGUIManager::GetInst()->AddWindow<CFBXConvertWindow>(FBX_CONVERTOR);
+
+	m_BaseMenuBar = CIMGUIManager::GetInst()->AddWindow<CBaseMenuBar>("BehaviorTree");
+	
+	m_MaterialEditor = CIMGUIManager::GetInst()->AddWindow<CMaterialEditor>("MaterialEditor");
+	m_MaterialEditor->Close();
+	
+	m_ResourceDisplayWindow = CIMGUIManager::GetInst()->AddWindow<CResourceDisplayWindow>("Resources");
+	m_ResourceDisplayWindow->Close();
+
+	m_CollisionProfileEditor = CIMGUIManager::GetInst()->AddWindow<CCollisionProfileEditor>(COLLISION_PROFILE);
+	m_CollisionProfileEditor->Close();
 }
 
 void CEditorManager::CreateEditorCamera()

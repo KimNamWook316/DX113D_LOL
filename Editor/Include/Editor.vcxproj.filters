@@ -79,6 +79,9 @@
     <Filter Include="05. LoLManager">
       <UniqueIdentifier>{c29db2ae-b440-4633-9c63-011f3bcf3088}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. Editor\01. Window\5. CollisionProfile">
+      <UniqueIdentifier>{385f0b36-6776-4bd1-9902-df98b61ac424}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EditorManager.cpp">
@@ -228,8 +231,14 @@
     <ClCompile Include="Widget\BuildingComponentWidget.cpp">
       <Filter>02. Editor\02. Widget\01. Inspector\01. SceneComponent</Filter>
     </ClCompile>
-    <ClCompile Include="Window\EffectDisplayWindow.cpp">
+	<ClCompile Include="Window\EffectDisplayWindow.cpp">
       <Filter>02. Editor\01. Window\3. Particle</Filter>
+    </ClCompile>
+	<ClCompile Include="Widget\DataMenu.cpp">
+      <Filter>02. Editor\02. Widget\03. MenuBar</Filter>
+    </ClCompile>
+    <ClCompile Include="Window\CollisionProfileEditor.cpp">
+      <Filter>02. Editor\01. Window\5. CollisionProfile</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -385,9 +394,6 @@
     </ClInclude>
     <ClInclude Include="Widget\BuildingComponentWidget.h">
       <Filter>02. Editor\02. Widget\01. Inspector\01. SceneComponent</Filter>
-    </ClInclude>
-    <ClInclude Include="Window\EffectDisplayWindow.h">
-      <Filter>02. Editor\01. Window\3. Particle</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

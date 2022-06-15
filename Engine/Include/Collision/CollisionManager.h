@@ -14,6 +14,12 @@ public:
 	bool SetCollisionState(const std::string& Name, Collision_Channel Channel,
 		Collision_Interaction State);
 	CollisionProfile* FindProfile(const std::string& Name);
+	bool DeleteProfile(const std::string& Name);
+	void GetProfileNames(std::vector<std::string>& vecOutName);
+	bool SaveAsCSV(const char* FileName, const std::string& Path = EXCEL_PATH);
+	bool SaveAsCSVFullPath(const char* FullPath);
+	bool LoadProfileFromCSV(const char* FileName, const std::string& Path = EXCEL_PATH);
+	bool LoadProfileFromCSVFullPath(const char* FullPath);
 
 	DECLARE_SINGLE(CCollisionManager)
 };

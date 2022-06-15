@@ -13,5 +13,13 @@ public:
 	static bool IsFileExistInDir(const std::string& Path, const std::string& FileName);
 	// 풀경로를 넣어주면 파일 이름만 걸러서 리턴해줌
 	static std::string FilterFileName(const std::string& FullPath);
+
+	// Collision Profile
+	static std::string CollisionChannelToString(Collision_Channel eChannnel);
+	static Collision_Channel StringToCollisionChannel(const std::string& String);
+	static Collision_Interaction StringToCollisionInteraction(const std::string& String);
+
+	// String
+	static std::string BoolToString(bool Bool);
 };
 
