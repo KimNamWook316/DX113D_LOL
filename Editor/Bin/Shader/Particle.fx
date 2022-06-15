@@ -211,6 +211,7 @@ void ParticleUpdate(uint3 ThreadID : SV_DispatchThreadID)
 				float NextCircleAngle = g_ParticleShare[0].PrevCircleAngle + (360.f / g_ParticleSpawnCountMax);
 
 				CirclePos = float3(0.f, 0.f, 0.f) + float3(cos(NextCircleAngle) * g_ParcticleGenerateRadius,  0.f, sin(NextCircleAngle) * g_ParcticleGenerateRadius);
+				g_ParticleArray[ThreadID.x].WorldPos = CirclePos;
 
 				g_ParticleShare[0].PrevCircleAngle = NextCircleAngle;
 					// PrevCircleAngle
