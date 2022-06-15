@@ -232,6 +232,13 @@ void CSceneComponentHierarchyWindow::OnLoadGameObject(CGameObject* Object)
 	// Hierachy »ý¼º
 	CIMGUITree* RootComponentNode = m_Root->AddChild(RootName, Root);
 	MakeHierachyRecursive(Root, RootComponentNode);
+
+	size_t Count = Object->GetChildObjectCount();
+
+	for (size_t i = 0; i < Count; ++i)
+	{
+		OnLoadGameObject(Object->GetChildObject(i));
+	}
 }
 
 void CSceneComponentHierarchyWindow::OnClearComponents(const std::string& RootComponentName)

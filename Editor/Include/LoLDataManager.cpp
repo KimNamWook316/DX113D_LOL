@@ -86,7 +86,7 @@ void CLoLDataManager::SetChampionNotify(CAnimationSequenceInstance* Instance, co
 				ss << StrRange;
 				ss >> Range;
 
-				Instance->SetNotifyParamRange("Alistar_SkillQ", "AlistarQAirborne", Range);
+				Instance->SetNotifyParamRange("Alistar_SkillQ", "AlistarQAirborne", (float)Range);
 			}
 			// W Skill
 			if (i == 1)

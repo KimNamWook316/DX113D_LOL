@@ -29,6 +29,13 @@ bool CRenderStateManager::Init()
 
 	CreateRasterizerState("Wireframe", D3D11_FILL_WIREFRAME);
 
+	// 현재 Transparent Rendering Path에서 멀티 렌더 타겟을 사용하기 때문에 Material에서 이 State사용
+	AddBlendInfo("AlphaBlend_MRT", true, D3D11_BLEND_SRC_ALPHA, D3D11_BLEND_INV_SRC_ALPHA);
+	AddBlendInfo("AlphaBlend_MRT", false);
+	AddBlendInfo("AlphaBlend_MRT", false);
+	AddBlendInfo("AlphaBlend_MRT", false);
+	CreateBlendState("AlphaBlend_MRT", false, true);
+
 	return true;
 }
 

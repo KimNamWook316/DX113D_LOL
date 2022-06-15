@@ -331,11 +331,6 @@ enum ActionNode
 	NormalAttack
 };
 
-enum DecoratorNode
-{
-	Negate
-};
-
 enum Node_Type
 {
 	Sequence,
@@ -371,4 +366,9 @@ enum class Building_Type
 	Tower,
 	Inhibitor,
 	Nexus
+};
+
+enum DecoratorNode
+{
+	Negate,
 };

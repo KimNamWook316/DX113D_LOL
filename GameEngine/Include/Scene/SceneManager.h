@@ -61,6 +61,8 @@ public:
 			m_CreateAnimInstanceCallback(Sprite, Type);
 	}
 
+	CGameObject* CreateObjectByTypeID(size_t TypeID);
+
 public:
 	void Start();
 	bool Init();

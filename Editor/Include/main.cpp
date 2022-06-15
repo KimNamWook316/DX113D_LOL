@@ -2,6 +2,7 @@
 #include "EditorManager.h"
 
 // Visual Leak Detector Library
+// #include <vld.h>
 
 #ifdef _DEBUG
 
@@ -20,8 +21,6 @@
 #ifdef _DEBUG
 #define new new ( _NORMAL_BLOCK , __FILE__ , __LINE__ )
 #endif
-
-
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	_In_opt_ HINSTANCE hPrevInstance,

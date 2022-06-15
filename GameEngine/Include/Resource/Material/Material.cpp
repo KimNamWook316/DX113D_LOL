@@ -127,7 +127,7 @@ void CMaterial::SetTransparency(bool Enable)
 {
 	if (Enable)
 	{
-		m_RenderStateArray[(int)RenderState_Type::Blend] = CRenderManager::GetInst()->FindRenderState("AlphaBlend");
+		m_RenderStateArray[(int)RenderState_Type::Blend] = CRenderManager::GetInst()->FindRenderState("AlphaBlend_MRT");
 	}
 	else
 	{
