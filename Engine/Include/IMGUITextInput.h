@@ -94,16 +94,16 @@ public:
 
 	void ClearText()
 	{
-		char		m_Text[1024];
-		wchar_t		m_wText[1024];
-		char		m_TextUTF8[1024];
+		char		Text[1024];
+		wchar_t		wText[1024];
+		char		TextUTF8[1024];
 
 		if (m_TextType != ImGuiText_Type::String)
 			return;
 
-		memset(m_Text, 0, sizeof(m_Text));
-		memset(m_wText, 0, sizeof(m_wText));
-		memset(m_TextUTF8, 0, sizeof(m_TextUTF8));
+		memset(m_Text, 0, sizeof(Text));
+		memset(m_wText, 0, sizeof(wText));
+		memset(m_TextUTF8, 0, sizeof(TextUTF8));
 	}
 
 	void SetInt(int Value)

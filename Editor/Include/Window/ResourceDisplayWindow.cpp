@@ -114,16 +114,16 @@ void CResourceDisplayWindow::RefreshLoadedParticleResources()
 {
 	m_ParticleList->ClearWidget();
 
-	// const std::unordered_map<std::string, CSharedPtr<class CParticle>>& MapParticle = CRenderManager::GetInst()->GetParticleManager()->GetMapParticle();
-	// 
-	// auto iter = MapParticle.begin();
-	// auto iterEnd = MapParticle.end();
-	// 
-	// for (; iter != iterEnd; ++iter)
-	// {
-	// 	CIMGUIText* AddedText = m_ParticleList->AddWidget<CIMGUIText>(iter->first);
-	// 	AddedText->SetText(iter->first.c_str());
-	// }
+	const std::unordered_map<std::string, CSharedPtr<class CParticle>>& MapParticle = CResourceManager::GetInst()->GetParticleManager()->GetMapParticle();
+	
+	auto iter = MapParticle.begin();
+	auto iterEnd = MapParticle.end();
+	
+	for (; iter != iterEnd; ++iter)
+	{
+		CIMGUIText* AddedText = m_ParticleList->AddWidget<CIMGUIText>(iter->first);
+		AddedText->SetText(iter->first.c_str());
+	}
 }
 
 void CResourceDisplayWindow::RefreshAllDisplayInfos()

@@ -41,7 +41,18 @@ bool CAnimationMesh::Init()
 
 void CAnimationMesh::SetSkeleton(CSkeleton* Skeleton)
 {
+	// 기존 Mesh 가 들고 있는 Skeleton 과 같은 Skeleton 을 세팅하려는 경우, 예외처리를 해준다.
+	if (m_Skeleton && m_Skeleton == Skeleton)
+		return;
+
 	m_Skeleton = Skeleton;
+
+	// 아래의 코드를 활성화 해야 하는 것이 맞다. 하지만
+	// ex) Animation Editor 에서 A.anim 을 Load Inst 해서 돌리다가
+	// - Animation Mesh Widget 에서 같은 A.anim 을 Load Inst 하는 순간 
+	// - BoneBuffer 를 지우게 되면, 현재 이 Animation Mesh 의 Skeleton을 사용하던, Animatino Editor 의 Anim3DObject 의
+	// Animation입장에서는, 자기가 지니고 있던 Instancing Bone Buffer 가 지워진다. => Dangling Pointer 문제가 발생하게 되는 것이다.
+	//SAFE_DELETE(m_BoneBuffer);
 
 	m_BoneBuffer = new CStructuredBuffer;
 	m_BoneBuffer->Init("OutputBone", sizeof(Matrix), (unsigned int)m_Skeleton->GetBoneCount() * m_InstancingCount, 2);
@@ -57,6 +68,8 @@ void CAnimationMesh::SetSkeleton(const std::string& Name, const TCHAR* FileName,
 	WideCharToMultiByte(CP_ACP, 0, FileName, -1, FileNameMultibyte, Length, 0, 0);
 
 	m_Skeleton->LoadSkeleton(m_Scene, Name, FileNameMultibyte, PathName);
+
+	// SAFE_DELETE(m_BoneBuffer);
 
 	m_BoneBuffer = new CStructuredBuffer;
 	m_BoneBuffer->Init("OutputBone", sizeof(Matrix), (unsigned int)m_Skeleton->GetBoneCount() * m_InstancingCount, 2);

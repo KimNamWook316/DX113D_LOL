@@ -45,6 +45,7 @@ CAnimationMeshComponent::~CAnimationMeshComponent()
 	DeleteInstancingCheckList();
 
 	SAFE_DELETE(m_Animation);
+	// SAFE_DELETE(m_Skeleton);
 }
 
 void CAnimationMeshComponent::SetScene(CScene* Scene)
@@ -66,9 +67,6 @@ void CAnimationMeshComponent::SetMesh(const std::string& Name)
 	CAnimationMesh* FoundMesh = (CAnimationMesh*)m_Scene->GetResource()->FindMesh(Name);
 
 	if (!FoundMesh)
-		return;
-
-	if (m_Mesh == FoundMesh)
 		return;
 
 	DeleteInstancingCheckList();
@@ -822,10 +820,13 @@ bool CAnimationMeshComponent::Save(FILE* File)
 		if (MaterialPath)
 			strcpy_s(MaterialBinPathMutlibyte, MaterialPath->PathMultibyte);
 
-		// Mesh Name + _Idx 
+		// ObjectName_ + Mesh Name + _Idx
+		// 앞에 Object 를 붙여주는 이유는 같은 Object 가 동일한 Mesh 파일에서 비롯된, Material 을 사용할 경우
+		// A Object 의 Material 을 수정했는데, B Object 가 쓰는 Material 파일이 A Object 가 쓰는 Material 파일과 같아서
+		// A Object 의 Material 변화가 B Object 의 Material 파일에도 반영되는 것이다.
 		std::string SavedExtraMtrlName;
-		SavedExtraMtrlName.reserve(MeshName.length() * 2); 
-		SavedExtraMtrlName = MeshName + "_" + std::to_string(idx) + ".mtrl";;
+		SavedExtraMtrlName.reserve(MeshName.length() * 3); 
+		SavedExtraMtrlName = m_Object->GetName() + "_" + MeshName + "_" + std::to_string(idx) + ".mtrl";
 
 		strcat_s(MaterialBinPathMutlibyte, SavedExtraMtrlName.c_str());
 
@@ -875,7 +876,6 @@ bool CAnimationMeshComponent::Load(FILE* File)
 	fread(&AnimSavedFileNameLength, sizeof(size_t), 1, File);
 	fread(AnimSavedFileName,  sizeof(char), AnimSavedFileNameLength, File);
 
-
 	LoadAnimationInstance<CAnimationSequenceInstance>();
 
 	// RESOURCE_ANIMATION_PATH 를 통해서 .anim File Load
@@ -901,7 +901,7 @@ bool CAnimationMeshComponent::Load(FILE* File)
 	const PathInfo* MaterialPath = CPathManager::GetInst()->FindPath(MATERIAL_PATH);
 
 	m_vecMaterialSlot.clear();
-	
+
 	m_vecMaterialSlot.resize(MaterialSlotCount);
 
 	for (int idx = 0; idx < MaterialSlotCount; ++idx)
@@ -1108,10 +1108,13 @@ bool CAnimationMeshComponent::SaveOnly(FILE* pFile)
 		if (MaterialPath)
 			strcpy_s(MaterialBinPathMutlibyte, MaterialPath->PathMultibyte);
 
-		// Mesh Name + _Idx 
+		// ObjectName_ + Mesh Name + _Idx
+		// 앞에 Object 를 붙여주는 이유는 같은 Object 가 동일한 Mesh 파일에서 비롯된, Material 을 사용할 경우
+		// A Object 의 Material 을 수정했는데, B Object 가 쓰는 Material 파일이 A Object 가 쓰는 Material 파일과 같아서
+		// A Object 의 Material 변화가 B Object 의 Material 파일에도 반영되는 것이다.
 		std::string SavedExtraMtrlName;
-		SavedExtraMtrlName.reserve(MeshName.length() * 2);
-		SavedExtraMtrlName = MeshName + "_" + std::to_string(idx) + ".mtrl";;
+		SavedExtraMtrlName.reserve(MeshName.length() * 3);
+		SavedExtraMtrlName = m_Object->GetName() + "_" + MeshName + "_" + std::to_string(idx) + ".mtrl";
 
 		strcat_s(MaterialBinPathMutlibyte, SavedExtraMtrlName.c_str());
 
@@ -1281,13 +1284,13 @@ void CAnimationMeshComponent::ChangeInstancingLayer()
 	if (!CheckCountExist)
 	{
 		InstancingCheckCount* CheckCount = new InstancingCheckCount;
-
+	
 		m_InstancingCheckList.push_back(CheckCount);
-
+	
 		CheckCount->InstancingList.push_back(this);
 		CheckCount->LayerName = m_LayerName;
 		CheckCount->Mesh = m_Mesh;
-
+	
 		SetInstancing(false);
 	}
 }

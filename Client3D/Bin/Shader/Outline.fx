@@ -1,6 +1,6 @@
 #include "ShaderInfo.fx"
 
-Texture2DMS<float4> g_GBufferDiffuse : register(t13);
+Texture2DMS<float4> g_ScreenColor : register(t13);
 Texture2DMS<float4> g_GBufferNormal : register(t14);
 Texture2DMS<float4> g_GBufferDepth : register(t15);
 Texture2DMS<float4> g_GBufferOutlineInfo : register(t16);
@@ -70,7 +70,7 @@ PSOutput_Single OutlinePS(VS_OUTPUT_OUTLINE Input)
 	TargetPos.y = (int) (UV.y * g_Resolution.y);
 
 	float4 OutlineInfo = g_GBufferOutlineInfo.Load(TargetPos, 0);
-	float4 ScreenColor = g_GBufferDiffuse.Load(TargetPos, 0);
+	float4 ScreenColor = g_ScreenColor.Load(TargetPos, 0);
 	float4 DepthColor = g_GBufferDepth.Load(TargetPos, 0);
 
 	// 굵기 계산
@@ -87,13 +87,13 @@ PSOutput_Single OutlinePS(VS_OUTPUT_OUTLINE Input)
 	float SobelDepth = SobelSampleDepth(TargetPos, Offset);
 	SobelDepth = pow(saturate(SobelDepth) * g_OutlineDepthMultiplier, g_OutlineDepthBias);
 
- //	// Sobel Normal
- //	float3 SobelNormalVec = SobelSample(TargetPos, Offset);
- //	float SobelNormal = SobelNormalVec.x + SobelNormalVec.y + SobelNormalVec.z;
- //	SobelNormal = pow(SobelNormal * g_OutlineNormalMultiplier, g_OutlineNormalBias);
+	// Sobel Normal
+	float3 SobelNormalVec = SobelSample(TargetPos, Offset);
+	float SobelNormal = SobelNormalVec.x + SobelNormalVec.y + SobelNormalVec.z;
+	SobelNormal = pow(SobelNormal * g_OutlineNormalMultiplier, g_OutlineNormalBias);
 
-	float SobelOutline = saturate(SobelDepth);
-	//float SobelOutline = saturate(max(SobelDepth, SobelNormal));
+	//float SobelOutline = saturate(SobelDepth);
+	float SobelOutline = saturate(max(SobelDepth, SobelNormal));
 
 	// Outline 색상 보간
 	float4 Convert = ConvertColor(OutlineInfo.r);

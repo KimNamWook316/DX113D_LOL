@@ -8,6 +8,7 @@ CAnimationManager3D::CAnimationManager3D()
 
 CAnimationManager3D::~CAnimationManager3D()
 {
+	// Map Sequence
 	auto iter = m_mapSequence.begin();
 	auto iterEnd = m_mapSequence.end();
 
@@ -17,7 +18,20 @@ CAnimationManager3D::~CAnimationManager3D()
 		iterEnd = m_mapSequence.end();
 	}
 
-	m_mapSequence.empty();
+	m_mapSequence.clear();
+
+	// MapSkeleton
+	{
+		auto iter = m_mapSkeleton.begin();
+		auto iterEnd = m_mapSkeleton.end();
+
+		for (; iter != iterEnd;)
+		{
+			iter = m_mapSkeleton.erase(iter);
+			iterEnd = m_mapSkeleton.end();
+		}
+		m_mapSkeleton.clear();
+	}
 }
 
 bool CAnimationManager3D::Init()
@@ -358,12 +372,12 @@ bool CAnimationManager3D::LoadSkeletonMultibyte(const std::string& Name,
 bool CAnimationManager3D::LoadSkeletonFullPathMultibyte(
 	const std::string& Name, const char* FullPath, CScene* Scene)
 {
-	if (FindSkeleton(Name))
-	{
-		return true;
-	}
+	CSkeleton* Skeleton = FindSkeleton(Name);
 
-	CSkeleton* Skeleton = new CSkeleton;
+	if (Skeleton)
+		return true;
+
+	Skeleton = new CSkeleton;
 
 	Skeleton->m_Scene = Scene;
 

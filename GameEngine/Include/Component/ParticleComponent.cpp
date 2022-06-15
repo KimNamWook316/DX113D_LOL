@@ -91,14 +91,14 @@ void CParticleComponent::SetParticle(CParticle* Particle)
 
 	m_CBuffer = m_Particle->CloneConstantBuffer();
 
-	m_SpawnTimeMax = m_Particle->GetSpawnTime();
+	m_SpawnTimeMax = m_Particle->GetSpawnTimeMax();
 }
 
 void CParticleComponent::SetSpawnTime(float Time)
 {
 	m_SpawnTimeMax = Time;
 
-	// m_Particle->SetSpawnTime(m_SpawnTimeMax);
+	m_Particle->SetSpawnTimeMax(m_SpawnTimeMax);
 }
 
 void CParticleComponent::ApplyBillBoardEffect()

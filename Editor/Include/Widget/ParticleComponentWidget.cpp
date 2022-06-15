@@ -226,7 +226,7 @@ void CParticleComponentWidget::OnIsGravityEdit(const char*, bool Enable)
 
 void CParticleComponentWidget::OnIsRandomMoveEdit(const char*, bool Enable)
 {
-    dynamic_cast<CParticleComponent*>(m_Component.Get())->GetCBuffer()->SetApplyRandom(Enable);
+    // dynamic_cast<CParticleComponent*>(m_Component.Get())->GetCBuffer()->SetApplyRandom(Enable);
 }
 
 void CParticleComponentWidget::OnMoveDirEdit(const Vector3& Dir)
@@ -400,7 +400,7 @@ void CParticleComponentWidget::OnReflectCurrentParticleSetting()
 
     dynamic_cast<CParticleComponent*>(m_Component.Get())->GetParticle()->SetMove(m_IsMoveEdit->GetCheck(0));
 
-    dynamic_cast<CParticleComponent*>(m_Component.Get())->GetParticle()->SetApplyRandom(m_IsRandomMoveEdit->GetCheck(0));
+    // dynamic_cast<CParticleComponent*>(m_Component.Get())->GetParticle()->SetApplyRandom(m_IsRandomMoveEdit->GetCheck(0));
 }
 
 /*

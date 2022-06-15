@@ -203,6 +203,7 @@ bool CSkeleton::LoadSkeletonFullPath(CScene* pScene, const std::string& strName,
 	if (!pFile)
 		return false;
 
+	// 기존 Bone 들을 지워준다.
 	for (size_t i = 0; i < m_vecBones.size(); ++i)
 	{
 		--m_vecBones[i]->iRefCount;

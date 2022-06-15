@@ -373,7 +373,6 @@ enum class Building_Type
 	Inhibitor,
 	Nexus
 };
-
 enum class Minion_Type
 {
 	Melee,

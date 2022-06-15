@@ -22,6 +22,7 @@ CAnim3DObject::CAnim3DObject(const CAnim3DObject& obj) :
 
 CAnim3DObject::~CAnim3DObject()
 {
+	// SAFE_DELETE(m_Mesh);
 }
 
 bool CAnim3DObject::Init()

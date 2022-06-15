@@ -15,6 +15,7 @@ struct ParticleSaveLoadStruct
 	ParticleInfoShared InfoShared;
 	bool Is2D;
 	int SpawnCountMax;
+	float SpawnTimeMax;
 };
 
 class CParticle :
@@ -35,7 +36,7 @@ private:
 	ParticleInfo							m_Info;
 	ParticleInfoShared						m_InfoShare;
 	CParticleConstantBuffer*				m_CBuffer;
-	float									m_SpawnTime;
+	float									m_SpawnTimeMax;
 	bool									m_2D;
 	int										m_SpawnCountMax;
 	ParticleSaveLoadStruct       m_SaveLoadStruct;
@@ -60,9 +61,9 @@ public:
 		return m_CBuffer->Clone();
 	}
 
-	float GetSpawnTime()	const
+	float GetSpawnTimeMax()	const
 	{
-		return m_SpawnTime;
+		return m_SpawnTimeMax;
 	}
 
 public:
@@ -86,10 +87,10 @@ public:
 		return m_CBuffer;
 	}
 
-	int GetApplyRandom() const
-	{
-		return m_CBuffer->GetApplyRandom();
-	}
+	// int GetApplyRandom() const
+	// {
+	// 	return m_CBuffer->GetApplyRandom();
+	// }
 
 	int GetSpawnCountMax()	const
 	{
@@ -203,9 +204,9 @@ public:
 		m_Material = Material;
 	}
 
-	void SetSpawnTime(float SpawnTime)
+	void SetSpawnTimeMax(float SpawnTime)
 	{
-		m_SpawnTime = SpawnTime;
+		m_SpawnTimeMax = SpawnTime;
 	}
 
 	void SetSpawnEnable(unsigned int Count)
@@ -217,7 +218,6 @@ public:
 	{
 		m_CBuffer->SetStartMin(StartMin);
 	}
-
 
 	void SetStartMax(const Vector3& StartMax)
 	{
@@ -256,9 +256,19 @@ public:
 		m_CBuffer->SetColorMin(ColorMin);
 	}
 
+	void SetColorMin(float r, float g, float b, float a)
+	{
+		m_CBuffer->SetColorMin(r, g, b, a);
+	}
+
 	void SetColorMax(const Vector4& ColorMax)
 	{
 		m_CBuffer->SetColorMax(ColorMax);
+	}
+
+	void SetColorMax(float r, float g, float b, float a)
+	{
+		m_CBuffer->SetColorMax(r, g, b, a);
 	}
 
 	void SetSpeedMin(float SpeedMin)
@@ -286,10 +296,10 @@ public:
 		m_CBuffer->SetMoveDir(MoveDir);
 	}
 
-	void SetApplyRandom(bool Enable)
-	{
-		m_CBuffer->SetApplyRandom(Enable);
-	}
+	// void SetApplyRandom(bool Enable)
+	// {
+	// 	m_CBuffer->SetApplyRandom(Enable);
+	// }
 
 	void Set2D(bool Is2D)
 	{

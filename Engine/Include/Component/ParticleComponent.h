@@ -44,6 +44,10 @@ public :
 		return m_Particle;
 	}
 public :
+	void SetMaterial(class CMaterial* Material)
+	{
+		m_Material = Material;
+	}
 	void SetBillBoardEffect(bool Enable)
 	{
 		m_BillBoardEffect = Enable;

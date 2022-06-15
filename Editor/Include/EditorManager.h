@@ -26,6 +26,7 @@ private:
 	class CObjectComponentWindow* m_ObjectComponentWindow;
 	class CAnimationEditor* m_AnimationEditor;
 	class CEffectEditor* m_EffectEditor;
+	class CEffectDisplayWindow* m_EffectDisplayWindow;
 	class CInspectorWindow* m_InspectorWindow;
 	class CToolWindow* m_ToolWindow;
 	class CBehaviorTreeMenuBar* m_BehaviorTreeMenuBar;
@@ -34,6 +35,7 @@ private:
 	class CResourceDisplayWindow* m_ResourceDisplayWindow;
 	class C3DCameraObject* m_CameraObject;
 	class CFBXConvertWindow* m_FBXConvertWindow;
+	class CCollisionProfileEditor* m_CollisionProfileEditor;
 
 	bool				m_MousePush;
 	float				m_CameraMoveSpeed;
@@ -75,6 +77,10 @@ public:
 	{
 		return m_EffectEditor;
 	}
+	class CEffectDisplayWindow* GetEffectDisplayWindow() const
+	{
+		return m_EffectDisplayWindow;
+	}
 	class CMaterialEditor* GetMaterialEditor() const
 	{
 		return m_MaterialEditor;
@@ -86,6 +92,10 @@ public:
 	class CAnimationEditor* GetAnimationEditor()	const
 	{
 		return m_AnimationEditor;
+	}
+	class CCollisionProfileEditor* GetCollisionProfileEditor()	const
+	{
+		return m_CollisionProfileEditor;
 	}
 	class C3DCameraObject* Get3DCameraObject()	const
 	{
@@ -124,6 +134,11 @@ public:
 	void SetChampionInfo(class CGameObject* Object, const std::string& ChampionName);
 
 private:
+	void CreateKey();
+	void CreateEditorObjects();
+	void SetEditorSceneCallBack();
+	void LoadEditorResources();
+	void CreateWindows();
 	void CreateEditorCamera();
 	void ReadChampionNotify();
 	void ReadChampionSkillInfo();

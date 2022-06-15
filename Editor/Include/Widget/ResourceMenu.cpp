@@ -1,6 +1,7 @@
 #include "ResourceMenu.h"
 #include "IMGUIMenuItem.h"
 #include "../Window/EffectEditor.h"
+#include "../Window/EffectDisplayWindow.h"
 #include "../Window/MaterialEditor.h"
 #include "../Window/AnimationEditor.h"
 #include "../Window/ResourceDisplayWindow.h"
@@ -46,10 +47,12 @@ void CResourceMenu::OnToggleParticleEditorCallback()
 	if (IsOpen)
 	{
 		CEditorManager::GetInst()->GetEffectEditor()->Close();
+		CEditorManager::GetInst()->GetEffectDisplayWindow()->Close();
 	}
 	else
 	{
 		CEditorManager::GetInst()->GetEffectEditor()->Open();
+		CEditorManager::GetInst()->GetEffectDisplayWindow()->Open();
 	}
 }
 

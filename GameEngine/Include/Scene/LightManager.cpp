@@ -206,7 +206,7 @@ void CLightManager::SetForwardRenderShader()
 		++Count;
 	}
 
-	m_LightListBuffer->UpdateBuffer(&m_LightListBufferData[0], m_LightList.size());
+	m_LightListBuffer->UpdateBuffer(&m_LightListBufferData[0], (int)m_LightList.size());
 	m_LightListBuffer->SetShader();
 }
 
@@ -220,6 +220,6 @@ void CLightManager::CreateLightListBuffer()
 	SAFE_DELETE(m_LightListBuffer);
 
 	m_LightListBuffer = new CStructuredBuffer;
-	m_LightListBuffer->Init("LightListBuffer", sizeof(LightCBuffer), m_LightList.size(),
+	m_LightListBuffer->Init("LightListBuffer", sizeof(LightCBuffer), (unsigned int)m_LightList.size(),
 		13, true, (int)Buffer_Shader_Type::Pixel);
 }

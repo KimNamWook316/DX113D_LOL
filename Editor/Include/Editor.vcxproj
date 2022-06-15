@@ -89,8 +89,8 @@
     <LinkIncremental>true</LinkIncremental>
     <OutDir>../Bin/</OutDir>
     <IntDir>../BinObj/</IntDir>
-    <IncludePath>../../Engine/Include/;$(IncludePath)</IncludePath>
-    <LibraryPath>../Bin/;$(LibraryPath)</LibraryPath>
+    <IncludePath>../../Engine/Include/;C:\Program Files (x86)\Visual Leak Detector\include;$(IncludePath)</IncludePath>
+    <LibraryPath>../Bin/;C:\Program Files (x86)\Visual Leak Detector\lib\Win64;$(LibraryPath)</LibraryPath>
     <TargetName>$(ProjectName)_Debug</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -200,6 +200,7 @@
     <ClCompile Include="Widget\ColliderComponentWidget.cpp" />
     <ClCompile Include="Widget\ColliderSphereWidget.cpp" />
     <ClCompile Include="Widget\MinionAIComponentWidget.cpp" />
+    <ClCompile Include="Widget\DataMenu.cpp" />
     <ClCompile Include="Widget\ResourceMenu.cpp" />
     <ClCompile Include="Widget\GameObjectWidget.cpp" />
     <ClCompile Include="Widget\LandScapeWidget.cpp" />
@@ -220,6 +221,8 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClCompile>
+	<ClCompile Include="Window\CollisionProfileEditor.cpp" />
+	<ClCompile Include="Window\EffectDisplayWindow.cpp" />
     <ClCompile Include="Window\EffectEditor.cpp" />
     <ClCompile Include="Window\FBXConvertWindow.cpp" />
     <ClCompile Include="Window\FileBrowser.cpp" />
@@ -272,6 +275,7 @@
     </ClInclude>
     <ClInclude Include="Widget\ColliderComponentWidget.h" />
     <ClInclude Include="Widget\ColliderSphereWidget.h" />
+    <ClInclude Include="Widget\DataMenu.h" />
     <ClInclude Include="Widget\GameObjectWidget.h" />
     <ClInclude Include="Widget\LandScapeWidget.h" />
     <ClInclude Include="Widget\LightComponentWidget.h" />
@@ -293,6 +297,8 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClInclude>
+	<ClInclude Include="Window\CollisionProfileEditor.h" />
+	<ClInclude Include="Window\EffectDisplayWindow.h" />
     <ClInclude Include="Window\EffectEditor.h" />
     <ClInclude Include="Window\FBXConvertWindow.h" />
     <ClInclude Include="Window\FileBrowser.h" />

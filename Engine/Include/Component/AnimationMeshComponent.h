@@ -185,7 +185,7 @@ public:
         if (m_Mesh)
             m_Animation->SetInstancingBoneBuffer(m_Mesh->GetBoneBuffer());
 
-        return Anim;
+        return m_Animation;
     }
 
     template <typename T>

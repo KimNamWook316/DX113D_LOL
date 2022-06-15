@@ -29,6 +29,7 @@
 // Engine
 #include "Component/ParticleComponent.h"
 #include "Component/SpriteComponent.h"
+#include "Component/Arm.h"
 #include "Engine.h"
 #include "PathManager.h"
 #include "Scene/SceneManager.h"
@@ -38,7 +39,8 @@
 #include "Scene/SceneResource.h"
 #include "GameObject/SkyObject.h"
 
-CEffectEditor::CEffectEditor()
+CEffectEditor::CEffectEditor() :
+    m_StartEdit(false)
 {
 }
 
@@ -116,17 +118,14 @@ bool CEffectEditor::Init()
     m_CameraXRotSlideBar->SetMax(88.f);
 
     // ParticleEffectRenderTarget
-    m_ParticleRenderTarget = AddWidget<CIMGUIImage>("Render Target", 500.f, 400.f);
-    m_ParticleRenderTarget->SetRenderTargetImage(true);
-    m_ParticleRenderTarget->SetTexture(CRenderManager::GetInst()->GetParticleEffectRenderTarget());
-    m_ParticleRenderTarget->SetBorderColor(10, 10, 255);
-    m_ParticleRenderTarget->SetTableTitle("Render Target");
+   // m_ParticleRenderTarget = AddWidget<CIMGUIImage>("Render Target", 500.f, 400.f);
+   // m_ParticleRenderTarget->SetRenderTargetImage(true);
+   // m_ParticleRenderTarget->SetTexture(CRenderManager::GetInst()->GetParticleEffectRenderTarget());
+   // m_ParticleRenderTarget->SetBorderColor(10, 10, 255);
+   // m_ParticleRenderTarget->SetTableTitle("Render Target");
 
     // Particle Texture
     m_ParticleTexture = AddWidget<CIMGUIImage>("Particle Texture", 200.f, 200.f);
-    // m_ParticleRenderTarget = AddWidget<CIMGUIImage>("Render Target", 500.f, 500.f);
-    // m_ParticleRenderTarget->SetRenderTargetImage(true);
-    // m_ParticleRenderTarget->SetTexture(CRenderManager::GetInst()->GetParticleEffectRenderTarget());
     m_ParticleTexture->SetBorderColor(10, 10, 255);
     m_ParticleTexture->SetTableTitle("Texture");
 
@@ -153,12 +152,12 @@ bool CEffectEditor::Init()
     Line = Tree->AddWidget<CIMGUISameLine>("Line");
     Line->SetOffsetX(170.f);
 
-    m_IsRandomMoveEdit = Tree->AddWidget<CIMGUICheckBox>("Random", 80.f);
-    m_IsRandomMoveEdit->AddCheckInfo("Random");
-    m_IsRandomMoveEdit->SetCallBackLabel<CEffectEditor>(this, &CEffectEditor::OnIsRandomMoveEdit);
+    // m_IsRandomMoveEdit = Tree->AddWidget<CIMGUICheckBox>("Random", 80.f);
+    // m_IsRandomMoveEdit->AddCheckInfo("Random");
+    // m_IsRandomMoveEdit->SetCallBackLabel<CEffectEditor>(this, &CEffectEditor::OnIsRandomMoveEdit);
 
-    Line = Tree->AddWidget<CIMGUISameLine>("Line");
-    Line->SetOffsetX(260.f);
+    // Line = Tree->AddWidget<CIMGUISameLine>("Line");
+    // Line->SetOffsetX(260.f);
 
     m_IsPauseResumeToggle = Tree->AddWidget<CIMGUICheckBox>("Toggle", 80.f);
     m_IsPauseResumeToggle->AddCheckInfo("Toggle");
@@ -240,12 +239,8 @@ bool CEffectEditor::Init()
     // m_GravityAccelEdit = AddWidget<CIMGUIInputFloat>("Gravity Accel", 100.f);
     // m_StartDelayEdit = AddWidget<CIMGUIInputFloat>("Start Delay T// ", 100.f);
 
-    // Camera 세팅
-    // OnSetCameraSetting();
-
     SetGameObjectReady();
 
-    // OnSetParticleMaterialSetting(m_ParticleSampleObject->GetRootComponent());
 	return true;
 }
 
@@ -259,13 +254,32 @@ void CEffectEditor::OnLoadParticleObjectButton()
 
 void CEffectEditor::OnRestartParticleComponentButton()
 {
-    SAFE_DELETE(m_ParticleObject);
+    // 아직 시작도 안했다면 동작 X
+    if (!m_ParticleObject)
+        return;
+
+    if (!m_ParticleClass)
+        return;
+
+    // 기존에 존재하던 Particle Object 는 지워줘야 한다
+    if (m_ParticleObject)
+    {
+        m_ParticleObject->Destroy();
+    }
+
+    BackUpParticleObjectInfo();
+
     m_ParticleObject = CSceneManager::GetInst()->GetScene()->CreateGameObject<C3DParticleObject>("Particle Effect Base Ground");
 
-    m_CameraXRotSlideBar->SetValue(m_ParticleObject->GetCameraRelativeRotation().x);
-    m_CameraYOffsetBar->SetValue(m_ParticleObject->GetCameraOfffset().y);
-
     SetParticleToParticleComponent(dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent()), m_ParticleClass);
+
+    ReflectBackUpParticleObjectInfo();
+
+    // IMGUI가 Particle 정보 반영하게 하기 
+    SetIMGUIReflectParticle(m_ParticleClass);
+
+    // IMGUI가 Paritlc Object 정보 반영하게 하기 
+    SetIMGUIReflectObjectCamera();
 }
 
 void CEffectEditor::OnSpawnTimeMaxEdit(float Num)
@@ -273,7 +287,7 @@ void CEffectEditor::OnSpawnTimeMaxEdit(float Num)
     if (!m_ParticleClass)
         return;
 
-    m_ParticleClass->SetSpawnTime(m_SpawnTimeMaxEdit->GetVal());
+    m_ParticleClass->SetSpawnTimeMax(Num);
     dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->SetSpawnTime(Num);
 }
 
@@ -322,6 +336,7 @@ void CEffectEditor::OnScaleMaxEdit(const Vector3& Scale)
         return;
 
     m_ParticleClass->SetScaleMax(Scale);
+
     dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetScaleMax(Scale);
     // m_ParticleComponent->GetCBuffer()->SetScaleMax(Scale);
 }
@@ -371,8 +386,10 @@ void CEffectEditor::OnColorMinEdit(const Vector4& Color)
     if (!m_ParticleClass)
         return;
 
-    m_ParticleClass->SetColorMin(Color);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetColorMin(Color);
+    // Alpha 값은 0으로 한다.
+
+    m_ParticleClass->SetColorMin(Color.x, Color.y, Color.z, 1.f);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetColorMin(Color.x, Color.y, Color.z, 1.f);
     // m_ParticleComponent->GetCBuffer()->SetColorMin(Color);
 }
 
@@ -381,8 +398,8 @@ void CEffectEditor::OnColorMaxEdit(const Vector4& Color)
     if (!m_ParticleClass)
         return;
 
-    m_ParticleClass->SetColorMax(Color);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetColorMax(Color);
+    m_ParticleClass->SetColorMax(Color.x, Color.y, Color.z, 1.f);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetColorMax(Color.x, Color.y, Color.z, 1.f);
     // m_ParticleComponent->GetCBuffer()->SetColorMax(Color);
 }
 
@@ -407,15 +424,15 @@ void CEffectEditor::OnIsGravityEdit(const char*, bool Enable)
     // m_ParticleComponent->GetCBuffer()->SetGravity(Enable);
 }
 
-void CEffectEditor::OnIsRandomMoveEdit(const char*, bool Enable)
-{
-    if (!m_ParticleClass)
-        return;
-
-    m_ParticleClass->SetApplyRandom(Enable);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetApplyRandom(Enable);
-    // m_ParticleComponent->GetCBuffer()->SetApplyRandom(Enable);
-}
+// void CEffectEditor::OnIsRandomMoveEdit(const char*, bool Enable)
+// {
+//     if (!m_ParticleClass)
+//         return;
+// 
+//     m_ParticleClass->SetApplyRandom(Enable); //
+//     dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetApplyRandom(Enable);
+//     // m_ParticleComponent->GetCBuffer()->SetApplyRandom(Enable);
+// }
 
 void CEffectEditor::OnPauseResumeToggle(const char*, bool Enable)
 {
@@ -479,6 +496,7 @@ void CEffectEditor::OnMoveAngleEdit(const Vector3& Angle)
         return;
 
     m_ParticleClass->SetMoveAngle(Angle);
+
     dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetMoveAngle(Angle);
 }
 
@@ -526,11 +544,8 @@ void CEffectEditor::OnSetParticleTexture()
         // 실제 Particle 이 사용하는 Material 의 Texture 교체
         Material->SetTexture(0, 0, (int)Buffer_Shader_Type::Pixel, ConvertFileName, FileName, PARTICLE_PATH);
 
-        // 바뀐 Particle 정보를 Clone 해서 다시 세팅한다.
-        // m_ParticleComponent->SetParticle("BasicParticle");
-
         // 기존 세팅 정보를 그대로 반영한다.
-        OnReflectCurrentParticleSetting();
+        // OnReflectCurrentParticleSetting();
     }
 }
 
@@ -591,6 +606,7 @@ void CEffectEditor::OnLoadParticleClass()
 
     if (GetOpenFileName(&OpenFile) != 0)
     {
+        // 경로 추출
         char	Ext[_MAX_EXT] = {};
 
         char FilePathMultibyte[MAX_PATH] = {};
@@ -605,25 +621,38 @@ void CEffectEditor::OnLoadParticleClass()
 
         // 확장자 .anim 이 아니라면 return;
         if (strcmp(Ext, ".PRTC") != 0)
+        {
+            MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("확장자가 .prtc 이어야 합니다."), NULL, MB_OK);
             return;
+        }
 
-        SAFE_DELETE(m_ParticleClass);
+        // Edit State 처리 
+        m_StartEdit = true;
 
+        // Particle 파일 Load 하기
+        // SAFE_DELETE(m_ParticleClass); --> Particle Manager 에서 알아서 관리해줄 것이다.
         m_ParticleClass = CResourceManager::GetInst()->CreateParticleEmpty<CParticle>();
-
         m_ParticleClass->LoadFile(FilePathMultibyte);
 
-        // Particle 을 보여주기 위한 Particle Component 를 만들어내고
-        // m_Particle 에 세팅해주고
-        m_ParticleObject = CSceneManager::GetInst()->GetScene()->CreateGameObject<C3DParticleObject>("Particle Effect Base Ground");
+        // 이전 Particle Object 의 카메라 관련 정보 백업
+        BackUpParticleObjectInfo();
 
-        m_CameraXRotSlideBar->SetValue(m_ParticleObject->GetCameraRelativeRotation().x);
-        m_CameraYOffsetBar->SetValue(m_ParticleObject->GetCameraOfffset().y);
+         // 필요한 Object 목록 세팅 => Particle Object 도 세팅
+        SetGameObjectReady();
 
+        // Particle Object Enable 처리
+        m_ParticleObject->Enable(true);
+        m_ParticleObject->GetRootComponent()->Enable(true);
+
+        // 백업 내용 반영
+        ReflectBackUpParticleObjectInfo();
+
+        // Particle Component 에 Particle 세팅
         SetParticleToParticleComponent(dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent()), m_ParticleClass);
-         
+
         // IMGUI Update
-        SetIMGUIReflectPartice(m_ParticleClass);
+        SetIMGUIReflectParticle(m_ParticleClass);
+        SetIMGUIReflectObjectCamera();
 
         // Particle Manager 의 Map 에 추가하기
         CResourceManager::GetInst()->GetParticleManager()->AddParticle(m_ParticleClass);
@@ -631,7 +660,6 @@ void CEffectEditor::OnLoadParticleClass()
         // Resource Display Window 세팅하기
         CEditorManager::GetInst()->GetResourceDisplayWindow()->RefreshLoadedParticleResources();
     }
-    
 }
 
 void CEffectEditor::OnSetBasicParticleMaterialSetting(CSceneComponent* Com)
@@ -651,18 +679,10 @@ void CEffectEditor::OnSetBasicParticleMaterialSetting(CSceneComponent* Com)
         return;
     m_ParticleClass->SetMaterial(m_ParticleMaterial);
 
-    SetIMGUIReflectPartice(m_ParticleClass);
+    SetBasicDefaultParticleInfos(m_ParticleClass);
 
     // 해당 정보들 UI 에 세팅하기
     SetParticleToParticleComponent(dynamic_cast<CParticleComponent*>(Com), "BasicParticle");
-
-
-    // Move 여부, Gravity 여부, Random 여부 세팅하기
-    m_IsMoveEdit->SetCheck(0, m_ParticleClass->GetCBuffer()->GetMove());
-    m_IsGravityEdit->SetCheck(0, m_ParticleClass->GetCBuffer()->GetGravity());
-    m_IsRandomMoveEdit->SetCheck(0, m_ParticleClass->GetCBuffer()->GetApplyRandom());
-    
-    // Particle 세팅
 
     // 기본 Z Pos 세팅
     Com->SetWorldPos(Com->GetWorldPos().x, Com->GetWorldPos().y, 10.f);
@@ -693,7 +713,6 @@ void CEffectEditor::OnReflectCurrentParticleSetting()
     // dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetParticle()->SetMove(m_IsMoveEdit->GetCheck(0));
     // dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetParticle()->SetApplyRandom(m_IsRandomMoveEdit->GetCheck(0));
 }
-
 void CEffectEditor::SetGameObjectReady()
 {
     // SkyObject
@@ -702,49 +721,92 @@ void CEffectEditor::SetGameObjectReady()
    // m_SkyObject->SetScene(CSceneManager::GetInst()->GetScene());
    // m_SkyObject->Init();
 
-    m_BaseGroundObject = CSceneManager::GetInst()->GetScene()->CreateGameObject<CGameObject>("Particle Effect Base Ground");
-    m_BaseGroundObject->CreateComponent<CSpriteComponent>("Simple Sprite");
-    m_BaseGroundObject->GetRootComponent()->SetLayerName("ParticleEditorLayer");
-    m_BaseGroundObject->SetPivot(0.5, 0.5, 0.5);
-    m_BaseGroundObject->SetWorldScale(300.f, 300.f, 1.f);
-    m_BaseGroundObject->AddWorldRotationX(90.f);
-    m_BaseGroundObject->AddWorldPos(0.f, -30.f, 0.f);
-    m_BaseGroundObject->ExcludeFromSceneSave();
+    // Particle Object 생성
+    if (m_ParticleObject)
+    {
+        m_ParticleObject->Destroy();
+    }
 
-    // 처음에는 Enable 을 false 로 둬서 그리지 않게 한다.
-    m_BaseGroundObject->GetRootComponent()->Enable(false);
+    m_ParticleObject = CSceneManager::GetInst()->GetScene()->CreateGameObject<C3DParticleObject>("Particle Effect Base Ground");
+    // 처음에는 Enable False 로 하여 보이지 않게 한다.
+    m_ParticleObject->Enable(false);
+    m_ParticleObject->GetRootComponent()->Enable(false);
 
-    // m_ParticleSampleObject = CSceneManager::GetInst()->GetScene()->CreateGameObject<CGameObject>("Particle Object");
-    // m_ParticleSampleObject->CreateComponent<CParticleComponent>("Particle Sprite");
-    // m_ParticleSampleObject->GetRootComponent()->SetLayerName("ParticleEditorLayer");
-    // 
-    // CCameraComponent* ParticleCamera = m_ParticleSampleObject->CreateComponent<CCameraComponent>("Particle Camera");
-    // m_ParticleSampleObject->GetRootComponent()->AddChild(ParticleCamera);
-    // 
-    // // Camera Setting
-    // CSceneManager::GetInst()->GetScene()->GetCameraManager()->SetParticleEditorCamera(ParticleCamera);
-    // 
-    // ParticleCamera->SetCameraType(Camera_Type::Camera3D);
-    // ParticleCamera->SetViewAngle(27.f);
-    // 
-    // ParticleCamera->AddRelativePos(0.f, 30.f, -100.f);
-    // ParticleCamera->SetRelativeRotationX(45.f); 
+    // 기존 Base Ground Object 는 지운다.
+    if (!m_BaseGroundObject)
+    {
+        m_BaseGroundObject = CSceneManager::GetInst()->GetScene()->CreateGameObject<CGameObject>("Particle Effect Base Ground");
+        m_BaseGroundObject->CreateComponent<CSpriteComponent>("Simple Sprite");
+        m_BaseGroundObject->GetRootComponent()->SetLayerName("ParticleEditorLayer");
+        m_BaseGroundObject->SetPivot(0.5, 0.5, 0.5);
+        m_BaseGroundObject->SetWorldScale(300.f, 300.f, 1.f);
+        m_BaseGroundObject->AddWorldRotationX(90.f);
+        m_BaseGroundObject->AddWorldPos(0.f, -30.f, 0.f);
+        m_BaseGroundObject->ExcludeFromSceneSave();
+    }
+}
+
+void CEffectEditor::SetBasicDefaultParticleInfos(CParticle* Particle)
+{
+    // 반드시 3D 로 세팅한다.
+    Particle->Set2D(false);
+
+    // Spawn Time, Count
+    Particle->SetSpawnCountMax(1000);
+    Particle->SetSpawnTimeMax(0.05f);
+
+    // Life Time
+    Particle->SetLifeTimeMin(5.f);
+    Particle->SetLifeTimeMax(10.f);
+
+    // Scale
+    Particle->SetScaleMin(Vector3(20.f, 20.f, 1.f));
+    Particle->SetScaleMax(Vector3(50.f, 50.f, 1.f));
+
+    // Speed
+    Particle->SetSpeedMin(10.f);
+    Particle->SetSpeedMax(30.f);
+
+    // Start Min,Max
+    Particle->SetStartMin(Vector3(-30.f, -30.f, 0.f));
+    Particle->SetStartMax(Vector3(30.f, 30.f, 0.f));
+
+    // Color Min, Max
+    Particle->SetColorMin(Vector4(0.2f, 0.1f, 0.8f, 1.f));
+    Particle->SetColorMax(Vector4(0.6f, 0.8f, 0.8f, 1.f));
+
+    // Move Dir
+    Particle->SetMoveDir(Vector3(0.f, 1.f, 0.f)); 
+    // Move Angle
+    Particle->SetMoveAngle(Vector3(0.f, 0.f, 30.f));
+
+    // IsGravity
+    // IsMove
+    // IsRandomMove
+    // IsPauseResume -> 무조건 Enable true 로 시작 세팅한다.
+    Particle->SetGravity(true);
+    Particle->SetMove(true);
+    // Particle->SetApplyRandom(true);
+    Particle->Enable(true);
 }
 
 void CEffectEditor::SetStartEditing()
 {
+    if (m_StartEdit)
+        return;
+
+    m_StartEdit = true;
+
     // 이미 Particle Object 가 만들어져 있다면 => Particle Editing 을 시작한 상태이므로
-    if (m_BaseGroundObject->GetRootComponent()->IsEnable() == false)
-        m_BaseGroundObject->GetRootComponent()->Enable(true);
-
-    SAFE_DELETE(m_ParticleObject);
-
-    m_ParticleObject = CSceneManager::GetInst()->GetScene()->CreateGameObject<C3DParticleObject>("Particle Effect Base Ground");
-
-    m_CameraXRotSlideBar->SetValue(m_ParticleObject->GetCameraRelativeRotation().x);
-    m_CameraYOffsetBar->SetValue(m_ParticleObject->GetCameraOfffset().y);
+    m_ParticleObject->Enable(true);
+    m_ParticleObject->GetRootComponent()->Enable(true);
 
     OnSetBasicParticleMaterialSetting(m_ParticleObject->GetRootComponent());
+
+    SetIMGUIReflectParticle(m_ParticleClass);
+
+    SetIMGUIReflectObjectCamera();
+
 }
 
 void CEffectEditor::OnDropMaterialToParticle(const std::string& InputName)
@@ -755,22 +817,12 @@ void CEffectEditor::OnDropMaterialToParticle(const std::string& InputName)
         return;
     }
 
-    // Key 값 형태로 Resource Manager 에서 먼저 찾는다.
+    // Key 값 형태로 Resource Manager 에서 Mateirla 을 먼저 찾는다.
     CMaterial* FoundMaterial = CResourceManager::GetInst()->FindMaterial(InputName);
 
     if (FoundMaterial)
     {
-        // 해당 Material 의 Texture 를 불러와서 Image 에 세팅하기
-        // -> Material 을 Particle 에 세팅한다.
-        m_ParticleClass->SetMaterial(FoundMaterial);
-
-        // 해당 Material 의 Texture 를 불러와서 Image 에 세팅하기 => 첫번째 Texture 를 세팅해준다.
-        if (FoundMaterial->GetTextureInfo().size() > 0)
-            m_ParticleTexture->SetTexture(FoundMaterial->GetTexture());
-
-        // 제대로 세팅되었다는 Message
-        MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Material Set SuccessFully"), NULL, MB_OK);
-
+        ApplyNewMaterial(FoundMaterial);
         return;
     }
 
@@ -797,12 +849,24 @@ void CEffectEditor::OnDropMaterialToParticle(const std::string& InputName)
         MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Material Load Failure From HardDisk"), NULL, MB_OK);
         return;
     }
+    
+    ApplyNewMaterial(FoundMaterial);
+}
+
+void CEffectEditor::ApplyNewMaterial(CMaterial* FoundMaterial)
+{
+    if (!FoundMaterial)
+        return;
 
     m_ParticleClass->SetMaterial(FoundMaterial);
+    m_ParticleMaterial = FoundMaterial;
 
     // 해당 Material 의 Texture 를 불러와서 Image 에 세팅하기 => 첫번째 Texture 를 세팅해준다.
     if (FoundMaterial->GetTextureInfo().size() > 0)
         m_ParticleTexture->SetTexture(FoundMaterial->GetTexture());
+
+    // Particle 의 Material 정보를 Particle Component 에 다시 반영한다.
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->SetMaterial(m_ParticleClass->CloneMaterial());
 
     // 제대로 세팅되었다는 Message
     MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Material Set SuccessFully"), NULL, MB_OK);
@@ -810,8 +874,41 @@ void CEffectEditor::OnDropMaterialToParticle(const std::string& InputName)
     // Resource Window Display Update
     CEditorManager::GetInst()->GetResourceDisplayWindow()->RefreshLoadedTextureResources();
     CEditorManager::GetInst()->GetResourceDisplayWindow()->RefreshLoadedMaterialResources();
+}
 
-    m_ParticleMaterial = FoundMaterial;
+void CEffectEditor::BackUpParticleObjectInfo()
+{
+    if (!m_ParticleObject)
+        return;
+
+    m_BackUpStruct.IsCameraRotate = m_ParticleObject->IsCameraRotate();
+    m_BackUpStruct.IsCameraRotateInv = m_ParticleObject->IsCameraRotateInv();
+    m_BackUpStruct.IsCameraRotateSpeed = m_ParticleObject->GetCameraRotateSpeed();
+    m_BackUpStruct.IsCameraZoom = m_ParticleObject->IsCameraZoom();
+    m_BackUpStruct.CameraZoomSpeed = m_ParticleObject->GetCameraZoomSpeed();
+
+
+    m_BackUpStruct.CameraYOffset = m_ParticleObject->GetCameraYOffset();
+    m_BackUpStruct.CameraXRot = m_ParticleObject->GetCameraRelativeRotation().x;
+    m_BackUpStruct.TargetDist = m_ParticleObject->GetArmComponent()->GetTargetDistance();
+    m_BackUpStruct.WorldRotY = m_ParticleObject->GetCameraYOffset();
+}
+
+void CEffectEditor::ReflectBackUpParticleObjectInfo()
+{
+    if (!m_ParticleObject)
+        return;
+
+    m_ParticleObject->SetCameraRotate(m_BackUpStruct.IsCameraRotate);
+    m_ParticleObject->SetRotateInv(m_BackUpStruct.IsCameraRotateInv);
+    m_ParticleObject->SetCameraRotateSpeed(m_BackUpStruct.IsCameraRotateSpeed);
+    m_ParticleObject->SetCameraZoom(m_BackUpStruct.IsCameraZoom);
+    m_ParticleObject->SetCameraZoomSpeed(m_BackUpStruct.CameraZoomSpeed);
+
+    m_ParticleObject->GetArmComponent()->SetOffset(0.f, m_BackUpStruct.CameraYOffset, 0.f);
+    m_ParticleObject->GetArmComponent()->SetRelativeRotation(m_BackUpStruct.CameraXRot, 0.f, 0.f);
+    m_ParticleObject->GetArmComponent()->SetTargetDistance(m_BackUpStruct.TargetDist);
+    m_ParticleObject->GetArmComponent()->SetRelativeRotationY(m_BackUpStruct.WorldRotY);
 }
 
 void CEffectEditor::SetParticleToParticleComponent(CParticleComponent* Component,  const char* ParticleName)
@@ -830,53 +927,48 @@ void CEffectEditor::SetParticleToParticleComponent(CParticleComponent* Component
     Component->SetParticle(Particle);
 }
 
-void CEffectEditor::SetIMGUIReflectPartice(CParticle* Particle)
+void CEffectEditor::SetIMGUIReflectParticle(CParticle* Particle)
 {
     // 반드시 3D 로 세팅한다.
     Particle->Set2D(false);
 
-    Particle->SetSpawnCountMax(1000);
     m_SpawnCountMaxEdit->SetVal(Particle->GetSpawnCountMax());
+    m_SpawnTimeMaxEdit->SetVal(Particle->GetSpawnTimeMax());
 
-    Particle->SetLifeTimeMin(70.f);
     m_LifeTimeMinEdit->SetVal(Particle->GetLifeTimeMin());
-
-    Particle->SetLifeTimeMax(80.f);
     m_LifeTimeMaxEdit->SetVal(Particle->GetLifeTimeMax());
 
-    Particle->SetScaleMin(Vector3(20.f, 20.f, 1.f));
     m_ScaleMinEdit->SetVal(Particle->GetScaleMin());
-
-    Particle->SetScaleMax(Vector3(50.f, 50.f, 1.f));
     m_ScaleMaxEdit->SetVal(Particle->GetScaleMax());
 
-    Particle->SetSpeedMin(10.f);
     m_SpeedMinEdit->SetVal(Particle->GetSpeedMin());
-
-    Particle->SetSpeedMax(30.f);
     m_SpeedMaxEdit->SetVal(Particle->GetSpeedMax());
 
-    Particle->SetMoveDir(Vector3(0.f, 1.f, 1.f)); // Z 축 방향으로도 이동할 수 있게 세팅한다.
-    m_MoveDirEdit->SetVal(Particle->GetMoveDir());
-
-    Particle->SetStartMin(Vector3(-30.f, -30.f, 0.f));
     m_StartMinEdit->SetVal(Particle->GetStartMin());
-
-    Particle->SetStartMax(Vector3(30.f, 30.f, 0.f));
     m_StartMaxEdit->SetVal(Particle->GetStartMax());
 
-    Particle->SetColorMin(Vector4(0.2f, 0.1f, 0.8f, 1.f));
     m_ColorMinEdit->SetRGBA(Particle->GetColorMin());
-
-    Particle->SetColorMax(Vector4(0.2f, 0.1f, 0.8f, 1.f));
     m_ColorMaxEdit->SetRGBA(Particle->GetColorMax());
 
-    Particle->SetMoveAngle(Vector3(0.f, 0.f, 30.f));
+    m_MoveDirEdit->SetVal(Particle->GetMoveDir());
     m_MoveAngleEdit->SetVal(Particle->GetMoveAngle());
 
-    Particle->SetSpawnTime(0.05f);
-    m_SpawnTimeMaxEdit->SetVal(0.05f);
+    m_IsGravityEdit->SetCheck(0, Particle->GetGravity());
+    m_IsMoveEdit->SetCheck(0, Particle->GetMove());
+    // m_IsRandomMoveEdit->SetCheck(0, Particle->GetApplyRandom() == 1 ? true : false);
+    m_IsPauseResumeToggle->SetCheck(0, true);
+}
 
-    Particle->SetGravity(true);
-    Particle->SetMove(true);
+void CEffectEditor::SetIMGUIReflectObjectCamera()
+{
+    // 새로운 Particle Object 에 이전에 세팅되었던 Camera 관련 정보를 반영해준다.
+
+    m_IsRotateEdit->SetCheck(0, m_ParticleObject->IsCameraRotate());
+    m_IsRotateInv->SetCheck(0, m_ParticleObject->IsCameraRotateInv());
+    m_RotateSpeedSliderBar->SetValue(m_ParticleObject->GetCameraRotateSpeed());
+    m_IsZoomEdit->SetCheck(0, m_ParticleObject->IsCameraZoom());
+    m_ZoomSpeedSliderBar->SetValue(m_ParticleObject->GetCameraZoomSpeed());
+
+    m_CameraYOffsetBar->SetValue(m_ParticleObject->GetCameraYOffset());
+    m_CameraXRotSlideBar->SetValue(m_ParticleObject->GetCameraRelativeRotation().x);
 }

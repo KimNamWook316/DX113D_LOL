@@ -536,7 +536,6 @@ void CAnimationSequence::DummyLoad(FILE* pFile)
 	for (size_t i = 0; i < iCount; ++i)
 	{
 		BoneKeyFrame* pBoneKeyFrame = new BoneKeyFrame;
-		m_vecKeyFrame.push_back(pBoneKeyFrame);
 
 		fread(&pBoneKeyFrame->iBoneIndex, sizeof(int), 1,
 			pFile);
@@ -548,32 +547,13 @@ void CAnimationSequence::DummyLoad(FILE* pFile)
 		for (size_t j = 0; j < iBoneFrameCount; ++j)
 		{
 			KeyFrame* pKeyFrame = new KeyFrame;
-			pBoneKeyFrame->vecKeyFrame.push_back(pKeyFrame);
-
 			fread(&pKeyFrame->dTime, sizeof(double), 1, pFile);
 			fread(&pKeyFrame->vPos, sizeof(Vector3), 1, pFile);
 			fread(&pKeyFrame->vScale, sizeof(Vector3), 1, pFile);
 			fread(&pKeyFrame->vRot, sizeof(Vector4), 1, pFile);
-
-			if (j < m_FrameLength)
-			{
-				AnimationFrameTrans	tFrame = {};
-				tFrame.vScale = Vector4(pKeyFrame->vScale.x, pKeyFrame->vScale.y,
-					pKeyFrame->vScale.z, 1.f);
-				tFrame.vTranslate = Vector4(pKeyFrame->vPos.x, pKeyFrame->vPos.y,
-					pKeyFrame->vPos.z, 1.f);
-				tFrame.qRot = pKeyFrame->vRot;
-
-				m_vecFrameTrans[i * m_FrameLength + j] = tFrame;
-			}
+			SAFE_DELETE(pKeyFrame);
 		}
-	}
-
-	for (size_t i = 0; i < m_vecKeyFrame.size(); ++i)
-	{
-		--m_vecKeyFrame[i]->iRefCount;
-
-		SAFE_DELETE(m_vecKeyFrame[i]);
+		SAFE_DELETE(pBoneKeyFrame);
 	}
 
 	m_vecKeyFrame.clear();

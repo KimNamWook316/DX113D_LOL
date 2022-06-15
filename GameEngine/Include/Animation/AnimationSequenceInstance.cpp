@@ -87,6 +87,7 @@ CAnimationSequenceInstance::~CAnimationSequenceInstance()
 	{
 		SAFE_DELETE(iter->second);
 	}
+
 }
 
 void CAnimationSequenceInstance::SetEditorStopTargetFrame(int Frame)
@@ -876,8 +877,16 @@ bool CAnimationSequenceInstance::LoadAnimationFullPath(const char* FullPath)
 	size_t AnimationSize = -1;
 	fread(&AnimationSize, sizeof(size_t), 1, pFile);
 
+	// 기존에 mapAnimation 에 있던 사항들을 모두 지워준다.
+	auto iter = m_mapAnimation.begin();
+	auto iterEnd = m_mapAnimation.end();
 
-	// m_mapAnimation.clear();
+	for (; iter != iterEnd; ++iter)
+	{
+		SAFE_DELETE(iter->second);
+	}
+
+	m_mapAnimation.clear();
 	// m_CurrentAnimation = nullptr;
 
 	for (int i = 0; i < AnimationSize; i++)
@@ -920,7 +929,6 @@ bool CAnimationSequenceInstance::LoadAnimationFullPath(const char* FullPath)
 		}
 
 		m_mapAnimation.insert(std::make_pair(SequenceDataNameKey, SequenceData));
-
 	}
 
 	// Current Animation Info

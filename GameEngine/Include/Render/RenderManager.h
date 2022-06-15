@@ -89,6 +89,7 @@ private:
 	class CStandard2DConstantBuffer* m_Standard2DCBuffer;
 	class CRenderState* m_DepthDisable;
 	class CRenderState* m_AlphaBlend;
+	class CRenderState* m_AlphaBlendMRT;
 	class CRenderState* m_LightAccBlend;
 	CSharedPtr<class CShader> m_LightBlendShader;
 	CSharedPtr<class CShader> m_LightBlendRenderShader;
@@ -99,6 +100,7 @@ private:
 	std::vector<CSharedPtr<CRenderTarget>>	m_vecGBuffer;
 	std::vector<CSharedPtr<CRenderTarget>>	m_vecDecal;
 	std::vector<CSharedPtr<CRenderTarget>>	m_vecLightBuffer;
+	std::vector<CSharedPtr<CRenderTarget>>	m_vecTransparent;
 
 	// Shadow
 	bool m_Shadow;
@@ -110,7 +112,6 @@ private:
 
 	// Grayscale
 	bool m_Gray;
-	CSharedPtr<CRenderTarget> m_GrayTarget;
 	CSharedPtr<class CShader> m_GrayShader;
 
 	// OutLine

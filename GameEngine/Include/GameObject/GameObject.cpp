@@ -426,10 +426,10 @@ bool CGameObject::Load(FILE* File)
 
 		CComponent* Component = CSceneManager::GetInst()->CallCreateComponent(this, TypeID);
 
+		Component->SetGameObject(this);
+
 		if (!Component->Load(File))
 			return false;
-
-		Component->SetGameObject(this);
 	}
 
 	// NavAgent가 있을 경우, 처리해준다.
