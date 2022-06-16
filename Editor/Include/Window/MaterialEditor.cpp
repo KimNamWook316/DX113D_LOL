@@ -668,7 +668,9 @@ void CMaterialEditor::RefreshMaterialDisplayInfo(class CMaterial* Material, clas
 	m_ShaderSetInput->ClearText();
 
 	if (Shader)
+	{
 		m_ShaderSetInput->SetText(Shader->GetName().c_str());
+	}
 	 
 	// TODO : Material 의 고유 정보 세팅 (현재로서는 필요한 것은 없어보인다)
 	// BaseColor, Ambient Color, Specular Color, EmmisiveColor

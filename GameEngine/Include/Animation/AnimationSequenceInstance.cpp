@@ -212,8 +212,7 @@ const std::string& CAnimationSequenceInstance::GetCurrentAnimationKeyName()
 }
 
 void CAnimationSequenceInstance::AddAnimation(const std::string& SequenceName,
-	const std::string& Name, bool Loop,
-	float PlayTime, float PlayScale)
+	const std::string& Name, bool Loop, float PlayScale)
 {
 	CAnimationSequenceData* Anim = FindAnimation(Name);
 
@@ -240,9 +239,14 @@ void CAnimationSequenceInstance::AddAnimation(const std::string& SequenceName,
 	Anim->m_Sequence = Sequence;
 	Anim->m_Name = Name;
 	Anim->m_Loop = Loop;
-	Anim->m_PlayTime = PlayTime;
+	
+	// (OBJ 수정)
+	// Anim->m_PlayTime = PlayTime => 인자 제거해줌
+	Anim->m_PlayTime = Sequence->m_PlayTime;
+
 	Anim->m_PlayScale = PlayScale;
-	Anim->m_FrameTime = PlayTime / Sequence->GetKeyFrameCount();
+	
+	Anim->m_FrameTime = Sequence->m_PlayTime / Sequence->GetKeyFrameCount();
 
 	if (m_mapAnimation.empty())
 	{
@@ -253,8 +257,7 @@ void CAnimationSequenceInstance::AddAnimation(const std::string& SequenceName,
 }
 
 void CAnimationSequenceInstance::AddAnimation(const TCHAR* FileName,
-	const std::string& PathName, const std::string& Name,
-	bool Loop, float PlayTime, float PlayScale)
+	const std::string& PathName, const std::string& Name, bool Loop, float PlayScale)
 {
 	CAnimationSequenceData* Anim = FindAnimation(Name);
 
@@ -292,9 +295,14 @@ void CAnimationSequenceInstance::AddAnimation(const TCHAR* FileName,
 	Anim->m_Sequence = Sequence;
 	Anim->m_Name = Name;
 	Anim->m_Loop = Loop;
-	Anim->m_PlayTime = PlayTime;
+	
+	// Anim->m_PlayTime = PlayTime;
+	Anim->m_PlayTime = Sequence->m_PlayTime;
+	
 	Anim->m_PlayScale = PlayScale;
-	Anim->m_FrameTime = PlayTime / Sequence->GetKeyFrameCount();
+	
+	// Anim->m_FrameTime = PlayTime / Sequence->GetKeyFrameCount();
+	Anim->m_FrameTime = Sequence->m_PlayTime / Sequence->GetKeyFrameCount();
 
 	if (m_mapAnimation.empty())
 	{
@@ -311,7 +319,9 @@ void CAnimationSequenceInstance::SetPlayTime(const std::string& Name, float Play
 	if (!Anim)
 		return;
 
+	// PlayTime 은, Animation Sequence 의 PlayTime 도 조정해준다.
 	Anim->m_PlayTime = PlayTime;
+	Anim->GetAnimationSequence()->m_PlayTime = PlayTime;
 }
 
 void CAnimationSequenceInstance::SetPlayScale(const std::string& Name, float PlayScale)
@@ -322,6 +332,7 @@ void CAnimationSequenceInstance::SetPlayScale(const std::string& Name, float Pla
 		return;
 
 	Anim->m_PlayScale = PlayScale;
+	Anim->GetAnimationSequence()->m_PlayScale = PlayScale;
 }
 
 void CAnimationSequenceInstance::SetLoop(const std::string& Name, bool Loop)

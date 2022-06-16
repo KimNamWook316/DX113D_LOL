@@ -94,10 +94,6 @@ public:
 
 	void ClearText()
 	{
-		char		m_Text[1024];
-		wchar_t		m_wText[1024];
-		char		m_TextUTF8[1024];
-
 		if (m_TextType != ImGuiText_Type::String)
 			return;
 
