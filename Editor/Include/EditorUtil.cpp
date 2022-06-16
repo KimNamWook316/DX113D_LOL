@@ -147,6 +147,46 @@ void CEditorUtil::GetAllFileFullPathInDir(const char* TargetDir, std::vector<std
 	}
 }
 
+void CEditorUtil::GetAllFileNamesInDir(const char* TargetDir, std::vector<std::string>& OutVecFileName, const char* ExtFilter)
+{
+	fs::directory_iterator itr(TargetDir);
+
+	char Ext[_MAX_EXT] = {};
+
+	if (ExtFilter)
+	{
+		strcpy_s(Ext, ExtFilter);
+		_strupr_s(Ext);
+	}
+
+	while (itr != fs::end(itr))
+	{
+		const fs::directory_entry& entry = *itr;
+		fs::path iterpath = entry.path();
+		bool isDirectory = fs::is_directory(iterpath);
+		if (isDirectory)
+		{
+			++itr;
+			continue;
+		}
+
+		std::string fileName = entry.path().filename().string();
+
+		if (ExtFilter)
+		{
+			if (!CompareExt(fileName.c_str(), Ext))
+			{
+				++itr;
+				continue;
+			}
+		}
+
+		OutVecFileName.push_back(fileName);
+
+		++itr;
+	}
+}
+
 void CEditorUtil::FilterSpecificNameIncludedFilePath(std::vector<std::string>& InputVecFullPath, std::vector<std::string>& ReturnVecFullPath, 
 	const char* IncludeName)
 {
@@ -158,7 +198,12 @@ void CEditorUtil::FilterSpecificNameIncludedFilePath(std::vector<std::string>& I
 	for (size_t i = 0; i < InputSize; ++i)
 	{
 		// Common Name 을 포함하고 있지 않다면 Skips
-		size_t nPos = InputVecFullPath[i].find(IncludeName);
+		// size_t nPos = InputVecFullPath[i].find(IncludeName);
+		// FullPath 에서 중간 경로 들이 아니라, 오로지 FileName 이 IncludeName Str 을 포함하고 있는지를 조사해야 한다.
+		// 따라서 폴더 경로 제외, FileName 을 중간에 추출해야 한다.
+		std::string CurFileName;
+		GetFileNameAfterSlash(InputVecFullPath[i], CurFileName);
+		size_t nPos = CurFileName.find(IncludeName);
 
 		if (nPos == std::string::npos)
 			continue;
@@ -332,6 +377,70 @@ bool CEditorUtil::IsFileExistInDir(const std::string& PathName, const std::strin
 	return false;
 }
 
+void CEditorUtil::GetAllKindsOfTransformedStringVersions(std::string OriginalString, 
+	std::vector<std::string>& vecEachToLower, 
+	std::vector<std::string>& vecEachToUpper, 
+	std::string& strAllUpper, std::string& strAllLower)
+{
+	// 모두 대문자
+	strAllUpper.resize(OriginalString.size());
+	std::transform(OriginalString.begin(), OriginalString.end(), strAllUpper.begin(), ::toupper);
+
+	// 모두 소문자 
+	strAllLower.resize(OriginalString.size());
+	std::transform(OriginalString.begin(), OriginalString.end(), strAllLower.begin(), ::tolower);
+
+	// 원본 모두 소문자로 바꾸기
+	std::transform(OriginalString.begin(), OriginalString.end(), OriginalString.begin(), ::tolower);
+
+	vecEachToUpper.clear();
+
+	// 하나씩 대문자 
+	{
+		size_t  StrSize = OriginalString.size();
+
+		std::string CpyString = OriginalString;
+
+		for (size_t Index = 0; Index < StrSize; ++Index)
+			vecEachToUpper.push_back(CpyString);
+
+		for (size_t Index = 0; Index < StrSize; ++Index)
+		{
+			// abcd
+			// - Abcd
+			// - aBcd
+			// - abCd
+			// - abcD
+			vecEachToUpper[Index][Index] = toupper(vecEachToUpper[Index][Index]);
+		}
+	}
+
+	// 원본 모두 대문자로 바꾸기
+	std::transform(OriginalString.begin(), OriginalString.end(), OriginalString.begin(), ::toupper);
+
+	vecEachToLower.clear();
+
+	// 하나씩 소문자
+	{
+		size_t  StrSize = OriginalString.size();
+
+		std::string CpyString = OriginalString;
+
+		for (size_t Index = 0; Index < StrSize; ++Index)
+			vecEachToLower.push_back(CpyString);
+
+		for (size_t Index = 0; Index < StrSize; ++Index)
+		{
+			// ABCD
+			// - aBCD
+			// - AbCD
+			// - ABcD
+			// - ABCd
+			vecEachToLower[Index][Index] = tolower(vecEachToLower[Index][Index]);
+		}
+	}
+}
+
 void CEditorUtil::ShowDemo()
 {
 	static bool Open = false;
@@ -502,8 +611,8 @@ bool CEditorUtil::CompareExt(const char* FullPath, const char ExtFilter[_MAX_EXT
 	}
 	_strupr_s(FilterBuf);
 
-	int ExtLen = strlen(FilterBuf);
-	int Len = strlen(FullPath);
+	int ExtLen = (int)strlen(FilterBuf);
+	int Len = (int)strlen(FullPath);
 
 	strncpy_s(FullPathExt, FullPath + Len - ExtLen, 4);
 	_strupr_s(FullPathExt);

@@ -18,7 +18,11 @@ public:
 		std::vector<std::string>& vecDirNames);
 
 	// 해당 디렉토리에 존재하고, 확장자와 일치하는 파일들의 풀 경로를 리턴함
-	static void GetAllFileFullPathInDir(const char* TargetDir, std::vector<std::string>& OutVecFullPath,
+	static void GetAllFileFullPathInDir(const char* TargetDir, std::vector<std::string>& OutVecFullPath,  
+		const char* ExtFilter = nullptr);
+
+	// 해당 디렉토리에 존재하고, 확장자와 일치하는 파일들의 파일 이름들을 리턴
+	static void GetAllFileNamesInDir(const char* TargetDir, std::vector<std::string>& OutVecFileName,
 		const char* ExtFilter = nullptr);
 
 	// 특정 파일 이름을 포함하는 파일들의 목록만을 뽑아내주는 함수 
@@ -60,6 +64,15 @@ public:
 
 	// 해당 Dir 경로에, 해당 Name 으로 된 파일이 존재하는지 판단해주는 함수
 	static bool IsFileExistInDir(const std::string& Path, const std::string& FileName);
+
+	// 특정 문자열에 대해,
+	// 1. 문자 하나만 소문자인 문자열 set
+	// 2. 문자 하나만 대문자인 문자열 set
+	// 3. 모두 소문자
+	// 4. 모두 대문자
+	// 로 변환한 문자열들을 vector 형태로 만들어주는 함수
+	static void GetAllKindsOfTransformedStringVersions(std::string OriginString, std::vector<std::string>&vecEachToLower,
+		std::vector<std::string>& vecEachToUpper, std::string& strAllUpper, std::string& strAllLower);
 
 	// Imgui Demo Window를 띄워주는 함수
 	static void ShowDemo();

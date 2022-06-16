@@ -124,7 +124,7 @@ bool CAnimationEditor::Init()
 	Line->SetOffsetX(160.f);
 
 	// Sequence 원본 Frame 을 반영해서 PlayTime 을 재조정해주는 함수 
-	m_SetOriginalPlayTimeBtn = AddWidget<CIMGUIButton>("Original Time", 90.f, 20.f);
+	m_SetOriginalPlayTimeBtn = AddWidget<CIMGUIButton>("Set Origin Time", 90.f, 20.f);
 	m_SetOriginalPlayTimeBtn->SetClickCallback<CAnimationEditor>(this, &CAnimationEditor::OnSetOriginalAnimPlayTime);
 
 	// 각종 체크 박스들 
@@ -876,11 +876,113 @@ void CAnimationEditor::OnClickSetAnimSeqSrcDirButton()
 		WideCharToMultiByte(CP_ACP, 0, Buf, -1, m_SelectedSeqSrcsDirPath, length, nullptr, 0);
 		// strcat_s(m_SrcDirFullPath, "\\");
 
-		// ExtractAnimationSequenceFilesFullPath(m_SelectedSeqSrcsDirPath, m_vecAnimationSeqFilesFullPath);
+		// 모든 .sqc 확장자 파일 이름들을 모은다. FullPath 들을 모아둘 것이다.
 		std::vector<std::string> vecSeqFilesFullPath;
 
+		// 먼저 해당 .sqc 확장자를 지닌, FullPath 목록들을 vector 형태로 모아둬야 한다.
+		// CEditorUtil::GetAllFileNamesInDir(m_SelectedSeqSrcsDirPath, vecSeqFilesFullPath, ".sqc");
 		CEditorUtil::GetAllFileFullPathInDir(m_SelectedSeqSrcsDirPath, vecSeqFilesFullPath, ".sqc");
-		CEditorUtil::FilterSpecificNameIncludedFilePath(vecSeqFilesFullPath, m_vecAnimationSeqFilesFullPath, m_CommonAnimSeqName->GetTextUTF8());
+
+		// vecAllAnimationSeqFilesFullPath 에 특정 문자를 포함하는 (대문자, 소문자 형태 모두) .sqc 파일들을 모두 모아놓을 것이다.
+		std::vector<std::string> vecAllAnimationSeqFilesFullPath;
+		vecAllAnimationSeqFilesFullPath.reserve(100);
+
+		m_vecAnimationSeqFilesFullPath.clear();
+		m_vecAnimationSeqFilesFullPath.reserve(100);
+
+		// 1. Origin 입력 내용 그대로의 파일 이름을 포함하는 파일 들을 모은다
+		// ex) "zed" => 모든 "zed~~" 형태의 파일 이름들 추출
+
+		// CEditorUtil::FilterSpecificNameIncludedFilePath(vecSeqFilesFullPath, m_vecAnimationSeqFilesFullPath, m_CommonAnimSeqName->GetTextUTF8());
+		CEditorUtil::FilterSpecificNameIncludedFilePath(vecSeqFilesFullPath, vecAllAnimationSeqFilesFullPath, m_CommonAnimSeqName->GetTextUTF8());
+
+		// 모든 .sqc 파일들을 m_vecAnimationSeqFilesFullPath 에 모아두기 
+		size_t AllSeqFilesCnt = vecAllAnimationSeqFilesFullPath.size();
+		
+		for (size_t i = 0; i < AllSeqFilesCnt; ++i)
+		{
+			// 중복 제거
+			if (std::find(m_vecAnimationSeqFilesFullPath.begin(), m_vecAnimationSeqFilesFullPath.end(), vecAllAnimationSeqFilesFullPath[i]) != m_vecAnimationSeqFilesFullPath.end())
+				continue;
+
+			m_vecAnimationSeqFilesFullPath.push_back(std::move(vecAllAnimationSeqFilesFullPath[i])); 
+		}
+
+		// 2. 각각 소문자, 대문자
+		//    모두 소문자, 모두 대문자
+		std::vector<std::string> vecEachUpperSeqFilesFullPath;
+		std::vector<std::string> vecEachLowerSeqFilesFullPath;
+		std::string AllUpper;
+		std::string AllLower;
+
+		CEditorUtil::GetAllKindsOfTransformedStringVersions(m_CommonAnimSeqName->GetTextUTF8(), vecEachLowerSeqFilesFullPath, 
+			vecEachUpperSeqFilesFullPath, AllUpper, AllLower);
+
+		// 각각 대문자 목록들 모아두기
+		size_t EachUpperTotSize = vecEachUpperSeqFilesFullPath.size();
+
+		for (size_t i = 0; i < EachUpperTotSize; ++i)
+		{
+			// FilterSpecificNameIncludedFilePath 에서는 vecAllAnimationSeqFilesFullPath 을 비워준다.
+			CEditorUtil::FilterSpecificNameIncludedFilePath(vecSeqFilesFullPath, vecAllAnimationSeqFilesFullPath, vecEachUpperSeqFilesFullPath[i].c_str());
+
+			AllSeqFilesCnt = vecAllAnimationSeqFilesFullPath.size();
+
+			for (size_t i = 0; i < AllSeqFilesCnt; ++i)
+			{
+				if (std::find(m_vecAnimationSeqFilesFullPath.begin(), m_vecAnimationSeqFilesFullPath.end(), vecAllAnimationSeqFilesFullPath[i]) != m_vecAnimationSeqFilesFullPath.end())
+					continue;
+
+				m_vecAnimationSeqFilesFullPath.push_back(std::move(vecAllAnimationSeqFilesFullPath[i]));
+			}
+		}
+
+		// 각각 소문자 목록들 모아두기
+		size_t EachLowerTotSize = vecEachLowerSeqFilesFullPath.size();
+
+		for (size_t i = 0; i < EachLowerTotSize; ++i)
+		{
+			// FilterSpecificNameIncludedFilePath 에서는 vecAllAnimationSeqFilesFullPath 을 비워준다.
+			CEditorUtil::FilterSpecificNameIncludedFilePath(vecSeqFilesFullPath, vecAllAnimationSeqFilesFullPath, vecEachLowerSeqFilesFullPath[i].c_str());
+
+			AllSeqFilesCnt = vecAllAnimationSeqFilesFullPath.size();
+
+			for (size_t i = 0; i < AllSeqFilesCnt; ++i)
+			{
+				if (std::find(m_vecAnimationSeqFilesFullPath.begin(), m_vecAnimationSeqFilesFullPath.end(), vecAllAnimationSeqFilesFullPath[i]) != m_vecAnimationSeqFilesFullPath.end())
+					continue;
+
+				m_vecAnimationSeqFilesFullPath.push_back(std::move(vecAllAnimationSeqFilesFullPath[i]));
+			}
+		}
+
+		
+		// All 대문자 목록들 모아두기
+		CEditorUtil::FilterSpecificNameIncludedFilePath(vecSeqFilesFullPath, vecAllAnimationSeqFilesFullPath, AllUpper.c_str());
+		 
+		AllSeqFilesCnt = vecAllAnimationSeqFilesFullPath.size();
+
+		for (size_t i = 0; i < AllSeqFilesCnt; ++i)
+		{
+			if (std::find(m_vecAnimationSeqFilesFullPath.begin(), m_vecAnimationSeqFilesFullPath.end(), vecAllAnimationSeqFilesFullPath[i]) != m_vecAnimationSeqFilesFullPath.end())
+				continue;
+
+			m_vecAnimationSeqFilesFullPath.push_back(std::move(vecAllAnimationSeqFilesFullPath[i]));
+		}
+		
+		// All 대문자 목록들 모아두기
+		CEditorUtil::FilterSpecificNameIncludedFilePath(vecSeqFilesFullPath, vecAllAnimationSeqFilesFullPath, AllLower.c_str());
+
+		AllSeqFilesCnt = vecAllAnimationSeqFilesFullPath.size();
+
+		for (size_t i = 0; i < AllSeqFilesCnt; ++i)
+		{
+			if (std::find(m_vecAnimationSeqFilesFullPath.begin(), m_vecAnimationSeqFilesFullPath.end(), vecAllAnimationSeqFilesFullPath[i]) != m_vecAnimationSeqFilesFullPath.end())
+				continue;
+
+			m_vecAnimationSeqFilesFullPath.push_back(std::move(vecAllAnimationSeqFilesFullPath[i]));
+		}
+
 
 		// 하나도 찾아내지 못했다면.
 		if (m_vecAnimationSeqFilesFullPath.size() == 0)
@@ -913,8 +1015,6 @@ void CAnimationEditor::OnConvertSequencesIntoAnimationInstance()
 
 	for (size_t i = 0; i < Size; ++i)
 	{
-		// 쓰레드에 수행 요청 => Engine 설정을 멀티 쓰레딩을 요구하지 않았기 때문에, Engine 혹은 GPU 메모리를 건들 경우, Engine 에러 발생
-		// m_AnimInstanceConvertThread->AddWork(m_vecAnimationSeqFilesFullPath[i]);
 		AddSequenceToDummyAnimationInstance(m_vecAnimationSeqFilesFullPath[i].c_str());
 
 		// File 이름 목록에 추가
@@ -1005,6 +1105,7 @@ void CAnimationEditor::AddSequenceToDummyAnimationInstance(const char* FileFullP
 	
 
 	// FileFullPath 에서 File 이름으로 Key 값을 지정해줄 것이다.
+	// 중복 방지 
 	if (m_DummyAnimation->FindAnimation(SqcFileName))
 		return;
 	

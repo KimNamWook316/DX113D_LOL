@@ -70,7 +70,12 @@ private :
 	// 저장할 Animation File Name
 	class CIMGUITextInput* m_SavedAnimFileName;
 private :
+	// FullPath 목록 모아둔 Vector 
 	std::vector<std::string> m_vecAnimationSeqFilesFullPath;
+	
+	// FileName 목록 모아둔 Vector
+	// std::vector<std::string> m_vecAnimationSeqFileNames;
+
 	char m_SelectedSeqSrcsDirPath[MAX_PATH];
 	// Animation Instance 를 File형태로 저장하기 위해 임시적으로 사용하는 Dummy Animation Instance
 	class CAnimationSequenceInstance* m_DummyAnimation;
@@ -89,7 +94,6 @@ private:
 	void OnRefreshAnimationComboBox();
 	void OnRefreshScaleAndTimeInputInfo();
 	void OnRefreshCheckBoxInfo();
-
 	// Play
 	void OnCreateSample3DObject();
 	void OnSetPlayEngineDeltaTime(const char*, bool);
