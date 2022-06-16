@@ -77,6 +77,7 @@ bool CAnimationEditor::Init()
 	m_CurAnimComboBox = AddWidget<CIMGUIComboBox>("Anim List Combo Box", 300.f, 30.f);
 	m_CurAnimComboBox->SetHideName(true);
 	m_CurAnimComboBox->SetSelectCallback<CAnimationEditor>(this, &CAnimationEditor::OnClickAnimationSequence);
+	// m_CurAnimComboBox->SetSelectIndexCallback<CAnimationEditor>(this, &CAnimationEditor::OnSetAnimationComboBoxCallback);
 
 	// 별도 Render Target
 	m_AnimationRenderTarget = AddWidget<CIMGUIImage>("Render Target", 400.f, 400.f);
@@ -761,7 +762,8 @@ void CAnimationEditor::OnSetOriginalAnimPlayTime()
 	// PlayTime Input Update
 	// Anim Info Table Update
 	OnRefreshAnimationClipTable(m_Animation->GetCurrentAnimation()->GetAnimationSequence());
-	OnRefreshAnimationComboBox();
+
+	OnRefreshScaleAndTimeInputInfo();
 }
 
 void CAnimationEditor::OnEditAnimPlayTime()
@@ -799,7 +801,12 @@ void CAnimationEditor::OnEditAnimSequenceKey()
 	if (!m_Animation || !m_Animation->GetCurrentAnimation())
 		return;
 
-	// 기존 Animation 이 저장된 Key 값
+	// New Key 값과 중복된 Key 값의 Animation 이 있는지를 검사한다.
+	if (m_Animation->FindAnimation(m_EditAnimSeqDataKeyName->GetTextUTF8()))
+	{
+		MessageBox(nullptr, TEXT("Sequence Exist"), TEXT("Same Named Seq File Already Exist"), MB_OK);
+		return;
+	}
 
 	// New Key 값
 	// EditCurrentSequenceKeyName
@@ -814,6 +821,14 @@ void CAnimationEditor::OnEditAnimSequenceKey()
 
 	// Combo Box 내용 Refresh
 	OnRefreshAnimationComboBox();
+
+	// 새롭게 바뀐 SequenceKey Name 의 이름으로, ComboBox 세팅해두기
+	int FoundIndex = m_CurAnimComboBox->FindTargetTextIndex(m_EditAnimSeqDataKeyName->GetTextUTF8());
+	
+	if (FoundIndex != -1)
+	{
+		m_CurAnimComboBox->SetSelectIndex(FoundIndex);
+	}
 }
 
 void CAnimationEditor::OnDeleteAnimationSequenceData()
@@ -869,7 +884,10 @@ void CAnimationEditor::OnClickSetAnimSeqSrcDirButton()
 
 		// 하나도 찾아내지 못했다면.
 		if (m_vecAnimationSeqFilesFullPath.size() == 0)
+		{
+			MessageBox(nullptr, TEXT("No .sqc Files Found"), TEXT(".sqc File 찾기 실패"), MB_OK);
 			return;
+		}
 
 		m_AnimSeqcSrcFolderPath->SetText(m_SelectedSeqSrcsDirPath);
 	}
@@ -1085,7 +1103,9 @@ void CAnimationEditor::OnAddAnimationSequence()
 			std::pair<bool, std::string> LoadResult = CResourceManager::GetInst()->LoadMeshTextureBoneInfo(SqcFileName);
 		
 			if (!LoadResult.first)
+			{
 				return;
+			}
 		
 			m_3DTestObjectMeshName = LoadResult.second;
 		
@@ -1165,6 +1185,13 @@ void CAnimationEditor::OnClickAnimationSequence(int Index, const char* Name)
 	OnRefreshScaleAndTimeInputInfo();
 
 	OnRefreshCheckBoxInfo();
+}
+
+void CAnimationEditor::OnSetAnimationComboBoxCallback(const std::string& AnimSequenceName)
+{
+	if (!m_Animation)
+		return;
+	m_Animation->SetCurrentAnimation(AnimSequenceName);
 }
 
 void CAnimationEditor::OnRefreshAnimationClipTable(CAnimationSequence* Sequence)

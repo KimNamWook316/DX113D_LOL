@@ -20,6 +20,8 @@ protected:
 	ImGuiComboFlags	m_Flag;
 	std::function<void(int, const char*)>	m_SelectCallback;
 
+	// OBJ Ãß°¡
+	std::function<void(const std::string&)>	m_SelectIndexCallback;
 public:
 	const std::string& GetItem(int Index)
 	{
@@ -112,16 +114,41 @@ public:
 	{
 		m_SelectIndex = Index;
 		m_PrevViewName = m_vecItemUTF8[Index];
+
+		if (m_SelectIndexCallback && Index > 0 && Index < (int)m_vecItemUTF8.size())
+		{
+			m_SelectIndexCallback(m_vecItemUTF8[Index]);
+		}
+	}
+
+	int FindTargetTextIndex(const std::string& Name)
+	{
+		int TotalSize = (int)m_vecItemUTF8.size();
+
+		for (int i = 0; i < TotalSize; ++i)
+		{
+			if (m_vecItemUTF8[i] == Name)
+				return i;
+		}
+
+		return -1;
 	}
 
 public:
 	virtual bool Init();
 	virtual void Render();
+public :
 
 public:
 	template <typename T>
 	void SetSelectCallback(T* Obj, void(T::* Func)(int, const char*))
 	{
 		m_SelectCallback = std::bind(Func, Obj, std::placeholders::_1, std::placeholders::_2);
+	}
+
+	template <typename T>
+	void SetSelectIndexCallback(T* Obj, void(T::* Func)(const std::string& Name))
+	{
+		m_SelectIndexCallback = std::bind(Func, Obj, std::placeholders::_1);
 	}
 };

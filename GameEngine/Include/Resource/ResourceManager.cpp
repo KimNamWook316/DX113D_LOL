@@ -279,7 +279,7 @@ std::pair<bool, std::string> CResourceManager::LoadMeshTextureBoneInfo(const cha
 	// ex) FBX Convert 이후, singed_spell2.sqc 가 있다면, 같은 경로내에 singed_spell2.fbm 이라는 디렉토리가 존재해야 한다.
 	// 만약 해당 Folder 가 존재하지 않는다면, Mesh를 Load 하더라도 Texture 가 없다고 뜰 것이다
 	char TextFolderExt[10] = ".fbm";
-	char TextFilePath[MAX_PATH] = {};
+	// char TextFilePath[MAX_PATH] = {};
 	// TCHAR MshTCHARFileName[MAX_PATH] = {};
 
 	char MeshFileFullPath[MAX_PATH] = {};
@@ -289,11 +289,13 @@ std::pair<bool, std::string> CResourceManager::LoadMeshTextureBoneInfo(const cha
 	strcpy_s(MeshFileFullPath, FullPath);
 	strcat_s(MeshFileFullPath, ConstMeshFileName);
 
-	// ex) Alistar_Idle.fbm
-	strcpy_s(TextFilePath, MeshFileName);
-	strcat_s(TextFilePath, TextFolderExt); // .fbm 붙여주기
+	std::string TargetFolderPath = ConstMeshFileName;
+	TargetFolderPath.append(TextFolderExt); //.fbm 붙여주기
 
-	auto FoundTextureFolderResult = CEngineUtil::CheckAndExtractFullPathOfTargetFile(MESH_PATH, TextFilePath);
+	// strcpy_s(TextFilePath, MeshFileName);
+	// strcat_s(TextFilePath, TextFolderExt); // 
+
+	auto FoundTextureFolderResult = CEngineUtil::CheckAndExtractFullPathOfTargetFile(MESH_PATH, TargetFolderPath.c_str());
 
 	if (FoundTextureFolderResult.has_value() == false)
 	{

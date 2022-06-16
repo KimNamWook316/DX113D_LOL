@@ -830,6 +830,15 @@ bool CAnimationSequenceInstance::SaveAnimationFullPath(const char* FullPath)
 		// Current Anim Length
 		Length = (int)m_CurrentAnimation->m_Name.length();
 		fwrite(&Length, sizeof(int), 1, pFile);
+
+		// CurrentAnimation 의 Name 은, 원본 Sequence 를 FBX 에서 만들어줄 때 세팅해준 내용이다.
+		// 하지만, 만약 내가 Animation Editor 에서 Alistar_Spell1 을 Spell1 으로 바꿨다면
+		// 그럼에도 m_CurrentAnimation->m_Name 은 여전히 Alistar_Spell1 이고, 
+		// 실제 FindAnimation을 할 때 쓰이는 Ken Name 은 Spell1 가 되어서, 차후 Anim Instance 를 Load 할 때
+		// 해당 Animation 을 찾더라도 없는 것으로 나오게 된다.
+		// 즉, 만약 Current Animation 의 Name 을 저장하고, 그것을 이용해서, 차후 Load 에서, Current Animation을 세팅하고자 한다면
+		// CurrentAnimation 고유의 m_Name 이 아니라, KeyName 으로 찾게 해야 한다.
+		// 따라서 Current Animation 의 Key Name 을 저정할 것이다.
 		fwrite(m_CurrentAnimation->m_Name.c_str(), sizeof(char), Length, pFile);
 	}
 

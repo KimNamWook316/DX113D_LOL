@@ -53,3 +53,14 @@ void CIMGUIComboBox::Render()
 
     ImGui::PopID();
 }
+
+// void CIMGUIComboBox::SetSelectIndex(int Index)
+// {
+//     m_SelectIndex = Index;
+//     m_PrevViewName = m_vecItemUTF8[Index];
+// 
+//     if (m_SelectIndexCallback && Index >= 0 && Index < m_vecItemUTF8.size())
+//     {
+//         m_SelectIndexCallback(m_vecItemUTF8[m_SelectIndex]);
+//     }
+// }

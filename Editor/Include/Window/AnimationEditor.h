@@ -119,6 +119,7 @@ private:
 	void OnDeleteExisting3DObject();
 	void OnClearExistingAnimationSeqInfos();
 	void OnClickAnimationSequence(int, const char*);
+	void OnSetAnimationComboBoxCallback(const std::string& AnimSequenceName);
 	void OnAnimationSliderIntCallback(int);
 	void OnAnimationFrameInputCallback();
 	// Convert Animation Instance  Functions
