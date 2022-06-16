@@ -2,6 +2,7 @@
 #include "ResourceManager.h"
 #include "../Animation/AnimationSequenceInstance.h"
 #include "../Engine.h"
+#include "../EngineUtil.h"
 #include "../PathManager.h"
 #include <filesystem>
 #include "../Scene/Scene.h"
@@ -220,20 +221,58 @@ std::pair<bool, std::string> CResourceManager::LoadMeshTextureBoneInfo(const cha
 	int ConvertLength = MultiByteToWideChar(CP_ACP, 0, MeshFileName, -1, 0, 0);
 	MultiByteToWideChar(CP_ACP, 0, MeshFileName, -1, MeshTCHARFileName, ConvertLength);
 
-	if (!LoadMesh(Mesh_Type::Animation, LoadedMeshName,
-		MeshTCHARFileName, MESH_PATH))
-	{
-		if (IsLastSqcFile)
-		{
-			TCHAR FulllErrorMessage[MAX_PATH] = {};
-			TCHAR ErrorMessage[MAX_PATH] = TEXT(".msh Load Failure in Bin//Mesh");
-			lstrcpy(FulllErrorMessage, TCHARPureFileName);
-			lstrcat(FulllErrorMessage, ErrorMessage);
+	//MeshTCHARFileName 와 Path Name 을 더해서 해당 FullPath 를 만들어낸다.
+	// 1. 기존 방식대로 Load Mesh 진행
+	// 2. 없다면, 새롭게 MESH_PATH 전체를 돌면서 해당 FileName 이 존재하는지를 찾은 이후, FullPath 를 만들어서 새롭게 Load 시도
+	bool LoadMeshResult = LoadMesh(Mesh_Type::Animation, LoadedMeshName,
+		MeshTCHARFileName, MESH_PATH);
 
-			MessageBox(CEngine::GetInst()->GetWindowHandle(), FulllErrorMessage, NULL, MB_OK);
+	if (!LoadMeshResult)
+	{
+		// 먼저 해당 경로에 파일이 존재하는지 확인하기
+		auto FoundResult = CEngineUtil::CheckAndExtractFullPathOfTargetFile(MESH_PATH, MeshFileName);
+
+		TCHAR FulllErrorMessage[MAX_PATH] = {};
+		TCHAR ErrorMessage[MAX_PATH] = TEXT(".msh Load Failure in Bin//Mesh");
+		lstrcpy(FulllErrorMessage, TCHARPureFileName);
+		lstrcat(FulllErrorMessage, ErrorMessage);
+
+		// 해당 경로에 Mesh 파일이 존재하지 않는다면 Return
+		if (!FoundResult.has_value())
+		{
+			if (IsLastSqcFile)
+				MessageBox(CEngine::GetInst()->GetWindowHandle(), FulllErrorMessage, NULL, MB_OK);
+
+			return std::make_pair(false, "");
 		}
-		return std::make_pair(false, "");
+
+		// 위에서 얻어온 FullPath 로 한번더 Load 시도
+		LoadMeshResult = LoadMeshFullPathMultibyte(Mesh_Type::Animation, LoadedMeshName, FoundResult.value().c_str());
+
+		if (!LoadMeshResult)
+		{
+			if (IsLastSqcFile)
+				MessageBox(CEngine::GetInst()->GetWindowHandle(), FulllErrorMessage, NULL, MB_OK);
+
+			return std::make_pair(false, "");
+		}
 	}
+
+	// 기존 코드 (OBJ)
+	// if (!LoadMesh(Mesh_Type::Animation, LoadedMeshName,
+	// 	MeshTCHARFileName, MESH_PATH))
+	// {
+	// 	if (IsLastSqcFile)
+	// 	{
+	// 		TCHAR FulllErrorMessage[MAX_PATH] = {};
+	// 		TCHAR ErrorMessage[MAX_PATH] = TEXT(".msh Load Failure in Bin//Mesh");
+	// 		lstrcpy(FulllErrorMessage, TCHARPureFileName);
+	// 		lstrcat(FulllErrorMessage, ErrorMessage);
+	// 
+	// 		MessageBox(CEngine::GetInst()->GetWindowHandle(), FulllErrorMessage, NULL, MB_OK);
+	// 	}
+	// 	return std::make_pair(false, "");
+	// }
 
 
 	// 만약 Mesh Load 과정에서 필요한 Texture가 없다면 
@@ -250,12 +289,13 @@ std::pair<bool, std::string> CResourceManager::LoadMeshTextureBoneInfo(const cha
 	strcpy_s(MeshFileFullPath, FullPath);
 	strcat_s(MeshFileFullPath, ConstMeshFileName);
 
-	strcpy_s(TextFilePath, MeshFileFullPath);
+	// ex) Alistar_Idle.fbm
+	strcpy_s(TextFilePath, MeshFileName);
 	strcat_s(TextFilePath, TextFolderExt); // .fbm 붙여주기
 
-	std::filesystem::path MeshTextureFolderPath(TextFilePath);
+	auto FoundTextureFolderResult = CEngineUtil::CheckAndExtractFullPathOfTargetFile(MESH_PATH, TextFilePath);
 
-	if (!std::filesystem::exists(MeshTextureFolderPath))
+	if (FoundTextureFolderResult.has_value() == false)
 	{
 		if (IsLastSqcFile)
 		{
@@ -291,20 +331,58 @@ std::pair<bool, std::string> CResourceManager::LoadMeshTextureBoneInfo(const cha
 	ConvertLength = MultiByteToWideChar(CP_ACP, 0, BneFileName, -1, 0, 0);
 	MultiByteToWideChar(CP_ACP, 0, BneFileName, -1, BneTCHARFileName, ConvertLength);
 
-	if (!LoadSkeleton(LoadedBneName, BneTCHARFileName, MESH_PATH))
+	// BneTCHARFileName 와 Path Name 을 더해서 해당 FullPath 를 만들어낸다.
+	// 1. 기존 방식대로 LoadSkeleton 진행
+	// 2. 없다면, 새롭게 MESH_PATH 전체를 돌면서 해당 FileName 이 존재하는지를 찾은 이후, FullPath 를 만들어서 새롭게 Load 시도
+	bool LoadSkeletonResult = LoadSkeleton(LoadedBneName,
+		BneTCHARFileName, MESH_PATH);
+
+	if (!LoadSkeletonResult)
 	{
-		if (IsLastSqcFile)
+		// 먼저 해당 경로에 .bne 파일이 존재하는지 확인하기
+		auto FoundResult = CEngineUtil::CheckAndExtractFullPathOfTargetFile(MESH_PATH, BneFileName);
+
+		TCHAR FulllErrorMessage[MAX_PATH] = {};
+		TCHAR ErrorMessage[MAX_PATH] = TEXT(".bne Load Failure in Bin//Mesh");
+		lstrcpy(FulllErrorMessage, TCHARPureFileName);
+		lstrcat(FulllErrorMessage, ErrorMessage);
+
+		// 해당 경로에 Mesh 파일이 존재하지 않는다면 Return
+		if (!FoundResult.has_value())
 		{
-			TCHAR FulllErrorMessage[MAX_PATH] = {};
-			TCHAR ErrorMessage[MAX_PATH] = TEXT(".bne Load Failure in Bin//Mesh");
+			if (IsLastSqcFile)
+				MessageBox(CEngine::GetInst()->GetWindowHandle(), FulllErrorMessage, NULL, MB_OK);
 
-			lstrcpy(FulllErrorMessage, TCHARPureFileName);
-			lstrcat(FulllErrorMessage, ErrorMessage);
-
-			MessageBox(CEngine::GetInst()->GetWindowHandle(), FulllErrorMessage, NULL, MB_OK);
+			return std::make_pair(false, "");
 		}
-		return std::make_pair(false, "");
+
+		// 위에서 얻어온 FullPath 로 한번더 Load 시도
+		LoadSkeletonResult = LoadSkeletonFullPathMultibyte(LoadedBneName, FoundResult.value().data());
+
+		if (!LoadSkeletonResult)
+		{
+			if (IsLastSqcFile)
+				MessageBox(CEngine::GetInst()->GetWindowHandle(), FulllErrorMessage, NULL, MB_OK);
+
+			return std::make_pair(false, "");
+		}
 	}
+
+	// 기존 코드 (OBJ)
+	// if (!LoadSkeleton(LoadedBneName, BneTCHARFileName, MESH_PATH))
+	// {
+	// 	if (IsLastSqcFile)
+	// 	{
+	// 		TCHAR FulllErrorMessage[MAX_PATH] = {};
+	// 		TCHAR ErrorMessage[MAX_PATH] = TEXT(".bne Load Failure in Bin//Mesh");
+	// 
+	// 		lstrcpy(FulllErrorMessage, TCHARPureFileName);
+	// 		lstrcat(FulllErrorMessage, ErrorMessage);
+	// 
+	// 		MessageBox(CEngine::GetInst()->GetWindowHandle(), FulllErrorMessage, NULL, MB_OK);
+	// 	}
+	// 	return std::make_pair(false, "");
+	// }
 
 	// Mesh 에 해당 Skeleton 세팅
 	SetMeshSkeleton(LoadedMeshName, LoadedBneName);

@@ -609,7 +609,7 @@ void CAnimationMeshComponent::SetTextureFullPath(int MaterialIndex, int Index, i
 	const TCHAR* FullPath)
 {
 	m_vecMaterialSlot[MaterialIndex]->SetTextureFullPath(Index, Register, ShaderType, Name, FullPath);
-}
+} 
 
 void CAnimationMeshComponent::SetTexture(int MaterialIndex, int Index, int Register, int ShaderType, const std::string& Name,
 	const std::vector<TCHAR*>& vecFileName, const std::string& PathName)
@@ -633,6 +633,12 @@ bool CAnimationMeshComponent::DeleteInstancingCheckList()
 	{
 		if ((*iter)->Mesh == m_Mesh)
 		{
+			// 반투명 상태일 경우 다른 레이어의 InstancingCheckList로 생성되어야 한다.
+			if (m_LayerName != (*iter)->LayerName)
+			{
+				continue;
+			}
+
 			auto	iter1 = (*iter)->InstancingList.begin();
 			auto	iter1End = (*iter)->InstancingList.end();
 

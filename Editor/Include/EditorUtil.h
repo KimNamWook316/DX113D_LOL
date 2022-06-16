@@ -51,7 +51,7 @@ public:
 	// TCHAR [] 형태의 Text 을 넣어주면, char [] (Multibyte) 형태 Text 리턴, 
 	static const char* ChangeTCHARTextToMultibyte(TCHAR* TCHARText);
 
-	// char [](Multibyte) 형태의 Text 을 넣어주면, TCHAR []  형태의 FullPath 문자열 리턴
+	// char [](Multibyte) 형태의 Text 을 넣어주면, TCHAR []  형태의 Text 리턴
 	static  const TCHAR* ChangeMultibyteTextToTCHAR(const std::string& MText);
 
 	// FullPath 넣어주면, FileName, Ext 만 뽑아주는 함수;

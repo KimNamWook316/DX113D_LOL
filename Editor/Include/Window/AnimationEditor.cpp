@@ -107,19 +107,24 @@ bool CAnimationEditor::Init()
 	m_PlayScaleEditBtn = AddWidget<CIMGUIButton>("Edit Scale", 90.f, 20.f);
 	m_PlayScaleEditBtn->SetClickCallback<CAnimationEditor>(this, &CAnimationEditor::OnEditAnimPlayScale);
 
-	Line = AddWidget<CIMGUISameLine>("Line");
-	Line->SetOffsetX(155.f);
-
 	// Play Time 조정
 	m_PlayTimeInput = AddWidget<CIMGUITextInput>("Play Time Input", 50.f, 30.f);
 	m_PlayTimeInput->SetHideName(true);
 	m_PlayTimeInput->SetTextType(ImGuiText_Type::Float);
 
 	Line = AddWidget<CIMGUISameLine>("Line");
-	Line->SetOffsetX(210.f);
+	Line->SetOffsetX(60.f);
 
+	// PlayTime Edit
 	m_PlayTimeEditBtn = AddWidget<CIMGUIButton>("Edit Time", 90.f, 20.f);
 	m_PlayTimeEditBtn->SetClickCallback<CAnimationEditor>(this, &CAnimationEditor::OnEditAnimPlayTime);
+
+	Line = AddWidget<CIMGUISameLine>("Line");
+	Line->SetOffsetX(160.f);
+
+	// Sequence 원본 Frame 을 반영해서 PlayTime 을 재조정해주는 함수 
+	m_SetOriginalPlayTimeBtn = AddWidget<CIMGUIButton>("Original Time", 90.f, 20.f);
+	m_SetOriginalPlayTimeBtn->SetClickCallback<CAnimationEditor>(this, &CAnimationEditor::OnSetOriginalAnimPlayTime);
 
 	// 각종 체크 박스들 
 	m_DeltaTimeCheckBtn = AddWidget<CIMGUICheckBox>("Engine Play", 90.f, 30.f);
@@ -331,6 +336,24 @@ void CAnimationEditor::Update(float DeltaTime)
 	}
 }
 
+void CAnimationEditor::OnDeleteExisting3DObject()
+{
+	m_3DTestObject->Destroy();
+
+	m_3DTestObject = nullptr;
+
+	m_Animation = nullptr;
+
+	if (!m_Animation)
+		return;
+
+	// Combo Box Clear
+	m_CurAnimComboBox->Clear();
+
+	// Table Claer
+	m_AnimInfoTable->ClearContents();
+}
+
 void CAnimationEditor::OnClearExistingAnimationSeqInfos()
 {
 	if (!m_Animation)
@@ -516,12 +539,16 @@ void CAnimationEditor::OnLoadAnimationInstance()
 		}
 
 		// TODO : Animation Instance 는 그냥 지워줘 버리면 안되나 ?
-
 		m_Animation->LoadAnimationFullPath(FilePathMultibyte);
 
-		// CurrentAnimation 이 없다면,
+		// CurrentAnimation 이 없다면, 
 		if (!m_Animation->GetCurrentAnimation())
+		{
+			// .anim File 이 정상적으로 Load 되지 않았다는 의미이다.
+			// - 그러면 기존에 생성해둔 3DObject 를 지워서 Animation Mesh Component 가 그려지지 않게 해야 한다.
+			OnDeleteExisting3DObject();
 			return;
+		}
 
 		// const char* CurSeqFileName = m_Animation->GetCurrentAnimation()->GetAnimationSequence()->GetSequenceFileNameMultibyte();
 		// if (!LoadElementsForSqcLoading(CurSeqFileName))
@@ -532,6 +559,10 @@ void CAnimationEditor::OnLoadAnimationInstance()
 		if (LoadResult.first == false)
 		{
 			MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Mesh, Texture, Skeleton Load Failure"), NULL, MB_OK);
+
+			// 만약 Load 를 실패했다면, 
+			OnDeleteExisting3DObject();
+
 			return;
 		}
 
@@ -557,8 +588,12 @@ void CAnimationEditor::OnLoadAnimationInstance()
 
 		// Current Animation 정보로 세팅한다.
 		int CurAnimIdx = m_Animation->GetCurrentAnimationOrder();
+
 		if (CurAnimIdx == -1)
+		{
+			assert(false);
 			return;
+		}
 
 		m_CurAnimComboBox->SetSelectIndex(CurAnimIdx);
 
@@ -582,10 +617,8 @@ void CAnimationEditor::OnLoadAnimationInstance()
 		// Animation Play Scale, Time
 		OnRefreshScaleAndTimeInputInfo();
 
-
 		// Animation을 시작한다..
 		m_Animation->Play();
-
 	}
 }
 
@@ -716,6 +749,19 @@ void CAnimationEditor::SetMeshMaterialReadyForAnimation()
 {
 	m_3DTestObject->SetMeshAndMaterialInfo();
 	m_Animation->Start();
+}
+
+void CAnimationEditor::OnSetOriginalAnimPlayTime()
+{
+	if (!m_Animation || !m_Animation->GetCurrentAnimation())
+		return;
+
+	m_Animation->GetCurrentAnimation()->SetOriginalFramePlayTime();
+
+	// PlayTime Input Update
+	// Anim Info Table Update
+	OnRefreshAnimationClipTable(m_Animation->GetCurrentAnimation()->GetAnimationSequence());
+	OnRefreshAnimationComboBox();
 }
 
 void CAnimationEditor::OnEditAnimPlayTime()

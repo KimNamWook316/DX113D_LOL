@@ -39,6 +39,33 @@ Light_Type CEngineUtil::StringToLightType(const std::string& TypeString)
 	return (Light_Type)(-1);
 }
 
+std::optional<std::string> CEngineUtil::CheckAndExtractFullPathOfTargetFile(std::string_view PathName, std::string_view TargetFileName)
+{
+	const PathInfo* Info = CPathManager::GetInst()->FindPath(PathName.data());
+
+	if (!Info)
+		return  std::nullopt;
+
+	char FolderName[MAX_PATH] = {};
+
+	strcpy_s(FolderName, Info->PathMultibyte);
+
+	fs::path TargetFolder(FolderName);
+
+	for (const fs::directory_entry& entry :
+		fs::recursive_directory_iterator(TargetFolder))
+	{
+		const std::string& FileName = FilterFileName(entry.path().u8string());
+
+		if (strcmp(FileName.c_str(), TargetFileName.data()) == 0)
+		{
+			return entry.path().u8string();
+		}
+	}
+
+	return std::nullopt;
+}
+
 bool CEngineUtil::IsFileExistInDir(const std::string& PathName, const std::string& TargetFileName)
 {
 	const PathInfo* Info = CPathManager::GetInst()->FindPath(PathName);

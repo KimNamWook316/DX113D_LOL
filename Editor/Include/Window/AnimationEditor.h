@@ -20,9 +20,8 @@ private:
 	// Frame 조정
 	class CIMGUITextInput* m_FrameInput;
 	class CIMGUISliderInt* m_FrameSlider;
-	// class CIMGUIButton* m_FrameDeleteBtn;
-	// class CIMGUITextInput* m_DeleteFrameInput;
-	// Animation Seq 추가
+	class CIMGUIButton* m_SetOriginalPlayTimeBtn;
+
 	class CIMGUIButton* m_AnimSequenceAddBtn;
 	class CIMGUIButton* m_CreateSample3DBtn;
 	// Animation Seq 지우기
@@ -107,6 +106,7 @@ private:
 	bool LoadElementsForSqcLoading(const char* SqcFileName);
 	void SetMeshMaterialReadyForAnimation();
 	// Edit
+	void OnSetOriginalAnimPlayTime(); // 원본 Sequence의 PlayTime 을 고려하여 PlayTime 을 다시 세팅한다.
 	void OnEditAnimPlayTime();
 	void OnEditAnimPlayScale();
 	void OnEditAnimSequenceKey();
@@ -116,6 +116,7 @@ private:
 	// void OnDeleteAnimFrame();
 
 // Helper Functions
+	void OnDeleteExisting3DObject();
 	void OnClearExistingAnimationSeqInfos();
 	void OnClickAnimationSequence(int, const char*);
 	void OnAnimationSliderIntCallback(int);
