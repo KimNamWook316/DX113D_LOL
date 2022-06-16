@@ -828,7 +828,8 @@ bool CAnimationSequenceInstance::SaveAnimationFullPath(const char* FullPath)
 	if (m_CurrentAnimation)
 	{
 		// Current Anim Length
-		Length = (int)m_CurrentAnimation->m_Name.length();
+		const std::string& CurrentAnimKeyName = GetCurrentAnimationKeyName();
+		Length = (int)CurrentAnimKeyName.length();
 		fwrite(&Length, sizeof(int), 1, pFile);
 
 		// CurrentAnimation 의 Name 은, 원본 Sequence 를 FBX 에서 만들어줄 때 세팅해준 내용이다.
@@ -839,7 +840,7 @@ bool CAnimationSequenceInstance::SaveAnimationFullPath(const char* FullPath)
 		// 즉, 만약 Current Animation 의 Name 을 저장하고, 그것을 이용해서, 차후 Load 에서, Current Animation을 세팅하고자 한다면
 		// CurrentAnimation 고유의 m_Name 이 아니라, KeyName 으로 찾게 해야 한다.
 		// 따라서 Current Animation 의 Key Name 을 저정할 것이다.
-		fwrite(m_CurrentAnimation->m_Name.c_str(), sizeof(char), Length, pFile);
+		fwrite(CurrentAnimKeyName.c_str(), sizeof(char), Length, pFile);
 	}
 
 	fclose(pFile);
