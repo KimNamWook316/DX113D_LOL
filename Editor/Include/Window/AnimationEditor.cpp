@@ -514,12 +514,6 @@ void CAnimationEditor::OnLoadAnimationInstance()
 		if (strcmp(Ext, ".ANIM") != 0)
 			return;
 
-		// Animation .anim File 들은, .anim 파일 확장자로 저장된 
-		// 파일 이름으로 식별할 것이다.
-		// 같은 Animation File 을 Load 하는 것이라면 Skip
-		if (m_Animation && strcmp(FileName, m_Animation->GetSavedFileName()) == 0)
-			return;
-
 		if (!m_Animation)
 		{
 			// ex) singed_spell2.sqc 를 선택했다면
