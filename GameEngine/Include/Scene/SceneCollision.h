@@ -99,6 +99,8 @@ public:
 	int GetSectionIndexZ(const Vector3& Pos);
 	// 해당 Section에 들어있는 Collider를 모아놓은 vector를 리턴
 	const std::vector<CColliderComponent*>& GetSectionCollider(int Index);
+	// 인자로 주어진 Collision Profile을 가진 Collider가 하나라도 있는지
+	bool IsExistColliderHasProfile(CollisionProfile* Profile);
 
 private:
 	void CheckColliderSection();

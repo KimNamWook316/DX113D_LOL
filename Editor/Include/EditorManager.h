@@ -39,6 +39,7 @@ private:
 	class CResourceDisplayWindow* m_ResourceDisplayWindow;
 	class C3DCameraObject* m_CameraObject;
 	class CFBXConvertWindow* m_FBXConvertWindow;
+	class CCollisionProfileEditor* m_CollisionProfileEditor;
 
 	bool				m_MousePush;
 	float				m_CameraMoveSpeed;
@@ -100,6 +101,10 @@ public:
 	{
 		return m_AnimationEditor;
 	}
+	class CCollisionProfileEditor* GetCollisionProfileEditor()	const
+	{
+		return m_CollisionProfileEditor;
+	}
 	class C3DCameraObject* Get3DCameraObject()	const
 	{
 		return m_CameraObject;
@@ -137,6 +142,11 @@ public:
 	void SetChampionInfo(class CGameObject* Object, const std::string& ChampionName);
 
 private:
+	void CreateKey();
+	void CreateEditorObjects();
+	void SetEditorSceneCallBack();
+	void LoadEditorResources();
+	void CreateWindows();
 	void CreateEditorCamera();
 	void ReadChampionNotify();
 	void ReadChampionSkillInfo();

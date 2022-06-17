@@ -142,6 +142,7 @@ void CSceneComponentCreateModal::OnCreateComponent()
 	// Window 갱신
 	CSceneComponentHierarchyWindow* ComponentWindow = (CSceneComponentHierarchyWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(SCENECOMPONENT_HIERARCHY);
 	CInspectorWindow* Inspector = (CInspectorWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(INSPECTOR);
+	CToolWindow* Tool = (CToolWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(TOOL);
 
 	bool IsRoot = SelectObject->GetRootComponent() == Com;
 
@@ -155,11 +156,9 @@ void CSceneComponentCreateModal::OnCreateComponent()
 		Inspector->OnCreateSceneComponent(Com);
 	}
 
-	if (HasRoot)
+	if (Tool)
 	{
-		// Root Node로 들어가는 경우, Gizmo에 Object갱신
-		CToolWindow* ToolWindow = (CToolWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(TOOL);
-		ToolWindow->SetGizmoObject(SelectObject);
+		Tool->SetGizmoComponent(Com);
 	}
 }
 

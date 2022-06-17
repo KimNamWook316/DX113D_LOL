@@ -2,7 +2,7 @@
 #include "EditorManager.h"
 
 // Visual Leak Detector Library
-// #include <vld.h>
+#include <vld.h>
 
 #ifdef _DEBUG
 

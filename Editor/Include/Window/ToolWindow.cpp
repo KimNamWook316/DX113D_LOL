@@ -6,6 +6,7 @@
 #include "Render/RenderManager.h"
 #include "Engine.h"
 #include "IMGUISameLine.h"
+#include "IMGUIRadioButton.h"
 #include "Scene/SceneManager.h"
 #include "../Window/InspectorWindow.h"
 #include "../Window/ObjectComponentWindow.h"
@@ -68,6 +69,7 @@ bool CToolWindow::Init()
 	// Render
 	// Outline
 	m_RenderBlock = AddWidget<CIMGUICollapsingHeader>("Render", 200.f);
+	m_DebugRender = m_RenderBlock->AddWidget<CIMGUICheckBox>("DebugRender");
 	CIMGUITree* Tree = m_RenderBlock->AddWidget<CIMGUITree>("Outline", 200.f);
 	m_OutlineDepthMultiply = Tree->AddWidget<CIMGUISliderFloat>("Outline Depth Multiplier");
 	m_OutlineDepthBias = Tree->AddWidget<CIMGUISliderFloat>("Outline Depth Bias");
@@ -111,6 +113,10 @@ bool CToolWindow::Init()
 	bool IsGray = CRenderManager::GetInst()->IsGray();
 	m_GrayEnable->SetCheck(0, IsGray);
 
+	m_DebugRender->AddCheckInfo("Debug Render");
+	bool IsDebugRender = CRenderManager::GetInst()->IsDebugRender();
+	m_DebugRender->SetCheck(0, IsDebugRender);
+
 	// CallBack
 	m_GizmoTransformMode->SetCallBack(this, &CToolWindow::OnSelectGizmoTransformMode);
 	m_GizmoOperationMode->SetCallBack(this, &CToolWindow::OnSelectGizmoOperationMode);
@@ -120,6 +126,7 @@ bool CToolWindow::Init()
 	m_OutlineNormalMutliply->SetCallBack(this, &CToolWindow::OnChangeOutlineNormalMultiply);
 	m_OutlineNormalBias->SetCallBack(this, &CToolWindow::OnChangeOutlineNormalBias);
 	m_GrayEnable->SetCallBackLabel(this, &CToolWindow::OnCheckGrayEnable);
+	m_DebugRender->SetCallBackLabel(this, &CToolWindow::OnCheckDebugRender);
 	m_Play->SetClickCallback(this, &CToolWindow::OnClickPlay);
 	m_Pause->SetClickCallback(this, &CToolWindow::OnClickPause);
 	m_Stop->SetClickCallback(this, &CToolWindow::OnClickStop);
@@ -210,6 +217,11 @@ void CToolWindow::OnChangeOutlineNormalMultiply(float Val)
 void CToolWindow::OnChangeOutlineNormalBias(float Val)
 {
 	CRenderManager::GetInst()->SetOutlineNormalBias(Val);
+}
+
+void CToolWindow::OnCheckDebugRender(const char* Label, bool Check)
+{
+	CRenderManager::GetInst()->SetDebugRender(Check);
 }
 
 void CToolWindow::OnCheckGrayEnable(const char* Label, bool Check)

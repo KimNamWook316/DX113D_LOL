@@ -17,9 +17,13 @@ public:
 
 	// 풀경로를 넣어주면 파일 이름만 걸러서 리턴해줌
 	static std::string FilterFileName(const std::string& FullPath);
-	
-	// FullPath 가 C::\\Windows\\Project\\Bin\\Hello.txt 이고, 
-	// FolderName 이 Project 라면 => Bin\\Hello.txt 라는 Path 정보를 return 해준다.
-	// std::string_view GetFilePathAfterSpecificFolder(std::string_view FolderName, std::string_view FullPath);
+
+	// Collision Profile
+	static std::string CollisionChannelToString(Collision_Channel eChannnel);
+	static Collision_Channel StringToCollisionChannel(const std::string& String);
+	static Collision_Interaction StringToCollisionInteraction(const std::string& String);
+
+	// String
+	static std::string BoolToString(bool Bool);
 };
 

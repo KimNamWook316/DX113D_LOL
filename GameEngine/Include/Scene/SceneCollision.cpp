@@ -414,6 +414,21 @@ const std::vector<CColliderComponent*>& CSceneCollision::GetSectionCollider(int 
 	return m_Section->vecSection[Index]->m_vecCollider;
 }
 
+bool CSceneCollision::IsExistColliderHasProfile(CollisionProfile* Profile)
+{
+	auto	iter = m_ColliderList.begin();
+	auto	iterEnd = m_ColliderList.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		if ((*iter)->GetCollisionProfile() == Profile)
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
 void CSceneCollision::CheckColliderSection()
 {
 	auto	iter = m_ColliderList.begin();

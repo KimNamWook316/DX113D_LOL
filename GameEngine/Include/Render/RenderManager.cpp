@@ -29,7 +29,8 @@ CRenderManager::CRenderManager()	:
 	m_ShadowCBuffer(nullptr),
 	m_OutlineCBuffer(nullptr),
 	m_Gray(false),
-	m_AlphaBlendMRT(nullptr)
+	m_AlphaBlendMRT(nullptr),
+	m_DebugRender(false)
 {
 }
 
@@ -587,8 +588,11 @@ void CRenderManager::Render()
 
 	CSceneManager::GetInst()->GetScene()->GetViewport()->Render();
 
-	// µğ¹ö±ë¿ë ·»´õÅ¸°ÙÀ» Ãâ·ÂÇÑ´Ù.
-	CResourceManager::GetInst()->RenderTarget();
+	if (m_DebugRender)
+	{
+		// µğ¹ö±ë¿ë ·»´õÅ¸°ÙÀ» Ãâ·ÂÇÑ´Ù.
+		CResourceManager::GetInst()->RenderTarget();
+	}
 
 	// ¸¶¿ì½º Ãâ·Â
 	CWidgetWindow* MouseWidget = CEngine::GetInst()->GetMouseWidget();

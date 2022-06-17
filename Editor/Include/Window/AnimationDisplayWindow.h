@@ -45,6 +45,9 @@ private :
 	void OnAnimInstanceConvertLoading(const LoadingMessage& msg);
 	void OnClickSetAnimSeqSrcDirButton();
 	void OnConvertSequencesIntoAnimationInstance();
+private :
 	void AddSequenceToDummyAnimationInstance(const char* FileFullPath);
+	bool CheckSavedFileNameDuplicated();
+	bool CheckGatheredSeqFilesIncludeCommonName();
 };
 

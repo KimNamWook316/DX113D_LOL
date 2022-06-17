@@ -350,12 +350,15 @@ void CEditorUtil::ExtractFileNameAndExtFromPath(const std::string& FullPath, cha
 	_splitpath_s(FullPath.c_str(), nullptr, 0, nullptr, 0, FileName, MAX_PATH, FileExt, _MAX_EXT);
 }
 
-bool CEditorUtil::IsFileExistInDir(const std::string& PathName, const std::string& FileName)
+bool CEditorUtil::IsFileExistInDir(const std::string& PathName, const std::string& TargetFileName)
 {
 	const PathInfo* Info = CPathManager::GetInst()->FindPath(PathName);
 
 	if (!Info)
+	{
+		assert(false);
 		return  false;
+	}
 
 	char FolderName[MAX_PATH] = {};
 
@@ -368,7 +371,7 @@ bool CEditorUtil::IsFileExistInDir(const std::string& PathName, const std::strin
 	{
 		const std::string& FileName = FilterFileName(entry.path().u8string());
 
-		if (strcmp(FileName.c_str(), FileName.c_str()) == 0)
+		if (strcmp(TargetFileName.c_str(), FileName.c_str()) == 0)
 		{
 			return true;
 		}

@@ -270,6 +270,17 @@ void CAnimationDisplayWindow::OnConvertSequencesIntoAnimationInstance()
 	if (m_AnimSeqcSrcFolderPath->Empty() || m_SavedAnimFileName->Empty())
 		return;
 
+	// 현재 m_SavedAnimFileName 이, Bin/Animation 에 이미 존재하는지 확인 + 중복 방지
+	// return 값이 true 라면, 생성 X (중복된 이름의 .anim 파일이 이미 존재한다는 의미이기 때문이다)
+	bool DuplicateResult = CheckSavedFileNameDuplicated();
+
+	if (DuplicateResult)
+	{
+		MessageBox(nullptr, TEXT("해당 Folder 에 같은 이름의 .anim File 존재"), TEXT(".anim File Duplicate"), MB_OK);
+		return;
+	}
+
+	// Animation Instance 를 만들어낼 .sqc 파일 목록들이 있는지 검사한다.
 	if (m_vecAnimationSeqFilesFullPath.size() <= 0)
 	{
 		MessageBox(nullptr, TEXT("해당 Folder 에 해당 Common 이름을 포함한 .sqc 파일 존재 X"), TEXT("Common Name Error"), MB_OK);
@@ -278,68 +289,12 @@ void CAnimationDisplayWindow::OnConvertSequencesIntoAnimationInstance()
 	
 	// 다시 한번, 현재 모아둔 m_vecAnimationSeqFilesFullPath 에서, Common Name 이 포함되어 있는지 한번 더 검사한다.
 	// 첫번째 File 로만 검사할 것이다.
-	if (m_vecAnimationSeqFilesFullPath.size() > 0)
+	bool CheckCommonNameResult = CheckGatheredSeqFilesIncludeCommonName();
+
+	if (!CheckCommonNameResult)
 	{
-		bool CommonNameIncluded = false;
-
-		// && m_vecAnimationSeqFilesFullPath[0].find(m_CommonAnimSeqName->GetTextUTF8()) == std::string::npos
-		std::vector<std::string> vecEachUpperSeqFilesFullPath;
-		std::vector<std::string> vecEachLowerSeqFilesFullPath;
-		std::string AllUpper;
-		std::string AllLower;
-
-		CEditorUtil::GetAllKindsOfTransformedStringVersions(m_CommonAnimSeqName->GetTextUTF8(), vecEachLowerSeqFilesFullPath,
-			vecEachUpperSeqFilesFullPath, AllUpper, AllLower);
-
-		size_t EachUpperTotalSize = vecEachUpperSeqFilesFullPath.size();
-
-		for (size_t i = 0; i < EachUpperTotalSize; ++i)
-		{
-			// 만약에 하나라도 포함한다면, 현재 Folder 경로와 Common Name 이 잘 짝지어진 것이다.
-			if (m_vecAnimationSeqFilesFullPath[0].find(vecEachUpperSeqFilesFullPath[i]) != std::string::npos)
-			{
-				CommonNameIncluded = true;
-				break;
-			}
-		}
-
-		if (!CommonNameIncluded)
-		{
-			size_t EachLowerTotalSize = vecEachLowerSeqFilesFullPath.size();
-
-			for (size_t i = 0; i < EachLowerTotalSize; ++i)
-			{
-				// 만약에 하나라도 포함한다면, 현재 Folder 경로와 Common Name 이 잘 짝지어진 것이다.
-				if (m_vecAnimationSeqFilesFullPath[0].find(vecEachLowerSeqFilesFullPath[i]) != std::string::npos)
-				{
-					CommonNameIncluded = true;
-					break;
-				}
-			}
-		}
-
-		if (!CommonNameIncluded)
-		{
-			// 만약에 하나라도 포함한다면, 현재 Folder 경로와 Common Name 이 잘 짝지어진 것이다.
-			if (m_vecAnimationSeqFilesFullPath[0].find(AllUpper) != std::string::npos)
-				CommonNameIncluded = true;
-		}
-
-		if (CommonNameIncluded)
-		{
-			// 만약에 하나라도 포함한다면, 현재 Folder 경로와 Common Name 이 잘 짝지어진 것이다.
-			if (m_vecAnimationSeqFilesFullPath[0].find(AllLower) != std::string::npos)
-				CommonNameIncluded = true;
-		}
-
-		// 현재 Folder 내 특정 이름을 포함하는 File 들을 모아놨는데
-		// 해당 File 들 중, 첫번째 파일이, Common Name 을 Include 하지 않는다는 의미는
-		// 중간에 Common NAme 을 바꾸는 등의 변화가 있었다는 것이다.
-		if (!CommonNameIncluded)
-		{
-			MessageBox(nullptr, TEXT("Folder 경로와, Common 이름을 확인하세요. (중간에 Common 이름을 변경했는지 확인)"), TEXT("Common Name Error"), MB_OK);
-			return;
-		}
+		MessageBox(nullptr, TEXT("Folder 경로와, Common 이름을 확인하세요. (중간에 Common 이름을 변경했는지 확인)"), TEXT("Common Name Error"), MB_OK);
+		return;
 	}
 
 	// 로그창 클리어
@@ -469,4 +424,93 @@ void CAnimationDisplayWindow::AddSequenceToDummyAnimationInstance(const char* Fi
 	// Resource Manager, Animation Instance 에 모두
 	// 동일하게 Single_Idle 이라는 Key 값으로 해당 정보를 세팅할 것이다.
 	m_DummyAnimation->AddAnimation(SqcFileName, SqcFileName);
+}
+
+// Return 값이 false 라면, 계속 진행하여, Make Inst
+// true 라면 , 중복 현상이 발생하는 것이므로, Make Inst X
+bool CAnimationDisplayWindow::CheckSavedFileNameDuplicated()
+{
+	// SaveFileName Input 에 Text 가 비어있다면 skip
+	if (m_SavedAnimFileName->Empty())
+		return true;
+
+	const PathInfo* Info = CPathManager::GetInst()->FindPath(ANIMATION_PATH);
+
+	if (!Info)
+	{
+		assert(false);
+	}
+
+	std::string SavedFileName = m_SavedAnimFileName->GetTextUTF8();
+
+	if (SavedFileName.find(".anim") == std::string::npos)
+		SavedFileName.append(".anim");
+
+	return CEditorUtil::IsFileExistInDir(ANIMATION_PATH, SavedFileName);
+}
+
+bool CAnimationDisplayWindow::CheckGatheredSeqFilesIncludeCommonName()
+{
+	if (m_vecAnimationSeqFilesFullPath.size() > 0)
+	{
+		bool CommonNameIncluded = false;
+
+		// && m_vecAnimationSeqFilesFullPath[0].find(m_CommonAnimSeqName->GetTextUTF8()) == std::string::npos
+		std::vector<std::string> vecEachUpperSeqFilesFullPath;
+		std::vector<std::string> vecEachLowerSeqFilesFullPath;
+		std::string AllUpper;
+		std::string AllLower;
+
+		CEditorUtil::GetAllKindsOfTransformedStringVersions(m_CommonAnimSeqName->GetTextUTF8(), vecEachLowerSeqFilesFullPath,
+			vecEachUpperSeqFilesFullPath, AllUpper, AllLower);
+
+		size_t EachUpperTotalSize = vecEachUpperSeqFilesFullPath.size();
+
+		for (size_t i = 0; i < EachUpperTotalSize; ++i)
+		{
+			// 만약에 하나라도 포함한다면, 현재 Folder 경로와 Common Name 이 잘 짝지어진 것이다.
+			if (m_vecAnimationSeqFilesFullPath[0].find(vecEachUpperSeqFilesFullPath[i]) != std::string::npos)
+			{
+				CommonNameIncluded = true;
+				break;
+			}
+		}
+
+		if (!CommonNameIncluded)
+		{
+			size_t EachLowerTotalSize = vecEachLowerSeqFilesFullPath.size();
+
+			for (size_t i = 0; i < EachLowerTotalSize; ++i)
+			{
+				// 만약에 하나라도 포함한다면, 현재 Folder 경로와 Common Name 이 잘 짝지어진 것이다.
+				if (m_vecAnimationSeqFilesFullPath[0].find(vecEachLowerSeqFilesFullPath[i]) != std::string::npos)
+				{
+					CommonNameIncluded = true;
+					break;
+				}
+			}
+		}
+
+		if (!CommonNameIncluded)
+		{
+			// 만약에 하나라도 포함한다면, 현재 Folder 경로와 Common Name 이 잘 짝지어진 것이다.
+			if (m_vecAnimationSeqFilesFullPath[0].find(AllUpper) != std::string::npos)
+				CommonNameIncluded = true;
+		}
+
+		if (CommonNameIncluded)
+		{
+			// 만약에 하나라도 포함한다면, 현재 Folder 경로와 Common Name 이 잘 짝지어진 것이다.
+			if (m_vecAnimationSeqFilesFullPath[0].find(AllLower) != std::string::npos)
+				CommonNameIncluded = true;
+		}
+
+		// 현재 Folder 내 특정 이름을 포함하는 File 들을 모아놨는데
+		// 해당 File 들 중, 첫번째 파일이, Common Name 을 Include 하지 않는다는 의미는
+		// 중간에 Common NAme 을 바꾸는 등의 변화가 있었다는 것이다.
+		if (!CommonNameIncluded)
+			return false;
+	}
+
+	return true;
 }

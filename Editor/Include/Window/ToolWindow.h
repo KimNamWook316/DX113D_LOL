@@ -41,6 +41,7 @@ private:
 	void OnChangeOutlineDepthBias(float Val);
 	void OnChangeOutlineNormalMultiply(float Val);
 	void OnChangeOutlineNormalBias(float Val);
+	void OnCheckDebugRender(const char* Label, bool Check);
 	void OnCheckGrayEnable(const char* Label, bool Check);
 	void OnClickPlay();
 	void OnClickPause();
@@ -63,6 +64,7 @@ private:
 
 	// Render
 	CIMGUICollapsingHeader* m_RenderBlock;
+	CIMGUICheckBox* m_DebugRender;
 	CIMGUISliderFloat* m_OutlineDepthMultiply;
 	CIMGUISliderFloat* m_OutlineDepthBias;
 	CIMGUISliderFloat* m_OutlineNormalMutliply;
