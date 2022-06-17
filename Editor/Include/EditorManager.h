@@ -24,9 +24,13 @@ private:
 	class CObjectHierarchyWindow* m_ObjectHierarchyWindow;
 	class CSceneComponentHierarchyWindow* m_ComponentHierarchyWindow;
 	class CObjectComponentWindow* m_ObjectComponentWindow;
+
 	class CAnimationEditor* m_AnimationEditor;
+	class CAnimationDisplayWindow* m_AnimationDisplayWindow;
+
 	class CEffectEditor* m_EffectEditor;
 	class CEffectDisplayWindow* m_EffectDisplayWindow;
+
 	class CInspectorWindow* m_InspectorWindow;
 	class CToolWindow* m_ToolWindow;
 	class CBehaviorTreeMenuBar* m_BehaviorTreeMenuBar;
@@ -47,6 +51,10 @@ public:
 	class CDragObject* GetDragObj()	const
 	{
 		return m_DragObj;
+	}
+	class CAnimationDisplayWindow* GetAnimationDisplayWindow() const
+	{
+		return m_AnimationDisplayWindow;
 	}
 	class CFBXConvertWindow* GetFBXConvertWindow()	const
 	{

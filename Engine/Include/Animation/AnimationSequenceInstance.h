@@ -6,6 +6,7 @@
 class CAnimationSequenceInstance
 {
 	friend class CAnimationEditor;
+	friend class CAnimationDisplayWindow;
 public:
 	CAnimationSequenceInstance();
 	CAnimationSequenceInstance(const CAnimationSequenceInstance& Anim);

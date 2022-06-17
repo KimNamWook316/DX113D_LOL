@@ -799,6 +799,12 @@ bool CAnimationSequenceInstance::SaveAnimationFullPath(const char* FullPath)
 	fwrite(&FileNameLength, sizeof(int), 1, pFile);
 	fwrite(m_SavedFileName, sizeof(char), FileNameLength, pFile);
 
+	if (FileNameLength == 0)
+	{
+		// AnimInstance 의 Saved FileName 이 없을 경우, assert false
+		assert(false);
+	}
+
 	int Length = (int)m_AnimInstanceName.length();
 	fwrite(&Length, sizeof(int), 1, pFile);
 	fwrite(m_AnimInstanceName.c_str(), sizeof(char), Length, pFile);

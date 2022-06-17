@@ -231,6 +231,9 @@
     <ClCompile Include="Window\EffectDisplayWindow.cpp">
       <Filter>02. Editor\01. Window\3. Particle</Filter>
     </ClCompile>
+    <ClCompile Include="Window\AnimationDisplayWindow.cpp">
+      <Filter>02. Editor\01. Window\2. Animation</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EditorManager.h">
@@ -388,6 +391,9 @@
     </ClInclude>
     <ClInclude Include="Window\EffectDisplayWindow.h">
       <Filter>02. Editor\01. Window\3. Particle</Filter>
+    </ClInclude>
+    <ClInclude Include="Window\AnimationDisplayWindow.h">
+      <Filter>02. Editor\01. Window\2. Animation</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

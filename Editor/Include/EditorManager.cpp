@@ -36,6 +36,7 @@
 #include "Window/BehaviorTreeMenuBar.h"
 #include "Window/BaseMenuBar.h"
 #include "Window/MaterialEditor.h"
+#include "Window/AnimationDisplayWindow.h"
 #include "Window/ResourceDisplayWindow.h"
 // Object
 #include "Object/DragObject.h"
@@ -151,6 +152,9 @@ bool CEditorManager::Init(HINSTANCE hInst)
 	
 	m_AnimationEditor = CIMGUIManager::GetInst()->AddWindow<CAnimationEditor>(ANIMATION_EDITOR);
 	m_AnimationEditor->Close();
+
+	m_AnimationDisplayWindow = CIMGUIManager::GetInst()->AddWindow<CAnimationDisplayWindow>(ANIMATION_DISPLAYWINDW);
+	m_AnimationDisplayWindow->Close();
 
 	m_EffectEditor = CIMGUIManager::GetInst()->AddWindow<CEffectEditor>(PARTICLE_EDITOR);
 	m_EffectEditor->Close();
@@ -436,7 +440,7 @@ void CEditorManager::SetChampionNotify(CAnimationSequenceInstance* Instance, con
 				ss << StrRange;
 				ss >> Range;
 				
-				Instance->SetNotifyParamRange("Alistar_SkillQ", "AlistarQAirborne", Range);
+				Instance->SetNotifyParamRange("Alistar_SkillQ", "AlistarQAirborne", (float)Range);
 			}
 			// W Skill
 			if (i == 1)
@@ -479,7 +483,7 @@ void CEditorManager::SetChampionInfo(class CGameObject* Object, const std::strin
 				Object->SetChampionMoveSpeed((float)Info);
 			// Attack
 			else if (i == 1)
-				Object->SetChampionAttack((float)Info);
+				Object->SetChampionAttack(Info);
 
 			else if (i == 2)
 				Object->SetChampionAttackSpeed((float)Info);
