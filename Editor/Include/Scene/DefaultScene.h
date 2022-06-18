@@ -1,5 +1,7 @@
 #pragma once
+
 #include "Scene/SceneMode.h"
+
 class CDefaultScene :
     public CSceneMode
 {
@@ -14,6 +16,9 @@ public:
 private:
     bool LoadAnimationSequence2D();
     bool CreateMaterial();
+
+private:
+    class CDataManager* m_DataManager;
 
 private:
     class CGameObject* m_PickObj;

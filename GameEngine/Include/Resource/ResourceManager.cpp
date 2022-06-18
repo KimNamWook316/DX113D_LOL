@@ -90,6 +90,7 @@ bool CResourceManager::Init()
 
 	if (!m_ExcelManager->Init())
 		return false;
+
 	return true;
 }
 

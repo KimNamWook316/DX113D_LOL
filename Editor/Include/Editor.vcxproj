@@ -166,12 +166,72 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AnimationInstanceConvertThread.cpp" />
-    <ClCompile Include="Component\BuildingComponent.cpp" />
+    <ClCompile Include="Component\GameBehaviorTree.cpp" />
+    <ClCompile Include="Component\GameDataComponent.cpp" />
+    <ClCompile Include="Component\GameStateComponent.cpp" />
+    <ClCompile Include="Component\Node\CheckAttackTarget.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="Component\Node\CheckState.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="Component\Node\CheckTurretAttackFrequency.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="Component\Node\CheckTurretAttackTarget.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="Component\Node\DeathNode.cpp" />
+    <ClCompile Include="Component\Node\FindEnemyChampion.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="Component\Node\HPCheck.cpp" />
+    <ClCompile Include="Component\Node\IdleNode.cpp" />
+    <ClCompile Include="Component\Node\InSkillCheck.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="Component\Node\MoveInputCheckNode.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="Component\Node\MoveNode.cpp" />
+    <ClCompile Include="Component\Node\MovePickingNode.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="Component\Node\NegateNode.cpp" />
+    <ClCompile Include="Component\Node\NoInterruptNode.cpp" />
+    <ClCompile Include="Component\Node\NormalAttack.cpp" />
+    <ClCompile Include="Component\Node\SkillEndCheckNode.cpp" />
+    <ClCompile Include="Component\State\AirBorneState.cpp" />
+    <ClCompile Include="Component\State\DamageState.cpp" />
+    <ClCompile Include="Component\State\GameStateManager.cpp" />
+    <ClCompile Include="DataManager.cpp" />
     <ClCompile Include="EditorManager.cpp" />
     <ClCompile Include="EditorUtil.cpp" />
     <ClCompile Include="GraphEditor.cpp" />
-    <ClCompile Include="LoLBuildingManager.cpp" />
-    <ClCompile Include="LoLDataManager.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Object\3DCameraObject.cpp" />
     <ClCompile Include="Object\3DParticleObject.cpp" />
@@ -182,7 +242,6 @@
     <ClCompile Include="Scene\DefaultScene.cpp" />
     <ClCompile Include="Widget\AnimationMeshWidget.cpp" />
     <ClCompile Include="Widget\BehaviorTreeMenu.cpp" />
-    <ClCompile Include="Widget\BuildingComponentWidget.cpp" />
     <ClCompile Include="Widget\ColliderComponentWidget.cpp" />
     <ClCompile Include="Widget\ColliderSphereWidget.cpp" />
     <ClCompile Include="Widget\DataMenu.cpp" />
@@ -207,8 +266,8 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClCompile>
-	<ClCompile Include="Window\CollisionProfileEditor.cpp" />
-	<ClCompile Include="Window\EffectDisplayWindow.cpp" />
+    <ClCompile Include="Window\CollisionProfileEditor.cpp" />
+    <ClCompile Include="Window\EffectDisplayWindow.cpp" />
     <ClCompile Include="Window\EffectEditor.cpp" />
     <ClCompile Include="Window\FBXConvertWindow.cpp" />
     <ClCompile Include="Window\FileBrowser.cpp" />
@@ -226,13 +285,73 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimationInstanceConvertThread.h" />
-    <ClInclude Include="Component\BuildingComponent.h" />
+    <ClInclude Include="Component\GameBehaviorTree.h" />
+    <ClInclude Include="Component\GameDataComponent.h" />
+    <ClInclude Include="Component\GameStateComponent.h" />
+    <ClInclude Include="Component\Node\CheckAttackTarget.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="Component\Node\CheckState.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="Component\Node\CheckTurretAttackFrequency.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="Component\Node\CheckTurretAttackTarget.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="Component\Node\DeathNode.h" />
+    <ClInclude Include="Component\Node\FindEnemyChampion.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="Component\Node\HPCheck.h" />
+    <ClInclude Include="Component\Node\IdleNode.h" />
+    <ClInclude Include="Component\Node\InSkillCheck.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="Component\Node\MoveInputCheckNode.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="Component\Node\MoveNode.h" />
+    <ClInclude Include="Component\Node\MovePickingNode.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="Component\Node\NegateNode.h" />
+    <ClInclude Include="Component\Node\NoInterruptNode.h" />
+    <ClInclude Include="Component\Node\NormalAttack.h" />
+    <ClInclude Include="Component\Node\SkillEndCheckNode.h" />
+    <ClInclude Include="Component\State\AirBorneState.h" />
+    <ClInclude Include="Component\State\DamageState.h" />
+    <ClInclude Include="Component\State\GameStateManager.h" />
+    <ClInclude Include="DataManager.h" />
     <ClInclude Include="EditorInfo.h" />
     <ClInclude Include="EditorManager.h" />
     <ClInclude Include="EditorUtil.h" />
     <ClInclude Include="GraphEditor.h" />
-    <ClInclude Include="LoLBuildingManager.h" />
-    <ClInclude Include="LoLDataManager.h" />
     <ClInclude Include="Object\3DCameraObject.h" />
     <ClInclude Include="Object\3DParticleObject.h" />
     <ClInclude Include="Object\Anim3DObject.h" />
@@ -244,7 +363,6 @@
     <ClInclude Include="Utils.h" />
     <ClInclude Include="Widget\AnimationMeshWidget.h" />
     <ClInclude Include="Widget\BehaviorTreeMenu.h" />
-    <ClInclude Include="Widget\BuildingComponentWidget.h" />
     <ClInclude Include="Widget\ColliderComponentWidget.h" />
     <ClInclude Include="Widget\ColliderSphereWidget.h" />
     <ClInclude Include="Widget\DataMenu.h" />
@@ -269,8 +387,8 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClInclude>
-	<ClInclude Include="Window\CollisionProfileEditor.h" />
-	<ClInclude Include="Window\EffectDisplayWindow.h" />
+    <ClInclude Include="Window\CollisionProfileEditor.h" />
+    <ClInclude Include="Window\EffectDisplayWindow.h" />
     <ClInclude Include="Window\EffectEditor.h" />
     <ClInclude Include="Window\FBXConvertWindow.h" />
     <ClInclude Include="Window\FileBrowser.h" />

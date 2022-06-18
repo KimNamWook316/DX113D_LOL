@@ -14,8 +14,8 @@ CStateComponent::CStateComponent()	:
 	SetTypeID<CStateComponent>();
 	m_ComponentType = Component_Type::ObjectComponent;
 
-	m_BehaviorTree = new CBehaviorTree;
-	m_BehaviorTree->m_Owner = this;
+	//m_BehaviorTree = new CBehaviorTree;
+	//m_BehaviorTree->m_Owner = this;
 }
 
 CStateComponent::CStateComponent(const CStateComponent& com)	:
@@ -65,8 +65,8 @@ void CStateComponent::Update(float DeltaTime)
 			iter = m_StateList.erase(iter);
 			iterEnd = m_StateList.end();
 
-			if(m_StateList.empty())
-				m_Object->SetOntHit(false);
+			/*if(m_StateList.empty())
+				m_Object->SetOntHit(false);*/
 
 			continue;
 		}
@@ -95,8 +95,8 @@ void CStateComponent::PostUpdate(float DeltaTime)
 			iter = m_StateList.erase(iter);
 			iterEnd = m_StateList.end();
 
-			if (m_StateList.empty())
-				m_Object->SetOntHit(false);
+			/*if (m_StateList.empty())
+				m_Object->SetOntHit(false);*/
 
 			continue;
 		}

@@ -884,6 +884,7 @@ bool CCollision::CollisionBox3DToSphere(Vector3& HitPoint, CColliderBox3D* Src, 
 	if (SphereInObbSpace.Center.z - SphereInObbSpace.Radius > Box.AxisLen[2])
 		return false;
 
+
 	//MessageBox(nullptr, TEXT("충돌"), TEXT("충돌"), MB_OK);
 
 	return true;

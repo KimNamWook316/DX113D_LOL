@@ -342,6 +342,8 @@ bool CScene::LoadFullPath(const char* FullPath)
 		// 여기서 NextScene 포인터를 Obj->LoadHierarchy안으로 넘겨줘야 한다
 		Success = Obj->LoadHierarchy(File, this);
 
+		CSceneManager::GetInst()->CallObjectDataSet(Obj, Obj->GetName());
+
 		if (!Success)
 		{
 			fclose(File);
@@ -394,25 +396,6 @@ bool CScene::CheckSameName(const std::string& Name)
 	}
 
 	return false;
-}
-
-CGameObject* CScene::FindNearChampion(const Vector3& MyPos, float Dist)
-{
-	auto iter = m_ObjList.begin();
-	auto iterEnd = m_ObjList.end();
-
-	for (; iter != iterEnd; ++iter)
-	{
-		if ((*iter)->GetObjectType() == Object_Type::Champion)
-		{
-			Vector3 Pos = (*iter)->GetWorldPos();
-
-			if (Dist < abs(Pos.Distance(MyPos)))
-				return (*iter);
-		}
-	}
-
-	return nullptr;
 }
 
 void CScene::GetAllObjectsPointer(std::vector<CGameObject*>& vecOutObj)

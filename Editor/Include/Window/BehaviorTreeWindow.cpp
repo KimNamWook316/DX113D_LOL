@@ -2,32 +2,24 @@
 #include "BehaviorTreeWindow.h"
 #include "IMGUIManager.h"
 #include "IMGUIButton.h"
-#include "Component/StateComponent.h"
+#include "../Component/GameStateComponent.h"
 #include "Component/Node/SequenceNode.h"
 #include "Component/Node/SelectorNode.h"
 #include "Component/Node/ActionNode.h"
 #include "Component/Node/ConditionNode.h"
-#include "Component/Node/InputQCheckNode.h"
-#include "Component/Node/InputWCheckNode.h"
-#include "Component/Node/SkillQNode.h"
-#include "Component/Node/SkillWNode.h"
-#include "Component/Node/SkillENode.h"
-#include "Component/Node/SkillRNode.h"
-#include "Component/Node/InputQCheckNode.h"
-#include "Component/Node/InputWCheckNode.h"
-#include "Component/Node/InputECheckNode.h"
-#include "Component/Node/InputRCheckNode.h"
-#include "Component/Node/IdleNode.h"
-#include "Component/Node/MoveInputCheckNode.h"
-#include "Component/Node/MovePickingNode.h"
-#include "Component/Node/NoInterruptNode.h"
-#include "Component/Node/CheckAttackTarget.h"
-#include "Component/Node/SkillEndCheckNode.h"
-#include "Component/Node/NormalAttack.h"
-#include "Component/Node/InSkillCheck.h"
-#include "Component/Node/CheckTurretAttackTarget.h"
-#include "Component/Node/CheckTurretAttackFrequency.h"
-#include "Component/Node/NegateNode.h"
+#include "../Component/Node/MoveNode.h"
+#include "../Component/Node/IdleNode.h"
+#include "../Component/Node/MoveInputCheckNode.h"
+#include "../Component/Node/MovePickingNode.h"
+#include "../Component/Node/NoInterruptNode.h"
+#include "../Component/Node/CheckAttackTarget.h"
+#include "../Component/Node/SkillEndCheckNode.h"
+#include "../Component/Node/NormalAttack.h"
+#include "../Component/Node/InSkillCheck.h"
+#include "../Component/Node/CheckTurretAttackTarget.h"
+#include "../Component/Node/CheckTurretAttackFrequency.h"
+#include "../Component/Node/NegateNode.h"
+#include "../Component/Node/DeathNode.h"
 #include "ObjectComponentWindow.h"
 #include "ObjectHierarchyWindow.h"
 #include "../EditorInfo.h"
@@ -95,7 +87,7 @@ void CBehaviorTreeWindow::Update(float DeltaTime)
     if (ObjWindow && ObjCompWindow)
     {
         CGameObject* SelectObj = ObjWindow->GetSelectObject();
-        CStateComponent* State = SelectObj->FindComponentFromType<CStateComponent>();
+        CGameStateComponent* State = SelectObj->FindComponentFromType<CGameStateComponent>();
 
         if (State)
         {
@@ -168,27 +160,16 @@ void CBehaviorTreeWindow::Update(float DeltaTime)
 
         if (m_TypeSelectIndex == 2)
         {
-            m_vecNodeAction.push_back("SkillQ");
-            m_vecNodeAction.push_back("SkillW");
-            m_vecNodeAction.push_back("SkillE");
-            m_vecNodeAction.push_back("SkillR");
-            m_vecNodeAction.push_back("SpellD");
-            m_vecNodeAction.push_back("SpellF");
             m_vecNodeAction.push_back("Move");
             m_vecNodeAction.push_back("MovePicking");
             m_vecNodeAction.push_back("Idle");
             m_vecNodeAction.push_back("NormalAttack");
+            m_vecNodeAction.push_back("Death");
         }
 
         else if (m_TypeSelectIndex == 3)
         {
-            m_vecNodeAction.push_back("InputQCheck");
-            m_vecNodeAction.push_back("InputWCheck");
-            m_vecNodeAction.push_back("InputECheck");
-            m_vecNodeAction.push_back("InputRCheck");
-            m_vecNodeAction.push_back("InputDCheck");
-            m_vecNodeAction.push_back("InputFCheck");
-            m_vecNodeAction.push_back("MouseRightInputCheck");
+            m_vecNodeAction.push_back("MoveInputCheck");
             m_vecNodeAction.push_back("NoInterruptCheck");
             m_vecNodeAction.push_back("AttackTargetCheck");
             m_vecNodeAction.push_back("SkillEndCheck");
@@ -360,32 +341,20 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
 
         switch (NodeActionClass)
         {
-        case ActionNode::SkillQ:
-            NewTreeNode = m_StateComponent->CreateTreeNode<CSkillQNode>(Name);
-            break;
-        case ActionNode::SkillW:
-            NewTreeNode = m_StateComponent->CreateTreeNode<CSkillWNode>(Name);
-            break;
-        case ActionNode::SkillE:
-            NewTreeNode = m_StateComponent->CreateTreeNode<CSkillENode>(Name);
-            break;
-        case ActionNode::SkillR:
-            NewTreeNode = m_StateComponent->CreateTreeNode<CSkillRNode>(Name);
-            break;
-        case ActionNode::SpellD:
-            break;
-        case ActionNode::SpellF:
-            break;
         case ActionNode::Move:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CMoveNode>(Name);
             break;
-        case ActionNode::MovePicking:
-            NewTreeNode = m_StateComponent->CreateTreeNode<CMovePickingNode>(Name);
-            break;
+        //case ActionNode::MovePicking:
+        //    NewTreeNode = m_StateComponent->CreateTreeNode<CMovePickingNode>(Name);
+        //    break;
         case ActionNode::Idle:
             NewTreeNode = m_StateComponent->CreateTreeNode<CIdleNode>(Name);
             break;
         case ActionNode::NormalAttack:
             NewTreeNode = m_StateComponent->CreateTreeNode<CNormalAttack>(Name);
+            break;
+        case ActionNode::Death:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CDeathNode>(Name);
             break;
         }
 
@@ -400,22 +369,6 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
 
         switch (NodeConditionlass)
         {
-        case ConditionNode::InputQCheck:
-            NewTreeNode = m_StateComponent->CreateTreeNode<CInputQCheckNode>(Name);
-            break;
-        case ConditionNode::InputWCheck:
-            NewTreeNode = m_StateComponent->CreateTreeNode<CInputWCheckNode>(Name);
-            break;
-        case ConditionNode::InputECheck:
-            NewTreeNode = m_StateComponent->CreateTreeNode<CInputECheckNode>(Name);
-            break;
-        case ConditionNode::InputRCheck:
-            NewTreeNode = m_StateComponent->CreateTreeNode<CInputRCheckNode>(Name);
-            break;
-        case ConditionNode::InputDCheck:
-            break;
-        case ConditionNode::InputFCheck:
-            break;
         case ConditionNode::MoveInputCheckNode:
             NewTreeNode = m_StateComponent->CreateTreeNode<CMoveInputCheckNode>(Name);
             break;
@@ -521,6 +474,9 @@ void CBehaviorTreeWindow::OnDeleteNodeButton(const char* Name)
 
 void CBehaviorTreeWindow::UpdateLoadNode(CCompositeNode* RootNode)
 {
+    if (!RootNode)
+        return;
+
     int TypeIndex = -1;
 
     if (RootNode->GetTypeID() == typeid(CSequenceNode).hash_code())
@@ -655,7 +611,7 @@ void CBehaviorTreeWindow::UpdateLoadNodeLink(CBehaviorTree* Tree)
             {
                 if (m_Delegate.GetDelegateNode((int)j).BehaviorTreeNode == Node)
                 {
-                    GraphEditorDelegate::Node SrcNode = m_Delegate.GetDelegateNode(j);
+                    GraphEditorDelegate::Node SrcNode = m_Delegate.GetDelegateNode((int)j);
 
                     const std::list<CNode*> ChildrenList = ((CCompositeNode*)Node)->GetChildrenList();
 
@@ -680,7 +636,7 @@ void CBehaviorTreeWindow::UpdateLoadNodeLink(CBehaviorTree* Tree)
             {
                 if (m_Delegate.GetDelegateNode((int)j).BehaviorTreeNode == Node)
                 {
-                    GraphEditorDelegate::Node SrcNode = m_Delegate.GetDelegateNode(j);
+                    GraphEditorDelegate::Node SrcNode = m_Delegate.GetDelegateNode((int)j);
 
                     CNode* DecoratorChild = ((CDecoratorNode*)Node)->GetChild();
                     GraphEditorDelegate::Node DestNode = m_Delegate.FindNode(DecoratorChild);

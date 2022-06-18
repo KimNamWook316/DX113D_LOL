@@ -7,6 +7,7 @@
 #include "IMGUISameLine.h"
 #include "IMGUISeperator.h"
 #include "IMGUIDummy.h"
+#include "IMGUIComboBox.h"
 #include "Component/StaticMeshComponent.h"
 #include "Component/AnimationMeshComponent.h"
 #include "Component/LightComponent.h"
@@ -14,7 +15,6 @@
 #include "Component/LandScape.h"
 #include "Component/ColliderBox3D.h"
 #include "Component/ColliderSphere.h"
-#include "../Component/BuildingComponent.h"
 #include "../Widget/StaticMeshComponentWidget.h"
 #include "../Widget/LightComponentWidget.h"
 #include "../Widget/ObjectComponentWidget.h"
@@ -24,7 +24,6 @@
 #include "../Widget/LandScapeWidget.h"
 #include "../Widget/ColliderComponentWidget.h"
 #include "../Widget/ColliderSphereWidget.h"
-#include "../Widget/BuildingComponentWidget.h"
 #include "IMGUIManager.h"
 #include "../EditorInfo.h"
 
@@ -57,12 +56,19 @@ bool CGameObjectWidget::Init()
 	m_EnemyCheckBox = AddWidget<CIMGUICheckBox>("IsEnemy");
 	m_EnemyCheckBox->AddCheckInfo("IsEnemy");
 
+	m_ObjectTypeCombo = AddWidget<CIMGUIComboBox>("Object Type");
+	m_ObjectTypeCombo->SetHideName(true);
+	m_ObjectTypeCombo->AddItem("Player");
+	m_ObjectTypeCombo->AddItem("Monster");
+	m_ObjectTypeCombo->AddItem("MapObject");
+
 	AddWidget<CIMGUISeperator>("Sep");
 
 	// CallBack
 	m_RenameButton->SetClickCallback(this, &CGameObjectWidget::OnClickRenameButton);
 	m_EnableCheckBox->SetCallBackIdx(this, &CGameObjectWidget::OnCheckEnableCheckBox);
 	m_EnemyCheckBox->SetCallBackIdx(this, &CGameObjectWidget::OnCheckEnemyCheckBox);
+	m_ObjectTypeCombo->SetSelectCallback<CGameObjectWidget>(this, &CGameObjectWidget::OnSelectObjectType);
 
 	return true;
 }
@@ -89,7 +95,7 @@ void CGameObjectWidget::ClearComponentWidget()
 
 	m_ObjectComponentWidgetList.clear();
 	
-	mVecChild.resize(8);
+	mVecChild.resize(9);
 }
 
 void CGameObjectWidget::SetGameObject(CGameObject* Obj)
@@ -123,6 +129,21 @@ void CGameObjectWidget::SetGameObject(CGameObject* Obj)
 		for (size_t i = 0; i < Size; ++i)
 		{
 			CreateObjectComponentWidget(vecObjComp[i]);
+		}
+
+		Object_Type Type = Obj->GetObjectType();
+
+		switch (Type)
+		{
+		case Object_Type::Player:
+			m_ObjectTypeCombo->SetSelectIndex(0);
+			break;
+		case Object_Type::Monster:
+			m_ObjectTypeCombo->SetSelectIndex(1);
+			break;
+		case Object_Type::MapObject:
+			m_ObjectTypeCombo->SetSelectIndex(2);
+			break;
 		}
 	}
 }
@@ -162,10 +183,7 @@ void CGameObjectWidget::CreateSceneComponentWidget(CSceneComponent* Com)
 	{
 		Widget = AddWidget<CColliderSphereWidget>("ColliderSphereWidget");
 	}
-	else if (TypeID == typeid(CBuildingComponent).hash_code())
-	{
-		Widget = AddWidget<CBuildingComponentWidget>("BuildingComponentWidget");
-	}
+
 	else
 	{
 	 	Widget = AddWidget<CSceneComponentWidget>("SceneWidget");
@@ -181,7 +199,16 @@ void CGameObjectWidget::CreateObjectComponentWidget(CObjectComponent* Com)
 {
 	size_t TypeID = Com->GetTypeID();
 
-	// TODO : 컴포넌트별 위젯 추가
+	CObjectComponentWidget* Widget = nullptr;
+
+
+	if (Widget)
+	{
+		// Component 넣어주면서 내부 Widget들 생성
+		Widget->SetObjectComponent(Com);
+
+		m_ObjectComponentWidgetList.push_back(Widget);
+	}
 }
 
 void CGameObjectWidget::DeleteSceneComponentWidget(CSceneComponent* Com)
@@ -247,4 +274,24 @@ void CGameObjectWidget::OnCheckEnableCheckBox(int Idx, bool Check)
 void CGameObjectWidget::OnCheckEnemyCheckBox(int Idx, bool Check)
 {
 	m_Object->SetEnemy(Check);
+}
+
+void CGameObjectWidget::OnSelectObjectType(int Idx, const char* label)
+{
+	const std::string& ObjectType = m_ObjectTypeCombo->GetItem(Idx);
+
+	if (ObjectType == "Player")
+	{
+		m_Object->SetObjectType(Object_Type::Player);
+	}
+
+	else if (ObjectType == "Monster")
+	{
+		m_Object->SetObjectType(Object_Type::Monster);
+	}
+
+	if (ObjectType == "MapObject")
+	{
+		m_Object->SetObjectType(Object_Type::MapObject);
+	}
 }

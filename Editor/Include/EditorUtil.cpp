@@ -11,10 +11,10 @@
 #include "Component/StaticMeshComponent.h"
 #include "Component/PaperBurnComponent.h"
 #include "Component/ParticleComponent.h"
-#include "Component/StateComponent.h"
+#include "Component/GameStateComponent.h"
 #include "Component/ColliderBox3D.h"
 #include "Component/ColliderSphere.h"
-#include "Component/BuildingComponent.h"
+#include "Component/GameDataComponent.h"
 #include "IMGUITree.h"
 #include "Flag.h"
 
@@ -451,20 +451,16 @@ void CEditorUtil::ShowDemo()
 	ImGui::ShowDemoWindow(&Open);
 }
 
-std::string CEditorUtil::LoLObjectToString(LoLObject Object)
+std::string CEditorUtil::ObjectToString(Object_Type Object)
 {
 	switch (Object)
 	{
-	case LoLObject::GameObject:
-		return "GameObject";
-	case LoLObject::MovingObject:
-		return "MovingObject";
-	case LoLObject::MapObject:
+	case Object_Type::Player:
+		return "Player";
+	case Object_Type::Monster:
+		return "Monster";
+	case Object_Type::MapObject:
 		return "MapObject";
-	case LoLObject::Champion:
-		return "Champion";
-	case LoLObject::Minion:
-		return "Minion";
 	}
 
 	return "";
@@ -492,8 +488,6 @@ std::string CEditorUtil::SceneComponent3DTypeToString(SceneComponent3DType Type)
 		return "ColliderBox3D";
 	case SceneComponent3DType::ColliderSphere:
 		return "ColliderSphere";
-	case SceneComponent3DType::BuildingComponent:
-		return "BuildingComponent";
 	}
 
 	return "";
@@ -505,10 +499,12 @@ std::string CEditorUtil::ObjectComponent3DTypeToString(ObjectComponent3DType Typ
 	{
 	case ObjectComponent3DType::PaperBurnComponent:
 		return "PaperBurnComponent";
-	case ObjectComponent3DType::StateComponent:
-		return "StateComponent";
+	case ObjectComponent3DType::GameStateComponent:
+		return "GameStateComponent";
 	case ObjectComponent3DType::NavAgent:
 		return "NavAgent";
+	case ObjectComponent3DType::GameDataComponent:
+		return "GameDataComponent";
 	}
 
 	return "";
@@ -571,13 +567,12 @@ size_t CEditorUtil::SceneComponentTypeIndexToTypeid(int TypeIndex)
 		return typeid(CColliderBox3D).hash_code();
 	case 8:
 		return typeid(CColliderSphere).hash_code();
-	case 9:
-		return typeid(CBuildingComponent).hash_code();
 	}
 
 	return -1;
 }
 
+// TODO : ObjectComponent 종류 추가될 때 마다 추가
 size_t CEditorUtil::ObjectComponentTypeIndexToTypeid(int TypeIndex)
 {
 	switch (TypeIndex)
@@ -585,13 +580,11 @@ size_t CEditorUtil::ObjectComponentTypeIndexToTypeid(int TypeIndex)
 	case 0:
 		return typeid(CPaperBurnComponent).hash_code();
 	case 1:
-		return typeid(CStateComponent).hash_code();
+		return typeid(CGameStateComponent).hash_code();
 	case 2:
 		return typeid(CNavAgent).hash_code();
-	//case 3:
-	//	return typeid(CArm).hash_code();
-	//case 4:
-	//	return typeid(CLightComponent).hash_code();
+	case 3:
+		return typeid(CGameDataComponent).hash_code();
 	//case 5:
 	//	return typeid(CSceneComponent).hash_code();
 	}
@@ -623,21 +616,3 @@ bool CEditorUtil::CompareExt(const char* FullPath, const char ExtFilter[_MAX_EXT
 	return (strcmp(FilterBuf, FullPathExt) == 0);
 }
 
-std::string LoLObjectToString(LoLObject Object)
-{
-	switch (Object)
-	{
-	case LoLObject::GameObject:
-		return "GameObject";
-	case LoLObject::MovingObject:
-		return "MovingObject";
-	case LoLObject::MapObject:
-		return "MapObject";
-	case LoLObject::Champion:
-		return "Champion";
-	case LoLObject::Minion:
-		return "Minion";
-	}
-
-	return "";
-}

@@ -44,6 +44,9 @@ private:
 	bool				m_MousePush;
 	float				m_CameraMoveSpeed;
 
+	class CGameStateManager* m_StateManager;
+	class CDataManager* m_DataManager;
+
 public:
 	bool GetLButtonPush()	const
 	{
@@ -114,6 +117,9 @@ public:
 		return m_EditMode;
 	}
 
+	class CGameStateManager* GetStateManager()	const;
+	class CDataManager* GetDataManager()	const;
+
 	void SetEditMode(EditMode Mode);
 
 public:
@@ -148,8 +154,7 @@ private:
 	void LoadEditorResources();
 	void CreateWindows();
 	void CreateEditorCamera();
-	void ReadChampionNotify();
-	void ReadChampionSkillInfo();
+
 
 	DECLARE_SINGLE(CEditorManager)
 };

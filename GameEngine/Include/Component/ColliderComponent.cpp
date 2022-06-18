@@ -275,6 +275,13 @@ bool CColliderComponent::Save(FILE* File)
 	fwrite(&Length, sizeof(int), 1, File);
 	fwrite(ShaderName, sizeof(char), Length, File);
 
+	Length = m_Profile->Name.length();
+	fwrite(&Length, sizeof(int), 1, File);
+
+	char ProfileName[256] = {};
+	strcpy_s(ProfileName, m_Profile->Name.c_str());
+	fwrite(ProfileName, sizeof(char), Length, File);
+
 
 	return true;
 }
@@ -313,6 +320,16 @@ bool CColliderComponent::Load(FILE* File)
 	m_CBuffer->Init();
 
 	m_CBuffer->SetColliderColor(Vector4(0.f, 1.f, 0.f, 1.f));
+
+	Length = 0;
+	fread(&Length, sizeof(int), 1, File);
+
+	char ProfileName[256] = {};
+	fread(ProfileName, sizeof(char), Length, File);
+
+	std::string strProfileName = ProfileName;
+
+	SetCollisionProfile(strProfileName);
 
 	return true;
 }
