@@ -73,14 +73,29 @@
     <Filter Include="02. Editor\01. Window\4. MenuBar">
       <UniqueIdentifier>{d565fee9-2c53-4eaf-8d99-f39f6bbed48d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="06. LoLComponent">
-      <UniqueIdentifier>{fbeb3de9-3b25-4cdf-9572-c12930aab8b7}</UniqueIdentifier>
-    </Filter>
     <Filter Include="05. LoLManager">
       <UniqueIdentifier>{c29db2ae-b440-4633-9c63-011f3bcf3088}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. Editor\01. Window\5. CollisionProfile">
       <UniqueIdentifier>{385f0b36-6776-4bd1-9902-df98b61ac424}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="07. BehaviorTree">
+      <UniqueIdentifier>{8e4533f3-be56-48d9-a9fb-75f29ead9a6d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="07. BehaviorTree\01. ConditionNode">
+      <UniqueIdentifier>{c2bf10e3-87bb-4aa5-bc41-bd4266d9b95f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="07. BehaviorTree\02. ActionNode">
+      <UniqueIdentifier>{474317a6-b07f-4128-8ee1-f71c07a7fcd0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="07. BehaviorTree\03. DecoratorNode">
+      <UniqueIdentifier>{6b5bccd5-4cff-4d30-abcc-8ca89762bc38}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="08. State">
+      <UniqueIdentifier>{f5f2078b-48ac-417b-aaf6-d8d7501769f2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. GameComponent">
+      <UniqueIdentifier>{fbeb3de9-3b25-4cdf-9572-c12930aab8b7}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -219,43 +234,85 @@
     <ClCompile Include="Widget\UtilMenuBar.cpp">
       <Filter>02. Editor\02. Widget\03. MenuBar</Filter>
     </ClCompile>
-    <ClCompile Include="LoLDataManager.cpp">
-      <Filter>05. LoLManager</Filter>
-    </ClCompile>
-    <ClCompile Include="LoLBuildingManager.cpp">
-      <Filter>05. LoLManager</Filter>
-    </ClCompile>
-    <ClCompile Include="Component\BuildingComponent.cpp">
-      <Filter>06. LoLComponent</Filter>
-    </ClCompile>
-    <ClCompile Include="Widget\BuildingComponentWidget.cpp">
-      <Filter>02. Editor\02. Widget\01. Inspector\01. SceneComponent</Filter>
-    </ClCompile>
-    	<ClCompile Include="Window\EffectDisplayWindow.cpp">
+    <ClCompile Include="Window\EffectDisplayWindow.cpp">
       <Filter>02. Editor\01. Window\3. Particle</Filter>
     </ClCompile>
-	<ClCompile Include="Widget\DataMenu.cpp">
+    <ClCompile Include="Widget\DataMenu.cpp">
       <Filter>02. Editor\02. Widget\03. MenuBar</Filter>
     </ClCompile>
     <ClCompile Include="Window\CollisionProfileEditor.cpp">
       <Filter>02. Editor\01. Window\5. CollisionProfile</Filter>
     </ClCompile>
-        <ClCompile Include="Widget\ChampionAIComponentWidget.cpp">
-      <Filter>02. Editor\02. Widget\01. Inspector\02. ObjectComponent</Filter>
+    <ClCompile Include="Component\Node\CheckAttackTarget.cpp">
+      <Filter>07. BehaviorTree\01. ConditionNode</Filter>
     </ClCompile>
-    <ClCompile Include="Component\ChampionAIComponent.cpp">
-      <Filter>06. LoLComponent</Filter>
+    <ClCompile Include="Component\Node\CheckState.cpp">
+      <Filter>07. BehaviorTree\01. ConditionNode</Filter>
     </ClCompile>
-    <ClCompile Include="Component\LoLDataComponent.cpp">
-      <Filter>06. LoLComponent</Filter>
+    <ClCompile Include="Component\Node\CheckTurretAttackFrequency.cpp">
+      <Filter>07. BehaviorTree\01. ConditionNode</Filter>
     </ClCompile>
-    <ClCompile Include="Component\MinionAIComponent.cpp">
-      <Filter>06. LoLComponent</Filter>
+    <ClCompile Include="Component\Node\CheckTurretAttackTarget.cpp">
+      <Filter>07. BehaviorTree\01. ConditionNode</Filter>
     </ClCompile>
-    <ClCompile Include="Widget\MinionAIComponentWidget.cpp">
-      <Filter>02. Editor\02. Widget\01. Inspector\02. ObjectComponent</Filter>
+    <ClCompile Include="Component\Node\FindEnemyChampion.cpp">
+      <Filter>07. BehaviorTree\01. ConditionNode</Filter>
     </ClCompile>
-    </ItemGroup>
+    <ClCompile Include="Component\Node\HPCheck.cpp">
+      <Filter>07. BehaviorTree\01. ConditionNode</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\Node\InSkillCheck.cpp">
+      <Filter>07. BehaviorTree\01. ConditionNode</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\Node\MoveInputCheckNode.cpp">
+      <Filter>07. BehaviorTree\01. ConditionNode</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\Node\NoInterruptNode.cpp">
+      <Filter>07. BehaviorTree\01. ConditionNode</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\Node\SkillEndCheckNode.cpp">
+      <Filter>07. BehaviorTree\01. ConditionNode</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\Node\DeathNode.cpp">
+      <Filter>07. BehaviorTree\02. ActionNode</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\Node\IdleNode.cpp">
+      <Filter>07. BehaviorTree\02. ActionNode</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\Node\MoveNode.cpp">
+      <Filter>07. BehaviorTree\02. ActionNode</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\Node\MovePickingNode.cpp">
+      <Filter>07. BehaviorTree\02. ActionNode</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\Node\NormalAttack.cpp">
+      <Filter>07. BehaviorTree\02. ActionNode</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\Node\NegateNode.cpp">
+      <Filter>07. BehaviorTree\03. DecoratorNode</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\State\AirBorneState.cpp">
+      <Filter>08. State</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\State\DamageState.cpp">
+      <Filter>08. State</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\State\GameStateManager.cpp">
+      <Filter>08. State</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\GameStateComponent.cpp">
+      <Filter>06. GameComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\GameDataComponent.cpp">
+      <Filter>06. GameComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\GameBehaviorTree.cpp">
+      <Filter>07. BehaviorTree</Filter>
+    </ClCompile>
+    <ClCompile Include="DataManager.cpp">
+      <Filter>05. LoLManager</Filter>
+    </ClCompile>
+  </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EditorManager.h">
       <Filter>헤더 파일</Filter>
@@ -398,32 +455,83 @@
     <ClInclude Include="Widget\UtilMenuBar.h">
       <Filter>02. Editor\02. Widget\03. MenuBar</Filter>
     </ClInclude>
-    <ClInclude Include="LoLDataManager.h">
+    <ClInclude Include="Widget\DataMenu.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Window\CollisionProfileEditor.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\CheckAttackTarget.h">
+      <Filter>07. BehaviorTree\01. ConditionNode</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\CheckState.h">
+      <Filter>07. BehaviorTree\01. ConditionNode</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\CheckTurretAttackFrequency.h">
+      <Filter>07. BehaviorTree\01. ConditionNode</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\CheckTurretAttackTarget.h">
+      <Filter>07. BehaviorTree\01. ConditionNode</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\FindEnemyChampion.h">
+      <Filter>07. BehaviorTree\01. ConditionNode</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\HPCheck.h">
+      <Filter>07. BehaviorTree\01. ConditionNode</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\InSkillCheck.h">
+      <Filter>07. BehaviorTree\01. ConditionNode</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\MoveInputCheckNode.h">
+      <Filter>07. BehaviorTree\01. ConditionNode</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\NoInterruptNode.h">
+      <Filter>07. BehaviorTree\01. ConditionNode</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\SkillEndCheckNode.h">
+      <Filter>07. BehaviorTree\01. ConditionNode</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\DeathNode.h">
+      <Filter>07. BehaviorTree\02. ActionNode</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\IdleNode.h">
+      <Filter>07. BehaviorTree\02. ActionNode</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\MoveNode.h">
+      <Filter>07. BehaviorTree\02. ActionNode</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\MovePickingNode.h">
+      <Filter>07. BehaviorTree\02. ActionNode</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\NormalAttack.h">
+      <Filter>07. BehaviorTree\02. ActionNode</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\NegateNode.h">
+      <Filter>07. BehaviorTree\03. DecoratorNode</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\State\AirBorneState.h">
+      <Filter>08. State</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\State\DamageState.h">
+      <Filter>08. State</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\State\GameStateManager.h">
+      <Filter>08. State</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\GameStateComponent.h">
+      <Filter>06. GameComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\GameDataComponent.h">
+      <Filter>06. GameComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\GameBehaviorTree.h">
+      <Filter>07. BehaviorTree</Filter>
+    </ClInclude>
+    <ClInclude Include="Window\EffectDisplayWindow.h">
+      <Filter>02. Editor\01. Window</Filter>
+    </ClInclude>
+    <ClInclude Include="DataManager.h">
       <Filter>05. LoLManager</Filter>
-    </ClInclude>
-    <ClInclude Include="LoLBuildingManager.h">
-      <Filter>05. LoLManager</Filter>
-    </ClInclude>
-    <ClInclude Include="Component\BuildingComponent.h">
-      <Filter>06. LoLComponent</Filter>
-    </ClInclude>
-    <ClInclude Include="Widget\BuildingComponentWidget.h">
-      <Filter>02. Editor\02. Widget\01. Inspector\01. SceneComponent</Filter>
-    </ClInclude>
-    <ClInclude Include="WIdget\ChampionAIComponentWidget.h">
-      <Filter>02. Editor\02. Widget\01. Inspector\02. ObjectComponent</Filter>
-    </ClInclude>
-    <ClInclude Include="Component\ChampionAIComponent.h">
-      <Filter>06. LoLComponent</Filter>
-    </ClInclude>
-    <ClInclude Include="Component\LoLDataComponent.h">
-      <Filter>06. LoLComponent</Filter>
-    </ClInclude>
-    <ClInclude Include="Component\MinionAIComponent.h">
-      <Filter>06. LoLComponent</Filter>
-    </ClInclude>
-    <ClInclude Include="Widget\MinionAIComponentWidget.h">
-      <Filter>02. Editor\02. Widget\01. Inspector\02. ObjectComponent</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

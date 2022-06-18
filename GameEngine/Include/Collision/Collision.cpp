@@ -885,7 +885,7 @@ bool CCollision::CollisionBox3DToSphere(Vector3& HitPoint, CColliderBox3D* Src, 
 		return false;
 
 
-	MessageBox(nullptr, TEXT("面倒"), TEXT("面倒"), MB_OK);
+	//MessageBox(nullptr, TEXT("面倒"), TEXT("面倒"), MB_OK);
 
 	return true;
 }

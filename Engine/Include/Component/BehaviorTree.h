@@ -10,9 +10,9 @@ class CBehaviorTree
 public:
     CBehaviorTree();
     CBehaviorTree(const CBehaviorTree& Tree);
-    ~CBehaviorTree();
+    virtual ~CBehaviorTree() = 0;
 
-private:
+protected:
     class CNode* m_Root;
     class CStateComponent* m_Owner;
     std::list<class CNode*> m_NodeList;
@@ -24,7 +24,7 @@ private:
 public:
     class CNode* GetCurrentNode()   const;
     void SetCurrentNode(class CNode* CurrentNode);
-
+    void SetOwner(class CStateComponent* StateComp);
 
 public:
     void SetAnimationMeshComponent(class CAnimationMeshComponent* Mesh);
@@ -50,24 +50,23 @@ public:
     }
 
 public:
-    bool Init();
-    void Start();
-    void Update(float DeltaTime);
-    void PostUpdate(float DeltaTime);
-    void PrevRender();
-    void Render();
-    void PostRender();
-    bool Save(FILE* File);
-    bool Load(FILE* File);
-    bool SaveOnly(FILE* File);
-    bool LoadOnly(FILE* File);
-    CBehaviorTree* Clone();
-
+   virtual bool Init();
+   virtual void Start();
+   virtual void Update(float DeltaTime);
+   virtual void PostUpdate(float DeltaTime);
+   virtual void PrevRender();
+   virtual void Render();
+   virtual void PostRender();
+   virtual bool Save(FILE* File);
+   virtual bool Load(FILE* File);
+   virtual bool SaveOnly(FILE* File);
+   virtual bool LoadOnly(FILE* File);
+   
 private:
     std::function<CNode* (CNode*, size_t)>   m_NodeCreateCallback;
 
 public:
-    CNode* LoadNode(CNode* Parent, size_t TypeID);
+    virtual CNode* LoadNode(CNode* Parent, size_t TypeID);
 
     template <typename T>
     void SetCreateNodeCallback(T* Obj, CNode*(T::* Func)(CNode* Parent, size_t TypeID))

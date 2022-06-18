@@ -90,6 +90,48 @@ public:
 		}
 	}
 
+	void SetNotifyParamAmount(const std::string& SequenceName, const std::string& NotifyName, int Amount)
+	{
+		CAnimationSequenceData* Data = FindAnimation(SequenceName);
+
+		if (Data)
+		{
+			auto iter = Data->m_vecNotify.begin();
+			auto iterEnd = Data->m_vecNotify.end();
+
+			for (; iter != iterEnd; ++iter)
+			{
+				if ((*iter)->Name == NotifyName)
+				{
+					(*iter)->Param.Amount = Amount;
+					return;
+				}
+			}
+
+		}
+	}
+
+	void SetNotifyParamTargetObject(const std::string& SequenceName, const std::string& NotifyName, CGameObject* TargetObject)
+	{
+		CAnimationSequenceData* Data = FindAnimation(SequenceName);
+
+		if (Data)
+		{
+			auto iter = Data->m_vecNotify.begin();
+			auto iterEnd = Data->m_vecNotify.end();
+
+			for (; iter != iterEnd; ++iter)
+			{
+				if ((*iter)->Name == NotifyName)
+				{
+					(*iter)->Param.TargetObject = TargetObject;
+					return;
+				}
+			}
+
+		}
+	}
+
 	std::unordered_map<std::string, CAnimationSequenceData*>& GetAnimationSequenceMap()
 	{
 		return m_mapAnimation;

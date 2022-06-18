@@ -4,13 +4,13 @@
 #include "Resource/Material/Material.h"
 #include "Component/StateComponent.h"
 #include "Component/Node/SequenceNode.h"
-#include "Component/Node/MoveInputCheckNode.h"
-#include "Component/Node/MovePickingNode.h"
+#include "../Component/Node/MoveInputCheckNode.h"
+#include "../Component/Node/MovePickingNode.h"
 
 #include "Component/AnimationMeshComponent.h"
 #include "Component/StaticMeshComponent.h"
 
-#include "../LoLDataManager.h"
+#include "../DataManager.h"
 
 CDefaultScene::CDefaultScene()  :
     m_PickObj(nullptr)
@@ -20,14 +20,14 @@ CDefaultScene::CDefaultScene()  :
 
 CDefaultScene::~CDefaultScene()
 {
-    CLoLDataManager::DestroyInst();
+
 }
 
 bool CDefaultScene::Init()
 {
     CreateMaterial();
 
-    CLoLDataManager::GetInst()->Init();
+
 
     /*
     if (!LoadAnimationSequence2D())

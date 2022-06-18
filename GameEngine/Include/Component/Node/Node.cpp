@@ -71,7 +71,7 @@ bool CNode::Load(FILE* File)
 
 bool CNode::SaveOnly(FILE* File)
 {
-	int Length = m_Name.length();
+	int Length = (int)m_Name.length();
 
 	fwrite(&Length, sizeof(int), 1, File);
 

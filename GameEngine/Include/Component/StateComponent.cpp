@@ -14,8 +14,8 @@ CStateComponent::CStateComponent()	:
 	SetTypeID<CStateComponent>();
 	m_ComponentType = Component_Type::ObjectComponent;
 
-	m_BehaviorTree = new CBehaviorTree;
-	m_BehaviorTree->m_Owner = this;
+	//m_BehaviorTree = new CBehaviorTree;
+	//m_BehaviorTree->m_Owner = this;
 }
 
 CStateComponent::CStateComponent(const CStateComponent& com)	:

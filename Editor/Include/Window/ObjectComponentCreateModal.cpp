@@ -5,17 +5,17 @@
 #include "IMGUIButton.h"
 #include "IMGUISameLine.h"
 #include "IMGUIDummy.h"
+#include "IMGUIManager.h"
 #include "Scene/SceneManager.h"
+#include "ObjectHierarchyWindow.h"
+#include "ObjectComponentWindow.h"
+#include "Component/PaperBurnComponent.h"
+#include "Component/NavAgent.h"
+#include "../Component/GameDataComponent.h"
+#include "../Component/GameStateComponent.h"
+#include "../Window/InspectorWindow.h"
 #include "../EditorUtil.h"
 #include "Flag.h"
-#include "ObjectHierarchyWindow.h"
-#include "IMGUIManager.h"
-#include "Component/PaperBurnComponent.h"
-#include "Component/StateComponent.h"
-#include "Component/NavAgent.h"
-#include "../Component/MinionAIComponent.h"
-#include "ObjectComponentWindow.h"
-#include "../Window/InspectorWindow.h"
 
 CObjectComponentCreateModal::CObjectComponentCreateModal()	:
 	m_ComponentCombo(nullptr),
@@ -37,8 +37,8 @@ bool CObjectComponentCreateModal::Init()
 	for (int i = (int)ObjectComponent3DType::PaperBurnComponent; i < (int)ObjectComponent3DType::Max; ++i)
 	{
 		ObjectComponent3DType foo = static_cast<ObjectComponent3DType>(i);
-		std::string StrLoLObjectComponent = CEditorUtil::ObjectComponent3DTypeToString(foo);
-		m_ComponentCombo->AddItem(StrLoLObjectComponent);
+		std::string StrObjectComponent = CEditorUtil::ObjectComponent3DTypeToString(foo);
+		m_ComponentCombo->AddItem(StrObjectComponent);
 	}
 
 	m_NameTextInput = AddWidget<CIMGUITextInput>("ObjectComponent Name");
@@ -94,8 +94,8 @@ void CObjectComponentCreateModal::OnCreateComponent()
 
 	if (Typeid == typeid(CPaperBurnComponent).hash_code())
 		Com = SelectObject->CreateComponent<CPaperBurnComponent>(Name);
-	else if (Typeid == typeid(CStateComponent).hash_code())
-		Com = SelectObject->CreateComponent<CStateComponent>(Name);
+	else if (Typeid == typeid(CGameStateComponent).hash_code())
+		Com = SelectObject->CreateComponent<CGameStateComponent>(Name);
 	else if (Typeid == typeid(CNavAgent).hash_code())
 	{
 		Com = SelectObject->CreateComponent<CNavAgent>(Name);
@@ -103,8 +103,9 @@ void CObjectComponentCreateModal::OnCreateComponent()
 		((CNavAgent*)Com)->SetUpdateComponent(SelectObject->GetRootComponent());
 	}
 
-	else if (Typeid == typeid(CMinionAIComponent).hash_code())
-		Com = SelectObject->CreateComponent<CMinionAIComponent>(Name);
+
+	else if (Typeid == typeid(CGameDataComponent).hash_code())
+		Com = SelectObject->CreateComponent<CGameDataComponent>(Name);
 
 	CObjectComponentWindow* ComponentWindow = (CObjectComponentWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(OBJECTCOMPONENT_LIST);
 

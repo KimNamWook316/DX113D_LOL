@@ -597,7 +597,7 @@ void CAnimationSequenceInstance::Update(float DeltaTime)
 
 				if (m_CurrentAnimation->m_vecNotify[i]->FunctionParam)
 				{
-					m_CurrentAnimation->m_vecNotify[i]->Param.Object = m_Owner->GetGameObject();
+					m_CurrentAnimation->m_vecNotify[i]->Param.SrcObject = m_Owner->GetGameObject();
 					m_CurrentAnimation->m_vecNotify[i]->FunctionParam(m_CurrentAnimation->m_vecNotify[i]->Param);
 				}
 			}

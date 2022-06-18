@@ -117,7 +117,6 @@ protected:
 
 	CGameObject* m_NormalAttackTarget;	// 챔피언의 평타 공격 대상 or 포탑이나 미니언의 공격 대상
 	std::list<CGameObject*> m_AttackTargetList;	// 광역스킬처럼 여러 오브젝트가 맞는 공격을 했을때 맞은 오브젝트들
-	ChampionInfo m_ChampionInfo;
 
 public:
 	CGameObject* GetNormalAttackTarget()	const
@@ -128,73 +127,6 @@ public:
 	void SetNormalAttackTarget(CGameObject* Target)
 	{
 		m_NormalAttackTarget = Target;
-	}
-
-	// 다른 오브젝트로부터 데미지를 받는 함수
-	void GetDamage(int Damage)
-	{
-		m_ChampionInfo.HP -= Damage;
-	}
-
-	// 다른 오브젝트에게 데미지를 주는 함수
-	void SetDamage(CGameObject* Target, int Damage)
-	{
-		Target->GetDamage(Damage);
-	}
-
-	void SetChampionInfo(const ChampionInfo& Info)
-	{
-		m_ChampionInfo = Info;
-	}
-
-	void SetChampionHP(int HP)
-	{
-		m_ChampionInfo.HP = HP;
-	}
-
-	void SetChampionMP(int MP)
-	{
-		m_ChampionInfo.MP = MP;
-	}
-
-	void SetChampionMoveSpeed(float Speed)
-	{
-		m_ChampionInfo.MoveSpeed = Speed;
-	}
-	
-	void SetChampionAttackSpeed(float Speed)
-	{
-		m_ChampionInfo.AttackSpeed = Speed;
-	}
-
-	void SetChampionAttack(int Attack)
-	{
-		m_ChampionInfo.Attack = Attack;
-	}
-
-	void SetChampionArmor(int Armor)
-	{
-		m_ChampionInfo.Armor = Armor;
-	}
-
-	void SetChampionAbilityPower(int AbilityPower)
-	{
-		m_ChampionInfo.AbilityPower = AbilityPower;
-	}
-
-	void SetChampionMagicResist(int MagicResist)
-	{
-		m_ChampionInfo.MagicResist = MagicResist;
-	}
-
-	void SetChampionNormalAttackRange(int AttackRange)
-	{
-		m_ChampionInfo.NormalAttackRange = AttackRange;
-	}
-
-	const ChampionInfo& GetChampionInfo()	const
-	{
-		return m_ChampionInfo;
 	}
 
 	void AddAttackTarget(CGameObject* Target)
@@ -351,8 +283,23 @@ public:
 		return nullptr;
 	}
 
+
 	template <typename T>
-	void FindAllObjectComponentFromType(std::vector<T*> vecComp)
+	void FindAllSceneComponentFromType(std::vector<T*>& vecComp)
+	{
+		auto	iter1 = m_SceneComponentList.begin();
+		auto	iter1End = m_SceneComponentList.end();
+
+		for (; iter1 != iter1End; ++iter1)
+		{
+			if ((*iter1)->CheckType<T>())
+				vecComp.push_back((T*)(*iter1));
+		}
+
+	}
+
+	template <typename T>
+	void FindAllObjectComponentFromType(std::vector<T*>& vecComp)
 	{
 		auto	iter1 = m_vecObjectComponent.begin();
 		auto	iter1End = m_vecObjectComponent.end();

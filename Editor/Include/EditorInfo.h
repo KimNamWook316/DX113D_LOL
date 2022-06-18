@@ -40,16 +40,6 @@ enum class TileEdit_Mode
 	Frame
 };
 
-enum class LoLObject
-{
-	GameObject,
-	MovingObject,
-	MapObject,
-	Champion,
-	Minion,
-	Max
-};
-
 struct FBXConvertWorkData
 {
 	std::string FBXFullPath;

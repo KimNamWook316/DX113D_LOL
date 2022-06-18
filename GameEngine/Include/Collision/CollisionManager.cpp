@@ -48,8 +48,9 @@ bool CCollisionManager::Init()
 	SetCollisionState("MonsterAttack", Collision_Channel::PlayerAttack, Collision_Interaction::Ignore);
 	SetCollisionState("MonsterAttack", Collision_Channel::MonsterAttack, Collision_Interaction::Ignore);
 
-	SetCollisionState("MinionDetect", Collision_Channel::Monster, Collision_Interaction::Ignore);
-	SetCollisionState("MinionNormalAttack", Collision_Channel::Monster, Collision_Interaction::Ignore);
+	SetCollisionState("MinionDetect", Collision_Channel::Monster, Collision_Interaction::Collision);
+	SetCollisionState("MinionNormalAttack", Collision_Channel::Monster, Collision_Interaction::Collision);
+	SetCollisionState("MinionNormalAttack", Collision_Channel::Player, Collision_Interaction::Collision);
 
 	return true;
 }
@@ -259,7 +260,7 @@ bool CCollisionManager::LoadProfileFromCSVFullPath(const char* FullPath)
 
 		CreateProfile(ProfileName, Channel, true);
 
-		for (int i = 1; i <= 15; ++i)
+		for (int i = 1; i <= (int)Collision_Channel::Max; ++i)
 		{
 			Collision_Channel InteractionChannel = (Collision_Channel)(i - 1);
 			SetCollisionState(ProfileName, InteractionChannel, CEngineUtil::StringToCollisionInteraction((*iterCSV->second)[i]));

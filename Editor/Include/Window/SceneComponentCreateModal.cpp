@@ -18,7 +18,6 @@
 #include "Component/ParticleComponent.h"
 #include "Component/ColliderBox3D.h"
 #include "Component/ColliderSphere.h"
-#include "../Component/BuildingComponent.h"
 #include "Resource/Particle/Particle.h"
 #include "Component/Arm.h"
 #include "Component/LandScape.h"
@@ -47,8 +46,8 @@ bool CSceneComponentCreateModal::Init()
 	for (int i = (int)SceneComponent3DType::AnimationMeshComponent; i < (int)SceneComponent3DType::Max; ++i)
 	{
 		SceneComponent3DType foo = static_cast<SceneComponent3DType>(i);
-		std::string StrLoLSceneComponent = CEditorUtil::SceneComponent3DTypeToString(foo);
-		m_ComponentCombo->AddItem(StrLoLSceneComponent);
+		std::string StrSceneComponent = CEditorUtil::SceneComponent3DTypeToString(foo);
+		m_ComponentCombo->AddItem(StrSceneComponent);
 	}
 
 	m_NameTextInput = AddWidget<CIMGUITextInput>("SceneComponent Name");
@@ -136,9 +135,7 @@ void CSceneComponentCreateModal::OnCreateComponent()
 	else if (Typeid == typeid(CColliderSphere).hash_code())
 		Com = SelectObject->CreateComponentAddChild<CColliderSphere>(Name);
 
-	else if (Typeid == typeid(CBuildingComponent).hash_code())
-		Com = SelectObject->CreateComponentAddChild<CBuildingComponent>(Name);
-	
+
 	// Window °»½Å
 	CSceneComponentHierarchyWindow* ComponentWindow = (CSceneComponentHierarchyWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(SCENECOMPONENT_HIERARCHY);
 	CInspectorWindow* Inspector = (CInspectorWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(INSPECTOR);

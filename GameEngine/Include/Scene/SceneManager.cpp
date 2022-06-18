@@ -11,7 +11,8 @@ DEFINITION_SINGLE(CSceneManager)
 CSceneManager::CSceneManager()	:
 	m_Scene(nullptr),
 	m_NextScene(nullptr),
-	m_StateManager(nullptr)
+	m_StateManager(nullptr),
+	m_ObjectDataSetCallback(nullptr)
 {
 	InitializeCriticalSection(&m_Crt);
 }
@@ -21,7 +22,7 @@ CSceneManager::~CSceneManager()
 	DeleteCriticalSection(&m_Crt);
 	SAFE_DELETE(m_Scene);
 	SAFE_DELETE(m_NextScene);
-	SAFE_DELETE(m_StateManager);
+	//SAFE_DELETE(m_StateManager);
 }
 
 CGameObject* CSceneManager::CreateObjectByTypeID(size_t TypeID)
@@ -57,9 +58,9 @@ bool CSceneManager::Init()
 
 	CRenderManager::GetInst()->SetObjectList(&m_Scene->m_ObjList);
 
-	m_StateManager = new CStateManager;
+	//m_StateManager = new CStateManager;
 
-	m_StateManager->Init();
+	//m_StateManager->Init();
 
 	return true;
 }

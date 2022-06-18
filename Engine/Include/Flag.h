@@ -259,16 +259,15 @@ enum class SceneComponent3DType
 	ParticleComponent,
 	ColliderBox3D,
 	ColliderSphere,
-	BuildingComponent,
 	Max
 };
 
 enum class ObjectComponent3DType
 {
 	PaperBurnComponent,
-	StateComponent,
+	GameStateComponent,
 	NavAgent,
-	MinionAIComponent,
+	GameDataComponent,
 	Max
 };
 
@@ -287,28 +286,8 @@ enum class NodeResult
 	Max
 };
 
-enum CrowdControl
-{
-	Airborne = 0x1,
-	Restraint = 0x2,
-	Stun = 0x4,
-	KnockBack = 0x8,
-	Silence = 0x10,
-	Fear = 0x20,
-	Taunt = 0x40,
-	Fascination = 0x80,
-	Transition = 0x100,
-	Slow = 0x200
-};
-
 enum ConditionNode
 {
-	InputQCheck,
-	InputWCheck,
-	InputECheck,
-	InputRCheck,
-	InputDCheck,
-	InputFCheck,
 	MoveInputCheckNode,
 	NoInterruptNode,
 	AttackTargetCheck,
@@ -320,16 +299,11 @@ enum ConditionNode
 
 enum ActionNode
 {
-	SkillQ,
-	SkillW,
-	SkillE,
-	SkillR,
-	SpellD,
-	SpellF,
 	Move,
 	MovePicking,
 	Idle,
-	NormalAttack
+	NormalAttack,
+	Death
 };
 
 enum DecoratorNode
@@ -348,36 +322,8 @@ enum Node_Type
 
 enum class Object_Type
 {
-	Champion,
-	Minion,
-	Jungle,
+	Player,
+	Monster,
 	MapObject,
-	Building,
-	None
-};
-
-enum class LoLLine
-{
-	Top,
-	Mid,
-	Bottom,
-	LeftTwin,
-	RightTwin,
-	None,
-	Max
-};
-
-enum class Building_Type
-{
-	Tower,
-	Inhibitor,
-	Nexus
-};
-enum class Minion_Type
-{
-	Melee,
-	Ranged,
-	Tank,
-	Super,
 	None
 };

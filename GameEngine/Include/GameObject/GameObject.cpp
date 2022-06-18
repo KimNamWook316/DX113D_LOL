@@ -647,6 +647,9 @@ bool CGameObject::LoadHierarchy(FILE* File, CScene* NextScene)
 		}
 	}
 
+
+	CSceneManager::GetInst()->CallObjectDataSet(this, m_Name);
+
 	return true;
 }
 

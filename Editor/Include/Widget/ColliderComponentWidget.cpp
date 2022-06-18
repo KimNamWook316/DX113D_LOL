@@ -6,6 +6,8 @@
 #include "Component/ColliderBox3D.h"
 #include "IMGUISeperator.h"
 #include "IMGUIComboBox.h"
+#include "Collision/CollisionManager.h"
+#include "IMGUIComboBox.h"
 
 CColliderComponentWidget::CColliderComponentWidget()
 {
@@ -26,8 +28,16 @@ bool CColliderComponentWidget::Init()
 	m_OffsetInput = m_ColliderComponentTree->AddWidget<CIMGUIInputFloat3>("Offset");
 	m_CollisionProfileCombo = m_ColliderComponentTree->AddWidget<CIMGUIComboBox>("Profile");
 	m_CollisionProfileCombo->SetHideName(true);
+	m_CollisionProfileCombo->Sort(false);
 
-	//m_CollisionProfileCombo->AddItem()
+	std::vector<std::string> vecProfileNames;
+
+	CCollisionManager::GetInst()->GetProfileNames(vecProfileNames);
+
+	size_t Count = vecProfileNames.size();
+
+	for (size_t i = 0; i < Count; ++i)
+		m_CollisionProfileCombo->AddItem(vecProfileNames[i]);
 
 	m_OffsetInput->SetCallBack(this, &CColliderComponentWidget::OnChangeOffset);
 	m_CollisionProfileCombo->SetSelectCallback(this, &CColliderComponentWidget::OnChangeProfile);
@@ -41,12 +51,54 @@ void CColliderComponentWidget::SetSceneComponent(CSceneComponent* Com)
 {
 	CSceneComponentWidget::SetSceneComponent(Com);
 
-	Vector3 Offset = ((CColliderComponent*)m_Component.Get())->GetOffset();
+	CColliderComponent* ColliderComp = ((CColliderComponent*)m_Component.Get());
+
+	Vector3 Offset = ColliderComp->GetOffset();
 
 	m_OffsetInput->SetX(Offset.x);
 	m_OffsetInput->SetY(Offset.y);
 	m_OffsetInput->SetZ(Offset.z);
 
+	std::string ProfileName = ColliderComp->GetCollisionProfile()->Name;
+	int Index = (int)(m_CollisionProfileCombo->GetItemIndex(ProfileName));
+	m_CollisionProfileCombo->SetSelectIndex(Index);
+
+
+	if (ProfileName == "Object")
+	{
+		ColliderComp->SetCollisionProfile("Object");
+	}
+
+	else if (ProfileName == "Player")
+	{
+		ColliderComp->SetCollisionProfile("Player");
+	}
+	else if (ProfileName == "Monster")
+	{
+		ColliderComp->SetCollisionProfile("Monster");
+	}
+
+	else if (ProfileName == "PlayerAttack")
+	{
+		ColliderComp->SetCollisionProfile("PlayerAttack");
+	}
+
+	else if (ProfileName == "MonsterAttack")
+	{
+		ColliderComp->SetCollisionProfile("MonsterAttack");
+	}
+
+	else if (ProfileName == "MinionDetect")
+	{
+		ColliderComp->SetCollisionProfile("MinionDetect");
+	}
+
+	else if (ProfileName == "MinionNormalAttack")
+	{
+		ColliderComp->SetCollisionProfile("MinionNormalAttack");
+	}
+
+	m_CollisionProfileCombo->SetSelectIndex(Index);
 }
 
 void CColliderComponentWidget::OnChangeOffset(const Vector3& Offset)
