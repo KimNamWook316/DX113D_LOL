@@ -20,21 +20,20 @@ CIdleNode::~CIdleNode()
 
 NodeResult CIdleNode::OnStart(float DeltaTime)
 {
-	if (m_Object->IsNavAgentPathListEmpty() && !m_Object->GetNormalAttackTarget())
+
+	m_AnimationMeshComp = m_Owner->GetAnimationMeshComp();
+
+	std::string ChampionName = m_Object->GetName();
+
+	std::string SequenceName = ChampionName + "_" + "Idle";
+
+	if (m_AnimationMeshComp)
 	{
-		m_AnimationMeshComp = m_Owner->GetAnimationMeshComp();
-
-		std::string ChampionName = m_Object->GetName();
-
-		std::string SequenceName = ChampionName + "_" + "Idle";
-
-		if (m_AnimationMeshComp)
-		{
-			m_AnimationMeshComp->GetAnimationInstance()->ChangeAnimation(SequenceName);
-		}
-
-		m_Object->SetNoInterrupt(false);
+		m_AnimationMeshComp->GetAnimationInstance()->ChangeAnimation(SequenceName);
 	}
+
+	m_Object->SetNoInterrupt(false);
+
 
 	return NodeResult::Node_True;
 }

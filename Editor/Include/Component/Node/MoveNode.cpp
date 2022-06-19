@@ -51,97 +51,59 @@ NodeResult CMoveNode::OnUpdate(float DeltaTime)
 	const keyState DState = CInput::GetInst()->FindKeyState('D');
 
 	float Speed = Comp->GetMoveSpeed();
-	Vector3 Rot = m_Object->GetWorldRot();
 
-	// 모든 각도를 0 ~ 360 사이로 만든다
-	while (Rot.y > 360.f)
-		Rot.y -= 360.f;
-	while (Rot.y < 0.f)
-		Rot.y += 360.f;
-
-	Vector3 XAxis = m_Object->GetWorldAxis(AXIS::AXIS_X);
 	Vector3 ZAxis = m_Object->GetWorldAxis(AXIS::AXIS_Z);
-	
+
 	Vector3 FrontVector = Vector3(-ZAxis.x, -ZAxis.y, -ZAxis.z);
 
-	if (WState.State[1])
+	Vector3 MoveDir;
+
+	if (WState.State[0] || WState.State[1])
 	{
-		// 0 ~ 180도 사이에 존재한다면 시계 방향 회전
-		if (Rot.y > 0 && Rot.y < 180.f)
-		{
-			if (Rot.y - 180.f >= -1.5f)
-				m_Object->AddWorldRotationY(90.f * DeltaTime);
-		}
-
-		// 180 ~ 360도 사이에 존재한다면 반시계 방향 회전
-		else
-		{
-			if (Rot.y - 180.f <= 1.5f)
-				m_Object->AddWorldRotationY(-90.f * DeltaTime);
-		}
-
-		m_Object->AddWorldPos(0.f, 0.f, Speed * DeltaTime);
+		MoveDir += Vector3(0.f, 0.f, 1.f);
 	}
 
-	if (AState.State[1])
+	if (AState.State[0] || AState.State[1])
 	{
-		// 0 ~ 180도 사이
-		float Rotation = Vector3(-1.f, 0.f, 0.f).Dot(FrontVector);
-
-		if (FrontVector.z < 0.f)
-		{
-			if (Rotation < 1.5f)
-				m_Object->AddWorldRotationY(180.f * DeltaTime);
-		}
-
-		else
-		{
-			if (Rotation < 1.5f)
-				m_Object->AddWorldRotationY(-180.f * DeltaTime);
-		}
-
-		m_Object->AddWorldPos(-Speed * DeltaTime, 0.f, 0.f);
+		MoveDir += Vector3(-1.f, 0.f, 0.f);
 	}
 
 	if (SState.State[1])
 	{
-		// 0 ~ 180도 사이에 존재한다면 반시계 방향 회전
-		if (Rot.y > 0 && Rot.y < 180.f)
-		{
-			if (Rot.y - 180.f >= -1.5f)
-				m_Object->AddWorldRotationY(-90.f * DeltaTime);
-		}
-
-		// 180 ~ 360도 사이에 존재한다면 시계 방향 회전
-		else
-		{
-			if (Rot.y - 180.f <= 1.5f)
-				m_Object->AddWorldRotationY(90.f * DeltaTime);
-		}
-
-		m_Object->AddWorldPos(0.f, 0.f, -Speed * DeltaTime);
+		MoveDir += Vector3(0.f, 0.f, -1.f);
 	}
 
 	if (DState.State[1])
 	{
-		// 0 ~ 180도 사이
-		float Rotation = Vector3(1.f, 0.f, 0.f).Dot(FrontVector);
-
-		if (FrontVector.z < 0.f)
-		{
-			if (Rotation < 1.5f)
-				m_Object->AddWorldRotationY(-180.f * DeltaTime);
-		}
-
-		else
-		{
-			if (Rotation < 1.5f)
-				m_Object->AddWorldRotationY(180.f * DeltaTime);
-		}
-
-		m_Object->AddWorldPos(Speed * DeltaTime, 0.f, 0.f);
+		MoveDir += Vector3(1.f, 0.f, 0.f);
 	}
 
+	MoveDir.Normalize();
+	
+	Vector3 CrossVector = FrontVector.Cross(MoveDir);
+
+	bool Over180 = false;
+
+	if (CrossVector.y < 0.f)
+		Over180 = true;
+
+	float Degree = FrontVector.Dot(MoveDir);
+	Degree = RadianToDegree(acosf(Degree));
+
+	// 180도 넘으면 반시계로 회전
+	if (Over180)
+	{
+		if(Degree > 1.5f)
+			m_Object->AddWorldRotationY(-360.f * DeltaTime);
+	}
+
+	else
+	{
+		if (Degree > 1.5f)
+			m_Object->AddWorldRotationY(360.f * DeltaTime);
+	}
+
+	m_Object->AddWorldPos(MoveDir.x * Speed * DeltaTime, 0.f, MoveDir.z * Speed * DeltaTime);
 
 	return NodeResult::Node_True;
 }
