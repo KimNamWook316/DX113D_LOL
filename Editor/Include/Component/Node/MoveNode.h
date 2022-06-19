@@ -17,6 +17,9 @@ protected:
     virtual NodeResult OnUpdate(float DeltaTime);
     virtual NodeResult OnEnd(float DeltaTime);
 
+private:
+    bool m_ClockWise;
+
 public:
     virtual NodeResult Invoke(float DeltaTime) override;
 };
