@@ -45,6 +45,10 @@ public :
 	{
 		return m_Particle;
 	}
+	const std::string& GetParticleName() const
+	{
+		return m_ParticleName;
+	}
 public :
 	void SetParticleClassFileName(const std::string& ParticleFileName)
 	{

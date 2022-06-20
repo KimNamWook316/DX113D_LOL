@@ -63,7 +63,7 @@ bool CMaterialEditor::Init()
 	m_SelectedMaterialName->SetDropCallBack(this, &CMaterialEditor::OnDropAndCreateMaterialCallback);
 
 	Line = AddWidget<CIMGUISameLine>("Line");
-	Line->SetOffsetX(300.f);
+	Line->SetOffsetX(290.f);
 
 	CIMGUIText* HelpText = AddWidget<CIMGUIText>("SelectMaterialHelpText", 90.f, 30.f);
 	const char* SelectMaterialHelpText = R"(ex)  현재 선택된 Material 이름을 보여준다. 
@@ -71,6 +71,18 @@ ResourceWindow로부터 Drag,Drop 을 통해서, Material 을  볼수 있다.)";
 	HelpText->SetText(SelectMaterialHelpText);
 	HelpText->SetIsHelpMode(true);
 
+	// Material 이름 Edit 기능
+	m_EditMaterialName = AddWidget<CIMGUITextInput>("Edit Mtrl Name", 150.f, 20.f);
+	m_EditMaterialName->SetHideName(true);
+	m_EditMaterialName->SetHintText("Edit Mtrl Name");
+
+	Line = AddWidget<CIMGUISameLine>("Line");
+	Line->SetOffsetX(160.f);
+
+	m_EditMaterialNameBtn = AddWidget<CIMGUIButton>("Edit", 90.f, 20.f);
+	m_EditMaterialNameBtn->SetClickCallback<CMaterialEditor>(this, &CMaterialEditor::OnEditMaterialNameCallback);
+
+	// Image
 	m_SetTexureImage = AddWidget<CIMGUIImage>("Texture Image", 150.f, 150.f);
 	m_SetTexureImage->SetBorderColor(10, 10, 255);
 	m_SetTexureImage->SetTableTitle("Texture Image");
@@ -223,6 +235,8 @@ void CMaterialEditor::OnCreateMaterialCallback()
 		return;
 	}
 
+	m_NewMaterialName->ClearText();
+
 	m_SelectedMaterial = NewMaterial;
 
 	RefreshMaterialDisplayInfo(m_SelectedMaterial);
@@ -320,6 +334,20 @@ void CMaterialEditor::OnDropAndSetRenderStateToMaterial(const std::string& DropR
 	RefreshMaterialDisplayInfo(m_SelectedMaterial);
 
 	MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("RenderState Successfully Set"), NULL, MB_OK);
+}
+
+void CMaterialEditor::OnEditMaterialNameCallback()
+{
+	if (!m_SelectedMaterial || m_EditMaterialName->Empty())
+		return;
+
+	// 이름 수정
+	m_SelectedMaterial->SetName(m_EditMaterialName->GetTextUTF8());
+
+	// IMGUI Update
+	m_SelectedMaterialName->SetText(m_EditMaterialName->GetTextUTF8());
+
+	m_EditMaterialName->ClearText();
 }
 
 void CMaterialEditor::OnSetParticleMaterialSettingCallback()
@@ -580,9 +608,21 @@ void CMaterialEditor::OnSaveMaterial()
 			return;
 		}
 
-		_strupr_s(FileExt);
 
-		// 확장자 .anim 이 아니라면 return;
+		// 현재 저장하는 Path 에서, 같은 이름의 FileName이 존재하는지 확인하기
+		char CheckMaterialFileName[MAX_PATH] = {};
+		strcpy_s(CheckMaterialFileName, FileName);
+		strcat_s(CheckMaterialFileName, FileExt);
+
+		if (CEditorUtil::IsFileExistInDir(MATERIAL_PATH, CheckMaterialFileName))
+		{
+			if (MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("같은 이름의 .mtrl 파일이 존재합니다. 저장하시겠습니까?"), NULL, MB_YESNO) != IDYES)
+				return;
+		}
+
+
+		// 확장자 검사하기
+		_strupr_s(FileExt);
 		if (strcmp(FileExt, ".MTRL") != 0)
 		{
 			MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("EXT Has To Be .mtrl"), NULL, MB_OK);

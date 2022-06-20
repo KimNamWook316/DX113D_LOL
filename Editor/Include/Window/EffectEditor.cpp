@@ -763,8 +763,8 @@ void CEffectEditor::OnSaveParticleClass()
 
         if (IsSameFileNameExist)
         {
-            MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("중복된 이름의 Particle File 존재"), NULL, MB_OK);
-            return;
+            if (MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("같은 이름의 .prtc 파일이 존재합니다. 저장하시겠습니까?"), NULL, MB_YESNO) != IDYES)
+                return;
         }
 
         // Particle Manager 상에서 기존 이름으로 저장되어있던 Particle 의 Key 값을 현재 지정된 파일 이름으로 재지정해준다.

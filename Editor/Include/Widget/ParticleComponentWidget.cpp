@@ -60,15 +60,16 @@ bool CParticleComponentWidget::Init()
     // 최상위 트리
     CIMGUITree* m_RootTree = AddWidget<CIMGUITree>("Particle Variables");
 
-    m_ParticleName = m_RootTree->AddWidget<CIMGUIText>("Particle Name", 90.f, 30.f);
-    m_ParticleName->SetText("Particle Name");
-
-    m_LoadedParticleName = m_RootTree->AddWidget<CIMGUITextInput>("Loaded Particle(Drop)", 90.f, 30.f);
-    m_LoadedParticleName->SetHintText("Drop Here");
+    m_LoadedParticleName = m_RootTree->AddWidget<CIMGUITextInput>("Loaded Particle(Drop)", 150.f, 30.f);
+    m_LoadedParticleName->SetHintText("Particle Name");
     m_LoadedParticleName->SetDropCallBack<CParticleComponentWidget>(this, &CParticleComponentWidget::OnDropParticleToParticleWidget);
+    
+    m_LoadedParticleFileName = m_RootTree->AddWidget<CIMGUITextInput>("Particle File Name", 150.f, 30.f);
+    m_LoadedParticleFileName->SetHintText("FileName");
 
-    m_LoadParticleButton = m_RootTree->AddWidget<CIMGUIButton>("Load Particle", 90.f, 20.f);
+    m_LoadParticleButton = m_RootTree->AddWidget<CIMGUIButton>("Load Particle", 150.f, 20.f);
     m_LoadParticleButton->SetClickCallback<CParticleComponentWidget>(this, &CParticleComponentWidget::OnLoadParticleClass);
+
    
     // Camera 세팅
     // OnSetCameraSetting();
@@ -153,8 +154,9 @@ void CParticleComponentWidget::SetSceneComponent(CSceneComponent* Com)
     // Material , Particle 세팅
     // OnSetParticleMaterialSetting(m_Component);
 
-    // Camera 세팅
-    // OnSetCameraSetting();
+    CParticle* ParticleClass = dynamic_cast<CParticleComponent*>(m_Component.Get())->GetParticle();
+    if (ParticleClass)
+        ParticleLoadSuccessCallback(ParticleClass);
 }
 
 void CParticleComponentWidget::OnSaveParticleObjectButton()
@@ -228,9 +230,6 @@ void CParticleComponentWidget::ParticleLoadSuccessCallback(CParticle* LoadedPart
 
     SetParticleClassToParticleComponent(LoadedParticle);
 
-    // Name 세팅
-    m_LoadedParticleName->SetText(m_ParticleClass->GetName().c_str());
-
     // Particle Manager 의 Map 에 추가하기
     CResourceManager::GetInst()->GetParticleManager()->AddParticle(m_ParticleClass);
 
@@ -246,13 +245,26 @@ void CParticleComponentWidget::SetParticleClassToParticleComponent(CParticle* Pa
 
     dynamic_cast<CParticleComponent*>(m_Component.Get())->SetParticle(Particle);
 
-   // if (m_Component->IsEnable() == false)
-   //     m_Component->Enable(true);
-   // 
-   // if (m_Component->GetGameObject()->IsEnable() == false)
-   //     m_Component->GetGameObject()->Enable(true);
-
+    // Name 세팅
+    m_LoadedParticleName->ClearText();
     m_LoadedParticleName->SetText(Particle->GetName().c_str());
+
+    // FileName 세팅하기 
+    std::string LoadedParticleName = dynamic_cast<CParticleComponent*>(m_Component.Get())->GetParticleName();
+    
+    // .prtc 를 붙이기
+    if (LoadedParticleName.find(".prtc") == std::string::npos)
+        LoadedParticleName.append(".prtc");
+
+    m_LoadedParticleFileName->ClearText();
+    m_LoadedParticleFileName->SetText(LoadedParticleName.c_str());
+
+}
+void CParticleComponentWidget::ReflectParticleToIMGUI()
+{
+    if (!m_Component || m_ParticleClass)
+        return;
+
 }
 /*
 void CParticleComponentWidget::OnSpawnTimeMaxEdit(float Num)
