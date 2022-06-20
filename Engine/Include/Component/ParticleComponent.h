@@ -30,7 +30,8 @@ protected:
 	float									m_SpawnTime;
 	float									m_SpawnTimeMax;
 	bool  m_BillBoardEffect;
-	std::string m_ParticleClassFileName;
+private :
+	std::string m_ParticleName;
 public:
 	void SetParticle(const std::string& Name);
 	void SetParticle(CParticle* Particle);
@@ -47,7 +48,7 @@ public :
 public :
 	void SetParticleClassFileName(const std::string& ParticleFileName)
 	{
-		m_ParticleClassFileName = ParticleFileName;
+		m_ParticleName = ParticleFileName;
 	}
 	void SetMaterial(class CMaterial* Material)
 	{

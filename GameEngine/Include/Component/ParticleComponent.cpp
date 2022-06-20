@@ -4,6 +4,7 @@
 #include "../Scene/SceneResource.h"
 #include "../Scene/SceneManager.h"
 #include "../Scene/CameraManager.h"
+#include "../PathManager.h"
 #include "../Component/CameraComponent.h"
 #include "../Resource/Shader/StructuredBuffer.h"
 
@@ -92,6 +93,8 @@ void CParticleComponent::SetParticle(CParticle* Particle)
 	m_CBuffer = m_Particle->CloneConstantBuffer();
 
 	m_SpawnTimeMax = m_Particle->GetSpawnTimeMax();
+
+	m_ParticleName = m_Particle->GetName();
 }
 
 void CParticleComponent::SetSpawnTime(float Time)
@@ -129,6 +132,9 @@ bool CParticleComponent::Init()
 
 void CParticleComponent::Update(float DeltaTime)
 {
+	if (!m_CBuffer)
+		return;
+
 	CSceneComponent::Update(DeltaTime);
 
 	m_SpawnTime += DeltaTime;
@@ -151,6 +157,9 @@ void CParticleComponent::Update(float DeltaTime)
 
 void CParticleComponent::PostUpdate(float DeltaTime)
 {
+	if (!m_CBuffer)
+		return;
+
 	CSceneComponent::PostUpdate(DeltaTime);
 
 	CParticleConstantBuffer* CBuffer = m_Particle->GetCBuffer();
@@ -201,6 +210,9 @@ void CParticleComponent::PrevRender()
 
 void CParticleComponent::RenderParticleEffectEditor()
 {
+	if (!m_CBuffer)
+		return;
+
 	CSceneComponent::RenderParticleEffectEditor();
 
 	size_t	BufferCount = m_vecStructuredBuffer.size();
@@ -227,6 +239,9 @@ void CParticleComponent::RenderParticleEffectEditor()
 
 void CParticleComponent::Render()
 {
+	if (!m_Material)
+		return;
+
 	CSceneComponent::Render();
 
 	size_t	BufferCount = m_vecStructuredBuffer.size();
@@ -238,7 +253,6 @@ void CParticleComponent::Render()
 
 	if (m_Material)
 		m_Material->Render();
-
 
 
 	// 인스턴싱을 이용해서 그려준다.
@@ -298,8 +312,28 @@ bool CParticleComponent::SaveOnly(FILE* File)
 		assert(false); 
 	}
 
+	// 혹시 모르니 한번 더 저장해준다.
+	m_ParticleName = m_Particle->GetName();
+	int	 ParticleNameLength = (int)m_ParticleName.length();
+	fwrite(&ParticleNameLength, sizeof(int), 1, File);
+	fwrite(m_ParticleName.c_str(), sizeof(char), ParticleNameLength, File);
+
 	// Particle
 	// m_Particle->Save(File);
+	std::string SaveParticleFileFullPath;
+	SaveParticleFileFullPath.reserve(100);
+
+	const PathInfo* Info = CPathManager::GetInst()->FindPath(PARTICLE_PATH);
+
+	if (Info)
+		SaveParticleFileFullPath = Info->PathMultibyte;
+	SaveParticleFileFullPath.append(m_Particle->GetName().c_str());
+
+	// .ptrc 가 해당 Name에 있는지 확인 후, 없으면 Add
+	if (SaveParticleFileFullPath.find(".prtc") == std::string::npos)
+		SaveParticleFileFullPath.append(".prtc");
+
+	m_Particle->SaveFile(SaveParticleFileFullPath.c_str());
 
 	fwrite(&m_BillBoardEffect, sizeof(bool), 1, File);
 	fwrite(&m_SpawnTimeMax, sizeof(float), 1, File);
@@ -320,8 +354,39 @@ bool CParticleComponent::LoadOnly(FILE* File)
 	m_Particle = CSceneManager::GetInst()->GetScene()->GetResource()->CreateParticleEmpty<CParticle>();
 	// m_Particle->Load(File);
 
-	// Particle Load 를 통해 각종 정보 세팅
+	char LoadedParticleName[MAX_PATH] = {};
+	int	 ParticleNameLength = (int)m_ParticleName.length();
+	fread(&ParticleNameLength, sizeof(int), 1, File);
+	fread(LoadedParticleName, sizeof(char), ParticleNameLength, File);
+
+	// Particle
+	// m_Particle->Save(File);
+	std::string LoadParticleFileFullPath;
+	LoadParticleFileFullPath.reserve(100);
+
+	const PathInfo* Info = CPathManager::GetInst()->FindPath(PARTICLE_PATH);
+
+	if (Info)
+		LoadParticleFileFullPath = Info->PathMultibyte;
+	LoadParticleFileFullPath.append(LoadedParticleName);
+
+	// .ptrc 가 해당 Name에 있는지 확인 후, 없으면 Add
+	if (LoadParticleFileFullPath.find(".prtc") == std::string::npos)
+		LoadParticleFileFullPath.append(".prtc");
+
+	bool Result = m_Particle->LoadFile(LoadParticleFileFullPath.c_str());
+
+	if (!Result)
+	{
+		assert(false);
+	}
+
+	m_ParticleName = m_Particle->GetName();
+
 	SetParticle(m_Particle);
+
+	// Load 한 Particle 은 Particle Manager 에 추가해준다.
+	CResourceManager::GetInst()->GetParticleManager()->AddParticle(m_Particle);
 
 	fread(&m_BillBoardEffect, sizeof(bool), 1, File);
 	fread(&m_SpawnTimeMax, sizeof(float), 1, File);

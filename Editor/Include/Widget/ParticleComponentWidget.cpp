@@ -63,7 +63,7 @@ bool CParticleComponentWidget::Init()
     m_ParticleName = m_RootTree->AddWidget<CIMGUIText>("Particle Name", 90.f, 30.f);
     m_ParticleName->SetText("Particle Name");
 
-    m_LoadedParticleName = m_RootTree->AddWidget<CIMGUITextInput>("Loaded Particle", 90.f, 30.f);
+    m_LoadedParticleName = m_RootTree->AddWidget<CIMGUITextInput>("Loaded Particle(Drop)", 90.f, 30.f);
     m_LoadedParticleName->SetHintText("Drop Here");
     m_LoadedParticleName->SetDropCallBack<CParticleComponentWidget>(this, &CParticleComponentWidget::OnDropParticleToParticleWidget);
 
@@ -147,8 +147,8 @@ void CParticleComponentWidget::SetSceneComponent(CSceneComponent* Com)
 	CParticleComponent* MeshCom = (CParticleComponent*)m_Component.Get();
 
     // 처음에는 Particle 이 세팅되어 있지 않으므로, Diable 처리하여 Update X
-    m_Component->Enable(false);
-    m_Component->GetGameObject()->Enable(false);
+    // m_Component->Enable(false);
+    // m_Component->GetGameObject()->Enable(false);
 
     // Material , Particle 세팅
     // OnSetParticleMaterialSetting(m_Component);
@@ -246,11 +246,11 @@ void CParticleComponentWidget::SetParticleClassToParticleComponent(CParticle* Pa
 
     dynamic_cast<CParticleComponent*>(m_Component.Get())->SetParticle(Particle);
 
-    if (m_Component->IsEnable() == false)
-        m_Component->Enable(true);
-
-    if (m_Component->GetGameObject()->IsEnable() == false)
-        m_Component->GetGameObject()->Enable(true);
+   // if (m_Component->IsEnable() == false)
+   //     m_Component->Enable(true);
+   // 
+   // if (m_Component->GetGameObject()->IsEnable() == false)
+   //     m_Component->GetGameObject()->Enable(true);
 
     m_LoadedParticleName->SetText(Particle->GetName().c_str());
 }
