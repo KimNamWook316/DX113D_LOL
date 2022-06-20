@@ -86,6 +86,10 @@ public:
 	{
 		return m_CBuffer;
 	}
+	CMaterial* GetMaterial() const
+	{
+		return m_Material;
+	}
 
 	// int GetApplyRandom() const
 	// {
@@ -220,7 +224,23 @@ public:
 	{
 		return m_CBuffer->IsLoopGenerateCircle();
 	}
+	float GetMinAlpha() const
+	{
+		return m_CBuffer->GetMinAlpha();
+	}
+	float GetMaxAlpha() const
+	{
+		return m_CBuffer->GetMaxAlpha();
+	}
 public:
+	void SetMinAlpha(float Alpha) 
+	{
+		m_CBuffer->SetMinAlpha(Alpha);
+	}
+	void SetMaxAlpha(float Alpha)
+	{
+		m_CBuffer->SetMaxAlpha(Alpha);
+	}
 	void SetLoopGenerateCircle(bool Enable)
 	{
 		m_CBuffer->SetLoopGenerateCircle(Enable);

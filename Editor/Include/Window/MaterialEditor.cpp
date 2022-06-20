@@ -63,7 +63,7 @@ bool CMaterialEditor::Init()
 	m_SelectedMaterialName->SetDropCallBack(this, &CMaterialEditor::OnDropAndCreateMaterialCallback);
 
 	Line = AddWidget<CIMGUISameLine>("Line");
-	Line->SetOffsetX(310.f);
+	Line->SetOffsetX(300.f);
 
 	CIMGUIText* HelpText = AddWidget<CIMGUIText>("SelectMaterialHelpText", 90.f, 30.f);
 	const char* SelectMaterialHelpText = R"(ex)  현재 선택된 Material 이름을 보여준다. 
@@ -83,7 +83,7 @@ ResourceWindow로부터 Drag,Drop 을 통해서, Material 을  볼수 있다.)";
 	m_RenderStateInfoTable->SetTableTitle("RenderState Info");
 
 	// Render State Input
-	m_RenderStateSetInput = AddWidget<CIMGUITextInput>("RenderState Name", 150.f, 20.f);
+	m_RenderStateSetInput = AddWidget<CIMGUITextInput>("Drop RenderState Name", 150.f, 20.f);
 	m_RenderStateSetInput->SetHintText("Render State");
 	m_RenderStateSetInput->SetDropCallBack(this, &CMaterialEditor::OnDropAndSetRenderStateToMaterial);
 
@@ -91,8 +91,18 @@ ResourceWindow로부터 Drag,Drop 을 통해서, Material 을  볼수 있다.)";
 	m_ShaderSetInput->SetHintText("Current Shader");
 	m_ShaderSetInput->SetDropCallBack(this, &CMaterialEditor::OnDropAndSetShaderToMaterial);
 
+	m_SetParticleSettingBtn = AddWidget<CIMGUIButton>("Particle Setting", 150.f, 20.f);
+	m_SetParticleSettingBtn->SetClickCallback<CMaterialEditor>(this, &CMaterialEditor::OnSetParticleMaterialSettingCallback);
+
+	HelpText = AddWidget<CIMGUIText>("SetParticleMaterial", 90.f, 30.f);
+	const char* SetParticleMaterialText = R"(ex) Particle Material 로 사용하기 위한 기본 세팅을 해주는 버튼.)";
+	HelpText->SetText(SetParticleMaterialText);
+	HelpText->SetIsHelpMode(true);
+
 	// m_MtrlInfoTable = AddWidget<CIMGUITable>("Mtrl Info", 200.f, 150.f);
 	// m_MtrlInfoTable->SetTableTitle("Mtrl Info");
+
+	Dummy = AddWidget<CIMGUIDummy>("Dummy", 150.f, 20.f);
 
 	m_OutLineCheck = AddWidget<CIMGUICheckBox>("Outline", 80.f);
 	m_OutLineCheck->AddCheckInfo("Outline");
@@ -307,6 +317,36 @@ void CMaterialEditor::OnDropAndSetRenderStateToMaterial(const std::string& DropR
 	RefreshMaterialDisplayInfo(m_SelectedMaterial);
 
 	MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("RenderState Successfully Set"), NULL, MB_OK);
+}
+
+void CMaterialEditor::OnSetParticleMaterialSettingCallback()
+{
+	if (!m_SelectedMaterial)
+		return;
+
+	// Alpha Blend State 세팅
+	CRenderState* AlphaBlendState = CRenderManager::GetInst()->FindRenderState("AlphaBlend");
+	if (!AlphaBlendState)
+	{
+		assert(false);
+		return;
+	}
+	m_SelectedMaterial->SetRenderState(AlphaBlendState);
+
+	// Particle Render Shader 세팅
+	CGraphicShader* FoundShader = dynamic_cast<CGraphicShader*>(CResourceManager::GetInst()->FindShader("ParticleRenderShader"));
+
+	if (!FoundShader)
+	{
+		assert(false);
+		return;
+	}
+	m_SelectedMaterial->SetShader(FoundShader);
+
+	// IMGUI Update
+	RefreshMaterialDisplayInfo(m_SelectedMaterial);
+
+	MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Particle Material Setting Set"), NULL, MB_OK);
 }
 
 void CMaterialEditor::OnIsOutLineEdit(const char*, bool Enable)
@@ -705,6 +745,7 @@ void CMaterialEditor::RefreshMaterialDisplayInfo(class CMaterial* Material, clas
 
 	// RenderState Input 을 Clear 해준다.
 	m_RenderStateSetInput->ClearText();
+
 
 	// OutLine 정보 세팅
 	m_OutLineCheck->SetCheck(0, Material->IsOutlineEnable());

@@ -50,6 +50,10 @@ private:
     class CIMGUIColor4* m_ColorMinEdit;
     class CIMGUIColor4* m_ColorMaxEdit;
 
+    class CIMGUIInputFloat* m_AlphaMinEdit;
+    class CIMGUIInputFloat* m_AlphaMaxEdit;
+    class CIMGUIButton* m_AlphaBlendEnableButton;
+
     // Material
     class CIMGUITextInput* m_MaterialName;
 
@@ -151,6 +155,10 @@ private:
 
     void OnColorMinEdit(const Vector4& Color);
     void OnColorMaxEdit(const Vector4& Color);
+
+    void OnAlphaMinEdit(float Alpha);
+    void OnAlphaMaxEdit(float Alpha);
+    void OnSetAlphaBlendToMaterialCallback();
 
     void OnIsMoveEdit(const char*, bool);
     void OnIsGravityEdit(const char*, bool);

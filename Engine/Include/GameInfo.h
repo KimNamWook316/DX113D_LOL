@@ -434,6 +434,11 @@ struct	ParticleCBuffer
 	float ParticleEmpty11;
 	// int     ParticleBounce;
 	// float	 ParticleBounceResistance;
+
+	float AlphaMax;
+	float AlphaMin;
+	float ParticleEmpty2;
+	float ParticleEmpty3;
 };
 
 struct ParticleInfo

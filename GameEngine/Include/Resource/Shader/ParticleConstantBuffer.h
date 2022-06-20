@@ -146,6 +146,14 @@ public:
 	{
 		return m_BufferData.IsLoopGenerateCircle;
 	}
+	float GetMinAlpha() const
+	{
+		return m_BufferData.AlphaMin;
+	}
+	float GetMaxAlpha() const
+	{
+		return m_BufferData.AlphaMax;
+	}
 public:
 	void SetLoopGenerateCircle(bool Enable)
 	{
@@ -163,7 +171,14 @@ public:
 	{
 		m_BufferData.ParticleBounce = Bounce;
 	}
-
+	void SetMinAlpha(float Alpha)
+	{
+		m_BufferData.AlphaMin = Alpha;
+	}
+	void SetMaxAlpha(float Alpha)
+	{
+		m_BufferData.AlphaMax = Alpha;
+	}
 	void SetBounceResist(float Bounce)
 	{
 		m_BufferData.ParticleBounceResistance = Bounce;

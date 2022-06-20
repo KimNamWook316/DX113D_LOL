@@ -262,6 +262,18 @@ bool CEffectEditor::Init()
     m_ColorMaxEdit = Tree->AddWidget<CIMGUIColor4>("Color Max", 150.f);
     m_ColorMaxEdit->SetCallBack(this, &CEffectEditor::OnColorMaxEdit);
 
+    // Alpha Min, Max
+    Tree = AddWidget<CIMGUITree>("Alpha Min, Max");
+
+    m_AlphaBlendEnableButton = Tree->AddWidget<CIMGUIButton>("Set Alpha Blend", 150.f, 20.f);
+    m_AlphaBlendEnableButton->SetClickCallback<CEffectEditor>(this, &CEffectEditor::OnSetAlphaBlendToMaterialCallback);
+
+    m_AlphaMinEdit = Tree->AddWidget<CIMGUIInputFloat>("Alpha Min", 150.f);
+    m_AlphaMinEdit->SetCallBack(this, &CEffectEditor::OnAlphaMinEdit);
+
+    m_AlphaMaxEdit = Tree->AddWidget<CIMGUIInputFloat>("Alpha Max", 150.f);
+    m_AlphaMaxEdit->SetCallBack(this, &CEffectEditor::OnAlphaMaxEdit);
+
     // Move Dir, Angle
     Tree = AddWidget<CIMGUITree>("Move Angle, Dir");
 
@@ -474,8 +486,10 @@ void CEffectEditor::OnColorMinEdit(const Vector4& Color)
 
     // Alpha 값은 0으로 한다.
 
-    m_ParticleClass->SetColorMin(Color.x, Color.y, Color.z, 1.f);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetColorMin(Color.x, Color.y, Color.z, 1.f);
+    // m_ParticleClass->SetColorMin(Color.x, Color.y, Color.z, 1.f);
+    m_ParticleClass->SetColorMin(Color);
+    // dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetColorMin(Color.x, Color.y, Color.z, 1.f);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetColorMin(Color);
     // m_ParticleComponent->GetCBuffer()->SetColorMin(Color);
 }
 
@@ -484,9 +498,52 @@ void CEffectEditor::OnColorMaxEdit(const Vector4& Color)
     if (!m_ParticleClass)
         return;
 
-    m_ParticleClass->SetColorMax(Color.x, Color.y, Color.z, 1.f);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetColorMax(Color.x, Color.y, Color.z, 1.f);
+    // m_ParticleClass->SetColorMax(Color.x, Color.y, Color.z, 1.f);
+    m_ParticleClass->SetColorMax(Color);
+    // dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetColorMax(Color.x, Color.y, Color.z, 1.f);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetColorMax(Color);
     // m_ParticleComponent->GetCBuffer()->SetColorMax(Color);
+}
+
+void CEffectEditor::OnAlphaMinEdit(float Alpha)
+{
+    if (!m_ParticleClass)
+        return;
+
+    // Alpha 값은 0으로 한다.
+
+    // m_ParticleClass->SetColorMin(Color.x, Color.y, Color.z, 1.f);
+    m_ParticleClass->SetMinAlpha(Alpha);
+    // dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetColorMin(Color.x, Color.y, Color.z, 1.f);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetMinAlpha(Alpha);
+}
+
+void CEffectEditor::OnAlphaMaxEdit(float Alpha)
+{
+    if (!m_ParticleClass)
+        return;
+
+    m_ParticleClass->SetMaxAlpha(Alpha);
+    // dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetColorMin(Color.x, Color.y, Color.z, 1.f);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetMaxAlpha(Alpha);
+}
+
+void CEffectEditor::OnSetAlphaBlendToMaterialCallback()
+{
+    if (!m_ParticleClass)
+        return;
+
+    if (m_ParticleClass->GetMaterial())
+    {
+        CRenderState* FoundRenderState = CRenderManager::GetInst()->FindRenderState("AlphaBlend");
+        
+        if (!FoundRenderState)
+        {
+            assert(false);
+        }
+
+        m_ParticleClass->GetMaterial()->SetRenderState(FoundRenderState);
+    }
 }
 
 
@@ -868,6 +925,10 @@ void CEffectEditor::SetBasicDefaultParticleInfos(CParticle* Particle)
     Particle->SetColorMin(Vector4(0.2f, 0.1f, 0.8f, 1.f));
     Particle->SetColorMax(Vector4(0.6f, 0.8f, 0.8f, 1.f));
 
+    // Alpha
+    Particle->SetMinAlpha(1.f);
+    Particle->SetMaxAlpha(1.f);
+
     // Move Dir
     Particle->SetMoveDir(Vector3(0.f, 1.f, 0.f)); 
     // Move Angle
@@ -1045,6 +1106,9 @@ void CEffectEditor::SetIMGUIReflectParticle(CParticle* Particle)
 
     m_ColorMinEdit->SetRGBA(Particle->GetColorMin());
     m_ColorMaxEdit->SetRGBA(Particle->GetColorMax());
+
+    m_AlphaMinEdit->SetVal(Particle->GetMinAlpha());
+    m_AlphaMaxEdit->SetVal(Particle->GetMaxAlpha());
 
     m_MoveDirEdit->SetVal(Particle->GetMoveDir());
     m_MoveAngleEdit->SetVal(Particle->GetMoveAngle());

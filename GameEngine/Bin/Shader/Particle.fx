@@ -33,9 +33,13 @@ cbuffer	ParticleCBuffer : register(b11)
 
 	int g_ParticleGenerateCircle;
 	float g_ParcticleGenerateRadius;
-
 	int g_LoopGenerateCircle;
-	float g_ParticleEmpty11;
+	float g_ParticleEmpty1;
+
+	float g_ParticleAlphaMax;
+	float g_ParticleAlphaMin;
+	float g_ParticleEmpty2;
+	float g_ParticleEmpty3;
 };
 
 /*
@@ -150,11 +154,13 @@ void ParticleUpdate(uint3 ThreadID : SV_DispatchThreadID)
 	g_ParticleShare[0].SpawnEnable = g_ParticleSpawnEnable;
 	g_ParticleShare[0].ScaleMin = g_ParticleScaleMin;
 	g_ParticleShare[0].ScaleMax = g_ParticleScaleMax;
-	g_ParticleShare[0].ColorMin = g_ParticleColorMin;
-	g_ParticleShare[0].ColorMax = g_ParticleColorMax;
 	g_ParticleShare[0].GravityEnable = g_ParticleGravity;
 	g_ParticleShare[0].RotationAngle = g_ParticleRotationAngle;
 
+	g_ParticleShare[0].ColorMin = g_ParticleColorMin;
+	g_ParticleShare[0].ColorMin.a = g_ParticleAlphaMin;
+	g_ParticleShare[0].ColorMax = g_ParticleColorMax;
+	g_ParticleShare[0].ColorMax.a = g_ParticleAlphaMax;
 
 	// 동작되는 스레드의 수가 생성되는 파티클의 최대 수 보다 크거나 같다면
 	// 잘못된 인덱스로 동작하기 때문에 처리를 안해준다.

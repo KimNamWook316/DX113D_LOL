@@ -30,6 +30,9 @@ private :
 	// Texture 목록을 보여주는 장소
 	class CIMGUITableElemList* m_TextureInfoTable;
 
+	// Particle 을 그려내기 위한 기본 세팅을 알아서 해주는 Btn
+	class CIMGUIButton* m_SetParticleSettingBtn;
+
 	// 남욱씨가 말한 내용들 Setting 하는 장소
 	class CIMGUICheckBox* m_OutLineCheck;
 	class CIMGUIColor3*      m_OutLineColor;
@@ -73,6 +76,9 @@ private :
 
 	// Render State
 	void OnDropAndSetRenderStateToMaterial(const std::string&);
+
+	// Particle Material Setting
+	void OnSetParticleMaterialSettingCallback();
 
 	void OnIsOutLineEdit(const char*, bool Enable);
 	void OnSetOutLineColor(const Vector3& Color);
