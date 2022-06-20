@@ -60,12 +60,14 @@ bool CParticleComponentWidget::Init()
     // 최상위 트리
     CIMGUITree* m_RootTree = AddWidget<CIMGUITree>("Particle Variables");
 
-    m_LoadedParticleName = m_RootTree->AddWidget<CIMGUITextInput>("Loaded Particle", 150.f, 30.f);
-    m_LoadedParticleName->SetHideName(true);
-    m_LoadedParticleName->SetHintText("Loaded Particle");
+    m_ParticleName = m_RootTree->AddWidget<CIMGUIText>("Particle Name", 90.f, 30.f);
+    m_ParticleName->SetText("Particle Name");
+
+    m_LoadedParticleName = m_RootTree->AddWidget<CIMGUITextInput>("Loaded Particle", 90.f, 30.f);
+    m_LoadedParticleName->SetHintText("Drop Here");
     m_LoadedParticleName->SetDropCallBack<CParticleComponentWidget>(this, &CParticleComponentWidget::OnDropParticleToParticleWidget);
 
-    m_LoadParticleButton = m_RootTree->AddWidget<CIMGUIButton>("Set Texture", 100.f, 30.f);
+    m_LoadParticleButton = m_RootTree->AddWidget<CIMGUIButton>("Load Particle", 90.f, 20.f);
     m_LoadParticleButton->SetClickCallback<CParticleComponentWidget>(this, &CParticleComponentWidget::OnLoadParticleClass);
    
     // Camera 세팅
@@ -172,8 +174,7 @@ void CParticleComponentWidget::OnDropParticleToParticleWidget(const std::string&
 
     if (FoundParticle)
     {
-        SetParticleClassToParticleComponent(FoundParticle);
-        m_ParticleClass = FoundParticle;
+        ParticleLoadSuccessCallback(FoundParticle);
         return;
     }
 
@@ -188,7 +189,7 @@ void CParticleComponentWidget::OnDropParticleToParticleWidget(const std::string&
     if (!FoundResult.has_value())
     {
         // New Texture Load Failure Message Box
-        MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Particle Class Load Failure From HardDisk"), NULL, MB_OK);
+        MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Particle Class Load Failure From Bin/ParticleClass"), NULL, MB_OK);
         return;
     }
 
@@ -212,13 +213,23 @@ void CParticleComponentWidget::OnDropParticleToParticleWidget(const std::string&
 
     if (!LoadResult)
     {
-        MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Particle Class Load Failure From HardDisk"), NULL, MB_OK);
+        MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Particle Class Load Failure From Bin/ParticleClass"), NULL, MB_OK);
         return;
     }
 
-    m_ParticleClass = FoundParticle;
+    ParticleLoadSuccessCallback(FoundParticle);
+}
+void CParticleComponentWidget::ParticleLoadSuccessCallback(CParticle* LoadedParticle)
+{
+    if (!LoadedParticle)
+        return;
 
-    SetParticleClassToParticleComponent(FoundParticle);
+    m_ParticleClass = LoadedParticle;
+
+    SetParticleClassToParticleComponent(LoadedParticle);
+
+    // Name 세팅
+    m_LoadedParticleName->SetText(m_ParticleClass->GetName().c_str());
 
     // Particle Manager 의 Map 에 추가하기
     CResourceManager::GetInst()->GetParticleManager()->AddParticle(m_ParticleClass);

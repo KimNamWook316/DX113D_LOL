@@ -27,7 +27,8 @@ private:
     class CIMGUIButton* m_LoadParticleBtn;
     class CIMGUIButton* m_StartEditBtn;
     class CIMGUIButton* m_RestartBtn;
-
+private :
+    class CIMGUITextInput* m_CurrentParticleName;
 private:
     class CIMGUIInputFloat* m_SpawnTimeMaxEdit;
     // class CIMGUIButton* m_RestartButton;
@@ -55,7 +56,8 @@ private:
     class CIMGUIButton* m_AlphaBlendEnableButton;
 
     // Material
-    class CIMGUITextInput* m_MaterialName;
+    class CIMGUITextInput* m_CurrentMaterialName;
+    class CIMGUITextInput* m_LoadedMaterialFileName;
 
     // Ground Texture
     class CIMGUISliderFloat* m_GroundTextureScale;

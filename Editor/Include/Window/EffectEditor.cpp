@@ -76,6 +76,36 @@ bool CEffectEditor::Init()
     m_RestartBtn = AddWidget<CIMGUIButton>("ReStart", 80.f, 20.f);
     m_RestartBtn->SetClickCallback<CEffectEditor>(this, &CEffectEditor::OnRestartParticleComponentButton);
 
+    // Particle Name
+    m_CurrentParticleName = AddWidget<CIMGUITextInput>("Particle Name", 180.f, 30.f);
+    m_CurrentParticleName->SetHintText("Current Particle Name");
+
+    // Material
+    m_CurrentMaterialName = AddWidget<CIMGUITextInput>("Current Mtrl Name(Drop)", 180.f, 30.f);
+    m_CurrentMaterialName->SetHintText("Drop Here");
+    m_CurrentMaterialName->SetDropCallBack<CEffectEditor>(this, &CEffectEditor::OnDropMaterialToParticle);
+
+    Line = AddWidget<CIMGUISameLine>("Line");
+    Line->SetOffsetX(350.f);
+
+    CIMGUIText* HelpText = AddWidget<CIMGUIText>("MtrlFileName", 90.f, 30.f);
+    const char* DropMtrlText = R"(ex) ResourceDisplayWindow 로부터 Material Key 를 Drop 하거나,
+    Bin/Material 에 있는 .mtrl 파일을 Drop 하면, 해당 Material 이 세팅된다.)";
+    HelpText->SetText(DropMtrlText);
+    HelpText->SetIsHelpMode(true);
+
+
+    m_LoadedMaterialFileName = AddWidget<CIMGUITextInput>("Loaded Mtrl File", 180.f, 30.f);
+    m_LoadedMaterialFileName->SetHintText("Not Loaded From Disk");
+
+    Line = AddWidget<CIMGUISameLine>("Line");
+    Line->SetOffsetX(290.f);
+HelpText = AddWidget<CIMGUIText>("MtrlFileName", 90.f, 30.f);
+    const char* LoadedMtrlHelpText = R"(ex)  하드디스크로부터, Material File을 Load 하여 세팅한 경우 
+    Load한 Material File의 이름을 보여준다.)";
+    HelpText->SetText(LoadedMtrlHelpText);
+    HelpText->SetIsHelpMode(true);
+
     // Camera
     CIMGUITree* Tree = AddWidget<CIMGUITree>("Camera");
 
@@ -128,12 +158,6 @@ bool CEffectEditor::Init()
     m_ParticleTexture = AddWidget<CIMGUIImage>("Particle Texture", 200.f, 200.f);
     m_ParticleTexture->SetBorderColor(10, 10, 255);
     m_ParticleTexture->SetTableTitle("Texture");
-
-    // Material
-    m_MaterialName = AddWidget<CIMGUITextInput>("Current Material", 150.f, 30.f);
-    m_MaterialName->SetHideName(true);
-    m_MaterialName->SetHintText("Current Material");
-    m_MaterialName->SetDropCallBack<CEffectEditor>(this, &CEffectEditor::OnDropMaterialToParticle);
 
     // BaseTexture
     Tree = AddWidget<CIMGUITree>("Ground Texture");
@@ -707,7 +731,7 @@ void CEffectEditor::OnSaveParticleClass()
     OpenFile.lpstrFilter = TEXT("All Files\0*.*\0.Animation File\0*.anim");
     OpenFile.lpstrFile = FiileFullPath;
     OpenFile.nMaxFile = MAX_PATH;
-    OpenFile.lpstrInitialDir = CPathManager::GetInst()->FindPath(PARTICLE_PATH)->Path;
+    OpenFile.lpstrInitialDir = CPathManager::GetInst()->FindPath(PARTICLE_PATH)->Path; // Bin//ParticleClass
 
     if (GetSaveFileName(&OpenFile) != 0)
     {
@@ -730,7 +754,35 @@ void CEffectEditor::OnSaveParticleClass()
             return;
         }
 
+        // 해당 PARTICLE_PATH 에서 중복된 이름이 있는지 확인하기
+        // .prtc 확장자 붙이기
+        char CheckFileName[MAX_PATH] = {};
+        strcpy_s(CheckFileName, FileName);
+        strcat_s(CheckFileName, ".prtc");
+        bool IsSameFileNameExist = CEditorUtil::IsFileExistInDir(PARTICLE_PATH, CheckFileName);
+
+        if (IsSameFileNameExist)
+        {
+            MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("중복된 이름의 Particle File 존재"), NULL, MB_OK);
+            return;
+        }
+
+        // Particle Manager 상에서 기존 이름으로 저장되어있던 Particle 의 Key 값을 현재 지정된 파일 이름으로 재지정해준다.
+        const std::string& PrevParticleName = m_ParticleClass->GetName();
+
+        CResourceManager::GetInst()->GetParticleManager()->ChangeParticleKeyName(PrevParticleName, FileName);
+
+        // Resource Display Window 다시 Update
+        CEditorManager::GetInst()->GetResourceDisplayWindow()->RefreshLoadedParticleResources();
+        
+        // 현재 저장하는 파일 이름으로 PArticle Class 의 이름 세팅하기 
+        m_ParticleClass->SetName(FileName);
+
+        // 해당 Particle File 저장하기 
         m_ParticleClass->SaveFile(FileFullPathMultibyte);
+
+        // IMGUI 한번 더 Update
+        SetIMGUIReflectParticle(m_ParticleClass);
     }
 }
 
@@ -822,6 +874,7 @@ void CEffectEditor::OnSetBasicParticleMaterialSetting(CSceneComponent* Com)
     m_ParticleClass = CSceneManager::GetInst()->GetScene()->GetResource()->FindParticle("BasicParticle");
     if (!m_ParticleClass)
         return;
+
     m_ParticleClass->SetMaterial(m_ParticleMaterial);
 
     SetBasicDefaultParticleInfos(m_ParticleClass);
@@ -999,17 +1052,36 @@ void CEffectEditor::OnDropMaterialToParticle(const std::string& InputName)
     if (!FoundResult.has_value())
     {
         // New Texture Load Failure Message Box
-        MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Material Load Failure From HardDisk"), NULL, MB_OK);
+        MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Material Load Failure From Bin/Material"), NULL, MB_OK);
         return;
     }
 
+    // 확장자 확인
+    std::string ExtractFileName;
+    std::string ExtractFileExt;
+
+    CEditorUtil::ExtractFileNameAndExtFromPath(FoundResult.value(), ExtractFileName, ExtractFileExt);
+
+    // 대문자화
+    std::transform(ExtractFileExt.begin(), ExtractFileExt.end(), ExtractFileExt.begin(), ::toupper);
+    
+    if (ExtractFileExt != ".MTRL")
+    {
+        MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("확장자가 .mtrl이 아닙니다."), NULL, MB_OK);
+        return;
+    }
+
+    // Load 시도
     FoundMaterial = CResourceManager::GetInst()->LoadMaterialFullPathMultibyte(FoundResult.value().c_str());
     
     if (!FoundMaterial)
     {
-        MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Material Load Failure From HardDisk"), NULL, MB_OK);
+        MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Material Load Process Failure"), NULL, MB_OK);
         return;
     }
+
+    // Hard Disk 로부터, File을 Drop했을 경우에만, FileName을 세팅한다.
+    m_LoadedMaterialFileName->SetText((ExtractFileName + ".mtrl").c_str());
     
     ApplyNewMaterial(FoundMaterial);
 }
@@ -1018,6 +1090,8 @@ void CEffectEditor::ApplyNewMaterial(CMaterial* FoundMaterial)
 {
     if (!FoundMaterial)
         return;
+
+    m_CurrentMaterialName->SetText(FoundMaterial->GetName().c_str());
 
     m_ParticleClass->SetMaterial(FoundMaterial);
     m_ParticleMaterial = FoundMaterial;
@@ -1090,6 +1164,15 @@ void CEffectEditor::SetParticleToParticleComponent(CParticleComponent* Component
 
 void CEffectEditor::SetIMGUIReflectParticle(CParticle* Particle)
 {
+    // Particle 이름 세팅
+    m_CurrentParticleName->SetText(Particle->GetName().c_str());
+
+    // Material 이름 세팅
+    if (Particle->GetMaterial())
+    {
+        m_CurrentMaterialName->SetText(Particle->GetMaterial()->GetName().c_str());
+    }
+
     // 반드시 3D 로 세팅한다.
     Particle->Set2D(false);
 

@@ -14,6 +14,7 @@ public:
     // SceneComponent 상속 위젯 만들때마다 오버라이드 해야 함
     virtual void SetSceneComponent(class CSceneComponent* Com) override;
 private :
+    class CIMGUIText* m_ParticleName;
     class CIMGUITextInput* m_LoadedParticleName;
     class CIMGUIButton* m_LoadParticleButton;
     class CParticle* m_ParticleClass;
@@ -23,6 +24,9 @@ private :
 private :
     void OnLoadParticleClass();
     void OnDropParticleToParticleWidget(const std::string& InputName);
+    // HelperFunction
+private :
+    void ParticleLoadSuccessCallback(class CParticle* LoadedParticle);
     void SetParticleClassToParticleComponent(class CParticle* Particle);
 };
 

@@ -269,14 +269,37 @@ bool CParticleComponent::Save(FILE* File)
 {
 	CSceneComponent::Save(File);
 
+	bool Result = SaveOnly(File);
+
+	return Result;
+}
+
+bool CParticleComponent::Load(FILE* File)
+{
+	CSceneComponent::Load(File);
+
+	LoadOnly(File);
+
+	return true;
+}
+
+bool CParticleComponent::SaveOnly(FILE* File)
+{
 	// Mesh
 	std::string	MeshName = m_Mesh->GetName();
 	int	Length = (int)MeshName.length();
 	fwrite(&Length, sizeof(int), 1, File);
 	fwrite(MeshName.c_str(), sizeof(char), Length, File);
 
+	if (m_Particle->GetName() == "")
+	{
+		// Particle 의 경우, Particle Editor 를 통해서 저장할 때, 반드시 Particle 이름을 저장하게 되어 있다.
+		// Particle 의 이름과, Particle File이 저장된 파일 이름은 동일하다.
+		assert(false); 
+	}
+
 	// Particle
-	m_Particle->Save(File);
+	// m_Particle->Save(File);
 
 	fwrite(&m_BillBoardEffect, sizeof(bool), 1, File);
 	fwrite(&m_SpawnTimeMax, sizeof(float), 1, File);
@@ -284,10 +307,8 @@ bool CParticleComponent::Save(FILE* File)
 	return true;
 }
 
-bool CParticleComponent::Load(FILE* File)
+bool CParticleComponent::LoadOnly(FILE* File)
 {
-	CSceneComponent::Load(File);
-
 	// Mesh
 	char	MeshName[256] = {};
 	int	Length = 0;
@@ -297,7 +318,7 @@ bool CParticleComponent::Load(FILE* File)
 
 	// Particle 생성
 	m_Particle = CSceneManager::GetInst()->GetScene()->GetResource()->CreateParticleEmpty<CParticle>();
-	m_Particle->Load(File);
+	// m_Particle->Load(File);
 
 	// Particle Load 를 통해 각종 정보 세팅
 	SetParticle(m_Particle);
