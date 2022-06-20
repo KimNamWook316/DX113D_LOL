@@ -53,6 +53,7 @@ bool CEffectDisplayWindow::Init()
     m_ParticleRenderTarget = AddWidget<CIMGUIImage>("Render Target", 600.f, 600.f);
     m_ParticleRenderTarget->SetRenderTargetImage(true);
     m_ParticleRenderTarget->SetTexture(CRenderManager::GetInst()->GetParticleEffectRenderTarget());
+    // m_ParticleRenderTarget->SetTexture(CResourceManager::GetInst()->FindTexture("FinalScreen"));
     m_ParticleRenderTarget->SetBorderColor(10, 10, 255);
     m_ParticleRenderTarget->SetTableTitle("Render Target");
 

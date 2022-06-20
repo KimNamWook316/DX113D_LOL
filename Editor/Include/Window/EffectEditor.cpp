@@ -486,7 +486,7 @@ void CEffectEditor::OnColorMinEdit(const Vector4& Color)
 
     // Alpha 값은 0으로 한다.
 
-    // m_ParticleClass->SetColorMin(Color.x, Color.y, Color.z, 1.f);
+    //m_ParticleClass->SetColorMin(Color.x, Color.y, Color.z, 1.f);
     m_ParticleClass->SetColorMin(Color);
     // dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetColorMin(Color.x, Color.y, Color.z, 1.f);
     dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetColorMin(Color);
@@ -543,6 +543,8 @@ void CEffectEditor::OnSetAlphaBlendToMaterialCallback()
         }
 
         m_ParticleClass->GetMaterial()->SetRenderState(FoundRenderState);
+
+        MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Alpha Blend Set Success"), NULL, MB_OK);
     }
 }
 
@@ -833,6 +835,7 @@ void CEffectEditor::OnSetBasicParticleMaterialSetting(CSceneComponent* Com)
     // Resource Window Display
     CEditorManager::GetInst()->GetResourceDisplayWindow()->RefreshLoadedTextureResources();
     CEditorManager::GetInst()->GetResourceDisplayWindow()->RefreshLoadedMaterialResources();
+    CEditorManager::GetInst()->GetResourceDisplayWindow()->RefreshLoadedParticleResources();
 }
 
 void CEffectEditor::OnReflectCurrentParticleSetting()
@@ -979,6 +982,7 @@ void CEffectEditor::OnDropMaterialToParticle(const std::string& InputName)
 
     if (FoundMaterial)
     {
+        MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Material Set SuccessFul"), NULL, MB_OK);
         ApplyNewMaterial(FoundMaterial);
         return;
     }

@@ -143,10 +143,6 @@ public:
 		return m_CBuffer->GetScaleMax();
 	}
 
-	const Vector3& GetRotationAngle()
-	{
-		return m_CBuffer->GetRotationAngle();
-	}
 
 	float GetLifeTimeMin()
 	{
@@ -208,6 +204,10 @@ public:
 		return m_CBuffer->IsBounceEnable();
 	}
 
+	const Vector3& GetRotationAngle()
+	{
+		return m_CBuffer->GetRotationAngle();
+	}
 	float GetBounceResistance() const
 	{
 		return m_CBuffer->GetParticleBounceResist();

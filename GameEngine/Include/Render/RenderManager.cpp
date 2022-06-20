@@ -171,7 +171,7 @@ bool CRenderManager::Init()
 	Resolution RS = CDevice::GetInst()->GetResolution();
 
 	if (!CResourceManager::GetInst()->CreateTarget("Diffuse",
-		RS.Width, RS.Height, DXGI_FORMAT_R32G32B32A32_FLOAT))
+		RS.Width, RS.Height, DXGI_FORMAT_R8G8B8A8_UNORM))
 		return false;
 
 	if (!CResourceManager::GetInst()->CreateTarget("GBuffer1",
@@ -532,6 +532,10 @@ void CRenderManager::Render()
 
 	for (; iter != iterEnd; ++iter)
 	{
+		// OBJ가 추가 (Particle Mesh Widget 에서 Enable false 처리)
+		if ((*iter)->IsEnable() == false)
+			continue;
+
 		(*iter)->Render();
 	}
 

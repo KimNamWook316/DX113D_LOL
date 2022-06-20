@@ -155,6 +155,10 @@ public:
 		return m_BufferData.AlphaMax;
 	}
 public:
+	void SetRotationAngle(const Vector3& Angle)
+	{
+		m_BufferData.RotationAngle = Angle;
+	}
 	void SetLoopGenerateCircle(bool Enable)
 	{
 		m_BufferData.IsLoopGenerateCircle = Enable ? 1 : 0;
@@ -197,11 +201,6 @@ public:
 	void SetStartMax(const Vector3& StartMax)
 	{
 		m_BufferData.StartMax = StartMax;
-	}
-
-	void SetRotationAngle(const Vector3& Angle)
-	{
-		m_BufferData.RotationAngle = Angle;
 	}
 
 	void SetSpawnCountMax(unsigned int Count)

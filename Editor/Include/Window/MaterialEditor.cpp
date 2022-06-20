@@ -94,6 +94,9 @@ ResourceWindow로부터 Drag,Drop 을 통해서, Material 을  볼수 있다.)";
 	m_SetParticleSettingBtn = AddWidget<CIMGUIButton>("Particle Setting", 150.f, 20.f);
 	m_SetParticleSettingBtn->SetClickCallback<CMaterialEditor>(this, &CMaterialEditor::OnSetParticleMaterialSettingCallback);
 
+	Line = AddWidget<CIMGUISameLine>("Line");
+	Line->SetOffsetX(160.f);
+
 	HelpText = AddWidget<CIMGUIText>("SetParticleMaterial", 90.f, 30.f);
 	const char* SetParticleMaterialText = R"(ex) Particle Material 로 사용하기 위한 기본 세팅을 해주는 버튼.)";
 	HelpText->SetText(SetParticleMaterialText);
