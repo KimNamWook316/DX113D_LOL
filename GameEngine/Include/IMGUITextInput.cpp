@@ -118,6 +118,9 @@ void CIMGUITextInput::ApplyDropEffect()
 			int ConvertLength = WideCharToMultiByte(CP_UTF8, 0, payload_n, -1, 0, 0, 0, 0);
 			WideCharToMultiByte(CP_UTF8, 0, payload_n, -1, DroppedTextMultibyte, ConvertLength, 0, 0);
 
+			memset(m_PrevText, 0, sizeof(char) * 1024);
+			strcpy_s(m_PrevText, m_TextUTF8);
+
 			switch (m_TextType)
 			{
 			case ImGuiText_Type::String:

@@ -30,6 +30,7 @@
 #include "PathManager.h"
 #include "Render/RenderManager.h"
 #include "Engine.h"
+#include "EngineUtil.h"
 #include "Render/RenderState.h"
 
 CMaterialEditor::CMaterialEditor()
@@ -268,24 +269,41 @@ void CMaterialEditor::OnDropAndCreateMaterialCallback(const std::string& Materia
 		return;
 	}
 
-	// 2) 없으면, 해당 하드디스크 파일 이름을 이용해서 Bin//Material 폴더에 있는 File 을 찾아서
+	// 2) 없으면, 해당 하드디스크 파일 이름을 이용해서 Bin//Material//ParticleMaterial 폴더에 있는 File 을 찾아서
 	// 해당 Material 파일을 Material Manager 에 Load 하고
 	// m_SeleteMaterial 에 세팅한다.
 	char MaterialLoadFullPathMultibyte[MAX_PATH] = {};
 	// TCHAR MaterialLoadFullPath[MAX_PATH] = {};
 
-	const PathInfo* Info = CPathManager::GetInst()->FindPath(MATERIAL_PATH);
+	const PathInfo* Info = CPathManager::GetInst()->FindPath(MATERIAL_PARTICLE_PATH);
+
+	//  Bin//Material//ParticleMaterial 해당 폴더가 없다면 만들어준다.
+	CEngineUtil::CheckAndMakeDirectory(Info);
 
 	if (Info)
 		strcpy_s(MaterialLoadFullPathMultibyte, Info->PathMultibyte);
 
 	strcat_s(MaterialLoadFullPathMultibyte, MaterialName.c_str());
 
-	m_SelectedMaterial = CResourceManager::GetInst()->LoadMaterialFullPathMultibyte(MaterialLoadFullPathMultibyte);
+	CMaterial* LoadedMaterial = CResourceManager::GetInst()->LoadMaterialFullPathMultibyte(MaterialLoadFullPathMultibyte);
+
+	// 이것이 nullptr 이라는 의미는, Load 가 실패했다는 의미이다.
+	if (!LoadedMaterial)
+	{
+		MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Material Load Failure From Bin/Material/ParticleMaterial."), NULL, MB_OK);
+
+		m_SelectedMaterialName->ResetText();
+
+		return;
+	}
+
+	m_SelectedMaterial = LoadedMaterial;
 
 	RefreshMaterialDisplayInfo(m_SelectedMaterial);
 
 	CEditorManager::GetInst()->GetResourceDisplayWindow()->RefreshLoadedMaterialResources();
+
+	MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Material Set Successfully"), NULL, MB_OK);
 }
 
 void CMaterialEditor::OnDropAndSetShaderToMaterial(const std::string& DropShaderName)
@@ -301,6 +319,7 @@ void CMaterialEditor::OnDropAndSetShaderToMaterial(const std::string& DropShader
 	if (!FoundShader)
 	{
 		MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("No Shader Exist To According Shader Key"), NULL, MB_OK);
+		m_ShaderSetInput->ResetText();
 		return;
 	}
 
@@ -314,6 +333,8 @@ void CMaterialEditor::OnDropAndSetShaderToMaterial(const std::string& DropShader
 
 void CMaterialEditor::OnDropAndSetRenderStateToMaterial(const std::string& DropRenderStateName)
 {
+	const char* PrevRenderStateName = m_RenderStateSetInput->GetTextUTF8();
+
 	// 현재 Material 에 Render State Name 을 세팅한다.
 	// Shader Manager 에서 Key 값만 찾아서 세팅해주고
 	// 없으면 X
@@ -325,6 +346,7 @@ void CMaterialEditor::OnDropAndSetRenderStateToMaterial(const std::string& DropR
 	if (!FoundRenderState)
 	{
 		MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("No RenderState Exist To According Sampler Key"), NULL, MB_OK);
+		m_RenderStateSetInput->SetText(PrevRenderStateName);
 		return;
 	}
 
@@ -574,6 +596,11 @@ void CMaterialEditor::OnSaveMaterial()
 	if (!m_SelectedMaterial)
 		return;
 
+	const PathInfo* MaterialPathInfo = CPathManager::GetInst()->FindPath(MATERIAL_PARTICLE_PATH);
+
+	// Bin//Material//ParticleMaterial 폴더가 있는지 확인하고 만들어준다.
+	CEngineUtil::CheckAndMakeDirectory(MaterialPathInfo);
+
 	TCHAR FileFullPath[MAX_PATH] = {};
 
 	OPENFILENAME OpenFile = {};
@@ -582,7 +609,7 @@ void CMaterialEditor::OnSaveMaterial()
 	OpenFile.lpstrFilter = TEXT("All Files\0*.*\0.Material File\0*.mtrl");
 	OpenFile.lpstrFile = FileFullPath;
 	OpenFile.nMaxFile = MAX_PATH;
-	OpenFile.lpstrInitialDir = CPathManager::GetInst()->FindPath(MATERIAL_PATH)->Path;
+	OpenFile.lpstrInitialDir = MaterialPathInfo->Path;
 
 	if (GetSaveFileName(&OpenFile) != 0)
 	{
@@ -614,7 +641,7 @@ void CMaterialEditor::OnSaveMaterial()
 		strcpy_s(CheckMaterialFileName, FileName);
 		strcat_s(CheckMaterialFileName, FileExt);
 
-		if (CEditorUtil::IsFileExistInDir(MATERIAL_PATH, CheckMaterialFileName))
+		if (CEditorUtil::IsFileExistInDir(MATERIAL_PARTICLE_PATH, CheckMaterialFileName))
 		{
 			if (MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("같은 이름의 .mtrl 파일이 존재합니다. 저장하시겠습니까?"), NULL, MB_YESNO) != IDYES)
 				return;
@@ -636,6 +663,11 @@ void CMaterialEditor::OnSaveMaterial()
 
 void CMaterialEditor::OnLoadMaterial()
 {
+	const PathInfo* MaterialPathInfo = CPathManager::GetInst()->FindPath(MATERIAL_PARTICLE_PATH);
+
+	// Bin//Material//ParticleMaterial 폴더가 있는지 확인하고 만들어준다.
+	CEngineUtil::CheckAndMakeDirectory(MaterialPathInfo);
+
 	TCHAR FilePath[MAX_PATH] = {};
 
 	OPENFILENAME OpenFile = {};
@@ -644,7 +676,7 @@ void CMaterialEditor::OnLoadMaterial()
 	OpenFile.lpstrFilter = TEXT("All Files\0*.*\0.Material File\0*.mtrl");
 	OpenFile.lpstrFile = FilePath;
 	OpenFile.nMaxFile = MAX_PATH;
-	OpenFile.lpstrInitialDir = CPathManager::GetInst()->FindPath(MATERIAL_PATH)->Path;
+	OpenFile.lpstrInitialDir = MaterialPathInfo->Path;
 
 	if (GetOpenFileName(&OpenFile) != 0)
 	{

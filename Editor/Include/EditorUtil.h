@@ -52,6 +52,10 @@ public:
 	// 만약 아예 인자로 들어오는 FilePath 에 "\\" 이 존재하지 않는다면, 그냥 FilePath 원본 그대로를 세팅해준다.
 	static bool GetFileNameAfterSlash(const std::string& FilePath, std::string& ExtractedFileName);
 
+	// 혹시나 "\\"가 경로에 있다면, 맨처음 경로부터 "\\" 까지의 정보를 뽑아내주는 함수
+	// C::Program\\OBJ\\Material\\Hello.mtrl ? => C::Program\\OBJ\\Material\\ 까지의 정보를 뽑아와준다.
+	static bool GetPathInfoBeforeFileName(const std::string& FilePath, std::string& ExtractedPathInfo);
+
 	// TCHAR [] 형태의 Text 을 넣어주면, char [] (Multibyte) 형태 Text 리턴, 
 	static const char* ChangeTCHARTextToMultibyte(TCHAR* TCHARText);
 

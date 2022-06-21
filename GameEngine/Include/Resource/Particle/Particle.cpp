@@ -178,23 +178,23 @@ bool CParticle::Load(FILE* File)
 		else
 		{
 			// 3_2_b) 그래도 없으면 Bin//Material 에서 찾아준다.
-			FoundResult = CEngineUtil::CheckAndExtractFullPathOfTargetFile(MATERIAL_PATH, StrParticleFileName);
-
-			if (FoundResult.has_value())
-			{
-				FileFound = true;
-
-				const PathInfo* MaterialPathInfo = CPathManager::GetInst()->FindPath(MATERIAL_PATH);
-
-				// 만약 찾았다면, Bin//Material//ParticleMaterial Path 로 복사해주기
-				CEngineUtil::CopyFileToOtherDirectory(MaterialPathInfo, ParticleMaterialPathInfo, StrParticleFileName);
-			}
+			// FoundResult = CEngineUtil::CheckAndExtractFullPathOfTargetFile(MATERIAL_PATH, StrParticleFileName);
+			// 
+			// if (FoundResult.has_value())
+			// {
+			// 	FileFound = true;
+			// 
+			// 	const PathInfo* MaterialPathInfo = CPathManager::GetInst()->FindPath(MATERIAL_PATH);
+			// 
+			// 	// 만약 찾았다면, Bin//Material//ParticleMaterial Path 로 복사해주기
+			// 	CEngineUtil::CopyFileToOtherDirectory(MaterialPathInfo, ParticleMaterialPathInfo, StrParticleFileName);
+			// }
 		}
 
 		if (!FileFound)
 		{
 			// Particle 이 사용하는 Material 파일이 경로에 존재하지 않습니다.
-			assert("Particle 이 사용하는 Material 파일이 경로에 존재하지 않습니다.");
+			assert("Particle 이 사용하는 Material 파일이 Bin//Material//ParticleMaterial 경로에 존재하지 않습니다.");
 		}
 
 		if (FileFound)

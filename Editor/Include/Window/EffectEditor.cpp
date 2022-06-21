@@ -52,6 +52,7 @@ CEffectEditor::~CEffectEditor()
 bool CEffectEditor::Init()
 {
     // Save, Load
+
     m_SaveParticleBtn = AddWidget<CIMGUIButton>("Save Particle", 90.f, 20.f);
     m_SaveParticleBtn->SetClickCallback<CEffectEditor>(this, &CEffectEditor::OnSaveParticleClass);
 
@@ -60,6 +61,14 @@ bool CEffectEditor::Init()
 
     m_LoadParticleBtn = AddWidget<CIMGUIButton>("Load Particle", 90.f, 20.f);
     m_LoadParticleBtn->SetClickCallback<CEffectEditor>(this, &CEffectEditor::OnLoadParticleClass);
+
+    Line = AddWidget<CIMGUISameLine>("Line");
+    Line->SetOffsetX(210);
+
+    CIMGUIText* HelpText = AddWidget<CIMGUIText>("ParticleSaveLoad", 90.f, 30.f);
+    const char* ParticleSaveLoadText = R"(ex) Particle 의 경우, Bin/ParticleClass 폴더에 Save 혹은, Bin/ParticleClass 로부터 Load 해야 한다.)";
+    HelpText->SetText(ParticleSaveLoadText);
+    HelpText->SetIsHelpMode(true);
 
     // Set Texture
     m_SetMaterialTextureButton = AddWidget<CIMGUIButton>("Set Texture", 90.f, 20.f);
@@ -89,7 +98,7 @@ bool CEffectEditor::Init()
     Line = AddWidget<CIMGUISameLine>("Line");
     Line->SetOffsetX(350.f);
 
-    CIMGUIText* HelpText = AddWidget<CIMGUIText>("MtrlFileName", 90.f, 30.f);
+    HelpText = AddWidget<CIMGUIText>("MtrlFileName", 90.f, 30.f);
     const char* DropMtrlText = R"(ex) ResourceDisplayWindow 로부터 Material Key 를 Drop 하거나,
     Bin/Material 에 있는 .mtrl 파일을 Drop 하면, 해당 Material 이 세팅된다.)";
     HelpText->SetText(DropMtrlText);
@@ -728,10 +737,10 @@ void CEffectEditor::OnSaveParticleClass()
     if (!m_ParticleObject || !dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetParticle())
         return;
 
-    const PathInfo* Info = CPathManager::GetInst()->FindPath(PARTICLE_PATH);
+    const PathInfo* ParticlePathInfo = CPathManager::GetInst()->FindPath(PARTICLE_PATH);
 
-    // Bin//ParticleClass 가 Path 내에 존재하는지 확인하기
-    CEngineUtil::CheckAndMakeDirectory(Info);
+    // Bin//ParticleClass 가 Path 내에 존재하는지 확인하기 , 없으면 만들기 
+    CEngineUtil::CheckAndMakeDirectory(ParticlePathInfo);
 
     TCHAR FiileFullPath[MAX_PATH] = {};
 
@@ -741,7 +750,7 @@ void CEffectEditor::OnSaveParticleClass()
     OpenFile.lpstrFilter = TEXT("All Files\0*.*\0.Animation File\0*.anim");
     OpenFile.lpstrFile = FiileFullPath;
     OpenFile.nMaxFile = MAX_PATH;
-    OpenFile.lpstrInitialDir = Info->Path; // Bin//ParticleClass
+    OpenFile.lpstrInitialDir = ParticlePathInfo->Path; // Bin//ParticleClass
 
     if (GetSaveFileName(&OpenFile) != 0)
     {
@@ -764,14 +773,21 @@ void CEffectEditor::OnSaveParticleClass()
             return;
         }
 
+        // 현재 저장하는 Directory가 Bin/ParticleClass 인지 확인하기 => 아니라면, Save 방지
+        std::string PathInfoBeforeFileName;
+        CEditorUtil::GetPathInfoBeforeFileName(FileFullPathMultibyte, PathInfoBeforeFileName);
+
+        if (strcmp(ParticlePathInfo->PathMultibyte, PathInfoBeforeFileName.c_str()) != 0)
+        {
+            MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Particle Class 의 경우, 반드시 Bin/Particle/ParticleMaterial 에 저장"), NULL, MB_OK);
+            return;
+        }
+
         // 해당 PARTICLE_PATH 에서 중복된 이름이 있는지 확인하기
         // .prtc 확장자 붙이기
         char CheckFileName[MAX_PATH] = {};
         strcpy_s(CheckFileName, FileName);
         strcat_s(CheckFileName, ".prtc");
-
-        // PARTICLE_PATH , 즉, Bin//ParticleClass 라는 Directory가 존재하는지 확인하고 없다면 해당 디렉토리를 만든다.
-
 
         bool IsSameFileNameExist = CEditorUtil::IsFileExistInDir(PARTICLE_PATH, CheckFileName);
 
@@ -805,6 +821,10 @@ void CEffectEditor::OnLoadParticleClass()
    //  if (!m_ParticleObject || !dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetParticle())
    //      return;
 
+    // 혹시 모르니 Particle Material 저장 전용 폴더를 만들어준다.
+    const PathInfo* ParticleMaterialPath = CPathManager::GetInst()->FindPath(PARTICLE_PATH);
+    CEngineUtil::CheckAndMakeDirectory(ParticleMaterialPath);
+
     TCHAR FilePath[MAX_PATH] = {};
 
     OPENFILENAME OpenFile = {};
@@ -813,7 +833,7 @@ void CEffectEditor::OnLoadParticleClass()
     OpenFile.lpstrFilter = TEXT("All Files\0*.*\0.Particle File\0*.prtc");
     OpenFile.lpstrFile = FilePath;
     OpenFile.nMaxFile = MAX_PATH;
-    OpenFile.lpstrInitialDir = CPathManager::GetInst()->FindPath(PARTICLE_PATH)->Path;
+    OpenFile.lpstrInitialDir = ParticleMaterialPath->Path;
 
     if (GetOpenFileName(&OpenFile) != 0)
     {
@@ -1039,9 +1059,14 @@ void CEffectEditor::SetStartEditing()
 
 void CEffectEditor::OnDropMaterialToParticle(const std::string& InputName)
 {
+
     if (!m_ParticleClass)
     {
         MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("No Particle Set"), NULL, MB_OK);
+        
+        // 다시 원상 복구 시켜줘야 한다.
+        m_CurrentMaterialName->ResetText();
+
         return;
     }
 
@@ -1050,7 +1075,6 @@ void CEffectEditor::OnDropMaterialToParticle(const std::string& InputName)
 
     if (FoundMaterial)
     {
-        MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Material Set SuccessFul"), NULL, MB_OK);
         ApplyNewMaterial(FoundMaterial);
         return;
     }
@@ -1060,14 +1084,19 @@ void CEffectEditor::OnDropMaterialToParticle(const std::string& InputName)
     // Texture File 의 File 명을, Texture 를 저장하는 Key 값으로 사용할 것이다.
     std::string MaterialKeyName;
 
-    std::optional<std::string> FoundResult = CEditorUtil::GetFullPathOfTargetFileNameInDir(MATERIAL_PATH,
-        InputName, MaterialKeyName);
+    // Bin//Material//ParticleClass 라는 폴더에서 찾을 것이다.
+    // std::optional<std::string> FoundResult = CEditorUtil::GetFullPathOfTargetFileNameInDir(MATERIAL_PATH, InputName, MaterialKeyName);
+    std::optional<std::string> FoundResult = CEditorUtil::GetFullPathOfTargetFileNameInDir(MATERIAL_PARTICLE_PATH, InputName, MaterialKeyName);
 
     // 찾지 못했다면 
     if (!FoundResult.has_value())
     {
         // New Texture Load Failure Message Box
-        MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Material Load Failure From Bin/Material"), NULL, MB_OK);
+        MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Material Load Failure From Bin/Material/ParticleMaterial"), NULL, MB_OK);
+
+        // 다시 원상 복구 시켜줘야 한다.
+        m_CurrentMaterialName->ResetText();
+
         return;
     }
 
@@ -1083,6 +1112,10 @@ void CEffectEditor::OnDropMaterialToParticle(const std::string& InputName)
     if (ExtractFileExt != ".MTRL")
     {
         MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("확장자가 .mtrl이 아닙니다."), NULL, MB_OK);
+
+        // 다시 원상 복구 시켜줘야 한다.
+        m_CurrentMaterialName->ResetText();
+
         return;
     }
 
@@ -1092,6 +1125,9 @@ void CEffectEditor::OnDropMaterialToParticle(const std::string& InputName)
     if (!FoundMaterial)
     {
         MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Material Load Process Failure"), NULL, MB_OK);
+
+        // 다시 원상 복구 시켜줘야 한다.
+        m_CurrentMaterialName->ResetText();
         return;
     }
 

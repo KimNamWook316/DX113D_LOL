@@ -313,6 +313,24 @@ bool CEditorUtil::GetFileNameAfterSlash(const std::string& FilePath, std::string
 	return true;
 }
 
+bool CEditorUtil::GetPathInfoBeforeFileName(const std::string& FilePath, std::string& ExtractedPathInfo)
+{
+	int FilePathLength = (int)FilePath.size();
+
+	for (int i = FilePathLength - 1; i >= 0; --i)
+	{
+		if (FilePath[i] == '\\')
+		{
+			ExtractedPathInfo = FilePath.substr(0, i + 1);
+			return true;
+		}
+	}
+
+	ExtractedPathInfo = FilePath;
+
+	return true;
+}
+
 const char* CEditorUtil::ChangeTCHARTextToMultibyte(TCHAR* TCHARText)
 {
 	char FilePathMultibyte[MAX_PATH] = {};
