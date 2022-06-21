@@ -566,7 +566,11 @@ void CEffectEditor::OnSetAlphaBlendToMaterialCallback()
             assert(false);
         }
 
+        // Particle Class 의 Material 에 Render State 적용하기 (이래야만 저장될 때, Render State 가 설정된 채로 Material 파일이 저장된다.)
         m_ParticleClass->GetMaterial()->SetRenderState(FoundRenderState);
+
+        // 현재 Render 되는 Particle Component 상에도 세팅해줘야 한다.
+        dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetMaterial()->SetRenderState(FoundRenderState);
 
         MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Alpha Blend Set Success"), NULL, MB_OK);
     }
@@ -856,6 +860,7 @@ void CEffectEditor::OnLoadParticleClass()
 
         // Resource Display Window 세팅하기
         CEditorManager::GetInst()->GetResourceDisplayWindow()->RefreshLoadedParticleResources();
+        CEditorManager::GetInst()->GetResourceDisplayWindow()->RefreshLoadedMaterialResources();
     }
 }
 
@@ -1170,7 +1175,14 @@ void CEffectEditor::SetIMGUIReflectParticle(CParticle* Particle)
     // Material 이름 세팅
     if (Particle->GetMaterial())
     {
-        m_CurrentMaterialName->SetText(Particle->GetMaterial()->GetName().c_str());
+        std::string MaterialName = Particle->GetMaterial()->GetName();
+        m_CurrentMaterialName->SetText(MaterialName.c_str());
+
+        // Material File Name 세팅
+        if (MaterialName.find(".mtrl") == std::string::npos)
+            MaterialName.append(".mtrl");
+        
+        m_LoadedMaterialFileName->SetText(MaterialName.c_str());
     }
 
     // 반드시 3D 로 세팅한다.

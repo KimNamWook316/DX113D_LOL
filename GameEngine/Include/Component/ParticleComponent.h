@@ -49,6 +49,10 @@ public :
 	{
 		return m_ParticleName;
 	}
+	CMaterial* GetMaterial() const
+	{
+		return m_Material;
+	}
 public :
 	void SetParticleClassFileName(const std::string& ParticleFileName)
 	{

@@ -76,7 +76,6 @@ void CParticleManager::ChangeParticleKeyName(const std::string& OldKeyName, cons
 {
 	if (OldKeyName == NewKeyName)
 	{
-		assert(false);
 		return;
 	}
 

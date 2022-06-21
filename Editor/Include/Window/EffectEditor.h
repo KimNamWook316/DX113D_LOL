@@ -160,10 +160,13 @@ private:
 
     void OnAlphaMinEdit(float Alpha);
     void OnAlphaMaxEdit(float Alpha);
+
+    // 현재 Material에 Alpha Blend 적용하기
     void OnSetAlphaBlendToMaterialCallback();
 
     void OnIsMoveEdit(const char*, bool);
     void OnIsGravityEdit(const char*, bool);
+
     // void OnIsRandomMoveEdit(const char*, bool);
     void OnPauseResumeToggle(const char*, bool);
 

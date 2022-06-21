@@ -96,8 +96,9 @@ bool CParticle::Save(FILE* File)
 			MtrlFileExist = true;
 	}
 
-	// 현재 저장할 Material 이 Particle 에 있고, 하드디스크 내에는 존재하지 않을 때
-	if (m_SaveLoadStruct.MaterialEnable && MtrlFileExist == false)
+	// 현재 저장할 Material 이 Particle 에 있다면
+	// if (m_SaveLoadStruct.MaterialEnable && MtrlFileExist == false) => 기존 Particle 용 Material 을 덮어써야 하는 경우도 있다.
+	if (m_SaveLoadStruct.MaterialEnable)
 	{
 		// Material 을 Bin/Material Path 에 저장하기
 		char MaterialBinPathMutlibyte[MAX_PATH] = {};
