@@ -635,6 +635,15 @@ void CMaterialEditor::OnSaveMaterial()
 			return;
 		}
 
+		// 현재 저장하는 Directory가 Bin/Material/ParticleMaterial 인지 확인하기 => 아니라면, Save 방지
+		std::string PathInfoBeforeFileName;
+		CEditorUtil::GetPathInfoBeforeFileName(FileFullPathMultibyte, PathInfoBeforeFileName);
+
+		if (strcmp(MaterialPathInfo->PathMultibyte, PathInfoBeforeFileName.c_str()) != 0)
+		{
+			MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Particle Material 의 경우, 반드시 Bin/Material/ParticleMaterial 에 저장"), NULL, MB_OK);
+			return;
+		}
 
 		// 현재 저장하는 Path 에서, 같은 이름의 FileName이 존재하는지 확인하기
 		char CheckMaterialFileName[MAX_PATH] = {};
@@ -657,8 +666,9 @@ void CMaterialEditor::OnSaveMaterial()
 		}
 
 		m_SelectedMaterial->SaveFullPath(FileFullPathMultibyte);
-	}
 
+		MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Material Save Success"), NULL, MB_OK);
+	}
 }
 
 void CMaterialEditor::OnLoadMaterial()
@@ -699,6 +709,16 @@ void CMaterialEditor::OnLoadMaterial()
 			return;
 		}
 
+		// 현재 Load하는 Directory가 Bin/Material/ParticleMaterial 인지 확인하기 => 아니라면, Load
+		std::string PathInfoBeforeFileName;
+		CEditorUtil::GetPathInfoBeforeFileName(FilePathMultibyte, PathInfoBeforeFileName);
+
+		if (strcmp(MaterialPathInfo->PathMultibyte, PathInfoBeforeFileName.c_str()) != 0)
+		{
+			MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Particle Material 의 경우, 반드시 Bin/Material/ParticleMaterial 로부터 Load 해야 한다."), NULL, MB_OK);
+			return;
+		}
+
 		// 파일 이름을, Material 을 저장하는 Key 값으로 활용할 것이다.
 		CMaterial* LoadedMaterial = CResourceManager::GetInst()->LoadMaterialFullPathMultibyte(FilePathMultibyte);
 
@@ -717,6 +737,8 @@ void CMaterialEditor::OnLoadMaterial()
 		CEditorManager::GetInst()->GetResourceDisplayWindow()->RefreshLoadedMaterialResources();
 		CEditorManager::GetInst()->GetResourceDisplayWindow()->RefreshLoadedRenderStateResources();
 		CEditorManager::GetInst()->GetResourceDisplayWindow()->RefreshLoadedShaderResources();
+
+		MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Material Load Success"), NULL, MB_OK);
 	}
 }
 

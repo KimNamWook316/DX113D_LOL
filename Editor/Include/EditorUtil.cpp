@@ -303,7 +303,7 @@ bool CEditorUtil::GetFileNameAfterSlash(const std::string& FilePath, std::string
 	{
 		if (FilePath[i] == '\\')
 		{
-			ExtractedFileName = FilePath.substr(i + 1, FilePath.size());
+			ExtractedFileName = FilePath.substr((size_t)i + 1, FilePath.size());
 			return true;
 		}
 	}
@@ -321,7 +321,7 @@ bool CEditorUtil::GetPathInfoBeforeFileName(const std::string& FilePath, std::st
 	{
 		if (FilePath[i] == '\\')
 		{
-			ExtractedPathInfo = FilePath.substr(0, i + 1);
+			ExtractedPathInfo = FilePath.substr(0, (size_t)i + 1);
 			return true;
 		}
 	}
