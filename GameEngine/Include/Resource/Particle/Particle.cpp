@@ -79,38 +79,56 @@ bool CParticle::Save(FILE* File)
 
 	fwrite(&m_SaveLoadStruct, sizeof(ParticleSaveLoadStruct), 1, File);
 
+	// 실제 저장할 폴더 위치는 Bin//Material//ParticleMaterial 폴더 이다.
+	// 해당 폴더가 없다면 만들어줘야 한다.
+	const PathInfo* ParticleMaterialPath = CPathManager::GetInst()->FindPath(MATERIAL_PARTICLE_PATH);
+	CEngineUtil::CheckAndMakeDirectory(ParticleMaterialPath);
+
 	// 3번째 Save, Load => Material
 	// 먼저 현재 저장하려는 Material 이 이미 하드디스크에 mtrl 형태로 존재하는지 확인
-	const PathInfo* MaterialPath = CPathManager::GetInst()->FindPath(MATERIAL_PATH);
-
-	bool MtrlFileExist = false;
-
-	if (m_SaveLoadStruct.MaterialEnable)
-	{
-		char MaterialFileName[MAX_PATH] = {};
-
-		strcpy_s(MaterialFileName, m_Material->GetName().c_str());
-		strcat_s(MaterialFileName, ".mtrl");
-
-		if (CEngineUtil::IsFileExistInDir(MATERIAL_PATH, MaterialFileName))
-			MtrlFileExist = true;
-	}
+	// Bin//Material 폴더 전부를 검색한다.
+	// const PathInfo* MaterialPath = CPathManager::GetInst()->FindPath(MATERIAL_PATH);
+	// 
+	// bool MtrlFileExist = false;
+	// 
+	// if (m_SaveLoadStruct.MaterialEnable)
+	// {
+	// 	char MaterialFileName[MAX_PATH] = {};
+	// 
+	// 	strcpy_s(MaterialFileName, m_Material->GetName().c_str());
+	// 	strcat_s(MaterialFileName, ".mtrl");
+	// 
+	// 	// Bin//Material 폴더에 있는지 확인한다.
+	// 	if (CEngineUtil::IsFileExistInDir(MATERIAL_PATH, MaterialFileName))
+	// 		MtrlFileExist = true;
+	// 
+	// 	// Bin//Material//ParticleMaterial 폴더에 있는지 확인한다.
+	// 
+	// }
 
 	// 현재 저장할 Material 이 Particle 에 있다면
 	// if (m_SaveLoadStruct.MaterialEnable && MtrlFileExist == false) => 기존 Particle 용 Material 을 덮어써야 하는 경우도 있다.
 	if (m_SaveLoadStruct.MaterialEnable)
 	{
-		// Material 을 Bin/Material Path 에 저장하기
+		// Material 을 Bin/Material/ParticleMaterial Path 에 저장하기
 		char MaterialBinPathMutlibyte[MAX_PATH] = {};
 
-		if (MaterialPath)
-			strcpy_s(MaterialBinPathMutlibyte, MaterialPath->PathMultibyte);
+		// if (MaterialPath)
+		// 	strcpy_s(MaterialBinPathMutlibyte, MaterialPath->PathMultibyte);
+		if (ParticleMaterialPath)
+			strcpy_s(MaterialBinPathMutlibyte, ParticleMaterialPath->PathMultibyte);
 
 		strcat_s(MaterialBinPathMutlibyte, m_Material->GetName().c_str());
-		strcat_s(MaterialBinPathMutlibyte, ".mtrl");
+
+		std::string MaterialPathString = MaterialBinPathMutlibyte;
+
+		// .mtrl 여부를 확인한다. 없으면 붙여준다
+		if (MaterialPathString.find(".mtrl") == std::string::npos)
+			MaterialPathString.append(".mtrl");
+		// strcat_s(MaterialBinPathMutlibyte, ".mtrl");
 
 		// .mtrl 확장자가 붙어서 저장되도록 세팅해야 한다.
-		m_Material->SaveFullPath(MaterialBinPathMutlibyte);
+		m_Material->SaveFullPath(MaterialPathString.c_str());
 	}
 
 	// 4번째 Save, Load : 상수 버퍼 저장 
@@ -135,24 +153,67 @@ bool CParticle::Load(FILE* File)
 	// 3_2) 그래도 없으면, 하드디스크에서 찾기
 	if (!m_Material)
 	{
-		const PathInfo* MaterialPath = CPathManager::GetInst()->FindPath(MATERIAL_PATH);
+		bool FileFound = false;
 
-		// Material 을 Bin/Material Path 에 저장하기
-		char MaterialBinPathMutlibyte[MAX_PATH] = {};
+		// 3_2_a) 제일 우선적으로 Bin//Material//ParticleMaterial Path 에서 찾아준다.
 
-		if (MaterialPath)
-			strcpy_s(MaterialBinPathMutlibyte, MaterialPath->PathMultibyte);
+		// 이를 위해서는 Bin//Material//ParticleMaterial 을 먼저 하드디스크 상에 만들어줘야 한다.
+		const PathInfo* ParticleMaterialPathInfo = CPathManager::GetInst()->FindPath(MATERIAL_PARTICLE_PATH);
 
-		strcat_s(MaterialBinPathMutlibyte, m_SaveLoadStruct.MaterialName);
-		strcat_s(MaterialBinPathMutlibyte, ".mtrl");
+		CEngineUtil::CheckAndMakeDirectory(ParticleMaterialPathInfo);
 
-		m_Material = CResourceManager::GetInst()->CreateMaterialEmpty<CMaterial>();
+		std::string StrParticleFileName;
 
-		m_Material->LoadFullPath(MaterialBinPathMutlibyte);
+		// 해당 파일이 존재하는지 확인한다.
+		StrParticleFileName = m_SaveLoadStruct.MaterialName;
+		StrParticleFileName.append(".mtrl");
 
-		// Material Manager 의 Material Map 에 추가
-		// KeyName 은, Material 의 Name 로 되어 있을 것이다.
-		CResourceManager::GetInst()->GetMaterialManager()->AddMaterial(m_Material);
+		auto FoundResult = CEngineUtil::CheckAndExtractFullPathOfTargetFile(MATERIAL_PARTICLE_PATH, StrParticleFileName);
+
+		// 해당 경로에 존재한다면
+		if (FoundResult.has_value())
+		{
+			FileFound = true;
+		}
+		else
+		{
+			// 3_2_b) 그래도 없으면 Bin//Material 에서 찾아준다.
+			FoundResult = CEngineUtil::CheckAndExtractFullPathOfTargetFile(MATERIAL_PATH, StrParticleFileName);
+
+			if (FoundResult.has_value())
+			{
+				FileFound = true;
+
+				const PathInfo* MaterialPathInfo = CPathManager::GetInst()->FindPath(MATERIAL_PATH);
+
+				// 만약 찾았다면, Bin//Material//ParticleMaterial Path 로 복사해주기
+				CEngineUtil::CopyFileToOtherDirectory(MaterialPathInfo, ParticleMaterialPathInfo, StrParticleFileName);
+			}
+		}
+
+		if (!FileFound)
+		{
+			// Particle 이 사용하는 Material 파일이 경로에 존재하지 않습니다.
+			assert("Particle 이 사용하는 Material 파일이 경로에 존재하지 않습니다.");
+		}
+
+		if (FileFound)
+		{
+			const std::string& StrParticleMtrlFullPath = FoundResult.value();
+
+			m_Material = CResourceManager::GetInst()->CreateMaterialEmpty<CMaterial>();
+
+			m_Material->LoadFullPath(StrParticleMtrlFullPath.c_str());
+
+			// Material Manager 의 Material Map 에 추가
+			// KeyName 은, Material 의 Name 로 되어 있을 것이다.
+			CResourceManager::GetInst()->GetMaterialManager()->AddMaterial(m_Material);
+		}
+	}
+
+	if (!m_Material)
+	{
+		assert("Particle Material Load 실패");
 	}
 
 	m_UpdateShader = (CParticleUpdateShader*)CResourceManager::GetInst()->FindShader(m_SaveLoadStruct.UpdateShaderName);

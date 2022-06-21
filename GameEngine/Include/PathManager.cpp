@@ -70,8 +70,8 @@ bool CPathManager::Init()
     AddPath(OBJECT_PATH, TEXT("Object\\"));
     AddPath(COMPONENT_PATH, TEXT("Component\\"));
     AddPath(MATERIAL_PATH, TEXT("Material\\"));
-    AddPath(MATERIAL_PARTICLE_PATH, TEXT("Material\\AnimComponentMaterial\\"));
-    AddPath(MATERIAL_ANIMCOMPONENT_PATH, TEXT("Material\\ParticleMaterial\\"));
+    AddPath(MATERIAL_ANIMCOMPONENT_PATH, TEXT("Material\\AnimComponentMaterial\\"));
+    AddPath(MATERIAL_PARTICLE_PATH, TEXT("Material\\ParticleMaterial\\"));
 
     // Resource Path
     TCHAR   IncludePath[MAX_PATH] = {};

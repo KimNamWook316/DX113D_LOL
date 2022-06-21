@@ -27,6 +27,7 @@
 // Object
 #include "../Object/3DParticleObject.h"
 // Engine
+#include "EngineUtil.h"
 #include "Component/ParticleComponent.h"
 #include "Component/SpriteComponent.h"
 #include "Component/Arm.h"
@@ -727,6 +728,11 @@ void CEffectEditor::OnSaveParticleClass()
     if (!m_ParticleObject || !dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetParticle())
         return;
 
+    const PathInfo* Info = CPathManager::GetInst()->FindPath(PARTICLE_PATH);
+
+    // Bin//ParticleClass 가 Path 내에 존재하는지 확인하기
+    CEngineUtil::CheckAndMakeDirectory(Info);
+
     TCHAR FiileFullPath[MAX_PATH] = {};
 
     OPENFILENAME OpenFile = {};
@@ -735,7 +741,7 @@ void CEffectEditor::OnSaveParticleClass()
     OpenFile.lpstrFilter = TEXT("All Files\0*.*\0.Animation File\0*.anim");
     OpenFile.lpstrFile = FiileFullPath;
     OpenFile.nMaxFile = MAX_PATH;
-    OpenFile.lpstrInitialDir = CPathManager::GetInst()->FindPath(PARTICLE_PATH)->Path; // Bin//ParticleClass
+    OpenFile.lpstrInitialDir = Info->Path; // Bin//ParticleClass
 
     if (GetSaveFileName(&OpenFile) != 0)
     {
@@ -763,6 +769,10 @@ void CEffectEditor::OnSaveParticleClass()
         char CheckFileName[MAX_PATH] = {};
         strcpy_s(CheckFileName, FileName);
         strcat_s(CheckFileName, ".prtc");
+
+        // PARTICLE_PATH , 즉, Bin//ParticleClass 라는 Directory가 존재하는지 확인하고 없다면 해당 디렉토리를 만든다.
+
+
         bool IsSameFileNameExist = CEditorUtil::IsFileExistInDir(PARTICLE_PATH, CheckFileName);
 
         if (IsSameFileNameExist)
