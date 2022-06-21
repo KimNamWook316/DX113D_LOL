@@ -168,6 +168,50 @@ void CParticleComponentWidget::OnLoadParticleObjectButton()
 }
 void CParticleComponentWidget::OnLoadParticleClass()
 {
+    TCHAR FileFullPath[MAX_PATH] = {};
+
+    OPENFILENAME OpenFile = {};
+    OpenFile.lStructSize = sizeof(OPENFILENAME);
+    OpenFile.hwndOwner = CEngine::GetInst()->GetWindowHandle();
+    OpenFile.lpstrFilter = TEXT("All Files\0*.*\0.Particle File\0*.prtc");
+    OpenFile.lpstrFile = FileFullPath;
+    OpenFile.nMaxFile = MAX_PATH;
+    OpenFile.lpstrInitialDir = CPathManager::GetInst()->FindPath(PARTICLE_PATH)->Path;
+
+    if (GetOpenFileName(&OpenFile) != 0)
+    {
+        // 경로 추출
+        std::string FileExt;
+        std::string FileName;
+
+        const char* FilePathMultibyte = CEditorUtil::ChangeTCHARTextToMultibyte(FileFullPath);
+        char FilePathMultibyteCopy[MAX_PATH] = {};
+        strcpy_s(FilePathMultibyteCopy, FilePathMultibyte);
+
+        CEditorUtil::ExtractFileNameAndExtFromPath(FilePathMultibyteCopy, FileName, FileExt);
+
+        // 확장자 검사
+        std::transform(FileExt.begin(), FileExt.end(), FileExt.begin(), [](char c) {return std::toupper(c); });
+
+        if (FileExt != ".PRTC")
+        {
+            MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("확장자가 .prtc 이어야 합니다."), NULL, MB_OK);
+            return;
+        }
+
+        // SAFE_DELETE(m_ParticleClass); --> Particle Manager 에서 알아서 관리해줄 것이다.
+        CParticle* LoadedParticle = CResourceManager::GetInst()->CreateParticleEmpty<CParticle>();
+        bool LoadResult = LoadedParticle->LoadFile(FilePathMultibyteCopy);
+
+        if (!LoadResult)
+        {
+            MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Particle Class Load Failure While Loading"), NULL, MB_OK);
+            return;
+        }
+
+        ParticleLoadSuccessCallback(LoadedParticle);
+    }
+
 }
 void CParticleComponentWidget::OnDropParticleToParticleWidget(const std::string& InputName)
 {

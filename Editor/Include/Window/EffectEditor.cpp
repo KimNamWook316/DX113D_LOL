@@ -796,7 +796,7 @@ void CEffectEditor::OnLoadParticleClass()
     OPENFILENAME OpenFile = {};
     OpenFile.lStructSize = sizeof(OPENFILENAME);
     OpenFile.hwndOwner = CEngine::GetInst()->GetWindowHandle();
-    OpenFile.lpstrFilter = TEXT("All Files\0*.*\0.Animation File\0*.anim");
+    OpenFile.lpstrFilter = TEXT("All Files\0*.*\0.Particle File\0*.prtc");
     OpenFile.lpstrFile = FilePath;
     OpenFile.nMaxFile = MAX_PATH;
     OpenFile.lpstrInitialDir = CPathManager::GetInst()->FindPath(PARTICLE_PATH)->Path;

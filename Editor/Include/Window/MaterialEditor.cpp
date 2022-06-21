@@ -579,7 +579,7 @@ void CMaterialEditor::OnSaveMaterial()
 	OPENFILENAME OpenFile = {};
 	OpenFile.lStructSize = sizeof(OPENFILENAME);
 	OpenFile.hwndOwner = CEngine::GetInst()->GetWindowHandle();
-	OpenFile.lpstrFilter = TEXT("All Files\0*.*\0.Animation File\0*.anim");
+	OpenFile.lpstrFilter = TEXT("All Files\0*.*\0.Material File\0*.mtrl");
 	OpenFile.lpstrFile = FileFullPath;
 	OpenFile.nMaxFile = MAX_PATH;
 	OpenFile.lpstrInitialDir = CPathManager::GetInst()->FindPath(MATERIAL_PATH)->Path;
@@ -641,7 +641,7 @@ void CMaterialEditor::OnLoadMaterial()
 	OPENFILENAME OpenFile = {};
 	OpenFile.lStructSize = sizeof(OPENFILENAME);
 	OpenFile.hwndOwner = CEngine::GetInst()->GetWindowHandle();
-	OpenFile.lpstrFilter = TEXT("All Files\0*.*\0.Animation File\0*.anim");
+	OpenFile.lpstrFilter = TEXT("All Files\0*.*\0.Material File\0*.mtrl");
 	OpenFile.lpstrFile = FilePath;
 	OpenFile.nMaxFile = MAX_PATH;
 	OpenFile.lpstrInitialDir = CPathManager::GetInst()->FindPath(MATERIAL_PATH)->Path;
