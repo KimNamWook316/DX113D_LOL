@@ -24,6 +24,7 @@
 #include "Component/StaticMeshComponent.h"
 #include "Resource/Particle/Particle.h"
 #include "Engine.h"
+#include "EngineUtil.h"
 #include "PathManager.h"
 #include "Scene/Scene.h"
 #include "Scene/SceneManager.h"
@@ -168,6 +169,10 @@ void CParticleComponentWidget::OnLoadParticleObjectButton()
 }
 void CParticleComponentWidget::OnLoadParticleClass()
 {
+    // Bin//ParticleClass 폴더로부터 Load 되게 세팅하기
+    const PathInfo* ParticleClassPathInfo = CPathManager::GetInst()->FindPath(PARTICLE_PATH);
+    CEngineUtil::CheckAndMakeDirectory(ParticleClassPathInfo);
+
     TCHAR FileFullPath[MAX_PATH] = {};
 
     OPENFILENAME OpenFile = {};
@@ -176,7 +181,7 @@ void CParticleComponentWidget::OnLoadParticleClass()
     OpenFile.lpstrFilter = TEXT("All Files\0*.*\0.Particle File\0*.prtc");
     OpenFile.lpstrFile = FileFullPath;
     OpenFile.nMaxFile = MAX_PATH;
-    OpenFile.lpstrInitialDir = CPathManager::GetInst()->FindPath(PARTICLE_PATH)->Path;
+    OpenFile.lpstrInitialDir = ParticleClassPathInfo->Path;
 
     if (GetOpenFileName(&OpenFile) != 0)
     {
@@ -187,6 +192,16 @@ void CParticleComponentWidget::OnLoadParticleClass()
         const char* FilePathMultibyte = CEditorUtil::ChangeTCHARTextToMultibyte(FileFullPath);
         char FilePathMultibyteCopy[MAX_PATH] = {};
         strcpy_s(FilePathMultibyteCopy, FilePathMultibyte);
+
+        // 현재 Load하는 Directory가  Bin//ParticleClass 인지 확인하기 => 아니라면, Load
+        std::string PathInfoBeforeFileName;
+        CEditorUtil::GetPathInfoBeforeFileName(FilePathMultibyteCopy, PathInfoBeforeFileName);
+
+        if (strcmp(ParticleClassPathInfo->PathMultibyte, PathInfoBeforeFileName.c_str()) != 0)
+        {
+            MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Particle 의 경우 Bin/ParticleClass 로부터 Load 해야 한다."), NULL, MB_OK);
+            return;
+        }
 
         CEditorUtil::ExtractFileNameAndExtFromPath(FilePathMultibyteCopy, FileName, FileExt);
 
@@ -236,6 +251,10 @@ void CParticleComponentWidget::OnDropParticleToParticleWidget(const std::string&
     {
         // New Texture Load Failure Message Box
         MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Particle Class Load Failure From Bin/ParticleClass"), NULL, MB_OK);
+
+        // m_LoadedParticleName Text Input 내용을 되돌려 놓는다
+        m_LoadedParticleName->ResetText();
+
         return;
     }
 
@@ -250,6 +269,10 @@ void CParticleComponentWidget::OnDropParticleToParticleWidget(const std::string&
     if (ExtractedExt != ".PRTC")
     {
         MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("확장자가 .prtc 이어야 합니다."), NULL, MB_OK);
+
+        // m_LoadedParticleName Text Input 내용을 되돌려 놓는다
+        m_LoadedParticleName->ResetText();
+
         return;
     }
 
@@ -260,6 +283,10 @@ void CParticleComponentWidget::OnDropParticleToParticleWidget(const std::string&
     if (!LoadResult)
     {
         MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Particle Class Load Failure From Bin/ParticleClass"), NULL, MB_OK);
+
+        // m_LoadedParticleName Text Input 내용을 되돌려 놓는다
+        m_LoadedParticleName->ResetText();
+
         return;
     }
 
