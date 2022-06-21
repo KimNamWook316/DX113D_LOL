@@ -58,6 +58,7 @@ private:
     // Material
     class CIMGUITextInput* m_CurrentMaterialName;
     class CIMGUITextInput* m_LoadedMaterialFileName;
+    class CIMGUIButton*    m_MaterialLoadButton;
 
     // Ground Texture
     class CIMGUISliderFloat* m_GroundTextureScale;
@@ -126,6 +127,9 @@ private:
     void OnSaveParticleObjectButton();
     void OnLoadParticleObjectButton();
     void OnRestartParticleComponentButton();
+
+    // Material Load By Btn
+    void OnLoadParticleMaterialCallback();
 
     // Base Ground Size
     void OnEditBaseGroundSize(float Speed);
@@ -209,7 +213,7 @@ private:
     // Edit 시작 하기 (기본 설정 세팅)
     void SetStartEditing();
 
-    // Particle Component 에 Particle 세팅하기 
+    // Particle Component 에 Particle 세팅하기 .
     void SetParticleToParticleComponent(class CParticleComponent* Component, const char* ParticleName);
     void SetParticleToParticleComponent(class CParticleComponent* Component, CParticle* Particle);
 

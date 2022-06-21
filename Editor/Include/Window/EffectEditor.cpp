@@ -116,6 +116,9 @@ HelpText = AddWidget<CIMGUIText>("MtrlFileName", 90.f, 30.f);
     HelpText->SetText(LoadedMtrlHelpText);
     HelpText->SetIsHelpMode(true);
 
+    m_MaterialLoadButton = AddWidget<CIMGUIButton>("Load/Set Material", 180.f, 20.f);
+    m_MaterialLoadButton->SetClickCallback<CEffectEditor>(this, &CEffectEditor::OnLoadParticleMaterialCallback);
+
     // Camera
     CIMGUITree* Tree = AddWidget<CIMGUITree>("Camera");
 
@@ -361,6 +364,82 @@ void CEffectEditor::OnRestartParticleComponentButton()
 
     // IMGUI가 Paritlc Object 정보 반영하게 하기 
     SetIMGUIReflectObjectCamera();
+}
+
+void CEffectEditor::OnLoadParticleMaterialCallback()
+{
+    // Load 하고
+    const PathInfo* MaterialPathInfo = CPathManager::GetInst()->FindPath(MATERIAL_PARTICLE_PATH);
+
+    // Bin//Material//ParticleMaterial 폴더가 있는지 확인하고 만들어준다.
+    CEngineUtil::CheckAndMakeDirectory(MaterialPathInfo);
+
+    TCHAR FilePath[MAX_PATH] = {};
+
+    OPENFILENAME OpenFile = {};
+    OpenFile.lStructSize = sizeof(OPENFILENAME);
+    OpenFile.hwndOwner = CEngine::GetInst()->GetWindowHandle();
+    OpenFile.lpstrFilter = TEXT("All Files\0*.*\0.Material File\0*.mtrl");
+    OpenFile.lpstrFile = FilePath;
+    OpenFile.nMaxFile = MAX_PATH;
+    OpenFile.lpstrInitialDir = MaterialPathInfo->Path;
+
+    if (GetOpenFileName(&OpenFile) != 0)
+    {
+        char	Ext[_MAX_EXT] = {};
+
+        char FilePathMultibyte[MAX_PATH] = {};
+        char FileName[MAX_PATH] = {};
+
+        int ConvertLength = WideCharToMultiByte(CP_ACP, 0, FilePath, -1, 0, 0, 0, 0);
+        WideCharToMultiByte(CP_ACP, 0, FilePath, -1, FilePathMultibyte, ConvertLength, 0, 0);
+
+        _splitpath_s(FilePathMultibyte, nullptr, 0, nullptr, 0, FileName, MAX_PATH, Ext, _MAX_EXT);
+
+        _strupr_s(Ext);
+
+        // 현재 Load하는 Directory가 Bin/Material/ParticleMaterial 인지 확인하기 => 아니라면, Load
+        std::string PathInfoBeforeFileName;
+        CEditorUtil::GetPathInfoBeforeFileName(FilePathMultibyte, PathInfoBeforeFileName);
+
+        if (strcmp(MaterialPathInfo->PathMultibyte, PathInfoBeforeFileName.c_str()) != 0)
+        {
+            MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Particle Material 의 경우, 반드시 Bin/Material/ParticleMaterial 로부터 Load 해야 한다."), NULL, MB_OK);
+            return;
+        }
+        // 확장자 .anim 이 아니라면 return;
+        if (strcmp(Ext, ".MTRL") != 0)
+        {
+            MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("EXT Has To Be .mtrl"), NULL, MB_OK);
+            return;
+        }
+
+        // 파일 이름을, Material 을 저장하는 Key 값으로 활용할 것이다.
+        CMaterial* LoadedMaterial = CResourceManager::GetInst()->LoadMaterialFullPathMultibyte(FilePathMultibyte);
+
+        if (!LoadedMaterial)
+        {
+            MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Material Load Failure"), NULL, MB_OK);
+            return;
+        }
+  
+        std::string MaterialFileName = LoadedMaterial->GetName();
+
+        if (MaterialFileName.find(".mtrl") == std::string::npos)
+            MaterialFileName.append(".mtrl");
+
+        // Hard Disk 로부터, File을 Drop했을 경우에만, FileName을 세팅한다.
+        m_LoadedMaterialFileName->SetText(MaterialFileName.c_str());
+
+        // Particle 에 세팅하고
+        ApplyNewMaterial(LoadedMaterial);
+
+        // ResourceDisplay Window 에 있는 Texture 목록들 Resource Window 에 추가해서 보여주기
+        CEditorManager::GetInst()->GetResourceDisplayWindow()->RefreshLoadedTextureResources();
+        CEditorManager::GetInst()->GetResourceDisplayWindow()->RefreshLoadedMaterialResources();
+        CEditorManager::GetInst()->GetResourceDisplayWindow()->RefreshLoadedRenderStateResources();
+        CEditorManager::GetInst()->GetResourceDisplayWindow()->RefreshLoadedShaderResources();
+    }
 }
 
 void CEffectEditor::OnEditBaseGroundSize(float Size)
@@ -1139,6 +1218,18 @@ void CEffectEditor::OnDropMaterialToParticle(const std::string& InputName)
 
 void CEffectEditor::ApplyNewMaterial(CMaterial* FoundMaterial)
 {
+    if (!m_ParticleClass)
+    {
+        // 제대로 세팅되었다는 Message
+        MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Particle이 Setting 되지 않았습니다."), NULL, MB_OK);
+
+        // 혹시나 Material Loaded FileName 이름이 해당 함수로 들어오기 전에 세팅되었을 수도 있으므로 
+        // 다시 되돌려 놓는다.
+        m_LoadedMaterialFileName->ResetText();
+
+        return;
+    }
+
     if (!FoundMaterial)
         return;
 
