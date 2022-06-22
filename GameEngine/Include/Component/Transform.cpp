@@ -65,6 +65,8 @@ CTransform::CTransform(const CTransform& transform)
 CTransform::~CTransform()
 {
 	SAFE_DELETE(m_CBuffer);
+
+	OnDestroy();
 }
 
 void CTransform::SetInstancingInfo(Instancing3DInfo* Info)
@@ -970,6 +972,17 @@ void CTransform::CallChangeScaleCallBack()
 	for (; iter != iterEnd; ++iter)
 	{
 		(*iter).Func(m_WorldScale, m_RelativeScale);
+	}
+}
+
+void CTransform::OnDestroy()
+{
+	auto iter = m_OnDestroyCallBackList.begin();
+	auto iterEnd = m_OnDestroyCallBackList.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		(*iter)();
 	}
 }
 

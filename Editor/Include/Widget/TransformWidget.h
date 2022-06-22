@@ -21,6 +21,7 @@ public:
     void OnChangeTransformScale(const Vector3& WorldScale, const Vector3& RelativeScale);
     void OnChangeTransformPos(const Vector3& WorldPos, const Vector3& RelativePos);
     void OnChangeTransformRot(const Vector3& WorldRot, const Vector3& RelativeRot);
+    void OnTransformDestroy();
 
 // 위젯에서 값 변경시 호출
 private:
@@ -33,7 +34,7 @@ private:
     void OnChangeRelativeScale(const Vector3& Scale);
 
 private:
-    CSharedPtr<class CSceneComponent> m_SceneComponent;
+    class CSceneComponent* m_SceneComponent;
     class CTransform* m_Transform;
 
     class CIMGUICheckBox* m_InheritCheckBox;

@@ -36,7 +36,7 @@ private:
     void OnSelectObjectType(int Idx, const char* label);
 
 private:
-    CSharedPtr<class CGameObject> m_Object;
+    class CGameObject* m_Object;
     class CIMGUITextInput* m_NameInput;
     class CIMGUIButton* m_RenameButton;
     class CIMGUICheckBox* m_EnableCheckBox;
