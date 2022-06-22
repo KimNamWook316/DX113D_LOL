@@ -101,12 +101,122 @@ bool CLightComponent::Save(FILE* File)
 {
 	CSceneComponent::Save(File);
 
+	Vector4 Color = m_CBuffer->GetLightColor();
+	Light_Type Type = (Light_Type)m_CBuffer->GetLightType();
+	float Distance = m_CBuffer->GetLightDistance();
+	float AngleIn = m_CBuffer->GetLightAngleIn();
+	float AngleOut = m_CBuffer->GetLightAngleOut();
+	float Att1 = m_CBuffer->GetLightAtt1();
+	float Att2 = m_CBuffer->GetLightAtt2();
+	float Att3 = m_CBuffer->GetLightAtt3();
+
+	fwrite(&Color, sizeof(Vector4), 1, File);
+	fwrite(&Type, sizeof(Light_Type), 1, File);
+	fwrite(&Distance, sizeof(float), 1, File);
+	fwrite(&AngleIn, sizeof(float), 1, File);
+	fwrite(&AngleOut, sizeof(float), 1, File);
+	fwrite(&Att1, sizeof(float), 1, File);
+	fwrite(&Att2, sizeof(float), 1, File);
+	fwrite(&Att3, sizeof(float), 1, File);
+
 	return true;
 }
 
 bool CLightComponent::Load(FILE* File)
 {
 	CSceneComponent::Load(File);
+
+	Vector4 Color;
+	Light_Type Type;
+	float Distance;
+	float AngleIn;
+	float AngleOut;
+	float Att1;
+	float Att2;
+	float Att3;
+
+	fread(&Color, sizeof(Vector4), 1, File);
+	fread(&Type, sizeof(Light_Type), 1, File);
+	fread(&Distance, sizeof(float), 1, File);
+	fread(&AngleIn, sizeof(float), 1, File);
+	fread(&AngleOut, sizeof(float), 1, File);
+	fread(&Att1, sizeof(float), 1, File);
+	fread(&Att2, sizeof(float), 1, File);
+	fread(&Att3, sizeof(float), 1, File);
+
+	m_CBuffer = new CLightConstantBuffer;
+	m_CBuffer->Init();
+
+	m_CBuffer->SetColor(Color);
+	m_CBuffer->SetLightType(Type);
+	m_CBuffer->SetDistance(Distance);
+	m_CBuffer->SetAngleIn(AngleIn);
+	m_CBuffer->SetAngleOut(AngleOut);
+	m_CBuffer->SetAtt1(Att1);
+	m_CBuffer->SetAtt1(Att2);
+	m_CBuffer->SetAtt1(Att3);
+
+	return true;
+}
+
+bool CLightComponent::SaveOnly(FILE* File)
+{
+	CSceneComponent::SaveOnly(File);
+
+	Vector4 Color = m_CBuffer->GetLightColor();
+	Light_Type Type = (Light_Type)m_CBuffer->GetLightType();
+	float Distance = m_CBuffer->GetLightDistance();
+	float AngleIn = m_CBuffer->GetLightAngleIn();
+	float AngleOut = m_CBuffer->GetLightAngleOut();
+	float Att1 = m_CBuffer->GetLightAtt1();
+	float Att2 = m_CBuffer->GetLightAtt2();
+	float Att3 = m_CBuffer->GetLightAtt3();
+
+	fwrite(&Color, sizeof(Vector4), 1, File);
+	fwrite(&Type, sizeof(Light_Type), 1, File);
+	fwrite(&Distance, sizeof(float), 1, File);
+	fwrite(&AngleIn, sizeof(float), 1, File);
+	fwrite(&AngleOut, sizeof(float), 1, File);
+	fwrite(&Att1, sizeof(float), 1, File);
+	fwrite(&Att2, sizeof(float), 1, File);
+	fwrite(&Att3, sizeof(float), 1, File);
+
+	return true;
+}
+
+bool CLightComponent::LoadOnly(FILE* File)
+{
+	CSceneComponent::LoadOnly(File);
+
+	Vector4 Color = m_CBuffer->GetLightColor();
+	Light_Type Type = (Light_Type)m_CBuffer->GetLightType();
+	float Distance = m_CBuffer->GetLightDistance();
+	float AngleIn = m_CBuffer->GetLightAngleIn();
+	float AngleOut = m_CBuffer->GetLightAngleOut();
+	float Att1 = m_CBuffer->GetLightAtt1();
+	float Att2 = m_CBuffer->GetLightAtt2();
+	float Att3 = m_CBuffer->GetLightAtt3();
+
+	fread(&Color, sizeof(Vector4), 1, File);
+	fread(&Type, sizeof(Light_Type), 1, File);
+	fread(&Distance, sizeof(float), 1, File);
+	fread(&AngleIn, sizeof(float), 1, File);
+	fread(&AngleOut, sizeof(float), 1, File);
+	fread(&Att1, sizeof(float), 1, File);
+	fread(&Att2, sizeof(float), 1, File);
+	fread(&Att3, sizeof(float), 1, File);
+
+	m_CBuffer = new CLightConstantBuffer;
+	m_CBuffer->Init();
+
+	m_CBuffer->SetColor(Color);
+	m_CBuffer->SetLightType(Type);
+	m_CBuffer->SetDistance(Distance);
+	m_CBuffer->SetAngleIn(AngleIn);
+	m_CBuffer->SetAngleOut(AngleOut);
+	m_CBuffer->SetAtt1(Att1);
+	m_CBuffer->SetAtt1(Att2);
+	m_CBuffer->SetAtt1(Att3);
 
 	return true;
 }

@@ -349,6 +349,12 @@ CComponent* CEditorManager::CreateComponent(CGameObject* Obj, size_t Type)
 		return Component;
 	}
 
+	else if (Type == typeid(CLightComponent).hash_code())
+	{
+		CLightComponent* Component = Obj->LoadComponent<CLightComponent>();
+		return Component;
+	}
+
 	return nullptr;
 }
 
