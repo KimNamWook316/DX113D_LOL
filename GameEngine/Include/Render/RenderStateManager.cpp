@@ -33,7 +33,7 @@ bool CRenderStateManager::Init()
 	AddBlendInfo("AlphaBlend_MRT", true, D3D11_BLEND_SRC_ALPHA, D3D11_BLEND_INV_SRC_ALPHA);
 	AddBlendInfo("AlphaBlend_MRT", false);
 	AddBlendInfo("AlphaBlend_MRT", false);
-	AddBlendInfo("AlphaBlend_MRT", false);
+	// AddBlendInfo("AlphaBlend_MRT", false);
 	CreateBlendState("AlphaBlend_MRT", false, true);
 
 	return true;

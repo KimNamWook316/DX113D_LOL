@@ -126,6 +126,7 @@
     <ClCompile Include="Ref.cpp" />
     <ClCompile Include="Render\BlendState.cpp" />
     <ClCompile Include="Render\DepthStencilState.cpp" />
+    <ClCompile Include="Render\PostFXRenderer.cpp" />
     <ClCompile Include="Render\RasterizerState.cpp" />
     <ClCompile Include="Render\RenderManager.cpp" />
     <ClCompile Include="Render\RenderState.cpp" />
@@ -164,9 +165,14 @@
     <ClCompile Include="Resource\Shader\ConstantBufferBase.cpp" />
     <ClCompile Include="Resource\Shader\DecalDebugShader.cpp" />
     <ClCompile Include="Resource\Shader\DecalShader.cpp" />
+    <ClCompile Include="Resource\Shader\DownScaleCBuffer.cpp" />
     <ClCompile Include="Resource\Shader\GlobalConstantBuffer.cpp" />
     <ClCompile Include="Resource\Shader\GraphicShader.cpp" />
     <ClCompile Include="Resource\Shader\GrayShader.cpp" />
+    <ClCompile Include="Resource\Shader\HDRDownScaleFirstPassShader.cpp" />
+    <ClCompile Include="Resource\Shader\HDRDownScaleSecondPathShader.cpp" />
+    <ClCompile Include="Resource\Shader\HDRRenderCBuffer.cpp" />
+    <ClCompile Include="Resource\Shader\HDRRenderShader.cpp" />
     <ClCompile Include="Resource\Shader\InstancingCBuffer.cpp" />
     <ClCompile Include="Resource\Shader\LandScapeConstantBuffer.cpp" />
     <ClCompile Include="Resource\Shader\LandScapeShader.cpp" />
@@ -354,6 +360,7 @@
     <ClInclude Include="Ref.h" />
     <ClInclude Include="Render\BlendState.h" />
     <ClInclude Include="Render\DepthStencilState.h" />
+    <ClInclude Include="Render\PostFXRenderer.h" />
     <ClInclude Include="Render\RasterizerState.h" />
     <ClInclude Include="Render\RenderManager.h" />
     <ClInclude Include="Render\RenderState.h" />
@@ -393,9 +400,14 @@
     <ClInclude Include="Resource\Shader\ConstantBufferBase.h" />
     <ClInclude Include="Resource\Shader\DecalDebugShader.h" />
     <ClInclude Include="Resource\Shader\DecalShader.h" />
+    <ClInclude Include="Resource\Shader\DownScaleCBuffer.h" />
     <ClInclude Include="Resource\Shader\GlobalConstantBuffer.h" />
     <ClInclude Include="Resource\Shader\GraphicShader.h" />
     <ClInclude Include="Resource\Shader\GrayShader.h" />
+    <ClInclude Include="Resource\Shader\HDRDownScaleFirstPassShader.h" />
+    <ClInclude Include="Resource\Shader\HDRDownScaleSecondPathShader.h" />
+    <ClInclude Include="Resource\Shader\HDRRenderCBuffer.h" />
+    <ClInclude Include="Resource\Shader\HDRRenderShader.h" />
     <ClInclude Include="Resource\Shader\InstancingCBuffer.h" />
     <ClInclude Include="Resource\Shader\LandScapeConstantBuffer.h" />
     <ClInclude Include="Resource\Shader\LandScapeShader.h" />
@@ -535,6 +547,22 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Effect</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">GrayVS</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="..\Bin\Shader\HDRDownScale.fx">
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">DownScaleFirstPass</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">DownScaleFirstPass</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="..\Bin\Shader\HDRRender.fx">
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">HDRRenderVS</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">HDRRenderVS</EntryPointName>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Effect</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>

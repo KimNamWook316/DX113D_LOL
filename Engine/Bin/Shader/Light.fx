@@ -26,7 +26,7 @@ Texture2DMS<float4> g_LightEmvTex : register(t20);
 Texture2DMS<float4> g_LightBlendTex : register(t21);
 Texture2DMS<float4> g_ShadowMapTex : register(t22);
 
-Texture2DMS<float4> g_OutlineTex : register(t23);
+// Texture2DMS<float4> g_OutlineTex : register(t23);
 
 cbuffer ShadowCBuffer : register(b10)
 {
@@ -260,12 +260,12 @@ PSOutput_Single LightBlendRenderPS(VS_OUTPUT_LIGHTACC input)
 
 	output.Color = LightBlendColor;
 
-	float4 OutlineColor = g_OutlineTex.Load(TargetPos, 0);
-
-    if (OutlineColor.a > 0.f)
-	{
-		output.Color.rgb = lerp(LightBlendColor.rgb, OutlineColor.rgb, OutlineColor.a);
-	}
+ //	float4 OutlineColor = g_OutlineTex.Load(TargetPos, 0);
+ //
+ //    if (OutlineColor.a > 0.f)
+ //	{
+ //		output.Color.rgb = lerp(LightBlendColor.rgb, OutlineColor.rgb, OutlineColor.a);
+ //	}
 
     return output;
 }

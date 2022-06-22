@@ -70,14 +70,18 @@ bool CToolWindow::Init()
 	// Outline
 	m_RenderBlock = AddWidget<CIMGUICollapsingHeader>("Render", 200.f);
 	m_DebugRender = m_RenderBlock->AddWidget<CIMGUICheckBox>("DebugRender");
-	CIMGUITree* Tree = m_RenderBlock->AddWidget<CIMGUITree>("Outline", 200.f);
-	m_OutlineDepthMultiply = Tree->AddWidget<CIMGUISliderFloat>("Outline Depth Multiplier");
-	m_OutlineDepthBias = Tree->AddWidget<CIMGUISliderFloat>("Outline Depth Bias");
-	m_OutlineNormalMutliply = Tree->AddWidget<CIMGUISliderFloat>("Outline Normal Mutiplier");
-	m_OutlineNormalBias = Tree->AddWidget<CIMGUISliderFloat>("Outline Normal Bias");
-	// Gray
-	Tree = m_RenderBlock->AddWidget<CIMGUITree>("Gray", 200.f);
-	m_GrayEnable = Tree->AddWidget<CIMGUICheckBox>("GrayShader Enable", 200.f);
+	m_PostProcessing = m_RenderBlock->AddWidget<CIMGUICheckBox>("PostProcessing(HDR)");
+	CIMGUITree* Tree = m_RenderBlock->AddWidget<CIMGUITree>("HDR Value", 200.f);
+	m_MiddleGray = Tree->AddWidget<CIMGUISliderFloat>("MiddleGray");
+	m_LumWhite = Tree->AddWidget<CIMGUISliderFloat>("LumWhite");
+ //	CIMGUITree* Tree = m_RenderBlock->AddWidget<CIMGUITree>("Outline", 200.f);
+ //	m_OutlineDepthMultiply = Tree->AddWidget<CIMGUISliderFloat>("Outline Depth Multiplier");
+ //	m_OutlineDepthBias = Tree->AddWidget<CIMGUISliderFloat>("Outline Depth Bias");
+ //	m_OutlineNormalMutliply = Tree->AddWidget<CIMGUISliderFloat>("Outline Normal Mutiplier");
+ //	m_OutlineNormalBias = Tree->AddWidget<CIMGUISliderFloat>("Outline Normal Bias");
+ //	// Gray
+ //	Tree = m_RenderBlock->AddWidget<CIMGUITree>("Gray", 200.f);
+ //	m_GrayEnable = Tree->AddWidget<CIMGUICheckBox>("GrayShader Enable", 200.f);
 
 	// Initial Value
 	bool Play = CSceneManager::GetInst()->GetScene()->IsPlay();
@@ -94,24 +98,37 @@ bool CToolWindow::Init()
 	m_CameraSpeed->SetMin(0.f);
 	m_CameraSpeed->SetMax(10.f);
 	m_CameraSpeed->SetValue(CEditorManager::GetInst()->Get3DCameraObject()->GetCameraSpeed());
-	m_OutlineDepthMultiply->SetMin(0.1f);
-	m_OutlineDepthMultiply->SetMax(5.f);
-	m_OutlineDepthBias->SetMin(0.1f);
-	m_OutlineDepthBias->SetMax(50.f);
-	m_OutlineNormalMutliply->SetMin(0.1f);
-	m_OutlineNormalMutliply->SetMax(5.f);
-	m_OutlineNormalBias->SetMin(0.1f);
-	m_OutlineNormalBias->SetMax(50.f);
+ //	m_OutlineDepthMultiply->SetMin(0.1f);
+ //	m_OutlineDepthMultiply->SetMax(5.f);
+ //	m_OutlineDepthBias->SetMin(0.1f);
+ //	m_OutlineDepthBias->SetMax(50.f);
+ //	m_OutlineNormalMutliply->SetMin(0.1f);
+ //	m_OutlineNormalMutliply->SetMax(5.f);
+ //	m_OutlineNormalBias->SetMin(0.1f);
+ //	m_OutlineNormalBias->SetMax(50.f);
 
-	m_OutlineDepthMultiply->SetValue(CRenderManager::GetInst()->GetOutlineDepthMultiplier());
-	m_OutlineDepthBias->SetValue(CRenderManager::GetInst()->GetOutlineDepthBias());
-	m_OutlineNormalMutliply->SetValue(CRenderManager::GetInst()->GetOutlineNormalMultiplier());
-	m_OutlineNormalBias->SetValue(CRenderManager::GetInst()->GetOutlineNormalBias());
-	
-	m_GrayEnable->AddCheckInfo("Enable GrayShader");
+ //	m_OutlineDepthMultiply->SetValue(CRenderManager::GetInst()->GetOutlineDepthMultiplier());
+ //	m_OutlineDepthBias->SetValue(CRenderManager::GetInst()->GetOutlineDepthBias());
+ //	m_OutlineNormalMutliply->SetValue(CRenderManager::GetInst()->GetOutlineNormalMultiplier());
+ //	m_OutlineNormalBias->SetValue(CRenderManager::GetInst()->GetOutlineNormalBias());
+ //	
+ //	m_GrayEnable->AddCheckInfo("Enable GrayShader");
 
-	bool IsGray = CRenderManager::GetInst()->IsGray();
-	m_GrayEnable->SetCheck(0, IsGray);
+ //	bool IsGray = CRenderManager::GetInst()->IsGray();
+ //	m_GrayEnable->SetCheck(0, IsGray);
+	m_PostProcessing->AddCheckInfo("Enable PostProcessing(HDR)");
+	bool IsPostProcessing = CRenderManager::GetInst()->IsPostProcessingEnable();
+	m_PostProcessing->SetCheck(0, IsPostProcessing);
+
+	float MiddleGray = CRenderManager::GetInst()->GetMiddleGray();
+	m_MiddleGray->SetValue(MiddleGray);
+	m_MiddleGray->SetMin(0.1f);
+	m_MiddleGray->SetMax(5.f);
+
+	float LumWhite = CRenderManager::GetInst()->GetLumWhite();
+	m_LumWhite->SetValue(LumWhite);
+	m_LumWhite->SetMin(0.9f);
+	m_LumWhite->SetMax(5.f);
 
 	m_DebugRender->AddCheckInfo("Debug Render");
 	bool IsDebugRender = CRenderManager::GetInst()->IsDebugRender();
@@ -121,15 +138,18 @@ bool CToolWindow::Init()
 	m_GizmoTransformMode->SetCallBack(this, &CToolWindow::OnSelectGizmoTransformMode);
 	m_GizmoOperationMode->SetCallBack(this, &CToolWindow::OnSelectGizmoOperationMode);
 	m_CameraSpeed->SetCallBack(this, &CToolWindow::OnChangeCameraSpeed);
-	m_OutlineDepthMultiply->SetCallBack(this, &CToolWindow::OnChangeOutlineDepthMultiply);
-	m_OutlineDepthBias->SetCallBack(this, &CToolWindow::OnChangeOutlineDepthBias);
-	m_OutlineNormalMutliply->SetCallBack(this, &CToolWindow::OnChangeOutlineNormalMultiply);
-	m_OutlineNormalBias->SetCallBack(this, &CToolWindow::OnChangeOutlineNormalBias);
-	m_GrayEnable->SetCallBackLabel(this, &CToolWindow::OnCheckGrayEnable);
+ //	m_OutlineDepthMultiply->SetCallBack(this, &CToolWindow::OnChangeOutlineDepthMultiply);
+ //	m_OutlineDepthBias->SetCallBack(this, &CToolWindow::OnChangeOutlineDepthBias);
+ //	m_OutlineNormalMutliply->SetCallBack(this, &CToolWindow::OnChangeOutlineNormalMultiply);
+ //	m_OutlineNormalBias->SetCallBack(this, &CToolWindow::OnChangeOutlineNormalBias);
+ //	m_GrayEnable->SetCallBackLabel(this, &CToolWindow::OnCheckGrayEnable);
 	m_DebugRender->SetCallBackLabel(this, &CToolWindow::OnCheckDebugRender);
+	m_PostProcessing->SetCallBackLabel(this, &CToolWindow::OnCheckPostProcessing);
 	m_Play->SetClickCallback(this, &CToolWindow::OnClickPlay);
 	m_Pause->SetClickCallback(this, &CToolWindow::OnClickPause);
 	m_Stop->SetClickCallback(this, &CToolWindow::OnClickStop);
+	m_MiddleGray->SetCallBack(this, &CToolWindow::OnChangeMiddleGray);
+	m_LumWhite->SetCallBack(this, &CToolWindow::OnChangeLumWhite);
 
 	// 디버그용 임시 키
 	CInput::GetInst()->CreateKey("Z", 'Z');
@@ -199,35 +219,50 @@ void CToolWindow::OnChangeCameraSpeed(float Speed)
 	CEditorManager::GetInst()->Get3DCameraObject()->SetCameraSpeed(Speed);
 }
 
-void CToolWindow::OnChangeOutlineDepthMultiply(float Val)
+void CToolWindow::OnChangeLumWhite(float White)
 {
-	CRenderManager::GetInst()->SetOutlineDepthMultiplier(Val);
+	CRenderManager::GetInst()->SetLumWhite(White);
 }
 
-void CToolWindow::OnChangeOutlineDepthBias(float Val)
+void CToolWindow::OnChangeMiddleGray(float Gray)
 {
-	CRenderManager::GetInst()->SetOutlineDepthBias(Val);
+	CRenderManager::GetInst()->SetMiddleGray(Gray);
 }
 
-void CToolWindow::OnChangeOutlineNormalMultiply(float Val)
-{
-	CRenderManager::GetInst()->SetOutlineNormalMultiplier(Val);
-}
-
-void CToolWindow::OnChangeOutlineNormalBias(float Val)
-{
-	CRenderManager::GetInst()->SetOutlineNormalBias(Val);
-}
+ //void CToolWindow::OnChangeOutlineDepthMultiply(float Val)
+ //{
+ //	CRenderManager::GetInst()->SetOutlineDepthMultiplier(Val);
+ //}
+ //
+ //void CToolWindow::OnChangeOutlineDepthBias(float Val)
+ //{
+ //	CRenderManager::GetInst()->SetOutlineDepthBias(Val);
+ //}
+ //
+ //void CToolWindow::OnChangeOutlineNormalMultiply(float Val)
+ //{
+ //	CRenderManager::GetInst()->SetOutlineNormalMultiplier(Val);
+ //}
+ //
+ //void CToolWindow::OnChangeOutlineNormalBias(float Val)
+ //{
+ //	CRenderManager::GetInst()->SetOutlineNormalBias(Val);
+ //}
 
 void CToolWindow::OnCheckDebugRender(const char* Label, bool Check)
 {
 	CRenderManager::GetInst()->SetDebugRender(Check);
 }
 
-void CToolWindow::OnCheckGrayEnable(const char* Label, bool Check)
+void CToolWindow::OnCheckPostProcessing(const char* Label, bool Check)
 {
-	CRenderManager::GetInst()->GrayEnable(Check);
+	CRenderManager::GetInst()->EnablePostProcessing(Check);
 }
+
+ //void CToolWindow::OnCheckGrayEnable(const char* Label, bool Check)
+ //{
+ //	CRenderManager::GetInst()->GrayEnable(Check);
+ //}
 
 void CToolWindow::OnClickPlay()
 {

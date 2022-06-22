@@ -113,15 +113,18 @@ private:
 	// Debug Render
 	bool m_DebugRender;
 
-	// Grayscale
-	bool m_Gray;
-	CSharedPtr<class CShader> m_GrayShader;
+	// Post Processing (HDR)
+	bool m_PostProcessing;
 
-	// OutLine
-	bool m_OutLine;
-	CSharedPtr<class CShader> m_OutLineShader;
-	class COutlineConstantBuffer* m_OutlineCBuffer;
-	CSharedPtr<CRenderTarget> m_OutlineTarget;
+ //	// Grayscale
+ //	bool m_Gray;
+ //	CSharedPtr<class CShader> m_GrayShader;
+
+ //	// OutLine
+ //	bool m_OutLine;
+ //	CSharedPtr<class CShader> m_OutLineShader;
+ //	class COutlineConstantBuffer* m_OutlineCBuffer;
+ //	CSharedPtr<CRenderTarget> m_OutlineTarget;
 
 	// Animation Editor 
 	CSharedPtr<class CShader> m_Mesh3DNoLightRenderShader; // m_AnimEditorRenderTarget 에 그려내기 위한 Shader 
@@ -130,6 +133,10 @@ private:
 	// Particle Editor
 	CSharedPtr<class CShader> m_ParticleShader; // m_AnimEditorRenderTarget 에 그려내기 위한 Shader 
 	CSharedPtr<CRenderTarget>	m_ParticleEffectEditorRenderTarget; // Skinning 처리 이후, 해당 출력을, 별도의 RenderTarget 에 그려낸다.
+
+	// Post Processing Renderer
+	class CPostFXRenderer* m_PostFXRenderer;
+
 public :
 	CRenderStateManager* GetRenderStateManager() const
 	{
@@ -156,60 +163,76 @@ public:
 		return m_ParticleEffectEditorRenderTarget;
 	}
 
-	void SetOutlineDepthMultiplier(float Val)
-	{
-		m_OutlineCBuffer->SetDepthMultiplier(Val);
-	}
+ //	void SetOutlineDepthMultiplier(float Val)
+ //	{
+ //		m_OutlineCBuffer->SetDepthMultiplier(Val);
+ //	}
+ //
+ //	void SetOutlineDepthBias(float Val)
+ //	{
+ //		m_OutlineCBuffer->SetDepthBias(Val);
+ //	}
+ //
+ //	void SetOutlineNormalMultiplier(float Val)
+ //	{
+ //		m_OutlineCBuffer->SetNormalMultiplier(Val);
+ //	}
+ //
+ //	void SetOutlineNormalBias(float Val)
+ //	{
+ //		m_OutlineCBuffer->SetNormalBias(Val);
+ //	}
 
-	void SetOutlineDepthBias(float Val)
-	{
-		m_OutlineCBuffer->SetDepthBias(Val);
-	}
-
-	void SetOutlineNormalMultiplier(float Val)
-	{
-		m_OutlineCBuffer->SetNormalMultiplier(Val);
-	}
-
-	void SetOutlineNormalBias(float Val)
-	{
-		m_OutlineCBuffer->SetNormalBias(Val);
-	}
-
-	void GrayEnable(bool Enable)
-	{
-		m_Gray = Enable;
-	}
+ //	void GrayEnable(bool Enable)
+ //	{
+ //		m_Gray = Enable;
+ //	}
 
 	void SetDebugRender(bool DebugRender)
 	{
 		m_DebugRender = DebugRender;
 	}
 
-	float GetOutlineDepthMultiplier()
+ //	float GetOutlineDepthMultiplier()
+ //	{
+ //		return m_OutlineCBuffer->GetDepthMultiplier();
+ //	}
+ //
+ //	float GetOutlineDepthBias()
+ //	{
+ //		return m_OutlineCBuffer->GetDepthBias();
+ //	}
+ //
+ //	float GetOutlineNormalMultiplier()
+ //	{
+ //		return m_OutlineCBuffer->GetNormalMultiplier();
+ //	}
+ //
+ //	float GetOutlineNormalBias()
+ //	{
+ //		return m_OutlineCBuffer->GetNormalBias();
+ //	}
+
+	bool IsPostProcessingEnable()
 	{
-		return m_OutlineCBuffer->GetDepthMultiplier();
+		return m_PostProcessing;
 	}
 
-	float GetOutlineDepthBias()
+	void EnablePostProcessing(bool Enable)
 	{
-		return m_OutlineCBuffer->GetDepthBias();
+		m_PostProcessing = Enable;
 	}
 
-	float GetOutlineNormalMultiplier()
-	{
-		return m_OutlineCBuffer->GetNormalMultiplier();
-	}
+	float GetMiddleGray() const;
+	float GetLumWhite() const;
 
-	float GetOutlineNormalBias()
-	{
-		return m_OutlineCBuffer->GetNormalBias();
-	}
+	void SetMiddleGray(float Gray);
+	void SetLumWhite(float White);
 
-	bool IsGray()
-	{
-		return m_Gray;
-	}
+ //	bool IsGray()
+ //	{
+ //		return m_Gray;
+ //	}
 
 	bool IsDebugRender()
 	{
@@ -237,10 +260,10 @@ private:
 	void RenderDecal();
 	void RenderLightAcc();
 	void RenderLightBlend();
-	void RenderOutLine();
+	// void RenderOutLine();
 	void RenderTransparent();
 	void RenderFinalScreen();
-	void RenderGray();
+	// void RenderGray();
 	void RenderAnimationEditor();
 	void RenderParticleEffectEditor();
 

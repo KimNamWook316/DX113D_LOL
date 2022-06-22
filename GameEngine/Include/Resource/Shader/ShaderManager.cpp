@@ -34,6 +34,9 @@
 #include "TransparentInstancing3DShader.h"
 #include "OutlineShader.h"
 #include "GrayShader.h"
+#include "HDRDownScaleFirstPassShader.h"
+#include "HDRDownScaleSecondPathShader.h"
+#include "HDRRenderShader.h"
 
 CShaderManager::CShaderManager()
 {
@@ -160,13 +163,31 @@ bool CShaderManager::Init()
 	if (!CreateShader<CShadowMapInstancingShader>("ShadowMapInstancingShader"))
 		return false;
 
-	if (!CreateShader<COutlineShader>("OutlineShader"))
+ //	if (!CreateShader<COutlineShader>("OutlineShader"))
+ //	{
+ //		assert(false);
+ //		return false;
+ //	}
+
+ //	if (!CreateShader<CGrayShader>("GrayShader"))
+ //	{
+ //		assert(false);
+ //		return false;
+ //	}
+
+	if (!CreateShader<CHDRDownScaleFirstPathShader>("HDRDownScaleFirstPathShader"))
 	{
 		assert(false);
 		return false;
 	}
 
-	if (!CreateShader<CGrayShader>("GrayShader"))
+	if (!CreateShader<CHDRDownScaleSecondPathShader>("HDRDownScaleSecondPathShader"))
+	{
+		assert(false);
+		return false;
+	}
+
+	if (!CreateShader<CHDRRenderShader>("HDRRenderShader"))
 	{
 		assert(false);
 		return false;
@@ -227,7 +248,13 @@ bool CShaderManager::Init()
 	CreateConstantBuffer("ShadowCBuffer", sizeof(ShadowCBuffer), 10,
 		(int)Buffer_Shader_Type::Graphic);
 
-	CreateConstantBuffer("OutlineConstantBuffer", sizeof(OutlineCBuffer), 10,
+ //	CreateConstantBuffer("OutlineConstantBuffer", sizeof(OutlineCBuffer), 10,
+ //		(int)Buffer_Shader_Type::Pixel);
+
+	CreateConstantBuffer("DownScaleCBuffer", sizeof(DownScaleCBuffer), 10,
+		(int)Buffer_Shader_Type::Compute);
+
+	CreateConstantBuffer("HDRRenderCBuffer", sizeof(HDRRenderCBuffer), 10,
 		(int)Buffer_Shader_Type::Pixel);
 
 	return true;

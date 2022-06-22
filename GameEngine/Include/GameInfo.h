@@ -643,13 +643,13 @@ struct InstancingCBuffer
 	Vector3 InstancingEmpty;
 };
 
-struct OutlineCBuffer
-{
-	float DepthMultiplier;
-	float DepthBias;
-	float NormalMultiplier;
-	float NormalBias;
-};
+ //struct OutlineCBuffer
+ //{
+ //	float DepthMultiplier;
+ //	float DepthBias;
+ //	float NormalMultiplier;
+ //	float NormalBias;
+ //};
 
 struct NotifyParameter
 {
@@ -665,4 +665,21 @@ struct GameData
 	int MP;
 	float MoveSpeed;
 	int Attack;
+};
+
+struct DownScaleCBuffer
+{
+	// 다운스케일 해상도 계산
+	Resolution RS;
+	// 다운스케일 이미지의 총 픽셀 수
+	unsigned int Domain;
+	// 첫 패스에 적용 된 그룹 수 계싼
+	unsigned int GroupSize;
+};
+
+struct HDRRenderCBuffer
+{
+	float MiddleGray;
+	float LumWhiteSqr;
+	Vector2 Empty;
 };
