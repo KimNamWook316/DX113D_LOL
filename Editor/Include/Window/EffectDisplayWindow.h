@@ -10,6 +10,7 @@ public:
     ~CEffectDisplayWindow();
 public:
     virtual bool Init() override;
+    virtual void Update(float DeltaTime);
 private :
     class CIMGUIImage* m_ParticleRenderTarget;
 };

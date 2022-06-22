@@ -121,10 +121,11 @@ public:
 
 private:
 	void CreateProjectionMatrix();
-
+public :
+	// 원하는 Width, Height에 맞춰서 Projection Matrix 를 만들어내는 함수
+	void CreateCustomResolutionProjMatrix(float Width, float Height);
 public:
 	void ComputeShadowView();
-
 public:
 	virtual void Start();
 	virtual bool Init();

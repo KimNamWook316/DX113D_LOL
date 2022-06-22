@@ -4,6 +4,7 @@
 #include "Scene/Scene.h"
 #include "Scene/SceneManager.h"
 #include "Input.h"
+#include "../EditorInfo.h"
 
 C3DParticleObject::C3DParticleObject() :
     m_IsCameraRotate(true),
@@ -40,15 +41,16 @@ bool C3DParticleObject::Init()
     // Arm ¾Æ·¡ Camera
     m_ParticleArm->AddChild(m_ParticleCamera);
 
-    // Camera Setting
-    CSceneManager::GetInst()->GetScene()->GetCameraManager()->SetParticleEditorCamera(m_ParticleCamera);
-
     m_ParticleCamera->SetInheritRotX(true);
     m_ParticleCamera->SetInheritRotY(true);
     m_ParticleCamera->SetInheritRotZ(true);
 
     m_ParticleCamera->SetCameraType(Camera_Type::Camera3D);
     m_ParticleCamera->SetViewAngle(27.f);
+    m_ParticleCamera->CreateCustomResolutionProjMatrix(ParticleEditorWidth, ParticleEditorHeight);
+
+    // Camera Setting
+    CSceneManager::GetInst()->GetScene()->GetCameraManager()->SetParticleEditorCamera(m_ParticleCamera);
 
     m_ParticleArm->SetOffset(0.f, 2.f, 0.f);
     m_ParticleArm->SetRelativeRotation(45.f, 0.f, 0.f);

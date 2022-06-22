@@ -223,7 +223,10 @@ void CParticleComponent::RenderParticleEffectEditor()
 	}
 
 	if (m_Material)
+	{
 		m_Material->Render();
+		m_Material->EnableDecal(m_ReceiveDecal);
+	}
 
 	// 인스턴싱을 이용해서 그려준다.
 	m_Mesh->RenderInstancing(m_CBuffer->GetSpawnCount());
@@ -239,7 +242,7 @@ void CParticleComponent::RenderParticleEffectEditor()
 
 void CParticleComponent::Render()
 {
-	if (!m_Material)
+	if (!m_CBuffer)
 		return;
 
 	CSceneComponent::Render();

@@ -816,7 +816,9 @@ bool CAnimationMeshComponent::Save(FILE* File)
 
 	fwrite(&MaterialSlotCount, sizeof(int), 1, File);
 
-	const PathInfo* MaterialPath = CPathManager::GetInst()->FindPath(MATERIAL_PATH);
+	// 기존 Bin/Material 이 아니라, Bin/Material/AnimationComponentMaterial 폴더에서 Save, Load 될 수 있ㄷ
+	// const PathInfo* MaterialPath = CPathManager::GetInst()->FindPath(MATERIAL_PATH);
+	const PathInfo* MaterialPath = CPathManager::GetInst()->FindPath(MATERIAL_ANIMCOMPONENT_PATH);
 
 	for (int idx = 0; idx < MaterialSlotCount; ++idx)
 	{
@@ -833,6 +835,7 @@ bool CAnimationMeshComponent::Save(FILE* File)
 		std::string SavedExtraMtrlName;
 		SavedExtraMtrlName.reserve(MeshName.length() * 3); 
 		SavedExtraMtrlName = m_Object->GetName() + "_" + MeshName + "_" + std::to_string(idx) + ".mtrl";
+
 
 		strcat_s(MaterialBinPathMutlibyte, SavedExtraMtrlName.c_str());
 
@@ -952,7 +955,6 @@ bool CAnimationMeshComponent::Load(FILE* File)
 	// }
 
 	CSceneComponent::Load(File);
-
 
 
 	return true;

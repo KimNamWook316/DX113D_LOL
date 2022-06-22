@@ -426,10 +426,7 @@ PSOutput_Single ParticlePS(GeometryParticleOutput input)
 	Color = PaperBurn2D(Color * input.Color, input.UV);
 
 	output.Color = Color;
-
-	// 아래 코드를 적용하면 계속 검정색으로만 나온다.
-	output.Color.a = Color.a * g_MtrlOpacity;
-	// output.Color.a = Color.a * g_MtrlOpacity * Alpha;
+	output.Color.a = Color.a * g_MtrlOpacity * Alpha;
 
 	return output;
 }

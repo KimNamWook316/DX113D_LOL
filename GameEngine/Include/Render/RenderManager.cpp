@@ -300,8 +300,11 @@ bool CRenderManager::Init()
 	m_AnimEditorRenderTarget->SetDebugRender(false);
 
 	// Particle Editor 용 Render Target
+	// if (!CResourceManager::GetInst()->CreateTarget("ParticleEffectRenderTarget",
+	// 	RS.Width, RS.Height, DXGI_FORMAT_R32G32B32A32_FLOAT,  true, DXGI_FORMAT_D24_UNORM_S8_UINT))
+	// 	return false;
 	if (!CResourceManager::GetInst()->CreateTarget("ParticleEffectRenderTarget",
-		RS.Width, RS.Height, DXGI_FORMAT_R32G32B32A32_FLOAT))
+		600, 600, DXGI_FORMAT_R32G32B32A32_FLOAT,  true, DXGI_FORMAT_D24_UNORM_S8_UINT))
 		return false;
 
 	m_ParticleEffectEditorRenderTarget = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("ParticleEffectRenderTarget");
@@ -1060,6 +1063,15 @@ void CRenderManager::RenderAnimationEditor()
 
 void CRenderManager::RenderParticleEffectEditor()
 {
+	// 뷰포트 Shadowmap Textre와 일치하도록
+	D3D11_VIEWPORT VP = {};
+
+	VP.Width  = m_ParticleEffectEditorRenderTarget->GetWidth();
+	VP.Height = m_ParticleEffectEditorRenderTarget->GetHeight();
+	VP.MaxDepth = 1.f;
+
+	CDevice::GetInst()->GetContext()->RSSetViewports(1, &VP);
+
 	int ParticleEffectEditorLayerIdx = GetRenderLayerIndex("ParticleEditorLayer");
 
 	// 만~약에 해당 Layer 의 Idx 가 정해져 있지 않다면
@@ -1073,7 +1085,8 @@ void CRenderManager::RenderParticleEffectEditor()
 	// Render Target 교체
 	m_ParticleEffectEditorRenderTarget->ClearTarget();
 
-	m_ParticleEffectEditorRenderTarget->SetTarget(nullptr);
+	// 고유의 Depth Target 사용하기 
+	m_ParticleEffectEditorRenderTarget->SetTarget();
 
 	auto iter = m_RenderLayerList[ParticleEffectEditorLayerIdx]->RenderList.begin();
 	auto iterEnd = m_RenderLayerList[ParticleEffectEditorLayerIdx]->RenderList.end();
@@ -1086,6 +1099,14 @@ void CRenderManager::RenderParticleEffectEditor()
 	}
 
 	m_ParticleEffectEditorRenderTarget->ResetTarget();
+
+	D3D11_VIEWPORT PrevVP = {};
+
+	PrevVP.Width = (float)CDevice::GetInst()->GetResolution().Width;
+	PrevVP.Height = (float)CDevice::GetInst()->GetResolution().Height;
+	PrevVP.MaxDepth = 1.f;
+
+	CDevice::GetInst()->GetContext()->RSSetViewports(1, &PrevVP);
 }
 
 void CRenderManager::SetBlendFactor(const std::string& Name, float r, float g,
