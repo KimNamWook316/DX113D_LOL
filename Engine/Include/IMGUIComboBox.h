@@ -43,6 +43,19 @@ public:
 		return (int)m_vecItem.size();
 	}
 
+	size_t GetItemIndex(const std::string& Name)	const
+	{
+		size_t Count = m_vecItem.size();
+
+		for (size_t i = 0; i < Count; ++i)
+		{
+			if (m_vecItem[i] == Name)
+				return i;
+		}
+
+		return -1;
+	}
+
 public:
 	void AddItem(const std::string& Item)
 	{

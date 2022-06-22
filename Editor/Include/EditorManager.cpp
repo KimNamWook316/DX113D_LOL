@@ -15,12 +15,11 @@
 #include "Component/StaticMeshComponent.h"
 #include "Component/ParticleComponent.h"
 #include "Component/AnimationMeshComponent.h"
-#include "Component/StateComponent.h"
 #include "Component/LandScape.h"
-#include "Component/StateComponent.h"
+#include "Component/GameStateComponent.h"
 #include "Component/ColliderBox3D.h"
 #include "Component/ColliderSphere.h"
-#include "Component/BuildingComponent.h"
+#include "Component/GameDataComponent.h"
 // Window
 #include "Window/ObjectHierarchyWindow.h"
 #include "Window/SceneComponentHierarchyWindow.h"
@@ -45,7 +44,8 @@
 #include "Object/Player2D.h"
 #include "Object/3DCameraObject.h"
 
-#include "Component/State/StateManager.h"
+#include "Component/State/GameStateManager.h"
+#include "DataManager.h"
 
 #include <sstream>
 
@@ -55,13 +55,29 @@ CEditorManager::CEditorManager() :
 	m_EditMode(EditMode::Scene),
 	m_DragObj(nullptr),
 	m_CameraMoveSpeed(1000.f),
-	m_CameraObject(nullptr)
+	m_CameraObject(nullptr),
+	m_StateManager(nullptr)
 {
 }
 
 CEditorManager::~CEditorManager()
 {
 	CEngine::DestroyInst();
+
+
+	SAFE_DELETE(m_StateManager);
+	SAFE_DELETE(m_DataManager);
+	
+}
+
+CGameStateManager* CEditorManager::GetStateManager() const
+{
+	return m_StateManager;
+}
+
+CDataManager* CEditorManager::GetDataManager() const
+{
+	return m_DataManager;
 }
 
 void CEditorManager::SetEditMode(EditMode Mode)
@@ -118,6 +134,16 @@ bool CEditorManager::Init(HINSTANCE hInst)
 	// 각종 윈도우 생성
 	CreateWindows();
 
+	m_StateManager = new CGameStateManager;
+
+	m_StateManager->Init();
+
+	CSceneManager::GetInst()->SetStateManager(m_StateManager);
+
+	m_DataManager = new CDataManager;
+
+	m_DataManager->Init();
+	
 	return true;
 }
 
@@ -290,9 +316,9 @@ CComponent* CEditorManager::CreateComponent(CGameObject* Obj, size_t Type)
 		return Component;
 	}
 
-	else if (Type == typeid(CStateComponent).hash_code())
+	else if (Type == typeid(CGameStateComponent).hash_code())
 	{
-		CStateComponent* Component = Obj->LoadObjectComponent<CStateComponent>();
+		CGameStateComponent* Component = Obj->LoadObjectComponent<CGameStateComponent>();
 		return Component;
 	}
 
@@ -316,9 +342,9 @@ CComponent* CEditorManager::CreateComponent(CGameObject* Obj, size_t Type)
 		return Component;
 	}
 
-	else if (Type == typeid(CBuildingComponent).hash_code())
+	else if (Type == typeid(CGameDataComponent).hash_code())
 	{
-		CBuildingComponent* Component = Obj->LoadComponent<CBuildingComponent>();
+		CGameDataComponent* Component = Obj->LoadObjectComponent<CGameDataComponent>();
 		// Component->EnableEditMode(true);
 		return Component;
 	}
@@ -351,11 +377,11 @@ void CEditorManager::CreateKey()
 	CInput::GetInst()->SetKeyCallback("Left", KeyState_Push, this, &CEditorManager::KeyboardLeft);
 	CInput::GetInst()->SetKeyCallback("Right", KeyState_Push, this, &CEditorManager::KeyboardRight);
 
-	CInput::GetInst()->CreateKey("MoveUp", 'W');
-	CInput::GetInst()->CreateKey("MoveDown", 'S');
-	CInput::GetInst()->CreateKey("RotationZInv", 'A');
-	CInput::GetInst()->CreateKey("RotationZ", 'D');
-	CInput::GetInst()->CreateKey("SkillQ", 'Q');
+	CInput::GetInst()->CreateKey("MoveForward", 'W');
+	CInput::GetInst()->CreateKey("MoveBack", 'S');
+	CInput::GetInst()->CreateKey("MoveLeft", 'A');
+	CInput::GetInst()->CreateKey("MoveRight", 'D');
+
 	CInput::GetInst()->CreateKey("SkillW", 'W');
 	CInput::GetInst()->CreateKey("SkillE", 'E');
 	CInput::GetInst()->CreateKey("SkillR", 'R');
@@ -373,6 +399,7 @@ void CEditorManager::SetEditorSceneCallBack()
 {
 	CSceneManager::GetInst()->SetCreateSceneModeFunction<CEditorManager>(this, &CEditorManager::CreateSceneMode);
 	CSceneManager::GetInst()->SetCreateObjectFunction<CEditorManager>(this, &CEditorManager::CreateObject);
+	//CSceneManager::GetInst()->SetObjectDataSetFunction<CDataManager>(m_DataManager, &CDataManager::SetObjectData);
 	CSceneManager::GetInst()->SetCreateComponentFunction<CEditorManager>(this, &CEditorManager::CreateComponent);
 	CSceneManager::GetInst()->SetCreateAnimInstanceFunction<CEditorManager>(this, &CEditorManager::CreateAnimInstance);
 }
@@ -381,8 +408,6 @@ void CEditorManager::LoadEditorResources()
 {
 	CResourceManager::GetInst()->LoadTexture(DIRECTORY_IMAGE, TEXT("Directory.png"));
 	CResourceManager::GetInst()->LoadTexture(FILE_IMAGE, TEXT("FileImage.png"));
-	ReadChampionSkillInfo();
-	ReadChampionNotify();
 }
 
 void CEditorManager::CreateWindows()
@@ -433,130 +458,121 @@ void CEditorManager::CreateEditorCamera()
 
 void CEditorManager::SetChampionNotify(CAnimationSequenceInstance* Instance, const std::string& ChampionName)
 {
-	CExcelData* Data = CResourceManager::GetInst()->FindCSV("AnimationNotify");
+	//CExcelData* Data = CResourceManager::GetInst()->FindCSV("AnimationNotify");
 
-	if (!Data)
-		return;
+	//if (!Data)
+	//	return;
 
-	CStateManager* StateManager = CSceneManager::GetInst()->GetStateManager();
-	
-	// TODO : 챔피언과 스킬이 추가될때마다 여기에 Notify 추가
-	if (ChampionName.find("Alistar") != std::string::npos)
-	{
-		Row* row = Data->GetRow("Alistar");
+	//CStateManager* StateManager = CSceneManager::GetInst()->GetStateManager();
+	//
+	//// TODO : 챔피언과 스킬이 추가될때마다 여기에 Notify 추가
+	//if (ChampionName.find("Alistar") != std::string::npos)
+	//{
+	//	Row* row = Data->GetRow("Alistar");
 
-		size_t Count = row->size();
+	//	size_t Count = row->size();
 
-		for (size_t i = 0; i < Count; ++i)
-		{
-			std::stringstream ss;
+	//	for (size_t i = 0; i < Count; ++i)
+	//	{
+	//		std::stringstream ss;
 
-			ss << (*row)[i];
+	//		ss << (*row)[i];
 
-			int Frame = 0;
+	//		int Frame = 0;
 
-			ss >> Frame;
-			
-			// Q Skill
-			if (i == 0)
-			{
-				Instance->AddNotifyParam<CStateManager>("Alistar_SkillQ", "AlistarQAirborne", Frame, StateManager, &CStateManager::CheckAirborneTarget);
+	//		ss >> Frame;
+	//		
+	//		// Q Skill
+	//		if (i == 0)
+	//		{
+	//			Instance->AddNotifyParam<CLoLStateManager>("Alistar_SkillQ", "AlistarQAirborne", Frame, StateManager, &CLoLStateManager::CheckAirborneTarget);
 
-				std::string StrRange = CResourceManager::GetInst()->FindCSV("SkillInfo")->FindData("Alistar", "QRange");
-				int Range = 0;
-				ss.clear();
+	//			std::string StrRange = CResourceManager::GetInst()->FindCSV("SkillInfo")->FindData("Alistar", "QRange");
+	//			int Range = 0;
+	//			ss.clear();
 
-				ss << StrRange;
-				ss >> Range;
-				
-				Instance->SetNotifyParamRange("Alistar_SkillQ", "AlistarQAirborne", (float)Range);
-			}
-			// W Skill
-			if (i == 1)
-				Instance->AddNotifyParam<CStateManager>("Airborne", "AlistarQAirborne", Frame, StateManager, &CStateManager::FindKnockBackTarget);
-		}
+	//			ss << StrRange;
+	//			ss >> Range;
+	//			
+	//			Instance->SetNotifyParamRange("Alistar_SkillQ", "AlistarQAirborne", Range);
+	//		}
+	//		// W Skill
+	//		if (i == 1)
+	//			Instance->AddNotifyParam<CLoLStateManager>("Airborne", "AlistarQAirborne", Frame, StateManager, &CLoLStateManager::FindKnockBackTarget);
+	//	}
 
-	}
+	//}
 }
 
 void CEditorManager::SetChampionInfo(class CGameObject* Object, const std::string& ChampionName)
 {
-	CExcelData* Data = CResourceManager::GetInst()->FindCSV("LoLChampionInfo");
+	//CExcelData* Data = CResourceManager::GetInst()->FindCSV("LoLChampionInfo");
 
-	if (!Data)
-		return;
+	//if (!Data)
+	//	return;
 
-	CStateManager* StateManager = CSceneManager::GetInst()->GetStateManager();
+	//CStateManager* StateManager = CSceneManager::GetInst()->GetStateManager();
 
-	// TODO : 챔피언과 스킬이 추가될때마다 여기에 Notify 추가
-	if (ChampionName.find("Alistar") != std::string::npos)
-	{
-		Row* row = Data->GetRow("Alistar");
+	//// TODO : 챔피언과 스킬이 추가될때마다 여기에 Notify 추가
+	//if (ChampionName.find("Alistar") != std::string::npos)
+	//{
+	//	Row* row = Data->GetRow("Alistar");
 
-		size_t Count = row->size();
+	//	size_t Count = row->size();
 
-		for (size_t i = 0; i < Count; ++i)
-		{
-			std::stringstream ss;
+	//	for (size_t i = 0; i < Count; ++i)
+	//	{
+	//		std::stringstream ss;
 
-			ss << (*row)[i];
+	//		ss << (*row)[i];
 
-			int Info = 0;
+	//		int Info = 0;
 
-			ss >> Info;
+	//		ss >> Info;
 
-			// TODO : LoLChampionInfo.csv에서 읽어오는 항목 늘어날 때 마다 추가해주기
+	//		// TODO : LoLChampionInfo.csv에서 읽어오는 항목 늘어날 때 마다 추가해주기
 
-			// Move Speed
-			if (i == 0)
-				Object->SetChampionMoveSpeed((float)Info);
-			// Attack
-			else if (i == 1)
-				Object->SetChampionAttack(Info);
+	//		// Move Speed
+	//		if (i == 0)
+	//			Object->SetChampionMoveSpeed((float)Info);
+	//		// Attack
+	//		else if (i == 1)
+	//			Object->SetChampionAttack((float)Info);
 
-			else if (i == 2)
-				Object->SetChampionAttackSpeed((float)Info);
+	//		else if (i == 2)
+	//			Object->SetChampionAttackSpeed((float)Info);
 
-			else if (i == 3)
-			{
+	//		else if (i == 3)
+	//		{
 
-			}
+	//		}
 
-			else if (i == 4)
-			{
+	//		else if (i == 4)
+	//		{
 
-			}
-			else if (i == 5)
-			{
+	//		}
+	//		else if (i == 5)
+	//		{
 
-			}
+	//		}
 
-			else if (i == 6)
-			{
+	//		else if (i == 6)
+	//		{
 
-			}
+	//		}
 
-			else if (i == 7)
-			{
-				Object->SetChampionHP(Info);
-			}
+	//		else if (i == 7)
+	//		{
+	//			Object->SetChampionHP(Info);
+	//		}
 
-			else if (i == 8)
-			{
+	//		else if (i == 8)
+	//		{
 
-			}
-		}
+	//		}
+	//	}
 
-	}
+	//}
 }
 
-void CEditorManager::ReadChampionNotify()
-{
-	CResourceManager::GetInst()->LoadCSV("AnimationNotify.csv");
-}
-
-void CEditorManager::ReadChampionSkillInfo()
-{
-	CResourceManager::GetInst()->LoadCSV("SkillInfo.csv");
-}
 

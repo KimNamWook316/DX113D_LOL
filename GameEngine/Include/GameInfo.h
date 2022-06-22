@@ -657,21 +657,19 @@ struct OutlineCBuffer
 	float NormalMultiplier;
 	float NormalBias;
 };
-struct ChampionInfo
-{
-	float MoveSpeed;
-	int Attack;
-	float AttackSpeed;
-	int Armor;
-	int AbilityPower;
-	int MagicResist;
-	int NormalAttackRange;
-	int HP;
-	int MP;
-};
 
 struct NotifyParameter
 {
-	class CGameObject* Object;	// 애니메이션 동작하는 본인
+	class CGameObject* SrcObject;	// 애니메이션 동작하는 본인
+	class CGameObject* TargetObject; // Notify에서 대상이 되는 Object(ex. StateManager::GiveDamage에서 데미지를 줘야 할 대상)
 	float Range;
+	int Amount;
+};
+
+struct GameData
+{
+	int HP;
+	int MP;
+	float MoveSpeed;
+	int Attack;
 };

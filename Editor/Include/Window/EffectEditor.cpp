@@ -858,7 +858,7 @@ void CEffectEditor::OnSaveParticleClass()
 
         if (strcmp(ParticlePathInfo->PathMultibyte, PathInfoBeforeFileName.c_str()) != 0)
         {
-            MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Particle Class 의 경우, 반드시 Bin/Particle/ParticleMaterial 에 저장"), NULL, MB_OK);
+            MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Particle Class 의 경우, 반드시 Bin/ParticleClass 에 저장"), NULL, MB_OK);
             return;
         }
 
@@ -901,8 +901,8 @@ void CEffectEditor::OnLoadParticleClass()
    //      return;
 
     // 혹시 모르니 Particle Material 저장 전용 폴더를 만들어준다.
-    const PathInfo* ParticleMaterialPath = CPathManager::GetInst()->FindPath(PARTICLE_PATH);
-    CEngineUtil::CheckAndMakeDirectory(ParticleMaterialPath);
+    const PathInfo* ParticlePathInfo = CPathManager::GetInst()->FindPath(PARTICLE_PATH);
+    CEngineUtil::CheckAndMakeDirectory(ParticlePathInfo);
 
     TCHAR FilePath[MAX_PATH] = {};
 
@@ -912,7 +912,7 @@ void CEffectEditor::OnLoadParticleClass()
     OpenFile.lpstrFilter = TEXT("All Files\0*.*\0.Particle File\0*.prtc");
     OpenFile.lpstrFile = FilePath;
     OpenFile.nMaxFile = MAX_PATH;
-    OpenFile.lpstrInitialDir = ParticleMaterialPath->Path;
+    OpenFile.lpstrInitialDir = ParticlePathInfo->Path;
 
     if (GetOpenFileName(&OpenFile) != 0)
     {
@@ -926,6 +926,16 @@ void CEffectEditor::OnLoadParticleClass()
         WideCharToMultiByte(CP_ACP, 0, FilePath, -1, FilePathMultibyte, ConvertLength, 0, 0);
 
         _splitpath_s(FilePathMultibyte, nullptr, 0, nullptr, 0, FileName, MAX_PATH, Ext, _MAX_EXT);
+
+        // 현재 Load되는 Directory가 Bin/ParticleClass 인지 확인하기 => 아니라면, Load 방지
+        std::string PathInfoBeforeFileName;
+        CEditorUtil::GetPathInfoBeforeFileName(FilePathMultibyte, PathInfoBeforeFileName);
+
+        if (strcmp(ParticlePathInfo->PathMultibyte, PathInfoBeforeFileName.c_str()) != 0)
+        {
+            MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Particle Class 의 경우, 반드시 Bin/ParticleClass 에서 Load 해야 한다."), NULL, MB_OK);
+            return;
+        }
 
         _strupr_s(Ext);
 
@@ -1207,6 +1217,7 @@ void CEffectEditor::OnDropMaterialToParticle(const std::string& InputName)
 
         // 다시 원상 복구 시켜줘야 한다.
         m_CurrentMaterialName->ResetText();
+
         return;
     }
 

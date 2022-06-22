@@ -11,6 +11,7 @@ private:
 	CScene* m_NextScene;
 	std::function<void(CScene*, size_t)>	m_CreateSceneModeCallback;
 	std::function<CGameObject* (CScene*, size_t)>	m_CreateObjectCallback;
+	std::function<void (CGameObject* , const std::string& )>	m_ObjectDataSetCallback;
 	std::function<class CComponent* (CGameObject* Obj, size_t Type)>	m_CreateComponentCallback;
 	std::function<void(class CSpriteComponent* Sprite, size_t Type)>	m_CreateAnimInstanceCallback;
 	CStateManager* m_StateManager;
@@ -18,6 +19,11 @@ private:
 	char m_LoadedSceneFullPath[MAX_PATH];
 
 public:
+	void SetStateManager(CStateManager* StateManager)
+	{
+		m_StateManager = StateManager;
+	}
+
 	CStateManager* GetStateManager()	const
 	{
 		return m_StateManager;
@@ -37,6 +43,12 @@ public:
 	{
 		if (m_CreateSceneModeCallback)
 			m_CreateSceneModeCallback(Scene, Type);
+	}
+
+	void CallObjectDataSet(CGameObject* Obj, const std::string& Name)
+	{
+		if (m_ObjectDataSetCallback)
+			m_ObjectDataSetCallback(Obj, Name);
 	}
 
 	CGameObject* CallCreateObject(CScene* Scene, size_t Type)
@@ -111,6 +123,12 @@ public:
 	void SetCreateObjectFunction(T* Obj, CGameObject* (T::* Func)(CScene*, size_t))
 	{
 		m_CreateObjectCallback = std::bind(Func, Obj, std::placeholders::_1, std::placeholders::_2);
+	}
+
+	template <typename T>
+	void SetObjectDataSetFunction(T* Obj, void (T::* Func)(CGameObject*, const std::string&))
+	{
+		m_ObjectDataSetCallback = std::bind(Func, Obj, std::placeholders::_1, std::placeholders::_2);
 	}
 
 	template <typename T>

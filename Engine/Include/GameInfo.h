@@ -406,24 +406,18 @@ struct	ParticleCBuffer
 	
 	Vector3	StartMax;		// 파티클이 생성될 영역의 Max
 	unsigned int	SpawnCountMax;	// 생성될 파티클의 최대
-	
 	Vector3	ScaleMin;		// 생성될 파티클 크기의 Min
 	float	LifeTimeMin;	// 생성될 파티클이 살아있을 최소시간
-	
 	Vector3	ScaleMax;		// 새성될 파티클 크기의 Max
 	float	LifeTimeMax;	// 생성될 파티클이 살아있을 최대시간
-	
 	Vector4	ColorMin;		// 생성될 파티클의 색상 Min
 	Vector4	ColorMax;		// 생성될 파티클의 색상 Max
-	
 	float	SpeedMin;		// 파티클의 최소 이동속도
 	float	SpeedMax;		// 파티클의 최대 이동속도
 	int		Move;			// 이동을 하는지 안하는지
 	int		Gravity;		// 중력 적용을 받는지 안받는지
-	
 	Vector3	MoveDir;		// 이동을 한다면 기준이 될 이동 방향
 	int		Is2D;			// 2D용 파티클인지
-	
 	Vector3	MoveAngle;	// 이동을 한다면 기준이 될 방향으로부터 x, y, z 에 저장된 각도만큼 틀어진 랜덤한 방향을 구한다.
 	int ParticleBounce;
 	
@@ -657,21 +651,19 @@ struct OutlineCBuffer
 	float NormalMultiplier;
 	float NormalBias;
 };
-struct ChampionInfo
-{
-	float MoveSpeed;
-	int Attack;
-	float AttackSpeed;
-	int Armor;
-	int AbilityPower;
-	int MagicResist;
-	int NormalAttackRange;
-	int HP;
-	int MP;
-};
 
 struct NotifyParameter
 {
-	class CGameObject* Object;	// 애니메이션 동작하는 본인
+	class CGameObject* SrcObject;	// 애니메이션 동작하는 본인
+	class CGameObject* TargetObject; // Notify에서 대상이 되는 Object(ex. StateManager::GiveDamage에서 데미지를 줘야 할 대상)
 	float Range;
+	int Amount;
+};
+
+struct GameData
+{
+	int HP;
+	int MP;
+	float MoveSpeed;
+	int Attack;
 };

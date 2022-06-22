@@ -13,7 +13,7 @@
 #include "IMGUIManager.h"
 #include "../Window/ObjectHierarchyWindow.h"
 #include "GameObject/GameObject.h"
-#include "Component/StateComponent.h"
+#include "../Component/GameStateComponent.h"
 #include "Component/AnimationMeshComponent.h"
 #include "Component/StaticMeshComponent.h"
 #include "PathManager.h"
@@ -75,7 +75,7 @@ void CBehaviorTreeMenu::OnOpenTreeEditorCallback()
 
 		if (Obj)
 		{
-			CComponent* Component = Obj->FindObjectComponentFromType<CStateComponent>();
+			CComponent* Component = Obj->FindObjectComponentFromType<CGameStateComponent>();
 			CAnimationMeshComponent* AnimMeshComp = Obj->FindComponentFromType<CAnimationMeshComponent>();
 			CStaticMeshComponent* StaticMeshComp = Obj->FindComponentFromType<CStaticMeshComponent>();
 

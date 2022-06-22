@@ -81,7 +81,7 @@ public:
 	// Imgui Demo Window를 띄워주는 함수
 	static void ShowDemo();
 
-	static std::string LoLObjectToString(LoLObject Object);
+	static std::string ObjectToString(Object_Type Object);
 
 	static std::string SceneComponent3DTypeToString(SceneComponent3DType Type);
 	static std::string ObjectComponent3DTypeToString(ObjectComponent3DType Type);

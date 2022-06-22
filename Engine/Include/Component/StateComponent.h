@@ -94,5 +94,10 @@ public:
 	{
 		return m_BehaviorTree;
 	}
+
+	void SetBehaviorTree(CBehaviorTree* Tree)
+	{
+		m_BehaviorTree = Tree;
+	}
 };
 

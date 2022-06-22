@@ -23,8 +23,6 @@
 #include <sstream>
 
 CObjectCreateModal::CObjectCreateModal()	:
-	//m_ObjectCreatePopUp(nullptr),
-	m_ObjectCombo(nullptr),
 	m_NameTextInput(nullptr),
 	m_ObjectCreateButton(nullptr)
 {
@@ -40,15 +38,6 @@ bool CObjectCreateModal::Init()
 
 	//m_ObjectCreatePopUp = AddWidget<CIMGUIPopUpModal>("CreateObjectPopUp");
 
-	m_ObjectCombo = AddWidget<CIMGUIComboBox>("");
-
-	for (int i = (int)LoLObject::GameObject; i < (int)LoLObject::Max; ++i)
-	{
-		LoLObject foo = static_cast<LoLObject>(i);
-		std::string StrLoLObject = CEditorUtil::LoLObjectToString(foo);
-		m_ObjectCombo->AddItem(StrLoLObject);
-	}
-
 	m_NameTextInput = AddWidget<CIMGUITextInput>("Object Name");
 	m_NameTextInput->SetHideName(true);
 	m_NameTextInput->SetHintText("Object Name");
@@ -59,11 +48,9 @@ bool CObjectCreateModal::Init()
 	m_ObjectCreateButton->SetClickCallback<CObjectCreateModal>(this, &CObjectCreateModal::OnCreateObject);
 
 	m_ObjectTypeCheckBox = AddWidget<CIMGUIRadioButton>("Object Type");
-	m_ObjectTypeCheckBox->AddCheckInfo("Champion");
-	m_ObjectTypeCheckBox->AddCheckInfo("Minion");
-	m_ObjectTypeCheckBox->AddCheckInfo("Jungle");
+	m_ObjectTypeCheckBox->AddCheckInfo("Player");
+	m_ObjectTypeCheckBox->AddCheckInfo("Monster");
 	m_ObjectTypeCheckBox->AddCheckInfo("MapObject");
-	m_ObjectTypeCheckBox->AddCheckInfo("Building");
 
 	m_ObjectTypeCheckBox->SetCheck(0, true);
 	m_ObjectTypeCheckBox->AlwaysCheck(true);
@@ -161,24 +148,8 @@ void CObjectCreateModal::OnCreateObject()
 		}
 	}
 
-	int Index = m_ObjectCombo->GetSelectIndex();
 
-	size_t Typeid = CEditorUtil::ObjectTypeIndexToTypeid(Index);
-
-	if (Typeid == typeid(CGameObject).hash_code())
-		NewObject = CurrentScene->CreateGameObject<CGameObject>(Name);
-
-	else if (Typeid == typeid(CMovingObject).hash_code())
-		NewObject = CurrentScene->CreateGameObject<CMovingObject>(Name);
-
-	else if (Typeid == typeid(CMapObject).hash_code())
-		NewObject = CurrentScene->CreateGameObject<CMapObject>(Name);
-
-	else if (Typeid == typeid(CChampion).hash_code())
-		NewObject = CurrentScene->CreateGameObject<CChampion>(Name);
-
-	else if (Typeid == typeid(CMinion).hash_code())
-		NewObject = CurrentScene->CreateGameObject<CMinion>(Name);
+	NewObject = CurrentScene->CreateGameObject<CGameObject>(Name);
 
 
 	// 차후, Loading 을 위해서 ObjectCombo Select Index 정보를 저장해준다.
@@ -190,20 +161,15 @@ void CObjectCreateModal::OnCreateObject()
 	switch (CheckIdx)
 	{
 	case 0:
-		NewObject->SetObjectType(Object_Type::Champion);
+		NewObject->SetObjectType(Object_Type::Player);
 		break;
 	case 1:
-		NewObject->SetObjectType(Object_Type::Minion);
+		NewObject->SetObjectType(Object_Type::Monster);
 		break;
 	case 2:
-		NewObject->SetObjectType(Object_Type::Jungle);
-		break;
-	case 3:
 		NewObject->SetObjectType(Object_Type::MapObject);
 		break;
-	case 4:
-		NewObject->SetObjectType(Object_Type::Building);
-		break;
+
 	}
 
 	Idx = -1;

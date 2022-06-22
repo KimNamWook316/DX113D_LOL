@@ -164,7 +164,6 @@ public:
 
 	void ResetText()
 	{
-		// m_PrevText 의 내용을 복사하여 세팅한다.
 		std::string StrPrevText = m_PrevText;
 		SetText(StrPrevText.c_str());
 	}

@@ -10,8 +10,6 @@ public:
 	virtual ~CObjectCreateModal();
 
 private:
-	//class CIMGUIPopUpModal* m_ObjectCreatePopUp;
-	class CIMGUIComboBox* m_ObjectCombo;
 	class CIMGUITextInput* m_NameTextInput;
 	class CIMGUIButton* m_ObjectCreateButton;
 	class CIMGUIRadioButton* m_ObjectTypeCheckBox;

@@ -151,7 +151,6 @@ public:
 public:
 	bool Picking(CGameObject*& Result);
 	bool CheckSameName(const std::string& Name);
-	CGameObject* FindNearChampion(const Vector3& MyPos, float Distance);
 
 public:
 	void GetAllObjectsPointer(std::vector<CGameObject*>& vecOutObj);
@@ -240,6 +239,7 @@ public:
 
 		return Obj;
 	}
+
 
 private:
 	int GetSaveExcludeObjectCount();

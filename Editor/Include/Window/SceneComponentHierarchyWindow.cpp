@@ -237,7 +237,7 @@ void CSceneComponentHierarchyWindow::OnLoadGameObject(CGameObject* Object)
 
 	for (size_t i = 0; i < Count; ++i)
 	{
-		OnLoadGameObject(Object->GetChildObject(i));
+		OnLoadGameObject(Object->GetChildObject((int)i));
 	}
 }
 
@@ -409,7 +409,10 @@ void CSceneComponentHierarchyWindow::OnLoadComponent()
 
 		if (Inspector)
 		{
-			Inspector->OnCreateSceneComponent((CSceneComponent*)LoadComp);
+			if(LoadComp->GetComponentType() == Component_Type::SceneComponent)
+				Inspector->OnCreateSceneComponent((CSceneComponent*)LoadComp);
+			else
+				Inspector->OnCreateObjectComponent((CObjectComponent*)LoadComp);
 		}
 
 		MessageBox(nullptr, TEXT("컴포넌트 로드 성공"), TEXT("Success"), MB_OK);
@@ -468,14 +471,14 @@ void CSceneComponentHierarchyWindow::MakeHierachyRecursive(CSceneComponent* Pare
 	// Tree 생성
 	for (size_t i = 0; i < Count; ++i)
 	{
-		ParentTree->AddChild(Parent->GetChild(i)->GetName(), Parent->GetChild(i));
+		ParentTree->AddChild(Parent->GetChild((int)i)->GetName(), Parent->GetChild((int)i));
 	}
 
 	// 재귀적 생성
 	for (size_t i = 0; i < Count; ++i)
 	{
-		CSceneComponent* Child = Parent->GetChild(i);
-		CIMGUITree* ChildTree = ParentTree->GetNode(i);
+		CSceneComponent* Child = Parent->GetChild((int)i);
+		CIMGUITree* ChildTree = ParentTree->GetNode((int)i);
 		MakeHierachyRecursive(Child, ChildTree);
 	}
 }
@@ -487,6 +490,6 @@ void CSceneComponentHierarchyWindow::DisableCurrent()
 
 	for (size_t i = 0; i < Count; ++i)
 	{
-		m_Root->GetNode(i)->DisableAll();
+		m_Root->GetNode((int)i)->DisableAll();
 	}
 }
