@@ -12,6 +12,7 @@
 #include "Component/ColliderBox3D.h"
 #include "Component/ColliderSphere.h"
 
+
 CMovePickingNode::CMovePickingNode()
 {
 	SetTypeID(typeid(CMovePickingNode).hash_code());
@@ -126,7 +127,6 @@ NodeResult CMovePickingNode::OnStart(float DeltaTime)
 				// 피킹했는데 지형이 아닌 특정 오브젝트랑 충돌하는 경우
 				if (Collision)
 				{
-					m_Object->SetNormalAttackTarget(vecTestCollider[i]->GetGameObject());
 					m_Object->ClearPath();
 					m_Object->AddPath(vecTestCollider[i]->GetGameObject()->GetWorldPos());
 					CAnimationSequenceInstance* Instance = m_Owner->GetAnimationMeshComp()->GetAnimationInstance();
@@ -148,7 +148,6 @@ NodeResult CMovePickingNode::OnStart(float DeltaTime)
 				// 피킹했는데 지형이 아닌 특정 오브젝트랑 충돌하는 경우
 				if (Collision)
 				{
-					m_Object->SetNormalAttackTarget(vecTestCollider[i]->GetGameObject());
 					m_Object->ClearPath();
 					m_Object->AddPath(vecTestCollider[i]->GetGameObject()->GetWorldPos());
 					CAnimationSequenceInstance* Instance = m_Owner->GetAnimationMeshComp()->GetAnimationInstance();
@@ -162,7 +161,6 @@ NodeResult CMovePickingNode::OnStart(float DeltaTime)
 		}
 
 		// 특정 오브젝트가 아닌 지형을 피킹한 경우
-		m_Object->SetNormalAttackTarget(nullptr);
 		m_Object->ClearPath();
 		m_Object->AddPath(TargetPos);
 		CAnimationSequenceInstance* Instance = m_Owner->GetAnimationMeshComp()->GetAnimationInstance();
@@ -199,3 +197,26 @@ NodeResult CMovePickingNode::Invoke(float DeltaTime)
 {
 	return CActionNode::Invoke(DeltaTime);
 }
+
+//bool CMovePickingNode::SavePos(FILE* File)
+//{
+//	CBehaviorTreeWindow* Window = (CBehaviorTreeWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(BEHAVIORTREE_WINDOW);
+//
+//	if (!Window)
+//		return false;
+//
+//	GraphEditorDelegate::Node WindowNode = Window->m_Delegate.FindNode(this);
+//
+//	fwrite(&WindowNode.x, sizeof(float), 1, File);
+//	fwrite(&WindowNode.y, sizeof(float), 1, File);
+//
+//}
+//
+//bool CMovePickingNode::LoadPos(FILE* File)
+//{
+//	fread(&m_InWindowPos.x, sizeof(float), 1, File);
+//	fread(&m_InWindowPos.y, sizeof(float), 1, File);
+//
+//	return true;
+//}
+//

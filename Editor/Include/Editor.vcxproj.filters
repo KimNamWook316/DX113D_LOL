@@ -249,28 +249,13 @@
     <ClCompile Include="Component\Node\CheckState.cpp">
       <Filter>07. BehaviorTree\01. ConditionNode</Filter>
     </ClCompile>
-    <ClCompile Include="Component\Node\CheckTurretAttackFrequency.cpp">
-      <Filter>07. BehaviorTree\01. ConditionNode</Filter>
-    </ClCompile>
-    <ClCompile Include="Component\Node\CheckTurretAttackTarget.cpp">
-      <Filter>07. BehaviorTree\01. ConditionNode</Filter>
-    </ClCompile>
-    <ClCompile Include="Component\Node\FindEnemyChampion.cpp">
-      <Filter>07. BehaviorTree\01. ConditionNode</Filter>
-    </ClCompile>
     <ClCompile Include="Component\Node\HPCheck.cpp">
-      <Filter>07. BehaviorTree\01. ConditionNode</Filter>
-    </ClCompile>
-    <ClCompile Include="Component\Node\InSkillCheck.cpp">
       <Filter>07. BehaviorTree\01. ConditionNode</Filter>
     </ClCompile>
     <ClCompile Include="Component\Node\MoveInputCheckNode.cpp">
       <Filter>07. BehaviorTree\01. ConditionNode</Filter>
     </ClCompile>
     <ClCompile Include="Component\Node\NoInterruptNode.cpp">
-      <Filter>07. BehaviorTree\01. ConditionNode</Filter>
-    </ClCompile>
-    <ClCompile Include="Component\Node\SkillEndCheckNode.cpp">
       <Filter>07. BehaviorTree\01. ConditionNode</Filter>
     </ClCompile>
     <ClCompile Include="Component\Node\DeathNode.cpp">
@@ -311,6 +296,27 @@
     </ClCompile>
     <ClCompile Include="DataManager.cpp">
       <Filter>05. LoLManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\Node\MouseLButtonCheckNode.cpp">
+      <Filter>07. BehaviorTree\01. ConditionNode</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\Node\RotateAttackDirectionNode.cpp">
+      <Filter>07. BehaviorTree\02. ActionNode</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\Node\MouseRButtonCheckNode.cpp">
+      <Filter>07. BehaviorTree\01. ConditionNode</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\Node\ReadyToShoot.cpp">
+      <Filter>07. BehaviorTree\02. ActionNode</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\Node\MouseRButtonUpCheckNode.cpp">
+      <Filter>07. BehaviorTree\01. ConditionNode</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\Node\ShootNode.cpp">
+      <Filter>07. BehaviorTree\02. ActionNode</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\Node\CancleShootNode.cpp">
+      <Filter>07. BehaviorTree\02. ActionNode</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -467,28 +473,13 @@
     <ClInclude Include="Component\Node\CheckState.h">
       <Filter>07. BehaviorTree\01. ConditionNode</Filter>
     </ClInclude>
-    <ClInclude Include="Component\Node\CheckTurretAttackFrequency.h">
-      <Filter>07. BehaviorTree\01. ConditionNode</Filter>
-    </ClInclude>
-    <ClInclude Include="Component\Node\CheckTurretAttackTarget.h">
-      <Filter>07. BehaviorTree\01. ConditionNode</Filter>
-    </ClInclude>
-    <ClInclude Include="Component\Node\FindEnemyChampion.h">
-      <Filter>07. BehaviorTree\01. ConditionNode</Filter>
-    </ClInclude>
     <ClInclude Include="Component\Node\HPCheck.h">
-      <Filter>07. BehaviorTree\01. ConditionNode</Filter>
-    </ClInclude>
-    <ClInclude Include="Component\Node\InSkillCheck.h">
       <Filter>07. BehaviorTree\01. ConditionNode</Filter>
     </ClInclude>
     <ClInclude Include="Component\Node\MoveInputCheckNode.h">
       <Filter>07. BehaviorTree\01. ConditionNode</Filter>
     </ClInclude>
     <ClInclude Include="Component\Node\NoInterruptNode.h">
-      <Filter>07. BehaviorTree\01. ConditionNode</Filter>
-    </ClInclude>
-    <ClInclude Include="Component\Node\SkillEndCheckNode.h">
       <Filter>07. BehaviorTree\01. ConditionNode</Filter>
     </ClInclude>
     <ClInclude Include="Component\Node\DeathNode.h">
@@ -532,6 +523,27 @@
     </ClInclude>
     <ClInclude Include="DataManager.h">
       <Filter>05. LoLManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\MouseLButtonCheckNode.h">
+      <Filter>07. BehaviorTree\01. ConditionNode</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\RotateAttackDirectionNode.h">
+      <Filter>07. BehaviorTree\02. ActionNode</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\MouseRButtonCheckNode.h">
+      <Filter>07. BehaviorTree\01. ConditionNode</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\ReadyToShoot.h">
+      <Filter>07. BehaviorTree\02. ActionNode</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\MouseRButtonUpCheckNode.h">
+      <Filter>07. BehaviorTree\01. ConditionNode</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\ShootNode.h">
+      <Filter>07. BehaviorTree\02. ActionNode</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\CancleShootNode.h">
+      <Filter>07. BehaviorTree\02. ActionNode</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

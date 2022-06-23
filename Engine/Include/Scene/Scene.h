@@ -36,8 +36,18 @@ private:
 	bool m_Play;
 
 	std::list<class CSceneComponent*> m_RenderComponentList;
+	Vector3 m_OriginCamPos;
 
 public:
+	void SetOriginCamPos(const Vector3& Pos)
+	{
+		m_OriginCamPos = Pos;
+	}
+
+	const Vector3& GetOriginCamPos()	const
+	{
+		return m_OriginCamPos;
+	}
 	//void UpdateObjUpdateOrder();
 
 public:
@@ -165,6 +175,12 @@ public:
 		m_ObjList.push_back(Obj);
 		return Obj;
 	}
+
+
+public:
+	// 카메라 이동이 끝나면 true 리턴
+	bool CameraMove(const Vector3& Direction, const Vector3& DestPos, float Speed, float DeltaTime);
+	bool RestoreCamera(float Speed, float DeltaTime);
 
 public:
 	template <typename T>

@@ -102,14 +102,14 @@ void CBehaviorTreeMenu::OnOpenTreeEditorCallback()
 					{
 						NeedUpdate = true;
 						m_TreeEditorWindow->Clear();
+
+						m_TreeEditorWindow->SetStateComponent(StateComp);
+
+						if (AnimMeshComp)
+							((CStateComponent*)Component)->SetAnimationMeshComponent(AnimMeshComp);
+
+						m_TreeEditorWindow->UpdateLoadNode((CCompositeNode*)(StateComp->GetBehaviorTree()->GetRootNode()));
 					}
-
-					m_TreeEditorWindow->SetStateComponent(StateComp);
-
-					if (AnimMeshComp)
-						((CStateComponent*)Component)->SetAnimationMeshComponent(AnimMeshComp);
-
-					m_TreeEditorWindow->UpdateLoadNode((CCompositeNode*)(StateComp->GetBehaviorTree()->GetRootNode()));
 
 					m_TreeEditorWindow->Open();
 				}

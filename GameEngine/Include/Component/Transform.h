@@ -50,6 +50,8 @@ private:
 	bool	m_UpdateByMat;
 
 public:
+	class CTransformConstantBuffer* GetTransformCBuffer()	const;
+
 	void SetState(Transform_State State)
 	{
 		m_State = State;

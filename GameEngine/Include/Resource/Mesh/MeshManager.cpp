@@ -162,8 +162,6 @@ bool CMeshManager::Init()
 		&vecColliderSphereIndex[0], sizeof(int), vecColliderSphereIndex.size(),
 		D3D11_USAGE_DEFAULT, DXGI_FORMAT_R32_UINT);
 
-
-
 	Vector3	CubePos[8] =
 	{
 		Vector3(-0.5f, 0.5f, -0.5f),
@@ -186,6 +184,22 @@ bool CMeshManager::Init()
 		2, 3, 7, 2, 7, 6	// Bottom
 	};
 
+	Vertex3D CubeVertex[8];
+
+	for (int i = 0; i < 8; ++i)
+		CubeVertex[i].Pos = CubePos[i];
+
+
+	CubeVertex[0].Normal = Vector3(1.f, 1.f, 1.f);
+	CubeVertex[1].Normal = Vector3(1.f, 1.f, 1.f);
+	CubeVertex[2].Normal = Vector3(1.f, 1.f, 1.f);
+	CubeVertex[3].Normal = Vector3(1.f, 1.f, 1.f);
+	CubeVertex[4].Normal = Vector3(1.f, 1.f, 1.f);
+	CubeVertex[5].Normal = Vector3(1.f, 1.f, 1.f);
+	CubeVertex[6].Normal = Vector3(1.f, 1.f, 1.f);
+	CubeVertex[7].Normal = Vector3(1.f, 1.f, 1.f);
+	
+
 	CreateMesh(Mesh_Type::Static, "CubePos",
 		&CubePos[0], sizeof(Vector3), 8,
 		D3D11_USAGE_DEFAULT, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST,
@@ -198,7 +212,7 @@ bool CMeshManager::Init()
 	};
 
 	CreateMesh(Mesh_Type::Static, "CubeLinePos",
-		&CubePos[0], sizeof(Vector3), 8,
+		&CubeVertex[0], sizeof(Vertex3D), 8,
 		D3D11_USAGE_DEFAULT, D3D11_PRIMITIVE_TOPOLOGY_LINELIST,
 		&CubeLineIdx[0], sizeof(int), 24,
 		D3D11_USAGE_DEFAULT, DXGI_FORMAT_R32_UINT);

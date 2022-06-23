@@ -33,7 +33,7 @@ NodeResult CMoveNode::OnStart(float DeltaTime)
 		m_AnimationMeshComp->GetAnimationInstance()->ChangeAnimation(SequenceName);
 	}
 
-	m_CallStart = true;
+	//m_CallStart = true;
 
 	return NodeResult::Node_True;
 }
@@ -80,7 +80,8 @@ NodeResult CMoveNode::OnUpdate(float DeltaTime)
 
 	MoveDir.Normalize();
 	
-	Vector3 CrossVector = FrontVector.Cross(MoveDir);
+	/// 벡터 외적을 할땐 오른손 좌표계 기준이라서 z에 -1을 곱해준다
+	Vector3 CrossVector = Vector3(FrontVector.x, FrontVector.y, -FrontVector.z).Cross(Vector3(MoveDir.x, MoveDir.y, -MoveDir.z));
 
 	bool Over180 = false;
 
@@ -94,13 +95,13 @@ NodeResult CMoveNode::OnUpdate(float DeltaTime)
 	if (Over180)
 	{
 		if(Degree > 1.5f)
-			m_Object->AddWorldRotationY(-360.f * DeltaTime);
+			m_Object->AddWorldRotationY(360.f * DeltaTime);
 	}
 
 	else
 	{
 		if (Degree > 1.5f)
-			m_Object->AddWorldRotationY(360.f * DeltaTime);
+			m_Object->AddWorldRotationY(-360.f * DeltaTime);
 	}
 
 	m_Object->AddWorldPos(MoveDir.x * Speed * DeltaTime, 0.f, MoveDir.z * Speed * DeltaTime);
@@ -117,3 +118,4 @@ NodeResult CMoveNode::Invoke(float DeltaTime)
 {
 	return CActionNode::Invoke(DeltaTime);
 }
+

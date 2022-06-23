@@ -210,6 +210,11 @@ public:
 		return m_CurrentAnimation;
 	}
 
+	CAnimationSequenceData* GetChangeAnimation()	const
+	{
+		return m_ChangeAnimation;
+	}
+
 	void SetEditorStopTargetFrame(int Frame);
 	void SetSkeleton(class CSkeleton* Skeleton);
 	void GetAnimationSequenceNames(std::vector<std::string>& VecSequenceNames);
@@ -230,6 +235,7 @@ public:
 	void SetLoop(bool Loop);
 	void SetCurrentAnimation(const std::string& Name);
 	void ChangeAnimation(const std::string& Name);
+	void KeepCurrentAnimation();
 	bool CheckCurrentAnimation(const std::string& Name);
 	void ClearAnimationSequenceFromAnimationEditor();
 	void GatherSequenceNames(std::vector<std::string>& vecString);

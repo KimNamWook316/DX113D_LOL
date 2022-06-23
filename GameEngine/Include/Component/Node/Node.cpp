@@ -47,6 +47,8 @@ bool CNode::Save(FILE* File)
 	fwrite(&Length, sizeof(int), 1, File);
 	fwrite(m_Name.c_str(), sizeof(char), Length, File);
 
+	SavePos(File);
+
 	return true;
 }
 
@@ -65,6 +67,7 @@ bool CNode::Load(FILE* File)
 
 	m_Name = Name;
 
+	LoadPos(File);
 
 	return true;
 }
@@ -84,6 +87,8 @@ bool CNode::SaveOnly(FILE* File)
 
 	fwrite(&m_NodeType, sizeof(Node_Type), 1, File);
 
+	SavePos(File);
+
 	return true;
 }
 
@@ -101,6 +106,20 @@ bool CNode::LoadOnly(FILE* File)
 	fread(&m_TypeID, sizeof(size_t), 1, File);
 
 	fread(&m_NodeType, sizeof(Node_Type), 1, File);
+
+	return true;
+}
+
+bool CNode::SavePos(FILE* File)
+{
+	fwrite(&m_InWindowPos, sizeof(Vector2), 1, File);
+
+	return true;
+}
+
+bool CNode::LoadPos(FILE* File)
+{
+	fread(&m_InWindowPos, sizeof(Vector2), 1, File);
 
 	return true;
 }

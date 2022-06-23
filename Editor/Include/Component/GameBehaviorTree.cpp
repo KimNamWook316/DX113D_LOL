@@ -8,11 +8,14 @@
 #include "Node/NoInterruptNode.h"
 #include "Node/CheckAttackTarget.h"
 #include "Node/NormalAttack.h"
-#include "Node/SkillEndCheckNode.h"
-#include "Node/InSkillCheck.h"
-#include "Node/CheckTurretAttackTarget.h"
-#include "Node/CheckTurretAttackFrequency.h"
+#include "Node/MouseLButtonCheckNode.h"
+#include "Node/MouseRButtonCheckNode.h"
+#include "Node/MouseRButtonUpCheckNode.h"
 #include "Node/NegateNode.h"
+#include "Node/RotateAttackDirectionNode.h"
+#include "Node/ReadyToShoot.h"
+#include "Node/ShootNode.h"
+#include "Node/CancleShootNode.h"
 #include "Component/StateComponent.h"
 
 CGameBehaviorTree::CGameBehaviorTree()
@@ -107,6 +110,72 @@ CNode* CGameBehaviorTree::LoadNode(CNode* Parent, size_t TypeID)
 		return NewNode;
 	}
 
+	else if (TypeID == typeid(CMouseLButtonCheckNode).hash_code())
+	{
+		CMouseLButtonCheckNode* NewNode = new CMouseLButtonCheckNode;
+		NewNode->SetParent(Parent);
+		NewNode->SetOwner(this);
+		NewNode->SetObject(m_Owner->GetGameObject());
+		NewNode->SetAnimationMeshComponent(m_AnimationMeshComp);
+
+		return NewNode;
+	}
+
+	else if (TypeID == typeid(CMouseRButtonCheckNode).hash_code())
+	{
+		CMouseRButtonCheckNode* NewNode = new CMouseRButtonCheckNode;
+		NewNode->SetParent(Parent);
+		NewNode->SetOwner(this);
+		NewNode->SetObject(m_Owner->GetGameObject());
+		NewNode->SetAnimationMeshComponent(m_AnimationMeshComp);
+
+		return NewNode;
+	}
+
+	else if (TypeID == typeid(CMouseRButtonUpCheckNode).hash_code())
+	{
+		CMouseRButtonUpCheckNode* NewNode = new CMouseRButtonUpCheckNode;
+		NewNode->SetParent(Parent);
+		NewNode->SetOwner(this);
+		NewNode->SetObject(m_Owner->GetGameObject());
+		NewNode->SetAnimationMeshComponent(m_AnimationMeshComp);
+
+		return NewNode;
+	}
+
+	else if (TypeID == typeid(CReadyToShoot).hash_code())
+	{
+		CReadyToShoot* NewNode = new CReadyToShoot;
+		NewNode->SetParent(Parent);
+		NewNode->SetOwner(this);
+		NewNode->SetObject(m_Owner->GetGameObject());
+		NewNode->SetAnimationMeshComponent(m_AnimationMeshComp);
+
+		return NewNode;
+	}
+
+	else if (TypeID == typeid(CShootNode).hash_code())
+	{
+		CShootNode* NewNode = new CShootNode;
+		NewNode->SetParent(Parent);
+		NewNode->SetOwner(this);
+		NewNode->SetObject(m_Owner->GetGameObject());
+		NewNode->SetAnimationMeshComponent(m_AnimationMeshComp);
+
+		return NewNode;
+	}
+
+	else if (TypeID == typeid(CCancleShootNode).hash_code())
+	{
+		CCancleShootNode* NewNode = new CCancleShootNode;
+		NewNode->SetParent(Parent);
+		NewNode->SetOwner(this);
+		NewNode->SetObject(m_Owner->GetGameObject());
+		NewNode->SetAnimationMeshComponent(m_AnimationMeshComp);
+
+		return NewNode;
+	}
+
 	else if (TypeID == typeid(CCheckAttackTarget).hash_code())
 	{
 		CCheckAttackTarget* NewNode = new CCheckAttackTarget;
@@ -129,42 +198,9 @@ CNode* CGameBehaviorTree::LoadNode(CNode* Parent, size_t TypeID)
 		return NewNode;
 	}
 
-	else if (TypeID == typeid(CSkillEndCheckNode).hash_code())
+	else if (TypeID == typeid(CRotateAttackDirectionNode).hash_code())
 	{
-		CSkillEndCheckNode* NewNode = new CSkillEndCheckNode;
-		NewNode->SetParent(Parent);
-		NewNode->SetOwner(this);
-		NewNode->SetObject(m_Owner->GetGameObject());
-		NewNode->SetAnimationMeshComponent(m_AnimationMeshComp);
-
-		return NewNode;
-	}
-
-	else if (TypeID == typeid(CInSkillCheck).hash_code())
-	{
-		CInSkillCheck* NewNode = new CInSkillCheck;
-		NewNode->SetParent(Parent);
-		NewNode->SetOwner(this);
-		NewNode->SetObject(m_Owner->GetGameObject());
-		NewNode->SetAnimationMeshComponent(m_AnimationMeshComp);
-
-		return NewNode;
-	}
-
-	else if (TypeID == typeid(CCheckTurretAttackTarget).hash_code())
-	{
-		CCheckTurretAttackTarget* NewNode = new CCheckTurretAttackTarget;
-		NewNode->SetParent(Parent);
-		NewNode->SetOwner(this);
-		NewNode->SetObject(m_Owner->GetGameObject());
-		NewNode->SetAnimationMeshComponent(m_AnimationMeshComp);
-
-		return NewNode;
-	}
-
-	else if (TypeID == typeid(CCheckTurretAttackFrequency).hash_code())
-	{
-		CCheckTurretAttackFrequency* NewNode = new CCheckTurretAttackFrequency;
+		CRotateAttackDirectionNode* NewNode = new CRotateAttackDirectionNode;
 		NewNode->SetParent(Parent);
 		NewNode->SetOwner(this);
 		NewNode->SetObject(m_Owner->GetGameObject());

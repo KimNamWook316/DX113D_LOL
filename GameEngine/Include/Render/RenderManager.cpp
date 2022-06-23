@@ -161,6 +161,12 @@ bool CRenderManager::Init()
 
 	m_RenderLayerList.push_back(Layer);
 
+	Layer = new RenderLayer;
+	Layer->Name = "Collider";
+	Layer->LayerPriority = 8;
+
+	m_RenderLayerList.push_back(Layer);
+
 	m_DepthDisable = m_RenderStateManager->FindRenderState("DepthDisable");
 	m_AlphaBlend = m_RenderStateManager->FindRenderState("AlphaBlend");
 	m_AlphaBlendMRT = m_RenderStateManager->FindRenderState("AlphaBlend_MRT"); // Transparent Render 패스에서 사용
@@ -541,6 +547,15 @@ void CRenderManager::Render()
 	// Screen Widget 출력
 	iter = m_RenderLayerList[5]->RenderList.begin();
 	iterEnd = m_RenderLayerList[5]->RenderList.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		(*iter)->Render();
+	}
+
+	// Collider Layer 출력
+	iter = m_RenderLayerList[8]->RenderList.begin();
+	iterEnd = m_RenderLayerList[8]->RenderList.end();
 
 	for (; iter != iterEnd; ++iter)
 	{

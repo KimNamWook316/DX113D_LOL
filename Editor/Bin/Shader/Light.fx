@@ -151,18 +151,18 @@ PS_OUTPUT_LIGHTACC LightAccPS(VS_OUTPUT_LIGHTACC input)
     // 뷰공간의 위치를 구한다.
 	float3 ViewPos = mul(ProjPos, g_matInvProj).xyz;
     
-	float3 ViewNormal = GBuffer1Color.xyz;
+	float3 ViewNormal = GBuffer1Color.xyz;    
+
+    LightResult result = ComputeLight(ViewPos, ViewNormal, GBuffer3Color);
     
-	LightResult result = ComputeLight(ViewPos, ViewNormal, GBuffer3Color);
-    
-	output.Dif.rgb = result.Dif + result.Amb;
-	output.Spc.rgb = result.Spc;
-	output.Emv.rgb = result.Emv;
-    
+    output.Dif.rgb = result.Dif + result.Amb;
+    output.Spc.rgb = result.Spc;
+    output.Emv.rgb = result.Emv;
+
 	output.Dif.a = 1.f;
 	output.Spc.a = 1.f;
 	output.Emv.a = 1.f;
-    
+        
     
 	return output;
 }

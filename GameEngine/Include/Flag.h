@@ -289,21 +289,23 @@ enum class NodeResult
 enum ConditionNode
 {
 	MoveInputCheckNode,
+	MouseLButtonCheckNode,
 	NoInterruptNode,
 	AttackTargetCheck,
-	SkillEndCheck,
-	InSkillCheck,
-	TurretAttackTargetCheck,
-	TurretAttackFrequencyCheck,
+	MouseRButtonCheckNode,
+	MouseRButtonUpCheckNode,
 };
 
 enum ActionNode
 {
 	Move,
-	MovePicking,
 	Idle,
 	NormalAttack,
-	Death
+	Death,
+	RotateAttackDirection,
+	ReadyToShoot,
+	ShootNode,
+	CancleShootNode,
 };
 
 enum DecoratorNode
