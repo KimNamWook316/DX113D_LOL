@@ -1,7 +1,6 @@
 
 #include "HPCheck.h"
 
-
 CHPCheck::CHPCheck()
 {
 	SetTypeID(typeid(CHPCheck).hash_code());

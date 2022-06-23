@@ -67,6 +67,11 @@ CTransform::~CTransform()
 	SAFE_DELETE(m_CBuffer);
 }
 
+CTransformConstantBuffer* CTransform::GetTransformCBuffer() const
+{
+	return m_CBuffer;
+}
+
 void CTransform::SetInstancingInfo(Instancing3DInfo* Info)
 {
 	CCameraComponent* Camera = m_Scene->GetCameraManager()->GetCurrentCamera();

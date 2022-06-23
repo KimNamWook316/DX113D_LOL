@@ -43,6 +43,29 @@ public:
         return m_ChildrenList;
     }
 
+    CNode* GetChild(int Index)  const
+    {
+        auto iter = m_ChildrenList.begin();
+        std::advance(iter, Index);
+
+        return *iter;
+    }
+
+    template <typename T>
+    CNode* FindChildByType()
+    {
+        auto iter = m_ChildrenList.begin();
+        auto iterEnd = m_ChildrenList.end();
+
+        for (; iter != iterEnd; ++iter)
+        {
+            if ((*iter)->GetTypeID() == typeid(T).hash_code())
+                return (*iter);
+        }
+
+        return nullptr;
+    }
+
     void SetChildrenCallStart(bool Start)
     {
         auto iter = m_ChildrenList.begin();
@@ -67,5 +90,6 @@ public:
     virtual bool Load(FILE* File);
     virtual bool SaveOnly(FILE* File);
     virtual bool LoadOnly(FILE* File);
+
 };
 

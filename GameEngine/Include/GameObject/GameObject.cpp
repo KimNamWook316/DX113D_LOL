@@ -11,7 +11,6 @@ CGameObject::CGameObject() :
 	m_NavAgent(nullptr),
 	m_IsEnemy(false),
 	m_NoInterrupt(false),
-	m_NormalAttackTarget(nullptr),
 	m_ExcludeSceneSave(false),
 	m_NoDestroyFromSceneChange(false)
 {

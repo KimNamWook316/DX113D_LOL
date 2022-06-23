@@ -4,6 +4,7 @@
 #include "../Scene/SceneCollision.h"
 #include "../Collision/CollisionManager.h"
 #include "../Resource/Shader/ColliderConstantBuffer.h"
+#include "../Resource/Shader/TransformConstantBuffer.h"
 
 CColliderComponent::CColliderComponent()
 {
@@ -211,6 +212,7 @@ bool CColliderComponent::Init()
 
 	m_Shader = CResourceManager::GetInst()->FindShader("ColliderShader");
 
+
 	return true;
 }
 
@@ -231,6 +233,7 @@ void CColliderComponent::CheckCollision()
 
 void CColliderComponent::PrevRender()
 {
+	m_LayerName = "Collider";
 	CSceneComponent::PrevRender();
 }
 

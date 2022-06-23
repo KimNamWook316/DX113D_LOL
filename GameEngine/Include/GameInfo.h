@@ -237,7 +237,7 @@ struct TransformCBuffer
 	Vector3	Pivot;
 	float	Empty1;
 	Vector3	MeshSize;
-	float	Empty;
+	float	Empty2;
 };
 
 struct VertexUV

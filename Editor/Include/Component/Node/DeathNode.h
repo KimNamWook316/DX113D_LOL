@@ -18,5 +18,6 @@ protected:
 
 public:
     virtual NodeResult Invoke(float DeltaTime) override;
+
 };
 

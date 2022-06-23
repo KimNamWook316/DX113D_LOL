@@ -17,6 +17,7 @@ CInput::CInput()	:
 	m_KeyArray{},
 	m_LButtonClick(false),
 	m_RButtonClick(false),
+	m_RButtonUp(false),
 	m_CollisionWidget(false)
 {
 	m_vecKeyState.resize(256);
@@ -326,7 +327,16 @@ void CInput::UpdateKeyState()
 			m_RButtonClick = true;
 
 		else
+		{
+			// 만약 이전 프레임에 RButton이 Click됐는데 이번 프레임에 RButton이 Click되지 않았다면
+			// 이번 프레임에 RButton이 Up된 것이다
+			if (m_RButtonClick)
+				m_RButtonUp = true;
+			else
+				m_RButtonUp = false;
+
 			m_RButtonClick = false;
+		}
 		break;
 	case Input_Type::Window:
 		if (GetAsyncKeyState(VK_CONTROL) & 0x8000)

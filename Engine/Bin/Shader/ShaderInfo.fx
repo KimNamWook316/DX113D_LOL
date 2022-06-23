@@ -29,7 +29,7 @@ cbuffer Transform : register(b0)
 	float3	g_Pivot;
 	float	g_TransformEmpty1;
 	float3	g_MeshSize;
-	float	g_TransformEmpty;
+    float	g_TransformEmpty2;
 };
 
 cbuffer Material : register(b1)

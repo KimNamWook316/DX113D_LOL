@@ -19,7 +19,7 @@ CAnimationSequenceInstance::CAnimationSequenceInstance() :
 	m_GlobalTime(0.f),
 	m_SequenceProgress(0.f),
 	m_ChangeTimeAcc(0.f),
-	m_ChangeTime(0.2f),
+	m_ChangeTime(0.1f),
 	m_EditorStopAnimation(false),
 	m_EditorStopTargetFrame(-1),
 	m_AnimEnd(false)
@@ -394,6 +394,16 @@ void CAnimationSequenceInstance::ChangeAnimation(const std::string& Name)
  	m_ChangeAnimation->m_Time = 0.f;
 }
 
+void CAnimationSequenceInstance::KeepCurrentAnimation()
+{
+	// CurrentAnimation은 지금 애니메이션이지만 ChangeAnimation은 다른 애니메이션으로 설정된 상태에서
+	// ChangeAnimation을 취소하고 지금 애니메이션으로 계속 유지하려면 이 함수를 호출
+
+	m_ChangeAnimation->m_Time = 0.f;
+	m_ChangeAnimation = nullptr;
+ 
+}
+
 bool CAnimationSequenceInstance::CheckCurrentAnimation(const std::string& Name)
 {
 	return m_CurrentAnimation->m_Name == Name;
@@ -530,6 +540,12 @@ void CAnimationSequenceInstance::Update(float DeltaTime)
 		{
 			m_ChangeTimeAcc = m_ChangeTime;
 			ChangeEnd = true;
+		}
+		else
+		{
+			if (m_ChangeAnimation->GetName().find("Idle") != std::string::npos &&
+				m_CurrentAnimation->GetName().find("Attack") != std::string::npos)
+				int a = 3;
 		}
 	}
 

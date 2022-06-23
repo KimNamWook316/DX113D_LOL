@@ -53,3 +53,4 @@ NodeResult CDeathNode::Invoke(float DeltaTime)
 {
 	return CActionNode::Invoke(DeltaTime);
 }
+

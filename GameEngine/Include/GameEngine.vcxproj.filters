@@ -918,9 +918,6 @@
     <ClCompile Include="Component\Node\CompositeNode.cpp">
       <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node</Filter>
     </ClCompile>
-    <ClCompile Include="Component\Node\ConditionNode.cpp">
-      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node</Filter>
-    </ClCompile>
     <ClCompile Include="Component\Node\Node.cpp">
       <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node</Filter>
     </ClCompile>
@@ -987,8 +984,11 @@
     <ClCompile Include="Component\Node\ActionNode.cpp">
       <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node\02. ActionNode</Filter>
     </ClCompile>
+    <ClCompile Include="Component\Node\ConditionNode.cpp">
+      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node\01. ConditionNode</Filter>
+    </ClCompile>
     <ClCompile Include="Component\Node\DecoratorNode.cpp">
-      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node</Filter>
+      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node\03. DecoratorNode</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1613,9 +1613,6 @@
     <ClInclude Include="Component\Node\CompositeNode.h">
       <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node</Filter>
     </ClInclude>
-    <ClInclude Include="Component\Node\ConditionNode.h">
-      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node</Filter>
-    </ClInclude>
     <ClInclude Include="Component\Node\Node.h">
       <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node</Filter>
     </ClInclude>
@@ -1682,11 +1679,14 @@
     <ClInclude Include="Component\Node\ActionNode.h">
       <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node\02. ActionNode</Filter>
     </ClInclude>
-    <ClInclude Include="Component\Node\DecoratorNode.h">
-      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node</Filter>
-    </ClInclude>
     <ClInclude Include="IMGUIUtil.h">
       <Filter>01. Engine\08. IMGUI\03. Widget</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\ConditionNode.h">
+      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node\01. ConditionNode</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\DecoratorNode.h">
+      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node\03. DecoratorNode</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

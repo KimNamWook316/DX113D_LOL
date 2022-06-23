@@ -169,6 +169,7 @@
     <ClCompile Include="Component\GameBehaviorTree.cpp" />
     <ClCompile Include="Component\GameDataComponent.cpp" />
     <ClCompile Include="Component\GameStateComponent.cpp" />
+    <ClCompile Include="Component\Node\CancleShootNode.cpp" />
     <ClCompile Include="Component\Node\CheckAttackTarget.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
@@ -181,33 +182,12 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="Component\Node\CheckTurretAttackFrequency.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="Component\Node\CheckTurretAttackTarget.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="Component\Node\DeathNode.cpp" />
-    <ClCompile Include="Component\Node\FindEnemyChampion.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="Component\Node\HPCheck.cpp" />
     <ClCompile Include="Component\Node\IdleNode.cpp" />
-    <ClCompile Include="Component\Node\InSkillCheck.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
-    </ClCompile>
+    <ClCompile Include="Component\Node\MouseLButtonCheckNode.cpp" />
+    <ClCompile Include="Component\Node\MouseRButtonCheckNode.cpp" />
+    <ClCompile Include="Component\Node\MouseRButtonUpCheckNode.cpp" />
     <ClCompile Include="Component\Node\MoveInputCheckNode.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
@@ -224,7 +204,9 @@
     <ClCompile Include="Component\Node\NegateNode.cpp" />
     <ClCompile Include="Component\Node\NoInterruptNode.cpp" />
     <ClCompile Include="Component\Node\NormalAttack.cpp" />
-    <ClCompile Include="Component\Node\SkillEndCheckNode.cpp" />
+    <ClCompile Include="Component\Node\ReadyToShoot.cpp" />
+    <ClCompile Include="Component\Node\RotateAttackDirectionNode.cpp" />
+    <ClCompile Include="Component\Node\ShootNode.cpp" />
     <ClCompile Include="Component\State\AirBorneState.cpp" />
     <ClCompile Include="Component\State\DamageState.cpp" />
     <ClCompile Include="Component\State\GameStateManager.cpp" />
@@ -288,6 +270,7 @@
     <ClInclude Include="Component\GameBehaviorTree.h" />
     <ClInclude Include="Component\GameDataComponent.h" />
     <ClInclude Include="Component\GameStateComponent.h" />
+    <ClInclude Include="Component\Node\CancleShootNode.h" />
     <ClInclude Include="Component\Node\CheckAttackTarget.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
@@ -300,33 +283,12 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClInclude>
-    <ClInclude Include="Component\Node\CheckTurretAttackFrequency.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="Component\Node\CheckTurretAttackTarget.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
-    </ClInclude>
     <ClInclude Include="Component\Node\DeathNode.h" />
-    <ClInclude Include="Component\Node\FindEnemyChampion.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
-    </ClInclude>
     <ClInclude Include="Component\Node\HPCheck.h" />
     <ClInclude Include="Component\Node\IdleNode.h" />
-    <ClInclude Include="Component\Node\InSkillCheck.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
-    </ClInclude>
+    <ClInclude Include="Component\Node\MouseLButtonCheckNode.h" />
+    <ClInclude Include="Component\Node\MouseRButtonCheckNode.h" />
+    <ClInclude Include="Component\Node\MouseRButtonUpCheckNode.h" />
     <ClInclude Include="Component\Node\MoveInputCheckNode.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
@@ -343,7 +305,9 @@
     <ClInclude Include="Component\Node\NegateNode.h" />
     <ClInclude Include="Component\Node\NoInterruptNode.h" />
     <ClInclude Include="Component\Node\NormalAttack.h" />
-    <ClInclude Include="Component\Node\SkillEndCheckNode.h" />
+    <ClInclude Include="Component\Node\ReadyToShoot.h" />
+    <ClInclude Include="Component\Node\RotateAttackDirectionNode.h" />
+    <ClInclude Include="Component\Node\ShootNode.h" />
     <ClInclude Include="Component\State\AirBorneState.h" />
     <ClInclude Include="Component\State\DamageState.h" />
     <ClInclude Include="Component\State\GameStateManager.h" />

@@ -443,6 +443,43 @@ void CScene::AddObject(CGameObject* Object)
 	m_ObjList.push_back(Object);
 }
 
+bool CScene::CameraMove(const Vector3& Direction, const Vector3& DestPos, float Speed, float DeltaTime)
+{
+	CCameraComponent* CurrentCamera = m_CameraManager->GetCurrentCamera();
+
+	CurrentCamera->AddRelativePos(Direction.x * Speed * DeltaTime, 0.f, Direction.z * Speed * DeltaTime);
+
+	Vector3 CurrentCameraPos = CurrentCamera->GetWorldPos();
+	float Dist = Vector3(CurrentCameraPos.x, 0.f, CurrentCameraPos.z).Distance(Vector3(DestPos.x, 0.f, DestPos.z));
+
+	if (Dist < 1.f)
+		return true;
+
+	return false;
+}
+
+bool CScene::RestoreCamera(float Speed, float DeltaTime)
+{
+	CCameraComponent* CurrentCamera = m_CameraManager->GetCurrentCamera();
+
+	Vector3 CurrentCamPos = CurrentCamera->GetWorldPos();
+	Vector3 RestoreDir = m_OriginCamPos - CurrentCamPos;
+	RestoreDir.y = 0.f;
+	RestoreDir.Normalize();
+
+	if (Vector3(CurrentCamPos.x, 0.f, CurrentCamPos.z).Distance(Vector3(m_OriginCamPos.x, 0.f, m_OriginCamPos.z)) < 0.5f)
+		return true;
+
+	else
+	{
+		CurrentCamera->AddRelativePos(RestoreDir.x * Speed * DeltaTime, 0.f, RestoreDir.z * Speed * DeltaTime);
+	}
+
+
+	return false;
+}
+
+
 int CScene::GetSaveExcludeObjectCount()
 {
 	int Count = 0;

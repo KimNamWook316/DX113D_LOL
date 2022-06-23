@@ -467,7 +467,6 @@ public:
 private:
     GraphEditor::Options m_Option;
     GraphEditor::ViewState m_ViewState;
-    GraphEditorDelegate m_Delegate;
     ImGuiComboFlags m_ComboFlag;
     bool m_Select;
     int m_TypeSelectIndex;
@@ -488,6 +487,9 @@ private:
     wchar_t		m_wHintText[1024];
     char		m_HintTextUTF8[1024];
     ImGuiInputTextFlags	m_TextInputFlag;
+
+public:
+    GraphEditorDelegate m_Delegate;
 
 public:
 	virtual bool Init();
@@ -520,7 +522,7 @@ public:
     // GameObject가 로드됐을때 Graph Editor상에 노드들 갱신
     void UpdateLoadNode(CCompositeNode* RootNode);
     void UpdateLoadNodeLink(class CBehaviorTree* Tree);
-    void UpdateLoadNodeRecursive(CNode* Node, int Depth, int Height);
+    void UpdateLoadNodeRecursive(CNode* Node);
     void Clear();
 };
 

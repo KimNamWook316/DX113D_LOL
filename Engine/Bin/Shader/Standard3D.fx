@@ -208,10 +208,11 @@ PSOutput_GBuffer Standard3DPS(Vertex3DOutput input)
     output.GBuffer2.g = input.ProjPos.w;
     output.GBuffer2.b = g_MtrlSpecularColor.w;
     output.GBuffer2.a = 1.f;
-    
+
     output.GBuffer3.r = ConvertColor(g_MtrlBaseColor);
     output.GBuffer3.g = ConvertColor(g_MtrlAmbientColor);
-    
+
+
     output.GBuffer4.rgb = input.Tangent.xyz;
     output.GBuffer4.a = 1.f;
     
