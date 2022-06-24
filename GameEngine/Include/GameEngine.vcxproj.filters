@@ -1008,7 +1008,7 @@
     <ClCompile Include="Resource\Shader\HDRRenderShader.cpp">
       <Filter>02. Resource\02. Shader\02. ShaderClass\20. HDR</Filter>
     </ClCompile>
-    <ClCompile Include="Resource\Shader\HDRDownScaleSecondPathShader.cpp">
+    <ClCompile Include="Resource\Shader\HDRDownScaleSecondPassShader.cpp">
       <Filter>02. Resource\02. Shader\02. ShaderClass\20. HDR</Filter>
     </ClCompile>
     <ClCompile Include="Render\PostFXRenderer.cpp">
@@ -1724,7 +1724,7 @@
     <ClInclude Include="Resource\Shader\HDRRenderShader.h">
       <Filter>02. Resource\02. Shader\02. ShaderClass\20. HDR</Filter>
     </ClInclude>
-    <ClInclude Include="Resource\Shader\HDRDownScaleSecondPathShader.h">
+    <ClInclude Include="Resource\Shader\HDRDownScaleSecondPassShader.h">
       <Filter>02. Resource\02. Shader\02. ShaderClass\20. HDR</Filter>
     </ClInclude>
     <ClInclude Include="Render\PostFXRenderer.h">
@@ -1790,6 +1790,9 @@
       <Filter>02. Resource\02. Shader\01. HLSL</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\Shader\HDRRender.fx">
+      <Filter>02. Resource\02. Shader\01. HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\Shader\HDRDownScaleSecond.fx">
       <Filter>02. Resource\02. Shader\01. HLSL</Filter>
     </FxCompile>
   </ItemGroup>

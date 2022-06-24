@@ -170,7 +170,7 @@
     <ClCompile Include="Resource\Shader\GraphicShader.cpp" />
     <ClCompile Include="Resource\Shader\GrayShader.cpp" />
     <ClCompile Include="Resource\Shader\HDRDownScaleFirstPassShader.cpp" />
-    <ClCompile Include="Resource\Shader\HDRDownScaleSecondPathShader.cpp" />
+    <ClCompile Include="Resource\Shader\HDRDownScaleSecondPassShader.cpp" />
     <ClCompile Include="Resource\Shader\HDRRenderCBuffer.cpp" />
     <ClCompile Include="Resource\Shader\HDRRenderShader.cpp" />
     <ClCompile Include="Resource\Shader\InstancingCBuffer.cpp" />
@@ -405,7 +405,7 @@
     <ClInclude Include="Resource\Shader\GraphicShader.h" />
     <ClInclude Include="Resource\Shader\GrayShader.h" />
     <ClInclude Include="Resource\Shader\HDRDownScaleFirstPassShader.h" />
-    <ClInclude Include="Resource\Shader\HDRDownScaleSecondPathShader.h" />
+    <ClInclude Include="Resource\Shader\HDRDownScaleSecondPassShader.h" />
     <ClInclude Include="Resource\Shader\HDRRenderCBuffer.h" />
     <ClInclude Include="Resource\Shader\HDRRenderShader.h" />
     <ClInclude Include="Resource\Shader\InstancingCBuffer.h" />
@@ -555,6 +555,14 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Effect</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">DownScaleFirstPass</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="..\Bin\Shader\HDRDownScaleSecond.fx">
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">DownScaleSecondPass</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">DownScaleSecondPass</EntryPointName>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Effect</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>

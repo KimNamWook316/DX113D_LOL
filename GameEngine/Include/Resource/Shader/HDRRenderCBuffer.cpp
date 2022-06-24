@@ -28,7 +28,7 @@ bool CHDRRenderCBuffer::Init()
 void CHDRRenderCBuffer::UpdateCBuffer()
 {
 	// 쉐이더에서 계산 최적화를 위해 제곱
-	m_BufferData.LumWhiteSqr = m_BufferData.LumWhiteSqr * m_BufferData.LumWhiteSqr;
+	m_BufferData.LumWhiteSqr *= m_BufferData.LumWhiteSqr;
 
 	m_Buffer->UpdateBuffer(&m_BufferData);
 }

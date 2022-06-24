@@ -2,14 +2,14 @@
 
 #include "ComputeShader.h"
 
-class CHDRDownScaleFirstPassShader :
+class CHDRDownScaleSecondPassShader :
     public CComputeShader
 {
     friend class CShaderManager;
 
 private:
-    CHDRDownScaleFirstPassShader();
-    virtual ~CHDRDownScaleFirstPassShader();
+    CHDRDownScaleSecondPassShader();
+    virtual ~CHDRDownScaleSecondPassShader();
 
 public:
     virtual bool Init() override;

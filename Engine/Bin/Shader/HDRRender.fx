@@ -15,7 +15,7 @@ float3 ToneMapping(float3 HDRColor)
 	// 현재 픽셀에 대한 휘도 스케일 계산
 	float LScale = dot(float4(HDRColor, 0.f), LUM_FACTOR);
 	LScale *= g_HDRMiddleGray / g_AvgLum[0];
-	LScale = (LScale + (LScale * LScale / g_HDRLumWhiteSqr)) / (1.0 + LScale);
+	LScale = (LScale + ((LScale * LScale) / g_HDRLumWhiteSqr)) / (1.0 + LScale);
 
 	return HDRColor * LScale;
 }
@@ -49,13 +49,17 @@ PSOutput_Single HDRRenderPS(VS_OUTPUT_HDR Input)
 	TargetPos.y = (int) (UV.y * g_Resolution.y);
 
 	// 색상 샘플 계산
-	float3 Color = g_HDRTex.Load(TargetPos, 0);
+	float4 Color = g_HDRTex.Load(TargetPos, 0);
+
+	if (Color.a == 0.f)
+	{
+		clip(-1);
+	}
 
 	// 톤 매핑
-	Color = ToneMapping(Color);
+	Color = float4(ToneMapping(Color.rgb), 1.f);
 
-	Output.Color.rgb = Color;
-	Output.Color.a = 1.f;
+	Output.Color = Color;
 
 	return Output;
 }

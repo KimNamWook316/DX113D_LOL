@@ -347,19 +347,12 @@ bool CEngine::Render(float DeltaTime)
 	CDevice::GetInst()->ClearRenderTarget(m_ClearColor);
 	CDevice::GetInst()->ClearDepthStencil(1.f, 0);
 
-	/*CMesh* Mesh = CResourceManager::GetInst()->FindMesh("SpriteMesh");
-	CShader* Shader = CResourceManager::GetInst()->FindShader("ColorMeshShader");
-
-	Shader->SetShader();
-
-	Mesh->Render();*/
-	CRenderManager::GetInst()->Render();
+	CRenderManager::GetInst()->Render(DeltaTime);
 
 	if (m_EditMode)
 	{
 		CIMGUIManager::GetInst()->Render();
 	}
-
 
 	CDevice::GetInst()->Flip();
 

@@ -229,6 +229,9 @@ public:
 	void SetMiddleGray(float Gray);
 	void SetLumWhite(float White);
 
+	void SetAdaptationTime(float Time);
+	float GetAdaptationTime() const;
+
  //	bool IsGray()
  //	{
  //		return m_Gray;
@@ -251,7 +254,7 @@ public:
 
 public:
 	bool Init();
-	void Render();
+	void Render(float DeltaTime);
 
 private:
 	void RenderSkyBox();

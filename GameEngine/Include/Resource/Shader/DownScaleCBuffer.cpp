@@ -4,6 +4,7 @@
 CDownScaleCBuffer::CDownScaleCBuffer() :
 	m_BufferData{}
 {
+	m_BufferData.Adaptation = 0.8f;
 }
 
 CDownScaleCBuffer::CDownScaleCBuffer(const CDownScaleCBuffer& Buffer)	:

@@ -35,7 +35,7 @@
 #include "OutlineShader.h"
 #include "GrayShader.h"
 #include "HDRDownScaleFirstPassShader.h"
-#include "HDRDownScaleSecondPathShader.h"
+#include "HDRDownScaleSecondPassShader.h"
 #include "HDRRenderShader.h"
 
 CShaderManager::CShaderManager()
@@ -175,13 +175,13 @@ bool CShaderManager::Init()
  //		return false;
  //	}
 
-	if (!CreateShader<CHDRDownScaleFirstPathShader>("HDRDownScaleFirstPathShader"))
+	if (!CreateShader<CHDRDownScaleFirstPassShader>("HDRDownScaleFirstPassShader"))
 	{
 		assert(false);
 		return false;
 	}
 
-	if (!CreateShader<CHDRDownScaleSecondPathShader>("HDRDownScaleSecondPathShader"))
+	if (!CreateShader<CHDRDownScaleSecondPassShader>("HDRDownScaleSecondPassShader"))
 	{
 		assert(false);
 		return false;

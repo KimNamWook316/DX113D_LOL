@@ -669,12 +669,11 @@ struct GameData
 
 struct DownScaleCBuffer
 {
-	// 다운스케일 해상도 계산
-	Resolution RS;
-	// 다운스케일 이미지의 총 픽셀 수
-	unsigned int Domain;
-	// 첫 패스에 적용 된 그룹 수 계싼
-	unsigned int GroupSize;
+	Resolution		RS;			// 다운스케일 해상도 (1 / 16)
+	unsigned int	Domain;		// 다운스케일 이미지의 총 픽셀 수
+	unsigned int	GroupSize;	// 첫 패스에 적용된 그룹 수 계산
+	float			Adaptation; // 적응
+	Vector3 Empty;
 };
 
 struct HDRRenderCBuffer

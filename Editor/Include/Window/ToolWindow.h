@@ -39,6 +39,7 @@ private:
 	void OnChangeCameraSpeed(float Speed);
 	void OnChangeLumWhite(float Speed);
 	void OnChangeMiddleGray(float Speed);
+	void OnChangeAdaptationTime(float Time);
  //	void OnChangeOutlineDepthMultiply(float Val);
  //	void OnChangeOutlineDepthBias(float Val);
  //	void OnChangeOutlineNormalMultiply(float Val);
@@ -69,6 +70,7 @@ private:
 	CIMGUICollapsingHeader* m_RenderBlock;
 	CIMGUICheckBox* m_DebugRender;
 	CIMGUICheckBox* m_PostProcessing;
+	CIMGUISliderFloat* m_AdaptationTime;
 	CIMGUISliderFloat* m_LumWhite;
 	CIMGUISliderFloat* m_MiddleGray;
  //	CIMGUISliderFloat* m_OutlineDepthMultiply;

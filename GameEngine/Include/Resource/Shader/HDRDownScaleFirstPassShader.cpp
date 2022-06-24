@@ -1,17 +1,17 @@
 #include "HDRDownScaleFirstPassShader.h"
 
-CHDRDownScaleFirstPathShader::CHDRDownScaleFirstPathShader()
+CHDRDownScaleFirstPassShader::CHDRDownScaleFirstPassShader()
 {
-	SetTypeID<CHDRDownScaleFirstPathShader>();
+	SetTypeID<CHDRDownScaleFirstPassShader>();
 }
 
-CHDRDownScaleFirstPathShader::~CHDRDownScaleFirstPathShader()
+CHDRDownScaleFirstPassShader::~CHDRDownScaleFirstPassShader()
 {
 }
 
-bool CHDRDownScaleFirstPathShader::Init()
+bool CHDRDownScaleFirstPassShader::Init()
 {
-	if (!LoadComputeShader("DownScaleSecondPass", TEXT("HDRDownScale.fx"), SHADER_PATH))
+	if (!LoadComputeShader("DownScaleFirstPass", TEXT("HDRDownScale.fx"), SHADER_PATH))
 		return false;
 
 	return true;

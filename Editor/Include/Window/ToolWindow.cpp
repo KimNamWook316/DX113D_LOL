@@ -72,6 +72,7 @@ bool CToolWindow::Init()
 	m_DebugRender = m_RenderBlock->AddWidget<CIMGUICheckBox>("DebugRender");
 	m_PostProcessing = m_RenderBlock->AddWidget<CIMGUICheckBox>("PostProcessing(HDR)");
 	CIMGUITree* Tree = m_RenderBlock->AddWidget<CIMGUITree>("HDR Value", 200.f);
+	m_AdaptationTime = Tree->AddWidget<CIMGUISliderFloat>("Adaptation Time");
 	m_MiddleGray = Tree->AddWidget<CIMGUISliderFloat>("MiddleGray");
 	m_LumWhite = Tree->AddWidget<CIMGUISliderFloat>("LumWhite");
  //	CIMGUITree* Tree = m_RenderBlock->AddWidget<CIMGUITree>("Outline", 200.f);
@@ -121,14 +122,19 @@ bool CToolWindow::Init()
 	m_PostProcessing->SetCheck(0, IsPostProcessing);
 
 	float MiddleGray = CRenderManager::GetInst()->GetMiddleGray();
-	m_MiddleGray->SetValue(MiddleGray);
 	m_MiddleGray->SetMin(0.1f);
 	m_MiddleGray->SetMax(5.f);
+	m_MiddleGray->SetValue(MiddleGray);
 
 	float LumWhite = CRenderManager::GetInst()->GetLumWhite();
-	m_LumWhite->SetValue(LumWhite);
 	m_LumWhite->SetMin(0.9f);
 	m_LumWhite->SetMax(5.f);
+	m_LumWhite->SetValue(LumWhite);
+
+	float AdaptTime = CRenderManager::GetInst()->GetAdaptationTime();
+	m_AdaptationTime->SetMin(1.f);
+	m_AdaptationTime->SetMax(10.f);
+	m_AdaptationTime->SetValue(AdaptTime);
 
 	m_DebugRender->AddCheckInfo("Debug Render");
 	bool IsDebugRender = CRenderManager::GetInst()->IsDebugRender();
@@ -148,6 +154,7 @@ bool CToolWindow::Init()
 	m_Play->SetClickCallback(this, &CToolWindow::OnClickPlay);
 	m_Pause->SetClickCallback(this, &CToolWindow::OnClickPause);
 	m_Stop->SetClickCallback(this, &CToolWindow::OnClickStop);
+	m_AdaptationTime->SetCallBack(this, &CToolWindow::OnChangeAdaptationTime);
 	m_MiddleGray->SetCallBack(this, &CToolWindow::OnChangeMiddleGray);
 	m_LumWhite->SetCallBack(this, &CToolWindow::OnChangeLumWhite);
 
@@ -227,6 +234,11 @@ void CToolWindow::OnChangeLumWhite(float White)
 void CToolWindow::OnChangeMiddleGray(float Gray)
 {
 	CRenderManager::GetInst()->SetMiddleGray(Gray);
+}
+
+void CToolWindow::OnChangeAdaptationTime(float Time)
+{
+	CRenderManager::GetInst()->SetAdaptationTime(Time);
 }
 
  //void CToolWindow::OnChangeOutlineDepthMultiply(float Val)

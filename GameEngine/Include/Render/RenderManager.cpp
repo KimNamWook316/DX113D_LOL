@@ -77,6 +77,16 @@ void CRenderManager::SetLumWhite(float White)
 	m_PostFXRenderer->SetLumWhite(White);
 }
 
+void CRenderManager::SetAdaptationTime(float Time)
+{
+	m_PostFXRenderer->SetAdaptationTime(Time);
+}
+
+float CRenderManager::GetAdaptationTime() const
+{
+	return m_PostFXRenderer->GetAdaptationTime();
+}
+
 void CRenderManager::AddRenderList(CSceneComponent* Component)
 {
 	RenderLayer* Layer = nullptr;
@@ -396,7 +406,7 @@ bool CRenderManager::Init()
 	return true;
 }
 
-void CRenderManager::Render()
+void CRenderManager::Render(float DeltaTime)
 {
 	{
 		auto	iter = m_RenderLayerList.begin();
@@ -537,6 +547,9 @@ void CRenderManager::Render()
 
 	if (m_PostProcessing)
 	{
+		// 적응 계수 계산
+		m_PostFXRenderer->Adaptation(DeltaTime);
+
 		CRenderTarget* FinalTarget = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("FinalScreen");
 		
 		// 평균 휘도 계산
@@ -654,11 +667,11 @@ void CRenderManager::RenderSkyBox()
 	CRenderTarget* FinalScreenTarget = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("FinalScreen");
 
 	FinalScreenTarget->ClearTarget();
-	FinalScreenTarget->SetTarget(nullptr);
+ //	FinalScreenTarget->SetTarget(nullptr);
 
 	SkyObj->Render();
 
-	FinalScreenTarget->ResetTarget();
+ //	FinalScreenTarget->ResetTarget();
 }
 
 void CRenderManager::RenderShadowMap()

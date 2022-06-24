@@ -19,7 +19,7 @@ public:
 	virtual CDownScaleCBuffer* Clone();
 
 public:
-	void SetResoluation(const Resolution& RS)
+	void SetResolution(const Resolution& RS)
 	{
 		m_BufferData.RS = RS;
 	}
@@ -34,9 +34,19 @@ public:
 		m_BufferData.GroupSize = GroupSize;
 	}
 
+	void SetAdaptation(float Adaptation)
+	{
+		m_BufferData.Adaptation = Adaptation;
+	}
+
 	unsigned int GetGroupSize() const
 	{
 		return m_BufferData.GroupSize;
+	}
+
+	float GetAdaptation() const
+	{
+		return m_BufferData.Adaptation;
 	}
 };
 
