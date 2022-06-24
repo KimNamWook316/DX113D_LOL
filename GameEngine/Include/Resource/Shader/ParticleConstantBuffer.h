@@ -133,7 +133,6 @@ public:
 	{
 		return m_BufferData.ParticleBounceResistance;
 	}
-
 	int IsGenerateCircle() const
 	{
 		return m_BufferData.IsGenerateCircle;
@@ -142,9 +141,17 @@ public:
 	{
 		return m_BufferData.GenerateCircleRadius;
 	}
-	int IsLoopGenerateCircle() const
+	int IsGenerateRing() const
 	{
-		return m_BufferData.IsLoopGenerateCircle;
+		return m_BufferData.IsGenerateRing;
+	}
+	float GetGenerateRingRadius() const
+	{
+		return m_BufferData.GenerateRingRadius;
+	}
+	int IsLoopGenerateRing() const
+	{
+		return m_BufferData.IsLoopGenerateRing;
 	}
 	float GetMinAlpha() const
 	{
@@ -159,9 +166,17 @@ public:
 	{
 		m_BufferData.RotationAngle = Angle;
 	}
-	void SetLoopGenerateCircle(bool Enable)
+	void SetLoopGenerateRing(bool Enable)
 	{
-		m_BufferData.IsLoopGenerateCircle = Enable ? 1 : 0;
+		m_BufferData.IsLoopGenerateRing = Enable ? 1 : 0;
+	}
+	void SetGenerateRingEnable(bool Enable)
+	{
+		m_BufferData.IsGenerateRing = Enable ? 1 : 0;
+	}
+	void SetGenerateRingRadius(float Radius)
+	{
+		m_BufferData.GenerateRingRadius = Radius;
 	}
 	void SetGenerateCircleEnable(bool Enable)
 	{

@@ -19,9 +19,9 @@ CParticleConstantBuffer::CParticleConstantBuffer() :
 	m_BufferData.ParticleBounce = 0;
 	m_BufferData.ParticleBounceResistance = 0.98f;
 
-	m_BufferData.IsGenerateCircle = 0;
-	m_BufferData.GenerateCircleRadius = 20.f;
-	m_BufferData.IsLoopGenerateCircle = 0;
+	m_BufferData.IsGenerateRing = 0;
+	m_BufferData.GenerateRingRadius = 20.f;
+	m_BufferData.IsLoopGenerateRing = 0;
 
 	m_BufferData.AlphaMin = 1.f;
 	m_BufferData.AlphaMax = 1.f;

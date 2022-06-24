@@ -147,8 +147,6 @@ static const float2 g_NullUV[4] =
     float2(1.f, 1.f)
 };
 
-
-
 static float Gaussian5x5[25] =
 {
 	0.003765f, 0.015019f, 0.023792f, 0.015019f, 0.003765f,

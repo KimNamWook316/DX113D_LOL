@@ -430,17 +430,22 @@ struct	ParticleCBuffer
 	Vector3 RotationAngle;
 	float	ParticleBounceResistance;
 
-	int IsGenerateCircle;
-	float GenerateCircleRadius;
-	int IsLoopGenerateCircle;
-	float ParticleEmpty11;
+	int IsGenerateRing;
+	float GenerateRingRadius;
+	int IsLoopGenerateRing;
+	float ParticleEmpty1;
 	// int     ParticleBounce;
 	// float	 ParticleBounceResistance;
 
 	float AlphaMax;
 	float AlphaMin;
+	int IsGenerateCircle;
+	float GenerateCircleRadius;
+
+	int IsGenerateTorch;
 	float ParticleEmpty2;
 	float ParticleEmpty3;
+	float ParticleEmpty4;
 };
 
 struct ParticleInfo
@@ -467,7 +472,7 @@ struct ParticleInfoShared
 	Vector4	ColorMax;
 	int		GravityEnable;
 	Vector3  RotationAngle;
-	float  PrevCircleAngle;
+	float  PrevRingAngle;
 };
 
 struct GlobalCBuffer

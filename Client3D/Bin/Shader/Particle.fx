@@ -31,15 +31,20 @@ cbuffer	ParticleCBuffer : register(b11)
 	float3 g_ParticleRotationAngle;
 	float   g_ParticleBounceResist;
 	
-	int g_ParticleGenerateCircle;
-	float g_ParcticleGenerateRadius;
-	int g_LoopGenerateCircle;
+	int g_ParticleGenerateRing;
+	float g_ParcticleRingRadius;
+	int g_LoopGenerateRing;
 	float g_ParticleEmpty1;
-	
+
 	float g_ParticleAlphaMax;
 	float g_ParticleAlphaMin;
-	float g_ParticleEmpty2;
-	float g_ParticleEmpty3;
+	int g_ParticleGenerateCircle;
+	float g_ParticleCircleRadius;
+
+	int g_ParticleGenerateTorch;
+	float ParticleEmpty2;
+	float ParticleEmpty3;
+	float ParticleEmpty4;
 };
 
 /*
@@ -83,7 +88,7 @@ struct ParticleInfoShared
 	int		GravityEnable;
 
 	float3 RotationAngle;
-	float PrevCircleAngle;
+	float PrevRingAngle;
 };
 
 RWStructuredBuffer<ParticleInfo>		g_ParticleArray	: register(u0);
@@ -198,36 +203,9 @@ void ParticleUpdate(uint3 ThreadID : SV_DispatchThreadID)
 		float3	RandomPos = float3(Rand(key), Rand(2.142f), Rand(key * 3.f));
 		float	Rand = (RandomPos.x + RandomPos.y + RandomPos.z) / 3.f;
 
-		// Radius 주변으로 그려내도록 하기 위해서는 아래 계산해준 StartRange 가 아니라, 원을 중심으로 그려지게 해야 한다.
-		// 그리고 Loop 을 세팅해주면, 원을 중심으로 일정한 간격으로 차례대로 Spawn 되도록 처리해야 한다.
 		float3	StartRange = g_ParticleStartMax - g_ParticleStartMin;
 		g_ParticleArray[ThreadID.x].WorldPos = Rand * (g_ParticleStartMax - g_ParticleStartMin) + g_ParticleStartMin;
 		g_ParticleArray[ThreadID.x].InitWorldPosY = g_ParticleArray[ThreadID.x].WorldPos.y;
-
-		// 원 모양 생성 => Generate Circle 을 하게 되면, Start Min, Max 가 무의미해지게 되는 것이다.
-		 if (g_ParticleGenerateCircle == 1)
-		 {
-		 	// 0.f, 0.f, 0.f 중심으로 원에 생성하기
-		 	float RandomAngle = 360.f * Rand;
-		 	float3 CirclePos = float3(0.f, 0.f, 0.f) + float3(cos(RandomAngle) * g_ParcticleGenerateRadius,
-		 		0.f, 
-		 		sin(RandomAngle) * g_ParcticleGenerateRadius);
-		 
-		 	g_ParticleArray[ThreadID.x].WorldPos = CirclePos;
-		 
-		 	// Loop 을 설정하게 되면, 차례대로 만들어지게 한다.
-		 	if (g_LoopGenerateCircle == 1)
-		 	{
-		 		float NextCircleAngle = g_ParticleShare[0].PrevCircleAngle + (360.f / g_ParticleSpawnCountMax);
-		 
-		 		CirclePos = float3(0.f, 0.f, 0.f) + float3(cos(NextCircleAngle) * g_ParcticleGenerateRadius,  0.f, sin(NextCircleAngle) * g_ParcticleGenerateRadius);
-		 		g_ParticleArray[ThreadID.x].WorldPos = CirclePos;
-		 
-		 		g_ParticleShare[0].PrevCircleAngle = NextCircleAngle;
-		 			// PrevCircleAngle
-		 		// g_ParticleShare[0].RotationAngle = g_ParticleRotationAngle;
-		 	}
-		 }
 
 		g_ParticleArray[ThreadID.x].FallTime = 0.f;
 		g_ParticleArray[ThreadID.x].FallStartY = g_ParticleArray[ThreadID.x].WorldPos.y;
@@ -247,6 +225,58 @@ void ParticleUpdate(uint3 ThreadID : SV_DispatchThreadID)
 			g_ParticleArray[ThreadID.x].Speed = Rand * (g_ParticleSpeedMax - g_ParticleSpeedMin) + g_ParticleSpeedMin;
 			g_ParticleArray[ThreadID.x].Dir = Dir;
 		}
+
+		// Ring 모양 생성 => Generate Circle 을 하게 되면, Start Min, Max 가 무의미해지게 되는 것이다.
+		 if (g_ParticleGenerateRing == 1)
+		 {
+		 	// 0.f, 0.f, 0.f 중심으로 원에 생성하기
+		 	float RandomAngle = 360.f * Rand;
+		 	float3 RingPos = float3(0.f, 0.f, 0.f) + float3(
+				cos(RandomAngle) * g_ParcticleRingRadius,
+		 		0.f, 
+		 		sin(RandomAngle) * g_ParcticleRingRadius);
+		 
+		 	g_ParticleArray[ThreadID.x].WorldPos = RingPos;
+		 
+		 	// Loop 을 설정하게 되면, 차례대로 만들어지게 한다.
+		 	if (g_LoopGenerateRing == 1)
+		 	{
+		 		float NextRingAngle = g_ParticleShare[0].PrevRingAngle + (360.f / g_ParticleSpawnCountMax);
+		 
+				RingPos = float3(0.f, 0.f, 0.f) + float3(cos(NextRingAngle) * g_ParcticleRingRadius,  0.f, sin(NextRingAngle) * g_ParcticleRingRadius);
+		 		g_ParticleArray[ThreadID.x].WorldPos = RingPos;
+		 
+		 		g_ParticleShare[0].PrevRingAngle = NextRingAngle;
+		 	}
+		 }
+
+		 // 일정 범위 원 안에서 생성되게 하기 (Ring 과 같이 일정 간격에만 생성 X. 원 안에 랜덤 위치에 생성)
+		 if (g_ParticleGenerateCircle == 1)
+		 {
+			 // 생성 각도도 Random
+			 float RandomAngle = 360.f * Rand;
+
+			 // 생성 반지름 크기도 Random
+			 float RandomRadius = g_ParticleCircleRadius* Rand;
+
+			 float3 RingPos = float3(0.f, 0.f, 0.f) + float3(
+				 cos(RandomAngle) * RandomRadius,
+				 0.f,
+				 sin(RandomAngle) * RandomRadius);
+
+			 g_ParticleArray[ThreadID.x].WorldPos = RingPos;
+		 }
+
+		 // 횃불 모양의 Particle 만들어내기
+		 // 중심에서 벗어날 수록, Life Time 은 짧아지고
+		 // Spawn 위치로, 가운데 쪽에 비율적으로 더 많이 생성되게 해야 한다.
+		 if (g_ParticleGenerateTorch == 1)
+		 {
+			 // 생성 위치 => 정규 분포를 사용하여, 확률적으로 가운데 많이 생성되게 하기
+
+			 // Life Time => 투영을 이용하여, 가운데에서 멀어질수록, 선형적으로 LifeTime이 감소하는 형태 만들기 => 당연히 끝으로 갈수록, 색상도 Colormin  에서 max 로 갈것
+
+		 }
 	}
 	// 현재 생성이 되어 있는 파티클일 경우
 	else

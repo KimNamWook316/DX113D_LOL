@@ -212,6 +212,14 @@ public:
 	{
 		return m_CBuffer->GetParticleBounceResist();
 	}
+	int IsGenerateRing() const
+	{
+		return m_CBuffer->IsGenerateRing();
+	}
+	float GetGenerateRingRadius() const
+	{
+		return m_CBuffer->GetGenerateRingRadius();
+	}
 	int IsGenerateCircle() const
 	{
 		return m_CBuffer->IsGenerateCircle();
@@ -220,9 +228,9 @@ public:
 	{
 		return m_CBuffer->GetGenerateCircleRadius();
 	}
-	int IsLoopGenerateCircle() const
+	int IsLoopGenerateRing() const
 	{
-		return m_CBuffer->IsLoopGenerateCircle();
+		return m_CBuffer->IsLoopGenerateRing();
 	}
 	float GetMinAlpha() const
 	{
@@ -241,9 +249,17 @@ public:
 	{
 		m_CBuffer->SetMaxAlpha(Alpha);
 	}
-	void SetLoopGenerateCircle(bool Enable)
+	void SetLoopGenerateRing(bool Enable)
 	{
-		m_CBuffer->SetLoopGenerateCircle(Enable);
+		m_CBuffer->SetLoopGenerateRing(Enable);
+	}
+	void SetGenerateRingEnable(bool Enable)
+	{
+		m_CBuffer->SetGenerateRingEnable(Enable);
+	}
+	void SetGenerateRingRadius(float Radius)
+	{
+		m_CBuffer->SetGenerateRingRadius(Radius);
 	}
 	void SetGenerateCircleEnable(bool Enable)
 	{

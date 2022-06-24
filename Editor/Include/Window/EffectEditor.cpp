@@ -70,20 +70,13 @@ bool CEffectEditor::Init()
     HelpText->SetText(ParticleSaveLoadText);
     HelpText->SetIsHelpMode(true);
 
-    // Set Texture
-    m_SetMaterialTextureButton = AddWidget<CIMGUIButton>("Set Texture", 90.f, 20.f);
-    m_SetMaterialTextureButton->SetClickCallback<CEffectEditor>(this, &CEffectEditor::OnSetParticleTexture);
-
-    Line = AddWidget<CIMGUISameLine>("Line");
-    Line->SetOffsetX(105);
-
     m_StartEditBtn = AddWidget<CIMGUIButton>("Start Edit", 90.f, 20.f);
     m_StartEditBtn->SetClickCallback<CEffectEditor>(this, &CEffectEditor::SetStartEditing);
 
     Line = AddWidget<CIMGUISameLine>("Line");
-    Line->SetOffsetX(205);
+    Line->SetOffsetX(105);
 
-    m_RestartBtn = AddWidget<CIMGUIButton>("ReStart", 80.f, 20.f);
+    m_RestartBtn = AddWidget<CIMGUIButton>("ReStart", 90.f, 20.f);
     m_RestartBtn->SetClickCallback<CEffectEditor>(this, &CEffectEditor::OnRestartParticleComponentButton);
 
     // Particle Name
@@ -164,12 +157,6 @@ bool CEffectEditor::Init()
     m_CameraXRotSlideBar->SetMin(-88.f);
     m_CameraXRotSlideBar->SetMax(88.f);
 
-    // ParticleEffectRenderTarget
-   // m_ParticleRenderTarget = AddWidget<CIMGUIImage>("Render Target", 500.f, 400.f);
-   // m_ParticleRenderTarget->SetRenderTargetImage(true);
-   // m_ParticleRenderTarget->SetTexture(CRenderManager::GetInst()->GetParticleEffectRenderTarget());
-   // m_ParticleRenderTarget->SetBorderColor(10, 10, 255);
-   // m_ParticleRenderTarget->SetTableTitle("Render Target");
 
     // Particle Texture
     m_ParticleTexture = AddWidget<CIMGUIImage>("Particle Texture", 200.f, 200.f);
@@ -193,7 +180,7 @@ bool CEffectEditor::Init()
     Line = Tree->AddWidget<CIMGUISameLine>("Line");
     Line->SetOffsetX(100.f);
 
-    HelpText = AddWidget<CIMGUIText>("BounceHelp", 90.f, 30.f);
+    HelpText = Tree->AddWidget<CIMGUIText>("BounceHelp", 90.f, 30.f);
     const char* BounceHelpText = R"(탄성 효과)";
     HelpText->SetText(BounceHelpText);
     HelpText->SetIsHelpMode(true);
@@ -203,7 +190,7 @@ bool CEffectEditor::Init()
     m_BounceResistance->SetMin(0.01f);
     m_BounceResistance->SetMax(0.99f);
 
-    // Generate Circle
+    // Generate Ring
     Tree = AddWidget<CIMGUITree>("Ring Generate");
 
     m_IsGenerateRing = Tree->AddWidget<CIMGUICheckBox>("Ring", 80.f);
@@ -213,7 +200,7 @@ bool CEffectEditor::Init()
     Line = Tree->AddWidget<CIMGUISameLine>("Line");
     Line->SetOffsetX(90.f);
 
-    HelpText = AddWidget<CIMGUIText>("RingGenerateText", 90.f, 30.f);
+    HelpText = Tree->AddWidget<CIMGUIText>("RingGenerateText", 90.f, 30.f);
     const char* RingHelpText = R"(Ring 모양 Particle)";
     HelpText->SetText(RingHelpText);
     HelpText->SetIsHelpMode(true);
@@ -226,19 +213,37 @@ bool CEffectEditor::Init()
     m_IsLoopGenerateRing->SetCallBackLabel<CEffectEditor>(this, &CEffectEditor::OnIsLoopGenerateRingEdit);
 
     Line = Tree->AddWidget<CIMGUISameLine>("Line");
-    Line->SetOffsetX(190.f);
+    Line->SetOffsetX(200.f);
 
     HelpText = Tree->AddWidget<CIMGUIText>("RingLoopText", 90.f, 30.f);
     const char* RingLoopHelpText = R"(ex)  Ring 여부가 Check 되야만 적용.)";
     HelpText->SetText(RingLoopHelpText);
     HelpText->SetIsHelpMode(true);
 
-    
     m_GenerateRingRadius = Tree->AddWidget<CIMGUISliderFloat>("Radius", 100.f, 20.f);
     m_GenerateRingRadius->SetCallBack<CEffectEditor>(this, &CEffectEditor::OnEditGenerateRingRadius);
     m_GenerateRingRadius->SetMin(0.0f);
     m_GenerateRingRadius->SetMax(100.f);
 
+    // Generate Circle
+    Tree = AddWidget<CIMGUITree>("Circle Generate");
+
+    m_IsGenerateCircle = Tree->AddWidget<CIMGUICheckBox>("Circle", 80.f);
+    m_IsGenerateCircle->AddCheckInfo("Circle");
+    m_IsGenerateCircle->SetCallBackLabel<CEffectEditor>(this, &CEffectEditor::OnIsGenerateCircleEdit);
+
+    Line = Tree->AddWidget<CIMGUISameLine>("Line");
+    Line->SetOffsetX(90.f);
+
+    HelpText = Tree->AddWidget<CIMGUIText>("CircleGenerate", 90.f, 30.f);
+    const char* CircleHelpText = R"(원 내에 Random 하게 생성)";
+    HelpText->SetText(CircleHelpText);
+    HelpText->SetIsHelpMode(true);
+
+    m_GenerateCircleRadius = Tree->AddWidget<CIMGUISliderFloat>("Radius", 100.f, 20.f);
+    m_GenerateCircleRadius->SetCallBack<CEffectEditor>(this, &CEffectEditor::OnEditGenerateCircleRadius);
+    m_GenerateCircleRadius->SetMin(0.0f);
+    m_GenerateCircleRadius->SetMax(100.f);
 
     // Movement
     Tree = AddWidget<CIMGUITree>("Movement");
@@ -504,8 +509,8 @@ void CEffectEditor::OnIsGenerateRingEdit(const char*, bool Enable)
     if (!m_ParticleClass)
         return;
 
-    m_ParticleClass->SetGenerateCircleEnable(Enable);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGenerateCircleEnable(Enable);
+    m_ParticleClass->SetGenerateRingEnable(Enable);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGenerateRingEnable(Enable);
 }
 
 void CEffectEditor::OnIsLoopGenerateRingEdit(const char*, bool Enable)
@@ -513,11 +518,29 @@ void CEffectEditor::OnIsLoopGenerateRingEdit(const char*, bool Enable)
     if (!m_ParticleClass)
         return;
 
-    m_ParticleClass->SetLoopGenerateCircle(Enable);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetLoopGenerateCircle(Enable);
+    m_ParticleClass->SetLoopGenerateRing(Enable);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetLoopGenerateRing(Enable);
 }
 
 void CEffectEditor::OnEditGenerateRingRadius(float Radius)
+{
+    if (!m_ParticleClass)
+        return;
+
+    m_ParticleClass->SetGenerateRingRadius(Radius);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGenerateRingRadius(Radius);
+}
+
+void CEffectEditor::OnIsGenerateCircleEdit(const char*, bool Enable)
+{
+    if (!m_ParticleClass)
+        return;
+
+    m_ParticleClass->SetGenerateCircleEnable(Enable);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGenerateCircleEnable(Enable);
+}
+
+void CEffectEditor::OnEditGenerateCircleRadius(float Radius)
 {
     if (!m_ParticleClass)
         return;
@@ -800,55 +823,6 @@ void CEffectEditor::OnMoveAngleEdit(const Vector3& Angle)
     m_ParticleClass->SetMoveAngle(Angle);
 
     dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetMoveAngle(Angle);
-}
-
-
-void CEffectEditor::OnSetParticleTexture()
-{
-    TCHAR FilePath[MAX_PATH] = {};
-
-    OPENFILENAME OpenFile = {};
-
-    OpenFile.lStructSize = sizeof(OPENFILENAME);
-    OpenFile.hwndOwner = CEngine::GetInst()->GetWindowHandle(); // handle to window that owns the dialog box
-    OpenFile.lpstrFilter =
-        TEXT("모든파일\0*.*\0DDSFile\0*.dds\0TGAFile\0*.tga\0PNGFile\0*.png\0JPGFile\0*.jpg\0JPEGFile\0*.jpeg\0BMPFile\0*.bmp");
-    OpenFile.lpstrFile = FilePath;
-    // buffer ! filename used to initialize the file name edit control -> 정상적으로 save,open할시 여기에 filePath 정보가 들어온다.
-    OpenFile.nMaxFile = MAX_PATH; // size of buffer, pointed to by lpstrFile
-    OpenFile.lpstrInitialDir = CPathManager::GetInst()->FindPath(TEXTURE_PATH)->Path; // Initial Directory
-
-    if (GetOpenFileName(&OpenFile) != 0) // NonZero --> specifies file name, clicks ok button
-    {
-        int   TextureIndex = 0;
-        TCHAR OriginFileName[MAX_PATH] = {};
-        TCHAR FileName[MAX_PATH] = {};
-        TCHAR Ext[_MAX_EXT] = {};
-        _wsplitpath_s(FilePath, nullptr, 0, nullptr, 0, FileName, MAX_PATH, Ext, _MAX_EXT);
-
-        lstrcpy(OriginFileName, FileName);
-
-        lstrcat(FileName, Ext);
-
-        // Texture 저장용
-        char ConvertFileName[MAX_PATH] = {};
-        int  Length = WideCharToMultiByte(CP_ACP, 0, OriginFileName, -1, nullptr, 0, nullptr, nullptr);
-        WideCharToMultiByte(CP_ACP, 0, OriginFileName, -1, ConvertFileName, Length, nullptr, nullptr);
-
-        CMaterial* Material = CSceneManager::GetInst()->GetScene()->GetResource()->FindMaterial("BasicParticleMaterial");
-
-        if (!Material)
-            return;
-
-        // m_ParticleTexture->SetTextureFullPath(ConvertFileName, FilePath);
-        m_ParticleTexture->SetTexture(ConvertFileName, FileName, PARTICLE_PATH);
-
-        // 실제 Particle 이 사용하는 Material 의 Texture 교체
-        Material->SetTexture(0, 0, (int)Buffer_Shader_Type::Pixel, ConvertFileName, FileName, PARTICLE_PATH);
-
-        // 기존 세팅 정보를 그대로 반영한다.
-        // OnReflectCurrentParticleSetting();
-    }
 }
 
 void CEffectEditor::OnSaveParticleClass()
@@ -1416,10 +1390,10 @@ void CEffectEditor::SetIMGUIReflectParticle(CParticle* Particle)
     m_IsBounce->SetCheck(0, Particle->IsBounceEnable() == 1 ? true : false);
     m_BounceResistance->SetValue(Particle->GetBounceResistance());
 
-    // Generate Circle
-    m_IsGenerateRing->SetCheck(0, Particle->IsGenerateCircle() == 1 ? true : false);
-    m_GenerateRingRadius->SetValue(Particle->GetGenerateCircleRadius());
-    m_IsLoopGenerateRing->SetCheck(0, Particle->IsLoopGenerateCircle());
+    // Generate Ring
+    m_IsGenerateRing->SetCheck(0, Particle->IsGenerateRing() == 1 ? true : false);
+    m_GenerateRingRadius->SetValue(Particle->GetGenerateRingRadius());
+    m_IsLoopGenerateRing->SetCheck(0, Particle->IsLoopGenerateRing());
 }
 
 void CEffectEditor::SetIMGUIReflectObjectCamera()

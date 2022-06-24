@@ -65,7 +65,6 @@ private:
 
     class CIMGUICheckBox* m_IsMoveEdit;
     class CIMGUICheckBox* m_IsGravityEdit;
-    // class CIMGUICheckBox* m_IsRandomMoveEdit;
     class CIMGUICheckBox* m_IsPauseResumeToggle;
 
     // Camera Related
@@ -85,23 +84,22 @@ private:
     class CIMGUISliderFloat* m_GenerateRingRadius;
     class CIMGUICheckBox* m_IsLoopGenerateRing; 
 
+    // Circle Generate
+    class CIMGUICheckBox* m_IsGenerateCircle;
+    class CIMGUISliderFloat* m_GenerateCircleRadius;
+
     // 카메라의 Y 축 위치 (위로 갈지, 아래로 갈지 조정)
     class CIMGUISliderFloat* m_CameraYOffsetBar;
 
     // 카메라의 X 축 기준 회전 조정 (위를 볼지, 아래를 볼지)
     class CIMGUISliderFloat* m_CameraXRotSlideBar;
 
+    // Move Dir, Angle
     class CIMGUIInputFloat3* m_MoveDirEdit;
     class CIMGUIInputFloat3* m_MoveAngleEdit;
 
-    // class CIMGUIInputFloat* m_GravityAccelEdit;
-    // class CIMGUIInputFloat* m_StartDelayEdit;
-    class CIMGUIButton* m_SetMaterialTextureButton;
-    class CIMGUIButton* m_RestartButton;
-
     // Particle 이 사용하는 Material Texture
     class CIMGUIImage* m_ParticleTexture;
-    // class CIMGUIImage* m_ParticleRenderTarget;
 private :
     class CParticle* m_ParticleClass;
     class CMaterial* m_ParticleMaterial;
@@ -109,9 +107,6 @@ private :
     Particle3DObjectBackUpStruct m_BackUpStruct;
     bool m_StartEdit;
 private :
-    // class CParticleComponent* m_ParticleComponent;
-    // class CStaticMeshComponent* m_BaseGroundComponent;
-    // class CStaticMeshComponent* m_SkyComponent;
     class C3DParticleObject* m_ParticleObject;
     class CGameObject* m_ParticleSampleObject;
     class CGameObject* m_BaseGroundObject;
@@ -138,54 +133,61 @@ private:
     void OnIsLoopGenerateRingEdit(const char*, bool);
     void OnEditGenerateRingRadius(float Radius);
 
-    void OnSpawnTimeMaxEdit(float Num);
+    // Generate Circle
+    void OnIsGenerateCircleEdit(const char*, bool);
+    void OnEditGenerateCircleRadius(float Radius);
 
+    // Spawn Time, Count
+    void OnSpawnTimeMaxEdit(float Num);
+    void OnSpawnCountMaxEdit(int Num);
+
+    // StartMin,Max
     void OnStartMinEdit(const Vector3&);
     void OnStartMaxEdit(const Vector3&);
 
-    void OnSpawnCountMaxEdit(int Num);
-
+    // Scale Min, Max
     void OnScaleMinEdit(const Vector3&);
     void OnScaleMaxEdit(const Vector3&);
 
+    // LifeTime Min, Max
     void OnLifeTimeMinEdit(float Num);
     void OnLifeTimeMaxEdit(float Num);
 
+    // Speed Min, Max
     void OnSpeedMinEdit(float Num);
     void OnSpeedMaxEdit(float Num);
 
+    // Color Min, Max
     void OnColorMinEdit(const Vector4& Color);
     void OnColorMaxEdit(const Vector4& Color);
 
+    // Alpha Min, Max
     void OnAlphaMinEdit(float Alpha);
     void OnAlphaMaxEdit(float Alpha);
 
     // 현재 Material에 Alpha Blend 적용하기
     void OnSetAlphaBlendToMaterialCallback();
 
+    // MoveMent
     void OnIsMoveEdit(const char*, bool);
     void OnIsGravityEdit(const char*, bool);
-
-    // void OnIsRandomMoveEdit(const char*, bool);
     void OnPauseResumeToggle(const char*, bool);
 
+    // Camera
     void OnIsCameraRotateEdit(const char*, bool);
     void OnCameraRotateInvEdit(const char*, bool);
     void OnSetCameraRotateSpeed(float Speed);
-
     void OnSetCameraYAxisRotate(float Speed);
-
     void OnIsCameraZoomEdit(const char*, bool);
     void OnSetCameraZoomSpeed(float Speed);
-
     void OnSetCameraYOffset(float Offset);
     void OnSetCameraXRot(float Rot);
 
+    // Move Dir, Angle
     void OnMoveDirEdit(const Vector3& Dir);
     void OnMoveAngleEdit(const Vector3& Angle);
 
-    void OnSetParticleTexture();
-
+    // Save, Load
     void OnSaveParticleClass();
     void OnLoadParticleClass();
 private:
