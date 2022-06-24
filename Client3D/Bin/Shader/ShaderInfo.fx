@@ -99,6 +99,16 @@ cbuffer InstancingCBuffer : register(b6)
 	float3 g_InstancingEmpty;
 };
 
+cbuffer DownScaleCBuffer : register(b10)
+{
+	uint2 g_DownScaleRS;
+	uint g_DownScaleDomain;
+	uint g_DownScaleGroupSize;
+	float g_DownScaleAdpatation;
+	float g_DownScaleBloomThreshold;
+	float2 g_DownScaleEmpty;
+}
+
 struct LightResult
 {
     float3 Dif;

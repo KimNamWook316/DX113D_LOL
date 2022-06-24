@@ -4,11 +4,13 @@ cbuffer HDRRenderCBuffer : register(b10)
 {
 	float g_HDRMiddleGray;
 	float g_HDRLumWhiteSqr;
-	float2 g_HDREmpty;
+	float g_HDRBloomScale;
+	float g_HDREmpty;
 }
 
 Texture2DMS<float4> g_HDRTex : register(t10);
 StructuredBuffer<float> g_AvgLum : register(t11);
+Texture2D<float4> g_BloomTex : register(t12);
 
 float3 ToneMapping(float3 HDRColor)
 {
@@ -51,15 +53,25 @@ PSOutput_Single HDRRenderPS(VS_OUTPUT_HDR Input)
 	// 색상 샘플 계산
 	float4 Color = g_HDRTex.Load(TargetPos, 0);
 
-	if (Color.a == 0.f)
+	// Bloom 분포 색상
+	float4 BloomColor = g_BloomTex.Sample(g_LinearSmp, UV);
+	BloomColor *= g_HDRBloomScale * BloomColor;
+
+	float Alpha = Color.a + ((BloomColor.r + BloomColor.g + BloomColor.b) / 3.f);
+
+	if (Alpha == 0.f)
 	{
 		clip(-1);
 	}
+
+	// 원래 픽셀에 Bloom 추가
+	Color += BloomColor;
 
 	// 톤 매핑
 	Color = float4(ToneMapping(Color.rgb), 1.f);
 
 	Output.Color = Color;
+	Output.Color.a = Alpha;
 
 	return Output;
 }

@@ -75,6 +75,8 @@ bool CToolWindow::Init()
 	m_AdaptationTime = Tree->AddWidget<CIMGUISliderFloat>("Adaptation Time");
 	m_MiddleGray = Tree->AddWidget<CIMGUISliderFloat>("MiddleGray");
 	m_LumWhite = Tree->AddWidget<CIMGUISliderFloat>("LumWhite");
+	m_BloomThreshold = Tree->AddWidget<CIMGUISliderFloat>("Bloom Threshold");
+	m_BloomScale = Tree->AddWidget<CIMGUISliderFloat>("Bloom Scale");
  //	CIMGUITree* Tree = m_RenderBlock->AddWidget<CIMGUITree>("Outline", 200.f);
  //	m_OutlineDepthMultiply = Tree->AddWidget<CIMGUISliderFloat>("Outline Depth Multiplier");
  //	m_OutlineDepthBias = Tree->AddWidget<CIMGUISliderFloat>("Outline Depth Bias");
@@ -136,6 +138,16 @@ bool CToolWindow::Init()
 	m_AdaptationTime->SetMax(10.f);
 	m_AdaptationTime->SetValue(AdaptTime);
 
+	float BloomThreshold = CRenderManager::GetInst()->GetBloomThreshold();
+	m_BloomThreshold->SetMin(0.1f);
+	m_BloomThreshold->SetMax(3.f);
+	m_BloomThreshold->SetValue(BloomThreshold);
+
+	float BloomScale = CRenderManager::GetInst()->GetBloomScale();
+	m_BloomScale->SetMin(0.5f);
+	m_BloomScale->SetMax(10.f);
+	m_BloomScale->SetValue(BloomScale);
+
 	m_DebugRender->AddCheckInfo("Debug Render");
 	bool IsDebugRender = CRenderManager::GetInst()->IsDebugRender();
 	m_DebugRender->SetCheck(0, IsDebugRender);
@@ -157,6 +169,8 @@ bool CToolWindow::Init()
 	m_AdaptationTime->SetCallBack(this, &CToolWindow::OnChangeAdaptationTime);
 	m_MiddleGray->SetCallBack(this, &CToolWindow::OnChangeMiddleGray);
 	m_LumWhite->SetCallBack(this, &CToolWindow::OnChangeLumWhite);
+	m_BloomThreshold->SetCallBack(this, &CToolWindow::OnChangeBloomThreshold);
+	m_BloomScale->SetCallBack(this, &CToolWindow::OnChangeBloomScale);
 
 	// 디버그용 임시 키
 	CInput::GetInst()->CreateKey("Z", 'Z');
@@ -239,6 +253,17 @@ void CToolWindow::OnChangeMiddleGray(float Gray)
 void CToolWindow::OnChangeAdaptationTime(float Time)
 {
 	CRenderManager::GetInst()->SetAdaptationTime(Time);
+}
+
+void CToolWindow::OnChangeBloomThreshold(float Threshold)
+{
+	CRenderManager::GetInst()->SetBloomThreshold(Threshold);
+}
+
+void CToolWindow::OnChangeBloomScale(float Scale)
+{
+	CRenderManager::GetInst()->SetBloomScale(Scale);
+	
 }
 
  //void CToolWindow::OnChangeOutlineDepthMultiply(float Val)

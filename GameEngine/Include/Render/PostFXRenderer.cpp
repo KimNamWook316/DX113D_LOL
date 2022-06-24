@@ -8,13 +8,19 @@
 #include "../Resource/Texture/RenderTarget.h"
 #include "RenderState.h"
 #include "RenderManager.h"
+#include "RenderStateManager.h"
 
 CPostFXRenderer::CPostFXRenderer()	:
 	m_DownScaleFirstPassShader(nullptr),
 	m_DownScaleSecondPassShader(nullptr),
+	m_BloomShader(nullptr),
+	m_BlurVerticalShader(nullptr),
+	m_BlurHorizontalShader(nullptr),
 	m_HDRRenderShader(nullptr),
 	m_DownScaleCBuffer(nullptr),
 	m_HDRRenderCBuffer(nullptr),
+	m_AlphaBlend(nullptr),
+	m_DepthDisable(nullptr),
 	m_DownScaleBuffer(nullptr),
 	m_DownScaleUAV(nullptr),
 	m_DownScaleSRV(nullptr),
@@ -24,7 +30,20 @@ CPostFXRenderer::CPostFXRenderer()	:
 	m_PrevFrameLumAverageBuffer(nullptr),
 	m_PrevFrameLumAverageBufferUAV(nullptr),
 	m_PrevFrameLumAverageBufferSRV(nullptr),
+	m_DownScaleRT(nullptr),
+	m_DownScaleRTUAV(nullptr),
+	m_DownScaleRTSRV(nullptr),
+	m_BloomRT(nullptr),
+	m_BloomUAV(nullptr),
+	m_BloomSRV(nullptr),
+	m_Temp1RT(nullptr),
+	m_Temp1UAV(nullptr),
+	m_Temp1SRV(nullptr),
+	m_Temp2RT(nullptr),
+	m_Temp2UAV(nullptr),
+	m_Temp2SRV(nullptr),
 	m_AdaptationTime(3.f),
+	m_AdaptationTimer(0.f),
 	m_FirstFrame(true)
 {
 }
@@ -46,6 +65,22 @@ CPostFXRenderer::~CPostFXRenderer()
 	SAFE_RELEASE(m_PrevFrameLumAverageBufferUAV);
 	SAFE_RELEASE(m_PrevFrameLumAverageBufferSRV);
 
+	SAFE_RELEASE(m_DownScaleRT);
+	SAFE_RELEASE(m_DownScaleRTUAV);
+	SAFE_RELEASE(m_DownScaleRTSRV);
+
+	SAFE_RELEASE(m_BloomRT);
+	SAFE_RELEASE(m_BloomUAV);
+	SAFE_RELEASE(m_BloomSRV);
+
+	SAFE_RELEASE(m_Temp1RT);
+	SAFE_RELEASE(m_Temp1UAV);
+	SAFE_RELEASE(m_Temp1SRV);
+
+	SAFE_RELEASE(m_Temp2RT);
+	SAFE_RELEASE(m_Temp2UAV);
+	SAFE_RELEASE(m_Temp2SRV);
+
  //	SAFE_RELEASE(m_Query);
  //	SAFE_RELEASE(m_Temp);
  //	SAFE_RELEASE(m_Temp2);
@@ -58,7 +93,7 @@ bool CPostFXRenderer::Init()
 	unsigned int PixelCount = RS.Width * RS.Height;
 	unsigned int GroupCount = (unsigned int)ceil((float)(PixelCount / 16.f) / 1024.f);
 
-	// DownScale Luminance Buffer
+	// 1. DownScale Luminance Buffer
 	D3D11_BUFFER_DESC DownScaleBufferDesc = {};
 	DownScaleBufferDesc.BindFlags = D3D11_BIND_UNORDERED_ACCESS | D3D11_BIND_SHADER_RESOURCE;
 	DownScaleBufferDesc.StructureByteStride = sizeof(float);
@@ -94,7 +129,7 @@ bool CPostFXRenderer::Init()
 		return false;
 	}
 
-	// Average Luminance Buffer
+	// 2. Average Luminance Buffer
 	D3D11_BUFFER_DESC AverageBufferDesc = {};
 	AverageBufferDesc.BindFlags = D3D11_BIND_UNORDERED_ACCESS | D3D11_BIND_SHADER_RESOURCE;
 	AverageBufferDesc.StructureByteStride = sizeof(float);
@@ -130,7 +165,7 @@ bool CPostFXRenderer::Init()
 		return false;
 	}
 
-	// Prev Frame Luminance Resource ( Same As Above )
+	// 3. Prev Frame Luminance Resource ( Same As Above )
 	if (FAILED(CDevice::GetInst()->GetDevice()->CreateBuffer(&AverageBufferDesc, nullptr, &m_PrevFrameLumAverageBuffer)))
 	{
 		assert(false);
@@ -148,6 +183,45 @@ bool CPostFXRenderer::Init()
 		assert(false);
 		return false;
 	}
+
+	/// Bloom
+	// DownScale Texture 생성 -> 백버퍼의 1/16 크기로 다운스케일된 텍스쳐
+	D3D11_TEXTURE2D_DESC DsTd = {};
+	DsTd.Width = RS.Width / 4;
+	DsTd.Height = RS.Height / 4;
+	DsTd.MipLevels = 1;
+	DsTd.ArraySize = 1;
+	DsTd.Format = DXGI_FORMAT_R16G16B16A16_FLOAT;
+	DsTd.SampleDesc.Count = 1;
+	DsTd.SampleDesc.Quality = 0;
+	DsTd.Usage = D3D11_USAGE_DEFAULT;
+	DsTd.BindFlags = D3D11_BIND_UNORDERED_ACCESS | D3D11_BIND_SHADER_RESOURCE;
+
+	// 텍스쳐 생성 - Bloom, Temp Texture 모두 같은 크기
+	FAILED_CHECK(CDevice::GetInst()->GetDevice()->CreateTexture2D(&DsTd, nullptr, &m_DownScaleRT));
+	FAILED_CHECK(CDevice::GetInst()->GetDevice()->CreateTexture2D(&DsTd, nullptr, &m_BloomRT));
+	FAILED_CHECK(CDevice::GetInst()->GetDevice()->CreateTexture2D(&DsTd, nullptr, &m_Temp1RT));
+	FAILED_CHECK(CDevice::GetInst()->GetDevice()->CreateTexture2D(&DsTd, nullptr, &m_Temp2RT));
+
+	// SRV, UAV 생성
+	D3D11_UNORDERED_ACCESS_VIEW_DESC DsUAV = {};
+	DsUAV.Format = DXGI_FORMAT_R16G16B16A16_FLOAT;
+	DsUAV.ViewDimension = D3D11_UAV_DIMENSION_TEXTURE2D;
+	DsUAV.Buffer.FirstElement = 0;
+	DsUAV.Buffer.NumElements = PixelCount / 16;
+	FAILED_CHECK(CDevice::GetInst()->GetDevice()->CreateUnorderedAccessView(m_DownScaleRT, &DsUAV, &m_DownScaleRTUAV));
+	FAILED_CHECK(CDevice::GetInst()->GetDevice()->CreateUnorderedAccessView(m_BloomRT, &DsUAV, &m_BloomUAV));
+	FAILED_CHECK(CDevice::GetInst()->GetDevice()->CreateUnorderedAccessView(m_Temp1RT, &DsUAV, &m_Temp1UAV));
+	FAILED_CHECK(CDevice::GetInst()->GetDevice()->CreateUnorderedAccessView(m_Temp2RT, &DsUAV, &m_Temp2UAV));
+
+	D3D11_SHADER_RESOURCE_VIEW_DESC DsSRV = {};
+	DsSRV.Format = DXGI_FORMAT_R16G16B16A16_FLOAT;
+	DsSRV.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	DsSRV.Texture2D.MipLevels = 1;
+	FAILED_CHECK(CDevice::GetInst()->GetDevice()->CreateShaderResourceView(m_DownScaleRT, &DsSRV, &m_DownScaleRTSRV));
+	FAILED_CHECK(CDevice::GetInst()->GetDevice()->CreateShaderResourceView(m_BloomRT, &DsSRV, &m_BloomSRV));
+	FAILED_CHECK(CDevice::GetInst()->GetDevice()->CreateShaderResourceView(m_Temp1RT, &DsSRV, &m_Temp1SRV));
+	FAILED_CHECK(CDevice::GetInst()->GetDevice()->CreateShaderResourceView(m_Temp2RT, &DsSRV, &m_Temp2SRV));
 
  //	///  Debug Section
  //
@@ -214,12 +288,19 @@ bool CPostFXRenderer::Init()
 	// Shader
 	m_DownScaleFirstPassShader = (CComputeShader*)CResourceManager::GetInst()->FindShader("HDRDownScaleFirstPassShader");
 	m_DownScaleSecondPassShader = (CComputeShader*)CResourceManager::GetInst()->FindShader("HDRDownScaleSecondPassShader");
+	m_BloomShader = (CComputeShader*)CResourceManager::GetInst()->FindShader("BloomShader");
+	m_BlurVerticalShader = (CComputeShader*)CResourceManager::GetInst()->FindShader("BlurVerticalShader");
+	m_BlurHorizontalShader = (CComputeShader*)CResourceManager::GetInst()->FindShader("BlurHorizontalShader");
 	m_HDRRenderShader = CResourceManager::GetInst()->FindShader("HDRRenderShader");
+
+	// RenderState
+	m_DepthDisable = CRenderManager::GetInst()->GetRenderStateManager()->FindRenderState("DepthDisable");
+	m_AlphaBlend = CRenderManager::GetInst()->GetRenderStateManager()->FindRenderState("AlphaBlend");
 
 	return true;
 }
 
-void CPostFXRenderer::Adaptation(float DeltaTime)
+void CPostFXRenderer::ComputeAdaptation(float DeltaTime)
 {
 	// Adaptation 계수 계산
 	float AdaptNorm;
@@ -254,6 +335,16 @@ void CPostFXRenderer::SetLumWhite(float White)
 	m_HDRRenderCBuffer->SetLumWhite(White);
 }
 
+void CPostFXRenderer::SetBloomThreshold(float Threshold)
+{
+	m_DownScaleCBuffer->SetBloomThreshold(Threshold);
+}
+
+void CPostFXRenderer::SetBloomScale(float Scale)
+{
+	m_HDRRenderCBuffer->SetBloomScale(Scale);
+}
+
 float CPostFXRenderer::GetMiddleGray() const
 {
 	return m_HDRRenderCBuffer->GetMiddleGray();
@@ -264,7 +355,35 @@ float CPostFXRenderer::GetLumWhite() const
 	return m_HDRRenderCBuffer->GetLumWhite();
 }
 
-void CPostFXRenderer::ExcuteDownScale(class CRenderTarget* LDRTarget)
+float CPostFXRenderer::GetBloomThreshold() const
+{
+	return m_DownScaleCBuffer->GetBloomThreshold();
+}
+
+float CPostFXRenderer::GetBloomScale() const
+{
+	return m_HDRRenderCBuffer->GetBloomScale();
+}
+
+void CPostFXRenderer::Render(float DeltaTime, CRenderTarget* LDRTarget)
+{
+	// 적응 계수 계산
+	ComputeAdaptation(DeltaTime);
+
+	// 스크린 휘도 계산
+	ComputeHDR(LDRTarget);
+
+	// Bloom 픽셀 계산
+	ComputeBloom();
+
+	// Blur 처리
+	Blur();
+
+	// 백버퍼 렌더
+	RenderFinal(LDRTarget);
+}
+
+void CPostFXRenderer::ComputeHDR(CRenderTarget* LDRTarget)
 {
 	ID3D11DeviceContext* Context = CDevice::GetInst()->GetContext();
 
@@ -281,6 +400,9 @@ void CPostFXRenderer::ExcuteDownScale(class CRenderTarget* LDRTarget)
 	// DownScale 결과 버퍼
 	unsigned int Count = -1;
 	Context->CSSetUnorderedAccessViews(7, 1, &m_DownScaleUAV, &Count);
+
+	// 축소된 씬 저장할 텍스쳐 바인드
+	Context->CSSetUnorderedAccessViews(6, 1, &m_DownScaleRTUAV, &Count);
 
 	// Context->CSSetUnorderedAccessViews(6, 1, &m_Temp2UAV, &Count);
 
@@ -300,6 +422,7 @@ void CPostFXRenderer::ExcuteDownScale(class CRenderTarget* LDRTarget)
 	// DEBUG
 	ID3D11UnorderedAccessView* UAV = nullptr;
 	Context->CSSetUnorderedAccessViews(7, 1, &UAV, &Count);
+	Context->CSSetUnorderedAccessViews(6, 1, &UAV, &Count);
 	//Context->CSSetUnorderedAccessViews(6, 1, &UAV, &Count);
 
 	// Context->CopyResource(m_Temp2, m_DownScaleBuffer);
@@ -362,7 +485,57 @@ void CPostFXRenderer::ExcuteDownScale(class CRenderTarget* LDRTarget)
  //	Context->Unmap(m_Temp, 0);
 }
 
-void CPostFXRenderer::Render(CRenderTarget* LDRTarget, class CRenderState* DepthDisable)
+void CPostFXRenderer::ComputeBloom()
+{
+	ID3D11DeviceContext* Context = CDevice::GetInst()->GetContext();
+	unsigned int Count = -1;
+
+	// 해상도 축소된 씬과 평균 휘도로 평균 휘도 이상인 픽셀을 검출한다.
+	Context->CSSetShaderResources(20, 1, &m_DownScaleRTSRV);
+	Context->CSSetShaderResources(10, 1, &m_LuminanceAverageBufferSRV);
+	Context->CSSetUnorderedAccessViews(7, 1, &m_Temp1UAV, &Count);
+
+	int GroupCount = m_DownScaleCBuffer->GetGroupSize();
+	m_BloomShader->Excute(GroupCount, 1, 1);
+
+	// Reset 
+	ID3D11UnorderedAccessView* UAV = nullptr;
+	ID3D11ShaderResourceView* SRV = nullptr;
+	Context->CSSetUnorderedAccessViews(7, 1, &UAV, &Count);
+	Context->CSSetShaderResources(20, 1, &SRV);
+	Context->CSSetShaderResources(10, 1, &SRV);
+}
+
+void CPostFXRenderer::Blur()
+{
+	Resolution RS = CDevice::GetInst()->GetResolution();
+	ID3D11DeviceContext* Context = CDevice::GetInst()->GetContext();
+	unsigned int Count = -1;
+	ID3D11UnorderedAccessView* UAV = nullptr;
+	ID3D11ShaderResourceView* SRV = nullptr;
+
+	// 1. 수직 블러 적용
+	// Bloom() 에서 검출한 평균 휘도 이상의 픽셀 정보를 가지고 수직 Blur 처리하고, Temp Texture에 쓴다.
+	Context->CSSetShaderResources(20, 1, &m_Temp1SRV);
+	Context->CSSetUnorderedAccessViews(7, 1, &m_Temp2UAV, &Count);
+
+	m_BlurVerticalShader->Excute((unsigned int)ceil(RS.Width / 4.f), (unsigned int)ceil((RS.Height / 4.f) / (128.f - 12.f)), 1);
+
+	Context->CSSetShaderResources(20, 1, &SRV);
+	Context->CSSetUnorderedAccessViews(7, 1, &UAV, &Count);
+
+	// 2. 수평 블러 적용
+	// 수직 블러 처리된 Temp Texture를 Input으로 수평 블러 처리해서, 마지막 Bloom Texture에 쓴다.
+	Context->CSSetShaderResources(20, 1, &m_Temp2SRV);
+	Context->CSSetUnorderedAccessViews(7, 1, &m_BloomUAV, &Count);
+
+	m_BlurHorizontalShader->Excute((unsigned int)ceil((RS.Width / 4.f) / (128.f - 12.f)), (unsigned int)ceil(RS.Height / 4.f), 1);
+
+	Context->CSSetShaderResources(20, 1, &SRV);
+	Context->CSSetUnorderedAccessViews(7, 1, &UAV, &Count);
+}
+
+void CPostFXRenderer::RenderFinal(CRenderTarget* LDRTarget)
 {
 	ID3D11DeviceContext* Context = CDevice::GetInst()->GetContext();
 
@@ -374,9 +547,13 @@ void CPostFXRenderer::Render(CRenderTarget* LDRTarget, class CRenderState* Depth
 	// 컴퓨트 쉐이더에서 계산한 씬 휘도 정보
 	Context->PSSetShaderResources(11, 1, &m_LuminanceAverageBufferSRV);
 
+	// Blur 처리된 Bloom Texture
+	Context->PSSetShaderResources(12, 1, &m_BloomSRV);
+
 	m_HDRRenderShader->SetShader();
 	
-	DepthDisable->SetState();
+	m_DepthDisable->SetState();
+	m_AlphaBlend->SetState();
 
 	// Null Buffer 출력
 	UINT Offset = 0;
@@ -386,10 +563,12 @@ void CPostFXRenderer::Render(CRenderTarget* LDRTarget, class CRenderState* Depth
 	Context->Draw(4, 0);
 
 	// Reset 
-	DepthDisable->ResetState();
+	m_DepthDisable->ResetState();
+	m_AlphaBlend->ResetState();
 
 	ID3D11ShaderResourceView* SRV = nullptr;
 	Context->PSSetShaderResources(11, 1, &SRV);
+	Context->PSSetShaderResources(12, 1, &SRV);
 
 	LDRTarget->ResetTargetShader(10);
 

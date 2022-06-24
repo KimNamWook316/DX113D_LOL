@@ -67,6 +67,16 @@ float CRenderManager::GetLumWhite() const
 	return m_PostFXRenderer->GetLumWhite();
 }
 
+float CRenderManager::GetBloomThreshold() const
+{
+	return m_PostFXRenderer->GetBloomThreshold();
+}
+
+float CRenderManager::GetBloomScale() const
+{
+	return m_PostFXRenderer->GetBloomScale();
+}
+
 void CRenderManager::SetMiddleGray(float Gray)
 {
 	m_PostFXRenderer->SetMiddleGray(Gray);
@@ -75,6 +85,16 @@ void CRenderManager::SetMiddleGray(float Gray)
 void CRenderManager::SetLumWhite(float White)
 {
 	m_PostFXRenderer->SetLumWhite(White);
+}
+
+void CRenderManager::SetBloomThreshold(float Threshold)
+{
+	m_PostFXRenderer->SetBloomThreshold(Threshold);
+}
+
+void CRenderManager::SetBloomScale(float Scale)
+{
+	m_PostFXRenderer->SetBloomScale(Scale);
 }
 
 void CRenderManager::SetAdaptationTime(float Time)
@@ -318,10 +338,10 @@ bool CRenderManager::Init()
 		RS.Width, RS.Height, DXGI_FORMAT_R32G32B32A32_FLOAT))
 		return false;
 
-	CRenderTarget* FinalScreenTarget = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("FinalScreen");
-	FinalScreenTarget->SetPos(Vector3(200.f, 0.f, 0.f));
-	FinalScreenTarget->SetScale(Vector3(100.f, 100.f, 1.f));
-	FinalScreenTarget->SetDebugRender(true);
+	m_FinalTarget = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("FinalScreen");
+	m_FinalTarget->SetPos(Vector3(200.f, 0.f, 0.f));
+	m_FinalTarget->SetScale(Vector3(100.f, 100.f, 1.f));
+	m_FinalTarget->SetDebugRender(true);
 
 	// Animation Editor 용 Render Target 
 	if (!CResourceManager::GetInst()->CreateTarget("AnimationEditorRenderTarget",
@@ -547,23 +567,14 @@ void CRenderManager::Render(float DeltaTime)
 
 	if (m_PostProcessing)
 	{
-		// 적응 계수 계산
-		m_PostFXRenderer->Adaptation(DeltaTime);
-
-		CRenderTarget* FinalTarget = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("FinalScreen");
-		
-		// 평균 휘도 계산
-		m_PostFXRenderer->ExcuteDownScale(FinalTarget);
-
-		// 백버퍼에 렌더
-		m_PostFXRenderer->Render(FinalTarget, m_DepthDisable);
+		// HDR, Bloom, Adaptation 등 PostEffect 처리
+		m_PostFXRenderer->Render(DeltaTime, m_FinalTarget);
 	}
 	else
 	{
 		// 반투명 오브젝트 + 조명처리 + 외곽선 처리된 최종 화면을 백버퍼에 그려낸다.
 		RenderFinalScreen();
 	}
-
 
  //	// 흑백 효과
  //	if (m_Gray)
@@ -664,14 +675,12 @@ void CRenderManager::RenderSkyBox()
 {
 	CSharedPtr<CGameObject> SkyObj = CSceneManager::GetInst()->GetScene()->GetSkyObject();
 
-	CRenderTarget* FinalScreenTarget = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("FinalScreen");
-
-	FinalScreenTarget->ClearTarget();
- //	FinalScreenTarget->SetTarget(nullptr);
+	m_FinalTarget->ClearTarget();
+ 	// m_FinalTarget->SetTarget(nullptr);
 
 	SkyObj->Render();
 
- //	FinalScreenTarget->ResetTarget();
+	// m_FinalTarget->ResetTarget();
 }
 
 void CRenderManager::RenderShadowMap()
@@ -912,9 +921,7 @@ void CRenderManager::RenderLightAcc()
 
 void CRenderManager::RenderLightBlend()
 {
-	CRenderTarget* FinalScreenTarget = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("FinalScreen");
-
-	FinalScreenTarget->SetTarget(nullptr);
+	m_FinalTarget->SetTarget(nullptr);
 
 	m_vecGBuffer[0]->SetTargetShader(14);
 	m_vecGBuffer[2]->SetTargetShader(16);
@@ -952,7 +959,7 @@ void CRenderManager::RenderLightBlend()
 	m_vecLightBuffer[2]->ResetTargetShader(20);
 	m_ShadowMapTarget->ResetTargetShader(22);
 
-	FinalScreenTarget->ResetTarget();
+	m_FinalTarget->ResetTarget();
 }
 
  //void CRenderManager::RenderOutLine()
@@ -1047,9 +1054,7 @@ void CRenderManager::RenderTransparent()
 
 void CRenderManager::RenderFinalScreen()
 {
-	CRenderTarget* FinalScreenTarget = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("FinalScreen");
-
-	FinalScreenTarget->SetTargetShader(21);
+	m_FinalTarget->SetTargetShader(21);
 	// m_OutlineTarget->SetTargetShader(23);
 
 	m_LightBlendRenderShader->SetShader();
@@ -1067,7 +1072,7 @@ void CRenderManager::RenderFinalScreen()
 	m_DepthDisable->ResetState();
 
 	// m_OutlineTarget->ResetTargetShader(23);
-	FinalScreenTarget->ResetTargetShader(21);
+	m_FinalTarget->ResetTargetShader(21);
 }
 
 void CRenderManager::RenderAnimationEditor()

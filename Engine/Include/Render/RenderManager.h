@@ -95,6 +95,9 @@ private:
 	CSharedPtr<class CShader> m_LightBlendRenderShader;
 	CSharedPtr<class CShader> m_Standard3DInstancingShader;
 	CSharedPtr<class CShader> m_Transparent3DInstancingShader;
+
+	// Final Target
+	CSharedPtr<CRenderTarget> m_FinalTarget;
 	
 	// GBuffer
 	std::vector<CSharedPtr<CRenderTarget>>	m_vecGBuffer;
@@ -142,6 +145,7 @@ public :
 	{
 		return m_RenderStateManager;
 	}
+
 public:
 	float GetShadowLightDistance() const
 	{
@@ -225,9 +229,13 @@ public:
 
 	float GetMiddleGray() const;
 	float GetLumWhite() const;
+	float GetBloomThreshold() const;
+	float GetBloomScale() const;
 
 	void SetMiddleGray(float Gray);
 	void SetLumWhite(float White);
+	void SetBloomThreshold(float Threshold);
+	void SetBloomScale(float Scale);
 
 	void SetAdaptationTime(float Time);
 	float GetAdaptationTime() const;

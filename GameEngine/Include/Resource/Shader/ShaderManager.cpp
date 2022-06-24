@@ -37,6 +37,9 @@
 #include "HDRDownScaleFirstPassShader.h"
 #include "HDRDownScaleSecondPassShader.h"
 #include "HDRRenderShader.h"
+#include "BloomShader.h"
+#include "BlurVerticalShader.h"
+#include "BlurHorizontalShader.h"
 
 CShaderManager::CShaderManager()
 {
@@ -193,6 +196,23 @@ bool CShaderManager::Init()
 		return false;
 	}
 
+	if (!CreateShader<CBloomShader>("BloomShader"))
+	{
+		assert(false);
+		return false;
+	}
+
+	if (!CreateShader<CBlurVerticalShader>("BlurVerticalShader"))
+	{
+		assert(false);
+		return false;
+	}
+
+	if (!CreateShader<CBlurHorizontalShader>("BlurHorizontalShader"))
+	{
+		assert(false);
+		return false;
+	}
 
 	// =================== 상수버퍼 ===================
 	CreateConstantBuffer("TransformCBuffer", sizeof(TransformCBuffer), 0,

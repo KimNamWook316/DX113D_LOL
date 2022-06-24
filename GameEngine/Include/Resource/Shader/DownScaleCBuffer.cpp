@@ -4,7 +4,7 @@
 CDownScaleCBuffer::CDownScaleCBuffer() :
 	m_BufferData{}
 {
-	m_BufferData.Adaptation = 0.8f;
+	m_BufferData.BloomThreshold = 1.f;
 }
 
 CDownScaleCBuffer::CDownScaleCBuffer(const CDownScaleCBuffer& Buffer)	:

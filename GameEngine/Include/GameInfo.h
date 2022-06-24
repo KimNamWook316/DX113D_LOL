@@ -128,6 +128,11 @@ private:\
 	~Type();
 
 #define	DEFINITION_SINGLE(Type)	Type* Type::m_Inst = nullptr;
+#define FAILED_CHECK(Executable)\
+if(FAILED(Executable)){\
+	assert(false);\
+	return false;\
+}\
 
 struct Resolution
 {
@@ -673,12 +678,14 @@ struct DownScaleCBuffer
 	unsigned int	Domain;		// 다운스케일 이미지의 총 픽셀 수
 	unsigned int	GroupSize;	// 첫 패스에 적용된 그룹 수 계산
 	float			Adaptation; // 적응
-	Vector3 Empty;
+	float			BloomThreshold;	// 블룸 임계값
+	Vector2			Empty;
 };
 
 struct HDRRenderCBuffer
 {
 	float MiddleGray;
 	float LumWhiteSqr;
-	Vector2 Empty;
+	float BloomScale;
+	float Empty;
 };

@@ -39,6 +39,11 @@ public:
 		m_BufferData.Adaptation = Adaptation;
 	}
 
+	void SetBloomThreshold(float Threshold)
+	{
+		m_BufferData.BloomThreshold = Threshold;
+	}
+
 	unsigned int GetGroupSize() const
 	{
 		return m_BufferData.GroupSize;
@@ -47,6 +52,11 @@ public:
 	float GetAdaptation() const
 	{
 		return m_BufferData.Adaptation;
+	}
+
+	float GetBloomThreshold() const
+	{
+		return m_BufferData.BloomThreshold;
 	}
 };
 

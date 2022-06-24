@@ -1,14 +1,5 @@
 #include "ShaderInfo.fx"
 
-cbuffer DownScaleCBuffer : register(b10)
-{
-	uint2 g_DownScaleRS;
-	uint g_DownScaleDomain;
-	uint g_DownScaleGroupSize;
-	float g_DownScaleAdpatation;
-	float3 g_DownScaleEmpty;
-}
-
 #define MAX_GROUPS 64
 
 // 공유 메모리 그룹에 중간 값 저장
