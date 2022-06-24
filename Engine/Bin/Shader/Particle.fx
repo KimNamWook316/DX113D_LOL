@@ -34,7 +34,7 @@ cbuffer	ParticleCBuffer : register(b11)
 	int g_ParticleGenerateRing;
 	float g_ParcticleRingRadius;
 	int g_LoopGenerateRing;
-	float g_ParticleEmpty1;
+	int g_ParticleRandomMoveDir;
 
 	float g_ParticleAlphaMax;
 	float g_ParticleAlphaMin;
@@ -42,7 +42,7 @@ cbuffer	ParticleCBuffer : register(b11)
 	float g_ParticleCircleRadius;
 
 	int g_ParticleGenerateTorch;
-	float ParticleEmpty2;
+	float g_ParticleTorchRadius;
 	float ParticleEmpty3;
 	float ParticleEmpty4;
 };
@@ -91,8 +91,11 @@ struct ParticleInfoShared
 	float PrevRingAngle;
 };
 
+
 RWStructuredBuffer<ParticleInfo>		g_ParticleArray	: register(u0);
 RWStructuredBuffer<ParticleInfoShared> g_ParticleShare : register(u1);
+
+StructuredBuffer<float>		g_ParticleNormalDistValArray	: register(t20);
 
 Texture2DMS<float4> g_GBufferDepth : register(t10);
 
@@ -202,6 +205,7 @@ void ParticleUpdate(uint3 ThreadID : SV_DispatchThreadID)
 		float	key = ThreadID.x / g_ParticleSpawnCountMax;
 		float3	RandomPos = float3(Rand(key), Rand(2.142f), Rand(key * 3.f));
 		float	Rand = (RandomPos.x + RandomPos.y + RandomPos.z) / 3.f;
+		float RandomAngle = 360.f * Rand;
 
 		float3	StartRange = g_ParticleStartMax - g_ParticleStartMin;
 		g_ParticleArray[ThreadID.x].WorldPos = Rand * (g_ParticleStartMax - g_ParticleStartMin) + g_ParticleStartMin;
@@ -215,22 +219,36 @@ void ParticleUpdate(uint3 ThreadID : SV_DispatchThreadID)
 
 		if (g_ParticleMove == 1)
 		{
+			// RandomPos.xyz 는 각각 0 에서 1 사이의 값 --> -1 에서 1 사이의 값으로 바꾼다.
+			// ex) 360도 => -180 ~ 180 도 사이의 랜덤한 각도로 회전을 한다고 생각하면 된다.
 			float3	ConvertAngle = (RandomPos.xyz * 2.f - 1.f) * g_ParticleMoveAngle;
 
-			float3x3 matRot = ComputeRotationMatrix(ConvertAngle);
+			// float3x3 matRot = ComputeRotationMatrix(ConvertAngle);
+			float3x3 matRot = ComputeRotationMatrix(g_ParticleMoveAngle);
 
 			// 현재 Rot 상으로는, Particle Rotation 기능만 수행중이다.
 			float3	Dir = normalize(mul(g_ParticleMoveDir, matRot));
 
 			g_ParticleArray[ThreadID.x].Speed = Rand * (g_ParticleSpeedMax - g_ParticleSpeedMin) + g_ParticleSpeedMin;
 			g_ParticleArray[ThreadID.x].Dir = Dir;
+
+			if (g_ParticleRandomMoveDir)
+			{
+				// 완전 랜덤한 방향으로 이동하기 
+				float3 RandDir = float3(0.f, 0.f, 0.f) + float3(
+					cos(RandomAngle) * 1,
+					0.f,
+					sin(RandomAngle) * 1);
+				normalize(RandDir);
+
+				g_ParticleArray[ThreadID.x].Dir = RandDir;
+			}
 		}
 
 		// Ring 모양 생성 => Generate Circle 을 하게 되면, Start Min, Max 가 무의미해지게 되는 것이다.
+		 // 0.f, 0.f, 0.f 중심으로 원에 생성하기
 		 if (g_ParticleGenerateRing == 1)
 		 {
-		 	// 0.f, 0.f, 0.f 중심으로 원에 생성하기
-		 	float RandomAngle = 360.f * Rand;
 		 	float3 RingPos = float3(0.f, 0.f, 0.f) + float3(
 				cos(RandomAngle) * g_ParcticleRingRadius,
 		 		0.f, 
@@ -254,17 +272,15 @@ void ParticleUpdate(uint3 ThreadID : SV_DispatchThreadID)
 		 if (g_ParticleGenerateCircle == 1)
 		 {
 			 // 생성 각도도 Random
-			 float RandomAngle = 360.f * Rand;
-
 			 // 생성 반지름 크기도 Random
 			 float RandomRadius = g_ParticleCircleRadius* Rand;
 
-			 float3 RingPos = float3(0.f, 0.f, 0.f) + float3(
+			 float3 CirclePos = float3(0.f, 0.f, 0.f) + float3(
 				 cos(RandomAngle) * RandomRadius,
 				 0.f,
 				 sin(RandomAngle) * RandomRadius);
 
-			 g_ParticleArray[ThreadID.x].WorldPos = RingPos;
+			 g_ParticleArray[ThreadID.x].WorldPos = CirclePos;
 		 }
 
 		 // 횃불 모양의 Particle 만들어내기
@@ -272,10 +288,43 @@ void ParticleUpdate(uint3 ThreadID : SV_DispatchThreadID)
 		 // Spawn 위치로, 가운데 쪽에 비율적으로 더 많이 생성되게 해야 한다.
 		 if (g_ParticleGenerateTorch == 1)
 		 {
+			 // 생성 각도도 Random
+
 			 // 생성 위치 => 정규 분포를 사용하여, 확률적으로 가운데 많이 생성되게 하기
+			 // CPU 측에서 평균 0 , 표준편차 0.165 라는 표준 정규 분포 값을 이용하여 값 세팅
+			 // 평균 0 의 값이 가장 많이 나올 것이다. (0 라는 값이 거의 집중적으로 나올 것)
+			 // 그리고 범위는 -0.5 ~ 0.5
+			 // 여기서 할일은, 0에 가까운 값이 거의 대부분 나오게 조절해야 하고, 또한 범위는 0에서 1 사이의 값에 놓이게 해야 한다.
+			 // 1) 값에서 *2 를 해서 -1 ~ 1 사이의 값으로 조정한다.
+			 // 2) 음수인 값은 양수로 바꿔준다.
+			 // 그러면 반쪽 짜리 정규 분포가 만들어질 것이다.
+			 float NormalDistVal = g_ParticleNormalDistValArray[ThreadID.x] * 2.f;
+
+			 // float NormalDistMean = 0.0;
+
+			// NormalDistVal -= 0.5;
+			if (NormalDistVal < 0)
+			 	 NormalDistVal *= -1.f;
+
+			// 너무 가운데 몰리는 것 방지
+			// if (NormalDistVal < 0.00001f)
+			// 	NormalDistVal = Rand;
+
+			// 정규 분포 편법 적용하기 (1보다 큰 값은, 다시 0 에서 1 사이의 랜덤 값 세팅하기)
+			if (NormalDistVal > 1.f)
+				NormalDistVal = Rand;
+
+			 // 설정한 반지름 범위로 맞춰준다.
+			 float GenerateRadius = NormalDistVal * g_ParticleTorchRadius;
+
+			 float3 TorchPos = float3(0.f, 0.f, 0.f) + float3(
+				 cos(RandomAngle) * GenerateRadius,
+				 0.f,
+				 sin(RandomAngle) * GenerateRadius);
+
+			 g_ParticleArray[ThreadID.x].WorldPos = TorchPos;
 
 			 // Life Time => 투영을 이용하여, 가운데에서 멀어질수록, 선형적으로 LifeTime이 감소하는 형태 만들기 => 당연히 끝으로 갈수록, 색상도 Colormin  에서 max 로 갈것
-
 		 }
 	}
 	// 현재 생성이 되어 있는 파티클일 경우

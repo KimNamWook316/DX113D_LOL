@@ -433,7 +433,7 @@ struct	ParticleCBuffer
 	int IsGenerateRing;
 	float GenerateRingRadius;
 	int IsLoopGenerateRing;
-	float ParticleEmpty1;
+	int IsMoveDirRandom;
 	// int     ParticleBounce;
 	// float	 ParticleBounceResistance;
 
@@ -443,7 +443,7 @@ struct	ParticleCBuffer
 	float GenerateCircleRadius;
 
 	int IsGenerateTorch;
-	float ParticleEmpty2;
+	float GenerateTorchRadius;
 	float ParticleEmpty3;
 	float ParticleEmpty4;
 };

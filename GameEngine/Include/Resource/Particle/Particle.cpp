@@ -9,6 +9,8 @@
 #include "../Material/MaterialManager.h"
 #include "../../PathManager.h"
 #include "../../EngineUtil.h"
+// Libraray
+#include <random>
 
 CParticle::CParticle()	:
 	m_CBuffer(nullptr),
@@ -27,6 +29,8 @@ CParticle::CParticle(const CParticle& particle)
 
 CParticle::~CParticle()
 {
+	SAFE_DELETE(m_NormalDistributionBuffer);
+
 	size_t	BufferCount = m_vecStructuredBuffer.size();
 
 	for (size_t i = 0; i < BufferCount; ++i)
@@ -35,6 +39,7 @@ CParticle::~CParticle()
 	}
 
 	SAFE_DELETE(m_CBuffer);
+
 }
 
 bool CParticle::Init()
@@ -52,6 +57,7 @@ bool CParticle::Init()
 
 	AddStructuredBuffer("ParticleInfo", sizeof(ParticleInfo), m_SpawnCountMax, 0);
 	AddStructuredBuffer("ParticleInfoShared", sizeof(ParticleInfoShared), 1, 1);
+	CreateNormalDistStructuredBuffer("ParticleNormalDistribution", sizeof(float), m_SpawnCountMax, 20, true);
 
 	return true;
 }
@@ -234,6 +240,9 @@ bool CParticle::Load(FILE* File)
 	AddStructuredBuffer("ParticleInfo", sizeof(ParticleInfo), m_SpawnCountMax, 0);
 	AddStructuredBuffer("ParticleInfoShared", sizeof(ParticleInfoShared), 1, 1);
 
+	// Dynamic True 로 세팅 => Particle.fx 에서 Read Only로만 사용
+	CreateNormalDistStructuredBuffer("ParticleNormalDistribution", sizeof(float), m_SpawnCountMax, 20, true);
+
 	return true;
 }
 
@@ -250,6 +259,23 @@ void CParticle::AddStructuredBuffer(const std::string& Name, unsigned int Size, 
 
 	m_vecStructuredBuffer.push_back(Buffer);
 
+}
+
+void CParticle::CreateNormalDistStructuredBuffer(const std::string& Name, unsigned int Size, unsigned int Count, int Register, bool Dynamic, int StructuredBufferShaderType)
+{
+	SAFE_DELETE(m_NormalDistributionBuffer);
+
+	CStructuredBuffer* Buffer = new CStructuredBuffer;
+
+	if (!Buffer->Init(Name, Size, Count, Register, Dynamic, StructuredBufferShaderType))
+	{
+		SAFE_DELETE(Buffer);
+		return;
+	}
+
+	m_NormalDistributionBuffer = Buffer;
+
+	GenerateNormalDistribution();
 }
 
 bool CParticle::ResizeBuffer(const std::string& Name, unsigned int Size, unsigned int Count,
@@ -270,6 +296,17 @@ bool CParticle::ResizeBuffer(const std::string& Name, unsigned int Size, unsigne
 	return false;
 }
 
+bool CParticle::ResizeNormalDistStructuredBuffer(const std::string& Name, unsigned int Size, unsigned int Count, int Register, bool Dynamic, int StructuredBufferShaderType)
+{
+	if (!m_NormalDistributionBuffer->Init(Name, Size, Count, Register, Dynamic, StructuredBufferShaderType))
+	{
+		assert(false);
+		return false;
+	}
+
+	return true;
+}
+
 void CParticle::CloneStructuredBuffer(std::vector<CStructuredBuffer*>& vecBuffer)
 {
 	size_t	BufferCount = m_vecStructuredBuffer.size();
@@ -280,6 +317,55 @@ void CParticle::CloneStructuredBuffer(std::vector<CStructuredBuffer*>& vecBuffer
 
 		vecBuffer.push_back(Buffer);
 	}
+}
+
+void CParticle::CloneNormalDistStructuredBuffer(CStructuredBuffer*& NormalDistBuffer)
+{
+	if (!m_NormalDistributionBuffer)
+		return;
+
+	NormalDistBuffer = m_NormalDistributionBuffer->Clone();
+}
+
+void CParticle::GenerateNormalDistribution()
+{
+	if (!m_NormalDistributionBuffer)
+		return;
+
+	// 정규 분포 생성 함수를 이용하여 0 ~ m_SpawnCountMax 개수까지 랜덤값을 계산한다.
+	m_vecNormalDistVal.clear();
+	m_vecNormalDistVal.reserve(m_SpawnCountMax);
+
+	std::random_device rd{};
+	std::mt19937 gen{ rd() };
+
+	// 표준 정규 분포 적용 (0 에서 1 사이의 범위 안에서 나오게 해야 한다.)
+	// 평균 0 / 표준편차 : 0.15 -> -0,5 ~ 0.5 사이에 거의 모든 값이 위치할 것이다
+	// ex) m - 3 * 표.편 ~ m + 3 * 표.편 => 99% 의 데이터 위치
+	// 단, 편법을 조금 사용할 것이다. 정석대로 하면, 너무 가운데에만 위치하게 되는 경향이 있다.
+	// 조금 더 퍼지게 하고 싶다. 따라서 표준편차를 0.15 보다 조금 더 크게 줄 것이다.
+	// 단, GPU 측에서는 * 2 를 해서 -1 에서 1 사이의 범위를 만들어주는데
+	// 이때 당연히 -1 에서 1 사이의 범위를 벗어나게 될 것이다.
+	// 범위를 벗어난 값들의 경우, 다시 Random 한 Radius 를 잡아서 세팅해준다.
+	// 그러면, 결과적으로 외곽에 있던 것들이, 다시 중간 어딘가로 들어오면서
+	// 위치를 잡게 되면, 가운데로 덜 몰린 형태가 될 것이다.
+	std::normal_distribution <> dist{0, 0.25};
+
+	std::unordered_map<float, int> hist{};
+
+	for (int i = 0; i < m_SpawnCountMax; ++i)
+	{
+		float YVal = (float)dist(gen);
+		m_vecNormalDistVal.push_back(YVal);
+
+		// 실제 개수 확인방법
+		// ++hist[std::round(YVal * 10) / 10];
+	}
+
+	// bool True = true;
+
+	// Update Buffer 의 경우, Particle Component 에 세팅할 때 한번 세팅해준다.
+	// m_NormalDistributionBuffer->UpdateBuffer(&m_vecNormalDistVal[0], (int)m_vecNormalDistVal.size());
 }
 
 bool CParticle::SaveFile(const char* FullPath)
@@ -321,4 +407,7 @@ void CParticle::SetSpawnCountMax(unsigned int Count)
 	m_SpawnCountMax = Count;
 
 	ResizeBuffer("ParticleInfo", sizeof(ParticleInfo), m_SpawnCountMax, 0);
+
+	// Dynamic True로 세팅
+	ResizeNormalDistStructuredBuffer("ParticleNormalDistribution", sizeof(float), m_SpawnCountMax, 20, true);
 }

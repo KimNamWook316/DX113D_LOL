@@ -30,6 +30,8 @@ protected:
 	float									m_SpawnTime;
 	float									m_SpawnTimeMax;
 	bool  m_BillBoardEffect;
+protected:
+	class CStructuredBuffer*					m_NormalDistributionBuffer;
 private :
 	std::string m_ParticleName;
 public:

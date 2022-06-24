@@ -119,11 +119,17 @@ public:
 		return m_BufferData.Is2D == 1 ? true : false;
 	}
 
+	bool IsMoveDirRandom()
+	{
+		return m_BufferData.IsMoveDirRandom == 1 ? true : false;
+	}
+
 	const Vector3& GetMoveAngle()
 	{
 		return m_BufferData.MoveAngle;
 	}
 
+	// Bounce
 	int IsBounceEnable() const
 	{
 		return m_BufferData.ParticleBounce;
@@ -133,14 +139,7 @@ public:
 	{
 		return m_BufferData.ParticleBounceResistance;
 	}
-	int IsGenerateCircle() const
-	{
-		return m_BufferData.IsGenerateCircle;
-	}
-	float GetGenerateCircleRadius() const
-	{
-		return m_BufferData.GenerateCircleRadius;
-	}
+	// Ring
 	int IsGenerateRing() const
 	{
 		return m_BufferData.IsGenerateRing;
@@ -153,6 +152,26 @@ public:
 	{
 		return m_BufferData.IsLoopGenerateRing;
 	}
+	// Circle
+	int IsGenerateCircle() const
+	{
+		return m_BufferData.IsGenerateCircle;
+	}
+	float GetGenerateCircleRadius() const
+	{
+		return m_BufferData.GenerateCircleRadius;
+	}
+	// Torch
+	int IsGenerateTorch() const
+	{
+		return m_BufferData.IsGenerateTorch;
+	}
+	float GetGenerateTorchRadius() const
+	{
+		return m_BufferData.GenerateTorchRadius;
+	}
+
+	// Alpha
 	float GetMinAlpha() const
 	{
 		return m_BufferData.AlphaMin;
@@ -166,6 +185,7 @@ public:
 	{
 		m_BufferData.RotationAngle = Angle;
 	}
+	// Ring
 	void SetLoopGenerateRing(bool Enable)
 	{
 		m_BufferData.IsLoopGenerateRing = Enable ? 1 : 0;
@@ -178,6 +198,7 @@ public:
 	{
 		m_BufferData.GenerateRingRadius = Radius;
 	}
+	// Circle
 	void SetGenerateCircleEnable(bool Enable)
 	{
 		m_BufferData.IsGenerateCircle = Enable ? 1 : 0;
@@ -186,10 +207,25 @@ public:
 	{
 		m_BufferData.GenerateCircleRadius = Radius;
 	}
+	// Torch
+	void SetGenerateTorchEnable(bool Enable)
+	{
+		m_BufferData.IsGenerateTorch = Enable ? 1 : 0;
+	}
+	void SetGenerateTorchRadius(float Radius)
+	{
+		m_BufferData.GenerateTorchRadius = Radius;
+	}
+	// Bounce
 	void SetBounceEnable(int Bounce)
 	{
 		m_BufferData.ParticleBounce = Bounce;
 	}
+	void SetBounceResist(float Bounce)
+	{
+		m_BufferData.ParticleBounceResistance = Bounce;
+	}
+	// Alpha
 	void SetMinAlpha(float Alpha)
 	{
 		m_BufferData.AlphaMin = Alpha;
@@ -197,10 +233,6 @@ public:
 	void SetMaxAlpha(float Alpha)
 	{
 		m_BufferData.AlphaMax = Alpha;
-	}
-	void SetBounceResist(float Bounce)
-	{
-		m_BufferData.ParticleBounceResistance = Bounce;
 	}
 
 	void SetSpawnEnable(unsigned int Count)
@@ -276,6 +308,11 @@ public:
 	void SetMove(bool Move)
 	{
 		m_BufferData.Move = Move ? 1 : 0;
+	}
+
+	void SetIsRandomMoveDir(bool Move)
+	{
+		m_BufferData.IsMoveDirRandom = Move ? 1 : 0;
 	}
 
 	void SetGravity(bool Gravity)

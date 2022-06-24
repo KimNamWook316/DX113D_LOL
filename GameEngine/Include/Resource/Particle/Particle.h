@@ -40,12 +40,21 @@ private:
 	bool									m_2D;
 	int										m_SpawnCountMax;
 	ParticleSaveLoadStruct       m_SaveLoadStruct;
+private :
+	// 정규 분포 형태의 Y 값들을 지닌 구조화 버퍼
+	// 원소 개수 (X 축 원소 개수) : SpawnCount 만큼
+	// Y값 범위 : 0 ~ 1 (정규분포)
+	class CStructuredBuffer* m_NormalDistributionBuffer;
+	std::vector<float>	m_vecNormalDistVal;
 public:
 	CMaterial* CloneMaterial()	const
 	{
 		return m_Material->Clone();
 	}
-
+	std::vector<float> GetVecNormalDistVal() 
+	{
+		return m_vecNormalDistVal;
+	}
 	CParticleUpdateShader* GetUpdateShader()	const
 	{
 		return m_UpdateShader;
@@ -74,10 +83,20 @@ public:
 	void AddStructuredBuffer(const std::string& Name, unsigned int Size, unsigned int Count,
 		int Register, bool Dynamic = false,
 		int StructuredBufferShaderType = (int)Buffer_Shader_Type::Compute);
+	void CreateNormalDistStructuredBuffer(const std::string& Name, unsigned int Size, unsigned int Count,
+		int Register, bool Dynamic = false,
+		int StructuredBufferShaderType = (int)Buffer_Shader_Type::Compute);
 	bool ResizeBuffer(const std::string& Name, unsigned int Size, unsigned int Count,
 		int Register, bool Dynamic = false,
 		int StructuredBufferShaderType = (int)Buffer_Shader_Type::Compute);
+	bool ResizeNormalDistStructuredBuffer(const std::string& Name, unsigned int Size, unsigned int Count,
+		int Register, bool Dynamic = false,
+		int StructuredBufferShaderType = (int)Buffer_Shader_Type::Compute);
 	void CloneStructuredBuffer(std::vector<CStructuredBuffer*>& vecBuffer);
+	void CloneNormalDistStructuredBuffer(CStructuredBuffer*& NormalDistBuffer);
+private :
+	// m_NormalDistributionBuffer 에 정규 분포 계산 값들을 적용하는 함수
+	void GenerateNormalDistribution();
 public :
 	bool SaveFile(const char* FullPath);
 	bool LoadFile(const char* FullPath);
@@ -194,24 +213,30 @@ public:
 		return m_CBuffer->Is2D();
 	}
 
+	bool IsMoveDirRandom()
+	{
+		return m_CBuffer->IsMoveDirRandom();
+	}
+
 	const Vector3& GetMoveAngle()
 	{
 		return m_CBuffer->GetMoveAngle();
-	}
-
-	int IsBounceEnable() const
-	{
-		return m_CBuffer->IsBounceEnable();
 	}
 
 	const Vector3& GetRotationAngle()
 	{
 		return m_CBuffer->GetRotationAngle();
 	}
+	// Bounce
+	int IsBounceEnable() const
+	{
+		return m_CBuffer->IsBounceEnable();
+	}
 	float GetBounceResistance() const
 	{
 		return m_CBuffer->GetParticleBounceResist();
 	}
+	// Ring
 	int IsGenerateRing() const
 	{
 		return m_CBuffer->IsGenerateRing();
@@ -220,6 +245,11 @@ public:
 	{
 		return m_CBuffer->GetGenerateRingRadius();
 	}
+	int IsLoopGenerateRing() const
+	{
+		return m_CBuffer->IsLoopGenerateRing();
+	}
+	// Circle
 	int IsGenerateCircle() const
 	{
 		return m_CBuffer->IsGenerateCircle();
@@ -228,10 +258,16 @@ public:
 	{
 		return m_CBuffer->GetGenerateCircleRadius();
 	}
-	int IsLoopGenerateRing() const
+	// Torch
+	int IsGenerateTorch() const
 	{
-		return m_CBuffer->IsLoopGenerateRing();
+		return m_CBuffer->IsGenerateTorch();
 	}
+	float GetGenerateTorchRadius() const
+	{
+		return m_CBuffer->GetGenerateTorchRadius();
+	}
+	// Alpha
 	float GetMinAlpha() const
 	{
 		return m_CBuffer->GetMinAlpha();
@@ -241,6 +277,7 @@ public:
 		return m_CBuffer->GetMaxAlpha();
 	}
 public:
+	// Alpha
 	void SetMinAlpha(float Alpha) 
 	{
 		m_CBuffer->SetMinAlpha(Alpha);
@@ -249,6 +286,7 @@ public:
 	{
 		m_CBuffer->SetMaxAlpha(Alpha);
 	}
+	// Ring
 	void SetLoopGenerateRing(bool Enable)
 	{
 		m_CBuffer->SetLoopGenerateRing(Enable);
@@ -261,6 +299,16 @@ public:
 	{
 		m_CBuffer->SetGenerateRingRadius(Radius);
 	}
+	// Torch
+	void SetGenerateTorchEnable(bool Enable)
+	{
+		m_CBuffer->SetGenerateTorchEnable(Enable);
+	}
+	void SetGenerateTorchRadius(float Radius)
+	{
+		m_CBuffer->SetGenerateTorchRadius(Radius);
+	}
+	// Circle
 	void SetGenerateCircleEnable(bool Enable)
 	{
 		m_CBuffer->SetGenerateCircleEnable(Enable);
@@ -269,6 +317,7 @@ public:
 	{
 		m_CBuffer->SetGenerateCircleRadius(Radius);
 	}
+	// Bounce
 	void SetBounceEnable(bool Enable)
 	{
 		m_CBuffer->SetBounceEnable(Enable);
@@ -281,7 +330,6 @@ public:
 	{
 		m_Material = Material;
 	}
-
 	void SetSpawnTimeMax(float SpawnTime)
 	{
 		m_SpawnTimeMax = SpawnTime;
@@ -362,6 +410,11 @@ public:
 	void SetMove(bool Move)
 	{
 		m_CBuffer->SetMove(Move);
+	}
+
+	void SetIsRandomMoveDir(bool Random)
+	{
+		m_CBuffer->SetIsRandomMoveDir(Random);
 	}
 
 	void SetGravity(bool Gravity)

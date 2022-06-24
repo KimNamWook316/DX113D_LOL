@@ -65,6 +65,7 @@ private:
 
     class CIMGUICheckBox* m_IsMoveEdit;
     class CIMGUICheckBox* m_IsGravityEdit;
+    class CIMGUICheckBox* m_IsRandomMoveDirEdit;
     class CIMGUICheckBox* m_IsPauseResumeToggle;
 
     // Camera Related
@@ -87,6 +88,10 @@ private:
     // Circle Generate
     class CIMGUICheckBox* m_IsGenerateCircle;
     class CIMGUISliderFloat* m_GenerateCircleRadius;
+
+    // Torch Generate
+    class CIMGUICheckBox* m_IsGenerateTorch;
+    class CIMGUISliderFloat* m_GenerateTorchRadius;
 
     // 카메라의 Y 축 위치 (위로 갈지, 아래로 갈지 조정)
     class CIMGUISliderFloat* m_CameraYOffsetBar;
@@ -137,6 +142,10 @@ private:
     void OnIsGenerateCircleEdit(const char*, bool);
     void OnEditGenerateCircleRadius(float Radius);
 
+    // Generate Torch
+    void OnIsGenerateTorchEdit(const char*, bool);
+    void OnEditGenerateTorchRadius(float Radius);
+
     // Spawn Time, Count
     void OnSpawnTimeMaxEdit(float Num);
     void OnSpawnCountMaxEdit(int Num);
@@ -172,6 +181,7 @@ private:
     void OnIsMoveEdit(const char*, bool);
     void OnIsGravityEdit(const char*, bool);
     void OnPauseResumeToggle(const char*, bool);
+    void OnIsRandomMoveDirEdit(const char*, bool);
 
     // Camera
     void OnIsCameraRotateEdit(const char*, bool);
