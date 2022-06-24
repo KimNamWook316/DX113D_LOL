@@ -1331,6 +1331,10 @@ void CEffectEditor::SetIMGUIReflectParticle(CParticle* Particle)
             MaterialName.append(".mtrl");
         
         m_LoadedMaterialFileName->SetText(MaterialName.c_str());
+
+        // Texture 내용 세팅
+        if (Particle->GetMaterial()->GetTextureInfo().size() > 0)
+            m_ParticleTexture->SetTexture(Particle->GetMaterial()->GetTexture());
     }
 
     // 반드시 3D 로 세팅한다.

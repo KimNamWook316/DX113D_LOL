@@ -93,18 +93,12 @@ private:
     class CIMGUIInputFloat3* m_MoveDirEdit;
     class CIMGUIInputFloat3* m_MoveAngleEdit;
 
-    // Camera 관련 세팅
-    // class CIMGUICheckBox* m_CameraZoom;
-    // class CIMGUICheckBox* m_CameraLookDownFromUp;
-    // class CIMGUICheckBox* m_CameraRotate;
-
-    // Unity 참고 이후 추가
-    class CIMGUIInputFloat* m_GravityAccelEdit;
-    class CIMGUIInputFloat* m_StartDelayEdit;
+    // class CIMGUIInputFloat* m_GravityAccelEdit;
+    // class CIMGUIInputFloat* m_StartDelayEdit;
     class CIMGUIButton* m_SetMaterialTextureButton;
     class CIMGUIButton* m_RestartButton;
 
-    // Render Target
+    // Particle 이 사용하는 Material Texture
     class CIMGUIImage* m_ParticleTexture;
     // class CIMGUIImage* m_ParticleRenderTarget;
 private :
