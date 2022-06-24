@@ -72,6 +72,7 @@ private:
     class CIMGUICheckBox* m_IsRotateEdit;
     class CIMGUICheckBox* m_IsRotateInv;
     class CIMGUISliderFloat* m_RotateSpeedSliderBar;
+    class CIMGUISliderFloat* m_YRotateSliderBar;
     class CIMGUICheckBox* m_IsZoomEdit;
     class CIMGUISliderFloat* m_ZoomSpeedSliderBar;
 
@@ -79,10 +80,10 @@ private:
     class CIMGUICheckBox* m_IsBounce;
     class CIMGUISliderFloat* m_BounceResistance; // 마찰력
 
-    // Circle Generate
-    class CIMGUICheckBox* m_IsGenerateCircle;
-    class CIMGUISliderFloat* m_GenerateCircleRadius; // 마찰력
-    class CIMGUICheckBox* m_IsLoopGenerateCircle; // 마찰력
+    // Ring Generate
+    class CIMGUICheckBox* m_IsGenerateRing;
+    class CIMGUISliderFloat* m_GenerateRingRadius;
+    class CIMGUICheckBox* m_IsLoopGenerateRing; 
 
     // 카메라의 Y 축 위치 (위로 갈지, 아래로 갈지 조정)
     class CIMGUISliderFloat* m_CameraYOffsetBar;
@@ -132,10 +133,10 @@ private:
     void OnIsBounceEdit(const char*, bool);
     void OnEditBounceResistance(float Speed);
 
-    // Generate Circle
-    void OnIsGenerateCircleEdit(const char*, bool);
-    void OnIsLoopGenerateCircleEdit(const char*, bool);
-    void OnEditGenerateCircleRadius(float Radius);
+    // Generate Ring
+    void OnIsGenerateRingEdit(const char*, bool);
+    void OnIsLoopGenerateRingEdit(const char*, bool);
+    void OnEditGenerateRingRadius(float Radius);
 
     void OnSpawnTimeMaxEdit(float Num);
 
@@ -171,6 +172,8 @@ private:
     void OnIsCameraRotateEdit(const char*, bool);
     void OnCameraRotateInvEdit(const char*, bool);
     void OnSetCameraRotateSpeed(float Speed);
+
+    void OnSetCameraYAxisRotate(float Speed);
 
     void OnIsCameraZoomEdit(const char*, bool);
     void OnSetCameraZoomSpeed(float Speed);

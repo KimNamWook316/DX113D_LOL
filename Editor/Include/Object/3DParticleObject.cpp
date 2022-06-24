@@ -79,5 +79,15 @@ void C3DParticleObject::Update(float DeltaTime)
             AddedRotationY *= -1;
 
         m_ParticleArm->AddRelativeRotationY(AddedRotationY);
+
+        if (m_CameraRotateCallback)
+        {
+            float RelativeRotY = m_ParticleArm->GetRelativeRot().y;
+            // 음수 
+            RelativeRotY = RelativeRotY < 0 ? 360 + RelativeRotY : RelativeRotY;
+            // 360 이상
+            RelativeRotY = RelativeRotY > 360 ? RelativeRotY - 360 : RelativeRotY;
+            m_CameraRotateCallback(RelativeRotY);
+        }
     }
 }

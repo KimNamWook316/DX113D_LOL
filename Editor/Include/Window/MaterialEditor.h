@@ -98,6 +98,7 @@ private :
 	void OnSaveMaterial();
 	void OnLoadMaterial();
 
+	// Material 내용이 IMGUI 를 통해 보여지게 하기 
 	void RefreshMaterialDisplayInfo(class CMaterial* Material, class CTexture* Texture = nullptr);
 };
 

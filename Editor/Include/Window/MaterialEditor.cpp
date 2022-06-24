@@ -839,11 +839,14 @@ void CMaterialEditor::OnLoadMaterial()
 void CMaterialEditor::RefreshMaterialDisplayInfo(class CMaterial* Material, class CTexture* Texture )
 {
 	// Material Editor =>
-
 	if (!Material)
 		return;
 
+	// 현재 Material 이름 보여주기
 	m_SelectedMaterialName->SetText(Material->GetName().c_str());
+
+	// Edit Name Input 비워주기 
+	m_EditMaterialName->ClearText();
 
 	const std::vector<MaterialTextureInfo>& MtrlTexture = Material->GetTextureInfo();
 
@@ -892,6 +895,10 @@ void CMaterialEditor::RefreshMaterialDisplayInfo(class CMaterial* Material, clas
 		}
 	}
 
+	// Set Texture, Add Texture Input 내용 비워주기
+	m_AddTextureInput->ClearText();
+	m_SetTextureInput->ClearText();
+
 	// Info Table 세팅
 	// Shader Name
 	CShader* Shader = Material->GetShader();
@@ -937,11 +944,9 @@ void CMaterialEditor::RefreshMaterialDisplayInfo(class CMaterial* Material, clas
 	// RenderState Input 을 Clear 해준다.
 	m_RenderStateSetInput->ClearText();
 
-
 	// OutLine 정보 세팅
 	m_OutLineCheck->SetCheck(0, Material->IsOutlineEnable());
 	m_OutLineColor->SetRGB(Material->GetOutlineColor());
 	m_OutLineThickNess->SetVal(Material->GetOutlineThickness());
 
-	// Material
 }

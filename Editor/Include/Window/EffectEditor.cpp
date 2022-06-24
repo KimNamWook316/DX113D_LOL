@@ -104,13 +104,13 @@ bool CEffectEditor::Init()
     HelpText->SetText(DropMtrlText);
     HelpText->SetIsHelpMode(true);
 
-
     m_LoadedMaterialFileName = AddWidget<CIMGUITextInput>("Loaded Mtrl File", 180.f, 30.f);
     m_LoadedMaterialFileName->SetHintText("Not Loaded From Disk");
 
     Line = AddWidget<CIMGUISameLine>("Line");
     Line->SetOffsetX(290.f);
-HelpText = AddWidget<CIMGUIText>("MtrlFileName", 90.f, 30.f);
+
+    HelpText = AddWidget<CIMGUIText>("MtrlFileName", 90.f, 30.f);
     const char* LoadedMtrlHelpText = R"(ex)  하드디스크로부터, Material File을 Load 하여 세팅한 경우 
     Load한 Material File의 이름을 보여준다.)";
     HelpText->SetText(LoadedMtrlHelpText);
@@ -134,11 +134,15 @@ HelpText = AddWidget<CIMGUIText>("MtrlFileName", 90.f, 30.f);
     m_IsRotateInv->AddCheckInfo("Inv");
     m_IsRotateInv->SetCallBackLabel<CEffectEditor>(this, &CEffectEditor::OnCameraRotateInvEdit);
 
-
     m_RotateSpeedSliderBar = Tree->AddWidget<CIMGUISliderFloat>("Rotate Speed", 100.f, 20.f);
     m_RotateSpeedSliderBar->SetCallBack<CEffectEditor>(this, &CEffectEditor::OnSetCameraRotateSpeed);
     m_RotateSpeedSliderBar->SetMin(10.f);
     m_RotateSpeedSliderBar->SetMax(90.f);
+
+    m_YRotateSliderBar = Tree->AddWidget<CIMGUISliderFloat>("Y Axis Rotate", 100.f, 20.f);
+    m_YRotateSliderBar->SetCallBack<CEffectEditor>(this, &CEffectEditor::OnSetCameraYAxisRotate);
+    m_YRotateSliderBar->SetMin(0.f);
+    m_YRotateSliderBar->SetMax(360.f);
 
     // Zoom
     m_IsZoomEdit = Tree->AddWidget<CIMGUICheckBox>("Zoom", 80.f);
@@ -181,9 +185,18 @@ HelpText = AddWidget<CIMGUIText>("MtrlFileName", 90.f, 30.f);
 
     // Bounce
     Tree = AddWidget<CIMGUITree>("Bounce");
+
     m_IsBounce = Tree->AddWidget<CIMGUICheckBox>("Bounce", 80.f);
     m_IsBounce->AddCheckInfo("Bounce");
     m_IsBounce->SetCallBackLabel<CEffectEditor>(this, &CEffectEditor::OnIsBounceEdit);
+
+    Line = Tree->AddWidget<CIMGUISameLine>("Line");
+    Line->SetOffsetX(100.f);
+
+    HelpText = AddWidget<CIMGUIText>("BounceHelp", 90.f, 30.f);
+    const char* BounceHelpText = R"(탄성 효과)";
+    HelpText->SetText(BounceHelpText);
+    HelpText->SetIsHelpMode(true);
 
     m_BounceResistance = Tree->AddWidget<CIMGUISliderFloat>("Bounce Resist", 100.f, 20.f);
     m_BounceResistance->SetCallBack<CEffectEditor>(this, &CEffectEditor::OnEditBounceResistance);
@@ -191,21 +204,41 @@ HelpText = AddWidget<CIMGUIText>("MtrlFileName", 90.f, 30.f);
     m_BounceResistance->SetMax(0.99f);
 
     // Generate Circle
-    Tree = AddWidget<CIMGUITree>("Circle Generate");
+    Tree = AddWidget<CIMGUITree>("Ring Generate");
 
-    m_IsGenerateCircle = Tree->AddWidget<CIMGUICheckBox>("Circle", 80.f);
-    m_IsGenerateCircle->AddCheckInfo("Circle");
-    m_IsGenerateCircle->SetCallBackLabel<CEffectEditor>(this, &CEffectEditor::OnIsGenerateCircleEdit);
+    m_IsGenerateRing = Tree->AddWidget<CIMGUICheckBox>("Ring", 80.f);
+    m_IsGenerateRing->AddCheckInfo("Ring");
+    m_IsGenerateRing->SetCallBackLabel<CEffectEditor>(this, &CEffectEditor::OnIsGenerateRingEdit);
 
-    m_GenerateCircleRadius = Tree->AddWidget<CIMGUISliderFloat>("Radius", 100.f, 20.f);
-    m_GenerateCircleRadius->SetCallBack<CEffectEditor>(this, &CEffectEditor::OnEditGenerateCircleRadius);
-    m_GenerateCircleRadius->SetMin(0.0f);
-    m_GenerateCircleRadius->SetMax(100.f);
+    Line = Tree->AddWidget<CIMGUISameLine>("Line");
+    Line->SetOffsetX(90.f);
 
-    m_IsLoopGenerateCircle = Tree->AddWidget<CIMGUICheckBox>("Loop", 80.f);
-    m_IsLoopGenerateCircle->AddCheckInfo("Loop");
-    m_IsLoopGenerateCircle->SetCallBackLabel<CEffectEditor>(this, &CEffectEditor::OnIsLoopGenerateCircleEdit);
+    HelpText = AddWidget<CIMGUIText>("RingGenerateText", 90.f, 30.f);
+    const char* RingHelpText = R"(Ring 모양 Particle)";
+    HelpText->SetText(RingHelpText);
+    HelpText->SetIsHelpMode(true);
+
+    Line = Tree->AddWidget<CIMGUISameLine>("Line");
+    Line->SetOffsetX(110.f);
+
+    m_IsLoopGenerateRing = Tree->AddWidget<CIMGUICheckBox>("Loop", 80.f);
+    m_IsLoopGenerateRing->AddCheckInfo("Ring Loop");
+    m_IsLoopGenerateRing->SetCallBackLabel<CEffectEditor>(this, &CEffectEditor::OnIsLoopGenerateRingEdit);
+
+    Line = Tree->AddWidget<CIMGUISameLine>("Line");
+    Line->SetOffsetX(190.f);
+
+    HelpText = Tree->AddWidget<CIMGUIText>("RingLoopText", 90.f, 30.f);
+    const char* RingLoopHelpText = R"(ex)  Ring 여부가 Check 되야만 적용.)";
+    HelpText->SetText(RingLoopHelpText);
+    HelpText->SetIsHelpMode(true);
+
     
+    m_GenerateRingRadius = Tree->AddWidget<CIMGUISliderFloat>("Radius", 100.f, 20.f);
+    m_GenerateRingRadius->SetCallBack<CEffectEditor>(this, &CEffectEditor::OnEditGenerateRingRadius);
+    m_GenerateRingRadius->SetMin(0.0f);
+    m_GenerateRingRadius->SetMax(100.f);
+
 
     // Movement
     Tree = AddWidget<CIMGUITree>("Movement");
@@ -466,7 +499,7 @@ void CEffectEditor::OnEditBounceResistance(float Resist)
    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetBounceResist(Resist);
 }
 
-void CEffectEditor::OnIsGenerateCircleEdit(const char*, bool Enable)
+void CEffectEditor::OnIsGenerateRingEdit(const char*, bool Enable)
 {
     if (!m_ParticleClass)
         return;
@@ -475,7 +508,7 @@ void CEffectEditor::OnIsGenerateCircleEdit(const char*, bool Enable)
     dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGenerateCircleEnable(Enable);
 }
 
-void CEffectEditor::OnIsLoopGenerateCircleEdit(const char*, bool Enable)
+void CEffectEditor::OnIsLoopGenerateRingEdit(const char*, bool Enable)
 {
     if (!m_ParticleClass)
         return;
@@ -484,7 +517,7 @@ void CEffectEditor::OnIsLoopGenerateCircleEdit(const char*, bool Enable)
     dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetLoopGenerateCircle(Enable);
 }
 
-void CEffectEditor::OnEditGenerateCircleRadius(float Radius)
+void CEffectEditor::OnEditGenerateRingRadius(float Radius)
 {
     if (!m_ParticleClass)
         return;
@@ -719,6 +752,13 @@ void CEffectEditor::OnSetCameraRotateSpeed(float Speed)
     m_RotateSpeedSliderBar->SetValue(Speed);
 
     m_ParticleObject->SetCameraRotateSpeed(Speed);
+}
+
+void CEffectEditor::OnSetCameraYAxisRotate(float Rot)
+{
+    m_YRotateSliderBar->SetValue(Rot);
+
+    m_ParticleObject->SetRelativeRotationY(Rot);
 }
 
 void CEffectEditor::OnIsCameraZoomEdit(const char*, bool Enable)
@@ -1051,6 +1091,10 @@ void CEffectEditor::SetGameObjectReady()
     }
 
     m_ParticleObject = CSceneManager::GetInst()->GetScene()->CreateGameObject<C3DParticleObject>("Particle Effect Base Ground");
+
+    // Callback Function 세팅
+    m_ParticleObject->SetCameraRotateCallback<CEffectEditor>(this, &CEffectEditor::OnSetCameraYAxisRotate);
+
     // 처음에는 Enable False 로 하여 보이지 않게 한다.
     m_ParticleObject->Enable(false);
     m_ParticleObject->GetRootComponent()->Enable(false);
@@ -1373,9 +1417,9 @@ void CEffectEditor::SetIMGUIReflectParticle(CParticle* Particle)
     m_BounceResistance->SetValue(Particle->GetBounceResistance());
 
     // Generate Circle
-    m_IsGenerateCircle->SetCheck(0, Particle->IsGenerateCircle() == 1 ? true : false);
-    m_GenerateCircleRadius->SetValue(Particle->GetGenerateCircleRadius());
-    m_IsLoopGenerateCircle->SetCheck(0, Particle->IsLoopGenerateCircle());
+    m_IsGenerateRing->SetCheck(0, Particle->IsGenerateCircle() == 1 ? true : false);
+    m_GenerateRingRadius->SetValue(Particle->GetGenerateCircleRadius());
+    m_IsLoopGenerateRing->SetCheck(0, Particle->IsLoopGenerateCircle());
 }
 
 void CEffectEditor::SetIMGUIReflectObjectCamera()
