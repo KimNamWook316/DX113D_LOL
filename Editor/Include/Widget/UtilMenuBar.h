@@ -10,7 +10,6 @@ private :
 	// Scene
 	class CIMGUIMenuItem* m_FBXConvertWindow;
 	class CIMGUIMenuItem* m_FileBrowserTree;
-	class CIMGUIMenuItem* m_FileBrowser;
 public:
 	virtual bool Init() override;
 	virtual void Render() override;

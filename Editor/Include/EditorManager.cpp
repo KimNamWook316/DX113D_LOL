@@ -413,10 +413,14 @@ void CEditorManager::LoadEditorResources()
 void CEditorManager::CreateWindows()
 {
 	m_ObjectHierarchyWindow = CIMGUIManager::GetInst()->AddWindow<CObjectHierarchyWindow>(OBJECT_HIERARCHY);
+	m_ObjectHierarchyWindow->Close();
 	m_ComponentHierarchyWindow = CIMGUIManager::GetInst()->AddWindow<CSceneComponentHierarchyWindow>(SCENECOMPONENT_HIERARCHY);
+	m_ComponentHierarchyWindow->Close();
 	m_ObjectComponentWindow = CIMGUIManager::GetInst()->AddWindow<CObjectComponentWindow>(OBJECTCOMPONENT_LIST);
+	m_ObjectComponentWindow->Close();
 
 	m_InspectorWindow = CIMGUIManager::GetInst()->AddWindow<CInspectorWindow>(INSPECTOR);
+	m_InspectorWindow->Close();
 
 	m_FileBrowserTree = CIMGUIManager::GetInst()->AddWindow<CFileBrowserTree>(FILE_BROWSERTREE);
 	m_FileBrowserTree->Close();
@@ -435,9 +439,12 @@ void CEditorManager::CreateWindows()
 	m_EffectDisplayWindow = CIMGUIManager::GetInst()->AddWindow<CEffectDisplayWindow>(PARTICLE_DISPLAYWINDOW);
 	m_EffectDisplayWindow->Close();
 
+	// (OBJ) 적어도 하나의 Window 는 계속 열려있어야 Error 발생 X
 	m_ToolWindow = CIMGUIManager::GetInst()->AddWindow<CToolWindow>(TOOL);
+	// m_ToolWindow->Close();
 
 	m_FBXConvertWindow = CIMGUIManager::GetInst()->AddWindow<CFBXConvertWindow>(FBX_CONVERTOR);
+	m_FBXConvertWindow->Close();
 
 	m_BaseMenuBar = CIMGUIManager::GetInst()->AddWindow<CBaseMenuBar>("BehaviorTree");
 	

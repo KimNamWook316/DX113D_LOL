@@ -93,6 +93,7 @@ private :
 	void OnSetTextureBtnWithString(const std::string&);
 	void OnAddTextureBtn();
 	void OnAddTextureBtnWithString(const std::string&);
+	void TextureSetSuccessCallback(class CTexture* Texture);
 
 	void OnSaveMaterial();
 	void OnLoadMaterial();

@@ -56,6 +56,10 @@ public:
 	{
 		return m_DragObj;
 	}
+	class CInspectorWindow* GetInspectorWindow() const
+	{
+		return m_InspectorWindow;;
+	}
 	class CAnimationDisplayWindow* GetAnimationDisplayWindow() const
 	{
 		return m_AnimationDisplayWindow;
@@ -111,6 +115,10 @@ public:
 	class C3DCameraObject* Get3DCameraObject()	const
 	{
 		return m_CameraObject;
+	}
+	class CToolWindow* GetToolWindow() const
+	{
+		return m_ToolWindow;
 	}
 	EditMode GetEditMode()
 	{
