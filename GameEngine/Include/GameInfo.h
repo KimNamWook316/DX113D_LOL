@@ -437,8 +437,8 @@ struct	ParticleCBuffer
 	// int     ParticleBounce;
 	// float	 ParticleBounceResistance;
 
-	float AlphaMax;
-	float AlphaMin;
+	float AlphaEnd;
+	float AlphaStart;
 	int IsGenerateCircle;
 	float ParticleEmpty1;
 

@@ -269,13 +269,13 @@ public:
 		return m_CBuffer->IsGenerateTorch();
 	}
 	// Alpha
-	float GetMinAlpha() const
+	float GetStartAlpha() const
 	{
-		return m_CBuffer->GetMinAlpha();
+		return m_CBuffer->GetStartAlpha();
 	}
-	float GetMaxAlpha() const
+	float GetEndAlpha() const
 	{
-		return m_CBuffer->GetMaxAlpha();
+		return m_CBuffer->GetEndAlpha();
 	}
 public:
 	// MoveUp Corn
@@ -284,13 +284,13 @@ public:
 		m_CBuffer->SetLifeTimeLinearFromCenter(Enable);
 	}
 	// Alpha
-	void SetMinAlpha(float Alpha) 
+	void SetStartAlpha(float Alpha) 
 	{
-		m_CBuffer->SetMinAlpha(Alpha);
+		m_CBuffer->SetStartAlpha(Alpha);
 	}
-	void SetMaxAlpha(float Alpha)
+	void SetEndAlpha(float Alpha)
 	{
-		m_CBuffer->SetMaxAlpha(Alpha);
+		m_CBuffer->SetEndAlpha(Alpha);
 	}
 	// 생성 반지름
 	void SetGenerateRadius(float Radius)

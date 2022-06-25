@@ -171,13 +171,13 @@ public:
 	}
 
 	// Alpha
-	float GetMinAlpha() const
+	float GetStartAlpha() const
 	{
-		return m_BufferData.AlphaMin;
+		return m_BufferData.AlphaStart;
 	}
-	float GetMaxAlpha() const
+	float GetEndAlpha() const
 	{
-		return m_BufferData.AlphaMax;
+		return m_BufferData.AlphaEnd;
 	}
 public:
 
@@ -223,13 +223,13 @@ public:
 		m_BufferData.ParticleBounceResistance = Bounce;
 	}
 	// Alpha
-	void SetMinAlpha(float Alpha)
+	void SetStartAlpha(float Alpha)
 	{
-		m_BufferData.AlphaMin = Alpha;
+		m_BufferData.AlphaStart = Alpha;
 	}
-	void SetMaxAlpha(float Alpha)
+	void SetEndAlpha(float Alpha)
 	{
-		m_BufferData.AlphaMax = Alpha;
+		m_BufferData.AlphaEnd = Alpha;
 	}
 
 	void SetSpawnEnable(unsigned int Count)

@@ -382,11 +382,11 @@ bool CEffectEditor::Init()
     m_AlphaBlendEnableButton = Tree->AddWidget<CIMGUIButton>("Set Alpha Blend", 150.f, 20.f);
     m_AlphaBlendEnableButton->SetClickCallback<CEffectEditor>(this, &CEffectEditor::OnSetAlphaBlendToMaterialCallback);
 
-    m_AlphaMinEdit = Tree->AddWidget<CIMGUIInputFloat>("Alpha Min", 150.f);
-    m_AlphaMinEdit->SetCallBack(this, &CEffectEditor::OnAlphaMinEdit);
+    m_AlphaStartEdit = Tree->AddWidget<CIMGUIInputFloat>("Alpha Min", 150.f);
+    m_AlphaStartEdit->SetCallBack(this, &CEffectEditor::OnAlphaStartEdit);
 
-    m_AlphaMaxEdit = Tree->AddWidget<CIMGUIInputFloat>("Alpha Max", 150.f);
-    m_AlphaMaxEdit->SetCallBack(this, &CEffectEditor::OnAlphaMaxEdit);
+    m_AlphaEndEdit = Tree->AddWidget<CIMGUIInputFloat>("Alpha Max", 150.f);
+    m_AlphaEndEdit->SetCallBack(this, &CEffectEditor::OnAlphaEndEdit);
 
     // Move Dir, Angle
     Tree = AddWidget<CIMGUITree>("Move Angle, Dir");
@@ -786,7 +786,7 @@ void CEffectEditor::OnColorMaxEdit(const Vector4& Color)
     // m_ParticleComponent->GetCBuffer()->SetColorMax(Color);
 }
 
-void CEffectEditor::OnAlphaMinEdit(float Alpha)
+void CEffectEditor::OnAlphaStartEdit(float Alpha)
 {
     if (!m_ParticleClass)
         return;
@@ -794,19 +794,19 @@ void CEffectEditor::OnAlphaMinEdit(float Alpha)
     // Alpha 값은 0으로 한다.
 
     // m_ParticleClass->SetColorMin(Color.x, Color.y, Color.z, 1.f);
-    m_ParticleClass->SetMinAlpha(Alpha);
+    // m_ParticleClass->SetStartAlpha(Alpha);
     // dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetColorMin(Color.x, Color.y, Color.z, 1.f);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetMinAlpha(Alpha);
+    // dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetStartAlpha(Alpha);
 }
 
-void CEffectEditor::OnAlphaMaxEdit(float Alpha)
+void CEffectEditor::OnAlphaEndEdit(float Alpha)
 {
     if (!m_ParticleClass)
         return;
 
-    m_ParticleClass->SetMaxAlpha(Alpha);
+    // m_ParticleClass->SetEndAlpha(Alpha);
     // dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetColorMin(Color.x, Color.y, Color.z, 1.f);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetMaxAlpha(Alpha);
+    // dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetEndAlpha(Alpha);
 }
 
 void CEffectEditor::OnSetAlphaBlendToMaterialCallback()
@@ -1257,8 +1257,8 @@ void CEffectEditor::SetBasicDefaultParticleInfos(CParticle* Particle)
     Particle->SetColorMax(Vector4(0.6f, 0.8f, 0.8f, 1.f));
 
     // Alpha
-    Particle->SetMinAlpha(1.f);
-    Particle->SetMaxAlpha(1.f);
+    // Particle->SetMinAlpha(1.f);
+    // Particle->SetMaxAlpha(1.f);
 
     // Move Dir
     Particle->SetMoveDir(Vector3(0.f, 1.f, 0.f)); 
@@ -1514,8 +1514,8 @@ void CEffectEditor::SetIMGUIReflectParticle(CParticle* Particle)
     m_ColorMinEdit->SetRGBA(Particle->GetColorMin());
     m_ColorMaxEdit->SetRGBA(Particle->GetColorMax());
 
-    m_AlphaMinEdit->SetVal(Particle->GetMinAlpha());
-    m_AlphaMaxEdit->SetVal(Particle->GetMaxAlpha());
+    m_AlphaStartEdit->SetVal(Particle->GetStartAlpha());
+    m_AlphaEndEdit->SetVal(Particle->GetEndAlpha());
 
     // Move Dir, Angle
     m_MoveDirEdit->SetVal(Particle->GetMoveDir());
@@ -1571,8 +1571,8 @@ void CEffectEditor::OnRipplePreset()
     dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGravity(false);
 
     // Alpha
-    OnAlphaMinEdit(0.2f);
-    OnAlphaMaxEdit(1.f);
+    OnAlphaStartEdit(1.f);
+    OnAlphaEndEdit(0.2f);
     OnSetAlphaBlendToMaterialCallback();
 
     // Scale
@@ -1618,8 +1618,8 @@ void CEffectEditor::OnRingPreset()
     dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGravity(false);
 
     // Alpha
-    OnAlphaMinEdit(0.3f);
-    OnAlphaMaxEdit(1.f);
+    OnAlphaStartEdit(1.f);
+    OnAlphaEndEdit(0.3f);
     OnSetAlphaBlendToMaterialCallback();
 
     // Random Dir
@@ -1654,6 +1654,9 @@ void CEffectEditor::OnRingPreset()
 
     m_ParticleClass->SetGenerateTorchEnable(false);
     dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGenerateTorchEnable(false);
+
+    // IMGUI Update
+    SetIMGUIReflectParticle(m_ParticleClass);
 }
 
 void CEffectEditor::OnRingWallPreset()
@@ -1670,8 +1673,8 @@ void CEffectEditor::OnRingWallPreset()
     dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGravity(false);
 
     // Alpha
-    OnAlphaMinEdit(0.7f);
-    OnAlphaMaxEdit(1.f);
+    OnAlphaStartEdit(1.f);
+    OnAlphaEndEdit(0.7f);
     OnSetAlphaBlendToMaterialCallback();
 
     // Random Dir
@@ -1716,6 +1719,9 @@ void CEffectEditor::OnRingWallPreset()
 
     m_ParticleClass->SetGenerateTorchEnable(false);
     dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGenerateTorchEnable(false);
+
+    // IMGUI Update
+    SetIMGUIReflectParticle(m_ParticleClass);
 }
 
 void CEffectEditor::OnTorchPreset()
@@ -1732,8 +1738,8 @@ void CEffectEditor::OnTorchPreset()
     dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGravity(false);
 
     // Alpha
-    OnAlphaMinEdit(0.7f);
-    OnAlphaMaxEdit(1.f);
+    OnAlphaStartEdit(1.f);
+    OnAlphaEndEdit(0.7f);
     OnSetAlphaBlendToMaterialCallback();
 
     // Random Dir
@@ -1760,6 +1766,10 @@ void CEffectEditor::OnTorchPreset()
     // Move Angle
     OnMoveAngleEdit(Vector3(0.f, 0.f, 0.f));
 
+    // Life Time Linaer
+    m_ParticleClass->SetLifeTimeLinearFromCenter(true);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetLifeTimeLinearFromCenter(true);
+
     // Ring X
     m_ParticleClass->SetGenerateRingEnable(false);
     dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGenerateRingEnable(false);
@@ -1771,6 +1781,9 @@ void CEffectEditor::OnTorchPreset()
     // Torch O
     m_ParticleClass->SetGenerateTorchEnable(true);
     dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGenerateTorchEnable(true);
+
+    // IMGUI Update
+    SetIMGUIReflectParticle(m_ParticleClass);
 }
 
 void CEffectEditor::OnFireSmallPreset()
@@ -1787,8 +1800,8 @@ void CEffectEditor::OnFireSmallPreset()
     dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGravity(false);
 
     // Alpha
-    OnAlphaMinEdit(0.7f);
-    OnAlphaMaxEdit(2.f);
+    OnAlphaEndEdit(2.f);
+    OnAlphaStartEdit(0.7f);
     OnSetAlphaBlendToMaterialCallback();
 
     // Random Dir
@@ -1828,28 +1841,201 @@ void CEffectEditor::OnFireSmallPreset()
     // Torch O
     m_ParticleClass->SetGenerateTorchEnable(false);
     dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGenerateTorchEnable(false);
+
+    // IMGUI Update
+    SetIMGUIReflectParticle(m_ParticleClass);
 }
 
 void CEffectEditor::OnFireWidePreset()
 {
     if (!m_ParticleClass)
         return;
+
+    // Move O
+    m_ParticleClass->SetMove(true);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetMove(true);
+
+    // Gravity X
+    m_ParticleClass->SetGravity(false);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGravity(false);
+
+    // Alpha
+    OnAlphaEndEdit(1.f);
+    OnAlphaStartEdit(0.6f);
+    OnSetAlphaBlendToMaterialCallback();
+
+    // Random Dir
+    m_ParticleClass->SetIsRandomMoveDir(false);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetIsRandomMoveDir(false);
+    
+    // Radiuse
+    OnEditGenerateRadius(80.f);
+
+    // SpawnTime
+    OnSpawnTimeMaxEdit(0.02f);
+
+    // Scale
+    OnScaleMinEdit(Vector3(20.f, 20.f, 1.f));
+    OnScaleMaxEdit(Vector3(20.f, 20.f, 1.f));
+
+    // Life Time
+    OnLifeTimeMinEdit(1.f);
+    OnLifeTimeMaxEdit(10.f);
+
+    // Life Time Linaer
+    m_ParticleClass->SetLifeTimeLinearFromCenter(true);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetLifeTimeLinearFromCenter(true);
+
+    // Move Dir
+    OnMoveDirEdit(Vector3(0.f, 1.f, 0.f));
+
+    // Ring X
+    m_ParticleClass->SetGenerateRingEnable(false);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGenerateRingEnable(false);
+
+    // Circle O
+    m_ParticleClass->SetGenerateCircleEnable(true);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGenerateCircleEnable(true);
+
+    // Torch X
+    m_ParticleClass->SetGenerateTorchEnable(false);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGenerateTorchEnable(false);
+
+    // IMGUI Update
+    SetIMGUIReflectParticle(m_ParticleClass);
 }
 
 void CEffectEditor::OnSparkPreset()
 {
     if (!m_ParticleClass)
         return;
+
+    // Move O
+    m_ParticleClass->SetMove(true);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetMove(true);
+
+    // Gravity X
+    m_ParticleClass->SetGravity(false);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGravity(false);
+
+    // Alpha
+    OnAlphaEndEdit(1.f);
+    OnAlphaStartEdit(0.8f);
+    OnSetAlphaBlendToMaterialCallback();
+
+    // Random Dir
+    m_ParticleClass->SetIsRandomMoveDir(true);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetIsRandomMoveDir(true);
+
+    // SpawnTime
+    OnSpawnTimeMaxEdit(0.02f);
+    
+    // Life Time
+    OnLifeTimeMinEdit(0.5f);
+    OnLifeTimeMaxEdit(2.f);
+
+    // Speed
+    OnSpeedMinEdit(50.f);
+    OnSpeedMaxEdit(80.f);
+
+    // Life Time Linaer
+    m_ParticleClass->SetLifeTimeLinearFromCenter(true);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetLifeTimeLinearFromCenter(true);
+
+    // Move Dir
+    OnMoveDirEdit(Vector3(0.f, 1.f, 0.f));
+
+    // Ring X
+    m_ParticleClass->SetGenerateRingEnable(false);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGenerateRingEnable(false);
+
+    // Circle X
+    m_ParticleClass->SetGenerateCircleEnable(false);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGenerateCircleEnable(false);
+
+    // Torch X
+    m_ParticleClass->SetGenerateTorchEnable(false);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGenerateTorchEnable(false);
+
+    // IMGUI Update
+    SetIMGUIReflectParticle(m_ParticleClass);
 }
 
 void CEffectEditor::OnSparkBouncePreset()
 {
     if (!m_ParticleClass)
         return;
+
+    OnLifeTimeMaxEdit(3.f);
+
+    m_ParticleClass->SetBounceEnable(true);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetBounceEnable(true);
+
+    m_ParticleClass->SetBounceResistance(0.7f);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetBounceResist(0.7f);
+
+    OnSparkPreset();
+
 }
 
 void CEffectEditor::OnSimpleMeteorPreset()
 {
     if (!m_ParticleClass)
         return;
+
+    // Move O
+    m_ParticleClass->SetMove(true);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetMove(true);
+
+    // Gravity X
+    m_ParticleClass->SetGravity(false);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGravity(false);
+
+    // Alpha
+    OnAlphaEndEdit(2.f);
+    OnAlphaStartEdit(0.2f);
+    OnSetAlphaBlendToMaterialCallback();
+
+    // Random Dir
+    m_ParticleClass->SetIsRandomMoveDir(false);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetIsRandomMoveDir(false);
+
+    // Radiuse
+    OnEditGenerateRadius(3.f);
+
+    // SpawnTime
+    OnSpawnTimeMaxEdit(0.02f);
+
+    // Life Time
+    OnLifeTimeMinEdit(0.5f);
+    OnLifeTimeMaxEdit(2.f);
+
+    // Speed
+    OnSpeedMinEdit(10.f);
+    OnSpeedMaxEdit(30.f);
+
+    // Life Time Linaer
+    m_ParticleClass->SetLifeTimeLinearFromCenter(true);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetLifeTimeLinearFromCenter(true);
+
+    // Move Dir
+    OnMoveDirEdit(Vector3(0.f, 1.f, 0.f));
+
+    // Move Angle
+    OnMoveAngleEdit(Vector3(0.f, 0.f, 5.f));
+
+    // Ring X
+    m_ParticleClass->SetGenerateRingEnable(false);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGenerateRingEnable(false);
+
+    // Circle X
+    m_ParticleClass->SetGenerateCircleEnable(false);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGenerateCircleEnable(false);
+
+    // Torch O
+    m_ParticleClass->SetGenerateTorchEnable(true);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGenerateTorchEnable(true);
+
+    // IMGUI Update
+    SetIMGUIReflectParticle(m_ParticleClass);
 }

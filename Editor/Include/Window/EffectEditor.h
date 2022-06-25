@@ -78,8 +78,8 @@ private:
     class CIMGUIColor4* m_ColorMinEdit;
     class CIMGUIColor4* m_ColorMaxEdit;
 
-    class CIMGUIInputFloat* m_AlphaMinEdit;
-    class CIMGUIInputFloat* m_AlphaMaxEdit;
+    class CIMGUIInputFloat* m_AlphaStartEdit;
+    class CIMGUIInputFloat* m_AlphaEndEdit;
     class CIMGUIButton* m_AlphaBlendEnableButton;
 
     // Material
@@ -197,8 +197,8 @@ private:
     void OnColorMaxEdit(const Vector4& Color);
 
     // Alpha Min, Max
-    void OnAlphaMinEdit(float Alpha);
-    void OnAlphaMaxEdit(float Alpha);
+    void OnAlphaStartEdit(float Alpha);
+    void OnAlphaEndEdit(float Alpha);
 
     // 현재 Material에 Alpha Blend 적용하기
     void OnSetAlphaBlendToMaterialCallback();
