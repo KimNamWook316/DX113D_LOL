@@ -149,7 +149,7 @@ private:
 
 
     // Generate Radius
-    void OnEditGenerateRadius(float Radius); //
+    void OnEditGenerateRadius(float Radius);
 
     // Material Load By Btn
     void OnLoadParticleMaterialCallback();
