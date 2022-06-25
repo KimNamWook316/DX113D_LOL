@@ -113,12 +113,17 @@ public:
 	{
 		return m_BufferData.MoveDir;
 	}
-
+	// 중심에서 멀어질 수록 LifeTime 감소
+	bool IsLifeTimeLinearFromCenter()
+	{
+		return m_BufferData.IsLifeTimeLinearFromCenter == 1 ? true : false;
+	}
 	bool Is2D()
 	{
 		return m_BufferData.Is2D == 1 ? true : false;
 	}
-
+	
+	// 랜덤 방향 이동
 	bool IsMoveDirRandom()
 	{
 		return m_BufferData.IsMoveDirRandom == 1 ? true : false;
@@ -139,14 +144,15 @@ public:
 	{
 		return m_BufferData.ParticleBounceResistance;
 	}
+	// Generate Radius
+	float GetGenerateRadius() const
+	{
+		return m_BufferData.GenerateRadius;
+	}
 	// Ring
 	int IsGenerateRing() const
 	{
 		return m_BufferData.IsGenerateRing;
-	}
-	float GetGenerateRingRadius() const
-	{
-		return m_BufferData.GenerateRingRadius;
 	}
 	int IsLoopGenerateRing() const
 	{
@@ -157,18 +163,11 @@ public:
 	{
 		return m_BufferData.IsGenerateCircle;
 	}
-	float GetGenerateCircleRadius() const
-	{
-		return m_BufferData.GenerateCircleRadius;
-	}
+
 	// Torch
 	int IsGenerateTorch() const
 	{
 		return m_BufferData.IsGenerateTorch;
-	}
-	float GetGenerateTorchRadius() const
-	{
-		return m_BufferData.GenerateTorchRadius;
 	}
 
 	// Alpha
@@ -181,9 +180,19 @@ public:
 		return m_BufferData.AlphaMax;
 	}
 public:
+
+	void SetLifeTimeLinearFromCenter(bool Enable)
+	{
+		m_BufferData.IsLifeTimeLinearFromCenter = Enable ? 1 : 0;
+	}
 	void SetRotationAngle(const Vector3& Angle)
 	{
 		m_BufferData.RotationAngle = Angle;
+	}
+	// Radius
+	void SetGenerateRadius(float Radius)
+	{
+		m_BufferData.GenerateRadius = Radius;
 	}
 	// Ring
 	void SetLoopGenerateRing(bool Enable)
@@ -194,27 +203,15 @@ public:
 	{
 		m_BufferData.IsGenerateRing = Enable ? 1 : 0;
 	}
-	void SetGenerateRingRadius(float Radius)
-	{
-		m_BufferData.GenerateRingRadius = Radius;
-	}
 	// Circle
 	void SetGenerateCircleEnable(bool Enable)
 	{
 		m_BufferData.IsGenerateCircle = Enable ? 1 : 0;
 	}
-	void SetGenerateCircleRadius(float Radius)
-	{
-		m_BufferData.GenerateCircleRadius = Radius;
-	}
 	// Torch
 	void SetGenerateTorchEnable(bool Enable)
 	{
 		m_BufferData.IsGenerateTorch = Enable ? 1 : 0;
-	}
-	void SetGenerateTorchRadius(float Radius)
-	{
-		m_BufferData.GenerateTorchRadius = Radius;
 	}
 	// Bounce
 	void SetBounceEnable(int Bounce)

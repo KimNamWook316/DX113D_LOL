@@ -112,6 +112,12 @@ bool CEffectEditor::Init()
     m_MaterialLoadButton = AddWidget<CIMGUIButton>("Load/Set Material", 180.f, 20.f);
     m_MaterialLoadButton->SetClickCallback<CEffectEditor>(this, &CEffectEditor::OnLoadParticleMaterialCallback);
 
+    // Generate Radius
+    m_GenerateRadius = AddWidget<CIMGUISliderFloat>("Radius", 100.f, 20.f);
+    m_GenerateRadius->SetCallBack<CEffectEditor>(this, &CEffectEditor::OnEditGenerateRadius);
+    m_GenerateRadius->SetMin(0.0f);
+    m_GenerateRadius->SetMax(100.f);
+
     // Camera
     CIMGUITree* Tree = AddWidget<CIMGUITree>("Camera");
 
@@ -220,10 +226,7 @@ bool CEffectEditor::Init()
     HelpText->SetText(RingLoopHelpText);
     HelpText->SetIsHelpMode(true);
 
-    m_GenerateRingRadius = Tree->AddWidget<CIMGUISliderFloat>("Radius", 100.f, 20.f);
-    m_GenerateRingRadius->SetCallBack<CEffectEditor>(this, &CEffectEditor::OnEditGenerateRingRadius);
-    m_GenerateRingRadius->SetMin(0.0f);
-    m_GenerateRingRadius->SetMax(100.f);
+
 
     // Generate Circle
     Tree = AddWidget<CIMGUITree>("Circle Generate");
@@ -240,11 +243,6 @@ bool CEffectEditor::Init()
     HelpText->SetText(CircleHelpText);
     HelpText->SetIsHelpMode(true);
 
-    m_GenerateCircleRadius = Tree->AddWidget<CIMGUISliderFloat>("Radius", 100.f, 20.f);
-    m_GenerateCircleRadius->SetCallBack<CEffectEditor>(this, &CEffectEditor::OnEditGenerateCircleRadius);
-    m_GenerateCircleRadius->SetMin(0.0f);
-    m_GenerateCircleRadius->SetMax(100.f);
-
     // Generate Torch
     Tree = AddWidget<CIMGUITree>("Torch Generate");
 
@@ -259,11 +257,6 @@ bool CEffectEditor::Init()
     const char* TorchHelpText = R"(횃불 모양 생성 : 가운데에 더 많은 Particle 생성)";
     HelpText->SetText(TorchHelpText);
     HelpText->SetIsHelpMode(true);
-
-    m_GenerateTorchRadius = Tree->AddWidget<CIMGUISliderFloat>("Radius", 100.f, 20.f);
-    m_GenerateTorchRadius->SetCallBack<CEffectEditor>(this, &CEffectEditor::OnEditGenerateTorchRadius);
-    m_GenerateTorchRadius->SetMin(0.0f);
-    m_GenerateTorchRadius->SetMax(100.f);
 
     // Movement
     Tree = AddWidget<CIMGUITree>("Movement");
@@ -293,14 +286,6 @@ bool CEffectEditor::Init()
     m_IsPauseResumeToggle->AddCheckInfo("Toggle");
     m_IsPauseResumeToggle->SetCallBackLabel<CEffectEditor>(this, &CEffectEditor::OnPauseResumeToggle);
     m_IsPauseResumeToggle->SetCheck(0, true);
-
-    Line = Tree->AddWidget<CIMGUISameLine>("Line");
-    Line->SetOffsetX(250.f);
-
-    m_IsRandomMoveDirEdit = Tree->AddWidget<CIMGUICheckBox>("Random Dir", 80.f);
-    m_IsRandomMoveDirEdit->AddCheckInfo("Random Dir");
-    m_IsRandomMoveDirEdit->SetCallBackLabel<CEffectEditor>(this, &CEffectEditor::OnIsRandomMoveDirEdit);
-    m_IsRandomMoveDirEdit->SetCheck(0, true);
 
     // Spawn Time, Spawn Count
     Tree  = AddWidget<CIMGUITree>("Spawn Time, Count");
@@ -334,6 +319,20 @@ bool CEffectEditor::Init()
 
     // LifeTime Min, Max
     Tree = AddWidget<CIMGUITree>("LifeTime Min, Max");
+
+    m_IsLifeTimeLinearFromCenterEdit = Tree->AddWidget<CIMGUICheckBox>("LifeTimeLinear", 80.f);
+    m_IsLifeTimeLinearFromCenterEdit->AddCheckInfo("LifeTimeLinear");
+    m_IsLifeTimeLinearFromCenterEdit->SetCallBackLabel<CEffectEditor>(this, &CEffectEditor::OnIsLifeTimeLinearFromCenter);
+
+    Line = Tree->AddWidget<CIMGUISameLine>("Line");
+    Line->SetOffsetX(140.f);
+
+    HelpText = Tree->AddWidget<CIMGUIText>("LifeTimeLinear", 90.f, 30.f);
+    const char* LifeTimeLinearText = R"(가운데에서 멀어질수록 LifeTime 감소)";
+    HelpText->SetText(LifeTimeLinearText);
+    HelpText->SetIsHelpMode(true);
+
+    m_IsLifeTimeLinearFromCenterEdit->SetCheck(0, true);
 
     m_LifeTimeMinEdit = Tree->AddWidget<CIMGUIInputFloat>("Life T Min", 150.f);
     m_LifeTimeMinEdit->SetCallBack(this, &CEffectEditor::OnLifeTimeMinEdit);
@@ -379,6 +378,11 @@ bool CEffectEditor::Init()
 
     // Move Dir, Angle
     Tree = AddWidget<CIMGUITree>("Move Angle, Dir");
+
+    m_IsRandomMoveDirEdit = Tree->AddWidget<CIMGUICheckBox>("Random Dir", 80.f);
+    m_IsRandomMoveDirEdit->AddCheckInfo("Random Dir");
+    m_IsRandomMoveDirEdit->SetCallBackLabel<CEffectEditor>(this, &CEffectEditor::OnIsRandomMoveDirEdit);
+    m_IsRandomMoveDirEdit->SetCheck(0, true);
 
     m_MoveDirEdit = Tree->AddWidget<CIMGUIInputFloat3>("Move Dir", 150.f);
     m_MoveDirEdit->SetCallBack<CEffectEditor>(this, &CEffectEditor::OnMoveDirEdit);
@@ -550,13 +554,13 @@ void CEffectEditor::OnIsLoopGenerateRingEdit(const char*, bool Enable)
     dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetLoopGenerateRing(Enable);
 }
 
-void CEffectEditor::OnEditGenerateRingRadius(float Radius)
+void CEffectEditor::OnEditGenerateRadius(float Radius)
 {
     if (!m_ParticleClass)
         return;
 
-    m_ParticleClass->SetGenerateRingRadius(Radius);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGenerateRingRadius(Radius);
+    m_ParticleClass->SetGenerateRadius(Radius);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGenerateRadius(Radius);
 }
 
 void CEffectEditor::OnIsGenerateCircleEdit(const char*, bool Enable)
@@ -568,14 +572,6 @@ void CEffectEditor::OnIsGenerateCircleEdit(const char*, bool Enable)
     dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGenerateCircleEnable(Enable);
 }
 
-void CEffectEditor::OnEditGenerateCircleRadius(float Radius)
-{
-    if (!m_ParticleClass)
-        return;
-
-    m_ParticleClass->SetGenerateCircleRadius(Radius);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGenerateCircleRadius(Radius);
-}
 
 void CEffectEditor::OnIsGenerateTorchEdit(const char*, bool Enable)
 {
@@ -584,15 +580,12 @@ void CEffectEditor::OnIsGenerateTorchEdit(const char*, bool Enable)
 
     m_ParticleClass->SetGenerateTorchEnable(Enable);
     dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGenerateTorchEnable(Enable);
-}
 
-void CEffectEditor::OnEditGenerateTorchRadius(float Radius)
-{
-    if (!m_ParticleClass)
-        return;
-
-    m_ParticleClass->SetGenerateTorchRadius(Radius);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGenerateTorchRadius(Radius);
+    // Spawn Time도 0.01 로 조절한다. (그래야만 Effect 가 잘 보인다)
+    if (m_ParticleClass->GetSpawnTimeMax() > 0.01)
+    {
+        m_ParticleClass->SetSpawnTimeMax(0.01);
+    }
 }
 
 void CEffectEditor::OnSpawnTimeMaxEdit(float Num)
@@ -813,6 +806,15 @@ void CEffectEditor::OnIsRandomMoveDirEdit(const char*, bool Enable)
 
     m_ParticleClass->SetIsRandomMoveDir(Enable);
     dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetIsRandomMoveDir(Enable);
+}
+
+void CEffectEditor::OnIsLifeTimeLinearFromCenter(const char*, bool Enable)
+{
+    if (!m_ParticleClass)
+        return;
+
+    m_ParticleClass->SetLifeTimeLinearFromCenter(Enable);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetLifeTimeLinearFromCenter(Enable);
 }
 
 void CEffectEditor::OnIsCameraRotateEdit(const char*, bool Enable)
@@ -1413,11 +1415,16 @@ void CEffectEditor::SetIMGUIReflectParticle(CParticle* Particle)
     // 반드시 3D 로 세팅한다.
     Particle->Set2D(false);
 
+    // Radius
+    m_GenerateRadius->SetValue(Particle->GetGenerateRadius());
+
     m_SpawnCountMaxEdit->SetVal(Particle->GetSpawnCountMax());
     m_SpawnTimeMaxEdit->SetVal(Particle->GetSpawnTimeMax());
 
+    // LifeTime
     m_LifeTimeMinEdit->SetVal(Particle->GetLifeTimeMin());
     m_LifeTimeMaxEdit->SetVal(Particle->GetLifeTimeMax());
+    m_IsLifeTimeLinearFromCenterEdit->SetCheck(0, Particle->IsLifeTimeLinearFromCenter());
 
     m_ScaleMinEdit->SetVal(Particle->GetScaleMin());
     m_ScaleMaxEdit->SetVal(Particle->GetScaleMax());
@@ -1449,12 +1456,10 @@ void CEffectEditor::SetIMGUIReflectParticle(CParticle* Particle)
 
     // Generate Ring
     m_IsGenerateRing->SetCheck(0, Particle->IsGenerateRing() == 1 ? true : false);
-    m_GenerateRingRadius->SetValue(Particle->GetGenerateRingRadius());
     m_IsLoopGenerateRing->SetCheck(0, Particle->IsLoopGenerateRing());
 
     // Circle
     m_IsGenerateCircle->SetCheck(0, Particle->IsGenerateCircle() == 1 ? true : false);
-    m_GenerateCircleRadius->SetValue(Particle->GetGenerateCircleRadius());
 
     // Torch
     // m_IsGenerateTorch->SetCheck(0, Particle->IsGenerateTorch() == 1 ? true : false);

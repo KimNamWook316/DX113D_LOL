@@ -226,6 +226,18 @@ public:
 	const Vector3& GetRotationAngle()
 	{
 		return m_CBuffer->GetRotationAngle();
+	}	
+
+	// 생성 반지름
+	float GetGenerateRadius() const
+	{
+		return m_CBuffer->GetGenerateRadius();
+	}
+	
+	// 가운데에서 멀어질수록 LifeTime 감소 
+	bool IsLifeTimeLinearFromCenter()
+	{
+		return m_CBuffer->IsLifeTimeLinearFromCenter();
 	}
 	// Bounce
 	int IsBounceEnable() const
@@ -241,10 +253,7 @@ public:
 	{
 		return m_CBuffer->IsGenerateRing();
 	}
-	float GetGenerateRingRadius() const
-	{
-		return m_CBuffer->GetGenerateRingRadius();
-	}
+
 	int IsLoopGenerateRing() const
 	{
 		return m_CBuffer->IsLoopGenerateRing();
@@ -254,18 +263,10 @@ public:
 	{
 		return m_CBuffer->IsGenerateCircle();
 	}
-	float GetGenerateCircleRadius() const
-	{
-		return m_CBuffer->GetGenerateCircleRadius();
-	}
 	// Torch
 	int IsGenerateTorch() const
 	{
 		return m_CBuffer->IsGenerateTorch();
-	}
-	float GetGenerateTorchRadius() const
-	{
-		return m_CBuffer->GetGenerateTorchRadius();
 	}
 	// Alpha
 	float GetMinAlpha() const
@@ -277,6 +278,11 @@ public:
 		return m_CBuffer->GetMaxAlpha();
 	}
 public:
+	// MoveUp Corn
+	void SetLifeTimeLinearFromCenter(bool Enable)
+	{
+		m_CBuffer->SetLifeTimeLinearFromCenter(Enable);
+	}
 	// Alpha
 	void SetMinAlpha(float Alpha) 
 	{
@@ -285,6 +291,11 @@ public:
 	void SetMaxAlpha(float Alpha)
 	{
 		m_CBuffer->SetMaxAlpha(Alpha);
+	}
+	// 생성 반지름
+	void SetGenerateRadius(float Radius)
+	{
+		m_CBuffer->SetGenerateRadius(Radius);
 	}
 	// Ring
 	void SetLoopGenerateRing(bool Enable)
@@ -295,27 +306,15 @@ public:
 	{
 		m_CBuffer->SetGenerateRingEnable(Enable);
 	}
-	void SetGenerateRingRadius(float Radius)
-	{
-		m_CBuffer->SetGenerateRingRadius(Radius);
-	}
 	// Torch
 	void SetGenerateTorchEnable(bool Enable)
 	{
 		m_CBuffer->SetGenerateTorchEnable(Enable);
 	}
-	void SetGenerateTorchRadius(float Radius)
-	{
-		m_CBuffer->SetGenerateTorchRadius(Radius);
-	}
 	// Circle
 	void SetGenerateCircleEnable(bool Enable)
 	{
 		m_CBuffer->SetGenerateCircleEnable(Enable);
-	}
-	void SetGenerateCircleRadius(float Radius)
-	{
-		m_CBuffer->SetGenerateCircleRadius(Radius);
 	}
 	// Bounce
 	void SetBounceEnable(bool Enable)

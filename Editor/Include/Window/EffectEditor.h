@@ -27,6 +27,7 @@ private:
     class CIMGUIButton* m_LoadParticleBtn;
     class CIMGUIButton* m_StartEditBtn;
     class CIMGUIButton* m_RestartBtn;
+    class CIMGUISliderFloat* m_GenerateRadius;
 private :
     class CIMGUITextInput* m_CurrentParticleName;
 private:
@@ -42,6 +43,8 @@ private:
     class CIMGUIInputFloat3* m_ScaleMinEdit;
     class CIMGUIInputFloat3* m_ScaleMaxEdit;
 
+    // Life Time
+    class CIMGUICheckBox* m_IsLifeTimeLinearFromCenterEdit;
     class CIMGUIInputFloat* m_LifeTimeMinEdit;
     class CIMGUIInputFloat* m_LifeTimeMaxEdit;
 
@@ -65,7 +68,6 @@ private:
 
     class CIMGUICheckBox* m_IsMoveEdit;
     class CIMGUICheckBox* m_IsGravityEdit;
-    class CIMGUICheckBox* m_IsRandomMoveDirEdit;
     class CIMGUICheckBox* m_IsPauseResumeToggle;
 
     // Camera Related
@@ -82,16 +84,13 @@ private:
 
     // Ring Generate
     class CIMGUICheckBox* m_IsGenerateRing;
-    class CIMGUISliderFloat* m_GenerateRingRadius;
     class CIMGUICheckBox* m_IsLoopGenerateRing; 
 
     // Circle Generate
     class CIMGUICheckBox* m_IsGenerateCircle;
-    class CIMGUISliderFloat* m_GenerateCircleRadius;
 
     // Torch Generate
     class CIMGUICheckBox* m_IsGenerateTorch;
-    class CIMGUISliderFloat* m_GenerateTorchRadius;
 
     // 카메라의 Y 축 위치 (위로 갈지, 아래로 갈지 조정)
     class CIMGUISliderFloat* m_CameraYOffsetBar;
@@ -100,6 +99,7 @@ private:
     class CIMGUISliderFloat* m_CameraXRotSlideBar;
 
     // Move Dir, Angle
+    class CIMGUICheckBox* m_IsRandomMoveDirEdit;
     class CIMGUIInputFloat3* m_MoveDirEdit;
     class CIMGUIInputFloat3* m_MoveAngleEdit;
 
@@ -123,6 +123,9 @@ private:
     void OnLoadParticleObjectButton();
     void OnRestartParticleComponentButton();
 
+    // Generate Radius
+    void OnEditGenerateRadius(float Radius);
+
     // Material Load By Btn
     void OnLoadParticleMaterialCallback();
 
@@ -136,15 +139,12 @@ private:
     // Generate Ring
     void OnIsGenerateRingEdit(const char*, bool);
     void OnIsLoopGenerateRingEdit(const char*, bool);
-    void OnEditGenerateRingRadius(float Radius);
 
     // Generate Circle
     void OnIsGenerateCircleEdit(const char*, bool);
-    void OnEditGenerateCircleRadius(float Radius);
 
     // Generate Torch
     void OnIsGenerateTorchEdit(const char*, bool);
-    void OnEditGenerateTorchRadius(float Radius);
 
     // Spawn Time, Count
     void OnSpawnTimeMaxEdit(float Num);
@@ -161,6 +161,7 @@ private:
     // LifeTime Min, Max
     void OnLifeTimeMinEdit(float Num);
     void OnLifeTimeMaxEdit(float Num);
+    void OnIsLifeTimeLinearFromCenter(const char*, bool);
 
     // Speed Min, Max
     void OnSpeedMinEdit(float Num);
@@ -181,7 +182,6 @@ private:
     void OnIsMoveEdit(const char*, bool);
     void OnIsGravityEdit(const char*, bool);
     void OnPauseResumeToggle(const char*, bool);
-    void OnIsRandomMoveDirEdit(const char*, bool);
 
     // Camera
     void OnIsCameraRotateEdit(const char*, bool);
@@ -196,6 +196,7 @@ private:
     // Move Dir, Angle
     void OnMoveDirEdit(const Vector3& Dir);
     void OnMoveAngleEdit(const Vector3& Angle);
+    void OnIsRandomMoveDirEdit(const char*, bool);
 
     // Save, Load
     void OnSaveParticleClass();
