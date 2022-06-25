@@ -236,9 +236,9 @@ void ParticleUpdate(uint3 ThreadID : SV_DispatchThreadID)
 			{
 				// 완전 랜덤한 방향으로 이동하기 
 				float3 RandDir = float3(0.f, 0.f, 0.f) + float3(
-					cos(RandomAngle) * 1,
+					cos(RandomAngle) * Rand,
 					OriginDir.y,
-					sin(RandomAngle) * 1);
+					sin(RandomAngle) * Rand);
 				normalize(RandDir);
 
 				g_ParticleArray[ThreadID.x].Dir = RandDir;

@@ -1,6 +1,31 @@
 #pragma once
 #include "IMGUIWindow.h"
 
+enum class ParticlePreset
+{
+    Ripple,
+    Ring,
+    RingWall,
+    Torch,
+    FireSmall,
+    FireWide,
+    Spark,
+    SparkBounce,
+    SimpleMeteor,
+    Max
+};
+
+static const char* ParticlePresetNames[] = {
+    "Ripple",
+    "Ring",
+    "RingWall",
+    "Torch",
+    "FireSmall",
+    "FireWide",
+    "Spark",
+    "SparkBounce",
+    "SimpleMeteor" };
+
 struct Particle3DObjectBackUpStruct
 {
     bool IsCameraRotate;
@@ -31,14 +56,13 @@ private:
 private :
     class CIMGUITextInput* m_CurrentParticleName;
 private:
+    class CIMGUIComboBox* m_ParticlePreset;
+
     class CIMGUIInputFloat* m_SpawnTimeMaxEdit;
-    // class CIMGUIButton* m_RestartButton;
+    class CIMGUIInputInt* m_SpawnCountMaxEdit;
 
     class CIMGUIInputFloat3* m_StartMinEdit;
     class CIMGUIInputFloat3* m_StartMaxEdit;
-
-    class CIMGUIInputInt* m_SpawnCountMaxEdit;
-    // class CIMGUIButton* m_RestartButton;
 
     class CIMGUIInputFloat3* m_ScaleMinEdit;
     class CIMGUIInputFloat3* m_ScaleMaxEdit;
@@ -122,6 +146,7 @@ private:
     void OnSaveParticleObjectButton();
     void OnLoadParticleObjectButton();
     void OnRestartParticleComponentButton();
+
 
     // Generate Radius
     void OnEditGenerateRadius(float Radius);
@@ -232,5 +257,18 @@ private:
 
     // IMGUI가 Paritlc Object 정보 반영하게 하기 
     void SetIMGUIReflectObjectCamera();
+
+    // PresetHelper Function
+private :
+    void OnClickParticlePreset(int, const char*);
+    void OnRipplePreset();
+    void OnRingPreset();
+    void OnRingWallPreset();
+    void OnTorchPreset();
+    void OnFireSmallPreset();
+    void OnFireWidePreset();
+    void OnSparkPreset();
+    void OnSparkBouncePreset();
+    void OnSimpleMeteorPreset();
 };
 
