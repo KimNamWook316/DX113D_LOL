@@ -329,3 +329,11 @@ enum class Object_Type
 	MapObject,
 	None
 };
+
+enum class Player_Ability
+{
+	Arrow,
+	Fire,
+	Chain,
+	Photon
+};

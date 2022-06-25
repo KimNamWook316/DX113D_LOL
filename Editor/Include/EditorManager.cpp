@@ -20,6 +20,7 @@
 #include "Component/ColliderBox3D.h"
 #include "Component/ColliderSphere.h"
 #include "Component/GameDataComponent.h"
+#include "Component/PlayerDataComponent.h"
 // Window
 #include "Window/ObjectHierarchyWindow.h"
 #include "Window/SceneComponentHierarchyWindow.h"
@@ -349,6 +350,13 @@ CComponent* CEditorManager::CreateComponent(CGameObject* Obj, size_t Type)
 		return Component;
 	}
 
+	else if (Type == typeid(CPlayerDataComponent).hash_code())
+	{
+		CPlayerDataComponent* Component = Obj->LoadObjectComponent<CPlayerDataComponent>();
+		// Component->EnableEditMode(true);
+		return Component;
+	}
+
 	return nullptr;
 }
 
@@ -455,124 +463,3 @@ void CEditorManager::CreateEditorCamera()
 {
 
 }
-
-void CEditorManager::SetChampionNotify(CAnimationSequenceInstance* Instance, const std::string& ChampionName)
-{
-	//CExcelData* Data = CResourceManager::GetInst()->FindCSV("AnimationNotify");
-
-	//if (!Data)
-	//	return;
-
-	//CStateManager* StateManager = CSceneManager::GetInst()->GetStateManager();
-	//
-	//// TODO : 챔피언과 스킬이 추가될때마다 여기에 Notify 추가
-	//if (ChampionName.find("Alistar") != std::string::npos)
-	//{
-	//	Row* row = Data->GetRow("Alistar");
-
-	//	size_t Count = row->size();
-
-	//	for (size_t i = 0; i < Count; ++i)
-	//	{
-	//		std::stringstream ss;
-
-	//		ss << (*row)[i];
-
-	//		int Frame = 0;
-
-	//		ss >> Frame;
-	//		
-	//		// Q Skill
-	//		if (i == 0)
-	//		{
-	//			Instance->AddNotifyParam<CLoLStateManager>("Alistar_SkillQ", "AlistarQAirborne", Frame, StateManager, &CLoLStateManager::CheckAirborneTarget);
-
-	//			std::string StrRange = CResourceManager::GetInst()->FindCSV("SkillInfo")->FindData("Alistar", "QRange");
-	//			int Range = 0;
-	//			ss.clear();
-
-	//			ss << StrRange;
-	//			ss >> Range;
-	//			
-	//			Instance->SetNotifyParamRange("Alistar_SkillQ", "AlistarQAirborne", Range);
-	//		}
-	//		// W Skill
-	//		if (i == 1)
-	//			Instance->AddNotifyParam<CLoLStateManager>("Airborne", "AlistarQAirborne", Frame, StateManager, &CLoLStateManager::FindKnockBackTarget);
-	//	}
-
-	//}
-}
-
-void CEditorManager::SetChampionInfo(class CGameObject* Object, const std::string& ChampionName)
-{
-	//CExcelData* Data = CResourceManager::GetInst()->FindCSV("LoLChampionInfo");
-
-	//if (!Data)
-	//	return;
-
-	//CStateManager* StateManager = CSceneManager::GetInst()->GetStateManager();
-
-	//// TODO : 챔피언과 스킬이 추가될때마다 여기에 Notify 추가
-	//if (ChampionName.find("Alistar") != std::string::npos)
-	//{
-	//	Row* row = Data->GetRow("Alistar");
-
-	//	size_t Count = row->size();
-
-	//	for (size_t i = 0; i < Count; ++i)
-	//	{
-	//		std::stringstream ss;
-
-	//		ss << (*row)[i];
-
-	//		int Info = 0;
-
-	//		ss >> Info;
-
-	//		// TODO : LoLChampionInfo.csv에서 읽어오는 항목 늘어날 때 마다 추가해주기
-
-	//		// Move Speed
-	//		if (i == 0)
-	//			Object->SetChampionMoveSpeed((float)Info);
-	//		// Attack
-	//		else if (i == 1)
-	//			Object->SetChampionAttack((float)Info);
-
-	//		else if (i == 2)
-	//			Object->SetChampionAttackSpeed((float)Info);
-
-	//		else if (i == 3)
-	//		{
-
-	//		}
-
-	//		else if (i == 4)
-	//		{
-
-	//		}
-	//		else if (i == 5)
-	//		{
-
-	//		}
-
-	//		else if (i == 6)
-	//		{
-
-	//		}
-
-	//		else if (i == 7)
-	//		{
-	//			Object->SetChampionHP(Info);
-	//		}
-
-	//		else if (i == 8)
-	//		{
-
-	//		}
-	//	}
-
-	//}
-}
-
-

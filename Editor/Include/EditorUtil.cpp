@@ -15,6 +15,7 @@
 #include "Component/ColliderBox3D.h"
 #include "Component/ColliderSphere.h"
 #include "Component/GameDataComponent.h"
+#include "Component/PlayerDataComponent.h"
 #include "IMGUITree.h"
 #include "Flag.h"
 
@@ -523,6 +524,8 @@ std::string CEditorUtil::ObjectComponent3DTypeToString(ObjectComponent3DType Typ
 		return "NavAgent";
 	case ObjectComponent3DType::GameDataComponent:
 		return "GameDataComponent";
+	case ObjectComponent3DType::PlayerDataComponent:
+		return "PlayerDataComponent";
 	}
 
 	return "";
@@ -603,8 +606,8 @@ size_t CEditorUtil::ObjectComponentTypeIndexToTypeid(int TypeIndex)
 		return typeid(CNavAgent).hash_code();
 	case 3:
 		return typeid(CGameDataComponent).hash_code();
-	//case 5:
-	//	return typeid(CSceneComponent).hash_code();
+	case 4:
+		return typeid(CPlayerDataComponent).hash_code();
 	}
 
 	return -1;

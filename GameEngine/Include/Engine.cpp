@@ -10,6 +10,7 @@
 #include "Collision/CollisionManager.h"
 #include "Resource/Shader/GlobalConstantBuffer.h"
 #include "Resource/Shader/StructuredBuffer.h"
+#include "ObjectPoolManager.h"
 #include <time.h>
 
 DEFINITION_SINGLE(CEngine)
@@ -70,6 +71,8 @@ CEngine::~CEngine()
 
 	CDevice::DestroyInst();
 
+	CObjectPoolManager::DestroyInst();
+
 	SAFE_DELETE(m_Timer);
 }
 
@@ -108,6 +111,9 @@ bool CEngine::Init(HINSTANCE hInst, HWND hWnd,
 	m_Timer = new CTimer;
 
 	if (!CDevice::GetInst()->Init(m_hWnd, Width, Height, WindowMode))
+		return false;
+
+	if (!CObjectPoolManager::GetInst()->Init())
 		return false;
 
 	if (!CPathManager::GetInst()->Init())

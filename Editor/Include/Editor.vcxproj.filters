@@ -73,9 +73,6 @@
     <Filter Include="02. Editor\01. Window\4. MenuBar">
       <UniqueIdentifier>{d565fee9-2c53-4eaf-8d99-f39f6bbed48d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="05. LoLManager">
-      <UniqueIdentifier>{c29db2ae-b440-4633-9c63-011f3bcf3088}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. Editor\01. Window\5. CollisionProfile">
       <UniqueIdentifier>{385f0b36-6776-4bd1-9902-df98b61ac424}</UniqueIdentifier>
     </Filter>
@@ -96,6 +93,9 @@
     </Filter>
     <Filter Include="06. GameComponent">
       <UniqueIdentifier>{fbeb3de9-3b25-4cdf-9572-c12930aab8b7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. Manager">
+      <UniqueIdentifier>{c29db2ae-b440-4633-9c63-011f3bcf3088}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -295,7 +295,7 @@
       <Filter>07. BehaviorTree</Filter>
     </ClCompile>
     <ClCompile Include="DataManager.cpp">
-      <Filter>05. LoLManager</Filter>
+      <Filter>05. Manager</Filter>
     </ClCompile>
     <ClCompile Include="Component\Node\MouseLButtonCheckNode.cpp">
       <Filter>07. BehaviorTree\01. ConditionNode</Filter>
@@ -317,6 +317,9 @@
     </ClCompile>
     <ClCompile Include="Component\Node\CancleShootNode.cpp">
       <Filter>07. BehaviorTree\02. ActionNode</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\PlayerDataComponent.cpp">
+      <Filter>06. GameComponent</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -522,7 +525,7 @@
       <Filter>02. Editor\01. Window</Filter>
     </ClInclude>
     <ClInclude Include="DataManager.h">
-      <Filter>05. LoLManager</Filter>
+      <Filter>05. Manager</Filter>
     </ClInclude>
     <ClInclude Include="Component\Node\MouseLButtonCheckNode.h">
       <Filter>07. BehaviorTree\01. ConditionNode</Filter>
@@ -544,6 +547,9 @@
     </ClInclude>
     <ClInclude Include="Component\Node\CancleShootNode.h">
       <Filter>07. BehaviorTree\02. ActionNode</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\PlayerDataComponent.h">
+      <Filter>06. GameComponent</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

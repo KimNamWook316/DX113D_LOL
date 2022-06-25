@@ -3,6 +3,7 @@
 #include "RotateAttackDirectionNode.h"
 #include "Component/Node/CompositeNode.h"
 #include "Component/AnimationMeshComponent.h"
+#include "../../Component/PlayerDataComponent.h"
 #include "Animation/AnimationSequenceInstance.h"
 #include "Component/BehaviorTree.h"
 #include "Scene/Scene.h"
@@ -58,6 +59,7 @@ NodeResult CReadyToShoot::OnStart(float DeltaTime)
 	if (Agent)
 		Agent->ClearPathList();
 
+	m_PlayerDataComp = m_Object->FindObjectComponentFromType<CPlayerDataComponent>();
 
 
 
@@ -70,8 +72,8 @@ NodeResult CReadyToShoot::OnStart(float DeltaTime)
 	Vector3 OriginCamPos = CurrentCamera->GetWorldPos();
 	CSceneManager::GetInst()->GetScene()->SetOriginCamPos(OriginCamPos);
 
-	m_CameraDestPos = (PickingPoint + OriginCamPos) / 2.f;
-	m_CameraMoveDir = (m_CameraDestPos - OriginCamPos);
+	m_CameraDestPos = PickingPoint * 0.3f +  OriginCamPos * 0.7f;
+	m_CameraMoveDir = m_CameraDestPos - OriginCamPos;
 	m_CameraMoveDir.y = 0.f;
 	m_CameraMoveDir.Normalize();
 
@@ -80,46 +82,56 @@ NodeResult CReadyToShoot::OnStart(float DeltaTime)
 
 NodeResult CReadyToShoot::OnUpdate(float DeltaTime)
 {
-	if (!m_CameraMoveEnd)
+	Player_Ability Ability = m_PlayerDataComp->GetPlayerAbility();
+
+	if (Ability == Player_Ability::Arrow || Ability == Player_Ability::Fire)
 	{
-		m_CameraMoveEnd = CSceneManager::GetInst()->GetScene()->CameraMove(m_CameraMoveDir, m_CameraDestPos, 50.f, DeltaTime);
-
-		bool RButtonUp = CInput::GetInst()->GetMouseRButtonUp();
-
-		// 카메라가 화살쏘는 목표 지점으로 완전히 이동하기 전에 마우스RButton 을 때면
-		if (RButtonUp)
+		if (!m_CameraMoveEnd)
 		{
-			m_CallStart = false;
-			m_Owner->SetCurrentNode(((CCompositeNode*)m_Parent->GetParent())->GetChild(1));
-			m_CameraMoveEnd = false;
+			m_CameraMoveEnd = CSceneManager::GetInst()->GetScene()->CameraMove(m_CameraMoveDir, m_CameraDestPos, 50.f, DeltaTime);
 
-			return NodeResult::Node_True;
+			bool RButtonUp = CInput::GetInst()->GetMouseRButtonUp();
+
+			// 카메라가 화살쏘는 목표 지점으로 완전히 이동하기 전에 마우스RButton 을 때면
+			if (RButtonUp)
+			{
+				m_CallStart = false;
+				m_Owner->SetCurrentNode(((CCompositeNode*)m_Parent->GetParent())->GetChild(1));
+				m_CameraMoveEnd = false;
+
+				return NodeResult::Node_True;
+			}
+
+			else
+			{
+				m_Owner->SetCurrentNode(this);
+				return NodeResult::Node_Running;
+			}
 		}
 
 		else
 		{
-			m_Owner->SetCurrentNode(this);
-			return NodeResult::Node_Running;
+			bool RButtonUp = CInput::GetInst()->GetMouseRButtonUp();
+			if (RButtonUp)
+			{
+				m_CallStart = false;
+				m_Owner->SetCurrentNode(((CCompositeNode*)m_Parent)->GetChild(1));
+				m_CameraMoveEnd = false;
+
+				return NodeResult::Node_True;
+			}
+
+			else
+			{
+				m_Owner->SetCurrentNode(this);
+				return NodeResult::Node_Running;
+			}
 		}
 	}
 
-	else
+	else if (Ability == Player_Ability::Chain)
 	{
-		bool RButtonUp = CInput::GetInst()->GetMouseRButtonUp();
-		if (RButtonUp)
-		{
-			m_CallStart = false;
-			m_Owner->SetCurrentNode(((CCompositeNode*)m_Parent)->GetChild(1));
-			m_CameraMoveEnd = false;
 
-			return NodeResult::Node_True;
-		}
-
-		else
-		{
-			m_Owner->SetCurrentNode(this);
-			return NodeResult::Node_Running;
-		}
 	}
 }
 
