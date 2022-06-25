@@ -297,16 +297,23 @@ void ParticleUpdate(uint3 ThreadID : SV_DispatchThreadID)
 			 // 그러면 반쪽 짜리 정규 분포가 만들어질 것이다.
 			 float NormalDistVal = g_ParticleNormalDistValArray[ThreadID.x] * 2.f;
 
+			 // 1.f 범위를 넘는 값들 조정하기 
+			 if (NormalDistVal > 1.f)
+				 NormalDistVal = Rand;
+			 if (NormalDistVal < -1.f)
+				 NormalDistVal = Rand * -1.f;
+
 			 // 설정한 반지름 범위로 맞춰준다.
-			 float TorchGenerateRadius = NormalDistVal * 100;
+			 float TorchGenerateRadius = NormalDistVal * g_ParcticleGenerateRadius;
 
 			 float3 StartMinBase = float3(-1.f, 0, -1.f);
 			 StartMinBase *= TorchGenerateRadius;
 			 float3 StartMaxBase = float3(1.f, 0, 1.f);
 			 StartMaxBase *= TorchGenerateRadius;
 			 float3 TorchPos = float3(0.f, 0.f, 0.f);
-			 TorchPos = Rand * (StartMaxBase - StartMinBase) + StartMinBase;
-			 TorchPos.y = 0.f;
+			 // TorchPos = Rand * (StartMaxBase - StartMinBase) + StartMinBase;
+			 // TorchPos.y = 0.f;
+			 TorchPos = float3(cos(RandomAngle) * TorchGenerateRadius, 0.f, sin(RandomAngle) * TorchGenerateRadius);
 
 			 g_ParticleArray[ThreadID.x].WorldPos = TorchPos;
 		 }
@@ -324,6 +331,10 @@ void ParticleUpdate(uint3 ThreadID : SV_DispatchThreadID)
 				 DistMax = g_ParcticleGenerateRadius;
 
 			 float SpawnPosRatio = (float)(SpawnStartPosDist / DistMax);
+
+			 if (SpawnPosRatio > 1.f)
+				 SpawnPosRatio = 0.01f;
+
 			 g_ParticleArray[ThreadID.x].LifeTimeMax = (1 - SpawnPosRatio) * (g_ParticleLifeTimeMax - g_ParticleLifeTimeMin) + g_ParticleLifeTimeMin;
 		 }
 	}
