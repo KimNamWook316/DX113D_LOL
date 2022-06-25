@@ -5,12 +5,25 @@ cbuffer HDRRenderCBuffer : register(b10)
 	float g_HDRMiddleGray;
 	float g_HDRLumWhiteSqr;
 	float g_HDRBloomScale;
-	float g_HDREmpty;
+	float g_HDRDOFMin;
+	float g_HDRDOFMax;
+	float3 g_HDRDOFEmpty;
 }
 
 Texture2DMS<float4> g_HDRTex : register(t10);
 StructuredBuffer<float> g_AvgLum : register(t11);
 Texture2D<float4> g_BloomTex : register(t12);
+Texture2DMS<float4> g_GBufferDepth : register(t13);
+Texture2D<float4> g_DownScaleTex : register(t14);
+
+float3 DepthDOF(float3 ColorFocus, float3 ColorBlurred, float Depth)
+{
+	// 1. Depth <= DOFMin : Always ColorFocus
+	// 2. Depth > DOFMin && Depth < DOFMax : 0 ~ 1
+	// 3. Depth > DOFMax : Always Blurred
+	float BlurFactor = saturate((Depth - g_HDRDOFMin) / (g_HDRDOFMax - g_HDRDOFMin));
+	return lerp(ColorFocus, ColorBlurred, BlurFactor);
+}
 
 float3 ToneMapping(float3 HDRColor)
 {
@@ -62,6 +75,18 @@ PSOutput_Single HDRRenderPS(VS_OUTPUT_HDR Input)
 	if (Alpha == 0.f)
 	{
 		clip(-1);
+	}
+
+	float4 Depth = g_GBufferDepth.Load(TargetPos, 0);
+
+	// 가장 먼 평면 제외
+	if (Depth.r < 1.f)
+	{
+		// DownScale된 Texture를 업스케일 하면서 블러 효과
+		float3 ColorBlurred = g_DownScaleTex.Sample(g_LinearSmp, UV).rgb;
+
+		// 깊이에 따라 원래 픽셀 색상과 블러 색상을 보간함
+		Color.rgb = DepthDOF(Color.rgb, ColorBlurred, Depth.g);
 	}
 
 	// 원래 픽셀에 Bloom 추가

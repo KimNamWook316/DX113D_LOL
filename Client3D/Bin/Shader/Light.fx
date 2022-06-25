@@ -73,6 +73,9 @@ LightResult ComputeLight(float3 Pos, float3 Normal, float4 MaterialColor)
 	
 	// 내적값이 음수가 나오면 0이 반환되고 양수가 나오면 해당 값이 그대로 반환된다.
     float Intensity = max(0.f, dot(ViewNormal, LightDir));
+
+    // Half Rambert
+	Intensity = (Intensity * 0.5f) + 0.5f;
     
     float3 MtrlDif = ConvertColor(MaterialColor.r).rgb;
     float3 MtrlAmb = ConvertColor(MaterialColor.g).rgb;

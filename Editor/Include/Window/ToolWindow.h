@@ -42,6 +42,8 @@ private:
 	void OnChangeAdaptationTime(float Time);
 	void OnChangeBloomThreshold(float Threshold);
 	void OnChangeBloomScale(float Scale);
+	void OnChangeDOFMin(float Min);
+	void OnChangeDOFMax(float Max);
  //	void OnChangeOutlineDepthMultiply(float Val);
  //	void OnChangeOutlineDepthBias(float Val);
  //	void OnChangeOutlineNormalMultiply(float Val);
@@ -77,6 +79,8 @@ private:
 	CIMGUISliderFloat* m_MiddleGray;
 	CIMGUISliderFloat* m_BloomThreshold;
 	CIMGUISliderFloat* m_BloomScale;
+	CIMGUISliderFloat* m_DOFMin;
+	CIMGUISliderFloat* m_DOFMax;
  //	CIMGUISliderFloat* m_OutlineDepthMultiply;
  //	CIMGUISliderFloat* m_OutlineDepthBias;
  //	CIMGUISliderFloat* m_OutlineNormalMutliply;

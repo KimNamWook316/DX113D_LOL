@@ -7,6 +7,8 @@ CHDRRenderCBuffer::CHDRRenderCBuffer()	:
 	m_BufferData.LumWhiteSqr = 1.f;
 	m_BufferData.MiddleGray = 1.f;
 	m_BufferData.BloomScale = 1.f;
+	m_BufferData.DOFMin = 300.f;
+	m_BufferData.DOFMax = 600.f;
 }
 
 CHDRRenderCBuffer::CHDRRenderCBuffer(const CHDRRenderCBuffer& Buffer)	:

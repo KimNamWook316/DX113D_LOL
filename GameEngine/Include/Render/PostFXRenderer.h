@@ -19,11 +19,15 @@ public:
 	void SetLumWhite(float White);
 	void SetBloomThreshold(float Threshold);
 	void SetBloomScale(float Scale);
+	void SetDOFMin(float Min);
+	void SetDOFMax(float Max);
 
 	float GetMiddleGray() const;
 	float GetLumWhite() const;
 	float GetBloomThreshold() const;
 	float GetBloomScale() const;
+	float GetDOFMin() const;
+	float GetDOFMax() const;
 
 	void SetAdaptationTime(float Time)
 	{
@@ -45,6 +49,9 @@ private:
 	void RenderFinal(class CRenderTarget* LDRTarget);
 
 private:
+	// Depth Buffer
+	class CRenderTarget* m_GBufferDepth;
+
 	// Shader
 	class CComputeShader* m_DownScaleFirstPassShader;
 	class CComputeShader* m_DownScaleSecondPassShader;

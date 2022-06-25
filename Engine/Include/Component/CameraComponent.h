@@ -66,6 +66,11 @@ public:
 		return LB;
 	}
 
+	float GetDistance() const
+	{
+		return m_Distance;
+	}
+
 public:
 	void SetViewAngle(float Angle)
 	{

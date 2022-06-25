@@ -7,6 +7,7 @@
 #include "Engine.h"
 #include "IMGUISameLine.h"
 #include "IMGUIRadioButton.h"
+#include "IMGUIInputFloat2.h"
 #include "Scene/SceneManager.h"
 #include "../Window/InspectorWindow.h"
 #include "../Window/ObjectComponentWindow.h"
@@ -77,6 +78,8 @@ bool CToolWindow::Init()
 	m_LumWhite = Tree->AddWidget<CIMGUISliderFloat>("LumWhite");
 	m_BloomThreshold = Tree->AddWidget<CIMGUISliderFloat>("Bloom Threshold");
 	m_BloomScale = Tree->AddWidget<CIMGUISliderFloat>("Bloom Scale");
+	m_DOFMin = Tree->AddWidget<CIMGUISliderFloat>("DOF Min");
+	m_DOFMax = Tree->AddWidget<CIMGUISliderFloat>("DOF Max");
  //	CIMGUITree* Tree = m_RenderBlock->AddWidget<CIMGUITree>("Outline", 200.f);
  //	m_OutlineDepthMultiply = Tree->AddWidget<CIMGUISliderFloat>("Outline Depth Multiplier");
  //	m_OutlineDepthBias = Tree->AddWidget<CIMGUISliderFloat>("Outline Depth Bias");
@@ -148,6 +151,17 @@ bool CToolWindow::Init()
 	m_BloomScale->SetMax(10.f);
 	m_BloomScale->SetValue(BloomScale);
 
+	float CameraDist = CSceneManager::GetInst()->GetScene()->GetCameraManager()->GetCurrentCamera()->GetDistance();
+	float DOFMin = CRenderManager::GetInst()->GetDOFMin();
+	m_DOFMin->SetMin(10.f);
+	m_DOFMin->SetMax(CameraDist - 200.f);
+	m_DOFMin->SetValue(DOFMin);
+
+	float DOFMax = CRenderManager::GetInst()->GetDOFMax();
+	m_DOFMax->SetMin(100.f);
+	m_DOFMax->SetMax(CameraDist);
+	m_DOFMax->SetValue(DOFMax);
+
 	m_DebugRender->AddCheckInfo("Debug Render");
 	bool IsDebugRender = CRenderManager::GetInst()->IsDebugRender();
 	m_DebugRender->SetCheck(0, IsDebugRender);
@@ -171,6 +185,8 @@ bool CToolWindow::Init()
 	m_LumWhite->SetCallBack(this, &CToolWindow::OnChangeLumWhite);
 	m_BloomThreshold->SetCallBack(this, &CToolWindow::OnChangeBloomThreshold);
 	m_BloomScale->SetCallBack(this, &CToolWindow::OnChangeBloomScale);
+	m_DOFMin->SetCallBack(this, &CToolWindow::OnChangeDOFMin);
+	m_DOFMax->SetCallBack(this, &CToolWindow::OnChangeDOFMax);
 
 	// 디버그용 임시 키
 	CInput::GetInst()->CreateKey("Z", 'Z');
@@ -264,6 +280,16 @@ void CToolWindow::OnChangeBloomScale(float Scale)
 {
 	CRenderManager::GetInst()->SetBloomScale(Scale);
 	
+}
+
+void CToolWindow::OnChangeDOFMin(float Min)
+{
+	CRenderManager::GetInst()->SetDOFMin(Min);
+}
+
+void CToolWindow::OnChangeDOFMax(float Max)
+{
+	CRenderManager::GetInst()->SetDOFMax(Max);
 }
 
  //void CToolWindow::OnChangeOutlineDepthMultiply(float Val)

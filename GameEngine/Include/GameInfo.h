@@ -687,5 +687,7 @@ struct HDRRenderCBuffer
 	float MiddleGray;
 	float LumWhiteSqr;
 	float BloomScale;
-	float Empty;
+	float DOFMin;				// DOF 적용 최소 거리
+	float DOFMax;				// 완전 초점 상실 거리
+	Vector3 Empty;
 };

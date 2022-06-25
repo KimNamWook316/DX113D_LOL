@@ -11,6 +11,7 @@
 #include "RenderStateManager.h"
 
 CPostFXRenderer::CPostFXRenderer()	:
+	m_GBufferDepth(nullptr),
 	m_DownScaleFirstPassShader(nullptr),
 	m_DownScaleSecondPassShader(nullptr),
 	m_BloomShader(nullptr),
@@ -92,6 +93,9 @@ bool CPostFXRenderer::Init()
 	Resolution RS = CDevice::GetInst()->GetResolution();
 	unsigned int PixelCount = RS.Width * RS.Height;
 	unsigned int GroupCount = (unsigned int)ceil((float)(PixelCount / 16.f) / 1024.f);
+
+	// Depth Buffer
+	m_GBufferDepth = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("GBuffer2");
 
 	// 1. DownScale Luminance Buffer
 	D3D11_BUFFER_DESC DownScaleBufferDesc = {};
@@ -345,6 +349,16 @@ void CPostFXRenderer::SetBloomScale(float Scale)
 	m_HDRRenderCBuffer->SetBloomScale(Scale);
 }
 
+void CPostFXRenderer::SetDOFMin(float Min)
+{
+	m_HDRRenderCBuffer->SetDOFMin(Min);
+}
+
+void CPostFXRenderer::SetDOFMax(float Max)
+{
+	m_HDRRenderCBuffer->SetDOFMax(Max);
+}
+
 float CPostFXRenderer::GetMiddleGray() const
 {
 	return m_HDRRenderCBuffer->GetMiddleGray();
@@ -363,6 +377,16 @@ float CPostFXRenderer::GetBloomThreshold() const
 float CPostFXRenderer::GetBloomScale() const
 {
 	return m_HDRRenderCBuffer->GetBloomScale();
+}
+
+float CPostFXRenderer::GetDOFMin() const
+{
+	return m_HDRRenderCBuffer->GetDOFMin();
+}
+
+float CPostFXRenderer::GetDOFMax() const
+{
+	return m_HDRRenderCBuffer->GetDOFMax();
 }
 
 void CPostFXRenderer::Render(float DeltaTime, CRenderTarget* LDRTarget)
@@ -541,14 +565,14 @@ void CPostFXRenderer::RenderFinal(CRenderTarget* LDRTarget)
 
 	m_HDRRenderCBuffer->UpdateCBuffer();
 
-	// HDR로 변환할 LDR 렌더타겟
-	LDRTarget->SetTargetShader(10);
+	ID3D11ShaderResourceView* arrSRV[5] = {};
+	arrSRV[0] = LDRTarget->GetResource(0);				// HDR로 변환할 Final Screen (LDR 렌더타겟)
+	arrSRV[1] = m_LuminanceAverageBufferSRV;			// 평균 휘도
+	arrSRV[2] = m_BloomSRV;								// Blur 처리된 Bloom Texture
+	arrSRV[3] = m_GBufferDepth->GetResource(0);			// DOF 처리를 위한 씬 깊이 텍스쳐
+	arrSRV[4] = m_DownScaleRTSRV;						// DOF Blur를 위한 1 / 16 크기 씬
 
-	// 컴퓨트 쉐이더에서 계산한 씬 휘도 정보
-	Context->PSSetShaderResources(11, 1, &m_LuminanceAverageBufferSRV);
-
-	// Blur 처리된 Bloom Texture
-	Context->PSSetShaderResources(12, 1, &m_BloomSRV);
+	Context->PSSetShaderResources(10, 5, arrSRV);
 
 	m_HDRRenderShader->SetShader();
 	
@@ -566,11 +590,11 @@ void CPostFXRenderer::RenderFinal(CRenderTarget* LDRTarget)
 	m_DepthDisable->ResetState();
 	m_AlphaBlend->ResetState();
 
-	ID3D11ShaderResourceView* SRV = nullptr;
-	Context->PSSetShaderResources(11, 1, &SRV);
-	Context->PSSetShaderResources(12, 1, &SRV);
-
-	LDRTarget->ResetTargetShader(10);
+	for (int i = 0; i < 5; ++i)
+	{
+		arrSRV[i] = nullptr;
+	}
+	Context->PSSetShaderResources(10, 5, arrSRV);
 
 	// 현재 프레임 평균 휘도를 저장
 	ID3D11Buffer* TempBuffer = m_PrevFrameLumAverageBuffer;

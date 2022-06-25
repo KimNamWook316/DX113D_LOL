@@ -231,11 +231,15 @@ public:
 	float GetLumWhite() const;
 	float GetBloomThreshold() const;
 	float GetBloomScale() const;
+	float GetDOFMin() const;
+	float GetDOFMax() const;
 
 	void SetMiddleGray(float Gray);
 	void SetLumWhite(float White);
 	void SetBloomThreshold(float Threshold);
 	void SetBloomScale(float Scale);
+	void SetDOFMin(float Min);
+	void SetDOFMax(float Max);
 
 	void SetAdaptationTime(float Time);
 	float GetAdaptationTime() const;

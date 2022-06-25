@@ -34,6 +34,16 @@ public:
 		m_BufferData.BloomScale = Scale;
 	}
 
+	void SetDOFMin(float Min)
+	{
+		m_BufferData.DOFMin = Min;
+	}
+
+	void SetDOFMax(float Max)
+	{
+		m_BufferData.DOFMax = Max;
+	}
+
 	float GetMiddleGray() const
 	{
 		return m_BufferData.MiddleGray;
@@ -47,6 +57,16 @@ public:
 	float GetBloomScale() const
 	{
 		return m_BufferData.BloomScale;
+	}
+
+	float GetDOFMin() const
+	{
+		return m_BufferData.DOFMin;
+	}
+
+	float GetDOFMax() const
+	{
+		return m_BufferData.DOFMax;
 	}
 };
 

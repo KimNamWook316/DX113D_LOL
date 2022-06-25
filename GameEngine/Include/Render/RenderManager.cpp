@@ -77,6 +77,16 @@ float CRenderManager::GetBloomScale() const
 	return m_PostFXRenderer->GetBloomScale();
 }
 
+float CRenderManager::GetDOFMin() const
+{
+	return m_PostFXRenderer->GetDOFMin();
+}
+
+float CRenderManager::GetDOFMax() const
+{
+	return m_PostFXRenderer->GetDOFMax();
+}
+
 void CRenderManager::SetMiddleGray(float Gray)
 {
 	m_PostFXRenderer->SetMiddleGray(Gray);
@@ -95,6 +105,16 @@ void CRenderManager::SetBloomThreshold(float Threshold)
 void CRenderManager::SetBloomScale(float Scale)
 {
 	m_PostFXRenderer->SetBloomScale(Scale);
+}
+
+void CRenderManager::SetDOFMin(float Min)
+{
+	m_PostFXRenderer->SetDOFMin(Min);
+}
+
+void CRenderManager::SetDOFMax(float Max)
+{
+	m_PostFXRenderer->SetDOFMax(Max);
 }
 
 void CRenderManager::SetAdaptationTime(float Time)
