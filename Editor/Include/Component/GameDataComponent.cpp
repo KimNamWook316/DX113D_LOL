@@ -25,19 +25,6 @@ CGameDataComponent::~CGameDataComponent()
 void CGameDataComponent::Start()
 {
 	CObjectComponent::Start();
-
-	Object_Type Type = m_Object->GetObjectType();
-
-	//if (Type == Object_Type::Champion)
-	//{
-	//	CDataManager::GetInst()->SetChampionInfo(m_Object, m_Object->GetName());
-	//	CDataManager::GetInst()->SetChampionNotify(m_Object, m_Object->GetName());
-	//}
-
-	//else if (Type == Object_Type::Minion)
-	//{
-	//	CDataManager::GetInst()->SetMonsterNotify(m_Object, m_Object->GetName());
-	//}
 }
 
 bool CGameDataComponent::Init()

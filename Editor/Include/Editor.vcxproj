@@ -207,6 +207,7 @@
     <ClCompile Include="Component\Node\ReadyToShoot.cpp" />
     <ClCompile Include="Component\Node\RotateAttackDirectionNode.cpp" />
     <ClCompile Include="Component\Node\ShootNode.cpp" />
+    <ClCompile Include="Component\PlayerDataComponent.cpp" />
     <ClCompile Include="Component\State\AirBorneState.cpp" />
     <ClCompile Include="Component\State\DamageState.cpp" />
     <ClCompile Include="Component\State\GameStateManager.cpp" />
@@ -307,6 +308,7 @@
     <ClInclude Include="Component\Node\ReadyToShoot.h" />
     <ClInclude Include="Component\Node\RotateAttackDirectionNode.h" />
     <ClInclude Include="Component\Node\ShootNode.h" />
+    <ClInclude Include="Component\PlayerDataComponent.h" />
     <ClInclude Include="Component\State\AirBorneState.h" />
     <ClInclude Include="Component\State\DamageState.h" />
     <ClInclude Include="Component\State\GameStateManager.h" />

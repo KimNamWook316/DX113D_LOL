@@ -91,6 +91,10 @@ void CGameObject::AddChildObject(CGameObject* Obj)
 {
 	Obj->m_Parent = this;
 	m_vecChildObject.push_back(Obj);
+
+	Obj->GetRootComponent()->m_Parent = GetRootComponent();
+
+	m_RootComponent->AddChild(Obj->GetRootComponent());
 }
 
 void CGameObject::DeleteObj()

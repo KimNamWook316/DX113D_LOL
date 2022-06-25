@@ -10,6 +10,7 @@ class CGameObject :
 {
 	friend class CScene;
 	friend class CSceneManager;
+	friend class CObjectPoolManager;
 
 protected:
 	CGameObject();

@@ -8,6 +8,7 @@
 #include "NavigationManager.h"
 #include "Navigation3DManager.h"
 #include "LightManager.h"
+#include "../ObjectPoolManager.h"
 #include "../GameObject/GameObject.h"
 
 class CScene
@@ -39,6 +40,11 @@ private:
 	Vector3 m_OriginCamPos;
 
 public:
+	CSceneMode* GetSceneMode()	const
+	{
+		return m_Mode;
+	}
+
 	void SetOriginCamPos(const Vector3& Pos)
 	{
 		m_OriginCamPos = Pos;
@@ -170,7 +176,8 @@ public:
 
 	CGameObject* CreateEmtpyObject()
 	{
-		CGameObject* Obj = new CGameObject;
+		//CGameObject* Obj = new CGameObject;
+		CGameObject* Obj = CObjectPoolManager::GetInst()->Allocate();
 		Obj->SetScene(this);
 		m_ObjList.push_back(Obj);
 		return Obj;
@@ -222,7 +229,31 @@ public:
 	template <typename T>
 	T* CreateGameObject(const std::string& Name)
 	{
-		T* Obj = new T;
+		T* Obj = nullptr;
+
+		if (typeid(T).hash_code() == typeid(CGameObject).hash_code())
+		{
+			CGameObject* Obj = CObjectPoolManager::GetInst()->Allocate();
+
+			Obj->SetName(Name);
+			Obj->SetScene(this);
+
+			if (!Obj->Init())
+			{
+				SAFE_RELEASE(Obj);
+				return nullptr;
+			}
+
+			m_ObjList.push_back(Obj);
+
+			if (m_Start)
+				Obj->Start();
+
+			return (T*)Obj;
+		}
+
+		else
+			Obj = new T;
 
 		Obj->SetName(Name);
 		Obj->SetScene(this);
@@ -244,7 +275,24 @@ public:
 	template <typename T>
 	T* LoadGameObject()
 	{
-		T* Obj = new T;
+		T* Obj = nullptr;
+
+		if (typeid(T).hash_code() == typeid(CGameObject).hash_code())
+		{
+			CGameObject* Obj = CObjectPoolManager::GetInst()->Allocate();
+
+			Obj->SetScene(this);
+
+			m_ObjList.push_back(Obj);
+
+			if (m_Start)
+				Obj->Start();
+
+			return (T*)Obj;
+		}
+
+		else
+			Obj = new T;
 
 		Obj->SetScene(this);
 

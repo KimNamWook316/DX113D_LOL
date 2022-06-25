@@ -22,6 +22,7 @@ private:
     Vector3 m_CameraMoveDir;
     Vector3 m_OriginCameraPos;
     bool m_CameraMoveEnd;
+    class CPlayerDataComponent* m_PlayerDataComp;
 
 public:
     const Vector3& GetOriginCameraPos()  const

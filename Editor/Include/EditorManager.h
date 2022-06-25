@@ -135,9 +135,6 @@ public:
 	class CComponent* CreateComponent(class CGameObject* Obj, size_t Type);
 	void CreateAnimInstance(class CSpriteComponent* Sprite, size_t Type);
 	
-public:
-	void SetChampionNotify(class CAnimationSequenceInstance* Instance, const std::string& ChampionName);
-	void SetChampionInfo(class CGameObject* Object, const std::string& ChampionName);
 
 private:
 	void CreateKey();

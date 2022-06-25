@@ -647,3 +647,10 @@ struct GameData
 	float MoveSpeed;
 	int Attack;
 };
+
+struct PlayerData
+{
+	Player_Ability Abilty_Type;
+	float AttackSpeed;
+	float MagicAttack;
+};
