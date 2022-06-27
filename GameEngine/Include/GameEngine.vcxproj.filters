@@ -867,9 +867,6 @@
     <ClCompile Include="Component\Frustum.cpp">
       <Filter>05. Component\01. SceneComponent\03. Camera</Filter>
     </ClCompile>
-    <ClCompile Include="Animation\SkeletonSocket.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="ImCurveEdit.cpp">
       <Filter>01. Engine\08. IMGUI\01. Lib</Filter>
     </ClCompile>
@@ -1558,9 +1555,6 @@
     </ClInclude>
     <ClInclude Include="Component\Frustum.h">
       <Filter>05. Component\01. SceneComponent\03. Camera</Filter>
-    </ClInclude>
-    <ClInclude Include="Animation\SkeletonSocket.h">
-      <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="ImCurveEdit.h">
       <Filter>01. Engine\08. IMGUI\01. Lib</Filter>

@@ -19,6 +19,7 @@
 #define TOOL								"Tool"
 #define BEHAVIORTREE_WINDOW					"BehaviorTreeWindow"
 #define	COLLISION_PROFILE					"CollisionProfileWindow"
+#define SOCKET_WINDOW						"SocketWindow"
 
 #define DIRECTORY_IMAGE						"DirectoryImage"
 #define FILE_IMAGE							"FileImage"

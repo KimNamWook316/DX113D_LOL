@@ -335,6 +335,6 @@ enum class Player_Ability
 {
 	Arrow,
 	Fire,
-	Chain,
+	Hook,
 	Photon
 };

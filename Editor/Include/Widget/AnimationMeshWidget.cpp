@@ -105,6 +105,7 @@ bool CAnimationMeshWidget::Init()
 	m_OutlineThickness->SetCallBack(this, &CAnimationMeshWidget::OnEditOutlineThickness);
 	m_OutlineColor->SetCallBack(this, &CAnimationMeshWidget::OnChangeOutlineColor);
 
+
     // CIMGUISameLine* Line = m_RootTree->AddWidget<CIMGUISameLine>("Line");
     // Line->SetOffsetX(125.f);
 

@@ -90,6 +90,11 @@ CAnimationSequenceInstance::~CAnimationSequenceInstance()
 
 }
 
+CSkeleton* CAnimationSequenceInstance::GetSkeleton() const
+{
+	return m_Skeleton;
+}
+
 void CAnimationSequenceInstance::SetEditorStopTargetFrame(int Frame)
 {
 	if (!m_CurrentAnimation)
@@ -529,12 +534,6 @@ void CAnimationSequenceInstance::Update(float DeltaTime)
 		{
 			m_ChangeTimeAcc = m_ChangeTime;
 			ChangeEnd = true;
-		}
-		else
-		{
-			if (m_ChangeAnimation->GetName().find("Idle") != std::string::npos &&
-				m_CurrentAnimation->GetName().find("Attack") != std::string::npos)
-				int a = 3;
 		}
 	}
 

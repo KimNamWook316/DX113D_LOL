@@ -221,6 +221,7 @@
     <ClCompile Include="Object\Anim3DObject.cpp" />
     <ClCompile Include="Object\DragObject.cpp" />
     <ClCompile Include="Object\Player2D.cpp" />
+    <ClCompile Include="Object\PlayerHook.cpp" />
     <ClCompile Include="Object\SpriteEditObject.cpp" />
     <ClCompile Include="Scene\DefaultScene.cpp" />
     <ClCompile Include="Widget\AnimationMeshWidget.cpp" />
@@ -263,6 +264,7 @@
     <ClCompile Include="Window\ResourceDisplayWindow.cpp" />
     <ClCompile Include="Window\SceneComponentCreateModal.cpp" />
     <ClCompile Include="Window\SceneComponentHierarchyWindow.cpp" />
+    <ClCompile Include="Window\SocketWindow.cpp" />
     <ClCompile Include="Window\ToolWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -322,6 +324,7 @@
     <ClInclude Include="Object\Anim3DObject.h" />
     <ClInclude Include="Object\DragObject.h" />
     <ClInclude Include="Object\Player2D.h" />
+    <ClInclude Include="Object\PlayerHook.h" />
     <ClInclude Include="Object\SpriteEditObject.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Scene\DefaultScene.h" />
@@ -366,6 +369,7 @@
     <ClInclude Include="Window\ResourceDisplayWindow.h" />
     <ClInclude Include="Window\SceneComponentCreateModal.h" />
     <ClInclude Include="Window\SceneComponentHierarchyWindow.h" />
+    <ClInclude Include="Window\SocketWindow.h" />
     <ClInclude Include="Window\ToolWindow.h" />
   </ItemGroup>
   <ItemGroup>

@@ -44,6 +44,7 @@ CGameObject* CSceneManager::CreateObjectByTypeID(size_t TypeID)
 		Child = new CSkyObject;
 	}
 
+
 	return Child;
 }
 

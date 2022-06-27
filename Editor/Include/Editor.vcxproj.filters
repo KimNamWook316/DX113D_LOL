@@ -321,6 +321,12 @@
     <ClCompile Include="Component\PlayerDataComponent.cpp">
       <Filter>06. GameComponent</Filter>
     </ClCompile>
+    <ClCompile Include="Object\PlayerHook.cpp">
+      <Filter>03. Object\02. 3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Window\SocketWindow.cpp">
+      <Filter>02. Editor\01. Window\1. Resource</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EditorManager.h">
@@ -464,9 +470,6 @@
     <ClInclude Include="Widget\UtilMenuBar.h">
       <Filter>02. Editor\02. Widget\03. MenuBar</Filter>
     </ClInclude>
-    <ClInclude Include="Widget\DataMenu.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="Window\CollisionProfileEditor.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
@@ -550,6 +553,15 @@
     </ClInclude>
     <ClInclude Include="Component\PlayerDataComponent.h">
       <Filter>06. GameComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\PlayerHook.h">
+      <Filter>03. Object\02. 3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Widget\DataMenu.h">
+      <Filter>02. Editor\02. Widget\03. MenuBar</Filter>
+    </ClInclude>
+    <ClInclude Include="Window\SocketWindow.h">
+      <Filter>02. Editor\01. Window\1. Resource</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

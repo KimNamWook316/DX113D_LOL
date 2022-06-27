@@ -36,6 +36,7 @@ private:
 	class C3DCameraObject* m_CameraObject;
 	class CFBXConvertWindow* m_FBXConvertWindow;
 	class CCollisionProfileEditor* m_CollisionProfileEditor;
+	class CSocketWindow* m_SocketWindow;
 
 	bool				m_MousePush;
 	float				m_CameraMoveSpeed;
@@ -91,6 +92,10 @@ public:
 	class CResourceDisplayWindow* GetResourceDisplayWindow() const
 	{
 		return m_ResourceDisplayWindow;
+	}
+	class CSocketWindow* GetSocketWindow()	const
+	{
+		return m_SocketWindow;
 	}
 	class CAnimationEditor* GetAnimationEditor()	const
 	{

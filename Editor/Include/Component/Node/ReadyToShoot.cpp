@@ -82,57 +82,49 @@ NodeResult CReadyToShoot::OnStart(float DeltaTime)
 
 NodeResult CReadyToShoot::OnUpdate(float DeltaTime)
 {
-	Player_Ability Ability = m_PlayerDataComp->GetPlayerAbility();
 
-	if (Ability == Player_Ability::Arrow || Ability == Player_Ability::Fire)
+	if (!m_CameraMoveEnd)
 	{
-		if (!m_CameraMoveEnd)
+		m_CameraMoveEnd = CSceneManager::GetInst()->GetScene()->CameraMove(m_CameraMoveDir, m_CameraDestPos, 50.f, DeltaTime);
+
+		bool RButtonUp = CInput::GetInst()->GetMouseRButtonUp();
+
+		// 카메라가 화살쏘는 목표 지점으로 완전히 이동하기 전에 마우스RButton 을 때면
+		if (RButtonUp)
 		{
-			m_CameraMoveEnd = CSceneManager::GetInst()->GetScene()->CameraMove(m_CameraMoveDir, m_CameraDestPos, 50.f, DeltaTime);
+			m_CallStart = false;
+			m_Owner->SetCurrentNode(((CCompositeNode*)m_Parent->GetParent())->GetChild(1));
+			m_CameraMoveEnd = false;
 
-			bool RButtonUp = CInput::GetInst()->GetMouseRButtonUp();
-
-			// 카메라가 화살쏘는 목표 지점으로 완전히 이동하기 전에 마우스RButton 을 때면
-			if (RButtonUp)
-			{
-				m_CallStart = false;
-				m_Owner->SetCurrentNode(((CCompositeNode*)m_Parent->GetParent())->GetChild(1));
-				m_CameraMoveEnd = false;
-
-				return NodeResult::Node_True;
-			}
-
-			else
-			{
-				m_Owner->SetCurrentNode(this);
-				return NodeResult::Node_Running;
-			}
+			return NodeResult::Node_True;
 		}
 
 		else
 		{
-			bool RButtonUp = CInput::GetInst()->GetMouseRButtonUp();
-			if (RButtonUp)
-			{
-				m_CallStart = false;
-				m_Owner->SetCurrentNode(((CCompositeNode*)m_Parent)->GetChild(1));
-				m_CameraMoveEnd = false;
-
-				return NodeResult::Node_True;
-			}
-
-			else
-			{
-				m_Owner->SetCurrentNode(this);
-				return NodeResult::Node_Running;
-			}
+			m_Owner->SetCurrentNode(this);
+			return NodeResult::Node_Running;
 		}
 	}
 
-	else if (Ability == Player_Ability::Chain)
+	else
 	{
+		bool RButtonUp = CInput::GetInst()->GetMouseRButtonUp();
+		if (RButtonUp)
+		{
+			m_CallStart = false;
+			m_Owner->SetCurrentNode(((CCompositeNode*)m_Parent)->GetChild(1));
+			m_CameraMoveEnd = false;
 
+			return NodeResult::Node_True;
+		}
+
+		else
+		{
+			m_Owner->SetCurrentNode(this);
+			return NodeResult::Node_Running;
+		}
 	}
+
 }
 
 NodeResult CReadyToShoot::OnEnd(float DeltaTime)

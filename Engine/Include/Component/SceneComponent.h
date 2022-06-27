@@ -131,6 +131,11 @@ public:
 		m_LayerName = Name;
 	}
 
+	void SetRender(bool Render)
+	{
+		m_Render = Render;
+	}
+
 public:
 	void SetSceneComponent(class CGameObject* Object);
 	void GetAllSceneComponentsName(std::vector<FindComponentName>& vecNames);

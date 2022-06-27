@@ -38,6 +38,7 @@
 #include "Window/MaterialEditor.h"
 #include "Window/ResourceDisplayWindow.h"
 #include "Window/CollisionProfileEditor.h"
+#include "Window/SocketWindow.h"
 // Object
 #include "Object/DragObject.h"
 #include "Object/SpriteEditObject.h"
@@ -249,23 +250,9 @@ CGameObject* CEditorManager::CreateObject(CScene* Scene, size_t Type)
 		return Obj;
 	}
 
-	else if (Type == typeid(CDragObject).hash_code())
+	else if (Type == typeid(CPlayerHook).hash_code())
 	{
-		CDragObject* Obj = Scene->LoadGameObject<CDragObject>();
-
-		return Obj;
-	}
-
-	else if (Type == typeid(CSpriteEditObject).hash_code())
-	{
-		CSpriteEditObject* Obj = Scene->LoadGameObject<CSpriteEditObject>();
-
-		return Obj;
-	}
-
-	else if (Type == typeid(CPlayer2D).hash_code())
-	{
-		CPlayer2D* Obj = Scene->LoadGameObject<CPlayer2D>();
+		CPlayerHook* Obj = Scene->LoadGameObject<CPlayerHook>();
 
 		return Obj;
 	}
@@ -447,6 +434,9 @@ void CEditorManager::CreateWindows()
 	m_ResourceDisplayWindow->Close();
 
 	m_CollisionProfileEditor = CIMGUIManager::GetInst()->AddWindow<CCollisionProfileEditor>(COLLISION_PROFILE);
+	m_CollisionProfileEditor->Close();
+
+	m_SocketWindow = CIMGUIManager::GetInst()->AddWindow<CSocketWindow>(SOCKET_WINDOW);
 	m_CollisionProfileEditor->Close();
 }
 

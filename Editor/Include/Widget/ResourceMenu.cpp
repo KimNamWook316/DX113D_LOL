@@ -5,6 +5,7 @@
 #include "../Window/MaterialEditor.h"
 #include "../Window/AnimationEditor.h"
 #include "../Window/ResourceDisplayWindow.h"
+#include "../Window/SocketWindow.h"
 #include "../EditorManager.h"
 
 CResourceMenu::CResourceMenu()
@@ -31,6 +32,9 @@ bool CResourceMenu::Init()
 
 	m_ResourceDisplayToggle = AddMenuItem("Display");
 	m_ResourceDisplayToggle->SetClickCallBack<CResourceMenu>(this, &CResourceMenu::OnToggleResourceDisplayEditorCallback);
+
+	m_SocketDisplayToggle = AddMenuItem("Socket");
+	m_SocketDisplayToggle->SetClickCallBack<CResourceMenu>(this, &CResourceMenu::OnToggleSocketDisplayEditorCallback);
 
 	return true;
 }
@@ -95,5 +99,19 @@ void CResourceMenu::OnToggleResourceDisplayEditorCallback()
 	else
 	{
 		CEditorManager::GetInst()->GetResourceDisplayWindow()->Open();
+	}
+}
+
+void CResourceMenu::OnToggleSocketDisplayEditorCallback()
+{
+	bool IsOpen = CEditorManager::GetInst()->GetSocketWindow()->IsOpen();
+
+	if (IsOpen)
+	{
+		CEditorManager::GetInst()->GetSocketWindow()->Close();
+	}
+	else
+	{
+		CEditorManager::GetInst()->GetSocketWindow()->Open();
 	}
 }

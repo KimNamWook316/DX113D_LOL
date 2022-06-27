@@ -333,6 +333,7 @@ std::pair<bool, std::string> CResourceManager::LoadMeshTextureBoneInfo(CAnimatio
 		char SqcFileName[MAX_PATH] = {};
 		strcpy_s(SqcFileName, ConstSqcFileName);
 
+		// SqcFileName이 시퀀스중에서 처음으로 텍스쳐를 가지고있는 시퀀스 이름?
 		const std::pair<bool, std::string>& Result = LoadMeshTextureBoneInfo(SqcFileName, MapCnt == MapSize);
 
 		if (Result.first == false)
