@@ -25,16 +25,6 @@ protected:
 	bool		m_ExcludeSceneSave;
 	bool		m_NoDestroyFromSceneChange;
 public:
-	//void SetOntHit(bool Hit)
-	//{
-	//	m_OnHit = Hit;
-	//}
-
-	//bool GetOnHit()	const
-	//{
-	//	return m_OnHit;
-	//}
-
 	bool IsEnemy()	const
 	{
 		return m_IsEnemy;
@@ -155,7 +145,7 @@ public:
 	}
 
 public:
-	void AddChildObject(CGameObject* Obj);
+	void AddChildObject(CGameObject* Obj, const std::string& SocketName = "");
 	void DeleteObj();
 	bool DeleteChildObj(const std::string& Name);
 	// 실제로 지우진 않고, 나는 부모를 nullptr로 만들고, 부모에게 내 자신을 자식 목록에서 지우게 함
@@ -163,6 +153,35 @@ public:
 	CGameObject* GetParentObject()	const
 	{
 		return m_Parent;
+	}
+
+	CGameObject* FindChildObject(const std::string& Name)
+	{
+		size_t Count = m_vecChildObject.size();
+
+		for (size_t i = 0; i < Count; ++i)
+		{
+			if (m_vecChildObject[i]->GetName() == Name)
+				return m_vecChildObject[i];
+
+		}
+
+		return nullptr;
+	}
+
+	template <typename T>
+	CGameObject* FindChildObjectByType()
+	{
+		size_t Count = m_vecChildObject.size();
+
+		for (size_t i = 0; i < Count; ++i)
+		{
+			if (m_vecChildObject[i]->GetTypeID() == typeid(T).hash_code())
+				return m_vecChildObject[i];
+
+		}
+
+		return nullptr;
 	}
 
 public:

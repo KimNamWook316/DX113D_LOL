@@ -124,6 +124,16 @@ CSkeletonSocket* CSkeleton::GetSocket(const std::string& Name)
 	return nullptr;
 }
 
+size_t CSkeleton::GetBoneSocketCount() const
+{
+	return m_BoneSocket.size();
+}
+
+CSkeletonSocket* CSkeleton::GetSkeletonSocket(size_t Index)
+{
+	return m_BoneSocket[Index];
+}
+
 
 void CSkeleton::AddBone(Bone* pBone)
 {
@@ -169,6 +179,18 @@ bool CSkeleton::SaveSkeletonFullPath(const char* pFullPath)
 		fwrite(&m_vecBones[i]->iParentIndex, sizeof(int), 1, pFile);
 		fwrite(&m_vecBones[i]->matOffset, sizeof(Matrix), 1, pFile);
 		fwrite(&m_vecBones[i]->matBone, sizeof(Matrix), 1, pFile);
+	}
+
+	// 여기서 m_BoneSocket정보를 저장한다
+	if (m_BoneSocket.size() > 0)
+	{
+		size_t Count = m_BoneSocket.size();
+		fwrite(&Count, sizeof(size_t), 1, pFile);
+
+		for (size_t i = 0; i < Count; ++i)
+		{
+			m_BoneSocket[i]->Save(pFile);
+		}
 	}
 
 	fclose(pFile);
@@ -237,6 +259,16 @@ bool CSkeleton::LoadSkeletonFullPath(CScene* pScene, const std::string& strName,
 		fread(&pBone->iParentIndex, sizeof(int), 1, pFile);
 		fread(&pBone->matOffset, sizeof(Matrix), 1, pFile);
 		fread(&pBone->matBone, sizeof(Matrix), 1, pFile);
+	}
+
+	// 여기서 m_BoneSocket정보를 읽어온다
+	size_t Count = 0;
+	fread(&Count, sizeof(size_t), 1, pFile);
+	for (size_t i = 0; i < Count; ++i)
+	{
+		CSkeletonSocket* Socket = new CSkeletonSocket;
+		Socket->Load(pFile);
+		m_BoneSocket.push_back(Socket);
 	}
 
 	fclose(pFile);

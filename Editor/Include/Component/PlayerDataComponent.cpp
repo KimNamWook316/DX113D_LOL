@@ -3,9 +3,9 @@
 #include "Input.h"
 #include "GameObject/GameObject.h"
 #include "Scene/Scene.h"
-#include "Component/StaticMeshComponent.h"
 
-CPlayerDataComponent::CPlayerDataComponent()
+CPlayerDataComponent::CPlayerDataComponent()	:
+	m_PlayerHook(nullptr)
 {
 	SetTypeID<CPlayerDataComponent>();
 	m_ComponentType = Component_Type::ObjectComponent;
@@ -26,16 +26,7 @@ void CPlayerDataComponent::Start()
 
 	m_Scene->GetSceneMode()->SetPlayerObject(m_Object);
 
-	/*m_Scene->GetResource()->LoadMesh(Mesh_Type::Static, "PlayerHook",
-		TEXT("Blade.msh"));
-
-	if (!m_PlayerHookHead)
-	{
-		m_PlayerHookHead = m_Scene->CreateGameObject<CGameObject>("Hook");
-		m_PlayerHookHead->CreateComponent<CStaticMeshComponent>("PlayerHook");
-	}
-
-	m_Object->GetRootComponent()->AddChild(m_PlayerHookHead, "L_Thumb1");*/
+	m_PlayerHook = (CPlayerHook*)m_Object->FindChildObjectByType<CPlayerHook>();
 
 	CInput::GetInst()->CreateKey("WeaponArrow", '1');
 	CInput::GetInst()->CreateKey("WeaponFire", '2');

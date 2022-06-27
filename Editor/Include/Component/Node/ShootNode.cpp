@@ -1,10 +1,13 @@
 
 #include "ShootNode.h"
+#include "RotateAttackDirectionNode.h"
 #include "Component/AnimationMeshComponent.h"
 #include "Animation/AnimationSequenceInstance.h"
 #include "Component/BehaviorTree.h"
 #include "Scene/Scene.h"
 #include "Scene/SceneManager.h"
+#include "../PlayerDataComponent.h"
+#include "../../Object/PlayerHook.h"
 
 CShootNode::CShootNode()
 {
@@ -52,6 +55,25 @@ NodeResult CShootNode::OnStart(float DeltaTime)
 
 NodeResult CShootNode::OnUpdate(float DeltaTime)
 {
+	CPlayerDataComponent* Comp = m_Object->FindObjectComponentFromType<CPlayerDataComponent>();
+
+	Player_Ability Ability = Comp->GetPlayerAbility();
+
+	if (Ability == Player_Ability::Hook)
+	{
+		CPlayerHook* HookHead = Comp->GetPlayerHookHead();
+
+		CRotateAttackDirectionNode* Node = (CRotateAttackDirectionNode*)m_Owner->FindNodeByType<CRotateAttackDirectionNode>();
+		Vector3 Point = Node->GetPickingPoint();
+		Vector3 ObjectPos = m_Object->GetWorldPos();
+		Vector3 Dir = Vector3(Point.x, 0.f, Point.z) - Vector3(ObjectPos.x, 0.f, ObjectPos.z);
+
+		bool Collision = false;
+		bool ThrowHookEnd = HookHead->Move(Dir, 1.f, Collision);
+
+		// Hook이 건물과 충돌해서 그 방향으로 나가가야한다면 return NodeResult::Node_False를 리턴해서 플레이어가 끌려가는 동작을 해주는 형제 노드로 가도록
+	}
+
 	if (!m_AnimationMeshComp->GetAnimationInstance()->IsCurrentAnimLoop() && m_AnimationMeshComp->GetAnimationInstance()->IsCurrentAnimEnd())
 	{
 		CScene* Scene = CSceneManager::GetInst()->GetScene();

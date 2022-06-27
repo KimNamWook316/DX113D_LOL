@@ -268,6 +268,7 @@ enum class ObjectComponent3DType
 	GameStateComponent,
 	NavAgent,
 	GameDataComponent,
+	PlayerDataComponent,
 	Max
 };
 
@@ -334,6 +335,6 @@ enum class Player_Ability
 {
 	Arrow,
 	Fire,
-	Chain,
+	Hook,
 	Photon
 };

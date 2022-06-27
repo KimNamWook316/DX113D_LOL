@@ -65,9 +65,9 @@ public:
 	// Component Save&Load
 	void OnSaveComponent();
 	void OnLoadComponent();
+	class CComponent* FindSelectComponent();
 
 private:
-	class CComponent* FindSelectComponent();
 	void OnAddComponent(class CGameObject* Object, class CSceneComponent* Component);
 	void MakeHierachyRecursive(class CSceneComponent* Parent, CIMGUITree* ParentTree);
 	void DisableCurrent();

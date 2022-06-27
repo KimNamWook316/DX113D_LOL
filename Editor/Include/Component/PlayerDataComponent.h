@@ -2,6 +2,7 @@
 
 #include "Component/ObjectComponent.h"
 #include "GameObject/GameObject.h"
+#include "../Object/PlayerHook.h"
 
 class CPlayerDataComponent :
     public CObjectComponent
@@ -15,7 +16,7 @@ protected:
 
 private:
 	PlayerData m_PlayerData;
-	//CGameObject* m_PlayerHookHead;
+	CPlayerHook* m_PlayerHook;
 
 public:
 	virtual void Start();
@@ -35,6 +36,11 @@ public:
 	virtual bool LoadOnly(FILE* File) override;
 
 public:
+	CPlayerHook* GetPlayerHookHead()	const
+	{
+		return m_PlayerHook;
+	}
+
 	void SetPlayerAbilityArrow(float DeltaTime)
 	{
 		m_PlayerData.Abilty_Type = Player_Ability::Arrow;
@@ -52,7 +58,7 @@ public:
 
 	void SetPlayerAbilityChain(float DeltaTime)
 	{
-		m_PlayerData.Abilty_Type = Player_Ability::Chain;
+		m_PlayerData.Abilty_Type = Player_Ability::Hook;
 	}
 
 	Player_Ability GetPlayerAbility()	const

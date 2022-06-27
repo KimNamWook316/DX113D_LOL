@@ -24,7 +24,6 @@
     <ClCompile Include="Animation\AnimationSequence2DInstance.cpp" />
     <ClCompile Include="Animation\AnimationSequenceData.cpp" />
     <ClCompile Include="Animation\AnimationSequenceInstance.cpp" />
-    <ClCompile Include="Animation\SkeletonSocket.cpp" />
     <ClCompile Include="Component\Node\DecoratorNode.cpp" />
     <ClCompile Include="Component\State\State.cpp" />
     <ClCompile Include="Component\State\StateManager.cpp" />
@@ -245,7 +244,6 @@
     <ClInclude Include="Animation\AnimationSequence2DInstance.h" />
     <ClInclude Include="Animation\AnimationSequenceData.h" />
     <ClInclude Include="Animation\AnimationSequenceInstance.h" />
-    <ClInclude Include="Animation\SkeletonSocket.h" />
     <ClInclude Include="Component\Node\DecoratorNode.h" />
     <ClInclude Include="Component\State\State.h" />
     <ClInclude Include="Component\State\StateManager.h" />

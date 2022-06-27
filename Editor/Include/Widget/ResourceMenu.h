@@ -12,6 +12,8 @@ private :
     class CIMGUIMenuItem* m_AnimationEditorToggle;
     class CIMGUIMenuItem* m_MaterialEditorToggle;
     class CIMGUIMenuItem* m_ResourceDisplayToggle;
+    class CIMGUIMenuItem* m_SocketDisplayToggle;
+
 public:
     virtual bool Init() override;
     virtual void Render() override;
@@ -20,5 +22,6 @@ private:
     void OnToggleAnimationEditorCallback();
     void OnToggleMaterialEditorCallback();
     void OnToggleResourceDisplayEditorCallback();
+    void OnToggleSocketDisplayEditorCallback();
 };
 

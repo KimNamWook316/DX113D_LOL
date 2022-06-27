@@ -157,6 +157,9 @@ public:
 	{
 		return m_TypeID;
 	}
+
+	class CSkeleton* GetSkeleton() const;
+
 	template <typename T>
 	void SetTypeID()
 	{

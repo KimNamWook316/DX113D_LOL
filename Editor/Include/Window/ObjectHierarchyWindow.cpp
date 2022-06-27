@@ -5,6 +5,7 @@
 #include "../EditorUtil.h"
 #include "IMGUIButton.h"
 #include "IMGUITree.h"
+#include "IMGUITextInput.h"
 #include "../EditorInfo.h"
 #include "Flag.h"
 #include "IMGUISameLine.h"
@@ -18,11 +19,14 @@
 #include "InspectorWindow.h"
 #include "ToolWindow.h"
 #include "ObjectComponentWindow.h"
+#include "Component/AnimationMeshComponent.h"
+#include "Resource/Animation/SkeletonSokcet.h"
 
 CObjectHierarchyWindow::CObjectHierarchyWindow() :
 	m_Root(nullptr),
 	m_ObjectDeleteButton(nullptr),
-	m_SelectObject(nullptr)
+	m_SelectObject(nullptr),
+	m_SocketParentObject(nullptr)
 {
 }
 
@@ -62,6 +66,14 @@ bool CObjectHierarchyWindow::Init()
 
 	m_ObjectDeleteButton = AddWidget<CIMGUIButton>("Delete", 50.f, 20.f);
 	m_ObjectDeleteButton->SetClickCallback<CObjectHierarchyWindow>(this, &CObjectHierarchyWindow::OnDeleteObject);
+
+	m_AddAsSocket = AddWidget<CIMGUICheckBox>("Add Child As Socket?");
+	m_AddAsSocket->AddCheckInfo("Add Child As Socket?");
+
+	m_SocketName = AddWidget<CIMGUITextInput>("Socket Name", 80.f, 20.f);
+	m_SocketName->SetHintText("Enter Socket Name");
+	m_SocketName->SetHideName(true);
+
 
 	m_vecObjectTree.push_back(m_Root);
 	return true;
@@ -253,16 +265,55 @@ void CObjectHierarchyWindow::OnDragDropDest(CIMGUITree* DestTree, const std::str
 
 	m_DragDest = DestTree;
 
-	if (m_DragDest && m_DragSrc)
+	bool CheckSocket = m_AddAsSocket->GetCheck(0);
+
+	if (CheckSocket)
 	{
 		CScene* CurrentScene = CSceneManager::GetInst()->GetScene();
 
 		CGameObject* SrcObj = CurrentScene->FindObject(m_DragSrc->GetName());
 		CGameObject* DestObj = CurrentScene->FindObject(m_DragDest->GetName());
 
-		SrcObj->ClearParent();
+		if (m_DragDest->GetData() == DestObj && m_DragSrc->GetData() == SrcObj)
+		{
+			std::string SocketName = m_SocketName->GetTextMultibyte();
 
-		DestObj->AddChildObject(SrcObj);
+			CAnimationMeshComponent* Comp = DestObj->FindComponentFromType<CAnimationMeshComponent>();
+
+			if (!Comp)
+				return;
+
+			CSkeleton* Skeleton = Comp->GetAnimationInstance()->GetSkeleton();
+
+			CSkeletonSocket* Socket = Skeleton->GetSocket(SocketName);
+
+			if (!Socket)
+			{
+				MessageBox(nullptr, TEXT("해당 이름의 소켓이 없습니다"), TEXT("Error"), MB_OK);
+				return;
+			}
+
+			Comp->AddChild(SrcObj, Socket->GetName());
+
+			MessageBox(nullptr, TEXT("소켓에 추가 성공"), TEXT("Warning"), MB_OK);
+		}
+	}
+
+	else
+	{
+		if (m_DragDest && m_DragSrc)
+		{
+			CScene* CurrentScene = CSceneManager::GetInst()->GetScene();
+
+			CGameObject* SrcObj = CurrentScene->FindObject(m_DragSrc->GetName());
+			CGameObject* DestObj = CurrentScene->FindObject(m_DragDest->GetName());
+
+			SrcObj->ClearParent();
+
+			DestObj->AddChildObject(SrcObj);
+
+			// SceneComponent Hierarychy Window, ObjectComponent List GUI상에서도 추가해줘야한다
+		}
 	}
 }
 

@@ -26,6 +26,11 @@ public:
 		return m_Name;
 	}
 
+	const std::string& GetBoneName()	const
+	{
+		return m_BoneName;
+	}
+
 	const Matrix& GetSocketMatrix()	const
 	{
 		return m_matSocket;
@@ -55,4 +60,8 @@ public:
 public:
 	void Update(const Matrix& matBone);
 	CSkeletonSocket* Clone();
+
+public:
+	bool Save(FILE* File);
+	bool Load(FILE* File);
 };

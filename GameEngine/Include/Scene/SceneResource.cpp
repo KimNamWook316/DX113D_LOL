@@ -1,5 +1,6 @@
 
 #include "SceneResource.h"
+#include "../Resource/Mesh/AnimationMesh.h"
 
 CSceneResource::CSceneResource()
 {
@@ -291,6 +292,20 @@ void CSceneResource::ReleaseMesh(const std::string& Name)
 		if (iter->second->GetRefCount() <= 3)
 		{
 			m_mapMesh.erase(iter);
+		}
+	}
+}
+
+void CSceneResource::GetAllAnimationMeshNames(std::vector<std::string>& vecAnimationMeshName)
+{
+	auto iter = m_mapMesh.begin();
+	auto iterEnd = m_mapMesh.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		if (iter->second->GetTypeID() == typeid(CAnimationMesh).hash_code())
+		{
+			vecAnimationMeshName.push_back(iter->second->GetName());
 		}
 	}
 }
@@ -913,4 +928,15 @@ CSkeleton* CSceneResource::FindSkeleton(const std::string& Name)
 	}
 
 	return iter->second;
+}
+
+void CSceneResource::GetAllSkeletonNames(std::vector<std::string>& vecSkeletonName)
+{
+	auto iter = m_mapSkeleton.begin();
+	auto iterEnd = m_mapSkeleton.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		vecSkeletonName.push_back(iter->first);
+	}
 }
