@@ -840,10 +840,25 @@ void CAnimationEditor::OnDeleteAnimationSequenceData()
 	m_Animation->DeleteCurrentAnimation();
 
 	// Combo Box 내용 Refresh
+	// 비어있을 경우, ComboBox 안의 내용 ""로 세팅하는 기능까지 
 	OnRefreshAnimationComboBox();
 
 	if (!m_Animation->GetCurrentAnimation())
+	{
+		// 다 지웠다는 메세지
+		MessageBox(nullptr, TEXT("모든 Sqc 파일이 Delete 되었습니다."), TEXT("Anim Seq Delete."), MB_OK);
+
+		// Animation Info Table 깨끗하게
+		m_AnimInfoTable->ClearContents();
+
+		// 3D Object ? Animation Mesh Component 도 지워준다. 
+		OnDeleteExisting3DObject();
+
+		// Render Target 을 비워준다.
+		CRenderManager::GetInst()->GetAnimationRenderTarget()->ClearTarget();
+
 		return;
+	}
 
 	OnRefreshAnimationClipTable(m_Animation->GetCurrentAnimation()->GetAnimationSequence());
 

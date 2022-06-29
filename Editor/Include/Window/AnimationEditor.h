@@ -54,33 +54,7 @@ private:
 	class CAnim3DObject* m_3DTestObject;
 	std::string m_3DTestObjectMeshName;
 	class CAnimationSequenceInstance* m_Animation;
-	// --------------------------------------------------------------------
-private :
-//	class CAnimationInstanceConvertThread* m_AnimInstanceConvertThread;
-//	// 지정된 Folder
-//	class CIMGUITextInput* m_AnimSeqcSrcFolderPath;
-//	// 공통 File Name
-//	class CIMGUITextInput* m_CommonAnimSeqName;
-//	// Convert Btn
-//	class CIMGUIButton* m_ConvertAnimInstanceBtn;
-//	// Folder 지정
-//	class CIMGUIButton* m_SelectAnimInstanceFolderPath;
-//	// Log
-//	class CIMGUIChild* m_AnimInstanceConvertLog;
-//	// ProgressBar
-//	class CIMGUIProgressBar* m_AnimInstanceProgressBar;
-//	// 저장할 Animation File Name
-//	class CIMGUITextInput* m_SavedAnimFileName;
-//private :
-//	// FullPath 목록 모아둔 Vector 
-//	std::vector<std::string> m_vecAnimationSeqFilesFullPath;
-//	
-//	// FileName 목록 모아둔 Vector
-//	// std::vector<std::string> m_vecAnimationSeqFileNames;
-//
-//	char m_SelectedSeqSrcsDirPath[MAX_PATH];
-	// Animation Instance 를 File형태로 저장하기 위해 임시적으로 사용하는 Dummy Animation Instance
-	// class CAnimationSequenceInstance* m_DummyAnimation;
+
 public:
 	const std::string& Get3DTestObjectMeshName() const
 	{
