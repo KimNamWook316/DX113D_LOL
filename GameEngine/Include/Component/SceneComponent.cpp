@@ -91,6 +91,8 @@ SphereInfo CSceneComponent::GetSphereInfoViewSpace() const
 	CCameraComponent* Camera = m_Scene->GetCameraManager()->GetCurrentCamera();
 
 	Info.Center = m_SphereInfo.Center * GetWorldScale() + GetWorldPos();
+	
+	// 여기서 Radius 는 애초부터 실제 World 공간 상에서의 Radius 크기를 세팅할 것이다.
 	Info.Radius = m_SphereInfo.Radius;
 
 	Info.Center = Info.Center.TransformCoord(Camera->GetViewMatrix());

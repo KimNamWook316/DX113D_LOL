@@ -181,6 +181,42 @@ bool CEffectEditor::Init()
     }
     m_ParticlePreset->SetSelectIndex(0);
 
+    // UV Move
+    Tree = AddWidget<CIMGUITree>("UV Move");
+    m_IsMoveEnableEdit = Tree->AddWidget<CIMGUICheckBox>("UV Move", 80.f);
+    m_IsMoveEnableEdit->AddCheckInfo("UVMove");
+    m_IsMoveEnableEdit->SetCallBackLabel<CEffectEditor>(this, &CEffectEditor::OnIsUVMoveEnableEdit);
+
+    Line = Tree->AddWidget<CIMGUISameLine>("Line");
+    Line->SetOffsetX(100.f);
+
+    HelpText = Tree->AddWidget<CIMGUIText>("UVMoveHelp", 90.f, 30.f);
+    const char* UVMoveText = R"(Texture 내에서 UV Move 효과)";
+    HelpText->SetText(UVMoveText);
+    HelpText->SetIsHelpMode(true);
+
+    m_UVRowN = Tree->AddWidget<CIMGUIInputInt>("UV RowN", 150.f);
+    m_UVRowN->SetCallBack(this, &CEffectEditor::OnUVRowNEdit);
+
+    Line = Tree->AddWidget<CIMGUISameLine>("Line");
+    Line->SetOffsetX(250.f);
+
+    HelpText = Tree->AddWidget<CIMGUIText>("UVRowN", 90.f, 30.f);
+    const char* UVRowNText = R"(Texture Image 행 개수)";
+    HelpText->SetText(UVRowNText);
+    HelpText->SetIsHelpMode(true);
+
+    m_UVColN = Tree->AddWidget<CIMGUIInputInt>("UV ColN", 150.f);
+    m_UVColN->SetCallBack(this, &CEffectEditor::OnUVColNEdit);
+
+    Line = Tree->AddWidget<CIMGUISameLine>("Line");
+    Line->SetOffsetX(250.f);
+
+    HelpText = Tree->AddWidget<CIMGUIText>("UVColN", 90.f, 30.f);
+    const char* UVColNext = R"(Texture Image 열 개수)";
+    HelpText->SetText(UVColNext);
+    HelpText->SetIsHelpMode(true);
+
     // BaseTexture
     Tree = AddWidget<CIMGUITree>("Ground Texture");
     m_GroundTextureScale =  Tree->AddWidget<CIMGUISliderFloat>("Ground Texture", 100.f, 20.f);
@@ -237,8 +273,6 @@ bool CEffectEditor::Init()
     const char* RingLoopHelpText = R"(ex)  Ring 여부가 Check 되야만 적용.)";
     HelpText->SetText(RingLoopHelpText);
     HelpText->SetIsHelpMode(true);
-
-
 
     // Generate Circle
     Tree = AddWidget<CIMGUITree>("Circle Generate");
@@ -446,6 +480,33 @@ void CEffectEditor::OnRestartParticleComponentButton()
 
     // IMGUI가 Paritlc Object 정보 반영하게 하기 
     SetIMGUIReflectObjectCamera();
+}
+
+void CEffectEditor::OnIsUVMoveEnableEdit(const char*, bool Enable)
+{
+    if (!m_ParticleClass)
+        return;
+
+    m_ParticleClass->SetUVMoveEnable(Enable);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetUVMoveEnable(Enable);
+}
+
+void CEffectEditor::OnUVRowNEdit(int Num)
+{
+    if (!m_ParticleClass)
+        return;
+
+    m_ParticleClass->SetUVRowN(Num);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetUVRowN(Num);
+}
+
+void CEffectEditor::OnUVColNEdit(int Num)
+{
+    if (!m_ParticleClass)
+        return;
+
+    m_ParticleClass->SetUVColN(Num);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetUVColN(Num);
 }
 
 void CEffectEditor::OnClickParticlePreset(int Index, const char* PresetName)
@@ -794,9 +855,9 @@ void CEffectEditor::OnAlphaStartEdit(float Alpha)
     // Alpha 값은 0으로 한다.
 
     // m_ParticleClass->SetColorMin(Color.x, Color.y, Color.z, 1.f);
-    // m_ParticleClass->SetStartAlpha(Alpha);
+    m_ParticleClass->SetStartAlpha(Alpha);
     // dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetColorMin(Color.x, Color.y, Color.z, 1.f);
-    // dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetStartAlpha(Alpha);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetStartAlpha(Alpha);
 }
 
 void CEffectEditor::OnAlphaEndEdit(float Alpha)
@@ -804,9 +865,9 @@ void CEffectEditor::OnAlphaEndEdit(float Alpha)
     if (!m_ParticleClass)
         return;
 
-    // m_ParticleClass->SetEndAlpha(Alpha);
+    m_ParticleClass->SetEndAlpha(Alpha);
     // dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetColorMin(Color.x, Color.y, Color.z, 1.f);
-    // dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetEndAlpha(Alpha);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetEndAlpha(Alpha);
 }
 
 void CEffectEditor::OnSetAlphaBlendToMaterialCallback()
@@ -1257,8 +1318,8 @@ void CEffectEditor::SetBasicDefaultParticleInfos(CParticle* Particle)
     Particle->SetColorMax(Vector4(0.6f, 0.8f, 0.8f, 1.f));
 
     // Alpha
-    // Particle->SetMinAlpha(1.f);
-    // Particle->SetMaxAlpha(1.f);
+    Particle->SetStartAlpha(1.f);
+    Particle->SetEndAlpha(1.f);
 
     // Move Dir
     Particle->SetMoveDir(Vector3(0.f, 1.f, 0.f)); 
@@ -1494,6 +1555,12 @@ void CEffectEditor::SetIMGUIReflectParticle(CParticle* Particle)
     // Radius
     m_GenerateRadius->SetValue(Particle->GetGenerateRadius());
 
+    // UV Move 
+    m_IsMoveEnableEdit->SetCheck(0, Particle->GetUVMoveEnable());
+    m_UVRowN->SetVal(Particle->GetUVRowN());
+    m_UVColN->SetVal(Particle->GetUVColN());
+
+    // Spawn Count, Time
     m_SpawnCountMaxEdit->SetVal(Particle->GetSpawnCountMax());
     m_SpawnTimeMaxEdit->SetVal(Particle->GetSpawnTimeMax());
 
@@ -1800,8 +1867,8 @@ void CEffectEditor::OnFireSmallPreset()
     dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGravity(false);
 
     // Alpha
-    OnAlphaEndEdit(2.f);
-    OnAlphaStartEdit(0.7f);
+    OnAlphaStartEdit(2.0f);
+    OnAlphaEndEdit(0.7f);
     OnSetAlphaBlendToMaterialCallback();
 
     // Random Dir
@@ -1915,8 +1982,12 @@ void CEffectEditor::OnSparkPreset()
     dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetMove(true);
 
     // Gravity X
-    m_ParticleClass->SetGravity(false);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGravity(false);
+    m_ParticleClass->SetGravity(true);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGravity(true);
+
+    // Bounce X
+    m_ParticleClass->SetBounceEnable(false);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetBounceEnable(false);
 
     // Alpha
     OnAlphaEndEdit(1.f);
@@ -2000,7 +2071,7 @@ void CEffectEditor::OnSimpleMeteorPreset()
     m_ParticleClass->SetIsRandomMoveDir(false);
     dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetIsRandomMoveDir(false);
 
-    // Radiuse
+    // Radius
     OnEditGenerateRadius(3.f);
 
     // SpawnTime

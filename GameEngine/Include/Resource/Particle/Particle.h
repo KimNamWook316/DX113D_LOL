@@ -277,7 +277,33 @@ public:
 	{
 		return m_CBuffer->GetEndAlpha();
 	}
+	// UV Move
+	int GetUVMoveEnable() const
+	{
+		return m_CBuffer->GetUVMoveEnable();
+	}
+	int GetUVRowN() const
+	{
+		return m_CBuffer->GetUVRowN();
+	}
+	int GetUVColN() const
+	{
+		return m_CBuffer->GetUVColN();
+	}
 public:
+	// UV Move
+	void SetUVMoveEnable(bool Enable)
+	{
+		m_CBuffer->SetUVMoveEnable(Enable);
+	}
+	int SetUVRowN(int Row)
+	{
+		m_CBuffer->SetUVRowN(Row);
+	}
+	int SetUVColN(int Col)
+	{
+		m_CBuffer->SetUVColN(Col);
+	}
 	// MoveUp Corn
 	void SetLifeTimeLinearFromCenter(bool Enable)
 	{

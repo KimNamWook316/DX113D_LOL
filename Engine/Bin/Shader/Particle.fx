@@ -44,7 +44,12 @@ cbuffer	ParticleCBuffer : register(b11)
 	int g_ParticleGenerateTorch;
 	float g_ParticleEmpty2;
 	int  g_ParticleLifeTimeLinear;
-	float ParticleEmpty4;
+	float ParticleEmpty3;
+
+	int g_ParticleUVMoveEnable;
+	int g_ParticleUVRowN;
+	int g_ParticleUVColN;
+	int ParticleEmpty4;
 };
 
 /*
@@ -89,6 +94,10 @@ struct ParticleInfoShared
 
 	float3 RotationAngle;
 	float PrevRingAngle;
+
+	int UVMoveEnable;
+	int UVRowN;
+	int UVColN;
 };
 
 
@@ -172,6 +181,9 @@ void ParticleUpdate(uint3 ThreadID : SV_DispatchThreadID)
 	g_ParticleShare[0].GravityEnable = g_ParticleGravity;
 	g_ParticleShare[0].RotationAngle = g_ParticleRotationAngle;
 
+	g_ParticleShare[0].UVMoveEnable = g_ParticleUVMoveEnable;
+	g_ParticleShare[0].UVRowN = g_ParticleUVRowN;
+	g_ParticleShare[0].UVColN   = g_ParticleUVColN;
 
 	// 동작되는 스레드의 수가 생성되는 파티클의 최대 수 보다 크거나 같다면
 	// 잘못된 인덱스로 동작하기 때문에 처리를 안해준다.
@@ -456,6 +468,43 @@ void ParticleGS(point VertexParticleOutput input[1],
 	OutputArray[1].UV = float2(1.f, 0.f);
 	OutputArray[2].UV = float2(0.f, 1.f);
 	OutputArray[3].UV = float2(1.f, 1.f);
+
+	if (g_ParticleShareSRV[0].UVMoveEnable == 1)
+	{
+		int UVRowN = g_ParticleShareSRV[0].UVRowN;
+		int UVColN = g_ParticleShareSRV[0].UVColN;
+
+		// 가로 UV 단일 크기
+		float WUVSize = 1.f / (float)UVColN;
+		// 세로 UV 단일 크기 
+		float HUVSize = 1.f / (float)UVRowN;
+
+		// ex) 5 * 2 => 10개
+		// 9 / 10 => 0.9 
+		// 10 * 0.9 => 9번째 UV => Idx 상으로는 8번째 (총 Idx 가 0 에서 9까지 존재) 
+		int TotalUVNum = UVRowN * UVColN;
+		float FloatCurUVIdx = ((float)g_ParticleArraySRV[InstanceID].LifeTime / (float)(g_ParticleArraySRV[InstanceID].LifeTimeMax)) * (float)TotalUVNum;
+		int CurUVIdx = floor(FloatCurUVIdx);
+		// CurUVIdx -= 1;
+
+		// row * col = 2 * 5
+		// rowS = 0.5 (height)
+		// colS  = 0.2 (width)
+		// 0.95 * 10 => 9.5 => floor(9.5) => 9;
+		// 10개의 칸 중에서, 가장 마지막 번째 칸이다.
+		// 9 / 5 => 1행
+		// 9 % 5 => 4열
+		int RowUVIdx = CurUVIdx / UVColN;
+		int ColUVIdx = (CurUVIdx % UVColN);
+
+		float2 UVStartPos = float2(WUVSize * ColUVIdx, HUVSize * RowUVIdx);
+		float2 UVEndPos = UVStartPos + float2(WUVSize, HUVSize);
+
+		OutputArray[0].UV = float2(UVStartPos.x, UVStartPos.y);
+		OutputArray[1].UV = float2(UVEndPos.x, UVStartPos.y);
+		OutputArray[2].UV = float2(UVStartPos.x, UVEndPos.y);
+		OutputArray[3].UV = float2(UVEndPos.x, UVEndPos.y);
+	}
 
 	float	Ratio = g_ParticleArraySRV[InstanceID].LifeTime / g_ParticleArraySRV[InstanceID].LifeTimeMax;
 

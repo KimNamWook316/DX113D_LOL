@@ -32,6 +32,10 @@ CParticleConstantBuffer::CParticleConstantBuffer() :
 	m_BufferData.IsGenerateTorch = 0;
 
 	m_BufferData.IsMoveDirRandom = 0;
+
+	m_BufferData.IsLifeTimeLinearFromCenter = 0;
+
+	m_BufferData.UVMoveEnable = 0;
 }
 
 CParticleConstantBuffer::CParticleConstantBuffer(const CParticleConstantBuffer& Buffer) :

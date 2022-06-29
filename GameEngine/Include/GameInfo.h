@@ -445,7 +445,12 @@ struct	ParticleCBuffer
 	int IsGenerateTorch;
 	float ParticleEmpty2;
 	int IsLifeTimeLinearFromCenter;
-	float ParticleEmpty4;
+	float ParticleEmpty3;
+
+	int UVMoveEnable;
+	int UVRowN;
+	int UVColN;
+	int ParticleEmpty4;
 };
 
 struct ParticleInfo
@@ -459,7 +464,7 @@ struct ParticleInfo
 	int		Alive;
 	float	FallTime;
 	float	FallStartY;
-	
+
 	float  InitWorldPosY;
 };
 
@@ -473,6 +478,10 @@ struct ParticleInfoShared
 	int		GravityEnable;
 	Vector3  RotationAngle;
 	float  PrevRingAngle;
+
+	int    UVMoveEnable;
+	int    UVRowN;
+	int    UVColN;
 };
 
 struct GlobalCBuffer

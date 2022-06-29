@@ -67,6 +67,11 @@ private:
     class CIMGUIInputFloat3* m_ScaleMinEdit;
     class CIMGUIInputFloat3* m_ScaleMaxEdit;
 
+    // UV Move
+    class CIMGUICheckBox* m_IsMoveEnableEdit;
+    class CIMGUIInputInt*   m_UVRowN;
+    class CIMGUIInputInt*   m_UVColN;
+
     // Life Time
     class CIMGUICheckBox* m_IsLifeTimeLinearFromCenterEdit;
     class CIMGUIInputFloat* m_LifeTimeMinEdit;
@@ -147,6 +152,10 @@ private:
     void OnLoadParticleObjectButton();
     void OnRestartParticleComponentButton();
 
+    // UV Move
+    void OnIsUVMoveEnableEdit(const char*, bool);
+    void OnUVRowNEdit(int Num);
+    void OnUVColNEdit(int Num);
 
     // Generate Radius
     void OnEditGenerateRadius(float Radius); //

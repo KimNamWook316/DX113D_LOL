@@ -30,7 +30,19 @@ public:
 	{
 		return m_BufferData.StartMax;
 	}
-
+	// UV Move
+	int GetUVMoveEnable() const
+	{
+		return m_BufferData.UVMoveEnable;
+	}
+	int GetUVRowN() const
+	{
+		return m_BufferData.UVRowN;
+	}
+	int GetUVColN() const
+	{
+		return m_BufferData.UVColN;
+	}
 	int GetSpawnCount()	const
 	{
 		return m_BufferData.SpawnCountMax;
@@ -180,7 +192,21 @@ public:
 		return m_BufferData.AlphaEnd;
 	}
 public:
+	// UV Move
+	void SetUVMoveEnable(bool Enable) 
+	{
+		m_BufferData.UVMoveEnable = Enable ? 1: 0;
+	}
+	int SetUVRowN(int Row) 
+	{
+		m_BufferData.UVRowN = Row;
+	}
+	int SetUVColN(int Col) 
+	{
+		m_BufferData.UVColN = Col;
+	}
 
+	// Life Time Linear
 	void SetLifeTimeLinearFromCenter(bool Enable)
 	{
 		m_BufferData.IsLifeTimeLinearFromCenter = Enable ? 1 : 0;
