@@ -8,6 +8,16 @@ cbuffer HDRRenderCBuffer : register(b10)
 	float g_HDRDOFMin;
 	float g_HDRDOFMax;
 	float3 g_HDRDOFEmpty;
+};
+
+cbuffer FogCBuffer : register(b11)
+{
+	float3	g_FogColor;
+	int		g_FogType;
+	float	g_FogStart;
+	float	g_FogEnd;
+	float	g_FogDensity;
+	float	g_FogEmpty;
 }
 
 Texture2DMS<float4> g_HDRTex : register(t10);
@@ -15,6 +25,40 @@ StructuredBuffer<float> g_AvgLum : register(t11);
 Texture2D<float4> g_BloomTex : register(t12);
 Texture2DMS<float4> g_GBufferDepth : register(t13);
 Texture2D<float4> g_DownScaleTex : register(t14);
+
+#define Fog_Type_Linear 0
+#define Fog_Type_Exp	1
+#define Fog_Type_Exp2	2
+
+#define NatrualE 2.71828
+
+float4 DepthFog(float3 OriginColor, float Depth)
+{
+	// 안개 얼만큼 끼는지 계산
+	float4 Color;
+	float FogFactor;
+
+	// Linear 쓰는게 속편함
+	if (g_FogType == Fog_Type_Linear)
+	{
+		FogFactor = ((g_FogEnd - Depth) / (g_FogEnd - g_FogStart)) * g_FogDensity;
+	}
+	else if (g_FogType == Fog_Type_Exp)
+	{
+		FogFactor = 1.f / (pow(NatrualE, Depth * g_FogDensity));
+	}
+	else if (g_FogType == Fog_Type_Exp2)
+	{
+		FogFactor = 1.f / (pow(NatrualE, Depth * Depth * g_FogDensity * g_FogDensity));
+	}
+
+	FogFactor = saturate(FogFactor);
+	
+	// 안개 색상과 보간
+	Color.rgb = lerp(OriginColor.rgb, g_FogColor, 1.f - FogFactor);
+
+	return Color;
+}
 
 float3 DepthDOF(float3 ColorFocus, float3 ColorBlurred, float Depth)
 {
@@ -70,12 +114,7 @@ PSOutput_Single HDRRenderPS(VS_OUTPUT_HDR Input)
 	float4 BloomColor = g_BloomTex.Sample(g_LinearSmp, UV);
 	BloomColor *= g_HDRBloomScale * BloomColor;
 
-	float Alpha = Color.a + ((BloomColor.r + BloomColor.g + BloomColor.b) / 3.f);
-
-	if (Alpha == 0.f)
-	{
-		clip(-1);
-	}
+	// float Alpha = Color.a + ((BloomColor.r + BloomColor.g + BloomColor.b) / 3.f);
 
 	float4 Depth = g_GBufferDepth.Load(TargetPos, 0);
 
@@ -95,8 +134,14 @@ PSOutput_Single HDRRenderPS(VS_OUTPUT_HDR Input)
 	// 톤 매핑
 	Color = float4(ToneMapping(Color.rgb), 1.f);
 
+	if (Depth.r < 1.f)
+	{
+		// Fog 계산
+		// Background 색이 Fog 색이랑 동일해야 자연스러운 결과 얻을 수 있음
+		Color = DepthFog(Color.rgb, Depth.g);
+	}
+
 	Output.Color = Color;
-	Output.Color.a = Alpha;
 
 	return Output;
 }

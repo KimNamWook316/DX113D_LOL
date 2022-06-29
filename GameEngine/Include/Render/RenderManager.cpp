@@ -87,6 +87,31 @@ float CRenderManager::GetDOFMax() const
 	return m_PostFXRenderer->GetDOFMax();
 }
 
+const Vector3& CRenderManager::GetFogColor() const
+{
+	return m_PostFXRenderer->GetFogColor();
+}
+
+Fog_Type CRenderManager::GetFogType() const
+{
+	return m_PostFXRenderer->GetFogType();
+}
+
+float CRenderManager::GetFogStart() const
+{
+	return m_PostFXRenderer->GetFogStart();
+}
+
+float CRenderManager::GetFogEnd() const
+{
+	return m_PostFXRenderer->GetFogEnd();
+}
+
+float CRenderManager::GetFogDensity() const
+{
+	return m_PostFXRenderer->GetFogDensity();
+}
+
 void CRenderManager::SetMiddleGray(float Gray)
 {
 	m_PostFXRenderer->SetMiddleGray(Gray);
@@ -115,6 +140,31 @@ void CRenderManager::SetDOFMin(float Min)
 void CRenderManager::SetDOFMax(float Max)
 {
 	m_PostFXRenderer->SetDOFMax(Max);
+}
+
+void CRenderManager::SetFogColor(const Vector3& Color)
+{
+	m_PostFXRenderer->SetFogColor(Color);
+}
+
+void CRenderManager::SetFogType(Fog_Type Type)
+{
+	m_PostFXRenderer->SetFogType(Type);
+}
+
+void CRenderManager::SetFogStart(float Start)
+{
+	m_PostFXRenderer->SetFogStart(Start);
+}
+
+void CRenderManager::SetFogEnd(float End)
+{
+	m_PostFXRenderer->SetFogEnd(End);
+}
+
+void CRenderManager::SetFogDensity(float Density)
+{
+	m_PostFXRenderer->SetFogDensity(Density);
 }
 
 void CRenderManager::SetAdaptationTime(float Time)

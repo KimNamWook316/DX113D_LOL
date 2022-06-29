@@ -327,3 +327,11 @@ enum class Object_Type
 	MapObject,
 	None
 };
+
+enum class Fog_Type
+{
+	Linear,
+	Exp,
+	Exp2,
+	Max
+};

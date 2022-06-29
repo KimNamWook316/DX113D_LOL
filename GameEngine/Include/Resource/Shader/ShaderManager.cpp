@@ -277,6 +277,9 @@ bool CShaderManager::Init()
 	CreateConstantBuffer("HDRRenderCBuffer", sizeof(HDRRenderCBuffer), 10,
 		(int)Buffer_Shader_Type::Pixel);
 
+	CreateConstantBuffer("FogCBuffer", sizeof(FogCBuffer), 11,
+		(int)Buffer_Shader_Type::Pixel);
+
 	return true;
 }
 

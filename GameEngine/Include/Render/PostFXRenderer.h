@@ -21,6 +21,11 @@ public:
 	void SetBloomScale(float Scale);
 	void SetDOFMin(float Min);
 	void SetDOFMax(float Max);
+	void SetFogColor(const Vector3& Color);
+	void SetFogType(Fog_Type Type);
+	void SetFogStart(float Start);
+	void SetFogEnd(float End);
+	void SetFogDensity(float Density);
 
 	float GetMiddleGray() const;
 	float GetLumWhite() const;
@@ -28,6 +33,11 @@ public:
 	float GetBloomScale() const;
 	float GetDOFMin() const;
 	float GetDOFMax() const;
+	const Vector3& GetFogColor() const;
+	Fog_Type GetFogType() const;
+	float GetFogStart() const;
+	float GetFogEnd() const;
+	float GetFogDensity() const;
 
 	void SetAdaptationTime(float Time)
 	{
@@ -63,6 +73,7 @@ private:
 	// ConstantBuffer
 	class CDownScaleCBuffer* m_DownScaleCBuffer;
 	class CHDRRenderCBuffer* m_HDRRenderCBuffer;
+	class CFogCBuffer*		 m_FogCBuffer;
 
 	// RenderState
 	class CRenderState* m_DepthDisable;

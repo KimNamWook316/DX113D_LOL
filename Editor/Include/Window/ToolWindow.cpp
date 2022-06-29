@@ -15,6 +15,7 @@
 #include "../Window/ObjectHierarchyWindow.h"
 #include "IMGUIManager.h"
 #include "../EditorInfo.h":
+#include "EngineUtil.h"
 
 CToolWindow::CToolWindow()	:
 	m_GizmoBlock(nullptr),
@@ -80,6 +81,12 @@ bool CToolWindow::Init()
 	m_BloomScale = Tree->AddWidget<CIMGUISliderFloat>("Bloom Scale");
 	m_DOFMin = Tree->AddWidget<CIMGUISliderFloat>("DOF Min");
 	m_DOFMax = Tree->AddWidget<CIMGUISliderFloat>("DOF Max");
+	Tree = Tree->AddWidget<CIMGUITree>("Fog Value");
+	m_FogType = Tree->AddWidget<CIMGUIComboBox>("Fog Type");
+	m_FogColor = Tree->AddWidget<CIMGUIColor3>("Fog Color");
+	m_FogStart = Tree->AddWidget<CIMGUISliderFloat>("Fog Start");
+	m_FogEnd = Tree->AddWidget<CIMGUISliderFloat>("Fog End");
+	m_FogDensity = Tree->AddWidget<CIMGUISliderFloat>("Fog Density");
  //	CIMGUITree* Tree = m_RenderBlock->AddWidget<CIMGUITree>("Outline", 200.f);
  //	m_OutlineDepthMultiply = Tree->AddWidget<CIMGUISliderFloat>("Outline Depth Multiplier");
  //	m_OutlineDepthBias = Tree->AddWidget<CIMGUISliderFloat>("Outline Depth Bias");
@@ -166,6 +173,32 @@ bool CToolWindow::Init()
 	bool IsDebugRender = CRenderManager::GetInst()->IsDebugRender();
 	m_DebugRender->SetCheck(0, IsDebugRender);
 
+	std::string TypeName;
+	for (int i = 0; i < (int)Fog_Type::Max; ++i)
+	{
+		TypeName = CEngineUtil::FogTypeToString((Fog_Type)i);
+		m_FogType->AddItem(TypeName);
+	}
+	Fog_Type CurType = CRenderManager::GetInst()->GetFogType();
+	m_FogType->SetSelectIndex((int)CurType);
+
+	m_FogColor->SetRGB(CRenderManager::GetInst()->GetFogColor());
+
+	float FogStart = CRenderManager::GetInst()->GetFogStart();
+	m_FogStart->SetMin(0);
+	m_FogStart->SetMax(CameraDist);
+	m_FogStart->SetValue(FogStart);
+
+	float FogEnd = CRenderManager::GetInst()->GetFogEnd();
+	m_FogEnd->SetMin(0);
+	m_FogEnd->SetMax(CameraDist);
+	m_FogEnd->SetValue(FogEnd);
+
+	float FogDensity = CRenderManager::GetInst()->GetFogDensity();
+	m_FogDensity->SetMin(0.1f);
+	m_FogDensity->SetMax(1.f);
+	m_FogDensity->SetValue(FogDensity);
+
 	// CallBack
 	m_GizmoTransformMode->SetCallBack(this, &CToolWindow::OnSelectGizmoTransformMode);
 	m_GizmoOperationMode->SetCallBack(this, &CToolWindow::OnSelectGizmoOperationMode);
@@ -187,6 +220,11 @@ bool CToolWindow::Init()
 	m_BloomScale->SetCallBack(this, &CToolWindow::OnChangeBloomScale);
 	m_DOFMin->SetCallBack(this, &CToolWindow::OnChangeDOFMin);
 	m_DOFMax->SetCallBack(this, &CToolWindow::OnChangeDOFMax);
+	m_FogType->SetSelectCallback(this, &CToolWindow::OnSelectFogType);
+	m_FogColor->SetCallBack(this, &CToolWindow::OnChageFogColor);
+	m_FogStart->SetCallBack(this, &CToolWindow::OnChangeFogStart);
+	m_FogEnd->SetCallBack(this, &CToolWindow::OnChangeFogEnd);
+	m_FogDensity->SetCallBack(this, &CToolWindow::OnChangeFogDensity);
 
 	// 디버그용 임시 키
 	CInput::GetInst()->CreateKey("Z", 'Z');
@@ -290,6 +328,32 @@ void CToolWindow::OnChangeDOFMin(float Min)
 void CToolWindow::OnChangeDOFMax(float Max)
 {
 	CRenderManager::GetInst()->SetDOFMax(Max);
+}
+
+void CToolWindow::OnSelectFogType(int Index, const char* Label)
+{
+	Fog_Type Type = (Fog_Type)Index;
+	CRenderManager::GetInst()->SetFogType(Type);
+}
+
+void CToolWindow::OnChageFogColor(const Vector3& Color)
+{
+	CRenderManager::GetInst()->SetFogColor(Color);
+}
+
+void CToolWindow::OnChangeFogStart(float Val)
+{
+	CRenderManager::GetInst()->SetFogStart(Val);
+}
+
+void CToolWindow::OnChangeFogEnd(float Val)
+{
+	CRenderManager::GetInst()->SetFogEnd(Val);
+}
+
+void CToolWindow::OnChangeFogDensity(float Val)
+{
+	CRenderManager::GetInst()->SetFogDensity(Val);
 }
 
  //void CToolWindow::OnChangeOutlineDepthMultiply(float Val)

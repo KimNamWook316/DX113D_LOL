@@ -233,6 +233,11 @@ public:
 	float GetBloomScale() const;
 	float GetDOFMin() const;
 	float GetDOFMax() const;
+	const Vector3& GetFogColor() const;
+	Fog_Type GetFogType() const;
+	float GetFogStart() const;
+	float GetFogEnd() const;
+	float GetFogDensity() const;
 
 	void SetMiddleGray(float Gray);
 	void SetLumWhite(float White);
@@ -240,6 +245,11 @@ public:
 	void SetBloomScale(float Scale);
 	void SetDOFMin(float Min);
 	void SetDOFMax(float Max);
+	void SetFogColor(const Vector3& Color);
+	void SetFogType(Fog_Type Type);
+	void SetFogStart(float Start);
+	void SetFogEnd(float End);
+	void SetFogDensity(float Density);
 
 	void SetAdaptationTime(float Time);
 	float GetAdaptationTime() const;

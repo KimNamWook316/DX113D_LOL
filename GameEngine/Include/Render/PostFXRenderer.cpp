@@ -2,6 +2,7 @@
 #include "../Device.h"
 #include "../Engine.h"
 #include "../Resource/Shader/HDRRenderCBuffer.h"
+#include "../Resource/Shader/FogCBuffer.h"
 #include "../Resource/Shader/DownScaleCBuffer.h"
 #include "../Resource/Shader/ComputeShader.h"
 #include "../Resource/ResourceManager.h"
@@ -20,6 +21,7 @@ CPostFXRenderer::CPostFXRenderer()	:
 	m_HDRRenderShader(nullptr),
 	m_DownScaleCBuffer(nullptr),
 	m_HDRRenderCBuffer(nullptr),
+	m_FogCBuffer(nullptr),
 	m_AlphaBlend(nullptr),
 	m_DepthDisable(nullptr),
 	m_DownScaleBuffer(nullptr),
@@ -53,6 +55,7 @@ CPostFXRenderer::~CPostFXRenderer()
 {
 	SAFE_DELETE(m_DownScaleCBuffer);
 	SAFE_DELETE(m_HDRRenderCBuffer);
+	SAFE_DELETE(m_FogCBuffer);
 
 	SAFE_RELEASE(m_DownScaleBuffer);
 	SAFE_RELEASE(m_DownScaleUAV);
@@ -289,6 +292,10 @@ bool CPostFXRenderer::Init()
 	m_HDRRenderCBuffer = new CHDRRenderCBuffer;
 	m_HDRRenderCBuffer->Init();
 
+	// Fog Constant Buffer
+	m_FogCBuffer = new CFogCBuffer;
+	m_FogCBuffer->Init();
+
 	// Shader
 	m_DownScaleFirstPassShader = (CComputeShader*)CResourceManager::GetInst()->FindShader("HDRDownScaleFirstPassShader");
 	m_DownScaleSecondPassShader = (CComputeShader*)CResourceManager::GetInst()->FindShader("HDRDownScaleSecondPassShader");
@@ -359,6 +366,31 @@ void CPostFXRenderer::SetDOFMax(float Max)
 	m_HDRRenderCBuffer->SetDOFMax(Max);
 }
 
+void CPostFXRenderer::SetFogColor(const Vector3& Color)
+{
+	m_FogCBuffer->SetFogColor(Color);
+}
+
+void CPostFXRenderer::SetFogType(Fog_Type Type)
+{
+	m_FogCBuffer->SetFogType(Type);
+}
+
+void CPostFXRenderer::SetFogStart(float Start)
+{
+	m_FogCBuffer->SetFogStart(Start);
+}
+
+void CPostFXRenderer::SetFogEnd(float End)
+{
+	m_FogCBuffer->SetFogEnd(End);
+}
+
+void CPostFXRenderer::SetFogDensity(float Density)
+{
+	m_FogCBuffer->SetFogDensity(Density);
+}
+
 float CPostFXRenderer::GetMiddleGray() const
 {
 	return m_HDRRenderCBuffer->GetMiddleGray();
@@ -387,6 +419,31 @@ float CPostFXRenderer::GetDOFMin() const
 float CPostFXRenderer::GetDOFMax() const
 {
 	return m_HDRRenderCBuffer->GetDOFMax();
+}
+
+const Vector3& CPostFXRenderer::GetFogColor() const
+{
+	return m_FogCBuffer->GetFogColor();
+}
+
+Fog_Type CPostFXRenderer::GetFogType() const
+{
+	return m_FogCBuffer->GetFogType();
+}
+
+float CPostFXRenderer::GetFogStart() const
+{
+	return m_FogCBuffer->GetFogStart();
+}
+
+float CPostFXRenderer::GetFogEnd() const
+{
+	return m_FogCBuffer->GetFogEnd();
+}
+
+float CPostFXRenderer::GetFogDensity() const
+{
+	return m_FogCBuffer->GetFogDensity();
 }
 
 void CPostFXRenderer::Render(float DeltaTime, CRenderTarget* LDRTarget)
@@ -564,6 +621,7 @@ void CPostFXRenderer::RenderFinal(CRenderTarget* LDRTarget)
 	ID3D11DeviceContext* Context = CDevice::GetInst()->GetContext();
 
 	m_HDRRenderCBuffer->UpdateCBuffer();
+	m_FogCBuffer->UpdateCBuffer();
 
 	ID3D11ShaderResourceView* arrSRV[5] = {};
 	arrSRV[0] = LDRTarget->GetResource(0);				// HDR∑Œ ∫Ø»Ø«“ Final Screen (LDR ∑ª¥ı≈∏∞Ÿ)

@@ -691,3 +691,13 @@ struct HDRRenderCBuffer
 	float DOFMax;				// 완전 초점 상실 거리
 	Vector3 Empty;
 };
+
+struct FogCBuffer
+{
+	Vector3 Color;
+	int Type;
+	float Start;				// 월드 깊이
+	float End;					// 월드 깊이
+	float Density;				
+	float Empty;
+};
