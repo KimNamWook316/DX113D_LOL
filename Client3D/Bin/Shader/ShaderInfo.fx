@@ -12,7 +12,7 @@ struct PSOutput_GBuffer
     float4 GBuffer3 : SV_Target3;
     float4 GBuffer4 : SV_Target4;
     float4 GBuffer5 : SV_Target5;
-	float4 GBufferOutline : SV_Target6;
+	// float4 GBufferOutline : SV_Target6;
 };
 
 cbuffer Transform : register(b0)
@@ -99,6 +99,16 @@ cbuffer InstancingCBuffer : register(b6)
 	float3 g_InstancingEmpty;
 };
 
+cbuffer DownScaleCBuffer : register(b10)
+{
+	uint2 g_DownScaleRS;
+	uint g_DownScaleDomain;
+	uint g_DownScaleGroupSize;
+	float g_DownScaleAdpatation;
+	float g_DownScaleBloomThreshold;
+	float2 g_DownScaleEmpty;
+}
+
 struct LightResult
 {
     float3 Dif;
@@ -112,6 +122,8 @@ struct LightResult
 #define	LightTypeSpot	2
 
 #define OutlineThickMax 20.f
+
+static const float4 LUM_FACTOR = float4(0.299, 0.587, 0.114, 0);
 
 SamplerState	g_PointSmp : register(s0);
 SamplerState	g_LinearSmp : register(s1);

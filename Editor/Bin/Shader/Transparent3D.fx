@@ -6,7 +6,7 @@ struct PS_OUTPUT_TRANSPARENT
 	float4 ScreenColor : SV_Target;
 	float4 Normal : SV_Target1;
 	float4 Depth : SV_Target2;
-	float4 Outline : SV_Target3;
+	// float4 Outline : SV_Target3;
 };
 
 cbuffer LightForwardCBuffer : register(b12)
@@ -308,19 +308,19 @@ PS_OUTPUT_TRANSPARENT Transparent3DPS(Vertex3DOutput input)
 	output.Depth.b = g_MtrlSpecularColor.w;
 	output.Depth.a = 1.f;
 
-	// ¿Ü°û¼± Á¤º¸
-    if (g_MtrlOutlineEnable == 1)
-	{
-		//output.GBufferOutline.rgb = g_MtrlOutlineColor;
-		output.Outline.r = ConvertColor(float4(g_MtrlOutlineColor, 0.f));
-
-		int Exp = 0;
-		float Frac = modf(g_MtrlOutlineThickness, Exp);
-
-		output.Outline.g = asfloat(Exp);
-		output.Outline.b = saturate(Frac);
-		output.Outline.a = 1.f;
-	}
+ //	// ¿Ü°û¼± Á¤º¸
+ //    if (g_MtrlOutlineEnable == 1)
+ //	{
+ //		//output.GBufferOutline.rgb = g_MtrlOutlineColor;
+ //		output.Outline.r = ConvertColor(float4(g_MtrlOutlineColor, 0.f));
+ //
+ //		int Exp = 0;
+ //		float Frac = modf(g_MtrlOutlineThickness, Exp);
+ //
+ //		output.Outline.g = asfloat(Exp);
+ //		output.Outline.b = saturate(Frac);
+ //		output.Outline.a = 1.f;
+ //	}
 
 	return output;
 }
@@ -544,17 +544,17 @@ PS_OUTPUT_TRANSPARENT TransparentInstancingPS(Vertex3DOutputInstancing input)
 	output.Depth.a = 1.f;
 
 	// ¿Ü°û¼± Á¤º¸
-	if (g_InstancingInfoArray[input.InstanceID].g_MtrlOutlineEnable == 1)
-	{
-		//output.GBufferOutline.rgb = g_MtrlOutlineColor;
-		output.Outline.r = ConvertColor(float4(g_InstancingInfoArray[input.InstanceID].g_MtrlOutlineColor, 0.f));
-
-		int Exp = 0;
-		float Frac = modf(g_InstancingInfoArray[input.InstanceID].g_MtrlOutlineThickness, Exp);
-
-		output.Outline.g = asfloat(Exp);
-		output.Outline.b = saturate(Frac);
-		output.Outline.a = 1.f;
-	}
+ //	if (g_InstancingInfoArray[input.InstanceID].g_MtrlOutlineEnable == 1)
+ //	{
+ //		//output.GBufferOutline.rgb = g_MtrlOutlineColor;
+ //		output.Outline.r = ConvertColor(float4(g_InstancingInfoArray[input.InstanceID].g_MtrlOutlineColor, 0.f));
+ //
+ //		int Exp = 0;
+ //		float Frac = modf(g_InstancingInfoArray[input.InstanceID].g_MtrlOutlineThickness, Exp);
+ //
+ //		output.Outline.g = asfloat(Exp);
+ //		output.Outline.b = saturate(Frac);
+ //		output.Outline.a = 1.f;
+ //	}
 	return output;
 }

@@ -236,18 +236,18 @@ PSOutput_GBuffer Standard3DPS(Vertex3DOutput input)
     // output.GBuffer3.a = ConvertColor(EmissiveColor* ReflectColor * fresnel);
     output.GBuffer3.a = ConvertColor(EmissiveColor);
 
-    if (g_MtrlOutlineEnable)
-	{
-		//output.GBufferOutline.rgb = g_MtrlOutlineColor;
-		output.GBufferOutline.r = ConvertColor(float4(g_MtrlOutlineColor, 0.f));
-
-		int Exp = 0;
-		float Frac = modf(g_MtrlOutlineThickness, Exp);
-
-		output.GBufferOutline.g = asfloat(Exp);
-		output.GBufferOutline.b = saturate(Frac);
-		output.GBufferOutline.a = 1.f;
-	}
+ //    if (g_MtrlOutlineEnable)
+ //	{
+ //		//output.GBufferOutline.rgb = g_MtrlOutlineColor;
+ //		output.GBufferOutline.r = ConvertColor(float4(g_MtrlOutlineColor, 0.f));
+ //
+ //		int Exp = 0;
+ //		float Frac = modf(g_MtrlOutlineThickness, Exp);
+ //
+ //		output.GBufferOutline.g = asfloat(Exp);
+ //		output.GBufferOutline.b = saturate(Frac);
+ //		output.GBufferOutline.a = 1.f;
+ //	}
 
     return output;
 }
@@ -400,18 +400,18 @@ PSOutput_GBuffer Standard3DInstancingPS(Vertex3DOutputInstancing input)
     
 	output.GBuffer3.a = ConvertColor(EmissiveColor);
 
-	if (g_InstancingInfoArray[input.InstanceID].g_MtrlOutlineEnable)
-	{
-		output.GBufferOutline.r = ConvertColor(float4(g_InstancingInfoArray[input.InstanceID].g_MtrlOutlineColor, 0.f));
-
-		int Exp = 0;
-		float Frac = modf(g_InstancingInfoArray[input.InstanceID].g_MtrlOutlineThickness, Exp);
-
-		output.GBufferOutline.g = asfloat(Exp);
-		output.GBufferOutline.b = saturate(Frac);
-		output.GBufferOutline.a = 1.f;
-	}
-
+ //	if (g_InstancingInfoArray[input.InstanceID].g_MtrlOutlineEnable)
+ //	{
+ //		output.GBufferOutline.r = ConvertColor(float4(g_InstancingInfoArray[input.InstanceID].g_MtrlOutlineColor, 0.f));
+ //
+ //		int Exp = 0;
+ //		float Frac = modf(g_InstancingInfoArray[input.InstanceID].g_MtrlOutlineThickness, Exp);
+ //
+ //		output.GBufferOutline.g = asfloat(Exp);
+ //		output.GBufferOutline.b = saturate(Frac);
+ //		output.GBufferOutline.a = 1.f;
+ //	}
+ //
 	return output;
 }
 // Instancing

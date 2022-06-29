@@ -27,7 +27,7 @@ private:
     void OnClickRenameButton();
     void OnCheckEnableCheckBox(int Idx, bool Check);
 protected:
-    CSharedPtr<class CSceneComponent> m_Component;
+    class CSceneComponent* m_Component;
     class CIMGUIText* m_ComponentTypeText;
     class CIMGUITextInput* m_NameInput;
     class CIMGUIButton* m_RenameButton;

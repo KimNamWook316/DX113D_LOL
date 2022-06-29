@@ -337,12 +337,18 @@ CComponent* CEditorManager::CreateComponent(CGameObject* Obj, size_t Type)
 		return Component;
 	}
 
+	else if (Type == typeid(CLightComponent).hash_code())
+	{
+		CLightComponent* Component = Obj->LoadComponent<CLightComponent>();
+		return Component;
+	}
 	else if (Type == typeid(CPlayerDataComponent).hash_code())
 	{
 		CPlayerDataComponent* Component = Obj->LoadObjectComponent<CPlayerDataComponent>();
 		// Component->EnableEditMode(true);
 		return Component;
 	}
+
 
 	return nullptr;
 }

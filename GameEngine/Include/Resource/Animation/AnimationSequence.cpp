@@ -620,6 +620,9 @@ bool CAnimationSequence::CreateSequence(bool bLoop,
 	case FbxTime::eFrames30:
 		m_FrameMode = 30;
 		break;
+	case FbxTime::eFrames50:
+		m_FrameMode = 50;
+		break;
 	case FbxTime::eFrames60:
 		m_FrameMode = 60;
 		break;
@@ -758,6 +761,9 @@ bool CAnimationSequence::CreateSequenceConvertFBX(bool bLoop, _tagFbxAnimationCl
 		break;
 	case FbxTime::eFrames30:
 		m_FrameMode = 30;
+		break;
+	case FbxTime::eFrames50:
+		m_FrameMode = 50;
 		break;
 	case FbxTime::eFrames60:
 		m_FrameMode = 60;

@@ -65,7 +65,7 @@ void CLightComponentWidget::SetSceneComponent(CSceneComponent* Com)
 {
 	CSceneComponentWidget::SetSceneComponent(Com);
 
-	CLightComponent* LightCom = static_cast<CLightComponent*>(m_Component.Get());
+	CLightComponent* LightCom = static_cast<CLightComponent*>(m_Component);
 
 	m_LightTypeEdit->SetSelectIndex((int)LightCom->GetLightType());
 	m_LightColorEdit->SetRGB(LightCom->GetLightColor().x, LightCom->GetLightColor().y, LightCom->GetLightColor().z);
@@ -79,48 +79,48 @@ void CLightComponentWidget::SetSceneComponent(CSceneComponent* Com)
 
 void CLightComponentWidget::OnEditLightColor(const Vector3& Color)
 {
-	CLightComponent* LightCom = static_cast<CLightComponent*>(m_Component.Get());
+	CLightComponent* LightCom = static_cast<CLightComponent*>(m_Component);
 	LightCom->SetColor(Vector4(Color.x, Color.y, Color.z, 1.f));
 }
 
 void CLightComponentWidget::OnEditLightType(int Idx, const char* Label)
 {
-	CLightComponent* LightCom = static_cast<CLightComponent*>(m_Component.Get());
+	CLightComponent* LightCom = static_cast<CLightComponent*>(m_Component);
 	LightCom->SetLightType((Light_Type)Idx);
 }
 
 void CLightComponentWidget::OnEditLightDist(float Value)
 {
-	CLightComponent* LightCom = static_cast<CLightComponent*>(m_Component.Get());
+	CLightComponent* LightCom = static_cast<CLightComponent*>(m_Component);
 	LightCom->SetDistance(Value);
 }
 
 void CLightComponentWidget::OnEditLightAngleIn(float Value)
 {
-	CLightComponent* LightCom = static_cast<CLightComponent*>(m_Component.Get());
+	CLightComponent* LightCom = static_cast<CLightComponent*>(m_Component);
 	LightCom->SetAngleIn(Value);
 }
 
 void CLightComponentWidget::OnEditLightAngleOut(float Value)
 {
-	CLightComponent* LightCom = static_cast<CLightComponent*>(m_Component.Get());
+	CLightComponent* LightCom = static_cast<CLightComponent*>(m_Component);
 	LightCom->SetAngleOut(Value);
 }
 
 void CLightComponentWidget::OnEditLightAtt1(float Value)
 {
-	CLightComponent* LightCom = static_cast<CLightComponent*>(m_Component.Get());
+	CLightComponent* LightCom = static_cast<CLightComponent*>(m_Component);
 	LightCom->SetAtt1(Value);
 }
 
 void CLightComponentWidget::OnEditLightAtt2(float Value)
 {
-	CLightComponent* LightCom = static_cast<CLightComponent*>(m_Component.Get());
+	CLightComponent* LightCom = static_cast<CLightComponent*>(m_Component);
 	LightCom->SetAtt2(Value);
 }
 
 void CLightComponentWidget::OnEditLightAtt3(float Value)
 {
-	CLightComponent* LightCom = static_cast<CLightComponent*>(m_Component.Get());
+	CLightComponent* LightCom = static_cast<CLightComponent*>(m_Component);
 	LightCom->SetAtt3(Value);
 }

@@ -146,7 +146,7 @@ void CParticleComponentWidget::SetSceneComponent(CSceneComponent* Com)
 {
 	CSceneComponentWidget::SetSceneComponent(Com);
 
-	CParticleComponent* MeshCom = (CParticleComponent*)m_Component.Get();
+	CParticleComponent* MeshCom = (CParticleComponent*)m_Component;
 
     // 처음에는 Particle 이 세팅되어 있지 않으므로, Diable 처리하여 Update X
     // m_Component->Enable(false);
@@ -340,88 +340,88 @@ void CParticleComponentWidget::ReflectParticleToIMGUI()
 /*
 void CParticleComponentWidget::OnSpawnTimeMaxEdit(float Num)
 {
-    dynamic_cast<CParticleComponent*>(m_Component.Get())->SetSpawnTime(Num);
+    dynamic_cast<CParticleComponent*>(m_Component)->SetSpawnTime(Num);
 }
 
 void CParticleComponentWidget::OnStartMinEdit(const Vector3& Pos)
 {
-   dynamic_cast<CParticleComponent*>(m_Component.Get())->GetParticle()->SetStartMin(Pos);
+   dynamic_cast<CParticleComponent*>(m_Component)->GetParticle()->SetStartMin(Pos);
 }
 
 void CParticleComponentWidget::OnStartMaxEdit(const Vector3& Pos)
 {
-    dynamic_cast<CParticleComponent*>(m_Component.Get())->GetParticle()->SetStartMax(Pos);
+    dynamic_cast<CParticleComponent*>(m_Component)->GetParticle()->SetStartMax(Pos);
 }
 
 void CParticleComponentWidget::OnSpawnCountMaxEdit(int Num)
 {
-    dynamic_cast<CParticleComponent*>(m_Component.Get())->GetCBuffer()->SetSpawnCountMax(Num);
+    dynamic_cast<CParticleComponent*>(m_Component)->GetCBuffer()->SetSpawnCountMax(Num);
 }
 
 void CParticleComponentWidget::OnScaleMinEdit(const Vector3& Scale)
 {
-    dynamic_cast<CParticleComponent*>(m_Component.Get())->GetCBuffer()->SetScaleMin(Scale);
+    dynamic_cast<CParticleComponent*>(m_Component)->GetCBuffer()->SetScaleMin(Scale);
 }
 
 void CParticleComponentWidget::OnScaleMaxEdit(const Vector3& Scale)
 {
-    dynamic_cast<CParticleComponent*>(m_Component.Get())->GetCBuffer()->SetScaleMax(Scale);
+    dynamic_cast<CParticleComponent*>(m_Component)->GetCBuffer()->SetScaleMax(Scale);
 }
 
 void CParticleComponentWidget::OnLifeTimeMinEdit(float Num)
 {
-    dynamic_cast<CParticleComponent*>(m_Component.Get())->GetCBuffer()->SetLifeTimeMin(Num);
+    dynamic_cast<CParticleComponent*>(m_Component)->GetCBuffer()->SetLifeTimeMin(Num);
 }
 
 void CParticleComponentWidget::OnLifeTimeMaxEdit(float Num)
 {
-    dynamic_cast<CParticleComponent*>(m_Component.Get())->GetCBuffer()->SetLifeTimeMax(Num);
+    dynamic_cast<CParticleComponent*>(m_Component)->GetCBuffer()->SetLifeTimeMax(Num);
 }
 
 void CParticleComponentWidget::OnSpeedMinEdit(float Num)
 {
-    dynamic_cast<CParticleComponent*>(m_Component.Get())->GetCBuffer()->SetSpeedMin(Num);
+    dynamic_cast<CParticleComponent*>(m_Component)->GetCBuffer()->SetSpeedMin(Num);
 }
 
 void CParticleComponentWidget::OnSpeedMaxEdit(float Num)
 {
-    dynamic_cast<CParticleComponent*>(m_Component.Get())->GetCBuffer()->SetSpeedMax(Num);
+    dynamic_cast<CParticleComponent*>(m_Component)->GetCBuffer()->SetSpeedMax(Num);
 }
 
 void CParticleComponentWidget::OnColorMinEdit(const Vector4& Color)
 {
-    dynamic_cast<CParticleComponent*>(m_Component.Get())->GetCBuffer()->SetColorMin(Color);
+    dynamic_cast<CParticleComponent*>(m_Component)->GetCBuffer()->SetColorMin(Color);
 }
 
 void CParticleComponentWidget::OnColorMaxEdit(const Vector4& Color)
 {
-    dynamic_cast<CParticleComponent*>(m_Component.Get())->GetCBuffer()->SetColorMax(Color);
+    dynamic_cast<CParticleComponent*>(m_Component)->GetCBuffer()->SetColorMax(Color);
 }
 
 
 void CParticleComponentWidget::OnIsMoveEdit(const char*, bool Enable)
 {
-    dynamic_cast<CParticleComponent*>(m_Component.Get())->GetCBuffer()->SetMove(Enable);
+    dynamic_cast<CParticleComponent*>(m_Component)->GetCBuffer()->SetMove(Enable);
 }
 
 void CParticleComponentWidget::OnIsGravityEdit(const char*, bool Enable)
 {
-    dynamic_cast<CParticleComponent*>(m_Component.Get())->GetCBuffer()->SetGravity(Enable);
+    dynamic_cast<CParticleComponent*>(m_Component)->GetCBuffer()->SetGravity(Enable);
 }
 
 void CParticleComponentWidget::OnIsRandomMoveEdit(const char*, bool Enable)
 {
-    // dynamic_cast<CParticleComponent*>(m_Component.Get())->GetCBuffer()->SetApplyRandom(Enable);
+    // dynamic_cast<CParticleComponent*>(m_Component)->GetCBuffer()->SetApplyRandom(Enable);
 }
 
 void CParticleComponentWidget::OnMoveDirEdit(const Vector3& Dir)
 {
-    dynamic_cast<CParticleComponent*>(m_Component.Get())->GetCBuffer()->SetMoveDir(Dir);
+    dynamic_cast<CParticleComponent*>(m_Component)->GetCBuffer()->SetMoveDir(Dir);
 }
 
 void CParticleComponentWidget::OnMoveAngleEdit(const Vector3& Angle)
 {
-    dynamic_cast<CParticleComponent*>(m_Component.Get())->GetCBuffer()->SetMoveAngle(Angle);
+    dynamic_cast<CParticleComponent*>(m_Component)->GetCBuffer()->SetMoveAngle(Angle);
 }
 
 
@@ -469,7 +469,7 @@ void CParticleComponentWidget::OnSetParticleTexture()
         Material->SetTexture(0, 0, (int)Buffer_Shader_Type::Pixel, ConvertFileName, FileName, PARTICLE_PATH);
 
         // 바뀐 Particle 정보를 Clone 해서 다시 세팅한다.
-        dynamic_cast<CParticleComponent*>(m_Component.Get())->SetParticle("BasicParticle");
+        dynamic_cast<CParticleComponent*>(m_Component)->SetParticle("BasicParticle");
 
         // 기존 세팅 정보를 그대로 반영한다.
         OnReflectCurrentParticleSetting();
@@ -557,39 +557,39 @@ void CParticleComponentWidget::OnSetParticleMaterialSetting(CSceneComponent* Com
 /*
 void CParticleComponentWidget::OnReflectCurrentParticleSetting()
 {
-    dynamic_cast<CParticleComponent*>(m_Component.Get())->GetParticle()->Set2D(false);
+    dynamic_cast<CParticleComponent*>(m_Component)->GetParticle()->Set2D(false);
 
-    dynamic_cast<CParticleComponent*>(m_Component.Get())->GetParticle()->SetSpawnCountMax(m_SpawnCountMaxEdit->GetVal());
+    dynamic_cast<CParticleComponent*>(m_Component)->GetParticle()->SetSpawnCountMax(m_SpawnCountMaxEdit->GetVal());
 
-    dynamic_cast<CParticleComponent*>(m_Component.Get())->GetParticle()->SetLifeTimeMin(m_LifeTimeMinEdit->GetVal());
+    dynamic_cast<CParticleComponent*>(m_Component)->GetParticle()->SetLifeTimeMin(m_LifeTimeMinEdit->GetVal());
 
-    dynamic_cast<CParticleComponent*>(m_Component.Get())->GetParticle()->SetLifeTimeMax(m_LifeTimeMaxEdit->GetVal());
+    dynamic_cast<CParticleComponent*>(m_Component)->GetParticle()->SetLifeTimeMax(m_LifeTimeMaxEdit->GetVal());
 
-    dynamic_cast<CParticleComponent*>(m_Component.Get())->GetParticle()->SetScaleMin(m_ScaleMinEdit->GetValue());
+    dynamic_cast<CParticleComponent*>(m_Component)->GetParticle()->SetScaleMin(m_ScaleMinEdit->GetValue());
 
-    dynamic_cast<CParticleComponent*>(m_Component.Get())->GetParticle()->SetScaleMax(m_ScaleMaxEdit->GetValue());
+    dynamic_cast<CParticleComponent*>(m_Component)->GetParticle()->SetScaleMax(m_ScaleMaxEdit->GetValue());
 
-    dynamic_cast<CParticleComponent*>(m_Component.Get())->GetParticle()->SetSpeedMin(m_SpeedMinEdit->GetVal());
+    dynamic_cast<CParticleComponent*>(m_Component)->GetParticle()->SetSpeedMin(m_SpeedMinEdit->GetVal());
 
-    dynamic_cast<CParticleComponent*>(m_Component.Get())->GetParticle()->SetSpeedMax(m_SpeedMaxEdit->GetVal());
+    dynamic_cast<CParticleComponent*>(m_Component)->GetParticle()->SetSpeedMax(m_SpeedMaxEdit->GetVal());
 
-    dynamic_cast<CParticleComponent*>(m_Component.Get())->GetParticle()->SetMoveDir(m_MoveDirEdit->GetValue());
+    dynamic_cast<CParticleComponent*>(m_Component)->GetParticle()->SetMoveDir(m_MoveDirEdit->GetValue());
 
-    dynamic_cast<CParticleComponent*>(m_Component.Get())->GetParticle()->SetStartMin(m_StartMinEdit->GetValue());
+    dynamic_cast<CParticleComponent*>(m_Component)->GetParticle()->SetStartMin(m_StartMinEdit->GetValue());
 
-    dynamic_cast<CParticleComponent*>(m_Component.Get())->GetParticle()->SetStartMax(m_StartMaxEdit->GetValue());
+    dynamic_cast<CParticleComponent*>(m_Component)->GetParticle()->SetStartMax(m_StartMaxEdit->GetValue());
 
-    dynamic_cast<CParticleComponent*>(m_Component.Get())->GetParticle()->SetColorMin(m_ColorMinEdit->GetRGBA());
+    dynamic_cast<CParticleComponent*>(m_Component)->GetParticle()->SetColorMin(m_ColorMinEdit->GetRGBA());
 
-    dynamic_cast<CParticleComponent*>(m_Component.Get())->GetParticle()->SetColorMax(m_ColorMaxEdit->GetRGBA());
+    dynamic_cast<CParticleComponent*>(m_Component)->GetParticle()->SetColorMax(m_ColorMaxEdit->GetRGBA());
 
-    dynamic_cast<CParticleComponent*>(m_Component.Get())->GetParticle()->SetMoveAngle(m_MoveAngleEdit->GetValue());
+    dynamic_cast<CParticleComponent*>(m_Component)->GetParticle()->SetMoveAngle(m_MoveAngleEdit->GetValue());
 
-    dynamic_cast<CParticleComponent*>(m_Component.Get())->GetParticle()->SetGravity(m_IsGravityEdit->GetCheck(0));
+    dynamic_cast<CParticleComponent*>(m_Component)->GetParticle()->SetGravity(m_IsGravityEdit->GetCheck(0));
 
-    dynamic_cast<CParticleComponent*>(m_Component.Get())->GetParticle()->SetMove(m_IsMoveEdit->GetCheck(0));
+    dynamic_cast<CParticleComponent*>(m_Component)->GetParticle()->SetMove(m_IsMoveEdit->GetCheck(0));
 
-    // dynamic_cast<CParticleComponent*>(m_Component.Get())->GetParticle()->SetApplyRandom(m_IsRandomMoveEdit->GetCheck(0));
+    // dynamic_cast<CParticleComponent*>(m_Component)->GetParticle()->SetApplyRandom(m_IsRandomMoveEdit->GetCheck(0));
 }
 */
 

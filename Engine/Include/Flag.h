@@ -331,6 +331,14 @@ enum class Object_Type
 	None
 };
 
+enum class Fog_Type
+{
+	Linear,
+	Exp,
+	Exp2,
+	Max
+};
+
 enum class Player_Ability
 {
 	Arrow,

@@ -39,6 +39,7 @@ protected:
 	bool m_ReceiveDecal;
 	bool m_Instancing;
 	static std::list<InstancingCheckCount*> m_InstancingCheckList;
+	std::function<void(CSceneComponent*)> m_OnDestroyCallBack;
 
 public:
 	void SetInstancingInfo(Instancing3DInfo* Info);
@@ -191,6 +192,13 @@ public:
 	const Transform_State& GetState()	const
 	{
 		return m_Transform->m_State;
+	}
+
+public:
+	template <typename T>
+	void AddOnDestoryCallBack(T* Obj, void(T::* Func)(CSceneComponent*))
+	{
+		m_OnDestroyCallBack = std::bind(Func, Obj, std::placeholders::_1);
 	}
 
 public:	// Transform

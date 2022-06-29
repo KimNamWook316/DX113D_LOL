@@ -36,6 +36,8 @@ public:
 		m_Component = nullptr;
 	}
 
+	void OnDestroyComponent(class CSceneComponent* Component);
+
 private:
 	Matrix m_matWorld;
 
