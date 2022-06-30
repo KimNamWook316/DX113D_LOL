@@ -262,6 +262,7 @@ void CEngine::Pause()
 		return;
 	}
 
+	m_Play = false;
 	m_Pause = true;
 }
 
@@ -272,6 +273,7 @@ void CEngine::Resume()
 		return;
 	}
 
+	m_Play = true;
 	m_Pause = false;
 }
 

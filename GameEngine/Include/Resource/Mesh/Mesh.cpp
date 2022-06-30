@@ -370,6 +370,8 @@ bool CMesh::ConvertFBX(CFBXLoader* Loader, const char* FullPath)
 
 		size_t  IdxCount = (*iter)->vecIndices.size();
 
+		Container->vecIB.reserve(IdxCount);
+
 		for (size_t i = 0; i < IdxCount; ++i)
 		{
 			// 인덱스 버퍼를 채워줄 데이터가 없다면 해당 서브셋은 폐기한다.
@@ -854,6 +856,8 @@ bool CMesh::ConvertFBXReleaseSequence(CFBXLoader* Loader, const char* FullPath)
 		Container->Primitive = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 
 		size_t  IdxCount = (*iter)->vecIndices.size();
+
+		Container->vecIB.reserve(IdxCount);
 
 		for (size_t i = 0; i < IdxCount; ++i)
 		{
