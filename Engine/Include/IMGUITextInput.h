@@ -164,8 +164,7 @@ public:
 
 	void ResetText()
 	{
-		std::string StrPrevText = m_PrevText;
-		SetText(StrPrevText.c_str());
+		SetText(m_PrevText);
 	}
 
 public:
