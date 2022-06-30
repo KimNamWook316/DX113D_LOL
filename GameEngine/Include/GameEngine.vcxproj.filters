@@ -993,6 +993,12 @@
     <ClCompile Include="ObjectPoolManager.cpp">
       <Filter>10. PoolManager</Filter>
     </ClCompile>
+    <ClCompile Include="Component\ColliderHalfLine.cpp">
+      <Filter>05. Component\01. SceneComponent\02. Collider</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\ColliderRay.cpp">
+      <Filter>05. Component\01. SceneComponent\02. Collider</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Device.h">
@@ -1690,6 +1696,12 @@
     </ClInclude>
     <ClInclude Include="ObjectPoolManager.h">
       <Filter>10. PoolManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\ColliderHalfLine.h">
+      <Filter>05. Component\01. SceneComponent\02. Collider</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\ColliderRay.h">
+      <Filter>05. Component\01. SceneComponent\02. Collider</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

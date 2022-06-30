@@ -217,6 +217,26 @@ bool CMeshManager::Init()
 		&CubeLineIdx[0], sizeof(int), 24,
 		D3D11_USAGE_DEFAULT, DXGI_FORMAT_R32_UINT);
 
+
+	Vertex3D HalfLineVertex[2];
+
+	Vector3	HalfLinePos[2] =
+	{
+		Vector3(0.f, 0.f, 0.f),
+		Vector3(1.f, 0.f, 0.f)
+	};
+
+	HalfLineVertex[0].Pos = HalfLinePos[0];
+	HalfLineVertex[1].Pos = HalfLinePos[1];
+
+	int HalfLineIdx[2] = { 0, 1 };
+
+	CreateMesh(Mesh_Type::Static, "HalfLinePos",
+		&HalfLineVertex[0], sizeof(Vertex3D), 2,
+		D3D11_USAGE_DEFAULT, D3D11_PRIMITIVE_TOPOLOGY_LINELIST,
+		&HalfLineIdx[0], sizeof(int), 2,
+		D3D11_USAGE_DEFAULT, DXGI_FORMAT_R32_UINT);
+
 	return true;
 }
 

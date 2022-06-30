@@ -15,6 +15,8 @@
 #include "Component/LandScape.h"
 #include "Component/ColliderBox3D.h"
 #include "Component/ColliderSphere.h"
+#include "Component/ColliderHalfLine.h"
+#include "Component/ColliderRay.h"
 #include "../Widget/StaticMeshComponentWidget.h"
 #include "../Widget/LightComponentWidget.h"
 #include "../Widget/ObjectComponentWidget.h"
@@ -175,7 +177,7 @@ void CGameObjectWidget::CreateSceneComponentWidget(CSceneComponent* Com)
 	{
 		Widget = AddWidget<CLandScapeWidget>("LandScapeWidget");
 	}
-	else if (TypeID == typeid(CColliderBox3D).hash_code())
+	else if (TypeID == typeid(CColliderBox3D).hash_code() || TypeID == typeid(CColliderHalfLine).hash_code() || TypeID == typeid(CColliderRay).hash_code())
 	{
 		Widget = AddWidget<CColliderComponentWidget>("ColliderComponentWidget");
 	}

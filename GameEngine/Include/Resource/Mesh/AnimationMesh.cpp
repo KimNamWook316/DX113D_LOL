@@ -52,7 +52,7 @@ void CAnimationMesh::SetSkeleton(CSkeleton* Skeleton)
 	// - Animation Mesh Widget 에서 같은 A.anim 을 Load Inst 하는 순간 
 	// - BoneBuffer 를 지우게 되면, 현재 이 Animation Mesh 의 Skeleton을 사용하던, Animatino Editor 의 Anim3DObject 의
 	// Animation입장에서는, 자기가 지니고 있던 Instancing Bone Buffer 가 지워진다. => Dangling Pointer 문제가 발생하게 되는 것이다.
-	//SAFE_DELETE(m_BoneBuffer);
+	SAFE_DELETE(m_BoneBuffer);
 
 	m_BoneBuffer = new CStructuredBuffer;
 	m_BoneBuffer->Init("OutputBone", sizeof(Matrix), (unsigned int)m_Skeleton->GetBoneCount() * m_InstancingCount, 2);

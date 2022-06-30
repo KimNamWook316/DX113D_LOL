@@ -67,5 +67,13 @@ public:
     virtual bool Load(FILE* File);
     virtual bool Collision(CColliderComponent* Dest);
     virtual bool CollisionMouse(const Vector2& MousePos);
+
+public:
+    void UpdateMinMax();
+
+private:
+    static bool SortX(const Vector3& Src, const Vector3& Dest);
+    static bool SortY(const Vector3& Src, const Vector3& Dest);
+    static bool SortZ(const Vector3& Src, const Vector3& Dest);
 };
 

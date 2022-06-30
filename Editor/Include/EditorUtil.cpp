@@ -14,6 +14,8 @@
 #include "Component/GameStateComponent.h"
 #include "Component/ColliderBox3D.h"
 #include "Component/ColliderSphere.h"
+#include "Component/ColliderHalfLine.h"
+#include "Component/ColliderRay.h"
 #include "Component/GameDataComponent.h"
 #include "Component/PlayerDataComponent.h"
 #include "IMGUITree.h"
@@ -377,6 +379,10 @@ std::string CEditorUtil::SceneComponent3DTypeToString(SceneComponent3DType Type)
 		return "ColliderBox3D";
 	case SceneComponent3DType::ColliderSphere:
 		return "ColliderSphere";
+	case SceneComponent3DType::ColliderHalfLine:
+		return "ColliderHalfLine";
+	case SceneComponent3DType::ColliderRay:
+		return "ColliderRay";
 	}
 
 	return "";
@@ -458,6 +464,10 @@ size_t CEditorUtil::SceneComponentTypeIndexToTypeid(int TypeIndex)
 		return typeid(CColliderBox3D).hash_code();
 	case 8:
 		return typeid(CColliderSphere).hash_code();
+	case 9:
+		return typeid(CColliderHalfLine).hash_code();
+	case 10:
+		return typeid(CColliderRay).hash_code();
 	}
 
 	return -1;

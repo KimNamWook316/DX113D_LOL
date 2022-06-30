@@ -141,7 +141,9 @@ enum class Collider_Type
 	Circle,
 	Pixel,
 	Sphere,
-	Box3D
+	Box3D,
+	HalfLine,
+	Ray
 };
 
 enum class Camera_Type
@@ -259,6 +261,8 @@ enum class SceneComponent3DType
 	ParticleComponent,
 	ColliderBox3D,
 	ColliderSphere,
+	ColliderHalfLine,
+	ColliderRay,
 	Max
 };
 

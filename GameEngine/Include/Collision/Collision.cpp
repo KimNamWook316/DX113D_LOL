@@ -4,6 +4,8 @@
 #include "../Component/ColliderPixel.h"
 #include "../Component/ColliderBox3D.h"
 #include "../Component/ColliderSphere.h"
+#include "../Component/ColliderHalfLine.h"
+#include "../Component/ColliderRay.h"
 
 #define EPSILON 0.00001f
 
@@ -146,6 +148,30 @@ bool CCollision::CollisionBox3DToBox3D(CColliderBox3D* Src, CColliderBox3D* Dest
 
 
 	return false;
+}
+
+bool CCollision::CollisionRayToBox3D(CColliderRay* Src, CColliderBox3D* Dest)
+{
+	Vector3 HitPoint;
+
+	if (CollisionRayToBox3D(HitPoint, Src->GetInfo(), Dest->GetInfo()))
+	{
+		return true;
+	}
+
+	return false;
+}
+
+bool CCollision::CollisionBox3DToHalfLine(CColliderBox3D* Src, CColliderHalfLine* Dest)
+{
+	Vector3	Result;
+
+	Src->UpdateMinMax();
+
+	if (CollisionBox3DToHalfLine(Result, Src->GetInfo(), Dest->GetInfo()))
+	{
+		return true;
+	}
 }
 
 bool CCollision::CollisionBox2DToBox2D(CollisionResult& SrcResult,
@@ -853,6 +879,31 @@ bool CCollision::CollisionRayToBox3D(Vector3& HitPoint, const Ray& ray, const Bo
 
 
 	return true;
+}
+
+bool CCollision::CollisionBox3DToHalfLine(Vector3& HitPoint, const Box3DInfo& Box, const HalfLineInfo& HalfLineInfo)
+{
+	if (Box.Min.x <= HalfLineInfo.EndPos.x && Box.Max.x >= HalfLineInfo.EndPos.x &&
+		Box.Min.y <= HalfLineInfo.EndPos.y && Box.Max.y >= HalfLineInfo.EndPos.y &&
+		Box.Min.z <= HalfLineInfo.EndPos.z && Box.Max.z >= HalfLineInfo.EndPos.z)
+		return true;
+
+	Ray ray;
+	ray.Dir = Vector3(HalfLineInfo.EndPos - HalfLineInfo.StartPos);
+	ray.Dir.Normalize();
+	ray.Pos = HalfLineInfo.StartPos;
+
+	bool Intersect = CollisionRayToBox3D(HitPoint, ray, Box);
+
+	if (Intersect)
+	{
+		if(HalfLineInfo.EndPos.x >= Box.Min.x && 
+			HalfLineInfo.EndPos.x >= Box.Min.y && 
+			HalfLineInfo.EndPos.x >= Box.Min.z)
+		return true;
+	}
+
+	return false;
 }
 
 
