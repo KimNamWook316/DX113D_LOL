@@ -4,6 +4,7 @@
 #include "../Window/EffectDisplayWindow.h"
 #include "../Window/MaterialEditor.h"
 #include "../Window/AnimationEditor.h"
+#include "../Window/AnimationDisplayWindow.h"
 #include "../Window/ResourceDisplayWindow.h"
 #include "../Window/SocketWindow.h"
 #include "../EditorManager.h"
@@ -67,10 +68,12 @@ void CResourceMenu::OnToggleAnimationEditorCallback()
 	if (IsOpen)
 	{
 		CEditorManager::GetInst()->GetAnimationEditor()->Close();
+		CEditorManager::GetInst()->GetAnimationDisplayWindow()->Close();
 	}
 	else
 	{
 		CEditorManager::GetInst()->GetAnimationEditor()->Open();
+		CEditorManager::GetInst()->GetAnimationDisplayWindow()->Open();
 	}
 }
 

@@ -115,7 +115,7 @@ void CMaterial::EnableDecal(bool Decal)
 void CMaterial::SetRenderState(CRenderState* State)
 {
 	m_RenderStateArray[(int)State->GetType()] = State;
-}
+} 
 
 void CMaterial::SetRenderState(const std::string& Name)
 {

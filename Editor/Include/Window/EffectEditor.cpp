@@ -27,6 +27,7 @@
 // Object
 #include "../Object/3DParticleObject.h"
 // Engine
+#include "EngineUtil.h"
 #include "Component/ParticleComponent.h"
 #include "Component/SpriteComponent.h"
 #include "Component/Arm.h"
@@ -51,6 +52,7 @@ CEffectEditor::~CEffectEditor()
 bool CEffectEditor::Init()
 {
     // Save, Load
+
     m_SaveParticleBtn = AddWidget<CIMGUIButton>("Save Particle", 90.f, 20.f);
     m_SaveParticleBtn->SetClickCallback<CEffectEditor>(this, &CEffectEditor::OnSaveParticleClass);
 
@@ -59,6 +61,14 @@ bool CEffectEditor::Init()
 
     m_LoadParticleBtn = AddWidget<CIMGUIButton>("Load Particle", 90.f, 20.f);
     m_LoadParticleBtn->SetClickCallback<CEffectEditor>(this, &CEffectEditor::OnLoadParticleClass);
+
+    Line = AddWidget<CIMGUISameLine>("Line");
+    Line->SetOffsetX(210);
+
+    CIMGUIText* HelpText = AddWidget<CIMGUIText>("ParticleSaveLoad", 90.f, 30.f);
+    const char* ParticleSaveLoadText = R"(ex) Particle 의 경우, Bin/ParticleClass 폴더에 Save 혹은, Bin/ParticleClass 로부터 Load 해야 한다.)";
+    HelpText->SetText(ParticleSaveLoadText);
+    HelpText->SetIsHelpMode(true);
 
     // Set Texture
     m_SetMaterialTextureButton = AddWidget<CIMGUIButton>("Set Texture", 90.f, 20.f);
@@ -75,6 +85,39 @@ bool CEffectEditor::Init()
 
     m_RestartBtn = AddWidget<CIMGUIButton>("ReStart", 80.f, 20.f);
     m_RestartBtn->SetClickCallback<CEffectEditor>(this, &CEffectEditor::OnRestartParticleComponentButton);
+
+    // Particle Name
+    m_CurrentParticleName = AddWidget<CIMGUITextInput>("Particle Name", 180.f, 30.f);
+    m_CurrentParticleName->SetHintText("Current Particle Name");
+
+    // Material
+    m_CurrentMaterialName = AddWidget<CIMGUITextInput>("Current Mtrl Name(Drop)", 180.f, 30.f);
+    m_CurrentMaterialName->SetHintText("Drop Here");
+    m_CurrentMaterialName->SetDropCallBack<CEffectEditor>(this, &CEffectEditor::OnDropMaterialToParticle);
+
+    Line = AddWidget<CIMGUISameLine>("Line");
+    Line->SetOffsetX(350.f);
+
+    HelpText = AddWidget<CIMGUIText>("MtrlFileName", 90.f, 30.f);
+    const char* DropMtrlText = R"(ex) ResourceDisplayWindow 로부터 Material Key 를 Drop 하거나,
+    Bin/Material 에 있는 .mtrl 파일을 Drop 하면, 해당 Material 이 세팅된다.)";
+    HelpText->SetText(DropMtrlText);
+    HelpText->SetIsHelpMode(true);
+
+
+    m_LoadedMaterialFileName = AddWidget<CIMGUITextInput>("Loaded Mtrl File", 180.f, 30.f);
+    m_LoadedMaterialFileName->SetHintText("Not Loaded From Disk");
+
+    Line = AddWidget<CIMGUISameLine>("Line");
+    Line->SetOffsetX(290.f);
+HelpText = AddWidget<CIMGUIText>("MtrlFileName", 90.f, 30.f);
+    const char* LoadedMtrlHelpText = R"(ex)  하드디스크로부터, Material File을 Load 하여 세팅한 경우 
+    Load한 Material File의 이름을 보여준다.)";
+    HelpText->SetText(LoadedMtrlHelpText);
+    HelpText->SetIsHelpMode(true);
+
+    m_MaterialLoadButton = AddWidget<CIMGUIButton>("Load/Set Material", 180.f, 20.f);
+    m_MaterialLoadButton->SetClickCallback<CEffectEditor>(this, &CEffectEditor::OnLoadParticleMaterialCallback);
 
     // Camera
     CIMGUITree* Tree = AddWidget<CIMGUITree>("Camera");
@@ -129,11 +172,40 @@ bool CEffectEditor::Init()
     m_ParticleTexture->SetBorderColor(10, 10, 255);
     m_ParticleTexture->SetTableTitle("Texture");
 
-    // Material
-    m_MaterialName = AddWidget<CIMGUITextInput>("Current Material", 150.f, 30.f);
-    m_MaterialName->SetHideName(true);
-    m_MaterialName->SetHintText("Current Material");
-    m_MaterialName->SetDropCallBack<CEffectEditor>(this, &CEffectEditor::OnDropMaterialToParticle);
+    // BaseTexture
+    Tree = AddWidget<CIMGUITree>("Ground Texture");
+    m_GroundTextureScale =  Tree->AddWidget<CIMGUISliderFloat>("Ground Texture", 100.f, 20.f);
+    m_GroundTextureScale->SetCallBack<CEffectEditor>(this, &CEffectEditor::OnEditBaseGroundSize);
+    m_GroundTextureScale->SetMin(10.f);
+    m_GroundTextureScale->SetMax(800.f);
+
+    // Bounce
+    Tree = AddWidget<CIMGUITree>("Bounce");
+    m_IsBounce = Tree->AddWidget<CIMGUICheckBox>("Bounce", 80.f);
+    m_IsBounce->AddCheckInfo("Bounce");
+    m_IsBounce->SetCallBackLabel<CEffectEditor>(this, &CEffectEditor::OnIsBounceEdit);
+
+    m_BounceResistance = Tree->AddWidget<CIMGUISliderFloat>("Bounce Resist", 100.f, 20.f);
+    m_BounceResistance->SetCallBack<CEffectEditor>(this, &CEffectEditor::OnEditBounceResistance);
+    m_BounceResistance->SetMin(0.01f);
+    m_BounceResistance->SetMax(0.99f);
+
+    // Generate Circle
+    Tree = AddWidget<CIMGUITree>("Circle Generate");
+
+    m_IsGenerateCircle = Tree->AddWidget<CIMGUICheckBox>("Circle", 80.f);
+    m_IsGenerateCircle->AddCheckInfo("Circle");
+    m_IsGenerateCircle->SetCallBackLabel<CEffectEditor>(this, &CEffectEditor::OnIsGenerateCircleEdit);
+
+    m_GenerateCircleRadius = Tree->AddWidget<CIMGUISliderFloat>("Radius", 100.f, 20.f);
+    m_GenerateCircleRadius->SetCallBack<CEffectEditor>(this, &CEffectEditor::OnEditGenerateCircleRadius);
+    m_GenerateCircleRadius->SetMin(0.0f);
+    m_GenerateCircleRadius->SetMax(100.f);
+
+    m_IsLoopGenerateCircle = Tree->AddWidget<CIMGUICheckBox>("Loop", 80.f);
+    m_IsLoopGenerateCircle->AddCheckInfo("Loop");
+    m_IsLoopGenerateCircle->SetCallBackLabel<CEffectEditor>(this, &CEffectEditor::OnIsLoopGenerateCircleEdit);
+    
 
     // Movement
     Tree = AddWidget<CIMGUITree>("Movement");
@@ -227,6 +299,18 @@ bool CEffectEditor::Init()
     m_ColorMaxEdit = Tree->AddWidget<CIMGUIColor4>("Color Max", 150.f);
     m_ColorMaxEdit->SetCallBack(this, &CEffectEditor::OnColorMaxEdit);
 
+    // Alpha Min, Max
+    Tree = AddWidget<CIMGUITree>("Alpha Min, Max");
+
+    m_AlphaBlendEnableButton = Tree->AddWidget<CIMGUIButton>("Set Alpha Blend", 150.f, 20.f);
+    m_AlphaBlendEnableButton->SetClickCallback<CEffectEditor>(this, &CEffectEditor::OnSetAlphaBlendToMaterialCallback);
+
+    m_AlphaMinEdit = Tree->AddWidget<CIMGUIInputFloat>("Alpha Min", 150.f);
+    m_AlphaMinEdit->SetCallBack(this, &CEffectEditor::OnAlphaMinEdit);
+
+    m_AlphaMaxEdit = Tree->AddWidget<CIMGUIInputFloat>("Alpha Max", 150.f);
+    m_AlphaMaxEdit->SetCallBack(this, &CEffectEditor::OnAlphaMaxEdit);
+
     // Move Dir, Angle
     Tree = AddWidget<CIMGUITree>("Move Angle, Dir");
 
@@ -280,6 +364,133 @@ void CEffectEditor::OnRestartParticleComponentButton()
 
     // IMGUI가 Paritlc Object 정보 반영하게 하기 
     SetIMGUIReflectObjectCamera();
+}
+
+void CEffectEditor::OnLoadParticleMaterialCallback()
+{
+    // Load 하고
+    const PathInfo* MaterialPathInfo = CPathManager::GetInst()->FindPath(MATERIAL_PARTICLE_PATH);
+
+    // Bin//Material//ParticleMaterial 폴더가 있는지 확인하고 만들어준다.
+    CEngineUtil::CheckAndMakeDirectory(MaterialPathInfo);
+
+    TCHAR FilePath[MAX_PATH] = {};
+
+    OPENFILENAME OpenFile = {};
+    OpenFile.lStructSize = sizeof(OPENFILENAME);
+    OpenFile.hwndOwner = CEngine::GetInst()->GetWindowHandle();
+    OpenFile.lpstrFilter = TEXT("All Files\0*.*\0.Material File\0*.mtrl");
+    OpenFile.lpstrFile = FilePath;
+    OpenFile.nMaxFile = MAX_PATH;
+    OpenFile.lpstrInitialDir = MaterialPathInfo->Path;
+
+    if (GetOpenFileName(&OpenFile) != 0)
+    {
+        char	Ext[_MAX_EXT] = {};
+
+        char FilePathMultibyte[MAX_PATH] = {};
+        char FileName[MAX_PATH] = {};
+
+        int ConvertLength = WideCharToMultiByte(CP_ACP, 0, FilePath, -1, 0, 0, 0, 0);
+        WideCharToMultiByte(CP_ACP, 0, FilePath, -1, FilePathMultibyte, ConvertLength, 0, 0);
+
+        _splitpath_s(FilePathMultibyte, nullptr, 0, nullptr, 0, FileName, MAX_PATH, Ext, _MAX_EXT);
+
+        _strupr_s(Ext);
+
+        // 현재 Load하는 Directory가 Bin/Material/ParticleMaterial 인지 확인하기 => 아니라면, Load
+        std::string PathInfoBeforeFileName;
+        CEditorUtil::GetPathInfoBeforeFileName(FilePathMultibyte, PathInfoBeforeFileName);
+
+        if (strcmp(MaterialPathInfo->PathMultibyte, PathInfoBeforeFileName.c_str()) != 0)
+        {
+            MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Particle Material 의 경우, 반드시 Bin/Material/ParticleMaterial 로부터 Load 해야 한다."), NULL, MB_OK);
+            return;
+        }
+        // 확장자 .anim 이 아니라면 return;
+        if (strcmp(Ext, ".MTRL") != 0)
+        {
+            MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("EXT Has To Be .mtrl"), NULL, MB_OK);
+            return;
+        }
+
+        // 파일 이름을, Material 을 저장하는 Key 값으로 활용할 것이다.
+        CMaterial* LoadedMaterial = CResourceManager::GetInst()->LoadMaterialFullPathMultibyte(FilePathMultibyte);
+
+        if (!LoadedMaterial)
+        {
+            MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Material Load Failure"), NULL, MB_OK);
+            return;
+        }
+  
+        std::string MaterialFileName = LoadedMaterial->GetName();
+
+        if (MaterialFileName.find(".mtrl") == std::string::npos)
+            MaterialFileName.append(".mtrl");
+
+        // Hard Disk 로부터, File을 Drop했을 경우에만, FileName을 세팅한다.
+        m_LoadedMaterialFileName->SetText(MaterialFileName.c_str());
+
+        // Particle 에 세팅하고
+        ApplyNewMaterial(LoadedMaterial);
+
+        // ResourceDisplay Window 에 있는 Texture 목록들 Resource Window 에 추가해서 보여주기
+        CEditorManager::GetInst()->GetResourceDisplayWindow()->RefreshLoadedTextureResources();
+        CEditorManager::GetInst()->GetResourceDisplayWindow()->RefreshLoadedMaterialResources();
+        CEditorManager::GetInst()->GetResourceDisplayWindow()->RefreshLoadedRenderStateResources();
+        CEditorManager::GetInst()->GetResourceDisplayWindow()->RefreshLoadedShaderResources();
+    }
+}
+
+void CEffectEditor::OnEditBaseGroundSize(float Size)
+{
+    m_GroundTextureScale->SetValue(Size);
+    m_BaseGroundObject->SetWorldScale(Size, Size, 1.f);
+}
+
+void CEffectEditor::OnIsBounceEdit(const char*, bool Enable)
+{
+    if (!m_ParticleClass)
+        return;
+
+    m_ParticleClass->SetBounceEnable(Enable);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetBounceEnable(Enable);
+}
+
+void CEffectEditor::OnEditBounceResistance(float Resist)
+{
+    if (!m_ParticleClass)
+        return;
+
+    m_ParticleClass->SetBounceResistance(Resist);
+   dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetBounceResist(Resist);
+}
+
+void CEffectEditor::OnIsGenerateCircleEdit(const char*, bool Enable)
+{
+    if (!m_ParticleClass)
+        return;
+
+    m_ParticleClass->SetGenerateCircleEnable(Enable);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGenerateCircleEnable(Enable);
+}
+
+void CEffectEditor::OnIsLoopGenerateCircleEdit(const char*, bool Enable)
+{
+    if (!m_ParticleClass)
+        return;
+
+    m_ParticleClass->SetLoopGenerateCircle(Enable);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetLoopGenerateCircle(Enable);
+}
+
+void CEffectEditor::OnEditGenerateCircleRadius(float Radius)
+{
+    if (!m_ParticleClass)
+        return;
+
+    m_ParticleClass->SetGenerateCircleRadius(Radius);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGenerateCircleRadius(Radius);
 }
 
 void CEffectEditor::OnSpawnTimeMaxEdit(float Num)
@@ -388,8 +599,10 @@ void CEffectEditor::OnColorMinEdit(const Vector4& Color)
 
     // Alpha 값은 0으로 한다.
 
-    m_ParticleClass->SetColorMin(Color.x, Color.y, Color.z, 1.f);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetColorMin(Color.x, Color.y, Color.z, 1.f);
+    //m_ParticleClass->SetColorMin(Color.x, Color.y, Color.z, 1.f);
+    m_ParticleClass->SetColorMin(Color);
+    // dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetColorMin(Color.x, Color.y, Color.z, 1.f);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetColorMin(Color);
     // m_ParticleComponent->GetCBuffer()->SetColorMin(Color);
 }
 
@@ -398,9 +611,58 @@ void CEffectEditor::OnColorMaxEdit(const Vector4& Color)
     if (!m_ParticleClass)
         return;
 
-    m_ParticleClass->SetColorMax(Color.x, Color.y, Color.z, 1.f);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetColorMax(Color.x, Color.y, Color.z, 1.f);
+    // m_ParticleClass->SetColorMax(Color.x, Color.y, Color.z, 1.f);
+    m_ParticleClass->SetColorMax(Color);
+    // dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetColorMax(Color.x, Color.y, Color.z, 1.f);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetColorMax(Color);
     // m_ParticleComponent->GetCBuffer()->SetColorMax(Color);
+}
+
+void CEffectEditor::OnAlphaMinEdit(float Alpha)
+{
+    if (!m_ParticleClass)
+        return;
+
+    // Alpha 값은 0으로 한다.
+
+    // m_ParticleClass->SetColorMin(Color.x, Color.y, Color.z, 1.f);
+    m_ParticleClass->SetMinAlpha(Alpha);
+    // dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetColorMin(Color.x, Color.y, Color.z, 1.f);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetMinAlpha(Alpha);
+}
+
+void CEffectEditor::OnAlphaMaxEdit(float Alpha)
+{
+    if (!m_ParticleClass)
+        return;
+
+    m_ParticleClass->SetMaxAlpha(Alpha);
+    // dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetColorMin(Color.x, Color.y, Color.z, 1.f);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetMaxAlpha(Alpha);
+}
+
+void CEffectEditor::OnSetAlphaBlendToMaterialCallback()
+{
+    if (!m_ParticleClass)
+        return;
+
+    if (m_ParticleClass->GetMaterial())
+    {
+        CRenderState* FoundRenderState = CRenderManager::GetInst()->FindRenderState("AlphaBlend");
+        
+        if (!FoundRenderState)
+        {
+            assert(false);
+        }
+
+        // Particle Class 의 Material 에 Render State 적용하기 (이래야만 저장될 때, Render State 가 설정된 채로 Material 파일이 저장된다.)
+        m_ParticleClass->GetMaterial()->SetRenderState(FoundRenderState);
+
+        // 현재 Render 되는 Particle Component 상에도 세팅해줘야 한다.
+        dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetMaterial()->SetRenderState(FoundRenderState);
+
+        MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Alpha Blend Set Success"), NULL, MB_OK);
+    }
 }
 
 
@@ -554,6 +816,11 @@ void CEffectEditor::OnSaveParticleClass()
     if (!m_ParticleObject || !dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetParticle())
         return;
 
+    const PathInfo* ParticlePathInfo = CPathManager::GetInst()->FindPath(PARTICLE_PATH);
+
+    // Bin//ParticleClass 가 Path 내에 존재하는지 확인하기 , 없으면 만들기 
+    CEngineUtil::CheckAndMakeDirectory(ParticlePathInfo);
+
     TCHAR FiileFullPath[MAX_PATH] = {};
 
     OPENFILENAME OpenFile = {};
@@ -562,7 +829,7 @@ void CEffectEditor::OnSaveParticleClass()
     OpenFile.lpstrFilter = TEXT("All Files\0*.*\0.Animation File\0*.anim");
     OpenFile.lpstrFile = FiileFullPath;
     OpenFile.nMaxFile = MAX_PATH;
-    OpenFile.lpstrInitialDir = CPathManager::GetInst()->FindPath(PARTICLE_PATH)->Path;
+    OpenFile.lpstrInitialDir = ParticlePathInfo->Path; // Bin//ParticleClass
 
     if (GetSaveFileName(&OpenFile) != 0)
     {
@@ -585,7 +852,46 @@ void CEffectEditor::OnSaveParticleClass()
             return;
         }
 
+        // 현재 저장하는 Directory가 Bin/ParticleClass 인지 확인하기 => 아니라면, Save 방지
+        std::string PathInfoBeforeFileName;
+        CEditorUtil::GetPathInfoBeforeFileName(FileFullPathMultibyte, PathInfoBeforeFileName);
+
+        if (strcmp(ParticlePathInfo->PathMultibyte, PathInfoBeforeFileName.c_str()) != 0)
+        {
+            MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Particle Class 의 경우, 반드시 Bin/ParticleClass 에 저장"), NULL, MB_OK);
+            return;
+        }
+
+        // 해당 PARTICLE_PATH 에서 중복된 이름이 있는지 확인하기
+        // .prtc 확장자 붙이기
+        char CheckFileName[MAX_PATH] = {};
+        strcpy_s(CheckFileName, FileName);
+        strcat_s(CheckFileName, ".prtc");
+
+        bool IsSameFileNameExist = CEditorUtil::IsFileExistInDir(PARTICLE_PATH, CheckFileName);
+
+        if (IsSameFileNameExist)
+        {
+            if (MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("같은 이름의 .prtc 파일이 존재합니다. 저장하시겠습니까?"), NULL, MB_YESNO) != IDYES)
+                return;
+        }
+
+        // Particle Manager 상에서 기존 이름으로 저장되어있던 Particle 의 Key 값을 현재 지정된 파일 이름으로 재지정해준다.
+        const std::string& PrevParticleName = m_ParticleClass->GetName();
+
+        CResourceManager::GetInst()->GetParticleManager()->ChangeParticleKeyName(PrevParticleName, FileName);
+
+        // Resource Display Window 다시 Update
+        CEditorManager::GetInst()->GetResourceDisplayWindow()->RefreshLoadedParticleResources();
+        
+        // 현재 저장하는 파일 이름으로 PArticle Class 의 이름 세팅하기 
+        m_ParticleClass->SetName(FileName);
+
+        // 해당 Particle File 저장하기 
         m_ParticleClass->SaveFile(FileFullPathMultibyte);
+
+        // IMGUI 한번 더 Update
+        SetIMGUIReflectParticle(m_ParticleClass);
     }
 }
 
@@ -594,15 +900,19 @@ void CEffectEditor::OnLoadParticleClass()
    //  if (!m_ParticleObject || !dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetParticle())
    //      return;
 
+    // 혹시 모르니 Particle Material 저장 전용 폴더를 만들어준다.
+    const PathInfo* ParticlePathInfo = CPathManager::GetInst()->FindPath(PARTICLE_PATH);
+    CEngineUtil::CheckAndMakeDirectory(ParticlePathInfo);
+
     TCHAR FilePath[MAX_PATH] = {};
 
     OPENFILENAME OpenFile = {};
     OpenFile.lStructSize = sizeof(OPENFILENAME);
     OpenFile.hwndOwner = CEngine::GetInst()->GetWindowHandle();
-    OpenFile.lpstrFilter = TEXT("All Files\0*.*\0.Animation File\0*.anim");
+    OpenFile.lpstrFilter = TEXT("All Files\0*.*\0.Particle File\0*.prtc");
     OpenFile.lpstrFile = FilePath;
     OpenFile.nMaxFile = MAX_PATH;
-    OpenFile.lpstrInitialDir = CPathManager::GetInst()->FindPath(PARTICLE_PATH)->Path;
+    OpenFile.lpstrInitialDir = ParticlePathInfo->Path;
 
     if (GetOpenFileName(&OpenFile) != 0)
     {
@@ -616,6 +926,16 @@ void CEffectEditor::OnLoadParticleClass()
         WideCharToMultiByte(CP_ACP, 0, FilePath, -1, FilePathMultibyte, ConvertLength, 0, 0);
 
         _splitpath_s(FilePathMultibyte, nullptr, 0, nullptr, 0, FileName, MAX_PATH, Ext, _MAX_EXT);
+
+        // 현재 Load되는 Directory가 Bin/ParticleClass 인지 확인하기 => 아니라면, Load 방지
+        std::string PathInfoBeforeFileName;
+        CEditorUtil::GetPathInfoBeforeFileName(FilePathMultibyte, PathInfoBeforeFileName);
+
+        if (strcmp(ParticlePathInfo->PathMultibyte, PathInfoBeforeFileName.c_str()) != 0)
+        {
+            MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Particle Class 의 경우, 반드시 Bin/ParticleClass 에서 Load 해야 한다."), NULL, MB_OK);
+            return;
+        }
 
         _strupr_s(Ext);
 
@@ -659,6 +979,7 @@ void CEffectEditor::OnLoadParticleClass()
 
         // Resource Display Window 세팅하기
         CEditorManager::GetInst()->GetResourceDisplayWindow()->RefreshLoadedParticleResources();
+        CEditorManager::GetInst()->GetResourceDisplayWindow()->RefreshLoadedMaterialResources();
     }
 }
 
@@ -677,6 +998,7 @@ void CEffectEditor::OnSetBasicParticleMaterialSetting(CSceneComponent* Com)
     m_ParticleClass = CSceneManager::GetInst()->GetScene()->GetResource()->FindParticle("BasicParticle");
     if (!m_ParticleClass)
         return;
+
     m_ParticleClass->SetMaterial(m_ParticleMaterial);
 
     SetBasicDefaultParticleInfos(m_ParticleClass);
@@ -690,6 +1012,7 @@ void CEffectEditor::OnSetBasicParticleMaterialSetting(CSceneComponent* Com)
     // Resource Window Display
     CEditorManager::GetInst()->GetResourceDisplayWindow()->RefreshLoadedTextureResources();
     CEditorManager::GetInst()->GetResourceDisplayWindow()->RefreshLoadedMaterialResources();
+    CEditorManager::GetInst()->GetResourceDisplayWindow()->RefreshLoadedParticleResources();
 }
 
 void CEffectEditor::OnReflectCurrentParticleSetting()
@@ -743,6 +1066,13 @@ void CEffectEditor::SetGameObjectReady()
         m_BaseGroundObject->AddWorldRotationX(90.f);
         m_BaseGroundObject->AddWorldPos(0.f, -30.f, 0.f);
         m_BaseGroundObject->ExcludeFromSceneSave();
+
+        CSpriteComponent* BaseGroundComponent = dynamic_cast<CSpriteComponent*>(m_BaseGroundObject->GetRootComponent());
+        BaseGroundComponent->SetMaterial(CResourceManager::GetInst()->FindMaterial("ParticleEditorBaseGround"));
+
+        // BaseGround Object 의 크기를 IMGUI 에 반영하기
+        const Vector3& WorldScale = m_BaseGroundObject->GetWorldScale();
+        m_GroundTextureScale->SetValue(WorldScale.x);
     }
 }
 
@@ -775,6 +1105,10 @@ void CEffectEditor::SetBasicDefaultParticleInfos(CParticle* Particle)
     Particle->SetColorMin(Vector4(0.2f, 0.1f, 0.8f, 1.f));
     Particle->SetColorMax(Vector4(0.6f, 0.8f, 0.8f, 1.f));
 
+    // Alpha
+    Particle->SetMinAlpha(1.f);
+    Particle->SetMaxAlpha(1.f);
+
     // Move Dir
     Particle->SetMoveDir(Vector3(0.f, 1.f, 0.f)); 
     // Move Angle
@@ -786,8 +1120,11 @@ void CEffectEditor::SetBasicDefaultParticleInfos(CParticle* Particle)
     // IsPauseResume -> 무조건 Enable true 로 시작 세팅한다.
     Particle->SetGravity(true);
     Particle->SetMove(true);
-    // Particle->SetApplyRandom(true);
     Particle->Enable(true);
+
+    // Bounce
+    Particle->SetBounceEnable(false);
+    Particle->SetBounceResistance(0.98f);
 }
 
 void CEffectEditor::SetStartEditing()
@@ -811,9 +1148,14 @@ void CEffectEditor::SetStartEditing()
 
 void CEffectEditor::OnDropMaterialToParticle(const std::string& InputName)
 {
+
     if (!m_ParticleClass)
     {
         MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("No Particle Set"), NULL, MB_OK);
+        
+        // 다시 원상 복구 시켜줘야 한다.
+        m_CurrentMaterialName->ResetText();
+
         return;
     }
 
@@ -831,32 +1173,78 @@ void CEffectEditor::OnDropMaterialToParticle(const std::string& InputName)
     // Texture File 의 File 명을, Texture 를 저장하는 Key 값으로 사용할 것이다.
     std::string MaterialKeyName;
 
-    std::optional<std::string> FoundResult = CEditorUtil::GetFullPathOfTargetFileNameInDir(MATERIAL_PATH,
-        InputName, MaterialKeyName);
+    // Bin//Material//ParticleClass 라는 폴더에서 찾을 것이다.
+    // std::optional<std::string> FoundResult = CEditorUtil::GetFullPathOfTargetFileNameInDir(MATERIAL_PATH, InputName, MaterialKeyName);
+    std::optional<std::string> FoundResult = CEditorUtil::GetFullPathOfTargetFileNameInDir(MATERIAL_PARTICLE_PATH, InputName, MaterialKeyName);
 
     // 찾지 못했다면 
     if (!FoundResult.has_value())
     {
         // New Texture Load Failure Message Box
-        MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Material Load Failure From HardDisk"), NULL, MB_OK);
+        MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Material Load Failure From Bin/Material/ParticleMaterial"), NULL, MB_OK);
+
+        // 다시 원상 복구 시켜줘야 한다.
+        m_CurrentMaterialName->ResetText();
+
         return;
     }
 
+    // 확장자 확인
+    std::string ExtractFileName;
+    std::string ExtractFileExt;
+
+    CEditorUtil::ExtractFileNameAndExtFromPath(FoundResult.value(), ExtractFileName, ExtractFileExt);
+
+    // 대문자화
+    std::transform(ExtractFileExt.begin(), ExtractFileExt.end(), ExtractFileExt.begin(), ::toupper);
+    
+    if (ExtractFileExt != ".MTRL")
+    {
+        MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("확장자가 .mtrl이 아닙니다."), NULL, MB_OK);
+
+        // 다시 원상 복구 시켜줘야 한다.
+        m_CurrentMaterialName->ResetText();
+
+        return;
+    }
+
+    // Load 시도
     FoundMaterial = CResourceManager::GetInst()->LoadMaterialFullPathMultibyte(FoundResult.value().c_str());
     
     if (!FoundMaterial)
     {
-        MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Material Load Failure From HardDisk"), NULL, MB_OK);
+        MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Material Load Process Failure"), NULL, MB_OK);
+
+        // 다시 원상 복구 시켜줘야 한다.
+        m_CurrentMaterialName->ResetText();
+
         return;
     }
+
+    // Hard Disk 로부터, File을 Drop했을 경우에만, FileName을 세팅한다.
+    m_LoadedMaterialFileName->SetText((ExtractFileName + ".mtrl").c_str());
     
     ApplyNewMaterial(FoundMaterial);
 }
 
 void CEffectEditor::ApplyNewMaterial(CMaterial* FoundMaterial)
 {
+    if (!m_ParticleClass)
+    {
+        // 제대로 세팅되었다는 Message
+        MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Particle이 Setting 되지 않았습니다."), NULL, MB_OK);
+
+        // 혹시나 Material Loaded FileName 이름이 해당 함수로 들어오기 전에 세팅되었을 수도 있으므로 
+        // 다시 되돌려 놓는다.
+        m_LoadedMaterialFileName->ResetText();
+
+        return;
+    }
+
     if (!FoundMaterial)
         return;
+
+    m_CurrentMaterialName->SetText(FoundMaterial->GetName().c_str());
 
     m_ParticleClass->SetMaterial(FoundMaterial);
     m_ParticleMaterial = FoundMaterial;
@@ -929,6 +1317,22 @@ void CEffectEditor::SetParticleToParticleComponent(CParticleComponent* Component
 
 void CEffectEditor::SetIMGUIReflectParticle(CParticle* Particle)
 {
+    // Particle 이름 세팅
+    m_CurrentParticleName->SetText(Particle->GetName().c_str());
+
+    // Material 이름 세팅
+    if (Particle->GetMaterial())
+    {
+        std::string MaterialName = Particle->GetMaterial()->GetName();
+        m_CurrentMaterialName->SetText(MaterialName.c_str());
+
+        // Material File Name 세팅
+        if (MaterialName.find(".mtrl") == std::string::npos)
+            MaterialName.append(".mtrl");
+        
+        m_LoadedMaterialFileName->SetText(MaterialName.c_str());
+    }
+
     // 반드시 3D 로 세팅한다.
     Particle->Set2D(false);
 
@@ -950,13 +1354,24 @@ void CEffectEditor::SetIMGUIReflectParticle(CParticle* Particle)
     m_ColorMinEdit->SetRGBA(Particle->GetColorMin());
     m_ColorMaxEdit->SetRGBA(Particle->GetColorMax());
 
+    m_AlphaMinEdit->SetVal(Particle->GetMinAlpha());
+    m_AlphaMaxEdit->SetVal(Particle->GetMaxAlpha());
+
     m_MoveDirEdit->SetVal(Particle->GetMoveDir());
     m_MoveAngleEdit->SetVal(Particle->GetMoveAngle());
 
     m_IsGravityEdit->SetCheck(0, Particle->GetGravity());
     m_IsMoveEdit->SetCheck(0, Particle->GetMove());
-    // m_IsRandomMoveEdit->SetCheck(0, Particle->GetApplyRandom() == 1 ? true : false);
     m_IsPauseResumeToggle->SetCheck(0, true);
+
+    // Bounce
+    m_IsBounce->SetCheck(0, Particle->IsBounceEnable() == 1 ? true : false);
+    m_BounceResistance->SetValue(Particle->GetBounceResistance());
+
+    // Generate Circle
+    m_IsGenerateCircle->SetCheck(0, Particle->IsGenerateCircle() == 1 ? true : false);
+    m_GenerateCircleRadius->SetValue(Particle->GetGenerateCircleRadius());
+    m_IsLoopGenerateCircle->SetCheck(0, Particle->IsLoopGenerateCircle());
 }
 
 void CEffectEditor::SetIMGUIReflectObjectCamera()

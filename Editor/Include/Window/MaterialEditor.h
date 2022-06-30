@@ -17,9 +17,12 @@ private :
 	class CIMGUITextInput* m_NewMaterialName; // 동시에 파일 이름으로 저장될 것이다.
 	class CIMGUIButton* m_CreateMaterialBtn;
 
-	class CIMGUITextInput* m_SelectedMaterialName;  // 현재 선택된 Material 이름
+	// 현재 선택된 Material 이름
+	class CIMGUITextInput* m_SelectedMaterialName;  
 
-	// class CIMGUIListBox* m_MadeMaterialList;
+	// Material 이름 수정하기 
+	class CIMGUITextInput* m_EditMaterialName; 
+	class CIMGUIButton* m_EditMaterialNameBtn;
 
 	// 해당 Material 의 정보를 보여주는 Info Table
 	class CIMGUITable* m_MtrlInfoTable;
@@ -29,6 +32,9 @@ private :
 
 	// Texture 목록을 보여주는 장소
 	class CIMGUITableElemList* m_TextureInfoTable;
+
+	// Particle 을 그려내기 위한 기본 세팅을 알아서 해주는 Btn
+	class CIMGUIButton* m_SetParticleSettingBtn;
 
 	// 남욱씨가 말한 내용들 Setting 하는 장소
 	class CIMGUICheckBox* m_OutLineCheck;
@@ -73,6 +79,11 @@ private :
 
 	// Render State
 	void OnDropAndSetRenderStateToMaterial(const std::string&);
+
+	// Particle Material Setting
+	void OnEditMaterialNameCallback();
+
+	void OnSetParticleMaterialSettingCallback();
 
 	void OnIsOutLineEdit(const char*, bool Enable);
 	void OnSetOutLineColor(const Vector3& Color);

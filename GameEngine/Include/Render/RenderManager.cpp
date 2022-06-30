@@ -29,7 +29,8 @@ CRenderManager::CRenderManager()	:
 	m_ShadowCBuffer(nullptr),
 	m_OutlineCBuffer(nullptr),
 	m_Gray(false),
-	m_AlphaBlendMRT(nullptr)
+	m_AlphaBlendMRT(nullptr),
+	m_DebugRender(false)
 {
 }
 
@@ -176,7 +177,7 @@ bool CRenderManager::Init()
 	Resolution RS = CDevice::GetInst()->GetResolution();
 
 	if (!CResourceManager::GetInst()->CreateTarget("Diffuse",
-		RS.Width, RS.Height, DXGI_FORMAT_R32G32B32A32_FLOAT))
+		RS.Width, RS.Height, DXGI_FORMAT_R8G8B8A8_UNORM))
 		return false;
 
 	if (!CResourceManager::GetInst()->CreateTarget("GBuffer1",
@@ -294,9 +295,9 @@ bool CRenderManager::Init()
 	FinalScreenTarget->SetScale(Vector3(100.f, 100.f, 1.f));
 	FinalScreenTarget->SetDebugRender(true);
 
-	// Animation Editor 용 Render Target 
+	// Animation Editor 용 Render Target => 고유의 Depth Buffer 를 사용하게 할 것이다.
 	if (!CResourceManager::GetInst()->CreateTarget("AnimationEditorRenderTarget",
-		RS.Width, RS.Height, DXGI_FORMAT_R32G32B32A32_FLOAT))
+		RS.Width, RS.Height, DXGI_FORMAT_R32G32B32A32_FLOAT, true, DXGI_FORMAT_D24_UNORM_S8_UINT))
 		return false;
 
 	m_AnimEditorRenderTarget = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("AnimationEditorRenderTarget");
@@ -537,6 +538,10 @@ void CRenderManager::Render()
 
 	for (; iter != iterEnd; ++iter)
 	{
+		// OBJ가 추가 (Particle Mesh Widget 에서 Enable false 처리)
+		if ((*iter)->IsEnable() == false)
+			continue;
+
 		(*iter)->Render();
 	}
 
@@ -602,8 +607,11 @@ void CRenderManager::Render()
 
 	CSceneManager::GetInst()->GetScene()->GetViewport()->Render();
 
-	// 디버깅용 렌더타겟을 출력한다.
-	CResourceManager::GetInst()->RenderTarget();
+	if (m_DebugRender)
+	{
+		// 디버깅용 렌더타겟을 출력한다.
+		CResourceManager::GetInst()->RenderTarget();
+	}
 
 	// 마우스 출력
 	CWidgetWindow* MouseWidget = CEngine::GetInst()->GetMouseWidget();
@@ -1041,7 +1049,10 @@ void CRenderManager::RenderAnimationEditor()
 	// Render Target 교체
 	m_AnimEditorRenderTarget->ClearTarget();
 
-	m_AnimEditorRenderTarget->SetTarget(nullptr);
+	// Animation Editor Render Target 고유의 Depth Buffer 를 사용하게 끔 한다.
+	// 그렇지 않으면, 최종적으로 그려내는 Scene 고유의 Depth Buffer 를 사용하게 되버린다.
+	// m_AnimEditorRenderTarget->SetTarget(nullptr);
+	m_AnimEditorRenderTarget->SetTarget();
 
 	m_Mesh3DNoLightRenderShader->SetShader();
 
@@ -1056,6 +1067,8 @@ void CRenderManager::RenderAnimationEditor()
 	{
 		(*iter)->RenderAnimationEditor();
 	}
+
+	// m_DepthDisable->ResetState();
 
 	m_AnimEditorRenderTarget->ResetTarget();
  }

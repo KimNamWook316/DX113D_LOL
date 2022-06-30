@@ -24,12 +24,14 @@
 #include "Component/StaticMeshComponent.h"
 #include "Resource/Particle/Particle.h"
 #include "Engine.h"
+#include "EngineUtil.h"
 #include "PathManager.h"
 #include "Scene/Scene.h"
 #include "Scene/SceneManager.h"
 #include "Render/RenderManager.h"
 #include "Component/ParticleComponent.h"
 #include "Component/SceneComponent.h"
+#include "Resource/Particle/Particle.h"
 // Editor Windows
 #include "ParticleComponentWidget.h"
 #include "../Window/ObjectHierarchyWindow.h"
@@ -37,6 +39,8 @@
 #include "../EditorUtil.h"
 #include "../Object/3DCameraObject.h"
 #include "../EditorManager.h"
+#include "../EditorManager.h"
+#include "../Window/ResourceDisplayWindow.h"
 
 
 CParticleComponentWidget::CParticleComponentWidget()
@@ -57,11 +61,23 @@ bool CParticleComponentWidget::Init()
     // 최상위 트리
     CIMGUITree* m_RootTree = AddWidget<CIMGUITree>("Particle Variables");
 
+    m_LoadedParticleName = m_RootTree->AddWidget<CIMGUITextInput>("Loaded Particle(Drop)", 150.f, 30.f);
+    m_LoadedParticleName->SetHintText("Particle Name");
+    m_LoadedParticleName->SetDropCallBack<CParticleComponentWidget>(this, &CParticleComponentWidget::OnDropParticleToParticleWidget);
+    
+    m_LoadedParticleFileName = m_RootTree->AddWidget<CIMGUITextInput>("Particle File Name", 150.f, 30.f);
+    m_LoadedParticleFileName->SetHintText("FileName");
+
+    m_LoadParticleButton = m_RootTree->AddWidget<CIMGUIButton>("Load Particle", 150.f, 20.f);
+    m_LoadParticleButton->SetClickCallback<CParticleComponentWidget>(this, &CParticleComponentWidget::OnLoadParticleClass);
+
+   
+    // Camera 세팅
+    // OnSetCameraSetting();
+
+    /*
     // Particle Texture
     m_ParticleTexture = m_RootTree->AddWidget<CIMGUIImage>("Render Target", 200.f, 200.f);
-    // m_ParticleRenderTarget = AddWidget<CIMGUIImage>("Render Target", 500.f, 500.f);
-    // m_ParticleRenderTarget->SetRenderTargetImage(true);
-    // m_ParticleRenderTarget->SetTexture(CRenderManager::GetInst()->GetParticleEffectRenderTarget());
     m_ParticleTexture->SetBorderColor(10, 10, 255);
 
     m_SpawnTimeMaxEdit = m_RootTree->AddWidget<CIMGUIInputFloat>("Spawn Time", 200.f);
@@ -112,22 +128,16 @@ bool CParticleComponentWidget::Init()
     m_IsRandomMoveEdit->AddCheckInfo("Random");
     m_IsRandomMoveEdit->SetCallBackLabel<CParticleComponentWidget>(this, &CParticleComponentWidget::OnIsRandomMoveEdit);
 
-    // m_Is3DEdit = m_RootTree->AddWidget<CIMGUICheckBox>("Load", 200.f);
-
     m_MoveDirEdit = m_RootTree->AddWidget<CIMGUIInputFloat3>("Move Dir", 200.f);
     m_MoveDirEdit->SetCallBack<CParticleComponentWidget>(this, &CParticleComponentWidget::OnMoveDirEdit);
 
     m_MoveAngleEdit = m_RootTree->AddWidget<CIMGUIInputFloat3>("Move Angle", 200.f);
     m_MoveAngleEdit->SetCallBack<CParticleComponentWidget>(this, &CParticleComponentWidget::OnMoveAngleEdit);
 
-    // m_GravityAccelEdit = m_RootTree->AddWidget<CIMGUIInputFloat>("Gravity Accel", 100.f);
-    // m_StartDelayEdit = m_RootTree->AddWidget<CIMGUIInputFloat>("Start Delay T// ", 100.f);
-
     m_SetMaterialTextureButton = m_RootTree->AddWidget<CIMGUIButton>("Set Texture", 100.f, 30.f);
     m_SetMaterialTextureButton->SetClickCallback<CParticleComponentWidget>(this, &CParticleComponentWidget::OnSetParticleTexture);
 
-    // Camera 세팅
-    // OnSetCameraSetting();
+   */
 
 	return true;
 }
@@ -138,11 +148,16 @@ void CParticleComponentWidget::SetSceneComponent(CSceneComponent* Com)
 
 	CParticleComponent* MeshCom = (CParticleComponent*)m_Component.Get();
 
-    // Material , Particle 세팅
-    OnSetParticleMaterialSetting(m_Component);
+    // 처음에는 Particle 이 세팅되어 있지 않으므로, Diable 처리하여 Update X
+    // m_Component->Enable(false);
+    // m_Component->GetGameObject()->Enable(false);
 
-    // Camera 세팅
-    // OnSetCameraSetting();
+    // Material , Particle 세팅
+    // OnSetParticleMaterialSetting(m_Component);
+
+    CParticle* ParticleClass = dynamic_cast<CParticleComponent*>(m_Component.Get())->GetParticle();
+    if (ParticleClass)
+        ParticleLoadSuccessCallback(ParticleClass);
 }
 
 void CParticleComponentWidget::OnSaveParticleObjectButton()
@@ -152,7 +167,177 @@ void CParticleComponentWidget::OnSaveParticleObjectButton()
 void CParticleComponentWidget::OnLoadParticleObjectButton()
 {
 }
+void CParticleComponentWidget::OnLoadParticleClass()
+{
+    // Bin//ParticleClass 폴더로부터 Load 되게 세팅하기
+    const PathInfo* ParticleClassPathInfo = CPathManager::GetInst()->FindPath(PARTICLE_PATH);
+    CEngineUtil::CheckAndMakeDirectory(ParticleClassPathInfo);
 
+    TCHAR FileFullPath[MAX_PATH] = {};
+
+    OPENFILENAME OpenFile = {};
+    OpenFile.lStructSize = sizeof(OPENFILENAME);
+    OpenFile.hwndOwner = CEngine::GetInst()->GetWindowHandle();
+    OpenFile.lpstrFilter = TEXT("All Files\0*.*\0.Particle File\0*.prtc");
+    OpenFile.lpstrFile = FileFullPath;
+    OpenFile.nMaxFile = MAX_PATH;
+    OpenFile.lpstrInitialDir = ParticleClassPathInfo->Path;
+
+    if (GetOpenFileName(&OpenFile) != 0)
+    {
+        // 경로 추출
+        std::string FileExt;
+        std::string FileName;
+
+        const char* FilePathMultibyte = CEditorUtil::ChangeTCHARTextToMultibyte(FileFullPath);
+        char FilePathMultibyteCopy[MAX_PATH] = {};
+        strcpy_s(FilePathMultibyteCopy, FilePathMultibyte);
+
+        // 현재 Load하는 Directory가  Bin//ParticleClass 인지 확인하기 => 아니라면, Load
+        std::string PathInfoBeforeFileName;
+        CEditorUtil::GetPathInfoBeforeFileName(FilePathMultibyteCopy, PathInfoBeforeFileName);
+
+        if (strcmp(ParticleClassPathInfo->PathMultibyte, PathInfoBeforeFileName.c_str()) != 0)
+        {
+            MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Particle 의 경우 Bin/ParticleClass 로부터 Load 해야 한다."), NULL, MB_OK);
+            return;
+        }
+
+        CEditorUtil::ExtractFileNameAndExtFromPath(FilePathMultibyteCopy, FileName, FileExt);
+
+        // 확장자 검사
+        std::transform(FileExt.begin(), FileExt.end(), FileExt.begin(), [](char c) {return std::toupper(c); });
+
+        if (FileExt != ".PRTC")
+        {
+            MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("확장자가 .prtc 이어야 합니다."), NULL, MB_OK);
+            return;
+        }
+
+        // SAFE_DELETE(m_ParticleClass); --> Particle Manager 에서 알아서 관리해줄 것이다.
+        CParticle* LoadedParticle = CResourceManager::GetInst()->CreateParticleEmpty<CParticle>();
+        bool LoadResult = LoadedParticle->LoadFile(FilePathMultibyteCopy);
+
+        if (!LoadResult)
+        {
+            MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Particle Class Load Failure While Loading"), NULL, MB_OK);
+            return;
+        }
+
+        ParticleLoadSuccessCallback(LoadedParticle);
+    }
+
+}
+void CParticleComponentWidget::OnDropParticleToParticleWidget(const std::string& InputName)
+{
+    // Key 값 형태로 Resource Manager 에서 Particle을 먼저 찾는다.
+    CParticle* FoundParticle = CResourceManager::GetInst()->FindParticle(InputName);
+
+    if (FoundParticle)
+    {
+        ParticleLoadSuccessCallback(FoundParticle);
+        return;
+    }
+
+    // 그래도 없다면, 하드디스크에서 찾는다.
+    std::string ParticleKeyName;
+
+    // Bin//ParticleClass 에 접근
+    std::optional<std::string> FoundResult = CEditorUtil::GetFullPathOfTargetFileNameInDir(PARTICLE_PATH,
+        InputName, ParticleKeyName);
+
+    // 찾지 못했다면 
+    if (!FoundResult.has_value())
+    {
+        // New Texture Load Failure Message Box
+        MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Particle Class Load Failure From Bin/ParticleClass"), NULL, MB_OK);
+
+        // m_LoadedParticleName Text Input 내용을 되돌려 놓는다
+        m_LoadedParticleName->ResetText();
+
+        return;
+    }
+
+    // 파일의 확장자가 .prtc 인지 확인한다.
+    const std::string& FullPathMultibyte = FoundResult.value();
+    std::string ExtractedFilName;
+    std::string ExtractedExt;
+    CEditorUtil::ExtractFileNameAndExtFromPath(FullPathMultibyte, ExtractedFilName, ExtractedExt);
+
+    // 대문자로 변환 이후, Ext 확인
+    std::transform(ExtractedExt.begin(), ExtractedExt.end(), ExtractedExt.begin(), ::toupper);
+    if (ExtractedExt != ".PRTC")
+    {
+        MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("확장자가 .prtc 이어야 합니다."), NULL, MB_OK);
+
+        // m_LoadedParticleName Text Input 내용을 되돌려 놓는다
+        m_LoadedParticleName->ResetText();
+
+        return;
+    }
+
+    // SAFE_DELETE(m_ParticleClass); --> Particle Manager 에서 알아서 관리해줄 것이다.
+    FoundParticle = CResourceManager::GetInst()->CreateParticleEmpty<CParticle>();
+    bool LoadResult = FoundParticle->LoadFile(FoundResult.value().c_str());
+
+    if (!LoadResult)
+    {
+        MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Particle Class Load Failure From Bin/ParticleClass"), NULL, MB_OK);
+
+        // m_LoadedParticleName Text Input 내용을 되돌려 놓는다
+        m_LoadedParticleName->ResetText();
+
+        return;
+    }
+
+    ParticleLoadSuccessCallback(FoundParticle);
+}
+void CParticleComponentWidget::ParticleLoadSuccessCallback(CParticle* LoadedParticle)
+{
+    if (!LoadedParticle)
+        return;
+
+    m_ParticleClass = LoadedParticle;
+
+    SetParticleClassToParticleComponent(LoadedParticle);
+
+    // Particle Manager 의 Map 에 추가하기
+    CResourceManager::GetInst()->GetParticleManager()->AddParticle(m_ParticleClass);
+
+    // Resource Display Window 세팅하기
+    CEditorManager::GetInst()->GetResourceDisplayWindow()->RefreshLoadedTextureResources();
+    CEditorManager::GetInst()->GetResourceDisplayWindow()->RefreshLoadedMaterialResources();
+    CEditorManager::GetInst()->GetResourceDisplayWindow()->RefreshLoadedParticleResources();
+}
+void CParticleComponentWidget::SetParticleClassToParticleComponent(CParticle* Particle)
+{
+    if (!Particle)
+        return;
+
+    dynamic_cast<CParticleComponent*>(m_Component.Get())->SetParticle(Particle);
+
+    // Name 세팅
+    m_LoadedParticleName->ClearText();
+    m_LoadedParticleName->SetText(Particle->GetName().c_str());
+
+    // FileName 세팅하기 
+    std::string LoadedParticleName = dynamic_cast<CParticleComponent*>(m_Component.Get())->GetParticleName();
+    
+    // .prtc 를 붙이기
+    if (LoadedParticleName.find(".prtc") == std::string::npos)
+        LoadedParticleName.append(".prtc");
+
+    m_LoadedParticleFileName->ClearText();
+    m_LoadedParticleFileName->SetText(LoadedParticleName.c_str());
+
+}
+void CParticleComponentWidget::ReflectParticleToIMGUI()
+{
+    if (!m_Component || m_ParticleClass)
+        return;
+
+}
+/*
 void CParticleComponentWidget::OnSpawnTimeMaxEdit(float Num)
 {
     dynamic_cast<CParticleComponent*>(m_Component.Get())->SetSpawnTime(Num);
@@ -290,7 +475,9 @@ void CParticleComponentWidget::OnSetParticleTexture()
         OnReflectCurrentParticleSetting();
     }
 }
+*/
 
+/*
 void CParticleComponentWidget::OnSetParticleMaterialSetting(CSceneComponent* Com)
 {
     // 기본 Particle Setting, 현재 Component 에 Particle Setting 하기
@@ -365,7 +552,9 @@ void CParticleComponentWidget::OnSetParticleMaterialSetting(CSceneComponent* Com
     Com->SetWorldPos(Com->GetWorldPos().x, Com->GetWorldPos().y, 10.f);
 
 }
+*/
 
+/*
 void CParticleComponentWidget::OnReflectCurrentParticleSetting()
 {
     dynamic_cast<CParticleComponent*>(m_Component.Get())->GetParticle()->Set2D(false);
@@ -402,39 +591,5 @@ void CParticleComponentWidget::OnReflectCurrentParticleSetting()
 
     // dynamic_cast<CParticleComponent*>(m_Component.Get())->GetParticle()->SetApplyRandom(m_IsRandomMoveEdit->GetCheck(0));
 }
-
-/*
-void CParticleComponentWidget::OnSetCameraSetting()
-{
-    // Camera Object 생성
-    m_ParticleCamera = CSceneManager::GetInst()->GetScene()->CreateGameObject<C3DParticleCamera>("ParticleCamera");
-
-    CObjectHierarchyWindow* Window = (CObjectHierarchyWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(OBJECT_HIERARCHY);
-
-    if (!Window)
-        return;
-
-    if (Window->GetSelectNode() == Window->GetRoot())
-        return;
-
-    std::string ObjName = Window->GetSelectNode()->GetName();
-
-    CGameObject* SelectObject = CSceneManager::GetInst()->GetScene()->FindObject(ObjName);
-
-    if (!SelectObject)
-        return;
-
-    // Particle Component Object 위치에 Sample Object 생성
-    // 실제 Camera 는 이 Sample Object 를 바라보는 형태가 될 것이다.
-    m_ParticleCameraTargetObj = CSceneManager::GetInst()->GetScene()->CreateGameObject<CGameObject>("CameraTarget");
-    m_ParticleCameraTargetObj->SetWorldPos(SelectObject->GetWorldPos());
-
-
-    // 해당 Object 를 Target 으로 세팅하기
-    m_ParticleCamera->SetTargetObject(m_ParticleCameraTargetObj);
-    m_ParticleCamera->SetTargetDistance(10.f);
-
-    // Particle Effect Camera 로 세팅
-    CSceneManager::GetInst()->GetScene()->GetCameraManager()->SetParticleEditorCamera(m_ParticleCamera->GetCamera());
-}
 */
+

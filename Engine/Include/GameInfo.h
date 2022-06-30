@@ -68,11 +68,13 @@
 #define	SCENE_PATH		"Scene"
 #define	SOUND_PATH		"Sound"
 #define	MESH_PATH		"Mesh"
-#define	PARTICLE_PATH		"ParticleOBJ"
+#define	PARTICLE_PATH		"ParticleClass"
 #define	EXCEL_PATH		"Excel"
 #define	OBJECT_PATH		"Object"
 #define	COMPONENT_PATH	"Component"
-#define	MATERIAL_PATH	"Material"
+#define	MATERIAL_PATH	 "Material"
+#define	MATERIAL_PARTICLE_PATH	 "MaterialParticle"
+#define	MATERIAL_ANIMCOMPONENT_PATH	 "MaterialAnimComponent"
 
 // Inclue Path
 #define	RESOURCE_ROOT_PATH		"IncludeRoot"
@@ -83,7 +85,7 @@
 #define	RESOURCE_SCENE_PATH		"ResourceScene"
 #define	RESOURCE_SOUND_PATH		"ResourceSound"
 #define	RESOURCE_MESH_PATH			"ResourceMesh"
-#define	RESOURCE_PARTICLE_PATH	"ResourceParticleOBJ"
+#define	RESOURCE_PARTICLE_PATH	"ResourceParticleClass"
 #define	RESOURCE_EXCEL_PATH			"ResourceExcel"
 #define	RESOURCE_OBJECT_PATH		"ResourceObject"
 #define	RESOURCE_MATERIAL_PATH		"ResourceMaterial"
@@ -408,6 +410,7 @@ struct	ParticleCBuffer
 {
 	unsigned int	SpawnEnable;	// 현재 파티클 생성 여부
 	Vector3	StartMin;		// 파티클이 생성될 영역의 Min
+	
 	Vector3	StartMax;		// 파티클이 생성될 영역의 Max
 	unsigned int	SpawnCountMax;	// 생성될 파티클의 최대
 	Vector3	ScaleMin;		// 생성될 파티클 크기의 Min
@@ -423,9 +426,22 @@ struct	ParticleCBuffer
 	Vector3	MoveDir;		// 이동을 한다면 기준이 될 이동 방향
 	int		Is2D;			// 2D용 파티클인지
 	Vector3	MoveAngle;	// 이동을 한다면 기준이 될 방향으로부터 x, y, z 에 저장된 각도만큼 틀어진 랜덤한 방향을 구한다.
-	int ApplyRandom;
-	float	Empty;
+	int ParticleBounce;
+	
 	Vector3 RotationAngle;
+	float	ParticleBounceResistance;
+
+	int IsGenerateCircle;
+	float GenerateCircleRadius;
+	int IsLoopGenerateCircle;
+	float ParticleEmpty11;
+	// int     ParticleBounce;
+	// float	 ParticleBounceResistance;
+
+	float AlphaMax;
+	float AlphaMin;
+	float ParticleEmpty2;
+	float ParticleEmpty3;
 };
 
 struct ParticleInfo
@@ -434,10 +450,13 @@ struct ParticleInfo
 	Vector3	Dir;
 	float	Speed;
 	float	LifeTime;
+
 	float	LifeTimeMax;
 	int		Alive;
 	float	FallTime;
 	float	FallStartY;
+	
+	float  InitWorldPosY;
 };
 
 struct ParticleInfoShared
@@ -449,6 +468,7 @@ struct ParticleInfoShared
 	Vector4	ColorMax;
 	int		GravityEnable;
 	Vector3  RotationAngle;
+	float  PrevCircleAngle;
 };
 
 struct GlobalCBuffer

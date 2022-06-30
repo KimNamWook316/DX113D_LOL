@@ -30,6 +30,7 @@
 #include "PathManager.h"
 #include "Render/RenderManager.h"
 #include "Engine.h"
+#include "EngineUtil.h"
 #include "Render/RenderState.h"
 
 CMaterialEditor::CMaterialEditor()
@@ -63,7 +64,7 @@ bool CMaterialEditor::Init()
 	m_SelectedMaterialName->SetDropCallBack(this, &CMaterialEditor::OnDropAndCreateMaterialCallback);
 
 	Line = AddWidget<CIMGUISameLine>("Line");
-	Line->SetOffsetX(310.f);
+	Line->SetOffsetX(290.f);
 
 	CIMGUIText* HelpText = AddWidget<CIMGUIText>("SelectMaterialHelpText", 90.f, 30.f);
 	const char* SelectMaterialHelpText = R"(ex)  현재 선택된 Material 이름을 보여준다. 
@@ -71,6 +72,18 @@ ResourceWindow로부터 Drag,Drop 을 통해서, Material 을  볼수 있다.)";
 	HelpText->SetText(SelectMaterialHelpText);
 	HelpText->SetIsHelpMode(true);
 
+	// Material 이름 Edit 기능
+	m_EditMaterialName = AddWidget<CIMGUITextInput>("Edit Mtrl Name", 150.f, 20.f);
+	m_EditMaterialName->SetHideName(true);
+	m_EditMaterialName->SetHintText("Edit Mtrl Name");
+
+	Line = AddWidget<CIMGUISameLine>("Line");
+	Line->SetOffsetX(160.f);
+
+	m_EditMaterialNameBtn = AddWidget<CIMGUIButton>("Edit", 90.f, 20.f);
+	m_EditMaterialNameBtn->SetClickCallback<CMaterialEditor>(this, &CMaterialEditor::OnEditMaterialNameCallback);
+
+	// Image
 	m_SetTexureImage = AddWidget<CIMGUIImage>("Texture Image", 150.f, 150.f);
 	m_SetTexureImage->SetBorderColor(10, 10, 255);
 	m_SetTexureImage->SetTableTitle("Texture Image");
@@ -83,7 +96,7 @@ ResourceWindow로부터 Drag,Drop 을 통해서, Material 을  볼수 있다.)";
 	m_RenderStateInfoTable->SetTableTitle("RenderState Info");
 
 	// Render State Input
-	m_RenderStateSetInput = AddWidget<CIMGUITextInput>("RenderState Name", 150.f, 20.f);
+	m_RenderStateSetInput = AddWidget<CIMGUITextInput>("Drop RenderState Name", 150.f, 20.f);
 	m_RenderStateSetInput->SetHintText("Render State");
 	m_RenderStateSetInput->SetDropCallBack(this, &CMaterialEditor::OnDropAndSetRenderStateToMaterial);
 
@@ -91,8 +104,21 @@ ResourceWindow로부터 Drag,Drop 을 통해서, Material 을  볼수 있다.)";
 	m_ShaderSetInput->SetHintText("Current Shader");
 	m_ShaderSetInput->SetDropCallBack(this, &CMaterialEditor::OnDropAndSetShaderToMaterial);
 
+	m_SetParticleSettingBtn = AddWidget<CIMGUIButton>("Particle Setting", 150.f, 20.f);
+	m_SetParticleSettingBtn->SetClickCallback<CMaterialEditor>(this, &CMaterialEditor::OnSetParticleMaterialSettingCallback);
+
+	Line = AddWidget<CIMGUISameLine>("Line");
+	Line->SetOffsetX(160.f);
+
+	HelpText = AddWidget<CIMGUIText>("SetParticleMaterial", 90.f, 30.f);
+	const char* SetParticleMaterialText = R"(ex) Particle Material 로 사용하기 위한 기본 세팅(Shader, RenderState)을 해주는 버튼.)";
+	HelpText->SetText(SetParticleMaterialText);
+	HelpText->SetIsHelpMode(true);
+
 	// m_MtrlInfoTable = AddWidget<CIMGUITable>("Mtrl Info", 200.f, 150.f);
 	// m_MtrlInfoTable->SetTableTitle("Mtrl Info");
+
+	Dummy = AddWidget<CIMGUIDummy>("Dummy", 150.f, 20.f);
 
 	m_OutLineCheck = AddWidget<CIMGUICheckBox>("Outline", 80.f);
 	m_OutLineCheck->AddCheckInfo("Outline");
@@ -210,6 +236,8 @@ void CMaterialEditor::OnCreateMaterialCallback()
 		return;
 	}
 
+	m_NewMaterialName->ClearText();
+
 	m_SelectedMaterial = NewMaterial;
 
 	RefreshMaterialDisplayInfo(m_SelectedMaterial);
@@ -241,24 +269,41 @@ void CMaterialEditor::OnDropAndCreateMaterialCallback(const std::string& Materia
 		return;
 	}
 
-	// 2) 없으면, 해당 하드디스크 파일 이름을 이용해서 Bin//Material 폴더에 있는 File 을 찾아서
+	// 2) 없으면, 해당 하드디스크 파일 이름을 이용해서 Bin//Material//ParticleMaterial 폴더에 있는 File 을 찾아서
 	// 해당 Material 파일을 Material Manager 에 Load 하고
 	// m_SeleteMaterial 에 세팅한다.
 	char MaterialLoadFullPathMultibyte[MAX_PATH] = {};
 	// TCHAR MaterialLoadFullPath[MAX_PATH] = {};
 
-	const PathInfo* Info = CPathManager::GetInst()->FindPath(MATERIAL_PATH);
+	const PathInfo* Info = CPathManager::GetInst()->FindPath(MATERIAL_PARTICLE_PATH);
+
+	//  Bin//Material//ParticleMaterial 해당 폴더가 없다면 만들어준다.
+	CEngineUtil::CheckAndMakeDirectory(Info);
 
 	if (Info)
 		strcpy_s(MaterialLoadFullPathMultibyte, Info->PathMultibyte);
 
 	strcat_s(MaterialLoadFullPathMultibyte, MaterialName.c_str());
 
-	m_SelectedMaterial = CResourceManager::GetInst()->LoadMaterialFullPathMultibyte(MaterialLoadFullPathMultibyte);
+	CMaterial* LoadedMaterial = CResourceManager::GetInst()->LoadMaterialFullPathMultibyte(MaterialLoadFullPathMultibyte);
+
+	// 이것이 nullptr 이라는 의미는, Load 가 실패했다는 의미이다.
+	if (!LoadedMaterial)
+	{
+		MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Material Load Failure From Bin/Material/ParticleMaterial."), NULL, MB_OK);
+
+		m_SelectedMaterialName->ResetText();
+
+		return;
+	}
+
+	m_SelectedMaterial = LoadedMaterial;
 
 	RefreshMaterialDisplayInfo(m_SelectedMaterial);
 
 	CEditorManager::GetInst()->GetResourceDisplayWindow()->RefreshLoadedMaterialResources();
+
+	MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Material Set Successfully"), NULL, MB_OK);
 }
 
 void CMaterialEditor::OnDropAndSetShaderToMaterial(const std::string& DropShaderName)
@@ -274,6 +319,7 @@ void CMaterialEditor::OnDropAndSetShaderToMaterial(const std::string& DropShader
 	if (!FoundShader)
 	{
 		MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("No Shader Exist To According Shader Key"), NULL, MB_OK);
+		m_ShaderSetInput->ResetText();
 		return;
 	}
 
@@ -287,6 +333,8 @@ void CMaterialEditor::OnDropAndSetShaderToMaterial(const std::string& DropShader
 
 void CMaterialEditor::OnDropAndSetRenderStateToMaterial(const std::string& DropRenderStateName)
 {
+	const char* PrevRenderStateName = m_RenderStateSetInput->GetTextUTF8();
+
 	// 현재 Material 에 Render State Name 을 세팅한다.
 	// Shader Manager 에서 Key 값만 찾아서 세팅해주고
 	// 없으면 X
@@ -298,6 +346,7 @@ void CMaterialEditor::OnDropAndSetRenderStateToMaterial(const std::string& DropR
 	if (!FoundRenderState)
 	{
 		MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("No RenderState Exist To According Sampler Key"), NULL, MB_OK);
+		m_RenderStateSetInput->SetText(PrevRenderStateName);
 		return;
 	}
 
@@ -307,6 +356,50 @@ void CMaterialEditor::OnDropAndSetRenderStateToMaterial(const std::string& DropR
 	RefreshMaterialDisplayInfo(m_SelectedMaterial);
 
 	MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("RenderState Successfully Set"), NULL, MB_OK);
+}
+
+void CMaterialEditor::OnEditMaterialNameCallback()
+{
+	if (!m_SelectedMaterial || m_EditMaterialName->Empty())
+		return;
+
+	// 이름 수정
+	m_SelectedMaterial->SetName(m_EditMaterialName->GetTextUTF8());
+
+	// IMGUI Update
+	m_SelectedMaterialName->SetText(m_EditMaterialName->GetTextUTF8());
+
+	m_EditMaterialName->ClearText();
+}
+
+void CMaterialEditor::OnSetParticleMaterialSettingCallback()
+{
+	if (!m_SelectedMaterial)
+		return;
+
+	// Alpha Blend State 세팅
+	CRenderState* AlphaBlendState = CRenderManager::GetInst()->FindRenderState("AlphaBlend");
+	if (!AlphaBlendState)
+	{
+		assert(false);
+		return;
+	}
+	m_SelectedMaterial->SetRenderState(AlphaBlendState);
+
+	// Particle Render Shader 세팅
+	CGraphicShader* FoundShader = dynamic_cast<CGraphicShader*>(CResourceManager::GetInst()->FindShader("ParticleRenderShader"));
+
+	if (!FoundShader)
+	{
+		assert(false);
+		return;
+	}
+	m_SelectedMaterial->SetShader(FoundShader);
+
+	// IMGUI Update
+	RefreshMaterialDisplayInfo(m_SelectedMaterial);
+
+	MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Particle Material Setting Set"), NULL, MB_OK);
 }
 
 void CMaterialEditor::OnIsOutLineEdit(const char*, bool Enable)
@@ -503,15 +596,20 @@ void CMaterialEditor::OnSaveMaterial()
 	if (!m_SelectedMaterial)
 		return;
 
+	const PathInfo* MaterialPathInfo = CPathManager::GetInst()->FindPath(MATERIAL_PARTICLE_PATH);
+
+	// Bin//Material//ParticleMaterial 폴더가 있는지 확인하고 만들어준다.
+	CEngineUtil::CheckAndMakeDirectory(MaterialPathInfo);
+
 	TCHAR FileFullPath[MAX_PATH] = {};
 
 	OPENFILENAME OpenFile = {};
 	OpenFile.lStructSize = sizeof(OPENFILENAME);
 	OpenFile.hwndOwner = CEngine::GetInst()->GetWindowHandle();
-	OpenFile.lpstrFilter = TEXT("All Files\0*.*\0.Animation File\0*.anim");
+	OpenFile.lpstrFilter = TEXT("All Files\0*.*\0.Material File\0*.mtrl");
 	OpenFile.lpstrFile = FileFullPath;
 	OpenFile.nMaxFile = MAX_PATH;
-	OpenFile.lpstrInitialDir = CPathManager::GetInst()->FindPath(MATERIAL_PATH)->Path;
+	OpenFile.lpstrInitialDir = MaterialPathInfo->Path;
 
 	if (GetSaveFileName(&OpenFile) != 0)
 	{
@@ -537,9 +635,30 @@ void CMaterialEditor::OnSaveMaterial()
 			return;
 		}
 
-		_strupr_s(FileExt);
+		// 현재 저장하는 Directory가 Bin/Material/ParticleMaterial 인지 확인하기 => 아니라면, Save 방지
+		std::string PathInfoBeforeFileName;
+		CEditorUtil::GetPathInfoBeforeFileName(FileFullPathMultibyte, PathInfoBeforeFileName);
 
-		// 확장자 .anim 이 아니라면 return;
+		if (strcmp(MaterialPathInfo->PathMultibyte, PathInfoBeforeFileName.c_str()) != 0)
+		{
+			MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Particle Material 의 경우, 반드시 Bin/Material/ParticleMaterial 에 저장"), NULL, MB_OK);
+			return;
+		}
+
+		// 현재 저장하는 Path 에서, 같은 이름의 FileName이 존재하는지 확인하기
+		char CheckMaterialFileName[MAX_PATH] = {};
+		strcpy_s(CheckMaterialFileName, FileName);
+		strcat_s(CheckMaterialFileName, FileExt);
+
+		if (CEditorUtil::IsFileExistInDir(MATERIAL_PARTICLE_PATH, CheckMaterialFileName))
+		{
+			if (MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("같은 이름의 .mtrl 파일이 존재합니다. 저장하시겠습니까?"), NULL, MB_YESNO) != IDYES)
+				return;
+		}
+
+
+		// 확장자 검사하기
+		_strupr_s(FileExt);
 		if (strcmp(FileExt, ".MTRL") != 0)
 		{
 			MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("EXT Has To Be .mtrl"), NULL, MB_OK);
@@ -547,21 +666,27 @@ void CMaterialEditor::OnSaveMaterial()
 		}
 
 		m_SelectedMaterial->SaveFullPath(FileFullPathMultibyte);
-	}
 
+		MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Material Save Success"), NULL, MB_OK);
+	}
 }
 
 void CMaterialEditor::OnLoadMaterial()
 {
+	const PathInfo* MaterialPathInfo = CPathManager::GetInst()->FindPath(MATERIAL_PARTICLE_PATH);
+
+	// Bin//Material//ParticleMaterial 폴더가 있는지 확인하고 만들어준다.
+	CEngineUtil::CheckAndMakeDirectory(MaterialPathInfo);
+
 	TCHAR FilePath[MAX_PATH] = {};
 
 	OPENFILENAME OpenFile = {};
 	OpenFile.lStructSize = sizeof(OPENFILENAME);
 	OpenFile.hwndOwner = CEngine::GetInst()->GetWindowHandle();
-	OpenFile.lpstrFilter = TEXT("All Files\0*.*\0.Animation File\0*.anim");
+	OpenFile.lpstrFilter = TEXT("All Files\0*.*\0.Material File\0*.mtrl");
 	OpenFile.lpstrFile = FilePath;
 	OpenFile.nMaxFile = MAX_PATH;
-	OpenFile.lpstrInitialDir = CPathManager::GetInst()->FindPath(MATERIAL_PATH)->Path;
+	OpenFile.lpstrInitialDir = MaterialPathInfo->Path;
 
 	if (GetOpenFileName(&OpenFile) != 0)
 	{
@@ -584,6 +709,16 @@ void CMaterialEditor::OnLoadMaterial()
 			return;
 		}
 
+		// 현재 Load하는 Directory가 Bin/Material/ParticleMaterial 인지 확인하기 => 아니라면, Load
+		std::string PathInfoBeforeFileName;
+		CEditorUtil::GetPathInfoBeforeFileName(FilePathMultibyte, PathInfoBeforeFileName);
+
+		if (strcmp(MaterialPathInfo->PathMultibyte, PathInfoBeforeFileName.c_str()) != 0)
+		{
+			MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Particle Material 의 경우, 반드시 Bin/Material/ParticleMaterial 로부터 Load 해야 한다."), NULL, MB_OK);
+			return;
+		}
+
 		// 파일 이름을, Material 을 저장하는 Key 값으로 활용할 것이다.
 		CMaterial* LoadedMaterial = CResourceManager::GetInst()->LoadMaterialFullPathMultibyte(FilePathMultibyte);
 
@@ -602,6 +737,8 @@ void CMaterialEditor::OnLoadMaterial()
 		CEditorManager::GetInst()->GetResourceDisplayWindow()->RefreshLoadedMaterialResources();
 		CEditorManager::GetInst()->GetResourceDisplayWindow()->RefreshLoadedRenderStateResources();
 		CEditorManager::GetInst()->GetResourceDisplayWindow()->RefreshLoadedShaderResources();
+
+		MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Material Load Success"), NULL, MB_OK);
 	}
 }
 
@@ -668,7 +805,9 @@ void CMaterialEditor::RefreshMaterialDisplayInfo(class CMaterial* Material, clas
 	m_ShaderSetInput->ClearText();
 
 	if (Shader)
+	{
 		m_ShaderSetInput->SetText(Shader->GetName().c_str());
+	}
 	 
 	// TODO : Material 의 고유 정보 세팅 (현재로서는 필요한 것은 없어보인다)
 	// BaseColor, Ambient Color, Specular Color, EmmisiveColor
@@ -703,6 +842,7 @@ void CMaterialEditor::RefreshMaterialDisplayInfo(class CMaterial* Material, clas
 
 	// RenderState Input 을 Clear 해준다.
 	m_RenderStateSetInput->ClearText();
+
 
 	// OutLine 정보 세팅
 	m_OutLineCheck->SetCheck(0, Material->IsOutlineEnable());

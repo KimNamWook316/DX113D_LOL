@@ -24,6 +24,8 @@ public:
 	CParticle* FindParticle(const std::string& Name);
 	void ReleaseParticle(const std::string& Name);
 	void AddParticle(CParticle* Particle);
+	void ChangeParticleKeyName(const std::string& OldKeyName , const std::string& NewKeyName);
+	bool DeleteParticle(const std::string& ParticleName);
 
 	template <typename T>
 	T* CreateParticleEmpty()

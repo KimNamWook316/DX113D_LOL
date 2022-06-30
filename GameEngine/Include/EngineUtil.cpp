@@ -39,6 +39,33 @@ Light_Type CEngineUtil::StringToLightType(const std::string& TypeString)
 	return (Light_Type)(-1);
 }
 
+std::optional<std::string> CEngineUtil::CheckAndExtractFullPathOfTargetFile(std::string_view PathName, std::string_view TargetFileName)
+{
+	const PathInfo* Info = CPathManager::GetInst()->FindPath(PathName.data());
+
+	if (!Info)
+		return  std::nullopt;
+
+	char FolderName[MAX_PATH] = {};
+
+	strcpy_s(FolderName, Info->PathMultibyte);
+
+	fs::path TargetFolder(FolderName);
+
+	for (const fs::directory_entry& entry :
+		fs::recursive_directory_iterator(TargetFolder))
+	{
+		const std::string& FileName = FilterFileName(entry.path().u8string());
+
+		if (strcmp(FileName.c_str(), TargetFileName.data()) == 0)
+		{
+			return entry.path().u8string();
+		}
+	}
+
+	return std::nullopt;
+}
+
 bool CEngineUtil::IsFileExistInDir(const std::string& PathName, const std::string& TargetFileName)
 {
 	const PathInfo* Info = CPathManager::GetInst()->FindPath(PathName);
@@ -64,6 +91,45 @@ bool CEngineUtil::IsFileExistInDir(const std::string& PathName, const std::strin
 	}
 
 	return false;
+}
+
+bool CEngineUtil::CopyFileToOtherDirectory(const PathInfo* CurrentPathInfo, const PathInfo* TargetPathInfo, const std::string& FileName)
+{
+	if (!CurrentPathInfo || !TargetPathInfo)
+		return false;
+
+	// 현재 디렉토리 정보를 만든다.
+	std::string CurrentPath = CurrentPathInfo->PathMultibyte;
+	CurrentPath.append(FileName);
+
+	std::string TargetPath = TargetPathInfo->PathMultibyte;
+	TargetPath.append(FileName);
+
+	fs::path FromFilePath(CurrentPath);
+	fs::path ToFilePath(TargetPath);
+
+	// 둘중 하나라도 파일이 아니라면 X (둘중 하나라도 Directory라면)
+	if (fs::is_directory(FromFilePath) || fs::is_directory(ToFilePath))
+		return false;
+
+	fs::copy(FromFilePath, ToFilePath);
+
+	return true;
+}
+
+void CEngineUtil::CheckAndMakeDirectory(const PathInfo* Info)
+{
+	if (!Info)
+		return;
+
+	fs::path dir(Info->PathMultibyte);
+
+	// 이미 존재하면 return
+	if (fs::exists(dir))
+		return;
+
+	// 해당 디렉토리까지 타고 들어가는, 부모 디렉토리들까지 한번에 만들어준다.
+	fs::create_directories(dir);
 }
 
 std::string CEngineUtil::FilterFileName(const std::string& FullPath)

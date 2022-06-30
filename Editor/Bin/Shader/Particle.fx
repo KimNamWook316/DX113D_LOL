@@ -7,30 +7,52 @@ cbuffer	ParticleCBuffer : register(b11)
 	float3	g_ParticleStartMin;		// 파티클이 생성될 영역의 Min
 	float3	g_ParticleStartMax;		// 파티클이 생성될 영역의 Max
 	uint	g_ParticleSpawnCountMax;	// 생성될 파티클의 최대
-	
+
 	float3	g_ParticleScaleMin;		// 생성될 파티클 크기의 Min
 	float	g_ParticleLifeTimeMin;	// 생성될 파티클이 살아있을 최소시간
-	
+
 	float3	g_ParticleScaleMax;		// 새성될 파티클 크기의 Max
 	float	g_ParticleLifeTimeMax;	// 생성될 파티클이 살아있을 최대시간
-	
+
 	float4	g_ParticleColorMin;		// 생성될 파티클의 색상 Min
 	float4	g_ParticleColorMax;		// 생성될 파티클의 색상 Max
-	
+
 	float	g_ParticleSpeedMin;		// 파티클의 최소 이동속도
 	float	g_ParticleSpeedMax;		// 파티클의 최대 이동속도
 	int		g_ParticleMove;			// 이동을 하는지 안하는지
 	int		g_ParticleGravity;		// 중력 적용을 받는지 안받는지
-	
+
 	float3	g_ParticleMoveDir;		// 이동을 한다면 기준이 될 이동 방향
 	int		g_Particle2D;			// 2D용 파티클인지
-	
+
 	float3	g_ParticleMoveAngle;	// 이동을 한다면 기준이 될 방향으로부터 x, y, z 에 저장된 각도만큼 틀어진 랜덤한 방향을 구한다.
-	float      g_ParticleEmpty;
+	int      g_ParticleBounce;
 
 	float3 g_ParticleRotationAngle;
-	float   g_ParticlEmpty1;
+	float   g_ParticleBounceResist;
+	
+	int g_ParticleGenerateCircle;
+	float g_ParcticleGenerateRadius;
+	int g_LoopGenerateCircle;
+	float g_ParticleEmpty1;
+	
+	float g_ParticleAlphaMax;
+	float g_ParticleAlphaMin;
+	float g_ParticleEmpty2;
+	float g_ParticleEmpty3;
 };
+
+/*
+if (g_ParticleBounce == 1)
+			{
+				if (g_ParticleArray[ThreadID.x].InitWorldPosY >= g_ParticleArray[ThreadID.x].WorldPos.y)
+				{
+					g_ParticleArray[ThreadID.x].FallTime = 0.f;
+					// g_ParticleArray[ThreadID.x].Speed *= 0.98f;
+					g_ParticleArray[ThreadID.x].Speed *= g_ParticleBounceResist;
+				}
+			}
+*/
 
 #define	GRAVITY	9.8f
 
@@ -44,6 +66,8 @@ struct ParticleInfo
 	int		Alive;
 	float	FallTime;
 	float	FallStartY;
+
+	float  InitWorldPosY;
 };
 
 struct ParticleInfoShared
@@ -59,6 +83,7 @@ struct ParticleInfoShared
 	int		GravityEnable;
 
 	float3 RotationAngle;
+	float PrevCircleAngle;
 };
 
 RWStructuredBuffer<ParticleInfo>		g_ParticleArray	: register(u0);
@@ -130,8 +155,13 @@ void ParticleUpdate(uint3 ThreadID : SV_DispatchThreadID)
 	g_ParticleShare[0].SpawnEnable = g_ParticleSpawnEnable;
 	g_ParticleShare[0].ScaleMin = g_ParticleScaleMin;
 	g_ParticleShare[0].ScaleMax = g_ParticleScaleMax;
+
 	g_ParticleShare[0].ColorMin = g_ParticleColorMin;
+	g_ParticleShare[0].ColorMin.a = g_ParticleAlphaMin;
+
 	g_ParticleShare[0].ColorMax = g_ParticleColorMax;
+	g_ParticleShare[0].ColorMax.a = g_ParticleAlphaMax;
+
 	g_ParticleShare[0].GravityEnable = g_ParticleGravity;
 	g_ParticleShare[0].RotationAngle = g_ParticleRotationAngle;
 
@@ -168,15 +198,42 @@ void ParticleUpdate(uint3 ThreadID : SV_DispatchThreadID)
 		float3	RandomPos = float3(Rand(key), Rand(2.142f), Rand(key * 3.f));
 		float	Rand = (RandomPos.x + RandomPos.y + RandomPos.z) / 3.f;
 
+		// Radius 주변으로 그려내도록 하기 위해서는 아래 계산해준 StartRange 가 아니라, 원을 중심으로 그려지게 해야 한다.
+		// 그리고 Loop 을 세팅해주면, 원을 중심으로 일정한 간격으로 차례대로 Spawn 되도록 처리해야 한다.
+		float3	StartRange = g_ParticleStartMax - g_ParticleStartMin;
+		g_ParticleArray[ThreadID.x].WorldPos = Rand * (g_ParticleStartMax - g_ParticleStartMin) + g_ParticleStartMin;
+		g_ParticleArray[ThreadID.x].InitWorldPosY = g_ParticleArray[ThreadID.x].WorldPos.y;
+
+		// 원 모양 생성 => Generate Circle 을 하게 되면, Start Min, Max 가 무의미해지게 되는 것이다.
+		 if (g_ParticleGenerateCircle == 1)
+		 {
+		 	// 0.f, 0.f, 0.f 중심으로 원에 생성하기
+		 	float RandomAngle = 360.f * Rand;
+		 	float3 CirclePos = float3(0.f, 0.f, 0.f) + float3(cos(RandomAngle) * g_ParcticleGenerateRadius,
+		 		0.f, 
+		 		sin(RandomAngle) * g_ParcticleGenerateRadius);
+		 
+		 	g_ParticleArray[ThreadID.x].WorldPos = CirclePos;
+		 
+		 	// Loop 을 설정하게 되면, 차례대로 만들어지게 한다.
+		 	if (g_LoopGenerateCircle == 1)
+		 	{
+		 		float NextCircleAngle = g_ParticleShare[0].PrevCircleAngle + (360.f / g_ParticleSpawnCountMax);
+		 
+		 		CirclePos = float3(0.f, 0.f, 0.f) + float3(cos(NextCircleAngle) * g_ParcticleGenerateRadius,  0.f, sin(NextCircleAngle) * g_ParcticleGenerateRadius);
+		 		g_ParticleArray[ThreadID.x].WorldPos = CirclePos;
+		 
+		 		g_ParticleShare[0].PrevCircleAngle = NextCircleAngle;
+		 			// PrevCircleAngle
+		 		// g_ParticleShare[0].RotationAngle = g_ParticleRotationAngle;
+		 	}
+		 }
+
 		g_ParticleArray[ThreadID.x].FallTime = 0.f;
 		g_ParticleArray[ThreadID.x].FallStartY = g_ParticleArray[ThreadID.x].WorldPos.y;
 
 		g_ParticleArray[ThreadID.x].LifeTime = 0.f;
 		g_ParticleArray[ThreadID.x].LifeTimeMax = (g_ParticleLifeTimeMax - g_ParticleLifeTimeMin) + g_ParticleLifeTimeMin;
-
-		float3	StartRange = g_ParticleStartMax - g_ParticleStartMin;
-		g_ParticleArray[ThreadID.x].WorldPos = Rand * (g_ParticleStartMax - g_ParticleStartMin) + g_ParticleStartMin;
-		
 
 		if (g_ParticleMove == 1)
 		{
@@ -213,12 +270,23 @@ void ParticleUpdate(uint3 ThreadID : SV_DispatchThreadID)
 			g_ParticleArray[ThreadID.x].FallTime += g_DeltaTime;
 
 			float	Velocity = 0.f;
-			
+
 			if (g_ParticleArray[ThreadID.x].Dir.y > 0.f)
 				Velocity = g_ParticleArray[ThreadID.x].Speed * g_ParticleArray[ThreadID.x].FallTime;
 
 			g_ParticleArray[ThreadID.x].WorldPos.y = g_ParticleArray[ThreadID.x].FallStartY +
 				(Velocity - 0.5f * GRAVITY * g_ParticleArray[ThreadID.x].FallTime * g_ParticleArray[ThreadID.x].FallTime * 10.f);
+
+			// Bounce 효과를 낸다면 
+			if (g_ParticleBounce == 1)
+			{
+				if (g_ParticleArray[ThreadID.x].InitWorldPosY >= g_ParticleArray[ThreadID.x].WorldPos.y)
+				{
+					g_ParticleArray[ThreadID.x].FallTime = 0.f;
+					// g_ParticleArray[ThreadID.x].Speed *= 0.98f;
+					g_ParticleArray[ThreadID.x].Speed *= g_ParticleBounceResist;
+				}
+			}
 
 			g_ParticleArray[ThreadID.x].WorldPos.x += MovePos.x;
 			g_ParticleArray[ThreadID.x].WorldPos.z += MovePos.z;
@@ -304,13 +372,7 @@ void ParticleGS(point VertexParticleOutput input[1],
 	float3	Scale = lerp(g_ParticleShareSRV[0].ScaleMin, g_ParticleShareSRV[0].ScaleMax,
 		float3(Ratio, Ratio, Ratio));
 
-	float4 ParticleColorMin = g_ParticleShareSRV[0].ColorMin;
-	ParticleColorMin.w = 1.f;
-
-	float4 ParticleColorMax = g_ParticleShareSRV[0].ColorMax;
-	ParticleColorMax.w = 0.9f;
-
-	float4	Color = lerp(ParticleColorMin, ParticleColorMax,
+	float4	Color = lerp(g_ParticleShareSRV[0].ColorMin, g_ParticleShareSRV[0].ColorMax,
 		float4(Ratio, Ratio, Ratio, Ratio));
 
 	float3x3 matRot = ComputeRotationMatrix(g_ParticleShareSRV[0].RotationAngle);
@@ -318,7 +380,7 @@ void ParticleGS(point VertexParticleOutput input[1],
 	// 4개의 최종 정점정보를 만들어준다.
 	for (int i = 0; i < 4; ++i)
 	{
-		float3	WorldPos = g_ParticleArraySRV[InstanceID].WorldPos + mul(g_ParticleLocalPos[i] * Scale ,matRot);
+		float3	WorldPos = g_ParticleArraySRV[InstanceID].WorldPos + mul(g_ParticleLocalPos[i] * Scale, matRot);
 
 		OutputArray[i].ProjPos = mul(float4(WorldPos, 1.f), g_matVP);
 		// OutputArray[i].ProjPos.xyz = mul(OutputArray[i].ProjPos.xyz, matRot);
@@ -339,34 +401,35 @@ void ParticleGS(point VertexParticleOutput input[1],
 
 PSOutput_Single ParticlePS(GeometryParticleOutput input)
 {
-	PSOutput_Single output = (PSOutput_Single) 0;
+	PSOutput_Single output = (PSOutput_Single)0;
 
 	float4 Color = g_BaseTexture.Sample(g_BaseSmp, input.UV);
 
 	if (Color.a == 0.f || input.Color.a == 0.f)
 		clip(-1);
-    
+
 	float2 ScreenUV = input.ProjPos.xy / input.ProjPos.w;
 	ScreenUV = ScreenUV * float2(0.5f, -0.5f) + float2(0.5f, 0.5f);
-    
+
 	int2 TargetPos = (int2) 0;
-	
-	TargetPos.x = (int) (ScreenUV.x * g_Resolution.x);
-	TargetPos.y = (int) (ScreenUV.y * g_Resolution.y);
-    
+
+	TargetPos.x = (int)(ScreenUV.x * g_Resolution.x);
+	TargetPos.y = (int)(ScreenUV.y * g_Resolution.y);
+
+	// Soft Particle
 	float4 Depth = g_GBufferDepth.Load(TargetPos, 0);
-    
 	float Alpha = 1.f;
-    
 	if (Depth.a > 0.f)
 		Alpha = (Depth.g - input.ProjPos.w) / 0.5f;
-    
 	Alpha = clamp(Alpha, 0.f, 1.f);
 
 	Color = PaperBurn2D(Color * input.Color, input.UV);
-	
+
 	output.Color = Color;
-	output.Color.a = Color.a * g_MtrlOpacity * Alpha;
+
+	// 아래 코드를 적용하면 계속 검정색으로만 나온다.
+	output.Color.a = Color.a * g_MtrlOpacity;
+	// output.Color.a = Color.a * g_MtrlOpacity * Alpha;
 
 	return output;
 }

@@ -34,6 +34,8 @@ protected:
 	std::function<void()>	m_InputCallback;
 	std::function<void(const std::string&)>	m_DropCallback;
 
+	char m_PrevText[1024];
+
 public:
 	int GetValueInt()	const
 	{
@@ -63,6 +65,9 @@ public:
 public:
 	void SetText(const char* Text)
 	{
+		memset(m_PrevText, 0, sizeof(char) * 1024);
+		strcpy_s(m_PrevText, m_TextUTF8);
+
 		memset(m_wText, 0, sizeof(wchar_t) * 1024);
 		memset(m_Text, 0, sizeof(char) * 1024);
 		memset(m_TextUTF8, 0, sizeof(char) * 1024);
@@ -94,6 +99,9 @@ public:
 
 	void ClearText()
 	{
+		memset(m_PrevText, 0, sizeof(char) * 1024);
+		strcpy_s(m_PrevText, m_TextUTF8);
+
 		char		Text[1024];
 		wchar_t		wText[1024];
 		char		TextUTF8[1024];
@@ -154,10 +162,15 @@ public:
 		return strlen(m_Text) == 0;
 	}
 
+	void ResetText()
+	{
+		SetText(m_PrevText);
+	}
+
 public:
 	virtual bool Init();
 	virtual void Render();
-private :
+private:
 	void RenderText();
 	void ApplyDropEffect();
 public:

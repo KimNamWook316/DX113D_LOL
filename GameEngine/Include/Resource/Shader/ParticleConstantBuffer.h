@@ -123,7 +123,71 @@ public:
 	{
 		return m_BufferData.MoveAngle;
 	}
+
+	int IsBounceEnable() const
+	{
+		return m_BufferData.ParticleBounce;
+	}
+	
+	float GetParticleBounceResist() const
+	{
+		return m_BufferData.ParticleBounceResistance;
+	}
+
+	int IsGenerateCircle() const
+	{
+		return m_BufferData.IsGenerateCircle;
+	}
+	float GetGenerateCircleRadius() const
+	{
+		return m_BufferData.GenerateCircleRadius;
+	}
+	int IsLoopGenerateCircle() const
+	{
+		return m_BufferData.IsLoopGenerateCircle;
+	}
+	float GetMinAlpha() const
+	{
+		return m_BufferData.AlphaMin;
+	}
+	float GetMaxAlpha() const
+	{
+		return m_BufferData.AlphaMax;
+	}
 public:
+	void SetRotationAngle(const Vector3& Angle)
+	{
+		m_BufferData.RotationAngle = Angle;
+	}
+	void SetLoopGenerateCircle(bool Enable)
+	{
+		m_BufferData.IsLoopGenerateCircle = Enable ? 1 : 0;
+	}
+	void SetGenerateCircleEnable(bool Enable)
+	{
+		m_BufferData.IsGenerateCircle = Enable ? 1 : 0;
+	}
+	void SetGenerateCircleRadius(float Radius)
+	{
+		m_BufferData.GenerateCircleRadius = Radius;
+	}
+	void SetBounceEnable(int Bounce)
+	{
+		m_BufferData.ParticleBounce = Bounce;
+	}
+	void SetMinAlpha(float Alpha)
+	{
+		m_BufferData.AlphaMin = Alpha;
+	}
+	void SetMaxAlpha(float Alpha)
+	{
+		m_BufferData.AlphaMax = Alpha;
+	}
+	void SetBounceResist(float Bounce)
+	{
+		m_BufferData.ParticleBounceResistance = Bounce;
+	}
+
 	void SetSpawnEnable(unsigned int Count)
 	{
 		m_BufferData.SpawnEnable = Count;
@@ -137,11 +201,6 @@ public:
 	void SetStartMax(const Vector3& StartMax)
 	{
 		m_BufferData.StartMax = StartMax;
-	}
-
-	void SetRotationAngle(const Vector3& Angle)
-	{
-		m_BufferData.RotationAngle = Angle;
 	}
 
 	void SetSpawnCountMax(unsigned int Count)

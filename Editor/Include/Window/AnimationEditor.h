@@ -20,9 +20,8 @@ private:
 	// Frame 조정
 	class CIMGUITextInput* m_FrameInput;
 	class CIMGUISliderInt* m_FrameSlider;
-	// class CIMGUIButton* m_FrameDeleteBtn;
-	// class CIMGUITextInput* m_DeleteFrameInput;
-	// Animation Seq 추가
+	class CIMGUIButton* m_SetOriginalPlayTimeBtn;
+
 	class CIMGUIButton* m_AnimSequenceAddBtn;
 	class CIMGUIButton* m_CreateSample3DBtn;
 	// Animation Seq 지우기
@@ -41,6 +40,8 @@ private:
 	// Save Load
 	class CIMGUIButton* m_SaveAnimationInstanceBtn;
 	class CIMGUIButton* m_LoadAnimationInstanceBtn;
+	// Loaded Anim File Name
+	class CIMGUITextInput* m_LoadedAnimFileName;
 	// Play Scale, Time
 	class CIMGUITextInput* m_PlayScaleInput;
 	class CIMGUIButton* m_PlayScaleEditBtn;
@@ -55,26 +56,31 @@ private:
 	class CAnimationSequenceInstance* m_Animation;
 	// --------------------------------------------------------------------
 private :
-	class CAnimationInstanceConvertThread* m_AnimInstanceConvertThread;
-	// 지정된 Folder
-	class CIMGUITextInput* m_AnimSeqcSrcFolderPath;
-	// 공통 File Name
-	class CIMGUITextInput* m_CommonAnimSeqName;
-	// Convert Btn
-	class CIMGUIButton* m_ConvertAnimInstanceBtn;
-	// Folder 지정
-	class CIMGUIButton* m_SelectAnimInstanceFolderPath;
-	// Log
-	class CIMGUIChild* m_AnimInstanceConvertLog;
-	// ProgressBar
-	class CIMGUIProgressBar* m_AnimInstanceProgressBar;
-	// 저장할 Animation File Name
-	class CIMGUITextInput* m_SavedAnimFileName;
-private :
-	std::vector<std::string> m_vecAnimationSeqFilesFullPath;
-	char m_SelectedSeqSrcsDirPath[MAX_PATH];
+//	class CAnimationInstanceConvertThread* m_AnimInstanceConvertThread;
+//	// 지정된 Folder
+//	class CIMGUITextInput* m_AnimSeqcSrcFolderPath;
+//	// 공통 File Name
+//	class CIMGUITextInput* m_CommonAnimSeqName;
+//	// Convert Btn
+//	class CIMGUIButton* m_ConvertAnimInstanceBtn;
+//	// Folder 지정
+//	class CIMGUIButton* m_SelectAnimInstanceFolderPath;
+//	// Log
+//	class CIMGUIChild* m_AnimInstanceConvertLog;
+//	// ProgressBar
+//	class CIMGUIProgressBar* m_AnimInstanceProgressBar;
+//	// 저장할 Animation File Name
+//	class CIMGUITextInput* m_SavedAnimFileName;
+//private :
+//	// FullPath 목록 모아둔 Vector 
+//	std::vector<std::string> m_vecAnimationSeqFilesFullPath;
+//	
+//	// FileName 목록 모아둔 Vector
+//	// std::vector<std::string> m_vecAnimationSeqFileNames;
+//
+//	char m_SelectedSeqSrcsDirPath[MAX_PATH];
 	// Animation Instance 를 File형태로 저장하기 위해 임시적으로 사용하는 Dummy Animation Instance
-	class CAnimationSequenceInstance* m_DummyAnimation;
+	// class CAnimationSequenceInstance* m_DummyAnimation;
 public:
 	const std::string& Get3DTestObjectMeshName() const
 	{
@@ -90,7 +96,6 @@ private:
 	void OnRefreshAnimationComboBox();
 	void OnRefreshScaleAndTimeInputInfo();
 	void OnRefreshCheckBoxInfo();
-
 	// Play
 	void OnCreateSample3DObject();
 	void OnSetPlayEngineDeltaTime(const char*, bool);
@@ -107,6 +112,7 @@ private:
 	bool LoadElementsForSqcLoading(const char* SqcFileName);
 	void SetMeshMaterialReadyForAnimation();
 	// Edit
+	void OnSetOriginalAnimPlayTime(); // 원본 Sequence의 PlayTime 을 고려하여 PlayTime 을 다시 세팅한다.
 	void OnEditAnimPlayTime();
 	void OnEditAnimPlayScale();
 	void OnEditAnimSequenceKey();
@@ -116,17 +122,19 @@ private:
 	// void OnDeleteAnimFrame();
 
 // Helper Functions
+	void OnDeleteExisting3DObject();
 	void OnClearExistingAnimationSeqInfos();
 	void OnClickAnimationSequence(int, const char*);
+	void OnSetAnimationComboBoxCallback(const std::string& AnimSequenceName);
 	void OnAnimationSliderIntCallback(int);
 	void OnAnimationFrameInputCallback();
 	// Convert Animation Instance  Functions
 private :
-	void OnClickSetAnimSeqSrcDirButton();
-	void OnConvertSequencesIntoAnimationInstance();
-	void OnAnimInstanceConvertLoading(const LoadingMessage& msg);
+	// void OnClickSetAnimSeqSrcDirButton();
+	// void OnConvertSequencesIntoAnimationInstance();
+	// void OnAnimInstanceConvertLoading(const LoadingMessage& msg);
 	// Helper Functions
 private :
-	void AddSequenceToDummyAnimationInstance(const char* FileFullPath);
+	// void AddSequenceToDummyAnimationInstance(const char* FileFullPath);
 };
 

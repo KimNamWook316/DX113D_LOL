@@ -71,3 +71,34 @@ void CParticleManager::AddParticle(CParticle* Particle)
 
 	m_mapParticle.insert(std::make_pair(Particle->GetName(), Particle));
 }
+
+void CParticleManager::ChangeParticleKeyName(const std::string& OldKeyName, const std::string& NewKeyName)
+{
+	if (OldKeyName == NewKeyName)
+	{
+		return;
+	}
+
+	CParticle* FoundParticle = FindParticle(OldKeyName);
+
+	if (!FoundParticle)
+		return;
+
+	// 새로운 이름으로 insert
+	m_mapParticle.insert(std::make_pair(NewKeyName, FoundParticle));
+
+	// 기존 것은 지운다
+	DeleteParticle(OldKeyName);
+}
+
+bool CParticleManager::DeleteParticle(const std::string& ParticleName)
+{
+	auto iter = m_mapParticle.find(ParticleName);
+
+	if (iter == m_mapParticle.end())
+		return false;
+
+	m_mapParticle.erase(iter);
+
+	return true;
+}

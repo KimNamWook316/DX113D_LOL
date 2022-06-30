@@ -51,7 +51,7 @@ public :
 	{
 		return m_IsCameraZoom; 
 	}
-	const Vector3& GetCameraRelativeRotation() const
+	Vector3 GetCameraRelativeRotation() const
 	{
 		return m_ParticleArm->GetRelativeRot();
 	}

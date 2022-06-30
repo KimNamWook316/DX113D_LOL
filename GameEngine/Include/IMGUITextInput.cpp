@@ -118,10 +118,8 @@ void CIMGUITextInput::ApplyDropEffect()
 			int ConvertLength = WideCharToMultiByte(CP_UTF8, 0, payload_n, -1, 0, 0, 0, 0);
 			WideCharToMultiByte(CP_UTF8, 0, payload_n, -1, DroppedTextMultibyte, ConvertLength, 0, 0);
 
-			if (m_DropCallback)
-			{
-				m_DropCallback(DroppedTextMultibyte);
-			}
+			memset(m_PrevText, 0, sizeof(char) * 1024);
+			strcpy_s(m_PrevText, m_TextUTF8);
 
 			switch (m_TextType)
 			{
@@ -149,6 +147,10 @@ void CIMGUITextInput::ApplyDropEffect()
 				break;
 			}
 
+			if (m_DropCallback)
+			{
+				m_DropCallback(DroppedTextMultibyte);
+			}
 
 		}
 		ImGui::EndDragDropTarget();

@@ -30,6 +30,8 @@ protected:
 	float									m_SpawnTime;
 	float									m_SpawnTimeMax;
 	bool  m_BillBoardEffect;
+private :
+	std::string m_ParticleName;
 public:
 	void SetParticle(const std::string& Name);
 	void SetParticle(CParticle* Particle);
@@ -43,7 +45,19 @@ public :
 	{
 		return m_Particle;
 	}
+	const std::string& GetParticleName() const
+	{
+		return m_ParticleName;
+	}
+	CMaterial* GetMaterial() const
+	{
+		return m_Material;
+	}
 public :
+	void SetParticleClassFileName(const std::string& ParticleFileName)
+	{
+		m_ParticleName = ParticleFileName;
+	}
 	void SetMaterial(class CMaterial* Material)
 	{
 		m_Material = Material;
@@ -65,7 +79,11 @@ public:
 	virtual void RenderParticleEffectEditor();
 	virtual void PostRender();
 	virtual CParticleComponent* Clone();
+public :
 	virtual bool Save(FILE* File);
 	virtual bool Load(FILE* File);
+private :
+	virtual bool SaveOnly(FILE* File);
+	virtual bool LoadOnly(FILE* File);
 };
 

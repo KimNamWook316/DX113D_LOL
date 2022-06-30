@@ -92,3 +92,18 @@ void CAnimationSequenceData::SetPlayTime(float Time)
 
 	m_FrameTime = m_PlayTime / m_Sequence->GetFrameLength();
 }
+
+void CAnimationSequenceData::SetOriginalFramePlayTime()
+{
+	int StartFrame = m_Sequence->GetStartFrame();
+	int EndFrame = m_Sequence->GetEndFrame();
+	int FrameMode = m_Sequence->GetFrameMode();
+
+	float OriginalPlayTime = (float)(EndFrame - StartFrame + 1) / (float)FrameMode;
+
+	m_PlayTime = OriginalPlayTime;
+	m_Sequence->m_PlayTime = OriginalPlayTime;
+
+	m_FrameTime = m_PlayTime / m_Sequence->GetFrameLength();
+	m_Sequence->m_FrameTime = m_PlayTime / m_Sequence->GetFrameLength();
+}

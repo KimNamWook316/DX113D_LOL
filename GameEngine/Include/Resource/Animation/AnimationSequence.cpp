@@ -411,6 +411,11 @@ bool CAnimationSequence::LoadFullPathMultibyte(const char* pFullPath)
 	fread(&m_FrameLength, sizeof(int), 1, pFile);
 	fread(&m_FrameMode, sizeof(int), 1, pFile);
 	fread(&m_ChangeFrame, sizeof(int), 1, pFile);
+	
+	// (OBJ)
+	// 자신의 Frame Mode 에 맞춰서, Play Time 을 조정한다.
+	// ex) 자신이 24 FrameMode => 총 96개의 Frame => 96 / 24 => 4초의 진행시간
+	// m_PlayTime = (float)(m_EndFrame - m_StartFrame + 1) / (float)m_FrameMode;
 
 	size_t	iCount = 0;
 
@@ -627,6 +632,11 @@ bool CAnimationSequence::CreateSequence(bool bLoop,
 
 	// 시간 정보를 저장해준다.
 	m_StartTime = 0.f;
+
+	// (OBJ) 코드 라인 추가
+	// 해당 Sequence 의 Frame Mode, Frame 개수를 고려하여 Play Time 다시 세팅
+	m_PlayTime = (float)(m_EndFrame - m_StartFrame + 1) / (float)m_FrameMode;
+	
 	m_EndTime = m_PlayTime;
 	m_TimeLength = m_PlayTime;
 
@@ -758,6 +768,9 @@ bool CAnimationSequence::CreateSequenceConvertFBX(bool bLoop, _tagFbxAnimationCl
 	m_StartFrame = pClip->tStart.GetFrameCount(pClip->eTimeMode);
 	m_EndFrame = pClip->tEnd.GetFrameCount(pClip->eTimeMode);
 	m_FrameLength = m_EndFrame - m_StartFrame + 1;
+
+	// (OBJ) => FrameMode, Frame 개수 를 고려하여 PlayTime 다시 세팅
+	m_PlayTime = (float)(m_EndFrame - m_StartFrame + 1) / (float)m_FrameMode;
 
 	// 시간 정보를 저장해준다.
 	m_StartTime = 0.f;

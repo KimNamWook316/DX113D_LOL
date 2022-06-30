@@ -27,7 +27,8 @@ private:
     class CIMGUIButton* m_LoadParticleBtn;
     class CIMGUIButton* m_StartEditBtn;
     class CIMGUIButton* m_RestartBtn;
-
+private :
+    class CIMGUITextInput* m_CurrentParticleName;
 private:
     class CIMGUIInputFloat* m_SpawnTimeMaxEdit;
     // class CIMGUIButton* m_RestartButton;
@@ -50,8 +51,17 @@ private:
     class CIMGUIColor4* m_ColorMinEdit;
     class CIMGUIColor4* m_ColorMaxEdit;
 
+    class CIMGUIInputFloat* m_AlphaMinEdit;
+    class CIMGUIInputFloat* m_AlphaMaxEdit;
+    class CIMGUIButton* m_AlphaBlendEnableButton;
+
     // Material
-    class CIMGUITextInput* m_MaterialName;
+    class CIMGUITextInput* m_CurrentMaterialName;
+    class CIMGUITextInput* m_LoadedMaterialFileName;
+    class CIMGUIButton*    m_MaterialLoadButton;
+
+    // Ground Texture
+    class CIMGUISliderFloat* m_GroundTextureScale;
 
     class CIMGUICheckBox* m_IsMoveEdit;
     class CIMGUICheckBox* m_IsGravityEdit;
@@ -64,6 +74,15 @@ private:
     class CIMGUISliderFloat* m_RotateSpeedSliderBar;
     class CIMGUICheckBox* m_IsZoomEdit;
     class CIMGUISliderFloat* m_ZoomSpeedSliderBar;
+
+    // Bounce Effect
+    class CIMGUICheckBox* m_IsBounce;
+    class CIMGUISliderFloat* m_BounceResistance; // 마찰력
+
+    // Circle Generate
+    class CIMGUICheckBox* m_IsGenerateCircle;
+    class CIMGUISliderFloat* m_GenerateCircleRadius; // 마찰력
+    class CIMGUICheckBox* m_IsLoopGenerateCircle; // 마찰력
 
     // 카메라의 Y 축 위치 (위로 갈지, 아래로 갈지 조정)
     class CIMGUISliderFloat* m_CameraYOffsetBar;
@@ -109,6 +128,21 @@ private:
     void OnLoadParticleObjectButton();
     void OnRestartParticleComponentButton();
 
+    // Material Load By Btn
+    void OnLoadParticleMaterialCallback();
+
+    // Base Ground Size
+    void OnEditBaseGroundSize(float Speed);
+
+    // Bounce
+    void OnIsBounceEdit(const char*, bool);
+    void OnEditBounceResistance(float Speed);
+
+    // Generate Circle
+    void OnIsGenerateCircleEdit(const char*, bool);
+    void OnIsLoopGenerateCircleEdit(const char*, bool);
+    void OnEditGenerateCircleRadius(float Radius);
+
     void OnSpawnTimeMaxEdit(float Num);
 
     void OnStartMinEdit(const Vector3&);
@@ -128,8 +162,15 @@ private:
     void OnColorMinEdit(const Vector4& Color);
     void OnColorMaxEdit(const Vector4& Color);
 
+    void OnAlphaMinEdit(float Alpha);
+    void OnAlphaMaxEdit(float Alpha);
+
+    // 현재 Material에 Alpha Blend 적용하기
+    void OnSetAlphaBlendToMaterialCallback();
+
     void OnIsMoveEdit(const char*, bool);
     void OnIsGravityEdit(const char*, bool);
+
     // void OnIsRandomMoveEdit(const char*, bool);
     void OnPauseResumeToggle(const char*, bool);
 
@@ -172,7 +213,7 @@ private:
     // Edit 시작 하기 (기본 설정 세팅)
     void SetStartEditing();
 
-    // Particle Component 에 Particle 세팅하기 
+    // Particle Component 에 Particle 세팅하기 .
     void SetParticleToParticleComponent(class CParticleComponent* Component, const char* ParticleName);
     void SetParticleToParticleComponent(class CParticleComponent* Component, CParticle* Particle);
 

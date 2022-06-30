@@ -86,6 +86,10 @@ public:
 	{
 		return m_CBuffer;
 	}
+	CMaterial* GetMaterial() const
+	{
+		return m_Material;
+	}
 
 	// int GetApplyRandom() const
 	// {
@@ -139,10 +143,6 @@ public:
 		return m_CBuffer->GetScaleMax();
 	}
 
-	const Vector3& GetRotationAngle()
-	{
-		return m_CBuffer->GetRotationAngle();
-	}
 
 	float GetLifeTimeMin()
 	{
@@ -198,7 +198,69 @@ public:
 	{
 		return m_CBuffer->GetMoveAngle();
 	}
+
+	int IsBounceEnable() const
+	{
+		return m_CBuffer->IsBounceEnable();
+	}
+
+	const Vector3& GetRotationAngle()
+	{
+		return m_CBuffer->GetRotationAngle();
+	}
+	float GetBounceResistance() const
+	{
+		return m_CBuffer->GetParticleBounceResist();
+	}
+	int IsGenerateCircle() const
+	{
+		return m_CBuffer->IsGenerateCircle();
+	}
+	float GetGenerateCircleRadius() const
+	{
+		return m_CBuffer->GetGenerateCircleRadius();
+	}
+	int IsLoopGenerateCircle() const
+	{
+		return m_CBuffer->IsLoopGenerateCircle();
+	}
+	float GetMinAlpha() const
+	{
+		return m_CBuffer->GetMinAlpha();
+	}
+	float GetMaxAlpha() const
+	{
+		return m_CBuffer->GetMaxAlpha();
+	}
 public:
+	void SetMinAlpha(float Alpha) 
+	{
+		m_CBuffer->SetMinAlpha(Alpha);
+	}
+	void SetMaxAlpha(float Alpha)
+	{
+		m_CBuffer->SetMaxAlpha(Alpha);
+	}
+	void SetLoopGenerateCircle(bool Enable)
+	{
+		m_CBuffer->SetLoopGenerateCircle(Enable);
+	}
+	void SetGenerateCircleEnable(bool Enable)
+	{
+		m_CBuffer->SetGenerateCircleEnable(Enable);
+	}
+	void SetGenerateCircleRadius(float Radius)
+	{
+		m_CBuffer->SetGenerateCircleRadius(Radius);
+	}
+	void SetBounceEnable(bool Enable)
+	{
+		m_CBuffer->SetBounceEnable(Enable);
+	}
+	void SetBounceResistance(float Resist)
+	{
+		m_CBuffer->SetBounceResist(Resist);
+	}
 	void SetMaterial(CMaterial* Material)
 	{
 		m_Material = Material;

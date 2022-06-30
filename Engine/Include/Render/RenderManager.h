@@ -110,6 +110,9 @@ private:
 	float m_ShadowLightDistance;
 	class CShadowCBuffer* m_ShadowCBuffer;
 
+	// Debug Render
+	bool m_DebugRender;
+
 	// Grayscale
 	bool m_Gray;
 	CSharedPtr<class CShader> m_GrayShader;
@@ -178,6 +181,11 @@ public:
 		m_Gray = Enable;
 	}
 
+	void SetDebugRender(bool DebugRender)
+	{
+		m_DebugRender = DebugRender;
+	}
+
 	float GetOutlineDepthMultiplier()
 	{
 		return m_OutlineCBuffer->GetDepthMultiplier();
@@ -201,6 +209,11 @@ public:
 	bool IsGray()
 	{
 		return m_Gray;
+	}
+
+	bool IsDebugRender()
+	{
+		return m_DebugRender;
 	}
 
 public:

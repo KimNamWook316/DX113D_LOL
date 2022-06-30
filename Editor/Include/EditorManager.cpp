@@ -38,6 +38,7 @@
 #include "Window/BehaviorTreeMenuBar.h"
 #include "Window/BaseMenuBar.h"
 #include "Window/MaterialEditor.h"
+#include "Window/AnimationDisplayWindow.h"
 #include "Window/ResourceDisplayWindow.h"
 #include "Window/CollisionProfileEditor.h"
 #include "Window/SocketWindow.h"
@@ -430,13 +431,21 @@ void CEditorManager::CreateWindows()
 	m_InspectorWindow = CIMGUIManager::GetInst()->AddWindow<CInspectorWindow>(INSPECTOR);
 
 	m_FileBrowserTree = CIMGUIManager::GetInst()->AddWindow<CFileBrowserTree>(FILE_BROWSERTREE);
+	m_FileBrowserTree->Close();
 	m_FileBrowser = CIMGUIManager::GetInst()->AddWindow<CFileBrowser>(FILE_BROWSER);
+	m_FileBrowser->Close();
 	
 	m_AnimationEditor = CIMGUIManager::GetInst()->AddWindow<CAnimationEditor>(ANIMATION_EDITOR);
 	m_AnimationEditor->Close();
 
+	m_AnimationDisplayWindow = CIMGUIManager::GetInst()->AddWindow<CAnimationDisplayWindow>(ANIMATION_DISPLAYWINDW);
+	m_AnimationDisplayWindow->Close();
+
 	m_EffectEditor = CIMGUIManager::GetInst()->AddWindow<CEffectEditor>(PARTICLE_EDITOR);
 	m_EffectEditor->Close();
+
+	m_EffectDisplayWindow = CIMGUIManager::GetInst()->AddWindow<CEffectDisplayWindow>(PARTICLE_DISPLAYWINDOW);
+	m_EffectDisplayWindow->Close();
 
 	m_ToolWindow = CIMGUIManager::GetInst()->AddWindow<CToolWindow>(TOOL);
 
@@ -459,4 +468,5 @@ void CEditorManager::CreateWindows()
 
 void CEditorManager::CreateEditorCamera()
 {
+
 }

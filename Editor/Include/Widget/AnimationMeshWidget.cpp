@@ -61,10 +61,10 @@ bool CAnimationMeshWidget::Init()
 
     // 최상위 트리
     CIMGUITree* m_RootTree = AddWidget<CIMGUITree>("Animation Variables");
-    m_CurrentAnimSequence = m_RootTree->AddWidget<CIMGUITextInput>("Current Sqc", 90.f, 30.f);
+    m_CurrentAnimSequence = m_RootTree->AddWidget<CIMGUITextInput>("Current Sqc", 150.f, 30.f);
 
     // Load & Save
-    m_LoadAnimInstanceBtn = m_RootTree->AddWidget<CIMGUIButton>("Load Inst", 90.f, 20.f);
+    m_LoadAnimInstanceBtn = m_RootTree->AddWidget<CIMGUIButton>("Load Inst", 150.f, 20.f);
 
     // Anim Table
 	m_AnimInfoTable = m_RootTree->AddWidget<CIMGUITableElemList>("TestTable", 200.f, 150.f);
