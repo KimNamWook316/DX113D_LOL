@@ -19,6 +19,8 @@
 #include "Component/GameStateComponent.h"
 #include "Component/ColliderBox3D.h"
 #include "Component/ColliderSphere.h"
+#include "Component/ColliderHalfLine.h"
+#include "Component/ColliderRay.h"
 #include "Component/GameDataComponent.h"
 #include "Component/PlayerDataComponent.h"
 // Window
@@ -329,6 +331,21 @@ CComponent* CEditorManager::CreateComponent(CGameObject* Obj, size_t Type)
 		// Component->EnableEditMode(true);
 		return Component;
 	}
+
+	else if (Type == typeid(CColliderHalfLine).hash_code())
+	{
+		CColliderHalfLine* Component = Obj->LoadComponent<CColliderHalfLine>();
+		// Component->EnableEditMode(true);
+		return Component;
+	}
+
+	else if (Type == typeid(CColliderRay).hash_code())
+	{
+		CColliderRay* Component = Obj->LoadComponent<CColliderRay>();
+		// Component->EnableEditMode(true);
+		return Component;
+	}
+
 
 	else if (Type == typeid(CGameDataComponent).hash_code())
 	{

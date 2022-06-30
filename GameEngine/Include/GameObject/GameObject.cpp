@@ -92,9 +92,11 @@ void CGameObject::AddChildObject(CGameObject* Obj, const std::string& SocketName
 	Obj->m_Parent = this;
 	m_vecChildObject.push_back(Obj);
 
-	Obj->GetRootComponent()->m_Parent = GetRootComponent();
+	m_RootComponent->AddChild(Obj, SocketName);
 
-	m_RootComponent->AddChild(Obj->GetRootComponent(), SocketName);
+	/*Obj->GetRootComponent()->m_Parent = GetRootComponent();
+
+	m_RootComponent->AddChild(Obj->GetRootComponent(), SocketName);*/
 }
 
 void CGameObject::DeleteObj()

@@ -336,8 +336,12 @@ void CFBXLoader::LoadMesh(FbxMesh* pMesh, bool bStatic)
 	{
 		// y와 z축이 바뀌어 있기 때문에 변경해준다.
 		pContainer->vecPos[i].x = (float)pVtxPos[i].mData[0];
-		pContainer->vecPos[i].y = (float)pVtxPos[i].mData[2];
-		pContainer->vecPos[i].z = (float)pVtxPos[i].mData[1];
+
+		// 수정
+		//pContainer->vecPos[i].y = (float)pVtxPos[i].mData[2];
+		//pContainer->vecPos[i].z = (float)pVtxPos[i].mData[1];
+		pContainer->vecPos[i].y = (float)pVtxPos[i].mData[1];
+		pContainer->vecPos[i].z = -(float)pVtxPos[i].mData[2];
 	}
 
 	// 폴리곤 수를 얻어온다.
@@ -749,8 +753,11 @@ void CFBXLoader::LoadOffsetMatrix(FbxCluster* pCluster,
 	pCluster->GetTransformLinkMatrix(matClusterLink);
 
 	FbxVector4	v1 = { 1.0, 0.0, 0.0, 0.0 };
-	FbxVector4	v2 = { 0.0, 0.0, 1.0, 0.0 };
-	FbxVector4	v3 = { 0.0, 1.0, 0.0, 0.0 };
+	//FbxVector4	v2 = { 0.0, 0.0, 1.0, 0.0 };
+	//FbxVector4	v3 = { 0.0, 1.0, 0.0, 0.0 };
+	// 수정
+	FbxVector4	v2 = { 0.0, 1.0, 0.0, 0.0 };
+	FbxVector4	v3 = { 0.0, 0.0, -1.0, 0.0 };
 	FbxVector4	v4 = { 0.0, 0.0, 0.0, 1.0 };
 
 	FbxAMatrix	matReflect;
@@ -788,8 +795,11 @@ void CFBXLoader::LoadTimeTransform(FbxNode* pNode,
 	int iBoneIndex)
 {
 	FbxVector4	v1 = { 1.0, 0.0, 0.0, 0.0 };
-	FbxVector4	v2 = { 0.0, 0.0, 1.0, 0.0 };
-	FbxVector4	v3 = { 0.0, 1.0, 0.0, 0.0 };
+	//FbxVector4	v2 = { 0.0, 0.0, 1.0, 0.0 };
+	//FbxVector4	v3 = { 0.0, 1.0, 0.0, 0.0 };
+	// 수정
+	FbxVector4	v2 = { 0.0, 1.0, 0.0, 0.0 };
+	FbxVector4	v3 = { 0.0, 0.0, -1.0, 0.0 };
 	FbxVector4	v4 = { 0.0, 0.0, 0.0, 1.0 };
 
 	FbxAMatrix	matReflect;

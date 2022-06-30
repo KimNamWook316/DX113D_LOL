@@ -24,6 +24,8 @@
     <ClCompile Include="Animation\AnimationSequence2DInstance.cpp" />
     <ClCompile Include="Animation\AnimationSequenceData.cpp" />
     <ClCompile Include="Animation\AnimationSequenceInstance.cpp" />
+    <ClCompile Include="Component\ColliderHalfLine.cpp" />
+    <ClCompile Include="Component\ColliderRay.cpp" />
     <ClCompile Include="Component\Node\DecoratorNode.cpp" />
     <ClCompile Include="Component\State\State.cpp" />
     <ClCompile Include="Component\State\StateManager.cpp" />
@@ -254,6 +256,8 @@
     <ClInclude Include="Animation\AnimationSequence2DInstance.h" />
     <ClInclude Include="Animation\AnimationSequenceData.h" />
     <ClInclude Include="Animation\AnimationSequenceInstance.h" />
+    <ClInclude Include="Component\ColliderHalfLine.h" />
+    <ClInclude Include="Component\ColliderRay.h" />
     <ClInclude Include="Component\Node\DecoratorNode.h" />
     <ClInclude Include="Component\State\State.h" />
     <ClInclude Include="Component\State\StateManager.h" />
@@ -738,13 +742,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -757,7 +761,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>

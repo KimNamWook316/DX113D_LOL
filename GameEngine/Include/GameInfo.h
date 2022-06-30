@@ -345,6 +345,13 @@ struct Box3DInfo
 	Vector3	Max;
 };
 
+struct HalfLineInfo
+{
+	Vector3 StartPos;
+	Vector3 EndPos;
+	//Vector3 Direction;
+};
+
 struct CircleInfo
 {
 	Vector2	Center;

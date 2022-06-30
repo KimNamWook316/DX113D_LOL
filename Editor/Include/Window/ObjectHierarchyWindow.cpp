@@ -293,7 +293,16 @@ void CObjectHierarchyWindow::OnDragDropDest(CIMGUITree* DestTree, const std::str
 				return;
 			}
 
-			Comp->AddChild(SrcObj, Socket->GetName());
+			DestObj->AddChildObject(SrcObj, Socket->GetName());
+
+			// 여기 안에서 CSceneComponent::AddChild를 호출해서 DestObj의 Comp의 Child Component로 SrcObj의 RootComponent를 넣을 것이므로
+			// 일단 SccneComponentHierarychy Window GUI상에서도 지우고 새로운 부모(DestObj의 RootComponent)에 추가해주는 작업을 해줘야 한다
+			CSceneComponentHierarchyWindow* Window = (CSceneComponentHierarchyWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(SCENECOMPONENT_HIERARCHY);
+
+			Window->DeleteTreeNode(SrcObj->GetRootComponent());
+			CIMGUITree* DestSceneCompTreeNode = Window->FindTreeNode(DestObj->GetRootComponent());
+
+			Window->AddTreeNode(SrcObj->GetRootComponent(), DestSceneCompTreeNode);
 
 			MessageBox(nullptr, TEXT("소켓에 추가 성공"), TEXT("Warning"), MB_OK);
 		}
