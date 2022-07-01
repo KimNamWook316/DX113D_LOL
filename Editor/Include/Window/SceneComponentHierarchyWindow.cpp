@@ -98,6 +98,55 @@ void CSceneComponentHierarchyWindow::Update(float DeltaTime)
 	//FindSelectNode(m_Root);
 }
 
+bool CSceneComponentHierarchyWindow::DeleteTreeNode(CSceneComponent* Comp, CIMGUITree* ParentNode)
+{
+	if (!ParentNode)
+		ParentNode = m_Root;
+
+	CIMGUITree* Child = ParentNode->FindChild(Comp->GetName(), Comp);
+
+	if (Child)
+	{
+		ParentNode->DeleteChild(Child->GetName());
+		return true;
+	}
+
+	return false;
+}
+
+bool CSceneComponentHierarchyWindow::AddTreeNode(CSceneComponent* Comp, CIMGUITree* ParentNode)
+{
+	if (!ParentNode)
+		ParentNode = m_Root;
+
+	CIMGUITree* Child = ParentNode->FindChild(Comp->GetName(), Comp);
+
+	if (Child)
+		return false;
+
+	else
+	{
+		ParentNode->AddChild(Comp->GetName(), Comp);
+		return true;
+	}
+}
+
+CIMGUITree* CSceneComponentHierarchyWindow::FindTreeNode(CSceneComponent* Comp)
+{
+	if (m_Root->GetName() == Comp->GetName() && m_Root->GetData() == Comp)
+	{
+		return m_Root;
+	}
+
+	CIMGUITree* TreeNode = m_Root->FindChild(Comp->GetName(), Comp);
+
+	if (TreeNode)
+		return TreeNode;
+
+	else
+		return nullptr;
+}
+
 void CSceneComponentHierarchyWindow::OnRenameComponent(const std::string& NewName, const std::string& PrevName)
 {
 	CIMGUITree* Node = m_Root->FindChild(PrevName);

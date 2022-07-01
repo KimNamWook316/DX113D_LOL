@@ -71,6 +71,11 @@ CSceneComponent::CSceneComponent(const CSceneComponent& com) :
 
 CSceneComponent::~CSceneComponent()
 {
+	if (m_OnDestroyCallBack)
+	{
+		m_OnDestroyCallBack(this);
+	}
+
 	SAFE_DELETE(m_Transform);
 }
 

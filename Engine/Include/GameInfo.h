@@ -130,6 +130,11 @@ private:\
 	~Type();
 
 #define	DEFINITION_SINGLE(Type)	Type* Type::m_Inst = nullptr;
+#define FAILED_CHECK(Executable)\
+if(FAILED(Executable)){\
+	assert(false);\
+	return false;\
+}\
 
 struct Resolution
 {
@@ -237,7 +242,7 @@ struct TransformCBuffer
 	Vector3	Pivot;
 	float	Empty1;
 	Vector3	MeshSize;
-	float	Empty;
+	float	Empty2;
 };
 
 struct VertexUV
@@ -338,6 +343,13 @@ struct Box3DInfo
 	float	AxisLen[3];
 	Vector3	Min;
 	Vector3	Max;
+};
+
+struct HalfLineInfo
+{
+	Vector3 StartPos;
+	Vector3 EndPos;
+	//Vector3 Direction;
 };
 
 struct CircleInfo
@@ -664,13 +676,13 @@ struct InstancingCBuffer
 	Vector3 InstancingEmpty;
 };
 
-struct OutlineCBuffer
-{
-	float DepthMultiplier;
-	float DepthBias;
-	float NormalMultiplier;
-	float NormalBias;
-};
+ //struct OutlineCBuffer
+ //{
+ //	float DepthMultiplier;
+ //	float DepthBias;
+ //	float NormalMultiplier;
+ //	float NormalBias;
+ //};
 
 struct NotifyParameter
 {
@@ -686,4 +698,41 @@ struct GameData
 	int MP;
 	float MoveSpeed;
 	int Attack;
+};
+
+struct DownScaleCBuffer
+{
+	Resolution		RS;			// 다운스케일 해상도 (1 / 16)
+	unsigned int	Domain;		// 다운스케일 이미지의 총 픽셀 수
+	unsigned int	GroupSize;	// 첫 패스에 적용된 그룹 수 계산
+	float			Adaptation; // 적응
+	float			BloomThreshold;	// 블룸 임계값
+	Vector2			Empty;
+};
+
+struct HDRRenderCBuffer
+{
+	float MiddleGray;
+	float LumWhiteSqr;
+	float BloomScale;
+	float DOFMin;				// DOF 적용 최소 거리
+	float DOFMax;				// 완전 초점 상실 거리
+	Vector3 Empty;
+};
+
+struct FogCBuffer
+{
+	Vector3 Color;
+	int Type;
+	float Start;				// 월드 깊이
+	float End;					// 월드 깊이
+	float Density;				
+	float Empty;
+};
+
+struct PlayerData
+{
+	Player_Ability Abilty_Type;
+	float AttackSpeed;
+	float MagicAttack;
 };

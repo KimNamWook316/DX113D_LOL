@@ -232,16 +232,6 @@ void CSaveLoadBeginMenu::OnLoadObjectMenuCallback()
 
 		MessageBox(nullptr, TEXT("로드 성공"), TEXT("Success"), MB_OK);
 
-		CAnimationMeshComponent* Comp = NewObject->FindComponentFromType<CAnimationMeshComponent>();
-
-		CEditorManager::GetInst()->SetChampionInfo(NewObject, NewObject->GetName());
-
-		if (Comp)
-		{
-			CAnimationSequenceInstance* Instance = Comp->GetAnimationInstance();
-			if (Instance)
-				CEditorManager::GetInst()->SetChampionNotify(Instance, NewObject->GetName());
-		}
 
 		// Resource Display 에 있는 Texture, Material 정보 다시 Update 
 		// 사실 아래 코드는 거의 쓸모 없다 => 어차피 각 Animation Mesh Component 등, Mesh 파일에서 불러온 Material 을 세팅할 때에는

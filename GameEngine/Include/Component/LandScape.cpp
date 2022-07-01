@@ -648,16 +648,17 @@ bool CLandScape::CheckInArea(const Vector3& StartPos, const Vector3& EndPos, Vec
         //XMVECTOR XMVec1 = (p1 * WorldScale + WorldPos).Convert();
         //XMVECTOR XMVec2 = (p2 * WorldScale + WorldPos).Convert();
         //XMVECTOR XMVec3 = (p3 * WorldScale + WorldPos).Convert();
-        XMVECTOR XMVec1 = p1.Convert();
-        XMVECTOR XMVec2 = p2.Convert();
-        XMVECTOR XMVec3 = p3.Convert();
+        //XMVECTOR XMVec1 = p1.Convert();
+        //XMVECTOR XMVec2 = p2.Convert();
+        //XMVECTOR XMVec3 = p3.Convert();
 
         XMVECTOR Result = XMPlaneIntersectLine(Plane, StartPos.Convert(), EndPos.Convert());
 
         // Intersect하는 polygon을 찾지 못했을 때
         if (isnan(Result.m128_f32[0]) && isnan(Result.m128_f32[1]) && isnan(Result.m128_f32[2]))
         {
-            return true;
+            //return true;
+            return false;
         }
 
         OutPos.x = Result.m128_f32[0];

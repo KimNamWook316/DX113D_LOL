@@ -17,11 +17,15 @@ private:
 	class CIMGUIComboBox* m_CurAnimComboBox;
 	// Anim Clip Table
 	class CIMGUITable* m_AnimInfoTable;
-	// Frame 조정
+	// Frame Display
 	class CIMGUITextInput* m_FrameInput;
 	class CIMGUISliderInt* m_FrameSlider;
 	class CIMGUIButton* m_SetOriginalPlayTimeBtn;
-
+	// Frame 조정
+	class CIMGUITextInput* m_StartFrameEditInput;
+	class CIMGUITextInput* m_EndFrameEditInput;
+	class CIMGUIButton* m_StartEndFrameEditBtn;
+	// Seq Add
 	class CIMGUIButton* m_AnimSequenceAddBtn;
 	class CIMGUIButton* m_CreateSample3DBtn;
 	// Animation Seq 지우기
@@ -70,6 +74,8 @@ private:
 	void OnRefreshAnimationComboBox();
 	void OnRefreshScaleAndTimeInputInfo();
 	void OnRefreshCheckBoxInfo();
+	// St, Ed Frame Edit
+	void OnEditStartEndFrame();
 	// Play
 	void OnCreateSample3DObject();
 	void OnSetPlayEngineDeltaTime(const char*, bool);

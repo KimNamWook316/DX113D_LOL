@@ -29,6 +29,9 @@ private:
 	Transform_State		m_State;
 	class CSkeletonSocket* m_Socket;
 
+	// Detroy시 콜백되는 함수
+	std::list<std::function<void()>> m_OnDestroyCallBackList;
+
 	// P, R, S 변경 시 콜백되는 함수 리스트
 	std::list<TransformCallBack> m_ScaleChangeCallBackList;
 	std::list<TransformCallBack> m_PosChangeCallBackList;
@@ -50,6 +53,8 @@ private:
 	bool	m_UpdateByMat;
 
 public:
+	class CTransformConstantBuffer* GetTransformCBuffer()	const;
+
 	void SetState(Transform_State State)
 	{
 		m_State = State;
@@ -325,6 +330,7 @@ private:
 	void CallChangePosCallBack();
 	void CallChangeRotCallBack();
 	void CallChangeScaleCallBack();
+	void OnDestroy();
 
 public:
 	void DeleteChangePosCallBack(void* Callee);
@@ -357,6 +363,13 @@ public:
 		CallBack.Callee = Obj;
 		CallBack.Func = std::bind(Func, Obj, std::placeholders::_1, std::placeholders::_2);
 		m_PosChangeCallBackList.push_back(CallBack);
+	}
+
+	template <typename T>
+	void AddOnDestroyCallBack(T* Obj, void(T::* Func)())
+	{
+		std::function<void()> CallBack = std::bind(Func, Obj);
+		m_OnDestroyCallBackList.push_back(CallBack);
 	}
 };
 

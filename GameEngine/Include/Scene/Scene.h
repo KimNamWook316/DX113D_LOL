@@ -8,6 +8,7 @@
 #include "NavigationManager.h"
 #include "Navigation3DManager.h"
 #include "LightManager.h"
+#include "../ObjectPoolManager.h"
 #include "../GameObject/GameObject.h"
 
 class CScene
@@ -36,8 +37,23 @@ private:
 	bool m_Play;
 
 	std::list<class CSceneComponent*> m_RenderComponentList;
+	Vector3 m_OriginCamPos;
 
 public:
+	CSceneMode* GetSceneMode()	const
+	{
+		return m_Mode;
+	}
+
+	void SetOriginCamPos(const Vector3& Pos)
+	{
+		m_OriginCamPos = Pos;
+	}
+
+	const Vector3& GetOriginCamPos()	const
+	{
+		return m_OriginCamPos;
+	}
 	//void UpdateObjUpdateOrder();
 
 public:
@@ -160,11 +176,18 @@ public:
 
 	CGameObject* CreateEmtpyObject()
 	{
-		CGameObject* Obj = new CGameObject;
+		//CGameObject* Obj = new CGameObject;
+		CGameObject* Obj = CObjectPoolManager::GetInst()->Allocate();
 		Obj->SetScene(this);
 		m_ObjList.push_back(Obj);
 		return Obj;
 	}
+
+
+public:
+	// 카메라 이동이 끝나면 true 리턴
+	bool CameraMove(const Vector3& Direction, const Vector3& DestPos, float Speed, float DeltaTime);
+	bool RestoreCamera(float Speed, float DeltaTime);
 
 public:
 	template <typename T>
@@ -206,7 +229,31 @@ public:
 	template <typename T>
 	T* CreateGameObject(const std::string& Name)
 	{
-		T* Obj = new T;
+		T* Obj = nullptr;
+
+		if (typeid(T).hash_code() == typeid(CGameObject).hash_code())
+		{
+			CGameObject* Obj = CObjectPoolManager::GetInst()->Allocate();
+
+			Obj->SetName(Name);
+			Obj->SetScene(this);
+
+			if (!Obj->Init())
+			{
+				SAFE_RELEASE(Obj);
+				return nullptr;
+			}
+
+			m_ObjList.push_back(Obj);
+
+			if (m_Start)
+				Obj->Start();
+
+			return (T*)Obj;
+		}
+
+		else
+			Obj = new T;
 
 		Obj->SetName(Name);
 		Obj->SetScene(this);
@@ -228,7 +275,24 @@ public:
 	template <typename T>
 	T* LoadGameObject()
 	{
-		T* Obj = new T;
+		T* Obj = nullptr;
+
+		if (typeid(T).hash_code() == typeid(CGameObject).hash_code())
+		{
+			CGameObject* Obj = CObjectPoolManager::GetInst()->Allocate();
+
+			Obj->SetScene(this);
+
+			m_ObjList.push_back(Obj);
+
+			if (m_Start)
+				Obj->Start();
+
+			return (T*)Obj;
+		}
+
+		else
+			Obj = new T;
 
 		Obj->SetScene(this);
 

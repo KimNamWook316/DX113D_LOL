@@ -24,12 +24,23 @@ protected:
 	bool m_CallStart;
 	Node_Type   m_NodeType;
 	class CAnimationMeshComponent* m_AnimationMeshComp;
+	Vector2 m_InWindowPos;
 
 public:
 	void SetAnimationMeshComponent(class CAnimationMeshComponent* AnimationMeshComp);
 	class CAnimationMeshComponent* GetAnimationMeshComponent()  const;
 
 public:
+	const Vector2& GetInWindowPos()	const
+	{
+		return m_InWindowPos;
+	}
+
+	void SetInWindowPos(const Vector2& Pos)
+	{
+		m_InWindowPos = Pos;
+	}
+
 	Node_Type GetNodeType()	const
 	{
 		return m_NodeType;
@@ -112,5 +123,7 @@ public:
 	virtual bool Load(FILE* File);
 	virtual bool SaveOnly(FILE* File);
 	virtual bool LoadOnly(FILE* File);
+	virtual bool SavePos(FILE* File);
+	virtual bool LoadPos(FILE* File);
 };
 

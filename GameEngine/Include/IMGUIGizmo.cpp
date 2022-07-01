@@ -81,7 +81,14 @@ void CIMGUIGizmo::SetGameObject(CGameObject* Object)
 		return;
 	}
 
-	m_Component = Object->GetRootComponent();
+	CSceneComponent* Root = Object->GetRootComponent();
+
+	if (Root != m_Component)
+	{
+		Root->AddOnDestoryCallBack(this, &CIMGUIGizmo::OnDestroyComponent);
+	}
+
+	m_Component = Root;
 }
 
 void CIMGUIGizmo::SetComponent(CSceneComponent* Component)
@@ -91,6 +98,19 @@ void CIMGUIGizmo::SetComponent(CSceneComponent* Component)
 		SetIdentity();
 	}
 
+	if (Component != m_Component)
+	{
+		Component->AddOnDestoryCallBack(this, &CIMGUIGizmo::OnDestroyComponent);
+	}
+
 	m_Component = Component;
+}
+
+void CIMGUIGizmo::OnDestroyComponent(CSceneComponent* Component)
+{
+	if (m_Component == Component)
+	{
+		m_Component = nullptr;
+	}
 }
 

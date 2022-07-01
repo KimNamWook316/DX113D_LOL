@@ -105,6 +105,7 @@ bool CAnimationMeshWidget::Init()
 	m_OutlineThickness->SetCallBack(this, &CAnimationMeshWidget::OnEditOutlineThickness);
 	m_OutlineColor->SetCallBack(this, &CAnimationMeshWidget::OnChangeOutlineColor);
 
+
     // CIMGUISameLine* Line = m_RootTree->AddWidget<CIMGUISameLine>("Line");
     // Line->SetOffsetX(125.f);
 
@@ -137,7 +138,7 @@ void CAnimationMeshWidget::SetSceneComponent(CSceneComponent* Com)
 		SetAnimationRelatedInfoToWidget(m_Animation);
 	}
 
-	CAnimationMeshComponent* MeshCom = (CAnimationMeshComponent*)m_Component.Get();
+	CAnimationMeshComponent* MeshCom = (CAnimationMeshComponent*)m_Component;
 
 	if (MeshCom->GetMesh())
 	{
@@ -151,7 +152,7 @@ void CAnimationMeshWidget::OnClickLoadMesh()
 
 void CAnimationMeshWidget::OnSelectMaterialSlotCombo(int Idx, const char* Label)
 {
-	CAnimationMeshComponent* MeshCom = (CAnimationMeshComponent*)m_Component.Get();
+	CAnimationMeshComponent* MeshCom = (CAnimationMeshComponent*)m_Component;
 
 	if (MeshCom->GetMesh())
 	{
@@ -177,7 +178,7 @@ void CAnimationMeshWidget::OnEditBaseColor(const Vector3& Color)
 		return;
 	}
 
-	CAnimationMeshComponent* MeshCom = (CAnimationMeshComponent*)m_Component.Get();
+	CAnimationMeshComponent* MeshCom = (CAnimationMeshComponent*)m_Component;
 
 	if (MeshCom->GetMesh())
 	{
@@ -192,7 +193,7 @@ void CAnimationMeshWidget::OnEditAmbientColor(const Vector3& Color)
 		return;
 	}
 
-	CAnimationMeshComponent* MeshCom = (CAnimationMeshComponent*)m_Component.Get();
+	CAnimationMeshComponent* MeshCom = (CAnimationMeshComponent*)m_Component;
 
 	if (MeshCom->GetMesh())
 	{
@@ -207,7 +208,7 @@ void CAnimationMeshWidget::OnEditSpecluarColor(const Vector3& Color)
 		return;
 	}
 
-	CAnimationMeshComponent* MeshCom = (CAnimationMeshComponent*)m_Component.Get();
+	CAnimationMeshComponent* MeshCom = (CAnimationMeshComponent*)m_Component;
 
 	if (MeshCom->GetMesh())
 	{
@@ -222,7 +223,7 @@ void CAnimationMeshWidget::OnEditSpecluarPower(float Power)
 		return;
 	}
 
-	CAnimationMeshComponent* MeshCom = (CAnimationMeshComponent*)m_Component.Get();
+	CAnimationMeshComponent* MeshCom = (CAnimationMeshComponent*)m_Component;
 
 	if (MeshCom->GetMesh())
 	{
@@ -237,7 +238,7 @@ void CAnimationMeshWidget::OnEditEmissiveColor(const Vector3& Color)
 		return;
 	}
 
-	CAnimationMeshComponent* MeshCom = (CAnimationMeshComponent*)m_Component.Get();
+	CAnimationMeshComponent* MeshCom = (CAnimationMeshComponent*)m_Component;
 
 	if (MeshCom->GetMesh())
 	{
@@ -252,7 +253,7 @@ void CAnimationMeshWidget::OnCheckTransparency(int Idx, bool Check)
 		return;
 	}
 
-	CAnimationMeshComponent* MeshCom = (CAnimationMeshComponent*)m_Component.Get();
+	CAnimationMeshComponent* MeshCom = (CAnimationMeshComponent*)m_Component;
 
 	if (MeshCom->GetMesh())
 	{
@@ -267,7 +268,7 @@ void CAnimationMeshWidget::OnEditOpacity(float Opacity)
 		return;
 	}
 
-	CAnimationMeshComponent* MeshCom = (CAnimationMeshComponent*)m_Component.Get();
+	CAnimationMeshComponent* MeshCom = (CAnimationMeshComponent*)m_Component;
 
 	if (MeshCom->GetMesh())
 	{
@@ -282,7 +283,7 @@ void CAnimationMeshWidget::OnCheckOutlineEnable(int Idx, bool Enable)
 		return;
 	}
 
-	CAnimationMeshComponent* MeshCom = (CAnimationMeshComponent*)m_Component.Get();
+	CAnimationMeshComponent* MeshCom = (CAnimationMeshComponent*)m_Component;
 
 	if (MeshCom->GetMesh())
 	{
@@ -297,7 +298,7 @@ void CAnimationMeshWidget::OnEditOutlineThickness(float Val)
 		return;
 	}
 
-	CAnimationMeshComponent* MeshCom = (CAnimationMeshComponent*)m_Component.Get();
+	CAnimationMeshComponent* MeshCom = (CAnimationMeshComponent*)m_Component;
 
 	if (MeshCom->GetMesh())
 	{
@@ -312,7 +313,7 @@ void CAnimationMeshWidget::OnChangeOutlineColor(const Vector3& Color)
 		return;
 	}
 
-	CAnimationMeshComponent* MeshCom = (CAnimationMeshComponent*)m_Component.Get();
+	CAnimationMeshComponent* MeshCom = (CAnimationMeshComponent*)m_Component;
 
 	if (MeshCom->GetMesh())
 	{
@@ -359,12 +360,12 @@ void CAnimationMeshWidget::OnLoadAnimationInstance()
 		{
 			ClearExistingAnimationSeqInfos();
 
-			dynamic_cast<CAnimationMeshComponent*>(m_Component.Get())->DeleteAnimationInstance();
+			dynamic_cast<CAnimationMeshComponent*>(m_Component)->DeleteAnimationInstance();
 
 			m_Animation = nullptr;
 		}
 
-		m_Animation = dynamic_cast<CAnimationMeshComponent*>(m_Component.Get())->LoadAnimationInstance<CAnimationSequenceInstance>();
+		m_Animation = dynamic_cast<CAnimationMeshComponent*>(m_Component)->LoadAnimationInstance<CAnimationSequenceInstance>();
 
 		m_Animation->LoadAnimationFullPath(FilePathMultibyte);
 
@@ -376,7 +377,7 @@ void CAnimationMeshWidget::OnLoadAnimationInstance()
 		{
 			ClearExistingAnimationSeqInfos();
 
-			dynamic_cast<CAnimationMeshComponent*>(m_Component.Get())->DeleteAnimationInstance();
+			dynamic_cast<CAnimationMeshComponent*>(m_Component)->DeleteAnimationInstance();
 			m_Animation = nullptr;
 
 			return;
@@ -387,7 +388,7 @@ void CAnimationMeshWidget::OnLoadAnimationInstance()
 		// Mesh 를 바꾸기 전에 Mesh 를 공유하는 InstancingCheckingList 목록에서 제거 --> 아래 Set Mesh 에서 어차피 해준다.
 		// bool DeleteResult = dynamic_cast<CAnimationMeshComponent*>(m_Component.Get())->DeleteInstancingCheckList();
 		// 현재 Load 한 Mesh 를 세팅
-		dynamic_cast<CAnimationMeshComponent*>(m_Component.Get())->SetMesh(m_LoadedMeshName);
+		dynamic_cast<CAnimationMeshComponent*>(m_Component)->SetMesh(m_LoadedMeshName);
 
 		// Animation 관련 정보를 모두 정상적으로 Load 했다면 Start 함수 호출하여, 필요한 정보 세팅
 		m_Animation->Start();
@@ -396,7 +397,7 @@ void CAnimationMeshWidget::OnLoadAnimationInstance()
 		SetAnimationRelatedInfoToWidget(m_Animation);
 
 		// Mesh, Material 관련 IMGUI Update
-		RefreshMeshWidget(dynamic_cast<CAnimationMeshComponent*>(m_Component.Get())->GetMesh());
+		RefreshMeshWidget(dynamic_cast<CAnimationMeshComponent*>(m_Component)->GetMesh());
 
 
 		// Resource Display Window Update 하기
@@ -562,10 +563,10 @@ bool CAnimationMeshWidget::LoadElementsForSqcLoading()
 	m_LoadedMeshName = Result.second;
 
 	// Mesh 를 바꾸기 전에 Mesh 를 공유하는 InstancingCheckingList 목록에서 제거
-	bool DeleteResult = dynamic_cast<CAnimationMeshComponent*>(m_Component.Get())->DeleteInstancingCheckList();
+	bool DeleteResult = dynamic_cast<CAnimationMeshComponent*>(m_Component)->DeleteInstancingCheckList();
 
 	// 현재 Load 한 Mesh 를 세팅
-	dynamic_cast<CAnimationMeshComponent*>(m_Component.Get())->SetMesh(m_LoadedMeshName);
+	dynamic_cast<CAnimationMeshComponent*>(m_Component)->SetMesh(m_LoadedMeshName);
 
 	return true;
 }
@@ -586,7 +587,7 @@ void CAnimationMeshWidget::ClearExistingAnimationSeqInfos()
 
 void CAnimationMeshWidget::RefreshMeshWidget(CMesh* Mesh)
 {
-	CAnimationMeshComponent* MeshCom = (CAnimationMeshComponent*)m_Component.Get();
+	CAnimationMeshComponent* MeshCom = (CAnimationMeshComponent*)m_Component;
 
 	std::string AutoName;
 

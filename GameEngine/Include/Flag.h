@@ -141,7 +141,9 @@ enum class Collider_Type
 	Circle,
 	Pixel,
 	Sphere,
-	Box3D
+	Box3D,
+	HalfLine,
+	Ray
 };
 
 enum class Camera_Type
@@ -259,6 +261,8 @@ enum class SceneComponent3DType
 	ParticleComponent,
 	ColliderBox3D,
 	ColliderSphere,
+	ColliderHalfLine,
+	ColliderRay,
 	Max
 };
 
@@ -268,6 +272,7 @@ enum class ObjectComponent3DType
 	GameStateComponent,
 	NavAgent,
 	GameDataComponent,
+	PlayerDataComponent,
 	Max
 };
 
@@ -289,21 +294,23 @@ enum class NodeResult
 enum ConditionNode
 {
 	MoveInputCheckNode,
+	MouseLButtonCheckNode,
 	NoInterruptNode,
 	AttackTargetCheck,
-	SkillEndCheck,
-	InSkillCheck,
-	TurretAttackTargetCheck,
-	TurretAttackFrequencyCheck,
+	MouseRButtonCheckNode,
+	MouseRButtonUpCheckNode,
 };
 
 enum ActionNode
 {
 	Move,
-	MovePicking,
 	Idle,
 	NormalAttack,
-	Death
+	Death,
+	RotateAttackDirection,
+	ReadyToShoot,
+	ShootNode,
+	CancleShootNode,
 };
 
 enum DecoratorNode
@@ -326,4 +333,20 @@ enum class Object_Type
 	Monster,
 	MapObject,
 	None
+};
+
+enum class Fog_Type
+{
+	Linear,
+	Exp,
+	Exp2,
+	Max
+};
+
+enum class Player_Ability
+{
+	Arrow,
+	Fire,
+	Hook,
+	Photon
 };

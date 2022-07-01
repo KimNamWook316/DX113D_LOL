@@ -24,7 +24,8 @@
     <ClCompile Include="Animation\AnimationSequence2DInstance.cpp" />
     <ClCompile Include="Animation\AnimationSequenceData.cpp" />
     <ClCompile Include="Animation\AnimationSequenceInstance.cpp" />
-    <ClCompile Include="Animation\SkeletonSocket.cpp" />
+    <ClCompile Include="Component\ColliderHalfLine.cpp" />
+    <ClCompile Include="Component\ColliderRay.cpp" />
     <ClCompile Include="Component\Node\DecoratorNode.cpp" />
     <ClCompile Include="Component\State\State.cpp" />
     <ClCompile Include="Component\State\StateManager.cpp" />
@@ -122,10 +123,12 @@
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="Matrix.cpp" />
     <ClCompile Include="Navigation3D.cpp" />
+    <ClCompile Include="ObjectPoolManager.cpp" />
     <ClCompile Include="PathManager.cpp" />
     <ClCompile Include="Ref.cpp" />
     <ClCompile Include="Render\BlendState.cpp" />
     <ClCompile Include="Render\DepthStencilState.cpp" />
+    <ClCompile Include="Render\PostFXRenderer.cpp" />
     <ClCompile Include="Render\RasterizerState.cpp" />
     <ClCompile Include="Render\RenderManager.cpp" />
     <ClCompile Include="Render\RenderState.cpp" />
@@ -155,6 +158,9 @@
     <ClCompile Include="Resource\Shader\AnimationUpdateShader.cpp" />
     <ClCompile Include="Resource\Shader\BillboardShader.cpp" />
     <ClCompile Include="Resource\Shader\AnimEditorShader.cpp" />
+    <ClCompile Include="Resource\Shader\BloomShader.cpp" />
+    <ClCompile Include="Resource\Shader\BlurHorizontalShader.cpp" />
+    <ClCompile Include="Resource\Shader\BlurVerticalShader.cpp" />
     <ClCompile Include="Resource\Shader\ColliderConstantBuffer.cpp" />
     <ClCompile Include="Resource\Shader\ColliderPixelShader.cpp" />
     <ClCompile Include="Resource\Shader\ColliderShader.cpp" />
@@ -164,9 +170,15 @@
     <ClCompile Include="Resource\Shader\ConstantBufferBase.cpp" />
     <ClCompile Include="Resource\Shader\DecalDebugShader.cpp" />
     <ClCompile Include="Resource\Shader\DecalShader.cpp" />
+    <ClCompile Include="Resource\Shader\DownScaleCBuffer.cpp" />
+    <ClCompile Include="Resource\Shader\FogCBuffer.cpp" />
     <ClCompile Include="Resource\Shader\GlobalConstantBuffer.cpp" />
     <ClCompile Include="Resource\Shader\GraphicShader.cpp" />
     <ClCompile Include="Resource\Shader\GrayShader.cpp" />
+    <ClCompile Include="Resource\Shader\HDRDownScaleFirstPassShader.cpp" />
+    <ClCompile Include="Resource\Shader\HDRDownScaleSecondPassShader.cpp" />
+    <ClCompile Include="Resource\Shader\HDRRenderCBuffer.cpp" />
+    <ClCompile Include="Resource\Shader\HDRRenderShader.cpp" />
     <ClCompile Include="Resource\Shader\InstancingCBuffer.cpp" />
     <ClCompile Include="Resource\Shader\LandScapeConstantBuffer.cpp" />
     <ClCompile Include="Resource\Shader\LandScapeShader.cpp" />
@@ -244,7 +256,8 @@
     <ClInclude Include="Animation\AnimationSequence2DInstance.h" />
     <ClInclude Include="Animation\AnimationSequenceData.h" />
     <ClInclude Include="Animation\AnimationSequenceInstance.h" />
-    <ClInclude Include="Animation\SkeletonSocket.h" />
+    <ClInclude Include="Component\ColliderHalfLine.h" />
+    <ClInclude Include="Component\ColliderRay.h" />
     <ClInclude Include="Component\Node\DecoratorNode.h" />
     <ClInclude Include="Component\State\State.h" />
     <ClInclude Include="Component\State\StateManager.h" />
@@ -350,10 +363,12 @@
     <ClInclude Include="Input.h" />
     <ClInclude Include="Matrix.h" />
     <ClInclude Include="Navigation3D.h" />
+    <ClInclude Include="ObjectPoolManager.h" />
     <ClInclude Include="PathManager.h" />
     <ClInclude Include="Ref.h" />
     <ClInclude Include="Render\BlendState.h" />
     <ClInclude Include="Render\DepthStencilState.h" />
+    <ClInclude Include="Render\PostFXRenderer.h" />
     <ClInclude Include="Render\RasterizerState.h" />
     <ClInclude Include="Render\RenderManager.h" />
     <ClInclude Include="Render\RenderState.h" />
@@ -384,6 +399,9 @@
     <ClInclude Include="Resource\Shader\AnimationUpdateShader.h" />
     <ClInclude Include="Resource\Shader\BillboardShader.h" />
     <ClInclude Include="Resource\Shader\AnimEditorShader.h" />
+    <ClInclude Include="Resource\Shader\BloomShader.h" />
+    <ClInclude Include="Resource\Shader\BlurHorizontalShader.h" />
+    <ClInclude Include="Resource\Shader\BlurVerticalShader.h" />
     <ClInclude Include="Resource\Shader\ColliderConstantBuffer.h" />
     <ClInclude Include="Resource\Shader\ColliderPixelShader.h" />
     <ClInclude Include="Resource\Shader\ColliderShader.h" />
@@ -393,9 +411,15 @@
     <ClInclude Include="Resource\Shader\ConstantBufferBase.h" />
     <ClInclude Include="Resource\Shader\DecalDebugShader.h" />
     <ClInclude Include="Resource\Shader\DecalShader.h" />
+    <ClInclude Include="Resource\Shader\DownScaleCBuffer.h" />
+    <ClInclude Include="Resource\Shader\FogCBuffer.h" />
     <ClInclude Include="Resource\Shader\GlobalConstantBuffer.h" />
     <ClInclude Include="Resource\Shader\GraphicShader.h" />
     <ClInclude Include="Resource\Shader\GrayShader.h" />
+    <ClInclude Include="Resource\Shader\HDRDownScaleFirstPassShader.h" />
+    <ClInclude Include="Resource\Shader\HDRDownScaleSecondPassShader.h" />
+    <ClInclude Include="Resource\Shader\HDRRenderCBuffer.h" />
+    <ClInclude Include="Resource\Shader\HDRRenderShader.h" />
     <ClInclude Include="Resource\Shader\InstancingCBuffer.h" />
     <ClInclude Include="Resource\Shader\LandScapeConstantBuffer.h" />
     <ClInclude Include="Resource\Shader\LandScapeShader.h" />
@@ -494,6 +518,22 @@
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">BillboardVS</EntryPointName>
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">BillboardVS</EntryPointName>
     </FxCompile>
+    <FxCompile Include="..\Bin\Shader\Bloom.fx">
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">BrightPass</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">BrightPass</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="..\Bin\Shader\Blur.fx">
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">VerticalFilter</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">VerticalFilter</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+    </FxCompile>
     <FxCompile Include="..\Bin\Shader\Collider.fx">
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">ColliderMeshVS</EntryPointName>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Effect</ShaderType>
@@ -535,6 +575,30 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Effect</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">GrayVS</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="..\Bin\Shader\HDRDownScale.fx">
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">DownScaleFirstPass</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">DownScaleFirstPass</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="..\Bin\Shader\HDRDownScaleSecond.fx">
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">DownScaleSecondPass</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">DownScaleSecondPass</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="..\Bin\Shader\HDRRender.fx">
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">HDRRenderVS</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">HDRRenderVS</EntryPointName>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Effect</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
@@ -678,13 +742,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -697,7 +761,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>

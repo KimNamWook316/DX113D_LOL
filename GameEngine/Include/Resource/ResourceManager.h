@@ -202,7 +202,7 @@ public:	// =================== Particle =====================
 	{
 		return m_ParticleManager->CreateParticleEmpty<T>();
 	}
-public:
+public: // =================== Sequence 3D =====================
 	bool LoadAnimationSequenceConvertFBX(const std::string& Name, bool bLoop, struct _tagFbxAnimationClip* pClip);
 	bool LoadAnimationSequence(const std::string& Name, bool Loop,
 		struct _tagFbxAnimationClip* Clip, class CScene* Scene = nullptr);
@@ -220,6 +220,9 @@ public:
 	CAnimationSequence* CreateBasicAnimationSequence(const std::string& Name);
 	void ReleaseAnimationSequence3D(const std::string& Name);
 	void DeleteSequence3D(const std::string& Name);
+	bool EditSequenceClip(class CAnimationSequence* ExistingSequence, const std::string& NewName,
+		int StartFrame, int EndFrame, const char* SaveFullPathMultibyte);
+
 
 	bool LoadSkeleton(const std::string& Name, const TCHAR* FileName,
 		const std::string& PathName = ANIMATION_PATH,

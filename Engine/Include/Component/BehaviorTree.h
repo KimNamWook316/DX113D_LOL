@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../GameInfo.h"
-
+#include "Node/Node.h"
 
 class CBehaviorTree
 {
@@ -33,6 +33,22 @@ public:
     class CNode* GetRootNode()    const;
     void SetRoot(class CNode* Node);
     CNode* FindNode(const std::string& Name);
+
+    template <typename T>
+    CNode* FindNodeByType()
+    {
+        auto iter = m_NodeList.begin();
+        auto iterEnd = m_NodeList.end();
+
+        for (; iter != iterEnd; ++iter)
+        {
+            if ((*iter)->GetTypeID() == typeid(T).hash_code())
+                return (*iter);
+        }
+
+        return nullptr;
+    }
+
     void AddNode(class CNode* Node);
     void DeleteNode(class CNode* Node);
 

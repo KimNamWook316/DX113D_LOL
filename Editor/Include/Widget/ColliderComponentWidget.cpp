@@ -51,7 +51,7 @@ void CColliderComponentWidget::SetSceneComponent(CSceneComponent* Com)
 {
 	CSceneComponentWidget::SetSceneComponent(Com);
 
-	CColliderComponent* ColliderComp = ((CColliderComponent*)m_Component.Get());
+	CColliderComponent* ColliderComp = ((CColliderComponent*)m_Component);
 
 	Vector3 Offset = ColliderComp->GetOffset();
 
@@ -103,10 +103,10 @@ void CColliderComponentWidget::SetSceneComponent(CSceneComponent* Com)
 
 void CColliderComponentWidget::OnChangeOffset(const Vector3& Offset)
 {
-	((CColliderComponent*)m_Component.Get())->SetOffset(Offset);
+	((CColliderComponent*)m_Component)->SetOffset(Offset);
 }
 
 void CColliderComponentWidget::OnChangeProfile(int Index, const char* Label)
 {
-	((CColliderComponent*)m_Component.Get())->SetCollisionProfile(Label);
+	((CColliderComponent*)m_Component)->SetCollisionProfile(Label);
 }

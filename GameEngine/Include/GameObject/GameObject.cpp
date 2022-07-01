@@ -11,7 +11,6 @@ CGameObject::CGameObject() :
 	m_NavAgent(nullptr),
 	m_IsEnemy(false),
 	m_NoInterrupt(false),
-	m_NormalAttackTarget(nullptr),
 	m_ExcludeSceneSave(false),
 	m_NoDestroyFromSceneChange(false)
 {
@@ -88,10 +87,16 @@ void CGameObject::Destroy()
 	}
 }
 
-void CGameObject::AddChildObject(CGameObject* Obj)
+void CGameObject::AddChildObject(CGameObject* Obj, const std::string& SocketName)
 {
 	Obj->m_Parent = this;
 	m_vecChildObject.push_back(Obj);
+
+	m_RootComponent->AddChild(Obj, SocketName);
+
+	/*Obj->GetRootComponent()->m_Parent = GetRootComponent();
+
+	m_RootComponent->AddChild(Obj->GetRootComponent(), SocketName);*/
 }
 
 void CGameObject::DeleteObj()
@@ -281,7 +286,7 @@ void CGameObject::Update(float DeltaTime)
 		}
 	}
 
-	size_t	Size = m_vecObjectComponent.size();
+	size_t Size = m_vecObjectComponent.size();
 
 	for (size_t i = 0; i < Size; ++i)
 	{
@@ -294,7 +299,7 @@ void CGameObject::Update(float DeltaTime)
 
 void CGameObject::PostUpdate(float DeltaTime)
 {
-	size_t	Size = m_vecObjectComponent.size();
+	size_t Size = m_vecObjectComponent.size();
 
 	for (size_t i = 0; i < Size; ++i)
 	{
@@ -313,7 +318,7 @@ void CGameObject::AddCollision()
 
 void CGameObject::PrevRender()
 {
-	size_t	Size = m_vecObjectComponent.size();
+	size_t Size = m_vecObjectComponent.size();
 
 	for (size_t i = 0; i < Size; ++i)
 	{
@@ -326,7 +331,7 @@ void CGameObject::PrevRender()
 
 void CGameObject::Render()
 {
-	size_t	Size = m_vecObjectComponent.size();
+	size_t Size = m_vecObjectComponent.size();
 
 	for (size_t i = 0; i < Size; ++i)
 	{
@@ -339,7 +344,7 @@ void CGameObject::Render()
 
 void CGameObject::PostRender()
 {
-	size_t	Size = m_vecObjectComponent.size();
+	size_t Size = m_vecObjectComponent.size();
 
 	for (size_t i = 0; i < Size; ++i)
 	{
@@ -576,18 +581,22 @@ bool CGameObject::LoadHierarchy(FILE* File, CScene* NextScene)
 
 	size_t ChildCount = 0;
 	fread(&ChildCount, sizeof(size_t), 1, File);
-
+	CGameObject* Child = nullptr;
 	for (size_t i = 0; i < ChildCount; ++i)
 	{
 		size_t ChildTypeID = 0;
 		fread(&ChildTypeID, sizeof(size_t), 1, File);
-		CGameObject* Child = CSceneManager::GetInst()->CreateObjectByTypeID(ChildTypeID);
+		Child = CSceneManager::GetInst()->CreateObjectByTypeID(ChildTypeID);
+
+		if (!Child)
+		{
+			Child = CSceneManager::GetInst()->CallCreateObject(NextScene, ChildTypeID);
+		}
 
 		if (Child)
 		{
 			// CurrentScene이 아니라 NextScene에다가 AddObject해줘야 한다
 			NextScene->AddObject(Child);
-			AddChildObject(Child);
 			Child->LoadHierarchy(File, NextScene);
 		}
 	}
@@ -647,6 +656,8 @@ bool CGameObject::LoadHierarchy(FILE* File, CScene* NextScene)
 		}
 	}
 
+	if(Child)
+		AddChildObject(Child);
 
 	CSceneManager::GetInst()->CallObjectDataSet(this, m_Name);
 

@@ -42,6 +42,9 @@ public:
 	static std::optional<std::string> GetFullPathOfTargetFileNameInDir(const std::string& PathName, 
 		const std::string& TargetFileFullName, std::string& FileNameOnly);
 
+	// 특정 파일 및 디렉토리의 이름을 바꿔주는 함수
+	static bool ChangeFileOrDirectoryName(const std::string& OriginFullPath, const std::string& NewName);
+
 	// 파일 이름 중에서 Extension만 리턴해주는 함수
 	static bool GetFileExt(const std::string& FileName, std::string& ExtractedExt);
 

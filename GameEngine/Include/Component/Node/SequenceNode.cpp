@@ -56,4 +56,3 @@ NodeResult CSequenceNode::OnEnd(float DeltaTime)
 {
 	return NodeResult();
 }
-

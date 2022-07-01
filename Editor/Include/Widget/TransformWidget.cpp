@@ -24,7 +24,7 @@ CTransformWidget::CTransformWidget()	:
 CTransformWidget::~CTransformWidget()
 {
 	// CallBack 삭제
-	if (m_SceneComponent)
+	if (m_Transform)
 	{
 		m_Transform->DeleteChangePosCallBack(this);
 		m_Transform->DeleteChangeRotCallBack(this);
@@ -99,6 +99,9 @@ void CTransformWidget::SetSceneCompoent(CSceneComponent* Component)
 	m_Transform->AddChangePosCallBack(this, &CTransformWidget::OnChangeTransformPos);
 	m_Transform->AddChangeRotCallBack(this, &CTransformWidget::OnChangeTransformRot);
 	m_Transform->AddChangeScaleCallBack(this, &CTransformWidget::OnChangeTransformScale);
+
+	// Transform이 삭제될 때, 이 위젯이 참조하는 Transform을 nullptr로 만든다.
+	m_Transform->AddOnDestroyCallBack(this, &CTransformWidget::OnTransformDestroy);
 }
 
 void CTransformWidget::OnChangeTransformScale(const Vector3& WorldScale, const Vector3& RelativeScale)
@@ -117,6 +120,12 @@ void CTransformWidget::OnChangeTransformRot(const Vector3& WorldRot, const Vecto
 {
 	m_WorldRotInput->SetVal(WorldRot);
 	m_RelativeRotInput->SetVal(RelativeRot);
+}
+
+void CTransformWidget::OnTransformDestroy()
+{
+	m_SceneComponent = nullptr;
+	m_Transform = nullptr;
 }
 
 void CTransformWidget::OnCheckInherit(int Idx, bool Check)

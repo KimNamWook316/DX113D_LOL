@@ -11,6 +11,7 @@
 #include "IMGUITree.h"
 #include "IMGUICheckBox.h"
 #include "IMGUIText.h"
+#include "IMGUIComboBox.h"
 
 class CToolWindow :
     public CIMGUIWindow
@@ -37,12 +38,25 @@ private:
 	void OnSelectGizmoOperationMode(const char* Label, bool Check);
 	void OnSelectGizmoTransformMode(const char* Label, bool Check);
 	void OnChangeCameraSpeed(float Speed);
-	void OnChangeOutlineDepthMultiply(float Val);
-	void OnChangeOutlineDepthBias(float Val);
-	void OnChangeOutlineNormalMultiply(float Val);
-	void OnChangeOutlineNormalBias(float Val);
+	void OnChangeLumWhite(float Speed);
+	void OnChangeMiddleGray(float Speed);
+	void OnChangeAdaptationTime(float Time);
+	void OnChangeBloomThreshold(float Threshold);
+	void OnChangeBloomScale(float Scale);
+	void OnChangeDOFMin(float Min);
+	void OnChangeDOFMax(float Max);
+	void OnSelectFogType(int Index, const char* Label);
+	void OnChageFogColor(const Vector3& Color);
+	void OnChangeFogStart(float Val);
+	void OnChangeFogEnd(float Val);
+	void OnChangeFogDensity(float Val);
+ //	void OnChangeOutlineDepthMultiply(float Val);
+ //	void OnChangeOutlineDepthBias(float Val);
+ //	void OnChangeOutlineNormalMultiply(float Val);
+ //	void OnChangeOutlineNormalBias(float Val);
+ //	void OnCheckGrayEnable(const char* Label, bool Check);
 	void OnCheckDebugRender(const char* Label, bool Check);
-	void OnCheckGrayEnable(const char* Label, bool Check);
+	void OnCheckPostProcessing(const char* Label, bool Check);
 	void OnClickPlay();
 	void OnClickPause();
 	void OnClickStop();
@@ -65,11 +79,24 @@ private:
 	// Render
 	CIMGUICollapsingHeader* m_RenderBlock;
 	CIMGUICheckBox* m_DebugRender;
-	CIMGUISliderFloat* m_OutlineDepthMultiply;
-	CIMGUISliderFloat* m_OutlineDepthBias;
-	CIMGUISliderFloat* m_OutlineNormalMutliply;
-	CIMGUISliderFloat* m_OutlineNormalBias;
-	CIMGUICheckBox* m_GrayEnable;
+	CIMGUICheckBox* m_PostProcessing;
+	CIMGUISliderFloat* m_AdaptationTime;
+	CIMGUISliderFloat* m_LumWhite;
+	CIMGUISliderFloat* m_MiddleGray;
+	CIMGUISliderFloat* m_BloomThreshold;
+	CIMGUISliderFloat* m_BloomScale;
+	CIMGUISliderFloat* m_DOFMin;
+	CIMGUISliderFloat* m_DOFMax;
+	CIMGUIColor3* m_FogColor;
+	CIMGUIComboBox* m_FogType;
+	CIMGUISliderFloat* m_FogStart;
+	CIMGUISliderFloat* m_FogEnd;
+	CIMGUISliderFloat* m_FogDensity;
+ //	CIMGUISliderFloat* m_OutlineDepthMultiply;
+ //	CIMGUISliderFloat* m_OutlineDepthBias;
+ //	CIMGUISliderFloat* m_OutlineNormalMutliply;
+ //	CIMGUISliderFloat* m_OutlineNormalBias;
+ //	CIMGUICheckBox* m_GrayEnable;
 
 	// PlayStop
 	CIMGUIText* m_PlayState;

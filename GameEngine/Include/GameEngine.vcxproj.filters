@@ -271,9 +271,6 @@
     <Filter Include="02. Resource\05. Animation\02. 3D">
       <UniqueIdentifier>{2e16266c-f24c-494a-8be7-d2f6ddec3b71}</UniqueIdentifier>
     </Filter>
-    <Filter Include="99. Util">
-      <UniqueIdentifier>{88dedb62-816d-497a-9914-d558eac24e8e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="05. Component\01. SceneComponent\10. Decal">
       <UniqueIdentifier>{ad74889f-6a94-479d-9d3a-34327c6d4d1d}</UniqueIdentifier>
     </Filter>
@@ -330,6 +327,12 @@
     </Filter>
     <Filter Include="05. Component\02. ObjectComponent\03. StateComponent\01. Node\03. DecoratorNode">
       <UniqueIdentifier>{7f567b65-b594-4333-be35-443a82f16874}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="10. PoolManager">
+      <UniqueIdentifier>{88dedb62-816d-497a-9914-d558eac24e8e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="99. Util">
+      <UniqueIdentifier>{106780f3-12e2-4456-b494-609eecd667b1}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -864,9 +867,6 @@
     <ClCompile Include="Component\Frustum.cpp">
       <Filter>05. Component\01. SceneComponent\03. Camera</Filter>
     </ClCompile>
-    <ClCompile Include="Animation\SkeletonSocket.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="ImCurveEdit.cpp">
       <Filter>01. Engine\08. IMGUI\01. Lib</Filter>
     </ClCompile>
@@ -891,9 +891,6 @@
     <ClCompile Include="Resource\Shader\BillboardShader.cpp">
       <Filter>02. Resource\02. Shader\02. ShaderClass\15. BillBoard</Filter>
     </ClCompile>
-    <ClCompile Include="EngineUtil.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="Resource\Shader\Mesh3DNoLightShader.cpp">
       <Filter>02. Resource\02. Shader\02. ShaderClass\13. Mesh3DNoLight</Filter>
     </ClCompile>
@@ -916,9 +913,6 @@
       <Filter>01. Engine\08. IMGUI\03. Widget</Filter>
     </ClCompile>
     <ClCompile Include="Component\Node\CompositeNode.cpp">
-      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node</Filter>
-    </ClCompile>
-    <ClCompile Include="Component\Node\ConditionNode.cpp">
       <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node</Filter>
     </ClCompile>
     <ClCompile Include="Component\Node\Node.cpp">
@@ -987,8 +981,23 @@
     <ClCompile Include="Component\Node\ActionNode.cpp">
       <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node\02. ActionNode</Filter>
     </ClCompile>
+    <ClCompile Include="Component\Node\ConditionNode.cpp">
+      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node\01. ConditionNode</Filter>
+    </ClCompile>
     <ClCompile Include="Component\Node\DecoratorNode.cpp">
-      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node</Filter>
+      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node\03. DecoratorNode</Filter>
+    </ClCompile>
+    <ClCompile Include="EngineUtil.cpp">
+      <Filter>99. Util</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectPoolManager.cpp">
+      <Filter>10. PoolManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\ColliderHalfLine.cpp">
+      <Filter>05. Component\01. SceneComponent\02. Collider</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\ColliderRay.cpp">
+      <Filter>05. Component\01. SceneComponent\02. Collider</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1553,9 +1562,6 @@
     <ClInclude Include="Component\Frustum.h">
       <Filter>05. Component\01. SceneComponent\03. Camera</Filter>
     </ClInclude>
-    <ClInclude Include="Animation\SkeletonSocket.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="ImCurveEdit.h">
       <Filter>01. Engine\08. IMGUI\01. Lib</Filter>
     </ClInclude>
@@ -1586,9 +1592,6 @@
     <ClInclude Include="Resource\Shader\BillboardShader.h">
       <Filter>02. Resource\02. Shader\02. ShaderClass\15. BillBoard</Filter>
     </ClInclude>
-    <ClInclude Include="EngineUtil.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="Resource\Shader\Mesh3DNoLightShader.h">
       <Filter>02. Resource\02. Shader\02. ShaderClass\13. Mesh3DNoLight</Filter>
     </ClInclude>
@@ -1611,9 +1614,6 @@
       <Filter>01. Engine\08. IMGUI\03. Widget</Filter>
     </ClInclude>
     <ClInclude Include="Component\Node\CompositeNode.h">
-      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node</Filter>
-    </ClInclude>
-    <ClInclude Include="Component\Node\ConditionNode.h">
       <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node</Filter>
     </ClInclude>
     <ClInclude Include="Component\Node\Node.h">
@@ -1682,11 +1682,26 @@
     <ClInclude Include="Component\Node\ActionNode.h">
       <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node\02. ActionNode</Filter>
     </ClInclude>
-    <ClInclude Include="Component\Node\DecoratorNode.h">
-      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node</Filter>
-    </ClInclude>
     <ClInclude Include="IMGUIUtil.h">
       <Filter>01. Engine\08. IMGUI\03. Widget</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\ConditionNode.h">
+      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node\01. ConditionNode</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\DecoratorNode.h">
+      <Filter>05. Component\02. ObjectComponent\03. StateComponent\01. Node\03. DecoratorNode</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineUtil.h">
+      <Filter>99. Util</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectPoolManager.h">
+      <Filter>10. PoolManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\ColliderHalfLine.h">
+      <Filter>05. Component\01. SceneComponent\02. Collider</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\ColliderRay.h">
+      <Filter>05. Component\01. SceneComponent\02. Collider</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

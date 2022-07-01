@@ -15,11 +15,16 @@ private:
 	class CObjectCreateModal* m_ObjectCreateModal;
 	class CIMGUIButton* m_ObjectDeleteButton;
 	class CGameObject* m_SelectObject;
+	class CIMGUICheckBox* m_AddAsSocket;
+	class CIMGUITextInput* m_SocketName;
+
 
 	class CIMGUITree* m_Root;
 	class CIMGUITree* m_SelectNode;
 	class CIMGUITree* m_DragSrc;
 	class CIMGUITree* m_DragDest;
+
+	class CGameObject* m_SocketParentObject;
 
 public:
 	class CIMGUITree* GetRoot()	const;

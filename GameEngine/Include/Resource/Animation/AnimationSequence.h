@@ -59,14 +59,16 @@ private:
 private:
 	class CScene*				m_Scene;
 	bool						m_Loop;
-	float						m_StartTime;
-	float						m_EndTime;
+	float						m_StartTime; 
+	float						m_EndTime;  
 	float						m_TimeLength;
 	float						m_FrameTime;
 	float						m_PlayTime;
 	float						m_PlayScale;
-	int							m_StartFrame;
-	int							m_EndFrame;
+	int							m_StartFrame; // Origin Start Frame
+	int							m_EndFrame;   // Origin End Frame
+	// int                        m_EditStartFrame; // Edit Start Frame
+	// int                        m_EditEndFrame;   // Edit End Frame
 	int							m_CurrentFrameIdx;
 	int							m_FrameLength;
 	int							m_FrameMode;
@@ -87,6 +89,14 @@ public:
 	{
 		return m_CurrentFrameIdx;
 	}
+	// int GetEditStartFrame() const
+	// {
+	// 	return m_EditStartFrame;
+	// }
+	// int GetEditEndFrame() const
+	// {
+	// 	return m_EditEndFrame;
+	// }
 	int GetKeyFrameCount()	const
 	{
 		return m_FrameLength;
@@ -164,5 +174,7 @@ public:
 	// FBX Convert 용도로 사용
 	// KeyFrameBuffer 만들지 않음
 	bool CreateSequenceConvertFBX(bool bLoop, struct _tagFbxAnimationClip* pClip);
+	bool CreateNewSequenceFromExistingSequence(CAnimationSequence* ExistingSequence, 
+		int StartFrame, int EndFrame, const std::string& NewName);
 };
 

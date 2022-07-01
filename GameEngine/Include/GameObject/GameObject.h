@@ -10,6 +10,7 @@ class CGameObject :
 {
 	friend class CScene;
 	friend class CSceneManager;
+	friend class CObjectPoolManager;
 
 protected:
 	CGameObject();
@@ -21,20 +22,9 @@ protected:
 	bool		m_NoInterrupt;	// 다른 State로 전환 불가능한 상태인지(ex. 특정 스킬 사용중에 다른 스킬을 쓸 수 없다)
 	Object_Type m_ObjectType;
 	bool		m_IsEnemy;
-	//bool		m_OnHit; // 다른 챔피언으로부터 공격 당하거나 피해를 받고 있는 상황인지
 	bool		m_ExcludeSceneSave;
 	bool		m_NoDestroyFromSceneChange;
 public:
-	//void SetOntHit(bool Hit)
-	//{
-	//	m_OnHit = Hit;
-	//}
-
-	//bool GetOnHit()	const
-	//{
-	//	return m_OnHit;
-	//}
-
 	bool IsEnemy()	const
 	{
 		return m_IsEnemy;
@@ -115,20 +105,9 @@ protected:
 	float		m_LifeSpan;
 	class CNavAgent* m_NavAgent;
 
-	CGameObject* m_NormalAttackTarget;	// 챔피언의 평타 공격 대상 or 포탑이나 미니언의 공격 대상
 	std::list<CGameObject*> m_AttackTargetList;	// 광역스킬처럼 여러 오브젝트가 맞는 공격을 했을때 맞은 오브젝트들
 
 public:
-	CGameObject* GetNormalAttackTarget()	const
-	{
-		return m_NormalAttackTarget;
-	}
-
-	void SetNormalAttackTarget(CGameObject* Target)
-	{
-		m_NormalAttackTarget = Target;
-	}
-
 	void AddAttackTarget(CGameObject* Target)
 	{
 		m_AttackTargetList.push_back(Target);
@@ -166,7 +145,7 @@ public:
 	}
 
 public:
-	void AddChildObject(CGameObject* Obj);
+	void AddChildObject(CGameObject* Obj, const std::string& SocketName = "");
 	void DeleteObj();
 	bool DeleteChildObj(const std::string& Name);
 	// 실제로 지우진 않고, 나는 부모를 nullptr로 만들고, 부모에게 내 자신을 자식 목록에서 지우게 함
@@ -174,6 +153,35 @@ public:
 	CGameObject* GetParentObject()	const
 	{
 		return m_Parent;
+	}
+
+	CGameObject* FindChildObject(const std::string& Name)
+	{
+		size_t Count = m_vecChildObject.size();
+
+		for (size_t i = 0; i < Count; ++i)
+		{
+			if (m_vecChildObject[i]->GetName() == Name)
+				return m_vecChildObject[i];
+
+		}
+
+		return nullptr;
+	}
+
+	template <typename T>
+	CGameObject* FindChildObjectByType()
+	{
+		size_t Count = m_vecChildObject.size();
+
+		for (size_t i = 0; i < Count; ++i)
+		{
+			if (m_vecChildObject[i]->GetTypeID() == typeid(T).hash_code())
+				return m_vecChildObject[i];
+
+		}
+
+		return nullptr;
 	}
 
 public:

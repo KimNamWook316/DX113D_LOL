@@ -13,13 +13,16 @@
 #include "../Component/Node/MovePickingNode.h"
 #include "../Component/Node/NoInterruptNode.h"
 #include "../Component/Node/CheckAttackTarget.h"
-#include "../Component/Node/SkillEndCheckNode.h"
 #include "../Component/Node/NormalAttack.h"
-#include "../Component/Node/InSkillCheck.h"
-#include "../Component/Node/CheckTurretAttackTarget.h"
-#include "../Component/Node/CheckTurretAttackFrequency.h"
+#include "../Component/Node/MouseLButtonCheckNode.h"
+#include "../Component/Node/MouseRButtonCheckNode.h"
+#include "../Component/Node/MouseRButtonUpCheckNode.h"
+#include "../Component/Node/RotateAttackDirectionNode.h"
 #include "../Component/Node/NegateNode.h"
 #include "../Component/Node/DeathNode.h"
+#include "../Component/Node/ReadyToShoot.h"
+#include "../Component/Node/ShootNode.h"
+#include "../Component/Node/CancleShootNode.h"
 #include "ObjectComponentWindow.h"
 #include "ObjectHierarchyWindow.h"
 #include "../EditorInfo.h"
@@ -161,21 +164,23 @@ void CBehaviorTreeWindow::Update(float DeltaTime)
         if (m_TypeSelectIndex == 2)
         {
             m_vecNodeAction.push_back("Move");
-            m_vecNodeAction.push_back("MovePicking");
             m_vecNodeAction.push_back("Idle");
             m_vecNodeAction.push_back("NormalAttack");
             m_vecNodeAction.push_back("Death");
+            m_vecNodeAction.push_back("RotateAttackDirection");
+            m_vecNodeAction.push_back("ReadyToShoot");
+            m_vecNodeAction.push_back("ShootNode");
+            m_vecNodeAction.push_back("CancleShootNode");
         }
 
         else if (m_TypeSelectIndex == 3)
         {
             m_vecNodeAction.push_back("MoveInputCheck");
+            m_vecNodeAction.push_back("MouseLButtonCheck");
             m_vecNodeAction.push_back("NoInterruptCheck");
             m_vecNodeAction.push_back("AttackTargetCheck");
-            m_vecNodeAction.push_back("SkillEndCheck");
-            m_vecNodeAction.push_back("InSkillCheck");
-            m_vecNodeAction.push_back("TurretAttackTargetCheck");
-            m_vecNodeAction.push_back("TurretAttackFrequencyCheck");
+            m_vecNodeAction.push_back("MouseRButtonCheck");
+            m_vecNodeAction.push_back("MouseRButtonUpCheck");
         }
 
         else if (m_TypeSelectIndex == 4)
@@ -300,6 +305,17 @@ void CBehaviorTreeWindow::Update(float DeltaTime)
 
     GraphEditor::Show(m_Delegate, m_Option, m_ViewState, true, &fit);
 
+    size_t Count = m_Delegate.mNodes.size();
+
+    for (size_t i = 0; i < Count; ++i)
+    {
+        Vector2 InWindowPos;
+        InWindowPos.x = m_Delegate.mNodes[i].x;
+        InWindowPos.y = m_Delegate.mNodes[i].y;
+
+        m_Delegate.mNodes[i].BehaviorTreeNode->SetInWindowPos(InWindowPos);
+    }
+
     ImGui::End();
 
 
@@ -344,9 +360,6 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
         case ActionNode::Move:
             NewTreeNode = m_StateComponent->CreateTreeNode<CMoveNode>(Name);
             break;
-        //case ActionNode::MovePicking:
-        //    NewTreeNode = m_StateComponent->CreateTreeNode<CMovePickingNode>(Name);
-        //    break;
         case ActionNode::Idle:
             NewTreeNode = m_StateComponent->CreateTreeNode<CIdleNode>(Name);
             break;
@@ -355,6 +368,18 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
             break;
         case ActionNode::Death:
             NewTreeNode = m_StateComponent->CreateTreeNode<CDeathNode>(Name);
+            break;
+        case ActionNode::RotateAttackDirection:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CRotateAttackDirectionNode>(Name);
+            break;
+        case ActionNode::ReadyToShoot:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CReadyToShoot>(Name);
+            break;
+        case ActionNode::ShootNode:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CShootNode>(Name);
+            break;
+        case ActionNode::CancleShootNode:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CCancleShootNode>(Name);
             break;
         }
 
@@ -372,23 +397,20 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
         case ConditionNode::MoveInputCheckNode:
             NewTreeNode = m_StateComponent->CreateTreeNode<CMoveInputCheckNode>(Name);
             break;
+        case ConditionNode::MouseLButtonCheckNode:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CMouseLButtonCheckNode>(Name);
+            break;
         case ConditionNode::NoInterruptNode:
             NewTreeNode = m_StateComponent->CreateTreeNode<CNoInterruptNode>(Name);
             break;
         case ConditionNode::AttackTargetCheck:
             NewTreeNode = m_StateComponent->CreateTreeNode<CCheckAttackTarget>(Name);
             break;
-        case ConditionNode::SkillEndCheck:
-            NewTreeNode = m_StateComponent->CreateTreeNode<CSkillEndCheckNode>(Name);
+        case ConditionNode::MouseRButtonCheckNode:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CMouseRButtonCheckNode>(Name);
             break;
-        case ConditionNode::InSkillCheck:
-            NewTreeNode = m_StateComponent->CreateTreeNode<CInSkillCheck>(Name);
-            break;
-        case ConditionNode::TurretAttackTargetCheck:
-            NewTreeNode = m_StateComponent->CreateTreeNode<CCheckTurretAttackTarget>(Name);
-            break;
-        case ConditionNode::TurretAttackFrequencyCheck:
-            NewTreeNode = m_StateComponent->CreateTreeNode<CCheckTurretAttackFrequency>(Name);
+        case ConditionNode::MouseRButtonUpCheckNode:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CMouseRButtonUpCheckNode>(Name);
             break;
         }
     }
@@ -499,7 +521,9 @@ void CBehaviorTreeWindow::UpdateLoadNode(CCompositeNode* RootNode)
         TypeIndex = 3;
     }
 
-    m_Delegate.AddNode(RootNode->GetName(), TypeIndex, 0.f, 0.f, false, RootNode);
+    Vector2 Pos = RootNode->GetInWindowPos();
+
+    m_Delegate.AddNode(RootNode->GetName(), TypeIndex, Pos.x, Pos.y, false, RootNode);
     RootNode->SetOwner(m_StateComponent->GetBehaviorTree());
     RootNode->SetObject(m_StateComponent->GetGameObject());
 
@@ -507,18 +531,17 @@ void CBehaviorTreeWindow::UpdateLoadNode(CCompositeNode* RootNode)
     auto iter = NodeList.begin();
     auto iterEnd = NodeList.end();
 
-    int Idx = 0;
-    for (; iter != iterEnd; ++iter, ++Idx)
+    for (; iter != iterEnd; ++iter)
     {
         (*iter)->SetOwner(m_StateComponent->GetBehaviorTree());
         (*iter)->SetObject(m_StateComponent->GetGameObject());
-        UpdateLoadNodeRecursive(*iter, 1, Idx);
+        UpdateLoadNodeRecursive(*iter);
     }
 
     UpdateLoadNodeLink(RootNode->GetOwner());
 }
 
-void CBehaviorTreeWindow::UpdateLoadNodeRecursive(CNode* Node, int Depth, int Height)
+void CBehaviorTreeWindow::UpdateLoadNodeRecursive(CNode* Node)
 {
     int TypeIndex = -1;
     std::list<CNode*> NodeList;
@@ -531,13 +554,14 @@ void CBehaviorTreeWindow::UpdateLoadNodeRecursive(CNode* Node, int Depth, int He
         auto iter = NodeList.begin();
         auto iterEnd = NodeList.end();
 
-        int Idx = 0;
-        for (; iter != iterEnd; ++iter, ++Idx)
+        for (; iter != iterEnd; ++iter)
         {
-            UpdateLoadNodeRecursive(*iter, Depth + 1, Idx);
+            UpdateLoadNodeRecursive(*iter);
         }
 
-        m_Delegate.AddNode(Node->GetName(), TypeIndex, Depth * 100.f, Height * 100.f, false, Node);
+        Vector2 Pos = Node->GetInWindowPos();
+
+        m_Delegate.AddNode(Node->GetName(), TypeIndex, Pos.x, Pos.y, false, Node);
     }
 
     else if (Node->GetTypeID() == typeid(CSelectorNode).hash_code())
@@ -548,34 +572,42 @@ void CBehaviorTreeWindow::UpdateLoadNodeRecursive(CNode* Node, int Depth, int He
         auto iter = NodeList.begin();
         auto iterEnd = NodeList.end();
 
-        int Idx = 0;
-        for (; iter != iterEnd; ++iter, ++Idx)
+
+        for (; iter != iterEnd; ++iter)
         {
-            UpdateLoadNodeRecursive(*iter, Depth + 1, Idx);
+            UpdateLoadNodeRecursive(*iter);
         }
 
-        m_Delegate.AddNode(Node->GetName(), TypeIndex, Depth * 100.f, Height * 100.f, false, Node);
+        Vector2 Pos = Node->GetInWindowPos();
+
+        m_Delegate.AddNode(Node->GetName(), TypeIndex, Pos.x, Pos.y, false, Node);
     }
 
     else if (Node->GetNodeType() == Node_Type::Action)
     {
         TypeIndex = 2;
-        m_Delegate.AddNode(Node->GetName(), TypeIndex, Depth * 100.f, Height * 100.f, false, Node);
+        Vector2 Pos = Node->GetInWindowPos();
+
+        m_Delegate.AddNode(Node->GetName(), TypeIndex, Pos.x, Pos.y, false, Node);
     }
 
     else if (Node->GetNodeType() == Node_Type::Condition)
     {
         TypeIndex = 3;
-        m_Delegate.AddNode(Node->GetName(), TypeIndex, Depth * 100.f, Height * 100.f, false, Node);
+        Vector2 Pos = Node->GetInWindowPos();
+
+        m_Delegate.AddNode(Node->GetName(), TypeIndex, Pos.x, Pos.y, false, Node);
     }
 
     else if (Node->GetNodeType() == Node_Type::Decorator)
     {
         TypeIndex = 4;
 
-        UpdateLoadNodeRecursive(((CDecoratorNode*)Node)->GetChild(), Depth + 1, 0);
+        UpdateLoadNodeRecursive(((CDecoratorNode*)Node)->GetChild());
 
-        m_Delegate.AddNode(Node->GetName(), TypeIndex, Depth * 100.f, Height * 100.f, false, Node);
+        Vector2 Pos = Node->GetInWindowPos();
+
+        m_Delegate.AddNode(Node->GetName(), TypeIndex, Pos.x, Pos.y, false, Node);
     }
 }
 

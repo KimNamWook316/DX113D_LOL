@@ -16,6 +16,9 @@ private :
     // Anim Instance
     class CIMGUIButton* m_LoadAnimInstanceBtn;
     class CIMGUIButton* m_SaveAnimInstanceBtn;
+
+    // Load Animation Mesh
+    //class CIMGUIButton* m_LoadAnimationMeshBtn;
     
     // Seq Name
     class CIMGUITextInput* m_NewNameInput;

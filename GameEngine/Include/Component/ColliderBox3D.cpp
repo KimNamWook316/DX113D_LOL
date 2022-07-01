@@ -4,6 +4,8 @@
 #include "ColliderCircle.h"
 #include "ColliderPixel.h"
 #include "ColliderSphere.h"
+#include "ColliderHalfLine.h"
+#include "ColliderRay.h"
 #include "../Collision/Collision.h"
 #include "../Scene/Scene.h"
 #include "../Scene/SceneResource.h"
@@ -91,36 +93,6 @@ void CColliderBox3D::PostUpdate(float DeltaTime)
 	m_Info.AxisLen[0] = GetWorldScale().x / 2.f;
 	m_Info.AxisLen[1] = GetWorldScale().y / 2.f;
 	m_Info.AxisLen[2] = GetWorldScale().z / 2.f;
-
-	m_Info.Min.x = m_Info.Center.x - m_Info.AxisLen[0];
-	m_Info.Min.y = m_Info.Center.y - m_Info.AxisLen[1];
-	m_Info.Min.z = m_Info.Center.z - m_Info.AxisLen[2];
-
-	m_Info.Max.x = m_Info.Center.x + m_Info.AxisLen[0];
-	m_Info.Max.y = m_Info.Center.y + m_Info.AxisLen[1];
-	m_Info.Max.z = m_Info.Center.z + m_Info.AxisLen[2];
-
-	m_Min = m_Info.Min;
-	m_Max = m_Info.Max;
-
-	//m_Info.Min.x = m_Info.Center.x - m_Info.Axis[0].x * m_Info.AxisLen[0];
-	//m_Info.Min.y = m_Info.Center.y - m_Info.Axis[1].y * m_Info.AxisLen[1];
-	//m_Info.Min.z = m_Info.Center.z - m_Info.Axis[2].z * m_Info.AxisLen[2];
-
-	//m_Info.Max.x = m_Info.Center.x + m_Info.Axis[0].x * m_Info.AxisLen[0];
-	//m_Info.Max.y = m_Info.Center.y + m_Info.Axis[1].y * m_Info.AxisLen[1];
-	//m_Info.Max.z = m_Info.Center.z + m_Info.Axis[2].z * m_Info.AxisLen[2];
-
-	//float MinX = min(m_Info.Min.x, m_Info.Max.x);
-	//float MinY = min(m_Info.Min.y, m_Info.Max.y);
-	//float MinZ = min(m_Info.Min.z, m_Info.Max.z);
-
-	//float MaxX = max(m_Info.Min.x, m_Info.Max.x);
-	//float MaxY = max(m_Info.Min.y, m_Info.Max.y);
-	//float MaxZ = max(m_Info.Min.z, m_Info.Max.z);
-
-	//m_Info.Min = Vector3(MinX, MinY, MinZ);
-	//m_Info.Max = Vector3(MaxX, MaxY, MaxZ);
 
 }
 
@@ -227,11 +199,83 @@ bool CColliderBox3D::Collision(CColliderComponent* Dest)
 		return CCollision::CollisionBox3DToBox3D(this, (CColliderBox3D*)Dest);
 	case Collider_Type::Sphere:
 		return CCollision::CollisionBox3DToSphere(this, (CColliderSphere*)Dest);
+	case Collider_Type::Ray:
+		return CCollision::CollisionRayToBox3D((CColliderRay*)Dest, this);
+	case Collider_Type::HalfLine:
+		return CCollision::CollisionBox3DToHalfLine(this, (CColliderHalfLine*)Dest);
 	}
 }
 
 bool CColliderBox3D::CollisionMouse(const Vector2& MousePos)
 {
 	return false;
+}
+
+void CColliderBox3D::UpdateMinMax()
+{
+	Matrix	matWorld;
+	Matrix	matScale, matRot, matTrans;
+
+	matScale.Scaling(m_Info.AxisLen[0] * 2.f, m_Info.AxisLen[1] * 2.f, m_Info.AxisLen[2] * 2.f);
+	matRot.Rotation(GetWorldRot());
+	matTrans.Translation(GetWorldPos());
+
+	matWorld = matScale * matRot * matTrans;
+
+	Vector3 P1 = Vector3(m_Info.Min.x, m_Info.Min.y, m_Info.Min.z);
+	Vector3 P2 = Vector3(m_Info.Max.x, m_Info.Min.y, m_Info.Min.z);
+	Vector3 P3 = Vector3(m_Info.Max.x, m_Info.Max.y, m_Info.Min.z);
+	Vector3 P4 = Vector3(m_Info.Min.x, m_Info.Max.y, m_Info.Min.z);
+	Vector3 P5 = Vector3(m_Info.Min.x, m_Info.Min.y, m_Info.Max.z);
+	Vector3 P6 = Vector3(m_Info.Max.x, m_Info.Min.y, m_Info.Max.z);
+	Vector3 P7 = Vector3(m_Info.Max.x, m_Info.Max.y, m_Info.Max.z);
+	Vector3 P8 = Vector3(m_Info.Min.x, m_Info.Max.y, m_Info.Max.z);
+
+	P1 = P1.TransformCoord(matWorld);
+	P2 = P2.TransformCoord(matWorld);
+	P3 = P3.TransformCoord(matWorld);
+	P4 = P4.TransformCoord(matWorld);
+	P5 = P5.TransformCoord(matWorld);
+	P6 = P6.TransformCoord(matWorld);
+	P7 = P7.TransformCoord(matWorld);
+	P8 = P8.TransformCoord(matWorld);
+
+	std::vector<Vector3> PointList;
+	PointList.push_back(P1);
+	PointList.push_back(P2);
+	PointList.push_back(P3);
+	PointList.push_back(P4);
+	PointList.push_back(P5);
+	PointList.push_back(P6);
+	PointList.push_back(P6);
+	PointList.push_back(P7);
+	PointList.push_back(P8);
+
+	std::sort(PointList.begin(), PointList.end(), SortX);
+	m_Info.Min.x = PointList[0].x;
+	m_Info.Max.x = PointList[7].x;
+
+	std::sort(PointList.begin(), PointList.end(), SortY);
+	m_Info.Min.y = PointList[0].y;
+	m_Info.Max.y = PointList[7].y;
+
+	std::sort(PointList.begin(), PointList.end(), SortZ);
+	m_Info.Min.z = PointList[0].z;
+	m_Info.Max.z = PointList[7].z;
+}
+
+bool CColliderBox3D::SortX(const Vector3& Src, const Vector3& Dest)
+{
+	return Src.x < Dest.x;
+}
+
+bool CColliderBox3D::SortY(const Vector3& Src, const Vector3& Dest)
+{
+	return Src.y < Dest.y;
+}
+
+bool CColliderBox3D::SortZ(const Vector3& Src, const Vector3& Dest)
+{
+	return Src.z < Dest.z;
 }
 

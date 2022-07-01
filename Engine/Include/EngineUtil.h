@@ -5,9 +5,14 @@
 class CEngineUtil
 {
 public:
+	// Enum To String
 	static std::string LightTypeToString(Light_Type Type);
 	static Light_Type StringToLightType(const std::string& TypeString);
 
+	static std::string FogTypeToString(Fog_Type Type);
+	static Fog_Type StringToFogType(const std::string& TypeString);
+
+	// String Related
 	// 해당 Dir 경로에, 해당 Name 으로 된 파일이 존재하는지 판단해주는 함수 + 존재할 시 FullPath 경로 리턴
 	static std::optional<std::string> CheckAndExtractFullPathOfTargetFile(std::string_view Path, std::string_view FileName);
 
@@ -17,6 +22,10 @@ public:
 	// 특정 파일을, 현재 디렉토리에서, 다른 디렉토리로 복사하기
 	// FileName 에는 확장자 정보까지 들어가 있어야 한다.
 	static bool CopyFileToOtherDirectory(const struct PathInfo* CurrentPathInfo, const struct PathInfo* TargetPathInfo, const std::string& FileName);
+
+	// string 으로 path 정보 넘겨주면 알아서 해당 Directory로 복사해주는 기능
+	static bool CopyFileToOtherDirectory(const std::string& OriginFullPath, const std::string& TargetFullPath,
+		bool Recursive = false);
 
 	// 해당 디렉토리가 존재하는지 확인하고, 존재하지 않는다면 해당 디렉토리를 만들어준다. (파일이 아니라, 폴더를 만들어주는 것)
 	static void CheckAndMakeDirectory(const struct PathInfo* Info);

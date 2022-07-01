@@ -14,7 +14,10 @@
 #include "Component/GameStateComponent.h"
 #include "Component/ColliderBox3D.h"
 #include "Component/ColliderSphere.h"
+#include "Component/ColliderHalfLine.h"
+#include "Component/ColliderRay.h"
 #include "Component/GameDataComponent.h"
+#include "Component/PlayerDataComponent.h"
 #include "IMGUITree.h"
 #include "Flag.h"
 
@@ -269,6 +272,40 @@ std::optional<std::string> CEditorUtil::GetFullPathOfTargetFileNameInDir(const s
 	return std::nullopt;
 }
 
+bool CEditorUtil::ChangeFileOrDirectoryName(const std::string& OriginFullPath, const std::string& NewName)
+{
+	fs::path TargetPath = OriginFullPath;
+
+	// Folder 경로 세팅
+	std::string RenamePathStr;
+	GetPathInfoBeforeFileName(OriginFullPath, RenamePathStr);
+
+	RenamePathStr.append(NewName);
+
+	fs::path ReNamedPath = RenamePathStr;
+
+	// Folder 의 경우(dir) 단순히 rename 이 안된다.
+	// 따라서, 아예 복사를 해준 다음, 해당 디렉토리의 이름을 바꺼주는 방식을 취한다.
+
+	if (fs::is_directory(TargetPath))
+	{
+		// 빈 디렉토리 생성
+		fs::create_directory(ReNamedPath);
+		
+		// 폴더 내용 복사
+		fs::copy(TargetPath, ReNamedPath, fs::copy_options::recursive);
+
+		// 기존 폴더 삭제
+		fs::remove_all(TargetPath);
+	}
+	else
+	{
+		fs::rename(TargetPath, ReNamedPath);
+	}
+
+	return true;
+}
+
 bool CEditorUtil::GetFileExt(const std::string& FileName, std::string& ExtractedExt)
 {
 	size_t i = FileName.find('.');
@@ -506,6 +543,10 @@ std::string CEditorUtil::SceneComponent3DTypeToString(SceneComponent3DType Type)
 		return "ColliderBox3D";
 	case SceneComponent3DType::ColliderSphere:
 		return "ColliderSphere";
+	case SceneComponent3DType::ColliderHalfLine:
+		return "ColliderHalfLine";
+	case SceneComponent3DType::ColliderRay:
+		return "ColliderRay";
 	}
 
 	return "";
@@ -523,6 +564,8 @@ std::string CEditorUtil::ObjectComponent3DTypeToString(ObjectComponent3DType Typ
 		return "NavAgent";
 	case ObjectComponent3DType::GameDataComponent:
 		return "GameDataComponent";
+	case ObjectComponent3DType::PlayerDataComponent:
+		return "PlayerDataComponent";
 	}
 
 	return "";
@@ -585,6 +628,10 @@ size_t CEditorUtil::SceneComponentTypeIndexToTypeid(int TypeIndex)
 		return typeid(CColliderBox3D).hash_code();
 	case 8:
 		return typeid(CColliderSphere).hash_code();
+	case 9:
+		return typeid(CColliderHalfLine).hash_code();
+	case 10:
+		return typeid(CColliderRay).hash_code();
 	}
 
 	return -1;
@@ -603,8 +650,8 @@ size_t CEditorUtil::ObjectComponentTypeIndexToTypeid(int TypeIndex)
 		return typeid(CNavAgent).hash_code();
 	case 3:
 		return typeid(CGameDataComponent).hash_code();
-	//case 5:
-	//	return typeid(CSceneComponent).hash_code();
+	case 4:
+		return typeid(CPlayerDataComponent).hash_code();
 	}
 
 	return -1;

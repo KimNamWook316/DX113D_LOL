@@ -41,6 +41,12 @@ public:
 	virtual void Update(float DeltaTime);
 
 public:
+	// ParentNode 인자가 nullptr이면 최상위 부모인 SceneComponents의 자식에서 찾아서 지워준다
+	bool DeleteTreeNode(class CSceneComponent* Comp, class CIMGUITree* ParentNode = nullptr);
+	bool AddTreeNode(class CSceneComponent* Comp, class CIMGUITree* ParentNode = nullptr);
+	CIMGUITree* FindTreeNode(class CSceneComponent* Comp);
+
+public:
 	// Inspector에서 GameObject 이름 변경되었을 때 호출
 	void OnRenameComponent(const std::string& NewName, const std::string& PrevName);
 	// Component 생성 팝업창 띄워주는 콜백
@@ -65,9 +71,9 @@ public:
 	// Component Save&Load
 	void OnSaveComponent();
 	void OnLoadComponent();
+	class CComponent* FindSelectComponent();
 
 private:
-	class CComponent* FindSelectComponent();
 	void OnAddComponent(class CGameObject* Object, class CSceneComponent* Component);
 	void MakeHierachyRecursive(class CSceneComponent* Parent, CIMGUITree* ParentTree);
 	void DisableCurrent();

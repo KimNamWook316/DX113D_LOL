@@ -14,9 +14,7 @@
 #include "ObjectComponentWindow.h"
 #include "SceneComponentCreateModal.h"
 #include "IMGUITree.h"
-#include "GameObject/Champion.h"
-#include "GameObject/Minion.h"
-#include "GameObject/MapObject.h"
+#include "../Object/PlayerHook.h"
 #include "IMGUIRadioButton.h"
 #include "IMGUICheckBox.h"
 
@@ -38,6 +36,11 @@ bool CObjectCreateModal::Init()
 
 	//m_ObjectCreatePopUp = AddWidget<CIMGUIPopUpModal>("CreateObjectPopUp");
 
+	m_ObjectTypeCombo = AddWidget<CIMGUIComboBox>("Object Type");
+	m_ObjectTypeCombo->SetHideName(true);
+	m_ObjectTypeCombo->AddItem("GameObject");
+	m_ObjectTypeCombo->AddItem("PlayerHook");
+
 	m_NameTextInput = AddWidget<CIMGUITextInput>("Object Name");
 	m_NameTextInput->SetHideName(true);
 	m_NameTextInput->SetHintText("Object Name");
@@ -51,6 +54,7 @@ bool CObjectCreateModal::Init()
 	m_ObjectTypeCheckBox->AddCheckInfo("Player");
 	m_ObjectTypeCheckBox->AddCheckInfo("Monster");
 	m_ObjectTypeCheckBox->AddCheckInfo("MapObject");
+	m_ObjectTypeCheckBox->AddCheckInfo("None");
 
 	m_ObjectTypeCheckBox->SetCheck(0, true);
 	m_ObjectTypeCheckBox->AlwaysCheck(true);
@@ -148,8 +152,11 @@ void CObjectCreateModal::OnCreateObject()
 		}
 	}
 
-
-	NewObject = CurrentScene->CreateGameObject<CGameObject>(Name);
+	int Index = m_ObjectTypeCombo->GetSelectIndex();
+	if (Index == 0)
+		NewObject = CurrentScene->CreateGameObject<CGameObject>(Name);
+	else if (Index == 1)
+		NewObject = CurrentScene->CreateGameObject<CPlayerHook>(Name);
 
 
 	// 차후, Loading 을 위해서 ObjectCombo Select Index 정보를 저장해준다.
@@ -169,7 +176,9 @@ void CObjectCreateModal::OnCreateObject()
 	case 2:
 		NewObject->SetObjectType(Object_Type::MapObject);
 		break;
-
+	case 3:
+		NewObject->SetObjectType(Object_Type::None);
+		break;
 	}
 
 	Idx = -1;

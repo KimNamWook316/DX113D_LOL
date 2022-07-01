@@ -46,6 +46,8 @@ public:
 	const Matrix& GetBoneMatrix(const std::string& strName)	const;
 	const Matrix& GetBoneMatrix(int iIndex)	const;
 	class CSkeletonSocket* GetSocket(const std::string& Name);
+	size_t GetBoneSocketCount() const;
+	class CSkeletonSocket* GetSkeletonSocket(size_t Index);
 
 public:
 	void AddBone(Bone* pBone);

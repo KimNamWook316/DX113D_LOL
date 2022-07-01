@@ -19,5 +19,6 @@ public:
     virtual NodeResult OnStart(float DeltaTime);
     virtual NodeResult OnUpdate(float DeltaTime);
     virtual NodeResult OnEnd(float DeltaTime);
+
 };
 

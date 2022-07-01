@@ -12,6 +12,7 @@
 #include "Component/PaperBurnComponent.h"
 #include "Component/NavAgent.h"
 #include "../Component/GameDataComponent.h"
+#include "../Component/PlayerDataComponent.h"
 #include "../Component/GameStateComponent.h"
 #include "../Window/InspectorWindow.h"
 #include "../EditorUtil.h"
@@ -96,6 +97,8 @@ void CObjectComponentCreateModal::OnCreateComponent()
 		Com = SelectObject->CreateComponent<CPaperBurnComponent>(Name);
 	else if (Typeid == typeid(CGameStateComponent).hash_code())
 		Com = SelectObject->CreateComponent<CGameStateComponent>(Name);
+	else if (Typeid == typeid(CPlayerDataComponent).hash_code())
+		Com = SelectObject->CreateComponent<CPlayerDataComponent>(Name);
 	else if (Typeid == typeid(CNavAgent).hash_code())
 	{
 		Com = SelectObject->CreateComponent<CNavAgent>(Name);

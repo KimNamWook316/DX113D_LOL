@@ -10,6 +10,7 @@
 #include "Collision/CollisionManager.h"
 #include "Resource/Shader/GlobalConstantBuffer.h"
 #include "Resource/Shader/StructuredBuffer.h"
+#include "ObjectPoolManager.h"
 #include <time.h>
 
 DEFINITION_SINGLE(CEngine)
@@ -70,6 +71,8 @@ CEngine::~CEngine()
 
 	CDevice::DestroyInst();
 
+	CObjectPoolManager::DestroyInst();
+
 	SAFE_DELETE(m_Timer);
 }
 
@@ -108,6 +111,9 @@ bool CEngine::Init(HINSTANCE hInst, HWND hWnd,
 	m_Timer = new CTimer;
 
 	if (!CDevice::GetInst()->Init(m_hWnd, Width, Height, WindowMode))
+		return false;
+
+	if (!CObjectPoolManager::GetInst()->Init())
 		return false;
 
 	if (!CPathManager::GetInst()->Init())
@@ -349,19 +355,12 @@ bool CEngine::Render(float DeltaTime)
 	CDevice::GetInst()->ClearRenderTarget(m_ClearColor);
 	CDevice::GetInst()->ClearDepthStencil(1.f, 0);
 
-	/*CMesh* Mesh = CResourceManager::GetInst()->FindMesh("SpriteMesh");
-	CShader* Shader = CResourceManager::GetInst()->FindShader("ColorMeshShader");
-
-	Shader->SetShader();
-
-	Mesh->Render();*/
-	CRenderManager::GetInst()->Render();
+	CRenderManager::GetInst()->Render(DeltaTime);
 
 	if (m_EditMode)
 	{
 		CIMGUIManager::GetInst()->Render();
 	}
-
 
 	CDevice::GetInst()->Flip();
 

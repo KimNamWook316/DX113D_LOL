@@ -70,7 +70,7 @@ void CSceneComponentWidget::OnGameObjectEnable(bool Enable)
 
 bool CSceneComponentWidget::IsMyWidget(CSceneComponent* Component)
 {
-	return Component == m_Component.Get();
+	return Component == m_Component;
 }
 
 void CSceneComponentWidget::OnClickRenameButton()

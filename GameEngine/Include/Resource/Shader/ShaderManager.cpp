@@ -34,6 +34,12 @@
 #include "TransparentInstancing3DShader.h"
 #include "OutlineShader.h"
 #include "GrayShader.h"
+#include "HDRDownScaleFirstPassShader.h"
+#include "HDRDownScaleSecondPassShader.h"
+#include "HDRRenderShader.h"
+#include "BloomShader.h"
+#include "BlurVerticalShader.h"
+#include "BlurHorizontalShader.h"
 
 CShaderManager::CShaderManager()
 {
@@ -160,18 +166,53 @@ bool CShaderManager::Init()
 	if (!CreateShader<CShadowMapInstancingShader>("ShadowMapInstancingShader"))
 		return false;
 
-	if (!CreateShader<COutlineShader>("OutlineShader"))
+ //	if (!CreateShader<COutlineShader>("OutlineShader"))
+ //	{
+ //		assert(false);
+ //		return false;
+ //	}
+
+ //	if (!CreateShader<CGrayShader>("GrayShader"))
+ //	{
+ //		assert(false);
+ //		return false;
+ //	}
+
+	if (!CreateShader<CHDRDownScaleFirstPassShader>("HDRDownScaleFirstPassShader"))
 	{
 		assert(false);
 		return false;
 	}
 
-	if (!CreateShader<CGrayShader>("GrayShader"))
+	if (!CreateShader<CHDRDownScaleSecondPassShader>("HDRDownScaleSecondPassShader"))
 	{
 		assert(false);
 		return false;
 	}
 
+	if (!CreateShader<CHDRRenderShader>("HDRRenderShader"))
+	{
+		assert(false);
+		return false;
+	}
+
+	if (!CreateShader<CBloomShader>("BloomShader"))
+	{
+		assert(false);
+		return false;
+	}
+
+	if (!CreateShader<CBlurVerticalShader>("BlurVerticalShader"))
+	{
+		assert(false);
+		return false;
+	}
+
+	if (!CreateShader<CBlurHorizontalShader>("BlurHorizontalShader"))
+	{
+		assert(false);
+		return false;
+	}
 
 	// =================== 상수버퍼 ===================
 	CreateConstantBuffer("TransformCBuffer", sizeof(TransformCBuffer), 0,
@@ -227,7 +268,16 @@ bool CShaderManager::Init()
 	CreateConstantBuffer("ShadowCBuffer", sizeof(ShadowCBuffer), 10,
 		(int)Buffer_Shader_Type::Graphic);
 
-	CreateConstantBuffer("OutlineConstantBuffer", sizeof(OutlineCBuffer), 10,
+ //	CreateConstantBuffer("OutlineConstantBuffer", sizeof(OutlineCBuffer), 10,
+ //		(int)Buffer_Shader_Type::Pixel);
+
+	CreateConstantBuffer("DownScaleCBuffer", sizeof(DownScaleCBuffer), 10,
+		(int)Buffer_Shader_Type::Compute);
+
+	CreateConstantBuffer("HDRRenderCBuffer", sizeof(HDRRenderCBuffer), 10,
+		(int)Buffer_Shader_Type::Pixel);
+
+	CreateConstantBuffer("FogCBuffer", sizeof(FogCBuffer), 11,
 		(int)Buffer_Shader_Type::Pixel);
 
 	return true;

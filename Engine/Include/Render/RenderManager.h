@@ -95,6 +95,9 @@ private:
 	CSharedPtr<class CShader> m_LightBlendRenderShader;
 	CSharedPtr<class CShader> m_Standard3DInstancingShader;
 	CSharedPtr<class CShader> m_Transparent3DInstancingShader;
+
+	// Final Target
+	CSharedPtr<CRenderTarget> m_FinalTarget;
 	
 	// GBuffer
 	std::vector<CSharedPtr<CRenderTarget>>	m_vecGBuffer;
@@ -113,15 +116,18 @@ private:
 	// Debug Render
 	bool m_DebugRender;
 
-	// Grayscale
-	bool m_Gray;
-	CSharedPtr<class CShader> m_GrayShader;
+	// Post Processing (HDR)
+	bool m_PostProcessing;
 
-	// OutLine
-	bool m_OutLine;
-	CSharedPtr<class CShader> m_OutLineShader;
-	class COutlineConstantBuffer* m_OutlineCBuffer;
-	CSharedPtr<CRenderTarget> m_OutlineTarget;
+ //	// Grayscale
+ //	bool m_Gray;
+ //	CSharedPtr<class CShader> m_GrayShader;
+
+ //	// OutLine
+ //	bool m_OutLine;
+ //	CSharedPtr<class CShader> m_OutLineShader;
+ //	class COutlineConstantBuffer* m_OutlineCBuffer;
+ //	CSharedPtr<CRenderTarget> m_OutlineTarget;
 
 	// Animation Editor 
 	CSharedPtr<class CShader> m_Mesh3DNoLightRenderShader; // m_AnimEditorRenderTarget 에 그려내기 위한 Shader 
@@ -130,11 +136,16 @@ private:
 	// Particle Editor
 	CSharedPtr<class CShader> m_ParticleShader; // m_AnimEditorRenderTarget 에 그려내기 위한 Shader 
 	CSharedPtr<CRenderTarget>	m_ParticleEffectEditorRenderTarget; // Skinning 처리 이후, 해당 출력을, 별도의 RenderTarget 에 그려낸다.
+
+	// Post Processing Renderer
+	class CPostFXRenderer* m_PostFXRenderer;
+
 public :
 	CRenderStateManager* GetRenderStateManager() const
 	{
 		return m_RenderStateManager;
 	}
+
 public:
 	float GetShadowLightDistance() const
 	{
@@ -156,60 +167,97 @@ public:
 		return m_ParticleEffectEditorRenderTarget;
 	}
 
-	void SetOutlineDepthMultiplier(float Val)
-	{
-		m_OutlineCBuffer->SetDepthMultiplier(Val);
-	}
+ //	void SetOutlineDepthMultiplier(float Val)
+ //	{
+ //		m_OutlineCBuffer->SetDepthMultiplier(Val);
+ //	}
+ //
+ //	void SetOutlineDepthBias(float Val)
+ //	{
+ //		m_OutlineCBuffer->SetDepthBias(Val);
+ //	}
+ //
+ //	void SetOutlineNormalMultiplier(float Val)
+ //	{
+ //		m_OutlineCBuffer->SetNormalMultiplier(Val);
+ //	}
+ //
+ //	void SetOutlineNormalBias(float Val)
+ //	{
+ //		m_OutlineCBuffer->SetNormalBias(Val);
+ //	}
 
-	void SetOutlineDepthBias(float Val)
-	{
-		m_OutlineCBuffer->SetDepthBias(Val);
-	}
-
-	void SetOutlineNormalMultiplier(float Val)
-	{
-		m_OutlineCBuffer->SetNormalMultiplier(Val);
-	}
-
-	void SetOutlineNormalBias(float Val)
-	{
-		m_OutlineCBuffer->SetNormalBias(Val);
-	}
-
-	void GrayEnable(bool Enable)
-	{
-		m_Gray = Enable;
-	}
+ //	void GrayEnable(bool Enable)
+ //	{
+ //		m_Gray = Enable;
+ //	}
 
 	void SetDebugRender(bool DebugRender)
 	{
 		m_DebugRender = DebugRender;
 	}
 
-	float GetOutlineDepthMultiplier()
+ //	float GetOutlineDepthMultiplier()
+ //	{
+ //		return m_OutlineCBuffer->GetDepthMultiplier();
+ //	}
+ //
+ //	float GetOutlineDepthBias()
+ //	{
+ //		return m_OutlineCBuffer->GetDepthBias();
+ //	}
+ //
+ //	float GetOutlineNormalMultiplier()
+ //	{
+ //		return m_OutlineCBuffer->GetNormalMultiplier();
+ //	}
+ //
+ //	float GetOutlineNormalBias()
+ //	{
+ //		return m_OutlineCBuffer->GetNormalBias();
+ //	}
+
+	bool IsPostProcessingEnable()
 	{
-		return m_OutlineCBuffer->GetDepthMultiplier();
+		return m_PostProcessing;
 	}
 
-	float GetOutlineDepthBias()
+	void EnablePostProcessing(bool Enable)
 	{
-		return m_OutlineCBuffer->GetDepthBias();
+		m_PostProcessing = Enable;
 	}
 
-	float GetOutlineNormalMultiplier()
-	{
-		return m_OutlineCBuffer->GetNormalMultiplier();
-	}
+	float GetMiddleGray() const;
+	float GetLumWhite() const;
+	float GetBloomThreshold() const;
+	float GetBloomScale() const;
+	float GetDOFMin() const;
+	float GetDOFMax() const;
+	const Vector3& GetFogColor() const;
+	Fog_Type GetFogType() const;
+	float GetFogStart() const;
+	float GetFogEnd() const;
+	float GetFogDensity() const;
 
-	float GetOutlineNormalBias()
-	{
-		return m_OutlineCBuffer->GetNormalBias();
-	}
+	void SetMiddleGray(float Gray);
+	void SetLumWhite(float White);
+	void SetBloomThreshold(float Threshold);
+	void SetBloomScale(float Scale);
+	void SetDOFMin(float Min);
+	void SetDOFMax(float Max);
+	void SetFogColor(const Vector3& Color);
+	void SetFogType(Fog_Type Type);
+	void SetFogStart(float Start);
+	void SetFogEnd(float End);
+	void SetFogDensity(float Density);
 
-	bool IsGray()
-	{
-		return m_Gray;
-	}
+	void SetAdaptationTime(float Time);
+	float GetAdaptationTime() const;
+
+ //	bool IsGray()
+ //	{
+ //		return m_Gray;
+ //	}
 
 	bool IsDebugRender()
 	{
@@ -228,7 +276,7 @@ public:
 
 public:
 	bool Init();
-	void Render();
+	void Render(float DeltaTime);
 
 private:
 	void RenderSkyBox();
@@ -237,10 +285,10 @@ private:
 	void RenderDecal();
 	void RenderLightAcc();
 	void RenderLightBlend();
-	void RenderOutLine();
+	// void RenderOutLine();
 	void RenderTransparent();
 	void RenderFinalScreen();
-	void RenderGray();
+	// void RenderGray();
 	void RenderAnimationEditor();
 	void RenderParticleEffectEditor();
 

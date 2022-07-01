@@ -62,7 +62,7 @@ void CLandScapeWidget::SetSceneComponent(CSceneComponent* Com)
 
 void CLandScapeWidget::OnCheckDebugRender(int Index, bool Check)
 {
-	static_cast<CLandScape*>(m_Component.Get())->SetDebugRender(Check);
+	static_cast<CLandScape*>(m_Component)->SetDebugRender(Check);
 }
 
 void CLandScapeWidget::OnClickLoadTexture()
@@ -109,12 +109,12 @@ void CLandScapeWidget::OnClickCreateLandScape()
 	}
 
 	CTexture* HeightTex = CSceneManager::GetInst()->GetScene()->GetResource()->FindTexture("LandScapeEditorHeightMap");
-	static_cast<CLandScape*>(m_Component.Get())->CreateLandScape("LandScape", CountX, CountY, HeightTex, m_YFactorInput->GetVal());
+	static_cast<CLandScape*>(m_Component)->CreateLandScape("LandScape", CountX, CountY, HeightTex, m_YFactorInput->GetVal());
 }
 
 void CLandScapeWidget::OnClickChangeYFactor()
 {
-	CLandScape* LandScape = static_cast<CLandScape*>(m_Component.Get());
+	CLandScape* LandScape = static_cast<CLandScape*>(m_Component);
 
 	if (!LandScape->IsCreate())
 	{

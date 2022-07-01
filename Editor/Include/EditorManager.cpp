@@ -19,7 +19,10 @@
 #include "Component/GameStateComponent.h"
 #include "Component/ColliderBox3D.h"
 #include "Component/ColliderSphere.h"
+#include "Component/ColliderHalfLine.h"
+#include "Component/ColliderRay.h"
 #include "Component/GameDataComponent.h"
+#include "Component/PlayerDataComponent.h"
 // Window
 #include "Window/ObjectHierarchyWindow.h"
 #include "Window/SceneComponentHierarchyWindow.h"
@@ -38,6 +41,7 @@
 #include "Window/AnimationDisplayWindow.h"
 #include "Window/ResourceDisplayWindow.h"
 #include "Window/CollisionProfileEditor.h"
+#include "Window/SocketWindow.h"
 // Object
 #include "Object/DragObject.h"
 #include "Object/SpriteEditObject.h"
@@ -249,23 +253,9 @@ CGameObject* CEditorManager::CreateObject(CScene* Scene, size_t Type)
 		return Obj;
 	}
 
-	else if (Type == typeid(CDragObject).hash_code())
+	else if (Type == typeid(CPlayerHook).hash_code())
 	{
-		CDragObject* Obj = Scene->LoadGameObject<CDragObject>();
-
-		return Obj;
-	}
-
-	else if (Type == typeid(CSpriteEditObject).hash_code())
-	{
-		CSpriteEditObject* Obj = Scene->LoadGameObject<CSpriteEditObject>();
-
-		return Obj;
-	}
-
-	else if (Type == typeid(CPlayer2D).hash_code())
-	{
-		CPlayer2D* Obj = Scene->LoadGameObject<CPlayer2D>();
+		CPlayerHook* Obj = Scene->LoadGameObject<CPlayerHook>();
 
 		return Obj;
 	}
@@ -342,12 +332,40 @@ CComponent* CEditorManager::CreateComponent(CGameObject* Obj, size_t Type)
 		return Component;
 	}
 
+	else if (Type == typeid(CColliderHalfLine).hash_code())
+	{
+		CColliderHalfLine* Component = Obj->LoadComponent<CColliderHalfLine>();
+		// Component->EnableEditMode(true);
+		return Component;
+	}
+
+	else if (Type == typeid(CColliderRay).hash_code())
+	{
+		CColliderRay* Component = Obj->LoadComponent<CColliderRay>();
+		// Component->EnableEditMode(true);
+		return Component;
+	}
+
+
 	else if (Type == typeid(CGameDataComponent).hash_code())
 	{
 		CGameDataComponent* Component = Obj->LoadObjectComponent<CGameDataComponent>();
 		// Component->EnableEditMode(true);
 		return Component;
 	}
+
+	else if (Type == typeid(CLightComponent).hash_code())
+	{
+		CLightComponent* Component = Obj->LoadComponent<CLightComponent>();
+		return Component;
+	}
+	else if (Type == typeid(CPlayerDataComponent).hash_code())
+	{
+		CPlayerDataComponent* Component = Obj->LoadObjectComponent<CPlayerDataComponent>();
+		// Component->EnableEditMode(true);
+		return Component;
+	}
+
 
 	return nullptr;
 }
@@ -456,130 +474,12 @@ void CEditorManager::CreateWindows()
 
 	m_CollisionProfileEditor = CIMGUIManager::GetInst()->AddWindow<CCollisionProfileEditor>(COLLISION_PROFILE);
 	m_CollisionProfileEditor->Close();
+
+	m_SocketWindow = CIMGUIManager::GetInst()->AddWindow<CSocketWindow>(SOCKET_WINDOW);
+	m_SocketWindow->Close();
 }
 
 void CEditorManager::CreateEditorCamera()
 {
 
 }
-
-void CEditorManager::SetChampionNotify(CAnimationSequenceInstance* Instance, const std::string& ChampionName)
-{
-	//CExcelData* Data = CResourceManager::GetInst()->FindCSV("AnimationNotify");
-
-	//if (!Data)
-	//	return;
-
-	//CStateManager* StateManager = CSceneManager::GetInst()->GetStateManager();
-	//
-	//// TODO : 챔피언과 스킬이 추가될때마다 여기에 Notify 추가
-	//if (ChampionName.find("Alistar") != std::string::npos)
-	//{
-	//	Row* row = Data->GetRow("Alistar");
-
-	//	size_t Count = row->size();
-
-	//	for (size_t i = 0; i < Count; ++i)
-	//	{
-	//		std::stringstream ss;
-
-	//		ss << (*row)[i];
-
-	//		int Frame = 0;
-
-	//		ss >> Frame;
-	//		
-	//		// Q Skill
-	//		if (i == 0)
-	//		{
-	//			Instance->AddNotifyParam<CLoLStateManager>("Alistar_SkillQ", "AlistarQAirborne", Frame, StateManager, &CLoLStateManager::CheckAirborneTarget);
-
-	//			std::string StrRange = CResourceManager::GetInst()->FindCSV("SkillInfo")->FindData("Alistar", "QRange");
-	//			int Range = 0;
-	//			ss.clear();
-
-	//			ss << StrRange;
-	//			ss >> Range;
-	//			
-	//			Instance->SetNotifyParamRange("Alistar_SkillQ", "AlistarQAirborne", Range);
-	//		}
-	//		// W Skill
-	//		if (i == 1)
-	//			Instance->AddNotifyParam<CLoLStateManager>("Airborne", "AlistarQAirborne", Frame, StateManager, &CLoLStateManager::FindKnockBackTarget);
-	//	}
-
-	//}
-}
-
-void CEditorManager::SetChampionInfo(class CGameObject* Object, const std::string& ChampionName)
-{
-	//CExcelData* Data = CResourceManager::GetInst()->FindCSV("LoLChampionInfo");
-
-	//if (!Data)
-	//	return;
-
-	//CStateManager* StateManager = CSceneManager::GetInst()->GetStateManager();
-
-	//// TODO : 챔피언과 스킬이 추가될때마다 여기에 Notify 추가
-	//if (ChampionName.find("Alistar") != std::string::npos)
-	//{
-	//	Row* row = Data->GetRow("Alistar");
-
-	//	size_t Count = row->size();
-
-	//	for (size_t i = 0; i < Count; ++i)
-	//	{
-	//		std::stringstream ss;
-
-	//		ss << (*row)[i];
-
-	//		int Info = 0;
-
-	//		ss >> Info;
-
-	//		// TODO : LoLChampionInfo.csv에서 읽어오는 항목 늘어날 때 마다 추가해주기
-
-	//		// Move Speed
-	//		if (i == 0)
-	//			Object->SetChampionMoveSpeed((float)Info);
-	//		// Attack
-	//		else if (i == 1)
-	//			Object->SetChampionAttack((float)Info);
-
-	//		else if (i == 2)
-	//			Object->SetChampionAttackSpeed((float)Info);
-
-	//		else if (i == 3)
-	//		{
-
-	//		}
-
-	//		else if (i == 4)
-	//		{
-
-	//		}
-	//		else if (i == 5)
-	//		{
-
-	//		}
-
-	//		else if (i == 6)
-	//		{
-
-	//		}
-
-	//		else if (i == 7)
-	//		{
-	//			Object->SetChampionHP(Info);
-	//		}
-
-	//		else if (i == 8)
-	//		{
-
-	//		}
-	//	}
-
-	//}
-}
-
-

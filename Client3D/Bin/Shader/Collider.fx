@@ -32,14 +32,13 @@ VertexPosOutput ColliderMeshVS(VertexPos input)
 
 PSOutput_Single ColliderMeshPS(VertexPosOutput input)
 {
-	PSOutput_Single	output = (PSOutput_Single)0;
+    PSOutput_Single output = (PSOutput_Single) 0;
 
-	output.Color.rgb = g_ColliderColor.rgb;
-	output.Color.a = g_ColliderColor.a;
+    output.Color.rgb = g_ColliderColor.rgb;
+    output.Color.a = g_ColliderColor.a;
 
-	return output;
+    return output;
 }
-
 
 
 struct VertexUV

@@ -39,6 +39,41 @@ Light_Type CEngineUtil::StringToLightType(const std::string& TypeString)
 	return (Light_Type)(-1);
 }
 
+std::string CEngineUtil::FogTypeToString(Fog_Type Type)
+{
+	std::string ret = "";
+	switch (Type)
+	{
+	case Fog_Type::Linear:
+		ret = "Linear";
+		break;
+	case Fog_Type::Exp:
+		ret = "Exp";
+		break;
+	case Fog_Type::Exp2:
+		ret = "Exp2";
+		break;
+	}
+	return ret;
+}
+
+Fog_Type CEngineUtil::StringToFogType(const std::string& TypeString)
+{
+	if (TypeString == "Linear")
+	{
+		return Fog_Type::Linear;
+	}
+	else if (TypeString == "Exp")
+	{
+		return Fog_Type::Exp;
+	}
+	else if (TypeString == "Exp2")
+	{
+		return Fog_Type::Exp2;
+	}
+	return (Fog_Type)(-1);
+}
+
 std::optional<std::string> CEngineUtil::CheckAndExtractFullPathOfTargetFile(std::string_view PathName, std::string_view TargetFileName)
 {
 	const PathInfo* Info = CPathManager::GetInst()->FindPath(PathName.data());
@@ -113,6 +148,24 @@ bool CEngineUtil::CopyFileToOtherDirectory(const PathInfo* CurrentPathInfo, cons
 		return false;
 
 	fs::copy(FromFilePath, ToFilePath);
+
+	return true;
+}
+
+bool CEngineUtil::CopyFileToOtherDirectory(const std::string& OriginFullPath, const std::string& TargetFullPath,
+	bool Recursvie )
+{
+	fs::path originalPath = OriginFullPath;
+	fs::path copiedPath = TargetFullPath;
+
+	if (Recursvie)
+	{
+		fs::copy(originalPath, copiedPath);
+	}
+	else
+	{
+		fs::copy(originalPath, copiedPath, fs::copy_options::recursive);
+	}
 
 	return true;
 }

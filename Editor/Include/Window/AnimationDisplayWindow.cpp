@@ -313,7 +313,7 @@ void CAnimationDisplayWindow::OnConvertSequencesIntoAnimationInstance()
 	{
 		AddSequenceToDummyAnimationInstance(m_vecAnimationSeqFilesFullPath[i].c_str());
 
-		// File 이름 목록에 추가
+		// File 이름 Log 목록에 추가
 		Text = m_AnimInstanceConvertLog->AddWidget<CIMGUIText>("Text");
 
 		Text->SetText(CEditorUtil::FilterFileName(m_vecAnimationSeqFilesFullPath[i]).c_str());

@@ -94,7 +94,7 @@ void CStaticMeshComponentWidget::SetSceneComponent(CSceneComponent* Com)
 {
 	CSceneComponentWidget::SetSceneComponent(Com);
 
-	CStaticMeshComponent* MeshCom = (CStaticMeshComponent*)m_Component.Get();
+	CStaticMeshComponent* MeshCom = (CStaticMeshComponent*)m_Component;
 
 	if (MeshCom->GetMesh())
 	{
@@ -125,7 +125,7 @@ void CStaticMeshComponentWidget::OnClickLoadMesh()
 
 		CMesh* Mesh = CSceneManager::GetInst()->GetScene()->GetResource()->FindMesh(MeshName);
 
-		static_cast<CStaticMeshComponent*>(m_Component.Get())->SetMesh((CStaticMesh*)Mesh);
+		static_cast<CStaticMeshComponent*>(m_Component)->SetMesh((CStaticMesh*)Mesh);
 
 		RefreshMeshWidget(Mesh);
 	}
@@ -133,7 +133,7 @@ void CStaticMeshComponentWidget::OnClickLoadMesh()
 
 void CStaticMeshComponentWidget::OnSelectMaterialSlotCombo(int Idx, const char* Label)
 {
-	CStaticMeshComponent* MeshCom = (CStaticMeshComponent*)m_Component.Get();
+	CStaticMeshComponent* MeshCom = (CStaticMeshComponent*)m_Component;
 
 	if (MeshCom->GetMesh())
 	{
@@ -156,7 +156,7 @@ void CStaticMeshComponentWidget::OnEditBaseColor(const Vector3& Color)
 		return;
 	}
 
-	CStaticMeshComponent* MeshCom = (CStaticMeshComponent*)m_Component.Get();
+	CStaticMeshComponent* MeshCom = (CStaticMeshComponent*)m_Component;
 
 	if (MeshCom->GetMesh())
 	{
@@ -171,7 +171,7 @@ void CStaticMeshComponentWidget::OnEditAmbientColor(const Vector3& Color)
 		return;
 	}
 
-	CStaticMeshComponent* MeshCom = (CStaticMeshComponent*)m_Component.Get();
+	CStaticMeshComponent* MeshCom = (CStaticMeshComponent*)m_Component;
 
 	if (MeshCom->GetMesh())
 	{
@@ -186,7 +186,7 @@ void CStaticMeshComponentWidget::OnEditSpecluarColor(const Vector3& Color)
 		return;
 	}
 
-	CStaticMeshComponent* MeshCom = (CStaticMeshComponent*)m_Component.Get();
+	CStaticMeshComponent* MeshCom = (CStaticMeshComponent*)m_Component;
 
 	if (MeshCom->GetMesh())
 	{
@@ -201,7 +201,7 @@ void CStaticMeshComponentWidget::OnEditSpecluarPower(float Power)
 		return;
 	}
 
-	CStaticMeshComponent* MeshCom = (CStaticMeshComponent*)m_Component.Get();
+	CStaticMeshComponent* MeshCom = (CStaticMeshComponent*)m_Component;
 
 	if (MeshCom->GetMesh())
 	{
@@ -216,7 +216,7 @@ void CStaticMeshComponentWidget::OnEditEmissiveColor(const Vector3& Color)
 		return;
 	}
 
-	CStaticMeshComponent* MeshCom = (CStaticMeshComponent*)m_Component.Get();
+	CStaticMeshComponent* MeshCom = (CStaticMeshComponent*)m_Component;
 
 	if (MeshCom->GetMesh())
 	{
@@ -231,7 +231,7 @@ void CStaticMeshComponentWidget::OnCheckTransparency(int Idx, bool Check)
 		return;
 	}
 
-	CStaticMeshComponent* MeshCom = (CStaticMeshComponent*)m_Component.Get();
+	CStaticMeshComponent* MeshCom = (CStaticMeshComponent*)m_Component;
 
 	if (MeshCom->GetMesh())
 	{
@@ -246,7 +246,7 @@ void CStaticMeshComponentWidget::OnEditOpacity(float Opacity)
 		return;
 	}
 
-	CStaticMeshComponent* MeshCom = (CStaticMeshComponent*)m_Component.Get();
+	CStaticMeshComponent* MeshCom = (CStaticMeshComponent*)m_Component;
 
 	if (MeshCom->GetMesh())
 	{
@@ -261,7 +261,7 @@ void CStaticMeshComponentWidget::OnCheckOutlineEnable(int Idx, bool Enable)
 		return;
 	}
 
-	CStaticMeshComponent* MeshCom = (CStaticMeshComponent*)m_Component.Get();
+	CStaticMeshComponent* MeshCom = (CStaticMeshComponent*)m_Component;
 
 	if (MeshCom->GetMesh())
 	{
@@ -276,7 +276,7 @@ void CStaticMeshComponentWidget::OnEditOutlineThickness(float Val)
 		return;
 	}
 
-	CStaticMeshComponent* MeshCom = (CStaticMeshComponent*)m_Component.Get();
+	CStaticMeshComponent* MeshCom = (CStaticMeshComponent*)m_Component;
 
 	if (MeshCom->GetMesh())
 	{
@@ -291,7 +291,7 @@ void CStaticMeshComponentWidget::OnChangeOutlineColor(const Vector3& Color)
 		return;
 	}
 
-	CStaticMeshComponent* MeshCom = (CStaticMeshComponent*)m_Component.Get();
+	CStaticMeshComponent* MeshCom = (CStaticMeshComponent*)m_Component;
 
 	if (MeshCom->GetMesh())
 	{
@@ -301,7 +301,7 @@ void CStaticMeshComponentWidget::OnChangeOutlineColor(const Vector3& Color)
 
 void CStaticMeshComponentWidget::RefreshMeshWidget(CMesh* Mesh)
 {
-	CStaticMeshComponent* MeshCom = (CStaticMeshComponent*)m_Component.Get();
+	CStaticMeshComponent* MeshCom = (CStaticMeshComponent*)m_Component;
 
 	m_MeshName->SetText(MeshCom->GetMesh()->GetName().c_str());
 

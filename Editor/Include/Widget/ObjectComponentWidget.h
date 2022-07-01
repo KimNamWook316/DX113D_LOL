@@ -24,7 +24,7 @@ private:
     void OnCheckEnableCheckBox(int Idx, bool Check);
 
 protected:
-    CSharedPtr<class CObjectComponent> m_Component;
+    class CObjectComponent* m_Component;
     class CIMGUIText* m_ComponentTypeText;
     class CIMGUITextInput* m_NameInput;
     class CIMGUIButton* m_RenameButton;

@@ -17,6 +17,7 @@
 // Engine
 #include "AnimationEditor.h"
 #include "../EditorManager.h"
+#include "EngineUtil.h"
 #include "PathManager.h"
 #include "Scene/SceneManager.h"
 #include "Scene/Scene.h"
@@ -90,15 +91,28 @@ bool CAnimationEditor::Init()
 	m_AnimInfoTable->SetTableTitle("Animation Info");
 
 	// Frame Slider 
-	m_FrameSlider = AddWidget<CIMGUISliderInt>("Frame Slider", 90.f, 30.f);
+	m_FrameSlider = AddWidget<CIMGUISliderInt>("Frame Slider", 110.f, 30.f);
 	m_FrameSlider->SetCallBack<CAnimationEditor>(this, &CAnimationEditor::OnAnimationSliderIntCallback);
 
-	m_FrameInput = AddWidget<CIMGUITextInput>("Frame Input", 90.f, 30.f);
+	m_FrameInput = AddWidget<CIMGUITextInput>("Frame Input", 110.f, 30.f);
 	m_FrameInput->SetTextType(ImGuiText_Type::Int);
 	m_FrameInput->SetCallback<CAnimationEditor>(this, &CAnimationEditor::OnAnimationFrameInputCallback);
 
+	// Frame Edit
+	m_StartFrameEditInput = AddWidget<CIMGUITextInput>("Edit Start Frame", 110.f, 30.f);
+	m_StartFrameEditInput->SetTextType(ImGuiText_Type::Int);
+
+	m_EndFrameEditInput = AddWidget<CIMGUITextInput>("Edit End Frame", 110.f, 30.f);
+	m_EndFrameEditInput->SetTextType(ImGuiText_Type::Int);
+
+	m_StartEndFrameEditBtn = AddWidget<CIMGUIButton>("Edit Frame Save", 110.f, 20.f);
+	m_StartEndFrameEditBtn->SetClickCallback<CAnimationEditor>(this, &CAnimationEditor::OnEditStartEndFrame);
+
+
 	// Edit  -------------------------------------------------------
 	// Play Scale 조정
+	CIMGUIDummy* Dummy = AddWidget<CIMGUIDummy>("Dummy", 200.f, 30.f);
+
 	m_PlayScaleInput = AddWidget<CIMGUITextInput>("Play Scale Input", 50.f, 30.f);
 	m_PlayScaleInput->SetHideName(true);
 	m_PlayScaleInput->SetTextType(ImGuiText_Type::Float);
@@ -129,13 +143,13 @@ bool CAnimationEditor::Init()
 	m_SetOriginalPlayTimeBtn->SetClickCallback<CAnimationEditor>(this, &CAnimationEditor::OnSetOriginalAnimPlayTime);
 
 	// 각종 체크 박스들 
-	m_DeltaTimeCheckBtn = AddWidget<CIMGUICheckBox>("Engine Play", 90.f, 30.f);
-	m_DeltaTimeCheckBtn->AddCheckInfo("Engine Play");
-	m_DeltaTimeCheckBtn->SetCallBackLabel<CAnimationEditor>(this, &CAnimationEditor::OnSetPlayEngineDeltaTime);
-	// m_DeltaTimeCheckBtn->SetClickCallback<CAnimationEditor>(this, &CAnimationEditor::OnSetPlayEngineDeltaTime);
-
-	Line = AddWidget<CIMGUISameLine>("Line");
-	Line->SetOffsetX(110.f);
+	// m_DeltaTimeCheckBtn = AddWidget<CIMGUICheckBox>("Engine Play", 90.f, 30.f);
+	// m_DeltaTimeCheckBtn->AddCheckInfo("Engine Play");
+	// m_DeltaTimeCheckBtn->SetCallBackLabel<CAnimationEditor>(this, &CAnimationEditor::OnSetPlayEngineDeltaTime);
+	// // m_DeltaTimeCheckBtn->SetClickCallback<CAnimationEditor>(this, &CAnimationEditor::OnSetPlayEngineDeltaTime);
+	// 
+	// Line = AddWidget<CIMGUISameLine>("Line");
+	// Line->SetOffsetX(110.f);
 
 	m_AnimationCheckBtn = AddWidget<CIMGUICheckBox>("Object Play", 90.f, 30.f);
 	m_AnimationCheckBtn->AddCheckInfo("Anim Play");
@@ -143,7 +157,7 @@ bool CAnimationEditor::Init()
 	// m_AnimationCheckBtn->SetClickCallback<CAnimationEditor>(this, &CAnimationEditor::OnPlayAnimation);
 
 	Line = AddWidget<CIMGUISameLine>("Line");
-	Line->SetOffsetX(205.f);
+	Line->SetOffsetX(110);
 
 	m_LoopEnableBtn = AddWidget<CIMGUICheckBox>("Loop", 90.f, 30.f);
 	m_LoopEnableBtn->AddCheckInfo("Loop");
@@ -262,7 +276,7 @@ Alistar Animation 과 관련된 파일들이 하나는 존재햐야 한다)";
 	m_AnimInfoTable->MakeKey(AnimationClipInfoKeys::PlayScale);
 
 	// Animation Instance Convert Widgets ----------------------------------------------------------------------------------------------------------------
-	CIMGUIDummy* Dummy = AddWidget<CIMGUIDummy>("Dummy", 200.f, 30.f);
+	Dummy = AddWidget<CIMGUIDummy>("Dummy", 200.f, 30.f);
 
 	// m_AnimInstanceConvertThread = new CAnimationInstanceConvertThread;
 	// m_AnimInstanceConvertThread->Init();
@@ -1093,11 +1107,181 @@ void CAnimationEditor::OnRefreshCheckBoxInfo()
 	if (!m_Animation || !m_Animation->GetCurrentAnimation())
 		return;
 
-	m_DeltaTimeCheckBtn->SetCheck(0, CEngine::GetInst()->IsPlay());
+	// m_DeltaTimeCheckBtn->SetCheck(0, CEngine::GetInst()->IsPlay());
 	m_AnimationCheckBtn->SetCheck(0, m_Animation->IsPlay());
 	m_RotationCheckBtn->SetCheck(0,m_3DTestObject->IsCameraRot());
 	m_ZoomEnableBtn->SetCheck(0, m_3DTestObject->IsCameraRot());
 	m_LoopEnableBtn->SetCheck(0, m_Animation->GetCurrentAnimation()->IsLoop());
+}
+
+void CAnimationEditor::OnEditStartEndFrame()
+{
+	// Animation 객체 정보가 있어야 하고
+	if (!m_3DTestObject)
+		return;
+
+	if (!m_Animation || !m_Animation->GetCurrentAnimation())
+		return;
+
+	// Frame 범위가 벗어나면 안된다. (Message Box)
+	CAnimationSequence* ExistingSequence = m_Animation->GetCurrentAnimation()->GetAnimationSequence();
+
+	if (m_StartFrameEditInput->GetValueInt() < 0 || m_EndFrameEditInput->GetValueInt() >= ExistingSequence->GetFrameLength())
+	{
+		MessageBox(nullptr, TEXT("Frame 범위를 벗어남."), TEXT("Frame 범위를 벗어남."), MB_OK);
+		return;
+	}
+
+	TCHAR FiileFullPath[MAX_PATH] = {};
+
+	OPENFILENAME OpenFile = {};
+	OpenFile.lStructSize = sizeof(OPENFILENAME);
+	OpenFile.hwndOwner = CEngine::GetInst()->GetWindowHandle();
+	OpenFile.lpstrFilter = TEXT("All Files\0*.*\0.Sqc Files\0*.sqc");
+	OpenFile.lpstrFile = FiileFullPath;
+	OpenFile.nMaxFile = MAX_PATH;
+	OpenFile.lpstrInitialDir = CPathManager::GetInst()->FindPath(MESH_PATH)->Path;
+
+	if (GetSaveFileName(&OpenFile) != 0)
+	{
+		char FileFullPathMultibyte[MAX_PATH] = {};
+		char NewlySavedSqcFileName[MAX_PATH] = {};
+		char FileExt[_MAX_EXT] = {};
+
+		int  ConvertLength = WideCharToMultiByte(CP_ACP, 0, FiileFullPath, -1, nullptr, 0, nullptr, nullptr);
+
+		WideCharToMultiByte(CP_ACP, 0, FiileFullPath, -1, FileFullPathMultibyte, ConvertLength, nullptr, nullptr);
+
+		_splitpath_s(FileFullPathMultibyte, nullptr, 0, nullptr, 0, NewlySavedSqcFileName, MAX_PATH, FileExt, _MAX_EXT);
+
+		_strupr_s(FileExt);
+
+		// 확장자 .sqc 이 아니라면 return;
+		if (strcmp(FileExt, ".SQC") != 0)
+		{
+			MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("EXT Has To Be .sqc"), NULL, MB_OK);
+			return;
+		}
+
+		bool SqcSaveResult = CResourceManager::GetInst()->EditSequenceClip(ExistingSequence, NewlySavedSqcFileName,
+			m_StartFrameEditInput->GetValueInt(), m_EndFrameEditInput->GetValueInt(), FileFullPathMultibyte);
+
+		bool TotalSaveResult = true;
+
+		if (SqcSaveResult)
+		{
+			// 현재 Sqc 가 사용하는 Mesh, Bne, Fbm 폴더 내용을 현재 저장한 폴더 경로에 그대로 복사하여 넣어주고
+			// 해당 파일들의 이름은, 현재 저장한 Sqc 파일들과 동일하게 세팅한다.
+			std::string SavedFolderPath;
+			CEditorUtil::GetPathInfoBeforeFileName(FileFullPathMultibyte, SavedFolderPath);
+
+			// (과정)
+			// m_3DTestObjectMeshName 에 현재 사용하는 Mesh의 Name 이 세팅되어 있다.
+			// 해당 Mesh Name 으로 Mesh 를 찾는다.
+			// 각 Mesh 에는 저장될 당시의 FullPath 정보가 들어있다.
+			// 해당 FullPath 정보를 이용해서, Mesh가 사용하는 FileName 을 가져와서
+			// FileName.msh, FileName.bne, FileName.fbm 폴더를 찾아낸다.
+			// 해당 파일들을, 새로 저장한 폴더에 복사하고
+			// 복사한 파일들의 이름을 바꿔준다.
+			CMesh* CurrentUsedMesh = CResourceManager::GetInst()->FindMesh(m_3DTestObjectMeshName);
+
+			// Extension 포함 이름 ex) CombinedPot.msh
+			const std::string& UsedMeshFileName = CEditorUtil::FilterFileName(CurrentUsedMesh->GetFullPath());
+			auto MeshFileFoundResult = CEngineUtil::CheckAndExtractFullPathOfTargetFile(MESH_PATH, UsedMeshFileName);
+
+			// Extension 제거
+			std::string FileNameOnly;
+			CEditorUtil::GetFileNameOnly(UsedMeshFileName, FileNameOnly);
+
+			// Unicode 버전
+			TCHAR TCHARCopyFileNameOnly[MAX_PATH];
+			lstrcpy(TCHARCopyFileNameOnly, CEditorUtil::ChangeMultibyteTextToTCHAR(FileNameOnly.c_str()));
+
+			// 복사할 .bne 파일, .fbm 폴더 이름을 세팅한다.
+			std::string UsedBoneFileName = FileNameOnly;
+			UsedBoneFileName.append(".bne");
+
+			std::string UsedTextureFolderName = FileNameOnly;
+			UsedTextureFolderName.append(".fbm");
+
+			// (혹시나 하는 예외처리)
+			// 해당 .msh, .bne, .fbn 이 경로내에 존재하는지 확인하기 => 나중에 필요하면 하기 
+			// MESH_PATH 경로 안에 존재해야 한다.
+			// 먼저 .bne 확인
+			auto BoneFileFoundResult = CEngineUtil::CheckAndExtractFullPathOfTargetFile(MESH_PATH, UsedBoneFileName);
+
+			TCHAR BneFulllErrorMessage[MAX_PATH] = {};
+			TCHAR BneErrorMessage[MAX_PATH] = TEXT(".bne Does Not Exist in Bin//Mesh");
+			lstrcpy(BneFulllErrorMessage, TCHARCopyFileNameOnly);
+			lstrcat(BneFulllErrorMessage, BneErrorMessage);
+
+			// 해당 경로에 Mesh 파일이 존재하지 않는다면 Return
+			if (!BoneFileFoundResult.has_value())
+			{
+				MessageBox(CEngine::GetInst()->GetWindowHandle(), BneFulllErrorMessage, NULL, MB_OK);
+				TotalSaveResult = false;
+				return;
+			}
+
+			// 그 다음 Texture Folder 확인
+			auto TextureFoundResult = CEngineUtil::CheckAndExtractFullPathOfTargetFile(MESH_PATH, UsedTextureFolderName);
+
+			TCHAR FbmFulllErrorMessage[MAX_PATH] = {};
+			TCHAR FbmErrorMessage[MAX_PATH] = TEXT(".fbm Does Not Exist in Bin//Mesh");
+			lstrcpy(FbmFulllErrorMessage, TCHARCopyFileNameOnly);
+			lstrcat(FbmFulllErrorMessage, FbmErrorMessage);
+
+			// 해당 경로에 Mesh 파일이 존재하지 않는다면 Return
+			if (!TextureFoundResult.has_value())
+			{
+				MessageBox(CEngine::GetInst()->GetWindowHandle(), FbmFulllErrorMessage, NULL, MB_OK);
+				TotalSaveResult = false;
+				return;
+			}
+
+			// 복사
+			std::string CopyMeshPath = SavedFolderPath;
+			CopyMeshPath.append(UsedMeshFileName);
+
+			std::string CopyBonePath = SavedFolderPath;
+			CopyBonePath.append(UsedBoneFileName);
+
+			std::string CopyTexturePath = SavedFolderPath;
+			CopyTexturePath.append(UsedTextureFolderName);
+
+			CEngineUtil::CopyFileToOtherDirectory(MeshFileFoundResult.value(), CopyMeshPath);
+			CEngineUtil::CopyFileToOtherDirectory(BoneFileFoundResult.value(), CopyBonePath);
+			// 안에 있는 Texture 내용들도 Copy 시킬 것이다.
+			CEngineUtil::CopyFileToOtherDirectory(TextureFoundResult.value(), CopyTexturePath, true);
+
+			// 이름 수정
+			std::string NewMeshFileName = NewlySavedSqcFileName;
+			NewMeshFileName.append(".msh");
+
+			std::string NewBoneFileName = NewlySavedSqcFileName;
+			NewBoneFileName.append(".bne");
+
+			std::string NewTextureFolderName = NewlySavedSqcFileName;
+			NewTextureFolderName.append(".fbm");
+
+			CEditorUtil::ChangeFileOrDirectoryName(CopyMeshPath, NewMeshFileName);
+			CEditorUtil::ChangeFileOrDirectoryName(CopyBonePath, NewBoneFileName);
+			CEditorUtil::ChangeFileOrDirectoryName(CopyTexturePath, NewTextureFolderName);
+
+		}
+		else 
+		{ }
+
+		if (TotalSaveResult)
+		{
+			MessageBox(nullptr, TEXT("Seq Edit & Save 성공."), TEXT("Seq Edit & Save 성공."), MB_OK);
+		}
+		else
+		{
+			MessageBox(nullptr, TEXT("Seq Edit & Save 실패 !!!."), TEXT("Seq Edit & Save 실패."), MB_OK);
+		}
+	}
+
 }
 
 
