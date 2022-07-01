@@ -261,7 +261,7 @@ bool CEngineUtil::CopyFileToOtherDirectory(const std::string& OriginFullPath, co
 		}
 	}
 
-	if (!Recursvie)
+	if (Recursvie)
 	{
 		fs::copy(originalPath, copiedPath);
 	}

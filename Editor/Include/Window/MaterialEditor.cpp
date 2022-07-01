@@ -731,7 +731,7 @@ void CMaterialEditor::OnSaveMaterial()
 
 		// 현재 저장하는 Directory가 Bin/Material/ParticleMaterial 인지 확인하기 => 아니라면, Save 방지
 		std::string PathInfoBeforeFileName;
-		CEditorUtil::GetPathInfoBeforeFileName(FileFullPathMultibyte, PathInfoBeforeFileName);
+		CEngineUtil::GetPathInfoBeforeFileName(FileFullPathMultibyte, PathInfoBeforeFileName);
 
 		if (strcmp(MaterialPathInfo->PathMultibyte, PathInfoBeforeFileName.c_str()) != 0)
 		{
@@ -805,7 +805,7 @@ void CMaterialEditor::OnLoadMaterial()
 
 		// 현재 Load하는 Directory가 Bin/Material/ParticleMaterial 인지 확인하기 => 아니라면, Load
 		std::string PathInfoBeforeFileName;
-		CEditorUtil::GetPathInfoBeforeFileName(FilePathMultibyte, PathInfoBeforeFileName);
+		CEngineUtil::GetPathInfoBeforeFileName(FilePathMultibyte, PathInfoBeforeFileName);
 
 		if (strcmp(MaterialPathInfo->PathMultibyte, PathInfoBeforeFileName.c_str()) != 0)
 		{
@@ -889,7 +889,7 @@ void CMaterialEditor::RefreshMaterialDisplayInfo(class CMaterial* Material, clas
 
 			std::string FileNameOnly;
 
-			CEditorUtil::GetFileNameAfterSlash(FileNameMultibyte, FileNameOnly);
+			CEngineUtil::GetFileNameAfterSlash(FileNameMultibyte, FileNameOnly);
 
 			m_TextureInfoTable->AddData(MaterialTextureInfoKeys::Textures[tIdx], FileNameOnly);
 		}

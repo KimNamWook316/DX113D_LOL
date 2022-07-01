@@ -275,53 +275,18 @@ Alistar Animation 과 관련된 파일들이 하나는 존재햐야 한다)";
 	m_AnimInfoTable->MakeKey(AnimationClipInfoKeys::FrameTime);
 	m_AnimInfoTable->MakeKey(AnimationClipInfoKeys::PlayScale);
 
-	// Animation Instance Convert Widgets ----------------------------------------------------------------------------------------------------------------
+	// Excel Btn ----------------------------------------------------------------------------------------------------------------
 	Dummy = AddWidget<CIMGUIDummy>("Dummy", 200.f, 30.f);
 
-	// m_AnimInstanceConvertThread = new CAnimationInstanceConvertThread;
-	// m_AnimInstanceConvertThread->Init();
-	// m_AnimInstanceConvertThread->Start();
-	// m_AnimInstanceConvertThread->SetLoadingCallBack(this, &CAnimationEditor::OnAnimInstanceConvertLoading);
+	m_LoadedExcelFileName = AddWidget<CIMGUITextInput>("Loaded Excel Name", 150.f, 30.f);
+	m_LoadedExcelFileName->SetHideName(true);
+	m_LoadedExcelFileName->SetHintText("Loaded Excel Name");
 
-	// Common Name
-	// m_SavedAnimFileName = AddWidget<CIMGUITextInput>("Saved File Name", 150.f, 20.f);
-	// m_SavedAnimFileName->SetHideName(true);
-	// m_SavedAnimFileName->SetHintText("Saved File Name");
-	// 
-	// Line = AddWidget<CIMGUISameLine>("Line");
-	// Line->SetOffsetX(160.f);
-	// 
-	// HelpText = AddWidget<CIMGUIText>("Anim Seq Load Btn Help Text", 90.f, 30.f);
-	// HelpText->SetText("ZedIdle 이라고 하면, Bin/Animation 폴더에 ZedIdle.anim 이름으로 Animation Instance 저장");
-	// HelpText->SetIsHelpMode(true);
-	// 
-	// m_CommonAnimSeqName = AddWidget<CIMGUITextInput>("Common Sqc Name", 150.f, 20.f);
-	// m_CommonAnimSeqName->SetHideName(true);
-	// m_CommonAnimSeqName->SetHintText("Common Sqc Name");
-	// 
-	// Line = AddWidget<CIMGUISameLine>("Line");
-	// Line->SetOffsetX(165.f);
-	// 
-	// m_SelectAnimInstanceFolderPath = AddWidget<CIMGUIButton>("Select Dir", 90.f, 20.f);
-	// m_SelectAnimInstanceFolderPath->SetClickCallback<CAnimationEditor>(this, &CAnimationEditor::OnClickSetAnimSeqSrcDirButton);
-	// 
-	// Line = AddWidget<CIMGUISameLine>("Line");
-	// Line->SetOffsetX(260.f);
-	// 
-	// m_ConvertAnimInstanceBtn = AddWidget<CIMGUIButton>("Make Inst", 90.f, 20.f);
-	// m_ConvertAnimInstanceBtn->SetClickCallback<CAnimationEditor>(this, &CAnimationEditor::OnConvertSequencesIntoAnimationInstance);
-	// 
-	// // Folder Path
-	// m_AnimSeqcSrcFolderPath = AddWidget<CIMGUITextInput>("Sqc Folder Path", 350.f, 20.f);
-	// m_AnimSeqcSrcFolderPath->ReadOnly(true);
-	// m_AnimSeqcSrcFolderPath->SetHideName(true);
-	// m_AnimSeqcSrcFolderPath->SetHintText("Set .sqc Folder Path");
-	// 
-	// // Convert
-	// m_AnimInstanceProgressBar = AddWidget<CIMGUIProgressBar>("", 350.f, 0.f);
-	// 
-	// m_AnimInstanceConvertLog = AddWidget<CIMGUIChild>("Log", 200.f, 200.f);
-	// m_AnimInstanceConvertLog->EnableBorder(true);
+	m_LoadExcelBtn = AddWidget<CIMGUIButton>("Load Excel", 150.f, 20.f);
+	m_LoadExcelBtn->SetClickCallback<CAnimationEditor>(this, &CAnimationEditor::OnLoadExcel);
+
+	m_MakeAnimInstByExcelBtn = AddWidget<CIMGUIButton>("Make Inst From Excel", 150.f, 20.f);
+	m_MakeAnimInstByExcelBtn->SetClickCallback<CAnimationEditor>(this, &CAnimationEditor::OnMakeAnimInstByExcel);
 
 	return true;
 }
@@ -454,6 +419,22 @@ void CAnimationEditor::OnLoopAnimation(const char*, bool Enable)
 	// 	RootMeshComponent->GetAnimationInstance()->Stop();
 	// else
 	// 	RootMeshComponent->GetAnimationInstance()->Play();
+}
+
+void CAnimationEditor::OnLoadExcel()
+{
+}
+
+void CAnimationEditor::OnMakeAnimInstByExcel()
+{
+	// Animation 이 존재해야 한다.
+
+	// Excel Data 를 읽어들인다.
+
+	// sqc 들을 저장할 폴더 경로를 선택한다.
+	// 여러개의 Sqc 들을 만든다.
+
+	// 폴더 내에 저장된 sqc 들을 하나의 anim 파일을 만들어낸다. (Save 까지)
 }
 
 void CAnimationEditor::OnSaveAnimationInstance()
@@ -1173,7 +1154,7 @@ void CAnimationEditor::OnEditStartEndFrame()
 			// 현재 Sqc 가 사용하는 Mesh, Bne, Fbm 폴더 내용을 현재 저장한 폴더 경로에 그대로 복사하여 넣어주고
 			// 해당 파일들의 이름은, 현재 저장한 Sqc 파일들과 동일하게 세팅한다.
 			std::string SavedFolderPath;
-			CEditorUtil::GetPathInfoBeforeFileName(FileFullPathMultibyte, SavedFolderPath);
+			CEngineUtil::GetPathInfoBeforeFileName(FileFullPathMultibyte, SavedFolderPath);
 
 			// (과정)
 			// m_3DTestObjectMeshName 에 현재 사용하는 Mesh의 Name 이 세팅되어 있다.
@@ -1191,7 +1172,7 @@ void CAnimationEditor::OnEditStartEndFrame()
 
 			// Extension 제거
 			std::string FileNameOnly;
-			CEditorUtil::GetFileNameOnly(UsedMeshFileName, FileNameOnly);
+			CEngineUtil::GetFileNameOnly(UsedMeshFileName, FileNameOnly);
 
 			// Unicode 버전
 			TCHAR TCHARCopyFileNameOnly[MAX_PATH];
@@ -1249,10 +1230,15 @@ void CAnimationEditor::OnEditStartEndFrame()
 			std::string CopyTexturePath = SavedFolderPath;
 			CopyTexturePath.append(UsedTextureFolderName);
 
-			CEngineUtil::CopyFileToOtherDirectory(MeshFileFoundResult.value(), CopyMeshPath);
-			CEngineUtil::CopyFileToOtherDirectory(BoneFileFoundResult.value(), CopyBonePath);
+			// 최종 복사된 경로 정보
+			std::string FinalCopyMeshPath;
+			std::string FinalCopyBonePath;
+			std::string FinalCopyTexturePath;
+
+			CEngineUtil::CopyFileToOtherDirectory(MeshFileFoundResult.value(), CopyMeshPath, FinalCopyMeshPath);
+			CEngineUtil::CopyFileToOtherDirectory(BoneFileFoundResult.value(), CopyBonePath, FinalCopyBonePath);
 			// 안에 있는 Texture 내용들도 Copy 시킬 것이다.
-			CEngineUtil::CopyFileToOtherDirectory(TextureFoundResult.value(), CopyTexturePath, true);
+			CEngineUtil::CopyFileToOtherDirectory(TextureFoundResult.value(), CopyTexturePath, FinalCopyTexturePath, true);
 
 			// 이름 수정
 			std::string NewMeshFileName = NewlySavedSqcFileName;
@@ -1264,9 +1250,9 @@ void CAnimationEditor::OnEditStartEndFrame()
 			std::string NewTextureFolderName = NewlySavedSqcFileName;
 			NewTextureFolderName.append(".fbm");
 
-			CEditorUtil::ChangeFileOrDirectoryName(CopyMeshPath, NewMeshFileName);
-			CEditorUtil::ChangeFileOrDirectoryName(CopyBonePath, NewBoneFileName);
-			CEditorUtil::ChangeFileOrDirectoryName(CopyTexturePath, NewTextureFolderName);
+			CEditorUtil::ChangeFileOrDirectoryName(FinalCopyMeshPath, NewMeshFileName);
+			CEditorUtil::ChangeFileOrDirectoryName(FinalCopyBonePath, NewBoneFileName);
+			CEditorUtil::ChangeFileOrDirectoryName(FinalCopyTexturePath, NewTextureFolderName);
 
 		}
 		else 

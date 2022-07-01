@@ -1,5 +1,10 @@
 
 #include "EditorUtil.h"
+// Library
+#include <fstream>
+#include <iostream>
+#include <filesystem>
+// Engine
 #include "PathManager.h"
 #include "GameObject/Minion.h"
 #include "GameObject/Champion.h"
@@ -20,11 +25,8 @@
 #include "Component/PlayerDataComponent.h"
 #include "IMGUITree.h"
 #include "Flag.h"
+#include "EngineUtil.h"
 
-
-#include <fstream>
-#include <iostream>
-#include <filesystem>
 
 namespace fs = std::filesystem;
 
@@ -205,7 +207,7 @@ void CEditorUtil::FilterSpecificNameIncludedFilePath(std::vector<std::string>& I
 		// FullPath 에서 중간 경로 들이 아니라, 오로지 FileName 이 IncludeName Str 을 포함하고 있는지를 조사해야 한다.
 		// 따라서 폴더 경로 제외, FileName 을 중간에 추출해야 한다.
 		std::string CurFileName;
-		GetFileNameAfterSlash(InputVecFullPath[i], CurFileName);
+		CEngineUtil::GetFileNameAfterSlash(InputVecFullPath[i], CurFileName);
 		size_t nPos = CurFileName.find(IncludeName);
 
 		if (nPos == std::string::npos)
@@ -263,7 +265,7 @@ std::optional<std::string> CEditorUtil::GetFullPathOfTargetFileNameInDir(const s
 	
 		if (strcmp(FileName.c_str(), TargetFileName.c_str()) == 0)
 		{
-			GetFileNameOnly(fs::path(entry.path()).filename().u8string(), FileNameOnly);
+			CEngineUtil::GetFileNameOnly(fs::path(entry.path()).filename().u8string(), FileNameOnly);
 
 			return entry.path().u8string();
 		}
@@ -278,7 +280,7 @@ bool CEditorUtil::ChangeFileOrDirectoryName(const std::string& OriginFullPath, c
 
 	// Folder 경로 세팅
 	std::string RenamePathStr;
-	GetPathInfoBeforeFileName(OriginFullPath, RenamePathStr);
+	CEngineUtil::GetPathInfoBeforeFileName(OriginFullPath, RenamePathStr);
 
 	RenamePathStr.append(NewName);
 
@@ -306,67 +308,7 @@ bool CEditorUtil::ChangeFileOrDirectoryName(const std::string& OriginFullPath, c
 	return true;
 }
 
-bool CEditorUtil::GetFileExt(const std::string& FileName, std::string& ExtractedExt)
-{
-	size_t i = FileName.find('.');
 
-	if (i != std::string::npos)
-	{
-		ExtractedExt = FileName.substr(i+1, FileName.length() - i);
-		return true;
-	}
-
-	return false;
-}
-
-bool CEditorUtil::GetFileNameOnly(const std::string& FullFileName, std::string& ExtractedFileName)
-{
-	size_t i = FullFileName.find('.');
-
-	if (i != std::string::npos)
-	{
-		ExtractedFileName = FullFileName.substr(0, i);
-		return true;
-	}
-
-	return false;
-}
-
-bool CEditorUtil::GetFileNameAfterSlash(const std::string& FilePath, std::string& ExtractedFileName)
-{
-	int FilePathLength = (int)FilePath.size();
-
-	for (int i = FilePathLength - 1; i >= 0; --i)
-	{
-		if (FilePath[i] == '\\')
-		{
-			ExtractedFileName = FilePath.substr((size_t)i + 1, FilePath.size());
-			return true;
-		}
-	}
-
-	ExtractedFileName = FilePath;
-
-	return true;
-}
-
-bool CEditorUtil::GetPathInfoBeforeFileName(const std::string& FilePath, std::string& ExtractedPathInfo)
-{
-	int FilePathLength = (int)FilePath.size();
-
-	for (int i = FilePathLength - 1; i >= 0; --i)
-	{
-		if (FilePath[i] == '\\')
-		{
-			ExtractedPathInfo = FilePath.substr(0, (size_t)i + 1);
-			return true;
-		}
-	}
-
-	ExtractedPathInfo = FilePath;
-
-	return true;
-}
 
 const char* CEditorUtil::ChangeTCHARTextToMultibyte(TCHAR* TCHARText)
 {

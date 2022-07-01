@@ -45,20 +45,6 @@ public:
 	// 특정 파일 및 디렉토리의 이름을 바꿔주는 함수
 	static bool ChangeFileOrDirectoryName(const std::string& OriginFullPath, const std::string& NewName);
 
-	// 파일 이름 중에서 Extension만 리턴해주는 함수
-	static bool GetFileExt(const std::string& FileName, std::string& ExtractedExt);
-
-	// 파일 이름 중에서, Extension 만 제외하고, 파일 본래 이름을 가져다주는 함수
-	static bool GetFileNameOnly(const std::string& FullFileName, std::string& ExtractedFileName);
-
-	// 혹시나 "\\"가 경로에 있다면, 그 뒤의 파일 이름만을 뽑아내주는 함수
-	// 만약 아예 인자로 들어오는 FilePath 에 "\\" 이 존재하지 않는다면, 그냥 FilePath 원본 그대로를 세팅해준다.
-	static bool GetFileNameAfterSlash(const std::string& FilePath, std::string& ExtractedFileName);
-
-	// 혹시나 "\\"가 경로에 있다면, 맨처음 경로부터 "\\" 까지의 정보를 뽑아내주는 함수
-	// C::Program\\OBJ\\Material\\Hello.mtrl ? => C::Program\\OBJ\\Material\\ 까지의 정보를 뽑아와준다.
-	static bool GetPathInfoBeforeFileName(const std::string& FilePath, std::string& ExtractedPathInfo);
-
 	// TCHAR [] 형태의 Text 을 넣어주면, char [] (Multibyte) 형태 Text 리턴, 
 	static const char* ChangeTCHARTextToMultibyte(TCHAR* TCHARText);
 

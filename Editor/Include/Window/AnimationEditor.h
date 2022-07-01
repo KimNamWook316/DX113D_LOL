@@ -51,6 +51,10 @@ private:
 	class CIMGUIButton* m_PlayScaleEditBtn;
 	class CIMGUITextInput* m_PlayTimeInput;
 	class CIMGUIButton* m_PlayTimeEditBtn;
+	// Excel
+	class CIMGUITextInput* m_LoadedExcelFileName;
+	class CIMGUIButton* m_LoadExcelBtn;
+	class CIMGUIButton* m_MakeAnimInstByExcelBtn;
 	// Render Target
 	bool m_RenderTargetSet;
 	class CIMGUIImage* m_AnimationRenderTarget;
@@ -84,6 +88,9 @@ private:
 	void OnZoomAnimationCamera(const char*, bool);
 	// Loop
 	void OnLoopAnimation(const char*, bool);
+	// Excel
+	void OnLoadExcel();
+	void OnMakeAnimInstByExcel();
 	// Save Load
 	void OnAddAnimationSequence();
 	void OnSaveAnimationInstance();
