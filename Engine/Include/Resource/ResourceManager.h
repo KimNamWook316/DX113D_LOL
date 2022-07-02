@@ -47,6 +47,10 @@ public:
 	{
 		return m_ParticleManager;
 	}
+	 CExcelManager* GetExcelManager() const
+	 {
+		 return m_ExcelManager;
+	 }
 
 public:	// =================== Mesh =====================
 	bool CreateMesh(Mesh_Type Type, const std::string& Name,
@@ -218,6 +222,7 @@ public: // =================== Sequence 3D =====================
 	bool LoadAnimationSequenceFullPathMultibyteSetOriginFileName(bool Loop, std::string& Name, const char* FullPath);
 	CAnimationSequence* FindAnimationSequence(const std::string& Name);
 	CAnimationSequence* CreateBasicAnimationSequence(const std::string& Name);
+	void ReleaseAnimationSequence3D(class CAnimationSequence* ExistingSequence);
 	void ReleaseAnimationSequence3D(const std::string& Name);
 	void DeleteSequence3D(const std::string& Name);
 	bool EditSequenceClip(class CAnimationSequence* ExistingSequence, const std::string& NewName,

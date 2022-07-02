@@ -291,14 +291,52 @@ bool CEditorUtil::ChangeFileOrDirectoryName(const std::string& OriginFullPath, c
 
 	if (fs::is_directory(TargetPath))
 	{
-		// 빈 디렉토리 생성
+		// 빈 디렉토리 생성 
 		fs::create_directory(ReNamedPath);
+
+		// 혹시나 하는 예외처리
+		// create_directory 의 경우, 해당 경로에 이미 해당 dir 이 존재하면, create 하지 않는다.
+		// 이때, 아래에서 copy 를 해주기 위해서는, ReNamedPath 폴더가 비어있어야 한다.
+		// 따라서, ReNamePath 를 우선 비워줄 것이다.
+		// 기존 폴더 내에 있던 데이터들 모두 삭제
+		while (true)
+		{
+			bool is_modified = false;
+
+			for (const fs::directory_entry& entry :
+				fs::recursive_directory_iterator(ReNamedPath))
+			{
+				fs::remove(entry.path());
+				is_modified = true;
+				break;
+			}
+
+			if (!is_modified)
+				break;
+		}
 		
 		// 폴더 내용 복사
 		fs::copy(TargetPath, ReNamedPath, fs::copy_options::recursive);
 
+		// 기존 Folder 는 지워준다.
+		while (true)
+		{
+			bool is_modified = false;
+
+			for (const fs::directory_entry& entry :
+				fs::recursive_directory_iterator(TargetPath))
+			{
+				fs::remove(entry.path());
+				is_modified = true;
+				break;
+			}
+
+			if (!is_modified)
+				break;
+		}
+
 		// 기존 폴더 삭제
-		fs::remove_all(TargetPath);
+		fs::remove(TargetPath);
 	}
 	else
 	{

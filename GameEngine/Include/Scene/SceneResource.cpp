@@ -837,6 +837,23 @@ CAnimationSequence* CSceneResource::FindAnimationSequence(const std::string& Nam
 	return iter->second;
 }
 
+void CSceneResource::DeleteSequence(const CAnimationSequence* const Sequence)
+{
+	auto iter = m_mapSequence.begin();
+	auto iterEnd = m_mapSequence.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		if (iter->second == Sequence)
+		{
+			m_mapSequence.erase(iter);
+			break;
+		}
+	}
+
+	CAnimationSequence* ExistingSeq = CResourceManager::GetInst()->FindAnimationSequence(Sequence->GetName());
+}
+
 void CSceneResource::AddSequenceInfo(CAnimationSequence* Sequence)
 {
 	CAnimationSequence* Anim = FindAnimationSequence(Sequence->GetName());

@@ -150,6 +150,7 @@ bool CExcelManager::LoadCSVFullPath(const char* fullPath)
 	}
 	
 	std::string name = data->GetName();
+
 	if (FindCSV(name))
 	{
 		SAFE_DELETE(data);
@@ -157,6 +158,7 @@ bool CExcelManager::LoadCSVFullPath(const char* fullPath)
 	}
 	
 	mMapExcelData.insert(std::make_pair(name, data));
+
 	return true;
 }
 

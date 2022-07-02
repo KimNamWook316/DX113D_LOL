@@ -35,8 +35,10 @@ public:
 	bool AddSocket(const std::string& SkeletonName, const std::string& BoneName, const std::string& SocketName,
 		const Vector3& Offset = Vector3::Zero, const Vector3& OffsetRot = Vector3::Zero);
 	void ReleaseSequence(const std::string& Name);
+	void ReleaseAnimationSequence3D(class CAnimationSequence* ExistingSequence);
 	CAnimationSequence* CreateBasicAnimationSequence(const std::string& Name);
 	void DeleteSequence(const std::string& Name);
+	void DeleteSequence(const CAnimationSequence* const Sequence);
 
 	// 기존 Animation Sequence 정보로부터 일부를 잘라내서 새로운 Sequence 를 만들어내는 기능
 	bool EditSequenceClip(class CAnimationSequence* ExistingSequence, const std::string& NewName, 

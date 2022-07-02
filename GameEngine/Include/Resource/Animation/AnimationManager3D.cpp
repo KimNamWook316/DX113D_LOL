@@ -267,6 +267,22 @@ void CAnimationManager3D::ReleaseSequence(const std::string& Name)
 	}
 }
 
+void CAnimationManager3D::ReleaseAnimationSequence3D(CAnimationSequence* ExistingSequence)
+{
+	auto iter = m_mapSequence.begin();
+	auto iterEnd = m_mapSequence.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		if (iter->second == ExistingSequence)
+		{
+			if (iter->second->GetRefCount() == 1)
+				m_mapSequence.erase(iter);
+			break;
+		}
+	}
+}
+
 CAnimationSequence* CAnimationManager3D::CreateBasicAnimationSequence(const std::string& Name)
 {
 	CAnimationSequence* Sequence = FindAnimationSequence(Name);
@@ -303,6 +319,21 @@ void CAnimationManager3D::DeleteSequence(const std::string& Name)
 	for (; iter != iterEnd; ++iter)
 	{
 		if (iter->second->GetName() == Name)
+		{
+			m_mapSequence.erase(iter);
+			break;
+		}
+	}
+}
+
+void CAnimationManager3D::DeleteSequence(const CAnimationSequence* const Sequence)
+{
+	auto iter = m_mapSequence.begin();
+	auto iterEnd = m_mapSequence.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		if (iter->second == Sequence)
 		{
 			m_mapSequence.erase(iter);
 			break;

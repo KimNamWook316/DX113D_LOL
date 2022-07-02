@@ -36,6 +36,7 @@ public:
 	void SetData(const std::string& name, const std::string& label, const char* data);
 	void SetData(const std::string& name, const std::string& label, int data);
 	void SetData(const std::string& name, const std::string& label, float data);
+
 	// Bool 변수의 경우 "TRUE"를 true, "FALSE"를 false로 인식
 	void SetData(const std::string& name, const std::string& label, bool data);
 

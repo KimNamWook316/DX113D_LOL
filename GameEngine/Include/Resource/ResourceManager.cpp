@@ -788,6 +788,11 @@ CAnimationSequence* CResourceManager::CreateBasicAnimationSequence(const std::st
 	return m_AnimationManager3D->CreateBasicAnimationSequence(Name);
 }
 
+void CResourceManager::ReleaseAnimationSequence3D(CAnimationSequence* ExistingSequence)
+{
+	m_AnimationManager3D->ReleaseAnimationSequence3D(ExistingSequence);
+}
+
 void CResourceManager::ReleaseAnimationSequence3D(const std::string& Name)
 {
 	m_AnimationManager3D->ReleaseSequence(Name);
