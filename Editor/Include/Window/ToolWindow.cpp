@@ -87,6 +87,15 @@ bool CToolWindow::Init()
 	m_FogStart = Tree->AddWidget<CIMGUISliderFloat>("Fog Start");
 	m_FogEnd = Tree->AddWidget<CIMGUISliderFloat>("Fog End");
 	m_FogDensity = Tree->AddWidget<CIMGUISliderFloat>("Fog Density");
+
+	// Global Light
+	m_GLightBlock = AddWidget<CIMGUICollapsingHeader>("Global Light", 200.f);
+	m_GLightRotX = m_GLightBlock->AddWidget<CIMGUISliderFloat>("RotX", 200.f);
+	m_GLightRotY = m_GLightBlock->AddWidget<CIMGUISliderFloat>("RotY", 200.f);
+	m_GLightRotZ = m_GLightBlock->AddWidget<CIMGUISliderFloat>("RotZ", 200.f);
+	m_GLightColor = m_GLightBlock->AddWidget<CIMGUIColor3>("Color", 200.f);
+	m_GLightAmbIntensity = m_GLightBlock->AddWidget<CIMGUISliderFloat>("Ambient Intensity", 200.f);
+
  //	CIMGUITree* Tree = m_RenderBlock->AddWidget<CIMGUITree>("Outline", 200.f);
  //	m_OutlineDepthMultiply = Tree->AddWidget<CIMGUISliderFloat>("Outline Depth Multiplier");
  //	m_OutlineDepthBias = Tree->AddWidget<CIMGUISliderFloat>("Outline Depth Bias");
@@ -139,7 +148,7 @@ bool CToolWindow::Init()
 	m_MiddleGray->SetValue(MiddleGray);
 
 	float LumWhite = CRenderManager::GetInst()->GetLumWhite();
-	m_LumWhite->SetMin(0.9f);
+	m_LumWhite->SetMin(0.1f);
 	m_LumWhite->SetMax(5.f);
 	m_LumWhite->SetValue(LumWhite);
 
@@ -199,6 +208,24 @@ bool CToolWindow::Init()
 	m_FogDensity->SetMax(1.f);
 	m_FogDensity->SetValue(FogDensity);
 
+	CLightComponent* GLight = CSceneManager::GetInst()->GetScene()->GetLightManager()->GetGlobalLightComponent();
+	Vector3 GLightRot = GLight->GetWorldRot();
+	m_GLightRotX->SetValue(GLightRot.x);
+	m_GLightRotY->SetValue(GLightRot.y);
+	m_GLightRotZ->SetValue(GLightRot.z);
+	m_GLightColor->SetRGB(GLight->GetLightColor().x, GLight->GetLightColor().y, GLight->GetLightColor().z);
+	m_GLightRotX->SetMin(-180.f);
+	m_GLightRotY->SetMin(-180.f);
+	m_GLightRotZ->SetMin(-180.f);
+	m_GLightRotX->SetMax(180.f);
+	m_GLightRotY->SetMax(180.f);
+	m_GLightRotZ->SetMax(180.f);
+
+	float GLightAmbIntensity = CSceneManager::GetInst()->GetScene()->GetLightManager()->GetGlobalLightAmbiendIntensity();
+	m_GLightAmbIntensity->SetValue(GLightAmbIntensity);
+	m_GLightAmbIntensity->SetMin(0.f);
+	m_GLightAmbIntensity->SetMax(1.f);
+
 	// CallBack
 	m_GizmoTransformMode->SetCallBack(this, &CToolWindow::OnSelectGizmoTransformMode);
 	m_GizmoOperationMode->SetCallBack(this, &CToolWindow::OnSelectGizmoOperationMode);
@@ -225,6 +252,11 @@ bool CToolWindow::Init()
 	m_FogStart->SetCallBack(this, &CToolWindow::OnChangeFogStart);
 	m_FogEnd->SetCallBack(this, &CToolWindow::OnChangeFogEnd);
 	m_FogDensity->SetCallBack(this, &CToolWindow::OnChangeFogDensity);
+	m_GLightRotX->SetCallBack(this, &CToolWindow::OnChangeGLightRotX);
+	m_GLightRotY->SetCallBack(this, &CToolWindow::OnChangeGLightRotY);
+	m_GLightRotZ->SetCallBack(this, &CToolWindow::OnChangeGLightRotZ);
+	m_GLightColor->SetCallBack(this, &CToolWindow::OnChangeGLightColor);
+	m_GLightAmbIntensity->SetCallBack(this, &CToolWindow::OnChangeGLightAmbIntensity);
 
 	// 디버그용 임시 키
 	CInput::GetInst()->CreateKey("Z", 'Z');
@@ -420,6 +452,37 @@ void CToolWindow::OnClickStop()
 
 		m_PlayState->SetText("Current State : Paused");
 	}
+}
+
+void CToolWindow::OnChangeGLightRotX(float Val)
+{
+	CGameObject* GLight = CSceneManager::GetInst()->GetScene()->GetLightManager()->GetGlobalLight();
+	GLight->SetWorldRotationX(Val);
+}
+
+void CToolWindow::OnChangeGLightRotY(float Val)
+{
+	CGameObject* GLight = CSceneManager::GetInst()->GetScene()->GetLightManager()->GetGlobalLight();
+	GLight->SetWorldRotationY(Val);
+}
+
+void CToolWindow::OnChangeGLightRotZ(float Val)
+{
+	CGameObject* GLight = CSceneManager::GetInst()->GetScene()->GetLightManager()->GetGlobalLight();
+	GLight->SetWorldRotationZ(Val);
+}
+
+void CToolWindow::OnChangeGLightAmbIntensity(float Val)
+{
+	CSceneManager::GetInst()->GetScene()->GetLightManager()->SetGlogbalLightAmbientIntensity(Val);
+}
+
+void CToolWindow::OnChangeGLightColor(const Vector3& Color)
+{
+	CLightComponent* GLight = CSceneManager::GetInst()->GetScene()->GetLightManager()->GetGlobalLightComponent();
+
+	Vector4 vCol = Vector4( Color.x, Color.y, Color.z, 0.f );
+	GLight->SetColor(vCol);
 }
 
 void CToolWindow::ClearSceneRelatedWindows()

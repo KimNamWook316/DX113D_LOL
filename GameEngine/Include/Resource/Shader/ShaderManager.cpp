@@ -40,6 +40,7 @@
 #include "BloomShader.h"
 #include "BlurVerticalShader.h"
 #include "BlurHorizontalShader.h"
+#include "ToonShader.h"
 
 CShaderManager::CShaderManager()
 {
@@ -214,6 +215,15 @@ bool CShaderManager::Init()
 		return false;
 	}
 
+	CreateConstantBuffer("ToonCBuffer", sizeof(ToonCBuffer), 11,
+		(int)Buffer_Shader_Type::Pixel);
+
+	if (!CreateShader<CToonShader>("ToonShader"))
+	{
+		assert(false);
+		return false;
+	}
+
 	// =================== 상수버퍼 ===================
 	CreateConstantBuffer("TransformCBuffer", sizeof(TransformCBuffer), 0,
 		(int)Buffer_Shader_Type::Graphic);
@@ -232,8 +242,6 @@ bool CShaderManager::Init()
 
 	CreateConstantBuffer("LightCBuffer", sizeof(LightCBuffer), 5,
 		(int)Buffer_Shader_Type::Pixel);
-
-
 
 	CreateConstantBuffer("Animation2DCBuffer", sizeof(Animation2DCBuffer), 10,
 		(int)Buffer_Shader_Type::Graphic);
@@ -278,6 +286,9 @@ bool CShaderManager::Init()
 		(int)Buffer_Shader_Type::Pixel);
 
 	CreateConstantBuffer("FogCBuffer", sizeof(FogCBuffer), 11,
+		(int)Buffer_Shader_Type::Pixel);
+
+	CreateConstantBuffer("GlobalLightCBuffer", sizeof(GlobalLightCBuffer), 11,
 		(int)Buffer_Shader_Type::Pixel);
 
 	return true;

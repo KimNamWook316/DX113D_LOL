@@ -16,6 +16,9 @@
 #include "PathManager.h"
 #include "Scene/Scene.h"
 #include "Scene/SceneManager.h"
+#include "ToonShaderWidget.h"
+#include "IMGUITextInput.h"
+#include "Resource/Shader/ToonShader.h"
 
 CStaticMeshComponentWidget::CStaticMeshComponentWidget()	:
 	m_MeshName(nullptr),
@@ -26,6 +29,7 @@ CStaticMeshComponentWidget::CStaticMeshComponentWidget()	:
 	m_SpecularColorEdit(nullptr),
 	m_SpecluarPowerEdit(nullptr),
 	m_EmissiveColorEdit(nullptr),
+	m_ShaderName(nullptr),
 	m_TransparencyEdit(nullptr),
 	m_OpacityEdit(nullptr)
 {
@@ -50,6 +54,8 @@ bool CStaticMeshComponentWidget::Init()
 	m_LoadMeshButton = m_RootTree->AddWidget<CIMGUIButton>("Load", 0.f, 0.f);
 
 	m_MaterialSlotCombo = m_RootTree->AddWidget<CIMGUIComboBox>("Material Slot", 200.f);
+	m_ShaderName = m_RootTree->AddWidget<CIMGUITextInput>("Shader", 200.f);
+	m_ShaderWidgetTree = m_RootTree->AddWidget<CIMGUITree>("Shader Params", 200.f);
 	m_BaseColorEdit = m_RootTree->AddWidget<CIMGUIColor3>("BaseColor", 200.f);
 	m_AmbientColorEdit = m_RootTree->AddWidget<CIMGUIColor3>("Ambient", 200.f);
 	m_SpecularColorEdit = m_RootTree->AddWidget<CIMGUIColor3>("Specluar", 200.f);
@@ -72,6 +78,7 @@ bool CStaticMeshComponentWidget::Init()
 	m_OutlineThickness->SetMin(0.1f);
 	m_OutlineThickness->SetMax(20.f);
 	m_OutlineEnable->AddCheckInfo("Outline Enable");
+	m_ShaderName->ReadOnly(true);
 
 	// CallBack
 	m_LoadMeshButton->SetClickCallback(this, &CStaticMeshComponentWidget::OnClickLoadMesh);
@@ -86,6 +93,7 @@ bool CStaticMeshComponentWidget::Init()
 	m_OutlineEnable->SetCallBackIdx(this, &CStaticMeshComponentWidget::OnCheckOutlineEnable);
 	m_OutlineThickness->SetCallBack(this, &CStaticMeshComponentWidget::OnEditOutlineThickness);
 	m_OutlineColor->SetCallBack(this, &CStaticMeshComponentWidget::OnChangeOutlineColor);
+	m_ShaderName->SetDropCallBack(this, &CStaticMeshComponentWidget::OnDropShaderName);
 
 	return true;
 }
@@ -139,6 +147,11 @@ void CStaticMeshComponentWidget::OnSelectMaterialSlotCombo(int Idx, const char* 
 	{
 		CMaterial* Mat = MeshCom->GetMaterial(Idx);
 
+		std::string ShaderName = Mat->GetShader()->GetName();
+
+		MakeShaderWidget(Mat, ShaderName);
+
+		m_ShaderName->SetText(ShaderName.c_str());
 		m_BaseColorEdit->SetRGB(Mat->GetBaseColor().x, Mat->GetBaseColor().y, Mat->GetBaseColor().z);
 		m_AmbientColorEdit->SetRGB(Mat->GetBaseColor().x, Mat->GetBaseColor().y, Mat->GetBaseColor().z);
 		m_SpecularColorEdit->SetRGB(Mat->GetBaseColor().x, Mat->GetBaseColor().y, Mat->GetBaseColor().z);
@@ -299,6 +312,27 @@ void CStaticMeshComponentWidget::OnChangeOutlineColor(const Vector3& Color)
 	}
 }
 
+void CStaticMeshComponentWidget::OnDropShaderName(const std::string& Name)
+{
+	int Index = m_MaterialSlotCombo->GetSelectIndex();
+
+	if (Index == -1)
+	{
+		return;
+	}
+
+	CMaterial* Mat = static_cast<CStaticMeshComponent*>(m_Component)->GetMaterial(Index);
+	CShader* Shader = CSceneManager::GetInst()->GetScene()->GetResource()->FindShader(Name);
+
+	if (!Shader || Shader->GetShaderType() != Shader_Type::Graphic)
+	{
+		return;
+	}
+
+	Mat->SetShader((CGraphicShader*)Shader);
+	m_ShaderName->SetText(Name.c_str());
+}
+
 void CStaticMeshComponentWidget::RefreshMeshWidget(CMesh* Mesh)
 {
 	CStaticMeshComponent* MeshCom = (CStaticMeshComponent*)m_Component;
@@ -322,4 +356,26 @@ void CStaticMeshComponentWidget::RefreshMeshWidget(CMesh* Mesh)
 			m_MaterialSlotCombo->AddItem(MeshCom->GetMaterial(i)->GetName());
 		}
 	}
+}
+
+bool CStaticMeshComponentWidget::MakeShaderWidget(class CMaterial* Mat, const std::string& ShaderName)
+{
+	SAFE_DELETE(m_ShaderWidget);
+
+	CShader* Shader = CResourceManager::GetInst()->FindShader(ShaderName);
+	size_t TypeID = Shader->GetTypeID();
+
+	if (TypeID == typeid(CToonShader).hash_code())
+	{
+		m_ShaderWidget = m_ShaderWidgetTree->AddWidget<CToonShaderWidget>("ToonShaderWidget", 200.f, 200.f);
+	}
+	else
+	{
+		return false;
+	}
+
+	ShaderParams MatShaderParams = Mat->GetShaderParams();
+	m_ShaderWidget->SetShaderParams(MatShaderParams);
+	m_ShaderWidget->SetMaterial(Mat);
+	return true;
 }

@@ -237,7 +237,9 @@
     <ClCompile Include="Widget\ParticleComponentWidget.cpp" />
     <ClCompile Include="Widget\SaveLoadBeginMenu.cpp" />
     <ClCompile Include="Widget\SceneComponentWidget.cpp" />
+    <ClCompile Include="Widget\ShaderWidget.cpp" />
     <ClCompile Include="Widget\StaticMeshComponentWidget.cpp" />
+    <ClCompile Include="Widget\ToonShaderWidget.cpp" />
     <ClCompile Include="Widget\TransformWidget.cpp" />
     <ClCompile Include="Widget\UtilMenuBar.cpp" />
     <ClCompile Include="Window\AnimationDisplayWindow.cpp" />
@@ -343,7 +345,9 @@
     <ClInclude Include="Widget\ResourceMenu.h" />
     <ClInclude Include="Widget\SaveLoadBeginMenu.h" />
     <ClInclude Include="Widget\SceneComponentWidget.h" />
+    <ClInclude Include="Widget\ShaderWidget.h" />
     <ClInclude Include="Widget\StaticMeshComponentWidget.h" />
+    <ClInclude Include="Widget\ToonShaderWidget.h" />
     <ClInclude Include="Widget\TransformWidget.h" />
     <ClInclude Include="Widget\UtilMenuBar.h" />
     <ClInclude Include="Window\AnimationDisplayWindow.h" />

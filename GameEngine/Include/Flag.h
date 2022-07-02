@@ -350,3 +350,12 @@ enum class Player_Ability
 	Hook,
 	Photon
 };
+
+enum class ToonShaderType
+{
+	Default,
+	Easy,
+	Light,
+	Warm,
+	Max
+};

@@ -47,6 +47,25 @@ bool CTextureManager::Init()
 	LoadTexture("EngineTexture", TEXT("teemo.png"));
 	LoadTexture("DefaultBurnTexture", TEXT("DefaultPaperBurn.png"));
 
+	// Toon Shader Ramp Texture
+	std::vector<TCHAR*> vecTexFileNames;
+
+	TCHAR* FileName = new TCHAR[MAX_PATH];
+	lstrcpy(FileName, TEXT("Toon/ToomWrapTex.png"));
+	vecTexFileNames.push_back(FileName);
+	FileName = new TCHAR[MAX_PATH];
+	lstrcpy(FileName, TEXT("Toon/ToonWrapTex_Easy.png"));
+	vecTexFileNames.push_back(FileName);
+	FileName = new TCHAR[MAX_PATH];
+	lstrcpy(FileName, TEXT("Toon/ToonWrapTex_Light.png"));
+	vecTexFileNames.push_back(FileName);
+	FileName = new TCHAR[MAX_PATH];
+	lstrcpy(FileName, TEXT("Toon/ToonWrapTex_Warm.png"));
+	vecTexFileNames.push_back(FileName);
+
+	LoadTextureArray("ToonRampTex", vecTexFileNames, TEXTURE_PATH);
+	SAFE_DELETE_ARRAY_VECLIST(vecTexFileNames);
+
 	float	BorderColor[4] = {};
 
 	BorderColor[0] = 1.f;

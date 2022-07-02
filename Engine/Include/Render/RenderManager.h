@@ -87,10 +87,12 @@ private:
 	const std::list<CSharedPtr<class CGameObject>>* m_ObjectList;
 	std::vector<RenderLayer*>	m_RenderLayerList;
 	class CStandard2DConstantBuffer* m_Standard2DCBuffer;
+
 	class CRenderState* m_DepthDisable;
 	class CRenderState* m_AlphaBlend;
 	class CRenderState* m_AlphaBlendMRT;
 	class CRenderState* m_LightAccBlend;
+
 	CSharedPtr<class CShader> m_LightBlendShader;
 	CSharedPtr<class CShader> m_LightBlendRenderShader;
 	CSharedPtr<class CShader> m_Standard3DInstancingShader;
@@ -136,6 +138,9 @@ private:
 	// Particle Editor
 	CSharedPtr<class CShader> m_ParticleShader; // m_AnimEditorRenderTarget 에 그려내기 위한 Shader 
 	CSharedPtr<CRenderTarget>	m_ParticleEffectEditorRenderTarget; // Skinning 처리 이후, 해당 출력을, 별도의 RenderTarget 에 그려낸다.
+
+	// Toon Ramp Texture
+	class CTexture* m_ToonRampTex;
 
 	// Post Processing Renderer
 	class CPostFXRenderer* m_PostFXRenderer;

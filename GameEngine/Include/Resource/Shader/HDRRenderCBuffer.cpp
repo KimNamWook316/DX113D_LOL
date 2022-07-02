@@ -4,7 +4,7 @@
 CHDRRenderCBuffer::CHDRRenderCBuffer()	:
 	m_BufferData{}
 {
-	m_BufferData.LumWhiteSqr = 1.f;
+	m_BufferData.LumWhiteSqr = 1.1f;
 	m_BufferData.MiddleGray = 1.f;
 	m_BufferData.BloomScale = 1.f;
 	m_BufferData.DOFMin = 300.f;
