@@ -111,7 +111,7 @@ private:
 	// St, Ed Frame Edit
 	void OnEditStartEndFrame();
 	bool SaveEditedSqcFile(const TCHAR* FileSavedFullPath, CAnimationSequence* ExistingSequence,
-		int StartFrame, int EndFrame);
+		int StartFrame, int EndFrame, bool MakeCopy = true);
 	// Play
 	void OnCreateSample3DObject();
 	void OnSetPlayEngineDeltaTime(const char*, bool);

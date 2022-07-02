@@ -625,6 +625,8 @@ void CAnimationEditor::OnMakeAnimInstByExcel()
 		auto iter = ExcelTableData.begin();
 		auto iterEnd = ExcelTableData.end();
 
+		int FirstData = true;
+
 		for (; iter != iterEnd; ++iter)
 		{
 			const std::string& DataLable = iter->first;
@@ -652,12 +654,15 @@ void CAnimationEditor::OnMakeAnimInstByExcel()
 
 			lstrcpy(TCHARSavedSqcFullPath, CEditorUtil::ChangeMultibyteTextToTCHAR(NewlySavedSqcFullPath.c_str()));
 
-			// 하나라도 Load 실패시 X
-			if (!SaveEditedSqcFile(TCHARSavedSqcFullPath, ExistingSequeunce, StFrameInt, EdFrameInt))
+			// 하나라도 Load 실패시 X 
+			// 처음 한개만 msh, fbm, bne 파일 복사본을 만들어줄 것이다.
+			if (!SaveEditedSqcFile(TCHARSavedSqcFullPath, ExistingSequeunce, StFrameInt, EdFrameInt, FirstData))
 			{
 				MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT(".sqc 파일 저장 실패"), NULL, MB_OK);
 				return;
 			}
+
+			FirstData = false;
 		}
 	}
 
@@ -715,11 +720,11 @@ void CAnimationEditor::OnMakeAnimInstByExcel()
 		++iterSqc;
 
 		// Dummy Animation 을 통해 찾아야 한다.
-		if (!m_DummyAnimation->EditCurrentSequenceKeyName(DataLable.c_str(), AddedKeyName))
-		{
-			assert(false);
-			return;
-		}
+		// if (!m_DummyAnimation->EditCurrentSequenceKeyName(DataLable.c_str(), AddedKeyName))
+		// {
+		// 	assert(false);
+		// 	return;
+		// }
 
 		// File 이름 Log 목록에 추가
 		Text = m_AnimInstanceConvertLog->AddWidget<CIMGUIText>("Text");
@@ -1466,7 +1471,8 @@ void CAnimationEditor::OnEditStartEndFrame()
 	}
 }
 
-bool CAnimationEditor::SaveEditedSqcFile(const TCHAR* FileSavedFullPath, CAnimationSequence* ExistingSequence, int StartFrame, int EndFrame)
+bool CAnimationEditor::SaveEditedSqcFile(const TCHAR* FileSavedFullPath, CAnimationSequence* ExistingSequence, 
+	int StartFrame, int EndFrame, bool MakeCopy)
 {
 	char FileFullPathMultibyte[MAX_PATH] = {};
 
@@ -1495,6 +1501,10 @@ bool CAnimationEditor::SaveEditedSqcFile(const TCHAR* FileSavedFullPath, CAnimat
 
 	if (SqcSaveResult)
 	{
+		// bne, fbm, msh 파일을 복사해주지 않을 것이라면, 그냥 return true 하고 끝
+		if (!MakeCopy)
+			return true;
+
 		// 현재 Sqc 가 사용하는 Mesh, Bne, Fbm 폴더 내용을 현재 저장한 폴더 경로에 그대로 복사하여 넣어주고
 		// 해당 파일들의 이름은, 현재 저장한 Sqc 파일들과 동일하게 세팅한다.
 		std::string SavedFolderPath;
