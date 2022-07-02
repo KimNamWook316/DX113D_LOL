@@ -894,7 +894,7 @@ bool CAnimationSequenceInstance::LoadAnimationFullPath(const char* FullPath)
 #endif
 
 		TCHAR FullErrorMessage[MAX_PATH] = {};
-		TCHAR ErrorMessage[MAX_PATH] = TEXT("File Not Found In Bin//Animation Folder");
+		TCHAR ErrorMessage[MAX_PATH] = TEXT(" File Not Found In Bin//Animation Folder");
 
 		lstrcpy(FullErrorMessage, TCHARAnimationFileName);
 		lstrcat(FullErrorMessage, ErrorMessage);
@@ -1002,18 +1002,21 @@ bool CAnimationSequenceInstance::LoadAnimation(const char* FileName)
 {
 	const PathInfo* Path = CPathManager::GetInst()->FindPath(ANIMATION_PATH);
 
-	char FileLoadFullPath[MAX_PATH] = {};
+	std::string FileLoadFullPath;
 
-	if (Path)
-		strcpy_s(FileLoadFullPath, Path->PathMultibyte);
+	FileLoadFullPath = Path->PathMultibyte;
+	FileLoadFullPath.append(FileName);
 
-	strcat_s(FileLoadFullPath, FileName);
+	std::string Ext = ".anim";
 
-	// 확장자 .anim File 도 붙여준다
-	char EXT[MAX_PATH] = ".anim";
-	strcat_s(FileLoadFullPath, EXT);
+	auto it = std::search(FileLoadFullPath.begin(), FileLoadFullPath.end(),
+			std::boyer_moore_searcher(Ext.begin(), Ext.end()));
 
-	if (!LoadAnimationFullPath(FileLoadFullPath))
+	// 해당 확장자가 들어있지 않다는 것이다.
+	if (it == FileLoadFullPath.end())
+		FileLoadFullPath.append(Ext);
+
+	if (!LoadAnimationFullPath(FileLoadFullPath.c_str()))
 		return false;
 
 	return true;

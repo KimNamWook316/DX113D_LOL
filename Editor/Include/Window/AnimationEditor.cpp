@@ -700,8 +700,6 @@ void CAnimationEditor::OnMakeAnimInstByExcel()
 	CIMGUIText* StartText = m_AnimInstanceConvertLog->AddWidget<CIMGUIText>("Text");
 	StartText->SetText("Convert Start...");
 
-	auto iterSqc = ExcelTableData.begin();
-	auto iterSqcEnd = ExcelTableData.end();
 
 	// 모은 모든 녀석들로 Mesh Load 하고 
 	size_t Size = m_vecAnimationSeqFilesFullPath.size();
@@ -715,21 +713,54 @@ void CAnimationEditor::OnMakeAnimInstByExcel()
 		AddSequenceToDummyAnimationInstance(m_vecAnimationSeqFilesFullPath[i].c_str(), AddedKeyName);
 
 		// 해당 Key 이름을, Excel 에 저장된 Layer 이름으로 바꿔준다.
-		const std::string& DataLable = iterSqc->first;
+		// 이를 위해, Excel 에 저장된 Layer 중에서, 자신이 현재 포함하고 있는 Layer 정보를 세팅해줄 것이다.
+		auto iterSqc = ExcelTableData.begin();
+		auto iterSqcEnd = ExcelTableData.end();
 
-		++iterSqc;
+		int AddedKeyNameLength = (int)AddedKeyName.length();
+
+		std::string NewLableKeyName;
+
+		for (; iterSqc != iterSqcEnd; ++iterSqc)
+		{
+			bool NameFound = true;
+
+			// ex) Idle
+			const std::string& DataLable = iterSqc->first;
+			int DataLableLength = DataLable.length();
+
+			// ex) Grunt_Idle.sqc => Grunt_Idle 이라는 Key 값으로 저장되어 있다.
+			// 뒤에서부터 비교해갈 것이다.
+			int DataLableCompIdx = DataLableLength - 1;
+			for (int compIdx = AddedKeyNameLength - 1; compIdx >= AddedKeyNameLength - DataLableLength; --compIdx)
+			{
+				if (AddedKeyName[compIdx] != DataLable[DataLableCompIdx])
+				{
+					NameFound = false;
+					break;
+				}
+				--DataLableCompIdx;
+			}
+
+			if (NameFound)
+			{
+				NewLableKeyName = DataLable;
+				break;
+			}
+		}
 
 		// Dummy Animation 을 통해 찾아야 한다.
-		// if (!m_DummyAnimation->EditCurrentSequenceKeyName(DataLable.c_str(), AddedKeyName))
-		// {
-		// 	assert(false);
-		// 	return;
-		// }
+		if (!m_DummyAnimation->EditCurrentSequenceKeyName(NewLableKeyName.c_str(), AddedKeyName))
+		{
+			assert(false);
+			return;
+		}
 
 		// File 이름 Log 목록에 추가
 		Text = m_AnimInstanceConvertLog->AddWidget<CIMGUIText>("Text");
 
 		Text->SetText(CEditorUtil::FilterFileName(m_vecAnimationSeqFilesFullPath[i]).c_str());
+
 	}
 
 	m_AnimInstanceProgressBar->SetPercent(100.f);

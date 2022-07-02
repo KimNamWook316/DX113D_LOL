@@ -907,7 +907,7 @@ bool CAnimationMeshComponent::Load(FILE* File)
 
 	fread(&MaterialSlotCount, sizeof(int), 1, File);
 
-	const PathInfo* MaterialPath = CPathManager::GetInst()->FindPath(MATERIAL_PATH);
+	const PathInfo* MaterialPath = CPathManager::GetInst()->FindPath(MATERIAL_ANIMCOMPONENT_PATH);
 
 	m_vecMaterialSlot.clear();
 
@@ -1047,7 +1047,7 @@ bool CAnimationMeshComponent::LoadOnly(FILE* File)
 
 	fread(&MaterialSlotCount, sizeof(int), 1, File);
 
-	const PathInfo* MaterialPath = CPathManager::GetInst()->FindPath(MATERIAL_PATH);
+	const PathInfo* MaterialPath = CPathManager::GetInst()->FindPath(MATERIAL_ANIMCOMPONENT_PATH);
 
 	m_vecMaterialSlot.clear();
 
