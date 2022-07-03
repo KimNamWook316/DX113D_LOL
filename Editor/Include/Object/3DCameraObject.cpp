@@ -52,7 +52,7 @@ bool C3DCameraObject::Init()
 	m_Camera->SetViewAngle(27.f);
 
 	m_Camera->AddRelativePos(0.f, 30.f, -30.f);
-	m_Camera->SetRelativeRotationX(0.f);
+	m_Camera->SetRelativeRotationX(45.f);
 
 	// Input Key ¼³Á¤
 	CInput::GetInst()->CreateKey("CameraMove", VK_LBUTTON);

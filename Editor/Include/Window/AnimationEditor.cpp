@@ -215,6 +215,12 @@ m_mapAnimationSequence['EditIdle'] = 'ZedIdle' 로 Key 값 수정 )";
 	m_DeleteAnimSequenceBtn = AddWidget<CIMGUIButton>("Delete Seq", 90.f, 20.f);
 	m_DeleteAnimSequenceBtn->SetClickCallback<CAnimationEditor>(this, &CAnimationEditor::OnDeleteAnimationSequenceData);
 
+	Line = AddWidget<CIMGUISameLine>("Line");
+	Line->SetOffsetX(195.f);
+
+	m_DeleteAnimObject = AddWidget<CIMGUIButton>("Delete Obj", 90.f, 20.f);
+	m_DeleteAnimObject->SetClickCallback<CAnimationEditor>(this, &CAnimationEditor::OnDeleteAnimation3DObject);
+
 	// Save, Load
 	// Animation Related Btns
 	HelpText = AddWidget<CIMGUIText>("Instance Save Btn Help Text", 90.f, 30.f);
@@ -562,8 +568,6 @@ void CAnimationEditor::OnMakeAnimInstByExcel()
 		auto iter = ExcelTableData.begin();
 		auto iterEnd = ExcelTableData.end();
 
-		const std::string& DataLable = iter->first;
-
 		for (; iter != iterEnd; ++iter)
 		{
 			// 1번째는 startFrame
@@ -576,6 +580,8 @@ void CAnimationEditor::OnMakeAnimInstByExcel()
 			int EdFrameInt;
 			auto EdFrameIntInfo = std::from_chars(EdFrame.c_str(), EdFrame.c_str() + sizeof(EdFrame.c_str()) - 1, EdFrameInt);
 
+			const std::string& DataLable = iter->first;
+
 			TCHAR FulllErrorMessage[MAX_PATH] = {};
 			TCHAR TCHARDataLable[MAX_PATH] = {};
 			lstrcpy(TCHARDataLable, CEditorUtil::ChangeMultibyteTextToTCHAR(DataLable.c_str()));
@@ -583,16 +589,24 @@ void CAnimationEditor::OnMakeAnimInstByExcel()
 
 			if (OriginAnimStartFrame > StFrameInt)
 			{
-				TCHAR ErrorMessage[MAX_PATH] = TEXT(": Start Frame 의 범위를 벗어납니다");
+				TCHAR ErrorMessage[MAX_PATH] = TEXT(": Start Frame 의 범위를 벗어납니다. Origin Start Frame : ");
+				TCHAR StartFrameMessage[MAX_PATH];
+				lstrcpy(StartFrameMessage, CEditorUtil::ChangeMultibyteTextToTCHAR(std::to_string(OriginAnimStartFrame).c_str()));
+
 				lstrcat(FulllErrorMessage, ErrorMessage);
+				lstrcat(FulllErrorMessage, StartFrameMessage);
 				MessageBox(CEngine::GetInst()->GetWindowHandle(), FulllErrorMessage, NULL, MB_OK);
 
 				return;
 			}
 			if (OriginAnimEndFrame < EdFrameInt)
 			{
-				TCHAR ErrorMessage[MAX_PATH] = TEXT(": End Frame 의 범위를 벗어납니다");
+				TCHAR ErrorMessage[MAX_PATH] = TEXT(": End Frame 의 범위를 벗어납니다. Origin End Frame : ");
+				TCHAR EndFrameMessage[MAX_PATH];
+				lstrcpy(EndFrameMessage, CEditorUtil::ChangeMultibyteTextToTCHAR(std::to_string(OriginAnimEndFrame).c_str()));
+
 				lstrcat(FulllErrorMessage, ErrorMessage);
+				lstrcat(FulllErrorMessage, EndFrameMessage);
 				MessageBox(CEngine::GetInst()->GetWindowHandle(), FulllErrorMessage, NULL, MB_OK);
 				return;
 			}
@@ -1237,6 +1251,45 @@ void CAnimationEditor::OnDeleteAnimationSequenceData()
 	OnRefreshCheckBoxInfo();
 }
 
+void CAnimationEditor::OnDeleteAnimation3DObject()
+{
+	if (!m_Animation || !m_Animation->GetCurrentAnimation())
+		return;
+
+	// 모든 Sequence 정보를 지워준다.
+	while (m_Animation->GetCurrentAnimation())
+	{
+		// 현재 Current Animation 에 해당하는 Sequence 를 현재 Scene 에서 지워준다.
+		CAnimationSequence* DeleteSeq = CResourceManager::GetInst()->FindAnimationSequence(m_Animation->GetCurrentAnimation()->GetAnimationSequence()->GetName());
+
+		CSceneManager::GetInst()->GetScene()->GetResource()->DeleteSequence(m_Animation->GetCurrentAnimation()->GetAnimationSequence());
+
+		m_Animation->DeleteCurrentAnimation();
+
+		// ResourceManager 에 남아있는 Sqc 의 ref Cnt 가 1 이라면, 더이상 해당 sqc 를 사용하는 다른 Obj 가 없다는 것
+		// 따라서 지워준다.
+		CResourceManager::GetInst()->ReleaseAnimationSequence3D(DeleteSeq);
+	}
+
+	// Combo Box 내용 Refresh
+	// 비어있을 경우, ComboBox 안의 내용 ""로 세팅하는 기능까지 
+	OnRefreshAnimationComboBox();
+
+	// 아래 함수가 호출되기 위해서는 m_Animation 이 더이상 CurrentAnimation을 가지고 있어서는 안된다.
+	// 다 지웠다는 메세지
+	MessageBox(nullptr, TEXT("모든 Sqc 파일이 Delete 되었습니다."), TEXT("Anim Seq Delete."), MB_OK);
+
+	// Animation Info Table 깨끗하게
+	m_AnimInfoTable->ClearContents();
+
+	// 3D Object ? Animation Mesh Component 도 지워준다. 
+	OnDeleteExisting3DObject();
+
+	// Render Target 을 비워준다.
+	CRenderManager::GetInst()->GetAnimationRenderTarget()->ClearTarget();
+
+	return;
+}
 
 void CAnimationEditor::OnSetPlayEngineDeltaTime(const char* Lable, bool Enable)
 {

@@ -363,6 +363,7 @@ bool CExcelData::LoadCSVFullPath(const char* fullPath)
 
 	if (!fp)
 	{
+		// OBJ : 현재 해당 파일의 Excel 을 열어놓고 있는 상태면, 에러가 난다.
 		assert(false);
 		return false;
 	}

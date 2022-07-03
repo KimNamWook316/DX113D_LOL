@@ -30,6 +30,7 @@ private:
 	class CIMGUIButton* m_CreateSample3DBtn;
 	// Animation Seq 지우기
 	class CIMGUIButton* m_DeleteAnimSequenceBtn;
+	class CIMGUIButton* m_DeleteAnimObject;
 	// Animation Play 여부
 	class CIMGUICheckBox* m_DeltaTimeCheckBtn;
 	class CIMGUICheckBox* m_AnimationCheckBtn;
@@ -135,7 +136,9 @@ private:
 	void OnEditAnimPlayTime();
 	void OnEditAnimPlayScale();
 	void OnEditAnimSequenceKey();
+	// Delete
 	void OnDeleteAnimationSequenceData(); // 특정 Animation 지우기
+	void OnDeleteAnimation3DObject(); // 현재 Animation Object 지우기 
 private:
 	// Sqc 모아서 Animation 만들기 
 	void OnAnimInstanceConvertLoading(const LoadingMessage& msg);

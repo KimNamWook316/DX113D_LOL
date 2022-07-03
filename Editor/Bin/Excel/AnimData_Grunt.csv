@@ -1,5 +1,10 @@
+<<<<<<< HEAD
 AnimData_Grunt,
 FrameStart,FrameEnd,
+=======
+﻿AnimData_Grunt,,
+,FrameStart,FrameEnd
+>>>>>>> 49525bde5767eff24f50800e700a37bea7678068
 Idle,0,50
 Stagger,51,81
 Drown,82,183

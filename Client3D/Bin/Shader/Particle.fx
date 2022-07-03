@@ -469,6 +469,7 @@ void ParticleGS(point VertexParticleOutput input[1],
 	OutputArray[2].UV = float2(0.f, 1.f);
 	OutputArray[3].UV = float2(1.f, 1.f);
 
+	// UV Animation Àû¿ë
 	if (g_ParticleShareSRV[0].UVMoveEnable == 1)
 	{
 		int UVRowN = g_ParticleShareSRV[0].UVRowN;
