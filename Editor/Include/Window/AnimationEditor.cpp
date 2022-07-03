@@ -536,16 +536,16 @@ void CAnimationEditor::OnLoadExcel()
 
 		m_LoadedExcelData = LoadedExcelData;
 	}
-
-
-	// m_mapLoadedSqcExcel
 }
 
 void CAnimationEditor::OnMakeAnimInstByExcel()
 {
 	// Excel 이 존재해야 한다.
 	if (!m_LoadedExcelData)
+	{
+		MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Excel 파일을 Load 하세요"), NULL, MB_OK);
 		return;
+	}
 
 	// Animation 이 존재해야 한다.
 	if (!m_Animation || !m_Animation->GetCurrentAnimation())
@@ -1239,6 +1239,9 @@ void CAnimationEditor::OnDeleteAnimationSequenceData()
 		// Render Target 을 비워준다.
 		CRenderManager::GetInst()->GetAnimationRenderTarget()->ClearTarget();
 
+		// 혹시나 Load 된 .anim 파일 정보가 있다면 지워준다
+		m_LoadedAnimFileName->ClearText();
+
 		return;
 	}
 
@@ -1287,6 +1290,9 @@ void CAnimationEditor::OnDeleteAnimation3DObject()
 
 	// Render Target 을 비워준다.
 	CRenderManager::GetInst()->GetAnimationRenderTarget()->ClearTarget();
+
+	// 혹시나 Load 된 .anim 파일 정보가 있다면 지워준다
+	m_LoadedAnimFileName->ClearText();
 
 	return;
 }
