@@ -143,6 +143,21 @@ bool CSceneResource::CreateMesh(Mesh_Type Type,
 	return true;
 }
 
+bool CSceneResource::CreateNavMesh(CNavMesh* NavMesh, const std::string& Name, void* VtxData, int Size, int Count, D3D11_USAGE Usage, D3D11_PRIMITIVE_TOPOLOGY Primitive, void* IdxData, int IdxSize, int IdxCount, D3D11_USAGE IdxUsage, DXGI_FORMAT Fmt)
+{
+	if (FindMesh(Name))
+		return true;
+
+	if (!CResourceManager::GetInst()->CreateNavMesh(NavMesh, Name, VtxData, Size, Count,
+		Usage, Primitive, IdxData, IdxSize, IdxCount, IdxUsage,
+		Fmt, m_Scene))
+		return false;
+
+	m_mapMesh.insert(std::make_pair(Name, CResourceManager::GetInst()->FindMesh(Name)));
+
+	return true;
+}
+
 bool CSceneResource::LoadMesh(std::string& OutName, Mesh_Type Type, const TCHAR* FileName, const std::string& PathName)
 {
 	if (!CResourceManager::GetInst()->LoadMesh(OutName, Type, FileName, PathName, m_Scene))

@@ -23,6 +23,7 @@
 #include "Component/ColliderRay.h"
 #include "Component/GameDataComponent.h"
 #include "Component/PlayerDataComponent.h"
+#include "Component/NavMeshComponent.h"
 // Window
 #include "Window/ObjectHierarchyWindow.h"
 #include "Window/SceneComponentHierarchyWindow.h"
@@ -342,6 +343,14 @@ CComponent* CEditorManager::CreateComponent(CGameObject* Obj, size_t Type)
 	else if (Type == typeid(CColliderRay).hash_code())
 	{
 		CColliderRay* Component = Obj->LoadComponent<CColliderRay>();
+		// Component->EnableEditMode(true);
+		return Component;
+	}
+
+
+	else if (Type == typeid(CNavMeshComponent).hash_code())
+	{
+		CNavMeshComponent* Component = Obj->LoadComponent<CNavMeshComponent>();
 		// Component->EnableEditMode(true);
 		return Component;
 	}

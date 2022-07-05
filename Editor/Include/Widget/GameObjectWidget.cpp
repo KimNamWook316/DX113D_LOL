@@ -17,6 +17,7 @@
 #include "Component/ColliderSphere.h"
 #include "Component/ColliderHalfLine.h"
 #include "Component/ColliderRay.h"
+#include "Component/NavMeshComponent.h"
 #include "../Widget/StaticMeshComponentWidget.h"
 #include "../Widget/LightComponentWidget.h"
 #include "../Widget/ObjectComponentWidget.h"
@@ -24,6 +25,7 @@
 #include "../Widget/AnimationMeshWidget.h"
 #include "../Window/ObjectHierarchyWindow.h"
 #include "../Widget/LandScapeWidget.h"
+#include "../Widget/NavMeshComponentWidget.h"
 #include "../Widget/ColliderComponentWidget.h"
 #include "../Widget/ColliderSphereWidget.h"
 #include "IMGUIManager.h"
@@ -184,6 +186,10 @@ void CGameObjectWidget::CreateSceneComponentWidget(CSceneComponent* Com)
 	else if (TypeID == typeid(CColliderSphere).hash_code())
 	{
 		Widget = AddWidget<CColliderSphereWidget>("ColliderSphereWidget");
+	}
+	else if (TypeID == typeid(CNavMeshComponent).hash_code())
+	{
+		Widget = AddWidget<CNavMeshComponentWidget>("NavMeshComponentWidget");
 	}
 
 	else

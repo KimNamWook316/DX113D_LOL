@@ -18,6 +18,7 @@
 #include "Component/ColliderRay.h"
 #include "Component/GameDataComponent.h"
 #include "Component/PlayerDataComponent.h"
+#include "Component/NavMeshComponent.h"
 #include "IMGUITree.h"
 #include "Flag.h"
 
@@ -513,6 +514,8 @@ std::string CEditorUtil::SceneComponent3DTypeToString(SceneComponent3DType Type)
 		return "ColliderHalfLine";
 	case SceneComponent3DType::ColliderRay:
 		return "ColliderRay";
+	case SceneComponent3DType::NavMeshComponent:
+		return "NavMeshComponent";
 	}
 
 	return "";
@@ -598,6 +601,8 @@ size_t CEditorUtil::SceneComponentTypeIndexToTypeid(int TypeIndex)
 		return typeid(CColliderHalfLine).hash_code();
 	case 10:
 		return typeid(CColliderRay).hash_code();
+	case 11:
+		return typeid(CNavMeshComponent).hash_code();
 	}
 
 	return -1;

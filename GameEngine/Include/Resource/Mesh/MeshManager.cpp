@@ -3,6 +3,7 @@
 #include "SpriteMesh.h"
 #include "StaticMesh.h"
 #include "AnimationMesh.h"
+#include "NavMesh.h"
 #include "../../PathManager.h"
 
 CMeshManager::CMeshManager()
@@ -237,6 +238,7 @@ bool CMeshManager::Init()
 		&HalfLineIdx[0], sizeof(int), 2,
 		D3D11_USAGE_DEFAULT, DXGI_FORMAT_R32_UINT);
 
+
 	return true;
 }
 
@@ -276,6 +278,31 @@ bool CMeshManager::CreateMesh(Mesh_Type Type, const std::string& Name,
 	}
 
 	m_mapMesh.insert(std::make_pair(Name, Mesh));
+
+	return true;
+}
+
+bool CMeshManager::CreateNavMesh(CNavMesh* NavMesh, const std::string& Name,
+	void* VtxData, int Size, int Count, D3D11_USAGE Usage, D3D11_PRIMITIVE_TOPOLOGY Primitive,
+	void* IdxData, int IdxSize, int IdxCount, D3D11_USAGE IdxUsage, DXGI_FORMAT Fmt, CScene* Scene)
+{
+	CMesh* Mesh = FindMesh(Name);
+
+	if (Mesh)
+		return true;
+
+	NavMesh->SetName(Name);
+	NavMesh->SetScene(Scene);
+
+	if (!NavMesh->CreateMesh(VtxData, Size, Count, Usage,
+		Primitive, IdxData, IdxSize, IdxCount, IdxUsage,
+		Fmt))
+	{
+		SAFE_RELEASE(NavMesh);
+		return false;
+	}
+
+	m_mapMesh.insert(std::make_pair(Name, NavMesh));
 
 	return true;
 }
@@ -393,6 +420,9 @@ bool CMeshManager::LoadMeshFullPathMultibyte(Mesh_Type Type, const std::string& 
 		break;
 	case Mesh_Type::Animation:
 		Mesh = new CAnimationMesh;
+		break;
+	case Mesh_Type::Nav:
+		Mesh = new CNavMesh;
 		break;
 	}
 

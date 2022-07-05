@@ -40,11 +40,15 @@ public:	// =================== Mesh =====================
 		void* VtxData, int Size, int Count, D3D11_USAGE Usage,
 		D3D11_PRIMITIVE_TOPOLOGY Primitive, void* IdxData = nullptr, int IdxSize = 0, int IdxCount = 0,
 		D3D11_USAGE IdxUsage = D3D11_USAGE_DEFAULT, DXGI_FORMAT Fmt = DXGI_FORMAT_UNKNOWN);
+	bool CreateNavMesh(class CNavMesh* NavMesh, const std::string& Name,
+		void* VtxData, int Size, int Count, D3D11_USAGE Usage,
+		D3D11_PRIMITIVE_TOPOLOGY Primitive, void* IdxData = nullptr, int IdxSize = 0, int IdxCount = 0,
+		D3D11_USAGE IdxUsage = D3D11_USAGE_DEFAULT, DXGI_FORMAT Fmt = DXGI_FORMAT_UNKNOWN);
 	bool LoadMesh(std::string& OutName, Mesh_Type Type,const TCHAR* FileName,
 		const std::string& PathName = MESH_PATH);
 	bool LoadMesh(Mesh_Type Type, const std::string& Name, const TCHAR* FileName,
 		const std::string& PathName = MESH_PATH);
-	bool LoadMeshFullPath(std::string& OutName,Mesh_Type Type,
+	bool LoadMeshFullPath(std::string& OutName, Mesh_Type Type,
 		const TCHAR* FullPath);
 	bool LoadMeshFullPath(Mesh_Type Type, const std::string& Name,
 		const TCHAR* FullPath);

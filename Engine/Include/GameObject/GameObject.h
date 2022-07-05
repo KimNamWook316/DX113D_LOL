@@ -104,10 +104,16 @@ protected:
 	std::vector<CSharedPtr<CGameObject>>   m_vecChildObject;
 	float		m_LifeSpan;
 	class CNavAgent* m_NavAgent;
+	Vector3 m_PrevFramePos;
 
 	std::list<CGameObject*> m_AttackTargetList;	// 광역스킬처럼 여러 오브젝트가 맞는 공격을 했을때 맞은 오브젝트들
 
 public:
+	const Vector3& GetPrevFramePos()	const
+	{
+		return m_PrevFramePos;
+	}
+
 	void AddAttackTarget(CGameObject* Target)
 	{
 		m_AttackTargetList.push_back(Target);

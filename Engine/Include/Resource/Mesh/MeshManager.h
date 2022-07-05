@@ -20,6 +20,9 @@ public:
 		D3D11_PRIMITIVE_TOPOLOGY Primitive, void* IdxData = nullptr, int IdxSize = 0, int IdxCount = 0,
 		D3D11_USAGE IdxUsage = D3D11_USAGE_DEFAULT, DXGI_FORMAT Fmt = DXGI_FORMAT_UNKNOWN,
 		class CScene* Scene = nullptr);
+	bool CreateNavMesh(class CNavMesh* NavMesh, const std::string& Name, void* VtxData,
+		int Size, int Count, D3D11_USAGE Usage, D3D11_PRIMITIVE_TOPOLOGY Primitive,
+		void* IdxData, int IdxSize, int IdxCount, D3D11_USAGE IdxUsage, DXGI_FORMAT Fmt, class CScene* Scene = nullptr);
 	bool LoadMesh(Mesh_Type Type, const std::string& Name, const TCHAR* FileName,
 		const std::string& PathName = MESH_PATH, class CScene* Scene = nullptr);
 	bool LoadMesh(std::string& OutName, Mesh_Type Type,const TCHAR* FileName,

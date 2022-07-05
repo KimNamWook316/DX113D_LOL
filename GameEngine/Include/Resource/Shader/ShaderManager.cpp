@@ -166,6 +166,7 @@ bool CShaderManager::Init()
 	if (!CreateShader<CShadowMapInstancingShader>("ShadowMapInstancingShader"))
 		return false;
 
+
  //	if (!CreateShader<COutlineShader>("OutlineShader"))
  //	{
  //		assert(false);
@@ -279,6 +280,7 @@ bool CShaderManager::Init()
 
 	CreateConstantBuffer("FogCBuffer", sizeof(FogCBuffer), 11,
 		(int)Buffer_Shader_Type::Pixel);
+
 
 	return true;
 }

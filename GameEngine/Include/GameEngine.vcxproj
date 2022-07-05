@@ -26,6 +26,7 @@
     <ClCompile Include="Animation\AnimationSequenceInstance.cpp" />
     <ClCompile Include="Component\ColliderHalfLine.cpp" />
     <ClCompile Include="Component\ColliderRay.cpp" />
+    <ClCompile Include="Component\NavMeshComponent.cpp" />
     <ClCompile Include="Component\Node\DecoratorNode.cpp" />
     <ClCompile Include="Component\State\State.cpp" />
     <ClCompile Include="Component\State\StateManager.cpp" />
@@ -148,6 +149,7 @@
     <ClCompile Include="Resource\Mesh\FBXLoader.cpp" />
     <ClCompile Include="Resource\Mesh\Mesh.cpp" />
     <ClCompile Include="Resource\Mesh\MeshManager.cpp" />
+    <ClCompile Include="Resource\Mesh\NavMesh.cpp" />
     <ClCompile Include="Resource\Mesh\SpriteMesh.cpp" />
     <ClCompile Include="Resource\Mesh\StaticMesh.cpp" />
     <ClCompile Include="Resource\Particle\Particle.cpp" />
@@ -258,6 +260,7 @@
     <ClInclude Include="Animation\AnimationSequenceInstance.h" />
     <ClInclude Include="Component\ColliderHalfLine.h" />
     <ClInclude Include="Component\ColliderRay.h" />
+    <ClInclude Include="Component\NavMeshComponent.h" />
     <ClInclude Include="Component\Node\DecoratorNode.h" />
     <ClInclude Include="Component\State\State.h" />
     <ClInclude Include="Component\State\StateManager.h" />
@@ -389,6 +392,7 @@
     <ClInclude Include="Resource\Mesh\fbxsdk.h" />
     <ClInclude Include="Resource\Mesh\Mesh.h" />
     <ClInclude Include="Resource\Mesh\MeshManager.h" />
+    <ClInclude Include="Resource\Mesh\NavMesh.h" />
     <ClInclude Include="Resource\Mesh\SpriteMesh.h" />
     <ClInclude Include="Resource\Mesh\StaticMesh.h" />
     <ClInclude Include="Resource\Particle\Particle.h" />

@@ -20,6 +20,7 @@
 #include "Component/ColliderSphere.h"
 #include "Component/ColliderHalfLine.h"
 #include "Component/ColliderRay.h"
+#include "Component/NavMeshComponent.h"
 #include "Resource/Particle/Particle.h"
 #include "Component/Arm.h"
 #include "Component/LandScape.h"
@@ -142,6 +143,9 @@ void CSceneComponentCreateModal::OnCreateComponent()
 
 	else if (Typeid == typeid(CColliderRay).hash_code())
 		Com = SelectObject->CreateComponentAddChild<CColliderRay>(Name);
+
+	else if (Typeid == typeid(CNavMeshComponent).hash_code())
+		Com = SelectObject->CreateComponentAddChild<CNavMeshComponent>(Name);
 
 	// Window °»½Å
 	CSceneComponentHierarchyWindow* ComponentWindow = (CSceneComponentHierarchyWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(SCENECOMPONENT_HIERARCHY);

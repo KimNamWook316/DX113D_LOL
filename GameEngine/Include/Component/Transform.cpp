@@ -1036,3 +1036,62 @@ void CTransform::DeleteChangeRotCallBack(void* Callee)
 	}
 }
 
+void CTransform::ForceUpdateMat()
+{
+	if (m_Socket)
+	{
+		if (m_UpdateScale)
+		{
+			m_matScale.Scaling(m_RelativeScale);
+		}
+
+		// 축 기준 회전을 적용받는 경우, Rotaton Matrix가 이미 계산되어 있다.
+		if (m_UpdateRot && !m_UpdateRotAxis)
+		{
+			m_matRot.Rotation(m_RelativeRot);
+		}
+
+		if (m_UpdatePos)
+		{
+			m_matPos.Translation(m_RelativePos);
+		}
+
+		if (m_UpdateScale || m_UpdateRot || m_UpdateRotAxis || m_UpdatePos)
+		{
+			m_matWorld = m_matScale * m_matRot * m_matPos;
+		}
+
+		// Local World * Socket ( Socket Local Transform * Bone * Parent World ) = Final World
+		m_matWorld *= m_Socket->GetSocketMatrix();
+	}
+	else
+	{
+		Vector3 WorldPos = m_WorldPos;
+
+		if (CEngine::GetInst()->GetEngineSpace() == Engine_Space::Space2D)
+		{
+			WorldPos.z = WorldPos.y / 30000.f * 1000.f;
+		}
+
+		if (m_UpdateScale)
+		{
+			m_matScale.Scaling(m_WorldScale);
+		}
+
+		if (m_UpdateRot && !m_UpdateRotAxis)
+		{
+			m_matRot.Rotation(m_WorldRot);
+		}
+
+		if (m_UpdatePos)
+		{
+			m_matPos.Translation(m_WorldPos);
+		}
+
+		if (m_UpdateScale || m_UpdateRot || m_UpdateRotAxis || m_UpdatePos)
+		{
+			m_matWorld = m_matScale * m_matRot * m_matPos;
+		}
+	}
+}
+

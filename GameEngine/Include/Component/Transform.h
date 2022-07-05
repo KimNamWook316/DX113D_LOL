@@ -338,6 +338,9 @@ public:
 	void DeleteChangeRotCallBack(void* Callee);
 
 public:
+	void ForceUpdateMat();
+
+public:
 	template <typename T>
 	void AddChangeScaleCallBack(T* Obj, void(T::* Func)(const Vector3&, const Vector3&))
 	{

@@ -722,3 +722,12 @@ struct PlayerData
 	float AttackSpeed;
 	float MagicAttack;
 };
+
+struct NavMeshPolygon
+{
+	std::vector<Vector3>		m_vecVertexPos;
+	std::vector<int>		m_vecAdjIndex;
+	int m_Index;
+	Vector3 m_Min;
+	Vector3 m_Max;
+};

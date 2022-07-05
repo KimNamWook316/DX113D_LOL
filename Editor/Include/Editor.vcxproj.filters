@@ -327,6 +327,12 @@
     <ClCompile Include="Window\SocketWindow.cpp">
       <Filter>02. Editor\01. Window\1. Resource</Filter>
     </ClCompile>
+    <ClCompile Include="Window\AnimationDisplayWindow.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Widget\NavMeshComponentWidget.cpp">
+      <Filter>02. Editor\02. Widget\01. Inspector\01. SceneComponent</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EditorManager.h">
@@ -562,6 +568,12 @@
     </ClInclude>
     <ClInclude Include="Window\SocketWindow.h">
       <Filter>02. Editor\01. Window\1. Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="Window\AnimationDisplayWindow.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Widget\NavMeshComponentWidget.h">
+      <Filter>02. Editor\02. Widget\01. Inspector\01. SceneComponent</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

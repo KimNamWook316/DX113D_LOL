@@ -232,7 +232,8 @@ enum class Mesh_Type
 {
 	Sprite,
 	Static,
-	Animation
+	Animation,
+	Nav
 };
 
 enum class Light_Type
@@ -263,6 +264,7 @@ enum class SceneComponent3DType
 	ColliderSphere,
 	ColliderHalfLine,
 	ColliderRay,
+	NavMeshComponent,
 	Max
 };
 

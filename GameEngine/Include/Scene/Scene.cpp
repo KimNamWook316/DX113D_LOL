@@ -173,6 +173,9 @@ void CScene::PostUpdate(float DeltaTime)
 		}
 
 		(*iter)->PostUpdate(DeltaTime);
+
+		(*iter)->m_PrevFramePos = (*iter)->GetWorldPos();
+
 		++iter;
 	}
 

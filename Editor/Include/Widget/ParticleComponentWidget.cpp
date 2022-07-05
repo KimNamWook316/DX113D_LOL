@@ -155,7 +155,7 @@ void CParticleComponentWidget::SetSceneComponent(CSceneComponent* Com)
     // Material , Particle 세팅
     // OnSetParticleMaterialSetting(m_Component);
 
-    CParticle* ParticleClass = dynamic_cast<CParticleComponent*>(m_Component.Get())->GetParticle();
+    CParticle* ParticleClass = dynamic_cast<CParticleComponent*>(m_Component)->GetParticle();
     if (ParticleClass)
         ParticleLoadSuccessCallback(ParticleClass);
 }
@@ -314,14 +314,14 @@ void CParticleComponentWidget::SetParticleClassToParticleComponent(CParticle* Pa
     if (!Particle)
         return;
 
-    dynamic_cast<CParticleComponent*>(m_Component.Get())->SetParticle(Particle);
+    dynamic_cast<CParticleComponent*>(m_Component)->SetParticle(Particle);
 
     // Name 세팅
     m_LoadedParticleName->ClearText();
     m_LoadedParticleName->SetText(Particle->GetName().c_str());
 
     // FileName 세팅하기 
-    std::string LoadedParticleName = dynamic_cast<CParticleComponent*>(m_Component.Get())->GetParticleName();
+    std::string LoadedParticleName = dynamic_cast<CParticleComponent*>(m_Component)->GetParticleName();
     
     // .prtc 를 붙이기
     if (LoadedParticleName.find(".prtc") == std::string::npos)

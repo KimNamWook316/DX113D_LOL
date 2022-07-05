@@ -229,6 +229,7 @@
     <ClCompile Include="Widget\ColliderComponentWidget.cpp" />
     <ClCompile Include="Widget\ColliderSphereWidget.cpp" />
     <ClCompile Include="Widget\DataMenu.cpp" />
+    <ClCompile Include="Widget\NavMeshComponentWidget.cpp" />
     <ClCompile Include="Widget\ResourceMenu.cpp" />
     <ClCompile Include="Widget\GameObjectWidget.cpp" />
     <ClCompile Include="Widget\LandScapeWidget.cpp" />
@@ -338,6 +339,7 @@
     <ClInclude Include="Widget\GameObjectWidget.h" />
     <ClInclude Include="Widget\LandScapeWidget.h" />
     <ClInclude Include="Widget\LightComponentWidget.h" />
+    <ClInclude Include="Widget\NavMeshComponentWidget.h" />
     <ClInclude Include="Widget\ObjectComponentWidget.h" />
     <ClInclude Include="Widget\ParticleComponentWidget.h" />
     <ClInclude Include="Widget\ResourceMenu.h" />

@@ -334,6 +334,9 @@
     <Filter Include="99. Util">
       <UniqueIdentifier>{106780f3-12e2-4456-b494-609eecd667b1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="05. Component\01. SceneComponent\12. NavMeshComp">
+      <UniqueIdentifier>{f994b0f7-7290-48a9-8211-a49fa7f53082}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Device.cpp">
@@ -998,6 +1001,42 @@
     </ClCompile>
     <ClCompile Include="Component\ColliderRay.cpp">
       <Filter>05. Component\01. SceneComponent\02. Collider</Filter>
+    </ClCompile>
+    <ClCompile Include="Render\PostFXRenderer.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Shader\BloomShader.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Shader\BlurHorizontalShader.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Shader\BlurVerticalShader.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Shader\DownScaleCBuffer.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Shader\FogCBuffer.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Shader\HDRDownScaleFirstPassShader.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Shader\HDRDownScaleSecondPassShader.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Shader\HDRRenderCBuffer.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Shader\HDRRenderShader.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\NavMeshComponent.cpp">
+      <Filter>05. Component\01. SceneComponent\12. NavMeshComp</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Mesh\NavMesh.cpp">
+      <Filter>02. Resource\01. Mesh</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1703,6 +1742,42 @@
     <ClInclude Include="Component\ColliderRay.h">
       <Filter>05. Component\01. SceneComponent\02. Collider</Filter>
     </ClInclude>
+    <ClInclude Include="Render\PostFXRenderer.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Shader\BloomShader.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Shader\BlurHorizontalShader.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Shader\BlurVerticalShader.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Shader\DownScaleCBuffer.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Shader\FogCBuffer.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Shader\HDRDownScaleFirstPassShader.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Shader\HDRDownScaleSecondPassShader.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Shader\HDRRenderCBuffer.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Shader\HDRRenderShader.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\NavMeshComponent.h">
+      <Filter>05. Component\01. SceneComponent\12. NavMeshComp</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Mesh\NavMesh.h">
+      <Filter>02. Resource\01. Mesh</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\Shader\ColorMesh.fx">
@@ -1759,6 +1834,11 @@
     <FxCompile Include="..\Bin\Shader\Gray.fx">
       <Filter>02. Resource\02. Shader\01. HLSL</Filter>
     </FxCompile>
+    <FxCompile Include="..\Bin\Shader\Bloom.fx" />
+    <FxCompile Include="..\Bin\Shader\Blur.fx" />
+    <FxCompile Include="..\Bin\Shader\HDRDownScale.fx" />
+    <FxCompile Include="..\Bin\Shader\HDRDownScaleSecond.fx" />
+    <FxCompile Include="..\Bin\Shader\HDRRender.fx" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resource\Texture\DirectXTex.inl">
