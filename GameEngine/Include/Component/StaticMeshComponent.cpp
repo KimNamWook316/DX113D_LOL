@@ -680,7 +680,7 @@ bool CStaticMeshComponent::Save(FILE* File)
 	char MeshPath[MAX_PATH] = {};
 	strcpy_s(MeshPath, m_Mesh->GetFullPath());
 
-	Length = strlen(MeshPath);
+	Length = (int)strlen(MeshPath);
 
 	FullPathExist = Length > 0 ? true : false;
 	fwrite(&FullPathExist, sizeof(bool), 1, File);

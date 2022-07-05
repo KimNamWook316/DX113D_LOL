@@ -1059,6 +1059,12 @@
     <ClCompile Include="Resource\Shader\GlobalLightCBuffer.cpp">
       <Filter>02. Resource\02. Shader\03. ConstantBuffer\12. Light</Filter>
     </ClCompile>
+    <ClCompile Include="Component\NavMeshComponent.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Mesh\NavMesh.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Device.h">
@@ -1801,6 +1807,12 @@
     </ClInclude>
     <ClInclude Include="Resource\Shader\GlobalLightCBuffer.h">
       <Filter>02. Resource\02. Shader\03. ConstantBuffer\12. Light</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\NavMeshComponent.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Mesh\NavMesh.h">
+      <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

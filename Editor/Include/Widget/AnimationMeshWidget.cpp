@@ -489,7 +489,10 @@ void CAnimationMeshWidget::SetAnimationRelatedInfoToWidget(CAnimationSequenceIns
 		return;
 
 	// Current Animation Key Name 을 Sequenc eKey Text 에 세팅
-	m_CurrentAnimSequence->SetText(m_Animation->GetCurrentAnimationKeyName().c_str());
+	if (m_Animation->GetCurrentAnimationKeyName().has_value())
+	{
+		m_CurrentAnimSequence->SetText(m_Animation->GetCurrentAnimationKeyName().value().c_str());
+	}
 
 	// Table 정보 세팅
 	OnRefreshAnimationInfo();

@@ -576,7 +576,7 @@ void CRenderManager::Render(float DeltaTime)
 
 					if ((*iter)->InstancingList.size() > Layer->m_vecInstancing[Layer->InstancingIndex]->BufferCount)
 					{
-						int	Count = (int)Layer->m_vecInstancing[Layer->InstancingIndex]->BufferCount * 1.5f;
+						int	Count = (int)(Layer->m_vecInstancing[Layer->InstancingIndex]->BufferCount * 1.5f);
 
 						if ((*iter)->InstancingList.size() > Count)
 							Count = (int)(*iter)->InstancingList.size();
@@ -1226,8 +1226,8 @@ void CRenderManager::RenderParticleEffectEditor()
 	// 뷰포트 Shadowmap Textre와 일치하도록
 	D3D11_VIEWPORT VP = {};
 
-	VP.Width  = m_ParticleEffectEditorRenderTarget->GetWidth();
-	VP.Height = m_ParticleEffectEditorRenderTarget->GetHeight();
+	VP.Width  = (float)m_ParticleEffectEditorRenderTarget->GetWidth();
+	VP.Height = (float)m_ParticleEffectEditorRenderTarget->GetHeight();
 	VP.MaxDepth = 1.f;
 
 	// 원래 View Port 크기 
@@ -1302,7 +1302,7 @@ int CRenderManager::GetRenderLayerIndex(const std::string& TargetName)
 	for (size_t j = 0; j < m_RenderLayerList.size(); ++j)
 	{
 		if (m_RenderLayerList[j]->Name == TargetName)
-			return j;
+			return (int)j;
 	}
 
 	return -1;

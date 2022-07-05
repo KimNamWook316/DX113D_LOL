@@ -349,7 +349,7 @@ bool CEditorUtil::ChangeFileOrDirectoryName(const std::string& OriginFullPath, c
 
 
 
-const char* CEditorUtil::ChangeTCHARTextToMultibyte(TCHAR* TCHARText)
+char* CEditorUtil::ChangeTCHARTextToMultibyte(TCHAR* TCHARText)
 {
 	char FilePathMultibyte[MAX_PATH] = {};
 
@@ -360,7 +360,7 @@ const char* CEditorUtil::ChangeTCHARTextToMultibyte(TCHAR* TCHARText)
 }
 
 // void CEditorUtil::ChangeMultibyteTextToTCHAR(const std::string& MText, std::wstring& TCHARTextResult)
-const TCHAR* CEditorUtil::ChangeMultibyteTextToTCHAR(const std::string& MText)
+TCHAR* CEditorUtil::ChangeMultibyteTextToTCHAR(const std::string& MText)
 {
 	TCHAR TCHARTextResult[MAX_PATH] = {};
 

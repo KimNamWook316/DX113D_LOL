@@ -466,7 +466,7 @@ bool CAnimationSequence::LoadFullPathMultibyte(const char* pFullPath)
 	m_KeyFrameBuffer = new CStructuredBuffer;
 
 	m_KeyFrameBuffer->Init("KeyFrameBuffer", sizeof(AnimationFrameTrans),
-		m_vecFrameTrans.size(), 13, true, (int)Buffer_Shader_Type::Compute);
+		(unsigned int)m_vecFrameTrans.size(), 13, true, (int)Buffer_Shader_Type::Compute);
 
 	m_KeyFrameBuffer->UpdateBuffer(&m_vecFrameTrans[0],
 		(unsigned int)m_vecFrameTrans.size());
@@ -476,7 +476,7 @@ bool CAnimationSequence::LoadFullPathMultibyte(const char* pFullPath)
 	return true;
 }
 
-const char* CAnimationSequence::GetSequenceFileNameMultibyte()
+char* CAnimationSequence::GetSequenceFileNameMultibyte()
 {
 	char	Ext[_MAX_EXT] = {};
 	char FileName[MAX_PATH] = {};
