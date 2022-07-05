@@ -339,6 +339,9 @@
     <ClCompile Include="Widget\ShaderWidget.cpp">
       <Filter>02. Editor\02. Widget\01. Inspector\03. Shader</Filter>
     </ClCompile>
+    <ClCompile Include="Widget\NavMeshComponentWidget.cpp">
+      <Filter>02. Editor\02. Widget\01. Inspector\01. SceneComponent</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EditorManager.h">
@@ -583,6 +586,9 @@
     </ClInclude>
     <ClInclude Include="Widget\ShaderWidget.h">
       <Filter>02. Editor\02. Widget\01. Inspector\03. Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="Widget\NavMeshComponentWidget.h">
+      <Filter>02. Editor\02. Widget\01. Inspector\01. SceneComponent</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

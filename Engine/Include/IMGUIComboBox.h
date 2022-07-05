@@ -105,7 +105,6 @@ public:
 	{
 		m_vecItem.clear();
 		m_vecItemUTF8.clear();
-		m_PrevViewName = "";
 	}
 
 	bool Empty()

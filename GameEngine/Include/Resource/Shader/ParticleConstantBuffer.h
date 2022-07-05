@@ -201,7 +201,8 @@ public:
 	{
 		m_BufferData.UVRowN = Row;
 	}
-	int SetUVColN(int Col) 
+
+	void SetUVColN(int Col) 
 	{
 		m_BufferData.UVColN = Col;
 	}

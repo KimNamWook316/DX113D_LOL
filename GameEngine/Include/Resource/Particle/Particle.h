@@ -300,7 +300,7 @@ public:
 	{
 		m_CBuffer->SetUVRowN(Row);
 	}
-	int SetUVColN(int Col)
+	void SetUVColN(int Col)
 	{
 		m_CBuffer->SetUVColN(Col);
 	}

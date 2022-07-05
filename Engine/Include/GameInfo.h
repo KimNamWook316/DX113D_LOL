@@ -736,7 +736,6 @@ struct PlayerData
 	float AttackSpeed;
 	float MagicAttack;
 };
-
 struct ShaderParams
 {
 	size_t				Type;
