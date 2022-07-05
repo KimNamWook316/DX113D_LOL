@@ -40,7 +40,8 @@ public:
 
 public:
     virtual bool Init() = 0;
-    virtual void SetShader();
+    void SetShader();
+    virtual void SetShaderParams(const ShaderParams& Params);
     virtual CGraphicShader* Clone();
 
 public:

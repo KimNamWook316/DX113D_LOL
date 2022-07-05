@@ -41,6 +41,7 @@ struct MaterialSaveLoadStruct
     bool OutlineEnable;
     float OutlineThickness;
     Vector3 OutlineColor;
+    ShaderParams ShaderParams;
 };
 
 struct MaterialTextureInfo
@@ -109,6 +110,7 @@ protected:
 	bool        m_OutlineEnable;
 	float       m_OutlineThickness;
 	Vector3     m_OutlineColor;
+    ShaderParams m_ShaderParams;
     CMaterialConstantBuffer* m_CBuffer;
     CSharedPtr<class CRenderState>  m_RenderStateArray[(int)RenderState_Type::Max];
     std::list<RenderCallback*>    m_RenderCallback;
@@ -121,6 +123,7 @@ public:
     {
         return m_Shader;
     }
+
     CMaterialConstantBuffer* GetCBuffer()   const
     {
         return m_CBuffer;
@@ -135,6 +138,7 @@ public:
     {
         return m_RenderStateArray;
     }
+
 private:
     void SetConstantBuffer(class CMaterialConstantBuffer* Buffer)
     {
@@ -213,23 +217,35 @@ public:
     {
         return m_TextureInfo.empty();
     }
+
+    const ShaderParams& GetShaderParams() const
+    {
+        return m_ShaderParams;
+    }
+
 public :
     void SetOutLineEnable(bool Enable)
     {
         m_OutlineEnable = Enable;
     }
+
     void SetOutLineThickNess(float ThickNess)
     {
         m_OutlineThickness = ThickNess;
     }
+
     void SetOutLineColor(const Vector3& Color)
     {
         m_OutlineColor = Color;
     }
+
     void SetOutLineColor(float r, float g, float b)
     {
         m_OutlineColor = Vector3(r,g,b);
     }
+
+    void SetShaderParams(const ShaderParams& Params);
+
 public :
     void EnableBump();
     void EnableAnimation3D();
@@ -243,6 +259,7 @@ public:
     void SetTransparency(bool Enable);
     void SetOpacity(float Opacity);
     void AddOpacity(float Opacity);
+
 public:
     void SetBaseColor(const Vector4& Color);
     void SetBaseColor(float r, float g, float b, float a);
@@ -271,9 +288,11 @@ public:
     void SetTexture(int Index, int Register, int ShaderType, const std::string& Name, const std::vector<TCHAR*>& vecFileName, const std::string& PathName = TEXTURE_PATH);
     void SetTextureArrayFullPath(int Index, int Register, int ShaderType, const std::string& Name, const std::vector<TCHAR*>& vecFullPath);
     void SetTextureArray(int Index, int Register, int ShaderType, const std::string& Name, const std::vector<TCHAR*>& vecFileName, const std::string& PathName = TEXTURE_PATH);
+
 public :
     // Texture  정보만 세팅하는 코드
     void SetTextureInfoResource(int Index, class CTexture* Texture);
+
 public:
     void SetPaperBurn(bool Enable);
     bool CheckMaterial(CMaterial* Material);
@@ -289,9 +308,14 @@ public:
     bool Load(FILE* File);
     bool SaveMaterial(FILE* File);
     bool LoadMaterial(FILE* File);
-public  :
+
+public:
     bool SaveFullPath(const char* FullPath);
     bool LoadFullPath(const char* FullPath);
+
+private:
+    void UpdateShaderParams();
+
 public:
     template <typename T>
     void AddRenderCallback(T* Obj, void(T::* Func)())

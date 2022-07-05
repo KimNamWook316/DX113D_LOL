@@ -16,6 +16,9 @@ private:
 	CSharedPtr<class CGameObject>	m_GlobalLight;
 	CSharedPtr<CLightComponent>	m_GlobalLightComponent;
 
+	// Ambient 강도 등 전역 조명 값 상수버퍼
+	class CGlobalLightCBuffer* m_GlobalLightCBuffer;
+
 private:
 	std::list<CSharedPtr<CLightComponent>>	m_LightList;
 
@@ -35,6 +38,9 @@ public:
 	{
 		return m_GlobalLightComponent;
 	}
+
+	void SetGlogbalLightAmbientIntensity(float Intensity);
+	float GetGlobalLightAmbiendIntensity() const;
 
 public:
 	void AddLight(CLightComponent* Light);

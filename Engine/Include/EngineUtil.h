@@ -12,6 +12,9 @@ public:
 	static std::string FogTypeToString(Fog_Type Type);
 	static Fog_Type StringToFogType(const std::string& TypeString);
 
+	static std::string ToonShaderTypeToString(ToonShaderType Type);
+	static ToonShaderType StringToToonShaderType(const std::string& TypeString);
+
 	// String Related
 	// 해당 Dir 경로에, 해당 Name 으로 된 파일이 존재하는지 판단해주는 함수 + 존재할 시 FullPath 경로 리턴
 	static std::optional<std::string> CheckAndExtractFullPathOfTargetFile(std::string_view Path, std::string_view FileName);

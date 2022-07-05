@@ -74,6 +74,48 @@ Fog_Type CEngineUtil::StringToFogType(const std::string& TypeString)
 	return (Fog_Type)(-1);
 }
 
+std::string CEngineUtil::ToonShaderTypeToString(ToonShaderType Type)
+{
+	std::string ret = "";
+	switch (Type)
+	{
+	case ToonShaderType::Default:
+		ret = "Default";
+		break;
+	case ToonShaderType::Easy:
+		ret = "Easy";
+		break;
+	case ToonShaderType::Light:
+		ret = "Light";
+		break;
+	case ToonShaderType::Warm:
+		ret = "Warm";
+		break;
+	}
+	return ret;
+}
+
+ToonShaderType CEngineUtil::StringToToonShaderType(const std::string& TypeString)
+{
+	if (TypeString == "Default")
+	{
+		return ToonShaderType::Default;
+	}
+	else if (TypeString == "Easy")
+	{
+		return ToonShaderType::Easy;
+	}
+	else if (TypeString == "Light")
+	{
+		return ToonShaderType::Light;
+	}
+	else if (TypeString == "Warm")
+	{
+		return ToonShaderType::Warm;
+	}
+	return (ToonShaderType)(-1);
+}
+
 std::optional<std::string> CEngineUtil::CheckAndExtractFullPathOfTargetFile(std::string_view PathName, std::string_view TargetFileName)
 {
 	const PathInfo* Info = CPathManager::GetInst()->FindPath(PathName.data());

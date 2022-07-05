@@ -502,6 +502,9 @@ bool CRenderManager::Init()
 	m_PostFXRenderer = new CPostFXRenderer;
 	m_PostFXRenderer->Init();
 
+	// Toon Texture
+	m_ToonRampTex = CResourceManager::GetInst()->FindTexture("ToonRampTex");
+
 	return true;
 }
 
@@ -768,11 +771,11 @@ void CRenderManager::RenderSkyBox()
 	CSharedPtr<CGameObject> SkyObj = CSceneManager::GetInst()->GetScene()->GetSkyObject();
 
 	m_FinalTarget->ClearTarget();
- 	m_FinalTarget->SetTarget(nullptr);
+ 	// m_FinalTarget->SetTarget(nullptr);
 
 	SkyObj->Render();
 
-	m_FinalTarget->ResetTarget();
+	// m_FinalTarget->ResetTarget();
 }
 
 void CRenderManager::RenderShadowMap()
@@ -983,11 +986,14 @@ void CRenderManager::RenderLightAcc()
 
 	m_DepthDisable->SetState();
 
+	// Toon Ramp Texture Bind
+	m_ToonRampTex->SetShader(4, (int)Buffer_Shader_Type::Pixel, 0);
 
 	m_vecGBuffer[0]->SetTargetShader(14);
 	m_vecGBuffer[1]->SetTargetShader(15);
 	m_vecGBuffer[2]->SetTargetShader(16);
 	m_vecGBuffer[3]->SetTargetShader(17);
+	m_vecGBuffer[4]->SetTargetShader(18);
 
 	CSceneManager::GetInst()->GetScene()->GetLightManager()->Render();
 
@@ -995,6 +1001,9 @@ void CRenderManager::RenderLightAcc()
 	m_vecGBuffer[1]->ResetTargetShader(15);
 	m_vecGBuffer[2]->ResetTargetShader(16);
 	m_vecGBuffer[3]->ResetTargetShader(17);
+	m_vecGBuffer[4]->ResetTargetShader(18);
+
+	m_ToonRampTex->ResetShader(4, (int)Buffer_Shader_Type::Pixel, 0);
 
 	m_DepthDisable->ResetState();
 

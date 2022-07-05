@@ -1,4 +1,5 @@
 // IMGUI Widget
+#include "ToonShaderWidget.h"
 #include "IMGUITextInput.h"
 #include "IMGUIInputFloat.h"
 #include "IMGUIInputInt.h"
@@ -43,6 +44,8 @@
 #include "../Window/ResourceDisplayWindow.h"
 // C++ 17
 #include <filesystem>
+// Shader
+#include "Resource/Shader/ToonShader.h"
 
 CAnimationMeshWidget::CAnimationMeshWidget()
 {
@@ -70,6 +73,8 @@ bool CAnimationMeshWidget::Init()
 	m_AnimInfoTable = m_RootTree->AddWidget<CIMGUITableElemList>("TestTable", 200.f, 150.f);
 
 	m_MaterialSlotCombo = m_RootTree->AddWidget<CIMGUIComboBox>("Material Slot", 200.f);
+	m_ShaderName = m_RootTree->AddWidget<CIMGUITextInput>("Shader", 200.f);
+	m_ShaderWidgetTree = m_RootTree->AddWidget<CIMGUITree>("Shader Params", 200.f);
 	m_BaseColorEdit = m_RootTree->AddWidget<CIMGUIColor3>("BaseColor", 200.f);
 	m_AmbientColorEdit = m_RootTree->AddWidget<CIMGUIColor3>("Ambient", 200.f);
 	m_SpecularColorEdit = m_RootTree->AddWidget<CIMGUIColor3>("Specluar", 200.f);
@@ -90,6 +95,7 @@ bool CAnimationMeshWidget::Init()
 	m_OutlineThickness->SetMin(0.1f);
 	m_OutlineThickness->SetMax(20.f);
 	m_OutlineEnable->AddCheckInfo("Outline Enable");
+	m_ShaderName->ReadOnly(true);
 
 	// CallBack
 	m_MaterialSlotCombo->SetSelectCallback(this, &CAnimationMeshWidget::OnSelectMaterialSlotCombo);
@@ -104,6 +110,7 @@ bool CAnimationMeshWidget::Init()
 	m_OutlineEnable->SetCallBackIdx(this, &CAnimationMeshWidget::OnCheckOutlineEnable);
 	m_OutlineThickness->SetCallBack(this, &CAnimationMeshWidget::OnEditOutlineThickness);
 	m_OutlineColor->SetCallBack(this, &CAnimationMeshWidget::OnChangeOutlineColor);
+	m_ShaderName->SetDropCallBack(this, &CAnimationMeshWidget::OnDropShaderName);
 
 
     // CIMGUISameLine* Line = m_RootTree->AddWidget<CIMGUISameLine>("Line");
@@ -157,6 +164,10 @@ void CAnimationMeshWidget::OnSelectMaterialSlotCombo(int Idx, const char* Label)
 	if (MeshCom->GetMesh())
 	{
 		CMaterial* Mat = MeshCom->GetMaterial(Idx);
+		std::string ShaderName = Mat->GetShader()->GetName();
+		m_ShaderName->SetText(ShaderName.c_str());
+
+		MakeShaderWidget(Mat, ShaderName);
 
 		m_BaseColorEdit->SetRGB(Mat->GetBaseColor().x, Mat->GetBaseColor().y, Mat->GetBaseColor().z);
 		m_AmbientColorEdit->SetRGB(Mat->GetAmbientColor().x, Mat->GetAmbientColor().y, Mat->GetAmbientColor().z);
@@ -445,6 +456,27 @@ void CAnimationMeshWidget::OnRefreshAnimationInfo()
 	
 }
 
+void CAnimationMeshWidget::OnDropShaderName(const std::string& Name)
+{
+	int Index = m_MaterialSlotCombo->GetSelectIndex();
+
+	if (Index == -1)
+	{
+		return;
+	}
+
+	CMaterial* Mat = static_cast<CAnimationMeshComponent*>(m_Component)->GetMaterial(Index);
+	CShader* Shader = CSceneManager::GetInst()->GetScene()->GetResource()->FindShader(Name);
+
+	if (!Shader || Shader->GetShaderType() != Shader_Type::Graphic)
+	{
+		return;
+	}
+
+	Mat->SetShader((CGraphicShader*)Shader);
+	m_ShaderName->SetText(Name.c_str());
+}
+
 void CAnimationMeshWidget::SetAnimationRelatedInfoToWidget(CAnimationSequenceInstance* AnimationInstance)
 {
 	if (!AnimationInstance)
@@ -608,4 +640,26 @@ void CAnimationMeshWidget::RefreshMeshWidget(CMesh* Mesh)
 		}
 	}
 
+}
+
+bool CAnimationMeshWidget::MakeShaderWidget(class CMaterial* Mat, const std::string& ShaderName)
+{
+	SAFE_DELETE(m_ShaderWidget);
+
+	CShader* Shader = CResourceManager::GetInst()->FindShader(ShaderName);
+	size_t TypeID = Shader->GetTypeID();
+
+	if (TypeID == typeid(CToonShader).hash_code())
+	{
+		m_ShaderWidget = m_ShaderWidgetTree->AddWidget<CToonShaderWidget>("ToonShaderWidget", 200.f, 200.f);
+	}
+	else
+	{
+		return false;
+	}
+
+	ShaderParams MatShaderParams = Mat->GetShaderParams();
+	m_ShaderWidget->SetShaderParams(MatShaderParams);
+	m_ShaderWidget->SetMaterial(Mat);
+	return true;
 }

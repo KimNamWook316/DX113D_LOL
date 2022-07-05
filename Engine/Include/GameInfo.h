@@ -736,3 +736,21 @@ struct PlayerData
 	float AttackSpeed;
 	float MagicAttack;
 };
+
+struct ShaderParams
+{
+	size_t				Type;
+	ToonShaderType		ToonType;
+};
+
+struct ToonCBuffer
+{
+	int Type;
+	Vector3 Empty;
+};
+
+struct GlobalLightCBuffer
+{
+	float AmbientIntensity;
+	Vector3 Empty;
+};

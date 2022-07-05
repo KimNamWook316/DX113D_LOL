@@ -28,14 +28,19 @@ private:
     void OnCheckOutlineEnable(int Idx, bool Enable);
     void OnEditOutlineThickness(float Val);
     void OnChangeOutlineColor(const Vector3& Color);
+    void OnDropShaderName(const std::string& Name);
 
 private:
     void RefreshMeshWidget(class CMesh* Mesh);
+    bool MakeShaderWidget(class CMaterial* Mat, const std::string& ShaderName);
 
 private:
+    class CIMGUITree* m_ShaderWidgetTree;
+    class CShaderWidget* m_ShaderWidget;
     class CIMGUITextInput* m_MeshName;
     class CIMGUIButton* m_LoadMeshButton;
     class CIMGUIComboBox* m_MaterialSlotCombo;
+    class CIMGUITextInput* m_ShaderName;
     class CIMGUIColor3* m_BaseColorEdit;
     class CIMGUIColor3* m_AmbientColorEdit;
     class CIMGUIColor3* m_SpecularColorEdit;

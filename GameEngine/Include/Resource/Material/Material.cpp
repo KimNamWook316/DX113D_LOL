@@ -26,7 +26,8 @@ CMaterial::CMaterial() :
 	m_RenderStateArray{},
 	m_OutlineEnable(false),
 	m_OutlineThickness(1.f),
-	m_OutlineColor(Vector3(0.f, 0.f, 0.f))
+	m_OutlineColor(Vector3(0.f, 0.f, 0.f)),
+	m_ShaderParams{}
 {
 	SetTypeID<CMaterial>();
 }
@@ -797,7 +798,8 @@ bool CMaterial::CheckMaterial(CMaterial* Material)
 
 void CMaterial::SetShader(const std::string& Name)
 {
-	m_Shader = (CGraphicShader*)CResourceManager::GetInst()->FindShader(Name);
+	CGraphicShader* Shader = (CGraphicShader*)CResourceManager::GetInst()->FindShader(Name);
+	SetShader(Shader);
 }
 
 void CMaterial::SetShader(CGraphicShader* Shader)
@@ -806,12 +808,17 @@ void CMaterial::SetShader(CGraphicShader* Shader)
 		return;
 
 	m_Shader = Shader;
+
+	UpdateShaderParams();
 }
 
 void CMaterial::Render()
 {
 	if (m_Shader)
+	{
 		m_Shader->SetShader();
+		m_Shader->SetShaderParams(m_ShaderParams);
+	}
 
 	if (m_CBuffer)
 	{
@@ -968,6 +975,9 @@ bool CMaterial::Save(FILE* File)
 	fwrite(&m_OutlineEnable, sizeof(bool), 1, File);
 	fwrite(&m_OutlineThickness, sizeof(float), 1, File);
 	fwrite(&m_OutlineColor, sizeof(Vector3), 1, File);
+
+	// Shader Parameter ¿˙¿Â
+	fwrite(&m_ShaderParams, sizeof(ShaderParams), 1, File);
 
 	return true;
 }
@@ -1145,7 +1155,7 @@ bool CMaterial::Load(FILE* File)
 	fread(&m_OutlineEnable, sizeof(bool), 1, File);
 	fread(&m_OutlineThickness, sizeof(float), 1, File);
 	fread(&m_OutlineColor, sizeof(Vector3), 1, File);
-
+	fread(&m_ShaderParams, sizeof(ShaderParams), 1, File);
 
 	return true;
 }
@@ -1199,6 +1209,7 @@ bool CMaterial::SaveMaterial(FILE* File)
 	SaveStruct.OutlineThickness = m_OutlineThickness;
 	// fwrite(&m_OutlineColor, sizeof(Vector3), 1, File);
 	SaveStruct.OutlineColor = m_OutlineColor;
+	SaveStruct.ShaderParams = m_ShaderParams;
 
 	for (int i = 0; i < (int)RenderState_Type::Max; ++i)
 	{
@@ -1250,6 +1261,8 @@ bool CMaterial::SaveMaterial(FILE* File)
 		m_TextureInfo[i].Texture->Save(File);
 	}
 
+	fwrite(&SaveStruct.ShaderParams, sizeof(ShaderParams), 1, File);
+
 	return true;
 }
 
@@ -1278,6 +1291,7 @@ bool CMaterial::LoadMaterial(FILE* File)
 	m_SpecularTex = SaveStruct.SpecularTex;
 	m_EmissiveTex = SaveStruct.EmissiveTex;
 	m_Bump = SaveStruct.Bump;
+	m_ShaderParams = SaveStruct.ShaderParams;
 
 	m_CBuffer->SetAnimation3D(m_Animation3D);
 	m_CBuffer->SetBump(m_Bump);
@@ -1444,5 +1458,15 @@ bool CMaterial::LoadFullPath(const char* FullPath)
 	fclose(File);
 
 	return Result;
+}
+
+void CMaterial::UpdateShaderParams()
+{
+	m_ShaderParams.Type = m_Shader->GetTypeID();
+}
+
+void CMaterial::SetShaderParams(const ShaderParams& Params)
+{
+	m_ShaderParams = Params;
 }
 
