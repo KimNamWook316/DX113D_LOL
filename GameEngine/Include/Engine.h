@@ -20,7 +20,7 @@ private:
 	float			m_GlobalAccTime;
 	CSharedPtr<class CTexture>	m_GlobalNoiseTexture;
 	class CStructuredBuffer* m_RandomBuffer;
-	bool					m_EditMode;
+	bool					m_EditMode; // true -> 
 
 	bool		m_Start;
 	bool		m_Play;

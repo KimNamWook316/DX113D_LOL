@@ -30,6 +30,16 @@ public:
 	{
 		return m_BufferData.StartMax;
 	}
+	// Seperate Rot Angle
+	const Vector3& GetMinSeperateRotAngle() const
+	{
+		return m_BufferData.MinSeperateRotAngle;
+	}
+	const Vector3& GetMaxSeperateRotAngle() const
+	{
+		return m_BufferData.MaxSeperateRotAngle;
+	}
+
 	// UV Move
 	int GetUVMoveEnable() const
 	{
@@ -197,14 +207,22 @@ public:
 	{
 		m_BufferData.UVMoveEnable = Enable ? 1: 0;
 	}
-	void SetUVRowN(int Row)
+	void SetUVRowN(int Row) 
 	{
 		m_BufferData.UVRowN = Row;
 	}
-
-	void SetUVColN(int Col) 
+	void SetUVColN(int Col)
 	{
 		m_BufferData.UVColN = Col;
+	}
+	// Seperate Rot Angle Min, Max
+	void SetMinSeperateRotAngle(const Vector3& Angle)
+	{
+		m_BufferData.MinSeperateRotAngle = Angle;
+	}
+	void SetMaxSeperateRotAngle(const Vector3& Angle)
+	{
+		m_BufferData.MaxSeperateRotAngle = Angle;
 	}
 
 	// Life Time Linear
