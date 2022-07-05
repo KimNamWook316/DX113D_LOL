@@ -30,6 +30,8 @@ private:
 	CLightManager* m_LightManager;
 	CSharedPtr<CGameObject> m_SkyObject;
 
+	SceneSaveGlobalData m_SceneGlobalData;
+
 	std::list<CSharedPtr<CGameObject>>	m_ObjList;
 	bool		m_Start;
 	bool		m_Change;
@@ -118,6 +120,11 @@ public:
 		return m_Mode->GetPlayerObject();
 	}
 
+	const SceneSaveGlobalData& GetSceneSaveGlobalData() const
+	{
+		return m_SceneGlobalData;
+	}
+
 	bool IsPlay() const
 	{
 		return m_Play;
@@ -164,9 +171,14 @@ public:
 	bool Load(const char* FileName, const std::string& PathName = SCENE_PATH);
 	bool LoadFullPath(const char* FullPath);
 
+private:
+	bool SaveSceneGlobalDataCSV(const char* FileName);
+	bool LoadSceneGlobalDataCSV(const char* FileName);
+
 public:
 	bool Picking(CGameObject*& Result);
 	bool CheckSameName(const std::string& Name);
+	void UpdateSceneGlobalData();
 
 public:
 	void GetAllObjectsPointer(std::vector<CGameObject*>& vecOutObj);

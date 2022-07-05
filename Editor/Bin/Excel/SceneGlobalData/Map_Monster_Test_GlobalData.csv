@@ -1,0 +1,3 @@
+Map_Monster_Test_GlobalData
+,AdaptationTime,MiddleGray,LumWhite,BloomThreshold,BloomScale,DOFMax,DOFMin,FogType,FogColorR,FogColorG,FogColorB,FogStart,FogEnd,FogDensity,GlobalLightRotX,GlobalLightRotY,GlobalLightRotZ,GlobalLightColorR,GlobalLightColorG,GlobalLightColorB,AmbientIntensity
+Data,3.000000,1.000000,1.100000,3.000000,10.000000,139.399994,13.500000,0.000000,0.000000,0.000000,0.458824,81.400002,314.000000,1.000000,45.000000,90.000000,0.000000,1.000000,1.000000,1.000000,1.000000

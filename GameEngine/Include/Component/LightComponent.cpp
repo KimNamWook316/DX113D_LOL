@@ -159,8 +159,8 @@ bool CLightComponent::Load(FILE* File)
 	m_CBuffer->SetAngleIn(AngleIn);
 	m_CBuffer->SetAngleOut(AngleOut);
 	m_CBuffer->SetAtt1(Att1);
-	m_CBuffer->SetAtt1(Att2);
-	m_CBuffer->SetAtt1(Att3);
+	m_CBuffer->SetAtt2(Att2);
+	m_CBuffer->SetAtt3(Att3);
 
 	return true;
 }

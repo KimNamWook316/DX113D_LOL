@@ -3,7 +3,7 @@
 cbuffer HDRRenderCBuffer : register(b10)
 {
 	float g_HDRMiddleGray;
-	float g_HDRLumWhiteSqr;
+	float g_HDRLumWhite;
 	float g_HDRBloomScale;
 	float g_HDRDOFMin;
 	float g_HDRDOFMax;
@@ -72,11 +72,11 @@ float3 DepthDOF(float3 ColorFocus, float3 ColorBlurred, float Depth)
 float3 ToneMapping(float3 HDRColor)
 {
  //	// 현재 픽셀에 대한 휘도 스케일 계산
- //	float LScale = dot(float4(HDRColor, 0.f), LUM_FACTOR);
- //	LScale *= g_HDRMiddleGray / g_AvgLum[0];
- //	LScale = (LScale + ((LScale * LScale) / g_HDRLumWhiteSqr)) / (1.0 + LScale);
-	float LScale = dot(float4(HDRColor, 0.f), LUM_FACTOR) / (9.6f * g_AvgLum[0]);
-	LScale = (LScale * (1.f + (LScale / g_HDRLumWhiteSqr))) / (1.f + LScale);
+	float LScale = dot(float4(HDRColor, 0.f), LUM_FACTOR);
+	LScale *= g_HDRMiddleGray / g_AvgLum[0];
+	LScale = (LScale + ((LScale * LScale) / (g_HDRLumWhite * g_HDRLumWhite))) / (1.0 + LScale);
+ //	float LScale = dot(float4(HDRColor, 0.f), LUM_FACTOR) / (9.6f * g_AvgLum[0]);
+ //	LScale = (LScale * (1.f + (LScale / g_HDRLumWhiteSqr))) / (1.f + LScale);
 	
 	return HDRColor * LScale;
 }
@@ -143,8 +143,9 @@ PSOutput_Single HDRRenderPS(VS_OUTPUT_HDR Input)
 		Color = DepthFog(Color.rgb, Depth.g);
 	}
 
-	Output.Color.rgb = Color.rgb;
-	Output.Color.a = Alpha;
+	Output.Color = Color;
+ //	Output.Color.rgb = Color.rgb;
+ //	Output.Color.a = Alpha;
 
 	return Output;
 }

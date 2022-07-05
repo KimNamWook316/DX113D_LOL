@@ -150,6 +150,9 @@ bool CSceneManager::ChangeScene()
 
 			m_Scene->Start();
 
+			// HDR 렌더 설정, 전역 라이트 설정 등 로드
+			m_Scene->UpdateSceneGlobalData();
+
 			return true;
 		}
 	}

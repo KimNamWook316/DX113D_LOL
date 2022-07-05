@@ -533,3 +533,13 @@ std::string CEngineUtil::BoolToString(bool Bool)
 	std::string Ret = Bool ? "TRUE" : "FALSE";
 	return Ret;
 }
+
+bool CEngineUtil::StringToBool(const std::string& Str)
+{
+	if (Str == "TRUE")
+	{
+		return true;
+	}
+
+	return false;
+}
