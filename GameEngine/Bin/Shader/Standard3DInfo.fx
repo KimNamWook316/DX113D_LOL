@@ -21,6 +21,7 @@ struct Vertex3DOutput
     float2 UV : TEXCOORD;
     float4 ProjPos : POSITION;
     float3 ViewPos : POSITION1;
+	float3 WorldPos : POSITION2;
     float3 Normal : NORMAL;
     float3 Tangent : TANGENT;
     float3 Binormal : BINORMAL;

@@ -44,14 +44,11 @@ std::string CEngineUtil::FogTypeToString(Fog_Type Type)
 	std::string ret = "";
 	switch (Type)
 	{
-	case Fog_Type::Linear:
-		ret = "Linear";
+	case Fog_Type::Depth:
+		ret = "Depth";
 		break;
-	case Fog_Type::Exp:
-		ret = "Exp";
-		break;
-	case Fog_Type::Exp2:
-		ret = "Exp2";
+	case Fog_Type::Y:
+		ret = "Y";
 		break;
 	}
 	return ret;
@@ -59,17 +56,13 @@ std::string CEngineUtil::FogTypeToString(Fog_Type Type)
 
 Fog_Type CEngineUtil::StringToFogType(const std::string& TypeString)
 {
-	if (TypeString == "Linear")
+	if (TypeString == "Depth")
 	{
-		return Fog_Type::Linear;
+		return Fog_Type::Depth;
 	}
-	else if (TypeString == "Exp")
+	else if (TypeString == "Y")
 	{
-		return Fog_Type::Exp;
-	}
-	else if (TypeString == "Exp2")
-	{
-		return Fog_Type::Exp2;
+		return Fog_Type::Y;
 	}
 	return (Fog_Type)(-1);
 }

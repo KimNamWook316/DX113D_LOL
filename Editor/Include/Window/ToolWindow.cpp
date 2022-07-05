@@ -193,14 +193,25 @@ bool CToolWindow::Init()
 
 	m_FogColor->SetRGB(CRenderManager::GetInst()->GetFogColor());
 
+	switch (CurType)
+	{
+	case Fog_Type::Depth:
+		m_FogStart->SetMin(0.f);
+		m_FogStart->SetMax(1000.f);
+		m_FogEnd->SetMin(0.f);
+		m_FogEnd->SetMax(1000.f);
+		break;
+	case Fog_Type::Y:
+		m_FogStart->SetMin(-1000.f);
+		m_FogStart->SetMax(1000.f);
+		m_FogEnd->SetMin(-1000.f);
+		m_FogEnd->SetMax(1000.f);
+		break;
+	}
 	float FogStart = CRenderManager::GetInst()->GetFogStart();
-	m_FogStart->SetMin(0);
-	m_FogStart->SetMax(CameraDist);
 	m_FogStart->SetValue(FogStart);
 
 	float FogEnd = CRenderManager::GetInst()->GetFogEnd();
-	m_FogEnd->SetMin(0);
-	m_FogEnd->SetMax(CameraDist);
 	m_FogEnd->SetValue(FogEnd);
 
 	float FogDensity = CRenderManager::GetInst()->GetFogDensity();
@@ -366,6 +377,22 @@ void CToolWindow::OnSelectFogType(int Index, const char* Label)
 {
 	Fog_Type Type = (Fog_Type)Index;
 	CRenderManager::GetInst()->SetFogType(Type);
+
+	switch (Type)
+	{
+	case Fog_Type::Depth:
+		m_FogStart->SetMin(0.f);
+		m_FogStart->SetMax(1000.f);
+		m_FogEnd->SetMin(0.f);
+		m_FogEnd->SetMax(1000.f);
+		break;
+	case Fog_Type::Y:
+		m_FogStart->SetMin(-1000.f);
+		m_FogStart->SetMax(1000.f);
+		m_FogEnd->SetMin(-1000.f);
+		m_FogEnd->SetMax(1000.f);
+		break;
+	}
 }
 
 void CToolWindow::OnChageFogColor(const Vector3& Color)

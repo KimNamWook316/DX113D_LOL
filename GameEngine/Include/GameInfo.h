@@ -742,8 +742,8 @@ struct FogCBuffer
 {
 	Vector3 Color;
 	int Type;
-	float Start;				// ¿ùµå ±íÀÌ
-	float End;					// ¿ùµå ±íÀÌ
+	float Start; 
+	float End;
 	float Density;				
 	float Empty;
 };
@@ -795,7 +795,7 @@ struct HDRSceneSaveData
 		BloomScale(1.f),
 		DOFMax(600.f),
 		DOFMin(300.f),
-		FogType(Fog_Type::Linear),
+		FogType(Fog_Type::Depth),
 		FogColor(0.f, 0.f, 0.f),
 		FogStart(500.f),
 		FogEnd(950.f),
