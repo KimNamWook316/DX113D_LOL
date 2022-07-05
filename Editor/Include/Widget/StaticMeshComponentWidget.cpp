@@ -146,19 +146,21 @@ void CStaticMeshComponentWidget::OnSelectMaterialSlotCombo(int Idx, const char* 
 	if (MeshCom->GetMesh())
 	{
 		CMaterial* Mat = MeshCom->GetMaterial(Idx);
-
 		std::string ShaderName = Mat->GetShader()->GetName();
+		m_ShaderName->SetText(ShaderName.c_str());
 
 		MakeShaderWidget(Mat, ShaderName);
 
-		m_ShaderName->SetText(ShaderName.c_str());
 		m_BaseColorEdit->SetRGB(Mat->GetBaseColor().x, Mat->GetBaseColor().y, Mat->GetBaseColor().z);
-		m_AmbientColorEdit->SetRGB(Mat->GetBaseColor().x, Mat->GetBaseColor().y, Mat->GetBaseColor().z);
-		m_SpecularColorEdit->SetRGB(Mat->GetBaseColor().x, Mat->GetBaseColor().y, Mat->GetBaseColor().z);
-		m_EmissiveColorEdit->SetRGB(Mat->GetBaseColor().x, Mat->GetBaseColor().y, Mat->GetBaseColor().z);
+		m_AmbientColorEdit->SetRGB(Mat->GetAmbientColor().x, Mat->GetAmbientColor().y, Mat->GetAmbientColor().z);
+		m_SpecularColorEdit->SetRGB(Mat->GetSpecularColor().x, Mat->GetSpecularColor().y, Mat->GetSpecularColor().z);
+		m_EmissiveColorEdit->SetRGB(Mat->GetEmissiveColor().x, Mat->GetEmissiveColor().y, Mat->GetEmissiveColor().z);
 		m_SpecluarPowerEdit->SetVal(Mat->GetSpecularPower());
 		m_TransparencyEdit->SetCheck(0, Mat->IsTransparent());
 		m_OpacityEdit->SetValue(Mat->GetOpacity());
+		m_OutlineEnable->SetCheck(0, Mat->IsOutlineEnable());
+		m_OutlineThickness->SetValue(Mat->GetOutlineThickness());
+		m_OutlineColor->SetRGB(Mat->GetOutlineColor());
 	}
 }
 
