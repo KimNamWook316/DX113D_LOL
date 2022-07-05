@@ -50,6 +50,13 @@ cbuffer	ParticleCBuffer : register(b11)
 	int g_ParticleUVRowN;
 	int g_ParticleUVColN;
 	int ParticleEmpty4;
+
+	// 각 Particle 별로 다르게 Rotation Angle을 주는 경우
+	float3 g_SeperateRotAngleMin;
+	float ParticleEmpty5;
+
+	float3 g_SeperateRotAngleMax;
+	float ParticleEmpty6;
 };
 
 /*
@@ -76,13 +83,14 @@ struct ParticleInfo
 	int		Alive;
 	float	FallTime;
 	float	FallStartY;
-
+	float3 SeperateRotAngle;
 	float  InitWorldPosY;
 };
 
 struct ParticleInfoShared
 {
 	uint	SpawnEnable;
+	uint	SpawnCountMax;
 
 	float3	ScaleMin;
 	float3	ScaleMax;
@@ -93,6 +101,9 @@ struct ParticleInfoShared
 	int		GravityEnable;
 
 	float3 RotationAngle;
+	float3  SeperateMinRotAngle;
+	float3  SeperateMaxRotAngle;
+
 	float PrevRingAngle;
 
 	int UVMoveEnable;
@@ -169,6 +180,8 @@ float3x3 ComputeRotationMatrix(float3 Angle)
 void ParticleUpdate(uint3 ThreadID : SV_DispatchThreadID)
 {
 	g_ParticleShare[0].SpawnEnable = g_ParticleSpawnEnable;
+	g_ParticleShare[0].SpawnCountMax = g_ParticleSpawnCountMax;
+
 	g_ParticleShare[0].ScaleMin = g_ParticleScaleMin;
 	g_ParticleShare[0].ScaleMax = g_ParticleScaleMax;
 
@@ -180,6 +193,7 @@ void ParticleUpdate(uint3 ThreadID : SV_DispatchThreadID)
 
 	g_ParticleShare[0].GravityEnable = g_ParticleGravity;
 	g_ParticleShare[0].RotationAngle = g_ParticleRotationAngle;
+
 
 	g_ParticleShare[0].UVMoveEnable = g_ParticleUVMoveEnable;
 	g_ParticleShare[0].UVRowN = g_ParticleUVRowN;
@@ -349,6 +363,9 @@ void ParticleUpdate(uint3 ThreadID : SV_DispatchThreadID)
 
 			 g_ParticleArray[ThreadID.x].LifeTimeMax = (1 - SpawnPosRatio) * (g_ParticleLifeTimeMax - g_ParticleLifeTimeMin) + g_ParticleLifeTimeMin;
 		 }
+
+		 // 생성되는 순간 각 Particle 의 Rot 정도를 세팅한다.
+		 g_ParticleArray[ThreadID.x].SeperateRotAngle = (g_SeperateRotAngleMax - g_SeperateRotAngleMin) * Rand + g_SeperateRotAngleMin;
 	}
 	// 현재 생성이 되어 있는 파티클일 경우
 	else
@@ -514,7 +531,10 @@ void ParticleGS(point VertexParticleOutput input[1],
 	float4	Color = lerp(g_ParticleShareSRV[0].ColorMin, g_ParticleShareSRV[0].ColorMax,
 		float4(Ratio, Ratio, Ratio, Ratio));
 
-	float3x3 matRot = ComputeRotationMatrix(g_ParticleShareSRV[0].RotationAngle);
+	// 회전 (전체 회전 + 각 Particle 회전 정도)
+	float3 FinalRotAngle = g_ParticleShareSRV[0].RotationAngle + g_ParticleArraySRV[InstanceID].SeperateRotAngle;
+
+	float3x3 matRot = ComputeRotationMatrix(FinalRotAngle);
 
 	// 4개의 최종 정점정보를 만들어준다.
 	for (int i = 0; i < 4; ++i)
@@ -558,8 +578,10 @@ PSOutput_Single ParticlePS(GeometryParticleOutput input)
 	// Soft Particle
 	float4 Depth = g_GBufferDepth.Load(TargetPos, 0);
 	float Alpha = 1.f;
+
 	if (Depth.a > 0.f)
 		Alpha = (Depth.g - input.ProjPos.w) / 0.5f;
+
 	Alpha = clamp(Alpha, 0.f, 1.f);
 
 	Color = PaperBurn2D(Color * input.Color, input.UV);

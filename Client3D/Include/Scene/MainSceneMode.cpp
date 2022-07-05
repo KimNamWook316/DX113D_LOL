@@ -40,19 +40,22 @@ bool CMainSceneMode::Init()
 
 	SetPlayerObject(Player);
 
-
 	CLandScapeObj* LandScape = m_Scene->CreateGameObject<CLandScapeObj>("LandScape");
 
 	CDecalObj* Decal = m_Scene->CreateGameObject<CDecalObj>("Decal");
 
 	CPortal* Portal = m_Scene->CreateGameObject<CPortal>("Portal");
 
-	for (int i = 0; i < 30; ++i)
-	{
-		CBonObj* BonObj = m_Scene->CreateGameObject<CBonObj>("BonObj");
+	// Test
+	// CBonObj* BonObj = m_Scene->CreateGameObject<CBonObj>("BonObj");
+	// BonObj->SetWorldPos(3.f, 4.f, 10.f);
 
-		BonObj->SetWorldPos(i * 3.f, 4.f, 10.f);
-	}
+	// for (int i = 0; i < 30; ++i)
+	// {
+	// 	CBonObj* BonObj = m_Scene->CreateGameObject<CBonObj>("BonObj");
+	// 
+	// 	BonObj->SetWorldPos(i * 3.f, 4.f, 10.f);
+	// }
 
 	for (int i = 0; i < 5; ++i)
 	{
@@ -93,7 +96,7 @@ void CMainSceneMode::LoadMesh()
 		TEXT("Blade.msh"));
 
 	m_Scene->GetResource()->LoadMesh(Mesh_Type::Static, "BonObj",
-		TEXT("BonObj.msh"));
+		TEXT("Map_Corridor.msh"));
 
 	CMesh* Mesh = m_Scene->GetResource()->FindMesh("PlayerMesh");
 

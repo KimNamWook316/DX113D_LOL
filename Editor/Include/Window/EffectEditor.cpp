@@ -439,6 +439,15 @@ bool CEffectEditor::Init()
     // m_GravityAccelEdit = AddWidget<CIMGUIInputFloat>("Gravity Accel", 100.f);
     // m_StartDelayEdit = AddWidget<CIMGUIInputFloat>("Start Delay T// ", 100.f);
 
+    // Rotation Angle
+    Tree = AddWidget<CIMGUITree>("Rotation Angle");
+
+    m_MinSeperateRotAngleEdit = Tree->AddWidget<CIMGUIInputFloat3>("Min Angle", 150.f);
+    m_MinSeperateRotAngleEdit->SetCallBack<CEffectEditor>(this, &CEffectEditor::OnMinSeperateRotAngleEdit);
+
+    m_MaxSeperateRotAngleEdit = Tree->AddWidget<CIMGUIInputFloat3>("Max Angle", 150.f);
+    m_MaxSeperateRotAngleEdit->SetCallBack<CEffectEditor>(this, &CEffectEditor::OnMaxSeperateRotAngleEdit);
+
     SetGameObjectReady();
 
 	return true;
@@ -940,6 +949,24 @@ void CEffectEditor::OnIsRandomMoveDirEdit(const char*, bool Enable)
 
     m_ParticleClass->SetIsRandomMoveDir(Enable);
     dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetIsRandomMoveDir(Enable);
+}
+
+void CEffectEditor::OnMinSeperateRotAngleEdit(const Vector3& RotAngle)
+{
+    if (!m_ParticleClass)
+        return;
+
+    m_ParticleClass->SetMinSeperateRotAngle(RotAngle);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetMinSeperateRotAngle(RotAngle);
+}
+
+void CEffectEditor::OnMaxSeperateRotAngleEdit(const Vector3& RotAngle)
+{
+    if (!m_ParticleClass)
+        return;
+
+   m_ParticleClass->SetMaxSeperateRotAngle(RotAngle);
+   dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetMaxSeperateRotAngle(RotAngle);
 }
 
 void CEffectEditor::OnIsLifeTimeLinearFromCenter(const char*, bool Enable)
@@ -1607,6 +1634,10 @@ void CEffectEditor::SetIMGUIReflectParticle(CParticle* Particle)
 
     // Torch
     m_IsGenerateTorch->SetCheck(0, Particle->IsGenerateTorch() == 1 ? true : false);
+
+    // Min, Max Rot Angle
+    m_MinSeperateRotAngleEdit->SetVal(Particle->GetMinSeperateRotAngle());
+    m_MaxSeperateRotAngleEdit->SetVal(Particle->GetMaxSeperateRotAngle());
 
 }
 

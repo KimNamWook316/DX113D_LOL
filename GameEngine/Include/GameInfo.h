@@ -439,6 +439,8 @@ struct	ParticleCBuffer
 	Vector3	MoveAngle;	// 이동을 한다면 기준이 될 방향으로부터 x, y, z 에 저장된 각도만큼 틀어진 랜덤한 방향을 구한다.
 	int ParticleBounce;
 	
+	// 모든 Particle 들에 동일하게 적용할 Rotation Angle
+	// ParticleComponent PostUpdate 에서 WorldRot 정보로 세팅해주게 된다.
 	Vector3 RotationAngle;
 	float	ParticleBounceResistance;
 
@@ -463,6 +465,13 @@ struct	ParticleCBuffer
 	int UVRowN;
 	int UVColN;
 	int ParticleEmpty4;
+
+	// 각 Particle 별로 다르게 Rotation Angle을 주는 경우
+	Vector3 MinSeperateRotAngle;
+	float ParticleEmpty5;
+
+	Vector3 MaxSeperateRotAngle;
+	float ParticleEmpty6;
 };
 
 struct ParticleInfo
@@ -476,6 +485,7 @@ struct ParticleInfo
 	int		Alive;
 	float	FallTime;
 	float	FallStartY;
+	Vector3 SeperateRotAngle;
 
 	float  InitWorldPosY;
 };
@@ -483,13 +493,21 @@ struct ParticleInfo
 struct ParticleInfoShared
 {
 	unsigned int	SpawnEnable;
+	unsigned int	SpawnCountMax;
+
 	Vector3	ScaleMin;
 	Vector3	ScaleMax;
+
 	Vector4	ColorMin;
 	Vector4	ColorMax;
+
 	int		GravityEnable;
-	Vector3  RotationAngle;
+
+	Vector3  CommonRotationAngle;
+	Vector3  SeperateMinRotAngle;
+	Vector3  SeperateMaxRotAngle;
 	float  PrevRingAngle;
+
 
 	int    UVMoveEnable;
 	int    UVRowN;

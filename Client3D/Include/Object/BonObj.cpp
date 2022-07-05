@@ -21,7 +21,7 @@ bool CBonObj::Init()
 
 	m_Mesh->SetMesh("BonObj");
 
-	SetRelativeScale(0.03f, 0.03f, 0.03f);
+	SetRelativeScale(0.003f, 0.003f, 0.003f);
 
 	return true;
 }

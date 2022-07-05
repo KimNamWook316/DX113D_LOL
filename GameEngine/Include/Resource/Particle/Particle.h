@@ -228,6 +228,16 @@ public:
 		return m_CBuffer->GetRotationAngle();
 	}	
 
+	// Min, Max
+	const Vector3& GetMinSeperateRotAngle()
+	{
+		return m_CBuffer->GetMinSeperateRotAngle();
+	}
+	const Vector3& GetMaxSeperateRotAngle()
+	{
+		return m_CBuffer->GetMaxSeperateRotAngle();
+	}
+
 	// 생성 반지름
 	float GetGenerateRadius() const
 	{
@@ -291,16 +301,25 @@ public:
 		return m_CBuffer->GetUVColN();
 	}
 public:
+	// Seperate Rot Angle
+	void SetMinSeperateRotAngle(const Vector3& Angle)
+	{
+		m_CBuffer->SetMinSeperateRotAngle(Angle);
+	}
+	void SetMaxSeperateRotAngle(const Vector3& Angle)
+	{
+		m_CBuffer->SetMaxSeperateRotAngle(Angle);
+	}
 	// UV Move
 	void SetUVMoveEnable(bool Enable)
 	{
 		m_CBuffer->SetUVMoveEnable(Enable);
 	}
-	int SetUVRowN(int Row)
+	void SetUVRowN(int Row)
 	{
 		m_CBuffer->SetUVRowN(Row);
 	}
-	int SetUVColN(int Col)
+	void SetUVColN(int Col)
 	{
 		m_CBuffer->SetUVColN(Col);
 	}
