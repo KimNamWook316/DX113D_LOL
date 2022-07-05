@@ -41,6 +41,11 @@ public:
 	void SetTreeUpdate(bool Update)
 	{
 		m_TreeUpdate = Update;
+		
+		if (!Update)
+		{
+			m_BehaviorTree->SetCurrentNode(nullptr);
+		}
 	}
 
 	bool IsTreeUpdate()	const

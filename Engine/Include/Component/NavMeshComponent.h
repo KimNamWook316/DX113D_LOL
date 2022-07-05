@@ -19,6 +19,7 @@ protected:
 protected:
 	CSharedPtr<CNavMesh>	m_NavMesh;
 	CSharedPtr<class CShader> m_Shader;
+
 	bool m_DebugRender;
 	CSharedPtr<CRenderState> m_WireFrameState;
 	//int		m_CountX;

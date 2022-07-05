@@ -22,14 +22,20 @@ CNavigation3DManager::~CNavigation3DManager()
 {
 }
 
-void CNavigation3DManager::SetNavData(CLandScape* NavData)
+CNavMeshComponent* CNavigation3DManager::GetNavMeshData() const
 {
-	m_NavData = NavData;
+	return m_NavMeshComponent;
 }
 
 void CNavigation3DManager::SetNavMeshData(CNavMeshComponent* NavComp)
 {
 	m_NavMeshComponent = NavComp;
+}
+
+
+void CNavigation3DManager::SetNavData(CLandScape* NavData)
+{
+	m_NavData = NavData;
 }
 
 void CNavigation3DManager::AddNavResult(const NavResultData& NavData)

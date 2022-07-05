@@ -169,6 +169,7 @@
     <ClCompile Include="Component\GameBehaviorTree.cpp" />
     <ClCompile Include="Component\GameDataComponent.cpp" />
     <ClCompile Include="Component\GameStateComponent.cpp" />
+    <ClCompile Include="Component\Node\AddFallingFloorCallbackNode.cpp" />
     <ClCompile Include="Component\Node\CancleShootNode.cpp" />
     <ClCompile Include="Component\Node\CheckAttackTarget.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
@@ -276,6 +277,7 @@
     <ClInclude Include="Component\GameBehaviorTree.h" />
     <ClInclude Include="Component\GameDataComponent.h" />
     <ClInclude Include="Component\GameStateComponent.h" />
+    <ClInclude Include="Component\Node\AddFallingFloorCallbackNode.h" />
     <ClInclude Include="Component\Node\CancleShootNode.h" />
     <ClInclude Include="Component\Node\CheckAttackTarget.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>

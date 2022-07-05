@@ -24,16 +24,18 @@ NodeResult CMoveNode::OnStart(float DeltaTime)
 {
 	m_AnimationMeshComp = m_Owner->GetAnimationMeshComp();
 
-	std::string ChampionName = m_Object->GetName();
+	//std::string ChampionName = m_Object->GetName();
 
-	std::string SequenceName = ChampionName + "_" + "Run";
+	//std::string SequenceName = ChampionName + "_" + "Run";
 
-	if (m_AnimationMeshComp)
-	{
-		m_AnimationMeshComp->GetAnimationInstance()->ChangeAnimation(SequenceName);
-	}
+	//if (m_AnimationMeshComp)
+	//{
+	//	m_AnimationMeshComp->GetAnimationInstance()->ChangeAnimation(SequenceName);
+	//}
 
-	//m_CallStart = true;
+	////m_CallStart = true;
+
+	//m_NavAgent =  m_Object->FindObjectComponentFromType<CNavAgent>();
 
 	return NodeResult::Node_True;
 }
@@ -43,6 +45,9 @@ NodeResult CMoveNode::OnUpdate(float DeltaTime)
 	CGameDataComponent* Comp = m_Object->FindComponentFromType<CGameDataComponent>();
 
 	if (!Comp)
+		return NodeResult::Node_False;
+
+	if (!m_NavAgent)
 		return NodeResult::Node_False;
 
 	const keyState WState = CInput::GetInst()->FindKeyState('W');
@@ -104,7 +109,9 @@ NodeResult CMoveNode::OnUpdate(float DeltaTime)
 			m_Object->AddWorldRotationY(-360.f * DeltaTime);
 	}
 
-	m_Object->AddWorldPos(MoveDir.x * Speed * DeltaTime, 0.f, MoveDir.z * Speed * DeltaTime);
+
+	//m_Object->AddWorldPos(MoveDir.x * Speed * DeltaTime, 0.f, MoveDir.z * Speed * DeltaTime);
+	m_NavAgent->MoveOnNavMesh(Vector3(MoveDir.x * Speed * DeltaTime, 0.f, MoveDir.z * Speed * DeltaTime));
 
 	return NodeResult::Node_True;
 }

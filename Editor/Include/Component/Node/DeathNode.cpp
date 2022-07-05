@@ -2,7 +2,7 @@
 #include "DeathNode.h"
 #include "Component/AnimationMeshComponent.h"
 #include "Animation/AnimationSequenceInstance.h"
-#include "Component/BehaviorTree.h"
+#include "Component/BehaviorTree.h"	
 
 CDeathNode::CDeathNode()
 {

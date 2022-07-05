@@ -696,6 +696,7 @@ bool CTexture::CreateResourceArray()
 	return true;
 }
 
+
 void CTexture::SetShader(int Register, int ShaderType, int Index)
 {
 	if (m_ImageType != Image_Type::Array)

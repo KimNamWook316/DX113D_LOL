@@ -14,8 +14,9 @@
 #include "../Window/SceneComponentHierarchyWindow.h"
 #include "../Window/ObjectHierarchyWindow.h"
 #include "IMGUIManager.h"
-#include "../EditorInfo.h":
+#include "../EditorInfo.h"
 #include "EngineUtil.h"
+#include "Component/StateComponent.h"
 
 CToolWindow::CToolWindow()	:
 	m_GizmoBlock(nullptr),
@@ -428,6 +429,18 @@ void CToolWindow::OnClickPlay()
 	CSceneManager::GetInst()->GetScene()->Play();
 
 	m_PlayState->SetText("Current State : Playing");
+
+	std::vector<CGameObject*> vecObj;
+	CSceneManager::GetInst()->GetScene()->GetAllObjectsPointer(vecObj);
+
+	size_t Count = vecObj.size();
+
+	for (size_t i = 0; i < Count; ++i)
+	{
+		CStateComponent* StateComp = vecObj[i]->FindObjectComponentFromType<CStateComponent>();
+		if (StateComp)
+			StateComp->SetTreeUpdate(true);
+	}
 }
 
 void CToolWindow::OnClickPause()
@@ -435,6 +448,18 @@ void CToolWindow::OnClickPause()
 	CSceneManager::GetInst()->GetScene()->Pause();
 
 	m_PlayState->SetText("Current State : Paused");
+
+	std::vector<CGameObject*> vecObj;
+	CSceneManager::GetInst()->GetScene()->GetAllObjectsPointer(vecObj);
+
+	size_t Count = vecObj.size();
+
+	for (size_t i = 0; i < Count; ++i)
+	{
+		CStateComponent* StateComp = vecObj[i]->FindObjectComponentFromType<CStateComponent>();
+		if (StateComp)
+			StateComp->SetTreeUpdate(false);
+	}
 }
 
 void CToolWindow::OnClickStop()

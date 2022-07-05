@@ -23,8 +23,12 @@ private:
 	int m_PlayerPolyIndex;
 
 public:
-	void SetNavData(CLandScape* NavData);
+	class CNavMeshComponent* GetNavMeshData() const;
 	void SetNavMeshData(CNavMeshComponent* NavComp);
+
+
+
+	void SetNavData(CLandScape* NavData);
 	void AddNavResult(const NavResultData& NavData);
 	void SetLandScape(class CLandScape* LandScape);
 	class CLandScape* GetLandScape()	const;

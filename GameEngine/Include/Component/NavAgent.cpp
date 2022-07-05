@@ -37,6 +37,9 @@ bool CNavAgent::Move(const Vector3& EndPos)
 
 bool CNavAgent::MoveOnNavMesh(const Vector3 EndPos)
 {
+	if (!m_Scene->GetNavigation3DManager()->GetNavMeshData())
+		return false;
+
 	m_Object->AddWorldPos(EndPos);
 
 	bool Valid = m_Scene->GetNavigation3DManager()->CheckPlayerNavMeshPoly();

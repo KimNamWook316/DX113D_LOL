@@ -63,7 +63,9 @@ bool CNavMesh::LoadMeshFullPathMultibyte(const char* FullPath)
 			ss.clear();
 
 			Vector3 Vertex;
-			Vertex.x = XData;
+			// recast navmesh 프로그램의 x축 방향과 DX에서 x축 방향이 반대
+			//Vertex.x = XData;
+			Vertex.x = -XData;
 			Vertex.y = YData;
 			Vertex.z = ZData;
 
@@ -95,8 +97,6 @@ bool CNavMesh::LoadMeshFullPathMultibyte(const char* FullPath)
 
 			--Index1;
 
-			m_vecIndex.push_back(Index1);
-
 			int Index2;
 
 			ss << vecStr[2];
@@ -104,8 +104,6 @@ bool CNavMesh::LoadMeshFullPathMultibyte(const char* FullPath)
 			ss.clear();
 
 			--Index2;
-
-			m_vecIndex.push_back(Index2);
 
 			int Index3;
 
@@ -115,7 +113,10 @@ bool CNavMesh::LoadMeshFullPathMultibyte(const char* FullPath)
 
 			--Index3;
 
+			//m_vecIndex.push_back(Index3);
 			m_vecIndex.push_back(Index3);
+			m_vecIndex.push_back(Index2);
+			m_vecIndex.push_back(Index1);
 		}
 	}
 	
@@ -147,6 +148,8 @@ bool CNavMesh::LoadMeshFullPathMultibyte(const char* FullPath)
 
 	CreatePolygonInfo();
 	CheckAdjInfo();
+
+
 
 	return true;
 }

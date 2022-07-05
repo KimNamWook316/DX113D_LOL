@@ -342,6 +342,9 @@
     <ClCompile Include="Widget\NavMeshComponentWidget.cpp">
       <Filter>02. Editor\02. Widget\01. Inspector\01. SceneComponent</Filter>
     </ClCompile>
+    <ClCompile Include="Component\Node\AddFallingFloorCallbackNode.cpp">
+      <Filter>07. BehaviorTree\02. ActionNode</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EditorManager.h">
@@ -589,6 +592,9 @@
     </ClInclude>
     <ClInclude Include="Widget\NavMeshComponentWidget.h">
       <Filter>02. Editor\02. Widget\01. Inspector\01. SceneComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\AddFallingFloorCallbackNode.h">
+      <Filter>07. BehaviorTree\02. ActionNode</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

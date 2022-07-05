@@ -18,6 +18,7 @@ protected:
     virtual NodeResult OnEnd(float DeltaTime);
 
 private:
+    class CNavAgent* m_NavAgent;
     bool m_ClockWise;
 
 public:
