@@ -143,7 +143,7 @@ public:
 	bool LoadMultibyte(const char* pFileName, const std::string& strPathName = MESH_PATH);
 	bool LoadFullPath(const TCHAR* pFullPath);
 	bool LoadFullPathMultibyte(const char* pFullPath);
-	const char* GetSequenceFileNameMultibyte();
+	char* GetSequenceFileNameMultibyte();
 	virtual bool Save(FILE* pFile);
 	virtual bool Load(FILE* pFile);
 public :

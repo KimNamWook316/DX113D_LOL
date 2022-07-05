@@ -263,7 +263,7 @@ bool CColliderComponent::Save(FILE* File)
 
 	char MeshName[256] = {};
 
-	int Length = m_Mesh->GetName().length();
+	int Length = (int)m_Mesh->GetName().length();
 	strcpy_s(MeshName, m_Mesh->GetName().c_str());
 
 	fwrite(&Length, sizeof(int), 1, File);

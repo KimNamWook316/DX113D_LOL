@@ -857,7 +857,8 @@ bool CMesh::ConvertFBXReleaseSequence(CFBXLoader* Loader, const char* FullPath)
 
 		size_t  IdxCount = (*iter)->vecIndices.size();
 
-		Container->vecIB.reserve(IdxCount);
+		// Container->vecIB.reserve(IdxCount);
+		Container->vecIB.resize(IdxCount);
 
 		for (size_t i = 0; i < IdxCount; ++i)
 		{
@@ -879,7 +880,8 @@ bool CMesh::ConvertFBXReleaseSequence(CFBXLoader* Loader, const char* FullPath)
 			
 			IndexBuffer IdxBuffer = {};
 
-			Container->vecIB.push_back(IdxBuffer);
+			// Container->vecIB.push_back(IdxBuffer);
+			Container->vecIB[i] = IdxBuffer;
 
 			if (!CreateBuffer(Buffer_Type::Index,
 				&(*iter)->vecIndices[i][0], sizeof(UINT),

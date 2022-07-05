@@ -576,7 +576,7 @@ void CRenderManager::Render(float DeltaTime)
 
 					if ((*iter)->InstancingList.size() > Layer->m_vecInstancing[Layer->InstancingIndex]->BufferCount)
 					{
-						int	Count = (int)Layer->m_vecInstancing[Layer->InstancingIndex]->BufferCount * 1.5f;
+						int	Count = (int)(Layer->m_vecInstancing[Layer->InstancingIndex]->BufferCount * 1.5f);
 
 						if ((*iter)->InstancingList.size() > Count)
 							Count = (int)(*iter)->InstancingList.size();
@@ -664,11 +664,15 @@ void CRenderManager::Render(float DeltaTime)
  //		RenderGray();
  //	}
 
+	// Debug Mode 일때만 컴파일 + Editor 에서만 Render 되게 세팅
+#ifdef _DEBUG
 	// Animation Editor Animation Instance 제작용 Render Target
 	RenderAnimationEditor();
 
 	// Particle Effect Editor 제작용 Render Target
 	RenderParticleEffectEditor();
+#endif
+
 
 	m_vecGBuffer[2]->SetShader(10, (int)Buffer_Shader_Type::Pixel, 0);
 
@@ -1178,6 +1182,10 @@ void CRenderManager::RenderFinalScreen()
 
 void CRenderManager::RenderAnimationEditor()
 {
+	// Editor Mode 일때만 Render 하기 
+	if (CEngine::GetInst()->GetEditMode() == false)
+		return;
+
 	int AnimationEditorLayerIdx = GetRenderLayerIndex("AnimationEditorLayer");
 
 	// 만~약에 해당 Layer 의 Idx 가 정해져 있지 않다면
@@ -1198,10 +1206,6 @@ void CRenderManager::RenderAnimationEditor()
 
 	m_Mesh3DNoLightRenderShader->SetShader();
 
-	// m_DepthDisable->SetState();
-
-	// m_AnimationRenderTarget->SetTargetShader(55);
-
 	auto iter = m_RenderLayerList[AnimationEditorLayerIdx]->RenderList.begin();
 	auto iterEnd = m_RenderLayerList[AnimationEditorLayerIdx]->RenderList.end();
 
@@ -1210,19 +1214,28 @@ void CRenderManager::RenderAnimationEditor()
 		(*iter)->RenderAnimationEditor();
 	}
 
-	// m_DepthDisable->ResetState();
-
 	m_AnimEditorRenderTarget->ResetTarget();
  }
 
 void CRenderManager::RenderParticleEffectEditor()
 {
+	// Editor Mode 일때만 Render 하기 
+	if (CEngine::GetInst()->GetEditMode() == false)
+		return;
+
 	// 뷰포트 Shadowmap Textre와 일치하도록
 	D3D11_VIEWPORT VP = {};
 
-	VP.Width  = m_ParticleEffectEditorRenderTarget->GetWidth();
-	VP.Height = m_ParticleEffectEditorRenderTarget->GetHeight();
+	VP.Width  = (float)m_ParticleEffectEditorRenderTarget->GetWidth();
+	VP.Height = (float)m_ParticleEffectEditorRenderTarget->GetHeight();
 	VP.MaxDepth = 1.f;
+
+	// 원래 View Port 크기 
+	D3D11_VIEWPORT PrevVP = {};
+
+	PrevVP.Width = (float)CDevice::GetInst()->GetResolution().Width;
+	PrevVP.Height = (float)CDevice::GetInst()->GetResolution().Height;
+	PrevVP.MaxDepth = 1.f;
 
 	CDevice::GetInst()->GetContext()->RSSetViewports(1, &VP);
 
@@ -1230,11 +1243,17 @@ void CRenderManager::RenderParticleEffectEditor()
 
 	// 만~약에 해당 Layer 의 Idx 가 정해져 있지 않다면
 	if (ParticleEffectEditorLayerIdx == -1)
+	{
+		CDevice::GetInst()->GetContext()->RSSetViewports(1, &PrevVP);
 		return;
+	}
 
 	// Animation Edtior 상에서 Animation Editor 제작 중이지 않다면
 	if (m_RenderLayerList[ParticleEffectEditorLayerIdx]->RenderList.size() <= 0)
+	{
+		CDevice::GetInst()->GetContext()->RSSetViewports(1, &PrevVP);
 		return;
+	}
 
 	// Render Target 교체
 	m_ParticleEffectEditorRenderTarget->ClearTarget();
@@ -1253,12 +1272,6 @@ void CRenderManager::RenderParticleEffectEditor()
 	}
 
 	m_ParticleEffectEditorRenderTarget->ResetTarget();
-
-	D3D11_VIEWPORT PrevVP = {};
-
-	PrevVP.Width = (float)CDevice::GetInst()->GetResolution().Width;
-	PrevVP.Height = (float)CDevice::GetInst()->GetResolution().Height;
-	PrevVP.MaxDepth = 1.f;
 
 	CDevice::GetInst()->GetContext()->RSSetViewports(1, &PrevVP);
 }
@@ -1289,7 +1302,7 @@ int CRenderManager::GetRenderLayerIndex(const std::string& TargetName)
 	for (size_t j = 0; j < m_RenderLayerList.size(); ++j)
 	{
 		if (m_RenderLayerList[j]->Name == TargetName)
-			return j;
+			return (int)j;
 	}
 
 	return -1;

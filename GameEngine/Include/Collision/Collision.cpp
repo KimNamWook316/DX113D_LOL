@@ -172,6 +172,8 @@ bool CCollision::CollisionBox3DToHalfLine(CColliderBox3D* Src, CColliderHalfLine
 	{
 		return true;
 	}
+
+	return false;
 }
 
 bool CCollision::CollisionBox2DToBox2D(CollisionResult& SrcResult,
