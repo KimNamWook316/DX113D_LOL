@@ -1421,7 +1421,10 @@ bool CMaterial::SaveFullPath(const char* FullPath)
 	fopen_s(&File, FullPath, "wb");
 
 	if (!File)
+	{
+		assert(false);
 		return false;
+	}
 
 	bool Result = SaveMaterial(File);
 
@@ -1437,7 +1440,10 @@ bool CMaterial::LoadFullPath(const char* FullPath)
 	fopen_s(&File, FullPath, "rb");
 
 	if (!File)
+	{
+		assert(false);
 		return false;
+	}
 
 	bool Result = LoadMaterial(File);
 

@@ -508,7 +508,7 @@ void CAnimationEditor::OnLoadExcel()
 
 		if (!LoadResult)
 		{
-			MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Excel Load 실패 "), NULL, MB_OK);
+			MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Excel Load 실패. Excel 이 열려져있는지 확인해보세요"), NULL, MB_OK);
 			return;
 		}
 
