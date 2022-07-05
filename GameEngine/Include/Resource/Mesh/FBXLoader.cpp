@@ -373,7 +373,7 @@ void CFBXLoader::LoadMesh(FbxMesh* pMesh, bool bStatic)
 		{
 			// 현재 삼각형을 구성하고 있는 버텍스정보 내에서의 인덱스를
 			// 구한다.
-			int	iControlIndex = pMesh->GetPolygonVertex(i, j);
+			int iControlIndex = pMesh->GetPolygonVertex(i, j);
 
 			iIdx[j] = iControlIndex;
 
@@ -439,8 +439,10 @@ void CFBXLoader::LoadNormal(FbxMesh* pMesh, PFBXMESHCONTAINER pContainer,
 	FbxVector4	vNormal = pNormal->GetDirectArray().GetAt(iNormalIndex);
 
 	pContainer->vecNormal[iControlIndex].x = (float)vNormal.mData[0];
-	pContainer->vecNormal[iControlIndex].y = (float)vNormal.mData[2];
-	pContainer->vecNormal[iControlIndex].z = (float)vNormal.mData[1];
+	pContainer->vecNormal[iControlIndex].y = (float)vNormal.mData[1];
+	pContainer->vecNormal[iControlIndex].z = -(float)vNormal.mData[2];
+ //	pContainer->vecNormal[iControlIndex].y = (float)vNormal.mData[2];
+ //	pContainer->vecNormal[iControlIndex].z = (float)vNormal.mData[1];
 }
 
 void CFBXLoader::LoadUV(FbxMesh* pMesh, PFBXMESHCONTAINER pContainer,
@@ -479,8 +481,9 @@ void CFBXLoader::LoadUV(FbxMesh* pMesh, PFBXMESHCONTAINER pContainer,
 
 	FbxVector2	vUV = pUV->GetDirectArray().GetAt(iUVIndex);
 
-	pContainer->vecUV[iControlIndex].x = (float)vUV.mData[0] - (int)vUV.mData[0];
-	pContainer->vecUV[iControlIndex].y = 1.f - (float)(vUV.mData[1] - (int)vUV.mData[1]);
+	pContainer->vecUV[iControlIndex].x = (float)vUV.mData[0];// -(int)vUV.mData[0];
+	pContainer->vecUV[iControlIndex].y = 1.f - float(vUV.mData[1]);
+		//1.f - (float)(vUV.mData[1] - (int)vUV.mData[1]);
 }
 
 void CFBXLoader::LoadTangent(FbxMesh* pMesh, 
@@ -521,8 +524,10 @@ void CFBXLoader::LoadTangent(FbxMesh* pMesh,
 	FbxVector4	vTangent = pTangent->GetDirectArray().GetAt(iTangentIndex);
 
 	pContainer->vecTangent[iControlIndex].x = (float)vTangent.mData[0];
-	pContainer->vecTangent[iControlIndex].y = (float)vTangent.mData[2];
-	pContainer->vecTangent[iControlIndex].z = (float)vTangent.mData[1];
+	pContainer->vecTangent[iControlIndex].y = (float)vTangent.mData[1];
+	pContainer->vecTangent[iControlIndex].z = -(float)vTangent.mData[2];
+ //	pContainer->vecTangent[iControlIndex].y = (float)vTangent.mData[2];
+ //	pContainer->vecTangent[iControlIndex].z = (float)vTangent.mData[1];
 }
 
 void CFBXLoader::LoadBinormal(FbxMesh* pMesh, 
@@ -563,8 +568,10 @@ void CFBXLoader::LoadBinormal(FbxMesh* pMesh,
 	FbxVector4	vBinormal = pBinormal->GetDirectArray().GetAt(iBinormalIndex);
 
 	pContainer->vecBinormal[iControlIndex].x = (float)vBinormal.mData[0];
-	pContainer->vecBinormal[iControlIndex].y = (float)vBinormal.mData[2];
-	pContainer->vecBinormal[iControlIndex].z = (float)vBinormal.mData[1];
+	pContainer->vecBinormal[iControlIndex].y = (float)vBinormal.mData[1];
+	pContainer->vecBinormal[iControlIndex].z = -(float)vBinormal.mData[2];
+ //	pContainer->vecBinormal[iControlIndex].y = (float)vBinormal.mData[2];
+ //	pContainer->vecBinormal[iControlIndex].z = (float)vBinormal.mData[1];
 }
 
 void CFBXLoader::LoadAnimationClip()
