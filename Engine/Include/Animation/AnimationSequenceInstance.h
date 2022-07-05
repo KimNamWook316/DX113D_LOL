@@ -225,7 +225,7 @@ public:
 	void SetCurrentAnimationFrameIdx(int Idx);
 	bool EditCurrentSequenceKeyName(const std::string& NewKey, const std::string& PrevKey);
 	void DeleteCurrentAnimation();
-	const std::string& GetCurrentAnimationKeyName();
+	std::optional<std::string> GetCurrentAnimationKeyName();
 
 public:
 	void AddAnimation(const std::string& SequenceName, const std::string& Name, bool Loop = true, float PlayScale = 1.f);

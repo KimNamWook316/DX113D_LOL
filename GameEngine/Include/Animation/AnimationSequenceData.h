@@ -13,7 +13,10 @@ struct AnimationNotify
 
 	AnimationNotify() :
 		Frame(0),
-		Call(false)
+		Call(false),
+		Function(nullptr),
+		FunctionParam(nullptr),
+		Param{}
 	{
 	}
 };

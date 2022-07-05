@@ -131,6 +131,8 @@ bool CColliderRay::Collision(CColliderComponent* Dest)
 	case Collider_Type::Box3D:
 		return CCollision::CollisionRayToBox3D(this, (CColliderBox3D*)Dest);
 	}
+
+	return false;
 }
 
 bool CColliderRay::CollisionMouse(const Vector2& MousePos)

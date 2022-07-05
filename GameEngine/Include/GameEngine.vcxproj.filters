@@ -355,9 +355,6 @@
     <Filter Include="02. Resource\02. Shader\03. ConstantBuffer\19. Toon">
       <UniqueIdentifier>{0671428f-b530-4718-9ab0-5cc54e6da431}</UniqueIdentifier>
     </Filter>
-    <Filter Include="05. Component\01. SceneComponent\12. NavMesh">
-      <UniqueIdentifier>{d2c2e26d-eac1-43d2-9d05-490d54065115}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Device.cpp">
@@ -1063,10 +1060,10 @@
       <Filter>02. Resource\02. Shader\03. ConstantBuffer\12. Light</Filter>
     </ClCompile>
     <ClCompile Include="Component\NavMeshComponent.cpp">
-      <Filter>05. Component\01. SceneComponent\12. NavMesh</Filter>
+      <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Resource\Mesh\NavMesh.cpp">
-      <Filter>02. Resource\01. Mesh</Filter>
+      <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1811,11 +1808,11 @@
     <ClInclude Include="Resource\Shader\GlobalLightCBuffer.h">
       <Filter>02. Resource\02. Shader\03. ConstantBuffer\12. Light</Filter>
     </ClInclude>
-    <ClInclude Include="Resource\Mesh\NavMesh.h">
-      <Filter>02. Resource\01. Mesh</Filter>
-    </ClInclude>
     <ClInclude Include="Component\NavMeshComponent.h">
-      <Filter>05. Component\01. SceneComponent\12. NavMesh</Filter>
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Mesh\NavMesh.h">
+      <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

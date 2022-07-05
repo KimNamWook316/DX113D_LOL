@@ -52,8 +52,8 @@ void CIMGUIImageButton::Render()
 	if (!m_Texture)
 		return;
 
-	float Width = m_Texture->GetWidth();
-	float Height = m_Texture->GetHeight();
+	float Width = (float)m_Texture->GetWidth();
+	float Height = (float)m_Texture->GetHeight();
 
 	ImGui::PushID(m_WidgetID);
 

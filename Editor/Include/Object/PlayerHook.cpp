@@ -90,6 +90,9 @@ bool CPlayerHook::Move(const Vector3& Dir, float Speed, bool& Collision)
 		(*iter)->SetWorldPos(m_RootComponent->GetWorldPos());
 		(*iter)->SetRender(true);
 	}
+
+	// OBJ가 추가 (Relase Mode 컴파일 에러 -> 모든 경로 리턴값 반환)
+	return false;
 }
 
 void CPlayerHook::DisableRenderAllComponent()

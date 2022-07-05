@@ -204,6 +204,9 @@ bool CColliderBox3D::Collision(CColliderComponent* Dest)
 	case Collider_Type::HalfLine:
 		return CCollision::CollisionBox3DToHalfLine(this, (CColliderHalfLine*)Dest);
 	}
+
+	// OBJ 추가 (Warning : 모든 경로 리턴값 반환)
+	return false;
 }
 
 bool CColliderBox3D::CollisionMouse(const Vector2& MousePos)
