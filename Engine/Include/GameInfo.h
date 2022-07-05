@@ -442,17 +442,27 @@ struct	ParticleCBuffer
 	Vector3 RotationAngle;
 	float	ParticleBounceResistance;
 
-	int IsGenerateCircle;
-	float GenerateCircleRadius;
-	int IsLoopGenerateCircle;
-	float ParticleEmpty11;
+	int IsGenerateRing;
+	float GenerateRadius;
+	int IsLoopGenerateRing;
+	int IsMoveDirRandom;
 	// int     ParticleBounce;
 	// float	 ParticleBounceResistance;
 
-	float AlphaMax;
-	float AlphaMin;
+	float AlphaEnd;
+	float AlphaStart;
+	int IsGenerateCircle;
+	float ParticleEmpty1;
+
+	int IsGenerateTorch;
 	float ParticleEmpty2;
+	int IsLifeTimeLinearFromCenter;
 	float ParticleEmpty3;
+
+	int UVMoveEnable;
+	int UVRowN;
+	int UVColN;
+	int ParticleEmpty4;
 };
 
 struct ParticleInfo
@@ -466,7 +476,7 @@ struct ParticleInfo
 	int		Alive;
 	float	FallTime;
 	float	FallStartY;
-	
+
 	float  InitWorldPosY;
 };
 
@@ -479,7 +489,11 @@ struct ParticleInfoShared
 	Vector4	ColorMax;
 	int		GravityEnable;
 	Vector3  RotationAngle;
-	float  PrevCircleAngle;
+	float  PrevRingAngle;
+
+	int    UVMoveEnable;
+	int    UVRowN;
+	int    UVColN;
 };
 
 struct GlobalCBuffer
@@ -721,6 +735,24 @@ struct PlayerData
 	Player_Ability Abilty_Type;
 	float AttackSpeed;
 	float MagicAttack;
+};
+
+struct ShaderParams
+{
+	size_t				Type;
+	ToonShaderType		ToonType;
+};
+
+struct ToonCBuffer
+{
+	int Type;
+	Vector3 Empty;
+};
+
+struct GlobalLightCBuffer
+{
+	float AmbientIntensity;
+	Vector3 Empty;
 };
 
 struct NavMeshPolygon

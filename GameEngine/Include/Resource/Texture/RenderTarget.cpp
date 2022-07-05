@@ -38,6 +38,7 @@ bool CRenderTarget::CreateTarget(const std::string& Name,
 	Desc.Height = Height;
 	Desc.ArraySize = 1;
 	Desc.MipLevels = 1;
+	/*
 	if (MultiSample)
 	{
 		Desc.SampleDesc.Count = 4;
@@ -48,6 +49,9 @@ bool CRenderTarget::CreateTarget(const std::string& Name,
 		Desc.SampleDesc.Count = 0;
 		Desc.SampleDesc.Quality = 1;
 	}
+	*/
+	Desc.SampleDesc.Count = 4;
+	Desc.SampleDesc.Quality = 0;
 
 	Desc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
 	Desc.Format = PixelFormat;
@@ -61,6 +65,7 @@ bool CRenderTarget::CreateTarget(const std::string& Name,
 	Info->Width = Width;
 	Info->Height = Height;
 	Info->TextureResource = m_TargetTex;
+
 	m_vecTextureInfo.push_back(Info);
 
 	m_TargetTex->QueryInterface(__uuidof(IDXGISurface), (void**)&m_Surface);

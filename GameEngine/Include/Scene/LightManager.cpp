@@ -8,6 +8,7 @@
 #include "../Component/Transform.h"
 #include "../Resource/Shader/StructuredBuffer.h"
 #include "../Resource/Shader/LightForwardConstantBuffer.h"
+#include "../Resource/Shader/GlobalLightCBuffer.h"
 
 CLightManager::CLightManager()	:
 	m_CBuffer(nullptr),
@@ -17,8 +18,19 @@ CLightManager::CLightManager()	:
 
 CLightManager::~CLightManager()
 {
+	SAFE_DELETE(m_GlobalLightCBuffer);
 	SAFE_DELETE(m_CBuffer);
 	SAFE_DELETE(m_LightListBuffer);
+}
+
+void CLightManager::SetGlogbalLightAmbientIntensity(float Intensity)
+{
+	m_GlobalLightCBuffer->SetAmbientIntensity(Intensity);
+}
+
+float CLightManager::GetGlobalLightAmbiendIntensity() const
+{
+	return m_GlobalLightCBuffer->GetAmbiendIntensity();
 }
 
 void CLightManager::AddLight(CLightComponent* Light)
@@ -75,25 +87,21 @@ void CLightManager::Start()
 
 void CLightManager::Init()
 {
+	m_GlobalLight = m_Scene->FindObject("GlobalLight");
 	m_GlobalLight = m_Scene->CreateGameObject<CGameObject>("GlobalLight");
 	m_GlobalLight->ExcludeFromSceneSave();
-	m_GlobalLight->SetNoDestroyOnSceneChange(true);
+	// m_GlobalLight->SetNoDestroyOnSceneChange(true);
 
 	m_GlobalLightComponent = m_GlobalLight->CreateComponent<CLightComponent>("Light");
+	m_GlobalLightComponent->SetLightType(Light_Type::Dir);
 
 	m_GlobalLightComponent->SetRelativeRotation(45.f, 90.f, 0.f);
 
-	m_GlobalLightComponent->SetLightType(Light_Type::Dir);
-
 	m_CBuffer = new CLightForwardConstantBuffer;
 	m_CBuffer->Init();
-	 
-	//m_GlobalLightComponent->SetRelativePos(-3.f, 5.f, 0.f);
 
-	//m_GlobalLightComponent->SetLightType(Light_Type::Point);
-
-	//m_GlobalLightComponent->SetDistance(10.f);
-	//m_GlobalLightComponent->SetAtt3(0.02f);
+	m_GlobalLightCBuffer = new CGlobalLightCBuffer;
+	m_GlobalLightCBuffer->Init();
 }
 
 void CLightManager::Update(float DeltaTime)
@@ -148,6 +156,9 @@ void CLightManager::Render()
 
 	Shader->SetShader();
 
+	// 전역 조명 상수버퍼 바인드
+	m_GlobalLightCBuffer->UpdateCBuffer();
+
 	auto	iter = m_LightList.begin();
 	auto	iterEnd = m_LightList.end();
 
@@ -181,6 +192,9 @@ void CLightManager::SetForwardRenderShader()
 
 	m_CBuffer->SetLightCount(Size);
 	m_CBuffer->UpdateCBuffer();
+
+	// 전역 조명 상수버퍼 바인드
+	m_GlobalLightCBuffer->UpdateCBuffer();
 
 	m_LightListBufferData.clear();
 	m_LightListBufferData.resize(Size);

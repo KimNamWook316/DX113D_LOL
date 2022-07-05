@@ -262,6 +262,7 @@ void AnimationUpdateCS(int3 ThreadID : SV_DispatchThreadID)
     matrix matOffset = transpose(g_OffsetArray[ThreadID.x]);
 
     g_BoneMatrixArray[ThreadID.x] = mul(matOffset, matBone);
+
     g_BoneSocketMatrixArray[ThreadID.x] = transpose(matBone);
 
 	g_InstancingBoneMatrixArray[g_AnimRowIndex * g_AnimBoneCount + ThreadID.x] = mul(matOffset, matBone);

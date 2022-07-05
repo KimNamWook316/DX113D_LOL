@@ -97,6 +97,9 @@
     <Filter Include="05. Manager">
       <UniqueIdentifier>{c29db2ae-b440-4633-9c63-011f3bcf3088}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. Editor\02. Widget\01. Inspector\03. Shader">
+      <UniqueIdentifier>{564b3231-aa36-42c0-9c68-d1a40799fde2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EditorManager.cpp">
@@ -330,8 +333,11 @@
     <ClCompile Include="Window\AnimationDisplayWindow.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="Widget\NavMeshComponentWidget.cpp">
-      <Filter>02. Editor\02. Widget\01. Inspector\01. SceneComponent</Filter>
+    <ClCompile Include="Widget\ToonShaderWidget.cpp">
+      <Filter>02. Editor\02. Widget\01. Inspector\03. Shader</Filter>
+    </ClCompile>
+    <ClCompile Include="Widget\ShaderWidget.cpp">
+      <Filter>02. Editor\02. Widget\01. Inspector\03. Shader</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -572,8 +578,11 @@
     <ClInclude Include="Window\AnimationDisplayWindow.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="Widget\NavMeshComponentWidget.h">
-      <Filter>02. Editor\02. Widget\01. Inspector\01. SceneComponent</Filter>
+    <ClInclude Include="Widget\ToonShaderWidget.h">
+      <Filter>02. Editor\02. Widget\01. Inspector\03. Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="Widget\ShaderWidget.h">
+      <Filter>02. Editor\02. Widget\01. Inspector\03. Shader</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

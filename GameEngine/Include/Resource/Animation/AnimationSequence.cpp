@@ -156,6 +156,7 @@ bool CAnimationSequence::Save(FILE* pFile)
 	fwrite(&m_FrameMode, sizeof(int), 1, pFile);
 	fwrite(&m_ChangeFrame, sizeof(int), 1, pFile);
 
+	// Bone 개수 
 	size_t	iCount = m_vecKeyFrame.size();
 
 	fwrite(&iCount, sizeof(size_t), 1, pFile);
@@ -165,6 +166,7 @@ bool CAnimationSequence::Save(FILE* pFile)
 		fwrite(&m_vecKeyFrame[i]->iBoneIndex, sizeof(int), 1,
 			pFile);
 
+		// 각 Bone 이 지니고 있는 Frame 정보 
 		size_t	iFrameCount = m_vecKeyFrame[i]->vecKeyFrame.size();
 
 		fwrite(&iFrameCount, sizeof(size_t), 1, pFile);
@@ -232,6 +234,7 @@ bool CAnimationSequence::Load(FILE* pFile)
 		SAFE_DELETE(m_vecKeyFrame[i]);
 	}
 
+	// Bone 개수 
 	for (size_t i = 0; i < iCount; ++i)
 	{
 		BoneKeyFrame* pBoneKeyFrame = new BoneKeyFrame;
@@ -874,6 +877,121 @@ bool CAnimationSequence::CreateSequenceConvertFBX(bool bLoop, _tagFbxAnimationCl
 
 		SaveFullPathMultibyte(strAnimFullPath);
 	}
+
+	return true;
+}
+
+bool CAnimationSequence::CreateNewSequenceFromExistingSequence(CAnimationSequence* ExistingSequence,
+	int StartFrame, int EndFrame, const std::string& NewName)
+{
+	m_ChangeFrame = 0;
+	SetName(NewName);
+
+	switch (ExistingSequence->m_FrameMode)
+	{
+	case 24:
+		m_FrameMode = 24;
+		break;
+	case 30:
+		m_FrameMode = 30;
+		break;
+	case 50:
+		m_FrameMode = 50;
+		break;
+	case 60:
+		m_FrameMode = 60;
+		break;
+	}
+
+	// 예를 들어 원래 0 ~ 100 
+	// 그런데 10 ~ 20 까지를 자르고 싶다.
+	// 10 => 0
+	// 20 => 10
+
+	m_StartFrame = 0;
+	m_EndFrame = EndFrame - StartFrame;
+	m_FrameLength = m_EndFrame - m_StartFrame + 1;
+
+	// 시간 정보를 저장해준다.
+	m_StartTime = 0.f;
+
+	// (OBJ) 코드 라인 추가
+	// 해당 Sequence 의 Frame Mode, Frame 개수를 고려하여 Play Time 다시 세팅
+	// ex. 총 100 Frame => 50FrameMode => 총 2초간 Play
+	m_PlayTime = (float)(m_EndFrame - m_StartFrame + 1) / (float)m_FrameMode;
+
+	m_EndTime = m_PlayTime;
+	m_TimeLength = m_PlayTime;
+
+	m_FrameTime = m_PlayTime / m_FrameLength;
+
+	// 기존 Seqeunece 와 동일한 Bone 개수로 세팅한다.
+	// Bone 개수 * Edit하는 Frame 개수
+	std::vector<AnimationFrameTrans>	m_vecFrameTrans;
+	m_vecFrameTrans.resize(ExistingSequence->m_vecKeyFrame.size() * m_FrameLength);
+
+	// 본 3개 키프레임 5개일 경우
+	// 본0키0|본0키1|본0키2|본0키3|본0키4|본1키0|본1키1|본1키2|본1키3|본1키4|본2키0|본2키1|본2키2|본2키3|본2키4
+
+	// 키 프레임 수만큼 반복하며 각각의 프레임을 보간할 행렬 정보를 위치, 크기, 회전정보로
+	// 뽑아온다.
+	for (size_t BoneIdx = 0; BoneIdx < ExistingSequence->m_vecKeyFrame.size(); ++BoneIdx)
+	{
+		BoneKeyFrame* pBoneKeyFrame = new BoneKeyFrame;
+
+		// pBoneKeyFrame->iBoneIndex = ExistingSequence->m_vecKeyFrame[i].iBoneIndex;
+		pBoneKeyFrame->iBoneIndex = ExistingSequence->m_vecKeyFrame[BoneIdx]->iBoneIndex;
+
+		m_vecKeyFrame.push_back(pBoneKeyFrame);
+
+		// 아래부터 키프레임 정보를 저장
+		// 단, 잘라낸 키 프레임 정보들만을 저장할 것이다.
+		// pBoneKeyFrame->vecKeyFrame.reserve(pClip->vecBoneKeyFrame[i].vecKeyFrame.size());
+		pBoneKeyFrame->vecKeyFrame.reserve(m_FrameLength);
+
+		// StartFrame 부터, EndFrame 까지
+		for (size_t KeyFrameIndex = StartFrame; KeyFrameIndex <= EndFrame; ++KeyFrameIndex)
+		{
+			// 기본 원리대로라면, 100 Frame 짜리 Animation이라고 할때
+			// 각 Bone 들 모두가 100개 Frame 을 지니고 있어야 한다.
+			// 하지만 가끔 그렇지 않은 Bone들이 들어있다.
+			if (ExistingSequence->m_vecKeyFrame[BoneIdx]->vecKeyFrame.size() <= KeyFrameIndex)
+				break;
+
+			KeyFrame* NewKeyFrame = new KeyFrame;
+			NewKeyFrame->dTime = ExistingSequence->m_vecKeyFrame[BoneIdx]->vecKeyFrame[KeyFrameIndex]->dTime;
+			NewKeyFrame->vPos = ExistingSequence->m_vecKeyFrame[BoneIdx]->vecKeyFrame[KeyFrameIndex]->vPos;
+			NewKeyFrame->vScale = ExistingSequence->m_vecKeyFrame[BoneIdx]->vecKeyFrame[KeyFrameIndex]->vScale;
+			NewKeyFrame->vRot = ExistingSequence->m_vecKeyFrame[BoneIdx]->vecKeyFrame[KeyFrameIndex]->vRot;
+
+			// i번째 Bone 의 j번째 Frame 정보로 채워준다.
+			// pBoneKeyFrame->vecKeyFrame.push_back(NewKeyFrame);
+			pBoneKeyFrame->vecKeyFrame.push_back(NewKeyFrame);
+
+			if (KeyFrameIndex - StartFrame < m_FrameLength)
+			{
+				AnimationFrameTrans	tFrame = {};
+				tFrame.vScale = Vector4(NewKeyFrame->vScale.x, NewKeyFrame->vScale.y,
+					NewKeyFrame->vScale.z, 1.f);
+				tFrame.vTranslate = Vector4(NewKeyFrame->vPos.x, NewKeyFrame->vPos.y,
+					NewKeyFrame->vPos.z, 1.f);
+				tFrame.qRot = NewKeyFrame->vRot;
+
+				m_vecFrameTrans[BoneIdx * m_FrameLength + (KeyFrameIndex - StartFrame)] = tFrame;
+			}
+
+			else
+				int a = 10; // 여기 걸리면 안된다.
+		}
+	}
+
+	m_KeyFrameBuffer = new CStructuredBuffer;
+
+	m_KeyFrameBuffer->Init("KeyFrameBuffer", (unsigned int)sizeof(AnimationFrameTrans),
+		(unsigned int)m_vecFrameTrans.size(), 13, true, (int)Buffer_Shader_Type::Compute);
+
+	m_KeyFrameBuffer->UpdateBuffer(&m_vecFrameTrans[0],
+		(int)m_vecFrameTrans.size());
 
 	return true;
 }

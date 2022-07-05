@@ -144,16 +144,17 @@ ResourceWindow로부터 Drag,Drop 을 통해서, Material 을  볼수 있다.)";
 	Line = AddWidget<CIMGUISameLine>("Line");
 	Line->SetOffsetX(160.f);
 
-	m_SetTextureBtn = AddWidget<CIMGUIButton>("Set Texture", 90.f, 20.f);
+	m_SetTextureBtn = AddWidget<CIMGUIButton>("Load & Set Texture", 120.f, 20.f);
 	m_SetTextureBtn->SetClickCallback<CMaterialEditor>(this, &CMaterialEditor::OnSetTextureBtn);
 
 	Line = AddWidget<CIMGUISameLine>("Line");
-	Line->SetOffsetX(260.f);
+	Line->SetOffsetX(290.f);
 
 	HelpText = AddWidget<CIMGUIText>("SetTextureHelpText", 90.f, 30.f);
-	const char* SetTextureHelpTexte = R"(ex) 몇번째 Index 의 Texture 를 세팅할지 정한다.
-그 다음 ResourceWindow 로부터 Key값을 이용하여 찾거나
-FileBrowser 에서 File을 Drag 해서 세팅한다.)";
+	const char* SetTextureHelpTexte = R"(ex) 1) 몇번째 Index 의 Texture 를 세팅할지 정한다.
+2) 그 다음 ResourceWindow 로부터 Key값을 Drag Drop하여 찾거나
+3) FileBrowser 에서 File을 Drag Drop해서 세팅한다.
+4) 혹은, 해당 버튼을 통해 하드디스크로부터 Set 할 Texture 를 선택해서 Load 한다.)";
 	HelpText->SetText(SetTextureHelpTexte);
 	HelpText->SetIsHelpMode(true);
 
@@ -166,15 +167,17 @@ FileBrowser 에서 File을 Drag 해서 세팅한다.)";
 	Line = AddWidget<CIMGUISameLine>("Line");
 	Line->SetOffsetX(160.f);
 
-	m_AddTextureBtn = AddWidget<CIMGUIButton>("Add Texture", 90.f, 20.f);
+	m_AddTextureBtn = AddWidget<CIMGUIButton>("Load & Add Texture", 120.f, 20.f);
 	m_AddTextureBtn->SetClickCallback<CMaterialEditor>(this, &CMaterialEditor::OnAddTextureBtn);
 
 	Line = AddWidget<CIMGUISameLine>("Line");
-	Line->SetOffsetX(260.f);
+	Line->SetOffsetX(290.f);
 
 	HelpText = AddWidget<CIMGUIText>("AddTextureHelpText", 90.f, 30.f);
-	const char* AddTextureHelpTexte = R"(ex)  ResourceWindow 로부터 Key값을 이용하여 찾거나
-FileBrowser 에서 File을 Drag 해서 세팅한다.)";
+	const char* AddTextureHelpTexte = R"(ex)  
+1) ResourceWindow 로부터 Key값을 Drag Drop하여 찾거나
+2) FileBrowser 에서 File을 Drag Drop 해서 세팅한다.
+3) 혹은, 해당 버튼을 통해 하드디스크로부터 Add 할 Texture 를 선택하여 Load 한다.)";
 	HelpText->SetText(AddTextureHelpTexte);
 	HelpText->SetIsHelpMode(true);
 
@@ -425,10 +428,68 @@ void CMaterialEditor::OnSetOutLineThickNess(float ThickNess)
 
 void CMaterialEditor::OnSetTextureBtn()
 {
-	if (!m_SelectedMaterial || m_SetTextureInput->Empty())
+	if (!m_SelectedMaterial)
+	{
+		MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("No Material Set"), NULL, MB_OK);
 		return;
+	}
 
-	OnSetTextureBtnWithString(m_SetTextureInput->GetTextUTF8());
+	// OnSetTextureBtnWithString(m_SetTextureInput->GetTextUTF8());
+
+	// 실제 Texture 를 Load 하여 Setting 하는 기능 마련하기 
+	TCHAR FileFullPath[MAX_PATH] = {};
+
+	OPENFILENAME OpenFile = {};
+	OpenFile.lStructSize = sizeof(OPENFILENAME);
+	OpenFile.hwndOwner = CEngine::GetInst()->GetWindowHandle();
+	// OpenFile.lpstrFilter = TEXT("All Files\0*.*\0.Material File\0*.mtrl");
+	OpenFile.lpstrFile = FileFullPath;
+	OpenFile.nMaxFile = MAX_PATH;
+	OpenFile.lpstrInitialDir = CPathManager::GetInst()->FindPath(TEXTURE_PATH)->Path;
+
+	if (GetOpenFileName(&OpenFile) != 0)
+	{
+		int SetTextureIndex = m_TextureIndex->GetVal();
+
+		if (SetTextureIndex >= m_SelectedMaterial->GetTextureInfo().size())
+		{
+			MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Target Texture Index Exceed Texture Size"), NULL, MB_OK);
+			return;
+		}
+
+		// FullPath 추출
+		const char* FileFullPathMultibyte = CEditorUtil::ChangeTCHARTextToMultibyte(FileFullPath);
+		char FileFullPathMultibyteCopy[MAX_PATH] = {};
+		strcpy_s(FileFullPathMultibyteCopy, FileFullPathMultibyte);
+
+		// 파일 이름 추출
+		std::string FileName;
+		std::string FileExt;
+		CEditorUtil::ExtractFileNameAndExtFromPath(FileFullPathMultibyteCopy, FileName, FileExt);
+
+		// 파일 이름을 Key값으로 하여, 이미 Engine에 Load 되어 있는지 확인한다.
+		CTexture* TargetTexture = CResourceManager::GetInst()->FindTexture(FileName);
+
+		if (TargetTexture)
+		{
+			m_SelectedMaterial->SetTextureInfoResource(SetTextureIndex, TargetTexture);
+
+			TextureSetSuccessCallback(TargetTexture);
+
+			return;
+		}
+
+		// 그게 아니라면, Resource Manager 를 통해 Load 하고 Texture 를 세팅한다.
+		CResourceManager::GetInst()->LoadTextureFullPathMultibyte(FileName, FileFullPathMultibyteCopy);
+
+		TargetTexture = CResourceManager::GetInst()->FindTexture(FileName);
+		
+		m_SelectedMaterial->SetTextureInfoResource(SetTextureIndex, TargetTexture);
+
+		TextureSetSuccessCallback(TargetTexture);
+
+		return;
+	}
 }
 
 void CMaterialEditor::OnSetTextureBtnWithString(const std::string& InputName)
@@ -451,17 +512,7 @@ void CMaterialEditor::OnSetTextureBtnWithString(const std::string& InputName)
 	{
 		m_SelectedMaterial->SetTextureInfoResource(SetTextureIndex, TargetTexture);
 
-		// 현재 Texture 를 IMGUI Image 에 보여주기
-		m_SetTexureImage->SetTexture(TargetTexture);
-
-		RefreshMaterialDisplayInfo(m_SelectedMaterial, TargetTexture);
-
-		// ResourceDisplay Window 에 있는 Texture 목록들 Resource Window 에 추가해서 보여주기
-		CEditorManager::GetInst()->GetResourceDisplayWindow()->RefreshLoadedTextureResources();
-
-		// 제대로 세팅되었다는 Message
-		MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Texture Set SuccessFully"), NULL, MB_OK);
-
+		TextureSetSuccessCallback(TargetTexture);
 		return;
 	}
 
@@ -501,24 +552,71 @@ void CMaterialEditor::OnSetTextureBtnWithString(const std::string& InputName)
 
 	m_SelectedMaterial->SetTextureInfoResource(SetTextureIndex, TargetTexture);
 
-	// 현재 Texture 를 IMGUI Image 에 보여주기
-	m_SetTexureImage->SetTexture(TargetTexture);
-
-	RefreshMaterialDisplayInfo(m_SelectedMaterial, TargetTexture);
-
-	// ResourceDisplay Window 에 있는 Texture 목록들 Resource Window 에 추가해서 보여주기
-	CEditorManager::GetInst()->GetResourceDisplayWindow()->RefreshLoadedTextureResources();
-
-	// 제대로 세팅되었다는 Message
-	MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Texture Set SuccessFully"), NULL, MB_OK);
+	TextureSetSuccessCallback(TargetTexture);
 }
 
 void CMaterialEditor::OnAddTextureBtn()
 {
-	if (!m_SelectedMaterial || m_AddTextureInput->Empty())
+	if (!m_SelectedMaterial)
+	{
+		MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("No Material Set"), NULL, MB_OK);
 		return;
-	
-	OnAddTextureBtnWithString(m_AddTextureInput->GetTextUTF8());
+	}
+
+	// OnSetTextureBtnWithString(m_SetTextureInput->GetTextUTF8());
+
+	// 실제 Texture 를 Load 하여 Setting 하는 기능 마련하기 
+	TCHAR FileFullPath[MAX_PATH] = {};
+
+	OPENFILENAME OpenFile = {};
+	OpenFile.lStructSize = sizeof(OPENFILENAME);
+	OpenFile.hwndOwner = CEngine::GetInst()->GetWindowHandle();
+	// OpenFile.lpstrFilter = TEXT("All Files\0*.*\0.Material File\0*.mtrl");
+	OpenFile.lpstrFile = FileFullPath;
+	OpenFile.nMaxFile = MAX_PATH;
+	OpenFile.lpstrInitialDir = CPathManager::GetInst()->FindPath(TEXTURE_PATH)->Path;
+
+	if (GetOpenFileName(&OpenFile) != 0)
+	{
+		// FullPath 추출
+		const char* FileFullPathMultibyte = CEditorUtil::ChangeTCHARTextToMultibyte(FileFullPath);
+		char FileFullPathMultibyteCopy[MAX_PATH] = {};
+		strcpy_s(FileFullPathMultibyteCopy, FileFullPathMultibyte);
+
+		// 파일 이름 추출
+		std::string FileName;
+		std::string FileExt;
+		CEditorUtil::ExtractFileNameAndExtFromPath(FileFullPathMultibyteCopy, FileName, FileExt);
+
+		// 1) 파일 이름을 Key값으로 하여, 이미 Engine에 Load 되어 있는지 확인한다.
+		CTexture* TargetTexture = CResourceManager::GetInst()->FindTexture(FileName);
+
+		if (TargetTexture)
+		{
+			m_SelectedMaterial->AddTexture(0, (int)Buffer_Shader_Type::Pixel, FileName, TargetTexture);
+
+			TextureSetSuccessCallback(TargetTexture);
+
+			return;
+		}
+
+		// 2) 그게 아니라면, Resource Manager 를 통해 Load 하고 Texture 를 세팅한다.
+		bool LoadedResult = CResourceManager::GetInst()->LoadTextureFullPathMultibyte(FileName, FileFullPathMultibyteCopy);
+
+		if (!LoadedResult)
+		{
+			MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Texture Load Failure"), NULL, MB_OK);
+			return;
+		}
+
+		TargetTexture = CResourceManager::GetInst()->FindTexture(FileName);
+
+		m_SelectedMaterial->AddTexture(0, (int)Buffer_Shader_Type::Pixel, FileName, TargetTexture);
+
+		TextureSetSuccessCallback(TargetTexture);
+
+		return;
+	}
 }
 
 void CMaterialEditor::OnAddTextureBtnWithString(const std::string& InputName)
@@ -533,16 +631,7 @@ void CMaterialEditor::OnAddTextureBtnWithString(const std::string& InputName)
 	{
 		m_SelectedMaterial->AddTexture(0, (int)Buffer_Shader_Type::Pixel, InputName, TargetTexture);
 
-		// 현재 Texture 를 IMGUI Image 에 보여주기
-		m_SetTexureImage->SetTexture(TargetTexture);
-
-		RefreshMaterialDisplayInfo(m_SelectedMaterial);
-
-		// ResourceDisplay Window 에 있는 Texture 목록들 Resource Window 에 추가해서 보여주기
-		CEditorManager::GetInst()->GetResourceDisplayWindow()->RefreshLoadedTextureResources();
-
-		// 제대로 세팅되었다는 Message
-		MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Texture Added SuccessFully"), NULL, MB_OK);
+		TextureSetSuccessCallback(TargetTexture);
 
 		return;
 	}
@@ -579,16 +668,21 @@ void CMaterialEditor::OnAddTextureBtnWithString(const std::string& InputName)
 
 	m_SelectedMaterial->AddTexture(0, (int)Buffer_Shader_Type::Pixel, InputName, TargetTexture);
 
+	TextureSetSuccessCallback(TargetTexture);
+}
+
+void CMaterialEditor::TextureSetSuccessCallback(class CTexture* Texture)
+{
 	// 현재 Texture 를 IMGUI Image 에 보여주기
-	m_SetTexureImage->SetTexture(TargetTexture);
-
-	RefreshMaterialDisplayInfo(m_SelectedMaterial);
-
+	m_SetTexureImage->SetTexture(Texture);
+	
+	RefreshMaterialDisplayInfo(m_SelectedMaterial, Texture);
+	
 	// ResourceDisplay Window 에 있는 Texture 목록들 Resource Window 에 추가해서 보여주기
 	CEditorManager::GetInst()->GetResourceDisplayWindow()->RefreshLoadedTextureResources();
-
+	
 	// 제대로 세팅되었다는 Message
-	MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Texture Added SuccessFully"), NULL, MB_OK);
+	MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Texture Set SuccessFully"), NULL, MB_OK);
 }
 
 void CMaterialEditor::OnSaveMaterial()
@@ -637,7 +731,7 @@ void CMaterialEditor::OnSaveMaterial()
 
 		// 현재 저장하는 Directory가 Bin/Material/ParticleMaterial 인지 확인하기 => 아니라면, Save 방지
 		std::string PathInfoBeforeFileName;
-		CEditorUtil::GetPathInfoBeforeFileName(FileFullPathMultibyte, PathInfoBeforeFileName);
+		CEngineUtil::GetPathInfoBeforeFileName(FileFullPathMultibyte, PathInfoBeforeFileName);
 
 		if (strcmp(MaterialPathInfo->PathMultibyte, PathInfoBeforeFileName.c_str()) != 0)
 		{
@@ -711,7 +805,7 @@ void CMaterialEditor::OnLoadMaterial()
 
 		// 현재 Load하는 Directory가 Bin/Material/ParticleMaterial 인지 확인하기 => 아니라면, Load
 		std::string PathInfoBeforeFileName;
-		CEditorUtil::GetPathInfoBeforeFileName(FilePathMultibyte, PathInfoBeforeFileName);
+		CEngineUtil::GetPathInfoBeforeFileName(FilePathMultibyte, PathInfoBeforeFileName);
 
 		if (strcmp(MaterialPathInfo->PathMultibyte, PathInfoBeforeFileName.c_str()) != 0)
 		{
@@ -745,11 +839,14 @@ void CMaterialEditor::OnLoadMaterial()
 void CMaterialEditor::RefreshMaterialDisplayInfo(class CMaterial* Material, class CTexture* Texture )
 {
 	// Material Editor =>
-
 	if (!Material)
 		return;
 
+	// 현재 Material 이름 보여주기
 	m_SelectedMaterialName->SetText(Material->GetName().c_str());
+
+	// Edit Name Input 비워주기 
+	m_EditMaterialName->ClearText();
 
 	const std::vector<MaterialTextureInfo>& MtrlTexture = Material->GetTextureInfo();
 
@@ -792,11 +889,15 @@ void CMaterialEditor::RefreshMaterialDisplayInfo(class CMaterial* Material, clas
 
 			std::string FileNameOnly;
 
-			CEditorUtil::GetFileNameAfterSlash(FileNameMultibyte, FileNameOnly);
+			CEngineUtil::GetFileNameAfterSlash(FileNameMultibyte, FileNameOnly);
 
 			m_TextureInfoTable->AddData(MaterialTextureInfoKeys::Textures[tIdx], FileNameOnly);
 		}
 	}
+
+	// Set Texture, Add Texture Input 내용 비워주기
+	m_AddTextureInput->ClearText();
+	m_SetTextureInput->ClearText();
 
 	// Info Table 세팅
 	// Shader Name
@@ -843,11 +944,9 @@ void CMaterialEditor::RefreshMaterialDisplayInfo(class CMaterial* Material, clas
 	// RenderState Input 을 Clear 해준다.
 	m_RenderStateSetInput->ClearText();
 
-
 	// OutLine 정보 세팅
 	m_OutLineCheck->SetCheck(0, Material->IsOutlineEnable());
 	m_OutLineColor->SetRGB(Material->GetOutlineColor());
 	m_OutLineThickNess->SetVal(Material->GetOutlineThickness());
 
-	// Material
 }

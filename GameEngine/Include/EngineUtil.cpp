@@ -74,6 +74,48 @@ Fog_Type CEngineUtil::StringToFogType(const std::string& TypeString)
 	return (Fog_Type)(-1);
 }
 
+std::string CEngineUtil::ToonShaderTypeToString(ToonShaderType Type)
+{
+	std::string ret = "";
+	switch (Type)
+	{
+	case ToonShaderType::Default:
+		ret = "Default";
+		break;
+	case ToonShaderType::Easy:
+		ret = "Easy";
+		break;
+	case ToonShaderType::Light:
+		ret = "Light";
+		break;
+	case ToonShaderType::Warm:
+		ret = "Warm";
+		break;
+	}
+	return ret;
+}
+
+ToonShaderType CEngineUtil::StringToToonShaderType(const std::string& TypeString)
+{
+	if (TypeString == "Default")
+	{
+		return ToonShaderType::Default;
+	}
+	else if (TypeString == "Easy")
+	{
+		return ToonShaderType::Easy;
+	}
+	else if (TypeString == "Light")
+	{
+		return ToonShaderType::Light;
+	}
+	else if (TypeString == "Warm")
+	{
+		return ToonShaderType::Warm;
+	}
+	return (ToonShaderType)(-1);
+}
+
 std::optional<std::string> CEngineUtil::CheckAndExtractFullPathOfTargetFile(std::string_view PathName, std::string_view TargetFileName)
 {
 	const PathInfo* Info = CPathManager::GetInst()->FindPath(PathName.data());
@@ -148,6 +190,129 @@ bool CEngineUtil::CopyFileToOtherDirectory(const PathInfo* CurrentPathInfo, cons
 		return false;
 
 	fs::copy(FromFilePath, ToFilePath);
+
+	return true;
+}
+
+bool CEngineUtil::GetPathInfoBeforeFileName(const std::string& FilePath, std::string& ExtractedPathInfo)
+{
+	int FilePathLength = (int)FilePath.size();
+
+	for (int i = FilePathLength - 1; i >= 0; --i)
+	{
+		if (FilePath[i] == '\\')
+		{
+			ExtractedPathInfo = FilePath.substr(0, (size_t)i + 1);
+			return true;
+		}
+	}
+
+	ExtractedPathInfo = FilePath;
+
+	return true;
+}
+
+bool CEngineUtil::GetFileNameAfterSlash(const std::string& FilePath, std::string& ExtractedFileName)
+{
+	int FilePathLength = (int)FilePath.size();
+
+	for (int i = FilePathLength - 1; i >= 0; --i)
+	{
+		if (FilePath[i] == '\\')
+		{
+			ExtractedFileName = FilePath.substr((size_t)i + 1, FilePath.size());
+			return true;
+		}
+	}
+
+	ExtractedFileName = FilePath;
+
+	return true;
+}
+
+bool CEngineUtil::GetFileExt(const std::string& FileName, std::string& ExtractedExt)
+{
+	size_t i = FileName.find('.');
+
+	if (i != std::string::npos)
+	{
+		ExtractedExt = FileName.substr(i + 1, FileName.length() - i);
+		return true;
+	}
+
+	return false;
+}
+
+bool CEngineUtil::GetFileNameOnly(const std::string& FullFileName, std::string& ExtractedFileName)
+{
+	size_t i = FullFileName.find('.');
+
+	if (i != std::string::npos)
+	{
+		ExtractedFileName = FullFileName.substr(0, i);
+		return true;
+	}
+
+	return false;
+}
+
+
+bool CEngineUtil::CopyFileToOtherDirectory(const std::string& OriginFullPath, const std::string& TargetFullPath,
+	std::string& FinalCopyPath, bool Recursvie)
+{
+	fs::path originalPath = OriginFullPath;
+	fs::path copiedPath = TargetFullPath;
+
+	// 같은 경로라면, _(num) 을 붙여가면서, 해당 경로에 같은 이름이 없을 때까지 반복해가며 새로운 이름으로 만들어낸다.
+	// if (originalPath == copiedPath)
+	if (fs::exists(copiedPath))
+	{
+		std::string FolderPathStr;
+		std::string FileNameStr;
+		std::string FileNameOnlyStr;
+		std::string FileExtStr;
+
+		GetPathInfoBeforeFileName(OriginFullPath, FolderPathStr);
+		GetFileNameAfterSlash(OriginFullPath, FileNameStr);
+		GetFileExt(FileNameStr, FileExtStr);
+		GetFileNameOnly(FileNameStr, FileNameOnlyStr);
+
+		fs::path FolderPathInfo = FolderPathStr;
+
+		int ExtraNameNum = 0;
+
+		while (true)
+		{
+			std::string SavedCopyPath;
+			SavedCopyPath.reserve(FolderPathStr.length() * 2);
+
+			SavedCopyPath.append(FolderPathStr);
+			SavedCopyPath.append("\\");
+			SavedCopyPath.append(FileNameOnlyStr);
+			SavedCopyPath.append("_" + std::to_string(ExtraNameNum));
+			SavedCopyPath.append("." + FileExtStr);
+
+			// 만약 현재 폴더 경로에 해당 이름으로 된 파일이 없다면
+			if (fs::exists(SavedCopyPath) == false)
+			{
+				copiedPath = SavedCopyPath;
+				break;
+			}
+
+			++ExtraNameNum;
+		}
+	}
+
+	if (!Recursvie)
+	{
+		fs::copy(originalPath, copiedPath);
+	}
+	else
+	{
+		fs::copy(originalPath, copiedPath, fs::copy_options::recursive);
+	}
+
+	FinalCopyPath = copiedPath.string();
 
 	return true;
 }

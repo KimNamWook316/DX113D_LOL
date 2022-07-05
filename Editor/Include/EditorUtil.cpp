@@ -1,5 +1,10 @@
 
 #include "EditorUtil.h"
+// Library
+#include <fstream>
+#include <iostream>
+#include <filesystem>
+// Engine
 #include "PathManager.h"
 #include "GameObject/Minion.h"
 #include "GameObject/Champion.h"
@@ -21,11 +26,8 @@
 #include "Component/NavMeshComponent.h"
 #include "IMGUITree.h"
 #include "Flag.h"
+#include "EngineUtil.h"
 
-
-#include <fstream>
-#include <iostream>
-#include <filesystem>
 
 namespace fs = std::filesystem;
 
@@ -206,7 +208,7 @@ void CEditorUtil::FilterSpecificNameIncludedFilePath(std::vector<std::string>& I
 		// FullPath 에서 중간 경로 들이 아니라, 오로지 FileName 이 IncludeName Str 을 포함하고 있는지를 조사해야 한다.
 		// 따라서 폴더 경로 제외, FileName 을 중간에 추출해야 한다.
 		std::string CurFileName;
-		GetFileNameAfterSlash(InputVecFullPath[i], CurFileName);
+		CEngineUtil::GetFileNameAfterSlash(InputVecFullPath[i], CurFileName);
 		size_t nPos = CurFileName.find(IncludeName);
 
 		if (nPos == std::string::npos)
@@ -264,7 +266,7 @@ std::optional<std::string> CEditorUtil::GetFullPathOfTargetFileNameInDir(const s
 	
 		if (strcmp(FileName.c_str(), TargetFileName.c_str()) == 0)
 		{
-			GetFileNameOnly(fs::path(entry.path()).filename().u8string(), FileNameOnly);
+			CEngineUtil::GetFileNameOnly(fs::path(entry.path()).filename().u8string(), FileNameOnly);
 
 			return entry.path().u8string();
 		}
@@ -273,67 +275,79 @@ std::optional<std::string> CEditorUtil::GetFullPathOfTargetFileNameInDir(const s
 	return std::nullopt;
 }
 
-bool CEditorUtil::GetFileExt(const std::string& FileName, std::string& ExtractedExt)
+bool CEditorUtil::ChangeFileOrDirectoryName(const std::string& OriginFullPath, const std::string& NewName)
 {
-	size_t i = FileName.find('.');
+	fs::path TargetPath = OriginFullPath;
 
-	if (i != std::string::npos)
+	// Folder 경로 세팅
+	std::string RenamePathStr;
+	CEngineUtil::GetPathInfoBeforeFileName(OriginFullPath, RenamePathStr);
+
+	RenamePathStr.append(NewName);
+
+	fs::path ReNamedPath = RenamePathStr;
+
+	// Folder 의 경우(dir) 단순히 rename 이 안된다.
+	// 따라서, 아예 복사를 해준 다음, 해당 디렉토리의 이름을 바꺼주는 방식을 취한다.
+
+	if (fs::is_directory(TargetPath))
 	{
-		ExtractedExt = FileName.substr(i+1, FileName.length() - i);
-		return true;
-	}
+		// 빈 디렉토리 생성 
+		fs::create_directory(ReNamedPath);
 
-	return false;
-}
-
-bool CEditorUtil::GetFileNameOnly(const std::string& FullFileName, std::string& ExtractedFileName)
-{
-	size_t i = FullFileName.find('.');
-
-	if (i != std::string::npos)
-	{
-		ExtractedFileName = FullFileName.substr(0, i);
-		return true;
-	}
-
-	return false;
-}
-
-bool CEditorUtil::GetFileNameAfterSlash(const std::string& FilePath, std::string& ExtractedFileName)
-{
-	int FilePathLength = (int)FilePath.size();
-
-	for (int i = FilePathLength - 1; i >= 0; --i)
-	{
-		if (FilePath[i] == '\\')
+		// 혹시나 하는 예외처리
+		// create_directory 의 경우, 해당 경로에 이미 해당 dir 이 존재하면, create 하지 않는다.
+		// 이때, 아래에서 copy 를 해주기 위해서는, ReNamedPath 폴더가 비어있어야 한다.
+		// 따라서, ReNamePath 를 우선 비워줄 것이다.
+		// 기존 폴더 내에 있던 데이터들 모두 삭제
+		while (true)
 		{
-			ExtractedFileName = FilePath.substr((size_t)i + 1, FilePath.size());
-			return true;
-		}
-	}
+			bool is_modified = false;
 
-	ExtractedFileName = FilePath;
+			for (const fs::directory_entry& entry :
+				fs::recursive_directory_iterator(ReNamedPath))
+			{
+				fs::remove(entry.path());
+				is_modified = true;
+				break;
+			}
+
+			if (!is_modified)
+				break;
+		}
+		
+		// 폴더 내용 복사
+		fs::copy(TargetPath, ReNamedPath, fs::copy_options::recursive);
+
+		// 기존 Folder 는 지워준다.
+		while (true)
+		{
+			bool is_modified = false;
+
+			for (const fs::directory_entry& entry :
+				fs::recursive_directory_iterator(TargetPath))
+			{
+				fs::remove(entry.path());
+				is_modified = true;
+				break;
+			}
+
+			if (!is_modified)
+				break;
+		}
+
+		// 기존 폴더 삭제
+		fs::remove(TargetPath);
+	}
+	else
+	{
+		fs::rename(TargetPath, ReNamedPath);
+	}
 
 	return true;
 }
 
-bool CEditorUtil::GetPathInfoBeforeFileName(const std::string& FilePath, std::string& ExtractedPathInfo)
-{
-	int FilePathLength = (int)FilePath.size();
 
-	for (int i = FilePathLength - 1; i >= 0; --i)
-	{
-		if (FilePath[i] == '\\')
-		{
-			ExtractedPathInfo = FilePath.substr(0, (size_t)i + 1);
-			return true;
-		}
-	}
-
-	ExtractedPathInfo = FilePath;
-
-	return true;
-}
 
 const char* CEditorUtil::ChangeTCHARTextToMultibyte(TCHAR* TCHARText)
 {

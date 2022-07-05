@@ -1,6 +1,31 @@
 #pragma once
 #include "IMGUIWindow.h"
 
+enum class ParticlePreset
+{
+    Ripple,
+    Ring,
+    RingWall,
+    Torch,
+    FireSmall,
+    FireWide,
+    Spark,
+    SparkBounce,
+    SimpleMeteor,
+    Max
+};
+
+static const char* ParticlePresetNames[] = {
+    "Ripple",
+    "Ring",
+    "RingWall",
+    "Torch",
+    "FireSmall",
+    "FireWide",
+    "Spark",
+    "SparkBounce",
+    "SimpleMeteor" };
+
 struct Particle3DObjectBackUpStruct
 {
     bool IsCameraRotate;
@@ -27,21 +52,28 @@ private:
     class CIMGUIButton* m_LoadParticleBtn;
     class CIMGUIButton* m_StartEditBtn;
     class CIMGUIButton* m_RestartBtn;
+    class CIMGUISliderFloat* m_GenerateRadius;
 private :
     class CIMGUITextInput* m_CurrentParticleName;
 private:
+    class CIMGUIComboBox* m_ParticlePreset;
+
     class CIMGUIInputFloat* m_SpawnTimeMaxEdit;
-    // class CIMGUIButton* m_RestartButton;
+    class CIMGUIInputInt* m_SpawnCountMaxEdit;
 
     class CIMGUIInputFloat3* m_StartMinEdit;
     class CIMGUIInputFloat3* m_StartMaxEdit;
 
-    class CIMGUIInputInt* m_SpawnCountMaxEdit;
-    // class CIMGUIButton* m_RestartButton;
-
     class CIMGUIInputFloat3* m_ScaleMinEdit;
     class CIMGUIInputFloat3* m_ScaleMaxEdit;
 
+    // UV Move
+    class CIMGUICheckBox* m_IsMoveEnableEdit;
+    class CIMGUIInputInt*   m_UVRowN;
+    class CIMGUIInputInt*   m_UVColN;
+
+    // Life Time
+    class CIMGUICheckBox* m_IsLifeTimeLinearFromCenterEdit;
     class CIMGUIInputFloat* m_LifeTimeMinEdit;
     class CIMGUIInputFloat* m_LifeTimeMaxEdit;
 
@@ -51,8 +83,8 @@ private:
     class CIMGUIColor4* m_ColorMinEdit;
     class CIMGUIColor4* m_ColorMaxEdit;
 
-    class CIMGUIInputFloat* m_AlphaMinEdit;
-    class CIMGUIInputFloat* m_AlphaMaxEdit;
+    class CIMGUIInputFloat* m_AlphaStartEdit;
+    class CIMGUIInputFloat* m_AlphaEndEdit;
     class CIMGUIButton* m_AlphaBlendEnableButton;
 
     // Material
@@ -65,13 +97,13 @@ private:
 
     class CIMGUICheckBox* m_IsMoveEdit;
     class CIMGUICheckBox* m_IsGravityEdit;
-    // class CIMGUICheckBox* m_IsRandomMoveEdit;
     class CIMGUICheckBox* m_IsPauseResumeToggle;
 
     // Camera Related
     class CIMGUICheckBox* m_IsRotateEdit;
     class CIMGUICheckBox* m_IsRotateInv;
     class CIMGUISliderFloat* m_RotateSpeedSliderBar;
+    class CIMGUISliderFloat* m_YRotateSliderBar;
     class CIMGUICheckBox* m_IsZoomEdit;
     class CIMGUISliderFloat* m_ZoomSpeedSliderBar;
 
@@ -79,10 +111,15 @@ private:
     class CIMGUICheckBox* m_IsBounce;
     class CIMGUISliderFloat* m_BounceResistance; // 마찰력
 
+    // Ring Generate
+    class CIMGUICheckBox* m_IsGenerateRing;
+    class CIMGUICheckBox* m_IsLoopGenerateRing; 
+
     // Circle Generate
     class CIMGUICheckBox* m_IsGenerateCircle;
-    class CIMGUISliderFloat* m_GenerateCircleRadius; // 마찰력
-    class CIMGUICheckBox* m_IsLoopGenerateCircle; // 마찰력
+
+    // Torch Generate
+    class CIMGUICheckBox* m_IsGenerateTorch;
 
     // 카메라의 Y 축 위치 (위로 갈지, 아래로 갈지 조정)
     class CIMGUISliderFloat* m_CameraYOffsetBar;
@@ -90,23 +127,13 @@ private:
     // 카메라의 X 축 기준 회전 조정 (위를 볼지, 아래를 볼지)
     class CIMGUISliderFloat* m_CameraXRotSlideBar;
 
+    // Move Dir, Angle
+    class CIMGUICheckBox* m_IsRandomMoveDirEdit;
     class CIMGUIInputFloat3* m_MoveDirEdit;
     class CIMGUIInputFloat3* m_MoveAngleEdit;
 
-    // Camera 관련 세팅
-    // class CIMGUICheckBox* m_CameraZoom;
-    // class CIMGUICheckBox* m_CameraLookDownFromUp;
-    // class CIMGUICheckBox* m_CameraRotate;
-
-    // Unity 참고 이후 추가
-    class CIMGUIInputFloat* m_GravityAccelEdit;
-    class CIMGUIInputFloat* m_StartDelayEdit;
-    class CIMGUIButton* m_SetMaterialTextureButton;
-    class CIMGUIButton* m_RestartButton;
-
-    // Render Target
+    // Particle 이 사용하는 Material Texture
     class CIMGUIImage* m_ParticleTexture;
-    // class CIMGUIImage* m_ParticleRenderTarget;
 private :
     class CParticle* m_ParticleClass;
     class CMaterial* m_ParticleMaterial;
@@ -114,9 +141,6 @@ private :
     Particle3DObjectBackUpStruct m_BackUpStruct;
     bool m_StartEdit;
 private :
-    // class CParticleComponent* m_ParticleComponent;
-    // class CStaticMeshComponent* m_BaseGroundComponent;
-    // class CStaticMeshComponent* m_SkyComponent;
     class C3DParticleObject* m_ParticleObject;
     class CGameObject* m_ParticleSampleObject;
     class CGameObject* m_BaseGroundObject;
@@ -128,6 +152,14 @@ private:
     void OnLoadParticleObjectButton();
     void OnRestartParticleComponentButton();
 
+    // UV Move
+    void OnIsUVMoveEnableEdit(const char*, bool);
+    void OnUVRowNEdit(int Num);
+    void OnUVColNEdit(int Num);
+
+    // Generate Radius
+    void OnEditGenerateRadius(float Radius); //
+
     // Material Load By Btn
     void OnLoadParticleMaterialCallback();
 
@@ -138,57 +170,69 @@ private:
     void OnIsBounceEdit(const char*, bool);
     void OnEditBounceResistance(float Speed);
 
+    // Generate Ring
+    void OnIsGenerateRingEdit(const char*, bool);
+    void OnIsLoopGenerateRingEdit(const char*, bool);
+
     // Generate Circle
     void OnIsGenerateCircleEdit(const char*, bool);
-    void OnIsLoopGenerateCircleEdit(const char*, bool);
-    void OnEditGenerateCircleRadius(float Radius);
 
+    // Generate Torch
+    void OnIsGenerateTorchEdit(const char*, bool);
+
+    // Spawn Time, Count
     void OnSpawnTimeMaxEdit(float Num);
+    void OnSpawnCountMaxEdit(int Num);
 
+    // StartMin,Max
     void OnStartMinEdit(const Vector3&);
     void OnStartMaxEdit(const Vector3&);
 
-    void OnSpawnCountMaxEdit(int Num);
-
+    // Scale Min, Max
     void OnScaleMinEdit(const Vector3&);
     void OnScaleMaxEdit(const Vector3&);
 
+    // LifeTime Min, Max
     void OnLifeTimeMinEdit(float Num);
     void OnLifeTimeMaxEdit(float Num);
+    void OnIsLifeTimeLinearFromCenter(const char*, bool);
 
+    // Speed Min, Max
     void OnSpeedMinEdit(float Num);
     void OnSpeedMaxEdit(float Num);
 
+    // Color Min, Max
     void OnColorMinEdit(const Vector4& Color);
     void OnColorMaxEdit(const Vector4& Color);
 
-    void OnAlphaMinEdit(float Alpha);
-    void OnAlphaMaxEdit(float Alpha);
+    // Alpha Min, Max
+    void OnAlphaStartEdit(float Alpha);
+    void OnAlphaEndEdit(float Alpha);
 
     // 현재 Material에 Alpha Blend 적용하기
     void OnSetAlphaBlendToMaterialCallback();
 
+    // MoveMent
     void OnIsMoveEdit(const char*, bool);
     void OnIsGravityEdit(const char*, bool);
-
-    // void OnIsRandomMoveEdit(const char*, bool);
     void OnPauseResumeToggle(const char*, bool);
 
+    // Camera
     void OnIsCameraRotateEdit(const char*, bool);
     void OnCameraRotateInvEdit(const char*, bool);
     void OnSetCameraRotateSpeed(float Speed);
-
+    void OnSetCameraYAxisRotate(float Speed);
     void OnIsCameraZoomEdit(const char*, bool);
     void OnSetCameraZoomSpeed(float Speed);
-
     void OnSetCameraYOffset(float Offset);
     void OnSetCameraXRot(float Rot);
 
+    // Move Dir, Angle
     void OnMoveDirEdit(const Vector3& Dir);
     void OnMoveAngleEdit(const Vector3& Angle);
+    void OnIsRandomMoveDirEdit(const char*, bool);
 
-    void OnSetParticleTexture();
-
+    // Save, Load
     void OnSaveParticleClass();
     void OnLoadParticleClass();
 private:
@@ -222,5 +266,18 @@ private:
 
     // IMGUI가 Paritlc Object 정보 반영하게 하기 
     void SetIMGUIReflectObjectCamera();
+
+    // PresetHelper Function
+private :
+    void OnClickParticlePreset(int, const char*);
+    void OnRipplePreset();
+    void OnRingPreset();
+    void OnRingWallPreset();
+    void OnTorchPreset();
+    void OnFireSmallPreset();
+    void OnFireWidePreset();
+    void OnSparkPreset();
+    void OnSparkBouncePreset();
+    void OnSimpleMeteorPreset();
 };
 

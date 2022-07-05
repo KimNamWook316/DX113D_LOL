@@ -71,11 +71,13 @@ float3 DepthDOF(float3 ColorFocus, float3 ColorBlurred, float Depth)
 
 float3 ToneMapping(float3 HDRColor)
 {
-	// 현재 픽셀에 대한 휘도 스케일 계산
-	float LScale = dot(float4(HDRColor, 0.f), LUM_FACTOR);
-	LScale *= g_HDRMiddleGray / g_AvgLum[0];
-	LScale = (LScale + ((LScale * LScale) / g_HDRLumWhiteSqr)) / (1.0 + LScale);
-
+ //	// 현재 픽셀에 대한 휘도 스케일 계산
+ //	float LScale = dot(float4(HDRColor, 0.f), LUM_FACTOR);
+ //	LScale *= g_HDRMiddleGray / g_AvgLum[0];
+ //	LScale = (LScale + ((LScale * LScale) / g_HDRLumWhiteSqr)) / (1.0 + LScale);
+	float LScale = dot(float4(HDRColor, 0.f), LUM_FACTOR) / (9.6f * g_AvgLum[0]);
+	LScale = (LScale * (1.f + (LScale / g_HDRLumWhiteSqr))) / (1.f + LScale);
+	
 	return HDRColor * LScale;
 }
 
@@ -114,7 +116,7 @@ PSOutput_Single HDRRenderPS(VS_OUTPUT_HDR Input)
 	float4 BloomColor = g_BloomTex.Sample(g_LinearSmp, UV);
 	BloomColor *= g_HDRBloomScale * BloomColor;
 
-	// float Alpha = Color.a + ((BloomColor.r + BloomColor.g + BloomColor.b) / 3.f);
+	float Alpha = Color.a + ((BloomColor.r + BloomColor.g + BloomColor.b) / 3.f);
 
 	float4 Depth = g_GBufferDepth.Load(TargetPos, 0);
 
@@ -141,7 +143,8 @@ PSOutput_Single HDRRenderPS(VS_OUTPUT_HDR Input)
 		Color = DepthFog(Color.rgb, Depth.g);
 	}
 
-	Output.Color = Color;
+	Output.Color.rgb = Color.rgb;
+	Output.Color.a = Alpha;
 
 	return Output;
 }

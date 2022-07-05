@@ -319,7 +319,8 @@ bool CScene::LoadFullPath(const char* FullPath)
 	if (!File)
 		return false;
 
-	m_ObjList.clear();
+	// LightManager에서 생성된 Global Light를 삭제하지 않기 위해
+	// m_ObjList.clear();
 
 	size_t	SceneModeType = 0;
 

@@ -39,6 +39,7 @@
 #include "Resource/Particle/ParticleManager.h"
 #include "Scene/SceneResource.h"
 #include "GameObject/SkyObject.h"
+#include "../EditorInfo.h"
 
 CEffectDisplayWindow::CEffectDisplayWindow()
 {
@@ -50,7 +51,9 @@ CEffectDisplayWindow::~CEffectDisplayWindow()
 
 bool CEffectDisplayWindow::Init()
 {
-    m_ParticleRenderTarget = AddWidget<CIMGUIImage>("Render Target", 600.f, 600.f);
+    // 해당 해상도 만큼 => 3DParticleObject 의 Camera Component가 해상도를 세팅하게 되어있다.
+    // m_ParticleRenderTarget = AddWidget<CIMGUIImage>("Render Target", 600.f, 600.f);
+    m_ParticleRenderTarget = AddWidget<CIMGUIImage>("Render Target", ParticleEditorWidth, ParticleEditorHeight);
     m_ParticleRenderTarget->SetRenderTargetImage(true);
     m_ParticleRenderTarget->SetTexture(CRenderManager::GetInst()->GetParticleEffectRenderTarget());
     // m_ParticleRenderTarget->SetTexture(CResourceManager::GetInst()->FindTexture("FinalScreen"));
@@ -58,4 +61,11 @@ bool CEffectDisplayWindow::Init()
     m_ParticleRenderTarget->SetTableTitle("Render Target");
 
 	return true;
+}
+
+void CEffectDisplayWindow::Update(float DeltaTime)
+{
+    CIMGUIWindow::Update(DeltaTime);
+
+    // m_ParticleRenderTarget->SetTexture(CRenderManager::GetInst()->GetParticleEffectRenderTarget());
 }

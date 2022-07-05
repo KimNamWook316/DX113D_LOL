@@ -207,7 +207,6 @@ LightResult ComputeLight(LightInfo Info, float3 Pos, float3 Normal, float2 UV)
 	{
 		MtrlSpc = g_SpecularTexture.Sample(g_BaseSmp, UV).rgb;
 	}
-	MtrlSpc = float4(0.5f, 0.5f, 0.5f, 1.f);
 	
 	float3 MtrlEmv = g_MtrlEmissiveColor.rgb;
 	if (g_MtrlEmissiveTex)
@@ -215,9 +214,15 @@ LightResult ComputeLight(LightInfo Info, float3 Pos, float3 Normal, float2 UV)
 		MtrlEmv = g_EmissiveTexture.Sample(g_BaseSmp, UV).rgb;
 	}
 
+    // Gamma Space To Linear Space
+	MtrlDif = pow(MtrlDif, 2.2f);
 
 	result.Dif = Info.LightColor.xyz * MtrlDif * Intensity * Attn;
-	result.Amb = Info.LightColor.xyz * 0.2f * MtrlAmb * Attn;
+	result.Amb = Info.LightColor.xyz * g_GLightAmbIntensity * MtrlAmb * Attn;
+
+    // Linear Space To Gamma Space 
+    // 다시 Gamma Space로 되돌림
+	result.Dif = pow(result.Dif, 1 / 2.2f);
 	
 	float3 View = -Pos;
 	View = normalize(View);
@@ -321,6 +326,7 @@ PS_OUTPUT_TRANSPARENT Transparent3DPS(Vertex3DOutput input)
  //		output.Outline.b = saturate(Frac);
  //		output.Outline.a = 1.f;
  //	}
+	output.ScreenColor.rgb = pow(output.ScreenColor.rgb, 1.f / 22.f);
 
 	return output;
 }
@@ -476,9 +482,15 @@ LightResult ComputeLightInstancing(LightInfo Info, float3 Pos, float3 Normal, fl
 		MtrlEmv = g_EmissiveTexture.Sample(g_BaseSmp, UV).rgb;
 	}
 
+    // Gamma Space To Linear Space
+	MtrlDif = pow(MtrlDif, 2.2f);
 
 	result.Dif = Info.LightColor.xyz * MtrlDif * Intensity * Attn;
-	result.Amb = Info.LightColor.xyz * 0.2f * MtrlAmb * Attn;
+	result.Amb = Info.LightColor.xyz * g_GLightAmbIntensity * MtrlAmb * Attn;
+
+    // Linear Space To Gamma Space 
+    // 다시 Gamma Space로 되돌림
+	result.Dif = pow(result.Dif, 1 / 2.2f);
 	
 	float3 View = -Pos;
 	View = normalize(View);

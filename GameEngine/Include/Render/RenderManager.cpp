@@ -430,8 +430,11 @@ bool CRenderManager::Init()
 	m_AnimEditorRenderTarget->SetDebugRender(false);
 
 	// Particle Editor 용 Render Target
+	// if (!CResourceManager::GetInst()->CreateTarget("ParticleEffectRenderTarget",
+	// 	RS.Width, RS.Height, DXGI_FORMAT_R32G32B32A32_FLOAT,  true, DXGI_FORMAT_D24_UNORM_S8_UINT))
+	// 	return false;
 	if (!CResourceManager::GetInst()->CreateTarget("ParticleEffectRenderTarget",
-		RS.Width, RS.Height, DXGI_FORMAT_R32G32B32A32_FLOAT))
+		600, 600, DXGI_FORMAT_R32G32B32A32_FLOAT,  true, DXGI_FORMAT_D24_UNORM_S8_UINT))
 		return false;
 
 	m_ParticleEffectEditorRenderTarget = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("ParticleEffectRenderTarget");
@@ -498,6 +501,9 @@ bool CRenderManager::Init()
 	// Post FX Renderer
 	m_PostFXRenderer = new CPostFXRenderer;
 	m_PostFXRenderer->Init();
+
+	// Toon Texture
+	m_ToonRampTex = CResourceManager::GetInst()->FindTexture("ToonRampTex");
 
 	return true;
 }
@@ -765,11 +771,11 @@ void CRenderManager::RenderSkyBox()
 	CSharedPtr<CGameObject> SkyObj = CSceneManager::GetInst()->GetScene()->GetSkyObject();
 
 	m_FinalTarget->ClearTarget();
- 	m_FinalTarget->SetTarget(nullptr);
+ 	// m_FinalTarget->SetTarget(nullptr);
 
 	SkyObj->Render();
 
-	m_FinalTarget->ResetTarget();
+	// m_FinalTarget->ResetTarget();
 }
 
 void CRenderManager::RenderShadowMap()
@@ -980,11 +986,14 @@ void CRenderManager::RenderLightAcc()
 
 	m_DepthDisable->SetState();
 
+	// Toon Ramp Texture Bind
+	m_ToonRampTex->SetShader(4, (int)Buffer_Shader_Type::Pixel, 0);
 
 	m_vecGBuffer[0]->SetTargetShader(14);
 	m_vecGBuffer[1]->SetTargetShader(15);
 	m_vecGBuffer[2]->SetTargetShader(16);
 	m_vecGBuffer[3]->SetTargetShader(17);
+	m_vecGBuffer[4]->SetTargetShader(18);
 
 	CSceneManager::GetInst()->GetScene()->GetLightManager()->Render();
 
@@ -992,6 +1001,9 @@ void CRenderManager::RenderLightAcc()
 	m_vecGBuffer[1]->ResetTargetShader(15);
 	m_vecGBuffer[2]->ResetTargetShader(16);
 	m_vecGBuffer[3]->ResetTargetShader(17);
+	m_vecGBuffer[4]->ResetTargetShader(18);
+
+	m_ToonRampTex->ResetShader(4, (int)Buffer_Shader_Type::Pixel, 0);
 
 	m_DepthDisable->ResetState();
 
@@ -1205,6 +1217,15 @@ void CRenderManager::RenderAnimationEditor()
 
 void CRenderManager::RenderParticleEffectEditor()
 {
+	// 뷰포트 Shadowmap Textre와 일치하도록
+	D3D11_VIEWPORT VP = {};
+
+	VP.Width  = m_ParticleEffectEditorRenderTarget->GetWidth();
+	VP.Height = m_ParticleEffectEditorRenderTarget->GetHeight();
+	VP.MaxDepth = 1.f;
+
+	CDevice::GetInst()->GetContext()->RSSetViewports(1, &VP);
+
 	int ParticleEffectEditorLayerIdx = GetRenderLayerIndex("ParticleEditorLayer");
 
 	// 만~약에 해당 Layer 의 Idx 가 정해져 있지 않다면
@@ -1218,7 +1239,8 @@ void CRenderManager::RenderParticleEffectEditor()
 	// Render Target 교체
 	m_ParticleEffectEditorRenderTarget->ClearTarget();
 
-	m_ParticleEffectEditorRenderTarget->SetTarget(nullptr);
+	// 고유의 Depth Target 사용하기 
+	m_ParticleEffectEditorRenderTarget->SetTarget();
 
 	auto iter = m_RenderLayerList[ParticleEffectEditorLayerIdx]->RenderList.begin();
 	auto iterEnd = m_RenderLayerList[ParticleEffectEditorLayerIdx]->RenderList.end();
@@ -1231,6 +1253,14 @@ void CRenderManager::RenderParticleEffectEditor()
 	}
 
 	m_ParticleEffectEditorRenderTarget->ResetTarget();
+
+	D3D11_VIEWPORT PrevVP = {};
+
+	PrevVP.Width = (float)CDevice::GetInst()->GetResolution().Width;
+	PrevVP.Height = (float)CDevice::GetInst()->GetResolution().Height;
+	PrevVP.MaxDepth = 1.f;
+
+	CDevice::GetInst()->GetContext()->RSSetViewports(1, &PrevVP);
 }
 
 void CRenderManager::SetBlendFactor(const std::string& Name, float r, float g,

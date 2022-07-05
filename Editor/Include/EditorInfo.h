@@ -60,4 +60,5 @@ struct LoadingMessage
 	std::string Message;
 };
 
-
+static const float ParticleEditorWidth = 600.f;
+static const float ParticleEditorHeight = 600.f;

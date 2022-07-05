@@ -95,6 +95,10 @@ void CGraphicShader::SetShader()
     CDevice::GetInst()->GetContext()->IASetInputLayout(m_InputLayout);
 }
 
+void CGraphicShader::SetShaderParams(const ShaderParams& Params)
+{
+}
+
 CGraphicShader* CGraphicShader::Clone()
 {
     return nullptr;

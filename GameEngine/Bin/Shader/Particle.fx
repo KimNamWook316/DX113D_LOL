@@ -31,15 +31,25 @@ cbuffer	ParticleCBuffer : register(b11)
 	float3 g_ParticleRotationAngle;
 	float   g_ParticleBounceResist;
 	
-	int g_ParticleGenerateCircle;
+	int g_ParticleGenerateRing;
 	float g_ParcticleGenerateRadius;
-	int g_LoopGenerateCircle;
-	float g_ParticleEmpty1;
-	
+	int g_LoopGenerateRing;
+	int g_ParticleRandomMoveDir;
+
 	float g_ParticleAlphaMax;
 	float g_ParticleAlphaMin;
+	int g_ParticleGenerateCircle;
+	float g_ParticleEmpty1;
+
+	int g_ParticleGenerateTorch;
 	float g_ParticleEmpty2;
-	float g_ParticleEmpty3;
+	int  g_ParticleLifeTimeLinear;
+	float ParticleEmpty3;
+
+	int g_ParticleUVMoveEnable;
+	int g_ParticleUVRowN;
+	int g_ParticleUVColN;
+	int ParticleEmpty4;
 };
 
 /*
@@ -83,11 +93,18 @@ struct ParticleInfoShared
 	int		GravityEnable;
 
 	float3 RotationAngle;
-	float PrevCircleAngle;
+	float PrevRingAngle;
+
+	int UVMoveEnable;
+	int UVRowN;
+	int UVColN;
 };
+
 
 RWStructuredBuffer<ParticleInfo>		g_ParticleArray	: register(u0);
 RWStructuredBuffer<ParticleInfoShared> g_ParticleShare : register(u1);
+
+StructuredBuffer<float>		g_ParticleNormalDistValArray	: register(t20);
 
 Texture2DMS<float4> g_GBufferDepth : register(t10);
 
@@ -145,7 +162,6 @@ float3x3 ComputeRotationMatrix(float3 Angle)
 	matRot = mul(matRotX, matRotY);
 	matRot = mul(matRot, matRotZ);
 
-
 	return matRot;
 }
 
@@ -165,6 +181,9 @@ void ParticleUpdate(uint3 ThreadID : SV_DispatchThreadID)
 	g_ParticleShare[0].GravityEnable = g_ParticleGravity;
 	g_ParticleShare[0].RotationAngle = g_ParticleRotationAngle;
 
+	g_ParticleShare[0].UVMoveEnable = g_ParticleUVMoveEnable;
+	g_ParticleShare[0].UVRowN = g_ParticleUVRowN;
+	g_ParticleShare[0].UVColN   = g_ParticleUVColN;
 
 	// 동작되는 스레드의 수가 생성되는 파티클의 최대 수 보다 크거나 같다면
 	// 잘못된 인덱스로 동작하기 때문에 처리를 안해준다.
@@ -197,56 +216,139 @@ void ParticleUpdate(uint3 ThreadID : SV_DispatchThreadID)
 		float	key = ThreadID.x / g_ParticleSpawnCountMax;
 		float3	RandomPos = float3(Rand(key), Rand(2.142f), Rand(key * 3.f));
 		float	Rand = (RandomPos.x + RandomPos.y + RandomPos.z) / 3.f;
+		float RandomAngle = 360.f * Rand;
 
-		// Radius 주변으로 그려내도록 하기 위해서는 아래 계산해준 StartRange 가 아니라, 원을 중심으로 그려지게 해야 한다.
-		// 그리고 Loop 을 세팅해주면, 원을 중심으로 일정한 간격으로 차례대로 Spawn 되도록 처리해야 한다.
 		float3	StartRange = g_ParticleStartMax - g_ParticleStartMin;
 		g_ParticleArray[ThreadID.x].WorldPos = Rand * (g_ParticleStartMax - g_ParticleStartMin) + g_ParticleStartMin;
 		g_ParticleArray[ThreadID.x].InitWorldPosY = g_ParticleArray[ThreadID.x].WorldPos.y;
-
-		// 원 모양 생성 => Generate Circle 을 하게 되면, Start Min, Max 가 무의미해지게 되는 것이다.
-		 if (g_ParticleGenerateCircle == 1)
-		 {
-		 	// 0.f, 0.f, 0.f 중심으로 원에 생성하기
-		 	float RandomAngle = 360.f * Rand;
-		 	float3 CirclePos = float3(0.f, 0.f, 0.f) + float3(cos(RandomAngle) * g_ParcticleGenerateRadius,
-		 		0.f, 
-		 		sin(RandomAngle) * g_ParcticleGenerateRadius);
-		 
-		 	g_ParticleArray[ThreadID.x].WorldPos = CirclePos;
-		 
-		 	// Loop 을 설정하게 되면, 차례대로 만들어지게 한다.
-		 	if (g_LoopGenerateCircle == 1)
-		 	{
-		 		float NextCircleAngle = g_ParticleShare[0].PrevCircleAngle + (360.f / g_ParticleSpawnCountMax);
-		 
-		 		CirclePos = float3(0.f, 0.f, 0.f) + float3(cos(NextCircleAngle) * g_ParcticleGenerateRadius,  0.f, sin(NextCircleAngle) * g_ParcticleGenerateRadius);
-		 		g_ParticleArray[ThreadID.x].WorldPos = CirclePos;
-		 
-		 		g_ParticleShare[0].PrevCircleAngle = NextCircleAngle;
-		 			// PrevCircleAngle
-		 		// g_ParticleShare[0].RotationAngle = g_ParticleRotationAngle;
-		 	}
-		 }
 
 		g_ParticleArray[ThreadID.x].FallTime = 0.f;
 		g_ParticleArray[ThreadID.x].FallStartY = g_ParticleArray[ThreadID.x].WorldPos.y;
 
 		g_ParticleArray[ThreadID.x].LifeTime = 0.f;
-		g_ParticleArray[ThreadID.x].LifeTimeMax = (g_ParticleLifeTimeMax - g_ParticleLifeTimeMin) + g_ParticleLifeTimeMin;
+		g_ParticleArray[ThreadID.x].LifeTimeMax = Rand * (g_ParticleLifeTimeMax - g_ParticleLifeTimeMin) + g_ParticleLifeTimeMin;
 
 		if (g_ParticleMove == 1)
 		{
+			// RandomPos.xyz 는 각각 0 에서 1 사이의 값 --> -1 에서 1 사이의 값으로 바꾼다.
+			// ex) 360도 => -180 ~ 180 도 사이의 랜덤한 각도로 회전을 한다고 생각하면 된다.
 			float3	ConvertAngle = (RandomPos.xyz * 2.f - 1.f) * g_ParticleMoveAngle;
 
+			// float3x3 matRot = ComputeRotationMatrix(ConvertAngle);
 			float3x3 matRot = ComputeRotationMatrix(ConvertAngle);
 
 			// 현재 Rot 상으로는, Particle Rotation 기능만 수행중이다.
+			float3 OriginDir = mul(g_ParticleMoveDir, matRot);
 			float3	Dir = normalize(mul(g_ParticleMoveDir, matRot));
 
 			g_ParticleArray[ThreadID.x].Speed = Rand * (g_ParticleSpeedMax - g_ParticleSpeedMin) + g_ParticleSpeedMin;
 			g_ParticleArray[ThreadID.x].Dir = Dir;
+
+			if (g_ParticleRandomMoveDir == 1)
+			{
+				// 완전 랜덤한 방향으로 이동하기 
+				float3 RandDir = float3(0.f, 0.f, 0.f) + float3(
+					cos(RandomAngle) * Rand,
+					OriginDir.y,
+					sin(RandomAngle) * Rand);
+				normalize(RandDir);
+
+				g_ParticleArray[ThreadID.x].Dir = RandDir;
+			}
 		}
+
+		// Ring 모양 생성 => Generate Circle 을 하게 되면, Start Min, Max 가 무의미해지게 되는 것이다.
+		 // 0.f, 0.f, 0.f 중심으로 원에 생성하기
+		 if (g_ParticleGenerateRing == 1)
+		 {
+		 	float3 RingPos = float3(0.f, 0.f, 0.f) + float3(
+				cos(RandomAngle) * g_ParcticleGenerateRadius,
+		 		0.f, 
+		 		sin(RandomAngle) * g_ParcticleGenerateRadius);
+		 
+		 	g_ParticleArray[ThreadID.x].WorldPos = RingPos;
+		 
+		 	// Loop 을 설정하게 되면, 차례대로 만들어지게 한다.
+		 	if (g_LoopGenerateRing == 1)
+		 	{
+		 		float NextRingAngle = g_ParticleShare[0].PrevRingAngle + (360.f / g_ParticleSpawnCountMax);
+		 
+				RingPos = float3(0.f, 0.f, 0.f) + float3(cos(NextRingAngle) * g_ParcticleGenerateRadius,  0.f, sin(NextRingAngle) * g_ParcticleGenerateRadius);
+		 		g_ParticleArray[ThreadID.x].WorldPos = RingPos;
+		 
+		 		g_ParticleShare[0].PrevRingAngle = NextRingAngle;
+		 	}
+		 }
+
+		 // 일정 범위 원 안에서 생성되게 하기 (Ring 과 같이 일정 간격에만 생성 X. 원 안에 랜덤 위치에 생성)
+		 if (g_ParticleGenerateCircle == 1)
+		 {
+			 // 생성 각도도 Random
+			 // 생성 반지름 크기도 Random
+			 float RandomRadius = g_ParcticleGenerateRadius * Rand;
+
+			 float3 CirclePos = float3(0.f, 0.f, 0.f) + float3(
+				 cos(RandomAngle) * RandomRadius,
+				 0.f,
+				 sin(RandomAngle) * RandomRadius);
+
+			 g_ParticleArray[ThreadID.x].WorldPos = CirclePos;
+		 }
+
+		 // 횃불 모양의 Particle 만들어내기
+		 // Spawn 위치로, 가운데 쪽에 비율적으로 더 많이 생성되게 해야 한다.
+		 if (g_ParticleGenerateTorch == 1)
+		 {
+			 // 생성 위치 => 정규 분포를 사용하여, 확률적으로 가운데 많이 생성되게 하기
+			 // CPU 측에서 평균 0 , 표준편차 0.165 라는 표준 정규 분포 값을 이용하여 값 세팅
+			 // 평균 0 의 값이 가장 많이 나올 것이다. (0 라는 값이 거의 집중적으로 나올 것)
+			 // 그리고 범위는 -0.5 ~ 0.5
+			 // 여기서 할일은, 0에 가까운 값이 거의 대부분 나오게 조절해야 하고, 또한 범위는 0에서 1 사이의 값에 놓이게 해야 한다.
+			 // 1) 값에서 *2 를 해서 -1 ~ 1 사이의 값으로 조정한다.
+			 // 2) 음수인 값은 양수로 바꿔준다.
+			 // 그러면 반쪽 짜리 정규 분포가 만들어질 것이다.
+			 float NormalDistVal = g_ParticleNormalDistValArray[ThreadID.x] * 2.f;
+
+			 // 1.f 범위를 넘는 값들 조정하기 
+			 if (NormalDistVal > 1.f)
+				 NormalDistVal = Rand;
+			 if (NormalDistVal < -1.f)
+				 NormalDistVal = Rand * -1.f;
+
+			 // 설정한 반지름 범위로 맞춰준다.
+			 float TorchGenerateRadius = NormalDistVal * g_ParcticleGenerateRadius;
+
+			 float3 StartMinBase = float3(-1.f, 0, -1.f);
+			 StartMinBase *= TorchGenerateRadius;
+			 float3 StartMaxBase = float3(1.f, 0, 1.f);
+			 StartMaxBase *= TorchGenerateRadius;
+			 float3 TorchPos = float3(0.f, 0.f, 0.f);
+			 // TorchPos = Rand * (StartMaxBase - StartMinBase) + StartMinBase;
+			 // TorchPos.y = 0.f;
+			 TorchPos = float3(cos(RandomAngle) * TorchGenerateRadius, 0.f, sin(RandomAngle) * TorchGenerateRadius);
+
+			 g_ParticleArray[ThreadID.x].WorldPos = TorchPos;
+		 }
+
+		 // 원뿔 형태로 위로 이동 (즉, 가운데에서 멀어질 수록, LifeTime이 작아지는 효과)
+		// LifeTime 만 조정해줄 뿐,  //
+		 if (g_ParticleLifeTimeLinear == 1)
+		 {
+			 // Spawn Pos 를 기준으로 하여 LifeTime 조정하기 
+			 float SpawnStartPosDist = distance(g_ParticleArray[ThreadID.x].WorldPos, float3(0.f, 0.f, 0.f));
+			 float DistMax = (float)(abs(max(g_ParticleStartMax, g_ParticleStartMin)));
+
+			 // Circle Generate, Torch Generate 가 존재한다면 
+			 if (g_ParticleGenerateCircle == 1 || g_ParticleGenerateTorch == 1)
+				 DistMax = g_ParcticleGenerateRadius;
+
+			 float SpawnPosRatio = (float)(SpawnStartPosDist / DistMax);
+
+			 if (SpawnPosRatio > 1.f)
+				 SpawnPosRatio = 0.01f;
+
+			 g_ParticleArray[ThreadID.x].LifeTimeMax = (1 - SpawnPosRatio) * (g_ParticleLifeTimeMax - g_ParticleLifeTimeMin) + g_ParticleLifeTimeMin;
+		 }
 	}
 	// 현재 생성이 되어 있는 파티클일 경우
 	else
@@ -367,6 +469,44 @@ void ParticleGS(point VertexParticleOutput input[1],
 	OutputArray[2].UV = float2(0.f, 1.f);
 	OutputArray[3].UV = float2(1.f, 1.f);
 
+	// UV Animation 적용
+	if (g_ParticleShareSRV[0].UVMoveEnable == 1)
+	{
+		int UVRowN = g_ParticleShareSRV[0].UVRowN;
+		int UVColN = g_ParticleShareSRV[0].UVColN;
+
+		// 가로 UV 단일 크기
+		float WUVSize = 1.f / (float)UVColN;
+		// 세로 UV 단일 크기 
+		float HUVSize = 1.f / (float)UVRowN;
+
+		// ex) 5 * 2 => 10개
+		// 9 / 10 => 0.9 
+		// 10 * 0.9 => 9번째 UV => Idx 상으로는 8번째 (총 Idx 가 0 에서 9까지 존재) 
+		int TotalUVNum = UVRowN * UVColN;
+		float FloatCurUVIdx = ((float)g_ParticleArraySRV[InstanceID].LifeTime / (float)(g_ParticleArraySRV[InstanceID].LifeTimeMax)) * (float)TotalUVNum;
+		int CurUVIdx = floor(FloatCurUVIdx);
+		// CurUVIdx -= 1;
+
+		// row * col = 2 * 5
+		// rowS = 0.5 (height)
+		// colS  = 0.2 (width)
+		// 0.95 * 10 => 9.5 => floor(9.5) => 9;
+		// 10개의 칸 중에서, 가장 마지막 번째 칸이다.
+		// 9 / 5 => 1행
+		// 9 % 5 => 4열
+		int RowUVIdx = CurUVIdx / UVColN;
+		int ColUVIdx = (CurUVIdx % UVColN);
+
+		float2 UVStartPos = float2(WUVSize * ColUVIdx, HUVSize * RowUVIdx);
+		float2 UVEndPos = UVStartPos + float2(WUVSize, HUVSize);
+
+		OutputArray[0].UV = float2(UVStartPos.x, UVStartPos.y);
+		OutputArray[1].UV = float2(UVEndPos.x, UVStartPos.y);
+		OutputArray[2].UV = float2(UVStartPos.x, UVEndPos.y);
+		OutputArray[3].UV = float2(UVEndPos.x, UVEndPos.y);
+	}
+
 	float	Ratio = g_ParticleArraySRV[InstanceID].LifeTime / g_ParticleArraySRV[InstanceID].LifeTimeMax;
 
 	float3	Scale = lerp(g_ParticleShareSRV[0].ScaleMin, g_ParticleShareSRV[0].ScaleMax,
@@ -426,10 +566,7 @@ PSOutput_Single ParticlePS(GeometryParticleOutput input)
 	Color = PaperBurn2D(Color * input.Color, input.UV);
 
 	output.Color = Color;
-
-	// 아래 코드를 적용하면 계속 검정색으로만 나온다.
-	output.Color.a = Color.a * g_MtrlOpacity;
-	// output.Color.a = Color.a * g_MtrlOpacity * Alpha;
+	output.Color.a = Color.a * g_MtrlOpacity * Alpha;
 
 	return output;
 }

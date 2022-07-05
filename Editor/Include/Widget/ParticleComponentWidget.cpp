@@ -195,7 +195,7 @@ void CParticleComponentWidget::OnLoadParticleClass()
 
         // 현재 Load하는 Directory가  Bin//ParticleClass 인지 확인하기 => 아니라면, Load
         std::string PathInfoBeforeFileName;
-        CEditorUtil::GetPathInfoBeforeFileName(FilePathMultibyteCopy, PathInfoBeforeFileName);
+        CEngineUtil::GetPathInfoBeforeFileName(FilePathMultibyteCopy, PathInfoBeforeFileName);
 
         if (strcmp(ParticleClassPathInfo->PathMultibyte, PathInfoBeforeFileName.c_str()) != 0)
         {

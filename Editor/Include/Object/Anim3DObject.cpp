@@ -65,7 +65,7 @@ void CAnim3DObject::Update(float DeltaTime)
 	if (CInput::GetInst()->GetWheelDir() && m_IsCameraZoom)
 	{
 		float Length = m_Arm->GetTargetDistance() +
-			CInput::GetInst()->GetWheelDir() * 0.3f;
+			CInput::GetInst()->GetWheelDir() * 0.6f;
 
 		m_Arm->SetTargetDistance(Length);
 	}

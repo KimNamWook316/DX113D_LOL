@@ -47,6 +47,10 @@ public:
 	{
 		return m_ParticleManager;
 	}
+	 CExcelManager* GetExcelManager() const
+	 {
+		 return m_ExcelManager;
+	 }
 
 public:	// =================== Mesh =====================
 	bool CreateMesh(Mesh_Type Type, const std::string& Name,
@@ -205,7 +209,7 @@ public:	// =================== Particle =====================
 	{
 		return m_ParticleManager->CreateParticleEmpty<T>();
 	}
-public:
+public: // =================== Sequence 3D =====================
 	bool LoadAnimationSequenceConvertFBX(const std::string& Name, bool bLoop, struct _tagFbxAnimationClip* pClip);
 	bool LoadAnimationSequence(const std::string& Name, bool Loop,
 		struct _tagFbxAnimationClip* Clip, class CScene* Scene = nullptr);
@@ -221,8 +225,12 @@ public:
 	bool LoadAnimationSequenceFullPathMultibyteSetOriginFileName(bool Loop, std::string& Name, const char* FullPath);
 	CAnimationSequence* FindAnimationSequence(const std::string& Name);
 	CAnimationSequence* CreateBasicAnimationSequence(const std::string& Name);
+	void ReleaseAnimationSequence3D(class CAnimationSequence* ExistingSequence);
 	void ReleaseAnimationSequence3D(const std::string& Name);
 	void DeleteSequence3D(const std::string& Name);
+	bool EditSequenceClip(class CAnimationSequence* ExistingSequence, const std::string& NewName,
+		int StartFrame, int EndFrame, const char* SaveFullPathMultibyte);
+
 
 	bool LoadSkeleton(const std::string& Name, const TCHAR* FileName,
 		const std::string& PathName = ANIMATION_PATH,

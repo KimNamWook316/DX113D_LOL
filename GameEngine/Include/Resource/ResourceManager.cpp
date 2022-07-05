@@ -235,10 +235,10 @@ std::pair<bool, std::string> CResourceManager::LoadMeshTextureBoneInfo(const cha
 
 	//MeshTCHARFileName 와 Path Name 을 더해서 해당 FullPath 를 만들어낸다.
 	// 1. 기존 방식대로 Load Mesh 진행
-	// 2. 없다면, 새롭게 MESH_PATH 전체를 돌면서 해당 FileName 이 존재하는지를 찾은 이후, FullPath 를 만들어서 새롭게 Load 시도
 	bool LoadMeshResult = LoadMesh(Mesh_Type::Animation, LoadedMeshName,
 		MeshTCHARFileName, MESH_PATH);
 
+	// 2. 없다면, 새롭게 MESH_PATH 전체를 돌면서 해당 FileName 이 존재하는지를 찾은 이후, FullPath 를 만들어서 새롭게 Load 시도
 	if (!LoadMeshResult)
 	{
 		// 먼저 해당 경로에 파일이 존재하는지 확인하기
@@ -269,23 +269,6 @@ std::pair<bool, std::string> CResourceManager::LoadMeshTextureBoneInfo(const cha
 			return std::make_pair(false, "");
 		}
 	}
-
-	// 기존 코드 (OBJ)
-	// if (!LoadMesh(Mesh_Type::Animation, LoadedMeshName,
-	// 	MeshTCHARFileName, MESH_PATH))
-	// {
-	// 	if (IsLastSqcFile)
-	// 	{
-	// 		TCHAR FulllErrorMessage[MAX_PATH] = {};
-	// 		TCHAR ErrorMessage[MAX_PATH] = TEXT(".msh Load Failure in Bin//Mesh");
-	// 		lstrcpy(FulllErrorMessage, TCHARPureFileName);
-	// 		lstrcat(FulllErrorMessage, ErrorMessage);
-	// 
-	// 		MessageBox(CEngine::GetInst()->GetWindowHandle(), FulllErrorMessage, NULL, MB_OK);
-	// 	}
-	// 	return std::make_pair(false, "");
-	// }
-
 
 	// 만약 Mesh Load 과정에서 필요한 Texture가 없다면 
 	// ex) FBX Convert 이후, singed_spell2.sqc 가 있다면, 같은 경로내에 singed_spell2.fbm 이라는 디렉토리가 존재해야 한다.
@@ -381,22 +364,6 @@ std::pair<bool, std::string> CResourceManager::LoadMeshTextureBoneInfo(const cha
 			return std::make_pair(false, "");
 		}
 	}
-
-	// 기존 코드 (OBJ)
-	// if (!LoadSkeleton(LoadedBneName, BneTCHARFileName, MESH_PATH))
-	// {
-	// 	if (IsLastSqcFile)
-	// 	{
-	// 		TCHAR FulllErrorMessage[MAX_PATH] = {};
-	// 		TCHAR ErrorMessage[MAX_PATH] = TEXT(".bne Load Failure in Bin//Mesh");
-	// 
-	// 		lstrcpy(FulllErrorMessage, TCHARPureFileName);
-	// 		lstrcat(FulllErrorMessage, ErrorMessage);
-	// 
-	// 		MessageBox(CEngine::GetInst()->GetWindowHandle(), FulllErrorMessage, NULL, MB_OK);
-	// 	}
-	// 	return std::make_pair(false, "");
-	// }
 
 	// Mesh 에 해당 Skeleton 세팅
 	SetMeshSkeleton(LoadedMeshName, LoadedBneName);
@@ -832,6 +799,11 @@ CAnimationSequence* CResourceManager::CreateBasicAnimationSequence(const std::st
 	return m_AnimationManager3D->CreateBasicAnimationSequence(Name);
 }
 
+void CResourceManager::ReleaseAnimationSequence3D(CAnimationSequence* ExistingSequence)
+{
+	m_AnimationManager3D->ReleaseAnimationSequence3D(ExistingSequence);
+}
+
 void CResourceManager::ReleaseAnimationSequence3D(const std::string& Name)
 {
 	m_AnimationManager3D->ReleaseSequence(Name);
@@ -840,6 +812,11 @@ void CResourceManager::ReleaseAnimationSequence3D(const std::string& Name)
 void CResourceManager::DeleteSequence3D(const std::string& Name)
 {
 	m_AnimationManager3D->DeleteSequence(Name);
+}
+
+bool CResourceManager::EditSequenceClip(CAnimationSequence* ExistingSequence, const std::string& NewName, int StartFrame, int EndFrame, const char* SaveFullPathMultibyte)
+{
+	return m_AnimationManager3D->EditSequenceClip(ExistingSequence, NewName, StartFrame, EndFrame, SaveFullPathMultibyte);
 }
 
 bool CResourceManager::LoadSkeleton(const std::string& Name, 

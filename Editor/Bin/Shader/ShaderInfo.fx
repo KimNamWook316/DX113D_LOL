@@ -109,6 +109,12 @@ cbuffer DownScaleCBuffer : register(b10)
 	float2 g_DownScaleEmpty;
 }
 
+cbuffer GLightCBuffer : register(b11)
+{
+	float g_GLightAmbIntensity;
+	float3 g_GLightEmpty;
+}
+
 struct LightResult
 {
     float3 Dif;
@@ -122,6 +128,15 @@ struct LightResult
 #define	LightTypeSpot	2
 
 #define OutlineThickMax 20.f
+
+// Light Blend전에 렌더되어있는 픽셀이 어떤 쉐이더를 거쳐서 온 것인가 판단하는 정수
+#define Pixel_Type_Default 1
+#define Pixel_Type_Toon 2
+
+#define ToonType_Default	0
+#define ToonType_Easy		1
+#define ToonType_Light		2
+#define ToonType_Warm		3
 
 static const float4 LUM_FACTOR = float4(0.299, 0.587, 0.114, 0);
 
@@ -158,8 +173,6 @@ static const float2 g_NullUV[4] =
     float2(0.f, 1.f),
     float2(1.f, 1.f)
 };
-
-
 
 static float Gaussian5x5[25] =
 {
@@ -382,7 +395,7 @@ LightResult
     float Intensity = max(0.f, dot(ViewNormal, LightDir));
 	
     result.Dif = g_LightColor.xyz * g_MtrlBaseColor.xyz * Intensity * Attn;
-    result.Amb = g_LightColor.xyz * 0.2f * g_MtrlAmbientColor.xyz * Attn;
+	result.Amb = g_LightColor.xyz * g_GLightAmbIntensity * g_MtrlAmbientColor.xyz * Attn;
 	
     float3 View = -Pos;
     View = normalize(View);
@@ -400,8 +413,6 @@ LightResult
 	
     if (g_MtrlSpecularTex)
         SpecularColor = g_SpecularTexture.Sample(g_BaseSmp, UV).xxx;
-	
-    SpecularColor = float3(0.5f, 0.5f, 0.5f);
 	
     result.Spc = g_LightColor.xyz * SpecularColor * 
 		pow(SpcIntensity, g_MtrlSpecularColor.w) * Attn;

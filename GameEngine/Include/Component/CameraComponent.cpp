@@ -67,6 +67,26 @@ void CCameraComponent::CreateProjectionMatrix()
 		SHADOWMAP_WIDTH / SHADOWMAP_HEIGHT, 0.1f, m_Distance);
 }
 
+void CCameraComponent::CreateCustomResolutionProjMatrix(float Width, float Height)
+{
+	switch (m_CameraType)
+	{
+	case Camera_Type::Camera2D:
+		m_matProj = XMMatrixOrthographicOffCenterLH(0.f, Width, 0.f, Height, 0.f, 1000.f);
+		break;
+	case Camera_Type::Camera3D:
+		m_matProj = XMMatrixPerspectiveFovLH(DegreeToRadian(m_ViewAngle),
+			Width / Height, 0.1f, m_Distance);
+		break;
+	case Camera_Type::CameraUI:
+		m_matProj = XMMatrixOrthographicOffCenterLH(0.f, Width, 0.f, Height, 0.f, 1000.f);
+		break;
+	}
+
+	m_matShadowProj = XMMatrixPerspectiveFovLH(DegreeToRadian(m_ViewAngle),
+		Width / SHADOWMAP_HEIGHT, 0.1f, Height);
+}
+
 void CCameraComponent::ComputeShadowView()
 {
 	CLightComponent* GlobalLight = m_Scene->GetLightManager()->GetGlobalLightComponent();

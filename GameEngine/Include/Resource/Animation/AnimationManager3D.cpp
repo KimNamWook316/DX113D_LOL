@@ -267,6 +267,22 @@ void CAnimationManager3D::ReleaseSequence(const std::string& Name)
 	}
 }
 
+void CAnimationManager3D::ReleaseAnimationSequence3D(CAnimationSequence* ExistingSequence)
+{
+	auto iter = m_mapSequence.begin();
+	auto iterEnd = m_mapSequence.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		if (iter->second == ExistingSequence)
+		{
+			if (iter->second->GetRefCount() == 1)
+				m_mapSequence.erase(iter);
+			break;
+		}
+	}
+}
+
 CAnimationSequence* CAnimationManager3D::CreateBasicAnimationSequence(const std::string& Name)
 {
 	CAnimationSequence* Sequence = FindAnimationSequence(Name);
@@ -308,6 +324,55 @@ void CAnimationManager3D::DeleteSequence(const std::string& Name)
 			break;
 		}
 	}
+}
+
+void CAnimationManager3D::DeleteSequence(const CAnimationSequence* const Sequence)
+{
+	auto iter = m_mapSequence.begin();
+	auto iterEnd = m_mapSequence.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		if (iter->second == Sequence)
+		{
+			m_mapSequence.erase(iter);
+			break;
+		}
+	}
+}
+
+bool CAnimationManager3D::EditSequenceClip(CAnimationSequence* ExistingSequence, 
+	const std::string& NewName, int StartFrame, int EndFrame, 
+	const char* SaveFullPathMultibyte)
+{
+	// 새로운 Sequence 를 만들어내서
+	// 하드디스크에 저장 이후,
+	// 메모리 상에서는 해제한다.
+	CAnimationSequence* NewSequence = new CAnimationSequence;
+
+	NewSequence->m_Loop = true;
+
+	if (!NewSequence->CreateNewSequenceFromExistingSequence(ExistingSequence, 
+		StartFrame, EndFrame, NewName))
+	{
+		SAFE_DELETE(NewSequence);
+		return false;
+	}
+
+	strcpy_s(NewSequence->m_FullPath, SaveFullPathMultibyte);
+	char						m_FileName[MAX_PATH];
+
+	char	strAnimName[MAX_PATH] = {};
+	_splitpath_s(NewSequence->m_FullPath, 0, 0, 0, 0, strAnimName, MAX_PATH, 0, 0);
+
+	strcpy_s(NewSequence->m_FileName, strAnimName);
+	strcat_s(NewSequence->m_FileName, ".sqc");
+
+	NewSequence->SaveFullPathMultibyte(NewSequence->m_FullPath);
+
+	SAFE_DELETE(NewSequence);
+
+	return true;
 }
 
 bool CAnimationManager3D::LoadSkeleton(const std::string& Name, 

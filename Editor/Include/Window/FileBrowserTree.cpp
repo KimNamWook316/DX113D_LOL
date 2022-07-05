@@ -52,8 +52,9 @@ void CFileBrowserTree::Update(float DeltaTime)
 
 void CFileBrowserTree::OnOpenBrowserTree(CIMGUITree* Tree)
 {
-	if (Tree->GetChildCount() > 0)
-		return;
+	// (OBJ) 기존 코드 => 매번 해당 폴더 클릭할 때마다, 다시 매번 새롭게 Load 해주고 세팅해주기 위해 주석
+	// if (Tree->GetChildCount() > 0)
+	// 	return;
 
 	// open한 디렉토리의 경로안에 있는 디렉토리 목록들을 다시 받아와서 Tree의 Child로 넣어준다
 	const PathInfo* Info = CPathManager::GetInst()->FindPath(Tree->GetName());
@@ -79,6 +80,9 @@ void CFileBrowserTree::OnOpenBrowserTree(CIMGUITree* Tree)
 	std::vector<std::string> vecDirName;
 
 	CEditorUtil::GetAllFilenamesFullPath(m_CurrentFullPath, vecFileName, vecDirName);
+
+	// 기존 Child 목록은 비워주기 
+	Tree->DeleteHierarchy();
 
 	// 폴더 목록을 먼저 Add
 	size_t Count = vecDirName.size();

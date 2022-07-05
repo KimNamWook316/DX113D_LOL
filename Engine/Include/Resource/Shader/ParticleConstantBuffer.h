@@ -30,7 +30,19 @@ public:
 	{
 		return m_BufferData.StartMax;
 	}
-
+	// UV Move
+	int GetUVMoveEnable() const
+	{
+		return m_BufferData.UVMoveEnable;
+	}
+	int GetUVRowN() const
+	{
+		return m_BufferData.UVRowN;
+	}
+	int GetUVColN() const
+	{
+		return m_BufferData.UVColN;
+	}
 	int GetSpawnCount()	const
 	{
 		return m_BufferData.SpawnCountMax;
@@ -113,10 +125,20 @@ public:
 	{
 		return m_BufferData.MoveDir;
 	}
-
+	// 중심에서 멀어질 수록 LifeTime 감소
+	bool IsLifeTimeLinearFromCenter()
+	{
+		return m_BufferData.IsLifeTimeLinearFromCenter == 1 ? true : false;
+	}
 	bool Is2D()
 	{
 		return m_BufferData.Is2D == 1 ? true : false;
+	}
+	
+	// 랜덤 방향 이동
+	bool IsMoveDirRandom()
+	{
+		return m_BufferData.IsMoveDirRandom == 1 ? true : false;
 	}
 
 	const Vector3& GetMoveAngle()
@@ -124,6 +146,7 @@ public:
 		return m_BufferData.MoveAngle;
 	}
 
+	// Bounce
 	int IsBounceEnable() const
 	{
 		return m_BufferData.ParticleBounce;
@@ -133,59 +156,106 @@ public:
 	{
 		return m_BufferData.ParticleBounceResistance;
 	}
-
+	// Generate Radius
+	float GetGenerateRadius() const
+	{
+		return m_BufferData.GenerateRadius;
+	}
+	// Ring
+	int IsGenerateRing() const
+	{
+		return m_BufferData.IsGenerateRing;
+	}
+	int IsLoopGenerateRing() const
+	{
+		return m_BufferData.IsLoopGenerateRing;
+	}
+	// Circle
 	int IsGenerateCircle() const
 	{
 		return m_BufferData.IsGenerateCircle;
 	}
-	float GetGenerateCircleRadius() const
+
+	// Torch
+	int IsGenerateTorch() const
 	{
-		return m_BufferData.GenerateCircleRadius;
+		return m_BufferData.IsGenerateTorch;
 	}
-	int IsLoopGenerateCircle() const
+
+	// Alpha
+	float GetStartAlpha() const
 	{
-		return m_BufferData.IsLoopGenerateCircle;
+		return m_BufferData.AlphaStart;
 	}
-	float GetMinAlpha() const
+	float GetEndAlpha() const
 	{
-		return m_BufferData.AlphaMin;
-	}
-	float GetMaxAlpha() const
-	{
-		return m_BufferData.AlphaMax;
+		return m_BufferData.AlphaEnd;
 	}
 public:
+	// UV Move
+	void SetUVMoveEnable(bool Enable) 
+	{
+		m_BufferData.UVMoveEnable = Enable ? 1: 0;
+	}
+	void SetUVRowN(int Row)
+	{
+		m_BufferData.UVRowN = Row;
+	}
+	void SetUVColN(int Col)
+	{
+		m_BufferData.UVColN = Col;
+	}
+
+	// Life Time Linear
+	void SetLifeTimeLinearFromCenter(bool Enable)
+	{
+		m_BufferData.IsLifeTimeLinearFromCenter = Enable ? 1 : 0;
+	}
 	void SetRotationAngle(const Vector3& Angle)
 	{
 		m_BufferData.RotationAngle = Angle;
 	}
-	void SetLoopGenerateCircle(bool Enable)
+	// Radius
+	void SetGenerateRadius(float Radius)
 	{
-		m_BufferData.IsLoopGenerateCircle = Enable ? 1 : 0;
+		m_BufferData.GenerateRadius = Radius;
 	}
+	// Ring
+	void SetLoopGenerateRing(bool Enable)
+	{
+		m_BufferData.IsLoopGenerateRing = Enable ? 1 : 0;
+	}
+	void SetGenerateRingEnable(bool Enable)
+	{
+		m_BufferData.IsGenerateRing = Enable ? 1 : 0;
+	}
+	// Circle
 	void SetGenerateCircleEnable(bool Enable)
 	{
 		m_BufferData.IsGenerateCircle = Enable ? 1 : 0;
 	}
-	void SetGenerateCircleRadius(float Radius)
+	// Torch
+	void SetGenerateTorchEnable(bool Enable)
 	{
-		m_BufferData.GenerateCircleRadius = Radius;
+		m_BufferData.IsGenerateTorch = Enable ? 1 : 0;
 	}
+	// Bounce
 	void SetBounceEnable(int Bounce)
 	{
 		m_BufferData.ParticleBounce = Bounce;
 	}
-	void SetMinAlpha(float Alpha)
-	{
-		m_BufferData.AlphaMin = Alpha;
-	}
-	void SetMaxAlpha(float Alpha)
-	{
-		m_BufferData.AlphaMax = Alpha;
-	}
 	void SetBounceResist(float Bounce)
 	{
 		m_BufferData.ParticleBounceResistance = Bounce;
+	}
+	// Alpha
+	void SetStartAlpha(float Alpha)
+	{
+		m_BufferData.AlphaStart = Alpha;
+	}
+	void SetEndAlpha(float Alpha)
+	{
+		m_BufferData.AlphaEnd = Alpha;
 	}
 
 	void SetSpawnEnable(unsigned int Count)
@@ -261,6 +331,11 @@ public:
 	void SetMove(bool Move)
 	{
 		m_BufferData.Move = Move ? 1 : 0;
+	}
+
+	void SetIsRandomMoveDir(bool Move)
+	{
+		m_BufferData.IsMoveDirRandom = Move ? 1 : 0;
 	}
 
 	void SetGravity(bool Gravity)

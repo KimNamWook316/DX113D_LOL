@@ -12,9 +12,26 @@ public:
 	static std::string FogTypeToString(Fog_Type Type);
 	static Fog_Type StringToFogType(const std::string& TypeString);
 
+	static std::string ToonShaderTypeToString(ToonShaderType Type);
+	static ToonShaderType StringToToonShaderType(const std::string& TypeString);
+
 	// String Related
 	// 해당 Dir 경로에, 해당 Name 으로 된 파일이 존재하는지 판단해주는 함수 + 존재할 시 FullPath 경로 리턴
 	static std::optional<std::string> CheckAndExtractFullPathOfTargetFile(std::string_view Path, std::string_view FileName);
+
+	// 혹시나 "\\"가 경로에 있다면, 맨처음 경로부터 "\\" 까지의 정보를 뽑아내주는 함수
+	// C::Program\\OBJ\\Material\\Hello.mtrl ? => C::Program\\OBJ\\Material\\ 까지의 정보를 뽑아와준다.
+	static bool GetPathInfoBeforeFileName(const std::string& FilePath, std::string& ExtractedPathInfo);
+
+	// 파일 이름 중에서 Extension만 리턴해주는 함수 (앞에 . 는 포함되지 않는다. 확장자 이름만 ex) .txt 에서 txt 만)
+	static bool GetFileExt(const std::string& FileName, std::string& ExtractedExt);
+
+	// 혹시나 "\\"가 경로에 있다면, 그 뒤의 파일 이름만을 뽑아내주는 함수
+	// 만약 아예 인자로 들어오는 FilePath 에 "\\" 이 존재하지 않는다면, 그냥 FilePath 원본 그대로를 세팅해준다.
+	static bool GetFileNameAfterSlash(const std::string& FilePath, std::string& ExtractedFileName);
+
+	// 파일 이름 중에서, Extension 만 제외하고, 파일 본래 이름을 가져다주는 함수
+	static bool GetFileNameOnly(const std::string& FullFileName, std::string& ExtractedFileName);
 
 	// (OBJ : 혹시나 사용하고 있는 사람이 있나하여, 기존 함수 남겨둠) 해당 Dir 경로에, 해당 Name 으로 된 파일이 존재하는지 판단해주는 함수 
 	static bool IsFileExistInDir(const std::string& Path, const std::string& FileName);
@@ -22,6 +39,10 @@ public:
 	// 특정 파일을, 현재 디렉토리에서, 다른 디렉토리로 복사하기
 	// FileName 에는 확장자 정보까지 들어가 있어야 한다.
 	static bool CopyFileToOtherDirectory(const struct PathInfo* CurrentPathInfo, const struct PathInfo* TargetPathInfo, const std::string& FileName);
+
+	// string 으로 path 정보 넘겨주면 알아서 해당 Directory로 복사해주는 기능
+	static bool CopyFileToOtherDirectory(const std::string& OriginFullPath, const std::string& TargetFullPath, 
+		std::string& FinalCopyPath, bool Recursive = false);
 
 	// 해당 디렉토리가 존재하는지 확인하고, 존재하지 않는다면 해당 디렉토리를 만들어준다. (파일이 아니라, 폴더를 만들어주는 것)
 	static void CheckAndMakeDirectory(const struct PathInfo* Info);

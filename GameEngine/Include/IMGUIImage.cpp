@@ -119,60 +119,35 @@ void CIMGUIImage::Render()
 			ImVec2	StartUV = ImVec2(m_ImageStart.x / Width, m_ImageStart.y / Height);
 			ImVec2	EndUV = ImVec2(m_ImageEnd.x / Width, m_ImageEnd.y / Height);
 
+			ImGui::Image(m_Texture->GetResource(), m_Size, StartUV, EndUV, m_Tint, m_BorderColor);
+
 			// 일반 Texture Rendering
-			if (!m_IsRenderTargetImage)
-			{
-				ImGui::Image(m_Texture->GetResource(), m_Size, StartUV, EndUV, m_Tint, m_BorderColor);
-			}
-			// Render Target 가져와서 Rendering
-			else
-			{
-				m_CopyTargetTexResource = m_Texture->GetTextureResource();
-
-				if (!m_CopyTargetTexResource)
-					return;
-
-				if (!m_TexResource)
-				{
-					CreateTexture(Width, Height);
-				}
-
-				// Target Texture 복사 
-				// SAFE_RELEASE(m_TexResource);
-
-				CDevice::GetInst()->GetContext()->CopyResource(m_TexResource, m_CopyTargetTexResource);
-
-				ImGui::Image(m_ShaderResourceView, m_Size, StartUV, EndUV, m_Tint, m_BorderColor);
-			}
+			// if (!m_IsRenderTargetImage)
+			// {
+			// 	ImGui::Image(m_Texture->GetResource(), m_Size, StartUV, EndUV, m_Tint, m_BorderColor);
+			// }
+			// // Render Target 가져와서 Rendering
+			// else
+			// {
+			// 	m_CopyTargetTexResource = m_Texture->GetTextureResource();
+			// 
+			// 	if (!m_CopyTargetTexResource)
+			// 		return;
+			// 
+			// 	if (!m_TexResource)
+			// 	{
+			// 		CreateTexture(Width, Height);
+			// 	}
+			// 
+			// 	// Target Texture 복사 
+			// 	// SAFE_RELEASE(m_TexResource);
+			// 
+			// 	CDevice::GetInst()->GetContext()->CopyResource(m_TexResource, m_CopyTargetTexResource);
+			// 
+			// 	ImGui::Image(m_ShaderResourceView, m_Size, StartUV, EndUV, m_Tint, m_BorderColor);
+			// }
 			
 		}
 	}
-
-	ApplyDropEffect();
 }
 
-void CIMGUIImage::ApplyDropEffect()
-{
-	// Drop 내용을 받는다.
-	if (ImGui::BeginDragDropTarget())
-	{
-		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("DND_DEMO_CELL"))
-		{
-			// char type 배수 
-			if (payload->DataSize % sizeof(char) != 0)
-				return;
-
-			// 해당 Image Widget 으로 볼 Texture 의 
-			char* payload_n = (char*)payload->Data;
-
-			// 1) Texture Manager 에 저장된 Texture 의 Key 를 볼 것이다.
-			// m_Texture = CResourceManager::GetInst()->FindTexture(Name);
-
-			// 2) 그대로 없다면, Hard Disk 에서 찾을 것이다.
-			// - 없으면 X
-			// - 있다면, 해당 Texture 를, File Name 으로 Add 하고 
-			// SetTexture(payload_n);
-		}
-		ImGui::EndDragDropTarget();
-	}
-}

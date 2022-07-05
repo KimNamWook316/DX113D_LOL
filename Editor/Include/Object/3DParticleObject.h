@@ -16,6 +16,7 @@ private :
 	class CParticleComponent* m_ParticleComponent;
 	class CCameraComponent* m_ParticleCamera;
 	class CArm* m_ParticleArm;
+	std::function<void(float)> m_CameraRotateCallback;
 private :
 	bool m_IsCameraRotate;
 	bool m_IsCameraZoom;
@@ -94,7 +95,18 @@ public :
 		const Vector3& RelativeRotation = m_ParticleArm->GetRelativeRot();
 		m_ParticleArm->SetRelativeRotation(XRot, RelativeRotation.y, RelativeRotation.z);
 	}
+	void SetRelativeRotationY(float YRot)
+	{
+		const Vector3& RelativeRotation = m_ParticleArm->GetRelativeRot();
+		m_ParticleArm->SetRelativeRotation(RelativeRotation.x, YRot, RelativeRotation.z);
+	}
 public:
 	bool Init() override;
 	void Update(float DeltaTime) override;
+public :
+	template<typename T>
+	void SetCameraRotateCallback(T* Obj, void(T::*Func)(float Val))
+	{
+		m_CameraRotateCallback = std::bind(Func, Obj, std::placeholders::_1);
+	}
 };

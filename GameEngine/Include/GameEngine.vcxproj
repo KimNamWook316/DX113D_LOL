@@ -175,6 +175,7 @@
     <ClCompile Include="Resource\Shader\DownScaleCBuffer.cpp" />
     <ClCompile Include="Resource\Shader\FogCBuffer.cpp" />
     <ClCompile Include="Resource\Shader\GlobalConstantBuffer.cpp" />
+    <ClCompile Include="Resource\Shader\GlobalLightCBuffer.cpp" />
     <ClCompile Include="Resource\Shader\GraphicShader.cpp" />
     <ClCompile Include="Resource\Shader\GrayShader.cpp" />
     <ClCompile Include="Resource\Shader\HDRDownScaleFirstPassShader.cpp" />
@@ -216,6 +217,8 @@
     <ClCompile Include="Resource\Shader\StructuredBuffer.cpp" />
     <ClCompile Include="Resource\Shader\TileMapConstantBuffer.cpp" />
     <ClCompile Include="Resource\Shader\TileMapShader.cpp" />
+    <ClCompile Include="Resource\Shader\ToonCBuffer.cpp" />
+    <ClCompile Include="Resource\Shader\ToonShader.cpp" />
     <ClCompile Include="Resource\Shader\TransformConstantBuffer.cpp" />
     <ClCompile Include="Resource\Shader\Transparent3DShader.cpp" />
     <ClCompile Include="Resource\Shader\TransparentInstancing3DShader.cpp" />
@@ -418,6 +421,7 @@
     <ClInclude Include="Resource\Shader\DownScaleCBuffer.h" />
     <ClInclude Include="Resource\Shader\FogCBuffer.h" />
     <ClInclude Include="Resource\Shader\GlobalConstantBuffer.h" />
+    <ClInclude Include="Resource\Shader\GlobalLightCBuffer.h" />
     <ClInclude Include="Resource\Shader\GraphicShader.h" />
     <ClInclude Include="Resource\Shader\GrayShader.h" />
     <ClInclude Include="Resource\Shader\HDRDownScaleFirstPassShader.h" />
@@ -459,6 +463,8 @@
     <ClInclude Include="Resource\Shader\StructuredBuffer.h" />
     <ClInclude Include="Resource\Shader\TileMapConstantBuffer.h" />
     <ClInclude Include="Resource\Shader\TileMapShader.h" />
+    <ClInclude Include="Resource\Shader\ToonCBuffer.h" />
+    <ClInclude Include="Resource\Shader\ToonShader.h" />
     <ClInclude Include="Resource\Shader\TransformConstantBuffer.h" />
     <ClInclude Include="Resource\Shader\Transparent3DShader.h" />
     <ClInclude Include="Resource\Shader\TransparentInstancing3DShader.h" />
@@ -693,6 +699,12 @@
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Standard3DVS</EntryPointName>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Effect</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="..\Bin\Shader\Standard3DInfo.fx">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="..\Bin\Shader\TileMap.fx">
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">TileMapVS</EntryPointName>
@@ -707,6 +719,14 @@
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">TileMapVS</EntryPointName>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Effect</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="..\Bin\Shader\Toon.fx">
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">ToonVS</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">ToonVS</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="..\Bin\Shader\Transparent3D.fx">
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Transparent3DVS</EntryPointName>

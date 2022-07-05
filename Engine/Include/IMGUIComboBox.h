@@ -56,6 +56,11 @@ public:
 		return -1;
 	}
 
+	bool IsSelect() const
+	{
+		return (m_SelectIndex != -1);
+	}
+
 public:
 	void AddItem(const std::string& Item)
 	{
@@ -100,6 +105,7 @@ public:
 	{
 		m_vecItem.clear();
 		m_vecItemUTF8.clear();
+		m_PrevViewName = "";
 	}
 
 	bool Empty()

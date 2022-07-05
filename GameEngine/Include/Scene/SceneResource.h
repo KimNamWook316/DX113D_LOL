@@ -176,6 +176,7 @@ public:	// =================== Sequence3D =====================
 	bool LoadAnimationSequenceFullPathMultibyteSetOriginFileName(bool Loop, std::string& Name, const char* FullPath);
 	void AddSequenceInfo(CAnimationSequence* Sequence);
 	CAnimationSequence* FindAnimationSequence(const std::string& Name);
+	void DeleteSequence(const CAnimationSequence* const Sequence);
 
 	bool LoadSkeleton(const std::string& Name, const TCHAR* FileName,
 		const std::string& PathName = ANIMATION_PATH);

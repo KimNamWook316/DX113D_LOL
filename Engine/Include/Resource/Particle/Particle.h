@@ -40,12 +40,21 @@ private:
 	bool									m_2D;
 	int										m_SpawnCountMax;
 	ParticleSaveLoadStruct       m_SaveLoadStruct;
+private :
+	// 정규 분포 형태의 Y 값들을 지닌 구조화 버퍼
+	// 원소 개수 (X 축 원소 개수) : SpawnCount 만큼
+	// Y값 범위 : 0 ~ 1 (정규분포)
+	class CStructuredBuffer* m_NormalDistributionBuffer;
+	std::vector<float>	m_vecNormalDistVal;
 public:
 	CMaterial* CloneMaterial()	const
 	{
 		return m_Material->Clone();
 	}
-
+	std::vector<float> GetVecNormalDistVal() 
+	{
+		return m_vecNormalDistVal;
+	}
 	CParticleUpdateShader* GetUpdateShader()	const
 	{
 		return m_UpdateShader;
@@ -74,10 +83,20 @@ public:
 	void AddStructuredBuffer(const std::string& Name, unsigned int Size, unsigned int Count,
 		int Register, bool Dynamic = false,
 		int StructuredBufferShaderType = (int)Buffer_Shader_Type::Compute);
+	void CreateNormalDistStructuredBuffer(const std::string& Name, unsigned int Size, unsigned int Count,
+		int Register, bool Dynamic = false,
+		int StructuredBufferShaderType = (int)Buffer_Shader_Type::Compute);
 	bool ResizeBuffer(const std::string& Name, unsigned int Size, unsigned int Count,
 		int Register, bool Dynamic = false,
 		int StructuredBufferShaderType = (int)Buffer_Shader_Type::Compute);
+	bool ResizeNormalDistStructuredBuffer(const std::string& Name, unsigned int Size, unsigned int Count,
+		int Register, bool Dynamic = false,
+		int StructuredBufferShaderType = (int)Buffer_Shader_Type::Compute);
 	void CloneStructuredBuffer(std::vector<CStructuredBuffer*>& vecBuffer);
+	void CloneNormalDistStructuredBuffer(CStructuredBuffer*& NormalDistBuffer);
+private :
+	// m_NormalDistributionBuffer 에 정규 분포 계산 값들을 적용하는 함수
+	void GenerateNormalDistribution();
 public :
 	bool SaveFile(const char* FullPath);
 	bool LoadFile(const char* FullPath);
@@ -194,65 +213,136 @@ public:
 		return m_CBuffer->Is2D();
 	}
 
+	bool IsMoveDirRandom()
+	{
+		return m_CBuffer->IsMoveDirRandom();
+	}
+
 	const Vector3& GetMoveAngle()
 	{
 		return m_CBuffer->GetMoveAngle();
 	}
 
-	int IsBounceEnable() const
-	{
-		return m_CBuffer->IsBounceEnable();
-	}
-
 	const Vector3& GetRotationAngle()
 	{
 		return m_CBuffer->GetRotationAngle();
+	}	
+
+	// 생성 반지름
+	float GetGenerateRadius() const
+	{
+		return m_CBuffer->GetGenerateRadius();
+	}
+	
+	// 가운데에서 멀어질수록 LifeTime 감소 
+	bool IsLifeTimeLinearFromCenter()
+	{
+		return m_CBuffer->IsLifeTimeLinearFromCenter();
+	}
+	// Bounce
+	int IsBounceEnable() const
+	{
+		return m_CBuffer->IsBounceEnable();
 	}
 	float GetBounceResistance() const
 	{
 		return m_CBuffer->GetParticleBounceResist();
 	}
+	// Ring
+	int IsGenerateRing() const
+	{
+		return m_CBuffer->IsGenerateRing();
+	}
+
+	int IsLoopGenerateRing() const
+	{
+		return m_CBuffer->IsLoopGenerateRing();
+	}
+	// Circle
 	int IsGenerateCircle() const
 	{
 		return m_CBuffer->IsGenerateCircle();
 	}
-	float GetGenerateCircleRadius() const
+	// Torch
+	int IsGenerateTorch() const
 	{
-		return m_CBuffer->GetGenerateCircleRadius();
+		return m_CBuffer->IsGenerateTorch();
 	}
-	int IsLoopGenerateCircle() const
+	// Alpha
+	float GetStartAlpha() const
 	{
-		return m_CBuffer->IsLoopGenerateCircle();
+		return m_CBuffer->GetStartAlpha();
 	}
-	float GetMinAlpha() const
+	float GetEndAlpha() const
 	{
-		return m_CBuffer->GetMinAlpha();
+		return m_CBuffer->GetEndAlpha();
 	}
-	float GetMaxAlpha() const
+	// UV Move
+	int GetUVMoveEnable() const
 	{
-		return m_CBuffer->GetMaxAlpha();
+		return m_CBuffer->GetUVMoveEnable();
+	}
+	int GetUVRowN() const
+	{
+		return m_CBuffer->GetUVRowN();
+	}
+	int GetUVColN() const
+	{
+		return m_CBuffer->GetUVColN();
 	}
 public:
-	void SetMinAlpha(float Alpha) 
+	// UV Move
+	void SetUVMoveEnable(bool Enable)
 	{
-		m_CBuffer->SetMinAlpha(Alpha);
+		m_CBuffer->SetUVMoveEnable(Enable);
 	}
-	void SetMaxAlpha(float Alpha)
+	void SetUVRowN(int Row)
 	{
-		m_CBuffer->SetMaxAlpha(Alpha);
+		m_CBuffer->SetUVRowN(Row);
 	}
-	void SetLoopGenerateCircle(bool Enable)
+	void SetUVColN(int Col)
 	{
-		m_CBuffer->SetLoopGenerateCircle(Enable);
+		m_CBuffer->SetUVColN(Col);
 	}
+	// MoveUp Corn
+	void SetLifeTimeLinearFromCenter(bool Enable)
+	{
+		m_CBuffer->SetLifeTimeLinearFromCenter(Enable);
+	}
+	// Alpha
+	void SetStartAlpha(float Alpha) 
+	{
+		m_CBuffer->SetStartAlpha(Alpha);
+	}
+	void SetEndAlpha(float Alpha)
+	{
+		m_CBuffer->SetEndAlpha(Alpha);
+	}
+	// 생성 반지름
+	void SetGenerateRadius(float Radius)
+	{
+		m_CBuffer->SetGenerateRadius(Radius);
+	}
+	// Ring
+	void SetLoopGenerateRing(bool Enable)
+	{
+		m_CBuffer->SetLoopGenerateRing(Enable);
+	}
+	void SetGenerateRingEnable(bool Enable)
+	{
+		m_CBuffer->SetGenerateRingEnable(Enable);
+	}
+	// Torch
+	void SetGenerateTorchEnable(bool Enable)
+	{
+		m_CBuffer->SetGenerateTorchEnable(Enable);
+	}
+	// Circle
 	void SetGenerateCircleEnable(bool Enable)
 	{
 		m_CBuffer->SetGenerateCircleEnable(Enable);
 	}
-	void SetGenerateCircleRadius(float Radius)
-	{
-		m_CBuffer->SetGenerateCircleRadius(Radius);
-	}
+	// Bounce
 	void SetBounceEnable(bool Enable)
 	{
 		m_CBuffer->SetBounceEnable(Enable);
@@ -265,7 +355,6 @@ public:
 	{
 		m_Material = Material;
 	}
-
 	void SetSpawnTimeMax(float SpawnTime)
 	{
 		m_SpawnTimeMax = SpawnTime;
@@ -346,6 +435,11 @@ public:
 	void SetMove(bool Move)
 	{
 		m_CBuffer->SetMove(Move);
+	}
+
+	void SetIsRandomMoveDir(bool Random)
+	{
+		m_CBuffer->SetIsRandomMoveDir(Random);
 	}
 
 	void SetGravity(bool Gravity)

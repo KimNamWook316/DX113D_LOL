@@ -93,10 +93,12 @@ private :
 	void OnSetTextureBtnWithString(const std::string&);
 	void OnAddTextureBtn();
 	void OnAddTextureBtnWithString(const std::string&);
+	void TextureSetSuccessCallback(class CTexture* Texture);
 
 	void OnSaveMaterial();
 	void OnLoadMaterial();
 
+	// Material 내용이 IMGUI 를 통해 보여지게 하기 
 	void RefreshMaterialDisplayInfo(class CMaterial* Material, class CTexture* Texture = nullptr);
 };
 

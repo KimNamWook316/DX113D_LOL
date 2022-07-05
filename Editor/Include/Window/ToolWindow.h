@@ -60,6 +60,11 @@ private:
 	void OnClickPlay();
 	void OnClickPause();
 	void OnClickStop();
+	void OnChangeGLightRotX(float Val);
+	void OnChangeGLightRotY(float Val);
+	void OnChangeGLightRotZ(float Val);
+	void OnChangeGLightAmbIntensity(float Val);
+	void OnChangeGLightColor(const Vector3& Color);
 	void ClearSceneRelatedWindows();
 	void RefreshSceneRelatedWindow(class CGameObject* Object);
 	void RefreshSceneRelatedWindow(const std::vector<CGameObject*>& vecObj);
@@ -103,5 +108,13 @@ private:
 	CIMGUIButton* m_Play;
 	CIMGUIButton* m_Pause;
 	CIMGUIButton* m_Stop;
+
+	// Global Light
+	CIMGUICollapsingHeader* m_GLightBlock;
+	CIMGUISliderFloat* m_GLightRotX;
+	CIMGUISliderFloat* m_GLightRotY;
+	CIMGUISliderFloat* m_GLightRotZ;
+	CIMGUIColor3* m_GLightColor;
+	CIMGUISliderFloat* m_GLightAmbIntensity;
 };
 

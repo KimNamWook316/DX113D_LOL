@@ -334,8 +334,26 @@
     <Filter Include="99. Util">
       <UniqueIdentifier>{106780f3-12e2-4456-b494-609eecd667b1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="05. Component\01. SceneComponent\12. NavMeshComp">
-      <UniqueIdentifier>{f994b0f7-7290-48a9-8211-a49fa7f53082}</UniqueIdentifier>
+    <Filter Include="02. Resource\02. Shader\02. ShaderClass\20. HDR">
+      <UniqueIdentifier>{3be3e6ae-bdf0-4b71-92fa-1071faa27c2a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Resource\02. Shader\02. ShaderClass\21. Blur">
+      <UniqueIdentifier>{54d50d79-0253-434a-a355-c7511031c979}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Resource\02. Shader\02. ShaderClass\22. Bloom">
+      <UniqueIdentifier>{e3be1ff5-3e6f-41c3-9b08-4ac13cd06eeb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Resource\02. Shader\03. ConstantBuffer\17. HDR">
+      <UniqueIdentifier>{fdd5400e-644a-4f49-bfbf-1df2dce46999}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Resource\02. Shader\03. ConstantBuffer\18. Fog">
+      <UniqueIdentifier>{02b5fd94-4fd6-4d89-a35f-8ac9a48a443b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Resource\02. Shader\02. ShaderClass\23. Toon">
+      <UniqueIdentifier>{430f2778-cb88-4fa8-804c-c685a744f521}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Resource\02. Shader\03. ConstantBuffer\19. Toon">
+      <UniqueIdentifier>{0671428f-b530-4718-9ab0-5cc54e6da431}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1003,40 +1021,43 @@
       <Filter>05. Component\01. SceneComponent\02. Collider</Filter>
     </ClCompile>
     <ClCompile Include="Render\PostFXRenderer.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="Resource\Shader\BloomShader.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="Resource\Shader\BlurHorizontalShader.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="Resource\Shader\BlurVerticalShader.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="Resource\Shader\DownScaleCBuffer.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="Resource\Shader\FogCBuffer.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>06. Render</Filter>
     </ClCompile>
     <ClCompile Include="Resource\Shader\HDRDownScaleFirstPassShader.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>02. Resource\02. Shader\02. ShaderClass\20. HDR</Filter>
     </ClCompile>
     <ClCompile Include="Resource\Shader\HDRDownScaleSecondPassShader.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>02. Resource\02. Shader\02. ShaderClass\20. HDR</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Shader\BlurHorizontalShader.cpp">
+      <Filter>02. Resource\02. Shader\02. ShaderClass\21. Blur</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Shader\BlurVerticalShader.cpp">
+      <Filter>02. Resource\02. Shader\02. ShaderClass\21. Blur</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Shader\BloomShader.cpp">
+      <Filter>02. Resource\02. Shader\02. ShaderClass\22. Bloom</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Shader\DownScaleCBuffer.cpp">
+      <Filter>02. Resource\02. Shader\03. ConstantBuffer\17. HDR</Filter>
     </ClCompile>
     <ClCompile Include="Resource\Shader\HDRRenderCBuffer.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>02. Resource\02. Shader\03. ConstantBuffer\17. HDR</Filter>
     </ClCompile>
     <ClCompile Include="Resource\Shader\HDRRenderShader.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>02. Resource\02. Shader\03. ConstantBuffer\17. HDR</Filter>
     </ClCompile>
-    <ClCompile Include="Component\NavMeshComponent.cpp">
-      <Filter>05. Component\01. SceneComponent\12. NavMeshComp</Filter>
+    <ClCompile Include="Resource\Shader\FogCBuffer.cpp">
+      <Filter>02. Resource\02. Shader\03. ConstantBuffer\18. Fog</Filter>
     </ClCompile>
-    <ClCompile Include="Resource\Mesh\NavMesh.cpp">
-      <Filter>02. Resource\01. Mesh</Filter>
+    <ClCompile Include="Resource\Shader\ToonShader.cpp">
+      <Filter>02. Resource\02. Shader\02. ShaderClass\23. Toon</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Shader\ToonCBuffer.cpp">
+      <Filter>02. Resource\02. Shader\03. ConstantBuffer\19. Toon</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Shader\GlobalLightCBuffer.cpp">
+      <Filter>02. Resource\02. Shader\03. ConstantBuffer\12. Light</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1743,40 +1764,43 @@
       <Filter>05. Component\01. SceneComponent\02. Collider</Filter>
     </ClInclude>
     <ClInclude Include="Render\PostFXRenderer.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="Resource\Shader\BloomShader.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="Resource\Shader\BlurHorizontalShader.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="Resource\Shader\BlurVerticalShader.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="Resource\Shader\DownScaleCBuffer.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="Resource\Shader\FogCBuffer.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>06. Render</Filter>
     </ClInclude>
     <ClInclude Include="Resource\Shader\HDRDownScaleFirstPassShader.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>02. Resource\02. Shader\02. ShaderClass\20. HDR</Filter>
     </ClInclude>
     <ClInclude Include="Resource\Shader\HDRDownScaleSecondPassShader.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>02. Resource\02. Shader\02. ShaderClass\20. HDR</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Shader\BlurHorizontalShader.h">
+      <Filter>02. Resource\02. Shader\02. ShaderClass\21. Blur</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Shader\BlurVerticalShader.h">
+      <Filter>02. Resource\02. Shader\02. ShaderClass\21. Blur</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Shader\BloomShader.h">
+      <Filter>02. Resource\02. Shader\02. ShaderClass\22. Bloom</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Shader\DownScaleCBuffer.h">
+      <Filter>02. Resource\02. Shader\03. ConstantBuffer\17. HDR</Filter>
     </ClInclude>
     <ClInclude Include="Resource\Shader\HDRRenderCBuffer.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>02. Resource\02. Shader\03. ConstantBuffer\17. HDR</Filter>
     </ClInclude>
     <ClInclude Include="Resource\Shader\HDRRenderShader.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>02. Resource\02. Shader\03. ConstantBuffer\17. HDR</Filter>
     </ClInclude>
-    <ClInclude Include="Component\NavMeshComponent.h">
-      <Filter>05. Component\01. SceneComponent\12. NavMeshComp</Filter>
+    <ClInclude Include="Resource\Shader\FogCBuffer.h">
+      <Filter>02. Resource\02. Shader\03. ConstantBuffer\18. Fog</Filter>
     </ClInclude>
-    <ClInclude Include="Resource\Mesh\NavMesh.h">
-      <Filter>02. Resource\01. Mesh</Filter>
+    <ClInclude Include="Resource\Shader\ToonShader.h">
+      <Filter>02. Resource\02. Shader\02. ShaderClass\23. Toon</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Shader\ToonCBuffer.h">
+      <Filter>02. Resource\02. Shader\03. ConstantBuffer\19. Toon</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Shader\GlobalLightCBuffer.h">
+      <Filter>02. Resource\02. Shader\03. ConstantBuffer\12. Light</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1834,11 +1858,27 @@
     <FxCompile Include="..\Bin\Shader\Gray.fx">
       <Filter>02. Resource\02. Shader\01. HLSL</Filter>
     </FxCompile>
-    <FxCompile Include="..\Bin\Shader\Bloom.fx" />
-    <FxCompile Include="..\Bin\Shader\Blur.fx" />
-    <FxCompile Include="..\Bin\Shader\HDRDownScale.fx" />
-    <FxCompile Include="..\Bin\Shader\HDRDownScaleSecond.fx" />
-    <FxCompile Include="..\Bin\Shader\HDRRender.fx" />
+    <FxCompile Include="..\Bin\Shader\Bloom.fx">
+      <Filter>02. Resource\02. Shader\01. HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\Shader\Blur.fx">
+      <Filter>02. Resource\02. Shader\01. HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\Shader\HDRDownScale.fx">
+      <Filter>02. Resource\02. Shader\01. HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\Shader\HDRDownScaleSecond.fx">
+      <Filter>02. Resource\02. Shader\01. HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\Shader\HDRRender.fx">
+      <Filter>02. Resource\02. Shader\01. HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\Shader\Toon.fx">
+      <Filter>02. Resource\02. Shader\01. HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\Shader\Standard3DInfo.fx">
+      <Filter>02. Resource\02. Shader\01. HLSL</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resource\Texture\DirectXTex.inl">
