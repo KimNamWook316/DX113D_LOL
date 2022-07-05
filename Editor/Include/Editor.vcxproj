@@ -331,7 +331,6 @@
     <ClInclude Include="Object\SpriteEditObject.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Scene\DefaultScene.h" />
-    <ClInclude Include="Utils.h" />
     <ClInclude Include="Widget\AnimationMeshWidget.h" />
     <ClInclude Include="Widget\BehaviorTreeMenu.h" />
     <ClInclude Include="Widget\ColliderComponentWidget.h" />

@@ -27,6 +27,7 @@ public:
 	void SetPlayText(bool Play);
 	void SetGizmoObject(class CGameObject* Object);
 	void SetGizmoComponent(class CSceneComponent* SceneComp);
+	void RefreshGlobalSceneDataWidget(); // HDR 렌더 설정, 전역 라이트 설정 등 리프레쉬
 
 public:
 	// 디버그용 임시 키

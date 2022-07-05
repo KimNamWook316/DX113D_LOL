@@ -197,11 +197,11 @@ public:
 	{
 		m_BufferData.UVMoveEnable = Enable ? 1: 0;
 	}
-	int SetUVRowN(int Row) 
+	void SetUVRowN(int Row)
 	{
 		m_BufferData.UVRowN = Row;
 	}
-	int SetUVColN(int Col) 
+	void SetUVColN(int Col)
 	{
 		m_BufferData.UVColN = Col;
 	}

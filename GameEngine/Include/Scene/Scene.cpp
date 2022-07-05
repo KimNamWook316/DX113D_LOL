@@ -6,6 +6,8 @@
 #include "../GameObject/SkyObject.h"
 #include "../Input.h"
 #include "../Collision/Collision.h"
+#include "../Render/RenderManager.h"
+#include "../EngineUtil.h"
 
 CScene::CScene()
 {
@@ -289,6 +291,15 @@ bool CScene::SaveFullPath(const char* FullPath)
 		}
 	}
 
+	// Scene Global Data ( HDR Value, 전역 라이트 설정 등 )을 CSV로 저장
+	std::string FileName = CEngineUtil::FilterFileName(FullPath);
+	Success = SaveSceneGlobalDataCSV(FileName.c_str());
+
+	if (!Success)
+	{
+		MessageBox(nullptr, TEXT("씬 글로벌 데이터 엑셀 파일 없음 - 기본 설정으로 로드함"), TEXT("Warning"), MB_OK);
+	}
+
 	fclose(File);
 	return true;
 }
@@ -354,7 +365,184 @@ bool CScene::LoadFullPath(const char* FullPath)
 		Obj->SetScene(this);
 	}
 
+	std::string FileName = CEngineUtil::FilterFileName(FullPath);
+	
+	// 렌더 설정, 전역 조명 설정 등 로드
+	// 실패 시 기본 설정으로 로드함
+	Success = LoadSceneGlobalDataCSV(FileName.c_str());
+
 	fclose(File);
+
+	return true;
+}
+
+bool CScene::SaveSceneGlobalDataCSV(const char* FileName)
+{
+	// .scn을 제외한 파일 이름 생성
+	std::string PureFileName;
+	CEngineUtil::GetFileNameOnly(FileName, PureFileName);
+
+	// AAA.scn -> AAA_GlobalData
+	std::string CSVKeyName = PureFileName + "_GlobalData";
+	bool Success = CResourceManager::GetInst()->CreateCSV(CSVKeyName);
+
+	if (!Success)
+	{
+		return false;
+	}
+
+	CRenderManager* RMng = CRenderManager::GetInst();
+	CLightComponent* GL = m_LightManager->GetGlobalLightComponent();
+
+	CExcelData* Data = CResourceManager::GetInst()->FindCSV(CSVKeyName);
+
+	Data->AddRow("Data");
+
+	Data->AddLabel("AdaptationTime");
+	float Val = RMng->GetAdaptationTime();
+	Data->SetData("Data", "AdaptationTime", Val);
+
+	Data->AddLabel("MiddleGray");
+	Val = RMng->GetMiddleGray();
+	Data->SetData("Data", "MiddleGray", Val);
+
+	Data->AddLabel("LumWhite");
+	Val = RMng->GetLumWhite();
+	Data->SetData("Data", "LumWhite", Val);
+
+	Data->AddLabel("BloomThreshold");
+	Val = RMng->GetBloomThreshold();
+	Data->SetData("Data", "BloomThreshold", Val);
+
+	Data->AddLabel("BloomScale");
+	Val = RMng->GetBloomScale();
+	Data->SetData("Data", "BloomScale", Val);
+
+	Data->AddLabel("DOFMax");
+	Val = RMng->GetDOFMax();
+	Data->SetData("Data", "DOFMax", Val);
+
+	Data->AddLabel("DOFMin");
+	Val = RMng->GetDOFMin();
+	Data->SetData("Data", "DOFMin", Val);
+
+	Data->AddLabel("FogType");
+	Val = (int)RMng->GetFogType();
+	Data->SetData("Data", "FogType", Val);
+
+	Data->AddLabel("FogColorR");
+	Vector3 FogCol = RMng->GetFogColor();
+	Data->SetData("Data", "FogColorR", FogCol.x);
+
+	Data->AddLabel("FogColorG");
+	Data->SetData("Data", "FogColorG", FogCol.y);
+
+	Data->AddLabel("FogColorB");
+	Data->SetData("Data", "FogColorB", FogCol.z);
+
+	Data->AddLabel("FogStart");
+	Val = RMng->GetFogStart();
+	Data->SetData("Data", "FogStart", Val);
+
+	Data->AddLabel("FogEnd");
+	Val = RMng->GetFogEnd();
+	Data->SetData("Data", "FogEnd", Val);
+
+	Data->AddLabel("FogDensity");
+	Val = RMng->GetFogDensity();
+	Data->SetData("Data", "FogDensity", Val);
+
+	Data->AddLabel("GlobalLightRotX");
+	Vector3 GLRot = GL->GetWorldRot();
+	Data->SetData("Data", "GlobalLightRotX", GLRot.x);
+
+	Data->AddLabel("GlobalLightRotY");
+	Data->SetData("Data", "GlobalLightRotY", GLRot.y);
+
+	Data->AddLabel("GlobalLightRotZ");
+	Data->SetData("Data", "GlobalLightRotZ", GLRot.z);
+
+	Data->AddLabel("GlobalLightColorR");
+	Vector4 GLCol = GL->GetLightColor();
+	Data->SetData("Data", "GlobalLightColorR", GLCol.x);
+
+	Data->AddLabel("GlobalLightColorG");
+	Data->SetData("Data", "GlobalLightColorG", GLCol.y);
+
+	Data->AddLabel("GlobalLightColorB");
+	Data->SetData("Data", "GlobalLightColorB", GLCol.z);
+
+	Data->AddLabel("AmbientIntensity");
+	Val = m_LightManager->GetGlobalLightAmbiendIntensity();
+	Data->SetData("Data", "AmbientIntensity", Val);
+
+	// AAA.scn 로 scn 저장하면 -> AAA_GlobalData.csv 파일명 csv 파일 생성
+	// Excel/SceneGlobalData/ 경로에 저장한다
+	char CSVFileName[MAX_PATH] = {};
+	strcpy_s(CSVFileName, "//SceneGlobalData//");
+	strcat_s(CSVFileName, PureFileName.c_str());
+	strcat_s(CSVFileName, "_GlobalData.csv");
+
+	Success = Data->SaveCSV(CSVFileName);
+
+	if (!Success)
+	{
+		return false;
+	}
+
+	// 메모리 해제
+	CResourceManager::GetInst()->DeleteCSV(CSVKeyName);
+
+	return Success;
+}
+
+bool CScene::LoadSceneGlobalDataCSV(const char* FileName)
+{
+	// .scn을 제외한 파일 이름 생성
+	std::string PureFileName;
+	CEngineUtil::GetFileNameOnly(FileName, PureFileName);
+
+	char CSVFileName[MAX_PATH] = {};
+	strcpy_s(CSVFileName, "//SceneGlobalData//");
+	strcat_s(CSVFileName, PureFileName.c_str());
+	strcat_s(CSVFileName, "_GlobalData.csv");
+
+	std::string outCSVKey;
+	bool Success = CResourceManager::GetInst()->LoadCSV(outCSVKey, CSVFileName);
+
+	if (!Success)
+	{
+		return false;
+	}
+
+	CExcelData* Data = CResourceManager::GetInst()->FindCSV(outCSVKey);
+
+	// Load Data
+	m_SceneGlobalData.HDRData.AdaptationTime = Data->FindDataFloat("Data", "AdaptationTime");
+	m_SceneGlobalData.HDRData.MiddleGray = Data->FindDataFloat("Data", "MiddleGray");
+	m_SceneGlobalData.HDRData.LumWhite = Data->FindDataFloat("Data", "LumWhite");
+	m_SceneGlobalData.HDRData.BloomTreshold = Data->FindDataFloat("Data", "BloomThreshold");
+	m_SceneGlobalData.HDRData.BloomScale = Data->FindDataFloat("Data", "BloomScale");
+	m_SceneGlobalData.HDRData.DOFMax = Data->FindDataFloat("Data", "DOFMax");
+	m_SceneGlobalData.HDRData.DOFMin = Data->FindDataFloat("Data", "DOFMin");
+	m_SceneGlobalData.HDRData.FogType = (Fog_Type)Data->FindDataInt("Data", "FogType");
+	m_SceneGlobalData.HDRData.FogColor.x = Data->FindDataFloat("Data", "FogColorR");
+	m_SceneGlobalData.HDRData.FogColor.y = Data->FindDataFloat("Data", "FogColorG");
+	m_SceneGlobalData.HDRData.FogColor.z = Data->FindDataFloat("Data", "FogColorB");
+	m_SceneGlobalData.HDRData.FogStart = Data->FindDataFloat("Data", "FogStart");
+	m_SceneGlobalData.HDRData.FogEnd = Data->FindDataFloat("Data", "FogEnd");
+	m_SceneGlobalData.HDRData.FogDensity = Data->FindDataFloat("Data", "FogDensity");
+	m_SceneGlobalData.GLightData.Rot.x = Data->FindDataFloat("Data", "GlobalLightRotX");
+	m_SceneGlobalData.GLightData.Rot.y = Data->FindDataFloat("Data", "GlobalLightRotY");
+	m_SceneGlobalData.GLightData.Rot.z = Data->FindDataFloat("Data", "GlobalLightRotZ");
+	m_SceneGlobalData.GLightData.Color.x = Data->FindDataFloat("Data", "GlobalLightColorR");
+	m_SceneGlobalData.GLightData.Color.y = Data->FindDataFloat("Data", "GlobalLightColorG");
+	m_SceneGlobalData.GLightData.Color.z = Data->FindDataFloat("Data", "GlobalLightColorB");
+	m_SceneGlobalData.GLightData.AmbientIntensity = Data->FindDataFloat("Data", "AmbientIntensity");
+	
+	// 메모리 해제
+	CResourceManager::GetInst()->DeleteCSV(outCSVKey);
+
 	return true;
 }
 
@@ -397,6 +585,32 @@ bool CScene::CheckSameName(const std::string& Name)
 	}
 
 	return false;
+}
+
+void CScene::UpdateSceneGlobalData()
+{
+	CRenderManager* RenderMng = CRenderManager::GetInst();
+
+	RenderMng->SetAdaptationTime(m_SceneGlobalData.HDRData.AdaptationTime);
+	RenderMng->SetMiddleGray(m_SceneGlobalData.HDRData.MiddleGray);
+	RenderMng->SetLumWhite(m_SceneGlobalData.HDRData.LumWhite);
+	RenderMng->SetBloomThreshold(m_SceneGlobalData.HDRData.BloomTreshold);
+	RenderMng->SetBloomScale(m_SceneGlobalData.HDRData.BloomScale);
+	RenderMng->SetDOFMax(m_SceneGlobalData.HDRData.DOFMax);
+	RenderMng->SetDOFMin(m_SceneGlobalData.HDRData.DOFMin);
+	RenderMng->SetFogType(m_SceneGlobalData.HDRData.FogType);
+	RenderMng->SetFogColor(m_SceneGlobalData.HDRData.FogColor);
+	RenderMng->SetFogStart(m_SceneGlobalData.HDRData.FogStart);
+	RenderMng->SetFogEnd(m_SceneGlobalData.HDRData.FogEnd);
+	RenderMng->SetFogDensity(m_SceneGlobalData.HDRData.FogDensity);
+
+	CLightComponent* GLight = m_LightManager->GetGlobalLightComponent();
+	GLight->SetWorldRotation(m_SceneGlobalData.GLightData.Rot);
+
+	Vector4 Col = Vector4(m_SceneGlobalData.GLightData.Color.x,
+		m_SceneGlobalData.GLightData.Color.y, m_SceneGlobalData.GLightData.Color.z, 1.f);
+	GLight->SetColor(Col);
+	m_LightManager->SetGlogbalLightAmbientIntensity(m_SceneGlobalData.GLightData.AmbientIntensity);
 }
 
 void CScene::GetAllObjectsPointer(std::vector<CGameObject*>& vecOutObj)

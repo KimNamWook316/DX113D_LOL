@@ -664,11 +664,11 @@ void CRenderManager::Render(float DeltaTime)
  //		RenderGray();
  //	}
 
-	// Animation Editor Animation Instance 제작용 Render Target
-	RenderAnimationEditor();
-
-	// Particle Effect Editor 제작용 Render Target
-	RenderParticleEffectEditor();
+ //	// Animation Editor Animation Instance 제작용 Render Target
+ //	RenderAnimationEditor();
+ //
+ //	// Particle Effect Editor 제작용 Render Target
+ //	RenderParticleEffectEditor();
 
 	m_vecGBuffer[2]->SetShader(10, (int)Buffer_Shader_Type::Pixel, 0);
 
@@ -771,11 +771,11 @@ void CRenderManager::RenderSkyBox()
 	CSharedPtr<CGameObject> SkyObj = CSceneManager::GetInst()->GetScene()->GetSkyObject();
 
 	m_FinalTarget->ClearTarget();
- 	// m_FinalTarget->SetTarget(nullptr);
+ 	m_FinalTarget->SetTarget(nullptr);
 
 	SkyObj->Render();
 
-	// m_FinalTarget->ResetTarget();
+	m_FinalTarget->ResetTarget();
 }
 
 void CRenderManager::RenderShadowMap()

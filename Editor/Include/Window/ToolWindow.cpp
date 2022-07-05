@@ -451,6 +451,9 @@ void CToolWindow::OnClickStop()
 		RefreshSceneRelatedWindow(vecObj);
 
 		m_PlayState->SetText("Current State : Paused");
+
+		// Scene Global Data 로드때 세팅으로 변경
+		RefreshGlobalSceneDataWidget();
 	}
 }
 
@@ -548,6 +551,31 @@ void CToolWindow::RefreshSceneRelatedWindow(const std::vector<CGameObject*>& vec
 	{
 		RefreshSceneRelatedWindow(vecObj[i]);
 	}
+}
+
+void CToolWindow::RefreshGlobalSceneDataWidget()
+{
+	// 현재 씬 Change 되지 않은 프레임이기 때문에 NextScene에서 데이터를 받아온다.
+	CScene* LoadedScene = CSceneManager::GetInst()->GetNextScene();
+
+	SceneSaveGlobalData GlobalData = LoadedScene->GetSceneSaveGlobalData();
+	m_AdaptationTime->SetValue(GlobalData.HDRData.AdaptationTime);
+	m_LumWhite->SetValue(GlobalData.HDRData.LumWhite);
+	m_MiddleGray->SetValue(GlobalData.HDRData.MiddleGray);
+	m_BloomThreshold->SetValue(GlobalData.HDRData.BloomTreshold);
+	m_BloomScale->SetValue(GlobalData.HDRData.BloomScale);
+	m_DOFMin->SetValue(GlobalData.HDRData.DOFMin);
+	m_DOFMax->SetValue(GlobalData.HDRData.DOFMax);
+	m_FogColor->SetRGB(GlobalData.HDRData.FogColor);
+	m_FogType->SetSelectIndex((int)GlobalData.HDRData.FogType);
+	m_FogStart->SetValue(GlobalData.HDRData.FogStart);
+	m_FogEnd->SetValue(GlobalData.HDRData.FogEnd);
+	m_FogDensity->SetValue(GlobalData.HDRData.FogDensity);
+	m_GLightRotX->SetValue(GlobalData.GLightData.Rot.x);
+	m_GLightRotY->SetValue(GlobalData.GLightData.Rot.y);
+	m_GLightRotZ->SetValue(GlobalData.GLightData.Rot.z);
+	m_GLightColor->SetRGB(GlobalData.GLightData.Color);
+	m_GLightAmbIntensity->SetValue(GlobalData.GLightData.AmbientIntensity);
 }
 
 void CToolWindow::OnQDown(float DetlaTime)
