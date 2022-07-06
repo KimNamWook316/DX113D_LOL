@@ -52,11 +52,14 @@ cbuffer	ParticleCBuffer : register(b11)
 	int ParticleEmpty4;
 
 	// 각 Particle 별로 다르게 Rotation Angle을 주는 경우
-	float3 g_SeperateRotAngleMin;
+	float3 g_ParticleSeperateRotAngleMin;
 	float ParticleEmpty5;
 
-	float3 g_SeperateRotAngleMax;
+	float3 g_ParticleSeperateRotAngleMax;
 	float ParticleEmpty6;
+
+	float3 g_ParticleCommonRelativeScale;
+	float ParticleEmpty7;
 };
 
 /*
@@ -97,6 +100,8 @@ struct ParticleInfoShared
 
 	float4	ColorMin;
 	float4	ColorMax;
+
+	float3 CommonRelativeScale;
 
 	int		GravityEnable;
 
@@ -190,6 +195,8 @@ void ParticleUpdate(uint3 ThreadID : SV_DispatchThreadID)
 
 	g_ParticleShare[0].ColorMax = g_ParticleColorMax;
 	g_ParticleShare[0].ColorMax.a = g_ParticleAlphaMax;
+
+	g_ParticleShare[0].CommonRelativeScale = g_ParticleCommonRelativeScale;
 
 	g_ParticleShare[0].GravityEnable = g_ParticleGravity;
 	g_ParticleShare[0].RotationAngle = g_ParticleRotationAngle;
@@ -365,7 +372,7 @@ void ParticleUpdate(uint3 ThreadID : SV_DispatchThreadID)
 		 }
 
 		 // 생성되는 순간 각 Particle 의 Rot 정도를 세팅한다.
-		 g_ParticleArray[ThreadID.x].SeperateRotAngle = (g_SeperateRotAngleMax - g_SeperateRotAngleMin) * Rand + g_SeperateRotAngleMin;
+		 g_ParticleArray[ThreadID.x].SeperateRotAngle = (g_ParticleSeperateRotAngleMax - g_ParticleSeperateRotAngleMin) * Rand + g_ParticleSeperateRotAngleMin;
 	}
 	// 현재 생성이 되어 있는 파티클일 경우
 	else
@@ -525,8 +532,9 @@ void ParticleGS(point VertexParticleOutput input[1],
 	}
 
 	float	Ratio = g_ParticleArraySRV[InstanceID].LifeTime / g_ParticleArraySRV[InstanceID].LifeTimeMax;
-
-	float3	Scale = lerp(g_ParticleShareSRV[0].ScaleMin, g_ParticleShareSRV[0].ScaleMax,
+	
+	float3	Scale = lerp(g_ParticleShareSRV[0].ScaleMin * g_ParticleShareSRV[0].CommonRelativeScale, 
+		g_ParticleShareSRV[0].ScaleMax * g_ParticleShareSRV[0].CommonRelativeScale,
 		float3(Ratio, Ratio, Ratio));
 
 	float4	Color = lerp(g_ParticleShareSRV[0].ColorMin, g_ParticleShareSRV[0].ColorMax,

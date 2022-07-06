@@ -202,6 +202,12 @@ public:
 		return m_BufferData.AlphaEnd;
 	}
 public:
+	// Particle Component 의 Relative Scale 반영하기 
+	void SetCommonRelativeScale(const Vector3& Scale)
+	{
+		m_BufferData.CommonRelativeScale = Scale;
+	}
+
 	// UV Move
 	void SetUVMoveEnable(bool Enable) 
 	{

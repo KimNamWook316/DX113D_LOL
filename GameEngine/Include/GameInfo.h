@@ -472,6 +472,9 @@ struct	ParticleCBuffer
 
 	Vector3 MaxSeperateRotAngle;
 	float ParticleEmpty6;
+
+	Vector3 CommonRelativeScale;
+	float ParticleEmpty7;
 };
 
 struct ParticleInfo
@@ -500,6 +503,8 @@ struct ParticleInfoShared
 
 	Vector4	ColorMin;
 	Vector4	ColorMax;
+
+	Vector3	CommonRelativeScale;
 
 	int		GravityEnable;
 
