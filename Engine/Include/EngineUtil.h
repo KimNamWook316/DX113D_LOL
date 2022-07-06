@@ -57,5 +57,6 @@ public:
 
 	// String
 	static std::string BoolToString(bool Bool);
+	static bool StringToBool(const std::string& Str);
 };
 

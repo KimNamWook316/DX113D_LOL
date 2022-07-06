@@ -4,7 +4,7 @@
 CHDRRenderCBuffer::CHDRRenderCBuffer()	:
 	m_BufferData{}
 {
-	m_BufferData.LumWhiteSqr = 1.1f;
+	m_BufferData.LumWhite = 1.1f;
 	m_BufferData.MiddleGray = 1.f;
 	m_BufferData.BloomScale = 1.f;
 	m_BufferData.DOFMin = 300.f;
@@ -30,9 +30,6 @@ bool CHDRRenderCBuffer::Init()
 
 void CHDRRenderCBuffer::UpdateCBuffer()
 {
-	// 쉐이더에서 계산 최적화를 위해 제곱
-	m_BufferData.LumWhiteSqr *= m_BufferData.LumWhiteSqr;
-
 	m_Buffer->UpdateBuffer(&m_BufferData);
 }
 

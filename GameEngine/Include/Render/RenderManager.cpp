@@ -775,11 +775,11 @@ void CRenderManager::RenderSkyBox()
 	CSharedPtr<CGameObject> SkyObj = CSceneManager::GetInst()->GetScene()->GetSkyObject();
 
 	m_FinalTarget->ClearTarget();
- 	// m_FinalTarget->SetTarget(nullptr);
+ 	m_FinalTarget->SetTarget(nullptr);
 
 	SkyObj->Render();
 
-	// m_FinalTarget->ResetTarget();
+	m_FinalTarget->ResetTarget();
 }
 
 void CRenderManager::RenderShadowMap()

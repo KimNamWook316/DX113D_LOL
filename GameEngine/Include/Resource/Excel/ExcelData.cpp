@@ -1,6 +1,7 @@
 #include "ExcelData.h"
 #include "../../PathManager.h"
 #include "../../Engine.h"
+#include "../../EngineUtil.h"
 
 #include <fstream>
 
@@ -51,6 +52,25 @@ void CExcelData::AddLabel(const std::string& label)
 	}
 
 	m_vecLabel.push_back(label);
+
+	size = m_vecLabel.size();
+
+	// 모든 Row 순회하며 Size재할당
+	auto iter = m_Table.begin();
+	auto iterEnd = m_Table.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		iter->second->resize(size);
+	}
+
+	auto iterOrdered = m_PushOrderedData.begin();
+	auto iterOrderedEnd = m_PushOrderedData.end();
+
+	for (; iterOrdered != iterOrderedEnd; ++iterOrdered)
+	{
+		(*iterOrdered)->resize(size + 1);
+	}
 }
 
 void CExcelData::AddRow(const std::string& rowName)
@@ -475,6 +495,29 @@ const std::string& CExcelData::FindData(const std::string& name, const std::stri
 	int idx = getLabelIndex(label);
 
 	return (*row)[idx];
+}
+
+float CExcelData::FindDataFloat(const std::string& name, const std::string& label)
+{
+	std::string Find = FindData(name, label);
+
+	return std::stof(Find);
+}
+
+int CExcelData::FindDataInt(const std::string& name, const std::string& label)
+{
+	std::string Find = FindData(name, label);
+
+	return std::stoi(Find);
+}
+
+bool CExcelData::FindDataBool(const std::string& name, const std::string& label)
+{
+	std::string Find = FindData(name, label);
+
+	bool Ret = CEngineUtil::StringToBool(Find);
+
+	return Ret;
 }
 
 int CExcelData::getLabelIndex(const std::string& label)

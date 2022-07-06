@@ -736,7 +736,7 @@ struct DownScaleCBuffer
 struct HDRRenderCBuffer
 {
 	float MiddleGray;
-	float LumWhiteSqr;
+	float LumWhite;
 	float BloomScale;
 	float DOFMin;				// DOF 적용 최소 거리
 	float DOFMax;				// 완전 초점 상실 거리
@@ -775,6 +775,58 @@ struct GlobalLightCBuffer
 {
 	float AmbientIntensity;
 	Vector3 Empty;
+};
+
+struct HDRSceneSaveData
+{
+	float AdaptationTime;
+	float MiddleGray;
+	float LumWhite;
+	float BloomTreshold;
+	float BloomScale;
+	float DOFMax;
+	float DOFMin;
+	Fog_Type FogType;
+	Vector3 FogColor;
+	float FogStart;
+	float FogEnd;
+	float FogDensity;
+
+	HDRSceneSaveData() :
+		AdaptationTime(3.f),
+		MiddleGray(1.f),
+		LumWhite(1.1f),
+		BloomTreshold(1.f),
+		BloomScale(1.f),
+		DOFMax(600.f),
+		DOFMin(300.f),
+		FogType(Fog_Type::Linear),
+		FogColor(0.f, 0.f, 0.f),
+		FogStart(500.f),
+		FogEnd(950.f),
+		FogDensity(1.f)
+	{
+	}
+};
+
+struct GlobalLightSceneSaveData
+{
+	Vector3 Rot;
+	Vector3 Color;
+	float AmbientIntensity;
+
+	GlobalLightSceneSaveData()	:
+		Rot(45.f, 90.f, 0.f),
+		Color(1.f, 1.f, 1.f),
+		AmbientIntensity(1.f)
+	{
+	}
+};
+
+struct SceneSaveGlobalData
+{
+	HDRSceneSaveData			HDRData;
+	GlobalLightSceneSaveData	GLightData;
 };
 
 struct NavMeshPolygon
