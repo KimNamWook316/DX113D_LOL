@@ -66,6 +66,7 @@ private:
 	void OnChangeGLightRotZ(float Val);
 	void OnChangeGLightAmbIntensity(float Val);
 	void OnChangeGLightColor(const Vector3& Color);
+	void OnClickLoadSkyBoxTexture();
 	void ClearSceneRelatedWindows();
 	void RefreshSceneRelatedWindow(class CGameObject* Object);
 	void RefreshSceneRelatedWindow(const std::vector<CGameObject*>& vecObj);
@@ -117,5 +118,10 @@ private:
 	CIMGUISliderFloat* m_GLightRotZ;
 	CIMGUIColor3* m_GLightColor;
 	CIMGUISliderFloat* m_GLightAmbIntensity;
+
+	// Global Setting
+	CIMGUICollapsingHeader* m_GlobalBlock;
+	class CIMGUITextInput* m_SkyBoxTexPath;
+	CIMGUIButton* m_LoadSkyBoxTex;
 };
 

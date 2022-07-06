@@ -55,7 +55,9 @@ PSOutput_GBuffer ToonPS(Vertex3DOutput input)
 	output.GBuffer4.a = (float)Pixel_Type_Toon;
     
     output.GBuffer5.rgb = input.Binormal.xyz;
-    output.GBuffer5.a = 1.f;
+
+    // Mtrl Metallic ¿©ºÎ
+	output.GBuffer5.a = g_MtrlMetallic;
     
     float4 SpecularColor = g_MtrlSpecularColor.xyzw;
 	

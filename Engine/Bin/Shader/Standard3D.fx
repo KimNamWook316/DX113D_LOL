@@ -54,7 +54,7 @@ PSOutput_GBuffer Standard3DPS(Vertex3DOutput input)
     
     output.GBuffer2.r = input.ProjPos.z / input.ProjPos.w;
     output.GBuffer2.g = input.ProjPos.w;
-    output.GBuffer2.b = g_MtrlSpecularColor.w;
+	output.GBuffer2.b = g_MtrlSpecularColor.w;
     output.GBuffer2.a = input.WorldPos.y;    // y fog를 위해 월드 y값 전송
 
     output.GBuffer3.r = ConvertColor(g_MtrlBaseColor);
@@ -64,7 +64,9 @@ PSOutput_GBuffer Standard3DPS(Vertex3DOutput input)
     output.GBuffer4.a = 1.f;
     
     output.GBuffer5.rgb = input.Binormal.xyz;
-    output.GBuffer5.a = 1.f;
+
+    // Mtrl Metallic 여부
+	output.GBuffer5.a = g_MtrlMetallic;
     
     float4 SpecularColor = g_MtrlSpecularColor.xyzw;
 	

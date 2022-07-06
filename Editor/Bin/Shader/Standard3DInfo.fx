@@ -79,10 +79,8 @@ struct InstancingInfo
 	float4 g_PaperBurnInLineColor;
 	float4 g_PaperBurnOutLineColor;
 	float4 g_PaperBurnCenterLineColor;
-	int		g_MtrlOutlineEnable;
-	float	g_MtrlOutlineThickness; 
-	float3  g_MtrlOutlineColor;
-	float3  g_MtrlInstancingEmpty;
+	int g_MtrlMetallic;
+	float3 g_MtrlEmpty;
 };
 
 StructuredBuffer<InstancingInfo> g_InstancingInfoArray : register(t40);

@@ -274,9 +274,7 @@ struct MaterialCBuffer
 	int		SpecularTex;
 	int		EmissiveTex;
 	int		ReceiveDecal;
-	int		OutlineEnable;
-	float	OutlineThickness;
-	Vector3 OutlineColor;
+	int		Metallic;
 };
 
 struct AnimationFrameData
@@ -676,9 +674,7 @@ struct Instancing3DInfo
 	Vector4 PaperBurnInLineColor;
 	Vector4 PaperBurnOutLineColor;
 	Vector4 PaperBurnCenterLineColor;
-	int MtrlOutlineEnable;
-	float MtrlOutlineThickness;
-	Vector3 MtrlOutlineColor;
+	int MtrlMetallic;
 	Vector3 Empty;
 };
 
@@ -822,6 +818,7 @@ struct SceneSaveGlobalData
 {
 	HDRSceneSaveData			HDRData;
 	GlobalLightSceneSaveData	GLightData;
+	std::string					SkyBoxTexFileName;
 };
 
 struct NavMeshPolygon

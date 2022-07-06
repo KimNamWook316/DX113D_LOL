@@ -16,6 +16,10 @@
 #include "IMGUIManager.h"
 #include "../EditorInfo.h":
 #include "EngineUtil.h"
+#include "PathManager.h"
+#include "../EditorUtil.h"
+#include "GameObject/SkyObject.h"
+#include "IMGUITextInput.h"
 
 CToolWindow::CToolWindow()	:
 	m_GizmoBlock(nullptr),
@@ -95,6 +99,12 @@ bool CToolWindow::Init()
 	m_GLightRotZ = m_GLightBlock->AddWidget<CIMGUISliderFloat>("RotZ", 200.f);
 	m_GLightColor = m_GLightBlock->AddWidget<CIMGUIColor3>("Color", 200.f);
 	m_GLightAmbIntensity = m_GLightBlock->AddWidget<CIMGUISliderFloat>("Ambient Intensity", 200.f);
+
+	// Global
+	m_GlobalBlock = AddWidget<CIMGUICollapsingHeader>("Global", 200.f);
+	m_SkyBoxTexPath = m_GlobalBlock->AddWidget<CIMGUITextInput>("SkyBoxTextureFullPath");
+	m_GlobalBlock->AddWidget<CIMGUISameLine>("Line");
+	m_LoadSkyBoxTex = m_GlobalBlock->AddWidget<CIMGUIButton>("Load", 0.f, 0.f);
 
  //	CIMGUITree* Tree = m_RenderBlock->AddWidget<CIMGUITree>("Outline", 200.f);
  //	m_OutlineDepthMultiply = Tree->AddWidget<CIMGUISliderFloat>("Outline Depth Multiplier");
@@ -237,6 +247,8 @@ bool CToolWindow::Init()
 	m_GLightAmbIntensity->SetMin(0.f);
 	m_GLightAmbIntensity->SetMax(1.f);
 
+	m_SkyBoxTexPath->ReadOnly(true);
+
 	// CallBack
 	m_GizmoTransformMode->SetCallBack(this, &CToolWindow::OnSelectGizmoTransformMode);
 	m_GizmoOperationMode->SetCallBack(this, &CToolWindow::OnSelectGizmoOperationMode);
@@ -268,6 +280,7 @@ bool CToolWindow::Init()
 	m_GLightRotZ->SetCallBack(this, &CToolWindow::OnChangeGLightRotZ);
 	m_GLightColor->SetCallBack(this, &CToolWindow::OnChangeGLightColor);
 	m_GLightAmbIntensity->SetCallBack(this, &CToolWindow::OnChangeGLightAmbIntensity);
+	m_LoadSkyBoxTex->SetClickCallback(this, &CToolWindow::OnClickLoadSkyBoxTexture);
 
 	// 디버그용 임시 키
 	CInput::GetInst()->CreateKey("Z", 'Z');
@@ -513,6 +526,39 @@ void CToolWindow::OnChangeGLightColor(const Vector3& Color)
 
 	Vector4 vCol = Vector4( Color.x, Color.y, Color.z, 0.f );
 	GLight->SetColor(vCol);
+}
+
+void CToolWindow::OnClickLoadSkyBoxTexture()
+{
+	TCHAR FileFullPath[MAX_PATH] = {};
+	OPENFILENAME OpenFile = {};
+	OpenFile.lStructSize = sizeof(OPENFILENAME);
+	OpenFile.lpstrFile = FileFullPath;
+	OpenFile.nMaxFile = MAX_PATH;
+	OpenFile.lpstrInitialDir = CPathManager::GetInst()->FindPath(TEXTURE_PATH)->Path;
+	OpenFile.lpstrFilter = TEXT("모든 파일\0*.*\0");
+	OpenFile.hwndOwner = CEngine::GetInst()->GetWindowHandle();
+
+	if (GetOpenFileName(&OpenFile) != 0)
+	{
+		char FilePathMultibyte[MAX_PATH] = {};
+		int ConvertLength = WideCharToMultiByte(CP_ACP, 0, FileFullPath, -1, 0, 0, 0, 0);
+		WideCharToMultiByte(CP_ACP, 0, FileFullPath, -1, FilePathMultibyte, ConvertLength, 0, 0);
+	
+		CSkyObject* SkyObj = (CSkyObject*)CSceneManager::GetInst()->GetScene()->GetSkyObject();
+		
+		bool Success = SkyObj->SetSkyTextureFullPath(FilePathMultibyte);
+
+		if (!Success)
+		{
+			MessageBox(nullptr, TEXT("SkyBox 교체 실패"), TEXT("Error"), MB_OK);
+			return;
+		}
+
+		m_SkyBoxTexPath->SetText(FilePathMultibyte);
+
+		MessageBox(nullptr, TEXT("SkyBox 교체 성공"), TEXT("Success"), MB_OK);
+	}
 }
 
 void CToolWindow::ClearSceneRelatedWindows()

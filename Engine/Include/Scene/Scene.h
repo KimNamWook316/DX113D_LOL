@@ -125,6 +125,11 @@ public:
 		return m_SceneGlobalData;
 	}
 
+	void SetSceneSaveGlobalData(const SceneSaveGlobalData& Data)
+	{
+		m_SceneGlobalData = Data;
+	}
+
 	bool IsPlay() const
 	{
 		return m_Play;
@@ -160,7 +165,6 @@ public:
 
 		return false;
 	}
-
 
 public:
 	void Start();
