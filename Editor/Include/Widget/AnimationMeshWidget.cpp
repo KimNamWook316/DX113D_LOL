@@ -608,7 +608,6 @@ void CAnimationMeshWidget::RefreshMeshWidget(CMesh* Mesh)
 bool CAnimationMeshWidget::MakeShaderWidget(class CMaterial* Mat, const std::string& ShaderName)
 {
 	m_ShaderWidgetTree->ClearWidget();
-	SAFE_DELETE(m_ShaderWidget);
 
 	CShader* Shader = CResourceManager::GetInst()->FindShader(ShaderName);
 	size_t TypeID = Shader->GetTypeID();
