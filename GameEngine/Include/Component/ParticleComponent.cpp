@@ -185,6 +185,9 @@ void CParticleComponent::PostUpdate(float DeltaTime)
 
 	// Rotation Angle 정보를 세팅한다. Transform 의 정보로 만들어낼 것이다.
 	m_CBuffer->SetRotationAngle(GetWorldRot());
+	
+	// Relative Scale 정보를 세팅한다.
+	m_CBuffer->SetCommonRelativeScale(GetRelativeScale());
 
 	m_CBuffer->UpdateCBuffer();
 

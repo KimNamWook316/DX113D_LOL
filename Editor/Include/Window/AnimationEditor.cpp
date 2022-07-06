@@ -722,6 +722,7 @@ void CAnimationEditor::OnMakeAnimInstByExcel()
 
 	for (size_t i = 0; i < Size; ++i)
 	{
+		// Grunt_Idle 과 같이, '_' 뒤에 Excel 에 해당하는 Lable 이 놓일 것이다.
 		std::string AddedKeyName;
 
 		AddSequenceToDummyAnimationInstance(m_vecAnimationSeqFilesFullPath[i].c_str(), AddedKeyName);
@@ -733,30 +734,18 @@ void CAnimationEditor::OnMakeAnimInstByExcel()
 
 		int AddedKeyNameLength = (int)AddedKeyName.length();
 
+		// AddedKeyName 중에서 '_' 뒤의 문자를 가져온다. //
+		std::string_view AddedKeyNameAfterLowDash = AddedKeyName;
+		AddedKeyNameAfterLowDash = AddedKeyNameAfterLowDash.substr(AddedKeyNameAfterLowDash.find('_') + 1, AddedKeyNameAfterLowDash.length());
+
 		std::string NewLableKeyName;
 
 		for (; iterSqc != iterSqcEnd; ++iterSqc)
 		{
-			bool NameFound = true;
-
 			// ex) Idle
 			const std::string& DataLable = iterSqc->first;
-			int DataLableLength = DataLable.length();
 
-			// ex) Grunt_Idle.sqc => Grunt_Idle 이라는 Key 값으로 저장되어 있다.
-			// 뒤에서부터 비교해갈 것이다.
-			int DataLableCompIdx = DataLableLength - 1;
-			for (int compIdx = AddedKeyNameLength - 1; compIdx >= AddedKeyNameLength - DataLableLength; --compIdx)
-			{
-				if (AddedKeyName[compIdx] != DataLable[DataLableCompIdx])
-				{
-					NameFound = false;
-					break;
-				}
-				--DataLableCompIdx;
-			}
-
-			if (NameFound)
+			if (AddedKeyNameAfterLowDash.data() == DataLable)
 			{
 				NewLableKeyName = DataLable;
 				break;

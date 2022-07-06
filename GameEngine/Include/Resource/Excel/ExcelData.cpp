@@ -365,7 +365,7 @@ bool CExcelData::LoadCSVFullPath(const char* fullPath)
 	if (!fp)
 	{
 		// OBJ : 현재 해당 파일의 Excel 을 열어놓고 있는 상태면, 에러가 난다.
-		MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("현재 Excel 파일이 열려 있는지 확인하세요"), NULL, MB_OK);
+		// MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("현재 Excel 파일이 열려 있는지 확인하세요"), NULL, MB_OK);
 		return false;
 	}
 
