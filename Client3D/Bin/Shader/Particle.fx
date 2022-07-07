@@ -328,6 +328,16 @@ void ApplySpecialParticleGenerateShape(float RandomAngle, int ThreadID, float Fi
 
 void ApplySpecialMoveDirType(int ThreadID, float RandomAngle, float3 OriginDir, float Rand)
 {
+	float MoveTowardAngle = RandomAngle;
+
+	// 만약 Generate Loop 이라면, 순차적으로 만들어지는 것
+	// 그렇다면, 중심 기준 -> 자신이 생성된 위치
+	// 해당 각도 방향으로 회전해야 한다.
+	if (g_LoopGenerateRing == 1)
+	{
+		MoveTowardAngle = g_ParticleArray[ThreadID].CurrentParticleAngle;
+	}
+
 	switch (g_ParticleSpecialMoveDirType)
 	{
 		// g_ParticleSpecialMoveDirType -> 0 이라면, y 는 위로 증가하면서, XZ 방향으로만 Change 하기 
@@ -336,9 +346,9 @@ void ApplySpecialMoveDirType(int ThreadID, float RandomAngle, float3 OriginDir, 
 		// 완전 랜덤한 방향으로 이동하기 
 		float3 RandDir = float3(0.f, 0.f, 0.f) + float3(
 			// cos(RandomAngle) * Rand, 어차피 normalize 를 아래에서 진행해주는데, 굳이 Rand 를 곱해줘야 하는가
-			cos(RandomAngle),
+			cos(MoveTowardAngle),
 			OriginDir.y,
-			sin(RandomAngle));
+			sin(MoveTowardAngle));
 
 		normalize(RandDir);
 
@@ -353,9 +363,9 @@ void ApplySpecialMoveDirType(int ThreadID, float RandomAngle, float3 OriginDir, 
 		// y 는 0 -> XZ 평면으로, 사방으로 뻗어나가게 하기 
 		float3 RandDir = float3(0.f, 0.f, 0.f) + float3(
 			// cos(RandomAngle) * Rand, 어차피 normalize 를 아래에서 진행해주는데, 굳이 Rand 를 곱해줘야 하는가
-			cos(RandomAngle),
+			cos(MoveTowardAngle),
 			0.f,
-			sin(RandomAngle));
+			sin(MoveTowardAngle));
 		normalize(RandDir);
 
 		g_ParticleArray[ThreadID].Dir = RandDir;
@@ -366,9 +376,10 @@ void ApplySpecialMoveDirType(int ThreadID, float RandomAngle, float3 OriginDir, 
 	{
 		// z 는 0, xy 평면 방향으로 뻗어나가게 하기 
 		float3 RandDir = float3(0.f, 0.f, 0.f) + float3(
-			cos(RandomAngle),
-			sin(RandomAngle),
+			cos(MoveTowardAngle),
+			sin(MoveTowardAngle),
 			0.f);
+
 		normalize(RandDir);
 
 		g_ParticleArray[ThreadID].Dir = RandDir;
