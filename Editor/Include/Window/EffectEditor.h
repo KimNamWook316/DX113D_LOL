@@ -26,6 +26,13 @@ static const char* ParticlePresetNames[] = {
     "SparkBounce",
     "SimpleMeteor" };
 
+static const char* ParticleShapeNames[] = {
+    "YUpDirRing", // 위 방향을 향한 Ring
+    "Circle", // Circle (일정 범위 이내 랜덤한 위치에 생성)
+    "Torch", // Torch (가운데 더 많이 생성)
+    "ZMinusRing" // 사용자 측을 바라본 형태로 Ring 생성
+};
+
 struct Particle3DObjectBackUpStruct
 {
     bool IsCameraRotate;
@@ -112,14 +119,14 @@ private:
     class CIMGUISliderFloat* m_BounceResistance; // 마찰력
 
     // Ring Generate
-    class CIMGUICheckBox* m_IsGenerateRing;
+    class CIMGUIComboBox* m_ParticleShapeType;
     class CIMGUICheckBox* m_IsLoopGenerateRing; 
 
     // Circle Generate
-    class CIMGUICheckBox* m_IsGenerateCircle;
-
-    // Torch Generate
-    class CIMGUICheckBox* m_IsGenerateTorch;
+    // class CIMGUICheckBox* m_IsGenerateRing;
+    // class CIMGUICheckBox* m_IsGenerateCircle;
+    // class CIMGUICheckBox* m_IsGenerateTorch;
+    // class CIMGUICheckBox* m_ZMinusRing;
 
     // 카메라의 Y 축 위치 (위로 갈지, 아래로 갈지 조정)
     class CIMGUISliderFloat* m_CameraYOffsetBar;
@@ -175,14 +182,8 @@ private:
     void OnEditBounceResistance(float Speed);
 
     // Generate Ring
-    void OnIsGenerateRingEdit(const char*, bool);
+    void OnClickParticleShape(int, const char*);
     void OnIsLoopGenerateRingEdit(const char*, bool);
-
-    // Generate Circle
-    void OnIsGenerateCircleEdit(const char*, bool);
-
-    // Generate Torch
-    void OnIsGenerateTorchEdit(const char*, bool);
 
     // Spawn Time, Count
     void OnSpawnTimeMaxEdit(float Num);

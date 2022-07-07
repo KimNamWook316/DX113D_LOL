@@ -20,16 +20,13 @@ CParticleConstantBuffer::CParticleConstantBuffer() :
 	m_BufferData.ParticleBounce = 0;
 	m_BufferData.ParticleBounceResistance = 0.98f;
 
-	m_BufferData.IsGenerateRing = 0;
 	m_BufferData.GenerateRadius = 20.f;
 	m_BufferData.IsLoopGenerateRing = 0;
 
 	m_BufferData.AlphaStart = 1.f;
 	m_BufferData.AlphaEnd = 1.f;
 
-	m_BufferData.IsGenerateCircle = 0;
-
-	m_BufferData.IsGenerateTorch = 0;
+	m_BufferData.ParticleShapeType = -1;
 
 	m_BufferData.IsMoveDirRandom = 0;
 

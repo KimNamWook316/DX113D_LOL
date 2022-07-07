@@ -244,65 +244,48 @@ bool CEffectEditor::Init()
     m_BounceResistance->SetMin(0.01f);
     m_BounceResistance->SetMax(0.99f);
 
-    // Generate Ring
-    Tree = AddWidget<CIMGUITree>("Ring Generate");
+    // Particle Shape
+    Tree = AddWidget<CIMGUITree>("ParticleShape");
 
-    m_IsGenerateRing = Tree->AddWidget<CIMGUICheckBox>("Ring", 80.f);
-    m_IsGenerateRing->AddCheckInfo("Ring");
-    m_IsGenerateRing->SetCallBackLabel<CEffectEditor>(this, &CEffectEditor::OnIsGenerateRingEdit);
+    m_ParticleShapeType = Tree->AddWidget<CIMGUIComboBox>("Shape", 80.f);
+    m_ParticleShapeType->SetSelectCallback<CEffectEditor>(this, &CEffectEditor::OnClickParticleShape);
 
-    Line = Tree->AddWidget<CIMGUISameLine>("Line");
-    Line->SetOffsetX(90.f);
-
-    HelpText = Tree->AddWidget<CIMGUIText>("RingGenerateText", 90.f, 30.f);
-    const char* RingHelpText = R"(Ring 모양 Particle)";
-    HelpText->SetText(RingHelpText);
-    HelpText->SetIsHelpMode(true);
-
-    Line = Tree->AddWidget<CIMGUISameLine>("Line");
-    Line->SetOffsetX(110.f);
+    m_ParticleShapeType->AddItem("Select Shape");
+     for (int i = 0; i < (int)ParitcleShapeType::Max; ++i)
+     {
+         m_ParticleShapeType->AddItem(ParticleShapeNames[i]);
+     }
+    m_ParticleShapeType->SetSelectIndex(0);
 
     m_IsLoopGenerateRing = Tree->AddWidget<CIMGUICheckBox>("Loop", 80.f);
     m_IsLoopGenerateRing->AddCheckInfo("Ring Loop");
     m_IsLoopGenerateRing->SetCallBackLabel<CEffectEditor>(this, &CEffectEditor::OnIsLoopGenerateRingEdit);
 
+    /*
     Line = Tree->AddWidget<CIMGUISameLine>("Line");
-    Line->SetOffsetX(200.f);
+    Line->SetOffsetX(90.f);
 
-    HelpText = Tree->AddWidget<CIMGUIText>("RingLoopText", 90.f, 30.f);
+    HelpText = Tree->AddWidget<CIMGUIText>("RingLoopText", 30.f, 30.f);
     const char* RingLoopHelpText = R"(ex)  Ring 여부가 Check 되야만 적용.)";
     HelpText->SetText(RingLoopHelpText);
     HelpText->SetIsHelpMode(true);
 
-    // Generate Circle
-    Tree = AddWidget<CIMGUITree>("Circle Generate");
-
-    m_IsGenerateCircle = Tree->AddWidget<CIMGUICheckBox>("Circle", 80.f);
-    m_IsGenerateCircle->AddCheckInfo("Circle");
-    m_IsGenerateCircle->SetCallBackLabel<CEffectEditor>(this, &CEffectEditor::OnIsGenerateCircleEdit);
-
     Line = Tree->AddWidget<CIMGUISameLine>("Line");
-    Line->SetOffsetX(90.f);
+    Line->SetOffsetX(35.f);
 
-    HelpText = Tree->AddWidget<CIMGUIText>("CircleGenerate", 90.f, 30.f);
+    HelpText = Tree->AddWidget<CIMGUIText>("CircleGenerate", 930.f, 30.f);
     const char* CircleHelpText = R"(원 내에 Random 하게 생성)";
     HelpText->SetText(CircleHelpText);
     HelpText->SetIsHelpMode(true);
 
-    // Generate Torch
-    Tree = AddWidget<CIMGUITree>("Torch Generate");
-
-    m_IsGenerateTorch = Tree->AddWidget<CIMGUICheckBox>("Torch", 80.f);
-    m_IsGenerateTorch->AddCheckInfo("Torch");
-    m_IsGenerateTorch->SetCallBackLabel<CEffectEditor>(this, &CEffectEditor::OnIsGenerateTorchEdit);
-
     Line = Tree->AddWidget<CIMGUISameLine>("Line");
-    Line->SetOffsetX(90.f);
+    Line->SetOffsetX(75.f);
 
-    HelpText = Tree->AddWidget<CIMGUIText>("TorchGenerate", 90.f, 30.f);
+    HelpText = Tree->AddWidget<CIMGUIText>("TorchGenerate", 30.f, 30.f);
     const char* TorchHelpText = R"(횃불 모양 생성 : 가운데에 더 많은 Particle 생성)";
     HelpText->SetText(TorchHelpText);
     HelpText->SetIsHelpMode(true);
+    */
 
     // Movement
     Tree = AddWidget<CIMGUITree>("Movement");
@@ -679,13 +662,26 @@ void CEffectEditor::OnEditBounceResistance(float Resist)
    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetBounceResist(Resist);
 }
 
-void CEffectEditor::OnIsGenerateRingEdit(const char*, bool Enable)
+
+
+void CEffectEditor::OnClickParticleShape(int Index, const char* PresetName)
 {
     if (!m_ParticleClass)
         return;
 
-    m_ParticleClass->SetGenerateRingEnable(Enable);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGenerateRingEnable(Enable);
+    // 자기가 선택된 Idx - 1 을 해줘야 한다
+    // 처음에는 아무것도 선택안되어 있는 상태 -> 그러면 Idx 는 0 -> -1로 해줘야만
+    // hlsl 측에서 -1에 걸리지 않게 될 것이다.
+    ParitcleShapeType Type = (ParitcleShapeType)(Index - 1);
+   m_ParticleClass->SetParticleShapeType(Type);
+   dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetParticleShapeType(Type);
+
+   // Torch 의 경우, Spawn Time 도 조정해줘야 한다.
+   if (Type == ParitcleShapeType::Torch)
+   {
+       m_ParticleClass->SetSpawnTimeMax(0.01f);
+       dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->SetSpawnTime(0.01f);
+   }
 }
 
 void CEffectEditor::OnIsLoopGenerateRingEdit(const char*, bool Enable)
@@ -704,31 +700,6 @@ void CEffectEditor::OnEditGenerateRadius(float Radius)
 
     m_ParticleClass->SetGenerateRadius(Radius);
     dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGenerateRadius(Radius);
-}
-
-void CEffectEditor::OnIsGenerateCircleEdit(const char*, bool Enable)
-{
-    if (!m_ParticleClass)
-        return;
-
-    m_ParticleClass->SetGenerateCircleEnable(Enable);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGenerateCircleEnable(Enable);
-}
-
-
-void CEffectEditor::OnIsGenerateTorchEdit(const char*, bool Enable)
-{
-    if (!m_ParticleClass)
-        return;
-
-    m_ParticleClass->SetGenerateTorchEnable(Enable);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGenerateTorchEnable(Enable);
-
-    // Spawn Time도 0.01 로 조절한다. (그래야만 Effect 가 잘 보인다)
-    if (m_ParticleClass->GetSpawnTimeMax() > 0.01)
-    {
-        m_ParticleClass->SetSpawnTimeMax(0.01f);
-    }
 }
 
 void CEffectEditor::OnSpawnTimeMaxEdit(float Num)
@@ -1625,15 +1596,10 @@ void CEffectEditor::SetIMGUIReflectParticle(CParticle* Particle)
     m_IsBounce->SetCheck(0, Particle->IsBounceEnable() == 1 ? true : false);
     m_BounceResistance->SetValue(Particle->GetBounceResistance());
 
+    // Particle Shape
+
     // Generate Ring
-    m_IsGenerateRing->SetCheck(0, Particle->IsGenerateRing() == 1 ? true : false);
     m_IsLoopGenerateRing->SetCheck(0, Particle->IsLoopGenerateRing());
-
-    // Circle
-    m_IsGenerateCircle->SetCheck(0, Particle->IsGenerateCircle() == 1 ? true : false);
-
-    // Torch
-    m_IsGenerateTorch->SetCheck(0, Particle->IsGenerateTorch() == 1 ? true : false);
 
     // Min, Max Rot Angle
     m_MinSeperateRotAngleEdit->SetVal(Particle->GetMinSeperateRotAngle());
@@ -1688,15 +1654,9 @@ void CEffectEditor::OnRipplePreset()
     OnLifeTimeMinEdit(5.f);
     OnLifeTimeMaxEdit(5.f);
 
-    // Circle, Torch, Ring X
-    m_ParticleClass->SetGenerateRingEnable(false);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGenerateRingEnable(false);
-
-    m_ParticleClass->SetGenerateCircleEnable(false);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGenerateCircleEnable(false);
-
-    m_ParticleClass->SetGenerateTorchEnable(false);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGenerateTorchEnable(false);
+    // Circle, Torch, Ring, XYRing X
+    // m_ParticleClass->SetParticleShapeType(-1);
+    //  dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetParticleShapeType(-1);
 
     // IMGUI Update
     SetIMGUIReflectParticle(m_ParticleClass);
@@ -1738,20 +1698,13 @@ void CEffectEditor::OnRingPreset()
     // Radiuse
     OnEditGenerateRadius(40.f);
 
-    // Ring O
-    m_ParticleClass->SetGenerateRingEnable(true);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGenerateRingEnable(true);
-
     // Ring Loop O
     m_ParticleClass->SetLoopGenerateRing(true);
     dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetLoopGenerateRing(true);
-
-    // Circle, Torch X
-    m_ParticleClass->SetGenerateCircleEnable(false);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGenerateCircleEnable(false);
-
-    m_ParticleClass->SetGenerateTorchEnable(false);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGenerateTorchEnable(false);
+    
+    // Particle Shape
+    m_ParticleClass->SetParticleShapeType(ParitcleShapeType::YUpDirRing);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetParticleShapeType(ParitcleShapeType::YUpDirRing);
 
     // IMGUI Update
     SetIMGUIReflectParticle(m_ParticleClass);
@@ -1804,19 +1757,16 @@ void CEffectEditor::OnRingWallPreset()
     OnMoveAngleEdit(Vector3(0.f, 0.f, 0.f));
 
     // Ring O
-    m_ParticleClass->SetGenerateRingEnable(true);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGenerateRingEnable(true);
+    // m_ParticleClass->SetGenerateRingEnable(true);
+    // dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGenerateRingEnable(true);
 
     // Ring Loop O
     m_ParticleClass->SetLoopGenerateRing(true);
     dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetLoopGenerateRing(true);
 
-    // Circle, Torch X
-    m_ParticleClass->SetGenerateCircleEnable(false);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGenerateCircleEnable(false);
-
-    m_ParticleClass->SetGenerateTorchEnable(false);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGenerateTorchEnable(false);
+    // Particle Shape
+    m_ParticleClass->SetParticleShapeType(ParitcleShapeType::YUpDirRing);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetParticleShapeType(ParitcleShapeType::YUpDirRing);
 
     // IMGUI Update
     SetIMGUIReflectParticle(m_ParticleClass);
@@ -1868,17 +1818,9 @@ void CEffectEditor::OnTorchPreset()
     m_ParticleClass->SetLifeTimeLinearFromCenter(true);
     dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetLifeTimeLinearFromCenter(true);
 
-    // Ring X
-    m_ParticleClass->SetGenerateRingEnable(false);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGenerateRingEnable(false);
-
-    // Circle X
-    m_ParticleClass->SetGenerateCircleEnable(false);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGenerateCircleEnable(false);
-
-    // Torch O
-    m_ParticleClass->SetGenerateTorchEnable(true);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGenerateTorchEnable(true);
+    // Particle Shape
+    m_ParticleClass->SetParticleShapeType(ParitcleShapeType::Torch);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetParticleShapeType(ParitcleShapeType::Torch);
 
     // IMGUI Update
     SetIMGUIReflectParticle(m_ParticleClass);
@@ -1928,17 +1870,11 @@ void CEffectEditor::OnFireSmallPreset()
     // Move Dir
     OnMoveDirEdit(Vector3(0.f, 1.f, 0.f));
 
-    // Ring X
-    m_ParticleClass->SetGenerateRingEnable(false);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGenerateRingEnable(false);
-
-    // Circle X
-    m_ParticleClass->SetGenerateCircleEnable(false);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGenerateCircleEnable(false);
-
-    // Torch O
-    m_ParticleClass->SetGenerateTorchEnable(false);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGenerateTorchEnable(false);
+    // Particle Shape
+    // m_ParticleClass->SetParticleShapeType(ParitcleShapeType::Torch);
+    // dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetParticleShapeType(ParitcleShapeType::Torch);
+    m_ParticleClass->SetParticleShapeType(-1);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetParticleShapeType(-1);
 
     // IMGUI Update
     SetIMGUIReflectParticle(m_ParticleClass);
@@ -1987,17 +1923,10 @@ void CEffectEditor::OnFireWidePreset()
     // Move Dir
     OnMoveDirEdit(Vector3(0.f, 1.f, 0.f));
 
-    // Ring X
-    m_ParticleClass->SetGenerateRingEnable(false);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGenerateRingEnable(false);
+    // Particle Shape
+    m_ParticleClass->SetParticleShapeType(ParitcleShapeType::Circle);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetParticleShapeType(ParitcleShapeType::Circle);
 
-    // Circle O
-    m_ParticleClass->SetGenerateCircleEnable(true);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGenerateCircleEnable(true);
-
-    // Torch X
-    m_ParticleClass->SetGenerateTorchEnable(false);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGenerateTorchEnable(false);
 
     // IMGUI Update
     SetIMGUIReflectParticle(m_ParticleClass);
@@ -2047,17 +1976,8 @@ void CEffectEditor::OnSparkPreset()
     // Move Dir
     OnMoveDirEdit(Vector3(0.f, 1.f, 0.f));
 
-    // Ring X
-    m_ParticleClass->SetGenerateRingEnable(false);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGenerateRingEnable(false);
-
-    // Circle X
-    m_ParticleClass->SetGenerateCircleEnable(false);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGenerateCircleEnable(false);
-
-    // Torch X
-    m_ParticleClass->SetGenerateTorchEnable(false);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGenerateTorchEnable(false);
+    m_ParticleClass->SetParticleShapeType(-1);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetParticleShapeType(-1);
 
     // IMGUI Update
     SetIMGUIReflectParticle(m_ParticleClass);
@@ -2126,17 +2046,8 @@ void CEffectEditor::OnSimpleMeteorPreset()
     // Move Angle
     OnMoveAngleEdit(Vector3(0.f, 0.f, 5.f));
 
-    // Ring X
-    m_ParticleClass->SetGenerateRingEnable(false);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGenerateRingEnable(false);
-
-    // Circle X
-    m_ParticleClass->SetGenerateCircleEnable(false);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGenerateCircleEnable(false);
-
-    // Torch O
-    m_ParticleClass->SetGenerateTorchEnable(true);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGenerateTorchEnable(true);
+    m_ParticleClass->SetParticleShapeType(ParitcleShapeType::Torch);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetParticleShapeType(ParitcleShapeType::Torch);
 
     // IMGUI Update
     SetIMGUIReflectParticle(m_ParticleClass);

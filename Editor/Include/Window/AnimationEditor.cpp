@@ -734,7 +734,7 @@ void CAnimationEditor::OnMakeAnimInstByExcel()
 
 		int AddedKeyNameLength = (int)AddedKeyName.length();
 
-		// AddedKeyName 중에서 '_' 뒤의 문자를 가져온다. //
+		// AddedKeyName 중에서 '_' 뒤의 문자를 가져온다. 
 		std::string_view AddedKeyNameAfterLowDash = AddedKeyName;
 		AddedKeyNameAfterLowDash = AddedKeyNameAfterLowDash.substr(AddedKeyNameAfterLowDash.find('_') + 1, AddedKeyNameAfterLowDash.length());
 
@@ -753,11 +753,19 @@ void CAnimationEditor::OnMakeAnimInstByExcel()
 		}
 
 		// Dummy Animation 을 통해 찾아야 한다.
+		// Dummy Animation 상에서 KeyName 을 수정한다.
 		if (!m_DummyAnimation->EditCurrentSequenceKeyName(NewLableKeyName.c_str(), AddedKeyName))
 		{
 			assert(false);
 			return;
 		}
+
+		// 뿐만 아니라, AnimationSequenceData 의 m_Name 도 수정해야 한다.
+		// 그리고 현재 수정하는 AnimationSequenceData 는 m_DummyAnimation 에 저장되어 있는 녀석이어야 한다.
+		CAnimationSequenceData* AnimSeqData = m_DummyAnimation->FindAnimation(NewLableKeyName);
+		AnimSeqData->SetName(NewLableKeyName);
+
+		AnimSeqData->SetOriginalFramePlayTime();
 
 		// File 이름 Log 목록에 추가
 		Text = m_AnimInstanceConvertLog->AddWidget<CIMGUIText>("Text");

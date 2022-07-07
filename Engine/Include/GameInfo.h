@@ -444,7 +444,7 @@ struct	ParticleCBuffer
 	Vector3 RotationAngle;
 	float	ParticleBounceResistance;
 
-	int IsGenerateRing;
+	int ParticleShapeType;
 	float GenerateRadius;
 	int IsLoopGenerateRing;
 	int IsMoveDirRandom;
@@ -453,28 +453,24 @@ struct	ParticleCBuffer
 
 	float AlphaEnd;
 	float AlphaStart;
-	int IsGenerateCircle;
-	float ParticleEmpty1;
-
-	int IsGenerateTorch;
-	float ParticleEmpty2;
 	int IsLifeTimeLinearFromCenter;
-	float ParticleEmpty3;
+	float ParticleEmpty1;
 
 	int UVMoveEnable;
 	int UVRowN;
 	int UVColN;
-	int ParticleEmpty4;
+	int ParticleEmpty2;
 
 	// 각 Particle 별로 다르게 Rotation Angle을 주는 경우
 	Vector3 MinSeperateRotAngle;
-	float ParticleEmpty5;
+	float ParticleEmpty3;
 
 	Vector3 MaxSeperateRotAngle;
-	float ParticleEmpty6;
+	float ParticleEmpty4;
 
+	// Particle Component 상에서 적용하는 Scale 정보
 	Vector3 CommonRelativeScale;
-	float ParticleEmpty7;
+	float ParticleEmpty5;
 };
 
 struct ParticleInfo
@@ -512,7 +508,6 @@ struct ParticleInfoShared
 	Vector3  SeperateMinRotAngle;
 	Vector3  SeperateMaxRotAngle;
 	float  PrevRingAngle;
-
 
 	int    UVMoveEnable;
 	int    UVRowN;

@@ -171,27 +171,16 @@ public:
 	{
 		return m_BufferData.GenerateRadius;
 	}
-	// Ring
-	int IsGenerateRing() const
+	// Particle Shape Type
+	int GetParticleShapeType() const
 	{
-		return m_BufferData.IsGenerateRing;
+		return m_BufferData.ParticleShapeType;
 	}
+	// Ring Loop
 	int IsLoopGenerateRing() const
 	{
 		return m_BufferData.IsLoopGenerateRing;
 	}
-	// Circle
-	int IsGenerateCircle() const
-	{
-		return m_BufferData.IsGenerateCircle;
-	}
-
-	// Torch
-	int IsGenerateTorch() const
-	{
-		return m_BufferData.IsGenerateTorch;
-	}
-
 	// Alpha
 	float GetStartAlpha() const
 	{
@@ -245,24 +234,19 @@ public:
 	{
 		m_BufferData.GenerateRadius = Radius;
 	}
+	// Particle Shape
+	void SetParticleShapeType(ParitcleShapeType Type)
+	{
+		m_BufferData.ParticleShapeType = (int)Type;
+	}
+	void SetParticleShapeType(int Type)
+	{
+		m_BufferData.ParticleShapeType = Type;
+	}
 	// Ring
 	void SetLoopGenerateRing(bool Enable)
 	{
 		m_BufferData.IsLoopGenerateRing = Enable ? 1 : 0;
-	}
-	void SetGenerateRingEnable(bool Enable)
-	{
-		m_BufferData.IsGenerateRing = Enable ? 1 : 0;
-	}
-	// Circle
-	void SetGenerateCircleEnable(bool Enable)
-	{
-		m_BufferData.IsGenerateCircle = Enable ? 1 : 0;
-	}
-	// Torch
-	void SetGenerateTorchEnable(bool Enable)
-	{
-		m_BufferData.IsGenerateTorch = Enable ? 1 : 0;
 	}
 	// Bounce
 	void SetBounceEnable(int Bounce)

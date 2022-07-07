@@ -258,26 +258,17 @@ public:
 	{
 		return m_CBuffer->GetParticleBounceResist();
 	}
-	// Ring
-	int IsGenerateRing() const
+
+	int GetParticleShapeType() const
 	{
-		return m_CBuffer->IsGenerateRing();
+		return m_CBuffer->GetParticleShapeType();
 	}
 
 	int IsLoopGenerateRing() const
 	{
 		return m_CBuffer->IsLoopGenerateRing();
 	}
-	// Circle
-	int IsGenerateCircle() const
-	{
-		return m_CBuffer->IsGenerateCircle();
-	}
-	// Torch
-	int IsGenerateTorch() const
-	{
-		return m_CBuffer->IsGenerateTorch();
-	}
+
 	// Alpha
 	float GetStartAlpha() const
 	{
@@ -305,6 +296,15 @@ public:
 	void SetCommonRelativeScale(const Vector3& Scale)
 	{
 		m_CBuffer->SetCommonRelativeScale(Scale);
+	}
+	// Set  Particle Type
+	void SetParticleShapeType(int Type)
+	{
+		m_CBuffer->SetParticleShapeType((int)Type);
+	}
+	void SetParticleShapeType(ParitcleShapeType Type)
+	{
+		m_CBuffer->SetParticleShapeType((int)Type);
 	}
 
 	// Seperate Rot Angle
@@ -352,20 +352,6 @@ public:
 	void SetLoopGenerateRing(bool Enable)
 	{
 		m_CBuffer->SetLoopGenerateRing(Enable);
-	}
-	void SetGenerateRingEnable(bool Enable)
-	{
-		m_CBuffer->SetGenerateRingEnable(Enable);
-	}
-	// Torch
-	void SetGenerateTorchEnable(bool Enable)
-	{
-		m_CBuffer->SetGenerateTorchEnable(Enable);
-	}
-	// Circle
-	void SetGenerateCircleEnable(bool Enable)
-	{
-		m_CBuffer->SetGenerateCircleEnable(Enable);
 	}
 	// Bounce
 	void SetBounceEnable(bool Enable)
