@@ -15,6 +15,9 @@ Vertex3DOutput Standard3DVS(Vertex3D input)
     
     // 뷰공간의 위치를 만들어준다.
     output.ViewPos = mul(float4(Pos, 1.f), g_matWV).xyz;
+
+    // 월드공간의 위치
+	output.WorldPos = Pos;
     
     // 뷰 공간의 Normal을 만들어준다.
     output.Normal = normalize(mul(float4(Info.Normal, 0.f), g_matWV).xyz);
@@ -51,8 +54,8 @@ PSOutput_GBuffer Standard3DPS(Vertex3DOutput input)
     
     output.GBuffer2.r = input.ProjPos.z / input.ProjPos.w;
     output.GBuffer2.g = input.ProjPos.w;
-    output.GBuffer2.b = g_MtrlSpecularColor.w;
-    output.GBuffer2.a = 1.f;
+	output.GBuffer2.b = g_MtrlSpecularColor.w;
+    output.GBuffer2.a = input.WorldPos.y;    // y fog를 위해 월드 y값 전송
 
     output.GBuffer3.r = ConvertColor(g_MtrlBaseColor);
     output.GBuffer3.g = ConvertColor(g_MtrlAmbientColor);
@@ -61,7 +64,9 @@ PSOutput_GBuffer Standard3DPS(Vertex3DOutput input)
     output.GBuffer4.a = 1.f;
     
     output.GBuffer5.rgb = input.Binormal.xyz;
-    output.GBuffer5.a = 1.f;
+
+    // Mtrl Metallic 여부
+	output.GBuffer5.a = g_MtrlMetallic;
     
     float4 SpecularColor = g_MtrlSpecularColor.xyzw;
 	

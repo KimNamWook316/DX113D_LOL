@@ -87,6 +87,8 @@ public:	// =================== Shader =====================
 public:	// =================== Material =====================
 	CMaterial* FindMaterial(const std::string& Name);
 	CMaterial* LoadMaterialFullPathMultibyte(const char* FullPath);
+	void ReleaseMaterial(const std::string& Name);
+
 public:
 	template <typename T>
 	bool CreateMaterial(const std::string& Name)
@@ -121,6 +123,7 @@ public:	// =================== Texture =====================
 		const std::string& PathName = TEXTURE_PATH);
 	bool LoadTextureArrayFullPath(const std::string& Name, const std::vector<TCHAR*>& vecFullPath);
 	class CTexture* FindTexture(const std::string& Name);
+	void ReleaseTexture(const std::string& Name);
 
 public:	// =================== Sequence2D =====================
 	bool CreateAnimationSequence2D(const std::string& Name, const std::string& TextureName,

@@ -24,9 +24,6 @@ CMaterial::CMaterial() :
 	m_CBuffer(nullptr),
 	m_Opacity(1.f),
 	m_RenderStateArray{},
-	m_OutlineEnable(false),
-	m_OutlineThickness(1.f),
-	m_OutlineColor(Vector3(0.f, 0.f, 0.f)),
 	m_ShaderParams{}
 {
 	SetTypeID<CMaterial>();
@@ -71,9 +68,7 @@ void CMaterial::CreateConstantBuffer()
 	m_CBuffer->SetSpecularColor(m_SpecularColor);
 	m_CBuffer->SetEmissiveColor(m_EmissiveColor);
 	m_CBuffer->SetOpacity(m_Opacity);
-	m_CBuffer->SetOutlineEnable(m_OutlineEnable);
-	m_CBuffer->SetOutlineThickness(m_OutlineThickness);
-	m_CBuffer->SetOutlineColor(m_OutlineColor);
+	m_CBuffer->SetMetallic(m_Metallic);
 
 	m_CBuffer->UpdateCBuffer();
 }
@@ -255,36 +250,6 @@ void CMaterial::SetSpecularPower(float Power)
 	if (m_CBuffer)
 	{
 		m_CBuffer->SetSpecularColor(m_SpecularColor);
-	}
-}
-
-void CMaterial::EnableOutline(bool Enable)
-{
-	m_OutlineEnable = Enable;
-
-	if (m_CBuffer)
-	{
-		m_CBuffer->SetOutlineEnable(Enable);
-	}
-}
-
-void CMaterial::SetOutlineThickness(float Thickness)
-{
-	m_OutlineThickness = Thickness;
-
-	if (m_CBuffer)
-	{
-		m_CBuffer->SetOutlineThickness(Thickness);
-	}
-}
-
-void CMaterial::SetOutlineColor(const Vector3& Color)
-{
-	m_OutlineColor = Color;
-
-	if (m_CBuffer)
-	{
-		m_CBuffer->SetOutlineColor(Color);
 	}
 }
 
@@ -760,6 +725,11 @@ void CMaterial::SetTextureArray(int Index, int Register,
 	m_TextureInfo[Index].SavedFullPath = FullPathMultibyte;
 }
 
+void CMaterial::ClearTexture()
+{
+	m_TextureInfo.clear();
+}
+
 void CMaterial::SetTextureInfoResource(int Index, CTexture* Texture)
 {
 	if (!Texture)
@@ -827,9 +797,7 @@ void CMaterial::Render()
 		m_CBuffer->SetSpecularColor(m_SpecularColor);
 		m_CBuffer->SetEmissiveColor(m_EmissiveColor);
 		m_CBuffer->SetOpacity(m_Opacity);
-		m_CBuffer->SetOutlineEnable(m_OutlineEnable);
-		m_CBuffer->SetOutlineThickness(m_OutlineThickness);
-		m_CBuffer->SetOutlineColor(m_OutlineColor);
+		m_CBuffer->SetMetallic(m_Metallic);
 
 		m_CBuffer->UpdateCBuffer();
 	}
@@ -927,6 +895,7 @@ bool CMaterial::Save(FILE* File)
 	fwrite(&m_SpecularTex, sizeof(bool), 1, File);
 	fwrite(&m_EmissiveTex, sizeof(bool), 1, File);
 	fwrite(&m_Bump, sizeof(bool), 1, File);
+	fwrite(&m_Metallic, sizeof(bool), 1, File);
 
 	// 이 부분까지는 문제 X
 	for (int i = 0; i < (int)RenderState_Type::Max; ++i)
@@ -971,11 +940,6 @@ bool CMaterial::Save(FILE* File)
 		m_TextureInfo[i].Texture->Save(File);
 	}
 
-	// 외곽선 관련 값들 Save, Load 추가하기
-	fwrite(&m_OutlineEnable, sizeof(bool), 1, File);
-	fwrite(&m_OutlineThickness, sizeof(float), 1, File);
-	fwrite(&m_OutlineColor, sizeof(Vector3), 1, File);
-
 	// Shader Parameter 저장
 	fwrite(&m_ShaderParams, sizeof(ShaderParams), 1, File);
 
@@ -1007,6 +971,12 @@ bool CMaterial::Load(FILE* File)
 	fread(&m_SpecularTex, sizeof(bool), 1, File);
 	fread(&m_EmissiveTex, sizeof(bool), 1, File);
 	fread(&m_Bump, sizeof(bool), 1, File);
+	fread(&m_Metallic, sizeof(bool), 1, File);
+
+	if (m_SpecularColor.w == 0.f)
+	{
+		m_SpecularColor.w = 1.f;
+	}
 
 	m_CBuffer->SetAnimation3D(m_Animation3D);
 	m_CBuffer->SetBump(m_Bump);
@@ -1018,6 +988,7 @@ bool CMaterial::Load(FILE* File)
 	m_CBuffer->SetSpecularColor(m_SpecularColor);
 	m_CBuffer->SetEmissiveColor(m_EmissiveColor);
 	m_CBuffer->SetOpacity(m_Opacity);
+	m_CBuffer->SetMetallic(m_Metallic);
 
 	for (int i = 0; i < (int)RenderState_Type::Max; ++i)
 	{
@@ -1152,9 +1123,6 @@ bool CMaterial::Load(FILE* File)
 		}
 	}
 
-	fread(&m_OutlineEnable, sizeof(bool), 1, File);
-	fread(&m_OutlineThickness, sizeof(float), 1, File);
-	fread(&m_OutlineColor, sizeof(Vector3), 1, File);
 	fread(&m_ShaderParams, sizeof(ShaderParams), 1, File);
 
 	return true;
@@ -1200,15 +1168,7 @@ bool CMaterial::SaveMaterial(FILE* File)
 	SaveStruct.EmissiveTex = m_EmissiveTex;
 	// fwrite(&m_Bump, sizeof(bool), 1, File);
 	SaveStruct.Bump = m_Bump;
-
-
-	// 외곽선 관련 값들 Save, Load 추가하기
-	// fwrite(&m_OutlineEnable, sizeof(bool), 1, File);
-	SaveStruct.OutlineEnable = m_OutlineEnable;
-	// fwrite(&m_OutlineThickness, sizeof(float), 1, File);
-	SaveStruct.OutlineThickness = m_OutlineThickness;
-	// fwrite(&m_OutlineColor, sizeof(Vector3), 1, File);
-	SaveStruct.OutlineColor = m_OutlineColor;
+	SaveStruct.Metallic = m_Metallic;
 	SaveStruct.ShaderParams = m_ShaderParams;
 
 	for (int i = 0; i < (int)RenderState_Type::Max; ++i)
@@ -1261,8 +1221,6 @@ bool CMaterial::SaveMaterial(FILE* File)
 		m_TextureInfo[i].Texture->Save(File);
 	}
 
-	fwrite(&SaveStruct.ShaderParams, sizeof(ShaderParams), 1, File);
-
 	return true;
 }
 
@@ -1291,7 +1249,13 @@ bool CMaterial::LoadMaterial(FILE* File)
 	m_SpecularTex = SaveStruct.SpecularTex;
 	m_EmissiveTex = SaveStruct.EmissiveTex;
 	m_Bump = SaveStruct.Bump;
+	m_Metallic = SaveStruct.Metallic;
 	m_ShaderParams = SaveStruct.ShaderParams;
+
+	if (m_SpecularColor.w == 0.f)
+	{
+		m_SpecularColor.w = 1.f;
+	}
 
 	m_CBuffer->SetAnimation3D(m_Animation3D);
 	m_CBuffer->SetBump(m_Bump);
@@ -1303,6 +1267,7 @@ bool CMaterial::LoadMaterial(FILE* File)
 	m_CBuffer->SetSpecularColor(m_SpecularColor);
 	m_CBuffer->SetEmissiveColor(m_EmissiveColor);
 	m_CBuffer->SetOpacity(m_Opacity);
+	m_CBuffer->SetMetallic(m_Metallic);
 
 	for (int i = 0; i < (int)RenderState_Type::Max; ++i)
 	{
@@ -1313,11 +1278,6 @@ bool CMaterial::LoadMaterial(FILE* File)
 			m_RenderStateArray[i] = CRenderManager::GetInst()->FindRenderState(SaveStruct.RenderStateSaveLoad[i].StateName);
 		}
 	}
-
-	// todo : 외곽선 관련 값들 Save, Load 추가하기
-	m_OutlineEnable = SaveStruct.OutlineEnable;
-	m_OutlineThickness = SaveStruct.OutlineThickness;
-	m_OutlineColor = SaveStruct.OutlineColor;
 
 	int	TextureCount = 0;
 	fread(&TextureCount, sizeof(int), 1, File);

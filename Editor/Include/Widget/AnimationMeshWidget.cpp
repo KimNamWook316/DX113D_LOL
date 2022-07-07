@@ -23,6 +23,7 @@
 #include "IMGUIComboBox.h"
 #include "IMGUIDummy.h"
 #include "IMGUITree.h"
+#include "IMGUICollapsingHeader.h"
 // Components
 #include "Component/AnimationMeshComponent.h"
 #include "Component/AnimationMeshComponent.h"
@@ -74,27 +75,23 @@ bool CAnimationMeshWidget::Init()
 
 	m_MaterialSlotCombo = m_RootTree->AddWidget<CIMGUIComboBox>("Material Slot", 200.f);
 	m_ShaderName = m_RootTree->AddWidget<CIMGUITextInput>("Shader", 200.f);
-	m_ShaderWidgetTree = m_RootTree->AddWidget<CIMGUITree>("Shader Params", 200.f);
+	m_ShaderWidgetTree = m_RootTree->AddWidget<CIMGUICollapsingHeader>("Shader Params", 200.f);
 	m_BaseColorEdit = m_RootTree->AddWidget<CIMGUIColor3>("BaseColor", 200.f);
 	m_AmbientColorEdit = m_RootTree->AddWidget<CIMGUIColor3>("Ambient", 200.f);
 	m_SpecularColorEdit = m_RootTree->AddWidget<CIMGUIColor3>("Specluar", 200.f);
 	m_SpecluarPowerEdit = m_RootTree->AddWidget<CIMGUIInputFloat>("Specluar Power", 200.f);
 	m_EmissiveColorEdit = m_RootTree->AddWidget<CIMGUIColor3>("Emissive", 200.f);
+	m_Metallic = m_RootTree->AddWidget<CIMGUICheckBox>("Metallic", 200.f);
 	m_TransparencyEdit = m_RootTree->AddWidget<CIMGUICheckBox>("Enable Transparency", 200.f);
 	m_OpacityEdit = m_RootTree->AddWidget<CIMGUISliderFloat>("Opacity", 200.f);
-	m_OutlineEnable = m_RootTree->AddWidget<CIMGUICheckBox>("Outline", 200.f);
-	m_OutlineThickness = m_RootTree->AddWidget<CIMGUISliderFloat>("Outline Thickness", 200.f);
-	m_OutlineColor = m_RootTree->AddWidget<CIMGUIColor3>("Outline Color", 200.f);
 	
 	AddWidget<CIMGUISeperator>("Sep");
 
 	// Initial Setting
 	m_TransparencyEdit->AddCheckInfo("Transparency");
+	m_Metallic->AddCheckInfo("Metallic");
 	m_OpacityEdit->SetMin(0.f);
 	m_OpacityEdit->SetMax(1.f);
-	m_OutlineThickness->SetMin(0.1f);
-	m_OutlineThickness->SetMax(20.f);
-	m_OutlineEnable->AddCheckInfo("Outline Enable");
 	m_ShaderName->ReadOnly(true);
 
 	// CallBack
@@ -107,11 +104,8 @@ bool CAnimationMeshWidget::Init()
 	m_TransparencyEdit->SetCallBackIdx(this, &CAnimationMeshWidget::OnCheckTransparency);
 	m_OpacityEdit->SetCallBack(this, &CAnimationMeshWidget::OnEditOpacity);
 	m_LoadAnimInstanceBtn->SetClickCallback<CAnimationMeshWidget>(this, &CAnimationMeshWidget::OnLoadAnimationInstance);
-	m_OutlineEnable->SetCallBackIdx(this, &CAnimationMeshWidget::OnCheckOutlineEnable);
-	m_OutlineThickness->SetCallBack(this, &CAnimationMeshWidget::OnEditOutlineThickness);
-	m_OutlineColor->SetCallBack(this, &CAnimationMeshWidget::OnChangeOutlineColor);
 	m_ShaderName->SetDropCallBack(this, &CAnimationMeshWidget::OnDropShaderName);
-
+	m_Metallic->SetCallBackIdx(this, &CAnimationMeshWidget::OnCheckMetallic);
 
     // CIMGUISameLine* Line = m_RootTree->AddWidget<CIMGUISameLine>("Line");
     // Line->SetOffsetX(125.f);
@@ -125,8 +119,6 @@ bool CAnimationMeshWidget::Init()
     // Line->SetOffsetX(65.f);
 	// 
     // m_NewNameInput = m_RootTree->AddWidget<CIMGUITextInput>("Edit Key Name", 80.f, 30.f);
-
-
 
 	return true;
 }
@@ -176,9 +168,7 @@ void CAnimationMeshWidget::OnSelectMaterialSlotCombo(int Idx, const char* Label)
 		m_SpecluarPowerEdit->SetVal(Mat->GetSpecularPower());
 		m_TransparencyEdit->SetCheck(0, Mat->IsTransparent());
 		m_OpacityEdit->SetValue(Mat->GetOpacity());
-		m_OutlineEnable->SetCheck(0, Mat->IsOutlineEnable());
-		m_OutlineThickness->SetValue(Mat->GetOutlineThickness());
-		m_OutlineColor->SetRGB(Mat->GetOutlineColor());
+		m_Metallic->SetCheck(0, Mat->IsMetallic());
 	}
 }
 
@@ -287,7 +277,7 @@ void CAnimationMeshWidget::OnEditOpacity(float Opacity)
 	}
 }
 
-void CAnimationMeshWidget::OnCheckOutlineEnable(int Idx, bool Enable)
+void CAnimationMeshWidget::OnCheckMetallic(int Idx, bool Check)
 {
 	if (m_MaterialSlotCombo->GetSelectIndex() == -1)
 	{
@@ -298,37 +288,7 @@ void CAnimationMeshWidget::OnCheckOutlineEnable(int Idx, bool Enable)
 
 	if (MeshCom->GetMesh())
 	{
-		MeshCom->EnableOutline(Enable);
-	}
-}
-
-void CAnimationMeshWidget::OnEditOutlineThickness(float Val)
-{
-	if (m_MaterialSlotCombo->GetSelectIndex() == -1)
-	{
-		return;
-	}
-
-	CAnimationMeshComponent* MeshCom = (CAnimationMeshComponent*)m_Component;
-
-	if (MeshCom->GetMesh())
-	{
-		MeshCom->SetOutlineThickness(Val);
-	}
-}
-
-void CAnimationMeshWidget::OnChangeOutlineColor(const Vector3& Color)
-{
-	if (m_MaterialSlotCombo->GetSelectIndex() == -1)
-	{
-		return;
-	}
-
-	CAnimationMeshComponent* MeshCom = (CAnimationMeshComponent*)m_Component;
-
-	if (MeshCom->GetMesh())
-	{
-		MeshCom->SetOutlineColor(Color);
+		MeshCom->SetMetallic(Check, m_MaterialSlotCombo->GetSelectIndex());
 	}
 }
 
@@ -647,7 +607,7 @@ void CAnimationMeshWidget::RefreshMeshWidget(CMesh* Mesh)
 
 bool CAnimationMeshWidget::MakeShaderWidget(class CMaterial* Mat, const std::string& ShaderName)
 {
-	SAFE_DELETE(m_ShaderWidget);
+	m_ShaderWidgetTree->ClearWidget();
 
 	CShader* Shader = CResourceManager::GetInst()->FindShader(ShaderName);
 	size_t TypeID = Shader->GetTypeID();

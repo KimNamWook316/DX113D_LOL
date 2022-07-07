@@ -274,9 +274,7 @@ struct MaterialCBuffer
 	int		SpecularTex;
 	int		EmissiveTex;
 	int		ReceiveDecal;
-	int		OutlineEnable;
-	float	OutlineThickness;
-	Vector3 OutlineColor;
+	int		Metallic;
 };
 
 struct AnimationFrameData
@@ -681,9 +679,7 @@ struct Instancing3DInfo
 	Vector4 PaperBurnInLineColor;
 	Vector4 PaperBurnOutLineColor;
 	Vector4 PaperBurnCenterLineColor;
-	int MtrlOutlineEnable;
-	float MtrlOutlineThickness;
-	Vector3 MtrlOutlineColor;
+	int MtrlMetallic;
 	Vector3 Empty;
 };
 
@@ -747,8 +743,8 @@ struct FogCBuffer
 {
 	Vector3 Color;
 	int Type;
-	float Start;				// ¿ùµå ±íÀÌ
-	float End;					// ¿ùµå ±íÀÌ
+	float Start; 
+	float End;
 	float Density;				
 	float Empty;
 };
@@ -800,7 +796,7 @@ struct HDRSceneSaveData
 		BloomScale(1.f),
 		DOFMax(600.f),
 		DOFMin(300.f),
-		FogType(Fog_Type::Linear),
+		FogType(Fog_Type::Depth),
 		FogColor(0.f, 0.f, 0.f),
 		FogStart(500.f),
 		FogEnd(950.f),
@@ -827,6 +823,7 @@ struct SceneSaveGlobalData
 {
 	HDRSceneSaveData			HDRData;
 	GlobalLightSceneSaveData	GLightData;
+	std::string					SkyBoxTexFileName;
 };
 
 struct NavMeshPolygon

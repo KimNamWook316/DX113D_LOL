@@ -36,11 +36,6 @@ private :
 	// Particle 을 그려내기 위한 기본 세팅을 알아서 해주는 Btn
 	class CIMGUIButton* m_SetParticleSettingBtn;
 
-	// 남욱씨가 말한 내용들 Setting 하는 장소
-	class CIMGUICheckBox* m_OutLineCheck;
-	class CIMGUIColor3*      m_OutLineColor;
-	class CIMGUIInputFloat* m_OutLineThickNess;
-
 	// Shader 를 Drag, Drop 할 수 있는 장소
 	class CIMGUITextInput* m_ShaderSetInput;
 	
@@ -61,13 +56,16 @@ private :
 	// 각종 Btn 들
 	class CIMGUIButton* m_SaveMaterialBtn;
 	class CIMGUIButton* m_LoadMaterialBtn;
+
 public:
 	virtual bool Init();
+
 public :
 	void SetSelectMaterial(class CMaterial* Material)
 	{
 		m_SelectedMaterial = Material;
 	}
+
 private :
 	void OnCreateMaterialCallback();
 

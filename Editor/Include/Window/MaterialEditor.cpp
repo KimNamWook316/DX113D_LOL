@@ -120,16 +120,6 @@ ResourceWindow로부터 Drag,Drop 을 통해서, Material 을  볼수 있다.)";
 
 	Dummy = AddWidget<CIMGUIDummy>("Dummy", 150.f, 20.f);
 
-	m_OutLineCheck = AddWidget<CIMGUICheckBox>("Outline", 80.f);
-	m_OutLineCheck->AddCheckInfo("Outline");
-	m_OutLineCheck->SetCallBackLabel<CMaterialEditor>(this, &CMaterialEditor::OnIsOutLineEdit);
-
-	m_OutLineColor = AddWidget<CIMGUIColor3>("Color", 150.f);
-	m_OutLineColor->SetCallBack<CMaterialEditor>(this, &CMaterialEditor::OnSetOutLineColor);
-
-	m_OutLineThickNess = AddWidget<CIMGUIInputFloat>("ThickNess", 150.f);
-	m_OutLineThickNess->SetCallBack<CMaterialEditor>(this, &CMaterialEditor::OnSetOutLineThickNess);
-
 	// Add Texture
 	Dummy = AddWidget<CIMGUIDummy>("Dummy", 150.f, 20.f);
 
@@ -403,27 +393,6 @@ void CMaterialEditor::OnSetParticleMaterialSettingCallback()
 	RefreshMaterialDisplayInfo(m_SelectedMaterial);
 
 	MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Particle Material Setting Set"), NULL, MB_OK);
-}
-
-void CMaterialEditor::OnIsOutLineEdit(const char*, bool Enable)
-{
-	if (!m_SelectedMaterial)
-		return;
-	m_SelectedMaterial->SetOutLineEnable(Enable);
-}
-
-void CMaterialEditor::OnSetOutLineColor(const Vector3& Color)
-{
-	if (!m_SelectedMaterial)
-		return;
-	m_SelectedMaterial->SetOutLineColor(Color);
-}
-
-void CMaterialEditor::OnSetOutLineThickNess(float ThickNess)
-{
-	if (!m_SelectedMaterial)
-		return;
-	m_SelectedMaterial->SetOutLineThickNess(ThickNess);
 }
 
 void CMaterialEditor::OnSetTextureBtn()
@@ -944,9 +913,5 @@ void CMaterialEditor::RefreshMaterialDisplayInfo(class CMaterial* Material, clas
 	// RenderState Input 을 Clear 해준다.
 	m_RenderStateSetInput->ClearText();
 
-	// OutLine 정보 세팅
-	m_OutLineCheck->SetCheck(0, Material->IsOutlineEnable());
-	m_OutLineColor->SetRGB(Material->GetOutlineColor());
-	m_OutLineThickNess->SetVal(Material->GetOutlineThickness());
-
+	// TODO : Metallic 정보 세팅
 }
