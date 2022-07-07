@@ -144,7 +144,14 @@ public:
 	{
 		return m_BufferData.Is2D == 1 ? true : false;
 	}
-	
+
+	// Linear Rotate
+	// Linaer Iterate 할때의 최초 Rot Angle
+	int IsSeperateLinearRotate()
+	{
+		return m_BufferData.SeperateLinerRotate;
+	}
+
 	// 랜덤 방향 이동
 	int GetSpecialMoveDirType()
 	{
@@ -191,6 +198,13 @@ public:
 		return m_BufferData.AlphaEnd;
 	}
 public:
+	// Linear Rotate
+// Linaer Iterate 할때의 최초 Rot Angle
+	int SetSeperateLinearRotate(bool Enable)
+	{
+		m_BufferData.SeperateLinerRotate = Enable ? 1 : 0;
+	}
+
 	// Particle Component 의 Relative Scale 반영하기 
 	void SetCommonRelativeScale(const Vector3& Scale)
 	{

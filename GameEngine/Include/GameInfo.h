@@ -454,7 +454,7 @@ struct	ParticleCBuffer
 	float AlphaEnd;
 	float AlphaStart;
 	int IsLifeTimeLinearFromCenter;
-	int SeperateLinerRotate; //  예를 들어, XZ 평면 상에서 ring 모양으로 생성 ->  0 ~ 360 도  LInear 하게 회전되어서, 마치 회전 + 퍼져나가는 형태를 만들어낼 수 있다.
+	int SeperateLinerRotate;
 
 	int UVMoveEnable;
 	int UVRowN;
@@ -485,7 +485,12 @@ struct ParticleInfo
 	float	FallTime;
 	float	FallStartY;
 
-	Vector3 SeperateRotAngle;
+	// 1) Circle, Ring 등 Particle Shape
+	// 2) Linear Rot 때 세팅되는 값 
+	float CurrentParticleAngle;
+
+	Vector3 SeperateRotAngleOffset;
+	Vector3 FinalSeperateRotAngle;
 
 	float  InitWorldPosY;
 };

@@ -244,6 +244,15 @@ bool CEffectEditor::Init()
     m_BounceResistance->SetMin(0.01f);
     m_BounceResistance->SetMax(0.99f);
 
+    // Rotation Angle
+    Tree = AddWidget<CIMGUITree>("Rotation Angle");
+
+    m_MinSeperateRotAngleEdit = Tree->AddWidget<CIMGUIInputFloat3>("Min Angle", 150.f);
+    m_MinSeperateRotAngleEdit->SetCallBack<CEffectEditor>(this, &CEffectEditor::OnMinSeperateRotAngleEdit);
+
+    m_MaxSeperateRotAngleEdit = Tree->AddWidget<CIMGUIInputFloat3>("Max Angle", 150.f);
+    m_MaxSeperateRotAngleEdit->SetCallBack<CEffectEditor>(this, &CEffectEditor::OnMaxSeperateRotAngleEdit);
+
     // Particle Shape
     Tree = AddWidget<CIMGUITree>("ParticleShape");
 
@@ -260,6 +269,14 @@ bool CEffectEditor::Init()
     m_IsLoopGenerateRing = Tree->AddWidget<CIMGUICheckBox>("Loop", 80.f);
     m_IsLoopGenerateRing->AddCheckInfo("Ring Loop");
     m_IsLoopGenerateRing->SetCallBackLabel<CEffectEditor>(this, &CEffectEditor::OnIsLoopGenerateRingEdit);
+
+    Line = Tree->AddWidget<CIMGUISameLine>("Line");
+    Line->SetOffsetX(120.f);
+
+    // Linear Rot 적용 -> 단, 해당 세팅은, m_SpecialMoveDirType 가 유효하게 세팅되어야만 가능하다.
+    m_LinearRotate = Tree->AddWidget<CIMGUICheckBox>("LinearRot", 80.f);
+    m_LinearRotate->AddCheckInfo("LinearRot");
+    m_LinearRotate->SetCallBackLabel<CEffectEditor>(this, &CEffectEditor::OnIsLinearRot);
 
     /*
     Line = Tree->AddWidget<CIMGUISameLine>("Line");
@@ -408,7 +425,7 @@ bool CEffectEditor::Init()
     // Move Dir, Angle
     Tree = AddWidget<CIMGUITree>("Move Angle, Dir");
 
-    m_SpecialMoveDirType = Tree->AddWidget<CIMGUIComboBox>("Shape", 80.f);
+    m_SpecialMoveDirType = Tree->AddWidget<CIMGUIComboBox>("Shape", 150.f);
     m_SpecialMoveDirType->SetSelectCallback<CEffectEditor>(this, &CEffectEditor::OnClickSpecialMoveDirType);
 
     m_SpecialMoveDirType->AddItem("Select Dir");
@@ -423,18 +440,6 @@ bool CEffectEditor::Init()
 
     m_MoveAngleEdit = Tree->AddWidget<CIMGUIInputFloat3>("Move Angle", 150.f);
     m_MoveAngleEdit->SetCallBack<CEffectEditor>(this, &CEffectEditor::OnMoveAngleEdit);
-
-    // Rotation Angle
-    Tree = AddWidget<CIMGUITree>("Rotation Angle");
-
-    m_MinSeperateRotAngleEdit = Tree->AddWidget<CIMGUIInputFloat3>("Min Angle", 150.f);
-    m_MinSeperateRotAngleEdit->SetCallBack<CEffectEditor>(this, &CEffectEditor::OnMinSeperateRotAngleEdit);
-
-    m_MaxSeperateRotAngleEdit = Tree->AddWidget<CIMGUIInputFloat3>("Max Angle", 150.f);
-    m_MaxSeperateRotAngleEdit->SetCallBack<CEffectEditor>(this, &CEffectEditor::OnMaxSeperateRotAngleEdit);
-
-    // Linear Rot 적용 -> 단, 해당 세팅은, m_SpecialMoveDirType 가 유효하게 세팅되어야만 가능하다.
-
 
     SetGameObjectReady();
 
@@ -935,6 +940,16 @@ void CEffectEditor::OnMaxSeperateRotAngleEdit(const Vector3& RotAngle)
    m_ParticleClass->SetMaxSeperateRotAngle(RotAngle);
    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetMaxSeperateRotAngle(RotAngle);
 }
+
+void CEffectEditor::OnIsLinearRot(const char*, bool Enable)
+{
+    if (!m_ParticleClass)
+        return;
+
+    m_ParticleClass->SetSeperateLinearRotate(Enable);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetSeperateLinearRotate(Enable);
+}
+
 
 void CEffectEditor::OnIsLifeTimeLinearFromCenter(const char*, bool Enable)
 {
@@ -1596,6 +1611,7 @@ void CEffectEditor::SetIMGUIReflectParticle(CParticle* Particle)
     // Move Dir, Angle
     m_MoveDirEdit->SetVal(Particle->GetMoveDir());
     m_MoveAngleEdit->SetVal(Particle->GetMoveAngle());
+
     // Particle Special Move Dir Type 여부 세팅
     m_SpecialMoveDirType->SetSelectIndex(Particle->GetSpecialMoveDirType() + 1);
 
@@ -1618,7 +1634,8 @@ void CEffectEditor::SetIMGUIReflectParticle(CParticle* Particle)
     m_MinSeperateRotAngleEdit->SetVal(Particle->GetMinSeperateRotAngle());
     m_MaxSeperateRotAngleEdit->SetVal(Particle->GetMaxSeperateRotAngle());
 
-    // 
+    // Linaer Rotate
+    m_LinearRotate->SetCheck(0, Particle->IsSeperateLinearRotate());
 }
 
 void CEffectEditor::SetIMGUIReflectObjectCamera()

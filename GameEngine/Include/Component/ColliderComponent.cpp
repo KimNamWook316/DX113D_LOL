@@ -270,7 +270,7 @@ bool CColliderComponent::Save(FILE* File)
 
 	fwrite(MeshName, sizeof(char), Length, File);
 
-	Length = m_Shader->GetName().length();
+	Length = (int)m_Shader->GetName().length(); 
 
 	char ShaderName[256] = {};
 	strcpy_s(ShaderName, m_Shader->GetName().c_str());
@@ -278,7 +278,7 @@ bool CColliderComponent::Save(FILE* File)
 	fwrite(&Length, sizeof(int), 1, File);
 	fwrite(ShaderName, sizeof(char), Length, File);
 
-	Length = m_Profile->Name.length();
+	Length = (int)m_Profile->Name.length();
 	fwrite(&Length, sizeof(int), 1, File);
 
 	char ProfileName[256] = {};

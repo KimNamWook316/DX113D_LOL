@@ -291,7 +291,20 @@ public:
 	{
 		return m_CBuffer->GetUVColN();
 	}
+	// Linear Rotate
+// Linaer Iterate 할때의 최초 Rot Angle
+	int IsSeperateLinearRotate()
+	{
+		return m_CBuffer->IsSeperateLinearRotate();
+	}
+
 public:
+	// Linaer Rotate
+	int SetSeperateLinearRotate(bool Enable)
+	{
+		m_CBuffer->SetSeperateLinearRotate(Enable);
+	}
+
 	// Component 의 Relative Scale 반영학
 	void SetCommonRelativeScale(const Vector3& Scale)
 	{

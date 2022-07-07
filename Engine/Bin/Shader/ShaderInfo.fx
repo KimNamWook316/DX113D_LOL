@@ -226,6 +226,11 @@ float DegreeToRadian(float Angle)
 	return Angle / 180.f * 3.14159f;
 }
 
+float RadianToDegree(float Radian)
+{
+	return (Radian / 3.14159f) * 180.f;
+}
+
 float4 PaperBurn2D(float4 Color, float2 UV)
 {
 	if (g_MtrlPaperBurnEnable == 0)

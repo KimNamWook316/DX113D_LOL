@@ -149,6 +149,8 @@ private:
     class CIMGUIInputFloat3* m_MinSeperateRotAngleEdit;
     class CIMGUIInputFloat3* m_MaxSeperateRotAngleEdit;
 
+    class CIMGUICheckBox* m_LinearRotate;
+
     // Particle 이 사용하는 Material Texture
     class CIMGUIImage* m_ParticleTexture;
 private :
@@ -242,12 +244,17 @@ private:
     void OnMoveDirEdit(const Vector3& Dir);
     void OnMoveAngleEdit(const Vector3& Angle);
 
+    // Special Move Dir 
     void OnClickSpecialMoveDirType(int Index, const char* Type);
 
     // Rotation Angle
     void OnMinSeperateRotAngleEdit(const Vector3& RotAngle);
     void OnMaxSeperateRotAngleEdit(const Vector3& RotAngle);
-
+    
+    // Linear Rot
+    void OnIsLinearRot(const char*, bool);
+    void OnSetLinearRotInitAngle(const Vector3& Angle);
+    
     // Save, Load
     void OnSaveParticleClass();
     void OnLoadParticleClass();
