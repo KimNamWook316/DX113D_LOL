@@ -112,7 +112,7 @@ public:
 		}
 	}
 
-	void SetNotifyParamTargetObject(const std::string& SequenceName, const std::string& NotifyName, CGameObject* TargetObject)
+	void SetNotifyParamTargetObject(const std::string& SequenceName, const std::string& NotifyName, class CGameObject* TargetObject)
 	{
 		CAnimationSequenceData* Data = FindAnimation(SequenceName);
 

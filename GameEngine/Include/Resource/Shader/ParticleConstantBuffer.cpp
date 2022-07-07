@@ -28,7 +28,7 @@ CParticleConstantBuffer::CParticleConstantBuffer() :
 
 	m_BufferData.ParticleShapeType = -1;
 
-	m_BufferData.IsMoveDirRandom = 0;
+	m_BufferData.SpecialMoveDirType = -1;
 
 	m_BufferData.IsLifeTimeLinearFromCenter = 0;
 

@@ -146,9 +146,9 @@ public:
 	}
 	
 	// 랜덤 방향 이동
-	bool IsMoveDirRandom()
+	int GetSpecialMoveDirType()
 	{
-		return m_BufferData.IsMoveDirRandom == 1 ? true : false;
+		return m_BufferData.SpecialMoveDirType;
 	}
 
 	const Vector3& GetMoveAngle()
@@ -235,13 +235,13 @@ public:
 		m_BufferData.GenerateRadius = Radius;
 	}
 	// Particle Shape
-	void SetParticleShapeType(ParitcleShapeType Type)
-	{
-		m_BufferData.ParticleShapeType = (int)Type;
-	}
 	void SetParticleShapeType(int Type)
 	{
 		m_BufferData.ParticleShapeType = Type;
+	}
+	void SetParticleShapeType(ParitcleShapeType Type)
+	{
+		m_BufferData.ParticleShapeType = (int)Type;
 	}
 	// Ring
 	void SetLoopGenerateRing(bool Enable)
@@ -342,9 +342,14 @@ public:
 		m_BufferData.Move = Move ? 1 : 0;
 	}
 
-	void SetIsRandomMoveDir(bool Move)
+	void SetSpecialMoveDirType(int Type)
 	{
-		m_BufferData.IsMoveDirRandom = Move ? 1 : 0;
+		m_BufferData.SpecialMoveDirType = Type;
+	}
+
+	void SetSpecialMoveDirType(ParticleSpecialMoveDir Type)
+	{
+		m_BufferData.SpecialMoveDirType = (int)Type;
 	}
 
 	void SetGravity(bool Gravity)

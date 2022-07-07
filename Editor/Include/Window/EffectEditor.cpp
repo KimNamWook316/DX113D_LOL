@@ -247,7 +247,7 @@ bool CEffectEditor::Init()
     // Particle Shape
     Tree = AddWidget<CIMGUITree>("ParticleShape");
 
-    m_ParticleShapeType = Tree->AddWidget<CIMGUIComboBox>("Shape", 80.f);
+    m_ParticleShapeType = Tree->AddWidget<CIMGUIComboBox>("Shape", 150.f);
     m_ParticleShapeType->SetSelectCallback<CEffectEditor>(this, &CEffectEditor::OnClickParticleShape);
 
     m_ParticleShapeType->AddItem("Select Shape");
@@ -399,28 +399,30 @@ bool CEffectEditor::Init()
     m_AlphaBlendEnableButton = Tree->AddWidget<CIMGUIButton>("Set Alpha Blend", 150.f, 20.f);
     m_AlphaBlendEnableButton->SetClickCallback<CEffectEditor>(this, &CEffectEditor::OnSetAlphaBlendToMaterialCallback);
 
-    m_AlphaStartEdit = Tree->AddWidget<CIMGUIInputFloat>("Alpha Min", 150.f);
+    m_AlphaStartEdit = Tree->AddWidget<CIMGUIInputFloat>("Alpha Start", 150.f);
     m_AlphaStartEdit->SetCallBack(this, &CEffectEditor::OnAlphaStartEdit);
 
-    m_AlphaEndEdit = Tree->AddWidget<CIMGUIInputFloat>("Alpha Max", 150.f);
+    m_AlphaEndEdit = Tree->AddWidget<CIMGUIInputFloat>("Alpha End", 150.f);
     m_AlphaEndEdit->SetCallBack(this, &CEffectEditor::OnAlphaEndEdit);
 
     // Move Dir, Angle
     Tree = AddWidget<CIMGUITree>("Move Angle, Dir");
 
-    m_IsRandomMoveDirEdit = Tree->AddWidget<CIMGUICheckBox>("Random Dir", 80.f);
-    m_IsRandomMoveDirEdit->AddCheckInfo("Random Dir");
-    m_IsRandomMoveDirEdit->SetCallBackLabel<CEffectEditor>(this, &CEffectEditor::OnIsRandomMoveDirEdit);
-    m_IsRandomMoveDirEdit->SetCheck(0, true);
+    m_SpecialMoveDirType = Tree->AddWidget<CIMGUIComboBox>("Shape", 80.f);
+    m_SpecialMoveDirType->SetSelectCallback<CEffectEditor>(this, &CEffectEditor::OnClickSpecialMoveDirType);
+
+    m_SpecialMoveDirType->AddItem("Select Dir");
+    for (int i = 0; i < (int)ParticleSpecialMoveDir::Max; ++i)
+    {
+        m_SpecialMoveDirType->AddItem(ParticleMoveDirType[i]);
+    }
+    m_SpecialMoveDirType->SetSelectIndex(0);
 
     m_MoveDirEdit = Tree->AddWidget<CIMGUIInputFloat3>("Move Dir", 150.f);
     m_MoveDirEdit->SetCallBack<CEffectEditor>(this, &CEffectEditor::OnMoveDirEdit);
 
     m_MoveAngleEdit = Tree->AddWidget<CIMGUIInputFloat3>("Move Angle", 150.f);
     m_MoveAngleEdit->SetCallBack<CEffectEditor>(this, &CEffectEditor::OnMoveAngleEdit);
-
-    // m_GravityAccelEdit = AddWidget<CIMGUIInputFloat>("Gravity Accel", 100.f);
-    // m_StartDelayEdit = AddWidget<CIMGUIInputFloat>("Start Delay T// ", 100.f);
 
     // Rotation Angle
     Tree = AddWidget<CIMGUITree>("Rotation Angle");
@@ -430,6 +432,9 @@ bool CEffectEditor::Init()
 
     m_MaxSeperateRotAngleEdit = Tree->AddWidget<CIMGUIInputFloat3>("Max Angle", 150.f);
     m_MaxSeperateRotAngleEdit->SetCallBack<CEffectEditor>(this, &CEffectEditor::OnMaxSeperateRotAngleEdit);
+
+    // Linear Rot 적용 -> 단, 해당 세팅은, m_SpecialMoveDirType 가 유효하게 세팅되어야만 가능하다.
+
 
     SetGameObjectReady();
 
@@ -913,15 +918,6 @@ void CEffectEditor::OnPauseResumeToggle(const char*, bool Enable)
     m_ParticleObject->GetRootComponent()->Enable(Enable);
 }
 
-void CEffectEditor::OnIsRandomMoveDirEdit(const char*, bool Enable)
-{
-    if (!m_ParticleClass)
-        return;
-
-    m_ParticleClass->SetIsRandomMoveDir(Enable);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetIsRandomMoveDir(Enable);
-}
-
 void CEffectEditor::OnMinSeperateRotAngleEdit(const Vector3& RotAngle)
 {
     if (!m_ParticleClass)
@@ -1012,6 +1008,21 @@ void CEffectEditor::OnMoveAngleEdit(const Vector3& Angle)
     m_ParticleClass->SetMoveAngle(Angle);
 
     dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetMoveAngle(Angle);
+}
+
+void CEffectEditor::OnClickSpecialMoveDirType(int Index, const char* Type)
+{
+    if (!m_ParticleClass)
+        return;
+
+    // 자기가 선택된 Idx - 1 을 해줘야 한다
+    // 처음에는 아무것도 선택안되어 있는 상태 -> 그러면 Idx 는 0 -> -1로 해줘야만
+    // hlsl 측에서 -1에 걸리지 않게 될 것이다.
+    ParticleSpecialMoveDir DirType = (ParticleSpecialMoveDir)(Index - 1);
+
+    m_ParticleClass->SetSpecialMoveDirType(DirType);
+
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetSpecialMoveDirType(DirType);
 }
 
 void CEffectEditor::OnSaveParticleClass()
@@ -1585,7 +1596,8 @@ void CEffectEditor::SetIMGUIReflectParticle(CParticle* Particle)
     // Move Dir, Angle
     m_MoveDirEdit->SetVal(Particle->GetMoveDir());
     m_MoveAngleEdit->SetVal(Particle->GetMoveAngle());
-    m_IsRandomMoveDirEdit->SetCheck(0, Particle->IsMoveDirRandom());
+    // Particle Special Move Dir Type 여부 세팅
+    m_SpecialMoveDirType->SetSelectIndex(Particle->GetSpecialMoveDirType() + 1);
 
     // Movement
     m_IsGravityEdit->SetCheck(0, Particle->GetGravity());
@@ -1596,7 +1608,8 @@ void CEffectEditor::SetIMGUIReflectParticle(CParticle* Particle)
     m_IsBounce->SetCheck(0, Particle->IsBounceEnable() == 1 ? true : false);
     m_BounceResistance->SetValue(Particle->GetBounceResistance());
 
-    // Particle Shape
+    // Particle Shape (실제 Idx 의 +1 을 세팅하기)
+    m_ParticleShapeType->SetSelectIndex(Particle->GetParticleShapeType() + 1);
 
     // Generate Ring
     m_IsLoopGenerateRing->SetCheck(0, Particle->IsLoopGenerateRing());
@@ -1605,6 +1618,7 @@ void CEffectEditor::SetIMGUIReflectParticle(CParticle* Particle)
     m_MinSeperateRotAngleEdit->SetVal(Particle->GetMinSeperateRotAngle());
     m_MaxSeperateRotAngleEdit->SetVal(Particle->GetMaxSeperateRotAngle());
 
+    // 
 }
 
 void CEffectEditor::SetIMGUIReflectObjectCamera()
@@ -1681,8 +1695,8 @@ void CEffectEditor::OnRingPreset()
     OnSetAlphaBlendToMaterialCallback();
 
     // Random Dir
-    m_ParticleClass->SetIsRandomMoveDir(false);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetIsRandomMoveDir(false);
+    m_ParticleClass->SetSpecialMoveDirType(-1);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetSpecialMoveDirType(-1);
 
     // Scale
     OnScaleMinEdit(Vector3(10.f, 10.f, 1.f)); //
@@ -1729,8 +1743,8 @@ void CEffectEditor::OnRingWallPreset()
     OnSetAlphaBlendToMaterialCallback();
 
     // Random Dir
-    m_ParticleClass->SetIsRandomMoveDir(false);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetIsRandomMoveDir(false);
+    m_ParticleClass->SetSpecialMoveDirType(-1);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetSpecialMoveDirType(-1);
 
     // Scale
     OnScaleMinEdit(Vector3(15.f, 15.f, 1.f)); 
@@ -1791,8 +1805,8 @@ void CEffectEditor::OnTorchPreset()
     OnSetAlphaBlendToMaterialCallback();
 
     // Random Dir
-    m_ParticleClass->SetIsRandomMoveDir(false);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetIsRandomMoveDir(false);
+    m_ParticleClass->SetSpecialMoveDirType(-1);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetSpecialMoveDirType(-1);
 
     // Radiuse
     OnEditGenerateRadius(80.f);
@@ -1845,8 +1859,8 @@ void CEffectEditor::OnFireSmallPreset()
     OnSetAlphaBlendToMaterialCallback();
 
     // Random Dir
-    m_ParticleClass->SetIsRandomMoveDir(true);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetIsRandomMoveDir(true);
+    m_ParticleClass->SetSpecialMoveDirType(-1);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetSpecialMoveDirType(-1);
 
     // SpawnTime
     OnSpawnTimeMaxEdit(0.02f);
@@ -1899,9 +1913,9 @@ void CEffectEditor::OnFireWidePreset()
     OnSetAlphaBlendToMaterialCallback();
 
     // Random Dir
-    m_ParticleClass->SetIsRandomMoveDir(false);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetIsRandomMoveDir(false);
-    
+      m_ParticleClass->SetSpecialMoveDirType(-1);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetSpecialMoveDirType(-1);
+
     // Radiuse
     OnEditGenerateRadius(80.f);
 
@@ -1954,9 +1968,9 @@ void CEffectEditor::OnSparkPreset()
     OnAlphaStartEdit(0.8f);
     OnSetAlphaBlendToMaterialCallback();
 
-    // Random Dir
-    m_ParticleClass->SetIsRandomMoveDir(true);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetIsRandomMoveDir(true);
+    // Random Dir O
+    m_ParticleClass->SetSpecialMoveDirType(ParticleSpecialMoveDir::YGoingUpRandomDir);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetSpecialMoveDirType(ParticleSpecialMoveDir::YGoingUpRandomDir);
 
     // SpawnTime
     OnSpawnTimeMaxEdit(0.02f);
@@ -2014,16 +2028,16 @@ void CEffectEditor::OnSimpleMeteorPreset()
     dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGravity(false);
 
     // Alpha
-    OnAlphaEndEdit(2.f);
-    OnAlphaStartEdit(0.2f);
+    OnAlphaEndEdit(0.2f);
+    OnAlphaStartEdit(2.f);
     OnSetAlphaBlendToMaterialCallback();
 
     // Random Dir
-    m_ParticleClass->SetIsRandomMoveDir(false);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetIsRandomMoveDir(false);
+    m_ParticleClass->SetSpecialMoveDirType(-1);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetSpecialMoveDirType(-1);
 
     // Radius
-    OnEditGenerateRadius(3.f);
+    OnEditGenerateRadius(13.f);
 
     // SpawnTime
     OnSpawnTimeMaxEdit(0.02f);
@@ -2044,10 +2058,11 @@ void CEffectEditor::OnSimpleMeteorPreset()
     OnMoveDirEdit(Vector3(0.f, 1.f, 0.f));
 
     // Move Angle
-    OnMoveAngleEdit(Vector3(0.f, 0.f, 5.f));
+    OnMoveAngleEdit(Vector3(0.f, 0.f, 15.f));
 
-    m_ParticleClass->SetParticleShapeType(ParitcleShapeType::Torch);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetParticleShapeType(ParitcleShapeType::Torch);
+    // Circle Type
+    m_ParticleClass->SetParticleShapeType(ParitcleShapeType::Circle);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetParticleShapeType(ParitcleShapeType::Circle);
 
     // IMGUI Update
     SetIMGUIReflectParticle(m_ParticleClass);

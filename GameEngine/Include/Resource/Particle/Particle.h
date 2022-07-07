@@ -213,9 +213,9 @@ public:
 		return m_CBuffer->Is2D();
 	}
 
-	bool IsMoveDirRandom()
+	int GetSpecialMoveDirType()
 	{
-		return m_CBuffer->IsMoveDirRandom();
+		return m_CBuffer->GetSpecialMoveDirType();
 	}
 
 	const Vector3& GetMoveAngle()
@@ -301,6 +301,10 @@ public:
 	void SetParticleShapeType(ParitcleShapeType Type)
 	{
 		m_CBuffer->SetParticleShapeType((int)Type);
+	}
+	void SetParticleShapeType(int Type)
+	{
+		m_CBuffer->SetParticleShapeType(Type);
 	}
 
 	// Seperate Rot Angle
@@ -444,9 +448,14 @@ public:
 		m_CBuffer->SetMove(Move);
 	}
 
-	void SetIsRandomMoveDir(bool Random)
+	void SetSpecialMoveDirType(int Type)
 	{
-		m_CBuffer->SetIsRandomMoveDir(Random);
+		m_CBuffer->SetSpecialMoveDirType(Type);
+	}
+
+	void SetSpecialMoveDirType(ParticleSpecialMoveDir Type)
+	{
+		m_CBuffer->SetSpecialMoveDirType(Type);
 	}
 
 	void SetGravity(bool Gravity)

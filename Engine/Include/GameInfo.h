@@ -447,14 +447,14 @@ struct	ParticleCBuffer
 	int ParticleShapeType;
 	float GenerateRadius;
 	int IsLoopGenerateRing;
-	int IsMoveDirRandom;
+	int SpecialMoveDirType; 
 	// int     ParticleBounce;
 	// float	 ParticleBounceResistance;
 
 	float AlphaEnd;
 	float AlphaStart;
 	int IsLifeTimeLinearFromCenter;
-	float ParticleEmpty1;
+	int SeperateLinerRotate; //  예를 들어, XZ 평면 상에서 ring 모양으로 생성 ->  0 ~ 360 도  LInear 하게 회전되어서, 마치 회전 + 퍼져나가는 형태를 만들어낼 수 있다.
 
 	int UVMoveEnable;
 	int UVRowN;
@@ -484,6 +484,7 @@ struct ParticleInfo
 	int		Alive;
 	float	FallTime;
 	float	FallStartY;
+
 	Vector3 SeperateRotAngle;
 
 	float  InitWorldPosY;
@@ -507,6 +508,7 @@ struct ParticleInfoShared
 	Vector3  CommonRotationAngle;
 	Vector3  SeperateMinRotAngle;
 	Vector3  SeperateMaxRotAngle;
+
 	float  PrevRingAngle;
 
 	int    UVMoveEnable;

@@ -33,6 +33,12 @@ static const char* ParticleShapeNames[] = {
     "ZMinusRing" // 사용자 측을 바라본 형태로 Ring 생성
 };
 
+static const char* ParticleMoveDirType[] = {
+    "YGoingUpRandomDir", // 위로 이동하면서, xz 평면 방향으로 랜덤 이동
+    "XZSpread", //  xz 평명 방향으로 이동 y는 0
+    "XYSpread" //  xy 평명 방향으로 이동 z 는 0
+};
+
 struct Particle3DObjectBackUpStruct
 {
     bool IsCameraRotate;
@@ -135,7 +141,7 @@ private:
     class CIMGUISliderFloat* m_CameraXRotSlideBar;
 
     // Move Dir, Angle
-    class CIMGUICheckBox* m_IsRandomMoveDirEdit;
+    class CIMGUIComboBox* m_SpecialMoveDirType;
     class CIMGUIInputFloat3* m_MoveDirEdit;
     class CIMGUIInputFloat3* m_MoveAngleEdit;
 
@@ -235,7 +241,8 @@ private:
     // Move Dir, Angle
     void OnMoveDirEdit(const Vector3& Dir);
     void OnMoveAngleEdit(const Vector3& Angle);
-    void OnIsRandomMoveDirEdit(const char*, bool);
+
+    void OnClickSpecialMoveDirType(int Index, const char* Type);
 
     // Rotation Angle
     void OnMinSeperateRotAngleEdit(const Vector3& RotAngle);
