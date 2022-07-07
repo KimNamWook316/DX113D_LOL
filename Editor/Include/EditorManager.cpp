@@ -21,9 +21,11 @@
 #include "Component/ColliderSphere.h"
 #include "Component/ColliderHalfLine.h"
 #include "Component/ColliderRay.h"
-#include "Component/GameDataComponent.h"
+#include "Component/ObjectDataComponent.h"
 #include "Component/PlayerDataComponent.h"
 #include "Component/NavMeshComponent.h"
+#include "Component/PaperBurnComponent.h"
+#include "Component/PlayerNormalAttackCheckCollider.h"
 // Window
 #include "Window/ObjectHierarchyWindow.h"
 #include "Window/SceneComponentHierarchyWindow.h"
@@ -139,11 +141,11 @@ bool CEditorManager::Init(HINSTANCE hInst)
 	// 각종 윈도우 생성
 	CreateWindows();
 
-	m_StateManager = new CGameStateManager;
+	//m_StateManager = new CGameStateManager;
 
-	m_StateManager->Init();
+	//m_StateManager->Init();
 
-	CSceneManager::GetInst()->SetStateManager(m_StateManager);
+	//CSceneManager::GetInst()->SetStateManager(m_StateManager);
 
 	m_DataManager = new CDataManager;
 
@@ -356,10 +358,14 @@ CComponent* CEditorManager::CreateComponent(CGameObject* Obj, size_t Type)
 	}
 
 
-	else if (Type == typeid(CGameDataComponent).hash_code())
+	else if (Type == typeid(CObjectDataComponent).hash_code())
 	{
-		CGameDataComponent* Component = Obj->LoadObjectComponent<CGameDataComponent>();
-		// Component->EnableEditMode(true);
+		CObjectDataComponent* Component = Obj->LoadObjectComponent<CObjectDataComponent>();
+		// Editor에서는 EditorManager에서 DataManager 클래스를 갖고 있도록 함
+		if (CEngine::GetInst()->GetEditMode())
+		{
+			m_DataManager->SetObjectData(Obj);
+		}
 		return Component;
 	}
 
@@ -368,6 +374,7 @@ CComponent* CEditorManager::CreateComponent(CGameObject* Obj, size_t Type)
 		CLightComponent* Component = Obj->LoadComponent<CLightComponent>();
 		return Component;
 	}
+
 	else if (Type == typeid(CPlayerDataComponent).hash_code())
 	{
 		CPlayerDataComponent* Component = Obj->LoadObjectComponent<CPlayerDataComponent>();
@@ -375,6 +382,19 @@ CComponent* CEditorManager::CreateComponent(CGameObject* Obj, size_t Type)
 		return Component;
 	}
 
+	else if (Type == typeid(CPaperBurnComponent).hash_code())
+	{
+		CPaperBurnComponent* Component = Obj->LoadObjectComponent<CPaperBurnComponent>();
+		// Component->EnableEditMode(true);
+		return Component;
+	}
+
+	else if (Type == typeid(CPlayerNormalAttackCheckCollider).hash_code())
+	{
+		CPlayerNormalAttackCheckCollider* Component = Obj->LoadObjectComponent<CPlayerNormalAttackCheckCollider>();
+		// Component->EnableEditMode(true);
+		return Component;
+	}
 
 	return nullptr;
 }

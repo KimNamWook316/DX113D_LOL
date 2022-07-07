@@ -6,7 +6,8 @@
 #include "../GameObject/GameObject.h"
 
 CNavAgent::CNavAgent()	:
-	m_MoveSpeed(100.f)
+	m_MoveSpeed(100.f),
+	m_ApplyNavMesh(true)
 {
 	SetTypeID<CNavAgent>();
 }
@@ -108,6 +109,12 @@ void CNavAgent::Update(float DeltaTime)
 
 			m_UpdateComponent->AddWorldPos(Dir * Dist);
 		}
+	}
+
+	// NavAgent가 있는데 ApplyNavMesh가 false -> NavMesh를 적용 받지 않아서 아래로 떨어져야 하는 순간
+	if (!m_ApplyNavMesh)
+	{
+		m_Object->AddWorldPos(0.f, -12.f * DeltaTime, 0.f);
 	}
 }
 

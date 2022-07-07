@@ -291,9 +291,6 @@
     <ClCompile Include="Component\GameStateComponent.cpp">
       <Filter>06. GameComponent</Filter>
     </ClCompile>
-    <ClCompile Include="Component\GameDataComponent.cpp">
-      <Filter>06. GameComponent</Filter>
-    </ClCompile>
     <ClCompile Include="Component\GameBehaviorTree.cpp">
       <Filter>07. BehaviorTree</Filter>
     </ClCompile>
@@ -343,6 +340,18 @@
       <Filter>02. Editor\02. Widget\01. Inspector\01. SceneComponent</Filter>
     </ClCompile>
     <ClCompile Include="Component\Node\AddFallingFloorCallbackNode.cpp">
+      <Filter>07. BehaviorTree\02. ActionNode</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\ObjectDataComponent.cpp">
+      <Filter>06. GameComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\PlayerNormalAttackCheckCollider.cpp">
+      <Filter>06. GameComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\Node\TriggerBoxHitCheck.cpp">
+      <Filter>07. BehaviorTree\01. ConditionNode</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\Node\EyeLaserTracking.cpp">
       <Filter>07. BehaviorTree\02. ActionNode</Filter>
     </ClCompile>
   </ItemGroup>
@@ -488,9 +497,6 @@
     <ClInclude Include="Widget\UtilMenuBar.h">
       <Filter>02. Editor\02. Widget\03. MenuBar</Filter>
     </ClInclude>
-    <ClInclude Include="Window\CollisionProfileEditor.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="Component\Node\CheckAttackTarget.h">
       <Filter>07. BehaviorTree\01. ConditionNode</Filter>
     </ClInclude>
@@ -534,9 +540,6 @@
       <Filter>08. State</Filter>
     </ClInclude>
     <ClInclude Include="Component\GameStateComponent.h">
-      <Filter>06. GameComponent</Filter>
-    </ClInclude>
-    <ClInclude Include="Component\GameDataComponent.h">
       <Filter>06. GameComponent</Filter>
     </ClInclude>
     <ClInclude Include="Component\GameBehaviorTree.h">
@@ -594,6 +597,21 @@
       <Filter>02. Editor\02. Widget\01. Inspector\01. SceneComponent</Filter>
     </ClInclude>
     <ClInclude Include="Component\Node\AddFallingFloorCallbackNode.h">
+      <Filter>07. BehaviorTree\02. ActionNode</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\ObjectDataComponent.h">
+      <Filter>06. GameComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Window\CollisionProfileEditor.h">
+      <Filter>02. Editor\01. Window\5. CollisionProfile</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\PlayerNormalAttackCheckCollider.h">
+      <Filter>06. GameComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\TriggerBoxHitCheck.h">
+      <Filter>07. BehaviorTree\01. ConditionNode</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\EyeLaserTracking.h">
       <Filter>07. BehaviorTree\02. ActionNode</Filter>
     </ClInclude>
   </ItemGroup>

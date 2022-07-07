@@ -12,7 +12,8 @@ CGameObject::CGameObject() :
 	m_IsEnemy(false),
 	m_NoInterrupt(false),
 	m_ExcludeSceneSave(false),
-	m_NoDestroyFromSceneChange(false)
+	m_NoDestroyFromSceneChange(false),
+	m_IsHit(false)
 {
 	SetTypeID<CGameObject>();
 	m_ObjectType = Object_Type::None;

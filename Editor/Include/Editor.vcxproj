@@ -167,7 +167,6 @@
   <ItemGroup>
     <ClCompile Include="AnimationInstanceConvertThread.cpp" />
     <ClCompile Include="Component\GameBehaviorTree.cpp" />
-    <ClCompile Include="Component\GameDataComponent.cpp" />
     <ClCompile Include="Component\GameStateComponent.cpp" />
     <ClCompile Include="Component\Node\AddFallingFloorCallbackNode.cpp" />
     <ClCompile Include="Component\Node\CancleShootNode.cpp" />
@@ -184,6 +183,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="Component\Node\DeathNode.cpp" />
+    <ClCompile Include="Component\Node\EyeLaserTracking.cpp" />
     <ClCompile Include="Component\Node\HPCheck.cpp" />
     <ClCompile Include="Component\Node\IdleNode.cpp" />
     <ClCompile Include="Component\Node\MouseLButtonCheckNode.cpp" />
@@ -208,10 +208,28 @@
     <ClCompile Include="Component\Node\ReadyToShoot.cpp" />
     <ClCompile Include="Component\Node\RotateAttackDirectionNode.cpp" />
     <ClCompile Include="Component\Node\ShootNode.cpp" />
+    <ClCompile Include="Component\Node\TriggerBoxHitCheck.cpp" />
+    <ClCompile Include="Component\ObjectDataComponent.cpp" />
     <ClCompile Include="Component\PlayerDataComponent.cpp" />
-    <ClCompile Include="Component\State\AirBorneState.cpp" />
-    <ClCompile Include="Component\State\DamageState.cpp" />
-    <ClCompile Include="Component\State\GameStateManager.cpp" />
+    <ClCompile Include="Component\PlayerNormalAttackCheckCollider.cpp" />
+    <ClCompile Include="Component\State\AirBorneState.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="Component\State\DamageState.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="Component\State\GameStateManager.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="DataManager.cpp" />
     <ClCompile Include="EditorManager.cpp" />
     <ClCompile Include="EditorUtil.cpp" />
@@ -275,7 +293,6 @@
   <ItemGroup>
     <ClInclude Include="AnimationInstanceConvertThread.h" />
     <ClInclude Include="Component\GameBehaviorTree.h" />
-    <ClInclude Include="Component\GameDataComponent.h" />
     <ClInclude Include="Component\GameStateComponent.h" />
     <ClInclude Include="Component\Node\AddFallingFloorCallbackNode.h" />
     <ClInclude Include="Component\Node\CancleShootNode.h" />
@@ -292,6 +309,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="Component\Node\DeathNode.h" />
+    <ClInclude Include="Component\Node\EyeLaserTracking.h" />
     <ClInclude Include="Component\Node\HPCheck.h" />
     <ClInclude Include="Component\Node\IdleNode.h" />
     <ClInclude Include="Component\Node\MouseLButtonCheckNode.h" />
@@ -316,10 +334,28 @@
     <ClInclude Include="Component\Node\ReadyToShoot.h" />
     <ClInclude Include="Component\Node\RotateAttackDirectionNode.h" />
     <ClInclude Include="Component\Node\ShootNode.h" />
+    <ClInclude Include="Component\Node\TriggerBoxHitCheck.h" />
+    <ClInclude Include="Component\ObjectDataComponent.h" />
     <ClInclude Include="Component\PlayerDataComponent.h" />
-    <ClInclude Include="Component\State\AirBorneState.h" />
-    <ClInclude Include="Component\State\DamageState.h" />
-    <ClInclude Include="Component\State\GameStateManager.h" />
+    <ClInclude Include="Component\PlayerNormalAttackCheckCollider.h" />
+    <ClInclude Include="Component\State\AirBorneState.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="Component\State\DamageState.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="Component\State\GameStateManager.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="DataManager.h" />
     <ClInclude Include="EditorInfo.h" />
     <ClInclude Include="EditorManager.h" />

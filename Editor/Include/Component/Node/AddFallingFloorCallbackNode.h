@@ -17,10 +17,17 @@ protected:
     virtual NodeResult OnUpdate(float DeltaTime);
     virtual NodeResult OnEnd(float DeltaTime);
 
+private:
+    bool m_CollisionStart;
+    float m_AccTime;
+    Vector3 m_OriginPos;
+    class CColliderBox3D* m_BoxCollider;
+
 public:
     virtual NodeResult Invoke(float DeltaTime) override;
 
 public:
     void Trigger(const CollisionResult& Result);
+    void ResetFallingBlock();
 };
 

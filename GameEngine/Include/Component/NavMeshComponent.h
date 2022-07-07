@@ -22,6 +22,9 @@ protected:
 
 	bool m_DebugRender;
 	CSharedPtr<CRenderState> m_WireFrameState;
+
+	Vector3 m_PlayerSpawnPos;
+	int m_PlayerSpawnPolyIndex;
 	//int		m_CountX;
 	//int		m_CountZ;
 	//std::vector<NavMeshPolygon>		m_vecNavMeshPolygon;
@@ -29,6 +32,26 @@ protected:
 	//Vector3 m_Max;
 
 public:
+	void SetPlayerSpawnPolyIndex(int Index)
+	{
+		m_PlayerSpawnPolyIndex = Index;
+	}
+
+	int GetPlayerSpawnPolyIndex()	const
+	{
+		return m_PlayerSpawnPolyIndex;
+	}
+
+	void SetPlayerSpawnPos(const Vector3& Pos)
+	{
+		m_PlayerSpawnPos = Pos;
+	}
+
+	const Vector3& GetPlayerSpawnPos()	const
+	{
+		return m_PlayerSpawnPos;
+	}
+
 	CNavMesh* GetNavMesh()	const
 	{
 		return m_NavMesh;

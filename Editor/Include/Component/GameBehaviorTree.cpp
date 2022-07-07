@@ -16,6 +16,7 @@
 #include "Node/ReadyToShoot.h"
 #include "Node/ShootNode.h"
 #include "Node/CancleShootNode.h"
+#include "Node/AddFallingFloorCallbackNode.h"
 #include "Component/StateComponent.h"
 
 CGameBehaviorTree::CGameBehaviorTree()
@@ -95,6 +96,11 @@ CNode* CGameBehaviorTree::LoadNode(CNode* Parent, size_t TypeID)
 		NewNode->SetOwner(this);
 		NewNode->SetObject(m_Owner->GetGameObject());
 		NewNode->SetAnimationMeshComponent(m_AnimationMeshComp);
+
+		CNavAgent* Agent = NewNode->GetGameObject()->FindObjectComponentFromType<CNavAgent>();
+
+		if (Agent)
+			NewNode->SetNavAgent(Agent);
 
 		return NewNode;
 	}
@@ -220,6 +226,15 @@ CNode* CGameBehaviorTree::LoadNode(CNode* Parent, size_t TypeID)
 		return NewNode;
 	}
 
+	else if (TypeID == typeid(CAddFallingFloorCallbackNode).hash_code())
+	{
+		CAddFallingFloorCallbackNode* NewNode = new CAddFallingFloorCallbackNode;
+		NewNode->SetParent(Parent);
+		NewNode->SetOwner(this);
+		NewNode->SetObject(m_Owner->GetGameObject());
+
+		return NewNode;
+	}
 
 	return nullptr;
 }

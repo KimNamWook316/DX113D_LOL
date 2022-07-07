@@ -28,7 +28,7 @@ bool CLightComponentWidget::Init()
 	CSceneComponentWidget::Init();
 
 	// Create Widget
-	m_ComponentTypeText->SetText("StaticMesh Component");
+	m_ComponentTypeText->SetText("Light Component");
 
 	// 최상위 트리
 	CIMGUITree* m_RootTree = AddWidget<CIMGUITree>("Light Variables");

@@ -74,6 +74,16 @@ public:
         return m_Max;
     }
 
+    void SetCollisionResultSrc(CColliderComponent* Com)
+    {
+        m_Result.Src = Com;
+    }
+
+    void SetCollisionResultDest(CColliderComponent* Com)
+    {
+        m_Result.Dest = Com;
+    }
+
     CollisionResult GetCollisionResult()    const
     {
         return m_Result;
@@ -120,6 +130,10 @@ public:
     void CallCollisionCallback(Collision_State State);
     void CallCollisionMouseCallback(Collision_State State);
     void ClearFrame();
+    const std::list<CColliderComponent*>& GerPrevCollisionList()  const
+    {
+        return m_PrevCollisionList;
+    }
 
 public:
     virtual void Start();

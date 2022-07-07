@@ -23,6 +23,16 @@ private:
 	int m_PlayerPolyIndex;
 
 public:
+	void SetPlayerPolyIndex(int Index)
+	{
+		m_PlayerPolyIndex = Index;
+	}
+
+	int GetPlayerPolyIndex()	const
+	{
+		return m_PlayerPolyIndex;
+	}
+
 	class CNavMeshComponent* GetNavMeshData() const;
 	void SetNavMeshData(CNavMeshComponent* NavComp);
 

@@ -103,7 +103,7 @@ enum class Collision_Channel
 	Monster,
 	PlayerAttack,
 	MonsterAttack,
-	Custom1,
+	MapObject,
 	Custom2,
 	Custom3,
 	Custom4,
@@ -265,6 +265,7 @@ enum class SceneComponent3DType
 	ColliderHalfLine,
 	ColliderRay,
 	NavMeshComponent,
+	PlayerNormalAttackCheckCollider,
 	Max
 };
 
@@ -273,7 +274,7 @@ enum class ObjectComponent3DType
 	PaperBurnComponent,
 	GameStateComponent,
 	NavAgent,
-	GameDataComponent,
+	ObjectDataComponent,
 	PlayerDataComponent,
 	Max
 };
@@ -313,6 +314,7 @@ enum ActionNode
 	ReadyToShoot,
 	ShootNode,
 	CancleShootNode,
+	AddFallingFloorCallback
 };
 
 enum DecoratorNode

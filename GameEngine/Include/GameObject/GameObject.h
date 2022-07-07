@@ -24,7 +24,19 @@ protected:
 	bool		m_IsEnemy;
 	bool		m_ExcludeSceneSave;
 	bool		m_NoDestroyFromSceneChange;
+	bool		m_IsHit;
+
 public:
+	bool IsHit()	const
+	{
+		return m_IsHit;
+	}
+
+	void SetHit(bool Hit)
+	{
+		m_IsHit = Hit;
+	}
+
 	bool IsEnemy()	const
 	{
 		return m_IsEnemy;

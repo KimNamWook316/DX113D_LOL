@@ -11,11 +11,13 @@
 #include "ObjectComponentWindow.h"
 #include "Component/PaperBurnComponent.h"
 #include "Component/NavAgent.h"
-#include "../Component/GameDataComponent.h"
+#include "../Component/ObjectDataComponent.h"
 #include "../Component/PlayerDataComponent.h"
 #include "../Component/GameStateComponent.h"
 #include "../Window/InspectorWindow.h"
 #include "../EditorUtil.h"
+#include "../EditorManager.h"
+#include "../DataManager.h"
 #include "Flag.h"
 
 CObjectComponentCreateModal::CObjectComponentCreateModal()	:
@@ -107,8 +109,15 @@ void CObjectComponentCreateModal::OnCreateComponent()
 	}
 
 
-	else if (Typeid == typeid(CGameDataComponent).hash_code())
-		Com = SelectObject->CreateComponent<CGameDataComponent>(Name);
+	else if (Typeid == typeid(CObjectDataComponent).hash_code())
+	{
+		Com = SelectObject->CreateComponent<CObjectDataComponent>(Name);
+		// Editor에서는 EditorManager에서 DataManager 클래스를 갖고 있도록 함
+		if (CEngine::GetInst()->GetEditMode())
+		{
+			CEditorManager::GetInst()->GetDataManager()->SetObjectData(SelectObject);
+		}
+	}
 
 	CObjectComponentWindow* ComponentWindow = (CObjectComponentWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(OBJECTCOMPONENT_LIST);
 

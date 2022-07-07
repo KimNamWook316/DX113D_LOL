@@ -260,6 +260,11 @@ public:
 		return m_matWorld;
 	}
 
+	const Matrix& GetRotationMatrix()	const
+	{
+		return m_matRot;
+	}
+
 public:
 	void SetPivot(const Vector3& Pivot)
 	{

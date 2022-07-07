@@ -24,5 +24,8 @@ private:
 private:
 	void OnChangeOffset(const Vector3& Offset);
 	void OnChangeProfile(int Index, const char* Label);
+
+public:
+	void RefreshCollisionProfile();
 };
 

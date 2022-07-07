@@ -710,7 +710,7 @@ struct NotifyParameter
 	int Amount;
 };
 
-struct GameData
+struct ObjectData
 {
 	int HP;
 	int MP;

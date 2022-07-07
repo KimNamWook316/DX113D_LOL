@@ -22,6 +22,9 @@ private:
     bool m_ClockWise;
 
 public:
+    void SetNavAgent(class CNavAgent* Agent);
+
+public:
     virtual NodeResult Invoke(float DeltaTime) override;
 };
 

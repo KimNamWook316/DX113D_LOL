@@ -7,7 +7,8 @@
 #include "../Scene/SceneResource.h"
 
 CNavMeshComponent::CNavMeshComponent()	:
-	m_DebugRender(false)
+	m_DebugRender(false),
+	m_PlayerSpawnPolyIndex(0)
 {
 	SetTypeID<CNavMeshComponent>();
 	m_ComponentType = Component_Type::SceneComponent;
@@ -144,6 +145,8 @@ bool CNavMeshComponent::Load(FILE* File)
 	m_NavMesh = new CNavMesh;
 
 	m_NavMesh->LoadMesh(File);
+
+	m_Scene->GetNavigation3DManager()->SetNavMeshData(this);
 
 	return true;
 }

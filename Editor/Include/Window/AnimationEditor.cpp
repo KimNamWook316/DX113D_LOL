@@ -770,6 +770,9 @@ void CAnimationEditor::OnMakeAnimInstByExcel()
 			return;
 		}
 
+		CAnimationSequenceData* AnimSeqData = m_DummyAnimation->FindAnimation(NewLableKeyName);
+		AnimSeqData->SetName(NewLableKeyName);
+
 		// File 이름 Log 목록에 추가
 		Text = m_AnimInstanceConvertLog->AddWidget<CIMGUIText>("Text");
 

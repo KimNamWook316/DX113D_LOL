@@ -66,6 +66,11 @@ public:
 		return m_Time;
 	}
 
+	void SetName(const std::string& Name)
+	{
+		m_Name = Name;
+	}
+
 	class CAnimationSequence* GetAnimationSequence()	const
 	{
 		return m_Sequence;

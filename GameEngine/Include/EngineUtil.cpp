@@ -371,8 +371,8 @@ std::string CEngineUtil::CollisionChannelToString(Collision_Channel eChannnel)
 	case Collision_Channel::MonsterAttack:
 		Out = "MonsterAttack";
 		break;
-	case Collision_Channel::Custom1:
-		Out = "Custom1";
+	case Collision_Channel::MapObject:
+		Out = "MapObject";
 		break;
 	case Collision_Channel::Custom2:
 		Out = "Custom2";
@@ -449,9 +449,9 @@ Collision_Channel CEngineUtil::StringToCollisionChannel(const std::string& Strin
 	{
 		return Collision_Channel::MonsterAttack;
 	}
-	else if (String == "Custom1")
+	else if (String == "MapObject")
 	{
-		return Collision_Channel::Custom1;
+		return Collision_Channel::MapObject;
 	}
 	else if (String == "Custom2")
 	{

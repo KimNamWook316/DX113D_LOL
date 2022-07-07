@@ -32,10 +32,10 @@ void CCollisionSection::Clear()
 	m_vecCollider.clear();
 }
 
-void CCollisionSection::ClearPrevCollider()
-{
-	m_vecPrevCollider.clear();
-}
+//void CCollisionSection::ClearPrevCollider()
+//{
+//	m_vecPrevCollider.clear();
+//}
 
 void CCollisionSection::AddCollider(CColliderComponent* Collider)
 {
@@ -44,10 +44,10 @@ void CCollisionSection::AddCollider(CColliderComponent* Collider)
 	Collider->AddSectionIndex(m_Index);
 }
 
-void CCollisionSection::AddPrevCollider(CColliderComponent* Collider)
-{
-	m_vecPrevCollider.push_back(Collider);
-}
+//void CCollisionSection::AddPrevCollider(CColliderComponent* Collider)
+//{
+//	m_vecPrevCollider.push_back(Collider);
+//}
 
 void CCollisionSection::Collision(float DeltaTime)
 {
@@ -82,11 +82,26 @@ void CCollisionSection::Collision(float DeltaTime)
 				// 즉, 이전 프레임에 충돌된 목록에 없다면 지금 막 충돌이 시작된 것이다.
 				if (!Src->CheckPrevCollision(Dest))
 				{
+
 					Src->AddPrevCollision(Dest);
 					Dest->AddPrevCollision(Src);
 
+					// Src, Dest의 m_Result에 서로를 설정해주기
+					Src->SetCollisionResultSrc(Src);
+					Src->SetCollisionResultDest(Dest);
+
+					Dest->SetCollisionResultSrc(Dest);
+					Dest->SetCollisionResultDest(Src);
+
+
 					Src->CallCollisionCallback(Collision_State::Begin);
 					Dest->CallCollisionCallback(Collision_State::Begin);
+
+					Src->SetCollisionResultSrc(nullptr);
+					Src->SetCollisionResultDest(nullptr);
+
+					Dest->SetCollisionResultSrc(nullptr);
+					Dest->SetCollisionResultDest(nullptr);
 				}
 
 				Src->AddCurrentFrameCollision(Dest);
@@ -137,10 +152,10 @@ CColliderComponent* CCollisionSection::GetCollider(int Idx) const
 	return m_vecCollider[Idx];
 }
 
-CColliderComponent* CCollisionSection::GetPrevCollider(int Idx) const
-{
-	return m_vecPrevCollider[Idx];
-}
+//CColliderComponent* CCollisionSection::GetPrevCollider(int Idx) const
+//{
+//	return m_vecPrevCollider[Idx];
+//}
 
 int CCollisionSection::SortY(const void* Src, const void* Dest)
 {

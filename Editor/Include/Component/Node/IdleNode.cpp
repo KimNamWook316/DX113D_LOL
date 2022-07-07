@@ -23,14 +23,16 @@ NodeResult CIdleNode::OnStart(float DeltaTime)
 
 	m_AnimationMeshComp = m_Owner->GetAnimationMeshComp();
 
-	std::string ChampionName = m_Object->GetName();
+	/*std::string ObjectName = m_Object->GetName();
 
-	std::string SequenceName = ChampionName + "_" + "Idle";
+	std::string SequenceName = "_Idle";
+
+	SequenceName = ObjectName + SequenceName;
 
 	if (m_AnimationMeshComp)
 	{
 		m_AnimationMeshComp->GetAnimationInstance()->ChangeAnimation(SequenceName);
-	}
+	}*/
 
 	m_Object->SetNoInterrupt(false);
 

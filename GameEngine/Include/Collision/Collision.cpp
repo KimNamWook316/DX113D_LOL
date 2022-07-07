@@ -156,6 +156,27 @@ bool CCollision::CollisionRayToBox3D(CColliderRay* Src, CColliderBox3D* Dest)
 
 	if (CollisionRayToBox3D(HitPoint, Src->GetInfo(), Dest->GetInfo()))
 	{
+		float Step = 0.1f;
+		Vector3 CheckPoint;
+
+		Dest->UpdateMinMax();
+
+		Ray ray = Src->GetInfo();
+		Box3DInfo Box = Dest->GetInfo();
+
+		while (true)
+		{
+			CheckPoint = ray.Pos + (ray.Dir.x * Step, ray.Dir.y * Step, ray.Dir.z * Step);
+			bool Intersect = CheckPointInBox(CheckPoint, Box);
+
+			if (Intersect)
+				break;
+
+			Step += 0.1f;
+		}
+
+		HitPoint = CheckPoint;
+
 		return true;
 	}
 
@@ -561,7 +582,7 @@ bool CCollision::CollisionBox3DToBox3D(CollisionResult& SrcResult, CollisionResu
 	d[0] = diff.Dot(targetBox.Axis[0]);
 
 	r = abs(d[0]);
-	r0 = targetBox.AxisLen[0];
+	r0 = boundingBox.AxisLen[0];
 	r1 = targetBox.AxisLen[0] * absC[0][0] + targetBox.AxisLen[1] * absC[0][1] + targetBox.AxisLen[2] * absC[0][2];
 
 	if (r > r0 + r1)
@@ -879,7 +900,6 @@ bool CCollision::CollisionRayToBox3D(Vector3& HitPoint, const Ray& ray, const Bo
 	if (tMax < tMin)
 		return false;
 
-
 	return true;
 }
 
@@ -941,4 +961,14 @@ bool CCollision::CollisionBox3DToSphere(Vector3& HitPoint, CColliderBox3D* Src, 
 	//MessageBox(nullptr, TEXT("충돌"), TEXT("충돌"), MB_OK);
 
 	return true;
+}
+
+bool CCollision::CheckPointInBox(const Vector3& Point, const Box3DInfo& Box)
+{
+	if (Point.x >= Box.Min.x && Point.x <= Box.Max.x &&
+		Point.y >= Box.Min.y && Point.y <= Box.Max.y &&
+		Point.z >= Box.Min.z && Point.z <= Box.Max.z)
+		return true;
+
+	return false;
 }

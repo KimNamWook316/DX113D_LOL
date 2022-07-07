@@ -16,7 +16,7 @@
 #include "IMGUIManager.h"
 #include "../EditorInfo.h"
 #include "EngineUtil.h"
-#include "Component/StateComponent.h"
+#include "../Component/GameStateComponent.h"
 
 CToolWindow::CToolWindow()	:
 	m_GizmoBlock(nullptr),
@@ -437,7 +437,7 @@ void CToolWindow::OnClickPlay()
 
 	for (size_t i = 0; i < Count; ++i)
 	{
-		CStateComponent* StateComp = vecObj[i]->FindObjectComponentFromType<CStateComponent>();
+		CGameStateComponent* StateComp = vecObj[i]->FindObjectComponentFromType<CGameStateComponent>();
 		if (StateComp)
 			StateComp->SetTreeUpdate(true);
 	}
@@ -456,7 +456,7 @@ void CToolWindow::OnClickPause()
 
 	for (size_t i = 0; i < Count; ++i)
 	{
-		CStateComponent* StateComp = vecObj[i]->FindObjectComponentFromType<CStateComponent>();
+		CGameStateComponent* StateComp = vecObj[i]->FindObjectComponentFromType<CGameStateComponent>();
 		if (StateComp)
 			StateComp->SetTreeUpdate(false);
 	}

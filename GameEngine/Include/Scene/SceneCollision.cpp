@@ -487,7 +487,10 @@ void CSceneCollision::CheckColliderSection3D()
 	size_t Count = m_Section->vecSection.size();
 
 	for (size_t i = 0; i < Count; ++i)
-		m_Section->vecSection[i]->ClearPrevCollider();
+	{
+		//m_Section->vecSection[i]->ClearPrevCollider();
+		m_Section->vecSection[i]->Clear();
+	}
 
 	auto	iter = m_ColliderList.begin();
 	auto	iterEnd = m_ColliderList.end();
@@ -532,7 +535,7 @@ void CSceneCollision::CheckColliderSection3D()
 				int	Index = z * (m_Section->CountX) + x;
 
 				m_Section->vecSection[Index]->AddCollider(Collider);
-				m_Section->vecSection[Index]->AddPrevCollider(Collider);
+				//m_Section->vecSection[Index]->AddPrevCollider(Collider);
 				Collider->AddPrevSectionIndex(Index);
 			}
 		}

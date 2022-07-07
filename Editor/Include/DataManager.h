@@ -22,7 +22,7 @@ private:
 	void ReadNotifyData();
 
 public:
-	void SetObjectData(class CGameObject* Object, const std::string& ObjectName);
+	void SetObjectData(class CGameObject* Object);
 	void SetNotify(class CGameObject* Object, const std::string& ObjectName);
 
 public:
