@@ -21,6 +21,7 @@ struct Vertex3DOutput
     float2 UV : TEXCOORD;
     float4 ProjPos : POSITION;
     float3 ViewPos : POSITION1;
+	float3 WorldPos : POSITION2;
     float3 Normal : NORMAL;
     float3 Tangent : TANGENT;
     float3 Binormal : BINORMAL;
@@ -78,10 +79,8 @@ struct InstancingInfo
 	float4 g_PaperBurnInLineColor;
 	float4 g_PaperBurnOutLineColor;
 	float4 g_PaperBurnCenterLineColor;
-	int		g_MtrlOutlineEnable;
-	float	g_MtrlOutlineThickness; 
-	float3  g_MtrlOutlineColor;
-	float3  g_MtrlInstancingEmpty;
+	int g_MtrlMetallic;
+	float3 g_MtrlEmpty;
 };
 
 StructuredBuffer<InstancingInfo> g_InstancingInfoArray : register(t40);

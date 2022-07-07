@@ -62,10 +62,8 @@ bool CStaticMeshComponentWidget::Init()
 	m_SpecluarPowerEdit = m_RootTree->AddWidget<CIMGUIInputFloat>("Specluar Power", 200.f);
 	m_EmissiveColorEdit = m_RootTree->AddWidget<CIMGUIColor3>("Emissive", 200.f);
 	m_TransparencyEdit = m_RootTree->AddWidget<CIMGUICheckBox>("Enable Transparency", 200.f);
+	m_Metallic = m_RootTree->AddWidget<CIMGUICheckBox>("Metallic", 200.f);
 	m_OpacityEdit = m_RootTree->AddWidget<CIMGUISliderFloat>("Opacity", 200.f);
-	m_OutlineEnable = m_RootTree->AddWidget<CIMGUICheckBox>("Outline", 200.f);
-	m_OutlineThickness = m_RootTree->AddWidget<CIMGUISliderFloat>("Outline Thickness", 200.f);
-	m_OutlineColor = m_RootTree->AddWidget<CIMGUIColor3>("Outline Color", 200.f);
 	
 	AddWidget<CIMGUISeperator>("Sep");
 
@@ -73,11 +71,9 @@ bool CStaticMeshComponentWidget::Init()
 	m_MeshName->ReadOnly(true);
 	m_MeshName->SetHintText("Mesh Name");
 	m_TransparencyEdit->AddCheckInfo("Transparency");
+	m_Metallic->AddCheckInfo("Metallic");
 	m_OpacityEdit->SetMin(0.f);
 	m_OpacityEdit->SetMax(1.f);
-	m_OutlineThickness->SetMin(0.1f);
-	m_OutlineThickness->SetMax(20.f);
-	m_OutlineEnable->AddCheckInfo("Outline Enable");
 	m_ShaderName->ReadOnly(true);
 
 	// CallBack
@@ -90,9 +86,7 @@ bool CStaticMeshComponentWidget::Init()
 	m_SpecluarPowerEdit->SetCallBack(this, &CStaticMeshComponentWidget::OnEditSpecluarPower);
 	m_TransparencyEdit->SetCallBackIdx(this, &CStaticMeshComponentWidget::OnCheckTransparency);
 	m_OpacityEdit->SetCallBack(this, &CStaticMeshComponentWidget::OnEditOpacity);
-	m_OutlineEnable->SetCallBackIdx(this, &CStaticMeshComponentWidget::OnCheckOutlineEnable);
-	m_OutlineThickness->SetCallBack(this, &CStaticMeshComponentWidget::OnEditOutlineThickness);
-	m_OutlineColor->SetCallBack(this, &CStaticMeshComponentWidget::OnChangeOutlineColor);
+	m_Metallic->SetCallBackIdx(this, &CStaticMeshComponentWidget::OnCheckMetallic);
 	m_ShaderName->SetDropCallBack(this, &CStaticMeshComponentWidget::OnDropShaderName);
 
 	return true;
@@ -146,19 +140,19 @@ void CStaticMeshComponentWidget::OnSelectMaterialSlotCombo(int Idx, const char* 
 	if (MeshCom->GetMesh())
 	{
 		CMaterial* Mat = MeshCom->GetMaterial(Idx);
-
 		std::string ShaderName = Mat->GetShader()->GetName();
+		m_ShaderName->SetText(ShaderName.c_str());
 
 		MakeShaderWidget(Mat, ShaderName);
 
-		m_ShaderName->SetText(ShaderName.c_str());
 		m_BaseColorEdit->SetRGB(Mat->GetBaseColor().x, Mat->GetBaseColor().y, Mat->GetBaseColor().z);
-		m_AmbientColorEdit->SetRGB(Mat->GetBaseColor().x, Mat->GetBaseColor().y, Mat->GetBaseColor().z);
-		m_SpecularColorEdit->SetRGB(Mat->GetBaseColor().x, Mat->GetBaseColor().y, Mat->GetBaseColor().z);
-		m_EmissiveColorEdit->SetRGB(Mat->GetBaseColor().x, Mat->GetBaseColor().y, Mat->GetBaseColor().z);
+		m_AmbientColorEdit->SetRGB(Mat->GetAmbientColor().x, Mat->GetAmbientColor().y, Mat->GetAmbientColor().z);
+		m_SpecularColorEdit->SetRGB(Mat->GetSpecularColor().x, Mat->GetSpecularColor().y, Mat->GetSpecularColor().z);
+		m_EmissiveColorEdit->SetRGB(Mat->GetEmissiveColor().x, Mat->GetEmissiveColor().y, Mat->GetEmissiveColor().z);
 		m_SpecluarPowerEdit->SetVal(Mat->GetSpecularPower());
 		m_TransparencyEdit->SetCheck(0, Mat->IsTransparent());
 		m_OpacityEdit->SetValue(Mat->GetOpacity());
+		m_Metallic->SetCheck(0, Mat->IsMetallic());
 	}
 }
 
@@ -267,7 +261,7 @@ void CStaticMeshComponentWidget::OnEditOpacity(float Opacity)
 	}
 }
 
-void CStaticMeshComponentWidget::OnCheckOutlineEnable(int Idx, bool Enable)
+void CStaticMeshComponentWidget::OnCheckMetallic(int Idx, bool Check)
 {
 	if (m_MaterialSlotCombo->GetSelectIndex() == -1)
 	{
@@ -278,37 +272,7 @@ void CStaticMeshComponentWidget::OnCheckOutlineEnable(int Idx, bool Enable)
 
 	if (MeshCom->GetMesh())
 	{
-		MeshCom->EnableOutline(Enable);
-	}
-}
-
-void CStaticMeshComponentWidget::OnEditOutlineThickness(float Val)
-{
-	if (m_MaterialSlotCombo->GetSelectIndex() == -1)
-	{
-		return;
-	}
-
-	CStaticMeshComponent* MeshCom = (CStaticMeshComponent*)m_Component;
-
-	if (MeshCom->GetMesh())
-	{
-		MeshCom->SetOutlineThickness(Val);
-	}
-}
-
-void CStaticMeshComponentWidget::OnChangeOutlineColor(const Vector3& Color)
-{
-	if (m_MaterialSlotCombo->GetSelectIndex() == -1)
-	{
-		return;
-	}
-
-	CStaticMeshComponent* MeshCom = (CStaticMeshComponent*)m_Component;
-
-	if (MeshCom->GetMesh())
-	{
-		MeshCom->SetOutlineColor(Color);
+		MeshCom->SetMetallic(Check, Idx);
 	}
 }
 
@@ -361,6 +325,7 @@ void CStaticMeshComponentWidget::RefreshMeshWidget(CMesh* Mesh)
 bool CStaticMeshComponentWidget::MakeShaderWidget(class CMaterial* Mat, const std::string& ShaderName)
 {
 	SAFE_DELETE(m_ShaderWidget);
+	m_ShaderWidgetTree->DeleteHierarchy();
 
 	CShader* Shader = CResourceManager::GetInst()->FindShader(ShaderName);
 	size_t TypeID = Shader->GetTypeID();

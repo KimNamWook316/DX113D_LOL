@@ -38,9 +38,7 @@ struct MaterialSaveLoadStruct
     bool Bump;
     RenderStateSaveLoadStruct RenderStateSaveLoad[(int)RenderState_Type::Max];
     // int TextureCount;
-    bool OutlineEnable;
-    float OutlineThickness;
-    Vector3 OutlineColor;
+    bool Metallic;
     ShaderParams ShaderParams;
 };
 
@@ -107,9 +105,7 @@ protected:
     bool        m_EmissiveTex;
     bool        m_Bump;
     bool        m_RecieveDecal;
-	bool        m_OutlineEnable;
-	float       m_OutlineThickness;
-	Vector3     m_OutlineColor;
+    bool       m_Metallic;
     ShaderParams m_ShaderParams;
     CMaterialConstantBuffer* m_CBuffer;
     CSharedPtr<class CRenderState>  m_RenderStateArray[(int)RenderState_Type::Max];
@@ -198,19 +194,9 @@ public:
         return m_Opacity;
     }
 
-    bool IsOutlineEnable() const
+    bool IsMetallic() const
     {
-        return m_OutlineEnable;
-    }
-
-    float GetOutlineThickness() const 
-    {
-        return m_OutlineThickness;
-    }
-
-    const Vector3& GetOutlineColor() const
-    {
-        return m_OutlineColor;
+        return m_Metallic;
     }
 
     bool EmptyTexture() const
@@ -224,26 +210,6 @@ public:
     }
 
 public :
-    void SetOutLineEnable(bool Enable)
-    {
-        m_OutlineEnable = Enable;
-    }
-
-    void SetOutLineThickNess(float ThickNess)
-    {
-        m_OutlineThickness = ThickNess;
-    }
-
-    void SetOutLineColor(const Vector3& Color)
-    {
-        m_OutlineColor = Color;
-    }
-
-    void SetOutLineColor(float r, float g, float b)
-    {
-        m_OutlineColor = Vector3(r,g,b);
-    }
-
     void SetShaderParams(const ShaderParams& Params);
 
 public :
@@ -270,9 +236,10 @@ public:
     void SetEmissiveColor(const Vector4& Color);
     void SetEmissiveColor(float r, float g, float b, float a);
     void SetSpecularPower(float Power);
-    void EnableOutline(bool Enable);
-    void SetOutlineThickness(float Thickness);
-    void SetOutlineColor(const Vector3& Color);
+    void SetMetallic(bool Metallic)
+    {
+        m_Metallic = Metallic;
+    }
 
 public:
     void AddTexture(int Register, int ShaderType, const std::string& Name, class CTexture* Texture);
@@ -288,6 +255,8 @@ public:
     void SetTexture(int Index, int Register, int ShaderType, const std::string& Name, const std::vector<TCHAR*>& vecFileName, const std::string& PathName = TEXTURE_PATH);
     void SetTextureArrayFullPath(int Index, int Register, int ShaderType, const std::string& Name, const std::vector<TCHAR*>& vecFullPath);
     void SetTextureArray(int Index, int Register, int ShaderType, const std::string& Name, const std::vector<TCHAR*>& vecFileName, const std::string& PathName = TEXTURE_PATH);
+
+    void ClearTexture();
 
 public :
     // Texture  정보만 세팅하는 코드

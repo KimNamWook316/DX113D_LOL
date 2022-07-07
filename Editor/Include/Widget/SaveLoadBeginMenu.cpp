@@ -107,7 +107,6 @@ void CSaveLoadBeginMenu::OnSaveSceneMenuCallback()
 
 void CSaveLoadBeginMenu::OnLoadSceneMenuCallback()
 {
-	// TODO : Scene Load 직후 Scene Stop
 	TCHAR FileFullPath[MAX_PATH] = {};
 	OPENFILENAME OpenFile = {};
 	OpenFile.lStructSize = sizeof(OPENFILENAME);
@@ -353,4 +352,8 @@ void CSaveLoadBeginMenu::RefreshSceneRelatedWindow(const std::vector<CGameObject
 	{
 		RefreshSceneRelatedWindow(vecObj[i]);
 	}
+
+	// 렌더 관련 위젯 리프레쉬 
+	CToolWindow* ToolWindow = (CToolWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(TOOL);
+	ToolWindow->RefreshGlobalSceneDataWidget();
 }

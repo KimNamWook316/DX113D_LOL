@@ -14,9 +14,12 @@
 #include "../Window/SceneComponentHierarchyWindow.h"
 #include "../Window/ObjectHierarchyWindow.h"
 #include "IMGUIManager.h"
-#include "../EditorInfo.h"
+#include "../EditorInfo.h":
 #include "EngineUtil.h"
-#include "../Component/GameStateComponent.h"
+#include "PathManager.h"
+#include "../EditorUtil.h"
+#include "GameObject/SkyObject.h"
+#include "IMGUITextInput.h"
 
 CToolWindow::CToolWindow()	:
 	m_GizmoBlock(nullptr),
@@ -96,6 +99,12 @@ bool CToolWindow::Init()
 	m_GLightRotZ = m_GLightBlock->AddWidget<CIMGUISliderFloat>("RotZ", 200.f);
 	m_GLightColor = m_GLightBlock->AddWidget<CIMGUIColor3>("Color", 200.f);
 	m_GLightAmbIntensity = m_GLightBlock->AddWidget<CIMGUISliderFloat>("Ambient Intensity", 200.f);
+
+	// Global
+	m_GlobalBlock = AddWidget<CIMGUICollapsingHeader>("Global", 200.f);
+	m_SkyBoxTexPath = m_GlobalBlock->AddWidget<CIMGUITextInput>("SkyBoxTextureFullPath");
+	m_GlobalBlock->AddWidget<CIMGUISameLine>("Line");
+	m_LoadSkyBoxTex = m_GlobalBlock->AddWidget<CIMGUIButton>("Load", 0.f, 0.f);
 
  //	CIMGUITree* Tree = m_RenderBlock->AddWidget<CIMGUITree>("Outline", 200.f);
  //	m_OutlineDepthMultiply = Tree->AddWidget<CIMGUISliderFloat>("Outline Depth Multiplier");
@@ -194,14 +203,25 @@ bool CToolWindow::Init()
 
 	m_FogColor->SetRGB(CRenderManager::GetInst()->GetFogColor());
 
+	switch (CurType)
+	{
+	case Fog_Type::Depth:
+		m_FogStart->SetMin(0.f);
+		m_FogStart->SetMax(1000.f);
+		m_FogEnd->SetMin(0.f);
+		m_FogEnd->SetMax(1000.f);
+		break;
+	case Fog_Type::Y:
+		m_FogStart->SetMin(-1000.f);
+		m_FogStart->SetMax(1000.f);
+		m_FogEnd->SetMin(-1000.f);
+		m_FogEnd->SetMax(1000.f);
+		break;
+	}
 	float FogStart = CRenderManager::GetInst()->GetFogStart();
-	m_FogStart->SetMin(0);
-	m_FogStart->SetMax(CameraDist);
 	m_FogStart->SetValue(FogStart);
 
 	float FogEnd = CRenderManager::GetInst()->GetFogEnd();
-	m_FogEnd->SetMin(0);
-	m_FogEnd->SetMax(CameraDist);
 	m_FogEnd->SetValue(FogEnd);
 
 	float FogDensity = CRenderManager::GetInst()->GetFogDensity();
@@ -226,6 +246,8 @@ bool CToolWindow::Init()
 	m_GLightAmbIntensity->SetValue(GLightAmbIntensity);
 	m_GLightAmbIntensity->SetMin(0.f);
 	m_GLightAmbIntensity->SetMax(1.f);
+
+	m_SkyBoxTexPath->ReadOnly(true);
 
 	// CallBack
 	m_GizmoTransformMode->SetCallBack(this, &CToolWindow::OnSelectGizmoTransformMode);
@@ -258,6 +280,7 @@ bool CToolWindow::Init()
 	m_GLightRotZ->SetCallBack(this, &CToolWindow::OnChangeGLightRotZ);
 	m_GLightColor->SetCallBack(this, &CToolWindow::OnChangeGLightColor);
 	m_GLightAmbIntensity->SetCallBack(this, &CToolWindow::OnChangeGLightAmbIntensity);
+	m_LoadSkyBoxTex->SetClickCallback(this, &CToolWindow::OnClickLoadSkyBoxTexture);
 
 	// 디버그용 임시 키
 	CInput::GetInst()->CreateKey("Z", 'Z');
@@ -367,6 +390,22 @@ void CToolWindow::OnSelectFogType(int Index, const char* Label)
 {
 	Fog_Type Type = (Fog_Type)Index;
 	CRenderManager::GetInst()->SetFogType(Type);
+
+	switch (Type)
+	{
+	case Fog_Type::Depth:
+		m_FogStart->SetMin(0.f);
+		m_FogStart->SetMax(1000.f);
+		m_FogEnd->SetMin(0.f);
+		m_FogEnd->SetMax(1000.f);
+		break;
+	case Fog_Type::Y:
+		m_FogStart->SetMin(-1000.f);
+		m_FogStart->SetMax(1000.f);
+		m_FogEnd->SetMin(-1000.f);
+		m_FogEnd->SetMax(1000.f);
+		break;
+	}
 }
 
 void CToolWindow::OnChageFogColor(const Vector3& Color)
@@ -429,18 +468,6 @@ void CToolWindow::OnClickPlay()
 	CSceneManager::GetInst()->GetScene()->Play();
 
 	m_PlayState->SetText("Current State : Playing");
-
-	std::vector<CGameObject*> vecObj;
-	CSceneManager::GetInst()->GetScene()->GetAllObjectsPointer(vecObj);
-
-	size_t Count = vecObj.size();
-
-	for (size_t i = 0; i < Count; ++i)
-	{
-		CGameStateComponent* StateComp = vecObj[i]->FindObjectComponentFromType<CGameStateComponent>();
-		if (StateComp)
-			StateComp->SetTreeUpdate(true);
-	}
 }
 
 void CToolWindow::OnClickPause()
@@ -448,18 +475,6 @@ void CToolWindow::OnClickPause()
 	CSceneManager::GetInst()->GetScene()->Pause();
 
 	m_PlayState->SetText("Current State : Paused");
-
-	std::vector<CGameObject*> vecObj;
-	CSceneManager::GetInst()->GetScene()->GetAllObjectsPointer(vecObj);
-
-	size_t Count = vecObj.size();
-
-	for (size_t i = 0; i < Count; ++i)
-	{
-		CGameStateComponent* StateComp = vecObj[i]->FindObjectComponentFromType<CGameStateComponent>();
-		if (StateComp)
-			StateComp->SetTreeUpdate(false);
-	}
 }
 
 void CToolWindow::OnClickStop()
@@ -476,6 +491,9 @@ void CToolWindow::OnClickStop()
 		RefreshSceneRelatedWindow(vecObj);
 
 		m_PlayState->SetText("Current State : Paused");
+
+		// Scene Global Data 로드때 세팅으로 변경
+		RefreshGlobalSceneDataWidget();
 	}
 }
 
@@ -508,6 +526,39 @@ void CToolWindow::OnChangeGLightColor(const Vector3& Color)
 
 	Vector4 vCol = Vector4( Color.x, Color.y, Color.z, 0.f );
 	GLight->SetColor(vCol);
+}
+
+void CToolWindow::OnClickLoadSkyBoxTexture()
+{
+	TCHAR FileFullPath[MAX_PATH] = {};
+	OPENFILENAME OpenFile = {};
+	OpenFile.lStructSize = sizeof(OPENFILENAME);
+	OpenFile.lpstrFile = FileFullPath;
+	OpenFile.nMaxFile = MAX_PATH;
+	OpenFile.lpstrInitialDir = CPathManager::GetInst()->FindPath(TEXTURE_PATH)->Path;
+	OpenFile.lpstrFilter = TEXT("모든 파일\0*.*\0");
+	OpenFile.hwndOwner = CEngine::GetInst()->GetWindowHandle();
+
+	if (GetOpenFileName(&OpenFile) != 0)
+	{
+		char FilePathMultibyte[MAX_PATH] = {};
+		int ConvertLength = WideCharToMultiByte(CP_ACP, 0, FileFullPath, -1, 0, 0, 0, 0);
+		WideCharToMultiByte(CP_ACP, 0, FileFullPath, -1, FilePathMultibyte, ConvertLength, 0, 0);
+	
+		CSkyObject* SkyObj = (CSkyObject*)CSceneManager::GetInst()->GetScene()->GetSkyObject();
+		
+		bool Success = SkyObj->SetSkyTextureFullPath(FilePathMultibyte);
+
+		if (!Success)
+		{
+			MessageBox(nullptr, TEXT("SkyBox 교체 실패"), TEXT("Error"), MB_OK);
+			return;
+		}
+
+		m_SkyBoxTexPath->SetText(FilePathMultibyte);
+
+		MessageBox(nullptr, TEXT("SkyBox 교체 성공"), TEXT("Success"), MB_OK);
+	}
 }
 
 void CToolWindow::ClearSceneRelatedWindows()
@@ -573,6 +624,31 @@ void CToolWindow::RefreshSceneRelatedWindow(const std::vector<CGameObject*>& vec
 	{
 		RefreshSceneRelatedWindow(vecObj[i]);
 	}
+}
+
+void CToolWindow::RefreshGlobalSceneDataWidget()
+{
+	// 현재 씬 Change 되지 않은 프레임이기 때문에 NextScene에서 데이터를 받아온다.
+	CScene* LoadedScene = CSceneManager::GetInst()->GetNextScene();
+
+	SceneSaveGlobalData GlobalData = LoadedScene->GetSceneSaveGlobalData();
+	m_AdaptationTime->SetValue(GlobalData.HDRData.AdaptationTime);
+	m_LumWhite->SetValue(GlobalData.HDRData.LumWhite);
+	m_MiddleGray->SetValue(GlobalData.HDRData.MiddleGray);
+	m_BloomThreshold->SetValue(GlobalData.HDRData.BloomTreshold);
+	m_BloomScale->SetValue(GlobalData.HDRData.BloomScale);
+	m_DOFMin->SetValue(GlobalData.HDRData.DOFMin);
+	m_DOFMax->SetValue(GlobalData.HDRData.DOFMax);
+	m_FogColor->SetRGB(GlobalData.HDRData.FogColor);
+	m_FogType->SetSelectIndex((int)GlobalData.HDRData.FogType);
+	m_FogStart->SetValue(GlobalData.HDRData.FogStart);
+	m_FogEnd->SetValue(GlobalData.HDRData.FogEnd);
+	m_FogDensity->SetValue(GlobalData.HDRData.FogDensity);
+	m_GLightRotX->SetValue(GlobalData.GLightData.Rot.x);
+	m_GLightRotY->SetValue(GlobalData.GLightData.Rot.y);
+	m_GLightRotZ->SetValue(GlobalData.GLightData.Rot.z);
+	m_GLightColor->SetRGB(GlobalData.GLightData.Color);
+	m_GLightAmbIntensity->SetValue(GlobalData.GLightData.AmbientIntensity);
 }
 
 void CToolWindow::OnQDown(float DetlaTime)

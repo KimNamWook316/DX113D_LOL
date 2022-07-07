@@ -460,14 +460,10 @@ void CEditorManager::LoadEditorResources()
 void CEditorManager::CreateWindows()
 {
 	m_ObjectHierarchyWindow = CIMGUIManager::GetInst()->AddWindow<CObjectHierarchyWindow>(OBJECT_HIERARCHY);
-	m_ObjectHierarchyWindow->Close();
 	m_ComponentHierarchyWindow = CIMGUIManager::GetInst()->AddWindow<CSceneComponentHierarchyWindow>(SCENECOMPONENT_HIERARCHY);
-	m_ComponentHierarchyWindow->Close();
 	m_ObjectComponentWindow = CIMGUIManager::GetInst()->AddWindow<CObjectComponentWindow>(OBJECTCOMPONENT_LIST);
-	m_ObjectComponentWindow->Close();
 
 	m_InspectorWindow = CIMGUIManager::GetInst()->AddWindow<CInspectorWindow>(INSPECTOR);
-	m_InspectorWindow->Close();
 
 	m_FileBrowserTree = CIMGUIManager::GetInst()->AddWindow<CFileBrowserTree>(FILE_BROWSERTREE);
 	m_FileBrowserTree->Close();

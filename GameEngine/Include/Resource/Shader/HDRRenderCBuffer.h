@@ -26,7 +26,7 @@ public:
 
 	void SetLumWhite(float White)
 	{
-		m_BufferData.LumWhiteSqr = White;
+		m_BufferData.LumWhite = White;
 	}
 
 	void SetBloomScale(float Scale)
@@ -51,7 +51,7 @@ public:
 
 	float GetLumWhite() const
 	{
-		return m_BufferData.LumWhiteSqr;
+		return m_BufferData.LumWhite;
 	}
 
 	float GetBloomScale() const

@@ -3,7 +3,7 @@
 cbuffer HDRRenderCBuffer : register(b10)
 {
 	float g_HDRMiddleGray;
-	float g_HDRLumWhiteSqr;
+	float g_HDRLumWhite;
 	float g_HDRBloomScale;
 	float g_HDRDOFMin;
 	float g_HDRDOFMax;
@@ -26,11 +26,10 @@ Texture2D<float4> g_BloomTex : register(t12);
 Texture2DMS<float4> g_GBufferDepth : register(t13);
 Texture2D<float4> g_DownScaleTex : register(t14);
 
-#define Fog_Type_Linear 0
-#define Fog_Type_Exp	1
-#define Fog_Type_Exp2	2
-
 #define NatrualE 2.71828
+
+#define FOG_TYPE_DEPTH	0
+#define FOG_TYPE_Y		1
 
 float4 DepthFog(float3 OriginColor, float Depth)
 {
@@ -38,20 +37,24 @@ float4 DepthFog(float3 OriginColor, float Depth)
 	float4 Color;
 	float FogFactor;
 
-	// Linear 쓰는게 속편함
-	if (g_FogType == Fog_Type_Linear)
-	{
-		FogFactor = ((g_FogEnd - Depth) / (g_FogEnd - g_FogStart)) * g_FogDensity;
-	}
-	else if (g_FogType == Fog_Type_Exp)
-	{
-		FogFactor = 1.f / (pow(NatrualE, Depth * g_FogDensity));
-	}
-	else if (g_FogType == Fog_Type_Exp2)
-	{
-		FogFactor = 1.f / (pow(NatrualE, Depth * Depth * g_FogDensity * g_FogDensity));
-	}
+	// 선형 안개
+	FogFactor = ((g_FogEnd - Depth) / (g_FogEnd - g_FogStart)) * g_FogDensity;
+	FogFactor = saturate(FogFactor);
+	
+	// 안개 색상과 보간
+	Color.rgb = lerp(OriginColor.rgb, g_FogColor, 1.f - FogFactor);
 
+	return Color;
+}
+
+float4 YFog(float3 OriginColor, float WorldY)
+{
+	// 안개 얼만큼 끼는지 계산
+	float4 Color;
+	float FogFactor;
+
+	// 선형 안개
+	FogFactor = ((g_FogEnd - WorldY) / (g_FogEnd - g_FogStart)) * g_FogDensity;
 	FogFactor = saturate(FogFactor);
 	
 	// 안개 색상과 보간
@@ -72,11 +75,11 @@ float3 DepthDOF(float3 ColorFocus, float3 ColorBlurred, float Depth)
 float3 ToneMapping(float3 HDRColor)
 {
  //	// 현재 픽셀에 대한 휘도 스케일 계산
- //	float LScale = dot(float4(HDRColor, 0.f), LUM_FACTOR);
- //	LScale *= g_HDRMiddleGray / g_AvgLum[0];
- //	LScale = (LScale + ((LScale * LScale) / g_HDRLumWhiteSqr)) / (1.0 + LScale);
-	float LScale = dot(float4(HDRColor, 0.f), LUM_FACTOR) / (9.6f * g_AvgLum[0]);
-	LScale = (LScale * (1.f + (LScale / g_HDRLumWhiteSqr))) / (1.f + LScale);
+	float LScale = dot(float4(HDRColor, 0.f), LUM_FACTOR);
+	LScale *= g_HDRMiddleGray / g_AvgLum[0];
+	LScale = (LScale + ((LScale * LScale) / (g_HDRLumWhite * g_HDRLumWhite))) / (1.0 + LScale);
+ //	float LScale = dot(float4(HDRColor, 0.f), LUM_FACTOR) / (9.6f * g_AvgLum[0]);
+ //	LScale = (LScale * (1.f + (LScale / g_HDRLumWhiteSqr))) / (1.f + LScale);
 	
 	return HDRColor * LScale;
 }
@@ -140,11 +143,20 @@ PSOutput_Single HDRRenderPS(VS_OUTPUT_HDR Input)
 	{
 		// Fog 계산
 		// Background 색이 Fog 색이랑 동일해야 자연스러운 결과 얻을 수 있음
-		Color = DepthFog(Color.rgb, Depth.g);
+
+		if (g_FogType == FOG_TYPE_DEPTH)
+		{
+			Color = DepthFog(Color.rgb, Depth.g);
+		}
+		else
+		{
+			Color = YFog(Color.rgb, Depth.a);
+		}
 	}
 
-	Output.Color.rgb = Color.rgb;
-	Output.Color.a = Alpha;
+	Output.Color = Color;
+ //	Output.Color.rgb = Color.rgb;
+ //	Output.Color.a = Alpha;
 
 	return Output;
 }
