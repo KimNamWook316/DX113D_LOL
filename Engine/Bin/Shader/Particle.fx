@@ -218,7 +218,7 @@ void ApplySpecialParticleGenerateShape(float RandomAngle, int ThreadID, float Fi
 			// 현재 Frame 에서 해당 Particle 이 놓인 각도 (중심 기준)
 			g_ParticleArray[ThreadID].CurrentParticleAngle = CurrentRingAngle;
 
-			g_ParticleArray[ThreadID].SeperateRotAngleOffset = float3(0.f, CurrentRingAngle * -1.f, 0.f);
+			g_ParticleArray[ThreadID].SeperateRotAngleOffset = float3(0.f, CurrentRingAngle, 0.f);
 		}
 
 		// y 축 위 방향을 향하고 있다.
@@ -414,11 +414,6 @@ void ApplyParticleMove(float3 RandomPos, int ThreadID, float RandomAngle, float 
 	}
 }
 
-// Linear 하게 회전시키기
-void ApplyLinearParticleRotation(float Dir)
-{
-}
-
 // 중력 적용하기 
 void ApplyGravity(int ThreadID, float3 MovePos)
 {
@@ -567,7 +562,42 @@ void ParticleUpdate(uint3 ThreadID : SV_DispatchThreadID)
 		 // 회전할 Offset 값을 더해놓은 상태이기 때문이다.
 		 // g_ParticleArray[ThreadID.x].FinalSeperateRotAngle += ((g_ParticleSeperateRotAngleMax - g_ParticleSeperateRotAngleMin) * Rand + g_ParticleSeperateRotAngleMin);
 		 g_ParticleArray[ThreadID.x].FinalSeperateRotAngle = (g_ParticleSeperateRotAngleMax - g_ParticleSeperateRotAngleMin) * Rand + g_ParticleSeperateRotAngleMin;
-		 g_ParticleArray[ThreadID.x].FinalSeperateRotAngle += g_ParticleArray[ThreadID.x].SeperateRotAngleOffset;
+		 
+		 // g_ParticleArray[ThreadID.x].FinalSeperateRotAngle += g_ParticleArray[ThreadID.x].SeperateRotAngleOffset;
+		 
+		 if (g_SeperateLinerRotate == 1)
+		 {
+			 float3 CenterVector = float3(0.f, 0.f, 1.f);
+			 float3 DirVector = g_ParticleArray[ThreadID.x].Dir;
+			 DirVector.y = 0.f;
+
+			 // cos 0 -> 1
+			 // cos 30 -> sqrt(3) / 2
+			 // cos 90 -> 0
+			 // cos 180 -> -1
+			 // cos 210 -> (sqrt(3) / 2) * -1 -> cos30 * -1
+			 float cosResult = dot(CenterVector, DirVector);
+
+			 // acos 는 -1에서 1 사이의 값을 반환한다.
+			 float RadianRotAngle = acos(cosResult);
+			 float RotAngle = RadianToDegree(RadianRotAngle);
+
+			 // 0 에서 180도 회전까지는, 각도 정보를 제대로 구해온다.
+			 // 그런데 만약 회전이 210도 라면 ?
+			 // cos 210 은, cos 150도와 동일하다.
+			 // acos 을 취하면, cos 210 에 대한 결과값이 150도로 나온다는 의미이다. -> 왜 ?
+
+			 // 오른쪽 면에 있다는 것은, 회전이 180도 보다 크게 된다는 것 (아니면 왼쪽)
+			 // 이때는 RotAngle 결과물에, (180 - 결과물) 만큼 더해줄 것이다
+			 if (DirVector.x > 0.f)
+			 {
+				 RotAngle = (180 - RotAngle);
+			 }
+
+			 // 참고 : 왼손좌표계 기준 y 축 20도 회전 ? -> 반시계방향으로 20도 돌린 것
+			g_ParticleArray[ThreadID.x].FinalSeperateRotAngle += float3(0.f, RotAngle , 0.f);
+			// g_ParticleArray[ThreadID.x].FinalSeperateRotAngle += float3(0.f, 20.f , 0.f);
+		 }
 		 
 	}
 	// 현재 생성이 되어 있는 파티클일 경우
@@ -699,7 +729,8 @@ void ParticleGS(point VertexParticleOutput input[1],
 
 	float	Ratio = g_ParticleArraySRV[InstanceID].LifeTime / g_ParticleArraySRV[InstanceID].LifeTimeMax;
 	
-	float3	Scale = lerp(g_ParticleShareSRV[0].ScaleMin * g_ParticleShareSRV[0].CommonRelativeScale, 
+	float3	Scale = lerp(
+		g_ParticleShareSRV[0].ScaleMin * g_ParticleShareSRV[0].CommonRelativeScale, 
 		g_ParticleShareSRV[0].ScaleMax * g_ParticleShareSRV[0].CommonRelativeScale,
 		float3(Ratio, Ratio, Ratio));
 
