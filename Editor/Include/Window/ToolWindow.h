@@ -27,6 +27,7 @@ public:
 	void SetPlayText(bool Play);
 	void SetGizmoObject(class CGameObject* Object);
 	void SetGizmoComponent(class CSceneComponent* SceneComp);
+	void RefreshGlobalSceneDataWidget(); // HDR 렌더 설정, 전역 라이트 설정 등 리프레쉬
 
 public:
 	// 디버그용 임시 키
@@ -65,6 +66,7 @@ private:
 	void OnChangeGLightRotZ(float Val);
 	void OnChangeGLightAmbIntensity(float Val);
 	void OnChangeGLightColor(const Vector3& Color);
+	void OnClickLoadSkyBoxTexture();
 	void ClearSceneRelatedWindows();
 	void RefreshSceneRelatedWindow(class CGameObject* Object);
 	void RefreshSceneRelatedWindow(const std::vector<CGameObject*>& vecObj);
@@ -116,5 +118,10 @@ private:
 	CIMGUISliderFloat* m_GLightRotZ;
 	CIMGUIColor3* m_GLightColor;
 	CIMGUISliderFloat* m_GLightAmbIntensity;
+
+	// Global Setting
+	CIMGUICollapsingHeader* m_GlobalBlock;
+	class CIMGUITextInput* m_SkyBoxTexPath;
+	CIMGUIButton* m_LoadSkyBoxTex;
 };
 

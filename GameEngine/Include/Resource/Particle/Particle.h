@@ -110,6 +110,7 @@ public:
 		return m_Material;
 	}
 
+
 	// int GetApplyRandom() const
 	// {
 	// 	return m_CBuffer->GetApplyRandom();
@@ -161,7 +162,6 @@ public:
 	{
 		return m_CBuffer->GetScaleMax();
 	}
-
 
 	float GetLifeTimeMin()
 	{
@@ -301,6 +301,12 @@ public:
 		return m_CBuffer->GetUVColN();
 	}
 public:
+	// Component 의 Relative Scale 반영학
+	void SetCommonRelativeScale(const Vector3& Scale)
+	{
+		m_CBuffer->SetCommonRelativeScale(Scale);
+	}
+
 	// Seperate Rot Angle
 	void SetMinSeperateRotAngle(const Vector3& Angle)
 	{

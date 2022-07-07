@@ -543,19 +543,9 @@ void CAnimationMeshComponent::AddOpacity(float Opacity, int Index)
 	m_vecMaterialSlot[Index]->AddOpacity(Opacity);
 }
 
-void CAnimationMeshComponent::EnableOutline(bool Enable, int Index)
+void CAnimationMeshComponent::SetMetallic(bool Metallic, int Index)
 {
-	m_vecMaterialSlot[Index]->EnableOutline(Enable);
-}
-
-void CAnimationMeshComponent::SetOutlineThickness(float Thickness, int Index)
-{
-	m_vecMaterialSlot[Index]->SetOutlineThickness(Thickness);
-}
-
-void CAnimationMeshComponent::SetOutlineColor(const Vector3& Color, int Index)
-{
-	m_vecMaterialSlot[Index]->SetOutlineColor(Color);
+	m_vecMaterialSlot[Index]->SetMetallic(Metallic);
 }
 
 void CAnimationMeshComponent::SetMaterialShader(const std::string& Name)

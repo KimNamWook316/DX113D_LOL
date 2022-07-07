@@ -78,6 +78,9 @@ public:
 
 	// Row 이름과 Label 이름으로 Data검색 : String형태로 리턴되는 값을 원하는 형태로 캐스팅하여 사용
 	const std::string& FindData(const std::string& name, const std::string& label);
+	float FindDataFloat(const std::string& name, const std::string& label);
+	int FindDataInt(const std::string& name, const std::string& label);
+	bool FindDataBool(const std::string& name, const std::string& label);
 
 public:
 	void SetName(const std::string& name)

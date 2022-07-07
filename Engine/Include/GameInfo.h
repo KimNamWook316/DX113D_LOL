@@ -274,9 +274,7 @@ struct MaterialCBuffer
 	int		SpecularTex;
 	int		EmissiveTex;
 	int		ReceiveDecal;
-	int		OutlineEnable;
-	float	OutlineThickness;
-	Vector3 OutlineColor;
+	int		Metallic;
 };
 
 struct AnimationFrameData
@@ -472,6 +470,9 @@ struct	ParticleCBuffer
 
 	Vector3 MaxSeperateRotAngle;
 	float ParticleEmpty6;
+
+	Vector3 CommonRelativeScale;
+	float ParticleEmpty7;
 };
 
 struct ParticleInfo
@@ -500,6 +501,8 @@ struct ParticleInfoShared
 
 	Vector4	ColorMin;
 	Vector4	ColorMax;
+
+	Vector3	CommonRelativeScale;
 
 	int		GravityEnable;
 
@@ -676,9 +679,7 @@ struct Instancing3DInfo
 	Vector4 PaperBurnInLineColor;
 	Vector4 PaperBurnOutLineColor;
 	Vector4 PaperBurnCenterLineColor;
-	int MtrlOutlineEnable;
-	float MtrlOutlineThickness;
-	Vector3 MtrlOutlineColor;
+	int MtrlMetallic;
 	Vector3 Empty;
 };
 
@@ -731,7 +732,7 @@ struct DownScaleCBuffer
 struct HDRRenderCBuffer
 {
 	float MiddleGray;
-	float LumWhiteSqr;
+	float LumWhite;
 	float BloomScale;
 	float DOFMin;				// DOF 적용 최소 거리
 	float DOFMax;				// 완전 초점 상실 거리
@@ -742,8 +743,8 @@ struct FogCBuffer
 {
 	Vector3 Color;
 	int Type;
-	float Start;				// 월드 깊이
-	float End;					// 월드 깊이
+	float Start; 
+	float End;
 	float Density;				
 	float Empty;
 };
@@ -770,6 +771,59 @@ struct GlobalLightCBuffer
 {
 	float AmbientIntensity;
 	Vector3 Empty;
+};
+
+struct HDRSceneSaveData
+{
+	float AdaptationTime;
+	float MiddleGray;
+	float LumWhite;
+	float BloomTreshold;
+	float BloomScale;
+	float DOFMax;
+	float DOFMin;
+	Fog_Type FogType;
+	Vector3 FogColor;
+	float FogStart;
+	float FogEnd;
+	float FogDensity;
+
+	HDRSceneSaveData() :
+		AdaptationTime(3.f),
+		MiddleGray(1.f),
+		LumWhite(1.1f),
+		BloomTreshold(1.f),
+		BloomScale(1.f),
+		DOFMax(600.f),
+		DOFMin(300.f),
+		FogType(Fog_Type::Depth),
+		FogColor(0.f, 0.f, 0.f),
+		FogStart(500.f),
+		FogEnd(950.f),
+		FogDensity(1.f)
+	{
+	}
+};
+
+struct GlobalLightSceneSaveData
+{
+	Vector3 Rot;
+	Vector3 Color;
+	float AmbientIntensity;
+
+	GlobalLightSceneSaveData()	:
+		Rot(45.f, 90.f, 0.f),
+		Color(1.f, 1.f, 1.f),
+		AmbientIntensity(1.f)
+	{
+	}
+};
+
+struct SceneSaveGlobalData
+{
+	HDRSceneSaveData			HDRData;
+	GlobalLightSceneSaveData	GLightData;
+	std::string					SkyBoxTexFileName;
 };
 
 struct NavMeshPolygon

@@ -25,9 +25,7 @@ private:
     void OnEditEmissiveColor(const Vector3& Color);
     void OnCheckTransparency(int Idx, bool Check);
     void OnEditOpacity(float Opacity);
-    void OnCheckOutlineEnable(int Idx, bool Enable);
-    void OnEditOutlineThickness(float Val);
-    void OnChangeOutlineColor(const Vector3& Color);
+    void OnCheckMetallic(int Idx, bool Check);
     void OnDropShaderName(const std::string& Name);
 
 private:
@@ -48,8 +46,6 @@ private:
     class CIMGUIColor3* m_EmissiveColorEdit;
     class CIMGUICheckBox* m_TransparencyEdit;
     class CIMGUISliderFloat* m_OpacityEdit;
-    class CIMGUICheckBox* m_OutlineEnable;
-    class CIMGUISliderFloat* m_OutlineThickness;
-    class CIMGUIColor3* m_OutlineColor;
+    class CIMGUICheckBox* m_Metallic;
 };
 

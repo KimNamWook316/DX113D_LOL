@@ -23,5 +23,10 @@ public:
     virtual void Update(float DeltaTime);
     virtual void PostUpdate(float DeltaTime);
     virtual CSkyObject* Clone();
+
+public:
+    bool SetSkyTexture(const char* FileName, const std::string& PathName = TEXTURE_PATH);
+    bool SetSkyTextureFullPath(const char* FullPath);
+    CTexture* GetSkyTexture();
 };
 
