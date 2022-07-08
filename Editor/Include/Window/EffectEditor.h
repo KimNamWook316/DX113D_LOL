@@ -34,7 +34,6 @@ static const char* ParticleShapeNames[] = {
 };
 
 static const char* ParticleMoveDirType[] = {
-    "YGoingUpRandomDir", // 위로 이동하면서, xz 평면 방향으로 랜덤 이동
     "XZSpread", //  xz 평명 방향으로 이동 y는 0
     "XYSpread" //  xy 평명 방향으로 이동 z 는 0
 };
@@ -66,13 +65,13 @@ private:
     class CIMGUIButton* m_StartEditBtn;
     class CIMGUIButton* m_RestartBtn;
     class CIMGUISliderFloat* m_GenerateRadius;
+    class CIMGUIInputInt* m_SpawnCountMaxEdit;
 private :
     class CIMGUITextInput* m_CurrentParticleName;
 private:
     class CIMGUIComboBox* m_ParticlePreset;
 
     class CIMGUIInputFloat* m_SpawnTimeMaxEdit;
-    class CIMGUIInputInt* m_SpawnCountMaxEdit;
 
     class CIMGUIInputFloat3* m_StartMinEdit;
     class CIMGUIInputFloat3* m_StartMaxEdit;
@@ -195,7 +194,6 @@ private:
 
     // Spawn Time, Count
     void OnSpawnTimeMaxEdit(float Num);
-    void OnSpawnCountMaxEdit(int Num);
 
     // StartMin,Max
     void OnStartMinEdit(const Vector3&);

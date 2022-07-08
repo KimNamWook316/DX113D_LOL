@@ -373,8 +373,7 @@ enum class ParitcleShapeType
 
 enum class ParticleSpecialMoveDir
 {
-	YGoingUpRandomDir = 0, // 위로 이동하면서, xz 평면 방향으로 랜덤 이동
-	XZSpread, // xz 평명 방향으로 이동 y는 0
+	XZSpread = 0, // xz 평명 방향으로 이동 y는 0
 	XYSpread, // xy 평명 방향으로 이동 z 는 0
 	Max
 };

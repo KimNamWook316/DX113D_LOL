@@ -41,7 +41,7 @@ cbuffer	ParticleCBuffer : register(b11)
 	float g_ParticleAlphaMax;
 	float g_ParticleAlphaMin;
 	int g_ParticleLifeTimeLinear;
-	int g_SeperateLinerRotate; // 0 ~ 360 를 돌면서, Linaer 하게 회전시킬 것인지.
+	int g_SeperateLinerRotate; // 자신의 진행 방향 대로 회전시킬 것인가. g_ParticleSpecialMoveDirType 을 지정해야 한다. 회전 중심 축을 잡아야 하므로
 
 	int g_ParticleUVMoveEnable;
 	int g_ParticleUVRowN;
@@ -217,17 +217,7 @@ void ApplySpecialParticleGenerateShape(float RandomAngle, int ThreadID, float Fi
 
 			// 현재 Frame 에서 해당 Particle 이 놓인 각도 (중심 기준)
 			g_ParticleArray[ThreadID].CurrentParticleAngle = CurrentRingAngle;
-
-			g_ParticleArray[ThreadID].SeperateRotAngleOffset = float3(0.f, CurrentRingAngle, 0.f);
 		}
-
-		// y 축 위 방향을 향하고 있다.
-		// y축 기준 회전을 하면 된다.
-		if (g_SeperateLinerRotate == 1)
-		{
-			// g_ParticleArray[ThreadID].SeperateRotAngleOffset = float3(0.f, CurrentRingAngle * -1.f, 0.f);
-		}
-
 	}
 	break;
 	// Circle
@@ -314,13 +304,6 @@ void ApplySpecialParticleGenerateShape(float RandomAngle, int ThreadID, float Fi
 			// 현재 Frame 에서 해당 Particle 이 놓인 각도 (중심 기준)
 			g_ParticleArray[ThreadID].CurrentParticleAngle = CurrentRingAngle;
 		}
-
-		// Z 음수 방향으로 회전을 해야 한다. 따라서 실제 회전 양 * -1 을 해준다.
-		if (g_SeperateLinerRotate == 1)
-		{
-			// g_ParticleArray[ThreadID].SeperateRotAngleOffset = float3(0.f, CurrentRingAngle, 0.f) + g_LinearRotInitRotAngle;
-			g_ParticleArray[ThreadID].SeperateRotAngleOffset = float3(0.f, 0.f, CurrentRingAngle * -1.f);
-		}
 	}
 	break;
 	}
@@ -340,31 +323,13 @@ void ApplySpecialMoveDirType(int ThreadID, float RandomAngle, float3 OriginDir, 
 
 	switch (g_ParticleSpecialMoveDirType)
 	{
-		// g_ParticleSpecialMoveDirType -> 0 이라면, y 는 위로 증가하면서, XZ 방향으로만 Change 하기 
 	case 0:
-	{
-		// 완전 랜덤한 방향으로 이동하기 
-		float3 RandDir = float3(0.f, 0.f, 0.f) + float3(
-			// cos(RandomAngle) * Rand, 어차피 normalize 를 아래에서 진행해주는데, 굳이 Rand 를 곱해줘야 하는가
-			cos(MoveTowardAngle),
-			OriginDir.y,
-			sin(MoveTowardAngle));
-
-		normalize(RandDir);
-
-		g_ParticleArray[ThreadID].Dir = RandDir;
-
-		//g_LoopGenerateRing
-	}
-	break;
-
-	case 1:
 	{
 		// y 는 0 -> XZ 평면으로, 사방으로 뻗어나가게 하기 
 		float3 RandDir = float3(0.f, 0.f, 0.f) + float3(
 			// cos(RandomAngle) * Rand, 어차피 normalize 를 아래에서 진행해주는데, 굳이 Rand 를 곱해줘야 하는가
 			cos(MoveTowardAngle),
-			0.f,
+			OriginDir.y,
 			sin(MoveTowardAngle));
 		normalize(RandDir);
 
@@ -372,13 +337,13 @@ void ApplySpecialMoveDirType(int ThreadID, float RandomAngle, float3 OriginDir, 
 	}
 	break;
 
-	case 2:
+	case 1:
 	{
 		// z 는 0, xy 평면 방향으로 뻗어나가게 하기 
 		float3 RandDir = float3(0.f, 0.f, 0.f) + float3(
 			cos(MoveTowardAngle),
 			sin(MoveTowardAngle),
-			0.f);
+			OriginDir.z);
 
 		normalize(RandDir);
 
@@ -448,6 +413,59 @@ void ApplyGravity(int ThreadID, float3 MovePos)
 		g_ParticleArray[ThreadID.x].WorldPos += MovePos;
 }
 
+void ApplyRotationAccordingToDir(int ThreadID)
+{
+	// HLSL 좌표계를 무엇을 사용하는가 ?
+	//  y 축 20도 회전 ? -> 반시계방향으로 20도 돌린 것
+	// 그런데 왼손좌표계에서는 20도 회전이 곧, 시계방향인 것으로 알고 있는데 ..?
+	// g_ParticleArray[ThreadID.x].FinalSeperateRotAngle += float3(0.f, 20.f , 0.f);
+
+	if (g_SeperateLinerRotate == 1)
+	{
+		float RotAngle = 0.f;
+		float3 DirVector = g_ParticleArray[ThreadID.x].Dir;
+
+		switch (g_ParticleSpecialMoveDirType)
+		{
+		// y 는 0 -> XZ 평면으로, 사방으로 뻗어나가게 하기 
+		case 0:
+		{
+			// 아래는 Y + 방향을 바라본 상태로 회전하는 것
+			float3 CenterVector = float3(0.f, 0.f, 1.f);
+			DirVector.y = 0.f;
+
+			RotAngle = AngleBetweenTwoVector(CenterVector, DirVector);
+
+			if (DirVector.x > 0.f)
+			{
+				RotAngle = (180 - RotAngle);
+			}
+
+			g_ParticleArray[ThreadID.x].FinalSeperateRotAngle += float3(0.f, RotAngle, 0.f);
+		}
+		break;
+
+		case 1:
+		{
+			// z 는 0, xy 평면 방향으로 뻗어나가게 하기 (z 는 - 방향을 향하고 있게 된다.)
+			float3 CenterVector = float3(0.f, 1.f, 0.f);
+			DirVector.z = 0.f;
+
+			float RotAngle = AngleBetweenTwoVector(CenterVector, DirVector);
+
+			if (DirVector.x > 0.f)
+			{
+				RotAngle = (180 - RotAngle);
+			}
+
+			g_ParticleArray[ThreadID.x].FinalSeperateRotAngle += float3(0.f, 0.f, RotAngle );
+
+		}
+		break;
+		}
+	}
+}
+
 [numthreads(64, 1, 1)]	// 스레드 그룹 스레드 수를 지정한다.
 void ParticleUpdate(uint3 ThreadID : SV_DispatchThreadID)
 {
@@ -474,7 +492,6 @@ void ParticleUpdate(uint3 ThreadID : SV_DispatchThreadID)
 
 	// 매번 초기화 해줄 것이다.
 	g_ParticleArray[ThreadID.x].SeperateRotAngleOffset = float3(0.f, 0.f, 0.f);
-
 
 	// 처음에는 자기 자신의 Rot Angle 을 -1으로 세팅 (일종의 초기화)
 	g_ParticleArray[ThreadID.x].CurrentParticleAngle = PARTICLE_INIT_ANGLE;
@@ -565,39 +582,8 @@ void ParticleUpdate(uint3 ThreadID : SV_DispatchThreadID)
 		 
 		 // g_ParticleArray[ThreadID.x].FinalSeperateRotAngle += g_ParticleArray[ThreadID.x].SeperateRotAngleOffset;
 		 
-		 if (g_SeperateLinerRotate == 1)
-		 {
-			 float3 CenterVector = float3(0.f, 0.f, 1.f);
-			 float3 DirVector = g_ParticleArray[ThreadID.x].Dir;
-			 DirVector.y = 0.f;
-
-			 // cos 0 -> 1
-			 // cos 30 -> sqrt(3) / 2
-			 // cos 90 -> 0
-			 // cos 180 -> -1
-			 // cos 210 -> (sqrt(3) / 2) * -1 -> cos30 * -1
-			 float cosResult = dot(CenterVector, DirVector);
-
-			 // acos 는 -1에서 1 사이의 값을 반환한다.
-			 float RadianRotAngle = acos(cosResult);
-			 float RotAngle = RadianToDegree(RadianRotAngle);
-
-			 // 0 에서 180도 회전까지는, 각도 정보를 제대로 구해온다.
-			 // 그런데 만약 회전이 210도 라면 ?
-			 // cos 210 은, cos 150도와 동일하다.
-			 // acos 을 취하면, cos 210 에 대한 결과값이 150도로 나온다는 의미이다. -> 왜 ?
-
-			 // 오른쪽 면에 있다는 것은, 회전이 180도 보다 크게 된다는 것 (아니면 왼쪽)
-			 // 이때는 RotAngle 결과물에, (180 - 결과물) 만큼 더해줄 것이다
-			 if (DirVector.x > 0.f)
-			 {
-				 RotAngle = (180 - RotAngle);
-			 }
-
-			 // 참고 : 왼손좌표계 기준 y 축 20도 회전 ? -> 반시계방향으로 20도 돌린 것
-			g_ParticleArray[ThreadID.x].FinalSeperateRotAngle += float3(0.f, RotAngle , 0.f);
-			// g_ParticleArray[ThreadID.x].FinalSeperateRotAngle += float3(0.f, 20.f , 0.f);
-		 }
+		 // 자신의 진행 방향에 따른 회전을 추가한다.
+		 ApplyRotationAccordingToDir(ThreadID.x);
 		 
 	}
 	// 현재 생성이 되어 있는 파티클일 경우

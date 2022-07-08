@@ -207,6 +207,7 @@ void CParticleComponent::PostUpdate(float DeltaTime)
 	// 100개일 경우 그룹은 2개가 생성된다. 이때 스레드는 128개가 되므로 100개를 제외한 나머지 28개는 처리가 안되게
 	// 막아주면 되는것이다.
 	int	GroupCount = m_Particle->GetSpawnCountMax() / 64 + 1;
+
 	m_UpdateShader->Excute(GroupCount, 1, 1);
 
 	m_NormalDistributionBuffer->ResetShader();
@@ -215,8 +216,6 @@ void CParticleComponent::PostUpdate(float DeltaTime)
 	{
 		m_vecStructuredBuffer[i]->ResetShader();
 	}
-
-
 	// 여기에서 Data를 CopyResource로 복제해서 테스트 해볼것.
 }
 

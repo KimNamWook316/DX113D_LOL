@@ -52,7 +52,6 @@ CEffectEditor::~CEffectEditor()
 bool CEffectEditor::Init()
 {
     // Save, Load
-
     m_SaveParticleBtn = AddWidget<CIMGUIButton>("Save Particle", 90.f, 20.f);
     m_SaveParticleBtn->SetClickCallback<CEffectEditor>(this, &CEffectEditor::OnSaveParticleClass);
 
@@ -118,6 +117,10 @@ bool CEffectEditor::Init()
     m_GenerateRadius->SetMin(0.0f);
     m_GenerateRadius->SetMax(100.f);
 
+    // SpawnCount
+    m_SpawnCountMaxEdit = AddWidget<CIMGUIInputInt>("Init Spawn Count", 200.f);
+    m_SpawnCountMaxEdit->SetVal(1000); // 처음에는 1000개로 세팅
+
     // Camera
     CIMGUITree* Tree = AddWidget<CIMGUITree>("Camera");
 
@@ -180,6 +183,7 @@ bool CEffectEditor::Init()
         m_ParticlePreset->AddItem(ParticlePresetNames[i]);
     }
     m_ParticlePreset->SetSelectIndex(0);
+
 
     // UV Move
     Tree = AddWidget<CIMGUITree>("UV Move");
@@ -339,12 +343,6 @@ bool CEffectEditor::Init()
     m_SpawnTimeMaxEdit = Tree->AddWidget<CIMGUIInputFloat>("Spawn Time", 150.f);
     m_SpawnTimeMaxEdit->SetCallBack(this, &CEffectEditor::OnSpawnTimeMaxEdit);
 
-    Line = Tree->AddWidget<CIMGUISameLine>("Line");
-    Line->SetOffsetX(270.f);
-
-    m_SpawnCountMaxEdit = Tree->AddWidget<CIMGUIInputInt>("Spawn Max", 150.f);
-    m_SpawnCountMaxEdit->SetCallBack(this, &CEffectEditor::OnSpawnCountMaxEdit);
-
     // Start Min, Start Max
     Tree = AddWidget<CIMGUITree>("Start Min, Max");
 
@@ -472,6 +470,11 @@ void CEffectEditor::OnRestartParticleComponentButton()
     BackUpParticleObjectInfo();
 
     m_ParticleObject = CSceneManager::GetInst()->GetScene()->CreateGameObject<C3DParticleObject>("Particle Effect Base Ground");
+    
+    // Init Spawn Count 개수를 반영한다.
+    // 아래 SetParticleToParticleComponent 이전에 세팅해줘야 한다. m_PArticle Class 에 해당 내용을 세팅해두고
+    // 이를 Particle Component 에 반영하는 원리이다.
+    m_ParticleClass->SetSpawnCountMax(m_SpawnCountMaxEdit->GetVal());
 
     SetParticleToParticleComponent(dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent()), m_ParticleClass);
 
@@ -739,15 +742,6 @@ void CEffectEditor::OnStartMaxEdit(const Vector3& Pos)
 
     m_ParticleClass->SetStartMax(Pos);
     // m_ParticleComponent->GetParticle()->SetStartMax(Pos);
-}
-
-void CEffectEditor::OnSpawnCountMaxEdit(int Num)
-{
-    if (!m_ParticleClass)
-        return;
-
-    m_ParticleClass->SetSpawnCountMax(Num);
-    // m_ParticleComponent->GetCBuffer()->SetSpawnCountMax(Num);
 }
 
 void CEffectEditor::OnScaleMinEdit(const Vector3& Scale)
@@ -1227,7 +1221,9 @@ void CEffectEditor::OnSetBasicParticleMaterialSetting(CSceneComponent* Com)
 
     // 2) Particle 제작
     CSceneManager::GetInst()->GetScene()->GetResource()->CreateParticle("BasicParticle");
+
     m_ParticleClass = CSceneManager::GetInst()->GetScene()->GetResource()->FindParticle("BasicParticle");
+
     if (!m_ParticleClass)
         return;
 
@@ -1235,7 +1231,7 @@ void CEffectEditor::OnSetBasicParticleMaterialSetting(CSceneComponent* Com)
 
     SetBasicDefaultParticleInfos(m_ParticleClass);
 
-    // 해당 정보들 UI 에 세팅하기
+    // 해당 정보들 Particle 에 세팅하기
     SetParticleToParticleComponent(dynamic_cast<CParticleComponent*>(Com), "BasicParticle");
 
     // 기본 Z Pos 세팅
@@ -1317,8 +1313,13 @@ void CEffectEditor::SetBasicDefaultParticleInfos(CParticle* Particle)
     // 반드시 3D 로 세팅한다.
     Particle->Set2D(false);
 
-    // Spawn Time, Count
+    // Spawn Count
     Particle->SetSpawnCountMax(1000);
+
+    // Init Spawn Count Max 세팅하기
+    Particle->SetSpawnCountMax(m_SpawnCountMaxEdit->GetVal());
+
+    // Spawn Time
     Particle->SetSpawnTimeMax(0.05f);
 
     // Life Time
@@ -1986,8 +1987,8 @@ void CEffectEditor::OnSparkPreset()
     OnSetAlphaBlendToMaterialCallback();
 
     // Random Dir O
-    m_ParticleClass->SetSpecialMoveDirType(ParticleSpecialMoveDir::YGoingUpRandomDir);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetSpecialMoveDirType(ParticleSpecialMoveDir::YGoingUpRandomDir);
+    m_ParticleClass->SetSpecialMoveDirType(ParticleSpecialMoveDir::XZSpread);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetSpecialMoveDirType(ParticleSpecialMoveDir::XZSpread);
 
     // SpawnTime
     OnSpawnTimeMaxEdit(0.02f);
