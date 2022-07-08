@@ -13,12 +13,12 @@ public:
     virtual bool Init() override;
 
 private:
+    class CIMGUIButton* m_MaterialTextureChangeButton;
+
     class CIMGUIComboBox* m_MaterialSlotCombo;
     class CIMGUITextInput* m_MeshName;
     class CIMGUIColor3* m_BaseColorEdit;
-    class CIMGUIColor3* m_AmbientColorEdit;
-    class CIMGUIColor3* m_SpecularColorEdit;
-    class CIMGUIInputFloat* m_SpecluarPowerEdit;
+
     class CIMGUIColor3* m_EmissiveColorEdit;
     class CIMGUICheckBox* m_TransparencyEdit;
     class CIMGUISliderFloat* m_OpacityEdit;
@@ -28,12 +28,10 @@ public:
 
 private:
     void OnEditBaseColor(const Vector3& Color);
-    void OnEditAmbientColor(const Vector3& Color);
-    void OnEditSpecluarColor(const Vector3& Color);
-    void OnEditSpecluarPower(float Power);
     void OnEditEmissiveColor(const Vector3& Color);
     void OnCheckTransparency(int Idx, bool Check);
     void OnEditOpacity(float Opacity);
+    void OnChangeMaterialTexture();
 
 private:
     void RefreshMeshWidget(class CMesh* Mesh);

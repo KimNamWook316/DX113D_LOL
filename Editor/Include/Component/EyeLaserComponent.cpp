@@ -261,37 +261,244 @@ void CEyeLaserComponent::SetBaseColor(float r, float g, float b, float a, int In
 	m_Material->SetBaseColor(r, g, b, a);
 }
 
-void CEyeLaserComponent::SetAmbientColor(const Vector4& Color, int Index)
-{
-	m_Material->SetAmbientColor(Color);
-}
-
-void CEyeLaserComponent::SetAmbientColor(float r, float g, float b, float a, int Index)
-{
-	m_Material->SetAmbientColor(r, g, b, a);
-}
-
-void CEyeLaserComponent::SetSpecularColor(const Vector4& Color, int Index)
-{
-	//m_vecMaterialSlot[Index]->SetSpecularColor(Color);
-}
-
-void CEyeLaserComponent::SetSpecularColor(float r, float g, float b, float a, int Index)
-{
-	//m_vecMaterialSlot[Index]->SetSpecularColor(r, g, b, a);
-}
-
 void CEyeLaserComponent::SetEmissiveColor(const Vector4& Color, int Index)
 {
-	//m_vecMaterialSlot[Index]->SetEmissiveColor(Color);
+	m_Material->SetEmissiveColor(Color);
 }
 
 void CEyeLaserComponent::SetEmissiveColor(float r, float g, float b, float a, int Index)
 {
-	//m_vecMaterialSlot[Index]->SetEmissiveColor(r, g, b, a);
+	m_Material->SetEmissiveColor(r, g, b, a);
 }
 
-void CEyeLaserComponent::SetSpecularPower(float Power, int Index)
+void CEyeLaserComponent::SetTransparencyMaterial(bool Enable)
 {
-	//m_vecMaterialSlot[Index]->SetSpecularPower(Power);
+	if (Enable)
+	{
+		bool AlreadyTransparent = m_LayerName == "Transparency";
+
+		if (!AlreadyTransparent)
+		{
+			m_LayerName = "Transparency";
+		}
+
+		m_Material->SetTransparency(true);
+
+		// 모든 Material의 Shader 교체
+		SetMaterialShader("Transparent3DShader");
+
+		// 인스턴싱 레이어를 바꾼다.
+		if (!AlreadyTransparent)
+		{
+			ChangeInstancingLayer();
+		}
+	}
+
+	else
+	{
+		bool AlreadyOpaque = m_LayerName == "Default";
+
+		if (!AlreadyOpaque)
+		{
+			m_LayerName = "Default";
+		}
+
+		// 이전 쉐이더로 되돌림
+		m_Material->SetTransparency(false);
+		m_Material->RevertShader();
+
+		// 인스턴싱 레이어를 바꾼다.
+		if (!AlreadyOpaque)
+		{
+			ChangeInstancingLayer();
+		}
+	}
+}
+
+void CEyeLaserComponent::SetMaterialShader(const std::string& Name)
+{
+	CGraphicShader* Shader = dynamic_cast<CGraphicShader*>(CResourceManager::GetInst()->FindShader(Name));
+
+	if (!Shader)
+		return;
+
+	m_Material->SetShader(Shader);
+	OnChangeMaterialShader(Shader);
+
+}
+
+void CEyeLaserComponent::ChangeInstancingLayer()
+{
+	auto iter = m_InstancingCheckList.begin();
+	auto iterEnd = m_InstancingCheckList.end();
+
+	bool CheckCountExist = false;
+
+	bool AddOnNewLayer = false;
+	bool DeleteOnOldLayer = false;
+
+	for (; iter != iterEnd;)
+	{
+		if ((*iter)->Mesh == m_LaserPlaneMesh)
+		{
+			// 같은 레이어일 경우 추가한다.
+			if ((*iter)->LayerName == m_LayerName)
+			{
+				CheckCountExist = true;
+
+				(*iter)->InstancingList.push_back(this);
+
+				auto iterInst = (*iter)->InstancingList.begin();
+				auto iterInstEnd = (*iter)->InstancingList.end();
+
+				// 이 컴포넌트를 추가하면서 인스턴싱으로 출력하게 되는 경우
+				if ((*iter)->InstancingList.size() == 10)
+				{
+					for (; iterInst != iterInstEnd; ++iterInst)
+					{
+						(*iterInst)->SetInstancing(true);
+					}
+				}
+				// 이미 인스턴싱 출력중인 경우
+				else if ((*iter)->InstancingList.size() > 10)
+				{
+					SetInstancing(true);
+				}
+				// 인스턴싱 하지 않는 경우
+				else
+				{
+					SetInstancing(false);
+				}
+
+				AddOnNewLayer = true;
+			}
+
+			// Layer가 다를 경우 해당 레이어에서 뺀다
+			else
+			{
+				// 이 컴포넌트가 빠지면서 인스턴싱을 하지 않게 처리해야 하는 경우
+				bool InstancingOff = (*iter)->InstancingList.size() == 10;
+
+				auto iterInst = (*iter)->InstancingList.begin();
+				auto iterInstEnd = (*iter)->InstancingList.end();
+
+				if (InstancingOff)
+				{
+					for (; iterInst != iterInstEnd;)
+					{
+						(*iterInst)->SetInstancing(false);
+
+						if ((*iterInst) == this)
+						{
+							iterInst = (*iter)->InstancingList.erase(iterInst);
+							continue;
+						}
+
+						++iterInst;
+					}
+				}
+				else
+				{
+					for (; iterInst != iterInstEnd; ++iterInst)
+					{
+						if ((*iterInst) == this)
+						{
+							// 현재 레이어의 인스턴싱 리스트에서 제거
+							(*iter)->InstancingList.erase(iterInst);
+							break;
+						}
+					}
+				}
+
+				DeleteOnOldLayer = true;
+
+				if ((*iter)->InstancingList.empty())
+				{
+					SAFE_DELETE(*iter);
+					iter = m_InstancingCheckList.erase(iter);
+					continue;
+				}
+			}
+		}
+
+		// 새 레이어에 넣고, 이전 레이어에서 빼는 작업 완료한 경우 루프 종료
+		if (AddOnNewLayer && DeleteOnOldLayer)
+		{
+			break;
+		}
+
+		++iter;
+	}
+
+	// 이 컴포넌트가 속한 레이어에 처음 추가되는 경우
+	if (!CheckCountExist)
+	{
+		OnCreateNewInstancingCheckCount();
+	}
+}
+
+void CEyeLaserComponent::OnCreateNewInstancingCheckCount()
+{
+	InstancingCheckCount* CheckCount = new InstancingCheckCount;
+
+	m_InstancingCheckList.push_back(CheckCount);
+
+	CheckCount->InstancingList.push_back(this);
+	CheckCount->Mesh = m_LaserPlaneMesh;
+	CheckCount->LayerName = m_LayerName;
+
+	// Material별로 어떤 Instanicng Shader로 렌더해야 하는지 받아온다.
+	size_t SlotSize = 1;
+
+	CGraphicShader* NoInstancingShader = nullptr;
+	CGraphicShader* InstancingShader = nullptr;
+	CMaterial* Mat = nullptr;
+	ShaderParams MatShaderParams = {};
+
+	CheckCount->vecInstancingShader.resize(SlotSize);
+	CheckCount->vecShaderParams.resize(SlotSize);
+
+	for (size_t i = 0; i < SlotSize; ++i)
+	{
+		// Material별 Instancing Shader, Shader Paramerter 정보 저장
+		Mat = m_Material;
+		NoInstancingShader = Mat->GetShader();
+		InstancingShader = CResourceManager::GetInst()->FindInstancingShader(NoInstancingShader);
+		MatShaderParams = Mat->GetShaderParams();
+
+		CheckCount->vecInstancingShader[i] = InstancingShader;
+		CheckCount->vecShaderParams[i] = MatShaderParams;
+	}
+
+	SetInstancing(false);
+}
+
+void CEyeLaserComponent::SetOpacity(float Opacity)
+{
+	m_Material->SetOpacity(Opacity);
+}
+
+void CEyeLaserComponent::AddOpacity(float Opacity)
+{
+	m_Material->AddOpacity(Opacity);
+}
+
+void CEyeLaserComponent::OnChangeMaterialShader(CGraphicShader* NewShader)
+{
+	auto iter = m_InstancingCheckList.begin();
+	auto iterEnd = m_InstancingCheckList.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		if ((*iter)->Mesh == m_LaserPlaneMesh)
+		{
+			if ((*iter)->LayerName == m_LayerName)
+			{
+				// Instancing Shader 교체
+				CGraphicShader* NewInstancingShader = CResourceManager::GetInst()->FindInstancingShader(NewShader);
+				(*iter)->vecInstancingShader[0] = NewInstancingShader;
+				break;
+			}
+		}
+	}
 }

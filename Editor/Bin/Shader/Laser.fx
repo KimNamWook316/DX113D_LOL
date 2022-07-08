@@ -23,7 +23,7 @@ PS_OUTPUT_TRANSPARENT LaserPS(Vertex3DOutput Input)
     if (BaseTextureColor.a == 0.f || g_MtrlOpacity == 0.f)
         clip(-1);
     
-    output.ScreenColor.rgb = BaseTextureColor.rgb;
+    output.ScreenColor.rgb = BaseTextureColor.rgb * g_MtrlBaseColor.rgb + g_MtrlEmissiveColor.rgb;
     
     output.ScreenColor.a = BaseTextureColor.a * g_MtrlOpacity;
     

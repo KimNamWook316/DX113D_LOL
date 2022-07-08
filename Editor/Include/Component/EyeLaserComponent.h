@@ -79,12 +79,15 @@ private:
 public:
 	void SetBaseColor(const Vector4& Color, int Index = 0);
 	void SetBaseColor(float r, float g, float b, float a, int Index = 0);
-	void SetAmbientColor(const Vector4& Color, int Index = 0);
-	void SetAmbientColor(float r, float g, float b, float a, int Index = 0);
-	void SetSpecularColor(const Vector4& Color, int Index = 0);
-	void SetSpecularColor(float r, float g, float b, float a, int Index = 0);
 	void SetEmissiveColor(const Vector4& Color, int Index = 0);
 	void SetEmissiveColor(float r, float g, float b, float a, int Index = 0);
-	void SetSpecularPower(float Power, int Index = 0);
+	void SetTransparencyMaterial(bool Enable);
+	void SetMaterialShader(const std::string& Name);
+	void OnChangeMaterialShader(CGraphicShader* NewShader);
+	void ChangeInstancingLayer();
+	void OnCreateNewInstancingCheckCount();
+
+	void SetOpacity(float Opacity);
+	void AddOpacity(float Opacity);
 };
 

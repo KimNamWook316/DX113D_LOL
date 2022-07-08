@@ -137,6 +137,7 @@ public:	// =================== Texture =====================
 	bool LoadTexture(const std::string& Name, const TCHAR* FileName,
 		const std::string& PathName = TEXTURE_PATH);
 	bool LoadTextureFullPath(const std::string& Name, const TCHAR* FullPath);
+	bool LoadTextureFullPath(std::string& OutName, const TCHAR* FullPath);
 	bool LoadTextureFullPathMultibyte(const std::string& Name, const char* FullPath);
 	bool LoadTexture(const std::string& Name, const std::vector<TCHAR*>& vecFileName,
 		const std::string& PathName = TEXTURE_PATH);
