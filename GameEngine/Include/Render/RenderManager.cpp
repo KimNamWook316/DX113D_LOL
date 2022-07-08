@@ -287,11 +287,13 @@ bool CRenderManager::Init()
 
 	m_RenderLayerList.push_back(Layer);
 
+#ifdef _DEBUG
 	Layer = new RenderLayer;
 	Layer->Name = "Collider";
 	Layer->LayerPriority = 8;
 
 	m_RenderLayerList.push_back(Layer);
+#endif // _DEBUG
 
 	m_DepthDisable = m_RenderStateManager->FindRenderState("DepthDisable");
 	m_AlphaBlend = m_RenderStateManager->FindRenderState("AlphaBlend");
@@ -486,18 +488,11 @@ bool CRenderManager::Init()
 	m_LightBlendShader = CResourceManager::GetInst()->FindShader("LightBlendShader");
 	m_LightBlendRenderShader = CResourceManager::GetInst()->FindShader("LightBlendRenderShader");
 	m_Mesh3DNoLightRenderShader = CResourceManager::GetInst()->FindShader("Mesh3DNoLightShader");
-	m_Standard3DInstancingShader = CResourceManager::GetInst()->FindShader("Standard3DInstancingShader");
 	m_ShadowMapShader = CResourceManager::GetInst()->FindShader("ShadowMapShader");
 	m_ShadowMapInstancingShader = CResourceManager::GetInst()->FindShader("ShadowMapInstancingShader");
-	m_Transparent3DInstancingShader = CResourceManager::GetInst()->FindShader("TransparentInstancing3DShader");
-	// m_OutLineShader = CResourceManager::GetInst()->FindShader("OutlineShader");
-	// m_GrayShader = CResourceManager::GetInst()->FindShader("GrayShader");
 
 	m_ShadowCBuffer = new CShadowCBuffer;
 	m_ShadowCBuffer->Init();
-
- //	m_OutlineCBuffer = new COutlineConstantBuffer;
- //	m_OutlineCBuffer->Init();
 
 	// Post FX Renderer
 	m_PostFXRenderer = new CPostFXRenderer;
@@ -540,89 +535,14 @@ void CRenderManager::Render(float DeltaTime)
 		}	
 	}
 
-	{
-		const std::list<InstancingCheckCount*>* InstancingList = CSceneComponent::GetInstancingCheckList();
-
-		auto	iter = InstancingList->begin();
-		auto	iterEnd = InstancingList->end();
-
-		for (; iter != iterEnd; ++iter)
-		{
-			if ((*iter)->InstancingList.size() >= 10)
-			{
-				RenderLayer* Layer = nullptr;
-
-				size_t	Size = m_RenderLayerList.size();
-
-				for (size_t i = 0; i < Size; ++i)
-				{
-					if (m_RenderLayerList[i]->Name == (*iter)->LayerName)
-					{
-						Layer = m_RenderLayerList[i];
-						break;
-					}
-				}
-
-				if (Layer)
-				{
-					if (Layer->m_vecInstancing.size() == Layer->InstancingIndex)
-					{
-						Layer->m_vecInstancing.resize(Layer->InstancingIndex * 2);
-
-						for (int i = 0; i < Layer->InstancingIndex; ++i)
-						{
-							Layer->m_vecInstancing[Layer->InstancingIndex + i] = new RenderInstancingList;
-						}
-					}
-
-					if ((*iter)->InstancingList.size() > Layer->m_vecInstancing[Layer->InstancingIndex]->BufferCount)
-					{
-						int	Count = (int)(Layer->m_vecInstancing[Layer->InstancingIndex]->BufferCount * 1.5f);
-
-						if ((*iter)->InstancingList.size() > Count)
-							Count = (int)(*iter)->InstancingList.size();
-
-						SAFE_DELETE(Layer->m_vecInstancing[Layer->InstancingIndex]->Buffer);
-						SAFE_DELETE(Layer->m_vecInstancing[Layer->InstancingIndex]->ShadowBuffer);
-
-						Layer->m_vecInstancing[Layer->InstancingIndex]->Buffer = new CStructuredBuffer;
-						Layer->m_vecInstancing[Layer->InstancingIndex]->Buffer->Init("InstancingBuffer", sizeof(Instancing3DInfo),
-							Count, 40, true,
-							(int)Buffer_Shader_Type::Vertex | (int)Buffer_Shader_Type::Pixel);
-
-						Layer->m_vecInstancing[Layer->InstancingIndex]->ShadowBuffer = new CStructuredBuffer;
-						Layer->m_vecInstancing[Layer->InstancingIndex]->Buffer->Init("InstancingShadowBuffer", sizeof(Instancing3DInfo),
-							Count, 40, true,
-							(int)Buffer_Shader_Type::Vertex | (int)Buffer_Shader_Type::Pixel);
-					}
-
-					auto	iter1 = (*iter)->InstancingList.begin();
-					auto	iter1End = (*iter)->InstancingList.end();
-
-					for (; iter1 != iter1End; ++iter1)
-					{
-						Layer->m_vecInstancing[Layer->InstancingIndex]->RenderList.push_back(*iter1);
-					}
-
-					Layer->m_vecInstancing[Layer->InstancingIndex]->Mesh = (*iter)->Mesh;
-
-					if ((*iter)->Mesh->CheckType<CAnimationMesh>())
-					{
-						Layer->m_vecInstancing[Layer->InstancingIndex]->Animation = true;
-						Layer->m_vecInstancing[Layer->InstancingIndex]->CBuffer->SetBoneCount(((CAnimationMesh*)(*iter)->Mesh)->GetBoneCount());
-					}
-
-					++Layer->InstancingIndex;
-				}
-			}
-		}
-	}
+	// 인스턴싱 리스트 업데이트
+	UpdateInstancingList();
 
 	// 환경맵 출력
 	RenderSkyBox();
 	
-	// 인스턴싱 정보를 만든다.
-	RenderDefaultInstancingInfo();
+	// Default Layer의 인스턴싱 정보를 만든다.
+	UpdateInstancingInfo(1, true);
 
 	// 그림자 맵을 만든다.
 	RenderShadowMap();
@@ -639,14 +559,11 @@ void CRenderManager::Render(float DeltaTime)
 	// 조명 누적버퍼와 GBuffer를 이용하여 최종화면을 만들어낸다.
 	RenderLightBlend();
 
-	// 반투명한 오브젝트들의 인스턴싱 정보 생성
-	RenderTransparentInstancingInfo();
+	// 반투명 레이어의 인스턴싱 정보 생성
+	UpdateInstancingInfo(2, false);
 
 	// 반투명한 오브젝트를 그린다.
 	RenderTransparent();
-
- //	// 외곽선을 그린다.
- //	RenderOutLine();
 
 	if (m_PostProcessing)
 	{
@@ -659,12 +576,6 @@ void CRenderManager::Render(float DeltaTime)
 		RenderFinalScreen();
 	}
 
- //	// 흑백 효과
- //	if (m_Gray)
- //	{
- //		RenderGray();
- //	}
-
 	// Debug Mode 일때만 컴파일 + Editor 에서만 Render 되게 세팅
 #ifdef _DEBUG
 	// Animation Editor Animation Instance 제작용 Render Target
@@ -673,7 +584,6 @@ void CRenderManager::Render(float DeltaTime)
 	// Particle Effect Editor 제작용 Render Target
 	RenderParticleEffectEditor();
 #endif
-
 
 	m_vecGBuffer[2]->SetShader(10, (int)Buffer_Shader_Type::Pixel, 0);
 
@@ -705,30 +615,19 @@ void CRenderManager::Render(float DeltaTime)
 		(*iter)->Render();
 	}
 
-	// Collider Layer 출력
-	iter = m_RenderLayerList[8]->RenderList.begin();
-	iterEnd = m_RenderLayerList[8]->RenderList.end();
-
-	for (; iter != iterEnd; ++iter)
+#ifdef _DEBUG
+	if (CEngine::GetInst()->GetEditMode())
 	{
-		(*iter)->Render();
-	}
-
-	// 조명 정보를 Shader로 넘겨준다.
-	//CSceneManager::GetInst()->GetScene()->GetLightManager()->SetShader();
-
-	/*{
-		auto	iter = m_RenderLayerList.begin();
-		auto	iterEnd = m_RenderLayerList.end();
+		// Collider Layer 출력
+		iter = m_RenderLayerList[8]->RenderList.begin();
+		iterEnd = m_RenderLayerList[8]->RenderList.end();
 
 		for (; iter != iterEnd; ++iter)
 		{
-			for (int i = 0; i < (*iter)->RenderCount; ++i)
-			{
-				(*iter)->RenderList[i]->Render();
-			}
+			(*iter)->Render();
 		}
-	}*/
+	}
+#endif // _DEBUG
 
 	{
 		auto	iter1 = m_RenderLayerList.begin();
@@ -860,7 +759,8 @@ void CRenderManager::RenderGBuffer()
 		}
 	}
 
-	RenderDefaultInstancing();
+	// Default Layer Instancing
+	RenderInstancing(1, false);
 
 	CDevice::GetInst()->GetContext()->OMSetRenderTargets((unsigned int)GBufferSize,
 		&vecPrevTarget[0], PrevDepthTarget);
@@ -1035,7 +935,6 @@ void CRenderManager::RenderLightAcc()
 
 void CRenderManager::RenderLightBlend()
 {
-
 	m_FinalTarget->SetTarget(nullptr);
 
 	m_vecGBuffer[0]->SetTargetShader(14);
@@ -1077,41 +976,6 @@ void CRenderManager::RenderLightBlend()
 	m_FinalTarget->ResetTarget();
 }
 
- //void CRenderManager::RenderOutLine()
- //{
- //	m_OutlineTarget->ClearTarget();
- //	m_OutlineTarget->SetTarget(nullptr);
- //
- //	// ScreenColor, Normal, Depth, OutlineInfo
- //	CRenderTarget* FinalScreenTarget = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("FinalScreen");
- //
- //	FinalScreenTarget->SetTargetShader(13);
- //	m_vecGBuffer[1]->SetTargetShader(14);
- //	m_vecGBuffer[2]->SetTargetShader(15);
- //	m_vecGBuffer[6]->SetTargetShader(16);
- //	
- //	m_DepthDisable->SetState();
- //
- //	m_OutlineCBuffer->UpdateCBuffer();
- //	m_OutLineShader->SetShader();
- //
- //	UINT Offset = 0;
- //	CDevice::GetInst()->GetContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
- //	CDevice::GetInst()->GetContext()->IASetVertexBuffers(0, 0, nullptr, nullptr, &Offset);
- //	CDevice::GetInst()->GetContext()->IASetIndexBuffer(nullptr, DXGI_FORMAT_UNKNOWN, 0);
- //
- //	CDevice::GetInst()->GetContext()->Draw(4, 0);
- //
- //	FinalScreenTarget->ResetTargetShader(13);
- //	m_vecGBuffer[1]->ResetTargetShader(14);
- //	m_vecGBuffer[2]->ResetTargetShader(15);
- //	m_vecGBuffer[6]->ResetTargetShader(16);
- //
- //	m_OutlineTarget->ResetTarget();
- //
- //	m_DepthDisable->ResetState();
- //}
-
 void CRenderManager::RenderTransparent()
 {
 	// z소팅
@@ -1152,7 +1016,8 @@ void CRenderManager::RenderTransparent()
 		(*iter)->Render();
 	}
 
-	RenderTransparentInstancing();
+	// Transparent Layer Instancing
+	RenderInstancing(2, true);
 
 	CSceneManager::GetInst()->GetScene()->GetLightManager()->ResetForwardRenderShader();
 
@@ -1170,7 +1035,6 @@ void CRenderManager::RenderTransparent()
 void CRenderManager::RenderFinalScreen()
 {
 	m_FinalTarget->SetTargetShader(21);
-	// m_OutlineTarget->SetTargetShader(23);
 
 	m_LightBlendRenderShader->SetShader();
 
@@ -1186,7 +1050,6 @@ void CRenderManager::RenderFinalScreen()
 
 	m_DepthDisable->ResetState();
 
-	// m_OutlineTarget->ResetTargetShader(23);
 	m_FinalTarget->ResetTargetShader(21);
 }
 
@@ -1323,44 +1186,244 @@ CRenderState* CRenderManager::FindRenderState(const std::string& Name)
 	return m_RenderStateManager->FindRenderState(Name);
 }
 
-void CRenderManager::RenderDefaultInstancingInfo()
+void CRenderManager::RenderInstancing(int LayerIndex, bool AlphaBlend)
 {
-	for (int i = 0; i < m_RenderLayerList[1]->InstancingIndex; ++i)
+	int InstancingIndex = m_RenderLayerList[LayerIndex]->InstancingIndex;
+
+	// 이제 Default Layer 에 있는 Instancing집단. 들을 순회할 것이다.
+	for (int i = 0; i < InstancingIndex; ++i)
 	{
+		RenderInstancingList* InstancingList = m_RenderLayerList[LayerIndex]->m_vecInstancing[i];
 		// Material Slot 수만큼 반복한다.
 		int	SlotCount = 0;
-		if (m_RenderLayerList[1]->m_vecInstancing[i]->Mesh->GetMeshType() == Mesh_Type::Static)
+
+		if (InstancingList->Mesh->GetMeshType() == Mesh_Type::Static)
 		{
-			SlotCount = ((CStaticMeshComponent*)m_RenderLayerList[1]->m_vecInstancing[i]->RenderList.back())->GetMaterialSlotCount();
+			SlotCount = ((CStaticMeshComponent*)InstancingList->RenderList.back())->GetMaterialSlotCount();
 		}
 
 		else if (m_RenderLayerList[1]->m_vecInstancing[i]->Mesh->GetMeshType() == Mesh_Type::Animation)
 		{
-			SlotCount = ((CAnimationMeshComponent*)m_RenderLayerList[1]->m_vecInstancing[i]->RenderList.back())->GetMaterialSlotCount();
+			SlotCount = ((CAnimationMeshComponent*)InstancingList->RenderList.back())->GetMaterialSlotCount();
 		}
 
 		for (int j = 0; j < SlotCount; ++j)
 		{
-			auto	iter = m_RenderLayerList[1]->m_vecInstancing[i]->RenderList.begin();
-			auto	iterEnd = m_RenderLayerList[1]->m_vecInstancing[i]->RenderList.end();
+			CMaterial* Material = nullptr;
 
-			std::vector<Instancing3DInfo>	vecInfo;
-			vecInfo.reserve(m_RenderLayerList[1]->m_vecInstancing[i]->RenderList.size());
+			if (m_RenderLayerList[1]->m_vecInstancing[i]->Mesh->GetMeshType() == Mesh_Type::Static)
+			{
+				Material = ((CStaticMeshComponent*)InstancingList->RenderList.back())->GetMaterial(j);
+			}
 
+			else if (m_RenderLayerList[1]->m_vecInstancing[i]->Mesh->GetMeshType() == Mesh_Type::Animation)
+			{
+				Material = ((CAnimationMeshComponent*)InstancingList->RenderList.back())->GetMaterial(j);
+			}
+
+			if (Material)
+				Material->RenderTexture();
+
+			if (m_RenderLayerList[1]->m_vecInstancing[i]->Animation)
+			{
+				((CAnimationMesh*)InstancingList->Mesh)->SetBoneShader();
+			}
+
+			if (AlphaBlend)
+			{
+				m_AlphaBlendMRT->SetState();
+			}
+			
+			// 해당 Material의 Instancing Shader에 접근
+			// Transparent한 경우 모든 Material이 Transparent Instancing Shader를 가지고 있다. (Mesh Component 단에서 처리)
+			CGraphicShader* InstancingShader = (InstancingList->pvecInstancingShader->at(j));
+			InstancingShader->SetShader();
+
+			// Shader Parameter 업데이트
+			ShaderParams ShaderParams = (InstancingList->pvecShaderParams->at(j));
+			InstancingShader->SetShaderParams(ShaderParams);
+
+			InstancingList->CBuffer->SetMaterialIndex(j);
+
+			InstancingList->CBuffer->UpdateCBuffer();
+
+			InstancingList->Buffer->SetShader();
+
+			InstancingList->Mesh->RenderInstancing((int)InstancingList->RenderList.size(), j);
+
+			InstancingList->Buffer->ResetShader();
+
+			if (AlphaBlend)
+			{
+				m_AlphaBlendMRT->ResetState();
+			}
+
+			if (InstancingList->Animation)
+			{
+				((CAnimationMesh*)InstancingList->Mesh)->ResetBoneShader();
+			}
+
+			if (Material)
+				Material->Reset();
+		}
+	}
+}
+
+void CRenderManager::UpdateInstancingList()
+{
+	const std::list<InstancingCheckCount*>* InstancingList = CSceneComponent::GetInstancingCheckList();
+
+	auto	iter = InstancingList->begin();
+	auto	iterEnd = InstancingList->end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		if ((*iter)->InstancingList.size() >= 10)
+		{
+			RenderLayer* Layer = nullptr;
+
+			size_t	Size = m_RenderLayerList.size();
+
+			for (size_t i = 0; i < Size; ++i)
+			{
+				if (m_RenderLayerList[i]->Name == (*iter)->LayerName)
+				{
+					Layer = m_RenderLayerList[i];
+					break;
+				}
+			}
+
+			if (Layer)
+			{
+				if (Layer->m_vecInstancing.size() == Layer->InstancingIndex)
+				{
+					Layer->m_vecInstancing.resize(Layer->InstancingIndex * 2);
+
+					for (int i = 0; i < Layer->InstancingIndex; ++i)
+					{
+						Layer->m_vecInstancing[Layer->InstancingIndex + i] = new RenderInstancingList;
+					}
+				}
+
+				const std::list<class CSceneComponent*>& InstancingCompList = (*iter)->InstancingList;
+				int RecommendSBufferSize = InstancingCompList.size();
+
+				if ((*iter)->Mesh->GetMeshType() == Mesh_Type::Static)
+				{
+					RecommendSBufferSize *= ((CStaticMeshComponent*)InstancingCompList.back())->GetMaterialSlotCount();
+				}
+				else if ((*iter)->Mesh->GetMeshType() == Mesh_Type::Animation)
+				{
+					RecommendSBufferSize *= ((CAnimationMeshComponent*)InstancingCompList.back())->GetMaterialSlotCount();
+				}
+
+				if (RecommendSBufferSize > Layer->m_vecInstancing[Layer->InstancingIndex]->BufferCount)
+				{
+					int	Count = (int)(Layer->m_vecInstancing[Layer->InstancingIndex]->BufferCount * 1.5f);
+
+					if ((*iter)->InstancingList.size() > Count)
+					{
+						Count = RecommendSBufferSize;
+					}
+
+					if (RecommendSBufferSize > 1000)
+					{
+						int a = 1;
+					}
+
+					SAFE_DELETE(Layer->m_vecInstancing[Layer->InstancingIndex]->Buffer);
+					SAFE_DELETE(Layer->m_vecInstancing[Layer->InstancingIndex]->ShadowBuffer);
+
+					Layer->m_vecInstancing[Layer->InstancingIndex]->Buffer = new CStructuredBuffer;
+					Layer->m_vecInstancing[Layer->InstancingIndex]->Buffer->Init("InstancingBuffer", sizeof(Instancing3DInfo),
+						Count, 40, true,
+						(int)Buffer_Shader_Type::Vertex | (int)Buffer_Shader_Type::Pixel);
+
+					Layer->m_vecInstancing[Layer->InstancingIndex]->ShadowBuffer = new CStructuredBuffer;
+					Layer->m_vecInstancing[Layer->InstancingIndex]->Buffer->Init("InstancingShadowBuffer", sizeof(Instancing3DInfo),
+						Count, 40, true,
+						(int)Buffer_Shader_Type::Vertex | (int)Buffer_Shader_Type::Pixel);
+
+					Layer->m_vecInstancing[Layer->InstancingIndex]->BufferCount = Count;
+				}
+
+				auto	iter1 = (*iter)->InstancingList.begin();
+				auto	iter1End = (*iter)->InstancingList.end();
+
+				for (; iter1 != iter1End; ++iter1)
+				{
+					Layer->m_vecInstancing[Layer->InstancingIndex]->RenderList.push_back(*iter1);
+				}
+
+				Layer->m_vecInstancing[Layer->InstancingIndex]->Mesh = (*iter)->Mesh;
+				Layer->m_vecInstancing[Layer->InstancingIndex]->pvecInstancingShader = &(*iter)->vecInstancingShader;
+				Layer->m_vecInstancing[Layer->InstancingIndex]->pvecShaderParams = &(*iter)->vecShaderParams;
+
+				if ((*iter)->Mesh->CheckType<CAnimationMesh>())
+				{
+					Layer->m_vecInstancing[Layer->InstancingIndex]->Animation = true;
+					Layer->m_vecInstancing[Layer->InstancingIndex]->CBuffer->SetBoneCount(((CAnimationMesh*)(*iter)->Mesh)->GetBoneCount());
+				}
+
+				Layer->m_vecInstancing[Layer->InstancingIndex]->CBuffer->SetObjectCount((*iter)->InstancingList.size());
+
+				++Layer->InstancingIndex;
+			}
+		}
+	}
+}
+
+void CRenderManager::UpdateInstancingInfo(int LayerIndex, bool UpdateShadow)
+{
+	int InstancingIndex = m_RenderLayerList[LayerIndex]->InstancingIndex;
+
+	for (int i = 0; i < InstancingIndex; ++i)
+	{
+		RenderInstancingList* InstancingList = m_RenderLayerList[LayerIndex]->m_vecInstancing[i];
+
+		CSceneComponent* RenderComponent = InstancingList->RenderList.back();
+
+		// Material Slot 수만큼 반복한다.
+		int	SlotCount = 0;
+		if (InstancingList->Mesh->GetMeshType() == Mesh_Type::Static)
+		{
+			SlotCount = ((CStaticMeshComponent*)RenderComponent)->GetMaterialSlotCount();
+		}
+
+		else if (InstancingList->Mesh->GetMeshType() == Mesh_Type::Animation)
+		{
+			SlotCount = ((CAnimationMeshComponent*)RenderComponent)->GetMaterialSlotCount();
+		}
+
+		// 렌더해야 할 오브젝트 수 * 오브젝트 당 Material 수만큼 구조화 버퍼 할당
+		int SBufferSize = (int)(InstancingList->RenderList.size()) * SlotCount;
+
+		std::vector<Instancing3DInfo>	vecInfo;
+		std::vector<Instancing3DInfo>	vecShadowInfo;
+
+		vecInfo.reserve(SBufferSize);
+
+		if (UpdateShadow)
+		{
 			// ShadowBuffer
-			std::vector<Instancing3DInfo>	vecShadowInfo;
-			vecShadowInfo.reserve(m_RenderLayerList[1]->m_vecInstancing[i]->RenderList.size());
+			vecShadowInfo.reserve(SBufferSize);
+		}
+
+		for (int j = 0; j < SlotCount; ++j)
+		{
+			auto	iter = InstancingList->RenderList.begin();
+			auto	iterEnd = InstancingList->RenderList.end();
 
 			CMaterial* Material = nullptr;
 
 			for (; iter != iterEnd; ++iter)
 			{
-				if (m_RenderLayerList[1]->m_vecInstancing[i]->Mesh->GetMeshType() == Mesh_Type::Static)
+				if (InstancingList->Mesh->GetMeshType() == Mesh_Type::Static)
 				{
 					Material = ((CStaticMeshComponent*)(*iter))->GetMaterial(j);
 				}
 
-				else if (m_RenderLayerList[1]->m_vecInstancing[i]->Mesh->GetMeshType() == Mesh_Type::Animation)
+				else if (InstancingList->Mesh->GetMeshType() == Mesh_Type::Animation)
 				{
 					Material = ((CAnimationMeshComponent*)(*iter))->GetMaterial(j);
 				}
@@ -1387,251 +1450,65 @@ void CRenderManager::RenderDefaultInstancingInfo()
 				(*iter)->SetInstancingShadowInfo(&ShadowInfo);
 				Material->GetCBuffer()->SetInstancingInfo(&ShadowInfo);
 
-				vecShadowInfo.push_back(ShadowInfo);
+				if (UpdateShadow)
+				{
+					vecShadowInfo.push_back(ShadowInfo);
+				}
 			}
-
-			m_RenderLayerList[1]->m_vecInstancing[i]->Buffer->UpdateBuffer(&vecInfo[0],
-				(int)vecInfo.size());
-			m_RenderLayerList[1]->m_vecInstancing[i]->ShadowBuffer->UpdateBuffer(&vecShadowInfo[0],
-				(int)vecShadowInfo.size());
-		}
-	}
-}
-
-void CRenderManager::RenderDefaultInstancing()
-{
-	// 이제 Default Layer 에 있는 Instancing집단. 들을 순회할 것이다.
-	for (int i = 0; i < m_RenderLayerList[1]->InstancingIndex; ++i)
-	{
-		// Material Slot 수만큼 반복한다.
-		int	SlotCount = 0;
-
-		if (m_RenderLayerList[1]->m_vecInstancing[i]->Mesh->GetMeshType() == Mesh_Type::Static)
-		{
-			SlotCount = ((CStaticMeshComponent*)m_RenderLayerList[1]->m_vecInstancing[i]->RenderList.back())->GetMaterialSlotCount();
 		}
 
-		else if (m_RenderLayerList[1]->m_vecInstancing[i]->Mesh->GetMeshType() == Mesh_Type::Animation)
+		InstancingList->Buffer->UpdateBuffer(&vecInfo[0],
+			(int)SBufferSize);
+
+		if (UpdateShadow)
 		{
-			SlotCount = ((CAnimationMeshComponent*)m_RenderLayerList[1]->m_vecInstancing[i]->RenderList.back())->GetMaterialSlotCount();
-		}
-
-		for (int j = 0; j < SlotCount; ++j)
-		{
-			CMaterial* Material = nullptr;
-
-			if (m_RenderLayerList[1]->m_vecInstancing[i]->Mesh->GetMeshType() == Mesh_Type::Static)
-			{
-				Material = ((CStaticMeshComponent*)m_RenderLayerList[1]->m_vecInstancing[i]->RenderList.back())->GetMaterial(j);
-			}
-
-			else if (m_RenderLayerList[1]->m_vecInstancing[i]->Mesh->GetMeshType() == Mesh_Type::Animation)
-			{
-				Material = ((CAnimationMeshComponent*)m_RenderLayerList[1]->m_vecInstancing[i]->RenderList.back())->GetMaterial(j);
-			}
-
-			if (Material)
-				Material->RenderTexture();
-
-			if (m_RenderLayerList[1]->m_vecInstancing[i]->Animation)
-			{
-				((CAnimationMesh*)m_RenderLayerList[1]->m_vecInstancing[i]->Mesh)->SetBoneShader();
-			}
-
-			m_Standard3DInstancingShader->SetShader();
-
-			m_RenderLayerList[1]->m_vecInstancing[i]->CBuffer->UpdateCBuffer();
-
-			m_RenderLayerList[1]->m_vecInstancing[i]->Buffer->SetShader();
-
-			m_RenderLayerList[1]->m_vecInstancing[i]->Mesh->RenderInstancing((int)m_RenderLayerList[1]->m_vecInstancing[i]->RenderList.size(), j);
-
-			m_RenderLayerList[1]->m_vecInstancing[i]->Buffer->ResetShader();
-
-
-			if (m_RenderLayerList[1]->m_vecInstancing[i]->Animation)
-			{
-				((CAnimationMesh*)m_RenderLayerList[1]->m_vecInstancing[i]->Mesh)->ResetBoneShader();
-			}
-
-
-			if (Material)
-				Material->Reset();
-
+			InstancingList->ShadowBuffer->UpdateBuffer(&vecShadowInfo[0],
+				(int)SBufferSize);
 		}
 	}
 }
 
 void CRenderManager::RenderDefaultInstancingShadow()
 {
-	for (int i = 0; i < m_RenderLayerList[1]->InstancingIndex; ++i)
+	int InstancingIndex = m_RenderLayerList[1]->InstancingIndex;
+
+	for (int i = 0; i < InstancingIndex; ++i)
 	{
+		RenderInstancingList* InstancingList = m_RenderLayerList[1]->m_vecInstancing[i];
+
 		// Material Slot 수만큼 반복한다.
 		int	SlotCount = 0;
-		if (m_RenderLayerList[1]->m_vecInstancing[i]->Mesh->GetMeshType() == Mesh_Type::Static)
+		if (InstancingList->Mesh->GetMeshType() == Mesh_Type::Static)
 		{
-			SlotCount = ((CStaticMeshComponent*)m_RenderLayerList[1]->m_vecInstancing[i]->RenderList.back())->GetMaterialSlotCount();
+			SlotCount = ((CStaticMeshComponent*)InstancingList->RenderList.back())->GetMaterialSlotCount();
 		}
 
-		else if (m_RenderLayerList[1]->m_vecInstancing[i]->Mesh->GetMeshType() == Mesh_Type::Animation)
+		else if (InstancingList->Mesh->GetMeshType() == Mesh_Type::Animation)
 		{
-			SlotCount = ((CAnimationMeshComponent*)m_RenderLayerList[1]->m_vecInstancing[i]->RenderList.back())->GetMaterialSlotCount();
+			SlotCount = ((CAnimationMeshComponent*)InstancingList->RenderList.back())->GetMaterialSlotCount();
 		}
 
 		for (int j = 0; j < SlotCount; ++j)
 		{
-			if (m_RenderLayerList[1]->m_vecInstancing[i]->Animation)
+			if (InstancingList->Animation)
 			{
-				((CAnimationMesh*)m_RenderLayerList[1]->m_vecInstancing[i]->Mesh)->SetBoneShader();
+				((CAnimationMesh*)InstancingList->Mesh)->SetBoneShader();
 			}
 
 			m_ShadowMapInstancingShader->SetShader();
 
-			m_RenderLayerList[1]->m_vecInstancing[i]->CBuffer->UpdateCBuffer();
+			InstancingList->CBuffer->UpdateCBuffer();
 
-			m_RenderLayerList[1]->m_vecInstancing[i]->ShadowBuffer->SetShader();
+			InstancingList->ShadowBuffer->SetShader();
 
-			m_RenderLayerList[1]->m_vecInstancing[i]->Mesh->RenderInstancing((int)m_RenderLayerList[1]->m_vecInstancing[i]->RenderList.size(), j);
+			InstancingList->Mesh->RenderInstancing((int)InstancingList->RenderList.size(), j);
 
+			InstancingList->ShadowBuffer->ResetShader();
 
-			m_RenderLayerList[1]->m_vecInstancing[i]->ShadowBuffer->ResetShader();
-
-
-
-			if (m_RenderLayerList[1]->m_vecInstancing[i]->Animation)
+			if (InstancingList->Animation)
 			{
-				((CAnimationMesh*)m_RenderLayerList[1]->m_vecInstancing[i]->Mesh)->ResetBoneShader();
+				((CAnimationMesh*)InstancingList->Mesh)->ResetBoneShader();
 			}
-		}
-	}
-}
-
-void CRenderManager::RenderTransparentInstancingInfo()
-{
-	for (int i = 0; i < m_RenderLayerList[2]->InstancingIndex; ++i)
-	{
-		// Material Slot 수만큼 반복한다.
-		int	SlotCount = 0;
-		if (m_RenderLayerList[2]->m_vecInstancing[i]->Mesh->GetMeshType() == Mesh_Type::Static)
-		{
-			SlotCount = ((CStaticMeshComponent*)m_RenderLayerList[2]->m_vecInstancing[i]->RenderList.back())->GetMaterialSlotCount();
-		}
-
-		else if (m_RenderLayerList[2]->m_vecInstancing[i]->Mesh->GetMeshType() == Mesh_Type::Animation)
-		{
-			SlotCount = ((CAnimationMeshComponent*)m_RenderLayerList[2]->m_vecInstancing[i]->RenderList.back())->GetMaterialSlotCount();
-		}
-
-		for (int j = 0; j < SlotCount; ++j)
-		{
-			auto	iter = m_RenderLayerList[2]->m_vecInstancing[i]->RenderList.begin();
-			auto	iterEnd = m_RenderLayerList[2]->m_vecInstancing[i]->RenderList.end();
-
-			std::vector<Instancing3DInfo>	vecInfo;
-			vecInfo.reserve(m_RenderLayerList[2]->m_vecInstancing[i]->RenderList.size());
-
-			CMaterial* Material = nullptr;
-
-			for (; iter != iterEnd; ++iter)
-			{
-				if (m_RenderLayerList[2]->m_vecInstancing[i]->Mesh->GetMeshType() == Mesh_Type::Static)
-				{
-					Material = ((CStaticMeshComponent*)(*iter))->GetMaterial(j);
-				}
-
-				else if (m_RenderLayerList[2]->m_vecInstancing[i]->Mesh->GetMeshType() == Mesh_Type::Animation)
-				{
-					Material = ((CAnimationMeshComponent*)(*iter))->GetMaterial(j);
-				}
-
-				Instancing3DInfo	Info = {};
-
-				(*iter)->SetInstancingInfo(&Info);
-				Material->GetCBuffer()->SetInstancingInfo(&Info);
-
-				// 페이퍼번 정보
-				if (Info.MtrlPaperBurnEnable == 2)
-				{
-					CPaperBurnComponent* PaperBurn = (*iter)->GetGameObject()->FindComponentFromType<CPaperBurnComponent>();
-					if (PaperBurn)
-					{
-						PaperBurn->SetInstancingInfo(&Info);
-					}
-				}
-
-				vecInfo.push_back(Info);
-
-				Instancing3DInfo	ShadowInfo = {};
-			}
-
-			m_RenderLayerList[2]->m_vecInstancing[i]->Buffer->UpdateBuffer(&vecInfo[0],
-				(int)vecInfo.size());
-		}
-	}
-}
-
-void CRenderManager::RenderTransparentInstancing()
-{
-	for (int i = 0; i < m_RenderLayerList[2]->InstancingIndex; ++i)
-	{
-		// Material Slot 수만큼 반복한다.
-		int	SlotCount = 0;
-
-		if (m_RenderLayerList[2]->m_vecInstancing[i]->Mesh->GetMeshType() == Mesh_Type::Static)
-		{
-			SlotCount = ((CStaticMeshComponent*)m_RenderLayerList[2]->m_vecInstancing[i]->RenderList.back())->GetMaterialSlotCount();
-		}
-
-		else if (m_RenderLayerList[2]->m_vecInstancing[i]->Mesh->GetMeshType() == Mesh_Type::Animation)
-		{
-			SlotCount = ((CAnimationMeshComponent*)m_RenderLayerList[2]->m_vecInstancing[i]->RenderList.back())->GetMaterialSlotCount();
-		}
-
-		for (int j = 0; j < SlotCount; ++j)
-		{
-			CMaterial* Material = nullptr;
-
-			if (m_RenderLayerList[2]->m_vecInstancing[i]->Mesh->GetMeshType() == Mesh_Type::Static)
-			{
-				Material = ((CStaticMeshComponent*)m_RenderLayerList[2]->m_vecInstancing[i]->RenderList.back())->GetMaterial(j);
-			}
-
-			else if (m_RenderLayerList[2]->m_vecInstancing[i]->Mesh->GetMeshType() == Mesh_Type::Animation)
-			{
-				Material = ((CAnimationMeshComponent*)m_RenderLayerList[2]->m_vecInstancing[i]->RenderList.back())->GetMaterial(j);
-			}
-
-			if (Material)
-				Material->RenderTexture();
-
-			if (m_RenderLayerList[2]->m_vecInstancing[i]->Animation)
-			{
-				((CAnimationMesh*)m_RenderLayerList[2]->m_vecInstancing[i]->Mesh)->SetBoneShader();
-			}
-
-			m_AlphaBlendMRT->SetState();
-
-			m_Transparent3DInstancingShader->SetShader();
-
-			m_RenderLayerList[2]->m_vecInstancing[i]->CBuffer->UpdateCBuffer();
-
-			m_RenderLayerList[2]->m_vecInstancing[i]->Buffer->SetShader();
-
-			m_RenderLayerList[2]->m_vecInstancing[i]->Mesh->RenderInstancing((int)m_RenderLayerList[2]->m_vecInstancing[i]->RenderList.size(), j);
-
-			m_RenderLayerList[2]->m_vecInstancing[i]->Buffer->ResetShader();
-
-			m_AlphaBlendMRT->ResetState();
-
-			if (m_RenderLayerList[2]->m_vecInstancing[i]->Animation)
-			{
-				((CAnimationMesh*)m_RenderLayerList[2]->m_vecInstancing[i]->Mesh)->ResetBoneShader();
-			}
-
-
-			if (Material)
-				Material->Reset();
-
 		}
 	}
 }

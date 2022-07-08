@@ -23,6 +23,16 @@ public:
 	{
 		m_BufferData.InstancingBoneCount = BoneCount;
 	}
+
+	void SetMaterialIndex(int MatIndex)
+	{
+		m_BufferData.MaterialIndex = MatIndex;
+	}
+
+	void SetObjectCount(int ObjCount)
+	{
+		m_BufferData.ObjectCount = ObjCount;
+	}
 };
 
 

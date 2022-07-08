@@ -50,6 +50,7 @@ struct Vertex3DOutputInstancing
 	float2 UV : TEXCOORD;
 	float4 ProjPos : POSITION;
 	float3 ViewPos : POSITION1;
+	float3 WorldPos : POSITION2;
 	float3 Normal : NORMAL;
 	float3 Tangent : TANGENT;
 	float3 Binormal : BINORMAL;
@@ -131,22 +132,72 @@ SkinningInfo Skinning(float3 Pos, float3 Normal, float3 Tangent, float3 Binormal
 
 }
 
-/*
-11 12 13 14
-21 22 23 24
-31 32 33 34
-41 42 43 44
+SkinningInfo SkinningInstancing(float3 Pos, float3 Normal, float3 Tangent, float3 Binormal,
+    float4 BlendWeight, float4 BlendIndex, uint InstanceID)
+{
+	SkinningInfo Info = (SkinningInfo) 0;
+    
+	if (g_InstancingInfoArray[InstanceID].g_MtrlAnimation3DEnable == 0)
+	{
+		Info.Pos = Pos;
+		Info.Normal = Normal;
+		Info.Tangent = Tangent;
+		Info.Binormal = Binormal;
+        
+		return Info;
+	}
+    
+	for (int i = 0; i < 4; ++i)
+	{
+		if (BlendWeight[i] == 0.f)
+			continue;
+        
+		matrix matBone = g_SkinningBoneMatrixArray[(InstanceID * g_InstancingBoneCount) + (int) BlendIndex[i]];
+        
+		Info.Pos += (mul(float4(Pos, 1.f), matBone) * BlendWeight[i]).xyz;
+		Info.Normal += (mul(float4(Normal, 0.f), matBone) * BlendWeight[i]).xyz;
+		Info.Tangent += (mul(float4(Tangent, 0.f), matBone) * BlendWeight[i]).xyz;
+		Info.Binormal += (mul(float4(Binormal, 0.f), matBone) * BlendWeight[i]).xyz;
+	}
+    
+	Info.Normal = normalize(Info.Normal);
+	Info.Tangent = normalize(Info.Tangent);
+	Info.Binormal = normalize(Info.Binormal);
+    
+    
+	return Info;
 
-원근투영
-34 : 뷰공간의 z값
+}
 
-이 말은 투영변환까지 거치면 나오는
-x, y, z, w 에서 w에는
-뷰공간의 z값이 들어간다.
+float3 ComputeBumpNormalInstancing(float3 Normal, float3 Tangent, float3 Binormal,
+	float2 UV, uint InstanceID)
+{
+	float3 result = Normal;
+	
+	if (g_InstancingInfoArray[InstanceID].g_MtrlBumpEnable == 1)
+	{
+		float4 NormalColor = g_NormalTexture.Sample(g_BaseSmp, UV);
+		
+		// 색상은 0 ~ 1 사이이므로 -1 ~ 1 사이의 법선벡터로 만들어준다.
+		float3 ConvertNormal = NormalColor.xyz * 2.f - 1.f;
+		// z는 무조건 + 방향으로 만들어준다.
+		ConvertNormal.z = 1.f;
+		ConvertNormal = normalize(ConvertNormal);
+		
+		// Tangent, Binormal, Normal을 이용해서 위에서 만들어준 법선
+		// 벡터를 뷰공간으로 변환해준다. 뷰공간이 되는 이유는 Tangent,
+		// Binormal, Normal 3개 모두 뷰공간으로 변환된 벡터가 들어오기
+		// 때문이다.
+		float3x3 mat =
+		{
+			Tangent,
+			Binormal,
+			Normal
+		};
 
-내부적으로 최종 화면에서의 위치를
-구할때
-투영의 x, y, z, w가 있으면 이 값을 모두 w로 나누어준다.
+		result = normalize(mul(ConvertNormal, mat));
+	}
+	
+	return result;
+}
 
-x / w, y / w, z / w, w / w
-*/

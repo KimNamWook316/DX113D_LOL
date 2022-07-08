@@ -10,6 +10,8 @@ struct RenderInstancingList
 {
 	std::list<class CSceneComponent*> RenderList;
 	class CMesh* Mesh;
+	std::vector<class CGraphicShader*>* pvecInstancingShader;
+	std::vector<ShaderParams>* pvecShaderParams;
 	CStructuredBuffer* Buffer;
 	CStructuredBuffer* ShadowBuffer;
 	int BufferCount; // 인스턴싱할 Scene Component의 개수
@@ -20,6 +22,8 @@ struct RenderInstancingList
 	{
 		Mesh = nullptr;
 		Animation = false;
+		pvecInstancingShader = nullptr;
+		pvecShaderParams = nullptr;
 
 		Buffer = new CStructuredBuffer;
 
@@ -95,8 +99,6 @@ private:
 
 	CSharedPtr<class CShader> m_LightBlendShader;
 	CSharedPtr<class CShader> m_LightBlendRenderShader;
-	CSharedPtr<class CShader> m_Standard3DInstancingShader;
-	CSharedPtr<class CShader> m_Transparent3DInstancingShader;
 
 	// Final Target
 	CSharedPtr<CRenderTarget> m_FinalTarget;
@@ -290,10 +292,8 @@ private:
 	void RenderDecal();
 	void RenderLightAcc();
 	void RenderLightBlend();
-	// void RenderOutLine();
 	void RenderTransparent();
 	void RenderFinalScreen();
-	// void RenderGray();
 	void RenderAnimationEditor();
 	void RenderParticleEffectEditor();
 
@@ -310,11 +310,10 @@ public:
 	class CRenderState* FindRenderState(const std::string& Name);
 
 private:
-	void RenderDefaultInstancingInfo();
-	void RenderDefaultInstancing();
 	void RenderDefaultInstancingShadow();
-	void RenderTransparentInstancingInfo();
-	void RenderTransparentInstancing();
+	void RenderInstancing(int LayerIndex, bool AlphaBlend);
+	void UpdateInstancingList();
+	void UpdateInstancingInfo(int LayerIndex, bool UpdateShadow);
 
 private :
 	int GetRenderLayerIndex(const std::string& Name);

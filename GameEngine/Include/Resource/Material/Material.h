@@ -94,6 +94,7 @@ public:
 
 protected:
     CSharedPtr<CGraphicShader>  m_Shader;
+    CSharedPtr<CGraphicShader>  m_PrevShader;           // Transparency 적용될 경우, 이전에 가지고 있던 Shader
     std::vector<MaterialTextureInfo>    m_TextureInfo;
     Vector4     m_BaseColor;
     Vector4		m_AmbientColor;
@@ -118,6 +119,11 @@ public:
     CGraphicShader* GetShader() const
     {
         return m_Shader;
+    }
+
+    CGraphicShader* GetPrevShader() const
+    {
+        return m_PrevShader;
     }
 
     CMaterialConstantBuffer* GetCBuffer()   const
@@ -236,10 +242,7 @@ public:
     void SetEmissiveColor(const Vector4& Color);
     void SetEmissiveColor(float r, float g, float b, float a);
     void SetSpecularPower(float Power);
-    void SetMetallic(bool Metallic)
-    {
-        m_Metallic = Metallic;
-    }
+    void SetMetallic(bool Metallic);
 
 public:
     void AddTexture(int Register, int ShaderType, const std::string& Name, class CTexture* Texture);
@@ -269,6 +272,7 @@ public:
 public:
     void SetShader(const std::string& Name);
     void SetShader(CGraphicShader* Shader);
+    void RevertShader();                    // PrevShader로 되돌림
     void Render();
     void RenderTexture();
     void Reset();

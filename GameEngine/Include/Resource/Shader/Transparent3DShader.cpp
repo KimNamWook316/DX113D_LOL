@@ -1,4 +1,6 @@
 #include "Transparent3DShader.h"
+#include "../ResourceManager.h"
+#include "TransparentInstancing3DShader.h"
 
 CTransparent3DShader::CTransparent3DShader()
 {
@@ -27,6 +29,13 @@ bool CTransparent3DShader::Init()
 
 	if (!CreateInputLayout())
 		return false;
+
+	// Instancing Shader도 같이 만든다.
+	bool Success = CResourceManager::GetInst()->CreateInstancingShader<CTransparent3DShader, CTransparentInstancing3DShader>(this, "TransparentInstancing3DShader");
+	if (!Success)
+	{
+		return false;
+	}
 
 	return true;
 }

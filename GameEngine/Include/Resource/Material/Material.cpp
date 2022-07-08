@@ -253,6 +253,16 @@ void CMaterial::SetSpecularPower(float Power)
 	}
 }
 
+void CMaterial::SetMetallic(bool Metallic)
+{
+	m_Metallic = Metallic;
+
+	if (m_CBuffer)
+	{
+		m_CBuffer->SetMetallic(Metallic);
+	}
+}
+
 void CMaterial::AddTexture(int Register, int ShaderType, const std::string& Name, CTexture* Texture)
 {
 	m_TextureInfo.push_back(MaterialTextureInfo());
@@ -777,7 +787,23 @@ void CMaterial::SetShader(CGraphicShader* Shader)
 	if (!Shader)
 		return;
 
+	m_PrevShader = m_Shader;
 	m_Shader = Shader;
+
+	UpdateShaderParams();
+}
+
+void CMaterial::RevertShader()
+{
+	if (!m_PrevShader)
+	{
+		m_Shader = (CGraphicShader*)CResourceManager::GetInst()->FindShader("Standard3DShader");
+	}
+	else
+	{
+		m_Shader = m_PrevShader;
+		m_PrevShader = nullptr;
+	}
 
 	UpdateShaderParams();
 }
@@ -960,7 +986,7 @@ bool CMaterial::Load(FILE* File)
 	fread(&Length, sizeof(int), 1, File);
 	fread(ShaderName, sizeof(char), Length, File);
 
-	m_Shader = (CGraphicShader*)CResourceManager::GetInst()->FindShader(ShaderName);
+	SetShader(ShaderName);
 
 	fread(&m_BaseColor, sizeof(Vector4), 1, File);
 	fread(&m_AmbientColor, sizeof(Vector4), 1, File);
@@ -1238,7 +1264,7 @@ bool CMaterial::LoadMaterial(FILE* File)
 
 	int	Length = 0;
 
-	m_Shader = (CGraphicShader*)CResourceManager::GetInst()->FindShader(SaveStruct.ShaderName);
+	SetShader(SaveStruct.ShaderName);
 
 	m_BaseColor = SaveStruct.BaseColor;
 	m_AmbientColor = SaveStruct.AmbientColor;

@@ -73,6 +73,9 @@ bool CAnimationMeshWidget::Init()
     // Anim Table
 	m_AnimInfoTable = m_RootTree->AddWidget<CIMGUITableElemList>("TestTable", 200.f, 150.f);
 
+	// Transparent는 모든 Material에 일괄 적용
+	m_TransparencyEdit = m_RootTree->AddWidget<CIMGUICheckBox>("Enable Transparency", 200.f);
+
 	m_MaterialSlotCombo = m_RootTree->AddWidget<CIMGUIComboBox>("Material Slot", 200.f);
 	m_ShaderName = m_RootTree->AddWidget<CIMGUITextInput>("Shader", 200.f);
 	m_ShaderWidgetTree = m_RootTree->AddWidget<CIMGUICollapsingHeader>("Shader Params", 200.f);
@@ -82,7 +85,6 @@ bool CAnimationMeshWidget::Init()
 	m_SpecluarPowerEdit = m_RootTree->AddWidget<CIMGUIInputFloat>("Specluar Power", 200.f);
 	m_EmissiveColorEdit = m_RootTree->AddWidget<CIMGUIColor3>("Emissive", 200.f);
 	m_Metallic = m_RootTree->AddWidget<CIMGUICheckBox>("Metallic", 200.f);
-	m_TransparencyEdit = m_RootTree->AddWidget<CIMGUICheckBox>("Enable Transparency", 200.f);
 	m_OpacityEdit = m_RootTree->AddWidget<CIMGUISliderFloat>("Opacity", 200.f);
 	
 	AddWidget<CIMGUISeperator>("Sep");
@@ -166,7 +168,6 @@ void CAnimationMeshWidget::OnSelectMaterialSlotCombo(int Idx, const char* Label)
 		m_SpecularColorEdit->SetRGB(Mat->GetSpecularColor().x, Mat->GetSpecularColor().y, Mat->GetSpecularColor().z);
 		m_EmissiveColorEdit->SetRGB(Mat->GetEmissiveColor().x, Mat->GetEmissiveColor().y, Mat->GetEmissiveColor().z);
 		m_SpecluarPowerEdit->SetVal(Mat->GetSpecularPower());
-		m_TransparencyEdit->SetCheck(0, Mat->IsTransparent());
 		m_OpacityEdit->SetValue(Mat->GetOpacity());
 		m_Metallic->SetCheck(0, Mat->IsMetallic());
 	}
@@ -258,7 +259,7 @@ void CAnimationMeshWidget::OnCheckTransparency(int Idx, bool Check)
 
 	if (MeshCom->GetMesh())
 	{
-		MeshCom->SetTransparency(Check, Idx);
+		MeshCom->SetTransparencyAllMaterial(Check);
 	}
 }
 
@@ -425,7 +426,6 @@ void CAnimationMeshWidget::OnDropShaderName(const std::string& Name)
 		return;
 	}
 
-	CMaterial* Mat = static_cast<CAnimationMeshComponent*>(m_Component)->GetMaterial(Index);
 	CShader* Shader = CSceneManager::GetInst()->GetScene()->GetResource()->FindShader(Name);
 
 	if (!Shader || Shader->GetShaderType() != Shader_Type::Graphic)
@@ -433,7 +433,13 @@ void CAnimationMeshWidget::OnDropShaderName(const std::string& Name)
 		return;
 	}
 
-	Mat->SetShader((CGraphicShader*)Shader);
+	CAnimationMeshComponent* MeshCom = (CAnimationMeshComponent*)m_Component;
+
+	if (MeshCom->GetMesh())
+	{
+		MeshCom->SetMaterialShader(Index, (CGraphicShader*)Shader);
+	}
+
 	m_ShaderName->SetText(Name.c_str());
 }
 
@@ -603,6 +609,7 @@ void CAnimationMeshWidget::RefreshMeshWidget(CMesh* Mesh)
 		}
 	}
 
+	m_TransparencyEdit->SetCheck(0, MeshCom->IsTransparent());
 }
 
 bool CAnimationMeshWidget::MakeShaderWidget(class CMaterial* Mat, const std::string& ShaderName)

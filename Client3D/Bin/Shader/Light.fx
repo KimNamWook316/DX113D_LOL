@@ -378,13 +378,6 @@ PSOutput_Single LightBlendRenderPS(VS_OUTPUT_LIGHTACC input)
 
 	output.Color = LightBlendColor;
 
- //	float4 OutlineColor = g_OutlineTex.Load(TargetPos, 0);
- //
- //    if (OutlineColor.a > 0.f)
- //	{
- //		output.Color.rgb = lerp(LightBlendColor.rgb, OutlineColor.rgb, OutlineColor.a);
- //	}
-
     return output;
 }
 
