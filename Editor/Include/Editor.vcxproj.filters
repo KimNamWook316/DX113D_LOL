@@ -363,6 +363,9 @@
     <ClCompile Include="Component\EyeLaserComponent.cpp">
       <Filter>06. GameComponent\01. SceneComponent</Filter>
     </ClCompile>
+    <ClCompile Include="Widget\EyeLaserComponentWidget.cpp">
+      <Filter>02. Editor\02. Widget\01. Inspector\01. SceneComponent</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EditorManager.h">
@@ -622,6 +625,9 @@
     </ClInclude>
     <ClInclude Include="Component\EyeLaserComponent.h">
       <Filter>06. GameComponent\01. SceneComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Widget\EyeLaserComponentWidget.h">
+      <Filter>02. Editor\02. Widget\01. Inspector\01. SceneComponent</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -22,10 +22,20 @@ private:
 	Matrix m_LaserRotMatrix;
 
 	//CSharedPtr<CShader>	m_Shader;
-	CSharedPtr<CMesh> m_LaserPlaneMesh1;
+	CSharedPtr<CMesh> m_LaserPlaneMesh;
 	CSharedPtr<CMaterial>	m_Material;
 
 public:
+	CMesh* GetMesh()	const
+	{
+		return m_LaserPlaneMesh;
+	}
+
+	CMaterial* GetMaterial()	const
+	{
+		return m_Material;
+	}
+
 	void SetWakeEnd();
 
 	void AddTriggerCount()
@@ -36,6 +46,11 @@ public:
 	int GetTriggerCount() const
 	{
 		return m_TriggerHitCount;
+	}
+
+	bool IsTransparent()	const
+	{
+		return m_Material->IsTransparent();
 	}
 
 public:
@@ -60,5 +75,16 @@ private:
 	void ChangeToWakeAnimation();
 	void ChangeToDieAnimation();
 	void ChangeToIdleAnimation();
+
+public:
+	void SetBaseColor(const Vector4& Color, int Index = 0);
+	void SetBaseColor(float r, float g, float b, float a, int Index = 0);
+	void SetAmbientColor(const Vector4& Color, int Index = 0);
+	void SetAmbientColor(float r, float g, float b, float a, int Index = 0);
+	void SetSpecularColor(const Vector4& Color, int Index = 0);
+	void SetSpecularColor(float r, float g, float b, float a, int Index = 0);
+	void SetEmissiveColor(const Vector4& Color, int Index = 0);
+	void SetEmissiveColor(float r, float g, float b, float a, int Index = 0);
+	void SetSpecularPower(float Power, int Index = 0);
 };
 

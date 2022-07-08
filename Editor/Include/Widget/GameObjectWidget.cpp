@@ -18,6 +18,7 @@
 #include "Component/ColliderHalfLine.h"
 #include "Component/ColliderRay.h"
 #include "Component/NavMeshComponent.h"
+#include "../Component/EyeLaserComponent.h"
 #include "../Component/PlayerNormalAttackCheckCollider.h"
 #include "../Widget/StaticMeshComponentWidget.h"
 #include "../Widget/LightComponentWidget.h"
@@ -29,6 +30,7 @@
 #include "../Widget/NavMeshComponentWidget.h"
 #include "../Widget/ColliderComponentWidget.h"
 #include "../Widget/ColliderSphereWidget.h"
+#include "../Widget/EyeLaserComponentWidget.h"
 #include "IMGUIManager.h"
 #include "../EditorInfo.h"
 
@@ -191,6 +193,10 @@ void CGameObjectWidget::CreateSceneComponentWidget(CSceneComponent* Com)
 	else if (TypeID == typeid(CNavMeshComponent).hash_code())
 	{
 		Widget = AddWidget<CNavMeshComponentWidget>("NavMeshComponentWidget");
+	}
+	else if (TypeID == typeid(CEyeLaserComponent).hash_code())
+	{
+		Widget = AddWidget<CEyeLaserComponentWidget>("EyeLaserComponentWidget");
 	}
 
 	else

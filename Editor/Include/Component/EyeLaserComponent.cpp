@@ -15,7 +15,7 @@ CEyeLaserComponent::CEyeLaserComponent()	:
 	SetTypeID<CEyeLaserComponent>();
 	m_ComponentType = Component_Type::SceneComponent;
 
-	m_CurrentLaserDir = Vector3(0.f, 0.f, 1.f);
+	m_CurrentLaserDir = Vector3(0.f, 0.f, -1.f);
 
 	m_LayerName = "Transparency";
 	m_Render = true;
@@ -54,7 +54,7 @@ void CEyeLaserComponent::Start()
 		Instance->SetEndFunction<CEyeLaserComponent>("EyeLaser_Wake", this, &CEyeLaserComponent::SetWakeEnd);
 	}
 	
-	m_LaserPlaneMesh1 = CResourceManager::GetInst()->FindMesh("PlaneMesh");
+	m_LaserPlaneMesh = CResourceManager::GetInst()->FindMesh("PlaneMesh");
 
 	CMaterial* LaserMat = m_Scene->GetResource()->FindMaterial("LaserMaterial");
 
@@ -70,7 +70,10 @@ void CEyeLaserComponent::Start()
 	m_Material->SetShader("LaserShader");
 	m_Material->AddTexture(0, (int)Buffer_Shader_Type::Pixel,
 		"LaserDif", TEXT("Laser.png"));
-	m_Material->SetOpacity(0.3f);
+	m_Material->SetOpacity(1.f);
+	m_Material->SetTransparency(true);
+
+	SetWorldRotation(90.f, -90.f, 0.f);
 }
 
 bool CEyeLaserComponent::Init()
@@ -120,14 +123,14 @@ void CEyeLaserComponent::Render()
 {
 	// 카메라를 계속 바라보게 만든다.
 	// 카메라의 위치를 얻어온다.
-	Vector3 CameraPos = m_Scene->GetCameraManager()->GetCurrentCamera()->GetWorldPos();
+	/*Vector3 CameraPos = m_Scene->GetCameraManager()->GetCurrentCamera()->GetWorldPos();
 
 	Vector3	View = CameraPos - GetWorldPos();
 	View.Normalize();
 
 	Vector3 OriginDir(0.f, 0.f, -1.f);
 
-	m_Transform->SetRotationAxis(OriginDir, View);
+	m_Transform->SetRotationAxis(OriginDir, View);*/
 
 	//if (m_TriggerHitCount == 1 && m_WakeEnd)
 	//{
@@ -135,7 +138,7 @@ void CEyeLaserComponent::Render()
 
 		m_Material->Render();
 
-		m_LaserPlaneMesh1->Render();
+		m_LaserPlaneMesh->Render();
 	//}
 }
 
@@ -207,7 +210,7 @@ void CEyeLaserComponent::TrackPlayer(float DeltaTime)
 		m_Object->AddWorldRotationY(-DeltaTime * 6.f);
 	}
 
-	Vector3 LaserTopPos = GetWorldPos();;
+	Vector3 LaserTopPos = GetWorldPos();
 	Dir = PlayerPos - Vector3(LaserTopPos.x, LaserPos.y + 1.5f, LaserPos.z);
 
 	Vector3 UpDownVec = Vector3(0.f, Dir.y, Dir.z);
@@ -246,4 +249,49 @@ void CEyeLaserComponent::ChangeToDieAnimation()
 
 void CEyeLaserComponent::ChangeToIdleAnimation()
 {
+}
+
+void CEyeLaserComponent::SetBaseColor(const Vector4& Color, int Index)
+{
+	m_Material->SetBaseColor(Color);
+}
+
+void CEyeLaserComponent::SetBaseColor(float r, float g, float b, float a, int Index)
+{
+	m_Material->SetBaseColor(r, g, b, a);
+}
+
+void CEyeLaserComponent::SetAmbientColor(const Vector4& Color, int Index)
+{
+	m_Material->SetAmbientColor(Color);
+}
+
+void CEyeLaserComponent::SetAmbientColor(float r, float g, float b, float a, int Index)
+{
+	m_Material->SetAmbientColor(r, g, b, a);
+}
+
+void CEyeLaserComponent::SetSpecularColor(const Vector4& Color, int Index)
+{
+	//m_vecMaterialSlot[Index]->SetSpecularColor(Color);
+}
+
+void CEyeLaserComponent::SetSpecularColor(float r, float g, float b, float a, int Index)
+{
+	//m_vecMaterialSlot[Index]->SetSpecularColor(r, g, b, a);
+}
+
+void CEyeLaserComponent::SetEmissiveColor(const Vector4& Color, int Index)
+{
+	//m_vecMaterialSlot[Index]->SetEmissiveColor(Color);
+}
+
+void CEyeLaserComponent::SetEmissiveColor(float r, float g, float b, float a, int Index)
+{
+	//m_vecMaterialSlot[Index]->SetEmissiveColor(r, g, b, a);
+}
+
+void CEyeLaserComponent::SetSpecularPower(float Power, int Index)
+{
+	//m_vecMaterialSlot[Index]->SetSpecularPower(Power);
 }
