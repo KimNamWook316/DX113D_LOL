@@ -52,7 +52,6 @@ CEffectEditor::~CEffectEditor()
 bool CEffectEditor::Init()
 {
     // Save, Load
-
     m_SaveParticleBtn = AddWidget<CIMGUIButton>("Save Particle", 90.f, 20.f);
     m_SaveParticleBtn->SetClickCallback<CEffectEditor>(this, &CEffectEditor::OnSaveParticleClass);
 
@@ -118,6 +117,10 @@ bool CEffectEditor::Init()
     m_GenerateRadius->SetMin(0.0f);
     m_GenerateRadius->SetMax(100.f);
 
+    // SpawnCount
+    m_SpawnCountMaxEdit = AddWidget<CIMGUIInputInt>("Init Spawn Count", 200.f);
+    m_SpawnCountMaxEdit->SetVal(1000); // 처음에는 1000개로 세팅
+
     // Camera
     CIMGUITree* Tree = AddWidget<CIMGUITree>("Camera");
 
@@ -180,6 +183,7 @@ bool CEffectEditor::Init()
         m_ParticlePreset->AddItem(ParticlePresetNames[i]);
     }
     m_ParticlePreset->SetSelectIndex(0);
+
 
     // UV Move
     Tree = AddWidget<CIMGUITree>("UV Move");
@@ -244,65 +248,65 @@ bool CEffectEditor::Init()
     m_BounceResistance->SetMin(0.01f);
     m_BounceResistance->SetMax(0.99f);
 
-    // Generate Ring
-    Tree = AddWidget<CIMGUITree>("Ring Generate");
+    // Rotation Angle
+    Tree = AddWidget<CIMGUITree>("Rotation Angle");
 
-    m_IsGenerateRing = Tree->AddWidget<CIMGUICheckBox>("Ring", 80.f);
-    m_IsGenerateRing->AddCheckInfo("Ring");
-    m_IsGenerateRing->SetCallBackLabel<CEffectEditor>(this, &CEffectEditor::OnIsGenerateRingEdit);
+    m_MinSeperateRotAngleEdit = Tree->AddWidget<CIMGUIInputFloat3>("Min Angle", 150.f);
+    m_MinSeperateRotAngleEdit->SetCallBack<CEffectEditor>(this, &CEffectEditor::OnMinSeperateRotAngleEdit);
 
-    Line = Tree->AddWidget<CIMGUISameLine>("Line");
-    Line->SetOffsetX(90.f);
+    m_MaxSeperateRotAngleEdit = Tree->AddWidget<CIMGUIInputFloat3>("Max Angle", 150.f);
+    m_MaxSeperateRotAngleEdit->SetCallBack<CEffectEditor>(this, &CEffectEditor::OnMaxSeperateRotAngleEdit);
 
-    HelpText = Tree->AddWidget<CIMGUIText>("RingGenerateText", 90.f, 30.f);
-    const char* RingHelpText = R"(Ring 모양 Particle)";
-    HelpText->SetText(RingHelpText);
-    HelpText->SetIsHelpMode(true);
+    // Particle Shape
+    Tree = AddWidget<CIMGUITree>("ParticleShape");
 
-    Line = Tree->AddWidget<CIMGUISameLine>("Line");
-    Line->SetOffsetX(110.f);
+    m_ParticleShapeType = Tree->AddWidget<CIMGUIComboBox>("Shape", 150.f);
+    m_ParticleShapeType->SetSelectCallback<CEffectEditor>(this, &CEffectEditor::OnClickParticleShape);
+
+    m_ParticleShapeType->AddItem("Select Shape");
+     for (int i = 0; i < (int)ParitcleShapeType::Max; ++i)
+     {
+         m_ParticleShapeType->AddItem(ParticleShapeNames[i]);
+     }
+    m_ParticleShapeType->SetSelectIndex(0);
 
     m_IsLoopGenerateRing = Tree->AddWidget<CIMGUICheckBox>("Loop", 80.f);
     m_IsLoopGenerateRing->AddCheckInfo("Ring Loop");
     m_IsLoopGenerateRing->SetCallBackLabel<CEffectEditor>(this, &CEffectEditor::OnIsLoopGenerateRingEdit);
 
     Line = Tree->AddWidget<CIMGUISameLine>("Line");
-    Line->SetOffsetX(200.f);
+    Line->SetOffsetX(120.f);
 
-    HelpText = Tree->AddWidget<CIMGUIText>("RingLoopText", 90.f, 30.f);
+    // Linear Rot 적용 -> 단, 해당 세팅은, m_SpecialMoveDirType 가 유효하게 세팅되어야만 가능하다.
+    m_LinearRotate = Tree->AddWidget<CIMGUICheckBox>("LinearRot", 80.f);
+    m_LinearRotate->AddCheckInfo("LinearRot");
+    m_LinearRotate->SetCallBackLabel<CEffectEditor>(this, &CEffectEditor::OnIsLinearRot);
+
+    /*
+    Line = Tree->AddWidget<CIMGUISameLine>("Line");
+    Line->SetOffsetX(90.f);
+
+    HelpText = Tree->AddWidget<CIMGUIText>("RingLoopText", 30.f, 30.f);
     const char* RingLoopHelpText = R"(ex)  Ring 여부가 Check 되야만 적용.)";
     HelpText->SetText(RingLoopHelpText);
     HelpText->SetIsHelpMode(true);
 
-    // Generate Circle
-    Tree = AddWidget<CIMGUITree>("Circle Generate");
-
-    m_IsGenerateCircle = Tree->AddWidget<CIMGUICheckBox>("Circle", 80.f);
-    m_IsGenerateCircle->AddCheckInfo("Circle");
-    m_IsGenerateCircle->SetCallBackLabel<CEffectEditor>(this, &CEffectEditor::OnIsGenerateCircleEdit);
-
     Line = Tree->AddWidget<CIMGUISameLine>("Line");
-    Line->SetOffsetX(90.f);
+    Line->SetOffsetX(35.f);
 
-    HelpText = Tree->AddWidget<CIMGUIText>("CircleGenerate", 90.f, 30.f);
+    HelpText = Tree->AddWidget<CIMGUIText>("CircleGenerate", 930.f, 30.f);
     const char* CircleHelpText = R"(원 내에 Random 하게 생성)";
     HelpText->SetText(CircleHelpText);
     HelpText->SetIsHelpMode(true);
 
-    // Generate Torch
-    Tree = AddWidget<CIMGUITree>("Torch Generate");
-
-    m_IsGenerateTorch = Tree->AddWidget<CIMGUICheckBox>("Torch", 80.f);
-    m_IsGenerateTorch->AddCheckInfo("Torch");
-    m_IsGenerateTorch->SetCallBackLabel<CEffectEditor>(this, &CEffectEditor::OnIsGenerateTorchEdit);
-
     Line = Tree->AddWidget<CIMGUISameLine>("Line");
-    Line->SetOffsetX(90.f);
+    Line->SetOffsetX(75.f);
 
-    HelpText = Tree->AddWidget<CIMGUIText>("TorchGenerate", 90.f, 30.f);
+    HelpText = Tree->AddWidget<CIMGUIText>("TorchGenerate", 30.f, 30.f);
     const char* TorchHelpText = R"(횃불 모양 생성 : 가운데에 더 많은 Particle 생성)";
     HelpText->SetText(TorchHelpText);
     HelpText->SetIsHelpMode(true);
+    */
 
     // Movement
     Tree = AddWidget<CIMGUITree>("Movement");
@@ -338,12 +342,6 @@ bool CEffectEditor::Init()
 
     m_SpawnTimeMaxEdit = Tree->AddWidget<CIMGUIInputFloat>("Spawn Time", 150.f);
     m_SpawnTimeMaxEdit->SetCallBack(this, &CEffectEditor::OnSpawnTimeMaxEdit);
-
-    Line = Tree->AddWidget<CIMGUISameLine>("Line");
-    Line->SetOffsetX(270.f);
-
-    m_SpawnCountMaxEdit = Tree->AddWidget<CIMGUIInputInt>("Spawn Max", 150.f);
-    m_SpawnCountMaxEdit->SetCallBack(this, &CEffectEditor::OnSpawnCountMaxEdit);
 
     // Start Min, Start Max
     Tree = AddWidget<CIMGUITree>("Start Min, Max");
@@ -416,37 +414,30 @@ bool CEffectEditor::Init()
     m_AlphaBlendEnableButton = Tree->AddWidget<CIMGUIButton>("Set Alpha Blend", 150.f, 20.f);
     m_AlphaBlendEnableButton->SetClickCallback<CEffectEditor>(this, &CEffectEditor::OnSetAlphaBlendToMaterialCallback);
 
-    m_AlphaStartEdit = Tree->AddWidget<CIMGUIInputFloat>("Alpha Min", 150.f);
+    m_AlphaStartEdit = Tree->AddWidget<CIMGUIInputFloat>("Alpha Start", 150.f);
     m_AlphaStartEdit->SetCallBack(this, &CEffectEditor::OnAlphaStartEdit);
 
-    m_AlphaEndEdit = Tree->AddWidget<CIMGUIInputFloat>("Alpha Max", 150.f);
+    m_AlphaEndEdit = Tree->AddWidget<CIMGUIInputFloat>("Alpha End", 150.f);
     m_AlphaEndEdit->SetCallBack(this, &CEffectEditor::OnAlphaEndEdit);
 
     // Move Dir, Angle
     Tree = AddWidget<CIMGUITree>("Move Angle, Dir");
 
-    m_IsRandomMoveDirEdit = Tree->AddWidget<CIMGUICheckBox>("Random Dir", 80.f);
-    m_IsRandomMoveDirEdit->AddCheckInfo("Random Dir");
-    m_IsRandomMoveDirEdit->SetCallBackLabel<CEffectEditor>(this, &CEffectEditor::OnIsRandomMoveDirEdit);
-    m_IsRandomMoveDirEdit->SetCheck(0, true);
+    m_SpecialMoveDirType = Tree->AddWidget<CIMGUIComboBox>("Shape", 150.f);
+    m_SpecialMoveDirType->SetSelectCallback<CEffectEditor>(this, &CEffectEditor::OnClickSpecialMoveDirType);
+
+    m_SpecialMoveDirType->AddItem("Select Dir");
+    for (int i = 0; i < (int)ParticleSpecialMoveDir::Max; ++i)
+    {
+        m_SpecialMoveDirType->AddItem(ParticleMoveDirType[i]);
+    }
+    m_SpecialMoveDirType->SetSelectIndex(0);
 
     m_MoveDirEdit = Tree->AddWidget<CIMGUIInputFloat3>("Move Dir", 150.f);
     m_MoveDirEdit->SetCallBack<CEffectEditor>(this, &CEffectEditor::OnMoveDirEdit);
 
     m_MoveAngleEdit = Tree->AddWidget<CIMGUIInputFloat3>("Move Angle", 150.f);
     m_MoveAngleEdit->SetCallBack<CEffectEditor>(this, &CEffectEditor::OnMoveAngleEdit);
-
-    // m_GravityAccelEdit = AddWidget<CIMGUIInputFloat>("Gravity Accel", 100.f);
-    // m_StartDelayEdit = AddWidget<CIMGUIInputFloat>("Start Delay T// ", 100.f);
-
-    // Rotation Angle
-    Tree = AddWidget<CIMGUITree>("Rotation Angle");
-
-    m_MinSeperateRotAngleEdit = Tree->AddWidget<CIMGUIInputFloat3>("Min Angle", 150.f);
-    m_MinSeperateRotAngleEdit->SetCallBack<CEffectEditor>(this, &CEffectEditor::OnMinSeperateRotAngleEdit);
-
-    m_MaxSeperateRotAngleEdit = Tree->AddWidget<CIMGUIInputFloat3>("Max Angle", 150.f);
-    m_MaxSeperateRotAngleEdit->SetCallBack<CEffectEditor>(this, &CEffectEditor::OnMaxSeperateRotAngleEdit);
 
     SetGameObjectReady();
 
@@ -479,6 +470,11 @@ void CEffectEditor::OnRestartParticleComponentButton()
     BackUpParticleObjectInfo();
 
     m_ParticleObject = CSceneManager::GetInst()->GetScene()->CreateGameObject<C3DParticleObject>("Particle Effect Base Ground");
+    
+    // Init Spawn Count 개수를 반영한다.
+    // 아래 SetParticleToParticleComponent 이전에 세팅해줘야 한다. m_PArticle Class 에 해당 내용을 세팅해두고
+    // 이를 Particle Component 에 반영하는 원리이다.
+    m_ParticleClass->SetSpawnCountMax(m_SpawnCountMaxEdit->GetVal());
 
     SetParticleToParticleComponent(dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent()), m_ParticleClass);
 
@@ -679,13 +675,26 @@ void CEffectEditor::OnEditBounceResistance(float Resist)
    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetBounceResist(Resist);
 }
 
-void CEffectEditor::OnIsGenerateRingEdit(const char*, bool Enable)
+
+
+void CEffectEditor::OnClickParticleShape(int Index, const char* PresetName)
 {
     if (!m_ParticleClass)
         return;
 
-    m_ParticleClass->SetGenerateRingEnable(Enable);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGenerateRingEnable(Enable);
+    // 자기가 선택된 Idx - 1 을 해줘야 한다
+    // 처음에는 아무것도 선택안되어 있는 상태 -> 그러면 Idx 는 0 -> -1로 해줘야만
+    // hlsl 측에서 -1에 걸리지 않게 될 것이다.
+    ParitcleShapeType Type = (ParitcleShapeType)(Index - 1);
+   m_ParticleClass->SetParticleShapeType(Type);
+   dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetParticleShapeType(Type);
+
+   // Torch 의 경우, Spawn Time 도 조정해줘야 한다.
+   if (Type == ParitcleShapeType::Torch)
+   {
+       m_ParticleClass->SetSpawnTimeMax(0.01f);
+       dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->SetSpawnTime(0.01f);
+   }
 }
 
 void CEffectEditor::OnIsLoopGenerateRingEdit(const char*, bool Enable)
@@ -704,31 +713,6 @@ void CEffectEditor::OnEditGenerateRadius(float Radius)
 
     m_ParticleClass->SetGenerateRadius(Radius);
     dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGenerateRadius(Radius);
-}
-
-void CEffectEditor::OnIsGenerateCircleEdit(const char*, bool Enable)
-{
-    if (!m_ParticleClass)
-        return;
-
-    m_ParticleClass->SetGenerateCircleEnable(Enable);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGenerateCircleEnable(Enable);
-}
-
-
-void CEffectEditor::OnIsGenerateTorchEdit(const char*, bool Enable)
-{
-    if (!m_ParticleClass)
-        return;
-
-    m_ParticleClass->SetGenerateTorchEnable(Enable);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGenerateTorchEnable(Enable);
-
-    // Spawn Time도 0.01 로 조절한다. (그래야만 Effect 가 잘 보인다)
-    if (m_ParticleClass->GetSpawnTimeMax() > 0.01)
-    {
-        m_ParticleClass->SetSpawnTimeMax(0.01f);
-    }
 }
 
 void CEffectEditor::OnSpawnTimeMaxEdit(float Num)
@@ -758,15 +742,6 @@ void CEffectEditor::OnStartMaxEdit(const Vector3& Pos)
 
     m_ParticleClass->SetStartMax(Pos);
     // m_ParticleComponent->GetParticle()->SetStartMax(Pos);
-}
-
-void CEffectEditor::OnSpawnCountMaxEdit(int Num)
-{
-    if (!m_ParticleClass)
-        return;
-
-    m_ParticleClass->SetSpawnCountMax(Num);
-    // m_ParticleComponent->GetCBuffer()->SetSpawnCountMax(Num);
 }
 
 void CEffectEditor::OnScaleMinEdit(const Vector3& Scale)
@@ -942,15 +917,6 @@ void CEffectEditor::OnPauseResumeToggle(const char*, bool Enable)
     m_ParticleObject->GetRootComponent()->Enable(Enable);
 }
 
-void CEffectEditor::OnIsRandomMoveDirEdit(const char*, bool Enable)
-{
-    if (!m_ParticleClass)
-        return;
-
-    m_ParticleClass->SetIsRandomMoveDir(Enable);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetIsRandomMoveDir(Enable);
-}
-
 void CEffectEditor::OnMinSeperateRotAngleEdit(const Vector3& RotAngle)
 {
     if (!m_ParticleClass)
@@ -968,6 +934,16 @@ void CEffectEditor::OnMaxSeperateRotAngleEdit(const Vector3& RotAngle)
    m_ParticleClass->SetMaxSeperateRotAngle(RotAngle);
    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetMaxSeperateRotAngle(RotAngle);
 }
+
+void CEffectEditor::OnIsLinearRot(const char*, bool Enable)
+{
+    if (!m_ParticleClass)
+        return;
+
+    m_ParticleClass->SetSeperateLinearRotate(Enable);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetSeperateLinearRotate(Enable);
+}
+
 
 void CEffectEditor::OnIsLifeTimeLinearFromCenter(const char*, bool Enable)
 {
@@ -1041,6 +1017,21 @@ void CEffectEditor::OnMoveAngleEdit(const Vector3& Angle)
     m_ParticleClass->SetMoveAngle(Angle);
 
     dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetMoveAngle(Angle);
+}
+
+void CEffectEditor::OnClickSpecialMoveDirType(int Index, const char* Type)
+{
+    if (!m_ParticleClass)
+        return;
+
+    // 자기가 선택된 Idx - 1 을 해줘야 한다
+    // 처음에는 아무것도 선택안되어 있는 상태 -> 그러면 Idx 는 0 -> -1로 해줘야만
+    // hlsl 측에서 -1에 걸리지 않게 될 것이다.
+    ParticleSpecialMoveDir DirType = (ParticleSpecialMoveDir)(Index - 1);
+
+    m_ParticleClass->SetSpecialMoveDirType(DirType);
+
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetSpecialMoveDirType(DirType);
 }
 
 void CEffectEditor::OnSaveParticleClass()
@@ -1230,7 +1221,9 @@ void CEffectEditor::OnSetBasicParticleMaterialSetting(CSceneComponent* Com)
 
     // 2) Particle 제작
     CSceneManager::GetInst()->GetScene()->GetResource()->CreateParticle("BasicParticle");
+
     m_ParticleClass = CSceneManager::GetInst()->GetScene()->GetResource()->FindParticle("BasicParticle");
+
     if (!m_ParticleClass)
         return;
 
@@ -1238,7 +1231,7 @@ void CEffectEditor::OnSetBasicParticleMaterialSetting(CSceneComponent* Com)
 
     SetBasicDefaultParticleInfos(m_ParticleClass);
 
-    // 해당 정보들 UI 에 세팅하기
+    // 해당 정보들 Particle 에 세팅하기
     SetParticleToParticleComponent(dynamic_cast<CParticleComponent*>(Com), "BasicParticle");
 
     // 기본 Z Pos 세팅
@@ -1320,8 +1313,13 @@ void CEffectEditor::SetBasicDefaultParticleInfos(CParticle* Particle)
     // 반드시 3D 로 세팅한다.
     Particle->Set2D(false);
 
-    // Spawn Time, Count
+    // Spawn Count
     Particle->SetSpawnCountMax(1000);
+
+    // Init Spawn Count Max 세팅하기
+    Particle->SetSpawnCountMax(m_SpawnCountMaxEdit->GetVal());
+
+    // Spawn Time
     Particle->SetSpawnTimeMax(0.05f);
 
     // Life Time
@@ -1614,7 +1612,9 @@ void CEffectEditor::SetIMGUIReflectParticle(CParticle* Particle)
     // Move Dir, Angle
     m_MoveDirEdit->SetVal(Particle->GetMoveDir());
     m_MoveAngleEdit->SetVal(Particle->GetMoveAngle());
-    m_IsRandomMoveDirEdit->SetCheck(0, Particle->IsMoveDirRandom());
+
+    // Particle Special Move Dir Type 여부 세팅
+    m_SpecialMoveDirType->SetSelectIndex(Particle->GetSpecialMoveDirType() + 1);
 
     // Movement
     m_IsGravityEdit->SetCheck(0, Particle->GetGravity());
@@ -1625,20 +1625,18 @@ void CEffectEditor::SetIMGUIReflectParticle(CParticle* Particle)
     m_IsBounce->SetCheck(0, Particle->IsBounceEnable() == 1 ? true : false);
     m_BounceResistance->SetValue(Particle->GetBounceResistance());
 
+    // Particle Shape (실제 Idx 의 +1 을 세팅하기)
+    m_ParticleShapeType->SetSelectIndex(Particle->GetParticleShapeType() + 1);
+
     // Generate Ring
-    m_IsGenerateRing->SetCheck(0, Particle->IsGenerateRing() == 1 ? true : false);
     m_IsLoopGenerateRing->SetCheck(0, Particle->IsLoopGenerateRing());
-
-    // Circle
-    m_IsGenerateCircle->SetCheck(0, Particle->IsGenerateCircle() == 1 ? true : false);
-
-    // Torch
-    m_IsGenerateTorch->SetCheck(0, Particle->IsGenerateTorch() == 1 ? true : false);
 
     // Min, Max Rot Angle
     m_MinSeperateRotAngleEdit->SetVal(Particle->GetMinSeperateRotAngle());
     m_MaxSeperateRotAngleEdit->SetVal(Particle->GetMaxSeperateRotAngle());
 
+    // Linaer Rotate
+    m_LinearRotate->SetCheck(0, Particle->IsSeperateLinearRotate());
 }
 
 void CEffectEditor::SetIMGUIReflectObjectCamera()
@@ -1688,15 +1686,9 @@ void CEffectEditor::OnRipplePreset()
     OnLifeTimeMinEdit(5.f);
     OnLifeTimeMaxEdit(5.f);
 
-    // Circle, Torch, Ring X
-    m_ParticleClass->SetGenerateRingEnable(false);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGenerateRingEnable(false);
-
-    m_ParticleClass->SetGenerateCircleEnable(false);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGenerateCircleEnable(false);
-
-    m_ParticleClass->SetGenerateTorchEnable(false);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGenerateTorchEnable(false);
+    // Circle, Torch, Ring, XYRing X
+    // m_ParticleClass->SetParticleShapeType(-1);
+    //  dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetParticleShapeType(-1);
 
     // IMGUI Update
     SetIMGUIReflectParticle(m_ParticleClass);
@@ -1721,8 +1713,8 @@ void CEffectEditor::OnRingPreset()
     OnSetAlphaBlendToMaterialCallback();
 
     // Random Dir
-    m_ParticleClass->SetIsRandomMoveDir(false);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetIsRandomMoveDir(false);
+    m_ParticleClass->SetSpecialMoveDirType(-1);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetSpecialMoveDirType(-1);
 
     // Scale
     OnScaleMinEdit(Vector3(10.f, 10.f, 1.f)); //
@@ -1738,20 +1730,13 @@ void CEffectEditor::OnRingPreset()
     // Radiuse
     OnEditGenerateRadius(40.f);
 
-    // Ring O
-    m_ParticleClass->SetGenerateRingEnable(true);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGenerateRingEnable(true);
-
     // Ring Loop O
     m_ParticleClass->SetLoopGenerateRing(true);
     dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetLoopGenerateRing(true);
-
-    // Circle, Torch X
-    m_ParticleClass->SetGenerateCircleEnable(false);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGenerateCircleEnable(false);
-
-    m_ParticleClass->SetGenerateTorchEnable(false);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGenerateTorchEnable(false);
+    
+    // Particle Shape
+    m_ParticleClass->SetParticleShapeType(ParitcleShapeType::YUpDirRing);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetParticleShapeType(ParitcleShapeType::YUpDirRing);
 
     // IMGUI Update
     SetIMGUIReflectParticle(m_ParticleClass);
@@ -1776,8 +1761,8 @@ void CEffectEditor::OnRingWallPreset()
     OnSetAlphaBlendToMaterialCallback();
 
     // Random Dir
-    m_ParticleClass->SetIsRandomMoveDir(false);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetIsRandomMoveDir(false);
+    m_ParticleClass->SetSpecialMoveDirType(-1);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetSpecialMoveDirType(-1);
 
     // Scale
     OnScaleMinEdit(Vector3(15.f, 15.f, 1.f)); 
@@ -1804,19 +1789,16 @@ void CEffectEditor::OnRingWallPreset()
     OnMoveAngleEdit(Vector3(0.f, 0.f, 0.f));
 
     // Ring O
-    m_ParticleClass->SetGenerateRingEnable(true);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGenerateRingEnable(true);
+    // m_ParticleClass->SetGenerateRingEnable(true);
+    // dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGenerateRingEnable(true);
 
     // Ring Loop O
     m_ParticleClass->SetLoopGenerateRing(true);
     dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetLoopGenerateRing(true);
 
-    // Circle, Torch X
-    m_ParticleClass->SetGenerateCircleEnable(false);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGenerateCircleEnable(false);
-
-    m_ParticleClass->SetGenerateTorchEnable(false);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGenerateTorchEnable(false);
+    // Particle Shape
+    m_ParticleClass->SetParticleShapeType(ParitcleShapeType::YUpDirRing);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetParticleShapeType(ParitcleShapeType::YUpDirRing);
 
     // IMGUI Update
     SetIMGUIReflectParticle(m_ParticleClass);
@@ -1841,8 +1823,8 @@ void CEffectEditor::OnTorchPreset()
     OnSetAlphaBlendToMaterialCallback();
 
     // Random Dir
-    m_ParticleClass->SetIsRandomMoveDir(false);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetIsRandomMoveDir(false);
+    m_ParticleClass->SetSpecialMoveDirType(-1);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetSpecialMoveDirType(-1);
 
     // Radiuse
     OnEditGenerateRadius(80.f);
@@ -1868,17 +1850,9 @@ void CEffectEditor::OnTorchPreset()
     m_ParticleClass->SetLifeTimeLinearFromCenter(true);
     dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetLifeTimeLinearFromCenter(true);
 
-    // Ring X
-    m_ParticleClass->SetGenerateRingEnable(false);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGenerateRingEnable(false);
-
-    // Circle X
-    m_ParticleClass->SetGenerateCircleEnable(false);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGenerateCircleEnable(false);
-
-    // Torch O
-    m_ParticleClass->SetGenerateTorchEnable(true);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGenerateTorchEnable(true);
+    // Particle Shape
+    m_ParticleClass->SetParticleShapeType(ParitcleShapeType::Torch);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetParticleShapeType(ParitcleShapeType::Torch);
 
     // IMGUI Update
     SetIMGUIReflectParticle(m_ParticleClass);
@@ -1903,8 +1877,8 @@ void CEffectEditor::OnFireSmallPreset()
     OnSetAlphaBlendToMaterialCallback();
 
     // Random Dir
-    m_ParticleClass->SetIsRandomMoveDir(true);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetIsRandomMoveDir(true);
+    m_ParticleClass->SetSpecialMoveDirType(-1);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetSpecialMoveDirType(-1);
 
     // SpawnTime
     OnSpawnTimeMaxEdit(0.02f);
@@ -1928,17 +1902,11 @@ void CEffectEditor::OnFireSmallPreset()
     // Move Dir
     OnMoveDirEdit(Vector3(0.f, 1.f, 0.f));
 
-    // Ring X
-    m_ParticleClass->SetGenerateRingEnable(false);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGenerateRingEnable(false);
-
-    // Circle X
-    m_ParticleClass->SetGenerateCircleEnable(false);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGenerateCircleEnable(false);
-
-    // Torch O
-    m_ParticleClass->SetGenerateTorchEnable(false);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGenerateTorchEnable(false);
+    // Particle Shape
+    // m_ParticleClass->SetParticleShapeType(ParitcleShapeType::Torch);
+    // dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetParticleShapeType(ParitcleShapeType::Torch);
+    m_ParticleClass->SetParticleShapeType(-1);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetParticleShapeType(-1);
 
     // IMGUI Update
     SetIMGUIReflectParticle(m_ParticleClass);
@@ -1963,9 +1931,9 @@ void CEffectEditor::OnFireWidePreset()
     OnSetAlphaBlendToMaterialCallback();
 
     // Random Dir
-    m_ParticleClass->SetIsRandomMoveDir(false);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetIsRandomMoveDir(false);
-    
+      m_ParticleClass->SetSpecialMoveDirType(-1);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetSpecialMoveDirType(-1);
+
     // Radiuse
     OnEditGenerateRadius(80.f);
 
@@ -1987,17 +1955,10 @@ void CEffectEditor::OnFireWidePreset()
     // Move Dir
     OnMoveDirEdit(Vector3(0.f, 1.f, 0.f));
 
-    // Ring X
-    m_ParticleClass->SetGenerateRingEnable(false);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGenerateRingEnable(false);
+    // Particle Shape
+    m_ParticleClass->SetParticleShapeType(ParitcleShapeType::Circle);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetParticleShapeType(ParitcleShapeType::Circle);
 
-    // Circle O
-    m_ParticleClass->SetGenerateCircleEnable(true);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGenerateCircleEnable(true);
-
-    // Torch X
-    m_ParticleClass->SetGenerateTorchEnable(false);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGenerateTorchEnable(false);
 
     // IMGUI Update
     SetIMGUIReflectParticle(m_ParticleClass);
@@ -2025,9 +1986,9 @@ void CEffectEditor::OnSparkPreset()
     OnAlphaStartEdit(0.8f);
     OnSetAlphaBlendToMaterialCallback();
 
-    // Random Dir
-    m_ParticleClass->SetIsRandomMoveDir(true);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetIsRandomMoveDir(true);
+    // Random Dir O
+    m_ParticleClass->SetSpecialMoveDirType(ParticleSpecialMoveDir::XZSpread);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetSpecialMoveDirType(ParticleSpecialMoveDir::XZSpread);
 
     // SpawnTime
     OnSpawnTimeMaxEdit(0.02f);
@@ -2047,17 +2008,8 @@ void CEffectEditor::OnSparkPreset()
     // Move Dir
     OnMoveDirEdit(Vector3(0.f, 1.f, 0.f));
 
-    // Ring X
-    m_ParticleClass->SetGenerateRingEnable(false);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGenerateRingEnable(false);
-
-    // Circle X
-    m_ParticleClass->SetGenerateCircleEnable(false);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGenerateCircleEnable(false);
-
-    // Torch X
-    m_ParticleClass->SetGenerateTorchEnable(false);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGenerateTorchEnable(false);
+    m_ParticleClass->SetParticleShapeType(-1);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetParticleShapeType(-1);
 
     // IMGUI Update
     SetIMGUIReflectParticle(m_ParticleClass);
@@ -2094,16 +2046,16 @@ void CEffectEditor::OnSimpleMeteorPreset()
     dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGravity(false);
 
     // Alpha
-    OnAlphaEndEdit(2.f);
-    OnAlphaStartEdit(0.2f);
+    OnAlphaEndEdit(0.2f);
+    OnAlphaStartEdit(2.f);
     OnSetAlphaBlendToMaterialCallback();
 
     // Random Dir
-    m_ParticleClass->SetIsRandomMoveDir(false);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetIsRandomMoveDir(false);
+    m_ParticleClass->SetSpecialMoveDirType(-1);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetSpecialMoveDirType(-1);
 
     // Radius
-    OnEditGenerateRadius(3.f);
+    OnEditGenerateRadius(13.f);
 
     // SpawnTime
     OnSpawnTimeMaxEdit(0.02f);
@@ -2124,19 +2076,11 @@ void CEffectEditor::OnSimpleMeteorPreset()
     OnMoveDirEdit(Vector3(0.f, 1.f, 0.f));
 
     // Move Angle
-    OnMoveAngleEdit(Vector3(0.f, 0.f, 5.f));
+    OnMoveAngleEdit(Vector3(0.f, 0.f, 15.f));
 
-    // Ring X
-    m_ParticleClass->SetGenerateRingEnable(false);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGenerateRingEnable(false);
-
-    // Circle X
-    m_ParticleClass->SetGenerateCircleEnable(false);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGenerateCircleEnable(false);
-
-    // Torch O
-    m_ParticleClass->SetGenerateTorchEnable(true);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGenerateTorchEnable(true);
+    // Circle Type
+    m_ParticleClass->SetParticleShapeType(ParitcleShapeType::Circle);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetParticleShapeType(ParitcleShapeType::Circle);
 
     // IMGUI Update
     SetIMGUIReflectParticle(m_ParticleClass);

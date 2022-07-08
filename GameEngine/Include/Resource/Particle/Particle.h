@@ -213,9 +213,9 @@ public:
 		return m_CBuffer->Is2D();
 	}
 
-	bool IsMoveDirRandom()
+	int GetSpecialMoveDirType()
 	{
-		return m_CBuffer->IsMoveDirRandom();
+		return m_CBuffer->GetSpecialMoveDirType();
 	}
 
 	const Vector3& GetMoveAngle()
@@ -258,26 +258,17 @@ public:
 	{
 		return m_CBuffer->GetParticleBounceResist();
 	}
-	// Ring
-	int IsGenerateRing() const
+
+	int GetParticleShapeType() const
 	{
-		return m_CBuffer->IsGenerateRing();
+		return m_CBuffer->GetParticleShapeType();
 	}
 
 	int IsLoopGenerateRing() const
 	{
 		return m_CBuffer->IsLoopGenerateRing();
 	}
-	// Circle
-	int IsGenerateCircle() const
-	{
-		return m_CBuffer->IsGenerateCircle();
-	}
-	// Torch
-	int IsGenerateTorch() const
-	{
-		return m_CBuffer->IsGenerateTorch();
-	}
+
 	// Alpha
 	float GetStartAlpha() const
 	{
@@ -300,11 +291,33 @@ public:
 	{
 		return m_CBuffer->GetUVColN();
 	}
+	// Linear Rotate
+// Linaer Iterate 할때의 최초 Rot Angle
+	int IsSeperateLinearRotate()
+	{
+		return m_CBuffer->IsSeperateLinearRotate();
+	}
+
 public:
+	// Linaer Rotate
+	int SetSeperateLinearRotate(bool Enable)
+	{
+		m_CBuffer->SetSeperateLinearRotate(Enable);
+	}
+
 	// Component 의 Relative Scale 반영학
 	void SetCommonRelativeScale(const Vector3& Scale)
 	{
 		m_CBuffer->SetCommonRelativeScale(Scale);
+	}
+	// Set  Particle Type
+	void SetParticleShapeType(ParitcleShapeType Type)
+	{
+		m_CBuffer->SetParticleShapeType((int)Type);
+	}
+	void SetParticleShapeType(int Type)
+	{
+		m_CBuffer->SetParticleShapeType(Type);
 	}
 
 	// Seperate Rot Angle
@@ -352,20 +365,6 @@ public:
 	void SetLoopGenerateRing(bool Enable)
 	{
 		m_CBuffer->SetLoopGenerateRing(Enable);
-	}
-	void SetGenerateRingEnable(bool Enable)
-	{
-		m_CBuffer->SetGenerateRingEnable(Enable);
-	}
-	// Torch
-	void SetGenerateTorchEnable(bool Enable)
-	{
-		m_CBuffer->SetGenerateTorchEnable(Enable);
-	}
-	// Circle
-	void SetGenerateCircleEnable(bool Enable)
-	{
-		m_CBuffer->SetGenerateCircleEnable(Enable);
 	}
 	// Bounce
 	void SetBounceEnable(bool Enable)
@@ -462,9 +461,14 @@ public:
 		m_CBuffer->SetMove(Move);
 	}
 
-	void SetIsRandomMoveDir(bool Random)
+	void SetSpecialMoveDirType(int Type)
 	{
-		m_CBuffer->SetIsRandomMoveDir(Random);
+		m_CBuffer->SetSpecialMoveDirType(Type);
+	}
+
+	void SetSpecialMoveDirType(ParticleSpecialMoveDir Type)
+	{
+		m_CBuffer->SetSpecialMoveDirType(Type);
 	}
 
 	void SetGravity(bool Gravity)

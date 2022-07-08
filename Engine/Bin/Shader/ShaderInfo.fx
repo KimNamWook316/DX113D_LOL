@@ -224,6 +224,26 @@ float DegreeToRadian(float Angle)
 	return Angle / 180.f * 3.14159f;
 }
 
+float RadianToDegree(float Radian)
+{
+	return (Radian / 3.14159f) * 180.f;
+}
+
+// Radian (X), Degree 로 리턴한다.
+float AngleBetweenTwoVector(float3 V1, float3 V2)
+{
+	float cosResult = dot(V1, V2);
+
+	// acos 는 -1에서 1 사이의 값을 반환한다.
+	float RadianRotAngle = acos(cosResult);
+
+	// 주의할점 : cos210 -> cos 150과 동일
+	// 실제 각도는 210도 인데도 불구하고 150 도를 리턴한다.
+	float RotAngle = RadianToDegree(RadianRotAngle);
+
+	return RotAngle;
+}
+
 float4 PaperBurn2D(float4 Color, float2 UV)
 {
 	if (g_MtrlPaperBurnEnable == 0)

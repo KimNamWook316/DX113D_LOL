@@ -442,37 +442,33 @@ struct	ParticleCBuffer
 	Vector3 RotationAngle;
 	float	ParticleBounceResistance;
 
-	int IsGenerateRing;
+	int ParticleShapeType;
 	float GenerateRadius;
 	int IsLoopGenerateRing;
-	int IsMoveDirRandom;
+	int SpecialMoveDirType; 
 	// int     ParticleBounce;
 	// float	 ParticleBounceResistance;
 
 	float AlphaEnd;
 	float AlphaStart;
-	int IsGenerateCircle;
-	float ParticleEmpty1;
-
-	int IsGenerateTorch;
-	float ParticleEmpty2;
 	int IsLifeTimeLinearFromCenter;
-	float ParticleEmpty3;
+	int SeperateLinerRotate;
 
 	int UVMoveEnable;
 	int UVRowN;
 	int UVColN;
-	int ParticleEmpty4;
+	int ParticleEmpty2;
 
 	// 각 Particle 별로 다르게 Rotation Angle을 주는 경우
 	Vector3 MinSeperateRotAngle;
-	float ParticleEmpty5;
+	float ParticleEmpty3;
 
 	Vector3 MaxSeperateRotAngle;
-	float ParticleEmpty6;
+	float ParticleEmpty4;
 
+	// Particle Component 상에서 적용하는 Scale 정보
 	Vector3 CommonRelativeScale;
-	float ParticleEmpty7;
+	float ParticleEmpty5;
 };
 
 struct ParticleInfo
@@ -486,7 +482,13 @@ struct ParticleInfo
 	int		Alive;
 	float	FallTime;
 	float	FallStartY;
-	Vector3 SeperateRotAngle;
+
+	// 1) Circle, Ring 등 Particle Shape
+	// 2) Linear Rot 때 세팅되는 값 
+	float CurrentParticleAngle;
+
+	Vector3 SeperateRotAngleOffset;
+	Vector3 FinalSeperateRotAngle;
 
 	float  InitWorldPosY;
 };
@@ -509,8 +511,8 @@ struct ParticleInfoShared
 	Vector3  CommonRotationAngle;
 	Vector3  SeperateMinRotAngle;
 	Vector3  SeperateMaxRotAngle;
-	float  PrevRingAngle;
 
+	float  PrevRingAngle;
 
 	int    UVMoveEnable;
 	int    UVRowN;

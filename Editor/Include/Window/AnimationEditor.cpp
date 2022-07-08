@@ -734,7 +734,7 @@ void CAnimationEditor::OnMakeAnimInstByExcel()
 
 		int AddedKeyNameLength = (int)AddedKeyName.length();
 
-		// AddedKeyName 중에서 '_' 뒤의 문자를 가져온다. //
+		// AddedKeyName 중에서 '_' 뒤의 문자를 가져온다. 
 		std::string_view AddedKeyNameAfterLowDash = AddedKeyName;
 		AddedKeyNameAfterLowDash = AddedKeyNameAfterLowDash.substr(AddedKeyNameAfterLowDash.find('_') + 1, AddedKeyNameAfterLowDash.length());
 
@@ -753,11 +753,19 @@ void CAnimationEditor::OnMakeAnimInstByExcel()
 		}
 
 		// Dummy Animation 을 통해 찾아야 한다.
+		// Dummy Animation 상에서 KeyName 을 수정한다.
 		if (!m_DummyAnimation->EditCurrentSequenceKeyName(NewLableKeyName.c_str(), AddedKeyName))
 		{
 			assert(false);
 			return;
 		}
+
+		// 뿐만 아니라, AnimationSequenceData 의 m_Name 도 수정해야 한다.
+		// 그리고 현재 수정하는 AnimationSequenceData 는 m_DummyAnimation 에 저장되어 있는 녀석이어야 한다.
+		CAnimationSequenceData* AnimSeqData = m_DummyAnimation->FindAnimation(NewLableKeyName);
+		AnimSeqData->SetName(NewLableKeyName);
+
+		AnimSeqData->SetOriginalFramePlayTime();
 
 		// File 이름 Log 목록에 추가
 		Text = m_AnimInstanceConvertLog->AddWidget<CIMGUIText>("Text");
@@ -1302,6 +1310,15 @@ void CAnimationEditor::OnAddAnimationSequence()
 	// Add 할 Animation 의 이름을 입력해야 한다
 	if (m_NewAnimSeqName->Empty() || m_NewAnimSeqDataKeyName->Empty())
 		return;
+
+	// 현재 Seq Key 를 Key로 사용하고 있는 SceneResource 내의 Sequence 를 조사한다.
+	// 그래야만, 내가 Add한 Key로, 불러오고자 하는 .sqc 파일을 제대로 불러온다.
+	// 그렇지 않다면, 이미 SceneResource 에 존재하는 .sqc 를 불러오게 될 것이다.
+	if (CSceneManager::GetInst()->GetScene()->GetResource()->FindAnimationSequence(m_NewAnimSeqName->GetTextUTF8()))
+	{
+		MessageBox(nullptr, TEXT("다른 Sqc Key 활용하세요"), TEXT("다른 Sqc Key 활용하세요"), MB_OK);
+		return;
+	}
 
 	TCHAR LoadFilePath[MAX_PATH] = {};
 

@@ -360,3 +360,19 @@ enum class ToonShaderType
 	Warm,
 	Max
 };
+
+enum class ParitcleShapeType
+{
+	YUpDirRing = 0, // 위를 바라보는 형태로 즉, Y 를 바라보는 형태로 Ring 생성
+	Circle,
+	Torch,
+	ZMinusDirRing, // 사용자 정면을 바라보는 형태로 Ring 생성
+	Max
+};
+
+enum class ParticleSpecialMoveDir
+{
+	XZSpread = 0, // xz 평명 방향으로 이동 y는 0
+	XYSpread, // xy 평명 방향으로 이동 z 는 0
+	Max
+};
