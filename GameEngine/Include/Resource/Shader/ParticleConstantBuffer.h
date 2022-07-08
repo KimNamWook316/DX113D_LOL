@@ -197,9 +197,25 @@ public:
 	{
 		return m_BufferData.AlphaEnd;
 	}
+	// 되살리는 효과
+	int IsDisableNewAlive() const
+	{
+		return m_BufferData.DisableNewAlive;
+	}
 public:
+	// Restart 버튼 ( 설명은 생성자 참고)
+	void SetResetParticleSharedInfoSumSpawnCnt(bool Enable)
+	{
+		m_BufferData.ResetParticleSharedInfoSumSpawnCnt = Enable ? 1 : 0;
+	}
+	// 되살리는 효과 무효화 하기
+	void SetDisableNewAlive(bool Enable)
+	{
+		m_BufferData.DisableNewAlive = Enable ? 1 : 0;
+	}
+
 	// Linear Rotate
-// Linaer Iterate 할때의 최초 Rot Angle
+	// Linaer Iterate 할때의 최초 Rot Angle
 	void SetSeperateLinearRotate(bool Enable)
 	{
 		m_BufferData.SeperateLinerRotate = Enable ? 1 : 0;

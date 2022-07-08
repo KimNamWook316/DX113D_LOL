@@ -322,9 +322,6 @@ bool CEffectEditor::Init()
     m_IsGravityEdit->AddCheckInfo("Gravity");
     m_IsGravityEdit->SetCallBackLabel<CEffectEditor>(this, &CEffectEditor::OnIsGravityEdit);
 
-    Line = Tree->AddWidget<CIMGUISameLine>("Line");
-    Line->SetOffsetX(170.f);
-
     // m_IsRandomMoveEdit = Tree->AddWidget<CIMGUICheckBox>("Random", 80.f);
     // m_IsRandomMoveEdit->AddCheckInfo("Random");
     // m_IsRandomMoveEdit->SetCallBackLabel<CEffectEditor>(this, &CEffectEditor::OnIsRandomMoveEdit);
@@ -332,16 +329,22 @@ bool CEffectEditor::Init()
     // Line = Tree->AddWidget<CIMGUISameLine>("Line");
     // Line->SetOffsetX(260.f);
 
-    m_IsPauseResumeToggle = Tree->AddWidget<CIMGUICheckBox>("Toggle", 80.f);
-    m_IsPauseResumeToggle->AddCheckInfo("Toggle");
-    m_IsPauseResumeToggle->SetCallBackLabel<CEffectEditor>(this, &CEffectEditor::OnPauseResumeToggle);
-    m_IsPauseResumeToggle->SetCheck(0, true);
+    // m_IsPauseResumeToggle = Tree->AddWidget<CIMGUICheckBox>("Toggle", 80.f);
+    // m_IsPauseResumeToggle->AddCheckInfo("Toggle");
+    // m_IsPauseResumeToggle->SetCallBackLabel<CEffectEditor>(this, &CEffectEditor::OnPauseResumeToggle);
+    // m_IsPauseResumeToggle->SetCheck(0, true);
 
     // Spawn Time, Spawn Count
-    Tree  = AddWidget<CIMGUITree>("Spawn Time, Count");
+    Tree  = AddWidget<CIMGUITree>("Spawn Time, Disable Alive");
 
     m_SpawnTimeMaxEdit = Tree->AddWidget<CIMGUIInputFloat>("Spawn Time", 150.f);
     m_SpawnTimeMaxEdit->SetCallBack(this, &CEffectEditor::OnSpawnTimeMaxEdit);
+
+    // 
+    m_DisableNewAliveEdit = Tree->AddWidget<CIMGUICheckBox>("Disable New Alive", 150.f);
+    m_DisableNewAliveEdit->AddCheckInfo("Disable New Alive");
+    m_DisableNewAliveEdit->SetCallBackLabel<CEffectEditor>(this, &CEffectEditor::OnDisableNewAlive);
+    m_DisableNewAliveEdit->SetCheck(0, false); // 처음에는 false 로 세팅되어 있다.
 
     // Start Min, Start Max
     Tree = AddWidget<CIMGUITree>("Start Min, Max");
@@ -722,6 +725,15 @@ void CEffectEditor::OnSpawnTimeMaxEdit(float Num)
 
     m_ParticleClass->SetSpawnTimeMax(Num);
     dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->SetSpawnTime(Num);
+}
+
+void CEffectEditor::OnDisableNewAlive(const char*, bool Enable)
+{
+    if (!m_ParticleClass)
+        return;
+
+    m_ParticleClass->SetDisableNewAlive(Enable);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetDisableNewAlive(Enable);
 }
 
 // StartMin, Max , SpawnCountMax 의 경우, Particle Component 에서 Particle 의 상수 버퍼로 부터 정보를 바로 얻어와서 Post Update 에서 계산
@@ -1588,6 +1600,7 @@ void CEffectEditor::SetIMGUIReflectParticle(CParticle* Particle)
     // Spawn Count, Time
     m_SpawnCountMaxEdit->SetVal(Particle->GetSpawnCountMax());
     m_SpawnTimeMaxEdit->SetVal(Particle->GetSpawnTimeMax());
+    m_DisableNewAliveEdit->SetCheck(0, Particle->IsDisableNewAlive());
 
     // LifeTime
     m_LifeTimeMinEdit->SetVal(Particle->GetLifeTimeMin());
@@ -1619,7 +1632,7 @@ void CEffectEditor::SetIMGUIReflectParticle(CParticle* Particle)
     // Movement
     m_IsGravityEdit->SetCheck(0, Particle->GetGravity());
     m_IsMoveEdit->SetCheck(0, Particle->GetMove());
-    m_IsPauseResumeToggle->SetCheck(0, true);
+    // m_IsPauseResumeToggle->SetCheck(0, true); 사실상 거의 이제 쓸모가 없는 코드
 
     // Bounce
     m_IsBounce->SetCheck(0, Particle->IsBounceEnable() == 1 ? true : false);

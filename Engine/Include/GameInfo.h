@@ -457,11 +457,13 @@ struct	ParticleCBuffer
 	int UVMoveEnable;
 	int UVRowN;
 	int UVColN;
-	int ParticleEmpty2;
+	int ResetParticleSharedInfoSumSpawnCnt;
 
 	// 각 Particle 별로 다르게 Rotation Angle을 주는 경우
 	Vector3 MinSeperateRotAngle;
-	float ParticleEmpty3;
+	// 한번에 처음 SpawnCount 개수만큼 생성되게 세팅하기 (확 생성되고, 확 사라지고)
+	// SpawnTime 이 지나면 새로 만들어지거나 하는 효과 X
+	int DisableNewAlive;
 
 	Vector3 MaxSeperateRotAngle;
 	float ParticleEmpty4;
@@ -500,6 +502,13 @@ struct ParticleInfoShared
 {
 	unsigned int	SpawnEnable;
 	unsigned int	SpawnCountMax;
+
+	// 지금까지 생성된 Particle 개수
+	unsigned int	CurrentSpawnCountSum;
+
+	// 한번에 처음 SpawnCount 개수만큼 생성되게 세팅하기 
+	// SpawnTime 이 지나면 새로 만들어지거나 하는 효과 X
+	int DisableNewAlive;
 
 	Vector3	ScaleMin;
 	Vector3	ScaleMax;

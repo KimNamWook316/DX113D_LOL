@@ -95,7 +95,7 @@ void CParticleComponent::SetParticle(CParticle* Particle)
 
 	std::vector<float> VecNormalDistVal = m_Particle->GetVecNormalDistVal();
 
-	// 딱 한번만 Update 해준다.
+	// 정규 분포 정보의 경우, 딱 한번만 Update 해준다.
 	m_NormalDistributionBuffer->UpdateBuffer(&VecNormalDistVal[0], (int)VecNormalDistVal.size());
 
 	m_UpdateShader = m_Particle->CloneUpdateShader();
@@ -105,6 +105,33 @@ void CParticleComponent::SetParticle(CParticle* Particle)
 	m_SpawnTimeMax = m_Particle->GetSpawnTimeMax();
 
 	m_ParticleName = m_Particle->GetName();
+
+
+	// 해당 코드를 세팅해주는 이유는 다음과 같다
+	// 1. CBuffer 의 DisableNewAlive 가 true 라면, 처음에 SpawnCount 만큼 모든 Particle 들을 생성하고
+	// 차후, SpawnTime 이 SpawnTimeMax 를 지나더라도, 추가생성을 막기 위함이다.
+	// 이를 위해서 Compute Shader 측에서는 Particle 공유 구조화 버퍼 중에서
+	// CurrentSpawnCountSum 이라는 변수를 참조하여
+	// 해당 CurrentSpawnCountSum 가 SpawnCountMax 보다 크면, 더이상 생성하지 않도록 한다.
+	
+	// 현재 내가 하고 싶은 것은, Restart 버튼을 Particle Componet Widget 상에서 누를 때마다
+	// 확 생성되었다가, 사라지고, -> 이 과정을 반복해서 보고 싶은 것
+	// 이를 위해서는 맨 처음 Compute Shader 측에서 CurrentSpawnCountSum 라는 공유 변수 정보가 
+	// Restart 버튼을 누를 때마다 0으로 초기화 되어야 한다.
+	// Compute Shadter 측에서는 DisableNewAlive 가 false 라면 CurrentSpawnCountSum 을 0 으로
+	// 세팅하는 코드를 적어두었다.
+	// 따라서, 맨 처음에 Particle 을 세팅할 때 DisableNewAlive 를 무조건 false 로 줘서
+	// Compute Shader 측의 CurrentSpawnCountSum 을 0으로 만들 것이다.
+	// int OriginDisableNewAlive = m_CBuffer->IsDisableNewAlive();
+	// 
+	// m_CBuffer->SetDisableNewAlive(0);
+	// m_CBuffer->UpdateCBuffer();
+	// 
+	// int	GroupCount = m_Particle->GetSpawnCountMax() / 64 + 1;
+	// m_UpdateShader->Excute(GroupCount, 1, 1);
+	// 
+	// // 그 다음 원래의 DisableNewAlive 정보를 상수 버퍼에 재세팅할 것이다.
+	// m_CBuffer->SetDisableNewAlive(OriginDisableNewAlive);
 }
 
 void CParticleComponent::SetSpawnTime(float Time)
@@ -149,10 +176,23 @@ void CParticleComponent::Update(float DeltaTime)
 
 	m_SpawnTime += DeltaTime;
 
+	// CBuffer 의 DisableNewAlive 가 true 라면, 한번에 다 생성해버려야 하는 것
+	// 이 방법 중 하나는 m_SpawnTimeMax 를 0으로 만들어버리는 것
+	if (m_CBuffer->IsDisableNewAlive() == 1)
+	{
+		m_SpawnTimeMax = 0.f;
+	}
+
 	if (m_SpawnTime >= m_SpawnTimeMax)
 	{
 		m_SpawnTime -= m_SpawnTimeMax;
 		m_CBuffer->SetSpawnEnable(1);
+
+		// SpawnTime 은 0으로 만든다.
+		if (m_CBuffer->IsDisableNewAlive() == 1)
+		{
+			m_SpawnTime = 0.f;
+		}
 	}
 
 	else
@@ -292,6 +332,14 @@ void CParticleComponent::Render()
 void CParticleComponent::PostRender()
 {
 	CSceneComponent::PostRender();
+
+	// Restart 버튼을 해제 한다.
+	// 일단 해당 상수 버퍼 내용이 실제 GPU 측에는 한번 넘어가야 하니까
+	// 위에서 Render 혹은 PostUpdate 에서 넘겨주고 여기서 세팅
+	if (m_CBuffer)
+	{
+		m_CBuffer->SetResetParticleSharedInfoSumSpawnCnt(0);
+	}
 }
 
 CParticleComponent* CParticleComponent::Clone()
@@ -317,12 +365,13 @@ bool CParticleComponent::Load(FILE* File)
 	return true;
 }
 
-void CParticleComponent::ResetParticleInfo()
+// Shader 측에 넘겨진 구조화 버퍼 정보를 초기화 해주는 코드이다.
+void CParticleComponent::ResetParticleStructuredBufferInfo()
 {
 	if (!m_Particle)
 		return;
 
-	SetParticle(m_Particle);
+	m_CBuffer->SetResetParticleSharedInfoSumSpawnCnt(1);
 }
 
 bool CParticleComponent::SaveOnly(FILE* File)

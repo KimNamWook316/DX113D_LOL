@@ -98,6 +98,8 @@ private :
 	// m_NormalDistributionBuffer 에 정규 분포 계산 값들을 적용하는 함수
 	void GenerateNormalDistribution();
 public :
+	void ResetStructuredBufferInfo();
+public :
 	bool SaveFile(const char* FullPath);
 	bool LoadFile(const char* FullPath);
 public:
@@ -109,7 +111,6 @@ public:
 	{
 		return m_Material;
 	}
-
 
 	// int GetApplyRandom() const
 	// {
@@ -297,10 +298,23 @@ public:
 	{
 		return m_CBuffer->IsSeperateLinearRotate();
 	}
-
+	// 되살리는 효과
+	int IsDisableNewAlive() const
+	{
+		return m_CBuffer->IsDisableNewAlive();
+	}
 public:
+	void SetResetParticleSharedInfoSumSpawnCnt(bool Enable)
+	{
+		m_CBuffer->SetResetParticleSharedInfoSumSpawnCnt(Enable);
+	}
+	void SetDisableNewAlive(bool Enable)
+	{
+		m_CBuffer->SetDisableNewAlive(Enable);
+	}
+
 	// Linaer Rotate
-	int SetSeperateLinearRotate(bool Enable)
+	void SetSeperateLinearRotate(bool Enable)
 	{
 		m_CBuffer->SetSeperateLinearRotate(Enable);
 	}

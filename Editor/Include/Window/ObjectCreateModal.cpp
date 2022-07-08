@@ -158,6 +158,9 @@ void CObjectCreateModal::OnCreateObject()
 	else if (Index == 1)
 		NewObject = CurrentScene->CreateGameObject<CPlayerHook>(Name);
 
+	// (OBJ)가 임시적으로 예외처리 -> 독
+	if (!NewObject)
+		return;
 
 	// 차후, Loading 을 위해서 ObjectCombo Select Index 정보를 저장해준다.
 	// NewObject->SetEditorObjectModalIndex(Index);

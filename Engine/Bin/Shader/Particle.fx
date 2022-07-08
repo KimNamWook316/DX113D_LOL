@@ -46,11 +46,11 @@ cbuffer	ParticleCBuffer : register(b11)
 	int g_ParticleUVMoveEnable;
 	int g_ParticleUVRowN;
 	int g_ParticleUVColN;
-	int ParticleEmpty2;
+	int g_ParticleResetSharedInfoSpawnCntSum;
 
 	// 각 Particle 별로 다르게 Rotation Angle을 주는 경우
 	float3 g_ParticleSeperateRotAngleMin;
-	int ParticleEmpty3;
+	int g_ParticleDisableNewAlive;
 
 	float3 g_ParticleSeperateRotAngleMax;
 	int ParticleEmpty4;
@@ -102,6 +102,9 @@ struct ParticleInfoShared
 {
 	uint	SpawnEnable;
 	uint	SpawnCountMax;
+
+	uint CurrentSpawnCountSum;
+	int DisableNewAlive;
 
 	float3	ScaleMin;
 	float3	ScaleMax;
@@ -498,6 +501,8 @@ void ParticleUpdate(uint3 ThreadID : SV_DispatchThreadID)
 	g_ParticleShare[0].GravityEnable = g_ParticleGravity;
 	g_ParticleShare[0].RotationAngle = g_ParticleRotationAngle;
 
+	g_ParticleShare[0].DisableNewAlive = g_ParticleDisableNewAlive;
+
 	g_ParticleShare[0].UVMoveEnable = g_ParticleUVMoveEnable;
 	g_ParticleShare[0].UVRowN = g_ParticleUVRowN;
 	g_ParticleShare[0].UVColN   = g_ParticleUVColN;
@@ -513,9 +518,29 @@ void ParticleUpdate(uint3 ThreadID : SV_DispatchThreadID)
 	if (g_ParticleSpawnCountMax <= ThreadID.x)
 		return;
 
+	// 원래 기본 설정 처럼, SpawnTime 에 맞춰서 지속적으로 Particle을 생성하거나
+	// 일시적으로 Restart 버튼을 누른 것이라면
+	if (g_ParticleDisableNewAlive == 0 ||
+		g_ParticleResetSharedInfoSpawnCntSum == 1)
+	{
+		// SpawnTime 에 맞춰서 지속적으로 생성하게끔 하려면 
+		// g_ParticleDisableNewAlive == 1 일때, 즉, 한번에 확 생성하고, 지금까지 누적 생성된 Particle 개수가
+		// g_ParticleSpawnCountMax 를 넘어가면 생성되지 않는 원리인데.
+		// 이를 무효화 하기 위해서, 
+		// 지금까지 누적 생성된 Particle 개수를 계속 0이 되게 할 것이다.
+		g_ParticleShare[0].CurrentSpawnCountSum = 0;
+	}
+
 	// 파티클이 살아있는 파티클인지 판단한다.
 	if (g_ParticleArray[ThreadID.x].Alive == 0)
 	{
+		// SpawnCount 만큼 한번에 생성해버리고, 
+		// 차후 새로운 Particle 은 생성하지 않으려고 한다면
+		if (g_ParticleShare[0].CurrentSpawnCountSum >= g_ParticleSpawnCountMax && 
+			g_ParticleDisableNewAlive == 1)
+		// if (g_ParticleShare[0].CurrentSpawnCountSum > g_ParticleSpawnCountMax && g_ParticleDisableNewAlive == 1) -> 한개가 더 생성됨
+			return;
+
 		int	SpawnEnable = g_ParticleShare[0].SpawnEnable;
 		int	Exchange = 0;
 
@@ -526,10 +551,33 @@ void ParticleUpdate(uint3 ThreadID : SV_DispatchThreadID)
 			// 함수의 인자는 in, in, out으로 구성되어 있다.
 			// in은 일반적으로 변수의 값을 넘겨줄때 사용한다.
 			// out은 반쪽짜리 레퍼런스처럼 결과값을 여기의 변수에 받아올때 사용한다.
+			// InputValue 를 g_ParticleShare[0].SpawnEnable 에 새롭게 세팅해주고
+			// 기존에 g_ParticleShare[0].SpawnEnable 에 들어있던 값을 ExChange 로 가져온다.
+			// 그러면, 지금 g_ParticleShare[0].SpawnEnable 에 세팅하려는 값은 0 이다.
+			// InputValue 에는 0이 들어가있으니까
+			// 만약에 g_ParticleShare[0].SpawnEnable 에 1 이 들어있다면
+			// 다른 쓰레드가 아직 접근안했다는 의미이고, Exchange 에 1이 들어올 것이다.
+			// 즉, 결과적으로 지금 현재 g_ParticleShare[0].SpawnEnable 의 값을 Exchange 로 가져오는 것이다.
 			InterlockedExchange(g_ParticleShare[0].SpawnEnable, InputValue, Exchange);
 
 			if (Exchange == SpawnEnable)
+			{
 				g_ParticleArray[ThreadID.x].Alive = 1;
+
+				if (g_ParticleDisableNewAlive == 1)
+				{
+					g_ParticleShare[0].CurrentSpawnCountSum += 1;
+				}
+				else
+				{
+					// SpawnTime 에 맞춰서 지속적으로 생성하게끔 하려면 
+					// g_ParticleDisableNewAlive == 1 일때, 즉, 한번에 확 생성하고, 지금까지 누적 생성된 Particle 개수가
+					// g_ParticleSpawnCountMax 를 넘어가면 생성되지 않는 원리인데.
+					// 이를 무효화 하기 위해서, 
+					// 지금까지 누적 생성된 Particle 개수를 계속 0이 되게 할 것이다.
+					g_ParticleShare[0].CurrentSpawnCountSum = 0;
+				}
+			}
 		}
 
 		if (g_ParticleArray[ThreadID.x].Alive == 0)
@@ -598,7 +646,10 @@ void ParticleUpdate(uint3 ThreadID : SV_DispatchThreadID)
 		 ApplyRotationAccordingToDir(ThreadID.x);
 		 
 	}
+
 	// 현재 생성이 되어 있는 파티클일 경우
+	// 혹은 처음에 그냥 다 생성해버리는 코드라면
+	// if (g_ParticleDisableNewAlive == 1 || g_ParticleArray[ThreadID.x].Alive == 0)
 	else
 	{
 		g_ParticleArray[ThreadID.x].LifeTime += g_DeltaTime;

@@ -72,6 +72,7 @@ private:
     class CIMGUIComboBox* m_ParticlePreset;
 
     class CIMGUIInputFloat* m_SpawnTimeMaxEdit;
+    class CIMGUICheckBox* m_DisableNewAliveEdit;
 
     class CIMGUIInputFloat3* m_StartMinEdit;
     class CIMGUIInputFloat3* m_StartMaxEdit;
@@ -194,6 +195,9 @@ private:
 
     // Spawn Time, Count
     void OnSpawnTimeMaxEdit(float Num);
+
+    // Diable Alive
+    void OnDisableNewAlive(const char*, bool);
 
     // StartMin,Max
     void OnStartMinEdit(const Vector3&);

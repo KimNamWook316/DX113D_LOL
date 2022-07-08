@@ -35,6 +35,16 @@ CParticleConstantBuffer::CParticleConstantBuffer() :
 	m_BufferData.SeperateLinerRotate = 0;
 
 	m_BufferData.UVMoveEnable = 0;
+
+	// Alive 를 안하는 것 (즉, 되살리지 않는 코드)
+	// 그리고, 한번에 SpawnCount 만큼 생성해버리기 
+	m_BufferData.DisableNewAlive = 0;
+
+	// Restart 버튼을 위한 것
+	// 공유 ParticleShareInfo 구조화 버퍼에서 CurrentSpawnCntSum 정보를 0으로 만들어줘 ! 라고 GPU 측에 메세지를 보내는 것
+	// Restart 버튼을 누르게 되면, 해당 값이 1로 바뀐다.
+	// 단, 다음 Frame 에서는 다시 0으로 세팅해준다.
+	m_BufferData.ResetParticleSharedInfoSumSpawnCnt = 0;
 }
 
 CParticleConstantBuffer::CParticleConstantBuffer(const CParticleConstantBuffer& Buffer) :
@@ -50,6 +60,10 @@ CParticleConstantBuffer::~CParticleConstantBuffer()
 bool CParticleConstantBuffer::Init()
 {
 	SetConstantBuffer("ParticleCBuffer");
+
+	// 처음 Init 될 때 Update Buffer 처리를 한번 해준다.
+	// 처음에 생성될 때에는 
+	m_Buffer->UpdateBuffer(&m_BufferData);
 
 	return true;
 }
