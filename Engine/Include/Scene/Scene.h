@@ -132,8 +132,6 @@ public:
 	{
 		m_Mode->SetPlayerObject(Player);
 	}
-
-
 	bool IsPlay() const
 	{
 		return m_Play;

@@ -1,6 +1,7 @@
 
 #include "MoveNode.h"
 #include "Component/AnimationMeshComponent.h"
+#include "../PlayerNormalAttackCheckCollider.h"
 #include "Animation/AnimationSequenceInstance.h"
 #include "../GameBehaviorTree.h"
 #include "../ObjectDataComponent.h"
@@ -25,10 +26,10 @@ NodeResult CMoveNode::OnStart(float DeltaTime)
 {
 	CNavAgent* Agent = m_Object->FindObjectComponentFromType<CNavAgent>();
 
-	/*if (Agent)
+	if (Agent)
 		m_NavAgent = Agent;
 
-	m_AnimationMeshComp = m_Owner->GetAnimationMeshComp();
+	/* m_AnimationMeshComp = m_Owner->GetAnimationMeshComp();
 
 	std::string ObjectName = m_Object->GetName();
 
@@ -49,6 +50,7 @@ NodeResult CMoveNode::OnStart(float DeltaTime)
 NodeResult CMoveNode::OnUpdate(float DeltaTime)
 {
 	CObjectDataComponent* Comp = m_Object->FindComponentFromType<CObjectDataComponent>();
+	CPlayerNormalAttackCheckCollider* NormalAttackComp = m_Object->FindComponentFromType<CPlayerNormalAttackCheckCollider>();
 
 	if (!Comp)
 		return NodeResult::Node_False;
@@ -92,7 +94,10 @@ NodeResult CMoveNode::OnUpdate(float DeltaTime)
 		MoveDir += Vector3(1.f, 0.f, 0.f).TransformCoord(matRot);
 	}
 
+	MoveDir.y = 0.f;
 	MoveDir.Normalize();
+
+	m_Object->SetMoveDir(MoveDir);
 	
 	/// 벡터 외적을 할땐 오른손 좌표계 기준이라서 z에 -1을 곱해준다
 	Vector3 CrossVector = Vector3(FrontVector.x, FrontVector.y, -FrontVector.z).Cross(Vector3(MoveDir.x, MoveDir.y, -MoveDir.z));
@@ -108,14 +113,18 @@ NodeResult CMoveNode::OnUpdate(float DeltaTime)
 	// 180도 넘으면 반시계로 회전
 	if (Over180)
 	{
-		if(Degree > 1.5f)
+		if (Degree > 1.5f)
+		{
 			m_Object->AddWorldRotationY(360.f * DeltaTime);
+		}
 	}
 
 	else
 	{
 		if (Degree > 1.5f)
+		{
 			m_Object->AddWorldRotationY(-360.f * DeltaTime);
+		}
 	}
 
 

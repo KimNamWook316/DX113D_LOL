@@ -20,6 +20,7 @@
 #include "../EditorUtil.h"
 #include "GameObject/SkyObject.h"
 #include "IMGUITextInput.h"
+#include "../Component/GameStateComponent.h"
 
 CToolWindow::CToolWindow()	:
 	m_GizmoBlock(nullptr),
@@ -468,6 +469,21 @@ void CToolWindow::OnClickPlay()
 	CSceneManager::GetInst()->GetScene()->Play();
 
 	m_PlayState->SetText("Current State : Playing");
+
+	std::vector<CGameObject*> vecObject;
+	CSceneManager::GetInst()->GetScene()->GetAllObjectsPointer(vecObject);
+
+	size_t Count = vecObject.size();
+
+	for (size_t i = 0; i < Count; ++i)
+	{
+		CGameStateComponent* Comp = vecObject[i]->FindObjectComponentFromType<CGameStateComponent>();
+
+		if (Comp)
+		{
+			Comp->SetTreeUpdate(true);
+		}
+	}
 }
 
 void CToolWindow::OnClickPause()
@@ -475,6 +491,21 @@ void CToolWindow::OnClickPause()
 	CSceneManager::GetInst()->GetScene()->Pause();
 
 	m_PlayState->SetText("Current State : Paused");
+
+	std::vector<CGameObject*> vecObject;
+	CSceneManager::GetInst()->GetScene()->GetAllObjectsPointer(vecObject);
+
+	size_t Count = vecObject.size();
+
+	for (size_t i = 0; i < Count; ++i)
+	{
+		CGameStateComponent* Comp = vecObject[i]->FindObjectComponentFromType<CGameStateComponent>();
+
+		if (Comp)
+		{
+			Comp->SetTreeUpdate(false);
+		}
+	}
 }
 
 void CToolWindow::OnClickStop()

@@ -1,9 +1,9 @@
 #pragma once
 
-#include "Component/ColliderBox3D.h"
+#include "Component/ColliderSphere.h"
 
 class CPlayerNormalAttackCheckCollider :
-    public CColliderBox3D
+    public CColliderSphere
 {
     friend class CGameObject;
 

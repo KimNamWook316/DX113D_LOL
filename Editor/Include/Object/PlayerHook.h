@@ -23,7 +23,7 @@ private:
     float m_Distance;
     float m_AccDistance;
     float m_AccUnitDistance;
-    CStaticMeshComponent* m_HookHeadMesh;
+    class CStaticMeshComponent* m_HookHeadMesh;
     std::list<class CSceneComponent*> m_HookBodyList;
 
 public:

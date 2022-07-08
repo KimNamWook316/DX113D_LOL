@@ -100,6 +100,12 @@
     <Filter Include="02. Editor\02. Widget\01. Inspector\03. Shader">
       <UniqueIdentifier>{564b3231-aa36-42c0-9c68-d1a40799fde2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="06. GameComponent\01. SceneComponent">
+      <UniqueIdentifier>{1f7b7ab1-1a6d-40b2-8891-2a6f83bc7194}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. GameComponent\02. ObjectComponent">
+      <UniqueIdentifier>{95477303-fdb1-4f48-86fa-2851caed13c8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EditorManager.cpp">
@@ -288,9 +294,6 @@
     <ClCompile Include="Component\State\GameStateManager.cpp">
       <Filter>08. State</Filter>
     </ClCompile>
-    <ClCompile Include="Component\GameStateComponent.cpp">
-      <Filter>06. GameComponent</Filter>
-    </ClCompile>
     <ClCompile Include="Component\GameBehaviorTree.cpp">
       <Filter>07. BehaviorTree</Filter>
     </ClCompile>
@@ -318,9 +321,6 @@
     <ClCompile Include="Component\Node\CancleShootNode.cpp">
       <Filter>07. BehaviorTree\02. ActionNode</Filter>
     </ClCompile>
-    <ClCompile Include="Component\PlayerDataComponent.cpp">
-      <Filter>06. GameComponent</Filter>
-    </ClCompile>
     <ClCompile Include="Object\PlayerHook.cpp">
       <Filter>03. Object\02. 3D</Filter>
     </ClCompile>
@@ -342,17 +342,26 @@
     <ClCompile Include="Component\Node\AddFallingFloorCallbackNode.cpp">
       <Filter>07. BehaviorTree\02. ActionNode</Filter>
     </ClCompile>
-    <ClCompile Include="Component\ObjectDataComponent.cpp">
-      <Filter>06. GameComponent</Filter>
-    </ClCompile>
-    <ClCompile Include="Component\PlayerNormalAttackCheckCollider.cpp">
-      <Filter>06. GameComponent</Filter>
-    </ClCompile>
-    <ClCompile Include="Component\Node\TriggerBoxHitCheck.cpp">
+    <ClCompile Include="Component\Node\Lockstone3TriggerBoxHitCheck.cpp">
       <Filter>07. BehaviorTree\01. ConditionNode</Filter>
     </ClCompile>
-    <ClCompile Include="Component\Node\EyeLaserTracking.cpp">
+    <ClCompile Include="Component\Node\Lockstone3TriggerBoxAction.cpp">
       <Filter>07. BehaviorTree\02. ActionNode</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\GameStateComponent.cpp">
+      <Filter>06. GameComponent\02. ObjectComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\ObjectDataComponent.cpp">
+      <Filter>06. GameComponent\02. ObjectComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\PlayerDataComponent.cpp">
+      <Filter>06. GameComponent\02. ObjectComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\PlayerNormalAttackCheckCollider.cpp">
+      <Filter>06. GameComponent\01. SceneComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\EyeLaserComponent.cpp">
+      <Filter>06. GameComponent\01. SceneComponent</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -382,9 +391,6 @@
     </ClInclude>
     <ClInclude Include="EditorUtil.h">
       <Filter>02. Editor\99. Util</Filter>
-    </ClInclude>
-    <ClInclude Include="Utils.h">
-      <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Widget\GameObjectWidget.h">
       <Filter>02. Editor\02. Widget\01. Inspector</Filter>
@@ -539,9 +545,6 @@
     <ClInclude Include="Component\State\GameStateManager.h">
       <Filter>08. State</Filter>
     </ClInclude>
-    <ClInclude Include="Component\GameStateComponent.h">
-      <Filter>06. GameComponent</Filter>
-    </ClInclude>
     <ClInclude Include="Component\GameBehaviorTree.h">
       <Filter>07. BehaviorTree</Filter>
     </ClInclude>
@@ -572,9 +575,6 @@
     <ClInclude Include="Component\Node\CancleShootNode.h">
       <Filter>07. BehaviorTree\02. ActionNode</Filter>
     </ClInclude>
-    <ClInclude Include="Component\PlayerDataComponent.h">
-      <Filter>06. GameComponent</Filter>
-    </ClInclude>
     <ClInclude Include="Object\PlayerHook.h">
       <Filter>03. Object\02. 3D</Filter>
     </ClInclude>
@@ -599,20 +599,29 @@
     <ClInclude Include="Component\Node\AddFallingFloorCallbackNode.h">
       <Filter>07. BehaviorTree\02. ActionNode</Filter>
     </ClInclude>
-    <ClInclude Include="Component\ObjectDataComponent.h">
-      <Filter>06. GameComponent</Filter>
-    </ClInclude>
     <ClInclude Include="Window\CollisionProfileEditor.h">
       <Filter>02. Editor\01. Window\5. CollisionProfile</Filter>
     </ClInclude>
-    <ClInclude Include="Component\PlayerNormalAttackCheckCollider.h">
-      <Filter>06. GameComponent</Filter>
-    </ClInclude>
-    <ClInclude Include="Component\Node\TriggerBoxHitCheck.h">
+    <ClInclude Include="Component\Node\Lockstone3TriggerBoxHitCheck.h">
       <Filter>07. BehaviorTree\01. ConditionNode</Filter>
     </ClInclude>
-    <ClInclude Include="Component\Node\EyeLaserTracking.h">
+    <ClInclude Include="Component\Node\Lockstone3TriggerBoxAction.h">
       <Filter>07. BehaviorTree\02. ActionNode</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\GameStateComponent.h">
+      <Filter>06. GameComponent\02. ObjectComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\PlayerDataComponent.h">
+      <Filter>06. GameComponent\02. ObjectComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\ObjectDataComponent.h">
+      <Filter>06. GameComponent\02. ObjectComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\PlayerNormalAttackCheckCollider.h">
+      <Filter>06. GameComponent\01. SceneComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\EyeLaserComponent.h">
+      <Filter>06. GameComponent\01. SceneComponent</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

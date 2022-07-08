@@ -25,8 +25,19 @@ protected:
 	bool		m_ExcludeSceneSave;
 	bool		m_NoDestroyFromSceneChange;
 	bool		m_IsHit;
+	Vector3		m_MoveDir;
 
 public:
+	void SetMoveDir(const Vector3& Dir)
+	{
+		m_MoveDir = Dir;
+	}
+
+	const Vector3& GetMoveDir()	const
+	{
+		return m_MoveDir;
+	}
+
 	bool IsHit()	const
 	{
 		return m_IsHit;

@@ -14,6 +14,7 @@
 #include "../Component/ObjectDataComponent.h"
 #include "../Component/PlayerDataComponent.h"
 #include "../Component/GameStateComponent.h"
+#include "../Component/EyeLaserComponent.h"
 #include "../Window/InspectorWindow.h"
 #include "../EditorUtil.h"
 #include "../EditorManager.h"
@@ -107,7 +108,6 @@ void CObjectComponentCreateModal::OnCreateComponent()
 		SelectObject->SetNavAgent((CNavAgent*)Com);
 		((CNavAgent*)Com)->SetUpdateComponent(SelectObject->GetRootComponent());
 	}
-
 
 	else if (Typeid == typeid(CObjectDataComponent).hash_code())
 	{

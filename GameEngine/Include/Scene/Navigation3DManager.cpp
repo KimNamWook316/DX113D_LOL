@@ -114,7 +114,7 @@ bool CNavigation3DManager::CheckPickingPoint(Vector3& OutPos)
 	return true;
 }
 
-bool CNavigation3DManager::CheckPlayerNavMeshPoly()
+bool CNavigation3DManager::CheckPlayerNavMeshPoly(float& Height)
 {
 	if (!m_NavMeshComponent)
 		return false;
@@ -157,6 +157,17 @@ bool CNavigation3DManager::CheckPlayerNavMeshPoly()
 			if (Intersect)
 			{
 				m_PlayerPolyIndex = i;
+				
+				float Dist1 = P1.Distance(PlayerPos);
+				float Dist2 = P2.Distance(PlayerPos);
+				float Dist3 = P3.Distance(PlayerPos);
+
+				Vector3 LerpVec = Vector3(1/Dist1, 1/Dist2, 1/Dist3);
+				LerpVec.Normalize();
+
+				// Weighted Average
+				Height = LerpVec.x * LerpVec.x * P1.y + LerpVec.y * LerpVec.y * P2.y + LerpVec.z * LerpVec.z * P3.y + 0.1f;
+
 				return true;
 			}
 
@@ -209,6 +220,16 @@ bool CNavigation3DManager::CheckPlayerNavMeshPoly()
 
 		if (Intersect)
 		{
+			float Dist1 = P1.Distance(PlayerPos);
+			float Dist2 = P2.Distance(PlayerPos);
+			float Dist3 = P3.Distance(PlayerPos);
+
+			Vector3 LerpVec = Vector3(1 / Dist1, 1 / Dist2, 1 / Dist3);
+			LerpVec.Normalize();
+
+			// Weighted Average
+			Height = LerpVec.x * LerpVec.x * P1.y + LerpVec.y * LerpVec.y * P2.y + LerpVec.z * LerpVec.z * P3.y + 0.1f;
+
 			return true;
 		}
 
@@ -245,6 +266,16 @@ bool CNavigation3DManager::CheckPlayerNavMeshPoly()
 
 				if (Intersect)
 				{
+					float Dist1 = P1.Distance(PlayerPos);
+					float Dist2 = P2.Distance(PlayerPos);
+					float Dist3 = P3.Distance(PlayerPos);
+
+					Vector3 LerpVec = Vector3(1 / Dist1, 1 / Dist2, 1 / Dist3);
+					LerpVec.Normalize();
+
+					// Weighted Average
+					Height = LerpVec.x * LerpVec.x * P1.y + LerpVec.y * LerpVec.y * P2.y + LerpVec.z * LerpVec.z * P3.y + 0.1f;
+
 					m_PlayerPolyIndex = AdjPolyIndex;
 					return true;
 				}

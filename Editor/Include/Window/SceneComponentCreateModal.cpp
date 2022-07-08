@@ -25,6 +25,7 @@
 #include "Resource/Particle/Particle.h"
 #include "Component/Arm.h"
 #include "Component/LandScape.h"
+#include "../Component/EyeLaserComponent.h"
 #include "ToolWindow.h"
 
 CSceneComponentCreateModal::CSceneComponentCreateModal() :
@@ -150,6 +151,9 @@ void CSceneComponentCreateModal::OnCreateComponent()
 
 	else if (Typeid == typeid(CPlayerNormalAttackCheckCollider).hash_code())
 		Com = SelectObject->CreateComponentAddChild<CPlayerNormalAttackCheckCollider>(Name);
+
+	else if (Typeid == typeid(CEyeLaserComponent).hash_code())
+		Com = SelectObject->CreateComponentAddChild<CEyeLaserComponent>(Name);
 
 	// Window °»½Å
 	CSceneComponentHierarchyWindow* ComponentWindow = (CSceneComponentHierarchyWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(SCENECOMPONENT_HIERARCHY);

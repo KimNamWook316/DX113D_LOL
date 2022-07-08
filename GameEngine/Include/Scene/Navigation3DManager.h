@@ -46,7 +46,8 @@ public:
 public:
 	float GetY(const Vector3& Pos);
 	bool CheckPickingPoint(Vector3& OutPos);
-	bool CheckPlayerNavMeshPoly();
+	// 높이를 결과로 리턴
+	bool CheckPlayerNavMeshPoly(float& Height);
 
 public:
 	void Start();

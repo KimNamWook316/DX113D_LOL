@@ -26,6 +26,7 @@
 #include "Component/NavMeshComponent.h"
 #include "Component/PaperBurnComponent.h"
 #include "Component/PlayerNormalAttackCheckCollider.h"
+#include "Component/EyeLaserComponent.h"
 // Window
 #include "Window/ObjectHierarchyWindow.h"
 #include "Window/SceneComponentHierarchyWindow.h"
@@ -349,6 +350,12 @@ CComponent* CEditorManager::CreateComponent(CGameObject* Obj, size_t Type)
 		return Component;
 	}
 
+	else if (Type == typeid(CPlayerNormalAttackCheckCollider).hash_code())
+	{
+		CPlayerNormalAttackCheckCollider* Component = Obj->LoadComponent<CPlayerNormalAttackCheckCollider>();
+		// Component->EnableEditMode(true);
+		return Component;
+	}
 
 	else if (Type == typeid(CNavMeshComponent).hash_code())
 	{
@@ -357,6 +364,12 @@ CComponent* CEditorManager::CreateComponent(CGameObject* Obj, size_t Type)
 		return Component;
 	}
 
+	else if (Type == typeid(CEyeLaserComponent).hash_code())
+	{
+		CEyeLaserComponent* Component = Obj->LoadComponent<CEyeLaserComponent>();
+		// Component->EnableEditMode(true);
+		return Component;
+	}
 
 	else if (Type == typeid(CObjectDataComponent).hash_code())
 	{
@@ -385,13 +398,6 @@ CComponent* CEditorManager::CreateComponent(CGameObject* Obj, size_t Type)
 	else if (Type == typeid(CPaperBurnComponent).hash_code())
 	{
 		CPaperBurnComponent* Component = Obj->LoadObjectComponent<CPaperBurnComponent>();
-		// Component->EnableEditMode(true);
-		return Component;
-	}
-
-	else if (Type == typeid(CPlayerNormalAttackCheckCollider).hash_code())
-	{
-		CPlayerNormalAttackCheckCollider* Component = Obj->LoadObjectComponent<CPlayerNormalAttackCheckCollider>();
 		// Component->EnableEditMode(true);
 		return Component;
 	}

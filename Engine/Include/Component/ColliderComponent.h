@@ -54,6 +54,26 @@ public:
         return m_Offset;
     }
 
+    void AddOffset(const Vector3& Offset)
+    {
+        m_Offset += Offset;
+    }
+
+    void AddOffsetX(float Offset)
+    {
+        m_Offset.x += Offset;
+    }
+
+    void AddOffsetY(float Offset)
+    {
+        m_Offset.y += Offset;
+    }
+
+    void AddOffsetZ(float Offset)
+    {
+        m_Offset.z += Offset;
+    }
+
     virtual void SetOffset(const Vector3& Offset)
     {
         m_Offset = Offset;

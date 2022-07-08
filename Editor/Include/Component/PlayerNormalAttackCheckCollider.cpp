@@ -3,6 +3,7 @@
 #include "Component/AnimationMeshComponent.h"
 #include "Animation/AnimationSequenceInstance.h"
 #include "GameObject/GameObject.h"
+#include "Input.h"
 
 CPlayerNormalAttackCheckCollider::CPlayerNormalAttackCheckCollider()
 {
@@ -12,13 +13,13 @@ CPlayerNormalAttackCheckCollider::CPlayerNormalAttackCheckCollider()
 
 	m_ColliderType = Collider_Type::Box3D;
 
-	AddCollisionCallback<CPlayerNormalAttackCheckCollider>(Collision_State::Begin, this, &CPlayerNormalAttackCheckCollider::AttackSuccess);
+	AddCollisionCallback<CPlayerNormalAttackCheckCollider>(Collision_State::Stay, this, &CPlayerNormalAttackCheckCollider::AttackSuccess);
 
 	SetCollisionProfile("PlayerAttack");
 }
 
 CPlayerNormalAttackCheckCollider::CPlayerNormalAttackCheckCollider(const CPlayerNormalAttackCheckCollider& com) :
-	CColliderBox3D(com)
+	CColliderSphere(com)
 {
 }
 
@@ -28,11 +29,12 @@ CPlayerNormalAttackCheckCollider::~CPlayerNormalAttackCheckCollider()
 
 void CPlayerNormalAttackCheckCollider::Start()
 {
+	CColliderSphere::Start();
 }
 
 bool CPlayerNormalAttackCheckCollider::Init()
 {
-	if (!CColliderBox3D::Init())
+	if (!CColliderSphere::Init())
 		return false;
 
 	return true;
@@ -40,27 +42,27 @@ bool CPlayerNormalAttackCheckCollider::Init()
 
 void CPlayerNormalAttackCheckCollider::Update(float DeltaTime)
 {
-	CColliderBox3D::Update(DeltaTime);
+	CColliderSphere::Update(DeltaTime);
 }
 
 void CPlayerNormalAttackCheckCollider::PostUpdate(float DeltaTime)
 {
-	CColliderBox3D::PostUpdate(DeltaTime);
+	CColliderSphere::PostUpdate(DeltaTime);
 }
 
 void CPlayerNormalAttackCheckCollider::PrevRender()
 {
-	CColliderBox3D::PrevRender();
+	CColliderSphere::PrevRender();
 }
 
 void CPlayerNormalAttackCheckCollider::Render()
 {
-	CColliderBox3D::Render();
+	CColliderSphere::Render();
 }
 
 void CPlayerNormalAttackCheckCollider::PostRender()
 {
-	CColliderBox3D::PostRender();
+	CColliderSphere::PostRender();
 }
 
 CPlayerNormalAttackCheckCollider* CPlayerNormalAttackCheckCollider::Clone()
@@ -70,17 +72,17 @@ CPlayerNormalAttackCheckCollider* CPlayerNormalAttackCheckCollider::Clone()
 
 bool CPlayerNormalAttackCheckCollider::Save(FILE* File)
 {
-	return CColliderBox3D::Save(File);
+	return CColliderSphere::Save(File);
 }
 
 bool CPlayerNormalAttackCheckCollider::Load(FILE* File)
 {
-	return CColliderBox3D::Load(File);
+	return CColliderSphere::Load(File);
 }
 
 bool CPlayerNormalAttackCheckCollider::Collision(CColliderComponent* Dest)
 {
-	return CColliderBox3D::Collision(Dest);
+	return CColliderSphere::Collision(Dest);
 }
 
 bool CPlayerNormalAttackCheckCollider::CollisionMouse(const Vector2& MousePos)
@@ -100,9 +102,20 @@ void CPlayerNormalAttackCheckCollider::AttackSuccess(const CollisionResult& Resu
 	if (!Instance)
 		return;
 
-	if (Instance->CheckCurrentAnimation("Slash_Light_L") || Instance->CheckCurrentAnimation("Slash_Light_R"))
+	if (CInput::GetInst()->GetMouseLButtonClick())
 	{
-		Result.Dest->GetGameObject()->SetHit(true);
+		auto iter = m_PrevCollisionList.begin();
+		auto iterEnd = m_PrevCollisionList.end();
+
+		for (; iter != iterEnd; ++iter)
+		{
+			Vector3 Vec1 = ((*iter)->GetWorldPos() - m_Object->GetWorldPos());
+			Vec1.Normalize();
+			Vector3 Vec2 = m_Object->GetMoveDir();
+
+			if(Vec1.Dot(Vec2) > 0.f)
+				(*iter)->GetGameObject()->SetHit(true);
+		}
 	}
 
 }

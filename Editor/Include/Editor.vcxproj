@@ -166,6 +166,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AnimationInstanceConvertThread.cpp" />
+    <ClCompile Include="Component\EyeLaserComponent.cpp" />
     <ClCompile Include="Component\GameBehaviorTree.cpp" />
     <ClCompile Include="Component\GameStateComponent.cpp" />
     <ClCompile Include="Component\Node\AddFallingFloorCallbackNode.cpp" />
@@ -183,9 +184,10 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="Component\Node\DeathNode.cpp" />
-    <ClCompile Include="Component\Node\EyeLaserTracking.cpp" />
     <ClCompile Include="Component\Node\HPCheck.cpp" />
     <ClCompile Include="Component\Node\IdleNode.cpp" />
+    <ClCompile Include="Component\Node\Lockstone3TriggerBoxAction.cpp" />
+    <ClCompile Include="Component\Node\Lockstone3TriggerBoxHitCheck.cpp" />
     <ClCompile Include="Component\Node\MouseLButtonCheckNode.cpp" />
     <ClCompile Include="Component\Node\MouseRButtonCheckNode.cpp" />
     <ClCompile Include="Component\Node\MouseRButtonUpCheckNode.cpp" />
@@ -208,7 +210,6 @@
     <ClCompile Include="Component\Node\ReadyToShoot.cpp" />
     <ClCompile Include="Component\Node\RotateAttackDirectionNode.cpp" />
     <ClCompile Include="Component\Node\ShootNode.cpp" />
-    <ClCompile Include="Component\Node\TriggerBoxHitCheck.cpp" />
     <ClCompile Include="Component\ObjectDataComponent.cpp" />
     <ClCompile Include="Component\PlayerDataComponent.cpp" />
     <ClCompile Include="Component\PlayerNormalAttackCheckCollider.cpp" />
@@ -292,6 +293,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimationInstanceConvertThread.h" />
+    <ClInclude Include="Component\EyeLaserComponent.h" />
     <ClInclude Include="Component\GameBehaviorTree.h" />
     <ClInclude Include="Component\GameStateComponent.h" />
     <ClInclude Include="Component\Node\AddFallingFloorCallbackNode.h" />
@@ -309,9 +311,10 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="Component\Node\DeathNode.h" />
-    <ClInclude Include="Component\Node\EyeLaserTracking.h" />
     <ClInclude Include="Component\Node\HPCheck.h" />
     <ClInclude Include="Component\Node\IdleNode.h" />
+    <ClInclude Include="Component\Node\Lockstone3TriggerBoxAction.h" />
+    <ClInclude Include="Component\Node\Lockstone3TriggerBoxHitCheck.h" />
     <ClInclude Include="Component\Node\MouseLButtonCheckNode.h" />
     <ClInclude Include="Component\Node\MouseRButtonCheckNode.h" />
     <ClInclude Include="Component\Node\MouseRButtonUpCheckNode.h" />
@@ -334,7 +337,6 @@
     <ClInclude Include="Component\Node\ReadyToShoot.h" />
     <ClInclude Include="Component\Node\RotateAttackDirectionNode.h" />
     <ClInclude Include="Component\Node\ShootNode.h" />
-    <ClInclude Include="Component\Node\TriggerBoxHitCheck.h" />
     <ClInclude Include="Component\ObjectDataComponent.h" />
     <ClInclude Include="Component\PlayerDataComponent.h" />
     <ClInclude Include="Component\PlayerNormalAttackCheckCollider.h" />

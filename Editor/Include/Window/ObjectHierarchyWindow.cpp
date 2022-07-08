@@ -181,7 +181,8 @@ void CObjectHierarchyWindow::OnDeleteObject()
 	CGameObject* Obj = CSceneManager::GetInst()->GetScene()->FindObject(SelectObjName);
 
 	// GUI상에서 노드 제거
-	CompWindow->OnClearComponents(Obj->GetRootComponent()->GetName());
+	if(Obj->GetRootComponent())
+		CompWindow->OnClearComponents(Obj->GetRootComponent()->GetName());
 
 	// 엔진 상에서 Object 계층 구조 내에서 제거
 	Obj->DeleteObj();

@@ -132,6 +132,7 @@ enum class Collision_State
 {
 	Begin,
 	End,
+	Stay,
 	Max
 };
 
@@ -266,6 +267,7 @@ enum class SceneComponent3DType
 	ColliderRay,
 	NavMeshComponent,
 	PlayerNormalAttackCheckCollider,
+	EyeLaserComponent,
 	Max
 };
 
@@ -302,6 +304,7 @@ enum ConditionNode
 	AttackTargetCheck,
 	MouseRButtonCheckNode,
 	MouseRButtonUpCheckNode,
+	Lockstone3TriggerBoxHitCheck
 };
 
 enum ActionNode
@@ -314,7 +317,8 @@ enum ActionNode
 	ReadyToShoot,
 	ShootNode,
 	CancleShootNode,
-	AddFallingFloorCallback
+	AddFallingFloorCallback,
+	Lockstone3TriggerBoxAction
 };
 
 enum DecoratorNode

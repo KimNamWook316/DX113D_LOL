@@ -104,6 +104,13 @@ void CCollisionSection::Collision(float DeltaTime)
 					Dest->SetCollisionResultDest(nullptr);
 				}
 
+				// 이전 프레임부터 계속 충돌중인 경우
+				else
+				{
+					Src->CallCollisionCallback(Collision_State::Stay);
+					Dest->CallCollisionCallback(Collision_State::Stay);
+				}
+
 				Src->AddCurrentFrameCollision(Dest);
 				Dest->AddCurrentFrameCollision(Src);
 			}

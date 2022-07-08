@@ -43,10 +43,15 @@ bool CNavAgent::MoveOnNavMesh(const Vector3 EndPos)
 
 	m_Object->AddWorldPos(EndPos);
 
-	bool Valid = m_Scene->GetNavigation3DManager()->CheckPlayerNavMeshPoly();
+	float Height = 0.f;
+	bool Valid = m_Scene->GetNavigation3DManager()->CheckPlayerNavMeshPoly(Height);
 
-	if(Valid)
+	if (Valid)
+	{
+		Vector3 Pos = m_Object->GetWorldPos();
+		m_Object->SetWorldPos(Pos.x, Height, Pos.z);
 		return true;
+	}
 
 	else
 	{

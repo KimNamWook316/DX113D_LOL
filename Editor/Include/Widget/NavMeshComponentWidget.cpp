@@ -142,7 +142,9 @@ void CNavMeshComponentWidget::OnChangePlayerSpawnPos()
 
 	MeshCom->SetPlayerSpawnPos(PlayerPos);
 
-	Manager->CheckPlayerNavMeshPoly();
+	float ResultHeight = 0.f;
+
+	Manager->CheckPlayerNavMeshPoly(ResultHeight);
 	int PlayerPolyIndex = Manager->GetPlayerPolyIndex();
 	MeshCom->SetPlayerSpawnPolyIndex(PlayerPolyIndex);
 
