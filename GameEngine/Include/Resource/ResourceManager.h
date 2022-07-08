@@ -96,7 +96,15 @@ public:	// =================== Shader =====================
 	{
 		return m_ShaderManager->CreateShader<T>(Name);
 	}
+	
+	template <typename Origin, typename Instancing>
+	bool CreateInstancingShader(Origin* OriginShader, const std::string& InstancingShaderName)
+	{
+		return m_ShaderManager->CreateInstancingShader<Origin, Instancing>(OriginShader, InstancingShaderName);
+	}
+
 	class CShader* FindShader(const std::string& Name);
+	class CGraphicShader* FindInstancingShader(class CGraphicShader* Shader);
 
 	void ReleaseShader(const std::string& Name);
 

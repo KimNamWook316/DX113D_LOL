@@ -39,7 +39,7 @@ CEngine::CEngine()	:
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
 
-	//_CrtSetBreakAlloc(7845);
+	//_CrtSetBreakAlloc(8951);
 	//m_ClearColor[1] = 1.f; 
 	srand(unsigned int(GetTickCount()));
 	rand();

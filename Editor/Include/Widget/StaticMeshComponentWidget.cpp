@@ -53,6 +53,9 @@ bool CStaticMeshComponentWidget::Init()
 	m_RootTree->AddWidget<CIMGUISameLine>("Line");
 	m_LoadMeshButton = m_RootTree->AddWidget<CIMGUIButton>("Load", 0.f, 0.f);
 
+	// Transparent는 모든 Material에 일괄 적용
+	m_TransparencyEdit = m_RootTree->AddWidget<CIMGUICheckBox>("Enable Transparency", 200.f);
+
 	m_MaterialSlotCombo = m_RootTree->AddWidget<CIMGUIComboBox>("Material Slot", 200.f);
 	m_ShaderName = m_RootTree->AddWidget<CIMGUITextInput>("Shader", 200.f);
 	m_ShaderWidgetTree = m_RootTree->AddWidget<CIMGUITree>("Shader Params", 200.f);
@@ -61,7 +64,6 @@ bool CStaticMeshComponentWidget::Init()
 	m_SpecularColorEdit = m_RootTree->AddWidget<CIMGUIColor3>("Specluar", 200.f);
 	m_SpecluarPowerEdit = m_RootTree->AddWidget<CIMGUIInputFloat>("Specluar Power", 200.f);
 	m_EmissiveColorEdit = m_RootTree->AddWidget<CIMGUIColor3>("Emissive", 200.f);
-	m_TransparencyEdit = m_RootTree->AddWidget<CIMGUICheckBox>("Enable Transparency", 200.f);
 	m_Metallic = m_RootTree->AddWidget<CIMGUICheckBox>("Metallic", 200.f);
 	m_OpacityEdit = m_RootTree->AddWidget<CIMGUISliderFloat>("Opacity", 200.f);
 	
@@ -242,7 +244,7 @@ void CStaticMeshComponentWidget::OnCheckTransparency(int Idx, bool Check)
 
 	if (MeshCom->GetMesh())
 	{
-		MeshCom->SetTransparency(Check, Idx);
+		MeshCom->SetTransparencyAllMaterial(Check);
 	}
 }
 
@@ -285,7 +287,6 @@ void CStaticMeshComponentWidget::OnDropShaderName(const std::string& Name)
 		return;
 	}
 
-	CMaterial* Mat = static_cast<CStaticMeshComponent*>(m_Component)->GetMaterial(Index);
 	CShader* Shader = CSceneManager::GetInst()->GetScene()->GetResource()->FindShader(Name);
 
 	if (!Shader || Shader->GetShaderType() != Shader_Type::Graphic)
@@ -293,7 +294,13 @@ void CStaticMeshComponentWidget::OnDropShaderName(const std::string& Name)
 		return;
 	}
 
-	Mat->SetShader((CGraphicShader*)Shader);
+	CStaticMeshComponent* MeshCom = (CStaticMeshComponent*)m_Component;
+
+	if (MeshCom->GetMesh())
+	{
+		MeshCom->SetMaterialShader(Index, (CGraphicShader*)Shader);
+	}
+
 	m_ShaderName->SetText(Name.c_str());
 }
 
@@ -320,6 +327,8 @@ void CStaticMeshComponentWidget::RefreshMeshWidget(CMesh* Mesh)
 			m_MaterialSlotCombo->AddItem(MeshCom->GetMaterial(i)->GetName());
 		}
 	}
+
+	m_TransparencyEdit->SetCheck(0, MeshCom->IsTransparent());
 }
 
 bool CStaticMeshComponentWidget::MakeShaderWidget(class CMaterial* Mat, const std::string& ShaderName)

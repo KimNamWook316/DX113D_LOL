@@ -94,7 +94,9 @@ cbuffer LightCBuffer : register(b5)
 cbuffer InstancingCBuffer : register(b6)
 {
 	int g_InstancingBoneCount;
-	float3 g_InstancingEmpty;
+	int g_InstancingMaterialIndex;
+	int g_InstancingObjecCount;
+	float g_InstancingEmpty;
 };
 
 cbuffer DownScaleCBuffer : register(b10)
@@ -368,84 +370,6 @@ float4 ConvertColor(float Color)
 
     return Result;
 
-}
-
-
-LightResult
-    ComputeLight(
-    float3 Pos, float3 Normal, float3 Tangent, float3 Binormal,
-	float2 UV)
-{
-    LightResult result = (LightResult) 0;
-	
-    float3 LightDir = (float3) 0.f;
-    float Attn = 1.f;
-	
-    if (g_LightType == LightTypeDir)
-    {
-        LightDir = -g_LightDir;
-        LightDir = normalize(LightDir);
-    }
-	
-	
-    if (g_LightType == LightTypePoint)
-    {
-        LightDir = g_LightPos - Pos;
-        LightDir = normalize(LightDir);
-		
-        float Dist = distance(g_LightPos, Pos);
-		
-        if (Dist > g_LightDistance)
-            Attn = 0.f;
-		
-		else
-            Attn = 1.f / (g_LightAtt1 + g_LightAtt2 * Dist + g_LightAtt3 * (Dist * Dist));
-    }
-	
-	
-    if (g_LightType == LightTypeSpot)
-    {
-    }
-	
-    float3 ViewNormal = ComputeBumpNormal(Normal, Tangent, Binormal, UV);
-	
-	// 내적값이 음수가 나오면 0이 반환되고 양수가 나오면 해당 값이 그대로 반환된다.
-    float Intensity = max(0.f, dot(ViewNormal, LightDir));
-	
-    result.Dif = g_LightColor.xyz * g_MtrlBaseColor.xyz * Intensity * Attn;
-	result.Amb = g_LightColor.xyz * g_GLightAmbIntensity * g_MtrlAmbientColor.xyz * Attn;
-	
-    float3 View = -Pos;
-    View = normalize(View);
-	
-	// 퐁 쉐이딩
-    float3 Reflect = 2.f * ViewNormal * dot(ViewNormal, LightDir) - LightDir;
-    Reflect = normalize(Reflect);	
-    float SpcIntensity = max(0.f, dot(View, Reflect));
-	
-	// 블린-퐁 쉐이딩
-    //float3 Reflect = normalize(View + LightDir);
-    //float SpcIntensity = max(0.f, dot(ViewNormal, Reflect));
-	
-    float3 SpecularColor = g_MtrlSpecularColor.xyz;
-	
-    if (g_MtrlSpecularTex)
-        SpecularColor = g_SpecularTexture.Sample(g_BaseSmp, UV).xxx;
-	
-    result.Spc = g_LightColor.xyz * SpecularColor * 
-		pow(SpcIntensity, g_MtrlSpecularColor.w) * Attn;
-	
-    float3 EmissiveColor = g_MtrlEmissiveColor.xyz;
-	
-    if (g_MtrlEmissiveTex)
-        EmissiveColor = g_EmissiveTexture.Sample(g_BaseSmp, UV).xxx;
-	
-    result.Emv = EmissiveColor;
-	
-    //result.Spc = float3(0.5f, 0.5f, 0.5f);
-    result.Emv = float3(0.f, 0.f, 0.f);
-	
-    return result;
 }
 
 

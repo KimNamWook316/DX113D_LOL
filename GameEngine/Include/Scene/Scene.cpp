@@ -590,6 +590,30 @@ bool CScene::CheckSameName(const std::string& Name)
 	return false;
 }
 
+bool CScene::IsExistSameName(const std::string& Name)
+{
+	CGameObject* First = FindObject(Name);
+
+	if (!First)
+	{
+		return false;
+	}
+
+	std::string FirstName = First->GetName();
+
+	auto iter = m_ObjList.begin();
+	auto iterEnd = m_ObjList.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		if (First != (*iter) && FirstName == (*iter)->GetName())
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
 void CScene::UpdateSceneGlobalData()
 {
 	CRenderManager* RenderMng = CRenderManager::GetInst();

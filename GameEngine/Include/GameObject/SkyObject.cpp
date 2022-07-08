@@ -25,6 +25,8 @@ bool CSkyObject::Init()
 {
 	m_Mesh = CreateComponent<CStaticMeshComponent>("Mesh");
 
+	m_Mesh->SetLayerName("Back");
+
 	m_Mesh->SetMesh("SpherePos");
 
 	CMaterial* Material = m_Scene->GetResource()->FindMaterial("SkyMaterial");
@@ -36,8 +38,6 @@ bool CSkyObject::Init()
 	Material->SetRenderState("SkyDepth");
 
 	m_Mesh->AddMaterial(Material);
-
-	m_Mesh->SetLayerName("Back");
 
 	m_Mesh->SetRelativeScale(100000.f, 100000.f, 100000.f);
 

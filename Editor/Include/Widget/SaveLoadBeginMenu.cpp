@@ -216,10 +216,21 @@ void CSaveLoadBeginMenu::OnLoadObjectMenuCallback()
 			return;
 		}
 
-		CGameObject* NewObject = CSceneManager::GetInst()->GetScene()->CreateEmtpyObject();
+		CScene* Scene = CSceneManager::GetInst()->GetScene();
 
-		//bool Success = NewObject->Load(FilePathMultibyte);
+		CGameObject* NewObject = Scene->CreateEmtpyObject();
+
 		bool Success = NewObject->LoadHierarchy(FilePathMultibyte);
+
+		std::string NewObjName = NewObject->GetName();
+		std::string ChangeName;
+
+		while (Scene->IsExistSameName(NewObjName))
+		{
+			ChangeName = CEditorUtil::ConcatNumOverlapName(NewObjName);
+			NewObject->SetName(ChangeName);
+			NewObjName = NewObject->GetName();
+		}
 
 		if (!Success)
 		{

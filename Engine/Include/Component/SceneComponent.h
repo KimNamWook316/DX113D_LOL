@@ -9,6 +9,8 @@ struct InstancingCheckCount
 {
 	std::string LayerName;
 	CMesh* Mesh;
+	std::vector<CGraphicShader*> vecInstancingShader;				// Material 수만큼
+	std::vector<ShaderParams> vecShaderParams;						// Material 수만큼
 	std::list<class CSceneComponent*> InstancingList;
 
 	InstancingCheckCount() :

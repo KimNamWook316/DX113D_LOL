@@ -17,8 +17,7 @@
 #include "../Object/PlayerHook.h"
 #include "IMGUIRadioButton.h"
 #include "IMGUICheckBox.h"
-
-#include <sstream>
+#include "../EditorUtil.h"
 
 CObjectCreateModal::CObjectCreateModal()	:
 	m_NameTextInput(nullptr),
@@ -92,64 +91,19 @@ void CObjectCreateModal::OnCreateObject()
 
 	CGameObject* NewObject = nullptr;
 
-	char Name[256] = {};
-	strcpy_s(Name, m_NameTextInput->GetTextMultibyte());
-
-	std::string strName = Name;
+	std::string Name;
+	Name = m_NameTextInput->GetTextMultibyte();
 
 	CScene* Scene = CSceneManager::GetInst()->GetScene();
 
 	while (Scene)
 	{
-		bool Same = Scene->CheckSameName(strName);
+		bool Same = Scene->CheckSameName(Name);
 
 		if (!Same)
 			break;
 
-		if (strName[strName.length() - 1] == '0' || strName[strName.length() - 1] == '1' || strName[strName.length() - 1] == '2'
-			|| strName[strName.length() - 1] == '3' || strName[strName.length() - 1] == '4' || strName[strName.length() - 1] == '5'
-			|| strName[strName.length() - 1] == '6' || strName[strName.length() - 1] == '7' || strName[strName.length() - 1] == '8'
-			|| strName[strName.length() - 1] == '9')
-		{
-			size_t Length = strName.length();
-			std::string NumPart;
-
-			int UnderIdx = -1;
-
-			for (size_t i = 0; i < Length; ++i)
-			{
-				if (strName[i] == '_')
-					UnderIdx = (int)i;
-
-				if (strName[i] == '0' || strName[i] == '1' || strName[i] == '2'
-					|| strName[i] == '3' || strName[i] == '4' || strName[i] == '5'
-					|| strName[i] == '6' || strName[i] == '7' || strName[i] == '8'
-					|| strName[i] == '9')
-				{
-					NumPart += strName[i];
-				}
-			}
-
-			std::stringstream ss(NumPart);
-
-			int Num = 0;
-			ss >> Num;
-
-			++Num;
-			ss.clear();
-			ss << Num;
-
-			strName.erase(UnderIdx + 1);
-
-			strName += ss.str();
-			strcpy_s(Name, strName.c_str());
-		}
-
-		else
-		{
-			strName += "_1";
-			strcpy_s(Name, strName.c_str());
-		}
+		Name = CEditorUtil::ConcatNumOverlapName(Name);
 	}
 
 	int Index = m_ObjectTypeCombo->GetSelectIndex();

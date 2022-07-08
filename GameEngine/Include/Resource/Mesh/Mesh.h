@@ -66,6 +66,11 @@ public:
 		return &m_vecMaterialSlot;
 	}
 
+	size_t GetMaterialSlotCount() const
+	{
+		return m_vecMaterialSlot.size();
+	}
+
 	CMaterial* GetMaterial(int SlotIndex)
 	{
 		return m_vecMaterialSlot[SlotIndex];
