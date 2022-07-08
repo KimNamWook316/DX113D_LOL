@@ -363,6 +363,22 @@ CMaterial* CSceneResource::FindMaterial(const std::string& Name)
 	return iter->second;
 }
 
+void CSceneResource::ReleaseMaterial(const std::string& Name)
+{
+	auto iter = m_mapMaterial.find(Name);
+
+	if (iter != m_mapMaterial.end())
+	{
+		// 이 리소스 삭제를 요청한 객체와 리소스 매니저,SceneResource에서만 들고 있다면 erase
+		if (iter->second->GetRefCount() <= 3)
+		{
+			m_mapMaterial.erase(iter);
+
+			CResourceManager::GetInst()->ReleaseMaterial(Name);
+		}
+	}
+}
+
 bool CSceneResource::LoadTexture(const std::string& Name, const TCHAR* FileName, const std::string& PathName)
 {
 	if (FindTexture(Name))
@@ -475,6 +491,22 @@ CTexture* CSceneResource::FindTexture(const std::string& Name)
 	}
 
 	return iter->second;
+}
+
+void CSceneResource::ReleaseTexture(const std::string& Name)
+{
+	auto iter = m_mapTexture.find(Name);
+
+	if (iter != m_mapTexture.end())
+	{
+		// 이 리소스 삭제를 요청한 객체와 리소스 매니저,SceneResource에서만 들고 있다면 erase
+		if (iter->second->GetRefCount() <= 3)
+		{
+			m_mapTexture.erase(iter);
+
+			CResourceManager::GetInst()->ReleaseTexture(Name);
+		}
+	}
 }
 
 bool CSceneResource::CreateAnimationSequence2D(const std::string& Name, 

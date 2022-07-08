@@ -244,6 +244,11 @@ void CStaticMeshComponent::AddMaterial(CMaterial* Material)
 	m_vecMaterialSlot[m_vecMaterialSlot.size() - 1]->SetScene(m_Scene);
 }
 
+void CStaticMeshComponent::ClearMaterial()
+{
+	m_vecMaterialSlot.clear();
+}
+
 bool CStaticMeshComponent::SetCustomShader(const std::string& Name)
 {
 	m_CustomShader = m_Scene->GetResource()->FindShader(Name);
@@ -510,19 +515,9 @@ void CStaticMeshComponent::AddOpacity(float Opacity, int Index)
 	m_vecMaterialSlot[Index]->AddOpacity(Opacity);
 }
 
-void CStaticMeshComponent::EnableOutline(bool Enable, int Index)
+void CStaticMeshComponent::SetMetallic(bool Metallic, int Index)
 {
-	m_vecMaterialSlot[Index]->EnableOutline(Enable);
-}
-
-void CStaticMeshComponent::SetOutlineThickness(float Thickness, int Index)
-{
-	m_vecMaterialSlot[Index]->SetOutlineThickness(Thickness);
-}
-
-void CStaticMeshComponent::SetOutlineColor(const Vector3& Color, int Index)
-{
-	m_vecMaterialSlot[Index]->SetOutlineColor(Color);
+	m_vecMaterialSlot[Index]->SetMetallic(Metallic);
 }
 
 void CStaticMeshComponent::AddTexture(int MaterialIndex, int Register, int ShaderType, const std::string& Name, CTexture* Texture)

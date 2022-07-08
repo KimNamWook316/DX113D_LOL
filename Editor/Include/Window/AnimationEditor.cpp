@@ -1311,6 +1311,15 @@ void CAnimationEditor::OnAddAnimationSequence()
 	if (m_NewAnimSeqName->Empty() || m_NewAnimSeqDataKeyName->Empty())
 		return;
 
+	// 현재 Seq Key 를 Key로 사용하고 있는 SceneResource 내의 Sequence 를 조사한다.
+	// 그래야만, 내가 Add한 Key로, 불러오고자 하는 .sqc 파일을 제대로 불러온다.
+	// 그렇지 않다면, 이미 SceneResource 에 존재하는 .sqc 를 불러오게 될 것이다.
+	if (CSceneManager::GetInst()->GetScene()->GetResource()->FindAnimationSequence(m_NewAnimSeqName->GetTextUTF8()))
+	{
+		MessageBox(nullptr, TEXT("다른 Sqc Key 활용하세요"), TEXT("다른 Sqc Key 활용하세요"), MB_OK);
+		return;
+	}
+
 	TCHAR LoadFilePath[MAX_PATH] = {};
 
 	OPENFILENAME OpenFile = {};

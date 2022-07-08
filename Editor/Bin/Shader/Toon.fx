@@ -15,6 +15,7 @@ Vertex3DOutput ToonVS(Vertex3D input)
     
     float3 Pos = Info.Pos;
     output.ProjPos = mul(float4(Pos, 1.f), g_matWVP);
+	output.WorldPos = Pos;
     output.Pos = output.ProjPos;
     output.ViewPos = mul(float4(Pos, 1.f), g_matWV).xyz;
     output.Normal = normalize(mul(float4(Info.Normal, 0.f), g_matWV).xyz);
@@ -43,7 +44,7 @@ PSOutput_GBuffer ToonPS(Vertex3DOutput input)
     output.GBuffer2.r = input.ProjPos.z / input.ProjPos.w;
     output.GBuffer2.g = input.ProjPos.w;
     output.GBuffer2.b = g_MtrlSpecularColor.w;
-    output.GBuffer2.a = 1.f;
+    output.GBuffer2.a = input.WorldPos.y;    // y fog를 위해 월드 y값 전송
 
     output.GBuffer3.r = ConvertColor(g_MtrlBaseColor);
     output.GBuffer3.g = ConvertColor(g_MtrlAmbientColor);
@@ -54,7 +55,9 @@ PSOutput_GBuffer ToonPS(Vertex3DOutput input)
 	output.GBuffer4.a = (float)Pixel_Type_Toon;
     
     output.GBuffer5.rgb = input.Binormal.xyz;
-    output.GBuffer5.a = 1.f;
+
+    // Mtrl Metallic 여부
+	output.GBuffer5.a = g_MtrlMetallic;
     
     float4 SpecularColor = g_MtrlSpecularColor.xyzw;
 	

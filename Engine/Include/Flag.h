@@ -339,9 +339,8 @@ enum class Object_Type
 
 enum class Fog_Type
 {
-	Linear,
-	Exp,
-	Exp2,
+	Depth,
+	Y,
 	Max
 };
 

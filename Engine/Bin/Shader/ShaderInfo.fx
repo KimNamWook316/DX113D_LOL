@@ -45,9 +45,7 @@ cbuffer Material : register(b1)
     int		g_MtrlSpecularTex;
     int		g_MtrlEmissiveTex;
 	int		g_MtrlRecevieDecal;
-	int		g_MtrlOutlineEnable;
-	float	g_MtrlOutlineThickness; 
-	float3  g_MtrlOutlineColor;
+	int		g_MtrlMetallic;
 };
 
 cbuffer Standard2D : register(b2)
