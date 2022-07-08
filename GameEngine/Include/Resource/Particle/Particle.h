@@ -300,7 +300,7 @@ public:
 
 public:
 	// Linaer Rotate
-	int SetSeperateLinearRotate(bool Enable)
+	void SetSeperateLinearRotate(bool Enable)
 	{
 		m_CBuffer->SetSeperateLinearRotate(Enable);
 	}

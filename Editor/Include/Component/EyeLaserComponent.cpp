@@ -139,6 +139,8 @@ void CEyeLaserComponent::Render()
 		m_Material->Render();
 
 		m_LaserPlaneMesh->Render();
+
+		m_Material->Reset();
 	//}
 }
 
