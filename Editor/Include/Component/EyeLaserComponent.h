@@ -21,8 +21,9 @@ private:
 	Vector3 m_CurrentLaserDir;
 	Matrix m_LaserRotMatrix;
 
-	CSharedPtr<CShader>	m_Shader;
+	//CSharedPtr<CShader>	m_Shader;
 	CSharedPtr<CMesh> m_LaserPlaneMesh1;
+	CSharedPtr<CMaterial>	m_Material;
 
 public:
 	void SetWakeEnd();

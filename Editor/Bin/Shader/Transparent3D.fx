@@ -94,6 +94,7 @@ struct SkinningInfo
 	float3 Binormal;
 };
 
+
 struct InstancingInfo
 {
 	matrix matWV;

@@ -4,6 +4,7 @@
 #include "Animation/AnimationSequenceInstance.h"
 #include "GameObject/GameObject.h"
 #include "Scene/Scene.h"
+#include "Scene/SceneManager.h"
 
 CEyeLaserComponent::CEyeLaserComponent()	:
 	m_TriggerHitCount(0),
@@ -17,10 +18,7 @@ CEyeLaserComponent::CEyeLaserComponent()	:
 	m_CurrentLaserDir = Vector3(0.f, 0.f, 1.f);
 
 	m_LayerName = "Transparency";
-	m_LaserPlaneMesh1 = CResourceManager::GetInst()->FindMesh("PlaneMesh");
-
-	m_Shader = CResourceManager::GetInst()->FindShader("LaserShader");
-	
+	m_Render = true;
 }
 
 CEyeLaserComponent::CEyeLaserComponent(const CEyeLaserComponent& com)	:
@@ -56,6 +54,23 @@ void CEyeLaserComponent::Start()
 		Instance->SetEndFunction<CEyeLaserComponent>("EyeLaser_Wake", this, &CEyeLaserComponent::SetWakeEnd);
 	}
 	
+	m_LaserPlaneMesh1 = CResourceManager::GetInst()->FindMesh("PlaneMesh");
+
+	CMaterial* LaserMat = m_Scene->GetResource()->FindMaterial("LaserMaterial");
+
+	if (!LaserMat)
+	{
+		m_Scene->GetResource()->CreateMaterial<CMaterial>("LaserMaterial");
+		m_Material = m_Scene->GetResource()->FindMaterial("LaserMaterial");
+	}
+
+	else
+		m_Material = LaserMat;
+
+	m_Material->SetShader("LaserShader");
+	m_Material->AddTexture(0, (int)Buffer_Shader_Type::Pixel,
+		"LaserDif", TEXT("Laser.png"));
+	m_Material->SetOpacity(0.3f);
 }
 
 bool CEyeLaserComponent::Init()
@@ -70,21 +85,24 @@ void CEyeLaserComponent::Update(float DeltaTime)
 {
 	CSceneComponent::Update(DeltaTime);
 
-	CAnimationSequenceInstance* Instance = m_AnimComp->GetAnimationInstance();
-	if (m_TriggerHitCount == 1 && !m_WakeEnd)
+	if (m_AnimComp)
 	{
-		// EyeLaser가 깨어나는 애니메니션으로 전환
-		Instance->ChangeAnimation("EyeLaser_Wake");
-	}
+		CAnimationSequenceInstance* Instance = m_AnimComp->GetAnimationInstance();
+		if (m_TriggerHitCount == 1 && !m_WakeEnd)
+		{
+			// EyeLaser가 깨어나는 애니메니션으로 전환
+			Instance->ChangeAnimation("EyeLaser_Wake");
+		}
 
-	if (m_TriggerHitCount == 1 && m_WakeEnd)
-	{
-		TrackPlayer(DeltaTime);
-	}
+		if (m_TriggerHitCount == 1 && m_WakeEnd)
+		{
+			TrackPlayer(DeltaTime);
+		}
 
-	else if (m_TriggerHitCount == 4)
-	{
-		// EyeLaser가 파괴
+		else if (m_TriggerHitCount == 4)
+		{
+			// EyeLaser가 파괴
+		}
 	}
 }
 
@@ -100,14 +118,25 @@ void CEyeLaserComponent::PrevRender()
 
 void CEyeLaserComponent::Render()
 {
-	if (m_TriggerHitCount == 1 && m_WakeEnd)
-	{
+	// 카메라를 계속 바라보게 만든다.
+	// 카메라의 위치를 얻어온다.
+	Vector3 CameraPos = m_Scene->GetCameraManager()->GetCurrentCamera()->GetWorldPos();
+
+	Vector3	View = CameraPos - GetWorldPos();
+	View.Normalize();
+
+	Vector3 OriginDir(0.f, 0.f, -1.f);
+
+	m_Transform->SetRotationAxis(OriginDir, View);
+
+	//if (m_TriggerHitCount == 1 && m_WakeEnd)
+	//{
 		CSceneComponent::Render();
 
-		m_Shader->SetShader();
+		m_Material->Render();
 
 		m_LaserPlaneMesh1->Render();
-	}
+	//}
 }
 
 void CEyeLaserComponent::PostRender()
