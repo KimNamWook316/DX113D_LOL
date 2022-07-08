@@ -557,6 +557,7 @@ void CAnimationMeshComponent::RenderShadowMap()
 	size_t Size = m_vecMaterialSlot.size();
 	for (size_t i = 0; i < Size; ++i)
 	{
+		m_vecMaterialSlot[i]->UpdateCBuffer();
 		m_Mesh->Render((int)i);
 	}
 

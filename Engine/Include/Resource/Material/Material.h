@@ -275,6 +275,7 @@ public:
     void RevertShader();                    // PrevShader로 되돌림
     void Render();
     void RenderTexture();
+    void UpdateCBuffer();
     void Reset();
     CMaterial* Clone()  const;
     bool Save(FILE* File);

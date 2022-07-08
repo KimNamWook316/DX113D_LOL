@@ -20,6 +20,8 @@
 #include "../Resource/Shader/OutlineConstantBuffer.h"
 #include "PostFXRenderer.h"
 #include "../GameObject/SkyObject.h"
+#include "../Resource/Shader/ConstantBuffer.h"
+#include "../Resource/ResourceManager.h"
 
 DEFINITION_SINGLE(CRenderManager)
 
@@ -27,7 +29,7 @@ CRenderManager::CRenderManager()	:
 	m_RenderStateManager(nullptr),
 	m_Standard2DCBuffer(nullptr),
 	m_Shadow(true),
-	m_ShadowLightDistance(20.f),
+	m_ShadowLightDistance(100.f),
 	m_ShadowCBuffer(nullptr),
 	//m_OutlineCBuffer(nullptr),
 	//m_Gray(false),
@@ -373,12 +375,6 @@ bool CRenderManager::Init()
 	GBufferTarget->SetDebugRender(true);
 	m_vecGBuffer.push_back(GBufferTarget);
 
- //	GBufferTarget = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("GBufferOutlineInfo");
- //	GBufferTarget->SetPos(Vector3(0.f, 600.f, 0.f));
- //	GBufferTarget->SetScale(Vector3(100.f, 100.f, 1.f));
- //	GBufferTarget->SetDebugRender(true);
- //	m_vecGBuffer.push_back(GBufferTarget);
-
 	// Decal은 이미 생성된 렌더타겟에 렌더한다.
 	GBufferTarget = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("Diffuse");
 	m_vecDecal.push_back(GBufferTarget);
@@ -452,18 +448,7 @@ bool CRenderManager::Init()
 	m_ParticleEffectEditorRenderTarget->SetDebugRender(false);
 	m_ParticleEffectEditorRenderTarget->SetClearColor(0.6f, 0.6f, 0.6f, 0.6f);
 
- //	// Outline 용 Render Target
- //	if (!CResourceManager::GetInst()->CreateTarget("OutlineRenderTarget",
- //		RS.Width, RS.Height, DXGI_FORMAT_R32G32B32A32_FLOAT))
- //		return false;
-
- //	// Outline Target
- //	m_OutlineTarget = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("OutlineRenderTarget");
- //	m_OutlineTarget->SetPos(Vector3(800.f, 0.f, 0.f));
- //	m_OutlineTarget->SetScale(Vector3(300.f, 300.f, 1.f));
- //	m_OutlineTarget->SetDebugRender(true);
-
-	// Transparent Target : FinalScreen, Normal, Depth, Outline
+	// Transparent Target : FinalScreen, Normal, Depthw
 	GBufferTarget = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("FinalScreen");
 	m_vecTransparent.push_back(GBufferTarget);
 
@@ -472,10 +457,6 @@ bool CRenderManager::Init()
 
 	GBufferTarget = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("GBuffer2");
 	m_vecTransparent.push_back(GBufferTarget);
-
- //	GBufferTarget = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("GBufferOutlineInfo");
- //	m_vecTransparent.push_back(GBufferTarget);
-
 	// Map 출력용 변수들
 
 	// Shadow
@@ -558,6 +539,35 @@ void CRenderManager::Render(float DeltaTime)
 
 	// Decal을 그려낸다.
 	RenderDecal();
+
+	// 트랜스폼 정보를 넘겨주어야 한다.
+	TransformCBuffer	TBuffer = {};
+
+	CScene* Scene = CSceneManager::GetInst()->GetScene();
+	CCameraComponent* Camera = Scene->GetCameraManager()->GetCurrentCamera();
+
+	TBuffer.matView = Camera->GetViewMatrix();
+	TBuffer.matProj = Camera->GetProjMatrix();
+	TBuffer.matInvProj = TBuffer.matProj;
+	TBuffer.matInvProj.Inverse();
+	TBuffer.matWV = TBuffer.matView;
+	TBuffer.matWVP = TBuffer.matView * TBuffer.matProj;
+	TBuffer.matVP = TBuffer.matWVP;
+	TBuffer.matInvVP = TBuffer.matWVP;
+	TBuffer.matInvVP.Inverse();
+	TBuffer.matInvWVP = TBuffer.matWVP;
+	TBuffer.matInvWVP.Inverse();
+
+	TBuffer.matView.Transpose();
+	TBuffer.matProj.Transpose();
+	TBuffer.matInvProj.Transpose();
+	TBuffer.matWV.Transpose();
+	TBuffer.matWVP.Transpose();
+	TBuffer.matVP.Transpose();
+	TBuffer.matInvVP.Transpose();
+	TBuffer.matInvWVP.Transpose();
+
+	CResourceManager::GetInst()->FindConstantBuffer("TransformCBuffer")->UpdateBuffer(&TBuffer);
 
 	// 조명 누적버퍼를 만들어낸다.
 	RenderLightAcc();
@@ -956,7 +966,7 @@ void CRenderManager::RenderLightBlend()
 
 	CScene* Scene = CSceneManager::GetInst()->GetScene();
 	Matrix matView = Scene->GetCameraManager()->GetCurrentCamera()->GetShadowViewMatrix();
-	Matrix matProj = Scene->GetCameraManager()->GetCurrentCamera()->GetShadowViewMatrix();
+	Matrix matProj = Scene->GetCameraManager()->GetCurrentCamera()->GetShadowProjMatrix();
 
 	m_ShadowCBuffer->SetShadowVP(matView * matProj);
 	m_ShadowCBuffer->UpdateCBuffer();

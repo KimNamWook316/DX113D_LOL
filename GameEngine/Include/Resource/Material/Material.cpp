@@ -874,6 +874,21 @@ void CMaterial::RenderTexture()
 	}
 }
 
+void CMaterial::UpdateCBuffer()
+{
+	if (m_CBuffer)
+	{
+		m_CBuffer->SetBaseColor(m_BaseColor);
+		m_CBuffer->SetAmbientColor(m_AmbientColor);
+		m_CBuffer->SetSpecularColor(m_SpecularColor);
+		m_CBuffer->SetEmissiveColor(m_EmissiveColor);
+		m_CBuffer->SetOpacity(m_Opacity);
+		m_CBuffer->SetMetallic(m_Metallic);
+
+		m_CBuffer->UpdateCBuffer();
+	}
+}
+
 void CMaterial::Reset()
 {
 	size_t	Size = m_TextureInfo.size();

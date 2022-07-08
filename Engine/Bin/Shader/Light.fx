@@ -346,9 +346,6 @@ PSOutput_Single LightBlendPS(VS_OUTPUT_LIGHTACC input)
 		}
 	}
 
-    // Metallic 한 물체라면 LightSpecularColor.a 값에 1이 들어온다.
-	float Metallic = LightSpecularColor.a;
-
 	output.Color.rgb = GBufferDiffuseColor.rgb * LightDiffuseColor.rgb + LightSpecularColor.rgb + LightEmissiveColor.rgb;
 
 	output.Color.a = GBufferDiffuseColor.a;
