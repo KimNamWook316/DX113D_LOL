@@ -144,11 +144,18 @@ public:
 	{
 		return m_BufferData.Is2D == 1 ? true : false;
 	}
-	
-	// 랜덤 방향 이동
-	bool IsMoveDirRandom()
+
+	// Linear Rotate
+	// Linaer Iterate 할때의 최초 Rot Angle
+	int IsSeperateLinearRotate()
 	{
-		return m_BufferData.IsMoveDirRandom == 1 ? true : false;
+		return m_BufferData.SeperateLinerRotate;
+	}
+
+	// 랜덤 방향 이동
+	int GetSpecialMoveDirType()
+	{
+		return m_BufferData.SpecialMoveDirType;
 	}
 
 	const Vector3& GetMoveAngle()
@@ -171,27 +178,16 @@ public:
 	{
 		return m_BufferData.GenerateRadius;
 	}
-	// Ring
-	int IsGenerateRing() const
+	// Particle Shape Type
+	int GetParticleShapeType() const
 	{
-		return m_BufferData.IsGenerateRing;
+		return m_BufferData.ParticleShapeType;
 	}
+	// Ring Loop
 	int IsLoopGenerateRing() const
 	{
 		return m_BufferData.IsLoopGenerateRing;
 	}
-	// Circle
-	int IsGenerateCircle() const
-	{
-		return m_BufferData.IsGenerateCircle;
-	}
-
-	// Torch
-	int IsGenerateTorch() const
-	{
-		return m_BufferData.IsGenerateTorch;
-	}
-
 	// Alpha
 	float GetStartAlpha() const
 	{
@@ -202,6 +198,13 @@ public:
 		return m_BufferData.AlphaEnd;
 	}
 public:
+	// Linear Rotate
+// Linaer Iterate 할때의 최초 Rot Angle
+	int SetSeperateLinearRotate(bool Enable)
+	{
+		m_BufferData.SeperateLinerRotate = Enable ? 1 : 0;
+	}
+
 	// Particle Component 의 Relative Scale 반영하기 
 	void SetCommonRelativeScale(const Vector3& Scale)
 	{
@@ -245,24 +248,19 @@ public:
 	{
 		m_BufferData.GenerateRadius = Radius;
 	}
+	// Particle Shape
+	void SetParticleShapeType(int Type)
+	{
+		m_BufferData.ParticleShapeType = Type;
+	}
+	void SetParticleShapeType(ParitcleShapeType Type)
+	{
+		m_BufferData.ParticleShapeType = (int)Type;
+	}
 	// Ring
 	void SetLoopGenerateRing(bool Enable)
 	{
 		m_BufferData.IsLoopGenerateRing = Enable ? 1 : 0;
-	}
-	void SetGenerateRingEnable(bool Enable)
-	{
-		m_BufferData.IsGenerateRing = Enable ? 1 : 0;
-	}
-	// Circle
-	void SetGenerateCircleEnable(bool Enable)
-	{
-		m_BufferData.IsGenerateCircle = Enable ? 1 : 0;
-	}
-	// Torch
-	void SetGenerateTorchEnable(bool Enable)
-	{
-		m_BufferData.IsGenerateTorch = Enable ? 1 : 0;
 	}
 	// Bounce
 	void SetBounceEnable(int Bounce)
@@ -358,9 +356,14 @@ public:
 		m_BufferData.Move = Move ? 1 : 0;
 	}
 
-	void SetIsRandomMoveDir(bool Move)
+	void SetSpecialMoveDirType(int Type)
 	{
-		m_BufferData.IsMoveDirRandom = Move ? 1 : 0;
+		m_BufferData.SpecialMoveDirType = Type;
+	}
+
+	void SetSpecialMoveDirType(ParticleSpecialMoveDir Type)
+	{
+		m_BufferData.SpecialMoveDirType = (int)Type;
 	}
 
 	void SetGravity(bool Gravity)

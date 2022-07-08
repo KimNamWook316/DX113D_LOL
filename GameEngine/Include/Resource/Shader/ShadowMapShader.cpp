@@ -1,5 +1,7 @@
 
 #include "ShadowMapShader.h"
+#include "../ResourceManager.h"
+#include "ShadowMapInstancingShader.h"
 
 CShadowMapShader::CShadowMapShader()
 {
@@ -28,6 +30,13 @@ bool CShadowMapShader::Init()
 
 	if (!CreateInputLayout())
 		return false;
+
+	// Instancing Shader도 같이 만든다.
+	bool Success = CResourceManager::GetInst()->CreateInstancingShader<CShadowMapShader, CShadowMapInstancingShader>(this, "ShadowMapInstancingShader");
+	if (!Success)
+	{
+		return false;
+	}
 
 	return true;
 }

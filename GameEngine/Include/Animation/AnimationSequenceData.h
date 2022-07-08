@@ -44,6 +44,10 @@ public:
 	void Save(FILE* File);
 	void Load(FILE* File);
 public:
+	void SetName(const std::string& Name)
+	{
+		m_Name = Name;
+	}
 	void SetPlayTime(float Time);
 	void SetPlayScale(float Scale)
 	{

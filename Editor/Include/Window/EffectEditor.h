@@ -26,6 +26,18 @@ static const char* ParticlePresetNames[] = {
     "SparkBounce",
     "SimpleMeteor" };
 
+static const char* ParticleShapeNames[] = {
+    "YUpDirRing", // 위 방향을 향한 Ring
+    "Circle", // Circle (일정 범위 이내 랜덤한 위치에 생성)
+    "Torch", // Torch (가운데 더 많이 생성)
+    "ZMinusRing" // 사용자 측을 바라본 형태로 Ring 생성
+};
+
+static const char* ParticleMoveDirType[] = {
+    "XZSpread", //  xz 평명 방향으로 이동 y는 0
+    "XYSpread" //  xy 평명 방향으로 이동 z 는 0
+};
+
 struct Particle3DObjectBackUpStruct
 {
     bool IsCameraRotate;
@@ -53,13 +65,13 @@ private:
     class CIMGUIButton* m_StartEditBtn;
     class CIMGUIButton* m_RestartBtn;
     class CIMGUISliderFloat* m_GenerateRadius;
+    class CIMGUIInputInt* m_SpawnCountMaxEdit;
 private :
     class CIMGUITextInput* m_CurrentParticleName;
 private:
     class CIMGUIComboBox* m_ParticlePreset;
 
     class CIMGUIInputFloat* m_SpawnTimeMaxEdit;
-    class CIMGUIInputInt* m_SpawnCountMaxEdit;
 
     class CIMGUIInputFloat3* m_StartMinEdit;
     class CIMGUIInputFloat3* m_StartMaxEdit;
@@ -112,14 +124,14 @@ private:
     class CIMGUISliderFloat* m_BounceResistance; // 마찰력
 
     // Ring Generate
-    class CIMGUICheckBox* m_IsGenerateRing;
+    class CIMGUIComboBox* m_ParticleShapeType;
     class CIMGUICheckBox* m_IsLoopGenerateRing; 
 
     // Circle Generate
-    class CIMGUICheckBox* m_IsGenerateCircle;
-
-    // Torch Generate
-    class CIMGUICheckBox* m_IsGenerateTorch;
+    // class CIMGUICheckBox* m_IsGenerateRing;
+    // class CIMGUICheckBox* m_IsGenerateCircle;
+    // class CIMGUICheckBox* m_IsGenerateTorch;
+    // class CIMGUICheckBox* m_ZMinusRing;
 
     // 카메라의 Y 축 위치 (위로 갈지, 아래로 갈지 조정)
     class CIMGUISliderFloat* m_CameraYOffsetBar;
@@ -128,13 +140,15 @@ private:
     class CIMGUISliderFloat* m_CameraXRotSlideBar;
 
     // Move Dir, Angle
-    class CIMGUICheckBox* m_IsRandomMoveDirEdit;
+    class CIMGUIComboBox* m_SpecialMoveDirType;
     class CIMGUIInputFloat3* m_MoveDirEdit;
     class CIMGUIInputFloat3* m_MoveAngleEdit;
 
     // Rotation  Angle
     class CIMGUIInputFloat3* m_MinSeperateRotAngleEdit;
     class CIMGUIInputFloat3* m_MaxSeperateRotAngleEdit;
+
+    class CIMGUICheckBox* m_LinearRotate;
 
     // Particle 이 사용하는 Material Texture
     class CIMGUIImage* m_ParticleTexture;
@@ -175,18 +189,11 @@ private:
     void OnEditBounceResistance(float Speed);
 
     // Generate Ring
-    void OnIsGenerateRingEdit(const char*, bool);
+    void OnClickParticleShape(int, const char*);
     void OnIsLoopGenerateRingEdit(const char*, bool);
-
-    // Generate Circle
-    void OnIsGenerateCircleEdit(const char*, bool);
-
-    // Generate Torch
-    void OnIsGenerateTorchEdit(const char*, bool);
 
     // Spawn Time, Count
     void OnSpawnTimeMaxEdit(float Num);
-    void OnSpawnCountMaxEdit(int Num);
 
     // StartMin,Max
     void OnStartMinEdit(const Vector3&);
@@ -234,12 +241,18 @@ private:
     // Move Dir, Angle
     void OnMoveDirEdit(const Vector3& Dir);
     void OnMoveAngleEdit(const Vector3& Angle);
-    void OnIsRandomMoveDirEdit(const char*, bool);
+
+    // Special Move Dir 
+    void OnClickSpecialMoveDirType(int Index, const char* Type);
 
     // Rotation Angle
     void OnMinSeperateRotAngleEdit(const Vector3& RotAngle);
     void OnMaxSeperateRotAngleEdit(const Vector3& RotAngle);
-
+    
+    // Linear Rot
+    void OnIsLinearRot(const char*, bool);
+    void OnSetLinearRotInitAngle(const Vector3& Angle);
+    
     // Save, Load
     void OnSaveParticleClass();
     void OnLoadParticleClass();

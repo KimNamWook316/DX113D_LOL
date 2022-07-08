@@ -153,7 +153,7 @@ void CAnim3DObject::SetMeshAndMaterialInfo()
 	m_Mesh->SetMesh(LoadedMeshName);
 
 	// GBuffer 가 아니라, 바로 Animation Editor 용 Render Target 에 그려내기 위해 Shader 를 다른 것으로 세팅한다.
-	m_Mesh->SetMaterialShader("Mesh3DNoLightShader");
+	m_Mesh->SetMaterialShaderAll("Mesh3DNoLightShader");
 
 	// m_Mesh->CreateAnimationInstance<CAnim3DObjectAnimation>();
 	// m_Animation = (CAnim3DObjectAnimation*)m_Mesh->GetAnimationInstance();

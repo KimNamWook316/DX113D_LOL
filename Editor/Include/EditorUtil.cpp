@@ -4,6 +4,7 @@
 #include <fstream>
 #include <iostream>
 #include <filesystem>
+#include <sstream>
 // Engine
 #include "PathManager.h"
 #include "GameObject/Minion.h"
@@ -30,8 +31,60 @@
 #include "Flag.h"
 #include "EngineUtil.h"
 
-
 namespace fs = std::filesystem;
+
+std::string CEditorUtil::ConcatNumOverlapName(const std::string& OverlapPossibleString)
+{
+	std::string input = OverlapPossibleString;
+	char outputBuf[256] = {};
+
+	if (input[input.length() - 1] == '0' || input[input.length() - 1] == '1' || input[input.length() - 1] == '2'
+		|| input[input.length() - 1] == '3' || input[input.length() - 1] == '4' || input[input.length() - 1] == '5'
+		|| input[input.length() - 1] == '6' || input[input.length() - 1] == '7' || input[input.length() - 1] == '8'
+		|| input[input.length() - 1] == '9')
+	{
+		size_t Length = input.length();
+		std::string NumPart;
+
+		int UnderIdx = -1;
+
+		for (size_t i = 0; i < Length; ++i)
+		{
+			if (input[i] == '_')
+				UnderIdx = (int)i;
+
+			if (input[i] == '0' || input[i] == '1' || input[i] == '2'
+				|| input[i] == '3' || input[i] == '4' || input[i] == '5'
+				|| input[i] == '6' || input[i] == '7' || input[i] == '8'
+				|| input[i] == '9')
+			{
+				NumPart += input[i];
+			}
+		}
+
+		std::stringstream ss(NumPart);
+
+		int Num = 0;
+		ss >> Num;
+
+		++Num;
+		ss.clear();
+		ss << Num;
+
+		input.erase(UnderIdx + 1);
+
+		input += ss.str();
+		strcpy_s(outputBuf, input.c_str());
+	}
+
+	else
+	{
+		input += "_1";
+		strcpy_s(outputBuf, input.c_str());
+	}
+
+	return std::string(outputBuf);
+}
 
 std::string CEditorUtil::FilterFileName(const std::string& FullPath)
 {

@@ -10,6 +10,8 @@ struct RenderInstancingList
 {
 	std::list<class CSceneComponent*> RenderList;
 	class CMesh* Mesh;
+	std::vector<class CGraphicShader*>* pvecInstancingShader;
+	std::vector<ShaderParams>* pvecShaderParams;
 	CStructuredBuffer* Buffer;
 	CStructuredBuffer* ShadowBuffer;
 	int BufferCount; // 인스턴싱할 Scene Component의 개수
@@ -20,6 +22,8 @@ struct RenderInstancingList
 	{
 		Mesh = nullptr;
 		Animation = false;
+		pvecInstancingShader = nullptr;
+		pvecShaderParams = nullptr;
 
 		Buffer = new CStructuredBuffer;
 
@@ -95,8 +99,6 @@ private:
 
 	CSharedPtr<class CShader> m_LightBlendShader;
 	CSharedPtr<class CShader> m_LightBlendRenderShader;
-	CSharedPtr<class CShader> m_Standard3DInstancingShader;
-	CSharedPtr<class CShader> m_Transparent3DInstancingShader;
 
 	// Final Target
 	CSharedPtr<CRenderTarget> m_FinalTarget;
@@ -120,16 +122,6 @@ private:
 
 	// Post Processing (HDR)
 	bool m_PostProcessing;
-
- //	// Grayscale
- //	bool m_Gray;
- //	CSharedPtr<class CShader> m_GrayShader;
-
- //	// OutLine
- //	bool m_OutLine;
- //	CSharedPtr<class CShader> m_OutLineShader;
- //	class COutlineConstantBuffer* m_OutlineCBuffer;
- //	CSharedPtr<CRenderTarget> m_OutlineTarget;
 
 	// Animation Editor 
 	CSharedPtr<class CShader> m_Mesh3DNoLightRenderShader; // m_AnimEditorRenderTarget 에 그려내기 위한 Shader 
@@ -172,55 +164,10 @@ public:
 		return m_ParticleEffectEditorRenderTarget;
 	}
 
- //	void SetOutlineDepthMultiplier(float Val)
- //	{
- //		m_OutlineCBuffer->SetDepthMultiplier(Val);
- //	}
- //
- //	void SetOutlineDepthBias(float Val)
- //	{
- //		m_OutlineCBuffer->SetDepthBias(Val);
- //	}
- //
- //	void SetOutlineNormalMultiplier(float Val)
- //	{
- //		m_OutlineCBuffer->SetNormalMultiplier(Val);
- //	}
- //
- //	void SetOutlineNormalBias(float Val)
- //	{
- //		m_OutlineCBuffer->SetNormalBias(Val);
- //	}
-
- //	void GrayEnable(bool Enable)
- //	{
- //		m_Gray = Enable;
- //	}
-
 	void SetDebugRender(bool DebugRender)
 	{
 		m_DebugRender = DebugRender;
 	}
-
- //	float GetOutlineDepthMultiplier()
- //	{
- //		return m_OutlineCBuffer->GetDepthMultiplier();
- //	}
- //
- //	float GetOutlineDepthBias()
- //	{
- //		return m_OutlineCBuffer->GetDepthBias();
- //	}
- //
- //	float GetOutlineNormalMultiplier()
- //	{
- //		return m_OutlineCBuffer->GetNormalMultiplier();
- //	}
- //
- //	float GetOutlineNormalBias()
- //	{
- //		return m_OutlineCBuffer->GetNormalBias();
- //	}
 
 	bool IsPostProcessingEnable()
 	{
@@ -243,6 +190,7 @@ public:
 	float GetFogStart() const;
 	float GetFogEnd() const;
 	float GetFogDensity() const;
+	float GetShadowBias() const;
 
 	void SetMiddleGray(float Gray);
 	void SetLumWhite(float White);
@@ -255,14 +203,10 @@ public:
 	void SetFogStart(float Start);
 	void SetFogEnd(float End);
 	void SetFogDensity(float Density);
+	void SetShadowBias(float Bias);
 
 	void SetAdaptationTime(float Time);
 	float GetAdaptationTime() const;
-
- //	bool IsGray()
- //	{
- //		return m_Gray;
- //	}
 
 	bool IsDebugRender()
 	{
@@ -290,10 +234,8 @@ private:
 	void RenderDecal();
 	void RenderLightAcc();
 	void RenderLightBlend();
-	// void RenderOutLine();
 	void RenderTransparent();
 	void RenderFinalScreen();
-	// void RenderGray();
 	void RenderAnimationEditor();
 	void RenderParticleEffectEditor();
 
@@ -310,11 +252,10 @@ public:
 	class CRenderState* FindRenderState(const std::string& Name);
 
 private:
-	void RenderDefaultInstancingInfo();
-	void RenderDefaultInstancing();
 	void RenderDefaultInstancingShadow();
-	void RenderTransparentInstancingInfo();
-	void RenderTransparentInstancing();
+	void RenderInstancing(int LayerIndex, bool AlphaBlend);
+	void UpdateInstancingList();
+	void UpdateInstancingInfo(int LayerIndex, bool UpdateShadow);
 
 private :
 	int GetRenderLayerIndex(const std::string& Name);

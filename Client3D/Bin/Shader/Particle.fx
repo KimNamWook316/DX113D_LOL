@@ -1,6 +1,8 @@
 
 #include "ShaderInfo.fx"
 
+#define PARTICLE_INIT_ANGLE 1000
+
 cbuffer	ParticleCBuffer : register(b11)
 {
 	uint	g_ParticleSpawnEnable;	// 파티클 생성여부
@@ -30,48 +32,43 @@ cbuffer	ParticleCBuffer : register(b11)
 
 	float3 g_ParticleRotationAngle;
 	float   g_ParticleBounceResist;
-	
-	int g_ParticleGenerateRing;
+
+	int g_ParticleGenerateShapeType;
 	float g_ParcticleGenerateRadius;
 	int g_LoopGenerateRing;
-	int g_ParticleRandomMoveDir;
+	int g_ParticleSpecialMoveDirType;
 
 	float g_ParticleAlphaMax;
 	float g_ParticleAlphaMin;
-	int g_ParticleGenerateCircle;
-	float g_ParticleEmpty1;
-
-	int g_ParticleGenerateTorch;
-	float g_ParticleEmpty2;
-	int  g_ParticleLifeTimeLinear;
-	float ParticleEmpty3;
+	int g_ParticleLifeTimeLinear;
+	int g_SeperateLinerRotate; // 자신의 진행 방향 대로 회전시킬 것인가. g_ParticleSpecialMoveDirType 을 지정해야 한다. 회전 중심 축을 잡아야 하므로
 
 	int g_ParticleUVMoveEnable;
 	int g_ParticleUVRowN;
 	int g_ParticleUVColN;
-	int ParticleEmpty4;
+	int ParticleEmpty2;
 
 	// 각 Particle 별로 다르게 Rotation Angle을 주는 경우
 	float3 g_ParticleSeperateRotAngleMin;
-	float ParticleEmpty5;
+	float ParticleEmpty3;
 
 	float3 g_ParticleSeperateRotAngleMax;
-	float ParticleEmpty6;
+	float ParticleEmpty4;
 
 	float3 g_ParticleCommonRelativeScale;
-	float ParticleEmpty7;
+	float ParticleEmpty5;
 };
 
 /*
 if (g_ParticleBounce == 1)
-			{
-				if (g_ParticleArray[ThreadID.x].InitWorldPosY >= g_ParticleArray[ThreadID.x].WorldPos.y)
-				{
-					g_ParticleArray[ThreadID.x].FallTime = 0.f;
-					// g_ParticleArray[ThreadID.x].Speed *= 0.98f;
-					g_ParticleArray[ThreadID.x].Speed *= g_ParticleBounceResist;
-				}
-			}
+{
+	if (g_ParticleArray[ThreadID.x].InitWorldPosY >= g_ParticleArray[ThreadID.x].WorldPos.y)
+	{
+		g_ParticleArray[ThreadID.x].FallTime = 0.f;
+		// g_ParticleArray[ThreadID.x].Speed *= 0.98f;
+		g_ParticleArray[ThreadID.x].Speed *= g_ParticleBounceResist;
+	}
+}
 */
 
 #define	GRAVITY	9.8f
@@ -86,7 +83,9 @@ struct ParticleInfo
 	int		Alive;
 	float	FallTime;
 	float	FallStartY;
-	float3 SeperateRotAngle;
+	float CurrentParticleAngle;
+	float3 SeperateRotAngleOffset;
+	float3 FinalSeperateRotAngle;
 	float  InitWorldPosY;
 };
 
@@ -181,6 +180,292 @@ float3x3 ComputeRotationMatrix(float3 Angle)
 	return matRot;
 }
 
+
+void ApplySpecialParticleGenerateShape(float RandomAngle, int ThreadID, float FinalAppliedRadius,
+	float Rand)
+{
+	switch (g_ParticleGenerateShapeType)
+	{
+		// Ring 모양 생성 => Generate Circle 을 하게 되면, Start Min, Max 가 무의미해지게 되는 것이다.
+		// 0.f, 0.f, 0.f 중심으로 원에 생성하기
+	case 0:
+	{
+		float CurrentRingAngle = RandomAngle;
+
+		float3 RingPos = float3(0.f, 0.f, 0.f) + float3(
+			cos(CurrentRingAngle) * FinalAppliedRadius,
+			0.f,
+			sin(CurrentRingAngle) * FinalAppliedRadius);
+
+		g_ParticleArray[ThreadID].WorldPos = RingPos;
+
+		// Loop 을 설정하게 되면, 차례대로 만들어지게 한다.
+		if (g_LoopGenerateRing == 1)
+		{
+			CurrentRingAngle = g_ParticleShare[0].PrevRingAngle + (360.f / g_ParticleSpawnCountMax);
+
+			if (CurrentRingAngle > 360.f)
+				CurrentRingAngle -= 360.f;
+
+			RingPos = float3(0.f, 0.f, 0.f) + float3(cos(CurrentRingAngle) * FinalAppliedRadius,
+				0.f,
+				sin(CurrentRingAngle) * FinalAppliedRadius);
+
+			g_ParticleArray[ThreadID].WorldPos = RingPos;
+
+			g_ParticleShare[0].PrevRingAngle = CurrentRingAngle;
+
+			// 현재 Frame 에서 해당 Particle 이 놓인 각도 (중심 기준)
+			g_ParticleArray[ThreadID].CurrentParticleAngle = CurrentRingAngle;
+		}
+	}
+	break;
+	// Circle
+	// 일정 범위 원 안에서 생성되게 하기 (Ring 과 같이 일정 간격에만 생성 X. 원 안에 랜덤 위치에 생성)
+	case 1:
+	{
+		// 생성 각도도 Random
+		// 생성 반지름 크기도 Random
+		float RandomRadius = FinalAppliedRadius * Rand;
+
+		float3 CirclePos = float3(0.f, 0.f, 0.f) + float3(
+			cos(RandomAngle) * RandomRadius,
+			0.f,
+			sin(RandomAngle) * RandomRadius);
+
+		g_ParticleArray[ThreadID].WorldPos = CirclePos;
+	}
+	break;
+	// Torch
+	// 횃불 모양의 Particle 만들어내기
+	// Spawn 위치로, 가운데 쪽에 비율적으로 더 많이 생성되게 해야 한다.
+	case 2:
+	{
+		// 생성 위치 => 정규 분포를 사용하여, 확률적으로 가운데 많이 생성되게 하기
+		// CPU 측에서 평균 0 , 표준편차 0.165 라는 표준 정규 분포 값을 이용하여 값 세팅
+		// 평균 0 의 값이 가장 많이 나올 것이다. (0 라는 값이 거의 집중적으로 나올 것)
+		// 그리고 범위는 -0.5 ~ 0.5
+		// 여기서 할일은, 0에 가까운 값이 거의 대부분 나오게 조절해야 하고, 또한 범위는 0에서 1 사이의 값에 놓이게 해야 한다.
+		// 1) 값에서 *2 를 해서 -1 ~ 1 사이의 값으로 조정한다.
+		// 2) 음수인 값은 양수로 바꿔준다.
+		// 그러면 반쪽 짜리 정규 분포가 만들어질 것이다.
+		float NormalDistVal = g_ParticleNormalDistValArray[ThreadID.x] * 2.f;
+
+		// 1.f 범위를 넘는 값들 조정하기 
+		if (NormalDistVal > 1.f)
+			NormalDistVal = Rand;
+		if (NormalDistVal < -1.f)
+			NormalDistVal = Rand * -1.f;
+
+		// 설정한 반지름 범위로 맞춰준다.
+		float TorchGenerateRadius = NormalDistVal * FinalAppliedRadius;
+
+		float3 StartMinBase = float3(-1.f, 0, -1.f);
+		StartMinBase *= TorchGenerateRadius;
+		float3 StartMaxBase = float3(1.f, 0, 1.f);
+		StartMaxBase *= TorchGenerateRadius;
+		float3 TorchPos = float3(0.f, 0.f, 0.f);
+		// TorchPos = Rand * (StartMaxBase - StartMinBase) + StartMinBase;
+		// TorchPos.y = 0.f;
+		TorchPos = float3(cos(RandomAngle) * TorchGenerateRadius, 0.f, sin(RandomAngle) * TorchGenerateRadius);
+
+		g_ParticleArray[ThreadID].WorldPos = TorchPos;
+	}
+	break;
+	// 사용자 정면을 바라보는 형태로 Ring 생성하게 하기 
+	case 3:
+	{
+		float CurrentRingAngle = RandomAngle;
+
+		float3 RingPos = float3(0.f, 0.f, 0.f) + float3(
+			cos(RandomAngle) * FinalAppliedRadius,
+			sin(RandomAngle) * FinalAppliedRadius,
+			0.f);
+
+		g_ParticleArray[ThreadID.x].WorldPos = RingPos;
+
+		// Loop 을 설정하게 되면, 차례대로 만들어지게 한다.
+		if (g_LoopGenerateRing == 1)
+		{
+			CurrentRingAngle = g_ParticleShare[0].PrevRingAngle + (360.f / g_ParticleSpawnCountMax);
+
+			if (CurrentRingAngle > 360.f)
+				CurrentRingAngle -= 360.f;
+
+			RingPos = float3(0.f, 0.f, 0.f) + float3(
+				cos(CurrentRingAngle) * FinalAppliedRadius,
+				sin(CurrentRingAngle) * FinalAppliedRadius,
+				0.f);
+
+			g_ParticleArray[ThreadID].WorldPos = RingPos;
+
+			g_ParticleShare[0].PrevRingAngle = CurrentRingAngle;
+
+			// 현재 Frame 에서 해당 Particle 이 놓인 각도 (중심 기준)
+			g_ParticleArray[ThreadID].CurrentParticleAngle = CurrentRingAngle;
+		}
+	}
+	break;
+	}
+}
+
+void ApplySpecialMoveDirType(int ThreadID, float RandomAngle, float3 OriginDir, float Rand)
+{
+	float MoveTowardAngle = RandomAngle;
+
+	// 만약 Generate Loop 이라면, 순차적으로 만들어지는 것
+	// 그렇다면, 중심 기준 -> 자신이 생성된 위치
+	// 해당 각도 방향으로 회전해야 한다.
+	if (g_LoopGenerateRing == 1)
+	{
+		MoveTowardAngle = g_ParticleArray[ThreadID].CurrentParticleAngle;
+	}
+
+	switch (g_ParticleSpecialMoveDirType)
+	{
+	case 0:
+	{
+		// y 는 0 -> XZ 평면으로, 사방으로 뻗어나가게 하기 
+		float3 RandDir = float3(0.f, 0.f, 0.f) + float3(
+			// cos(RandomAngle) * Rand, 어차피 normalize 를 아래에서 진행해주는데, 굳이 Rand 를 곱해줘야 하는가
+			cos(MoveTowardAngle),
+			OriginDir.y,
+			sin(MoveTowardAngle));
+		normalize(RandDir);
+
+		g_ParticleArray[ThreadID].Dir = RandDir;
+	}
+	break;
+
+	case 1:
+	{
+		// z 는 0, xy 평면 방향으로 뻗어나가게 하기 
+		float3 RandDir = float3(0.f, 0.f, 0.f) + float3(
+			cos(MoveTowardAngle),
+			sin(MoveTowardAngle),
+			OriginDir.z);
+
+		normalize(RandDir);
+
+		g_ParticleArray[ThreadID].Dir = RandDir;
+	}
+	break;
+	}
+}
+
+void ApplyParticleMove(float3 RandomPos, int ThreadID, float RandomAngle, float Rand)
+{
+	// Rand는 0 에서 1 사이의 값
+	// Move 하는 Particle 이라면, Speed 와 Dir 를 세팅한다.
+	if (g_ParticleMove == 1)
+	{
+		// RandomPos.xyz 는 각각 0 에서 1 사이의 값 --> -1 에서 1 사이의 값으로 바꾼다.
+		// ex) 360도 => -180 ~ 180 도 사이의 랜덤한 각도로 회전을 한다고 생각하면 된다.
+		float3	ConvertAngle = (RandomPos.xyz * 2.f - 1.f) * g_ParticleMoveAngle;
+
+		// float3x3 matRot = ComputeRotationMatrix(ConvertAngle);
+		float3x3 matRot = ComputeRotationMatrix(ConvertAngle);
+
+		// 현재 Rot 상으로는, Particle Rotation 기능만 수행중이다.
+		float3 OriginDir = mul(g_ParticleMoveDir, matRot);
+
+		float3	Dir = normalize(mul(g_ParticleMoveDir, matRot));
+
+		g_ParticleArray[ThreadID.x].Speed = Rand * (g_ParticleSpeedMax - g_ParticleSpeedMin) + g_ParticleSpeedMin;
+		g_ParticleArray[ThreadID.x].Dir = Dir;
+
+		// 단순 Dir 이동이 아니라, 특정 방향으로 Special 하게 이동하는 설정을 했다면
+		ApplySpecialMoveDirType(ThreadID, RandomAngle, OriginDir, Rand);
+	}
+}
+
+// 중력 적용하기 
+void ApplyGravity(int ThreadID, float3 MovePos)
+{
+	// 중력 적용
+	if (g_ParticleShare[0].GravityEnable)
+	{
+		g_ParticleArray[ThreadID].FallTime += g_DeltaTime;
+
+		float	Velocity = 0.f;
+
+		if (g_ParticleArray[ThreadID].Dir.y > 0.f)
+			Velocity = g_ParticleArray[ThreadID].Speed * g_ParticleArray[ThreadID].FallTime;
+
+		g_ParticleArray[ThreadID].WorldPos.y = g_ParticleArray[ThreadID].FallStartY +
+			(Velocity - 0.5f * GRAVITY * g_ParticleArray[ThreadID].FallTime * g_ParticleArray[ThreadID].FallTime * 10.f);
+
+		// Bounce 효과를 낸다면 
+		if (g_ParticleBounce == 1)
+		{
+			if (g_ParticleArray[ThreadID].InitWorldPosY >= g_ParticleArray[ThreadID].WorldPos.y)
+			{
+				g_ParticleArray[ThreadID].FallTime = 0.f;
+				// g_ParticleArray[ThreadID.x].Speed *= 0.98f;
+				g_ParticleArray[ThreadID].Speed *= g_ParticleBounceResist;
+			}
+		}
+
+		g_ParticleArray[ThreadID].WorldPos.x += MovePos.x;
+		g_ParticleArray[ThreadID].WorldPos.z += MovePos.z;
+	}
+	else
+		g_ParticleArray[ThreadID.x].WorldPos += MovePos;
+}
+
+void ApplyRotationAccordingToDir(int ThreadID)
+{
+	// HLSL 좌표계를 무엇을 사용하는가 ?
+	//  y 축 20도 회전 ? -> 반시계방향으로 20도 돌린 것
+	// 그런데 왼손좌표계에서는 20도 회전이 곧, 시계방향인 것으로 알고 있는데 ..?
+	// g_ParticleArray[ThreadID.x].FinalSeperateRotAngle += float3(0.f, 20.f , 0.f);
+
+	if (g_SeperateLinerRotate == 1)
+	{
+		float RotAngle = 0.f;
+		float3 DirVector = g_ParticleArray[ThreadID.x].Dir;
+
+		switch (g_ParticleSpecialMoveDirType)
+		{
+		// y 는 0 -> XZ 평면으로, 사방으로 뻗어나가게 하기 
+		case 0:
+		{
+			// 아래는 Y + 방향을 바라본 상태로 회전하는 것
+			float3 CenterVector = float3(0.f, 0.f, 1.f);
+			DirVector.y = 0.f;
+
+			RotAngle = AngleBetweenTwoVector(CenterVector, DirVector);
+
+			if (DirVector.x > 0.f)
+			{
+				RotAngle = (180 - RotAngle);
+			}
+
+			g_ParticleArray[ThreadID.x].FinalSeperateRotAngle += float3(0.f, RotAngle, 0.f);
+		}
+		break;
+
+		case 1:
+		{
+			// z 는 0, xy 평면 방향으로 뻗어나가게 하기 (z 는 - 방향을 향하고 있게 된다.)
+			float3 CenterVector = float3(0.f, 1.f, 0.f);
+			DirVector.z = 0.f;
+
+			float RotAngle = AngleBetweenTwoVector(CenterVector, DirVector);
+
+			if (DirVector.x > 0.f)
+			{
+				RotAngle = (180 - RotAngle);
+			}
+
+			g_ParticleArray[ThreadID.x].FinalSeperateRotAngle += float3(0.f, 0.f, RotAngle );
+
+		}
+		break;
+		}
+	}
+}
+
 [numthreads(64, 1, 1)]	// 스레드 그룹 스레드 수를 지정한다.
 void ParticleUpdate(uint3 ThreadID : SV_DispatchThreadID)
 {
@@ -201,10 +486,15 @@ void ParticleUpdate(uint3 ThreadID : SV_DispatchThreadID)
 	g_ParticleShare[0].GravityEnable = g_ParticleGravity;
 	g_ParticleShare[0].RotationAngle = g_ParticleRotationAngle;
 
-
 	g_ParticleShare[0].UVMoveEnable = g_ParticleUVMoveEnable;
 	g_ParticleShare[0].UVRowN = g_ParticleUVRowN;
 	g_ParticleShare[0].UVColN   = g_ParticleUVColN;
+
+	// 매번 초기화 해줄 것이다.
+	g_ParticleArray[ThreadID.x].SeperateRotAngleOffset = float3(0.f, 0.f, 0.f);
+
+	// 처음에는 자기 자신의 Rot Angle 을 -1으로 세팅 (일종의 초기화)
+	g_ParticleArray[ThreadID.x].CurrentParticleAngle = PARTICLE_INIT_ANGLE;
 
 	// 동작되는 스레드의 수가 생성되는 파티클의 최대 수 보다 크거나 같다면
 	// 잘못된 인덱스로 동작하기 때문에 처리를 안해준다.
@@ -249,107 +539,18 @@ void ParticleUpdate(uint3 ThreadID : SV_DispatchThreadID)
 		g_ParticleArray[ThreadID.x].LifeTime = 0.f;
 		g_ParticleArray[ThreadID.x].LifeTimeMax = Rand * (g_ParticleLifeTimeMax - g_ParticleLifeTimeMin) + g_ParticleLifeTimeMin;
 
-		if (g_ParticleMove == 1)
-		{
-			// RandomPos.xyz 는 각각 0 에서 1 사이의 값 --> -1 에서 1 사이의 값으로 바꾼다.
-			// ex) 360도 => -180 ~ 180 도 사이의 랜덤한 각도로 회전을 한다고 생각하면 된다.
-			float3	ConvertAngle = (RandomPos.xyz * 2.f - 1.f) * g_ParticleMoveAngle;
+		// Scale 크기도 그만큼 조정한다.
+		g_ParticleArray[ThreadID.x].LifeTimeMax *= g_ParticleCommonRelativeScale.x;
+		g_ParticleArray[ThreadID.x].LifeTimeMax *= g_ParticleCommonRelativeScale.y;
+		g_ParticleArray[ThreadID.x].LifeTimeMax *= g_ParticleCommonRelativeScale.z;
 
-			// float3x3 matRot = ComputeRotationMatrix(ConvertAngle);
-			float3x3 matRot = ComputeRotationMatrix(ConvertAngle);
+		float FinalAppliedRadius = g_ParcticleGenerateRadius * g_ParticleCommonRelativeScale.x * g_ParticleCommonRelativeScale.y * g_ParticleCommonRelativeScale.z;
 
-			// 현재 Rot 상으로는, Particle Rotation 기능만 수행중이다.
-			float3 OriginDir = mul(g_ParticleMoveDir, matRot);
-			float3	Dir = normalize(mul(g_ParticleMoveDir, matRot));
+		// Special 한 모양으로 Particle 을 만들고자 한다면
+		ApplySpecialParticleGenerateShape(RandomAngle, ThreadID.x, FinalAppliedRadius, Rand);
 
-			g_ParticleArray[ThreadID.x].Speed = Rand * (g_ParticleSpeedMax - g_ParticleSpeedMin) + g_ParticleSpeedMin;
-			g_ParticleArray[ThreadID.x].Dir = Dir;
-
-			if (g_ParticleRandomMoveDir == 1)
-			{
-				// 완전 랜덤한 방향으로 이동하기 
-				float3 RandDir = float3(0.f, 0.f, 0.f) + float3(
-					cos(RandomAngle) * Rand,
-					OriginDir.y,
-					sin(RandomAngle) * Rand);
-				normalize(RandDir);
-
-				g_ParticleArray[ThreadID.x].Dir = RandDir;
-			}
-		}
-
-		// Ring 모양 생성 => Generate Circle 을 하게 되면, Start Min, Max 가 무의미해지게 되는 것이다.
-		 // 0.f, 0.f, 0.f 중심으로 원에 생성하기
-		 if (g_ParticleGenerateRing == 1)
-		 {
-		 	float3 RingPos = float3(0.f, 0.f, 0.f) + float3(
-				cos(RandomAngle) * g_ParcticleGenerateRadius,
-		 		0.f, 
-		 		sin(RandomAngle) * g_ParcticleGenerateRadius);
-		 
-		 	g_ParticleArray[ThreadID.x].WorldPos = RingPos;
-		 
-		 	// Loop 을 설정하게 되면, 차례대로 만들어지게 한다.
-		 	if (g_LoopGenerateRing == 1)
-		 	{
-		 		float NextRingAngle = g_ParticleShare[0].PrevRingAngle + (360.f / g_ParticleSpawnCountMax);
-		 
-				RingPos = float3(0.f, 0.f, 0.f) + float3(cos(NextRingAngle) * g_ParcticleGenerateRadius,  0.f, sin(NextRingAngle) * g_ParcticleGenerateRadius);
-		 		g_ParticleArray[ThreadID.x].WorldPos = RingPos;
-		 
-		 		g_ParticleShare[0].PrevRingAngle = NextRingAngle;
-		 	}
-		 }
-
-		 // 일정 범위 원 안에서 생성되게 하기 (Ring 과 같이 일정 간격에만 생성 X. 원 안에 랜덤 위치에 생성)
-		 if (g_ParticleGenerateCircle == 1)
-		 {
-			 // 생성 각도도 Random
-			 // 생성 반지름 크기도 Random
-			 float RandomRadius = g_ParcticleGenerateRadius * Rand;
-
-			 float3 CirclePos = float3(0.f, 0.f, 0.f) + float3(
-				 cos(RandomAngle) * RandomRadius,
-				 0.f,
-				 sin(RandomAngle) * RandomRadius);
-
-			 g_ParticleArray[ThreadID.x].WorldPos = CirclePos;
-		 }
-
-		 // 횃불 모양의 Particle 만들어내기
-		 // Spawn 위치로, 가운데 쪽에 비율적으로 더 많이 생성되게 해야 한다.
-		 if (g_ParticleGenerateTorch == 1)
-		 {
-			 // 생성 위치 => 정규 분포를 사용하여, 확률적으로 가운데 많이 생성되게 하기
-			 // CPU 측에서 평균 0 , 표준편차 0.165 라는 표준 정규 분포 값을 이용하여 값 세팅
-			 // 평균 0 의 값이 가장 많이 나올 것이다. (0 라는 값이 거의 집중적으로 나올 것)
-			 // 그리고 범위는 -0.5 ~ 0.5
-			 // 여기서 할일은, 0에 가까운 값이 거의 대부분 나오게 조절해야 하고, 또한 범위는 0에서 1 사이의 값에 놓이게 해야 한다.
-			 // 1) 값에서 *2 를 해서 -1 ~ 1 사이의 값으로 조정한다.
-			 // 2) 음수인 값은 양수로 바꿔준다.
-			 // 그러면 반쪽 짜리 정규 분포가 만들어질 것이다.
-			 float NormalDistVal = g_ParticleNormalDistValArray[ThreadID.x] * 2.f;
-
-			 // 1.f 범위를 넘는 값들 조정하기 
-			 if (NormalDistVal > 1.f)
-				 NormalDistVal = Rand;
-			 if (NormalDistVal < -1.f)
-				 NormalDistVal = Rand * -1.f;
-
-			 // 설정한 반지름 범위로 맞춰준다.
-			 float TorchGenerateRadius = NormalDistVal * g_ParcticleGenerateRadius;
-
-			 float3 StartMinBase = float3(-1.f, 0, -1.f);
-			 StartMinBase *= TorchGenerateRadius;
-			 float3 StartMaxBase = float3(1.f, 0, 1.f);
-			 StartMaxBase *= TorchGenerateRadius;
-			 float3 TorchPos = float3(0.f, 0.f, 0.f);
-			 // TorchPos = Rand * (StartMaxBase - StartMinBase) + StartMinBase;
-			 // TorchPos.y = 0.f;
-			 TorchPos = float3(cos(RandomAngle) * TorchGenerateRadius, 0.f, sin(RandomAngle) * TorchGenerateRadius);
-
-			 g_ParticleArray[ThreadID.x].WorldPos = TorchPos;
-		 }
+		// Move 하는 Particle 이라면, Speed 와 Dir 를 세팅한다.
+		ApplyParticleMove(RandomPos, ThreadID.x, RandomAngle, Rand);
 
 		 // 원뿔 형태로 위로 이동 (즉, 가운데에서 멀어질 수록, LifeTime이 작아지는 효과)
 		// LifeTime 만 조정해줄 뿐,  //
@@ -359,9 +560,9 @@ void ParticleUpdate(uint3 ThreadID : SV_DispatchThreadID)
 			 float SpawnStartPosDist = distance(g_ParticleArray[ThreadID.x].WorldPos, float3(0.f, 0.f, 0.f));
 			 float DistMax = (float)(abs(max(g_ParticleStartMax, g_ParticleStartMin)));
 
-			 // Circle Generate, Torch Generate 가 존재한다면 
-			 if (g_ParticleGenerateCircle == 1 || g_ParticleGenerateTorch == 1)
-				 DistMax = g_ParcticleGenerateRadius;
+			 // Circle, Torch 가 존재한다면
+			 if (g_ParticleGenerateShapeType == 1 || g_ParticleGenerateShapeType == 2)
+				 DistMax = FinalAppliedRadius;
 
 			 float SpawnPosRatio = (float)(SpawnStartPosDist / DistMax);
 
@@ -372,7 +573,18 @@ void ParticleUpdate(uint3 ThreadID : SV_DispatchThreadID)
 		 }
 
 		 // 생성되는 순간 각 Particle 의 Rot 정도를 세팅한다.
-		 g_ParticleArray[ThreadID.x].SeperateRotAngle = (g_ParticleSeperateRotAngleMax - g_ParticleSeperateRotAngleMin) * Rand + g_ParticleSeperateRotAngleMin;
+		 // 최종 각각의 Particle 회전 정도 세팅
+		 // '=' 가 아니라 '+=' 를 해줘야 한다.
+		 // ApplySpecialParticleGenerateShape 에서 일부 미리 FinalSeperateRotAngle 값에 
+		 // 회전할 Offset 값을 더해놓은 상태이기 때문이다.
+		 // g_ParticleArray[ThreadID.x].FinalSeperateRotAngle += ((g_ParticleSeperateRotAngleMax - g_ParticleSeperateRotAngleMin) * Rand + g_ParticleSeperateRotAngleMin);
+		 g_ParticleArray[ThreadID.x].FinalSeperateRotAngle = (g_ParticleSeperateRotAngleMax - g_ParticleSeperateRotAngleMin) * Rand + g_ParticleSeperateRotAngleMin;
+		 
+		 // g_ParticleArray[ThreadID.x].FinalSeperateRotAngle += g_ParticleArray[ThreadID.x].SeperateRotAngleOffset;
+		 
+		 // 자신의 진행 방향에 따른 회전을 추가한다.
+		 ApplyRotationAccordingToDir(ThreadID.x);
+		 
 	}
 	// 현재 생성이 되어 있는 파티클일 경우
 	else
@@ -385,40 +597,10 @@ void ParticleUpdate(uint3 ThreadID : SV_DispatchThreadID)
 		{
 			MovePos = g_ParticleArray[ThreadID.x].Dir *
 				g_ParticleArray[ThreadID.x].Speed * g_DeltaTime;
-
-			/*g_ParticleArray[ThreadID.x].WorldPos += g_ParticleArray[ThreadID.x].Dir *
-				g_ParticleArray[ThreadID.x].Speed * g_DeltaTime;*/
 		}
 
 		// 중력 적용
-		if (g_ParticleShare[0].GravityEnable)
-		{
-			g_ParticleArray[ThreadID.x].FallTime += g_DeltaTime;
-
-			float	Velocity = 0.f;
-
-			if (g_ParticleArray[ThreadID.x].Dir.y > 0.f)
-				Velocity = g_ParticleArray[ThreadID.x].Speed * g_ParticleArray[ThreadID.x].FallTime;
-
-			g_ParticleArray[ThreadID.x].WorldPos.y = g_ParticleArray[ThreadID.x].FallStartY +
-				(Velocity - 0.5f * GRAVITY * g_ParticleArray[ThreadID.x].FallTime * g_ParticleArray[ThreadID.x].FallTime * 10.f);
-
-			// Bounce 효과를 낸다면 
-			if (g_ParticleBounce == 1)
-			{
-				if (g_ParticleArray[ThreadID.x].InitWorldPosY >= g_ParticleArray[ThreadID.x].WorldPos.y)
-				{
-					g_ParticleArray[ThreadID.x].FallTime = 0.f;
-					// g_ParticleArray[ThreadID.x].Speed *= 0.98f;
-					g_ParticleArray[ThreadID.x].Speed *= g_ParticleBounceResist;
-				}
-			}
-
-			g_ParticleArray[ThreadID.x].WorldPos.x += MovePos.x;
-			g_ParticleArray[ThreadID.x].WorldPos.z += MovePos.z;
-		}
-		else
-			g_ParticleArray[ThreadID.x].WorldPos += MovePos;
+		ApplyGravity(ThreadID.x, MovePos);
 
 		if (g_ParticleArray[ThreadID.x].LifeTime >= g_ParticleArray[ThreadID.x].LifeTimeMax)
 		{
@@ -533,7 +715,8 @@ void ParticleGS(point VertexParticleOutput input[1],
 
 	float	Ratio = g_ParticleArraySRV[InstanceID].LifeTime / g_ParticleArraySRV[InstanceID].LifeTimeMax;
 	
-	float3	Scale = lerp(g_ParticleShareSRV[0].ScaleMin * g_ParticleShareSRV[0].CommonRelativeScale, 
+	float3	Scale = lerp(
+		g_ParticleShareSRV[0].ScaleMin * g_ParticleShareSRV[0].CommonRelativeScale, 
 		g_ParticleShareSRV[0].ScaleMax * g_ParticleShareSRV[0].CommonRelativeScale,
 		float3(Ratio, Ratio, Ratio));
 
@@ -541,7 +724,7 @@ void ParticleGS(point VertexParticleOutput input[1],
 		float4(Ratio, Ratio, Ratio, Ratio));
 
 	// 회전 (전체 회전 + 각 Particle 회전 정도)
-	float3 FinalRotAngle = g_ParticleShareSRV[0].RotationAngle + g_ParticleArraySRV[InstanceID].SeperateRotAngle;
+	float3 FinalRotAngle = g_ParticleShareSRV[0].RotationAngle + g_ParticleArraySRV[InstanceID].FinalSeperateRotAngle;
 
 	float3x3 matRot = ComputeRotationMatrix(FinalRotAngle);
 

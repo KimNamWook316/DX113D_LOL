@@ -184,6 +184,8 @@ private:
 public:
 	bool Picking(CGameObject*& Result);
 	bool CheckSameName(const std::string& Name);
+	// SameName은 로드 전, IsExistSameName은 로드 후 이름이 중복된 경우
+	bool IsExistSameName(const std::string& Name);
 	void UpdateSceneGlobalData();
 
 public:

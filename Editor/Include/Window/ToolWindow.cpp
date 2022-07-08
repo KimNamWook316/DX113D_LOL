@@ -78,6 +78,7 @@ bool CToolWindow::Init()
 	m_RenderBlock = AddWidget<CIMGUICollapsingHeader>("Render", 200.f);
 	m_DebugRender = m_RenderBlock->AddWidget<CIMGUICheckBox>("DebugRender");
 	m_PostProcessing = m_RenderBlock->AddWidget<CIMGUICheckBox>("PostProcessing(HDR)");
+	m_ShadowBias = m_RenderBlock->AddWidget<CIMGUISliderFloat>("Shadow Bias");
 	CIMGUITree* Tree = m_RenderBlock->AddWidget<CIMGUITree>("HDR Value", 200.f);
 	m_AdaptationTime = Tree->AddWidget<CIMGUISliderFloat>("Adaptation Time");
 	m_MiddleGray = Tree->AddWidget<CIMGUISliderFloat>("MiddleGray");
@@ -107,15 +108,6 @@ bool CToolWindow::Init()
 	m_GlobalBlock->AddWidget<CIMGUISameLine>("Line");
 	m_LoadSkyBoxTex = m_GlobalBlock->AddWidget<CIMGUIButton>("Load", 0.f, 0.f);
 
- //	CIMGUITree* Tree = m_RenderBlock->AddWidget<CIMGUITree>("Outline", 200.f);
- //	m_OutlineDepthMultiply = Tree->AddWidget<CIMGUISliderFloat>("Outline Depth Multiplier");
- //	m_OutlineDepthBias = Tree->AddWidget<CIMGUISliderFloat>("Outline Depth Bias");
- //	m_OutlineNormalMutliply = Tree->AddWidget<CIMGUISliderFloat>("Outline Normal Mutiplier");
- //	m_OutlineNormalBias = Tree->AddWidget<CIMGUISliderFloat>("Outline Normal Bias");
- //	// Gray
- //	Tree = m_RenderBlock->AddWidget<CIMGUITree>("Gray", 200.f);
- //	m_GrayEnable = Tree->AddWidget<CIMGUICheckBox>("GrayShader Enable", 200.f);
-
 	// Initial Value
 	bool Play = CSceneManager::GetInst()->GetScene()->IsPlay();
 
@@ -131,27 +123,15 @@ bool CToolWindow::Init()
 	m_CameraSpeed->SetMin(0.f);
 	m_CameraSpeed->SetMax(10.f);
 	m_CameraSpeed->SetValue(CEditorManager::GetInst()->Get3DCameraObject()->GetCameraSpeed());
- //	m_OutlineDepthMultiply->SetMin(0.1f);
- //	m_OutlineDepthMultiply->SetMax(5.f);
- //	m_OutlineDepthBias->SetMin(0.1f);
- //	m_OutlineDepthBias->SetMax(50.f);
- //	m_OutlineNormalMutliply->SetMin(0.1f);
- //	m_OutlineNormalMutliply->SetMax(5.f);
- //	m_OutlineNormalBias->SetMin(0.1f);
- //	m_OutlineNormalBias->SetMax(50.f);
 
- //	m_OutlineDepthMultiply->SetValue(CRenderManager::GetInst()->GetOutlineDepthMultiplier());
- //	m_OutlineDepthBias->SetValue(CRenderManager::GetInst()->GetOutlineDepthBias());
- //	m_OutlineNormalMutliply->SetValue(CRenderManager::GetInst()->GetOutlineNormalMultiplier());
- //	m_OutlineNormalBias->SetValue(CRenderManager::GetInst()->GetOutlineNormalBias());
- //	
- //	m_GrayEnable->AddCheckInfo("Enable GrayShader");
-
- //	bool IsGray = CRenderManager::GetInst()->IsGray();
- //	m_GrayEnable->SetCheck(0, IsGray);
 	m_PostProcessing->AddCheckInfo("Enable PostProcessing(HDR)");
 	bool IsPostProcessing = CRenderManager::GetInst()->IsPostProcessingEnable();
 	m_PostProcessing->SetCheck(0, IsPostProcessing);
+
+	float ShadowBias = CRenderManager::GetInst()->GetShadowBias();
+	m_ShadowBias->SetMin(0.f);
+	m_ShadowBias->SetMax(100.f);
+	m_ShadowBias->SetValue(ShadowBias);
 
 	float MiddleGray = CRenderManager::GetInst()->GetMiddleGray();
 	m_MiddleGray->SetMin(0.1f);
@@ -254,16 +234,12 @@ bool CToolWindow::Init()
 	m_GizmoTransformMode->SetCallBack(this, &CToolWindow::OnSelectGizmoTransformMode);
 	m_GizmoOperationMode->SetCallBack(this, &CToolWindow::OnSelectGizmoOperationMode);
 	m_CameraSpeed->SetCallBack(this, &CToolWindow::OnChangeCameraSpeed);
- //	m_OutlineDepthMultiply->SetCallBack(this, &CToolWindow::OnChangeOutlineDepthMultiply);
- //	m_OutlineDepthBias->SetCallBack(this, &CToolWindow::OnChangeOutlineDepthBias);
- //	m_OutlineNormalMutliply->SetCallBack(this, &CToolWindow::OnChangeOutlineNormalMultiply);
- //	m_OutlineNormalBias->SetCallBack(this, &CToolWindow::OnChangeOutlineNormalBias);
- //	m_GrayEnable->SetCallBackLabel(this, &CToolWindow::OnCheckGrayEnable);
 	m_DebugRender->SetCallBackLabel(this, &CToolWindow::OnCheckDebugRender);
 	m_PostProcessing->SetCallBackLabel(this, &CToolWindow::OnCheckPostProcessing);
 	m_Play->SetClickCallback(this, &CToolWindow::OnClickPlay);
 	m_Pause->SetClickCallback(this, &CToolWindow::OnClickPause);
 	m_Stop->SetClickCallback(this, &CToolWindow::OnClickStop);
+	m_ShadowBias->SetCallBack(this, &CToolWindow::OnChangeShadowBias);
 	m_AdaptationTime->SetCallBack(this, &CToolWindow::OnChangeAdaptationTime);
 	m_MiddleGray->SetCallBack(this, &CToolWindow::OnChangeMiddleGray);
 	m_LumWhite->SetCallBack(this, &CToolWindow::OnChangeLumWhite);
@@ -349,6 +325,11 @@ void CToolWindow::OnSelectGizmoTransformMode(const char* Label, bool Check)
 void CToolWindow::OnChangeCameraSpeed(float Speed)
 {
 	CEditorManager::GetInst()->Get3DCameraObject()->SetCameraSpeed(Speed);
+}
+
+void CToolWindow::OnChangeShadowBias(float Bias)
+{
+	CRenderManager::GetInst()->SetShadowBias(Bias);
 }
 
 void CToolWindow::OnChangeLumWhite(float White)

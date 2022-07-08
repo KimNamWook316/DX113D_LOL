@@ -94,7 +94,9 @@ cbuffer LightCBuffer : register(b5)
 cbuffer InstancingCBuffer : register(b6)
 {
 	int g_InstancingBoneCount;
-	float3 g_InstancingEmpty;
+	int g_InstancingMaterialIndex;
+	int g_InstancingObjecCount;
+	float g_InstancingEmpty;
 };
 
 cbuffer DownScaleCBuffer : register(b10)
@@ -224,6 +226,26 @@ float DegreeToRadian(float Angle)
 	return Angle / 180.f * 3.14159f;
 }
 
+float RadianToDegree(float Radian)
+{
+	return (Radian / 3.14159f) * 180.f;
+}
+
+// Radian (X), Degree 로 리턴한다.
+float AngleBetweenTwoVector(float3 V1, float3 V2)
+{
+	float cosResult = dot(V1, V2);
+
+	// acos 는 -1에서 1 사이의 값을 반환한다.
+	float RadianRotAngle = acos(cosResult);
+
+	// 주의할점 : cos210 -> cos 150과 동일
+	// 실제 각도는 210도 인데도 불구하고 150 도를 리턴한다.
+	float RotAngle = RadianToDegree(RadianRotAngle);
+
+	return RotAngle;
+}
+
 float4 PaperBurn2D(float4 Color, float2 UV)
 {
 	if (g_MtrlPaperBurnEnable == 0)
@@ -348,84 +370,6 @@ float4 ConvertColor(float Color)
 
     return Result;
 
-}
-
-
-LightResult
-    ComputeLight(
-    float3 Pos, float3 Normal, float3 Tangent, float3 Binormal,
-	float2 UV)
-{
-    LightResult result = (LightResult) 0;
-	
-    float3 LightDir = (float3) 0.f;
-    float Attn = 1.f;
-	
-    if (g_LightType == LightTypeDir)
-    {
-        LightDir = -g_LightDir;
-        LightDir = normalize(LightDir);
-    }
-	
-	
-    if (g_LightType == LightTypePoint)
-    {
-        LightDir = g_LightPos - Pos;
-        LightDir = normalize(LightDir);
-		
-        float Dist = distance(g_LightPos, Pos);
-		
-        if (Dist > g_LightDistance)
-            Attn = 0.f;
-		
-		else
-            Attn = 1.f / (g_LightAtt1 + g_LightAtt2 * Dist + g_LightAtt3 * (Dist * Dist));
-    }
-	
-	
-    if (g_LightType == LightTypeSpot)
-    {
-    }
-	
-    float3 ViewNormal = ComputeBumpNormal(Normal, Tangent, Binormal, UV);
-	
-	// 내적값이 음수가 나오면 0이 반환되고 양수가 나오면 해당 값이 그대로 반환된다.
-    float Intensity = max(0.f, dot(ViewNormal, LightDir));
-	
-    result.Dif = g_LightColor.xyz * g_MtrlBaseColor.xyz * Intensity * Attn;
-	result.Amb = g_LightColor.xyz * g_GLightAmbIntensity * g_MtrlAmbientColor.xyz * Attn;
-	
-    float3 View = -Pos;
-    View = normalize(View);
-	
-	// 퐁 쉐이딩
-    float3 Reflect = 2.f * ViewNormal * dot(ViewNormal, LightDir) - LightDir;
-    Reflect = normalize(Reflect);	
-    float SpcIntensity = max(0.f, dot(View, Reflect));
-	
-	// 블린-퐁 쉐이딩
-    //float3 Reflect = normalize(View + LightDir);
-    //float SpcIntensity = max(0.f, dot(ViewNormal, Reflect));
-	
-    float3 SpecularColor = g_MtrlSpecularColor.xyz;
-	
-    if (g_MtrlSpecularTex)
-        SpecularColor = g_SpecularTexture.Sample(g_BaseSmp, UV).xxx;
-	
-    result.Spc = g_LightColor.xyz * SpecularColor * 
-		pow(SpcIntensity, g_MtrlSpecularColor.w) * Attn;
-	
-    float3 EmissiveColor = g_MtrlEmissiveColor.xyz;
-	
-    if (g_MtrlEmissiveTex)
-        EmissiveColor = g_EmissiveTexture.Sample(g_BaseSmp, UV).xxx;
-	
-    result.Emv = EmissiveColor;
-	
-    //result.Spc = float3(0.5f, 0.5f, 0.5f);
-    result.Emv = float3(0.f, 0.f, 0.f);
-	
-    return result;
 }
 
 
