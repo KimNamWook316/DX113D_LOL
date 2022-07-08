@@ -188,6 +188,7 @@ void CParticleComponent::PostUpdate(float DeltaTime)
 	
 	// Relative Scale 정보를 세팅한다.
 	m_CBuffer->SetCommonRelativeScale(GetRelativeScale());
+	m_CBuffer->SetCommonParticleComponentWorldPos(GetWorldPos());
 
 	m_CBuffer->UpdateCBuffer();
 
@@ -314,6 +315,14 @@ bool CParticleComponent::Load(FILE* File)
 	LoadOnly(File);
 
 	return true;
+}
+
+void CParticleComponent::ResetParticleInfo()
+{
+	if (!m_Particle)
+		return;
+
+	SetParticle(m_Particle);
 }
 
 bool CParticleComponent::SaveOnly(FILE* File)

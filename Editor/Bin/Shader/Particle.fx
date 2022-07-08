@@ -50,13 +50,18 @@ cbuffer	ParticleCBuffer : register(b11)
 
 	// 각 Particle 별로 다르게 Rotation Angle을 주는 경우
 	float3 g_ParticleSeperateRotAngleMin;
-	float ParticleEmpty3;
+	int ParticleEmpty3;
 
 	float3 g_ParticleSeperateRotAngleMax;
-	float ParticleEmpty4;
+	int ParticleEmpty4;
 
+	// Particle Component Relative Scale
 	float3 g_ParticleCommonRelativeScale;
-	float ParticleEmpty5;
+	int ParticleEmpty5;
+
+	// Particle Component WorldPos
+	float3 g_ParticleComponentWorldPos;
+	int ParticleEmpty6;
 };
 
 /*
@@ -79,13 +84,17 @@ struct ParticleInfo
 	float3	Dir;
 	float	Speed;
 	float	LifeTime;
+
 	float	LifeTimeMax;
 	int		Alive;
 	float	FallTime;
 	float	FallStartY;
+
 	float CurrentParticleAngle;
+
 	float3 SeperateRotAngleOffset;
 	float3 FinalSeperateRotAngle;
+
 	float  InitWorldPosY;
 };
 
@@ -107,6 +116,8 @@ struct ParticleInfoShared
 	float3 RotationAngle;
 	float3  SeperateMinRotAngle;
 	float3  SeperateMaxRotAngle;
+
+	float3  ParticleComponentWorldPos;
 
 	float PrevRingAngle;
 
@@ -482,6 +493,7 @@ void ParticleUpdate(uint3 ThreadID : SV_DispatchThreadID)
 	g_ParticleShare[0].ColorMax.a = g_ParticleAlphaMax;
 
 	g_ParticleShare[0].CommonRelativeScale = g_ParticleCommonRelativeScale;
+	g_ParticleShare[0].ParticleComponentWorldPos = g_ParticleComponentWorldPos;
 
 	g_ParticleShare[0].GravityEnable = g_ParticleGravity;
 	g_ParticleShare[0].RotationAngle = g_ParticleRotationAngle;
@@ -732,6 +744,9 @@ void ParticleGS(point VertexParticleOutput input[1],
 	for (int i = 0; i < 4; ++i)
 	{
 		float3	WorldPos = g_ParticleArraySRV[InstanceID].WorldPos + mul(g_ParticleLocalPos[i] * Scale, matRot);
+
+		// Particle Component 의 World Post 도 더한다.
+		WorldPos += g_ParticleShareSRV[0].ParticleComponentWorldPos;
 
 		OutputArray[i].ProjPos = mul(float4(WorldPos, 1.f), g_matVP);
 		// OutputArray[i].ProjPos.xyz = mul(OutputArray[i].ProjPos.xyz, matRot);

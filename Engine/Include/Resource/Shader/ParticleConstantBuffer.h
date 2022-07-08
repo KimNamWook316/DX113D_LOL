@@ -39,7 +39,7 @@ public:
 	{
 		return m_BufferData.MaxSeperateRotAngle;
 	}
-
+	
 	// UV Move
 	int GetUVMoveEnable() const
 	{
@@ -209,6 +209,12 @@ public:
 	void SetCommonRelativeScale(const Vector3& Scale)
 	{
 		m_BufferData.CommonRelativeScale = Scale;
+	}
+
+	// Particle Component ÀÇ World Pos ¹Ý¿µ
+	void SetCommonParticleComponentWorldPos(const Vector3& WorldPos)
+	{
+		m_BufferData.CommonParticleComponentWorldPos = WorldPos;
 	}
 
 	// UV Move

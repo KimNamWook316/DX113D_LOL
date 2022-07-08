@@ -469,6 +469,9 @@ struct	ParticleCBuffer
 	// Particle Component 상에서 적용하는 Scale 정보
 	Vector3 CommonRelativeScale;
 	float ParticleEmpty5;
+
+	Vector3 CommonParticleComponentWorldPos;
+	float ParticleEmpty6;
 };
 
 struct ParticleInfo
@@ -511,6 +514,8 @@ struct ParticleInfoShared
 	Vector3  CommonRotationAngle;
 	Vector3  SeperateMinRotAngle;
 	Vector3  SeperateMaxRotAngle;
+
+	Vector3  CommonParticleCompWorldPos;
 
 	float  PrevRingAngle;
 

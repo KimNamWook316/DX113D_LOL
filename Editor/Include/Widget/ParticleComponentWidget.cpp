@@ -71,6 +71,9 @@ bool CParticleComponentWidget::Init()
     m_LoadParticleButton = m_RootTree->AddWidget<CIMGUIButton>("Load Particle", 150.f, 20.f);
     m_LoadParticleButton->SetClickCallback<CParticleComponentWidget>(this, &CParticleComponentWidget::OnLoadParticleClass);
 
+    // OnResetParticleInfo
+    m_ResetParticleButton = m_RootTree->AddWidget<CIMGUIButton>("Reset Particle", 150.f, 20.f);
+    m_ResetParticleButton->SetClickCallback<CParticleComponentWidget>(this, &CParticleComponentWidget::OnResetParticleInfo);
    
     // Camera ¼¼ÆÃ
     // OnSetCameraSetting();
@@ -291,6 +294,13 @@ void CParticleComponentWidget::OnDropParticleToParticleWidget(const std::string&
     }
 
     ParticleLoadSuccessCallback(FoundParticle);
+}
+void CParticleComponentWidget::OnResetParticleInfo()
+{
+    if (!m_Component)
+        return;
+
+    dynamic_cast<CParticleComponent*>(m_Component)->ResetParticleInfo();
 }
 void CParticleComponentWidget::ParticleLoadSuccessCallback(CParticle* LoadedParticle)
 {

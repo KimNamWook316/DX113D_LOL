@@ -39,7 +39,7 @@ public:
 	{
 		return m_BufferData.MaxSeperateRotAngle;
 	}
-
+	
 	// UV Move
 	int GetUVMoveEnable() const
 	{
@@ -200,7 +200,7 @@ public:
 public:
 	// Linear Rotate
 // Linaer Iterate 할때의 최초 Rot Angle
-	int SetSeperateLinearRotate(bool Enable)
+	void SetSeperateLinearRotate(bool Enable)
 	{
 		m_BufferData.SeperateLinerRotate = Enable ? 1 : 0;
 	}
@@ -209,6 +209,12 @@ public:
 	void SetCommonRelativeScale(const Vector3& Scale)
 	{
 		m_BufferData.CommonRelativeScale = Scale;
+	}
+
+	// Particle Component 의 World Pos 반영
+	void SetCommonParticleComponentWorldPos(const Vector3& WorldPos)
+	{
+		m_BufferData.CommonParticleComponentWorldPos = WorldPos;
 	}
 
 	// UV Move
