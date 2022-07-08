@@ -37,6 +37,7 @@ bool CEyeLaserComponentWidget::Init()
 	CIMGUITree* m_RootTree = AddWidget<CIMGUITree>("EyeLaser Variables");
 
 	m_MaterialTextureChangeButton = m_RootTree->AddWidget<CIMGUIButton>("Material Change");
+	m_MaterialTextureChangeButton->SetSize(100.f, 20.f);
 
 	m_MeshName = m_RootTree->AddWidget<CIMGUITextInput>("Mesh Name");
 	m_RootTree->AddWidget<CIMGUISameLine>("Line");
@@ -46,7 +47,8 @@ bool CEyeLaserComponentWidget::Init()
 
 	m_MaterialSlotCombo = m_RootTree->AddWidget<CIMGUIComboBox>("Material Slot", 200.f);
 	m_BaseColorEdit = m_RootTree->AddWidget<CIMGUIColor3>("BaseColor", 200.f);
-
+	m_ShaderName = m_RootTree->AddWidget<CIMGUITextInput>("Shader", 200.f);
+	m_ShaderName->ReadOnly(true);
 	m_EmissiveColorEdit = m_RootTree->AddWidget<CIMGUIColor3>("Emissive", 200.f);
 	m_OpacityEdit = m_RootTree->AddWidget<CIMGUISliderFloat>("Opacity", 200.f);
 
@@ -59,6 +61,7 @@ bool CEyeLaserComponentWidget::Init()
 	m_OpacityEdit->SetMax(1.f);
 
 	// CallBack
+	m_MaterialSlotCombo->SetSelectCallback(this, &CEyeLaserComponentWidget::OnSelectMaterialSlotCombo);
 	m_BaseColorEdit->SetCallBack(this, &CEyeLaserComponentWidget::OnEditBaseColor);
 	m_EmissiveColorEdit->SetCallBack(this, &CEyeLaserComponentWidget::OnEditEmissiveColor);
 	m_TransparencyEdit->SetCallBackIdx(this, &CEyeLaserComponentWidget::OnCheckTransparency);
@@ -78,6 +81,8 @@ void CEyeLaserComponentWidget::SetSceneComponent(CSceneComponent* Com)
 	{
 		RefreshMeshWidget(MeshCom->GetMesh());
 	}
+
+	m_OpacityEdit->SetValue(MeshCom->GetMaterial()->GetOpacity());
 }
 
 void CEyeLaserComponentWidget::OnEditBaseColor(const Vector3 & Color)
@@ -143,7 +148,7 @@ void CEyeLaserComponentWidget::OnChangeMaterialTexture()
 	OpenFile.lpstrFilter = TEXT("png File\0*.png\0");
 	OpenFile.lpstrFile = FilePath;
 	OpenFile.nMaxFile = MAX_PATH;
-	OpenFile.lpstrInitialDir = CPathManager::GetInst()->FindPath(MESH_PATH)->Path;
+	OpenFile.lpstrInitialDir = CPathManager::GetInst()->FindPath(TEXTURE_PATH)->Path;
 
 	if (GetOpenFileName(&OpenFile) != 0)
 	{
@@ -154,7 +159,7 @@ void CEyeLaserComponentWidget::OnChangeMaterialTexture()
 		WideCharToMultiByte(CP_ACP, 0, FilePath, -1, FilePathMultibyte, ConvertLength, 0, 0);
 
 		CEngineUtil::GetFileNameOnly(FilePathMultibyte, TextureName);
-		if (!CSceneManager::GetInst()->GetScene()->GetResource()->LoadTextureFullPath(TextureName, FilePath));
+		if (!CSceneManager::GetInst()->GetScene()->GetResource()->LoadTextureFullPath(TextureName, FilePath))
 		{
 			MessageBox(nullptr, TEXT("텍스쳐 로드 실패"), TEXT("실패"), MB_OK);
 		}
@@ -163,7 +168,24 @@ void CEyeLaserComponentWidget::OnChangeMaterialTexture()
 
 		MeshCom->GetMaterial()->SetTexture(0, 0, (int)Buffer_Shader_Type::Pixel, TextureName, NewTexture);
 
-		RefreshMeshWidget(MeshCom->GetMesh());
+		//RefreshMeshWidget(MeshCom->GetMesh());
+	}
+}
+
+void CEyeLaserComponentWidget::OnSelectMaterialSlotCombo(int Idx, const char* Label)
+{
+	CEyeLaserComponent* MeshCom = (CEyeLaserComponent*)m_Component;
+
+	if (MeshCom->GetMesh())
+	{
+		CMaterial* Mat = MeshCom->GetMaterial();
+		std::string ShaderName = Mat->GetShader()->GetName();
+		m_ShaderName->SetText(ShaderName.c_str());
+
+		m_BaseColorEdit->SetRGB(Mat->GetBaseColor().x, Mat->GetBaseColor().y, Mat->GetBaseColor().z);
+		m_EmissiveColorEdit->SetRGB(Mat->GetEmissiveColor().x, Mat->GetEmissiveColor().y, Mat->GetEmissiveColor().z);
+		m_TransparencyEdit->SetCheck(0, Mat->IsTransparent());
+		m_OpacityEdit->SetValue(Mat->GetOpacity());
 	}
 }
 

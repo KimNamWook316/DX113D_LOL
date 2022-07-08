@@ -17,6 +17,7 @@ private:
 
     class CIMGUIComboBox* m_MaterialSlotCombo;
     class CIMGUITextInput* m_MeshName;
+    class CIMGUITextInput* m_ShaderName;
     class CIMGUIColor3* m_BaseColorEdit;
 
     class CIMGUIColor3* m_EmissiveColorEdit;
@@ -32,6 +33,7 @@ private:
     void OnCheckTransparency(int Idx, bool Check);
     void OnEditOpacity(float Opacity);
     void OnChangeMaterialTexture();
+    void OnSelectMaterialSlotCombo(int Idx, const char* Label);
 
 private:
     void RefreshMeshWidget(class CMesh* Mesh);
