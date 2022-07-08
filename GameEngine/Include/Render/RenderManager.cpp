@@ -113,6 +113,11 @@ float CRenderManager::GetFogDensity() const
 	return m_PostFXRenderer->GetFogDensity();
 }
 
+float CRenderManager::GetShadowBias() const
+{
+	return m_ShadowCBuffer->GetBias();
+}
+
 void CRenderManager::SetMiddleGray(float Gray)
 {
 	m_PostFXRenderer->SetMiddleGray(Gray);
@@ -166,6 +171,11 @@ void CRenderManager::SetFogEnd(float End)
 void CRenderManager::SetFogDensity(float Density)
 {
 	m_PostFXRenderer->SetFogDensity(Density);
+}
+
+void CRenderManager::SetShadowBias(float Bias)
+{
+	m_ShadowCBuffer->SetBias(Bias);
 }
 
 void CRenderManager::SetAdaptationTime(float Time)
@@ -326,10 +336,6 @@ bool CRenderManager::Init()
 	if (!CResourceManager::GetInst()->CreateTarget("GBuffer5",
 		RS.Width, RS.Height, DXGI_FORMAT_R32G32B32A32_FLOAT))
 		return false;
-
- //	if (!CResourceManager::GetInst()->CreateTarget("GBufferOutlineInfo",
- //		RS.Width, RS.Height, DXGI_FORMAT_R32G32B32A32_FLOAT))
- //		return false;
 
 	CRenderTarget* GBufferTarget = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("Diffuse");
 	GBufferTarget->SetPos(Vector3(0.f, 0.f, 0.f));
@@ -962,7 +968,6 @@ void CRenderManager::RenderLightBlend()
 	CDevice::GetInst()->GetContext()->IASetIndexBuffer(nullptr, DXGI_FORMAT_UNKNOWN, 0);
 
 	CDevice::GetInst()->GetContext()->Draw(4, 0);
-
 
 	m_DepthDisable->ResetState();
 

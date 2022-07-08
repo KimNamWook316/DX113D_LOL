@@ -46,6 +46,11 @@ public:
 	{
 		m_BufferData.ShadowBias = Bias;
 	}
+
+	float GetBias() const
+	{
+		return m_BufferData.ShadowBias;
+	}
 };
 
 

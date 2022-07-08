@@ -310,17 +310,15 @@ PSOutput_Single LightBlendPS(VS_OUTPUT_LIGHTACC input)
     float4 LightSpecularColor = g_LightSpcTex.Load(TargetPos, 0);
     float4 LightEmissiveColor = g_LightEmvTex.Load(TargetPos, 0);
 
- //    if (LightDiffuseColor.a == 0.f)
- //        clip(-1);    
 	float4 GBuffer2Color = g_GBuffer2Tex.Load(TargetPos, 0);
 
 	float4 ProjPos;
 	ProjPos.x = input.ProjPos.x;
 	ProjPos.y = input.ProjPos.y;
-	ProjPos.z = GBuffer2Color.r * GBuffer2Color.g;
-	ProjPos.w = GBuffer2Color.g;
-    
-    //ProjPos *= GBuffer2Color.g;
+	ProjPos.z = GBuffer2Color.r;
+	ProjPos.w = 1.f;
+
+	ProjPos *= GBuffer2Color.g;
 
     // 월드공간 변환
 	float3 WorldPos = mul(ProjPos, g_matInvVP).xyz;
