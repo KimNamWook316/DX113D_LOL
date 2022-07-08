@@ -12,6 +12,7 @@ enum class ParticlePreset
     Spark,
     SparkBounce,
     SimpleMeteor,
+    XZSpreadDust,
     Max
 };
 
@@ -24,7 +25,9 @@ static const char* ParticlePresetNames[] = {
     "FireWide",
     "Spark",
     "SparkBounce",
-    "SimpleMeteor" };
+    "SimpleMeteor",
+    "XZSpreadDust"
+};
 
 static const char* ParticleShapeNames[] = {
     "YUpDirRing", // 위 방향을 향한 Ring
@@ -304,5 +307,6 @@ private :
     void OnSparkPreset();
     void OnSparkBouncePreset();
     void OnSimpleMeteorPreset();
+    void OnXZSpreadDust();
 };
 

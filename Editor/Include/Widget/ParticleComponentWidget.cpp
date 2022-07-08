@@ -306,21 +306,21 @@ void CParticleComponentWidget::OnResetParticleInfo()
     // 그 녀석들에 대해서 ResetParticleStructuredBufferInfo 함수를 호출해준다
     const std::list<CSceneComponent*>& ObjectSceneComponents = m_Component->GetGameObject()->GetSceneComponents();
 
-  //   auto iter = ObjectSceneComponents.begin();
-  //   auto iterEnd = ObjectSceneComponents.end();
-  // 
-  //   for (; iter != iterEnd; ++iter)
-  //   {
-  //       // ParticleComponent 들에 대해서만 아래 함수를 호출한다.
-  //       CParticleComponent* CurParticleComponent = dynamic_cast<CParticleComponent*>((*iter));
-  // 
-  //       if (!CurParticleComponent)
-  //           return;
-  // 
-  //       CurParticleComponent->ResetParticleStructuredBufferInfo();
-  //   }
+    auto iter = ObjectSceneComponents.begin();
+    auto iterEnd = ObjectSceneComponents.end();
+    
+    for (; iter != iterEnd; ++iter)
+    {
+        // ParticleComponent 들에 대해서만 아래 함수를 호출한다.
+        CParticleComponent* CurParticleComponent = dynamic_cast<CParticleComponent*>((*iter));
+    
+        if (!CurParticleComponent)
+            return;
+    
+        CurParticleComponent->ResetParticleStructuredBufferInfo();
+    }
 
-   dynamic_cast<CParticleComponent*>(m_Component)->ResetParticleStructuredBufferInfo();
+   // dynamic_cast<CParticleComponent*>(m_Component)->ResetParticleStructuredBufferInfo();
 }
 void CParticleComponentWidget::ParticleLoadSuccessCallback(CParticle* LoadedParticle)
 {

@@ -572,6 +572,11 @@ void CEffectEditor::OnClickParticlePreset(int Index, const char* PresetName)
         OnSimpleMeteorPreset();
     }
     break;
+    case (int)ParticlePreset::XZSpreadDust:
+    {
+        OnXZSpreadDust();
+    }
+    break;
     default:
         break;
     } 
@@ -2094,6 +2099,84 @@ void CEffectEditor::OnSimpleMeteorPreset()
     // Circle Type
     m_ParticleClass->SetParticleShapeType(ParitcleShapeType::Circle);
     dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetParticleShapeType(ParitcleShapeType::Circle);
+
+    // IMGUI Update
+    SetIMGUIReflectParticle(m_ParticleClass);
+}
+
+void CEffectEditor::OnXZSpreadDust()
+{
+    if (!m_ParticleClass)
+        return;
+
+    // Move O
+    m_ParticleClass->SetMove(true);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetMove(true);
+
+    // Gravity X
+    m_ParticleClass->SetGravity(false);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGravity(false);
+
+    // Bound Flase
+    m_ParticleClass->SetBounceEnable(false);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetBounceEnable(false);
+
+    // UV Move False
+    m_ParticleClass->SetUVMoveEnable(false);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetUVMoveEnable(false);
+
+    // Alpha
+    OnAlphaEndEdit(1.1f);
+    OnAlphaStartEdit(0.2f);
+    OnSetAlphaBlendToMaterialCallback();
+
+    // Random Dir
+    m_ParticleClass->SetSpecialMoveDirType(-1);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetSpecialMoveDirType(-1);
+
+    // Radius
+    OnEditGenerateRadius(1.2f);
+
+    // SpawnTime
+    OnSpawnTimeMaxEdit(0.02f);
+
+    // Move Dir
+    OnMoveDirEdit(Vector3(0.f, 0.f, 0.f));
+
+    // Move Angle
+    OnMoveAngleEdit(Vector3(0.f, 0.f, 0.f));
+
+    // Scale,
+    OnScaleMinEdit(Vector3(50.f, 50.f, 1.f));
+    OnScaleMaxEdit(Vector3(5.f, 5.f, 1.f));
+
+    // Speed
+    OnSpeedMinEdit(50.f);
+    OnSpeedMaxEdit(50.f);
+
+    // Rotation Angle
+    OnMinSeperateRotAngleEdit(Vector3(45.f, 0.f, 0.f));
+    OnMaxSeperateRotAngleEdit(Vector3(45.f, 0.f, 0.f));
+
+    // Life Time
+    OnLifeTimeMinEdit(0.5f);
+    OnLifeTimeMaxEdit(2.f);
+
+    // Speed
+    OnSpeedMinEdit(10.f);
+    OnSpeedMaxEdit(30.f);
+
+    // Life Time Linaer
+    m_ParticleClass->SetLifeTimeLinearFromCenter(false);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetLifeTimeLinearFromCenter(false);
+
+    // Circle Type
+    m_ParticleClass->SetParticleShapeType(ParitcleShapeType::YUpDirRing);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetParticleShapeType(ParitcleShapeType::YUpDirRing);
+
+    // Move Dir Type
+    m_ParticleClass->SetSpecialMoveDirType(ParticleSpecialMoveDir::XZSpread);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetSpecialMoveDirType(ParticleSpecialMoveDir::XZSpread);
 
     // IMGUI Update
     SetIMGUIReflectParticle(m_ParticleClass);
