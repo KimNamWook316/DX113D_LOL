@@ -9,6 +9,7 @@ CStaticMeshComponent::CStaticMeshComponent()
 {
 	SetTypeID<CStaticMeshComponent>();
 	m_Render = true;
+	m_InstanceID = 0;
 	//m_Transform->SetTransformState(Transform_State::Ground);
 }
 
@@ -27,125 +28,30 @@ CStaticMeshComponent::CStaticMeshComponent(const CStaticMeshComponent& com) :
 
 CStaticMeshComponent::~CStaticMeshComponent()
 {
-	auto	iter = m_InstancingCheckList.begin();
-	auto	iterEnd = m_InstancingCheckList.end();
+	DeleteInstancingCheckList();
+}
 
-	for (; iter != iterEnd; ++iter)
+bool CStaticMeshComponent::IsTransparent() const
+{
+	if (m_vecMaterialSlot.size() == 0)
 	{
-		if ((*iter)->Mesh == m_Mesh)
-		{
-			auto	iter1 = (*iter)->InstancingList.begin();
-			auto	iter1End = (*iter)->InstancingList.end();
-
-			for (; iter1 != iter1End; ++iter1)
-			{
-				if (*iter1 == this)
-				{
-					(*iter)->InstancingList.erase(iter1);
-
-					if ((*iter)->InstancingList.size() < 10)
-					{
-						auto	iter2 = (*iter)->InstancingList.begin();
-						auto	iter2End = (*iter)->InstancingList.end();
-
-						for (; iter2 != iter2End; ++iter2)
-						{
-							(*iter2)->SetInstancing(false);
-						}
-					}
-					break;
-				}
-			}
-
-			if ((*iter)->InstancingList.empty())
-			{
-				SAFE_DELETE((*iter));
-				m_InstancingCheckList.erase(iter);
-			}
-
-			break;
-		}
+		return false;
 	}
+
+	// 하나의 Material이라도 Transparent라면 모든 Material이 Transparent Layer에 있음
+	return m_vecMaterialSlot[0]->IsTransparent();
 }
 
 void CStaticMeshComponent::SetMesh(const std::string& Name)
 {
 	m_Mesh = (CStaticMesh*)m_Scene->GetResource()->FindMesh(Name);
 
-	m_vecMaterialSlot.clear();
-
-	const std::vector<CSharedPtr<CMaterial>>* pMaterialSlots =
-		m_Mesh->GetMaterialSlots();
-
-	std::vector<CSharedPtr<CMaterial>>::const_iterator	iter = pMaterialSlots->begin();
-	std::vector<CSharedPtr<CMaterial>>::const_iterator	iterEnd = pMaterialSlots->end();
-
-	for (; iter != iterEnd; ++iter)
+	if (!m_Mesh)
 	{
-		m_vecMaterialSlot.push_back((*iter)->Clone());
-
-		(*iter)->SetScene(m_Scene);
+		return;
 	}
 
-	SetMeshSize(m_Mesh->GetMax() - m_Mesh->GetMin());
-	m_SphereInfo.Center = (m_Mesh->GetMax() + m_Mesh->GetMin()) / 2.f;
-
-	auto	iter1 = m_InstancingCheckList.begin();
-	auto	iter1End = m_InstancingCheckList.end();
-
-	bool	Add = false;
-
-	for (; iter1 != iter1End; ++iter1)
-	{
-		if ((*iter1)->Mesh == m_Mesh)
-		{
-			// 반투명 상태일 경우 다른 레이어의 InstancingCheckList로 생성되어야 한다.
-			if (m_LayerName != (*iter1)->LayerName)
-			{
-				continue;
-			}
-
-			bool	InstancingEnable = (*iter1)->InstancingList.back()->GetInstancing();
-
-			(*iter1)->InstancingList.push_back(this);
-			Add = true;
-
-			// 인스턴싱 개수를 판단한다.
-			if (InstancingEnable)
-				SetInstancing(InstancingEnable);
-
-			else
-			{
-				if ((*iter1)->InstancingList.size() == 10)
-				{
-					auto	iter2 = (*iter1)->InstancingList.begin();
-					auto	iter2End = (*iter1)->InstancingList.end();
-
-					for (; iter2 != iter2End; ++iter2)
-					{
-						(*iter2)->SetInstancing(true);
-					}
-
-					m_Instancing = true;
-				}
-			}
-
-			break;
-		}
-	}
-
-	if (!Add)
-	{
-		InstancingCheckCount* CheckCount = new InstancingCheckCount;
-
-		m_InstancingCheckList.push_back(CheckCount);
-
-		CheckCount->InstancingList.push_back(this);
-		CheckCount->Mesh = m_Mesh;
-
-		// Default Or Transparent
-		CheckCount->LayerName = m_LayerName;
-	}
+	SetMesh(m_Mesh);
 }
 
 void CStaticMeshComponent::SetMesh(CStaticMesh* Mesh)
@@ -153,6 +59,8 @@ void CStaticMeshComponent::SetMesh(CStaticMesh* Mesh)
 	m_Mesh = Mesh;
 
 	m_vecMaterialSlot.clear();
+
+	DeleteInstancingCheckList();
 
 	const std::vector<CSharedPtr<CMaterial>>* pMaterialSlots =
 		m_Mesh->GetMaterialSlots();
@@ -218,15 +126,7 @@ void CStaticMeshComponent::SetMesh(CStaticMesh* Mesh)
 
 	if (!Add)
 	{
-		InstancingCheckCount* CheckCount = new InstancingCheckCount;
-
-		m_InstancingCheckList.push_back(CheckCount);
-
-		CheckCount->InstancingList.push_back(this);
-		CheckCount->Mesh = m_Mesh;
-
-		// Default Or Transparent
-		CheckCount->LayerName = m_LayerName;
+		OnCreateNewInstancingCheckCount();
 	}
 }
 
@@ -249,76 +149,47 @@ void CStaticMeshComponent::ClearMaterial()
 	m_vecMaterialSlot.clear();
 }
 
-bool CStaticMeshComponent::SetCustomShader(const std::string& Name)
+void CStaticMeshComponent::SetMaterialShaderAll(const std::string& Name)
 {
-	m_CustomShader = m_Scene->GetResource()->FindShader(Name);
+	CGraphicShader* Shader = dynamic_cast<CGraphicShader*>(CResourceManager::GetInst()->FindShader(Name));
 
-	if (!m_CustomShader)
+	if (!Shader)
+		return;
+
+	int Size = (int)m_vecMaterialSlot.size();
+	for (int i = 0; i < Size; ++i)
 	{
-		assert(false);
-		return false;
+		m_vecMaterialSlot[i]->SetShader(Shader);
+		OnChangeMaterialShader(i, Shader);
 	}
-
-	// 현재 반투명상태인 Material 체크
-	size_t Size = m_vecMaterialSlot.size();
-
-	std::vector<bool> vecTransparent;
-	vecTransparent.resize(Size);
-
-	for (size_t i = 0; i < Size; ++i)
-	{
-		if (m_vecMaterialSlot[i]->IsTransparent())
-		{
-			vecTransparent[i] = true;
-		}
-	}
-
-	// 반투명 상태가 아닌 Material들에 Custom Shader 적용
-	for (size_t i = 0; i < Size; ++i)
-	{
-		if (false == vecTransparent[i])
-		{
-			m_vecMaterialSlot[i]->SetShader((CGraphicShader*)(m_CustomShader.Get()));
-		}
-	}
-
-	return true;
 }
 
-bool CStaticMeshComponent::SetCustomTransparencyShader(const std::string& Name)
+void CStaticMeshComponent::SetMaterialShader(int MatIndex, const std::string& ShaderName)
 {
-	m_CustomTransparentShader = m_Scene->GetResource()->FindShader(Name);
+	CGraphicShader* Shader = dynamic_cast<CGraphicShader*>(CResourceManager::GetInst()->FindShader(ShaderName));
 
-	if (!m_CustomTransparentShader)
+	SetMaterialShader(MatIndex, Shader);
+}
+
+void CStaticMeshComponent::SetMaterialShader(int MatIndex, CGraphicShader* Shader)
+{
+	if (!Shader)
 	{
-		assert(false);
-		return false;
+		return;
 	}
 
-	// 현재 반투명상태인 Material 체크
-	size_t Size = m_vecMaterialSlot.size();
+	m_vecMaterialSlot[MatIndex]->SetShader(Shader);
 
-	std::vector<bool> vecTransparent;
-	vecTransparent.resize(Size);
+	// Instancing Shader 변경
+	OnChangeMaterialShader(MatIndex, Shader);
+}
 
-	for (size_t i = 0; i < Size; ++i)
-	{
-		if (m_vecMaterialSlot[i]->IsTransparent())
-		{
-			vecTransparent[i] = true;
-		}
-	}
+void CStaticMeshComponent::SetMaterialShaderParams(int MatIndex, const ShaderParams& Params)
+{
+	m_vecMaterialSlot[MatIndex]->SetShaderParams(Params);
 
-	// 반투명 상태인 Material들에 Custom Shader 적용
-	for (size_t i = 0; i < Size; ++i)
-	{
-		if (vecTransparent[i])
-		{
-			m_vecMaterialSlot[i]->SetShader((CGraphicShader*)(m_CustomTransparentShader.Get()));
-		}
-	}
-
-	return true;
+	// Instancing Shader Parameter 변경
+	OnChangeMaterialShaderParams(MatIndex, Params);
 }
 
 void CStaticMeshComponent::SetBaseColor(const Vector4& Color, int Index)
@@ -376,77 +247,6 @@ void CStaticMeshComponent::SetRenderState(const std::string& Name, int Index)
 	m_vecMaterialSlot[Index]->SetRenderState(Name);
 }
 
-void CStaticMeshComponent::SetTransparency(bool Enable, int Index)
-{
-	if (Enable)
-	{
-		// 한 Material이라도 반투명이라면 반투명 Layer에서 렌더해야 한다.
-		m_LayerName = "Transparency";
-
-		// 반투명시 적용되어야 할 커스텀 쉐이더가 있는 경우
-		if (m_CustomTransparentShader)
-		{
-			m_vecMaterialSlot[Index]->SetShader((CGraphicShader*)m_CustomTransparentShader.Get());
-		}
-		// 없는 경우 Default Transparent Shader로 렌더
-		else
-		{
-			m_vecMaterialSlot[Index]->SetShader("Transparent3DShader");
-		}
-
-		bool AlreadyTransparent = m_vecMaterialSlot[Index]->IsTransparent();
-
-		// 이전에 반투명 상태가 아니었을 경우에만 Enable 처리하고 레이어를 바꿈
-		if (!AlreadyTransparent)
-		{
-			m_vecMaterialSlot[Index]->SetTransparency(Enable);
-
-			// 인스턴싱 레이어를 바꾼다.
-			ChangeInstancingLayer();
-		}
-	}
-	else
-	{
-		bool AlreadyOpaque = !m_vecMaterialSlot[Index]->IsTransparent();
-
-		// 이전에 불투명 상태가 아니었을 경우에만 불투명 처리
-		if (!AlreadyOpaque)
-		{
-			m_vecMaterialSlot[Index]->SetTransparency(Enable);
-		}
-
-		// 커스텀 쉐이더가 있는 경우
-		if (m_CustomShader)
-		{
-			m_vecMaterialSlot[Index]->SetShader((CGraphicShader*)m_CustomShader.Get());
-		}
-		// 없는 경우 Default 3D Shader로 렌더
-		else
-		{
-			m_vecMaterialSlot[Index]->SetShader("Standard3DShader");
-		}
-
-		// 하나의 Material이라도 반투명이라면, 레이어를 Transparency 레이어로 유지한다.
-		size_t Size = m_vecMaterialSlot.size();
-		for (size_t i = 0; i < Size; ++i)
-		{
-			if (m_vecMaterialSlot[i]->IsTransparent())
-			{
-				return;
-			}
-		}
-
-		// 모두 다 불투명 상태라면, Default Layer로 바꾼다.
-		m_LayerName = "Default";
-
-		if (!AlreadyOpaque)
-		{
-			// 인스턴싱 레이어를 바꾼다.
-			ChangeInstancingLayer();
-		}
-	}
-}
-
 void CStaticMeshComponent::SetTransparencyAllMaterial(bool Enable)
 {
 	size_t Size = m_vecMaterialSlot.size();
@@ -462,16 +262,13 @@ void CStaticMeshComponent::SetTransparencyAllMaterial(bool Enable)
 
 		for (size_t i = 0; i < Size; ++i)
 		{
-			if (m_CustomTransparentShader)
-			{
-				m_vecMaterialSlot[i]->SetShader((CGraphicShader*)m_CustomTransparentShader.Get());
-			}
-			else
-			{
-				m_vecMaterialSlot[i]->SetShader("Standard3DShader");
-			}
+			m_vecMaterialSlot[i]->SetTransparency(true);
 		}
 
+		// 모든 Material의 Shader 교체
+		SetMaterialShaderAll("Transparent3DShader");
+
+		// 인스턴싱 레이어를 바꾼다.
 		if (!AlreadyTransparent)
 		{
 			ChangeInstancingLayer();
@@ -488,16 +285,12 @@ void CStaticMeshComponent::SetTransparencyAllMaterial(bool Enable)
 
 		for (size_t i = 0; i < Size; ++i)
 		{
-			if (m_CustomShader)
-			{
-				m_vecMaterialSlot[i]->SetShader((CGraphicShader*)m_CustomShader.Get());
-			}
-			else
-			{
-				m_vecMaterialSlot[i]->SetShader("Transparent3DShader");
-			}
+			// 이전 쉐이더로 되돌림
+			m_vecMaterialSlot[i]->SetTransparency(false);
+			m_vecMaterialSlot[i]->RevertShader();
 		}
 
+		// 인스턴싱 레이어를 바꾼다.
 		if (!AlreadyOpaque)
 		{
 			ChangeInstancingLayer();
@@ -740,6 +533,34 @@ bool CStaticMeshComponent::Load(FILE* File)
 		m_vecMaterialSlot[i]->Load(File);
 	}
 
+	// 현재 Mesh의 기본 Material 기준으로 Instancing Shader 및 Parameter가 Instancing Check List에 생성되어 있기 때문에
+	// 로드한 고유한 Material 정보에 따라 Instancing CheckList를 갱신해주어야 함
+	auto iter = m_InstancingCheckList.begin();
+	auto iterEnd = m_InstancingCheckList.end();
+
+	CGraphicShader* NoInstancingShader = nullptr;
+	CGraphicShader* InstancingShader = nullptr;
+	ShaderParams ShaderParams = {};
+
+	for (; iter != iterEnd; ++iter)
+	{
+		if ((*iter)->Mesh == m_Mesh)
+		{
+			if ((*iter)->LayerName == m_LayerName)
+			{
+				for (int i = 0; i < MaterialSlotCount; ++i)
+				{
+					NoInstancingShader = m_vecMaterialSlot[i]->GetShader();
+					InstancingShader = CResourceManager::GetInst()->FindInstancingShader(NoInstancingShader);
+					ShaderParams = m_vecMaterialSlot[i]->GetShaderParams();
+
+					(*iter)->vecInstancingShader[i] = InstancingShader;
+					(*iter)->vecShaderParams[i] = ShaderParams;
+				}
+			}
+		}
+	}
+
 	CSceneComponent::Load(File);
 
 	return true;
@@ -851,14 +672,151 @@ void CStaticMeshComponent::ChangeInstancingLayer()
 	// 이 컴포넌트가 속한 레이어에 처음 추가되는 경우
 	if (!CheckCountExist)
 	{
-		InstancingCheckCount* CheckCount = new InstancingCheckCount;
-
-		m_InstancingCheckList.push_back(CheckCount);
-
-		CheckCount->InstancingList.push_back(this);
-		CheckCount->LayerName = m_LayerName;
-		CheckCount->Mesh = m_Mesh;
-
-		SetInstancing(false);
+		OnCreateNewInstancingCheckCount();
 	}
+}
+
+bool CStaticMeshComponent::DeleteInstancingCheckList()
+{
+	bool Deleted = false;
+
+	auto	iter = m_InstancingCheckList.begin();
+	auto	iterEnd = m_InstancingCheckList.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		if ((*iter)->Mesh == m_Mesh)
+		{
+			// 반투명 상태일 경우 다른 레이어의 InstancingCheckList로 생성되어야 한다.
+			if (m_LayerName != (*iter)->LayerName)
+			{
+				continue;
+			}
+
+			auto	iter1 = (*iter)->InstancingList.begin();
+			auto	iter1End = (*iter)->InstancingList.end();
+
+			for (; iter1 != iter1End; ++iter1)
+			{
+				if (*iter1 == this)
+				{
+					Deleted = true;
+
+					(*iter)->InstancingList.erase(iter1);
+
+					if ((*iter)->InstancingList.size() < 10)
+					{
+						auto	iter2 = (*iter)->InstancingList.begin();
+						auto	iter2End = (*iter)->InstancingList.end();
+
+						for (; iter2 != iter2End; ++iter2)
+						{
+							((CStaticMeshComponent*)(*iter2))->SetInstanceID(0);
+							(*iter2)->SetInstancing(false);
+						}
+					}
+					else
+					{
+						auto	iter2 = (*iter)->InstancingList.begin();
+						auto	iter2End = (*iter)->InstancingList.end();
+
+						int ID = 0;
+
+						for (; iter2 != iter2End; ++iter2, ++ID)
+						{
+							((CStaticMeshComponent*)(*iter2))->SetInstanceID(ID);
+							(*iter2)->SetInstancing(true);
+						}
+
+					
+					}
+					break;
+				}
+			}
+
+			if ((*iter)->InstancingList.empty())
+			{
+				SAFE_DELETE((*iter));
+				m_InstancingCheckList.erase(iter);
+			}
+
+			break;
+		}
+	}
+
+	return Deleted;
+}
+
+void CStaticMeshComponent::OnChangeMaterialShader(int MatIndex, CGraphicShader* NewShader)
+{
+	auto iter = m_InstancingCheckList.begin();
+	auto iterEnd = m_InstancingCheckList.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		if ((*iter)->Mesh == m_Mesh)
+		{
+			if ((*iter)->LayerName == m_LayerName)
+			{
+				// Instancing Shader 교체
+				CGraphicShader* NewInstancingShader = CResourceManager::GetInst()->FindInstancingShader(NewShader);
+				(*iter)->vecInstancingShader[MatIndex] = NewInstancingShader;
+				break;
+			}
+		}
+	}
+}
+
+void CStaticMeshComponent::OnChangeMaterialShaderParams(int MatIndex, const ShaderParams& Params)
+{
+	auto iter = m_InstancingCheckList.begin();
+	auto iterEnd = m_InstancingCheckList.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		if ((*iter)->Mesh == m_Mesh)
+		{
+			if ((*iter)->LayerName == m_LayerName)
+			{
+				(*iter)->vecShaderParams[MatIndex] = Params;
+				break;
+			}
+		}
+	}
+}
+
+void CStaticMeshComponent::OnCreateNewInstancingCheckCount()
+{
+	InstancingCheckCount* CheckCount = new InstancingCheckCount;
+
+	m_InstancingCheckList.push_back(CheckCount);
+
+	CheckCount->InstancingList.push_back(this);
+	CheckCount->Mesh = m_Mesh;
+	CheckCount->LayerName = m_LayerName;
+
+	// Material별로 어떤 Instanicng Shader로 렌더해야 하는지 받아온다.
+	size_t SlotSize = m_Mesh->GetMaterialSlotCount();
+	
+	CGraphicShader* NoInstancingShader = nullptr;
+	CGraphicShader* InstancingShader = nullptr;
+	CMaterial* Mat = nullptr;
+	ShaderParams MatShaderParams = {};
+
+	CheckCount->vecInstancingShader.resize(SlotSize);
+	CheckCount->vecShaderParams.resize(SlotSize);
+
+	for (size_t i = 0; i < SlotSize; ++i)
+	{
+		// Material별 Instancing Shader, Shader Paramerter 정보 저장
+		Mat = m_Mesh->GetMaterial(i);
+		NoInstancingShader = Mat->GetShader();
+		InstancingShader = CResourceManager::GetInst()->FindInstancingShader(NoInstancingShader);
+		MatShaderParams = Mat->GetShaderParams();
+
+		CheckCount->vecInstancingShader[i] = InstancingShader;
+		CheckCount->vecShaderParams[i] = MatShaderParams;
+	}
+
+	SetInstancing(false);
 }

@@ -8,6 +8,8 @@
 class CEditorUtil
 {
 public:
+	static std::string ConcatNumOverlapName(const std::string& OverlapPossibleString);
+
 	// 풀경로를 넣어주면 파일 이름만 걸러서 리턴해줌
 	static std::string FilterFileName(const std::string& FullPath);
 

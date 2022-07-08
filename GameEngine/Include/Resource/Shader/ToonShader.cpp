@@ -1,5 +1,7 @@
 #include "ToonShader.h"
 #include "ToonCBuffer.h"
+#include "../ResourceManager.h"
+#include "ToonInstancingShader.h"
 
 CToonShader::CToonShader()	:
 	m_CBuffer(nullptr)
@@ -33,6 +35,13 @@ bool CToonShader::Init()
 
 	m_CBuffer = new CToonCBuffer;
 	m_CBuffer->Init();
+
+	// Instancing Shader도 같이 만든다.
+	bool Success = CResourceManager::GetInst()->CreateInstancingShader<CToonShader, CToonInstancingShader>(this, "ToonInstancingShader");
+	if (!Success)
+	{
+		return false;
+	}
 
 	return true;
 }

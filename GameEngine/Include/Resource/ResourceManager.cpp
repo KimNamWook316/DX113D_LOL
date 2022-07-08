@@ -414,6 +414,11 @@ CShader* CResourceManager::FindShader(const std::string& Name)
 	return m_ShaderManager->FindShader(Name);
 }
 
+CGraphicShader* CResourceManager::FindInstancingShader(CGraphicShader* Shader)
+{
+	return m_ShaderManager->FindInstancingShader(Shader);
+}
+
 void CResourceManager::ReleaseShader(const std::string& Name)
 {
 	m_ShaderManager->ReleaseShader(Name);

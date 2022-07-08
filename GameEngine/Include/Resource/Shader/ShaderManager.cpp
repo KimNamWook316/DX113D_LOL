@@ -95,9 +95,6 @@ bool CShaderManager::Init()
 	if (!CreateShader<CTileMapShader>("TileMapShader"))
 		return false;
 
-	if (!CreateShader<CStandard3DShader>("Standard3DShader"))
-		return false;
-
 	if (!CreateShader<CAnimationUpdateShader>("AnimationUpdateShader"))
 		return false;
 
@@ -137,19 +134,14 @@ bool CShaderManager::Init()
 	if (!CreateShader<CAnimEditorShader>("AnimEditorShader"))
 		return false;
 
-	if (!CreateShader<CStandard3DInstancingShader>("Standard3DInstancingShader"))
+	// Instancing Shader는 이 Shader가 만들어질 때 같이 생성됨
+	if (!CreateShader<CStandard3DShader>("Standard3DShader"))
 	{
 		assert(false);
 		return false;
 	}
 
 	if (!CreateShader<CTransparent3DShader>("Transparent3DShader"))
-	{
-		assert(false);
-		return false;
-	}
-
-	if (!CreateShader<CTransparentInstancing3DShader>("TransparentInstancing3DShader"))
 	{
 		assert(false);
 		return false;
@@ -163,22 +155,6 @@ bool CShaderManager::Init()
 
 	if (!CreateShader<CShadowMapShader>("ShadowMapShader"))
 		return false;
-
-	if (!CreateShader<CShadowMapInstancingShader>("ShadowMapInstancingShader"))
-		return false;
-
-
- //	if (!CreateShader<COutlineShader>("OutlineShader"))
- //	{
- //		assert(false);
- //		return false;
- //	}
-
- //	if (!CreateShader<CGrayShader>("GrayShader"))
- //	{
- //		assert(false);
- //		return false;
- //	}
 
 	if (!CreateShader<CHDRDownScaleFirstPassShader>("HDRDownScaleFirstPassShader"))
 	{
@@ -300,6 +276,18 @@ CShader* CShaderManager::FindShader(const std::string& Name)
 
 	if (iter == m_mapShader.end())
 		return nullptr;
+
+	return iter->second;
+}
+
+CGraphicShader* CShaderManager::FindInstancingShader(CGraphicShader* Shader)
+{
+	auto iter = m_mapInstancingShader.find(Shader);
+
+	if (iter == m_mapInstancingShader.end())
+	{
+		return nullptr;
+	}
 
 	return iter->second;
 }

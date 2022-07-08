@@ -17,10 +17,7 @@ protected:
 protected:
     CSharedPtr<CStaticMesh> m_Mesh;
     std::vector<CSharedPtr<CMaterial>> m_vecMaterialSlot;
-
-    // Editor, Client단에서 Custom Shader를 적용할 경우 적용할 Shader
-    CSharedPtr<class CShader> m_CustomShader;
-    CSharedPtr<class CShader> m_CustomTransparentShader;
+    int m_InstanceID;
 
 public:
     CStaticMesh* GetMesh() const
@@ -33,10 +30,22 @@ public:
         return m_vecMaterialSlot[Index];
     }
 
+    void SetInstanceID(int ID)
+    {
+        m_InstanceID = ID;
+    }
+
+    int GetInstanceID() const
+    {
+        return m_InstanceID;
+    }
+
     int GetMaterialSlotCount() const
     {
         return (int)m_vecMaterialSlot.size();
     }
+
+    bool IsTransparent() const;
 
 public:
     void SetMesh(const std::string& Name);
@@ -45,9 +54,11 @@ public:
     void AddMaterial(CMaterial* Material);
     void ClearMaterial();
 
-public:
-    bool SetCustomShader(const std::string& Name);
-    bool SetCustomTransparencyShader(const std::string& Name);
+public :
+    void SetMaterialShaderAll(const std::string& Name);
+    void SetMaterialShader(int MatIndex, const std::string& ShaderName);
+    void SetMaterialShader(int MatIndex, CGraphicShader* Shader);
+    void SetMaterialShaderParams(int MatIndex, const ShaderParams& Params);
 
 public:
     void SetBaseColor(const Vector4& Color, int Index = 0);
@@ -61,7 +72,6 @@ public:
     void SetSpecularPower(float Power, int Index = 0);
     void SetRenderState(class CRenderState* State, int Index = 0);
     void SetRenderState(const std::string& Name, int Index = 0);
-    void SetTransparency(bool Enable, int Index = 0);
     void SetTransparencyAllMaterial(bool Enable);
     void SetOpacity(float Opacity, int Index = 0);
     void AddOpacity(float Opacity, int Index = 0);
@@ -96,6 +106,10 @@ public :
 
 private:
     void ChangeInstancingLayer();
+    bool DeleteInstancingCheckList();
+    void OnChangeMaterialShader(int MatIndex, CGraphicShader* NewShader);
+    void OnChangeMaterialShaderParams(int MatIndex, const ShaderParams& Params);
+    void OnCreateNewInstancingCheckCount();
 };
 
 

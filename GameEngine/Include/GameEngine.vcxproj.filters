@@ -1065,6 +1065,9 @@
     <ClCompile Include="Resource\Mesh\NavMesh.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="Resource\Shader\ToonInstancingShader.cpp">
+      <Filter>02. Resource\02. Shader\02. ShaderClass\23. Toon</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Device.h">
@@ -1813,6 +1816,9 @@
     </ClInclude>
     <ClInclude Include="Resource\Mesh\NavMesh.h">
       <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Shader\ToonInstancingShader.h">
+      <Filter>02. Resource\02. Shader\02. ShaderClass\23. Toon</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
