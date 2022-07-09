@@ -309,11 +309,13 @@ void ApplySpecialMoveDirType(int ThreadID, float RandomAngle, float3 OriginDir, 
 	case 0:
 	{
 		// y 는 0 -> XZ 평면으로, 사방으로 뻗어나가게 하기 
-		float3 RandDir = float3(0.f, 0.f, 0.f) + float3(
+		float3 RandDir = float3(
 			// cos(RandomAngle) * Rand, 어차피 normalize 를 아래에서 진행해주는데, 굳이 Rand 를 곱해줘야 하는가
 			cos(MoveTowardAngle),
-			OriginDir.y,
+			g_ParticleMoveDir.y,
+			// OriginDir.y, 
 			sin(MoveTowardAngle));
+
 		normalize(RandDir);
 
 		g_ParticleArray[ThreadID].Dir = RandDir;
@@ -323,10 +325,11 @@ void ApplySpecialMoveDirType(int ThreadID, float RandomAngle, float3 OriginDir, 
 	case 1:
 	{
 		// z 는 0, xy 평면 방향으로 뻗어나가게 하기 
-		float3 RandDir = float3(0.f, 0.f, 0.f) + float3(
+		float3 RandDir = float3(
 			cos(MoveTowardAngle),
 			sin(MoveTowardAngle),
-			OriginDir.z);
+			g_ParticleMoveDir.z);
+			// OriginDir.z);
 
 		normalize(RandDir);
 
@@ -423,6 +426,8 @@ void ApplyRotationAccordingToDir(int ThreadID)
 			// 아래는 Y + 방향을 바라본 상태로 회전하는 것
 			float3 CenterVector = float3(0.f, 0.f, 1.f);
 			DirVector.y = 0.f;
+
+			normalize(DirVector);
 			// CenterVector = mul(matComponentRot, CenterVector);
 
 			RotAngle = AngleBetweenTwoVector(CenterVector, DirVector);
@@ -442,6 +447,7 @@ void ApplyRotationAccordingToDir(int ThreadID)
 			float3 CenterVector = float3(0.f, 1.f, 0.f);
 			DirVector.z = 0.f;
 
+			normalize(DirVector);
 			float RotAngle = AngleBetweenTwoVector(CenterVector, DirVector);
 
 			if (DirVector.x > 0.f)
