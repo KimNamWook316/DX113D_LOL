@@ -423,6 +423,10 @@ bool CEffectEditor::Init()
     m_AlphaEndEdit = Tree->AddWidget<CIMGUIInputFloat>("Alpha End", 150.f);
     m_AlphaEndEdit->SetCallBack(this, &CEffectEditor::OnAlphaEndEdit);
 
+    m_IsAlphaLinearFromCenter = Tree->AddWidget<CIMGUICheckBox>("Alpha Linear", 30.f);
+    m_IsAlphaLinearFromCenter->AddCheckInfo("Alpha Linear");
+    m_IsAlphaLinearFromCenter->SetCallBackLabel<CEffectEditor>(this, &CEffectEditor::OnAlphaLinearFromCenter);
+
     // Move Dir, Angle
     Tree = AddWidget<CIMGUITree>("Move Angle, Dir");
 
@@ -869,6 +873,15 @@ void CEffectEditor::OnAlphaEndEdit(float Alpha)
     m_ParticleClass->SetEndAlpha(Alpha);
     // dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetColorMin(Color.x, Color.y, Color.z, 1.f);
     dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetEndAlpha(Alpha);
+}
+
+void CEffectEditor::OnAlphaLinearFromCenter(const char*, bool Enable)
+{
+    if (!m_ParticleClass)
+        return;
+
+    m_ParticleClass->SetAlphaLinearFromCenter(Enable);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetAlphaLinearFromCenter(Enable);
 }
 
 void CEffectEditor::OnSetAlphaBlendToMaterialCallback()
@@ -1626,6 +1639,7 @@ void CEffectEditor::SetIMGUIReflectParticle(CParticle* Particle)
 
     m_AlphaStartEdit->SetVal(Particle->GetStartAlpha());
     m_AlphaEndEdit->SetVal(Particle->GetEndAlpha());
+    m_IsAlphaLinearFromCenter->SetCheck(0, Particle->IsAlphaLinearFromCenter());
 
     // Move Dir, Angle
     m_MoveDirEdit->SetVal(Particle->GetMoveDir());

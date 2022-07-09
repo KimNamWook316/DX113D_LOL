@@ -101,6 +101,7 @@ private:
 
     class CIMGUIInputFloat* m_AlphaStartEdit;
     class CIMGUIInputFloat* m_AlphaEndEdit;
+    class CIMGUICheckBox* m_IsAlphaLinearFromCenter;
     class CIMGUIButton* m_AlphaBlendEnableButton;
 
     // Material
@@ -226,6 +227,7 @@ private:
     // Alpha Min, Max
     void OnAlphaStartEdit(float Alpha);
     void OnAlphaEndEdit(float Alpha);
+    void OnAlphaLinearFromCenter(const char*, bool);
 
     // 현재 Material에 Alpha Blend 적용하기
     void OnSetAlphaBlendToMaterialCallback();

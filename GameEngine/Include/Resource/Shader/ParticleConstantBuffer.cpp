@@ -32,6 +32,8 @@ CParticleConstantBuffer::CParticleConstantBuffer() :
 
 	m_BufferData.IsLifeTimeLinearFromCenter = 0;
 
+	m_BufferData.AlphaLinearFromCenter = 0;
+
 	m_BufferData.SeperateLinerRotate = 0;
 
 	m_BufferData.UVMoveEnable = 0;

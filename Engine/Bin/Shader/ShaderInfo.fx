@@ -370,6 +370,12 @@ float4 ConvertColor(float Color)
 
 }
 
+float GetRandomNumber(float key)
+{
+	float3	RandomPos = float3(Rand(key), Rand(2.142f), Rand(key * 3.f));
+	float	Rand = (RandomPos.x + RandomPos.y + RandomPos.z) / 3.f;
+	return Rand;
+}
 
 LightResult
     ComputeLight(

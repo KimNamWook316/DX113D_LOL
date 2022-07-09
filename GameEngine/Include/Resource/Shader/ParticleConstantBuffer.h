@@ -197,6 +197,11 @@ public:
 	{
 		return m_BufferData.AlphaEnd;
 	}
+	// Alpha Linear
+	int IsAlphaLinearFromCenter() const
+	{
+		return m_BufferData.AlphaLinearFromCenter;
+	}
 	// 되살리는 효과
 	int IsDisableNewAlive() const
 	{
@@ -255,7 +260,11 @@ public:
 	{
 		m_BufferData.MaxSeperateRotAngle = Angle;
 	}
-
+	// Alpha Linear
+	void SetAlphaLinearFromCenter(bool Enable)
+	{
+		m_BufferData.AlphaLinearFromCenter = Enable ? 1 : 0;
+	}
 	// Life Time Linear
 	void SetLifeTimeLinearFromCenter(bool Enable)
 	{

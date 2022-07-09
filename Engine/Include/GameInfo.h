@@ -466,7 +466,7 @@ struct	ParticleCBuffer
 	int DisableNewAlive;
 
 	Vector3 MaxSeperateRotAngle;
-	float ParticleEmpty4;
+	int AlphaLinearFromCenter;
 
 	// Particle Component 상에서 적용하는 Scale 정보
 	Vector3 CommonRelativeScale;
@@ -487,6 +487,9 @@ struct ParticleInfo
 	int		Alive;
 	float	FallTime;
 	float	FallStartY;
+
+	// 각 Particle 의 처음 Alpha 시작 값
+	float AlphaDistinctStart;
 
 	// 1) Circle, Ring 등 Particle Shape
 	// 2) Linear Rot 때 세팅되는 값 
@@ -525,6 +528,8 @@ struct ParticleInfoShared
 	Vector3  SeperateMaxRotAngle;
 
 	Vector3  CommonParticleCompWorldPos;
+
+	float MaxDistFromCenter;
 
 	float  PrevRingAngle;
 

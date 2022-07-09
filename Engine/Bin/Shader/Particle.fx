@@ -38,8 +38,8 @@ cbuffer	ParticleCBuffer : register(b11)
 	int g_LoopGenerateRing;
 	int g_ParticleSpecialMoveDirType;
 
-	float g_ParticleAlphaMax;
-	float g_ParticleAlphaMin;
+	float g_ParticleAlphaEnd;
+	float g_ParticleAlphaStart;
 	int g_ParticleLifeTimeLinear;
 	int g_SeperateLinerRotate; // 자신의 진행 방향 대로 회전시킬 것인가. g_ParticleSpecialMoveDirType 을 지정해야 한다. 회전 중심 축을 잡아야 하므로
 
@@ -53,7 +53,7 @@ cbuffer	ParticleCBuffer : register(b11)
 	int g_ParticleDisableNewAlive;
 
 	float3 g_ParticleSeperateRotAngleMax;
-	int ParticleEmpty4;
+	int g_ParticleAlphaLinearFromCenter;
 
 	// Particle Component Relative Scale
 	float3 g_ParticleCommonRelativeScale;
@@ -90,6 +90,9 @@ struct ParticleInfo
 	float	FallTime;
 	float	FallStartY;
 
+	// Alpha
+	float AlphaDistinctStart; 
+
 	float CurrentParticleAngle;
 
 	float3 SeperateRotAngleOffset;
@@ -109,8 +112,8 @@ struct ParticleInfoShared
 	float3	ScaleMin;
 	float3	ScaleMax;
 
-	float4	ColorMin;
-	float4	ColorMax;
+	float4	ColorStart;
+	float4	ColorEnd;
 
 	float3 CommonRelativeScale;
 
@@ -121,6 +124,8 @@ struct ParticleInfoShared
 	float3  SeperateMaxRotAngle;
 
 	float3  ParticleComponentWorldPos;
+
+	float MaxDistFromCenter;
 
 	float PrevRingAngle;
 
@@ -397,7 +402,7 @@ void ApplyParticleMove(float3 RandomPos, int ThreadID, float RandomAngle, float 
 void ApplyGravity(int ThreadID, float3 MovePos)
 {
 	// 중력 적용
-	if (g_ParticleShare[0].GravityEnable)
+	if (g_ParticleShare[0].GravityEnable == 1)
 	{
 		g_ParticleArray[ThreadID].FallTime += g_DeltaTime;
 
@@ -480,6 +485,44 @@ void ApplyRotationAccordingToDir(int ThreadID)
 	}
 }
 
+// 해당 함수로 들어올 때는, 이미 동기화 작업을 거쳐서
+// 특정 쓰레드가, 자기 혼자만 공유 정보에 접근하고 있는 상태
+// 따라서 별도의 추가적인 동기화는 필요없다. (필요하다면 넣어야 하지만)
+void ApplyLinearEffect(int ThreadID)
+{
+	float DistFromCenter = distance(g_ParticleArray[ThreadID].WorldPos, float3(0.f, 0.f, 0.f));
+	float MaxDistFromCenter = g_ParticleShare[0].MaxDistFromCenter;
+
+	if (MaxDistFromCenter == 0)
+		MaxDistFromCenter = DistFromCenter;
+
+	float SpawnPosRatio = (float)(DistFromCenter / MaxDistFromCenter);
+
+	if (SpawnPosRatio >= 1.f)
+		SpawnPosRatio = 0.999f;
+
+	// Life Time
+	if (g_ParticleLifeTimeLinear == 1)
+	{
+		// 이렇게만 하면 LifeTime 에서 큰 차이가 없다.
+		// float LifeTimeRatio = (1 - SpawnPosRatio);
+		float LifeTimeRatio = pow(1 - SpawnPosRatio, 2);
+
+		g_ParticleArray[ThreadID].LifeTimeMax = LifeTimeRatio * (g_ParticleLifeTimeMax - g_ParticleLifeTimeMin) + g_ParticleLifeTimeMin;
+	}
+
+	// Alpha
+	if (g_ParticleAlphaLinearFromCenter == 1)
+	{
+		// 이렇게만 하면 LifeTime 에서 큰 차이가 없다.
+		// float LifeTimeRatio = (1 - SpawnPosRatio);
+		float AlphaTimeRatio = pow(1 - SpawnPosRatio, 2);
+		float AlphaDiff = g_ParticleAlphaEnd - g_ParticleAlphaStart;
+
+		g_ParticleArray[ThreadID].AlphaDistinctStart = AlphaTimeRatio * (g_ParticleAlphaEnd - g_ParticleAlphaStart) + g_ParticleAlphaStart;
+	}
+}
+
 [numthreads(64, 1, 1)]	// 스레드 그룹 스레드 수를 지정한다.
 void ParticleUpdate(uint3 ThreadID : SV_DispatchThreadID)
 {
@@ -489,11 +532,11 @@ void ParticleUpdate(uint3 ThreadID : SV_DispatchThreadID)
 	g_ParticleShare[0].ScaleMin = g_ParticleScaleMin;
 	g_ParticleShare[0].ScaleMax = g_ParticleScaleMax;
 
-	g_ParticleShare[0].ColorMin = g_ParticleColorMin;
-	g_ParticleShare[0].ColorMin.a = g_ParticleAlphaMin;
+	g_ParticleShare[0].ColorStart = g_ParticleColorMin;
+	g_ParticleShare[0].ColorStart.a = g_ParticleAlphaStart;
 
-	g_ParticleShare[0].ColorMax = g_ParticleColorMax;
-	g_ParticleShare[0].ColorMax.a = g_ParticleAlphaMax;
+	g_ParticleShare[0].ColorEnd = g_ParticleColorMax;
+	g_ParticleShare[0].ColorEnd.a = g_ParticleAlphaEnd;
 
 	g_ParticleShare[0].CommonRelativeScale = g_ParticleCommonRelativeScale;
 	g_ParticleShare[0].ParticleComponentWorldPos = g_ParticleComponentWorldPos;
@@ -506,6 +549,7 @@ void ParticleUpdate(uint3 ThreadID : SV_DispatchThreadID)
 	g_ParticleShare[0].UVMoveEnable = g_ParticleUVMoveEnable;
 	g_ParticleShare[0].UVRowN = g_ParticleUVRowN;
 	g_ParticleShare[0].UVColN   = g_ParticleUVColN;
+
 
 	// 매번 초기화 해줄 것이다.
 	g_ParticleArray[ThreadID.x].SeperateRotAngleOffset = float3(0.f, 0.f, 0.f);
@@ -561,27 +605,25 @@ void ParticleUpdate(uint3 ThreadID : SV_DispatchThreadID)
 			InterlockedExchange(g_ParticleShare[0].SpawnEnable, InputValue, Exchange);
 
 			if (Exchange == SpawnEnable)
-			{
 				g_ParticleArray[ThreadID.x].Alive = 1;
-
-				if (g_ParticleDisableNewAlive == 1)
-				{
-					g_ParticleShare[0].CurrentSpawnCountSum += 1;
-				}
-				else
-				{
-					// SpawnTime 에 맞춰서 지속적으로 생성하게끔 하려면 
-					// g_ParticleDisableNewAlive == 1 일때, 즉, 한번에 확 생성하고, 지금까지 누적 생성된 Particle 개수가
-					// g_ParticleSpawnCountMax 를 넘어가면 생성되지 않는 원리인데.
-					// 이를 무효화 하기 위해서, 
-					// 지금까지 누적 생성된 Particle 개수를 계속 0이 되게 할 것이다.
-					g_ParticleShare[0].CurrentSpawnCountSum = 0;
-				}
-			}
 		}
 
+		// 아래를 거쳐갔다는 것은, 현재 바로 생성된 Particle 이라는 의미이다.
 		if (g_ParticleArray[ThreadID.x].Alive == 0)
 			return;
+
+		// g_ParticleDisableNewAlive 에 따라서, 공유 구조화 버퍼에 CurrentSpawnCountSum 세팅하기 
+		if (g_ParticleDisableNewAlive == 1)
+			g_ParticleShare[0].CurrentSpawnCountSum += 1;
+		else
+		{
+			// SpawnTime 에 맞춰서 지속적으로 생성하게끔 하려면 
+			// g_ParticleDisableNewAlive == 1 일때, 즉, 한번에 확 생성하고, 지금까지 누적 생성된 Particle 개수가
+			// g_ParticleSpawnCountMax 를 넘어가면 생성되지 않는 원리인데.
+			// 이를 무효화 하기 위해서, 
+			// 지금까지 누적 생성된 Particle 개수를 계속 0이 되게 할 것이다.
+			g_ParticleShare[0].CurrentSpawnCountSum = 0;
+		}
 
 		// 살려야 하는 파티클이라면 파티클 생성정보를 만들어낸다.
 		float	key = ThreadID.x / g_ParticleSpawnCountMax;
@@ -600,11 +642,14 @@ void ParticleUpdate(uint3 ThreadID : SV_DispatchThreadID)
 		g_ParticleArray[ThreadID.x].LifeTimeMax = Rand * (g_ParticleLifeTimeMax - g_ParticleLifeTimeMin) + g_ParticleLifeTimeMin;
 
 		// Scale 크기도 그만큼 조정한다.
-		g_ParticleArray[ThreadID.x].LifeTimeMax *= g_ParticleCommonRelativeScale.x;
-		g_ParticleArray[ThreadID.x].LifeTimeMax *= g_ParticleCommonRelativeScale.y;
-		g_ParticleArray[ThreadID.x].LifeTimeMax *= g_ParticleCommonRelativeScale.z;
+		g_ParticleArray[ThreadID.x].LifeTimeMax *= (g_ParticleCommonRelativeScale.x + g_ParticleCommonRelativeScale.y + g_ParticleCommonRelativeScale.z) / 3.f;
 
-		float FinalAppliedRadius = g_ParcticleGenerateRadius * g_ParticleCommonRelativeScale.x * g_ParticleCommonRelativeScale.y * g_ParticleCommonRelativeScale.z;
+		// x,y,z 의 Relative Scale 의 중간 비율만큼 세팅해준다.
+		// 아래 코드처럼 하면, 너무 Dramatic 하게 변한다.
+		// float ParticleComponentScaleRatio = g_ParticleCommonRelativeScale.x * g_ParticleCommonRelativeScale.y * g_ParticleCommonRelativeScale.z;
+		float ParticleComponentScaleRatio = (g_ParticleCommonRelativeScale.x + g_ParticleCommonRelativeScale.y + g_ParticleCommonRelativeScale.z) / 3.f;
+
+		float FinalAppliedRadius = g_ParcticleGenerateRadius * ParticleComponentScaleRatio;
 
 		// Special 한 모양으로 Particle 을 만들고자 한다면
 		ApplySpecialParticleGenerateShape(RandomAngle, ThreadID.x, FinalAppliedRadius, Rand);
@@ -612,39 +657,27 @@ void ParticleUpdate(uint3 ThreadID : SV_DispatchThreadID)
 		// Move 하는 Particle 이라면, Speed 와 Dir 를 세팅한다.
 		ApplyParticleMove(RandomPos, ThreadID.x, RandomAngle, Rand);
 
-		 // 원뿔 형태로 위로 이동 (즉, 가운데에서 멀어질 수록, LifeTime이 작아지는 효과)
-		// LifeTime 만 조정해줄 뿐,  //
-		 if (g_ParticleLifeTimeLinear == 1)
-		 {
-			 // Spawn Pos 를 기준으로 하여 LifeTime 조정하기 
-			 float SpawnStartPosDist = distance(g_ParticleArray[ThreadID.x].WorldPos, float3(0.f, 0.f, 0.f));
-			 float DistMax = (float)(abs(max(g_ParticleStartMax, g_ParticleStartMin)));
+		// 생성되는 순간 각 Particle 의 Rot 정도를 세팅한다.
+		// 최종 각각의 Particle 회전 정도 세팅
+		// '=' 가 아니라 '+=' 를 해줘야 한다.
+		// ApplySpecialParticleGenerateShape 에서 일부 미리 FinalSeperateRotAngle 값에 
+		// 회전할 Offset 값을 더해놓은 상태이기 때문이다.
+		// g_ParticleArray[ThreadID.x].FinalSeperateRotAngle += ((g_ParticleSeperateRotAngleMax - g_ParticleSeperateRotAngleMin) * Rand + g_ParticleSeperateRotAngleMin);
+		g_ParticleArray[ThreadID.x].FinalSeperateRotAngle = (g_ParticleSeperateRotAngleMax - g_ParticleSeperateRotAngleMin) * Rand + g_ParticleSeperateRotAngleMin;
 
-			 // Circle, Torch 가 존재한다면
-			 if (g_ParticleGenerateShapeType == 1 || g_ParticleGenerateShapeType == 2)
-				 DistMax = FinalAppliedRadius;
+		// 자신의 진행 방향에 따른 회전을 추가한다.
+		ApplyRotationAccordingToDir(ThreadID.x);
+		
+		// 가장 마지막에 중심에서 가장 멀리떨어져 있는 Max 거리값을 공유 구조화 버퍼에 세팅한다.
+		float DistFromCenter = length(g_ParticleArray[ThreadID.x].WorldPos);
+		g_ParticleShare[0].MaxDistFromCenter = max(g_ParticleShare[0].MaxDistFromCenter, DistFromCenter);
 
-			 float SpawnPosRatio = (float)(SpawnStartPosDist / DistMax);
+		// Alpha 시작값을 세팅한다. 기본적으로 상수버퍼로 넘어온 g_ParticleAlphaStart 값을 이용한다.
+		g_ParticleArray[ThreadID.x].AlphaDistinctStart = g_ParticleAlphaStart;
 
-			 if (SpawnPosRatio > 1.f)
-				 SpawnPosRatio = 0.01f;
-
-			 g_ParticleArray[ThreadID.x].LifeTimeMax = (1 - SpawnPosRatio) * (g_ParticleLifeTimeMax - g_ParticleLifeTimeMin) + g_ParticleLifeTimeMin;
-		 }
-
-		 // 생성되는 순간 각 Particle 의 Rot 정도를 세팅한다.
-		 // 최종 각각의 Particle 회전 정도 세팅
-		 // '=' 가 아니라 '+=' 를 해줘야 한다.
-		 // ApplySpecialParticleGenerateShape 에서 일부 미리 FinalSeperateRotAngle 값에 
-		 // 회전할 Offset 값을 더해놓은 상태이기 때문이다.
-		 // g_ParticleArray[ThreadID.x].FinalSeperateRotAngle += ((g_ParticleSeperateRotAngleMax - g_ParticleSeperateRotAngleMin) * Rand + g_ParticleSeperateRotAngleMin);
-		 g_ParticleArray[ThreadID.x].FinalSeperateRotAngle = (g_ParticleSeperateRotAngleMax - g_ParticleSeperateRotAngleMin) * Rand + g_ParticleSeperateRotAngleMin;
-		 
-		 // g_ParticleArray[ThreadID.x].FinalSeperateRotAngle += g_ParticleArray[ThreadID.x].SeperateRotAngleOffset;
-		 
-		 // 자신의 진행 방향에 따른 회전을 추가한다.
-		 ApplyRotationAccordingToDir(ThreadID.x);
-		 
+		// 중앙으로부터 가장 멀리 떨어져 있는 값만큼 세팅
+		// 아래에서 한번 더 
+		ApplyLinearEffect(ThreadID.x);
 	}
 
 	// 현재 생성이 되어 있는 파티클일 경우
@@ -670,6 +703,7 @@ void ParticleUpdate(uint3 ThreadID : SV_DispatchThreadID)
 			g_ParticleArray[ThreadID.x].Alive = 0;
 		}
 	}
+
 }
 
 struct VertexParticle
@@ -783,7 +817,10 @@ void ParticleGS(point VertexParticleOutput input[1],
 		g_ParticleShareSRV[0].ScaleMax * g_ParticleShareSRV[0].CommonRelativeScale,
 		float3(Ratio, Ratio, Ratio));
 
-	float4	Color = lerp(g_ParticleShareSRV[0].ColorMin, g_ParticleShareSRV[0].ColorMax,
+	float4 ColorStart = g_ParticleShareSRV[0].ColorStart;
+	ColorStart.a = g_ParticleArraySRV[InstanceID].AlphaDistinctStart;
+
+	float4	Color = lerp(ColorStart, g_ParticleShareSRV[0].ColorEnd,
 		float4(Ratio, Ratio, Ratio, Ratio));
 
 	// 회전 (전체 회전 + 각 Particle 회전 정도)

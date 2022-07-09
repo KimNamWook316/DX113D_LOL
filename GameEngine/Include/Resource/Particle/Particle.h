@@ -279,6 +279,11 @@ public:
 	{
 		return m_CBuffer->GetEndAlpha();
 	}
+	// Alpha Linear
+	int IsAlphaLinearFromCenter() const
+	{
+		return m_CBuffer->IsAlphaLinearFromCenter();
+	}
 	// UV Move
 	int GetUVMoveEnable() const
 	{
@@ -317,6 +322,12 @@ public:
 	void SetSeperateLinearRotate(bool Enable)
 	{
 		m_CBuffer->SetSeperateLinearRotate(Enable);
+	}	
+
+	// Alpha Linear
+	void SetAlphaLinearFromCenter(bool Enable)
+	{
+		m_CBuffer->SetAlphaLinearFromCenter(Enable);
 	}
 
 	// Component 의 Relative Scale 반영학
