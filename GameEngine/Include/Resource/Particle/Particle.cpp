@@ -29,8 +29,6 @@ CParticle::CParticle(const CParticle& particle)
 
 CParticle::~CParticle()
 {
-	SAFE_DELETE(m_NormalDistributionBuffer);
-
 	size_t	BufferCount = m_vecStructuredBuffer.size();
 
 	for (size_t i = 0; i < BufferCount; ++i)
@@ -57,7 +55,8 @@ bool CParticle::Init()
 
 	AddStructuredBuffer("ParticleInfo", sizeof(ParticleInfo), m_SpawnCountMax, 0);
 	AddStructuredBuffer("ParticleInfoShared", sizeof(ParticleInfoShared), 1, 1);
-	CreateNormalDistStructuredBuffer("ParticleNormalDistribution", sizeof(float), m_SpawnCountMax, 20, true);
+	
+	// CreateNormalDistStructuredBuffer("ParticleNormalDistribution", sizeof(float), m_SpawnCountMax, 20, true);
 
 	return true;
 }
@@ -241,7 +240,7 @@ bool CParticle::Load(FILE* File)
 	AddStructuredBuffer("ParticleInfoShared", sizeof(ParticleInfoShared), 1, 1);
 
 	// Dynamic True 로 세팅 => Particle.fx 에서 Read Only로만 사용
-	CreateNormalDistStructuredBuffer("ParticleNormalDistribution", sizeof(float), m_SpawnCountMax, 20, true);
+	// CreateNormalDistStructuredBuffer("ParticleNormalDistribution", sizeof(float), m_SpawnCountMax, 20, true);
 
 	return true;
 }
@@ -261,22 +260,6 @@ void CParticle::AddStructuredBuffer(const std::string& Name, unsigned int Size, 
 
 }
 
-void CParticle::CreateNormalDistStructuredBuffer(const std::string& Name, unsigned int Size, unsigned int Count, int Register, bool Dynamic, int StructuredBufferShaderType)
-{
-	SAFE_DELETE(m_NormalDistributionBuffer);
-
-	CStructuredBuffer* Buffer = new CStructuredBuffer;
-
-	if (!Buffer->Init(Name, Size, Count, Register, Dynamic, StructuredBufferShaderType))
-	{
-		SAFE_DELETE(Buffer);
-		return;
-	}
-
-	m_NormalDistributionBuffer = Buffer;
-
-	GenerateNormalDistribution();
-}
 
 bool CParticle::ResizeBuffer(const std::string& Name, unsigned int Size, unsigned int Count,
 	int Register, bool Dynamic, int StructuredBufferShaderType)
@@ -296,16 +279,6 @@ bool CParticle::ResizeBuffer(const std::string& Name, unsigned int Size, unsigne
 	return false;
 }
 
-bool CParticle::ResizeNormalDistStructuredBuffer(const std::string& Name, unsigned int Size, unsigned int Count, int Register, bool Dynamic, int StructuredBufferShaderType)
-{
-	if (!m_NormalDistributionBuffer->Init(Name, Size, Count, Register, Dynamic, StructuredBufferShaderType))
-	{
-		assert(false);
-		return false;
-	}
-
-	return true;
-}
 
 void CParticle::CloneStructuredBuffer(std::vector<CStructuredBuffer*>& vecBuffer)
 {
@@ -319,6 +292,53 @@ void CParticle::CloneStructuredBuffer(std::vector<CStructuredBuffer*>& vecBuffer
 	}
 }
 
+
+bool CParticle::SaveFile(const char* FullPath)
+{
+	FILE* File;
+
+	fopen_s(&File, FullPath, "wb");
+
+	if (!File)
+		return false;
+
+	bool Result = Save(File);
+
+	fclose(File);
+
+	return Result;
+}
+
+bool CParticle::LoadFile(const char* FullPath)
+{
+	FILE* File;
+
+	fopen_s(&File, FullPath, "rb");
+
+	if (!File)
+		return false;
+
+	bool Result = Load(File);
+
+	fclose(File);
+
+	return Result;
+}
+
+void CParticle::SetSpawnCountMax(unsigned int Count)
+{
+	m_CBuffer->SetSpawnCountMax(Count);
+
+	m_SpawnCountMax = Count;
+
+	ResizeBuffer("ParticleInfo", sizeof(ParticleInfo), m_SpawnCountMax, 0);
+
+	// Dynamic True로 세팅
+	// ResizeNormalDistStructuredBuffer("ParticleNormalDistribution", sizeof(float), m_SpawnCountMax, 20, true);
+}
+
+
+/*
 void CParticle::CloneNormalDistStructuredBuffer(CStructuredBuffer*& NormalDistBuffer)
 {
 	if (!m_NormalDistributionBuffer)
@@ -368,46 +388,33 @@ void CParticle::GenerateNormalDistribution()
 	// m_NormalDistributionBuffer->UpdateBuffer(&m_vecNormalDistVal[0], (int)m_vecNormalDistVal.size());
 }
 
-bool CParticle::SaveFile(const char* FullPath)
+
+bool CParticle::ResizeNormalDistStructuredBuffer(const std::string& Name, unsigned int Size, unsigned int Count, int Register, bool Dynamic, int StructuredBufferShaderType)
 {
-	FILE* File;
-
-	fopen_s(&File, FullPath, "wb");
-
-	if (!File)
+	if (!m_NormalDistributionBuffer->Init(Name, Size, Count, Register, Dynamic, StructuredBufferShaderType))
+	{
+		assert(false);
 		return false;
+	}
 
-	bool Result = Save(File);
-
-	fclose(File);
-
-	return Result;
+	return true;
 }
 
-bool CParticle::LoadFile(const char* FullPath)
+
+void CParticle::CreateNormalDistStructuredBuffer(const std::string& Name, unsigned int Size, unsigned int Count, int Register, bool Dynamic, int StructuredBufferShaderType)
 {
-	FILE* File;
+	SAFE_DELETE(m_NormalDistributionBuffer);
 
-	fopen_s(&File, FullPath, "rb");
+	CStructuredBuffer* Buffer = new CStructuredBuffer;
 
-	if (!File)
-		return false;
+	if (!Buffer->Init(Name, Size, Count, Register, Dynamic, StructuredBufferShaderType))
+	{
+		SAFE_DELETE(Buffer);
+		return;
+	}
 
-	bool Result = Load(File);
+	m_NormalDistributionBuffer = Buffer;
 
-	fclose(File);
-
-	return Result;
+	GenerateNormalDistribution();
 }
-
-void CParticle::SetSpawnCountMax(unsigned int Count)
-{
-	m_CBuffer->SetSpawnCountMax(Count);
-
-	m_SpawnCountMax = Count;
-
-	ResizeBuffer("ParticleInfo", sizeof(ParticleInfo), m_SpawnCountMax, 0);
-
-	// Dynamic True로 세팅
-	ResizeNormalDistStructuredBuffer("ParticleNormalDistribution", sizeof(float), m_SpawnCountMax, 20, true);
-}
+*/

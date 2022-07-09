@@ -53,7 +53,7 @@ CParticleComponent::CParticleComponent(const CParticleComponent& com) :
 
 CParticleComponent::~CParticleComponent()
 {
-	SAFE_DELETE(m_NormalDistributionBuffer);
+	// SAFE_DELETE(m_NormalDistributionBuffer);
 
 	size_t	BufferCount = m_vecStructuredBuffer.size();
 
@@ -85,18 +85,16 @@ void CParticleComponent::SetParticle(CParticle* Particle)
 
 	SAFE_DELETE(m_CBuffer);
 
-	SAFE_DELETE(m_NormalDistributionBuffer);
+	// SAFE_DELETE(m_NormalDistributionBuffer);
 
 	m_vecStructuredBuffer.clear();
 
 	m_Particle->CloneStructuredBuffer(m_vecStructuredBuffer);
 
-	m_Particle->CloneNormalDistStructuredBuffer(m_NormalDistributionBuffer);
-
-	std::vector<float> VecNormalDistVal = m_Particle->GetVecNormalDistVal();
-
-	// 정규 분포 정보의 경우, 딱 한번만 Update 해준다.
-	m_NormalDistributionBuffer->UpdateBuffer(&VecNormalDistVal[0], (int)VecNormalDistVal.size());
+	// 정규 분포 정보의 경우, 딱 한번만 Update 해준다. (우선 사용 X)
+	// m_Particle->CloneNormalDistStructuredBuffer(m_NormalDistributionBuffer);
+	// std::vector<float> VecNormalDistVal = m_Particle->GetVecNormalDistVal();
+	// m_NormalDistributionBuffer->UpdateBuffer(&VecNormalDistVal[0], (int)VecNormalDistVal.size());
 
 	m_UpdateShader = m_Particle->CloneUpdateShader();
 
@@ -233,7 +231,7 @@ void CParticleComponent::PostUpdate(float DeltaTime)
 	m_CBuffer->UpdateCBuffer();
 
 	// Normal Dist 구조화 버퍼 정보를 넘겨준다.
-	m_NormalDistributionBuffer->SetShader();
+	// m_NormalDistributionBuffer->SetShader();
 
 	size_t	BufferCount = m_vecStructuredBuffer.size();
 
@@ -251,7 +249,7 @@ void CParticleComponent::PostUpdate(float DeltaTime)
 
 	m_UpdateShader->Excute(GroupCount, 1, 1);
 
-	m_NormalDistributionBuffer->ResetShader();
+	// m_NormalDistributionBuffer->ResetShader();
 
 	for (size_t i = 0; i < BufferCount; ++i)
 	{

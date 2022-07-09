@@ -6,13 +6,17 @@ enum class ParticlePreset
     Ripple,
     Ring,
     RingWall,
-    Torch,
     FireSmall,
     FireWide,
     Spark,
     SparkBounce,
     SimpleMeteor,
     XZSpreadDust,
+    FireTorch, // 가운데가 올라가 있는 형태의 불
+    FireGenerateMoment, // 불이 확 붙는 순간
+    BloodPartice, // Blood 입자 하나하나가 튀는 효과
+    BloodSpreadSpiral,
+    XZSpreadGrass, // 사방으로 퍼지는 Grass 효과
     Max
 };
 
@@ -20,19 +24,22 @@ static const char* ParticlePresetNames[] = {
     "Ripple",
     "Ring",
     "RingWall",
-    "Torch",
     "FireSmall",
     "FireWide",
     "Spark",
     "SparkBounce",
     "SimpleMeteor",
-    "XZSpreadDust"
+    "XZSpreadDust",
+    "FireTorch",
+    "FireGenerateMoment",
+    "BloodEachParticle",
+    "BloodSpreadSpiral",
+    "XZSpreadGrass"
 };
 
 static const char* ParticleShapeNames[] = {
     "YUpDirRing", // 위 방향을 향한 Ring
     "Circle", // Circle (일정 범위 이내 랜덤한 위치에 생성)
-    "Torch", // Torch (가운데 더 많이 생성)
     "ZMinusRing" // 사용자 측을 바라본 형태로 Ring 생성
 };
 
@@ -303,12 +310,16 @@ private :
     void OnRipplePreset();
     void OnRingPreset();
     void OnRingWallPreset();
-    void OnTorchPreset();
     void OnFireSmallPreset();
     void OnFireWidePreset();
     void OnSparkPreset();
     void OnSparkBouncePreset();
     void OnSimpleMeteorPreset();
-    void OnXZSpreadDust();
+    void OnXZSpreadDustPreset();
+    void OnFireTorchPreset();
+    void OnFireGenerateMomentPreset();
+    void OnBloodEachParticlePreset();
+    void OnBloodSpreadPreset();
+    void OnSpreadGrassPreset();
 };
 

@@ -44,16 +44,12 @@ private :
 	// 정규 분포 형태의 Y 값들을 지닌 구조화 버퍼
 	// 원소 개수 (X 축 원소 개수) : SpawnCount 만큼
 	// Y값 범위 : 0 ~ 1 (정규분포)
-	class CStructuredBuffer* m_NormalDistributionBuffer;
-	std::vector<float>	m_vecNormalDistVal;
+	// class CStructuredBuffer* m_NormalDistributionBuffer;
+	// std::vector<float>	m_vecNormalDistVal;
 public:
 	CMaterial* CloneMaterial()	const
 	{
 		return m_Material->Clone();
-	}
-	std::vector<float> GetVecNormalDistVal() 
-	{
-		return m_vecNormalDistVal;
 	}
 	CParticleUpdateShader* GetUpdateShader()	const
 	{
@@ -83,22 +79,23 @@ public:
 	void AddStructuredBuffer(const std::string& Name, unsigned int Size, unsigned int Count,
 		int Register, bool Dynamic = false,
 		int StructuredBufferShaderType = (int)Buffer_Shader_Type::Compute);
-	void CreateNormalDistStructuredBuffer(const std::string& Name, unsigned int Size, unsigned int Count,
-		int Register, bool Dynamic = false,
-		int StructuredBufferShaderType = (int)Buffer_Shader_Type::Compute);
+
 	bool ResizeBuffer(const std::string& Name, unsigned int Size, unsigned int Count,
 		int Register, bool Dynamic = false,
 		int StructuredBufferShaderType = (int)Buffer_Shader_Type::Compute);
-	bool ResizeNormalDistStructuredBuffer(const std::string& Name, unsigned int Size, unsigned int Count,
-		int Register, bool Dynamic = false,
-		int StructuredBufferShaderType = (int)Buffer_Shader_Type::Compute);
 	void CloneStructuredBuffer(std::vector<CStructuredBuffer*>& vecBuffer);
-	void CloneNormalDistStructuredBuffer(CStructuredBuffer*& NormalDistBuffer);
 private :
 	// m_NormalDistributionBuffer 에 정규 분포 계산 값들을 적용하는 함수
-	void GenerateNormalDistribution();
-public :
-	void ResetStructuredBufferInfo();
+	// void CloneNormalDistStructuredBuffer(CStructuredBuffer*& NormalDistBuffer);
+	// void GenerateNormalDistribution();
+	/*
+	void CreateNormalDistStructuredBuffer(const std::string& Name, unsigned int Size, unsigned int Count,
+	int Register, bool Dynamic = false,
+	int StructuredBufferShaderType = (int)Buffer_Shader_Type::Compute);
+	bool ResizeNormalDistStructuredBuffer(const std::string& Name, unsigned int Size, unsigned int Count,
+	int Register, bool Dynamic = false,
+	int StructuredBufferShaderType = (int)Buffer_Shader_Type::Compute);
+	*/
 public :
 	bool SaveFile(const char* FullPath);
 	bool LoadFile(const char* FullPath);
@@ -319,9 +316,9 @@ public:
 	}
 
 	// Linaer Rotate
-	void SetSeperateLinearRotate(bool Enable)
+	void SetRotToDir(bool Enable)
 	{
-		m_CBuffer->SetSeperateLinearRotate(Enable);
+		m_CBuffer->SetRotToDir(Enable);
 	}	
 
 	// Alpha Linear

@@ -255,44 +255,8 @@ void ApplySpecialParticleGenerateShape(float RandomAngle, int ThreadID, float Fi
 		g_ParticleArray[ThreadID].WorldPos = CirclePos;
 	}
 	break;
-	// Torch
-	// 횃불 모양의 Particle 만들어내기
-	// Spawn 위치로, 가운데 쪽에 비율적으로 더 많이 생성되게 해야 한다.
-	case 2:
-	{
-		// 생성 위치 => 정규 분포를 사용하여, 확률적으로 가운데 많이 생성되게 하기
-		// CPU 측에서 평균 0 , 표준편차 0.165 라는 표준 정규 분포 값을 이용하여 값 세팅
-		// 평균 0 의 값이 가장 많이 나올 것이다. (0 라는 값이 거의 집중적으로 나올 것)
-		// 그리고 범위는 -0.5 ~ 0.5
-		// 여기서 할일은, 0에 가까운 값이 거의 대부분 나오게 조절해야 하고, 또한 범위는 0에서 1 사이의 값에 놓이게 해야 한다.
-		// 1) 값에서 *2 를 해서 -1 ~ 1 사이의 값으로 조정한다.
-		// 2) 음수인 값은 양수로 바꿔준다.
-		// 그러면 반쪽 짜리 정규 분포가 만들어질 것이다.
-		float NormalDistVal = g_ParticleNormalDistValArray[ThreadID.x] * 2.f;
-
-		// 1.f 범위를 넘는 값들 조정하기 
-		if (NormalDistVal > 1.f)
-			NormalDistVal = Rand;
-		if (NormalDistVal < -1.f)
-			NormalDistVal = Rand * -1.f;
-
-		// 설정한 반지름 범위로 맞춰준다.
-		float TorchGenerateRadius = NormalDistVal * FinalAppliedRadius;
-
-		float3 StartMinBase = float3(-1.f, 0, -1.f);
-		StartMinBase *= TorchGenerateRadius;
-		float3 StartMaxBase = float3(1.f, 0, 1.f);
-		StartMaxBase *= TorchGenerateRadius;
-		float3 TorchPos = float3(0.f, 0.f, 0.f);
-		// TorchPos = Rand * (StartMaxBase - StartMinBase) + StartMinBase;
-		// TorchPos.y = 0.f;
-		TorchPos = float3(cos(RandomAngle) * TorchGenerateRadius, 0.f, sin(RandomAngle) * TorchGenerateRadius);
-
-		g_ParticleArray[ThreadID].WorldPos = TorchPos;
-	}
-	break;
 	// 사용자 정면을 바라보는 형태로 Ring 생성하게 하기 
-	case 3:
+	case 2:
 	{
 		float CurrentRingAngle = RandomAngle;
 

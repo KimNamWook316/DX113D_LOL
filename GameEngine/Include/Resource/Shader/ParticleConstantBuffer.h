@@ -221,7 +221,7 @@ public:
 
 	// Linear Rotate
 	// Linaer Iterate 할때의 최초 Rot Angle
-	void SetSeperateLinearRotate(bool Enable)
+	void SetRotToDir(bool Enable)
 	{
 		m_BufferData.SeperateLinerRotate = Enable ? 1 : 0;
 	}
