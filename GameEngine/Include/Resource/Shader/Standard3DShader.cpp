@@ -1,5 +1,7 @@
 
 #include "Standard3DShader.h"
+#include "../ResourceManager.h"
+#include "Standard3DInstancingShader.h"
 
 CStandard3DShader::CStandard3DShader()
 {
@@ -28,6 +30,14 @@ bool CStandard3DShader::Init()
 
 	if (!CreateInputLayout())
 		return false;
+
+
+	// Standard3D Instancing Shader도 같이 만든다.
+	bool Success = CResourceManager::GetInst()->CreateInstancingShader<CStandard3DShader, CStandard3DInstancingShader>(this, "Standard3DInstancingShader");
+	if (!Success)
+	{
+		return false;
+	}
 
 	return true;
 }

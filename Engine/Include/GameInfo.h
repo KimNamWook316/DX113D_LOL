@@ -713,7 +713,9 @@ struct LightForwardCBuffer
 struct InstancingCBuffer
 {
 	int InstancingBoneCount;
-	Vector3 InstancingEmpty;
+	int MaterialIndex;
+	int ObjectCount;
+	float Empty;
 };
 
  //struct OutlineCBuffer

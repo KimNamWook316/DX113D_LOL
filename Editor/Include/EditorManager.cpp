@@ -187,28 +187,25 @@ void CEditorManager::MouseLButtonUp(float DeltaTime)
 
 void CEditorManager::KeyboardUp(float DeltaTime)
 {
-	if (m_DragObj)
-		m_DragObj->AddWorldPos(0.f, 1.f, 0.f);
+	float Bias = CRenderManager::GetInst()->GetShadowBias();
 
-	else
-	{
-		CCameraComponent* Camera = CSceneManager::GetInst()->GetScene()->GetCameraManager()->GetCurrentCamera();
-
-		Camera->AddWorldPos(Vector3(0.f, m_CameraMoveSpeed * DeltaTime, 0.f));
-	}
+	CRenderManager::GetInst()->SetShadowBias(Bias + DeltaTime);
+ //	if (m_DragObj)
+ //		m_DragObj->AddWorldPos(0.f, 1.f, 0.f);
+ //
+ //	else
+ //	{
+ //		CCameraComponent* Camera = CSceneManager::GetInst()->GetScene()->GetCameraManager()->GetCurrentCamera();
+ //
+ //		Camera->AddWorldPos(Vector3(0.f, m_CameraMoveSpeed * DeltaTime, 0.f));
+ //	}
 }
 
 void CEditorManager::KeyboardDown(float DeltaTime)
 {
-	if (m_DragObj)
-		m_DragObj->AddWorldPos(0.f, -1.f, 0.f);
+	float Bias = CRenderManager::GetInst()->GetShadowBias();
 
-	else
-	{
-		CCameraComponent* Camera = CSceneManager::GetInst()->GetScene()->GetCameraManager()->GetCurrentCamera();
-
-		Camera->AddWorldPos(Vector3(0.f, -m_CameraMoveSpeed * DeltaTime, 0.f));
-	}
+	CRenderManager::GetInst()->SetShadowBias(Bias - DeltaTime);
 }
 
 void CEditorManager::KeyboardLeft(float DeltaTime)

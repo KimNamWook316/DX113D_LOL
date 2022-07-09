@@ -218,6 +218,7 @@
     <ClCompile Include="Resource\Shader\TileMapConstantBuffer.cpp" />
     <ClCompile Include="Resource\Shader\TileMapShader.cpp" />
     <ClCompile Include="Resource\Shader\ToonCBuffer.cpp" />
+    <ClCompile Include="Resource\Shader\ToonInstancingShader.cpp" />
     <ClCompile Include="Resource\Shader\ToonShader.cpp" />
     <ClCompile Include="Resource\Shader\TransformConstantBuffer.cpp" />
     <ClCompile Include="Resource\Shader\Transparent3DShader.cpp" />
@@ -464,6 +465,7 @@
     <ClInclude Include="Resource\Shader\TileMapConstantBuffer.h" />
     <ClInclude Include="Resource\Shader\TileMapShader.h" />
     <ClInclude Include="Resource\Shader\ToonCBuffer.h" />
+    <ClInclude Include="Resource\Shader\ToonInstancingShader.h" />
     <ClInclude Include="Resource\Shader\ToonShader.h" />
     <ClInclude Include="Resource\Shader\TransformConstantBuffer.h" />
     <ClInclude Include="Resource\Shader\Transparent3DShader.h" />

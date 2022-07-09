@@ -39,6 +39,7 @@ private:
 	void OnSelectGizmoOperationMode(const char* Label, bool Check);
 	void OnSelectGizmoTransformMode(const char* Label, bool Check);
 	void OnChangeCameraSpeed(float Speed);
+	void OnChangeShadowBias(float Bias);
 	void OnChangeLumWhite(float Speed);
 	void OnChangeMiddleGray(float Speed);
 	void OnChangeAdaptationTime(float Time);
@@ -51,11 +52,6 @@ private:
 	void OnChangeFogStart(float Val);
 	void OnChangeFogEnd(float Val);
 	void OnChangeFogDensity(float Val);
- //	void OnChangeOutlineDepthMultiply(float Val);
- //	void OnChangeOutlineDepthBias(float Val);
- //	void OnChangeOutlineNormalMultiply(float Val);
- //	void OnChangeOutlineNormalBias(float Val);
- //	void OnCheckGrayEnable(const char* Label, bool Check);
 	void OnCheckDebugRender(const char* Label, bool Check);
 	void OnCheckPostProcessing(const char* Label, bool Check);
 	void OnClickPlay();
@@ -87,6 +83,7 @@ private:
 	CIMGUICollapsingHeader* m_RenderBlock;
 	CIMGUICheckBox* m_DebugRender;
 	CIMGUICheckBox* m_PostProcessing;
+	CIMGUISliderFloat* m_ShadowBias;
 	CIMGUISliderFloat* m_AdaptationTime;
 	CIMGUISliderFloat* m_LumWhite;
 	CIMGUISliderFloat* m_MiddleGray;
@@ -99,11 +96,6 @@ private:
 	CIMGUISliderFloat* m_FogStart;
 	CIMGUISliderFloat* m_FogEnd;
 	CIMGUISliderFloat* m_FogDensity;
- //	CIMGUISliderFloat* m_OutlineDepthMultiply;
- //	CIMGUISliderFloat* m_OutlineDepthBias;
- //	CIMGUISliderFloat* m_OutlineNormalMutliply;
- //	CIMGUISliderFloat* m_OutlineNormalBias;
- //	CIMGUICheckBox* m_GrayEnable;
 
 	// PlayStop
 	CIMGUIText* m_PlayState;

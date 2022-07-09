@@ -23,10 +23,6 @@ protected:
     class CAnimationSequenceInstance* m_Animation;
     int     m_InstanceID;
 
-    // Editor, Client단에서 Custom Shader를 적용할 경우 적용할 Shader
-    CSharedPtr<class CShader> m_CustomShader;
-    CSharedPtr<class CShader> m_CustomTransparentShader;
-
 public:
     void SetInstanceID(int ID)
     {
@@ -58,6 +54,8 @@ public:
         return m_Mesh;
     }
 
+    bool IsTransparent() const;
+
     virtual void SetScene(class CScene* Scene) override;
 
 public:
@@ -65,10 +63,6 @@ public:
     void SetMesh(CAnimationMesh* Mesh);
     void SetMaterial(CMaterial* Material, int Index = 0);
     void AddMaterial(CMaterial* Material);
-
-public:
-    bool SetCustomShader(const std::string& Name);
-    bool SetCustomTransparencyShader(const std::string& Name);
 
 public:
     void SetBaseColor(const Vector4& Color, int Index = 0);
@@ -82,14 +76,16 @@ public:
     void SetSpecularPower(float Power, int Index = 0);
     void SetRenderState(class CRenderState* State, int Index = 0);
     void SetRenderState(const std::string& Name, int Index = 0);
-    void SetTransparency(bool Enable, int Index = 0);
     void SetTransparencyAllMaterial(bool Enable);
     void SetOpacity(float Opacity, int Index = 0);
     void AddOpacity(float Opacity, int Index = 0);
     void SetMetallic(bool Metallic, int Index = 0);
 
 public :
-    void SetMaterialShader(const std::string& Name);
+    void SetMaterialShaderAll(const std::string& Name);
+    void SetMaterialShader(int MatIndex, const std::string& ShaderName);
+    void SetMaterialShader(int MatIndex, CGraphicShader* Shader);
+    void SetMaterialShaderParams(int MatIndex, const ShaderParams& Params);
 
 public:
     void AddTexture(int MaterialIndex, int Register, int ShaderType, const std::string& Name, class CTexture* Texture);
@@ -105,7 +101,6 @@ public:
 
 private :
     void LoadAnimationMeshInstanceFromFile(const char* AnimFileName);
-    bool DeleteInstancingCheckList();
 
 public:
     virtual void AddChild(CSceneComponent* Child, const std::string& SocketName = "");
@@ -135,6 +130,10 @@ private :
 
 private:
     void ChangeInstancingLayer();
+    bool DeleteInstancingCheckList();
+    void OnChangeMaterialShader(int MatIndex, CGraphicShader* NewShader);
+    void OnChangeMaterialShaderParams(int MatIndex, const ShaderParams& Params);
+    void OnCreateNewInstancingCheckCount();
 
 public:
     template <typename T>

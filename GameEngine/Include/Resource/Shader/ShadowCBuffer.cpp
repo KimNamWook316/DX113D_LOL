@@ -5,7 +5,7 @@
 CShadowCBuffer::CShadowCBuffer() :
 	m_BufferData{}
 {
-	m_BufferData.ShadowBias = 0.05f;
+	m_BufferData.ShadowBias = 0.00307193305f;
 }
 
 CShadowCBuffer::CShadowCBuffer(const CShadowCBuffer& Buffer) :
