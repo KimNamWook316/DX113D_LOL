@@ -24,6 +24,7 @@
 #include "Component/GameDataComponent.h"
 #include "Component/PlayerDataComponent.h"
 #include "Component/NavMeshComponent.h"
+#include "Component/PaperBurnComponent.h"
 // Window
 #include "Window/ObjectHierarchyWindow.h"
 #include "Window/SceneComponentHierarchyWindow.h"
@@ -371,7 +372,11 @@ CComponent* CEditorManager::CreateComponent(CGameObject* Obj, size_t Type)
 		// Component->EnableEditMode(true);
 		return Component;
 	}
-
+	else if (Type == typeid(CPaperBurnComponent).hash_code())
+	{
+		CPaperBurnComponent* Component = Obj->LoadObjectComponent<CPaperBurnComponent>();
+		return Component;
+	}
 
 	return nullptr;
 }

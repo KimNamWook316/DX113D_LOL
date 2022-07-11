@@ -1,5 +1,7 @@
 #include "GameObjectWidget.h"
 #include "GameObject/GameObject.h"
+#include "IMGUIManager.h"
+#include "../EditorInfo.h"
 #include "IMGUITextInput.h"
 #include "IMGUIText.h"
 #include "IMGUIButton.h"
@@ -8,6 +10,7 @@
 #include "IMGUISeperator.h"
 #include "IMGUIDummy.h"
 #include "IMGUIComboBox.h"
+// SceneComponent
 #include "Component/StaticMeshComponent.h"
 #include "Component/AnimationMeshComponent.h"
 #include "Component/LightComponent.h"
@@ -18,6 +21,9 @@
 #include "Component/ColliderHalfLine.h"
 #include "Component/ColliderRay.h"
 #include "Component/NavMeshComponent.h"
+// ObjectComponent
+#include "Component/PaperBurnComponent.h"
+// SceneCompWidget
 #include "../Widget/StaticMeshComponentWidget.h"
 #include "../Widget/LightComponentWidget.h"
 #include "../Widget/ObjectComponentWidget.h"
@@ -28,8 +34,8 @@
 #include "../Widget/NavMeshComponentWidget.h"
 #include "../Widget/ColliderComponentWidget.h"
 #include "../Widget/ColliderSphereWidget.h"
-#include "IMGUIManager.h"
-#include "../EditorInfo.h"
+// ObjCompWidget
+#include "../Widget/PaperBurnWidget.h"
 
 CGameObjectWidget::CGameObjectWidget()	:
 	m_NameInput(nullptr),
@@ -209,6 +215,14 @@ void CGameObjectWidget::CreateObjectComponentWidget(CObjectComponent* Com)
 
 	CObjectComponentWidget* Widget = nullptr;
 
+	if (TypeID == typeid(CPaperBurnComponent).hash_code())
+	{
+		Widget = AddWidget<CPaperBurnWidget>("PaperBurnWidget");
+	}
+	else
+	{
+		Widget = AddWidget<CObjectComponentWidget>("DefaultObjCompWidget");
+	}
 
 	if (Widget)
 	{

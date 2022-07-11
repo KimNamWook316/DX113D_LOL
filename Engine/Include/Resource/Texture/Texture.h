@@ -57,14 +57,17 @@ public:
 	{
 		return m_vecTextureInfo;
 	}
+
 	ID3D11Texture2D* GetTextureResource(int Index = 0) const
 	{
 		return m_vecTextureInfo[Index]->TextureResource;
 	}
+
 	ID3D11ShaderResourceView* GetResource(int Index = 0)	const
 	{
 		return m_vecTextureInfo[Index]->SRV;
 	}
+
 	ScratchImage* GetScratchImage(int Index = 0) const
 	{
 		return m_vecTextureInfo[Index]->Image;
@@ -111,6 +114,5 @@ public:
 	void SetShader(int Register, int ShaderType, int Index);
 	void ResetShader(int Register, int ShaderType, int Index);
 	bool Save(FILE* pFile);
-
 };
 
