@@ -469,7 +469,7 @@ struct	ParticleCBuffer
 	int AlphaLinearFromCenter;
 
 	// Particle Component 상에서 적용하는 Scale 정보
-	Vector3 CommonRelativeScale;
+	Vector3 CommonWorldScale;
 	float ParticleEmpty5;
 
 	Vector3 CommonParticleComponentWorldPos;

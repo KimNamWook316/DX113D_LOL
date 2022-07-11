@@ -227,9 +227,9 @@ public:
 	}
 
 	// Particle Component 의 Relative Scale 반영하기 
-	void SetCommonRelativeScale(const Vector3& Scale)
+	void SetCommonWorldScale(const Vector3& Scale)
 	{
-		m_BufferData.CommonRelativeScale = Scale;
+		m_BufferData.CommonWorldScale = Scale;
 	}
 
 	// Particle Component 의 World Pos 반영

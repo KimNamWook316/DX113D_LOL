@@ -386,6 +386,10 @@ public:
 	}
 
 public:
+	const Matrix& GetRotationMatrix() const
+	{
+		return m_Transform->GetRotationMatrix();
+	}
 	Vector3 GetWorldScale()	const
 	{
 		return m_Transform->GetWorldScale();

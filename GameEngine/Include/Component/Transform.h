@@ -255,6 +255,11 @@ public:
 		return m_WorldAxis[Axis];
 	}
 
+	const Matrix& GetRotationMatrix()	const
+	{
+		return m_matRot;
+	}
+
 	const Matrix& GetWorldMatrix()	const
 	{
 		return m_matWorld;

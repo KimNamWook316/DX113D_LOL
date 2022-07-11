@@ -328,9 +328,9 @@ public:
 	}
 
 	// Component 의 Relative Scale 반영학
-	void SetCommonRelativeScale(const Vector3& Scale)
+	void SetCommonWorldScale(const Vector3& Scale)
 	{
-		m_CBuffer->SetCommonRelativeScale(Scale);
+		m_CBuffer->SetCommonWorldScale(Scale);
 	}
 	// Set  Particle Type
 	void SetParticleShapeType(ParitcleShapeType Type)
