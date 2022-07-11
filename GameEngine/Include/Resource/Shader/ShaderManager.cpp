@@ -299,7 +299,13 @@ void CShaderManager::ReleaseShader(const std::string& Name)
 	if (iter != m_mapShader.end())
 	{
 		if (iter->second->GetRefCount() == 1)
+		{
 			m_mapShader.erase(iter);
+			if (m_ChangeCallBack)
+			{
+				m_ChangeCallBack();
+			}
+		}
 	}
 }
 

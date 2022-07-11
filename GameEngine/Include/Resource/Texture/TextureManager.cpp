@@ -170,6 +170,11 @@ bool CTextureManager::LoadTexture(const std::string& Name, const TCHAR* FileName
 
 	m_mapTexture.insert(std::make_pair(Name, Texture));
 
+	if (m_ChangeCallBack)
+	{
+		m_ChangeCallBack();
+	}
+
 	return true;
 }
 
@@ -190,6 +195,11 @@ bool CTextureManager::LoadTextureFullPath(const std::string& Name, const TCHAR* 
 
 	m_mapTexture.insert(std::make_pair(Name, Texture));
 
+	if (m_ChangeCallBack)
+	{
+		m_ChangeCallBack();
+	}
+
 	return true;
 }
 
@@ -209,6 +219,11 @@ bool CTextureManager::LoadTextureFullPathMultibyte(const std::string& Name, cons
 	}
 
 	m_mapTexture.insert(std::make_pair(Name, Texture));
+
+	if (m_ChangeCallBack)
+	{
+		m_ChangeCallBack();
+	}
 
 	return true;
 }
@@ -231,6 +246,11 @@ bool CTextureManager::LoadTexture(const std::string& Name, const std::vector<TCH
 
 	m_mapTexture.insert(std::make_pair(Name, Texture));
 
+	if (m_ChangeCallBack)
+	{
+		m_ChangeCallBack();
+	}
+
 	return true;
 }
 
@@ -251,6 +271,11 @@ bool CTextureManager::LoadTextureFullPath(const std::string& Name,
 	}
 
 	m_mapTexture.insert(std::make_pair(Name, Texture));
+
+	if (m_ChangeCallBack)
+	{
+		m_ChangeCallBack();
+	}
 
 	return true;
 }
@@ -338,7 +363,14 @@ void CTextureManager::ReleaseTexture(const std::string& Name)
 	if (iter != m_mapTexture.end())
 	{
 		if (iter->second->GetRefCount() == 1)
+		{
 			m_mapTexture.erase(iter);
+
+			if (m_ChangeCallBack)
+			{
+				m_ChangeCallBack();
+			}
+		}
 	}
 }
 

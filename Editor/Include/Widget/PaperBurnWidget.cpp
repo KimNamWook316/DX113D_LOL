@@ -70,6 +70,8 @@ bool CPaperBurnWidget::Init()
 	m_CenterFilter->SetCallBack(this, &CPaperBurnWidget::OnChangeCenterFilter);
 	m_InFilter->SetCallBack(this, &CPaperBurnWidget::OnChangeInFilter);
 	m_OutlineColor->SetCallBack(this, &CPaperBurnWidget::OnChangeOutColor);
+	m_CenterlineColor->SetCallBack(this, &CPaperBurnWidget::OnChangeCenterColor);
+	m_InlineColor->SetCallBack(this, &CPaperBurnWidget::OnChangeInColor);
 	m_PaperBurnComponent->SetDropCallBack(this, &CPaperBurnWidget::OnDropPaperBurnComponent);
 	m_EndEventType->SetSelectCallback(this, &CPaperBurnWidget::OnSelectEndEventType);
 
@@ -83,6 +85,7 @@ void CPaperBurnWidget::SetObjectComponent(CObjectComponent* Com)
 	CPaperBurnComponent* PCom = dynamic_cast<CPaperBurnComponent*>(m_Component);
 
 	CTexture* PaperBurnTex = PCom->GetTexture();
+	m_TexName->SetText(PaperBurnTex->GetName().c_str());
 	m_Tex->SetTexture(PaperBurnTex);
 
 	m_Inverse->SetCheck(0, PCom->IsInverse());
@@ -212,21 +215,21 @@ void CPaperBurnWidget::OnChangeInColor(const Vector4& Color)
 {
 	CPaperBurnComponent* Com = dynamic_cast<CPaperBurnComponent*>(m_Component);
 
-	Com->SetInLineColor(Vector4(Color.x, Color.y, Color.z, 1.f));
+	Com->SetInLineColor(Color);
 }
 
 void CPaperBurnWidget::OnChangeCenterColor(const Vector4& Color)
 {
 	CPaperBurnComponent* Com = dynamic_cast<CPaperBurnComponent*>(m_Component);
 
-	Com->SetCenterLineColor(Vector4(Color.x, Color.y, Color.z, 1.f));
+	Com->SetCenterLineColor(Color);
 }
 
 void CPaperBurnWidget::OnChangeOutColor(const Vector4& Color)
 {
 	CPaperBurnComponent* Com = dynamic_cast<CPaperBurnComponent*>(m_Component);
 
-	Com->SetOutLineColor(Vector4(Color.x, Color.y, Color.z, 1.f));
+	Com->SetOutLineColor(Color);
 }
 
 void CPaperBurnWidget::OnClickStart()

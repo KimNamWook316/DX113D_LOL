@@ -127,6 +127,9 @@ std::string CEngineUtil::PaperBurnEndEventTypeToString(PaperBurnEndEvent Type)
 	case PaperBurnEndEvent::Return:
 		Ret = "Return";
 		break;
+	case PaperBurnEndEvent::Reset:
+		Ret = "Reset";
+		break;
 	}
 
 	return Ret;
@@ -151,6 +154,10 @@ PaperBurnEndEvent CEngineUtil::StringToPaperBurnEndEvent(const std::string& Type
 	else if (TypeString == "Return")
 	{
 		Type = PaperBurnEndEvent::Return;
+	}
+	else if (TypeString == "Reset")
+	{
+		Type = PaperBurnEndEvent::Reset;
 	}
 
 	return Type;

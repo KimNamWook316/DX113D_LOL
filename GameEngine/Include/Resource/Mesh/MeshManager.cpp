@@ -279,6 +279,11 @@ bool CMeshManager::CreateMesh(Mesh_Type Type, const std::string& Name,
 
 	m_mapMesh.insert(std::make_pair(Name, Mesh));
 
+	if (m_ChangeCallBack)
+	{
+		m_ChangeCallBack();
+	}
+
 	return true;
 }
 
@@ -303,6 +308,11 @@ bool CMeshManager::CreateNavMesh(CNavMesh* NavMesh, const std::string& Name,
 	}
 
 	m_mapMesh.insert(std::make_pair(Name, NavMesh));
+
+	if (m_ChangeCallBack)
+	{
+		m_ChangeCallBack();
+	}
 
 	return true;
 }
@@ -438,6 +448,11 @@ bool CMeshManager::LoadMeshFullPathMultibyte(Mesh_Type Type, const std::string& 
 
 	m_mapMesh.insert(std::make_pair(Name, Mesh));
 
+	if (m_ChangeCallBack)
+	{
+		m_ChangeCallBack();
+	}
+
 	return true;
 }
 
@@ -470,6 +485,12 @@ bool CMeshManager::LoadMeshFullPathMultibyte(std::string& OutName, Mesh_Type Typ
 	}
 
 	m_mapMesh.insert(std::make_pair(OutName, Mesh));
+
+	if (m_ChangeCallBack)
+	{
+		m_ChangeCallBack();
+	}
+
 	return true;
 }
 
@@ -523,7 +544,14 @@ void CMeshManager::ReleaseMesh(const std::string& Name)
 	if (iter != m_mapMesh.end())
 	{
 		if (iter->second->GetRefCount() == 1)
+		{
 			m_mapMesh.erase(iter);
+
+			if (m_ChangeCallBack)
+			{
+				m_ChangeCallBack();
+			}
+		}
 	}
 }
 

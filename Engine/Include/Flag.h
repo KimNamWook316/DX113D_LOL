@@ -382,5 +382,6 @@ enum class PaperBurnEndEvent
 	Destroy,
 	Disable,
 	Return,
+	Reset,
 	Max	
 };

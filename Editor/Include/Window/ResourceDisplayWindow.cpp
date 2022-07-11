@@ -57,6 +57,11 @@ bool CResourceDisplayWindow::Init()
 	RefreshLoadedShaderResources();
 	RefreshLoadedParticleResources();
 
+	CResourceManager::GetInst()->AddTextureResourceChangeCallBack(this, &CResourceDisplayWindow::RefreshLoadedTextureResources);
+	CResourceManager::GetInst()->AddMaterialResourceChangeCallBack(this, &CResourceDisplayWindow::RefreshLoadedMaterialResources);
+	CResourceManager::GetInst()->AddShaderResourceChangeCallBack(this, &CResourceDisplayWindow::RefreshLoadedShaderResources);
+	CResourceManager::GetInst()->AddParticleResourceChangeCallBack(this, &CResourceDisplayWindow::RefreshLoadedParticleResources);
+
 	return true;
 }
 

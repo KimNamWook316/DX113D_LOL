@@ -31,6 +31,49 @@ public:
 	void RenderTarget();
 
 public:
+	template <typename T>
+	void AddMeshResourceChangeCallBack(T* Obj, void(T::* Func)())
+	{
+		m_MeshManager->AddResourceChangeCallBack<T>(Obj, Func);
+	}
+
+	template <typename T>
+	void AddMaterialResourceChangeCallBack(T* Obj, void(T::* Func)())
+	{
+		m_MaterialManager->AddResourceChangeCallBack<T>(Obj, Func);
+	}
+
+	template <typename T>
+	void AddTextureResourceChangeCallBack(T* Obj, void(T::* Func)())
+	{
+		m_TextureManager->AddResourceChangeCallBack<T>(Obj, Func);
+	}
+
+	template <typename T>
+	void AddAnimation3DResourceChangeCallBack(T* Obj, void(T::* Func)())
+	{
+		m_AnimationManager3D->AddResourceChangeCallBack<T>(Obj, Func);
+	}
+
+	template <typename T>
+	void AddSoundResourceChangeCallBack(T* Obj, void(T::* Func)())
+	{
+		m_SoundManager->AddResourceChangeCallBack<T>(Obj, Func);
+	}
+
+	template <typename T>
+	void AddParticleResourceChangeCallBack(T* Obj, void(T::* Func)())
+	{
+		m_ParticleManager->AddResourceChangeCallBack<T>(Obj, Func);
+	}
+
+	template <typename T>
+	void AddShaderResourceChangeCallBack(T* Obj, void(T::* Func)())
+	{
+		m_ShaderManager->AddResourceChangeCallBack<T>(Obj, Func);
+	}
+
+public:
 	 CTextureManager* GetTextureManager() const
 	{
 		return m_TextureManager;
@@ -238,7 +281,6 @@ public: // =================== Sequence 3D =====================
 	void DeleteSequence3D(const std::string& Name);
 	bool EditSequenceClip(class CAnimationSequence* ExistingSequence, const std::string& NewName,
 		int StartFrame, int EndFrame, const char* SaveFullPathMultibyte);
-
 
 	bool LoadSkeleton(const std::string& Name, const TCHAR* FileName,
 		const std::string& PathName = ANIMATION_PATH,

@@ -38,6 +38,11 @@ bool CParticleManager::CreateParticle(const std::string& Name)
 
 	m_mapParticle.insert(std::make_pair(Name, Particle));
 
+	if (m_ChangeCallBack)
+	{
+		m_ChangeCallBack();
+	}
+
 	return true;
 }
 
@@ -58,7 +63,14 @@ void CParticleManager::ReleaseParticle(const std::string& Name)
 	if (iter != m_mapParticle.end())
 	{
 		if (iter->second->GetRefCount() == 1)
+		{
+			if (m_ChangeCallBack)
+			{
+				m_ChangeCallBack();
+			}
+
 			m_mapParticle.erase(iter);
+		}
 	}
 }
 
@@ -70,6 +82,11 @@ void CParticleManager::AddParticle(CParticle* Particle)
 		return;
 
 	m_mapParticle.insert(std::make_pair(Particle->GetName(), Particle));
+
+	if (m_ChangeCallBack)
+	{
+		m_ChangeCallBack();
+	}
 }
 
 void CParticleManager::ChangeParticleKeyName(const std::string& OldKeyName, const std::string& NewKeyName)
@@ -89,6 +106,11 @@ void CParticleManager::ChangeParticleKeyName(const std::string& OldKeyName, cons
 
 	// 기존 것은 지운다
 	DeleteParticle(OldKeyName);
+
+	if (m_ChangeCallBack)
+	{
+		m_ChangeCallBack();
+	}
 }
 
 bool CParticleManager::DeleteParticle(const std::string& ParticleName)
@@ -96,7 +118,14 @@ bool CParticleManager::DeleteParticle(const std::string& ParticleName)
 	auto iter = m_mapParticle.find(ParticleName);
 
 	if (iter == m_mapParticle.end())
+	{
+		if (m_ChangeCallBack)
+		{
+			m_ChangeCallBack();
+		}
+
 		return false;
+	}
 
 	m_mapParticle.erase(iter);
 

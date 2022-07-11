@@ -72,6 +72,20 @@ void CPaperBurnComponent::StartPaperBurn()
 	m_StartPaperBurn = true;
 }
 
+void CPaperBurnComponent::ResetPaperBurn()
+{
+	m_StartPaperBurn = false;
+	m_Filter = 0.f;
+
+	auto iter = m_vecMaterial.begin();
+	auto iterEnd = m_vecMaterial.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		(*iter)->SetPaperBurn(false);
+	}
+}
+
 void CPaperBurnComponent::SetInverse(bool Enable)
 {
 	m_CBuffer->SetInverse(Enable);
@@ -264,6 +278,9 @@ void CPaperBurnComponent::Update(float DeltaTime)
 				break;
 			case PaperBurnEndEvent::Return:
 				// TODO : Object Pool에 Return 해야 하는 경우
+				break;
+			case PaperBurnEndEvent::Reset:
+				ResetPaperBurn();
 				break;
 			}
 		}

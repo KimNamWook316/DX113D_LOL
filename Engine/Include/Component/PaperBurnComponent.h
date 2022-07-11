@@ -31,6 +31,7 @@ public:
 		m_CBuffer->SetInstancingInfo(Info);
 	}
 	void StartPaperBurn();
+	void ResetPaperBurn();
 	void SetInverse(bool Enable);
 	void SetFinishTime(float Time)
 	{

@@ -130,7 +130,13 @@ void CMaterialManager::ReleaseMaterial(const std::string& Name)
 	if (iter != m_mapMaterial.end())
 	{
 		if (iter->second->GetRefCount() == 1)
+		{
+			if (m_ChangeCallBack)
+			{
+				m_ChangeCallBack();
+			}
 			m_mapMaterial.erase(iter);
+		}
 	}
 }
 
@@ -164,6 +170,11 @@ CMaterial* CMaterialManager::LoadMaterialFullPathMultibyte(const char* FullPath)
 	
 	m_mapMaterial.insert(std::make_pair(MaterialName, LoadedMaterial));
 
+	if (m_ChangeCallBack)
+	{
+		m_ChangeCallBack();
+	}
+
 	return LoadedMaterial;
 }
 
@@ -175,4 +186,9 @@ void CMaterialManager::AddMaterial(CMaterial* Material)
 		return;
 
 	m_mapMaterial.insert(std::make_pair(Material->GetName(), Material));
+
+	if (m_ChangeCallBack)
+	{
+		m_ChangeCallBack();
+	}
 }
