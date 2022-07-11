@@ -64,18 +64,6 @@ cbuffer	ParticleCBuffer : register(b11)
 	int ParticleEmpty6;
 };
 
-/*
-if (g_ParticleBounce == 1)
-{
-	if (g_ParticleArray[ThreadID.x].InitWorldPosY >= g_ParticleArray[ThreadID.x].WorldPos.y)
-	{
-		g_ParticleArray[ThreadID.x].FallTime = 0.f;
-		// g_ParticleArray[ThreadID.x].Speed *= 0.98f;
-		g_ParticleArray[ThreadID.x].Speed *= g_ParticleBounceResist;
-	}
-}
-*/
-
 #define	GRAVITY	9.8f
 
 struct ParticleInfo
@@ -346,8 +334,9 @@ void ApplyParticleMove(float3 RandomPos, int ThreadID, float RandomAngle, float 
 		// ex) 360도 => -180 ~ 180 도 사이의 랜덤한 각도로 회전을 한다고 생각하면 된다.
 		float3	ConvertAngle = (RandomPos.xyz * 2.f - 1.f) * g_ParticleMoveAngle;
 
+		// Particle Component 의 World Rot Angle 정도도 더해준다.
 		// float3x3 matRot = ComputeRotationMatrix(ConvertAngle);
-		float3x3 matRot = ComputeRotationMatrix(ConvertAngle);
+		float3x3 matRot = ComputeRotationMatrix(ConvertAngle + g_ParticleRotationAngle);
 
 		// 현재 Rot 상으로는, Particle Rotation 기능만 수행중이다.
 		float3 OriginDir = mul(g_ParticleMoveDir, matRot);
@@ -596,7 +585,21 @@ void ParticleUpdate(uint3 ThreadID : SV_DispatchThreadID)
 		float RandomAngle = 360.f * Rand;
 
 		float3	StartRange = g_ParticleStartMax - g_ParticleStartMin;
+
+		// StartMin, StartMax 도 Particle Component 의 Rot 을 반영해서 세팅해야 한다.
+		// 그런데, StartMin, StartMax 에 대한 회전은, CPU 측에서 미리 다 세팅해준 이후에 넘겨준다.
+		// 왜 ?
+		// 1) 아래와 같이 한다는 것은, 예를 들어, 내가 x 축으로 -10 이동하고, y축 으로 45 도 회전한다고 하면
+		// 말 그대로 x 축 이동 이후, 원점은 그대로 있던 상태에서, 해당 원점을 기준으로 y축 회전
+		// 즉, 마치 공전의 효과가 나타나게 되는 것이다.
+
+		// 2) 반면, 현재 코드와 같이 CPU 측에서 Rot을 반영한다면
+		// - 먼저 y 축으로 45도 회전 시키고 -> 그 다음 x 축 -10 이동 시킨 효과가 나오는 것이다.
+		// float3 ParticleStartMaxPos = mul(g_ParticleStartMax, ComputeRotationMatrix(g_ParticleRotationAngle));
+		// float3 ParticleStartMinPos = mul(g_ParticleStartMin, ComputeRotationMatrix(g_ParticleRotationAngle));
+
 		g_ParticleArray[ThreadID.x].WorldPos = Rand * (g_ParticleStartMax - g_ParticleStartMin) + g_ParticleStartMin;
+
 		g_ParticleArray[ThreadID.x].InitWorldPosY = g_ParticleArray[ThreadID.x].WorldPos.y;
 
 		g_ParticleArray[ThreadID.x].FallTime = 0.f;
@@ -798,7 +801,7 @@ void ParticleGS(point VertexParticleOutput input[1],
 		float3	WorldPos = g_ParticleArraySRV[InstanceID].WorldPos + mul(g_ParticleLocalPos[i] * Scale, matRot);
 
 		// Particle Component 의 World Post 도 더한다.
-		WorldPos += g_ParticleShareSRV[0].ParticleComponentWorldPos;
+		// WorldPos += g_ParticleShareSRV[0].ParticleComponentWorldPos;
 
 		OutputArray[i].ProjPos = mul(float4(WorldPos, 1.f), g_matVP);
 		// OutputArray[i].ProjPos.xyz = mul(OutputArray[i].ProjPos.xyz, matRot);
