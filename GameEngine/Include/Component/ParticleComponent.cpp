@@ -210,6 +210,8 @@ void CParticleComponent::PostUpdate(float DeltaTime)
 
 	CSceneComponent::PostUpdate(DeltaTime);
 
+	Vector3	StartMin, StartMax;
+
 	CParticleConstantBuffer* CBuffer = m_Particle->GetCBuffer();
 
 	// Update Shader를 동작시킨다.
@@ -217,14 +219,14 @@ void CParticleComponent::PostUpdate(float DeltaTime)
 	// 1) Particle Component 의 World Rot 을 반영하여 회전 시킨 이후
 	// 2) Particle Component 의 WorldPos 를 더해준다.
 	// ( Rot  -> Translation )
-	Vector3	StartMin = CBuffer->GetStartMin() * GetWorldRot();
-	Vector3 StartMax = CBuffer->GetStartMax() * GetWorldRot();
+	// Vector3	StartMin = CBuffer->GetStartMin() * GetWorldRot();
+	// Vector3 StartMax = CBuffer->GetStartMax() * GetWorldRot();
+	// 
+	// StartMin += GetWorldPos();
+	// StartMax += GetWorldPos();
 
-	StartMin += GetWorldPos();
-	StartMax += GetWorldPos();
-
-	// StartMin = GetWorldPos() + CBuffer->GetStartMin();
-	// StartMax = GetWorldPos() + CBuffer->GetStartMax();
+	StartMin = GetWorldPos() + CBuffer->GetStartMin();
+	StartMax = GetWorldPos() + CBuffer->GetStartMax();
 
 	m_CBuffer->SetStartMin(StartMin);
 	m_CBuffer->SetStartMax(StartMax);

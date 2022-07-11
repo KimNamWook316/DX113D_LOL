@@ -598,7 +598,13 @@ void ParticleUpdate(uint3 ThreadID : SV_DispatchThreadID)
 		// float3 ParticleStartMaxPos = mul(g_ParticleStartMax, ComputeRotationMatrix(g_ParticleRotationAngle));
 		// float3 ParticleStartMinPos = mul(g_ParticleStartMin, ComputeRotationMatrix(g_ParticleRotationAngle));
 
-		g_ParticleArray[ThreadID.x].WorldPos = Rand * (g_ParticleStartMax - g_ParticleStartMin) + g_ParticleStartMin;
+		float XRand = GetRandomNumber(key); // 0 에서 1 사이의 숫자 
+		float YRand = GetRandomNumber(key * XRand);
+		float ZRand = GetRandomNumber((ThreadID.x * 100.f) % (float)(g_ParticleSpawnCountMax * YRand));
+
+		g_ParticleArray[ThreadID.x].WorldPos.x = XRand * (g_ParticleStartMax.x - g_ParticleStartMin.x) + g_ParticleStartMin.x;
+		g_ParticleArray[ThreadID.x].WorldPos.y = YRand * (g_ParticleStartMax.y - g_ParticleStartMin.y) + g_ParticleStartMin.y;
+		g_ParticleArray[ThreadID.x].WorldPos.z = ZRand * (g_ParticleStartMax.z - g_ParticleStartMin.z) + g_ParticleStartMin.z;
 
 		g_ParticleArray[ThreadID.x].InitWorldPosY = g_ParticleArray[ThreadID.x].WorldPos.y;
 
