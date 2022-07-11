@@ -160,7 +160,11 @@ private:
     class CIMGUIInputFloat3* m_MinSeperateRotAngleEdit;
     class CIMGUIInputFloat3* m_MaxSeperateRotAngleEdit;
 
-    class CIMGUICheckBox* m_LinearRotate;
+    // 진행 방향에 따른 회전 처리
+    class CIMGUICheckBox* m_RotateAccordingToDir;
+
+    // 방햐엥 따른 UV Clipping
+    class CIMGUICheckBox* m_UVClippingAccordingToDir;
 
     // Particle 이 사용하는 Material Texture
     class CIMGUIImage* m_ParticleTexture;
@@ -209,6 +213,9 @@ private:
 
     // Diable Alive
     void OnDisableNewAlive(const char*, bool);
+
+    // UVClipping
+    void OnIsUVClippingReflectingMoveDirEdit(const char*, bool);
 
     // StartMin,Max
     void OnStartMinEdit(const Vector3&);

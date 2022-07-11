@@ -218,6 +218,7 @@ void CParticleComponent::PostUpdate(float DeltaTime)
 	// 2) Particle Component 의 Scalilng 까지 적용한다. (우선 RelativeScale 만 적용)
 	// 3) Translation은 처리하지 않는다. StartMin, Max 는, Local Space 상에서의 Min, Max 를 의미하게 할 것이다.
 	// ( Rot  -> Translation )
+	Vector3 WorldScale = GetWorldScale();
 	Vector3	StartMin = CBuffer->GetStartMin() * GetWorldScale();
 	StartMin.TransformCoord(GetRotationMatrix());
 
@@ -241,8 +242,7 @@ void CParticleComponent::PostUpdate(float DeltaTime)
 	
 	// Relative Scale 정보를 세팅한다.
 	m_CBuffer->SetCommonWorldScale(GetWorldScale());
-	Vector3 WorldPos = GetWorldPos();
-	m_CBuffer->SetCommonParticleComponentWorldPos(WorldPos);
+	m_CBuffer->SetCommonParticleComponentWorldPos(GetWorldPos());
 
 	m_CBuffer->UpdateCBuffer();
 
@@ -284,6 +284,10 @@ void CParticleComponent::RenderParticleEffectEditor()
 	if (!m_CBuffer)
 		return;
 
+	// 상수 버퍼를 다시 한번 Setting 해준다.
+	// 계산 셰이더 외에도, Render 과정에서도 상수 버퍼 정보를 사용할 수 있게 하는 것이다.
+	m_CBuffer->UpdateCBuffer();
+
 	CSceneComponent::RenderParticleEffectEditor();
 
 	size_t	BufferCount = m_vecStructuredBuffer.size();
@@ -316,6 +320,9 @@ void CParticleComponent::Render()
 	if (!m_CBuffer)
 		return;
 
+	// 계산 셰이더 외에도, Render 과정에서도 상수 버퍼 정보를 사용할 수 있게 하는 것이다.
+	m_CBuffer->UpdateCBuffer();
+
 	CSceneComponent::Render();
 
 	size_t	BufferCount = m_vecStructuredBuffer.size();
@@ -328,16 +335,13 @@ void CParticleComponent::Render()
 	if (m_Material)
 		m_Material->Render();
 
-
 	// 인스턴싱을 이용해서 그려준다.
 	m_Mesh->RenderInstancing(m_CBuffer->GetSpawnCount());
-
 
 	for (size_t i = 0; i < BufferCount; ++i)
 	{
 		m_vecStructuredBuffer[i]->ResetShader(30 + (int)i, (int)Buffer_Shader_Type::Geometry);
 	}
-
 
 	if (m_Material)
 		m_Material->Reset();

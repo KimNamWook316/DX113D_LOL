@@ -57,7 +57,7 @@ cbuffer	ParticleCBuffer : register(b11)
 
 	// Particle Component Relative Scale
 	float3 g_ParticleCommonWorldScale;
-	int ParticleEmpty5;
+	int g_ParticleUVClippingReflectingMoveDir;
 
 	// Particle Component WorldPos
 	float3 g_ParticleComponentWorldPos;
@@ -411,7 +411,8 @@ void ApplyRotationAccordingToDir(int ThreadID)
 
 			if (DirVector.x > 0.f)
 			{
-				RotAngle = (180 - RotAngle);
+				// RotAngle = (180 - RotAngle);
+				RotAngle = (180 - RotAngle) + 180;
 			}
 
 			g_ParticleArray[ThreadID.x].FinalSeperateRotAngle += float3(0.f, RotAngle, 0.f);
@@ -428,7 +429,7 @@ void ApplyRotationAccordingToDir(int ThreadID)
 
 			if (DirVector.x > 0.f)
 			{
-				RotAngle = (180 - RotAngle);
+				RotAngle = (180 - RotAngle) + 180;
 			}
 
 			g_ParticleArray[ThreadID.x].FinalSeperateRotAngle += float3(0.f, 0.f, RotAngle );
@@ -717,6 +718,8 @@ struct GeometryParticleOutput
 	float4	Color : COLOR;
 	float2	UV	: TEXCOORD;
 	float4	ProjPos : POSITION;
+	float      LifeTimeRatio : RATIO;
+	// int         LocalXPlusMoveDir : MOVEDIR; // 기본 1 로 세팅 (만약 Local Space 기준, X 음의 방향으로 이동하면, 0으로 세팅)
 };
 
 static float3	g_ParticleLocalPos[4] =
@@ -739,6 +742,8 @@ void ParticleGS(point VertexParticleOutput input[1],
 
 	if (g_ParticleArraySRV[InstanceID].Alive == 0)
 		return;
+
+	float	Ratio = g_ParticleArraySRV[InstanceID].LifeTime / g_ParticleArraySRV[InstanceID].LifeTimeMax;
 
 	GeometryParticleOutput	OutputArray[4] =
 	{
@@ -791,7 +796,7 @@ void ParticleGS(point VertexParticleOutput input[1],
 		OutputArray[3].UV = float2(UVEndPos.x, UVEndPos.y);
 	}
 
-	float	Ratio = g_ParticleArraySRV[InstanceID].LifeTime / g_ParticleArraySRV[InstanceID].LifeTimeMax;
+	
 	
 	float3	Scale = lerp(
 		g_ParticleShareSRV[0].ScaleMin * g_ParticleShareSRV[0].CommonWorldScale, 
@@ -820,8 +825,16 @@ void ParticleGS(point VertexParticleOutput input[1],
 
 		OutputArray[i].ProjPos = mul(float4(WorldPos, 1.f), g_matVP);
 		// OutputArray[i].ProjPos.xyz = mul(OutputArray[i].ProjPos.xyz, matRot);
+
 		OutputArray[i].Pos = OutputArray[i].ProjPos;
+
 		OutputArray[i].Color = Color;
+
+		OutputArray[i].LifeTimeRatio = Ratio;
+
+		// OutputArray[i].LocalXPlusMoveDir = 1;
+		// if (g_ParticleArraySRV[InstanceID].Dir.x < 0.f)
+		// 	OutputArray[i].LocalXPlusMoveDir = 0;
 	}
 
 	output.Append(OutputArray[0]);
@@ -840,6 +853,23 @@ PSOutput_Single ParticlePS(GeometryParticleOutput input)
 	PSOutput_Single output = (PSOutput_Single)0;
 
 	float4 Color = g_BaseTexture.Sample(g_BaseSmp, input.UV);
+
+	// UV Cllipping 효과
+	// 오른쪽 부터, 왼쪽 방향으로 서서히 사라지는 효과를 줄 것이다.
+	// 이를 위해서는 LifeTime 을 사용해야 한다.
+	// 핵심은, 향하는 방향의 끝점 부분만 계속 남아있게 하는 것이다.
+	// UV 좌표 0 ~ 1. 상에서, 가상의 세로 선이 존재한다고 가정
+	// 먼저, Local Space 기준, x 의 양의 방향으로 계속 이동하는 Particle 이라고 가정
+	// 해당 선은, 왼쪽에서 오른쪽으로 점점 이동
+	// 해당 선 왼쪽에 위치한 UV 는 아예 Alpha 값을 0으로 세팅하여 안보이게 할 것이다.
+	// 그리고 해당 가로 선은, LifeTime / LifeTimeMax 비율이 증가할 수록, 오른쪽으로 이동하는 형태를 띄게 할 것이다.
+	if (g_ParticleUVClippingReflectingMoveDir == 0)
+	{
+		// if (input.LocalXPlusMoveDir == 1)
+		if (input.UV.x > 1 - input.LifeTimeRatio)
+			clip(-1);
+	}
+
 
 	if (Color.a == 0.f || input.Color.a == 0.f)
 		clip(-1);
@@ -861,6 +891,11 @@ PSOutput_Single ParticlePS(GeometryParticleOutput input)
 
 	Alpha = clamp(Alpha, 0.f, 1.f);
 
+	// UV Clipping
+	// 오른쪽 Texture 부터, 왼쪽 방향으로, 서서히 사라지는 느낌
+	// 일단은, Geometry Shader 에서 구현해줄 것이다.
+
+	// Paper Burn
 	Color = PaperBurn2D(Color * input.Color, input.UV);
 
 	output.Color = Color;

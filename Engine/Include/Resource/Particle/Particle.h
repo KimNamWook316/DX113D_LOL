@@ -305,7 +305,17 @@ public:
 	{
 		return m_CBuffer->IsDisableNewAlive();
 	}
+	int IsUVClippingReflectingMoveDir() const
+	{
+		return m_CBuffer->IsUVClippingReflectingMoveDir();
+	}
 public:
+	// UV Clipping
+	void SetUVClippingReflectingMoveDirEnable(bool Enable)
+	{
+		m_CBuffer->SetUVClippingReflectingMoveDirEnable(Enable);
+	}
+	// Restart 기능 (구조화 버퍼 내의 특정 값을 초기화 해주는 것)
 	void SetResetParticleSharedInfoSumSpawnCnt(bool Enable)
 	{
 		m_CBuffer->SetResetParticleSharedInfoSumSpawnCnt(Enable);

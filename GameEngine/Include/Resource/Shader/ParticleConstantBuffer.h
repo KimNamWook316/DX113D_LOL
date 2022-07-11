@@ -207,7 +207,17 @@ public:
 	{
 		return m_BufferData.DisableNewAlive;
 	}
+	int IsUVClippingReflectingMoveDir() const
+	{
+		return m_BufferData.UVClippingReflectingMoveDir;
+	}
 public:
+	// UV Clipping
+	void SetUVClippingReflectingMoveDirEnable(bool Enable)
+	{
+		m_BufferData.UVClippingReflectingMoveDir = Enable ? 1 : 0;
+	}
+
 	// Restart 버튼 ( 설명은 생성자 참고)
 	void SetResetParticleSharedInfoSumSpawnCnt(bool Enable)
 	{

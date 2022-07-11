@@ -470,7 +470,9 @@ struct	ParticleCBuffer
 
 	// Particle Component 상에서 적용하는 Scale 정보
 	Vector3 CommonWorldScale;
-	float ParticleEmpty5;
+
+	// 진행 방향으로 점점 UV Clipping 되는 효과 구현하기 
+	int UVClippingReflectingMoveDir;
 
 	Vector3 CommonParticleComponentWorldPos;
 	float ParticleEmpty6;

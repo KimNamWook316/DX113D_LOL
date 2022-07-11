@@ -47,6 +47,9 @@ CParticleConstantBuffer::CParticleConstantBuffer() :
 	// Restart 버튼을 누르게 되면, 해당 값이 1로 바뀐다.
 	// 단, 다음 Frame 에서는 다시 0으로 세팅해준다.
 	m_BufferData.ResetParticleSharedInfoSumSpawnCnt = 0;
+
+	// 처음에는 UV Clipping 처리를 하지 않는다.
+	m_BufferData.UVClippingReflectingMoveDir = 0;
 }
 
 CParticleConstantBuffer::CParticleConstantBuffer(const CParticleConstantBuffer& Buffer) :

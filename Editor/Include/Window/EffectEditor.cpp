@@ -278,10 +278,14 @@ bool CEffectEditor::Init()
     Line->SetOffsetX(120.f);
 
     // 진행 방향에 따른 회전 적용 -> 단, 해당 세팅은, m_SpecialMoveDirType 가 유효하게 세팅되어야만 가능하다.
-    m_LinearRotate = Tree->AddWidget<CIMGUICheckBox>("Rot To Dir", 80.f);
-    m_LinearRotate->AddCheckInfo("Rot To Dir");
-    m_LinearRotate->SetCallBackLabel<CEffectEditor>(this, &CEffectEditor::OnIsLinearRot);
+    m_RotateAccordingToDir = Tree->AddWidget<CIMGUICheckBox>("Rot To Dir", 80.f);
+    m_RotateAccordingToDir->AddCheckInfo("Rot To Dir");
+    m_RotateAccordingToDir->SetCallBackLabel<CEffectEditor>(this, &CEffectEditor::OnIsLinearRot);
 
+    // 방햐엥 따른 UV Clipping
+    m_UVClippingAccordingToDir = Tree->AddWidget<CIMGUICheckBox>("UV Clip To Dir", 80.f);
+    m_UVClippingAccordingToDir->AddCheckInfo("UV Clip To Dir");
+    m_UVClippingAccordingToDir->SetCallBackLabel<CEffectEditor>(this, &CEffectEditor::OnIsUVClippingReflectingMoveDirEdit);
     /*
     Line = Tree->AddWidget<CIMGUISameLine>("Line");
     Line->SetOffsetX(90.f);
@@ -765,6 +769,15 @@ void CEffectEditor::OnDisableNewAlive(const char*, bool Enable)
 
     m_ParticleClass->SetDisableNewAlive(Enable);
     dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetDisableNewAlive(Enable);
+}
+
+void CEffectEditor::OnIsUVClippingReflectingMoveDirEdit(const char*, bool Enable)
+{
+    if (!m_ParticleClass)
+        return;
+
+    m_ParticleClass->SetUVClippingReflectingMoveDirEnable(Enable);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetUVClippingReflectingMoveDirEnable(Enable);
 }
 
 // StartMin, Max , SpawnCountMax 의 경우, Particle Component 에서 Particle 의 상수 버퍼로 부터 정보를 바로 얻어와서 Post Update 에서 계산
@@ -1690,7 +1703,10 @@ void CEffectEditor::SetIMGUIReflectParticle(CParticle* Particle)
     m_MaxSeperateRotAngleEdit->SetVal(Particle->GetMaxSeperateRotAngle());
 
     // Linaer Rotate
-    m_LinearRotate->SetCheck(0, Particle->IsSeperateLinearRotate());
+    m_RotateAccordingToDir->SetCheck(0, Particle->IsSeperateLinearRotate());
+
+    // UV Clip To Dir
+    m_UVClippingAccordingToDir->SetCheck(0, Particle->IsUVClippingReflectingMoveDir());
 }
 
 void CEffectEditor::SetIMGUIReflectObjectCamera()
