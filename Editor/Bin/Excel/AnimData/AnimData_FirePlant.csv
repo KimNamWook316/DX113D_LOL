@@ -1,0 +1,6 @@
+﻿AnimData_FirePlant,,
+,FrameStart,FrameEnd
+Idle,0,61
+Bite,62,144
+Die,145,204
+Hit,205,219
