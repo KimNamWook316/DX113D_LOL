@@ -3,7 +3,7 @@
 
 #define PARTICLE_INIT_ANGLE 1000
 
-cbuffer	ParticleCBuffer : register(b11)
+cbuffer	ParticleCBuffer : register(b7)
 {
 	uint	g_ParticleSpawnEnable;	// 파티클 생성여부
 	float3	g_ParticleStartMin;		// 파티클이 생성될 영역의 Min
@@ -864,7 +864,7 @@ PSOutput_Single ParticlePS(GeometryParticleOutput input)
 	// 해당 선은, 왼쪽에서 오른쪽으로 점점 이동
 	// 해당 선 왼쪽에 위치한 UV 는 아예 Alpha 값을 0으로 세팅하여 안보이게 할 것이다.
 	// 그리고 해당 가로 선은, LifeTime / LifeTimeMax 비율이 증가할 수록, 오른쪽으로 이동하는 형태를 띄게 할 것이다.
-	if (g_ParticleUVClippingReflectingMoveDir == 0)
+	if (g_ParticleUVClippingReflectingMoveDir == 1)
 	{
 		if (input.LocalXPlusMoveDir == 1)
 		{
