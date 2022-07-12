@@ -124,7 +124,7 @@ public:
 
 	float GetCenterFilter() const
 	{
-		return m_BufferData.OutFilter;
+		return m_BufferData.CenterFilter;
 	}
 };
 

@@ -52,8 +52,6 @@ bool CPaperBurnWidget::Init()
 	// Initial Value
 	m_Tex->SetTableTitle("Burn Texture");
 	m_Inverse->AddCheckInfo("Inverse");
-	m_PaperBurnComponent->ReadOnly(true);
-	m_PaperBurnComponent->SetHintText("Drop SceneComponent Here");
 
 	for (int i = 0; i < (int)PaperBurnEndEvent::Max; ++i)
 	{

@@ -386,11 +386,11 @@ bool CPaperBurnComponent::Load(FILE* File)
 	fread(&Inverse, sizeof(bool), 1, File);
 
 	m_CBuffer->SetInColor(InCol);
-	m_CBuffer->SetOutColor(InCol);
-	m_CBuffer->SetCenterColor(InCol);
+	m_CBuffer->SetOutColor(OutCol);
+	m_CBuffer->SetCenterColor(CenterCol);
 	m_CBuffer->SetInFilter(InFil);
-	m_CBuffer->SetOutFilter(InFil);
-	m_CBuffer->SetCenterFilter(InFil);
+	m_CBuffer->SetOutFilter(OutFil);
+	m_CBuffer->SetCenterFilter(CenterFil);
 	m_CBuffer->SetInverse(Inverse);
 
 	fread(&m_FinishTime, sizeof(float), 1, File);
