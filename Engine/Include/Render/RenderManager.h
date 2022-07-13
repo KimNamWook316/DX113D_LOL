@@ -6,6 +6,22 @@
 #include "../Resource/Shader/StructuredBuffer.h"
 #include "../Resource/Shader/OutlineConstantBuffer.h"
 
+enum class RenderLayerType
+{
+	Back,
+	Default,
+	PostDefault,
+	Transparency,
+	Decal,
+	Particle,
+	ScreenWidgetComponent,
+	AnimationEditor,
+	ParticleEditor,
+#ifdef _DEBUG
+	Collider
+#endif // _DEBUG
+};
+
 struct RenderInstancingList
 {
 	std::list<class CSceneComponent*> RenderList;
@@ -94,7 +110,6 @@ private:
 
 	class CRenderState* m_DepthDisable;
 	class CRenderState* m_AlphaBlend;
-	class CRenderState* m_AlphaBlendMRT;
 	class CRenderState* m_LightAccBlend;
 
 	CSharedPtr<class CShader> m_LightBlendShader;
@@ -107,7 +122,6 @@ private:
 	std::vector<CSharedPtr<CRenderTarget>>	m_vecGBuffer;
 	std::vector<CSharedPtr<CRenderTarget>>	m_vecDecal;
 	std::vector<CSharedPtr<CRenderTarget>>	m_vecLightBuffer;
-	std::vector<CSharedPtr<CRenderTarget>>	m_vecTransparent;
 
 	// Shadow
 	bool m_Shadow;

@@ -93,6 +93,16 @@ void CGraphicShader::SetShader()
     CDevice::GetInst()->GetContext()->GSSetShader(m_GS, nullptr, 0);
 
     CDevice::GetInst()->GetContext()->IASetInputLayout(m_InputLayout);
+
+    SetShaderResources();
+}
+
+void CGraphicShader::SetShaderResources()
+{
+}
+
+void CGraphicShader::ResetShaderResources()
+{
 }
 
 void CGraphicShader::SetShaderParams(const ShaderParams& Params)

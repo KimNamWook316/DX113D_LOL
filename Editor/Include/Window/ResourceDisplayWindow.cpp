@@ -10,6 +10,7 @@
 #include "Render/RenderStateManager.h"
 #include "Resource/Shader/ShaderManager.h"
 #include "Resource/Particle/ParticleManager.h"
+#include "Resource/Mesh/MeshManager.h"
 
 CResourceDisplayWindow::CResourceDisplayWindow()
 {
@@ -30,6 +31,11 @@ bool CResourceDisplayWindow::Init()
 	AddedText->SetText("Hello");
 
 	m_vecResourceTapList.push_back(m_TextureList);
+
+	// Mesh List
+	m_MeshList = AddWidget<CIMGUIWidgetList>("Mesh", 100.f, 20.f);
+	m_MeshList->SetApplyHideEffect(true);
+	m_vecResourceTapList.push_back(m_MeshList);
 
 	// Material List
 	m_MaterialList = AddWidget<CIMGUIWidgetList>("Material", 100.f, 20.f);
@@ -55,12 +61,14 @@ bool CResourceDisplayWindow::Init()
 	RefreshLoadedMaterialResources();
 	RefreshLoadedRenderStateResources();
 	RefreshLoadedShaderResources();
+	RefreshLoadedMeshResources();
 	RefreshLoadedParticleResources();
 
 	CResourceManager::GetInst()->AddTextureResourceChangeCallBack(this, &CResourceDisplayWindow::RefreshLoadedTextureResources);
 	CResourceManager::GetInst()->AddMaterialResourceChangeCallBack(this, &CResourceDisplayWindow::RefreshLoadedMaterialResources);
 	CResourceManager::GetInst()->AddShaderResourceChangeCallBack(this, &CResourceDisplayWindow::RefreshLoadedShaderResources);
 	CResourceManager::GetInst()->AddParticleResourceChangeCallBack(this, &CResourceDisplayWindow::RefreshLoadedParticleResources);
+	CResourceManager::GetInst()->AddMeshResourceChangeCallBack(this, &CResourceDisplayWindow::RefreshLoadedMeshResources);
 
 	return true;
 }
@@ -127,6 +135,22 @@ void CResourceDisplayWindow::RefreshLoadedParticleResources()
 	for (; iter != iterEnd; ++iter)
 	{
 		CIMGUIText* AddedText = m_ParticleList->AddWidget<CIMGUIText>(iter->first);
+		AddedText->SetText(iter->first.c_str());
+	}
+}
+
+void CResourceDisplayWindow::RefreshLoadedMeshResources()
+{
+	m_MeshList->ClearWidget();
+
+	const std::unordered_map<std::string, CSharedPtr<class CMesh>>& MapMesh = CResourceManager::GetInst()->GetMeshManager()->GetMapMesh();
+	
+	auto iter = MapMesh.begin();
+	auto iterEnd = MapMesh.end();
+	
+	for (; iter != iterEnd; ++iter)
+	{
+		CIMGUIText* AddedText = m_MeshList->AddWidget<CIMGUIText>(iter->first);
 		AddedText->SetText(iter->first.c_str());
 	}
 }

@@ -857,3 +857,10 @@ struct NavMeshPolygon
 	Vector3 m_Min;
 	Vector3 m_Max;
 };
+
+struct WaterCBuffer
+{
+	float Speed;
+	float FoamDepthThreshold;
+	Vector2 Empty;
+};

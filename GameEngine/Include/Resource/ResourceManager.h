@@ -94,6 +94,10 @@ public:
 	 {
 		 return m_ExcelManager;
 	 }
+	 CMeshManager* GetMeshManager() const
+	 {
+		 return m_MeshManager;
+	 }
 
 public:	// =================== Mesh =====================
 	bool CreateMesh(Mesh_Type Type, const std::string& Name,

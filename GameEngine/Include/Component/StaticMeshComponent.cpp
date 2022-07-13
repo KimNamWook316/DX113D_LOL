@@ -141,12 +141,31 @@ void CStaticMeshComponent::AddMaterial(CMaterial* Material)
 {
 	m_vecMaterialSlot.push_back(Material->Clone());
 
-	m_vecMaterialSlot[m_vecMaterialSlot.size() - 1]->SetScene(m_Scene);
+	int Index = m_vecMaterialSlot.size() - 1;
+	m_vecMaterialSlot[Index]->SetScene(m_Scene);
 }
 
 void CStaticMeshComponent::ClearMaterial()
 {
 	m_vecMaterialSlot.clear();
+
+	auto	iter1 = m_InstancingCheckList.begin();
+	auto	iter1End = m_InstancingCheckList.end();
+
+	for (; iter1 != iter1End; ++iter1)
+	{
+		if ((*iter1)->Mesh == m_Mesh)
+		{
+			// 반투명 상태일 경우 다른 레이어의 InstancingCheckList로 생성되어야 한다.
+			if (m_LayerName != (*iter1)->LayerName)
+			{
+				continue;
+			}
+
+			(*iter1)->vecInstancingShader.clear();
+			(*iter1)->vecShaderParams.clear();
+		}
+	}
 }
 
 void CStaticMeshComponent::SetMaterialShaderAll(const std::string& Name)
@@ -760,7 +779,11 @@ void CStaticMeshComponent::OnChangeMaterialShader(int MatIndex, CGraphicShader* 
 			{
 				// Instancing Shader 교체
 				CGraphicShader* NewInstancingShader = CResourceManager::GetInst()->FindInstancingShader(NewShader);
-				(*iter)->vecInstancingShader[MatIndex] = NewInstancingShader;
+
+				if (NewInstancingShader)
+				{
+					(*iter)->vecInstancingShader[MatIndex] = NewInstancingShader;
+				}
 				break;
 			}
 		}

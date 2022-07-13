@@ -41,6 +41,8 @@ public:
 public:
     virtual bool Init() = 0;
     void SetShader();
+    virtual void SetShaderResources();
+    virtual void ResetShaderResources();
     virtual void SetShaderParams(const ShaderParams& Params);
     virtual CGraphicShader* Clone();
 

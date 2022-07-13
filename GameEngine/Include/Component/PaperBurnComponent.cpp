@@ -224,12 +224,14 @@ void CPaperBurnComponent::Start()
 		SetBurnTexture("DefaultBurnTexture", TEXT("DefaultPaperBurn.png"));
 	}
 
+	// 페이퍼번 컴포넌트 에디터 등에서 지정되지 않으면
 	if (m_PaperBurnComponentName.empty())
 	{
 		// 루트 컴포넌트를 기본 PaperBurn 적용 컴포넌트로 설정
 		CSceneComponent* Root = m_Object->GetRootComponent();
 
 		// Static Or Animation Mesh Component일 경우에만
+		// TODO : Particle 추가?
 		if (Root)
 		{
 			SetPaperBurnComponent(Root);

@@ -41,6 +41,7 @@
 #include "BlurVerticalShader.h"
 #include "BlurHorizontalShader.h"
 #include "ToonShader.h"
+#include "WaterShader.h"
 
 CShaderManager::CShaderManager()
 {
@@ -201,6 +202,12 @@ bool CShaderManager::Init()
 		return false;
 	}
 
+	if (!CreateShader<CWaterShader>("WaterShader"))
+	{
+		assert(false);
+		return false;
+	}
+
 	// =================== 상수버퍼 ===================
 	CreateConstantBuffer("TransformCBuffer", sizeof(TransformCBuffer), 0,
 		(int)Buffer_Shader_Type::Graphic);
@@ -253,9 +260,6 @@ bool CShaderManager::Init()
 	CreateConstantBuffer("ShadowCBuffer", sizeof(ShadowCBuffer), 10,
 		(int)Buffer_Shader_Type::Graphic);
 
- //	CreateConstantBuffer("OutlineConstantBuffer", sizeof(OutlineCBuffer), 10,
- //		(int)Buffer_Shader_Type::Pixel);
-
 	CreateConstantBuffer("DownScaleCBuffer", sizeof(DownScaleCBuffer), 10,
 		(int)Buffer_Shader_Type::Compute);
 
@@ -267,6 +271,10 @@ bool CShaderManager::Init()
 
 	CreateConstantBuffer("GlobalLightCBuffer", sizeof(GlobalLightCBuffer), 11,
 		(int)Buffer_Shader_Type::Pixel);
+
+	CreateConstantBuffer("WaterCBuffer", sizeof(WaterCBuffer), 13,
+		(int)Buffer_Shader_Type::Pixel | (int)Buffer_Shader_Type::Vertex);
+
 	return true;
 }
 

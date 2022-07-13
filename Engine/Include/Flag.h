@@ -265,6 +265,7 @@ enum class SceneComponent3DType
 	ColliderHalfLine,
 	ColliderRay,
 	NavMeshComponent,
+	WaterComponent,
 	Max
 };
 

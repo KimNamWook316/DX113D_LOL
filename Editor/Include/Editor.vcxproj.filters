@@ -100,6 +100,12 @@
     <Filter Include="02. Editor\02. Widget\01. Inspector\03. Shader">
       <UniqueIdentifier>{564b3231-aa36-42c0-9c68-d1a40799fde2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="06. GameComponent\01. SceneComponent">
+      <UniqueIdentifier>{cdfb231b-88b5-4d2d-9f07-db8deb5dcda4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. GameComponent\02. ObjectComponent">
+      <UniqueIdentifier>{9249fe04-eb03-4c53-b7c3-3286b4b600ec}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EditorManager.cpp">
@@ -288,12 +294,6 @@
     <ClCompile Include="Component\State\GameStateManager.cpp">
       <Filter>08. State</Filter>
     </ClCompile>
-    <ClCompile Include="Component\GameStateComponent.cpp">
-      <Filter>06. GameComponent</Filter>
-    </ClCompile>
-    <ClCompile Include="Component\GameDataComponent.cpp">
-      <Filter>06. GameComponent</Filter>
-    </ClCompile>
     <ClCompile Include="Component\GameBehaviorTree.cpp">
       <Filter>07. BehaviorTree</Filter>
     </ClCompile>
@@ -321,9 +321,6 @@
     <ClCompile Include="Component\Node\CancleShootNode.cpp">
       <Filter>07. BehaviorTree\02. ActionNode</Filter>
     </ClCompile>
-    <ClCompile Include="Component\PlayerDataComponent.cpp">
-      <Filter>06. GameComponent</Filter>
-    </ClCompile>
     <ClCompile Include="Object\PlayerHook.cpp">
       <Filter>03. Object\02. 3D</Filter>
     </ClCompile>
@@ -344,6 +341,18 @@
     </ClCompile>
     <ClCompile Include="Widget\PaperBurnWidget.cpp">
       <Filter>02. Editor\02. Widget\01. Inspector\02. ObjectComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\GameDataComponent.cpp">
+      <Filter>06. GameComponent\02. ObjectComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\GameStateComponent.cpp">
+      <Filter>06. GameComponent\02. ObjectComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\PlayerDataComponent.cpp">
+      <Filter>06. GameComponent\02. ObjectComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Widget\WaterComponentWidget.cpp">
+      <Filter>02. Editor\02. Widget\01. Inspector\01. SceneComponent</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -527,12 +536,6 @@
     <ClInclude Include="Component\State\GameStateManager.h">
       <Filter>08. State</Filter>
     </ClInclude>
-    <ClInclude Include="Component\GameStateComponent.h">
-      <Filter>06. GameComponent</Filter>
-    </ClInclude>
-    <ClInclude Include="Component\GameDataComponent.h">
-      <Filter>06. GameComponent</Filter>
-    </ClInclude>
     <ClInclude Include="Component\GameBehaviorTree.h">
       <Filter>07. BehaviorTree</Filter>
     </ClInclude>
@@ -563,9 +566,6 @@
     <ClInclude Include="Component\Node\CancleShootNode.h">
       <Filter>07. BehaviorTree\02. ActionNode</Filter>
     </ClInclude>
-    <ClInclude Include="Component\PlayerDataComponent.h">
-      <Filter>06. GameComponent</Filter>
-    </ClInclude>
     <ClInclude Include="Object\PlayerHook.h">
       <Filter>03. Object\02. 3D</Filter>
     </ClInclude>
@@ -592,6 +592,18 @@
     </ClInclude>
     <ClInclude Include="Widget\PaperBurnWidget.h">
       <Filter>02. Editor\02. Widget\01. Inspector\02. ObjectComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\PlayerDataComponent.h">
+      <Filter>06. GameComponent\02. ObjectComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\GameDataComponent.h">
+      <Filter>06. GameComponent\02. ObjectComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\GameStateComponent.h">
+      <Filter>06. GameComponent\02. ObjectComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Widget\WaterComponentWidget.h">
+      <Filter>02. Editor\02. Widget\01. Inspector\01. SceneComponent</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

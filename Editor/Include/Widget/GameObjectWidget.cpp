@@ -21,6 +21,7 @@
 #include "Component/ColliderHalfLine.h"
 #include "Component/ColliderRay.h"
 #include "Component/NavMeshComponent.h"
+#include "Component/WaterComponent.h"
 // ObjectComponent
 #include "Component/PaperBurnComponent.h"
 // SceneCompWidget
@@ -34,6 +35,7 @@
 #include "../Widget/NavMeshComponentWidget.h"
 #include "../Widget/ColliderComponentWidget.h"
 #include "../Widget/ColliderSphereWidget.h"
+#include "../Widget/WaterComponentWidget.h"
 // ObjCompWidget
 #include "../Widget/PaperBurnWidget.h"
 
@@ -196,6 +198,10 @@ void CGameObjectWidget::CreateSceneComponentWidget(CSceneComponent* Com)
 	else if (TypeID == typeid(CNavMeshComponent).hash_code())
 	{
 		Widget = AddWidget<CNavMeshComponentWidget>("NavMeshComponentWidget");
+	}
+	else if (TypeID == typeid(CWaterComponent).hash_code())
+	{
+		Widget = AddWidget<CWaterComponentWidget>("WaterComponentWidget");
 	}
 
 	else

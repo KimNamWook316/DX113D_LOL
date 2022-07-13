@@ -25,6 +25,7 @@
 #include "Component/PlayerDataComponent.h"
 #include "Component/NavMeshComponent.h"
 #include "Component/PaperBurnComponent.h"
+#include "Component/WaterComponent.h"
 // Window
 #include "Window/ObjectHierarchyWindow.h"
 #include "Window/SceneComponentHierarchyWindow.h"
@@ -375,6 +376,11 @@ CComponent* CEditorManager::CreateComponent(CGameObject* Obj, size_t Type)
 	else if (Type == typeid(CPaperBurnComponent).hash_code())
 	{
 		CPaperBurnComponent* Component = Obj->LoadObjectComponent<CPaperBurnComponent>();
+		return Component;
+	}
+	else if (Type == typeid(CWaterComponent).hash_code())
+	{
+		CWaterComponent* Component = Obj->LoadComponent<CWaterComponent>();
 		return Component;
 	}
 

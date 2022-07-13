@@ -14,6 +14,12 @@ private:
 	std::unordered_map<std::string, CSharedPtr<class CMesh>>	m_mapMesh;
 	std::function<void()> m_ChangeCallBack;
 
+public :
+	const std::unordered_map<std::string, CSharedPtr<class CMesh>>& GetMapMesh() const
+	{
+		return m_mapMesh;
+	}
+
 public:
 	bool Init();
 	bool CreateMesh(Mesh_Type Type, const std::string& Name,

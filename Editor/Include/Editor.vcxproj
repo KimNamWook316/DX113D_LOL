@@ -244,6 +244,7 @@
     <ClCompile Include="Widget\ToonShaderWidget.cpp" />
     <ClCompile Include="Widget\TransformWidget.cpp" />
     <ClCompile Include="Widget\UtilMenuBar.cpp" />
+    <ClCompile Include="Widget\WaterComponentWidget.cpp" />
     <ClCompile Include="Window\AnimationDisplayWindow.cpp" />
     <ClCompile Include="Window\AnimationEditor.cpp" />
     <ClCompile Include="Thread\FBXConvertThread.cpp" />
@@ -353,6 +354,7 @@
     <ClInclude Include="Widget\ToonShaderWidget.h" />
     <ClInclude Include="Widget\TransformWidget.h" />
     <ClInclude Include="Widget\UtilMenuBar.h" />
+    <ClInclude Include="Widget\WaterComponentWidget.h" />
     <ClInclude Include="Window\AnimationDisplayWindow.h" />
     <ClInclude Include="Window\AnimationEditor.h" />
     <ClInclude Include="Thread\FBXConvertThread.h" />
