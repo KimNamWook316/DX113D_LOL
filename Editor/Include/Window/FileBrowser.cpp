@@ -40,7 +40,7 @@ void CFileBrowser::Update(float DeltaTime)
 {
 	CIMGUIWindow::Update(DeltaTime);
 
-	size_t Num = GetWindowSize().x / ICON_SIZEX;
+	size_t Num = (int)(GetWindowSize().x / ICON_SIZEX);
 	bool Update = false;
 
 

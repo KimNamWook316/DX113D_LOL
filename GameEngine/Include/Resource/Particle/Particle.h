@@ -181,14 +181,19 @@ public:
 		return m_CBuffer->GetColorMax();
 	}
 
-	float GetSpeedMin()
+	int GetSpeedChangeMethod() const
 	{
-		return m_CBuffer->GetSpeedMin();
+		return m_CBuffer->GetSpeedChangeMethod();
 	}
 
-	float GetSpeedMax()
+	float GetSpeedStart()
 	{
-		return m_CBuffer->GetSpeedMax();
+		return m_CBuffer->GetSpeedStart();
+	}
+
+	float GetSpeedEnd()
+	{
+		return m_CBuffer->GetSpeedEnd();
 	}
 
 	bool GetMove()
@@ -309,7 +314,16 @@ public:
 	{
 		return m_CBuffer->IsUVClippingReflectingMoveDir();
 	}
+	int IsNoiseTextureSamplingApplied()
+	{
+		return m_CBuffer->IsNoiseTextureSamplingApplied();
+	}
 public:
+	// Noise Texture
+	void SetApplyNoiseTextureSamplingEnable(bool Enable)
+	{
+		m_CBuffer->SetApplyNoiseTextureSamplingEnable(Enable);
+	}
 	// UV Clipping
 	void SetUVClippingReflectingMoveDirEnable(bool Enable)
 	{
@@ -478,14 +492,24 @@ public:
 		m_CBuffer->SetColorMax(r, g, b, a);
 	}
 
-	void SetSpeedMin(float SpeedMin)
+	void SetSpeedChangeMethod(ParticleSpeedChangeMethod Method)
 	{
-		m_CBuffer->SetSpeedMin(SpeedMin);
+		m_CBuffer->SetSpeedChangeMethod(Method);
 	}
 
-	void SetSpeedMax(float SpeedMax)
+	void SetSpeedChangeMethod(int Method)
 	{
-		m_CBuffer->SetSpeedMax(SpeedMax);
+		m_CBuffer->SetSpeedChangeMethod(Method);
+	}
+
+	void SetSpeedStart(float SpeedMin)
+	{
+		m_CBuffer->SetSpeedStart(SpeedMin);
+	}
+
+	void SetSpeedEnd(float SpeedMax)
+	{
+		m_CBuffer->SetSpeedEnd(SpeedMax);
 	}
 
 	void SetMove(bool Move)

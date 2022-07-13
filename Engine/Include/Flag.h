@@ -375,3 +375,10 @@ enum class ParticleSpecialMoveDir
 	XYSpread, // xy 평명 방향으로 이동 z 는 0
 	Max
 };
+
+enum class ParticleSpeedChangeMethod
+{
+	Linear = 1,
+	Exponential, 
+	Max
+};

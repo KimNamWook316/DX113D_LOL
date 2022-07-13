@@ -128,7 +128,7 @@ void CCollisionProfileEditor::Refresh()
 
 	for (size_t i = 0; i < (size_t)Collision_Channel::Max; ++i)
 	{
-		m_InteractionEdit->SetCheck(i, false);
+		m_InteractionEdit->SetCheck((int)i, false);
 	}
 }
 

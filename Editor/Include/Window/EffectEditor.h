@@ -48,6 +48,11 @@ static const char* ParticleMoveDirType[] = {
     "XYSpread" //  xy 평명 방향으로 이동 z 는 0
 };
 
+static const char* ParticleSpeedChangeType[] = {
+    "Linear", //  xz 평명 방향으로 이동 y는 0
+    "Exponential" //  xy 평명 방향으로 이동 z 는 0
+};
+
 struct Particle3DObjectBackUpStruct
 {
     bool IsCameraRotate;
@@ -100,8 +105,9 @@ private:
     class CIMGUIInputFloat* m_LifeTimeMinEdit;
     class CIMGUIInputFloat* m_LifeTimeMaxEdit;
 
-    class CIMGUIInputFloat* m_SpeedMinEdit;
-    class CIMGUIInputFloat* m_SpeedMaxEdit;
+    class CIMGUIInputFloat* m_SpeedStartEdit;
+    class CIMGUIInputFloat* m_SpeedEndEdit;
+    class CIMGUIComboBox* m_SpeedChangeType;
 
     class CIMGUIColor4* m_ColorMinEdit;
     class CIMGUIColor4* m_ColorMaxEdit;
@@ -165,6 +171,9 @@ private:
 
     // 방햐엥 따른 UV Clipping
     class CIMGUICheckBox* m_UVClippingAccordingToDir;
+
+    // Noise Texture
+    class CIMGUICheckBox* m_ApplyNoiseTextureSampling;
 
     // Particle 이 사용하는 Material Texture
     class CIMGUIImage* m_ParticleTexture;
@@ -235,8 +244,9 @@ private:
     void OnIsLifeTimeLinearFromCenter(const char*, bool);
 
     // Speed Min, Max
-    void OnSpeedMinEdit(float Num);
-    void OnSpeedMaxEdit(float Num);
+    void OnSpeedStartEdit(float Num);
+    void OnSpeedEndEdit(float Num);
+    void OnSpeedChangeTypeEdit(int Index, const char* Type);
 
     // Color Min, Max
     void OnColorMinEdit(const Vector4& Color);
@@ -264,6 +274,9 @@ private:
     void OnSetCameraZoomSpeed(float Speed);
     void OnSetCameraYOffset(float Offset);
     void OnSetCameraXRot(float Rot);
+
+    // Noise Texture
+    void OnApplyNoiseTextureSamplingEdit(const char*, bool);
 
     // Move Dir, Angle
     void OnMoveDirEdit(const Vector3& Dir);

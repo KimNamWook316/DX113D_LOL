@@ -426,8 +426,8 @@ struct	ParticleCBuffer
 	Vector4	ColorMin;		// 생성될 파티클의 색상 Min
 	Vector4	ColorMax;		// 생성될 파티클의 색상 Max
 	
-	float	SpeedMin;		// 파티클의 최소 이동속도
-	float	SpeedMax;		// 파티클의 최대 이동속도
+	float	SpeedStart;		// 파티클의 최소 이동속도
+	float	SpeedEnd;		// 파티클의 최대 이동속도
 	int		Move;			// 이동을 하는지 안하는지
 	int		Gravity;		// 중력 적용을 받는지 안받는지
 	
@@ -470,12 +470,16 @@ struct	ParticleCBuffer
 
 	// Particle Component 상에서 적용하는 Scale 정보
 	Vector3 CommonWorldScale;
-
 	// 진행 방향으로 점점 UV Clipping 되는 효과 구현하기 
 	int UVClippingReflectingMoveDir;
 
 	Vector3 CommonParticleComponentWorldPos;
-	float ParticleEmpty6;
+	int SpeedChangeMethod; // Linear, 지수 분포
+
+	int ApplyNoiseTexture; // Pixel Shader 에서 매순간 Noise Texture 로 부터, Sampling 을 해서 Color, Alpha 값 등을 바꾸는 것
+	int ApplyToonBaseTexture; // 우선 보류
+	float SpeedChangeExponentialCoefficient;
+	int ParticleEmpty2;
 };
 
 struct ParticleInfo

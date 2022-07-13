@@ -150,7 +150,7 @@ bool CNavigation3DManager::CheckPlayerNavMeshPoly()
 
 			if (Intersect)
 			{
-				m_PlayerPolyIndex = i;
+				m_PlayerPolyIndex = (int)i;
 				return true;
 			}
 
