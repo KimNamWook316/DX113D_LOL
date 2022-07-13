@@ -234,12 +234,12 @@ void ApplySpecialParticleGenerateShape(float RandomAngle, int ThreadID, float Fi
 	{
 		// 생성 각도도 Random
 		// 생성 반지름 크기도 Random
-		float RandomRadius = FinalAppliedRadius * Rand;
+		// float RandomRadius = FinalAppliedRadius * Rand;
 
 		float3 CirclePos = float3(0.f, 0.f, 0.f) + float3(
-			cos(RandomAngle) * RandomRadius,
+			cos(RandomAngle) * FinalAppliedRadius,
 			0.f,
-			sin(RandomAngle) * RandomRadius);
+			sin(RandomAngle) * FinalAppliedRadius);
 
 		g_ParticleArray[ThreadID].LocalPos = CirclePos;
 	}
@@ -331,6 +331,8 @@ void ApplyParticleMove(float3 RandomPos, int ThreadID, float RandomAngle, float 
 	// Move 하는 Particle 이라면, Speed 와 Dir 를 세팅한다.
 	if (g_ParticleMove == 1)
 	{
+		float ParticleComponentScaleRatio = (g_ParticleCommonWorldScale.x / 3.f + g_ParticleCommonWorldScale.y / 3.f + g_ParticleCommonWorldScale.z / 3.f);
+
 		// RandomPos.xyz 는 각각 0 에서 1 사이의 값 --> -1 에서 1 사이의 값으로 바꾼다.
 		// ex) 360도 => -180 ~ 180 도 사이의 랜덤한 각도로 회전을 한다고 생각하면 된다.
 		float3	ConvertAngle = (RandomPos.xyz * 2.f - 1.f) * g_ParticleMoveAngle;
@@ -344,7 +346,9 @@ void ApplyParticleMove(float3 RandomPos, int ThreadID, float RandomAngle, float 
 
 		float3	Dir = normalize(mul(g_ParticleMoveDir, matRot));
 
-		g_ParticleArray[ThreadID.x].Speed = Rand * (g_ParticleSpeedMax - g_ParticleSpeedMin) + g_ParticleSpeedMin;
+		g_ParticleArray[ThreadID.x].Speed = Rand * (g_ParticleSpeedMax * ParticleComponentScaleRatio - g_ParticleSpeedMin * ParticleComponentScaleRatio) + g_ParticleSpeedMin * ParticleComponentScaleRatio;
+		// g_ParticleArray[ThreadID.x].Speed *= ParticleComponentScaleRatio;
+
 		g_ParticleArray[ThreadID.x].Dir = Dir;
 
 		// 단순 Dir 이동이 아니라, 특정 방향으로 Special 하게 이동하는 설정을 했다면
@@ -448,6 +452,8 @@ void ApplyLinearEffect(int ThreadID)
 	float DistFromCenter = distance(g_ParticleArray[ThreadID].LocalPos, float3(0.f, 0.f, 0.f));
 	float MaxDistFromCenter = g_ParticleShare[0].MaxDistFromCenter;
 
+	float ParticleComponentScaleRatio = (g_ParticleCommonWorldScale.x / 3.f + g_ParticleCommonWorldScale.y / 3.f + g_ParticleCommonWorldScale.z / 3.f);
+
 	if (MaxDistFromCenter == 0)
 		MaxDistFromCenter = DistFromCenter;
 
@@ -464,6 +470,7 @@ void ApplyLinearEffect(int ThreadID)
 		float LifeTimeRatio = pow(1 - SpawnPosRatio, 2);
 
 		g_ParticleArray[ThreadID].LifeTimeMax = LifeTimeRatio * (g_ParticleLifeTimeMax - g_ParticleLifeTimeMin) + g_ParticleLifeTimeMin;
+		g_ParticleArray[ThreadID].LifeTimeMax *= ParticleComponentScaleRatio;
 	}
 
 	// Alpha
@@ -608,7 +615,7 @@ void ParticleUpdate(uint3 ThreadID : SV_DispatchThreadID)
 		// float3 ParticleStartMinPos = mul(g_ParticleStartMin, ComputeRotationMatrix(g_ParticleRotationAngle));
 
 		float XRand = GetRandomNumber(key); // 0 에서 1 사이의 숫자 
-		float YRand = GetRandomNumber(key * XRand);
+		float YRand = GetRandomNumber((ThreadID.x * 500.f) % (float)(g_ParticleSpawnCountMax * XRand));
 		float ZRand = GetRandomNumber((ThreadID.x * 100.f) % (float)(g_ParticleSpawnCountMax * YRand));
 
 		g_ParticleArray[ThreadID.x].LocalPos.x = XRand * (g_ParticleStartMax.x - g_ParticleStartMin.x) + g_ParticleStartMin.x;
@@ -620,16 +627,17 @@ void ParticleUpdate(uint3 ThreadID : SV_DispatchThreadID)
 		g_ParticleArray[ThreadID.x].FallTime = 0.f;
 		g_ParticleArray[ThreadID.x].FallStartY = g_ParticleArray[ThreadID.x].LocalPos.y;
 
+		// x,y,z 의 Relative Scale 의 중간 비율만큼 세팅해준다.
+	// 아래 코드처럼 하면, 너무 Dramatic 하게 변한다.
+	// float ParticleComponentScaleRatio = g_ParticleCommonWorldScale.x * g_ParticleCommonWorldScale.y * g_ParticleCommonWorldScale.z;
+		float ParticleComponentScaleRatio = (g_ParticleCommonWorldScale.x / 3.f + g_ParticleCommonWorldScale.y / 3.f + g_ParticleCommonWorldScale.z / 3.f);
+
 		g_ParticleArray[ThreadID.x].LifeTime = 0.f;
 		g_ParticleArray[ThreadID.x].LifeTimeMax = Rand * (g_ParticleLifeTimeMax - g_ParticleLifeTimeMin) + g_ParticleLifeTimeMin;
 
 		// Scale 크기도 그만큼 조정한다.
-		g_ParticleArray[ThreadID.x].LifeTimeMax *= (g_ParticleCommonWorldScale.x + g_ParticleCommonWorldScale.y + g_ParticleCommonWorldScale.z) / 3.f;
-
-		// x,y,z 의 Relative Scale 의 중간 비율만큼 세팅해준다.
-		// 아래 코드처럼 하면, 너무 Dramatic 하게 변한다.
-		// float ParticleComponentScaleRatio = g_ParticleCommonWorldScale.x * g_ParticleCommonWorldScale.y * g_ParticleCommonWorldScale.z;
-		float ParticleComponentScaleRatio = (g_ParticleCommonWorldScale.x + g_ParticleCommonWorldScale.y + g_ParticleCommonWorldScale.z) / 3.f;
+		// g_ParticleArray[ThreadID.x].LifeTimeMax *= (g_ParticleCommonWorldScale.x + g_ParticleCommonWorldScale.y + g_ParticleCommonWorldScale.z) / 3.f;
+		g_ParticleArray[ThreadID.x].LifeTimeMax *= ParticleComponentScaleRatio;
 
 		float FinalAppliedRadius = g_ParcticleGenerateRadius * ParticleComponentScaleRatio;
 

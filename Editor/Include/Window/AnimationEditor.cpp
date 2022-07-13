@@ -406,6 +406,9 @@ void CAnimationEditor::OnCreateSample3DObject()
 
 	m_3DTestObject = CSceneManager::GetInst()->GetScene()->CreateGameObject<CAnim3DObject>("3DObject");
 
+	m_3DTestObject->ExcludeFromSceneSave();
+	m_3DTestObject->SetNoDestroyOnSceneChange(true);
+
 	// 3DTest Object의 Animation 정보를 가져온다.
 	m_Animation = dynamic_cast<CAnimationMeshComponent*>(m_3DTestObject->GetRootComponent())->CreateBasicAnimationInstance();
 }

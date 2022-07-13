@@ -15,7 +15,7 @@ C3DParticleObject::C3DParticleObject() :
     m_ExcludeSceneSave = true;
 }
 
-C3DParticleObject::C3DParticleObject(const C3DParticleObject& obj)
+C3DParticleObject::C3DParticleObject(const C3DParticleObject& obj) : CGameObject(obj)
 {
 }
 
@@ -57,6 +57,12 @@ bool C3DParticleObject::Init()
     m_ParticleArm->SetTargetDistance(90.f);
 
 	return true;
+}
+
+void C3DParticleObject::Start()
+{
+    // Camera Setting
+    CSceneManager::GetInst()->GetScene()->GetCameraManager()->SetParticleEditorCamera(m_ParticleCamera);
 }
 
 void C3DParticleObject::Update(float DeltaTime)

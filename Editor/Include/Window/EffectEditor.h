@@ -181,6 +181,10 @@ private :
     class CGameObject* m_SkyObject;
 public :
     virtual bool Init() override;
+    class C3DParticleObject* GetParticleObject() const
+    {
+        return m_ParticleObject;
+    }
 private:
     void OnSaveParticleObjectButton();
     void OnLoadParticleObjectButton();
@@ -284,8 +288,6 @@ private:
     void OnSetBasicParticleMaterialSetting(class CSceneComponent* Com);
     void OnReflectCurrentParticleSetting();
 
-    // Base Ground Object 준비시키기
-    void SetGameObjectReady();
 
     // 기본 Particle 정보 세팅하기
     void SetBasicDefaultParticleInfos(class CParticle* Particle);
@@ -328,5 +330,8 @@ private :
     void OnBloodEachParticlePreset();
     void OnBloodSpreadPreset();
     void OnSpreadGrassPreset();
+public :
+        // Base Ground Object 준비시키기
+        void SetGameObjectReady();
 };
 

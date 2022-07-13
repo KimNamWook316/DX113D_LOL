@@ -41,7 +41,8 @@
 #include "GameObject/SkyObject.h"
 
 CEffectEditor::CEffectEditor() :
-    m_StartEdit(false)
+    m_StartEdit(false),
+    m_ParticleClass(nullptr)
 {
 }
 
@@ -1341,9 +1342,15 @@ void CEffectEditor::SetGameObjectReady()
     if (m_ParticleObject)
     {
         m_ParticleObject->Destroy();
+        m_ParticleObject = nullptr;
     }
 
     m_ParticleObject = CSceneManager::GetInst()->GetScene()->CreateGameObject<C3DParticleObject>("Particle Effect Base Ground");
+
+    // Scn 저장시 저장X
+    m_ParticleObject->ExcludeFromSceneSave();
+    // Scene Change 시에 파괴 X
+    m_ParticleObject->SetNoDestroyOnSceneChange(true);
 
     // Callback Function 세팅
     m_ParticleObject->SetCameraRotateCallback<CEffectEditor>(this, &CEffectEditor::OnSetCameraYAxisRotate);
@@ -1353,6 +1360,12 @@ void CEffectEditor::SetGameObjectReady()
     m_ParticleObject->GetRootComponent()->Enable(false);
 
     // 기존 Base Ground Object 는 지운다.
+    if (m_BaseGroundObject)
+    {
+        m_BaseGroundObject->Destroy();
+        m_BaseGroundObject = nullptr;
+    }
+
     if (!m_BaseGroundObject)
     {
         m_BaseGroundObject = CSceneManager::GetInst()->GetScene()->CreateGameObject<CGameObject>("Particle Effect Base Ground");
@@ -1362,7 +1375,10 @@ void CEffectEditor::SetGameObjectReady()
         m_BaseGroundObject->SetWorldScale(300.f, 300.f, 1.f);
         m_BaseGroundObject->AddWorldRotationX(90.f);
         m_BaseGroundObject->AddWorldPos(0.f, -30.f, 0.f);
+
         m_BaseGroundObject->ExcludeFromSceneSave();
+        // Scene Change 시에 파괴 X
+        m_BaseGroundObject->SetNoDestroyOnSceneChange(true);
 
         CSpriteComponent* BaseGroundComponent = dynamic_cast<CSpriteComponent*>(m_BaseGroundObject->GetRootComponent());
         BaseGroundComponent->SetMaterial(CResourceManager::GetInst()->FindMaterial("ParticleEditorBaseGround"));
@@ -2138,7 +2154,7 @@ void CEffectEditor::OnFireTorchPreset()
     dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetSpecialMoveDirType(-1);
 
     // Radius
-    OnEditGenerateRadius(65.f);
+    OnEditGenerateRadius(4.2f);
 
     // SpawnTime
     OnSpawnTimeMaxEdit(0.001f);
@@ -2150,24 +2166,24 @@ void CEffectEditor::OnFireTorchPreset()
     OnMoveAngleEdit(Vector3(30.f, 0.f, 0.f));
 
     // Scale,
-    OnScaleMinEdit(Vector3(80.f, 80.f, 1.f));
-    OnScaleMaxEdit(Vector3(20.f, 80.f, 1.f));
+    OnScaleMinEdit(Vector3(10.f, 10.f, 1.f));
+    OnScaleMaxEdit(Vector3(10.f, 20.f, 1.f));
 
     // Speed
-    OnSpeedMinEdit(10.f);
-    OnSpeedMaxEdit(30.f);
+    OnSpeedMinEdit(5.f);
+    OnSpeedMaxEdit(10.f);
 
     // Rotation Angle
     OnMinSeperateRotAngleEdit(Vector3(0.f, 0.f, 0.f));
     OnMaxSeperateRotAngleEdit(Vector3(0.f, 0.f, 0.f));
 
     // Life Time
-    OnLifeTimeMinEdit(0.001f);
-    OnLifeTimeMaxEdit(8.f);
+    OnLifeTimeMinEdit(1.f);
+    OnLifeTimeMaxEdit(2.f);
 
     // Speed
-    OnSpeedMinEdit(10.f);
-    OnSpeedMaxEdit(30.f);
+    OnSpeedMinEdit(5.f);
+    OnSpeedMaxEdit(10.f);
 
     // Life Time Linaer
     m_ParticleClass->SetLifeTimeLinearFromCenter(true);

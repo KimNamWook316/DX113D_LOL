@@ -17,8 +17,10 @@
 #include "../Window/BehaviorTreeMenuBar.h"
 #include "../Window/ResourceDisplayWindow.h"
 #include "../Window/ObjectCreateModal.h"
+#include "../Window/EffectEditor.h"
 #include "../EditorUtil.h"
 #include "../EditorManager.h"
+#include "../Object/3DParticleObject.h"
 // IMGUI
 #include "IMGUIManager.h"
 #include "SaveLoadBeginMenu.h"
@@ -353,6 +355,7 @@ void CSaveLoadBeginMenu::RefreshSceneRelatedWindow(CGameObject* Object)
 	{
 		Inspector->OnSelectGameObject(Object);
 	}
+
 }
 
 void CSaveLoadBeginMenu::RefreshSceneRelatedWindow(const std::vector<CGameObject*>& vecObj)
@@ -367,4 +370,8 @@ void CSaveLoadBeginMenu::RefreshSceneRelatedWindow(const std::vector<CGameObject
 	// 렌더 관련 위젯 리프레쉬 
 	CToolWindow* ToolWindow = (CToolWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(TOOL);
 	ToolWindow->RefreshGlobalSceneDataWidget();
+
+	// Effect Editor 관련 Refresh
+	CEffectEditor* EffectEditor = (CEffectEditor*)CIMGUIManager::GetInst()->FindIMGUIWindow(PARTICLE_EDITOR);
+	EffectEditor->SetGameObjectReady();
 }

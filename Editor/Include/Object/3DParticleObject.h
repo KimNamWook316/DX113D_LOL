@@ -101,8 +101,9 @@ public :
 		m_ParticleArm->SetRelativeRotation(RelativeRotation.x, YRot, RelativeRotation.z);
 	}
 public:
-	bool Init() override;
-	void Update(float DeltaTime) override;
+	virtual bool Init() override;
+	virtual void Start() override;
+	virtual void Update(float DeltaTime) override;
 public :
 	template<typename T>
 	void SetCameraRotateCallback(T* Obj, void(T::*Func)(float Val))
