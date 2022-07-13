@@ -392,19 +392,21 @@ float3 ApplyAliveParticleMove(int ThreadID)
 		switch (g_ParticleSpeedChangeMethod)
 		{
 			// 선형적으로 
-		case 1:
-		{
-			g_ParticleArray[ThreadID].Speed = ScaledSpeedStart + LifeTimeRatio * (ScaledSpeedEnd - ScaledSpeedStart);
-			// LifeTimeRatio
-		}
-		break;
-
-		// 지수 분포
-		case 2:
-		{
-			// 1. 점차 증가하는 경우
-			if (Inclination > 0)
+			case 1:
 			{
+				g_ParticleArray[ThreadID].Speed = ScaledSpeedStart + LifeTimeRatio * (ScaledSpeedEnd - ScaledSpeedStart);
+				// LifeTimeRatio
+			}
+			break;
+
+			// 지수 분포
+			case 2:
+			{
+				// X 절편 Offset
+				// 해당 숫자만큼, 실제 지수함수 그래프에서의 X 절편을 왼쪽으로 댕긴다.
+				// 그러면, 실제 그래프에서의 증가 및 감소폭보다 크게 증가 및 감소하게 된다.
+				float XInterceptOffet = 0.5f;
+
 				// y = a^(x - b) + c
 				// c 는 Speed Start
 				// b 는 LifeTime 중간
@@ -412,47 +414,75 @@ float3 ApplyAliveParticleMove(int ThreadID)
 				// x 는 0 ~ LifeTimeMax 까지 증가하고
 				// y 는 SpeedStart ~ SpeedEnd 까지 증가한다.
 
-				// (아래와 같이 식을 세워준다.)
-				// 	y = a ^ (x - g_ParticleArray[ThreadID.x].LifeTime / 2.f) + (ScaledSpeedStart)
-				// ScaledSpeedEnd = a ^ (g_ParticleArray[ThreadID.x].LifeTime - g_ParticleArray[ThreadID.x].LifeTime / 2.f) + (ScaledSpeedStart)
-				// a ^ (g_ParticleArray[ThreadID.x].LifeTime / 2.f)  = (ScaledSpeedEnd - ScaledSpeedStart)
-				// pow(x, y) : x^y
-				// a = pow(ScaledSpeedEnd - ScaledSpeedStart), 1 / (g_ParticleArray[ThreadID.x].LifeTime / 2.f));
-				
-				// a의 값 (밑)
-				// - a 는 항상 1 보다 큰 계수여야 한다.
-				// - LifeTimeMax 의 경우, Speed 와 같이 ParticleComponentScaleRatio 가 반영된 상태여야 한다.
-				float ExponentialBottom = pow(ScaledSpeedEnd - ScaledSpeedStart, (g_ParticleArray[ThreadID].LifeTimeMax / 2.f));
-
-				// a 의 값이 1보다 커야 한다.
-				// 이를 확인하기 위해서는 a ^ (x-b) 에서 (x-b) 부분을 1로 만들어주면 된다.
-				// 그리고 이때의 y 값은, ScaledSpeedStart + 1 보다 큰 값이어야 한다.
-				// ex) y = a ^ (x-5) + 3
-				// x 가 5일때, 4
-				// x 가 6일때, a + 3 
-				// a 가 1 보다 큰 값이라면, a + 3 이, (3 + 1) 인 4 라는 값보다 커야 한다.
-				// 그렇지 않으면, x가 증가시, y도 증가하는 지수함수의 밑이, 1 보다 크다라는,
-				// 지수함수의 조건과 부합하지 않는다.
-				// 따라서, 이 경우에는, 선형적으로 증가하게 세팅한다.
-				if (ExponentialBottom + ScaledSpeedStart > ScaledSpeedStart + 1)
+				// 1. 점차 증가하는 경우
+				if (Inclination > 0)
 				{
-					g_ParticleArray[ThreadID].Speed = pow(ExponentialBottom, g_ParticleArray[ThreadID].LifeTime) + ScaledSpeedStart;
+					// 	y = a ^ (x - g_ParticleArray[ThreadID.x].LifeTime / 2.f) + (ScaledSpeedStart)
+					// ScaledSpeedEnd = a ^ (g_ParticleArray[ThreadID.x].LifeTime - g_ParticleArray[ThreadID.x].LifeTime / 2.f) + (ScaledSpeedStart)
+					// a ^ (g_ParticleArray[ThreadID.x].LifeTime / 2.f)  = (ScaledSpeedEnd - ScaledSpeedStart)
+					// pow(x, y) : x^y
+					// a = pow(ScaledSpeedEnd - ScaledSpeedStart), 1 / (g_ParticleArray[ThreadID.x].LifeTime / 2.f));
+
+					// a의 값 (밑)
+					// - a 는 항상 1 보다 큰 계수여야 한다.
+					// - LifeTimeMax 의 경우, Speed 와 같이 ParticleComponentScaleRatio 가 반영된 상태여야 한다.
+					float ExponentialBottom = pow(ScaledSpeedEnd - ScaledSpeedStart, 1 / (g_ParticleArray[ThreadID].LifeTimeMax / 2.f));
+
+					// a 의 값이 1보다 커야 한다.
+					// 이를 확인하기 위해서는 a ^ (x-b) 에서 (x-b) 부분을 1로 만들어주면 된다.
+					// 그리고 이때의 y 값은, ScaledSpeedStart + 1 보다 큰 값이어야 한다.
+					// ex) y = a ^ (x-5) + 3
+					// x 가 5일때, 4
+					// x 가 6일때, a + 3 
+					// a 가 1 보다 큰 값이라면, a + 3 이, (3 + 1) 인 4 라는 값보다 커야 한다.
+					// 그렇지 않으면, x가 증가시, y도 증가하는 지수함수의 밑이, 1 보다 크다라는,
+					// 지수함수의 조건과 부합하지 않는다.
+					// 따라서, 이 경우에는, 선형적으로 증가하게 세팅한다.
+					if (ExponentialBottom + ScaledSpeedStart > ScaledSpeedStart + 1)
+					{
+						g_ParticleArray[ThreadID].Speed = pow(ExponentialBottom, g_ParticleArray[ThreadID].LifeTime + XInterceptOffet - g_ParticleArray[ThreadID].LifeTimeMax * 0.5f) + ScaledSpeedStart;
+					}
+					else
+					{
+						g_ParticleArray[ThreadID].Speed = ScaledSpeedStart + LifeTimeRatio * (ScaledSpeedEnd - ScaledSpeedStart);
+					}
 				}
 				else
 				{
-					g_ParticleArray[ThreadID].Speed = ScaledSpeedStart + LifeTimeRatio * (ScaledSpeedEnd - ScaledSpeedStart);
+					// 	y = -1 * a ^ (x - g_ParticleArray[ThreadID.x].LifeTime / 2.f) + (ScaledSpeedStart)
+					// ScaledSpeedEnd = -1 * a ^ (g_ParticleArray[ThreadID.x].LifeTime - g_ParticleArray[ThreadID.x].LifeTime / 2.f) + (ScaledSpeedStart)
+					// a ^ (g_ParticleArray[ThreadID.x].LifeTime / 2.f)  = - 1 *  (ScaledSpeedEnd - ScaledSpeedStart)
+					// a = pow(-1 * (ScaledSpeedEnd - ScaledSpeedStart)), 1 / (g_ParticleArray[ThreadID.x].LifeTime / 2.f));
+
+					// a의 값 (밑)
+					// - a 는 항상 1 보다 큰 계수여야 한다.
+					// - LifeTimeMax 의 경우, Speed 와 같이 ParticleComponentScaleRatio 가 반영된 상태여야 한다.
+					float ExponentialBottom = pow(-1 * (ScaledSpeedEnd - ScaledSpeedStart), 1 / (g_ParticleArray[ThreadID].LifeTimeMax / 2.f));
+
+					// a 의 값이 1보다 커야 한다.
+					// 이를 확인하기 위해서는 a ^ (x-b) 에서 (x-b) 부분을 1로 만들어주면 된다.
+					// 그리고 이때의 y 값은, ScaledSpeedStart - 1 보다 작은 값이어야 한다.
+					// ex) y = -1 * (a ^ (x-5)) + 3
+					// x 가 5일때, 2
+					// x 가 6일때, -1 * a + 3 
+					// a 가 1 보다 큰 값이라면, -1 * a + 3 이, (3 - 1) 인 2 라는 값보다 작아야 한다.
+					// 따라서, 이 경우에는, 선형적으로 감소하게 세팅한다.
+					if (ExponentialBottom + ScaledSpeedStart < ScaledSpeedStart - 1)
+					{
+						g_ParticleArray[ThreadID].Speed = -1 * pow(ExponentialBottom, g_ParticleArray[ThreadID].LifeTime + XInterceptOffet - g_ParticleArray[ThreadID].LifeTimeMax * 0.5f) + ScaledSpeedStart;
+					}
+					else
+					{
+						g_ParticleArray[ThreadID].Speed = ScaledSpeedStart - LifeTimeRatio * (ScaledSpeedEnd - ScaledSpeedStart);
+					}
 				}
 			}
-			else
+			break;
+			case 3:
 			{
-				// 2. 기울기가 음수인 경우
-				// b 는 항상 - 1 보다 더 작은 계수여야 한다.
-				// g_ParticleArray[ThreadID.x].
 
-					// 3. 기울기가 1인 경우 -> 이것은 Linear 하게 변화하는 것과 똑같다.
 			}
-		}
-		break;
+			break;
 		}
 	}
 

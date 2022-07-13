@@ -379,6 +379,7 @@ enum class ParticleSpecialMoveDir
 enum class ParticleSpeedChangeMethod
 {
 	Linear = 1,
-	Exponential, 
+	Exponential,  // 속도 변화가 점점 크게
+	Log, /// 속도 변화가 점점 작게 
 	Max
 };

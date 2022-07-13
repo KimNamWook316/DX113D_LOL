@@ -49,8 +49,9 @@ static const char* ParticleMoveDirType[] = {
 };
 
 static const char* ParticleSpeedChangeType[] = {
-    "Linear", //  xz 평명 방향으로 이동 y는 0
-    "Exponential" //  xy 평명 방향으로 이동 z 는 0
+    "Linear", //  속도 변화 선형적으로 변화
+    "Exponential", //  속도 변화 점점 크게 변화
+    "Log" // 속도 변화 점점 작게 변화 
 };
 
 struct Particle3DObjectBackUpStruct
