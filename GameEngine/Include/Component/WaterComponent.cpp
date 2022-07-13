@@ -9,7 +9,7 @@ CWaterComponent::CWaterComponent()
 	m_CBuffer = new CWaterCBuffer;
 	m_CBuffer->Init();
 
-	m_LayerName = "Particle";
+	m_LayerName = "PostParticle";
 	m_Render = true;
 }
 
@@ -73,7 +73,7 @@ bool CWaterComponent::Save(FILE* File)
 	fwrite(&Speed, sizeof(float), 1, File);
 	fwrite(&FoamDepth, sizeof(float), 1, File);
 
-	std::string MaterialName;
+	std::string MaterialName = m_Material->GetName();
 	int Length = MaterialName.length();
 	fwrite(&Length, sizeof(int), 1, File);
 	fwrite(MaterialName.c_str(), sizeof(char), Length, File);
@@ -105,6 +105,8 @@ bool CWaterComponent::Load(FILE* File)
 	}
 
 	m_Material = m_Scene->GetResource()->FindMaterial(MatName);
+
+	m_Material->Load(File);
 
 	return true;
 }

@@ -2,27 +2,29 @@
 #include "TransparentInfo.fx"
 
 Texture2DMS<float4> g_Depth : register(t11);
+Texture2DMS<float4> g_ShadowMapTex : register(t12);
 
 cbuffer WaterCBuffer : register(b13)
 {
 	float g_WaterSpeed;
-	float g_WaterDistortThreshold;
-	int2 g_WaterDepthOffset;
-}
+	float g_WaterFoamDepthThreshold;
+	float2 g_WaterEmpty;
+};
 
-int2 g_MultiplyArr[4] =
+cbuffer ShadowCBuffer : register(b10)
 {
-	int2(1, 1),
-	int2(-1, 1),
-	int2(1, -1),
-	int2(-1, -1)
+	matrix g_matShadowVP;
+	matrix g_matShadowInvVP;
+	float g_ShadowBias;
+	float2 g_ShadowResolution;
+	float g_ShadowEmpty;
 };
 
 Vertex3DOutput WaterVS(Vertex3D Input)
 {
-    Vertex3DOutput Output = (Vertex3DOutput) 0;
+	Vertex3DOutput Output = (Vertex3DOutput) 0;
     
-    float3 Pos = Input.Pos;
+	float3 Pos = Input.Pos;
 
 	Output.ProjPos = mul(float4(Pos, 1.f), g_matWVP);
 	Output.Pos = Output.ProjPos;
@@ -35,7 +37,7 @@ Vertex3DOutput WaterVS(Vertex3D Input)
 	Output.Tangent = normalize(mul(float4(Input.Tangent, 0.f), g_matWV).xyz);
 	Output.Binormal = normalize(mul(float4(Input.Binormal, 0.f), g_matWV).xyz);
 
-    Output.UV = Input.UV;
+	Output.UV = Input.UV;
 	
 	return Output;
 }
@@ -44,60 +46,79 @@ PSOutput_Single WaterPS(Vertex3DOutput Input)
 {
 	PSOutput_Single Output = (PSOutput_Single) 0;
 
-	float4 BaseTexColor = g_BaseTexture.Sample(g_BaseSmp, Input.UV);
-
-	if (BaseTexColor.a == 0.f || g_MtrlOpacity == 0.f)
+	if (g_MtrlOpacity == 0.f)
 	{
 		clip(-1);
 	}
+
+	float4 BaseColor = g_MtrlBaseColor;
 
 	uint2 ScreenPos = (uint2) 0;
 	ScreenPos.x = g_Resolution.x * ((Input.ProjPos.x / Input.ProjPos.w) * 0.5f + 0.5f);
 	ScreenPos.y = g_Resolution.y * ((Input.ProjPos.y / Input.ProjPos.w) * -0.5f + 0.5f);
 
-	float WorldDepth = g_Depth.Load(ScreenPos, 0).g;
+	float4 PrevDepth = g_Depth.Load(ScreenPos, 0);
 
-	// 사방의 Depth를 검사해 임계값 이상의 깊이 차이가 난다면 Normal Texture를 참조해 물결파를 만듬
-	// 막힌 방향 반대로 이동하는 UV 텍스쳐를 참조함, 현재 Depth보다 얕은 쪽에서 물결파가 일어남
-	float3 DistortNormal;
-	float3 InputNormal = Input.Normal;
-	
-	[unroll]
-	for (int i = 0; i < 4; ++i)
+	float2 MoveUV = (Input.UV * 8.f) + float2(g_AccTime, 0.f) * g_WaterSpeed * 0.2f;
+
+	float DepthDiff = PrevDepth.g - Input.ViewPos.z;
+
+	float3 NoiseColor = g_BaseTexture.Sample(g_BaseSmp, MoveUV).rgb;
+
+	MoveUV = (Input.UV * 6.f) + float2(g_AccTime, g_AccTime) * g_WaterSpeed * 0.2f;
+	float NoiseColor2 = g_BaseTexture.Sample(g_BaseSmp, MoveUV).rgb;
+
+	NoiseColor += NoiseColor2;
+	NoiseColor *= 0.5f;
+
+	if (PrevDepth.r < 0.95f)
 	{
-		float DistortDepth = g_Depth.Load(ScreenPos + (g_WaterDepthOffset * g_MultiplyArr[i]), 0).g;
-
-		if (DistortDepth - WorldDepth > g_WaterDistortThreshold)
+		Output.Color.rgb = BaseColor.rgb;
+	}
+	else
+	{
+		if (DepthDiff < g_WaterFoamDepthThreshold)
 		{
-			DistortNormal = ComputeBumpNormal(InputNormal, Input.Tangent, Input.Binormal,
-					Input.UV + (-1 * g_MultiplyArr[i] * g_AccTime * g_WaterSpeed * 0.002f));
-			Input.Normal += DistortNormal;
-			Input.Normal *= 0.f;
+			DepthDiff = 1.f - (DepthDiff / g_WaterFoamDepthThreshold);
+
+			float3 AddColor = float3(0.3f, 0.3f, 0.3f);
+
+			if (DepthDiff <= (0.3f + NoiseColor.r))
+			{
+				if (NoiseColor.r < 0.35f)
+				{
+					AddColor = 0.f;
+				}
+			}
+			BaseColor.rgb += AddColor;
 		}
 	}
 
-	// 조명 계산
-	LightInfo Info;
-	LightResult LResult;
-	LightResult LAcc;
+	Output.Color.rgb = BaseColor.rgb + g_MtrlAmbientColor.rgb;
+	Output.Color.a = 1.f;
 
-	int LightCount = g_LightCount;
-	
-	for (int j = 0; j < LightCount; ++j)
+	// 그림자
+	float3 WorldPos = mul(Input.ProjPos, g_matInvVP).xyz;
+	float4 ShadowPos = mul(float4(WorldPos, 1.f), g_matShadowVP);
+
+	float2 ShadowUV;
+	ShadowUV.x = ShadowPos.x / ShadowPos.w * 0.5f + 0.5f;
+	ShadowUV.y = ShadowPos.y / ShadowPos.w * -0.5f + 0.5f;
+
+	int2 ShadowTargetPos = (int2)0;
+
+	ShadowTargetPos.x = (int) (ShadowUV.x * g_ShadowResolution.x);
+	ShadowTargetPos.y = (int) (ShadowUV.y * g_ShadowResolution.y);
+
+	float4 ShadowMap = g_ShadowMapTex.Load(ShadowTargetPos, 0);
+
+    if (ShadowMap.a > 0.f)
 	{
-		Info = g_LightInfoArray[j];
-		LResult = ComputeLight(Info, Input.ViewPos, Input.Normal, Input.UV);
-		LAcc.Dif += LResult.Dif;
-		LAcc.Amb += LResult.Amb;
-		LAcc.Spc += LResult.Spc;
-		LAcc.Emv += LResult.Emv;
+        if (ShadowPos.z - g_ShadowBias > ShadowMap.r * ShadowPos.w)
+		{
+			Output.Color.rgb *= 0.2f;
+		}
 	}
-
-	Output.Color.rgb = BaseTexColor.rgb * (LAcc.Dif.rgb + LAcc.Amb.rgb) +
-        LAcc.Spc.rgb + LAcc.Emv.rgb;
-
-	// 픽셀 색상
-	Output.Color.a = BaseTexColor.a * g_MtrlOpacity;
 
 	return Output;
 }

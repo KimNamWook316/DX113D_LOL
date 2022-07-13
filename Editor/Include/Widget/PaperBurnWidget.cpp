@@ -38,6 +38,8 @@ bool CPaperBurnWidget::Init()
 	m_Tex = RootTree->AddWidget<CIMGUIImage>("Burn Texture", 200.f, 200.f);
 	m_EndEventType = RootTree->AddWidget<CIMGUIComboBox>("End Event Type", 200.f);
 	m_PaperBurnComponent = RootTree->AddWidget<CIMGUITextInput>("PaperBurn Component Name", 200.f);
+	RootTree->AddWidget<CIMGUISameLine>("Line");
+	m_FindCompnent = RootTree->AddWidget<CIMGUIButton>("Find Component", 0.f, 0.f);
 	m_Inverse = RootTree->AddWidget<CIMGUICheckBox>("Inverse", 200.f);
 	m_FinishTime = RootTree->AddWidget<CIMGUIInputFloat>("Finish Time", 200.f);
 	m_OutlineColor = RootTree->AddWidget<CIMGUIColor4>("Outline Color", 200.f);
@@ -70,8 +72,8 @@ bool CPaperBurnWidget::Init()
 	m_OutlineColor->SetCallBack(this, &CPaperBurnWidget::OnChangeOutColor);
 	m_CenterlineColor->SetCallBack(this, &CPaperBurnWidget::OnChangeCenterColor);
 	m_InlineColor->SetCallBack(this, &CPaperBurnWidget::OnChangeInColor);
-	m_PaperBurnComponent->SetDropCallBack(this, &CPaperBurnWidget::OnDropPaperBurnComponent);
 	m_EndEventType->SetSelectCallback(this, &CPaperBurnWidget::OnSelectEndEventType);
+	m_FindCompnent->SetClickCallback(this, &CPaperBurnWidget::OnClickFindComponent);
 
 	return true;
 }
@@ -155,16 +157,22 @@ void CPaperBurnWidget::OnSelectEndEventType(int Idx, const char* Label)
 	Com->SetEndEvent((PaperBurnEndEvent)Idx);
 }
 
-void CPaperBurnWidget::OnDropPaperBurnComponent(const std::string& Name)
+void CPaperBurnWidget::OnClickFindComponent()
 {
+	std::string InputCompName = m_PaperBurnComponent->GetTextMultibyte();
+
 	CGameObject* OwnerObject = m_Component->GetGameObject();
 
-	CComponent* DropComponent = OwnerObject->FindComponent(Name);
+	CComponent* DropComponent = OwnerObject->FindComponent(InputCompName);
 
 	bool Success = false;
 	if (DropComponent->GetComponentType() == Component_Type::SceneComponent)
 	{
 		Success = dynamic_cast<CPaperBurnComponent*>(m_Component)->SetPaperBurnComponent((CSceneComponent*)DropComponent);
+		if (Success)
+		{
+			MessageBox(nullptr, TEXT("컴포넌트 지정 성공"), TEXT("성공"), MB_OK);
+		}
 	}
 
 	if (!Success)

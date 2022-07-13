@@ -2,19 +2,29 @@
 #include "TransparentInfo.fx"
 
 Texture2DMS<float4> g_Depth : register(t11);
+Texture2DMS<float4> g_ShadowMapTex : register(t12);
 
 cbuffer WaterCBuffer : register(b13)
 {
 	float g_WaterSpeed;
 	float g_WaterFoamDepthThreshold;
 	float2 g_WaterEmpty;
-}
+};
+
+cbuffer ShadowCBuffer : register(b10)
+{
+	matrix g_matShadowVP;
+	matrix g_matShadowInvVP;
+	float g_ShadowBias;
+	float2 g_ShadowResolution;
+	float g_ShadowEmpty;
+};
 
 Vertex3DOutput WaterVS(Vertex3D Input)
 {
-    Vertex3DOutput Output = (Vertex3DOutput) 0;
+	Vertex3DOutput Output = (Vertex3DOutput) 0;
     
-    float3 Pos = Input.Pos;
+	float3 Pos = Input.Pos;
 
 	Output.ProjPos = mul(float4(Pos, 1.f), g_matWVP);
 	Output.Pos = Output.ProjPos;
@@ -27,7 +37,7 @@ Vertex3DOutput WaterVS(Vertex3D Input)
 	Output.Tangent = normalize(mul(float4(Input.Tangent, 0.f), g_matWV).xyz);
 	Output.Binormal = normalize(mul(float4(Input.Binormal, 0.f), g_matWV).xyz);
 
-    Output.UV = Input.UV;
+	Output.UV = Input.UV;
 	
 	return Output;
 }
@@ -84,10 +94,31 @@ PSOutput_Single WaterPS(Vertex3DOutput Input)
 		}
 	}
 
-	Output.Color.rgb = BaseColor.rgb;
-
-	// 픽셀 색상
+	Output.Color.rgb = BaseColor.rgb + g_MtrlAmbientColor.rgb;
 	Output.Color.a = 1.f;
+
+	// 그림자
+	float3 WorldPos = mul(Input.ProjPos, g_matInvVP).xyz;
+	float4 ShadowPos = mul(float4(WorldPos, 1.f), g_matShadowVP);
+
+	float2 ShadowUV;
+	ShadowUV.x = ShadowPos.x / ShadowPos.w * 0.5f + 0.5f;
+	ShadowUV.y = ShadowPos.y / ShadowPos.w * -0.5f + 0.5f;
+
+	int2 ShadowTargetPos = (int2)0;
+
+	ShadowTargetPos.x = (int) (ShadowUV.x * g_ShadowResolution.x);
+	ShadowTargetPos.y = (int) (ShadowUV.y * g_ShadowResolution.y);
+
+	float4 ShadowMap = g_ShadowMapTex.Load(ShadowTargetPos, 0);
+
+    if (ShadowMap.a > 0.f)
+	{
+        if (ShadowPos.z - g_ShadowBias > ShadowMap.r * ShadowPos.w)
+		{
+			Output.Color.rgb *= 0.2f;
+		}
+	}
 
 	return Output;
 }

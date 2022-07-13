@@ -285,6 +285,12 @@ bool CRenderManager::Init()
 	m_RenderLayerList.push_back(Layer);
 
 	Layer = new RenderLayer;
+	Layer->Name = "PostParticle";
+	Layer->LayerPriority = (int)RenderLayerType::PostParticle;
+
+	m_RenderLayerList.push_back(Layer);
+
+	Layer = new RenderLayer;
 	Layer->Name = "ScreenWidgetComponent";
 	Layer->LayerPriority = (int)RenderLayerType::ScreenWidgetComponent;
 
@@ -614,6 +620,9 @@ void CRenderManager::Render(float DeltaTime)
 	m_AlphaBlend->ResetState();
 
 	m_vecGBuffer[2]->ResetShader(10, (int)Buffer_Shader_Type::Pixel, 0);
+
+	// Post-Particle Layer 출력
+	RenderPostParticle();
 
 	// Screen Widget 출력
 	iter = m_RenderLayerList[(int)RenderLayerType::ScreenWidgetComponent]->RenderList.begin();
@@ -1131,6 +1140,18 @@ void CRenderManager::RenderParticleEffectEditor()
 	CDevice::GetInst()->GetContext()->RSSetViewports(1, &PrevVP);
 }
 
+void CRenderManager::RenderPostParticle()
+{
+	// Post - 파티클 레이어 출력
+	auto	iter = m_RenderLayerList[(int)RenderLayerType::PostParticle]->RenderList.begin();
+	auto	iterEnd = m_RenderLayerList[(int)RenderLayerType::PostParticle]->RenderList.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		(*iter)->Render();
+	}
+}
+
 void CRenderManager::SetBlendFactor(const std::string& Name, float r, float g,
 	float b, float a)
 {
@@ -1306,11 +1327,6 @@ void CRenderManager::UpdateInstancingList()
 					if ((*iter)->InstancingList.size() > Count)
 					{
 						Count = RecommendSBufferSize;
-					}
-
-					if (RecommendSBufferSize > 1000)
-					{
-						int a = 1;
 					}
 
 					SAFE_DELETE(Layer->m_vecInstancing[Layer->InstancingIndex]->Buffer);

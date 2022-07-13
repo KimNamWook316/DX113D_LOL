@@ -18,7 +18,7 @@ public:
 public:
     void OnClickLoad();
     void OnSelectEndEventType(int Idx, const char* Label);
-    void OnDropPaperBurnComponent(const std::string& Name);
+    void OnClickFindComponent();
     void OnCheckInverse(int Idx, bool Bool);
     void OnChangeFinishTime(float Val);
     void OnChangeInFilter(float Val);
@@ -33,6 +33,7 @@ public:
 private:
     class CIMGUIComboBox* m_EndEventType;
     class CIMGUITextInput* m_PaperBurnComponent;
+    class CIMGUIButton* m_FindCompnent;
     class CIMGUITextInput* m_TexName;
     class CIMGUIButton* m_LoadTex;
     class CIMGUIImage* m_Tex;

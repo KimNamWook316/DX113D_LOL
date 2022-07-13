@@ -14,6 +14,7 @@ enum class RenderLayerType
 	Transparency,
 	Decal,
 	Particle,
+	PostParticle,
 	ScreenWidgetComponent,
 	AnimationEditor,
 	ParticleEditor,
@@ -193,6 +194,11 @@ public:
 		m_PostProcessing = Enable;
 	}
 
+	class CShadowCBuffer* GetShadowCBuffer() const
+	{
+		return m_ShadowCBuffer;
+	}
+
 	float GetMiddleGray() const;
 	float GetLumWhite() const;
 	float GetBloomThreshold() const;
@@ -252,6 +258,7 @@ private:
 	void RenderFinalScreen();
 	void RenderAnimationEditor();
 	void RenderParticleEffectEditor();
+	void RenderPostParticle();
 
 	// Render State
 public:

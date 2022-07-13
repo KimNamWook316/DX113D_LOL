@@ -1,6 +1,8 @@
 #include "WaterShader.h"
 #include "../Texture/RenderTarget.h"
+#include "ShadowCBuffer.h"
 #include "../ResourceManager.h"
+#include "../../Render/RenderManager.h"
 
 CWaterShader::CWaterShader()
 {
@@ -35,12 +37,20 @@ bool CWaterShader::Init()
 
 void CWaterShader::SetShaderResources()
 {
+	CShadowCBuffer* ShadowCBuffer = CRenderManager::GetInst()->GetShadowCBuffer();
 	CRenderTarget* DepthTarget = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("GBuffer2");
+	CRenderTarget* ShadowTarget = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("ShadowMap");
+
+	ShadowCBuffer->UpdateCBuffer();
 	DepthTarget->SetTargetShader(11);
+	ShadowTarget->SetTargetShader(12);
 }
 
 void CWaterShader::ResetShaderResources()
 {
 	CRenderTarget* DepthTarget = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("GBuffer2");
+	CRenderTarget* ShadowTarget = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("ShadowMap");
+
 	DepthTarget->ResetTargetShader(11);
+	ShadowTarget->ResetTargetShader(12);
 }
