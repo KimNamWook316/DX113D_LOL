@@ -723,6 +723,11 @@ void CRenderManager::RenderShadowMap()
 
 		for (; iter != iterEnd; ++iter)
 		{
+			if (!(*iter)->IsDrawShadow())
+			{
+				continue;
+			}
+
 			(*iter)->RenderShadowMap();
 		}
 	}
