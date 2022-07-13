@@ -399,6 +399,44 @@ void CAnimationSequenceInstance::ChangeAnimation(const std::string& Name)
  	m_ChangeAnimation->m_Time = 0.f;
 }
 
+void CAnimationSequenceInstance::ChangeAnimation(CAnimationSequenceData* SequenceData)
+{
+	if (!SequenceData)
+	{
+		m_PlayAnimation = false;
+		m_AnimEnd = false;
+		m_CurrentAnimation->m_Time = 0.f;
+		m_CurrentAnimation->m_Sequence->m_CurrentFrameIdx = 0;
+
+		size_t	Size = m_CurrentAnimation->m_vecNotify.size();
+
+		for (size_t i = 0; i < Size; ++i)
+		{
+			m_CurrentAnimation->m_vecNotify[i]->Call = false;
+		}
+
+		m_ChangeAnimation = nullptr;
+		return;
+	}
+
+	if (m_CurrentAnimation->m_Name == SequenceData->GetName())
+		return;
+
+	m_AnimEnd = false;
+	m_CurrentAnimation->m_Time = 0.f;
+	m_CurrentAnimation->m_Sequence->m_CurrentFrameIdx = 0;
+
+	size_t	Size = m_CurrentAnimation->m_vecNotify.size();
+
+	for (size_t i = 0; i < Size; ++i)
+	{
+		m_CurrentAnimation->m_vecNotify[i]->Call = false;
+	}
+
+	m_ChangeAnimation = SequenceData;
+	m_ChangeAnimation->m_Time = 0.f;
+}
+
 void CAnimationSequenceInstance::KeepCurrentAnimation()
 {
 	// CurrentAnimation은 지금 애니메이션이지만 ChangeAnimation은 다른 애니메이션으로 설정된 상태에서

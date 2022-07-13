@@ -28,6 +28,7 @@ public:
 	{
 		m_CBuffer->SetInstancingInfo(Info);
 	}
+
 	void StartPaperBurn();
 	void SetMaterial(class CMaterial* Material);
 	void SetInverse(bool Enable);

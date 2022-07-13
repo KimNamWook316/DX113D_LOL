@@ -95,6 +95,7 @@ class CFBXLoader
 	friend class CStaticMesh;
 	friend class CAnimationMesh;
 	friend class CAnimationSequence;
+	friend class CMeshManager;
 
 private:
 	CFBXLoader();
@@ -174,5 +175,9 @@ private:
 		FbxCluster* pCluster, const FbxAMatrix& matTransform,
 		int iBoneIndex);
 	void ChangeWeightAndIndices(PFBXMESHCONTAINER pContainer);
+
+public:
+	void LoadAniFile();
+	void LoadWString(std::wstring& _str, FILE* _pFile);
 };
 

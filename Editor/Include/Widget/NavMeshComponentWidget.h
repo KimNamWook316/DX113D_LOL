@@ -17,6 +17,7 @@ public:
 private:
     void OnClickLoadMesh();
     void OnClickDebugRender(int Idx, bool Check);
+    void OnChangePlayerSpawnPos();
 
 private:
     void RefreshMeshWidget(class CMesh* Mesh);
@@ -25,5 +26,7 @@ private:
     class CIMGUITextInput* m_MeshName;
     class CIMGUIButton* m_LoadMeshButton;
     class CIMGUICheckBox* m_DebugRenderCheckBox;
+    class CIMGUIInputFloat3* m_PlayerSpawnPosInput;
+    class CIMGUIButton* m_PlayerSpawnPosSetButton;
 };
 

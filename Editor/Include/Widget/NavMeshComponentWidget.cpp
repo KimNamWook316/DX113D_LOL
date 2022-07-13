@@ -12,6 +12,8 @@
 #include "IMGUITree.h"
 #include "IMGUIButton.h"
 #include "IMGUICheckBox.h"
+#include "IMGUIInputFloat3.h"
+#include "IMGUISameLine.h"
 
 CNavMeshComponentWidget::CNavMeshComponentWidget()
 {
@@ -34,12 +36,19 @@ bool CNavMeshComponentWidget::Init()
 	m_MeshName = m_RootTree->AddWidget<CIMGUITextInput>("Mesh Name");
 	m_LoadMeshButton = m_RootTree->AddWidget<CIMGUIButton>("Load", 0.f, 0.f);
 	m_DebugRenderCheckBox = m_RootTree->AddWidget<CIMGUICheckBox>("Debug Render");
+	m_PlayerSpawnPosInput = m_RootTree->AddWidget<CIMGUIInputFloat3>("Player Spawn Position");
+
+	m_PlayerSpawnPosSetButton = m_RootTree->AddWidget<CIMGUIButton>("SpawnPos Set");
+
+
 	m_DebugRenderCheckBox->AddCheckInfo("Debug Render");
+	m_PlayerSpawnPosSetButton->SetSize(100.f, 20.f);
 
 	// CallBack
 	m_LoadMeshButton->SetClickCallback(this, &CNavMeshComponentWidget::OnClickLoadMesh);
 
 	m_DebugRenderCheckBox->SetCallBackIdx<CNavMeshComponentWidget>(this, &CNavMeshComponentWidget::OnClickDebugRender);
+	m_PlayerSpawnPosSetButton->SetClickCallback<CNavMeshComponentWidget>(this, &CNavMeshComponentWidget::OnChangePlayerSpawnPos);
 
 	return true;
 }
@@ -122,6 +131,24 @@ void CNavMeshComponentWidget::OnClickDebugRender(int Idx, bool Check)
 	}
 	else
 		static_cast<CNavMeshComponent*>(m_Component)->SetDebugRender(false);
+}
+
+void CNavMeshComponentWidget::OnChangePlayerSpawnPos()
+{
+	CNavMeshComponent* MeshCom = (CNavMeshComponent*)m_Component;
+
+	Vector3 PlayerPos = CSceneManager::GetInst()->GetScene()->GetPlayerObject()->GetWorldPos();
+	CNavigation3DManager* Manager = CSceneManager::GetInst()->GetScene()->GetNavigation3DManager();
+
+	MeshCom->SetPlayerSpawnPos(PlayerPos);
+
+	float ResultHeight = 0.f;
+
+	Manager->CheckPlayerNavMeshPoly(ResultHeight);
+	int PlayerPolyIndex = Manager->GetPlayerPolyIndex();
+	MeshCom->SetPlayerSpawnPolyIndex(PlayerPolyIndex);
+
+	m_PlayerSpawnPosInput->SetVal(PlayerPos);
 }
 
 void CNavMeshComponentWidget::RefreshMeshWidget(CMesh* Mesh)

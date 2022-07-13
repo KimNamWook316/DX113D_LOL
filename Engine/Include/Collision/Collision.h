@@ -40,7 +40,9 @@ public:
 
 	static bool CollisionRayToSphere(Vector3& HitPoint, const Ray& ray, const SphereInfo& Sphere);
 	static bool CollisionRayToBox3D(Vector3& HitPoint, const Ray& ray, const Box3DInfo& Box);
-	static bool CollisionBox3DToHalfLine(Vector3& HitPoint, const Box3DInfo& Box, const HalfLineInfo& HalfLineInfo);
+	static bool CollisionBox3DToHalfLine(Vector3& HitPoint, const Box3DInfo& Box, const HalfLineInfo& HalfLineInfo, class CColliderBox3D* BoxCollider);
 	static bool CollisionBox3DToSphere(Vector3& HitPoint, class CColliderBox3D* Src, const Box3DInfo& Box, const SphereInfo& Sphere);
+
+	static bool CheckPointInBox(const Vector3& Point, const Box3DInfo& Box);
 };
 

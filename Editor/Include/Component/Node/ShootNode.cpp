@@ -7,9 +7,12 @@
 #include "Scene/Scene.h"
 #include "Scene/SceneManager.h"
 #include "../PlayerDataComponent.h"
+#include "../PlayerHookComponent.h"
 #include "../../Object/PlayerHook.h"
+#include "Component/Node/CompositeNode.h"
 
-CShootNode::CShootNode()
+CShootNode::CShootNode()	:
+	m_InRestoreCam(false)
 {
 	SetTypeID(typeid(CShootNode).hash_code());
 }
@@ -29,7 +32,7 @@ NodeResult CShootNode::OnStart(float DeltaTime)
 
 	std::string ChampionName = m_Object->GetName();
 
-	std::string SequenceName = ChampionName + "_" + "SkillR";
+	std::string SequenceName = ChampionName + "_" + "Hook";
 
 	if (m_AnimationMeshComp)
 	{
@@ -61,47 +64,75 @@ NodeResult CShootNode::OnUpdate(float DeltaTime)
 
 	if (Ability == Player_Ability::Hook)
 	{
-		CPlayerHook* HookHead = Comp->GetPlayerHookHead();
+		if (m_InRestoreCam)
+		{
+			CScene* Scene = CSceneManager::GetInst()->GetScene();
 
-		CRotateAttackDirectionNode* Node = (CRotateAttackDirectionNode*)m_Owner->FindNodeByType<CRotateAttackDirectionNode>();
+			bool RestoreEnd = Scene->RestoreCamera(50.f, DeltaTime);
+
+			if (RestoreEnd)
+			{
+				m_IsEnd = true;
+				m_CallStart = false;
+				m_Owner->SetCurrentNode(nullptr);
+				m_InRestoreCam = false;
+
+				return NodeResult::Node_True;
+			}
+
+			else
+			{
+				return NodeResult::Node_Running;
+			}
+		}
+
+		CRotateAttackDirectionNode* Node = (CRotateAttackDirectionNode*)((CCompositeNode*)(m_Parent->GetParent()->GetParent()))->FindChildByType<CRotateAttackDirectionNode>();
 		Vector3 Point = Node->GetPickingPoint();
+
 		Vector3 ObjectPos = m_Object->GetWorldPos();
 		Vector3 Dir = Vector3(Point.x, 0.f, Point.z) - Vector3(ObjectPos.x, 0.f, ObjectPos.z);
+		Dir.Normalize();
 
-		bool Collision = false;
-		bool ThrowHookEnd = HookHead->Move(Dir, 1.f, Collision);
-
-		// Hook이 건물과 충돌해서 그 방향으로 나가가야한다면 return NodeResult::Node_False를 리턴해서 플레이어가 끌려가는 동작을 해주는 형제 노드로 가도록
-	}
-
-	if (!m_AnimationMeshComp->GetAnimationInstance()->IsCurrentAnimLoop() && m_AnimationMeshComp->GetAnimationInstance()->IsCurrentAnimEnd())
-	{
-		CScene* Scene = CSceneManager::GetInst()->GetScene();
-
-		bool RestoreEnd = Scene->RestoreCamera(50.f, DeltaTime);
-
-		if (RestoreEnd)
+		CPlayerHookComponent* Comp = m_Object->FindComponentFromType<CPlayerHookComponent>();
+		bool HookCollision = false;
+		if (Comp)
 		{
-			m_Object->SetNoInterrupt(false);
+			HookResult Result = Comp->ShootHook(Dir, DeltaTime);
 
-			m_IsEnd = true;
-			m_CallStart = false;
-			m_Owner->SetCurrentNode(nullptr);
+			if (Result == HookResult::NoCollision)
+			{
+				m_InRestoreCam = true;
+				return NodeResult::Node_Running;
+			}
 
-			return NodeResult::Node_True;
+			else if (Result == HookResult::Collision)
+			{
+				m_Owner->SetCurrentNode(this);
+				return NodeResult::Node_Running;
+				// 충돌된 지점까지 플레이어가 날아가고 있는중
+			}
+
+			else if(Result == HookResult::OnShoot)
+			{
+				m_Owner->SetCurrentNode(this);
+				return NodeResult::Node_Running;
+			}
+
+			else if (Result == HookResult::CollisionEnd)
+			{
+				m_Owner->SetCurrentNode(nullptr);
+				return NodeResult::Node_True;
+			}
+
 		}
 
 		else
 		{
-			return NodeResult::Node_Running;
+			// CancleShootNode를 CurrentNode로 만들어서 카메라 원래 위치로 복구
+			m_Owner->SetCurrentNode(((CCompositeNode*)m_Parent->GetParent())->GetChild(1));
 		}
-	}
 
-	else
-	{
-		m_Owner->SetCurrentNode(this);
-
-		return NodeResult::Node_Running;
+		return NodeResult::Node_True;
 	}
 }
 

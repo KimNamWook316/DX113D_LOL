@@ -22,14 +22,20 @@ CNavigation3DManager::~CNavigation3DManager()
 {
 }
 
-void CNavigation3DManager::SetNavData(CLandScape* NavData)
+CNavMeshComponent* CNavigation3DManager::GetNavMeshData() const
 {
-	m_NavData = NavData;
+	return m_NavMeshComponent;
 }
 
 void CNavigation3DManager::SetNavMeshData(CNavMeshComponent* NavComp)
 {
 	m_NavMeshComponent = NavComp;
+}
+
+
+void CNavigation3DManager::SetNavData(CLandScape* NavData)
+{
+	m_NavData = NavData;
 }
 
 void CNavigation3DManager::AddNavResult(const NavResultData& NavData)
@@ -108,7 +114,7 @@ bool CNavigation3DManager::CheckPickingPoint(Vector3& OutPos)
 	return true;
 }
 
-bool CNavigation3DManager::CheckPlayerNavMeshPoly()
+bool CNavigation3DManager::CheckPlayerNavMeshPoly(float& Height)
 {
 	if (!m_NavMeshComponent)
 		return false;
@@ -133,9 +139,9 @@ bool CNavigation3DManager::CheckPlayerNavMeshPoly()
 
 			Matrix WorldMat = m_NavMeshComponent->GetWorldMatrix();
 
-			P1 = P1.TransformCoord(WorldMat);
-			P2 = P2.TransformCoord(WorldMat);
-			P3 = P3.TransformCoord(WorldMat);
+			//P1 = P1.TransformCoord(WorldMat);
+			//P2 = P2.TransformCoord(WorldMat);
+			//P3 = P3.TransformCoord(WorldMat);
 
 			XMVECTOR v1 = PlayerPos.Convert();
 
@@ -151,6 +157,17 @@ bool CNavigation3DManager::CheckPlayerNavMeshPoly()
 			if (Intersect)
 			{
 				m_PlayerPolyIndex = i;
+				
+				float Dist1 = P1.Distance(PlayerPos);
+				float Dist2 = P2.Distance(PlayerPos);
+				float Dist3 = P3.Distance(PlayerPos);
+
+				Vector3 LerpVec = Vector3(1/Dist1, 1/Dist2, 1/Dist3);
+				LerpVec.Normalize();
+
+				// Weighted Average
+				Height = LerpVec.x * LerpVec.x * P1.y + LerpVec.y * LerpVec.y * P2.y + LerpVec.z * LerpVec.z * P3.y + 0.1f;
+
 				return true;
 			}
 
@@ -162,9 +179,9 @@ bool CNavigation3DManager::CheckPlayerNavMeshPoly()
 
 		Matrix WorldMat = m_NavMeshComponent->GetWorldMatrix();
 
-		P1 = P1.TransformCoord(WorldMat);
-		P2 = P2.TransformCoord(WorldMat);
-		P3 = P3.TransformCoord(WorldMat);
+		//P1 = P1.TransformCoord(WorldMat);
+		//P2 = P2.TransformCoord(WorldMat);
+		//P3 = P3.TransformCoord(WorldMat);
 
 		Player->SetWorldPos(Vector3((P1.x + P2.x + P3.x) / 3.f, (P1.y + P2.y + P3.y) / 3.f, (P1.z + P2.z + P3.z) / 3.f));
 		m_PlayerPolyIndex = 0;
@@ -183,9 +200,9 @@ bool CNavigation3DManager::CheckPlayerNavMeshPoly()
 		Vector3 P2 = vecPos[1];
 		Vector3 P3 = vecPos[2];
 
-		P1 = P1.TransformCoord(WorldMat);
-		P2 = P2.TransformCoord(WorldMat);
-		P3 = P3.TransformCoord(WorldMat);
+		//P1 = P1.TransformCoord(WorldMat);
+		//P2 = P2.TransformCoord(WorldMat);
+		//P3 = P3.TransformCoord(WorldMat);
 
 		CGameObject* Player = m_Scene->GetPlayerObject();
 		Vector3 PlayerPos = Player->GetWorldPos();
@@ -203,6 +220,16 @@ bool CNavigation3DManager::CheckPlayerNavMeshPoly()
 
 		if (Intersect)
 		{
+			float Dist1 = P1.Distance(PlayerPos);
+			float Dist2 = P2.Distance(PlayerPos);
+			float Dist3 = P3.Distance(PlayerPos);
+
+			Vector3 LerpVec = Vector3(1 / Dist1, 1 / Dist2, 1 / Dist3);
+			LerpVec.Normalize();
+
+			// Weighted Average
+			Height = LerpVec.x * LerpVec.x * P1.y + LerpVec.y * LerpVec.y * P2.y + LerpVec.z * LerpVec.z * P3.y + 0.1f;
+
 			return true;
 		}
 
@@ -225,9 +252,9 @@ bool CNavigation3DManager::CheckPlayerNavMeshPoly()
 				P2 = vecPos[1];
 				P3 = vecPos[2];
 
-				P1 = P1.TransformCoord(WorldMat);
-				P2 = P2.TransformCoord(WorldMat);
-				P3 = P3.TransformCoord(WorldMat);
+				//P1 = P1.TransformCoord(WorldMat);
+				//P2 = P2.TransformCoord(WorldMat);
+				//P3 = P3.TransformCoord(WorldMat);
 
 				XMVECTOR _P1 = P1.Convert();
 				XMVECTOR _P2 = P2.Convert();
@@ -239,12 +266,84 @@ bool CNavigation3DManager::CheckPlayerNavMeshPoly()
 
 				if (Intersect)
 				{
+					float Dist1 = P1.Distance(PlayerPos);
+					float Dist2 = P2.Distance(PlayerPos);
+					float Dist3 = P3.Distance(PlayerPos);
+
+					Vector3 LerpVec = Vector3(1 / Dist1, 1 / Dist2, 1 / Dist3);
+					LerpVec.Normalize();
+
+					// Weighted Average
+					Height = LerpVec.x * LerpVec.x * P1.y + LerpVec.y * LerpVec.y * P2.y + LerpVec.z * LerpVec.z * P3.y + 0.1f;
+
 					m_PlayerPolyIndex = AdjPolyIndex;
 					return true;
 				}
 			}
 
 			return false;
+		}
+	}
+
+	return false;
+}
+
+bool CNavigation3DManager::CheckNavMeshPickingPoint(Vector3& OutPos)
+{
+	if (!m_NavMeshComponent)
+		return false;
+
+	CCameraComponent* Current = CSceneManager::GetInst()->GetScene()->GetCameraManager()->GetCurrentCamera();
+
+	Matrix ViewMat = Current->GetViewMatrix();
+
+	Ray ray = CInput::GetInst()->GetRay(ViewMat);
+	Vector3 RayDir = ray.Dir;
+	Vector3 RayStartPos = ray.Pos;
+	XMVECTOR _RayDir = RayDir.Convert();
+	XMVECTOR _RayStartPos = RayStartPos.Convert();
+	size_t Count = m_NavMeshComponent->GetNavMesh()->GetNavMeshPolygonCount();
+
+	for (size_t i = 0; i < Count; ++i)
+	{
+		NavMeshPolygon Poly = m_NavMeshComponent->GetNavMesh()->GetNavMeshPolygon(i);
+
+		Vector3 P1 = Poly.m_vecVertexPos[0];
+		Vector3 P2 = Poly.m_vecVertexPos[1];
+		Vector3 P3 = Poly.m_vecVertexPos[2];
+
+		XMVECTOR _P1 = P1.Convert();
+		XMVECTOR _P2 = P2.Convert();
+		XMVECTOR _P3 = P3.Convert();
+
+		float Dist = 0.f;
+
+		bool Intersect = DirectX::TriangleTests::Intersects(_RayStartPos, _RayDir, _P1, _P2, _P3, Dist);
+
+		if (Intersect)
+		{
+			Vector3 Edge1 = P2 - P1;
+			Vector3 Edge2 = P3 - P1;
+
+			Vector3 Normal = Edge1.Cross(Edge2);
+			Normal.Normalize();
+
+			// Normal.X(x - p1.x) + Normal.Y(y - p1.y) + Normal.Z(z - p1.z) = 0
+			// 평면의 방정식이 ax + by + cz + d 일때, a는 Normal.x, b는 Normal.y, c는 Normal.z
+			// d는 -Normal.X * p1.x - Normal.Y * p1.y - Normal.Z * p1.z
+			float Coff_a = Normal.x;
+			float Coff_b = Normal.y;
+			float Coff_c = Normal.z;
+			float Coff_d = -Normal.x * P1.x - Normal.y * P1.y - Normal.z * P1.z;
+
+			XMVECTOR Plane = { Coff_a, Coff_b, Coff_c, Coff_d };
+			XMVECTOR Result = XMPlaneIntersectLine(Plane, RayStartPos.Convert(), (RayStartPos + RayDir * 1000.f).Convert());
+
+			OutPos.x = Result.m128_f32[0];
+			OutPos.y = Result.m128_f32[1];
+			OutPos.z = Result.m128_f32[2];
+			//OutPos = (P1 + P2 + P3) / 3.f;
+			return true;
 		}
 	}
 

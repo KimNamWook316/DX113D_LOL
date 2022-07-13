@@ -54,6 +54,26 @@ public:
         return m_Offset;
     }
 
+    void AddOffset(const Vector3& Offset)
+    {
+        m_Offset += Offset;
+    }
+
+    void AddOffsetX(float Offset)
+    {
+        m_Offset.x += Offset;
+    }
+
+    void AddOffsetY(float Offset)
+    {
+        m_Offset.y += Offset;
+    }
+
+    void AddOffsetZ(float Offset)
+    {
+        m_Offset.z += Offset;
+    }
+
     virtual void SetOffset(const Vector3& Offset)
     {
         m_Offset = Offset;
@@ -72,6 +92,16 @@ public:
     Vector3 GetMax()    const
     {
         return m_Max;
+    }
+
+    void SetCollisionResultSrc(CColliderComponent* Com)
+    {
+        m_Result.Src = Com;
+    }
+
+    void SetCollisionResultDest(CColliderComponent* Com)
+    {
+        m_Result.Dest = Com;
     }
 
     CollisionResult GetCollisionResult()    const
@@ -120,6 +150,10 @@ public:
     void CallCollisionCallback(Collision_State State);
     void CallCollisionMouseCallback(Collision_State State);
     void ClearFrame();
+    const std::list<CColliderComponent*>& GerPrevCollisionList()  const
+    {
+        return m_PrevCollisionList;
+    }
 
 public:
     virtual void Start();
@@ -136,7 +170,7 @@ public:
     virtual bool Collision(CColliderComponent* Dest) = 0;
     virtual bool CollisionMouse(const Vector2& MousePos) = 0;
     virtual bool CollisionRay(const Ray& Ray);
-
+    virtual void Destroy() override;
 public:
     template <typename T>
     void AddCollisionCallback(Collision_State State, T* Obj, void(T::* Func)(const CollisionResult&))

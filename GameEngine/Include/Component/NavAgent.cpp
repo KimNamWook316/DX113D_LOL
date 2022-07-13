@@ -6,7 +6,8 @@
 #include "../GameObject/GameObject.h"
 
 CNavAgent::CNavAgent()	:
-	m_MoveSpeed(100.f)
+	m_MoveSpeed(100.f),
+	m_ApplyNavMesh(true)
 {
 	SetTypeID<CNavAgent>();
 }
@@ -37,12 +38,20 @@ bool CNavAgent::Move(const Vector3& EndPos)
 
 bool CNavAgent::MoveOnNavMesh(const Vector3 EndPos)
 {
+	if (!m_Scene->GetNavigation3DManager()->GetNavMeshData())
+		return false;
+
 	m_Object->AddWorldPos(EndPos);
 
-	bool Valid = m_Scene->GetNavigation3DManager()->CheckPlayerNavMeshPoly();
+	float Height = 0.f;
+	bool Valid = m_Scene->GetNavigation3DManager()->CheckPlayerNavMeshPoly(Height);
 
-	if(Valid)
+	if (Valid)
+	{
+		Vector3 Pos = m_Object->GetWorldPos();
+		m_Object->SetWorldPos(Pos.x, Height, Pos.z);
 		return true;
+	}
 
 	else
 	{
@@ -105,6 +114,12 @@ void CNavAgent::Update(float DeltaTime)
 
 			m_UpdateComponent->AddWorldPos(Dir * Dist);
 		}
+	}
+
+	// NavAgent가 있는데 ApplyNavMesh가 false -> NavMesh를 적용 받지 않아서 아래로 떨어져야 하는 순간
+	if (!m_ApplyNavMesh)
+	{
+		m_Object->AddWorldPos(0.f, -12.f * DeltaTime, 0.f);
 	}
 }
 

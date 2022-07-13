@@ -7,13 +7,16 @@
 #include "../Scene/SceneResource.h"
 
 CNavMeshComponent::CNavMeshComponent()	:
-	m_DebugRender(false)
+	m_DebugRender(false),
+	m_PlayerSpawnPolyIndex(0)
 {
 	SetTypeID<CNavMeshComponent>();
 	m_ComponentType = Component_Type::SceneComponent;
 	m_Render = true;
 
 	m_LayerName = "Default";
+
+	m_Transform->AddChangePosCallBack<CNavMeshComponent>(this, &CNavMeshComponent::OnUpdatePos);
 }
 
 CNavMeshComponent::CNavMeshComponent(const CNavMeshComponent& com)	:
@@ -127,6 +130,31 @@ const Vector3& CNavMeshComponent::GetVertexPos(int PolyIndex, int VertexIndex)
 	return m_NavMesh->GetNavMeshPolygon(PolyIndex).m_vecVertexPos[VertexIndex];
 }
 
+void CNavMeshComponent::OnUpdatePos(const Vector3& WorldPos, const Vector3& RelativePos)
+{
+	size_t Count = m_NavMesh->GetNavMeshPolygonCount();
+
+	for (size_t i = 0; i < Count; ++i)
+	{
+		Vector3 Pos1 = m_NavMesh->GetNavMeshPolygon(i).m_vecVertexOriginPos[0];
+		Vector3 Pos2 = m_NavMesh->GetNavMeshPolygon(i).m_vecVertexOriginPos[1];
+		Vector3 Pos3 = m_NavMesh->GetNavMeshPolygon(i).m_vecVertexOriginPos[2];
+
+		m_NavMesh->GetNavMeshPolygon(i).m_vecVertexPos[0] = Pos1 + WorldPos;
+		m_NavMesh->GetNavMeshPolygon(i).m_vecVertexPos[1] = Pos2 + WorldPos;
+		m_NavMesh->GetNavMeshPolygon(i).m_vecVertexPos[2] = Pos3 + WorldPos;
+	}
+
+	Count = m_NavMesh->GetVertexPosCount();
+
+	for (size_t i = 0; i < Count; ++i)
+	{
+		Vector3 Pos = m_NavMesh->GetVertexOriginPos(i);
+
+		m_NavMesh->GetVertexPos(i) = Pos + WorldPos;
+	}
+}
+
 
 bool CNavMeshComponent::Save(FILE* File)
 {
@@ -144,6 +172,8 @@ bool CNavMeshComponent::Load(FILE* File)
 	m_NavMesh = new CNavMesh;
 
 	m_NavMesh->LoadMesh(File);
+
+	m_Scene->GetNavigation3DManager()->SetNavMeshData(this);
 
 	return true;
 }

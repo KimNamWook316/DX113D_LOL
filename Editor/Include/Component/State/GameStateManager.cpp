@@ -80,38 +80,38 @@ void CGameStateManager::CheckAirborneTarget(const NotifyParameter& Param)
 		}
 	}
 
-	size_t Count = vecTargetSection.size();
+	//size_t Count = vecTargetSection.size();
 
-	for (size_t i = 0; i < Count; ++i)
-	{
-		// PrevSectionCollider로 받아와야한다(지금은 CScene::Collsion 호출 전이라 각 Section으로 Collider가 들어가있지 않은 상황이라 직전 프레임 기준 Section별
-		// Collider가 들어있는 PrevSectionCollider로 받아와야 한다
-		CCollisionSection* Section = Collision->GetCollisionSectionInfo()->vecSection[vecTargetSection[i]];
-		size_t PrevSectionSize = Section->GetPrevColliderSize();
+	//for (size_t i = 0; i < Count; ++i)
+	//{
+	//	// PrevSectionCollider로 받아와야한다(지금은 CScene::Collsion 호출 전이라 각 Section으로 Collider가 들어가있지 않은 상황이라 직전 프레임 기준 Section별
+	//	// Collider가 들어있는 PrevSectionCollider로 받아와야 한다
+	//	CCollisionSection* Section = Collision->GetCollisionSectionInfo()->vecSection[vecTargetSection[i]];
+	//	size_t PrevSectionSize = Section->GetPrevColliderSize();
 
-		for (size_t j = 0; j < PrevSectionSize; ++j)
-		{
-			CColliderComponent* PrevSectionCollider = Section->GetPrevCollider(j);
-			if (PrevSectionCollider == Collider)
-				continue;
+	//	for (size_t j = 0; j < PrevSectionSize; ++j)
+	//	{
+	//		CColliderComponent* PrevSectionCollider = Section->GetPrevCollider(j);
+	//		if (PrevSectionCollider == Collider)
+	//			continue;
 
-			Vector3 CandidatePos = PrevSectionCollider->GetWorldPos();
-			CGameObject* CandidateObject = PrevSectionCollider->GetGameObject();
-			if (CandidatePos.Distance(Collider->GetWorldPos()) <= Param.Range)
-			{
-				CGameStateComponent* StateComp = CandidateObject->FindComponentFromType<CGameStateComponent>();
+	//		Vector3 CandidatePos = PrevSectionCollider->GetWorldPos();
+	//		CGameObject* CandidateObject = PrevSectionCollider->GetGameObject();
+	//		if (CandidatePos.Distance(Collider->GetWorldPos()) <= Param.Range)
+	//		{
+	//			CGameStateComponent* StateComp = CandidateObject->FindComponentFromType<CGameStateComponent>();
 
-				if (StateComp)
-				{
-					StateComp->AddState("Airborne", Param.SrcObject);
-					CState* DamageState = StateComp->AddState("Damage", Param.SrcObject);
+	//			if (StateComp)
+	//			{
+	//				StateComp->AddState("Airborne", Param.SrcObject);
+	//				CState* DamageState = StateComp->AddState("Damage", Param.SrcObject);
 
-					((CDamageState*)DamageState)->SetDamage(1234); // TODO : 추후 csv로 스킬 데미지 정확하게 읽어와서 바꿔주기
-					//CandidateObject->SetOntHit(true);
-				}
-			}
-		}
-	}
+	//				((CDamageState*)DamageState)->SetDamage(1234); // TODO : 추후 csv로 스킬 데미지 정확하게 읽어와서 바꿔주기
+	//				//CandidateObject->SetOntHit(true);
+	//			}
+	//		}
+	//	}
+	//}
 
 	// 충돌체가 속한 Section들
 	//std::vector<int> vecColliderSection = Collider->GetPrevSections();

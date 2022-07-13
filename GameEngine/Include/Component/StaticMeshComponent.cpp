@@ -388,6 +388,9 @@ void CStaticMeshComponent::PrevRender()
 
 void CStaticMeshComponent::Render()
 {
+	if (m_Name.find("Hook") != std::string::npos)
+		int a = 3;
+
 	CSceneComponent::Render();
 
 	if (!m_Mesh)

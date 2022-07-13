@@ -47,6 +47,11 @@ void CBehaviorTree::SetOwner(CStateComponent* StateComp)
 	m_Owner = StateComp;
 }
 
+CStateComponent* CBehaviorTree::GetOwner() const
+{
+	return m_Owner;
+}
+
 void CBehaviorTree::SetAnimationMeshComponent(CAnimationMeshComponent* Mesh)
 {
 	m_AnimationMeshComp = Mesh;

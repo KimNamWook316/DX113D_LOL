@@ -185,6 +185,7 @@
     <ClCompile Include="Resource\Shader\InstancingCBuffer.cpp" />
     <ClCompile Include="Resource\Shader\LandScapeConstantBuffer.cpp" />
     <ClCompile Include="Resource\Shader\LandScapeShader.cpp" />
+    <ClCompile Include="Resource\Shader\LaserShader.cpp" />
     <ClCompile Include="Resource\Shader\LightAccShader.cpp" />
     <ClCompile Include="Resource\Shader\LightBlendRenderShader.cpp" />
     <ClCompile Include="Resource\Shader\LightBlendShader.cpp" />
@@ -432,6 +433,7 @@
     <ClInclude Include="Resource\Shader\InstancingCBuffer.h" />
     <ClInclude Include="Resource\Shader\LandScapeConstantBuffer.h" />
     <ClInclude Include="Resource\Shader\LandScapeShader.h" />
+    <ClInclude Include="Resource\Shader\LaserShader.h" />
     <ClInclude Include="Resource\Shader\LightAccShader.h" />
     <ClInclude Include="Resource\Shader\LightBlendRenderShader.h" />
     <ClInclude Include="Resource\Shader\LightBlendShader.h" />
@@ -619,6 +621,20 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Effect</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">LandScapeVS</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="..\Bin\Shader\Laser.fx">
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">LaserVS</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">LaserVS</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">LaserVS</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">LaserVS</EntryPointName>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Effect</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>

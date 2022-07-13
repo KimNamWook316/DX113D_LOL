@@ -736,7 +736,7 @@ struct NotifyParameter
 	int Amount;
 };
 
-struct GameData
+struct ObjectData
 {
 	int HP;
 	int MP;
@@ -854,6 +854,7 @@ struct SceneSaveGlobalData
 struct NavMeshPolygon
 {
 	std::vector<Vector3>		m_vecVertexPos;
+	std::vector<Vector3>		m_vecVertexOriginPos;
 	std::vector<int>		m_vecAdjIndex;
 	int m_Index;
 	Vector3 m_Min;

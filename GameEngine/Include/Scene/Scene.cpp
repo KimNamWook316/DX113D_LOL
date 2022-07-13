@@ -219,6 +219,11 @@ void CScene::PostUpdate(float DeltaTime)
 		// 포함된 충돌체들을 이용해서 충돌처리를 진행한다.
 		m_Collision->Collision(DeltaTime);
 	}
+
+	else
+	{
+		m_Collision->ClearAll();
+	}
 }
 
 bool CScene::Save(const char* FileName, const std::string& PathName)
@@ -689,12 +694,12 @@ bool CScene::CameraMove(const Vector3& Direction, const Vector3& DestPos, float 
 {
 	CCameraComponent* CurrentCamera = m_CameraManager->GetCurrentCamera();
 
-	CurrentCamera->AddRelativePos(Direction.x * Speed * DeltaTime, 0.f, Direction.z * Speed * DeltaTime);
+	CurrentCamera->AddWorldPos(Direction.x * Speed * DeltaTime, 0.f, Direction.z * Speed * DeltaTime);
 
 	Vector3 CurrentCameraPos = CurrentCamera->GetWorldPos();
 	float Dist = Vector3(CurrentCameraPos.x, 0.f, CurrentCameraPos.z).Distance(Vector3(DestPos.x, 0.f, DestPos.z));
 
-	if (Dist < 1.f)
+	if (Dist < 2.f)
 		return true;
 
 	return false;

@@ -192,6 +192,9 @@ float CRenderManager::GetAdaptationTime() const
 
 void CRenderManager::AddRenderList(CSceneComponent* Component)
 {
+	if (!Component->IsEnable())
+		return;
+
 	RenderLayer* Layer = nullptr;
 
 	auto	iter = m_RenderLayerList.begin();

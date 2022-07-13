@@ -101,6 +101,8 @@ public:
 	const std::vector<CColliderComponent*>& GetSectionCollider(int Index);
 	// 인자로 주어진 Collision Profile을 가진 Collider가 하나라도 있는지
 	bool IsExistColliderHasProfile(CollisionProfile* Profile);
+	void DeleteCollider(class CColliderComponent* Collider, int SectionIndex);
+	void ClearAll();
 
 private:
 	void CheckColliderSection();

@@ -23,6 +23,9 @@
 #include "../Component/Node/ReadyToShoot.h"
 #include "../Component/Node/ShootNode.h"
 #include "../Component/Node/CancleShootNode.h"
+#include "../Component/Node/AddFallingFloorCallbackNode.h"
+#include "../Component/Node/Lockstone3TriggerBoxHitCheck.h"
+#include "../Component/Node/Lockstone3TriggerBoxAction.h"
 #include "ObjectComponentWindow.h"
 #include "ObjectHierarchyWindow.h"
 #include "../EditorInfo.h"
@@ -171,6 +174,8 @@ void CBehaviorTreeWindow::Update(float DeltaTime)
             m_vecNodeAction.push_back("ReadyToShoot");
             m_vecNodeAction.push_back("ShootNode");
             m_vecNodeAction.push_back("CancleShootNode");
+            m_vecNodeAction.push_back("AddFallingFloorCallback");
+            m_vecNodeAction.push_back("Lockstone3TriggerBoxAction");
         }
 
         else if (m_TypeSelectIndex == 3)
@@ -181,6 +186,7 @@ void CBehaviorTreeWindow::Update(float DeltaTime)
             m_vecNodeAction.push_back("AttackTargetCheck");
             m_vecNodeAction.push_back("MouseRButtonCheck");
             m_vecNodeAction.push_back("MouseRButtonUpCheck");
+            m_vecNodeAction.push_back("Lockstone3TriggerBoxHitCheck");
         }
 
         else if (m_TypeSelectIndex == 4)
@@ -358,7 +364,13 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
         switch (NodeActionClass)
         {
         case ActionNode::Move:
+        {
             NewTreeNode = m_StateComponent->CreateTreeNode<CMoveNode>(Name);
+            CNavAgent* Agent = m_StateComponent->GetGameObject()->FindObjectComponentFromType<CNavAgent>();
+
+            if (Agent)
+                ((CMoveNode*)NewTreeNode)->SetNavAgent(Agent);
+        }
             break;
         case ActionNode::Idle:
             NewTreeNode = m_StateComponent->CreateTreeNode<CIdleNode>(Name);
@@ -380,6 +392,12 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
             break;
         case ActionNode::CancleShootNode:
             NewTreeNode = m_StateComponent->CreateTreeNode<CCancleShootNode>(Name);
+            break;
+        case ActionNode::AddFallingFloorCallback:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CAddFallingFloorCallbackNode>(Name);
+            break;
+        case ActionNode::Lockstone3TriggerBoxAction:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CLockstone3TriggerBoxAction>(Name);
             break;
         }
 
@@ -411,6 +429,9 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
             break;
         case ConditionNode::MouseRButtonUpCheckNode:
             NewTreeNode = m_StateComponent->CreateTreeNode<CMouseRButtonUpCheckNode>(Name);
+            break;
+        case ConditionNode::Lockstone3TriggerBoxHitCheck:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CLockstone3TriggerBoxHitCheck>(Name);
             break;
         }
     }

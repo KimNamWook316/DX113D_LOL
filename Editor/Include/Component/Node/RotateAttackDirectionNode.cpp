@@ -27,21 +27,14 @@ NodeResult CRotateAttackDirectionNode::OnStart(float DeltaTime)
 	m_Object->SetNoInterrupt(false);
 	m_CallStart = true;
 
-	// Nav Agent의 PathList를 비운다
-	CNavAgent* Agent = m_Object->GetNavAgent();
-
-	if (Agent)
-		Agent->ClearPathList();
-
 	CNavigation3DManager* Manager = m_Object->GetScene()->GetNavigation3DManager();
 
 	Vector3 TargetPos;
 	Vector3 ZAxis = m_Object->GetWorldAxis(AXIS::AXIS_Z);
 
-	// 벡터의 외적은 오른손 좌표계(+z 방향이 가까운 평면 방향)기준이므로 z부호를 반대로 해준다
 	m_CurrentForwardVector = Vector3(-ZAxis.x, 0.f, -ZAxis.z);
 
-	if (Manager->CheckPickingPoint(m_PickingPoint))
+	if (Manager->CheckNavMeshPickingPoint(m_PickingPoint))
 	{
 		Vector3 CurrentPos = m_Object->GetWorldPos();
 		m_DestForwardVector = Vector3(m_PickingPoint.x, 0.f, m_PickingPoint.z) - Vector3(CurrentPos.x, 0.f, CurrentPos.z);
@@ -58,7 +51,9 @@ NodeResult CRotateAttackDirectionNode::OnStart(float DeltaTime)
 
 	else
 	{
+		m_PickingPoint = m_Object->GetWorldPos();
 		m_DestForwardVector = m_CurrentForwardVector;
+		return NodeResult::Node_True;
 	}
 
 	Vector3 CurrentFowardYZero = Vector3(m_CurrentForwardVector.x, 0.f, m_CurrentForwardVector.z);
@@ -72,14 +67,15 @@ NodeResult CRotateAttackDirectionNode::OnStart(float DeltaTime)
 	if (m_Over180)
 	{
 		m_Object->AddWorldRotationY(Degree);
+
 		m_IsEnd = true;
 		return NodeResult::Node_True;
-
 	}
 
 	else
 	{
 		m_Object->AddWorldRotationY(-Degree);
+
 		m_IsEnd = true;
 		return NodeResult::Node_True;
 	}

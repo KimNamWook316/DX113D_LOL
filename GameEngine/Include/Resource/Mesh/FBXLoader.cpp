@@ -1,5 +1,42 @@
 
 #include "FBXLoader.h"
+#include "../../PathManager.h"
+
+struct tMTAnimClip
+{
+	std::wstring         strAnimName;
+	int            iStartFrame;
+	int            iEndFrame;
+	int            iFrameLength;
+
+	double         dStartTime;
+	double         dEndTime;
+	double         dTimeLength;
+	float         fUpdateTime; // ÀÌ°Å ¾È¾¸
+
+	bool         bFinish;
+	bool         bStay;
+
+	FbxTime::EMode   eMode;
+
+	tMTAnimClip() {
+		strAnimName = {};
+		iStartFrame = 0;
+		iEndFrame = 0;
+		iFrameLength = 0;
+
+		dStartTime = 0;
+		dEndTime = 0;
+		dTimeLength = 0;
+		fUpdateTime = 0;
+
+		bFinish = false;
+		bStay = true;
+
+		eMode = (FbxTime::EMode)0;
+	}
+};
+
 
 CFBXLoader::CFBXLoader() :
 	m_Manager(nullptr),
@@ -909,3 +946,85 @@ void CFBXLoader::ChangeWeightAndIndices(PFBXMESHCONTAINER pContainer)
 	}
 }
 
+void CFBXLoader::LoadAniFile()
+{
+	const PathInfo* Info = CPathManager::GetInst()->FindPath(ANIMATION_PATH);
+
+	FILE* File = nullptr;
+
+	char FullPath[MAX_PATH] = {};
+
+	strcpy_s(FullPath, Info->PathMultibyte);
+	strcat_s(FullPath, "Player.ani");
+
+	fopen_s(&File, FullPath, "rb");
+
+	if (!File)
+		return;
+
+	size_t Size = 0;
+	fread(&Size, sizeof(size_t), 1, File);
+
+	if (Size <= 0)
+	{
+		fclose(File);
+		return;
+	}
+
+	std::vector<tMTAnimClip>* TempVecClip = nullptr;
+
+	for (size_t i = 0; i < Size; ++i)
+	{
+		std::wstring strAniName = {};
+
+		int StartFrame = 0;
+		int EndFrame = 0;
+		int FrameLength = 0;
+
+		float UpdateTime = 0.0f;
+		double EndTime = 0.0;
+		double StartTime = 0.0;
+		double TimeLength = 0.0;
+
+		FbxTime::EMode Mode = {};
+
+		LoadWString(strAniName, File);
+
+		fread(&StartFrame, sizeof(int), 1, File);
+		fread(&EndFrame, sizeof(int), 1, File);
+		fread(&FrameLength, sizeof(int), 1, File);
+
+		fread(&EndTime, sizeof(double), 1, File);
+		fread(&StartTime, sizeof(double), 1, File);
+		fread(&TimeLength, sizeof(double), 1, File);
+
+		fread(&Mode, sizeof(FbxTime::EMode), 1, File);
+
+
+
+		tMTAnimClip TempClip = { };
+		TempClip.iEndFrame = EndFrame;
+		TempClip.dEndTime = EndTime;
+		TempClip.iFrameLength = FrameLength;
+		TempClip.eMode = Mode;
+		TempClip.iStartFrame = StartFrame;
+		TempClip.dStartTime = StartTime;
+		TempClip.strAnimName = strAniName;
+		TempClip.dTimeLength = TimeLength;
+
+		//TempVecClip->emplace_back(TempClip);
+	}
+
+	fclose(File);
+
+}
+
+void CFBXLoader::LoadWString(std::wstring& _str, FILE* _pFile)
+{
+	BYTE b = 0;
+	fread(&b, 1, 1, _pFile);
+
+	wchar_t szBuffer[255] = {};
+	fread(szBuffer, sizeof(wchar_t), (size_t)b, _pFile);
+	_str = szBuffer;
+}

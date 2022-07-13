@@ -5,6 +5,7 @@
 #include "AnimationMesh.h"
 #include "NavMesh.h"
 #include "../../PathManager.h"
+#include "FBXLoader.h"
 
 CMeshManager::CMeshManager()
 {
@@ -238,6 +239,45 @@ bool CMeshManager::Init()
 		&HalfLineIdx[0], sizeof(int), 2,
 		D3D11_USAGE_DEFAULT, DXGI_FORMAT_R32_UINT);
 
+
+
+	CMesh* PlaneMesh = new CStaticMesh;
+
+	std::vector<Vertex3D> vecPlaneVertex;
+	vecPlaneVertex.resize(4);
+
+	Vector3	PlaneMeshPos[4] =
+	{
+		Vector3(-0.5f, 0.f, 0.f),
+		Vector3(0.5f, 0.f, 0.f),
+		Vector3(0.5f, 0.f, 1.f),
+		Vector3(-0.5f, 0.f, 1.f)
+	};
+	
+	for (size_t i = 0; i < 4; ++i)
+		vecPlaneVertex[i].Pos = PlaneMeshPos[i];
+
+	vecPlaneVertex[0].UV = Vector2(0.f, 0.f);
+	vecPlaneVertex[1].UV = Vector2(1.f, 0.f);
+	vecPlaneVertex[2].UV = Vector2(1.f, 1.f);
+	vecPlaneVertex[3].UV = Vector2(0.f, 1.f);
+
+	vecPlaneVertex[0].Normal = Vector3(0.f, 0.f, -1.f);
+	vecPlaneVertex[1].Normal = Vector3(0.f, 0.f, -1.f);
+	vecPlaneVertex[2].Normal = Vector3(0.f, 0.f, -1.f);
+	vecPlaneVertex[3].Normal = Vector3(0.f, 0.f, -1.f);
+
+	int PlaneMeshIndex[6] = { 0, 1, 2, 0, 2, 3 };
+
+	PlaneMesh->SetName("PlaneMesh");
+
+	CreateMesh(Mesh_Type::Static, "PlaneMesh",
+		&vecPlaneVertex[0], sizeof(Vertex3D), 4,
+		D3D11_USAGE_DEFAULT, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST,
+		&PlaneMeshIndex[0], sizeof(int), 6,
+		D3D11_USAGE_DEFAULT, DXGI_FORMAT_R32_UINT);
+
+	m_mapMesh.insert(std::make_pair("PlaneMesh", PlaneMesh));
 
 	return true;
 }
@@ -702,4 +742,10 @@ float CMeshManager::AngleFromXY(float x, float y)
 		theta = atanf(y / x) + PI; // in [0, 2*pi).
 
 	return theta;
+}
+
+void CMeshManager::LoadAniFile()
+{
+	CFBXLoader Loader;
+	Loader.LoadAniFile();
 }

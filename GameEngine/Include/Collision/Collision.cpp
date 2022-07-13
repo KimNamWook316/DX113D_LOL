@@ -156,6 +156,27 @@ bool CCollision::CollisionRayToBox3D(CColliderRay* Src, CColliderBox3D* Dest)
 
 	if (CollisionRayToBox3D(HitPoint, Src->GetInfo(), Dest->GetInfo()))
 	{
+		float Step = 0.1f;
+		Vector3 CheckPoint;
+
+		Dest->UpdateMinMax();
+
+		Ray ray = Src->GetInfo();
+		Box3DInfo Box = Dest->GetInfo();
+
+		//while (true)
+		//{
+		//	CheckPoint = ray.Pos + (ray.Dir.x * Step, ray.Dir.y * Step, ray.Dir.z * Step);
+		//	bool Intersect = CheckPointInBox(CheckPoint, Box);
+
+		//	if (Intersect)
+		//		break;
+
+		//	Step += 0.1f;
+		//}
+
+		HitPoint = CheckPoint;
+
 		return true;
 	}
 
@@ -168,7 +189,7 @@ bool CCollision::CollisionBox3DToHalfLine(CColliderBox3D* Src, CColliderHalfLine
 
 	Src->UpdateMinMax();
 
-	if (CollisionBox3DToHalfLine(Result, Src->GetInfo(), Dest->GetInfo()))
+	if (CollisionBox3DToHalfLine(Result, Src->GetInfo(), Dest->GetInfo(), Src))
 	{
 		return true;
 	}
@@ -561,7 +582,7 @@ bool CCollision::CollisionBox3DToBox3D(CollisionResult& SrcResult, CollisionResu
 	d[0] = diff.Dot(targetBox.Axis[0]);
 
 	r = abs(d[0]);
-	r0 = targetBox.AxisLen[0];
+	r0 = boundingBox.AxisLen[0];
 	r1 = targetBox.AxisLen[0] * absC[0][0] + targetBox.AxisLen[1] * absC[0][1] + targetBox.AxisLen[2] * absC[0][2];
 
 	if (r > r0 + r1)
@@ -879,11 +900,10 @@ bool CCollision::CollisionRayToBox3D(Vector3& HitPoint, const Ray& ray, const Bo
 	if (tMax < tMin)
 		return false;
 
-
 	return true;
 }
 
-bool CCollision::CollisionBox3DToHalfLine(Vector3& HitPoint, const Box3DInfo& Box, const HalfLineInfo& HalfLineInfo)
+bool CCollision::CollisionBox3DToHalfLine(Vector3& HitPoint, const Box3DInfo& Box, const HalfLineInfo& HalfLineInfo, CColliderBox3D* BoxCollider)
 {
 	if (Box.Min.x <= HalfLineInfo.EndPos.x && Box.Max.x >= HalfLineInfo.EndPos.x &&
 		Box.Min.y <= HalfLineInfo.EndPos.y && Box.Max.y >= HalfLineInfo.EndPos.y &&
@@ -899,9 +919,24 @@ bool CCollision::CollisionBox3DToHalfLine(Vector3& HitPoint, const Box3DInfo& Bo
 
 	if (Intersect)
 	{
-		if(HalfLineInfo.EndPos.x >= Box.Min.x && 
-			HalfLineInfo.EndPos.x >= Box.Min.y && 
-			HalfLineInfo.EndPos.x >= Box.Min.z)
+		// ray는 통과하지만 halfline의 endpos는 아직 통과하지 못했다면 intersect된게 아닌 코드 추가
+		Vector3 Dir = HalfLineInfo.EndPos - HalfLineInfo.StartPos;
+
+		if (Dir.x > 0.f && HalfLineInfo.EndPos.x < Box.Min.x)
+			return false;
+		if (Dir.x < 0.f && HalfLineInfo.EndPos.x > Box.Max.x)
+			return false;
+
+		if (Dir.y > 0.f && HalfLineInfo.EndPos.y < Box.Min.y)
+			return false;
+		if (Dir.y < 0.f && HalfLineInfo.EndPos.y > Box.Max.y)
+			return false;
+
+		if (Dir.z > 0.f && HalfLineInfo.EndPos.z < Box.Min.z)
+			return false;
+		if (Dir.z < 0.f && HalfLineInfo.EndPos.z > Box.Max.z)
+			return false;
+
 		return true;
 	}
 
@@ -941,4 +976,14 @@ bool CCollision::CollisionBox3DToSphere(Vector3& HitPoint, CColliderBox3D* Src, 
 	//MessageBox(nullptr, TEXT("충돌"), TEXT("충돌"), MB_OK);
 
 	return true;
+}
+
+bool CCollision::CheckPointInBox(const Vector3& Point, const Box3DInfo& Box)
+{
+	if (Point.x >= Box.Min.x && Point.x <= Box.Max.x &&
+		Point.y >= Box.Min.y && Point.y <= Box.Max.y &&
+		Point.z >= Box.Min.z && Point.z <= Box.Max.z)
+		return true;
+
+	return false;
 }

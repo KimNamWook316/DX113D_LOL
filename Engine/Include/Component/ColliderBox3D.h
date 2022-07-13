@@ -13,6 +13,20 @@ protected:
 
 protected:
     Box3DInfo   m_Info;
+    bool        m_UpdateMinMax;
+
+public:
+    void SetUpdateMinMax(bool Update)
+    {
+        m_UpdateMinMax = Update;
+    }
+
+    bool IsUpdateMinMax()   const
+    {
+        return m_UpdateMinMax;
+    }
+
+    void UpdateTransform(const Vector3& World, const Vector3& Relative);
 
 public:
     virtual void SetOffset(const Vector3& Offset)

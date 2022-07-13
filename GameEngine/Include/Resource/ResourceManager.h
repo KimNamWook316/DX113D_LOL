@@ -137,6 +137,7 @@ public:	// =================== Texture =====================
 	bool LoadTexture(const std::string& Name, const TCHAR* FileName,
 		const std::string& PathName = TEXTURE_PATH);
 	bool LoadTextureFullPath(const std::string& Name, const TCHAR* FullPath);
+	bool LoadTextureFullPath(std::string& OutName, const TCHAR* FullPath);
 	bool LoadTextureFullPathMultibyte(const std::string& Name, const char* FullPath);
 	bool LoadTexture(const std::string& Name, const std::vector<TCHAR*>& vecFileName,
 		const std::string& PathName = TEXTURE_PATH);
@@ -238,7 +239,7 @@ public: // =================== Sequence 3D =====================
 	void DeleteSequence3D(const std::string& Name);
 	bool EditSequenceClip(class CAnimationSequence* ExistingSequence, const std::string& NewName,
 		int StartFrame, int EndFrame, const char* SaveFullPathMultibyte);
-
+	void LoadAniFile();
 
 	bool LoadSkeleton(const std::string& Name, const TCHAR* FileName,
 		const std::string& PathName = ANIMATION_PATH,

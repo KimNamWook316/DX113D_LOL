@@ -59,12 +59,35 @@ void CColliderComponentWidget::SetSceneComponent(CSceneComponent* Com)
 	m_OffsetInput->SetY(Offset.y);
 	m_OffsetInput->SetZ(Offset.z);
 
-	std::string ProfileName = ColliderComp->GetCollisionProfile()->Name;
+	CollisionProfile* Profile = ColliderComp->GetCollisionProfile();
+	std::string ProfileName;
+
+	if (!Profile)
+		ProfileName = "Object";
+
+	else
+		ProfileName = ColliderComp->GetCollisionProfile()->Name;
+
 	int Index = (int)(m_CollisionProfileCombo->GetItemIndex(ProfileName));
 	m_CollisionProfileCombo->SetSelectIndex(Index);
 
+	std::vector<std::string> vecProfileNames;
 
-	if (ProfileName == "Object")
+	CCollisionManager::GetInst()->GetProfileNames(vecProfileNames);
+
+	size_t Count = vecProfileNames.size();
+
+	for (size_t i = 0; i < Count; ++i)
+	{
+		if (vecProfileNames[i] == ProfileName)
+		{
+			ColliderComp->SetCollisionProfile(vecProfileNames[i]);
+			break;
+		}
+	}
+
+	// TODO : Collision Profile 추가될 때 마다 추가
+	/*if (ProfileName == "Object")
 	{
 		ColliderComp->SetCollisionProfile("Object");
 	}
@@ -98,6 +121,11 @@ void CColliderComponentWidget::SetSceneComponent(CSceneComponent* Com)
 		ColliderComp->SetCollisionProfile("MinionNormalAttack");
 	}
 
+	else if (ProfileName == "MapObject")
+	{
+		ColliderComp->SetCollisionProfile("MapObject");
+	}*/
+
 	m_CollisionProfileCombo->SetSelectIndex(Index);
 }
 
@@ -109,4 +137,18 @@ void CColliderComponentWidget::OnChangeOffset(const Vector3& Offset)
 void CColliderComponentWidget::OnChangeProfile(int Index, const char* Label)
 {
 	((CColliderComponent*)m_Component)->SetCollisionProfile(Label);
+}
+
+void CColliderComponentWidget::RefreshCollisionProfile()
+{
+	m_CollisionProfileCombo->Clear();
+
+	std::vector<std::string> vecProfileNames;
+
+	CCollisionManager::GetInst()->GetProfileNames(vecProfileNames);
+
+	size_t Count = vecProfileNames.size();
+
+	for (size_t i = 0; i < Count; ++i)
+		m_CollisionProfileCombo->AddItem(vecProfileNames[i]);
 }

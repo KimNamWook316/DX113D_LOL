@@ -41,6 +41,7 @@
 #include "BlurVerticalShader.h"
 #include "BlurHorizontalShader.h"
 #include "ToonShader.h"
+#include "LaserShader.h"
 
 CShaderManager::CShaderManager()
 {
@@ -200,6 +201,9 @@ bool CShaderManager::Init()
 		assert(false);
 		return false;
 	}
+
+	if (!CreateShader<CLaserShader>("LaserShader"))
+		return false;
 
 	// =================== 상수버퍼 ===================
 	CreateConstantBuffer("TransformCBuffer", sizeof(TransformCBuffer), 0,

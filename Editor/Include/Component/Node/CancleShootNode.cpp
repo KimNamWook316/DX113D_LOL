@@ -22,7 +22,7 @@ CCancleShootNode::~CCancleShootNode()
 
 NodeResult CCancleShootNode::OnStart(float DeltaTime)
 {
-	m_AnimationMeshComp = m_Owner->GetAnimationMeshComp();
+	/*m_AnimationMeshComp = m_Owner->GetAnimationMeshComp();
 
 	std::string ObjectName = m_Object->GetName();
 
@@ -39,7 +39,7 @@ NodeResult CCancleShootNode::OnStart(float DeltaTime)
 			Instance->ChangeAnimation(SequenceName);
 	}
 
-	m_Object->SetNoInterrupt(true);
+	m_Object->SetNoInterrupt(true);*/
 	m_CallStart = true;
 
 	return NodeResult::Node_True;

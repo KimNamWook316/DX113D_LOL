@@ -759,14 +759,12 @@ void CAnimationEditor::OnMakeAnimInstByExcel()
 			assert(false);
 			return;
 		}
-
 		// 뿐만 아니라, AnimationSequenceData 의 m_Name 도 수정해야 한다.
-		// 그리고 현재 수정하는 AnimationSequenceData 는 m_DummyAnimation 에 저장되어 있는 녀석이어야 한다.
+// 그리고 현재 수정하는 AnimationSequenceData 는 m_DummyAnimation 에 저장되어 있는 녀석이어야 한다.
 		CAnimationSequenceData* AnimSeqData = m_DummyAnimation->FindAnimation(NewLableKeyName);
 		AnimSeqData->SetName(NewLableKeyName);
 
 		AnimSeqData->SetOriginalFramePlayTime();
-
 		// File 이름 Log 목록에 추가
 		Text = m_AnimInstanceConvertLog->AddWidget<CIMGUIText>("Text");
 

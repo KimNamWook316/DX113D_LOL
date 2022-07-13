@@ -17,6 +17,8 @@
 #include "IMGUIChild.h"
 #include "IMGUICollapsingHeader.h"
 #include "IMGUIDummy.h"
+#include "InspectorWindow.h"
+#include "../Widget/ColliderComponentWidget.h"
 
 CCollisionProfileEditor::CCollisionProfileEditor()	 :
 	m_ProfileList(nullptr),
@@ -250,6 +252,16 @@ void CCollisionProfileEditor::OnClickLoad()
 
 		MessageBox(nullptr, TEXT("로드 성공"), TEXT("Error"), MB_OK);
 		Refresh();
+
+		CInspectorWindow* Window = (CInspectorWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(INSPECTOR);
+
+		if (Window)
+		{
+			CColliderComponentWidget* Widget = (CColliderComponentWidget*)Window->FindWidget("ColliderComponentWidget");
+
+			if (Widget)
+				Widget->RefreshCollisionProfile();
+		}
 	}
 }
 

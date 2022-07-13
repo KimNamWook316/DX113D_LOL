@@ -16,6 +16,9 @@
 #include "Node/ReadyToShoot.h"
 #include "Node/ShootNode.h"
 #include "Node/CancleShootNode.h"
+#include "Node/AddFallingFloorCallbackNode.h"
+#include "Node/Lockstone3TriggerBoxHitCheck.h"
+#include "Node/Lockstone3TriggerBoxAction.h"
 #include "Component/StateComponent.h"
 
 CGameBehaviorTree::CGameBehaviorTree()
@@ -95,6 +98,11 @@ CNode* CGameBehaviorTree::LoadNode(CNode* Parent, size_t TypeID)
 		NewNode->SetOwner(this);
 		NewNode->SetObject(m_Owner->GetGameObject());
 		NewNode->SetAnimationMeshComponent(m_AnimationMeshComp);
+
+		CNavAgent* Agent = NewNode->GetGameObject()->FindObjectComponentFromType<CNavAgent>();
+
+		if (Agent)
+			NewNode->SetNavAgent(Agent);
 
 		return NewNode;
 	}
@@ -220,6 +228,35 @@ CNode* CGameBehaviorTree::LoadNode(CNode* Parent, size_t TypeID)
 		return NewNode;
 	}
 
+	else if (TypeID == typeid(CAddFallingFloorCallbackNode).hash_code())
+	{
+		CAddFallingFloorCallbackNode* NewNode = new CAddFallingFloorCallbackNode;
+		NewNode->SetParent(Parent);
+		NewNode->SetOwner(this);
+		NewNode->SetObject(m_Owner->GetGameObject());
+
+		return NewNode;
+	}
+
+	else if (TypeID == typeid(CLockstone3TriggerBoxHitCheck).hash_code())
+	{
+		CLockstone3TriggerBoxHitCheck* NewNode = new CLockstone3TriggerBoxHitCheck;
+		NewNode->SetParent(Parent);
+		NewNode->SetOwner(this);
+		NewNode->SetObject(m_Owner->GetGameObject());
+
+		return NewNode;
+	}
+
+	else if (TypeID == typeid(CLockstone3TriggerBoxAction).hash_code())
+	{
+		CLockstone3TriggerBoxAction* NewNode = new CLockstone3TriggerBoxAction;
+		NewNode->SetParent(Parent);
+		NewNode->SetOwner(this);
+		NewNode->SetObject(m_Owner->GetGameObject());
+
+		return NewNode;
+	}
 
 	return nullptr;
 }

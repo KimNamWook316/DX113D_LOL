@@ -18,7 +18,12 @@ protected:
     virtual NodeResult OnEnd(float DeltaTime);
 
 private:
+    class CNavAgent* m_NavAgent;
     bool m_ClockWise;
+    Vector3 m_AccOffsetChange;
+
+public:
+    void SetNavAgent(class CNavAgent* Agent);
 
 public:
     virtual NodeResult Invoke(float DeltaTime) override;

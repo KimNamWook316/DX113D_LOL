@@ -24,9 +24,21 @@ NodeResult CNormalAttack::OnStart(float DeltaTime)
 {
 	m_AnimationMeshComp = m_Owner->GetAnimationMeshComp();
 
-	std::string ChampionName = m_Object->GetName();
+	std::string ObjectName = m_Object->GetName();
 
-	std::string SequenceName = ChampionName + "_" + "Attack1";
+	std::string SequenceName;
+
+	if (m_Object->GetObjectType() == Object_Type::Player)
+	{
+		SequenceName = ObjectName + "_Slash_L";
+	}
+
+	else
+	{
+
+	}
+
+	m_AnimationMeshComp->GetAnimationInstance()->ChangeAnimation(SequenceName);
 
 	if (m_AnimationMeshComp)
 	{
@@ -47,17 +59,18 @@ NodeResult CNormalAttack::OnStart(float DeltaTime)
 	m_Object->SetNoInterrupt(false);
 	m_CallStart = true;
 	
-	// Nav Agent의 PathList를 비운다
-	CNavAgent* Agent = m_Object->GetNavAgent();
-
-	if (Agent)
-		Agent->ClearPathList();
-
 	return NodeResult::Node_True;
 }
 
 NodeResult CNormalAttack::OnUpdate(float DeltaTime)
 {
+	m_Object->SetNoInterrupt(false);
+
+	m_IsEnd = true;
+	m_CallStart = false;
+	m_Owner->SetCurrentNode(nullptr);
+	return NodeResult::Node_False;
+
 	if (!m_AnimationMeshComp->GetAnimationInstance()->IsCurrentAnimLoop() && m_AnimationMeshComp->GetAnimationInstance()->IsCurrentAnimEnd())
 	{
 		m_Object->SetNoInterrupt(false);

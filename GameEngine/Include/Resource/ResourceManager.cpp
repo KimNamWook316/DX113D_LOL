@@ -465,6 +465,11 @@ bool CResourceManager::LoadTextureFullPath(const std::string& Name, const TCHAR*
 	return m_TextureManager->LoadTextureFullPath(Name, FullPath);
 }
 
+bool CResourceManager::LoadTextureFullPath(std::string& OutName, const TCHAR* FullPath)
+{
+	return m_TextureManager->LoadTextureFullPath(OutName, FullPath);
+}
+
 bool CResourceManager::LoadTextureFullPathMultibyte(const std::string& Name, const char* FullPath)
 {
 	return m_TextureManager->LoadTextureFullPathMultibyte(Name, FullPath);
@@ -822,6 +827,11 @@ void CResourceManager::DeleteSequence3D(const std::string& Name)
 bool CResourceManager::EditSequenceClip(CAnimationSequence* ExistingSequence, const std::string& NewName, int StartFrame, int EndFrame, const char* SaveFullPathMultibyte)
 {
 	return m_AnimationManager3D->EditSequenceClip(ExistingSequence, NewName, StartFrame, EndFrame, SaveFullPathMultibyte);
+}
+
+void CResourceManager::LoadAniFile()
+{
+	m_MeshManager->LoadAniFile();
 }
 
 bool CResourceManager::LoadSkeleton(const std::string& Name, 

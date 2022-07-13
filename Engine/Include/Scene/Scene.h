@@ -119,7 +119,6 @@ public:
 	{
 		return m_Mode->GetPlayerObject();
 	}
-
 	const SceneSaveGlobalData& GetSceneSaveGlobalData() const
 	{
 		return m_SceneGlobalData;
@@ -129,7 +128,10 @@ public:
 	{
 		m_SceneGlobalData = Data;
 	}
-
+	void SetPlayerObject(CGameObject* Player)
+	{
+		m_Mode->SetPlayerObject(Player);
+	}
 	bool IsPlay() const
 	{
 		return m_Play;

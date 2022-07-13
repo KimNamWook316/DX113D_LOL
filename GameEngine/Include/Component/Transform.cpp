@@ -46,7 +46,8 @@ CTransform::CTransform() :
 	m_WorldScale(1.f, 1.f, 1.f),
 	m_State(Transform_State::None),
 	m_Socket(nullptr),
-	m_UpdateByMat(false)
+	m_UpdateByMat(false),
+	m_FixTransform(false)
 {
 	for (int i = 0; i < AXIS_MAX; ++i)
 	{
@@ -107,6 +108,9 @@ void CTransform::SetInstancingShadowInfo(Instancing3DInfo* Info)
 
 void CTransform::InheritScale(bool Current)
 {
+	if (m_FixTransform)
+		return;
+
 	if (m_Parent && m_InheritScale)
 		m_WorldScale = m_RelativeScale * m_Parent->GetWorldScale();
 
@@ -125,6 +129,9 @@ void CTransform::InheritScale(bool Current)
 
 void CTransform::InheritRotation(bool Current)
 {
+	if (m_FixTransform)
+		return;
+
 	if (m_Parent)
 	{
 		if (m_InheritRotX)
@@ -178,6 +185,9 @@ void CTransform::InheritRotation(bool Current)
 
 void CTransform::InheritParentRotationPos(bool Current)
 {
+	if (m_FixTransform)
+		return;
+
 	if (m_Parent)
 	{
 		Matrix	matRot;
@@ -228,6 +238,9 @@ void CTransform::InheritParentRotationPos(bool Current)
 
 void CTransform::InheritWorldScale(bool Current)
 {
+	if (m_FixTransform)
+		return;
+
 	if (m_Parent && m_InheritScale)
 		m_RelativeScale = m_WorldScale / m_Parent->GetWorldScale();
 
@@ -246,6 +259,9 @@ void CTransform::InheritWorldScale(bool Current)
 
 void CTransform::InheritWorldRotation(bool Current)
 {
+	if (m_FixTransform)
+		return;
+
 	if (m_Parent)
 	{
 		if (m_InheritRotX)
@@ -299,6 +315,9 @@ void CTransform::InheritWorldRotation(bool Current)
 
 void CTransform::InheritParentRotationWorldPos(bool Current)
 {
+	if (m_FixTransform)
+		return;
+
 	if (m_Parent)
 	{
 		Matrix	matRot;

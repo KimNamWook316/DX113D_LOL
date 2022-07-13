@@ -23,8 +23,22 @@ private:
 	int m_PlayerPolyIndex;
 
 public:
-	void SetNavData(CLandScape* NavData);
+	void SetPlayerPolyIndex(int Index)
+	{
+		m_PlayerPolyIndex = Index;
+	}
+
+	int GetPlayerPolyIndex()	const
+	{
+		return m_PlayerPolyIndex;
+	}
+
+	class CNavMeshComponent* GetNavMeshData() const;
 	void SetNavMeshData(CNavMeshComponent* NavComp);
+
+
+
+	void SetNavData(CLandScape* NavData);
 	void AddNavResult(const NavResultData& NavData);
 	void SetLandScape(class CLandScape* LandScape);
 	class CLandScape* GetLandScape()	const;
@@ -32,7 +46,9 @@ public:
 public:
 	float GetY(const Vector3& Pos);
 	bool CheckPickingPoint(Vector3& OutPos);
-	bool CheckPlayerNavMeshPoly();
+	// 높이를 결과로 리턴
+	bool CheckPlayerNavMeshPoly(float& Height);
+	bool CheckNavMeshPickingPoint(Vector3& OutPos);
 
 public:
 	void Start();

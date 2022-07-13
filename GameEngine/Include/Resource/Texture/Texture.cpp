@@ -2,6 +2,7 @@
 #include "Texture.h"
 #include "../../PathManager.h"
 #include "../../Device.h"
+#include "../../EngineUtil.h"
 
 CTexture::CTexture() :
 	m_Scene(nullptr),
@@ -104,6 +105,95 @@ bool CTexture::LoadTexture(const std::string& Name, const TCHAR* FileName,
 	Info->Image = Image;
 
 	m_vecTextureInfo.push_back(Info);
+
+	return CreateResource(0);
+}
+
+bool CTexture::LoadTexture(std::string& OutName, const TCHAR* FileName,
+	const std::string& PathName)
+{
+	TextureResourceInfo* Info = new TextureResourceInfo;
+
+	const PathInfo* Path = CPathManager::GetInst()->FindPath(PathName);
+
+	TCHAR* FullPath = new TCHAR[MAX_PATH];
+	memset(FullPath, 0, sizeof(TCHAR) * MAX_PATH);
+
+	if (Path)
+		lstrcpy(FullPath, Path->Path);
+
+	lstrcat(FullPath, FileName);
+
+	Info->FullPath = FullPath;
+
+	Info->FileName = new TCHAR[MAX_PATH];
+	memset(Info->FileName, 0, sizeof(TCHAR) * MAX_PATH);
+
+	lstrcpy(Info->FileName, FileName);
+
+	Info->PathName = new char[MAX_PATH];
+	memset(Info->PathName, 0, sizeof(char) * MAX_PATH);
+
+	strcpy_s(Info->PathName, PathName.length() + 1, PathName.c_str());
+
+	char	Ext[_MAX_EXT] = {};
+	char	FullPathMultibyte[MAX_PATH] = {};
+
+#ifdef UNICODE
+
+	int	ConvertLength = WideCharToMultiByte(CP_ACP, 0, FullPath, -1, nullptr, 0, nullptr, nullptr);
+	WideCharToMultiByte(CP_ACP, 0, FullPath, -1, FullPathMultibyte, ConvertLength, nullptr, nullptr);
+
+#else
+
+	strcpy_s(FullPathMultibyte, FullPath);
+
+#endif // UNICODE
+
+	_splitpath_s(FullPathMultibyte, nullptr, 0, nullptr, 0, nullptr, 0, Ext, _MAX_EXT);
+
+	_strupr_s(Ext);
+
+	ScratchImage* Image = new ScratchImage;
+
+	if (strcmp(Ext, ".DDS") == 0)
+	{
+		if (FAILED(LoadFromDDSFile(FullPath, DDS_FLAGS_NONE, nullptr, *Image)))
+		{
+			SAFE_DELETE(Info);
+			SAFE_DELETE(Image);
+			return false;
+		}
+	}
+
+	else if (strcmp(Ext, ".TGA") == 0)
+	{
+		if (FAILED(LoadFromTGAFile(FullPath, nullptr, *Image)))
+		{
+			SAFE_DELETE(Info);
+			SAFE_DELETE(Image);
+			return false;
+		}
+	}
+
+	else
+	{
+		if (FAILED(LoadFromWICFile(FullPath, WIC_FLAGS_NONE, nullptr, *Image)))
+		{
+			SAFE_DELETE(Info);
+			SAFE_DELETE(Image);
+			return false;
+		}
+	}
+
+	Info->Image = Image;
+
+	m_vecTextureInfo.push_back(Info);
+
+	
+	CEngineUtil::GetFileNameOnly(FullPathMultibyte, OutName);
+
+	SetName(OutName);
 
 	return CreateResource(0);
 }
@@ -695,6 +785,7 @@ bool CTexture::CreateResourceArray()
 
 	return true;
 }
+
 
 void CTexture::SetShader(int Register, int ShaderType, int Index)
 {

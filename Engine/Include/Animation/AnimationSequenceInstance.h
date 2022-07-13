@@ -238,6 +238,7 @@ public:
 	void SetLoop(bool Loop);
 	void SetCurrentAnimation(const std::string& Name);
 	void ChangeAnimation(const std::string& Name);
+	void ChangeAnimation(class CAnimationSequenceData* SequenceData);
 	void KeepCurrentAnimation();
 	bool CheckCurrentAnimation(const std::string& Name);
 	void ClearAnimationSequenceFromAnimationEditor();

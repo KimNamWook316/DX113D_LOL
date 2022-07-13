@@ -103,7 +103,7 @@ enum class Collision_Channel
 	Monster,
 	PlayerAttack,
 	MonsterAttack,
-	Custom1,
+	MapObject,
 	Custom2,
 	Custom3,
 	Custom4,
@@ -132,6 +132,7 @@ enum class Collision_State
 {
 	Begin,
 	End,
+	Stay,
 	Max
 };
 
@@ -265,6 +266,9 @@ enum class SceneComponent3DType
 	ColliderHalfLine,
 	ColliderRay,
 	NavMeshComponent,
+	PlayerNormalAttackCheckCollider,
+	EyeLaserComponent,
+	PlayerHookComponent,
 	Max
 };
 
@@ -273,7 +277,7 @@ enum class ObjectComponent3DType
 	PaperBurnComponent,
 	GameStateComponent,
 	NavAgent,
-	GameDataComponent,
+	ObjectDataComponent,
 	PlayerDataComponent,
 	Max
 };
@@ -301,6 +305,7 @@ enum ConditionNode
 	AttackTargetCheck,
 	MouseRButtonCheckNode,
 	MouseRButtonUpCheckNode,
+	Lockstone3TriggerBoxHitCheck
 };
 
 enum ActionNode
@@ -313,6 +318,8 @@ enum ActionNode
 	ReadyToShoot,
 	ShootNode,
 	CancleShootNode,
+	AddFallingFloorCallback,
+	Lockstone3TriggerBoxAction
 };
 
 enum DecoratorNode
@@ -374,4 +381,13 @@ enum class ParticleSpecialMoveDir
 	XZSpread = 0, // xz 평명 방향으로 이동 y는 0
 	XYSpread, // xy 평명 방향으로 이동 z 는 0
 	Max
+};
+
+enum class HookResult
+{
+	// 날아가고 있는중
+	OnShoot,
+	NoCollision,
+	Collision,
+	CollisionEnd
 };

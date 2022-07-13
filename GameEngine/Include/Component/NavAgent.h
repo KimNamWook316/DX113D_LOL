@@ -14,6 +14,7 @@ private:
 	CSharedPtr<class CSceneComponent> m_UpdateComponent;
 	std::list<Vector3>		m_PathList;
 	float					m_MoveSpeed;
+	bool					m_ApplyNavMesh;
 
 public:
 	void SetUpdateComponent(class CSceneComponent* UpdateComponent);
@@ -23,6 +24,16 @@ public:
 	void SetMoveSpeed(float Speed)
 	{
 		m_MoveSpeed = Speed;
+	}
+
+	void SetApplyNavMesh(bool Apply)
+	{
+		m_ApplyNavMesh = Apply;
+	}
+
+	bool GetApplyNavMesh()	const
+	{
+		return m_ApplyNavMesh;
 	}
 
 public:
