@@ -829,6 +829,11 @@ bool CResourceManager::EditSequenceClip(CAnimationSequence* ExistingSequence, co
 	return m_AnimationManager3D->EditSequenceClip(ExistingSequence, NewName, StartFrame, EndFrame, SaveFullPathMultibyte);
 }
 
+void CResourceManager::LoadAniFile()
+{
+	m_MeshManager->LoadAniFile();
+}
+
 bool CResourceManager::LoadSkeleton(const std::string& Name, 
 	const TCHAR* FileName, const std::string& PathName, CScene* Scene)
 {

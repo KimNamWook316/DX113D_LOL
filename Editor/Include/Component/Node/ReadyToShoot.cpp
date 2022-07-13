@@ -32,7 +32,7 @@ NodeResult CReadyToShoot::OnStart(float DeltaTime)
 
 	std::string ObjectName = m_Object->GetName();
 
-	std::string SequenceName = ObjectName + "_" + "SkillQ";
+	std::string SequenceName = ObjectName + "_" + "Arrow";
 
 	if (m_AnimationMeshComp)
 	{
@@ -53,12 +53,6 @@ NodeResult CReadyToShoot::OnStart(float DeltaTime)
 	m_Object->SetNoInterrupt(true);
 	m_CallStart = true;
 
-	// Nav Agent의 PathList를 비운다
-	CNavAgent* Agent = m_Object->GetNavAgent();
-
-	if (Agent)
-		Agent->ClearPathList();
-
 	m_PlayerDataComp = m_Object->FindObjectComponentFromType<CPlayerDataComponent>();
 
 
@@ -69,13 +63,16 @@ NodeResult CReadyToShoot::OnStart(float DeltaTime)
 
 	CCameraComponent* CurrentCamera = CSceneManager::GetInst()->GetScene()->GetCameraManager()->GetCurrentCamera();
 
+	Vector3 ObjectPos = m_Object->GetWorldPos();
 	Vector3 OriginCamPos = CurrentCamera->GetWorldPos();
 	CSceneManager::GetInst()->GetScene()->SetOriginCamPos(OriginCamPos);
 
-	m_CameraDestPos = PickingPoint * 0.3f +  OriginCamPos * 0.7f;
-	m_CameraMoveDir = m_CameraDestPos - OriginCamPos;
+	m_CameraDestPos =  OriginCamPos + (PickingPoint - ObjectPos) / 2.f;
+	m_CameraDestPos.y = OriginCamPos.y;
+	m_CameraMoveDir = PickingPoint - ObjectPos;
 	m_CameraMoveDir.y = 0.f;
 	m_CameraMoveDir.Normalize();
+
 
 	return NodeResult::Node_True;
 }
@@ -102,6 +99,10 @@ NodeResult CReadyToShoot::OnUpdate(float DeltaTime)
 		else
 		{
 			m_Owner->SetCurrentNode(this);
+
+			// Hook 여러개 렌더링해내면서 HalfLine Collider 길게 만드는 코드 추가
+
+
 			return NodeResult::Node_Running;
 		}
 	}

@@ -32,10 +32,22 @@ void CCollisionSection::Clear()
 	m_vecCollider.clear();
 }
 
-//void CCollisionSection::ClearPrevCollider()
-//{
-//	m_vecPrevCollider.clear();
-//}
+void CCollisionSection::DeleteCollider(CColliderComponent* Collider)
+{
+	size_t Count = m_vecCollider.size();
+
+	for (size_t i = 0; i < Count; ++i)
+	{
+		if (m_vecCollider[i] == Collider)
+		{
+			auto iter = m_vecCollider.begin();
+			std::advance(iter, i);
+
+			m_vecCollider.erase(iter);
+			return;
+		}
+	}
+}
 
 void CCollisionSection::AddCollider(CColliderComponent* Collider)
 {
@@ -43,11 +55,6 @@ void CCollisionSection::AddCollider(CColliderComponent* Collider)
 
 	Collider->AddSectionIndex(m_Index);
 }
-
-//void CCollisionSection::AddPrevCollider(CColliderComponent* Collider)
-//{
-//	m_vecPrevCollider.push_back(Collider);
-//}
 
 void CCollisionSection::Collision(float DeltaTime)
 {

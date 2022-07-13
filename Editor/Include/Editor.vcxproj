@@ -212,6 +212,7 @@
     <ClCompile Include="Component\Node\ShootNode.cpp" />
     <ClCompile Include="Component\ObjectDataComponent.cpp" />
     <ClCompile Include="Component\PlayerDataComponent.cpp" />
+    <ClCompile Include="Component\PlayerHookComponent.cpp" />
     <ClCompile Include="Component\PlayerNormalAttackCheckCollider.cpp" />
     <ClCompile Include="Component\State\AirBorneState.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -340,6 +341,7 @@
     <ClInclude Include="Component\Node\ShootNode.h" />
     <ClInclude Include="Component\ObjectDataComponent.h" />
     <ClInclude Include="Component\PlayerDataComponent.h" />
+    <ClInclude Include="Component\PlayerHookComponent.h" />
     <ClInclude Include="Component\PlayerNormalAttackCheckCollider.h" />
     <ClInclude Include="Component\State\AirBorneState.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>

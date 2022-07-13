@@ -79,6 +79,7 @@ public:
 	void GetNavPolgonVertexPos(int Index, std::vector<Vector3>& vecPos);
 	void GetAdjPolyIndex(int Index, std::vector<int>& vecPolyIndex);
 	const Vector3& GetVertexPos(int PolyIndex, int VertexIndex);
+	void OnUpdatePos(const Vector3& WorldPos, const Vector3& RelativePos);
 
 public:
 	virtual void Start();

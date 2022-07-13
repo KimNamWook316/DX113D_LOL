@@ -48,6 +48,7 @@ public:
 	bool CheckPickingPoint(Vector3& OutPos);
 	// 높이를 결과로 리턴
 	bool CheckPlayerNavMeshPoly(float& Height);
+	bool CheckNavMeshPickingPoint(Vector3& OutPos);
 
 public:
 	void Start();

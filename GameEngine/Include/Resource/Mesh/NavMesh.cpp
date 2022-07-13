@@ -70,6 +70,7 @@ bool CNavMesh::LoadMeshFullPathMultibyte(const char* FullPath)
 			Vertex.z = ZData;
 
 			m_vecVertexPos.push_back(Vertex);
+			m_vecOriginVertexPos.push_back(Vertex);
 			
 			if (m_Min.x > Vertex.x)
 				m_Min.x = Vertex.x;
@@ -127,6 +128,7 @@ bool CNavMesh::LoadMeshFullPathMultibyte(const char* FullPath)
 	for (size_t i = 0; i < Count; ++i)
 	{
 		m_vecVertexPos[i] = m_vecVertexPos[i] - Middle;
+		m_vecOriginVertexPos[i] = m_vecOriginVertexPos[i] - Middle;
 	}
 
 	Count = m_vecNavMeshPolygon.size();
@@ -134,7 +136,11 @@ bool CNavMesh::LoadMeshFullPathMultibyte(const char* FullPath)
 	for (size_t i = 0; i < Count; ++i)
 	{
 		for (size_t j = 0; j < 3; ++j)
+		{
 			m_vecNavMeshPolygon[i].m_vecVertexPos[j] = m_vecNavMeshPolygon[i].m_vecVertexPos[j] - Middle;
+			m_vecNavMeshPolygon[i].m_vecVertexOriginPos[j] = m_vecNavMeshPolygon[i].m_vecVertexPos[j] - Middle;
+
+		}
 	}
 
 	m_Min = m_Min - Middle;
@@ -179,6 +185,10 @@ void CNavMesh::CreatePolygonInfo()
 		Poly.m_vecVertexPos.push_back(Vertex1);
 		Poly.m_vecVertexPos.push_back(Vertex2);
 		Poly.m_vecVertexPos.push_back(Vertex3);
+		
+		Poly.m_vecVertexOriginPos.push_back(Vertex1);
+		Poly.m_vecVertexOriginPos.push_back(Vertex2);
+		Poly.m_vecVertexOriginPos.push_back(Vertex3);
 
 		m_vecNavMeshPolygon.push_back(Poly);
 
@@ -242,6 +252,7 @@ bool CNavMesh::SaveMesh(FILE* File)
 		for (size_t j = 0; j < VtxCount; ++j)
 		{
 			fwrite(&Poly.m_vecVertexPos[j], sizeof(Vector3), 1, File);
+			fwrite(&Poly.m_vecVertexOriginPos[j], sizeof(Vector3), 1, File);
 		}
 
 		size_t AdjCount = Poly.m_vecAdjIndex.size();
@@ -261,6 +272,7 @@ bool CNavMesh::SaveMesh(FILE* File)
 	for (size_t i = 0; i < Count; ++i)
 	{
 		fwrite(&m_vecVertexPos[i], sizeof(Vector3), 1, File);
+		fwrite(&m_vecOriginVertexPos[i], sizeof(Vector3), 1, File);
 	}
 
 	Count = m_vecIndex.size();
@@ -278,34 +290,6 @@ bool CNavMesh::SaveMesh(FILE* File)
 
 bool CNavMesh::LoadMesh(FILE* File)
 {
-	/*
-	* size_t Count = m_vecNavMeshPolygon.size();
-	fwrite(&Count, sizeof(size_t), 1, File);
-	for (size_t i = 0; i < Count; ++i)
-	{
-		NavMeshPolygon Poly = m_vecNavMeshPolygon[i];
-		size_t VtxCount = Poly.m_vecVertexPos.size();
-
-		fwrite(&VtxCount, sizeof(size_t), 1, File);
-		
-		for (size_t j = 0; j < VtxCount; ++j)
-		{
-			fwrite(&Poly.m_vecVertexPos[j], sizeof(Vector3), 1, File);
-		}
-
-		size_t AdjCount = Poly.m_vecAdjIndex.size();
-
-		fwrite(&AdjCount, sizeof(size_t), 1, File);
-
-		for (size_t j = 0; j < AdjCount; ++j)
-		{
-			fwrite(&Poly.m_vecAdjIndex[j], sizeof(int), 1, File);
-		}
-
-		fwrite(&Poly.m_Index, sizeof(int), 1, File);
-	}
-	*/
-
 	size_t PolyCount = 0;
 
 	fread(&PolyCount, sizeof(size_t), 1, File);
@@ -322,6 +306,10 @@ bool CNavMesh::LoadMesh(FILE* File)
 			Vector3 VertexPos;
 			fread(&VertexPos, sizeof(Vector3), 1, File);
 			Poly.m_vecVertexPos.push_back(VertexPos);
+
+			Vector3 OriginPos;
+			fread(&OriginPos, sizeof(Vector3), 1, File);
+			Poly.m_vecVertexOriginPos.push_back(OriginPos);
 		}
 
 		size_t AdjCount = 0;
@@ -349,6 +337,10 @@ bool CNavMesh::LoadMesh(FILE* File)
 		Vector3 Vertex;
 		fread(&Vertex, sizeof(Vector3), 1, File);
 		m_vecVertexPos.push_back(Vertex);
+
+		Vector3 OriginVertex;
+		fread(&OriginVertex, sizeof(Vector3), 1, File);
+		m_vecOriginVertexPos.push_back(OriginVertex);
 	}
 
 
@@ -372,7 +364,7 @@ bool CNavMesh::LoadMesh(FILE* File)
 bool CNavMesh::CreateNavMesh(const std::string& Name)
 {
 	return CSceneManager::GetInst()->GetScene()->GetResource()->CreateNavMesh(this, Name,
-		&m_vecVertexPos[0], sizeof(Vector3), m_vecVertexPos.size(),
+		&m_vecOriginVertexPos[0], sizeof(Vector3), m_vecVertexPos.size(),
 		D3D11_USAGE_DEFAULT, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST,
 		&m_vecIndex[0], sizeof(int), (int)m_vecIndex.size(),
 		D3D11_USAGE_DEFAULT, DXGI_FORMAT_R32_UINT);

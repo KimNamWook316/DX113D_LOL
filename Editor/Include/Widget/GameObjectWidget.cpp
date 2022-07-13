@@ -18,6 +18,7 @@
 #include "Component/ColliderHalfLine.h"
 #include "Component/ColliderRay.h"
 #include "Component/NavMeshComponent.h"
+#include "../Component/PlayerHookComponent.h"
 #include "../Component/EyeLaserComponent.h"
 #include "../Component/PlayerNormalAttackCheckCollider.h"
 #include "../Widget/StaticMeshComponentWidget.h"
@@ -162,7 +163,7 @@ void CGameObjectWidget::CreateSceneComponentWidget(CSceneComponent* Com)
 	CSceneComponentWidget* Widget = nullptr;
 
 	// TODO : ÄÄÆ÷³ÍÆ®º° À§Á¬ Ãß°¡
-	if (TypeID == typeid(CStaticMeshComponent).hash_code())
+	if (TypeID == typeid(CStaticMeshComponent).hash_code() || TypeID == typeid(CPlayerHookComponent).hash_code())
 	{
 	 	Widget = AddWidget<CStaticMeshComponentWidget>("StaticMeshWidget");
 	}

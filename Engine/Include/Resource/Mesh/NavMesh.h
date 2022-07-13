@@ -15,6 +15,7 @@ protected:
 private:
 	std::vector<NavMeshPolygon>			m_vecNavMeshPolygon;
 	std::vector<Vector3>				m_vecVertexPos;
+	std::vector<Vector3>				m_vecOriginVertexPos;
 	std::vector<int>					m_vecIndex;
 	Vector3								m_Min;
 	Vector3								m_Max;
@@ -37,19 +38,25 @@ public:
 		return m_vecNavMeshPolygon.size();
 	}
 
-	const NavMeshPolygon& GetNavMeshPolygon(int Idx)	const
+	NavMeshPolygon& GetNavMeshPolygon(int Idx)
 	{
 		return m_vecNavMeshPolygon[Idx];
 	}
+
 
 	size_t GetVertexPosCount()	const
 	{
 		return m_vecVertexPos.size();
 	}
 
-	const Vector3& GetVertexPos(int Index)	const
+	Vector3& GetVertexPos(int Index)
 	{
 		return m_vecVertexPos[Index];
+	}
+
+	Vector3& GetVertexOriginPos(int Index)
+	{
+		return m_vecOriginVertexPos[Index];
 	}
 
 	// m_mapIndex에 이미 Vertex가 존재하면 그 Vertex의 Index를 리턴하고 없으면 -1을 리턴해서

@@ -27,6 +27,7 @@
 #include "Component/PaperBurnComponent.h"
 #include "Component/PlayerNormalAttackCheckCollider.h"
 #include "Component/EyeLaserComponent.h"
+#include "Component/PlayerHookComponent.h"
 // Window
 #include "Window/ObjectHierarchyWindow.h"
 #include "Window/SceneComponentHierarchyWindow.h"
@@ -364,6 +365,13 @@ CComponent* CEditorManager::CreateComponent(CGameObject* Obj, size_t Type)
 	else if (Type == typeid(CEyeLaserComponent).hash_code())
 	{
 		CEyeLaserComponent* Component = Obj->LoadComponent<CEyeLaserComponent>();
+		// Component->EnableEditMode(true);
+		return Component;
+	}
+
+	else if (Type == typeid(CPlayerHookComponent).hash_code())
+	{
+		CPlayerHookComponent* Component = Obj->LoadComponent<CPlayerHookComponent>();
 		// Component->EnableEditMode(true);
 		return Component;
 	}

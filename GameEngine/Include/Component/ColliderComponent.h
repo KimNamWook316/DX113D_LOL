@@ -170,7 +170,7 @@ public:
     virtual bool Collision(CColliderComponent* Dest) = 0;
     virtual bool CollisionMouse(const Vector2& MousePos) = 0;
     virtual bool CollisionRay(const Ray& Ray);
-
+    virtual void Destroy() override;
 public:
     template <typename T>
     void AddCollisionCallback(Collision_State State, T* Obj, void(T::* Func)(const CollisionResult&))

@@ -164,16 +164,16 @@ bool CCollision::CollisionRayToBox3D(CColliderRay* Src, CColliderBox3D* Dest)
 		Ray ray = Src->GetInfo();
 		Box3DInfo Box = Dest->GetInfo();
 
-		while (true)
-		{
-			CheckPoint = ray.Pos + (ray.Dir.x * Step, ray.Dir.y * Step, ray.Dir.z * Step);
-			bool Intersect = CheckPointInBox(CheckPoint, Box);
+		//while (true)
+		//{
+		//	CheckPoint = ray.Pos + (ray.Dir.x * Step, ray.Dir.y * Step, ray.Dir.z * Step);
+		//	bool Intersect = CheckPointInBox(CheckPoint, Box);
 
-			if (Intersect)
-				break;
+		//	if (Intersect)
+		//		break;
 
-			Step += 0.1f;
-		}
+		//	Step += 0.1f;
+		//}
 
 		HitPoint = CheckPoint;
 
@@ -189,7 +189,7 @@ bool CCollision::CollisionBox3DToHalfLine(CColliderBox3D* Src, CColliderHalfLine
 
 	Src->UpdateMinMax();
 
-	if (CollisionBox3DToHalfLine(Result, Src->GetInfo(), Dest->GetInfo()))
+	if (CollisionBox3DToHalfLine(Result, Src->GetInfo(), Dest->GetInfo(), Src))
 	{
 		return true;
 	}
@@ -903,7 +903,7 @@ bool CCollision::CollisionRayToBox3D(Vector3& HitPoint, const Ray& ray, const Bo
 	return true;
 }
 
-bool CCollision::CollisionBox3DToHalfLine(Vector3& HitPoint, const Box3DInfo& Box, const HalfLineInfo& HalfLineInfo)
+bool CCollision::CollisionBox3DToHalfLine(Vector3& HitPoint, const Box3DInfo& Box, const HalfLineInfo& HalfLineInfo, CColliderBox3D* BoxCollider)
 {
 	if (Box.Min.x <= HalfLineInfo.EndPos.x && Box.Max.x >= HalfLineInfo.EndPos.x &&
 		Box.Min.y <= HalfLineInfo.EndPos.y && Box.Max.y >= HalfLineInfo.EndPos.y &&
@@ -919,9 +919,24 @@ bool CCollision::CollisionBox3DToHalfLine(Vector3& HitPoint, const Box3DInfo& Bo
 
 	if (Intersect)
 	{
-		if(HalfLineInfo.EndPos.x >= Box.Min.x && 
-			HalfLineInfo.EndPos.x >= Box.Min.y && 
-			HalfLineInfo.EndPos.x >= Box.Min.z)
+		// ray는 통과하지만 halfline의 endpos는 아직 통과하지 못했다면 intersect된게 아닌 코드 추가
+		Vector3 Dir = HalfLineInfo.EndPos - HalfLineInfo.StartPos;
+
+		if (Dir.x > 0.f && HalfLineInfo.EndPos.x < Box.Min.x)
+			return false;
+		if (Dir.x < 0.f && HalfLineInfo.EndPos.x > Box.Max.x)
+			return false;
+
+		if (Dir.y > 0.f && HalfLineInfo.EndPos.y < Box.Min.y)
+			return false;
+		if (Dir.y < 0.f && HalfLineInfo.EndPos.y > Box.Max.y)
+			return false;
+
+		if (Dir.z > 0.f && HalfLineInfo.EndPos.z < Box.Min.z)
+			return false;
+		if (Dir.z < 0.f && HalfLineInfo.EndPos.z > Box.Max.z)
+			return false;
+
 		return true;
 	}
 

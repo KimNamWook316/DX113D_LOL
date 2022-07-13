@@ -43,6 +43,7 @@ protected:
 	static std::list<InstancingCheckCount*> m_InstancingCheckList;
 	std::function<void(CSceneComponent*)> m_OnDestroyCallBack;
 
+
 public:
 	void SetInstancingInfo(Instancing3DInfo* Info);
 	void SetInstancingShadowInfo(Instancing3DInfo* Info);

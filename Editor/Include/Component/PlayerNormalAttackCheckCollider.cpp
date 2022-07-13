@@ -11,7 +11,7 @@ CPlayerNormalAttackCheckCollider::CPlayerNormalAttackCheckCollider()
 	m_ComponentType = Component_Type::SceneComponent;
 	m_Render = true;
 
-	m_ColliderType = Collider_Type::Box3D;
+	m_ColliderType = Collider_Type::Sphere;
 
 	AddCollisionCallback<CPlayerNormalAttackCheckCollider>(Collision_State::Stay, this, &CPlayerNormalAttackCheckCollider::AttackSuccess);
 

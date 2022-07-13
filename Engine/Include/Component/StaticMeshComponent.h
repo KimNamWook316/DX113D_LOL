@@ -48,8 +48,8 @@ public:
     bool IsTransparent() const;
 
 public:
-    void SetMesh(const std::string& Name);
-    void SetMesh(CStaticMesh* Mesh);
+    virtual void SetMesh(const std::string& Name);
+    virtual void SetMesh(CStaticMesh* Mesh);
     void SetMaterial(CMaterial* Material, int Index = 0);
     void AddMaterial(CMaterial* Material);
     void ClearMaterial();

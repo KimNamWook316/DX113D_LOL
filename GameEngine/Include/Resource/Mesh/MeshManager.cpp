@@ -5,6 +5,7 @@
 #include "AnimationMesh.h"
 #include "NavMesh.h"
 #include "../../PathManager.h"
+#include "FBXLoader.h"
 
 CMeshManager::CMeshManager()
 {
@@ -247,10 +248,10 @@ bool CMeshManager::Init()
 
 	Vector3	PlaneMeshPos[4] =
 	{
-		Vector3(-0.5f, 0.5f, 0.f),
-		Vector3(0.5f, 0.5f, 0.f),
-		Vector3(0.5f, -0.5f, 0.f),
-		Vector3(-0.5f, -0.5f, 0.f),
+		Vector3(-0.5f, 0.f, 0.f),
+		Vector3(0.5f, 0.f, 0.f),
+		Vector3(0.5f, 0.f, 1.f),
+		Vector3(-0.5f, 0.f, 1.f)
 	};
 	
 	for (size_t i = 0; i < 4; ++i)
@@ -741,4 +742,10 @@ float CMeshManager::AngleFromXY(float x, float y)
 		theta = atanf(y / x) + PI; // in [0, 2*pi).
 
 	return theta;
+}
+
+void CMeshManager::LoadAniFile()
+{
+	CFBXLoader Loader;
+	Loader.LoadAniFile();
 }

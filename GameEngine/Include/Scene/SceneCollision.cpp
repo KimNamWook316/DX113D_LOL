@@ -429,6 +429,29 @@ bool CSceneCollision::IsExistColliderHasProfile(CollisionProfile* Profile)
 	return false;
 }
 
+void CSceneCollision::DeleteCollider(CColliderComponent* Collider, int SectionIndex)
+{
+	m_Section->vecSection[SectionIndex]->DeleteCollider(Collider);
+}
+
+void CSceneCollision::ClearAll()
+{
+	size_t	Size = m_Section->vecSection.size();
+
+	for (size_t i = 0; i < Size; ++i)
+	{
+		m_Section->vecSection[i]->Clear();
+	}
+
+	auto iter = m_ColliderList.begin();
+	auto iterEnd = m_ColliderList.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		(*iter)->ClearFrame();
+	}
+}
+
 void CSceneCollision::CheckColliderSection()
 {
 	auto	iter = m_ColliderList.begin();

@@ -49,5 +49,9 @@ private:
 		unsigned int SubDivision);
 	void Subdivide(std::vector<Vertex3D>& vecVertices, std::vector<int>& vecIndices);
 	float AngleFromXY(float x, float y);
+
+
+public:
+	void LoadAniFile();
 };
 

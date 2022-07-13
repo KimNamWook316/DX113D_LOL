@@ -17,6 +17,8 @@ protected:
     virtual NodeResult OnUpdate(float DeltaTime);
     virtual NodeResult OnEnd(float DeltaTime);
 
+private:
+    bool m_InRestoreCam;
 
 public:
     virtual NodeResult Invoke(float DeltaTime) override;

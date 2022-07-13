@@ -88,10 +88,18 @@ bool CPlayerDataComponent::Load(FILE* File)
 
 bool CPlayerDataComponent::SaveOnly(FILE* File)
 {
-	return false;
+	CObjectComponent::Save(File);
+
+	fwrite(&m_PlayerData, sizeof(PlayerData), 1, File);
+
+	return true;
 }
 
 bool CPlayerDataComponent::LoadOnly(FILE* File)
 {
-	return false;
+	CObjectComponent::Load(File);
+
+	fread(&m_PlayerData, sizeof(PlayerData), 1, File);
+
+	return true;
 }

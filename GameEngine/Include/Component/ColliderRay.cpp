@@ -116,12 +116,20 @@ CColliderRay* CColliderRay::Clone()
 
 bool CColliderRay::Save(FILE* File)
 {
-	return false;
+	CColliderComponent::Save(File);
+
+	fwrite(&m_RayInfo, sizeof(Ray), 1, File);
+
+	return true;
 }
 
 bool CColliderRay::Load(FILE* File)
 {
-	return false;
+	CColliderComponent::Load(File);
+
+	fread(&m_RayInfo, sizeof(Ray), 1, File);
+
+	return true;
 }
 
 bool CColliderRay::Collision(CColliderComponent* Dest)

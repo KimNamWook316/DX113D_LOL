@@ -18,12 +18,21 @@ private:
 	class CGameObject* m_Player;
 	class CAnimationMeshComponent* m_AnimComp;
 	bool	m_WakeEnd;
+	Vector3 m_CurrentLaserLeftRightDir;
+	Vector3 m_CurrentLaserUpDownDir;
 	Vector3 m_CurrentLaserDir;
-	Matrix m_LaserRotMatrix;
+	Vector3 m_NormalDir;
+
+	Matrix m_LaserLeftRightRotMatrix;
+	Matrix m_LaserUpDownRotMatrix;
 
 	//CSharedPtr<CShader>	m_Shader;
 	CSharedPtr<CMesh> m_LaserPlaneMesh;
 	CSharedPtr<CMaterial>	m_Material;
+
+	class CColliderRay* m_RayCollider;
+
+	bool m_FaceCameraOnce;
 
 public:
 	CMesh* GetMesh()	const
@@ -75,6 +84,7 @@ private:
 	void ChangeToWakeAnimation();
 	void ChangeToDieAnimation();
 	void ChangeToIdleAnimation();
+	void FaceCamera();
 
 public:
 	void SetBaseColor(const Vector4& Color, int Index = 0);

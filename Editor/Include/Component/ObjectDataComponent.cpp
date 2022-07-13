@@ -14,6 +14,11 @@ CObjectDataComponent::CObjectDataComponent()
 {
 	SetTypeID<CObjectDataComponent>();
 	m_ComponentType = Component_Type::ObjectComponent;
+
+	if (m_Object && m_Object->GetObjectType() == Object_Type::Player)
+	{
+		m_Scene->SetPlayerObject(m_Object);
+	}
 }
 
 CObjectDataComponent::CObjectDataComponent(const CObjectDataComponent& com) :

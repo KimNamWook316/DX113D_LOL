@@ -27,6 +27,7 @@
 #include "Component/NavMeshComponent.h"
 #include "Component/EyeLaserComponent.h"
 #include "Component/PlayerNormalAttackCheckCollider.h"
+#include "Component/PlayerHookComponent.h"
 #include "IMGUITree.h"
 #include "Flag.h"
 #include "EngineUtil.h"
@@ -589,6 +590,8 @@ std::string CEditorUtil::SceneComponent3DTypeToString(SceneComponent3DType Type)
 		return "PlayerNormalAttackCheckCollider";
 	case SceneComponent3DType::EyeLaserComponent:
 		return "EyeLaserComponent";
+	case SceneComponent3DType::PlayerHookComponent:
+		return "PlayerHookComponent";
 	}
 
 	return "";
@@ -664,6 +667,8 @@ size_t CEditorUtil::SceneComponentTypeIndexToTypeid(int TypeIndex)
 		return typeid(CPlayerNormalAttackCheckCollider).hash_code();
 	case 13:
 		return typeid(CEyeLaserComponent).hash_code();
+	case 14:
+		return typeid(CPlayerHookComponent).hash_code();
 	}
 
 	return -1;

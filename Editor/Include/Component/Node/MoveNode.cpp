@@ -29,7 +29,7 @@ NodeResult CMoveNode::OnStart(float DeltaTime)
 	if (Agent)
 		m_NavAgent = Agent;
 
-	/* m_AnimationMeshComp = m_Owner->GetAnimationMeshComp();
+	 m_AnimationMeshComp = m_Owner->GetAnimationMeshComp();
 
 	std::string ObjectName = m_Object->GetName();
 
@@ -38,11 +38,11 @@ NodeResult CMoveNode::OnStart(float DeltaTime)
 	if (m_AnimationMeshComp)
 	{
 		m_AnimationMeshComp->GetAnimationInstance()->ChangeAnimation(SequenceName);
-	}*/
+	}
 
-	////m_CallStart = true;
+	m_CallStart = true;
 
-	//m_NavAgent =  m_Object->FindObjectComponentFromType<CNavAgent>();
+	m_NavAgent =  m_Object->FindObjectComponentFromType<CNavAgent>();
 
 	return NodeResult::Node_True;
 }

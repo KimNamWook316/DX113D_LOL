@@ -21,6 +21,7 @@
 #include "Component/ColliderHalfLine.h"
 #include "Component/ColliderRay.h"
 #include "Component/NavMeshComponent.h"
+#include "../Component/PlayerHookComponent.h"
 #include "../Component/PlayerNormalAttackCheckCollider.h"
 #include "Resource/Particle/Particle.h"
 #include "Component/Arm.h"
@@ -154,6 +155,9 @@ void CSceneComponentCreateModal::OnCreateComponent()
 
 	else if (Typeid == typeid(CEyeLaserComponent).hash_code())
 		Com = SelectObject->CreateComponentAddChild<CEyeLaserComponent>(Name);
+
+	else if (Typeid == typeid(CPlayerHookComponent).hash_code())
+		Com = SelectObject->CreateComponentAddChild<CPlayerHookComponent>(Name);
 
 	// Window °»½Å
 	CSceneComponentHierarchyWindow* ComponentWindow = (CSceneComponentHierarchyWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(SCENECOMPONENT_HIERARCHY);
