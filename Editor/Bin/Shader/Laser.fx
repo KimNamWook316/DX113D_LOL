@@ -14,18 +14,18 @@ Vertex3DOutput LaserVS(Vertex3D input)
     return output;
 }
 
-PS_OUTPUT_TRANSPARENT LaserPS(Vertex3DOutput Input)
+PSOutput_Single LaserPS(Vertex3DOutput Input)
 {
-    PS_OUTPUT_TRANSPARENT output = (PS_OUTPUT_TRANSPARENT) 0;
+	PSOutput_Single output = (PSOutput_Single) 0;
     
     float4 BaseTextureColor = g_BaseTexture.Sample(g_BaseSmp, Input.UV);
     
     if (BaseTextureColor.a == 0.f || g_MtrlOpacity == 0.f)
         clip(-1);
     
-    output.ScreenColor.rgb = BaseTextureColor.rgb * g_MtrlBaseColor.rgb + g_MtrlEmissiveColor.rgb;
+    output.Color.rgb = BaseTextureColor.rgb * g_MtrlBaseColor.rgb + g_MtrlEmissiveColor.rgb;
     
-    output.ScreenColor.a = BaseTextureColor.a * g_MtrlOpacity;
+    output.Color.a = BaseTextureColor.a * g_MtrlOpacity;
     
     return output;
 }

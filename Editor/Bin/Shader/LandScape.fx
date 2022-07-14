@@ -152,11 +152,11 @@ PSOutput_GBuffer LandScapePS(Vertex3DOutput input)
     if (g_MtrlSpecularTex)
         SpecularColor = g_SpecularTexture.Sample(g_BaseSmp, UV).rgba;
 	
-    for (int i = 0; i < g_LandScapeSplatCount; ++i)
+    for (int j = 0; j < g_LandScapeSplatCount; ++j)
     {
-        float4 SplatSpecular = g_SplatSpecular.Sample(g_BaseSmp, float3(UV, i));
+        float4 SplatSpecular = g_SplatSpecular.Sample(g_BaseSmp, float3(UV, j));
         
-        float4 SplatAlpha = g_SplatAlpha.Sample(g_BaseSmp, float3(input.UV, i));
+        float4 SplatAlpha = g_SplatAlpha.Sample(g_BaseSmp, float3(input.UV, j));
         
         SpecularColor.rgb = SpecularColor.rgb * (1.f - SplatAlpha.r) + SplatSpecular.rgb * SplatAlpha.r;
     }

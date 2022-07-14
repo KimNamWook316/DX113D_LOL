@@ -29,6 +29,7 @@ private:
     void OnCheckMetallic(int Idx, bool Check);
     void OnDropShaderName(const std::string& Name);
     void OnDropMeshName(const std::string& Name);
+    void OnEditUVScale(const Vector2& Scale);
 
 private:
     void RefreshMeshWidget(class CMesh* Mesh);
@@ -50,5 +51,6 @@ private:
     class CIMGUICheckBox* m_TransparencyEdit;
     class CIMGUISliderFloat* m_OpacityEdit;
     class CIMGUICheckBox* m_Metallic;
+    class CIMGUIInputFloat2* m_UVScale;
 };
 

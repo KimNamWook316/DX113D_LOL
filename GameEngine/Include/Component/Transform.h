@@ -283,11 +283,6 @@ public:
 		return m_matWorld;
 	}
 
-	const Matrix& GetRotationMatrix()	const
-	{
-		return m_matRot;
-	}
-
 	void SetRotationMatrix(const Matrix& Mat)
 	{
 		m_matRot = Mat;

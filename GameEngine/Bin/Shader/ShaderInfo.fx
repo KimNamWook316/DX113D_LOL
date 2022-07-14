@@ -46,6 +46,7 @@ cbuffer Material : register(b1)
     int		g_MtrlEmissiveTex;
 	int		g_MtrlRecevieDecal;
 	int		g_MtrlMetallic;
+	float2	g_MtrlUVScale;
 };
 
 cbuffer Standard2D : register(b2)

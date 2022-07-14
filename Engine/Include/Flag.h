@@ -393,7 +393,6 @@ enum class PaperBurnEndEvent
 	Reset,
 	Max	
 };
-};
 
 enum class HookResult
 {

@@ -333,9 +333,6 @@
     <ClCompile Include="Window\SocketWindow.cpp">
       <Filter>02. Editor\01. Window\1. Resource</Filter>
     </ClCompile>
-    <ClCompile Include="Window\AnimationDisplayWindow.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="Widget\ToonShaderWidget.cpp">
       <Filter>02. Editor\02. Widget\01. Inspector\03. Shader</Filter>
     </ClCompile>
@@ -378,9 +375,6 @@
     <ClCompile Include="Widget\PaperBurnWidget.cpp">
       <Filter>02. Editor\02. Widget\01. Inspector\02. ObjectComponent</Filter>
     </ClCompile>
-    <ClCompile Include="Component\GameDataComponent.cpp">
-      <Filter>06. GameComponent\02. ObjectComponent</Filter>
-    </ClCompile>
     <ClCompile Include="Component\GameStateComponent.cpp">
       <Filter>06. GameComponent\02. ObjectComponent</Filter>
     </ClCompile>
@@ -389,6 +383,9 @@
     </ClCompile>
     <ClCompile Include="Widget\WaterComponentWidget.cpp">
       <Filter>02. Editor\02. Widget\01. Inspector\01. SceneComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Window\AnimationDisplayWindow.cpp">
+      <Filter>02. Editor\01. Window\2. Animation</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -611,9 +608,6 @@
     <ClInclude Include="Window\SocketWindow.h">
       <Filter>02. Editor\01. Window\1. Resource</Filter>
     </ClInclude>
-    <ClInclude Include="Window\AnimationDisplayWindow.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="Widget\ToonShaderWidget.h">
       <Filter>02. Editor\02. Widget\01. Inspector\03. Shader</Filter>
     </ClInclude>
@@ -633,9 +627,6 @@
       <Filter>02. Editor\02. Widget\01. Inspector\02. ObjectComponent</Filter>
     </ClInclude>
     <ClInclude Include="Component\PlayerDataComponent.h">
-      <Filter>06. GameComponent\02. ObjectComponent</Filter>
-    </ClInclude>
-    <ClInclude Include="Component\GameDataComponent.h">
       <Filter>06. GameComponent\02. ObjectComponent</Filter>
     </ClInclude>
     <ClInclude Include="Component\GameStateComponent.h">
@@ -670,6 +661,9 @@
     </ClInclude>
     <ClInclude Include="Component\PlayerHookComponent.h">
       <Filter>06. GameComponent\01. SceneComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Window\AnimationDisplayWindow.h">
+      <Filter>02. Editor\01. Window\2. Animation</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

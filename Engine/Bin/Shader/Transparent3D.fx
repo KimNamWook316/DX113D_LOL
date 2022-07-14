@@ -33,13 +33,14 @@ Vertex3DOutput Transparent3DVS(Vertex3D input)
 PSOutput_Single Transparent3DPS(Vertex3DOutput input)
 {
 	PSOutput_Single output = (PSOutput_Single) 0;
+	float2 ScaledUV = input.UV * g_MtrlUVScale;
 
-	float4 BaseTextureColor = g_BaseTexture.Sample(g_BaseSmp, input.UV);
+	float4 BaseTextureColor = g_BaseTexture.Sample(g_BaseSmp, ScaledUV);
 
 	if (BaseTextureColor.a == 0.f || g_MtrlOpacity == 0.f)
 		clip(-1);
 
-	float3 ViewNormal = ComputeBumpNormal(input.Normal, input.Tangent, input.Binormal, input.UV);
+	float3 ViewNormal = ComputeBumpNormal(input.Normal, input.Tangent, input.Binormal, ScaledUV);
 
 	LightInfo Info;
 	LightResult LResult;
@@ -50,7 +51,7 @@ PSOutput_Single Transparent3DPS(Vertex3DOutput input)
 	for (int i = 0; i < LightCount; ++i)
 	{
 		Info = g_LightInfoArray[i];
-		LResult = ComputeLight(Info, input.ViewPos, ViewNormal, input.UV);
+		LResult = ComputeLight(Info, input.ViewPos, ViewNormal, ScaledUV);
 		LAcc.Dif += LResult.Dif;
 		LAcc.Amb += LResult.Amb;
 		LAcc.Spc += LResult.Spc;
@@ -185,13 +186,14 @@ PSOutput_Single TransparentInstancingPS(Vertex3DOutputInstancing input)
 	PSOutput_Single output = (PSOutput_Single) 0;
 
 	int InstancingIndex = input.InstanceID + (g_InstancingObjecCount * g_InstancingMaterialIndex);
+	float2 ScaledUV = input.UV * g_InstancingInfoArray[InstancingIndex].g_MtrlUVScale;
 
-	float4 BaseTextureColor = g_BaseTexture.Sample(g_BaseSmp, input.UV);
+	float4 BaseTextureColor = g_BaseTexture.Sample(g_BaseSmp, ScaledUV);
 
 	if (BaseTextureColor.a == 0.f || g_MtrlOpacity == 0.f)
 		clip(-1);
 
-	float3 ViewNormal = ComputeBumpNormalInstancing(input.Normal, input.Tangent, input.Binormal, input.UV, input.InstanceID);
+	float3 ViewNormal = ComputeBumpNormalInstancing(input.Normal, input.Tangent, input.Binormal, ScaledUV, input.InstanceID);
 
 	LightInfo Info;
 	LightResult LResult;
@@ -202,7 +204,7 @@ PSOutput_Single TransparentInstancingPS(Vertex3DOutputInstancing input)
 	for (int i = 0; i < LightCount; ++i)
 	{
 		Info = g_LightInfoArray[i];
-		LResult = ComputeLightInstancing(Info, input.ViewPos, ViewNormal, input.UV, InstancingIndex);
+		LResult = ComputeLightInstancing(Info, input.ViewPos, ViewNormal, ScaledUV, InstancingIndex);
 		LAcc.Dif += LResult.Dif;
 		LAcc.Amb += LResult.Amb;
 		LAcc.Spc += LResult.Spc;

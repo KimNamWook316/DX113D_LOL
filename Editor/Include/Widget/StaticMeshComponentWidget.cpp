@@ -8,6 +8,7 @@
 #include "IMGUISliderFloat.h"
 #include "IMGUIColor3.h"
 #include "IMGUIInputFloat.h"
+#include "IMGUIInputFloat2.h"
 #include "IMGUIComboBox.h"
 #include "IMGUIDummy.h"
 #include "IMGUITree.h"
@@ -62,6 +63,7 @@ bool CStaticMeshComponentWidget::Init()
 	m_LoadMtrlButton = m_RootTree->AddWidget<CIMGUIButton>("Load & Add Material", 0.f, 0.f);
 	m_ShaderName = m_RootTree->AddWidget<CIMGUITextInput>("Shader", 200.f);
 	m_ShaderWidgetTree = m_RootTree->AddWidget<CIMGUITree>("Shader Params", 200.f);
+	m_UVScale = m_RootTree->AddWidget<CIMGUIInputFloat2>("UV Scale", 200.f);
 	m_BaseColorEdit = m_RootTree->AddWidget<CIMGUIColor3>("BaseColor", 200.f);
 	m_AmbientColorEdit = m_RootTree->AddWidget<CIMGUIColor3>("Ambient", 200.f);
 	m_SpecularColorEdit = m_RootTree->AddWidget<CIMGUIColor3>("Specluar", 200.f);
@@ -95,6 +97,7 @@ bool CStaticMeshComponentWidget::Init()
 	m_Metallic->SetCallBackIdx(this, &CStaticMeshComponentWidget::OnCheckMetallic);
 	m_ShaderName->SetDropCallBack(this, &CStaticMeshComponentWidget::OnDropShaderName);
 	m_MeshName->SetDropCallBack(this, &CStaticMeshComponentWidget::OnDropMeshName);
+	m_UVScale->SetCallBack(this, &CStaticMeshComponentWidget::OnEditUVScale);
 
 	return true;
 }
@@ -190,6 +193,7 @@ void CStaticMeshComponentWidget::OnSelectMaterialSlotCombo(int Idx, const char* 
 			MakeShaderWidget(Mat, ShaderName);
 		}
 
+		m_UVScale->SetVal(Mat->GetUVScale());
 		m_BaseColorEdit->SetRGB(Mat->GetBaseColor().x, Mat->GetBaseColor().y, Mat->GetBaseColor().z);
 		m_AmbientColorEdit->SetRGB(Mat->GetAmbientColor().x, Mat->GetAmbientColor().y, Mat->GetAmbientColor().z);
 		m_SpecularColorEdit->SetRGB(Mat->GetSpecularColor().x, Mat->GetSpecularColor().y, Mat->GetSpecularColor().z);
@@ -362,6 +366,21 @@ void CStaticMeshComponentWidget::OnDropMeshName(const std::string& Name)
 	MeshCom->SetMesh((CStaticMesh*)Mesh);
 
 	RefreshMeshWidget(Mesh);
+}
+
+void CStaticMeshComponentWidget::OnEditUVScale(const Vector2& Scale)
+{
+	if (m_MaterialSlotCombo->GetSelectIndex() == -1)
+	{
+		return;
+	}
+
+	CStaticMeshComponent* MeshCom = (CStaticMeshComponent*)m_Component;
+
+	if (MeshCom->GetMesh())
+	{
+		MeshCom->SetUVScale(Scale, m_MaterialSlotCombo->GetSelectIndex());
+	}
 }
 
 void CStaticMeshComponentWidget::RefreshMeshWidget(CMesh* Mesh)

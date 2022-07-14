@@ -76,6 +76,7 @@ public:
     void SetOpacity(float Opacity, int Index = 0);
     void AddOpacity(float Opacity, int Index = 0);
     void SetMetallic(bool Metallic, int Index = 0);
+    void SetUVScale(const Vector2& UVScale, int Index = 0);
 
 public:
     void AddTexture(int MaterialIndex, int Register, int ShaderType, const std::string& Name, class CTexture* Texture);

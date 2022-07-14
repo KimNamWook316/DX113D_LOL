@@ -275,6 +275,8 @@ struct MaterialCBuffer
 	int		EmissiveTex;
 	int		ReceiveDecal;
 	int		Metallic;
+	Vector2 UVScale;
+	Vector2 Empty;
 };
 
 struct AnimationFrameData
@@ -703,7 +705,8 @@ struct Instancing3DInfo
 	Vector4 PaperBurnOutLineColor;
 	Vector4 PaperBurnCenterLineColor;
 	int MtrlMetallic;
-	Vector3 Empty;
+	Vector2 UVScale;
+	float	Empty;
 };
 
 struct LightForwardCBuffer

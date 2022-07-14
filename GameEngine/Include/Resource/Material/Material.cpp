@@ -20,6 +20,8 @@ CMaterial::CMaterial() :
 	m_EmissiveTex(false),
 	m_RecieveDecal(false),
 	m_Bump(false),
+	m_Metallic(false),
+	m_UVScale(Vector2(1.f, 1.f)),
 	m_Scene(nullptr),
 	m_CBuffer(nullptr),
 	m_Opacity(1.f),
@@ -69,6 +71,7 @@ void CMaterial::CreateConstantBuffer()
 	m_CBuffer->SetEmissiveColor(m_EmissiveColor);
 	m_CBuffer->SetOpacity(m_Opacity);
 	m_CBuffer->SetMetallic(m_Metallic);
+	m_CBuffer->SetUVScale(m_UVScale);
 
 	m_CBuffer->UpdateCBuffer();
 }
@@ -260,6 +263,16 @@ void CMaterial::SetMetallic(bool Metallic)
 	if (m_CBuffer)
 	{
 		m_CBuffer->SetMetallic(Metallic);
+	}
+}
+
+void CMaterial::SetUVScale(const Vector2& UVScale)
+{
+	m_UVScale = UVScale;
+
+	if (m_CBuffer)
+	{
+		m_CBuffer->SetUVScale(m_UVScale);
 	}
 }
 
@@ -824,6 +837,7 @@ void CMaterial::Render()
 		m_CBuffer->SetEmissiveColor(m_EmissiveColor);
 		m_CBuffer->SetOpacity(m_Opacity);
 		m_CBuffer->SetMetallic(m_Metallic);
+		m_CBuffer->SetUVScale(m_UVScale);
 
 		m_CBuffer->UpdateCBuffer();
 	}
@@ -884,6 +898,7 @@ void CMaterial::UpdateCBuffer()
 		m_CBuffer->SetEmissiveColor(m_EmissiveColor);
 		m_CBuffer->SetOpacity(m_Opacity);
 		m_CBuffer->SetMetallic(m_Metallic);
+		m_CBuffer->SetUVScale(m_UVScale);
 
 		m_CBuffer->UpdateCBuffer();
 	}

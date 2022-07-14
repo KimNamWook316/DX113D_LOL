@@ -332,6 +332,11 @@ void CStaticMeshComponent::SetMetallic(bool Metallic, int Index)
 	m_vecMaterialSlot[Index]->SetMetallic(Metallic);
 }
 
+void CStaticMeshComponent::SetUVScale(const Vector2& UVScale, int Index)
+{
+	m_vecMaterialSlot[Index]->SetUVScale(UVScale);
+}
+
 void CStaticMeshComponent::AddTexture(int MaterialIndex, int Register, int ShaderType, const std::string& Name, CTexture* Texture)
 {
 	m_vecMaterialSlot[MaterialIndex]->AddTexture(Register, ShaderType, Name, Texture);
