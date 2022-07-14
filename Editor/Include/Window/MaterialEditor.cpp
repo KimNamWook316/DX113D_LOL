@@ -698,15 +698,16 @@ void CMaterialEditor::OnSaveMaterial()
 			return;
 		}
 
+		// (아래의 코드는 기존 Particle Material 용도로만 사용한다는 가정하에 작성, 이제는 다른 Material 범용으로 사용하므로 아래코드 지우기)
 		// 현재 저장하는 Directory가 Bin/Material/ParticleMaterial 인지 확인하기 => 아니라면, Save 방지
 		std::string PathInfoBeforeFileName;
 		CEngineUtil::GetPathInfoBeforeFileName(FileFullPathMultibyte, PathInfoBeforeFileName);
 
-		if (strcmp(MaterialPathInfo->PathMultibyte, PathInfoBeforeFileName.c_str()) != 0)
-		{
-			MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Particle Material 의 경우, 반드시 Bin/Material/ParticleMaterial 에 저장"), NULL, MB_OK);
-			return;
-		}
+		// if (strcmp(MaterialPathInfo->PathMultibyte, PathInfoBeforeFileName.c_str()) != 0)
+		// {
+		// 	MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Particle Material 의 경우, 반드시 Bin/Material/ParticleMaterial 에 저장"), NULL, MB_OK);
+		// 	return;
+		// }
 
 		// 현재 저장하는 Path 에서, 같은 이름의 FileName이 존재하는지 확인하기
 		char CheckMaterialFileName[MAX_PATH] = {};
@@ -772,15 +773,17 @@ void CMaterialEditor::OnLoadMaterial()
 			return;
 		}
 
-		// 현재 Load하는 Directory가 Bin/Material/ParticleMaterial 인지 확인하기 => 아니라면, Load
-		std::string PathInfoBeforeFileName;
-		CEngineUtil::GetPathInfoBeforeFileName(FilePathMultibyte, PathInfoBeforeFileName);
-
-		if (strcmp(MaterialPathInfo->PathMultibyte, PathInfoBeforeFileName.c_str()) != 0)
-		{
-			MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Particle Material 의 경우, 반드시 Bin/Material/ParticleMaterial 로부터 Load 해야 한다."), NULL, MB_OK);
-			return;
-		}
+		// >> (원래는 반드시 Particle 용 Material 을 사용하려고 했었다. 하지만, 이제 다른 Component 의 Material Editor 로도 사용해야 하므로)
+		// >> (아래의 코드는 없앤다.)
+		// 현재 Load하는 Directory가 Bin/Material/ParticleMaterial 인지 확인하기 => 아니라면, Load X
+		// std::string PathInfoBeforeFileName;
+		// CEngineUtil::GetPathInfoBeforeFileName(FilePathMultibyte, PathInfoBeforeFileName);
+		// 
+		// if (strcmp(MaterialPathInfo->PathMultibyte, PathInfoBeforeFileName.c_str()) != 0)
+		// {
+		// 	MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Particle Material 의 경우, 반드시 Bin/Material/ParticleMaterial 로부터 Load 해야 한다."), NULL, MB_OK);
+		// 	return;
+		// }
 
 		// 파일 이름을, Material 을 저장하는 Key 값으로 활용할 것이다.
 		CMaterial* LoadedMaterial = CResourceManager::GetInst()->LoadMaterialFullPathMultibyte(FilePathMultibyte);
