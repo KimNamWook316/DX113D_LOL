@@ -521,6 +521,16 @@ void CAnimationEditor::OnLoadExcel()
 			return;
 		}
 
+		// 기존 KeyName 의 복사본을 만든다.
+		std::string PrevExcelKeyName = m_ExcelKeyName;
+
+		// 같은 Excel 을 Load 한 것 
+		// 따라서, 그냥 바로 return 시킨다.
+		if (PrevExcelKeyName == LoadedExcelKey)
+		{
+			return;
+		}
+
 		m_ExcelKeyName = LoadedExcelKey;
 
 		CExcelData* LoadedExcelData = CResourceManager::GetInst()->GetExcelManager()->FindCSV(LoadedExcelKey);
@@ -530,12 +540,9 @@ void CAnimationEditor::OnLoadExcel()
 
 		m_LoadedExcelFileName->SetText(LoadedExcelName.c_str());
 
-		// Excel Data 내용 세팅 
-		if (m_LoadedExcelData)
-		{
-			// Excel Manager 에서 해당 Excel 내용을 지운다.
-			CResourceManager::GetInst()->GetExcelManager()->DeleteCSV(m_ExcelKeyName);
-		}
+		// Excel Data 내용 새롭게 세팅
+		// Excel Manager 에서 기존 Excel 내용을 지운다.
+		CResourceManager::GetInst()->GetExcelManager()->DeleteCSV(PrevExcelKeyName);
 
 		m_LoadedExcelData = LoadedExcelData;
 	}
