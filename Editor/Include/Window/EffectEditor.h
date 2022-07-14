@@ -14,8 +14,11 @@ enum class ParticlePreset
     FireTorch, // 가운데가 올라가 있는 형태의 불
     FireGenerateMoment, // 불이 확 붙는 순간
     BloodPartice, // Blood 입자 하나하나가 튀는 효과
-    BloodSpreadSpiral,
+    XYBloodSpreadSpiral,
     XZSpreadGrass, // 사방으로 퍼지는 Grass 효과
+    FireSmokeUp,
+    FireCracker , // 폭죽 효과
+    SummonEffect, // 소환되는 느낌
     Max
 };
 
@@ -31,8 +34,11 @@ static const char* ParticlePresetNames[] = {
     "FireTorch",
     "FireGenerateMoment",
     "BloodEachParticle",
-    "BloodSpreadSpiral",
-    "XZSpreadGrass"
+    "XYBloodSpreadSpiral",
+    "XZSpreadGrass",
+    "FireSmokeUp",
+    "FireCraker", // 폭죽 효과
+    "SummonEffect" // 소환되는 느낌
 };
 
 static const char* ParticleShapeNames[] = {
@@ -340,8 +346,11 @@ private :
     void OnFireTorchPreset();
     void OnFireGenerateMomentPreset();
     void OnBloodEachParticlePreset();
-    void OnBloodSpreadPreset();
-    void OnSpreadGrassPreset();
+    void OnXYBloodSpreadPreset();
+    void OnXZSpreadGrassPreset();
+    void OnFireSmokeUpPreset();
+    void OnFireCrackerPreset();
+    void OnSummonEffectPreset();
 public :
         // Base Ground Object 준비시키기
         void SetGameObjectReady();

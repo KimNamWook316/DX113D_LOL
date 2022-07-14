@@ -1155,7 +1155,6 @@ PSOutput_Single ParticlePS(GeometryParticleOutput input)
 	// 	g_NormalTexture.Sample(g_BaseSmp, input.UV);
 	// }
 
-
 	if (Color.a == 0.f || input.Color.a == 0.f)
 		clip(-1);
 
