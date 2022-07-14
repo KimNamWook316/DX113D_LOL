@@ -395,23 +395,23 @@ bool CEffectEditor::Init()
     m_LifeTimeMaxEdit = Tree->AddWidget<CIMGUIInputFloat>("Life T Max", 150.f);
     m_LifeTimeMaxEdit->SetCallBack(this, &CEffectEditor::OnLifeTimeMaxEdit);
 
-    // Speed Min, Max
-    Tree = AddWidget<CIMGUITree>("Speed Min, Max");
+    // Speed Start End
+    Tree = AddWidget<CIMGUITree>("Speed Start, End");
 
-    m_SpeedStartEdit = Tree->AddWidget<CIMGUIInputFloat>("Speed Min", 150.f);
+    m_SpeedStartEdit = Tree->AddWidget<CIMGUIInputFloat>("Speed Start", 150.f);
     m_SpeedStartEdit->SetCallBack(this, &CEffectEditor::OnSpeedStartEdit);
 
     Line = Tree->AddWidget<CIMGUISameLine>("Line");
     Line->SetOffsetX(250.f);
 
-    m_SpeedEndEdit = Tree->AddWidget<CIMGUIInputFloat>("Speed Max", 150.f);
+    m_SpeedEndEdit = Tree->AddWidget<CIMGUIInputFloat>("Speed End", 150.f);
     m_SpeedEndEdit->SetCallBack(this, &CEffectEditor::OnSpeedEndEdit);
 
     m_SpeedChangeType = Tree->AddWidget<CIMGUIComboBox>("SpeedChangeType", 200.f);
     m_SpeedChangeType->SetSelectCallback<CEffectEditor>(this, &CEffectEditor::OnSpeedChangeTypeEdit);
 
     m_SpeedChangeType->AddItem("Select Type");
-    for (int i = 0; i < (int)ParticleSpecialMoveDir::Max; ++i)
+    for (int i = 0; i < (int)ParticleSpeedChangeMethod::Max - 1; ++i)
     {
         m_SpeedChangeType->AddItem(ParticleSpeedChangeType[i]);
     }
@@ -669,11 +669,13 @@ void CEffectEditor::OnLoadParticleMaterialCallback()
         std::string PathInfoBeforeFileName;
         CEngineUtil::GetPathInfoBeforeFileName(FilePathMultibyte, PathInfoBeforeFileName);
 
-        if (strcmp(MaterialPathInfo->PathMultibyte, PathInfoBeforeFileName.c_str()) != 0)
-        {
-            MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Particle Material 의 경우, 반드시 Bin/Material/ParticleMaterial 로부터 Load 해야 한다."), NULL, MB_OK);
-            return;
-        }
+         // 어떤 Material Folder 던 간에 정상적으로 Load 될 수 있도록 세팅한다.
+          //if (strcmp(MaterialPathInfo->PathMultibyte, PathInfoBeforeFileName.c_str()) != 0)
+          //{
+          //    MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Particle Material 의 경우, 반드시 Bin/Material/ParticleMaterial 로부터 Load 해야 한다."), NULL, MB_OK);
+          //    return;
+          //}
+
         // 확장자 .anim 이 아니라면 return;
         if (strcmp(Ext, ".MTRL") != 0)
         {
