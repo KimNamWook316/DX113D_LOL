@@ -3,7 +3,7 @@
 #include "../GameInfo.h"
 #include "../Component/LandScape.h"
 //#include "../ThreadQueue.h"
-//#include "NavigationThread.h"
+#include "NavigationThread3D.h"
 
 class CNavigation3DManager
 {
@@ -15,9 +15,9 @@ private:
 
 private:
 	class CScene* m_Scene;
-	//std::vector<CNavigationThread*>	m_vecNavigationThread;
+	std::vector<CNavigationThread3D*>	m_vecNavigationThread;
 	CSharedPtr<CLandScape>				m_NavData;
-	//CThreadQueue<NavResultData>			m_ResultQueue;
+	CThreadQueue<NavResultData>			m_ResultQueue;
 	class CLandScape* m_LandScape;
 	class CNavMeshComponent* m_NavMeshComponent;
 	int m_PlayerPolyIndex;
@@ -54,6 +54,33 @@ public:
 	void Start();
 	bool Init();
 	void Update(float DeltaTime);
+
+
+	template <typename T, typename ComponentType>
+	bool FindPath(T* Obj, void(T::* Func)(const std::list<Vector3>&),
+		ComponentType* OwnerComponent, const Vector3& End)
+	{
+		if (m_vecNavigationThread.empty())
+			return false;
+
+		int	Count = m_vecNavigationThread[0]->GetWorkCount();
+		int	WorkIndex = 0;
+
+		size_t	Size = m_vecNavigationThread.size();
+
+		for (size_t i = 1; i < Size; ++i)
+		{
+			if (Count > m_vecNavigationThread[i]->GetWorkCount())
+			{
+				Count = m_vecNavigationThread[i]->GetWorkCount();
+				WorkIndex = (int)i;
+			}
+		}
+
+		m_vecNavigationThread[WorkIndex]->AddWork<T>(Obj, Func, OwnerComponent, End);
+
+		return true;
+	}
 };
 
 

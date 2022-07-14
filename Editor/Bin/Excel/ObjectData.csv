@@ -1,4 +1,4 @@
 ObjectData,,,,
-,HP,MP,MoveSpeed,Attack
+,HP,DetectRange,MoveSpeed,Attack
 Player,4,-1,10,10
-Monster,80,-1,5,20
+Lurker,80,20,5,20

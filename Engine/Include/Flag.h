@@ -305,7 +305,8 @@ enum ConditionNode
 	AttackTargetCheck,
 	MouseRButtonCheckNode,
 	MouseRButtonUpCheckNode,
-	Lockstone3TriggerBoxHitCheck
+	Lockstone3TriggerBoxHitCheck,
+	CheckAttackRange
 };
 
 enum ActionNode
@@ -319,7 +320,8 @@ enum ActionNode
 	ShootNode,
 	CancleShootNode,
 	AddFallingFloorCallback,
-	Lockstone3TriggerBoxAction
+	Lockstone3TriggerBoxAction,
+	FindPath
 };
 
 enum DecoratorNode

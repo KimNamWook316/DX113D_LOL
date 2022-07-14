@@ -26,6 +26,8 @@
 #include "../Component/Node/AddFallingFloorCallbackNode.h"
 #include "../Component/Node/Lockstone3TriggerBoxHitCheck.h"
 #include "../Component/Node/Lockstone3TriggerBoxAction.h"
+#include "../Component/Node/CheckAttackRangeNode.h"
+#include "../Component/Node/FindPathNode.h"
 #include "ObjectComponentWindow.h"
 #include "ObjectHierarchyWindow.h"
 #include "../EditorInfo.h"
@@ -176,6 +178,7 @@ void CBehaviorTreeWindow::Update(float DeltaTime)
             m_vecNodeAction.push_back("CancleShootNode");
             m_vecNodeAction.push_back("AddFallingFloorCallback");
             m_vecNodeAction.push_back("Lockstone3TriggerBoxAction");
+            m_vecNodeAction.push_back("FindPath");
         }
 
         else if (m_TypeSelectIndex == 3)
@@ -187,6 +190,7 @@ void CBehaviorTreeWindow::Update(float DeltaTime)
             m_vecNodeAction.push_back("MouseRButtonCheck");
             m_vecNodeAction.push_back("MouseRButtonUpCheck");
             m_vecNodeAction.push_back("Lockstone3TriggerBoxHitCheck");
+            m_vecNodeAction.push_back("CheckAttackRange");
         }
 
         else if (m_TypeSelectIndex == 4)
@@ -399,6 +403,9 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
         case ActionNode::Lockstone3TriggerBoxAction:
             NewTreeNode = m_StateComponent->CreateTreeNode<CLockstone3TriggerBoxAction>(Name);
             break;
+        case ActionNode::FindPath:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CFindPathNode>(Name);
+            break;
         }
 
         break;
@@ -432,6 +439,9 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
             break;
         case ConditionNode::Lockstone3TriggerBoxHitCheck:
             NewTreeNode = m_StateComponent->CreateTreeNode<CLockstone3TriggerBoxHitCheck>(Name);
+            break;
+        case ConditionNode::CheckAttackRange:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CCheckAttackRangeNode>(Name);
             break;
         }
     }

@@ -7,6 +7,7 @@
 #include "../Input.h"
 #include "../Component/NavMeshComponent.h"
 #include "../Resource/Mesh/NavMesh.h"
+#include "NavigationThread3D.h"
 
 //#include "DirectXMath.h"
 #include <DirectXCollision.h>
@@ -20,6 +21,14 @@ CNavigation3DManager::CNavigation3DManager()	:
 
 CNavigation3DManager::~CNavigation3DManager()
 {
+	size_t	Size = m_vecNavigationThread.size();
+
+	for (size_t i = 0; i < Size; ++i)
+	{
+		SAFE_DELETE(m_vecNavigationThread[i]);
+	}
+
+	m_vecNavigationThread.clear();
 }
 
 CNavMeshComponent* CNavigation3DManager::GetNavMeshData() const
@@ -40,6 +49,7 @@ void CNavigation3DManager::SetNavData(CLandScape* NavData)
 
 void CNavigation3DManager::AddNavResult(const NavResultData& NavData)
 {
+	m_ResultQueue.push(NavData);
 }
 
 void CNavigation3DManager::SetLandScape(CLandScape* LandScape)
@@ -137,7 +147,7 @@ bool CNavigation3DManager::CheckPlayerNavMeshPoly(float& Height)
 			Vector3 P2 = m_NavMeshComponent->GetVertexPos(i, 1);
 			Vector3 P3 = m_NavMeshComponent->GetVertexPos(i, 2);
 
-			Matrix WorldMat = m_NavMeshComponent->GetWorldMatrix();
+			//Matrix WorldMat = m_NavMeshComponent->GetWorldMatrix();
 
 			//P1 = P1.TransformCoord(WorldMat);
 			//P2 = P2.TransformCoord(WorldMat);
@@ -352,6 +362,17 @@ bool CNavigation3DManager::CheckNavMeshPickingPoint(Vector3& OutPos)
 
 void CNavigation3DManager::Start()
 {
+	for (int i = 0; i < 4; ++i)
+	{
+		char	Name[256] = {};
+		sprintf_s(Name, "NavThread%d", i);
+		CNavigationThread3D* Thread = CThread::CreateThread<CNavigationThread3D>(Name);
+
+		Thread->SetNavMeshComponent(m_NavMeshComponent);
+		Thread->Start();
+
+		m_vecNavigationThread.push_back(Thread);
+	}
 }
 
 bool CNavigation3DManager::Init()
@@ -361,4 +382,11 @@ bool CNavigation3DManager::Init()
 
 void CNavigation3DManager::Update(float DeltaTime)
 {
+	if (!m_ResultQueue.empty())
+	{
+		NavResultData	Result = m_ResultQueue.front();
+		m_ResultQueue.pop();
+
+		Result.Callback(Result.vecPath);
+	}
 }

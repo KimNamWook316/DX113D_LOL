@@ -21,9 +21,9 @@ public:
 		m_Data.HP = HP;
 	}
 
-	void SetMP(int MP)
+	void SetDetectRange(int DetectRange)
 	{
-		m_Data.MP = MP;
+		m_Data.DetectRange = DetectRange;
 	}
 
 	void SetMoveSpeed(float Speed)
@@ -41,9 +41,9 @@ public:
 		return m_Data.HP;
 	}
 
-	int GetMP()	const
+	int GetDetectRange()	const
 	{
-		return m_Data.MP;
+		return m_Data.DetectRange;
 	}
 
 	float GetMoveSpeed()	const

@@ -18,8 +18,11 @@
 #include "Node/CancleShootNode.h"
 #include "Node/AddFallingFloorCallbackNode.h"
 #include "Node/Lockstone3TriggerBoxHitCheck.h"
+#include "Node/CheckAttackRangeNode.h"
+#include "Node/FindPathNode.h"
 #include "Node/Lockstone3TriggerBoxAction.h"
 #include "Component/StateComponent.h"
+
 
 CGameBehaviorTree::CGameBehaviorTree()
 {
@@ -258,5 +261,24 @@ CNode* CGameBehaviorTree::LoadNode(CNode* Parent, size_t TypeID)
 		return NewNode;
 	}
 
+	else if (TypeID == typeid(CCheckAttackRangeNode).hash_code())
+	{
+		CCheckAttackRangeNode* NewNode = new CCheckAttackRangeNode;
+		NewNode->SetParent(Parent);
+		NewNode->SetOwner(this);
+		NewNode->SetObject(m_Owner->GetGameObject());
+
+		return NewNode;
+	}
+
+	else if (TypeID == typeid(CFindPathNode).hash_code())
+	{
+		CFindPathNode* NewNode = new CFindPathNode;
+		NewNode->SetParent(Parent);
+		NewNode->SetOwner(this);
+		NewNode->SetObject(m_Owner->GetGameObject());
+
+		return NewNode;
+	}
 	return nullptr;
 }

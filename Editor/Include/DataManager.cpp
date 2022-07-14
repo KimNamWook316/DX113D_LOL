@@ -52,38 +52,47 @@ void CDataManager::SetObjectData(CGameObject* Object)
 	if (!Comp)
 		return;
 
+	Row* row = nullptr;
+
 	switch (ObjectType)
 	{
-		case Object_Type::Player:
-			Row* row = Data->GetRow("Player");
-
-			size_t Count = row->size();
-
-			for (size_t i = 0; i < Count; ++i)
-			{
-				std::stringstream ss;
-
-				ss << (*row)[i];
-
-				int Frame = 0;
-
-				ss >> Frame;
-
-				if (i == 0)
-					Comp->SetHP(Frame);
-
-				if (i == 1)
-					Comp->SetMP(Frame);
-
-				if (i == 2)
-					Comp->SetMoveSpeed(Frame);
-
-				if (i == 3)
-					Comp->SetAttack(Frame);
-			}
-
+	case Object_Type::Player:
+		row = Data->GetRow("Player");
 		break;
+	case Object_Type::Monster:
+		if (Object->GetName().find("Lurker") != std::string::npos)
+		{
+			row = Data->GetRow("Lurker");
+		}
+		break;
+
 	}
+
+	size_t Count = row->size();
+
+	for (size_t i = 0; i < Count; ++i)
+	{
+		std::stringstream ss;
+
+		ss << (*row)[i];
+
+		int Frame = 0;
+
+		ss >> Frame;
+
+		if (i == 0)
+			Comp->SetHP(Frame);
+
+		if (i == 1)
+			Comp->SetDetectRange(Frame);
+
+		if (i == 2)
+			Comp->SetMoveSpeed(Frame);
+
+		if (i == 3)
+			Comp->SetAttack(Frame);
+	}
+
 }
 
 void CDataManager::SetNotify(CGameObject* Object, const std::string& ObjectName)

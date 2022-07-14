@@ -369,6 +369,12 @@
     <ClCompile Include="Component\PlayerHookComponent.cpp">
       <Filter>06. GameComponent\01. SceneComponent</Filter>
     </ClCompile>
+    <ClCompile Include="Component\Node\CheckAttackRangeNode.cpp">
+      <Filter>07. BehaviorTree\01. ConditionNode</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\Node\FindPathNode.cpp">
+      <Filter>07. BehaviorTree\02. ActionNode</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EditorManager.h">
@@ -634,6 +640,12 @@
     </ClInclude>
     <ClInclude Include="Component\PlayerHookComponent.h">
       <Filter>06. GameComponent\01. SceneComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\CheckAttackRangeNode.h">
+      <Filter>07. BehaviorTree\01. ConditionNode</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\FindPathNode.h">
+      <Filter>07. BehaviorTree\02. ActionNode</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

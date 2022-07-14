@@ -1077,6 +1077,9 @@
     <ClCompile Include="Resource\Shader\ToonInstancingShader.cpp">
       <Filter>02. Resource\02. Shader\02. ShaderClass\23. Toon</Filter>
     </ClCompile>
+    <ClCompile Include="Scene\NavigationThread3D.cpp">
+      <Filter>03. Scene\06. Navigation</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Device.h">
@@ -1831,6 +1834,9 @@
     </ClInclude>
     <ClInclude Include="Resource\Shader\ToonInstancingShader.h">
       <Filter>02. Resource\02. Shader\02. ShaderClass\23. Toon</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\NavigationThread3D.h">
+      <Filter>03. Scene\06. Navigation</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
