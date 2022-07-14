@@ -429,6 +429,29 @@ bool CSceneCollision::IsExistColliderHasProfile(CollisionProfile* Profile)
 	return false;
 }
 
+void CSceneCollision::DeleteCollider(CColliderComponent* Collider, int SectionIndex)
+{
+	m_Section->vecSection[SectionIndex]->DeleteCollider(Collider);
+}
+
+void CSceneCollision::ClearAll()
+{
+	size_t	Size = m_Section->vecSection.size();
+
+	for (size_t i = 0; i < Size; ++i)
+	{
+		m_Section->vecSection[i]->Clear();
+	}
+
+	auto iter = m_ColliderList.begin();
+	auto iterEnd = m_ColliderList.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		(*iter)->ClearFrame();
+	}
+}
+
 void CSceneCollision::CheckColliderSection()
 {
 	auto	iter = m_ColliderList.begin();
@@ -487,7 +510,10 @@ void CSceneCollision::CheckColliderSection3D()
 	size_t Count = m_Section->vecSection.size();
 
 	for (size_t i = 0; i < Count; ++i)
-		m_Section->vecSection[i]->ClearPrevCollider();
+	{
+		//m_Section->vecSection[i]->ClearPrevCollider();
+		m_Section->vecSection[i]->Clear();
+	}
 
 	auto	iter = m_ColliderList.begin();
 	auto	iterEnd = m_ColliderList.end();
@@ -532,7 +558,7 @@ void CSceneCollision::CheckColliderSection3D()
 				int	Index = z * (m_Section->CountX) + x;
 
 				m_Section->vecSection[Index]->AddCollider(Collider);
-				m_Section->vecSection[Index]->AddPrevCollider(Collider);
+				//m_Section->vecSection[Index]->AddPrevCollider(Collider);
 				Collider->AddPrevSectionIndex(Index);
 			}
 		}

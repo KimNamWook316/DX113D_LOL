@@ -27,6 +27,8 @@ CSceneComponent::CSceneComponent() :
 
 	m_Parent = nullptr;
 
+	m_DrawShadow = true;
+
 	m_LayerName = "Default";
 
 	m_Culling = false;

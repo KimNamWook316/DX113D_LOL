@@ -32,9 +32,21 @@ void CCollisionSection::Clear()
 	m_vecCollider.clear();
 }
 
-void CCollisionSection::ClearPrevCollider()
+void CCollisionSection::DeleteCollider(CColliderComponent* Collider)
 {
-	m_vecPrevCollider.clear();
+	size_t Count = m_vecCollider.size();
+
+	for (size_t i = 0; i < Count; ++i)
+	{
+		if (m_vecCollider[i] == Collider)
+		{
+			auto iter = m_vecCollider.begin();
+			std::advance(iter, i);
+
+			m_vecCollider.erase(iter);
+			return;
+		}
+	}
 }
 
 void CCollisionSection::AddCollider(CColliderComponent* Collider)
@@ -42,11 +54,6 @@ void CCollisionSection::AddCollider(CColliderComponent* Collider)
 	m_vecCollider.push_back(Collider);
 
 	Collider->AddSectionIndex(m_Index);
-}
-
-void CCollisionSection::AddPrevCollider(CColliderComponent* Collider)
-{
-	m_vecPrevCollider.push_back(Collider);
 }
 
 void CCollisionSection::Collision(float DeltaTime)
@@ -82,11 +89,33 @@ void CCollisionSection::Collision(float DeltaTime)
 				// 즉, 이전 프레임에 충돌된 목록에 없다면 지금 막 충돌이 시작된 것이다.
 				if (!Src->CheckPrevCollision(Dest))
 				{
+
 					Src->AddPrevCollision(Dest);
 					Dest->AddPrevCollision(Src);
 
+					// Src, Dest의 m_Result에 서로를 설정해주기
+					Src->SetCollisionResultSrc(Src);
+					Src->SetCollisionResultDest(Dest);
+
+					Dest->SetCollisionResultSrc(Dest);
+					Dest->SetCollisionResultDest(Src);
+
+
 					Src->CallCollisionCallback(Collision_State::Begin);
 					Dest->CallCollisionCallback(Collision_State::Begin);
+
+					Src->SetCollisionResultSrc(nullptr);
+					Src->SetCollisionResultDest(nullptr);
+
+					Dest->SetCollisionResultSrc(nullptr);
+					Dest->SetCollisionResultDest(nullptr);
+				}
+
+				// 이전 프레임부터 계속 충돌중인 경우
+				else
+				{
+					Src->CallCollisionCallback(Collision_State::Stay);
+					Dest->CallCollisionCallback(Collision_State::Stay);
 				}
 
 				Src->AddCurrentFrameCollision(Dest);
@@ -137,10 +166,10 @@ CColliderComponent* CCollisionSection::GetCollider(int Idx) const
 	return m_vecCollider[Idx];
 }
 
-CColliderComponent* CCollisionSection::GetPrevCollider(int Idx) const
-{
-	return m_vecPrevCollider[Idx];
-}
+//CColliderComponent* CCollisionSection::GetPrevCollider(int Idx) const
+//{
+//	return m_vecPrevCollider[Idx];
+//}
 
 int CCollisionSection::SortY(const void* Src, const void* Dest)
 {

@@ -52,6 +52,19 @@ private:
 
 	bool	m_UpdateByMat;
 
+	bool m_FixTransform;
+
+public:
+	void SetFixTransform(bool Fix)
+	{
+		m_FixTransform = Fix;
+	}
+
+	bool GetFixTransform()	const
+	{
+		return m_FixTransform;
+	}
+
 public:
 	class CTransformConstantBuffer* GetTransformCBuffer()	const;
 
@@ -116,6 +129,11 @@ public:
 	void SetInheritParentRotationPosZ(bool Inherit)
 	{
 		m_InheritParentRotationPosZ = Inherit;
+	}
+
+	void SetUpdateRotAxis(bool Update)
+	{
+		m_UpdateRotAxis = Update;
 	}
 
 	void InheritScale(bool Current);
@@ -265,6 +283,11 @@ public:
 		return m_matWorld;
 	}
 
+	void SetRotationMatrix(const Matrix& Mat)
+	{
+		m_matRot = Mat;
+	}
+
 public:
 	void SetPivot(const Vector3& Pivot)
 	{
@@ -307,6 +330,7 @@ public:
 	void AddWorldRotationZ(float z);
 	void AddWorldPos(const Vector3& Pos);
 	void AddWorldPos(float x, float y, float z);
+	
 
 	// 자신의 축 기준으로 이동
 	void AddWorldPosByLocalAxis(AXIS Axis, float Amount);

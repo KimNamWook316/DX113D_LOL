@@ -12,6 +12,7 @@
 
 #include "../DataManager.h"
 
+
 CDefaultScene::CDefaultScene()  :
     m_PickObj(nullptr)
 {
@@ -26,6 +27,7 @@ CDefaultScene::~CDefaultScene()
 bool CDefaultScene::Init()
 {
     CreateMaterial();
+
 
 
 

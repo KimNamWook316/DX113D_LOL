@@ -14,6 +14,7 @@ private:
 	std::unordered_map<std::string, CSharedPtr<class CShader>>	m_mapShader;
 	std::unordered_map<std::string, CSharedPtr<class CConstantBuffer>>	m_mapConstantBuffer;
 	std::unordered_map<class CGraphicShader*, class CGraphicShader*> m_mapInstancingShader;
+	std::function<void()> m_ChangeCallBack;
 
 public:
 	bool Init();
@@ -52,6 +53,11 @@ public:
 
 		m_mapShader.insert(std::make_pair(Name, Shader));
 
+		if (m_ChangeCallBack)
+		{
+			m_ChangeCallBack();
+		}
+
 		return true;
 	}
 
@@ -69,5 +75,12 @@ public:
 		m_mapInstancingShader.insert(std::make_pair(OriginShader, InstancingShader));
 
 		return true;
+	}
+
+public:
+	template <typename T>
+	void AddResourceChangeCallBack(T* Obj, void(T::* Func)())
+	{
+		m_ChangeCallBack = std::bind(Func, Obj);
 	}
 };

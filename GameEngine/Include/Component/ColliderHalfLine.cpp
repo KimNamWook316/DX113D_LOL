@@ -118,12 +118,12 @@ CColliderHalfLine* CColliderHalfLine::Clone()
 
 bool CColliderHalfLine::Save(FILE* File)
 {
-	return false;
+	return CColliderComponent::Save(File);
 }
 
 bool CColliderHalfLine::Load(FILE* File)
 {
-	return false;
+	return CColliderComponent::Load(File);
 }
 
 bool CColliderHalfLine::Collision(CColliderComponent* Dest)

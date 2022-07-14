@@ -343,7 +343,7 @@ public:
 	void SetRotToDir(bool Enable)
 	{
 		m_CBuffer->SetRotToDir(Enable);
-	}	
+	}
 
 	// Alpha Linear
 	void SetAlphaLinearFromCenter(bool Enable)

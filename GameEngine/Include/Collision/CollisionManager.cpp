@@ -33,6 +33,7 @@ bool CCollisionManager::Init()
 	CreateProfile("MonsterAttack", Collision_Channel::MonsterAttack, true);
 	CreateProfile("MinionDetect", Collision_Channel::Monster, true);
 	CreateProfile("MinionNormalAttack", Collision_Channel::Monster, true);
+	//CreateProfile("MapObject", Collision_Channel::MapObject, true);
 
 	SetCollisionState("Player", Collision_Channel::Player, Collision_Interaction::Ignore);
 	SetCollisionState("Player", Collision_Channel::PlayerAttack, Collision_Interaction::Ignore);
@@ -51,6 +52,10 @@ bool CCollisionManager::Init()
 	SetCollisionState("MinionDetect", Collision_Channel::Monster, Collision_Interaction::Collision);
 	SetCollisionState("MinionNormalAttack", Collision_Channel::Monster, Collision_Interaction::Collision);
 	SetCollisionState("MinionNormalAttack", Collision_Channel::Player, Collision_Interaction::Collision);
+
+	//SetCollisionState("MapObject", Collision_Channel::MapObject, Collision_Interaction::Ignore);
+	//SetCollisionState("MapObject", Collision_Channel::PlayerAttack, Collision_Interaction::Ignore);
+	//SetCollisionState("MapObject", Collision_Channel::MonsterAttack, Collision_Interaction::Ignore);
 
 	return true;
 }

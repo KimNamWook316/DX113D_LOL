@@ -5,7 +5,7 @@
 #include "Scene/SceneManager.h"
 #include "Animation/AnimationSequenceInstance.h"
 #include "Component/AnimationMeshComponent.h"
-#include "Component/GameDataComponent.h"
+#include "Component/ObjectDataComponent.h"
 
 #include <sstream>
 
@@ -23,7 +23,7 @@ void CDataManager::Init()
 	ReadObjectData();
 	ReadNotifyData();
 
-	CSceneManager::GetInst()->SetObjectDataSetFunction(this, &CDataManager::SetObjectData);
+	//CSceneManager::GetInst()->SetObjectDataSetFunction(this, &CDataManager::SetObjectData);
 }
 
 void CDataManager::ReadObjectData()
@@ -40,21 +40,14 @@ void CDataManager::ReadObjectData()
 
 void CDataManager::ReadNotifyData()
 {
-	//CResourceManager::GetInst()->LoadCSV("NotifyData.csv");
 
-	//CExcelData* Data = CResourceManager::GetInst()->FindCSV("NotifyData");
-
-	//if (Data)
-	//{
-	//	m_mapData.insert(std::make_pair("NotifyData", Data));
-	//}
 }
 
-void CDataManager::SetObjectData(CGameObject* Object, const std::string& ObjectName)
+void CDataManager::SetObjectData(CGameObject* Object)
 {
 	Object_Type ObjectType = Object->GetObjectType();
 	CExcelData* Data = FindData("ObjectData");
-	CGameDataComponent* Comp = Object->FindComponentFromType<CGameDataComponent>();
+	CObjectDataComponent* Comp = Object->FindComponentFromType<CObjectDataComponent>();
 
 	if (!Comp)
 		return;
@@ -62,36 +55,33 @@ void CDataManager::SetObjectData(CGameObject* Object, const std::string& ObjectN
 	switch (ObjectType)
 	{
 		case Object_Type::Player:
-			if (ObjectName == "Player" || ObjectName == "Alistar")
+			Row* row = Data->GetRow("Player");
+
+			size_t Count = row->size();
+
+			for (size_t i = 0; i < Count; ++i)
 			{
-				Row* row = Data->GetRow("Player");
+				std::stringstream ss;
 
-				size_t Count = row->size();
+				ss << (*row)[i];
 
-				for (size_t i = 0; i < Count; ++i)
-				{
-					std::stringstream ss;
+				int Frame = 0;
 
-					ss << (*row)[i];
+				ss >> Frame;
 
-					int Frame = 0;
+				if (i == 0)
+					Comp->SetHP(Frame);
 
-					ss >> Frame;
-
-
-					if (i == 0)
-						Comp->SetHP(Frame);
-
-					if (i == 1)
-						Comp->SetMP(Frame);
+				if (i == 1)
+					Comp->SetMP(Frame);
 
 					if (i == 2)
 						Comp->SetMoveSpeed((float)Frame);
 
-					if (i == 3)
-						Comp->SetAttack(Frame);
-				}
+				if (i == 3)
+					Comp->SetAttack(Frame);
 			}
+
 		break;
 	}
 }

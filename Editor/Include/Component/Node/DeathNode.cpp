@@ -2,7 +2,7 @@
 #include "DeathNode.h"
 #include "Component/AnimationMeshComponent.h"
 #include "Animation/AnimationSequenceInstance.h"
-#include "Component/BehaviorTree.h"
+#include "Component/BehaviorTree.h"	
 
 CDeathNode::CDeathNode()
 {
@@ -22,9 +22,7 @@ NodeResult CDeathNode::OnStart(float DeltaTime)
 {
 	m_AnimationMeshComp = m_Owner->GetAnimationMeshComp();
 
-	std::string ChampionName = m_Object->GetName();
-
-	std::string SequenceName = ChampionName + "_" + "Death";
+	std::string SequenceName = "Death";
 
 	if (m_AnimationMeshComp)
 	{

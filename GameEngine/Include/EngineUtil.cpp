@@ -109,6 +109,60 @@ ToonShaderType CEngineUtil::StringToToonShaderType(const std::string& TypeString
 	return (ToonShaderType)(-1);
 }
 
+std::string CEngineUtil::PaperBurnEndEventTypeToString(PaperBurnEndEvent Type)
+{
+	std::string Ret = "";
+
+	switch (Type)
+	{
+	case PaperBurnEndEvent::None:
+		Ret = "None";
+		break;
+	case PaperBurnEndEvent::Destroy:
+		Ret = "Destroy";
+		break;
+	case PaperBurnEndEvent::Disable:
+		Ret = "Disable";
+		break;
+	case PaperBurnEndEvent::Return:
+		Ret = "Return";
+		break;
+	case PaperBurnEndEvent::Reset:
+		Ret = "Reset";
+		break;
+	}
+
+	return Ret;
+}
+
+PaperBurnEndEvent CEngineUtil::StringToPaperBurnEndEvent(const std::string& TypeString)
+{
+	PaperBurnEndEvent Type;
+
+	if (TypeString == "None")
+	{
+		Type = PaperBurnEndEvent::None;
+	}
+	else if (TypeString == "Destroy")
+	{
+		Type = PaperBurnEndEvent::Destroy;
+	}
+	else if (TypeString == "Disable")
+	{
+		Type = PaperBurnEndEvent::Disable;
+	}
+	else if (TypeString == "Return")
+	{
+		Type = PaperBurnEndEvent::Return;
+	}
+	else if (TypeString == "Reset")
+	{
+		Type = PaperBurnEndEvent::Reset;
+	}
+
+	return Type;
+}
+
 std::optional<std::string> CEngineUtil::CheckAndExtractFullPathOfTargetFile(std::string_view PathName, std::string_view TargetFileName)
 {
 	const PathInfo* Info = CPathManager::GetInst()->FindPath(PathName.data());
@@ -364,8 +418,8 @@ std::string CEngineUtil::CollisionChannelToString(Collision_Channel eChannnel)
 	case Collision_Channel::MonsterAttack:
 		Out = "MonsterAttack";
 		break;
-	case Collision_Channel::Custom1:
-		Out = "Custom1";
+	case Collision_Channel::MapObject:
+		Out = "MapObject";
 		break;
 	case Collision_Channel::Custom2:
 		Out = "Custom2";
@@ -442,9 +496,9 @@ Collision_Channel CEngineUtil::StringToCollisionChannel(const std::string& Strin
 	{
 		return Collision_Channel::MonsterAttack;
 	}
-	else if (String == "Custom1")
+	else if (String == "MapObject")
 	{
-		return Collision_Channel::Custom1;
+		return Collision_Channel::MapObject;
 	}
 	else if (String == "Custom2")
 	{

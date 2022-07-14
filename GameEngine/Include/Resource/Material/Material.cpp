@@ -123,7 +123,7 @@ void CMaterial::SetTransparency(bool Enable)
 {
 	if (Enable)
 	{
-		m_RenderStateArray[(int)RenderState_Type::Blend] = CRenderManager::GetInst()->FindRenderState("AlphaBlend_MRT");
+		m_RenderStateArray[(int)RenderState_Type::Blend] = CRenderManager::GetInst()->FindRenderState("AlphaBlend");
 	}
 	else
 	{
@@ -892,6 +892,8 @@ void CMaterial::UpdateCBuffer()
 void CMaterial::Reset()
 {
 	size_t	Size = m_TextureInfo.size();
+
+	m_Shader->ResetShaderResources();
 
 	for (size_t i = 0; i < Size; ++i)
 	{

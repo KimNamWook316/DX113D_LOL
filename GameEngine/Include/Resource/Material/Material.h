@@ -78,7 +78,7 @@ class CMaterial :
     friend class CAnimationMeshComponent;
     friend class CLandScape;
 
-protected:
+public:
     CMaterial();
     CMaterial(const CMaterial& Material);
     virtual ~CMaterial();

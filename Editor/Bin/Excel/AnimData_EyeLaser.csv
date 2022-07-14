@@ -1,0 +1,5 @@
+﻿AnimData_EyeLaser,,
+,FrameStart,FrameEnd
+EyeLaser_Sleep,0,3
+EyeLaser_Idle,3,45
+EyeLaser_Wake,45,84

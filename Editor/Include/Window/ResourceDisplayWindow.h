@@ -23,16 +23,22 @@ private :
 	class CIMGUIWidgetList* m_MaterialList;
 	// Particle
 	class CIMGUIWidgetList* m_ParticleList;
+	// Mesh
+	class CIMGUIWidgetList* m_MeshList;
+
 private :
 	std::vector<class CIMGUIWidgetList*> m_vecResourceTapList;
+
 public :
 	virtual bool Init() override;
+
 public  :
 	void RefreshLoadedTextureResources();
 	void RefreshLoadedMaterialResources();
 	void RefreshLoadedRenderStateResources();
 	void RefreshLoadedShaderResources();
 	void RefreshLoadedParticleResources();
+	void RefreshLoadedMeshResources();
 	void RefreshAllDisplayInfos();
 };
 

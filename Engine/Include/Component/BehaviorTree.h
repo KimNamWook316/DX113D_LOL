@@ -25,6 +25,7 @@ public:
     class CNode* GetCurrentNode()   const;
     void SetCurrentNode(class CNode* CurrentNode);
     void SetOwner(class CStateComponent* StateComp);
+    class CStateComponent* GetOwner() const;
 
 public:
     void SetAnimationMeshComponent(class CAnimationMeshComponent* Mesh);

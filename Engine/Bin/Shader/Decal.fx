@@ -104,6 +104,7 @@ PS_OUTPUT_DECAL DecalPS(VS_OUTPUT_DECAL input)
     output.Material.a = ConvertColor(EmissiveColor);
     
     return output;
+    
 }
 
 VS_OUTPUT_DEBUGDECAL DecalDebugVS(float3 Pos : POSITION)

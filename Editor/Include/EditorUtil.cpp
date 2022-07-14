@@ -22,9 +22,13 @@
 #include "Component/ColliderSphere.h"
 #include "Component/ColliderHalfLine.h"
 #include "Component/ColliderRay.h"
-#include "Component/GameDataComponent.h"
+#include "Component/ObjectDataComponent.h"
 #include "Component/PlayerDataComponent.h"
 #include "Component/NavMeshComponent.h"
+#include "Component/WaterComponent.h"
+#include "Component/EyeLaserComponent.h"
+#include "Component/PlayerNormalAttackCheckCollider.h"
+#include "Component/PlayerHookComponent.h"
 #include "IMGUITree.h"
 #include "Flag.h"
 #include "EngineUtil.h"
@@ -583,6 +587,14 @@ std::string CEditorUtil::SceneComponent3DTypeToString(SceneComponent3DType Type)
 		return "ColliderRay";
 	case SceneComponent3DType::NavMeshComponent:
 		return "NavMeshComponent";
+	case SceneComponent3DType::WaterComponent:
+		return "WaterComponent";
+	case SceneComponent3DType::PlayerNormalAttackCheckCollider:
+		return "PlayerNormalAttackCheckCollider";
+	case SceneComponent3DType::EyeLaserComponent:
+		return "EyeLaserComponent";
+	case SceneComponent3DType::PlayerHookComponent:
+		return "PlayerHookComponent";
 	}
 
 	return "";
@@ -598,8 +610,8 @@ std::string CEditorUtil::ObjectComponent3DTypeToString(ObjectComponent3DType Typ
 		return "GameStateComponent";
 	case ObjectComponent3DType::NavAgent:
 		return "NavAgent";
-	case ObjectComponent3DType::GameDataComponent:
-		return "GameDataComponent";
+	case ObjectComponent3DType::ObjectDataComponent:
+		return "ObjectDataComponent";
 	case ObjectComponent3DType::PlayerDataComponent:
 		return "PlayerDataComponent";
 	}
@@ -622,22 +634,6 @@ size_t CEditorUtil::ObjectTypeIndexToTypeid(int TypeIndex)
 	case 4:
 		return typeid(CMinion).hash_code();
 	}
-
-	return -1;
-}
-
-int CEditorUtil::ObjectTypeIdToTypeIndex(size_t ObjectTypeID)
-{
-	if (ObjectTypeID == typeid(CGameObject).hash_code())
-		return 0;
-	else if (ObjectTypeID == typeid(CMovingObject).hash_code())
-		return 1;
-	else if (ObjectTypeID == typeid(CMapObject).hash_code())
-		return 2;
-	else if (ObjectTypeID == typeid(CChampion).hash_code())
-		return 3;
-	else if (ObjectTypeID == typeid(CMinion).hash_code())
-		return 4;
 
 	return -1;
 }
@@ -670,6 +666,14 @@ size_t CEditorUtil::SceneComponentTypeIndexToTypeid(int TypeIndex)
 		return typeid(CColliderRay).hash_code();
 	case 11:
 		return typeid(CNavMeshComponent).hash_code();
+	case 12:
+		return typeid(CWaterComponent).hash_code();
+	case 13:
+		return typeid(CPlayerNormalAttackCheckCollider).hash_code();
+	case 14:
+		return typeid(CEyeLaserComponent).hash_code();
+	case 15:
+		return typeid(CPlayerHookComponent).hash_code();
 	}
 
 	return -1;
@@ -687,7 +691,7 @@ size_t CEditorUtil::ObjectComponentTypeIndexToTypeid(int TypeIndex)
 	case 2:
 		return typeid(CNavAgent).hash_code();
 	case 3:
-		return typeid(CGameDataComponent).hash_code();
+		return typeid(CObjectDataComponent).hash_code();
 	case 4:
 		return typeid(CPlayerDataComponent).hash_code();
 	}

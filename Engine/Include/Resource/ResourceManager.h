@@ -31,6 +31,49 @@ public:
 	void RenderTarget();
 
 public:
+	template <typename T>
+	void AddMeshResourceChangeCallBack(T* Obj, void(T::* Func)())
+	{
+		m_MeshManager->AddResourceChangeCallBack<T>(Obj, Func);
+	}
+
+	template <typename T>
+	void AddMaterialResourceChangeCallBack(T* Obj, void(T::* Func)())
+	{
+		m_MaterialManager->AddResourceChangeCallBack<T>(Obj, Func);
+	}
+
+	template <typename T>
+	void AddTextureResourceChangeCallBack(T* Obj, void(T::* Func)())
+	{
+		m_TextureManager->AddResourceChangeCallBack<T>(Obj, Func);
+	}
+
+	template <typename T>
+	void AddAnimation3DResourceChangeCallBack(T* Obj, void(T::* Func)())
+	{
+		m_AnimationManager3D->AddResourceChangeCallBack<T>(Obj, Func);
+	}
+
+	template <typename T>
+	void AddSoundResourceChangeCallBack(T* Obj, void(T::* Func)())
+	{
+		m_SoundManager->AddResourceChangeCallBack<T>(Obj, Func);
+	}
+
+	template <typename T>
+	void AddParticleResourceChangeCallBack(T* Obj, void(T::* Func)())
+	{
+		m_ParticleManager->AddResourceChangeCallBack<T>(Obj, Func);
+	}
+
+	template <typename T>
+	void AddShaderResourceChangeCallBack(T* Obj, void(T::* Func)())
+	{
+		m_ShaderManager->AddResourceChangeCallBack<T>(Obj, Func);
+	}
+
+public:
 	 CTextureManager* GetTextureManager() const
 	{
 		return m_TextureManager;
@@ -50,6 +93,10 @@ public:
 	 CExcelManager* GetExcelManager() const
 	 {
 		 return m_ExcelManager;
+	 }
+	 CMeshManager* GetMeshManager() const
+	 {
+		 return m_MeshManager;
 	 }
 
 public:	// =================== Mesh =====================
@@ -137,6 +184,7 @@ public:	// =================== Texture =====================
 	bool LoadTexture(const std::string& Name, const TCHAR* FileName,
 		const std::string& PathName = TEXTURE_PATH);
 	bool LoadTextureFullPath(const std::string& Name, const TCHAR* FullPath);
+	bool LoadTextureFullPath(std::string& OutName, const TCHAR* FullPath);
 	bool LoadTextureFullPathMultibyte(const std::string& Name, const char* FullPath);
 	bool LoadTexture(const std::string& Name, const std::vector<TCHAR*>& vecFileName,
 		const std::string& PathName = TEXTURE_PATH);
@@ -238,8 +286,7 @@ public: // =================== Sequence 3D =====================
 	void DeleteSequence3D(const std::string& Name);
 	bool EditSequenceClip(class CAnimationSequence* ExistingSequence, const std::string& NewName,
 		int StartFrame, int EndFrame, const char* SaveFullPathMultibyte);
-
-
+	void LoadAniFile();
 	bool LoadSkeleton(const std::string& Name, const TCHAR* FileName,
 		const std::string& PathName = ANIMATION_PATH,
 		class CScene* Scene = nullptr);

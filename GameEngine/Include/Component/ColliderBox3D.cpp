@@ -11,13 +11,19 @@
 #include "../Scene/SceneResource.h"
 #include "../Resource/Shader/ColliderConstantBuffer.h"
 
-CColliderBox3D::CColliderBox3D()
+CColliderBox3D::CColliderBox3D()	:
+	m_UpdateMinMax(false)
 {
 	SetTypeID<CColliderBox3D>();
 	m_ComponentType = Component_Type::SceneComponent;
 	m_Render = true;
 
 	m_ColliderType = Collider_Type::Box3D;
+
+	m_Transform->AddChangePosCallBack<CColliderBox3D>(this, &CColliderBox3D::UpdateTransform);
+	m_Transform->AddChangeRotCallBack<CColliderBox3D>(this, &CColliderBox3D::UpdateTransform);
+	m_Transform->AddChangeScaleCallBack<CColliderBox3D>(this, &CColliderBox3D::UpdateTransform);
+
 }
 
 CColliderBox3D::CColliderBox3D(const CColliderBox3D& com) :
@@ -30,9 +36,17 @@ CColliderBox3D::~CColliderBox3D()
 {
 }
 
+void CColliderBox3D::UpdateTransform(const Vector3& World, const Vector3& Relative)
+{
+	UpdateMinMax();
+}
+
+
 void CColliderBox3D::Start()
 {
 	CColliderComponent::Start();
+
+	UpdateMinMax();
 }
 
 bool CColliderBox3D::Init()
@@ -225,14 +239,14 @@ void CColliderBox3D::UpdateMinMax()
 
 	matWorld = matScale * matRot * matTrans;
 
-	Vector3 P1 = Vector3(m_Info.Min.x, m_Info.Min.y, m_Info.Min.z);
-	Vector3 P2 = Vector3(m_Info.Max.x, m_Info.Min.y, m_Info.Min.z);
-	Vector3 P3 = Vector3(m_Info.Max.x, m_Info.Max.y, m_Info.Min.z);
-	Vector3 P4 = Vector3(m_Info.Min.x, m_Info.Max.y, m_Info.Min.z);
-	Vector3 P5 = Vector3(m_Info.Min.x, m_Info.Min.y, m_Info.Max.z);
-	Vector3 P6 = Vector3(m_Info.Max.x, m_Info.Min.y, m_Info.Max.z);
-	Vector3 P7 = Vector3(m_Info.Max.x, m_Info.Max.y, m_Info.Max.z);
-	Vector3 P8 = Vector3(m_Info.Min.x, m_Info.Max.y, m_Info.Max.z);
+	Vector3 P1 = Vector3(-0.5f, 0.5f, -0.5f);
+	Vector3 P2 = Vector3(0.5f, 0.5f, -0.5f);
+	Vector3 P3 = Vector3(-0.5f, -0.5f, -0.5f);
+	Vector3 P4 = Vector3(0.5f, -0.5f, -0.5f);
+	Vector3 P5 = Vector3(-0.5f, 0.5f, 0.5f);
+	Vector3 P6 = Vector3(0.5f, 0.5f, 0.5f);
+	Vector3 P7 = Vector3(-0.5f, -0.5f, 0.5f);
+	Vector3 P8 = Vector3(0.5f, -0.5f, 0.5f);
 
 	P1 = P1.TransformCoord(matWorld);
 	P2 = P2.TransformCoord(matWorld);
@@ -265,6 +279,8 @@ void CColliderBox3D::UpdateMinMax()
 	std::sort(PointList.begin(), PointList.end(), SortZ);
 	m_Info.Min.z = PointList[0].z;
 	m_Info.Max.z = PointList[7].z;
+
+	m_UpdateMinMax = true;
 }
 
 bool CColliderBox3D::SortX(const Vector3& Src, const Vector3& Dest)

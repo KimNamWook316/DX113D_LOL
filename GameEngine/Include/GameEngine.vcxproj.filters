@@ -355,6 +355,21 @@
     <Filter Include="02. Resource\02. Shader\03. ConstantBuffer\19. Toon">
       <UniqueIdentifier>{0671428f-b530-4718-9ab0-5cc54e6da431}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. Resource\02. Shader\03. ConstantBuffer\20. Water">
+      <UniqueIdentifier>{877efc72-dc7b-4ed3-a93c-02842df9695d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Resource\02. Shader\02. ShaderClass\24. Water">
+      <UniqueIdentifier>{61d9f45a-3334-4134-bafc-642be1f43481}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. Component\01. SceneComponent\12. Water">
+      <UniqueIdentifier>{df75cc48-f651-4fd9-8758-a498e7557b0c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. Component\01. SceneComponent\12. NavMesh">
+      <UniqueIdentifier>{91b671f2-b8ee-47d7-a3cb-ff2bf2102c20}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Resource\02. Shader\02. ShaderClass\24. Laser">
+      <UniqueIdentifier>{cb471bb2-7b0c-4913-9944-ba99d48a1296}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Device.cpp">
@@ -1060,13 +1075,25 @@
       <Filter>02. Resource\02. Shader\03. ConstantBuffer\12. Light</Filter>
     </ClCompile>
     <ClCompile Include="Component\NavMeshComponent.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>05. Component\01. SceneComponent\12. NavMesh</Filter>
     </ClCompile>
     <ClCompile Include="Resource\Mesh\NavMesh.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>02. Resource\01. Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Shader\LaserShader.cpp">
+      <Filter>02. Resource\02. Shader\02. ShaderClass\24. Laser</Filter>
     </ClCompile>
     <ClCompile Include="Resource\Shader\ToonInstancingShader.cpp">
       <Filter>02. Resource\02. Shader\02. ShaderClass\23. Toon</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Shader\WaterCBuffer.cpp">
+      <Filter>02. Resource\02. Shader\03. ConstantBuffer\20. Water</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Shader\WaterShader.cpp">
+      <Filter>02. Resource\02. Shader\02. ShaderClass\24. Water</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\WaterComponent.cpp">
+      <Filter>05. Component\01. SceneComponent\12. Water</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1812,13 +1839,25 @@
       <Filter>02. Resource\02. Shader\03. ConstantBuffer\12. Light</Filter>
     </ClInclude>
     <ClInclude Include="Component\NavMeshComponent.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>05. Component\01. SceneComponent\12. NavMesh</Filter>
     </ClInclude>
     <ClInclude Include="Resource\Mesh\NavMesh.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>02. Resource\01. Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Shader\LaserShader.h">
+      <Filter>02. Resource\02. Shader\02. ShaderClass\24. Laser</Filter>
     </ClInclude>
     <ClInclude Include="Resource\Shader\ToonInstancingShader.h">
       <Filter>02. Resource\02. Shader\02. ShaderClass\23. Toon</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Shader\WaterCBuffer.h">
+      <Filter>02. Resource\02. Shader\03. ConstantBuffer\20. Water</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Shader\WaterShader.h">
+      <Filter>02. Resource\02. Shader\02. ShaderClass\24. Water</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\WaterComponent.h">
+      <Filter>05. Component\01. SceneComponent\12. Water</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1895,6 +1934,15 @@
       <Filter>02. Resource\02. Shader\01. HLSL</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\Shader\Standard3DInfo.fx">
+      <Filter>02. Resource\02. Shader\01. HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\Shader\Water.fx">
+      <Filter>02. Resource\02. Shader\01. HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\Shader\TransparentInfo.fx">
+      <Filter>02. Resource\02. Shader\01. HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\Shader\Laser.fx">
       <Filter>02. Resource\02. Shader\01. HLSL</Filter>
     </FxCompile>
   </ItemGroup>

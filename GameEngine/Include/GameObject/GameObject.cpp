@@ -3,6 +3,7 @@
 #include "../Scene/SceneManager.h"
 #include "../PathManager.h"
 #include "../Component/NavAgent.h"
+#include "../Component/PaperBurnComponent.h"
 
 CGameObject::CGameObject() :
 	m_Scene(nullptr),
@@ -12,7 +13,8 @@ CGameObject::CGameObject() :
 	m_IsEnemy(false),
 	m_NoInterrupt(false),
 	m_ExcludeSceneSave(false),
-	m_NoDestroyFromSceneChange(false)
+	m_NoDestroyFromSceneChange(false),
+	m_IsHit(false)
 {
 	SetTypeID<CGameObject>();
 	m_ObjectType = Object_Type::None;

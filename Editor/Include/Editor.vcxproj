@@ -166,9 +166,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AnimationInstanceConvertThread.cpp" />
+    <ClCompile Include="Component\EyeLaserComponent.cpp" />
     <ClCompile Include="Component\GameBehaviorTree.cpp" />
-    <ClCompile Include="Component\GameDataComponent.cpp" />
     <ClCompile Include="Component\GameStateComponent.cpp" />
+    <ClCompile Include="Component\Node\AddFallingFloorCallbackNode.cpp" />
     <ClCompile Include="Component\Node\CancleShootNode.cpp" />
     <ClCompile Include="Component\Node\CheckAttackTarget.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
@@ -185,6 +186,8 @@
     <ClCompile Include="Component\Node\DeathNode.cpp" />
     <ClCompile Include="Component\Node\HPCheck.cpp" />
     <ClCompile Include="Component\Node\IdleNode.cpp" />
+    <ClCompile Include="Component\Node\Lockstone3TriggerBoxAction.cpp" />
+    <ClCompile Include="Component\Node\Lockstone3TriggerBoxHitCheck.cpp" />
     <ClCompile Include="Component\Node\MouseLButtonCheckNode.cpp" />
     <ClCompile Include="Component\Node\MouseRButtonCheckNode.cpp" />
     <ClCompile Include="Component\Node\MouseRButtonUpCheckNode.cpp" />
@@ -207,10 +210,28 @@
     <ClCompile Include="Component\Node\ReadyToShoot.cpp" />
     <ClCompile Include="Component\Node\RotateAttackDirectionNode.cpp" />
     <ClCompile Include="Component\Node\ShootNode.cpp" />
+    <ClCompile Include="Component\ObjectDataComponent.cpp" />
     <ClCompile Include="Component\PlayerDataComponent.cpp" />
-    <ClCompile Include="Component\State\AirBorneState.cpp" />
-    <ClCompile Include="Component\State\DamageState.cpp" />
-    <ClCompile Include="Component\State\GameStateManager.cpp" />
+    <ClCompile Include="Component\PlayerHookComponent.cpp" />
+    <ClCompile Include="Component\PlayerNormalAttackCheckCollider.cpp" />
+    <ClCompile Include="Component\State\AirBorneState.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="Component\State\DamageState.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="Component\State\GameStateManager.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="DataManager.cpp" />
     <ClCompile Include="EditorManager.cpp" />
     <ClCompile Include="EditorUtil.cpp" />
@@ -229,7 +250,9 @@
     <ClCompile Include="Widget\ColliderComponentWidget.cpp" />
     <ClCompile Include="Widget\ColliderSphereWidget.cpp" />
     <ClCompile Include="Widget\DataMenu.cpp" />
+    <ClCompile Include="Widget\EyeLaserComponentWidget.cpp" />
     <ClCompile Include="Widget\NavMeshComponentWidget.cpp" />
+    <ClCompile Include="Widget\PaperBurnWidget.cpp" />
     <ClCompile Include="Widget\ResourceMenu.cpp" />
     <ClCompile Include="Widget\GameObjectWidget.cpp" />
     <ClCompile Include="Widget\LandScapeWidget.cpp" />
@@ -243,6 +266,7 @@
     <ClCompile Include="Widget\ToonShaderWidget.cpp" />
     <ClCompile Include="Widget\TransformWidget.cpp" />
     <ClCompile Include="Widget\UtilMenuBar.cpp" />
+    <ClCompile Include="Widget\WaterComponentWidget.cpp" />
     <ClCompile Include="Window\AnimationDisplayWindow.cpp" />
     <ClCompile Include="Window\AnimationEditor.cpp" />
     <ClCompile Include="Thread\FBXConvertThread.cpp" />
@@ -273,9 +297,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimationInstanceConvertThread.h" />
+    <ClInclude Include="Component\EyeLaserComponent.h" />
     <ClInclude Include="Component\GameBehaviorTree.h" />
-    <ClInclude Include="Component\GameDataComponent.h" />
     <ClInclude Include="Component\GameStateComponent.h" />
+    <ClInclude Include="Component\Node\AddFallingFloorCallbackNode.h" />
     <ClInclude Include="Component\Node\CancleShootNode.h" />
     <ClInclude Include="Component\Node\CheckAttackTarget.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
@@ -292,6 +317,8 @@
     <ClInclude Include="Component\Node\DeathNode.h" />
     <ClInclude Include="Component\Node\HPCheck.h" />
     <ClInclude Include="Component\Node\IdleNode.h" />
+    <ClInclude Include="Component\Node\Lockstone3TriggerBoxAction.h" />
+    <ClInclude Include="Component\Node\Lockstone3TriggerBoxHitCheck.h" />
     <ClInclude Include="Component\Node\MouseLButtonCheckNode.h" />
     <ClInclude Include="Component\Node\MouseRButtonCheckNode.h" />
     <ClInclude Include="Component\Node\MouseRButtonUpCheckNode.h" />
@@ -314,10 +341,28 @@
     <ClInclude Include="Component\Node\ReadyToShoot.h" />
     <ClInclude Include="Component\Node\RotateAttackDirectionNode.h" />
     <ClInclude Include="Component\Node\ShootNode.h" />
+    <ClInclude Include="Component\ObjectDataComponent.h" />
     <ClInclude Include="Component\PlayerDataComponent.h" />
-    <ClInclude Include="Component\State\AirBorneState.h" />
-    <ClInclude Include="Component\State\DamageState.h" />
-    <ClInclude Include="Component\State\GameStateManager.h" />
+    <ClInclude Include="Component\PlayerHookComponent.h" />
+    <ClInclude Include="Component\PlayerNormalAttackCheckCollider.h" />
+    <ClInclude Include="Component\State\AirBorneState.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="Component\State\DamageState.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="Component\State\GameStateManager.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="DataManager.h" />
     <ClInclude Include="EditorInfo.h" />
     <ClInclude Include="EditorManager.h" />
@@ -337,11 +382,13 @@
     <ClInclude Include="Widget\ColliderComponentWidget.h" />
     <ClInclude Include="Widget\ColliderSphereWidget.h" />
     <ClInclude Include="Widget\DataMenu.h" />
+    <ClInclude Include="Widget\EyeLaserComponentWidget.h" />
     <ClInclude Include="Widget\GameObjectWidget.h" />
     <ClInclude Include="Widget\LandScapeWidget.h" />
     <ClInclude Include="Widget\LightComponentWidget.h" />
     <ClInclude Include="Widget\NavMeshComponentWidget.h" />
     <ClInclude Include="Widget\ObjectComponentWidget.h" />
+    <ClInclude Include="Widget\PaperBurnWidget.h" />
     <ClInclude Include="Widget\ParticleComponentWidget.h" />
     <ClInclude Include="Widget\ResourceMenu.h" />
     <ClInclude Include="Widget\SaveLoadBeginMenu.h" />
@@ -351,6 +398,7 @@
     <ClInclude Include="Widget\ToonShaderWidget.h" />
     <ClInclude Include="Widget\TransformWidget.h" />
     <ClInclude Include="Widget\UtilMenuBar.h" />
+    <ClInclude Include="Widget\WaterComponentWidget.h" />
     <ClInclude Include="Window\AnimationDisplayWindow.h" />
     <ClInclude Include="Window\AnimationEditor.h" />
     <ClInclude Include="Thread\FBXConvertThread.h" />

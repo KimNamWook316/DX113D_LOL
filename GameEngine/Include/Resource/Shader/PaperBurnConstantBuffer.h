@@ -90,5 +90,41 @@ public:
 	{
 		m_BufferData.CenterFilter = Filter;
 	}
+
+public:
+	bool IsInverse() const
+	{
+		return m_BufferData.Inverse;
+	}
+
+	const Vector4& GetOutlineColor() const
+	{
+		return m_BufferData.OutLineColor;
+	}
+
+	const Vector4& GetInlineColor() const
+	{
+		return m_BufferData.InLineColor;
+	}
+
+	const Vector4& GetCenterlineColor() const
+	{
+		return m_BufferData.CenterLineColor;
+	}
+
+	float GetOutFilter() const
+	{
+		return m_BufferData.OutFilter;
+	}
+
+	float GetInFilter() const
+	{
+		return m_BufferData.InFilter;
+	}
+
+	float GetCenterFilter() const
+	{
+		return m_BufferData.CenterFilter;
+	}
 };
 
