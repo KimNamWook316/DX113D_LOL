@@ -39,7 +39,7 @@ public:
 	{
 		return m_BufferData.MaxSeperateRotAngle;
 	}
-	
+
 	// UV Move
 	int GetUVMoveEnable() const
 	{
@@ -111,14 +111,19 @@ public:
 		return m_BufferData.ColorMax;
 	}
 
-	float GetSpeedMin()
+	int GetSpeedChangeMethod() const
 	{
-		return m_BufferData.SpeedMin;
+		return m_BufferData.SpeedChangeMethod;
 	}
 
-	float GetSpeedMax()
+	float GetSpeedStart()
 	{
-		return m_BufferData.SpeedMax;
+		return m_BufferData.SpeedStart;
+	}
+
+	float GetSpeedEnd()
+	{
+		return m_BufferData.SpeedEnd;
 	}
 
 	bool GetMove()
@@ -211,7 +216,17 @@ public:
 	{
 		return m_BufferData.UVClippingReflectingMoveDir;
 	}
+	int IsNoiseTextureSamplingApplied() const
+	{
+		return m_BufferData.ApplyNoiseTexture ? 1 : 0;
+	}
 public:
+	// Noise Texture
+	void SetApplyNoiseTextureSamplingEnable(bool Enable)
+	{
+		m_BufferData.ApplyNoiseTexture = Enable ? 1 : 0;
+	}
+
 	// UV Clipping
 	void SetUVClippingReflectingMoveDirEnable(bool Enable)
 	{
@@ -382,14 +397,27 @@ public:
 		m_BufferData.ColorMax = Vector4(r, g, b, a);
 	}
 
-	void SetSpeedMin(float SpeedMin)
+	void SetSpeedChangeMethod(ParticleSpeedChangeMethod Method) 
 	{
-		m_BufferData.SpeedMin = SpeedMin;
+		m_BufferData.SpeedChangeMethod = (int)Method;
 	}
 
-	void SetSpeedMax(float SpeedMax)
+	void SetSpeedChangeMethod(int Method) 
 	{
-		m_BufferData.SpeedMax = SpeedMax;
+		if (Method > (int)ParticleSpeedChangeMethod::Max)
+			assert(false);
+
+		m_BufferData.SpeedChangeMethod = Method;
+	}
+
+	void SetSpeedStart(float SpeedStart)
+	{
+		m_BufferData.SpeedStart = SpeedStart;
+	}
+
+	void SetSpeedEnd(float SpeedEnd)
+	{
+		m_BufferData.SpeedEnd = SpeedEnd;
 	}
 
 	void SetMove(bool Move)

@@ -903,7 +903,7 @@ bool CLandScape::SaveOnly(FILE* File)
 {
     CSceneComponent::SaveOnly(File);
 
-    int Length = m_MeshName.length();
+    int Length = (int)m_MeshName.length();
     fwrite(&Length, sizeof(int), 1, File);
     fwrite(m_MeshName.c_str(), sizeof(char), Length, File);
 

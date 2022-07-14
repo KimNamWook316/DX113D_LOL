@@ -761,7 +761,7 @@ int CFBXLoader::FindBoneFromName(const std::string& strName)
 	for (size_t i = 0; i < m_vecBones.size(); ++i)
 	{
 		if (m_vecBones[i]->strName == strName)
-			return i;
+			return (int)i;
 	}
 
 	return -1;

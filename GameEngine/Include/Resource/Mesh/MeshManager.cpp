@@ -161,7 +161,7 @@ bool CMeshManager::Init()
 	CreateMesh(Mesh_Type::Static, "SphereLinePos",
 		&vecColliderSpherePos[0], sizeof(Vector3), ColliderSphereSize,
 		D3D11_USAGE_DEFAULT, D3D11_PRIMITIVE_TOPOLOGY_LINELIST,
-		&vecColliderSphereIndex[0], sizeof(int), vecColliderSphereIndex.size(),
+		&vecColliderSphereIndex[0], sizeof(int), (int)vecColliderSphereIndex.size(),
 		D3D11_USAGE_DEFAULT, DXGI_FORMAT_R32_UINT);
 
 	Vector3	CubePos[8] =

@@ -218,7 +218,6 @@ void CParticleComponent::PostUpdate(float DeltaTime)
 	// 2) Particle Component 의 Scalilng 까지 적용한다. (우선 RelativeScale 만 적용)
 	// 3) Translation은 처리하지 않는다. StartMin, Max 는, Local Space 상에서의 Min, Max 를 의미하게 할 것이다.
 	// ( Rot  -> Translation )
-	Vector3 WorldScale = GetWorldScale();
 	Vector3	StartMin = CBuffer->GetStartMin() * GetWorldScale();
 	StartMin.TransformCoord(GetRotationMatrix());
 
@@ -333,7 +332,9 @@ void CParticleComponent::Render()
 	}
 
 	if (m_Material)
+	{
 		m_Material->Render();
+	}
 
 	// 인스턴싱을 이용해서 그려준다.
 	m_Mesh->RenderInstancing(m_CBuffer->GetSpawnCount());

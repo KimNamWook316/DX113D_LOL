@@ -342,7 +342,7 @@ bool CExcelData::SaveCSVFullPath(const char* fullPath)
 
 		for (size_t j = 0; j < rowSize; ++j)
 		{
-			int length = (*row)[j].length();
+			int length = (int)(*row)[j].length();
 			strcpy_s(buf, length + 1, (*row)[j].c_str());
 
 			if (j == rowSize - 1)

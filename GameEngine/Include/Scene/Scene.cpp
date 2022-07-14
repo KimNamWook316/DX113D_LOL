@@ -435,7 +435,7 @@ bool CScene::SaveSceneGlobalDataCSV(const char* FileName)
 	Data->SetData("Data", "DOFMin", Val);
 
 	Data->AddLabel("FogType");
-	Val = (int)RMng->GetFogType();
+	Val = (float)RMng->GetFogType();
 	Data->SetData("Data", "FogType", Val);
 
 	Data->AddLabel("FogColorR");

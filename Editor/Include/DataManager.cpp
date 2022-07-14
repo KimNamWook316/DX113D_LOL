@@ -75,8 +75,8 @@ void CDataManager::SetObjectData(CGameObject* Object)
 				if (i == 1)
 					Comp->SetMP(Frame);
 
-				if (i == 2)
-					Comp->SetMoveSpeed(Frame);
+					if (i == 2)
+						Comp->SetMoveSpeed((float)Frame);
 
 				if (i == 3)
 					Comp->SetAttack(Frame);

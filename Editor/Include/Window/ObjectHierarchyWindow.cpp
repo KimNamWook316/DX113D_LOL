@@ -121,7 +121,7 @@ void CObjectHierarchyWindow::OnCreateObject(CGameObject* Object)
 
 	for (size_t i = 0; i < Count; ++i)
 	{
-		OnCreateObjectRecursive(Object->GetChildObject(i), NewNode);
+		OnCreateObjectRecursive(Object->GetChildObject((int)i), NewNode);
 	}
 }
 
@@ -146,7 +146,7 @@ void CObjectHierarchyWindow::OnCreateObjectRecursive(CGameObject* Object, CIMGUI
 
 	for (size_t i = 0; i < Count; ++i)
 	{
-		OnCreateObjectRecursive(Object->GetChildObject(i), NewNode);
+		OnCreateObjectRecursive(Object->GetChildObject((int)i), NewNode);
 	}
 }
 

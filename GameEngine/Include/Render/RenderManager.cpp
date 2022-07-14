@@ -583,6 +583,9 @@ void CRenderManager::Render(float DeltaTime)
 	// 반투명한 오브젝트를 그린다.
 	RenderTransparent();
 
+	// 파티클 레이어
+	RenderParticle();
+
 	if (m_PostProcessing)
 	{
 		// HDR, Bloom, Adaptation 등 PostEffect 처리
@@ -603,33 +606,12 @@ void CRenderManager::Render(float DeltaTime)
 	RenderParticleEffectEditor();
 #endif
 
-	m_vecGBuffer[2]->SetShader(10, (int)Buffer_Shader_Type::Pixel, 0);
-
-	m_AlphaBlend->SetState();
-
-	// 파티클 레이어 출력
-	auto	iter = m_RenderLayerList[(int)RenderLayerType::Particle]->RenderList.begin();
-	auto	iterEnd = m_RenderLayerList[(int)RenderLayerType::Particle]->RenderList.end();
-
-	for (; iter != iterEnd; ++iter)
-	{
-		// OBJ가 추가 (Particle Mesh Widget 에서 Enable false 처리)
-		if ((*iter)->IsEnable() == false)
-			continue;
-
-		(*iter)->Render();
-	}
-
-	m_AlphaBlend->ResetState();
-
-	m_vecGBuffer[2]->ResetShader(10, (int)Buffer_Shader_Type::Pixel, 0);
-
 	// Post-Particle Layer 출력
 	RenderPostParticle();
 
 	// Screen Widget 출력
-	iter = m_RenderLayerList[(int)RenderLayerType::ScreenWidgetComponent]->RenderList.begin();
-	iterEnd = m_RenderLayerList[(int)RenderLayerType::ScreenWidgetComponent]->RenderList.end();
+	auto iter = m_RenderLayerList[(int)RenderLayerType::ScreenWidgetComponent]->RenderList.begin();
+	auto iterEnd = m_RenderLayerList[(int)RenderLayerType::ScreenWidgetComponent]->RenderList.end();
 
 	for (; iter != iterEnd; ++iter)
 	{
@@ -1158,6 +1140,35 @@ void CRenderManager::RenderPostParticle()
 	{
 		(*iter)->Render();
 	}
+}
+
+void CRenderManager::RenderParticle()
+{
+	// Final Target 에 그리기 
+	m_FinalTarget->SetTarget();
+
+	m_vecGBuffer[2]->SetShader(10, (int)Buffer_Shader_Type::Pixel, 0);
+
+	m_AlphaBlend->SetState();
+
+	// 파티클 레이어 출력
+	auto	iter = m_RenderLayerList[(int)RenderLayerType::Particle]->RenderList.begin();
+	auto	iterEnd = m_RenderLayerList[(int)RenderLayerType::Particle]->RenderList.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		// OBJ가 추가 (Particle Mesh Widget 에서 Enable false 처리)
+		if ((*iter)->IsEnable() == false)
+			continue;
+
+		(*iter)->Render();
+	}
+
+	m_AlphaBlend->ResetState();
+
+	m_vecGBuffer[2]->ResetShader(10, (int)Buffer_Shader_Type::Pixel, 0);
+
+	m_FinalTarget->ResetTarget();
 }
 
 void CRenderManager::SetBlendFactor(const std::string& Name, float r, float g,

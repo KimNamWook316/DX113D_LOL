@@ -258,7 +258,8 @@ private:
 	void RenderFinalScreen();
 	void RenderAnimationEditor();
 	void RenderParticleEffectEditor();
-	void RenderPostParticle();
+	void RenderPostParticle(); // π∞ Ω¶¿Ã¥ı µÓ
+	void RenderParticle();
 
 	// Render State
 public:

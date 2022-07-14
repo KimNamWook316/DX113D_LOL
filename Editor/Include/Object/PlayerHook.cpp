@@ -46,7 +46,7 @@ void CPlayerHook::Start()
 
 	for (size_t i = 0; i < Count; ++i)
 	{
-		CSceneComponent* Child = GetRootComponent()->GetChild(i);
+		CSceneComponent* Child = GetRootComponent()->GetChild((int)i);
 		Child->SetRender(false);
 		m_HookBodyList.push_back(Child);
 	}
