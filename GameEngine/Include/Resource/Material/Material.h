@@ -39,6 +39,7 @@ struct MaterialSaveLoadStruct
     RenderStateSaveLoadStruct RenderStateSaveLoad[(int)RenderState_Type::Max];
     // int TextureCount;
     bool Metallic;
+    // Vector2 UVScale;
     ShaderParams ShaderParams;
 };
 
