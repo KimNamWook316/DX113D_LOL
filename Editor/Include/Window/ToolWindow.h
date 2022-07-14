@@ -54,6 +54,7 @@ private:
 	void OnChangeFogDensity(float Val);
 	void OnCheckDebugRender(const char* Label, bool Check);
 	void OnCheckPostProcessing(const char* Label, bool Check);
+	void OnCheckRenderSkyBox(const char* Label, bool Check);
 	void OnClickPlay();
 	void OnClickPause();
 	void OnClickStop();
@@ -81,6 +82,7 @@ private:
 
 	// Render
 	CIMGUICollapsingHeader* m_RenderBlock;
+	CIMGUICheckBox* m_RenderSkyBox;
 	CIMGUICheckBox* m_DebugRender;
 	CIMGUICheckBox* m_PostProcessing;
 	CIMGUISliderFloat* m_ShadowBias;

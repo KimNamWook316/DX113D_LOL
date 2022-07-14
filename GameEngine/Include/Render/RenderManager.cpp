@@ -33,7 +33,8 @@ CRenderManager::CRenderManager()	:
 	m_ShadowCBuffer(nullptr),
 	m_DebugRender(false),
 	m_PostFXRenderer(nullptr),
-	m_PostProcessing(false)
+	m_PostProcessing(false),
+	m_RenderSkyBox(true)
 {
 }
 
@@ -524,11 +525,16 @@ void CRenderManager::Render(float DeltaTime)
 		}	
 	}
 
+	m_FinalTarget->ClearTarget();
+
 	// 인스턴싱 리스트 업데이트
 	UpdateInstancingList();
 
-	// 환경맵 출력
-	RenderSkyBox();
+	if (m_RenderSkyBox)
+	{
+		// 환경맵 출력
+		RenderSkyBox();
+	}
 	
 	// Default Layer의 인스턴싱 정보를 만든다.
 	UpdateInstancingInfo((int)RenderLayerType::Default, true);
@@ -695,7 +701,6 @@ void CRenderManager::RenderSkyBox()
 {
 	CSharedPtr<CGameObject> SkyObj = CSceneManager::GetInst()->GetScene()->GetSkyObject();
 
-	m_FinalTarget->ClearTarget();
  	m_FinalTarget->SetTarget(nullptr);
 
 	SkyObj->Render();

@@ -6,6 +6,8 @@ CWaterCBuffer::CWaterCBuffer()	:
 {
 	m_BufferData.Speed = 1.f;
 	m_BufferData.FoamDepthThreshold = 5.f;
+	m_BufferData.Attn1 = 0.3f;
+	m_BufferData.Attn2 = 0.35f;
 }
 
 CWaterCBuffer::CWaterCBuffer(const CWaterCBuffer& Buffer)	:

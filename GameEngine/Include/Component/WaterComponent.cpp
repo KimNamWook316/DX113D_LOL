@@ -69,9 +69,13 @@ bool CWaterComponent::Save(FILE* File)
 
 	float Speed = m_CBuffer->GetSpeed();
 	float FoamDepth = m_CBuffer->GetFoamDepth();
+	float Attn1 = m_CBuffer->GetAttn1();
+	float Attn2 = m_CBuffer->GetAttn2();
 
 	fwrite(&Speed, sizeof(float), 1, File);
 	fwrite(&FoamDepth, sizeof(float), 1, File);
+	fwrite(&Attn1, sizeof(float), 1, File);
+	fwrite(&Attn2, sizeof(float), 1, File);
 
 	std::string MaterialName = m_Material->GetName();
 	int Length = MaterialName.length();
@@ -87,10 +91,17 @@ bool CWaterComponent::Load(FILE* File)
 {
 	CSceneComponent::Load(File);
 
-	float Speed, FoamDepth;
+	float Speed, FoamDepth, Attn1, Attn2;
 
 	fread(&Speed, sizeof(float), 1, File);
 	fread(&FoamDepth, sizeof(float), 1, File);
+	fread(&Attn1, sizeof(float), 1, File);
+	fread(&Attn2, sizeof(float), 1, File);
+
+	m_CBuffer->SetSpeed(Speed);
+	m_CBuffer->SetFoamDepth(FoamDepth);
+	m_CBuffer->SetAttn1(Attn1);
+	m_CBuffer->SetAttn2(Attn2);
 
 	char MatName[128] = {};
 	int Length = 0;
@@ -117,9 +128,13 @@ bool CWaterComponent::SaveOnly(FILE* File)
 
 	float Speed = m_CBuffer->GetSpeed();
 	float FoamDepth = m_CBuffer->GetFoamDepth();
+	float Attn1 = m_CBuffer->GetAttn1();
+	float Attn2 = m_CBuffer->GetAttn2();
 
 	fwrite(&Speed, sizeof(float), 1, File);
 	fwrite(&FoamDepth, sizeof(float), 1, File);
+	fwrite(&Attn1, sizeof(float), 1, File);
+	fwrite(&Attn2, sizeof(float), 1, File);
 
 	std::string MaterialName;
 	int Length = MaterialName.length();
@@ -136,13 +151,17 @@ bool CWaterComponent::LoadOnly(FILE* File)
 {
 	CSceneComponent::LoadOnly(File);
 
-	float Speed, DistortThreshold;
-	int DepthOffsetX, DepthOffsetY;
+	float Speed, FoamDepth, Attn1, Attn2;
 
 	fread(&Speed, sizeof(float), 1, File);
-	fread(&DistortThreshold, sizeof(float), 1, File);
-	fread(&DepthOffsetX, sizeof(int), 1, File);
-	fread(&DepthOffsetY, sizeof(int), 1, File);
+	fread(&FoamDepth, sizeof(float), 1, File);
+	fread(&Attn1, sizeof(float), 1, File);
+	fread(&Attn2, sizeof(float), 1, File);
+
+	m_CBuffer->SetSpeed(Speed);
+	m_CBuffer->SetFoamDepth(FoamDepth);
+	m_CBuffer->SetAttn1(Attn1);
+	m_CBuffer->SetAttn2(Attn2);
 
 	char MatName[128] = {};
 	int Length = 0;
@@ -179,6 +198,16 @@ void CWaterComponent::SetFoamDepth(float Depth)
 	m_CBuffer->SetFoamDepth(Depth);
 }
 
+void CWaterComponent::SetAttn1(float Attn1)
+{
+	m_CBuffer->SetAttn1(Attn1);
+}
+
+void CWaterComponent::SetAttn2(float Attn2)
+{
+	m_CBuffer->SetAttn2(Attn2);
+}
+
 float CWaterComponent::GetSpeed() const
 {
 	return m_CBuffer->GetSpeed();
@@ -187,4 +216,14 @@ float CWaterComponent::GetSpeed() const
 float CWaterComponent::GetFoamDepth() const
 {
 	return m_CBuffer->GetFoamDepth();
+}
+
+float CWaterComponent::GetAttn1() const
+{
+	return m_CBuffer->GetAttn1();
+}
+
+float CWaterComponent::GetAttn2() const
+{
+	return m_CBuffer->GetAttn2();
 }

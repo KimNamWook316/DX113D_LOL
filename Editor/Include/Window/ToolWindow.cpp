@@ -74,8 +74,8 @@ bool CToolWindow::Init()
 	m_CameraSpeed = m_EditorCameraBlock->AddWidget<CIMGUISliderFloat>("Speed");
 
 	// Render
-	// Outline
 	m_RenderBlock = AddWidget<CIMGUICollapsingHeader>("Render", 200.f);
+	m_RenderSkyBox = m_RenderBlock->AddWidget<CIMGUICheckBox>("Render SkyBox");
 	m_DebugRender = m_RenderBlock->AddWidget<CIMGUICheckBox>("DebugRender");
 	m_PostProcessing = m_RenderBlock->AddWidget<CIMGUICheckBox>("PostProcessing(HDR)");
 	m_ShadowBias = m_RenderBlock->AddWidget<CIMGUISliderFloat>("Shadow Bias");
@@ -173,6 +173,10 @@ bool CToolWindow::Init()
 	bool IsDebugRender = CRenderManager::GetInst()->IsDebugRender();
 	m_DebugRender->SetCheck(0, IsDebugRender);
 
+	m_RenderSkyBox->AddCheckInfo("Render SkyBox");
+	bool RenderSky = CRenderManager::GetInst()->IsRenderSkyBox();
+	m_RenderSkyBox->SetCheck(0, RenderSky);
+
 	std::string TypeName;
 	for (int i = 0; i < (int)Fog_Type::Max; ++i)
 	{
@@ -258,6 +262,7 @@ bool CToolWindow::Init()
 	m_GLightColor->SetCallBack(this, &CToolWindow::OnChangeGLightColor);
 	m_GLightAmbIntensity->SetCallBack(this, &CToolWindow::OnChangeGLightAmbIntensity);
 	m_LoadSkyBoxTex->SetClickCallback(this, &CToolWindow::OnClickLoadSkyBoxTexture);
+	m_RenderSkyBox->SetCallBackLabel(this, &CToolWindow::OnCheckRenderSkyBox);
 
 	// 디버그용 임시 키
 	CInput::GetInst()->CreateKey("Z", 'Z');
@@ -410,26 +415,6 @@ void CToolWindow::OnChangeFogDensity(float Val)
 	CRenderManager::GetInst()->SetFogDensity(Val);
 }
 
- //void CToolWindow::OnChangeOutlineDepthMultiply(float Val)
- //{
- //	CRenderManager::GetInst()->SetOutlineDepthMultiplier(Val);
- //}
- //
- //void CToolWindow::OnChangeOutlineDepthBias(float Val)
- //{
- //	CRenderManager::GetInst()->SetOutlineDepthBias(Val);
- //}
- //
- //void CToolWindow::OnChangeOutlineNormalMultiply(float Val)
- //{
- //	CRenderManager::GetInst()->SetOutlineNormalMultiplier(Val);
- //}
- //
- //void CToolWindow::OnChangeOutlineNormalBias(float Val)
- //{
- //	CRenderManager::GetInst()->SetOutlineNormalBias(Val);
- //}
-
 void CToolWindow::OnCheckDebugRender(const char* Label, bool Check)
 {
 	CRenderManager::GetInst()->SetDebugRender(Check);
@@ -440,10 +425,10 @@ void CToolWindow::OnCheckPostProcessing(const char* Label, bool Check)
 	CRenderManager::GetInst()->EnablePostProcessing(Check);
 }
 
- //void CToolWindow::OnCheckGrayEnable(const char* Label, bool Check)
- //{
- //	CRenderManager::GetInst()->GrayEnable(Check);
- //}
+void CToolWindow::OnCheckRenderSkyBox(const char* Label, bool Check)
+{
+	CRenderManager::GetInst()->SetRenderSkyBox(Check);
+}
 
 void CToolWindow::OnClickPlay()
 {
@@ -661,6 +646,7 @@ void CToolWindow::RefreshGlobalSceneDataWidget()
 	m_GLightRotZ->SetValue(GlobalData.GLightData.Rot.z);
 	m_GLightColor->SetRGB(GlobalData.GLightData.Color);
 	m_GLightAmbIntensity->SetValue(GlobalData.GLightData.AmbientIntensity);
+	m_RenderSkyBox->SetCheck(0, GlobalData.RenderSkyBox);
 }
 
 void CToolWindow::OnQDown(float DetlaTime)

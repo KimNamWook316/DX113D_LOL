@@ -26,6 +26,8 @@ public:
 	void SetMaterial(class CMaterial* Mat);
 	void SetSpeed(float Speed);
 	void SetFoamDepth(float Depth);
+	void SetAttn1(float Attn1);
+	void SetAttn2(float Attn2);
 
 public:
 	CMaterial* GetMaterial()
@@ -35,6 +37,8 @@ public:
 
 	float GetSpeed() const;
 	float GetFoamDepth() const;
+	float GetAttn1() const;
+	float GetAttn2() const;
 
 protected:
 	CSharedPtr<class CMesh> m_Mesh;

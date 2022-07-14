@@ -851,6 +851,7 @@ struct SceneSaveGlobalData
 {
 	HDRSceneSaveData			HDRData;
 	GlobalLightSceneSaveData	GLightData;
+	bool						RenderSkyBox;
 	std::string					SkyBoxTexFileName;
 };
 
@@ -868,5 +869,6 @@ struct WaterCBuffer
 {
 	float Speed;
 	float FoamDepthThreshold;
-	Vector2 Empty;
+	float Attn1;
+	float Attn2;
 };
