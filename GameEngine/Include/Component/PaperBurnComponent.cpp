@@ -407,6 +407,7 @@ bool CPaperBurnComponent::Load(FILE* File)
 	char Buf[128] = {};
 	fread(&Length, sizeof(int), 1, File);
 	fread(Buf, sizeof(char), Length, File);
+	m_PaperBurnComponentName = Buf;
 
 	ZeroMemory(&Buf, Length);
 	fread(&Length, sizeof(int), 1, File);
@@ -419,34 +420,35 @@ bool CPaperBurnComponent::Load(FILE* File)
 	{
 		m_BurnTexture = LoadedTex;
 	}
-	else
+
+	size_t Size = 0;
+	fread(&Size, sizeof(size_t), 1, File);
+
+	std::vector<TCHAR*> vecFullPath;
+	vecFullPath.resize(Size);
+
+	TCHAR BufFileName[MAX_PATH] = {};
+	char BufPathName[MAX_PATH] = {};
+
+	for (size_t i = 0; i < Size; ++i)
 	{
-		size_t Size = 0;
-		fread(&Size, sizeof(size_t), 1, File);
+		vecFullPath[i] = new TCHAR[MAX_PATH];
 
-		std::vector<TCHAR*> vecFullPath;
-		vecFullPath.resize(Size);
+		ZeroMemory(&BufFileName, MAX_PATH);
+		ZeroMemory(&BufPathName, MAX_PATH);
 
-		TCHAR BufFileName[MAX_PATH] = {};
-		char BufPathName[MAX_PATH] = {};
+		fread(&Length, sizeof(int), 1, File);
+		fread(&BufFileName, sizeof(TCHAR), Length, File);
+		fread(&Length, sizeof(int), 1, File);
+		fread(&BufPathName, sizeof(char), Length, File);
 
-		for (size_t i = 0; i < Size; ++i)
-		{
-			vecFullPath[i] = new TCHAR[MAX_PATH];
+		const PathInfo* Info = CPathManager::GetInst()->FindPath(BufPathName);
+		lstrcpy(vecFullPath[i], Info->Path);
+		lstrcat(vecFullPath[i], BufFileName);
+	}
 
-			ZeroMemory(&BufFileName, MAX_PATH);
-			ZeroMemory(&BufPathName, MAX_PATH);
-
-			fread(&Length, sizeof(int), 1, File);
-			fread(&BufFileName, sizeof(TCHAR), Length, File);
-			fread(&Length, sizeof(int), 1, File);
-			fread(&BufPathName, sizeof(char), Length, File);
-
-			const PathInfo* Info = CPathManager::GetInst()->FindPath(BufPathName);
-			lstrcpy(vecFullPath[i], Info->Path);
-			lstrcat(vecFullPath[i], BufFileName);
-		}
-		
+	if (!m_BurnTexture)
+	{
 		if (!m_Scene->GetResource()->LoadTextureFullPath(TexName, vecFullPath))
 		{
 			for (size_t i = 0; i < Size; ++i)
@@ -556,6 +558,7 @@ bool CPaperBurnComponent::LoadOnly(FILE* File)
 	char Buf[128] = {};
 	fread(&Length, sizeof(int), 1, File);
 	fread(Buf, sizeof(char), Length, File);
+	m_PaperBurnComponentName = Buf;
 
 	ZeroMemory(&Buf, Length);
 	fread(&Length, sizeof(int), 1, File);
@@ -568,42 +571,49 @@ bool CPaperBurnComponent::LoadOnly(FILE* File)
 	{
 		m_BurnTexture = LoadedTex;
 	}
-	else
+
+	size_t Size = 0;
+	fread(&Size, sizeof(size_t), 1, File);
+
+	std::vector<TCHAR*> vecFullPath;
+	vecFullPath.resize(Size);
+
+	TCHAR BufFileName[MAX_PATH] = {};
+	char BufPathName[MAX_PATH] = {};
+
+	for (size_t i = 0; i < Size; ++i)
 	{
-		size_t Size = 0;
-		fread(&Size, sizeof(size_t), 1, File);
+		vecFullPath[i] = new TCHAR[MAX_PATH];
 
-		std::vector<TCHAR*> vecFullPath;
-		vecFullPath.resize(Size);
+		ZeroMemory(&BufFileName, MAX_PATH);
+		ZeroMemory(&BufPathName, MAX_PATH);
 
-		TCHAR BufFileName[MAX_PATH] = {};
-		char BufPathName[MAX_PATH] = {};
+		fread(&Length, sizeof(int), 1, File);
+		fread(&BufFileName, sizeof(TCHAR), Length, File);
+		fread(&Length, sizeof(int), 1, File);
+		fread(&BufPathName, sizeof(char), Length, File);
 
-		for (size_t i = 0; i < Size; ++i)
-		{
-			vecFullPath[i] = new TCHAR[MAX_PATH];
+		const PathInfo* Info = CPathManager::GetInst()->FindPath(BufPathName);
+		lstrcpy(vecFullPath[i], Info->Path);
+		lstrcat(vecFullPath[i], BufFileName);
+	}
 
-			ZeroMemory(&BufFileName, MAX_PATH);
-			ZeroMemory(&BufPathName, MAX_PATH);
-
-			fread(&Length, sizeof(int), 1, File);
-			fread(&BufFileName, sizeof(TCHAR), Length, File);
-			fread(&Length, sizeof(int), 1, File);
-			fread(&BufPathName, sizeof(char), Length, File);
-
-			const PathInfo* Info = CPathManager::GetInst()->FindPath(BufPathName);
-			lstrcpy(vecFullPath[i], Info->Path);
-			lstrcat(vecFullPath[i], BufFileName);
-		}
-		
+	if (!m_BurnTexture)
+	{
 		if (!m_Scene->GetResource()->LoadTextureFullPath(TexName, vecFullPath))
 		{
-			SAFE_DELETE_ARRAY_VECLIST(vecFullPath);
+			for (size_t i = 0; i < Size; ++i)
+			{
+				SAFE_DELETE_ARRAY(vecFullPath[i]);
+			}
 			return false;
 		}
 
 		m_BurnTexture = m_Scene->GetResource()->FindTexture(TexName);
-		SAFE_DELETE_ARRAY_VECLIST(vecFullPath);
+		for (size_t i = 0; i < Size; ++i)
+		{
+			SAFE_DELETE_ARRAY(vecFullPath[i]);
+		}
 	}
 
 	return true;
