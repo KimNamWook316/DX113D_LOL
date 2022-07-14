@@ -15,10 +15,10 @@ public:
 	void Init();
 
 public:
-	void CheckAirborneTarget(const NotifyParameter& Param);
-	void GiveDamage(const NotifyParameter& Param);
-	void FindRestraintTarget(const NotifyParameter& Param);
-	void FindStunTarget(const NotifyParameter& Param);
-	void FindKnockBackTarget(const NotifyParameter& Param);
+	//void CheckAirborneTarget(const NotifyParameter& Param);
+	//void GiveDamage(const NotifyParameter& Param);
+	//void FindRestraintTarget(const NotifyParameter& Param);
+	//void FindStunTarget(const NotifyParameter& Param);
+	//void FindKnockBackTarget(const NotifyParameter& Param);
 };
 

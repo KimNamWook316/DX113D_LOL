@@ -5,7 +5,8 @@
 #include "Scene/Navigation3DManager.h"
 #include "Component/BehaviorTree.h"	
 
-CFindPathNode::CFindPathNode()
+CFindPathNode::CFindPathNode()	:
+	m_NavAgent(nullptr)
 {
 	SetTypeID(typeid(CFindPathNode).hash_code());
 }
@@ -27,13 +28,17 @@ NodeResult CFindPathNode::OnStart(float DeltaTime)
 
 	CGameObject* Player = Scene->GetPlayerObject();
 
-	Scene->GetNavigation3DManager()->FindPath(this, &CFindPathNode::OnFindPath, m_Object->GetRootComponent(), Player->GetWorldPos());
+	m_NavAgent = m_Object->FindObjectComponentFromType<CNavAgent>();
+
+	if(m_NavAgent)
+		m_NavAgent->FindPath(m_Object->GetRootComponent(), Player->GetWorldPos());
 
 	return NodeResult::Node_True;
 }
 
 NodeResult CFindPathNode::OnUpdate(float DeltaTime)
 {
+
 	return NodeResult::Node_True;
 }
 
@@ -47,7 +52,3 @@ NodeResult CFindPathNode::Invoke(float DeltaTime)
 	return CActionNode::Invoke(DeltaTime);
 }
 
-void CFindPathNode::OnFindPath(const std::list<Vector3>& vecPath)
-{
-	int a = 3;
-}

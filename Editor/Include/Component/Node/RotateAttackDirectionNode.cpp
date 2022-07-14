@@ -5,6 +5,7 @@
 #include "Component/BehaviorTree.h"
 #include "Scene/Scene.h"
 #include "Scene/SceneManager.h"
+#include "Scene/Navigation3DManager.h"
 
 
 CRotateAttackDirectionNode::CRotateAttackDirectionNode() :

@@ -8,15 +8,13 @@ struct AnimationNotify
 	int		Frame;
 	bool	Call;
 	std::function<void()>	Function;
-	std::function<void(NotifyParameter)>	FunctionParam;
-	NotifyParameter Param;
+	//std::function<void(NotifyParameter)>	FunctionParam;
+	//NotifyParameter Param;
 
 	AnimationNotify() :
 		Frame(0),
 		Call(false),
-		Function(nullptr),
-		FunctionParam(nullptr),
-		Param{}
+		Function(nullptr)
 	{
 	}
 };
@@ -106,16 +104,16 @@ public:
 	}
 
 
-	template <typename T>
-	void AddNotifyParam(const std::string& Name, int Frame, T* Obj, void (T::* Func)(const NotifyParameter&))
-	{
-		AnimationNotify* Notify = new AnimationNotify;
+	//template <typename T>
+	//void AddNotifyParam(const std::string& Name, int Frame, T* Obj, void (T::* Func)(const NotifyParameter&))
+	//{
+	//	AnimationNotify* Notify = new AnimationNotify;
 
-		Notify->Name = Name;
-		Notify->Frame = Frame;
-		Notify->FunctionParam = std::bind(Func, Obj, std::placeholders::_1);
+	//	Notify->Name = Name;
+	//	Notify->Frame = Frame;
+	//	Notify->FunctionParam = std::bind(Func, Obj, std::placeholders::_1);
 
-		m_vecNotify.push_back(Notify);
-	}
+	//	m_vecNotify.push_back(Notify);
+	//}
 };
 

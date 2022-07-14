@@ -1,6 +1,8 @@
 
 #include "GameObject.h"
+#include "../Scene/Scene.h"
 #include "../Scene/SceneManager.h"
+#include "../Scene/Navigation3DManager.h"
 #include "../PathManager.h"
 #include "../Component/NavAgent.h"
 

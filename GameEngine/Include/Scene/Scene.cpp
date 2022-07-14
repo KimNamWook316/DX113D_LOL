@@ -6,6 +6,7 @@
 #include "../GameObject/SkyObject.h"
 #include "../Input.h"
 #include "../Collision/Collision.h"
+#include "Navigation3DManager.h"
 #include "../Render/RenderManager.h"
 #include "../EngineUtil.h"
 

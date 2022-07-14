@@ -728,13 +728,13 @@ struct InstancingCBuffer
  //	float NormalBias;
  //};
 
-struct NotifyParameter
-{
-	class CGameObject* SrcObject;	// 애니메이션 동작하는 본인
-	class CGameObject* TargetObject; // Notify에서 대상이 되는 Object(ex. StateManager::GiveDamage에서 데미지를 줘야 할 대상)
-	float Range;
-	int Amount;
-};
+//struct NotifyParameter
+//{
+//	CGameObject* SrcObject;	// 애니메이션 동작하는 본인
+//	CGameObject* TargetObject; // Notify에서 대상이 되는 Object(ex. StateManager::GiveDamage에서 데미지를 줘야 할 대상)
+//	float Range;
+//	int Amount;
+//};
 
 struct ObjectData
 {

@@ -154,6 +154,7 @@ public:
 	// 첫번째 인자로 들어온 Cell의 인접 Cell들을 열린 목록에 넣어준다
 	void AddAdjCellOpenList(NavigationCell* Cell, NavigationCell* End, int ParentIndex);
 	void DelteCellOpenList(NavigationCell* Cell);
+	void MakePathList(std::list<Vector3>& PathList);
 	
 	NavigationCell* FindCell(int PolyIndex);
 

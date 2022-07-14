@@ -26,14 +26,14 @@ public:
 	}
 
 	void SetNavMeshComponent(class CNavMeshComponent* NavMeshComp);
+	void SetNavigationManager(class CNavigation3DManager* Manager);
 
 public:
 	virtual void Run();
 
 public:
 	template <typename T, typename ComponentType>
-	void AddWork(T* Obj, void(T::* Func)(const std::list<Vector3>&),
-		ComponentType* OwnerComponent, const Vector3& End)
+	void AddWork(T* Obj, void(T::* Func)(const std::list<Vector3>&), ComponentType* OwnerComponent, const Vector3& End)
 	{
 		NavWorkData	Data;
 		Data.Callback = std::bind(Func, Obj, std::placeholders::_1);

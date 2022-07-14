@@ -54,6 +54,7 @@
 #include "Object/3DCameraObject.h"
 
 #include "Component/State/GameStateManager.h"
+#include "Scene/Navigation3DManager.h"
 #include "DataManager.h"
 
 #include <sstream>

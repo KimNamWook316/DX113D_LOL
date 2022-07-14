@@ -4,6 +4,7 @@
 #include "../Resource/Mesh/StaticMesh.h"
 #include "../Resource/ResourceManager.h"
 #include "../Scene/Scene.h"
+#include "../Scene/Navigation3DManager.h"
 #include "../Scene/SceneResource.h"
 
 #include <DirectXCollision.h>
@@ -241,7 +242,19 @@ void CNavMeshComponent::FindPath(const Vector3& Start, const Vector3& End, std::
 			// 닫힌 목록에 목표 Cell이 들어오면 그 Cell들의 부모 Cell들을 타고 올라가면서 경로를 완성하고 길찾기 종료
 			if (EndCell == (*iter))
 			{
+				vecPath.push_back((*iter)->Center);
+				int ParentIndex = (*iter)->ParentIdx;
 
+				while (true)
+				{
+					if (ParentIndex == -1)
+						return;
+
+					NavigationCell* Cell = FindCell(ParentIndex);
+					vecPath.push_back(Cell->Center);
+
+					ParentIndex = Cell->ParentIdx;
+				}
 
 				break;
 			}
@@ -365,6 +378,11 @@ void CNavMeshComponent::DelteCellOpenList(NavigationCell* Cell)
 			return;
 		}
 	}
+}
+
+void CNavMeshComponent::MakePathList(std::list<Vector3>& PathList)
+{
+
 }
 
 NavigationCell* CNavMeshComponent::FindCell(int PolyIndex)

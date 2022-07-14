@@ -30,6 +30,11 @@ void CNavigationThread3D::SetNavMeshComponent(CNavMeshComponent* NavMeshComp)
 	m_NavMeshComponent = NavMeshComp;
 }
 
+void CNavigationThread3D::SetNavigationManager(CNavigation3DManager* Manager)
+{
+	m_NavManager = Manager;
+}
+
 void CNavigationThread3D::Run()
 {
 	while (m_Loop)

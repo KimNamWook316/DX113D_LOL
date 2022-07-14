@@ -1,13 +1,15 @@
 
 #include "NavAgent.h"
 #include "../Scene/Scene.h"
-#include "../Scene/NavigationManager.h"
+#include "../Scene/SceneManager.h"
+#include "../Scene/Navigation3DManager.h"
 #include "SceneComponent.h"
 #include "../GameObject/GameObject.h"
 
 CNavAgent::CNavAgent()	:
-	m_MoveSpeed(100.f),
-	m_ApplyNavMesh(true)
+	m_MoveSpeed(0.f),
+	m_ApplyNavMesh(true),
+	m_OccupyPolygonIndex(0)
 {
 	SetTypeID<CNavAgent>();
 }
@@ -75,6 +77,17 @@ void CNavAgent::Update(float DeltaTime)
 {
 	if (m_UpdateComponent)
 	{
+		float Height = 0.f;
+		int PolyIndex = 0;
+		if (m_OccupyPolygonIndex == -1)
+		{
+			// 최초로 자신이 어떤 Polygon을 밟고 있는지 체크
+			bool Intersect = CSceneManager::GetInst()->GetScene()->GetNavigation3DManager()->CheckNavMeshPoly(m_UpdateComponent->GetWorldPos(), Height, PolyIndex);
+
+			if (Intersect)
+				m_OccupyPolygonIndex = PolyIndex;
+		}
+
 		if (!m_PathList.empty())
 		{
 			Vector3	TargetPos = m_PathList.front();
@@ -103,8 +116,9 @@ void CNavAgent::Update(float DeltaTime)
 			//	}
 			//}
 
-
 			float	Dist = 20.f * DeltaTime;
+			if(m_MoveSpeed == 0.f)
+				Dist = m_MoveSpeed * DeltaTime;
 
 			if (TargetDistance <= Dist)
 			{
@@ -113,6 +127,15 @@ void CNavAgent::Update(float DeltaTime)
 			}
 
 			m_UpdateComponent->AddWorldPos(Dir * Dist);
+
+			Vector3 NewPos = m_UpdateComponent->GetWorldPos();
+			float Height = 0.f;
+			int NewPolyIndex = 0;
+			// 움직이고 나서 자신이 어떤 Polygon을 밟고 있는지 업데이트
+			bool Intersect = CSceneManager::GetInst()->GetScene()->GetNavigation3DManager()->CheckAdjNavMeshPoly(NewPos, m_OccupyPolygonIndex, Height, NewPolyIndex);
+
+			if(Intersect)
+				m_OccupyPolygonIndex = NewPolyIndex;
 		}
 	}
 
@@ -184,4 +207,22 @@ void CNavAgent::PathResult(const std::list<Vector3>& PathList)
 {
 	m_PathList.clear();
 	m_PathList = PathList;
+}
+
+void CNavAgent::FillPathList(const std::list<Vector3>& PathList)
+{
+	auto iter = PathList.begin();
+	auto iterEnd = PathList.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		m_PathList.push_back(*iter);
+	}
+}
+
+bool CNavAgent::FindPath(CSceneComponent* OwnerComponent, const Vector3& End)
+{
+	bool Result = CSceneManager::GetInst()->GetScene()->GetNavigation3DManager()->FindPath<CNavAgent, CSceneComponent>(this, &CNavAgent::FillPathList, OwnerComponent, End);
+
+	return Result;
 }

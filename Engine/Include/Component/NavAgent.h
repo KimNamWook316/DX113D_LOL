@@ -1,5 +1,9 @@
 #pragma once
+
 #include "ObjectComponent.h"
+//#include "../Scene/Scene.h"
+//#include "../Scene/SceneManager.h"
+
 class CNavAgent :
     public CObjectComponent
 {
@@ -15,6 +19,7 @@ private:
 	std::list<Vector3>		m_PathList;
 	float					m_MoveSpeed;
 	bool					m_ApplyNavMesh;
+	int						m_OccupyPolygonIndex;
 
 public:
 	void SetUpdateComponent(class CSceneComponent* UpdateComponent);
@@ -64,5 +69,10 @@ public:
 
 private:
 	void PathResult(const std::list<Vector3>& PathList);
+
+
+public:
+	void FillPathList(const std::list<Vector3>& PathList);
+	bool FindPath(class CSceneComponent* OwnerComponent, const Vector3& End);
 };
 

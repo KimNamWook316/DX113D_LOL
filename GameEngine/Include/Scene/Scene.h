@@ -6,7 +6,7 @@
 #include "CameraManager.h"
 #include "Viewport.h"
 #include "NavigationManager.h"
-#include "Navigation3DManager.h"
+//#include "Navigation3DManager.h"
 #include "LightManager.h"
 #include "../ObjectPoolManager.h"
 #include "../GameObject/GameObject.h"
@@ -26,7 +26,7 @@ private:
 	CCameraManager* m_CameraManager;
 	CViewport* m_Viewport;
 	CNavigationManager* m_NavManager;
-	CNavigation3DManager* m_Nav3DManager;
+	class CNavigation3DManager* m_Nav3DManager;
 	CLightManager* m_LightManager;
 	CSharedPtr<CGameObject> m_SkyObject;
 
@@ -105,10 +105,7 @@ public:
 		return m_NavManager;
 	}
 
-	CNavigation3DManager* GetNavigation3DManager()	const
-	{
-		return m_Nav3DManager;
-	}
+	CNavigation3DManager* GetNavigation3DManager()	const;
 
 	CLightManager* GetLightManager()	const
 	{

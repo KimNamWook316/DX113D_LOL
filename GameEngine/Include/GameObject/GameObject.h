@@ -3,7 +3,8 @@
 #include "../Component/SceneComponent.h"
 #include "../Component/ObjectComponent.h"
 #include "../Component/NavAgent.h"
-#include "../Scene/Navigation3DManager.h"
+#include "../Component/LandScape.h"
+//#include "../Scene/Navigation3DManager.h"
 
 class CGameObject :
 	public CRef

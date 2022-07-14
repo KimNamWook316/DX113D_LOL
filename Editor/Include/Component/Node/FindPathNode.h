@@ -20,7 +20,8 @@ protected:
 public:
     virtual NodeResult Invoke(float DeltaTime) override;
 
-public:
-    void OnFindPath(const std::list<Vector3>& vecPath);
+private:
+    class CNavAgent* m_NavAgent;
+
 };
 

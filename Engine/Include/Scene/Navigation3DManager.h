@@ -2,8 +2,10 @@
 
 #include "../GameInfo.h"
 #include "../Component/LandScape.h"
-//#include "../ThreadQueue.h"
+#include "../ThreadQueue.h"
 #include "NavigationThread3D.h"
+#include "../Component/NavAgent.h"
+
 
 class CNavigation3DManager
 {
@@ -48,6 +50,9 @@ public:
 	bool CheckPickingPoint(Vector3& OutPos);
 	// 높이를 결과로 리턴
 	bool CheckPlayerNavMeshPoly(float& Height);
+	// 높이와 Polygon Index를 리턴
+	bool CheckNavMeshPoly(const Vector3& Pos, float& Height, int& PolyIndex);
+	bool CheckAdjNavMeshPoly(const Vector3& Pos, int CurrentPolyIndex, float& Height, int& PolyIndex);
 	bool CheckNavMeshPickingPoint(Vector3& OutPos);
 
 public:
@@ -55,10 +60,9 @@ public:
 	bool Init();
 	void Update(float DeltaTime);
 
-
-	template <typename T, typename ComponentType>
-	bool FindPath(T* Obj, void(T::* Func)(const std::list<Vector3>&),
-		ComponentType* OwnerComponent, const Vector3& End)
+public:
+	template <typename T1, typename T2>
+	bool FindPath(T1* Obj, void(T1::* Func)(const std::list<Vector3>&), T2* OwnerComponent, const Vector3& End)
 	{
 		if (m_vecNavigationThread.empty())
 			return false;
@@ -77,7 +81,7 @@ public:
 			}
 		}
 
-		m_vecNavigationThread[WorkIndex]->AddWork<T>(Obj, Func, OwnerComponent, End);
+		m_vecNavigationThread[WorkIndex]->AddWork<T1, T2>(Obj, Func, OwnerComponent, End);
 
 		return true;
 	}

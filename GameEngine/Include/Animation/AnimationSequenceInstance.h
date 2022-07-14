@@ -49,89 +49,89 @@ protected:
 	char m_SavedFileName[MAX_PATH];
 
 public:
-	void SetNotifyParam(const std::string& SequenceName, const std::string& NotifyName, const NotifyParameter& Param)
-	{
-		CAnimationSequenceData* Data = FindAnimation(SequenceName);
+	//void SetNotifyParam(const std::string& SequenceName, const std::string& NotifyName, const NotifyParameter& Param)
+	//{
+	//	CAnimationSequenceData* Data = FindAnimation(SequenceName);
 
-		if (Data)
-		{
-			auto iter = Data->m_vecNotify.begin();
-			auto iterEnd = Data->m_vecNotify.end();
+	//	if (Data)
+	//	{
+	//		auto iter = Data->m_vecNotify.begin();
+	//		auto iterEnd = Data->m_vecNotify.end();
 
-			for (; iter != iterEnd; ++iter)
-			{
-				if ((*iter)->Name == NotifyName)
-				{
-					(*iter)->Param = Param;
-					return;
-				}
-			}
+	//		for (; iter != iterEnd; ++iter)
+	//		{
+	//			if ((*iter)->Name == NotifyName)
+	//			{
+	//				(*iter)->Param = Param;
+	//				return;
+	//			}
+	//		}
 
-		}
-	}
+	//	}
+	//}
 
-	void SetNotifyParamRange(const std::string& SequenceName, const std::string& NotifyName, float Range)
-	{
-		CAnimationSequenceData* Data = FindAnimation(SequenceName);
+	//void SetNotifyParamRange(const std::string& SequenceName, const std::string& NotifyName, float Range)
+	//{
+	//	CAnimationSequenceData* Data = FindAnimation(SequenceName);
 
-		if (Data)
-		{
-			auto iter = Data->m_vecNotify.begin();
-			auto iterEnd = Data->m_vecNotify.end();
+	//	if (Data)
+	//	{
+	//		auto iter = Data->m_vecNotify.begin();
+	//		auto iterEnd = Data->m_vecNotify.end();
 
-			for (; iter != iterEnd; ++iter)
-			{
-				if ((*iter)->Name == NotifyName)
-				{
-					(*iter)->Param.Range = Range;
-					return;
-				}
-			}
+	//		for (; iter != iterEnd; ++iter)
+	//		{
+	//			if ((*iter)->Name == NotifyName)
+	//			{
+	//				(*iter)->Param.Range = Range;
+	//				return;
+	//			}
+	//		}
 
-		}
-	}
+	//	}
+	//}
 
-	void SetNotifyParamAmount(const std::string& SequenceName, const std::string& NotifyName, int Amount)
-	{
-		CAnimationSequenceData* Data = FindAnimation(SequenceName);
+	//void SetNotifyParamAmount(const std::string& SequenceName, const std::string& NotifyName, int Amount)
+	//{
+	//	CAnimationSequenceData* Data = FindAnimation(SequenceName);
 
-		if (Data)
-		{
-			auto iter = Data->m_vecNotify.begin();
-			auto iterEnd = Data->m_vecNotify.end();
+	//	if (Data)
+	//	{
+	//		auto iter = Data->m_vecNotify.begin();
+	//		auto iterEnd = Data->m_vecNotify.end();
 
-			for (; iter != iterEnd; ++iter)
-			{
-				if ((*iter)->Name == NotifyName)
-				{
-					(*iter)->Param.Amount = Amount;
-					return;
-				}
-			}
+	//		for (; iter != iterEnd; ++iter)
+	//		{
+	//			if ((*iter)->Name == NotifyName)
+	//			{
+	//				(*iter)->Param.Amount = Amount;
+	//				return;
+	//			}
+	//		}
 
-		}
-	}
+	//	}
+	//}
 
-	void SetNotifyParamTargetObject(const std::string& SequenceName, const std::string& NotifyName, class CGameObject* TargetObject)
-	{
-		CAnimationSequenceData* Data = FindAnimation(SequenceName);
+	//void SetNotifyParamTargetObject(const std::string& SequenceName, const std::string& NotifyName, class CGameObject* TargetObject)
+	//{
+	//	CAnimationSequenceData* Data = FindAnimation(SequenceName);
 
-		if (Data)
-		{
-			auto iter = Data->m_vecNotify.begin();
-			auto iterEnd = Data->m_vecNotify.end();
+	//	if (Data)
+	//	{
+	//		auto iter = Data->m_vecNotify.begin();
+	//		auto iterEnd = Data->m_vecNotify.end();
 
-			for (; iter != iterEnd; ++iter)
-			{
-				if ((*iter)->Name == NotifyName)
-				{
-					(*iter)->Param.TargetObject = TargetObject;
-					return;
-				}
-			}
+	//		for (; iter != iterEnd; ++iter)
+	//		{
+	//			if ((*iter)->Name == NotifyName)
+	//			{
+	//				(*iter)->Param.TargetObject = TargetObject;
+	//				return;
+	//			}
+	//		}
 
-		}
-	}
+	//	}
+	//}
 
 	std::unordered_map<std::string, CAnimationSequenceData*>& GetAnimationSequenceMap()
 	{
@@ -287,16 +287,16 @@ public:
 		Data->AddNotify<T>(NotifyName, Frame, Obj, Func);
 	}
 
-	template <typename T>
-	void AddNotifyParam(const std::string& Name, const std::string& NotifyName, int Frame,
-		T* Obj, void (T::* Func)(const NotifyParameter&))
-	{
-		CAnimationSequenceData* Data = FindAnimation(Name);
+	//template <typename T>
+	//void AddNotifyParam(const std::string& Name, const std::string& NotifyName, int Frame,
+	//	T* Obj, void (T::* Func)(const NotifyParameter&))
+	//{
+	//	CAnimationSequenceData* Data = FindAnimation(Name);
 
-		if (!Data)
-			return;
+	//	if (!Data)
+	//		return;
 
-		Data->AddNotifyParam<T>(NotifyName, Frame, Obj, Func);
-	}
+	//	Data->AddNotifyParam<T>(NotifyName, Frame, Obj, Func);
+	//}
 };
 
