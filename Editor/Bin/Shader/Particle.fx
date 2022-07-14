@@ -242,9 +242,9 @@ void ApplyInitSpecialParticleGenerateShape(float RandomAngle, int ThreadID, floa
 		// float RandomRadius = FinalAppliedRadius * Rand;
 
 		float3 CirclePos = float3(0.f, 0.f, 0.f) + float3(
-			cos(RandomAngle) * FinalAppliedRadius,
+			cos(RandomAngle) * FinalAppliedRadius * Rand,
 			0.f,
-			sin(RandomAngle) * FinalAppliedRadius);
+			sin(RandomAngle) * FinalAppliedRadius * Rand);
 
 		g_ParticleArray[ThreadID].LocalPos = CirclePos;
 	}
@@ -388,7 +388,7 @@ float3 ApplyAliveParticleMove(int ThreadID)
 	// X 절편 Offset
 	// 해당 숫자만큼, 실제 지수함수 그래프에서의 X 절편을 왼쪽으로 댕긴다.
 	// 그러면, 실제 그래프에서의 증가 및 감소폭보다 크게 증가 및 감소하게 된다.
-	float XInterceptOffet = 0.2f;
+	float XInterceptOffet = 0.0f;
 
 	// Start 에서 End 로 점점 바뀌어야 한다.
 // 따라서 최초 Speed 는 g_ParticleSpeedStart 로 세팅한다.
@@ -429,7 +429,7 @@ float3 ApplyAliveParticleMove(int ThreadID)
 					// a의 값 (밑)
 					// - a 는 항상 1 보다 큰 계수여야 한다.
 					// - LifeTimeMax 의 경우, Speed 와 같이 ParticleComponentScaleRatio 가 반영된 상태여야 한다.
-					float ExponentialBottom = pow(ScaledSpeedEnd - ScaledSpeedStart, 1 / (g_ParticleArray[ThreadID].LifeTimeMax / 2.f));
+					float ExponentialBottom = pow(ScaledSpeedEnd - ScaledSpeedStart, 1 / (g_ParticleArray[ThreadID].LifeTimeMax * 0.5f));
 
 					// a 의 값이 1보다 커야 한다.
 					// 이를 확인하기 위해서는 a ^ (x-b) 에서 (x-b) 부분을 1로 만들어주면 된다.
@@ -469,7 +469,7 @@ float3 ApplyAliveParticleMove(int ThreadID)
 					// a의 값 (밑)
 					// - a 는 항상 1 보다 큰 계수여야 한다.
 					// - LifeTimeMax 의 경우, Speed 와 같이 ParticleComponentScaleRatio 가 반영된 상태여야 한다.
-					float ExponentialBottom = pow(-1 * (ScaledSpeedEnd - ScaledSpeedStart), 1 / (g_ParticleArray[ThreadID].LifeTimeMax / 2.f));
+					float ExponentialBottom = pow(-1 * (ScaledSpeedEnd - ScaledSpeedStart), 1 / (g_ParticleArray[ThreadID].LifeTimeMax * 0.5f));
 
 					// a 의 값이 1보다 커야 한다.
 					// 이를 확인하기 위해서는 a ^ (x-b) 에서 (x-b) 부분을 1로 만들어주면 된다.
@@ -714,6 +714,9 @@ void ApplyLinearEffect(int ThreadID)
 	if (SpawnPosRatio >= 1.f)
 		SpawnPosRatio = 0.999f;
 
+	float ScaledLifeTimeMax = g_ParticleLifeTimeMax * ParticleComponentScaleRatio;
+	float ScaledLifeTimeMin = g_ParticleLifeTimeMin * ParticleComponentScaleRatio;
+
 	// Life Time
 	if (g_ParticleLifeTimeLinear == 1)
 	{
@@ -721,8 +724,7 @@ void ApplyLinearEffect(int ThreadID)
 		// float LifeTimeRatio = (1 - SpawnPosRatio);
 		float LifeTimeRatio = pow(1 - SpawnPosRatio, 2);
 
-		g_ParticleArray[ThreadID].LifeTimeMax = LifeTimeRatio * (g_ParticleLifeTimeMax - g_ParticleLifeTimeMin) + g_ParticleLifeTimeMin;
-		g_ParticleArray[ThreadID].LifeTimeMax *= ParticleComponentScaleRatio;
+		g_ParticleArray[ThreadID].LifeTimeMax = LifeTimeRatio * (ScaledLifeTimeMax - ScaledLifeTimeMin) + ScaledLifeTimeMin;
 	}
 
 	// Alpha
@@ -884,12 +886,13 @@ void ParticleUpdate(uint3 ThreadID : SV_DispatchThreadID)
 	// float ParticleComponentScaleRatio = g_ParticleCommonWorldScale.x * g_ParticleCommonWorldScale.y * g_ParticleCommonWorldScale.z;
 		float ParticleComponentScaleRatio = (g_ParticleCommonWorldScale.x / 3.f + g_ParticleCommonWorldScale.y / 3.f + g_ParticleCommonWorldScale.z / 3.f);
 
+		float ScaledLifeTimeMax = g_ParticleLifeTimeMax * ParticleComponentScaleRatio;
+		float ScaledLifeTimeMin = g_ParticleLifeTimeMin * ParticleComponentScaleRatio;
+
 		g_ParticleArray[ThreadID.x].LifeTime = 0.f;
-		g_ParticleArray[ThreadID.x].LifeTimeMax = Rand * (g_ParticleLifeTimeMax - g_ParticleLifeTimeMin) + g_ParticleLifeTimeMin;
+		g_ParticleArray[ThreadID.x].LifeTimeMax = Rand * (ScaledLifeTimeMax - ScaledLifeTimeMin) + ScaledLifeTimeMin;
 
 		// Scale 크기도 그만큼 조정한다.
-		// g_ParticleArray[ThreadID.x].LifeTimeMax *= (g_ParticleCommonWorldScale.x + g_ParticleCommonWorldScale.y + g_ParticleCommonWorldScale.z) / 3.f;
-		g_ParticleArray[ThreadID.x].LifeTimeMax *= ParticleComponentScaleRatio;
 
 		float FinalAppliedRadius = g_ParcticleGenerateRadius * ParticleComponentScaleRatio;
 

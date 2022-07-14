@@ -570,12 +570,6 @@ void CEffectEditor::OnClickParticlePreset(int Index, const char* PresetName)
         OnRingWallPreset();
     }
     break;
-    break;
-    case (int)ParticlePreset::FireSmall:
-    {
-        OnFireSmallPreset();
-    }
-    break;
     case (int)ParticlePreset::FireWide:
     {
         OnFireWidePreset();
@@ -1795,6 +1789,18 @@ void CEffectEditor::OnRipplePreset()
     m_ParticleClass->SetGravity(false);
     dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGravity(false);
 
+    // Bounce X
+    m_ParticleClass->SetBounceEnable(false);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetBounceEnable(false);
+
+    // Particle Shape X
+    m_ParticleClass->SetParticleShapeType(-1);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetParticleShapeType(-1);
+
+    // Rotation Angle 90, 0, 0
+    OnMinSeperateRotAngleEdit(Vector3(90.f, 0.f, 0.f));
+    OnMaxSeperateRotAngleEdit(Vector3(90.f, 0.f, 0.f));
+
     // Alpha
     OnAlphaStartEdit(1.f);
     OnAlphaEndEdit(0.2f);
@@ -1815,9 +1821,17 @@ void CEffectEditor::OnRipplePreset()
     OnLifeTimeMinEdit(5.f);
     OnLifeTimeMaxEdit(5.f);
 
-    // Circle, Torch, Ring, XYRing X
-    // m_ParticleClass->SetParticleShapeType(-1);
-    //  dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetParticleShapeType(-1);
+    // Life Time Linear X
+    m_ParticleClass->SetLifeTimeLinearFromCenter(false);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetLifeTimeLinearFromCenter(false);
+
+    // Disable New Alive X
+    m_ParticleClass->SetDisableNewAlive(false);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetDisableNewAlive(false);
+
+    // Move Dir
+    m_ParticleClass->SetSpecialMoveDirType(-1);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetSpecialMoveDirType(-1);
 
     // IMGUI Update
     SetIMGUIReflectParticle(m_ParticleClass);
@@ -1836,14 +1850,14 @@ void CEffectEditor::OnRingPreset()
     m_ParticleClass->SetGravity(false);
     dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGravity(false);
 
+    // Bounce X
+    m_ParticleClass->SetBounceEnable(false);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetBounceEnable(false);
+
     // Alpha
     OnAlphaStartEdit(1.f);
     OnAlphaEndEdit(0.3f);
     OnSetAlphaBlendToMaterialCallback();
-
-    // Random Dir
-    m_ParticleClass->SetSpecialMoveDirType(-1);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetSpecialMoveDirType(-1);
 
     // Scale
     OnScaleMinEdit(Vector3(10.f, 10.f, 1.f)); //
@@ -1856,6 +1870,11 @@ void CEffectEditor::OnRingPreset()
     OnLifeTimeMinEdit(1.f);
     OnLifeTimeMaxEdit(2.f);
 
+    // Life Time Linear X
+    m_ParticleClass->SetLifeTimeLinearFromCenter(false);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetLifeTimeLinearFromCenter(false);
+
+
     // Radiuse
     OnEditGenerateRadius(40.f);
 
@@ -1866,6 +1885,14 @@ void CEffectEditor::OnRingPreset()
     // Particle Shape
     m_ParticleClass->SetParticleShapeType(ParitcleShapeType::YUpDirRing);
     dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetParticleShapeType(ParitcleShapeType::YUpDirRing);
+
+    // Disable New Alive X
+    m_ParticleClass->SetDisableNewAlive(false);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetDisableNewAlive(false);
+
+    // Special Move X
+    m_ParticleClass->SetSpecialMoveDirType(-1);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetSpecialMoveDirType(-1);
 
     // IMGUI Update
     SetIMGUIReflectParticle(m_ParticleClass);
@@ -1883,6 +1910,10 @@ void CEffectEditor::OnRingWallPreset()
     // Gravity X
     m_ParticleClass->SetGravity(false);
     dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGravity(false);
+
+    // Bounce X
+    m_ParticleClass->SetBounceEnable(false);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetBounceEnable(false);
 
     // Alpha
     OnAlphaStartEdit(1.f);
@@ -1907,6 +1938,10 @@ void CEffectEditor::OnRingWallPreset()
     // Life Time
     OnLifeTimeMinEdit(5.f);
     OnLifeTimeMaxEdit(5.f);
+    
+    // Life Time Linear X
+    m_ParticleClass->SetLifeTimeLinearFromCenter(false);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetLifeTimeLinearFromCenter(false);
 
     // Radiuse
     OnEditGenerateRadius(40.f);
@@ -1917,9 +1952,9 @@ void CEffectEditor::OnRingWallPreset()
     // Move Angle
     OnMoveAngleEdit(Vector3(0.f, 0.f, 0.f));
 
-    // Ring O
-    // m_ParticleClass->SetGenerateRingEnable(true);
-    // dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGenerateRingEnable(true);
+    // Disable New Alive X
+    m_ParticleClass->SetDisableNewAlive(false);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetDisableNewAlive(false);
 
     // Ring Loop O
     m_ParticleClass->SetLoopGenerateRing(true);
@@ -1928,60 +1963,6 @@ void CEffectEditor::OnRingWallPreset()
     // Particle Shape
     m_ParticleClass->SetParticleShapeType(ParitcleShapeType::YUpDirRing);
     dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetParticleShapeType(ParitcleShapeType::YUpDirRing);
-
-    // IMGUI Update
-    SetIMGUIReflectParticle(m_ParticleClass);
-}
-
-void CEffectEditor::OnFireSmallPreset()
-{
-    if (!m_ParticleClass)
-        return;
-
-    // Move O
-    m_ParticleClass->SetMove(true);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetMove(true);
-
-    // Gravity X
-    m_ParticleClass->SetGravity(false);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGravity(false);
-
-    // Alpha
-    OnAlphaStartEdit(2.0f);
-    OnAlphaEndEdit(0.7f);
-    OnSetAlphaBlendToMaterialCallback();
-
-    // Random Dir
-    m_ParticleClass->SetSpecialMoveDirType(-1);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetSpecialMoveDirType(-1);
-
-    // SpawnTime
-    OnSpawnTimeMaxEdit(0.02f);
-
-    // Scale
-    OnScaleMinEdit(Vector3(20.f, 20.f, 1.f));
-    OnScaleMaxEdit(Vector3(20.f, 20.f, 1.f));
-
-    // Start Min, Max
-    OnStartMinEdit(Vector3(-1.f, -1.f, -1.f));
-    OnStartMaxEdit(Vector3(1.f, 1.f, 1.f));
-
-    // Life Time
-    OnLifeTimeMinEdit(3.f);
-    OnLifeTimeMaxEdit(7.f);
-
-    // Speed
-    OnSpeedStartEdit(1.f);
-    OnSpeedEndEdit(20.f);
-
-    // Move Dir
-    OnMoveDirEdit(Vector3(0.f, 1.f, 0.f));
-
-    // Particle Shape
-    // m_ParticleClass->SetParticleShapeType(ParitcleShapeType::Torch);
-    // dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetParticleShapeType(ParitcleShapeType::Torch);
-    m_ParticleClass->SetParticleShapeType(-1);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetParticleShapeType(-1);
 
     // IMGUI Update
     SetIMGUIReflectParticle(m_ParticleClass);
@@ -2000,12 +1981,17 @@ void CEffectEditor::OnFireWidePreset()
     m_ParticleClass->SetGravity(false);
     dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGravity(false);
 
+    // Bounce X
+    m_ParticleClass->SetBounceEnable(false);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetBounceEnable(false);
+
+
     // Alpha
     OnAlphaEndEdit(1.f);
     OnAlphaStartEdit(0.6f);
     OnSetAlphaBlendToMaterialCallback();
 
-    // Random Dir
+    // Special move Dir X
       m_ParticleClass->SetSpecialMoveDirType(-1);
     dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetSpecialMoveDirType(-1);
 
@@ -2034,6 +2020,9 @@ void CEffectEditor::OnFireWidePreset()
     m_ParticleClass->SetParticleShapeType(ParitcleShapeType::Circle);
     dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetParticleShapeType(ParitcleShapeType::Circle);
 
+    // Special Move X
+    m_ParticleClass->SetSpecialMoveDirType(-1);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetSpecialMoveDirType(-1);
 
     // IMGUI Update
     SetIMGUIReflectParticle(m_ParticleClass);
@@ -2072,17 +2061,18 @@ void CEffectEditor::OnSparkPreset()
     OnLifeTimeMinEdit(0.5f);
     OnLifeTimeMaxEdit(2.f);
 
+    // Life Time Linear X
+    m_ParticleClass->SetLifeTimeLinearFromCenter(false);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetLifeTimeLinearFromCenter(false);
+
     // Speed
     OnSpeedStartEdit(50.f);
     OnSpeedEndEdit(80.f);
 
-    // Life Time Linaer
-    m_ParticleClass->SetLifeTimeLinearFromCenter(true);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetLifeTimeLinearFromCenter(true);
-
     // Move Dir
     OnMoveDirEdit(Vector3(0.f, 1.f, 0.f));
 
+    //Particle Shape X
     m_ParticleClass->SetParticleShapeType(-1);
     dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetParticleShapeType(-1);
 
