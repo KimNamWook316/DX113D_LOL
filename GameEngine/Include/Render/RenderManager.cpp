@@ -31,9 +31,6 @@ CRenderManager::CRenderManager()	:
 	m_Shadow(true),
 	m_ShadowLightDistance(100.f),
 	m_ShadowCBuffer(nullptr),
-	//m_OutlineCBuffer(nullptr),
-	//m_Gray(false),
-	m_AlphaBlendMRT(nullptr),
 	m_DebugRender(false),
 	m_PostFXRenderer(nullptr),
 	m_PostProcessing(false)
@@ -256,63 +253,74 @@ bool CRenderManager::Init()
 	// 기본 레이어 생성
 	RenderLayer* Layer = new RenderLayer;
 	Layer->Name = "Back";
-	Layer->LayerPriority = 0;
+	Layer->LayerPriority = (int)RenderLayerType::Back;
 
 	m_RenderLayerList.push_back(Layer);
 
 	Layer = new RenderLayer;
 	Layer->Name = "Default";
-	Layer->LayerPriority = 1;
+	Layer->LayerPriority = (int)RenderLayerType::Default;
+
+	m_RenderLayerList.push_back(Layer);
+
+	Layer = new RenderLayer;
+	Layer->Name = "PostDefault";
+	Layer->LayerPriority = (int)RenderLayerType::PostDefault;
 
 	m_RenderLayerList.push_back(Layer);
 
 	Layer = new RenderLayer;
 	Layer->Name = "Transparency";
-	Layer->LayerPriority = 2;
+	Layer->LayerPriority = (int)RenderLayerType::Transparency;
 
 	m_RenderLayerList.push_back(Layer);
 
 	Layer = new RenderLayer;
 	Layer->Name = "Decal";
-	Layer->LayerPriority = 3;
+	Layer->LayerPriority = (int)RenderLayerType::Decal;
 
 	m_RenderLayerList.push_back(Layer);
 
 	Layer = new RenderLayer;
 	Layer->Name = "Particle";
-	Layer->LayerPriority = 4;
+	Layer->LayerPriority = (int)RenderLayerType::Particle;
+
+	m_RenderLayerList.push_back(Layer);
+
+	Layer = new RenderLayer;
+	Layer->Name = "PostParticle";
+	Layer->LayerPriority = (int)RenderLayerType::PostParticle;
 
 	m_RenderLayerList.push_back(Layer);
 
 	Layer = new RenderLayer;
 	Layer->Name = "ScreenWidgetComponent";
-	Layer->LayerPriority = 5;
+	Layer->LayerPriority = (int)RenderLayerType::ScreenWidgetComponent;
 
 	m_RenderLayerList.push_back(Layer);
 
 	Layer = new RenderLayer;
 	Layer->Name = "AnimationEditorLayer";
-	Layer->LayerPriority = 6;
+	Layer->LayerPriority = (int)RenderLayerType::AnimationEditor;
 
 	m_RenderLayerList.push_back(Layer);
 
 	Layer = new RenderLayer;
 	Layer->Name = "ParticleEditorLayer";
-	Layer->LayerPriority = 7;
+	Layer->LayerPriority = (int)RenderLayerType::ParticleEditor;
 
 	m_RenderLayerList.push_back(Layer);
 
 #ifdef _DEBUG
 	Layer = new RenderLayer;
 	Layer->Name = "Collider";
-	Layer->LayerPriority = 8;
+	Layer->LayerPriority = (int)RenderLayerType::Collider;
 
 	m_RenderLayerList.push_back(Layer);
 #endif // _DEBUG
 
 	m_DepthDisable = m_RenderStateManager->FindRenderState("DepthDisable");
 	m_AlphaBlend = m_RenderStateManager->FindRenderState("AlphaBlend");
-	m_AlphaBlendMRT = m_RenderStateManager->FindRenderState("AlphaBlend_MRT"); // Transparent Render 패스에서 사용
 	m_LightAccBlend = m_RenderStateManager->FindRenderState("LightAcc");
 
 	// 디퍼드 렌더링용 타겟 생성
@@ -451,15 +459,6 @@ bool CRenderManager::Init()
 	m_ParticleEffectEditorRenderTarget->SetDebugRender(false);
 	m_ParticleEffectEditorRenderTarget->SetClearColor(0.6f, 0.6f, 0.6f, 0.6f);
 
-	// Transparent Target : FinalScreen, Normal, Depthw
-	GBufferTarget = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("FinalScreen");
-	m_vecTransparent.push_back(GBufferTarget);
-
-	GBufferTarget = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("GBuffer1");
-	m_vecTransparent.push_back(GBufferTarget);
-
-	GBufferTarget = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("GBuffer2");
-	m_vecTransparent.push_back(GBufferTarget);
 	// Map 출력용 변수들
 
 	// Shadow
@@ -532,7 +531,7 @@ void CRenderManager::Render(float DeltaTime)
 	RenderSkyBox();
 	
 	// Default Layer의 인스턴싱 정보를 만든다.
-	UpdateInstancingInfo(1, true);
+	UpdateInstancingInfo((int)RenderLayerType::Default, true);
 
 	// 그림자 맵을 만든다.
 	RenderShadowMap();
@@ -579,7 +578,7 @@ void CRenderManager::Render(float DeltaTime)
 	RenderLightBlend();
 
 	// 반투명 레이어의 인스턴싱 정보 생성
-	UpdateInstancingInfo(2, false);
+	UpdateInstancingInfo((int)RenderLayerType::Transparency, false);
 
 	// 반투명한 오브젝트를 그린다.
 	RenderTransparent();
@@ -609,8 +608,8 @@ void CRenderManager::Render(float DeltaTime)
 	m_AlphaBlend->SetState();
 
 	// 파티클 레이어 출력
-	auto	iter = m_RenderLayerList[4]->RenderList.begin();
-	auto	iterEnd = m_RenderLayerList[4]->RenderList.end();
+	auto	iter = m_RenderLayerList[(int)RenderLayerType::Particle]->RenderList.begin();
+	auto	iterEnd = m_RenderLayerList[(int)RenderLayerType::Particle]->RenderList.end();
 
 	for (; iter != iterEnd; ++iter)
 	{
@@ -625,9 +624,12 @@ void CRenderManager::Render(float DeltaTime)
 
 	m_vecGBuffer[2]->ResetShader(10, (int)Buffer_Shader_Type::Pixel, 0);
 
+	// Post-Particle Layer 출력
+	RenderPostParticle();
+
 	// Screen Widget 출력
-	iter = m_RenderLayerList[5]->RenderList.begin();
-	iterEnd = m_RenderLayerList[5]->RenderList.end();
+	iter = m_RenderLayerList[(int)RenderLayerType::ScreenWidgetComponent]->RenderList.begin();
+	iterEnd = m_RenderLayerList[(int)RenderLayerType::ScreenWidgetComponent]->RenderList.end();
 
 	for (; iter != iterEnd; ++iter)
 	{
@@ -638,8 +640,8 @@ void CRenderManager::Render(float DeltaTime)
 	if (CEngine::GetInst()->GetEditMode())
 	{
 		// Collider Layer 출력
-		iter = m_RenderLayerList[8]->RenderList.begin();
-		iterEnd = m_RenderLayerList[8]->RenderList.end();
+		iter = m_RenderLayerList[(int)RenderLayerType::Collider]->RenderList.begin();
+		iterEnd = m_RenderLayerList[(int)RenderLayerType::Collider]->RenderList.end();
 
 		for (; iter != iterEnd; ++iter)
 		{
@@ -717,13 +719,18 @@ void CRenderManager::RenderShadowMap()
 	
 	m_ShadowMapShader->SetShader();
 
-	for (size_t i = 0; i <= 1; ++i)
+	for (size_t i = 0; i <= (int)RenderLayerType::Default; ++i)
 	{
 		auto iter = m_RenderLayerList[i]->RenderList.begin();
 		auto iterEnd = m_RenderLayerList[i]->RenderList.end();
 
 		for (; iter != iterEnd; ++iter)
 		{
+			if (!(*iter)->IsDrawShadow())
+			{
+				continue;
+			}
+
 			(*iter)->RenderShadowMap();
 		}
 	}
@@ -766,7 +773,7 @@ void CRenderManager::RenderGBuffer()
 	CDevice::GetInst()->GetContext()->OMSetRenderTargets((unsigned int)GBufferSize,
 		&vecTarget[0], PrevDepthTarget);
 
-	for (size_t i = 0; i <= 1; ++i)
+	for (size_t i = 0; i <= (int)RenderLayerType::PostDefault; ++i)
 	{
 		auto	iter = m_RenderLayerList[i]->RenderList.begin();
 		auto	iterEnd = m_RenderLayerList[i]->RenderList.end();
@@ -779,7 +786,7 @@ void CRenderManager::RenderGBuffer()
 	}
 
 	// Default Layer Instancing
-	RenderInstancing(1, false);
+	RenderInstancing((int)RenderLayerType::Default, false);
 
 	CDevice::GetInst()->GetContext()->OMSetRenderTargets((unsigned int)GBufferSize,
 		&vecPrevTarget[0], PrevDepthTarget);
@@ -817,8 +824,8 @@ void CRenderManager::RenderDecal()
 	m_vecGBuffer[4]->SetTargetShader(11);
 	m_vecGBuffer[5]->SetTargetShader(12);
 
-	auto	iter = m_RenderLayerList[3]->RenderList.begin();
-	auto	iterEnd = m_RenderLayerList[3]->RenderList.end();
+	auto	iter = m_RenderLayerList[(int)RenderLayerType::Decal]->RenderList.begin();
+	auto	iterEnd = m_RenderLayerList[(int)RenderLayerType::Decal]->RenderList.end();
 
 	for (; iter != iterEnd; ++iter)
 	{
@@ -862,8 +869,8 @@ void CRenderManager::RenderDecal()
 	CDevice::GetInst()->GetContext()->OMSetRenderTargets((unsigned int)GBufferSize,
 		&vecTarget1[0], PrevDepthTarget1);
 
-	iter = m_RenderLayerList[3]->RenderList.begin();
-	iterEnd = m_RenderLayerList[3]->RenderList.end();
+	iter = m_RenderLayerList[(int)RenderLayerType::Decal]->RenderList.begin();
+	iterEnd = m_RenderLayerList[(int)RenderLayerType::Decal]->RenderList.end();
 
 	for (; iter != iterEnd; ++iter)
 	{
@@ -997,37 +1004,19 @@ void CRenderManager::RenderLightBlend()
 void CRenderManager::RenderTransparent()
 {
 	// z소팅
-	if (m_RenderLayerList[2]->RenderList.size() >= 2)
+	if (m_RenderLayerList[(int)RenderLayerType::Transparency]->RenderList.size() >= 2)
 	{
-		m_RenderLayerList[2]->RenderList.sort(CRenderManager::SortZ);
+		m_RenderLayerList[(int)RenderLayerType::Transparency]->RenderList.sort(CRenderManager::SortZ);
 	}
 
-	// 렌더타겟 설정
-	std::vector<ID3D11RenderTargetView*>	vecTarget;
-	std::vector<ID3D11RenderTargetView*>	vecPrevTarget;
-	ID3D11DepthStencilView* PrevDepthTarget = nullptr;
-
-	size_t	TransparentBufferSize = m_vecTransparent.size();
-
-	vecPrevTarget.resize(TransparentBufferSize);
-
-	for (size_t i = 0; i < TransparentBufferSize; ++i)
-	{
-		vecTarget.push_back(m_vecTransparent[i]->GetTargetView());
-	}
-
-	CDevice::GetInst()->GetContext()->OMGetRenderTargets((unsigned int)TransparentBufferSize,
-		&vecPrevTarget[0], &PrevDepthTarget);
-
-	CDevice::GetInst()->GetContext()->OMSetRenderTargets((unsigned int)TransparentBufferSize,
-		&vecTarget[0], PrevDepthTarget);
+	m_FinalTarget->SetTarget();
 
 	// 모든 Light정보 구조화 버퍼에 담아서 넘긴다.
 	CSceneManager::GetInst()->GetScene()->GetLightManager()->SetForwardRenderShader();
 
 	// Forward Rendering
-	auto iter = m_RenderLayerList[2]->RenderList.begin();
-	auto iterEnd = m_RenderLayerList[2]->RenderList.end();
+	auto iter = m_RenderLayerList[(int)RenderLayerType::Transparency]->RenderList.begin();
+	auto iterEnd = m_RenderLayerList[(int)RenderLayerType::Transparency]->RenderList.end();
 
 	for (; iter != iterEnd; ++iter)
 	{
@@ -1035,19 +1024,11 @@ void CRenderManager::RenderTransparent()
 	}
 
 	// Transparent Layer Instancing
-	RenderInstancing(2, true);
+	RenderInstancing((int)RenderLayerType::Transparency, true);
 
 	CSceneManager::GetInst()->GetScene()->GetLightManager()->ResetForwardRenderShader();
 
-	// 타겟 초기화
-	CDevice::GetInst()->GetContext()->OMSetRenderTargets((unsigned int)TransparentBufferSize,
-		&vecPrevTarget[0], PrevDepthTarget);
-
-	SAFE_RELEASE(PrevDepthTarget);
-	for (size_t i = 0; i < TransparentBufferSize; ++i)
-	{
-		SAFE_RELEASE(vecPrevTarget[i]);
-	}
+	m_FinalTarget->ResetTarget();
 }
 
 void CRenderManager::RenderFinalScreen()
@@ -1167,6 +1148,18 @@ void CRenderManager::RenderParticleEffectEditor()
 	CDevice::GetInst()->GetContext()->RSSetViewports(1, &PrevVP);
 }
 
+void CRenderManager::RenderPostParticle()
+{
+	// Post - 파티클 레이어 출력
+	auto	iter = m_RenderLayerList[(int)RenderLayerType::PostParticle]->RenderList.begin();
+	auto	iterEnd = m_RenderLayerList[(int)RenderLayerType::PostParticle]->RenderList.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		(*iter)->Render();
+	}
+}
+
 void CRenderManager::SetBlendFactor(const std::string& Name, float r, float g,
 	float b, float a)
 {
@@ -1220,7 +1213,7 @@ void CRenderManager::RenderInstancing(int LayerIndex, bool AlphaBlend)
 			SlotCount = ((CStaticMeshComponent*)InstancingList->RenderList.back())->GetMaterialSlotCount();
 		}
 
-		else if (m_RenderLayerList[1]->m_vecInstancing[i]->Mesh->GetMeshType() == Mesh_Type::Animation)
+		else if (m_RenderLayerList[LayerIndex]->m_vecInstancing[i]->Mesh->GetMeshType() == Mesh_Type::Animation)
 		{
 			SlotCount = ((CAnimationMeshComponent*)InstancingList->RenderList.back())->GetMaterialSlotCount();
 		}
@@ -1229,12 +1222,12 @@ void CRenderManager::RenderInstancing(int LayerIndex, bool AlphaBlend)
 		{
 			CMaterial* Material = nullptr;
 
-			if (m_RenderLayerList[1]->m_vecInstancing[i]->Mesh->GetMeshType() == Mesh_Type::Static)
+			if (m_RenderLayerList[LayerIndex]->m_vecInstancing[i]->Mesh->GetMeshType() == Mesh_Type::Static)
 			{
 				Material = ((CStaticMeshComponent*)InstancingList->RenderList.back())->GetMaterial(j);
 			}
 
-			else if (m_RenderLayerList[1]->m_vecInstancing[i]->Mesh->GetMeshType() == Mesh_Type::Animation)
+			else if (m_RenderLayerList[LayerIndex]->m_vecInstancing[i]->Mesh->GetMeshType() == Mesh_Type::Animation)
 			{
 				Material = ((CAnimationMeshComponent*)InstancingList->RenderList.back())->GetMaterial(j);
 			}
@@ -1242,14 +1235,14 @@ void CRenderManager::RenderInstancing(int LayerIndex, bool AlphaBlend)
 			if (Material)
 				Material->RenderTexture();
 
-			if (m_RenderLayerList[1]->m_vecInstancing[i]->Animation)
+			if (m_RenderLayerList[LayerIndex]->m_vecInstancing[i]->Animation)
 			{
 				((CAnimationMesh*)InstancingList->Mesh)->SetBoneShader();
 			}
 
 			if (AlphaBlend)
 			{
-				m_AlphaBlendMRT->SetState();
+				m_AlphaBlend->SetState();
 			}
 			
 			// 해당 Material의 Instancing Shader에 접근
@@ -1273,7 +1266,7 @@ void CRenderManager::RenderInstancing(int LayerIndex, bool AlphaBlend)
 
 			if (AlphaBlend)
 			{
-				m_AlphaBlendMRT->ResetState();
+				m_AlphaBlend->ResetState();
 			}
 
 			if (InstancingList->Animation)
@@ -1342,11 +1335,6 @@ void CRenderManager::UpdateInstancingList()
 					if ((*iter)->InstancingList.size() > Count)
 					{
 						Count = RecommendSBufferSize;
-					}
-
-					if (RecommendSBufferSize > 1000)
-					{
-						int a = 1;
 					}
 
 					SAFE_DELETE(Layer->m_vecInstancing[Layer->InstancingIndex]->Buffer);
@@ -1488,11 +1476,11 @@ void CRenderManager::UpdateInstancingInfo(int LayerIndex, bool UpdateShadow)
 
 void CRenderManager::RenderDefaultInstancingShadow()
 {
-	int InstancingIndex = m_RenderLayerList[1]->InstancingIndex;
+	int InstancingIndex = m_RenderLayerList[(int)RenderLayerType::Default]->InstancingIndex;
 
 	for (int i = 0; i < InstancingIndex; ++i)
 	{
-		RenderInstancingList* InstancingList = m_RenderLayerList[1]->m_vecInstancing[i];
+		RenderInstancingList* InstancingList = m_RenderLayerList[(int)RenderLayerType::Default]->m_vecInstancing[i];
 
 		// Material Slot 수만큼 반복한다.
 		int	SlotCount = 0;

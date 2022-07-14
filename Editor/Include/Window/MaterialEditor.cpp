@@ -124,6 +124,7 @@ ResourceWindow로부터 Drag,Drop 을 통해서, Material 을  볼수 있다.)";
 	Dummy = AddWidget<CIMGUIDummy>("Dummy", 150.f, 20.f);
 
 	// Set Texture
+	m_TextureRegister = AddWidget<CIMGUIInputInt>("Register", 150.f, 20.f);
 	m_TextureIndex = AddWidget<CIMGUIInputInt>("Index", 150.f, 20.f);
 
 	m_SetTextureInput = AddWidget<CIMGUITextInput>("Set Texture", 150.f, 20.f);
@@ -562,7 +563,13 @@ void CMaterialEditor::OnAddTextureBtn()
 
 		if (TargetTexture)
 		{
-			m_SelectedMaterial->AddTexture(0, (int)Buffer_Shader_Type::Pixel, FileName, TargetTexture);
+			int Reg = m_TextureRegister->GetVal();
+			if (m_TextureRegister->GetVal() < 0)
+			{
+				Reg = 0;
+			}
+
+			m_SelectedMaterial->AddTexture(Reg, (int)Buffer_Shader_Type::Pixel, FileName, TargetTexture);
 
 			TextureSetSuccessCallback(TargetTexture);
 
@@ -580,7 +587,12 @@ void CMaterialEditor::OnAddTextureBtn()
 
 		TargetTexture = CResourceManager::GetInst()->FindTexture(FileName);
 
-		m_SelectedMaterial->AddTexture(0, (int)Buffer_Shader_Type::Pixel, FileName, TargetTexture);
+		int Reg = m_TextureRegister->GetVal();
+		if (m_TextureRegister->GetVal() < 0)
+		{
+			Reg = 0;
+		}
+		m_SelectedMaterial->AddTexture(Reg, (int)Buffer_Shader_Type::Pixel, FileName, TargetTexture);
 
 		TextureSetSuccessCallback(TargetTexture);
 
@@ -598,7 +610,12 @@ void CMaterialEditor::OnAddTextureBtnWithString(const std::string& InputName)
 
 	if (TargetTexture)
 	{
-		m_SelectedMaterial->AddTexture(0, (int)Buffer_Shader_Type::Pixel, InputName, TargetTexture);
+		int Reg = m_TextureRegister->GetVal();
+		if (m_TextureRegister->GetVal() < 0)
+		{
+			Reg = 0;
+		}
+		m_SelectedMaterial->AddTexture(Reg, (int)Buffer_Shader_Type::Pixel, InputName, TargetTexture);
 
 		TextureSetSuccessCallback(TargetTexture);
 
@@ -635,7 +652,12 @@ void CMaterialEditor::OnAddTextureBtnWithString(const std::string& InputName)
 
 	TargetTexture = CResourceManager::GetInst()->FindTexture(TextureKeyName);
 
-	m_SelectedMaterial->AddTexture(0, (int)Buffer_Shader_Type::Pixel, InputName, TargetTexture);
+	int Reg = m_TextureRegister->GetVal();
+	if (m_TextureRegister->GetVal() < 0)
+	{
+		Reg = 0;
+	}
+	m_SelectedMaterial->AddTexture(Reg, (int)Buffer_Shader_Type::Pixel, InputName, TargetTexture);
 
 	TextureSetSuccessCallback(TargetTexture);
 }

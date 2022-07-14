@@ -15,6 +15,7 @@
 #include "Engine.h"
 #include "PathManager.h"
 #include "Scene/Scene.h"
+#include "Scene/SceneResource.h"
 #include "Scene/SceneManager.h"
 #include "ToonShaderWidget.h"
 #include "IMGUITextInput.h"
@@ -57,6 +58,8 @@ bool CStaticMeshComponentWidget::Init()
 	m_TransparencyEdit = m_RootTree->AddWidget<CIMGUICheckBox>("Enable Transparency", 200.f);
 
 	m_MaterialSlotCombo = m_RootTree->AddWidget<CIMGUIComboBox>("Material Slot", 200.f);
+	m_RootTree->AddWidget<CIMGUISameLine>("Line");
+	m_LoadMtrlButton = m_RootTree->AddWidget<CIMGUIButton>("Load & Add Material", 0.f, 0.f);
 	m_ShaderName = m_RootTree->AddWidget<CIMGUITextInput>("Shader", 200.f);
 	m_ShaderWidgetTree = m_RootTree->AddWidget<CIMGUITree>("Shader Params", 200.f);
 	m_BaseColorEdit = m_RootTree->AddWidget<CIMGUIColor3>("BaseColor", 200.f);
@@ -80,6 +83,7 @@ bool CStaticMeshComponentWidget::Init()
 
 	// CallBack
 	m_LoadMeshButton->SetClickCallback(this, &CStaticMeshComponentWidget::OnClickLoadMesh);
+	m_LoadMtrlButton->SetClickCallback(this, &CStaticMeshComponentWidget::OnClickLoadMaterial);
 	m_MaterialSlotCombo->SetSelectCallback(this, &CStaticMeshComponentWidget::OnSelectMaterialSlotCombo);
 	m_BaseColorEdit->SetCallBack(this, &CStaticMeshComponentWidget::OnEditBaseColor);
 	m_AmbientColorEdit->SetCallBack(this, &CStaticMeshComponentWidget::OnEditAmbientColor);
@@ -90,6 +94,7 @@ bool CStaticMeshComponentWidget::Init()
 	m_OpacityEdit->SetCallBack(this, &CStaticMeshComponentWidget::OnEditOpacity);
 	m_Metallic->SetCallBackIdx(this, &CStaticMeshComponentWidget::OnCheckMetallic);
 	m_ShaderName->SetDropCallBack(this, &CStaticMeshComponentWidget::OnDropShaderName);
+	m_MeshName->SetDropCallBack(this, &CStaticMeshComponentWidget::OnDropMeshName);
 
 	return true;
 }
@@ -135,6 +140,41 @@ void CStaticMeshComponentWidget::OnClickLoadMesh()
 	}
 }
 
+void CStaticMeshComponentWidget::OnClickLoadMaterial()
+{
+	TCHAR   FilePath[MAX_PATH] = {};
+
+	OPENFILENAME    OpenFile = {};
+
+	OpenFile.lStructSize = sizeof(OPENFILENAME);
+	OpenFile.hwndOwner = CEngine::GetInst()->GetWindowHandle();
+	OpenFile.lpstrFilter = TEXT("Material File\0*.mtrl\0");
+	OpenFile.lpstrFile = FilePath;
+	OpenFile.nMaxFile = MAX_PATH;
+	OpenFile.lpstrInitialDir = CPathManager::GetInst()->FindPath(MATERIAL_PATH)->Path;
+
+	if (GetOpenFileName(&OpenFile) != 0)
+	{
+		char FullPathMultiByte[MAX_PATH] = {};
+		int Length = WideCharToMultiByte(CP_ACP, 0, FilePath, -1, nullptr, 0, 0, 0);
+		WideCharToMultiByte(CP_ACP, 0, FilePath, Length, FullPathMultiByte, Length, 0, 0);
+
+		CMaterial* LoadMat = CResourceManager::GetInst()->LoadMaterialFullPathMultibyte(FullPathMultiByte);
+
+		if (!LoadMat)
+		{
+			MessageBox(nullptr, TEXT("Material 로드 실패"), TEXT("실패"), MB_OK);
+			return;
+		}
+
+		CStaticMeshComponent* MeshCom = (CStaticMeshComponent*)m_Component;
+		MeshCom->AddMaterial(LoadMat);
+
+		std::string MatName = LoadMat->GetName();
+		m_MaterialSlotCombo->AddItem(MatName);
+	}
+}
+
 void CStaticMeshComponentWidget::OnSelectMaterialSlotCombo(int Idx, const char* Label)
 {
 	CStaticMeshComponent* MeshCom = (CStaticMeshComponent*)m_Component;
@@ -142,10 +182,13 @@ void CStaticMeshComponentWidget::OnSelectMaterialSlotCombo(int Idx, const char* 
 	if (MeshCom->GetMesh())
 	{
 		CMaterial* Mat = MeshCom->GetMaterial(Idx);
-		std::string ShaderName = Mat->GetShader()->GetName();
-		m_ShaderName->SetText(ShaderName.c_str());
 
-		MakeShaderWidget(Mat, ShaderName);
+		if (Mat->GetShader())
+		{
+			std::string ShaderName = Mat->GetShader()->GetName();
+			m_ShaderName->SetText(ShaderName.c_str());
+			MakeShaderWidget(Mat, ShaderName);
+		}
 
 		m_BaseColorEdit->SetRGB(Mat->GetBaseColor().x, Mat->GetBaseColor().y, Mat->GetBaseColor().z);
 		m_AmbientColorEdit->SetRGB(Mat->GetAmbientColor().x, Mat->GetAmbientColor().y, Mat->GetAmbientColor().z);
@@ -302,6 +345,23 @@ void CStaticMeshComponentWidget::OnDropShaderName(const std::string& Name)
 	}
 
 	m_ShaderName->SetText(Name.c_str());
+}
+
+void CStaticMeshComponentWidget::OnDropMeshName(const std::string& Name)
+{
+	CMesh* Mesh = CResourceManager::GetInst()->FindMesh(Name);
+
+	if (!Mesh || Mesh->GetMeshType() != Mesh_Type::Static)
+	{
+		MessageBox(nullptr, TEXT("메쉬 가져오기 실패 - Static Mesh가 아니거나 Mesh가 아님"), TEXT("실패"), MB_OK);
+		return;
+	}
+
+	CStaticMeshComponent* MeshCom = (CStaticMeshComponent*)m_Component;
+
+	MeshCom->SetMesh((CStaticMesh*)Mesh);
+
+	RefreshMeshWidget(Mesh);
 }
 
 void CStaticMeshComponentWidget::RefreshMeshWidget(CMesh* Mesh)

@@ -40,6 +40,7 @@ protected:
 	bool m_Culling;
 	bool m_ReceiveDecal;
 	bool m_Instancing;
+	bool m_DrawShadow;
 	static std::list<InstancingCheckCount*> m_InstancingCheckList;
 	std::function<void(CSceneComponent*)> m_OnDestroyCallBack;
 
@@ -117,6 +118,11 @@ public:
 		return m_Render;
 	}
 
+	bool IsDrawShadow() const
+	{
+		return m_DrawShadow;
+	}
+
 	float GetViewZ() const;
 
 public:
@@ -138,6 +144,11 @@ public:
 	void SetRender(bool Render)
 	{
 		m_Render = Render;
+	}
+
+	void SetDrawShadow(bool Enable)
+	{
+		m_DrawShadow = Enable;
 	}
 
 public:

@@ -12,6 +12,7 @@ private:
 
 private:
 	std::unordered_map<std::string, CSharedPtr<CParticle>>	m_mapParticle;
+	std::function<void()> m_ChangeCallBack;
 
 public :
 	const std::unordered_map<std::string, CSharedPtr<CParticle>>& GetMapParticle() const
@@ -35,6 +36,13 @@ public:
 		// Particle->SetConstantBuffer(m_CBuffer);
 
 		return Particle;
+	}
+
+public:
+	template <typename T>
+	void AddResourceChangeCallBack(T* Obj, void(T::* Func)())
+	{
+		m_ChangeCallBack = std::bind(Func, Obj);
 	}
 };
 

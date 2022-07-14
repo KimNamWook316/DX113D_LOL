@@ -266,6 +266,7 @@ enum class SceneComponent3DType
 	ColliderHalfLine,
 	ColliderRay,
 	NavMeshComponent,
+	WaterComponent,
 	PlayerNormalAttackCheckCollider,
 	EyeLaserComponent,
 	PlayerHookComponent,
@@ -381,6 +382,17 @@ enum class ParticleSpecialMoveDir
 	XZSpread = 0, // xz 평명 방향으로 이동 y는 0
 	XYSpread, // xy 평명 방향으로 이동 z 는 0
 	Max
+};
+
+enum class PaperBurnEndEvent
+{
+	None,
+	Destroy,
+	Disable,
+	Return,
+	Reset,
+	Max	
+};
 };
 
 enum class HookResult

@@ -73,6 +73,11 @@ PSOutput_GBuffer ToonPS(Vertex3DOutput input)
 
     output.GBuffer3.a = ConvertColor(EmissiveColor);
 
+    if (g_MtrlPaperBurnEnable)
+	{
+		output.Diffuse = PaperBurn2D(output.Diffuse, input.UV);
+	}
+
 	return output;
 }
 
@@ -155,6 +160,11 @@ PSOutput_GBuffer ToonInstancingPS(Vertex3DOutputInstancing input)
 		EmissiveColor = g_EmissiveTexture.Sample(g_BaseSmp, input.UV).xxxx;
     
 	output.GBuffer3.a = ConvertColor(EmissiveColor);
+
+	if (g_InstancingInfoArray[InstancingIndex].g_MtrlPaperBurnEnable)
+	{
+		output.Diffuse = PaperBurn2D(output.Diffuse, input.UV);
+	}
 
 	return output;
 }

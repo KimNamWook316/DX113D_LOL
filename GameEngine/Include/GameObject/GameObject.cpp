@@ -3,6 +3,7 @@
 #include "../Scene/SceneManager.h"
 #include "../PathManager.h"
 #include "../Component/NavAgent.h"
+#include "../Component/PaperBurnComponent.h"
 
 CGameObject::CGameObject() :
 	m_Scene(nullptr),

@@ -1,5 +1,7 @@
 #include "GameObjectWidget.h"
 #include "GameObject/GameObject.h"
+#include "IMGUIManager.h"
+#include "../EditorInfo.h"
 #include "IMGUITextInput.h"
 #include "IMGUIText.h"
 #include "IMGUIButton.h"
@@ -8,6 +10,7 @@
 #include "IMGUISeperator.h"
 #include "IMGUIDummy.h"
 #include "IMGUIComboBox.h"
+// SceneComponent
 #include "Component/StaticMeshComponent.h"
 #include "Component/AnimationMeshComponent.h"
 #include "Component/LightComponent.h"
@@ -18,6 +21,10 @@
 #include "Component/ColliderHalfLine.h"
 #include "Component/ColliderRay.h"
 #include "Component/NavMeshComponent.h"
+#include "Component/WaterComponent.h"
+// ObjectComponent
+#include "Component/PaperBurnComponent.h"
+// SceneCompWidget
 #include "../Component/PlayerHookComponent.h"
 #include "../Component/EyeLaserComponent.h"
 #include "../Component/PlayerNormalAttackCheckCollider.h"
@@ -31,6 +38,9 @@
 #include "../Widget/NavMeshComponentWidget.h"
 #include "../Widget/ColliderComponentWidget.h"
 #include "../Widget/ColliderSphereWidget.h"
+#include "../Widget/WaterComponentWidget.h"
+// ObjCompWidget
+#include "../Widget/PaperBurnWidget.h"
 #include "../Widget/EyeLaserComponentWidget.h"
 #include "IMGUIManager.h"
 #include "../EditorInfo.h"
@@ -195,6 +205,10 @@ void CGameObjectWidget::CreateSceneComponentWidget(CSceneComponent* Com)
 	{
 		Widget = AddWidget<CNavMeshComponentWidget>("NavMeshComponentWidget");
 	}
+	else if (TypeID == typeid(CWaterComponent).hash_code())
+	{
+		Widget = AddWidget<CWaterComponentWidget>("WaterComponentWidget");
+	}
 	else if (TypeID == typeid(CEyeLaserComponent).hash_code())
 	{
 		Widget = AddWidget<CEyeLaserComponentWidget>("EyeLaserComponentWidget");
@@ -217,6 +231,14 @@ void CGameObjectWidget::CreateObjectComponentWidget(CObjectComponent* Com)
 
 	CObjectComponentWidget* Widget = nullptr;
 
+	if (TypeID == typeid(CPaperBurnComponent).hash_code())
+	{
+		Widget = AddWidget<CPaperBurnWidget>("PaperBurnWidget");
+	}
+	else
+	{
+		Widget = AddWidget<CObjectComponentWidget>("DefaultObjCompWidget");
+	}
 
 	if (Widget)
 	{

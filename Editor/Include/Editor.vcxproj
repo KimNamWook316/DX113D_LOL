@@ -252,6 +252,7 @@
     <ClCompile Include="Widget\DataMenu.cpp" />
     <ClCompile Include="Widget\EyeLaserComponentWidget.cpp" />
     <ClCompile Include="Widget\NavMeshComponentWidget.cpp" />
+    <ClCompile Include="Widget\PaperBurnWidget.cpp" />
     <ClCompile Include="Widget\ResourceMenu.cpp" />
     <ClCompile Include="Widget\GameObjectWidget.cpp" />
     <ClCompile Include="Widget\LandScapeWidget.cpp" />
@@ -265,6 +266,7 @@
     <ClCompile Include="Widget\ToonShaderWidget.cpp" />
     <ClCompile Include="Widget\TransformWidget.cpp" />
     <ClCompile Include="Widget\UtilMenuBar.cpp" />
+    <ClCompile Include="Widget\WaterComponentWidget.cpp" />
     <ClCompile Include="Window\AnimationDisplayWindow.cpp" />
     <ClCompile Include="Window\AnimationEditor.cpp" />
     <ClCompile Include="Thread\FBXConvertThread.cpp" />
@@ -386,6 +388,7 @@
     <ClInclude Include="Widget\LightComponentWidget.h" />
     <ClInclude Include="Widget\NavMeshComponentWidget.h" />
     <ClInclude Include="Widget\ObjectComponentWidget.h" />
+    <ClInclude Include="Widget\PaperBurnWidget.h" />
     <ClInclude Include="Widget\ParticleComponentWidget.h" />
     <ClInclude Include="Widget\ResourceMenu.h" />
     <ClInclude Include="Widget\SaveLoadBeginMenu.h" />
@@ -395,6 +398,7 @@
     <ClInclude Include="Widget\ToonShaderWidget.h" />
     <ClInclude Include="Widget\TransformWidget.h" />
     <ClInclude Include="Widget\UtilMenuBar.h" />
+    <ClInclude Include="Widget\WaterComponentWidget.h" />
     <ClInclude Include="Window\AnimationDisplayWindow.h" />
     <ClInclude Include="Window\AnimationEditor.h" />
     <ClInclude Include="Thread\FBXConvertThread.h" />

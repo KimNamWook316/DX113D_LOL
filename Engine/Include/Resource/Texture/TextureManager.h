@@ -14,12 +14,14 @@ private:
 	std::unordered_map<std::string, CSharedPtr<class CTexture>>	m_mapTexture;
 	std::unordered_map<std::string, ID3D11SamplerState*>	m_mapSampler;
 	class CWidgetConstantBuffer* m_CBuffer;
+	std::function<void()> m_ChangeCallBack;
 
 public :
 	const std::unordered_map<std::string, CSharedPtr<class CTexture>>& GetMapTexture() const
 	{
 		return m_mapTexture;
 	}
+
 public:
 	bool Init();
 	void RenderTarget(class CMesh* Mesh, class CShader* Shader);
@@ -61,5 +63,12 @@ public:
 	ID3D11SamplerState* FindSampler(const std::string& Name);
 	void SetSampler(const std::string& Name, int Register,
 		int ShaderType = (int)Buffer_Shader_Type::All);
+
+public:
+	template <typename T>
+	void AddResourceChangeCallBack(T* Obj, void(T::* Func)())
+	{
+		m_ChangeCallBack = std::bind(Func, Obj);
+	}
 };
 

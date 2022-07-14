@@ -41,6 +41,7 @@
 #include "BlurVerticalShader.h"
 #include "BlurHorizontalShader.h"
 #include "ToonShader.h"
+#include "WaterShader.h"
 #include "LaserShader.h"
 
 CShaderManager::CShaderManager()
@@ -202,8 +203,17 @@ bool CShaderManager::Init()
 		return false;
 	}
 
-	if (!CreateShader<CLaserShader>("LaserShader"))
+	if (!CreateShader<CWaterShader>("WaterShader"))
+	{
+		assert(false);
 		return false;
+	}
+
+	if (!CreateShader<CLaserShader>("LaserShader"))
+	{
+		assert(false);
+		return false;
+	}
 
 	// =================== 상수버퍼 ===================
 	CreateConstantBuffer("TransformCBuffer", sizeof(TransformCBuffer), 0,
@@ -257,9 +267,6 @@ bool CShaderManager::Init()
 	CreateConstantBuffer("ShadowCBuffer", sizeof(ShadowCBuffer), 10,
 		(int)Buffer_Shader_Type::Graphic);
 
- //	CreateConstantBuffer("OutlineConstantBuffer", sizeof(OutlineCBuffer), 10,
- //		(int)Buffer_Shader_Type::Pixel);
-
 	CreateConstantBuffer("DownScaleCBuffer", sizeof(DownScaleCBuffer), 10,
 		(int)Buffer_Shader_Type::Compute);
 
@@ -271,6 +278,10 @@ bool CShaderManager::Init()
 
 	CreateConstantBuffer("GlobalLightCBuffer", sizeof(GlobalLightCBuffer), 11,
 		(int)Buffer_Shader_Type::Pixel);
+
+	CreateConstantBuffer("WaterCBuffer", sizeof(WaterCBuffer), 13,
+		(int)Buffer_Shader_Type::Pixel | (int)Buffer_Shader_Type::Vertex);
+
 	return true;
 }
 
@@ -303,7 +314,13 @@ void CShaderManager::ReleaseShader(const std::string& Name)
 	if (iter != m_mapShader.end())
 	{
 		if (iter->second->GetRefCount() == 1)
+		{
 			m_mapShader.erase(iter);
+			if (m_ChangeCallBack)
+			{
+				m_ChangeCallBack();
+			}
+		}
 	}
 }
 

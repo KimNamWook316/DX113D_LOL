@@ -239,6 +239,40 @@ bool CMeshManager::Init()
 		&HalfLineIdx[0], sizeof(int), 2,
 		D3D11_USAGE_DEFAULT, DXGI_FORMAT_R32_UINT);
 
+	Vertex3D DefaultPlaneVertcies[4];
+	
+	DefaultPlaneVertcies[0].Pos = Vector3(-0.5f, 0.f, 0.5f);
+	DefaultPlaneVertcies[1].Pos = Vector3(0.5f, 0.f, 0.5f);
+	DefaultPlaneVertcies[2].Pos = Vector3(0.5f, 0.f, -0.5f);
+	DefaultPlaneVertcies[3].Pos = Vector3(-0.5f, 0.f, -0.5f);
+	DefaultPlaneVertcies[0].UV = Vector2(0.f, 0.f);
+	DefaultPlaneVertcies[1].UV = Vector2(1.f, 0.f);
+	DefaultPlaneVertcies[2].UV = Vector2(1.f, 1.f);
+	DefaultPlaneVertcies[3].UV = Vector2(0.f, 1.f);
+	DefaultPlaneVertcies[0].Normal = Vector3(0.f, 1.f, 0.f);
+	DefaultPlaneVertcies[1].Normal = Vector3(0.f, 1.f, 0.f);
+	DefaultPlaneVertcies[2].Normal = Vector3(0.f, 1.f, 0.f);
+	DefaultPlaneVertcies[3].Normal = Vector3(0.f, 1.f, 0.f);
+	DefaultPlaneVertcies[0].Tangent = Vector3(1.f, 0.f, 0.f);
+	DefaultPlaneVertcies[1].Tangent = Vector3(1.f, 0.f, 0.f);
+	DefaultPlaneVertcies[2].Tangent = Vector3(1.f, 0.f, 0.f);
+	DefaultPlaneVertcies[3].Tangent = Vector3(1.f, 0.f, 0.f);
+	DefaultPlaneVertcies[0].Binormal = Vector3(0.f, 0.f, 1.f);
+	DefaultPlaneVertcies[1].Binormal = Vector3(0.f, 0.f, 1.f);
+	DefaultPlaneVertcies[2].Binormal= Vector3(0.f, 0.f, 1.f);
+	DefaultPlaneVertcies[3].Binormal = Vector3(0.f, 0.f, 1.f);
+
+	int DefaultPlaneIndices[6] =
+	{
+		0, 1, 2,
+		0, 2, 3
+	};
+
+	CreateMesh(Mesh_Type::Static, "DefaultPlane",
+		&DefaultPlaneVertcies[0], sizeof(Vertex3D), 4,
+		D3D11_USAGE_DEFAULT, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST,
+		&DefaultPlaneIndices[0], sizeof(int), 6,
+		D3D11_USAGE_DEFAULT, DXGI_FORMAT_R32_UINT);
 
 
 	CMesh* PlaneMesh = new CStaticMesh;
@@ -319,6 +353,11 @@ bool CMeshManager::CreateMesh(Mesh_Type Type, const std::string& Name,
 
 	m_mapMesh.insert(std::make_pair(Name, Mesh));
 
+	if (m_ChangeCallBack)
+	{
+		m_ChangeCallBack();
+	}
+
 	return true;
 }
 
@@ -343,6 +382,11 @@ bool CMeshManager::CreateNavMesh(CNavMesh* NavMesh, const std::string& Name,
 	}
 
 	m_mapMesh.insert(std::make_pair(Name, NavMesh));
+
+	if (m_ChangeCallBack)
+	{
+		m_ChangeCallBack();
+	}
 
 	return true;
 }
@@ -478,6 +522,11 @@ bool CMeshManager::LoadMeshFullPathMultibyte(Mesh_Type Type, const std::string& 
 
 	m_mapMesh.insert(std::make_pair(Name, Mesh));
 
+	if (m_ChangeCallBack)
+	{
+		m_ChangeCallBack();
+	}
+
 	return true;
 }
 
@@ -510,6 +559,12 @@ bool CMeshManager::LoadMeshFullPathMultibyte(std::string& OutName, Mesh_Type Typ
 	}
 
 	m_mapMesh.insert(std::make_pair(OutName, Mesh));
+
+	if (m_ChangeCallBack)
+	{
+		m_ChangeCallBack();
+	}
+
 	return true;
 }
 
@@ -563,7 +618,14 @@ void CMeshManager::ReleaseMesh(const std::string& Name)
 	if (iter != m_mapMesh.end())
 	{
 		if (iter->second->GetRefCount() == 1)
+		{
 			m_mapMesh.erase(iter);
+
+			if (m_ChangeCallBack)
+			{
+				m_ChangeCallBack();
+			}
+		}
 	}
 }
 
