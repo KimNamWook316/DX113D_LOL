@@ -738,8 +738,9 @@ void CAnimationEditor::OnMakeAnimInstByExcel()
 		int AddedKeyNameLength = (int)AddedKeyName.length();
 
 		// AddedKeyName 중에서 '_' 뒤의 문자를 가져온다. 
+		// 단, 맨 뒤에서부터 검사한다. (따라서, str.find 가 아니라, rfind 를 사용할 것이다.)
 		std::string_view AddedKeyNameAfterLowDash = AddedKeyName;
-		AddedKeyNameAfterLowDash = AddedKeyNameAfterLowDash.substr(AddedKeyNameAfterLowDash.find('_') + 1, AddedKeyNameAfterLowDash.length());
+		AddedKeyNameAfterLowDash = AddedKeyNameAfterLowDash.substr(AddedKeyNameAfterLowDash.rfind('_') + 1, AddedKeyNameAfterLowDash.length());
 
 		std::string NewLableKeyName;
 

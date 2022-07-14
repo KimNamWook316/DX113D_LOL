@@ -65,7 +65,7 @@ cbuffer	ParticleCBuffer : register(b7)
 
 	int g_ParticleApplyNoiseTexture; // Pixel Shader 에서 매순간 Noise Texture 로 부터, Sampling 을 해서 Color, Alpha 값 등을 바꾸는 것
 	int g_ParticleApplyToonBaseTexture; // 우선 보류
-	float g_ParticleSpeedChangeExponentialCoefficient;
+	float g_ParticleExponentialAndLogFunctionXIntercept;
 	int g_ParticleEmpty2;
 };
 
@@ -414,14 +414,17 @@ float3 ApplyAliveParticleMove(int ThreadID)
 				// x 는 0 ~ LifeTimeMax 까지 증가하고
 				// y 는 SpeedStart ~ SpeedEnd 까지 증가한다.
 
+				// g_ParticleArray[ThreadID.x].LifeTime 이 x 미지수
+				// y 가 Speed 미지수 
+
 				// 1. 점차 증가하는 경우
 				if (Inclination > 0)
 				{
-					// 	y = a ^ (x - g_ParticleArray[ThreadID.x].LifeTime / 2.f) + (ScaledSpeedStart)
-					// ScaledSpeedEnd = a ^ (g_ParticleArray[ThreadID.x].LifeTime - g_ParticleArray[ThreadID.x].LifeTime / 2.f) + (ScaledSpeedStart)
-					// a ^ (g_ParticleArray[ThreadID.x].LifeTime / 2.f)  = (ScaledSpeedEnd - ScaledSpeedStart)
+					// 	y = a ^ (x - g_ParticleArray[ThreadID.x].LifeTimeMax / 2.f) + (ScaledSpeedStart)
+					// ScaledSpeedEnd = a ^ (g_ParticleArray[ThreadID.x].LifeTime - g_ParticleArray[ThreadID.x].LifeTimeMax / 2.f) + (ScaledSpeedStart)
+					// a ^ (g_ParticleArray[ThreadID.x].LifeTime - g_ParticleArray[ThreadID.x].LifeTimeMax / 2.f)  = (ScaledSpeedEnd - ScaledSpeedStart)
 					// pow(x, y) : x^y
-					// a = pow(ScaledSpeedEnd - ScaledSpeedStart), 1 / (g_ParticleArray[ThreadID.x].LifeTime / 2.f));
+					// a = pow(ScaledSpeedEnd - ScaledSpeedStart), 1 / (g_ParticleArray[ThreadID.x].LifeTimeMax / 2.f));
 
 					// a의 값 (밑)
 					// - a 는 항상 1 보다 큰 계수여야 한다.
@@ -441,13 +444,21 @@ float3 ApplyAliveParticleMove(int ThreadID)
 					if (ExponentialBottom + ScaledSpeedStart > ScaledSpeedStart + 1)
 					{
 						g_ParticleArray[ThreadID].Speed = pow(ExponentialBottom, g_ParticleArray[ThreadID].LifeTime + XInterceptOffet - g_ParticleArray[ThreadID].LifeTimeMax * 0.5f) + ScaledSpeedStart;
+					
+						// 아래 코드를 넣게 되면, 부자연스럽다.
+						// 지수 함수는 Y 축이 무한대로 증가한다.
+						// 이 경우, Speed End 값에 고정시킨다.
+						// if (g_ParticleArray[ThreadID].Speed > ScaledSpeedEnd)
+						// {
+						// 	g_ParticleArray[ThreadID].Speed = ScaledSpeedEnd;
+						// }
 					}
 					else
 					{
 						g_ParticleArray[ThreadID].Speed = ScaledSpeedStart + LifeTimeRatio * (ScaledSpeedEnd - ScaledSpeedStart);
 					}
 				}
-				else
+				else if (Inclination < 0)
 				{
 					// 	y = -1 * a ^ (x - g_ParticleArray[ThreadID.x].LifeTime / 2.f) + (ScaledSpeedStart)
 					// ScaledSpeedEnd = -1 * a ^ (g_ParticleArray[ThreadID.x].LifeTime - g_ParticleArray[ThreadID.x].LifeTime / 2.f) + (ScaledSpeedStart)
@@ -467,20 +478,94 @@ float3 ApplyAliveParticleMove(int ThreadID)
 					// x 가 6일때, -1 * a + 3 
 					// a 가 1 보다 큰 값이라면, -1 * a + 3 이, (3 - 1) 인 2 라는 값보다 작아야 한다.
 					// 따라서, 이 경우에는, 선형적으로 감소하게 세팅한다.
-					if (ExponentialBottom + ScaledSpeedStart < ScaledSpeedStart - 1)
+					if (-1 * ExponentialBottom + ScaledSpeedStart < ScaledSpeedStart - 1)
 					{
 						g_ParticleArray[ThreadID].Speed = -1 * pow(ExponentialBottom, g_ParticleArray[ThreadID].LifeTime + XInterceptOffet - g_ParticleArray[ThreadID].LifeTimeMax * 0.5f) + ScaledSpeedStart;
+					
+						// 지수 함수는 y 값이 무한대로 감소하므로, 0 아래로 내려가지는 않게 한다.
+						// 원래는 ScaledSpeedEnd 로 줘야 하는데, 부자연 스러운 느낌이 있을까봐, 우선 0으로 세팅
+						if (g_ParticleArray[ThreadID].Speed < 0)
+						{
+							g_ParticleArray[ThreadID].Speed = 0;
+						}
 					}
 					else
 					{
 						g_ParticleArray[ThreadID].Speed = ScaledSpeedStart - LifeTimeRatio * (ScaledSpeedEnd - ScaledSpeedStart);
 					}
 				}
+				// 기울기가 0 일 경우 -> Speed Start, End 가 같다는 것
+				else if (Inclination == 0)
+				{
+					
+				}
 			}
 			break;
 			case 3:
 			{
+				// y = log a (x) + C
+				// X 절편은 별도로 두지 않는다.
+				// 대신 C 의 경우, SpeedStart 로 세팅한다.
+				// 자, 그런데 hlsl 에서 제공해주는 log 함수의 경우, 밑이 e, 2, 10 에 제한되어 있다.
+				// log a (X) = log e (X) / log e (a)
+				/*
+				1)
+				log 함수
+				X 범위 : LifeTime
+				Y 범위 : Speed St -> Ed
 
+				2)
+				지수 함수
+				X 범위 : Speed St -> Ed
+				Y 범위 : LifeTime -> 0 부터 시작하므로, Y절편 존재 X
+				- X 절편 : (Ed - St) * 0.5 + St
+
+				y = a ^ (x - X 절편)
+
+				3) 실시간 LifeTime x 값을
+				- 지수함수 y 값에 세팅 -> x 값 구하기
+				- 구한 x 값을, log 함수에서의 y 로 세팅, 즉, Speed 값으로 세팅
+				- 단, 추가적인 범위 제한 세팅
+
+				*/
+
+
+				// 1. 점차 증가하는 경우
+				if (Inclination > 0)
+				{
+
+					// y = a ^ (x - b)
+					// b : (ScaledSpeedEnd - ScaledSpeedStart) * 0.5f + ScaledSpeedStart
+					float ExponentialBottom = pow(g_ParticleArray[ThreadID].LifeTimeMax, 1 / (ScaledSpeedEnd - ScaledSpeedStart) * 0.5f);
+
+					// 우선, 결과적으로 얻어낸 a 라는 밑. 이 1보다 큰지 아닌지는 검사하지 않는다.
+					// 기본적으로 Inclination 가 양수라면, ExponentialBottom 도 1보다 큰 값이 나올 것 같기 때문이다.
+					// g_ParticleArray[ThreadID].Speed = -1 * pow(ExponentialBottom, g_ParticleArray[ThreadID].LifeTime + XInterceptOffet - g_ParticleArray[ThreadID].LifeTimeMax * 0.5f) + ScaledSpeedStart;
+
+					// log();
+
+					// 로그 함수의 경우, 시작 y 자체가 음의 무한대
+					// 따라서 최소 Speed 는 Speed Start 로 잡아준다
+					if (g_ParticleArray[ThreadID].Speed < ScaledSpeedStart)
+					{
+						g_ParticleArray[ThreadID].Speed = ScaledSpeedStart;
+					}
+
+					// 그리고 로그 함수에서 X 는 0 이 될 수 없다.
+// 따라서 Lifetime 이 0 이라고 하더라도, 0.01 정도로 잡아주고 시작한다.
+					if (g_ParticleArray[ThreadID].LifeTime == 0.f)
+					{
+						g_ParticleArray[ThreadID].LifeTime = 0.001f;
+					}
+				}
+				else if (Inclination < 0)
+				{
+
+				}
+				else if (Inclination == 0)
+				{
+
+				}
 			}
 			break;
 		}
