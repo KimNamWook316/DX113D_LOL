@@ -29,7 +29,17 @@ protected:
 	ParticleInfoShared						m_InfoShared;
 	float									m_SpawnTime;
 	float									m_SpawnTimeMax;
+	// BillBoard
 	bool  m_BillBoardEffect;
+	// Move
+	float m_ParticleMoveSpeed;
+	Vector3 m_ParticleNextMovePos;
+	Vector3 m_ParticleMoveDir;
+	// Bazier
+	bool m_BazierMoveEffect;
+	std::queue<Vector3> m_queueBazierMovePos;
+	// 중력 적용
+	bool m_GravityEnable;
 protected:
 	// class CStructuredBuffer*					m_NormalDistributionBuffer;
 private :
@@ -56,6 +66,14 @@ public :
 		return m_Material;
 	}
 public :
+	void SetGravityEffect(bool Enable)
+	{
+		m_ParticleMoveSpeed = Enable;
+	}
+	void SetParticleMoveSpeed(float Speed)
+	{
+		m_ParticleMoveSpeed = Speed;
+	}
 	void SetParticleClassFileName(const std::string& ParticleFileName)
 	{
 		m_ParticleName = ParticleFileName;
@@ -68,9 +86,16 @@ public :
 	{
 		m_BillBoardEffect = Enable;
 	}
+	void SetBazierMoveEffect(bool Enable)
+	{
+		m_BazierMoveEffect = Enable;
+	}
 private :
 	void ApplyBillBoardEffect();
-
+	void ApplyBazierMove();
+	// Bazier 방식으로 특정 방향을 따라가게 세팅한다.
+public :
+	void SetBazierTargetPos(const Vector3& D1, const Vector3& D2, const Vector3& D3);
 public:
 	virtual void Start();
 	virtual bool Init();

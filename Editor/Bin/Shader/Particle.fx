@@ -3,7 +3,7 @@
 
 #define PARTICLE_INIT_ANGLE 1000
 
-cbuffer	ParticleCBuffer : register(b7)
+cbuffer	ParticleCBuffer : register(b11)
 {
 	uint	g_ParticleSpawnEnable;	// 파티클 생성여부
 	float3	g_ParticleStartMin;		// 파티클이 생성될 영역의 Min
@@ -19,8 +19,8 @@ cbuffer	ParticleCBuffer : register(b7)
 	float4	g_ParticleColorMin;		// 생성될 파티클의 색상 Min
 	float4	g_ParticleColorMax;		// 생성될 파티클의 색상 Max
 
-	float	g_ParticleSpeedStart;		// 파티클의 최소 이동속도
-	float	g_ParticleSpeedEnd;		// 파티클의 최대 이동속도
+	float	g_ParticleSpeedMin;		// 파티클의 최소 이동속도
+	float	g_ParticleSpeedMax;		// 파티클의 최대 이동속도
 	int		g_ParticleMove;			// 이동을 하는지 안하는지
 	int		g_ParticleGravity;		// 중력 적용을 받는지 안받는지
 
@@ -61,12 +61,7 @@ cbuffer	ParticleCBuffer : register(b7)
 
 	// Particle Component WorldPos
 	float3 g_ParticleComponentWorldPos;
-	int g_ParticleSpeedChangeMethod;
-
-	int g_ParticleApplyNoiseTexture; // Pixel Shader 에서 매순간 Noise Texture 로 부터, Sampling 을 해서 Color, Alpha 값 등을 바꾸는 것
-	int g_ParticleApplyToonBaseTexture; // 우선 보류
-	float g_ParticleExponentialAndLogFunctionXIntercept;
-	int g_ParticleEmpty2;
+	int ParticleEmpty6;
 };
 
 #define	GRAVITY	9.8f
@@ -194,7 +189,7 @@ float3x3 ComputeRotationMatrix(float3 Angle)
 }
 
 
-void ApplyInitSpecialParticleGenerateShape(float RandomAngle, int ThreadID, float FinalAppliedRadius,
+void ApplySpecialParticleGenerateShape(float RandomAngle, int ThreadID, float FinalAppliedRadius,
 	float Rand)
 {
 	switch (g_ParticleGenerateShapeType)
@@ -239,12 +234,12 @@ void ApplyInitSpecialParticleGenerateShape(float RandomAngle, int ThreadID, floa
 	{
 		// 생성 각도도 Random
 		// 생성 반지름 크기도 Random
-		// float RandomRadius = FinalAppliedRadius * Rand;
+		float RandomRadius = FinalAppliedRadius * Rand;
 
 		float3 CirclePos = float3(0.f, 0.f, 0.f) + float3(
-			cos(RandomAngle) * FinalAppliedRadius * Rand,
+			cos(RandomAngle) * RandomRadius,
 			0.f,
-			sin(RandomAngle) * FinalAppliedRadius * Rand);
+			sin(RandomAngle) * RandomRadius);
 
 		g_ParticleArray[ThreadID].LocalPos = CirclePos;
 	}
@@ -286,7 +281,7 @@ void ApplyInitSpecialParticleGenerateShape(float RandomAngle, int ThreadID, floa
 	}
 }
 
-void ApplyInitSpecialMoveDirType(int ThreadID, float RandomAngle, float3 OriginDir, float Rand)
+void ApplySpecialMoveDirType(int ThreadID, float RandomAngle, float3 OriginDir, float Rand)
 {
 	float MoveTowardAngle = RandomAngle;
 
@@ -330,15 +325,12 @@ void ApplyInitSpecialMoveDirType(int ThreadID, float RandomAngle, float3 OriginD
 	}
 }
 
-// LifeTime 이 Setting 되고 나서, 해당 함수를 실행해야 한다.
-void ApplyInitParticleMove(float3 RandomPos, int ThreadID, float RandomAngle, float Rand)
+void ApplyParticleMove(float3 RandomPos, int ThreadID, float RandomAngle, float Rand)
 {
 	// Rand는 0 에서 1 사이의 값
 	// Move 하는 Particle 이라면, Speed 와 Dir 를 세팅한다.
 	if (g_ParticleMove == 1)
 	{
-		float ParticleComponentScaleRatio = (g_ParticleCommonWorldScale.x / 3.f + g_ParticleCommonWorldScale.y / 3.f + g_ParticleCommonWorldScale.z / 3.f);
-
 		// RandomPos.xyz 는 각각 0 에서 1 사이의 값 --> -1 에서 1 사이의 값으로 바꾼다.
 		// ex) 360도 => -180 ~ 180 도 사이의 랜덤한 각도로 회전을 한다고 생각하면 된다.
 		float3	ConvertAngle = (RandomPos.xyz * 2.f - 1.f) * g_ParticleMoveAngle;
@@ -352,260 +344,12 @@ void ApplyInitParticleMove(float3 RandomPos, int ThreadID, float RandomAngle, fl
 
 		float3	Dir = normalize(mul(g_ParticleMoveDir, matRot));
 
-		float ScaledSpeedStart = g_ParticleSpeedStart * ParticleComponentScaleRatio;
-		float ScaledSpeedEnd = g_ParticleSpeedEnd * ParticleComponentScaleRatio;
-
-		g_ParticleArray[ThreadID.x].Speed = Rand * (ScaledSpeedEnd - ScaledSpeedStart) + ScaledSpeedStart;
-
-		// Start 에서 End 로 점점 바뀌어야 한다.
-		// 따라서 최초 Speed 는 g_ParticleSpeedStart 로 세팅한다.
-		if (g_ParticleSpeedChangeMethod >= 1)
-		{
-			g_ParticleArray[ThreadID.x].Speed = ScaledSpeedStart;
-		}
-
+		g_ParticleArray[ThreadID.x].Speed = Rand * (g_ParticleSpeedMax - g_ParticleSpeedMin) + g_ParticleSpeedMin;
 		g_ParticleArray[ThreadID.x].Dir = Dir;
 
 		// 단순 Dir 이동이 아니라, 특정 방향으로 Special 하게 이동하는 설정을 했다면
-		ApplyInitSpecialMoveDirType(ThreadID, RandomAngle, OriginDir, Rand);
+		ApplySpecialMoveDirType(ThreadID, RandomAngle, OriginDir, Rand);
 	}
-}
-
-float3 ApplyAliveParticleMove(int ThreadID)
-{
-	// Speed 에 Particle Component의 Scale 변화도 반영
-	float ParticleComponentScaleRatio = (g_ParticleCommonWorldScale.x / 3.f + g_ParticleCommonWorldScale.y / 3.f + g_ParticleCommonWorldScale.z / 3.f);
-
-	float ScaledSpeedStart = g_ParticleSpeedStart * ParticleComponentScaleRatio;
-	float ScaledSpeedEnd   = g_ParticleSpeedEnd * ParticleComponentScaleRatio;
-
-	float3	MovePos = (float3)0.f;
-
-	float LifeTimeRatio = g_ParticleArray[ThreadID].LifeTime / g_ParticleArray[ThreadID].LifeTimeMax;
-
-	float Inclination = (ScaledSpeedEnd - ScaledSpeedStart / g_ParticleArray[ThreadID].LifeTimeMax);
-
-	// X 절편 Offset
-	// 해당 숫자만큼, 실제 지수함수 그래프에서의 X 절편을 왼쪽으로 댕긴다.
-	// 그러면, 실제 그래프에서의 증가 및 감소폭보다 크게 증가 및 감소하게 된다.
-	float XInterceptOffet = 0.0f;
-
-	// Start 에서 End 로 점점 바뀌어야 한다.
-// 따라서 최초 Speed 는 g_ParticleSpeedStart 로 세팅한다.
-	if (g_ParticleSpeedChangeMethod >= 1)
-	{
-		switch (g_ParticleSpeedChangeMethod)
-		{
-			// 선형적으로 
-			case 1:
-			{
-				g_ParticleArray[ThreadID].Speed = ScaledSpeedStart + LifeTimeRatio * (ScaledSpeedEnd - ScaledSpeedStart);
-				// LifeTimeRatio
-			}
-			break;
-
-			// 지수 분포
-			case 2:
-			{
-				// y = a^(x - b) + c
-				// c 는 Speed Start
-				// b 는 LifeTime 중간
-				// x,y 그래프에서
-				// x 는 0 ~ LifeTimeMax 까지 증가하고
-				// y 는 SpeedStart ~ SpeedEnd 까지 증가한다.
-
-				// g_ParticleArray[ThreadID.x].LifeTime 이 x 미지수
-				// y 가 Speed 미지수 
-
-				// 1. 점차 증가하는 경우
-				if (Inclination > 0)
-				{
-					// 	y = a ^ (x - g_ParticleArray[ThreadID.x].LifeTimeMax / 2.f) + (ScaledSpeedStart)
-					// ScaledSpeedEnd = a ^ (g_ParticleArray[ThreadID.x].LifeTime - g_ParticleArray[ThreadID.x].LifeTimeMax / 2.f) + (ScaledSpeedStart)
-					// a ^ (g_ParticleArray[ThreadID.x].LifeTime - g_ParticleArray[ThreadID.x].LifeTimeMax / 2.f)  = (ScaledSpeedEnd - ScaledSpeedStart)
-					// pow(x, y) : x^y
-					// a = pow(ScaledSpeedEnd - ScaledSpeedStart), 1 / (g_ParticleArray[ThreadID.x].LifeTimeMax / 2.f));
-
-					// a의 값 (밑)
-					// - a 는 항상 1 보다 큰 계수여야 한다.
-					// - LifeTimeMax 의 경우, Speed 와 같이 ParticleComponentScaleRatio 가 반영된 상태여야 한다.
-					float ExponentialBottom = pow(ScaledSpeedEnd - ScaledSpeedStart, 1 / (g_ParticleArray[ThreadID].LifeTimeMax * 0.5f));
-
-					// a 의 값이 1보다 커야 한다.
-					// 이를 확인하기 위해서는 a ^ (x-b) 에서 (x-b) 부분을 1로 만들어주면 된다.
-					// 그리고 이때의 y 값은, ScaledSpeedStart + 1 보다 큰 값이어야 한다.
-					// ex) y = a ^ (x-5) + 3
-					// x 가 5일때, 4
-					// x 가 6일때, a + 3 
-					// a 가 1 보다 큰 값이라면, a + 3 이, (3 + 1) 인 4 라는 값보다 커야 한다.
-					// 그렇지 않으면, x가 증가시, y도 증가하는 지수함수의 밑이, 1 보다 크다라는,
-					// 지수함수의 조건과 부합하지 않는다.
-					// 따라서, 이 경우에는, 선형적으로 증가하게 세팅한다.
-					if (ExponentialBottom + ScaledSpeedStart > ScaledSpeedStart + 1)
-					{
-						g_ParticleArray[ThreadID].Speed = pow(ExponentialBottom, g_ParticleArray[ThreadID].LifeTime + XInterceptOffet - g_ParticleArray[ThreadID].LifeTimeMax * 0.5f) + ScaledSpeedStart;
-						// g_ParticleArray[ThreadID].Speed = pow(ExponentialBottom, g_ParticleArray[ThreadID].LifeTime - g_ParticleArray[ThreadID].LifeTimeMax * 0.5f) + ScaledSpeedStart;
-					
-						// 아래 코드를 넣게 되면, 부자연스럽다.
-						// 지수 함수는 Y 축이 무한대로 증가한다.
-						// 이 경우, Speed End 값에 고정시킨다.
-						// if (g_ParticleArray[ThreadID].Speed > ScaledSpeedEnd)
-						// {
-						// 	g_ParticleArray[ThreadID].Speed = ScaledSpeedEnd;
-						// }
-					}
-					else
-					{
-						g_ParticleArray[ThreadID].Speed = ScaledSpeedStart + LifeTimeRatio * (ScaledSpeedEnd - ScaledSpeedStart);
-					}
-				}
-				else if (Inclination < 0)
-				{
-					// 	y = -1 * a ^ (x - g_ParticleArray[ThreadID.x].LifeTime / 2.f) + (ScaledSpeedStart)
-					// ScaledSpeedEnd = -1 * a ^ (g_ParticleArray[ThreadID.x].LifeTime - g_ParticleArray[ThreadID.x].LifeTime / 2.f) + (ScaledSpeedStart)
-					// a ^ (g_ParticleArray[ThreadID.x].LifeTime / 2.f)  = - 1 *  (ScaledSpeedEnd - ScaledSpeedStart)
-					// a = pow(-1 * (ScaledSpeedEnd - ScaledSpeedStart)), 1 / (g_ParticleArray[ThreadID.x].LifeTime / 2.f));
-
-					// a의 값 (밑)
-					// - a 는 항상 1 보다 큰 계수여야 한다.
-					// - LifeTimeMax 의 경우, Speed 와 같이 ParticleComponentScaleRatio 가 반영된 상태여야 한다.
-					float ExponentialBottom = pow(-1 * (ScaledSpeedEnd - ScaledSpeedStart), 1 / (g_ParticleArray[ThreadID].LifeTimeMax * 0.5f));
-
-					// a 의 값이 1보다 커야 한다.
-					// 이를 확인하기 위해서는 a ^ (x-b) 에서 (x-b) 부분을 1로 만들어주면 된다.
-					// 그리고 이때의 y 값은, ScaledSpeedStart - 1 보다 작은 값이어야 한다.
-					// ex) y = -1 * (a ^ (x-5)) + 3
-					// x 가 5일때, 2
-					// x 가 6일때, -1 * a + 3 
-					// a 가 1 보다 큰 값이라면, -1 * a + 3 이, (3 - 1) 인 2 라는 값보다 작아야 한다.
-					// 따라서, 이 경우에는, 선형적으로 감소하게 세팅한다.
-					if (-1 * ExponentialBottom + ScaledSpeedStart < ScaledSpeedStart - 1)
-					{
-						g_ParticleArray[ThreadID].Speed = -1 * pow(ExponentialBottom, g_ParticleArray[ThreadID].LifeTime + XInterceptOffet - g_ParticleArray[ThreadID].LifeTimeMax * 0.5f) + ScaledSpeedStart;
-					
-						// 지수 함수는 y 값이 무한대로 감소하므로, 0 아래로 내려가지는 않게 한다.
-						// 원래는 ScaledSpeedEnd 로 줘야 하는데, 부자연 스러운 느낌이 있을까봐, 우선 0으로 세팅
-						if (g_ParticleArray[ThreadID].Speed < 0)
-						{
-							g_ParticleArray[ThreadID].Speed = 0;
-						}
-					}
-					else
-					{
-						g_ParticleArray[ThreadID].Speed = ScaledSpeedStart - LifeTimeRatio * (ScaledSpeedEnd - ScaledSpeedStart);
-					}
-				}
-				// 기울기가 0 일 경우 -> Speed Start, End 가 같다는 것
-				else if (Inclination == 0)
-				{
-					
-				}
-			}
-			break;
-			case 3:
-			{
-				// 그리고 로그 함수에서 X 는 0 이 될 수 없다.
-				// 따라서 Lifetime 이 0 이라고 하더라도, 0.01 정도로 잡아주고 시작한다.
-				// (아래의 코드는 더이상 필요없다. x 축 절편을 -1 로 세팅, 즉, x 축으로 - 1 방향으로 함수 그래프를 이동)
-				// -1 이라는 x 값은 존재할 수 없지만, 0이라는 x 값은 이제 존재할 수 있다.
-				if (g_ParticleArray[ThreadID].LifeTime == 0.f)
-				{
-					g_ParticleArray[ThreadID].LifeTime = 0.001f;
-				}
-
-				// y = log a (x + 1) + C
-				// X 절편은 +1 로 한다. 즉, X 축 왼쪽으로 당기는 것이다
-				// 이렇게 될 경우, X 가 1 일때, Y값이 0이었던 것이, X 가 0일때, Y값이 0 이 될 것이다.
-				// 이렇게 해야만, Y값이 Speed Start 부터 시작하도록 할 수 있다.
-				// 대신 C 의 경우, SpeedStart 로 세팅한다.
-				// 자, 그런데 hlsl 에서 제공해주는 log 함수의 경우, 밑이 e, 2, 10 에 제한되어 있다.
-				// log a (X) = log e (X) / log e (a)
-				/*
-				1)
-				log 함수
-				X 범위 : LifeTime
-				Y 범위 : Speed St -> Ed
-
-				2)
-				지수 함수
-				X 범위 : Speed St -> Ed
-				Y 범위 : LifeTime -> 0 부터 시작하므로, Y절편 존재 X
-				- X 절편 : (Ed - St) * 0.5 + St
-
-				y = a ^ (x - X 절편)
-
-				3) 실시간 LifeTime x 값을
-				- 지수함수 y 값에 세팅 -> x 값 구하기
-				- 구한 x 값을, log 함수에서의 y 로 세팅, 즉, Speed 값으로 세팅
-				- 단, 추가적인 범위 제한 세팅
-
-				*/
-
-
-				// 1. 점차 증가하는 경우
-				if (Inclination > 0)
-				{
-					// 수식
-					// y = log a(x + 1) + SpeedStart
-					// SpeedEnd = log a (LifeTimeMax + 1) + SpeedStart
-					// log a (LifeTimeMax + 1) = (SpeedEnd - SpeedStart)
-					// LifeTimeMax + 1 = a ^ (SpeedEnd - SpeedStart)
-					// a = pow(LifeTimeMax + 1, 1 / (SpeedEnd - SpeedStart));
-					
-					// y = log a (LifeTime + 1) + SpeedStart
-					// y = (log e (LifeTime + 1) / log e (a)) + SpeedStart
-
-					float ExponentialBottom = pow(g_ParticleArray[ThreadID].LifeTimeMax + 1, 1 / (ScaledSpeedEnd - ScaledSpeedStart));
-
-					// 우선, 결과적으로 얻어낸 a 라는 밑. 이 1보다 큰지 아닌지는 검사하지 않는다.
-					// 기본적으로 Inclination 가 양수라면, ExponentialBottom 도 1보다 큰 값이 나올 것 같기 때문이다.
-					// g_ParticleArray[ThreadID].Speed = -1 * pow(ExponentialBottom, g_ParticleArray[ThreadID].LifeTime + XInterceptOffet - g_ParticleArray[ThreadID].LifeTimeMax * 0.5f) + ScaledSpeedStart;
-
-					// g_ParticleArray[ThreadID].Speed = (log(g_ParticleArray[ThreadID].LifeTime + 1) / log(ExponentialBottom)) + ScaledSpeedStart;
-					g_ParticleArray[ThreadID].Speed = (log(g_ParticleArray[ThreadID].LifeTime + 1 + XInterceptOffet) / log(ExponentialBottom)) + ScaledSpeedStart;
-
-					// 로그 함수의 경우, 시작 y 자체가 음의 무한대
-					// 따라서 최소 Speed 는 Speed Start 로 잡아준다
-					if (g_ParticleArray[ThreadID].Speed < ScaledSpeedStart)
-					{
-						g_ParticleArray[ThreadID].Speed = ScaledSpeedStart;
-					}
-				}
-				else if (Inclination < 0)
-				{
-					// a 는 1 보다 큰 값
-					// 기울기가 양수일때에 대해서, x 축으로 대칭 시킨 개념의 수식을 세운다.
-					// y = -1 * log a (x + 1) + SpeedStart
-					// SpeedEnd = -1 * log a (LifeTimeMax + 1) + SpeedStart
-					// -1 * log  a(LifeTimeMax + 1) = (SpeedEnd - SpeedStart)
-					// log a (LifeTimeMax + 1) = (SpeedStart - SpeedEnd)
-					// (LifeTimaMax + 1) = a ^ (SpeedStart - SpeedEnd)
-					// a = pow(LifeTimeMax + 1, SpeedStart - SpeedEnd);
-					float ExponentialBottom = pow(g_ParticleArray[ThreadID].LifeTimeMax + 1, 1 / (ScaledSpeedStart - ScaledSpeedEnd));
-
-					g_ParticleArray[ThreadID].Speed = -1 * (log(g_ParticleArray[ThreadID].LifeTime + 1 + XInterceptOffet) / log(ExponentialBottom)) + ScaledSpeedStart;
-				
-					if (g_ParticleArray[ThreadID].Speed < 0.f)
-					{
-						g_ParticleArray[ThreadID].Speed = 0.f;
-					}
-				}
-				else if (Inclination == 0)
-				{
-
-				}
-			}
-			break;
-		}
-	}
-
-	if (g_ParticleMove == 1)
-	{
-		MovePos = g_ParticleArray[ThreadID].Dir *
-			g_ParticleArray[ThreadID].Speed * g_DeltaTime;
-	}
-
-	return MovePos;
 }
 
 // 중력 적용하기 
@@ -642,7 +386,7 @@ void ApplyGravity(int ThreadID, float3 MovePos)
 		g_ParticleArray[ThreadID.x].LocalPos += MovePos;
 }
 
-void ApplyInitRotationAccordingToDir(int ThreadID)
+void ApplyRotationAccordingToDir(int ThreadID)
 {
 	// HLSL 좌표계를 무엇을 사용하는가 ?
 	//  y 축 20도 회전 ? -> 반시계방향으로 20도 돌린 것
@@ -704,8 +448,6 @@ void ApplyLinearEffect(int ThreadID)
 	float DistFromCenter = distance(g_ParticleArray[ThreadID].LocalPos, float3(0.f, 0.f, 0.f));
 	float MaxDistFromCenter = g_ParticleShare[0].MaxDistFromCenter;
 
-	float ParticleComponentScaleRatio = (g_ParticleCommonWorldScale.x / 3.f + g_ParticleCommonWorldScale.y / 3.f + g_ParticleCommonWorldScale.z / 3.f);
-
 	if (MaxDistFromCenter == 0)
 		MaxDistFromCenter = DistFromCenter;
 
@@ -714,9 +456,6 @@ void ApplyLinearEffect(int ThreadID)
 	if (SpawnPosRatio >= 1.f)
 		SpawnPosRatio = 0.999f;
 
-	float ScaledLifeTimeMax = g_ParticleLifeTimeMax * ParticleComponentScaleRatio;
-	float ScaledLifeTimeMin = g_ParticleLifeTimeMin * ParticleComponentScaleRatio;
-
 	// Life Time
 	if (g_ParticleLifeTimeLinear == 1)
 	{
@@ -724,7 +463,7 @@ void ApplyLinearEffect(int ThreadID)
 		// float LifeTimeRatio = (1 - SpawnPosRatio);
 		float LifeTimeRatio = pow(1 - SpawnPosRatio, 2);
 
-		g_ParticleArray[ThreadID].LifeTimeMax = LifeTimeRatio * (ScaledLifeTimeMax - ScaledLifeTimeMin) + ScaledLifeTimeMin;
+		g_ParticleArray[ThreadID].LifeTimeMax = LifeTimeRatio * (g_ParticleLifeTimeMax - g_ParticleLifeTimeMin) + g_ParticleLifeTimeMin;
 	}
 
 	// Alpha
@@ -869,7 +608,7 @@ void ParticleUpdate(uint3 ThreadID : SV_DispatchThreadID)
 		// float3 ParticleStartMinPos = mul(g_ParticleStartMin, ComputeRotationMatrix(g_ParticleRotationAngle));
 
 		float XRand = GetRandomNumber(key); // 0 에서 1 사이의 숫자 
-		float YRand = GetRandomNumber((ThreadID.x * 500.f) % (float)(g_ParticleSpawnCountMax * XRand));
+		float YRand = GetRandomNumber(key * XRand);
 		float ZRand = GetRandomNumber((ThreadID.x * 100.f) % (float)(g_ParticleSpawnCountMax * YRand));
 
 		g_ParticleArray[ThreadID.x].LocalPos.x = XRand * (g_ParticleStartMax.x - g_ParticleStartMin.x) + g_ParticleStartMin.x;
@@ -881,27 +620,24 @@ void ParticleUpdate(uint3 ThreadID : SV_DispatchThreadID)
 		g_ParticleArray[ThreadID.x].FallTime = 0.f;
 		g_ParticleArray[ThreadID.x].FallStartY = g_ParticleArray[ThreadID.x].LocalPos.y;
 
-		// x,y,z 의 Relative Scale 의 중간 비율만큼 세팅해준다.
-	// 아래 코드처럼 하면, 너무 Dramatic 하게 변한다.
-	// float ParticleComponentScaleRatio = g_ParticleCommonWorldScale.x * g_ParticleCommonWorldScale.y * g_ParticleCommonWorldScale.z;
-		float ParticleComponentScaleRatio = (g_ParticleCommonWorldScale.x / 3.f + g_ParticleCommonWorldScale.y / 3.f + g_ParticleCommonWorldScale.z / 3.f);
-
-		float ScaledLifeTimeMax = g_ParticleLifeTimeMax * ParticleComponentScaleRatio;
-		float ScaledLifeTimeMin = g_ParticleLifeTimeMin * ParticleComponentScaleRatio;
-
 		g_ParticleArray[ThreadID.x].LifeTime = 0.f;
-		g_ParticleArray[ThreadID.x].LifeTimeMax = Rand * (ScaledLifeTimeMax - ScaledLifeTimeMin) + ScaledLifeTimeMin;
+		g_ParticleArray[ThreadID.x].LifeTimeMax = Rand * (g_ParticleLifeTimeMax - g_ParticleLifeTimeMin) + g_ParticleLifeTimeMin;
 
 		// Scale 크기도 그만큼 조정한다.
+		g_ParticleArray[ThreadID.x].LifeTimeMax *= (g_ParticleCommonWorldScale.x + g_ParticleCommonWorldScale.y + g_ParticleCommonWorldScale.z) / 3.f;
+
+		// x,y,z 의 Relative Scale 의 중간 비율만큼 세팅해준다.
+		// 아래 코드처럼 하면, 너무 Dramatic 하게 변한다.
+		// float ParticleComponentScaleRatio = g_ParticleCommonWorldScale.x * g_ParticleCommonWorldScale.y * g_ParticleCommonWorldScale.z;
+		float ParticleComponentScaleRatio = (g_ParticleCommonWorldScale.x + g_ParticleCommonWorldScale.y + g_ParticleCommonWorldScale.z) / 3.f;
 
 		float FinalAppliedRadius = g_ParcticleGenerateRadius * ParticleComponentScaleRatio;
 
 		// Special 한 모양으로 Particle 을 만들고자 한다면
-		ApplyInitSpecialParticleGenerateShape(RandomAngle, ThreadID.x, FinalAppliedRadius, Rand);
+		ApplySpecialParticleGenerateShape(RandomAngle, ThreadID.x, FinalAppliedRadius, Rand);
 
 		// Move 하는 Particle 이라면, Speed 와 Dir 를 세팅한다.
-		// LifeTimeMax 가 이미 세팅된 상태여야만 ApplyInitParticleMove 를 세팅할 수 있다.
-		ApplyInitParticleMove(RandomPos, ThreadID.x, RandomAngle, Rand);
+		ApplyParticleMove(RandomPos, ThreadID.x, RandomAngle, Rand);
 
 		// 생성되는 순간 각 Particle 의 Rot 정도를 세팅한다.
 		// 최종 각각의 Particle 회전 정도 세팅
@@ -912,7 +648,7 @@ void ParticleUpdate(uint3 ThreadID : SV_DispatchThreadID)
 		g_ParticleArray[ThreadID.x].FinalSeperateRotAngle = (g_ParticleSeperateRotAngleMax - g_ParticleSeperateRotAngleMin) * Rand + g_ParticleSeperateRotAngleMin;
 
 		// 자신의 진행 방향에 따른 회전을 추가한다.
-		ApplyInitRotationAccordingToDir(ThreadID.x);
+		ApplyRotationAccordingToDir(ThreadID.x);
 		
 		// 가장 마지막에 중심에서 가장 멀리떨어져 있는 Max 거리값을 공유 구조화 버퍼에 세팅한다.
 		float DistFromCenter = length(g_ParticleArray[ThreadID.x].LocalPos);
@@ -933,9 +669,13 @@ void ParticleUpdate(uint3 ThreadID : SV_DispatchThreadID)
 	{
 		g_ParticleArray[ThreadID.x].LifeTime += g_DeltaTime;
 
-		// 아래 함수를 사용하기 전에 LifeTime 을 시간에 맞게 증가시켜야 한다.
-		// 왜냐하면 ApplyAliveParticleMove 에서 LifeTime 비율을 계산하기 때문이다.
-		float3 MovePos = ApplyAliveParticleMove(ThreadID.x);
+		float3	MovePos = (float3)0.f;
+
+		if (g_ParticleMove == 1)
+		{
+			MovePos = g_ParticleArray[ThreadID.x].Dir *
+				g_ParticleArray[ThreadID.x].Speed * g_DeltaTime;
+		}
 
 		// 중력 적용
 		ApplyGravity(ThreadID.x, MovePos);
@@ -979,7 +719,7 @@ struct GeometryParticleOutput
 	float2	UV	: TEXCOORD;
 	float4	ProjPos : POSITION;
 	float      LifeTimeRatio : RATIO;
-	int         LocalXPlusMoveDir : MOVEDIR; // 기본 1 로 세팅 (만약 Local Space 기준, X 음의 방향으로 이동하면, 0으로 세팅)
+	// int         LocalXPlusMoveDir : MOVEDIR; // 기본 1 로 세팅 (만약 Local Space 기준, X 음의 방향으로 이동하면, 0으로 세팅)
 };
 
 static float3	g_ParticleLocalPos[4] =
@@ -1092,10 +832,9 @@ void ParticleGS(point VertexParticleOutput input[1],
 
 		OutputArray[i].LifeTimeRatio = Ratio;
 
-		OutputArray[i].LocalXPlusMoveDir = 1;
-
-		if (g_ParticleArraySRV[InstanceID].Dir.x < 0.f)
-			OutputArray[i].LocalXPlusMoveDir = 0;
+		// OutputArray[i].LocalXPlusMoveDir = 1;
+		// if (g_ParticleArraySRV[InstanceID].Dir.x < 0.f)
+		// 	OutputArray[i].LocalXPlusMoveDir = 0;
 	}
 
 	output.Append(OutputArray[0]);
@@ -1109,9 +848,12 @@ void ParticleGS(point VertexParticleOutput input[1],
 	output.RestartStrip();
 }
 
-// LifeTime 비율에 따라서, (Texture 기준) 오른쪽에서, 왼쪽 방향으로 점점 사라지게 하기
-void ApplyLinearUVClipping(GeometryParticleOutput input)
+PSOutput_Single ParticlePS(GeometryParticleOutput input)
 {
+	PSOutput_Single output = (PSOutput_Single)0;
+
+	float4 Color = g_BaseTexture.Sample(g_BaseSmp, input.UV);
+
 	// UV Cllipping 효과
 	// 오른쪽 부터, 왼쪽 방향으로 서서히 사라지는 효과를 줄 것이다.
 	// 이를 위해서는 LifeTime 을 사용해야 한다.
@@ -1121,39 +863,12 @@ void ApplyLinearUVClipping(GeometryParticleOutput input)
 	// 해당 선은, 왼쪽에서 오른쪽으로 점점 이동
 	// 해당 선 왼쪽에 위치한 UV 는 아예 Alpha 값을 0으로 세팅하여 안보이게 할 것이다.
 	// 그리고 해당 가로 선은, LifeTime / LifeTimeMax 비율이 증가할 수록, 오른쪽으로 이동하는 형태를 띄게 할 것이다.
-	if (g_ParticleUVClippingReflectingMoveDir == 1)
+	if (g_ParticleUVClippingReflectingMoveDir == 0)
 	{
-		if (input.LocalXPlusMoveDir == 1)
-		{
-			if (input.UV.x > 1 - input.LifeTimeRatio)
-				clip(-1);
-		}
-		// 단,
-		// 진행 방향이 왼쪽인 녀석들. 즉 x 축 음의 방향으로 향하는 녀석들은
-		// 반대로, 가로 선은, LifeTime / LifeTimeMax 비율이 증가할 수록, 왼쪽에서 오른쪽으로 
-		// 오른쪽부터 왼쪽 방향으로 점점 사라지게 할 것이다.
-		else
-		{
-			// ex. 0.3 -.
-			if (input.UV.x > 1 - input.LifeTimeRatio)
-				clip(-1);
-		}
+		// if (input.LocalXPlusMoveDir == 1)
+		if (input.UV.x > 1 - input.LifeTimeRatio)
+			clip(-1);
 	}
-}
-
-
-PSOutput_Single ParticlePS(GeometryParticleOutput input)
-{
-	PSOutput_Single output = (PSOutput_Single)0;
-
-	float4 Color = g_BaseTexture.Sample(g_BaseSmp, input.UV);
-
-	ApplyLinearUVClipping(input);
-
-	// if (g_NormalTexture)
-	// {
-	// 	g_NormalTexture.Sample(g_BaseSmp, input.UV);
-	// }
 
 	if (Color.a == 0.f || input.Color.a == 0.f)
 		clip(-1);

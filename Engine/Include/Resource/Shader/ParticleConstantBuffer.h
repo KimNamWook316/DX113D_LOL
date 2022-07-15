@@ -96,6 +96,11 @@ public:
 		return m_BufferData.LifeTimeMin;
 	}
 
+	float GetNoiseTextureFilter() const
+	{
+		return m_BufferData.NoiseTextureEffectFilter;
+	}
+
 	float GetLifeTimeMax()
 	{
 		return m_BufferData.LifeTimeMax;
@@ -262,7 +267,6 @@ public:
 	{
 		m_BufferData.CommonParticleComponentWorldPos = WorldPos;
 	}
-
 	// UV Move
 	void SetUVMoveEnable(bool Enable) 
 	{
@@ -355,6 +359,11 @@ public:
 	void SetSpawnCountMax(unsigned int Count)
 	{
 		m_BufferData.SpawnCountMax = Count;
+	}
+
+	void SetNoiseTextureFilter(float Value)
+	{
+		m_BufferData.NoiseTextureEffectFilter = Value;
 	}
 
 	void SetScaleMin(const Vector3& ScaleMin)

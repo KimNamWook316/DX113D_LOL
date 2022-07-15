@@ -18,6 +18,7 @@
 #include <dwrite_3.h>
 #include <d2d1.h>
 #include <stack>
+#include <queue>
 #include <process.h>
 #include <utility>
 #include <optional>
@@ -477,9 +478,9 @@ struct	ParticleCBuffer
 	int SpeedChangeMethod; // Linear, 지수 분포
 
 	int ApplyNoiseTexture; // Pixel Shader 에서 매순간 Noise Texture 로 부터, Sampling 을 해서 Color, Alpha 값 등을 바꾸는 것
-	int ApplyToonBaseTexture; // 우선 보류
+	float NoiseTextureEffectFilter; 
 	float SpeedChangeExponentialCoefficient;
-	int ParticleEmpty2;
+	int ParticleEmpty5; 
 };
 
 struct ParticleInfo

@@ -179,6 +179,7 @@ private:
 
     // Noise Texture
     class CIMGUICheckBox* m_ApplyNoiseTextureSampling;
+    class CIMGUIButton* m_ResetNoiseTextureFilterValue;
 
     // Particle 이 사용하는 Material Texture
     class CIMGUIImage* m_ParticleTexture;
@@ -282,6 +283,7 @@ private:
 
     // Noise Texture
     void OnApplyNoiseTextureSamplingEdit(const char*, bool);
+    void OnResetNoiseTextureFilterValue();
 
     // Move Dir, Angle
     void OnMoveDirEdit(const Vector3& Dir);

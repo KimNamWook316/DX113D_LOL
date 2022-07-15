@@ -287,31 +287,7 @@ bool CEffectEditor::Init()
     m_UVClippingAccordingToDir = Tree->AddWidget<CIMGUICheckBox>("UV Clip To Dir", 80.f);
     m_UVClippingAccordingToDir->AddCheckInfo("UV Clip To Dir");
     m_UVClippingAccordingToDir->SetCallBackLabel<CEffectEditor>(this, &CEffectEditor::OnIsUVClippingReflectingMoveDirEdit);
-    /*
-    Line = Tree->AddWidget<CIMGUISameLine>("Line");
-    Line->SetOffsetX(90.f);
 
-    HelpText = Tree->AddWidget<CIMGUIText>("RingLoopText", 30.f, 30.f);
-    const char* RingLoopHelpText = R"(ex)  Ring 여부가 Check 되야만 적용.)";
-    HelpText->SetText(RingLoopHelpText);
-    HelpText->SetIsHelpMode(true);
-
-    Line = Tree->AddWidget<CIMGUISameLine>("Line");
-    Line->SetOffsetX(35.f);
-
-    HelpText = Tree->AddWidget<CIMGUIText>("CircleGenerate", 930.f, 30.f);
-    const char* CircleHelpText = R"(원 내에 Random 하게 생성)";
-    HelpText->SetText(CircleHelpText);
-    HelpText->SetIsHelpMode(true);
-
-    Line = Tree->AddWidget<CIMGUISameLine>("Line");
-    Line->SetOffsetX(75.f);
-
-    HelpText = Tree->AddWidget<CIMGUIText>("TorchGenerate", 30.f, 30.f);
-    const char* TorchHelpText = R"(횃불 모양 생성 : 가운데에 더 많은 Particle 생성)";
-    HelpText->SetText(TorchHelpText);
-    HelpText->SetIsHelpMode(true);
-    */
 
     // Movement
     Tree = AddWidget<CIMGUITree>("Movement");
@@ -326,18 +302,6 @@ bool CEffectEditor::Init()
     m_IsGravityEdit = Tree->AddWidget<CIMGUICheckBox>("Gravity", 80.f);
     m_IsGravityEdit->AddCheckInfo("Gravity");
     m_IsGravityEdit->SetCallBackLabel<CEffectEditor>(this, &CEffectEditor::OnIsGravityEdit);
-
-    // m_IsRandomMoveEdit = Tree->AddWidget<CIMGUICheckBox>("Random", 80.f);
-    // m_IsRandomMoveEdit->AddCheckInfo("Random");
-    // m_IsRandomMoveEdit->SetCallBackLabel<CEffectEditor>(this, &CEffectEditor::OnIsRandomMoveEdit);
-
-    // Line = Tree->AddWidget<CIMGUISameLine>("Line");
-    // Line->SetOffsetX(260.f);
-
-    // m_IsPauseResumeToggle = Tree->AddWidget<CIMGUICheckBox>("Toggle", 80.f);
-    // m_IsPauseResumeToggle->AddCheckInfo("Toggle");
-    // m_IsPauseResumeToggle->SetCallBackLabel<CEffectEditor>(this, &CEffectEditor::OnPauseResumeToggle);
-    // m_IsPauseResumeToggle->SetCheck(0, true);
 
     // Spawn Time, Spawn Count
     Tree  = AddWidget<CIMGUITree>("Spawn Time, Disable Alive");
@@ -467,6 +431,9 @@ bool CEffectEditor::Init()
     m_ApplyNoiseTextureSampling = Tree->AddWidget<CIMGUICheckBox>("Noise Texture", 80.f);
     m_ApplyNoiseTextureSampling->AddCheckInfo("Noise Texture");
     m_ApplyNoiseTextureSampling->SetCallBackLabel<CEffectEditor>(this, &CEffectEditor::OnApplyNoiseTextureSamplingEdit);
+
+    m_ResetNoiseTextureFilterValue = Tree->AddWidget<CIMGUIButton>("Reset Noise", 80.f, 20.f);
+    m_ResetNoiseTextureFilterValue->SetClickCallback<CEffectEditor>(this, &CEffectEditor::OnResetNoiseTextureFilterValue);
 
 
     // GameObject 생성
@@ -1109,8 +1076,37 @@ void CEffectEditor::OnApplyNoiseTextureSamplingEdit(const char*, bool Enable)
     if (!m_ParticleClass)
         return;
 
+    // Material 의 2번째 Texture 를 Noise Texture로 활용할 것이다.
+    // 그리고 Noise Texture 는 Register 100 번으로 설정되어 있다.
+    // 따라서 2번재 Texture 가 Register 100 번이 아니라면, MessageBox 를 띄워서, 
+    // True  세팅을 방지한다.
+    if (Enable)
+    {
+        const std::vector<MaterialTextureInfo>& TextureInfo = m_ParticleClass->GetMaterial()->GetTextureInfo();
+
+        if (TextureInfo.size() < 2 ||
+            TextureInfo[1].Register != 100)
+        {
+            // 다시 false 체크
+            m_ApplyNoiseTextureSampling->SetCheck(0, false);
+
+            MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("2번째 Texture(Noise Texture) 가 존재하지 않거나, Register 가 100번이 아닙니다 "), NULL, MB_OK);
+            return;
+        }
+    }
+
+
     m_ParticleClass->SetApplyNoiseTextureSamplingEnable(Enable);
     dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetApplyNoiseTextureSamplingEnable(Enable);
+}
+
+void CEffectEditor::OnResetNoiseTextureFilterValue()
+{
+    if (!m_ParticleClass)
+        return;
+
+    // Noise Texture Filter Value 를 다시 0으로 만들어준다.
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetNoiseTextureFilter(0);
 }
 
 void CEffectEditor::OnMoveDirEdit(const Vector3& Dir)
@@ -1267,11 +1263,12 @@ void CEffectEditor::OnLoadParticleClass()
         std::string PathInfoBeforeFileName;
         CEngineUtil::GetPathInfoBeforeFileName(FilePathMultibyte, PathInfoBeforeFileName);
 
-        if (strcmp(ParticlePathInfo->PathMultibyte, PathInfoBeforeFileName.c_str()) != 0)
-        {
-            MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Particle Class 의 경우, 반드시 Bin/ParticleClass 에서 Load 해야 한다."), NULL, MB_OK);
-            return;
-        }
+        // Particle Folder 에서 Load 될 수 있도록 세팅해야 한다.
+        // if (strcmp(ParticlePathInfo->PathMultibyte, PathInfoBeforeFileName.c_str()) != 0)
+        // {
+        //     MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Particle Class 의 경우, 반드시 Bin/ParticleClass 에서 Load 해야 한다."), NULL, MB_OK);
+        //     return;
+        // }
 
         _strupr_s(Ext);
 

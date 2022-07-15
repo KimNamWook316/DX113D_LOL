@@ -74,7 +74,7 @@ bool CWaterComponent::Save(FILE* File)
 	fwrite(&FoamDepth, sizeof(float), 1, File);
 
 	std::string MaterialName = m_Material->GetName();
-	int Length = MaterialName.length();
+	int Length = (int)MaterialName.length();
 	fwrite(&Length, sizeof(int), 1, File);
 	fwrite(MaterialName.c_str(), sizeof(char), Length, File);
 
@@ -122,7 +122,7 @@ bool CWaterComponent::SaveOnly(FILE* File)
 	fwrite(&FoamDepth, sizeof(float), 1, File);
 
 	std::string MaterialName;
-	int Length = MaterialName.length();
+	int Length = (int)MaterialName.length();
 	fwrite(&Length, sizeof(int), 1, File);
 	fwrite(MaterialName.c_str(), sizeof(char), Length, File);
 

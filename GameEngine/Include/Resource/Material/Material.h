@@ -264,7 +264,8 @@ public:
 public :
     // Texture  정보만 세팅하는 코드
     void SetTextureInfoResource(int Index, class CTexture* Texture);
-
+    // Register 정보만 세팅하는 코드
+    void SetTextureInfoRegister(int Index, int Register);
 public:
     void SetPaperBurn(bool Enable);
     bool CheckMaterial(CMaterial* Material);

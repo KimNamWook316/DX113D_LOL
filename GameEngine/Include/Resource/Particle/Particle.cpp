@@ -89,28 +89,6 @@ bool CParticle::Save(FILE* File)
 	const PathInfo* ParticleMaterialPath = CPathManager::GetInst()->FindPath(MATERIAL_PARTICLE_PATH);
 	CEngineUtil::CheckAndMakeDirectory(ParticleMaterialPath);
 
-	// 3번째 Save, Load => Material
-	// 먼저 현재 저장하려는 Material 이 이미 하드디스크에 mtrl 형태로 존재하는지 확인
-	// Bin//Material 폴더 전부를 검색한다.
-	// const PathInfo* MaterialPath = CPathManager::GetInst()->FindPath(MATERIAL_PATH);
-	// 
-	// bool MtrlFileExist = false;
-	// 
-	// if (m_SaveLoadStruct.MaterialEnable)
-	// {
-	// 	char MaterialFileName[MAX_PATH] = {};
-	// 
-	// 	strcpy_s(MaterialFileName, m_Material->GetName().c_str());
-	// 	strcat_s(MaterialFileName, ".mtrl");
-	// 
-	// 	// Bin//Material 폴더에 있는지 확인한다.
-	// 	if (CEngineUtil::IsFileExistInDir(MATERIAL_PATH, MaterialFileName))
-	// 		MtrlFileExist = true;
-	// 
-	// 	// Bin//Material//ParticleMaterial 폴더에 있는지 확인한다.
-	// 
-	// }
-
 	// 현재 저장할 Material 이 Particle 에 있다면
 	// if (m_SaveLoadStruct.MaterialEnable && MtrlFileExist == false) => 기존 Particle 용 Material 을 덮어써야 하는 경우도 있다.
 	if (m_SaveLoadStruct.MaterialEnable)
@@ -119,7 +97,6 @@ bool CParticle::Save(FILE* File)
 		char MaterialBinPathMutlibyte[MAX_PATH] = {};
 
 		// if (MaterialPath)
-		// 	strcpy_s(MaterialBinPathMutlibyte, MaterialPath->PathMultibyte);
 		if (ParticleMaterialPath)
 			strcpy_s(MaterialBinPathMutlibyte, ParticleMaterialPath->PathMultibyte);
 
@@ -127,10 +104,9 @@ bool CParticle::Save(FILE* File)
 
 		std::string MaterialPathString = MaterialBinPathMutlibyte;
 
-		// .mtrl 여부를 확인한다. 없으면 붙여준다
+		// .mtrl 여부를 확인한다. 없으면 붙여준다.
 		if (MaterialPathString.find(".mtrl") == std::string::npos)
 			MaterialPathString.append(".mtrl");
-		// strcat_s(MaterialBinPathMutlibyte, ".mtrl");
 
 		// .mtrl 확장자가 붙어서 저장되도록 세팅해야 한다.
 		m_Material->SaveFullPath(MaterialPathString.c_str());
@@ -234,6 +210,8 @@ bool CParticle::Load(FILE* File)
 	m_CBuffer->Init();
 	m_CBuffer->Load(File);
 
+	// Noise Texture 관련 필터값은 항상 0 으로 세팅하기
+	m_CBuffer->SetNoiseTextureFilter(0);
 
 	// 구조화 버퍼 세팅
 	AddStructuredBuffer("ParticleInfo", sizeof(ParticleInfo), m_SpawnCountMax, 0);

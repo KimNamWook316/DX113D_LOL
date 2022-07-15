@@ -297,7 +297,7 @@ void CMaterialEditor::OnDropAndCreateMaterialCallback(const std::string& Materia
 
 	CEditorManager::GetInst()->GetResourceDisplayWindow()->RefreshLoadedMaterialResources();
 
-	MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Material Set Successfully"), NULL, MB_OK);
+	MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Material Set Successfully"), TEXT("Success"), NULL);
 }
 
 void CMaterialEditor::OnDropAndSetShaderToMaterial(const std::string& DropShaderName)
@@ -322,7 +322,7 @@ void CMaterialEditor::OnDropAndSetShaderToMaterial(const std::string& DropShader
 	// Shader Setting 이후, Refresh
 	RefreshMaterialDisplayInfo(m_SelectedMaterial);
 
-	MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Shader Successfully Set"), NULL, MB_OK);
+	MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Shader Successfully Set"), TEXT("Success"), NULL);
 }
 
 void CMaterialEditor::OnDropAndSetRenderStateToMaterial(const std::string& DropRenderStateName)
@@ -349,7 +349,7 @@ void CMaterialEditor::OnDropAndSetRenderStateToMaterial(const std::string& DropR
 
 	RefreshMaterialDisplayInfo(m_SelectedMaterial);
 
-	MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("RenderState Successfully Set"), NULL, MB_OK);
+	MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("RenderState Successfully Set"), TEXT("Success"), NULL);
 }
 
 void CMaterialEditor::OnEditMaterialNameCallback()
@@ -440,9 +440,11 @@ void CMaterialEditor::OnSetTextureBtn()
 		// 파일 이름을 Key값으로 하여, 이미 Engine에 Load 되어 있는지 확인한다.
 		CTexture* TargetTexture = CResourceManager::GetInst()->FindTexture(FileName);
 
+		// Texture 와 Register 정보를 둘다 세팅한다.
 		if (TargetTexture)
 		{
 			m_SelectedMaterial->SetTextureInfoResource(SetTextureIndex, TargetTexture);
+			m_SelectedMaterial->SetTextureInfoRegister(SetTextureIndex, m_TextureRegister->GetVal());
 
 			TextureSetSuccessCallback(TargetTexture);
 
@@ -455,6 +457,7 @@ void CMaterialEditor::OnSetTextureBtn()
 		TargetTexture = CResourceManager::GetInst()->FindTexture(FileName);
 		
 		m_SelectedMaterial->SetTextureInfoResource(SetTextureIndex, TargetTexture);
+		m_SelectedMaterial->SetTextureInfoRegister(SetTextureIndex, m_TextureRegister->GetVal());
 
 		TextureSetSuccessCallback(TargetTexture);
 
@@ -673,7 +676,7 @@ void CMaterialEditor::TextureSetSuccessCallback(class CTexture* Texture)
 	CEditorManager::GetInst()->GetResourceDisplayWindow()->RefreshLoadedTextureResources();
 	
 	// 제대로 세팅되었다는 Message
-	MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Texture Set SuccessFully"), NULL, MB_OK);
+	MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Texture Set SuccessFully"), TEXT("Success"), NULL);
 }
 
 void CMaterialEditor::OnSaveMaterial()
@@ -753,7 +756,7 @@ void CMaterialEditor::OnSaveMaterial()
 
 		m_SelectedMaterial->SaveFullPath(FileFullPathMultibyte);
 
-		MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Material Save Success"), NULL, MB_OK);
+		MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Material Save Success"), TEXT("Success"), NULL);
 	}
 }
 
@@ -826,7 +829,7 @@ void CMaterialEditor::OnLoadMaterial()
 		CEditorManager::GetInst()->GetResourceDisplayWindow()->RefreshLoadedRenderStateResources();
 		CEditorManager::GetInst()->GetResourceDisplayWindow()->RefreshLoadedShaderResources();
 
-		MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Material Load Success"), NULL, MB_OK);
+		MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Success"), TEXT("Material Load Success"), NULL);
 	}
 }
 

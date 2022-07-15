@@ -214,6 +214,8 @@ std::optional<std::string>CAnimationSequenceInstance::GetCurrentAnimationKeyName
 		if (iter->second == m_CurrentAnimation)
 			return iter->first;
 	}
+
+	return std::nullopt;
 }
 
 void CAnimationSequenceInstance::AddAnimation(const std::string& SequenceName,

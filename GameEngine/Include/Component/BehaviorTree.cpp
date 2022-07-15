@@ -223,7 +223,7 @@ bool CBehaviorTree::SaveOnly(FILE* File)
 		Root = true;
 		fwrite(&Root, sizeof(bool), 1, File);
 
-		int Length = m_Root->m_Name.length();
+		int Length = (int)m_Root->m_Name.length();
 
 		fwrite(&Length, sizeof(int), 1, File);
 

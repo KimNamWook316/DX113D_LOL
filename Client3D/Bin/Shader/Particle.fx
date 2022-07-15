@@ -870,7 +870,6 @@ PSOutput_Single ParticlePS(GeometryParticleOutput input)
 			clip(-1);
 	}
 
-
 	if (Color.a == 0.f || input.Color.a == 0.f)
 		clip(-1);
 
