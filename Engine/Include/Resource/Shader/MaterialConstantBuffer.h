@@ -33,6 +33,7 @@ public:
 		Info->MtrlEmissiveTex = m_BufferData.EmissiveTex;
 		Info->MtrlReceiveDecal = m_BufferData.ReceiveDecal;
 		Info->MtrlMetallic = m_BufferData.Metallic;
+		Info->UVScale = m_BufferData.UVScale;
 	}
 
 	void SetBaseColor(const Vector4& BaseColor)
@@ -93,6 +94,11 @@ public:
 	void SetMetallic(bool Metallic)
 	{
 		m_BufferData.Metallic = Metallic ? 1 : 0;
+	}
+
+	void SetUVScale(const Vector2& UVScale)
+	{
+		m_BufferData.UVScale = UVScale;
 	}
 };
 

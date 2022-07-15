@@ -401,21 +401,16 @@ CComponent* CEditorManager::CreateComponent(CGameObject* Obj, size_t Type)
 		// Component->EnableEditMode(true);
 		return Component;
 	}
-	else if (Type == typeid(CPaperBurnComponent).hash_code())
-	{
-		CPaperBurnComponent* Component = Obj->LoadObjectComponent<CPaperBurnComponent>();
-		return Component;
-	}
-	else if (Type == typeid(CWaterComponent).hash_code())
-	{
-		CWaterComponent* Component = Obj->LoadComponent<CWaterComponent>();
-		return Component;
-	}
 
 	else if (Type == typeid(CPaperBurnComponent).hash_code())
 	{
 		CPaperBurnComponent* Component = Obj->LoadObjectComponent<CPaperBurnComponent>();
-		// Component->EnableEditMode(true);
+		return Component;
+	}
+
+	else if (Type == typeid(CWaterComponent).hash_code())
+	{
+		CWaterComponent* Component = Obj->LoadComponent<CWaterComponent>();
 		return Component;
 	}
 

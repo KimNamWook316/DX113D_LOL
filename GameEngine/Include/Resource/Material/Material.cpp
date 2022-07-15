@@ -20,6 +20,8 @@ CMaterial::CMaterial() :
 	m_EmissiveTex(false),
 	m_RecieveDecal(false),
 	m_Bump(false),
+	m_Metallic(false),
+	m_UVScale(Vector2(1.f, 1.f)),
 	m_Scene(nullptr),
 	m_CBuffer(nullptr),
 	m_Opacity(1.f),
@@ -69,6 +71,7 @@ void CMaterial::CreateConstantBuffer()
 	m_CBuffer->SetEmissiveColor(m_EmissiveColor);
 	m_CBuffer->SetOpacity(m_Opacity);
 	m_CBuffer->SetMetallic(m_Metallic);
+	m_CBuffer->SetUVScale(m_UVScale);
 
 	m_CBuffer->UpdateCBuffer();
 }
@@ -260,6 +263,16 @@ void CMaterial::SetMetallic(bool Metallic)
 	if (m_CBuffer)
 	{
 		m_CBuffer->SetMetallic(Metallic);
+	}
+}
+
+void CMaterial::SetUVScale(const Vector2& UVScale)
+{
+	m_UVScale = UVScale;
+
+	if (m_CBuffer)
+	{
+		m_CBuffer->SetUVScale(m_UVScale);
 	}
 }
 
@@ -824,6 +837,7 @@ void CMaterial::Render()
 		m_CBuffer->SetEmissiveColor(m_EmissiveColor);
 		m_CBuffer->SetOpacity(m_Opacity);
 		m_CBuffer->SetMetallic(m_Metallic);
+		m_CBuffer->SetUVScale(m_UVScale);
 
 		m_CBuffer->UpdateCBuffer();
 	}
@@ -884,6 +898,7 @@ void CMaterial::UpdateCBuffer()
 		m_CBuffer->SetEmissiveColor(m_EmissiveColor);
 		m_CBuffer->SetOpacity(m_Opacity);
 		m_CBuffer->SetMetallic(m_Metallic);
+		m_CBuffer->SetUVScale(m_UVScale);
 
 		m_CBuffer->UpdateCBuffer();
 	}
@@ -939,6 +954,7 @@ bool CMaterial::Save(FILE* File)
 	fwrite(&m_EmissiveTex, sizeof(bool), 1, File);
 	fwrite(&m_Bump, sizeof(bool), 1, File);
 	fwrite(&m_Metallic, sizeof(bool), 1, File);
+	// fwrite(&m_UVScale, sizeof(Vector2), 1, File);
 
 	// 이 부분까지는 문제 X
 	for (int i = 0; i < (int)RenderState_Type::Max; ++i)
@@ -1015,6 +1031,7 @@ bool CMaterial::Load(FILE* File)
 	fread(&m_EmissiveTex, sizeof(bool), 1, File);
 	fread(&m_Bump, sizeof(bool), 1, File);
 	fread(&m_Metallic, sizeof(bool), 1, File);
+	// fread(&m_UVScale, sizeof(Vector2), 1, File);
 
 	if (m_SpecularColor.w == 0.f)
 	{
@@ -1032,6 +1049,7 @@ bool CMaterial::Load(FILE* File)
 	m_CBuffer->SetEmissiveColor(m_EmissiveColor);
 	m_CBuffer->SetOpacity(m_Opacity);
 	m_CBuffer->SetMetallic(m_Metallic);
+	// m_CBuffer->SetUVScale(m_UVScale);
 
 	for (int i = 0; i < (int)RenderState_Type::Max; ++i)
 	{
@@ -1213,6 +1231,7 @@ bool CMaterial::SaveMaterial(FILE* File)
 	SaveStruct.Bump = m_Bump;
 	SaveStruct.Metallic = m_Metallic;
 	SaveStruct.ShaderParams = m_ShaderParams;
+	// SaveStruct.UVScale = m_UVScale;
 
 	for (int i = 0; i < (int)RenderState_Type::Max; ++i)
 	{
@@ -1294,6 +1313,7 @@ bool CMaterial::LoadMaterial(FILE* File)
 	m_Bump = SaveStruct.Bump;
 	m_Metallic = SaveStruct.Metallic;
 	m_ShaderParams = SaveStruct.ShaderParams;
+	// m_UVScale = SaveStruct.UVScale;
 
 	if (m_SpecularColor.w == 0.f)
 	{
@@ -1311,6 +1331,7 @@ bool CMaterial::LoadMaterial(FILE* File)
 	m_CBuffer->SetEmissiveColor(m_EmissiveColor);
 	m_CBuffer->SetOpacity(m_Opacity);
 	m_CBuffer->SetMetallic(m_Metallic);
+	m_CBuffer->SetUVScale(m_UVScale);
 
 	for (int i = 0; i < (int)RenderState_Type::Max; ++i)
 	{

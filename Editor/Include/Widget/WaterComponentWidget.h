@@ -24,6 +24,8 @@ private:
     void OnEditEmissiveColor(const Vector3& Color);
     void OnChangeSpeed(float Val);
     void OnChangeFoamDepth(float Val);
+    void OnChangeAttn1(float Val);
+    void OnChangeAttn2(float Val);
     void OnDropMaterialName(const std::string& Name);
 
 private:
@@ -31,6 +33,8 @@ private:
     class CIMGUIButton* m_LoadButton;
     class CIMGUIInputFloat* m_Speed;
     class CIMGUIInputFloat* m_FoamDepth;
+    class CIMGUIInputFloat* m_Attn1;
+    class CIMGUIInputFloat* m_Attn2;
     class CIMGUIColor3* m_BaseColorEdit;
     class CIMGUIColor3* m_AmbientColorEdit;
     class CIMGUIColor3* m_SpecularColorEdit;

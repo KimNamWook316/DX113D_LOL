@@ -67,6 +67,7 @@ void CPaperBurnComponent::StartPaperBurn()
 
 	for (; iter != iterEnd; ++iter)
 	{
+		(*iter)->SetMetallic(false);
 		(*iter)->SetPaperBurn(true);
 	}
 	m_StartPaperBurn = true;
@@ -446,7 +447,7 @@ bool CPaperBurnComponent::Load(FILE* File)
 		lstrcpy(vecFullPath[i], Info->Path);
 		lstrcat(vecFullPath[i], BufFileName);
 	}
-
+	
 	if (!m_BurnTexture)
 	{
 		if (!m_Scene->GetResource()->LoadTextureFullPath(TexName, vecFullPath))

@@ -275,6 +275,8 @@ struct MaterialCBuffer
 	int		EmissiveTex;
 	int		ReceiveDecal;
 	int		Metallic;
+	Vector2 UVScale;
+	Vector2 Empty;
 };
 
 struct AnimationFrameData
@@ -707,7 +709,8 @@ struct Instancing3DInfo
 	Vector4 PaperBurnOutLineColor;
 	Vector4 PaperBurnCenterLineColor;
 	int MtrlMetallic;
-	Vector3 Empty;
+	Vector2 UVScale;
+	float	Empty;
 };
 
 struct LightForwardCBuffer
@@ -852,6 +855,7 @@ struct SceneSaveGlobalData
 {
 	HDRSceneSaveData			HDRData;
 	GlobalLightSceneSaveData	GLightData;
+	bool						RenderSkyBox;
 	std::string					SkyBoxTexFileName;
 };
 
@@ -869,5 +873,6 @@ struct WaterCBuffer
 {
 	float Speed;
 	float FoamDepthThreshold;
-	Vector2 Empty;
+	float Attn1;
+	float Attn2;
 };

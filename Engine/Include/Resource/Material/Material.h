@@ -39,6 +39,7 @@ struct MaterialSaveLoadStruct
     RenderStateSaveLoadStruct RenderStateSaveLoad[(int)RenderState_Type::Max];
     // int TextureCount;
     bool Metallic;
+    Vector2 UVScale;
     ShaderParams ShaderParams;
 };
 
@@ -106,7 +107,8 @@ protected:
     bool        m_EmissiveTex;
     bool        m_Bump;
     bool        m_RecieveDecal;
-    bool       m_Metallic;
+    bool        m_Metallic;
+    Vector2     m_UVScale;
     ShaderParams m_ShaderParams;
     CMaterialConstantBuffer* m_CBuffer;
     CSharedPtr<class CRenderState>  m_RenderStateArray[(int)RenderState_Type::Max];
@@ -205,6 +207,11 @@ public:
         return m_Metallic;
     }
 
+    const Vector2& GetUVScale() const
+    {
+        return m_UVScale;
+    }
+
     bool EmptyTexture() const
     {
         return m_TextureInfo.empty();
@@ -243,6 +250,7 @@ public:
     void SetEmissiveColor(float r, float g, float b, float a);
     void SetSpecularPower(float Power);
     void SetMetallic(bool Metallic);
+    void SetUVScale(const Vector2& UVScale);
 
 public:
     void AddTexture(int Register, int ShaderType, const std::string& Name, class CTexture* Texture);

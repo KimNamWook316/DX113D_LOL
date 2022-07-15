@@ -8,7 +8,8 @@ cbuffer WaterCBuffer : register(b13)
 {
 	float g_WaterSpeed;
 	float g_WaterFoamDepthThreshold;
-	float2 g_WaterEmpty;
+	float g_WaterNoiseAttn1;
+	float g_WaterNoiseAttn2;
 };
 
 cbuffer ShadowCBuffer : register(b10)
@@ -83,9 +84,9 @@ PSOutput_Single WaterPS(Vertex3DOutput Input)
 
 			float3 AddColor = float3(0.3f, 0.3f, 0.3f);
 
-			if (DepthDiff <= (0.3f + NoiseColor.r))
+			if (DepthDiff <= (g_WaterNoiseAttn1 + NoiseColor.r))
 			{
-				if (NoiseColor.r < 0.35f)
+				if (NoiseColor.r < g_WaterNoiseAttn2)
 				{
 					AddColor = 0.f;
 				}

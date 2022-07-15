@@ -135,6 +135,9 @@ private:
 	// Debug Render
 	bool m_DebugRender;
 
+	// SkyBox
+	bool m_RenderSkyBox;
+
 	// Post Processing (HDR)
 	bool m_PostProcessing;
 
@@ -194,6 +197,11 @@ public:
 		m_PostProcessing = Enable;
 	}
 
+	void SetRenderSkyBox(bool Enable)
+	{
+		m_RenderSkyBox = Enable;
+	}
+
 	class CShadowCBuffer* GetShadowCBuffer() const
 	{
 		return m_ShadowCBuffer;
@@ -231,6 +239,11 @@ public:
 	bool IsDebugRender()
 	{
 		return m_DebugRender;
+	}
+
+	bool IsRenderSkyBox() const
+	{
+		return m_RenderSkyBox;
 	}
 
 public:

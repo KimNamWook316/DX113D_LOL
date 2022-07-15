@@ -484,6 +484,10 @@ bool CScene::SaveSceneGlobalDataCSV(const char* FileName)
 	Val = m_LightManager->GetGlobalLightAmbiendIntensity();
 	Data->SetData("Data", "AmbientIntensity", Val);
 
+	bool RenderSkyBox = CRenderManager::GetInst()->IsRenderSkyBox();
+	Data->AddLabel("RenderSkyBox");
+	Data->SetData("Data", "RenderSkyBox", RenderSkyBox);
+
 	// AAA.scn 로 scn 저장하면 -> AAA_GlobalData.csv 파일명 csv 파일 생성
 	// Excel/SceneGlobalData/ 경로에 저장한다
 	char CSVFileName[MAX_PATH] = {};
@@ -547,6 +551,7 @@ bool CScene::LoadSceneGlobalDataCSV(const char* FileName)
 	m_SceneGlobalData.GLightData.Color.y = Data->FindDataFloat("Data", "GlobalLightColorG");
 	m_SceneGlobalData.GLightData.Color.z = Data->FindDataFloat("Data", "GlobalLightColorB");
 	m_SceneGlobalData.GLightData.AmbientIntensity = Data->FindDataFloat("Data", "AmbientIntensity");
+	m_SceneGlobalData.RenderSkyBox = Data->FindDataBool("Data", "RenderSkyBox");
 	
 	// 메모리 해제
 	CResourceManager::GetInst()->DeleteCSV(outCSVKey);
@@ -635,6 +640,7 @@ void CScene::UpdateSceneGlobalData()
 	RenderMng->SetFogStart(m_SceneGlobalData.HDRData.FogStart);
 	RenderMng->SetFogEnd(m_SceneGlobalData.HDRData.FogEnd);
 	RenderMng->SetFogDensity(m_SceneGlobalData.HDRData.FogDensity);
+	RenderMng->SetRenderSkyBox(m_SceneGlobalData.RenderSkyBox);
 
 	CLightComponent* GLight = m_LightManager->GetGlobalLightComponent();
 	GLight->SetWorldRotation(m_SceneGlobalData.GLightData.Rot);

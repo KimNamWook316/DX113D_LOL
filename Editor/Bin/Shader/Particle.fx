@@ -979,7 +979,7 @@ struct GeometryParticleOutput
 	float2	UV	: TEXCOORD;
 	float4	ProjPos : POSITION;
 	float      LifeTimeRatio : RATIO;
-	int         LocalXPlusMoveDir : MOVEDIR; // 기본 1 로 세팅 (만약 Local Space 기준, X 음의 방향으로 이동하면, 0으로 세팅)
+	// int         LocalXPlusMoveDir : MOVEDIR; // 기본 1 로 세팅 (만약 Local Space 기준, X 음의 방향으로 이동하면, 0으로 세팅)
 };
 
 static float3	g_ParticleLocalPos[4] =
@@ -1092,10 +1092,9 @@ void ParticleGS(point VertexParticleOutput input[1],
 
 		OutputArray[i].LifeTimeRatio = Ratio;
 
-		OutputArray[i].LocalXPlusMoveDir = 1;
-
-		if (g_ParticleArraySRV[InstanceID].Dir.x < 0.f)
-			OutputArray[i].LocalXPlusMoveDir = 0;
+		// OutputArray[i].LocalXPlusMoveDir = 1;
+		// if (g_ParticleArraySRV[InstanceID].Dir.x < 0.f)
+		// 	OutputArray[i].LocalXPlusMoveDir = 0;
 	}
 
 	output.Append(OutputArray[0]);
@@ -1123,21 +1122,9 @@ void ApplyLinearUVClipping(GeometryParticleOutput input)
 	// 그리고 해당 가로 선은, LifeTime / LifeTimeMax 비율이 증가할 수록, 오른쪽으로 이동하는 형태를 띄게 할 것이다.
 	if (g_ParticleUVClippingReflectingMoveDir == 1)
 	{
-		if (input.LocalXPlusMoveDir == 1)
-		{
-			if (input.UV.x > 1 - input.LifeTimeRatio)
-				clip(-1);
-		}
-		// 단,
-		// 진행 방향이 왼쪽인 녀석들. 즉 x 축 음의 방향으로 향하는 녀석들은
-		// 반대로, 가로 선은, LifeTime / LifeTimeMax 비율이 증가할 수록, 왼쪽에서 오른쪽으로 
-		// 오른쪽부터 왼쪽 방향으로 점점 사라지게 할 것이다.
-		else
-		{
-			// ex. 0.3 -.
-			if (input.UV.x > 1 - input.LifeTimeRatio)
-				clip(-1);
-		}
+		// if (input.LocalXPlusMoveDir == 1)
+		if (input.UV.x > 1 - input.LifeTimeRatio)
+			clip(-1);
 	}
 }
 

@@ -25,7 +25,7 @@ PSOutput_Single LaserPS(Vertex3DOutput Input)
     
     output.Color.rgb = BaseTextureColor.rgb * g_MtrlBaseColor.rgb + g_MtrlEmissiveColor.rgb;
     
-	output.Color.a = BaseTextureColor.a * g_MtrlOpacity;
+    output.Color.a = BaseTextureColor.a * g_MtrlOpacity;
     
     return output;
 }

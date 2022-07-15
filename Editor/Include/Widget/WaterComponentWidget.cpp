@@ -34,6 +34,8 @@ bool CWaterComponentWidget::Init()
 	m_LoadButton = RootTree->AddWidget<CIMGUIButton>("Load", 0.f, 0.f);
 	m_Speed = RootTree->AddWidget<CIMGUIInputFloat>("Speed", 200.f, 0.f);
 	m_FoamDepth = RootTree->AddWidget<CIMGUIInputFloat>("Foam Depth", 200.f);
+	m_Attn1 = RootTree->AddWidget<CIMGUIInputFloat>("Attn1", 200.f);
+	m_Attn2 = RootTree->AddWidget<CIMGUIInputFloat>("Attn2", 200.f);
 	m_BaseColorEdit = RootTree->AddWidget<CIMGUIColor3>("BaseColor", 200.f);
 	m_AmbientColorEdit = RootTree->AddWidget<CIMGUIColor3>("Ambient", 200.f);
 	m_SpecularColorEdit = RootTree->AddWidget<CIMGUIColor3>("Specluar", 200.f);
@@ -50,6 +52,8 @@ bool CWaterComponentWidget::Init()
 	m_LoadButton->SetClickCallback(this, &CWaterComponentWidget::OnClickLoadMaterial);
 	m_Speed->SetCallBack(this, &CWaterComponentWidget::OnChangeSpeed);
 	m_FoamDepth->SetCallBack(this, &CWaterComponentWidget::OnChangeFoamDepth);
+	m_Attn1->SetCallBack(this, &CWaterComponentWidget::OnChangeAttn1);
+	m_Attn2->SetCallBack(this, &CWaterComponentWidget::OnChangeAttn2);
 	m_BaseColorEdit->SetCallBack(this, &CWaterComponentWidget::OnEditBaseColor);
 	m_AmbientColorEdit->SetCallBack(this, &CWaterComponentWidget::OnEditAmbientColor);
 	m_SpecularColorEdit->SetCallBack(this, &CWaterComponentWidget::OnEditSpecluarColor);
@@ -67,9 +71,13 @@ void CWaterComponentWidget::SetSceneComponent(CSceneComponent* Com)
 
 	float Speed = WCom->GetSpeed();
 	float FoamDepth = WCom->GetFoamDepth();
+	float Attn1 = WCom->GetAttn1();
+	float Attn2 = WCom->GetAttn2();
 
 	m_Speed->SetVal(Speed);
 	m_FoamDepth->SetVal(FoamDepth);
+	m_Attn1->SetVal(Attn1);
+	m_Attn2->SetVal(Attn2);
 
 	CMaterial* Mat = WCom->GetMaterial();
 
@@ -183,6 +191,18 @@ void CWaterComponentWidget::OnChangeFoamDepth(float Val)
 {
 	CWaterComponent* WCom = dynamic_cast<CWaterComponent*>(m_Component);
 	WCom->SetFoamDepth(Val);
+}
+
+void CWaterComponentWidget::OnChangeAttn1(float Val)
+{
+	CWaterComponent* WCom = dynamic_cast<CWaterComponent*>(m_Component);
+	WCom->SetAttn1(Val);
+}
+
+void CWaterComponentWidget::OnChangeAttn2(float Val)
+{
+	CWaterComponent* WCom = dynamic_cast<CWaterComponent*>(m_Component);
+	WCom->SetAttn2(Val);
 }
 
 void CWaterComponentWidget::OnDropMaterialName(const std::string& Name)

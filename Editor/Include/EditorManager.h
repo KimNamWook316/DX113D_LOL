@@ -14,11 +14,6 @@ class CEditorManager
 private:
 	EditMode	m_EditMode;
 	class CDragObject* m_DragObj;
-	//class CSpriteWindow* m_SpriteWindow;
-	//class CDetailWindow* m_DetailWindow;
-	//class CEditorMenu* m_EditorMenu;
-	//class CObjectHierarchy* m_ObjectHierarchy;
-	//class CTileMapWindow* m_TileMapWindow;
 	class CFileBrowser* m_FileBrowser;
 	class CFileBrowserTree* m_FileBrowserTree;
 	class CObjectHierarchyWindow* m_ObjectHierarchyWindow;
