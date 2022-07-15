@@ -54,6 +54,7 @@ public:
 	bool CheckNavMeshPoly(const Vector3& Pos, float& Height, int& PolyIndex);
 	bool CheckAdjNavMeshPoly(const Vector3& Pos, int CurrentPolyIndex, float& Height, int& PolyIndex);
 	bool CheckNavMeshPickingPoint(Vector3& OutPos);
+	bool CheckStraightPath(const Vector3& StartPos, const Vector3& EndPos, std::vector<Vector3>& vecPath);
 
 public:
 	void Start();

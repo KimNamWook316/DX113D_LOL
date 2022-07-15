@@ -73,6 +73,8 @@ private:
 
 public:
 	void FillPathList(const std::list<Vector3>& PathList);
+	void AddPath(const Vector3& EndPos);
 	bool FindPath(class CSceneComponent* OwnerComponent, const Vector3& End);
+	bool CheckStraightPath(const Vector3& StartPos, const Vector3& EndPos, std::vector<Vector3>& vecPath);
 };
 

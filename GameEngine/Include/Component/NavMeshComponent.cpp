@@ -1,4 +1,4 @@
-
+ï»¿
 #include "NavMeshComponent.h"
 #include "../Resource/Mesh/NavMesh.h"
 #include "../Resource/Mesh/StaticMesh.h"
@@ -6,6 +6,7 @@
 #include "../Scene/Scene.h"
 #include "../Scene/Navigation3DManager.h"
 #include "../Scene/SceneResource.h"
+#include "../Scene/SceneManager.h"
 
 #include <DirectXCollision.h>
 
@@ -239,7 +240,7 @@ void CNavMeshComponent::FindPath(const Vector3& Start, const Vector3& End, std::
 			auto iter = m_CloseList.end();
 			--iter;
 
-			// ´ÝÈù ¸ñ·Ï¿¡ ¸ñÇ¥ CellÀÌ µé¾î¿À¸é ±× CellµéÀÇ ºÎ¸ð CellµéÀ» Å¸°í ¿Ã¶ó°¡¸é¼­ °æ·Î¸¦ ¿Ï¼ºÇÏ°í ±æÃ£±â Á¾·á
+			// ë‹«ížŒ ëª©ë¡ì— ëª©í‘œ Cellì´ ë“¤ì–´ì˜¤ë©´ ê·¸ Cellë“¤ì˜ ë¶€ëª¨ Cellë“¤ì„ íƒ€ê³  ì˜¬ë¼ê°€ë©´ì„œ ê²½ë¡œë¥¼ ì™„ì„±í•˜ê³  ê¸¸ì°¾ê¸° ì¢…ë£Œ
 			if (EndCell == (*iter))
 			{
 				vecPath.push_back((*iter)->Center);
@@ -260,7 +261,7 @@ void CNavMeshComponent::FindPath(const Vector3& Start, const Vector3& End, std::
 			}
 		}
 
-		// TotalÀÌ ³·Àº ¼øÀ¸·Î Á¤·Ä
+		// Totalì´ ë‚®ì€ ìˆœìœ¼ë¡œ ì •ë ¬
 		m_OpenList.sort(SortByTotal);
 
 		auto iter2 = m_OpenList.begin();
@@ -328,13 +329,13 @@ void CNavMeshComponent::AddAdjCellOpenList(NavigationCell* Cell, NavigationCell*
 
 		if (AdjCell)
 		{
-			// ÀÎÁ¢ CellÀÌ ÀÌ¹Ì ´ÝÈù ¸ñ·Ï¿¡ µé¾î°¡ÀÖ´Ù¸é ÆÐ½º
+			// ì¸ì ‘ Cellì´ ì´ë¯¸ ë‹«ížŒ ëª©ë¡ì— ë“¤ì–´ê°€ìžˆë‹¤ë©´ íŒ¨ìŠ¤
 			if (AdjCell->Type == NCLT_CLOSE)
 			{
 				continue;
 			}
 
-			// ÀÌ¹Ì ¿­¸° ¸ñ·Ï¿¡ ÀÖ´Â ³ðÀÌ¶ó¸é TotalÀ» ºñ±³ÇØ¼­ ´õ ÀÛÀº °ÍÀ¸·Î ±³Ã¼
+			// ì´ë¯¸ ì—´ë¦° ëª©ë¡ì— ìžˆëŠ” ë†ˆì´ë¼ë©´ Totalì„ ë¹„êµí•´ì„œ ë” ìž‘ì€ ê²ƒìœ¼ë¡œ êµì²´
 			if (AdjCell->Type == NCLT_OPEN)
 			{
 				float NewG = Cell->G + Cell->Center.Distance(AdjCell->Center);
@@ -352,7 +353,7 @@ void CNavMeshComponent::AddAdjCellOpenList(NavigationCell* Cell, NavigationCell*
 
 			else
 			{
-				// ºñ¿ë °è»êÇØ¼­ ¿­¸° ¸ñ·Ï¿¡ ³Ö¾îÁÖ±â
+				// ë¹„ìš© ê³„ì‚°í•´ì„œ ì—´ë¦° ëª©ë¡ì— ë„£ì–´ì£¼ê¸°
 				AdjCell->Type = NCLT_OPEN;
 				AdjCell->G = Cell->G + Cell->Center.Distance(AdjCell->Center);
 				AdjCell->H = AdjCell->Center.Distance(End->Center);
@@ -384,6 +385,120 @@ void CNavMeshComponent::MakePathList(std::list<Vector3>& PathList)
 {
 
 }
+
+bool CNavMeshComponent::CheckStraightPath(const Vector3& StartPos, const Vector3& EndPos, std::vector<Vector3>& vecPath)
+{
+	///////
+	float slope = 0.f;
+	int CurrentPosX = (int)StartPos.x;
+	int CurrentPosZ = (int)StartPos.z;
+	int DestPosX = (int)EndPos.x;
+	int DestPosZ = (int)EndPos.z;
+
+	int dx = DestPosX - CurrentPosX;
+	int dz = DestPosZ - CurrentPosZ;
+
+	vecPath.push_back(Vector3(CurrentPosX, 1000.f, CurrentPosZ));
+
+	int Absdx = (int)abs(dx);
+	int Absdz = (int)abs(dz);
+
+	slope = (float)Absdz / Absdx;
+
+	if (slope > 1)
+	{
+		int pi = 2 * (Absdx - Absdz);
+
+		while (true)
+		{
+			if (pi >= 0)
+			{
+				if (dx > 0)
+					++CurrentPosX;
+				else
+					--CurrentPosX;
+				if (dz > 0)
+					++CurrentPosZ;
+				else
+					--CurrentPosZ;
+
+				pi = pi + 2 * (Absdx - Absdz);
+			}
+
+			else
+			{
+				if (dz > 0)
+					++CurrentPosZ;
+				else
+					--CurrentPosZ;
+
+				pi = pi + 2 * (Absdx);
+			}
+			
+			vecPath.push_back(Vector3(CurrentPosX, 1000.f, CurrentPosZ));
+
+			if (CurrentPosX == DestPosX && CurrentPosZ == DestPosZ)
+				break;
+		}
+	}
+
+	else
+	{
+		int pi = 2 * (Absdz - Absdx);
+
+		while (true)
+		{
+			if (pi >= 0)
+			{
+				if (dx > 0)
+					++CurrentPosX;
+				else
+					--CurrentPosX;
+				if (dz > 0)
+					++CurrentPosZ;
+				else
+					--CurrentPosZ;
+
+				pi = pi + 2 * (Absdz - Absdx);
+			}
+
+			else
+			{
+				if (dx > 0)
+					++CurrentPosX;
+				else
+					--CurrentPosX;
+
+				pi = pi + 2 * Absdz;
+			}
+
+			vecPath.push_back(Vector3(CurrentPosX, 1000.f, CurrentPosZ));
+
+			if (CurrentPosX == DestPosX && CurrentPosZ == DestPosZ)
+				break;
+		}
+	}
+
+	// ë¸Œë ˆì  í—˜ ì•Œê³ ë¦¬ì¦˜ìœ¼ë¡œ ì–»ì€ (vecPathì— ìžˆëŠ”) ì§ì„  ê²½ë¡œê°€ NavMeshìƒì— ì¡´ìž¬í•˜ëŠ” ê²½ë¡œì¸ì§€ ì²´í¬ 
+
+	CNavigation3DManager* Manager = CSceneManager::GetInst()->GetScene()->GetNavigation3DManager();
+
+	size_t Count = vecPath.size();
+	float Height = 0.f;
+	int PolyIndex = 0;
+
+	for (size_t i = 0; i < Count; ++i)
+	{
+		bool Valid = Manager->CheckNavMeshPoly(vecPath[i], Height, PolyIndex);
+
+		if (!Valid)
+			return false;
+	}
+
+	return true;
+}
+
+
 
 NavigationCell* CNavMeshComponent::FindCell(int PolyIndex)
 {

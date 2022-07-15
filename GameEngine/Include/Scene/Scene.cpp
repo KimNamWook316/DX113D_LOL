@@ -63,6 +63,11 @@ CScene::~CScene()
 	SAFE_DELETE(m_LightManager);
 }
 
+CNavigation3DManager* CScene::GetNavigation3DManager() const
+{
+	return m_Nav3DManager;
+}
+
 void CScene::Start()
 {
 	m_Mode->Start();

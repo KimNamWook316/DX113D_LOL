@@ -5,6 +5,7 @@
 #include "../Scene/Navigation3DManager.h"
 #include "SceneComponent.h"
 #include "../GameObject/GameObject.h"
+#include "NavMeshComponent.h"
 
 CNavAgent::CNavAgent()	:
 	m_MoveSpeed(0.f),
@@ -90,7 +91,7 @@ void CNavAgent::Update(float DeltaTime)
 
 		if (!m_PathList.empty())
 		{
-			Vector3	TargetPos = m_PathList.front();
+			Vector3	TargetPos = m_PathList.back();
 			Vector3	Pos = m_UpdateComponent->GetWorldPos();
 
 			float	TargetDistance = Pos.Distance(TargetPos);
@@ -116,17 +117,15 @@ void CNavAgent::Update(float DeltaTime)
 			//	}
 			//}
 
-			float	Dist = 20.f * DeltaTime;
-			if(m_MoveSpeed == 0.f)
-				Dist = m_MoveSpeed * DeltaTime;
+			if (m_MoveSpeed == 0.f)
+				m_MoveSpeed = 5.f;
 
-			if (TargetDistance <= Dist)
+			if (TargetDistance <= 0.5f)
 			{
-				m_PathList.pop_front();
-				Dist = TargetDistance;
+				m_PathList.pop_back();
 			}
 
-			m_UpdateComponent->AddWorldPos(Dir * Dist);
+			m_UpdateComponent->AddWorldPos(Dir * m_MoveSpeed * DeltaTime);
 
 			Vector3 NewPos = m_UpdateComponent->GetWorldPos();
 			float Height = 0.f;
@@ -220,9 +219,20 @@ void CNavAgent::FillPathList(const std::list<Vector3>& PathList)
 	}
 }
 
+void CNavAgent::AddPath(const Vector3& EndPos)
+{
+	m_PathList.push_back(EndPos);
+}
+
 bool CNavAgent::FindPath(CSceneComponent* OwnerComponent, const Vector3& End)
 {
 	bool Result = CSceneManager::GetInst()->GetScene()->GetNavigation3DManager()->FindPath<CNavAgent, CSceneComponent>(this, &CNavAgent::FillPathList, OwnerComponent, End);
 
 	return Result;
+}
+
+bool CNavAgent::CheckStraightPath(const Vector3& StartPos, const Vector3& EndPos, std::vector<Vector3>& vecPath)
+{
+
+	return CSceneManager::GetInst()->GetScene()->GetNavigation3DManager()->GetNavMeshData()->CheckStraightPath(StartPos, EndPos, vecPath);
 }

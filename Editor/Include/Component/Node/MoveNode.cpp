@@ -99,7 +99,6 @@ NodeResult CMoveNode::OnUpdate(float DeltaTime)
 
 	m_Object->SetMoveDir(MoveDir);
 	
-	/// 벡터 외적을 할땐 오른손 좌표계 기준이라서 z에 -1을 곱해준다
 	Vector3 CrossVector = Vector3(FrontVector.x, FrontVector.y, -FrontVector.z).Cross(Vector3(MoveDir.x, MoveDir.y, -MoveDir.z));
 
 	bool Over180 = false;

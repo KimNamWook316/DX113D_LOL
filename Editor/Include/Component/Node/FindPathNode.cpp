@@ -30,8 +30,23 @@ NodeResult CFindPathNode::OnStart(float DeltaTime)
 
 	m_NavAgent = m_Object->FindObjectComponentFromType<CNavAgent>();
 
-	if(m_NavAgent)
-		m_NavAgent->FindPath(m_Object->GetRootComponent(), Player->GetWorldPos());
+	if (m_NavAgent)
+	{
+		CSceneComponent* Root = m_Object->GetRootComponent();
+		Vector3 PlayerPos = Player->GetWorldPos();
+		std::vector<Vector3> vecPath;
+		bool Straight = m_NavAgent->CheckStraightPath(Root->GetWorldPos(), PlayerPos, vecPath);
+
+		if (Straight)
+		{
+			m_NavAgent->AddPath(PlayerPos);
+		}
+
+		else
+			m_NavAgent->FindPath(Root, PlayerPos);
+	}
+
+	m_CallStart = true;
 
 	return NodeResult::Node_True;
 }

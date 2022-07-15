@@ -346,7 +346,9 @@ bool CNavigation3DManager::CheckNavMeshPoly(const Vector3& Pos, float& Height, i
 bool CNavigation3DManager::CheckAdjNavMeshPoly(const Vector3& Pos, int CurrentPolyIndex, float& Height, int& PolyIndex)
 {
 	std::vector<int> vecAdjPolyIndex;
-	m_NavMeshComponent->GetAdjPolyIndex(CurrentPolyIndex, vecAdjPolyIndex);
+
+	if(CurrentPolyIndex != -1)
+		m_NavMeshComponent->GetAdjPolyIndex(CurrentPolyIndex, vecAdjPolyIndex);
 
 	size_t Count = vecAdjPolyIndex.size();
 
@@ -450,6 +452,11 @@ bool CNavigation3DManager::CheckNavMeshPickingPoint(Vector3& OutPos)
 	}
 
 	return false;
+}
+
+bool CNavigation3DManager::CheckStraightPath(const Vector3& StartPos, const Vector3& EndPos, std::vector<Vector3>& vecPath)
+{
+	return m_NavMeshComponent->CheckStraightPath(StartPos, EndPos, vecPath);
 }
 
 void CNavigation3DManager::Start()

@@ -582,9 +582,6 @@
     <ClCompile Include="Scene\Navigation.cpp">
       <Filter>03. Scene\06. Navigation</Filter>
     </ClCompile>
-    <ClCompile Include="Scene\Scene.cpp">
-      <Filter>03. Scene</Filter>
-    </ClCompile>
     <ClCompile Include="Scene\SceneManager.cpp">
       <Filter>03. Scene</Filter>
     </ClCompile>
@@ -1080,6 +1077,9 @@
     <ClCompile Include="Scene\NavigationThread3D.cpp">
       <Filter>03. Scene\06. Navigation</Filter>
     </ClCompile>
+    <ClCompile Include="Scene\Scene.cpp">
+      <Filter>03. Scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Device.h">
@@ -1324,9 +1324,6 @@
     </ClInclude>
     <ClInclude Include="Scene\NavigationThread.h">
       <Filter>03. Scene\06. Navigation</Filter>
-    </ClInclude>
-    <ClInclude Include="Scene\Scene.h">
-      <Filter>03. Scene</Filter>
     </ClInclude>
     <ClInclude Include="Scene\SceneManager.h">
       <Filter>03. Scene</Filter>
@@ -1837,6 +1834,9 @@
     </ClInclude>
     <ClInclude Include="Scene\NavigationThread3D.h">
       <Filter>03. Scene\06. Navigation</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\Scene.h">
+      <Filter>03. Scene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

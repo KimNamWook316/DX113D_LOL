@@ -155,6 +155,7 @@ public:
 	void AddAdjCellOpenList(NavigationCell* Cell, NavigationCell* End, int ParentIndex);
 	void DelteCellOpenList(NavigationCell* Cell);
 	void MakePathList(std::list<Vector3>& PathList);
+	bool CheckStraightPath(const Vector3& StartPos, const Vector3& EndPos, std::vector<Vector3>& vecPath);
 	
 	NavigationCell* FindCell(int PolyIndex);
 
