@@ -228,6 +228,8 @@ void CParticleComponent::Update(float DeltaTime)
 		m_CBuffer->SetSpawnEnable(0);
 	}
 
+	// 해당 상수 버퍼 값은, 사용하지 않는다.각 Particle입자의 LifeTimeRatio 를 사용할 것이다.
+	/*
 	// Noise Texture 를 이용한 랜덤 사라짐 효과
 	if (m_CBuffer->IsNoiseTextureSamplingApplied())
 	{
@@ -240,6 +242,7 @@ void CParticleComponent::Update(float DeltaTime)
 
 		m_CBuffer->SetNoiseTextureFilter(NoiseTextureFilter);
 	}
+	*/
 
 	// 추가 : Particle 도 BillBoard 를 적용하기위해 OBJ 가 추가
 	if (m_BillBoardEffect)

@@ -127,7 +127,6 @@ struct ParticleInfoShared
 	int UVColN;
 };
 
-
 RWStructuredBuffer<ParticleInfo>		g_ParticleArray	: register(u0);
 RWStructuredBuffer<ParticleInfoShared> g_ParticleShare : register(u1);
 
@@ -973,7 +972,8 @@ struct GeometryParticleOutput
 	float4	Color : COLOR;
 	float2	UV	: TEXCOORD;
 	float4	ProjPos : POSITION;
-	float      LifeTimeMax : RATIO;
+	float      LifeTimeMax : NUMBER;
+	int			InstanceID : NUMBER1;
 	float      LifeTimeRatio : RATIO1;
 	float      LocalXPlusMoveDir : RATIO2; // 기본 1 로 세팅 (만약 Local Space 기준, X 음의 방향으로 이동하면, 0으로 세팅)
 };
@@ -1086,6 +1086,8 @@ void ParticleGS(point VertexParticleOutput input[1],
 
 		OutputArray[i].Color = Color;
 
+		OutputArray[i].InstanceID = InstanceID;
+
 		OutputArray[i].LifeTimeMax = g_ParticleArraySRV[InstanceID].LifeTimeMax;
 
 		OutputArray[i].LifeTimeRatio = Ratio;
@@ -1140,44 +1142,50 @@ void ApplyLinearUVClipping(GeometryParticleOutput input)
 }
 
 // Apply Noise Texture 
-bool ApplyNoiseTextureDestroyEffect(float2 UV, float LifeTimeMax, float LifeTimeRatio)
+bool ApplyNoiseTextureDestroyEffect(float2 UV, float LifeTimeMax, float LifeTimeRatio, int InstanceID)
 {
+	// g_ParticleNoiseTextureEffectFilter 는 1초이상으로 올라가지 않게 될 것이다. (cpu 에서 해당 시간을 제한 중이다)
 	if (g_ParticleApplyNoiseTexture == 1)
 	{
 		// 일정 LifeTimeRatio 이상이 되면 사라지게 한다.
-		if (LifeTimeRatio < 0.02f)
-			return true;
+		// if (LifeTimeRatio < 0.02f)
+		// 	return true;
 
-		float RandValF = GetRandomNumber(sqrt(UV.x * UV.x + UV.y * UV.y));
-		float RandValS = GetRandomNumber(sqrt(UV.x * UV.x + UV.y * UV.y) * RandValF * 10.f);
 
-		float XNoiseUV = cos(g_AccTime * 0.1f * RandValF + UV.x * RandValF) * 0.5f + 0.5f;
-		float YNoiseUV = sin(g_AccTime * 0.1f * RandValS + UV.y * RandValS) * 0.5f + 0.5f;
+		// InstanceID 에 따라서, 실제 NoiseTexture 에서 참조하는 UV 범위도 다르게 한다
+		// ex) 총 100개 생성 -> 10번째 Instance => 0 ~ 0.1 사이의 UV 범위 참조하게 하기
+		float2 NoiseSmpUV = UV +  (InstanceID / (g_ParticleSpawnCountMax * 0.1f));
 
-		// float4 NoiseColor = g_NoiseTexture.Sample(g_BaseSmp, float2(XNoiseUV, YNoiseUV));
-		float4 NoiseColor = g_NoiseTexture.Sample(g_BaseSmp, UV);
+		float3 FinalColor = g_NoiseTexture.Sample(g_BaseSmp, NoiseSmpUV);
 
-		float ClipLimit = g_ParticleNoiseTextureEffectFilter;
+		// float ClipLimit = LifeTimeRatio + FinalColor.g * 0.1f;
+		float ClipLimit = LifeTimeRatio;
 
+		if (ClipLimit > FinalColor.x)
+		{
+			// clip(-1);
+			return false;
+		}
+
+		/*
 		// ex. 0.5초 안에, 모든 Particle 들이 사라지게 해야 한다.
 		// 그러면, NoiseColor 에 0.5 배를 곱해준다. -> 더 빨리 사라지게 될 것이다.
-		if (LifeTimeMax < 1.f)
-		{
-			NoiseColor = NoiseColor * LifeTimeMax;
-		}
+		// 왜냐하면, NoiseColor 의 Max 값은 1 인데, Max 값을 0.5로 세팅하는 개념이다.
+		NoiseColor.x = NoiseColor.x * LifeTimeMax;
 
 		// ex. 10 초 안에 모든 Particle 들이 사라지게 해야 한다.
-		// g_ParticleNoiseTextureEffectFilter 는 계속 증가하는 값이다.
-		// g_ParticleNoiseTextureEffectFilter 는 0 에서 1로 계속 증가할 것이고
-		// g_ParticleNoiseTextureEffectFilter 가 1에 도달할 때, 모든 Pixel 이 사라져야 한다.
-		// g_ParticleNoiseTextureEffectFilter 은 10초라는 시간에 걸쳐서 1초까지 가야 한다.
-		// 그렇다면, 실제 g_ParticleNoiseTextureEffectFilter 가 증가하는 비율 / LifeTime 을 해주면 된다.
-		else if (LifeTimeMax > 1.f)
+		// LifeTimeRatio 는 계속 증가하는 값이다.
+		// LifeTimeRatio 는 0 에서 1로 계속 증가할 것이고
+		// LifeTimeRatio 가 1에 도달할 때, 모든 Pixel 이 사라져야 한다.
+		// LifeTimeRatio 은 10초라는 시간에 걸쳐서 1초까지 가야 한다.
+		// 그렇다면, 실제 LifeTimeRatio 가 증가하는 비율 / LifeTime 을 해주면 된다.
+		if (LifeTimeMax > 1.f)
 		{
-			ClipLimit = ClipLimit / LifeTimeMax;
+			ClipLimit = ClipLimit * LifeTimeMax;
 		}
+		*/
 
-		if (NoiseColor.x < ClipLimit)
+		if (FinalColor.x < ClipLimit)
 			return false;
 	}
 
@@ -1192,12 +1200,7 @@ PSOutput_Single ParticlePS(GeometryParticleOutput input)
 
 	ApplyLinearUVClipping(input);
 
-	// if (g_NormalTexture)
-	// {
-	// 	g_NormalTexture.Sample(g_BaseSmp, input.UV);
-	// }
-
-	if (ApplyNoiseTextureDestroyEffect(input.UV, input.LifeTimeMax, input.LifeTimeRatio) == false)
+	if (ApplyNoiseTextureDestroyEffect(input.UV, input.LifeTimeMax, input.LifeTimeRatio, input.InstanceID) == false)
 		clip(-1);
 
 	if (Color.a == 0.f || input.Color.a == 0.f)

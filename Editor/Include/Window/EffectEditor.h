@@ -19,6 +19,8 @@ enum class ParticlePreset
     FireSmokeUp,
     FireCracker , // ÆøÁ× È¿°ú
     SummonEffect, // ¼ÒÈ¯µÇ´Â ´À³¦
+    BettyAttackSpreadDust,
+    PlayerDust,
     Max
 };
 
@@ -38,7 +40,9 @@ static const char* ParticlePresetNames[] = {
     "XZSpreadGrass",
     "FireSmokeUp",
     "FireCraker", // ÆøÁ× È¿°ú
-    "SummonEffect" // ¼ÒÈ¯µÇ´Â ´À³¦
+    "SummonEffect", // ¼ÒÈ¯µÇ´Â ´À³¦
+    "BettyAttackSpreadDust",
+    "PlayerDust"
 };
 
 static const char* ParticleShapeNames[] = {
@@ -356,7 +360,6 @@ private :
     void OnRipplePreset();
     void OnRingPreset();
     void OnRingWallPreset();
-    void OnFireSmallPreset();
     void OnFireWidePreset();
     void OnSparkPreset();
     void OnSparkBouncePreset();
@@ -370,6 +373,8 @@ private :
     void OnFireSmokeUpPreset();
     void OnFireCrackerPreset();
     void OnSummonEffectPreset();
+    void OnBettyAttackSpreadDustPreset();
+    void OnPlayerDustPreset();
 public :
         // Base Ground Object ÁØºñ½ÃÅ°±â
         void SetGameObjectReady();

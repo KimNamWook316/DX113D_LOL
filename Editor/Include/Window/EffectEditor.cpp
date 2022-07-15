@@ -386,7 +386,7 @@ bool CEffectEditor::Init()
     m_ColorMaxEdit->SetCallBack(this, &CEffectEditor::OnColorMaxEdit);
 
     // Alpha Min, Max
-    Tree = AddWidget<CIMGUITree>("Alpha Min, Max");
+    Tree = AddWidget<CIMGUITree>("Alpha Start, End");
 
     m_AlphaBlendEnableButton = Tree->AddWidget<CIMGUIButton>("Set Alpha Blend", 150.f, 20.f);
     m_AlphaBlendEnableButton->SetClickCallback<CEffectEditor>(this, &CEffectEditor::OnSetAlphaBlendToMaterialCallback);
@@ -618,6 +618,16 @@ void CEffectEditor::OnClickParticlePreset(int Index, const char* PresetName)
     case (int)ParticlePreset::SummonEffect:
     {
         OnSummonEffectPreset();
+    }
+    break;
+    case (int)ParticlePreset::BettyAttackSpreadDust:
+    {
+        OnBettyAttackSpreadDustPreset();
+    }
+    break;
+    case (int)ParticlePreset::PlayerDust:
+    {
+        OnPlayerDustPreset();
     }
     break;
     default:
@@ -2875,6 +2885,14 @@ void CEffectEditor::OnSummonEffectPreset()
 
     // IMGUI Update
     SetIMGUIReflectParticle(m_ParticleClass);
+}
+
+void CEffectEditor::OnBettyAttackSpreadDustPreset()
+{
+}
+
+void CEffectEditor::OnPlayerDustPreset()
+{
 }
 
 void CEffectEditor::OnXZSpreadDustPreset()
