@@ -17,6 +17,7 @@ protected:
 	Camera_Type m_CameraType;
 	Matrix      m_matView;
 	Matrix      m_matProj;
+	Matrix		m_matKeepProj;
 	Matrix      m_matShadowView;
 	Matrix      m_matShadowProj;
 	float		m_ViewAngle;
@@ -124,13 +125,17 @@ public:
 	bool FrustumInPoint(const Vector3& Point);
 	bool FrustumInSphere(const SphereInfo& Sphere);
 
-private:
-	void CreateProjectionMatrix();
 public :
 	// 원하는 Width, Height에 맞춰서 Projection Matrix 를 만들어내는 함수
 	void CreateCustomResolutionProjMatrix(float Width, float Height);
+
 public:
 	void ComputeShadowView();
+	void SwitchOrthographic();
+
+private:
+	void CreateProjectionMatrix();
+
 public:
 	virtual void Start();
 	virtual bool Init();

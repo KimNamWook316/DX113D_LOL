@@ -112,6 +112,24 @@
     <Filter Include="06. GameComponent\02. ObjectComponent">
       <UniqueIdentifier>{95477303-fdb1-4f48-86fa-2851caed13c8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="07. BehaviorTree\01. ConditionNode\00. Specific">
+      <UniqueIdentifier>{19d100ad-6719-4880-bdb2-c7ccefb14b01}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="07. BehaviorTree\01. ConditionNode\00. Specific\01. BossKnight">
+      <UniqueIdentifier>{1a9ae2d2-92bd-48a4-857f-7cf03b6c4ea8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="07. BehaviorTree\02. ActionNode\00. Specific">
+      <UniqueIdentifier>{21f6bbc9-7ec7-4279-9f66-248615c7e213}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="07. BehaviorTree\02. ActionNode\01. Public">
+      <UniqueIdentifier>{99a57954-c008-446a-8497-d413b1727a4a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="07. BehaviorTree\01. ConditionNode\01. Public">
+      <UniqueIdentifier>{d02551ac-52b2-4103-8263-77ca0015a052}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="07. BehaviorTree\02. ActionNode\00. Specific\01. BossKnight">
+      <UniqueIdentifier>{cde23c16-afe6-4397-8ec1-f819935e0ca0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EditorManager.cpp">
@@ -386,6 +404,24 @@
     </ClCompile>
     <ClCompile Include="Window\AnimationDisplayWindow.cpp">
       <Filter>02. Editor\01. Window\2. Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\Node\KnightHopAttackRangeCheck.cpp">
+      <Filter>07. BehaviorTree\01. ConditionNode\00. Specific\01. BossKnight</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\Node\KnightFinalAttackCheck.cpp">
+      <Filter>07. BehaviorTree\01. ConditionNode\00. Specific\01. BossKnight</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\Node\KnightHopAttackNode.cpp">
+      <Filter>07. BehaviorTree\02. ActionNode\00. Specific\01. BossKnight</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\Node\BossKnightMeleeAttackNode.cpp">
+      <Filter>07. BehaviorTree\02. ActionNode\00. Specific\01. BossKnight</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\Node\BossKnightFinalAttackNode.cpp">
+      <Filter>07. BehaviorTree\02. ActionNode\00. Specific\01. BossKnight</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\Node\MeleeRangeCheckNode.cpp">
+      <Filter>07. BehaviorTree\01. ConditionNode\01. Public</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -664,6 +700,24 @@
     </ClInclude>
     <ClInclude Include="Window\AnimationDisplayWindow.h">
       <Filter>02. Editor\01. Window\2. Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\KnightHopAttackRangeCheck.h">
+      <Filter>07. BehaviorTree\01. ConditionNode\00. Specific\01. BossKnight</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\KnightFinalAttackCheck.h">
+      <Filter>07. BehaviorTree\01. ConditionNode\00. Specific\01. BossKnight</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\KnightHopAttackNode.h">
+      <Filter>07. BehaviorTree\02. ActionNode\00. Specific\01. BossKnight</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\BossKnightMeleeAttackNode.h">
+      <Filter>07. BehaviorTree\02. ActionNode\00. Specific\01. BossKnight</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\BossKnightFinalAttackNode.h">
+      <Filter>07. BehaviorTree\02. ActionNode\00. Specific\01. BossKnight</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\MeleeRangeCheckNode.h">
+      <Filter>07. BehaviorTree\01. ConditionNode\01. Public</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

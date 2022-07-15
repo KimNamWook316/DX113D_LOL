@@ -67,6 +67,7 @@ void CPaperBurnComponent::StartPaperBurn()
 
 	for (; iter != iterEnd; ++iter)
 	{
+		(*iter)->SetMetallic(false);
 		(*iter)->SetPaperBurn(true);
 	}
 	m_StartPaperBurn = true;
