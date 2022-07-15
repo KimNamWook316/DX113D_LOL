@@ -210,9 +210,6 @@ bool CParticle::Load(FILE* File)
 	m_CBuffer->Init();
 	m_CBuffer->Load(File);
 
-	// Noise Texture 관련 필터값은 항상 0 으로 세팅하기
-	m_CBuffer->SetNoiseTextureFilter(0);
-
 	// 구조화 버퍼 세팅
 	AddStructuredBuffer("ParticleInfo", sizeof(ParticleInfo), m_SpawnCountMax, 0);
 	AddStructuredBuffer("ParticleInfoShared", sizeof(ParticleInfoShared), 1, 1);

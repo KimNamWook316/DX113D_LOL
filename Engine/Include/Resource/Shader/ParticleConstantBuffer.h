@@ -96,9 +96,9 @@ public:
 		return m_BufferData.LifeTimeMin;
 	}
 
-	float GetNoiseTextureFilter() const
+	float GetNoiseTextureApplyRatio() const
 	{
-		return m_BufferData.NoiseTextureEffectFilter;
+		return m_BufferData.NoiseTextureApplyRatio;
 	}
 
 	float GetLifeTimeMax()
@@ -361,9 +361,9 @@ public:
 		m_BufferData.SpawnCountMax = Count;
 	}
 
-	void SetNoiseTextureFilter(float Value)
+	void SetNoiseTextureApplyRatio(float Value)
 	{
-		m_BufferData.NoiseTextureEffectFilter = Value;
+		m_BufferData.NoiseTextureApplyRatio = Value;
 	}
 
 	void SetScaleMin(const Vector3& ScaleMin)

@@ -61,5 +61,15 @@ public:
 	// String
 	static std::string BoolToString(bool Bool);
 	static bool StringToBool(const std::string& Str);
+
+	// Bazier 
+	static void CalculateBazierTargetPoses(const Vector3& D1, const Vector3& D2,const Vector3& D3, const Vector3& D4,
+		std::queue<Vector3>& queuePoses, int DetailNum);
+	static void CalculateBazierTargetPoses(const Vector3& D1, const Vector3& D2, const Vector3& D3, const Vector3& D4,
+		std::vector<Vector3>& vecPoses, int DetailNum);
+
+	// Log 함수를 이용하여, 급감하는 속도 효과
+
+	// 지수함수를 이용하여, 급증하는 속도 효과
 };
 

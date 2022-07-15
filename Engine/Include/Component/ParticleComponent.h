@@ -35,12 +35,11 @@ protected:
 	float m_ParticleMoveSpeed;
 	Vector3 m_ParticleNextMovePos;
 	Vector3 m_ParticleMoveDir;
-	Vector3 m_ParticleMoveRotOffset;
 	// Bazier
+	float m_BazierMoveTargetDist;
+	float m_BazierMoveCurDist;
 	bool m_BazierMoveEffect;
 	std::queue<Vector3> m_queueBazierMovePos;
-protected:
-	// class CStructuredBuffer*					m_NormalDistributionBuffer;
 private :
 	std::string m_ParticleName;
 public:
@@ -48,6 +47,10 @@ public:
 	void SetParticle(CParticle* Particle);
 	void SetSpawnTime(float Time);
 public :
+	bool IsBazierMoveEnable() const
+	{
+		return m_BazierMoveEffect;
+	}
 	CParticleConstantBuffer* GetCBuffer() const
 	{
 		return m_CBuffer;
@@ -64,15 +67,7 @@ public :
 	{
 		return m_Material;
 	}
-	bool IsBazierMoveEnable() const
-	{
-		return m_BazierMoveEffect;
-	}
 public :
-	void SetMoveRotOffset(const Vector3& Offset)
-	{
-		m_ParticleMoveRotOffset = Offset;
-	}
 	void SetGravityEffect(bool Enable)
 	{
 		m_ParticleMoveSpeed = Enable;
@@ -99,10 +94,11 @@ public :
 	}
 private :
 	void ApplyBillBoardEffect();
-	void ApplyBazierMove();
+	void ApplyBazierMove(float DeltaTime);
 	// Bazier 방식으로 특정 방향을 따라가게 세팅한다.
 public :
-	void SetBazierTargetPos(const Vector3& D1, const Vector3& D2, const Vector3& D3);
+	// D1 , 즉, 시작점은 WorldPos 가 될 것이다.
+	void SetBazierTargetPos(const Vector3& D2, const Vector3& D3, const Vector3& D4, int DetailNum);
 public:
 	virtual void Start();
 	virtual bool Init();

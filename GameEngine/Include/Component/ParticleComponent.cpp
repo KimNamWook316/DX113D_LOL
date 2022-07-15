@@ -7,6 +7,7 @@
 #include "../PathManager.h"
 #include "../Component/CameraComponent.h"
 #include "../Resource/Shader/StructuredBuffer.h"
+#include "../EngineUtil.h"
 
 CParticleComponent::CParticleComponent()	:
 	m_SpawnTime(0.f),
@@ -14,7 +15,6 @@ CParticleComponent::CParticleComponent()	:
 	m_Info{},
 	m_BillBoardEffect(false),
 	m_BazierMoveEffect(false),
-	m_GravityEnable(false),
 	m_ParticleMoveSpeed(50.f),
 	m_InfoShared{},
 	m_CBuffer(nullptr)
@@ -129,57 +129,63 @@ void CParticleComponent::ApplyBillBoardEffect()
 	m_Transform->SetRotationAxis(OriginDir, View);
 }
 
-void CParticleComponent::ApplyBazierMove()
+void CParticleComponent::ApplyBazierMove(float DeltaTime)
 {
 	if (!m_BazierMoveEffect)
 		return;
 
 	// 위치 이동
-	AddWorldPos(m_ParticleMoveDir * m_ParticleMoveSpeed);
+	float BazierMoveDist = (m_ParticleMoveDir * m_ParticleMoveSpeed * DeltaTime).Length();
+	AddWorldPos(m_ParticleMoveDir * m_ParticleMoveSpeed * DeltaTime);
+	m_BazierMoveCurDist += BazierMoveDist;
 
 	// 이동 방향에 따라, Rotation 적용해준다.
 
 	// 목표 위치로 거의 이동했다면, 다음 위치를 뽑아서 해당 위치로 이동한다.
-	if (GetWorldPos().Distance(m_ParticleNextMovePos) < 0.1f)
+	const Vector3& CurrentWorldPos = GetWorldPos();
+
+	if (m_BazierMoveTargetDist <= m_BazierMoveCurDist)
 	{
 		if (!m_queueBazierMovePos.empty())
 		{
 			Vector3 NextPos = m_queueBazierMovePos.front();
 			m_queueBazierMovePos.pop();
 			m_ParticleNextMovePos = NextPos;
+
 			m_ParticleMoveDir = m_ParticleNextMovePos - GetWorldPos();
 			m_ParticleMoveDir.Normalize();
+
+			m_BazierMoveTargetDist = m_ParticleNextMovePos.Distance(CurrentWorldPos);
+
+			m_BazierMoveCurDist = 0.f;
+		}
+		else
+		{
+			m_BazierMoveEffect = false;
 		}
 	}
 }
 
-void CParticleComponent::SetBazierTargetPos(const Vector3& D1, const Vector3& D2, const Vector3& D3)
+void CParticleComponent::SetBazierTargetPos(const Vector3& D2, const Vector3& D3, const Vector3& D4, int DetailNum)
 {
-	// 먼저 기존에 채워져있던 Pos 정보를 전부 지워준다.
-	while (!m_queueBazierMovePos.empty())
+	CEngineUtil::CalculateBazierTargetPoses(GetWorldPos(), D2, D3, D4, m_queueBazierMovePos, 100);
+
+	// 처음 한개를 뽑아둔다.
+	if (!m_queueBazierMovePos.empty())
 	{
+		Vector3 NextPos = m_queueBazierMovePos.front();
 		m_queueBazierMovePos.pop();
-	}
 
-	const Vector3& StPos = GetWorldPos();
+		m_ParticleNextMovePos = NextPos;
 
-	int numDiv = 50;
+		m_ParticleMoveDir = m_ParticleNextMovePos - GetWorldPos();
+		m_ParticleMoveDir.Normalize();
 
-	for (int i = 0; i < numDiv; ++i)
-	{
-		float amt = 1 / (float)numDiv;
+		const Vector3& CurrentWorldPos = GetWorldPos();
 
-		// 선형 보간 법
-		const Vector3& Q1 = StPos * (1 - amt) + D1 * amt;
-		const Vector3& Q2 = D1 * (1 - amt) + D2 * amt;
-		const Vector3& Q3 = D2 * (1 - amt) + D3 * amt;
+		m_BazierMoveTargetDist = m_ParticleNextMovePos.Distance(CurrentWorldPos);
 
-		const Vector3& R1 = Q1 * (1 - amt) + Q2 * amt;
-		const Vector3& R2 = Q2 * (1 - amt) + Q3 * amt;
-
-		const Vector3& TargetPos = R1 * (1 - amt) + R2 * amt;
-
-		m_queueBazierMovePos.push(TargetPos);
+		m_BazierMoveCurDist = 0.f;
 	}
 }
 
@@ -254,7 +260,7 @@ void CParticleComponent::Update(float DeltaTime)
 	if (m_BazierMoveEffect)
 	{
 		// Bazier 에 저장된 위치 정보로 이동할 것인다.
-		ApplyBazierMove();
+		ApplyBazierMove(DeltaTime);
 	}
 }
 
@@ -446,10 +452,6 @@ void CParticleComponent::ResetParticleStructuredBufferInfo()
 		return;
 
 	m_CBuffer->SetResetParticleSharedInfoSumSpawnCnt(1);
-
-	// 뿐만 아니라, 혹시 모르니 
-	// Noise Filter 값도 초기화 해준다.
-	m_CBuffer->SetNoiseTextureFilter(0.f);
 }
 
 bool CParticleComponent::SaveOnly(FILE* File)

@@ -432,8 +432,8 @@ bool CEffectEditor::Init()
     m_ApplyNoiseTextureSampling->AddCheckInfo("Noise Texture");
     m_ApplyNoiseTextureSampling->SetCallBackLabel<CEffectEditor>(this, &CEffectEditor::OnApplyNoiseTextureSamplingEdit);
 
-    m_ResetNoiseTextureFilterValue = Tree->AddWidget<CIMGUIButton>("Reset Noise", 80.f, 20.f);
-    m_ResetNoiseTextureFilterValue->SetClickCallback<CEffectEditor>(this, &CEffectEditor::OnResetNoiseTextureFilterValue);
+    m_NoiseTextureApplyRatio = Tree->AddWidget<CIMGUIInputFloat>("Noise Start Ratio", 150.f, 20.f);
+    m_NoiseTextureApplyRatio->SetCallBack<CEffectEditor>(this, &CEffectEditor::OnSetNoiseTextureApplyRatio);
 
     // Bazier Move Test
     Tree = AddWidget<CIMGUITree>("Bazier Test");
@@ -1080,10 +1080,12 @@ void CEffectEditor::OnClickStartBazierMove()
     }
     else
     {
-        dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->SetBazierMoveEffect(true);
+        m_ParticleObject->SetWorldPos(0.f, 0.f, 0.f);
+
         dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->SetBazierTargetPos(
-            m_BazierD1Pos, m_BazierD2Pos, m_BazierD3Pos
+            m_BazierD1Pos, m_BazierD2Pos, m_BazierD3Pos, 100
         );
+        dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->SetBazierMoveEffect(true);
     }
 }
 
@@ -1172,13 +1174,13 @@ void CEffectEditor::OnApplyNoiseTextureSamplingEdit(const char*, bool Enable)
     dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetApplyNoiseTextureSamplingEnable(Enable);
 }
 
-void CEffectEditor::OnResetNoiseTextureFilterValue()
+void CEffectEditor::OnSetNoiseTextureApplyRatio(float Ratio)
 {
     if (!m_ParticleClass)
         return;
 
-    // Noise Texture Filter Value 를 다시 0으로 만들어준다.
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetNoiseTextureFilter(0);
+    m_ParticleClass->SetNoiseTextureApplyRatio(Ratio);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetNoiseTextureApplyRatio(Ratio);
 }
 
 void CEffectEditor::OnMoveDirEdit(const Vector3& Dir)
@@ -1843,6 +1845,7 @@ void CEffectEditor::SetIMGUIReflectParticle(CParticle* Particle)
 
     // Noise Texture
     m_ApplyNoiseTextureSampling->SetCheck(0, Particle->IsNoiseTextureSamplingApplied());
+    m_NoiseTextureApplyRatio->SetVal(Particle->GetNoiseTextureApplyRatio());
 }
 
 void CEffectEditor::SetIMGUIReflectObjectCamera()
@@ -2963,7 +2966,7 @@ void CEffectEditor::OnPlayerDustPreset()
 
     // Scale,
     OnScaleMinEdit(Vector3(10.f, 10.f, 1.f));
-    OnScaleMaxEdit(Vector3(10.f, 30.f, 1.f));
+    OnScaleMaxEdit(Vector3(30.f, 30.f, 1.f));
 
     // Rotation Angle
     OnMinSeperateRotAngleEdit(Vector3(45.f, 0.f, 0.f));

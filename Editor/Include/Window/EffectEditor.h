@@ -183,7 +183,7 @@ private:
 
     // Noise Texture
     class CIMGUICheckBox* m_ApplyNoiseTextureSampling;
-    class CIMGUIButton* m_ResetNoiseTextureFilterValue;
+    class CIMGUIInputFloat* m_NoiseTextureApplyRatio;
 
     // Particle 이 사용하는 Material Texture
     class CIMGUIImage* m_ParticleTexture;
@@ -298,7 +298,7 @@ private:
 
     // Noise Texture
     void OnApplyNoiseTextureSamplingEdit(const char*, bool);
-    void OnResetNoiseTextureFilterValue();
+    void OnSetNoiseTextureApplyRatio(float Ratio);
 
     // Move Dir, Angle
     void OnMoveDirEdit(const Vector3& Dir);
@@ -313,7 +313,6 @@ private:
     
     // Linear Rot
     void OnIsLinearRot(const char*, bool);
-    void OnSetLinearRotInitAngle(const Vector3& Angle);
 
     // Baziear Move Test
     void OnSetBazierD1Pos(const Vector3& Pos);

@@ -63,7 +63,7 @@ cbuffer	ParticleCBuffer : register(b7)
 	int g_ParticleSpeedChangeMethod;
 
 	int g_ParticleApplyNoiseTexture; // Pixel Shader 에서 매순간 Noise Texture 로 부터, Sampling 을 해서 Color, Alpha 값 등을 바꾸는 것
-	float g_ParticleNoiseTextureEffectFilter; // Noise Texture Filter 값
+	float g_ParticleNoiseTextureApplyRatio; // Noise Texture 사라지는 효과 시작 비율
 	float g_ParticleExponentialAndLogFunctionXIntercept;
 	int g_ParticleEmpty2;
 };
@@ -1147,10 +1147,9 @@ bool ApplyNoiseTextureDestroyEffect(float2 UV, float LifeTimeMax, float LifeTime
 	// g_ParticleNoiseTextureEffectFilter 는 1초이상으로 올라가지 않게 될 것이다. (cpu 에서 해당 시간을 제한 중이다)
 	if (g_ParticleApplyNoiseTexture == 1)
 	{
-		// 일정 LifeTimeRatio 이상이 되면 사라지게 한다.
-		// if (LifeTimeRatio < 0.02f)
-		// 	return true;
-
+		// LifeTimeRatio 가 g_ParticleNoiseTextureApplyRatio 이상이 되면 사라지게 한다.
+		if (g_ParticleNoiseTextureApplyRatio > LifeTimeRatio)
+		 	return true;
 
 		// InstanceID 에 따라서, 실제 NoiseTexture 에서 참조하는 UV 범위도 다르게 한다
 		// ex) 총 100개 생성 -> 10번째 Instance => 0 ~ 0.1 사이의 UV 범위 참조하게 하기
@@ -1158,32 +1157,8 @@ bool ApplyNoiseTextureDestroyEffect(float2 UV, float LifeTimeMax, float LifeTime
 
 		float3 FinalColor = g_NoiseTexture.Sample(g_BaseSmp, NoiseSmpUV);
 
-		// float ClipLimit = LifeTimeRatio + FinalColor.g * 0.1f;
-		float ClipLimit = LifeTimeRatio;
-
-		if (ClipLimit > FinalColor.x)
-		{
-			// clip(-1);
-			return false;
-		}
-
-		/*
-		// ex. 0.5초 안에, 모든 Particle 들이 사라지게 해야 한다.
-		// 그러면, NoiseColor 에 0.5 배를 곱해준다. -> 더 빨리 사라지게 될 것이다.
-		// 왜냐하면, NoiseColor 의 Max 값은 1 인데, Max 값을 0.5로 세팅하는 개념이다.
-		NoiseColor.x = NoiseColor.x * LifeTimeMax;
-
-		// ex. 10 초 안에 모든 Particle 들이 사라지게 해야 한다.
-		// LifeTimeRatio 는 계속 증가하는 값이다.
-		// LifeTimeRatio 는 0 에서 1로 계속 증가할 것이고
-		// LifeTimeRatio 가 1에 도달할 때, 모든 Pixel 이 사라져야 한다.
-		// LifeTimeRatio 은 10초라는 시간에 걸쳐서 1초까지 가야 한다.
-		// 그렇다면, 실제 LifeTimeRatio 가 증가하는 비율 / LifeTime 을 해주면 된다.
-		if (LifeTimeMax > 1.f)
-		{
-			ClipLimit = ClipLimit * LifeTimeMax;
-		}
-		*/
+		// float ClipLimit = LifeTimeRatio;
+		float ClipLimit = (LifeTimeRatio - g_ParticleNoiseTextureApplyRatio) / (1 - g_ParticleNoiseTextureApplyRatio);
 
 		if (FinalColor.x < ClipLimit)
 			return false;
