@@ -406,6 +406,9 @@ void CAnimationEditor::OnCreateSample3DObject()
 
 	m_3DTestObject = CSceneManager::GetInst()->GetScene()->CreateGameObject<CAnim3DObject>("3DObject");
 
+	m_3DTestObject->ExcludeFromSceneSave();
+	m_3DTestObject->SetNoDestroyOnSceneChange(true);
+
 	// 3DTest Object의 Animation 정보를 가져온다.
 	m_Animation = dynamic_cast<CAnimationMeshComponent*>(m_3DTestObject->GetRootComponent())->CreateBasicAnimationInstance();
 }
@@ -518,6 +521,16 @@ void CAnimationEditor::OnLoadExcel()
 			return;
 		}
 
+		// 기존 KeyName 의 복사본을 만든다.
+		std::string PrevExcelKeyName = m_ExcelKeyName;
+
+		// 같은 Excel 을 Load 한 것 
+		// 따라서, 그냥 바로 return 시킨다.
+		if (PrevExcelKeyName == LoadedExcelKey)
+		{
+			return;
+		}
+
 		m_ExcelKeyName = LoadedExcelKey;
 
 		CExcelData* LoadedExcelData = CResourceManager::GetInst()->GetExcelManager()->FindCSV(LoadedExcelKey);
@@ -527,12 +540,9 @@ void CAnimationEditor::OnLoadExcel()
 
 		m_LoadedExcelFileName->SetText(LoadedExcelName.c_str());
 
-		// Excel Data 내용 세팅 
-		if (m_LoadedExcelData)
-		{
-			// Excel Manager 에서 해당 Excel 내용을 지운다.
-			CResourceManager::GetInst()->GetExcelManager()->DeleteCSV(m_ExcelKeyName);
-		}
+		// Excel Data 내용 새롭게 세팅
+		// Excel Manager 에서 기존 Excel 내용을 지운다.
+		CResourceManager::GetInst()->GetExcelManager()->DeleteCSV(PrevExcelKeyName);
 
 		m_LoadedExcelData = LoadedExcelData;
 	}
@@ -735,8 +745,9 @@ void CAnimationEditor::OnMakeAnimInstByExcel()
 		int AddedKeyNameLength = (int)AddedKeyName.length();
 
 		// AddedKeyName 중에서 '_' 뒤의 문자를 가져온다. 
+		// 단, 맨 뒤에서부터 검사한다. (따라서, str.find 가 아니라, rfind 를 사용할 것이다.)
 		std::string_view AddedKeyNameAfterLowDash = AddedKeyName;
-		AddedKeyNameAfterLowDash = AddedKeyNameAfterLowDash.substr(AddedKeyNameAfterLowDash.find('_') + 1, AddedKeyNameAfterLowDash.length());
+		AddedKeyNameAfterLowDash = AddedKeyNameAfterLowDash.substr(AddedKeyNameAfterLowDash.rfind('_') + 1, AddedKeyNameAfterLowDash.length());
 
 		std::string NewLableKeyName;
 

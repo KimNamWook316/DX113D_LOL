@@ -49,7 +49,7 @@ bool C3DCameraObject::Init()
 	m_Camera->SetInheritParentRotationPosZ(true);
 
 	m_Camera->SetCameraType(Camera_Type::Camera3D);
-	m_Camera->SetViewAngle(27.f);
+	m_Camera->SetViewAngle(15.f);
 
 	m_Camera->AddRelativePos(0.f, 30.f, -30.f);
 	m_Camera->SetRelativeRotationX(45.f);

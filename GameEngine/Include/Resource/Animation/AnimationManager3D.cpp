@@ -61,6 +61,11 @@ bool CAnimationManager3D::LoadAnimationSequence(const std::string& Name, bool Lo
 
 	m_mapSequence.insert(std::make_pair(Name, Sequence));
 
+	if (m_ChangeCallBack)
+	{
+		m_ChangeCallBack();
+	}
+
 	return true;
 }
 
@@ -104,6 +109,11 @@ bool CAnimationManager3D::LoadAnimationSequence(const std::string& Name, bool Lo
 
 	m_mapSequence.insert(std::make_pair(Name, Sequence));
 
+	if (m_ChangeCallBack)
+	{
+		m_ChangeCallBack();
+	}
+
 	return true;
 }
 
@@ -128,6 +138,11 @@ bool CAnimationManager3D::LoadAnimationSequence(bool Loop, const std::string& Na
 	Sequence->SetName(Name);
 
 	m_mapSequence.insert(std::make_pair(Name, Sequence));
+
+	if (m_ChangeCallBack)
+	{
+		m_ChangeCallBack();
+	}
 
 	return true;
 }
@@ -154,6 +169,11 @@ bool CAnimationManager3D::LoadAnimationSequenceFullPath(bool Loop, const std::st
 	Sequence->SetName(Name);
 
 	m_mapSequence.insert(std::make_pair(Name, Sequence));
+
+	if (m_ChangeCallBack)
+	{
+		m_ChangeCallBack();
+	}
 
 	return true;
 }
@@ -190,6 +210,11 @@ bool CAnimationManager3D::LoadAnimationSequenceMultibyte(bool Loop, const std::s
 
 	m_mapSequence.insert(std::make_pair(Name, Sequence));
 
+	if (m_ChangeCallBack)
+	{
+		m_ChangeCallBack();
+	}
+
 	return true;
 }
 
@@ -215,6 +240,11 @@ bool CAnimationManager3D::LoadAnimationSequenceFullPathMultibyte(bool Loop, cons
 	Sequence->SetName(Name);
 
 	m_mapSequence.insert(std::make_pair(Name, Sequence));
+
+	if (m_ChangeCallBack)
+	{
+		m_ChangeCallBack();
+	}
 
 	return true;
 }
@@ -243,6 +273,11 @@ bool CAnimationManager3D::LoadAnimationSequenceFullPathMultibyteSetOriginFileNam
 
 	m_mapSequence.insert(std::make_pair(Name, Sequence));
 
+	if (m_ChangeCallBack)
+	{
+		m_ChangeCallBack();
+	}
+
 	return true;
 }
 
@@ -263,7 +298,13 @@ void CAnimationManager3D::ReleaseSequence(const std::string& Name)
 	if (iter != m_mapSequence.end())
 	{
 		if (iter->second->GetRefCount() == 1)
+		{
 			m_mapSequence.erase(iter);
+			if (m_ChangeCallBack)
+			{
+				m_ChangeCallBack();
+			}
+		}
 	}
 }
 
@@ -277,7 +318,13 @@ void CAnimationManager3D::ReleaseAnimationSequence3D(CAnimationSequence* Existin
 		if (iter->second == ExistingSequence)
 		{
 			if (iter->second->GetRefCount() == 1)
+			{
+				if (m_ChangeCallBack)
+				{
+					m_ChangeCallBack();
+				}
 				m_mapSequence.erase(iter);
+			}
 			break;
 		}
 	}
@@ -308,6 +355,11 @@ CAnimationSequence* CAnimationManager3D::CreateBasicAnimationSequence(const std:
 
 	m_mapSequence.insert(std::make_pair(Name, Sequence));
 
+	if (m_ChangeCallBack)
+	{
+		m_ChangeCallBack();
+	}
+
 	return Sequence;
 }
 
@@ -321,6 +373,11 @@ void CAnimationManager3D::DeleteSequence(const std::string& Name)
 		if (iter->second->GetName() == Name)
 		{
 			m_mapSequence.erase(iter);
+
+			if (m_ChangeCallBack)
+			{
+				m_ChangeCallBack();
+			}
 			break;
 		}
 	}
@@ -336,6 +393,11 @@ void CAnimationManager3D::DeleteSequence(const CAnimationSequence* const Sequenc
 		if (iter->second == Sequence)
 		{
 			m_mapSequence.erase(iter);
+
+			if (m_ChangeCallBack)
+			{
+				m_ChangeCallBack();
+			}
 			break;
 		}
 	}

@@ -30,6 +30,7 @@
     <ClCompile Include="Component\Node\DecoratorNode.cpp" />
     <ClCompile Include="Component\State\State.cpp" />
     <ClCompile Include="Component\State\StateManager.cpp" />
+    <ClCompile Include="Component\WaterComponent.cpp" />
     <ClCompile Include="IMGUITableElemList.cpp" />
     <ClCompile Include="Component\BehaviorTree.cpp" />
     <ClCompile Include="Component\BillboardComponent.cpp" />
@@ -224,6 +225,8 @@
     <ClCompile Include="Resource\Shader\TransformConstantBuffer.cpp" />
     <ClCompile Include="Resource\Shader\Transparent3DShader.cpp" />
     <ClCompile Include="Resource\Shader\TransparentInstancing3DShader.cpp" />
+    <ClCompile Include="Resource\Shader\WaterCBuffer.cpp" />
+    <ClCompile Include="Resource\Shader\WaterShader.cpp" />
     <ClCompile Include="Resource\Shader\WidgetConstantBuffer.cpp" />
     <ClCompile Include="Resource\Shader\WidgetShader.cpp" />
     <ClCompile Include="Resource\Sound\Sound.cpp" />
@@ -270,6 +273,7 @@
     <ClInclude Include="Component\Node\DecoratorNode.h" />
     <ClInclude Include="Component\State\State.h" />
     <ClInclude Include="Component\State\StateManager.h" />
+    <ClInclude Include="Component\WaterComponent.h" />
     <ClInclude Include="IMGUITableElemList.h" />
     <ClInclude Include="Collision\Collision.h" />
     <ClInclude Include="Collision\CollisionManager.h" />
@@ -473,6 +477,8 @@
     <ClInclude Include="Resource\Shader\TransformConstantBuffer.h" />
     <ClInclude Include="Resource\Shader\Transparent3DShader.h" />
     <ClInclude Include="Resource\Shader\TransparentInstancing3DShader.h" />
+    <ClInclude Include="Resource\Shader\WaterCBuffer.h" />
+    <ClInclude Include="Resource\Shader\WaterShader.h" />
     <ClInclude Include="Resource\Shader\WidgetConstantBuffer.h" />
     <ClInclude Include="Resource\Shader\WidgetShader.h" />
     <ClInclude Include="Resource\Sound\Sound.h" />
@@ -753,6 +759,18 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Effect</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Transparent3DVS</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="..\Bin\Shader\TransparentInfo.fx">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="..\Bin\Shader\Water.fx">
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">WaterVS</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">WaterVS</EntryPointName>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Effect</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>

@@ -266,6 +266,7 @@ enum class SceneComponent3DType
 	ColliderHalfLine,
 	ColliderRay,
 	NavMeshComponent,
+	WaterComponent,
 	PlayerNormalAttackCheckCollider,
 	EyeLaserComponent,
 	PlayerHookComponent,
@@ -385,6 +386,16 @@ enum class ParticleSpecialMoveDir
 	Max
 };
 
+enum class PaperBurnEndEvent
+{
+	None,
+	Destroy,
+	Disable,
+	Return,
+	Reset,
+	Max	
+};
+
 enum class HookResult
 {
 	// 날아가고 있는중
@@ -392,4 +403,13 @@ enum class HookResult
 	NoCollision,
 	Collision,
 	CollisionEnd
+};
+
+
+enum class ParticleSpeedChangeMethod
+{
+	Linear = 1,
+	Exponential,  // 속도 변화가 점점 크게
+	Log, /// 속도 변화가 점점 작게 
+	Max
 };

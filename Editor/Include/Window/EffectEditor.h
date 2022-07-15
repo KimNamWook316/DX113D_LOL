@@ -6,7 +6,6 @@ enum class ParticlePreset
     Ripple,
     Ring,
     RingWall,
-    FireSmall,
     FireWide,
     Spark,
     SparkBounce,
@@ -15,8 +14,11 @@ enum class ParticlePreset
     FireTorch, // 가운데가 올라가 있는 형태의 불
     FireGenerateMoment, // 불이 확 붙는 순간
     BloodPartice, // Blood 입자 하나하나가 튀는 효과
-    BloodSpreadSpiral,
+    XYBloodSpreadSpiral,
     XZSpreadGrass, // 사방으로 퍼지는 Grass 효과
+    FireSmokeUp,
+    FireCracker , // 폭죽 효과
+    SummonEffect, // 소환되는 느낌
     Max
 };
 
@@ -24,7 +26,6 @@ static const char* ParticlePresetNames[] = {
     "Ripple",
     "Ring",
     "RingWall",
-    "FireSmall",
     "FireWide",
     "Spark",
     "SparkBounce",
@@ -33,8 +34,11 @@ static const char* ParticlePresetNames[] = {
     "FireTorch",
     "FireGenerateMoment",
     "BloodEachParticle",
-    "BloodSpreadSpiral",
-    "XZSpreadGrass"
+    "XYBloodSpreadSpiral",
+    "XZSpreadGrass",
+    "FireSmokeUp",
+    "FireCraker", // 폭죽 효과
+    "SummonEffect" // 소환되는 느낌
 };
 
 static const char* ParticleShapeNames[] = {
@@ -46,6 +50,12 @@ static const char* ParticleShapeNames[] = {
 static const char* ParticleMoveDirType[] = {
     "XZSpread", //  xz 평명 방향으로 이동 y는 0
     "XYSpread" //  xy 평명 방향으로 이동 z 는 0
+};
+
+static const char* ParticleSpeedChangeType[] = {
+    "Linear", //  속도 변화 선형적으로 변화
+    "Exponential", //  속도 변화 점점 크게 변화
+    "Log" // 속도 변화 점점 작게 변화 
 };
 
 struct Particle3DObjectBackUpStruct
@@ -100,8 +110,9 @@ private:
     class CIMGUIInputFloat* m_LifeTimeMinEdit;
     class CIMGUIInputFloat* m_LifeTimeMaxEdit;
 
-    class CIMGUIInputFloat* m_SpeedMinEdit;
-    class CIMGUIInputFloat* m_SpeedMaxEdit;
+    class CIMGUIInputFloat* m_SpeedStartEdit;
+    class CIMGUIInputFloat* m_SpeedEndEdit;
+    class CIMGUIComboBox* m_SpeedChangeType;
 
     class CIMGUIColor4* m_ColorMinEdit;
     class CIMGUIColor4* m_ColorMaxEdit;
@@ -166,6 +177,9 @@ private:
     // 방햐엥 따른 UV Clipping
     class CIMGUICheckBox* m_UVClippingAccordingToDir;
 
+    // Noise Texture
+    class CIMGUICheckBox* m_ApplyNoiseTextureSampling;
+
     // Particle 이 사용하는 Material Texture
     class CIMGUIImage* m_ParticleTexture;
 private :
@@ -181,6 +195,10 @@ private :
     class CGameObject* m_SkyObject;
 public :
     virtual bool Init() override;
+    class C3DParticleObject* GetParticleObject() const
+    {
+        return m_ParticleObject;
+    }
 private:
     void OnSaveParticleObjectButton();
     void OnLoadParticleObjectButton();
@@ -231,8 +249,9 @@ private:
     void OnIsLifeTimeLinearFromCenter(const char*, bool);
 
     // Speed Min, Max
-    void OnSpeedMinEdit(float Num);
-    void OnSpeedMaxEdit(float Num);
+    void OnSpeedStartEdit(float Num);
+    void OnSpeedEndEdit(float Num);
+    void OnSpeedChangeTypeEdit(int Index, const char* Type);
 
     // Color Min, Max
     void OnColorMinEdit(const Vector4& Color);
@@ -261,6 +280,9 @@ private:
     void OnSetCameraYOffset(float Offset);
     void OnSetCameraXRot(float Rot);
 
+    // Noise Texture
+    void OnApplyNoiseTextureSamplingEdit(const char*, bool);
+
     // Move Dir, Angle
     void OnMoveDirEdit(const Vector3& Dir);
     void OnMoveAngleEdit(const Vector3& Angle);
@@ -284,8 +306,6 @@ private:
     void OnSetBasicParticleMaterialSetting(class CSceneComponent* Com);
     void OnReflectCurrentParticleSetting();
 
-    // Base Ground Object 준비시키기
-    void SetGameObjectReady();
 
     // 기본 Particle 정보 세팅하기
     void SetBasicDefaultParticleInfos(class CParticle* Particle);
@@ -326,7 +346,13 @@ private :
     void OnFireTorchPreset();
     void OnFireGenerateMomentPreset();
     void OnBloodEachParticlePreset();
-    void OnBloodSpreadPreset();
-    void OnSpreadGrassPreset();
+    void OnXYBloodSpreadPreset();
+    void OnXZSpreadGrassPreset();
+    void OnFireSmokeUpPreset();
+    void OnFireCrackerPreset();
+    void OnSummonEffectPreset();
+public :
+        // Base Ground Object 준비시키기
+        void SetGameObjectReady();
 };
 

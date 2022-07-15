@@ -1,172 +1,125 @@
 
-#include "ShaderInfo.fx"
+#include "TransparentInfo.fx"
 
-struct Vertex3D
+Texture2DMS<float4> g_Depth : register(t11);
+Texture2DMS<float4> g_ShadowMapTex : register(t12);
+
+cbuffer WaterCBuffer : register(b13)
 {
-    // 변수 뒤에 : 레지스터이름 + 번호 로 지정한다.
-    // 번호를 안붙이면 0으로 지정된다.
-    float3 Pos : POSITION; // Vector3타입.
-    float3 Normal : NORMAL;
-    float2 UV : TEXCOORD;
-    float3 Tangent : TANGENT;
-    float3 Binormal : BINORMAL;
-    float4 BlendWeight : BLENDWEIGHT;
-    float4 BlendIndex : BLENDINDEX;
+	float g_WaterSpeed;
+	float g_WaterFoamDepthThreshold;
+	float g_WaterNoiseAttn1;
+	float g_WaterNoiseAttn2;
 };
 
-struct Vertex3DOutput
+cbuffer ShadowCBuffer : register(b10)
 {
-    // SV가 붙으면 System Value이다. 이 값은 레지스터에 저장만 하고
-    // 가져다 사용하면 안된다.
-    float4 Pos : SV_POSITION;
-    float2 UV : TEXCOORD1;
-    float4 ProjPos : POSITION;
-    float3 ViewPos : POSITION1;
-    float3 Normal : NORMAL;
-    float3 Tangent : TANGENT;
-    float3 Binormal : BINORMAL;
+	matrix g_matShadowVP;
+	matrix g_matShadowInvVP;
+	float g_ShadowBias;
+	float2 g_ShadowResolution;
+	float g_ShadowEmpty;
 };
 
-struct PS_OUTPUT_Water
+Vertex3DOutput WaterVS(Vertex3D Input)
 {
-    float4 Diffuse : SV_Target;
-    float4 GBuffer1 : SV_Target1;
-    float4 GBuffer2 : SV_Target2;
-    float4 GBuffer3 : SV_Target3;
-};
-
-cbuffer Water : register(b9)
-{
-    float g_WaveHeight;
-    float g_WaveSpeed;
-    float2 g_WaveFrequencey;
-    float2 g_WaterEmpty;
-};
-
-Texture2DMS<float4> g_GBufferDiffuse : register(t10);
-Texture2DMS<float4> g_GBufferNormal : register(t11);
-
-Vertex3DOutput WaterVS(Vertex3D input)
-{
-    Vertex3DOutput output = (Vertex3DOutput)0;
-
-    // 새로 그려내기
-
-    float3 Pos = input.Pos;
-
-    float Wave = cos(g_AccTime * g_WaveSpeed + input.UV.x * g_WaveFrequencey);
-    Wave += cos(g_AccTime * g_WaveSpeed + input.UV.y * g_WaveFrequencey);
+	Vertex3DOutput Output = (Vertex3DOutput) 0;
     
-    // float cosTime = 0.5 * 
-    Pos.y += Wave * g_WaveHeight;
+	float3 Pos = Input.Pos;
 
-    output.ProjPos = mul(float4(Pos, 1.f), g_matWVP);
-    output.Pos = output.ProjPos;
-
+	Output.ProjPos = mul(float4(Pos, 1.f), g_matWVP);
+	Output.Pos = Output.ProjPos;
+    
     // 뷰공간의 위치를 만들어준다.
-    output.ViewPos = mul(float4(Pos, 1.f), g_matWV).xyz;
+	Output.ViewPos = mul(float4(Pos, 1.f), g_matWV).xyz;
+	Output.WorldPos = Pos;
 
-    // 뷰 공간의 Normal을 만들어준다.
-    output.Normal = normalize(mul(float4(input.Normal, 0.f), g_matWV).xyz);
-    // 뷰 공간의 Tangent을 만들어준다.
-    output.Tangent = normalize(mul(float4(input.Tangent, 0.f), g_matWV).xyz);
-    // 뷰 공간의 Binormal을 만들어준다.
-    output.Binormal = normalize(mul(float4(input.Binormal, 0.f), g_matWV).xyz);
+	Output.Normal = normalize(mul(float4(Input.Normal, 0.f), g_matWV).xyz);
+	Output.Tangent = normalize(mul(float4(Input.Tangent, 0.f), g_matWV).xyz);
+	Output.Binormal = normalize(mul(float4(Input.Binormal, 0.f), g_matWV).xyz);
 
-    output.UV = input.UV;
-
-    return output;
+	Output.UV = Input.UV;
+	
+	return Output;
 }
 
-PS_OUTPUT_Water WaterPS(Vertex3DOutput input)
+PSOutput_Single WaterPS(Vertex3DOutput Input)
 {
-    PS_OUTPUT_Water output = (PS_OUTPUT_Water)0;
+	PSOutput_Single Output = (PSOutput_Single) 0;
 
-    float2 ScreenUV = input.ProjPos.xy / input.ProjPos.w;
-    ScreenUV = ScreenUV * float2(0.5f, -0.5f) + float2(0.5f, 0.5f);
+	if (g_MtrlOpacity == 0.f)
+	{
+		clip(-1);
+	}
 
-    int2 TargetPos = (int2) 0;
+	float4 BaseColor = g_MtrlBaseColor;
 
-    TargetPos.x = (int)(ScreenUV.x * g_Resolution.x);
-    TargetPos.y = (int)(ScreenUV.y * g_Resolution.y);
+	uint2 ScreenPos = (uint2) 0;
+	ScreenPos.x = g_Resolution.x * ((Input.ProjPos.x / Input.ProjPos.w) * 0.5f + 0.5f);
+	ScreenPos.y = g_Resolution.y * ((Input.ProjPos.y / Input.ProjPos.w) * -0.5f + 0.5f);
 
-    // Rim
-    // Frenel => 시야 방향 벡터와, 대상의 노멀 방향 벡터의 관계 이용
-    // 두 벡터가 이루는 각이 수직에 가까울 수록, 투과율이 감소하고
-    // 반사율이 증가한다.
-    // float Rim = saturate(dot());
+	float4 PrevDepth = g_Depth.Load(ScreenPos, 0);
 
-    float2 UV1 = input.UV + float2(g_AccTime * 0.025f, 0.f);
-    float2 UV2 = input.UV + float2(g_AccTime * 0.025f * -1.f, 0.f);
+	float2 MoveUV = (Input.UV * 8.f) + float2(g_AccTime, 0.f) * g_WaterSpeed * 0.2f;
 
-    float3 NormalFirst = ComputeBumpNormal(input.Normal, input.Tangent, input.Binormal, UV1);
-    float3 NormalSecond = ComputeBumpNormal(input.Normal, input.Tangent, input.Binormal, UV2);
-    float3 FinalNormal = (NormalFirst + NormalSecond) * 0.5;
+	float DepthDiff = PrevDepth.g - Input.ViewPos.z;
 
-    float3 ViewReflect = reflect(FinalNormal, input.ViewPos);
-    // float4 ProjReflect = normalize(mul(float4(ViewReflect, 1.f), g_matProj).xyz);
-    // float4 ReflectColor = g_SkyTex.Sample(g_BaseSmp, ProjReflect);
-    float4 ReflectColor = g_SkyTex.Sample(g_BaseSmp, ViewReflect);
+	float3 NoiseColor = g_BaseTexture.Sample(g_BaseSmp, MoveUV).rgb;
 
-    // 투과율 제어하기
-   //  float penet = pow(dot(input.Normal, input.ViewPos), 5) * 0.2;
+	MoveUV = (Input.UV * 6.f) + float2(g_AccTime, g_AccTime) * g_WaterSpeed * 0.2f;
+	float NoiseColor2 = g_BaseTexture.Sample(g_BaseSmp, MoveUV).rgb;
 
-    // Fresnel -> 시야 방향 벡터와 노멀 방향 벡터의 관계를 이용한 공식
-    // - 두 벡터가 이루는 각이 수직에 가까울 수록, 투과율이 감소하고, 반사율이 증가한다.
-    float rim = saturate(dot(normalize(FinalNormal), input.ViewPos * -1.f));
-    // float fresnel = pow(1 - rim, 0.05);
-    float fresnel = 1 - pow(rim, 2) * 1.f;
+	NoiseColor += NoiseColor2;
+	NoiseColor *= 0.5f;
 
-    float4 BaseTextureColor = g_BaseTexture.Sample(g_BaseSmp, input.UV.xy);
+	if (PrevDepth.r < 0.95f)
+	{
+		Output.Color.rgb = BaseColor.rgb;
+	}
+	else
+	{
+		if (DepthDiff < g_WaterFoamDepthThreshold)
+		{
+			DepthDiff = 1.f - (DepthDiff / g_WaterFoamDepthThreshold);
 
-    float4 WaterDiffuseColor = BaseTextureColor + ReflectColor * (fresnel);
+			float3 AddColor = float3(0.3f, 0.3f, 0.3f);
 
-    float4 ExistingDiffuseColor = g_GBufferDiffuse.Load(TargetPos, 0);
+			if (DepthDiff <= (g_WaterNoiseAttn1 + NoiseColor.r))
+			{
+				if (NoiseColor.r < g_WaterNoiseAttn2)
+				{
+					AddColor = 0.f;
+				}
+			}
+			BaseColor.rgb += AddColor;
+		}
+	}
 
-    float4 Refraction = g_GBufferDiffuse.Load(TargetPos + FinalNormal.xy * 0.5f, 0) * 0.5f;
+	Output.Color.rgb = BaseColor.rgb + g_MtrlAmbientColor.rgb;
+	Output.Color.a = 1.f;
 
-    // float4 FinalWaterColor = lerp(DiffuseColor, Refraction, pow(dot(FinalNormal, input.ViewPos * -1.f), 3));
-    float4 FinalWaterColor = Refraction * (1 - fresnel) + WaterDiffuseColor * (fresnel);
+	// 그림자
+	float3 WorldPos = mul(Input.ProjPos, g_matInvVP).xyz;
+	float4 ShadowPos = mul(float4(WorldPos, 1.f), g_matShadowVP);
 
-    // 두 벡터가 수직을 이룰 수록, 즉, 비스듬하게 보면, ReflectColor 를 더 많이 비추고
-    // 물을 Direct 로 보면, 물 고유 색상을 더 잘 보이게 세팅
-    // output.Diffuse.rgb = BaseTextureColor.rgb * (1 - fresnel) + ReflectColor.rgb * fresnel; // * (LightInfo.Dif + LightInfo.Amb) + LightInfo.Spc + LightInfo.Emv;
-    // output.Diffuse.rgb = BaseTextureColor.rgb * (fresnel + 0.5f) + ReflectColor.rgb * (1 - fresnel); // * (LightInfo.Dif + LightInfo.Amb) + LightInfo.Spc + LightInfo.Emv;
-    output.Diffuse.rgb = FinalWaterColor.rgb; // * (LightInfo.Dif + LightInfo.Amb) + LightInfo.Spc + LightInfo.Emv;
-    // output.Diffuse.rgb = ReflectColor.rgb; // * (LightInfo.Dif + LightInfo.Amb) + LightInfo.Spc + LightInfo.Emv;
-    // output.Diffuse.a = fresnel - penet;
-    output.Diffuse.a = 1.f;
+	float2 ShadowUV;
+	ShadowUV.x = ShadowPos.x / ShadowPos.w * 0.5f + 0.5f;
+	ShadowUV.y = ShadowPos.y / ShadowPos.w * -0.5f + 0.5f;
 
-    float4 ExistingNormal = g_GBufferNormal.Load(TargetPos, 0);
+	int2 ShadowTargetPos = (int2)0;
 
-    output.GBuffer1.rgb = FinalNormal;
-    output.GBuffer1.a = 1.f;
+	ShadowTargetPos.x = (int) (ShadowUV.x * g_ShadowResolution.x);
+	ShadowTargetPos.y = (int) (ShadowUV.y * g_ShadowResolution.y);
 
-    output.GBuffer2.r = input.ProjPos.z / input.ProjPos.w;
-    output.GBuffer2.g = input.ProjPos.w;
-    output.GBuffer2.b = g_MtrlSpecularColor.w;
-    output.GBuffer2.a = 1.f;
+	float4 ShadowMap = g_ShadowMapTex.Load(ShadowTargetPos, 0);
 
-    output.GBuffer3.r = ConvertColor(g_MtrlBaseColor);
-    output.GBuffer3.g = ConvertColor(g_MtrlAmbientColor);
+    if (ShadowMap.a > 0.f)
+	{
+        if (ShadowPos.z - g_ShadowBias > ShadowMap.r * ShadowPos.w)
+		{
+			Output.Color.rgb *= 0.2f;
+		}
+	}
 
-    float4 SpecularColor = g_MtrlSpecularColor.xyzw;
-
-    if (g_MtrlSpecularTex)
-        SpecularColor = g_SpecularTexture.Sample(g_BaseSmp, input.UV.xy).rgba;
-
-    output.GBuffer3.b = ConvertColor(SpecularColor);
-
-    float4 EmissiveColor = g_MtrlEmissiveColor.xyzw;
-
-    if (g_MtrlEmissiveTex)
-        EmissiveColor = g_EmissiveTexture.Sample(g_BaseSmp, input.UV.xy).rgba;
-
-    // output.GBuffer3.a = ConvertColor(ReflectColor * 0.6f * fresnel);
-    // output.GBuffer3.a = ConvertColor(EmissiveColor);
-    output.GBuffer3.a = ConvertColor(EmissiveColor + ReflectColor * fresnel * 0.05f);
-    // output.GBuffer3.a = ConvertColor(Refraction);
-
-    return output;
-
+	return Output;
 }

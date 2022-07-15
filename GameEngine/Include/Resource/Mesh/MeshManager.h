@@ -12,6 +12,13 @@ private:
 
 private:
 	std::unordered_map<std::string, CSharedPtr<class CMesh>>	m_mapMesh;
+	std::function<void()> m_ChangeCallBack;
+
+public :
+	const std::unordered_map<std::string, CSharedPtr<class CMesh>>& GetMapMesh() const
+	{
+		return m_mapMesh;
+	}
 
 public:
 	bool Init();
@@ -43,6 +50,13 @@ public:
 	class CMesh* FindMesh(const std::string& Name);
 	bool ConvertFBXLocalFormatFullPathMultiByte(const char* FullPath);
 	void ReleaseMesh(const std::string& Name);
+
+public:
+	template <typename T>
+	void AddResourceChangeCallBack(T* Obj, void(T::* Func)())
+	{
+		m_ChangeCallBack = std::bind(Func, Obj);
+	}
 
 private:
 	bool CreateSphere(std::vector<Vertex3D>& vecVertex, std::vector<int>& vecIndex, float Radius,

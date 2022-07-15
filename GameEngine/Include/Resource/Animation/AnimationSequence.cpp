@@ -727,7 +727,7 @@ bool CAnimationSequence::CreateSequence(bool bLoop,
 		char	strAnimPath[MAX_PATH] = {};
 		strcpy_s(strAnimPath, m_FullPath);
 
-		int	iLength = strlen(strAnimPath);
+		int	iLength = (int)strlen(strAnimPath);
 		for (int i = iLength - 1; i >= 0; --i)
 		{
 			// aa/bb.exe 9개, 2번인덱스 3 ~ 8번까지 제거
@@ -774,8 +774,8 @@ bool CAnimationSequence::CreateSequenceConvertFBX(bool bLoop, _tagFbxAnimationCl
 	}
 
 	// FBXANIMATIONCLIP에 있는 starttime 과 endtime 을 이용하여 keyframe 을 얻어온다.
-	m_StartFrame = pClip->tStart.GetFrameCount(pClip->eTimeMode);
-	m_EndFrame = pClip->tEnd.GetFrameCount(pClip->eTimeMode);
+	m_StartFrame = (int)pClip->tStart.GetFrameCount(pClip->eTimeMode);
+	m_EndFrame = (int)pClip->tEnd.GetFrameCount(pClip->eTimeMode);
 	m_FrameLength = m_EndFrame - m_StartFrame + 1;
 
 	// (OBJ) => FrameMode, Frame 개수 를 고려하여 PlayTime 다시 세팅

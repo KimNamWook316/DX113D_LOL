@@ -25,6 +25,8 @@
 #include "Component/PlayerDataComponent.h"
 #include "Component/NavMeshComponent.h"
 #include "Component/PaperBurnComponent.h"
+#include "Component/WaterComponent.h"
+#include "Component/PaperBurnComponent.h"
 #include "Component/PlayerNormalAttackCheckCollider.h"
 #include "Component/EyeLaserComponent.h"
 #include "Component/PlayerHookComponent.h"
@@ -404,7 +406,12 @@ CComponent* CEditorManager::CreateComponent(CGameObject* Obj, size_t Type)
 	else if (Type == typeid(CPaperBurnComponent).hash_code())
 	{
 		CPaperBurnComponent* Component = Obj->LoadObjectComponent<CPaperBurnComponent>();
-		// Component->EnableEditMode(true);
+		return Component;
+	}
+
+	else if (Type == typeid(CWaterComponent).hash_code())
+	{
+		CWaterComponent* Component = Obj->LoadComponent<CWaterComponent>();
 		return Component;
 	}
 

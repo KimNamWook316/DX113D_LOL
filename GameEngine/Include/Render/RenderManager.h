@@ -6,6 +6,23 @@
 #include "../Resource/Shader/StructuredBuffer.h"
 #include "../Resource/Shader/OutlineConstantBuffer.h"
 
+enum class RenderLayerType
+{
+	Back,
+	Default,
+	PostDefault,
+	Transparency,
+	Decal,
+	Particle,
+	PostParticle,
+	ScreenWidgetComponent,
+	AnimationEditor,
+	ParticleEditor,
+#ifdef _DEBUG
+	Collider
+#endif // _DEBUG
+};
+
 struct RenderInstancingList
 {
 	std::list<class CSceneComponent*> RenderList;
@@ -94,7 +111,6 @@ private:
 
 	class CRenderState* m_DepthDisable;
 	class CRenderState* m_AlphaBlend;
-	class CRenderState* m_AlphaBlendMRT;
 	class CRenderState* m_LightAccBlend;
 
 	CSharedPtr<class CShader> m_LightBlendShader;
@@ -107,7 +123,6 @@ private:
 	std::vector<CSharedPtr<CRenderTarget>>	m_vecGBuffer;
 	std::vector<CSharedPtr<CRenderTarget>>	m_vecDecal;
 	std::vector<CSharedPtr<CRenderTarget>>	m_vecLightBuffer;
-	std::vector<CSharedPtr<CRenderTarget>>	m_vecTransparent;
 
 	// Shadow
 	bool m_Shadow;
@@ -119,6 +134,9 @@ private:
 
 	// Debug Render
 	bool m_DebugRender;
+
+	// SkyBox
+	bool m_RenderSkyBox;
 
 	// Post Processing (HDR)
 	bool m_PostProcessing;
@@ -179,6 +197,16 @@ public:
 		m_PostProcessing = Enable;
 	}
 
+	void SetRenderSkyBox(bool Enable)
+	{
+		m_RenderSkyBox = Enable;
+	}
+
+	class CShadowCBuffer* GetShadowCBuffer() const
+	{
+		return m_ShadowCBuffer;
+	}
+
 	float GetMiddleGray() const;
 	float GetLumWhite() const;
 	float GetBloomThreshold() const;
@@ -213,6 +241,11 @@ public:
 		return m_DebugRender;
 	}
 
+	bool IsRenderSkyBox() const
+	{
+		return m_RenderSkyBox;
+	}
+
 public:
 	void SetObjectList(const std::list<CSharedPtr<class CGameObject>>* List)
 	{
@@ -238,6 +271,8 @@ private:
 	void RenderFinalScreen();
 	void RenderAnimationEditor();
 	void RenderParticleEffectEditor();
+	void RenderPostParticle(); // π∞ Ω¶¿Ã¥ı µÓ
+	void RenderParticle();
 
 	// Render State
 public:

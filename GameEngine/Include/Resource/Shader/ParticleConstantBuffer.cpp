@@ -12,8 +12,8 @@ CParticleConstantBuffer::CParticleConstantBuffer() :
 	m_BufferData.LifeTimeMax = 1.f;
 	m_BufferData.ScaleMin = Vector3(30.f, 30.f, 1.f);
 	m_BufferData.ScaleMax = Vector3(30.f, 30.f, 1.f);
-	m_BufferData.SpeedMin = 1.f;
-	m_BufferData.SpeedMax = 3.f;
+	m_BufferData.SpeedStart = 1.f;
+	m_BufferData.SpeedEnd = 3.f;
 	m_BufferData.StartMin = Vector3(-10.f, -10.f, 0.f);
 	m_BufferData.StartMax = Vector3(10.f, 10.f, 0.f);
 
@@ -50,6 +50,14 @@ CParticleConstantBuffer::CParticleConstantBuffer() :
 
 	// 처음에는 UV Clipping 처리를 하지 않는다.
 	m_BufferData.UVClippingReflectingMoveDir = 0;
+
+	// 처음에는 Speed St, End 사이에 랜덤한 Speed 가 세팅되도록 한다.
+	// 1) 해당 값이 1 일 경우, Linear 
+	// 2) 해당 값이 2 일 경우, 지수 
+	m_BufferData.SpeedChangeMethod = 0;
+
+	// Noise Texture 를 활용하는 것은, 처음에는 방지 
+	m_BufferData.ApplyNoiseTexture = 0;
 }
 
 CParticleConstantBuffer::CParticleConstantBuffer(const CParticleConstantBuffer& Buffer) :

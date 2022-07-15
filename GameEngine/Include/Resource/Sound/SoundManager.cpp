@@ -74,6 +74,11 @@ bool CSoundManager::LoadSound(const std::string& ChannelGroupName, bool Loop,
 
 	m_mapSound.insert(std::make_pair(Name, Sound));
 
+	if (m_ChangeCallBack)
+	{
+		m_ChangeCallBack();
+	}
+
 	return true;
 }
 
@@ -190,6 +195,13 @@ void CSoundManager::ReleaseSound(const std::string& Name)
 	if (iter != m_mapSound.end())
 	{
 		if (iter->second->GetRefCount() == 1)
+		{
 			m_mapSound.erase(iter);
+
+			if (m_ChangeCallBack)
+			{
+				m_ChangeCallBack();
+			}
+		}
 	}
 }

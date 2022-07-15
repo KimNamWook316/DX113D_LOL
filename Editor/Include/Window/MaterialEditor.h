@@ -49,6 +49,7 @@ private :
 
 	// Drop 해서 Add Texture 하기 
 	class CIMGUIInputInt*   m_TextureIndex; // 동시에 파일 이름으로 저장될 것이다.
+	class CIMGUIInputInt*	m_TextureRegister;
 	class CIMGUITextInput* m_SetTextureInput; // 동시에 파일 이름으로 저장될 것이다.
 	class CIMGUIButton*     m_SetTextureBtn;
 

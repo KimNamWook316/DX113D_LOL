@@ -27,5 +27,5 @@ void CIMGUISetRect::Render()
 	Res.Height *= (unsigned int)Ratio.y;
 
 	ImGuiIO& io = ImGui::GetIO();
-	ImGuizmo::SetRect(Rect.left, Rect.top, Res.Width, Res.Height);
+	ImGuizmo::SetRect((float)Rect.left, (float)Rect.top, (float)Res.Width, (float)Res.Height);
 }

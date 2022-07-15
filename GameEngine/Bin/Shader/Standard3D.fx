@@ -36,8 +36,10 @@ Vertex3DOutput Standard3DVS(Vertex3D input)
 PSOutput_GBuffer Standard3DPS(Vertex3DOutput input)
 {
     PSOutput_GBuffer output = (PSOutput_GBuffer) 0;
+
+	float2 ScaledUV = input.UV * g_MtrlUVScale;
     
-    float4 BaseTextureColor = g_BaseTexture.Sample(g_BaseSmp, input.UV);
+    float4 BaseTextureColor = g_BaseTexture.Sample(g_BaseSmp, ScaledUV);
 
     if (BaseTextureColor.a == 0.f || g_MtrlOpacity == 0.f)
         clip(-1);
@@ -46,7 +48,7 @@ PSOutput_GBuffer Standard3DPS(Vertex3DOutput input)
 
     output.Diffuse.a = BaseTextureColor.a * g_MtrlOpacity;
     
-    output.GBuffer1.rgb = ComputeBumpNormal(input.Normal, input.Tangent, input.Binormal, input.UV);
+    output.GBuffer1.rgb = ComputeBumpNormal(input.Normal, input.Tangent, input.Binormal, ScaledUV);
     output.GBuffer1.a = 1.f;
     
     output.GBuffer2.r = input.ProjPos.z / input.ProjPos.w;
@@ -68,16 +70,21 @@ PSOutput_GBuffer Standard3DPS(Vertex3DOutput input)
     float4 SpecularColor = g_MtrlSpecularColor.xyzw;
 	
     if (g_MtrlSpecularTex)
-        SpecularColor = g_SpecularTexture.Sample(g_BaseSmp, input.UV).xxxx;
+		SpecularColor = g_SpecularTexture.Sample(g_BaseSmp, ScaledUV).xxxx;
     
     output.GBuffer3.b = ConvertColor(SpecularColor);
     
     float4 EmissiveColor = g_MtrlEmissiveColor.xyzw;
 	
     if (g_MtrlEmissiveTex)
-        EmissiveColor = g_EmissiveTexture.Sample(g_BaseSmp, input.UV).xxxx;
+		EmissiveColor = g_EmissiveTexture.Sample(g_BaseSmp, ScaledUV).xxxx;
 
     output.GBuffer3.a = ConvertColor(EmissiveColor);
+
+    if (g_MtrlPaperBurnEnable)
+	{
+		output.Diffuse = PaperBurn2D(output.Diffuse, ScaledUV);
+	}
 
     return output;
 }
@@ -119,8 +126,9 @@ PSOutput_GBuffer Standard3DInstancingPS(Vertex3DOutputInstancing input)
 	PSOutput_GBuffer output = (PSOutput_GBuffer) 0;
 
 	int InstancingIndex = input.InstanceID + (g_InstancingObjecCount * g_InstancingMaterialIndex);
+	float2 ScaledUV = input.UV * g_InstancingInfoArray[InstancingIndex].g_MtrlUVScale;
 
-	float4 BaseTextureColor = g_BaseTexture.Sample(g_BaseSmp, input.UV);
+	float4 BaseTextureColor = g_BaseTexture.Sample(g_BaseSmp, ScaledUV);
 
 	if (BaseTextureColor.a == 0.f || g_InstancingInfoArray[InstancingIndex].g_MtrlOpacity == 0.f)
 		clip(-1);
@@ -129,7 +137,7 @@ PSOutput_GBuffer Standard3DInstancingPS(Vertex3DOutputInstancing input)
 
 	output.Diffuse.a = BaseTextureColor.a * g_InstancingInfoArray[InstancingIndex].g_MtrlOpacity;
     
-	output.GBuffer1.rgb = ComputeBumpNormalInstancing(input.Normal, input.Tangent, input.Binormal, input.UV, input.InstanceID);
+	output.GBuffer1.rgb = ComputeBumpNormalInstancing(input.Normal, input.Tangent, input.Binormal, ScaledUV, input.InstanceID);
 	output.GBuffer1.a = 1.f;
     
 	output.GBuffer2.r = input.ProjPos.z / input.ProjPos.w;
@@ -152,16 +160,21 @@ PSOutput_GBuffer Standard3DInstancingPS(Vertex3DOutputInstancing input)
 	float4 SpecularColor = g_InstancingInfoArray[InstancingIndex].g_MtrlSpecularColor.xyzw;
 	
 	if (g_InstancingInfoArray[InstancingIndex].g_MtrlSpecularTex)
-		SpecularColor = g_SpecularTexture.Sample(g_BaseSmp, input.UV).xxxx;
+		SpecularColor = g_SpecularTexture.Sample(g_BaseSmp, ScaledUV).xxxx;
     
 	output.GBuffer3.b = ConvertColor(SpecularColor);
     
 	float4 EmissiveColor = g_InstancingInfoArray[InstancingIndex].g_MtrlEmissiveColor.xyzw;
 	
 	if (g_InstancingInfoArray[InstancingIndex].g_MtrlEmissiveTex)
-		EmissiveColor = g_EmissiveTexture.Sample(g_BaseSmp, input.UV).xxxx;
+		EmissiveColor = g_EmissiveTexture.Sample(g_BaseSmp, ScaledUV).xxxx;
     
 	output.GBuffer3.a = ConvertColor(EmissiveColor);
+
+	if (g_InstancingInfoArray[InstancingIndex].g_MtrlPaperBurnEnable)
+	{
+		output.Diffuse = PaperBurn2D(output.Diffuse, ScaledUV);
+	}
 
 	return output;
 }

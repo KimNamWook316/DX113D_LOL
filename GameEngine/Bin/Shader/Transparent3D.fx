@@ -1,117 +1,5 @@
 
-#include "Standard3DInfo.fx"
-
-struct PS_OUTPUT_TRANSPARENT
-{
-	float4 ScreenColor : SV_Target;
-	float4 Normal : SV_Target1;
-	float4 Depth : SV_Target2;
-};
-
-cbuffer LightForwardCBuffer : register(b12)
-{
-	int g_LightCount;
-	float3 g_LightForwardEmpty;
-}
-
-struct LightInfo
-{
-	float4 LightColor;
-	int LightType;
-	float3 LightPos;
-	float3 LightDir;
-	float LightDistance;
-	float LightAngleIn;
-	float LightAngleOut;
-	float LightAtt1;
-	float LightAtt2;
-	float LightAtt3;
-	float3 LightEmpty;
-};
-
-StructuredBuffer<LightInfo> g_LightInfoArray : register(t13);
-
-LightResult ComputeLight(LightInfo Info, float3 Pos, float3 Normal, float2 UV)
-{
-	LightResult result = (LightResult) 0;
-	
-	float3 LightDir = (float3) 0.f;
-	float Attn = 1.f;
-	
-	if (Info.LightType == LightTypeDir)
-	{
-		LightDir = -Info.LightDir;
-		LightDir = normalize(LightDir);
-	}
-	
-	
-	if (Info.LightType == LightTypePoint)
-	{
-		LightDir = Info.LightPos - Pos;
-		LightDir = normalize(LightDir);
-		
-		float Dist = distance(Info.LightPos, Pos);
-		
-		if (Dist > Info.LightDistance)
-			Attn = 0.f;
-		else
-			Attn = 1.f / (Info.LightAtt1 + Info.LightAtt2 * Dist + Info.LightAtt3 * (Dist * Dist));
-	}
-	
-	
-	if (Info.LightType == LightTypeSpot)
-	{
-	}
-	
-	float3 ViewNormal = Normal;
-	
-	// 내적값이 음수가 나오면 0이 반환되고 양수가 나오면 해당 값이 그대로 반환된다.
-	float Intensity = max(0.f, dot(ViewNormal, LightDir));
-    
-	float3 MtrlDif = g_MtrlBaseColor.rgb;
-	float3 MtrlAmb = g_MtrlAmbientColor.rgb;
-
-	float3 MtrlSpc = g_MtrlSpecularColor.rgb;
-	if (g_MtrlSpecularTex)
-	{
-		MtrlSpc = g_SpecularTexture.Sample(g_BaseSmp, UV).rgb;
-	}
-	
-	float3 MtrlEmv = g_MtrlEmissiveColor.rgb;
-	if (g_MtrlEmissiveTex)
-	{
-		MtrlEmv = g_EmissiveTexture.Sample(g_BaseSmp, UV).rgb;
-	}
-
-    // Gamma Space To Linear Space
-	MtrlDif = pow(MtrlDif, 2.2f);
-
-	result.Dif = Info.LightColor.xyz * MtrlDif * Intensity * Attn;
-	result.Amb = Info.LightColor.xyz * g_GLightAmbIntensity * MtrlAmb * Attn;
-
-    // Linear Space To Gamma Space 
-    // 다시 Gamma Space로 되돌림
-	result.Dif = pow(result.Dif, 1 / 2.2f);
-	
-	float3 View = -Pos;
-	View = normalize(View);
-	
-	// 퐁 쉐이딩
-	float3 Reflect = 2.f * ViewNormal * dot(ViewNormal, LightDir) - LightDir;
-	Reflect = normalize(Reflect);
-	float SpcIntensity = max(0.f, dot(View, Reflect));
-	
-	// 블린-퐁 쉐이딩
-    //float3 Reflect = normalize(View + LightDir);
-    //float SpcIntensity = max(0.f, dot(ViewNormal, Reflect));
-	
-	result.Spc = Info.LightColor.xyz * MtrlSpc *
-		pow(SpcIntensity, g_MtrlSpecularColor.w) * Attn;
-	
-	result.Emv = MtrlEmv;
-	
-	return result;
-}
+#include "TransparentInfo.fx"
 
 Vertex3DOutput Transparent3DVS(Vertex3D input)
 {
@@ -142,16 +30,17 @@ Vertex3DOutput Transparent3DVS(Vertex3D input)
 	return output;
 }
 
-PS_OUTPUT_TRANSPARENT Transparent3DPS(Vertex3DOutput input)
+PSOutput_Single Transparent3DPS(Vertex3DOutput input)
 {
-	PS_OUTPUT_TRANSPARENT output = (PS_OUTPUT_TRANSPARENT) 0;
+	PSOutput_Single output = (PSOutput_Single) 0;
+	float2 ScaledUV = input.UV * g_MtrlUVScale;
 
-	float4 BaseTextureColor = g_BaseTexture.Sample(g_BaseSmp, input.UV);
+	float4 BaseTextureColor = g_BaseTexture.Sample(g_BaseSmp, ScaledUV);
 
 	if (BaseTextureColor.a == 0.f || g_MtrlOpacity == 0.f)
 		clip(-1);
 
-	float3 ViewNormal = ComputeBumpNormal(input.Normal, input.Tangent, input.Binormal, input.UV);
+	float3 ViewNormal = ComputeBumpNormal(input.Normal, input.Tangent, input.Binormal, ScaledUV);
 
 	LightInfo Info;
 	LightResult LResult;
@@ -162,28 +51,18 @@ PS_OUTPUT_TRANSPARENT Transparent3DPS(Vertex3DOutput input)
 	for (int i = 0; i < LightCount; ++i)
 	{
 		Info = g_LightInfoArray[i];
-		LResult = ComputeLight(Info, input.ViewPos, ViewNormal, input.UV);
+		LResult = ComputeLight(Info, input.ViewPos, ViewNormal, ScaledUV);
 		LAcc.Dif += LResult.Dif;
 		LAcc.Amb += LResult.Amb;
 		LAcc.Spc += LResult.Spc;
 		LAcc.Emv += LResult.Emv;
 	}
 
-	output.ScreenColor.rgb = BaseTextureColor.rgb * (LAcc.Dif.rgb + LAcc.Amb.rgb) +
+	output.Color.rgb = BaseTextureColor.rgb * (LAcc.Dif.rgb + LAcc.Amb.rgb) +
         LAcc.Spc.rgb + LAcc.Emv.rgb;
 
 	// 픽셀 색상
-	output.ScreenColor.a = BaseTextureColor.a * g_MtrlOpacity;
-
-	// 노말
-	output.Normal.rgb = ViewNormal;
-	output.Normal.a = 1.f;
-
-	// 깊이
-	output.Depth.r = input.ProjPos.z / input.ProjPos.w;
-	output.Depth.g = input.ProjPos.w;
-	output.Depth.b = g_MtrlSpecularColor.w;
-	output.Depth.a = 1.f;
+	output.Color.a = BaseTextureColor.a * g_MtrlOpacity;
 
 	return output;
 }
@@ -302,18 +181,19 @@ LightResult ComputeLightInstancing(LightInfo Info, float3 Pos, float3 Normal, fl
 	return result;
 }
 
-PS_OUTPUT_TRANSPARENT TransparentInstancingPS(Vertex3DOutputInstancing input)
+PSOutput_Single TransparentInstancingPS(Vertex3DOutputInstancing input)
 {
-	PS_OUTPUT_TRANSPARENT output = (PS_OUTPUT_TRANSPARENT) 0;
+	PSOutput_Single output = (PSOutput_Single) 0;
 
 	int InstancingIndex = input.InstanceID + (g_InstancingObjecCount * g_InstancingMaterialIndex);
+	float2 ScaledUV = input.UV * g_InstancingInfoArray[InstancingIndex].g_MtrlUVScale;
 
-	float4 BaseTextureColor = g_BaseTexture.Sample(g_BaseSmp, input.UV);
+	float4 BaseTextureColor = g_BaseTexture.Sample(g_BaseSmp, ScaledUV);
 
 	if (BaseTextureColor.a == 0.f || g_MtrlOpacity == 0.f)
 		clip(-1);
 
-	float3 ViewNormal = ComputeBumpNormalInstancing(input.Normal, input.Tangent, input.Binormal, input.UV, input.InstanceID);
+	float3 ViewNormal = ComputeBumpNormalInstancing(input.Normal, input.Tangent, input.Binormal, ScaledUV, input.InstanceID);
 
 	LightInfo Info;
 	LightResult LResult;
@@ -324,28 +204,17 @@ PS_OUTPUT_TRANSPARENT TransparentInstancingPS(Vertex3DOutputInstancing input)
 	for (int i = 0; i < LightCount; ++i)
 	{
 		Info = g_LightInfoArray[i];
-		LResult = ComputeLightInstancing(Info, input.ViewPos, ViewNormal, input.UV, InstancingIndex);
+		LResult = ComputeLightInstancing(Info, input.ViewPos, ViewNormal, ScaledUV, InstancingIndex);
 		LAcc.Dif += LResult.Dif;
 		LAcc.Amb += LResult.Amb;
 		LAcc.Spc += LResult.Spc;
 		LAcc.Emv += LResult.Emv;
 	}
 
-	output.ScreenColor.rgb = BaseTextureColor.rgb * (LAcc.Dif.rgb + LAcc.Amb.rgb) +
+	output.Color.rgb = BaseTextureColor.rgb * (LAcc.Dif.rgb + LAcc.Amb.rgb) +
         LAcc.Spc.rgb + LAcc.Emv.rgb;
 
-	// 픽셀 색상
-	output.ScreenColor.a = BaseTextureColor.a * g_InstancingInfoArray[InstancingIndex].g_MtrlOpacity;
-
-	// 노말
-	output.Normal.rgb = ViewNormal;
-	output.Normal.a = 1.f;
-
-	// 깊이
-	output.Depth.r = input.ProjPos.z / input.ProjPos.w;
-	output.Depth.g = input.ProjPos.w;
-	output.Depth.b = g_InstancingInfoArray[InstancingIndex].g_MtrlSpecularColor;
-	output.Depth.a = 1.f;
+	output.Color.a = BaseTextureColor.a * g_InstancingInfoArray[InstancingIndex].g_MtrlOpacity;
 
 	return output;
 }

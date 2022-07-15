@@ -17,6 +17,7 @@ public:
 
 private:
     void OnClickLoadMesh();
+    void OnClickLoadMaterial();
     void OnSelectMaterialSlotCombo(int Idx, const char* Label);
     void OnEditBaseColor(const Vector3& Color);
     void OnEditAmbientColor(const Vector3& Color);
@@ -27,6 +28,8 @@ private:
     void OnEditOpacity(float Opacity);
     void OnCheckMetallic(int Idx, bool Check);
     void OnDropShaderName(const std::string& Name);
+    void OnDropMeshName(const std::string& Name);
+    void OnEditUVScale(const Vector2& Scale);
 
 private:
     void RefreshMeshWidget(class CMesh* Mesh);
@@ -38,6 +41,7 @@ private:
     class CIMGUITextInput* m_MeshName;
     class CIMGUIButton* m_LoadMeshButton;
     class CIMGUIComboBox* m_MaterialSlotCombo;
+    class CIMGUIButton* m_LoadMtrlButton;
     class CIMGUITextInput* m_ShaderName;
     class CIMGUIColor3* m_BaseColorEdit;
     class CIMGUIColor3* m_AmbientColorEdit;
@@ -47,5 +51,6 @@ private:
     class CIMGUICheckBox* m_TransparencyEdit;
     class CIMGUISliderFloat* m_OpacityEdit;
     class CIMGUICheckBox* m_Metallic;
+    class CIMGUIInputFloat2* m_UVScale;
 };
 

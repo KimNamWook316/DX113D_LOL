@@ -46,6 +46,7 @@ cbuffer Material : register(b1)
     int		g_MtrlEmissiveTex;
 	int		g_MtrlRecevieDecal;
 	int		g_MtrlMetallic;
+	float2	g_MtrlUVScale;
 };
 
 cbuffer Standard2D : register(b2)
@@ -261,7 +262,9 @@ float4 PaperBurn2D(float4 Color, float2 UV)
 	if (g_PaperBurnInverse == 0)
 	{
 		if (g_PaperBurnFilter >= BurnColor.r)
-			result.a = 0.f;
+		{
+			clip(-1);
+		}
 
 		else
 		{

@@ -14,6 +14,7 @@ private:
 private:
 	std::unordered_map<std::string, CSharedPtr<CAnimationSequence>>	m_mapSequence;
 	std::unordered_map<std::string, CSharedPtr<CSkeleton>>	m_mapSkeleton;
+	std::function<void()> m_ChangeCallBack;
 
 public:
 	bool Init();
@@ -44,7 +45,6 @@ public:
 	bool EditSequenceClip(class CAnimationSequence* ExistingSequence, const std::string& NewName, 
 		int StartFrame, int EndFrame, const char* SaveFullPathMultibyte);
 
-
 	// Skeleton
 	bool LoadSkeleton(const std::string& Name, const TCHAR* FileName,
 		const std::string& PathName = ANIMATION_PATH,
@@ -58,5 +58,12 @@ public:
 		class CScene* Scene = nullptr);
 	CSkeleton* FindSkeleton(const std::string& Name);
 	void ReleaseSkeleton(const std::string& Name);
+
+public:
+	template <typename T>
+	void AddResourceChangeCallBack(T* Obj, void(T::* Func)())
+	{
+		m_ChangeCallBack = std::bind(Func, Obj);
+	}
 };
 

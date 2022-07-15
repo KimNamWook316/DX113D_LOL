@@ -122,7 +122,7 @@ void CSocketWindow::OnSelectSkeleton(int Index, const char* Label)
 
 		for (size_t i = 0; i < Count; ++i)
 		{
-			m_SelectedSkeletonBoneListBox->AddItem(m_SelectSkelton->GetBone(i)->strName);
+			m_SelectedSkeletonBoneListBox->AddItem(m_SelectSkelton->GetBone((int)i)->strName);
 		}
 	}
 }
