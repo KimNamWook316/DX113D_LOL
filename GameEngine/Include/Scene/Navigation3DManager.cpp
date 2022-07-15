@@ -343,6 +343,55 @@ bool CNavigation3DManager::CheckNavMeshPoly(const Vector3& Pos, float& Height, i
 	return false;
 }
 
+bool CNavigation3DManager::CheckCurrentNavMeshPoly(const Vector3& Pos, int CurrentPolyIndex, float& Height, int& OutPolyIndex)
+{
+	if (!m_NavMeshComponent)
+		return false;
+
+	NavMeshPolygon Polygon = m_NavMeshComponent->GetNavMesh()->GetNavMeshPolygon(CurrentPolyIndex);
+
+	Vector3 P1 = Polygon.m_vecVertexPos[0];
+	Vector3 P2 = Polygon.m_vecVertexPos[1];
+	Vector3 P3 = Polygon.m_vecVertexPos[2];
+
+	XMVECTOR v1 = Pos.Convert();
+
+	XMVECTOR Dir = Vector3(0.f, -1.f, 0.f).Convert();
+	XMVECTOR _P1 = P1.Convert();
+	XMVECTOR _P2 = P2.Convert();
+	XMVECTOR _P3 = P3.Convert();
+
+	float Dist = 0.f;
+
+	bool Intersect = DirectX::TriangleTests::Intersects(v1, Dir, _P1, _P2, _P3, Dist);
+
+	if (Intersect)
+	{
+		float Dist1 = P1.Distance(Pos);
+		float Dist2 = P2.Distance(Pos);
+		float Dist3 = P3.Distance(Pos);
+
+		Vector3 LerpVec = Vector3(1 / Dist1, 1 / Dist2, 1 / Dist3);
+		LerpVec.Normalize();
+
+		// Weighted Average
+		Height = LerpVec.x * LerpVec.x * P1.y + LerpVec.y * LerpVec.y * P2.y + LerpVec.z * LerpVec.z * P3.y + 0.1f;
+
+		OutPolyIndex = CurrentPolyIndex;
+
+		return true;
+	}
+
+	else
+	{
+		bool Intersect = CheckAdjNavMeshPoly(Pos, CurrentPolyIndex, Height, OutPolyIndex);
+
+		return Intersect;
+	}
+
+	return false;
+}
+
 bool CNavigation3DManager::CheckAdjNavMeshPoly(const Vector3& Pos, int CurrentPolyIndex, float& Height, int& PolyIndex)
 {
 	std::vector<int> vecAdjPolyIndex;

@@ -126,6 +126,8 @@ NodeResult CMoveNode::OnUpdate(float DeltaTime)
 		}
 	}
 
+	if (m_AnimationMeshComp->GetAnimationInstance()->CheckCurrentAnimation("Player_Idle"))
+		int a = 3;
 
 	//m_Object->AddWorldPos(MoveDir.x * Speed * DeltaTime, 0.f, MoveDir.z * Speed * DeltaTime);
 	m_NavAgent->MoveOnNavMesh(Vector3(MoveDir.x * Speed * DeltaTime, 0.f, MoveDir.z * Speed * DeltaTime));

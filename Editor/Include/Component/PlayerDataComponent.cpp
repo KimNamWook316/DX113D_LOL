@@ -3,9 +3,10 @@
 #include "Input.h"
 #include "GameObject/GameObject.h"
 #include "Scene/Scene.h"
+#include "Component/AnimationMeshComponent.h"
 
 CPlayerDataComponent::CPlayerDataComponent()	:
-	m_PlayerHook(nullptr)
+	m_OnSlash(false)
 {
 	SetTypeID<CPlayerDataComponent>();
 	m_ComponentType = Component_Type::ObjectComponent;
@@ -26,8 +27,6 @@ void CPlayerDataComponent::Start()
 
 	m_Scene->GetSceneMode()->SetPlayerObject(m_Object);
 
-	m_PlayerHook = (CPlayerHook*)m_Object->FindChildObjectByType<CPlayerHook>();
-
 	CInput::GetInst()->CreateKey("WeaponArrow", '1');
 	CInput::GetInst()->CreateKey("WeaponFire", '2');
 	CInput::GetInst()->CreateKey("WeaponChain", '3');
@@ -35,6 +34,11 @@ void CPlayerDataComponent::Start()
 	CInput::GetInst()->SetKeyCallback("WeaponArrow", KeyState_Down, this, &CPlayerDataComponent::SetPlayerAbilityArrow);
 	CInput::GetInst()->SetKeyCallback("WeaponFire", KeyState_Down, this, &CPlayerDataComponent::SetPlayerAbilityFire);
 	CInput::GetInst()->SetKeyCallback("WeaponChain", KeyState_Down, this, &CPlayerDataComponent::SetPlayerAbilityChain);
+
+	CAnimationMeshComponent* Comp = m_Object->FindComponentFromType<CAnimationMeshComponent>();
+	Comp->GetAnimationInstance()->AddNotify<CPlayerDataComponent>("Player_Slash_L", "OnSlash", 3, this, &CPlayerDataComponent::SetTrueOnSlash);
+	Comp->GetAnimationInstance()->SetEndFunction<CPlayerDataComponent>("Player_Slash_L", this, &CPlayerDataComponent::SetFalseOnSlash);
+
 }
 
 bool CPlayerDataComponent::Init()

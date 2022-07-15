@@ -375,6 +375,9 @@
     <ClCompile Include="Component\Node\FindPathNode.cpp">
       <Filter>07. BehaviorTree\02. ActionNode</Filter>
     </ClCompile>
+    <ClCompile Include="Component\MonsterPathFindCollider.cpp">
+      <Filter>06. GameComponent\01. SceneComponent</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EditorManager.h">
@@ -646,6 +649,9 @@
     </ClInclude>
     <ClInclude Include="Component\Node\FindPathNode.h">
       <Filter>07. BehaviorTree\02. ActionNode</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\MonsterPathFindCollider.h">
+      <Filter>06. GameComponent\01. SceneComponent</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -52,6 +52,9 @@ public:
 	bool CheckPlayerNavMeshPoly(float& Height);
 	// 높이와 Polygon Index를 리턴
 	bool CheckNavMeshPoly(const Vector3& Pos, float& Height, int& PolyIndex);
+
+	// CurrentPolyIndex에 존재하는지 체크 후, 존재하지 않는다면 인접 Polygon을 탐색해서 OutPolyIndex에 반환해준다
+	bool CheckCurrentNavMeshPoly(const Vector3& Pos, int CurrentPolyIndex, float& Height, int& OutPolyIndex);
 	bool CheckAdjNavMeshPoly(const Vector3& Pos, int CurrentPolyIndex, float& Height, int& PolyIndex);
 	bool CheckNavMeshPickingPoint(Vector3& OutPos);
 	bool CheckStraightPath(const Vector3& StartPos, const Vector3& EndPos, std::vector<Vector3>& vecPath);

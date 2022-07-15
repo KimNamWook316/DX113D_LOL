@@ -2,7 +2,6 @@
 
 #include "Component/ObjectComponent.h"
 #include "GameObject/GameObject.h"
-#include "../Object/PlayerHook.h"
 
 class CPlayerDataComponent :
     public CObjectComponent
@@ -16,7 +15,7 @@ protected:
 
 private:
 	PlayerData m_PlayerData;
-	CPlayerHook* m_PlayerHook;
+	bool m_OnSlash;
 
 public:
 	virtual void Start();
@@ -36,9 +35,24 @@ public:
 	virtual bool LoadOnly(FILE* File) override;
 
 public:
-	CPlayerHook* GetPlayerHookHead()	const
+	void SetTrueOnSlash()
 	{
-		return m_PlayerHook;
+		m_OnSlash = true;
+	}
+
+	void SetFalseOnSlash()
+	{
+		m_OnSlash = false;
+	}
+
+	void SetOnSlash(bool Slash)
+	{
+		m_OnSlash = Slash;
+	}
+
+	bool GetOnSlash()	const
+	{
+		return m_OnSlash;
 	}
 
 	void SetPlayerAbilityArrow(float DeltaTime)

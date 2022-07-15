@@ -169,6 +169,7 @@
     <ClCompile Include="Component\EyeLaserComponent.cpp" />
     <ClCompile Include="Component\GameBehaviorTree.cpp" />
     <ClCompile Include="Component\GameStateComponent.cpp" />
+    <ClCompile Include="Component\MonsterPathFindCollider.cpp" />
     <ClCompile Include="Component\Node\AddFallingFloorCallbackNode.cpp" />
     <ClCompile Include="Component\Node\CancleShootNode.cpp" />
     <ClCompile Include="Component\Node\CheckAttackRangeNode.cpp" />
@@ -300,6 +301,7 @@
     <ClInclude Include="Component\EyeLaserComponent.h" />
     <ClInclude Include="Component\GameBehaviorTree.h" />
     <ClInclude Include="Component\GameStateComponent.h" />
+    <ClInclude Include="Component\MonsterPathFindCollider.h" />
     <ClInclude Include="Component\Node\AddFallingFloorCallbackNode.h" />
     <ClInclude Include="Component\Node\CancleShootNode.h" />
     <ClInclude Include="Component\Node\CheckAttackRangeNode.h" />

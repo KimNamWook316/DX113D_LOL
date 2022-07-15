@@ -60,7 +60,16 @@ NodeResult CRotateAttackDirectionNode::OnStart(float DeltaTime)
 	Vector3 CurrentFowardYZero = Vector3(m_CurrentForwardVector.x, 0.f, m_CurrentForwardVector.z);
 	Vector3 DestForwardYZero = Vector3(m_DestForwardVector.x, 0.f, m_DestForwardVector.z);
 
-	float Degree = RadianToDegree(acosf(CurrentFowardYZero.Dot(DestForwardYZero)));
+	float DotProduct = CurrentFowardYZero.Dot(DestForwardYZero);
+
+	if (DotProduct > 0.99f)
+	{
+		m_IsEnd = true;
+		return NodeResult::Node_True;
+	}
+
+	float Rad = acosf(DotProduct);
+	float Degree = RadianToDegree(Rad);
 
 	m_DestForwardVector.Normalize();
 

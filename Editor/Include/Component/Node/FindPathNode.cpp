@@ -22,8 +22,6 @@ CFindPathNode::~CFindPathNode()
 
 NodeResult CFindPathNode::OnStart(float DeltaTime)
 {
-	m_Owner->SetCurrentNode(this);
-
 	CScene* Scene = CSceneManager::GetInst()->GetScene();
 
 	CGameObject* Player = Scene->GetPlayerObject();
