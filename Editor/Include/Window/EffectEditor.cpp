@@ -2889,10 +2889,120 @@ void CEffectEditor::OnSummonEffectPreset()
 
 void CEffectEditor::OnBettyAttackSpreadDustPreset()
 {
+    if (!m_ParticleClass)
+        return;
+
+    OnXZSpreadDustPreset();
+
+    // Speed
+    OnSpeedStartEdit(50.f);
+    OnSpeedEndEdit(20.f);
+
+    // Speed Method Type
+    m_ParticleClass->SetSpeedChangeMethod(ParticleSpeedChangeMethod::Log);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetSpeedChangeMethod(ParticleSpeedChangeMethod::Log);
+
+    // Color
+    OnColorMinEdit(Vector4(250.f, 248.f, 235.f, 255.f));
+    OnColorMinEdit(Vector4(155.f, 204.f, 255.f, 255.f));
+
+    // Alpha
+    OnAlphaEndEdit(1.1f);
+    OnAlphaStartEdit(1.f);
+
+    // Noise Texture »ç¶óÁü È¿°ú
+    m_ParticleClass->SetApplyNoiseTextureSamplingEnable(true);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetApplyNoiseTextureSamplingEnable(true);
+
+    // Linaer UV Destroy X
+    m_ParticleClass->SetUVClippingReflectingMoveDirEnable(false);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetUVClippingReflectingMoveDirEnable(false);
+
+    // IMGUI Update
+    SetIMGUIReflectParticle(m_ParticleClass);
 }
 
 void CEffectEditor::OnPlayerDustPreset()
 {
+    if (!m_ParticleClass)
+        return;
+
+    // Move O
+    m_ParticleClass->SetMove(true);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetMove(true);
+
+    // Gravity X
+    m_ParticleClass->SetGravity(false);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGravity(false);
+
+    // Bound Flase
+    m_ParticleClass->SetBounceEnable(false);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetBounceEnable(false);
+
+    // UV Move False
+    m_ParticleClass->SetUVMoveEnable(false);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetUVMoveEnable(false);
+
+    // Alpha
+    OnAlphaEndEdit(1.1f);
+    OnAlphaStartEdit(0.5f);
+    OnSetAlphaBlendToMaterialCallback();
+
+    // Alpha Linaer X
+    m_ParticleClass->SetAlphaLinearFromCenter(false);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetAlphaLinearFromCenter(false);
+
+    // SpawnTime
+    OnSpawnTimeMaxEdit(1.f);
+
+    // Move Dir
+    OnMoveDirEdit(Vector3(1.f, 0.f, 0.f));
+
+    // Move Angle
+    OnMoveAngleEdit(Vector3(0.f, 0.f, 0.f));
+
+    // Scale,
+    OnScaleMinEdit(Vector3(10.f, 10.f, 1.f));
+    OnScaleMaxEdit(Vector3(10.f, 30.f, 1.f));
+
+    // Rotation Angle
+    OnMinSeperateRotAngleEdit(Vector3(45.f, 0.f, 0.f));
+    OnMaxSeperateRotAngleEdit(Vector3(45.f, 0.f, 0.f));
+
+    // Life Time
+    OnLifeTimeMinEdit(0.5f);
+    OnLifeTimeMaxEdit(0.5f);
+
+    // Speed
+    OnSpeedStartEdit(20.f);
+    OnSpeedEndEdit(20.f);
+
+    // Start Min, Max
+    OnStartMinEdit(Vector3(0.f, 0.f, 0.f));
+    OnStartMaxEdit(Vector3(0.f, 0.f, 0.f));
+
+    // Life Time Linaer X
+    m_ParticleClass->SetLifeTimeLinearFromCenter(false);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetLifeTimeLinearFromCenter(false);
+
+    // Circle Type
+    m_ParticleClass->SetParticleShapeType(-1);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetParticleShapeType(-1);
+
+    // Rot To Dir X
+    m_ParticleClass->SetRotToDir(false);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetRotToDir(false);
+
+    // Move Dir Type X
+    m_ParticleClass->SetSpecialMoveDirType(-1);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetSpecialMoveDirType(-1);
+
+    // Noise Texture True
+    m_ParticleClass->SetApplyNoiseTextureSamplingEnable(true);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetApplyNoiseTextureSamplingEnable(true);
+
+    // IMGUI Update
+    SetIMGUIReflectParticle(m_ParticleClass);
 }
 
 void CEffectEditor::OnXZSpreadDustPreset()
@@ -2957,7 +3067,7 @@ void CEffectEditor::OnXZSpreadDustPreset()
     OnSpeedStartEdit(10.f);
     OnSpeedEndEdit(30.f);
 
-    // Life Time Linaer
+    // Life Time Linaer X
     m_ParticleClass->SetLifeTimeLinearFromCenter(false);
     dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetLifeTimeLinearFromCenter(false);
 
@@ -2968,7 +3078,6 @@ void CEffectEditor::OnXZSpreadDustPreset()
     // Rot To Dir True
     m_ParticleClass->SetRotToDir(false);
     dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetRotToDir(false);
-
 
     // Move Dir Type
     m_ParticleClass->SetSpecialMoveDirType(ParticleSpecialMoveDir::XZSpread);
