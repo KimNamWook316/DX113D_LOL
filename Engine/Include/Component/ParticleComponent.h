@@ -35,11 +35,10 @@ protected:
 	float m_ParticleMoveSpeed;
 	Vector3 m_ParticleNextMovePos;
 	Vector3 m_ParticleMoveDir;
+	Vector3 m_ParticleMoveRotOffset;
 	// Bazier
 	bool m_BazierMoveEffect;
 	std::queue<Vector3> m_queueBazierMovePos;
-	// 중력 적용
-	bool m_GravityEnable;
 protected:
 	// class CStructuredBuffer*					m_NormalDistributionBuffer;
 private :
@@ -65,7 +64,15 @@ public :
 	{
 		return m_Material;
 	}
+	bool IsBazierMoveEnable() const
+	{
+		return m_BazierMoveEffect;
+	}
 public :
+	void SetMoveRotOffset(const Vector3& Offset)
+	{
+		m_ParticleMoveRotOffset = Offset;
+	}
 	void SetGravityEffect(bool Enable)
 	{
 		m_ParticleMoveSpeed = Enable;

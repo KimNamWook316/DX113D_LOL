@@ -99,6 +99,10 @@ public:
 	{
 		return m_3DTestObjectMeshName;
 	}
+	class CAnim3DObject* GetAnim3DObjectFromAnimationEditor() const
+	{
+		return m_3DTestObject;
+	}
 public:
 	virtual bool Init();
 	virtual void Update(float DeltaTime);

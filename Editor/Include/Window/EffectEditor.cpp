@@ -283,11 +283,6 @@ bool CEffectEditor::Init()
     m_RotateAccordingToDir->AddCheckInfo("Rot To Dir");
     m_RotateAccordingToDir->SetCallBackLabel<CEffectEditor>(this, &CEffectEditor::OnIsLinearRot);
 
-    // ¹æÇá¿¨ µû¸¥ UV Clipping
-    m_UVClippingAccordingToDir = Tree->AddWidget<CIMGUICheckBox>("UV Clip To Dir", 80.f);
-    m_UVClippingAccordingToDir->AddCheckInfo("UV Clip To Dir");
-    m_UVClippingAccordingToDir->SetCallBackLabel<CEffectEditor>(this, &CEffectEditor::OnIsUVClippingReflectingMoveDirEdit);
-
 
     // Movement
     Tree = AddWidget<CIMGUITree>("Movement");
@@ -428,6 +423,11 @@ bool CEffectEditor::Init()
     // m_ApplyNoiseTextureSampling
     Tree = AddWidget<CIMGUITree>("Pixel Shader");
 
+    // ¹æÇá¿¨ µû¸¥ UV Clipping
+    m_UVClippingAccordingToDir = Tree->AddWidget<CIMGUICheckBox>("Linear UV Clip", 80.f);
+    m_UVClippingAccordingToDir->AddCheckInfo("Linear UV Clip");
+    m_UVClippingAccordingToDir->SetCallBackLabel<CEffectEditor>(this, &CEffectEditor::OnIsUVClippingReflectingMoveDirEdit);
+
     m_ApplyNoiseTextureSampling = Tree->AddWidget<CIMGUICheckBox>("Noise Texture", 80.f);
     m_ApplyNoiseTextureSampling->AddCheckInfo("Noise Texture");
     m_ApplyNoiseTextureSampling->SetCallBackLabel<CEffectEditor>(this, &CEffectEditor::OnApplyNoiseTextureSamplingEdit);
@@ -435,6 +435,24 @@ bool CEffectEditor::Init()
     m_ResetNoiseTextureFilterValue = Tree->AddWidget<CIMGUIButton>("Reset Noise", 80.f, 20.f);
     m_ResetNoiseTextureFilterValue->SetClickCallback<CEffectEditor>(this, &CEffectEditor::OnResetNoiseTextureFilterValue);
 
+    // Bazier Move Test
+    Tree = AddWidget<CIMGUITree>("Bazier Test");
+
+    m_BazierD1Input = Tree->AddWidget<CIMGUIInputFloat3>("D1Pos", 150.f);
+    m_BazierD1Input->SetCallBack<CEffectEditor>(this, &CEffectEditor::OnSetBazierD1Pos);
+
+    m_BazierD2Input = Tree->AddWidget<CIMGUIInputFloat3>("D2Pos", 150.f);
+    m_BazierD2Input->SetCallBack<CEffectEditor>(this, &CEffectEditor::OnSetBazierD2Pos);
+
+    m_BazierD3Input = Tree->AddWidget<CIMGUIInputFloat3>("D3Pos", 150.f);
+    m_BazierD3Input->SetCallBack<CEffectEditor>(this, &CEffectEditor::OnSetBazierD3Pos);
+
+    m_StartTestBazier = Tree->AddWidget<CIMGUIButton>("Start Bazier", 80.f, 20.f);
+    m_StartTestBazier->SetClickCallback<CEffectEditor>(this, &CEffectEditor::OnClickStartBazierMove);
+  //  class CIMGUIInputFloat3 m_BazierD1;
+  //  class CIMGUIInputFloat3 m_BazierD2;
+  //  class CIMGUIInputFloat3 m_BazierD3;
+  //  class CIMGUIButton* m_StartTestBazier;
 
     // GameObject »ý¼º
     SetGameObjectReady();
@@ -1013,6 +1031,50 @@ void CEffectEditor::OnIsLinearRot(const char*, bool Enable)
 
     m_ParticleClass->SetRotToDir(Enable);
     dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetRotToDir(Enable);
+}
+
+void CEffectEditor::OnSetBazierD1Pos(const Vector3& Pos)
+{
+    if (!m_ParticleClass)
+        return;
+
+    m_BazierD1Pos = Pos;
+}
+
+void CEffectEditor::OnSetBazierD2Pos(const Vector3& Pos)
+{
+    if (!m_ParticleClass)
+        return;
+
+    m_BazierD2Pos = Pos;
+}
+
+void CEffectEditor::OnSetBazierD3Pos(const Vector3& Pos)
+{
+    if (!m_ParticleClass)
+        return;
+
+    m_BazierD3Pos = Pos;
+}
+
+void CEffectEditor::OnClickStartBazierMove()
+{
+    if (!m_ParticleClass)
+        return;
+
+    bool BazierMoveEnable = dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->IsBazierMoveEnable();
+
+    if (BazierMoveEnable)
+    {
+        dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->SetBazierMoveEffect(false);
+    }
+    else
+    {
+        dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->SetBazierMoveEffect(true);
+        dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->SetBazierTargetPos(
+            m_BazierD1Pos, m_BazierD2Pos, m_BazierD3Pos
+        );
+    }
 }
 
 

@@ -183,6 +183,17 @@ private:
 
     // Particle 이 사용하는 Material Texture
     class CIMGUIImage* m_ParticleTexture;
+
+    // Particle Bazier Move Test
+    class CIMGUIInputFloat3* m_BazierD1Input;
+    class CIMGUIInputFloat3* m_BazierD2Input;
+    class CIMGUIInputFloat3* m_BazierD3Input;
+    class CIMGUIButton* m_StartTestBazier;
+
+    Vector3 m_BazierD1Pos;
+    Vector3 m_BazierD2Pos;
+    Vector3 m_BazierD3Pos;
+
 private :
     class CParticle* m_ParticleClass;
     class CMaterial* m_ParticleMaterial;
@@ -299,6 +310,12 @@ private:
     // Linear Rot
     void OnIsLinearRot(const char*, bool);
     void OnSetLinearRotInitAngle(const Vector3& Angle);
+
+    // Baziear Move Test
+    void OnSetBazierD1Pos(const Vector3& Pos);
+    void OnSetBazierD2Pos(const Vector3& Pos);
+    void OnSetBazierD3Pos(const Vector3& Pos);
+    void OnClickStartBazierMove();
     
     // Save, Load
     void OnSaveParticleClass();

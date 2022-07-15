@@ -131,6 +131,9 @@ void CParticleComponent::ApplyBillBoardEffect()
 
 void CParticleComponent::ApplyBazierMove()
 {
+	if (!m_BazierMoveEffect)
+		return;
+
 	// 위치 이동
 	AddWorldPos(m_ParticleMoveDir * m_ParticleMoveSpeed);
 
@@ -152,7 +155,32 @@ void CParticleComponent::ApplyBazierMove()
 
 void CParticleComponent::SetBazierTargetPos(const Vector3& D1, const Vector3& D2, const Vector3& D3)
 {
+	// 먼저 기존에 채워져있던 Pos 정보를 전부 지워준다.
+	while (!m_queueBazierMovePos.empty())
+	{
+		m_queueBazierMovePos.pop();
+	}
 
+	const Vector3& StPos = GetWorldPos();
+
+	int numDiv = 50;
+
+	for (int i = 0; i < numDiv; ++i)
+	{
+		float amt = 1 / (float)numDiv;
+
+		// 선형 보간 법
+		const Vector3& Q1 = StPos * (1 - amt) + D1 * amt;
+		const Vector3& Q2 = D1 * (1 - amt) + D2 * amt;
+		const Vector3& Q3 = D2 * (1 - amt) + D3 * amt;
+
+		const Vector3& R1 = Q1 * (1 - amt) + Q2 * amt;
+		const Vector3& R2 = Q2 * (1 - amt) + Q3 * amt;
+
+		const Vector3& TargetPos = R1 * (1 - amt) + R2 * amt;
+
+		m_queueBazierMovePos.push(TargetPos);
+	}
 }
 
 void CParticleComponent::Start()
@@ -415,6 +443,10 @@ void CParticleComponent::ResetParticleStructuredBufferInfo()
 		return;
 
 	m_CBuffer->SetResetParticleSharedInfoSumSpawnCnt(1);
+
+	// 뿐만 아니라, 혹시 모르니 
+	// Noise Filter 값도 초기화 해준다.
+	m_CBuffer->SetNoiseTextureFilter(0.f);
 }
 
 bool CParticleComponent::SaveOnly(FILE* File)

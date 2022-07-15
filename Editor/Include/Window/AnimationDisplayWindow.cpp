@@ -70,6 +70,24 @@ bool CAnimationDisplayWindow::Init()
     m_AnimationRenderTarget->SetBorderColor(10, 10, 255);
     m_AnimationRenderTarget->SetTableTitle("Render Target");
 
+    m_AnimMeshScaleEdit = AddWidget<CIMGUIInputFloat3>("Relative Scale", 250.f);
+    m_AnimMeshScaleEdit->SetCallBack<CAnimationDisplayWindow>(this, &CAnimationDisplayWindow::OnEditAnimRelativeScale);
+
     return true;
+}
+
+void CAnimationDisplayWindow::SetAnimMeshScaleToIMGUI(const Vector3& Scale)
+{
+    m_AnimMeshScaleEdit->SetVal(Scale);
+}
+
+void CAnimationDisplayWindow::OnEditAnimRelativeScale(const Vector3& RelativeScale)
+{
+    CAnim3DObject* Anim3DObject = CEditorManager::GetInst()->GetAnimationEditor()->GetAnim3DObjectFromAnimationEditor();
+
+    if (Anim3DObject == nullptr)
+        return;
+
+    dynamic_cast<CAnimationMeshComponent*>(Anim3DObject->GetRootComponent())->SetRelativeScale(RelativeScale);
 }
 
