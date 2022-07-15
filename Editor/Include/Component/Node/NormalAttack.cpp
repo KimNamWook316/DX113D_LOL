@@ -66,12 +66,8 @@ NodeResult CNormalAttack::OnUpdate(float DeltaTime)
 {
 	m_Object->SetNoInterrupt(false);
 
-	m_IsEnd = true;
-	m_CallStart = false;
-	m_Owner->SetCurrentNode(nullptr);
-	return NodeResult::Node_False;
-
-	if (!m_AnimationMeshComp->GetAnimationInstance()->IsCurrentAnimLoop() && m_AnimationMeshComp->GetAnimationInstance()->IsCurrentAnimEnd())
+	CAnimationSequenceInstance* Instance = m_AnimationMeshComp->GetAnimationInstance();
+	if (!Instance->IsCurrentAnimLoop() && Instance->IsCurrentAnimEnd())
 	{
 		m_Object->SetNoInterrupt(false);
 

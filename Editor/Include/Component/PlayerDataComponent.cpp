@@ -36,8 +36,8 @@ void CPlayerDataComponent::Start()
 	CInput::GetInst()->SetKeyCallback("WeaponChain", KeyState_Down, this, &CPlayerDataComponent::SetPlayerAbilityChain);
 
 	CAnimationMeshComponent* Comp = m_Object->FindComponentFromType<CAnimationMeshComponent>();
-	Comp->GetAnimationInstance()->AddNotify<CPlayerDataComponent>("Player_Slash_L", "OnSlash", 3, this, &CPlayerDataComponent::SetTrueOnSlash);
-	Comp->GetAnimationInstance()->SetEndFunction<CPlayerDataComponent>("Player_Slash_L", this, &CPlayerDataComponent::SetFalseOnSlash);
+	Comp->GetAnimationInstance()->AddNotify<CPlayerDataComponent>("Player_Slash_L", "Player_Slash_L", 3, this, &CPlayerDataComponent::SetTrueOnSlash);
+	Comp->GetAnimationInstance()->AddNotify<CPlayerDataComponent>("Player_Slash_L", "Player_Slash_L", 8, this, &CPlayerDataComponent::SetFalseOnSlash);
 
 }
 
@@ -49,6 +49,8 @@ bool CPlayerDataComponent::Init()
 
 void CPlayerDataComponent::Update(float DeltaTime)
 {
+	int a = 3;
+	//CObjectComponent::Update(DeltaTime);
 }
 
 void CPlayerDataComponent::PostUpdate(float DeltaTime)

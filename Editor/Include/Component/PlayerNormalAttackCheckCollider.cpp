@@ -2,6 +2,7 @@
 #include "PlayerNormalAttackCheckCollider.h"
 #include "Component/AnimationMeshComponent.h"
 #include "Animation/AnimationSequenceInstance.h"
+#include "PlayerDataComponent.h"
 #include "GameObject/GameObject.h"
 #include "Input.h"
 
@@ -102,20 +103,31 @@ void CPlayerNormalAttackCheckCollider::AttackSuccess(const CollisionResult& Resu
 	if (!Instance)
 		return;
 
-	if (CInput::GetInst()->GetMouseLButtonClick())
+	CPlayerDataComponent* PlayerDataComp = m_Object->FindObjectComponentFromType<CPlayerDataComponent>();
+
+	if (!PlayerDataComp)
+		return;
+
+
+	auto iter = m_PrevCollisionList.begin();
+	auto iterEnd = m_PrevCollisionList.end();
+
+	for (; iter != iterEnd; ++iter)
 	{
-		auto iter = m_PrevCollisionList.begin();
-		auto iterEnd = m_PrevCollisionList.end();
+		Vector3 Vec1 = ((*iter)->GetWorldPos() - m_Object->GetWorldPos());
+		Vec1.Normalize();
+		Vector3 Vec2 = m_Object->GetMoveDir();
 
-		for (; iter != iterEnd; ++iter)
+		if (Vec1.Dot(Vec2) > 0.f && PlayerDataComp->GetOnSlash())
 		{
-			Vector3 Vec1 = ((*iter)->GetWorldPos() - m_Object->GetWorldPos());
-			Vec1.Normalize();
-			Vector3 Vec2 = m_Object->GetMoveDir();
+			(*iter)->GetGameObject()->SetHit(true);
+		}
 
-			if(Vec1.Dot(Vec2) > 0.f)
-				(*iter)->GetGameObject()->SetHit(true);
+		if (!PlayerDataComp->GetOnSlash())
+		{
+			(*iter)->GetGameObject()->SetHit(false);
 		}
 	}
+
 
 }

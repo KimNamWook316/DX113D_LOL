@@ -256,12 +256,12 @@ CGameObject* CEditorManager::CreateObject(CScene* Scene, size_t Type)
 		return Obj;
 	}
 
-	else if (Type == typeid(CPlayerHook).hash_code())
-	{
-		CPlayerHook* Obj = Scene->LoadGameObject<CPlayerHook>();
+	//else if (Type == typeid(CPlayerHook).hash_code())
+	//{
+	//	CPlayerHook* Obj = Scene->LoadGameObject<CPlayerHook>();
 
-		return Obj;
-	}
+	//	return Obj;
+	//}
 
 	return nullptr;
 }
