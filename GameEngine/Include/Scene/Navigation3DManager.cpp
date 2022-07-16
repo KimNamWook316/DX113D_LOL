@@ -517,7 +517,10 @@ void CNavigation3DManager::Start()
 		CNavigationThread3D* Thread = CThread::CreateThread<CNavigationThread3D>(Name);
 
 		Thread->SetNavigationManager(this);
-		Thread->SetNavMeshComponent(m_NavMeshComponent);
+
+		if(m_NavMeshComponent)
+			Thread->SetNavMeshComponent(m_NavMeshComponent->Clone());
+
 		Thread->Start();
 
 		m_vecNavigationThread.push_back(Thread);

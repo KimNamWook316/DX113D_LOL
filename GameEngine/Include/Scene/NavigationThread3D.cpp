@@ -21,7 +21,7 @@ CNavigationThread3D::~CNavigationThread3D()
 
 	CloseHandle(m_ExitEvent);
 
-	//SAFE_DELETE(m_NavMeshComponent);
+	SAFE_DELETE(m_NavMeshComponent);
 }
 
 

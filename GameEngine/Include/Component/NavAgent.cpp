@@ -10,7 +10,8 @@
 CNavAgent::CNavAgent()	:
 	m_MoveSpeed(0.f),
 	m_ApplyNavMesh(true),
-	m_OccupyPolygonIndex(0)
+	m_OccupyPolygonIndex(0),
+	m_PathFindStart(false)
 {
 	SetTypeID<CNavAgent>();
 }
@@ -78,16 +79,16 @@ void CNavAgent::Update(float DeltaTime)
 {
 	if (m_UpdateComponent)
 	{
-		float Height = 0.f;
-		int PolyIndex = 0;
-		if (m_OccupyPolygonIndex == -1)
-		{
-			// 최초로 자신이 어떤 Polygon을 밟고 있는지 체크
-			bool Intersect = CSceneManager::GetInst()->GetScene()->GetNavigation3DManager()->CheckNavMeshPoly(m_UpdateComponent->GetWorldPos(), Height, PolyIndex);
+		//float Height = 0.f;
+		//int PolyIndex = 0;
+		//if (m_OccupyPolygonIndex == -1)
+		//{
+		//	// 최초로 자신이 어떤 Polygon을 밟고 있는지 체크
+		//	bool Intersect = CSceneManager::GetInst()->GetScene()->GetNavigation3DManager()->CheckNavMeshPoly(m_UpdateComponent->GetWorldPos(), Height, PolyIndex);
 
-			if (Intersect)
-				m_OccupyPolygonIndex = PolyIndex;
-		}
+		//	if (Intersect)
+		//		m_OccupyPolygonIndex = PolyIndex;
+		//}
 
 		if (!m_PathList.empty())
 		{
@@ -123,18 +124,21 @@ void CNavAgent::Update(float DeltaTime)
 			if (TargetDistance <= 0.5f)
 			{
 				m_PathList.pop_back();
+
+				if (m_PathList.empty())
+					m_PathFindStart = false;
 			}
 
 			m_UpdateComponent->AddWorldPos(Dir * m_MoveSpeed * DeltaTime);
 
-			Vector3 NewPos = m_UpdateComponent->GetWorldPos();
-			float Height = 0.f;
-			int NewPolyIndex = 0;
-			// 움직이고 나서 자신이 어떤 Polygon을 밟고 있는지 업데이트
-			bool Intersect = CSceneManager::GetInst()->GetScene()->GetNavigation3DManager()->CheckAdjNavMeshPoly(NewPos, m_OccupyPolygonIndex, Height, NewPolyIndex);
+			//Vector3 NewPos = m_UpdateComponent->GetWorldPos();
+			//float Height = 0.f;
+			//int NewPolyIndex = 0;
+			//// 움직이고 나서 자신이 어떤 Polygon을 밟고 있는지 업데이트
+			//bool Intersect = CSceneManager::GetInst()->GetScene()->GetNavigation3DManager()->CheckAdjNavMeshPoly(NewPos, m_OccupyPolygonIndex, Height, NewPolyIndex);
 
-			if(Intersect)
-				m_OccupyPolygonIndex = NewPolyIndex;
+			//if(Intersect)
+			//	m_OccupyPolygonIndex = NewPolyIndex;
 		}
 	}
 
@@ -226,13 +230,15 @@ void CNavAgent::AddPath(const Vector3& EndPos)
 
 bool CNavAgent::FindPath(CSceneComponent* OwnerComponent, const Vector3& End)
 {
-	bool Result = CSceneManager::GetInst()->GetScene()->GetNavigation3DManager()->FindPath<CNavAgent, CSceneComponent>(this, &CNavAgent::FillPathList, OwnerComponent, End);
+	m_PathFindStart = true;
 
+	bool Result = CSceneManager::GetInst()->GetScene()->GetNavigation3DManager()->FindPath<CNavAgent, CSceneComponent>(this, &CNavAgent::FillPathList, OwnerComponent, End);
 	return Result;
 }
 
 bool CNavAgent::CheckStraightPath(const Vector3& StartPos, const Vector3& EndPos, std::vector<Vector3>& vecPath)
 {
+	m_PathFindStart = true;
 
 	return CSceneManager::GetInst()->GetScene()->GetNavigation3DManager()->GetNavMeshData()->CheckStraightPath(StartPos, EndPos, vecPath);
 }

@@ -26,6 +26,8 @@ CNavMeshComponent::CNavMeshComponent()	:
 CNavMeshComponent::CNavMeshComponent(const CNavMeshComponent& com)	:
 	CSceneComponent(com)
 {
+	m_NavMesh = com.m_NavMesh;
+	m_Shader = com.m_Shader;
 }
 
 CNavMeshComponent::~CNavMeshComponent()
@@ -54,6 +56,9 @@ void CNavMeshComponent::SetNavMesh(CNavMesh* NavMesh)
 void CNavMeshComponent::Start()
 {
 	CSceneComponent::Start();
+
+	CSceneManager::GetInst()->GetScene()->GetCollision()->SetNavMeshMin(m_NavMesh->GetMin());
+	CSceneManager::GetInst()->GetScene()->GetCollision()->SetNavMeshMax(m_NavMesh->GetMax());
 }
 
 bool CNavMeshComponent::Init()
@@ -224,6 +229,9 @@ void CNavMeshComponent::FindPath(const Vector3& Start, const Vector3& End, std::
 	NavigationCell* StartCell = FindCell(Start);
 	NavigationCell* EndCell = FindCell(End);
 
+	if (!StartCell || !EndCell)
+		int a = 3;
+
 	if (StartCell == EndCell)
 	{
 		vecPath.push_back(EndCell->Center);
@@ -243,13 +251,17 @@ void CNavMeshComponent::FindPath(const Vector3& Start, const Vector3& End, std::
 			// 닫힌 목록에 목표 Cell이 들어오면 그 Cell들의 부모 Cell들을 타고 올라가면서 경로를 완성하고 길찾기 종료
 			if (EndCell == (*iter))
 			{
+				vecPath.push_back(End);
 				vecPath.push_back((*iter)->Center);
 				int ParentIndex = (*iter)->ParentIdx;
 
 				while (true)
 				{
 					if (ParentIndex == -1)
+					{
+						ResetAllCell();
 						return;
+					}
 
 					NavigationCell* Cell = FindCell(ParentIndex);
 					vecPath.push_back(Cell->Center);
@@ -395,6 +407,12 @@ bool CNavMeshComponent::CheckStraightPath(const Vector3& StartPos, const Vector3
 	int DestPosX = (int)EndPos.x;
 	int DestPosZ = (int)EndPos.z;
 
+	if (abs(StartPos.x - EndPos.x) < 1.f && abs(StartPos.z - EndPos.z) < 1.f)
+	{
+		vecPath.push_back(EndPos);
+		return true;
+	}
+
 	int dx = DestPosX - CurrentPosX;
 	int dz = DestPosZ - CurrentPosZ;
 
@@ -496,6 +514,36 @@ bool CNavMeshComponent::CheckStraightPath(const Vector3& StartPos, const Vector3
 	}
 
 	return true;
+}
+
+void CNavMeshComponent::ResetAllCell()
+{
+	m_OpenList.clear();
+	m_CloseList.clear();
+
+	auto iter = m_UseCellList.begin();
+	auto iterEnd = m_UseCellList.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		(*iter)->G = 0;
+		(*iter)->H = 0;
+		(*iter)->Total = 0;
+		(*iter)->Type = NCLT_NONE;
+		(*iter)->ParentIdx = -1;
+	}
+
+	auto iter2 = m_mapCell.begin();
+	auto iterEnd2 = m_mapCell.end();
+
+	for (; iter2 != iterEnd2; ++iter2)
+	{
+		iter2->second->G = 0;
+		iter2->second->H = 0;
+		iter2->second->Total = 0;
+		iter2->second->Type = NCLT_NONE;
+		iter2->second->ParentIdx = -1;
+	}
 }
 
 

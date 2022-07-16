@@ -32,7 +32,8 @@ NodeResult CReadyToShoot::OnStart(float DeltaTime)
 
 	std::string ObjectName = m_Object->GetName();
 
-	std::string SequenceName = ObjectName + "_" + "Arrow";
+	std::string SequenceName = ObjectName + "Arrow";
+	//std::string SequenceName = "Arrow";
 
 	if (m_AnimationMeshComp)
 	{

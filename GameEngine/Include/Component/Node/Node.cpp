@@ -107,6 +107,8 @@ bool CNode::LoadOnly(FILE* File)
 
 	fread(&m_NodeType, sizeof(Node_Type), 1, File);
 
+	LoadPos(File);
+
 	return true;
 }
 

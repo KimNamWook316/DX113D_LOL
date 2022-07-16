@@ -22,6 +22,7 @@
 #include "Component/ColliderRay.h"
 #include "Component/NavMeshComponent.h"
 #include "Component/WaterComponent.h"
+#include "../Component/MonsterPathFindCollider.h"
 #include "../Component/PlayerHookComponent.h"
 #include "../Component/PlayerNormalAttackCheckCollider.h"
 #include "Resource/Particle/Particle.h"
@@ -114,7 +115,7 @@ void CSceneComponentCreateModal::OnCreateComponent()
 
 	CSceneComponent* Com = nullptr;
 
-	// TODO : 컴포넌트 추가될때마다 추가
+	// TODO : Scene Component 추가될때마다 추가
 	if (Typeid == typeid(CAnimationMeshComponent).hash_code())
 		Com = SelectObject->CreateComponentAddChild<CAnimationMeshComponent>(Name);
 
@@ -162,6 +163,9 @@ void CSceneComponentCreateModal::OnCreateComponent()
 
 	else if (Typeid == typeid(CPlayerHookComponent).hash_code())
 		Com = SelectObject->CreateComponentAddChild<CPlayerHookComponent>(Name);
+
+	else if (Typeid == typeid(CMonsterPathFindCollider).hash_code())
+		Com = SelectObject->CreateComponentAddChild<CMonsterPathFindCollider>(Name);
 
 	// Window 갱신
 	CSceneComponentHierarchyWindow* ComponentWindow = (CSceneComponentHierarchyWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(SCENECOMPONENT_HIERARCHY);

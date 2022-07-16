@@ -26,7 +26,7 @@
 #include "../Component/Node/AddFallingFloorCallbackNode.h"
 #include "../Component/Node/Lockstone3TriggerBoxHitCheck.h"
 #include "../Component/Node/Lockstone3TriggerBoxAction.h"
-#include "../Component/Node/CheckAttackRangeNode.h"
+#include "../Component/Node/CheckDetectRangeNode.h"
 #include "../Component/Node/FindPathNode.h"
 #include "ObjectComponentWindow.h"
 #include "ObjectHierarchyWindow.h"
@@ -190,7 +190,7 @@ void CBehaviorTreeWindow::Update(float DeltaTime)
             m_vecNodeAction.push_back("MouseRButtonCheck");
             m_vecNodeAction.push_back("MouseRButtonUpCheck");
             m_vecNodeAction.push_back("Lockstone3TriggerBoxHitCheck");
-            m_vecNodeAction.push_back("CheckAttackRange");
+            m_vecNodeAction.push_back("CheckDetectRange");
         }
 
         else if (m_TypeSelectIndex == 4)
@@ -440,8 +440,8 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
         case ConditionNode::Lockstone3TriggerBoxHitCheck:
             NewTreeNode = m_StateComponent->CreateTreeNode<CLockstone3TriggerBoxHitCheck>(Name);
             break;
-        case ConditionNode::CheckAttackRange:
-            NewTreeNode = m_StateComponent->CreateTreeNode<CCheckAttackRangeNode>(Name);
+        case ConditionNode::CheckDetectRange:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CCheckDetectRangeNode>(Name);
             break;
         }
     }

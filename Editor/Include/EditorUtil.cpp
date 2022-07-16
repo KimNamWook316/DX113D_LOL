@@ -29,6 +29,7 @@
 #include "Component/EyeLaserComponent.h"
 #include "Component/PlayerNormalAttackCheckCollider.h"
 #include "Component/PlayerHookComponent.h"
+#include "Component/MonsterPathFindCollider.h"
 #include "IMGUITree.h"
 #include "Flag.h"
 #include "EngineUtil.h"
@@ -559,6 +560,7 @@ std::string CEditorUtil::ObjectToString(Object_Type Object)
 	return "";
 }
 
+// TODO : SceneComponent Type 추가될 때 마다 추가
 std::string CEditorUtil::SceneComponent3DTypeToString(SceneComponent3DType Type)
 {
 	switch (Type)
@@ -595,6 +597,8 @@ std::string CEditorUtil::SceneComponent3DTypeToString(SceneComponent3DType Type)
 		return "EyeLaserComponent";
 	case SceneComponent3DType::PlayerHookComponent:
 		return "PlayerHookComponent";
+	case SceneComponent3DType::MonsterPathFindCollider:
+		return "MonsterPathFindCollider";
 	}
 
 	return "";
@@ -640,6 +644,7 @@ size_t CEditorUtil::ObjectTypeIndexToTypeid(int TypeIndex)
 
 size_t CEditorUtil::SceneComponentTypeIndexToTypeid(int TypeIndex)
 {
+	// TODO : SceneComponent Type 추가될 때 마다 추가
 	switch (TypeIndex)
 	{
 	case 0:
@@ -674,6 +679,8 @@ size_t CEditorUtil::SceneComponentTypeIndexToTypeid(int TypeIndex)
 		return typeid(CEyeLaserComponent).hash_code();
 	case 15:
 		return typeid(CPlayerHookComponent).hash_code();
+	case 16:
+		return typeid(CMonsterPathFindCollider).hash_code();
 	}
 
 	return -1;

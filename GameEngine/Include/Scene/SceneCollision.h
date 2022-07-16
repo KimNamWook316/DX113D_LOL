@@ -54,8 +54,20 @@ private:
 	std::list<CSharedPtr<class CColliderComponent>>	m_ColliderList;
 	CSharedPtr<class CColliderComponent> m_MouseCollision;
 	bool	m_WidgetClick;
+	Vector3 m_NavMeshMin;
+	Vector3 m_NavMeshMax;
 
 public:
+	void SetNavMeshMin(const Vector3& Min)
+	{
+		m_NavMeshMin = Min;
+	}
+
+	void SetNavMeshMax(const Vector3& Max)
+	{
+		m_NavMeshMax = Max;
+	}
+
 	CollisionSectionInfo* GetCollisionSectionInfo()	const
 	{
 		return m_Section;

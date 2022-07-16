@@ -30,6 +30,7 @@
 #include "Component/PlayerNormalAttackCheckCollider.h"
 #include "Component/EyeLaserComponent.h"
 #include "Component/PlayerHookComponent.h"
+#include "Component/MonsterPathFindCollider.h"
 // Window
 #include "Window/ObjectHierarchyWindow.h"
 #include "Window/SceneComponentHierarchyWindow.h"
@@ -414,6 +415,13 @@ CComponent* CEditorManager::CreateComponent(CGameObject* Obj, size_t Type)
 		CWaterComponent* Component = Obj->LoadComponent<CWaterComponent>();
 		return Component;
 	}
+
+	else if (Type == typeid(CMonsterPathFindCollider).hash_code())
+	{
+		CMonsterPathFindCollider* Component = Obj->LoadComponent<CMonsterPathFindCollider>();
+		return Component;
+	}
+
 
 	return nullptr;
 }

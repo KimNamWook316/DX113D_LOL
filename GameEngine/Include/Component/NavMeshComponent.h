@@ -55,6 +55,7 @@ class CNavMeshComponent :
 {
 	friend class CGameObject;
 	friend class CCameraManager;
+	friend class CNavigationThread3D;
 
 protected:
 	CNavMeshComponent();
@@ -156,6 +157,7 @@ public:
 	void DelteCellOpenList(NavigationCell* Cell);
 	void MakePathList(std::list<Vector3>& PathList);
 	bool CheckStraightPath(const Vector3& StartPos, const Vector3& EndPos, std::vector<Vector3>& vecPath);
+	void ResetAllCell();
 	
 	NavigationCell* FindCell(int PolyIndex);
 

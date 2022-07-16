@@ -280,6 +280,9 @@ void CColliderBox3D::UpdateMinMax()
 	m_Info.Min.z = PointList[0].z;
 	m_Info.Max.z = PointList[7].z;
 
+	m_Min = m_Info.Min;
+	m_Max = m_Info.Max;
+
 	m_UpdateMinMax = true;
 }
 

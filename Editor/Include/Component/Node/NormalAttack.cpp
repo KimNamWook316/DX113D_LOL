@@ -30,7 +30,8 @@ NodeResult CNormalAttack::OnStart(float DeltaTime)
 
 	if (m_Object->GetObjectType() == Object_Type::Player)
 	{
-		SequenceName = ObjectName + "_Slash_L";
+		SequenceName = ObjectName + "SlashL";
+		//SequenceName = "SlashL";
 	}
 
 	else

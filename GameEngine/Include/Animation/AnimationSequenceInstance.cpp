@@ -568,10 +568,6 @@ void CAnimationSequenceInstance::Update(float DeltaTime)
 	if (!m_Skeleton || !m_CurrentAnimation || !m_PlayAnimation || m_CurrentAnimation->m_Sequence->GetKeyFrameCount() == 0)
 		return;
 
-	if (m_CurrentAnimation->GetName().find("Slash") != std::string::npos && m_ChangeAnimation && m_ChangeAnimation->GetName().find("Idle") != std::string::npos)
-		int a = 3;
-
-
 	m_GlobalTime += DeltaTime * m_CurrentAnimation->m_PlayScale;
 
 	bool	Change = false;
@@ -651,12 +647,6 @@ void CAnimationSequenceInstance::Update(float DeltaTime)
 		m_AnimationUpdateCBuffer->SetBoneCount((int)m_Skeleton->GetBoneCount());
 
 		size_t	Size = m_CurrentAnimation->m_vecNotify.size();
-
-		if (m_CurrentAnimation->GetName().find("Slash") != std::string::npos)
-			int a = 3;
-		
-		if (m_ChangeAnimation && m_ChangeAnimation->GetName().find("Slash") != std::string::npos)
-			int a = 3;
 
 		for (size_t i = 0; i < Size; ++i)
 		{

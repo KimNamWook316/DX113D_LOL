@@ -369,14 +369,38 @@
     <ClCompile Include="Component\PlayerHookComponent.cpp">
       <Filter>06. GameComponent\01. SceneComponent</Filter>
     </ClCompile>
-    <ClCompile Include="Component\Node\CheckAttackRangeNode.cpp">
-      <Filter>07. BehaviorTree\01. ConditionNode</Filter>
-    </ClCompile>
     <ClCompile Include="Component\Node\FindPathNode.cpp">
       <Filter>07. BehaviorTree\02. ActionNode</Filter>
     </ClCompile>
     <ClCompile Include="Component\MonsterPathFindCollider.cpp">
       <Filter>06. GameComponent\01. SceneComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\Node\BossKnightFinalAttackNode.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\Node\BossKnightMeleeAttackNode.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\Node\KnightFinalAttackCheck.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\Node\KnightHopAttackNode.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\Node\KnightHopAttackRangeCheck.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\Node\MeleeRangeCheckNode.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Widget\PaperBurnWidget.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Widget\WaterComponentWidget.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\Node\CheckDetectRangeNode.cpp">
+      <Filter>07. BehaviorTree\01. ConditionNode</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -644,14 +668,38 @@
     <ClInclude Include="Component\PlayerHookComponent.h">
       <Filter>06. GameComponent\01. SceneComponent</Filter>
     </ClInclude>
-    <ClInclude Include="Component\Node\CheckAttackRangeNode.h">
-      <Filter>07. BehaviorTree\01. ConditionNode</Filter>
-    </ClInclude>
     <ClInclude Include="Component\Node\FindPathNode.h">
       <Filter>07. BehaviorTree\02. ActionNode</Filter>
     </ClInclude>
     <ClInclude Include="Component\MonsterPathFindCollider.h">
       <Filter>06. GameComponent\01. SceneComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\BossKnightFinalAttackNode.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\BossKnightMeleeAttackNode.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\KnightFinalAttackCheck.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\KnightHopAttackNode.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\KnightHopAttackRangeCheck.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\MeleeRangeCheckNode.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Widget\PaperBurnWidget.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Widget\WaterComponentWidget.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\CheckDetectRangeNode.h">
+      <Filter>07. BehaviorTree\01. ConditionNode</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

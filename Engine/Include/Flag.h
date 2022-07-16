@@ -252,6 +252,7 @@ enum class PopUpModalState
 	Max
 };
 
+// TODO : SceneComponent Type 추가될 때 마다 추가
 enum class SceneComponent3DType
 {
 	AnimationMeshComponent,
@@ -270,6 +271,7 @@ enum class SceneComponent3DType
 	PlayerNormalAttackCheckCollider,
 	EyeLaserComponent,
 	PlayerHookComponent,
+	MonsterPathFindCollider,
 	Max
 };
 
@@ -307,7 +309,7 @@ enum ConditionNode
 	MouseRButtonCheckNode,
 	MouseRButtonUpCheckNode,
 	Lockstone3TriggerBoxHitCheck,
-	CheckAttackRange
+	CheckDetectRange
 };
 
 enum ActionNode
@@ -404,6 +406,7 @@ enum class HookResult
 	Collision,
 	CollisionEnd
 };
+
 
 enum class ParticleSpeedChangeMethod
 {

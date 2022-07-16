@@ -33,7 +33,8 @@ NodeResult CMoveNode::OnStart(float DeltaTime)
 
 	std::string ObjectName = m_Object->GetName();
 
-	std::string SequenceName = ObjectName + "_Run";
+	std::string SequenceName = ObjectName + "Run";
+	//std::string SequenceName = "Run";
 
 	if (m_AnimationMeshComp)
 	{
@@ -125,9 +126,6 @@ NodeResult CMoveNode::OnUpdate(float DeltaTime)
 			m_Object->AddWorldRotationY(-360.f * DeltaTime);
 		}
 	}
-
-	if (m_AnimationMeshComp->GetAnimationInstance()->CheckCurrentAnimation("Player_Idle"))
-		int a = 3;
 
 	//m_Object->AddWorldPos(MoveDir.x * Speed * DeltaTime, 0.f, MoveDir.z * Speed * DeltaTime);
 	m_NavAgent->MoveOnNavMesh(Vector3(MoveDir.x * Speed * DeltaTime, 0.f, MoveDir.z * Speed * DeltaTime));

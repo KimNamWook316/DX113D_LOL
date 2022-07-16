@@ -30,6 +30,14 @@ NodeResult CFindPathNode::OnStart(float DeltaTime)
 
 	if (m_NavAgent)
 	{
+		// 이미 길찾기해서 목표 지점으로 가고 있는 중이면 길찾기 X
+		if (!m_NavAgent->IsEmptyPathList())
+			return NodeResult::Node_True;
+
+		// PathList에 경로는 채워지지 않았지만 길찾기 쓰레드가 돌아가고 있는중이라도 길찾기X
+		if (m_NavAgent->GetPathFindStart())
+			return NodeResult::Node_True;
+
 		CSceneComponent* Root = m_Object->GetRootComponent();
 		Vector3 PlayerPos = Player->GetWorldPos();
 		std::vector<Vector3> vecPath;
@@ -43,8 +51,6 @@ NodeResult CFindPathNode::OnStart(float DeltaTime)
 		else
 			m_NavAgent->FindPath(Root, PlayerPos);
 	}
-
-	m_CallStart = true;
 
 	return NodeResult::Node_True;
 }

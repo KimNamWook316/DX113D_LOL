@@ -12,7 +12,33 @@ protected:
 	virtual ~CMonsterPathFindCollider();
 
 private:
+	bool m_PathFindEnable;
+	bool m_PathFindCoolStart;
+	float m_AccTime;
+	float m_PathFindCoolTime;
 
+public:
+	void SetPathFindCoolStart(const CollisionResult& Result)
+	{
+		m_PathFindCoolStart = true;
+	}
+
+	void SetPathFindCoolEnd()
+	{
+		m_PathFindCoolStart = false;
+	}
+
+	void SetPathFindFalse(const CollisionResult& Result)
+	{
+		m_PathFindEnable = false;
+		m_PathFindCoolStart = false;
+		m_AccTime = 0.f;
+	}
+
+	bool GetPathFindEnable()	const
+	{
+		return m_PathFindEnable;
+	}
 
 public:
 	virtual void Start();

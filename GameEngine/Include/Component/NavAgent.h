@@ -19,6 +19,7 @@ private:
 	std::list<Vector3>		m_PathList;
 	float					m_MoveSpeed;
 	bool					m_ApplyNavMesh;
+	bool					m_PathFindStart;
 	int						m_OccupyPolygonIndex;
 
 public:
@@ -26,9 +27,20 @@ public:
 	bool Move(const Vector3& EndPos);
 	// 길찾기를 하지 않고, NavMesh위에서 움직이고, NavMesh안에서만 움직이는 모든 오브젝트들은 이 함수들을 이용해서 움직여야 한다
 	bool MoveOnNavMesh(const Vector3 EndPos);
+
 	void SetMoveSpeed(float Speed)
 	{
 		m_MoveSpeed = Speed;
+	}
+
+	void SetPathFindStart(bool Start)
+	{
+		m_PathFindStart = Start;
+	}
+
+	bool GetPathFindStart()	const
+	{
+		return m_PathFindStart;
 	}
 
 	void SetApplyNavMesh(bool Apply)
@@ -50,6 +62,11 @@ public:
 	void ClearPathList()
 	{
 		m_PathList.clear();
+	}
+
+	bool IsEmptyPathList()	const
+	{
+		return m_PathList.empty();
 	}
 
 public:
