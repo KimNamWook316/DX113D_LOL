@@ -169,6 +169,7 @@
     <ClCompile Include="Component\EyeLaserComponent.cpp" />
     <ClCompile Include="Component\GameBehaviorTree.cpp" />
     <ClCompile Include="Component\GameStateComponent.cpp" />
+    <ClCompile Include="Component\KnightDataComponent.cpp" />
     <ClCompile Include="Component\Node\AddFallingFloorCallbackNode.cpp" />
     <ClCompile Include="Component\Node\BossKnightFinalAttackNode.cpp" />
     <ClCompile Include="Component\Node\BossKnightMeleeAttackNode.cpp" />
@@ -306,6 +307,7 @@
     <ClInclude Include="Component\EyeLaserComponent.h" />
     <ClInclude Include="Component\GameBehaviorTree.h" />
     <ClInclude Include="Component\GameStateComponent.h" />
+    <ClInclude Include="Component\KnightDataComponent.h" />
     <ClInclude Include="Component\Node\AddFallingFloorCallbackNode.h" />
     <ClInclude Include="Component\Node\BossKnightFinalAttackNode.h" />
     <ClInclude Include="Component\Node\BossKnightMeleeAttackNode.h" />

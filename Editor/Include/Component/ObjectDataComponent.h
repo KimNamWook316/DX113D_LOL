@@ -12,7 +12,7 @@ protected:
 	CObjectDataComponent(const CObjectDataComponent& com);
 	virtual ~CObjectDataComponent();
 
-private:
+protected:
 	ObjectData m_Data;
 
 public:
@@ -65,7 +65,6 @@ public:
 	virtual void Render();
 	virtual void PostRender();
 	virtual CObjectDataComponent* Clone();
-
 
 public:
 	virtual bool Save(FILE* File);

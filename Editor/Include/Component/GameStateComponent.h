@@ -12,5 +12,16 @@ protected:
 	CGameStateComponent(const CGameStateComponent& com);
 	virtual ~CGameStateComponent();
 
+public:
+	virtual void Start() override;
+
+public:
+	class CObjectDataComponent* GetData()
+	{
+		return m_Data;
+	}
+
+private:
+	class CObjectDataComponent* m_Data;
 };
 

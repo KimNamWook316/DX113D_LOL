@@ -110,7 +110,7 @@ bool CObjectDataComponent::Load(FILE* File)
 
 bool CObjectDataComponent::SaveOnly(FILE* File)
 {
-	CObjectComponent::Save(File);
+	CObjectComponent::SaveOnly(File);
 
 	fwrite(&m_Data, sizeof(ObjectData), 1, File);
 
@@ -119,7 +119,7 @@ bool CObjectDataComponent::SaveOnly(FILE* File)
 
 bool CObjectDataComponent::LoadOnly(FILE* File)
 {
-	CObjectComponent::Load(File);
+	CObjectComponent::LoadOnly(File);
 
 	fread(&m_Data, sizeof(ObjectData), 1, File);
 

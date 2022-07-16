@@ -130,6 +130,12 @@
     <Filter Include="07. BehaviorTree\02. ActionNode\00. Specific\01. BossKnight">
       <UniqueIdentifier>{cde23c16-afe6-4397-8ec1-f819935e0ca0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="06. GameComponent\02. ObjectComponent\01. ObjectDataComponent">
+      <UniqueIdentifier>{11fa6ebc-e5f7-4830-a18e-1162f62b9bd5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. GameComponent\02. ObjectComponent\01. ObjectDataComponent\01. KnightData">
+      <UniqueIdentifier>{484f7989-8f88-4043-ae31-cb59bbed1d82}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EditorManager.cpp">
@@ -372,9 +378,6 @@
     <ClCompile Include="Component\GameStateComponent.cpp">
       <Filter>06. GameComponent\02. ObjectComponent</Filter>
     </ClCompile>
-    <ClCompile Include="Component\ObjectDataComponent.cpp">
-      <Filter>06. GameComponent\02. ObjectComponent</Filter>
-    </ClCompile>
     <ClCompile Include="Component\PlayerDataComponent.cpp">
       <Filter>06. GameComponent\02. ObjectComponent</Filter>
     </ClCompile>
@@ -422,6 +425,12 @@
     </ClCompile>
     <ClCompile Include="Component\Node\MeleeRangeCheckNode.cpp">
       <Filter>07. BehaviorTree\01. ConditionNode\01. Public</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\ObjectDataComponent.cpp">
+      <Filter>06. GameComponent\02. ObjectComponent\01. ObjectDataComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\KnightDataComponent.cpp">
+      <Filter>06. GameComponent\02. ObjectComponent\01. ObjectDataComponent\01. KnightData</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -683,9 +692,6 @@
     <ClInclude Include="Component\PlayerDataComponent.h">
       <Filter>06. GameComponent\02. ObjectComponent</Filter>
     </ClInclude>
-    <ClInclude Include="Component\ObjectDataComponent.h">
-      <Filter>06. GameComponent\02. ObjectComponent</Filter>
-    </ClInclude>
     <ClInclude Include="Component\PlayerNormalAttackCheckCollider.h">
       <Filter>06. GameComponent\01. SceneComponent</Filter>
     </ClInclude>
@@ -718,6 +724,12 @@
     </ClInclude>
     <ClInclude Include="Component\Node\MeleeRangeCheckNode.h">
       <Filter>07. BehaviorTree\01. ConditionNode\01. Public</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\ObjectDataComponent.h">
+      <Filter>06. GameComponent\02. ObjectComponent\01. ObjectDataComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\KnightDataComponent.h">
+      <Filter>06. GameComponent\02. ObjectComponent\01. ObjectDataComponent\01. KnightData</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -403,6 +403,7 @@ enum class HookResult
 	CollisionEnd
 };
 
+
 enum class ParticleSpeedChangeMethod
 {
 	Linear = 1,
