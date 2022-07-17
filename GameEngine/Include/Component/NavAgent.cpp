@@ -10,10 +10,12 @@
 CNavAgent::CNavAgent()	:
 	m_MoveSpeed(0.f),
 	m_ApplyNavMesh(true),
-	m_OccupyPolygonIndex(0),
 	m_PathFindStart(false)
 {
 	SetTypeID<CNavAgent>();
+
+	// NavAgent를 가지고 있는 모든 움직이는 오브젝트가 초기에 바라보는 방향은 -z 방향이라고 가정
+	m_CurrentFaceDir = Vector3(0.f, 0.f, -1.f);
 }
 
 CNavAgent::CNavAgent(const CNavAgent& com)	:
@@ -29,6 +31,14 @@ CNavAgent::~CNavAgent()
 void CNavAgent::SetUpdateComponent(CSceneComponent* UpdateComponent)
 {
 	m_UpdateComponent = UpdateComponent;
+
+	Vector3 Rot = m_UpdateComponent->GetWorldRot();
+
+	Matrix RotMat;
+	RotMat.Rotation(Rot);
+
+	m_CurrentFaceDir = m_CurrentFaceDir.TransformCoord(RotMat);
+	m_CurrentFaceDir.Normalize();
 }
 
 bool CNavAgent::Move(const Vector3& EndPos)
@@ -100,26 +110,36 @@ void CNavAgent::Update(float DeltaTime)
 			Vector3	Dir = TargetPos - Pos;
 			Dir.Normalize();
 
-			//Vector3 Rot = m_Object->GetWorldRot();
-			//Rot.Normalize();
+			Vector3 CurrentFaceDir = m_CurrentFaceDir;
+			Vector3 Rot = m_UpdateComponent->GetWorldRot();
 
-			//Vector3 Diff = Dir - Rot;
+			Matrix RotMat;
 
-			//if (abs(Diff.y) > 0.01f)
-			//{
-			//	if (Diff.y > 0.f)
-			//	{
-			//		m_Object->AddWorldRotationY(10.f * DeltaTime);
-			//	}
+			RotMat.Rotation(Rot);
 
-			//	else
-			//	{
-			//		m_Object->AddWorldRotationY(-10.f * DeltaTime);
-			//	}
-			//}
+			CurrentFaceDir = CurrentFaceDir.TransformCoord(RotMat);
+
+			float Dot = Vector3(Dir.x, 0.f, Dir.z).Dot(Vector3(CurrentFaceDir.x, 0.f, CurrentFaceDir.z));
+
+			if (Dot < 0.99f)
+			{
+				float Degree = RadianToDegree(acosf(Dot));
+				Vector3 CrossResult = Vector3(Dir.x, 0.f, Dir.z).Cross(Vector3(CurrentFaceDir.x, 0.f, CurrentFaceDir.z));
+
+				if (CrossResult.y > 0.f)
+				{
+					m_UpdateComponent->AddWorldRotationY(-180.f * DeltaTime);
+				}
+
+				else
+				{
+					m_UpdateComponent->AddWorldRotationY(180.f * DeltaTime);
+				}
+			}
+
 
 			if (m_MoveSpeed == 0.f)
-				m_MoveSpeed = 5.f;
+				m_MoveSpeed = 10.f;
 
 			if (TargetDistance <= 0.5f)
 			{

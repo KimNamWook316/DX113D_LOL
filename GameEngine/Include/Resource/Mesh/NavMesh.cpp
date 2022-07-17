@@ -131,17 +131,22 @@ bool CNavMesh::LoadMeshFullPathMultibyte(const char* FullPath)
 		m_vecOriginVertexPos[i] = m_vecOriginVertexPos[i] - Middle;
 	}
 
-	Count = m_vecNavMeshPolygon.size();
 
-	for (size_t i = 0; i < Count; ++i)
-	{
-		for (size_t j = 0; j < 3; ++j)
-		{
-			m_vecNavMeshPolygon[i].m_vecVertexPos[j] = m_vecNavMeshPolygon[i].m_vecVertexPos[j] - Middle;
-			m_vecNavMeshPolygon[i].m_vecVertexOriginPos[j] = m_vecNavMeshPolygon[i].m_vecVertexPos[j] - Middle;
+	CreatePolygonInfo();
 
-		}
-	}
+	CheckAdjInfo();
+
+	//Count = m_vecNavMeshPolygon.size();
+
+	//for (size_t i = 0; i < Count; ++i)
+	//{
+	//	for (size_t j = 0; j < 3; ++j)
+	//	{
+	//		m_vecNavMeshPolygon[i].m_vecVertexPos[j] = m_vecNavMeshPolygon[i].m_vecVertexPos[j] - Middle;
+	//		m_vecNavMeshPolygon[i].m_vecVertexOriginPos[j] = m_vecNavMeshPolygon[i].m_vecVertexPos[j] - Middle;
+
+	//	}
+	//}
 
 	m_Min = m_Min - Middle;
 	m_Max = m_Max - Middle;
@@ -151,10 +156,6 @@ bool CNavMesh::LoadMeshFullPathMultibyte(const char* FullPath)
 		D3D11_USAGE_DEFAULT, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST,
 		&m_vecIndex[0], sizeof(int), (int)m_vecIndex.size(),
 		D3D11_USAGE_DEFAULT, DXGI_FORMAT_R32_UINT);
-
-	CreatePolygonInfo();
-	CheckAdjInfo();
-
 
 
 	return true;

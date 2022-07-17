@@ -40,7 +40,7 @@ struct MaterialSaveLoadStruct
     // int TextureCount;
     bool Metallic;
     ShaderParams ShaderParams;
-    //Vector2 UVScale;
+    Vector2 UVScale;
 };
 
 struct MaterialTextureInfo

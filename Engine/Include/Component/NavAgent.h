@@ -20,7 +20,7 @@ private:
 	float					m_MoveSpeed;
 	bool					m_ApplyNavMesh;
 	bool					m_PathFindStart;
-	int						m_OccupyPolygonIndex;
+	Vector3					m_CurrentFaceDir;
 
 public:
 	void SetUpdateComponent(class CSceneComponent* UpdateComponent);
@@ -31,6 +31,11 @@ public:
 	void SetMoveSpeed(float Speed)
 	{
 		m_MoveSpeed = Speed;
+	}
+
+	void SetPathFindStart(bool Start)
+	{
+		m_PathFindStart = Start;
 	}
 
 	bool GetPathFindStart()	const
@@ -46,11 +51,6 @@ public:
 	bool GetApplyNavMesh()	const
 	{
 		return m_ApplyNavMesh;
-	}
-
-	void SetPathFindStart(bool Start)
-	{
-		m_PathFindStart = Start;
 	}
 
 public:

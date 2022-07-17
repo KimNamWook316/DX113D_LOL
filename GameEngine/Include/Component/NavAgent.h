@@ -20,7 +20,7 @@ private:
 	float					m_MoveSpeed;
 	bool					m_ApplyNavMesh;
 	bool					m_PathFindStart;
-	int						m_OccupyPolygonIndex;
+	Vector3					m_CurrentFaceDir;
 
 public:
 	void SetUpdateComponent(class CSceneComponent* UpdateComponent);

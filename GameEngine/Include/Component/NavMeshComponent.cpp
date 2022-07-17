@@ -57,8 +57,11 @@ void CNavMeshComponent::Start()
 {
 	CSceneComponent::Start();
 
-	CSceneManager::GetInst()->GetScene()->GetCollision()->SetNavMeshMin(m_NavMesh->GetMin());
-	CSceneManager::GetInst()->GetScene()->GetCollision()->SetNavMeshMax(m_NavMesh->GetMax());
+	if (m_NavMesh)
+	{
+		CSceneManager::GetInst()->GetScene()->GetCollision()->SetNavMeshMin(m_NavMesh->GetMin());
+		CSceneManager::GetInst()->GetScene()->GetCollision()->SetNavMeshMax(m_NavMesh->GetMax());
+	}
 }
 
 bool CNavMeshComponent::Init()
