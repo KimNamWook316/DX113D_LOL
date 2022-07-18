@@ -8,8 +8,7 @@
 #include "Scene/Navigation3DManager.h"
 
 CMonsterPathFindCollider::CMonsterPathFindCollider()	:
-	m_PathFindEnable(true),
-	m_PathFindCoolStart(true),
+	m_PathFindCoolStart(false),
 	m_AccTime(0.f),
 	m_PathFindCoolTime(2.f)
 {
@@ -21,7 +20,7 @@ CMonsterPathFindCollider::CMonsterPathFindCollider()	:
 
 	m_Profile = CCollisionManager::GetInst()->FindProfile("MonsterPathFind");
 
-	AddCollisionCallback<CMonsterPathFindCollider>(Collision_State::Begin, this, &CMonsterPathFindCollider::SetPathFindFalse);
+	AddCollisionCallback<CMonsterPathFindCollider>(Collision_State::Begin, this, &CMonsterPathFindCollider::SetPathFindCoolEnd);
 	AddCollisionCallback<CMonsterPathFindCollider>(Collision_State::End, this, &CMonsterPathFindCollider::SetPathFindCoolStart);
 
 	// 다른 몬스터와 충돌한다면 겹치지 않게 밀어내기
@@ -37,15 +36,17 @@ CMonsterPathFindCollider::~CMonsterPathFindCollider()
 {
 }
 
-void CMonsterPathFindCollider::SetPathFindFalse(const CollisionResult& Result)
-{
-	if (Result.Dest->GetGameObject()->GetObjectType() == Object_Type::Player)
-	{
-		m_PathFindEnable = false;
-		m_PathFindCoolStart = false;
-		m_AccTime = 0.f;
-	}
-}
+//void CMonsterPathFindCollider::SetPathFindFalse(const CollisionResult& Result)
+//{
+//	if (Result.Dest->GetGameObject()->GetObjectType() == Object_Type::Player)
+//	{
+//		m_PathFindEnable = false;
+//		m_PathFindCoolStart = false;
+//		m_AccTime = 0.f;
+//		m_NavAgent->ClearPathList();
+//	}
+//}
+
 void CMonsterPathFindCollider::PushEachOther(const CollisionResult& Result)
 {
 	if (Result.Dest->GetCollisionProfile()->Name == "MonsterPathFind")
@@ -59,21 +60,19 @@ void CMonsterPathFindCollider::PushEachOther(const CollisionResult& Result)
 		if (!m_NavAgent || !DestObjNavAgent)
 			return;
 
-		std::list<Vector3> DestPathList = DestObjNavAgent->GetPathList();
-
-		if (!m_NavAgent->IsEmptyPathList() && !DestPathList.empty())
+		if (!m_NavAgent->IsEmptyPathList() && !DestObjNavAgent->IsEmptyPathList())
 		{
-			auto iter = DestPathList.back();
+			Vector3 DestObjecTargetPos = DestObjNavAgent->GetTargetPos();
 
-			if (iter.Distance(SrcPos) > 4.f)
-			{
-				DestPathList.pop_back();
-				Vector3 Dir = DestObjectPos - SrcPos;
-				Dir.Normalize();
-				DestPathList.push_back(DestObjectPos + Dir * 10.f);
-				m_NavAgent->AddPath(SrcPos);
-				return;
-			}
+			DestObjNavAgent->DeleteTargetPos();
+			Vector3 Dir = DestObjectPos - SrcPos;
+			Dir.Normalize();
+			DestObjNavAgent->AddPath(DestObjectPos + Vector3(Dir.x / 2.f, 0.f, Dir.z / 2.f));
+			m_NavAgent->AddPath(SrcPos);
+
+
+			return;
+
 		}
 
 		// 앞에 있는 몬스터가 플레이어와 충돌해서 멈춰있고, 내가 아직 길찾기가 남은 경우 나의 방향을 조금씩 회전해준다
@@ -84,9 +83,18 @@ void CMonsterPathFindCollider::PushEachOther(const CollisionResult& Result)
 
 			Vector3 DestPos = PathList.back();
 
-
-
 			PathList.pop_back();
+
+			float DeltaTime = CEngine::GetInst()->GetDeltaTime();
+
+			Matrix RotMat;
+			RotMat.Rotation(0.f, 10.f, 0.f);
+
+			FaceDir = FaceDir.TransformCoord(RotMat);
+
+			Vector3 NewPos = SrcPos + Vector3(FaceDir.x * 2.f, 0.f, FaceDir.z * 2.f);
+
+			m_NavAgent->AddPath(NewPos);
 		}
 
 	}
@@ -118,7 +126,8 @@ void CMonsterPathFindCollider::Update(float DeltaTime)
 		if (m_AccTime >= m_PathFindCoolTime)
 		{
 			m_AccTime = 0.f;
-			m_PathFindEnable = true;
+
+			m_NavAgent->SetPathFindEnable(true);
 		}
 	}
 }
