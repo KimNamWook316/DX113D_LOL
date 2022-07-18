@@ -20,6 +20,8 @@ CParticleComponent::CParticleComponent()	:
 	m_Render = true;
 
 	m_LayerName = "Particle";
+
+	// 처음에는 Particle Component 의 Dir 를 
 }
 
 CParticleComponent::CParticleComponent(const CParticleComponent& com) :
