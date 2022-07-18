@@ -31,6 +31,9 @@ public:
 	class CAnimationMeshComponent* GetAnimationMeshComponent()  const;
 
 public:
+	virtual void Init();
+
+public:
 	const Vector2& GetInWindowPos()	const
 	{
 		return m_InWindowPos;

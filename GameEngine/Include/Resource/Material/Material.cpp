@@ -758,7 +758,18 @@ void CMaterial::SetTextureInfoResource(int Index, CTexture* Texture)
 	if (!Texture)
 		return;
 
+	if (Index >= m_TextureInfo.size())
+		return;
+
 	m_TextureInfo[Index].Texture = Texture;
+}
+
+void CMaterial::SetTextureInfoRegister(int Index, int Register)
+{
+	if (Index >= m_TextureInfo.size())
+		return;
+
+	m_TextureInfo[Index].Register = Register;
 }
 
 void CMaterial::SetPaperBurn(bool Enable)
@@ -1049,7 +1060,7 @@ bool CMaterial::Load(FILE* File)
 	m_CBuffer->SetEmissiveColor(m_EmissiveColor);
 	m_CBuffer->SetOpacity(m_Opacity);
 	m_CBuffer->SetMetallic(m_Metallic);
-	//m_CBuffer->SetUVScale(m_UVScale);
+	m_CBuffer->SetUVScale(m_UVScale);
 
 	for (int i = 0; i < (int)RenderState_Type::Max; ++i)
 	{

@@ -14,21 +14,24 @@
 #include "IMGUITextInput.h"
 #include "IMGUISliderFloat.h"
 #include "IMGUISliderInt.h"
-// Engine
+// Window
 #include "AnimationEditor.h"
+#include "AnimationDisplayWindow.h"
 #include "../EditorManager.h"
+#include "../Object/Anim3DObject.h"
+#include "../AnimationInstanceConvertThread.h"
+#include "../EditorUtil.h"
+
+// Engine
 #include "EngineUtil.h"
 #include "PathManager.h"
 #include "Scene/SceneManager.h"
 #include "Scene/Scene.h"
 #include "Animation/AnimationSequenceInstance.h"
-#include "../EditorUtil.h"
 #include "Engine.h"
 #include "Device.h"
-#include "../Object/Anim3DObject.h"
 #include "Render/RenderManager.h"
 #include "Resource/ResourceManager.h"
-#include "../AnimationInstanceConvertThread.h"
 #include "Resource/Excel/ExcelManager.h"
 // Library
 #include <charconv>
@@ -410,7 +413,14 @@ void CAnimationEditor::OnCreateSample3DObject()
 	m_3DTestObject->SetNoDestroyOnSceneChange(true);
 
 	// 3DTest Object의 Animation 정보를 가져온다.
-	m_Animation = dynamic_cast<CAnimationMeshComponent*>(m_3DTestObject->GetRootComponent())->CreateBasicAnimationInstance();
+	CAnimationMeshComponent* AnimComponent = dynamic_cast<CAnimationMeshComponent*>(m_3DTestObject->GetRootComponent());
+
+	if (AnimComponent == nullptr)
+	{
+		assert(false);
+	}
+
+	m_Animation = AnimComponent->CreateBasicAnimationInstance();
 }
 
 void CAnimationEditor::OnPlayAnimation(const char* Lable, bool Enable)
@@ -1128,7 +1138,17 @@ bool CAnimationEditor::LoadElementsForSqcLoading(const char* SqcFileName)
 void CAnimationEditor::SetMeshMaterialReadyForAnimation()
 {
 	m_3DTestObject->SetMeshAndMaterialInfo();
+
 	m_Animation->Start();
+
+	// 3DTest Object의 Animation 정보를 가져온다.
+	CAnimationMeshComponent* AnimComponent = dynamic_cast<CAnimationMeshComponent*>(m_3DTestObject->GetRootComponent());
+
+	if (AnimComponent == nullptr)
+		assert(false);
+
+	// Animation Display Window 에서 Scale 값 세팅해준다.
+	CEditorManager::GetInst()->GetAnimationDisplayWindow()->SetAnimMeshScaleToIMGUI(AnimComponent->GetRelativeScale());
 }
 
 void CAnimationEditor::OnSetOriginalAnimPlayTime()

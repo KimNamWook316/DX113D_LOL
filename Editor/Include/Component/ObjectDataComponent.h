@@ -14,14 +14,16 @@ protected:
 	CObjectDataComponent(const CObjectDataComponent& com);
 	virtual ~CObjectDataComponent();
 
-private:
+protected:
 	ObjectData m_Data;
 	bool m_IsHit;
+	bool m_IsHitPrevFrame;
 
 public:
-	void SetIsHit(bool Hit)
+	virtual void SetIsHit(bool Hit)
 	{
 		m_IsHit = Hit;
+		m_IsHitPrevFrame = false;
 	}
 
 	bool GetIsHit()	const
@@ -34,9 +36,9 @@ public:
 		m_Data.HP = HP;
 	}
 
-	void SetDetectRange(int DetectRange)
+	void SetDetectRange(float Range)
 	{
-		m_Data.DetectRange = DetectRange;
+		m_Data.DetectRange = Range;
 	}
 
 	void SetMoveSpeed(float Speed)
@@ -55,13 +57,18 @@ public:
 	{
 		m_Data.Attack = Attack;
 	}
+	
+	void SetMeleeAttackRange(float Range)
+	{
+		m_Data.MeleeAttackRange = Range;
+	}
 
 	int GetHP()	const
 	{
 		return m_Data.HP;
 	}
 
-	int GetDetectRange()	const
+	float GetDetectRange() const
 	{
 		return m_Data.DetectRange;
 	}
@@ -76,6 +83,11 @@ public:
 		return m_Data.Attack;
 	}
 
+	float GetMeleeAttackRange() const
+	{
+		return m_Data.MeleeAttackRange;
+	}
+
 public:
 	virtual void Start();
 	virtual bool Init();
@@ -85,7 +97,6 @@ public:
 	virtual void Render();
 	virtual void PostRender();
 	virtual CObjectDataComponent* Clone();
-
 
 public:
 	virtual bool Save(FILE* File);

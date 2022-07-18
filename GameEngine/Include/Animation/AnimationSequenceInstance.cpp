@@ -214,6 +214,8 @@ std::optional<std::string>CAnimationSequenceInstance::GetCurrentAnimationKeyName
 		if (iter->second == m_CurrentAnimation)
 			return iter->first;
 	}
+
+	return std::nullopt;
 }
 
 void CAnimationSequenceInstance::AddAnimation(const std::string& SequenceName,
@@ -659,11 +661,11 @@ void CAnimationSequenceInstance::Update(float DeltaTime)
 					m_CurrentAnimation->m_vecNotify[i]->Function();
 				}
 
-				//if (m_CurrentAnimation->m_vecNotify[i]->FunctionParam)
-				//{
-				//	m_CurrentAnimation->m_vecNotify[i]->Param.SrcObject = m_Owner->GetGameObject();
-				//	m_CurrentAnimation->m_vecNotify[i]->FunctionParam(m_CurrentAnimation->m_vecNotify[i]->Param);
-				//}
+				if (m_CurrentAnimation->m_vecNotify[i]->FunctionDetlaTime)
+				{
+					m_CurrentAnimation->m_vecNotify[i]->Call = true;
+					m_CurrentAnimation->m_vecNotify[i]->FunctionDetlaTime(DeltaTime);
+				}
 			}
 		}
 

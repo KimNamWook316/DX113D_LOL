@@ -41,7 +41,6 @@ private:
 	float				m_CameraMoveSpeed;
 
 	class CGameStateManager* m_StateManager;
-	class CDataManager* m_DataManager;
 
 public:
 	bool GetLButtonPush()	const
@@ -126,7 +125,6 @@ public:
 	}
 
 	class CGameStateManager* GetStateManager()	const;
-	class CDataManager* GetDataManager()	const;
 
 	void SetEditMode(EditMode Mode);
 

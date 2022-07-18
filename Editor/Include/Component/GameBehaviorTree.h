@@ -18,6 +18,9 @@ public:
     virtual void Start();
 
 public:
+    class CGameStateComponent* GetOwner() const;
+
+public:
     virtual CNode* LoadNode(CNode* Parent, size_t TypeID);
 };
 

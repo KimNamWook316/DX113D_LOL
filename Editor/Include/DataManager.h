@@ -5,12 +5,6 @@
 // csv에서 정보들을 읽어오는 Manager
 class CDataManager
 {
-	friend class CEditorManager;
-
-private:
-	CDataManager();
-	~CDataManager();
-
 private:
 	std::unordered_map <std::string, class CExcelData*> m_mapData;
 
@@ -19,13 +13,13 @@ public:
 
 private:
 	void ReadObjectData();
-	void ReadNotifyData();
 
 public:
-	void SetObjectData(class CGameObject* Object);
-	void SetNotify(class CGameObject* Object, const std::string& ObjectName);
+	const ObjectData& GetObjectData(const std::string& Key);
 
-public:
+private:
 	class CExcelData* FindData(const std::string& Name);
+
+	DECLARE_SINGLE(CDataManager)
 };
 

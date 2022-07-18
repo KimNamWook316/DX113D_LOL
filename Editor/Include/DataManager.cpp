@@ -9,6 +9,8 @@
 
 #include <sstream>
 
+DEFINITION_SINGLE(CDataManager)
+
 CDataManager::CDataManager()
 {
 }
@@ -21,7 +23,6 @@ CDataManager::~CDataManager()
 void CDataManager::Init()
 {
 	ReadObjectData();
-	ReadNotifyData();
 
 	//CSceneManager::GetInst()->SetObjectDataSetFunction(this, &CDataManager::SetObjectData);
 }
@@ -38,34 +39,18 @@ void CDataManager::ReadObjectData()
 	}
 }
 
-void CDataManager::ReadNotifyData()
+// TODO : 데이터 추가될 때마다 함수 업데이트 할 것
+const ObjectData& CDataManager::GetObjectData(const std::string& Key)
 {
+	ObjectData Data = {};
 
-}
+	CExcelData* Excel = FindData("ObjectData");
 
-void CDataManager::SetObjectData(CGameObject* Object)
-{
-	Object_Type ObjectType = Object->GetObjectType();
-	CExcelData* Data = FindData("ObjectData");
-	CObjectDataComponent* Comp = Object->FindComponentFromType<CObjectDataComponent>();
+	Row* row = Excel->GetRow(Key);
 
-	if (!Comp)
-		return;
-
-	Row* row = nullptr;
-
-	switch (ObjectType)
+	if (!row)
 	{
-	case Object_Type::Player:
-		row = Data->GetRow("Player");
-		break;
-	case Object_Type::Monster:
-		if (Object->GetName().find("Lurker") != std::string::npos)
-		{
-			row = Data->GetRow("Lurker");
-		}
-		break;
-
+		return Data;
 	}
 
 	size_t Count = row->size();
@@ -81,24 +66,37 @@ void CDataManager::SetObjectData(CGameObject* Object)
 		ss >> Frame;
 
 		if (i == 0)
-			Comp->SetHP(Frame);
-
-		if (i == 1)
-			Comp->SetDetectRange(Frame);
-
-		if (i == 2)
-			Comp->SetMoveSpeed(Frame);
-
-		if (i == 3)
-			Comp->SetAttack(Frame);
+		{
+			Data.HP = Frame;
+		}
+		else if (i == 1)
+		{
+			Data.DetectRange = (float)Frame;
+		}
+		else if (i == 2)
+		{
+			Data.MoveSpeed = (float)Frame;
+		}
+		else if (i == 3)
+		{
+			Data.Attack = (int)Frame;
+		}
+		else if (i == 4)
+		{
+			Data.MeleeAttackRange = (float)Frame;
+		}
+		else if (i == 5)
+		{
+			Data.JumpAttackRange = (float)Frame;
+		}
+		else if (i == 6)
+		{
+			Data.RotateSpeedPerSec = (float)Frame;
+		}
 	}
 
+	return Data;
 }
-
-void CDataManager::SetNotify(CGameObject* Object, const std::string& ObjectName)
-{
-}
-
 
 CExcelData* CDataManager::FindData(const std::string& Name)
 {

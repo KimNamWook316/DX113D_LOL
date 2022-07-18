@@ -58,6 +58,9 @@ CParticleConstantBuffer::CParticleConstantBuffer() :
 
 	// Noise Texture 를 활용하는 것은, 처음에는 방지 
 	m_BufferData.ApplyNoiseTexture = 0;
+
+	// Noise Texture Apply Ratio -> 처음부터 적용 X
+	m_BufferData.NoiseTextureApplyRatio = 0.f;
 }
 
 CParticleConstantBuffer::CParticleConstantBuffer(const CParticleConstantBuffer& Buffer) :

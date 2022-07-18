@@ -7,6 +7,8 @@
 #include "Resource/ResourceManager.h"
 #include "Scene/SceneManager.h"
 #include "Engine.h"
+#include "Component/AnimationMeshComponent.h"
+#include "Component/StaticMeshComponent.h"
 
 #include <sstream>
 
@@ -48,12 +50,20 @@ bool CObjectDataComponent::Init()
 
 void CObjectDataComponent::Update(float DeltaTime)
 {
+	if (m_IsHit && m_IsHitPrevFrame)
+	{
+		m_IsHit = false;
+		m_IsHitPrevFrame = false;
+	}
 
+	if (m_IsHit && !m_IsHitPrevFrame)
+	{
+		m_IsHitPrevFrame = true;
+	}
 }
 
 void CObjectDataComponent::PostUpdate(float DeltaTime)
 {
-
 }
 
 void CObjectDataComponent::PrevRender()
@@ -90,21 +100,14 @@ bool CObjectDataComponent::Load(FILE* File)
 	// 추후에 fread로 읽지 않도록 이 코드 지우기
 	//fread(&m_Data, sizeof(ObjectData), 1, File);
 
-	CExcelData* Data = CEditorManager::GetInst()->GetDataManager()->FindData("ObjectData");
-	Row* row = nullptr;
-
-	if (Data)
+	if (m_Object->GetObjectType() == Object_Type::Player)
 	{
-		if (m_Object->GetObjectType() == Object_Type::Player)
-		{
-			if(CSceneManager::GetInst()->GetNextScene())
-				CSceneManager::GetInst()->GetNextScene()->SetPlayerObject(m_Object);
-			else
-				CSceneManager::GetInst()->GetScene()->SetPlayerObject(m_Object);
-			// 플레이어의 초기위치 설정?
-			// CSceneManager::GetInst()->GetScene()->GetNavigation3DManager()->CheckPlayerNavMeshPoly();
-		}
-
+		if(CSceneManager::GetInst()->GetNextScene())
+			CSceneManager::GetInst()->GetNextScene()->SetPlayerObject(m_Object);
+		else
+			CSceneManager::GetInst()->GetScene()->SetPlayerObject(m_Object);
+		// 플레이어의 초기위치 설정?
+		// CSceneManager::GetInst()->GetScene()->GetNavigation3DManager()->CheckPlayerNavMeshPoly();
 	}
 
 	return true;
@@ -112,7 +115,7 @@ bool CObjectDataComponent::Load(FILE* File)
 
 bool CObjectDataComponent::SaveOnly(FILE* File)
 {
-	CObjectComponent::Save(File);
+	CObjectComponent::SaveOnly(File);
 
 	fwrite(&m_Data, sizeof(ObjectData), 1, File);
 
@@ -121,7 +124,7 @@ bool CObjectDataComponent::SaveOnly(FILE* File)
 
 bool CObjectDataComponent::LoadOnly(FILE* File)
 {
-	CObjectComponent::Load(File);
+	CObjectComponent::LoadOnly(File);
 
 	fread(&m_Data, sizeof(ObjectData), 1, File);
 

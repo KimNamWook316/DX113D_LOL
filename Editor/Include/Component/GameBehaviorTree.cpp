@@ -21,7 +21,7 @@
 #include "Node/CheckDetectRangeNode.h"
 #include "Node/FindPathNode.h"
 #include "Node/Lockstone3TriggerBoxAction.h"
-#include "Component/StateComponent.h"
+#include "GameStateComponent.h"
 
 
 CGameBehaviorTree::CGameBehaviorTree()
@@ -44,6 +44,11 @@ bool CGameBehaviorTree::Init()
 
 void CGameBehaviorTree::Start()
 {
+}
+
+CGameStateComponent* CGameBehaviorTree::GetOwner() const
+{
+	return dynamic_cast<CGameStateComponent*>(m_Owner);
 }
 
 

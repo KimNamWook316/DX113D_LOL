@@ -283,35 +283,6 @@ bool CEffectEditor::Init()
     m_RotateAccordingToDir->AddCheckInfo("Rot To Dir");
     m_RotateAccordingToDir->SetCallBackLabel<CEffectEditor>(this, &CEffectEditor::OnIsLinearRot);
 
-    // 방햐엥 따른 UV Clipping
-    m_UVClippingAccordingToDir = Tree->AddWidget<CIMGUICheckBox>("UV Clip To Dir", 80.f);
-    m_UVClippingAccordingToDir->AddCheckInfo("UV Clip To Dir");
-    m_UVClippingAccordingToDir->SetCallBackLabel<CEffectEditor>(this, &CEffectEditor::OnIsUVClippingReflectingMoveDirEdit);
-    /*
-    Line = Tree->AddWidget<CIMGUISameLine>("Line");
-    Line->SetOffsetX(90.f);
-
-    HelpText = Tree->AddWidget<CIMGUIText>("RingLoopText", 30.f, 30.f);
-    const char* RingLoopHelpText = R"(ex)  Ring 여부가 Check 되야만 적용.)";
-    HelpText->SetText(RingLoopHelpText);
-    HelpText->SetIsHelpMode(true);
-
-    Line = Tree->AddWidget<CIMGUISameLine>("Line");
-    Line->SetOffsetX(35.f);
-
-    HelpText = Tree->AddWidget<CIMGUIText>("CircleGenerate", 930.f, 30.f);
-    const char* CircleHelpText = R"(원 내에 Random 하게 생성)";
-    HelpText->SetText(CircleHelpText);
-    HelpText->SetIsHelpMode(true);
-
-    Line = Tree->AddWidget<CIMGUISameLine>("Line");
-    Line->SetOffsetX(75.f);
-
-    HelpText = Tree->AddWidget<CIMGUIText>("TorchGenerate", 30.f, 30.f);
-    const char* TorchHelpText = R"(횃불 모양 생성 : 가운데에 더 많은 Particle 생성)";
-    HelpText->SetText(TorchHelpText);
-    HelpText->SetIsHelpMode(true);
-    */
 
     // Movement
     Tree = AddWidget<CIMGUITree>("Movement");
@@ -326,18 +297,6 @@ bool CEffectEditor::Init()
     m_IsGravityEdit = Tree->AddWidget<CIMGUICheckBox>("Gravity", 80.f);
     m_IsGravityEdit->AddCheckInfo("Gravity");
     m_IsGravityEdit->SetCallBackLabel<CEffectEditor>(this, &CEffectEditor::OnIsGravityEdit);
-
-    // m_IsRandomMoveEdit = Tree->AddWidget<CIMGUICheckBox>("Random", 80.f);
-    // m_IsRandomMoveEdit->AddCheckInfo("Random");
-    // m_IsRandomMoveEdit->SetCallBackLabel<CEffectEditor>(this, &CEffectEditor::OnIsRandomMoveEdit);
-
-    // Line = Tree->AddWidget<CIMGUISameLine>("Line");
-    // Line->SetOffsetX(260.f);
-
-    // m_IsPauseResumeToggle = Tree->AddWidget<CIMGUICheckBox>("Toggle", 80.f);
-    // m_IsPauseResumeToggle->AddCheckInfo("Toggle");
-    // m_IsPauseResumeToggle->SetCallBackLabel<CEffectEditor>(this, &CEffectEditor::OnPauseResumeToggle);
-    // m_IsPauseResumeToggle->SetCheck(0, true);
 
     // Spawn Time, Spawn Count
     Tree  = AddWidget<CIMGUITree>("Spawn Time, Disable Alive");
@@ -427,7 +386,7 @@ bool CEffectEditor::Init()
     m_ColorMaxEdit->SetCallBack(this, &CEffectEditor::OnColorMaxEdit);
 
     // Alpha Min, Max
-    Tree = AddWidget<CIMGUITree>("Alpha Min, Max");
+    Tree = AddWidget<CIMGUITree>("Alpha Start, End");
 
     m_AlphaBlendEnableButton = Tree->AddWidget<CIMGUIButton>("Set Alpha Blend", 150.f, 20.f);
     m_AlphaBlendEnableButton->SetClickCallback<CEffectEditor>(this, &CEffectEditor::OnSetAlphaBlendToMaterialCallback);
@@ -464,10 +423,36 @@ bool CEffectEditor::Init()
     // m_ApplyNoiseTextureSampling
     Tree = AddWidget<CIMGUITree>("Pixel Shader");
 
+    // 방햐엥 따른 UV Clipping
+    m_UVClippingAccordingToDir = Tree->AddWidget<CIMGUICheckBox>("Linear UV Clip", 80.f);
+    m_UVClippingAccordingToDir->AddCheckInfo("Linear UV Clip");
+    m_UVClippingAccordingToDir->SetCallBackLabel<CEffectEditor>(this, &CEffectEditor::OnIsUVClippingReflectingMoveDirEdit);
+
     m_ApplyNoiseTextureSampling = Tree->AddWidget<CIMGUICheckBox>("Noise Texture", 80.f);
     m_ApplyNoiseTextureSampling->AddCheckInfo("Noise Texture");
     m_ApplyNoiseTextureSampling->SetCallBackLabel<CEffectEditor>(this, &CEffectEditor::OnApplyNoiseTextureSamplingEdit);
 
+    m_NoiseTextureApplyRatio = Tree->AddWidget<CIMGUIInputFloat>("Noise Start Ratio", 150.f, 20.f);
+    m_NoiseTextureApplyRatio->SetCallBack<CEffectEditor>(this, &CEffectEditor::OnSetNoiseTextureApplyRatio);
+
+    // Bazier Move Test
+    Tree = AddWidget<CIMGUITree>("Bazier Test");
+
+    m_BazierD1Input = Tree->AddWidget<CIMGUIInputFloat3>("D1Pos", 150.f);
+    m_BazierD1Input->SetCallBack<CEffectEditor>(this, &CEffectEditor::OnSetBazierD1Pos);
+
+    m_BazierD2Input = Tree->AddWidget<CIMGUIInputFloat3>("D2Pos", 150.f);
+    m_BazierD2Input->SetCallBack<CEffectEditor>(this, &CEffectEditor::OnSetBazierD2Pos);
+
+    m_BazierD3Input = Tree->AddWidget<CIMGUIInputFloat3>("D3Pos", 150.f);
+    m_BazierD3Input->SetCallBack<CEffectEditor>(this, &CEffectEditor::OnSetBazierD3Pos);
+
+    m_StartTestBazier = Tree->AddWidget<CIMGUIButton>("Start Bazier", 80.f, 20.f);
+    m_StartTestBazier->SetClickCallback<CEffectEditor>(this, &CEffectEditor::OnClickStartBazierMove);
+  //  class CIMGUIInputFloat3 m_BazierD1;
+  //  class CIMGUIInputFloat3 m_BazierD2;
+  //  class CIMGUIInputFloat3 m_BazierD3;
+  //  class CIMGUIButton* m_StartTestBazier;
 
     // GameObject 생성
     SetGameObjectReady();
@@ -633,6 +618,16 @@ void CEffectEditor::OnClickParticlePreset(int Index, const char* PresetName)
     case (int)ParticlePreset::SummonEffect:
     {
         OnSummonEffectPreset();
+    }
+    break;
+    case (int)ParticlePreset::BettyAttackSpreadDust:
+    {
+        OnBettyAttackSpreadDustPreset();
+    }
+    break;
+    case (int)ParticlePreset::PlayerDust:
+    {
+        OnPlayerDustPreset();
     }
     break;
     default:
@@ -1048,6 +1043,59 @@ void CEffectEditor::OnIsLinearRot(const char*, bool Enable)
     dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetRotToDir(Enable);
 }
 
+void CEffectEditor::OnSetBazierD1Pos(const Vector3& Pos)
+{
+    if (!m_ParticleClass)
+        return;
+
+    m_BazierD1Pos = Pos;
+}
+
+void CEffectEditor::OnSetBazierD2Pos(const Vector3& Pos)
+{
+    if (!m_ParticleClass)
+        return;
+
+    m_BazierD2Pos = Pos;
+}
+
+void CEffectEditor::OnSetBazierD3Pos(const Vector3& Pos)
+{
+    if (!m_ParticleClass)
+        return;
+
+    m_BazierD3Pos = Pos;
+}
+
+void CEffectEditor::OnClickStartBazierMove()
+{
+    if (!m_ParticleClass)
+        return;
+
+    bool BazierMoveEnable = dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->IsBazierMoveEnable();
+
+    if (BazierMoveEnable)
+    {
+        dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->SetBazierMoveEffect(false);
+    }
+    else
+    {
+        m_ParticleObject->SetWorldPos(0.f, 0.f, 0.f);
+
+        dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->SetBazierTargetPos(
+            m_BazierD1Pos, m_BazierD2Pos, m_BazierD3Pos, 300
+        );
+
+        // Particle Speed Settting
+        dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->SetParticleMoveSpeed(50.f);
+
+        // 급증하는 효과 주기 
+        dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->SetComponentSpeedChangeMethod(ParticleSpeedChangeMethod::Exponential);
+
+        dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->SetBazierMoveEffect(true);
+    }
+}
+
 
 void CEffectEditor::OnIsLifeTimeLinearFromCenter(const char*, bool Enable)
 {
@@ -1109,8 +1157,37 @@ void CEffectEditor::OnApplyNoiseTextureSamplingEdit(const char*, bool Enable)
     if (!m_ParticleClass)
         return;
 
+    // Material 의 2번째 Texture 를 Noise Texture로 활용할 것이다.
+    // 그리고 Noise Texture 는 Register 100 번으로 설정되어 있다.
+    // 따라서 2번재 Texture 가 Register 100 번이 아니라면, MessageBox 를 띄워서, 
+    // True  세팅을 방지한다.
+    if (Enable)
+    {
+        const std::vector<MaterialTextureInfo>& TextureInfo = m_ParticleClass->GetMaterial()->GetTextureInfo();
+
+        if (TextureInfo.size() < 2 ||
+            TextureInfo[1].Register != 100)
+        {
+            // 다시 false 체크
+            m_ApplyNoiseTextureSampling->SetCheck(0, false);
+
+            MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("2번째 Texture(Noise Texture) 가 존재하지 않거나, Register 가 100번이 아닙니다 "), NULL, MB_OK);
+            return;
+        }
+    }
+
+
     m_ParticleClass->SetApplyNoiseTextureSamplingEnable(Enable);
     dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetApplyNoiseTextureSamplingEnable(Enable);
+}
+
+void CEffectEditor::OnSetNoiseTextureApplyRatio(float Ratio)
+{
+    if (!m_ParticleClass)
+        return;
+
+    m_ParticleClass->SetNoiseTextureApplyRatio(Ratio);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetNoiseTextureApplyRatio(Ratio);
 }
 
 void CEffectEditor::OnMoveDirEdit(const Vector3& Dir)
@@ -1267,11 +1344,12 @@ void CEffectEditor::OnLoadParticleClass()
         std::string PathInfoBeforeFileName;
         CEngineUtil::GetPathInfoBeforeFileName(FilePathMultibyte, PathInfoBeforeFileName);
 
-        if (strcmp(ParticlePathInfo->PathMultibyte, PathInfoBeforeFileName.c_str()) != 0)
-        {
-            MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Particle Class 의 경우, 반드시 Bin/ParticleClass 에서 Load 해야 한다."), NULL, MB_OK);
-            return;
-        }
+        // Particle Folder 에서 Load 될 수 있도록 세팅해야 한다.
+        // if (strcmp(ParticlePathInfo->PathMultibyte, PathInfoBeforeFileName.c_str()) != 0)
+        // {
+        //     MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Particle Class 의 경우, 반드시 Bin/ParticleClass 에서 Load 해야 한다."), NULL, MB_OK);
+        //     return;
+        // }
 
         _strupr_s(Ext);
 
@@ -1774,6 +1852,7 @@ void CEffectEditor::SetIMGUIReflectParticle(CParticle* Particle)
 
     // Noise Texture
     m_ApplyNoiseTextureSampling->SetCheck(0, Particle->IsNoiseTextureSamplingApplied());
+    m_NoiseTextureApplyRatio->SetVal(Particle->GetNoiseTextureApplyRatio());
 }
 
 void CEffectEditor::SetIMGUIReflectObjectCamera()
@@ -2818,6 +2897,124 @@ void CEffectEditor::OnSummonEffectPreset()
     SetIMGUIReflectParticle(m_ParticleClass);
 }
 
+void CEffectEditor::OnBettyAttackSpreadDustPreset()
+{
+    if (!m_ParticleClass)
+        return;
+
+    OnXZSpreadDustPreset();
+
+    // Speed
+    OnSpeedStartEdit(50.f);
+    OnSpeedEndEdit(20.f);
+
+    // Speed Method Type
+    m_ParticleClass->SetSpeedChangeMethod(ParticleSpeedChangeMethod::Log);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetSpeedChangeMethod(ParticleSpeedChangeMethod::Log);
+
+    // Color
+    OnColorMinEdit(Vector4(250.f, 248.f, 235.f, 255.f));
+    OnColorMinEdit(Vector4(155.f, 204.f, 255.f, 255.f));
+
+    // Alpha
+    OnAlphaEndEdit(1.1f);
+    OnAlphaStartEdit(1.f);
+
+    // Noise Texture 사라짐 효과
+    m_ParticleClass->SetApplyNoiseTextureSamplingEnable(true);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetApplyNoiseTextureSamplingEnable(true);
+
+    // Linaer UV Destroy X
+    m_ParticleClass->SetUVClippingReflectingMoveDirEnable(false);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetUVClippingReflectingMoveDirEnable(false);
+
+    // IMGUI Update
+    SetIMGUIReflectParticle(m_ParticleClass);
+}
+
+void CEffectEditor::OnPlayerDustPreset()
+{
+    if (!m_ParticleClass)
+        return;
+
+    // Move O
+    m_ParticleClass->SetMove(true);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetMove(true);
+
+    // Gravity X
+    m_ParticleClass->SetGravity(false);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetGravity(false);
+
+    // Bound Flase
+    m_ParticleClass->SetBounceEnable(false);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetBounceEnable(false);
+
+    // UV Move False
+    m_ParticleClass->SetUVMoveEnable(false);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetUVMoveEnable(false);
+
+    // Alpha
+    OnAlphaEndEdit(1.1f);
+    OnAlphaStartEdit(0.5f);
+    OnSetAlphaBlendToMaterialCallback();
+
+    // Alpha Linaer X
+    m_ParticleClass->SetAlphaLinearFromCenter(false);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetAlphaLinearFromCenter(false);
+
+    // SpawnTime
+    OnSpawnTimeMaxEdit(1.f);
+
+    // Move Dir
+    OnMoveDirEdit(Vector3(1.f, 0.f, 0.f));
+
+    // Move Angle
+    OnMoveAngleEdit(Vector3(0.f, 0.f, 0.f));
+
+    // Scale,
+    OnScaleMinEdit(Vector3(10.f, 10.f, 1.f));
+    OnScaleMaxEdit(Vector3(30.f, 30.f, 1.f));
+
+    // Rotation Angle
+    OnMinSeperateRotAngleEdit(Vector3(45.f, 0.f, 0.f));
+    OnMaxSeperateRotAngleEdit(Vector3(45.f, 0.f, 0.f));
+
+    // Life Time
+    OnLifeTimeMinEdit(0.5f);
+    OnLifeTimeMaxEdit(0.5f);
+
+    // Speed
+    OnSpeedStartEdit(20.f);
+    OnSpeedEndEdit(20.f);
+
+    // Start Min, Max
+    OnStartMinEdit(Vector3(0.f, 0.f, 0.f));
+    OnStartMaxEdit(Vector3(0.f, 0.f, 0.f));
+
+    // Life Time Linaer X
+    m_ParticleClass->SetLifeTimeLinearFromCenter(false);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetLifeTimeLinearFromCenter(false);
+
+    // Circle Type
+    m_ParticleClass->SetParticleShapeType(-1);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetParticleShapeType(-1);
+
+    // Rot To Dir X
+    m_ParticleClass->SetRotToDir(false);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetRotToDir(false);
+
+    // Move Dir Type X
+    m_ParticleClass->SetSpecialMoveDirType(-1);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetSpecialMoveDirType(-1);
+
+    // Noise Texture True
+    m_ParticleClass->SetApplyNoiseTextureSamplingEnable(true);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetApplyNoiseTextureSamplingEnable(true);
+
+    // IMGUI Update
+    SetIMGUIReflectParticle(m_ParticleClass);
+}
+
 void CEffectEditor::OnXZSpreadDustPreset()
 {
     if (!m_ParticleClass)
@@ -2880,7 +3077,7 @@ void CEffectEditor::OnXZSpreadDustPreset()
     OnSpeedStartEdit(10.f);
     OnSpeedEndEdit(30.f);
 
-    // Life Time Linaer
+    // Life Time Linaer X
     m_ParticleClass->SetLifeTimeLinearFromCenter(false);
     dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetLifeTimeLinearFromCenter(false);
 
@@ -2891,7 +3088,6 @@ void CEffectEditor::OnXZSpreadDustPreset()
     // Rot To Dir True
     m_ParticleClass->SetRotToDir(false);
     dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetRotToDir(false);
-
 
     // Move Dir Type
     m_ParticleClass->SetSpecialMoveDirType(ParticleSpecialMoveDir::XZSpread);

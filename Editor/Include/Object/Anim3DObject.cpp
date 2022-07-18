@@ -146,7 +146,6 @@ void CAnim3DObject::Attack(float DeltaTime)
 
 void CAnim3DObject::SetMeshAndMaterialInfo()
 {
-
 	// 3DTestObject 의 Camera Object 를 Scene의 Animation Current Camera 로 세팅한다.
 	m_Scene->GetCameraManager()->SetAnimationEditorCamera(m_Camera);
 

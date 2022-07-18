@@ -112,11 +112,11 @@ void CObjectComponentCreateModal::OnCreateComponent()
 	else if (Typeid == typeid(CObjectDataComponent).hash_code())
 	{
 		Com = SelectObject->CreateComponent<CObjectDataComponent>(Name);
-		// Editor에서는 EditorManager에서 DataManager 클래스를 갖고 있도록 함
-		if (CEngine::GetInst()->GetEditMode())
-		{
-			CEditorManager::GetInst()->GetDataManager()->SetObjectData(SelectObject);
-		}
+ //		// Editor에서는 EditorManager에서 DataManager 클래스를 갖고 있도록 함
+ //		if (CEngine::GetInst()->GetEditMode())
+ //		{
+ //			CEditorManager::GetInst()->GetDataManager()->SetObjectData(SelectObject);
+ //		}
 	}
 
 	CObjectComponentWindow* ComponentWindow = (CObjectComponentWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(OBJECTCOMPONENT_LIST);

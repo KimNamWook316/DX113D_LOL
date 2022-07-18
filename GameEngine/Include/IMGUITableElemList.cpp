@@ -141,7 +141,7 @@ void CIMGUITableElemList::CalculateMaxElemCount()
     for (; iter != iterEnd; ++iter)
     {
         if (iter->second.size() > MaxElemCnt)
-            MaxElemCnt = iter->second.size();
+            MaxElemCnt = (int)iter->second.size();
     }
 
     m_MaxElemSize = MaxElemCnt;
