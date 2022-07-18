@@ -622,7 +622,6 @@ bool CAnimationMeshComponent::Save(FILE* File)
 		SavedExtraMtrlName.reserve(MeshName.length() * 3); 
 		SavedExtraMtrlName = m_Object->GetName() + "_" + MeshName + "_" + std::to_string(idx) + ".mtrl";
 
-
 		strcat_s(MaterialBinPathMutlibyte, SavedExtraMtrlName.c_str());
 
 		// Animation Mesh Component 가 차후 Load 해서 지녀야할 Material 의 Name 을 저장하기
@@ -918,6 +917,7 @@ bool CAnimationMeshComponent::SaveOnly(FILE* pFile)
 
 	fwrite(&MaterialSlotCount, sizeof(int), 1, pFile);
 
+	// const PathInfo* MaterialPath = CPathManager::GetInst()->FindPath(MATERIAL_ANIMCOMPONENT_PATH);
 	const PathInfo* MaterialPath = CPathManager::GetInst()->FindPath(MATERIAL_PATH);
 
 	for (int idx = 0; idx < MaterialSlotCount; ++idx)

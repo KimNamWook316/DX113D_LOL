@@ -318,11 +318,19 @@ public:
 	{
 		return m_CBuffer->IsNoiseTextureSamplingApplied();
 	}
+	float GetNoiseTextureApplyRatio() const
+	{
+		return m_CBuffer->GetNoiseTextureApplyRatio();
+	}
 public:
 	// Noise Texture
 	void SetApplyNoiseTextureSamplingEnable(bool Enable)
 	{
 		m_CBuffer->SetApplyNoiseTextureSamplingEnable(Enable);
+	}
+	void SetNoiseTextureApplyRatio(float Ratio)
+	{
+		m_CBuffer->SetNoiseTextureApplyRatio(Ratio);
 	}
 	// UV Clipping
 	void SetUVClippingReflectingMoveDirEnable(bool Enable)

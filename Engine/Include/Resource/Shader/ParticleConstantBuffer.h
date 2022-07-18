@@ -96,6 +96,11 @@ public:
 		return m_BufferData.LifeTimeMin;
 	}
 
+	float GetNoiseTextureApplyRatio() const
+	{
+		return m_BufferData.NoiseTextureApplyRatio;
+	}
+
 	float GetLifeTimeMax()
 	{
 		return m_BufferData.LifeTimeMax;
@@ -262,7 +267,6 @@ public:
 	{
 		m_BufferData.CommonParticleComponentWorldPos = WorldPos;
 	}
-
 	// UV Move
 	void SetUVMoveEnable(bool Enable) 
 	{
@@ -355,6 +359,11 @@ public:
 	void SetSpawnCountMax(unsigned int Count)
 	{
 		m_BufferData.SpawnCountMax = Count;
+	}
+
+	void SetNoiseTextureApplyRatio(float Value)
+	{
+		m_BufferData.NoiseTextureApplyRatio = Value;
 	}
 
 	void SetScaleMin(const Vector3& ScaleMin)

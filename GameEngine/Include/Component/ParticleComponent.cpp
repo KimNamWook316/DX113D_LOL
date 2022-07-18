@@ -7,13 +7,18 @@
 #include "../PathManager.h"
 #include "../Component/CameraComponent.h"
 #include "../Resource/Shader/StructuredBuffer.h"
+#include "../EngineUtil.h"
 
 CParticleComponent::CParticleComponent()	:
 	m_SpawnTime(0.f),
 	m_SpawnTimeMax(0.01f),
 	m_Info{},
 	m_BillBoardEffect(false),
+	m_BazierMoveEffect(false),
+	m_ParticleMoveSpeed(50.f),
+	m_ParticleMoveSpeedBottom(3.5f),
 	m_InfoShared{},
+	m_SpeedChangeMethod(ParticleSpeedChangeMethod::Linear), // Particle Component 의 경우, Linear 설정이, 그냥 원본 Speed 유지 
 	m_CBuffer(nullptr)
 {
 	SetTypeID<CParticleComponent>();
@@ -21,7 +26,10 @@ CParticleComponent::CParticleComponent()	:
 
 	m_LayerName = "Particle";
 
-	// 처음에는 Particle Component 의 Dir 를 
+	// 처음에는 Particle Component 의 Dir 를 (0, 0, -1) 로 세팅
+	// 왜냐하면, Particle Component 자체는, z 축 기준 -1 방향으로 향하면서
+	// 사용자 측을 바라보고 있기 때문이다.
+	m_ParticleMoveDir = Vector3(0, 0, -1);
 }
 
 CParticleComponent::CParticleComponent(const CParticleComponent& com) :
@@ -105,33 +113,6 @@ void CParticleComponent::SetParticle(CParticle* Particle)
 	m_SpawnTimeMax = m_Particle->GetSpawnTimeMax();
 
 	m_ParticleName = m_Particle->GetName();
-
-
-	// 해당 코드를 세팅해주는 이유는 다음과 같다
-	// 1. CBuffer 의 DisableNewAlive 가 true 라면, 처음에 SpawnCount 만큼 모든 Particle 들을 생성하고
-	// 차후, SpawnTime 이 SpawnTimeMax 를 지나더라도, 추가생성을 막기 위함이다.
-	// 이를 위해서 Compute Shader 측에서는 Particle 공유 구조화 버퍼 중에서
-	// CurrentSpawnCountSum 이라는 변수를 참조하여
-	// 해당 CurrentSpawnCountSum 가 SpawnCountMax 보다 크면, 더이상 생성하지 않도록 한다.
-	
-	// 현재 내가 하고 싶은 것은, Restart 버튼을 Particle Componet Widget 상에서 누를 때마다
-	// 확 생성되었다가, 사라지고, -> 이 과정을 반복해서 보고 싶은 것
-	// 이를 위해서는 맨 처음 Compute Shader 측에서 CurrentSpawnCountSum 라는 공유 변수 정보가 
-	// Restart 버튼을 누를 때마다 0으로 초기화 되어야 한다.
-	// Compute Shadter 측에서는 DisableNewAlive 가 false 라면 CurrentSpawnCountSum 을 0 으로
-	// 세팅하는 코드를 적어두었다.
-	// 따라서, 맨 처음에 Particle 을 세팅할 때 DisableNewAlive 를 무조건 false 로 줘서
-	// Compute Shader 측의 CurrentSpawnCountSum 을 0으로 만들 것이다.
-	// int OriginDisableNewAlive = m_CBuffer->IsDisableNewAlive();
-	// 
-	// m_CBuffer->SetDisableNewAlive(0);
-	// m_CBuffer->UpdateCBuffer();
-	// 
-	// int	GroupCount = m_Particle->GetSpawnCountMax() / 64 + 1;
-	// m_UpdateShader->Excute(GroupCount, 1, 1);
-	// 
-	// // 그 다음 원래의 DisableNewAlive 정보를 상수 버퍼에 재세팅할 것이다.
-	// m_CBuffer->SetDisableNewAlive(OriginDisableNewAlive);
 }
 
 void CParticleComponent::SetSpawnTime(float Time)
@@ -153,6 +134,94 @@ void CParticleComponent::ApplyBillBoardEffect()
 	Vector3 OriginDir = Vector3(0.f, 0.f, -1.f);
 
 	m_Transform->SetRotationAxis(OriginDir, View);
+}
+
+void CParticleComponent::ApplyBazierMove(float DeltaTime)
+{
+	if (!m_BazierMoveEffect)
+		return;
+
+	m_ParticleMoveAccTime += DeltaTime;
+
+	// 급증하는 효과 주기 
+	switch (m_SpeedChangeMethod)
+	{
+		case ParticleSpeedChangeMethod::Exponential :
+		{
+			m_ParticleMoveSpeed = CEngineUtil::CalculateRealTimeSpeedUsingExponential(m_ParticleMoveSpeedBottom, m_ParticleMoveAccTime, m_ParticleMoveInitSpeed);
+		}
+		break;
+	}
+
+	// 위치 이동
+	float BazierMoveDist = (m_ParticleMoveDir * m_ParticleMoveSpeed * DeltaTime).Length();
+
+	AddWorldPos(m_ParticleMoveDir * m_ParticleMoveSpeed * DeltaTime);
+
+	m_BazierMoveCurDist += BazierMoveDist;
+
+	// 목표 위치로 거의 이동했다면, 다음 위치를 뽑아서 해당 위치로 이동한다.
+	const Vector3& CurrentWorldPos = GetWorldPos();
+
+	if (m_BazierMoveTargetDist <= m_BazierMoveCurDist)
+	{
+		if (!m_queueBazierMovePos.empty())
+		{
+			Vector3 NextPos = m_queueBazierMovePos.front();
+			m_queueBazierMovePos.pop();
+			m_ParticleNextMovePos = NextPos;
+
+			const Vector3& PrevMoveDir = m_ParticleMoveDir;
+
+			m_ParticleMoveDir = m_ParticleNextMovePos - GetWorldPos();
+			m_ParticleMoveDir.Normalize();
+
+			m_BazierMoveTargetDist = m_ParticleNextMovePos.Distance(CurrentWorldPos);
+
+			m_BazierMoveCurDist = 0.f;
+
+			// >> 이동 방향에 따라, Rotation 적용해준다.
+			// 1. 실제 Particle Component 가 바라보는 방향은, (0, 0, -1) 이다.
+			// 2. 하지만, 실제 처음 Particle Component 들이 향하는 방향은, y 축 1 방향 (0, 1, 0)
+			// - 따라서, 기본적으로 m_ParticleMoveDir 에 대해서, X 축 기준, 90도 회전을 기본적으로 해줘야 한다.
+			// 3. 뿐만 아니라, Particle 각각에 대한 Rot Angle 이 있다. 이것이 마치 Offset 각도 처럼 동작할 것이다.
+			// 4. 이전 Dir, 현재 Dir 간의 Angle 을 구하고, 이것만큼 Particle Dir 을 회전시킬 것이다.
+			// - 예를 들어, X 축 기준 오른쪽으로 가다가, Y 축 기준 위쪽으로 간다는 것은, 실제 Angle 이 Z 축 기준 90 도 회전
+			// const Vector3& ChangedMoveAngle = m_ParticleMoveDir.Angle(PrevMoveDir);
+
+		}
+		else
+		{
+			m_BazierMoveEffect = false;
+		}
+	}
+}
+
+void CParticleComponent::SetBazierTargetPos(const Vector3& D2, const Vector3& D3, const Vector3& D4, int DetailNum)
+{
+	CEngineUtil::CalculateBazierTargetPoses(GetWorldPos(), D2, D3, D4, m_queueBazierMovePos, 100);
+
+	// 처음 한개를 뽑아둔다.
+	if (!m_queueBazierMovePos.empty())
+	{
+		Vector3 NextPos = m_queueBazierMovePos.front();
+		m_queueBazierMovePos.pop();
+
+		m_ParticleNextMovePos = NextPos;
+
+		m_ParticleMoveDir = m_ParticleNextMovePos - GetWorldPos();
+		m_ParticleMoveDir.Normalize();
+
+		const Vector3& CurrentWorldPos = GetWorldPos();
+
+		m_BazierMoveTargetDist = m_ParticleNextMovePos.Distance(CurrentWorldPos);
+
+		m_BazierMoveCurDist = 0.f;
+
+		m_ParticleMoveAccTime = 0.f;
+
+		m_ParticleMoveInitSpeed = m_ParticleMoveSpeed;
+	}
 }
 
 void CParticleComponent::Start()
@@ -183,6 +252,7 @@ void CParticleComponent::Update(float DeltaTime)
 		m_SpawnTimeMax = 0.f;
 	}
 
+	// Spawn Time 정보
 	if (m_SpawnTime >= m_SpawnTimeMax)
 	{
 		m_SpawnTime -= m_SpawnTimeMax;
@@ -194,14 +264,22 @@ void CParticleComponent::Update(float DeltaTime)
 			m_SpawnTime = 0.f;
 		}
 	}
-
 	else
+	{
 		m_CBuffer->SetSpawnEnable(0);
+	}
 
 	// 추가 : Particle 도 BillBoard 를 적용하기위해 OBJ 가 추가
 	if (m_BillBoardEffect)
 	{
 		ApplyBillBoardEffect();
+	}
+
+	// Bazier 방식으로 움직이게 할 것인다
+	if (m_BazierMoveEffect)
+	{
+		// Bazier 에 저장된 위치 정보로 이동할 것인다.
+		ApplyBazierMove(DeltaTime);
 	}
 }
 
@@ -476,7 +554,22 @@ bool CParticleComponent::LoadOnly(FILE* File)
 
 	if (!Result)
 	{
-		assert(false);
+		// 만약 없다면, Particle Path 전부를 뒤져서 찾는다.
+		// 해당 Dir 경로에, 해당 Name 으로 된 파일이 존재하는지 판단해주는 함수 + 존재할 시 FullPath 경로 리턴
+		std::string StrLoadParticleFileName = LoadedParticleName;
+		if (StrLoadParticleFileName.find(".prtc") == std::string::npos)
+			StrLoadParticleFileName.append(".prtc");
+
+		auto ExtraLoadResult = CEngineUtil::CheckAndExtractFullPathOfTargetFile(PARTICLE_PATH, StrLoadParticleFileName);
+
+		// 그래도 Load 가 안된다면, 아예 Load 할 prtc 파일 자체가 존재하지 않는다는 의미
+		if (!ExtraLoadResult.has_value())
+			assert(false);
+		
+		Result = m_Particle->LoadFile(ExtraLoadResult.value().c_str());
+
+		if (!Result)
+			assert(false);
 	}
 
 	m_ParticleName = m_Particle->GetName();

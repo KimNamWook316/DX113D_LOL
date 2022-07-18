@@ -19,6 +19,8 @@ enum class ParticlePreset
     FireSmokeUp,
     FireCracker , // 폭죽 효과
     SummonEffect, // 소환되는 느낌
+    BettyAttackSpreadDust,
+    PlayerDust,
     Max
 };
 
@@ -38,7 +40,9 @@ static const char* ParticlePresetNames[] = {
     "XZSpreadGrass",
     "FireSmokeUp",
     "FireCraker", // 폭죽 효과
-    "SummonEffect" // 소환되는 느낌
+    "SummonEffect", // 소환되는 느낌
+    "BettyAttackSpreadDust",
+    "PlayerDust"
 };
 
 static const char* ParticleShapeNames[] = {
@@ -179,9 +183,21 @@ private:
 
     // Noise Texture
     class CIMGUICheckBox* m_ApplyNoiseTextureSampling;
+    class CIMGUIInputFloat* m_NoiseTextureApplyRatio;
 
     // Particle 이 사용하는 Material Texture
     class CIMGUIImage* m_ParticleTexture;
+
+    // Particle Bazier Move Test
+    class CIMGUIInputFloat3* m_BazierD1Input;
+    class CIMGUIInputFloat3* m_BazierD2Input;
+    class CIMGUIInputFloat3* m_BazierD3Input;
+    class CIMGUIButton* m_StartTestBazier;
+
+    Vector3 m_BazierD1Pos;
+    Vector3 m_BazierD2Pos;
+    Vector3 m_BazierD3Pos;
+
 private :
     class CParticle* m_ParticleClass;
     class CMaterial* m_ParticleMaterial;
@@ -282,6 +298,7 @@ private:
 
     // Noise Texture
     void OnApplyNoiseTextureSamplingEdit(const char*, bool);
+    void OnSetNoiseTextureApplyRatio(float Ratio);
 
     // Move Dir, Angle
     void OnMoveDirEdit(const Vector3& Dir);
@@ -296,7 +313,12 @@ private:
     
     // Linear Rot
     void OnIsLinearRot(const char*, bool);
-    void OnSetLinearRotInitAngle(const Vector3& Angle);
+
+    // Baziear Move Test
+    void OnSetBazierD1Pos(const Vector3& Pos);
+    void OnSetBazierD2Pos(const Vector3& Pos);
+    void OnSetBazierD3Pos(const Vector3& Pos);
+    void OnClickStartBazierMove();
     
     // Save, Load
     void OnSaveParticleClass();
@@ -337,7 +359,6 @@ private :
     void OnRipplePreset();
     void OnRingPreset();
     void OnRingWallPreset();
-    void OnFireSmallPreset();
     void OnFireWidePreset();
     void OnSparkPreset();
     void OnSparkBouncePreset();
@@ -351,6 +372,8 @@ private :
     void OnFireSmokeUpPreset();
     void OnFireCrackerPreset();
     void OnSummonEffectPreset();
+    void OnBettyAttackSpreadDustPreset();
+    void OnPlayerDustPreset();
 public :
         // Base Ground Object 준비시키기
         void SetGameObjectReady();

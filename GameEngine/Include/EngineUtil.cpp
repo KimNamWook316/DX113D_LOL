@@ -590,3 +590,105 @@ bool CEngineUtil::StringToBool(const std::string& Str)
 
 	return false;
 }
+
+void CEngineUtil::CalculateBazierTargetPoses(const Vector3& D1, const Vector3& D2, 
+	const Vector3& D3, const Vector3& D4, std::queue<Vector3>& queuePoses, int DetailNum)
+{
+	// 먼저 기존에 채워져있던 Pos 정보를 전부 지워준다.
+	while (!queuePoses.empty())
+	{
+		queuePoses.pop();
+	}
+
+	for (int i = 0; i < DetailNum; ++i)
+	{
+		float amt = i / (float)DetailNum;
+
+		// 선형 보간 법
+		const Vector3& Q1 = D1 * (1 - amt) + D2 * amt;
+		const Vector3& Q2 = D2 * (1 - amt) + D3 * amt;
+		const Vector3& Q3 = D3 * (1 - amt) + D4 * amt;
+
+		const Vector3& R1 = Q1 * (1 - amt) + Q2 * amt;
+		const Vector3& R2 = Q2 * (1 - amt) + Q3 * amt;
+
+		const Vector3& TargetPos = R1 * (1 - amt) + R2 * amt;
+
+		queuePoses.push(TargetPos);
+	}
+
+	// 처음 한개를 뽑아둔다.
+	/*
+	if (!m_queueBazierMovePos.empty())
+	{
+		Vector3 NextPos = m_queueBazierMovePos.front();
+		m_queueBazierMovePos.pop();
+
+		m_ParticleNextMovePos = NextPos;
+
+		m_ParticleMoveDir = m_ParticleNextMovePos - GetWorldPos();
+		m_ParticleMoveDir.Normalize();
+
+		const Vector3& CurrentWorldPos = GetWorldPos();
+
+		m_BazierMoveTargetDist = m_ParticleNextMovePos.Distance(CurrentWorldPos);
+
+		m_BazierMoveCurDist = 0.f;
+	}
+	*/
+}
+
+void CEngineUtil::CalculateBazierTargetPoses(const Vector3& D1, const Vector3& D2, const Vector3& D3, const Vector3& D4, 
+	std::vector<Vector3>& vecPoses, int DetailNum)
+{
+	// 먼저 기존에 채워져있던 Pos 정보를 전부 지워준다.
+	vecPoses.clear();
+
+	for (int i = 0; i < DetailNum; ++i)
+	{
+		float amt = i / (float)DetailNum;
+
+		// 선형 보간 법
+		const Vector3& Q1 = D1 * (1 - amt) + D2 * amt;
+		const Vector3& Q2 = D2 * (1 - amt) + D3 * amt;
+		const Vector3& Q3 = D3 * (1 - amt) + D4 * amt;
+
+		const Vector3& R1 = Q1 * (1 - amt) + Q2 * amt;
+		const Vector3& R2 = Q2 * (1 - amt) + Q3 * amt;
+
+		const Vector3& TargetPos = R1 * (1 - amt) + R2 * amt;
+
+		vecPoses.push_back(TargetPos);
+	}
+
+	// 처음 한개를 뽑아둔다.
+/*
+if (!m_queueBazierMovePos.empty())
+{
+	Vector3 NextPos = m_queueBazierMovePos.front();
+	m_queueBazierMovePos.pop();
+
+	m_ParticleNextMovePos = NextPos;
+
+	m_ParticleMoveDir = m_ParticleNextMovePos - GetWorldPos();
+	m_ParticleMoveDir.Normalize();
+
+	const Vector3& CurrentWorldPos = GetWorldPos();
+
+	m_BazierMoveTargetDist = m_ParticleNextMovePos.Distance(CurrentWorldPos);
+
+	m_BazierMoveCurDist = 0.f;
+}
+*/
+}
+
+
+float CEngineUtil::CalculateRealTimeSpeedUsingExponential(float Bottom, float CurTime, float InitSpeed)
+{
+	// 밑은 1 보다 큰 값이어야만 한다.
+	assert(Bottom > 1);
+
+	// Bottom ^ CurTime + InitSpeed
+	return pow(Bottom, CurTime) + InitSpeed;
+}
+

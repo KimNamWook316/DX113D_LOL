@@ -496,12 +496,12 @@ bool CPaperBurnComponent::SaveOnly(FILE* File)
 	fwrite(&m_FinishTime, sizeof(float), 1, File);
 	fwrite(&m_EndEvent, sizeof(PaperBurnEndEvent), 1, File);
 
-	int Length = m_PaperBurnComponentName.length();
+	int Length = (int)m_PaperBurnComponentName.length();
 	fwrite(&Length, sizeof(int), 1, File);
 	fwrite(m_PaperBurnComponentName.c_str(), sizeof(char), Length, File);
 
 	std::string TexName = m_BurnTexture->GetName();
-	Length = TexName.length();
+	Length = (int)TexName.length();
 	fwrite(&Length, sizeof(int), 1, File);
 	fwrite(TexName.c_str(), sizeof(char), Length, File);
 
