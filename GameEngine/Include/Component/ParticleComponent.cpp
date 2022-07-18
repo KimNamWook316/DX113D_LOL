@@ -171,7 +171,7 @@ void CParticleComponent::ApplyBazierMove(float DeltaTime)
 			m_queueBazierMovePos.pop();
 			m_ParticleNextMovePos = NextPos;
 
-			const Vector3& PrevMoveDir = m_ParticleMoveDir;
+			Vector3 PrevMoveDir = m_ParticleMoveDir;
 
 			m_ParticleMoveDir = m_ParticleNextMovePos - GetWorldPos();
 			m_ParticleMoveDir.Normalize();
@@ -187,8 +187,17 @@ void CParticleComponent::ApplyBazierMove(float DeltaTime)
 			// 3. 뿐만 아니라, Particle 각각에 대한 Rot Angle 이 있다. 이것이 마치 Offset 각도 처럼 동작할 것이다.
 			// 4. 이전 Dir, 현재 Dir 간의 Angle 을 구하고, 이것만큼 Particle Dir 을 회전시킬 것이다.
 			// - 예를 들어, X 축 기준 오른쪽으로 가다가, Y 축 기준 위쪽으로 간다는 것은, 실제 Angle 이 Z 축 기준 90 도 회전
-			// const Vector3& ChangedMoveAngle = m_ParticleMoveDir.Angle(PrevMoveDir);
+			float RotAngle = m_ParticleMoveDir.Angle(PrevMoveDir);
+			const Vector3& RotAxis = PrevMoveDir.Cross(m_ParticleMoveDir);
 
+			if (XMVector3Equal(RotAxis.Convert(), XMVectorZero()) == false)
+			{
+				XMVECTOR Qut = XMQuaternionRotationAxis(RotAxis.Convert(), RotAngle);
+
+				const Vector3& EulerRotAngle = CEngineUtil::QuarternionToEulerAngles(Qut);
+
+				AddWorldRotation(EulerRotAngle);
+			}
 		}
 		else
 		{

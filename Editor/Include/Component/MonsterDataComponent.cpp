@@ -134,6 +134,40 @@ float CMonsterDataComponent::GetAnglePlayer()
 	return Angle;
 }
 
+bool CMonsterDataComponent::IsPlayerLeftBasedInLookDir()
+{
+	Vector3 vToPlayer = ToPlayer();
+	Vector3 vLook = m_Object->GetWorldAxis(AXIS::AXIS_Z) * -1.f;
+
+	Vector3 vCross = vToPlayer.Cross(vLook);
+
+	if (vCross.y > 0.f)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+void CMonsterDataComponent::OnLookPlayer(float DeltaTime)
+{
+	// 플레이어 방향으로 회전 범위만큼 회전
+	float AnglePlayer = GetAnglePlayer();
+
+	CGameObject* MyObj = m_Object;
+
+	if (abs(AnglePlayer) < m_Data.RotateSpeedPerSec)
+	{
+		MyObj->AddWorldRotationY(AnglePlayer * DeltaTime);
+	}
+	else
+	{
+		MyObj->AddWorldRotationY(m_Data.RotateSpeedPerSec * DeltaTime);
+	}
+}
+
 bool CMonsterDataComponent::IsPlayerInMeleeAttackRange()
 {
 	CGameObject* PlayerObj = m_Scene->GetPlayerObject();
@@ -167,7 +201,9 @@ Vector3 CMonsterDataComponent::ToPlayer()
 	Vector3 PlayerPos = PlayerObj->GetWorldPos();
 	Vector3 MyPos = m_Object->GetWorldPos();
 
-	return (PlayerPos - MyPos);
+	Vector3 ToP = PlayerPos - MyPos;
+	ToP.Normalize();
+	return ToP;
 }
 
 bool CMonsterDataComponent::Save(FILE* File)

@@ -166,6 +166,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AnimationInstanceConvertThread.cpp" />
+    <ClCompile Include="Component\BossBettyDataComponent.cpp" />
     <ClCompile Include="Component\EyeLaserComponent.cpp" />
     <ClCompile Include="Component\GameBehaviorTree.cpp" />
     <ClCompile Include="Component\GameStateComponent.cpp" />
@@ -311,6 +312,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimationInstanceConvertThread.h" />
+    <ClInclude Include="Component\BossBettyDataComponent.h" />
     <ClInclude Include="Component\EyeLaserComponent.h" />
     <ClInclude Include="Component\GameBehaviorTree.h" />
     <ClInclude Include="Component\GameStateComponent.h" />

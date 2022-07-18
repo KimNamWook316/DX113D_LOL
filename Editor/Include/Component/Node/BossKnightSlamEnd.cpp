@@ -36,5 +36,5 @@ NodeResult CBossKnightSlamEnd::OnStart(float DeltaTime)
 	CAnimationSequenceInstance* AnimInst = m_AnimationMeshComp->GetAnimationInstance();
 	AnimInst->ChangeAnimation(AnimName);
 
-	return NodeResult();
+	return NodeResult::Node_True;
 }

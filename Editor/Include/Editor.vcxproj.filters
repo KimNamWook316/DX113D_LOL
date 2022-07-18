@@ -133,6 +133,12 @@
     <Filter Include="06. GameComponent\02. ObjectComponent\01. ObjectDataComponent\01. Monster\01. KnightData">
       <UniqueIdentifier>{484f7989-8f88-4043-ae31-cb59bbed1d82}</UniqueIdentifier>
     </Filter>
+    <Filter Include="06. GameComponent\02. ObjectComponent\01. ObjectDataComponent\01. Monster\02. BossBetty">
+      <UniqueIdentifier>{1d7573b3-fcb4-4029-8416-5d966f469471}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="07. BehaviorTree\01. ConditionNode\00. Specific\02. BossBetty">
+      <UniqueIdentifier>{3b1b9189-c87f-4cc8-9b1c-b3ecc7864491}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EditorManager.cpp">
@@ -402,9 +408,6 @@
     <ClCompile Include="Component\Node\BossKnightMeleeAttackNode.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="Component\Node\KnightFinalAttackCheck.cpp">
-      <Filter>07. BehaviorTree\01. ConditionNode\00. Specific\01. BossKnight</Filter>
-    </ClCompile>
     <ClCompile Include="Component\Node\BossKnightMeleeAttackNode.cpp">
       <Filter>07. BehaviorTree\02. ActionNode\00. Specific\01. BossKnight</Filter>
     </ClCompile>
@@ -455,6 +458,9 @@
     </ClCompile>
     <ClCompile Include="Window\AnimationDisplayWindow.cpp">
       <Filter>02. Editor\01. Window\2. Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\BossBettyDataComponent.cpp">
+      <Filter>06. GameComponent\02. ObjectComponent\01. ObjectDataComponent\01. Monster\02. BossBetty</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -772,6 +778,9 @@
     </ClInclude>
     <ClInclude Include="Window\AnimationDisplayWindow.h">
       <Filter>02. Editor\01. Window\2. Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\BossBettyDataComponent.h">
+      <Filter>06. GameComponent\02. ObjectComponent\01. ObjectDataComponent\01. Monster\02. BossBetty</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
