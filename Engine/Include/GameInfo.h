@@ -746,9 +746,12 @@ struct NotifyParameter
 struct ObjectData
 {
 	int HP;
-	int MP;
+	int DetectRange;
 	float MoveSpeed;
 	int Attack;
+	float MeleeAttackRange;
+	float JumpAttackRange;
+	float RotateSpeedPerSec;
 };
 
 struct DownScaleCBuffer

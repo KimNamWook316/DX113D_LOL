@@ -75,20 +75,14 @@ CEditorManager::~CEditorManager()
 {
 	CEngine::DestroyInst();
 
+	CDataManager::DestroyInst();
 
 	SAFE_DELETE(m_StateManager);
-	SAFE_DELETE(m_DataManager);
-	
 }
 
 CGameStateManager* CEditorManager::GetStateManager() const
 {
 	return m_StateManager;
-}
-
-CDataManager* CEditorManager::GetDataManager() const
-{
-	return m_DataManager;
 }
 
 void CEditorManager::SetEditMode(EditMode Mode)
@@ -151,9 +145,7 @@ bool CEditorManager::Init(HINSTANCE hInst)
 
 	//CSceneManager::GetInst()->SetStateManager(m_StateManager);
 
-	m_DataManager = new CDataManager;
-
-	m_DataManager->Init();
+	CDataManager::GetInst()->Init();
 	
 	return true;
 }
@@ -382,10 +374,10 @@ CComponent* CEditorManager::CreateComponent(CGameObject* Obj, size_t Type)
 	{
 		CObjectDataComponent* Component = Obj->LoadObjectComponent<CObjectDataComponent>();
 		// Editor에서는 EditorManager에서 DataManager 클래스를 갖고 있도록 함
-		if (CEngine::GetInst()->GetEditMode())
-		{
-			m_DataManager->SetObjectData(Obj);
-		}
+ //		if (CEngine::GetInst()->GetEditMode())
+ //		{
+ //			m_DataManager->SetObjectData(Obj);
+ //		}
 		return Component;
 	}
 

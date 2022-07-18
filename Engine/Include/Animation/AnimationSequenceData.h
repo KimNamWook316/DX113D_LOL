@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../GameInfo.h"
+#include "../Resource/Animation/AnimationSequence.h"
 
 struct AnimationNotify
 {
@@ -8,15 +9,12 @@ struct AnimationNotify
 	int		Frame;
 	bool	Call;
 	std::function<void()>	Function;
-	std::function<void(NotifyParameter)>	FunctionParam;
-	NotifyParameter Param;
+	std::function<void(float)>	FunctionDetlaTime;
 
 	AnimationNotify() :
 		Frame(0),
 		Call(false),
-		Function(nullptr),
-		FunctionParam(nullptr),
-		Param{}
+		Function(nullptr)
 	{
 	}
 };
@@ -105,17 +103,74 @@ public:
 		m_vecNotify.push_back(Notify);
 	}
 
-
 	template <typename T>
-	void AddNotifyParam(const std::string& Name, int Frame, T* Obj, void (T::* Func)(const NotifyParameter&))
+	void AddNotifyDetlaTime(const std::string& Name, int Frame, T* Obj, void (T::* Func)(float))
 	{
 		AnimationNotify* Notify = new AnimationNotify;
 
 		Notify->Name = Name;
 		Notify->Frame = Frame;
-		Notify->FunctionParam = std::bind(Func, Obj, std::placeholders::_1);
+		Notify->FunctionDetlaTime = std::bind(Func, Obj, std::placeholders::_1);
 
 		m_vecNotify.push_back(Notify);
+	}
+
+	template <typename T>
+	void AddNotifyFrameRange(const std::string& Name, int FrameStart, int FrameEnd,
+		T* Obj, void(T::* Func)())
+	{
+		int StartFrame = FrameStart;
+		int EndFrame = FrameEnd;
+
+		if (StartFrame < 0)
+		{
+			StartFrame == 0;
+		}
+
+		int SeqEndFrame = m_Sequence->GetEndFrame();
+		if (EndFrame > SeqEndFrame)
+		{
+			EndFrame = SeqEndFrame;
+		}
+
+		for (int i = StartFrame; i <= EndFrame; ++i)
+		{
+			AnimationNotify* Notify = new AnimationNotify;
+			Notify->Name = Name;
+			Notify->Frame = i;
+			Notify->Function = std::bind(Func, Obj);
+			
+			m_vecNotify.push_back(Notify);
+		}
+	}
+
+	template <typename T>
+	void AddNotifyDeltaTimeFrameRange(const std::string& Name, int FrameStart, int FrameEnd,
+		T* Obj, void(T::* Func)(float))
+	{
+		int StartFrame = FrameStart;
+		int EndFrame = FrameEnd;
+
+		if (StartFrame < 0)
+		{
+			StartFrame == 0;
+		}
+
+		int SeqEndFrame = m_Sequence->GetEndFrame();
+		if (EndFrame > SeqEndFrame)
+		{
+			EndFrame = SeqEndFrame;
+		}
+
+		for (int i = StartFrame; i <= EndFrame; ++i)
+		{
+			AnimationNotify* Notify = new AnimationNotify;
+			Notify->Name = Name;
+			Notify->Frame = i;
+			Notify->FunctionDetlaTime = std::bind(Func, Obj, std::placeholders::_1);
+			
+			m_vecNotify.push_back(Notify);
+		}
 	}
 };
 

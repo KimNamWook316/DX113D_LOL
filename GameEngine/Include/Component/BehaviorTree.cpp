@@ -115,7 +115,14 @@ void CBehaviorTree::DeleteNode(CNode* Node)
 
 void CBehaviorTree::Start()
 {
+	// 노드를 순회하며 ActionNode와 Condition Node에 한하여 단 한번만 초기화 한다.
+	auto iter = m_NodeList.begin();
+	auto iterEnd = m_NodeList.end();
 
+	for (; iter != iterEnd; ++iter)
+	{
+		(*iter)->Init();
+	}
 }
 
 bool CBehaviorTree::Init()

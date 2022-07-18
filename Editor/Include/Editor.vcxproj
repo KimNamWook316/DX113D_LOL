@@ -170,9 +170,13 @@
     <ClCompile Include="Component\GameBehaviorTree.cpp" />
     <ClCompile Include="Component\GameStateComponent.cpp" />
     <ClCompile Include="Component\KnightDataComponent.cpp" />
+    <ClCompile Include="Component\MonsterDataComponent.cpp" />
     <ClCompile Include="Component\Node\AddFallingFloorCallbackNode.cpp" />
+    <ClCompile Include="Component\Node\BossKnightContinueAttackNode.cpp" />
     <ClCompile Include="Component\Node\BossKnightFinalAttackNode.cpp" />
     <ClCompile Include="Component\Node\BossKnightMeleeAttackNode.cpp" />
+    <ClCompile Include="Component\Node\BossKnightSlamEnd.cpp" />
+    <ClCompile Include="Component\Node\PostAttackDelayCheck.cpp" />
     <ClCompile Include="Component\Node\CancleShootNode.cpp" />
     <ClCompile Include="Component\Node\CheckAttackTarget.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
@@ -189,9 +193,9 @@
     <ClCompile Include="Component\Node\DeathNode.cpp" />
     <ClCompile Include="Component\Node\HPCheck.cpp" />
     <ClCompile Include="Component\Node\IdleNode.cpp" />
-    <ClCompile Include="Component\Node\KnightFinalAttackCheck.cpp" />
-    <ClCompile Include="Component\Node\KnightHopAttackNode.cpp" />
-    <ClCompile Include="Component\Node\KnightHopAttackRangeCheck.cpp" />
+    <ClCompile Include="Component\Node\BossKnightFinalAttackCheck.cpp" />
+    <ClCompile Include="Component\Node\BossKnightJumpAttackNode.cpp" />
+    <ClCompile Include="Component\Node\BossKnightJumpAttackRangeCheck.cpp" />
     <ClCompile Include="Component\Node\Lockstone3TriggerBoxAction.cpp" />
     <ClCompile Include="Component\Node\Lockstone3TriggerBoxHitCheck.cpp" />
     <ClCompile Include="Component\Node\MeleeRangeCheckNode.cpp" />
@@ -308,9 +312,13 @@
     <ClInclude Include="Component\GameBehaviorTree.h" />
     <ClInclude Include="Component\GameStateComponent.h" />
     <ClInclude Include="Component\KnightDataComponent.h" />
+    <ClInclude Include="Component\MonsterDataComponent.h" />
     <ClInclude Include="Component\Node\AddFallingFloorCallbackNode.h" />
+    <ClInclude Include="Component\Node\BossKnightContinueAttackNode.h" />
     <ClInclude Include="Component\Node\BossKnightFinalAttackNode.h" />
     <ClInclude Include="Component\Node\BossKnightMeleeAttackNode.h" />
+    <ClInclude Include="Component\Node\BossKnightSlamEnd.h" />
+    <ClInclude Include="Component\Node\PostAttackDelayCheck.h" />
     <ClInclude Include="Component\Node\CancleShootNode.h" />
     <ClInclude Include="Component\Node\CheckAttackTarget.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
@@ -327,9 +335,9 @@
     <ClInclude Include="Component\Node\DeathNode.h" />
     <ClInclude Include="Component\Node\HPCheck.h" />
     <ClInclude Include="Component\Node\IdleNode.h" />
-    <ClInclude Include="Component\Node\KnightFinalAttackCheck.h" />
-    <ClInclude Include="Component\Node\KnightHopAttackNode.h" />
-    <ClInclude Include="Component\Node\KnightHopAttackRangeCheck.h" />
+    <ClInclude Include="Component\Node\BossKnightFinalAttackCheck.h" />
+    <ClInclude Include="Component\Node\BossKnightJumpAttackNode.h" />
+    <ClInclude Include="Component\Node\BossKnightJumpAttackRangeCheck.h" />
     <ClInclude Include="Component\Node\Lockstone3TriggerBoxAction.h" />
     <ClInclude Include="Component\Node\Lockstone3TriggerBoxHitCheck.h" />
     <ClInclude Include="Component\Node\MeleeRangeCheckNode.h" />
