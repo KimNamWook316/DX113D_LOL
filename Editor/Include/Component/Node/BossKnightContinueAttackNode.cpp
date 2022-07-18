@@ -44,7 +44,6 @@ void CBossKnightContinueAttackNode::Init()
  	AnimInst->AddNotify("Slam180CCW", "HitBoxDisable", 25, Data, &CKnightDataComponent::OnInActiveMeleeAttackCollider);
  	AnimInst->SetEndFunction("Slam180CCW", (CMonsterDataComponent*)(Data), &CMonsterDataComponent::OnEndAnimPostAttackDelayOn);
 
-	CKnightDataComponent* Data = dynamic_cast<CKnightDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
 	m_RotatePerSec = Data->GetRotateSpeed();
 }
 

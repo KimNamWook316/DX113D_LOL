@@ -223,7 +223,6 @@ void CMonsterDataComponent::ActiveHitEffect(float DeltaTime)
 	}
 	else
 	{
-		m_IsHit = false;
 		m_HitEffectTimer = 0.f;
 		m_HitEffectFlag = 0;
 
@@ -265,9 +264,9 @@ void CMonsterDataComponent::ChangeHitColor(int EffectNum)
 		for (size_t i = 0; i < m_MeshMatSize; ++i)
 		{
 			m_AnimMesh->GetMaterial(i)->SetEmissiveColor(Vector4::Red);
-			m_AnimMesh->GetMaterial(i)->SetBaseColor(m_vecOriginDiffuse[i]);
-			m_AnimMesh->GetMaterial(i)->SetAmbientColor(m_vecOriginAmbient[i]);
-			m_AnimMesh->GetMaterial(i)->SetSpecularColor(m_vecOriginSpecluar[i]);
+			m_AnimMesh->GetMaterial(i)->SetBaseColor(Vector4::Black);
+			m_AnimMesh->GetMaterial(i)->SetAmbientColor(Vector4::Black);
+			m_AnimMesh->GetMaterial(i)->SetSpecularColor(Vector4::Black);
 		}
 	}
 }

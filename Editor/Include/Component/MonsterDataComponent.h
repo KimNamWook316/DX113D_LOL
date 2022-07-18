@@ -28,11 +28,6 @@ public:
 	void OnEndAnimPostAttackDelayOff();
 
 public:
-	void SetHit(bool Hit)
-	{
-		m_IsHit = true;
-	}
-
 	void SetPostAttckDelaying(bool Enable)
 	{
 		m_PostAttackDelaying = Enable;

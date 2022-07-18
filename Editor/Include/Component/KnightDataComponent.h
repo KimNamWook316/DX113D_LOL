@@ -10,7 +10,7 @@ enum class Knight_Attack_Rot_Type
 };
 
 class CKnightDataComponent final :
-    public CMonsterDataComponent
+    public CMonsterDataComponent 
 {
     friend class CGameObject;
 

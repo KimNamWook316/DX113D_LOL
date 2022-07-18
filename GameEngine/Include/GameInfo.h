@@ -746,7 +746,7 @@ struct NotifyParameter
 struct ObjectData
 {
 	int HP;
-	int MP;
+	float DetectRange;
 	float MoveSpeed;
 	int Attack;
 	float MeleeAttackRange;
