@@ -1149,11 +1149,11 @@ bool ApplyNoiseTextureDestroyEffect(float2 UV, float LifeTimeMax, float LifeTime
 	{
 		// LifeTimeRatio 가 g_ParticleNoiseTextureApplyRatio 이상이 되면 사라지게 한다.
 		if (g_ParticleNoiseTextureApplyRatio > LifeTimeRatio)
-		 	return true;
+			return true;
 
 		// InstanceID 에 따라서, 실제 NoiseTexture 에서 참조하는 UV 범위도 다르게 한다
 		// ex) 총 100개 생성 -> 10번째 Instance => 0 ~ 0.1 사이의 UV 범위 참조하게 하기
-		float2 NoiseSmpUV = UV +  (InstanceID / (g_ParticleSpawnCountMax * 0.1f));
+		float2 NoiseSmpUV = UV + (InstanceID / (g_ParticleSpawnCountMax * 0.1f));
 
 		float3 FinalColor = g_NoiseTexture.Sample(g_BaseSmp, NoiseSmpUV);
 

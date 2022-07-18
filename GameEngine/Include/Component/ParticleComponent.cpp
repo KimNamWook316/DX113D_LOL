@@ -16,7 +16,9 @@ CParticleComponent::CParticleComponent()	:
 	m_BillBoardEffect(false),
 	m_BazierMoveEffect(false),
 	m_ParticleMoveSpeed(50.f),
+	m_ParticleMoveSpeedBottom(4.f),
 	m_InfoShared{},
+	m_SpeedChangeMethod(ParticleSpeedChangeMethod::Linear), // Particle Component 의 경우, Linear 설정이, 그냥 원본 Speed 유지 
 	m_CBuffer(nullptr)
 {
 	SetTypeID<CParticleComponent>();
@@ -134,6 +136,18 @@ void CParticleComponent::ApplyBazierMove(float DeltaTime)
 	if (!m_BazierMoveEffect)
 		return;
 
+	m_ParticleMoveAccTime += DeltaTime;
+
+	// 급증하는 효과 주기 
+	switch (m_SpeedChangeMethod)
+	{
+		case ParticleSpeedChangeMethod::Exponential :
+		{
+			m_ParticleMoveSpeed = CEngineUtil::CalculateRealTimeSpeedUsingExponential(m_ParticleMoveSpeedBottom, m_ParticleMoveAccTime, m_ParticleMoveInitSpeed);
+		}
+		break;
+	}
+
 	// 위치 이동
 	float BazierMoveDist = (m_ParticleMoveDir * m_ParticleMoveSpeed * DeltaTime).Length();
 	AddWorldPos(m_ParticleMoveDir * m_ParticleMoveSpeed * DeltaTime);
@@ -186,6 +200,10 @@ void CParticleComponent::SetBazierTargetPos(const Vector3& D2, const Vector3& D3
 		m_BazierMoveTargetDist = m_ParticleNextMovePos.Distance(CurrentWorldPos);
 
 		m_BazierMoveCurDist = 0.f;
+
+		m_ParticleMoveAccTime = 0.f;
+
+		m_ParticleMoveInitSpeed = m_ParticleMoveSpeed;
 	}
 }
 
@@ -233,22 +251,6 @@ void CParticleComponent::Update(float DeltaTime)
 	{
 		m_CBuffer->SetSpawnEnable(0);
 	}
-
-	// 해당 상수 버퍼 값은, 사용하지 않는다.각 Particle입자의 LifeTimeRatio 를 사용할 것이다.
-	/*
-	// Noise Texture 를 이용한 랜덤 사라짐 효과
-	if (m_CBuffer->IsNoiseTextureSamplingApplied())
-	{
-		float NoiseTextureFilter = m_CBuffer->GetNoiseTextureFilter();
-
-		NoiseTextureFilter += DeltaTime;
-
-		if (NoiseTextureFilter > 1)
-			NoiseTextureFilter = 1.f;
-
-		m_CBuffer->SetNoiseTextureFilter(NoiseTextureFilter);
-	}
-	*/
 
 	// 추가 : Particle 도 BillBoard 를 적용하기위해 OBJ 가 추가
 	if (m_BillBoardEffect)

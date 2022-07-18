@@ -32,20 +32,32 @@ protected:
 	// BillBoard
 	bool  m_BillBoardEffect;
 	// Move
+	float m_ParticleMoveAccTime;
 	float m_ParticleMoveSpeed;
+	float m_ParticleMoveInitSpeed;
+	ParticleSpeedChangeMethod m_SpeedChangeMethod;
 	Vector3 m_ParticleNextMovePos;
 	Vector3 m_ParticleMoveDir;
+	Vector3 m_ParticleRotOffset;
+	// 지수 함수 형태로 사용할 밑
+	float m_ParticleMoveSpeedBottom;
 	// Bazier
 	float m_BazierMoveTargetDist;
 	float m_BazierMoveCurDist;
 	bool m_BazierMoveEffect;
 	std::queue<Vector3> m_queueBazierMovePos;
+
 private :
 	std::string m_ParticleName;
 public:
 	void SetParticle(const std::string& Name);
 	void SetParticle(CParticle* Particle);
 	void SetSpawnTime(float Time);
+	// Particle 입자가 아니라, Particle Component 의 움직임 효과
+	void SetComponentSpeedChangeMethod(ParticleSpeedChangeMethod Method)
+	{
+		m_SpeedChangeMethod = Method;
+	}
 public :
 	bool IsBazierMoveEnable() const
 	{

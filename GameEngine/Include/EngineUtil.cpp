@@ -660,4 +660,35 @@ void CEngineUtil::CalculateBazierTargetPoses(const Vector3& D1, const Vector3& D
 
 		vecPoses.push_back(TargetPos);
 	}
+
+	// 처음 한개를 뽑아둔다.
+/*
+if (!m_queueBazierMovePos.empty())
+{
+	Vector3 NextPos = m_queueBazierMovePos.front();
+	m_queueBazierMovePos.pop();
+
+	m_ParticleNextMovePos = NextPos;
+
+	m_ParticleMoveDir = m_ParticleNextMovePos - GetWorldPos();
+	m_ParticleMoveDir.Normalize();
+
+	const Vector3& CurrentWorldPos = GetWorldPos();
+
+	m_BazierMoveTargetDist = m_ParticleNextMovePos.Distance(CurrentWorldPos);
+
+	m_BazierMoveCurDist = 0.f;
 }
+*/
+}
+
+
+float CEngineUtil::CalculateRealTimeSpeedUsingExponential(float Bottom, float CurTime, float InitSpeed)
+{
+	// 밑은 1 보다 큰 값이어야만 한다.
+	assert(Bottom > 1);
+
+	// Bottom ^ CurTime + InitSpeed
+	return pow(Bottom, CurTime) + InitSpeed;
+}
+
