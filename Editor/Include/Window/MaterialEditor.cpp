@@ -380,6 +380,16 @@ void CMaterialEditor::OnSetParticleMaterialSettingCallback()
 	}
 	m_SelectedMaterial->SetRenderState(AlphaBlendState);
 
+	// No Cull Mode 세팅
+	CRenderState* NoCullModeState = CRenderManager::GetInst()->FindRenderState("NoCull");
+
+	if (!NoCullModeState)
+	{
+		assert(false);
+		return;
+	}
+	m_SelectedMaterial->SetRenderState(NoCullModeState);
+
 	// Particle Render Shader 세팅
 	CGraphicShader* FoundShader = dynamic_cast<CGraphicShader*>(CResourceManager::GetInst()->FindShader("ParticleRenderShader"));
 

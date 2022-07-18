@@ -16,7 +16,7 @@ CParticleComponent::CParticleComponent()	:
 	m_BillBoardEffect(false),
 	m_BazierMoveEffect(false),
 	m_ParticleMoveSpeed(50.f),
-	m_ParticleMoveSpeedBottom(4.f),
+	m_ParticleMoveSpeedBottom(3.5f),
 	m_InfoShared{},
 	m_SpeedChangeMethod(ParticleSpeedChangeMethod::Linear), // Particle Component 의 경우, Linear 설정이, 그냥 원본 Speed 유지 
 	m_CBuffer(nullptr)
@@ -537,7 +537,22 @@ bool CParticleComponent::LoadOnly(FILE* File)
 
 	if (!Result)
 	{
-		assert(false);
+		// 만약 없다면, Particle Path 전부를 뒤져서 찾는다.
+		// 해당 Dir 경로에, 해당 Name 으로 된 파일이 존재하는지 판단해주는 함수 + 존재할 시 FullPath 경로 리턴
+		std::string StrLoadParticleFileName = LoadedParticleName;
+		if (StrLoadParticleFileName.find(".prtc") == std::string::npos)
+			StrLoadParticleFileName.append(".prtc");
+
+		auto ExtraLoadResult = CEngineUtil::CheckAndExtractFullPathOfTargetFile(PARTICLE_PATH, StrLoadParticleFileName);
+
+		// 그래도 Load 가 안된다면, 아예 Load 할 prtc 파일 자체가 존재하지 않는다는 의미
+		if (!ExtraLoadResult.has_value())
+			assert(false);
+		
+		Result = m_Particle->LoadFile(ExtraLoadResult.value().c_str());
+
+		if (!Result)
+			assert(false);
 	}
 
 	m_ParticleName = m_Particle->GetName();

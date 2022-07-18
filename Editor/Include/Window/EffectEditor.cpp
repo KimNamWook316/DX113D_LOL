@@ -1083,7 +1083,7 @@ void CEffectEditor::OnClickStartBazierMove()
         m_ParticleObject->SetWorldPos(0.f, 0.f, 0.f);
 
         dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->SetBazierTargetPos(
-            m_BazierD1Pos, m_BazierD2Pos, m_BazierD3Pos, 100
+            m_BazierD1Pos, m_BazierD2Pos, m_BazierD3Pos, 300
         );
 
         // Particle Speed Settting
