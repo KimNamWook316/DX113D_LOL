@@ -30,6 +30,7 @@
 #include "Component/PlayerNormalAttackCheckCollider.h"
 #include "Component/EyeLaserComponent.h"
 #include "Component/PlayerHookComponent.h"
+#include "Component/MonsterPathFindCollider.h"
 // Window
 #include "Window/ObjectHierarchyWindow.h"
 #include "Window/SceneComponentHierarchyWindow.h"
@@ -56,6 +57,7 @@
 #include "Object/3DCameraObject.h"
 
 #include "Component/State/GameStateManager.h"
+#include "Scene/Navigation3DManager.h"
 #include "DataManager.h"
 
 #include <sstream>
@@ -249,12 +251,12 @@ CGameObject* CEditorManager::CreateObject(CScene* Scene, size_t Type)
 		return Obj;
 	}
 
-	else if (Type == typeid(CPlayerHook).hash_code())
-	{
-		CPlayerHook* Obj = Scene->LoadGameObject<CPlayerHook>();
+	//else if (Type == typeid(CPlayerHook).hash_code())
+	//{
+	//	CPlayerHook* Obj = Scene->LoadGameObject<CPlayerHook>();
 
-		return Obj;
-	}
+	//	return Obj;
+	//}
 
 	return nullptr;
 }
@@ -405,6 +407,13 @@ CComponent* CEditorManager::CreateComponent(CGameObject* Obj, size_t Type)
 		CWaterComponent* Component = Obj->LoadComponent<CWaterComponent>();
 		return Component;
 	}
+
+	else if (Type == typeid(CMonsterPathFindCollider).hash_code())
+	{
+		CMonsterPathFindCollider* Component = Obj->LoadComponent<CMonsterPathFindCollider>();
+		return Component;
+	}
+
 
 	return nullptr;
 }

@@ -104,7 +104,7 @@ enum class Collision_Channel
 	PlayerAttack,
 	MonsterAttack,
 	MapObject,
-	Custom2,
+	MonsterPathFind,
 	Custom3,
 	Custom4,
 	Custom5,
@@ -252,6 +252,7 @@ enum class PopUpModalState
 	Max
 };
 
+// TODO : SceneComponent Type 추가될 때 마다 추가
 enum class SceneComponent3DType
 {
 	AnimationMeshComponent,
@@ -270,6 +271,7 @@ enum class SceneComponent3DType
 	PlayerNormalAttackCheckCollider,
 	EyeLaserComponent,
 	PlayerHookComponent,
+	MonsterPathFindCollider,
 	Max
 };
 
@@ -306,7 +308,8 @@ enum ConditionNode
 	AttackTargetCheck,
 	MouseRButtonCheckNode,
 	MouseRButtonUpCheckNode,
-	Lockstone3TriggerBoxHitCheck
+	Lockstone3TriggerBoxHitCheck,
+	CheckDetectRange
 };
 
 enum ActionNode
@@ -320,7 +323,8 @@ enum ActionNode
 	ShootNode,
 	CancleShootNode,
 	AddFallingFloorCallback,
-	Lockstone3TriggerBoxAction
+	Lockstone3TriggerBoxAction,
+	FindPath
 };
 
 enum DecoratorNode
@@ -410,4 +414,11 @@ enum class ParticleSpeedChangeMethod
 	Exponential,  // 속도 변화가 점점 크게
 	Log, /// 속도 변화가 점점 작게 
 	Max
+};
+
+enum NAVIMESH_CELL_LIST_TYPE
+{
+	NCLT_NONE,
+	NCLT_OPEN,
+	NCLT_CLOSE
 };

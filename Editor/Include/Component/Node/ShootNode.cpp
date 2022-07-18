@@ -32,7 +32,7 @@ NodeResult CShootNode::OnStart(float DeltaTime)
 
 	std::string ChampionName = m_Object->GetName();
 
-	std::string SequenceName = ChampionName + "_" + "Hook";
+	std::string SequenceName = ChampionName + + "Hook";
 
 	if (m_AnimationMeshComp)
 	{

@@ -5,6 +5,7 @@
 #include "Component/BehaviorTree.h"
 #include "Scene/Scene.h"
 #include "Scene/SceneManager.h"
+#include "Scene/Navigation3DManager.h"
 
 
 CRotateAttackDirectionNode::CRotateAttackDirectionNode() :
@@ -25,7 +26,7 @@ CRotateAttackDirectionNode::~CRotateAttackDirectionNode()
 NodeResult CRotateAttackDirectionNode::OnStart(float DeltaTime)
 {
 	m_Object->SetNoInterrupt(false);
-	m_CallStart = true;
+	//m_CallStart = true;
 
 	CNavigation3DManager* Manager = m_Object->GetScene()->GetNavigation3DManager();
 
@@ -59,7 +60,16 @@ NodeResult CRotateAttackDirectionNode::OnStart(float DeltaTime)
 	Vector3 CurrentFowardYZero = Vector3(m_CurrentForwardVector.x, 0.f, m_CurrentForwardVector.z);
 	Vector3 DestForwardYZero = Vector3(m_DestForwardVector.x, 0.f, m_DestForwardVector.z);
 
-	float Degree = RadianToDegree(acosf(CurrentFowardYZero.Dot(DestForwardYZero)));
+	float DotProduct = CurrentFowardYZero.Dot(DestForwardYZero);
+
+	if (DotProduct > 0.99f)
+	{
+		m_IsEnd = true;
+		return NodeResult::Node_True;
+	}
+
+	float Rad = acosf(DotProduct);
+	float Degree = RadianToDegree(Rad);
 
 	m_DestForwardVector.Normalize();
 

@@ -7,6 +7,7 @@
 #include "../Input.h"
 #include "../Component/NavMeshComponent.h"
 #include "../Resource/Mesh/NavMesh.h"
+#include "NavigationThread3D.h"
 
 //#include "DirectXMath.h"
 #include <DirectXCollision.h>
@@ -20,6 +21,14 @@ CNavigation3DManager::CNavigation3DManager()	:
 
 CNavigation3DManager::~CNavigation3DManager()
 {
+	size_t	Size = m_vecNavigationThread.size();
+
+	for (size_t i = 0; i < Size; ++i)
+	{
+		SAFE_DELETE(m_vecNavigationThread[i]);
+	}
+
+	m_vecNavigationThread.clear();
 }
 
 CNavMeshComponent* CNavigation3DManager::GetNavMeshData() const
@@ -40,6 +49,7 @@ void CNavigation3DManager::SetNavData(CLandScape* NavData)
 
 void CNavigation3DManager::AddNavResult(const NavResultData& NavData)
 {
+	m_ResultQueue.push(NavData);
 }
 
 void CNavigation3DManager::SetLandScape(CLandScape* LandScape)
@@ -137,12 +147,13 @@ bool CNavigation3DManager::CheckPlayerNavMeshPoly(float& Height)
 			Vector3 P2 = m_NavMeshComponent->GetVertexPos(i, 1);
 			Vector3 P3 = m_NavMeshComponent->GetVertexPos(i, 2);
 
-			Matrix WorldMat = m_NavMeshComponent->GetWorldMatrix();
+			//Matrix WorldMat = m_NavMeshComponent->GetWorldMatrix();
 
 			//P1 = P1.TransformCoord(WorldMat);
 			//P2 = P2.TransformCoord(WorldMat);
 			//P3 = P3.TransformCoord(WorldMat);
 
+			PlayerPos.y += 10.f;
 			XMVECTOR v1 = PlayerPos.Convert();
 
 			XMVECTOR Dir = Vector3(0.f, -1.f, 0.f).Convert();
@@ -288,6 +299,149 @@ bool CNavigation3DManager::CheckPlayerNavMeshPoly(float& Height)
 	return false;
 }
 
+bool CNavigation3DManager::CheckNavMeshPoly(const Vector3& Pos, float& Height, int& PolyIndex)
+{
+	if (!m_NavMeshComponent)
+		return false;
+
+	size_t Count = m_NavMeshComponent->GetNavMesh()->GetNavMeshPolygonCount();
+
+	for (size_t i = 0; i < Count; ++i)
+	{
+		Vector3 P1 = m_NavMeshComponent->GetVertexPos(i, 0);
+		Vector3 P2 = m_NavMeshComponent->GetVertexPos(i, 1);
+		Vector3 P3 = m_NavMeshComponent->GetVertexPos(i, 2);
+
+		XMVECTOR v1 = Pos.Convert();
+
+		XMVECTOR Dir = Vector3(0.f, -1.f, 0.f).Convert();
+		XMVECTOR _P1 = P1.Convert();
+		XMVECTOR _P2 = P2.Convert();
+		XMVECTOR _P3 = P3.Convert();
+
+		float Dist = 0.f;
+
+		bool Intersect = DirectX::TriangleTests::Intersects(v1, Dir, _P1, _P2, _P3, Dist);
+
+		if (Intersect)
+		{
+			float Dist1 = P1.Distance(Pos);
+			float Dist2 = P2.Distance(Pos);
+			float Dist3 = P3.Distance(Pos);
+
+			Vector3 LerpVec = Vector3(1 / Dist1, 1 / Dist2, 1 / Dist3);
+			LerpVec.Normalize();
+
+			// Weighted Average
+			Height = LerpVec.x * LerpVec.x * P1.y + LerpVec.y * LerpVec.y * P2.y + LerpVec.z * LerpVec.z * P3.y + 0.1f;
+
+			PolyIndex = i;
+
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool CNavigation3DManager::CheckCurrentNavMeshPoly(const Vector3& Pos, int CurrentPolyIndex, float& Height, int& OutPolyIndex)
+{
+	if (!m_NavMeshComponent)
+		return false;
+
+	NavMeshPolygon Polygon = m_NavMeshComponent->GetNavMesh()->GetNavMeshPolygon(CurrentPolyIndex);
+
+	Vector3 P1 = Polygon.m_vecVertexPos[0];
+	Vector3 P2 = Polygon.m_vecVertexPos[1];
+	Vector3 P3 = Polygon.m_vecVertexPos[2];
+
+	XMVECTOR v1 = Pos.Convert();
+
+	XMVECTOR Dir = Vector3(0.f, -1.f, 0.f).Convert();
+	XMVECTOR _P1 = P1.Convert();
+	XMVECTOR _P2 = P2.Convert();
+	XMVECTOR _P3 = P3.Convert();
+
+	float Dist = 0.f;
+
+	bool Intersect = DirectX::TriangleTests::Intersects(v1, Dir, _P1, _P2, _P3, Dist);
+
+	if (Intersect)
+	{
+		float Dist1 = P1.Distance(Pos);
+		float Dist2 = P2.Distance(Pos);
+		float Dist3 = P3.Distance(Pos);
+
+		Vector3 LerpVec = Vector3(1 / Dist1, 1 / Dist2, 1 / Dist3);
+		LerpVec.Normalize();
+
+		// Weighted Average
+		Height = LerpVec.x * LerpVec.x * P1.y + LerpVec.y * LerpVec.y * P2.y + LerpVec.z * LerpVec.z * P3.y + 0.1f;
+
+		OutPolyIndex = CurrentPolyIndex;
+
+		return true;
+	}
+
+	else
+	{
+		bool Intersect = CheckAdjNavMeshPoly(Pos, CurrentPolyIndex, Height, OutPolyIndex);
+
+		return Intersect;
+	}
+
+	return false;
+}
+
+bool CNavigation3DManager::CheckAdjNavMeshPoly(const Vector3& Pos, int CurrentPolyIndex, float& Height, int& PolyIndex)
+{
+	std::vector<int> vecAdjPolyIndex;
+
+	if(CurrentPolyIndex != -1)
+		m_NavMeshComponent->GetAdjPolyIndex(CurrentPolyIndex, vecAdjPolyIndex);
+
+	size_t Count = vecAdjPolyIndex.size();
+
+	for (size_t i = 0; i < Count; ++i)
+	{
+		std::vector<Vector3> vecPos;
+		int AdjPolyIndex = vecAdjPolyIndex[i];
+		m_NavMeshComponent->GetNavPolgonVertexPos(AdjPolyIndex, vecPos);
+
+		Vector3 P1 = vecPos[0];
+		Vector3 P2 = vecPos[1];
+		Vector3 P3 = vecPos[2];
+
+		XMVECTOR _P1 = P1.Convert();
+		XMVECTOR _P2 = P2.Convert();
+		XMVECTOR _P3 = P3.Convert();
+		XMVECTOR Dir = Vector3(0.f, -1.f, 0.f).Convert();
+		XMVECTOR v1 = Pos.Convert();
+
+		float Dist = 0.f;
+
+		bool Intersect = DirectX::TriangleTests::Intersects(v1, Dir, _P1, _P2, _P3, Dist);
+
+		if (Intersect)
+		{
+			float Dist1 = P1.Distance(Pos);
+			float Dist2 = P2.Distance(Pos);
+			float Dist3 = P3.Distance(Pos);
+
+			Vector3 LerpVec = Vector3(1 / Dist1, 1 / Dist2, 1 / Dist3);
+			LerpVec.Normalize();
+
+			// Weighted Average
+			Height = LerpVec.x * LerpVec.x * P1.y + LerpVec.y * LerpVec.y * P2.y + LerpVec.z * LerpVec.z * P3.y + 0.1f;
+			PolyIndex = AdjPolyIndex;
+
+			return true;
+		}
+	}
+
+	return false;
+}
+
 bool CNavigation3DManager::CheckNavMeshPickingPoint(Vector3& OutPos)
 {
 	if (!m_NavMeshComponent)
@@ -350,8 +504,38 @@ bool CNavigation3DManager::CheckNavMeshPickingPoint(Vector3& OutPos)
 	return false;
 }
 
+bool CNavigation3DManager::CheckStraightPath(const Vector3& StartPos, const Vector3& EndPos, std::vector<Vector3>& vecPath)
+{
+	return m_NavMeshComponent->CheckStraightPath(StartPos, EndPos, vecPath);
+}
+
+NavigationCell* CNavigation3DManager::FindCell(int PolyIndex)
+{
+	return m_NavMeshComponent->FindCell(PolyIndex);
+}
+
+void CNavigation3DManager::FindAdjCell(int PolyIndex, std::vector<NavigationCell*>& vecCell)
+{
+	m_NavMeshComponent->FindAdjCell(PolyIndex, vecCell);
+}
+
 void CNavigation3DManager::Start()
 {
+	for (int i = 0; i < 4; ++i)
+	{
+		char	Name[256] = {};
+		sprintf_s(Name, "NavThread%d", i);
+		CNavigationThread3D* Thread = CThread::CreateThread<CNavigationThread3D>(Name);
+
+		Thread->SetNavigationManager(this);
+
+		if(m_NavMeshComponent)
+			Thread->SetNavMeshComponent(m_NavMeshComponent->Clone());
+
+		Thread->Start();
+
+		m_vecNavigationThread.push_back(Thread);
+	}
 }
 
 bool CNavigation3DManager::Init()
@@ -361,4 +545,11 @@ bool CNavigation3DManager::Init()
 
 void CNavigation3DManager::Update(float DeltaTime)
 {
+	if (!m_ResultQueue.empty())
+	{
+		NavResultData	Result = m_ResultQueue.front();
+		m_ResultQueue.pop();
+
+		Result.Callback(Result.vecPath);
+	}
 }

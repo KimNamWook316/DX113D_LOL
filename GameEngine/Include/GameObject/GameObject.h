@@ -3,7 +3,8 @@
 #include "../Component/SceneComponent.h"
 #include "../Component/ObjectComponent.h"
 #include "../Component/NavAgent.h"
-#include "../Scene/Navigation3DManager.h"
+#include "../Component/LandScape.h"
+//#include "../Scene/Navigation3DManager.h"
 
 class CGameObject :
 	public CRef
@@ -24,7 +25,6 @@ protected:
 	bool		m_IsEnemy;
 	bool		m_ExcludeSceneSave;
 	bool		m_NoDestroyFromSceneChange;
-	bool		m_IsHit;
 	Vector3		m_MoveDir;
 
 public:
@@ -36,16 +36,6 @@ public:
 	const Vector3& GetMoveDir()	const
 	{
 		return m_MoveDir;
-	}
-
-	bool IsHit()	const
-	{
-		return m_IsHit;
-	}
-
-	void SetHit(bool Hit)
-	{
-		m_IsHit = Hit;
 	}
 
 	bool IsEnemy()	const

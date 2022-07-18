@@ -171,6 +171,7 @@
     <ClCompile Include="Component\GameStateComponent.cpp" />
     <ClCompile Include="Component\KnightDataComponent.cpp" />
     <ClCompile Include="Component\MonsterDataComponent.cpp" />
+    <ClCompile Include="Component\MonsterPathFindCollider.cpp" />
     <ClCompile Include="Component\Node\AddFallingFloorCallbackNode.cpp" />
     <ClCompile Include="Component\Node\BossKnightContinueAttackNode.cpp" />
     <ClCompile Include="Component\Node\BossKnightFinalAttackNode.cpp" />
@@ -184,6 +185,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="Component\Node\CheckDetectRangeNode.cpp" />
     <ClCompile Include="Component\Node\CheckState.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
@@ -191,6 +193,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="Component\Node\DeathNode.cpp" />
+    <ClCompile Include="Component\Node\FindPathNode.cpp" />
     <ClCompile Include="Component\Node\HPCheck.cpp" />
     <ClCompile Include="Component\Node\IdleNode.cpp" />
     <ClCompile Include="Component\Node\BossKnightFinalAttackCheck.cpp" />
@@ -313,6 +316,7 @@
     <ClInclude Include="Component\GameStateComponent.h" />
     <ClInclude Include="Component\KnightDataComponent.h" />
     <ClInclude Include="Component\MonsterDataComponent.h" />
+    <ClInclude Include="Component\MonsterPathFindCollider.h" />
     <ClInclude Include="Component\Node\AddFallingFloorCallbackNode.h" />
     <ClInclude Include="Component\Node\BossKnightContinueAttackNode.h" />
     <ClInclude Include="Component\Node\BossKnightFinalAttackNode.h" />
@@ -326,6 +330,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClInclude>
+    <ClInclude Include="Component\Node\CheckDetectRangeNode.h" />
     <ClInclude Include="Component\Node\CheckState.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
@@ -333,6 +338,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="Component\Node\DeathNode.h" />
+    <ClInclude Include="Component\Node\FindPathNode.h" />
     <ClInclude Include="Component\Node\HPCheck.h" />
     <ClInclude Include="Component\Node\IdleNode.h" />
     <ClInclude Include="Component\Node\BossKnightFinalAttackCheck.h" />

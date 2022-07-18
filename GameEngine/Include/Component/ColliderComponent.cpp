@@ -344,11 +344,13 @@ bool CColliderComponent::CollisionRay(const Ray& Ray)
 
 void CColliderComponent::Destroy()
 {
+	m_Scene->GetCollision()->EraseCollider(this);
+
 	size_t Count = m_vecSectionIndex.size();
 
 	for (size_t i = 0; i < Count; ++i)
 	{
 		int Index = m_vecSectionIndex[i];
-		m_Scene->GetCollision()->DeleteCollider(this, Index);
+		m_Scene->GetCollision()->DeleteColliderInSection(this, Index);
 	}
 }

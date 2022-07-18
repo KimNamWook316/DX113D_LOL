@@ -19,16 +19,16 @@ CLockstone3TriggerBoxHitCheck::~CLockstone3TriggerBoxHitCheck()
 
 NodeResult CLockstone3TriggerBoxHitCheck::OnStart(float DeltaTime)
 {
-	if (m_Object->IsHit())
-	{
-		m_Owner->GetOwner()->SetTreeUpdate(false);
+	//if (m_Object->IsHit())
+	//{
+	//	m_Owner->GetOwner()->SetTreeUpdate(false);
 		return NodeResult::Node_True;
-	}
+	//}
 
-	else
-	{
+	//else
+	//{
 		return NodeResult::Node_False;
-	}
+	//}
 }
 
 NodeResult CLockstone3TriggerBoxHitCheck::OnUpdate(float DeltaTime)

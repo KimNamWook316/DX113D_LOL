@@ -1,6 +1,8 @@
 #pragma once
 
 #include "Component/ObjectComponent.h"
+#include "Component/NavAgent.h"
+#include "GameObject/GameObject.h"
 
 class CObjectDataComponent :
     public CObjectComponent
@@ -14,8 +16,19 @@ protected:
 
 protected:
 	ObjectData m_Data;
+	bool m_IsHit;
 
 public:
+	void SetIsHit(bool Hit)
+	{
+		m_IsHit = Hit;
+	}
+
+	bool GetIsHit()	const
+	{
+		return m_IsHit;
+	}
+
 	void SetHP(int HP)
 	{
 		m_Data.HP = HP;
@@ -29,6 +42,13 @@ public:
 	void SetMoveSpeed(float Speed)
 	{
 		m_Data.MoveSpeed = Speed;
+
+		CNavAgent* Agent = m_Object->FindObjectComponentFromType<CNavAgent>();
+
+		if (Agent)
+		{
+			Agent->SetMoveSpeed(m_Data.MoveSpeed);
+		}
 	}
 
 	void SetAttack(int Attack)

@@ -241,6 +241,7 @@
     <ClCompile Include="Scene\Navigation3DManager.cpp" />
     <ClCompile Include="Scene\NavigationManager.cpp" />
     <ClCompile Include="Scene\NavigationThread.cpp" />
+    <ClCompile Include="Scene\NavigationThread3D.cpp" />
     <ClCompile Include="Scene\Scene.cpp" />
     <ClCompile Include="Scene\SceneCollision.cpp" />
     <ClCompile Include="Scene\SceneManager.cpp" />
@@ -493,6 +494,7 @@
     <ClInclude Include="Scene\Navigation3DManager.h" />
     <ClInclude Include="Scene\NavigationManager.h" />
     <ClInclude Include="Scene\NavigationThread.h" />
+    <ClInclude Include="Scene\NavigationThread3D.h" />
     <ClInclude Include="Scene\Scene.h" />
     <ClInclude Include="Scene\SceneCollision.h" />
     <ClInclude Include="Scene\SceneManager.h" />

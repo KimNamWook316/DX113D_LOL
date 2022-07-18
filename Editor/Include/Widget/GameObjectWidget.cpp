@@ -28,6 +28,7 @@
 #include "../Component/PlayerHookComponent.h"
 #include "../Component/EyeLaserComponent.h"
 #include "../Component/PlayerNormalAttackCheckCollider.h"
+#include "../Component/MonsterPathFindCollider.h"
 #include "../Widget/StaticMeshComponentWidget.h"
 #include "../Widget/LightComponentWidget.h"
 #include "../Widget/ObjectComponentWidget.h"
@@ -197,7 +198,7 @@ void CGameObjectWidget::CreateSceneComponentWidget(CSceneComponent* Com)
 	{
 		Widget = AddWidget<CColliderComponentWidget>("ColliderComponentWidget");
 	}
-	else if (TypeID == typeid(CColliderSphere).hash_code() ||  TypeID == typeid(CPlayerNormalAttackCheckCollider).hash_code())
+	else if (TypeID == typeid(CColliderSphere).hash_code() ||  TypeID == typeid(CPlayerNormalAttackCheckCollider).hash_code() || TypeID == typeid(CMonsterPathFindCollider).hash_code())
 	{
 		Widget = AddWidget<CColliderSphereWidget>("ColliderSphereWidget");
 	}

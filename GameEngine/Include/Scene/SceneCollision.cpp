@@ -1,8 +1,13 @@
 
 #include "SceneCollision.h"
 #include "../Engine.h"
+#include "SceneManager.h"
+#include "Navigation3DManager.h"
+#include "../Resource/Mesh/NavMesh.h"
+#include "../Component/NavMeshComponent.h"
 #include "CollisionSection.h"
 #include "../Component/ColliderComponent.h"
+#include "../Component/ColliderBox3D.h"
 #include "../Input.h"
 #include "Viewport.h"
 #include "Scene.h"
@@ -429,9 +434,24 @@ bool CSceneCollision::IsExistColliderHasProfile(CollisionProfile* Profile)
 	return false;
 }
 
-void CSceneCollision::DeleteCollider(CColliderComponent* Collider, int SectionIndex)
+void CSceneCollision::DeleteColliderInSection(CColliderComponent* Collider, int SectionIndex)
 {
 	m_Section->vecSection[SectionIndex]->DeleteCollider(Collider);
+}
+
+void CSceneCollision::EraseCollider(CColliderComponent* Collider)
+{
+	auto iter = m_ColliderList.begin();
+	auto iterEnd = m_ColliderList.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		if ((*iter) == Collider)
+		{
+			m_ColliderList.erase(iter);
+			return;
+		}
+	}
 }
 
 void CSceneCollision::ClearAll()
@@ -527,11 +547,18 @@ void CSceneCollision::CheckColliderSection3D()
 		if (!Collider->IsEnable())
 			continue;
 
+		// Box3D타입(혹은 그걸 상속받은) Collider는 8개의 꼭지점을 매 프레임마다 월드 변환을 거쳐서 Min/Max를 판단하는것은 프레임을 너무 떨어트려서 필요할때마다 강제로 해준다
+		if (Collider->CheckType<CColliderBox3D>())
+			((CColliderBox3D*)Collider)->UpdateMinMax();
+
 		Vector3	Min = Collider->GetMin();
 		Vector3	Max = Collider->GetMax();
 
 		Min -= m_Section->Min;
 		Max -= m_Section->Min;
+
+		Min -= m_NavMeshMin;
+		Max -= m_NavMeshMin;
 
 		int	IndexMinX, IndexMinZ;
 		int	IndexMaxX, IndexMaxZ;

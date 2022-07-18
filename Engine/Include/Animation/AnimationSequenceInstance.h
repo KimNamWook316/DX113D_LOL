@@ -64,6 +64,11 @@ public:
 		return m_AnimEnd;
 	}
 
+	bool IsChangeAnimLoop()	const
+	{
+		return m_ChangeAnimation->IsLoop();
+	}
+
 	void SetInstancingBoneBuffer(class CStructuredBuffer* Buffer)
 	{
 		m_InstancingBoneBuffer = Buffer;

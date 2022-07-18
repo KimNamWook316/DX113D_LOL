@@ -1,5 +1,9 @@
 #pragma once
+
 #include "ObjectComponent.h"
+//#include "../Scene/Scene.h"
+//#include "../Scene/SceneManager.h"
+
 class CNavAgent :
     public CObjectComponent
 {
@@ -15,15 +19,33 @@ private:
 	std::list<Vector3>		m_PathList;
 	float					m_MoveSpeed;
 	bool					m_ApplyNavMesh;
+	bool					m_PathFindStart;
+	Vector3					m_CurrentFaceDir;
 
 public:
+	const Vector3& GetCurrentFaceDir()	const
+	{
+		return m_CurrentFaceDir;
+	}
+
 	void SetUpdateComponent(class CSceneComponent* UpdateComponent);
 	bool Move(const Vector3& EndPos);
-	// 길찾기를 하지 않고, NavMesh위에서 움직이고, NavMesh안에서만 움직이는 모든 오브젝트들은 이 함수들을 이용해서 움직여야 한다
+
 	bool MoveOnNavMesh(const Vector3 EndPos);
+
 	void SetMoveSpeed(float Speed)
 	{
 		m_MoveSpeed = Speed;
+	}
+
+	void SetPathFindStart(bool Start)
+	{
+		m_PathFindStart = Start;
+	}
+
+	bool GetPathFindStart()	const
+	{
+		return m_PathFindStart;
 	}
 
 	void SetApplyNavMesh(bool Apply)
@@ -36,6 +58,13 @@ public:
 		return m_ApplyNavMesh;
 	}
 
+	const Vector3& GetTargetPos() const;
+
+	std::list<Vector3>& GetPathList()
+	{
+		return m_PathList;
+	}
+
 public:
 	void AddTargetPos(const Vector3& TargetPos)
 	{
@@ -45,6 +74,11 @@ public:
 	void ClearPathList()
 	{
 		m_PathList.clear();
+	}
+
+	bool IsEmptyPathList()	const
+	{
+		return m_PathList.empty();
 	}
 
 public:
@@ -64,5 +98,14 @@ public:
 
 private:
 	void PathResult(const std::list<Vector3>& PathList);
+
+
+public:
+	void FillPathList(const std::list<Vector3>& PathList);
+	void AddPath(const Vector3& EndPos);
+	bool FindPath(class CSceneComponent* OwnerComponent, const Vector3& End);
+	bool FindPathExcept(class CSceneComponent* OwnerComponent, const Vector3& End, std::vector<Vector3>& vecExceptPos);
+	bool FindPathExcept(class CSceneComponent* OwnerComponent, const Vector3& End, std::vector<NavigationCell*>& vecExceptCell);
+	bool CheckStraightPath(const Vector3& StartPos, const Vector3& EndPos, std::vector<Vector3>& vecPath);
 };
 

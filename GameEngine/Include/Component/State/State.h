@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../../GameInfo.h"
+#include "../../GameObject/GameObject.h"
 
 class CState
 {
@@ -39,15 +40,9 @@ public:
 		m_Name = Name;
 	}
 
-	void SetOwnerObject(CGameObject* Object)
-	{
-		m_OwnerObject = Object;
-	}
+	void SetOwnerObject(CGameObject* Object);
 
-	CGameObject* GetOwnerObject()	const
-	{
-		return m_OwnerObject;
-	}
+	CGameObject* GetOwnerObject()	const;
 
 	void SetSourceObject(CGameObject* Src)
 	{

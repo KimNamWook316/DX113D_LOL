@@ -25,7 +25,7 @@ NodeResult CIdleNode::OnStart(float DeltaTime)
 
 	std::string ObjectName = m_Object->GetName();
 
-	std::string SequenceName = "_Idle";
+	std::string SequenceName = "Idle";
 
 	SequenceName = ObjectName + SequenceName;
 

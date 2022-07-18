@@ -6,6 +6,7 @@
 #include "../GameObject/SkyObject.h"
 #include "../Input.h"
 #include "../Collision/Collision.h"
+#include "Navigation3DManager.h"
 #include "../Render/RenderManager.h"
 #include "../EngineUtil.h"
 
@@ -60,6 +61,11 @@ CScene::~CScene()
 	SAFE_DELETE(m_Resource);
 	m_LightManager->Destroy();
 	SAFE_DELETE(m_LightManager);
+}
+
+CNavigation3DManager* CScene::GetNavigation3DManager() const
+{
+	return m_Nav3DManager;
 }
 
 void CScene::Start()

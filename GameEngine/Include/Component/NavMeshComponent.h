@@ -10,6 +10,7 @@ class CNavMeshComponent :
 {
 	friend class CGameObject;
 	friend class CCameraManager;
+	friend class CNavigationThread3D;
 
 protected:
 	CNavMeshComponent();
@@ -30,6 +31,11 @@ protected:
 	//std::vector<NavMeshPolygon>		m_vecNavMeshPolygon;
 	//Vector3 m_Min;
 	//Vector3 m_Max;
+
+	std::list<NavigationCell*> m_UseCellList;
+	std::list<NavigationCell*> m_OpenList;
+	std::list<NavigationCell*> m_CloseList;
+	std::unordered_map<int, NavigationCell*> m_mapCell;
 
 public:
 	void SetPlayerSpawnPolyIndex(int Index)
@@ -95,5 +101,24 @@ public:
 	virtual bool SaveOnly(FILE* File) override;
 	virtual bool LoadOnly(FILE* File) override;
 
+
+	void FindPath(const Vector3& Start, const Vector3& End, std::list<Vector3>& vecPath);
+	NavigationCell* FindCell(const Vector3& Pos);
+
+	void AddCellCloseList(NavigationCell* Cell, NavigationCell* End);
+	// 첫번째 인자로 들어온 Cell의 인접 Cell들을 열린 목록에 넣어준다
+	void AddAdjCellOpenList(NavigationCell* Cell, NavigationCell* End, int ParentIndex);
+	void DelteCellOpenList(NavigationCell* Cell);
+	void MakePathList(std::list<Vector3>& PathList);
+	bool CheckStraightPath(const Vector3& StartPos, const Vector3& EndPos, std::vector<Vector3>& vecPath);
+	void ResetAllCell();
+	
+	NavigationCell* FindCell(int PolyIndex);
+	void FindAdjCell(int PolyIndex, std::vector<NavigationCell*>& vecCell);
+
+	static bool SortByTotal(NavigationCell* Src, NavigationCell* Dest)
+	{
+		return Src->Total < Dest->Total;
+	}
 };
 

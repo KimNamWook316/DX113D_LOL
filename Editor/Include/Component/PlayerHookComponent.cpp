@@ -130,7 +130,7 @@ HookResult CPlayerHookComponent::ShootHook(const Vector3& ShootDir, float DeltaT
 
 			if (Comp)
 			{
-				Comp->GetAnimationInstance()->ChangeAnimation("Player_Idle");
+				Comp->GetAnimationInstance()->ChangeAnimation("PlayerIdle");
 			}
 			
 			m_InFlying = false;
@@ -242,7 +242,7 @@ void CPlayerHookComponent::OnHookCollision(const CollisionResult& Result)
 
 	if (Comp)
 	{
-		Comp->GetAnimationInstance()->ChangeAnimation("Player_HookFly");
+		Comp->GetAnimationInstance()->ChangeAnimation("PlayerHookFly");
 	}
 
 	m_Object->AddWorldPos(0.f, 3.f, 0.f);

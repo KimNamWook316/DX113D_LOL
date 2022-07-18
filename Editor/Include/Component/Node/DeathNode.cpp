@@ -21,8 +21,11 @@ CDeathNode::~CDeathNode()
 NodeResult CDeathNode::OnStart(float DeltaTime)
 {
 	m_AnimationMeshComp = m_Owner->GetAnimationMeshComp();
+	std::string ObjectName = m_Object->GetName();
 
 	std::string SequenceName = "Death";
+
+	SequenceName = ObjectName + SequenceName;
 
 	if (m_AnimationMeshComp)
 	{

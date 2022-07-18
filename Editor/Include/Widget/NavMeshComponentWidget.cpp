@@ -7,6 +7,7 @@
 #include "PathManager.h"
 #include "Scene/Scene.h"
 #include "Scene/SceneManager.h"
+#include "Scene/Navigation3DManager.h"
 #include "IMGUIText.h"
 #include "IMGUITextInput.h"
 #include "IMGUITree.h"

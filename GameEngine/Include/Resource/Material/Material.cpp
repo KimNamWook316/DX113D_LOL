@@ -1217,7 +1217,7 @@ bool CMaterial::SaveMaterial(FILE* File)
 
 	int	Length = (int)ShaderName.length();
 	SaveStruct.ShaderNameLength = Length;
-	// fwrite(&Length, sizeof(int), 1, File);
+	//fwrite(&Length, sizeof(int), 1, File);
 
 	// fwrite(ShaderName.c_str(), sizeof(char), Length, File);
 	strcpy_s(SaveStruct.ShaderName, ShaderName.c_str());

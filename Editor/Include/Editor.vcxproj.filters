@@ -101,12 +101,6 @@
       <UniqueIdentifier>{564b3231-aa36-42c0-9c68-d1a40799fde2}</UniqueIdentifier>
     </Filter>
     <Filter Include="06. GameComponent\01. SceneComponent">
-      <UniqueIdentifier>{cdfb231b-88b5-4d2d-9f07-db8deb5dcda4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="06. GameComponent\02. ObjectComponent">
-      <UniqueIdentifier>{9249fe04-eb03-4c53-b7c3-3286b4b600ec}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="06. GameComponent\01. SceneComponent">
       <UniqueIdentifier>{1f7b7ab1-1a6d-40b2-8891-2a6f83bc7194}</UniqueIdentifier>
     </Filter>
     <Filter Include="06. GameComponent\02. ObjectComponent">
@@ -360,6 +354,9 @@
     <ClCompile Include="Window\SocketWindow.cpp">
       <Filter>02. Editor\01. Window\1. Resource</Filter>
     </ClCompile>
+    <ClCompile Include="Window\AnimationDisplayWindow.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
     <ClCompile Include="Widget\ToonShaderWidget.cpp">
       <Filter>02. Editor\02. Widget\01. Inspector\03. Shader</Filter>
     </ClCompile>
@@ -396,44 +393,44 @@
     <ClCompile Include="Component\PlayerHookComponent.cpp">
       <Filter>06. GameComponent\01. SceneComponent</Filter>
     </ClCompile>
-    <ClCompile Include="Widget\PaperBurnWidget.cpp">
-      <Filter>02. Editor\02. Widget\01. Inspector\02. ObjectComponent</Filter>
+    <ClCompile Include="Component\Node\FindPathNode.cpp">
+      <Filter>07. BehaviorTree\02. ActionNode</Filter>
     </ClCompile>
-    <ClCompile Include="Component\GameStateComponent.cpp">
-      <Filter>06. GameComponent\02. ObjectComponent</Filter>
+    <ClCompile Include="Component\MonsterPathFindCollider.cpp">
+      <Filter>06. GameComponent\01. SceneComponent</Filter>
     </ClCompile>
-    <ClCompile Include="Component\PlayerDataComponent.cpp">
-      <Filter>06. GameComponent\02. ObjectComponent</Filter>
+    <ClCompile Include="Component\Node\BossKnightFinalAttackNode.cpp">
+      <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="Widget\WaterComponentWidget.cpp">
-      <Filter>02. Editor\02. Widget\01. Inspector\01. SceneComponent</Filter>
+    <ClCompile Include="Component\Node\BossKnightMeleeAttackNode.cpp">
+      <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="Window\AnimationDisplayWindow.cpp">
-      <Filter>02. Editor\01. Window\2. Animation</Filter>
+    <ClCompile Include="Component\Node\KnightFinalAttackCheck.cpp">
+      <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="Component\Node\BossKnightJumpAttackRangeCheck.cpp">
+    <ClCompile Include="Component\Node\KnightHopAttackRangeCheck.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\Node\KnightFinalAttackCheck.cpp">
       <Filter>07. BehaviorTree\01. ConditionNode\00. Specific\01. BossKnight</Filter>
     </ClCompile>
-    <ClCompile Include="Component\Node\BossKnightFinalAttackCheck.cpp">
-      <Filter>07. BehaviorTree\01. ConditionNode\00. Specific\01. BossKnight</Filter>
+    <ClCompile Include="Component\Node\KnightHopAttackNode.cpp">
+      <Filter>07. BehaviorTree\02. ActionNode\00. Specific\01. BossKnight</Filter>
     </ClCompile>
-    <ClCompile Include="Component\Node\BossKnightJumpAttackNode.cpp">
+    <ClCompile Include="Component\Node\BossKnightMeleeAttackNode.cpp">
       <Filter>07. BehaviorTree\02. ActionNode\00. Specific\01. BossKnight</Filter>
     </ClCompile>
     <ClCompile Include="Component\Node\BossKnightFinalAttackNode.cpp">
       <Filter>07. BehaviorTree\02. ActionNode\00. Specific\01. BossKnight</Filter>
     </ClCompile>
-    <ClCompile Include="Component\Node\MeleeRangeCheckNode.cpp">
-      <Filter>07. BehaviorTree\01. ConditionNode\01. Public</Filter>
+    <ClCompile Include="Component\Node\CheckDetectRangeNode.cpp">
+      <Filter>07. BehaviorTree\01. ConditionNode</Filter>
     </ClCompile>
     <ClCompile Include="Component\ObjectDataComponent.cpp">
       <Filter>06. GameComponent\02. ObjectComponent\01. ObjectDataComponent</Filter>
     </ClCompile>
-    <ClCompile Include="Component\KnightDataComponent.cpp">
-      <Filter>06. GameComponent\02. ObjectComponent\01. ObjectDataComponent\01. Monster\01. KnightData</Filter>
-    </ClCompile>
     <ClCompile Include="Component\MonsterDataComponent.cpp">
-      <Filter>06. GameComponent\02. ObjectComponent\01. ObjectDataComponent\01. Monster</Filter>
+      <Filter>06. GameComponent\02. ObjectComponent\01. ObjectDataComponent\01. Monster\01. KnightData</Filter>
     </ClCompile>
     <ClCompile Include="Component\Node\PostAttackDelayCheck.cpp">
       <Filter>07. BehaviorTree\01. ConditionNode\01. Public</Filter>
@@ -668,6 +665,9 @@
     <ClInclude Include="Window\SocketWindow.h">
       <Filter>02. Editor\01. Window\1. Resource</Filter>
     </ClInclude>
+    <ClInclude Include="Window\AnimationDisplayWindow.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
     <ClInclude Include="Widget\ToonShaderWidget.h">
       <Filter>02. Editor\02. Widget\01. Inspector\03. Shader</Filter>
     </ClInclude>
@@ -682,18 +682,6 @@
     </ClInclude>
     <ClInclude Include="Window\CollisionProfileEditor.h">
       <Filter>02. Editor\01. Window\5. CollisionProfile</Filter>
-    </ClInclude>
-    <ClInclude Include="Widget\PaperBurnWidget.h">
-      <Filter>02. Editor\02. Widget\01. Inspector\02. ObjectComponent</Filter>
-    </ClInclude>
-    <ClInclude Include="Component\PlayerDataComponent.h">
-      <Filter>06. GameComponent\02. ObjectComponent</Filter>
-    </ClInclude>
-    <ClInclude Include="Component\GameStateComponent.h">
-      <Filter>06. GameComponent\02. ObjectComponent</Filter>
-    </ClInclude>
-    <ClInclude Include="Widget\WaterComponentWidget.h">
-      <Filter>02. Editor\02. Widget\01. Inspector\01. SceneComponent</Filter>
     </ClInclude>
     <ClInclude Include="Component\Node\Lockstone3TriggerBoxHitCheck.h">
       <Filter>07. BehaviorTree\01. ConditionNode</Filter>
@@ -719,32 +707,38 @@
     <ClInclude Include="Component\PlayerHookComponent.h">
       <Filter>06. GameComponent\01. SceneComponent</Filter>
     </ClInclude>
-    <ClInclude Include="Window\AnimationDisplayWindow.h">
-      <Filter>02. Editor\01. Window\2. Animation</Filter>
+    <ClInclude Include="Component\Node\FindPathNode.h">
+      <Filter>07. BehaviorTree\02. ActionNode</Filter>
     </ClInclude>
-    <ClInclude Include="Component\Node\BossKnightJumpAttackRangeCheck.h">
-      <Filter>07. BehaviorTree\01. ConditionNode\00. Specific\01. BossKnight</Filter>
-    </ClInclude>
-    <ClInclude Include="Component\Node\BossKnightFinalAttackCheck.h">
-      <Filter>07. BehaviorTree\01. ConditionNode\00. Specific\01. BossKnight</Filter>
-    </ClInclude>
-    <ClInclude Include="Component\Node\BossKnightJumpAttackNode.h">
-      <Filter>07. BehaviorTree\02. ActionNode\00. Specific\01. BossKnight</Filter>
+    <ClInclude Include="Component\MonsterPathFindCollider.h">
+      <Filter>06. GameComponent\01. SceneComponent</Filter>
     </ClInclude>
     <ClInclude Include="Component\Node\BossKnightFinalAttackNode.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\KnightHopAttackRangeCheck.h">
+      <Filter>07. BehaviorTree\01. ConditionNode\00. Specific\01. BossKnight</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\KnightFinalAttackCheck.h">
+      <Filter>07. BehaviorTree\01. ConditionNode\00. Specific\01. BossKnight</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\KnightHopAttackNode.h">
       <Filter>07. BehaviorTree\02. ActionNode\00. Specific\01. BossKnight</Filter>
     </ClInclude>
-    <ClInclude Include="Component\Node\MeleeRangeCheckNode.h">
-      <Filter>07. BehaviorTree\01. ConditionNode\01. Public</Filter>
+    <ClInclude Include="Component\Node\BossKnightMeleeAttackNode.h">
+      <Filter>07. BehaviorTree\02. ActionNode\00. Specific\01. BossKnight</Filter>
     </ClInclude>
-    <ClInclude Include="Component\ObjectDataComponent.h">
-      <Filter>06. GameComponent\02. ObjectComponent\01. ObjectDataComponent</Filter>
+    <ClInclude Include="Widget\WaterComponentWidget.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\CheckDetectRangeNode.h">
+      <Filter>07. BehaviorTree\01. ConditionNode</Filter>
     </ClInclude>
     <ClInclude Include="Component\KnightDataComponent.h">
-      <Filter>06. GameComponent\02. ObjectComponent\01. ObjectDataComponent\01. Monster\01. KnightData</Filter>
+      <Filter>06. GameComponent\02. ObjectComponent\01. ObjectDataComponent</Filter>
     </ClInclude>
     <ClInclude Include="Component\MonsterDataComponent.h">
-      <Filter>06. GameComponent\02. ObjectComponent\01. ObjectDataComponent\01. Monster</Filter>
+      <Filter>06. GameComponent\02. ObjectComponent\01. ObjectDataComponent\01. Monster\01. KnightData</Filter>
     </ClInclude>
     <ClInclude Include="Component\Node\PostAttackDelayCheck.h">
       <Filter>07. BehaviorTree\01. ConditionNode\01. Public</Filter>

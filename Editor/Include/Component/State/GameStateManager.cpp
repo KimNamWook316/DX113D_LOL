@@ -29,56 +29,56 @@ void CGameStateManager::Init()
 	AddState("Damage", DamageState);
 }
 
-void CGameStateManager::CheckAirborneTarget(const NotifyParameter& Param)
-{
-	// Param.MyPos를 기준으로 검사할 Collision Section을 찾고, 그 Section내에서 Param.Range내에 있는 오브젝트의 StateList에 Airborne State를 넣어준다
-	CColliderBox3D* ColliderBox = Param.SrcObject->FindComponentFromType<CColliderBox3D>();
-
-	CColliderSphere* ColliderSphere = nullptr;
-
-	bool ColliderBoxExist = false;
-	bool ColliderSphereExist = false;
-
-	if (ColliderBox)
-		ColliderBoxExist = true;
-
-	else
-	{
-		ColliderSphere = Param.SrcObject->FindComponentFromType<CColliderSphere>();
-		if (ColliderSphere)
-			ColliderSphereExist = true;
-	}
-
-	// 2가지의 충돌체 모두 갖고 있지 않는 object면 에어본 처리 X
-	if (!ColliderBoxExist && !ColliderSphereExist)
-		return;
-
-	CColliderComponent* Collider = nullptr;
-	if (ColliderBoxExist)
-		Collider = ColliderBox;
-	else
-		Collider = ColliderSphere;
-
-	Vector3 ColliderPos = Collider->GetWorldPos();
-
-	CSceneCollision* Collision = CSceneManager::GetInst()->GetScene()->GetCollision();
-
-	int MinIndexX = Collision->GetSectionIndexX(Vector3(ColliderPos.x - Param.Range, ColliderPos.y, ColliderPos.z));
-	int MinIndexZ = Collision->GetSectionIndexZ(Vector3(ColliderPos.x, ColliderPos.y, ColliderPos.z - Param.Range));
-	int MaxIndexX = Collision->GetSectionIndexX(Vector3(ColliderPos.x + Param.Range, ColliderPos.y, ColliderPos.z));
-	int MaxIndexZ = Collision->GetSectionIndexZ(Vector3(ColliderPos.x, ColliderPos.y, ColliderPos.z + Param.Range));
-
-	int SectionCountX = Collision->GetSectionCountX();
-
-	std::vector<int> vecTargetSection;
-
-	for (size_t i = MinIndexZ; i <= MaxIndexZ; ++i)
-	{
-		for (size_t j = MinIndexX; j <= MaxIndexZ; ++j)
-		{
-			vecTargetSection.push_back((int)(i * SectionCountX + j));
-		}
-	}
+//void CGameStateManager::CheckAirborneTarget(const NotifyParameter& Param)
+//{
+//	// Param.MyPos를 기준으로 검사할 Collision Section을 찾고, 그 Section내에서 Param.Range내에 있는 오브젝트의 StateList에 Airborne State를 넣어준다
+//	CColliderBox3D* ColliderBox = Param.SrcObject->FindComponentFromType<CColliderBox3D>();
+//
+//	CColliderSphere* ColliderSphere = nullptr;
+//
+//	bool ColliderBoxExist = false;
+//	bool ColliderSphereExist = false;
+//
+//	if (ColliderBox)
+//		ColliderBoxExist = true;
+//
+//	else
+//	{
+//		ColliderSphere = Param.SrcObject->FindComponentFromType<CColliderSphere>();
+//		if (ColliderSphere)
+//			ColliderSphereExist = true;
+//	}
+//
+//	// 2가지의 충돌체 모두 갖고 있지 않는 object면 에어본 처리 X
+//	if (!ColliderBoxExist && !ColliderSphereExist)
+//		return;
+//
+//	CColliderComponent* Collider = nullptr;
+//	if (ColliderBoxExist)
+//		Collider = ColliderBox;
+//	else
+//		Collider = ColliderSphere;
+//
+//	Vector3 ColliderPos = Collider->GetWorldPos();
+//
+//	CSceneCollision* Collision = CSceneManager::GetInst()->GetScene()->GetCollision();
+//
+//	int MinIndexX = Collision->GetSectionIndexX(Vector3(ColliderPos.x - Param.Range, ColliderPos.y, ColliderPos.z));
+//	int MinIndexZ = Collision->GetSectionIndexZ(Vector3(ColliderPos.x, ColliderPos.y, ColliderPos.z - Param.Range));
+//	int MaxIndexX = Collision->GetSectionIndexX(Vector3(ColliderPos.x + Param.Range, ColliderPos.y, ColliderPos.z));
+//	int MaxIndexZ = Collision->GetSectionIndexZ(Vector3(ColliderPos.x, ColliderPos.y, ColliderPos.z + Param.Range));
+//
+//	int SectionCountX = Collision->GetSectionCountX();
+//
+//	std::vector<int> vecTargetSection;
+//
+//	for (size_t i = MinIndexZ; i <= MaxIndexZ; ++i)
+//	{
+//		for (size_t j = MinIndexX; j <= MaxIndexZ; ++j)
+//		{
+//			vecTargetSection.push_back((int)(i * SectionCountX + j));
+//		}
+//	}
 
 	//size_t Count = vecTargetSection.size();
 
@@ -146,30 +146,29 @@ void CGameStateManager::CheckAirborneTarget(const NotifyParameter& Param)
 	//}
 
 
-
-}
-
-void CGameStateManager::GiveDamage(const NotifyParameter& Param)
-{
-	CGameObject* TargetObject = Param.TargetObject;
-
-	CGameStateComponent* StateComp = TargetObject->FindComponentFromType<CGameStateComponent>();
-
-	if (StateComp)
-	{
-		CState* DamageState = StateComp->AddState("Damage", Param.SrcObject);
-		((CDamageState*)DamageState)->SetDamage(Param.Amount); // Amount는 GameDataManager::SetMonsterNotify에서 미니언 공격력 읽어와서 설정해줌
-	}
-}
-
-void CGameStateManager::FindRestraintTarget(const NotifyParameter& Param)
-{
-}
-
-void CGameStateManager::FindStunTarget(const NotifyParameter& Param)
-{
-}
-
-void CGameStateManager::FindKnockBackTarget(const NotifyParameter& Param)
-{
-}
+//}
+//
+//void CGameStateManager::GiveDamage(const NotifyParameter& Param)
+//{
+//	CGameObject* TargetObject = Param.TargetObject;
+//
+//	CGameStateComponent* StateComp = TargetObject->FindComponentFromType<CGameStateComponent>();
+//
+//	if (StateComp)
+//	{
+//		CState* DamageState = StateComp->AddState("Damage", Param.SrcObject);
+//		((CDamageState*)DamageState)->SetDamage(Param.Amount); // Amount는 GameDataManager::SetMonsterNotify에서 미니언 공격력 읽어와서 설정해줌
+//	}
+//}
+//
+//void CGameStateManager::FindRestraintTarget(const NotifyParameter& Param)
+//{
+//}
+//
+//void CGameStateManager::FindStunTarget(const NotifyParameter& Param)
+//{
+//}
+//
+//void CGameStateManager::FindKnockBackTarget(const NotifyParameter& Param)
+//{
+//}

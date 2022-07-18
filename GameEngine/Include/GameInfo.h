@@ -23,6 +23,7 @@
 #include <utility>
 #include <optional>
 
+
 #pragma comment(lib, "d3d11.lib")
 #pragma comment(lib, "dxguid.lib")
 #pragma comment(lib, "d3dcompiler.lib")
@@ -736,13 +737,13 @@ struct InstancingCBuffer
  //	float NormalBias;
  //};
 
-struct NotifyParameter
-{
-	class CGameObject* SrcObject;	// 애니메이션 동작하는 본인
-	class CGameObject* TargetObject; // Notify에서 대상이 되는 Object(ex. StateManager::GiveDamage에서 데미지를 줘야 할 대상)
-	float Range;
-	int Amount;
-};
+//struct NotifyParameter
+//{
+//	CGameObject* SrcObject;	// 애니메이션 동작하는 본인
+//	CGameObject* TargetObject; // Notify에서 대상이 되는 Object(ex. StateManager::GiveDamage에서 데미지를 줘야 할 대상)
+//	float Range;
+//	int Amount;
+//};
 
 struct ObjectData
 {
@@ -879,4 +880,42 @@ struct WaterCBuffer
 	float FoamDepthThreshold;
 	float Attn1;
 	float Attn2;
+};
+
+struct NavigationCell
+{
+	NAVIMESH_CELL_LIST_TYPE	Type;
+	NavMeshPolygon Polygon;
+	Vector3		Center;
+	int			ParentIdx;
+	float		G;
+	float		H;
+	float		Total;
+	bool		Enable;
+
+	void Clear()
+	{
+		Type = NCLT_NONE;
+		ParentIdx = -1;
+		G = -1.f;
+		H = -1.f;
+		Total = -1.f;
+	}
+
+	NavigationCell()
+	{
+		Type = NCLT_NONE;
+		ParentIdx = -1;
+		G = 0.f;
+		H = 0.f;
+		Total = 0.f;
+		Enable = true;
+	}
+
+	NavigationCell operator + (const NavigationCell& cell)
+	{
+		NavigationCell	_cell;
+
+		return _cell;
+	}
 };

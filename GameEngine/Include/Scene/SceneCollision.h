@@ -54,8 +54,20 @@ private:
 	std::list<CSharedPtr<class CColliderComponent>>	m_ColliderList;
 	CSharedPtr<class CColliderComponent> m_MouseCollision;
 	bool	m_WidgetClick;
+	Vector3 m_NavMeshMin;
+	Vector3 m_NavMeshMax;
 
 public:
+	void SetNavMeshMin(const Vector3& Min)
+	{
+		m_NavMeshMin = Min;
+	}
+
+	void SetNavMeshMax(const Vector3& Max)
+	{
+		m_NavMeshMax = Max;
+	}
+
 	CollisionSectionInfo* GetCollisionSectionInfo()	const
 	{
 		return m_Section;
@@ -101,7 +113,8 @@ public:
 	const std::vector<CColliderComponent*>& GetSectionCollider(int Index);
 	// 인자로 주어진 Collision Profile을 가진 Collider가 하나라도 있는지
 	bool IsExistColliderHasProfile(CollisionProfile* Profile);
-	void DeleteCollider(class CColliderComponent* Collider, int SectionIndex);
+	void DeleteColliderInSection(class CColliderComponent* Collider, int SectionIndex);
+	void EraseCollider(class CColliderComponent* Collider);
 	void ClearAll();
 
 private:

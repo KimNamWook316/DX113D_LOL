@@ -50,7 +50,7 @@ public:
 			}
 		}
 
-		m_vecNavigationThread[WorkIndex]->AddWork<T>(Obj, Func, OwnerComponent, End);
+		m_vecNavigationThread[WorkIndex]->AddWork<T, ComponentType>(Obj, Func, OwnerComponent, End);
 
 		return true;
 	}

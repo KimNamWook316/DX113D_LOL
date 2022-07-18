@@ -33,7 +33,8 @@ NodeResult CMoveNode::OnStart(float DeltaTime)
 
 	std::string ObjectName = m_Object->GetName();
 
-	std::string SequenceName = ObjectName + "_Run";
+	std::string SequenceName = ObjectName + "Run";
+	//std::string SequenceName = "Run";
 
 	if (m_AnimationMeshComp)
 	{
@@ -99,7 +100,6 @@ NodeResult CMoveNode::OnUpdate(float DeltaTime)
 
 	m_Object->SetMoveDir(MoveDir);
 	
-	/// 벡터 외적을 할땐 오른손 좌표계 기준이라서 z에 -1을 곱해준다
 	Vector3 CrossVector = Vector3(FrontVector.x, FrontVector.y, -FrontVector.z).Cross(Vector3(MoveDir.x, MoveDir.y, -MoveDir.z));
 
 	bool Over180 = false;
@@ -126,7 +126,6 @@ NodeResult CMoveNode::OnUpdate(float DeltaTime)
 			m_Object->AddWorldRotationY(-360.f * DeltaTime);
 		}
 	}
-
 
 	//m_Object->AddWorldPos(MoveDir.x * Speed * DeltaTime, 0.f, MoveDir.z * Speed * DeltaTime);
 	m_NavAgent->MoveOnNavMesh(Vector3(MoveDir.x * Speed * DeltaTime, 0.f, MoveDir.z * Speed * DeltaTime));
