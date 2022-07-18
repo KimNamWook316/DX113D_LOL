@@ -39,7 +39,7 @@ NodeResult CLockstone3TriggerBoxAction::OnStart(float DeltaTime)
 		}
 
 
-		m_Object->SetHit(false);
+		//m_Object->SetHit(false);
 	}
 
 	return NodeResult::Node_True;

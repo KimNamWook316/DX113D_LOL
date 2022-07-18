@@ -56,3 +56,28 @@ void CNavigationThread3D::Run()
 
 	SetEvent(m_ExitEvent);
 }
+
+void CNavigationThread3D::DisableCell(std::vector<Vector3>& vecExceptPos)
+{
+	size_t Count = vecExceptPos.size();
+
+	for (size_t i = 0; i < Count; ++i)
+	{
+		float Height = 0.f;
+		int PolyIndex = 0;
+		m_NavManager->CheckNavMeshPoly(vecExceptPos[i], Height, PolyIndex);
+		NavigationCell* Cell = m_NavManager->FindCell(PolyIndex);
+
+		Cell->Enable = false;
+	}
+}
+
+void CNavigationThread3D::DisableCell(std::vector<NavigationCell*>& vecExceptCell)
+{
+	size_t Count = vecExceptCell.size();
+
+	for (size_t i = 0; i < Count; ++i)
+	{
+		vecExceptCell[i]->Enable = false;
+	}
+}

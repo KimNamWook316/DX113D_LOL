@@ -5,51 +5,6 @@
 #include "../Render/RenderManager.h"
 #include "../Render/RenderState.h"
 
-enum NAVIMESH_CELL_LIST_TYPE
-{
-	NCLT_NONE,
-	NCLT_OPEN,
-	NCLT_CLOSE
-};
-
-struct NavigationCell
-{
-	NAVIMESH_CELL_LIST_TYPE	Type;
-	NavMeshPolygon Polygon;
-	Vector3		Center;
-	int			ParentIdx;
-	float		G;
-	float		H;
-	float		Total;
-	bool		Enable;
-
-	void Clear()
-	{
-		Type = NCLT_NONE;
-		ParentIdx = -1;
-		G = -1.f;
-		H = -1.f;
-		Total = -1.f;
-	}
-
-	NavigationCell()
-	{
-		Type = NCLT_NONE;
-		ParentIdx = -1;
-		G = 0.f;
-		H = 0.f;
-		Total = 0.f;
-		Enable = true;
-	}
-
-	NavigationCell operator + (const NavigationCell& cell)
-	{
-		NavigationCell	_cell;
-
-		return _cell;
-	}
-};
-
 class CNavMeshComponent :
     public CSceneComponent
 {
@@ -147,8 +102,7 @@ public:
 	virtual bool LoadOnly(FILE* File) override;
 
 
-	void FindPath(const Vector3& Start, const Vector3& End,
-		std::list<Vector3>& vecPath);
+	void FindPath(const Vector3& Start, const Vector3& End, std::list<Vector3>& vecPath);
 	NavigationCell* FindCell(const Vector3& Pos);
 
 	void AddCellCloseList(NavigationCell* Cell, NavigationCell* End);
@@ -160,6 +114,7 @@ public:
 	void ResetAllCell();
 	
 	NavigationCell* FindCell(int PolyIndex);
+	void FindAdjCell(int PolyIndex, std::vector<NavigationCell*>& vecCell);
 
 	static bool SortByTotal(NavigationCell* Src, NavigationCell* Dest)
 	{

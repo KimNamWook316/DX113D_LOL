@@ -5,6 +5,7 @@
 #include "PlayerDataComponent.h"
 #include "GameObject/GameObject.h"
 #include "Input.h"
+#include "ObjectDataComponent.h"
 
 CPlayerNormalAttackCheckCollider::CPlayerNormalAttackCheckCollider()
 {
@@ -120,13 +121,14 @@ void CPlayerNormalAttackCheckCollider::AttackSuccess(const CollisionResult& Resu
 
 		if (Vec1.Dot(Vec2) > 0.f && PlayerDataComp->GetOnSlash())
 		{
-			(*iter)->GetGameObject()->SetHit(true);
+			CObjectDataComponent* Comp = (*iter)->GetGameObject()->FindObjectComponentFromType<CObjectDataComponent>();
+			Comp->SetIsHit(true);
 		}
 
-		if (!PlayerDataComp->GetOnSlash())
-		{
-			(*iter)->GetGameObject()->SetHit(false);
-		}
+		//if (!PlayerDataComp->GetOnSlash())
+		//{
+		//	(*iter)->GetGameObject()->SetHit(false);
+		//}
 	}
 
 

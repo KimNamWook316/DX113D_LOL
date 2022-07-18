@@ -15,8 +15,7 @@ CGameObject::CGameObject() :
 	m_IsEnemy(false),
 	m_NoInterrupt(false),
 	m_ExcludeSceneSave(false),
-	m_NoDestroyFromSceneChange(false),
-	m_IsHit(false)
+	m_NoDestroyFromSceneChange(false)
 {
 	SetTypeID<CGameObject>();
 	m_ObjectType = Object_Type::None;
@@ -107,7 +106,6 @@ void CGameObject::DeleteObj()
 {
 	if (!m_Parent)
 	{
-		// 루트노드를 지우는 경우, 그냥 모두 Destroy
 		Destroy();
 		m_SceneComponentList.clear();
 

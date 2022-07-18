@@ -23,9 +23,14 @@ private:
 	Vector3					m_CurrentFaceDir;
 
 public:
+	const Vector3& GetCurrentFaceDir()	const
+	{
+		return m_CurrentFaceDir;
+	}
+
 	void SetUpdateComponent(class CSceneComponent* UpdateComponent);
 	bool Move(const Vector3& EndPos);
-	// 길찾기를 하지 않고, NavMesh위에서 움직이고, NavMesh안에서만 움직이는 모든 오브젝트들은 이 함수들을 이용해서 움직여야 한다
+
 	bool MoveOnNavMesh(const Vector3 EndPos);
 
 	void SetMoveSpeed(float Speed)
@@ -51,6 +56,13 @@ public:
 	bool GetApplyNavMesh()	const
 	{
 		return m_ApplyNavMesh;
+	}
+
+	const Vector3& GetTargetPos() const;
+
+	std::list<Vector3>& GetPathList()
+	{
+		return m_PathList;
 	}
 
 public:
@@ -92,6 +104,8 @@ public:
 	void FillPathList(const std::list<Vector3>& PathList);
 	void AddPath(const Vector3& EndPos);
 	bool FindPath(class CSceneComponent* OwnerComponent, const Vector3& End);
+	bool FindPathExcept(class CSceneComponent* OwnerComponent, const Vector3& End, std::vector<Vector3>& vecExceptPos);
+	bool FindPathExcept(class CSceneComponent* OwnerComponent, const Vector3& End, std::vector<NavigationCell*>& vecExceptCell);
 	bool CheckStraightPath(const Vector3& StartPos, const Vector3& EndPos, std::vector<Vector3>& vecPath);
 };
 

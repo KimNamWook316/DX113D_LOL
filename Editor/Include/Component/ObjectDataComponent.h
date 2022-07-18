@@ -16,8 +16,19 @@ protected:
 
 private:
 	ObjectData m_Data;
+	bool m_IsHit;
 
 public:
+	void SetIsHit(bool Hit)
+	{
+		m_IsHit = Hit;
+	}
+
+	bool GetIsHit()	const
+	{
+		return m_IsHit;
+	}
+
 	void SetHP(int HP)
 	{
 		m_Data.HP = HP;

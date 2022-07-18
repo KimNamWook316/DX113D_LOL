@@ -197,6 +197,18 @@ bool CCollision::CollisionBox3DToHalfLine(CColliderBox3D* Src, CColliderHalfLine
 	return false;
 }
 
+bool CCollision::CollisionSphereToSphere(CColliderSphere* Src, CColliderSphere* Dest)
+{
+	CollisionResult	srcResult, destResult;
+
+	if (CollisionSphereToSphere(srcResult, destResult, Src->GetInfo(), Dest->GetInfo()))
+	{
+		return true;
+	}
+
+	return false;
+}
+
 bool CCollision::CollisionBox2DToBox2D(CollisionResult& SrcResult,
 	CollisionResult& DestResult, const Box2DInfo& Src, const Box2DInfo& Dest)
 {
@@ -758,6 +770,14 @@ bool CCollision::CollisionBox3DToBox3D(CollisionResult& SrcResult, CollisionResu
 	}
 
 	return true;
+}
+
+bool CCollision::CollisionSphereToSphere(CollisionResult& SrcResult, CollisionResult& DestResult, const SphereInfo& SrcInfo, const SphereInfo& DestInfo)
+{
+	if (SrcInfo.Center.Distance(DestInfo.Center) <= SrcInfo.Radius + DestInfo.Radius)
+		return true;
+
+	return false;
 }
 
 bool CCollision::CollisionRayToSphere(Vector3& HitPoint, const Ray& ray, const SphereInfo& Sphere)

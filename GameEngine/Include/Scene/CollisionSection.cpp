@@ -85,6 +85,12 @@ void CCollisionSection::Collision(float DeltaTime)
 
 			if (Src->Collision(Dest))
 			{
+				// Src, Dest의 m_Result에 서로를 설정해주기
+				Src->SetCollisionResultSrc(Src);
+				Src->SetCollisionResultDest(Dest);
+
+				Dest->SetCollisionResultSrc(Dest);
+				Dest->SetCollisionResultDest(Src);
 				// 지금 충돌이 된건지를 판단한다.
 				// 즉, 이전 프레임에 충돌된 목록에 없다면 지금 막 충돌이 시작된 것이다.
 				if (!Src->CheckPrevCollision(Dest))
@@ -93,22 +99,8 @@ void CCollisionSection::Collision(float DeltaTime)
 					Src->AddPrevCollision(Dest);
 					Dest->AddPrevCollision(Src);
 
-					// Src, Dest의 m_Result에 서로를 설정해주기
-					Src->SetCollisionResultSrc(Src);
-					Src->SetCollisionResultDest(Dest);
-
-					Dest->SetCollisionResultSrc(Dest);
-					Dest->SetCollisionResultDest(Src);
-
-
 					Src->CallCollisionCallback(Collision_State::Begin);
 					Dest->CallCollisionCallback(Collision_State::Begin);
-
-					Src->SetCollisionResultSrc(nullptr);
-					Src->SetCollisionResultDest(nullptr);
-
-					Dest->SetCollisionResultSrc(nullptr);
-					Dest->SetCollisionResultDest(nullptr);
 				}
 
 				// 이전 프레임부터 계속 충돌중인 경우
@@ -120,17 +112,36 @@ void CCollisionSection::Collision(float DeltaTime)
 
 				Src->AddCurrentFrameCollision(Dest);
 				Dest->AddCurrentFrameCollision(Src);
+
+				Src->SetCollisionResultSrc(nullptr);
+				Src->SetCollisionResultDest(nullptr);
+
+				Dest->SetCollisionResultSrc(nullptr);
+				Dest->SetCollisionResultDest(nullptr);
 			}
 
 			// 이전 프레임에 충돌이 되었는데 현재프레임에 충돌이 안되는 상황이라면
 			// 충돌되었다가 이제 떨어지는 의미이다.
 			else if (Src->CheckPrevCollision(Dest))
 			{
+				// Src, Dest의 m_Result에 서로를 설정해주기
+				Src->SetCollisionResultSrc(Src);
+				Src->SetCollisionResultDest(Dest);
+
+				Dest->SetCollisionResultSrc(Dest);
+				Dest->SetCollisionResultDest(Src);
+
 				Src->DeletePrevCollision(Dest);
 				Dest->DeletePrevCollision(Src);
 
 				Src->CallCollisionCallback(Collision_State::End);
 				Dest->CallCollisionCallback(Collision_State::End);
+
+				Src->SetCollisionResultSrc(nullptr);
+				Src->SetCollisionResultDest(nullptr);
+
+				Dest->SetCollisionResultSrc(nullptr);
+				Dest->SetCollisionResultDest(nullptr);
 			}
 		}
 	}

@@ -62,6 +62,21 @@ void CNavMeshComponent::Start()
 		CSceneManager::GetInst()->GetScene()->GetCollision()->SetNavMeshMin(m_NavMesh->GetMin());
 		CSceneManager::GetInst()->GetScene()->GetCollision()->SetNavMeshMax(m_NavMesh->GetMax());
 	}
+
+	size_t Count = m_NavMesh->GetNavMeshPolygonCount();
+
+	for (size_t i = 0; i < Count; ++i)
+	{
+		NavigationCell* Cell = new NavigationCell;
+		NavMeshPolygon Polygon = m_NavMesh->GetNavMeshPolygon(i);
+		Vector3 P1 = Polygon.m_vecVertexPos[0];
+		Vector3 P2 = Polygon.m_vecVertexPos[1];
+		Vector3 P3 = Polygon.m_vecVertexPos[2];
+		Cell->Center = (P1 + P2 + P3) / 3.f;
+		Cell->Polygon = Polygon;
+		m_UseCellList.push_back(Cell);
+		m_mapCell.insert(std::make_pair(Polygon.m_Index, Cell));
+	}
 }
 
 bool CNavMeshComponent::Init()
@@ -229,8 +244,8 @@ void CNavMeshComponent::FindPath(const Vector3& Start, const Vector3& End, std::
 		}
 	}
 
-	NavigationCell* StartCell = FindCell(Start);
-	NavigationCell* EndCell = FindCell(End);
+	NavigationCell* StartCell = FindCell(Vector3(Start.x, Start.y + 10.f, Start.z));
+	NavigationCell* EndCell = FindCell(Vector3(End.x, End.y + 10.f, End.z));
 
 	if (!StartCell || !EndCell)
 		int a = 3;
@@ -255,8 +270,10 @@ void CNavMeshComponent::FindPath(const Vector3& Start, const Vector3& End, std::
 			if (EndCell == (*iter))
 			{
 				vecPath.push_back(End);
-				vecPath.push_back((*iter)->Center);
+				//vecPath.push_back((*iter)->Center);
 				int ParentIndex = (*iter)->ParentIdx;
+
+				NavigationCell* CurrentCell = (*iter);
 
 				while (true)
 				{
@@ -266,10 +283,18 @@ void CNavMeshComponent::FindPath(const Vector3& Start, const Vector3& End, std::
 						return;
 					}
 
-					NavigationCell* Cell = FindCell(ParentIndex);
-					vecPath.push_back(Cell->Center);
+					Vector3 Pos = CurrentCell->Center;
 
-					ParentIndex = Cell->ParentIdx;
+					NavigationCell* ParentCell = FindCell(ParentIndex);
+
+					Vector3 ParentCellPos = ParentCell->Center;
+
+					Vector3 LerpPos = Vector3(0.8f, 0.8f, 0.8f) * ParentCellPos + Vector3(0.2f, 0.2f, 0.2f) * Pos;
+
+					vecPath.push_back(ParentCell->Center);
+
+					ParentIndex = ParentCell->ParentIdx;
+					CurrentCell = ParentCell;
 				}
 
 				break;
@@ -326,6 +351,9 @@ void CNavMeshComponent::AddCellCloseList(NavigationCell* Cell, NavigationCell* E
 {
 	NavigationCell* CheckCell = FindCell(Cell->Polygon.m_Index);
 
+	if (!CheckCell->Enable)
+		return;
+
 	if (CheckCell->Type == NCLT_CLOSE)
 		return;
 
@@ -346,9 +374,10 @@ void CNavMeshComponent::AddAdjCellOpenList(NavigationCell* Cell, NavigationCell*
 		{
 			// 인접 Cell이 이미 닫힌 목록에 들어가있다면 패스
 			if (AdjCell->Type == NCLT_CLOSE)
-			{
 				continue;
-			}
+
+			if (!AdjCell->Enable)
+				continue;
 
 			// 이미 열린 목록에 있는 놈이라면 Total을 비교해서 더 작은 것으로 교체
 			if (AdjCell->Type == NCLT_OPEN)
@@ -534,6 +563,7 @@ void CNavMeshComponent::ResetAllCell()
 		(*iter)->Total = 0;
 		(*iter)->Type = NCLT_NONE;
 		(*iter)->ParentIdx = -1;
+		(*iter)->Enable = true;
 	}
 
 	auto iter2 = m_mapCell.begin();
@@ -546,6 +576,7 @@ void CNavMeshComponent::ResetAllCell()
 		iter2->second->Total = 0;
 		iter2->second->Type = NCLT_NONE;
 		iter2->second->ParentIdx = -1;
+		iter2->second->Enable = true;
 	}
 }
 
@@ -559,4 +590,22 @@ NavigationCell* CNavMeshComponent::FindCell(int PolyIndex)
 		return nullptr;
 
 	return iter->second;
+}
+
+void CNavMeshComponent::FindAdjCell(int PolyIndex, std::vector<NavigationCell*>& vecCell)
+{
+	auto iter = m_mapCell.find(PolyIndex);
+
+	if (iter == m_mapCell.end())
+		return;
+
+	size_t Count = iter->second->Polygon.m_vecAdjIndex.size();
+
+	for (size_t i = 0; i < Count; ++i)
+	{
+		NavigationCell* AdjCell = m_mapCell.find(iter->second->Polygon.m_vecAdjIndex[i])->second;
+		vecCell.push_back(AdjCell);
+
+		int a = 3;
+	}
 }

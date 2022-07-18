@@ -434,9 +434,24 @@ bool CSceneCollision::IsExistColliderHasProfile(CollisionProfile* Profile)
 	return false;
 }
 
-void CSceneCollision::DeleteCollider(CColliderComponent* Collider, int SectionIndex)
+void CSceneCollision::DeleteColliderInSection(CColliderComponent* Collider, int SectionIndex)
 {
 	m_Section->vecSection[SectionIndex]->DeleteCollider(Collider);
+}
+
+void CSceneCollision::EraseCollider(CColliderComponent* Collider)
+{
+	auto iter = m_ColliderList.begin();
+	auto iterEnd = m_ColliderList.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		if ((*iter) == Collider)
+		{
+			m_ColliderList.erase(iter);
+			return;
+		}
+	}
 }
 
 void CSceneCollision::ClearAll()

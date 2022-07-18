@@ -14,6 +14,7 @@ public:
 	static bool CollisionBox3DToBox3D(class CColliderBox3D* Src, class CColliderBox3D* Dest);
 	static bool CollisionRayToBox3D(class CColliderRay* Src, class CColliderBox3D* Dest);
 	static bool CollisionBox3DToHalfLine(class CColliderBox3D* Src, class CColliderHalfLine* Dest);
+	static bool CollisionSphereToSphere(class CColliderSphere* Src, class CColliderSphere* Dest);
 
 
 public:
@@ -37,11 +38,15 @@ public:
 		const PixelInfo& PixelInfo, const Vector2& Point);
 	static bool CollisionBox3DToBox3D(CollisionResult& SrcResult, CollisionResult& DestResult,
 		const Box3DInfo& Src, const Box3DInfo& Dest);
+	static bool CollisionSphereToSphere(CollisionResult& SrcResult, CollisionResult& DestResult,
+		const SphereInfo& SrcInfo, const SphereInfo& DestInfo);
 
 	static bool CollisionRayToSphere(Vector3& HitPoint, const Ray& ray, const SphereInfo& Sphere);
 	static bool CollisionRayToBox3D(Vector3& HitPoint, const Ray& ray, const Box3DInfo& Box);
 	static bool CollisionBox3DToHalfLine(Vector3& HitPoint, const Box3DInfo& Box, const HalfLineInfo& HalfLineInfo, class CColliderBox3D* BoxCollider);
 	static bool CollisionBox3DToSphere(Vector3& HitPoint, class CColliderBox3D* Src, const Box3DInfo& Box, const SphereInfo& Sphere);
+
+
 
 	static bool CheckPointInBox(const Vector3& Point, const Box3DInfo& Box);
 };

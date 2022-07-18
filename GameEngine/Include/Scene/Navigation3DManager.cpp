@@ -153,6 +153,7 @@ bool CNavigation3DManager::CheckPlayerNavMeshPoly(float& Height)
 			//P2 = P2.TransformCoord(WorldMat);
 			//P3 = P3.TransformCoord(WorldMat);
 
+			PlayerPos.y += 10.f;
 			XMVECTOR v1 = PlayerPos.Convert();
 
 			XMVECTOR Dir = Vector3(0.f, -1.f, 0.f).Convert();
@@ -506,6 +507,16 @@ bool CNavigation3DManager::CheckNavMeshPickingPoint(Vector3& OutPos)
 bool CNavigation3DManager::CheckStraightPath(const Vector3& StartPos, const Vector3& EndPos, std::vector<Vector3>& vecPath)
 {
 	return m_NavMeshComponent->CheckStraightPath(StartPos, EndPos, vecPath);
+}
+
+NavigationCell* CNavigation3DManager::FindCell(int PolyIndex)
+{
+	return m_NavMeshComponent->FindCell(PolyIndex);
+}
+
+void CNavigation3DManager::FindAdjCell(int PolyIndex, std::vector<NavigationCell*>& vecCell)
+{
+	m_NavMeshComponent->FindAdjCell(PolyIndex, vecCell);
 }
 
 void CNavigation3DManager::Start()

@@ -13,9 +13,6 @@ CNavAgent::CNavAgent()	:
 	m_PathFindStart(false)
 {
 	SetTypeID<CNavAgent>();
-
-	// NavAgent를 가지고 있는 모든 움직이는 오브젝트가 초기에 바라보는 방향은 -z 방향이라고 가정
-	m_CurrentFaceDir = Vector3(0.f, 0.f, -1.f);
 }
 
 CNavAgent::CNavAgent(const CNavAgent& com)	:
@@ -74,6 +71,15 @@ bool CNavAgent::MoveOnNavMesh(const Vector3 EndPos)
 	}
 }
 
+const Vector3& CNavAgent::GetTargetPos() const
+{
+	if (!m_PathList.empty())
+		return m_PathList.back();
+
+	else
+		return m_Object->GetRootComponent()->GetWorldPos();
+}
+
 void CNavAgent::Start()
 {
 	if (!m_UpdateComponent)
@@ -89,16 +95,6 @@ void CNavAgent::Update(float DeltaTime)
 {
 	if (m_UpdateComponent)
 	{
-		//float Height = 0.f;
-		//int PolyIndex = 0;
-		//if (m_OccupyPolygonIndex == -1)
-		//{
-		//	// 최초로 자신이 어떤 Polygon을 밟고 있는지 체크
-		//	bool Intersect = CSceneManager::GetInst()->GetScene()->GetNavigation3DManager()->CheckNavMeshPoly(m_UpdateComponent->GetWorldPos(), Height, PolyIndex);
-
-		//	if (Intersect)
-		//		m_OccupyPolygonIndex = PolyIndex;
-		//}
 
 		if (!m_PathList.empty())
 		{
@@ -110,7 +106,18 @@ void CNavAgent::Update(float DeltaTime)
 			Vector3	Dir = TargetPos - Pos;
 			Dir.Normalize();
 
-			Vector3 CurrentFaceDir = m_CurrentFaceDir;
+			m_UpdateComponent->AddWorldPos(Dir * m_MoveSpeed * DeltaTime);
+
+			if (TargetDistance <= 0.5f)
+			{
+				m_PathList.pop_back();
+
+				if (m_PathList.empty())
+					m_PathFindStart = false;
+			}
+
+			// NavAgent를 가지고 있는 모든 움직이는 오브젝트가 초기에 바라보는 방향은 -z 방향이라고 가정
+			Vector3 CurrentFaceDir = Vector3(0.f, 0.f, -1.f);
 			Vector3 Rot = m_UpdateComponent->GetWorldRot();
 
 			Matrix RotMat;
@@ -118,10 +125,11 @@ void CNavAgent::Update(float DeltaTime)
 			RotMat.Rotation(Rot);
 
 			CurrentFaceDir = CurrentFaceDir.TransformCoord(RotMat);
+			m_CurrentFaceDir = CurrentFaceDir;
 
 			float Dot = Vector3(Dir.x, 0.f, Dir.z).Dot(Vector3(CurrentFaceDir.x, 0.f, CurrentFaceDir.z));
 
-			if (Dot < 0.99f)
+			if (Dot < 0.994f && Dot > -0.994f)
 			{
 				float Degree = RadianToDegree(acosf(Dot));
 				Vector3 CrossResult = Vector3(Dir.x, 0.f, Dir.z).Cross(Vector3(CurrentFaceDir.x, 0.f, CurrentFaceDir.z));
@@ -136,29 +144,6 @@ void CNavAgent::Update(float DeltaTime)
 					m_UpdateComponent->AddWorldRotationY(180.f * DeltaTime);
 				}
 			}
-
-
-			if (m_MoveSpeed == 0.f)
-				m_MoveSpeed = 10.f;
-
-			if (TargetDistance <= 0.5f)
-			{
-				m_PathList.pop_back();
-
-				if (m_PathList.empty())
-					m_PathFindStart = false;
-			}
-
-			m_UpdateComponent->AddWorldPos(Dir * m_MoveSpeed * DeltaTime);
-
-			//Vector3 NewPos = m_UpdateComponent->GetWorldPos();
-			//float Height = 0.f;
-			//int NewPolyIndex = 0;
-			//// 움직이고 나서 자신이 어떤 Polygon을 밟고 있는지 업데이트
-			//bool Intersect = CSceneManager::GetInst()->GetScene()->GetNavigation3DManager()->CheckAdjNavMeshPoly(NewPos, m_OccupyPolygonIndex, Height, NewPolyIndex);
-
-			//if(Intersect)
-			//	m_OccupyPolygonIndex = NewPolyIndex;
 		}
 	}
 
@@ -253,6 +238,22 @@ bool CNavAgent::FindPath(CSceneComponent* OwnerComponent, const Vector3& End)
 	m_PathFindStart = true;
 
 	bool Result = CSceneManager::GetInst()->GetScene()->GetNavigation3DManager()->FindPath<CNavAgent, CSceneComponent>(this, &CNavAgent::FillPathList, OwnerComponent, End);
+	return Result;
+}
+
+bool CNavAgent::FindPathExcept(CSceneComponent* OwnerComponent, const Vector3& End, std::vector<Vector3>& vecExceptPos)
+{
+	m_PathFindStart = true;
+
+	bool Result = CSceneManager::GetInst()->GetScene()->GetNavigation3DManager()->FindPathExcept<CNavAgent, CSceneComponent>(this, &CNavAgent::FillPathList, OwnerComponent, End, vecExceptPos);
+	return Result;
+}
+
+bool CNavAgent::FindPathExcept(CSceneComponent* OwnerComponent, const Vector3& End, std::vector<NavigationCell*>& vecExceptCell)
+{
+	m_PathFindStart = true;
+
+	bool Result = CSceneManager::GetInst()->GetScene()->GetNavigation3DManager()->FindPathExcept<CNavAgent, CSceneComponent>(this, &CNavAgent::FillPathList, OwnerComponent, End, vecExceptCell);
 	return Result;
 }
 

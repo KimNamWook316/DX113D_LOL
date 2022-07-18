@@ -16,6 +16,7 @@ private:
 	bool m_PathFindCoolStart;
 	float m_AccTime;
 	float m_PathFindCoolTime;
+	class CNavAgent* m_NavAgent;
 
 public:
 	void SetPathFindCoolStart(const CollisionResult& Result)
@@ -28,17 +29,15 @@ public:
 		m_PathFindCoolStart = false;
 	}
 
-	void SetPathFindFalse(const CollisionResult& Result)
-	{
-		m_PathFindEnable = false;
-		m_PathFindCoolStart = false;
-		m_AccTime = 0.f;
-	}
+	void SetPathFindFalse(const CollisionResult& Result);
 
 	bool GetPathFindEnable()	const
 	{
 		return m_PathFindEnable;
 	}
+
+	// 다른 몬스터와 충돌한다면 겹치지 않게 밀어내기
+	void PushEachOther(const CollisionResult& Result);
 
 public:
 	virtual void Start();

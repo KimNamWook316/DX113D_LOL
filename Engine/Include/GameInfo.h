@@ -877,3 +877,41 @@ struct WaterCBuffer
 	float Attn1;
 	float Attn2;
 };
+
+struct NavigationCell
+{
+	NAVIMESH_CELL_LIST_TYPE	Type;
+	NavMeshPolygon Polygon;
+	Vector3		Center;
+	int			ParentIdx;
+	float		G;
+	float		H;
+	float		Total;
+	bool		Enable;
+
+	void Clear()
+	{
+		Type = NCLT_NONE;
+		ParentIdx = -1;
+		G = -1.f;
+		H = -1.f;
+		Total = -1.f;
+	}
+
+	NavigationCell()
+	{
+		Type = NCLT_NONE;
+		ParentIdx = -1;
+		G = 0.f;
+		H = 0.f;
+		Total = 0.f;
+		Enable = true;
+	}
+
+	NavigationCell operator + (const NavigationCell& cell)
+	{
+		NavigationCell	_cell;
+
+		return _cell;
+	}
+};

@@ -32,6 +32,9 @@ public:
 	virtual void Run();
 
 public:
+	void DisableCell(std::vector<Vector3>& vecExceptPos);
+	void DisableCell(std::vector<NavigationCell*>& vecExceptCell);
+
 	template <typename T, typename ComponentType>
 	void AddWork(T* Obj, void(T::* Func)(const std::list<Vector3>&), ComponentType* OwnerComponent, const Vector3& End)
 	{
