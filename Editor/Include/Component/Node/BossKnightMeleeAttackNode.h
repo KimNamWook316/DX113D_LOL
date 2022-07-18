@@ -1,7 +1,27 @@
 #pragma once
-#include "D:\Study\DX3D_LOL\Engine\Include\Component\Node\ActionNode.h"
+
+#include "Component\Node\ActionNode.h"
+
 class CBossKnightMeleeAttackNode :
     public CActionNode
 {
-};
+public:
+    CBossKnightMeleeAttackNode();
+    CBossKnightMeleeAttackNode(const CBossKnightMeleeAttackNode& Node);
+    virtual ~CBossKnightMeleeAttackNode();
 
+public:
+    virtual void Init() override;
+
+protected:
+    virtual NodeResult OnStart(float DeltaTime);
+    virtual NodeResult OnUpdate(float DeltaTime);
+    virtual NodeResult OnEnd(float DeltaTime);
+
+public:
+    virtual NodeResult Invoke(float DeltaTime) override;
+
+private:
+    float m_RotatePerSec;
+};
+ 

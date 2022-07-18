@@ -28,6 +28,10 @@ CAnimationMeshComponent* CNode::GetAnimationMeshComponent() const
 	return m_AnimationMeshComp;
 }
 
+void CNode::Init()
+{
+}
+
 void CNode::SetOwner(CBehaviorTree* Owner)
 {
 	m_Owner = Owner;

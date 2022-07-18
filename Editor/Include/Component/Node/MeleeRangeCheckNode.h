@@ -1,7 +1,16 @@
 #pragma once
-#include "D:\Study\DX3D_LOL\Engine\Include\Component\Node\ConditionNode.h"
+
+#include "Component\Node\ConditionNode.h"
+
 class CMeleeRangeCheckNode :
     public CConditionNode
 {
+protected:
+    CMeleeRangeCheckNode();
+    CMeleeRangeCheckNode(const CMeleeRangeCheckNode& Node);
+    virtual ~CMeleeRangeCheckNode();
+
+public:
+    virtual NodeResult OnStart(float DeltaTime) override;
 };
 

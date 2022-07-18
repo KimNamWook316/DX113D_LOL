@@ -1,9 +1,27 @@
 #pragma once
 
-#include "D:\Study\DX3D_LOL\Engine\Include\Component\Node\ActionNode.h"
+#include "Component\Node\ActionNode.h"
 
 class CBossKnightFinalAttackNode :
     public CActionNode
 {
+public:
+    CBossKnightFinalAttackNode();
+    CBossKnightFinalAttackNode(const CBossKnightFinalAttackNode& Node);
+    virtual ~CBossKnightFinalAttackNode();
+
+public:
+    virtual void Init() override;
+
+protected:
+    virtual NodeResult OnStart(float DeltaTime);
+    virtual NodeResult OnUpdate(float DeltaTime);
+    virtual NodeResult OnEnd(float DeltaTime);
+
+public:
+    virtual NodeResult Invoke(float DeltaTime) override;
+
+private:
+    float m_RotatePerSec;
 };
 

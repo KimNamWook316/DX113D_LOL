@@ -133,7 +133,10 @@
     <Filter Include="06. GameComponent\02. ObjectComponent\01. ObjectDataComponent">
       <UniqueIdentifier>{11fa6ebc-e5f7-4830-a18e-1162f62b9bd5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="06. GameComponent\02. ObjectComponent\01. ObjectDataComponent\01. KnightData">
+    <Filter Include="06. GameComponent\02. ObjectComponent\01. ObjectDataComponent\01. Monster">
+      <UniqueIdentifier>{9576bd80-61b6-4043-a68e-88c4f5a1a73d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. GameComponent\02. ObjectComponent\01. ObjectDataComponent\01. Monster\01. KnightData">
       <UniqueIdentifier>{484f7989-8f88-4043-ae31-cb59bbed1d82}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -408,16 +411,13 @@
     <ClCompile Include="Window\AnimationDisplayWindow.cpp">
       <Filter>02. Editor\01. Window\2. Animation</Filter>
     </ClCompile>
-    <ClCompile Include="Component\Node\KnightHopAttackRangeCheck.cpp">
+    <ClCompile Include="Component\Node\BossKnightJumpAttackRangeCheck.cpp">
       <Filter>07. BehaviorTree\01. ConditionNode\00. Specific\01. BossKnight</Filter>
     </ClCompile>
-    <ClCompile Include="Component\Node\KnightFinalAttackCheck.cpp">
+    <ClCompile Include="Component\Node\BossKnightFinalAttackCheck.cpp">
       <Filter>07. BehaviorTree\01. ConditionNode\00. Specific\01. BossKnight</Filter>
     </ClCompile>
-    <ClCompile Include="Component\Node\KnightHopAttackNode.cpp">
-      <Filter>07. BehaviorTree\02. ActionNode\00. Specific\01. BossKnight</Filter>
-    </ClCompile>
-    <ClCompile Include="Component\Node\BossKnightMeleeAttackNode.cpp">
+    <ClCompile Include="Component\Node\BossKnightJumpAttackNode.cpp">
       <Filter>07. BehaviorTree\02. ActionNode\00. Specific\01. BossKnight</Filter>
     </ClCompile>
     <ClCompile Include="Component\Node\BossKnightFinalAttackNode.cpp">
@@ -430,7 +430,22 @@
       <Filter>06. GameComponent\02. ObjectComponent\01. ObjectDataComponent</Filter>
     </ClCompile>
     <ClCompile Include="Component\KnightDataComponent.cpp">
-      <Filter>06. GameComponent\02. ObjectComponent\01. ObjectDataComponent\01. KnightData</Filter>
+      <Filter>06. GameComponent\02. ObjectComponent\01. ObjectDataComponent\01. Monster\01. KnightData</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\MonsterDataComponent.cpp">
+      <Filter>06. GameComponent\02. ObjectComponent\01. ObjectDataComponent\01. Monster</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\Node\PostAttackDelayCheck.cpp">
+      <Filter>07. BehaviorTree\01. ConditionNode\01. Public</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\Node\BossKnightSlamEnd.cpp">
+      <Filter>07. BehaviorTree\02. ActionNode\00. Specific\01. BossKnight</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\Node\BossKnightContinueAttackNode.cpp">
+      <Filter>07. BehaviorTree\02. ActionNode\00. Specific\01. BossKnight</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\Node\BossKnightMeleeAttackNode.cpp">
+      <Filter>07. BehaviorTree\02. ActionNode\00. Specific\01. BossKnight</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -707,16 +722,13 @@
     <ClInclude Include="Window\AnimationDisplayWindow.h">
       <Filter>02. Editor\01. Window\2. Animation</Filter>
     </ClInclude>
-    <ClInclude Include="Component\Node\KnightHopAttackRangeCheck.h">
+    <ClInclude Include="Component\Node\BossKnightJumpAttackRangeCheck.h">
       <Filter>07. BehaviorTree\01. ConditionNode\00. Specific\01. BossKnight</Filter>
     </ClInclude>
-    <ClInclude Include="Component\Node\KnightFinalAttackCheck.h">
+    <ClInclude Include="Component\Node\BossKnightFinalAttackCheck.h">
       <Filter>07. BehaviorTree\01. ConditionNode\00. Specific\01. BossKnight</Filter>
     </ClInclude>
-    <ClInclude Include="Component\Node\KnightHopAttackNode.h">
-      <Filter>07. BehaviorTree\02. ActionNode\00. Specific\01. BossKnight</Filter>
-    </ClInclude>
-    <ClInclude Include="Component\Node\BossKnightMeleeAttackNode.h">
+    <ClInclude Include="Component\Node\BossKnightJumpAttackNode.h">
       <Filter>07. BehaviorTree\02. ActionNode\00. Specific\01. BossKnight</Filter>
     </ClInclude>
     <ClInclude Include="Component\Node\BossKnightFinalAttackNode.h">
@@ -729,7 +741,22 @@
       <Filter>06. GameComponent\02. ObjectComponent\01. ObjectDataComponent</Filter>
     </ClInclude>
     <ClInclude Include="Component\KnightDataComponent.h">
-      <Filter>06. GameComponent\02. ObjectComponent\01. ObjectDataComponent\01. KnightData</Filter>
+      <Filter>06. GameComponent\02. ObjectComponent\01. ObjectDataComponent\01. Monster\01. KnightData</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\MonsterDataComponent.h">
+      <Filter>06. GameComponent\02. ObjectComponent\01. ObjectDataComponent\01. Monster</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\PostAttackDelayCheck.h">
+      <Filter>07. BehaviorTree\01. ConditionNode\01. Public</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\BossKnightSlamEnd.h">
+      <Filter>07. BehaviorTree\02. ActionNode\00. Specific\01. BossKnight</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\BossKnightContinueAttackNode.h">
+      <Filter>07. BehaviorTree\02. ActionNode\00. Specific\01. BossKnight</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\BossKnightMeleeAttackNode.h">
+      <Filter>07. BehaviorTree\02. ActionNode\00. Specific\01. BossKnight</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

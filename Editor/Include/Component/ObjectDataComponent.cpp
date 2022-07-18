@@ -7,6 +7,8 @@
 #include "Resource/ResourceManager.h"
 #include "Scene/SceneManager.h"
 #include "Engine.h"
+#include "Component/AnimationMeshComponent.h"
+#include "Component/StaticMeshComponent.h"
 
 #include <sstream>
 
@@ -48,7 +50,6 @@ bool CObjectDataComponent::Init()
 
 void CObjectDataComponent::Update(float DeltaTime)
 {
-
 }
 
 void CObjectDataComponent::PostUpdate(float DeltaTime)
@@ -88,21 +89,14 @@ bool CObjectDataComponent::Load(FILE* File)
 
 	fread(&m_Data, sizeof(ObjectData), 1, File);
 
-	CExcelData* Data = CEditorManager::GetInst()->GetDataManager()->FindData("ObjectData");
-	Row* row = nullptr;
-
-	if (Data)
+	if (m_Object->GetObjectType() == Object_Type::Player)
 	{
-		if (m_Object->GetObjectType() == Object_Type::Player)
-		{
-			if(CSceneManager::GetInst()->GetNextScene())
-				CSceneManager::GetInst()->GetNextScene()->SetPlayerObject(m_Object);
-			else
-				CSceneManager::GetInst()->GetScene()->SetPlayerObject(m_Object);
-			// 플레이어의 초기위치 설정?
-			// CSceneManager::GetInst()->GetScene()->GetNavigation3DManager()->CheckPlayerNavMeshPoly();
-		}
-
+		if(CSceneManager::GetInst()->GetNextScene())
+			CSceneManager::GetInst()->GetNextScene()->SetPlayerObject(m_Object);
+		else
+			CSceneManager::GetInst()->GetScene()->SetPlayerObject(m_Object);
+		// 플레이어의 초기위치 설정?
+		// CSceneManager::GetInst()->GetScene()->GetNavigation3DManager()->CheckPlayerNavMeshPoly();
 	}
 
 	return true;

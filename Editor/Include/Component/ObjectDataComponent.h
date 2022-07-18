@@ -21,9 +21,9 @@ public:
 		m_Data.HP = HP;
 	}
 
-	void SetMP(int MP)
+	void SetDetectRange(float Range)
 	{
-		m_Data.MP = MP;
+		m_Data.DetectRange = Range;
 	}
 
 	void SetMoveSpeed(float Speed)
@@ -35,15 +35,20 @@ public:
 	{
 		m_Data.Attack = Attack;
 	}
+	
+	void SetMeleeAttackRange(float Range)
+	{
+		m_Data.MeleeAttackRange = Range;
+	}
 
 	int GetHP()	const
 	{
 		return m_Data.HP;
 	}
 
-	int GetMP()	const
+	float GetDetectRange() const
 	{
-		return m_Data.MP;
+		return m_Data.DetectRange;
 	}
 
 	float GetMoveSpeed()	const
@@ -54,6 +59,11 @@ public:
 	int GetAttack()	const
 	{
 		return m_Data.Attack;
+	}
+
+	float GetMeleeAttackRange() const
+	{
+		return m_Data.MeleeAttackRange;
 	}
 
 public:
