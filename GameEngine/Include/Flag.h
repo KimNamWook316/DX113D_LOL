@@ -255,6 +255,8 @@ enum class PopUpModalState
 // TODO : SceneComponent Type 추가될 때 마다 추가
 enum class SceneComponent3DType
 {
+	// TODO : Client 자체 enum으로 수정 예정
+
 	AnimationMeshComponent,
 	StaticMeshComponent,
 	LandScapeComponent,
@@ -277,6 +279,8 @@ enum class SceneComponent3DType
 
 enum class ObjectComponent3DType
 {
+	// TODO : Client 자체 enum으로 수정 예정
+
 	PaperBurnComponent,
 	GameStateComponent,
 	NavAgent,
@@ -302,6 +306,8 @@ enum class NodeResult
 
 enum ConditionNode
 {
+	// TODO : Client 자체 enum으로 수정 예정
+
 	MoveInputCheckNode,
 	MouseLButtonCheckNode,
 	NoInterruptNode,
@@ -314,6 +320,8 @@ enum ConditionNode
 
 enum ActionNode
 {
+	// TODO : Client 자체 enum으로 수정 예정
+
 	Move,
 	Idle,
 	NormalAttack,

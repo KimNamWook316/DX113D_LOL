@@ -33,3 +33,13 @@ NodeResult CMeleeRangeCheckNode::OnStart(float DeltaTime)
 		return NodeResult::Node_False;
 	}
 }
+
+NodeResult CMeleeRangeCheckNode::OnUpdate(float DeltaTime)
+{
+	return NodeResult();
+}
+
+NodeResult CMeleeRangeCheckNode::OnEnd(float DeltaTime)
+{
+	return NodeResult();
+}

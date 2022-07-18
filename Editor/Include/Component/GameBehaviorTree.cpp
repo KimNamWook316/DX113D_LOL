@@ -21,8 +21,21 @@
 #include "Node/CheckDetectRangeNode.h"
 #include "Node/FindPathNode.h"
 #include "Node/Lockstone3TriggerBoxAction.h"
-#include "GameStateComponent.h"
 
+// Public Nodes
+#include "Node/MeleeRangeCheckNode.h"
+#include "Node/PostAttackDelayCheck.h"
+
+// Boss - Knight
+#include "Node/BossKnightFinalAttackCheck.h"
+#include "Node/BossKnightJumpAttackRangeCheck.h"
+#include "Node/BossKnightContinueAttackNode.h"
+#include "Node/BossKnightFinalAttackNode.h"
+#include "Node/BossKnightJumpAttackNode.h"
+#include "Node/BossKnightMeleeAttackNode.h"
+#include "Node/BossKnightSlamEnd.h"
+
+#include "GameStateComponent.h"
 
 CGameBehaviorTree::CGameBehaviorTree()
 {
@@ -54,49 +67,28 @@ CGameStateComponent* CGameBehaviorTree::GetOwner() const
 
 CNode* CGameBehaviorTree::LoadNode(CNode* Parent, size_t TypeID)
 {
+	CNode* NewNode = nullptr;
+	CGameObject* OwnerObject = m_Owner->GetGameObject();
+
 	// TODO : Node 종류 추가될 때 마다 추가해주기
 	if (TypeID == typeid(CSelectorNode).hash_code())
 	{
-		CSelectorNode* NewNode = new CSelectorNode;
-		NewNode->SetParent(Parent);
-		NewNode->SetOwner(this);
-		NewNode->SetObject(m_Owner->GetGameObject());
-		NewNode->SetAnimationMeshComponent(m_AnimationMeshComp);
-
-		return NewNode;
+		NewNode = MakeNode<CSelectorNode>(Parent, OwnerObject);
 	}
 
 	else if (TypeID == typeid(CSequenceNode).hash_code())
 	{
-		CSequenceNode* NewNode = new CSequenceNode;
-		NewNode->SetParent(Parent);
-		NewNode->SetOwner(this);
-		NewNode->SetObject(m_Owner->GetGameObject());
-		NewNode->SetAnimationMeshComponent(m_AnimationMeshComp);
-
-		return NewNode;
+		NewNode = MakeNode<CSequenceNode>(Parent, OwnerObject);
 	}
 
 	else if (TypeID == typeid(CNoInterruptNode).hash_code())
 	{
-		CNoInterruptNode* NewNode = new CNoInterruptNode;
-		NewNode->SetParent(Parent);
-		NewNode->SetOwner(this);
-		NewNode->SetObject(m_Owner->GetGameObject());
-		NewNode->SetAnimationMeshComponent(m_AnimationMeshComp);
-
-		return NewNode;
+		NewNode = MakeNode<CNoInterruptNode>(Parent, OwnerObject);
 	}
 
 	else if (TypeID == typeid(CIdleNode).hash_code())
 	{
-		CIdleNode* NewNode = new CIdleNode;
-		NewNode->SetParent(Parent);
-		NewNode->SetOwner(this);
-		NewNode->SetObject(m_Owner->GetGameObject());
-		NewNode->SetAnimationMeshComponent(m_AnimationMeshComp);
-
-		return NewNode;
+		NewNode = MakeNode<CIdleNode>(Parent, OwnerObject);
 	}
 
 	else if (TypeID == typeid(CMoveNode).hash_code())
@@ -117,174 +109,128 @@ CNode* CGameBehaviorTree::LoadNode(CNode* Parent, size_t TypeID)
 
 	else if (TypeID == typeid(CMoveInputCheckNode).hash_code())
 	{
-		CMoveInputCheckNode* NewNode = new CMoveInputCheckNode;
-		NewNode->SetParent(Parent);
-		NewNode->SetOwner(this);
-		NewNode->SetObject(m_Owner->GetGameObject());
-		NewNode->SetAnimationMeshComponent(m_AnimationMeshComp);
-
-		return NewNode;
+		NewNode = MakeNode<CMoveInputCheckNode>(Parent, OwnerObject);
 	}
 
 	else if (TypeID == typeid(CMouseLButtonCheckNode).hash_code())
 	{
-		CMouseLButtonCheckNode* NewNode = new CMouseLButtonCheckNode;
-		NewNode->SetParent(Parent);
-		NewNode->SetOwner(this);
-		NewNode->SetObject(m_Owner->GetGameObject());
-		NewNode->SetAnimationMeshComponent(m_AnimationMeshComp);
-
-		return NewNode;
+		NewNode = MakeNode<CMouseLButtonCheckNode>(Parent, OwnerObject);
 	}
 
 	else if (TypeID == typeid(CMouseRButtonCheckNode).hash_code())
 	{
-		CMouseRButtonCheckNode* NewNode = new CMouseRButtonCheckNode;
-		NewNode->SetParent(Parent);
-		NewNode->SetOwner(this);
-		NewNode->SetObject(m_Owner->GetGameObject());
-		NewNode->SetAnimationMeshComponent(m_AnimationMeshComp);
-
-		return NewNode;
+		NewNode = MakeNode<CMouseRButtonCheckNode>(Parent, OwnerObject);
 	}
 
 	else if (TypeID == typeid(CMouseRButtonUpCheckNode).hash_code())
 	{
-		CMouseRButtonUpCheckNode* NewNode = new CMouseRButtonUpCheckNode;
-		NewNode->SetParent(Parent);
-		NewNode->SetOwner(this);
-		NewNode->SetObject(m_Owner->GetGameObject());
-		NewNode->SetAnimationMeshComponent(m_AnimationMeshComp);
-
-		return NewNode;
+		NewNode = MakeNode<CMouseRButtonUpCheckNode>(Parent, OwnerObject);
 	}
 
 	else if (TypeID == typeid(CReadyToShoot).hash_code())
 	{
-		CReadyToShoot* NewNode = new CReadyToShoot;
-		NewNode->SetParent(Parent);
-		NewNode->SetOwner(this);
-		NewNode->SetObject(m_Owner->GetGameObject());
-		NewNode->SetAnimationMeshComponent(m_AnimationMeshComp);
-
-		return NewNode;
+		NewNode = MakeNode<CReadyToShoot>(Parent, OwnerObject);
 	}
 
 	else if (TypeID == typeid(CShootNode).hash_code())
 	{
-		CShootNode* NewNode = new CShootNode;
-		NewNode->SetParent(Parent);
-		NewNode->SetOwner(this);
-		NewNode->SetObject(m_Owner->GetGameObject());
-		NewNode->SetAnimationMeshComponent(m_AnimationMeshComp);
-
-		return NewNode;
+		NewNode = MakeNode<CShootNode>(Parent, OwnerObject);
 	}
 
 	else if (TypeID == typeid(CCancleShootNode).hash_code())
 	{
-		CCancleShootNode* NewNode = new CCancleShootNode;
-		NewNode->SetParent(Parent);
-		NewNode->SetOwner(this);
-		NewNode->SetObject(m_Owner->GetGameObject());
-		NewNode->SetAnimationMeshComponent(m_AnimationMeshComp);
-
-		return NewNode;
+		NewNode = MakeNode<CCancleShootNode>(Parent, OwnerObject);
 	}
 
 	else if (TypeID == typeid(CCheckAttackTarget).hash_code())
 	{
-		CCheckAttackTarget* NewNode = new CCheckAttackTarget;
-		NewNode->SetParent(Parent);
-		NewNode->SetOwner(this);
-		NewNode->SetObject(m_Owner->GetGameObject());
-		NewNode->SetAnimationMeshComponent(m_AnimationMeshComp);
-
-		return NewNode;
+		NewNode = MakeNode<CCheckAttackTarget>(Parent, OwnerObject);
 	}
 
 	else if (TypeID == typeid(CNormalAttack).hash_code())
 	{
-		CNormalAttack* NewNode = new CNormalAttack;
-		NewNode->SetParent(Parent);
-		NewNode->SetOwner(this);
-		NewNode->SetObject(m_Owner->GetGameObject());
-		NewNode->SetAnimationMeshComponent(m_AnimationMeshComp);
-
-		return NewNode;
+		NewNode = MakeNode<CNormalAttack>(Parent, OwnerObject);
 	}
 
 	else if (TypeID == typeid(CRotateAttackDirectionNode).hash_code())
 	{
-		CRotateAttackDirectionNode* NewNode = new CRotateAttackDirectionNode;
-		NewNode->SetParent(Parent);
-		NewNode->SetOwner(this);
-		NewNode->SetObject(m_Owner->GetGameObject());
-		NewNode->SetAnimationMeshComponent(m_AnimationMeshComp);
-
-		return NewNode;
+		NewNode = MakeNode<CRotateAttackDirectionNode>(Parent, OwnerObject);
 	}
 
 	else if (TypeID == typeid(CNegateNode).hash_code())
 	{
-		CNegateNode* NewNode = new CNegateNode;
-		NewNode->SetParent(Parent);
-		NewNode->SetOwner(this);
-		NewNode->SetObject(m_Owner->GetGameObject());
-		NewNode->SetAnimationMeshComponent(m_AnimationMeshComp);
-
-		return NewNode;
+		NewNode = MakeNode<CNegateNode>(Parent, OwnerObject);
 	}
 
 	else if (TypeID == typeid(CAddFallingFloorCallbackNode).hash_code())
 	{
-		CAddFallingFloorCallbackNode* NewNode = new CAddFallingFloorCallbackNode;
-		NewNode->SetParent(Parent);
-		NewNode->SetOwner(this);
-		NewNode->SetObject(m_Owner->GetGameObject());
-
-		return NewNode;
+		NewNode = MakeNode<CAddFallingFloorCallbackNode>(Parent, OwnerObject);
 	}
 
 	else if (TypeID == typeid(CLockstone3TriggerBoxHitCheck).hash_code())
 	{
-		CLockstone3TriggerBoxHitCheck* NewNode = new CLockstone3TriggerBoxHitCheck;
-		NewNode->SetParent(Parent);
-		NewNode->SetOwner(this);
-		NewNode->SetObject(m_Owner->GetGameObject());
-
-		return NewNode;
+		NewNode = MakeNode<CLockstone3TriggerBoxHitCheck>(Parent, OwnerObject);
 	}
 
 	else if (TypeID == typeid(CLockstone3TriggerBoxAction).hash_code())
 	{
-		CLockstone3TriggerBoxAction* NewNode = new CLockstone3TriggerBoxAction;
-		NewNode->SetParent(Parent);
-		NewNode->SetOwner(this);
-		NewNode->SetObject(m_Owner->GetGameObject());
-
-		return NewNode;
+		NewNode = MakeNode<CLockstone3TriggerBoxAction>(Parent, OwnerObject);
 	}
 
 	else if (TypeID == typeid(CCheckDetectRangeNode).hash_code())
 	{
-		CCheckDetectRangeNode* NewNode = new CCheckDetectRangeNode;
-		NewNode->SetParent(Parent);
-		NewNode->SetOwner(this);
-		NewNode->SetObject(m_Owner->GetGameObject());
-
-		return NewNode;
+		NewNode = MakeNode<CCheckDetectRangeNode>(Parent, OwnerObject);
 	}
 
 	else if (TypeID == typeid(CFindPathNode).hash_code())
 	{
-		CFindPathNode* NewNode = new CFindPathNode;
-		NewNode->SetParent(Parent);
-		NewNode->SetOwner(this);
-		NewNode->SetObject(m_Owner->GetGameObject());
-
-		return NewNode;
+		NewNode = MakeNode<CFindPathNode>(Parent, OwnerObject);
 	}
 
-	return nullptr;
+	else if (TypeID == typeid(CMeleeRangeCheckNode).hash_code())
+	{
+		NewNode = MakeNode<CMeleeRangeCheckNode>(Parent, OwnerObject);
+	}
+
+	else if (TypeID == typeid(CPostAttackDelayCheck).hash_code())
+	{
+		NewNode = MakeNode<CPostAttackDelayCheck>(Parent, OwnerObject);
+	}
+
+	else if (TypeID == typeid(CBossKnightFinalAttackCheck).hash_code())
+	{
+		NewNode = MakeNode<CBossKnightFinalAttackCheck>(Parent, OwnerObject);
+	}
+
+	else if (TypeID == typeid(CBossKnightJumpAttackRangeCheck).hash_code())
+	{
+		NewNode = MakeNode<CBossKnightJumpAttackRangeCheck>(Parent, OwnerObject);
+	}
+
+	else if (TypeID == typeid(CBossKnightContinueAttackNode).hash_code())
+	{
+		NewNode = MakeNode<CBossKnightContinueAttackNode>(Parent, OwnerObject);
+	}
+
+	else if (TypeID == typeid(CBossKnightFinalAttackNode).hash_code())
+	{
+		NewNode = MakeNode<CBossKnightFinalAttackNode>(Parent, OwnerObject);
+	}
+
+	else if (TypeID == typeid(CBossKnightJumpAttackNode).hash_code())
+	{
+		NewNode = MakeNode<CBossKnightJumpAttackNode>(Parent, OwnerObject);
+	}
+
+	else if (TypeID == typeid(CBossKnightMeleeAttackNode).hash_code())
+	{
+		NewNode = MakeNode<CBossKnightMeleeAttackNode>(Parent, OwnerObject);
+	}
+
+	else if (TypeID == typeid(CBossKnightSlamEnd).hash_code())
+	{
+		NewNode = MakeNode<CBossKnightSlamEnd>(Parent, OwnerObject);
+	}
+
+	return NewNode;
 }

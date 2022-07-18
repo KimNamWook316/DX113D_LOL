@@ -108,7 +108,6 @@ void CKnightDataComponent::OnEndAnimJudgeContinueAttack()
 		SetPostAttckDelaying(true);
 		SetContinueAttack(false);
 	}
-
 }
 
 void CKnightDataComponent::OnActiveMeleeAttackCollider()

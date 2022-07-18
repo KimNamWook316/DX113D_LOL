@@ -247,6 +247,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="DataManager.cpp" />
+    <ClCompile Include="DeathDoor\DDUtil.cpp" />
     <ClCompile Include="EditorManager.cpp" />
     <ClCompile Include="EditorUtil.cpp" />
     <ClCompile Include="GraphEditor.cpp" />
@@ -392,6 +393,8 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="DataManager.h" />
+    <ClInclude Include="DeathDoor\DDFlag.h" />
+    <ClInclude Include="DeathDoor\DDUtil.h" />
     <ClInclude Include="EditorInfo.h" />
     <ClInclude Include="EditorManager.h" />
     <ClInclude Include="EditorUtil.h" />

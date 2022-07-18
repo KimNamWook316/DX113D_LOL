@@ -84,6 +84,10 @@ void CMonsterDataComponent::Start()
 
 void CMonsterDataComponent::Update(float DeltaTime)
 {
+	if (m_HitEffectStart)
+	{
+		ActiveHitEffect(DeltaTime);
+	}
 }
 
 CMonsterDataComponent* CMonsterDataComponent::Clone()
@@ -164,7 +168,15 @@ void CMonsterDataComponent::OnLookPlayer(float DeltaTime)
 	}
 	else
 	{
-		MyObj->AddWorldRotationY(m_Data.RotateSpeedPerSec * DeltaTime);
+		bool IsLeft = IsPlayerLeftBasedInLookDir();
+		if (IsLeft)
+		{
+			MyObj->AddWorldRotationY(m_Data.RotateSpeedPerSec * DeltaTime);
+		}
+		else
+		{
+			MyObj->AddWorldRotationY(-m_Data.RotateSpeedPerSec * DeltaTime);
+		}
 	}
 }
 

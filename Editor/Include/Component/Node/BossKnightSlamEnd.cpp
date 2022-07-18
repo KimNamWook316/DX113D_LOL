@@ -38,3 +38,13 @@ NodeResult CBossKnightSlamEnd::OnStart(float DeltaTime)
 
 	return NodeResult::Node_True;
 }
+
+NodeResult CBossKnightSlamEnd::OnUpdate(float DeltaTime)
+{
+	return NodeResult();
+}
+
+NodeResult CBossKnightSlamEnd::OnEnd(float DeltaTime)
+{
+	return NodeResult();
+}

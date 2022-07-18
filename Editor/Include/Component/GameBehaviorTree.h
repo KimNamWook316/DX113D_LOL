@@ -22,5 +22,17 @@ public:
 
 public:
     virtual CNode* LoadNode(CNode* Parent, size_t TypeID);
+
+public:
+    template <typename T>
+    T* MakeNode(CNode* Parent, class CGameObject* OwnerObject)
+    {
+        T* NewNode = new T;
+        NewNode->SetParent(Parent);
+        NewNode->SetOwner(this);
+        NewNode->SetObject(OwnerObject);
+        NewNode->SetAnimationMeshComponent(m_AnimationMeshComp);
+        return NewNode;
+    }
 };
 
