@@ -17,11 +17,13 @@ protected:
 protected:
 	ObjectData m_Data;
 	bool m_IsHit;
+	bool m_IsHitPrevFrame;
 
 public:
-	void SetIsHit(bool Hit)
+	virtual void SetIsHit(bool Hit)
 	{
 		m_IsHit = Hit;
+		m_IsHitPrevFrame = false;
 	}
 
 	bool GetIsHit()	const

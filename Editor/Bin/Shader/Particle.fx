@@ -1092,9 +1092,10 @@ void ParticleGS(point VertexParticleOutput input[1],
 
 		OutputArray[i].LifeTimeRatio = Ratio;
 
-		// OutputArray[i].LocalXPlusMoveDir = 1;
-		// if (g_ParticleArraySRV[InstanceID].Dir.x < 0.f)
-		// 	OutputArray[i].LocalXPlusMoveDir = 0;
+		OutputArray[i].LocalXPlusMoveDir = 1;
+
+		if (g_ParticleArraySRV[InstanceID].Dir.x < 0.f)
+			OutputArray[i].LocalXPlusMoveDir = 0;
 	}
 
 	output.Append(OutputArray[0]);

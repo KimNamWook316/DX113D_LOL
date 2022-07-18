@@ -28,6 +28,8 @@ public:
 	void OnEndAnimPostAttackDelayOff();
 
 public:
+	virtual void SetIsHit(bool Hit) override;
+
 	void SetPostAttckDelaying(bool Enable)
 	{
 		m_PostAttackDelaying = Enable;
@@ -63,6 +65,8 @@ protected:
 	class CColliderBox3D* m_HitBox;
 
 	bool m_PostAttackDelaying; // 공격 후딜레이 중인지 여부
+
+	bool m_HitEffectStart;
 	float m_HitEffectTimer;
 	float m_HitEffectMax;
 	int m_HitEffectFlag;

@@ -84,12 +84,6 @@ void CMonsterDataComponent::Start()
 
 void CMonsterDataComponent::Update(float DeltaTime)
 {
-	bool Hit = m_Object->IsHit();
-
-	if (Hit)
-	{
-		ActiveHitEffect(DeltaTime);
-	}
 }
 
 CMonsterDataComponent* CMonsterDataComponent::Clone()
@@ -100,6 +94,19 @@ CMonsterDataComponent* CMonsterDataComponent::Clone()
 void CMonsterDataComponent::OnEndAnimPostAttackDelayOff()
 {
 	m_PostAttackDelaying = false;
+}
+
+void CMonsterDataComponent::SetIsHit(bool Hit)
+{
+	CObjectDataComponent::SetIsHit(Hit);
+
+	if (m_HitEffectStart)
+	{
+		m_HitEffectFlag = 0;
+		m_HitEffectTimer = 0.f;
+	}
+
+	m_HitEffectStart = true;
 }
 
 void CMonsterDataComponent::OnEndAnimPostAttackDelayOn()
@@ -223,6 +230,7 @@ void CMonsterDataComponent::ActiveHitEffect(float DeltaTime)
 	}
 	else
 	{
+		m_HitEffectStart = false;
 		m_HitEffectTimer = 0.f;
 		m_HitEffectFlag = 0;
 
