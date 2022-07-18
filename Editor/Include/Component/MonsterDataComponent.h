@@ -26,6 +26,7 @@ public:
 public:
     void OnEndAnimPostAttackDelayOn();
 	void OnEndAnimPostAttackDelayOff();
+    void OnLookPlayer(float DeltaTime);
 
 public:
 	virtual void SetIsHit(bool Hit) override;
@@ -47,6 +48,7 @@ public:
 	}
 
 	float GetAnglePlayer();
+	bool IsPlayerLeftBasedInLookDir(); // 플레이어가 몬스터가 보는 방향 기준 왼쪽에 있는지 판별
 	bool IsPlayerInMeleeAttackRange();
 	Vector3	ToPlayer();
 

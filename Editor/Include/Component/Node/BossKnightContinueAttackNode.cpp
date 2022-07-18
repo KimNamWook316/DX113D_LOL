@@ -29,19 +29,19 @@ void CBossKnightContinueAttackNode::Init()
 	// 애니메이션 콜백 등록
 	CKnightDataComponent* Data = dynamic_cast<CKnightDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
 
-	AnimInst->AddNotifyDeltaTimeFrameRange("SlamContinueFirst", "OnTrace", 9, 14, Data, &CKnightDataComponent::OnTracePlayerOnlyRotation);
+	AnimInst->AddNotifyDeltaTimeFrameRange("SlamContinueFirst", "OnTrace", 9, 14, (CMonsterDataComponent*)Data, &CMonsterDataComponent::OnLookPlayer);
  	AnimInst->SetEndFunction("SlamContinueFirst", (CMonsterDataComponent*)(Data), &CMonsterDataComponent::OnEndAnimPostAttackDelayOn);
  	AnimInst->AddNotify("SlamContinueFirst", "HitBoxActive", 21, Data, &CKnightDataComponent::OnActiveMeleeAttackCollider);
  	AnimInst->AddNotify("SlamContinueFirst", "HitBoxDisable", 25, Data, &CKnightDataComponent::OnInActiveMeleeAttackCollider);
 
-	AnimInst->AddNotifyDeltaTimeFrameRange("Slam180CW", "OnTrace", 5, 10, Data, &CKnightDataComponent::OnTracePlayerOnlyRotation);
- 	AnimInst->AddNotify("Slam180CW", "HitBoxActive", 21, Data, &CKnightDataComponent::OnActiveMeleeAttackCollider);
- 	AnimInst->AddNotify("Slam180CW", "HitBoxDisable", 25, Data, &CKnightDataComponent::OnInActiveMeleeAttackCollider);
+	AnimInst->AddNotifyDeltaTimeFrameRange("Slam180CW", "OnTrace", 5, 10, (CMonsterDataComponent*)Data, &CMonsterDataComponent::OnLookPlayer);
+ 	AnimInst->AddNotify("Slam180CW", "HitBoxActive", 16, Data, &CKnightDataComponent::OnActiveMeleeAttackCollider);
+ 	AnimInst->AddNotify("Slam180CW", "HitBoxDisable", 21, Data, &CKnightDataComponent::OnInActiveMeleeAttackCollider);
  	AnimInst->SetEndFunction("Slam180CW",(CMonsterDataComponent*)(Data), &CMonsterDataComponent::OnEndAnimPostAttackDelayOn);
 
-	AnimInst->AddNotifyDeltaTimeFrameRange("Slam180CCW", "OnTrace", 5, 10, Data, &CKnightDataComponent::OnTracePlayerOnlyRotation);
- 	AnimInst->AddNotify("Slam180CCW", "HitBoxActive", 21, Data, &CKnightDataComponent::OnActiveMeleeAttackCollider);
- 	AnimInst->AddNotify("Slam180CCW", "HitBoxDisable", 25, Data, &CKnightDataComponent::OnInActiveMeleeAttackCollider);
+	AnimInst->AddNotifyDeltaTimeFrameRange("Slam180CCW", "OnTrace", 5, 10, (CMonsterDataComponent*)Data, &CMonsterDataComponent::OnLookPlayer);
+ 	AnimInst->AddNotify("Slam180CCW", "HitBoxActive", 16, Data, &CKnightDataComponent::OnActiveMeleeAttackCollider);
+ 	AnimInst->AddNotify("Slam180CCW", "HitBoxDisable", 21, Data, &CKnightDataComponent::OnInActiveMeleeAttackCollider);
  	AnimInst->SetEndFunction("Slam180CCW", (CMonsterDataComponent*)(Data), &CMonsterDataComponent::OnEndAnimPostAttackDelayOn);
 
 	m_RotatePerSec = Data->GetRotateSpeed();
@@ -72,20 +72,15 @@ NodeResult CBossKnightContinueAttackNode::OnStart(float DeltaTime)
 		break;
 	}
 
-	return NodeResult();
+	return NodeResult::Node_True;
 }
 
 NodeResult CBossKnightContinueAttackNode::OnUpdate(float DeltaTime)
 {
-	return NodeResult();
+	return NodeResult::Node_True;
 }
 
 NodeResult CBossKnightContinueAttackNode::OnEnd(float DeltaTime)
 {
-	return NodeResult();
-}
-
-NodeResult CBossKnightContinueAttackNode::Invoke(float DeltaTime)
-{
-	return NodeResult();
+	return NodeResult::Node_True;
 }

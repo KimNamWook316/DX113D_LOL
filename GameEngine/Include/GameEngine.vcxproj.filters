@@ -361,6 +361,15 @@
     <Filter Include="02. Resource\02. Shader\02. ShaderClass\24. Laser">
       <UniqueIdentifier>{cb471bb2-7b0c-4913-9944-ba99d48a1296}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. Resource\02. Shader\03. ConstantBuffer\20. Water">
+      <UniqueIdentifier>{42cdd86e-3e88-4ee5-a49e-89d8fd89083c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Resource\02. Shader\02. ShaderClass\25. Water">
+      <UniqueIdentifier>{25728410-264d-448a-8846-99b8824f9e73}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. Component\01. SceneComponent\13. Water">
+      <UniqueIdentifier>{42292487-7f75-49a7-a958-d1f9a9868a18}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Device.cpp">
@@ -1079,6 +1088,15 @@
     </ClCompile>
     <ClCompile Include="Scene\Scene.cpp">
       <Filter>03. Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Shader\WaterCBuffer.cpp">
+      <Filter>02. Resource\02. Shader\03. ConstantBuffer\20. Water</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Shader\WaterShader.cpp">
+      <Filter>02. Resource\02. Shader\02. ShaderClass\25. Water</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\WaterComponent.cpp">
+      <Filter>05. Component\01. SceneComponent\13. Water</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1838,6 +1856,15 @@
     <ClInclude Include="Scene\Scene.h">
       <Filter>03. Scene</Filter>
     </ClInclude>
+    <ClInclude Include="Resource\Shader\WaterCBuffer.h">
+      <Filter>02. Resource\02. Shader\03. ConstantBuffer\20. Water</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Shader\WaterShader.h">
+      <Filter>02. Resource\02. Shader\02. ShaderClass\25. Water</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\WaterComponent.h">
+      <Filter>05. Component\01. SceneComponent\13. Water</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\Shader\ColorMesh.fx">
@@ -1916,6 +1943,12 @@
       <Filter>02. Resource\02. Shader\01. HLSL</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\Shader\Laser.fx">
+      <Filter>02. Resource\02. Shader\01. HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\Shader\TransparentInfo.fx">
+      <Filter>02. Resource\02. Shader\01. HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\Shader\Water.fx">
       <Filter>02. Resource\02. Shader\01. HLSL</Filter>
     </FxCompile>
   </ItemGroup>

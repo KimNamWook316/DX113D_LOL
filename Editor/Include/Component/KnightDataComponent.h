@@ -26,8 +26,7 @@ public:
     void OnActiveMeleeAttackCollider();
     void OnInActiveMeleeAttackCollider();
     void OnHitMeleeAttack(const CollisionResult& Result);
-    void OnTracePlayerOnlyRotation(float DeltaTime);
-    void OnTracePlayerRotationMove(float DeltaTime);
+    void OnLookPlayerMove(float DeltaTime);
     void OnEndAnimJudgeContinueAttack();
 
 public:

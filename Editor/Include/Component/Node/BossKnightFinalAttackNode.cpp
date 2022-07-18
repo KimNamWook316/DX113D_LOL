@@ -6,8 +6,7 @@
 #include "Scene/Scene.h"
 #include "../KnightDataComponent.h"
 
-CBossKnightFinalAttackNode::CBossKnightFinalAttackNode()	:
-	m_RotatePerSec(0.f)
+CBossKnightFinalAttackNode::CBossKnightFinalAttackNode()
 {
 	SetTypeID(typeid(CBossKnightFinalAttackNode).hash_code());
 }
@@ -30,7 +29,7 @@ void CBossKnightFinalAttackNode::Init()
 
 	std::string AnimName = "SlamContinueJump";
 	CAnimationSequenceInstance* AnimInst = m_AnimationMeshComp->GetAnimationInstance();
-	AnimInst->AddNotifyDeltaTimeFrameRange(AnimName, "OnTracePlayer", 6, 14, Data, &CKnightDataComponent::OnTracePlayerOnlyRotation);
+	AnimInst->AddNotifyDeltaTimeFrameRange(AnimName, "OnTracePlayer", 6, 14, (CMonsterDataComponent*)Data, &CMonsterDataComponent::OnLookPlayer);
 	AnimInst->AddNotify(AnimName, "OnHitBoxActive", 21, Data, &CKnightDataComponent::OnActiveMeleeAttackCollider);
 	AnimInst->AddNotify(AnimName, "OnHitBoxDisable", 25, Data, &CKnightDataComponent::OnInActiveMeleeAttackCollider);
 	AnimInst->SetEndFunction(AnimName, (CMonsterDataComponent*)Data, &CMonsterDataComponent::OnEndAnimPostAttackDelayOn);
@@ -53,7 +52,7 @@ NodeResult CBossKnightFinalAttackNode::OnStart(float DeltaTime)
 
 NodeResult CBossKnightFinalAttackNode::OnUpdate(float DeltaTime)
 {
-	return NodeResult();
+	return NodeResult::Node_True;
 }
 
 NodeResult CBossKnightFinalAttackNode::OnEnd(float DeltaTime)
@@ -61,9 +60,4 @@ NodeResult CBossKnightFinalAttackNode::OnEnd(float DeltaTime)
 	m_CallStart = false;
 
 	return NodeResult::Node_True;
-}
-
-NodeResult CBossKnightFinalAttackNode::Invoke(float DeltaTime)
-{
-	return CActionNode::Invoke(DeltaTime);
 }

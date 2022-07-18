@@ -40,7 +40,7 @@ void CKnightDataComponent::OnHitMeleeAttack(const CollisionResult& Result)
 	// TODO : Boss Knight - Player Hit 처리
 }
 
-void CKnightDataComponent::OnTracePlayerOnlyRotation(float DeltaTime)
+void CKnightDataComponent::OnLookPlayerMove(float DeltaTime)
 {
 	// 플레이어 방향으로 회전 범위만큼 회전
 	float AnglePlayer = GetAnglePlayer();
@@ -49,24 +49,7 @@ void CKnightDataComponent::OnTracePlayerOnlyRotation(float DeltaTime)
 
 	if (abs(AnglePlayer) < m_Data.RotateSpeedPerSec)
 	{
-		MyObj->AddWorldRotationY(AnglePlayer * DeltaTime);
-	}
-	else
-	{
-		MyObj->AddWorldRotationY(m_Data.RotateSpeedPerSec * DeltaTime);
-	}
-}
-
-void CKnightDataComponent::OnTracePlayerRotationMove(float DeltaTime)
-{
-	// 플레이어 방향으로 회전 범위만큼 회전
-	float AnglePlayer = GetAnglePlayer();
-
-	CGameObject* MyObj = m_Object;
-
-	if (abs(AnglePlayer) < m_Data.RotateSpeedPerSec)
-	{
-		MyObj->AddWorldRotationY(AnglePlayer * DeltaTime);
+		MyObj->AddWorldRotationY(-AnglePlayer * DeltaTime);
 	}
 	else
 	{
@@ -108,19 +91,15 @@ void CKnightDataComponent::OnEndAnimJudgeContinueAttack()
 			return;
 		}
 
-		Vector3 PlayerZAxis = Player->GetWorldAxis(AXIS::AXIS_Z) * -1.f;
-		Vector3 MyZAxis = m_Object->GetWorldAxis(AXIS::AXIS_Z) * -1.f;
+		bool IsPlayerLeft = IsPlayerLeftBasedInLookDir();
 
-		// 플레이어가 시계방향에 있는지, 반시계방향에 있는지 판단
-		Vector3 Cross = PlayerZAxis.Cross(MyZAxis);
-
-		if (Cross.y > 0.f)
+		if (IsPlayerLeft)
 		{
-			SetAttackRot(Knight_Attack_Rot_Type::CW);
+			SetAttackRot(Knight_Attack_Rot_Type::CCW);
 		}
 		else
 		{
-			SetAttackRot(Knight_Attack_Rot_Type::CCW);
+			SetAttackRot(Knight_Attack_Rot_Type::CW);
 		}
 	}
 	else
