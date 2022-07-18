@@ -34,8 +34,6 @@ void CBossKnightFinalAttackNode::Init()
 	AnimInst->AddNotify(AnimName, "OnHitBoxActive", 21, Data, &CKnightDataComponent::OnActiveMeleeAttackCollider);
 	AnimInst->AddNotify(AnimName, "OnHitBoxDisable", 25, Data, &CKnightDataComponent::OnInActiveMeleeAttackCollider);
 	AnimInst->SetEndFunction(AnimName, (CMonsterDataComponent*)Data, &CMonsterDataComponent::OnEndAnimPostAttackDelayOn);
-
-	m_RotatePerSec = Data->GetRotateSpeed();
 }
 
 NodeResult CBossKnightFinalAttackNode::OnStart(float DeltaTime)

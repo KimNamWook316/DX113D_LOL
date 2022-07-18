@@ -29,6 +29,10 @@ void CBossKnightMeleeAttackNode::Init()
 
 	std::string AnimName = "Slam";
 	CAnimationSequenceInstance* AnimInst = m_AnimationMeshComp->GetAnimationInstance();
+	AnimInst->AddNotifyDeltaTimeFrameRange(AnimName, "OnTrace", 0, 4, Data, &CKnightDataComponent::OnTracePlayerOnlyRotation);
+	AnimInst->AddNotify(AnimName, "HitBoxActive", 11 ,Data, &CKnightDataComponent::OnActiveMeleeAttackCollider);
+	AnimInst->AddNotify(AnimName, "HitBoxActive", 15, Data, &CKnightDataComponent::OnActiveMeleeAttackCollider);
+	AnimInst->SetEndFunction(AnimName, Data, &CKnightDataComponent::OnEndAnimJudgeContinueAttack);
 
 	m_RotatePerSec = Data->GetRotateSpeed();
 }

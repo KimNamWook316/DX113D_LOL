@@ -22,8 +22,6 @@ public:
     void OnAttackJumpMove(float DeltaTime);
 
 private:
-    float m_RotatePerSec;
     float m_MoveSpeed;
-    Vector3 m_FinalMoveDir;
 };
 

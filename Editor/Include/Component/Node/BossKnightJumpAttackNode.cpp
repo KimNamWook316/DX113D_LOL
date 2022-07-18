@@ -35,7 +35,6 @@ void CBossKnightJumpAttackNode::Init()
 	AnimInst->AddNotify(AnimName, "OnHitBoxDisable", 20, Data, &CKnightDataComponent::OnInActiveMeleeAttackCollider);
 	AnimInst->SetEndFunction(AnimName, Data, &CKnightDataComponent::OnEndAnimJudgeContinueAttack);
 
-	m_RotatePerSec = Data->GetRotateSpeed();
 	m_MoveSpeed = Data->GetMoveSpeed();
 }
 

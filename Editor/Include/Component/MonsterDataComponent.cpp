@@ -128,7 +128,7 @@ float CMonsterDataComponent::GetAnglePlayer()
 
 	Vector3 ToPlayer = PlayerPos - MyPos;
 
-	Vector3 MyAxisZ = m_Object->GetWorldAxis(AXIS::AXIS_Z);
+	Vector3 MyAxisZ = m_Object->GetWorldAxis(AXIS::AXIS_Z) * -1.f;
 
 	float Angle = ToPlayer.Angle(MyAxisZ);
 	return Angle;

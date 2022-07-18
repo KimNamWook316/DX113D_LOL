@@ -74,7 +74,7 @@ void CKnightDataComponent::OnTracePlayerRotationMove(float DeltaTime)
 	}
 
 	// Walk Speed 두배로 이동
-	MyObj->AddWorldPosByLocalAxis(AXIS::AXIS_Z, m_Data.MoveSpeed * 2.f);
+	MyObj->AddWorldPosByLocalAxis(AXIS::AXIS_Z, -1.f * m_Data.MoveSpeed * 2.f);
 
 	// 추적 종료 시 방향 저장
 	Vector3 FinalZAxis = ToPlayer();
@@ -108,8 +108,8 @@ void CKnightDataComponent::OnEndAnimJudgeContinueAttack()
 			return;
 		}
 
-		Vector3 PlayerZAxis = Player->GetWorldAxis(AXIS::AXIS_Z);
-		Vector3 MyZAxis = m_Object->GetWorldAxis(AXIS::AXIS_Z);
+		Vector3 PlayerZAxis = Player->GetWorldAxis(AXIS::AXIS_Z) * -1.f;
+		Vector3 MyZAxis = m_Object->GetWorldAxis(AXIS::AXIS_Z) * -1.f;
 
 		// 플레이어가 시계방향에 있는지, 반시계방향에 있는지 판단
 		Vector3 Cross = PlayerZAxis.Cross(MyZAxis);
