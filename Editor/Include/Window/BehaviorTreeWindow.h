@@ -518,6 +518,10 @@ private:
         WideCharToMultiByte(CP_UTF8, 0, m_wHintText, -1, m_HintTextUTF8, Length, 0, 0);
     }
 
+private:
+    void PrintActionNodes();
+    void PrintConditionNodes();
+
 public:
     // GameObject가 로드됐을때 Graph Editor상에 노드들 갱신
     void UpdateLoadNode(CCompositeNode* RootNode);

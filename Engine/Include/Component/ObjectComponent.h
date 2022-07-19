@@ -20,6 +20,7 @@ public:
     virtual void PrevRender() = 0;
     virtual void Render() = 0;
     virtual void PostRender() = 0;
+	virtual void Reset() override;
     virtual CObjectComponent* Clone() = 0;
 };
 

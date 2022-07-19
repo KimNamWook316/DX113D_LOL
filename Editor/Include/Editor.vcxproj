@@ -166,77 +166,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AnimationInstanceConvertThread.cpp" />
-    <ClCompile Include="Component\BossBettyDataComponent.cpp" />
-    <ClCompile Include="Component\EyeLaserComponent.cpp" />
-    <ClCompile Include="Component\GameBehaviorTree.cpp" />
-    <ClCompile Include="Component\GameStateComponent.cpp" />
-    <ClCompile Include="Component\KnightDataComponent.cpp" />
-    <ClCompile Include="Component\MonsterDataComponent.cpp" />
-    <ClCompile Include="Component\MonsterPathFindCollider.cpp" />
-    <ClCompile Include="Component\Node\AddFallingFloorCallbackNode.cpp" />
-    <ClCompile Include="Component\Node\BossBettyAngryAttackNode.cpp" />
-    <ClCompile Include="Component\Node\BossBettyCloseAttackNode.cpp" />
-    <ClCompile Include="Component\Node\BossBettyFarAttackTypeCheck.cpp" />
-    <ClCompile Include="Component\Node\BossBettyHPStateCheck.cpp" />
-    <ClCompile Include="Component\Node\BossBettyJumpAttackNode.cpp" />
-    <ClCompile Include="Component\Node\BossBettySpinAttackNode.cpp" />
-    <ClCompile Include="Component\Node\BossBettyThrowAttackCheck.cpp" />
-    <ClCompile Include="Component\Node\BossBettyThrowNode.cpp" />
-    <ClCompile Include="Component\Node\BossKnightContinueAttackNode.cpp" />
-    <ClCompile Include="Component\Node\BossKnightFinalAttackNode.cpp" />
-    <ClCompile Include="Component\Node\BossKnightMeleeAttackNode.cpp" />
-    <ClCompile Include="Component\Node\BossKnightSlamEnd.cpp" />
-    <ClCompile Include="Component\Node\PostAttackDelayCheck.cpp" />
-    <ClCompile Include="Component\Node\CancleShootNode.cpp" />
-    <ClCompile Include="Component\Node\CheckAttackTarget.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="Component\Node\CheckDetectRangeNode.cpp" />
-    <ClCompile Include="Component\Node\CheckState.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="Component\Node\DeathNode.cpp" />
-    <ClCompile Include="Component\Node\FindPathNode.cpp" />
-    <ClCompile Include="Component\Node\HPCheck.cpp" />
-    <ClCompile Include="Component\Node\IdleNode.cpp" />
-    <ClCompile Include="Component\Node\BossKnightFinalAttackCheck.cpp" />
-    <ClCompile Include="Component\Node\BossKnightJumpAttackNode.cpp" />
-    <ClCompile Include="Component\Node\BossKnightJumpAttackRangeCheck.cpp" />
-    <ClCompile Include="Component\Node\Lockstone3TriggerBoxAction.cpp" />
-    <ClCompile Include="Component\Node\Lockstone3TriggerBoxHitCheck.cpp" />
-    <ClCompile Include="Component\Node\MeleeRangeCheckNode.cpp" />
-    <ClCompile Include="Component\Node\MouseLButtonCheckNode.cpp" />
-    <ClCompile Include="Component\Node\MouseRButtonCheckNode.cpp" />
-    <ClCompile Include="Component\Node\MouseRButtonUpCheckNode.cpp" />
-    <ClCompile Include="Component\Node\MoveInputCheckNode.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="Component\Node\MoveNode.cpp" />
-    <ClCompile Include="Component\Node\MovePickingNode.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="Component\Node\NegateNode.cpp" />
-    <ClCompile Include="Component\Node\NoInterruptNode.cpp" />
-    <ClCompile Include="Component\Node\NormalAttack.cpp" />
-    <ClCompile Include="Component\Node\ReadyToShoot.cpp" />
-    <ClCompile Include="Component\Node\RotateAttackDirectionNode.cpp" />
-    <ClCompile Include="Component\Node\ShootNode.cpp" />
-    <ClCompile Include="Component\ObjectDataComponent.cpp" />
-    <ClCompile Include="Component\PlayerDataComponent.cpp" />
-    <ClCompile Include="Component\PlayerHookComponent.cpp" />
-    <ClCompile Include="Component\PlayerNormalAttackCheckCollider.cpp" />
     <ClCompile Include="Component\State\AirBorneState.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
@@ -255,7 +184,61 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="DataManager.cpp" />
+    <ClCompile Include="DeathDoor\Component\BossBettyDataComponent.cpp" />
+    <ClCompile Include="DeathDoor\Component\EyeLaserComponent.cpp" />
+    <ClCompile Include="DeathDoor\Component\GameBehaviorTree.cpp" />
+    <ClCompile Include="DeathDoor\Component\GameStateComponent.cpp" />
+    <ClCompile Include="DeathDoor\Component\KnightDataComponent.cpp" />
+    <ClCompile Include="DeathDoor\Component\MonsterDataComponent.cpp" />
+    <ClCompile Include="DeathDoor\Component\MonsterPathFindCollider.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\AddFallingFloorCallbackNode.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\BossBettyAngryAttackNode.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\BossBettyCloseAttackNode.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\BossBettyFarAttackTypeCheck.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\BossBettyHPStateCheck.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\BossBettyJumpAttackNode.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\BossBettySpinAttackNode.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\BossBettyThrowAttackCheck.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\BossBettyThrowNode.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\BossKnightContinueAttackNode.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\BossKnightCutScenePlayCheck.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\BossKnightFinalAttackCheck.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\BossKnightFinalAttackNode.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\BossKnightIdleNode.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\BossKnightJumpAttackNode.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\BossKnightJumpAttackRangeCheck.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\BossKnightMeleeAttackNode.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\BossKnightPlayerEnterZoneCheck.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\BossKnightSlamEnd.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\BossKnightWalkNode.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\CancleShootNode.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\CheckAttackTarget.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\CheckDetectRangeNode.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\CheckState.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\DeathNode.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\FindPathNode.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\HPCheck.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\IdleNode.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\Lockstone3TriggerBoxAction.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\Lockstone3TriggerBoxHitCheck.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\MeleeRangeCheckNode.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\MouseLButtonCheckNode.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\MouseRButtonCheckNode.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\MouseRButtonUpCheckNode.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\MoveInputCheckNode.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\MoveNode.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\NegateNode.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\NoInterruptNode.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\NormalAttack.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\PostAttackDelayCheck.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\ReadyToShoot.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\RotateAttackDirectionNode.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\ShootNode.cpp" />
+    <ClCompile Include="DeathDoor\Component\ObjectDataComponent.cpp" />
+    <ClCompile Include="DeathDoor\Component\PlayerDataComponent.cpp" />
+    <ClCompile Include="DeathDoor\Component\PlayerHookComponent.cpp" />
+    <ClCompile Include="DeathDoor\Component\PlayerNormalAttackCheckCollider.cpp" />
+    <ClCompile Include="DeathDoor\DataManager.cpp" />
     <ClCompile Include="DeathDoor\DDUtil.cpp" />
     <ClCompile Include="EditorManager.cpp" />
     <ClCompile Include="EditorUtil.cpp" />
@@ -271,6 +254,7 @@
     <ClCompile Include="Scene\DefaultScene.cpp" />
     <ClCompile Include="Widget\AnimationMeshWidget.cpp" />
     <ClCompile Include="Widget\BehaviorTreeMenu.cpp" />
+    <ClCompile Include="Widget\CameraWidget.cpp" />
     <ClCompile Include="Widget\ColliderComponentWidget.cpp" />
     <ClCompile Include="Widget\ColliderSphereWidget.cpp" />
     <ClCompile Include="Widget\DataMenu.cpp" />
@@ -321,77 +305,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimationInstanceConvertThread.h" />
-    <ClInclude Include="Component\BossBettyDataComponent.h" />
-    <ClInclude Include="Component\EyeLaserComponent.h" />
-    <ClInclude Include="Component\GameBehaviorTree.h" />
-    <ClInclude Include="Component\GameStateComponent.h" />
-    <ClInclude Include="Component\KnightDataComponent.h" />
-    <ClInclude Include="Component\MonsterDataComponent.h" />
-    <ClInclude Include="Component\MonsterPathFindCollider.h" />
-    <ClInclude Include="Component\Node\AddFallingFloorCallbackNode.h" />
-    <ClInclude Include="Component\Node\BossBettyAngryAttackNode.h" />
-    <ClInclude Include="Component\Node\BossBettyCloseAttackNode.h" />
-    <ClInclude Include="Component\Node\BossBettyFarAttackTypeCheck.h" />
-    <ClInclude Include="Component\Node\BossBettyHPStateCheck.h" />
-    <ClInclude Include="Component\Node\BossBettyJumpAttackNode.h" />
-    <ClInclude Include="Component\Node\BossBettySpinAttackNode.h" />
-    <ClInclude Include="Component\Node\BossBettyThrowAttackCheck.h" />
-    <ClInclude Include="Component\Node\BossBettyThrowNode.h" />
-    <ClInclude Include="Component\Node\BossKnightContinueAttackNode.h" />
-    <ClInclude Include="Component\Node\BossKnightFinalAttackNode.h" />
-    <ClInclude Include="Component\Node\BossKnightMeleeAttackNode.h" />
-    <ClInclude Include="Component\Node\BossKnightSlamEnd.h" />
-    <ClInclude Include="Component\Node\PostAttackDelayCheck.h" />
-    <ClInclude Include="Component\Node\CancleShootNode.h" />
-    <ClInclude Include="Component\Node\CheckAttackTarget.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="Component\Node\CheckDetectRangeNode.h" />
-    <ClInclude Include="Component\Node\CheckState.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="Component\Node\DeathNode.h" />
-    <ClInclude Include="Component\Node\FindPathNode.h" />
-    <ClInclude Include="Component\Node\HPCheck.h" />
-    <ClInclude Include="Component\Node\IdleNode.h" />
-    <ClInclude Include="Component\Node\BossKnightFinalAttackCheck.h" />
-    <ClInclude Include="Component\Node\BossKnightJumpAttackNode.h" />
-    <ClInclude Include="Component\Node\BossKnightJumpAttackRangeCheck.h" />
-    <ClInclude Include="Component\Node\Lockstone3TriggerBoxAction.h" />
-    <ClInclude Include="Component\Node\Lockstone3TriggerBoxHitCheck.h" />
-    <ClInclude Include="Component\Node\MeleeRangeCheckNode.h" />
-    <ClInclude Include="Component\Node\MouseLButtonCheckNode.h" />
-    <ClInclude Include="Component\Node\MouseRButtonCheckNode.h" />
-    <ClInclude Include="Component\Node\MouseRButtonUpCheckNode.h" />
-    <ClInclude Include="Component\Node\MoveInputCheckNode.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="Component\Node\MoveNode.h" />
-    <ClInclude Include="Component\Node\MovePickingNode.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="Component\Node\NegateNode.h" />
-    <ClInclude Include="Component\Node\NoInterruptNode.h" />
-    <ClInclude Include="Component\Node\NormalAttack.h" />
-    <ClInclude Include="Component\Node\ReadyToShoot.h" />
-    <ClInclude Include="Component\Node\RotateAttackDirectionNode.h" />
-    <ClInclude Include="Component\Node\ShootNode.h" />
-    <ClInclude Include="Component\ObjectDataComponent.h" />
-    <ClInclude Include="Component\PlayerDataComponent.h" />
-    <ClInclude Include="Component\PlayerHookComponent.h" />
-    <ClInclude Include="Component\PlayerNormalAttackCheckCollider.h" />
     <ClInclude Include="Component\State\AirBorneState.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
@@ -410,7 +323,61 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClInclude>
-    <ClInclude Include="DataManager.h" />
+    <ClInclude Include="DeathDoor\Component\BossBettyDataComponent.h" />
+    <ClInclude Include="DeathDoor\Component\EyeLaserComponent.h" />
+    <ClInclude Include="DeathDoor\Component\GameBehaviorTree.h" />
+    <ClInclude Include="DeathDoor\Component\GameStateComponent.h" />
+    <ClInclude Include="DeathDoor\Component\KnightDataComponent.h" />
+    <ClInclude Include="DeathDoor\Component\MonsterDataComponent.h" />
+    <ClInclude Include="DeathDoor\Component\MonsterPathFindCollider.h" />
+    <ClInclude Include="DeathDoor\Component\Node\AddFallingFloorCallbackNode.h" />
+    <ClInclude Include="DeathDoor\Component\Node\BossBettyAngryAttackNode.h" />
+    <ClInclude Include="DeathDoor\Component\Node\BossBettyCloseAttackNode.h" />
+    <ClInclude Include="DeathDoor\Component\Node\BossBettyFarAttackTypeCheck.h" />
+    <ClInclude Include="DeathDoor\Component\Node\BossBettyHPStateCheck.h" />
+    <ClInclude Include="DeathDoor\Component\Node\BossBettyJumpAttackNode.h" />
+    <ClInclude Include="DeathDoor\Component\Node\BossBettySpinAttackNode.h" />
+    <ClInclude Include="DeathDoor\Component\Node\BossBettyThrowAttackCheck.h" />
+    <ClInclude Include="DeathDoor\Component\Node\BossBettyThrowNode.h" />
+    <ClInclude Include="DeathDoor\Component\Node\BossKnightContinueAttackNode.h" />
+    <ClInclude Include="DeathDoor\Component\Node\BossKnightCutScenePlayCheck.h" />
+    <ClInclude Include="DeathDoor\Component\Node\BossKnightFinalAttackCheck.h" />
+    <ClInclude Include="DeathDoor\Component\Node\BossKnightFinalAttackNode.h" />
+    <ClInclude Include="DeathDoor\Component\Node\BossKnightIdleNode.h" />
+    <ClInclude Include="DeathDoor\Component\Node\BossKnightJumpAttackNode.h" />
+    <ClInclude Include="DeathDoor\Component\Node\BossKnightJumpAttackRangeCheck.h" />
+    <ClInclude Include="DeathDoor\Component\Node\BossKnightMeleeAttackNode.h" />
+    <ClInclude Include="DeathDoor\Component\Node\BossKnightPlayerEnterZoneCheck.h" />
+    <ClInclude Include="DeathDoor\Component\Node\BossKnightSlamEnd.h" />
+    <ClInclude Include="DeathDoor\Component\Node\BossKnightWalkNode.h" />
+    <ClInclude Include="DeathDoor\Component\Node\CancleShootNode.h" />
+    <ClInclude Include="DeathDoor\Component\Node\CheckAttackTarget.h" />
+    <ClInclude Include="DeathDoor\Component\Node\CheckDetectRangeNode.h" />
+    <ClInclude Include="DeathDoor\Component\Node\CheckState.h" />
+    <ClInclude Include="DeathDoor\Component\Node\DeathNode.h" />
+    <ClInclude Include="DeathDoor\Component\Node\FindPathNode.h" />
+    <ClInclude Include="DeathDoor\Component\Node\HPCheck.h" />
+    <ClInclude Include="DeathDoor\Component\Node\IdleNode.h" />
+    <ClInclude Include="DeathDoor\Component\Node\Lockstone3TriggerBoxAction.h" />
+    <ClInclude Include="DeathDoor\Component\Node\Lockstone3TriggerBoxHitCheck.h" />
+    <ClInclude Include="DeathDoor\Component\Node\MeleeRangeCheckNode.h" />
+    <ClInclude Include="DeathDoor\Component\Node\MouseLButtonCheckNode.h" />
+    <ClInclude Include="DeathDoor\Component\Node\MouseRButtonCheckNode.h" />
+    <ClInclude Include="DeathDoor\Component\Node\MouseRButtonUpCheckNode.h" />
+    <ClInclude Include="DeathDoor\Component\Node\MoveInputCheckNode.h" />
+    <ClInclude Include="DeathDoor\Component\Node\MoveNode.h" />
+    <ClInclude Include="DeathDoor\Component\Node\NegateNode.h" />
+    <ClInclude Include="DeathDoor\Component\Node\NoInterruptNode.h" />
+    <ClInclude Include="DeathDoor\Component\Node\NormalAttack.h" />
+    <ClInclude Include="DeathDoor\Component\Node\PostAttackDelayCheck.h" />
+    <ClInclude Include="DeathDoor\Component\Node\ReadyToShoot.h" />
+    <ClInclude Include="DeathDoor\Component\Node\RotateAttackDirectionNode.h" />
+    <ClInclude Include="DeathDoor\Component\Node\ShootNode.h" />
+    <ClInclude Include="DeathDoor\Component\ObjectDataComponent.h" />
+    <ClInclude Include="DeathDoor\Component\PlayerDataComponent.h" />
+    <ClInclude Include="DeathDoor\Component\PlayerHookComponent.h" />
+    <ClInclude Include="DeathDoor\Component\PlayerNormalAttackCheckCollider.h" />
+    <ClInclude Include="DeathDoor\DataManager.h" />
     <ClInclude Include="DeathDoor\DDFlag.h" />
     <ClInclude Include="DeathDoor\DDUtil.h" />
     <ClInclude Include="EditorInfo.h" />
@@ -428,6 +395,7 @@
     <ClInclude Include="Scene\DefaultScene.h" />
     <ClInclude Include="Widget\AnimationMeshWidget.h" />
     <ClInclude Include="Widget\BehaviorTreeMenu.h" />
+    <ClInclude Include="Widget\CameraWidget.h" />
     <ClInclude Include="Widget\ColliderComponentWidget.h" />
     <ClInclude Include="Widget\ColliderSphereWidget.h" />
     <ClInclude Include="Widget\DataMenu.h" />

@@ -604,6 +604,10 @@ void CSceneComponent::PostRender()
 {
 }
 
+void CSceneComponent::Reset()
+{
+}
+
 CSceneComponent* CSceneComponent::Clone()
 {
 	return new CSceneComponent(*this);

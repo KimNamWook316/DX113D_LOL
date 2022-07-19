@@ -187,6 +187,7 @@ public:
 	virtual void RenderShadowMap();
 	virtual void RenderDebug();
 	virtual void PostRender();
+	virtual void Reset() override;
 	virtual CSceneComponent* Clone();
 	virtual bool Save(FILE* File);
 	virtual bool Load(FILE* File);

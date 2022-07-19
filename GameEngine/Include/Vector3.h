@@ -95,5 +95,7 @@ struct Vector3
 	static Vector3	Zero;
 	static Vector3	One;
 	static Vector3	Axis[AXIS_MAX];
+	static Vector3	LargeNum;
+	static Vector3	MinusLargeNum;
 };
 

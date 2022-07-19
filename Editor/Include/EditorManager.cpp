@@ -16,21 +16,21 @@
 #include "Component/ParticleComponent.h"
 #include "Component/AnimationMeshComponent.h"
 #include "Component/LandScape.h"
-#include "Component/GameStateComponent.h"
+#include "DeathDoor/Component\GameStateComponent.h"
 #include "Component/ColliderBox3D.h"
 #include "Component/ColliderSphere.h"
 #include "Component/ColliderHalfLine.h"
 #include "Component/ColliderRay.h"
-#include "Component/ObjectDataComponent.h"
-#include "Component/PlayerDataComponent.h"
+#include "DeathDoor/Component/ObjectDataComponent.h"
+#include "DeathDoor/Component/PlayerDataComponent.h"
 #include "Component/NavMeshComponent.h"
 #include "Component/PaperBurnComponent.h"
 #include "Component/WaterComponent.h"
 #include "Component/PaperBurnComponent.h"
-#include "Component/PlayerNormalAttackCheckCollider.h"
-#include "Component/EyeLaserComponent.h"
-#include "Component/PlayerHookComponent.h"
-#include "Component/MonsterPathFindCollider.h"
+#include "DeathDoor\Component/PlayerNormalAttackCheckCollider.h"
+#include "DeathDoor\Component/EyeLaserComponent.h"
+#include "DeathDoor\Component/PlayerHookComponent.h"
+#include "DeathDoor\Component/MonsterPathFindCollider.h"
 // Window
 #include "Window/ObjectHierarchyWindow.h"
 #include "Window/SceneComponentHierarchyWindow.h"
@@ -56,9 +56,9 @@
 #include "Object/Player2D.h"
 #include "Object/3DCameraObject.h"
 
-#include "Component/State/GameStateManager.h"
+#include "DeathDoor\Component/State/GameStateManager.h"
 #include "Scene/Navigation3DManager.h"
-#include "DataManager.h"
+#include "DeathDoor\DataManager.h"
 
 #include <sstream>
 
@@ -204,8 +204,6 @@ void CEditorManager::KeyboardUp(float DeltaTime)
 void CEditorManager::KeyboardDown(float DeltaTime)
 {
 	float Bias = CRenderManager::GetInst()->GetShadowBias();
-
-	CRenderManager::GetInst()->SetShadowBias(Bias - DeltaTime);
 }
 
 void CEditorManager::KeyboardLeft(float DeltaTime)
@@ -307,6 +305,12 @@ CComponent* CEditorManager::CreateComponent(CGameObject* Obj, size_t Type)
 	else if (Type == typeid(CGameStateComponent).hash_code())
 	{
 		CGameStateComponent* Component = Obj->LoadObjectComponent<CGameStateComponent>();
+		return Component;
+	}
+
+	else if (Type == typeid(CCameraComponent).hash_code())
+	{
+		CCameraComponent* Component = Obj->LoadObjectComponent<CCameraComponent>();
 		return Component;
 	}
 

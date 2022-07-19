@@ -4,13 +4,13 @@
 #include "Resource/Material/Material.h"
 #include "Component/StateComponent.h"
 #include "Component/Node/SequenceNode.h"
-#include "../Component/Node/MoveInputCheckNode.h"
-#include "../Component/Node/MovePickingNode.h"
+#include "../DeathDoor/Component/Node/MoveInputCheckNode.h"
+#include "../DeathDoor/Component/Node/MovePickingNode.h"
 
 #include "Component/AnimationMeshComponent.h"
 #include "Component/StaticMeshComponent.h"
 
-#include "../DataManager.h"
+#include "../DeathDoor/DataManager.h"
 
 
 CDefaultScene::CDefaultScene()  :

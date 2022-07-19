@@ -20,3 +20,12 @@ void CObjectComponent::Start()
 {
 	CComponent::Start();
 }
+
+void CObjectComponent::Reset()
+{
+}
+
+CObjectComponent* CObjectComponent::Clone()
+{
+	return nullptr;
+}
