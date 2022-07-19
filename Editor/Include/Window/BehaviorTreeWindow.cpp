@@ -167,6 +167,7 @@ void CBehaviorTreeWindow::Update(float DeltaTime)
 
 
     // 노드가 ActionNode이거나 Condition Node일 때 Invoke할 동작을 정하고 만들어야한다
+    // TODO : Action Node 추가될 때 마다 추가
     if (m_TypeSelectIndex == 2 || m_TypeSelectIndex == 3 || m_TypeSelectIndex == 4)
     {
         m_vecNodeAction.clear();
@@ -176,6 +177,7 @@ void CBehaviorTreeWindow::Update(float DeltaTime)
             PrintActionNodes();
         }
 
+        // TODO : Condition Node 추가될 때 마다 추가
         else if (m_TypeSelectIndex == 3)
         {
             PrintConditionNodes();
@@ -339,13 +341,22 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
 
     CNode* NewTreeNode = nullptr;
 
+    CNode* ExistNode = m_StateComponent->GetBehaviorTree()->FindNode(Name);
+
+    char NewName[256] = {};
+    strcpy_s(NewName, Name);
+
+    if (ExistNode)
+        strcat_s(NewName, "_");
+
+
     switch (TypeIndex)
     {
     case 0:
-        NewTreeNode = m_StateComponent->CreateTreeNode<CSequenceNode>(Name);
+        NewTreeNode = m_StateComponent->CreateTreeNode<CSequenceNode>(NewName);
         break;
     case 1:
-        NewTreeNode = m_StateComponent->CreateTreeNode<CSelectorNode>(Name);
+        NewTreeNode = m_StateComponent->CreateTreeNode<CSelectorNode>(NewName);
         break;
     case 2:
     {
@@ -503,7 +514,7 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
         switch (NodeDecoratorClass)
         {
         case DecoratorNode::Negate:
-            NewTreeNode = m_StateComponent->CreateTreeNode<CNegateNode>(Name);
+            NewTreeNode = m_StateComponent->CreateTreeNode<CNegateNode>(NewName);
             break;
         }
     }
@@ -529,9 +540,12 @@ void CBehaviorTreeWindow::OnDeleteNodeButton(const char* Name)
 {
     CBehaviorTree* Tree = m_StateComponent->GetBehaviorTree();
 
-    if (Name == Tree->GetRootNode()->GetName())
+    if (Tree->GetRootNode())
     {
-        Tree->SetRoot(nullptr);
+        if (Name == Tree->GetRootNode()->GetName())
+        {
+            Tree->SetRoot(nullptr);
+        }
     }
 
 	CNode* Node = Tree->FindNode(Name);

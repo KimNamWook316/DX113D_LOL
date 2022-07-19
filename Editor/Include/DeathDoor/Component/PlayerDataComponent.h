@@ -1,10 +1,10 @@
 #pragma once
 
-#include "Component/ObjectComponent.h"
+#include "ObjectDataComponent.h"
 #include "GameObject/GameObject.h"
 
 class CPlayerDataComponent :
-    public CObjectComponent
+    public CObjectDataComponent
 {
 	friend class CGameObject;
 

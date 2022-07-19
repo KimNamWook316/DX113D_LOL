@@ -148,9 +148,6 @@
     <Filter Include="06. DeathDoor\01. GameComponent\02. ObjectComponent\01. DataComponent\01. ObjectDataComponent\01. Monster\01. KnightData">
       <UniqueIdentifier>{484f7989-8f88-4043-ae31-cb59bbed1d82}</UniqueIdentifier>
     </Filter>
-    <Filter Include="06. DeathDoor\01. GameComponent\02. ObjectComponent\00. State">
-      <UniqueIdentifier>{b9b489ee-e8a9-4d46-a39f-aa64fc33e2c7}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EditorManager.cpp">
@@ -302,6 +299,8 @@
     </ClCompile>
     <ClCompile Include="Component\State\DamageState.cpp">
       <Filter>06. DeathDoor\03. State</Filter>
+    <ClCompile Include="Component\Node\CheckState.cpp">
+      <Filter>07. BehaviorTree\01. ConditionNode</Filter>
     </ClCompile>
     <ClCompile Include="Component\State\GameStateManager.cpp">
       <Filter>06. DeathDoor\03. State</Filter>
@@ -326,6 +325,8 @@
     </ClCompile>
     <ClCompile Include="Widget\PaperBurnWidget.cpp">
       <Filter>02. Editor\02. Widget\01. Inspector\02. ObjectComponent</Filter>
+    <ClCompile Include="Component\Node\NormalAttack.cpp">
+      <Filter>07. BehaviorTree\02. ActionNode</Filter>
     </ClCompile>
     <ClCompile Include="Widget\WaterComponentWidget.cpp">
       <Filter>02. Editor\02. Widget\01. Inspector\01. SceneComponent</Filter>
@@ -491,6 +492,21 @@
     </ClCompile>
     <ClCompile Include="DeathDoor\Component\GameStateComponent.cpp">
       <Filter>06. DeathDoor\01. GameComponent\02. ObjectComponent\00. State</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\LurkerDataComponent.cpp">
+      <Filter>06. GameComponent\02. ObjectComponent\01. ObjectDataComponent\01. Monster\02. Lurker</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\Node\ClearPathListNode.cpp">
+      <Filter>07. BehaviorTree\02. ActionNode</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\MonsterNavAgent.cpp">
+      <Filter>06. GameComponent\02. ObjectComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\PlayerDataComponent.cpp">
+      <Filter>06. GameComponent\02. ObjectComponent\01. ObjectDataComponent\02. Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\Node\PathFindEnableCheck.cpp">
+      <Filter>07. BehaviorTree\01. ConditionNode</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -856,6 +872,21 @@
     </ClInclude>
     <ClInclude Include="DeathDoor\Component\Node\BossBettyThrowNode.h">
       <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\02. BossBetty</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\LurkerDataComponent.h">
+      <Filter>06. GameComponent\02. ObjectComponent\01. ObjectDataComponent\01. Monster\02. Lurker</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\ClearPathListNode.h">
+      <Filter>07. BehaviorTree\02. ActionNode</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\MonsterNavAgent.h">
+      <Filter>06. GameComponent\02. ObjectComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\PlayerDataComponent.h">
+      <Filter>06. GameComponent\02. ObjectComponent\01. ObjectDataComponent\02. Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\PathFindEnableCheck.h">
+      <Filter>07. BehaviorTree\01. ConditionNode</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -23,5 +23,8 @@ public:
 
 private:
 	class CObjectDataComponent* m_Data;
+
+public:
+	class CObjectDataComponent* GetObjectDataComponent()	const;
 };
 

@@ -121,14 +121,11 @@ void CObjectComponentCreateModal::OnCreateComponent()
 	}
 
 	else if (Typeid == typeid(CObjectDataComponent).hash_code())
-	{
 		Com = SelectObject->CreateComponent<CObjectDataComponent>(Name);
- //		// Editor에서는 EditorManager에서 DataManager 클래스를 갖고 있도록 함
- //		if (CEngine::GetInst()->GetEditMode())
- //		{
- //			CEditorManager::GetInst()->GetDataManager()->SetObjectData(SelectObject);
- //		}
-	}
+	else if (Typeid == typeid(CLurkerDataComponent).hash_code())
+		Com = SelectObject->CreateComponent<CLurkerDataComponent>(Name);
+	else if (Typeid == typeid(CMonsterNavAgent).hash_code())
+		Com = SelectObject->CreateComponent<CMonsterNavAgent>(Name);
 
 	// 위에서 생성되지 않았다면 클라이언트 단에서 정의된 컴포넌트임
 	// TODO : Death Door Object Component 추가될 때마다 업데이트

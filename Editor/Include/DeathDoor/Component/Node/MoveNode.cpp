@@ -4,6 +4,7 @@
 #include "../PlayerNormalAttackCheckCollider.h"
 #include "Animation/AnimationSequenceInstance.h"
 #include "../GameBehaviorTree.h"
+#include "../GameStateComponent.h"
 #include "../ObjectDataComponent.h"
 #include "Input.h"
 #include "Scene/SceneManager.h"
@@ -50,10 +51,11 @@ NodeResult CMoveNode::OnStart(float DeltaTime)
 
 NodeResult CMoveNode::OnUpdate(float DeltaTime)
 {
-	CObjectDataComponent* Comp = m_Object->FindComponentFromType<CObjectDataComponent>();
+	CObjectDataComponent* Data = dynamic_cast<CObjectDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
+
 	CPlayerNormalAttackCheckCollider* NormalAttackComp = m_Object->FindComponentFromType<CPlayerNormalAttackCheckCollider>();
 
-	if (!Comp)
+	if (!Data)
 		return NodeResult::Node_False;
 
 	if (!m_NavAgent)
@@ -64,7 +66,7 @@ NodeResult CMoveNode::OnUpdate(float DeltaTime)
 	const keyState SState = CInput::GetInst()->FindKeyState('S');
 	const keyState DState = CInput::GetInst()->FindKeyState('D');
 
-	float Speed = Comp->GetMoveSpeed();
+	float Speed = Data->GetMoveSpeed();
 
 	CCameraComponent* CurrentCam = CSceneManager::GetInst()->GetScene()->GetCameraManager()->GetCurrentCamera();
 
