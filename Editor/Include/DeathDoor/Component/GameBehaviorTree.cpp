@@ -6,7 +6,6 @@
 #include "Node/IdleNode.h"
 #include "Node/MoveInputCheckNode.h"
 #include "Node/NoInterruptNode.h"
-#include "Node/CheckAttackTarget.h"
 #include "Node/NormalAttack.h"
 #include "Node/MouseLButtonCheckNode.h"
 #include "Node/MouseRButtonCheckNode.h"
@@ -140,11 +139,6 @@ CNode* CGameBehaviorTree::LoadNode(CNode* Parent, size_t TypeID)
 	else if (TypeID == typeid(CCancleShootNode).hash_code())
 	{
 		NewNode = MakeNode<CCancleShootNode>(Parent, OwnerObject);
-	}
-
-	else if (TypeID == typeid(CCheckAttackTarget).hash_code())
-	{
-		NewNode = MakeNode<CCheckAttackTarget>(Parent, OwnerObject);
 	}
 
 	else if (TypeID == typeid(CNormalAttack).hash_code())

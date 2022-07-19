@@ -19,6 +19,8 @@
 #include "../DeathDoor/Component/EyeLaserComponent.h"
 #include "../DeathDoor/Component/MonsterDataComponent.h"
 #include "../DeathDoor/Component/KnightDataComponent.h"
+#include "../DeathDoor/Component/LurkerDataComponent.h"
+#include "../DeathDoor/Component/MonsterNavAgent.h"
 
 #include "../Window/InspectorWindow.h"
 #include "../EditorUtil.h"
@@ -122,10 +124,6 @@ void CObjectComponentCreateModal::OnCreateComponent()
 
 	else if (Typeid == typeid(CObjectDataComponent).hash_code())
 		Com = SelectObject->CreateComponent<CObjectDataComponent>(Name);
-	else if (Typeid == typeid(CLurkerDataComponent).hash_code())
-		Com = SelectObject->CreateComponent<CLurkerDataComponent>(Name);
-	else if (Typeid == typeid(CMonsterNavAgent).hash_code())
-		Com = SelectObject->CreateComponent<CMonsterNavAgent>(Name);
 
 	// 위에서 생성되지 않았다면 클라이언트 단에서 정의된 컴포넌트임
 	// TODO : Death Door Object Component 추가될 때마다 업데이트
@@ -156,6 +154,10 @@ void CObjectComponentCreateModal::OnCreateComponent()
 		{
 			Com = SelectObject->CreateComponent<CKnightDataComponent>(Name);
 		}
+		else if (Typeid == typeid(CLurkerDataComponent).hash_code())
+			Com = SelectObject->CreateComponent<CLurkerDataComponent>(Name);
+		else if (Typeid == typeid(CMonsterNavAgent).hash_code())
+			Com = SelectObject->CreateComponent<CMonsterNavAgent>(Name);
 	}
 
 	CObjectComponentWindow* ComponentWindow = (CObjectComponentWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(OBJECTCOMPONENT_LIST);

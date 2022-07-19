@@ -12,9 +12,7 @@
 #include "../DeathDoor/Component/Node/MoveNode.h"
 #include "../DeathDoor/Component/Node/IdleNode.h"
 #include "../DeathDoor/Component/Node/MoveInputCheckNode.h"
-#include "../DeathDoor/Component/Node/MovePickingNode.h"
 #include "../DeathDoor/Component/Node/NoInterruptNode.h"
-#include "../DeathDoor/Component/Node/CheckAttackTarget.h"
 #include "../DeathDoor/Component/Node/NormalAttack.h"
 #include "../DeathDoor/Component/Node/MouseLButtonCheckNode.h"
 #include "../DeathDoor/Component/Node/MouseRButtonCheckNode.h"
@@ -478,9 +476,6 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
             break;
         case DDConditionNode::NoInterruptNode:
             NewTreeNode = m_StateComponent->CreateTreeNode<CNoInterruptNode>(Name);
-            break;
-        case DDConditionNode::AttackTargetCheck:
-            NewTreeNode = m_StateComponent->CreateTreeNode<CCheckAttackTarget>(Name);
             break;
         case DDConditionNode::MouseRButtonCheckNode:
             NewTreeNode = m_StateComponent->CreateTreeNode<CMouseRButtonCheckNode>(Name);

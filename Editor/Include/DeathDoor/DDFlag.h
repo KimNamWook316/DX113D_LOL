@@ -16,8 +16,11 @@ enum class DDActionNode
 	BossKnightContinueAttack,
 	BossKnightFinalAttack,
 	BossKnightJumpAttack,
+	BossKnightIdle,
 	BossKnightMeleeAttack,
 	BossKnightSlamEnd,
+	BossKnightWalk,
+	ClearPathList,
 	Max
 };
 
@@ -35,6 +38,10 @@ enum class DDConditionNode
 	PostAttackDelayCheck,
 	BossKnightFinalAttackCheck,
 	BossKnightJumpAttackRangeCheck,
+	BossKnightCutScenePlayCheck,
+	BossKnightPlayerEnterZoneCheck,
+	HPCheck,
+	PathFindEnableCheck,
 	Max
 };
 
@@ -54,5 +61,7 @@ enum class DDObjectComponentType
 	GameStateComponent,
 	MonsterData,
 	KnightData,
+	LurkerData,
+	MonsterNavAgent,
 	Max
 };

@@ -124,7 +124,7 @@ public:
 
 		if (StartFrame < 0)
 		{
-			StartFrame = 0;
+			StartFrame == 0;
 		}
 
 		int SeqEndFrame = m_Sequence->GetEndFrame();

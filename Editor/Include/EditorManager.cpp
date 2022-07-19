@@ -31,6 +31,8 @@
 #include "DeathDoor\Component/EyeLaserComponent.h"
 #include "DeathDoor\Component/PlayerHookComponent.h"
 #include "DeathDoor\Component/MonsterPathFindCollider.h"
+#include "DeathDoor\Component/LurkerDataComponent.h"
+#include "DeathDoor\Component/MonsterNavAgent.h"
 // Window
 #include "Window/ObjectHierarchyWindow.h"
 #include "Window/SceneComponentHierarchyWindow.h"

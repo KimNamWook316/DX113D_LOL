@@ -2,7 +2,7 @@
 
 #define PARTICLE_INIT_ANGLE 1000
 
-cbuffer	ParticleCBuffer : register(b11)
+cbuffer	ParticleCBuffer : register(b7)
 {
 	uint	g_ParticleSpawnEnable;	// 파티클 생성여부
 	float3	g_ParticleStartMin;		// 파티클이 생성될 영역의 Min
@@ -18,8 +18,8 @@ cbuffer	ParticleCBuffer : register(b11)
 	float4	g_ParticleColorMin;		// 생성될 파티클의 색상 Min
 	float4	g_ParticleColorMax;		// 생성될 파티클의 색상 Max
 
-	float	g_ParticleSpeedMin;		// 파티클의 최소 이동속도
-	float	g_ParticleSpeedMax;		// 파티클의 최대 이동속도
+	float	g_ParticleSpeedStart;		// 파티클의 최소 이동속도
+	float	g_ParticleSpeedEnd;		// 파티클의 최대 이동속도
 	int		g_ParticleMove;			// 이동을 하는지 안하는지
 	int		g_ParticleGravity;		// 중력 적용을 받는지 안받는지
 
@@ -192,7 +192,7 @@ float3x3 ComputeRotationMatrix(float3 Angle)
 }
 
 
-void ApplySpecialParticleGenerateShape(float RandomAngle, int ThreadID, float FinalAppliedRadius,
+void ApplyInitSpecialParticleGenerateShape(float RandomAngle, int ThreadID, float FinalAppliedRadius,
 	float Rand)
 {
 	switch (g_ParticleGenerateShapeType)
@@ -237,12 +237,12 @@ void ApplySpecialParticleGenerateShape(float RandomAngle, int ThreadID, float Fi
 	{
 		// 생성 각도도 Random
 		// 생성 반지름 크기도 Random
-		float RandomRadius = FinalAppliedRadius * Rand;
+		// float RandomRadius = FinalAppliedRadius * Rand;
 
 		float3 CirclePos = float3(0.f, 0.f, 0.f) + float3(
-			cos(RandomAngle) * RandomRadius,
+			cos(RandomAngle) * FinalAppliedRadius * Rand,
 			0.f,
-			sin(RandomAngle) * RandomRadius);
+			sin(RandomAngle) * FinalAppliedRadius * Rand);
 
 		g_ParticleArray[ThreadID].LocalPos = CirclePos;
 	}
@@ -284,7 +284,7 @@ void ApplySpecialParticleGenerateShape(float RandomAngle, int ThreadID, float Fi
 	}
 }
 
-void ApplySpecialMoveDirType(int ThreadID, float RandomAngle, float3 OriginDir, float Rand)
+void ApplyInitSpecialMoveDirType(int ThreadID, float RandomAngle, float3 OriginDir, float Rand)
 {
 	float MoveTowardAngle = RandomAngle;
 
@@ -328,12 +328,15 @@ void ApplySpecialMoveDirType(int ThreadID, float RandomAngle, float3 OriginDir, 
 	}
 }
 
-void ApplyParticleMove(float3 RandomPos, int ThreadID, float RandomAngle, float Rand)
+// LifeTime 이 Setting 되고 나서, 해당 함수를 실행해야 한다.
+void ApplyInitParticleMove(float3 RandomPos, int ThreadID, float RandomAngle, float Rand)
 {
 	// Rand는 0 에서 1 사이의 값
 	// Move 하는 Particle 이라면, Speed 와 Dir 를 세팅한다.
 	if (g_ParticleMove == 1)
 	{
+		float ParticleComponentScaleRatio = (g_ParticleCommonWorldScale.x / 3.f + g_ParticleCommonWorldScale.y / 3.f + g_ParticleCommonWorldScale.z / 3.f);
+
 		// RandomPos.xyz 는 각각 0 에서 1 사이의 값 --> -1 에서 1 사이의 값으로 바꾼다.
 		// ex) 360도 => -180 ~ 180 도 사이의 랜덤한 각도로 회전을 한다고 생각하면 된다.
 		float3	ConvertAngle = (RandomPos.xyz * 2.f - 1.f) * g_ParticleMoveAngle;
@@ -347,7 +350,18 @@ void ApplyParticleMove(float3 RandomPos, int ThreadID, float RandomAngle, float 
 
 		float3	Dir = normalize(mul(g_ParticleMoveDir, matRot));
 
-		g_ParticleArray[ThreadID.x].Speed = Rand * (g_ParticleSpeedMax - g_ParticleSpeedMin) + g_ParticleSpeedMin;
+		float ScaledSpeedStart = g_ParticleSpeedStart * ParticleComponentScaleRatio;
+		float ScaledSpeedEnd = g_ParticleSpeedEnd * ParticleComponentScaleRatio;
+
+		g_ParticleArray[ThreadID.x].Speed = Rand * (ScaledSpeedEnd - ScaledSpeedStart) + ScaledSpeedStart;
+
+		// Start 에서 End 로 점점 바뀌어야 한다.
+		// 따라서 최초 Speed 는 g_ParticleSpeedStart 로 세팅한다.
+		if (g_ParticleSpeedChangeMethod >= 1)
+		{
+			g_ParticleArray[ThreadID.x].Speed = ScaledSpeedStart;
+		}
+
 		g_ParticleArray[ThreadID.x].Dir = Dir;
 
 		// 단순 Dir 이동이 아니라, 특정 방향으로 Special 하게 이동하는 설정을 했다면
@@ -622,7 +636,7 @@ void ApplyGravity(int ThreadID, float3 MovePos)
 		g_ParticleArray[ThreadID.x].LocalPos += MovePos;
 }
 
-void ApplyRotationAccordingToDir(int ThreadID)
+void ApplyInitRotationAccordingToDir(int ThreadID)
 {
 	// HLSL 좌표계를 무엇을 사용하는가 ?
 	//  y 축 20도 회전 ? -> 반시계방향으로 20도 돌린 것
@@ -684,6 +698,8 @@ void ApplyLinearEffect(int ThreadID)
 	float DistFromCenter = distance(g_ParticleArray[ThreadID].LocalPos, float3(0.f, 0.f, 0.f));
 	float MaxDistFromCenter = g_ParticleShare[0].MaxDistFromCenter;
 
+	float ParticleComponentScaleRatio = (g_ParticleCommonWorldScale.x / 3.f + g_ParticleCommonWorldScale.y / 3.f + g_ParticleCommonWorldScale.z / 3.f);
+
 	if (MaxDistFromCenter == 0)
 		MaxDistFromCenter = DistFromCenter;
 
@@ -692,6 +708,9 @@ void ApplyLinearEffect(int ThreadID)
 	if (SpawnPosRatio >= 1.f)
 		SpawnPosRatio = 0.999f;
 
+	float ScaledLifeTimeMax = g_ParticleLifeTimeMax * ParticleComponentScaleRatio;
+	float ScaledLifeTimeMin = g_ParticleLifeTimeMin * ParticleComponentScaleRatio;
+
 	// Life Time
 	if (g_ParticleLifeTimeLinear == 1)
 	{
@@ -699,7 +718,7 @@ void ApplyLinearEffect(int ThreadID)
 		// float LifeTimeRatio = (1 - SpawnPosRatio);
 		float LifeTimeRatio = pow(1 - SpawnPosRatio, 2);
 
-		g_ParticleArray[ThreadID].LifeTimeMax = LifeTimeRatio * (g_ParticleLifeTimeMax - g_ParticleLifeTimeMin) + g_ParticleLifeTimeMin;
+		g_ParticleArray[ThreadID].LifeTimeMax = LifeTimeRatio * (ScaledLifeTimeMax - ScaledLifeTimeMin) + ScaledLifeTimeMin;
 	}
 
 	// Alpha
@@ -844,7 +863,7 @@ void ParticleUpdate(uint3 ThreadID : SV_DispatchThreadID)
 		// float3 ParticleStartMinPos = mul(g_ParticleStartMin, ComputeRotationMatrix(g_ParticleRotationAngle));
 
 		float XRand = GetRandomNumber(key); // 0 에서 1 사이의 숫자 
-		float YRand = GetRandomNumber(key * XRand);
+		float YRand = GetRandomNumber((ThreadID.x * 500.f) % (float)(g_ParticleSpawnCountMax * XRand));
 		float ZRand = GetRandomNumber((ThreadID.x * 100.f) % (float)(g_ParticleSpawnCountMax * YRand));
 
 		g_ParticleArray[ThreadID.x].LocalPos.x = XRand * (g_ParticleStartMax.x - g_ParticleStartMin.x) + g_ParticleStartMin.x;
@@ -856,24 +875,27 @@ void ParticleUpdate(uint3 ThreadID : SV_DispatchThreadID)
 		g_ParticleArray[ThreadID.x].FallTime = 0.f;
 		g_ParticleArray[ThreadID.x].FallStartY = g_ParticleArray[ThreadID.x].LocalPos.y;
 
+		// x,y,z 의 Relative Scale 의 중간 비율만큼 세팅해준다.
+	// 아래 코드처럼 하면, 너무 Dramatic 하게 변한다.
+	// float ParticleComponentScaleRatio = g_ParticleCommonWorldScale.x * g_ParticleCommonWorldScale.y * g_ParticleCommonWorldScale.z;
+		float ParticleComponentScaleRatio = (g_ParticleCommonWorldScale.x / 3.f + g_ParticleCommonWorldScale.y / 3.f + g_ParticleCommonWorldScale.z / 3.f);
+
+		float ScaledLifeTimeMax = g_ParticleLifeTimeMax * ParticleComponentScaleRatio;
+		float ScaledLifeTimeMin = g_ParticleLifeTimeMin * ParticleComponentScaleRatio;
+
 		g_ParticleArray[ThreadID.x].LifeTime = 0.f;
-		g_ParticleArray[ThreadID.x].LifeTimeMax = Rand * (g_ParticleLifeTimeMax - g_ParticleLifeTimeMin) + g_ParticleLifeTimeMin;
+		g_ParticleArray[ThreadID.x].LifeTimeMax = Rand * (ScaledLifeTimeMax - ScaledLifeTimeMin) + ScaledLifeTimeMin;
 
 		// Scale 크기도 그만큼 조정한다.
-		g_ParticleArray[ThreadID.x].LifeTimeMax *= (g_ParticleCommonWorldScale.x + g_ParticleCommonWorldScale.y + g_ParticleCommonWorldScale.z) / 3.f;
-
-		// x,y,z 의 Relative Scale 의 중간 비율만큼 세팅해준다.
-		// 아래 코드처럼 하면, 너무 Dramatic 하게 변한다.
-		// float ParticleComponentScaleRatio = g_ParticleCommonWorldScale.x * g_ParticleCommonWorldScale.y * g_ParticleCommonWorldScale.z;
-		float ParticleComponentScaleRatio = (g_ParticleCommonWorldScale.x + g_ParticleCommonWorldScale.y + g_ParticleCommonWorldScale.z) / 3.f;
 
 		float FinalAppliedRadius = g_ParcticleGenerateRadius * ParticleComponentScaleRatio;
 
 		// Special 한 모양으로 Particle 을 만들고자 한다면
-		ApplySpecialParticleGenerateShape(RandomAngle, ThreadID.x, FinalAppliedRadius, Rand);
+		ApplyInitSpecialParticleGenerateShape(RandomAngle, ThreadID.x, FinalAppliedRadius, Rand);
 
 		// Move 하는 Particle 이라면, Speed 와 Dir 를 세팅한다.
-		ApplyParticleMove(RandomPos, ThreadID.x, RandomAngle, Rand);
+		// LifeTimeMax 가 이미 세팅된 상태여야만 ApplyInitParticleMove 를 세팅할 수 있다.
+		ApplyInitParticleMove(RandomPos, ThreadID.x, RandomAngle, Rand);
 
 		// 생성되는 순간 각 Particle 의 Rot 정도를 세팅한다.
 		// 최종 각각의 Particle 회전 정도 세팅
@@ -905,13 +927,9 @@ void ParticleUpdate(uint3 ThreadID : SV_DispatchThreadID)
 	{
 		g_ParticleArray[ThreadID.x].LifeTime += g_DeltaTime;
 
-		float3	MovePos = (float3)0.f;
-
-		if (g_ParticleMove == 1)
-		{
-			MovePos = g_ParticleArray[ThreadID.x].Dir *
-				g_ParticleArray[ThreadID.x].Speed * g_DeltaTime;
-		}
+		// 아래 함수를 사용하기 전에 LifeTime 을 시간에 맞게 증가시켜야 한다.
+		// 왜냐하면 ApplyAliveParticleMove 에서 LifeTime 비율을 계산하기 때문이다.
+		float3 MovePos = ApplyAliveParticleMove(ThreadID.x);
 
 		// 중력 적용
 		ApplyGravity(ThreadID.x, MovePos);
@@ -1091,12 +1109,9 @@ void ParticleGS(point VertexParticleOutput input[1],
 	output.RestartStrip();
 }
 
-PSOutput_Single ParticlePS(GeometryParticleOutput input)
+// LifeTime 비율에 따라서, (Texture 기준) 오른쪽에서, 왼쪽 방향으로 점점 사라지게 하기
+void ApplyLinearUVClipping(GeometryParticleOutput input)
 {
-	PSOutput_Single output = (PSOutput_Single)0;
-
-	float4 Color = g_BaseTexture.Sample(g_BaseSmp, input.UV);
-
 	// UV Cllipping 효과
 	// 오른쪽 부터, 왼쪽 방향으로 서서히 사라지는 효과를 줄 것이다.
 	// 이를 위해서는 LifeTime 을 사용해야 한다.
