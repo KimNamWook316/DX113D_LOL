@@ -6,7 +6,6 @@
 #include "Node/IdleNode.h"
 #include "Node/MoveInputCheckNode.h"
 #include "Node/NoInterruptNode.h"
-#include "Node/CheckAttackTarget.h"
 #include "Node/NormalAttack.h"
 #include "Node/MouseLButtonCheckNode.h"
 #include "Node/MouseRButtonCheckNode.h"
@@ -21,6 +20,9 @@
 #include "Node/CheckDetectRangeNode.h"
 #include "Node/FindPathNode.h"
 #include "Node/Lockstone3TriggerBoxAction.h"
+#include "Node/MeleeRangeCheckNode.h"
+#include "Node/ClearPathListNode.h"
+#include "Node/PathFindEnableCheck.h"
 #include "GameStateComponent.h"
 
 
@@ -192,17 +194,6 @@ CNode* CGameBehaviorTree::LoadNode(CNode* Parent, size_t TypeID)
 		return NewNode;
 	}
 
-	else if (TypeID == typeid(CCheckAttackTarget).hash_code())
-	{
-		CCheckAttackTarget* NewNode = new CCheckAttackTarget;
-		NewNode->SetParent(Parent);
-		NewNode->SetOwner(this);
-		NewNode->SetObject(m_Owner->GetGameObject());
-		NewNode->SetAnimationMeshComponent(m_AnimationMeshComp);
-
-		return NewNode;
-	}
-
 	else if (TypeID == typeid(CNormalAttack).hash_code())
 	{
 		CNormalAttack* NewNode = new CNormalAttack;
@@ -279,6 +270,36 @@ CNode* CGameBehaviorTree::LoadNode(CNode* Parent, size_t TypeID)
 	else if (TypeID == typeid(CFindPathNode).hash_code())
 	{
 		CFindPathNode* NewNode = new CFindPathNode;
+		NewNode->SetParent(Parent);
+		NewNode->SetOwner(this);
+		NewNode->SetObject(m_Owner->GetGameObject());
+
+		return NewNode;
+	}
+
+	else if (TypeID == typeid(CMeleeRangeCheckNode).hash_code())
+	{
+		CMeleeRangeCheckNode* NewNode = new CMeleeRangeCheckNode;
+		NewNode->SetParent(Parent);
+		NewNode->SetOwner(this);
+		NewNode->SetObject(m_Owner->GetGameObject());
+
+		return NewNode;
+	}
+
+	else if (TypeID == typeid(CClearPathListNode).hash_code())
+	{
+		CClearPathListNode* NewNode = new CClearPathListNode;
+		NewNode->SetParent(Parent);
+		NewNode->SetOwner(this);
+		NewNode->SetObject(m_Owner->GetGameObject());
+
+		return NewNode;
+	}
+
+	else if (TypeID == typeid(CPathFindEnableCheck).hash_code())
+	{
+		CPathFindEnableCheck* NewNode = new CPathFindEnableCheck;
 		NewNode->SetParent(Parent);
 		NewNode->SetOwner(this);
 		NewNode->SetObject(m_Owner->GetGameObject());

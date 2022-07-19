@@ -170,21 +170,19 @@
     <ClCompile Include="Component\GameBehaviorTree.cpp" />
     <ClCompile Include="Component\GameStateComponent.cpp" />
     <ClCompile Include="Component\KnightDataComponent.cpp" />
+    <ClCompile Include="Component\LurkerDataComponent.cpp" />
     <ClCompile Include="Component\MonsterDataComponent.cpp" />
+    <ClCompile Include="Component\MonsterNavAgent.cpp" />
     <ClCompile Include="Component\MonsterPathFindCollider.cpp" />
     <ClCompile Include="Component\Node\AddFallingFloorCallbackNode.cpp" />
     <ClCompile Include="Component\Node\BossKnightContinueAttackNode.cpp" />
     <ClCompile Include="Component\Node\BossKnightFinalAttackNode.cpp" />
     <ClCompile Include="Component\Node\BossKnightMeleeAttackNode.cpp" />
     <ClCompile Include="Component\Node\BossKnightSlamEnd.cpp" />
+    <ClCompile Include="Component\Node\ClearPathListNode.cpp" />
+    <ClCompile Include="Component\Node\PathFindEnableCheck.cpp" />
     <ClCompile Include="Component\Node\PostAttackDelayCheck.cpp" />
     <ClCompile Include="Component\Node\CancleShootNode.cpp" />
-    <ClCompile Include="Component\Node\CheckAttackTarget.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="Component\Node\CheckDetectRangeNode.cpp" />
     <ClCompile Include="Component\Node\CheckState.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
@@ -212,12 +210,6 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="Component\Node\MoveNode.cpp" />
-    <ClCompile Include="Component\Node\MovePickingNode.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="Component\Node\NegateNode.cpp" />
     <ClCompile Include="Component\Node\NoInterruptNode.cpp" />
     <ClCompile Include="Component\Node\NormalAttack.cpp" />
@@ -315,21 +307,19 @@
     <ClInclude Include="Component\GameBehaviorTree.h" />
     <ClInclude Include="Component\GameStateComponent.h" />
     <ClInclude Include="Component\KnightDataComponent.h" />
+    <ClInclude Include="Component\LurkerDataComponent.h" />
     <ClInclude Include="Component\MonsterDataComponent.h" />
+    <ClInclude Include="Component\MonsterNavAgent.h" />
     <ClInclude Include="Component\MonsterPathFindCollider.h" />
     <ClInclude Include="Component\Node\AddFallingFloorCallbackNode.h" />
     <ClInclude Include="Component\Node\BossKnightContinueAttackNode.h" />
     <ClInclude Include="Component\Node\BossKnightFinalAttackNode.h" />
     <ClInclude Include="Component\Node\BossKnightMeleeAttackNode.h" />
     <ClInclude Include="Component\Node\BossKnightSlamEnd.h" />
+    <ClInclude Include="Component\Node\ClearPathListNode.h" />
+    <ClInclude Include="Component\Node\PathFindEnableCheck.h" />
     <ClInclude Include="Component\Node\PostAttackDelayCheck.h" />
     <ClInclude Include="Component\Node\CancleShootNode.h" />
-    <ClInclude Include="Component\Node\CheckAttackTarget.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
-    </ClInclude>
     <ClInclude Include="Component\Node\CheckDetectRangeNode.h" />
     <ClInclude Include="Component\Node\CheckState.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
@@ -357,12 +347,6 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="Component\Node\MoveNode.h" />
-    <ClInclude Include="Component\Node\MovePickingNode.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClInclude>
     <ClInclude Include="Component\Node\NegateNode.h" />
     <ClInclude Include="Component\Node\NoInterruptNode.h" />
     <ClInclude Include="Component\Node\NormalAttack.h" />

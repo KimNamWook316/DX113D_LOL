@@ -16,11 +16,12 @@ protected:
 
 private:
 	CSharedPtr<class CSceneComponent> m_UpdateComponent;
-	std::list<Vector3>		m_PathList;
 	float					m_MoveSpeed;
 	bool					m_ApplyNavMesh;
-	bool					m_PathFindEnable;
 	Vector3					m_CurrentFaceDir;
+
+protected:
+	std::list<Vector3>		m_PathList;
 
 public:
 	const Vector3& GetCurrentFaceDir()	const
@@ -37,16 +38,6 @@ public:
 	void SetMoveSpeed(float Speed)
 	{
 		m_MoveSpeed = Speed;
-	}
-
-	void SetPathFindEnable(bool Enable)
-	{
-		m_PathFindEnable = Enable;
-	}
-
-	bool GetPathFindEnable()	const
-	{
-		return m_PathFindEnable;
 	}
 
 	void SetApplyNavMesh(bool Apply)

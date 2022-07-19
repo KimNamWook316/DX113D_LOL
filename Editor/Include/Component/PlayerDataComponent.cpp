@@ -4,6 +4,8 @@
 #include "GameObject/GameObject.h"
 #include "Scene/Scene.h"
 #include "Component/AnimationMeshComponent.h"
+#include "../DataManager.h"
+#include "GameStateComponent.h"
 
 CPlayerDataComponent::CPlayerDataComponent()	:
 	m_OnSlash(false)
@@ -13,7 +15,7 @@ CPlayerDataComponent::CPlayerDataComponent()	:
 }
 
 CPlayerDataComponent::CPlayerDataComponent(const CPlayerDataComponent& com)	:
-	CObjectComponent(com)
+	CObjectDataComponent(com)
 {
 }
 
@@ -23,8 +25,6 @@ CPlayerDataComponent::~CPlayerDataComponent()
 
 void CPlayerDataComponent::Start()
 {
-	CObjectComponent::Start();
-
 	m_Scene->GetSceneMode()->SetPlayerObject(m_Object);
 
 	CInput::GetInst()->CreateKey("WeaponArrow", '1');
@@ -40,6 +40,11 @@ void CPlayerDataComponent::Start()
 	Comp->GetAnimationInstance()->AddNotify<CPlayerDataComponent>("Player_Slash_L", "Player_Slash_L", 3, this, &CPlayerDataComponent::SetTrueOnSlash);
 	Comp->GetAnimationInstance()->AddNotify<CPlayerDataComponent>("Player_Slash_L", "Player_Slash_L", 8, this, &CPlayerDataComponent::SetFalseOnSlash);
 
+	m_Data = CDataManager::GetInst()->GetObjectData("Player");
+
+	//CGameStateComponent::Start가 PlayerDataComponent::Start보다 먼저 호출되면 GameStateComponent가 가지고 있는 m_Data는 데이터가 아무것도 들어있지 않게돼서 여기서 강제로 Set
+	//m_Object->FindObjectComponentFromType<CGameStateComponent>()->GetObjectDataComponent()->SetObjectData(m_Data);
+
 }
 
 bool CPlayerDataComponent::Init()
@@ -50,7 +55,6 @@ bool CPlayerDataComponent::Init()
 
 void CPlayerDataComponent::Update(float DeltaTime)
 {
-	int a = 3;
 	//CObjectComponent::Update(DeltaTime);
 }
 
@@ -77,7 +81,7 @@ CPlayerDataComponent* CPlayerDataComponent::Clone()
 
 bool CPlayerDataComponent::Save(FILE* File)
 {
-	CObjectComponent::Save(File);
+	CObjectDataComponent::Save(File);
 
 	fwrite(&m_PlayerData, sizeof(PlayerData), 1, File);
 
@@ -86,7 +90,7 @@ bool CPlayerDataComponent::Save(FILE* File)
 
 bool CPlayerDataComponent::Load(FILE* File)
 {
-	CObjectComponent::Load(File);
+	CObjectDataComponent::Load(File);
 
 	fread(&m_PlayerData, sizeof(PlayerData), 1, File);
 
@@ -95,7 +99,7 @@ bool CPlayerDataComponent::Load(FILE* File)
 
 bool CPlayerDataComponent::SaveOnly(FILE* File)
 {
-	CObjectComponent::Save(File);
+	CObjectDataComponent::Save(File);
 
 	fwrite(&m_PlayerData, sizeof(PlayerData), 1, File);
 
@@ -104,7 +108,7 @@ bool CPlayerDataComponent::SaveOnly(FILE* File)
 
 bool CPlayerDataComponent::LoadOnly(FILE* File)
 {
-	CObjectComponent::Load(File);
+	CObjectDataComponent::Load(File);
 
 	fread(&m_PlayerData, sizeof(PlayerData), 1, File);
 

@@ -9,8 +9,7 @@
 
 CNavAgent::CNavAgent()	:
 	m_MoveSpeed(0.f),
-	m_ApplyNavMesh(true),
-	m_PathFindEnable(true)
+	m_ApplyNavMesh(true)
 {
 	SetTypeID<CNavAgent>();
 }
@@ -81,6 +80,8 @@ void CNavAgent::Start()
 {
 	if (!m_UpdateComponent)
 		m_UpdateComponent = m_Object->GetRootComponent();
+
+	
 }
 
 bool CNavAgent::Init()
@@ -122,19 +123,19 @@ void CNavAgent::Update(float DeltaTime)
 
 			float Dot = Vector3(Dir.x, 0.f, Dir.z).Dot(Vector3(CurrentFaceDir.x, 0.f, CurrentFaceDir.z));
 
-			if (Dot < 0.994f && Dot > -0.994f)
+			if (Dot < 0.999f && Dot > -0.999f)
 			{
 				float Degree = RadianToDegree(acosf(Dot));
 				Vector3 CrossResult = Vector3(Dir.x, 0.f, Dir.z).Cross(Vector3(CurrentFaceDir.x, 0.f, CurrentFaceDir.z));
 
 				if (CrossResult.y > 0.f)
 				{
-					m_UpdateComponent->AddWorldRotationY(-180.f * DeltaTime);
+					m_UpdateComponent->AddWorldRotationY(-360.f * DeltaTime);
 				}
 
 				else
 				{
-					m_UpdateComponent->AddWorldRotationY(180.f * DeltaTime);
+					m_UpdateComponent->AddWorldRotationY(360.f * DeltaTime);
 				}
 			}
 		}
@@ -228,8 +229,6 @@ void CNavAgent::AddPath(const Vector3& EndPos)
 
 bool CNavAgent::FindPath(CSceneComponent* OwnerComponent, const Vector3& End)
 {
-	m_PathFindEnable = false;
-
 	bool Result = CSceneManager::GetInst()->GetScene()->GetNavigation3DManager()->FindPath<CNavAgent, CSceneComponent>(this, &CNavAgent::FillPathList, OwnerComponent, End);
 	return Result;
 }

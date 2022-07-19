@@ -10,9 +10,7 @@
 #include "../Component/Node/MoveNode.h"
 #include "../Component/Node/IdleNode.h"
 #include "../Component/Node/MoveInputCheckNode.h"
-#include "../Component/Node/MovePickingNode.h"
 #include "../Component/Node/NoInterruptNode.h"
-#include "../Component/Node/CheckAttackTarget.h"
 #include "../Component/Node/NormalAttack.h"
 #include "../Component/Node/MouseLButtonCheckNode.h"
 #include "../Component/Node/MouseRButtonCheckNode.h"
@@ -28,6 +26,9 @@
 #include "../Component/Node/Lockstone3TriggerBoxAction.h"
 #include "../Component/Node/CheckDetectRangeNode.h"
 #include "../Component/Node/FindPathNode.h"
+#include "../Component/Node/MeleeRangeCheckNode.h"
+#include "../Component/Node/ClearPathListNode.h"
+#include "../Component/Node/PathFindEnableCheck.h"
 #include "ObjectComponentWindow.h"
 #include "ObjectHierarchyWindow.h"
 #include "../EditorInfo.h"
@@ -162,6 +163,7 @@ void CBehaviorTreeWindow::Update(float DeltaTime)
 
 
     // 노드가 ActionNode이거나 Condition Node일 때 Invoke할 동작을 정하고 만들어야한다
+    // TODO : Action Node 추가될 때 마다 추가
     if (m_TypeSelectIndex == 2 || m_TypeSelectIndex == 3 || m_TypeSelectIndex == 4)
     {
         m_vecNodeAction.clear();
@@ -179,18 +181,22 @@ void CBehaviorTreeWindow::Update(float DeltaTime)
             m_vecNodeAction.push_back("AddFallingFloorCallback");
             m_vecNodeAction.push_back("Lockstone3TriggerBoxAction");
             m_vecNodeAction.push_back("FindPath");
+            m_vecNodeAction.push_back("ClearPathList");
+
         }
 
+        // TODO : Condition Node 추가될 때 마다 추가
         else if (m_TypeSelectIndex == 3)
         {
             m_vecNodeAction.push_back("MoveInputCheck");
             m_vecNodeAction.push_back("MouseLButtonCheck");
             m_vecNodeAction.push_back("NoInterruptCheck");
-            m_vecNodeAction.push_back("AttackTargetCheck");
             m_vecNodeAction.push_back("MouseRButtonCheck");
             m_vecNodeAction.push_back("MouseRButtonUpCheck");
             m_vecNodeAction.push_back("Lockstone3TriggerBoxHitCheck");
             m_vecNodeAction.push_back("CheckDetectRange");
+            m_vecNodeAction.push_back("MeleeRangeCheck");
+            m_vecNodeAction.push_back("PathFindEnableCheck");
         }
 
         else if (m_TypeSelectIndex == 4)
@@ -351,13 +357,22 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
 
     CNode* NewTreeNode = nullptr;
 
+    CNode* ExistNode = m_StateComponent->GetBehaviorTree()->FindNode(Name);
+
+    char NewName[256] = {};
+    strcpy_s(NewName, Name);
+
+    if (ExistNode)
+        strcat_s(NewName, "_");
+
+
     switch (TypeIndex)
     {
     case 0:
-        NewTreeNode = m_StateComponent->CreateTreeNode<CSequenceNode>(Name);
+        NewTreeNode = m_StateComponent->CreateTreeNode<CSequenceNode>(NewName);
         break;
     case 1:
-        NewTreeNode = m_StateComponent->CreateTreeNode<CSelectorNode>(Name);
+        NewTreeNode = m_StateComponent->CreateTreeNode<CSelectorNode>(NewName);
         break;
     case 2:
     {
@@ -369,7 +384,7 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
         {
         case ActionNode::Move:
         {
-            NewTreeNode = m_StateComponent->CreateTreeNode<CMoveNode>(Name);
+            NewTreeNode = m_StateComponent->CreateTreeNode<CMoveNode>(NewName);
             CNavAgent* Agent = m_StateComponent->GetGameObject()->FindObjectComponentFromType<CNavAgent>();
 
             if (Agent)
@@ -377,34 +392,37 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
         }
             break;
         case ActionNode::Idle:
-            NewTreeNode = m_StateComponent->CreateTreeNode<CIdleNode>(Name);
+            NewTreeNode = m_StateComponent->CreateTreeNode<CIdleNode>(NewName);
             break;
         case ActionNode::NormalAttack:
-            NewTreeNode = m_StateComponent->CreateTreeNode<CNormalAttack>(Name);
+            NewTreeNode = m_StateComponent->CreateTreeNode<CNormalAttack>(NewName);
             break;
         case ActionNode::Death:
-            NewTreeNode = m_StateComponent->CreateTreeNode<CDeathNode>(Name);
+            NewTreeNode = m_StateComponent->CreateTreeNode<CDeathNode>(NewName);
             break;
         case ActionNode::RotateAttackDirection:
-            NewTreeNode = m_StateComponent->CreateTreeNode<CRotateAttackDirectionNode>(Name);
+            NewTreeNode = m_StateComponent->CreateTreeNode<CRotateAttackDirectionNode>(NewName);
             break;
         case ActionNode::ReadyToShoot:
-            NewTreeNode = m_StateComponent->CreateTreeNode<CReadyToShoot>(Name);
+            NewTreeNode = m_StateComponent->CreateTreeNode<CReadyToShoot>(NewName);
             break;
         case ActionNode::ShootNode:
-            NewTreeNode = m_StateComponent->CreateTreeNode<CShootNode>(Name);
+            NewTreeNode = m_StateComponent->CreateTreeNode<CShootNode>(NewName);
             break;
         case ActionNode::CancleShootNode:
-            NewTreeNode = m_StateComponent->CreateTreeNode<CCancleShootNode>(Name);
+            NewTreeNode = m_StateComponent->CreateTreeNode<CCancleShootNode>(NewName);
             break;
         case ActionNode::AddFallingFloorCallback:
-            NewTreeNode = m_StateComponent->CreateTreeNode<CAddFallingFloorCallbackNode>(Name);
+            NewTreeNode = m_StateComponent->CreateTreeNode<CAddFallingFloorCallbackNode>(NewName);
             break;
         case ActionNode::Lockstone3TriggerBoxAction:
-            NewTreeNode = m_StateComponent->CreateTreeNode<CLockstone3TriggerBoxAction>(Name);
+            NewTreeNode = m_StateComponent->CreateTreeNode<CLockstone3TriggerBoxAction>(NewName);
             break;
         case ActionNode::FindPath:
-            NewTreeNode = m_StateComponent->CreateTreeNode<CFindPathNode>(Name);
+            NewTreeNode = m_StateComponent->CreateTreeNode<CFindPathNode>(NewName);
+            break;
+        case ActionNode::ClearPathList:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CClearPathListNode>(NewName);
             break;
         }
 
@@ -420,28 +438,31 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
         switch (NodeConditionlass)
         {
         case ConditionNode::MoveInputCheckNode:
-            NewTreeNode = m_StateComponent->CreateTreeNode<CMoveInputCheckNode>(Name);
+            NewTreeNode = m_StateComponent->CreateTreeNode<CMoveInputCheckNode>(NewName);
             break;
         case ConditionNode::MouseLButtonCheckNode:
-            NewTreeNode = m_StateComponent->CreateTreeNode<CMouseLButtonCheckNode>(Name);
+            NewTreeNode = m_StateComponent->CreateTreeNode<CMouseLButtonCheckNode>(NewName);
             break;
         case ConditionNode::NoInterruptNode:
-            NewTreeNode = m_StateComponent->CreateTreeNode<CNoInterruptNode>(Name);
-            break;
-        case ConditionNode::AttackTargetCheck:
-            NewTreeNode = m_StateComponent->CreateTreeNode<CCheckAttackTarget>(Name);
+            NewTreeNode = m_StateComponent->CreateTreeNode<CNoInterruptNode>(NewName);
             break;
         case ConditionNode::MouseRButtonCheckNode:
-            NewTreeNode = m_StateComponent->CreateTreeNode<CMouseRButtonCheckNode>(Name);
+            NewTreeNode = m_StateComponent->CreateTreeNode<CMouseRButtonCheckNode>(NewName);
             break;
         case ConditionNode::MouseRButtonUpCheckNode:
-            NewTreeNode = m_StateComponent->CreateTreeNode<CMouseRButtonUpCheckNode>(Name);
+            NewTreeNode = m_StateComponent->CreateTreeNode<CMouseRButtonUpCheckNode>(NewName);
             break;
         case ConditionNode::Lockstone3TriggerBoxHitCheck:
-            NewTreeNode = m_StateComponent->CreateTreeNode<CLockstone3TriggerBoxHitCheck>(Name);
+            NewTreeNode = m_StateComponent->CreateTreeNode<CLockstone3TriggerBoxHitCheck>(NewName);
             break;
         case ConditionNode::CheckDetectRange:
-            NewTreeNode = m_StateComponent->CreateTreeNode<CCheckDetectRangeNode>(Name);
+            NewTreeNode = m_StateComponent->CreateTreeNode<CCheckDetectRangeNode>(NewName);
+            break;
+        case ConditionNode::MeleeRangeCheck:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CMeleeRangeCheckNode>(NewName);
+            break;
+        case ConditionNode::PathFindEnableCheck:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CPathFindEnableCheck>(NewName);
             break;
         }
     }
@@ -455,7 +476,7 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
         switch (NodeDecoratorClass)
         {
         case DecoratorNode::Negate:
-            NewTreeNode = m_StateComponent->CreateTreeNode<CNegateNode>(Name);
+            NewTreeNode = m_StateComponent->CreateTreeNode<CNegateNode>(NewName);
             break;
         }
     }
@@ -481,9 +502,12 @@ void CBehaviorTreeWindow::OnDeleteNodeButton(const char* Name)
 {
     CBehaviorTree* Tree = m_StateComponent->GetBehaviorTree();
 
-    if (Name == Tree->GetRootNode()->GetName())
+    if (Tree->GetRootNode())
     {
-        Tree->SetRoot(nullptr);
+        if (Name == Tree->GetRootNode()->GetName())
+        {
+            Tree->SetRoot(nullptr);
+        }
     }
 
 	CNode* Node = Tree->FindNode(Name);

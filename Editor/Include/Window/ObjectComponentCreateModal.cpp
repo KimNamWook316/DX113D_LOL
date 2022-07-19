@@ -15,6 +15,8 @@
 #include "../Component/PlayerDataComponent.h"
 #include "../Component/GameStateComponent.h"
 #include "../Component/EyeLaserComponent.h"
+#include "../Component/LurkerDataComponent.h"
+#include "../Component/MonsterNavAgent.h"
 #include "../Window/InspectorWindow.h"
 #include "../EditorUtil.h"
 #include "../EditorManager.h"
@@ -110,14 +112,11 @@ void CObjectComponentCreateModal::OnCreateComponent()
 	}
 
 	else if (Typeid == typeid(CObjectDataComponent).hash_code())
-	{
 		Com = SelectObject->CreateComponent<CObjectDataComponent>(Name);
- //		// Editor에서는 EditorManager에서 DataManager 클래스를 갖고 있도록 함
- //		if (CEngine::GetInst()->GetEditMode())
- //		{
- //			CEditorManager::GetInst()->GetDataManager()->SetObjectData(SelectObject);
- //		}
-	}
+	else if (Typeid == typeid(CLurkerDataComponent).hash_code())
+		Com = SelectObject->CreateComponent<CLurkerDataComponent>(Name);
+	else if (Typeid == typeid(CMonsterNavAgent).hash_code())
+		Com = SelectObject->CreateComponent<CMonsterNavAgent>(Name);
 
 	CObjectComponentWindow* ComponentWindow = (CObjectComponentWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(OBJECTCOMPONENT_LIST);
 

@@ -5,6 +5,9 @@
 #include "Scene/Navigation3DManager.h"
 #include "Component/BehaviorTree.h"	
 #include "../MonsterPathFindCollider.h"	
+#include "../MonsterDataComponent.h"
+#include "../GameStateComponent.h"
+#include "../MonsterNavAgent.h"
 
 CFindPathNode::CFindPathNode()	:
 	m_NavAgent(nullptr)
@@ -27,7 +30,8 @@ NodeResult CFindPathNode::OnStart(float DeltaTime)
 
 	CGameObject* Player = Scene->GetPlayerObject();
 
-	m_NavAgent = m_Object->FindObjectComponentFromType<CNavAgent>();
+	CObjectDataComponent* DataComp = (dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner()))->GetData();
+	m_NavAgent = (dynamic_cast<CMonsterDataComponent*>(DataComp))->GetMonsterNavAgent();
 
 	if (m_NavAgent)
 	{

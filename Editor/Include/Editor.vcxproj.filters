@@ -133,6 +133,12 @@
     <Filter Include="06. GameComponent\02. ObjectComponent\01. ObjectDataComponent\01. Monster\01. KnightData">
       <UniqueIdentifier>{484f7989-8f88-4043-ae31-cb59bbed1d82}</UniqueIdentifier>
     </Filter>
+    <Filter Include="06. GameComponent\02. ObjectComponent\01. ObjectDataComponent\01. Monster\02. Lurker">
+      <UniqueIdentifier>{a5f19625-1e1c-421d-9fb3-13415b7db40f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. GameComponent\02. ObjectComponent\01. ObjectDataComponent\02. Player">
+      <UniqueIdentifier>{59fced8d-36ac-4e4b-b883-f61c08a15f61}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EditorManager.cpp">
@@ -279,9 +285,6 @@
     <ClCompile Include="Window\CollisionProfileEditor.cpp">
       <Filter>02. Editor\01. Window\5. CollisionProfile</Filter>
     </ClCompile>
-    <ClCompile Include="Component\Node\CheckAttackTarget.cpp">
-      <Filter>07. BehaviorTree\01. ConditionNode</Filter>
-    </ClCompile>
     <ClCompile Include="Component\Node\CheckState.cpp">
       <Filter>07. BehaviorTree\01. ConditionNode</Filter>
     </ClCompile>
@@ -301,9 +304,6 @@
       <Filter>07. BehaviorTree\02. ActionNode</Filter>
     </ClCompile>
     <ClCompile Include="Component\Node\MoveNode.cpp">
-      <Filter>07. BehaviorTree\02. ActionNode</Filter>
-    </ClCompile>
-    <ClCompile Include="Component\Node\MovePickingNode.cpp">
       <Filter>07. BehaviorTree\02. ActionNode</Filter>
     </ClCompile>
     <ClCompile Include="Component\Node\NormalAttack.cpp">
@@ -375,9 +375,6 @@
     <ClCompile Include="Component\GameStateComponent.cpp">
       <Filter>06. GameComponent\02. ObjectComponent</Filter>
     </ClCompile>
-    <ClCompile Include="Component\PlayerDataComponent.cpp">
-      <Filter>06. GameComponent\02. ObjectComponent</Filter>
-    </ClCompile>
     <ClCompile Include="Component\PlayerNormalAttackCheckCollider.cpp">
       <Filter>06. GameComponent\01. SceneComponent</Filter>
     </ClCompile>
@@ -401,9 +398,6 @@
     </ClCompile>
     <ClCompile Include="Component\Node\BossKnightMeleeAttackNode.cpp">
       <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="Component\Node\KnightFinalAttackCheck.cpp">
-      <Filter>07. BehaviorTree\01. ConditionNode\00. Specific\01. BossKnight</Filter>
     </ClCompile>
     <ClCompile Include="Component\Node\BossKnightMeleeAttackNode.cpp">
       <Filter>07. BehaviorTree\02. ActionNode\00. Specific\01. BossKnight</Filter>
@@ -455,6 +449,21 @@
     </ClCompile>
     <ClCompile Include="Window\AnimationDisplayWindow.cpp">
       <Filter>02. Editor\01. Window\2. Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\LurkerDataComponent.cpp">
+      <Filter>06. GameComponent\02. ObjectComponent\01. ObjectDataComponent\01. Monster\02. Lurker</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\Node\ClearPathListNode.cpp">
+      <Filter>07. BehaviorTree\02. ActionNode</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\MonsterNavAgent.cpp">
+      <Filter>06. GameComponent\02. ObjectComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\PlayerDataComponent.cpp">
+      <Filter>06. GameComponent\02. ObjectComponent\01. ObjectDataComponent\02. Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\Node\PathFindEnableCheck.cpp">
+      <Filter>07. BehaviorTree\01. ConditionNode</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -596,9 +605,6 @@
     <ClInclude Include="Widget\UtilMenuBar.h">
       <Filter>02. Editor\02. Widget\03. MenuBar</Filter>
     </ClInclude>
-    <ClInclude Include="Component\Node\CheckAttackTarget.h">
-      <Filter>07. BehaviorTree\01. ConditionNode</Filter>
-    </ClInclude>
     <ClInclude Include="Component\Node\CheckState.h">
       <Filter>07. BehaviorTree\01. ConditionNode</Filter>
     </ClInclude>
@@ -618,9 +624,6 @@
       <Filter>07. BehaviorTree\02. ActionNode</Filter>
     </ClInclude>
     <ClInclude Include="Component\Node\MoveNode.h">
-      <Filter>07. BehaviorTree\02. ActionNode</Filter>
-    </ClInclude>
-    <ClInclude Include="Component\Node\MovePickingNode.h">
       <Filter>07. BehaviorTree\02. ActionNode</Filter>
     </ClInclude>
     <ClInclude Include="Component\Node\NormalAttack.h">
@@ -701,9 +704,6 @@
     <ClInclude Include="Component\GameStateComponent.h">
       <Filter>06. GameComponent\02. ObjectComponent</Filter>
     </ClInclude>
-    <ClInclude Include="Component\PlayerDataComponent.h">
-      <Filter>06. GameComponent\02. ObjectComponent</Filter>
-    </ClInclude>
     <ClInclude Include="Component\PlayerNormalAttackCheckCollider.h">
       <Filter>06. GameComponent\01. SceneComponent</Filter>
     </ClInclude>
@@ -772,6 +772,21 @@
     </ClInclude>
     <ClInclude Include="Window\AnimationDisplayWindow.h">
       <Filter>02. Editor\01. Window\2. Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\LurkerDataComponent.h">
+      <Filter>06. GameComponent\02. ObjectComponent\01. ObjectDataComponent\01. Monster\02. Lurker</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\ClearPathListNode.h">
+      <Filter>07. BehaviorTree\02. ActionNode</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\MonsterNavAgent.h">
+      <Filter>06. GameComponent\02. ObjectComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\PlayerDataComponent.h">
+      <Filter>06. GameComponent\02. ObjectComponent\01. ObjectDataComponent\02. Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\PathFindEnableCheck.h">
+      <Filter>07. BehaviorTree\01. ConditionNode</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

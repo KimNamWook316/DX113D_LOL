@@ -86,6 +86,20 @@ CNode* CBehaviorTree::FindNode(const std::string& Name)
 	return nullptr;
 }
 
+//CNode* CBehaviorTree::FindNode(CNode* Node)
+//{
+//	auto iter = m_NodeList.begin();
+//	auto iterEnd = m_NodeList.end();
+//
+//	for (; iter != iterEnd; ++iter)
+//	{
+//		if ((*iter) == Node)
+//			return (*iter);
+//	}
+//
+//	return nullptr;
+//}
+
 void CBehaviorTree::AddNode(CNode* Node)
 {
 	m_NodeList.push_back(Node);
@@ -285,7 +299,6 @@ CNode* CBehaviorTree::LoadNode(CNode* Parent, size_t TypeID)
 	//if (m_NodeCreateCallback)
 	//	return m_NodeCreateCallback(Parent, TypeID);
 
-	////// TODO : Node 종류 추가될 때 마다 추가해주기
 	//if (TypeID == typeid(CSelectorNode).hash_code())
 	//{
 	//	CSelectorNode* NewNode = new CSelectorNode;

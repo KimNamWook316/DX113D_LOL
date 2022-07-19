@@ -1,9 +1,9 @@
 
 #include "CheckDetectRangeNode.h"
-#include "../ObjectDataComponent.h"
-#include "../MonsterPathFindCollider.h"
+#include "../MonsterDataComponent.h"
+#include "../GameStateComponent.h"
 #include "Scene/Scene.h"
-#include "Component/NavAgent.h"
+#include "../MonsterNavAgent.h"
 
 CCheckDetectRangeNode::CCheckDetectRangeNode() :
 	m_DetectRange(0.f)
@@ -22,13 +22,9 @@ CCheckDetectRangeNode::~CCheckDetectRangeNode()
 
 NodeResult CCheckDetectRangeNode::OnStart(float DeltaTime)
 {
-	CObjectDataComponent* Comp = m_Object->FindObjectComponentFromType<CObjectDataComponent>();
-	CNavAgent* Agent = m_Object->FindObjectComponentFromType<CNavAgent>();
+	CMonsterDataComponent* Data = dynamic_cast<CMonsterDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
 
-	if (!Agent->GetPathFindEnable())
-		return NodeResult::Node_False;
-
-	m_DetectRange = Comp->GetDetectRange();
+	m_DetectRange = Data->GetDetectRange();
 	m_Player = m_Object->GetScene()->GetPlayerObject();
 
 	Vector3 PlayerPos = m_Player->GetWorldPos();
