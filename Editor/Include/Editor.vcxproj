@@ -229,6 +229,7 @@
     <ClCompile Include="DeathDoor\Component\PlayerDataComponent.cpp" />
     <ClCompile Include="DeathDoor\Component\PlayerHookComponent.cpp" />
     <ClCompile Include="DeathDoor\Component\PlayerNormalAttackCheckCollider.cpp" />
+    <ClCompile Include="DeathDoor\Component\ProjectileComponent.cpp" />
     <ClCompile Include="DeathDoor\DataManager.cpp" />
     <ClCompile Include="DeathDoor\DDUtil.cpp" />
     <ClCompile Include="EditorManager.cpp" />
@@ -359,6 +360,7 @@
     <ClInclude Include="DeathDoor\Component\PlayerDataComponent.h" />
     <ClInclude Include="DeathDoor\Component\PlayerHookComponent.h" />
     <ClInclude Include="DeathDoor\Component\PlayerNormalAttackCheckCollider.h" />
+    <ClInclude Include="DeathDoor\Component\ProjectileComponent.h" />
     <ClInclude Include="DeathDoor\DataManager.h" />
     <ClInclude Include="DeathDoor\DDFlag.h" />
     <ClInclude Include="DeathDoor\DDUtil.h" />

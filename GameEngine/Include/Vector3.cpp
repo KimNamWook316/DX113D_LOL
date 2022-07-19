@@ -8,6 +8,8 @@ Vector3 Vector3::Axis[AXIS_MAX] =
 	Vector3(0.f, 1.f, 0.f),
 	Vector3(0.f, 0.f, 1.f)
 };
+Vector3 Vector3::Inf(INFINITY, INFINITY, INFINITY);
+Vector3 Vector3::MinusInf(-INFINITY, -INFINITY, -INFINITY);
 
 Vector3::Vector3() :
 	x(0.f),

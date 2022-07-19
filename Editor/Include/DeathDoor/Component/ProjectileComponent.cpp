@@ -20,8 +20,11 @@ CProjectileComponent::CProjectileComponent(const CProjectileComponent& com)	:
 		m_Collider = m_Object->FindComponentFromType<CColliderBox3D>();
 	}
 
-	// TODO : End Particle String값으로 찾을 지 논의
-	m_EndParticle = (CParticleComponent*)m_Object->FindComponent("EndParticle");
+	// TODO : End Particle Pool에서 찾기
+	if (com.m_EndParticleObject)
+	{
+
+	}
 }
 
 CProjectileComponent::~CProjectileComponent()
@@ -44,18 +47,25 @@ void CProjectileComponent::Start()
 	{
 		m_Collider = m_Object->FindComponentFromType<CColliderBox3D>();
 	}
-
-	// TODO : End Particle String값으로 찾을 지 논의
-	m_EndParticle = (CParticleComponent*)m_Object->FindComponent("EndParticle");
 }
 
 void CProjectileComponent::Update(float DeltaTime)
 {
 	if (m_IsShoot)
 	{
+		m_LifeTimer += DeltaTime;
+
+		bool IsDestroy = CheckDestroy();
+
+		if (IsDestroy)
+		{
+			return;
+		}
+
 		float GravityMoveY = 0.f;
 		if (m_IsGravity)
 		{
+			m_GravityTimer += DeltaTime;
 		}
 
 		Vector3 Move = Vector3(m_Dir.x * m_Speed * DeltaTime, 
@@ -68,9 +78,6 @@ void CProjectileComponent::Update(float DeltaTime)
 
 void CProjectileComponent::PostUpdate(float DeltaTime)
 {
-	if (m_IsShoot)
-	{
-	}
 }
 
 void CProjectileComponent::PrevRender()
@@ -79,6 +86,7 @@ void CProjectileComponent::PrevRender()
 
 void CProjectileComponent::Reset()
 {
+	CObjectComponent::Reset();
 }
 
 void CProjectileComponent::Render()
@@ -122,7 +130,8 @@ bool CProjectileComponent::LoadOnly(FILE* File)
 	return true;
 }
 
-void CProjectileComponent::Shoot(const Vector3& StartPos, const Vector3& Dir, float Speed, const Vector3& TargetPos, bool Gravity)
+void CProjectileComponent::Shoot(const Vector3& StartPos, const Vector3& Dir, float Speed, 
+		const Vector3& TargetPos, bool Gravity, class CGameObject* EndParticleObj = nullptr)
 {
 	m_IsShoot = true;
 	m_StartPos = StartPos;
@@ -130,5 +139,74 @@ void CProjectileComponent::Shoot(const Vector3& StartPos, const Vector3& Dir, fl
 	m_Speed = Speed;
 	m_TargetPos = TargetPos;
 	m_IsGravity = Gravity;
+	m_EndParticleObject = EndParticleObj;
 	m_Dir.Normalize();
+}
+
+void CProjectileComponent::Shoot(const Vector3& StartPos, const Vector3& Dir, float Speed, float LifeTime, bool Gravity, CGameObject* EndParticleObj)
+{
+	m_IsShoot = true;
+	m_StartPos = StartPos;
+	m_Dir = Dir;	
+	m_Speed = Speed;
+	m_LifeTime = LifeTime;
+	m_IsGravity = Gravity;
+	m_EndParticleObject = EndParticleObj;
+	m_Dir.Normalize();
+}
+
+bool CProjectileComponent::CheckDestroy()
+{
+	// 중력의 영향을 받는 경우 목표 지점보다 높이가 낮아질 경우 Destroy
+	if (m_IsGravity)
+	{
+		float CurY = m_Root->GetWorldPos().y;
+
+		if (CurY < m_TargetPos.y)
+		{
+			OnEnd();
+			return true;
+		}
+	}
+	// 중력의 영향을 받지 않는 경우 
+	else
+	{
+		// LifeTime으로 삭제를 관리하는 경우
+		if (m_LifeTime != 0.f)
+		{
+			if (m_LifeTimer >= m_LifeTime)
+			{
+				OnEnd();
+				return true;
+			}
+		}
+		// TargetPosition이 정해진 경우 TargetPosition보다 멀리 온 경우 파괴
+		else
+		{
+			Vector3 MyPos = m_Root->GetWorldPos();
+			Vector3 ToTarget = MyPos - m_TargetPos;
+
+			float Dot = ToTarget.Dot(m_Dir);
+
+			if (Dot < 0)
+			{
+				OnEnd();
+				return true;
+			}
+		}
+	}
+
+	return false;
+}
+
+void CProjectileComponent::OnEnd()
+{
+	// End Effect가 있는 경우
+	if (m_EndParticleObject)
+	{
+		m_EndParticleObject->Enable(true);
+	}
+
+	// TODO : Projectile Destroy처리 확정된 이후 변경
+	Destroy();
 }
