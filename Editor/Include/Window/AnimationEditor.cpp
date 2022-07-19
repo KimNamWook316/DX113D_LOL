@@ -740,6 +740,8 @@ void CAnimationEditor::OnMakeAnimInstByExcel()
 
 	CIMGUIText* Text = nullptr;
 
+	bool DummyAnimationMadeSuccess = true;
+
 	for (size_t i = 0; i < Size; ++i)
 	{
 		// Grunt_Idle 과 같이, '_' 뒤에 Excel 에 해당하는 Lable 이 놓일 것이다.
@@ -761,6 +763,8 @@ void CAnimationEditor::OnMakeAnimInstByExcel()
 
 		std::string NewLableKeyName;
 
+		bool LabelFound = false;
+
 		for (; iterSqc != iterSqcEnd; ++iterSqc)
 		{
 			// ex) Idle
@@ -768,15 +772,24 @@ void CAnimationEditor::OnMakeAnimInstByExcel()
 
 			if (AddedKeyNameAfterLowDash.data() == DataLable)
 			{
+				LabelFound = true;
 				NewLableKeyName = DataLable;
 				break;
 			}
+		}
+
+		if (!LabelFound)
+		{
+			DummyAnimationMadeSuccess = false;
+			MessageBox(nullptr, TEXT("Label 이름에 '_' 이 포함되지 않게 하세요"), TEXT("실패"), MB_OK);
+			break;
 		}
 
 		// Dummy Animation 을 통해 찾아야 한다.
 		// Dummy Animation 상에서 KeyName 을 수정한다.
 		if (!m_DummyAnimation->EditCurrentSequenceKeyName(NewLableKeyName.c_str(), AddedKeyName))
 		{
+			DummyAnimationMadeSuccess = false;
 			assert(false);
 			return;
 		}
@@ -791,6 +804,13 @@ void CAnimationEditor::OnMakeAnimInstByExcel()
 
 		Text->SetText(CEditorUtil::FilterFileName(m_vecAnimationSeqFilesFullPath[i]).c_str());
 
+	}
+
+	if (DummyAnimationMadeSuccess == false)
+	{
+		SAFE_DELETE(m_DummyAnimation);
+		MessageBox(nullptr, TEXT("Instance Create 실패"), TEXT("실패"), MB_OK);
+		return;
 	}
 
 	m_AnimInstanceProgressBar->SetPercent(100.f);

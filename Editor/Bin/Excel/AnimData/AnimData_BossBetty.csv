@@ -1,7 +1,7 @@
 AnimData_Betty,,
 ,FrameStart,FrameEnd
 Idle,0,61
-Idle_Beast,62,123
+IdleBeast,62,123
 Intro,124,276
 Punch_Double,277,324
 HopBack,325,344
