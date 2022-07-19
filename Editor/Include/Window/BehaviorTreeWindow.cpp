@@ -28,6 +28,7 @@
 #include "../DeathDoor/Component/Node/Lockstone3TriggerBoxAction.h"
 #include "../DeathDoor/Component/Node/CheckDetectRangeNode.h"
 #include "../DeathDoor/Component/Node/FindPathNode.h"
+#include "../DeathDoor/Component/Node/ClearPathListNode.h"
 
 #include "ObjectComponentWindow.h"
 #include "ObjectHierarchyWindow.h"
@@ -426,6 +427,10 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
         case DDActionNode::FindPath:
         {
             NewTreeNode = m_StateComponent->CreateTreeNode<CFindPathNode>(Name);
+        }
+        case DDActionNode::ClearPathList:
+        {
+            NewTreeNode = m_StateComponent->CreateTreeNode<CClearPathListNode>(Name);
         }
         case DDActionNode::BossKnightContinueAttack:
         {

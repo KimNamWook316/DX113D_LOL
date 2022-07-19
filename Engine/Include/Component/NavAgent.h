@@ -29,6 +29,11 @@ public:
 		return m_CurrentFaceDir;
 	}
 
+	void SetCurrentFaceDir(const Vector3& Dir)
+	{
+		m_CurrentFaceDir = Dir;
+	}
+
 	void SetUpdateComponent(class CSceneComponent* UpdateComponent);
 
 	bool Move(const Vector3& EndPos);
