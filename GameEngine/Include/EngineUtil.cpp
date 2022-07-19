@@ -682,6 +682,57 @@ if (!m_queueBazierMovePos.empty())
 */
 }
 
+Vector3 CEngineUtil::QuarternionToEulerAngles(const XMVECTOR& Qut)
+{
+	Vector3 Angle;
+
+	Vector4 q;
+	q.Convert(Qut);
+
+	// roll (x-axis rotation)
+	float sinr_cosp = 2 * (q.w * q.x + q.y * q.z);
+	double cosr_cosp = 1 - 2 * (q.x * q.x + q.y * q.y);
+	Angle.x = std::atan2(sinr_cosp, cosr_cosp);
+
+	// pitch (y-axis rotation)
+	double sinp = 2 * (q.w * q.y - q.z * q.x);
+	if (std::abs(sinp) >= 1)
+		Angle.y = std::copysign(3.14159 / 2, sinp); // use 90 degrees if out of range
+	else
+		Angle.y = std::asin(sinp);
+
+	// yaw (z-axis rotation)
+	double siny_cosp = 2 * (q.w * q.z + q.x * q.y);
+	double cosy_cosp = 1 - 2 * (q.y * q.y + q.z * q.z);
+	Angle.z = std::atan2(siny_cosp, cosy_cosp);
+
+	return Angle;
+}
+
+
+// V1 : 왼쪽 하단 (x,y 둘다 가장 작은 값 )
+// V2 : 왼쪽 상단
+// V3 : 오른쪽 상단 (x,y 둘다 가장 큰 값)
+// V4: 오른쪽 하단
+bool CEngineUtil::CheckInsideSquare(const Vector2& V1, const Vector2& V2, const Vector2& V3, const Vector2& V4, const Vector2& TargetPos)
+{
+	// x 축 (가로 비교)
+	if (TargetPos.x < V1.x)
+		return false;
+
+	if (TargetPos.x > V3.x)
+		return false;
+	
+	// y 축 (세로 비교)
+	if (TargetPos.y > V2.y)
+		return false;
+
+	if (TargetPos.y < V1.y)
+		return false;
+
+	return true;
+}
+
 
 float CEngineUtil::CalculateRealTimeSpeedUsingExponential(float Bottom, float CurTime, float InitSpeed)
 {

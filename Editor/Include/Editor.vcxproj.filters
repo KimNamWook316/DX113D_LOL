@@ -324,9 +324,6 @@
     <ClCompile Include="Widget\EyeLaserComponentWidget.cpp">
       <Filter>02. Editor\02. Widget\01. Inspector\01. SceneComponent</Filter>
     </ClCompile>
-    <ClCompile Include="Component\Node\BossKnightMeleeAttackNode.cpp">
-      <Filter>07. BehaviorTree\02. ActionNode\00. Specific\01. BossKnight</Filter>
-    </ClCompile>
     <ClCompile Include="Widget\PaperBurnWidget.cpp">
       <Filter>02. Editor\02. Widget\01. Inspector\02. ObjectComponent</Filter>
     </ClCompile>
@@ -338,9 +335,6 @@
     </ClCompile>
     <ClCompile Include="DeathDoor\DDUtil.cpp">
       <Filter>06. DeathDoor\04. Util</Filter>
-    </ClCompile>
-    <ClCompile Include="Component\Node\BossKnightFinalAttackNode.cpp">
-      <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\01. BossKnight</Filter>
     </ClCompile>
     <ClCompile Include="Component\Node\BossKnightMeleeAttackNode.cpp">
       <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\01. BossKnight</Filter>
@@ -419,6 +413,9 @@
     </ClCompile>
     <ClCompile Include="DeathDoor\Component\Node\MeleeRangeCheckNode.cpp">
       <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\01. Public</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\Node\BossKnightMeleeAttackNode.cpp">
+      <Filter>07. BehaviorTree\02. ActionNode\00. Specific\01. BossKnight</Filter>
     </ClCompile>
     <ClCompile Include="DeathDoor\Component\Node\PostAttackDelayCheck.cpp">
       <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\01. Public</Filter>
@@ -686,9 +683,6 @@
     <ClInclude Include="DeathDoor\DDUtil.h">
       <Filter>06. DeathDoor\04. Util</Filter>
     </ClInclude>
-    <ClInclude Include="Component\Node\BossKnightMeleeAttackNode.h">
-      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\01. BossKnight</Filter>
-    </ClInclude>
     <ClInclude Include="Widget\CameraWidget.h">
       <Filter>02. Editor\02. Widget\01. Inspector\01. SceneComponent</Filter>
     </ClInclude>
@@ -835,6 +829,33 @@
     </ClInclude>
     <ClInclude Include="DeathDoor\Component\GameStateComponent.h">
       <Filter>06. DeathDoor\01. GameComponent\02. ObjectComponent\00. State</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\Node\BossBettyFarAttackTypeCheck.h">
+      <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\02. BossBetty</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\Node\BossBettyHPStateCheck.h">
+      <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\02. BossBetty</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\Node\BossBettyThrowAttackCheck.h">
+      <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\02. BossBetty</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\BossBettyDataComponent.h">
+      <Filter>06. DeathDoor\01. GameComponent\02. ObjectComponent\01. ObjectDataComponent\01. Monster\02. BossBetty</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\Node\BossBettyAngryAttackNode.h">
+      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\02. BossBetty</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\Node\BossBettyCloseAttackNode.h">
+      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\02. BossBetty</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\Node\BossBettyJumpAttackNode.h">
+      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\02. BossBetty</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\Node\BossBettySpinAttackNode.h">
+      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\02. BossBetty</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\Node\BossBettyThrowNode.h">
+      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\02. BossBetty</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

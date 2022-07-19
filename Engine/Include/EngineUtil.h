@@ -68,6 +68,13 @@ public:
 	static void CalculateBazierTargetPoses(const Vector3& D1, const Vector3& D2, const Vector3& D3, const Vector3& D4,
 		std::vector<Vector3>& vecPoses, int DetailNum);
 
+	// Quaternion To Euler Angle
+	static Vector3 QuarternionToEulerAngles(const XMVECTOR& Qut);
+
+	// 사각형을 정의하는 4개의 정점 -> 해당 사각형 안에, 특정 Vector 가 위치하는지 확인하기 (2차원)
+	static bool CheckInsideSquare(const Vector2& V1, const Vector2& V2,
+		const Vector2& V3, const Vector2& V4, const Vector2& TargetPos);
+
 	// 밑이 a 인 지수함수를 이용해서, 실시간으로 증가하는 지수 함수 형태의 값을 얻어내기
 	static float CalculateRealTimeSpeedUsingExponential(float Bottom, float CurTime, float InitSpeed);
 };

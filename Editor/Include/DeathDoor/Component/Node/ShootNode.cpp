@@ -8,7 +8,7 @@
 #include "Scene/SceneManager.h"
 #include "../PlayerDataComponent.h"
 #include "../PlayerHookComponent.h"
-#include "../../Object/PlayerHook.h"
+#include "../../../Object/PlayerHook.h"
 #include "Component/Node/CompositeNode.h"
 
 CShootNode::CShootNode()	:

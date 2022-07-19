@@ -20,7 +20,6 @@ public:
     virtual void Update(float DeltaTime) override;
     virtual void PostUpdate(float DeltaTime) override;
     virtual void PrevRender() override;
-	virtual void Reset() override;
     virtual void Render() override;
     virtual void PostRender() override;
     virtual CObjectComponent* Clone() override;
@@ -39,7 +38,7 @@ public:
 		float Speed, float LifeTime, bool Gravity = false,
 		class CGameObject* EndParticleObj = nullptr);
 
-	void CheckDestroy();
+	bool CheckDestroy();
 	void OnEnd();
 
 public:

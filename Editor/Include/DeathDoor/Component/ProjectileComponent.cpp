@@ -131,7 +131,7 @@ bool CProjectileComponent::LoadOnly(FILE* File)
 }
 
 void CProjectileComponent::Shoot(const Vector3& StartPos, const Vector3& Dir, float Speed, 
-		const Vector3& TargetPos, bool Gravity, class CGameObject* EndParticleObj = nullptr)
+		const Vector3& TargetPos, bool Gravity, class CGameObject* EndParticleObj)
 {
 	m_IsShoot = true;
 	m_StartPos = StartPos;
@@ -143,7 +143,8 @@ void CProjectileComponent::Shoot(const Vector3& StartPos, const Vector3& Dir, fl
 	m_Dir.Normalize();
 }
 
-void CProjectileComponent::Shoot(const Vector3& StartPos, const Vector3& Dir, float Speed, float LifeTime, bool Gravity, CGameObject* EndParticleObj)
+void CProjectileComponent::Shoot(const Vector3& StartPos, const Vector3& Dir,
+		float Speed, float LifeTime, bool Gravity, CGameObject* EndParticleObj)
 {
 	m_IsShoot = true;
 	m_StartPos = StartPos;
