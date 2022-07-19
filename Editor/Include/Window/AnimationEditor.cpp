@@ -780,8 +780,9 @@ void CAnimationEditor::OnMakeAnimInstByExcel()
 
 		if (!LabelFound)
 		{
+			m_AnimInstanceConvertLog->ClearWidget();
 			DummyAnimationMadeSuccess = false;
-			MessageBox(nullptr, TEXT("Label 이름에 '_' 이 포함되지 않게 하세요"), TEXT("실패"), MB_OK);
+			MessageBox(nullptr, TEXT("Label 이름에 '_' 이 포함되지 않게 하세요. 혹은, 기존에 만든 sqc 들을 다 지워주고 다시 시도하세요"), TEXT("실패"), MB_OK);
 			break;
 		}
 
@@ -808,6 +809,7 @@ void CAnimationEditor::OnMakeAnimInstByExcel()
 
 	if (DummyAnimationMadeSuccess == false)
 	{
+		m_AnimInstanceConvertLog->ClearWidget();
 		SAFE_DELETE(m_DummyAnimation);
 		MessageBox(nullptr, TEXT("Instance Create 실패"), TEXT("실패"), MB_OK);
 		return;
@@ -819,8 +821,6 @@ void CAnimationEditor::OnMakeAnimInstByExcel()
 	Text->SetText("Complete!");
 
 	// Dummy Animation Intance 를 저장한다.
-	if (!m_DummyAnimation)
-		return;
 
 	const PathInfo* Path = CPathManager::GetInst()->FindPath(ANIMATION_PATH);
 

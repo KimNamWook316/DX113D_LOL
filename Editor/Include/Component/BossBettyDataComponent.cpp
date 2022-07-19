@@ -1,6 +1,9 @@
 #include "BossBettyDataComponent.h"
 
-CBossBettyDataComponent::CBossBettyDataComponent()
+CBossBettyDataComponent::CBossBettyDataComponent() :
+	m_ThrowFarAttackEnable(false),
+	m_CloseAngryAttackEnable(false),
+	m_FarAttackType(BossBettyFarAttackType::Spin)
 {
 }
 
