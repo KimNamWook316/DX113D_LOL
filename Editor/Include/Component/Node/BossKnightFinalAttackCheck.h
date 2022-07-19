@@ -5,6 +5,8 @@
 class CBossKnightFinalAttackCheck :
     public CConditionNode
 {
+    friend class CGameBehaviorTree;
+
 protected:
     CBossKnightFinalAttackCheck();
     CBossKnightFinalAttackCheck(const CBossKnightFinalAttackCheck& Node);

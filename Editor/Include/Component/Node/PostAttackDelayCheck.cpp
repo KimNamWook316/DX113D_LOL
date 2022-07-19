@@ -33,3 +33,13 @@ NodeResult CPostAttackDelayCheck::OnStart(float DeltaTime)
 		return NodeResult::Node_False;
 	}
 }
+
+NodeResult CPostAttackDelayCheck::OnUpdate(float DeltaTime)
+{
+	return NodeResult();
+}
+
+NodeResult CPostAttackDelayCheck::OnEnd(float DeltaTime)
+{
+	return NodeResult();
+}

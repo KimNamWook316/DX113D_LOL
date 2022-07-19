@@ -31,6 +31,7 @@
 #include "ObjectComponentWindow.h"
 #include "ObjectHierarchyWindow.h"
 #include "../EditorInfo.h"
+#include "../DeathDoor/DDUtil.h"
 
 CBehaviorTreeWindow::CBehaviorTreeWindow()  :
     m_Select(false),
@@ -407,7 +408,6 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
             NewTreeNode = m_StateComponent->CreateTreeNode<CFindPathNode>(Name);
             break;
         }
-
         break;
     }
 

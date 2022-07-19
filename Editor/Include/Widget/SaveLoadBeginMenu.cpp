@@ -194,7 +194,6 @@ void CSaveLoadBeginMenu::OnSaveObjectMenuCallback()
 
 void CSaveLoadBeginMenu::OnLoadObjectMenuCallback()
 {
-	// TODO : Scene Load Á÷ÈÄ Scene Stop
 	TCHAR FileFullPath[MAX_PATH] = {};
 	OPENFILENAME OpenFile = {};
 	OpenFile.lStructSize = sizeof(OPENFILENAME);

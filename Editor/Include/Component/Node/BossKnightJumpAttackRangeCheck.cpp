@@ -47,3 +47,13 @@ NodeResult CBossKnightJumpAttackRangeCheck::OnStart(float DeltaTime)
 		return NodeResult::Node_False;
 	}
 }
+
+NodeResult CBossKnightJumpAttackRangeCheck::OnUpdate(float DeltaTime)
+{
+	return NodeResult();
+}
+
+NodeResult CBossKnightJumpAttackRangeCheck::OnEnd(float DeltaTime)
+{
+	return NodeResult();
+}

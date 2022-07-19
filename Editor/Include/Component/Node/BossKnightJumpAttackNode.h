@@ -5,6 +5,8 @@
 class CBossKnightJumpAttackNode :
     public CActionNode
 {
+    friend class CGameBehaviorTree;
+
 public:
     CBossKnightJumpAttackNode();
     CBossKnightJumpAttackNode(const CBossKnightJumpAttackNode& Node);
