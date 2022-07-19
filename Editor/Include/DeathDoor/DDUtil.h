@@ -18,9 +18,11 @@ public:
 	// TODO : Death Door SceneComponent 추가시마다 추가
 	static std::string DDSceneComponentTypeToString(DDSceneComponentType Type);
 	static DDSceneComponentType StringToDDSceneComponentType(const std::string& Str);
+	static size_t DDSceneComponentTypeToTypeID(DDSceneComponentType Type);
 
 	// TODO : Death Door ObjectComponent 추가시마다 추가
 	static std::string DDObjectComponentTypeToString(DDObjectComponentType Type);
 	static DDObjectComponentType StringToDDObjectComponentType(const std::string& Str);
+	static size_t DDObjectComponentTypeToTypeID(DDObjectComponentType Type);
 };
 

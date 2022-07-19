@@ -190,7 +190,7 @@ bool CMonsterDataComponent::IsPlayerInMeleeAttackRange()
 	}
 
 	Vector3 MyPos = m_Object->GetWorldPos();
-	Vector3 PlayerPos = m_Object->GetWorldPos();
+	Vector3 PlayerPos = PlayerObj->GetWorldPos();
 	float Dist = MyPos.Distance(PlayerPos);
 
 	if (Dist <= m_Data.MeleeAttackRange)
@@ -301,6 +301,9 @@ void CMonsterDataComponent::ChangeHitColor(int EffectNum)
 		for (size_t i = 0; i < m_MeshMatSize; ++i)
 		{
 			m_AnimMesh->GetMaterial(i)->SetEmissiveColor(Vector4::White);
+			m_AnimMesh->GetMaterial(i)->SetBaseColor(Vector4::Black);
+			m_AnimMesh->GetMaterial(i)->SetAmbientColor(Vector4::Black);
+			m_AnimMesh->GetMaterial(i)->SetSpecularColor(Vector4::Black);
 		}
 	}
 	// °Ë

@@ -29,6 +29,7 @@ void CBossKnightJumpAttackNode::Init()
 
 	std::string AnimName = "DashSlam";
 	CAnimationSequenceInstance* AnimInst = m_AnimationMeshComp->GetAnimationInstance();
+	AnimInst->AddNotify(AnimName, "IncreaseMeleeCount", 0, Data, &CKnightDataComponent::IncreaseMeleeAttackCount);
 	AnimInst->AddNotifyDeltaTimeFrameRange(AnimName, "OnTracePlayer", 0, 11, Data, &CKnightDataComponent::OnLookPlayerMove);
 	AnimInst->AddNotifyDeltaTimeFrameRange(AnimName, "OnAttackJump", 12, 19, this, &CBossKnightJumpAttackNode::OnAttackJumpMove);
 	AnimInst->AddNotify(AnimName, "OnHitBoxActive", 20, Data, &CKnightDataComponent::OnActiveMeleeAttackCollider);
@@ -40,14 +41,9 @@ void CBossKnightJumpAttackNode::Init()
 
 NodeResult CBossKnightJumpAttackNode::OnStart(float DeltaTime)
 {
-	m_CallStart = true;
 	std::string AnimName = "DashSlam";
 	CAnimationSequenceInstance* AnimInst = m_AnimationMeshComp->GetAnimationInstance();
 	AnimInst->ChangeAnimation(AnimName);
-
-	// Attack Count ¡ı∞°
-	CKnightDataComponent* Data = dynamic_cast<CKnightDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
-	Data->IncreaseMeleeAttackCount();
 
 	return NodeResult::Node_True;
 }
@@ -59,8 +55,6 @@ NodeResult CBossKnightJumpAttackNode::OnUpdate(float DeltaTime)
 
 NodeResult CBossKnightJumpAttackNode::OnEnd(float DeltaTime)
 {
-	m_CallStart = false;
-
 	return NodeResult::Node_True;
 }
 

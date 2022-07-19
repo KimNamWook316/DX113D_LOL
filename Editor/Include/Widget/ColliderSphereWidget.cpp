@@ -3,6 +3,7 @@
 #include "IMGUIText.h"
 #include "IMGUITree.h"
 #include "IMGUIInputFloat.h"
+#include "IMGUISeperator.h"
 #include "Component/ColliderSphere.h"
 
 CColliderSphereWidget::CColliderSphereWidget()
@@ -23,6 +24,8 @@ bool CColliderSphereWidget::Init()
 
 	m_RadiusInput = m_RadiusTree->AddWidget<CIMGUIInputFloat>("Radius");
 	m_RadiusInput->SetCallBack(this, &CColliderSphereWidget::OnChangeRadius);
+
+	AddWidget<CIMGUISeperator>("Sep");
 
 	return true;
 }

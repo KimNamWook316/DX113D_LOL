@@ -2,35 +2,39 @@
 #include "BehaviorTreeWindow.h"
 #include "IMGUIManager.h"
 #include "IMGUIButton.h"
-#include "../Component/GameStateComponent.h"
+#include "../DeathDoor/Component/GameStateComponent.h"
 #include "Component/Node/SequenceNode.h"
 #include "Component/Node/SelectorNode.h"
 #include "Component/Node/ActionNode.h"
 #include "Component/Node/ConditionNode.h"
-#include "../Component/Node/MoveNode.h"
-#include "../Component/Node/IdleNode.h"
-#include "../Component/Node/MoveInputCheckNode.h"
-#include "../Component/Node/MovePickingNode.h"
-#include "../Component/Node/NoInterruptNode.h"
-#include "../Component/Node/CheckAttackTarget.h"
-#include "../Component/Node/NormalAttack.h"
-#include "../Component/Node/MouseLButtonCheckNode.h"
-#include "../Component/Node/MouseRButtonCheckNode.h"
-#include "../Component/Node/MouseRButtonUpCheckNode.h"
-#include "../Component/Node/RotateAttackDirectionNode.h"
-#include "../Component/Node/NegateNode.h"
-#include "../Component/Node/DeathNode.h"
-#include "../Component/Node/ReadyToShoot.h"
-#include "../Component/Node/ShootNode.h"
-#include "../Component/Node/CancleShootNode.h"
-#include "../Component/Node/AddFallingFloorCallbackNode.h"
-#include "../Component/Node/Lockstone3TriggerBoxHitCheck.h"
-#include "../Component/Node/Lockstone3TriggerBoxAction.h"
-#include "../Component/Node/CheckDetectRangeNode.h"
-#include "../Component/Node/FindPathNode.h"
+
+// TODO : Death Door Behavior Tree Node 추가될 때마다 업데이트
+#include "../DeathDoor/Component/Node/MoveNode.h"
+#include "../DeathDoor/Component/Node/IdleNode.h"
+#include "../DeathDoor/Component/Node/MoveInputCheckNode.h"
+#include "../DeathDoor/Component/Node/MovePickingNode.h"
+#include "../DeathDoor/Component/Node/NoInterruptNode.h"
+#include "../DeathDoor/Component/Node/CheckAttackTarget.h"
+#include "../DeathDoor/Component/Node/NormalAttack.h"
+#include "../DeathDoor/Component/Node/MouseLButtonCheckNode.h"
+#include "../DeathDoor/Component/Node/MouseRButtonCheckNode.h"
+#include "../DeathDoor/Component/Node/MouseRButtonUpCheckNode.h"
+#include "../DeathDoor/Component/Node/RotateAttackDirectionNode.h"
+#include "../DeathDoor/Component/Node/NegateNode.h"
+#include "../DeathDoor/Component/Node/DeathNode.h"
+#include "../DeathDoor/Component/Node/ReadyToShoot.h"
+#include "../DeathDoor/Component/Node/ShootNode.h"
+#include "../DeathDoor/Component/Node/CancleShootNode.h"
+#include "../DeathDoor/Component/Node/AddFallingFloorCallbackNode.h"
+#include "../DeathDoor/Component/Node/Lockstone3TriggerBoxHitCheck.h"
+#include "../DeathDoor/Component/Node/Lockstone3TriggerBoxAction.h"
+#include "../DeathDoor/Component/Node/CheckDetectRangeNode.h"
+#include "../DeathDoor/Component/Node/FindPathNode.h"
+
 #include "ObjectComponentWindow.h"
 #include "ObjectHierarchyWindow.h"
 #include "../EditorInfo.h"
+#include "../EditorUtil.h"
 #include "../DeathDoor/DDUtil.h"
 
 CBehaviorTreeWindow::CBehaviorTreeWindow()  :
@@ -169,29 +173,12 @@ void CBehaviorTreeWindow::Update(float DeltaTime)
 
         if (m_TypeSelectIndex == 2)
         {
-            m_vecNodeAction.push_back("Move");
-            m_vecNodeAction.push_back("Idle");
-            m_vecNodeAction.push_back("NormalAttack");
-            m_vecNodeAction.push_back("Death");
-            m_vecNodeAction.push_back("RotateAttackDirection");
-            m_vecNodeAction.push_back("ReadyToShoot");
-            m_vecNodeAction.push_back("ShootNode");
-            m_vecNodeAction.push_back("CancleShootNode");
-            m_vecNodeAction.push_back("AddFallingFloorCallback");
-            m_vecNodeAction.push_back("Lockstone3TriggerBoxAction");
-            m_vecNodeAction.push_back("FindPath");
+            PrintActionNodes();
         }
 
         else if (m_TypeSelectIndex == 3)
         {
-            m_vecNodeAction.push_back("MoveInputCheck");
-            m_vecNodeAction.push_back("MouseLButtonCheck");
-            m_vecNodeAction.push_back("NoInterruptCheck");
-            m_vecNodeAction.push_back("AttackTargetCheck");
-            m_vecNodeAction.push_back("MouseRButtonCheck");
-            m_vecNodeAction.push_back("MouseRButtonUpCheck");
-            m_vecNodeAction.push_back("Lockstone3TriggerBoxHitCheck");
-            m_vecNodeAction.push_back("CheckDetectRange");
+            PrintConditionNodes();
         }
 
         else if (m_TypeSelectIndex == 4)
@@ -368,46 +355,85 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
 
         switch (NodeActionClass)
         {
-        case ActionNode::Move:
-        {
-            NewTreeNode = m_StateComponent->CreateTreeNode<CMoveNode>(Name);
-            CNavAgent* Agent = m_StateComponent->GetGameObject()->FindObjectComponentFromType<CNavAgent>();
-
-            if (Agent)
-                ((CMoveNode*)NewTreeNode)->SetNavAgent(Agent);
         }
+
+        if (NewTreeNode)
+        {
             break;
-        case ActionNode::Idle:
+        }
+
+		// 위에서 생성되지 않았다면 클라이언트 단에서 정의된 노드임
+		// TODO : Death Door Action Node 추가될 때마다 업데이트
+        int DDActionIdx = ActionIndex - (int)ActionNode::ActionNodeMax;
+        DDActionNode ActionNodeType = (DDActionNode)DDActionIdx;
+        switch (ActionNodeType)
+        {
+        case DDActionNode::Move:
+        {
+			NewTreeNode = m_StateComponent->CreateTreeNode<CMoveNode>(Name);
+			CNavAgent* Agent = m_StateComponent->GetGameObject()->FindObjectComponentFromType<CNavAgent>();
+
+			if (Agent)
+				((CMoveNode*)NewTreeNode)->SetNavAgent(Agent);
+            break;
+        }
+        case DDActionNode::Idle:
+        {
             NewTreeNode = m_StateComponent->CreateTreeNode<CIdleNode>(Name);
             break;
-        case ActionNode::NormalAttack:
-            NewTreeNode = m_StateComponent->CreateTreeNode<CNormalAttack>(Name);
-            break;
-        case ActionNode::Death:
-            NewTreeNode = m_StateComponent->CreateTreeNode<CDeathNode>(Name);
-            break;
-        case ActionNode::RotateAttackDirection:
-            NewTreeNode = m_StateComponent->CreateTreeNode<CRotateAttackDirectionNode>(Name);
-            break;
-        case ActionNode::ReadyToShoot:
-            NewTreeNode = m_StateComponent->CreateTreeNode<CReadyToShoot>(Name);
-            break;
-        case ActionNode::ShootNode:
-            NewTreeNode = m_StateComponent->CreateTreeNode<CShootNode>(Name);
-            break;
-        case ActionNode::CancleShootNode:
-            NewTreeNode = m_StateComponent->CreateTreeNode<CCancleShootNode>(Name);
-            break;
-        case ActionNode::AddFallingFloorCallback:
-            NewTreeNode = m_StateComponent->CreateTreeNode<CAddFallingFloorCallbackNode>(Name);
-            break;
-        case ActionNode::Lockstone3TriggerBoxAction:
-            NewTreeNode = m_StateComponent->CreateTreeNode<CLockstone3TriggerBoxAction>(Name);
-            break;
-        case ActionNode::FindPath:
-            NewTreeNode = m_StateComponent->CreateTreeNode<CFindPathNode>(Name);
-            break;
         }
+        case DDActionNode::NormalAttack:
+        {
+            NewTreeNode = m_StateComponent->CreateTreeNode<CNormalAttack>(Name);
+        }
+        case DDActionNode::Death:
+        {
+            NewTreeNode = m_StateComponent->CreateTreeNode<CDeathNode>(Name);
+        }
+        case DDActionNode::RotateAttackDirection:
+        {
+            NewTreeNode = m_StateComponent->CreateTreeNode<CRotateAttackDirectionNode>(Name);
+        }
+        case DDActionNode::ReadyToShoot:
+        {
+            NewTreeNode = m_StateComponent->CreateTreeNode<CReadyToShoot>(Name);
+        }
+        case DDActionNode::ShootNode:
+        {
+            NewTreeNode = m_StateComponent->CreateTreeNode<CShootNode>(Name);
+        }
+        case DDActionNode::CancleShootNode:
+        {
+            NewTreeNode = m_StateComponent->CreateTreeNode<CCancleShootNode>(Name);
+        }
+        case DDActionNode::AddFallingFloorCallback:
+        {
+            NewTreeNode = m_StateComponent->CreateTreeNode<CAddFallingFloorCallbackNode>(Name);
+        }
+        case DDActionNode::Lockstone3TriggerBoxAction:
+        {
+            NewTreeNode = m_StateComponent->CreateTreeNode<CLockstone3TriggerBoxAction>(Name);
+        }
+        case DDActionNode::FindPath:
+        {
+            NewTreeNode = m_StateComponent->CreateTreeNode<CFindPathNode>(Name);
+        }
+        case DDActionNode::BossKnightContinueAttack:
+        {
+        }
+        case DDActionNode::BossKnightFinalAttack:
+        {
+        }
+        case DDActionNode::BossKnightJumpAttack:
+        {
+        }
+        case DDActionNode::BossKnightMeleeAttack:
+        {
+        }
+        case DDActionNode::BossKnightSlamEnd:
+        {
+        }
+		}
         break;
     }
 
@@ -419,29 +445,51 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
 
         switch (NodeConditionlass)
         {
-        case ConditionNode::MoveInputCheckNode:
+        }
+
+        if (NewTreeNode)
+        {
+            break;
+        }
+
+		// 위에서 생성되지 않았다면 클라이언트 단에서 정의된 노드임
+		// TODO : Death Door Condition Node 추가될 때마다 업데이트
+        int DDConditionIdx = ActionIndex - (int)ConditionNode::ConditionNodeMax;
+        DDConditionNode ConditionNodeType = (DDConditionNode)DDConditionIdx;
+
+        switch (ConditionNodeType)
+        {
+        case DDConditionNode::MoveInputCheckNode:
             NewTreeNode = m_StateComponent->CreateTreeNode<CMoveInputCheckNode>(Name);
             break;
-        case ConditionNode::MouseLButtonCheckNode:
+        case DDConditionNode::MouseLButtonCheckNode:
             NewTreeNode = m_StateComponent->CreateTreeNode<CMouseLButtonCheckNode>(Name);
             break;
-        case ConditionNode::NoInterruptNode:
+        case DDConditionNode::NoInterruptNode:
             NewTreeNode = m_StateComponent->CreateTreeNode<CNoInterruptNode>(Name);
             break;
-        case ConditionNode::AttackTargetCheck:
+        case DDConditionNode::AttackTargetCheck:
             NewTreeNode = m_StateComponent->CreateTreeNode<CCheckAttackTarget>(Name);
             break;
-        case ConditionNode::MouseRButtonCheckNode:
+        case DDConditionNode::MouseRButtonCheckNode:
             NewTreeNode = m_StateComponent->CreateTreeNode<CMouseRButtonCheckNode>(Name);
             break;
-        case ConditionNode::MouseRButtonUpCheckNode:
+        case DDConditionNode::MouseRButtonUpCheckNode:
             NewTreeNode = m_StateComponent->CreateTreeNode<CMouseRButtonUpCheckNode>(Name);
             break;
-        case ConditionNode::Lockstone3TriggerBoxHitCheck:
+        case DDConditionNode::Lockstone3TriggerBoxHitCheck:
             NewTreeNode = m_StateComponent->CreateTreeNode<CLockstone3TriggerBoxHitCheck>(Name);
             break;
-        case ConditionNode::CheckDetectRange:
+        case DDConditionNode::CheckDetectRange:
             NewTreeNode = m_StateComponent->CreateTreeNode<CCheckDetectRangeNode>(Name);
+            break;
+        case DDConditionNode::MeleeAttackRangeCheck:
+            break;
+        case DDConditionNode::PostAttackDelayCheck:
+            break;
+        case DDConditionNode::BossKnightFinalAttackCheck:
+            break;
+        case DDConditionNode::BossKnightJumpAttackRangeCheck:
             break;
         }
     }
@@ -524,6 +572,40 @@ void CBehaviorTreeWindow::OnDeleteNodeButton(const char* Name)
 
 }
 
+
+void CBehaviorTreeWindow::PrintActionNodes()
+{
+    std::string TypeStr;
+
+    for (int i = 0; i < (int)ActionNode::ActionNodeMax; ++i)
+    {
+        TypeStr = CEditorUtil::ActioNodeTypeToString((ActionNode)i);
+        m_vecNodeAction.push_back(TypeStr);
+    }
+
+    for (int i = 0; i < (int)DDActionNode::Max; ++i)
+    {
+        TypeStr = CDDUtil::DDActionNodeTypeToString((DDActionNode)i);
+        m_vecNodeAction.push_back(TypeStr);
+    }
+}
+
+void CBehaviorTreeWindow::PrintConditionNodes()
+{
+    std::string TypeStr;
+
+    for (int i = 0; i < (int)ConditionNode::ConditionNodeMax; ++i)
+    {
+        TypeStr = CEditorUtil::ConditionNodeTypeToString((ConditionNode)i);
+        m_vecNodeAction.push_back(TypeStr);
+    }
+
+    for (int i = 0; i < (int)DDConditionNode::Max; ++i)
+    {
+        TypeStr = CDDUtil::DDConditionNodeTypeToString((DDConditionNode)i);
+        m_vecNodeAction.push_back(TypeStr);
+    }
+}
 
 void CBehaviorTreeWindow::UpdateLoadNode(CCompositeNode* RootNode)
 {

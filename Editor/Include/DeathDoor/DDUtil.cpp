@@ -1,20 +1,55 @@
 #include "DDUtil.h"
 
+// TODO : DeathDoor Component 추가 시마다 업데이트
+#include "Component\EyeLaserComponent.h"
+#include "Component\KnightDataComponent.h"
+#include "Component\MonsterDataComponent.h"
+#include "Component\MonsterPathFindCollider.h"
+#include "Component\ObjectDataComponent.h"
+#include "Component\GameStateComponent.h"
+#include "Component\PlayerDataComponent.h"
+#include "Component\PlayerHookComponent.h"
+#include "Component\PlayerNormalAttackCheckCollider.h"
+
 std::string CDDUtil::DDConditionNodeTypeToString(DDConditionNode NodeType)
 {
 	switch (NodeType)
 	{
-	case DDConditionNode::BossKnightFinalAttackCheck:
-		return "BossKnightFinalAttackCheck";
+	case DDConditionNode::MoveInputCheckNode:
+		return "MoveInputCheckNode";
 
-	case DDConditionNode::BossKnightJumpAttackRangeCheck:
-		return "BossKnightJumpAttackRangeCheck";
+	case DDConditionNode::MouseLButtonCheckNode:
+		return "MouseLButtonCheckNode";
+
+	case DDConditionNode::NoInterruptNode:
+		return "NoInterruptNode";
+
+	case DDConditionNode::AttackTargetCheck:
+		return "AttackTargetCheck";
+
+	case DDConditionNode::MouseRButtonCheckNode:
+		return "MouseRButtonCheckNode";
+
+	case DDConditionNode::MouseRButtonUpCheckNode:
+		return "MouseRButtonUpCheckNode";
+
+	case DDConditionNode::Lockstone3TriggerBoxHitCheck:
+		return "Lockstone3TriggerBoxHitCheck";
+
+	case DDConditionNode::CheckDetectRange:
+		return "CheckDetectRange";
 
 	case DDConditionNode::MeleeAttackRangeCheck:
 		return "MeleeAttackRangeCheck";
 
 	case DDConditionNode::PostAttackDelayCheck:
 		return "PostAttackDelayCheck";
+
+	case DDConditionNode::BossKnightFinalAttackCheck:
+		return "BossKnightFinalAttackCheck";
+
+	case DDConditionNode::BossKnightJumpAttackRangeCheck:
+		return "BossKnightJumpAttackRangeCheck";
 	}
 
 	return "";
@@ -25,6 +60,38 @@ DDConditionNode CDDUtil::StringToDDConditionNodeType(const std::string& Str)
 	if (Str == "BossKnightFinalAttackCheck")
 	{
 		return DDConditionNode::BossKnightFinalAttackCheck;
+	}
+	else if (Str == "MoveInputCheckNode")
+	{
+		return DDConditionNode::MoveInputCheckNode;
+	}
+	else if (Str == "MouseLButtonCheckNode")
+	{
+		return DDConditionNode::MouseLButtonCheckNode;
+	}
+	else if (Str == "NoInterruptNode")
+	{
+		return DDConditionNode::NoInterruptNode;
+	}
+	else if (Str == "AttackTargetCheck")
+	{
+		return DDConditionNode::AttackTargetCheck;
+	}
+	else if (Str == "MouseRButtonCheckNode")
+	{
+		return DDConditionNode::MouseRButtonCheckNode;
+	}
+	else if (Str == "MouseRButtonUpCheckNode")
+	{
+		return DDConditionNode::MouseRButtonUpCheckNode;
+	}
+	else if (Str == "Lockstone3TriggerBoxHitCheck")
+	{
+		return DDConditionNode::Lockstone3TriggerBoxHitCheck;
+	}
+	else if (Str == "CheckDetectRange")
+	{
+		return DDConditionNode::CheckDetectRange;
 	}
 	else if (Str == "BossKnightJumpAttackRangeCheck")
 	{
@@ -46,6 +113,39 @@ std::string CDDUtil::DDActionNodeTypeToString(DDActionNode NodeType)
 {
 	switch (NodeType)
 	{
+	case DDActionNode::Move:
+		return "Move";
+
+	case DDActionNode::Idle:
+		return "Idle";
+
+	case DDActionNode::NormalAttack:
+		return "NormalAttack";
+
+	case DDActionNode::Death:
+		return "Death";
+
+	case DDActionNode::RotateAttackDirection:
+		return "RotateAttackDirection";
+
+	case DDActionNode::ReadyToShoot:
+		return "ReadyToShoot";
+
+	case DDActionNode::ShootNode:
+		return "ShootNode";
+
+	case DDActionNode::CancleShootNode:
+		return "CancleShootNode";
+
+	case DDActionNode::AddFallingFloorCallback:
+		return "AddFallingFloorCallback";
+
+	case DDActionNode::Lockstone3TriggerBoxAction:
+		return "Lockstone3TriggerBoxAction";
+
+	case DDActionNode::FindPath:
+		return "FindPath";
+
 	case DDActionNode::BossKnightContinueAttack:
 		return "BossKnightContinueAttack";
 
@@ -71,6 +171,50 @@ DDActionNode CDDUtil::StringToDDActionNodeType(const std::string& Str)
 	{
 		return DDActionNode::BossKnightFinalAttack;
 	}
+	else if (Str == "Move")
+	{
+		return DDActionNode::Move;
+	}
+	else if (Str == "Idle")
+	{
+		return DDActionNode::Idle;
+	}
+	else if (Str == "NormalAttack")
+	{
+		return DDActionNode::NormalAttack;
+	}
+	else if (Str == "Death")
+	{
+		return DDActionNode::Death;
+	}
+	else if (Str == "RotateAttackDirection")
+	{
+		return DDActionNode::RotateAttackDirection;
+	}
+	else if (Str == "ReadyToShoot")
+	{
+		return DDActionNode::ReadyToShoot;
+	}
+	else if (Str == "ShootNode")
+	{
+		return DDActionNode::ShootNode;
+	}
+	else if (Str == "CancleShootNode")
+	{
+		return DDActionNode::CancleShootNode;
+	}
+	else if (Str == "AddFallingFloorCallback")
+	{
+		return DDActionNode::AddFallingFloorCallback;
+	}
+	else if (Str == "Lockstone3TriggerBoxAction")
+	{
+		return DDActionNode::Lockstone3TriggerBoxAction;
+	}
+	else if (Str == "FindPath")
+	{
+		return DDActionNode::FindPath;
+	}
 	else if (Str == "BossKnightContinueAttack")
 	{
 		return DDActionNode::BossKnightContinueAttack;
@@ -95,6 +239,14 @@ std::string CDDUtil::DDSceneComponentTypeToString(DDSceneComponentType Type)
 {
 	switch (Type)
 	{
+	case DDSceneComponentType::PlayerNormalAttackCheckCollider:
+		return "PlayerNormalAttackCheckCollider";
+	case DDSceneComponentType::EyeLaserComponent:
+		return "EyeLaserComponent";
+	case DDSceneComponentType::PlayerHookComponent:
+		return "PlayerHookComponent";
+	case DDSceneComponentType::MonsterPathFindCollider:
+		return "MonsterPathFindCollider";
 	}
 
 	return "";
@@ -102,13 +254,54 @@ std::string CDDUtil::DDSceneComponentTypeToString(DDSceneComponentType Type)
 
 DDSceneComponentType CDDUtil::StringToDDSceneComponentType(const std::string& Str)
 {
-	return DDSceneComponentType();
+	if (Str == "PlayerNormalAttackCheckCollider")
+	{
+		return DDSceneComponentType::PlayerNormalAttackCheckCollider;
+	}
+	else if (Str == "EyeLaserComponent")
+	{
+		return DDSceneComponentType::EyeLaserComponent;
+	}
+	else if (Str == "PlayerHookComponent")
+	{
+		return DDSceneComponentType::PlayerHookComponent;
+	}
+	else if (Str == "MonsterPathFindCollider")
+	{
+		return DDSceneComponentType::MonsterPathFindCollider;
+	}
+	return DDSceneComponentType(-1);
+}
+
+size_t CDDUtil::DDSceneComponentTypeToTypeID(DDSceneComponentType Type)
+{
+	switch (Type)
+	{
+	case DDSceneComponentType::PlayerNormalAttackCheckCollider:
+		return typeid(CPlayerNormalAttackCheckCollider).hash_code();
+	case DDSceneComponentType::EyeLaserComponent:
+		return typeid(CEyeLaserComponent).hash_code();
+	case DDSceneComponentType::PlayerHookComponent:
+		return typeid(CPlayerHookComponent).hash_code();
+	case DDSceneComponentType::MonsterPathFindCollider:
+		return typeid(CMonsterPathFindCollider).hash_code();
+	}
+	return -1;
 }
 
 std::string CDDUtil::DDObjectComponentTypeToString(DDObjectComponentType Type)
 {
 	switch (Type)
 	{
+	case DDObjectComponentType::PlayerDataComponent:
+		return "PlayerDataComponent";
+
+	case DDObjectComponentType::ObjectDataComponent:
+		return "ObjectDataComponent";
+
+	case DDObjectComponentType::GameStateComponent:
+		return "GameStateComponent";
+
 	case DDObjectComponentType::MonsterData:
 		return "MonsterData";
 
@@ -125,10 +318,40 @@ DDObjectComponentType CDDUtil::StringToDDObjectComponentType(const std::string& 
 	{
 		return DDObjectComponentType::MonsterData;
 	}
+	else if (Str == "ObjectDataComponent")
+	{
+		return DDObjectComponentType::ObjectDataComponent;
+	}
+	else if (Str == "PlayerDataComponent")
+	{
+		return DDObjectComponentType::PlayerDataComponent;
+	}
+	else if (Str == "GameStateComponent")
+	{
+		return DDObjectComponentType::GameStateComponent;
+	}
 	else if (Str == "KnightData")
 	{
 		return DDObjectComponentType::KnightData;
 	}
 
 	return DDObjectComponentType(-1);
+}
+
+size_t CDDUtil::DDObjectComponentTypeToTypeID(DDObjectComponentType Type)
+{
+	switch (Type)
+	{
+	case DDObjectComponentType::GameStateComponent:
+		return typeid(CGameStateComponent).hash_code();
+	case DDObjectComponentType::KnightData:
+		return typeid(CKnightDataComponent).hash_code();
+	case DDObjectComponentType::MonsterData:
+		return typeid(CMonsterDataComponent).hash_code();
+	case DDObjectComponentType::ObjectDataComponent:
+		return typeid(CObjectDataComponent).hash_code();
+	case DDObjectComponentType::PlayerDataComponent:
+		return typeid(CPlayerDataComponent).hash_code();
+	}
+	return -1;
 }

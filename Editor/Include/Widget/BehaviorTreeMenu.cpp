@@ -13,7 +13,7 @@
 #include "IMGUIManager.h"
 #include "../Window/ObjectHierarchyWindow.h"
 #include "GameObject/GameObject.h"
-#include "../Component/GameStateComponent.h"
+#include "../DeathDoor/Component/GameStateComponent.h"
 #include "Component/AnimationMeshComponent.h"
 #include "Component/StaticMeshComponent.h"
 #include "PathManager.h"

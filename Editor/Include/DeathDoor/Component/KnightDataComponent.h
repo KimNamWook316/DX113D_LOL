@@ -28,6 +28,8 @@ public:
     void OnHitMeleeAttack(const CollisionResult& Result);
     void OnLookPlayerMove(float DeltaTime);
     void OnEndAnimJudgeContinueAttack();
+    void OnWalk(float DeltaTime);
+    void OnPlayerEnterZone(const CollisionResult& Result);
 
 public:
     int GetMeleeAttackCount() const
@@ -60,6 +62,16 @@ public:
         return m_FinalTraceZAxis;
     }
 
+    bool IsCutScenePlaying() const
+    {
+        return m_IsCutScenePlaying;
+    }
+
+    bool IsPlayerEnterZone() const
+    {
+        return m_PlayerEnterZone;
+    }
+
 public:
     void IncreaseMeleeAttackCount()
     {
@@ -81,12 +93,23 @@ public:
         m_AttackRot = Type;
     }
 
+    void OnEndCutScenePlaying()
+    {
+        m_IsCutScenePlaying = false;
+    }
+
 protected:
     Knight_Attack_Rot_Type m_AttackRot;
     Vector3 m_FinalTraceZAxis;
     bool m_ContinueAttack;
-    int m_MeleeAttackCount;
     float m_JumpAttackRange;
+
+    int m_MeleeAttackCount;
     class CColliderBox3D* m_MeleeAttackCollider;
+
+    bool m_PlayerEnterZone;
+    class CColliderBox3D* m_PlayerEnterZoneTrigger;
+
+    bool m_IsCutScenePlaying;
 };
 

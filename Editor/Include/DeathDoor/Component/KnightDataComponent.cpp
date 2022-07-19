@@ -26,6 +26,12 @@ void CKnightDataComponent::Start()
 {
 	m_Data = CDataManager::GetInst()->GetObjectData("BossKnight");
 	m_MeleeAttackCollider = (CColliderBox3D*)m_Object->FindComponent("MeleeAttackCollider");
+	m_PlayerEnterZoneTrigger = (CColliderBox3D*)m_Object->FindComponent("PlayerEnterTrigger");
+
+	m_MeleeAttackCollider->AddCollisionCallback(Collision_State::Begin, this, &CKnightDataComponent::OnHitMeleeAttack);
+	m_PlayerEnterZoneTrigger->AddCollisionCallback(Collision_State::Begin, this, &CKnightDataComponent::OnPlayerEnterZone);
+	
+	m_MeleeAttackCollider->Enable(false);
 }
 
 void CKnightDataComponent::OnInActiveMeleeAttackCollider()
@@ -108,6 +114,19 @@ void CKnightDataComponent::OnEndAnimJudgeContinueAttack()
 		SetPostAttckDelaying(true);
 		SetContinueAttack(false);
 	}
+}
+
+void CKnightDataComponent::OnWalk(float DeltaTime)
+{
+	m_Object->AddWorldPosByLocalAxis(AXIS::AXIS_Z, -m_Data.MoveSpeed);
+}
+
+void CKnightDataComponent::OnPlayerEnterZone(const CollisionResult& Result)
+{
+	m_PlayerEnterZoneTrigger->Enable(false);
+
+	m_PlayerEnterZone = true;
+	m_IsCutScenePlaying = true;
 }
 
 void CKnightDataComponent::OnActiveMeleeAttackCollider()

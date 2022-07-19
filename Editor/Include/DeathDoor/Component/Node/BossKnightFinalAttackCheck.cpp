@@ -35,10 +35,10 @@ NodeResult CBossKnightFinalAttackCheck::OnStart(float DeltaTime)
 
 NodeResult CBossKnightFinalAttackCheck::OnUpdate(float DeltaTime)
 {
-	return NodeResult();
+	return NodeResult::Node_True;
 }
 
 NodeResult CBossKnightFinalAttackCheck::OnEnd(float DeltaTime)
 {
-	return NodeResult();
+	return NodeResult::Node_True;
 }

@@ -12,6 +12,7 @@
 #include "IMGUIComboBox.h"
 // SceneComponent
 #include "Component/StaticMeshComponent.h"
+#include "Component/CameraComponent.h"
 #include "Component/AnimationMeshComponent.h"
 #include "Component/LightComponent.h"
 #include "Component/ParticleComponent.h"
@@ -25,10 +26,10 @@
 // ObjectComponent
 #include "Component/PaperBurnComponent.h"
 // SceneCompWidget
-#include "../Component/PlayerHookComponent.h"
-#include "../Component/EyeLaserComponent.h"
-#include "../Component/PlayerNormalAttackCheckCollider.h"
-#include "../Component/MonsterPathFindCollider.h"
+#include "../DeathDoor/Component/PlayerHookComponent.h"
+#include "../DeathDoor/Component/EyeLaserComponent.h"
+#include "../DeathDoor/Component/PlayerNormalAttackCheckCollider.h"
+#include "../DeathDoor/Component/MonsterPathFindCollider.h"
 #include "../Widget/StaticMeshComponentWidget.h"
 #include "../Widget/LightComponentWidget.h"
 #include "../Widget/ObjectComponentWidget.h"
@@ -40,6 +41,7 @@
 #include "../Widget/ColliderComponentWidget.h"
 #include "../Widget/ColliderSphereWidget.h"
 #include "../Widget/WaterComponentWidget.h"
+#include "../Widget/CameraWidget.h"
 // ObjCompWidget
 #include "../Widget/PaperBurnWidget.h"
 #include "../Widget/EyeLaserComponentWidget.h"
@@ -181,6 +183,10 @@ void CGameObjectWidget::CreateSceneComponentWidget(CSceneComponent* Com)
 	else if (TypeID == typeid(CAnimationMeshComponent).hash_code())
 	{
 		Widget = AddWidget<CAnimationMeshWidget>("AnimationMeshWidget");
+	}
+	else if (TypeID == typeid(CCameraComponent).hash_code())
+	{
+		Widget = AddWidget<CCameraWidget>("CameraWidget");
 	}
 	else if (TypeID == typeid(CLightComponent).hash_code())
 	{

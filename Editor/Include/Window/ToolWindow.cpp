@@ -20,7 +20,7 @@
 #include "../EditorUtil.h"
 #include "GameObject/SkyObject.h"
 #include "IMGUITextInput.h"
-#include "../Component/GameStateComponent.h"
+#include "../DeathDoor/Component/GameStateComponent.h"
 
 CToolWindow::CToolWindow()	:
 	m_GizmoBlock(nullptr),

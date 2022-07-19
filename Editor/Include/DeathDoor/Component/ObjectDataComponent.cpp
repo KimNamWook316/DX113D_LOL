@@ -3,7 +3,7 @@
 #include "../DataManager.h"
 #include "GameObject/GameObject.h"
 #include "Resource/Excel/ExcelData.h"
-#include "../EditorManager.h"
+#include "../../EditorManager.h"
 #include "Resource/ResourceManager.h"
 #include "Scene/SceneManager.h"
 #include "Engine.h"

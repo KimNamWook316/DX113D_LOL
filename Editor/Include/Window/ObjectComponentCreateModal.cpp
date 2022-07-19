@@ -11,14 +11,20 @@
 #include "ObjectComponentWindow.h"
 #include "Component/PaperBurnComponent.h"
 #include "Component/NavAgent.h"
-#include "../Component/ObjectDataComponent.h"
-#include "../Component/PlayerDataComponent.h"
-#include "../Component/GameStateComponent.h"
-#include "../Component/EyeLaserComponent.h"
+
+// TODO : DeathDoor Object Component 추가될 때마다 업데이트 
+#include "../DeathDoor/Component/ObjectDataComponent.h"
+#include "../DeathDoor/Component/PlayerDataComponent.h"
+#include "../DeathDoor/Component/GameStateComponent.h"
+#include "../DeathDoor/Component/EyeLaserComponent.h"
+#include "../DeathDoor/Component/MonsterDataComponent.h"
+#include "../DeathDoor/Component/KnightDataComponent.h"
+
 #include "../Window/InspectorWindow.h"
 #include "../EditorUtil.h"
 #include "../EditorManager.h"
-#include "../DataManager.h"
+#include "../DeathDoor/DataManager.h"
+#include "../DeathDoor/DDUtil.h"
 #include "Flag.h"
 
 CObjectComponentCreateModal::CObjectComponentCreateModal()	:
@@ -43,6 +49,13 @@ bool CObjectComponentCreateModal::Init()
 		ObjectComponent3DType foo = static_cast<ObjectComponent3DType>(i);
 		std::string StrObjectComponent = CEditorUtil::ObjectComponent3DTypeToString(foo);
 		m_ComponentCombo->AddItem(StrObjectComponent);
+	}
+
+	for (int i = 0; i < (int)DDObjectComponentType::Max; ++i)
+	{
+		DDObjectComponentType DDType = (DDObjectComponentType)i;
+		std::string TypeName = CDDUtil::DDObjectComponentTypeToString(DDType);
+		m_ComponentCombo->AddItem(TypeName);
 	}
 
 	m_NameTextInput = AddWidget<CIMGUITextInput>("ObjectComponent Name");
@@ -98,8 +111,6 @@ void CObjectComponentCreateModal::OnCreateComponent()
 
 	if (Typeid == typeid(CPaperBurnComponent).hash_code())
 		Com = SelectObject->CreateComponent<CPaperBurnComponent>(Name);
-	else if (Typeid == typeid(CGameStateComponent).hash_code())
-		Com = SelectObject->CreateComponent<CGameStateComponent>(Name);
 	else if (Typeid == typeid(CPlayerDataComponent).hash_code())
 		Com = SelectObject->CreateComponent<CPlayerDataComponent>(Name);
 	else if (Typeid == typeid(CNavAgent).hash_code())
@@ -117,6 +128,37 @@ void CObjectComponentCreateModal::OnCreateComponent()
  //		{
  //			CEditorManager::GetInst()->GetDataManager()->SetObjectData(SelectObject);
  //		}
+	}
+
+	// 위에서 생성되지 않았다면 클라이언트 단에서 정의된 컴포넌트임
+	// TODO : Death Door Object Component 추가될 때마다 업데이트
+	if (!Com)
+	{
+		Index -= (int)ObjectComponent3DType::Max;
+		DDObjectComponentType DDObjType = (DDObjectComponentType)Index;
+
+		Typeid = CDDUtil::DDObjectComponentTypeToTypeID(DDObjType);
+
+		if (Typeid == typeid(CObjectDataComponent).hash_code())
+		{
+			Com = SelectObject->CreateComponent<CObjectDataComponent>(Name);
+		}
+		else if (Typeid == typeid(CPlayerDataComponent).hash_code())
+		{
+			Com = SelectObject->CreateComponent<CPlayerDataComponent>(Name);
+		}
+		else if (Typeid == typeid(CGameStateComponent).hash_code())
+		{
+			Com = SelectObject->CreateComponent<CGameStateComponent>(Name);
+		}
+		else if (Typeid == typeid(CMonsterDataComponent).hash_code())
+		{
+			Com = SelectObject->CreateComponent<CMonsterDataComponent>(Name);
+		}
+		else if (Typeid == typeid(CKnightDataComponent).hash_code())
+		{
+			Com = SelectObject->CreateComponent<CKnightDataComponent>(Name);
+		}
 	}
 
 	CObjectComponentWindow* ComponentWindow = (CObjectComponentWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(OBJECTCOMPONENT_LIST);

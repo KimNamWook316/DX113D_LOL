@@ -72,6 +72,11 @@ public:
 		return m_Distance;
 	}
 
+	float GetViewAngle() const
+	{
+		return m_ViewAngle;
+	}
+
 public:
 	void SetViewAngle(float Angle)
 	{
@@ -131,7 +136,6 @@ public :
 
 public:
 	void ComputeShadowView();
-	void SwitchOrthographic();
 
 private:
 	void CreateProjectionMatrix();

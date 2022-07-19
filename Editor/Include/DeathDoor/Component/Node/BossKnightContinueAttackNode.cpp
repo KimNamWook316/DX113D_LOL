@@ -29,16 +29,19 @@ void CBossKnightContinueAttackNode::Init()
 	// 애니메이션 콜백 등록
 	CKnightDataComponent* Data = dynamic_cast<CKnightDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
 
+	AnimInst->AddNotify("SlamContinueFirst", "IncreaseCount", 0, Data, &CKnightDataComponent::IncreaseMeleeAttackCount);
 	AnimInst->AddNotifyDeltaTimeFrameRange("SlamContinueFirst", "OnTrace", 9, 14, (CMonsterDataComponent*)Data, &CMonsterDataComponent::OnLookPlayer);
  	AnimInst->SetEndFunction("SlamContinueFirst", (CMonsterDataComponent*)(Data), &CMonsterDataComponent::OnEndAnimPostAttackDelayOn);
  	AnimInst->AddNotify("SlamContinueFirst", "HitBoxActive", 21, Data, &CKnightDataComponent::OnActiveMeleeAttackCollider);
  	AnimInst->AddNotify("SlamContinueFirst", "HitBoxDisable", 25, Data, &CKnightDataComponent::OnInActiveMeleeAttackCollider);
 
+	AnimInst->AddNotify("Slam180CW", "IncreaseCount", 0, Data, &CKnightDataComponent::IncreaseMeleeAttackCount);
 	AnimInst->AddNotifyDeltaTimeFrameRange("Slam180CW", "OnTrace", 5, 10, (CMonsterDataComponent*)Data, &CMonsterDataComponent::OnLookPlayer);
  	AnimInst->AddNotify("Slam180CW", "HitBoxActive", 16, Data, &CKnightDataComponent::OnActiveMeleeAttackCollider);
  	AnimInst->AddNotify("Slam180CW", "HitBoxDisable", 21, Data, &CKnightDataComponent::OnInActiveMeleeAttackCollider);
  	AnimInst->SetEndFunction("Slam180CW",(CMonsterDataComponent*)(Data), &CMonsterDataComponent::OnEndAnimPostAttackDelayOn);
 
+	AnimInst->AddNotify("Slam180CCW", "IncreaseCount", 0, Data, &CKnightDataComponent::IncreaseMeleeAttackCount);
 	AnimInst->AddNotifyDeltaTimeFrameRange("Slam180CCW", "OnTrace", 5, 10, (CMonsterDataComponent*)Data, &CMonsterDataComponent::OnLookPlayer);
  	AnimInst->AddNotify("Slam180CCW", "HitBoxActive", 16, Data, &CKnightDataComponent::OnActiveMeleeAttackCollider);
  	AnimInst->AddNotify("Slam180CCW", "HitBoxDisable", 21, Data, &CKnightDataComponent::OnInActiveMeleeAttackCollider);
@@ -49,11 +52,8 @@ void CBossKnightContinueAttackNode::Init()
 
 NodeResult CBossKnightContinueAttackNode::OnStart(float DeltaTime)
 {
-	m_CallStart = true;
-
 	// Melee Attack Count 증가
 	CKnightDataComponent* Data = dynamic_cast<CKnightDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
-	Data->IncreaseMeleeAttackCount();
 
 	// 공격 회전 방향에 따라 다른 애니메이션 재생
 	Knight_Attack_Rot_Type AttackType = Data->GetAttackRotationType();
