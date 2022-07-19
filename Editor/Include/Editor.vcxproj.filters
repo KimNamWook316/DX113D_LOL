@@ -139,6 +139,15 @@
     <Filter Include="07. BehaviorTree\01. ConditionNode\00. Specific\02. BossBetty">
       <UniqueIdentifier>{3b1b9189-c87f-4cc8-9b1c-b3ecc7864491}</UniqueIdentifier>
     </Filter>
+    <Filter Include="07. BehaviorTree\03. DecoratorNode\00. Specific">
+      <UniqueIdentifier>{e9cd6821-c16b-4c76-81f2-70aded672b72}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="07. BehaviorTree\03. DecoratorNode\00. Specific\01. BossBetty">
+      <UniqueIdentifier>{7c8a68c2-cc94-4b9e-953e-f384df34bb39}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="07. BehaviorTree\02. ActionNode\00. Specific\02. BossBetty">
+      <UniqueIdentifier>{e09fd66d-dd07-4d3a-a7a2-c1c43f8f450e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EditorManager.cpp">
@@ -462,6 +471,30 @@
     <ClCompile Include="Component\BossBettyDataComponent.cpp">
       <Filter>06. GameComponent\02. ObjectComponent\01. ObjectDataComponent\01. Monster\02. BossBetty</Filter>
     </ClCompile>
+    <ClCompile Include="Component\Node\BossBettyHPStateCheck.cpp">
+      <Filter>07. BehaviorTree\01. ConditionNode\00. Specific\02. BossBetty</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\Node\BossBettyThrowAttackCheck.cpp">
+      <Filter>07. BehaviorTree\01. ConditionNode\00. Specific\02. BossBetty</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\Node\BossBettyAngryAttackNode.cpp">
+      <Filter>07. BehaviorTree\02. ActionNode\00. Specific\02. BossBetty</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\Node\BossBettyCloseAttackNode.cpp">
+      <Filter>07. BehaviorTree\02. ActionNode\00. Specific\02. BossBetty</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\Node\BossBettyJumpAttackNode.cpp">
+      <Filter>07. BehaviorTree\02. ActionNode\00. Specific\02. BossBetty</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\Node\BossBettySpinAttackNode.cpp">
+      <Filter>07. BehaviorTree\02. ActionNode\00. Specific\02. BossBetty</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\Node\BossBettyThrowNode.cpp">
+      <Filter>07. BehaviorTree\02. ActionNode\00. Specific\02. BossBetty</Filter>
+    </ClCompile>
+    <ClCompile Include="Component\Node\BossBettyFarAttackTypeCheck.cpp">
+      <Filter>07. BehaviorTree\01. ConditionNode\00. Specific\02. BossBetty</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EditorManager.h">
@@ -781,6 +814,30 @@
     </ClInclude>
     <ClInclude Include="Component\BossBettyDataComponent.h">
       <Filter>06. GameComponent\02. ObjectComponent\01. ObjectDataComponent\01. Monster\02. BossBetty</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\BossBettyHPStateCheck.h">
+      <Filter>07. BehaviorTree\01. ConditionNode\00. Specific\02. BossBetty</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\BossBettyThrowAttackCheck.h">
+      <Filter>07. BehaviorTree\01. ConditionNode\00. Specific\02. BossBetty</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\BossBettyAngryAttackNode.h">
+      <Filter>07. BehaviorTree\02. ActionNode\00. Specific\02. BossBetty</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\BossBettyCloseAttackNode.h">
+      <Filter>07. BehaviorTree\02. ActionNode\00. Specific\02. BossBetty</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\BossBettyJumpAttackNode.h">
+      <Filter>07. BehaviorTree\02. ActionNode\00. Specific\02. BossBetty</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\BossBettySpinAttackNode.h">
+      <Filter>07. BehaviorTree\02. ActionNode\00. Specific\02. BossBetty</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\BossBettyThrowNode.h">
+      <Filter>07. BehaviorTree\02. ActionNode\00. Specific\02. BossBetty</Filter>
+    </ClInclude>
+    <ClInclude Include="Component\Node\BossBettyFarAttackTypeCheck.h">
+      <Filter>07. BehaviorTree\01. ConditionNode\00. Specific\02. BossBetty</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

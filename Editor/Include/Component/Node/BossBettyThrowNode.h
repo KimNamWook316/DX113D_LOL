@@ -19,6 +19,7 @@ protected:
     virtual NodeResult OnEnd(float DeltaTime);
 
 private:
-    float m_RotatePerSec;
+    void MakeSnowBallAttackObj();
+    void ThrowSnowBallAttackObj();
 };
 

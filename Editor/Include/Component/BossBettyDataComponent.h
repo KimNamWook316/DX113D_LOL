@@ -27,8 +27,6 @@ private:
 private :
     // 근거리 연속 공격 횟수
     int m_CloseSequentialAttackNum;
-    // 연속 2번 근거리 공격 시에, Close Attack 이후, AngryAttack Node 중에서 2번째 (FirstSlam + Roar)
-    bool m_CloseAngryAttackEnable;
     // 원거리 공격 횟수 -> 3번 마다, Spin , Jump 를 번갈아가면서 실행할 것이다.
     int m_FarAttackAttackNum;
     // 6번 원거리 공격 Gauge 가 다 차면, Throw 를 할 것이다.
@@ -37,10 +35,23 @@ private :
     BossBettyFarAttackType m_FarAttackType;
     // 60%, 30% 가 될 때마다, Angry Attack 중에서 첫번째 Attack 설정하기 
     BossBettyHPState m_BettyHPState;
+    // 근거리 공격 범위 정보 (사각형)
+    Vector3 m_PunchLeftSquarePos[4];
+    Vector3 m_PunchRightSquarePos[4];
+    Vector3 m_SlashLeftSquarePos[4];
+    Vector3 m_SlashRightSquarePos[4];
+    Vector3 m_TwoSideFrontSquarePos[4];
+    std::vector<Vector3> m_vecCloseAttackPoses;
+
+    // Boss Betty Throw Ball 투사체 Object
 public :
-    bool IsCloseAngryAttackEnable() const
+    const std::vector<Vector3>& GetVecCloseAttackPoses() const
     {
-        return m_CloseAngryAttackEnable;
+        return m_vecCloseAttackPoses;
+    }
+    bool IsThrowFarAttackEnable() const
+    {
+        return m_ThrowFarAttackEnable;
     }
     int GetCloseSequentialAttackNum() const
     {
@@ -55,23 +66,18 @@ public :
         return m_FarAttackType;
     }
 public  :
+    void ResetBettyHPState()
+    {
+        m_BettyHPState = BossBettyHPState::None;
+    }
     void SetCloseAngryAttackEnable(bool Enable)
     {
         m_ThrowFarAttackEnable = Enable;
     }
-    void SetFarThrowAttackEnable(bool Enable)
-    {
-        m_CloseAngryAttackEnable = Enable;
-    }
+
     void IncCloseSequentialAttackNum() 
     {
         ++m_CloseSequentialAttackNum;
-
-        if (m_CloseSequentialAttackNum == 2)
-        {
-            m_CloseSequentialAttackNum = 0;
-            m_CloseAngryAttackEnable = true;
-        }
     }
     void IncFarAttackNum()
     {
@@ -94,5 +100,15 @@ public  :
     }
 public:
     virtual void Start() override;
+public :
+    // (아래 콜백 함수들은, 여러 Action Node 들에서 공통으로 사용하는 효과)
+    // 땅을 내리칠때, 양쪽에 Attack 효과를 내기
+    void OnBossBettyGenerateTwoSideCloseAttackEffect();
+    // 땅 내리칠때 오른쪽에 Attack 효과를 내기 
+    void OnBossBettyGenerateRightCloseAttackEffect();
+    // 땅 내리칠 때 왼쪽에 Attack 효과를 내기 
+    void OnBossBettyGenerateLeftCloseAttackEffect();
+    // 울부짖기 효과
+    void OnBossBettyRoarEffect();
 };
 
