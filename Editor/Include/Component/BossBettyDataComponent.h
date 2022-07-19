@@ -41,13 +41,28 @@ private :
     Vector3 m_SlashLeftSquarePos[4];
     Vector3 m_SlashRightSquarePos[4];
     Vector3 m_TwoSideFrontSquarePos[4];
-    std::vector<Vector3> m_vecCloseAttackPoses;
 
     // Boss Betty Throw Ball ≈ıªÁ√º Object
 public :
-    const std::vector<Vector3>& GetVecCloseAttackPoses() const
+    const Vector3* const& GetPunchLeftSquarePoses() 
     {
-        return m_vecCloseAttackPoses;
+        return m_PunchLeftSquarePos;
+    }
+    const Vector3* const& GetPunchRightSquarePoses()
+    {
+        return m_PunchRightSquarePos;
+    }
+    const Vector3* const& GetSlashLeftSquarePoses()
+    {
+        return m_SlashLeftSquarePos;
+    }
+    const Vector3* const& GetSlashRightSquarePoses()
+    {
+        return m_SlashRightSquarePos;
+    }
+    const Vector3* const& GetTwoSideFrontSquarePoses()
+    {
+        return m_TwoSideFrontSquarePos;
     }
     bool IsThrowFarAttackEnable() const
     {
