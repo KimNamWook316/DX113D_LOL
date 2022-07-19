@@ -282,6 +282,8 @@ enum class ObjectComponent3DType
 	NavAgent,
 	ObjectDataComponent,
 	PlayerDataComponent,
+	LurkerDataComponent,
+	MonsterNavAgent,
 	Max
 };
 
@@ -305,11 +307,12 @@ enum ConditionNode
 	MoveInputCheckNode,
 	MouseLButtonCheckNode,
 	NoInterruptNode,
-	AttackTargetCheck,
 	MouseRButtonCheckNode,
 	MouseRButtonUpCheckNode,
 	Lockstone3TriggerBoxHitCheck,
-	CheckDetectRange
+	CheckDetectRange,
+	MeleeRangeCheck,
+	PathFindEnableCheck
 };
 
 enum ActionNode
@@ -324,7 +327,8 @@ enum ActionNode
 	CancleShootNode,
 	AddFallingFloorCallback,
 	Lockstone3TriggerBoxAction,
-	FindPath
+	FindPath,
+	ClearPathList
 };
 
 enum DecoratorNode

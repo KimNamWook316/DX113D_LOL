@@ -30,6 +30,8 @@
 #include "Component/PlayerNormalAttackCheckCollider.h"
 #include "Component/PlayerHookComponent.h"
 #include "Component/MonsterPathFindCollider.h"
+#include "Component/LurkerDataComponent.h"
+#include "Component/MonsterNavAgent.h"
 #include "IMGUITree.h"
 #include "Flag.h"
 #include "EngineUtil.h"
@@ -618,6 +620,10 @@ std::string CEditorUtil::ObjectComponent3DTypeToString(ObjectComponent3DType Typ
 		return "ObjectDataComponent";
 	case ObjectComponent3DType::PlayerDataComponent:
 		return "PlayerDataComponent";
+	case ObjectComponent3DType::LurkerDataComponent:
+		return "LurkerDataComponent";
+	case ObjectComponent3DType::MonsterNavAgent:
+		return "MonsterNavAgent";
 	}
 
 	return "";
@@ -701,6 +707,10 @@ size_t CEditorUtil::ObjectComponentTypeIndexToTypeid(int TypeIndex)
 		return typeid(CObjectDataComponent).hash_code();
 	case 4:
 		return typeid(CPlayerDataComponent).hash_code();
+	case 5:
+		return typeid(CLurkerDataComponent).hash_code();
+	case 6:
+		return typeid(CMonsterNavAgent).hash_code();
 	}
 
 	return -1;

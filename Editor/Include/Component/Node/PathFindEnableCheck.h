@@ -2,16 +2,18 @@
 
 #include "Component/Node/ConditionNode.h"
 
-// GameObject의 AttackTarget이 nullptr이 아니고 평타를 때릴만큼 가까운지
-class CCheckAttackTarget :
+class CPathFindEnableCheck :
     public CConditionNode
 {
     friend class CGameBehaviorTree;
 
 public:
-    CCheckAttackTarget();
-    CCheckAttackTarget(const CCheckAttackTarget& Node);
-    virtual ~CCheckAttackTarget();
+    CPathFindEnableCheck();
+    CPathFindEnableCheck(const CPathFindEnableCheck& Node);
+    virtual ~CPathFindEnableCheck();
+
+private:
+
 
 public:
     virtual NodeResult OnStart(float DeltaTime);

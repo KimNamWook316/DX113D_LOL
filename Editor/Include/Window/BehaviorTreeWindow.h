@@ -124,6 +124,7 @@ struct GraphEditorDelegate : public GraphEditor::Delegate
         CBehaviorTree* Tree = DestNode.BehaviorTreeNode->GetOwner();
 
         CNode* ChildNode = Tree->FindNode(DestNode.name);
+        //CNode* ChildNode = Tree->FindNode(DestNode);
 
         // SrcNode가 Selector이거나 Sequence일때
         if (SrcNode.templateIndex == 0 || SrcNode.templateIndex == 1)

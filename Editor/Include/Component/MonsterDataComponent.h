@@ -61,6 +61,7 @@ private:
 	void ChangeHitColor(int EffectNum);
 
 protected:
+	class CMonsterNavAgent* m_MonsterNavAgent;
 	class CAnimationMeshComponent* m_AnimMesh;
 	class CColliderBox3D* m_HitBox;
 
@@ -76,5 +77,8 @@ protected:
 	std::vector<Vector4> m_vecOriginSpecluar;
 	std::vector<Vector4> m_vecOriginAmbient;
 	std::vector<Vector4> m_vecOriginEmissive;
+
+public:
+	class CMonsterNavAgent* GetMonsterNavAgent()	const;
 };
 

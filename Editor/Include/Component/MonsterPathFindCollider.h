@@ -12,7 +12,7 @@ protected:
 	virtual ~CMonsterPathFindCollider();
 
 private:
-	bool m_PathFindEnable;
+	//bool m_PathFindEnable;
 	bool m_PathFindCoolStart;
 	float m_AccTime;
 	float m_PathFindCoolTime;
@@ -24,17 +24,18 @@ public:
 		m_PathFindCoolStart = true;
 	}
 
-	void SetPathFindCoolEnd()
+	void SetPathFindCoolEnd(const CollisionResult& Result)
 	{
 		m_PathFindCoolStart = false;
+		m_AccTime = 0.f;
 	}
 
-	void SetPathFindFalse(const CollisionResult& Result);
+	//void SetPathFindFalse(const CollisionResult& Result);
 
-	bool GetPathFindEnable()	const
-	{
-		return m_PathFindEnable;
-	}
+	//bool GetPathFindEnable()	const
+	//{
+	//	return m_PathFindEnable;
+	//}
 
 	// 다른 몬스터와 충돌한다면 겹치지 않게 밀어내기
 	void PushEachOther(const CollisionResult& Result);

@@ -2,6 +2,7 @@
 #include "../GameStateComponent.h"
 #include "../GameBehaviorTree.h"
 #include "../MonsterDataComponent.h"
+#include "../MonsterNavAgent.h"
 #include "Scene/Scene.h"
 
 CMeleeRangeCheckNode::CMeleeRangeCheckNode()
@@ -24,12 +25,29 @@ NodeResult CMeleeRangeCheckNode::OnStart(float DeltaTime)
 
 	bool InRange = Data->IsPlayerInMeleeAttackRange();
 
+
 	if (InRange)
 	{
 		return NodeResult::Node_True;
 	}
+
 	else
 	{
 		return NodeResult::Node_False;
 	}
+}
+
+NodeResult CMeleeRangeCheckNode::OnUpdate(float DeltaTime)
+{
+	return NodeResult();
+}
+
+NodeResult CMeleeRangeCheckNode::OnEnd(float DeltaTime)
+{
+	return NodeResult();
+}
+
+NodeResult CMeleeRangeCheckNode::Invoke(float DeltaTime)
+{
+	return CConditionNode::Invoke(DeltaTime);
 }
