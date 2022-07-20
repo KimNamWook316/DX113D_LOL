@@ -20,6 +20,8 @@
 #include "Node/CheckDetectRangeNode.h"
 #include "Node/FindPathNode.h"
 #include "Node/Lockstone3TriggerBoxAction.h"
+#include "Node/ClearPathListNode.h"
+#include "Node/PathFindEnableCheck.h"
 
 // Public Nodes
 #include "Node/MeleeRangeCheckNode.h"
@@ -225,6 +227,17 @@ CNode* CGameBehaviorTree::LoadNode(CNode* Parent, size_t TypeID)
 	{
 		NewNode = MakeNode<CBossKnightSlamEnd>(Parent, OwnerObject);
 	}
+
+	else if (TypeID == typeid(CClearPathListNode).hash_code())
+	{
+		NewNode = MakeNode<CClearPathListNode>(Parent, OwnerObject);
+	}
+
+	else if (TypeID == typeid(CPathFindEnableCheck).hash_code())
+	{
+		NewNode = MakeNode<CPathFindEnableCheck>(Parent, OwnerObject);
+	}
+
 
 	return NewNode;
 }
