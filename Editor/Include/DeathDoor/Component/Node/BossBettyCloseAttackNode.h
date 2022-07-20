@@ -35,7 +35,7 @@ private:
     BossBettyCloseAttackType m_CloseAttackType;
     
 private :
-    BossBettyCloseAttackType DeterminBettyCloseAttackType();
+    BossBettyCloseAttackType DetermineBettyCloseAttackType();
 private :
     void OnBossBettySlashLeftEffect();
     void OnBossBettySlashRightEffect();
