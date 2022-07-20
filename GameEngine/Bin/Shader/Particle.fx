@@ -1216,13 +1216,12 @@ PSOutput_Single ParticlePS(GeometryParticleOutput input)
 	// Paper Burn
 	BaseMaterialColor = PaperBurn2D(BaseMaterialColor * input.Color, input.UV);
 
-	// float4 BaseEmissiveColor;
-	// 
-	// BaseEmissiveColor = ApplyPSLinearEmissiveColorChangeEffect(input.LifeTimeRatio,
-	// 	BaseEmissiveColor);
+	// Emssive Color
+	float4 EmissiveColor = g_MtrlEmissiveColor.xyzw;
+	EmissiveColor = ApplyPSLinearEmissiveColorChangeEffect(input.LifeTimeRatio, EmissiveColor);
 
 	// output.Color = Color;
-	output.Color = BaseMaterialColor * input.Color;
+	output.Color.rgb = (BaseMaterialColor * input.Color).rgb + EmissiveColor.rgb;
 	output.Color.a = BaseMaterialColor.a * g_MtrlOpacity * Alpha;
 
 	return output;

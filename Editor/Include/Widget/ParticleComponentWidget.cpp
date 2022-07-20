@@ -122,8 +122,14 @@ void CParticleComponentWidget::OnEditBaseColor(const Vector3& Color)
     if (!m_ParticleClass || !m_ParticleClass->GetMaterial())
         return;
 
-    CMaterial* ParticleMaterial = m_ParticleClass->GetMaterial();
+    CParticle* ParticleClass = dynamic_cast<CParticleComponent*>(m_Component)->GetParticle();
 
+    if (!m_Component || !ParticleClass || !ParticleClass->GetMaterial())
+        return;
+
+    CMaterial* ParticleMaterial = ParticleClass->GetMaterial();
+
+    m_ParticleClass->GetMaterial()->SetBaseColor(Color.x, Color.y, Color.z, 1.f);
     ParticleMaterial->SetBaseColor(Color.x, Color.y, Color.z, 1.f);
 }
 void CParticleComponentWidget::OnEditEmissiveColor(const Vector3& Color)
@@ -131,30 +137,54 @@ void CParticleComponentWidget::OnEditEmissiveColor(const Vector3& Color)
     if (!m_ParticleClass || !m_ParticleClass->GetMaterial())
         return;
 
-    CMaterial* ParticleMaterial = m_ParticleClass->GetMaterial();
+    CParticle* ParticleClass = dynamic_cast<CParticleComponent*>(m_Component)->GetParticle();
+
+    if (!m_Component || !ParticleClass || !ParticleClass->GetMaterial())
+        return;
+
+    CMaterial* ParticleMaterial = ParticleClass->GetMaterial();
 
     ParticleMaterial->SetEmissiveColor(Color.x, Color.y, Color.z, 1.f);
+    m_ParticleClass->GetMaterial()->SetEmissiveColor(Color.x, Color.y, Color.z, 1.f);
 }
 void CParticleComponentWidget::OnEditStartEmissiveColor(const Vector3& Color)
 {
     if (!m_ParticleClass)
         return;
 
+    CParticle* ParticleClass = dynamic_cast<CParticleComponent*>(m_Component)->GetParticle();
+
+    if (!!ParticleClass || !ParticleClass->GetMaterial())
+        return;
+
     m_ParticleClass->SetStartEmissiveColor(Color);
+    ParticleClass->SetStartEmissiveColor(Color);
 }
 void CParticleComponentWidget::OnEditEndEmissiveColor(const Vector3& Color)
 {
     if (!m_ParticleClass)
         return;
 
+    CParticle* ParticleClass = dynamic_cast<CParticleComponent*>(m_Component)->GetParticle();
+
+    if (!!ParticleClass || !ParticleClass->GetMaterial())
+        return;
+
     m_ParticleClass->SetEndEmissiveColor(Color);
+    ParticleClass->SetEndEmissiveColor(Color);
 }
 void CParticleComponentWidget::OnEditEmissiveLinearCheck(const char*, bool Enable)
 {
     if (!m_ParticleClass)
         return;
 
+    CParticle* ParticleClass = dynamic_cast<CParticleComponent*>(m_Component)->GetParticle();
+
+    if (!m_Component || !ParticleClass)
+        return;
+
     m_ParticleClass->SetLinearEmissiveChangeEnable(Enable);
+    ParticleClass->SetLinearEmissiveChangeEnable(Enable);
 }
 
 void CParticleComponentWidget::OnLoadParticleClass()
