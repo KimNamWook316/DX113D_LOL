@@ -31,6 +31,8 @@
 #include "DeathDoor\Component/EyeLaserComponent.h"
 #include "DeathDoor\Component/PlayerHookComponent.h"
 #include "DeathDoor\Component/MonsterPathFindCollider.h"
+#include "DeathDoor\Component/LurkerDataComponent.h"
+#include "DeathDoor\Component/MonsterNavAgent.h"
 // Window
 #include "Window/ObjectHierarchyWindow.h"
 #include "Window/SceneComponentHierarchyWindow.h"
@@ -261,6 +263,7 @@ CGameObject* CEditorManager::CreateObject(CScene* Scene, size_t Type)
 
 CComponent* CEditorManager::CreateComponent(CGameObject* Obj, size_t Type)
 {
+	// TODO : Component 추가될 때 마다 추가
 	if (Type == typeid(CSceneComponent).hash_code())
 	{
 		CComponent* Component = Obj->LoadComponent<CSceneComponent>();
@@ -379,11 +382,7 @@ CComponent* CEditorManager::CreateComponent(CGameObject* Obj, size_t Type)
 	else if (Type == typeid(CObjectDataComponent).hash_code())
 	{
 		CObjectDataComponent* Component = Obj->LoadObjectComponent<CObjectDataComponent>();
-		// Editor에서는 EditorManager에서 DataManager 클래스를 갖고 있도록 함
- //		if (CEngine::GetInst()->GetEditMode())
- //		{
- //			m_DataManager->SetObjectData(Obj);
- //		}
+
 		return Component;
 	}
 
@@ -418,6 +417,17 @@ CComponent* CEditorManager::CreateComponent(CGameObject* Obj, size_t Type)
 		return Component;
 	}
 
+	else if (Type == typeid(CLurkerDataComponent).hash_code())
+	{
+		CLurkerDataComponent* Component = Obj->LoadObjectComponent<CLurkerDataComponent>();
+		return Component;
+	}
+
+	else if (Type == typeid(CMonsterNavAgent).hash_code())
+	{
+		CMonsterNavAgent* Component = Obj->LoadObjectComponent<CMonsterNavAgent>();
+		return Component;
+	}
 
 	return nullptr;
 }

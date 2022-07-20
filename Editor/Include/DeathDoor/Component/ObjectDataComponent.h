@@ -20,6 +20,11 @@ protected:
 	bool m_IsHitPrevFrame;
 
 public:
+	void SetObjectData(const ObjectData& Data)
+	{
+		m_Data = Data;
+	}
+
 	virtual void SetIsHit(bool Hit)
 	{
 		m_IsHit = Hit;

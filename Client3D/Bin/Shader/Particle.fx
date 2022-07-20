@@ -1117,27 +1117,23 @@ void ApplyLinearUVClipping(GeometryParticleOutput input)
 	// 이를 위해서는 LifeTime 을 사용해야 한다.
 	// 핵심은, 향하는 방향의 끝점 부분만 계속 남아있게 하는 것이다.
 	// UV 좌표 0 ~ 1. 상에서, 가상의 세로 선이 존재한다고 가정
-	// 먼저, Local Space 기준, x 의 양의 방향으로 계속 이동하는 Particle 이라고 가정
-	// 해당 선은, 왼쪽에서 오른쪽으로 점점 이동
-	// 해당 선 왼쪽에 위치한 UV 는 아예 Alpha 값을 0으로 세팅하여 안보이게 할 것이다.
-	// 그리고 해당 가로 선은, LifeTime / LifeTimeMax 비율이 증가할 수록, 오른쪽으로 이동하는 형태를 띄게 할 것이다.
+	// 해당 선이 왼쪽 -> 오른쪽, 오른쪽 -> 왼쪽. 으로 이동 하는 개념
 	if (g_ParticleUVClippingReflectingMoveDir == 1)
 	{
+		if (input.UV.x > 1 - input.LifeTimeRatio)
+			clip(-1);
+		/*
 		if (input.LocalXPlusMoveDir == 1)
 		{
 			if (input.UV.x > 1 - input.LifeTimeRatio)
 				clip(-1);
 		}
-		// 단,
-		// 진행 방향이 왼쪽인 녀석들. 즉 x 축 음의 방향으로 향하는 녀석들은
-		// 반대로, 가로 선은, LifeTime / LifeTimeMax 비율이 증가할 수록, 왼쪽에서 오른쪽으로 
-		// 오른쪽부터 왼쪽 방향으로 점점 사라지게 할 것이다.
 		else
 		{
-			// ex. 0.3 -.
 			if (input.UV.x > 1 - input.LifeTimeRatio)
 				clip(-1);
 		}
+		*/
 	}
 }
 

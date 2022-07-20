@@ -94,15 +94,6 @@
     <Filter Include="06. DeathDoor\01. GameComponent\02. ObjectComponent">
       <UniqueIdentifier>{95477303-fdb1-4f48-86fa-2851caed13c8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="06. DeathDoor\01. GameComponent\02. ObjectComponent\01. ObjectDataComponent">
-      <UniqueIdentifier>{11fa6ebc-e5f7-4830-a18e-1162f62b9bd5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="06. DeathDoor\01. GameComponent\02. ObjectComponent\01. ObjectDataComponent\01. Monster">
-      <UniqueIdentifier>{9576bd80-61b6-4043-a68e-88c4f5a1a73d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="06. DeathDoor\01. GameComponent\02. ObjectComponent\01. ObjectDataComponent\01. Monster\01. KnightData">
-      <UniqueIdentifier>{484f7989-8f88-4043-ae31-cb59bbed1d82}</UniqueIdentifier>
-    </Filter>
     <Filter Include="06. DeathDoor\02. BehaviorTree">
       <UniqueIdentifier>{8e4533f3-be56-48d9-a9fb-75f29ead9a6d}</UniqueIdentifier>
     </Filter>
@@ -142,14 +133,41 @@
     <Filter Include="06. DeathDoor\05. SceneMode">
       <UniqueIdentifier>{54bfb173-1daf-4185-9c86-bdd968fe81b0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="06. DeathDoor\01. GameComponent\02. ObjectComponent\01. ObjectDataComponent\01. Monster\02. BossBetty">
-      <UniqueIdentifier>{e4d609e1-89c2-4e22-abc6-eb3cbae4b32b}</UniqueIdentifier>
+    <Filter Include="06. DeathDoor\01. GameComponent\02. ObjectComponent\02. Projectile">
+      <UniqueIdentifier>{0a2d76e7-e91f-4b14-b6eb-734c0c770615}</UniqueIdentifier>
     </Filter>
-    <Filter Include="06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\02. BossBetty">
-      <UniqueIdentifier>{01700e25-55e0-4392-a3cf-9fb75e08b239}</UniqueIdentifier>
+    <Filter Include="06. DeathDoor\01. GameComponent\02. ObjectComponent\01. DataComponent">
+      <UniqueIdentifier>{6fef16e4-b311-4cff-b4d8-0d4e3242e980}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. DeathDoor\01. GameComponent\02. ObjectComponent\01. DataComponent\01. ObjectDataComponent">
+      <UniqueIdentifier>{11fa6ebc-e5f7-4830-a18e-1162f62b9bd5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. DeathDoor\01. GameComponent\02. ObjectComponent\01. DataComponent\01. ObjectDataComponent\01. Monster">
+      <UniqueIdentifier>{9576bd80-61b6-4043-a68e-88c4f5a1a73d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. DeathDoor\01. GameComponent\02. ObjectComponent\01. DataComponent\01. ObjectDataComponent\01. Monster\01. KnightData">
+      <UniqueIdentifier>{484f7989-8f88-4043-ae31-cb59bbed1d82}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. DeathDoor\01. GameComponent\02. ObjectComponent\01. DataComponent\01. ObjectDataComponent\01. Monster\02. Lurker">
+      <UniqueIdentifier>{4353b92d-d55b-405c-9baa-edf369c30942}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. DeathDoor\01. GameComponent\02. ObjectComponent\01. DataComponent\02. Player">
+      <UniqueIdentifier>{28cc70a6-3929-421b-adc4-679a96bea29e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. DeathDoor\01. GameComponent\02. ObjectComponent\03. NavAgent">
+      <UniqueIdentifier>{e05cfd74-b63c-421b-a83e-489c6e56a10c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. DeathDoor\01. GameComponent\02. ObjectComponent\04. State">
+      <UniqueIdentifier>{f5a65822-0ab9-4c72-85c9-86857475155b}</UniqueIdentifier>
     </Filter>
     <Filter Include="06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\02. BossBetty">
-      <UniqueIdentifier>{097076ac-f386-4f12-b4ca-eda53e7e30fc}</UniqueIdentifier>
+      <UniqueIdentifier>{90fffea0-bbd5-4f43-ad1f-ef93a1bfc1f6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\02. BossBetty">
+      <UniqueIdentifier>{030670a0-df98-4c53-9cc3-ae95a4c58810}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. DeathDoor\01. GameComponent\02. ObjectComponent\01. DataComponent\01. ObjectDataComponent\01. Monster\03. BossBetty">
+      <UniqueIdentifier>{fc85b155-279d-4cba-914b-7a51c72aa633}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -351,28 +369,16 @@
     <ClCompile Include="DeathDoor\Component\PlayerNormalAttackCheckCollider.cpp">
       <Filter>06. DeathDoor\01. GameComponent\01. SceneComponent</Filter>
     </ClCompile>
-    <ClCompile Include="DeathDoor\Component\PlayerDataComponent.cpp">
-      <Filter>06. DeathDoor\01. GameComponent\02. ObjectComponent</Filter>
-    </ClCompile>
-    <ClCompile Include="DeathDoor\Component\GameStateComponent.cpp">
-      <Filter>06. DeathDoor\01. GameComponent\02. ObjectComponent</Filter>
-    </ClCompile>
     <ClCompile Include="DeathDoor\Component\ObjectDataComponent.cpp">
-      <Filter>06. DeathDoor\01. GameComponent\02. ObjectComponent\01. ObjectDataComponent</Filter>
+      <Filter>06. DeathDoor\01. GameComponent\02. ObjectComponent\01. DataComponent\01. ObjectDataComponent</Filter>
     </ClCompile>
     <ClCompile Include="DeathDoor\Component\MonsterDataComponent.cpp">
-      <Filter>06. DeathDoor\01. GameComponent\02. ObjectComponent\01. ObjectDataComponent\01. Monster</Filter>
+      <Filter>06. DeathDoor\01. GameComponent\02. ObjectComponent\01. DataComponent\01. ObjectDataComponent\01. Monster</Filter>
     </ClCompile>
     <ClCompile Include="DeathDoor\Component\KnightDataComponent.cpp">
-      <Filter>06. DeathDoor\01. GameComponent\02. ObjectComponent\01. ObjectDataComponent\01. Monster\01. KnightData</Filter>
-    </ClCompile>
-    <ClCompile Include="DeathDoor\Component\Node\CheckAttackTarget.cpp">
-      <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode</Filter>
+      <Filter>06. DeathDoor\01. GameComponent\02. ObjectComponent\01. DataComponent\01. ObjectDataComponent\01. Monster\01. KnightData</Filter>
     </ClCompile>
     <ClCompile Include="DeathDoor\Component\Node\CheckDetectRangeNode.cpp">
-      <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode</Filter>
-    </ClCompile>
-    <ClCompile Include="DeathDoor\Component\Node\CheckState.cpp">
       <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode</Filter>
     </ClCompile>
     <ClCompile Include="DeathDoor\Component\Node\HPCheck.cpp">
@@ -398,9 +404,6 @@
     </ClCompile>
     <ClCompile Include="DeathDoor\DataManager.cpp">
       <Filter>05. Manager</Filter>
-    </ClCompile>
-    <ClCompile Include="Component\Node\BossKnightMeleeAttackNode.cpp">
-      <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="DeathDoor\Component\GameBehaviorTree.cpp">
       <Filter>06. DeathDoor\02. BehaviorTree</Filter>
@@ -483,17 +486,32 @@
     <ClCompile Include="DeathDoor\Component\Node\NegateNode.cpp">
       <Filter>06. DeathDoor\02. BehaviorTree\03. DecoratorNode</Filter>
     </ClCompile>
+    <ClCompile Include="DeathDoor\Component\ProjectileComponent.cpp">
+      <Filter>06. DeathDoor\01. GameComponent\02. ObjectComponent\02. Projectile</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Component\LurkerDataComponent.cpp">
+      <Filter>06. DeathDoor\01. GameComponent\02. ObjectComponent\01. DataComponent\01. ObjectDataComponent\01. Monster\02. Lurker</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Component\PlayerDataComponent.cpp">
+      <Filter>06. DeathDoor\01. GameComponent\02. ObjectComponent\01. DataComponent\02. Player</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Component\MonsterNavAgent.cpp">
+      <Filter>06. DeathDoor\01. GameComponent\02. ObjectComponent\03. NavAgent</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Component\Node\PathFindEnableCheck.cpp">
+      <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Component\Node\ClearPathListNode.cpp">
+      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Component\GameStateComponent.cpp">
+      <Filter>06. DeathDoor\01. GameComponent\02. ObjectComponent\04. State</Filter>
+    </ClCompile>
     <ClCompile Include="DeathDoor\Component\Node\BossBettyFarAttackTypeCheck.cpp">
       <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\02. BossBetty</Filter>
     </ClCompile>
     <ClCompile Include="DeathDoor\Component\Node\BossBettyHPStateCheck.cpp">
       <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\02. BossBetty</Filter>
-    </ClCompile>
-    <ClCompile Include="DeathDoor\Component\Node\BossBettyThrowAttackCheck.cpp">
-      <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\02. BossBetty</Filter>
-    </ClCompile>
-    <ClCompile Include="DeathDoor\Component\BossBettyDataComponent.cpp">
-      <Filter>06. DeathDoor\01. GameComponent\02. ObjectComponent\01. ObjectDataComponent\01. Monster\02. BossBetty</Filter>
     </ClCompile>
     <ClCompile Include="DeathDoor\Component\Node\BossBettyAngryAttackNode.cpp">
       <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\02. BossBetty</Filter>
@@ -719,28 +737,16 @@
     <ClInclude Include="DeathDoor\Component\PlayerNormalAttackCheckCollider.h">
       <Filter>06. DeathDoor\01. GameComponent\01. SceneComponent</Filter>
     </ClInclude>
-    <ClInclude Include="DeathDoor\Component\PlayerDataComponent.h">
-      <Filter>06. DeathDoor\01. GameComponent\02. ObjectComponent</Filter>
-    </ClInclude>
-    <ClInclude Include="DeathDoor\Component\GameStateComponent.h">
-      <Filter>06. DeathDoor\01. GameComponent\02. ObjectComponent</Filter>
-    </ClInclude>
     <ClInclude Include="DeathDoor\Component\ObjectDataComponent.h">
-      <Filter>06. DeathDoor\01. GameComponent\02. ObjectComponent\01. ObjectDataComponent</Filter>
+      <Filter>06. DeathDoor\01. GameComponent\02. ObjectComponent\01. DataComponent\01. ObjectDataComponent</Filter>
     </ClInclude>
     <ClInclude Include="DeathDoor\Component\MonsterDataComponent.h">
-      <Filter>06. DeathDoor\01. GameComponent\02. ObjectComponent\01. ObjectDataComponent\01. Monster</Filter>
+      <Filter>06. DeathDoor\01. GameComponent\02. ObjectComponent\01. DataComponent\01. ObjectDataComponent\01. Monster</Filter>
     </ClInclude>
     <ClInclude Include="DeathDoor\Component\KnightDataComponent.h">
-      <Filter>06. DeathDoor\01. GameComponent\02. ObjectComponent\01. ObjectDataComponent\01. Monster\01. KnightData</Filter>
-    </ClInclude>
-    <ClInclude Include="DeathDoor\Component\Node\CheckAttackTarget.h">
-      <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode</Filter>
+      <Filter>06. DeathDoor\01. GameComponent\02. ObjectComponent\01. DataComponent\01. ObjectDataComponent\01. Monster\01. KnightData</Filter>
     </ClInclude>
     <ClInclude Include="DeathDoor\Component\Node\CheckDetectRangeNode.h">
-      <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode</Filter>
-    </ClInclude>
-    <ClInclude Include="DeathDoor\Component\Node\CheckState.h">
       <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode</Filter>
     </ClInclude>
     <ClInclude Include="DeathDoor\Component\Node\HPCheck.h">
@@ -845,17 +851,32 @@
     <ClInclude Include="DeathDoor\Component\Node\NegateNode.h">
       <Filter>06. DeathDoor\02. BehaviorTree\03. DecoratorNode</Filter>
     </ClInclude>
+    <ClInclude Include="DeathDoor\Component\ProjectileComponent.h">
+      <Filter>06. DeathDoor\01. GameComponent\02. ObjectComponent\02. Projectile</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\LurkerDataComponent.h">
+      <Filter>06. DeathDoor\01. GameComponent\02. ObjectComponent\01. DataComponent\01. ObjectDataComponent\01. Monster\02. Lurker</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\PlayerDataComponent.h">
+      <Filter>06. DeathDoor\01. GameComponent\02. ObjectComponent\01. DataComponent\02. Player</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\MonsterNavAgent.h">
+      <Filter>06. DeathDoor\01. GameComponent\02. ObjectComponent\03. NavAgent</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\Node\PathFindEnableCheck.h">
+      <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\Node\ClearPathListNode.h">
+      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\GameStateComponent.h">
+      <Filter>06. DeathDoor\01. GameComponent\02. ObjectComponent\04. State</Filter>
+    </ClInclude>
     <ClInclude Include="DeathDoor\Component\Node\BossBettyFarAttackTypeCheck.h">
       <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\02. BossBetty</Filter>
     </ClInclude>
     <ClInclude Include="DeathDoor\Component\Node\BossBettyHPStateCheck.h">
       <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\02. BossBetty</Filter>
-    </ClInclude>
-    <ClInclude Include="DeathDoor\Component\Node\BossBettyThrowAttackCheck.h">
-      <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\02. BossBetty</Filter>
-    </ClInclude>
-    <ClInclude Include="DeathDoor\Component\BossBettyDataComponent.h">
-      <Filter>06. DeathDoor\01. GameComponent\02. ObjectComponent\01. ObjectDataComponent\01. Monster\02. BossBetty</Filter>
     </ClInclude>
     <ClInclude Include="DeathDoor\Component\Node\BossBettyAngryAttackNode.h">
       <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\02. BossBetty</Filter>
@@ -867,6 +888,9 @@
       <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\02. BossBetty</Filter>
     </ClInclude>
     <ClInclude Include="DeathDoor\Component\Node\BossBettyThrowNode.h">
+      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\02. BossBetty</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\Node\BossBettyThrowAttackCheck.h">
       <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\02. BossBetty</Filter>
     </ClInclude>
     <ClInclude Include="DeathDoor\Component\Node\BossBettyCloseAttackNode.h">

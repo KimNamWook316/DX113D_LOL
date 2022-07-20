@@ -88,11 +88,11 @@ bool CShaderManager::Init()
 	if (!CreateShader<CNumberShader>("NumberShader"))
 		return false;
 
-	if (!CreateShader<CParticleUpdateShader>("ParticleUpdateShader"))
-		return false;
+	//if (!CreateShader<CParticleUpdateShader>("ParticleUpdateShader"))
+	//	return false;
 
-	if (!CreateShader<CParticleRenderShader>("ParticleRenderShader"))
-		return false;
+	//if (!CreateShader<CParticleRenderShader>("ParticleRenderShader"))
+	//	return false;
 
 	if (!CreateShader<CTileMapShader>("TileMapShader"))
 		return false;

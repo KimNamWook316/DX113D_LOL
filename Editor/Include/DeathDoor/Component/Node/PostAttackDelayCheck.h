@@ -5,9 +5,7 @@
 class CPostAttackDelayCheck :
     public CConditionNode
 {
-    friend class CGameBehaviorTree;
-
-protected:
+public:
     CPostAttackDelayCheck();
     CPostAttackDelayCheck(const CPostAttackDelayCheck& Node);
     virtual ~CPostAttackDelayCheck();

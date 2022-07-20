@@ -16,11 +16,12 @@ protected:
 
 private:
 	CSharedPtr<class CSceneComponent> m_UpdateComponent;
-	std::list<Vector3>		m_PathList;
 	float					m_MoveSpeed;
 	bool					m_ApplyNavMesh;
-	bool					m_PathFindStart;
 	Vector3					m_CurrentFaceDir;
+
+protected:
+	std::list<Vector3>		m_PathList;
 
 public:
 	const Vector3& GetCurrentFaceDir()	const
@@ -28,7 +29,13 @@ public:
 		return m_CurrentFaceDir;
 	}
 
+	void SetCurrentFaceDir(const Vector3& Dir)
+	{
+		m_CurrentFaceDir = Dir;
+	}
+
 	void SetUpdateComponent(class CSceneComponent* UpdateComponent);
+
 	bool Move(const Vector3& EndPos);
 
 	bool MoveOnNavMesh(const Vector3 EndPos);
@@ -36,16 +43,6 @@ public:
 	void SetMoveSpeed(float Speed)
 	{
 		m_MoveSpeed = Speed;
-	}
-
-	void SetPathFindStart(bool Start)
-	{
-		m_PathFindStart = Start;
-	}
-
-	bool GetPathFindStart()	const
-	{
-		return m_PathFindStart;
 	}
 
 	void SetApplyNavMesh(bool Apply)
@@ -65,6 +62,11 @@ public:
 		return m_PathList;
 	}
 
+	void DeleteTargetPos()
+	{
+		m_PathList.pop_back();
+	}
+
 public:
 	void AddTargetPos(const Vector3& TargetPos)
 	{
@@ -79,6 +81,11 @@ public:
 	bool IsEmptyPathList()	const
 	{
 		return m_PathList.empty();
+	}
+
+	size_t GetPathListCount()	const
+	{
+		return m_PathList.size();
 	}
 
 public:

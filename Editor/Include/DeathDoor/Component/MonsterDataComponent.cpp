@@ -1,7 +1,9 @@
+
 #include "MonsterDataComponent.h"
 #include "GameObject/GameObject.h"
 #include "Component/AnimationMeshComponent.h"
 #include "Component/ColliderBox3D.h"
+#include "MonsterNavAgent.h"
 #include "Scene/Scene.h"
 
 CMonsterDataComponent::CMonsterDataComponent()	:
@@ -12,6 +14,8 @@ CMonsterDataComponent::CMonsterDataComponent()	:
 	m_HitEffectMax(0.6f)
 {
 	SetTypeID<CMonsterDataComponent>();
+
+	m_ComponentType = Component_Type::ObjectComponent;
 }
 
 CMonsterDataComponent::CMonsterDataComponent(const CMonsterDataComponent& com)	:
@@ -25,6 +29,8 @@ CMonsterDataComponent::~CMonsterDataComponent()
 
 void CMonsterDataComponent::Start()
 {
+	m_MonsterNavAgent = m_Object->FindObjectComponentFromType<CMonsterNavAgent>();
+
 	std::vector<CAnimationMeshComponent*> vecAnim;
 	std::vector<CColliderBox3D*> vecCollider;
 
@@ -328,4 +334,9 @@ void CMonsterDataComponent::ChangeHitColor(int EffectNum)
 			m_AnimMesh->GetMaterial(i)->SetSpecularColor(Vector4::Black);
 		}
 	}
+}
+
+CMonsterNavAgent* CMonsterDataComponent::GetMonsterNavAgent() const
+{
+	return m_MonsterNavAgent;
 }

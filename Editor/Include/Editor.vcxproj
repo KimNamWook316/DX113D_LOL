@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -189,7 +189,9 @@
     <ClCompile Include="DeathDoor\Component\GameBehaviorTree.cpp" />
     <ClCompile Include="DeathDoor\Component\GameStateComponent.cpp" />
     <ClCompile Include="DeathDoor\Component\KnightDataComponent.cpp" />
+    <ClCompile Include="DeathDoor\Component\LurkerDataComponent.cpp" />
     <ClCompile Include="DeathDoor\Component\MonsterDataComponent.cpp" />
+    <ClCompile Include="DeathDoor\Component\MonsterNavAgent.cpp" />
     <ClCompile Include="DeathDoor\Component\MonsterPathFindCollider.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\AddFallingFloorCallbackNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\BossBettyAngryAttackNode.cpp" />
@@ -213,9 +215,8 @@
     <ClCompile Include="DeathDoor\Component\Node\BossKnightSlamEnd.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\BossKnightWalkNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\CancleShootNode.cpp" />
-    <ClCompile Include="DeathDoor\Component\Node\CheckAttackTarget.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\CheckDetectRangeNode.cpp" />
-    <ClCompile Include="DeathDoor\Component\Node\CheckState.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\ClearPathListNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\DeathNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\FindPathNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\HPCheck.cpp" />
@@ -231,6 +232,7 @@
     <ClCompile Include="DeathDoor\Component\Node\NegateNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\NoInterruptNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\NormalAttack.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\PathFindEnableCheck.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\PostAttackDelayCheck.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\ReadyToShoot.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\RotateAttackDirectionNode.cpp" />
@@ -239,6 +241,7 @@
     <ClCompile Include="DeathDoor\Component\PlayerDataComponent.cpp" />
     <ClCompile Include="DeathDoor\Component\PlayerHookComponent.cpp" />
     <ClCompile Include="DeathDoor\Component\PlayerNormalAttackCheckCollider.cpp" />
+    <ClCompile Include="DeathDoor\Component\ProjectileComponent.cpp" />
     <ClCompile Include="DeathDoor\DataManager.cpp" />
     <ClCompile Include="DeathDoor\DDUtil.cpp" />
     <ClCompile Include="EditorManager.cpp" />
@@ -329,7 +332,9 @@
     <ClInclude Include="DeathDoor\Component\GameBehaviorTree.h" />
     <ClInclude Include="DeathDoor\Component\GameStateComponent.h" />
     <ClInclude Include="DeathDoor\Component\KnightDataComponent.h" />
+    <ClInclude Include="DeathDoor\Component\LurkerDataComponent.h" />
     <ClInclude Include="DeathDoor\Component\MonsterDataComponent.h" />
+    <ClInclude Include="DeathDoor\Component\MonsterNavAgent.h" />
     <ClInclude Include="DeathDoor\Component\MonsterPathFindCollider.h" />
     <ClInclude Include="DeathDoor\Component\Node\AddFallingFloorCallbackNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\BossBettyAngryAttackNode.h" />
@@ -353,9 +358,8 @@
     <ClInclude Include="DeathDoor\Component\Node\BossKnightSlamEnd.h" />
     <ClInclude Include="DeathDoor\Component\Node\BossKnightWalkNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\CancleShootNode.h" />
-    <ClInclude Include="DeathDoor\Component\Node\CheckAttackTarget.h" />
     <ClInclude Include="DeathDoor\Component\Node\CheckDetectRangeNode.h" />
-    <ClInclude Include="DeathDoor\Component\Node\CheckState.h" />
+    <ClInclude Include="DeathDoor\Component\Node\ClearPathListNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\DeathNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\FindPathNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\HPCheck.h" />
@@ -371,6 +375,7 @@
     <ClInclude Include="DeathDoor\Component\Node\NegateNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\NoInterruptNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\NormalAttack.h" />
+    <ClInclude Include="DeathDoor\Component\Node\PathFindEnableCheck.h" />
     <ClInclude Include="DeathDoor\Component\Node\PostAttackDelayCheck.h" />
     <ClInclude Include="DeathDoor\Component\Node\ReadyToShoot.h" />
     <ClInclude Include="DeathDoor\Component\Node\RotateAttackDirectionNode.h" />
@@ -379,6 +384,7 @@
     <ClInclude Include="DeathDoor\Component\PlayerDataComponent.h" />
     <ClInclude Include="DeathDoor\Component\PlayerHookComponent.h" />
     <ClInclude Include="DeathDoor\Component\PlayerNormalAttackCheckCollider.h" />
+    <ClInclude Include="DeathDoor\Component\ProjectileComponent.h" />
     <ClInclude Include="DeathDoor\DataManager.h" />
     <ClInclude Include="DeathDoor\DDFlag.h" />
     <ClInclude Include="DeathDoor\DDUtil.h" />

@@ -10,6 +10,8 @@
 #include "Component\PlayerDataComponent.h"
 #include "Component\PlayerHookComponent.h"
 #include "Component\PlayerNormalAttackCheckCollider.h"
+#include "Component\LurkerDataComponent.h"
+#include "Component\MonsterNavAgent.h"
 
 std::string CDDUtil::DDConditionNodeTypeToString(DDConditionNode NodeType)
 {
@@ -50,6 +52,18 @@ std::string CDDUtil::DDConditionNodeTypeToString(DDConditionNode NodeType)
 
 	case DDConditionNode::BossKnightJumpAttackRangeCheck:
 		return "BossKnightJumpAttackRangeCheck";
+
+	case DDConditionNode::BossKnightCutScenePlayCheck:
+		return "BossKnightCutScenePlayCheck";
+
+	case DDConditionNode::BossKnightPlayerEnterZoneCheck:
+		return "BossKnightPlayerEnterZoneCheck";
+
+	case DDConditionNode::HPCheck:
+		return "HPCheck";
+
+	case DDConditionNode::PathFindEnableCheck:
+		return "PathFindEnableCheck";
 	}
 
 	return "";
@@ -104,6 +118,22 @@ DDConditionNode CDDUtil::StringToDDConditionNodeType(const std::string& Str)
 	else if (Str == "PostAttackDelayCheck")
 	{
 		return DDConditionNode::PostAttackDelayCheck;
+	}
+	else if (Str == "BossKnightCutScenePlayCheck")
+	{
+		return DDConditionNode::BossKnightCutScenePlayCheck;
+	}
+	else if (Str == "BossKnightPlayerEnterZoneCheck")
+	{
+		return DDConditionNode::BossKnightPlayerEnterZoneCheck;
+	}
+	else if (Str == "HPCheck")
+	{
+		return DDConditionNode::HPCheck;
+	}
+	else if (Str == "PathFindEnableCheck")
+	{
+		return DDConditionNode::PathFindEnableCheck;
 	}
 
 	return DDConditionNode(-1);
@@ -160,6 +190,15 @@ std::string CDDUtil::DDActionNodeTypeToString(DDActionNode NodeType)
 
 	case DDActionNode::BossKnightSlamEnd:
 		return "BossKnightSlamEnd";
+
+	case DDActionNode::BossKnightIdle:
+		return "BossKnightIdle";
+
+	case DDActionNode::BossKnightWalk:
+		return "BossKnightWalk";
+
+	case DDActionNode::ClearPathList:
+		return "ClearPathList";
 	}
 
 	return "";
@@ -230,6 +269,14 @@ DDActionNode CDDUtil::StringToDDActionNodeType(const std::string& Str)
 	else if (Str == "BossKnightSlamEnd")
 	{
 		return DDActionNode::BossKnightSlamEnd;
+	}
+	else if (Str == "BossKnightWalk")
+	{
+		return DDActionNode::BossKnightWalk;
+	}
+	else if (Str == "ClearPathList")
+	{
+		return DDActionNode::ClearPathList;
 	}
 
 	return DDActionNode(-1);
@@ -307,6 +354,12 @@ std::string CDDUtil::DDObjectComponentTypeToString(DDObjectComponentType Type)
 
 	case DDObjectComponentType::KnightData:
 		return "KnightData";
+
+	case DDObjectComponentType::LurkerData:
+		return "LurkerData";
+
+	case DDObjectComponentType::MonsterNavAgent:
+		return "MonsterNavAgent";
 	}
 
 	return "";
@@ -334,6 +387,14 @@ DDObjectComponentType CDDUtil::StringToDDObjectComponentType(const std::string& 
 	{
 		return DDObjectComponentType::KnightData;
 	}
+	else if (Str == "LurkerData")
+	{
+		return DDObjectComponentType::LurkerData;
+	}
+	else if (Str == "MonsterNavAgent")
+	{
+		return DDObjectComponentType::MonsterNavAgent;
+	}
 
 	return DDObjectComponentType(-1);
 }
@@ -352,6 +413,10 @@ size_t CDDUtil::DDObjectComponentTypeToTypeID(DDObjectComponentType Type)
 		return typeid(CObjectDataComponent).hash_code();
 	case DDObjectComponentType::PlayerDataComponent:
 		return typeid(CPlayerDataComponent).hash_code();
+	case DDObjectComponentType::LurkerData:
+		return typeid(CLurkerDataComponent).hash_code();
+	case DDObjectComponentType::MonsterNavAgent:
+		return typeid(CMonsterNavAgent).hash_code();
 	}
 	return -1;
 }

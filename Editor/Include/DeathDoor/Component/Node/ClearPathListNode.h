@@ -1,15 +1,16 @@
 #pragma once
-#include "Component/Node/ActionNode.h"
 
-class CMovePickingNode :
+#include "Component\Node\ActionNode.h"
+
+class CClearPathListNode :
     public CActionNode
 {
     friend class CGameBehaviorTree;
 
 public:
-    CMovePickingNode();
-    CMovePickingNode(const CMovePickingNode& Node);
-    virtual ~CMovePickingNode();
+    CClearPathListNode();
+    CClearPathListNode(const CClearPathListNode& Node);
+    virtual ~CClearPathListNode();
 
 protected:
     virtual NodeResult OnStart(float DeltaTime);

@@ -12,9 +12,7 @@
 #include "../DeathDoor/Component/Node/MoveNode.h"
 #include "../DeathDoor/Component/Node/IdleNode.h"
 #include "../DeathDoor/Component/Node/MoveInputCheckNode.h"
-#include "../DeathDoor/Component/Node/MovePickingNode.h"
 #include "../DeathDoor/Component/Node/NoInterruptNode.h"
-#include "../DeathDoor/Component/Node/CheckAttackTarget.h"
 #include "../DeathDoor/Component/Node/NormalAttack.h"
 #include "../DeathDoor/Component/Node/MouseLButtonCheckNode.h"
 #include "../DeathDoor/Component/Node/MouseRButtonCheckNode.h"
@@ -30,6 +28,21 @@
 #include "../DeathDoor/Component/Node/Lockstone3TriggerBoxAction.h"
 #include "../DeathDoor/Component/Node/CheckDetectRangeNode.h"
 #include "../DeathDoor/Component/Node/FindPathNode.h"
+#include "../DeathDoor/Component/Node/ClearPathListNode.h"
+#include "../DeathDoor/Component/Node/MeleeRangeCheckNode.h"
+#include "../DeathDoor/Component/Node/PostAttackDelayCheck.h"
+#include "../DeathDoor/Component/Node/BossKnightContinueAttackNode.h"
+#include "../DeathDoor/Component/Node/BossKnightCutScenePlayCheck.h"
+#include "../DeathDoor/Component/Node/BossKnightCutScenePlayNode.h"
+#include "../DeathDoor/Component/Node/BossKnightFinalAttackCheck.h"
+#include "../DeathDoor/Component/Node/BossKnightFinalAttackNode.h"
+#include "../DeathDoor/Component/Node/BossKnightIdleNode.h"
+#include "../DeathDoor/Component/Node/BossKnightJumpAttackNode.h"
+#include "../DeathDoor/Component/Node/BossKnightJumpAttackRangeCheck.h"
+#include "../DeathDoor/Component/Node/BossKnightMeleeAttackNode.h"
+#include "../DeathDoor/Component/Node/BossKnightPlayerEnterZoneCheck.h"
+#include "../DeathDoor/Component/Node/BossKnightSlamEnd.h"
+#include "../DeathDoor/Component/Node/BossKnightWalkNode.h"
 
 #include "ObjectComponentWindow.h"
 #include "ObjectHierarchyWindow.h"
@@ -339,13 +352,22 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
 
     CNode* NewTreeNode = nullptr;
 
+    CNode* ExistNode = m_StateComponent->GetBehaviorTree()->FindNode(Name);
+
+    char NewName[256] = {};
+    strcpy_s(NewName, Name);
+
+    if (ExistNode)
+        strcat_s(NewName, "_");
+
+
     switch (TypeIndex)
     {
     case 0:
-        NewTreeNode = m_StateComponent->CreateTreeNode<CSequenceNode>(Name);
+        NewTreeNode = m_StateComponent->CreateTreeNode<CSequenceNode>(NewName);
         break;
     case 1:
-        NewTreeNode = m_StateComponent->CreateTreeNode<CSelectorNode>(Name);
+        NewTreeNode = m_StateComponent->CreateTreeNode<CSelectorNode>(NewName);
         break;
     case 2:
     {
@@ -385,53 +407,82 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
         case DDActionNode::NormalAttack:
         {
             NewTreeNode = m_StateComponent->CreateTreeNode<CNormalAttack>(Name);
+            break;
         }
         case DDActionNode::Death:
         {
             NewTreeNode = m_StateComponent->CreateTreeNode<CDeathNode>(Name);
+            break;
         }
         case DDActionNode::RotateAttackDirection:
         {
             NewTreeNode = m_StateComponent->CreateTreeNode<CRotateAttackDirectionNode>(Name);
+            break;
         }
         case DDActionNode::ReadyToShoot:
         {
             NewTreeNode = m_StateComponent->CreateTreeNode<CReadyToShoot>(Name);
+            break;
         }
         case DDActionNode::ShootNode:
         {
             NewTreeNode = m_StateComponent->CreateTreeNode<CShootNode>(Name);
+            break;
         }
         case DDActionNode::CancleShootNode:
         {
             NewTreeNode = m_StateComponent->CreateTreeNode<CCancleShootNode>(Name);
+            break;
         }
         case DDActionNode::AddFallingFloorCallback:
         {
             NewTreeNode = m_StateComponent->CreateTreeNode<CAddFallingFloorCallbackNode>(Name);
+            break;
         }
         case DDActionNode::Lockstone3TriggerBoxAction:
         {
             NewTreeNode = m_StateComponent->CreateTreeNode<CLockstone3TriggerBoxAction>(Name);
+            break;
         }
         case DDActionNode::FindPath:
         {
             NewTreeNode = m_StateComponent->CreateTreeNode<CFindPathNode>(Name);
+            break;
+        }
+        case DDActionNode::ClearPathList:
+        {
+            NewTreeNode = m_StateComponent->CreateTreeNode<CClearPathListNode>(Name);
+            break;
         }
         case DDActionNode::BossKnightContinueAttack:
         {
+            NewTreeNode = m_StateComponent->CreateTreeNode<CBossKnightContinueAttackNode>(Name);
+            break;
         }
         case DDActionNode::BossKnightFinalAttack:
         {
+            NewTreeNode = m_StateComponent->CreateTreeNode<CBossKnightFinalAttackNode>(Name);
+            break;
         }
         case DDActionNode::BossKnightJumpAttack:
         {
+            NewTreeNode = m_StateComponent->CreateTreeNode<CBossKnightJumpAttackNode>(Name);
+            break;
         }
         case DDActionNode::BossKnightMeleeAttack:
         {
+            NewTreeNode = m_StateComponent->CreateTreeNode<CBossKnightMeleeAttackNode>(Name);
+            break;
         }
         case DDActionNode::BossKnightSlamEnd:
         {
+            NewTreeNode = m_StateComponent->CreateTreeNode<CBossKnightSlamEnd>(Name);
+            break;
+        }
+        case DDActionNode::BossKnightWalk:
+        {
+            NewTreeNode = m_StateComponent->CreateTreeNode<CBossKnightWalkNode>(Name);
+            break;
         }
 		}
         break;
@@ -468,9 +519,6 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
         case DDConditionNode::NoInterruptNode:
             NewTreeNode = m_StateComponent->CreateTreeNode<CNoInterruptNode>(Name);
             break;
-        case DDConditionNode::AttackTargetCheck:
-            NewTreeNode = m_StateComponent->CreateTreeNode<CCheckAttackTarget>(Name);
-            break;
         case DDConditionNode::MouseRButtonCheckNode:
             NewTreeNode = m_StateComponent->CreateTreeNode<CMouseRButtonCheckNode>(Name);
             break;
@@ -484,14 +532,25 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
             NewTreeNode = m_StateComponent->CreateTreeNode<CCheckDetectRangeNode>(Name);
             break;
         case DDConditionNode::MeleeAttackRangeCheck:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CMeleeRangeCheckNode>(Name);
             break;
         case DDConditionNode::PostAttackDelayCheck:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CPostAttackDelayCheck>(Name);
             break;
         case DDConditionNode::BossKnightFinalAttackCheck:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CBossKnightFinalAttackCheck>(Name);
             break;
         case DDConditionNode::BossKnightJumpAttackRangeCheck:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CBossKnightJumpAttackRangeCheck>(Name);
+            break;
+        case DDConditionNode::BossKnightCutScenePlayCheck:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CBossKnightCutScenePlayCheck>(Name);
+            break;
+        case DDConditionNode::BossKnightPlayerEnterZoneCheck:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CBossKnightPlayerEnterZoneCheck>(Name);
             break;
         }
+        break;
     }
 
     case 4:
@@ -503,11 +562,10 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
         switch (NodeDecoratorClass)
         {
         case DecoratorNode::Negate:
-            NewTreeNode = m_StateComponent->CreateTreeNode<CNegateNode>(Name);
+            NewTreeNode = m_StateComponent->CreateTreeNode<CNegateNode>(NewName);
             break;
         }
     }
-
     }
 
     NewTreeNode->SetOwner(m_StateComponent->GetBehaviorTree());
@@ -529,9 +587,12 @@ void CBehaviorTreeWindow::OnDeleteNodeButton(const char* Name)
 {
     CBehaviorTree* Tree = m_StateComponent->GetBehaviorTree();
 
-    if (Name == Tree->GetRootNode()->GetName())
+    if (Tree->GetRootNode())
     {
-        Tree->SetRoot(nullptr);
+        if (Name == Tree->GetRootNode()->GetName())
+        {
+            Tree->SetRoot(nullptr);
+        }
     }
 
 	CNode* Node = Tree->FindNode(Name);

@@ -1,9 +1,9 @@
 
 #include "CheckDetectRangeNode.h"
-#include "../ObjectDataComponent.h"
-#include "../MonsterPathFindCollider.h"
+#include "../MonsterDataComponent.h"
+#include "../GameStateComponent.h"
 #include "Scene/Scene.h"
-#include "Component/NavAgent.h"
+#include "../MonsterNavAgent.h"
 
 CCheckDetectRangeNode::CCheckDetectRangeNode() :
 	m_DetectRange(0.f)
@@ -22,32 +22,17 @@ CCheckDetectRangeNode::~CCheckDetectRangeNode()
 
 NodeResult CCheckDetectRangeNode::OnStart(float DeltaTime)
 {
-	CMonsterPathFindCollider* PathComp = m_Object->FindComponentFromType<CMonsterPathFindCollider>();
+	CMonsterDataComponent* Data = dynamic_cast<CMonsterDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
 
-	if (!PathComp)
-		return NodeResult::Node_False;
-
-	CObjectDataComponent* Comp = m_Object->FindObjectComponentFromType<CObjectDataComponent>();
-	CNavAgent* Agent = m_Object->FindObjectComponentFromType<CNavAgent>();
-
-	m_DetectRange = Comp->GetDetectRange();
+	m_DetectRange = Data->GetDetectRange();
 	m_Player = m_Object->GetScene()->GetPlayerObject();
 
 	Vector3 PlayerPos = m_Player->GetWorldPos();
 	Vector3 MyPos = m_Object->GetWorldPos();
 
-	if (PathComp->GetPathFindEnable() && PlayerPos.Distance(MyPos) <= m_DetectRange)
+	if (PlayerPos.Distance(MyPos) <= m_DetectRange)
 	{
 		return NodeResult::Node_True;
-	}
-
-	// 길찾기해서 목표 지점으로 가는 도중에 PathFindCollider가 플레이어에 충돌해서 PathFindEnable = false라면
-	else if (!PathComp->GetPathFindEnable() && !Agent->IsEmptyPathList())
-	{
-		Agent->ClearPathList();
-		Agent->SetPathFindStart(false);
-
-		return NodeResult::Node_False;
 	}
 
 	return NodeResult::Node_False;

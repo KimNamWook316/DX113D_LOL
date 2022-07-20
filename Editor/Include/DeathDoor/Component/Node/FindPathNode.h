@@ -21,7 +21,7 @@ public:
     virtual NodeResult Invoke(float DeltaTime) override;
 
 private:
-    class CNavAgent* m_NavAgent;
+    class CMonsterNavAgent* m_NavAgent;
 
 };
 

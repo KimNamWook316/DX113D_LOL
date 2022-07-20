@@ -29,3 +29,8 @@ void CGameStateComponent::Start()
 	// 클래스를 ObjectData라는 이름으로 가지고 있어야 함
 	m_Data = dynamic_cast<CObjectDataComponent*>(m_Object->FindComponent("ObjectData"));
 }
+
+CObjectDataComponent* CGameStateComponent::GetObjectDataComponent() const
+{
+	return m_Data;
+}

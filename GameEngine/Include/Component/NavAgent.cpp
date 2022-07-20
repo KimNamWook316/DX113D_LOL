@@ -9,8 +9,7 @@
 
 CNavAgent::CNavAgent()	:
 	m_MoveSpeed(0.f),
-	m_ApplyNavMesh(true),
-	m_PathFindStart(false)
+	m_ApplyNavMesh(true)
 {
 	SetTypeID<CNavAgent>();
 }
@@ -75,15 +74,14 @@ const Vector3& CNavAgent::GetTargetPos() const
 {
 	if (!m_PathList.empty())
 		return m_PathList.back();
-
-	else
-		return m_Object->GetRootComponent()->GetWorldPos();
 }
 
 void CNavAgent::Start()
 {
 	if (!m_UpdateComponent)
 		m_UpdateComponent = m_Object->GetRootComponent();
+
+	
 }
 
 bool CNavAgent::Init()
@@ -95,7 +93,6 @@ void CNavAgent::Update(float DeltaTime)
 {
 	if (m_UpdateComponent)
 	{
-
 		if (!m_PathList.empty())
 		{
 			Vector3	TargetPos = m_PathList.back();
@@ -111,9 +108,6 @@ void CNavAgent::Update(float DeltaTime)
 			if (TargetDistance <= 0.5f)
 			{
 				m_PathList.pop_back();
-
-				if (m_PathList.empty())
-					m_PathFindStart = false;
 			}
 
 			// NavAgent를 가지고 있는 모든 움직이는 오브젝트가 초기에 바라보는 방향은 -z 방향이라고 가정
@@ -129,19 +123,19 @@ void CNavAgent::Update(float DeltaTime)
 
 			float Dot = Vector3(Dir.x, 0.f, Dir.z).Dot(Vector3(CurrentFaceDir.x, 0.f, CurrentFaceDir.z));
 
-			if (Dot < 0.994f && Dot > -0.994f)
+			if (Dot < 0.999f && Dot > -0.999f)
 			{
 				float Degree = RadianToDegree(acosf(Dot));
 				Vector3 CrossResult = Vector3(Dir.x, 0.f, Dir.z).Cross(Vector3(CurrentFaceDir.x, 0.f, CurrentFaceDir.z));
 
 				if (CrossResult.y > 0.f)
 				{
-					m_UpdateComponent->AddWorldRotationY(-180.f * DeltaTime);
+					m_UpdateComponent->AddWorldRotationY(-360.f * DeltaTime);
 				}
 
 				else
 				{
-					m_UpdateComponent->AddWorldRotationY(180.f * DeltaTime);
+					m_UpdateComponent->AddWorldRotationY(360.f * DeltaTime);
 				}
 			}
 		}
@@ -235,31 +229,23 @@ void CNavAgent::AddPath(const Vector3& EndPos)
 
 bool CNavAgent::FindPath(CSceneComponent* OwnerComponent, const Vector3& End)
 {
-	m_PathFindStart = true;
-
 	bool Result = CSceneManager::GetInst()->GetScene()->GetNavigation3DManager()->FindPath<CNavAgent, CSceneComponent>(this, &CNavAgent::FillPathList, OwnerComponent, End);
 	return Result;
 }
 
 bool CNavAgent::FindPathExcept(CSceneComponent* OwnerComponent, const Vector3& End, std::vector<Vector3>& vecExceptPos)
 {
-	m_PathFindStart = true;
-
 	bool Result = CSceneManager::GetInst()->GetScene()->GetNavigation3DManager()->FindPathExcept<CNavAgent, CSceneComponent>(this, &CNavAgent::FillPathList, OwnerComponent, End, vecExceptPos);
 	return Result;
 }
 
 bool CNavAgent::FindPathExcept(CSceneComponent* OwnerComponent, const Vector3& End, std::vector<NavigationCell*>& vecExceptCell)
 {
-	m_PathFindStart = true;
-
 	bool Result = CSceneManager::GetInst()->GetScene()->GetNavigation3DManager()->FindPathExcept<CNavAgent, CSceneComponent>(this, &CNavAgent::FillPathList, OwnerComponent, End, vecExceptCell);
 	return Result;
 }
 
 bool CNavAgent::CheckStraightPath(const Vector3& StartPos, const Vector3& EndPos, std::vector<Vector3>& vecPath)
 {
-	m_PathFindStart = true;
-
 	return CSceneManager::GetInst()->GetScene()->GetNavigation3DManager()->GetNavMeshData()->CheckStraightPath(StartPos, EndPos, vecPath);
 }

@@ -5,9 +5,7 @@
 class CBossKnightFinalAttackCheck :
     public CConditionNode
 {
-    friend class CGameBehaviorTree;
-
-protected:
+public:
     CBossKnightFinalAttackCheck();
     CBossKnightFinalAttackCheck(const CBossKnightFinalAttackCheck& Node);
     virtual ~CBossKnightFinalAttackCheck();
