@@ -920,10 +920,6 @@ void CAnimationEditor::OnMakeAnimInstByExcelWithNoAdditionalFiles()
 	// Full 경로 정보가 들어있다.
 	auto MeshFileFoundResult = CEngineUtil::CheckAndExtractFullPathOfTargetFile(MESH_PATH, UsedMeshFileName);
 
-	// Folder 경로
-	std::string CommonFolderPath;
-	CEngineUtil::GetPathInfoBeforeFileName(MeshFileFoundResult.value(), CommonFolderPath);
-
 	// Animation Sequence 정보
 	CAnimationSequence* ExistingSequeunce = m_Animation->GetCurrentAnimation()->GetAnimationSequence();
 
@@ -944,14 +940,11 @@ void CAnimationEditor::OnMakeAnimInstByExcelWithNoAdditionalFiles()
 		for (; iter != iterEnd; ++iter)
 		{
 			const std::string& DataLable = iter->first;
-			std::string NewlySavedSqcFullPath;
+			std::string NewlyEditedSqcName;
 
-			NewlySavedSqcFullPath.reserve(CommonFolderPath.length() * 2);
-
-			NewlySavedSqcFullPath = CommonFolderPath;
-			NewlySavedSqcFullPath.append(UsedMeshFileNameOnly);
-			NewlySavedSqcFullPath.append("_" + DataLable);
-			NewlySavedSqcFullPath.append(".sqc");
+			NewlyEditedSqcName.append(UsedMeshFileNameOnly);
+			NewlyEditedSqcName.append("_" + DataLable);
+			NewlyEditedSqcName.append(".sqc");
 
 			// 1번째는 startFrame
 			// 2번째는 endFrame
@@ -964,13 +957,13 @@ void CAnimationEditor::OnMakeAnimInstByExcelWithNoAdditionalFiles()
 			auto EdFrameIntInfo = std::from_chars(EdFrame.c_str(), EdFrame.c_str() + sizeof(EdFrame.c_str()) - 1, EdFrameInt);
 
 
-			TCHAR TCHARSavedSqcFullPath[MAX_PATH];
+			TCHAR TCHAREditedSqcName[MAX_PATH];
 
-			lstrcpy(TCHARSavedSqcFullPath, CEditorUtil::ChangeMultibyteTextToTCHAR(NewlySavedSqcFullPath.c_str()));
+			lstrcpy(TCHAREditedSqcName, CEditorUtil::ChangeMultibyteTextToTCHAR(NewlyEditedSqcName.c_str()));
 
 			// 하나라도 Load 실패시 X 
 			// 처음 한개만 msh, fbm, bne 파일 복사본을 만들어줄 것이다.
-			CAnimationSequence* EditedSqc = EditSqcFile(TCHARSavedSqcFullPath, ExistingSequeunce, StFrameInt, EdFrameInt);
+			CAnimationSequence* EditedSqc = EditSqcFile(TCHAREditedSqcName, ExistingSequeunce, StFrameInt, EdFrameInt);
 			
 			if (!EditedSqc)
 			{
@@ -1937,16 +1930,16 @@ bool CAnimationEditor::EditAndSaveSqcFile(const TCHAR* FileSavedFullPath, CAnima
 	return false;
 }
 
-CAnimationSequence* CAnimationEditor::EditSqcFile(const TCHAR* FileSavedFullPath, CAnimationSequence* ExistingSequence, int StartFrame, int EndFrame)
+CAnimationSequence* CAnimationEditor::EditSqcFile(const TCHAR* FileEditedFullPath, CAnimationSequence* ExistingSequence, int StartFrame, int EndFrame)
 {
 	char FileFullPathMultibyte[MAX_PATH] = {};
 
 	char NewlySavedSqcFileName[MAX_PATH] = {};
 	char FileExt[_MAX_EXT] = {};
 
-	int  ConvertLength = WideCharToMultiByte(CP_ACP, 0, FileSavedFullPath, -1, nullptr, 0, nullptr, nullptr);
+	int  ConvertLength = WideCharToMultiByte(CP_ACP, 0, FileEditedFullPath, -1, nullptr, 0, nullptr, nullptr);
 
-	WideCharToMultiByte(CP_ACP, 0, FileSavedFullPath, -1, FileFullPathMultibyte, ConvertLength, nullptr, nullptr);
+	WideCharToMultiByte(CP_ACP, 0, FileEditedFullPath, -1, FileFullPathMultibyte, ConvertLength, nullptr, nullptr);
 
 	_splitpath_s(FileFullPathMultibyte, nullptr, 0, nullptr, 0, NewlySavedSqcFileName, MAX_PATH, FileExt, _MAX_EXT);
 
@@ -1959,7 +1952,8 @@ CAnimationSequence* CAnimationEditor::EditSqcFile(const TCHAR* FileSavedFullPath
 		return nullptr;
 	}
 
-	CAnimationSequence* EditedSequence = CResourceManager::GetInst()->EditSequenceClip(ExistingSequence, NewlySavedSqcFileName,
+	CAnimationSequence* EditedSequence = CResourceManager::GetInst()->EditSequenceClip(ExistingSequence, 
+		NewlySavedSqcFileName,
 	StartFrame, EndFrame, FileFullPathMultibyte);
 
 	return EditedSequence;

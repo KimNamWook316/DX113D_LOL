@@ -387,11 +387,19 @@ std::pair<bool, std::string> CResourceManager::LoadMeshTextureBoneInfo(CAnimatio
 
 		// 1) 자신이 가지고 있는 Sequence 의 m_Name 중에서 '_' 앞에 있는 글자를 가져온다.
 		std::string SqcFileName = iter->second->GetAnimationSequence()->GetName();
-		SqcFileName = SqcFileName.substr(0,SqcFileName.find("_"));
+		
+		std::size_t FoundLowDashResult = SqcFileName.find("_");
 
-		// 2) 그럼에도 불구하고, ""를 리턴받는 다면, 그때가서 Sequence 본연의 FileName 을 이용한다.
-		if (SqcFileName == "")
+		// 2) 그럼에도 불구하고, 찾지 못한다면, 그때가서 Sequence 본연의 FileName 을 이용한다.
+		if (FoundLowDashResult == std::string::npos)
+		{
 			SqcFileName = iter->second->GetAnimationSequence()->GetSequenceFileNameMultibyte();
+		}
+		else
+		{
+			SqcFileName = SqcFileName.substr(0, SqcFileName.find("_"));
+		}
+
 		// const char* ConstSqcFileName = iter->second->GetAnimationSequence()->GetSequenceFileNameMultibyte();
 
 		// char SqcFileName[MAX_PATH] = {};
