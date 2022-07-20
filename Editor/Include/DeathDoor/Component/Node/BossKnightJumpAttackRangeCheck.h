@@ -5,9 +5,7 @@
 class CBossKnightJumpAttackRangeCheck :
     public CConditionNode
 {
-    friend class CGameBehaviorTree;
-
-protected:
+public:
     CBossKnightJumpAttackRangeCheck();
     CBossKnightJumpAttackRangeCheck(const CBossKnightJumpAttackRangeCheck& Node);
     virtual ~CBossKnightJumpAttackRangeCheck();

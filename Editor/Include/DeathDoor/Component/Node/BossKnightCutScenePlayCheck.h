@@ -5,9 +5,7 @@
 class CBossKnightCutScenePlayCheck :
     public CConditionNode
 {
-    friend class CGameBehaviorTree;
-
-protected:
+public:
     CBossKnightCutScenePlayCheck();
     CBossKnightCutScenePlayCheck(const CBossKnightCutScenePlayCheck& Node);
     virtual ~CBossKnightCutScenePlayCheck();
