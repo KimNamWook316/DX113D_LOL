@@ -157,6 +157,9 @@
     <Filter Include="06. DeathDoor\01. GameComponent\02. ObjectComponent\03. NavAgent">
       <UniqueIdentifier>{e05cfd74-b63c-421b-a83e-489c6e56a10c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="06. DeathDoor\01. GameComponent\02. ObjectComponent\04. State">
+      <UniqueIdentifier>{f5a65822-0ab9-4c72-85c9-86857475155b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EditorManager.cpp">
@@ -483,9 +486,6 @@
     <ClCompile Include="DeathDoor\Component\BossBettyDataComponent.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="DeathDoor\Component\GameStateComponent.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="DeathDoor\Component\Node\BossBettyAngryAttackNode.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
@@ -524,6 +524,9 @@
     </ClCompile>
     <ClCompile Include="DeathDoor\Component\Node\ClearPathListNode.cpp">
       <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Component\GameStateComponent.cpp">
+      <Filter>06. DeathDoor\01. GameComponent\02. ObjectComponent\04. State</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -851,9 +854,6 @@
     <ClInclude Include="DeathDoor\Component\BossBettyDataComponent.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="DeathDoor\Component\GameStateComponent.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="DeathDoor\Component\Node\BossBettyAngryAttackNode.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
@@ -892,6 +892,9 @@
     </ClInclude>
     <ClInclude Include="DeathDoor\Component\Node\ClearPathListNode.h">
       <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\GameStateComponent.h">
+      <Filter>06. DeathDoor\01. GameComponent\02. ObjectComponent\04. State</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
