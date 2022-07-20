@@ -483,7 +483,13 @@ struct	ParticleCBuffer
 	int ApplyNoiseTexture; // Pixel Shader 에서 매순간 Noise Texture 로 부터, Sampling 을 해서 Color, Alpha 값 등을 바꾸는 것
 	float NoiseTextureApplyRatio; // 사라지기 시작하는 Ratio 범위 
 	float SpeedChangeExponentialCoefficient; // 빈것이나 마찬가지
-	int ParticleEmpty5; 
+	int ApplyLinearEmissiveChange;
+
+	Vector3 StartEmissiveColor;
+	int ParticleEmpty1;
+	
+	Vector3 EndEmissiveColor;
+	int ParticleEmpty2;
 };
 
 struct ParticleInfo

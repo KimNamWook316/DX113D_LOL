@@ -155,6 +155,22 @@ public:
 		return m_BufferData.Is2D == 1 ? true : false;
 	}
 
+	// Linear Emissive 
+	int IsLinearEmissiveChangeEnable() const
+	{
+		return m_BufferData.ApplyLinearEmissiveChange;
+	}
+
+	const Vector3& GetStartEmissiveColor() const
+	{
+		return m_BufferData.StartEmissiveColor;
+	}
+
+	const Vector3& GetEndEmissiveColor() const
+	{
+		return m_BufferData.EndEmissiveColor;
+	}
+
 	// Linear Rotate
 	// Linaer Iterate 할때의 최초 Rot Angle
 	int IsSeperateLinearRotate()
@@ -226,6 +242,24 @@ public:
 		return m_BufferData.ApplyNoiseTexture ? 1 : 0;
 	}
 public:
+	// Linear Emissive Change
+	void SetLinearEmissiveChangeEnable(bool Enable)
+	{
+		m_BufferData.ApplyLinearEmissiveChange = Enable ? 1 : 0;
+	}
+
+	// Start Emissive Color
+	void SetStartEmissiveColor(const Vector3& Color)
+	{
+		m_BufferData.StartEmissiveColor = Color;
+	}
+
+	// End Emissive Color
+	void SetEndEmissiveColor(const Vector3& Color)
+	{
+		m_BufferData.EndEmissiveColor = Color;
+	}
+
 	// Noise Texture
 	void SetApplyNoiseTextureSamplingEnable(bool Enable)
 	{
