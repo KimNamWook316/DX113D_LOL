@@ -46,7 +46,8 @@ protected:
 	float m_BazierMoveCurDist;
 	bool m_BazierMoveEffect;
 	std::queue<Vector3> m_queueBazierMovePos;
-
+	// 등장 Delay Time -> ex. 0.5초 후에 해당 위치에 나타가게 하기
+	float m_InitActiveDelayTime;
 private :
 	std::string m_ParticleName;
 public:
@@ -57,52 +58,6 @@ public:
 	void SetComponentSpeedChangeMethod(ParticleSpeedChangeMethod Method)
 	{
 		m_SpeedChangeMethod = Method;
-	}
-public :
-	bool IsBazierMoveEnable() const
-	{
-		return m_BazierMoveEffect;
-	}
-	CParticleConstantBuffer* GetCBuffer() const
-	{
-		return m_CBuffer;
-	}
-	CParticle* GetParticle() const
-	{
-		return m_Particle;
-	}
-	const std::string& GetParticleName() const
-	{
-		return m_ParticleName;
-	}
-	CMaterial* GetMaterial() const
-	{
-		return m_Material;
-	}
-public :
-	void SetGravityEffect(bool Enable)
-	{
-		m_ParticleMoveSpeed = Enable;
-	}
-	void SetParticleMoveSpeed(float Speed)
-	{
-		m_ParticleMoveSpeed = Speed;
-	}
-	void SetParticleClassFileName(const std::string& ParticleFileName)
-	{
-		m_ParticleName = ParticleFileName;
-	}
-	void SetMaterial(class CMaterial* Material)
-	{
-		m_Material = Material;
-	}
-	void SetBillBoardEffect(bool Enable)
-	{
-		m_BillBoardEffect = Enable;
-	}
-	void SetBazierMoveEffect(bool Enable)
-	{
-		m_BazierMoveEffect = Enable;
 	}
 private :
 	void ApplyBillBoardEffect();
@@ -130,5 +85,59 @@ public :
 private :
 	virtual bool SaveOnly(FILE* File);
 	virtual bool LoadOnly(FILE* File);
+public:
+	float GetInitActiveDelayTime() const
+	{
+		return m_InitActiveDelayTime;
+	}
+	bool IsBazierMoveEnable() const
+	{
+		return m_BazierMoveEffect;
+	}
+	CParticleConstantBuffer* GetCBuffer() const
+	{
+		return m_CBuffer;
+	}
+	CParticle* GetParticle() const
+	{
+		return m_Particle;
+	}
+	const std::string& GetParticleName() const
+	{
+		return m_ParticleName;
+	}
+	CMaterial* GetMaterial() const
+	{
+		return m_Material;
+	}
+public:
+	void SetGravityEffect(bool Enable)
+	{
+		m_ParticleMoveSpeed = Enable;
+	}
+	void SetParticleMoveSpeed(float Speed)
+	{
+		m_ParticleMoveSpeed = Speed;
+	}
+	void SetParticleClassFileName(const std::string& ParticleFileName)
+	{
+		m_ParticleName = ParticleFileName;
+	}
+	void SetMaterial(class CMaterial* Material)
+	{
+		m_Material = Material;
+	}
+	void SetBillBoardEffect(bool Enable)
+	{
+		m_BillBoardEffect = Enable;
+	}
+	void SetBazierMoveEffect(bool Enable)
+	{
+		m_BazierMoveEffect = Enable;
+	}
+	void SetInitActiveDelayTime(float Time)
+	{
+		m_InitActiveDelayTime = Time;
+	}
 };
 

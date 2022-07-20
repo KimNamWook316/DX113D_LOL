@@ -336,9 +336,6 @@
     <ClCompile Include="DeathDoor\DDUtil.cpp">
       <Filter>06. DeathDoor\04. Util</Filter>
     </ClCompile>
-    <ClCompile Include="Component\Node\BossKnightMeleeAttackNode.cpp">
-      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\01. BossKnight</Filter>
-    </ClCompile>
     <ClCompile Include="Widget\CameraWidget.cpp">
       <Filter>02. Editor\02. Widget\01. Inspector\01. SceneComponent</Filter>
     </ClCompile>
@@ -401,9 +398,6 @@
     </ClCompile>
     <ClCompile Include="DeathDoor\DataManager.cpp">
       <Filter>05. Manager</Filter>
-    </ClCompile>
-    <ClCompile Include="Component\Node\BossKnightFinalAttackNode.cpp">
-      <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Component\Node\BossKnightMeleeAttackNode.cpp">
       <Filter>소스 파일</Filter>
@@ -514,6 +508,9 @@
       <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\02. BossBetty</Filter>
     </ClCompile>
     <ClCompile Include="DeathDoor\Component\Node\BossBettyThrowNode.cpp">
+      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\02. BossBetty</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Component\Node\BossBettyChangeAttackDirNode.cpp">
       <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\02. BossBetty</Filter>
     </ClCompile>
   </ItemGroup>
@@ -770,9 +767,6 @@
     <ClInclude Include="DeathDoor\DataManager.h">
       <Filter>05. Manager</Filter>
     </ClInclude>
-    <ClInclude Include="Component\Node\BossKnightMeleeAttackNode.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="DeathDoor\Component\GameBehaviorTree.h">
       <Filter>06. DeathDoor\02. BehaviorTree</Filter>
     </ClInclude>
@@ -866,9 +860,6 @@
     <ClInclude Include="DeathDoor\Component\Node\BossBettyAngryAttackNode.h">
       <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\02. BossBetty</Filter>
     </ClInclude>
-    <ClInclude Include="DeathDoor\Component\Node\BossBettyCloseAttackNode.h">
-      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\02. BossBetty</Filter>
-    </ClInclude>
     <ClInclude Include="DeathDoor\Component\Node\BossBettyJumpAttackNode.h">
       <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\02. BossBetty</Filter>
     </ClInclude>
@@ -876,6 +867,12 @@
       <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\02. BossBetty</Filter>
     </ClInclude>
     <ClInclude Include="DeathDoor\Component\Node\BossBettyThrowNode.h">
+      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\02. BossBetty</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\Node\BossBettyCloseAttackNode.h">
+      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\02. BossBetty</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\Node\BossBettyChangeAttackDirNode.h">
       <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\02. BossBetty</Filter>
     </ClInclude>
   </ItemGroup>

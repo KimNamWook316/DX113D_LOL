@@ -1,4 +1,12 @@
 #include "BossBettyDataComponent.h"
+#include "GameBehaviorTree.h"
+#include "GameStateComponent.h"
+#include "Component/AnimationMeshComponent.h"
+#include "Component/ColliderBox3D.h"
+#include "Collision/Collision.h"
+#include "Scene/Scene.h"
+#include "Scene/SceneManager.h"
+#include "BossBettyDataComponent.h"
 
 CBossBettyDataComponent::CBossBettyDataComponent() :
 	m_ThrowFarAttackEnable(false),
@@ -44,6 +52,12 @@ void CBossBettyDataComponent::Start()
     m_TwoSideFrontSquarePos[1] = Vector3(ObjectWorldScale.x * -1 * 1.5f, 0.f, ObjectWorldScale.z * 1.5f);
     m_TwoSideFrontSquarePos[2] = Vector3(ObjectWorldScale.x * 1 * 1.5f, 0.f, ObjectWorldScale.z * 1.5f);
     m_TwoSideFrontSquarePos[3] = Vector3(ObjectWorldScale.x * 1 * 1.5f, 0.f, ObjectWorldScale.z);
+
+    m_RelativePunchRightPos = (m_PunchRightSquarePos[0] + m_PunchRightSquarePos[2]) / 2.f;
+    m_RelativePunchLeftPos = (m_PunchLeftSquarePos[0] + m_PunchLeftSquarePos[2]) / 2.f;
+
+    m_RelativeSlashRightPos = (m_SlashLeftSquarePos[0] + m_SlashLeftSquarePos[2]) / 2.f;
+    m_RelativeSlashLeftPos = (m_SlashRightSquarePos[0] + m_SlashRightSquarePos[2]) / 2.f;
 }
 
 void CBossBettyDataComponent::OnBossBettyGenerateTwoSideCloseAttackEffect()
@@ -55,13 +69,20 @@ void CBossBettyDataComponent::OnBossBettyGenerateTwoSideCloseAttackEffect()
 
 void CBossBettyDataComponent::OnBossBettyGenerateRightCloseAttackEffect()
 {
+    // m_RelativePunchRightPos
 }
 
 void CBossBettyDataComponent::OnBossBettyGenerateLeftCloseAttackEffect()
 {
+    // m_RelativePunchLeftPos
 }
 
 void CBossBettyDataComponent::OnBossBettyRoarEffect()
 {
-	// 앞으로, 원형 형태로 뻗어나가는 형태의 Particle 만들어내기 
+	// 1. 앞으로, 원형 형태로 뻗어나가는 형태의 Particle 만들어내기 
+}
+
+// 투사체를 던진 이후, 투사체가 바닥, 벽 등에 충돌 이후, 터질 때 효과 
+void CBossBettyDataComponent::OnExplodeBettyThrowBallCallback()
+{
 }

@@ -6,19 +6,19 @@
 #include "Scene/Scene.h"
 #include "../BossBettyDataComponent.h"
 
-CBossBettyAngrylAttackNode::CBossBettyAngrylAttackNode()
+CBossBettyAngryAttackNode::CBossBettyAngryAttackNode()
 {
 }
 
-CBossBettyAngrylAttackNode::CBossBettyAngrylAttackNode(const CBossBettyAngrylAttackNode& Node)
+CBossBettyAngryAttackNode::CBossBettyAngryAttackNode(const CBossBettyAngryAttackNode& Node)
 {
 }
 
-CBossBettyAngrylAttackNode::~CBossBettyAngrylAttackNode()
+CBossBettyAngryAttackNode::~CBossBettyAngryAttackNode()
 {
 }
 
-void CBossBettyAngrylAttackNode::Init()
+void CBossBettyAngryAttackNode::Init()
 {
 	CBossBettyDataComponent* Data = dynamic_cast<CBossBettyDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
 
@@ -35,7 +35,7 @@ void CBossBettyAngrylAttackNode::Init()
 
 	// Snow Ball Falling
 	AnimInst->AddNotify(AnimName, "OnStartFallingSnowBallEffect", 9, 
-		this, &CBossBettyAngrylAttackNode::OnBossBettyStartFallingSnowBallEffect);
+		this, &CBossBettyAngryAttackNode::OnBossBettyStartFallingSnowBallEffect);
 
 	// 양쪽
 	AnimInst->AddNotify(AnimName, "OnTwoSideCloseAttackEffect", 25, 
@@ -66,7 +66,7 @@ void CBossBettyAngrylAttackNode::Init()
 		Data, &CBossBettyDataComponent::OnBossBettyRoarEffect);
 }
 
-NodeResult CBossBettyAngrylAttackNode::OnStart(float DeltaTime)
+NodeResult CBossBettyAngryAttackNode::OnStart(float DeltaTime)
 {
 	m_CallStart = true;
 
@@ -82,18 +82,23 @@ NodeResult CBossBettyAngrylAttackNode::OnStart(float DeltaTime)
 	return NodeResult::Node_True;
 }
 
-NodeResult CBossBettyAngrylAttackNode::OnUpdate(float DeltaTime)
+NodeResult CBossBettyAngryAttackNode::OnUpdate(float DeltaTime)
 {
 	return NodeResult();
 }
 
-NodeResult CBossBettyAngrylAttackNode::OnEnd(float DeltaTime)
+NodeResult CBossBettyAngryAttackNode::OnEnd(float DeltaTime)
 {
 	return NodeResult();
 }
 
-void CBossBettyAngrylAttackNode::OnBossBettyStartFallingSnowBallEffect()
+void CBossBettyAngryAttackNode::OnBossBettyStartFallingSnowBallEffect()
 {
 	// 사방에서 투사체 눈덩이가 떨어지게 한다.
+	// 1. 특정 위치에 투사체 눈덩이 Object 를 생성
+
+	// 2. 각각에 대해서, 충돌시 동작시킬 콜백들을 세팅한다.
+	// - 투사체의 경우, ThrowNode, AngryAttackNode 둘 다에서 동작하기 때문에 
+	// - BossBettyDataComponent::OnExplodeBettyThrowBallCallback 로 세팅
 }
 

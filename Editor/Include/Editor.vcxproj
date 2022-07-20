@@ -193,6 +193,7 @@
     <ClCompile Include="DeathDoor\Component\MonsterPathFindCollider.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\AddFallingFloorCallbackNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\BossBettyAngryAttackNode.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\BossBettyChangeAttackDirNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\BossBettyCloseAttackNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\BossBettyFarAttackTypeCheck.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\BossBettyHPStateCheck.cpp" />
@@ -332,6 +333,7 @@
     <ClInclude Include="DeathDoor\Component\MonsterPathFindCollider.h" />
     <ClInclude Include="DeathDoor\Component\Node\AddFallingFloorCallbackNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\BossBettyAngryAttackNode.h" />
+    <ClInclude Include="DeathDoor\Component\Node\BossBettyChangeAttackDirNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\BossBettyCloseAttackNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\BossBettyFarAttackTypeCheck.h" />
     <ClInclude Include="DeathDoor\Component\Node\BossBettyHPStateCheck.h" />
