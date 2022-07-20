@@ -528,12 +528,6 @@
     <ClCompile Include="DeathDoor\Component\Node\BossBettyChangeAttackDirNode.cpp">
       <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\02. BossBetty</Filter>
     </ClCompile>
-    <ClCompile Include="DeathDoor\Component\BossBettyDataComponent.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="DeathDoor\Component\Node\BossBettyThrowAttackCheck.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="DeathDoor\Component\Node\BossKnightCutScenePlayNode.cpp">
       <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\01. BossKnight</Filter>
     </ClCompile>
@@ -545,6 +539,12 @@
     </ClCompile>
     <ClCompile Include="DeathDoor\Component\Node\DeathCheck.cpp">
       <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\01. Public</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Component\BossBettyDataComponent.cpp">
+      <Filter>06. DeathDoor\01. GameComponent\02. ObjectComponent\01. DataComponent\01. ObjectDataComponent\01. Monster\03. BossBetty</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Component\Node\BossBettyThrowAttackCheck.cpp">
+      <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\02. BossBetty</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -914,9 +914,6 @@
     <ClInclude Include="DeathDoor\Component\Node\BossBettyChangeAttackDirNode.h">
       <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\02. BossBetty</Filter>
     </ClInclude>
-    <ClInclude Include="DeathDoor\Component\BossBettyDataComponent.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="DeathDoor\Component\Node\BossKnightCutScenePlayNode.h">
       <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\01. BossKnight</Filter>
     </ClInclude>
@@ -928,6 +925,9 @@
     </ClInclude>
     <ClInclude Include="DeathDoor\Component\Node\DeathCheck.h">
       <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\01. Public</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\BossBettyDataComponent.h">
+      <Filter>06. DeathDoor\01. GameComponent\02. ObjectComponent\01. DataComponent\01. ObjectDataComponent\01. Monster\03. BossBetty</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
