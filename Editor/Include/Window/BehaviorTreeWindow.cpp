@@ -30,6 +30,8 @@
 #include "../DeathDoor/Component/Node/FindPathNode.h"
 #include "../DeathDoor/Component/Node/ClearPathListNode.h"
 #include "../DeathDoor/Component/Node/MeleeRangeCheckNode.h"
+#include "../DeathDoor/Component/Node/IsCombatCheck.h"
+#include "../DeathDoor/Component/Node/DeathCheck.h"
 #include "../DeathDoor/Component/Node/PostAttackDelayCheck.h"
 #include "../DeathDoor/Component/Node/BossKnightContinueAttackNode.h"
 #include "../DeathDoor/Component/Node/BossKnightCutScenePlayCheck.h"
@@ -43,6 +45,8 @@
 #include "../DeathDoor/Component/Node/BossKnightPlayerEnterZoneCheck.h"
 #include "../DeathDoor/Component/Node/BossKnightSlamEnd.h"
 #include "../DeathDoor/Component/Node/BossKnightWalkNode.h"
+#include "../DeathDoor/Component/Node/BossKnightCutScenePlayNode.h"
+#include "../DeathDoor/Component/Node/BossKnightContinueAttackCheck.h"
 
 #include "ObjectComponentWindow.h"
 #include "ObjectHierarchyWindow.h"
@@ -484,6 +488,16 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
             NewTreeNode = m_StateComponent->CreateTreeNode<CBossKnightWalkNode>(Name);
             break;
         }
+        case DDActionNode::BossKnightCutScenePlay:
+        {
+            NewTreeNode = m_StateComponent->CreateTreeNode<CBossKnightCutScenePlayNode>(Name);
+            break;
+        }
+        case DDActionNode::BossKnightIdle:
+        {
+            NewTreeNode = m_StateComponent->CreateTreeNode<CBossKnightIdleNode>(Name);
+            break;
+        }
 		}
         break;
     }
@@ -548,6 +562,15 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
             break;
         case DDConditionNode::BossKnightPlayerEnterZoneCheck:
             NewTreeNode = m_StateComponent->CreateTreeNode<CBossKnightPlayerEnterZoneCheck>(Name);
+            break;
+        case DDConditionNode::BossKnightContinueAttackCheck:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CBossKnightContinueAttackCheck>(Name);
+            break;
+        case DDConditionNode::IsCombatCheck:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CIsCombatCheck>(Name);
+            break;
+        case DDConditionNode::DeathCheck:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CDeathCheck>(Name);
             break;
         }
         break;

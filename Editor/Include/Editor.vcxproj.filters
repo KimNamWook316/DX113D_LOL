@@ -417,9 +417,6 @@
     <ClCompile Include="DeathDoor\Component\Node\MeleeRangeCheckNode.cpp">
       <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\01. Public</Filter>
     </ClCompile>
-    <ClCompile Include="Component\Node\BossKnightMeleeAttackNode.cpp">
-      <Filter>07. BehaviorTree\02. ActionNode\00. Specific\01. BossKnight</Filter>
-    </ClCompile>
     <ClCompile Include="DeathDoor\Component\Node\PostAttackDelayCheck.cpp">
       <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\01. Public</Filter>
     </ClCompile>
@@ -533,6 +530,18 @@
     </ClCompile>
     <ClCompile Include="DeathDoor\Component\BossBettyDataComponent.cpp">
       <Filter>06. DeathDoor\01. GameComponent\02. ObjectComponent\01. DataComponent\01. ObjectDataComponent\01. Monster\03. BossBetty</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Component\Node\BossKnightCutScenePlayNode.cpp">
+      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\01. BossKnight</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Component\Node\BossKnightContinueAttackCheck.cpp">
+      <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\01. BossKnight</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Component\Node\IsCombatCheck.cpp">
+      <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\01. Public</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Component\Node\DeathCheck.cpp">
+      <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\01. Public</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -901,6 +910,18 @@
     </ClInclude>
     <ClInclude Include="DeathDoor\Component\BossBettyDataComponent.h">
       <Filter>06. DeathDoor\01. GameComponent\02. ObjectComponent\01. DataComponent\01. ObjectDataComponent\01. Monster\03. BossBetty</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\Node\BossKnightCutScenePlayNode.h">
+      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\01. BossKnight</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\Node\BossKnightContinueAttackCheck.h">
+      <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\01. BossKnight</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\Node\IsCombatCheck.h">
+      <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\01. Public</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\Node\DeathCheck.h">
+      <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\01. Public</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

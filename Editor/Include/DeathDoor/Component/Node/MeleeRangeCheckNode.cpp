@@ -25,10 +25,8 @@ NodeResult CMeleeRangeCheckNode::OnStart(float DeltaTime)
 
 	bool InRange = Data->IsPlayerInMeleeAttackRange();
 
-
 	if (InRange)
 	{
-
 		return NodeResult::Node_True;
 	}
 

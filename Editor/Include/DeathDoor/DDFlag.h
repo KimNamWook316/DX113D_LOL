@@ -20,6 +20,7 @@ enum class DDActionNode
 	BossKnightMeleeAttack,
 	BossKnightSlamEnd,
 	BossKnightWalk,
+	BossKnightCutScenePlay,
 	ClearPathList,
 	Max
 };
@@ -40,7 +41,10 @@ enum class DDConditionNode
 	BossKnightJumpAttackRangeCheck,
 	BossKnightCutScenePlayCheck,
 	BossKnightPlayerEnterZoneCheck,
+	BossKnightContinueAttackCheck,
 	HPCheck,
+	DeathCheck,
+	IsCombatCheck,
 	PathFindEnableCheck,
 	Max
 };

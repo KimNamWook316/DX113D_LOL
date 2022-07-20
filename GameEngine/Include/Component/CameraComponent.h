@@ -26,6 +26,16 @@ protected:
 	Vector2		m_Ratio;
 	class CFrustum* m_Frustum;
 
+	Vector3		m_OriginRelavitePos;
+	bool		m_Shake;
+	float		m_ShakeTimer;
+	float		m_ShakeMaxTime;
+	float		m_ShakeAmount;
+	float		m_ShakeDecreaseTick;
+
+public:
+	void Shake(float Time, float Amount);
+
 public:
 	Resolution GetResolution()	const
 	{

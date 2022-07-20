@@ -56,11 +56,20 @@ std::string CDDUtil::DDConditionNodeTypeToString(DDConditionNode NodeType)
 	case DDConditionNode::BossKnightCutScenePlayCheck:
 		return "BossKnightCutScenePlayCheck";
 
+	case DDConditionNode::BossKnightContinueAttackCheck:
+		return "BossKnightContinueAttackCheck";
+
 	case DDConditionNode::BossKnightPlayerEnterZoneCheck:
 		return "BossKnightPlayerEnterZoneCheck";
 
 	case DDConditionNode::HPCheck:
 		return "HPCheck";
+
+	case DDConditionNode::DeathCheck:
+		return "DeathCheck";
+
+	case DDConditionNode::IsCombatCheck:
+		return "IsCombatCheck";
 
 	case DDConditionNode::PathFindEnableCheck:
 		return "PathFindEnableCheck";
@@ -127,9 +136,21 @@ DDConditionNode CDDUtil::StringToDDConditionNodeType(const std::string& Str)
 	{
 		return DDConditionNode::BossKnightPlayerEnterZoneCheck;
 	}
+	else if (Str == "BossKnightContinueAttackCheck")
+	{
+		return DDConditionNode::BossKnightContinueAttackCheck;
+	}
 	else if (Str == "HPCheck")
 	{
 		return DDConditionNode::HPCheck;
+	}
+	else if (Str == "DeathCheck")
+	{
+		return DDConditionNode::DeathCheck;
+	}
+	else if (Str == "IsCombatCheck")
+	{
+		return DDConditionNode::IsCombatCheck;
 	}
 	else if (Str == "PathFindEnableCheck")
 	{
@@ -196,6 +217,9 @@ std::string CDDUtil::DDActionNodeTypeToString(DDActionNode NodeType)
 
 	case DDActionNode::BossKnightWalk:
 		return "BossKnightWalk";
+
+	case DDActionNode::BossKnightCutScenePlay:
+		return "BossKnightCutScenePlay";
 
 	case DDActionNode::ClearPathList:
 		return "ClearPathList";
@@ -273,6 +297,10 @@ DDActionNode CDDUtil::StringToDDActionNodeType(const std::string& Str)
 	else if (Str == "BossKnightWalk")
 	{
 		return DDActionNode::BossKnightWalk;
+	}
+	else if (Str == "BossKnightCutScenePlay")
+	{
+		return DDActionNode::BossKnightCutScenePlay;
 	}
 	else if (Str == "ClearPathList")
 	{
