@@ -42,7 +42,9 @@ public:
 	void DeleteSequence(const CAnimationSequence* const Sequence);
 
 	// 기존 Animation Sequence 정보로부터 일부를 잘라내서 새로운 Sequence 를 만들어내는 기능
-	bool EditSequenceClip(class CAnimationSequence* ExistingSequence, const std::string& NewName, 
+	bool EditAndSaveSequenceClip(class CAnimationSequence* ExistingSequence, const std::string& NewName, 
+		int StartFrame, int EndFrame, const char* SaveFullPathMultibyte);
+	CAnimationSequence* EditSequenceClip(class CAnimationSequence* ExistingSequence, const std::string& NewName,
 		int StartFrame, int EndFrame, const char* SaveFullPathMultibyte);
 
 	// Skeleton

@@ -319,6 +319,38 @@ void CAnimationSequenceInstance::AddAnimation(const TCHAR* FileName,
 	m_mapAnimation.insert(std::make_pair(Name, Anim));
 }
 
+void CAnimationSequenceInstance::AddAnimation(const std::string& AnimInstSavedName, CAnimationSequence* AddedSequence,
+	bool Loop)
+{
+	CAnimationSequenceData* Anim = FindAnimation(AnimInstSavedName);
+
+	if (Anim)
+		return;
+
+	Anim = new CAnimationSequenceData;
+
+	Anim->m_Sequence = AddedSequence;
+
+	// AnimInst 에 등록될 때의 KeyName == AnimSeqData 자체의 m_Name
+	Anim->m_Name = AnimInstSavedName;
+	Anim->m_Loop = Loop;
+
+	// Anim->m_PlayTime = PlayTime;
+	Anim->m_PlayTime = AddedSequence->m_PlayTime;
+
+	Anim->m_PlayScale = AddedSequence->m_PlayScale;
+
+	// Anim->m_FrameTime = PlayTime / Sequence->GetKeyFrameCount();
+	Anim->m_FrameTime = AddedSequence->m_PlayTime / AddedSequence->GetKeyFrameCount();
+
+	if (m_mapAnimation.empty())
+	{
+		m_CurrentAnimation = Anim;
+	}
+
+	m_mapAnimation.insert(std::make_pair(AnimInstSavedName, Anim));
+}
+
 void CAnimationSequenceInstance::SetPlayTime(const std::string& Name, float PlayTime)
 {
 	CAnimationSequenceData* Anim = FindAnimation(Name);

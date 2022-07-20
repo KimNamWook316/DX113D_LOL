@@ -403,7 +403,7 @@ void CAnimationManager3D::DeleteSequence(const CAnimationSequence* const Sequenc
 	}
 }
 
-bool CAnimationManager3D::EditSequenceClip(CAnimationSequence* ExistingSequence, 
+bool CAnimationManager3D::EditAndSaveSequenceClip(CAnimationSequence* ExistingSequence,
 	const std::string& NewName, int StartFrame, int EndFrame, 
 	const char* SaveFullPathMultibyte)
 {
@@ -435,6 +435,25 @@ bool CAnimationManager3D::EditSequenceClip(CAnimationSequence* ExistingSequence,
 	SAFE_DELETE(NewSequence);
 
 	return true;
+}
+
+CAnimationSequence* CAnimationManager3D::EditSequenceClip(CAnimationSequence* ExistingSequence, const std::string& NewName, int StartFrame, int EndFrame, const char* SaveFullPathMultibyte)
+{
+	// 새로운 Sequence 를 만들어내서
+	// 하드디스크에 저장 이후,
+	// 메모리 상에서는 해제한다. //
+	CAnimationSequence* NewSequence = new CAnimationSequence;
+
+	NewSequence->m_Loop = true;
+
+	if (!NewSequence->CreateNewSequenceFromExistingSequence(ExistingSequence,
+		StartFrame, EndFrame, NewName))
+	{
+		SAFE_DELETE(NewSequence);
+		return nullptr;
+	}
+
+	return NewSequence;
 }
 
 bool CAnimationManager3D::LoadSkeleton(const std::string& Name, 

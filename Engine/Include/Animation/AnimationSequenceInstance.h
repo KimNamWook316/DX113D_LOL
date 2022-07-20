@@ -152,6 +152,8 @@ public:
 	void AddAnimation(const std::string& SequenceName, const std::string& Name, bool Loop = true, float PlayScale = 1.f);
 	void AddAnimation(const TCHAR* FileName, const std::string& PathName, const std::string& Name, bool Loop = true,
 		float PlayScale = 1.f);
+	void AddAnimation(const std::string& AnimInstSavedName,
+		CAnimationSequence* AddedSequence, bool Loop = true);
 	void SetPlayTime(const std::string& Name, float PlayTime);
 	void SetPlayScale(const std::string& Name, float PlayScale);
 	void SetLoop(const std::string& Name, bool Loop);

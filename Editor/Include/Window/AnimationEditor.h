@@ -115,8 +115,10 @@ private:
 	void OnRefreshCheckBoxInfo();
 	// St, Ed Frame Edit
 	void OnEditStartEndFrame();
-	bool SaveEditedSqcFile(const TCHAR* FileSavedFullPath, CAnimationSequence* ExistingSequence,
+	bool EditAndSaveSqcFile(const TCHAR* FileSavedFullPath, CAnimationSequence* ExistingSequence,
 		int StartFrame, int EndFrame, bool MakeCopy = true);
+	CAnimationSequence* EditSqcFile(const TCHAR* FileSavedFullPath, CAnimationSequence* ExistingSequence,
+		int StartFrame, int EndFrame);
 	// Play
 	void OnCreateSample3DObject();
 	void OnSetPlayEngineDeltaTime(const char*, bool);
@@ -128,6 +130,7 @@ private:
 	// Excel
 	void OnLoadExcel();
 	void OnMakeAnimInstByExcel();
+	void OnMakeAnimInstByExcelWithNoAdditionalFiles();
 	// Save Load
 	void OnAddAnimationSequence();
 	void OnSaveAnimationInstance();
@@ -149,7 +152,9 @@ private:
 	void OnClickSetAnimSeqSrcDirButton();
 	void OnConvertSequencesIntoAnimationInstance();
 	// Animation Instance 에 Add 된 Key 이름을 return 한다.
-	void AddSequenceToDummyAnimationInstance(const char* FileFullPath, std::string& AddedKeyName);
+	void AddSequenceToDummyAnimationInstanceFullPath(const char* FileFullPath, std::string& AddedKeyName);
+	void AddSequenceToDummyAnimationInstance(const std::string& KeyName, 
+		const CAnimationSequence* Sequence);
 	bool CheckSavedFileNameDuplicated();
 	bool CheckGatheredSeqFilesIncludeCommonName();
 	void GatherFullPathInfoOfSqcFilesInSelectedDir(const std::string& SelectedDirPath, const std::string& CommonSqcName);

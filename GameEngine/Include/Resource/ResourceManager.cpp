@@ -385,14 +385,20 @@ std::pair<bool, std::string> CResourceManager::LoadMeshTextureBoneInfo(CAnimatio
 	{
 		MapCnt++;
 
-		// const char* ConstSqcFileName = Instance->GetCurrentAnimation()->GetAnimationSequence()->GetSequenceFileNameMultibyte();
-		const char* ConstSqcFileName = iter->second->GetAnimationSequence()->GetSequenceFileNameMultibyte();
+		// 1) 자신이 가지고 있는 Sequence 의 m_Name 중에서 '_' 앞에 있는 글자를 가져온다.
+		std::string SqcFileName = iter->second->GetAnimationSequence()->GetName();
+		SqcFileName = SqcFileName.substr(0,SqcFileName.find("_"));
 
-		char SqcFileName[MAX_PATH] = {};
-		strcpy_s(SqcFileName, ConstSqcFileName);
+		// 2) 그럼에도 불구하고, ""를 리턴받는 다면, 그때가서 Sequence 본연의 FileName 을 이용한다.
+		if (SqcFileName == "")
+			SqcFileName = iter->second->GetAnimationSequence()->GetSequenceFileNameMultibyte();
+		// const char* ConstSqcFileName = iter->second->GetAnimationSequence()->GetSequenceFileNameMultibyte();
+
+		// char SqcFileName[MAX_PATH] = {};
+		// strcpy_s(SqcFileName, ConstSqcFileName);
 
 		// SqcFileName이 시퀀스중에서 처음으로 텍스쳐를 가지고있는 시퀀스 이름?
-		const std::pair<bool, std::string>& Result = LoadMeshTextureBoneInfo(SqcFileName, MapCnt == MapSize);
+		const std::pair<bool, std::string>& Result = LoadMeshTextureBoneInfo(SqcFileName.data(), MapCnt == MapSize);
 
 		if (Result.first == false)
 		{
@@ -824,7 +830,12 @@ void CResourceManager::DeleteSequence3D(const std::string& Name)
 	m_AnimationManager3D->DeleteSequence(Name);
 }
 
-bool CResourceManager::EditSequenceClip(CAnimationSequence* ExistingSequence, const std::string& NewName, int StartFrame, int EndFrame, const char* SaveFullPathMultibyte)
+bool CResourceManager::EditAndSaveSequenceClip(CAnimationSequence* ExistingSequence, const std::string& NewName, int StartFrame, int EndFrame, const char* SaveFullPathMultibyte)
+{
+	return m_AnimationManager3D->EditAndSaveSequenceClip(ExistingSequence, NewName, StartFrame, EndFrame, SaveFullPathMultibyte);
+}
+
+CAnimationSequence* CResourceManager::EditSequenceClip(CAnimationSequence* ExistingSequence, const std::string& NewName, int StartFrame, int EndFrame, const char* SaveFullPathMultibyte)
 {
 	return m_AnimationManager3D->EditSequenceClip(ExistingSequence, NewName, StartFrame, EndFrame, SaveFullPathMultibyte);
 }

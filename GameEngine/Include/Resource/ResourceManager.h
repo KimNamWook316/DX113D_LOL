@@ -284,8 +284,12 @@ public: // =================== Sequence 3D =====================
 	void ReleaseAnimationSequence3D(class CAnimationSequence* ExistingSequence);
 	void ReleaseAnimationSequence3D(const std::string& Name);
 	void DeleteSequence3D(const std::string& Name);
-	bool EditSequenceClip(class CAnimationSequence* ExistingSequence, const std::string& NewName,
+
+	bool EditAndSaveSequenceClip(class CAnimationSequence* ExistingSequence, const std::string& NewName,
 		int StartFrame, int EndFrame, const char* SaveFullPathMultibyte);
+	CAnimationSequence* EditSequenceClip(class CAnimationSequence* ExistingSequence, const std::string& NewName,
+		int StartFrame, int EndFrame, const char* SaveFullPathMultibyte);
+
 	void LoadAniFile();
 	bool LoadSkeleton(const std::string& Name, const TCHAR* FileName,
 		const std::string& PathName = ANIMATION_PATH,

@@ -342,7 +342,8 @@ Alistar Animation 과 관련된 파일들이 하나는 존재햐야 한다)";
 	m_LoadExcelBtn->SetClickCallback<CAnimationEditor>(this, &CAnimationEditor::OnLoadExcel);
 
 	m_MakeAnimInstByExcelBtn = AddWidget<CIMGUIButton>("Make Inst From Excel", 150.f, 20.f);
-	m_MakeAnimInstByExcelBtn->SetClickCallback<CAnimationEditor>(this, &CAnimationEditor::OnMakeAnimInstByExcel);
+	// m_MakeAnimInstByExcelBtn->SetClickCallback<CAnimationEditor>(this, &CAnimationEditor::OnMakeAnimInstByExcel);
+	m_MakeAnimInstByExcelBtn->SetClickCallback<CAnimationEditor>(this, &CAnimationEditor::OnMakeAnimInstByExcelWithNoAdditionalFiles);
 
 	return true;
 }
@@ -690,7 +691,7 @@ void CAnimationEditor::OnMakeAnimInstByExcel()
 
 			// 하나라도 Load 실패시 X 
 			// 처음 한개만 msh, fbm, bne 파일 복사본을 만들어줄 것이다.
-			if (!SaveEditedSqcFile(TCHARSavedSqcFullPath, ExistingSequeunce, StFrameInt, EdFrameInt, FirstData))
+			if (!EditAndSaveSqcFile(TCHARSavedSqcFullPath, ExistingSequeunce, StFrameInt, EdFrameInt, FirstData))
 			{
 				MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT(".sqc 파일 저장 실패"), NULL, MB_OK);
 				return;
@@ -745,7 +746,7 @@ void CAnimationEditor::OnMakeAnimInstByExcel()
 		// Grunt_Idle 과 같이, '_' 뒤에 Excel 에 해당하는 Lable 이 놓일 것이다.
 		std::string AddedKeyName;
 
-		AddSequenceToDummyAnimationInstance(m_vecAnimationSeqFilesFullPath[i].c_str(), AddedKeyName);
+		AddSequenceToDummyAnimationInstanceFullPath(m_vecAnimationSeqFilesFullPath[i].c_str(), AddedKeyName);
 
 		// 해당 Key 이름을, Excel 에 저장된 Layer 이름으로 바꿔준다.
 		// 이를 위해, Excel 에 저장된 Layer 중에서, 자신이 현재 포함하고 있는 Layer 정보를 세팅해줄 것이다.
@@ -816,6 +817,197 @@ void CAnimationEditor::OnMakeAnimInstByExcel()
 
 	SaveAnimFileName = m_ExcelSavedAnimFileName->GetTextUTF8();
 	
+	// .anim 확장자 붙여주기
+	if (SaveAnimFileName.find(".anim") == std::string::npos)
+		SaveAnimFileName.append(".anim");
+
+	SavedFileNameMultibyte.append(SaveAnimFileName);
+
+	m_DummyAnimation->SetSavedFileName(SaveAnimFileName.c_str());
+	m_DummyAnimation->SaveAnimationFullPath(SavedFileNameMultibyte.c_str());
+
+	MessageBox(nullptr, TEXT("Instance Create 완료"), TEXT("완료"), MB_OK);
+
+	SAFE_DELETE(m_DummyAnimation);
+}
+
+void CAnimationEditor::OnMakeAnimInstByExcelWithNoAdditionalFiles()
+{
+	// Excel 이 존재해야 한다.
+	if (!m_LoadedExcelData)
+	{
+		MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Excel 파일을 Load 하세요"), NULL, MB_OK);
+		return;
+	}
+
+	// Animation 이 존재해야 한다.
+	if (!m_Animation || !m_Animation->GetCurrentAnimation())
+		return;
+
+	// m_ExcelSavedAnimFileName 에 이름이 채워져 있어야 한다.
+	if (m_ExcelSavedAnimFileName->Empty())
+	{
+		MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT(".anim 파일 이름을 지정하세요"), NULL, MB_OK);
+		return;
+	}
+
+	int OriginAnimStartFrame = 0;
+	int OriginAnimEndFrame = m_Animation->GetCurrentAnimation()->GetAnimationSequence()->GetFrameLength() - 1;
+
+	// >> Excel 내에 모든 sqc 정보들을 돌면서, 범위를 벗어나는 정보인지를 확인한다. 
+	const Table& ExcelTableData = m_LoadedExcelData->GetTable();
+
+	{
+		auto iter = ExcelTableData.begin();
+		auto iterEnd = ExcelTableData.end();
+
+		for (; iter != iterEnd; ++iter)
+		{
+			// 1번째는 startFrame
+			// 2번째는 endFrame
+			const std::string& StFrame = (*(iter->second))[0];
+			int StFrameInt;
+			auto StFrameIntInfo = std::from_chars(StFrame.c_str(), StFrame.c_str() + sizeof(StFrame.c_str()) - 1, StFrameInt);
+
+			const std::string& EdFrame = (*(iter->second))[1];
+			int EdFrameInt;
+			auto EdFrameIntInfo = std::from_chars(EdFrame.c_str(), EdFrame.c_str() + sizeof(EdFrame.c_str()) - 1, EdFrameInt);
+
+			const std::string& DataLable = iter->first;
+
+			TCHAR FulllErrorMessage[MAX_PATH] = {};
+			TCHAR TCHARDataLable[MAX_PATH] = {};
+			lstrcpy(TCHARDataLable, CEditorUtil::ChangeMultibyteTextToTCHAR(DataLable.c_str()));
+			lstrcpy(FulllErrorMessage, TCHARDataLable);
+
+			if (OriginAnimStartFrame > StFrameInt)
+			{
+				TCHAR ErrorMessage[MAX_PATH] = TEXT(": Start Frame 의 범위를 벗어납니다. Origin Start Frame : ");
+				TCHAR StartFrameMessage[MAX_PATH];
+				lstrcpy(StartFrameMessage, CEditorUtil::ChangeMultibyteTextToTCHAR(std::to_string(OriginAnimStartFrame).c_str()));
+
+				lstrcat(FulllErrorMessage, ErrorMessage);
+				lstrcat(FulllErrorMessage, StartFrameMessage);
+				MessageBox(CEngine::GetInst()->GetWindowHandle(), FulllErrorMessage, NULL, MB_OK);
+
+				return;
+			}
+			if (OriginAnimEndFrame < EdFrameInt)
+			{
+				TCHAR ErrorMessage[MAX_PATH] = TEXT(": End Frame 의 범위를 벗어납니다. Origin End Frame : ");
+				TCHAR EndFrameMessage[MAX_PATH];
+				lstrcpy(EndFrameMessage, CEditorUtil::ChangeMultibyteTextToTCHAR(std::to_string(OriginAnimEndFrame).c_str()));
+
+				lstrcat(FulllErrorMessage, ErrorMessage);
+				lstrcat(FulllErrorMessage, EndFrameMessage);
+				MessageBox(CEngine::GetInst()->GetWindowHandle(), FulllErrorMessage, NULL, MB_OK);
+				return;
+			}
+		}
+	}
+
+
+	// >> 현재 Load 된 sqc 가 위치한 Folder 경로에 여러개 sqc 파일들로 저장해서 만들어준다. 
+	CMesh* CurrentUsedMesh = CResourceManager::GetInst()->FindMesh(m_3DTestObjectMeshName);
+
+	// Extension 포함 이름 ex) CombinedPot.msh
+	const std::string& UsedMeshFileName = CEditorUtil::FilterFileName(CurrentUsedMesh->GetFullPath());
+
+	// 확장자 제외 파일 이름
+	std::string UsedMeshFileNameOnly;
+	CEngineUtil::GetFileNameOnly(UsedMeshFileName, UsedMeshFileNameOnly);
+
+	// Full 경로 정보가 들어있다.
+	auto MeshFileFoundResult = CEngineUtil::CheckAndExtractFullPathOfTargetFile(MESH_PATH, UsedMeshFileName);
+
+	// Folder 경로
+	std::string CommonFolderPath;
+	CEngineUtil::GetPathInfoBeforeFileName(MeshFileFoundResult.value(), CommonFolderPath);
+
+	// Animation Sequence 정보
+	CAnimationSequence* ExistingSequeunce = m_Animation->GetCurrentAnimation()->GetAnimationSequence();
+
+	// >> 하나의 anim 파일을 만들어서 저장한다.
+	// 로그창 클리어
+	m_AnimInstanceConvertLog->ClearWidget();
+
+	CIMGUIText* StartText = m_AnimInstanceConvertLog->AddWidget<CIMGUIText>("Text");
+	StartText->SetText("Convert Start...");
+
+	CIMGUIText* Text = nullptr;
+
+	// >> 여러개의 Sqc 들을 만든다.
+	{
+		auto iter = ExcelTableData.begin();
+		auto iterEnd = ExcelTableData.end();
+
+		for (; iter != iterEnd; ++iter)
+		{
+			const std::string& DataLable = iter->first;
+			std::string NewlySavedSqcFullPath;
+
+			NewlySavedSqcFullPath.reserve(CommonFolderPath.length() * 2);
+
+			NewlySavedSqcFullPath = CommonFolderPath;
+			NewlySavedSqcFullPath.append(UsedMeshFileNameOnly);
+			NewlySavedSqcFullPath.append("_" + DataLable);
+			NewlySavedSqcFullPath.append(".sqc");
+
+			// 1번째는 startFrame
+			// 2번째는 endFrame
+			const std::string& StFrame = (*(iter->second))[0];
+			int StFrameInt;
+			auto StFrameIntInfo = std::from_chars(StFrame.c_str(), StFrame.c_str() + sizeof(StFrame.c_str()) - 1, StFrameInt);
+
+			const std::string& EdFrame = (*(iter->second))[1];
+			int EdFrameInt;
+			auto EdFrameIntInfo = std::from_chars(EdFrame.c_str(), EdFrame.c_str() + sizeof(EdFrame.c_str()) - 1, EdFrameInt);
+
+
+			TCHAR TCHARSavedSqcFullPath[MAX_PATH];
+
+			lstrcpy(TCHARSavedSqcFullPath, CEditorUtil::ChangeMultibyteTextToTCHAR(NewlySavedSqcFullPath.c_str()));
+
+			// 하나라도 Load 실패시 X 
+			// 처음 한개만 msh, fbm, bne 파일 복사본을 만들어줄 것이다.
+			CAnimationSequence* EditedSqc = EditSqcFile(TCHARSavedSqcFullPath, ExistingSequeunce, StFrameInt, EdFrameInt);
+			
+			if (!EditedSqc)
+			{
+				SAFE_DELETE(m_DummyAnimation);
+
+				MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT(".sqc 파일 저장 실패"), NULL, MB_OK);
+				return;
+			}
+
+			AddSequenceToDummyAnimationInstance(DataLable, EditedSqc);
+
+			// 뿐만 아니라, AnimationSequenceData 의 m_Name 도 수정해야 한다.
+			// 그리고 현재 수정하는 AnimationSequenceData 는 m_DummyAnimation 에 저장되어 있는 녀석이어야 한다.
+			CAnimationSequenceData* AnimSeqData = m_DummyAnimation->FindAnimation(DataLable);
+			AnimSeqData->SetName(DataLable);
+
+			AnimSeqData->SetOriginalFramePlayTime();
+		}
+	}
+
+	Text = m_AnimInstanceConvertLog->AddWidget<CIMGUIText>("OK");
+	Text->SetText("Complete!");
+
+	const PathInfo* Path = CPathManager::GetInst()->FindPath(ANIMATION_PATH);
+
+	std::string SavedFileNameMultibyte;
+	SavedFileNameMultibyte.reserve(strlen(Path->PathMultibyte) * 2);
+
+	// 확장자 포함
+	std::string SaveAnimFileName;
+	SaveAnimFileName.reserve(strlen(m_ExcelSavedAnimFileName->GetTextUTF8()) * 2);
+
+	if (Path)
+		SavedFileNameMultibyte = Path->PathMultibyte;
+
+	SaveAnimFileName = m_ExcelSavedAnimFileName->GetTextUTF8();
+
 	// .anim 확장자 붙여주기
 	if (SaveAnimFileName.find(".anim") == std::string::npos)
 		SaveAnimFileName.append(".anim");
@@ -1592,11 +1784,11 @@ void CAnimationEditor::OnEditStartEndFrame()
 
 	if (GetSaveFileName(&OpenFile) != 0)
 	{
-		SaveEditedSqcFile(FiileFullPath, ExistingSequence, m_StartFrameEditInput->GetValueInt(), m_EndFrameEditInput->GetValueInt());
+		EditAndSaveSqcFile(FiileFullPath, ExistingSequence, m_StartFrameEditInput->GetValueInt(), m_EndFrameEditInput->GetValueInt());
 	}
 }
 
-bool CAnimationEditor::SaveEditedSqcFile(const TCHAR* FileSavedFullPath, CAnimationSequence* ExistingSequence, 
+bool CAnimationEditor::EditAndSaveSqcFile(const TCHAR* FileSavedFullPath, CAnimationSequence* ExistingSequence,
 	int StartFrame, int EndFrame, bool MakeCopy)
 {
 	char FileFullPathMultibyte[MAX_PATH] = {};
@@ -1619,7 +1811,7 @@ bool CAnimationEditor::SaveEditedSqcFile(const TCHAR* FileSavedFullPath, CAnimat
 		return false;
 	}
 
-	bool SqcSaveResult = CResourceManager::GetInst()->EditSequenceClip(ExistingSequence, NewlySavedSqcFileName,
+	bool SqcSaveResult = CResourceManager::GetInst()->EditAndSaveSequenceClip(ExistingSequence, NewlySavedSqcFileName,
 		StartFrame, EndFrame, FileFullPathMultibyte);
 
 	bool TotalSaveResult = true;
@@ -1745,6 +1937,33 @@ bool CAnimationEditor::SaveEditedSqcFile(const TCHAR* FileSavedFullPath, CAnimat
 	return false;
 }
 
+CAnimationSequence* CAnimationEditor::EditSqcFile(const TCHAR* FileSavedFullPath, CAnimationSequence* ExistingSequence, int StartFrame, int EndFrame)
+{
+	char FileFullPathMultibyte[MAX_PATH] = {};
+
+	char NewlySavedSqcFileName[MAX_PATH] = {};
+	char FileExt[_MAX_EXT] = {};
+
+	int  ConvertLength = WideCharToMultiByte(CP_ACP, 0, FileSavedFullPath, -1, nullptr, 0, nullptr, nullptr);
+
+	WideCharToMultiByte(CP_ACP, 0, FileSavedFullPath, -1, FileFullPathMultibyte, ConvertLength, nullptr, nullptr);
+
+	_splitpath_s(FileFullPathMultibyte, nullptr, 0, nullptr, 0, NewlySavedSqcFileName, MAX_PATH, FileExt, _MAX_EXT);
+
+	_strupr_s(FileExt);
+
+	// 확장자 .sqc 이 아니라면 return;
+	if (strcmp(FileExt, ".SQC") != 0)
+	{
+		MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("EXT Has To Be .sqc"), NULL, MB_OK);
+		return nullptr;
+	}
+
+	CAnimationSequence* EditedSequence = CResourceManager::GetInst()->EditSequenceClip(ExistingSequence, NewlySavedSqcFileName,
+	StartFrame, EndFrame, FileFullPathMultibyte);
+
+	return EditedSequence;
+}
 
 
 void CAnimationEditor::OnClickSetAnimSeqSrcDirButton()
@@ -1833,7 +2052,7 @@ void CAnimationEditor::OnConvertSequencesIntoAnimationInstance()
 	for (size_t i = 0; i < Size; ++i)
 	{
 		std::string AddedKeyName;
-		AddSequenceToDummyAnimationInstance(m_vecAnimationSeqFilesFullPath[i].c_str(), AddedKeyName);
+		AddSequenceToDummyAnimationInstanceFullPath(m_vecAnimationSeqFilesFullPath[i].c_str(), AddedKeyName);
 
 		// File 이름 Log 목록에 추가
 		Text = m_AnimInstanceConvertLog->AddWidget<CIMGUIText>("Text");
@@ -1893,7 +2112,7 @@ void CAnimationEditor::OnAnimInstanceConvertLoading(const LoadingMessage& msg)
 	}
 }
 
-void CAnimationEditor::AddSequenceToDummyAnimationInstance(const char* FileFullPath, std::string& AddedKeyName)
+void CAnimationEditor::AddSequenceToDummyAnimationInstanceFullPath(const char* FileFullPath, std::string& AddedKeyName)
 {
 	if (!m_DummyAnimation)
 	{
@@ -1947,6 +2166,34 @@ void CAnimationEditor::AddSequenceToDummyAnimationInstance(const char* FileFullP
 	m_DummyAnimation->AddAnimation(SqcFileName, SqcFileName);
 
 	AddedKeyName = SqcFileName;
+}
+
+void CAnimationEditor::AddSequenceToDummyAnimationInstance(const std::string& KeyName,
+	const CAnimationSequence* Sequence)
+{
+	if (!Sequence)
+		return;
+
+	if (!m_DummyAnimation)
+	{
+		m_DummyAnimation = new CAnimationSequenceInstance;
+
+		if (!m_DummyAnimation->Init())
+		{
+			SAFE_DELETE(m_DummyAnimation);
+			return;
+		}
+	}
+
+	// FileFullPath 에서 File 이름으로 Key 값을 지정해줄 것이다.
+	// 중복 방지 
+	if (m_DummyAnimation->FindAnimation(KeyName))
+		return;
+
+	// ex) File 이름이 Single_Idle.sqc 라면
+	// Resource Manager, Animation Instance 에 모두
+	// 동일하게 Single_Idle 이라는 Key 값으로 해당 정보를 세팅할 것이다.
+	m_DummyAnimation->AddAnimation(KeyName, const_cast<CAnimationSequence*>(Sequence));
 }
 
 // Return 값이 false 라면, 계속 진행하여, Make Inst
