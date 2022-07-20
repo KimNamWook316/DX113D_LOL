@@ -24,6 +24,14 @@ CBossBettyDataComponent::~CBossBettyDataComponent()
 
 void CBossBettyDataComponent::Start()
 {
+    // m_BossBettySpinCollider 를 Object 의 Component List 에 추가한다.
+    // - 그리고 Spin 중간에, Collide 시 Spin Collider Animation 으로 바꾸는 Callback도 세팅한다.
+    // - 처음에는 비활성화 시킨다.
+    m_BossBettySpinCollider = m_Object->CreateComponent<CColliderBox3D>("BossBettySpinCollide");
+    m_BossBettySpinCollider->Enable(false);
+    m_BossBettySpinCollider->AddCollisionCallback(Collision_State::Begin, 
+        this, &CBossBettyDataComponent::OnChangeFromSpinToSpinCollideWhenCollide);
+
     // 근거리 사정 거리 판별 Square Pos 위치 만들기 
     //  0: 왼쪽 하단, 1 : 왼쪽 상단, 2 : 오른쪽 상단, 3 : 오른쪽 하단
     const Vector3& ObjectWorldScale = m_Object->GetRootComponent()->GetWorldScale();
@@ -85,4 +93,26 @@ void CBossBettyDataComponent::OnBossBettyRoarEffect()
 // 투사체를 던진 이후, 투사체가 바닥, 벽 등에 충돌 이후, 터질 때 효과 
 void CBossBettyDataComponent::OnExplodeBettyThrowBallCallback()
 {
+    // 자기 위치를 기준으로 20개의 위치를 세팅한다.
+    // 서서히 Delay 를 주면서 내려오게 할 것이다.
+}
+
+void CBossBettyDataComponent::OnChangeFromSpinToSpinCollideWhenCollide(const CollisionResult& Result)
+{
+    CAnimationSequenceInstance* AnimInst =  dynamic_cast<CAnimationMeshComponent*>(m_Object->GetRootComponent())->GetAnimationInstance();
+
+    if (AnimInst->GetCurrentAnimation()->GetName() == "Spin")
+    {
+        AnimInst->ChangeAnimation("SpinCollide");
+    }
+}
+
+void CBossBettyDataComponent::OnBossBettyDisableSpinCollider()
+{
+    m_BossBettySpinCollider->Enable(false);
+}
+
+void CBossBettyDataComponent::OnBossBettyEnableSpinCollider()
+{
+    m_BossBettySpinCollider->Enable(true);
 }

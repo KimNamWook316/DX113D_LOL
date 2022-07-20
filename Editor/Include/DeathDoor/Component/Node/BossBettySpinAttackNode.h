@@ -1,6 +1,7 @@
 #pragma once
 #include "Component\Node\ActionNode.h"
 
+
 // 1. Jump Spin 
 // - 마지막 Frame 에 Spin 으로 Change
 // 2. Spin
@@ -8,6 +9,7 @@
 // 3. Spin Collide
 // - 마지막 Floor 에 도달하는 순간, 주변 Damage
 // - 동작 중에 Player 방향으로 회전
+
 class CBossBettySpinAttackNode :
     public CActionNode
 {
@@ -25,6 +27,6 @@ protected:
     virtual NodeResult OnEnd(float DeltaTime);
 
 private:
-    float m_RotatePerSec;
+    void OnBossBettyChangeToSpinAnimation();
 };
 

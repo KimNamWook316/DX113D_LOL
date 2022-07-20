@@ -53,6 +53,10 @@ private :
     Vector3 m_RelativeSlashRightPos;
     Vector3 m_RelativeSlashLeftPos;
 
+    // Spin 하는 중에 벽과 충돌했는지 여부를 추가적으로 계속 조사하기 위해서
+    // ColliderBox3D 를 하나 더 둘 것이다.
+    class CColliderComponent* m_BossBettySpinCollider;
+
     // Boss Betty Throw Ball 투사체 Object
     class CGameObject* m_BossBettyThrowObject;
     // Boss Betty Punch Down Particle
@@ -73,8 +77,16 @@ public :
     void OnBossBettyRoarEffect();
     // 눈덩이 투사체 충돌시 발생시킬 Callback 함수
     void OnExplodeBettyThrowBallCallback();
+    // Spin 중간에 벽에 부딪히면, Spin Collide Animation 으로 바꿔주는 함수 
+    void OnChangeFromSpinToSpinCollideWhenCollide(const CollisionResult&);
+    // Spin Collider 비활성화
+    void OnBossBettyDisableSpinCollider();
+    // Spin Collider 활성화
+    void OnBossBettyEnableSpinCollider();
+
     // Setter 함수 ---
 public:
+
     void SetBossBettyThrowObject(class CGameObject* Object)
     {
         m_BossBettyThrowObject = Object;
@@ -115,6 +127,10 @@ public:
 
     // Getter 함수 ---
 public:
+    class CColliderComponent* GetBossBettySpinCollider() const
+    {
+        return m_BossBettySpinCollider;
+    }
     class CGameObject* GetBossBettyThrowObject() const
     {
         return m_BossBettyThrowObject;

@@ -1,6 +1,7 @@
 #pragma once
 #include "Component\Node\ActionNode.h"
 
+
 // 원거리 점프 공격
 // PunchDouble 로 Change
 // - 진행 중에 Player 방향으로 서서히 이동
@@ -22,6 +23,6 @@ protected:
     virtual NodeResult OnEnd(float DeltaTime);
 
 private:
-    void OnBossBettyChangeToSpinAnimation();
+    float m_RotatePerSec;
 };
 

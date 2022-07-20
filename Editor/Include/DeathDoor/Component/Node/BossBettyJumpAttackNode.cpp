@@ -24,24 +24,22 @@ void CBossBettyJumpAttackNode::Init()
 {
 	CBossBettyDataComponent* Data = dynamic_cast<CBossBettyDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
 
-	// Animation CallBack
 	m_AnimationMeshComp = m_Owner->GetAnimationMeshComp();
 
-	// 1) JumpSpin
-	std::string AnimName = "JumpSpin";
 	CAnimationSequenceInstance* AnimInst = m_AnimationMeshComp->GetAnimationInstance();
 
-	// JumpSpin Animation 이 끝나면 바로 Spin Animation 으로 바꾼다.
-	AnimInst->SetEndFunction(AnimName,
-		this, &CBossBettyJumpAttackNode::OnBossBettyChangeToSpinAnimation);
+	// PunchDouble
+	std::string AnimName = "PunchDouble";
 
-	// 2) Spin
-	AnimName = "Spin";
-	AnimInst = m_AnimationMeshComp->GetAnimationInstance();
-
-	// JumpSpin Animation 이 끝나면 바로 Spin Animation 으로 바꾼다.
+	// JumpSpin Animation 이 끝나면 해당 위치에 2단 공격
 	AnimInst->SetEndFunction(AnimName,
-		this, &CBossBettyJumpAttackNode::OnBossBettyChangeToSpinAnimation);
+		Data, &CBossBettyDataComponent::OnBossBettyGenerateTwoSideCloseAttackEffect);
+
+	// 날아가는 중간에도, Player 를 향해 방향 회전하기 
+	AnimInst->AddNotifyDeltaTimeFrameRange(AnimName, "OnTracePlayer", 9, 22,
+		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnLookPlayer);
+
+
 }
 
 NodeResult CBossBettyJumpAttackNode::OnStart(float DeltaTime)
@@ -49,23 +47,23 @@ NodeResult CBossBettyJumpAttackNode::OnStart(float DeltaTime)
 	m_CallStart = true;
 
 	CAnimationSequenceInstance* AnimInst = m_AnimationMeshComp->GetAnimationInstance();
-	AnimInst->ChangeAnimation("Spin");
+	AnimInst->ChangeAnimation("PunchDouble");
 
 	return NodeResult::Node_True;
 }
 
 NodeResult CBossBettyJumpAttackNode::OnUpdate(float DeltaTime)
 {
-	return NodeResult();
+	CBossBettyDataComponent* Data = dynamic_cast<CBossBettyDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
+
+	// 자신의 앞 방향으로 날아가게 하기 
+	Vector3 MyAxisZ = m_Object->GetWorldAxis(AXIS::AXIS_Z) * -1.f;
+	m_Object->AddWorldPos(MyAxisZ * Data->GetMoveSpeed() * DeltaTime);
+
+	return NodeResult::Node_True;
 }
 
 NodeResult CBossBettyJumpAttackNode::OnEnd(float DeltaTime)
 {
 	return NodeResult();
-}
-
-void CBossBettyJumpAttackNode::OnBossBettyChangeToSpinAnimation()
-{
-	CAnimationSequenceInstance* AnimInst = m_AnimationMeshComp->GetAnimationInstance();
-	AnimInst->ChangeAnimation("Spin");
 }
