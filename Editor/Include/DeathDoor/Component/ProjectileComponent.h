@@ -35,7 +35,7 @@ public:
 		float Speed, const Vector3& TargetPos, bool Gravity = false,
 		class CGameObject* EndParticleObj = nullptr);
 	void Shoot(const Vector3& StartPos, const Vector3& Dir, 
-		float Speed, float LifeTime, bool Gravity = false,
+		float Speed, float LifeTime,
 		class CGameObject* EndParticleObj = nullptr);
 
 	bool CheckDestroy();
@@ -58,14 +58,14 @@ public:
 	template <typename T>
 	void Shoot(T* Obj, void(T::* CollisionCallBack)(const CollisionResult&), Collision_State CollsionState,
 		const Vector3& StartPos, const Vector3& Dir, float Speed,
-		float LifeTime, bool Gravity = false, class CGameObject* EndParticleObj = nullptr)
+		float LifeTime, class CGameObject* EndParticleObj = nullptr)
 	{
 		if (m_Collider && CollisionCallBack)
 		{
 			m_Collider->AddCollisionCallback(CollsionState, Obj, CollisionCallBack);
 		}
 
-		Shoot(StartPos, Dir, Speed, LifeTime, Gravity, EndParticleObj);
+		Shoot(StartPos, Dir, Speed, LifeTime, EndParticleObj);
 	}
 
 private:
@@ -79,7 +79,8 @@ private:
 	bool	m_IsShoot;
 
 	bool	m_IsGravity;
-	float	m_GravityTimer;
+	float	m_VelocityXZ;
+	float	m_VelocityY;
 
 	float	m_LifeTime;
 	float	m_LifeTimer;

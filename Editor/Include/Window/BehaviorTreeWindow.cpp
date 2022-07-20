@@ -180,7 +180,6 @@ void CBehaviorTreeWindow::Update(float DeltaTime)
 
 
     // 노드가 ActionNode이거나 Condition Node일 때 Invoke할 동작을 정하고 만들어야한다
-    // TODO : Action Node 추가될 때 마다 추가
     if (m_TypeSelectIndex == 2 || m_TypeSelectIndex == 3 || m_TypeSelectIndex == 4)
     {
         m_vecNodeAction.clear();
@@ -190,7 +189,6 @@ void CBehaviorTreeWindow::Update(float DeltaTime)
             PrintActionNodes();
         }
 
-        // TODO : Condition Node 추가될 때 마다 추가
         else if (m_TypeSelectIndex == 3)
         {
             PrintConditionNodes();

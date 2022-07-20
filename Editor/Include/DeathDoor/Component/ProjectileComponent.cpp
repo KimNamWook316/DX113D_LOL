@@ -23,7 +23,6 @@ CProjectileComponent::CProjectileComponent(const CProjectileComponent& com)	:
 	// TODO : End Particle Pool에서 찾기
 	if (com.m_EndParticleObject)
 	{
-
 	}
 }
 
@@ -62,15 +61,18 @@ void CProjectileComponent::Update(float DeltaTime)
 			return;
 		}
 
-		float GravityMoveY = 0.f;
+		Vector3 Move;
+
 		if (m_IsGravity)
 		{
-			m_GravityTimer += DeltaTime;
+			Move = Vector3(m_Dir.x * m_VelocityXZ * DeltaTime,
+				m_Dir.y * ((m_VelocityY - (GRAVITY * m_LifeTimer)) * DeltaTime),
+				m_Dir.z * m_VelocityXZ * DeltaTime);
 		}
-
-		Vector3 Move = Vector3(m_Dir.x * m_Speed * DeltaTime, 
-			(m_Dir.y * m_Speed * DeltaTime) + GravityMoveY, 
-				m_Dir.z * m_Speed * DeltaTime);
+		else
+		{
+			Move = m_Dir * m_Speed * DeltaTime;
+		}
 
 		m_Root->AddWorldPos(Move);
 	}
@@ -141,59 +143,51 @@ void CProjectileComponent::Shoot(const Vector3& StartPos, const Vector3& Dir, fl
 	m_IsGravity = Gravity;
 	m_EndParticleObject = EndParticleObj;
 	m_Dir.Normalize();
+
+	float Distance = m_StartPos.Distance(TargetPos);
+	float Velocity = Distance / sinf(2.f * DegreeToRadian(Dir.y)) / GRAVITY;
+
+	m_VelocityXZ = sqrtf(Velocity) * cosf(DegreeToRadian(Dir.y));
+	m_VelocityY = sqrtf(Velocity) * sinf(DegreeToRadian(Dir.y));
+	m_LifeTime = Distance / m_VelocityXZ;
 }
 
 void CProjectileComponent::Shoot(const Vector3& StartPos, const Vector3& Dir,
-		float Speed, float LifeTime, bool Gravity, CGameObject* EndParticleObj)
+		float Speed, float LifeTime, CGameObject* EndParticleObj)
 {
 	m_IsShoot = true;
 	m_StartPos = StartPos;
 	m_Dir = Dir;	
 	m_Speed = Speed;
 	m_LifeTime = LifeTime;
-	m_IsGravity = Gravity;
+	m_IsGravity = false;
 	m_EndParticleObject = EndParticleObj;
 	m_Dir.Normalize();
 }
 
 bool CProjectileComponent::CheckDestroy()
 {
-	// 중력의 영향을 받는 경우 목표 지점보다 높이가 낮아질 경우 Destroy
-	if (m_IsGravity)
+	// LifeTime으로 삭제를 관리하는 경우 ( 중력이 적용된 경우에도 LifeTime으로 관리)
+	if (m_LifeTime != 0.f)
 	{
-		float CurY = m_Root->GetWorldPos().y;
-
-		if (CurY < m_TargetPos.y)
+		if (m_LifeTimer >= m_LifeTime)
 		{
 			OnEnd();
 			return true;
 		}
 	}
-	// 중력의 영향을 받지 않는 경우 
+	// TargetPosition이 정해진 경우 TargetPosition보다 멀리 온 경우 파괴
 	else
 	{
-		// LifeTime으로 삭제를 관리하는 경우
-		if (m_LifeTime != 0.f)
-		{
-			if (m_LifeTimer >= m_LifeTime)
-			{
-				OnEnd();
-				return true;
-			}
-		}
-		// TargetPosition이 정해진 경우 TargetPosition보다 멀리 온 경우 파괴
-		else
-		{
-			Vector3 MyPos = m_Root->GetWorldPos();
-			Vector3 ToTarget = MyPos - m_TargetPos;
+		Vector3 MyPos = m_Root->GetWorldPos();
+		Vector3 ToTarget = MyPos - m_TargetPos;
 
-			float Dot = ToTarget.Dot(m_Dir);
+		float Dot = ToTarget.Dot(m_Dir);
 
-			if (Dot < 0)
-			{
-				OnEnd();
-				return true;
-			}
+		if (Dot < 0)
+		{
+			OnEnd();
+			return true;
 		}
 	}
 
