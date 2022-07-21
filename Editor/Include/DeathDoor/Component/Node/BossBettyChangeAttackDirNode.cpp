@@ -8,6 +8,7 @@
 
 CBossBettyChangeAttackDirNode::CBossBettyChangeAttackDirNode()
 {
+	SetTypeID(typeid(CBossBettyChangeAttackDirNode).hash_code());
 }
 
 CBossBettyChangeAttackDirNode::CBossBettyChangeAttackDirNode(const CBossBettyChangeAttackDirNode& Node)

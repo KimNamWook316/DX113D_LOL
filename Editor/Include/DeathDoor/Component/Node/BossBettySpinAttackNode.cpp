@@ -10,6 +10,7 @@
 
 CBossBettySpinAttackNode::CBossBettySpinAttackNode()
 {
+	SetTypeID(typeid(CBossBettySpinAttackNode).hash_code());
 }
 
 CBossBettySpinAttackNode::CBossBettySpinAttackNode(const CBossBettySpinAttackNode& Node)

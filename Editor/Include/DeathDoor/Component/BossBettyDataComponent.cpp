@@ -13,9 +13,12 @@ CBossBettyDataComponent::CBossBettyDataComponent() :
 	m_FarAttackType(BossBettyFarAttackType::Spin),
     m_ChangeDirLimitAngle(30.f)
 {
+    m_ComponentType = Component_Type::ObjectComponent;
+    SetTypeID<CBossBettyDataComponent>();
 }
 
-CBossBettyDataComponent::CBossBettyDataComponent(const CBossBettyDataComponent& com)
+CBossBettyDataComponent::CBossBettyDataComponent(const CBossBettyDataComponent& com) :
+    CMonsterDataComponent(com)
 {
 }
 
@@ -28,10 +31,14 @@ void CBossBettyDataComponent::Start()
     // m_BossBettySpinCollider 를 Object 의 Component List 에 추가한다.
     // - 그리고 Spin 중간에, Collide 시 Spin Collider Animation 으로 바꾸는 Callback도 세팅한다.
     // - 처음에는 비활성화 시킨다.
-    m_BossBettySpinCollider = m_Object->CreateComponent<CColliderBox3D>("BossBettySpinCollide");
-    m_BossBettySpinCollider->Enable(false);
-    m_BossBettySpinCollider->AddCollisionCallback(Collision_State::Begin, 
-        this, &CBossBettyDataComponent::OnChangeFromSpinToSpinCollideWhenCollide);
+    m_BossBettySpinCollider = (CColliderBox3D*)(m_Object->FindComponent("BossBettySpinCollide"));
+
+    if (m_BossBettySpinCollider)
+    {
+        m_BossBettySpinCollider->Enable(false);
+        m_BossBettySpinCollider->AddCollisionCallback(Collision_State::Begin,
+            this, &CBossBettyDataComponent::OnChangeFromSpinToSpinCollideWhenCollide);
+    }
 
     // 근거리 사정 거리 판별 Square Pos 위치 만들기 
     //  0: 왼쪽 하단, 1 : 왼쪽 상단, 2 : 오른쪽 상단, 3 : 오른쪽 하단
@@ -86,7 +93,7 @@ void CBossBettyDataComponent::OnBossBettyGenerateLeftCloseAttackEffect()
     // m_RelativePunchLeftPos
 }
 
-void CBossBettyDataComponent::OnBossBettyRoarEffect()
+void CBossBettyDataComponent::OnBossBettyRoarEffect(float DeltaTime)
 {
 	// 1. 앞으로, 원형 형태로 뻗어나가는 형태의 Particle 만들어내기 
 }

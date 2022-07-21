@@ -18,6 +18,7 @@
 #include "../DeathDoor/Component/GameStateComponent.h"
 #include "../DeathDoor/Component/EyeLaserComponent.h"
 #include "../DeathDoor/Component/MonsterDataComponent.h"
+#include "../DeathDoor/Component/BossBettyDataComponent.h"
 #include "../DeathDoor/Component/KnightDataComponent.h"
 #include "../DeathDoor/Component/LurkerDataComponent.h"
 #include "../DeathDoor/Component/MonsterNavAgent.h"
@@ -154,10 +155,18 @@ void CObjectComponentCreateModal::OnCreateComponent()
 		{
 			Com = SelectObject->CreateComponent<CKnightDataComponent>(Name);
 		}
+		else if (Typeid == typeid(CBossBettyDataComponent).hash_code())
+		{
+			Com = SelectObject->CreateComponent<CBossBettyDataComponent>(Name);
+		}
 		else if (Typeid == typeid(CLurkerDataComponent).hash_code())
+		{
 			Com = SelectObject->CreateComponent<CLurkerDataComponent>(Name);
+		}
 		else if (Typeid == typeid(CMonsterNavAgent).hash_code())
+		{
 			Com = SelectObject->CreateComponent<CMonsterNavAgent>(Name);
+		}
 	}
 
 	CObjectComponentWindow* ComponentWindow = (CObjectComponentWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(OBJECTCOMPONENT_LIST);

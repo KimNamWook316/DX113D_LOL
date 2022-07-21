@@ -77,7 +77,7 @@ public :
     // 땅 내리칠 때 왼쪽에 Attack 효과를 내기 
     void OnBossBettyGenerateLeftCloseAttackEffect();
     // 울부짖기 효과
-    void OnBossBettyRoarEffect();
+    void OnBossBettyRoarEffect(float DeltaTime);
     // 눈덩이 투사체 충돌시 발생시킬 Callback 함수
     void OnExplodeBettyThrowBallCallback();
     // Spin 중간에 벽에 부딪히면, Spin Collide Animation 으로 바꿔주는 함수 

@@ -478,10 +478,12 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
         case DDActionNode::HitBack:
         {
             NewTreeNode = m_StateComponent->CreateTreeNode<CHitBackNode>(Name);
+            break;
         }
         case DDActionNode::PlayerRoll:
         {
             NewTreeNode = m_StateComponent->CreateTreeNode<CPlayerRoll>(Name);
+            break;
         }
         case DDActionNode::BossKnightContinueAttack:
         {

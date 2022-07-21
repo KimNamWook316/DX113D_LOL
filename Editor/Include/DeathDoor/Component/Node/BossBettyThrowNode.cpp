@@ -8,6 +8,7 @@
 
 CBossBettyThrowNode::CBossBettyThrowNode()
 {
+	SetTypeID(typeid(CBossBettyThrowNode).hash_code());
 }
 
 CBossBettyThrowNode::CBossBettyThrowNode(const CBossBettyThrowNode& Node)

@@ -32,6 +32,7 @@
 #include "DeathDoor\Component/PlayerHookComponent.h"
 #include "DeathDoor\Component/MonsterPathFindCollider.h"
 #include "DeathDoor\Component/KnightDataComponent.h"
+#include "DeathDoor\Component/BossBettyDataComponent.h"
 #include "DeathDoor\Component/LurkerDataComponent.h"
 #include "DeathDoor\Component/MonsterNavAgent.h"
 // Window
@@ -433,6 +434,12 @@ CComponent* CEditorManager::CreateComponent(CGameObject* Obj, size_t Type)
 	else if (Type == typeid(CKnightDataComponent).hash_code())
 	{
 		CKnightDataComponent* Component = Obj->LoadObjectComponent<CKnightDataComponent>();
+		return Component;
+	}
+
+	else if (Type == typeid(CBossBettyDataComponent).hash_code())
+		{
+		CBossBettyDataComponent* Component = Obj->LoadObjectComponent<CBossBettyDataComponent>();
 		return Component;
 	}
 

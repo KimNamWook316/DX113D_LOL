@@ -6,6 +6,7 @@
 
 CBossBettyChangeDirCheck::CBossBettyChangeDirCheck()
 {
+	SetTypeID(typeid(CBossBettyChangeDirCheck).hash_code());
 }
 
 CBossBettyChangeDirCheck::CBossBettyChangeDirCheck(const CBossBettyChangeDirCheck& Node)
