@@ -322,6 +322,21 @@ public:
 	{
 		return m_CBuffer->GetNoiseTextureApplyRatio();
 	}
+	// Linear Emissive 
+	int IsLinearEmissiveChangeEnable() const
+	{
+		return m_CBuffer->IsLinearEmissiveChangeEnable();
+	}
+
+	const Vector3& GetStartEmissiveColor() const
+	{
+		return m_CBuffer->GetStartEmissiveColor();
+	}
+
+	const Vector3& GetEndEmissiveColor() const
+	{
+		return  m_CBuffer->GetEndEmissiveColor();
+	}
 public:
 	// Noise Texture
 	void SetApplyNoiseTextureSamplingEnable(bool Enable)
@@ -351,6 +366,23 @@ public:
 	void SetRotToDir(bool Enable)
 	{
 		m_CBuffer->SetRotToDir(Enable);
+	}
+
+	void SetLinearEmissiveChangeEnable(bool Enable)
+	{
+		m_CBuffer->SetLinearEmissiveChangeEnable(Enable);
+	}
+
+	// Linear Emissive
+	void SetStartEmissiveColor(const Vector3& Color)
+	{
+		m_CBuffer->SetStartEmissiveColor(Color);
+	}
+
+	// End Emissive Color
+	void SetEndEmissiveColor(const Vector3& Color)
+	{
+		m_CBuffer->SetEndEmissiveColor(Color);
 	}
 
 	// Alpha Linear

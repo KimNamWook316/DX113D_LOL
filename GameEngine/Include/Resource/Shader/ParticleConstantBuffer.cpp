@@ -61,6 +61,9 @@ CParticleConstantBuffer::CParticleConstantBuffer() :
 
 	// Noise Texture Apply Ratio -> 처음부터 적용 X
 	m_BufferData.NoiseTextureApplyRatio = 0.f;
+
+	// Linear Emissive Change 는 처음에는 반영하지 않는다
+	m_BufferData.ApplyLinearEmissiveChange = 0.f;
 }
 
 CParticleConstantBuffer::CParticleConstantBuffer(const CParticleConstantBuffer& Buffer) :

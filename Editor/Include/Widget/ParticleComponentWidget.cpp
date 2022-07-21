@@ -71,76 +71,30 @@ bool CParticleComponentWidget::Init()
     m_LoadParticleButton = m_RootTree->AddWidget<CIMGUIButton>("Load Particle", 150.f, 20.f);
     m_LoadParticleButton->SetClickCallback<CParticleComponentWidget>(this, &CParticleComponentWidget::OnLoadParticleClass);
 
+    m_SaveParticleButton = m_RootTree->AddWidget<CIMGUIButton>("Save Particle", 150.f, 20.f);
+    m_SaveParticleButton->SetClickCallback<CParticleComponentWidget>(this, &CParticleComponentWidget::OnSaveParticleClass);
+
     // OnResetParticleInfo
     m_ResetParticleButton = m_RootTree->AddWidget<CIMGUIButton>("Reset Particle", 150.f, 20.f);
     m_ResetParticleButton->SetClickCallback<CParticleComponentWidget>(this, &CParticleComponentWidget::OnResetParticleInfo);
    
-    // Camera 세팅
-    // OnSetCameraSetting();
+    // Color Setting
+    m_BaseColorEdit = m_RootTree->AddWidget<CIMGUIColor3>("BaseColor", 200.f);
+    m_BaseColorEdit->SetCallBack(this, &CParticleComponentWidget::OnEditBaseColor);
 
-    /*
-    // Particle Texture
-    m_ParticleTexture = m_RootTree->AddWidget<CIMGUIImage>("Render Target", 200.f, 200.f);
-    m_ParticleTexture->SetBorderColor(10, 10, 255);
+    m_EmissiveColorEdit = m_RootTree->AddWidget<CIMGUIColor3>("EmissiveColor", 200.f);
+    m_EmissiveColorEdit->SetCallBack(this, &CParticleComponentWidget::OnEditEmissiveColor);
 
-    m_SpawnTimeMaxEdit = m_RootTree->AddWidget<CIMGUIInputFloat>("Spawn Time", 200.f);
-    m_SpawnTimeMaxEdit->SetCallBack(this, &CParticleComponentWidget::OnSpawnTimeMaxEdit);
+    // Emissive Linear Change
+    m_ApplyLinearEmissiveChangeEdit = m_RootTree->AddWidget<CIMGUICheckBox>("Emissive Linear", 100.f);
+    m_ApplyLinearEmissiveChangeEdit->AddCheckInfo("Emissive Linear");
+    m_ApplyLinearEmissiveChangeEdit->SetCallBackLabel<CParticleComponentWidget>(this, &CParticleComponentWidget::OnEditEmissiveLinearCheck);
 
-    m_StartMinEdit = m_RootTree->AddWidget<CIMGUIInputFloat3>("StartMin", 200.f);
-    m_StartMinEdit->SetCallBack(this, &CParticleComponentWidget::OnStartMinEdit);
+    m_StartEmissiveColorEdit = m_RootTree->AddWidget<CIMGUIColor3>("StartEmissive", 200.f);
+    m_StartEmissiveColorEdit->SetCallBack(this, &CParticleComponentWidget::OnEditStartEmissiveColor);
 
-    m_StartMaxEdit = m_RootTree->AddWidget<CIMGUIInputFloat3>("StartMax", 200.f);
-    m_StartMaxEdit->SetCallBack(this, &CParticleComponentWidget::OnStartMaxEdit);
-
-    m_SpawnCountMaxEdit = m_RootTree->AddWidget<CIMGUIInputInt>("Spawn Max", 200.f);
-    m_SpawnCountMaxEdit->SetCallBack(this, &CParticleComponentWidget::OnSpawnCountMaxEdit);
-
-    m_ScaleMinEdit = m_RootTree->AddWidget<CIMGUIInputFloat3>("ScaleMin", 200.f);
-    m_ScaleMinEdit->SetCallBack(this, &CParticleComponentWidget::OnScaleMinEdit);
-
-    m_ScaleMaxEdit = m_RootTree->AddWidget<CIMGUIInputFloat3>("ScaleMax", 200.f);
-    m_ScaleMaxEdit->SetCallBack(this, &CParticleComponentWidget::OnScaleMaxEdit);
-
-    m_LifeTimeMinEdit = m_RootTree->AddWidget<CIMGUIInputFloat>("Life T Min", 200.f);
-    m_LifeTimeMinEdit->SetCallBack(this, &CParticleComponentWidget::OnLifeTimeMinEdit);
-
-    m_LifeTimeMaxEdit = m_RootTree->AddWidget<CIMGUIInputFloat>("Life T Max", 200.f);
-    m_LifeTimeMaxEdit->SetCallBack(this, &CParticleComponentWidget::OnLifeTimeMaxEdit);
-
-    m_SpeedMinEdit = m_RootTree->AddWidget<CIMGUIInputFloat>("Speed Min", 200.f);
-    m_SpeedMinEdit->SetCallBack(this, &CParticleComponentWidget::OnSpeedMinEdit);
-
-    m_SpeedMaxEdit = m_RootTree->AddWidget<CIMGUIInputFloat>("Speed Max", 200.f);
-    m_SpeedMaxEdit->SetCallBack(this, &CParticleComponentWidget::OnSpeedMaxEdit);
-
-    m_ColorMinEdit = m_RootTree->AddWidget<CIMGUIColor4>("Color Min", 200.f);
-    m_ColorMinEdit->SetCallBack(this, &CParticleComponentWidget::OnColorMinEdit);
-
-    m_ColorMaxEdit = m_RootTree->AddWidget<CIMGUIColor4>("Color Max", 200.f);
-    m_ColorMaxEdit->SetCallBack(this, &CParticleComponentWidget::OnColorMaxEdit);
-
-    m_IsMoveEdit = m_RootTree->AddWidget<CIMGUICheckBox>("Move", 100.f);
-    m_IsMoveEdit->AddCheckInfo("Move");
-    m_IsMoveEdit->SetCallBackLabel<CParticleComponentWidget>(this, &CParticleComponentWidget::OnIsMoveEdit);
-
-    m_IsGravityEdit = m_RootTree->AddWidget<CIMGUICheckBox>("Gravity", 100.f);
-    m_IsGravityEdit->AddCheckInfo("Gravity");
-    m_IsGravityEdit->SetCallBackLabel<CParticleComponentWidget>(this, &CParticleComponentWidget::OnIsGravityEdit);
-
-    m_IsRandomMoveEdit = m_RootTree->AddWidget<CIMGUICheckBox>("Random", 100.f);
-    m_IsRandomMoveEdit->AddCheckInfo("Random");
-    m_IsRandomMoveEdit->SetCallBackLabel<CParticleComponentWidget>(this, &CParticleComponentWidget::OnIsRandomMoveEdit);
-
-    m_MoveDirEdit = m_RootTree->AddWidget<CIMGUIInputFloat3>("Move Dir", 200.f);
-    m_MoveDirEdit->SetCallBack<CParticleComponentWidget>(this, &CParticleComponentWidget::OnMoveDirEdit);
-
-    m_MoveAngleEdit = m_RootTree->AddWidget<CIMGUIInputFloat3>("Move Angle", 200.f);
-    m_MoveAngleEdit->SetCallBack<CParticleComponentWidget>(this, &CParticleComponentWidget::OnMoveAngleEdit);
-
-    m_SetMaterialTextureButton = m_RootTree->AddWidget<CIMGUIButton>("Set Texture", 100.f, 30.f);
-    m_SetMaterialTextureButton->SetClickCallback<CParticleComponentWidget>(this, &CParticleComponentWidget::OnSetParticleTexture);
-
-   */
+    m_EndEmissiveColorEdit = m_RootTree->AddWidget<CIMGUIColor3>("EndEmissive", 200.f);
+    m_EndEmissiveColorEdit->SetCallBack(this, &CParticleComponentWidget::OnEditEndEmissiveColor);
 
 	return true;
 }
@@ -158,18 +112,53 @@ void CParticleComponentWidget::SetSceneComponent(CSceneComponent* Com)
     // Material , Particle 세팅
     // OnSetParticleMaterialSetting(m_Component);
 
-    CParticle* ParticleClass = dynamic_cast<CParticleComponent*>(m_Component)->GetParticle();
+    CParticle* ParticleClass = dynamic_cast<CParticleComponent*>(MeshCom)->GetParticle();
+
     if (ParticleClass)
         ParticleLoadSuccessCallback(ParticleClass);
 }
 
-void CParticleComponentWidget::OnSaveParticleObjectButton()
+void CParticleComponentWidget::OnEditBaseColor(const Vector3& Color)
 {
+    if (!m_ParticleClass || !m_ParticleClass->GetMaterial())
+        return;
+
+    m_ParticleClass->GetMaterial()->SetBaseColor(Color.x, Color.y, Color.z, 1.f);
+    dynamic_cast<CParticleComponent*>(m_Component)->GetMaterial()->SetBaseColor(Color.x, Color.y, Color.z, 1.f);
 }
-   
-void CParticleComponentWidget::OnLoadParticleObjectButton()
+void CParticleComponentWidget::OnEditEmissiveColor(const Vector3& Color)
 {
+    if (!m_ParticleClass || !m_ParticleClass->GetMaterial())
+        return;
+
+    m_ParticleClass->GetMaterial()->SetEmissiveColor(Color.x, Color.y, Color.z, 1.f);
+    dynamic_cast<CParticleComponent*>(m_Component)->GetMaterial()->SetEmissiveColor(Color.x, Color.y, Color.z, 1.f);
 }
+void CParticleComponentWidget::OnEditStartEmissiveColor(const Vector3& Color)
+{
+    if (!m_ParticleClass)
+        return;
+
+    m_ParticleClass->SetStartEmissiveColor(Color);
+    dynamic_cast<CParticleComponent*>(m_Component)->GetCBuffer()->SetStartEmissiveColor(Color);
+}
+void CParticleComponentWidget::OnEditEndEmissiveColor(const Vector3& Color)
+{
+    if (!m_ParticleClass)
+        return;
+
+    m_ParticleClass->SetEndEmissiveColor(Color);
+    dynamic_cast<CParticleComponent*>(m_Component)->GetCBuffer()->SetEndEmissiveColor(Color);
+}
+void CParticleComponentWidget::OnEditEmissiveLinearCheck(const char*, bool Enable)
+{
+    if (!m_ParticleClass)
+        return;
+
+    m_ParticleClass->SetLinearEmissiveChangeEnable(Enable);
+    dynamic_cast<CParticleComponent*>(m_Component)->GetCBuffer()->SetLinearEmissiveChangeEnable(Enable);
+}
+
 void CParticleComponentWidget::OnLoadParticleClass()
 {
     // Bin//ParticleClass 폴더로부터 Load 되게 세팅하기
@@ -231,6 +220,53 @@ void CParticleComponentWidget::OnLoadParticleClass()
         ParticleLoadSuccessCallback(LoadedParticle);
     }
 
+}
+void CParticleComponentWidget::OnSaveParticleClass()
+{
+    if (!m_ParticleClass)
+        return;
+
+    // Bin//ParticleClass 폴더로부터 Load 되게 세팅하기
+    const PathInfo* ParticleClassPathInfo = CPathManager::GetInst()->FindPath(PARTICLE_PATH);
+    CEngineUtil::CheckAndMakeDirectory(ParticleClassPathInfo);
+
+    TCHAR FileFullPath[MAX_PATH] = {};
+
+    OPENFILENAME OpenFile = {};
+    OpenFile.lStructSize = sizeof(OPENFILENAME);
+    OpenFile.hwndOwner = CEngine::GetInst()->GetWindowHandle();
+    OpenFile.lpstrFilter = TEXT("All Files\0*.*\0.Particle File\0*.prtc");
+    OpenFile.lpstrFile = FileFullPath;
+    OpenFile.nMaxFile = MAX_PATH;
+    OpenFile.lpstrInitialDir = ParticleClassPathInfo->Path;
+
+    if (GetSaveFileName(&OpenFile) != 0)
+    {
+        // 경로 추출
+        const char* FilePathMultibyte = CEditorUtil::ChangeTCHARTextToMultibyte(FileFullPath);
+        char FilePathMultibyteCopy[MAX_PATH] = {};
+        strcpy_s(FilePathMultibyteCopy, FilePathMultibyte);
+
+        // .prtc 확장자 확인하기 
+        char FileFullPathMultibyte[MAX_PATH];
+        char FileExt[MAX_PATH];
+
+        _splitpath_s(FilePathMultibyteCopy, nullptr, 0, nullptr, 0, nullptr, 0, FileExt, _MAX_EXT);
+
+        _strupr_s(FileExt);
+
+        // 확장자 .anim 이 아니라면 return;
+        if (strcmp(FileExt, ".PRTC") != 0)
+        {
+            MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("EXT Has To Be .prtc"), NULL, MB_OK);
+            return;
+        }
+
+        // 해당 Particle File 저장하기 
+        m_ParticleClass->SaveFile(FilePathMultibyteCopy);
+
+        MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("저장 성공"), TEXT("저장 성공"), NULL);
+    }
 }
 void CParticleComponentWidget::OnDropParticleToParticleWidget(const std::string& InputName)
 {
@@ -334,6 +370,8 @@ void CParticleComponentWidget::ParticleLoadSuccessCallback(CParticle* LoadedPart
     // Particle Manager 의 Map 에 추가하기
     CResourceManager::GetInst()->GetParticleManager()->AddParticle(m_ParticleClass);
 
+    ReflectParticleToIMGUI();
+
     // Resource Display Window 세팅하기
     CEditorManager::GetInst()->GetResourceDisplayWindow()->RefreshLoadedTextureResources();
     CEditorManager::GetInst()->GetResourceDisplayWindow()->RefreshLoadedMaterialResources();
@@ -363,263 +401,24 @@ void CParticleComponentWidget::SetParticleClassToParticleComponent(CParticle* Pa
 }
 void CParticleComponentWidget::ReflectParticleToIMGUI()
 {
-    if (!m_Component || m_ParticleClass)
+    if (!m_Component || !m_ParticleClass || !m_ParticleClass->GetMaterial())
         return;
 
-}
-/*
-void CParticleComponentWidget::OnSpawnTimeMaxEdit(float Num)
-{
-    dynamic_cast<CParticleComponent*>(m_Component)->SetSpawnTime(Num);
-}
+    CMaterial* ParticleMaterial = m_ParticleClass->GetMaterial();
 
-void CParticleComponentWidget::OnStartMinEdit(const Vector3& Pos)
-{
-   dynamic_cast<CParticleComponent*>(m_Component)->GetParticle()->SetStartMin(Pos);
-}
+    const Vector4& BaseColor = ParticleMaterial->GetBaseColor();
+    m_BaseColorEdit->SetRGB(BaseColor.x, BaseColor.y, BaseColor.z);
 
-void CParticleComponentWidget::OnStartMaxEdit(const Vector3& Pos)
-{
-    dynamic_cast<CParticleComponent*>(m_Component)->GetParticle()->SetStartMax(Pos);
-}
+    const Vector4& EmissiveColor = ParticleMaterial->GetEmissiveColor();
+    m_EmissiveColorEdit->SetRGB(EmissiveColor.x, EmissiveColor.y, EmissiveColor.z);
 
-void CParticleComponentWidget::OnSpawnCountMaxEdit(int Num)
-{
-    dynamic_cast<CParticleComponent*>(m_Component)->GetCBuffer()->SetSpawnCountMax(Num);
-}
+    const Vector3& StEmissiveColor = m_ParticleClass->GetStartEmissiveColor();
+    m_StartEmissiveColorEdit->SetRGB(StEmissiveColor.x, StEmissiveColor.y, StEmissiveColor.z);
 
-void CParticleComponentWidget::OnScaleMinEdit(const Vector3& Scale)
-{
-    dynamic_cast<CParticleComponent*>(m_Component)->GetCBuffer()->SetScaleMin(Scale);
-}
+    const Vector3& EdEmissiveColor = m_ParticleClass->GetEndEmissiveColor();
+    m_EndEmissiveColorEdit->SetRGB(EdEmissiveColor.x, EdEmissiveColor.y, EdEmissiveColor.z);
 
-void CParticleComponentWidget::OnScaleMaxEdit(const Vector3& Scale)
-{
-    dynamic_cast<CParticleComponent*>(m_Component)->GetCBuffer()->SetScaleMax(Scale);
-}
-
-void CParticleComponentWidget::OnLifeTimeMinEdit(float Num)
-{
-    dynamic_cast<CParticleComponent*>(m_Component)->GetCBuffer()->SetLifeTimeMin(Num);
-}
-
-void CParticleComponentWidget::OnLifeTimeMaxEdit(float Num)
-{
-    dynamic_cast<CParticleComponent*>(m_Component)->GetCBuffer()->SetLifeTimeMax(Num);
-}
-
-void CParticleComponentWidget::OnSpeedMinEdit(float Num)
-{
-    dynamic_cast<CParticleComponent*>(m_Component)->GetCBuffer()->SetSpeedMin(Num);
-}
-
-void CParticleComponentWidget::OnSpeedMaxEdit(float Num)
-{
-    dynamic_cast<CParticleComponent*>(m_Component)->GetCBuffer()->SetSpeedMax(Num);
-}
-
-void CParticleComponentWidget::OnColorMinEdit(const Vector4& Color)
-{
-    dynamic_cast<CParticleComponent*>(m_Component)->GetCBuffer()->SetColorMin(Color);
-}
-
-void CParticleComponentWidget::OnColorMaxEdit(const Vector4& Color)
-{
-    dynamic_cast<CParticleComponent*>(m_Component)->GetCBuffer()->SetColorMax(Color);
-}
-
-
-void CParticleComponentWidget::OnIsMoveEdit(const char*, bool Enable)
-{
-    dynamic_cast<CParticleComponent*>(m_Component)->GetCBuffer()->SetMove(Enable);
-}
-
-void CParticleComponentWidget::OnIsGravityEdit(const char*, bool Enable)
-{
-    dynamic_cast<CParticleComponent*>(m_Component)->GetCBuffer()->SetGravity(Enable);
-}
-
-void CParticleComponentWidget::OnIsRandomMoveEdit(const char*, bool Enable)
-{
-    // dynamic_cast<CParticleComponent*>(m_Component)->GetCBuffer()->SetApplyRandom(Enable);
-}
-
-void CParticleComponentWidget::OnMoveDirEdit(const Vector3& Dir)
-{
-    dynamic_cast<CParticleComponent*>(m_Component)->GetCBuffer()->SetMoveDir(Dir);
-}
-
-void CParticleComponentWidget::OnMoveAngleEdit(const Vector3& Angle)
-{
-    dynamic_cast<CParticleComponent*>(m_Component)->GetCBuffer()->SetMoveAngle(Angle);
-}
-
-
-void CParticleComponentWidget::OnSetParticleTexture()
-{
-    TCHAR FilePath[MAX_PATH] = {};
-
-    OPENFILENAME OpenFile = {};
-
-    OpenFile.lStructSize = sizeof(OPENFILENAME);
-    OpenFile.hwndOwner = CEngine::GetInst()->GetWindowHandle(); // handle to window that owns the dialog box
-    OpenFile.lpstrFilter =
-        TEXT("모든파일\0*.*\0DDSFile\0*.dds\0TGAFile\0*.tga\0PNGFile\0*.png\0JPGFile\0*.jpg\0JPEGFile\0*.jpeg\0BMPFile\0*.bmp");
-    OpenFile.lpstrFile = FilePath;
-    // buffer ! filename used to initialize the file name edit control -> 정상적으로 save,open할시 여기에 filePath 정보가 들어온다.
-    OpenFile.nMaxFile = MAX_PATH; // size of buffer, pointed to by lpstrFile
-    OpenFile.lpstrInitialDir = CPathManager::GetInst()->FindPath(TEXTURE_PATH)->Path; // Initial Directory
-
-    if (GetOpenFileName(&OpenFile) != 0) // NonZero --> specifies file name, clicks ok button
-    {
-        int   TextureIndex = 0;
-        TCHAR OriginFileName[MAX_PATH] = {};
-        TCHAR FileName[MAX_PATH] = {};
-        TCHAR Ext[_MAX_EXT] = {};
-        _wsplitpath_s(FilePath, nullptr, 0, nullptr, 0, FileName, MAX_PATH, Ext, _MAX_EXT);
-
-        lstrcpy(OriginFileName, FileName);
-
-        lstrcat(FileName, Ext);
-
-        // Texture 저장용
-        char ConvertFileName[MAX_PATH] = {};
-        int  Length = WideCharToMultiByte(CP_ACP, 0, OriginFileName, -1, nullptr, 0, nullptr, nullptr);
-        WideCharToMultiByte(CP_ACP, 0, OriginFileName, -1, ConvertFileName, Length, nullptr, nullptr);
-
-        CMaterial* Material = CSceneManager::GetInst()->GetScene()->GetResource()->FindMaterial("BasicParticleMaterial");
-
-        if (!Material)
-            return;
-
-        // m_ParticleTexture->SetTextureFullPath(ConvertFileName, FilePath);
-        m_ParticleTexture->SetTexture(ConvertFileName, FileName, PARTICLE_PATH);
-
-        // 실제 Particle 이 사용하는 Material 의 Texture 교체
-        Material->SetTexture(0, 0, (int)Buffer_Shader_Type::Pixel, ConvertFileName, FileName, PARTICLE_PATH);
-
-        // 바뀐 Particle 정보를 Clone 해서 다시 세팅한다.
-        dynamic_cast<CParticleComponent*>(m_Component)->SetParticle("BasicParticle");
-
-        // 기존 세팅 정보를 그대로 반영한다.
-        OnReflectCurrentParticleSetting();
-    }
-}
-*/
-
-/*
-void CParticleComponentWidget::OnSetParticleMaterialSetting(CSceneComponent* Com)
-{
-    // 기본 Particle Setting, 현재 Component 에 Particle Setting 하기
-    // 1) Particle Material 세팅
-    CSceneManager::GetInst()->GetScene()->GetResource()->CreateMaterial<CMaterial>("BasicParticleMaterial");
-    CMaterial* Material = CSceneManager::GetInst()->GetScene()->GetResource()->FindMaterial("BasicParticleMaterial");
-    Material->AddTexture(0, (int)Buffer_Shader_Type::Pixel, "Bubble", TEXT("Particle/Bubbles99px.png"));
-    Material->SetShader("ParticleRenderShader");
-    Material->SetRenderState("AlphaBlend");
-    Material->AddTexture(0, (int)Buffer_Shader_Type::Pixel, "Bubble", TEXT("Particle/Bubbles99px.png"));
-
-    // 2) Particle 제작
-    CSceneManager::GetInst()->GetScene()->GetResource()->CreateParticle("BasicParticle");
-    CParticle* Particle = CSceneManager::GetInst()->GetScene()->GetResource()->FindParticle("BasicParticle");
-    Material = CSceneManager::GetInst()->GetScene()->GetResource()->FindMaterial("BasicParticleMaterial");
-    Particle->SetMaterial(Material);
-
-    // 반드시 3D 로 세팅한다.
-    Particle->Set2D(false);
-
-    Particle->SetSpawnCountMax(1000);
-    m_SpawnCountMaxEdit->SetVal(Particle->GetSpawnCountMax());
-
-    Particle->SetLifeTimeMin(70.f);
-    m_LifeTimeMinEdit->SetVal(Particle->GetLifeTimeMin());
-
-    Particle->SetLifeTimeMax(80.f);
-    m_LifeTimeMaxEdit->SetVal(Particle->GetLifeTimeMax());
-
-    Particle->SetScaleMin(Vector3(20.f, 20.f, 1.f));
-    m_ScaleMinEdit->SetVal(Particle->GetScaleMin());
-
-    Particle->SetScaleMax(Vector3(50.f, 50.f, 1.f));
-    m_ScaleMaxEdit->SetVal(Particle->GetScaleMax());
-
-    Particle->SetSpeedMin(10.f);
-    m_SpeedMinEdit->SetVal(Particle->GetSpeedMin());
-
-    Particle->SetSpeedMax(30.f);
-    m_SpeedMaxEdit->SetVal(Particle->GetSpeedMax());
-
-    Particle->SetMoveDir(Vector3(0.f, 1.f, 1.f)); // Z 축 방향으로도 이동할 수 있게 세팅한다.
-    m_MoveDirEdit->SetVal(Particle->GetMoveDir());
-    
-    Particle->SetStartMin(Vector3(-30.f, -30.f, 0.f));
-    m_StartMinEdit->SetVal(Particle->GetStartMin());
-
-    Particle->SetStartMax(Vector3(30.f, 30.f, 0.f));
-    m_StartMaxEdit->SetVal(Particle->GetStartMax());
-
-    Particle->SetColorMin(Vector4(0.2f, 0.1f, 0.8f, 1.f));
-    m_ColorMinEdit->SetRGBA(Particle->GetColorMin());
-
-    Particle->SetColorMax(Vector4(0.2f, 0.1f, 0.8f, 1.f));
-    m_ColorMaxEdit->SetRGBA(Particle->GetColorMax());
-
-    Particle->SetMoveAngle(Vector3(0.f, 0.f, 30.f));
-    m_MoveAngleEdit->SetVal(Particle->GetMoveAngle());
-
-    Particle->SetGravity(true);
-    Particle->SetMove(true);
-
-    // 해당 정보들 UI 에 세팅하기
-
-    // Particle 세팅
-    dynamic_cast<CParticleComponent*>(Com)->SetParticle("BasicParticle");
-    dynamic_cast<CParticleComponent*>(Com)->SetBillBoardEffect(true);
-    dynamic_cast<CParticleComponent*>(Com)->SetSpawnTime(0.05f);
-    m_SpawnTimeMaxEdit->SetVal(0.05f);
-
-    // 기본 Z Pos 세팅
-    Com->SetWorldPos(Com->GetWorldPos().x, Com->GetWorldPos().y, 10.f);
+    bool IsLinearEmissiveEnable = m_ParticleClass->IsLinearEmissiveChangeEnable();
+    m_ApplyLinearEmissiveChangeEdit->SetCheck(0, IsLinearEmissiveEnable);
 
 }
-*/
-
-/*
-void CParticleComponentWidget::OnReflectCurrentParticleSetting()
-{
-    dynamic_cast<CParticleComponent*>(m_Component)->GetParticle()->Set2D(false);
-
-    dynamic_cast<CParticleComponent*>(m_Component)->GetParticle()->SetSpawnCountMax(m_SpawnCountMaxEdit->GetVal());
-
-    dynamic_cast<CParticleComponent*>(m_Component)->GetParticle()->SetLifeTimeMin(m_LifeTimeMinEdit->GetVal());
-
-    dynamic_cast<CParticleComponent*>(m_Component)->GetParticle()->SetLifeTimeMax(m_LifeTimeMaxEdit->GetVal());
-
-    dynamic_cast<CParticleComponent*>(m_Component)->GetParticle()->SetScaleMin(m_ScaleMinEdit->GetValue());
-
-    dynamic_cast<CParticleComponent*>(m_Component)->GetParticle()->SetScaleMax(m_ScaleMaxEdit->GetValue());
-
-    dynamic_cast<CParticleComponent*>(m_Component)->GetParticle()->SetSpeedMin(m_SpeedMinEdit->GetVal());
-
-    dynamic_cast<CParticleComponent*>(m_Component)->GetParticle()->SetSpeedMax(m_SpeedMaxEdit->GetVal());
-
-    dynamic_cast<CParticleComponent*>(m_Component)->GetParticle()->SetMoveDir(m_MoveDirEdit->GetValue());
-
-    dynamic_cast<CParticleComponent*>(m_Component)->GetParticle()->SetStartMin(m_StartMinEdit->GetValue());
-
-    dynamic_cast<CParticleComponent*>(m_Component)->GetParticle()->SetStartMax(m_StartMaxEdit->GetValue());
-
-    dynamic_cast<CParticleComponent*>(m_Component)->GetParticle()->SetColorMin(m_ColorMinEdit->GetRGBA());
-
-    dynamic_cast<CParticleComponent*>(m_Component)->GetParticle()->SetColorMax(m_ColorMaxEdit->GetRGBA());
-
-    dynamic_cast<CParticleComponent*>(m_Component)->GetParticle()->SetMoveAngle(m_MoveAngleEdit->GetValue());
-
-    dynamic_cast<CParticleComponent*>(m_Component)->GetParticle()->SetGravity(m_IsGravityEdit->GetCheck(0));
-
-    dynamic_cast<CParticleComponent*>(m_Component)->GetParticle()->SetMove(m_IsMoveEdit->GetCheck(0));
-
-    // dynamic_cast<CParticleComponent*>(m_Component)->GetParticle()->SetApplyRandom(m_IsRandomMoveEdit->GetCheck(0));
-}
-*/
-
