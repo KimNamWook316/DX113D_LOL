@@ -53,6 +53,19 @@
 #include "Node/BossKnightJumpAttackRangeCheck.h"
 #include "Node/BossKnightPlayerEnterZoneCheck.h"
 
+// Boss - Betty
+#include "Node/BossBettyAngryAttackNode.h"
+#include "Node/BossBettyChangeAttackDirNode.h"
+#include "Node/BossBettyCloseAttackNode.h"
+#include "Node/BossBettyJumpAttackNode.h"
+#include "Node/BossBettySpinAttackNode.h"
+#include "Node/BossBettyThrowNode.h"
+
+#include "Node/BossBettyChangeDirCheck.h"
+#include "Node/BossBettyFarAttackTypeCheck.h"
+#include "Node/BossBettyHPStateCheck.h"
+#include "Node/BossBettyThrowAttackCheck.h"
+
 #include "GameStateComponent.h"
 
 CGameBehaviorTree::CGameBehaviorTree()
@@ -302,6 +315,49 @@ CNode* CGameBehaviorTree::LoadNode(CNode* Parent, size_t TypeID)
 	{
 		NewNode = MakeNode<CBossKnightPlayerEnterZoneCheck>(Parent, OwnerObject);
 	}
+	// Boss Betty Action
+	else if (TypeID == typeid(CBossBettyAngryAttackNode).hash_code())
+	{
+	NewNode = MakeNode<CBossBettyAngryAttackNode>(Parent, OwnerObject);
+	}
+	else if (TypeID == typeid(CBossBettyChangeAttackDirNode).hash_code())
+	{
+	NewNode = MakeNode<CBossBettyChangeAttackDirNode>(Parent, OwnerObject);
+	}
+	else if (TypeID == typeid(CBossBettyCloseAttackNode).hash_code())
+	{
+	NewNode = MakeNode<CBossBettyCloseAttackNode>(Parent, OwnerObject);
+	}
+	else if (TypeID == typeid(CBossBettyJumpAttackNode).hash_code())
+	{
+	NewNode = MakeNode<CBossBettyJumpAttackNode>(Parent, OwnerObject);
+	}
+	else if (TypeID == typeid(CBossBettySpinAttackNode).hash_code())
+	{
+	NewNode = MakeNode<CBossBettySpinAttackNode>(Parent, OwnerObject);
+	}
+	else if (TypeID == typeid(CBossBettyThrowNode).hash_code())
+	{
+	NewNode = MakeNode<CBossBettyThrowNode>(Parent, OwnerObject);
+	}
+	// Boss Betty Condition
+	else if (TypeID == typeid(CBossBettyChangeDirCheck).hash_code())
+	{
+	NewNode = MakeNode<CBossBettyChangeDirCheck>(Parent, OwnerObject);
+	}
+	else if (TypeID == typeid(CBossBettyFarAttackTypeCheck).hash_code())
+	{
+	NewNode = MakeNode<CBossBettyFarAttackTypeCheck>(Parent, OwnerObject);
+	}
+	else if (TypeID == typeid(CBossBettyHPStateCheck).hash_code())
+	{
+	NewNode = MakeNode<CBossBettyHPStateCheck>(Parent, OwnerObject);
+	}
+	else if (TypeID == typeid(CBossBettyThrowAttackCheck).hash_code())
+	{
+	NewNode = MakeNode<CBossBettyThrowAttackCheck>(Parent, OwnerObject);
+	}
+
 
 	else if (TypeID == typeid(CHitCheckNode).hash_code())
 	{

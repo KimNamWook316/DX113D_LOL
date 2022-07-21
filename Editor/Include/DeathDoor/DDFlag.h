@@ -24,6 +24,13 @@ enum class DDActionNode
 	ClearPathList,
 	HitBack,
 	PlayerRoll,
+	// BossBetty
+	BossBettyAngryAttack,
+	BossBettyChangeAttackDir,
+	BossBettyCloseAttack,
+	BossBettyJumpAttack,
+	BossBettySpinAttack,
+	BossBettyThrowAttack,
 	Max
 };
 
@@ -50,6 +57,11 @@ enum class DDConditionNode
 	PathFindEnableCheck,
 	HitCheckNode,
 	RollInputCheck,
+	// BossBetty
+	BossBettyCheckAttackDir,
+	BossBettyCheckFarAttackType,
+	BossBettyCheckHPState,
+	BossBettyCheckThrowAttack,
 	Max
 };
 
@@ -69,6 +81,7 @@ enum class DDObjectComponentType
 	GameStateComponent,
 	MonsterData,
 	KnightData,
+	BossBettyData,
 	LurkerData,
 	MonsterNavAgent,
 	Max

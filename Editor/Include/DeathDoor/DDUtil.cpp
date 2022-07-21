@@ -3,6 +3,7 @@
 // TODO : DeathDoor Component 추가 시마다 업데이트
 #include "Component\EyeLaserComponent.h"
 #include "Component\KnightDataComponent.h"
+#include "Component\BossBettyDataComponent.h"
 #include "Component\MonsterDataComponent.h"
 #include "Component\MonsterPathFindCollider.h"
 #include "Component\ObjectDataComponent.h"
@@ -61,6 +62,19 @@ std::string CDDUtil::DDConditionNodeTypeToString(DDConditionNode NodeType)
 
 	case DDConditionNode::BossKnightPlayerEnterZoneCheck:
 		return "BossKnightPlayerEnterZoneCheck";
+
+	// Boss Betty
+	case DDConditionNode::BossBettyCheckAttackDir:
+		return "BossBettyCheckAttackDir";
+
+	case DDConditionNode::BossBettyCheckFarAttackType:
+		return "BossBettyCheckFarAttackType";
+
+	case DDConditionNode::BossBettyCheckHPState:
+		return "BossBettyCheckHPState";
+
+	case DDConditionNode::BossBettyCheckThrowAttack:
+		return "BossBettyCheckThrowAttack";
 
 	case DDConditionNode::HPCheck:
 		return "HPCheck";
@@ -145,6 +159,23 @@ DDConditionNode CDDUtil::StringToDDConditionNodeType(const std::string& Str)
 	else if (Str == "BossKnightContinueAttackCheck")
 	{
 		return DDConditionNode::BossKnightContinueAttackCheck;
+	}
+	// Boss Betty
+	else if (Str == "BossBettyCheckAttackDir")
+	{
+		return DDConditionNode::BossBettyCheckAttackDir;
+	}
+	else if (Str == "BossBettyCheckFarAttackType")
+	{
+		return DDConditionNode::BossBettyCheckFarAttackType;
+	}
+	else if (Str == "BossBettyCheckHPState")
+	{
+		return DDConditionNode::BossBettyCheckHPState;
+	}
+	else if (Str == "BossBettyCheckThrowAttack")
+	{
+		return DDConditionNode::BossBettyCheckThrowAttack;
 	}
 	else if (Str == "HPCheck")
 	{
@@ -235,6 +266,20 @@ std::string CDDUtil::DDActionNodeTypeToString(DDActionNode NodeType)
 	case DDActionNode::BossKnightCutScenePlay:
 		return "BossKnightCutScenePlay";
 
+	// Boss Betty
+	case DDActionNode::BossBettyAngryAttack:
+		return "BossBettyAngryAttack";
+	case DDActionNode::BossBettyChangeAttackDir:
+		return "BossBettyChangeAttackDir";
+	case DDActionNode::BossBettyCloseAttack:
+		return "BossBettyCloseAttack";
+	case DDActionNode::BossBettyJumpAttack:
+		return "BossBettyJumpAttack";
+	case DDActionNode::BossBettySpinAttack:
+		return "BossBettySpinAttack";
+	case DDActionNode::BossBettyThrowAttack:
+		return "BossBettyThrowAttack";
+
 	case DDActionNode::ClearPathList:
 		return "ClearPathList";
 
@@ -322,6 +367,29 @@ DDActionNode CDDUtil::StringToDDActionNodeType(const std::string& Str)
 	{
 		return DDActionNode::BossKnightCutScenePlay;
 	}
+
+	// Boss Betty
+	else if (Str == "BossBettyAngryAttack")
+	{
+		return DDActionNode::BossBettyAngryAttack;
+	}
+	else if (Str == "BossBettyChangeAttackDir")
+	{
+		return DDActionNode::BossBettyChangeAttackDir;
+	}
+	else if (Str == "BossBettyCloseAttack")
+	{
+		return DDActionNode::BossBettyCloseAttack;
+	}
+	else if (Str == "BossBettyJumpAttack")
+	{
+		return DDActionNode::BossBettyJumpAttack;
+	}
+	else if (Str == "BossBettyThrowAttack")
+	{
+		return DDActionNode::BossBettyThrowAttack;
+	}
+
 	else if (Str == "ClearPathList")
 	{
 		return DDActionNode::ClearPathList;
@@ -410,6 +478,9 @@ std::string CDDUtil::DDObjectComponentTypeToString(DDObjectComponentType Type)
 
 	case DDObjectComponentType::KnightData:
 		return "KnightData";
+		
+	case DDObjectComponentType::BossBettyData:
+		return "BossBettyData";
 
 	case DDObjectComponentType::LurkerData:
 		return "LurkerData";
@@ -443,6 +514,10 @@ DDObjectComponentType CDDUtil::StringToDDObjectComponentType(const std::string& 
 	{
 		return DDObjectComponentType::KnightData;
 	}
+	else if (Str == "BossBettyData")
+	{
+		return DDObjectComponentType::BossBettyData;
+	}
 	else if (Str == "LurkerData")
 	{
 		return DDObjectComponentType::LurkerData;
@@ -463,6 +538,8 @@ size_t CDDUtil::DDObjectComponentTypeToTypeID(DDObjectComponentType Type)
 		return typeid(CGameStateComponent).hash_code();
 	case DDObjectComponentType::KnightData:
 		return typeid(CKnightDataComponent).hash_code();
+	case DDObjectComponentType::BossBettyData:
+		return typeid(CBossBettyDataComponent).hash_code();
 	case DDObjectComponentType::MonsterData:
 		return typeid(CMonsterDataComponent).hash_code();
 	case DDObjectComponentType::ObjectDataComponent:

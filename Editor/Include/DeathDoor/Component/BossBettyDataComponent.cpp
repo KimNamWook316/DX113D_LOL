@@ -10,7 +10,8 @@
 
 CBossBettyDataComponent::CBossBettyDataComponent() :
 	m_ThrowFarAttackEnable(false),
-	m_FarAttackType(BossBettyFarAttackType::Spin)
+	m_FarAttackType(BossBettyFarAttackType::Spin),
+    m_ChangeDirLimitAngle(30.f)
 {
 }
 

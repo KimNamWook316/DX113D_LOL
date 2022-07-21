@@ -6,7 +6,7 @@
 class CBossBettyFarAttackTypeCheck :
     public CConditionNode
 {
-protected:
+public:
     CBossBettyFarAttackTypeCheck();
     CBossBettyFarAttackTypeCheck(const CBossBettyFarAttackTypeCheck& Node);
     virtual ~CBossBettyFarAttackTypeCheck();

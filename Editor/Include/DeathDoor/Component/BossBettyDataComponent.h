@@ -53,6 +53,9 @@ private :
     Vector3 m_RelativeSlashRightPos;
     Vector3 m_RelativeSlashLeftPos;
 
+    // 방향 전환 판단 Limit Angle
+    float m_ChangeDirLimitAngle;
+
     // Spin 하는 중에 벽과 충돌했는지 여부를 추가적으로 계속 조사하기 위해서
     // ColliderBox3D 를 하나 더 둘 것이다.
     class CColliderComponent* m_BossBettySpinCollider;
@@ -123,10 +126,12 @@ public:
             m_FarAttackAttackNum = 0;
         }
     }
-
-
     // Getter 함수 ---
 public:
+    float GetBossBettyChangeDirLimitAngle() const
+    {
+        return m_ChangeDirLimitAngle;
+    }
     class CColliderComponent* GetBossBettySpinCollider() const
     {
         return m_BossBettySpinCollider;
