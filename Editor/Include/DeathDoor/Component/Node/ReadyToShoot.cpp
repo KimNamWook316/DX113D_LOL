@@ -5,6 +5,7 @@
 #include "Component/AnimationMeshComponent.h"
 #include "../../Component/PlayerDataComponent.h"
 #include "Animation/AnimationSequenceInstance.h"
+#include "../GameStateComponent.h"
 #include "Component/BehaviorTree.h"
 #include "Scene/Scene.h"
 #include "Scene/SceneManager.h"
@@ -30,6 +31,10 @@ NodeResult CReadyToShoot::OnStart(float DeltaTime)
 {
 	m_AnimationMeshComp = m_Owner->GetAnimationMeshComp();
 
+	CPlayerDataComponent* Data = dynamic_cast<CPlayerDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
+
+	//Player_Ability Data->GetPlayerAbility();
+
 	std::string ObjectName = m_Object->GetName();
 
 	std::string SequenceName = ObjectName + "Arrow";
@@ -54,7 +59,7 @@ NodeResult CReadyToShoot::OnStart(float DeltaTime)
 	//m_Object->SetNoInterrupt(true);
 	m_CallStart = true;
 
-	m_PlayerDataComp = m_Object->FindObjectComponentFromType<CPlayerDataComponent>();
+	m_PlayerDataComp = dynamic_cast<CPlayerDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
 
 
 
@@ -80,50 +85,49 @@ NodeResult CReadyToShoot::OnStart(float DeltaTime)
 
 NodeResult CReadyToShoot::OnUpdate(float DeltaTime)
 {
-
-	if (!m_CameraMoveEnd)
+	if (m_PlayerDataComp->GetPlayerAbility() == Player_Ability::Hook)
 	{
-		m_CameraMoveEnd = CSceneManager::GetInst()->GetScene()->CameraMove(m_CameraMoveDir, m_CameraDestPos, 50.f, DeltaTime);
-
-		bool RButtonUp = CInput::GetInst()->GetMouseRButtonUp();
-
-		// 카메라가 화살쏘는 목표 지점으로 완전히 이동하기 전에 마우스RButton 을 때면
-		if (RButtonUp)
+		if (!m_CameraMoveEnd)
 		{
-			m_CallStart = false;
-			m_Owner->SetCurrentNode(((CCompositeNode*)m_Parent->GetParent())->GetChild(1));
-			m_CameraMoveEnd = false;
+			m_CameraMoveEnd = CSceneManager::GetInst()->GetScene()->CameraMove(m_CameraMoveDir, m_CameraDestPos, 50.f, DeltaTime);
 
-			return NodeResult::Node_True;
+			bool RButtonUp = CInput::GetInst()->GetMouseRButtonUp();
+
+			// 카메라가 화살쏘는 목표 지점으로 완전히 이동하기 전에 마우스RButton 을 때면
+			if (RButtonUp)
+			{
+				m_CallStart = false;
+				m_Owner->SetCurrentNode(((CCompositeNode*)m_Parent->GetParent())->GetChild(1));
+				m_CameraMoveEnd = false;
+
+				return NodeResult::Node_True;
+			}
+
+			else
+			{
+				m_Owner->SetCurrentNode(this);
+
+				return NodeResult::Node_Running;
+			}
 		}
 
 		else
 		{
-			m_Owner->SetCurrentNode(this);
+			bool RButtonUp = CInput::GetInst()->GetMouseRButtonUp();
+			if (RButtonUp)
+			{
+				m_CallStart = false;
+				m_Owner->SetCurrentNode(((CCompositeNode*)m_Parent)->GetChild(1));
+				m_CameraMoveEnd = false;
 
-			// Hook 여러개 렌더링해내면서 HalfLine Collider 길게 만드는 코드 추가
+				return NodeResult::Node_True;
+			}
 
-
-			return NodeResult::Node_Running;
-		}
-	}
-
-	else
-	{
-		bool RButtonUp = CInput::GetInst()->GetMouseRButtonUp();
-		if (RButtonUp)
-		{
-			m_CallStart = false;
-			m_Owner->SetCurrentNode(((CCompositeNode*)m_Parent)->GetChild(1));
-			m_CameraMoveEnd = false;
-
-			return NodeResult::Node_True;
-		}
-
-		else
-		{
-			m_Owner->SetCurrentNode(this);
-			return NodeResult::Node_Running;
+			else
+			{
+				m_Owner->SetCurrentNode(this);
+				return NodeResult::Node_Running;
+			}
 		}
 	}
 

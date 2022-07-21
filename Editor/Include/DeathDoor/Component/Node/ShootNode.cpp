@@ -28,11 +28,21 @@ CShootNode::~CShootNode()
 
 NodeResult CShootNode::OnStart(float DeltaTime)
 {
+
+	CPlayerDataComponent* Comp = m_Object->FindObjectComponentFromType<CPlayerDataComponent>();
+
+	Player_Ability Ability = Comp->GetPlayerAbility();
+
 	m_AnimationMeshComp = m_Owner->GetAnimationMeshComp();
 
-	std::string ChampionName = m_Object->GetName();
+	std::string ObjectName = m_Object->GetName();
 
-	std::string SequenceName = ChampionName + + "Hook";
+	std::string SequenceName;
+
+	if (Ability == Player_Ability::Hook)
+		SequenceName = ObjectName + "Hook";
+	else if (Ability == Player_Ability::Arrow)
+		SequenceName == ObjectName + "Arrow";
 
 	if (m_AnimationMeshComp)
 	{
@@ -62,6 +72,13 @@ NodeResult CShootNode::OnUpdate(float DeltaTime)
 
 	Player_Ability Ability = Comp->GetPlayerAbility();
 
+	CRotateAttackDirectionNode* Node = (CRotateAttackDirectionNode*)((CCompositeNode*)(m_Parent->GetParent()->GetParent()))->FindChildByType<CRotateAttackDirectionNode>();
+	Vector3 Point = Node->GetPickingPoint();
+
+	Vector3 ObjectPos = m_Object->GetWorldPos();
+	Vector3 Dir = Vector3(Point.x, 0.f, Point.z) - Vector3(ObjectPos.x, 0.f, ObjectPos.z);
+	Dir.Normalize();
+
 	if (Ability == Player_Ability::Hook)
 	{
 		if (m_InRestoreCam)
@@ -85,13 +102,6 @@ NodeResult CShootNode::OnUpdate(float DeltaTime)
 				return NodeResult::Node_Running;
 			}
 		}
-
-		CRotateAttackDirectionNode* Node = (CRotateAttackDirectionNode*)((CCompositeNode*)(m_Parent->GetParent()->GetParent()))->FindChildByType<CRotateAttackDirectionNode>();
-		Vector3 Point = Node->GetPickingPoint();
-
-		Vector3 ObjectPos = m_Object->GetWorldPos();
-		Vector3 Dir = Vector3(Point.x, 0.f, Point.z) - Vector3(ObjectPos.x, 0.f, ObjectPos.z);
-		Dir.Normalize();
 
 		CPlayerHookComponent* Comp = m_Object->FindComponentFromType<CPlayerHookComponent>();
 		bool HookCollision = false;
