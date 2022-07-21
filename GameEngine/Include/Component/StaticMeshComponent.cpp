@@ -4,6 +4,7 @@
 #include "../Scene/SceneResource.h"
 #include "../Render/RenderManager.h"
 #include "../Resource/Shader/Standard2DConstantBuffer.h"
+#include "../EngineUtil.h"
 
 CStaticMeshComponent::CStaticMeshComponent()
 {
@@ -412,9 +413,6 @@ void CStaticMeshComponent::PrevRender()
 
 void CStaticMeshComponent::Render()
 {
-	if (m_Name.find("Hook") != std::string::npos)
-		int a = 3;
-
 	CSceneComponent::Render();
 
 	if (!m_Mesh)
@@ -541,6 +539,21 @@ bool CStaticMeshComponent::Load(FILE* File)
 		fread(&MeshFullPath, sizeof(char), Length, File);
 
 		m_Scene->GetResource()->LoadMeshFullPathMultibyte(Mesh_Type::Static, MeshName, MeshFullPath);
+
+		CMesh* LoadCheck = m_Scene->GetResource()->FindMesh(MeshName);
+
+		if (!LoadCheck)
+		{
+			std::string FileName = CEngineUtil::FilterFileName(MeshFullPath);
+
+			char FileNameMB[MAX_PATH] = {};
+			TCHAR FileNameTCHAR[MAX_PATH] = {};
+			strcpy_s(FileNameMB, FileName.c_str());
+
+			MultiByteToWideChar(CP_ACP, 0, FileNameMB, FileName.length(), FileNameTCHAR, FileName.length());
+
+			m_Scene->GetResource()->LoadMesh(Mesh_Type::Static, MeshName, FileNameTCHAR, MESH_PATH);
+		}
 	}
 
 	SetMesh(MeshName);
