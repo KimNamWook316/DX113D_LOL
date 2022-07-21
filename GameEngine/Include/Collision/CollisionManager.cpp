@@ -190,7 +190,7 @@ bool CCollisionManager::SaveAsCSVFullPath(const char* FullPath)
 
 		for (int i = 0; i < (int)Collision_Channel::Max; ++i)
 		{
-			ProfileData.push_back(CEngineUtil::BoolToString((bool)iter->second->vecInteraction[i]));
+			ProfileData.push_back(CEngineUtil::CollisionInteractionToString(iter->second->vecInteraction[i]));
 		}
 
 		Data->SetData(iter->first, ProfileData);
@@ -239,7 +239,7 @@ bool CCollisionManager::LoadProfileFromCSVFullPath(const char* FullPath)
 
 	m_mapProfile.clear();
 
-	std::string CSVName;
+	std::string CSVName = "";
 	bool Success = CResourceManager::GetInst()->LoadCSVFullPath(CSVName, FullPath);
 
 	if (!Success)

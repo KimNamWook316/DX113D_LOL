@@ -28,7 +28,7 @@ void CBossKnightCutScenePlayNode::Init()
 
 	CKnightDataComponent* Data = dynamic_cast<CKnightDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
 
-	AnimInst->AddNotify("MeagSlam", "CutSceneStart", 0, Data, &CKnightDataComponent::OnStartCutScene);
+	AnimInst->AddNotify("MegaSlam", "CutSceneStart", 0, Data, &CKnightDataComponent::OnStartCutScene);
 	AnimInst->SetEndFunction("MegaSlam", Data, &CKnightDataComponent::OnEndCutScenePlaying);
 }
 

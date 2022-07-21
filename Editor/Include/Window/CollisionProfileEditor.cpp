@@ -26,7 +26,6 @@ CCollisionProfileEditor::CCollisionProfileEditor()	 :
 	m_ProfileNameInput(nullptr),
 	m_CreateProfileButton(nullptr),
 	m_ProfileChannel(nullptr),
-	m_InteractionEdit(nullptr),
 	m_ProfileName(nullptr),
 	m_SaveButton(nullptr),
 	m_LoadButton(nullptr),
@@ -74,7 +73,20 @@ bool CCollisionProfileEditor::Init()
 	m_ProfileChannel = Right->AddWidget<CIMGUITextInput>("Profile Channel");
 	Text = Right->AddWidget<CIMGUIText>("Text");
 	Text->SetText("Interaction");
-	m_InteractionEdit = Right->AddWidget<CIMGUICheckBox>("Interaction");
+	std::string ChannelName;
+	for (int i = 0; i < (int)Collision_Channel::Max; ++i)
+	{
+		ChannelName = CEngineUtil::CollisionChannelToString((Collision_Channel)i);
+		m_InteractionEditArr[i] = Right->AddWidget<CIMGUIComboBox>(ChannelName, 100.f);
+		m_InteractionEditArr[i]->SetSelectPointerCallback(this, &CCollisionProfileEditor::OnSelectInteraction);
+
+		std::string InteractionName;
+		for (int j = 0; j < 3; ++j)
+		{
+			InteractionName = CEngineUtil::CollisionInteractionToString(Collision_Interaction(j));
+			m_InteractionEditArr[i]->AddItem(InteractionName);
+		}
+	}
 
 	// Initial Value
 	m_ProfileList->SetPageItemCount(25);
@@ -97,15 +109,9 @@ bool CCollisionProfileEditor::Init()
 		m_ChannelList->AddItem(CEngineUtil::CollisionChannelToString((Collision_Channel)i));
 	}
 
-	for (size_t i = 0; i < (size_t)Collision_Channel::Max; ++i)
-	{
-		m_InteractionEdit->AddCheckInfo(CEngineUtil::CollisionChannelToString((Collision_Channel)i).c_str());
-	}
-
 	// CallBack
 	m_ProfileList->SetSelectCallback(this, &CCollisionProfileEditor::OnSelectList);
 	m_CreateProfileButton->SetClickCallback(this, &CCollisionProfileEditor::OnClickCreate);
-	m_InteractionEdit->SetCallBackIdx(this, &CCollisionProfileEditor::OnCheckInteraction);
 	m_SaveButton->SetClickCallback(this, &CCollisionProfileEditor::OnClickSave);
 	m_LoadButton->SetClickCallback(this, &CCollisionProfileEditor::OnClickLoad);
 	m_DeleteButton->SetClickCallback(this, &CCollisionProfileEditor::OnClickDelete);
@@ -130,7 +136,7 @@ void CCollisionProfileEditor::Refresh()
 
 	for (size_t i = 0; i < (size_t)Collision_Channel::Max; ++i)
 	{
-		m_InteractionEdit->SetCheck((int)i, false);
+		m_InteractionEditArr[i]->SetSelectIndex(0);
 	}
 }
 
@@ -147,14 +153,7 @@ void CCollisionProfileEditor::OnSelectList(int Idx, const char* Label)
 	{
 		Collision_Interaction Interaction = Profile->vecInteraction[i];
 
-		if (Interaction == Collision_Interaction::Collision)
-		{
-			m_InteractionEdit->SetCheck((int)i, true);
-		}
-		else
-		{
-			m_InteractionEdit->SetCheck((int)i, false);
-		}
+		m_InteractionEditArr[i]->SetSelectIndex((int)Interaction);
 	}
 }
 
@@ -176,19 +175,30 @@ void CCollisionProfileEditor::OnClickCreate()
 	}
 }
 
-void CCollisionProfileEditor::OnCheckInteraction(int Idx, bool Check)
+void CCollisionProfileEditor::OnSelectInteraction(int Idx, const char* Label, class CIMGUIComboBox* Pointer)
 {
 	if (m_ProfileList->GetSelectIndex() == -1)
 	{
 		return;
 	}
 
-	Collision_Interaction Interaction = Check ? Collision_Interaction::Collision : Collision_Interaction::Ignore;
+	Collision_Interaction Interaction = (Collision_Interaction)Idx;
 
 	std::string CurProfileName = m_ProfileList->GetSelectItem();
-	Collision_Channel Channel = (Collision_Channel)Idx;
 
-	CCollisionManager::GetInst()->SetCollisionState(CurProfileName, Channel, Interaction);
+	int SelectChannel = -1;
+	for (int i = 0; i < (int)Collision_Channel::Max; ++i)
+	{
+		if (Pointer == m_InteractionEditArr[i])
+		{
+			SelectChannel = i;
+			break;
+		}
+	}
+
+	Collision_Channel CurChannel = (Collision_Channel)SelectChannel;
+
+	CCollisionManager::GetInst()->SetCollisionState(CurProfileName, CurChannel, Interaction);
 }
 
 void CCollisionProfileEditor::OnClickSave()

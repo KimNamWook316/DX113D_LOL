@@ -9,6 +9,7 @@
 #include "IMGUIManager.h"
 #include "Animation/AnimationSequence2DInstance.h"
 #include "Render/RenderManager.h"
+#include "Collision/CollisionManager.h"
 // Component
 #include "Component/CameraComponent.h"
 #include "Component/SpriteComponent.h"
@@ -129,6 +130,9 @@ bool CEditorManager::Init(HINSTANCE hInst)
 		CEngine::DestroyInst();
 		return false;
 	}
+
+	// Collsion Profile Load
+	CCollisionManager::GetInst()->LoadProfileFromCSV("DeathDoorCollsionProfile.csv");
 
 	// 에디터 키 생성
 	CreateKey();

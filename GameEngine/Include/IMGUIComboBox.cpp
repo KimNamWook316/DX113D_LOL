@@ -36,8 +36,17 @@ void CIMGUIComboBox::Render()
 
             if (ImGui::Selectable(m_vecItemUTF8[i].c_str(), m_Select))
             {
-                if (m_SelectIndex != i && m_SelectCallback)
-                    m_SelectCallback((int)i, m_vecItem[i].c_str());
+                if (m_SelectIndex != i)
+                {
+                    if (m_SelectCallback)
+                    {
+						m_SelectCallback((int)i, m_vecItem[i].c_str());
+                    }
+                    if (m_SelectPointerCallback)
+                    {
+                        m_SelectPointerCallback((int)i, m_vecItem[i].c_str(), this);
+                    }
+                }
 
                 m_PrevViewName = m_vecItemUTF8[i];
 

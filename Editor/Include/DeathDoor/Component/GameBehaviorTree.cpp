@@ -83,11 +83,13 @@ CGameBehaviorTree::~CGameBehaviorTree()
 
 bool CGameBehaviorTree::Init()
 {
-	return false;
+	CBehaviorTree::Init();
+	return true;
 }
 
 void CGameBehaviorTree::Start()
 {
+	CBehaviorTree::Start();
 }
 
 CGameStateComponent* CGameBehaviorTree::GetOwner() const
