@@ -5,9 +5,7 @@
 class CBossKnightCutScenePlayNode :
     public CActionNode
 {
-    friend class CGameBehaviorTree;
-
-protected:
+public:
     CBossKnightCutScenePlayNode();
     CBossKnightCutScenePlayNode(const CBossKnightCutScenePlayNode& Node);
     virtual ~CBossKnightCutScenePlayNode();
@@ -20,4 +18,3 @@ public:
     virtual NodeResult OnUpdate(float DeltaTime) override;
     virtual NodeResult OnEnd(float DeltaTime) override;
 };
-

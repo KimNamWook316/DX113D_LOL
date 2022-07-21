@@ -5,9 +5,7 @@
 class CBossKnightPlayerEnterZoneCheck :
     public CConditionNode
 {
-    friend class CGameBehaviorTree;
-
-protected:
+public:
     CBossKnightPlayerEnterZoneCheck();
     CBossKnightPlayerEnterZoneCheck(const CBossKnightPlayerEnterZoneCheck& Node);
     virtual ~CBossKnightPlayerEnterZoneCheck();

@@ -115,6 +115,8 @@ private:
 	void OnRefreshCheckBoxInfo();
 	// St, Ed Frame Edit
 	void OnEditStartEndFrame();
+	class CAnimationSequence* NewlyEditSqcFile(const TCHAR* FileSavedFullPath, CAnimationSequence* ExistingSequence,
+		int StartFrame, int EndFrame);
 	bool SaveEditedSqcFile(const TCHAR* FileSavedFullPath, CAnimationSequence* ExistingSequence,
 		int StartFrame, int EndFrame, bool MakeCopy = true);
 	// Play

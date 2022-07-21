@@ -1,6 +1,7 @@
 #include "KnightDataComponent.h"
 #include "../DataManager.h"
 #include "Component/ColliderBox3D.h"
+#include "Component/CameraComponent.h"
 #include "GameObject/GameObject.h"
 #include "Scene/Scene.h"
 
@@ -27,6 +28,7 @@ void CKnightDataComponent::Start()
 	m_Data = CDataManager::GetInst()->GetObjectData("BossKnight");
 	m_MeleeAttackCollider = (CColliderBox3D*)m_Object->FindComponent("MeleeAttackCollider");
 	m_PlayerEnterZoneTrigger = (CColliderBox3D*)m_Object->FindComponent("PlayerEnterTrigger");
+	m_CutSceneCam = m_Object->FindComponentFromType<CCameraComponent>();
 
 	m_MeleeAttackCollider->AddCollisionCallback(Collision_State::Begin, this, &CKnightDataComponent::OnHitMeleeAttack);
 	m_PlayerEnterZoneTrigger->AddCollisionCallback(Collision_State::Begin, this, &CKnightDataComponent::OnPlayerEnterZone);
@@ -127,6 +129,23 @@ void CKnightDataComponent::OnPlayerEnterZone(const CollisionResult& Result)
 
 	m_PlayerEnterZone = true;
 	m_IsCutScenePlaying = true;
+
+	if (m_CutSceneCam)
+	{
+		m_Scene->GetCameraManager()->KeepCamera();
+		m_Scene->GetCameraManager()->SetCurrentCamera(m_CutSceneCam);
+	}
+}
+
+void CKnightDataComponent::OnEndCutScenePlaying()
+{
+	m_IsCutScenePlaying = false;
+	OnCombatStart();
+
+	if (m_CutSceneCam)
+	{
+		m_Scene->GetCameraManager()->ReturnCamera();
+	}
 }
 
 void CKnightDataComponent::OnActiveMeleeAttackCollider()

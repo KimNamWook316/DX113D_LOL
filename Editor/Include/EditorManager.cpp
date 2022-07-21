@@ -31,6 +31,7 @@
 #include "DeathDoor\Component/EyeLaserComponent.h"
 #include "DeathDoor\Component/PlayerHookComponent.h"
 #include "DeathDoor\Component/MonsterPathFindCollider.h"
+#include "DeathDoor\Component/KnightDataComponent.h"
 #include "DeathDoor\Component/LurkerDataComponent.h"
 #include "DeathDoor\Component/MonsterNavAgent.h"
 // Window
@@ -313,7 +314,7 @@ CComponent* CEditorManager::CreateComponent(CGameObject* Obj, size_t Type)
 
 	else if (Type == typeid(CCameraComponent).hash_code())
 	{
-		CCameraComponent* Component = Obj->LoadObjectComponent<CCameraComponent>();
+		CCameraComponent* Component = Obj->LoadComponent<CCameraComponent>();
 		return Component;
 	}
 
@@ -426,6 +427,12 @@ CComponent* CEditorManager::CreateComponent(CGameObject* Obj, size_t Type)
 	else if (Type == typeid(CMonsterNavAgent).hash_code())
 	{
 		CMonsterNavAgent* Component = Obj->LoadObjectComponent<CMonsterNavAgent>();
+		return Component;
+	}
+
+	else if (Type == typeid(CKnightDataComponent).hash_code())
+	{
+		CKnightDataComponent* Component = Obj->LoadObjectComponent<CKnightDataComponent>();
 		return Component;
 	}
 

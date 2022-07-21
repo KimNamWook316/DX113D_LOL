@@ -36,6 +36,11 @@ public:
 		m_PostAttackDelaying = Enable;
 	}
 
+	void OnCombatStart()
+	{
+		m_IsCombat = true;
+	}
+
 public:
 	float GetRotateSpeed() const
 	{
@@ -45,6 +50,11 @@ public:
 	bool IsPostAttackDelaying() const
 	{
 		return m_PostAttackDelaying;
+	}
+
+	bool IsCombat() const
+	{
+		return m_IsCombat;
 	}
 
 	float GetAnglePlayer();
@@ -68,6 +78,7 @@ protected:
 	class CColliderBox3D* m_HitBox;
 
 	bool m_PostAttackDelaying; // 공격 후딜레이 중인지 여부
+	bool m_IsCombat;
 
 	bool m_HitEffectStart;
 	float m_HitEffectTimer;

@@ -1616,6 +1616,11 @@ void CAnimationEditor::OnEditStartEndFrame()
 	}
 }
 
+CAnimationSequence* CAnimationEditor::NewlyEditSqcFile(const TCHAR* FileSavedFullPath, CAnimationSequence* ExistingSequence, int StartFrame, int EndFrame)
+{
+	return nullptr;
+}
+
 bool CAnimationEditor::SaveEditedSqcFile(const TCHAR* FileSavedFullPath, CAnimationSequence* ExistingSequence, 
 	int StartFrame, int EndFrame, bool MakeCopy)
 {

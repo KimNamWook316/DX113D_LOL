@@ -2,13 +2,13 @@
 
 #include "Component/Node/ConditionNode.h"
 
-class CBossKnightCutScenePlayCheck :
+class CIsCombatCheck :
     public CConditionNode
 {
 public:
-    CBossKnightCutScenePlayCheck();
-    CBossKnightCutScenePlayCheck(const CBossKnightCutScenePlayCheck& Node);
-    virtual ~CBossKnightCutScenePlayCheck();
+    CIsCombatCheck();
+    CIsCombatCheck(const CIsCombatCheck& Node);
+    virtual ~CIsCombatCheck();
 
 public:
     virtual NodeResult OnStart(float DeltaTime) override;

@@ -460,10 +460,11 @@ bool CPaperBurnComponent::Load(FILE* File)
 		}
 
 		m_BurnTexture = m_Scene->GetResource()->FindTexture(TexName);
-		for (size_t i = 0; i < Size; ++i)
-		{
-			SAFE_DELETE_ARRAY(vecFullPath[i]);
-		}
+	}
+
+	for (size_t i = 0; i < Size; ++i)
+	{
+		SAFE_DELETE_ARRAY(vecFullPath[i]);
 	}
 
 	return true;
@@ -611,10 +612,11 @@ bool CPaperBurnComponent::LoadOnly(FILE* File)
 		}
 
 		m_BurnTexture = m_Scene->GetResource()->FindTexture(TexName);
-		for (size_t i = 0; i < Size; ++i)
-		{
-			SAFE_DELETE_ARRAY(vecFullPath[i]);
-		}
+	}
+
+	for (size_t i = 0; i < Size; ++i)
+	{
+		SAFE_DELETE_ARRAY(vecFullPath[i]);
 	}
 
 	return true;

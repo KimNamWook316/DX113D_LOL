@@ -29,6 +29,24 @@
 #include "../DeathDoor/Component/Node/CheckDetectRangeNode.h"
 #include "../DeathDoor/Component/Node/FindPathNode.h"
 #include "../DeathDoor/Component/Node/ClearPathListNode.h"
+#include "../DeathDoor/Component/Node/MeleeRangeCheckNode.h"
+#include "../DeathDoor/Component/Node/IsCombatCheck.h"
+#include "../DeathDoor/Component/Node/DeathCheck.h"
+#include "../DeathDoor/Component/Node/PostAttackDelayCheck.h"
+#include "../DeathDoor/Component/Node/BossKnightContinueAttackNode.h"
+#include "../DeathDoor/Component/Node/BossKnightCutScenePlayCheck.h"
+#include "../DeathDoor/Component/Node/BossKnightCutScenePlayNode.h"
+#include "../DeathDoor/Component/Node/BossKnightFinalAttackCheck.h"
+#include "../DeathDoor/Component/Node/BossKnightFinalAttackNode.h"
+#include "../DeathDoor/Component/Node/BossKnightIdleNode.h"
+#include "../DeathDoor/Component/Node/BossKnightJumpAttackNode.h"
+#include "../DeathDoor/Component/Node/BossKnightJumpAttackRangeCheck.h"
+#include "../DeathDoor/Component/Node/BossKnightMeleeAttackNode.h"
+#include "../DeathDoor/Component/Node/BossKnightPlayerEnterZoneCheck.h"
+#include "../DeathDoor/Component/Node/BossKnightSlamEnd.h"
+#include "../DeathDoor/Component/Node/BossKnightWalkNode.h"
+#include "../DeathDoor/Component/Node/BossKnightCutScenePlayNode.h"
+#include "../DeathDoor/Component/Node/BossKnightContinueAttackCheck.h"
 #include "../DeathDoor/Component/Node/HitCheckNode.h"
 #include "../DeathDoor/Component/Node/HitBackNode.h"
 #include "../DeathDoor/Component/Node/RollInputCheck.h"
@@ -170,7 +188,6 @@ void CBehaviorTreeWindow::Update(float DeltaTime)
 
 
     // 노드가 ActionNode이거나 Condition Node일 때 Invoke할 동작을 정하고 만들어야한다
-    // TODO : Action Node 추가될 때 마다 추가
     if (m_TypeSelectIndex == 2 || m_TypeSelectIndex == 3 || m_TypeSelectIndex == 4)
     {
         m_vecNodeAction.clear();
@@ -180,7 +197,6 @@ void CBehaviorTreeWindow::Update(float DeltaTime)
             PrintActionNodes();
         }
 
-        // TODO : Condition Node 추가될 때 마다 추가
         else if (m_TypeSelectIndex == 3)
         {
             PrintConditionNodes();
@@ -399,42 +415,52 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
         case DDActionNode::NormalAttack:
         {
             NewTreeNode = m_StateComponent->CreateTreeNode<CNormalAttack>(Name);
+            break;
         }
         case DDActionNode::Death:
         {
             NewTreeNode = m_StateComponent->CreateTreeNode<CDeathNode>(Name);
+            break;
         }
         case DDActionNode::RotateAttackDirection:
         {
             NewTreeNode = m_StateComponent->CreateTreeNode<CRotateAttackDirectionNode>(Name);
+            break;
         }
         case DDActionNode::ReadyToShoot:
         {
             NewTreeNode = m_StateComponent->CreateTreeNode<CReadyToShoot>(Name);
+            break;
         }
         case DDActionNode::ShootNode:
         {
             NewTreeNode = m_StateComponent->CreateTreeNode<CShootNode>(Name);
+            break;
         }
         case DDActionNode::CancleShootNode:
         {
             NewTreeNode = m_StateComponent->CreateTreeNode<CCancleShootNode>(Name);
+            break;
         }
         case DDActionNode::AddFallingFloorCallback:
         {
             NewTreeNode = m_StateComponent->CreateTreeNode<CAddFallingFloorCallbackNode>(Name);
+            break;
         }
         case DDActionNode::Lockstone3TriggerBoxAction:
         {
             NewTreeNode = m_StateComponent->CreateTreeNode<CLockstone3TriggerBoxAction>(Name);
+            break;
         }
         case DDActionNode::FindPath:
         {
             NewTreeNode = m_StateComponent->CreateTreeNode<CFindPathNode>(Name);
+            break;
         }
         case DDActionNode::ClearPathList:
         {
             NewTreeNode = m_StateComponent->CreateTreeNode<CClearPathListNode>(Name);
+            break;
         }
         case DDActionNode::HitBack:
         {
@@ -446,18 +472,43 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
         }
         case DDActionNode::BossKnightContinueAttack:
         {
+            NewTreeNode = m_StateComponent->CreateTreeNode<CBossKnightContinueAttackNode>(Name);
+            break;
         }
         case DDActionNode::BossKnightFinalAttack:
         {
+            NewTreeNode = m_StateComponent->CreateTreeNode<CBossKnightFinalAttackNode>(Name);
+            break;
         }
         case DDActionNode::BossKnightJumpAttack:
         {
+            NewTreeNode = m_StateComponent->CreateTreeNode<CBossKnightJumpAttackNode>(Name);
+            break;
         }
         case DDActionNode::BossKnightMeleeAttack:
         {
+            NewTreeNode = m_StateComponent->CreateTreeNode<CBossKnightMeleeAttackNode>(Name);
+            break;
         }
         case DDActionNode::BossKnightSlamEnd:
         {
+            NewTreeNode = m_StateComponent->CreateTreeNode<CBossKnightSlamEnd>(Name);
+            break;
+        }
+        case DDActionNode::BossKnightWalk:
+        {
+            NewTreeNode = m_StateComponent->CreateTreeNode<CBossKnightWalkNode>(Name);
+            break;
+        }
+        case DDActionNode::BossKnightCutScenePlay:
+        {
+            NewTreeNode = m_StateComponent->CreateTreeNode<CBossKnightCutScenePlayNode>(Name);
+            break;
+        }
+        case DDActionNode::BossKnightIdle:
+        {
+            NewTreeNode = m_StateComponent->CreateTreeNode<CBossKnightIdleNode>(Name);
+            break;
         }
 		}
         break;
@@ -507,12 +558,31 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
             NewTreeNode = m_StateComponent->CreateTreeNode<CCheckDetectRangeNode>(Name);
             break;
         case DDConditionNode::MeleeAttackRangeCheck:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CMeleeRangeCheckNode>(Name);
             break;
         case DDConditionNode::PostAttackDelayCheck:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CPostAttackDelayCheck>(Name);
             break;
         case DDConditionNode::BossKnightFinalAttackCheck:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CBossKnightFinalAttackCheck>(Name);
             break;
         case DDConditionNode::BossKnightJumpAttackRangeCheck:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CBossKnightJumpAttackRangeCheck>(Name);
+            break;
+        case DDConditionNode::BossKnightCutScenePlayCheck:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CBossKnightCutScenePlayCheck>(Name);
+            break;
+        case DDConditionNode::BossKnightPlayerEnterZoneCheck:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CBossKnightPlayerEnterZoneCheck>(Name);
+            break;
+        case DDConditionNode::BossKnightContinueAttackCheck:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CBossKnightContinueAttackCheck>(Name);
+            break;
+        case DDConditionNode::IsCombatCheck:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CIsCombatCheck>(Name);
+            break;
+        case DDConditionNode::DeathCheck:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CDeathCheck>(Name);
             break;
         case DDConditionNode::HitCheckNode:
             NewTreeNode = m_StateComponent->CreateTreeNode<CHitCheckNode>(Name);
@@ -521,6 +591,7 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
             NewTreeNode = m_StateComponent->CreateTreeNode<CRollInputCheck>(Name);
             break;
         }
+        break;
     }
 
     case 4:
@@ -536,7 +607,6 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
             break;
         }
     }
-
     }
 
     NewTreeNode->SetOwner(m_StateComponent->GetBehaviorTree());

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -195,15 +195,18 @@
     <ClCompile Include="DeathDoor\Component\MonsterPathFindCollider.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\AddFallingFloorCallbackNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\BossBettyAngryAttackNode.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\BossBettyChangeAttackDirNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\BossBettyCloseAttackNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\BossBettyFarAttackTypeCheck.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\BossBettyHPStateCheck.cpp" />
-    <ClCompile Include="DeathDoor\Component\Node\BossBettyJumpAttackNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\BossBettySpinAttackNode.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\BossBettyJumpAttackNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\BossBettyThrowAttackCheck.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\BossBettyThrowNode.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\BossKnightContinueAttackCheck.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\BossKnightContinueAttackNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\BossKnightCutScenePlayCheck.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\BossKnightCutScenePlayNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\BossKnightFinalAttackCheck.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\BossKnightFinalAttackNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\BossKnightIdleNode.cpp" />
@@ -216,12 +219,14 @@
     <ClCompile Include="DeathDoor\Component\Node\CancleShootNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\CheckDetectRangeNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\ClearPathListNode.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\DeathCheck.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\DeathNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\FindPathNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\HitBackNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\HitCheckNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\HPCheck.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\IdleNode.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\IsCombatCheck.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\Lockstone3TriggerBoxAction.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\Lockstone3TriggerBoxHitCheck.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\MeleeRangeCheckNode.cpp" />
@@ -341,15 +346,18 @@
     <ClInclude Include="DeathDoor\Component\MonsterPathFindCollider.h" />
     <ClInclude Include="DeathDoor\Component\Node\AddFallingFloorCallbackNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\BossBettyAngryAttackNode.h" />
+    <ClInclude Include="DeathDoor\Component\Node\BossBettyChangeAttackDirNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\BossBettyCloseAttackNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\BossBettyFarAttackTypeCheck.h" />
     <ClInclude Include="DeathDoor\Component\Node\BossBettyHPStateCheck.h" />
-    <ClInclude Include="DeathDoor\Component\Node\BossBettyJumpAttackNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\BossBettySpinAttackNode.h" />
+    <ClInclude Include="DeathDoor\Component\Node\BossBettyJumpAttackNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\BossBettyThrowAttackCheck.h" />
     <ClInclude Include="DeathDoor\Component\Node\BossBettyThrowNode.h" />
+    <ClInclude Include="DeathDoor\Component\Node\BossKnightContinueAttackCheck.h" />
     <ClInclude Include="DeathDoor\Component\Node\BossKnightContinueAttackNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\BossKnightCutScenePlayCheck.h" />
+    <ClInclude Include="DeathDoor\Component\Node\BossKnightCutScenePlayNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\BossKnightFinalAttackCheck.h" />
     <ClInclude Include="DeathDoor\Component\Node\BossKnightFinalAttackNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\BossKnightIdleNode.h" />
@@ -362,12 +370,14 @@
     <ClInclude Include="DeathDoor\Component\Node\CancleShootNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\CheckDetectRangeNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\ClearPathListNode.h" />
+    <ClInclude Include="DeathDoor\Component\Node\DeathCheck.h" />
     <ClInclude Include="DeathDoor\Component\Node\DeathNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\FindPathNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\HitBackNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\HitCheckNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\HPCheck.h" />
     <ClInclude Include="DeathDoor\Component\Node\IdleNode.h" />
+    <ClInclude Include="DeathDoor\Component\Node\IsCombatCheck.h" />
     <ClInclude Include="DeathDoor\Component\Node\Lockstone3TriggerBoxAction.h" />
     <ClInclude Include="DeathDoor\Component\Node\Lockstone3TriggerBoxHitCheck.h" />
     <ClInclude Include="DeathDoor\Component\Node\MeleeRangeCheckNode.h" />

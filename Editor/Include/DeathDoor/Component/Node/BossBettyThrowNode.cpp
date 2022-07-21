@@ -40,17 +40,19 @@ void CBossBettyThrowNode::Init()
 
 NodeResult CBossBettyThrowNode::OnStart(float DeltaTime)
 {
-	return NodeResult();
+	m_AnimationMeshComp->GetAnimationInstance()->ChangeAnimation("Throw");
+
+	return NodeResult::Node_True;
 }
 
 NodeResult CBossBettyThrowNode::OnUpdate(float DeltaTime)
 {
-	return NodeResult();
+	return NodeResult::Node_True;
 }
 
 NodeResult CBossBettyThrowNode::OnEnd(float DeltaTime)
 {
-	return NodeResult();
+	return NodeResult::Node_True;
 }
 
 // Snow Ball Attack Obj 만들기 -> Socket 형태로 달아놓기

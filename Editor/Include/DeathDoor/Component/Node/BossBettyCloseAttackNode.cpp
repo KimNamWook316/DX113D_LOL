@@ -3,7 +3,9 @@
 #include "../GameStateComponent.h"
 #include "Component/AnimationMeshComponent.h"
 #include "Component/ColliderBox3D.h"
+#include "Collision/Collision.h"
 #include "Scene/Scene.h"
+#include "Scene/SceneManager.h"
 #include "../BossBettyDataComponent.h"
 
 CBossBettyCloseAttackNode::CBossBettyCloseAttackNode()
@@ -29,9 +31,8 @@ void CBossBettyCloseAttackNode::Init()
 	std::string AnimName = "SlashLeft";
 	CAnimationSequenceInstance* AnimInst = m_AnimationMeshComp->GetAnimationInstance();
 
-	// Animation 진행 중간 끝까지 Player 방향으로 회전할 수 있도록 한다.
-	// AnimInst->AddNotifyDeltaTimeFrameRange(AnimName, "OnTracePlayer", 0, 5,
-	// 	(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnLookPlayer);
+	AnimInst->AddNotifyDeltaTimeFrameRange(AnimName, "OnTracePlayer", 0, 5,
+		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnLookPlayer);
 
 	AnimInst->AddNotify(AnimName, "OnSlashLeft", 18,
 		this, &CBossBettyCloseAttackNode::OnBossBettySlashLeftEffect);
@@ -41,6 +42,9 @@ void CBossBettyCloseAttackNode::Init()
 
 	AnimInst->AddNotify(AnimName, "OnSlashRight", 18,
 		this, &CBossBettyCloseAttackNode::OnBossBettySlashRightEffect);
+
+	AnimInst->AddNotifyDeltaTimeFrameRange(AnimName, "OnTracePlayer", 0, 5,
+		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnLookPlayer);
 
 	// 3) PunchLeft
 	AnimName = "PunchLeft";
@@ -60,11 +64,11 @@ void CBossBettyCloseAttackNode::Init()
 	AnimInst->AddNotify(AnimName, "OnFirstSlam", 20,
 		Data, &CBossBettyDataComponent::OnBossBettyGenerateTwoSideCloseAttackEffect);
 
-	// 6) Player 쪽으로 방향 바꾸기 
-	AnimName = "BackUpStep";
-
-	AnimInst->AddNotifyDeltaTimeFrameRange(AnimName, "OnTracePlayer", 0, 19,
-			(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnLookPlayer);
+	// 6) Player 쪽으로 방향 바꾸기 -> 아래의 Init 과정을, ChangeAttackDir 노드에서 해주고 있다.
+	//AnimName = "BackUpStep";
+	//
+	//AnimInst->AddNotifyDeltaTimeFrameRange(AnimName, "OnTracePlayer", 0, 19,
+	//		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnLookPlayer);
 }
 
 NodeResult CBossBettyCloseAttackNode::OnStart(float DeltaTime)
@@ -76,7 +80,7 @@ NodeResult CBossBettyCloseAttackNode::OnStart(float DeltaTime)
 	CAnimationSequenceInstance* AnimInst = m_AnimationMeshComp->GetAnimationInstance();
 
 	// 근거리 공격 타입을 체크한다.
-	m_CloseAttackType = DeterminBettyCloseAttackType();
+	m_CloseAttackType = DetermineBettyCloseAttackType();
 
 	switch (m_CloseAttackType)
 	{
@@ -112,34 +116,124 @@ NodeResult CBossBettyCloseAttackNode::OnStart(float DeltaTime)
 	break;
 	}
 
-	return NodeResult();
+	return NodeResult::Node_True;
 }
 
 NodeResult CBossBettyCloseAttackNode::OnUpdate(float DeltaTime)
 {
-	return NodeResult();
+	return NodeResult::Node_True;
 }
 
 NodeResult CBossBettyCloseAttackNode::OnEnd(float DeltaTime)
 {
-	return NodeResult();
+	return NodeResult::Node_True;
 }
 
-BossBettyCloseAttackType CBossBettyCloseAttackNode::DeterminBettyCloseAttackType()
+BossBettyCloseAttackType CBossBettyCloseAttackNode::DetermineBettyCloseAttackType()
 {
-	BossBettyCloseAttackType Type;
+	CBossBettyDataComponent* Data = dynamic_cast<CBossBettyDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
+
+	const Vector3* const& PunchLeftSquarePoses = Data->GetPunchLeftSquarePoses();
+
+	const Vector3& RelativeXAxis = m_Object->GetRootComponent()->GetRelativeAxis(AXIS_X);
+	const Vector3& RelativeZAxis = m_Object->GetRootComponent()->GetRelativeAxis(AXIS_Z);
+	const Vector3& WorldScale = m_Object->GetRootComponent()->GetWorldScale();
+	const Vector3& WorldPos = m_Object->GetRootComponent()->GetWorldPos();
+
+	// Player 정보
+	CGameObject* PlayerObj = CSceneManager::GetInst()->GetScene()->GetPlayerObject();
+	Vector2 Player2DWorldPos = Vector2(PlayerObj->GetWorldPos().x, PlayerObj->GetWorldPos().z);
 
 	// 전방 방향을 비교한다.
+	Box2DInfo CheckBoxInfo;
+	CheckBoxInfo.Axis[0] = Vector2(RelativeXAxis.x, RelativeXAxis.z);
+	CheckBoxInfo.Axis[1] = Vector2(RelativeZAxis.x, RelativeZAxis.z);
 
-	return BossBettyCloseAttackType();
+	// 1) Box2DInfo m_PunchLeftSquareBox;
+	Vector2 BoxLeftDown = Vector2(WorldPos.x + PunchLeftSquarePoses[0].x * RelativeXAxis.x,
+		WorldPos.z + PunchLeftSquarePoses[0].z * RelativeXAxis.z);
+	Vector2 BoxRightUp = Vector2(WorldPos.x + PunchLeftSquarePoses[2].x * RelativeXAxis.x,
+		WorldPos.z + PunchLeftSquarePoses[2].z * RelativeXAxis.z);
+
+	CheckBoxInfo.Center = (BoxLeftDown + BoxRightUp) / 2.f;
+
+	CollisionResult SrcResult;
+	CollisionResult DestResult;
+	if (CCollision::CollisionBox2DToPoint(SrcResult, DestResult, CheckBoxInfo, Player2DWorldPos))
+		return BossBettyCloseAttackType::PunchLeft;
+
+	// 2) Box2DInfo m_PunchRightSquareBox;
+	const Vector3* const& PunchRightSquarePoses = Data->GetPunchRightSquarePoses();
+
+	BoxLeftDown = Vector2(WorldPos.x + PunchRightSquarePoses[0].x * RelativeXAxis.x,
+		WorldPos.z + PunchRightSquarePoses[0].z * RelativeXAxis.z);
+	BoxRightUp = Vector2(WorldPos.x + PunchRightSquarePoses[2].x * RelativeXAxis.x,
+		WorldPos.z + PunchRightSquarePoses[2].z * RelativeXAxis.z);
+
+	CheckBoxInfo.Center = (BoxLeftDown + BoxRightUp) / 2.f;
+
+	if (CCollision::CollisionBox2DToPoint(SrcResult, DestResult, CheckBoxInfo, Player2DWorldPos))
+		return BossBettyCloseAttackType::PunchRight;
+
+	// 3) Box2DInfo m_SlashLeftSquareBox;
+	const Vector3* const& SlashLeftSquarePoses = Data->GetSlashLeftSquarePoses();
+
+	BoxLeftDown = Vector2(WorldPos.x + SlashLeftSquarePoses[0].x * RelativeXAxis.x,
+		WorldPos.z + SlashLeftSquarePoses[0].z * RelativeXAxis.z);
+	BoxRightUp = Vector2(WorldPos.x + SlashLeftSquarePoses[2].x * RelativeXAxis.x,
+		WorldPos.z + SlashLeftSquarePoses[2].z * RelativeXAxis.z);
+
+	CheckBoxInfo.Center = (BoxLeftDown + BoxRightUp) / 2.f;
+
+	if (CCollision::CollisionBox2DToPoint(SrcResult, DestResult, CheckBoxInfo, Player2DWorldPos))
+		return BossBettyCloseAttackType::SlashLeft;
+
+	// 4) Box2DInfo m_SlashRightSquareBox;
+	const Vector3* const& SlashRightSquarePoses = Data->GetSlashRightSquarePoses();
+
+	BoxLeftDown = Vector2(WorldPos.x + SlashRightSquarePoses[0].x * RelativeXAxis.x,
+		WorldPos.z + SlashRightSquarePoses[0].z * RelativeXAxis.z);
+	BoxRightUp = Vector2(WorldPos.x + SlashRightSquarePoses[2].x * RelativeXAxis.x,
+		WorldPos.z + SlashRightSquarePoses[2].z * RelativeXAxis.z);
+
+	CheckBoxInfo.Center = (BoxLeftDown + BoxRightUp) / 2.f;
+
+	if (CCollision::CollisionBox2DToPoint(SrcResult, DestResult, CheckBoxInfo, Player2DWorldPos))
+		return BossBettyCloseAttackType::SlashRight;
+	
+	// 5) Box2DInfo m_TwoSideFrontSquareBox;
+	const Vector3* const& TwoSideFrontSquarePoses = Data->GetTwoSideFrontSquarePoses();
+
+	BoxLeftDown = Vector2(WorldPos.x + TwoSideFrontSquarePoses[0].x * RelativeXAxis.x,
+		WorldPos.z + TwoSideFrontSquarePoses[0].z * RelativeXAxis.z);
+	BoxRightUp = Vector2(WorldPos.x + TwoSideFrontSquarePoses[2].x * RelativeXAxis.x,
+		WorldPos.z + TwoSideFrontSquarePoses[2].z * RelativeXAxis.z);
+
+	CheckBoxInfo.Center = (BoxLeftDown + BoxRightUp) / 2.f;
+
+	if (CCollision::CollisionBox2DToPoint(SrcResult, DestResult, CheckBoxInfo, Player2DWorldPos))
+		return BossBettyCloseAttackType::TwoSideFront;
+
+	return BossBettyCloseAttackType::NotInCloseRange;
 }
 
 void CBossBettyCloseAttackNode::OnBossBettySlashLeftEffect()
 {
-	// 왼쪽으로 45 도 회전하기 
+	// 왼쪽으로 45 도 회전하기 (이것은 다른 Callback 에서 수행중이다)
+	CBossBettyDataComponent* Data = dynamic_cast<CBossBettyDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
+
+	const Vector3& SlashLeftSpawnPoint = Data->GetRelativeSlashLeftPos();
+	
+	// 1.바로 왼쪽 해당 위치에 Collider 생성하기 
+	// 2. 연속적으로 Particle 생성하기 (3개)
 }
 
 void CBossBettyCloseAttackNode::OnBossBettySlashRightEffect()
 {
-	// 오른쪽으로 45도 회전하기 
+	// 오른쪽으로 45도 회전하기 (이것은 다른 Callback 에서 수행중이다)
+	CBossBettyDataComponent* Data = dynamic_cast<CBossBettyDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
+	const Vector3& SlashRightSpawnPoint = Data->GetRelativeSlashRightPos();
+	
+	// 1.바로 왼쪽 해당 위치에 Collider 생성하기 
+	// 2. 연속적으로 Particle 생성하기 (3개)
 }

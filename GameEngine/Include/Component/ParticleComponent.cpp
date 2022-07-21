@@ -250,6 +250,12 @@ void CParticleComponent::Update(float DeltaTime)
 	if (!m_CBuffer)
 		return;
 
+	if (m_InitActiveDelayTime > 0.f)
+	{
+		m_InitActiveDelayTime -= DeltaTime;
+		return;
+	}
+
 	CSceneComponent::Update(DeltaTime);
 
 	m_SpawnTime += DeltaTime;
@@ -295,6 +301,9 @@ void CParticleComponent::Update(float DeltaTime)
 void CParticleComponent::PostUpdate(float DeltaTime)
 {
 	if (!m_CBuffer)
+		return;
+
+	if (m_InitActiveDelayTime > 0.f)
 		return;
 
 	CSceneComponent::PostUpdate(DeltaTime);
@@ -364,6 +373,9 @@ void CParticleComponent::PostUpdate(float DeltaTime)
 
 void CParticleComponent::PrevRender()
 {
+	if (m_InitActiveDelayTime > 0.f)
+		return;
+
 	CSceneComponent::PrevRender();
 }
 
@@ -406,6 +418,9 @@ void CParticleComponent::RenderParticleEffectEditor()
 void CParticleComponent::Render()
 {
 	if (!m_CBuffer)
+		return;
+
+	if (m_InitActiveDelayTime > 0.f)
 		return;
 
 	// 계산 셰이더 외에도, Render 과정에서도 상수 버퍼 정보를 사용할 수 있게 하는 것이다.

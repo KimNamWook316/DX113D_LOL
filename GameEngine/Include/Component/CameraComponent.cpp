@@ -37,6 +37,21 @@ CCameraComponent::~CCameraComponent()
 	SAFE_DELETE(m_Frustum);
 }
 
+void CCameraComponent::Shake(float Time, float Amount)
+{
+	if (m_Shake)
+	{
+		return;
+	}
+
+	m_Shake = true;
+	m_ShakeTimer = 0.f;
+	m_ShakeMaxTime = Time;
+	m_ShakeAmount = Amount;
+	m_ShakeDecreaseTick = m_ShakeAmount / Time;
+	m_OriginRelavitePos = GetRelativePos();
+}
+
 bool CCameraComponent::FrustumInPoint(const Vector3& Point)
 {
 	return m_Frustum->FrustumInPoint(Point);
@@ -139,6 +154,38 @@ bool CCameraComponent::Init()
 void CCameraComponent::Update(float DeltaTime)
 {
 	CSceneComponent::Update(DeltaTime);
+
+	if (m_Shake)
+	{
+		m_ShakeTimer += DeltaTime;
+
+		if (m_ShakeTimer >= m_ShakeMaxTime)
+		{
+			m_Shake = false;
+			SetRelativePos(m_OriginRelavitePos);
+			return;
+		}
+
+		float x, y;
+		x = (float)(rand()) / RAND_MAX;
+		y = (float)(rand()) / RAND_MAX;
+
+		bool Reverse = (bool)(rand() / 2);
+		if (Reverse)
+		{
+			x *= -1.f;
+		}
+		Reverse = (bool)(rand() / 2);
+		if (Reverse)
+		{
+			y *= -1.f;
+		}
+
+		Vector3 Shake = Vector3(x * m_ShakeAmount, y * m_ShakeAmount, 0.f);
+		SetRelativePos(m_OriginRelavitePos + Shake);
+
+		m_ShakeAmount -= m_ShakeDecreaseTick * DeltaTime;
+	}
 
 	/*
 	카메라가 뷰공간으로 변환이 되면 카메라를 구성하는 x, y, z 축은 월드의 축과 일치하게

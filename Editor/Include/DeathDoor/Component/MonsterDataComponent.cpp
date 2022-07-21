@@ -11,7 +11,8 @@ CMonsterDataComponent::CMonsterDataComponent()	:
 	m_HitBox(nullptr),
 	m_HitEffectFlag(0),
 	m_HitEffectTimer(0.f),
-	m_HitEffectMax(0.6f)
+	m_HitEffectMax(0.6f),
+	m_IsCombat(false)
 {
 	SetTypeID<CMonsterDataComponent>();
 

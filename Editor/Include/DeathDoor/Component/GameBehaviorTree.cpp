@@ -2,6 +2,8 @@
 #include "GameBehaviorTree.h"
 #include "Component/Node/SelectorNode.h"
 #include "Component/Node/SequenceNode.h"
+
+// Public Nodes
 #include "Node/MoveNode.h"
 #include "Node/IdleNode.h"
 #include "Node/MoveInputCheckNode.h"
@@ -30,15 +32,26 @@
 // Public Nodes
 #include "Node/MeleeRangeCheckNode.h"
 #include "Node/PostAttackDelayCheck.h"
+#include "Node/DeathCheck.h"
+#include "Node/IsCombatCheck.h"
+#include "Node/DeathNode.h"
 
 // Boss - Knight
-#include "Node/BossKnightFinalAttackCheck.h"
-#include "Node/BossKnightJumpAttackRangeCheck.h"
 #include "Node/BossKnightContinueAttackNode.h"
+#include "Node/BossKnightCutScenePlayNode.h"
+#include "Node/BossKnightFinalAttackCheck.h"
 #include "Node/BossKnightFinalAttackNode.h"
+#include "Node/BossKnightJumpAttackRangeCheck.h"
+#include "Node/BossKnightIdleNode.h"
 #include "Node/BossKnightJumpAttackNode.h"
 #include "Node/BossKnightMeleeAttackNode.h"
 #include "Node/BossKnightSlamEnd.h"
+#include "Node/BossKnightWalkNode.h"
+#include "Node/BossKnightContinueAttackCheck.h"
+#include "Node/BossKnightCutScenePlayCheck.h"
+#include "Node/BossKnightFinalAttackCheck.h"
+#include "Node/BossKnightJumpAttackRangeCheck.h"
+#include "Node/BossKnightPlayerEnterZoneCheck.h"
 
 #include "GameStateComponent.h"
 
@@ -76,6 +89,7 @@ CNode* CGameBehaviorTree::LoadNode(CNode* Parent, size_t TypeID)
 	CGameObject* OwnerObject = m_Owner->GetGameObject();
 
 	// TODO : Node 종류 추가될 때 마다 추가해주기
+	// Public Node 이곳에 작성
 	if (TypeID == typeid(CSelectorNode).hash_code())
 	{
 		NewNode = MakeNode<CSelectorNode>(Parent, OwnerObject);
@@ -197,24 +211,50 @@ CNode* CGameBehaviorTree::LoadNode(CNode* Parent, size_t TypeID)
 		NewNode = MakeNode<CPostAttackDelayCheck>(Parent, OwnerObject);
 	}
 
-	else if (TypeID == typeid(CBossKnightFinalAttackCheck).hash_code())
+	else if (TypeID == typeid(CIsCombatCheck).hash_code())
 	{
-		NewNode = MakeNode<CBossKnightFinalAttackCheck>(Parent, OwnerObject);
+		NewNode = MakeNode<CIsCombatCheck>(Parent, OwnerObject);
 	}
 
-	else if (TypeID == typeid(CBossKnightJumpAttackRangeCheck).hash_code())
+	else if (TypeID == typeid(CDeathCheck).hash_code())
 	{
-		NewNode = MakeNode<CBossKnightJumpAttackRangeCheck>(Parent, OwnerObject);
+		NewNode = MakeNode<CDeathCheck>(Parent, OwnerObject);
 	}
 
+	else if (TypeID == typeid(CDeathNode).hash_code())
+	{
+		NewNode = MakeNode<CDeathNode>(Parent, OwnerObject);
+	}
+
+	else if (TypeID == typeid(CClearPathListNode).hash_code())
+	{
+		NewNode = MakeNode<CClearPathListNode>(Parent, OwnerObject);
+	}
+
+	else if (TypeID == typeid(CPathFindEnableCheck).hash_code())
+	{
+		NewNode = MakeNode<CPathFindEnableCheck>(Parent, OwnerObject);
+	}
+
+	// Boss Knight - Action
 	else if (TypeID == typeid(CBossKnightContinueAttackNode).hash_code())
 	{
 		NewNode = MakeNode<CBossKnightContinueAttackNode>(Parent, OwnerObject);
 	}
 
+	else if (TypeID == typeid(CBossKnightCutScenePlayNode).hash_code())
+	{
+		NewNode = MakeNode<CBossKnightCutScenePlayNode>(Parent, OwnerObject);
+	}
+
 	else if (TypeID == typeid(CBossKnightFinalAttackNode).hash_code())
 	{
 		NewNode = MakeNode<CBossKnightFinalAttackNode>(Parent, OwnerObject);
+	}
+
+	else if (TypeID == typeid(CBossKnightIdleNode).hash_code())
+	{
+		NewNode = MakeNode<CBossKnightIdleNode>(Parent, OwnerObject);
 	}
 
 	else if (TypeID == typeid(CBossKnightJumpAttackNode).hash_code())
@@ -232,14 +272,35 @@ CNode* CGameBehaviorTree::LoadNode(CNode* Parent, size_t TypeID)
 		NewNode = MakeNode<CBossKnightSlamEnd>(Parent, OwnerObject);
 	}
 
-	else if (TypeID == typeid(CClearPathListNode).hash_code())
+	else if (TypeID == typeid(CBossKnightWalkNode).hash_code())
 	{
-		NewNode = MakeNode<CClearPathListNode>(Parent, OwnerObject);
+		NewNode = MakeNode<CBossKnightWalkNode>(Parent, OwnerObject);
 	}
 
-	else if (TypeID == typeid(CPathFindEnableCheck).hash_code())
+	// Boss Knight - Condition
+	else if (TypeID == typeid(CBossKnightContinueAttackCheck).hash_code())
 	{
-		NewNode = MakeNode<CPathFindEnableCheck>(Parent, OwnerObject);
+		NewNode = MakeNode<CBossKnightContinueAttackCheck>(Parent, OwnerObject);
+	}
+
+	else if (TypeID == typeid(CBossKnightCutScenePlayCheck).hash_code())
+	{
+		NewNode = MakeNode<CBossKnightCutScenePlayCheck>(Parent, OwnerObject);
+	}
+
+	else if (TypeID == typeid(CBossKnightFinalAttackCheck).hash_code())
+	{
+		NewNode = MakeNode<CBossKnightFinalAttackCheck>(Parent, OwnerObject);
+	}
+
+	else if (TypeID == typeid(CBossKnightJumpAttackRangeCheck).hash_code())
+	{
+		NewNode = MakeNode<CBossKnightJumpAttackRangeCheck>(Parent, OwnerObject);
+	}
+
+	else if (TypeID == typeid(CBossKnightPlayerEnterZoneCheck).hash_code())
+	{
+		NewNode = MakeNode<CBossKnightPlayerEnterZoneCheck>(Parent, OwnerObject);
 	}
 
 	else if (TypeID == typeid(CHitCheckNode).hash_code())
@@ -264,7 +325,7 @@ CNode* CGameBehaviorTree::LoadNode(CNode* Parent, size_t TypeID)
 
 	else
 	{
-	NewNode = MakeNode<CPlayerRoll>(Parent, OwnerObject);
+		NewNode = MakeNode<CPlayerRoll>(Parent, OwnerObject);
 	}
 
 	return NewNode;

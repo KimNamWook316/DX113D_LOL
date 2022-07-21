@@ -30,6 +30,7 @@ public:
     void OnEndAnimJudgeContinueAttack();
     void OnWalk(float DeltaTime);
     void OnPlayerEnterZone(const CollisionResult& Result);
+    void OnEndCutScenePlaying();
 
 public:
     int GetMeleeAttackCount() const
@@ -93,9 +94,9 @@ public:
         m_AttackRot = Type;
     }
 
-    void OnEndCutScenePlaying()
+    void OnStartCutScene()
     {
-        m_IsCutScenePlaying = false;
+        m_IsCutScenePlaying = true;
     }
 
 protected:
@@ -111,5 +112,6 @@ protected:
     class CColliderBox3D* m_PlayerEnterZoneTrigger;
 
     bool m_IsCutScenePlaying;
+    class CCameraComponent* m_CutSceneCam;
 };
 

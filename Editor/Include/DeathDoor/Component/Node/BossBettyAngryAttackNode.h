@@ -2,13 +2,13 @@
 #include "Component\Node\ActionNode.h"
 
 // 1. HP가 30%, 60%가 되는 순간 --> FirstSlamAnger + Roar / 주변 Particle 눈덩이 Damage
-class CBossBettyAngrylAttackNode :
+class CBossBettyAngryAttackNode :
     public CActionNode
 {
 public:
-    CBossBettyAngrylAttackNode();
-    CBossBettyAngrylAttackNode(const CBossBettyAngrylAttackNode& Node);
-    virtual ~CBossBettyAngrylAttackNode();
+    CBossBettyAngryAttackNode();
+    CBossBettyAngryAttackNode(const CBossBettyAngryAttackNode& Node);
+    virtual ~CBossBettyAngryAttackNode();
 public:
     virtual void Init() override;
 

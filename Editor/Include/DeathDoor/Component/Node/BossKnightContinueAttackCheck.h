@@ -2,13 +2,13 @@
 
 #include "Component\Node\ConditionNode.h"
 
-class CBossKnightJumpAttackRangeCheck :
+class CBossKnightContinueAttackCheck :
     public CConditionNode
 {
 public:
-    CBossKnightJumpAttackRangeCheck();
-    CBossKnightJumpAttackRangeCheck(const CBossKnightJumpAttackRangeCheck& Node);
-    virtual ~CBossKnightJumpAttackRangeCheck();
+    CBossKnightContinueAttackCheck();
+    CBossKnightContinueAttackCheck(const CBossKnightContinueAttackCheck& Node);
+    virtual ~CBossKnightContinueAttackCheck();
 
 public:
     virtual NodeResult OnStart(float DeltaTime) override;
