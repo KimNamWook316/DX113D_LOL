@@ -38,8 +38,6 @@ void CKnightDataComponent::Start()
 
 void CKnightDataComponent::OnInActiveMeleeAttackCollider()
 {
-	// TODO : Boss Knight - Particle, Cam Shake
-
 	m_MeleeAttackCollider->Enable(false);
 }
 
@@ -128,7 +126,6 @@ void CKnightDataComponent::OnPlayerEnterZone(const CollisionResult& Result)
 	m_PlayerEnterZoneTrigger->Enable(false);
 
 	m_PlayerEnterZone = true;
-	m_IsCutScenePlaying = true;
 
 	if (m_CutSceneCam)
 	{
@@ -150,5 +147,8 @@ void CKnightDataComponent::OnEndCutScenePlaying()
 
 void CKnightDataComponent::OnActiveMeleeAttackCollider()
 {
+	// TODO : Boss Knight - Particle, Cam Shake
+	m_Scene->GetCameraManager()->ShakeCamera(0.5f, 2.f);
+
 	m_MeleeAttackCollider->Enable(true);
 }

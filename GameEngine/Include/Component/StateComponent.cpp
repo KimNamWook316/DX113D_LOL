@@ -9,7 +9,8 @@
 
 CStateComponent::CStateComponent()	:
 	m_BehaviorTree(nullptr),
-	m_TreeUpdate(false)
+	m_TreeUpdate(false),
+	m_TreeInit(false)
 {
 	SetTypeID<CStateComponent>();
 	m_ComponentType = Component_Type::ObjectComponent;
@@ -46,11 +47,17 @@ bool CStateComponent::Init()
 
 void CStateComponent::Start()
 {
-	m_BehaviorTree->Start();
+	CObjectComponent::Start();
 }
 
 void CStateComponent::Update(float DeltaTime)
 {
+	if (!m_TreeInit)
+	{
+		m_BehaviorTree->Start();
+		m_TreeInit = true;
+	}
+
 	auto iter = m_StateList.begin();
 	auto iterEnd = m_StateList.end();
 

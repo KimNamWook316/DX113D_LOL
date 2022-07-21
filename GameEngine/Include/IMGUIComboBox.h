@@ -20,6 +20,8 @@ protected:
 	ImGuiComboFlags	m_Flag;
 	std::function<void(int, const char*)>	m_SelectCallback;
 
+	std::function<void(int, const char*, CIMGUIComboBox*)>	m_SelectPointerCallback;
+
 	// OBJ Ãß°¡
 	std::function<void(const std::string&)>	m_SelectIndexCallback;
 public:
@@ -155,9 +157,14 @@ public:
 public:
 	virtual bool Init();
 	virtual void Render();
-public :
 
 public:
+	template <typename T>
+	void SetSelectPointerCallback(T* Obj, void(T::* Func)(int, const char*, CIMGUIComboBox*))
+	{
+		m_SelectPointerCallback = std::bind(Func, Obj, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+	}
+
 	template <typename T>
 	void SetSelectCallback(T* Obj, void(T::* Func)(int, const char*))
 	{

@@ -18,7 +18,7 @@ private:
 private:
     void OnSelectList(int Idx, const char* Label);
     void OnClickCreate();
-    void OnCheckInteraction(int Idx, bool Check);
+    void OnSelectInteraction(int Idx, const char* Label, class CIMGUIComboBox* Pointer);
     void OnClickSave();
     void OnClickLoad(); 
     void OnClickDelete();
@@ -30,7 +30,7 @@ private:
     class CIMGUIButton* m_CreateProfileButton;
     class CIMGUITextInput* m_ProfileName;
     class CIMGUITextInput* m_ProfileChannel;
-    class CIMGUICheckBox* m_InteractionEdit;
+    class CIMGUIComboBox* m_InteractionEditArr[(int)Collision_Channel::Max];
     class CIMGUIButton* m_SaveButton;
     class CIMGUIButton* m_LoadButton;
     class CIMGUIButton* m_DeleteButton;
