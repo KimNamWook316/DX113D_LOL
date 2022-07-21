@@ -182,8 +182,6 @@ void CScene::PostUpdate(float DeltaTime)
 
 		(*iter)->PostUpdate(DeltaTime);
 
-		(*iter)->m_PrevFramePos = (*iter)->GetWorldPos();
-
 		++iter;
 	}
 
@@ -229,6 +227,14 @@ void CScene::PostUpdate(float DeltaTime)
 	else
 	{
 		m_Collision->ClearAll();
+	}
+
+	iter = m_ObjList.begin();
+	iterEnd = m_ObjList.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		(*iter)->m_PrevFramePos = (*iter)->GetWorldPos();
 	}
 }
 

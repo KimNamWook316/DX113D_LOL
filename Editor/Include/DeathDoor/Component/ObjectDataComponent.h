@@ -18,6 +18,7 @@ protected:
 	ObjectData m_Data;
 	bool m_IsHit;
 	bool m_IsHitPrevFrame;
+	bool m_NoInterrupt;	// 다른 상태로 전환 불가능한 상태인지
 
 public:
 	void SetObjectData(const ObjectData& Data)
@@ -91,6 +92,16 @@ public:
 	float GetMeleeAttackRange() const
 	{
 		return m_Data.MeleeAttackRange;
+	}
+
+	bool IsNoInterrupt()	const
+	{
+		return m_NoInterrupt;
+	}
+
+	void SetNoInterrupt(bool Enable)
+	{
+		m_NoInterrupt = Enable;
 	}
 
 public:

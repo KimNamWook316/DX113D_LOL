@@ -73,9 +73,11 @@ void CNavMeshComponentWidget::SetSceneComponent(CSceneComponent* Com)
 
 void CNavMeshComponentWidget::OnClickLoadMesh()
 {
-	if (m_NameInput->Empty())
+	std::string MeshName;
+	MeshName = m_MeshName->GetTextMultibyte();
+	if (MeshName.empty())
 	{
-		MessageBox(nullptr, TEXT("Enter the Name"), TEXT("Fail"), MB_OK);
+		MessageBox(nullptr, TEXT("Please Enter NavMeshName"), TEXT("실패"), MB_OK);
 		return;
 	}
 
@@ -92,8 +94,6 @@ void CNavMeshComponentWidget::OnClickLoadMesh()
 
 	if (GetOpenFileName(&OpenFile) != 0)
 	{
-		std::string MeshName;
-		MeshName = m_MeshName->GetTextMultibyte();
 		if (!CSceneManager::GetInst()->GetScene()->GetResource()->LoadMeshFullPath(Mesh_Type::Nav, MeshName, FilePath))
 		{
 			MessageBox(nullptr, TEXT("메쉬 로드 실패"), TEXT("실패"), MB_OK);

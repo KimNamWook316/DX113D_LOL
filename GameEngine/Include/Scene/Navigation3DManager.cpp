@@ -153,7 +153,7 @@ bool CNavigation3DManager::CheckPlayerNavMeshPoly(float& Height)
 			//P2 = P2.TransformCoord(WorldMat);
 			//P3 = P3.TransformCoord(WorldMat);
 
-			PlayerPos.y += 10.f;
+			//PlayerPos.y += 10.f;
 			XMVECTOR v1 = PlayerPos.Convert();
 
 			XMVECTOR Dir = Vector3(0.f, -1.f, 0.f).Convert();
@@ -184,18 +184,19 @@ bool CNavigation3DManager::CheckPlayerNavMeshPoly(float& Height)
 
 		}
 
-		Vector3 P1 = m_NavMeshComponent->GetVertexPos(0, 0);
-		Vector3 P2 = m_NavMeshComponent->GetVertexPos(0, 1);
-		Vector3 P3 = m_NavMeshComponent->GetVertexPos(0, 2);
+		//Vector3 P1 = m_NavMeshComponent->GetVertexPos(0, 0);
+		//Vector3 P2 = m_NavMeshComponent->GetVertexPos(0, 1);
+		//Vector3 P3 = m_NavMeshComponent->GetVertexPos(0, 2);
 
-		Matrix WorldMat = m_NavMeshComponent->GetWorldMatrix();
+		//Matrix WorldMat = m_NavMeshComponent->GetWorldMatrix();
 
 		//P1 = P1.TransformCoord(WorldMat);
 		//P2 = P2.TransformCoord(WorldMat);
 		//P3 = P3.TransformCoord(WorldMat);
 
-		Player->SetWorldPos(Vector3((P1.x + P2.x + P3.x) / 3.f, (P1.y + P2.y + P3.y) / 3.f, (P1.z + P2.z + P3.z) / 3.f));
-		m_PlayerPolyIndex = 0;
+		//Player->SetWorldPos(Vector3((P1.x + P2.x + P3.x) / 3.f, (P1.y + P2.y + P3.y) / 3.f, (P1.z + P2.z + P3.z) / 3.f));
+		//m_PlayerPolyIndex = 0;
+		return false;
 	}
 
 	// 플레이어가 어떤 polygon에 위치할지 이미 설정이 되어있는 상태라서 지금 Polygon에 존재하는지 체크,

@@ -50,7 +50,7 @@ NodeResult CShootNode::OnStart(float DeltaTime)
 			Instance->ChangeAnimation(SequenceName);
 	}
 
-	m_Object->SetNoInterrupt(false);
+	//m_Object->SetNoInterrupt(false);
 	m_CallStart = true;
 
 	return NodeResult::Node_True;

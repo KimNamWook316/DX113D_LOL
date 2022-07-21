@@ -8,6 +8,8 @@
 #include "CollisionSection.h"
 #include "../Component/ColliderComponent.h"
 #include "../Component/ColliderBox3D.h"
+#include "../Component/ColliderRay.h"
+#include "../Component/ColliderHalfLine.h"
 #include "../Input.h"
 #include "Viewport.h"
 #include "Scene.h"
@@ -553,6 +555,58 @@ void CSceneCollision::CheckColliderSection3D()
 
 		Vector3	Min = Collider->GetMin();
 		Vector3	Max = Collider->GetMax();
+
+		if (Collider->CheckType<CColliderRay>())
+		{
+			Vector3 StartPos = ((CColliderRay*)Collider)->GetStartPos();
+			Vector3 EndPos = ((CColliderRay*)Collider)->GetEndPos();
+
+			if (StartPos.x < EndPos.x)
+				Min.x = StartPos.x;
+			else
+				Min.x = EndPos.x;
+
+			if (StartPos.z < EndPos.z)
+				Min.z = StartPos.z;
+			else
+				Min.z = EndPos.z;
+
+			if (StartPos.x > EndPos.x)
+				Max.x = StartPos.x;
+			else
+				Max.x = EndPos.x;
+
+			if (StartPos.z > EndPos.z)
+				Max.z = StartPos.z;
+			else
+				Max.z = EndPos.z;
+		}
+
+		else if (Collider->CheckType<CColliderHalfLine>())
+		{
+			Vector3 StartPos = ((CColliderHalfLine*)Collider)->GetInfo().StartPos;
+			Vector3 EndPos = ((CColliderHalfLine*)Collider)->GetInfo().EndPos;
+
+			if (StartPos.x < EndPos.x)
+				Min.x = StartPos.x;
+			else
+				Min.x = EndPos.x;
+
+			if (StartPos.z < EndPos.z)
+				Min.z = StartPos.z;
+			else
+				Min.z = EndPos.z;
+
+			if (StartPos.x > EndPos.x)
+				Max.x = StartPos.x;
+			else
+				Max.x = EndPos.x;
+
+			if (StartPos.z > EndPos.z)
+				Max.z = StartPos.z;
+			else
+				Max.z = EndPos.z;
+		}
 
 		Min -= m_Section->Min;
 		Max -= m_Section->Min;

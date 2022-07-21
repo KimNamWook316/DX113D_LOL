@@ -22,6 +22,10 @@
 #include "Node/Lockstone3TriggerBoxAction.h"
 #include "Node/ClearPathListNode.h"
 #include "Node/PathFindEnableCheck.h"
+#include "Node/HitBackNode.h"
+#include "Node/HitCheckNode.h"
+#include "Node/RollInputCheck.h"
+#include "Node/PlayerRoll.h"
 
 // Public Nodes
 #include "Node/MeleeRangeCheckNode.h"
@@ -238,6 +242,30 @@ CNode* CGameBehaviorTree::LoadNode(CNode* Parent, size_t TypeID)
 		NewNode = MakeNode<CPathFindEnableCheck>(Parent, OwnerObject);
 	}
 
+	else if (TypeID == typeid(CHitCheckNode).hash_code())
+	{
+		NewNode = MakeNode<CHitCheckNode>(Parent, OwnerObject);
+	}
+
+	else if (TypeID == typeid(CHitBackNode).hash_code())
+	{
+		NewNode = MakeNode<CHitBackNode>(Parent, OwnerObject);
+	}
+
+	else if (TypeID == typeid(CRollInputCheck).hash_code())
+	{
+		NewNode = MakeNode<CRollInputCheck>(Parent, OwnerObject);
+	}
+
+	else if (TypeID == typeid(CPlayerRoll).hash_code())
+	{
+		NewNode = MakeNode<CPlayerRoll>(Parent, OwnerObject);
+	}
+
+	else
+	{
+	NewNode = MakeNode<CPlayerRoll>(Parent, OwnerObject);
+	}
 
 	return NewNode;
 }

@@ -51,7 +51,7 @@ NodeResult CReadyToShoot::OnStart(float DeltaTime)
 			Instance->ChangeAnimation(SequenceName);
 	}
 
-	m_Object->SetNoInterrupt(true);
+	//m_Object->SetNoInterrupt(true);
 	m_CallStart = true;
 
 	m_PlayerDataComp = m_Object->FindObjectComponentFromType<CPlayerDataComponent>();

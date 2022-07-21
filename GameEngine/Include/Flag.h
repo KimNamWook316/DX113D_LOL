@@ -104,7 +104,7 @@ enum class Collision_Channel
 	PlayerAttack,
 	MonsterAttack,
 	MapObject,
-	MonsterPathFind,
+	Custom2,
 	Custom3,
 	Custom4,
 	Custom5,
@@ -125,7 +125,8 @@ enum class Collision_Channel
 enum class Collision_Interaction
 {
 	Ignore,
-	Collision
+	Collision,
+	CollisionRigid
 };
 
 enum class Collision_State

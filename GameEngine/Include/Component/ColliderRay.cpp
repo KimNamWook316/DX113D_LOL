@@ -47,6 +47,11 @@ bool CColliderRay::Init()
 void CColliderRay::Update(float DeltaTime)
 {
 	CColliderComponent::Update(DeltaTime);
+
+	Matrix MatWorld = m_Transform->GetWorldMatrix();
+	m_EndPos = Vector3(1.f, 0.f, 0.f).TransformCoord(MatWorld);
+	m_StartPos = m_RayInfo.Pos;
+
 }
 
 void CColliderRay::PostUpdate(float DeltaTime)

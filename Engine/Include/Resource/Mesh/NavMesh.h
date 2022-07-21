@@ -19,6 +19,8 @@ private:
 	std::vector<int>					m_vecIndex;
 	Vector3								m_Min;
 	Vector3								m_Max;
+	Vector3								m_OriginMin;
+	Vector3								m_OriginMax;
 
 	int m_PolyCount;
 
@@ -31,6 +33,16 @@ public:
 	const Vector3& GetMax()	const
 	{
 		return m_Max;
+	}
+
+	const Vector3& GetOriginMin()	const
+	{
+		return m_OriginMin;
+	}
+
+	const Vector3& GetOriginMax()	const
+	{
+		return m_OriginMax;
 	}
 
 	size_t GetNavMeshPolygonCount() const

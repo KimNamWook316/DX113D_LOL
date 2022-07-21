@@ -6,9 +6,12 @@
 #include "Component/AnimationMeshComponent.h"
 #include "../DataManager.h"
 #include "GameStateComponent.h"
+#include "Component/ColliderComponent.h"
 
 CPlayerDataComponent::CPlayerDataComponent()	:
-	m_OnSlash(false)
+	m_OnSlash(false),
+	m_AnimComp(nullptr),
+	m_Body(nullptr)
 {
 	SetTypeID<CPlayerDataComponent>();
 	m_ComponentType = Component_Type::ObjectComponent;
@@ -35,13 +38,20 @@ void CPlayerDataComponent::Start()
 	CInput::GetInst()->SetKeyCallback("WeaponFire", KeyState_Down, this, &CPlayerDataComponent::SetPlayerAbilityFire);
 	CInput::GetInst()->SetKeyCallback("WeaponChain", KeyState_Down, this, &CPlayerDataComponent::SetPlayerAbilityChain);
 
+	m_AnimComp = m_Object->FindComponentFromType<CAnimationMeshComponent>();
+
 	// Player Animation Notify는 여기 추가
-	CAnimationMeshComponent* Comp = m_Object->FindComponentFromType<CAnimationMeshComponent>();
-	Comp->GetAnimationInstance()->AddNotify<CPlayerDataComponent>("Player_Slash_L", "Player_Slash_L", 3, this, &CPlayerDataComponent::SetTrueOnSlash);
-	Comp->GetAnimationInstance()->AddNotify<CPlayerDataComponent>("Player_Slash_L", "Player_Slash_L", 8, this, &CPlayerDataComponent::SetFalseOnSlash);
+	m_AnimComp->GetAnimationInstance()->AddNotify<CPlayerDataComponent>("PlayerSlashL", "PlayerSlashL", 3, this, &CPlayerDataComponent::SetTrueOnSlash);
+	m_AnimComp->GetAnimationInstance()->AddNotify<CPlayerDataComponent>("PlayerSlashL", "PlayerSlashL", 8, this, &CPlayerDataComponent::SetFalseOnSlash);
+	m_AnimComp->GetAnimationInstance()->AddNotify<CPlayerDataComponent>("PlayerHitBack", "PlayerHitBack", 0, this, &CPlayerDataComponent::OnHitBack);
+	m_AnimComp->GetAnimationInstance()->AddNotify<CPlayerDataComponent>("PlayerRoll", "PlayerRoll", 0, this, &CPlayerDataComponent::OnRoll);
+	
+	m_AnimComp->GetAnimationInstance()->SetEndFunction<CPlayerDataComponent>("PlayerHitBack", this, &CPlayerDataComponent::OnHitBackEnd);
+	m_AnimComp->GetAnimationInstance()->SetEndFunction<CPlayerDataComponent>("PlayerHitRecover", this, &CPlayerDataComponent::OnHitRecoverEnd);
+	m_AnimComp->GetAnimationInstance()->SetEndFunction<CPlayerDataComponent>("PlayerRoll", this, &CPlayerDataComponent::OnRollEnd);
 
 	m_Data = CDataManager::GetInst()->GetObjectData("Player");
-
+	m_Body = (CColliderComponent*)m_Object->FindComponent("Body");
 	//CGameStateComponent::Start가 PlayerDataComponent::Start보다 먼저 호출되면 GameStateComponent가 가지고 있는 m_Data는 데이터가 아무것도 들어있지 않게돼서 여기서 강제로 Set
 	//m_Object->FindObjectComponentFromType<CGameStateComponent>()->GetObjectDataComponent()->SetObjectData(m_Data);
 
@@ -113,4 +123,38 @@ bool CPlayerDataComponent::LoadOnly(FILE* File)
 	fread(&m_PlayerData, sizeof(PlayerData), 1, File);
 
 	return true;
+}
+
+CAnimationMeshComponent* CPlayerDataComponent::GetAnimationMeshComponent() const
+{
+	return m_AnimComp;
+}
+
+void CPlayerDataComponent::OnHitBack()
+{
+	m_Body->Enable(false);
+	m_NoInterrupt = true;
+}
+
+void CPlayerDataComponent::OnHitBackEnd()
+{
+	m_AnimComp->GetAnimationInstance()->ChangeAnimation("PlayerHitRecover");
+}
+
+void CPlayerDataComponent::OnHitRecoverEnd()
+{
+	m_Body->Enable(true);
+
+	m_NoInterrupt = false;
+	m_IsHit = false;
+}
+
+void CPlayerDataComponent::OnRoll()
+{
+	m_Body->Enable(false);
+}
+
+void CPlayerDataComponent::OnRollEnd()
+{
+	m_Body->Enable(true);
 }

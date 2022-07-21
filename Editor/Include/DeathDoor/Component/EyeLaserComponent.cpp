@@ -6,12 +6,11 @@
 #include "GameObject/GameObject.h"
 #include "Scene/Scene.h"
 #include "Scene/SceneManager.h"
+#include "ObjectDataComponent.h"
 
 CEyeLaserComponent::CEyeLaserComponent()	:
 	m_TriggerHitCount(0),
 	m_Player(nullptr),
-	m_AnimComp(nullptr),
-	m_WakeEnd(false),
 	m_RayCollider(nullptr),
 	m_FaceCameraOnce(false)
 {
@@ -19,7 +18,7 @@ CEyeLaserComponent::CEyeLaserComponent()	:
 	m_ComponentType = Component_Type::SceneComponent;
 
 	m_CurrentLaserLeftRightDir = Vector3(0.f, 0.f, -1.f);
-	m_CurrentLaserUpDownDir = Vector3(0.f, 0.f, 1.f);
+	//m_CurrentLaserUpDownDir = Vector3(0.f, 0.f, 1.f);
 	m_NormalDir = Vector3(0.f, 1.f, 0.f);
 
 	m_LayerName = "Transparency";
@@ -38,9 +37,7 @@ CEyeLaserComponent::~CEyeLaserComponent()
 
 void CEyeLaserComponent::SetWakeEnd()
 {
-	m_WakeEnd = true;
-	m_AnimComp->GetAnimationInstance()->ChangeAnimation("EyeLaser_Idle");
-	m_AnimComp->GetAnimationInstance()->SetPlayScale("EyeLaser_Idle", 0.f);
+
 }
 
 void CEyeLaserComponent::Start()
@@ -51,15 +48,6 @@ void CEyeLaserComponent::Start()
 
 	// Notify(ex. Wake 애니메이션 끝나면 TrackPlayer 함수 호출) 세팅
 
-	m_AnimComp = m_Object->FindComponentFromType<CAnimationMeshComponent>();
-
-	if (m_AnimComp)
-	{
-		CAnimationSequenceInstance* Instance = m_AnimComp->GetAnimationInstance();
-		
-		Instance->ChangeAnimation("EyeLaser_Sleep");
-		Instance->SetEndFunction<CEyeLaserComponent>("EyeLaser_Wake", this, &CEyeLaserComponent::SetWakeEnd);
-	}
 	
 	m_LaserPlaneMesh = CResourceManager::GetInst()->FindMesh("PlaneMesh");
 
@@ -80,9 +68,11 @@ void CEyeLaserComponent::Start()
 	m_Material->SetOpacity(1.f);
 	m_Material->SetTransparency(true);
 
-	if (m_Object->FindComponentFromType<CColliderRay>())
+	m_RayCollider = m_Object->FindComponentFromType<CColliderRay>();
+
+	if (m_RayCollider)
 	{
-		m_RayCollider = m_Object->FindComponentFromType<CColliderRay>();
+		m_RayCollider->AddCollisionCallback<CEyeLaserComponent>(Collision_State::Begin, this, &CEyeLaserComponent::RaserCollision);
 	}
 
 }
@@ -102,25 +92,16 @@ void CEyeLaserComponent::Update(float DeltaTime)
 
 	FaceCamera();
 
-	if (m_AnimComp)
+	if (m_TriggerHitCount == 1)
 	{
-		CAnimationSequenceInstance* Instance = m_AnimComp->GetAnimationInstance();
-		if (m_TriggerHitCount == 1 && !m_WakeEnd)
-		{
-			// EyeLaser가 깨어나는 애니메니션으로 전환
-			Instance->ChangeAnimation("EyeLaser_Wake");
-		}
-
-		if (m_TriggerHitCount == 1 && m_WakeEnd)
-		{
-			TrackPlayer(DeltaTime);
-		}
-
-		else if (m_TriggerHitCount == 4)
-		{
-			// EyeLaser가 파괴
-		}
+		TrackPlayer(DeltaTime);
 	}
+
+	else if (m_TriggerHitCount == 4)
+	{
+		// EyeLaser가 파괴
+	}
+
 }
 
 void CEyeLaserComponent::PostUpdate(float DeltaTime)
@@ -135,8 +116,8 @@ void CEyeLaserComponent::PrevRender()
 
 void CEyeLaserComponent::Render()
 {
-	//if (m_TriggerHitCount == 1 && m_WakeEnd)
-	//{
+	if (m_TriggerHitCount == 1)
+	{
 		CSceneComponent::Render();
 
 		m_Material->Render();
@@ -144,7 +125,7 @@ void CEyeLaserComponent::Render()
 		m_LaserPlaneMesh->Render();
 
 		m_Material->Reset();
-	//}
+	}
 }
 
 void CEyeLaserComponent::PostRender()
@@ -195,19 +176,6 @@ bool CEyeLaserComponent::LoadOnly(FILE* File)
 
 void CEyeLaserComponent::TrackPlayer(float DeltaTime)
 {
-	if (!m_RayCollider)
-	{
-		m_RayCollider = m_Object->FindComponentFromType<CColliderRay>();
-	}
-
-	if (!m_AnimComp)
-	{
-		m_AnimComp = m_Object->FindComponentFromType<CAnimationMeshComponent>();
-	}
-
-	m_WakeEnd = true; 
-
-
 	// 원래 레이저가 바라보는 방향은 플레이어가 입장하는 문을 바라보는 방향. 
 	// 이때 플레이어가 레이저를 바라볼 때 오른쪽이 -x, 왼쪽이 +x이다
 	//m_CurrentLaserRot = Vector3(0.f, 0.f, 1.f);
@@ -231,7 +199,7 @@ void CEyeLaserComponent::TrackPlayer(float DeltaTime)
 	if (CrossVector.y > 0.f)
 	{
 		// 회전은 로컬축 기준이라 Z축 회전을 하지만 World기준은 Y방향이므로 Matrix는 Y축 회전 Matrix를 만든다
-		m_AnimComp->AddWorldRotationZ(-DeltaTime * 7.f);
+		//m_AnimComp->AddWorldRotationZ(-DeltaTime * 7.f);
 		AddWorldRotationY(-DeltaTime * 7.f);
 		if (m_RayCollider)
 			m_RayCollider->AddWorldRotationY(-DeltaTime * 7.f);
@@ -242,7 +210,7 @@ void CEyeLaserComponent::TrackPlayer(float DeltaTime)
 	else if(CrossVector.y < 0.f)
 	{
 		// 회전은 로컬축 기준이라 Z축 회전을 하지만 World기준은 Y방향이므로 Matrix는 Y축 회전 Matrix를 만든다
-		m_AnimComp->AddWorldRotationZ(DeltaTime * 7.f);
+		//m_AnimComp->AddWorldRotationZ(DeltaTime * 7.f);
 		AddWorldRotationY(DeltaTime * 7.f);
 		if(m_RayCollider)
 			m_RayCollider->AddWorldRotationY(DeltaTime * 7.f);
@@ -341,15 +309,27 @@ void CEyeLaserComponent::FaceCamera()
 	Vector3 RotDir = Vector3(0.f, 1.f, 0.f).Cross(View);
 	RotDir.Normalize();
 
-	if (RotDir.z > 0.f)
+	if (RotDir.z < 0.f)
 		Angle *= -1.f;
 
 	//m_Transform->SetRotationAxis(m_NormalDir, View);
-	SetWorldRotationX(Angle);
+	SetWorldRotationZ(Angle);
 
 	//Matrix MatRot = XMMatrixRotationAxis(RotDir.Convert(), DegreeToRadian(-Angle));
 	//m_NormalDir = m_NormalDir.TransformCoord(MatRot);
 	//m_NormalDir.Normalize();
+}
+
+void CEyeLaserComponent::RaserCollision(const CollisionResult& Result)
+{
+	CGameObject* Object = Result.Dest->GetGameObject();
+
+	CObjectDataComponent* Comp = (CObjectDataComponent*)(Object->FindObjectComponent("ObjectData"));
+
+	if (Comp)
+	{
+		Comp->SetIsHit(true);
+	}
 }
 
 void CEyeLaserComponent::SetBaseColor(const Vector4& Color, int Index)

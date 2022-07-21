@@ -25,7 +25,7 @@ CRotateAttackDirectionNode::~CRotateAttackDirectionNode()
 
 NodeResult CRotateAttackDirectionNode::OnStart(float DeltaTime)
 {
-	m_Object->SetNoInterrupt(false);
+	//m_Object->SetNoInterrupt(false);
 	//m_CallStart = true;
 
 	CNavigation3DManager* Manager = m_Object->GetScene()->GetNavigation3DManager();

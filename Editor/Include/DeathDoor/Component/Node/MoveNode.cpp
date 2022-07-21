@@ -5,11 +5,12 @@
 #include "Animation/AnimationSequenceInstance.h"
 #include "../GameBehaviorTree.h"
 #include "../GameStateComponent.h"
-#include "../ObjectDataComponent.h"
+#include "../PlayerDataComponent.h"
 #include "Input.h"
 #include "Scene/SceneManager.h"
 
-CMoveNode::CMoveNode()
+CMoveNode::CMoveNode()	:
+	m_NavAgent(nullptr)
 {
 	SetTypeID(typeid(CMoveNode).hash_code());
 }
@@ -42,7 +43,7 @@ NodeResult CMoveNode::OnStart(float DeltaTime)
 		m_AnimationMeshComp->GetAnimationInstance()->ChangeAnimation(SequenceName);
 	}
 
-	m_CallStart = true;
+	//m_CallStart = true;
 
 	m_NavAgent =  m_Object->FindObjectComponentFromType<CNavAgent>();
 
@@ -51,9 +52,7 @@ NodeResult CMoveNode::OnStart(float DeltaTime)
 
 NodeResult CMoveNode::OnUpdate(float DeltaTime)
 {
-	CObjectDataComponent* Data = dynamic_cast<CObjectDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
-
-	CPlayerNormalAttackCheckCollider* NormalAttackComp = m_Object->FindComponentFromType<CPlayerNormalAttackCheckCollider>();
+	CPlayerDataComponent* Data = dynamic_cast<CPlayerDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
 
 	if (!Data)
 		return NodeResult::Node_False;

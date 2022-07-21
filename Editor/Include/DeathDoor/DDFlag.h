@@ -21,6 +21,8 @@ enum class DDActionNode
 	BossKnightSlamEnd,
 	BossKnightWalk,
 	ClearPathList,
+	HitBack,
+	PlayerRoll,
 	Max
 };
 
@@ -42,6 +44,8 @@ enum class DDConditionNode
 	BossKnightPlayerEnterZoneCheck,
 	HPCheck,
 	PathFindEnableCheck,
+	HitCheckNode,
+	RollInputCheck,
 	Max
 };
 

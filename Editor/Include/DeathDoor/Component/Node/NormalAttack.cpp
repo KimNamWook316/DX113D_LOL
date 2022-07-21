@@ -57,7 +57,6 @@ NodeResult CNormalAttack::OnStart(float DeltaTime)
 			Instance->ChangeAnimation(SequenceName);
 	}
 
-	m_Object->SetNoInterrupt(false);
 	m_CallStart = true;
 	
 	return NodeResult::Node_True;
@@ -65,13 +64,9 @@ NodeResult CNormalAttack::OnStart(float DeltaTime)
 
 NodeResult CNormalAttack::OnUpdate(float DeltaTime)
 {
-	m_Object->SetNoInterrupt(false);
-
 	CAnimationSequenceInstance* Instance = m_AnimationMeshComp->GetAnimationInstance();
 	if (!Instance->IsCurrentAnimLoop() && Instance->IsCurrentAnimEnd())
 	{
-		m_Object->SetNoInterrupt(false);
-
 		m_IsEnd = true;
 		m_CallStart = false;
 		m_Owner->SetCurrentNode(nullptr);

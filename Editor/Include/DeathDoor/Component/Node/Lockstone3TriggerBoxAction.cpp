@@ -4,6 +4,7 @@
 #include "../EyeLaserComponent.h"
 #include "Scene/Scene.h"
 #include "Scene/SceneManager.h"
+#include "Component/StaticMeshComponent.h"
 
 CLockstone3TriggerBoxAction::CLockstone3TriggerBoxAction()
 {
@@ -21,21 +22,21 @@ CLockstone3TriggerBoxAction::~CLockstone3TriggerBoxAction()
 
 NodeResult CLockstone3TriggerBoxAction::OnStart(float DeltaTime)
 {
-	CGameObject* EyeLaser = CSceneManager::GetInst()->GetScene()->FindObject("EyeLaserTop");
+	CGameObject* Laser = CSceneManager::GetInst()->GetScene()->FindObject("LaserGenerator");
 
-	if (EyeLaser)
+	if (Laser)
 	{
+		CEyeLaserComponent* EyeLaserComp = Laser->FindComponentFromType<CEyeLaserComponent>();
 		CColliderBox3D* TriggerBox = m_Object->FindComponentFromType<CColliderBox3D>();
 
 		if (TriggerBox)
 			TriggerBox->Enable(false);
 
-		CGameObject* EyeLaser = CSceneManager::GetInst()->GetScene()->FindObject("EyeLaserTop");
-		CEyeLaserComponent* EyeLaserComp = EyeLaser->FindComponentFromType<CEyeLaserComponent>();
-
 		if (EyeLaserComp)
 		{
 			EyeLaserComp->AddTriggerCount();
+			CStaticMeshComponent* Comp = m_Object->FindComponentFromType<CStaticMeshComponent>();
+			Comp->SetEmissiveColor(Vector4(0.f, 0.f, 0.f, 1.f));
 		}
 
 

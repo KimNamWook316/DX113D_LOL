@@ -16,6 +16,8 @@ protected:
 private:
 	PlayerData m_PlayerData;
 	bool m_OnSlash;
+	class CAnimationMeshComponent* m_AnimComp;
+	class CColliderComponent* m_Body;
 
 public:
 	virtual void Start();
@@ -79,5 +81,13 @@ public:
 	{
 		return m_PlayerData.Abilty_Type;
 	}
+
+	class CAnimationMeshComponent* GetAnimationMeshComponent() const;
+
+	void OnHitBack();
+	void OnHitBackEnd();
+	void OnHitRecoverEnd();
+	void OnRoll();
+	void OnRollEnd();
 };
 

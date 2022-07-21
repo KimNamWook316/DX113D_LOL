@@ -61,21 +61,21 @@ void CNavMeshComponent::Start()
 	{
 		CSceneManager::GetInst()->GetScene()->GetCollision()->SetNavMeshMin(m_NavMesh->GetMin());
 		CSceneManager::GetInst()->GetScene()->GetCollision()->SetNavMeshMax(m_NavMesh->GetMax());
-	}
 
-	size_t Count = m_NavMesh->GetNavMeshPolygonCount();
+		size_t Count = m_NavMesh->GetNavMeshPolygonCount();
 
-	for (size_t i = 0; i < Count; ++i)
-	{
-		NavigationCell* Cell = new NavigationCell;
-		NavMeshPolygon Polygon = m_NavMesh->GetNavMeshPolygon(i);
-		Vector3 P1 = Polygon.m_vecVertexPos[0];
-		Vector3 P2 = Polygon.m_vecVertexPos[1];
-		Vector3 P3 = Polygon.m_vecVertexPos[2];
-		Cell->Center = (P1 + P2 + P3) / 3.f;
-		Cell->Polygon = Polygon;
-		m_UseCellList.push_back(Cell);
-		m_mapCell.insert(std::make_pair(Polygon.m_Index, Cell));
+		for (size_t i = 0; i < Count; ++i)
+		{
+			NavigationCell* Cell = new NavigationCell;
+			NavMeshPolygon Polygon = m_NavMesh->GetNavMeshPolygon(i);
+			Vector3 P1 = Polygon.m_vecVertexPos[0];
+			Vector3 P2 = Polygon.m_vecVertexPos[1];
+			Vector3 P3 = Polygon.m_vecVertexPos[2];
+			Cell->Center = (P1 + P2 + P3) / 3.f;
+			Cell->Polygon = Polygon;
+			m_UseCellList.push_back(Cell);
+			m_mapCell.insert(std::make_pair(Polygon.m_Index, Cell));
+		}
 	}
 }
 
@@ -186,6 +186,15 @@ void CNavMeshComponent::OnUpdatePos(const Vector3& WorldPos, const Vector3& Rela
 
 		m_NavMesh->GetVertexPos(i) = Pos + WorldPos;
 	}
+
+	Vector3 OriginMin = m_NavMesh->GetOriginMin();
+	Vector3 OriginMax = m_NavMesh->GetOriginMax();
+
+	OriginMin += WorldPos;
+	OriginMax += WorldPos;
+
+	m_NavMesh->m_Min = OriginMin;
+	m_NavMesh->m_Max = OriginMax;
 }
 
 

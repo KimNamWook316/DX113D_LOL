@@ -5,6 +5,8 @@
 #include "Component/BehaviorTree.h"
 #include "Scene/Scene.h"
 #include "Scene/SceneManager.h"
+//#include "../ObjectDataComponent.h"
+//#include "../GameStateComponent.h"
 
 CCancleShootNode::CCancleShootNode()
 {
@@ -53,7 +55,9 @@ NodeResult CCancleShootNode::OnUpdate(float DeltaTime)
 
 	if (RestoreEnd)
 	{
-		m_Object->SetNoInterrupt(false);
+		//CObjectDataComponent* Data = dynamic_cast<CObjectDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
+
+		//Data->SetNoInterrupt(false);
 
 		m_IsEnd = true;
 		m_CallStart = false;

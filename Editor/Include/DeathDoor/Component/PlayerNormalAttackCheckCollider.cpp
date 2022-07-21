@@ -94,16 +94,6 @@ bool CPlayerNormalAttackCheckCollider::CollisionMouse(const Vector2& MousePos)
 
 void CPlayerNormalAttackCheckCollider::AttackSuccess(const CollisionResult& Result)
 {
-	CAnimationMeshComponent* Comp = m_Object->FindComponentFromType<CAnimationMeshComponent>();
-
-	if (!Comp)
-		return;
-
-	CAnimationSequenceInstance* Instance = Comp->GetAnimationInstance();
-
-	if (!Instance)
-		return;
-
 	CPlayerDataComponent* PlayerDataComp = m_Object->FindObjectComponentFromType<CPlayerDataComponent>();
 
 	if (!PlayerDataComp)
@@ -122,7 +112,9 @@ void CPlayerNormalAttackCheckCollider::AttackSuccess(const CollisionResult& Resu
 		if (Vec1.Dot(Vec2) > 0.f && PlayerDataComp->GetOnSlash())
 		{
 			CObjectDataComponent* Comp = (*iter)->GetGameObject()->FindObjectComponentFromType<CObjectDataComponent>();
-			Comp->SetIsHit(true);
+
+			if(Comp)
+				Comp->SetIsHit(true);
 		}
 
 		//if (!PlayerDataComp->GetOnSlash())

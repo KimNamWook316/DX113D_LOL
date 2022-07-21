@@ -3,6 +3,8 @@
 #include "Component/AnimationMeshComponent.h"
 #include "Animation/AnimationSequenceInstance.h"
 #include "Component/BehaviorTree.h"	
+#include "../ObjectDataComponent.h"
+#include "../GameStateComponent.h"
 
 CDeathNode::CDeathNode()
 {
@@ -32,7 +34,8 @@ NodeResult CDeathNode::OnStart(float DeltaTime)
 		m_AnimationMeshComp->GetAnimationInstance()->ChangeAnimation(SequenceName);
 	}
 
-	m_Object->SetNoInterrupt(true);
+	CObjectDataComponent* Data = dynamic_cast<CObjectDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
+	Data->SetNoInterrupt(true);
 
 
 	return NodeResult::Node_True;
@@ -40,8 +43,6 @@ NodeResult CDeathNode::OnStart(float DeltaTime)
 
 NodeResult CDeathNode::OnUpdate(float DeltaTime)
 {
-	m_IsEnd = true;
-
 	return NodeResult::Node_True;
 }
 

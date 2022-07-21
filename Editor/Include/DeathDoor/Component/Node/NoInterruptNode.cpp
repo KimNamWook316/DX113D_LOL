@@ -2,6 +2,8 @@
 #include "NoInterruptNode.h"
 #include "Input.h"
 #include "Component/BehaviorTree.h"
+#include "../ObjectDataComponent.h"
+#include "../GameStateComponent.h"
 
 CNoInterruptNode::CNoInterruptNode() 
 {
@@ -19,7 +21,12 @@ CNoInterruptNode::~CNoInterruptNode()
 
 NodeResult CNoInterruptNode::OnStart(float DeltaTime)
 {
-	if (m_Object->IsNoInterrupt())
+	CObjectDataComponent* Data = dynamic_cast<CObjectDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
+
+	if (!Data)
+		return NodeResult::Node_False;
+
+	if (Data->IsNoInterrupt())
 	{
 		return NodeResult::Node_True;
 	}

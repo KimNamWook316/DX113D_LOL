@@ -12,7 +12,9 @@
 
 #include <sstream>
 
-CObjectDataComponent::CObjectDataComponent()
+CObjectDataComponent::CObjectDataComponent()	:
+	m_NoInterrupt(false),
+	m_IsHit(false)
 {
 	SetTypeID<CObjectDataComponent>();
 	m_ComponentType = Component_Type::ObjectComponent;

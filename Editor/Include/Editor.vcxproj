@@ -218,6 +218,8 @@
     <ClCompile Include="DeathDoor\Component\Node\ClearPathListNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\DeathNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\FindPathNode.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\HitBackNode.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\HitCheckNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\HPCheck.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\IdleNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\Lockstone3TriggerBoxAction.cpp" />
@@ -232,8 +234,10 @@
     <ClCompile Include="DeathDoor\Component\Node\NoInterruptNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\NormalAttack.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\PathFindEnableCheck.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\PlayerRoll.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\PostAttackDelayCheck.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\ReadyToShoot.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\RollInputCheck.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\RotateAttackDirectionNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\ShootNode.cpp" />
     <ClCompile Include="DeathDoor\Component\ObjectDataComponent.cpp" />
@@ -360,6 +364,8 @@
     <ClInclude Include="DeathDoor\Component\Node\ClearPathListNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\DeathNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\FindPathNode.h" />
+    <ClInclude Include="DeathDoor\Component\Node\HitBackNode.h" />
+    <ClInclude Include="DeathDoor\Component\Node\HitCheckNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\HPCheck.h" />
     <ClInclude Include="DeathDoor\Component\Node\IdleNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\Lockstone3TriggerBoxAction.h" />
@@ -374,8 +380,10 @@
     <ClInclude Include="DeathDoor\Component\Node\NoInterruptNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\NormalAttack.h" />
     <ClInclude Include="DeathDoor\Component\Node\PathFindEnableCheck.h" />
+    <ClInclude Include="DeathDoor\Component\Node\PlayerRoll.h" />
     <ClInclude Include="DeathDoor\Component\Node\PostAttackDelayCheck.h" />
     <ClInclude Include="DeathDoor\Component\Node\ReadyToShoot.h" />
+    <ClInclude Include="DeathDoor\Component\Node\RollInputCheck.h" />
     <ClInclude Include="DeathDoor\Component\Node\RotateAttackDirectionNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\ShootNode.h" />
     <ClInclude Include="DeathDoor\Component\ObjectDataComponent.h" />

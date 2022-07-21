@@ -150,6 +150,8 @@ bool CNavMesh::LoadMeshFullPathMultibyte(const char* FullPath)
 
 	m_Min = m_Min - Middle;
 	m_Max = m_Max - Middle;
+	m_OriginMin = m_Min;
+	m_OriginMax = m_Max;
 
 	m_Scene->GetResource()->CreateNavMesh(this, "NavMesh",
 		&m_vecVertexPos[0], sizeof(Vector3), m_vecVertexPos.size(),

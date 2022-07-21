@@ -137,7 +137,9 @@ void CStaticMeshComponentWidget::OnClickLoadMesh()
 
 		CMesh* Mesh = CSceneManager::GetInst()->GetScene()->GetResource()->FindMesh(MeshName);
 
-		static_cast<CStaticMeshComponent*>(m_Component)->SetMesh((CStaticMesh*)Mesh);
+		//static_cast<CStaticMeshComponent*>(m_Component)->SetMesh((CStaticMesh*)Mesh);
+		CStaticMeshComponent* StaticComp = static_cast<CStaticMeshComponent*>(m_Component);
+		StaticComp->SetMesh((CStaticMesh*)Mesh);
 
 		RefreshMeshWidget(Mesh);
 	}

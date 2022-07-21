@@ -461,12 +461,13 @@ void CEditorManager::CreateKey()
 	CInput::GetInst()->CreateKey("MoveBack", 'S');
 	CInput::GetInst()->CreateKey("MoveLeft", 'A');
 	CInput::GetInst()->CreateKey("MoveRight", 'D');
+	CInput::GetInst()->CreateKey("Roll", VK_SPACE);
 
-	CInput::GetInst()->CreateKey("SkillW", 'W');
-	CInput::GetInst()->CreateKey("SkillE", 'E');
-	CInput::GetInst()->CreateKey("SkillR", 'R');
-	CInput::GetInst()->CreateKey("SpellD", 'D');
-	CInput::GetInst()->CreateKey("SpellF", 'F');
+	//CInput::GetInst()->CreateKey("SkillW", 'W');
+	//CInput::GetInst()->CreateKey("SkillE", 'E');
+	//CInput::GetInst()->CreateKey("SkillR", 'R');
+	//CInput::GetInst()->CreateKey("SpellD", 'D');
+	//CInput::GetInst()->CreateKey("SpellF", 'F');
 }
 
 void CEditorManager::CreateEditorObjects()

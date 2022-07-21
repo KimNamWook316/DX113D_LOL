@@ -20,7 +20,6 @@ protected:
 
 protected:
 	class CScene* m_Scene;
-	bool		m_NoInterrupt;	// 다른 State로 전환 불가능한 상태인지(ex. 특정 스킬 사용중에 다른 스킬을 쓸 수 없다)
 	Object_Type m_ObjectType;
 	bool		m_IsEnemy;
 	bool		m_ExcludeSceneSave;
@@ -61,16 +60,6 @@ public:
 	class CScene* GetScene()    const
 	{
 		return m_Scene;
-	}
-
-	bool IsNoInterrupt()	const
-	{
-		return m_NoInterrupt;
-	}
-
-	void SetNoInterrupt(bool Enable)
-	{
-		m_NoInterrupt = Enable;
 	}
 
 	void ExcludeFromSceneSave()
@@ -290,6 +279,20 @@ public:
 		{
 			if ((*iter1)->CheckType<T>())
 				return (T*)(*iter1).Get();
+		}
+
+		return nullptr;
+	}
+
+	CComponent* FindObjectComponent(const std::string& Name)
+	{
+		auto	iter = m_vecObjectComponent.begin();
+		auto	iterEnd = m_vecObjectComponent.end();
+
+		for (; iter != iterEnd; ++iter)
+		{
+			if ((*iter)->GetName() == Name)
+				return (*iter);
 		}
 
 		return nullptr;

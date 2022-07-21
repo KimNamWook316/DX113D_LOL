@@ -64,6 +64,12 @@ std::string CDDUtil::DDConditionNodeTypeToString(DDConditionNode NodeType)
 
 	case DDConditionNode::PathFindEnableCheck:
 		return "PathFindEnableCheck";
+
+	case DDConditionNode::HitCheckNode:
+		return "HitCheckNode";
+
+	case DDConditionNode::RollInputCheck:
+		return "RollInputCheck";
 	}
 
 	return "";
@@ -135,6 +141,14 @@ DDConditionNode CDDUtil::StringToDDConditionNodeType(const std::string& Str)
 	{
 		return DDConditionNode::PathFindEnableCheck;
 	}
+	else if (Str == "HitCheckNode")
+	{
+		return DDConditionNode::HitCheckNode;
+	}
+	else if (Str == "RollInputCheck")
+	{
+		return DDConditionNode::RollInputCheck;
+	}
 
 	return DDConditionNode(-1);
 }
@@ -199,6 +213,12 @@ std::string CDDUtil::DDActionNodeTypeToString(DDActionNode NodeType)
 
 	case DDActionNode::ClearPathList:
 		return "ClearPathList";
+
+	case DDActionNode::HitBack:
+		return "HitBack";
+
+	case DDActionNode::PlayerRoll:
+		return "PlayerRoll";
 	}
 
 	return "";
@@ -277,6 +297,14 @@ DDActionNode CDDUtil::StringToDDActionNodeType(const std::string& Str)
 	else if (Str == "ClearPathList")
 	{
 		return DDActionNode::ClearPathList;
+	}
+	else if (Str == "HitBack")
+	{
+		return DDActionNode::HitBack;
+	}
+	else if (Str == "PlayerRoll")
+	{
+		return DDActionNode::PlayerRoll;
 	}
 
 	return DDActionNode(-1);

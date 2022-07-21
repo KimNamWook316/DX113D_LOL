@@ -3,6 +3,8 @@
 #include "Component/AnimationMeshComponent.h"
 #include "Animation/AnimationSequenceInstance.h"
 #include "Component/BehaviorTree.h"
+#include "../ObjectDataComponent.h"
+#include "../GameStateComponent.h"
 
 CIdleNode::CIdleNode()
 {
@@ -20,7 +22,6 @@ CIdleNode::~CIdleNode()
 
 NodeResult CIdleNode::OnStart(float DeltaTime)
 {
-
 	m_AnimationMeshComp = m_Owner->GetAnimationMeshComp();
 
 	std::string ObjectName = m_Object->GetName();
@@ -34,7 +35,8 @@ NodeResult CIdleNode::OnStart(float DeltaTime)
 		m_AnimationMeshComp->GetAnimationInstance()->ChangeAnimation(SequenceName);
 	}
 
-	m_Object->SetNoInterrupt(false);
+	CObjectDataComponent* Data = dynamic_cast<CObjectDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
+	//Data->SetNoInterrupt(false);
 
 
 	return NodeResult::Node_True;

@@ -29,6 +29,10 @@
 #include "../DeathDoor/Component/Node/CheckDetectRangeNode.h"
 #include "../DeathDoor/Component/Node/FindPathNode.h"
 #include "../DeathDoor/Component/Node/ClearPathListNode.h"
+#include "../DeathDoor/Component/Node/HitCheckNode.h"
+#include "../DeathDoor/Component/Node/HitBackNode.h"
+#include "../DeathDoor/Component/Node/RollInputCheck.h"
+#include "../DeathDoor/Component/Node/PlayerRoll.h"
 
 #include "ObjectComponentWindow.h"
 #include "ObjectHierarchyWindow.h"
@@ -432,6 +436,14 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
         {
             NewTreeNode = m_StateComponent->CreateTreeNode<CClearPathListNode>(Name);
         }
+        case DDActionNode::HitBack:
+        {
+            NewTreeNode = m_StateComponent->CreateTreeNode<CHitBackNode>(Name);
+        }
+        case DDActionNode::PlayerRoll:
+        {
+            NewTreeNode = m_StateComponent->CreateTreeNode<CPlayerRoll>(Name);
+        }
         case DDActionNode::BossKnightContinueAttack:
         {
         }
@@ -501,6 +513,12 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
         case DDConditionNode::BossKnightFinalAttackCheck:
             break;
         case DDConditionNode::BossKnightJumpAttackRangeCheck:
+            break;
+        case DDConditionNode::HitCheckNode:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CHitCheckNode>(Name);
+            break;
+        case DDConditionNode::RollInputCheck:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CRollInputCheck>(Name);
             break;
         }
     }
