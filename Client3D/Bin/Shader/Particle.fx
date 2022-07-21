@@ -70,7 +70,7 @@ cbuffer	ParticleCBuffer : register(b7)
 	float3 g_ParticleStartEmissiveColor;
 	int g_ParticleEmpty1;
 
-	float3 EndEmissiveColor;
+	float3 g_ParticleEndEmissiveColor;
 	int ParticleEmpty2;
 };
 
@@ -1175,7 +1175,13 @@ float4 ApplyPSLinearEmissiveColorChangeEffect(float LifeTimeRatio, float4 Origin
 {
 	if (g_ParticleApplyLinearEmissiveChange == 1)
 	{
+		float4 ReturnColor;
+		ReturnColor.a = OriginEmissive.a;
 
+		ReturnColor.rgb = lerp(g_ParticleStartEmissiveColor, 
+			g_ParticleEndEmissiveColor, float3(LifeTimeRatio, LifeTimeRatio, LifeTimeRatio));
+
+		return ReturnColor;
 	}
 
 	return OriginEmissive;

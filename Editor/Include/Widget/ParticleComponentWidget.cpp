@@ -91,10 +91,10 @@ bool CParticleComponentWidget::Init()
     m_ApplyLinearEmissiveChangeEdit->SetCallBackLabel<CParticleComponentWidget>(this, &CParticleComponentWidget::OnEditEmissiveLinearCheck);
 
     m_StartEmissiveColorEdit = m_RootTree->AddWidget<CIMGUIColor3>("StartEmissive", 200.f);
-    m_StartEmissiveColorEdit->SetCallBack(this, &CParticleComponentWidget::OnEditBaseColor);
+    m_StartEmissiveColorEdit->SetCallBack(this, &CParticleComponentWidget::OnEditStartEmissiveColor);
 
     m_EndEmissiveColorEdit = m_RootTree->AddWidget<CIMGUIColor3>("EndEmissive", 200.f);
-    m_EndEmissiveColorEdit->SetCallBack(this, &CParticleComponentWidget::OnEditEmissiveColor);
+    m_EndEmissiveColorEdit->SetCallBack(this, &CParticleComponentWidget::OnEditEndEmissiveColor);
 
 	return true;
 }
@@ -112,7 +112,8 @@ void CParticleComponentWidget::SetSceneComponent(CSceneComponent* Com)
     // Material , Particle 세팅
     // OnSetParticleMaterialSetting(m_Component);
 
-    CParticle* ParticleClass = dynamic_cast<CParticleComponent*>(m_Component)->GetParticle();
+    CParticle* ParticleClass = dynamic_cast<CParticleComponent*>(MeshCom)->GetParticle();
+
     if (ParticleClass)
         ParticleLoadSuccessCallback(ParticleClass);
 }
@@ -122,69 +123,40 @@ void CParticleComponentWidget::OnEditBaseColor(const Vector3& Color)
     if (!m_ParticleClass || !m_ParticleClass->GetMaterial())
         return;
 
-    CParticle* ParticleClass = dynamic_cast<CParticleComponent*>(m_Component)->GetParticle();
-
-    if (!m_Component || !ParticleClass || !ParticleClass->GetMaterial())
-        return;
-
-    CMaterial* ParticleMaterial = ParticleClass->GetMaterial();
-
     m_ParticleClass->GetMaterial()->SetBaseColor(Color.x, Color.y, Color.z, 1.f);
-    ParticleMaterial->SetBaseColor(Color.x, Color.y, Color.z, 1.f);
+    dynamic_cast<CParticleComponent*>(m_Component)->GetMaterial()->SetBaseColor(Color.x, Color.y, Color.z, 1.f);
 }
 void CParticleComponentWidget::OnEditEmissiveColor(const Vector3& Color)
 {
     if (!m_ParticleClass || !m_ParticleClass->GetMaterial())
         return;
 
-    CParticle* ParticleClass = dynamic_cast<CParticleComponent*>(m_Component)->GetParticle();
-
-    if (!m_Component || !ParticleClass || !ParticleClass->GetMaterial())
-        return;
-
-    CMaterial* ParticleMaterial = ParticleClass->GetMaterial();
-
-    ParticleMaterial->SetEmissiveColor(Color.x, Color.y, Color.z, 1.f);
     m_ParticleClass->GetMaterial()->SetEmissiveColor(Color.x, Color.y, Color.z, 1.f);
+    dynamic_cast<CParticleComponent*>(m_Component)->GetMaterial()->SetEmissiveColor(Color.x, Color.y, Color.z, 1.f);
 }
 void CParticleComponentWidget::OnEditStartEmissiveColor(const Vector3& Color)
 {
     if (!m_ParticleClass)
         return;
 
-    CParticle* ParticleClass = dynamic_cast<CParticleComponent*>(m_Component)->GetParticle();
-
-    if (!!ParticleClass || !ParticleClass->GetMaterial())
-        return;
-
     m_ParticleClass->SetStartEmissiveColor(Color);
-    ParticleClass->SetStartEmissiveColor(Color);
+    dynamic_cast<CParticleComponent*>(m_Component)->GetCBuffer()->SetStartEmissiveColor(Color);
 }
 void CParticleComponentWidget::OnEditEndEmissiveColor(const Vector3& Color)
 {
     if (!m_ParticleClass)
         return;
 
-    CParticle* ParticleClass = dynamic_cast<CParticleComponent*>(m_Component)->GetParticle();
-
-    if (!!ParticleClass || !ParticleClass->GetMaterial())
-        return;
-
     m_ParticleClass->SetEndEmissiveColor(Color);
-    ParticleClass->SetEndEmissiveColor(Color);
+    dynamic_cast<CParticleComponent*>(m_Component)->GetCBuffer()->SetEndEmissiveColor(Color);
 }
 void CParticleComponentWidget::OnEditEmissiveLinearCheck(const char*, bool Enable)
 {
     if (!m_ParticleClass)
         return;
 
-    CParticle* ParticleClass = dynamic_cast<CParticleComponent*>(m_Component)->GetParticle();
-
-    if (!m_Component || !ParticleClass)
-        return;
-
     m_ParticleClass->SetLinearEmissiveChangeEnable(Enable);
-    ParticleClass->SetLinearEmissiveChangeEnable(Enable);
+    dynamic_cast<CParticleComponent*>(m_Component)->GetCBuffer()->SetLinearEmissiveChangeEnable(Enable);
 }
 
 void CParticleComponentWidget::OnLoadParticleClass()
@@ -245,41 +217,56 @@ void CParticleComponentWidget::OnLoadParticleClass()
             return;
         }
 
-        m_LoadedParticleFullPath = FilePathMultibyteCopy;
-
         ParticleLoadSuccessCallback(LoadedParticle);
     }
 
 }
 void CParticleComponentWidget::OnSaveParticleClass()
 {
-    if (m_LoadedParticleFullPath == "")
-        return;
-
     if (!m_ParticleClass)
         return;
 
-    // .prtc 확장자 확인하기 
-    char FileFullPathMultibyte[MAX_PATH];
-    char FileExt[MAX_PATH];
+    // Bin//ParticleClass 폴더로부터 Load 되게 세팅하기
+    const PathInfo* ParticleClassPathInfo = CPathManager::GetInst()->FindPath(PARTICLE_PATH);
+    CEngineUtil::CheckAndMakeDirectory(ParticleClassPathInfo);
 
-    strcpy_s(FileFullPathMultibyte, m_LoadedParticleFullPath.c_str());
+    TCHAR FileFullPath[MAX_PATH] = {};
 
-    _splitpath_s(FileFullPathMultibyte, nullptr, 0, nullptr, 0, nullptr, 0, FileExt, _MAX_EXT);
+    OPENFILENAME OpenFile = {};
+    OpenFile.lStructSize = sizeof(OPENFILENAME);
+    OpenFile.hwndOwner = CEngine::GetInst()->GetWindowHandle();
+    OpenFile.lpstrFilter = TEXT("All Files\0*.*\0.Particle File\0*.prtc");
+    OpenFile.lpstrFile = FileFullPath;
+    OpenFile.nMaxFile = MAX_PATH;
+    OpenFile.lpstrInitialDir = ParticleClassPathInfo->Path;
 
-    _strupr_s(FileExt);
-
-    // 확장자 .anim 이 아니라면 return;
-    if (strcmp(FileExt, ".PRTC") != 0)
+    if (GetSaveFileName(&OpenFile) != 0)
     {
-        MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("EXT Has To Be .prtc"), NULL, MB_OK);
-        return;
+        // 경로 추출
+        const char* FilePathMultibyte = CEditorUtil::ChangeTCHARTextToMultibyte(FileFullPath);
+        char FilePathMultibyteCopy[MAX_PATH] = {};
+        strcpy_s(FilePathMultibyteCopy, FilePathMultibyte);
+
+        // .prtc 확장자 확인하기 
+        char FileFullPathMultibyte[MAX_PATH];
+        char FileExt[MAX_PATH];
+
+        _splitpath_s(FilePathMultibyteCopy, nullptr, 0, nullptr, 0, nullptr, 0, FileExt, _MAX_EXT);
+
+        _strupr_s(FileExt);
+
+        // 확장자 .anim 이 아니라면 return;
+        if (strcmp(FileExt, ".PRTC") != 0)
+        {
+            MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("EXT Has To Be .prtc"), NULL, MB_OK);
+            return;
+        }
+
+        // 해당 Particle File 저장하기 
+        m_ParticleClass->SaveFile(FilePathMultibyteCopy);
+
+        MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("저장 성공"), TEXT("저장 성공"), NULL);
     }
-
-    // 해당 Particle File 저장하기 
-    m_ParticleClass->SaveFile(m_LoadedParticleFullPath.c_str());
-
-    MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("저장 성공"), TEXT("저장 성공"), NULL);
 }
 void CParticleComponentWidget::OnDropParticleToParticleWidget(const std::string& InputName)
 {
@@ -419,15 +406,17 @@ void CParticleComponentWidget::ReflectParticleToIMGUI()
 
     CMaterial* ParticleMaterial = m_ParticleClass->GetMaterial();
 
-    m_BaseColorEdit->SetColor(ParticleMaterial->GetBaseColor());
+    const Vector4& BaseColor = ParticleMaterial->GetBaseColor();
+    m_BaseColorEdit->SetRGB(BaseColor.x, BaseColor.y, BaseColor.z);
 
-    m_EmissiveColorEdit->SetColor(ParticleMaterial->GetEmissiveColor());
+    const Vector4& EmissiveColor = ParticleMaterial->GetEmissiveColor();
+    m_EmissiveColorEdit->SetRGB(EmissiveColor.x, EmissiveColor.y, EmissiveColor.z);
 
     const Vector3& StEmissiveColor = m_ParticleClass->GetStartEmissiveColor();
-    m_StartEmissiveColorEdit->SetColor(StEmissiveColor.x, StEmissiveColor.y, StEmissiveColor.z, 1.f);
+    m_StartEmissiveColorEdit->SetRGB(StEmissiveColor.x, StEmissiveColor.y, StEmissiveColor.z);
 
     const Vector3& EdEmissiveColor = m_ParticleClass->GetEndEmissiveColor();
-    m_EndEmissiveColorEdit->SetColor(EdEmissiveColor.x, EdEmissiveColor.y, EdEmissiveColor.z, 1.f);
+    m_EndEmissiveColorEdit->SetRGB(EdEmissiveColor.x, EdEmissiveColor.y, EdEmissiveColor.z);
 
     bool IsLinearEmissiveEnable = m_ParticleClass->IsLinearEmissiveChangeEnable();
     m_ApplyLinearEmissiveChangeEdit->SetCheck(0, IsLinearEmissiveEnable);

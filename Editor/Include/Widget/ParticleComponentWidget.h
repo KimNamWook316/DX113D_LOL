@@ -28,7 +28,6 @@ private : // 시간에 따른 Emissive 변화 정보 수정 기능
     class CIMGUICheckBox* m_ApplyLinearEmissiveChangeEdit;
 private:
     class CParticle* m_ParticleClass;
-    std::string m_LoadedParticleFullPath;
 private :
     void OnEditBaseColor(const Vector3& Color);
     void OnEditEmissiveColor(const Vector3& Color);
