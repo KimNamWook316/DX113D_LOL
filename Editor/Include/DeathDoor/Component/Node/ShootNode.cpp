@@ -134,6 +134,11 @@ NodeResult CShootNode::OnUpdate(float DeltaTime)
 
 		return NodeResult::Node_True;
 	}
+
+	else if (Ability == Player_Ability::Arrow)
+	{
+
+	}
 }
 
 NodeResult CShootNode::OnEnd(float DeltaTime)

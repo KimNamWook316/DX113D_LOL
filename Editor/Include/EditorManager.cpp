@@ -454,15 +454,15 @@ void CEditorManager::CreateKey()
 	CInput::GetInst()->SetKeyCallback("MouseLButton", KeyState_Push, this, &CEditorManager::MouseLButtonPush);
 	CInput::GetInst()->SetKeyCallback("MouseLButton", KeyState_Up, this, &CEditorManager::MouseLButtonUp);
 
-	CInput::GetInst()->CreateKey("Up", VK_UP);
-	CInput::GetInst()->CreateKey("Down", VK_DOWN);
-	CInput::GetInst()->CreateKey("Left", VK_LEFT);
-	CInput::GetInst()->CreateKey("Right", VK_RIGHT);
+	//CInput::GetInst()->CreateKey("Up", VK_UP);
+	//CInput::GetInst()->CreateKey("Down", VK_DOWN);
+	//CInput::GetInst()->CreateKey("Left", VK_LEFT);
+	//CInput::GetInst()->CreateKey("Right", VK_RIGHT);
 
-	CInput::GetInst()->SetKeyCallback("Up", KeyState_Push, this, &CEditorManager::KeyboardUp);
-	CInput::GetInst()->SetKeyCallback("Down", KeyState_Push, this, &CEditorManager::KeyboardDown);
-	CInput::GetInst()->SetKeyCallback("Left", KeyState_Push, this, &CEditorManager::KeyboardLeft);
-	CInput::GetInst()->SetKeyCallback("Right", KeyState_Push, this, &CEditorManager::KeyboardRight);
+	//CInput::GetInst()->SetKeyCallback("Up", KeyState_Push, this, &CEditorManager::KeyboardUp);
+	//CInput::GetInst()->SetKeyCallback("Down", KeyState_Push, this, &CEditorManager::KeyboardDown);
+	//CInput::GetInst()->SetKeyCallback("Left", KeyState_Push, this, &CEditorManager::KeyboardLeft);
+	//CInput::GetInst()->SetKeyCallback("Right", KeyState_Push, this, &CEditorManager::KeyboardRight);
 
 	CInput::GetInst()->CreateKey("MoveForward", 'W');
 	CInput::GetInst()->CreateKey("MoveBack", 'S');
