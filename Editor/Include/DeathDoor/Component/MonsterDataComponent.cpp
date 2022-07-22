@@ -149,26 +149,30 @@ float CMonsterDataComponent::GetAnglePlayer()
 bool CMonsterDataComponent::IsPlayerLeftBasedInLookDir()
 {
 	Vector3 vToPlayer = ToPlayer();
-	Vector3 vLook = m_Object->GetWorldAxis(AXIS::AXIS_Z) * -1.f;
+	// Vector3 vWorldLook = m_Object->GetWorldAxis(AXIS::AXIS_Z) * -1.f;
+	Vector3 vWorldLook = m_Object->GetWorldAxis(AXIS::AXIS_Z) * -1.f;
+	Vector3 vWorldRight = m_Object->GetWorldAxis(AXIS::AXIS_X) * -1.f;
 
-	// X, Z 축 -> 2차원 형태에서만 비교를 진행할 것이다.
+	// Monster 의 오른쪽에 Player 방향의 벡터를 투영
+	float ProjToMonsterWorldRight = vToPlayer.Dot(vWorldRight);
 
-	// Vector3 vCross = Vector3(vToPlayer.x, 0.f, vToPlayer.z).Cross(Vector3(vLook.x, 0.f, vLook.z));
-	float Angle = vToPlayer.Angle(vLook);
-	Vector3 vCross = vToPlayer.Cross(vLook);
-
-	if (Angle > 180.f)
-		int a = 1;
-
-	// if (vCross.y > 0.f)
+	if (ProjToMonsterWorldRight < 0.f)
+		return true;
+	else
+		return false;
+	/*
+	float Angle = vToPlayer.Angle(vWorldLook);
+	Vector3 vCross = vToPlayer.Cross(vWorldLook);
 	if (vCross.y > 0.f)
 	{
-			return true;
+		return true;
 	}
 	else
 	{
 		return false;
 	}
+	*/
+
 }
 
 void CMonsterDataComponent::OnLookPlayer(float DeltaTime)
@@ -180,18 +184,19 @@ void CMonsterDataComponent::OnLookPlayer(float DeltaTime)
 
 	if (abs(AnglePlayer) < m_Data.RotateSpeedPerSec)
 	{
-		MyObj->AddWorldRotationY(AnglePlayer * DeltaTime);
+		MyObj->AddWorldRotationY(AnglePlayer  * DeltaTime);
 	}
 	else
 	{
 		bool IsLeft = IsPlayerLeftBasedInLookDir();
 		if (IsLeft)
 		{
+			// 반시계방향 회전 ?
 			MyObj->AddWorldRotationY(m_Data.RotateSpeedPerSec * DeltaTime);
 		}
 		else
 		{
-			MyObj->AddWorldRotationY(-m_Data.RotateSpeedPerSec * DeltaTime);
+			MyObj->AddWorldRotationY(-1.f * m_Data.RotateSpeedPerSec * DeltaTime);
 		}
 	}
 }

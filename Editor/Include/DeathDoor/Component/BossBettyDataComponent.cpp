@@ -14,7 +14,7 @@
 CBossBettyDataComponent::CBossBettyDataComponent() :
 	m_ThrowFarAttackEnable(false),
 	m_FarAttackType(BossBettyFarAttackType::Spin),
-    m_ChangeDirLimitAngle(30.f)
+    m_ChangeDirLimitAngle(5.f)
 {
     m_ComponentType = Component_Type::ObjectComponent;
     SetTypeID<CBossBettyDataComponent>();
@@ -31,7 +31,7 @@ CBossBettyDataComponent::~CBossBettyDataComponent()
 
 void CBossBettyDataComponent::Start()
 {
-    m_Data = CDataManager::GetInst()->GetObjectData("BossKnight");
+    m_Data = CDataManager::GetInst()->GetObjectData("BossBetty");
 
     // m_BossBettySpinCollider 를 Object 의 Component List 에 추가한다.
     // - 그리고 Spin 중간에, Collide 시 Spin Collider Animation 으로 바꾸는 Callback도 세팅한다.
