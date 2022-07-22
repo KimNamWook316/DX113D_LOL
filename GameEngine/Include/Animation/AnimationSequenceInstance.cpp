@@ -629,7 +629,12 @@ void CAnimationSequenceInstance::Update(float DeltaTime)
 			FrameIndex = m_CurrentAnimation->m_Sequence->m_FrameLength - 1;
 
 		if (NextFrameIndex >= EndFrame)
-			NextFrameIndex = StartFrame;
+		{
+			if(m_CurrentAnimation->m_Loop)
+				NextFrameIndex = StartFrame;
+			else
+				NextFrameIndex = m_CurrentAnimation->m_Sequence->m_FrameLength - 1;
+		}
 
 		// 수정 전 코드
 		//float	Ratio = (AnimationTime - m_CurrentAnimation->m_Sequence->m_FrameTime * FrameIndex) / m_CurrentAnimation->m_Sequence->m_FrameTime;

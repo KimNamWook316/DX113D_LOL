@@ -70,7 +70,7 @@ enum class DDSceneComponentType
 	PlayerNormalAttackCheckCollider,
 	EyeLaserComponent,
 	PlayerHookComponent,
-	MonsterPathFindCollider,
+	PlayerBowComponent,
 	Max
 };
 
@@ -84,5 +84,16 @@ enum class DDObjectComponentType
 	BossBettyData,
 	LurkerData,
 	MonsterNavAgent,
+	ProjectileComponent,
 	Max
+};
+
+
+enum class HookResult
+{
+	// 날아가고 있는중
+	OnShoot,
+	NoCollision,
+	Collision,
+	CollisionEnd
 };

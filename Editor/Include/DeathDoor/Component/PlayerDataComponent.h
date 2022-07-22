@@ -18,6 +18,7 @@ private:
 	bool m_OnSlash;
 	class CAnimationMeshComponent* m_AnimComp;
 	class CColliderComponent* m_Body;
+	Vector3 m_ShootDir;
 
 public:
 	virtual void Start();
@@ -80,6 +81,16 @@ public:
 	Player_Ability GetPlayerAbility()	const
 	{
 		return m_PlayerData.Abilty_Type;
+	}
+
+	void SetShootDir(const Vector3& Dir)
+	{
+		m_ShootDir = Dir;
+	}
+
+	const Vector3& GetShootDir()	const
+	{
+		return m_ShootDir;
 	}
 
 	class CAnimationMeshComponent* GetAnimationMeshComponent() const;

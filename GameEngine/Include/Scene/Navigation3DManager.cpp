@@ -143,9 +143,14 @@ bool CNavigation3DManager::CheckPlayerNavMeshPoly(float& Height)
 
 		for (size_t i = 0; i < Count; ++i)
 		{
-			Vector3 P1 = m_NavMeshComponent->GetVertexPos(i, 0);
-			Vector3 P2 = m_NavMeshComponent->GetVertexPos(i, 1);
-			Vector3 P3 = m_NavMeshComponent->GetVertexPos(i, 2);
+			//Vector3 P1 = m_NavMeshComponent->GetVertexPos(i, 0);
+			//Vector3 P2 = m_NavMeshComponent->GetVertexPos(i, 1);
+			//Vector3 P3 = m_NavMeshComponent->GetVertexPos(i, 2);
+			std::vector<Vector3> vecPos;
+			m_NavMeshComponent->GetNavPolgonVertexPos(i, vecPos);
+			Vector3 P1 = vecPos[0];
+			Vector3 P2 = vecPos[1];
+			Vector3 P3 = vecPos[2];
 
 			//Matrix WorldMat = m_NavMeshComponent->GetWorldMatrix();
 
@@ -309,9 +314,16 @@ bool CNavigation3DManager::CheckNavMeshPoly(const Vector3& Pos, float& Height, i
 
 	for (size_t i = 0; i < Count; ++i)
 	{
-		Vector3 P1 = m_NavMeshComponent->GetVertexPos(i, 0);
-		Vector3 P2 = m_NavMeshComponent->GetVertexPos(i, 1);
-		Vector3 P3 = m_NavMeshComponent->GetVertexPos(i, 2);
+		std::vector<Vector3> vecPos;
+		m_NavMeshComponent->GetNavPolgonVertexPos(i, vecPos);
+
+		//Vector3 P1 = m_NavMeshComponent->GetVertexPos(i, 0);
+		//Vector3 P2 = m_NavMeshComponent->GetVertexPos(i, 1);
+		//Vector3 P3 = m_NavMeshComponent->GetVertexPos(i, 2);
+
+		Vector3 P1 = vecPos[0];
+		Vector3 P2 = vecPos[1];
+		Vector3 P3 = vecPos[2];
 
 		XMVECTOR v1 = Pos.Convert();
 

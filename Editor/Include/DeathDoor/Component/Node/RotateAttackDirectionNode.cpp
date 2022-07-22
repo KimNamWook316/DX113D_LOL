@@ -6,7 +6,8 @@
 #include "Scene/Scene.h"
 #include "Scene/SceneManager.h"
 #include "Scene/Navigation3DManager.h"
-
+#include "../PlayerDataComponent.h"
+#include "../GameStateComponent.h"
 
 CRotateAttackDirectionNode::CRotateAttackDirectionNode() :
 	m_Over180(false)
@@ -72,6 +73,10 @@ NodeResult CRotateAttackDirectionNode::OnStart(float DeltaTime)
 	float Degree = RadianToDegree(Rad);
 
 	m_DestForwardVector.Normalize();
+
+
+	CPlayerDataComponent* PlayerDataComp = dynamic_cast<CPlayerDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
+	PlayerDataComp->SetShootDir(m_DestForwardVector);
 
 	// CurretForwardVector기준 DestForwardVector로 반시계 방향으로 180도가 넘는다면
 	if (m_Over180)

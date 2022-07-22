@@ -13,6 +13,8 @@
 #include "Component\PlayerNormalAttackCheckCollider.h"
 #include "Component\LurkerDataComponent.h"
 #include "Component\MonsterNavAgent.h"
+#include "Component\PlayerBowComponent.h"
+#include "Component\ProjectileComponent.h"
 
 std::string CDDUtil::DDConditionNodeTypeToString(DDConditionNode NodeType)
 {
@@ -416,8 +418,8 @@ std::string CDDUtil::DDSceneComponentTypeToString(DDSceneComponentType Type)
 		return "EyeLaserComponent";
 	case DDSceneComponentType::PlayerHookComponent:
 		return "PlayerHookComponent";
-	case DDSceneComponentType::MonsterPathFindCollider:
-		return "MonsterPathFindCollider";
+	case DDSceneComponentType::PlayerBowComponent:
+		return "PlayerBowComponent";
 	}
 
 	return "";
@@ -437,10 +439,10 @@ DDSceneComponentType CDDUtil::StringToDDSceneComponentType(const std::string& St
 	{
 		return DDSceneComponentType::PlayerHookComponent;
 	}
-	else if (Str == "MonsterPathFindCollider")
-	{
-		return DDSceneComponentType::MonsterPathFindCollider;
-	}
+	//else if (Str == "MonsterPathFindCollider")
+	//{
+	//	return DDSceneComponentType::MonsterPathFindCollider;
+	//}
 	return DDSceneComponentType(-1);
 }
 
@@ -454,8 +456,8 @@ size_t CDDUtil::DDSceneComponentTypeToTypeID(DDSceneComponentType Type)
 		return typeid(CEyeLaserComponent).hash_code();
 	case DDSceneComponentType::PlayerHookComponent:
 		return typeid(CPlayerHookComponent).hash_code();
-	case DDSceneComponentType::MonsterPathFindCollider:
-		return typeid(CMonsterPathFindCollider).hash_code();
+	case DDSceneComponentType::PlayerBowComponent:
+		return typeid(CPlayerBowComponent).hash_code();
 	}
 	return -1;
 }
@@ -487,6 +489,9 @@ std::string CDDUtil::DDObjectComponentTypeToString(DDObjectComponentType Type)
 
 	case DDObjectComponentType::MonsterNavAgent:
 		return "MonsterNavAgent";
+
+	case DDObjectComponentType::ProjectileComponent:
+		return "ProjectileComponent";
 	}
 
 	return "";
@@ -526,6 +531,10 @@ DDObjectComponentType CDDUtil::StringToDDObjectComponentType(const std::string& 
 	{
 		return DDObjectComponentType::MonsterNavAgent;
 	}
+	else if (Str == "ProjectileComponent")
+	{
+		return DDObjectComponentType::ProjectileComponent;
+	}
 
 	return DDObjectComponentType(-1);
 }
@@ -550,6 +559,8 @@ size_t CDDUtil::DDObjectComponentTypeToTypeID(DDObjectComponentType Type)
 		return typeid(CLurkerDataComponent).hash_code();
 	case DDObjectComponentType::MonsterNavAgent:
 		return typeid(CMonsterNavAgent).hash_code();
+	case DDObjectComponentType::ProjectileComponent:
+		return typeid(CProjectileComponent).hash_code();
 	}
 	return -1;
 }

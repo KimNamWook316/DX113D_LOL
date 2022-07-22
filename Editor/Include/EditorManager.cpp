@@ -36,6 +36,8 @@
 #include "DeathDoor\Component/BossBettyDataComponent.h"
 #include "DeathDoor\Component/LurkerDataComponent.h"
 #include "DeathDoor\Component/MonsterNavAgent.h"
+#include "DeathDoor\Component/PlayerBowComponent.h"
+#include "DeathDoor\Component/ProjectileComponent.h"
 // Window
 #include "Window/ObjectHierarchyWindow.h"
 #include "Window/SceneComponentHierarchyWindow.h"
@@ -64,6 +66,7 @@
 #include "DeathDoor\Component/State/GameStateManager.h"
 #include "Scene/Navigation3DManager.h"
 #include "DeathDoor\DataManager.h"
+#include "ObjectPool.h"
 
 #include <sstream>
 
@@ -83,6 +86,8 @@ CEditorManager::~CEditorManager()
 	CEngine::DestroyInst();
 
 	CDataManager::DestroyInst();
+
+	//CObjectPool::DestroyInst();
 
 	SAFE_DELETE(m_StateManager);
 }
@@ -157,6 +162,11 @@ bool CEditorManager::Init(HINSTANCE hInst)
 
 	CDataManager::GetInst()->Init();
 	
+	//CObjectPool::GetInst()->Init();
+
+	//CObjectPool::GetInst()->LoadPoolData("ObjectPoolData.csv");
+	//CObjectPool::GetInst()->CreatePoolObject(OBJECT_PATH);
+
 	return true;
 }
 
@@ -417,9 +427,9 @@ CComponent* CEditorManager::CreateComponent(CGameObject* Obj, size_t Type)
 		return Component;
 	}
 
-	else if (Type == typeid(CMonsterPathFindCollider).hash_code())
+	else if (Type == typeid(CPlayerBowComponent).hash_code())
 	{
-		CMonsterPathFindCollider* Component = Obj->LoadComponent<CMonsterPathFindCollider>();
+		CPlayerBowComponent* Component = Obj->LoadComponent<CPlayerBowComponent>();
 		return Component;
 	}
 
@@ -438,6 +448,12 @@ CComponent* CEditorManager::CreateComponent(CGameObject* Obj, size_t Type)
 	else if (Type == typeid(CKnightDataComponent).hash_code())
 	{
 		CKnightDataComponent* Component = Obj->LoadObjectComponent<CKnightDataComponent>();
+		return Component;
+	}
+
+	else if (Type == typeid(CProjectileComponent).hash_code())
+	{
+		CProjectileComponent* Component = Obj->LoadObjectComponent<CProjectileComponent>();
 		return Component;
 	}
 

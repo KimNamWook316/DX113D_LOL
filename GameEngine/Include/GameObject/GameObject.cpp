@@ -6,6 +6,7 @@
 #include "../PathManager.h"
 #include "../Component/NavAgent.h"
 #include "../Component/PaperBurnComponent.h"
+#include "../ObjectPool.h"
 
 CGameObject::CGameObject() :
 	m_Scene(nullptr),
@@ -14,7 +15,8 @@ CGameObject::CGameObject() :
 	m_NavAgent(nullptr),
 	m_IsEnemy(false),
 	m_ExcludeSceneSave(false),
-	m_NoDestroyFromSceneChange(false)
+	m_NoDestroyFromSceneChange(false),
+	m_InPool(false)
 {
 	SetTypeID<CGameObject>();
 	m_ObjectType = Object_Type::None;
@@ -76,16 +78,24 @@ void CGameObject::SetScene(CScene* Scene)
 
 void CGameObject::Destroy()
 {
-	CRef::Destroy();
-
-	if (m_RootComponent)
-		m_RootComponent->Destroy();
-
-	size_t	Size = m_vecObjectComponent.size();
-
-	for (size_t i = 0; i < Size; ++i)
+	if (m_InPool)
 	{
-		m_vecObjectComponent[i]->Destroy();
+		CObjectPool::GetInst()->ReturnToPool(this);
+	}
+
+	else
+	{
+		CRef::Destroy();
+
+		if (m_RootComponent)
+			m_RootComponent->Destroy();
+
+		size_t	Size = m_vecObjectComponent.size();
+
+		for (size_t i = 0; i < Size; ++i)
+		{
+			m_vecObjectComponent[i]->Destroy();
+		}
 	}
 }
 

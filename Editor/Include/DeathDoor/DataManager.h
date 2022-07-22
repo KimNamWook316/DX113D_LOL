@@ -13,11 +13,11 @@ public:
 
 private:
 	void ReadObjectData();
+	//void ReadPoolData();
 
 public:
 	const ObjectData& GetObjectData(const std::string& Key);
-
-private:
+	//int GetObjectPoolData(const std::string& Key);
 	class CExcelData* FindData(const std::string& Name);
 
 	DECLARE_SINGLE(CDataManager)
