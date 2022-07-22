@@ -82,6 +82,8 @@ bool CGameObjectWidget::Init()
 	m_ObjectTypeCombo->AddItem("Player");
 	m_ObjectTypeCombo->AddItem("Monster");
 	m_ObjectTypeCombo->AddItem("MapObject");
+	m_ObjectTypeCombo->AddItem("Particle");
+	m_ObjectTypeCombo->AddItem("Projectile");
 
 	AddWidget<CIMGUISeperator>("Sep");
 
@@ -164,6 +166,12 @@ void CGameObjectWidget::SetGameObject(CGameObject* Obj)
 			break;
 		case Object_Type::MapObject:
 			m_ObjectTypeCombo->SetSelectIndex(2);
+			break;
+		case Object_Type::Particle:
+			m_ObjectTypeCombo->SetSelectIndex(3);
+			break;
+		case Object_Type::Projectile:
+			m_ObjectTypeCombo->SetSelectIndex(4);
 			break;
 		}
 	}
@@ -338,5 +346,15 @@ void CGameObjectWidget::OnSelectObjectType(int Idx, const char* label)
 	if (ObjectType == "MapObject")
 	{
 		m_Object->SetObjectType(Object_Type::MapObject);
+	}
+
+	if (ObjectType == "Particle")
+	{
+		m_Object->SetObjectType(Object_Type::Particle);
+	}
+
+	if (ObjectType == "Projectile")
+	{
+		m_Object->SetObjectType(Object_Type::Projectile);
 	}
 }

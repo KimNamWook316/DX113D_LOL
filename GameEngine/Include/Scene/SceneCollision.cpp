@@ -77,7 +77,7 @@ void CSceneCollision::Collision(float DeltaTime)
 
 	// 충돌체들을 각 자의 영역으로 포함시켜주도록 한다.
 	//CheckColliderSection();
-	//CheckColliderSection3D();
+	CheckColliderSection3D();
 
 	// 현재 충돌 영역이 겹치는지 판단한다.
 	iter = m_ColliderList.begin();

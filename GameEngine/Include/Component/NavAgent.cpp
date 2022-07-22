@@ -59,7 +59,7 @@ bool CNavAgent::MoveOnNavMesh(const Vector3 EndPos)
 	if (Valid)
 	{
 		Vector3 Pos = m_Object->GetWorldPos();
-		m_Object->SetWorldPos(Pos.x, Height, Pos.z);
+		m_Object->SetWorldPos(Pos.x, Height + 0.2f, Pos.z);
 		return true;
 	}
 

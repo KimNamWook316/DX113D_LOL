@@ -153,6 +153,8 @@ bool CNavMesh::LoadMeshFullPathMultibyte(const char* FullPath)
 	m_OriginMin = m_Min;
 	m_OriginMax = m_Max;
 
+	
+
 	m_Scene->GetResource()->CreateNavMesh(this, "NavMesh",
 		&m_vecVertexPos[0], sizeof(Vector3), m_vecVertexPos.size(),
 		D3D11_USAGE_DEFAULT, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST,
@@ -197,6 +199,12 @@ void CNavMesh::CreatePolygonInfo()
 
 		++PolyIndex;
 	}
+
+	int a = 3;
+}
+
+void CNavMesh::ReCreateVertexPos()
+{
 }
 
 void CNavMesh::CheckAdjInfo()

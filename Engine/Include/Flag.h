@@ -324,6 +324,8 @@ enum class Object_Type
 	Player,
 	Monster,
 	MapObject,
+	Particle,
+	Projectile,
 	None
 };
 
@@ -376,14 +378,14 @@ enum class PaperBurnEndEvent
 	Max	
 };
 
-enum class HookResult
-{
-	// 날아가고 있는중
-	OnShoot,
-	NoCollision,
-	Collision,
-	CollisionEnd
-};
+//enum class HookResult
+//{
+//	// 날아가고 있는중
+//	OnShoot,
+//	NoCollision,
+//	Collision,
+//	CollisionEnd
+//};
 
 
 enum class ParticleSpeedChangeMethod

@@ -35,10 +35,10 @@ bool CObjectCreateModal::Init()
 
 	//m_ObjectCreatePopUp = AddWidget<CIMGUIPopUpModal>("CreateObjectPopUp");
 
-	m_ObjectTypeCombo = AddWidget<CIMGUIComboBox>("Object Type");
-	m_ObjectTypeCombo->SetHideName(true);
-	m_ObjectTypeCombo->AddItem("GameObject");
-	m_ObjectTypeCombo->AddItem("PlayerHook");
+	//m_ObjectTypeCombo = AddWidget<CIMGUIComboBox>("Object Type");
+	//m_ObjectTypeCombo->SetHideName(true);
+	//m_ObjectTypeCombo->AddItem("GameObject");
+	//m_ObjectTypeCombo->AddItem("PlayerHook");
 
 	m_NameTextInput = AddWidget<CIMGUITextInput>("Object Name");
 	m_NameTextInput->SetHideName(true);
@@ -53,6 +53,8 @@ bool CObjectCreateModal::Init()
 	m_ObjectTypeCheckBox->AddCheckInfo("Player");
 	m_ObjectTypeCheckBox->AddCheckInfo("Monster");
 	m_ObjectTypeCheckBox->AddCheckInfo("MapObject");
+	m_ObjectTypeCheckBox->AddCheckInfo("Particle");
+	m_ObjectTypeCheckBox->AddCheckInfo("Projectile");
 	m_ObjectTypeCheckBox->AddCheckInfo("None");
 
 	m_ObjectTypeCheckBox->SetCheck(0, true);
@@ -106,17 +108,8 @@ void CObjectCreateModal::OnCreateObject()
 		Name = CEditorUtil::ConcatNumOverlapName(Name);
 	}
 
-	int Index = m_ObjectTypeCombo->GetSelectIndex();
-	if (Index == 0)
-		NewObject = CurrentScene->CreateGameObject<CGameObject>(Name);
-	else if (Index == 1)
-		NewObject = CurrentScene->CreateGameObject<CPlayerHook>(Name);
 
-	else
-	{
-		MessageBox(nullptr, TEXT("Select Object Type"), TEXT("ERROR"), MB_OK);
-		return;
-	}
+	NewObject = CurrentScene->CreateGameObject<CGameObject>(Name);
 
 
 	// 차후, Loading 을 위해서 ObjectCombo Select Index 정보를 저장해준다.
@@ -137,6 +130,12 @@ void CObjectCreateModal::OnCreateObject()
 		NewObject->SetObjectType(Object_Type::MapObject);
 		break;
 	case 3:
+		NewObject->SetObjectType(Object_Type::Particle);
+		break;
+	case 4:
+		NewObject->SetObjectType(Object_Type::Projectile);
+		break;
+	case 5:
 		NewObject->SetObjectType(Object_Type::None);
 		break;
 	}

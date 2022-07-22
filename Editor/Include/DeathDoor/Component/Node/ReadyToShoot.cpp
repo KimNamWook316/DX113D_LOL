@@ -4,6 +4,7 @@
 #include "Component/Node/CompositeNode.h"
 #include "Component/AnimationMeshComponent.h"
 #include "../../Component/PlayerDataComponent.h"
+#include "../../Component/PlayerBowComponent.h"
 #include "Animation/AnimationSequenceInstance.h"
 #include "../GameStateComponent.h"
 #include "Component/BehaviorTree.h"
@@ -31,14 +32,23 @@ NodeResult CReadyToShoot::OnStart(float DeltaTime)
 {
 	m_AnimationMeshComp = m_Owner->GetAnimationMeshComp();
 
-	CPlayerDataComponent* Data = dynamic_cast<CPlayerDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
+	m_PlayerDataComp = dynamic_cast<CPlayerDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
 
-	//Player_Ability Data->GetPlayerAbility();
+	Player_Ability Ability = m_PlayerDataComp->GetPlayerAbility();
 
 	std::string ObjectName = m_Object->GetName();
+	std::string SequenceName;
 
-	std::string SequenceName = ObjectName + "Arrow";
-	//std::string SequenceName = "Arrow";
+	if (Ability == Player_Ability::Arrow)
+	{
+		SequenceName = ObjectName + "Arrow";
+	}
+
+	else if (Ability == Player_Ability::Hook)
+	{
+		SequenceName = ObjectName + "Hook";
+	}
+
 
 	if (m_AnimationMeshComp)
 	{
@@ -58,9 +68,6 @@ NodeResult CReadyToShoot::OnStart(float DeltaTime)
 
 	//m_Object->SetNoInterrupt(true);
 	m_CallStart = true;
-
-	m_PlayerDataComp = dynamic_cast<CPlayerDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
-
 
 
 	CRotateAttackDirectionNode* Node = (CRotateAttackDirectionNode*)((CCompositeNode*)m_Parent->GetParent()->GetParent())->FindChildByType<CRotateAttackDirectionNode>();
@@ -85,51 +92,60 @@ NodeResult CReadyToShoot::OnStart(float DeltaTime)
 
 NodeResult CReadyToShoot::OnUpdate(float DeltaTime)
 {
-	if (m_PlayerDataComp->GetPlayerAbility() == Player_Ability::Hook)
+
+	Player_Ability Ability = m_PlayerDataComp->GetPlayerAbility();
+
+	if (Ability == Player_Ability::Arrow)
 	{
-		if (!m_CameraMoveEnd)
+		CPlayerBowComponent* BowComp = m_Object->FindComponentFromType<CPlayerBowComponent>();
+
+		if (BowComp)
+			BowComp->ShowBow(m_CameraMoveDir);
+	}
+
+	if (!m_CameraMoveEnd)
+	{
+		m_CameraMoveEnd = CSceneManager::GetInst()->GetScene()->CameraMove(m_CameraMoveDir, m_CameraDestPos, 50.f, DeltaTime);
+
+		bool RButtonUp = CInput::GetInst()->GetMouseRButtonUp();
+
+		// 카메라가 화살쏘는 목표 지점으로 완전히 이동하기 전에 마우스RButton 을 때면
+		if (RButtonUp)
 		{
-			m_CameraMoveEnd = CSceneManager::GetInst()->GetScene()->CameraMove(m_CameraMoveDir, m_CameraDestPos, 50.f, DeltaTime);
+			m_CallStart = false;
+			m_Owner->SetCurrentNode(((CCompositeNode*)m_Parent->GetParent())->GetChild(1));
+			m_CameraMoveEnd = false;
 
-			bool RButtonUp = CInput::GetInst()->GetMouseRButtonUp();
-
-			// 카메라가 화살쏘는 목표 지점으로 완전히 이동하기 전에 마우스RButton 을 때면
-			if (RButtonUp)
-			{
-				m_CallStart = false;
-				m_Owner->SetCurrentNode(((CCompositeNode*)m_Parent->GetParent())->GetChild(1));
-				m_CameraMoveEnd = false;
-
-				return NodeResult::Node_True;
-			}
-
-			else
-			{
-				m_Owner->SetCurrentNode(this);
-
-				return NodeResult::Node_Running;
-			}
+			return NodeResult::Node_True;
 		}
 
 		else
 		{
-			bool RButtonUp = CInput::GetInst()->GetMouseRButtonUp();
-			if (RButtonUp)
-			{
-				m_CallStart = false;
-				m_Owner->SetCurrentNode(((CCompositeNode*)m_Parent)->GetChild(1));
-				m_CameraMoveEnd = false;
+			m_Owner->SetCurrentNode(this);
 
-				return NodeResult::Node_True;
-			}
-
-			else
-			{
-				m_Owner->SetCurrentNode(this);
-				return NodeResult::Node_Running;
-			}
+			return NodeResult::Node_Running;
 		}
 	}
+
+	else
+	{
+		bool RButtonUp = CInput::GetInst()->GetMouseRButtonUp();
+		if (RButtonUp)
+		{
+			m_CallStart = false;
+			m_Owner->SetCurrentNode(((CCompositeNode*)m_Parent)->GetChild(1));
+			m_CameraMoveEnd = false;
+
+			return NodeResult::Node_True;
+		}
+
+		else
+		{
+			m_Owner->SetCurrentNode(this);
+			return NodeResult::Node_Running;
+		}
+	}
+
 
 }
 

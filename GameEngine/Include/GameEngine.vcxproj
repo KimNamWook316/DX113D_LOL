@@ -125,6 +125,7 @@
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="Matrix.cpp" />
     <ClCompile Include="Navigation3D.cpp" />
+    <ClCompile Include="ObjectPool.cpp" />
     <ClCompile Include="ObjectPoolManager.cpp" />
     <ClCompile Include="PathManager.cpp" />
     <ClCompile Include="Ref.cpp" />
@@ -376,6 +377,7 @@
     <ClInclude Include="Input.h" />
     <ClInclude Include="Matrix.h" />
     <ClInclude Include="Navigation3D.h" />
+    <ClInclude Include="ObjectPool.h" />
     <ClInclude Include="ObjectPoolManager.h" />
     <ClInclude Include="PathManager.h" />
     <ClInclude Include="Ref.h" />
