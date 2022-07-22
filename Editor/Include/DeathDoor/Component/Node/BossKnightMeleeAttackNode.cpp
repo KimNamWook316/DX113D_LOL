@@ -30,7 +30,10 @@ void CBossKnightMeleeAttackNode::Init()
 	std::string AnimName = "Slam";
 	CAnimationSequenceInstance* AnimInst = m_AnimationMeshComp->GetAnimationInstance();
 	AnimInst->AddNotify(AnimName, "IncreaseCount", 0, Data, &CKnightDataComponent::IncreaseMeleeAttackCount);
-	AnimInst->AddNotifyDeltaTimeFrameRange(AnimName, "OnTrace", 0, 4, (CMonsterDataComponent*)Data, &CMonsterDataComponent::OnLookPlayer);
+	AnimInst->AddNotify(AnimName, "OnTracePlayer", 0,
+		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnEnableLookPlayer);
+	AnimInst->AddNotify(AnimName, "OnDisableTracePlayer", 4,
+		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnDisableLookPlayer);
 	AnimInst->AddNotify(AnimName, "HitBoxActive", 11 ,Data, &CKnightDataComponent::OnActiveMeleeAttackCollider);
 	AnimInst->AddNotify(AnimName, "HitBoxActive", 15, Data, &CKnightDataComponent::OnActiveMeleeAttackCollider);
 	AnimInst->SetEndFunction(AnimName, Data, &CKnightDataComponent::OnEndAnimJudgeContinueAttack);
@@ -38,9 +41,14 @@ void CBossKnightMeleeAttackNode::Init()
 
 NodeResult CBossKnightMeleeAttackNode::OnStart(float DeltaTime)
 {
-	std::string AnimName = "Slam";
-	CAnimationSequenceInstance* AnimInst = m_AnimationMeshComp->GetAnimationInstance();
-	AnimInst->ChangeAnimation(AnimName);
+	if (this != m_Owner->GetCurrentNode())
+	{
+		m_Owner->SetCurrentNode(this);
+
+		std::string AnimName = "Slam";
+		CAnimationSequenceInstance* AnimInst = m_AnimationMeshComp->GetAnimationInstance();
+		AnimInst->ChangeAnimation(AnimName);
+	}
 
 	return NodeResult::Node_True;
 }

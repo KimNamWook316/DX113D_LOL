@@ -30,46 +30,54 @@ void CBossKnightContinueAttackNode::Init()
 	CKnightDataComponent* Data = dynamic_cast<CKnightDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
 
 	AnimInst->AddNotify("SlamContinueFirst", "IncreaseCount", 0, Data, &CKnightDataComponent::IncreaseMeleeAttackCount);
-	AnimInst->AddNotifyDeltaTimeFrameRange("SlamContinueFirst", "OnTrace", 9, 14, (CMonsterDataComponent*)Data, &CMonsterDataComponent::OnLookPlayer);
- 	AnimInst->SetEndFunction("SlamContinueFirst", (CMonsterDataComponent*)(Data), &CMonsterDataComponent::OnEndAnimPostAttackDelayOn);
+	AnimInst->AddNotify("SlamContinueFirst", "OnLookPlayer", 9, (CMonsterDataComponent*)Data, &CMonsterDataComponent::OnEnableLookPlayer);
+	AnimInst->AddNotify("SlamContinueFirst", "OnDisableLookPlayer", 9, (CMonsterDataComponent*)Data, &CMonsterDataComponent::OnDisableLookPlayer);
  	AnimInst->AddNotify("SlamContinueFirst", "HitBoxActive", 21, Data, &CKnightDataComponent::OnActiveMeleeAttackCollider);
  	AnimInst->AddNotify("SlamContinueFirst", "HitBoxDisable", 25, Data, &CKnightDataComponent::OnInActiveMeleeAttackCollider);
+ 	AnimInst->SetEndFunction("SlamContinueFirst", Data, &CKnightDataComponent::OnEndContinueAttack);
 
 	AnimInst->AddNotify("Slam180CW", "IncreaseCount", 0, Data, &CKnightDataComponent::IncreaseMeleeAttackCount);
-	AnimInst->AddNotifyDeltaTimeFrameRange("Slam180CW", "OnTrace", 5, 10, (CMonsterDataComponent*)Data, &CMonsterDataComponent::OnLookPlayer);
+	AnimInst->AddNotify("Slam180CW", "OnLookPlayer", 5, (CMonsterDataComponent*)Data, &CMonsterDataComponent::OnEnableLookPlayer);
+	AnimInst->AddNotify("Slam180CW", "OnDisableLookPlayer", 10, (CMonsterDataComponent*)Data, &CMonsterDataComponent::OnDisableLookPlayer);
  	AnimInst->AddNotify("Slam180CW", "HitBoxActive", 16, Data, &CKnightDataComponent::OnActiveMeleeAttackCollider);
  	AnimInst->AddNotify("Slam180CW", "HitBoxDisable", 21, Data, &CKnightDataComponent::OnInActiveMeleeAttackCollider);
- 	AnimInst->SetEndFunction("Slam180CW",(CMonsterDataComponent*)(Data), &CMonsterDataComponent::OnEndAnimPostAttackDelayOn);
+ 	AnimInst->SetEndFunction("Slam180CW", Data, &CKnightDataComponent::OnEndContinueAttack);
 
 	AnimInst->AddNotify("Slam180CCW", "IncreaseCount", 0, Data, &CKnightDataComponent::IncreaseMeleeAttackCount);
-	AnimInst->AddNotifyDeltaTimeFrameRange("Slam180CCW", "OnTrace", 5, 10, (CMonsterDataComponent*)Data, &CMonsterDataComponent::OnLookPlayer);
+	AnimInst->AddNotify("Slam180CCW", "OnLookPlayer", 5, (CMonsterDataComponent*)Data, &CMonsterDataComponent::OnEnableLookPlayer);
+	AnimInst->AddNotify("Slam180CCW", "OnDisableLookPlayer", 10, (CMonsterDataComponent*)Data, &CMonsterDataComponent::OnDisableLookPlayer);
  	AnimInst->AddNotify("Slam180CCW", "HitBoxActive", 16, Data, &CKnightDataComponent::OnActiveMeleeAttackCollider);
  	AnimInst->AddNotify("Slam180CCW", "HitBoxDisable", 21, Data, &CKnightDataComponent::OnInActiveMeleeAttackCollider);
- 	AnimInst->SetEndFunction("Slam180CCW", (CMonsterDataComponent*)(Data), &CMonsterDataComponent::OnEndAnimPostAttackDelayOn);
+ 	AnimInst->SetEndFunction("Slam180CCW", Data, &CKnightDataComponent::OnEndContinueAttack);
 
 	m_RotatePerSec = Data->GetRotateSpeed();
 }
 
 NodeResult CBossKnightContinueAttackNode::OnStart(float DeltaTime)
 {
-	// Melee Attack Count 증가
-	CKnightDataComponent* Data = dynamic_cast<CKnightDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
-
-	// 공격 회전 방향에 따라 다른 애니메이션 재생
-	Knight_Attack_Rot_Type AttackType = Data->GetAttackRotationType();
-	CAnimationSequenceInstance* AnimInst = m_AnimationMeshComp->GetAnimationInstance();
-
-	switch (AttackType)
+	if (this != m_Owner->GetCurrentNode())
 	{
-	case Knight_Attack_Rot_Type::Front:
-		AnimInst->ChangeAnimation("SlamContinueFirst");
-		break;
-	case Knight_Attack_Rot_Type::CW:
-		AnimInst->ChangeAnimation("Slam180CW");
-		break;
-	case Knight_Attack_Rot_Type::CCW:
-		AnimInst->ChangeAnimation("Slam180CCW");
-		break;
+		m_Owner->SetCurrentNode(this);
+
+		// Melee Attack Count 증가
+		CKnightDataComponent* Data = dynamic_cast<CKnightDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
+
+		// 공격 회전 방향에 따라 다른 애니메이션 재생
+		Knight_Attack_Rot_Type AttackType = Data->GetAttackRotationType();
+		CAnimationSequenceInstance* AnimInst = m_AnimationMeshComp->GetAnimationInstance();
+
+		switch (AttackType)
+		{
+		case Knight_Attack_Rot_Type::Front:
+			AnimInst->ChangeAnimation("SlamContinueFirst");
+			break;
+		case Knight_Attack_Rot_Type::CW:
+			AnimInst->ChangeAnimation("Slam180CW");
+			break;
+		case Knight_Attack_Rot_Type::CCW:
+			AnimInst->ChangeAnimation("Slam180CCW");
+			break;
+		}
 	}
 
 	return NodeResult::Node_True;

@@ -21,6 +21,7 @@ private:
 
 public:
     virtual void Start() override;
+	virtual void Update(float DeltaTime) override;
 
 public:
     void OnActiveMeleeAttackCollider();
@@ -28,9 +29,15 @@ public:
     void OnHitMeleeAttack(const CollisionResult& Result);
     void OnLookPlayerMove(float DeltaTime);
     void OnEndAnimJudgeContinueAttack();
+    void OnEnableLookAndMove();
+    void OnDisableLookAndMove();
     void OnWalk(float DeltaTime);
     void OnPlayerEnterZone(const CollisionResult& Result);
     void OnEndCutScenePlaying();
+    void OnStartJumpAttackMove();
+    void OnEndJumpAttackMove();
+    void OnEndJumpAttack();
+    void OnEndContinueAttack();
 
 public:
     int GetMeleeAttackCount() const

@@ -29,7 +29,10 @@ void CBossKnightFinalAttackNode::Init()
 
 	std::string AnimName = "SlamContinueJump";
 	CAnimationSequenceInstance* AnimInst = m_AnimationMeshComp->GetAnimationInstance();
-	AnimInst->AddNotifyDeltaTimeFrameRange(AnimName, "OnTracePlayer", 6, 14, (CMonsterDataComponent*)Data, &CMonsterDataComponent::OnLookPlayer);
+	AnimInst->AddNotify(AnimName, "OnTracePlayer", 6,
+		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnEnableLookPlayer);
+	AnimInst->AddNotify(AnimName, "OnDisableTracePlayer", 14,
+		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnDisableLookPlayer);
 	AnimInst->AddNotify(AnimName, "OnHitBoxActive", 21, Data, &CKnightDataComponent::OnActiveMeleeAttackCollider);
 	AnimInst->AddNotify(AnimName, "OnHitBoxDisable", 25, Data, &CKnightDataComponent::OnInActiveMeleeAttackCollider);
 	AnimInst->SetEndFunction(AnimName, (CMonsterDataComponent*)Data, &CMonsterDataComponent::OnEndAnimPostAttackDelayOn);
@@ -38,15 +41,18 @@ void CBossKnightFinalAttackNode::Init()
 
 NodeResult CBossKnightFinalAttackNode::OnStart(float DeltaTime)
 {
-	m_CallStart = true;
+	if (this != m_Owner->GetCurrentNode())
+	{
+		m_Owner->SetCurrentNode(this);
 
-	std::string AnimName = "SlamContinueJump";
-	CAnimationSequenceInstance* AnimInst = m_AnimationMeshComp->GetAnimationInstance();
-	AnimInst->ChangeAnimation(AnimName);
+		std::string AnimName = "SlamContinueJump";
+		CAnimationSequenceInstance* AnimInst = m_AnimationMeshComp->GetAnimationInstance();
+		AnimInst->ChangeAnimation(AnimName);
 
-	// 공격 카운트 리셋
-	CKnightDataComponent* Data = dynamic_cast<CKnightDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
-	Data->ResetMeleeAttackCount();
+		// 공격 카운트 리셋
+		CKnightDataComponent* Data = dynamic_cast<CKnightDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
+		Data->ResetMeleeAttackCount();
+	}
 
 	return NodeResult::Node_True;
 }

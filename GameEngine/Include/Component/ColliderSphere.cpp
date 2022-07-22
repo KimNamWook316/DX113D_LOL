@@ -8,6 +8,7 @@
 #include "../Scene/Scene.h"
 #include "../Scene/CameraManager.h"
 #include "CameraComponent.h"
+#include "../Render/RenderManager.h"
 
 CColliderSphere::CColliderSphere()
 {
@@ -77,6 +78,13 @@ void CColliderSphere::PrevRender()
 
 void CColliderSphere::Render()
 {
+	bool DebugRender = CRenderManager::GetInst()->IsDebugRender();
+
+	if (!DebugRender)
+	{
+		return;
+	}
+
 	CColliderComponent::Render();
 
 	CCameraComponent* Camera = m_Scene->GetCameraManager()->GetCurrentCamera();

@@ -31,10 +31,15 @@ void CBossKnightSlamEnd::Init()
 
 NodeResult CBossKnightSlamEnd::OnStart(float DeltaTime)
 {
-	// 후딜레이 애니메이션 재생
-	std::string AnimName = "SlamEnd";
-	CAnimationSequenceInstance* AnimInst = m_AnimationMeshComp->GetAnimationInstance();
-	AnimInst->ChangeAnimation(AnimName);
+	if (this != m_Owner->GetCurrentNode())
+	{
+		m_Owner->SetCurrentNode(this);
+
+		// 후딜레이 애니메이션 재생
+		std::string AnimName = "SlamEnd";
+		CAnimationSequenceInstance* AnimInst = m_AnimationMeshComp->GetAnimationInstance();
+		AnimInst->ChangeAnimation(AnimName);
+	}
 
 	return NodeResult::Node_True;
 }
