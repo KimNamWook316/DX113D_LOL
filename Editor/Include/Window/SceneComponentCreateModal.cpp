@@ -27,10 +27,11 @@
 #include "Component/LandScape.h"
 
 // TODO : DeathDoor Scene Component 추가될 때마다 업데이트
-#include "../DeathDoor/Component/MonsterPathFindCollider.h"
+//#include "../DeathDoor/Component/MonsterPathFindCollider.h"
 #include "../DeathDoor/Component/PlayerHookComponent.h"
 #include "../DeathDoor/Component/PlayerNormalAttackCheckCollider.h"
 #include "../DeathDoor/Component/EyeLaserComponent.h"
+#include "../DeathDoor/Component/PlayerBowComponent.h"
 
 #include "Resource/Particle/Particle.h"
 #include "ToolWindow.h"
@@ -191,9 +192,9 @@ void CSceneComponentCreateModal::OnCreateComponent()
 		{
 			Com = SelectObject->CreateComponentAddChild<CPlayerHookComponent>(Name);
 		}
-		else if (Typeid == typeid(CMonsterPathFindCollider).hash_code())
+		else if (Typeid == typeid(CPlayerBowComponent).hash_code())
 		{
-			Com = SelectObject->CreateComponentAddChild<CMonsterPathFindCollider>(Name);
+			Com = SelectObject->CreateComponentAddChild<CPlayerBowComponent>(Name);
 		}
 	}
 

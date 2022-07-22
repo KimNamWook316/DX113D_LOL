@@ -5,6 +5,7 @@
 
 CBossBettyHPStateCheck::CBossBettyHPStateCheck()
 {
+	SetTypeID(typeid(CBossBettyHPStateCheck).hash_code());
 }
 
 CBossBettyHPStateCheck::CBossBettyHPStateCheck(const CBossBettyHPStateCheck& Node)

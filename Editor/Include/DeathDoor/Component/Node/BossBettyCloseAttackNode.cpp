@@ -10,6 +10,7 @@
 
 CBossBettyCloseAttackNode::CBossBettyCloseAttackNode()
 {
+	SetTypeID(typeid(CBossBettyCloseAttackNode).hash_code());
 }
 
 CBossBettyCloseAttackNode::CBossBettyCloseAttackNode(const CBossBettyCloseAttackNode& Node)

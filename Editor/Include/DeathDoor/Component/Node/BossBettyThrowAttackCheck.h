@@ -4,7 +4,7 @@
 class CBossBettyThrowAttackCheck :
     public CConditionNode
 {
-protected:
+public:
     CBossBettyThrowAttackCheck();
     CBossBettyThrowAttackCheck(const CBossBettyThrowAttackCheck& Node);
     virtual ~CBossBettyThrowAttackCheck();

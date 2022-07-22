@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Component/StaticMeshComponent.h"
+#include "../DDFlag.h"
 
 class CPlayerHookComponent :
     public CStaticMeshComponent

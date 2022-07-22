@@ -24,6 +24,13 @@ enum class DDActionNode
 	ClearPathList,
 	HitBack,
 	PlayerRoll,
+	// BossBetty
+	BossBettyAngryAttack,
+	BossBettyChangeAttackDir,
+	BossBettyCloseAttack,
+	BossBettyJumpAttack,
+	BossBettySpinAttack,
+	BossBettyThrowAttack,
 	Max
 };
 
@@ -50,6 +57,11 @@ enum class DDConditionNode
 	PathFindEnableCheck,
 	HitCheckNode,
 	RollInputCheck,
+	// BossBetty
+	BossBettyCheckAttackDir,
+	BossBettyCheckFarAttackType,
+	BossBettyCheckHPState,
+	BossBettyCheckThrowAttack,
 	Max
 };
 
@@ -58,7 +70,7 @@ enum class DDSceneComponentType
 	PlayerNormalAttackCheckCollider,
 	EyeLaserComponent,
 	PlayerHookComponent,
-	MonsterPathFindCollider,
+	PlayerBowComponent,
 	Max
 };
 
@@ -69,7 +81,19 @@ enum class DDObjectComponentType
 	GameStateComponent,
 	MonsterData,
 	KnightData,
+	BossBettyData,
 	LurkerData,
 	MonsterNavAgent,
+	ProjectileComponent,
 	Max
+};
+
+
+enum class HookResult
+{
+	// 날아가고 있는중
+	OnShoot,
+	NoCollision,
+	Collision,
+	CollisionEnd
 };

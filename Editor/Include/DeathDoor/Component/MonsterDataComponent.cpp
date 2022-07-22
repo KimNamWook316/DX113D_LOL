@@ -59,6 +59,7 @@ void CMonsterDataComponent::Start()
 			}
 		}
 	}
+
 	if (vecCollider.size() == 1)
 	{
 		m_HitBox = vecCollider[0];

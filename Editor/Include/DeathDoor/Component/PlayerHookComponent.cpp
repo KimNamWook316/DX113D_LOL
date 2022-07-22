@@ -338,12 +338,12 @@ bool CPlayerHookComponent::Load(FILE* File)
 
 bool CPlayerHookComponent::SaveOnly(FILE* File)
 {
-	return false;
+	return true;
 }
 
 bool CPlayerHookComponent::LoadOnly(FILE* File)
 {
-	return false;
+	return true;
 }
 
 

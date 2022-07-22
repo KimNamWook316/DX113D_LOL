@@ -53,6 +53,9 @@ private :
     Vector3 m_RelativeSlashRightPos;
     Vector3 m_RelativeSlashLeftPos;
 
+    // 방향 전환 판단 Limit Angle
+    float m_ChangeDirLimitAngle;
+
     // Spin 하는 중에 벽과 충돌했는지 여부를 추가적으로 계속 조사하기 위해서
     // ColliderBox3D 를 하나 더 둘 것이다.
     class CColliderComponent* m_BossBettySpinCollider;
@@ -74,7 +77,7 @@ public :
     // 땅 내리칠 때 왼쪽에 Attack 효과를 내기 
     void OnBossBettyGenerateLeftCloseAttackEffect();
     // 울부짖기 효과
-    void OnBossBettyRoarEffect();
+    void OnBossBettyRoarEffect(float DeltaTime);
     // 눈덩이 투사체 충돌시 발생시킬 Callback 함수
     void OnExplodeBettyThrowBallCallback();
     // Spin 중간에 벽에 부딪히면, Spin Collide Animation 으로 바꿔주는 함수 
@@ -123,10 +126,12 @@ public:
             m_FarAttackAttackNum = 0;
         }
     }
-
-
     // Getter 함수 ---
 public:
+    float GetBossBettyChangeDirLimitAngle() const
+    {
+        return m_ChangeDirLimitAngle;
+    }
     class CColliderComponent* GetBossBettySpinCollider() const
     {
         return m_BossBettySpinCollider;

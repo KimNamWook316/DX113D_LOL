@@ -23,6 +23,7 @@ CDataManager::~CDataManager()
 void CDataManager::Init()
 {
 	ReadObjectData();
+	//ReadPoolData();
 
 	//CSceneManager::GetInst()->SetObjectDataSetFunction(this, &CDataManager::SetObjectData);
 }
@@ -38,6 +39,18 @@ void CDataManager::ReadObjectData()
 		m_mapData.insert(std::make_pair("ObjectData", Data));
 	}
 }
+
+//void CDataManager::ReadPoolData()
+//{
+//	CResourceManager::GetInst()->LoadCSV("ObjectPoolData.csv");
+//
+//	CExcelData* Data = CResourceManager::GetInst()->FindCSV("ObjectPoolData");
+//
+//	if (Data)
+//	{
+//		m_mapData.insert(std::make_pair("ObjectPoolData", Data));
+//	}
+//}
 
 // TODO : 데이터 추가될 때마다 함수 업데이트 할 것
 const ObjectData& CDataManager::GetObjectData(const std::string& Key)
@@ -97,6 +110,40 @@ const ObjectData& CDataManager::GetObjectData(const std::string& Key)
 
 	return Data;
 }
+
+//int CDataManager::GetObjectPoolData(const std::string& Key)
+//{
+//	int PoolCount = 0;
+//
+//	CExcelData* Excel = FindData("ObjectPoolData");
+//
+//	Row* row = Excel->GetRow(Key);
+//
+//	if (!row)
+//	{
+//		return PoolCount;
+//	}
+//
+//	size_t Count = row->size();
+//
+//	for (size_t i = 0; i < Count; ++i)
+//	{
+//		std::stringstream ss;
+//
+//		ss << (*row)[i];
+//
+//		int Frame = 0;
+//
+//		ss >> Frame;
+//
+//		if (i == 0)
+//		{
+//			PoolCount = Frame;
+//		}
+//	}
+//
+//	return PoolCount;
+//}
 
 CExcelData* CDataManager::FindData(const std::string& Name)
 {

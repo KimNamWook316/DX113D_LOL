@@ -12,6 +12,7 @@ class CGameObject :
 	friend class CScene;
 	friend class CSceneManager;
 	friend class CObjectPoolManager;
+	friend class CObjectPool;
 
 protected:
 	CGameObject();
@@ -25,6 +26,7 @@ protected:
 	bool		m_ExcludeSceneSave;
 	bool		m_NoDestroyFromSceneChange;
 	Vector3		m_MoveDir;
+	bool		m_InPool;
 
 public:
 	void SetMoveDir(const Vector3& Dir)
@@ -80,6 +82,16 @@ public:
 	bool IsNoDestroyFromSceneChange() const
 	{
 		return m_NoDestroyFromSceneChange;
+	}
+
+	void SetInPool(bool InPool)
+	{
+		m_InPool = InPool;
+	}
+
+	bool IsInPool()	const
+	{
+		return m_InPool;
 	}
 
 public:

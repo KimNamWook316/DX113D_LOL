@@ -8,6 +8,7 @@
 
 CBossBettyAngryAttackNode::CBossBettyAngryAttackNode()
 {
+	SetTypeID(typeid(CBossBettyAngryAttackNode).hash_code());
 }
 
 CBossBettyAngryAttackNode::CBossBettyAngryAttackNode(const CBossBettyAngryAttackNode& Node)
@@ -64,7 +65,7 @@ void CBossBettyAngryAttackNode::Init()
 		Data, &CBossBettyDataComponent::OnBossBettyGenerateTwoSideCloseAttackEffect);
 
 	// ¿ïºÎÂ¢±â
-	AnimInst->AddNotifyFrameRange(AnimName, "OnBettyRoar", 100, 120,
+	AnimInst->AddNotifyDeltaTimeFrameRange(AnimName, "OnBettyRoar", 100, 120,
 		Data, &CBossBettyDataComponent::OnBossBettyRoarEffect);
 }
 

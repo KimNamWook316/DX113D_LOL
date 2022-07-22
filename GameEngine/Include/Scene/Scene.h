@@ -193,8 +193,8 @@ public:
 
 	CGameObject* CreateEmtpyObject()
 	{
-		//CGameObject* Obj = new CGameObject;
-		CGameObject* Obj = CObjectPoolManager::GetInst()->Allocate();
+		CGameObject* Obj = new CGameObject;
+		//CGameObject* Obj = CObjectPoolManager::GetInst()->Allocate();
 		Obj->SetScene(this);
 		m_ObjList.push_back(Obj);
 		return Obj;
@@ -250,7 +250,8 @@ public:
 
 		if (typeid(T).hash_code() == typeid(CGameObject).hash_code())
 		{
-			CGameObject* Obj = CObjectPoolManager::GetInst()->Allocate();
+			//CGameObject* Obj = CObjectPoolManager::GetInst()->Allocate();
+			CGameObject* Obj = new CGameObject;
 
 			Obj->SetName(Name);
 			Obj->SetScene(this);
@@ -296,7 +297,8 @@ public:
 
 		if (typeid(T).hash_code() == typeid(CGameObject).hash_code())
 		{
-			CGameObject* Obj = CObjectPoolManager::GetInst()->Allocate();
+			//CGameObject* Obj = CObjectPoolManager::GetInst()->Allocate();
+			CGameObject* Obj = new CGameObject;
 
 			Obj->SetScene(this);
 

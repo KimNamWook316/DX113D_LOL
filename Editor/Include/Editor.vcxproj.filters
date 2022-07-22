@@ -175,6 +175,9 @@
     <Filter Include="06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\02. Player">
       <UniqueIdentifier>{a9e3b90e-3798-4b39-8ee5-ba9e8befbc40}</UniqueIdentifier>
     </Filter>
+    <Filter Include="06. DeathDoor\01. GameComponent\01. SceneComponent\01. Player">
+      <UniqueIdentifier>{4bfeae01-a66c-4c4f-8b72-042d1a312c1f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EditorManager.cpp">
@@ -369,12 +372,6 @@
     <ClCompile Include="DeathDoor\Component\MonsterPathFindCollider.cpp">
       <Filter>06. DeathDoor\01. GameComponent\01. SceneComponent</Filter>
     </ClCompile>
-    <ClCompile Include="DeathDoor\Component\PlayerHookComponent.cpp">
-      <Filter>06. DeathDoor\01. GameComponent\01. SceneComponent</Filter>
-    </ClCompile>
-    <ClCompile Include="DeathDoor\Component\PlayerNormalAttackCheckCollider.cpp">
-      <Filter>06. DeathDoor\01. GameComponent\01. SceneComponent</Filter>
-    </ClCompile>
     <ClCompile Include="DeathDoor\Component\ObjectDataComponent.cpp">
       <Filter>06. DeathDoor\01. GameComponent\02. ObjectComponent\01. DataComponent\01. ObjectDataComponent</Filter>
     </ClCompile>
@@ -563,6 +560,18 @@
     </ClCompile>
     <ClCompile Include="DeathDoor\Component\Node\RollInputCheck.cpp">
       <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\02. Player</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Component\PlayerBowComponent.cpp">
+      <Filter>06. DeathDoor\01. GameComponent\01. SceneComponent\01. Player</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Component\PlayerHookComponent.cpp">
+      <Filter>06. DeathDoor\01. GameComponent\01. SceneComponent\01. Player</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Component\PlayerNormalAttackCheckCollider.cpp">
+      <Filter>06. DeathDoor\01. GameComponent\01. SceneComponent\01. Player</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Component\Node\BossBettyChangeDirCheck.cpp">
+      <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\02. BossBetty</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -764,12 +773,6 @@
     <ClInclude Include="DeathDoor\Component\MonsterPathFindCollider.h">
       <Filter>06. DeathDoor\01. GameComponent\01. SceneComponent</Filter>
     </ClInclude>
-    <ClInclude Include="DeathDoor\Component\PlayerHookComponent.h">
-      <Filter>06. DeathDoor\01. GameComponent\01. SceneComponent</Filter>
-    </ClInclude>
-    <ClInclude Include="DeathDoor\Component\PlayerNormalAttackCheckCollider.h">
-      <Filter>06. DeathDoor\01. GameComponent\01. SceneComponent</Filter>
-    </ClInclude>
     <ClInclude Include="DeathDoor\Component\ObjectDataComponent.h">
       <Filter>06. DeathDoor\01. GameComponent\02. ObjectComponent\01. DataComponent\01. ObjectDataComponent</Filter>
     </ClInclude>
@@ -890,9 +893,6 @@
     <ClInclude Include="DeathDoor\Component\Node\BossBettyThrowNode.h">
       <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\02. BossBetty</Filter>
     </ClInclude>
-    <ClInclude Include="DeathDoor\Component\Node\BossBettyThrowAttackCheck.h">
-      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\02. BossBetty</Filter>
-    </ClInclude>
     <ClInclude Include="DeathDoor\Component\Node\BossBettyCloseAttackNode.h">
       <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\02. BossBetty</Filter>
     </ClInclude>
@@ -958,6 +958,21 @@
     </ClInclude>
     <ClInclude Include="DeathDoor\Component\Node\RollInputCheck.h">
       <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\02. Player</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\PlayerBowComponent.h">
+      <Filter>06. DeathDoor\01. GameComponent\01. SceneComponent\01. Player</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\PlayerHookComponent.h">
+      <Filter>06. DeathDoor\01. GameComponent\01. SceneComponent\01. Player</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\PlayerNormalAttackCheckCollider.h">
+      <Filter>06. DeathDoor\01. GameComponent\01. SceneComponent\01. Player</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\Node\BossBettyChangeDirCheck.h">
+      <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\02. BossBetty</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\Node\BossBettyThrowAttackCheck.h">
+      <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\02. BossBetty</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

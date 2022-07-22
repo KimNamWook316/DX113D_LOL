@@ -5,6 +5,7 @@
 
 CBossBettyThrowAttackCheck::CBossBettyThrowAttackCheck()
 {
+	SetTypeID(typeid(CBossBettyThrowAttackCheck).hash_code());
 }
 
 CBossBettyThrowAttackCheck::CBossBettyThrowAttackCheck(const CBossBettyThrowAttackCheck& Node)
