@@ -24,9 +24,20 @@ public:
 	virtual CMonsterDataComponent* Clone();
 
 public:
+	void LookPlayer(float DeltaTime);
+	void MoveZ(float DeltaTime);
+
+public:
     void OnEndAnimPostAttackDelayOn();
 	void OnEndAnimPostAttackDelayOff();
-    void OnLookPlayer(float DeltaTime);
+    void OnEnableLookPlayer();
+	void OnDisableLookPlayer();
+	void OnEnableMoveZ();
+	void OnDisableMoveZ();
+	void OnSetMoveSpeedZero(float DeltaTime)
+	{
+		m_CurMoveSpeed = 0.f;
+	}
 
 public:
 	virtual void SetIsHit(bool Hit) override;
@@ -40,6 +51,8 @@ public:
 	{
 		m_IsCombat = true;
 	}
+
+	void SetCurrentNodeNull();
 
 public:
 	float GetRotateSpeed() const
@@ -76,6 +89,7 @@ protected:
 	class CMonsterNavAgent* m_MonsterNavAgent;
 	class CAnimationMeshComponent* m_AnimMesh;
 	class CColliderBox3D* m_HitBox;
+	class CGameStateComponent* m_State;
 
 	bool m_PostAttackDelaying; // 공격 후딜레이 중인지 여부
 	bool m_IsCombat;
@@ -90,6 +104,10 @@ protected:
 	std::vector<Vector4> m_vecOriginSpecluar;
 	std::vector<Vector4> m_vecOriginAmbient;
 	std::vector<Vector4> m_vecOriginEmissive;
+
+	float m_CurMoveSpeed;
+	bool m_LookPlayer;
+	bool m_MoveZ;
 
 public:
 	class CMonsterNavAgent* GetMonsterNavAgent()	const;

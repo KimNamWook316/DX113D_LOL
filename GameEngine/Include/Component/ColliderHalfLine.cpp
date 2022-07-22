@@ -5,6 +5,7 @@
 #include "../Scene/SceneResource.h"
 #include "../Resource/Shader/ColliderConstantBuffer.h"
 #include "../Collision/Collision.h"
+#include "../Render/RenderManager.h"
 
 CColliderHalfLine::CColliderHalfLine()
 {
@@ -59,6 +60,13 @@ void CColliderHalfLine::PrevRender()
 
 void CColliderHalfLine::Render()
 {
+	bool DebugRender = CRenderManager::GetInst()->IsDebugRender();
+
+	if (!DebugRender)
+	{
+		return;
+	}
+
 	CColliderComponent::Render();
 
 	CCameraComponent* Camera = m_Scene->GetCameraManager()->GetCurrentCamera();

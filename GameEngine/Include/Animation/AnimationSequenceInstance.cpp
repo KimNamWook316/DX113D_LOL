@@ -387,8 +387,17 @@ void CAnimationSequenceInstance::ChangeAnimation(const std::string& Name)
 		return;
 
 	m_AnimEnd = false;
-	m_CurrentAnimation->m_Time = 0.f;
-	m_CurrentAnimation->m_Sequence->m_CurrentFrameIdx = 0;
+
+	if (m_CurrentAnimation->IsLoop())
+	{
+		m_CurrentAnimation->m_Time = 0.f;
+		m_CurrentAnimation->m_Sequence->m_CurrentFrameIdx = 0;
+	}
+	else
+	{
+		m_CurrentAnimation->m_Time = m_CurrentAnimation->m_Sequence->m_PlayTime;
+		m_CurrentAnimation->m_Sequence->m_CurrentFrameIdx = m_CurrentAnimation->m_Sequence->m_EndFrame;
+	}
 
 	size_t	Size = m_CurrentAnimation->m_vecNotify.size();
 
@@ -399,6 +408,7 @@ void CAnimationSequenceInstance::ChangeAnimation(const std::string& Name)
 
 	m_ChangeAnimation = FindAnimation(Name);
  	m_ChangeAnimation->m_Time = 0.f;
+	m_ChangeAnimation->m_EndFunctionCalled = false;
 }
 
 void CAnimationSequenceInstance::ChangeAnimation(CAnimationSequenceData* SequenceData)
@@ -437,6 +447,7 @@ void CAnimationSequenceInstance::ChangeAnimation(CAnimationSequenceData* Sequenc
 
 	m_ChangeAnimation = SequenceData;
 	m_ChangeAnimation->m_Time = 0.f;
+	m_ChangeAnimation->m_EndFunctionCalled = false;
 }
 
 void CAnimationSequenceInstance::KeepCurrentAnimation()
@@ -630,10 +641,14 @@ void CAnimationSequenceInstance::Update(float DeltaTime)
 
 		if (NextFrameIndex >= EndFrame)
 		{
-			if(m_CurrentAnimation->m_Loop)
+			if (m_CurrentAnimation->IsLoop())
+			{
 				NextFrameIndex = StartFrame;
+			}
 			else
-				NextFrameIndex = m_CurrentAnimation->m_Sequence->m_FrameLength - 1;
+			{
+				NextFrameIndex = EndFrame;
+			}
 		}
 
 		// 수정 전 코드
@@ -641,16 +656,28 @@ void CAnimationSequenceInstance::Update(float DeltaTime)
 		// 수정자 : 이도경 / 내용 : AnimationSequence가 아닌 AnimationSequenceInstance의 멤버 사용하는 것으로 수정
 		// 날짜 : 22.05.02
 		float	Ratio = (AnimationTime - m_CurrentAnimation->m_FrameTime * FrameIndex) / m_CurrentAnimation->m_FrameTime;
+		m_AnimationUpdateCBuffer->SetRatio(Ratio);
 
 		// 수정자 : 이도경 / 내용 : 예외처리
 		// 날짜 : 22.05.02
 		if (NextFrameIndex >= m_CurrentAnimation->m_Sequence->m_FrameLength)
-			NextFrameIndex = 0;
+		{
+			if (m_CurrentAnimation->IsLoop())
+			{
+				NextFrameIndex = StartFrame;
+			}
+			else
+			{
+				NextFrameIndex = EndFrame;
+			}
+			m_AnimationUpdateCBuffer->SetRatio(1.f);
+		}
 
 		m_AnimationUpdateCBuffer->SetFrameCount(EndFrame);
-		m_AnimationUpdateCBuffer->SetCurrentFrame(FrameIndex);
-		m_AnimationUpdateCBuffer->SetNextFrame(NextFrameIndex);
-		m_AnimationUpdateCBuffer->SetRatio(Ratio);
+		m_AnimationUpdateCBuffer->SetCurrentFrame(NextFrameIndex);
+		m_AnimationUpdateCBuffer->SetNextFrame(FrameIndex);
+ //		m_AnimationUpdateCBuffer->SetCurrentFrame(FrameIndex);
+ //		m_AnimationUpdateCBuffer->SetNextFrame(NextFrameIndex);
 		m_AnimationUpdateCBuffer->SetBoneCount((int)m_Skeleton->GetBoneCount());
 
 		size_t	Size = m_CurrentAnimation->m_vecNotify.size();
@@ -677,7 +704,10 @@ void CAnimationSequenceInstance::Update(float DeltaTime)
 		if (AnimEnd)
 		{
 			if (m_CurrentAnimation->m_EndFunction)
+			{
+				m_CurrentAnimation->m_EndFunctionCalled = true;
 				m_CurrentAnimation->m_EndFunction();
+			}
 
 			if (m_CurrentAnimation->m_Loop)
 			{
@@ -739,6 +769,14 @@ void CAnimationSequenceInstance::Update(float DeltaTime)
 
 	if (ChangeEnd)
 	{
+		if (m_CurrentAnimation->m_EndFunction)
+		{
+			if (!m_CurrentAnimation->m_EndFunctionCalled)
+			{
+				m_CurrentAnimation->m_EndFunctionCalled = true;
+				m_CurrentAnimation->m_EndFunction();
+			}
+		}
 		m_CurrentAnimation = m_ChangeAnimation;
 		m_ChangeAnimation = nullptr;
 		m_ChangeTimeAcc = 0.f;

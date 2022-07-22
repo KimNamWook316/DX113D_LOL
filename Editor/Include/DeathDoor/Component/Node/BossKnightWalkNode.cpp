@@ -27,15 +27,21 @@ void CBossKnightWalkNode::Init()
 	// 애니메이션 콜백 등록
 	CKnightDataComponent* Data = dynamic_cast<CKnightDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
 
-	AnimInst->AddNotifyDeltaTimeFrameRange("Walk", "Walk", 0, 5, Data, &CKnightDataComponent::OnWalk);
-	AnimInst->AddNotifyDeltaTimeFrameRange("Walk", "Walk", 14, 24, Data, &CKnightDataComponent::OnWalk);
-	AnimInst->AddNotifyDeltaTimeFrameRange("Walk", "Walk", 32, 41, Data, &CKnightDataComponent::OnWalk);
+	AnimInst->AddNotify("Walk", "EnableWalk", 0, Data, &CKnightDataComponent::OnEnableLookAndMove);
+	AnimInst->AddNotify("Walk", "DisableWalk", 5, Data, &CKnightDataComponent::OnDisableLookAndMove);
+	AnimInst->AddNotify("Walk", "EnableWalk", 14, Data, &CKnightDataComponent::OnEnableLookAndMove);
+	AnimInst->AddNotify("Walk", "DisableWalk", 24, Data, &CKnightDataComponent::OnDisableLookAndMove);
+	AnimInst->AddNotify("Walk", "EnableWalk", 32, Data, &CKnightDataComponent::OnEnableLookAndMove);
+	AnimInst->AddNotify("Walk", "DisableWalk", 41, Data, &CKnightDataComponent::OnDisableLookAndMove);
 }
 
 NodeResult CBossKnightWalkNode::OnStart(float DeltaTime)
 {
 	CAnimationSequenceInstance* AnimInst = m_AnimationMeshComp->GetAnimationInstance();
 	AnimInst->ChangeAnimation("Walk");
+
+	CKnightDataComponent* Data = dynamic_cast<CKnightDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
+	Data->ResetMeleeAttackCount();
 
 	return NodeResult::Node_True;
 }

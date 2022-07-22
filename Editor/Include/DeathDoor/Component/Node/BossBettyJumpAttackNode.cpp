@@ -37,10 +37,10 @@ void CBossBettyJumpAttackNode::Init()
 		Data, &CBossBettyDataComponent::OnBossBettyGenerateTwoSideCloseAttackEffect);
 
 	// 날아가는 중간에도, Player 를 향해 방향 회전하기 
-	AnimInst->AddNotifyDeltaTimeFrameRange(AnimName, "OnTracePlayer", 9, 22,
-		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnLookPlayer);
-
-
+	AnimInst->AddNotify(AnimName, "OnTracePlayer", 9,
+		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnEnableLookPlayer);
+	AnimInst->AddNotify(AnimName, "OnDisableTracePlayer", 22,
+		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnDisableLookPlayer);
 }
 
 NodeResult CBossBettyJumpAttackNode::OnStart(float DeltaTime)
@@ -66,5 +66,5 @@ NodeResult CBossBettyJumpAttackNode::OnUpdate(float DeltaTime)
 
 NodeResult CBossBettyJumpAttackNode::OnEnd(float DeltaTime)
 {
-	return NodeResult();
+	return NodeResult::Node_True;
 }

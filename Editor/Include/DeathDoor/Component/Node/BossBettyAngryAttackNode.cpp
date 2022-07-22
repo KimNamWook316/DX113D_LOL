@@ -31,8 +31,10 @@ void CBossBettyAngryAttackNode::Init()
 	CAnimationSequenceInstance* AnimInst = m_AnimationMeshComp->GetAnimationInstance();
 
 	// 던지기 전까지 Player 방향으로 회전할 수 있도록 한다.
-	AnimInst->AddNotifyDeltaTimeFrameRange(AnimName, "OnTracePlayer", 0, 5,
-		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnLookPlayer);
+	AnimInst->AddNotify(AnimName, "OnTracePlayer", 0,
+		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnEnableLookPlayer);
+	AnimInst->AddNotify(AnimName, "OnDisableTracePlayer", 5,
+		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnDisableLookPlayer);
 
 	// Snow Ball Falling
 	AnimInst->AddNotify(AnimName, "OnStartFallingSnowBallEffect", 9, 
@@ -85,12 +87,12 @@ NodeResult CBossBettyAngryAttackNode::OnStart(float DeltaTime)
 
 NodeResult CBossBettyAngryAttackNode::OnUpdate(float DeltaTime)
 {
-	return NodeResult();
+	return NodeResult::Node_True;
 }
 
 NodeResult CBossBettyAngryAttackNode::OnEnd(float DeltaTime)
 {
-	return NodeResult();
+	return NodeResult::Node_True;
 }
 
 void CBossBettyAngryAttackNode::OnBossBettyStartFallingSnowBallEffect()

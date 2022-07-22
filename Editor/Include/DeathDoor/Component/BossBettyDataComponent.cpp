@@ -3,6 +3,7 @@
 #include "GameStateComponent.h"
 #include "Component/AnimationMeshComponent.h"
 #include "Component/ColliderBox3D.h"
+#include "Component/ColliderSphere.h"
 #include "Collision/Collision.h"
 #include "Scene/Scene.h"
 #include "Scene/SceneManager.h"
@@ -31,7 +32,15 @@ CBossBettyDataComponent::~CBossBettyDataComponent()
 
 void CBossBettyDataComponent::Start()
 {
+    CMonsterDataComponent::Start();
+
     m_Data = CDataManager::GetInst()->GetObjectData("BossBetty");
+
+    // Move Speed 는 CSV OBJ Data 로 세팅한다.
+    m_CurMoveSpeed = m_Data.MoveSpeed;
+
+    // HitBox 에 콜백을 걸어준다.
+
 
     // m_BossBettySpinCollider 를 Object 의 Component List 에 추가한다.
     // - 그리고 Spin 중간에, Collide 시 Spin Collider Animation 으로 바꾸는 Callback도 세팅한다.
@@ -41,7 +50,7 @@ void CBossBettyDataComponent::Start()
     if (m_BossBettySpinCollider)
     {
         m_BossBettySpinCollider->Enable(false);
-        m_BossBettySpinCollider->AddCollisionCallback(Collision_State::Begin,
+        m_BossBettySpinCollider->AddCollisionCallback(Collision_State::Stay,
             this, &CBossBettyDataComponent::OnChangeFromSpinToSpinCollideWhenCollide);
     }
 
@@ -112,11 +121,33 @@ void CBossBettyDataComponent::OnExplodeBettyThrowBallCallback()
 
 void CBossBettyDataComponent::OnChangeFromSpinToSpinCollideWhenCollide(const CollisionResult& Result)
 {
+    if (Result.Dest->GetGameObject()->GetName() != "MapSurroundCollider")
+        return;
+
+    // 구 ~ 구 충돌
+    // BossBettySpinCollider 충돌체는, 전체 Map Surround Collider 안에 존재한다.
+    // 구 안에, 특정 구가 존재할 경우에는, 항상 충돌로 판정한다.
+    // 대신, 구끼리 충돌하는 그 순간에는 HitPoint 정보가 0이 아닌 상태로 존재하게 될 것이다.
+    if (Result.HitPoint.x == 0.f)
+        return;
+
+
     CAnimationSequenceInstance* AnimInst =  dynamic_cast<CAnimationMeshComponent*>(m_Object->GetRootComponent())->GetAnimationInstance();
 
     if (AnimInst->GetCurrentAnimation()->GetName() == "Spin")
     {
+        // 1. Spin Collider 로 Change
         AnimInst->ChangeAnimation("SpinCollide");
+
+        // 2. 더이상의 움직임을 멈춘다.
+        m_MoveZ = false;
+
+        // Current Node 가 BettySpinAttackNode 로 되어 있을 것이다. 
+        // 이를 nullptr 로 세팅
+        m_State->GetBehaviorTree()->SetCurrentNode(nullptr);
+
+        // BossBetty Spin Collider 를 Enable False 처리 한다.
+        m_BossBettySpinCollider->Enable(false);
     }
 }
 

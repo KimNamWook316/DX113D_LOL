@@ -46,17 +46,25 @@ void CBossBettySpinAttackNode::Init()
 	AnimInst->AddNotify(AnimName, "EnableSpinCollider", 0,
 		Data, &CBossBettyDataComponent::OnBossBettyEnableSpinCollider);
 
+	// Move Speed 의 경우 BossDataComponent 에서 처리해주고 있다.
+	AnimInst->AddNotify(AnimName, "EnableZMove", 0,
+		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnEnableMoveZ);
+
 	// 2) Spin Collide
 	AnimName = "SpinCollide";
 
 	// 처음 시작하는 순간, 다시 Spin Collide 를 비활성화 시킨다.
 	AnimInst->AddNotify(AnimName, "DisableSpinCollider", 0, 
 		Data, &CBossBettyDataComponent::OnBossBettyDisableSpinCollider);
+	AnimInst->AddNotify(AnimName, "DisableZMove", 0,
+		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnDisableMoveZ);
 
 	// 공중에서 Player 를 향해 서서히 돈다.
 	// 던지기 전까지 Player 방향으로 회전할 수 있도록 한다.
-	AnimInst->AddNotifyDeltaTimeFrameRange(AnimName, "OnTracePlayer", 0, 16,
-		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnLookPlayer);
+	AnimInst->AddNotify(AnimName, "OnTracePlayer", 0,
+		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnEnableLookPlayer);
+	AnimInst->AddNotify(AnimName, "OnDisableTracePlayer", 16,
+		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnDisableLookPlayer);
 
 	// 마지막 순간에 착지한 바닥을 공격한다.
 	AnimInst->SetEndFunction(AnimName,
@@ -67,27 +75,32 @@ void CBossBettySpinAttackNode::Init()
 
 NodeResult CBossBettySpinAttackNode::OnStart(float DeltaTime)
 {
-	m_CallStart = true;
-
 	CAnimationSequenceInstance* AnimInst = m_AnimationMeshComp->GetAnimationInstance();
-	AnimInst->ChangeAnimation("JumpSpin");
+
+	// Spin 중이라면, Animation 을 바꿔서는 안된다.
+	if (AnimInst->GetCurrentAnimation()->GetName() != "Spin")
+	{
+		AnimInst->ChangeAnimation("JumpSpin");
+	}
+
 
 	return NodeResult::Node_True;
 }
 
 NodeResult CBossBettySpinAttackNode::OnUpdate(float DeltaTime)
 {
-	return NodeResult();
+	return NodeResult::Node_True;
 }
 
 NodeResult CBossBettySpinAttackNode::OnEnd(float DeltaTime)
 {
-	return NodeResult();
+	return NodeResult::Node_True;
 }
 
 void CBossBettySpinAttackNode::OnBossBettyChangeToSpinAnimation()
 {
 	CAnimationSequenceInstance* AnimInst = m_AnimationMeshComp->GetAnimationInstance();
 	AnimInst->ChangeAnimation("Spin");
+	m_Owner->SetCurrentNode(this);
 }
 

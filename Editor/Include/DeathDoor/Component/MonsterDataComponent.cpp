@@ -3,6 +3,7 @@
 #include "GameObject/GameObject.h"
 #include "Component/AnimationMeshComponent.h"
 #include "Component/ColliderBox3D.h"
+#include "../Component/GameStateComponent.h"
 #include "MonsterNavAgent.h"
 #include "Scene/Scene.h"
 
@@ -12,7 +13,9 @@ CMonsterDataComponent::CMonsterDataComponent()	:
 	m_HitEffectFlag(0),
 	m_HitEffectTimer(0.f),
 	m_HitEffectMax(0.6f),
-	m_IsCombat(false)
+	m_IsCombat(false),
+	m_LookPlayer(false),
+	m_CurMoveSpeed(0.f)
 {
 	SetTypeID<CMonsterDataComponent>();
 
@@ -31,6 +34,7 @@ CMonsterDataComponent::~CMonsterDataComponent()
 void CMonsterDataComponent::Start()
 {
 	m_MonsterNavAgent = m_Object->FindObjectComponentFromType<CMonsterNavAgent>();
+	m_State = m_Object->FindObjectComponentFromType<CGameStateComponent>();
 
 	std::vector<CAnimationMeshComponent*> vecAnim;
 	std::vector<CColliderBox3D*> vecCollider;
@@ -96,6 +100,16 @@ void CMonsterDataComponent::Update(float DeltaTime)
 	{
 		ActiveHitEffect(DeltaTime);
 	}
+
+	if (m_LookPlayer)
+	{
+		LookPlayer(DeltaTime);
+	}
+
+	if (m_MoveZ)
+	{
+		MoveZ(DeltaTime);
+	}
 }
 
 CMonsterDataComponent* CMonsterDataComponent::Clone()
@@ -103,9 +117,41 @@ CMonsterDataComponent* CMonsterDataComponent::Clone()
 	return new CMonsterDataComponent(*this);
 }
 
+void CMonsterDataComponent::LookPlayer(float DeltaTime)
+{
+	// 플레이어 방향으로 회전 범위만큼 회전
+	float AnglePlayer = GetAnglePlayer();
+
+	CGameObject* MyObj = m_Object;
+
+	if (abs(AnglePlayer) < m_Data.RotateSpeedPerSec * DeltaTime)
+	{
+		MyObj->AddWorldRotationY(AnglePlayer * DeltaTime);
+	}
+	else
+	{
+		bool IsLeft = IsPlayerLeftBasedInLookDir();
+		if (IsLeft)
+		{
+			MyObj->AddWorldRotationY(m_Data.RotateSpeedPerSec * DeltaTime);
+		}
+		else
+		{
+			MyObj->AddWorldRotationY(-1.f * m_Data.RotateSpeedPerSec * DeltaTime);
+		}
+	}
+}
+
+void CMonsterDataComponent::MoveZ(float DeltaTime)
+{
+	m_Object->AddWorldPosByLocalAxis(AXIS::AXIS_Z, -m_CurMoveSpeed * DeltaTime);
+}
+
 void CMonsterDataComponent::OnEndAnimPostAttackDelayOff()
 {
 	m_PostAttackDelaying = false;
+
+	SetCurrentNodeNull();
 }
 
 void CMonsterDataComponent::SetIsHit(bool Hit)
@@ -121,8 +167,15 @@ void CMonsterDataComponent::SetIsHit(bool Hit)
 	m_HitEffectStart = true;
 }
 
+void CMonsterDataComponent::SetCurrentNodeNull()
+{
+	m_State->GetBehaviorTree()->SetCurrentNode(nullptr);
+}
+
 void CMonsterDataComponent::OnEndAnimPostAttackDelayOn()
 {
+	SetCurrentNodeNull();
+
 	m_PostAttackDelaying = true;
 }
 
@@ -148,8 +201,10 @@ float CMonsterDataComponent::GetAnglePlayer()
 
 bool CMonsterDataComponent::IsPlayerLeftBasedInLookDir()
 {
+	/*
 	Vector3 vToPlayer = ToPlayer();
 	// Vector3 vWorldLook = m_Object->GetWorldAxis(AXIS::AXIS_Z) * -1.f;
+	Vector3 vLook = m_Object->GetWorldAxis(AXIS::AXIS_Z) * -1.f;
 	Vector3 vWorldLook = m_Object->GetWorldAxis(AXIS::AXIS_Z) * -1.f;
 	Vector3 vWorldRight = m_Object->GetWorldAxis(AXIS::AXIS_X) * -1.f;
 
@@ -160,10 +215,14 @@ bool CMonsterDataComponent::IsPlayerLeftBasedInLookDir()
 		return true;
 	else
 		return false;
-	/*
-	float Angle = vToPlayer.Angle(vWorldLook);
-	Vector3 vCross = vToPlayer.Cross(vWorldLook);
-	if (vCross.y > 0.f)
+		*/
+
+	Vector3 vToPlayer = ToPlayer();
+	Vector3 vLook = m_Object->GetWorldAxis(AXIS::AXIS_Z) * -1.f;
+
+	Vector3 vCross = vToPlayer.Cross(vLook);
+
+	if (vCross.y < 0.f)
 	{
 		return true;
 	}
@@ -171,34 +230,26 @@ bool CMonsterDataComponent::IsPlayerLeftBasedInLookDir()
 	{
 		return false;
 	}
-	*/
-
 }
 
-void CMonsterDataComponent::OnLookPlayer(float DeltaTime)
+void CMonsterDataComponent::OnEnableLookPlayer()
 {
-	// 플레이어 방향으로 회전 범위만큼 회전
-	float AnglePlayer = GetAnglePlayer();
+	m_LookPlayer = true;
+}
 
-	CGameObject* MyObj = m_Object;
+void CMonsterDataComponent::OnDisableLookPlayer()
+{
+	m_LookPlayer = false;
+}
 
-	if (abs(AnglePlayer) < m_Data.RotateSpeedPerSec)
-	{
-		MyObj->AddWorldRotationY(AnglePlayer  * DeltaTime);
-	}
-	else
-	{
-		bool IsLeft = IsPlayerLeftBasedInLookDir();
-		if (IsLeft)
-		{
-			// 반시계방향 회전 ?
-			MyObj->AddWorldRotationY(m_Data.RotateSpeedPerSec * DeltaTime);
-		}
-		else
-		{
-			MyObj->AddWorldRotationY(-1.f * m_Data.RotateSpeedPerSec * DeltaTime);
-		}
-	}
+void CMonsterDataComponent::OnEnableMoveZ()
+{
+	m_MoveZ = true;
+}
+
+void CMonsterDataComponent::OnDisableMoveZ()
+{
+	m_MoveZ = false;
 }
 
 bool CMonsterDataComponent::IsPlayerInMeleeAttackRange()

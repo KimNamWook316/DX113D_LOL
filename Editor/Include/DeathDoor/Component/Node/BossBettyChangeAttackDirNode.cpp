@@ -31,35 +31,24 @@ void CBossBettyChangeAttackDirNode::Init()
 
 	CAnimationSequenceInstance* AnimInst = m_AnimationMeshComp->GetAnimationInstance();
 	
-	AnimInst->AddNotifyDeltaTimeFrameRange(AnimName, "OnTracePlayer", 0, 19,
-		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnLookPlayer);
+	AnimInst->AddNotify(AnimName, "OnTracePlayer", 0,
+		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnEnableLookPlayer);
+	AnimInst->SetEndFunction(AnimName, (CMonsterDataComponent*)Data, &CMonsterDataComponent::OnDisableLookPlayer);
 }
 
 NodeResult CBossBettyChangeAttackDirNode::OnStart(float DeltaTime)
 {
-
 	m_AnimationMeshComp->GetAnimationInstance()->ChangeAnimation("BackUpStep");
-
-	// Player 쪽으로 계속 돌기
-	int CurrentFrame = m_AnimationMeshComp->GetAnimationInstance()->GetCurrentAnimation()->GetAnimationSequence()->GetCurrentFrameIdx();
-
-	CBossBettyDataComponent* Data = dynamic_cast<CBossBettyDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
-	
-	if (CurrentFrame >= 0 && CurrentFrame <= 19)
-	{
-		// CMonsterDataComponent::OnLookPlayer(DeltaTime);
-		Data->OnLookPlayer(DeltaTime);
-	}
 
 	return NodeResult::Node_True;
 }
 
 NodeResult CBossBettyChangeAttackDirNode::OnUpdate(float DeltaTime)
 {
-	return NodeResult();
+	return NodeResult::Node_True;
 }
 
 NodeResult CBossBettyChangeAttackDirNode::OnEnd(float DeltaTime)
 {
-	return NodeResult();
+	return NodeResult::Node_True;
 }
