@@ -37,7 +37,19 @@ void CBossBettyChangeAttackDirNode::Init()
 
 NodeResult CBossBettyChangeAttackDirNode::OnStart(float DeltaTime)
 {
+
 	m_AnimationMeshComp->GetAnimationInstance()->ChangeAnimation("BackUpStep");
+
+	// Player 쪽으로 계속 돌기
+	int CurrentFrame = m_AnimationMeshComp->GetAnimationInstance()->GetCurrentAnimation()->GetAnimationSequence()->GetCurrentFrameIdx();
+
+	CBossBettyDataComponent* Data = dynamic_cast<CBossBettyDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
+	
+	if (CurrentFrame >= 0 && CurrentFrame <= 19)
+	{
+		// CMonsterDataComponent::OnLookPlayer(DeltaTime);
+		Data->OnLookPlayer(DeltaTime);
+	}
 
 	return NodeResult::Node_True;
 }

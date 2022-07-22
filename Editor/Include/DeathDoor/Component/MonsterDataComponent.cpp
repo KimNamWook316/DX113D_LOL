@@ -151,11 +151,19 @@ bool CMonsterDataComponent::IsPlayerLeftBasedInLookDir()
 	Vector3 vToPlayer = ToPlayer();
 	Vector3 vLook = m_Object->GetWorldAxis(AXIS::AXIS_Z) * -1.f;
 
+	// X, Z 축 -> 2차원 형태에서만 비교를 진행할 것이다.
+
+	// Vector3 vCross = Vector3(vToPlayer.x, 0.f, vToPlayer.z).Cross(Vector3(vLook.x, 0.f, vLook.z));
+	float Angle = vToPlayer.Angle(vLook);
 	Vector3 vCross = vToPlayer.Cross(vLook);
 
+	if (Angle > 180.f)
+		int a = 1;
+
+	// if (vCross.y > 0.f)
 	if (vCross.y > 0.f)
 	{
-		return true;
+			return true;
 	}
 	else
 	{

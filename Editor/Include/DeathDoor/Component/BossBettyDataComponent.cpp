@@ -7,6 +7,9 @@
 #include "Scene/Scene.h"
 #include "Scene/SceneManager.h"
 #include "BossBettyDataComponent.h"
+#include "../DataManager.h"
+#include "Component/CameraComponent.h"
+#include "GameObject/GameObject.h"
 
 CBossBettyDataComponent::CBossBettyDataComponent() :
 	m_ThrowFarAttackEnable(false),
@@ -28,6 +31,8 @@ CBossBettyDataComponent::~CBossBettyDataComponent()
 
 void CBossBettyDataComponent::Start()
 {
+    m_Data = CDataManager::GetInst()->GetObjectData("BossKnight");
+
     // m_BossBettySpinCollider 를 Object 의 Component List 에 추가한다.
     // - 그리고 Spin 중간에, Collide 시 Spin Collider Animation 으로 바꾸는 Callback도 세팅한다.
     // - 처음에는 비활성화 시킨다.
