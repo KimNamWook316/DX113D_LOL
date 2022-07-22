@@ -10,6 +10,7 @@
 
 CBossBettyJumpAttackNode::CBossBettyJumpAttackNode()
 {
+	SetTypeID(typeid(CBossBettyJumpAttackNode).hash_code());
 }
 
 CBossBettyJumpAttackNode::CBossBettyJumpAttackNode(const CBossBettyJumpAttackNode& Node)

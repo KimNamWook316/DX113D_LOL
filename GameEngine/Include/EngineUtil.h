@@ -57,6 +57,7 @@ public:
 	static std::string CollisionChannelToString(Collision_Channel eChannnel);
 	static Collision_Channel StringToCollisionChannel(const std::string& String);
 	static Collision_Interaction StringToCollisionInteraction(const std::string& String);
+	static std::string CollisionInteractionToString(Collision_Interaction eInteraction);
 
 	// String
 	static std::string BoolToString(bool Bool);

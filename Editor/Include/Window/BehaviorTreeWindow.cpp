@@ -47,6 +47,19 @@
 #include "../DeathDoor/Component/Node/BossKnightWalkNode.h"
 #include "../DeathDoor/Component/Node/BossKnightCutScenePlayNode.h"
 #include "../DeathDoor/Component/Node/BossKnightContinueAttackCheck.h"
+// BossBetty
+#include "../DeathDoor/Component/Node/BossBettyAngryAttackNode.h"
+#include "../DeathDoor/Component/Node/BossBettyChangeAttackDirNode.h"
+#include "../DeathDoor/Component/Node/BossBettyCloseAttackNode.h"
+#include "../DeathDoor/Component/Node/BossBettyJumpAttackNode.h"
+#include "../DeathDoor/Component/Node/BossBettySpinAttackNode.h"
+#include "../DeathDoor/Component/Node/BossBettyThrowNode.h"
+
+#include "../DeathDoor/Component/Node/BossBettyChangeDirCheck.h"
+#include "../DeathDoor/Component/Node/BossBettyFarAttackTypeCheck.h"
+#include "../DeathDoor/Component/Node/BossBettyHPStateCheck.h"
+#include "../DeathDoor/Component/Node/BossBettyThrowAttackCheck.h"
+
 #include "../DeathDoor/Component/Node/HitCheckNode.h"
 #include "../DeathDoor/Component/Node/HitBackNode.h"
 #include "../DeathDoor/Component/Node/RollInputCheck.h"
@@ -465,10 +478,12 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
         case DDActionNode::HitBack:
         {
             NewTreeNode = m_StateComponent->CreateTreeNode<CHitBackNode>(Name);
+            break;
         }
         case DDActionNode::PlayerRoll:
         {
             NewTreeNode = m_StateComponent->CreateTreeNode<CPlayerRoll>(Name);
+            break;
         }
         case DDActionNode::BossKnightContinueAttack:
         {
@@ -508,6 +523,37 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
         case DDActionNode::BossKnightIdle:
         {
             NewTreeNode = m_StateComponent->CreateTreeNode<CBossKnightIdleNode>(Name);
+            break;
+        }
+        // BossBetty
+        case DDActionNode::BossBettyAngryAttack:
+        {
+            NewTreeNode = m_StateComponent->CreateTreeNode<CBossBettyAngryAttackNode>(Name);
+            break;
+        }
+        case DDActionNode::BossBettyChangeAttackDir:
+        {
+            NewTreeNode = m_StateComponent->CreateTreeNode<CBossBettyChangeAttackDirNode>(Name);
+            break;
+        }
+        case DDActionNode::BossBettyCloseAttack:
+        {
+            NewTreeNode = m_StateComponent->CreateTreeNode<CBossBettyCloseAttackNode>(Name);
+            break;
+        }
+        case DDActionNode::BossBettyJumpAttack:
+        {
+            NewTreeNode = m_StateComponent->CreateTreeNode<CBossBettyJumpAttackNode>(Name);
+            break;
+        }
+        case DDActionNode::BossBettySpinAttack:
+        {
+            NewTreeNode = m_StateComponent->CreateTreeNode<CBossBettySpinAttackNode>(Name);
+            break;
+        }
+        case DDActionNode::BossBettyThrowAttack:
+        {
+            NewTreeNode = m_StateComponent->CreateTreeNode<CBossBettyThrowNode>(Name);
             break;
         }
 		}
@@ -578,6 +624,20 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
         case DDConditionNode::BossKnightContinueAttackCheck:
             NewTreeNode = m_StateComponent->CreateTreeNode<CBossKnightContinueAttackCheck>(Name);
             break;
+        // BossBetty
+        case DDConditionNode::BossBettyCheckAttackDir:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CBossBettyChangeDirCheck>(Name);
+            break;
+        case DDConditionNode::BossBettyCheckFarAttackType:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CBossBettyFarAttackTypeCheck>(Name);
+            break;
+        case DDConditionNode::BossBettyCheckHPState:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CBossBettyHPStateCheck>(Name);
+            break;
+        case DDConditionNode::BossBettyCheckThrowAttack:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CBossBettyThrowAttackCheck>(Name);
+            break;
+
         case DDConditionNode::IsCombatCheck:
             NewTreeNode = m_StateComponent->CreateTreeNode<CIsCombatCheck>(Name);
             break;

@@ -3,7 +3,7 @@
 class CBossBettyHPStateCheck :
     public CConditionNode
 {
-protected:
+public:
     CBossBettyHPStateCheck();
     CBossBettyHPStateCheck(const CBossBettyHPStateCheck& Node);
     virtual ~CBossBettyHPStateCheck();

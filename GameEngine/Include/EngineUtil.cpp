@@ -565,14 +565,33 @@ Collision_Channel CEngineUtil::StringToCollisionChannel(const std::string& Strin
 
 Collision_Interaction CEngineUtil::StringToCollisionInteraction(const std::string& String)
 {
-	if (String == "TRUE")
+	if (String == "Collision")
 	{
 		return Collision_Interaction::Collision;
+	}
+	else if (String == "CollisionRigid")
+	{
+		return Collision_Interaction::CollisionRigid;
 	}
 	else
 	{
 		return Collision_Interaction::Ignore;
 	}
+}
+
+std::string CEngineUtil::CollisionInteractionToString(Collision_Interaction eInteraction)
+{
+	switch (eInteraction)
+	{
+	case Collision_Interaction::Ignore:
+		return "Ignore";
+	case Collision_Interaction::Collision:
+		return "Collision";
+	case Collision_Interaction::CollisionRigid:
+		return "CollisionRigid";
+	}
+
+	return "";
 }
 
 std::string CEngineUtil::BoolToString(bool Bool)

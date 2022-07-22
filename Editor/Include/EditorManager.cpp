@@ -9,6 +9,7 @@
 #include "IMGUIManager.h"
 #include "Animation/AnimationSequence2DInstance.h"
 #include "Render/RenderManager.h"
+#include "Collision/CollisionManager.h"
 // Component
 #include "Component/CameraComponent.h"
 #include "Component/SpriteComponent.h"
@@ -32,6 +33,7 @@
 #include "DeathDoor\Component/PlayerHookComponent.h"
 #include "DeathDoor\Component/MonsterPathFindCollider.h"
 #include "DeathDoor\Component/KnightDataComponent.h"
+#include "DeathDoor\Component/BossBettyDataComponent.h"
 #include "DeathDoor\Component/LurkerDataComponent.h"
 #include "DeathDoor\Component/MonsterNavAgent.h"
 #include "DeathDoor\Component/PlayerBowComponent.h"
@@ -133,6 +135,9 @@ bool CEditorManager::Init(HINSTANCE hInst)
 		CEngine::DestroyInst();
 		return false;
 	}
+
+	// Collsion Profile Load
+	CCollisionManager::GetInst()->LoadProfileFromCSV("DeathDoorCollsionProfile.csv");
 
 	// 에디터 키 생성
 	CreateKey();
@@ -449,6 +454,12 @@ CComponent* CEditorManager::CreateComponent(CGameObject* Obj, size_t Type)
 	else if (Type == typeid(CProjectileComponent).hash_code())
 	{
 		CProjectileComponent* Component = Obj->LoadObjectComponent<CProjectileComponent>();
+		return Component;
+	}
+
+	else if (Type == typeid(CBossBettyDataComponent).hash_code())
+		{
+		CBossBettyDataComponent* Component = Obj->LoadObjectComponent<CBossBettyDataComponent>();
 		return Component;
 	}
 

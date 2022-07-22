@@ -18,6 +18,7 @@
 #include "../DeathDoor/Component/GameStateComponent.h"
 #include "../DeathDoor/Component/EyeLaserComponent.h"
 #include "../DeathDoor/Component/MonsterDataComponent.h"
+#include "../DeathDoor/Component/BossBettyDataComponent.h"
 #include "../DeathDoor/Component/KnightDataComponent.h"
 #include "../DeathDoor/Component/LurkerDataComponent.h"
 #include "../DeathDoor/Component/MonsterNavAgent.h"
@@ -154,6 +155,10 @@ void CObjectComponentCreateModal::OnCreateComponent()
 		else if (Typeid == typeid(CKnightDataComponent).hash_code())
 		{
 			Com = SelectObject->CreateComponent<CKnightDataComponent>(Name);
+		}
+		else if (Typeid == typeid(CBossBettyDataComponent).hash_code())
+		{
+			Com = SelectObject->CreateComponent<CBossBettyDataComponent>(Name);
 		}
 		else if (Typeid == typeid(CLurkerDataComponent).hash_code())
 		{

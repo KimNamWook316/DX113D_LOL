@@ -15,7 +15,7 @@ protected:
 
 public:
 	virtual bool Init() override;
-	virtual void Start();
+	virtual void Start() override;
 	virtual void Update(float DeltaTime) override;
 	virtual void PostUpdate(float DeltaTime) override;
 	virtual void PrevRender() override;
@@ -36,6 +36,7 @@ protected:
 	class CBehaviorTree*		m_BehaviorTree;
 	class CAnimationMeshComponent* m_AnimationMeshComp;
 	bool							m_TreeUpdate;
+	bool							m_TreeInit;
 
 public:
 	void SetTreeUpdate(bool Update)
