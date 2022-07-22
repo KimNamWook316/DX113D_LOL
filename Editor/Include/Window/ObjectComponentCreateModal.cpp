@@ -23,6 +23,7 @@
 #include "../DeathDoor/Component/LurkerDataComponent.h"
 #include "../DeathDoor/Component/MonsterNavAgent.h"
 #include "../DeathDoor/Component/ProjectileComponent.h"
+#include "../DeathDoor/Component/ArrowComponent.h"
 
 #include "../Window/InspectorWindow.h"
 #include "../EditorUtil.h"
@@ -171,6 +172,10 @@ void CObjectComponentCreateModal::OnCreateComponent()
 		else if (Typeid == typeid(CProjectileComponent).hash_code())
 		{
 			Com = SelectObject->CreateComponent<CProjectileComponent>(Name);
+		}
+		else if (Typeid == typeid(CArrowComponent).hash_code())
+		{
+			Com = SelectObject->CreateComponent<CArrowComponent>(Name);
 		}
 	}
 

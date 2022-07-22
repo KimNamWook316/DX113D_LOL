@@ -28,6 +28,7 @@ public:
 public:
 	void ShowBow(const Vector3& ShootDir);
 	void ShootArrow(const Vector3& ShootDir);
+	void HideBow();
 
 public:
 	virtual bool Save(FILE* File);

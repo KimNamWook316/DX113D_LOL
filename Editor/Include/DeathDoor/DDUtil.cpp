@@ -15,6 +15,7 @@
 #include "Component\MonsterNavAgent.h"
 #include "Component\PlayerBowComponent.h"
 #include "Component\ProjectileComponent.h"
+#include "Component\ArrowComponent.h"
 
 std::string CDDUtil::DDConditionNodeTypeToString(DDConditionNode NodeType)
 {
@@ -492,6 +493,9 @@ std::string CDDUtil::DDObjectComponentTypeToString(DDObjectComponentType Type)
 
 	case DDObjectComponentType::ProjectileComponent:
 		return "ProjectileComponent";
+
+	case DDObjectComponentType::ArrowComponent:
+		return "ArrowComponent";
 	}
 
 	return "";
@@ -535,6 +539,10 @@ DDObjectComponentType CDDUtil::StringToDDObjectComponentType(const std::string& 
 	{
 		return DDObjectComponentType::ProjectileComponent;
 	}
+	else if (Str == "ArrowComponent")
+	{
+		return DDObjectComponentType::ArrowComponent;
+	}
 
 	return DDObjectComponentType(-1);
 }
@@ -561,6 +569,8 @@ size_t CDDUtil::DDObjectComponentTypeToTypeID(DDObjectComponentType Type)
 		return typeid(CMonsterNavAgent).hash_code();
 	case DDObjectComponentType::ProjectileComponent:
 		return typeid(CProjectileComponent).hash_code();
+	case DDObjectComponentType::ArrowComponent:
+		return typeid(CArrowComponent).hash_code();
 	}
 	return -1;
 }

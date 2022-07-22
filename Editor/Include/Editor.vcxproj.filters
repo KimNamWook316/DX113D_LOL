@@ -573,6 +573,9 @@
     <ClCompile Include="DeathDoor\Component\Node\BossBettyChangeDirCheck.cpp">
       <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\02. BossBetty</Filter>
     </ClCompile>
+    <ClCompile Include="DeathDoor\Component\ArrowComponent.cpp">
+      <Filter>06. DeathDoor\01. GameComponent\02. ObjectComponent\02. Projectile</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EditorManager.h">
@@ -973,6 +976,9 @@
     </ClInclude>
     <ClInclude Include="DeathDoor\Component\Node\BossBettyThrowAttackCheck.h">
       <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\02. BossBetty</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\ArrowComponent.h">
+      <Filter>06. DeathDoor\01. GameComponent\02. ObjectComponent\02. Projectile</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

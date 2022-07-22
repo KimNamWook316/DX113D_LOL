@@ -174,6 +174,12 @@ NodeResult CShootNode::OnUpdate(float DeltaTime)
 			CPlayerBowComponent* BowComp = m_Object->FindComponentFromType<CPlayerBowComponent>();
 
 			BowComp->ShootArrow(Dir);
+
+			m_Owner->SetCurrentNode(this);
+
+			BowComp->HideBow();
+
+			m_InRestoreCam = true;
 		}
 	}
 }

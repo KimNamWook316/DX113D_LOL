@@ -85,6 +85,7 @@ enum class DDObjectComponentType
 	LurkerData,
 	MonsterNavAgent,
 	ProjectileComponent,
+	ArrowComponent,
 	Max
 };
 

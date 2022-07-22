@@ -343,17 +343,17 @@ void CGameObjectWidget::OnSelectObjectType(int Idx, const char* label)
 		m_Object->SetObjectType(Object_Type::Monster);
 	}
 
-	if (ObjectType == "MapObject")
+	else if (ObjectType == "MapObject")
 	{
 		m_Object->SetObjectType(Object_Type::MapObject);
 	}
 
-	if (ObjectType == "Particle")
+	else if (ObjectType == "Particle")
 	{
 		m_Object->SetObjectType(Object_Type::Particle);
 	}
 
-	if (ObjectType == "Projectile")
+	else if (ObjectType == "Projectile")
 	{
 		m_Object->SetObjectType(Object_Type::Projectile);
 	}

@@ -606,6 +606,12 @@ void CSceneComponent::PostRender()
 
 void CSceneComponent::Reset()
 {
+	size_t	Size = m_vecChild.size();
+
+	for (size_t i = 0; i < Size; ++i)
+	{
+		m_vecChild[i]->Reset();
+	}
 }
 
 CSceneComponent* CSceneComponent::Clone()

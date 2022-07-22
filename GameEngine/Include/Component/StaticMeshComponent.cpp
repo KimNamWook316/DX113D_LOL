@@ -45,11 +45,15 @@ bool CStaticMeshComponent::IsTransparent() const
 
 void CStaticMeshComponent::SetMesh(const std::string& Name)
 {
-	m_Mesh = (CStaticMesh*)m_Scene->GetResource()->FindMesh(Name);
+	if(m_Scene)
+		m_Mesh = (CStaticMesh*)m_Scene->GetResource()->FindMesh(Name);
 
 	if (!m_Mesh)
 	{
-		return;
+		m_Mesh = (CStaticMesh*)CResourceManager::GetInst()->FindMesh(Name);
+
+		if(!m_Mesh)
+			return;
 	}
 
 	SetMesh(m_Mesh);
@@ -538,9 +542,16 @@ bool CStaticMeshComponent::Load(FILE* File)
 		fread(&Length, sizeof(int), 1, File);
 		fread(&MeshFullPath, sizeof(char), Length, File);
 
-		m_Scene->GetResource()->LoadMeshFullPathMultibyte(Mesh_Type::Static, MeshName, MeshFullPath);
+		if(m_Scene)
+			m_Scene->GetResource()->LoadMeshFullPathMultibyte(Mesh_Type::Static, MeshName, MeshFullPath);
+		else
+			CResourceManager::GetInst()->LoadMeshFullPathMultibyte(Mesh_Type::Static, MeshName, MeshFullPath);
 
-		CMesh* LoadCheck = m_Scene->GetResource()->FindMesh(MeshName);
+		CMesh* LoadCheck = nullptr;
+		if(m_Scene)
+			LoadCheck = m_Scene->GetResource()->FindMesh(MeshName);
+		else
+			LoadCheck = CResourceManager::GetInst()->FindMesh(MeshName);
 
 		if (!LoadCheck)
 		{
@@ -552,7 +563,10 @@ bool CStaticMeshComponent::Load(FILE* File)
 
 			MultiByteToWideChar(CP_ACP, 0, FileNameMB, FileName.length(), FileNameTCHAR, FileName.length());
 
-			m_Scene->GetResource()->LoadMesh(Mesh_Type::Static, MeshName, FileNameTCHAR, MESH_PATH);
+			if(m_Scene)
+				m_Scene->GetResource()->LoadMesh(Mesh_Type::Static, MeshName, FileNameTCHAR, MESH_PATH);
+			else
+				CResourceManager::GetInst()->LoadMesh(Mesh_Type::Static, MeshName, FileNameTCHAR, MESH_PATH);
 		}
 	}
 

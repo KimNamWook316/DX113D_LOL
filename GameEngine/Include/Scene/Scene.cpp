@@ -9,6 +9,7 @@
 #include "Navigation3DManager.h"
 #include "../Render/RenderManager.h"
 #include "../EngineUtil.h"
+#include "../ObjectPool.h"
 
 CScene::CScene()
 {
@@ -112,9 +113,8 @@ void CScene::Update(float DeltaTime)
 
 	m_Mode->Update(DeltaTime);
 
-	// State에서 각 Collision Section별로 Collider를 얻어와야 하는 경우가 있어서 (ex. CheckTurretAttackTarget)
-	// CComponent::Update하기 전에 이걸 먼저 해주도록 수정
-	m_Collision->CheckColliderSection3D();
+	//CSceneCollision::Collision에서 CheckColliderSection3D 호출해주고 있음
+	//m_Collision->CheckColliderSection3D();
 
 	auto	iter = m_ObjList.begin();
 	auto	iterEnd = m_ObjList.end();
@@ -123,6 +123,9 @@ void CScene::Update(float DeltaTime)
 	{
 		if (!(*iter)->IsActive())
 		{
+			if ((*iter)->IsInPool())
+				CObjectPool::GetInst()->ReturnToPool(*iter);
+
 			iter = m_ObjList.erase(iter);
 			iterEnd = m_ObjList.end();
 			continue;
@@ -169,6 +172,9 @@ void CScene::PostUpdate(float DeltaTime)
 	{
 		if (!(*iter)->IsActive())
 		{
+			if((*iter)->IsInPool())
+				CObjectPool::GetInst()->ReturnToPool(*iter);
+
 			iter = m_ObjList.erase(iter);
 			iterEnd = m_ObjList.end();
 			continue;

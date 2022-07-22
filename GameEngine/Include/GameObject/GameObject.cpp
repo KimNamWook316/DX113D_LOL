@@ -78,9 +78,11 @@ void CGameObject::SetScene(CScene* Scene)
 
 void CGameObject::Destroy()
 {
+	CRef::Destroy();
 	if (m_InPool)
 	{
-		CObjectPool::GetInst()->ReturnToPool(this);
+		Reset();
+		//CObjectPool::GetInst()->ReturnToPool(this);
 	}
 
 	else
@@ -794,6 +796,19 @@ bool CGameObject::LoadOnly(const char* FullPath, CComponent*& OutCom)
 	fclose(File);
 
 	return Ret;
+}
+
+void CGameObject::Reset()
+{
+	size_t Size = m_vecObjectComponent.size();
+
+	for (size_t i = 0; i < Size; ++i)
+	{
+		m_vecObjectComponent[i]->Reset();
+	}
+
+	if (m_RootComponent)
+		m_RootComponent->Reset();
 }
 
 void CGameObject::Move(const Vector3& EndPos)
