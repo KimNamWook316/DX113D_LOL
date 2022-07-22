@@ -23,7 +23,7 @@ NodeResult CBossKnightFinalAttackCheck::OnStart(float DeltaTime)
 
 	int MeleeAttackCount = Data->GetMeleeAttackCount();
 
-	if (MeleeAttackCount == 2)
+	if (MeleeAttackCount >= 2)
 	{
 		return NodeResult::Node_True;
 	}

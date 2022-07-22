@@ -5,6 +5,7 @@
 #include "../Scene/SceneResource.h"
 #include "../Resource/Shader/ColliderConstantBuffer.h"
 #include "../Collision/Collision.h"
+#include "../Render/RenderManager.h"
 
 CColliderRay::CColliderRay()
 {
@@ -66,6 +67,13 @@ void CColliderRay::PrevRender()
 
 void CColliderRay::Render()
 {
+	bool DebugRender = CRenderManager::GetInst()->IsDebugRender();
+
+	if (!DebugRender)
+	{
+		return;
+	}
+
 	CColliderComponent::Render();
 
 	CCameraComponent* Camera = m_Scene->GetCameraManager()->GetCurrentCamera();

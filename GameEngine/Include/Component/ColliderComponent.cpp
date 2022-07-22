@@ -239,6 +239,7 @@ void CColliderComponent::PrevRender()
 
 void CColliderComponent::Render()
 {
+
 	CSceneComponent::Render();
 }
 

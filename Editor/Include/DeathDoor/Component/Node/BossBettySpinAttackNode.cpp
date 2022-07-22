@@ -54,8 +54,10 @@ void CBossBettySpinAttackNode::Init()
 
 	// 공중에서 Player 를 향해 서서히 돈다.
 	// 던지기 전까지 Player 방향으로 회전할 수 있도록 한다.
-	AnimInst->AddNotifyDeltaTimeFrameRange(AnimName, "OnTracePlayer", 0, 16,
-		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnLookPlayer);
+	AnimInst->AddNotify(AnimName, "OnTracePlayer", 0,
+		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnEnableLookPlayer);
+	AnimInst->AddNotify(AnimName, "OnDisableTracePlayer", 16,
+		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnDisableLookPlayer);
 
 	// 마지막 순간에 착지한 바닥을 공격한다.
 	AnimInst->SetEndFunction(AnimName,

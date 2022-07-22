@@ -25,7 +25,12 @@ CKnightDataComponent::~CKnightDataComponent()
 
 void CKnightDataComponent::Start()
 {
+	CMonsterDataComponent::Start();
+
 	m_Data = CDataManager::GetInst()->GetObjectData("BossKnight");
+
+	m_JumpAttackRange = m_Data.JumpAttackRange;
+
 	m_MeleeAttackCollider = (CColliderBox3D*)m_Object->FindComponent("MeleeAttackCollider");
 	m_PlayerEnterZoneTrigger = (CColliderBox3D*)m_Object->FindComponent("PlayerEnterTrigger");
 	m_CutSceneCam = m_Object->FindComponentFromType<CCameraComponent>();
@@ -34,6 +39,11 @@ void CKnightDataComponent::Start()
 	m_PlayerEnterZoneTrigger->AddCollisionCallback(Collision_State::Begin, this, &CKnightDataComponent::OnPlayerEnterZone);
 	
 	m_MeleeAttackCollider->Enable(false);
+}
+
+void CKnightDataComponent::Update(float DeltaTime)
+{
+	CMonsterDataComponent::Update(DeltaTime);
 }
 
 void CKnightDataComponent::OnInActiveMeleeAttackCollider()
@@ -74,8 +84,13 @@ void CKnightDataComponent::OnLookPlayerMove(float DeltaTime)
 // 공격 범위, 플레이어와의 각도로 공격을 이어갈지, 멈출지 판단하는 함수
 void CKnightDataComponent::OnEndAnimJudgeContinueAttack()
 {
+	if (m_MeleeAttackCount >= 2)
+	{
+		SetContinueAttack(false);
+		SetPostAttckDelaying(false);
+	}
 	// 애니메이션 끝난 이후 플레이어가 아직 공격 범위 내에 있을 경우
-	if (IsPlayerInMeleeAttackRange())
+	else if (IsPlayerInMeleeAttackRange())
 	{
 		// 공격 이어가는 상태로
 		SetContinueAttack(true);
@@ -84,8 +99,10 @@ void CKnightDataComponent::OnEndAnimJudgeContinueAttack()
 		float AnglePlayer = GetAnglePlayer();
 
 		// 플레이어와의 각도가 일정 이하인 경우
-		if (abs(AnglePlayer) <= 90.f)
+		if (abs(AnglePlayer) <= 45.f)
 		{
+			// 현재 노드를 Null로
+			SetCurrentNodeNull();
 			SetAttackRot(Knight_Attack_Rot_Type::Front);
 			return;
 		}
@@ -114,11 +131,30 @@ void CKnightDataComponent::OnEndAnimJudgeContinueAttack()
 		SetPostAttckDelaying(true);
 		SetContinueAttack(false);
 	}
+
+	// 현재 노드를 Null로
+	SetCurrentNodeNull();
+}
+
+void CKnightDataComponent::OnEnableLookAndMove()
+{
+	m_MoveZ = true;
+	m_LookPlayer = true;
+	m_CurMoveSpeed = m_Data.MoveSpeed;
+}
+
+void CKnightDataComponent::OnDisableLookAndMove()
+{
+	m_MoveZ = false;
+	m_LookPlayer = false;
+	m_CurMoveSpeed = 0.f;
 }
 
 void CKnightDataComponent::OnWalk(float DeltaTime)
 {
-	m_Object->AddWorldPosByLocalAxis(AXIS::AXIS_Z, -m_Data.MoveSpeed);
+	LookPlayer(DeltaTime);
+
+	m_Object->AddWorldPosByLocalAxis(AXIS::AXIS_Z, -m_Data.MoveSpeed * DeltaTime);
 }
 
 void CKnightDataComponent::OnPlayerEnterZone(const CollisionResult& Result)
@@ -143,6 +179,31 @@ void CKnightDataComponent::OnEndCutScenePlaying()
 	{
 		m_Scene->GetCameraManager()->ReturnCamera();
 	}
+}
+
+void CKnightDataComponent::OnStartJumpAttackMove()
+{
+	m_CurMoveSpeed = m_Data.MoveSpeed * 3.f;
+	m_MoveZ = true;
+	m_LookPlayer = true;
+}
+
+void CKnightDataComponent::OnEndJumpAttackMove()
+{
+	m_CurMoveSpeed = m_Data.MoveSpeed * 1.5f;
+	m_LookPlayer = false;
+}
+
+void CKnightDataComponent::OnEndJumpAttack()
+{
+	m_CurMoveSpeed = 0.f;
+	m_MoveZ = false;
+}
+
+void CKnightDataComponent::OnEndContinueAttack()
+{
+	SetCurrentNodeNull();
+	m_ContinueAttack = false;
 }
 
 void CKnightDataComponent::OnActiveMeleeAttackCollider()

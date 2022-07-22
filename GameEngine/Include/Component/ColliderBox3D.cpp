@@ -10,6 +10,7 @@
 #include "../Scene/Scene.h"
 #include "../Scene/SceneResource.h"
 #include "../Resource/Shader/ColliderConstantBuffer.h"
+#include "../Render/RenderManager.h"
 
 CColliderBox3D::CColliderBox3D()	:
 	m_UpdateMinMax(false)
@@ -117,6 +118,13 @@ void CColliderBox3D::PrevRender()
 
 void CColliderBox3D::Render()
 {
+	bool DebugRender = CRenderManager::GetInst()->IsDebugRender();
+
+	if (!DebugRender)
+	{
+		return;
+	}
+
 	CColliderComponent::Render();
 
 	CCameraComponent* Camera = m_Scene->GetCameraManager()->GetCurrentCamera();
