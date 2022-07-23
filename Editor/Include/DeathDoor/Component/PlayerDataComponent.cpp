@@ -7,6 +7,7 @@
 #include "../DataManager.h"
 #include "GameStateComponent.h"
 #include "Component/ColliderComponent.h"
+#include "../Component/PlayerNormalAttackCheckCollider.h"
 #include "Scene/Navigation3DManager.h"
 
 CPlayerDataComponent::CPlayerDataComponent()	:
@@ -48,6 +49,10 @@ void CPlayerDataComponent::Start()
 	CInput::GetInst()->SetKeyCallback("WeaponChain", KeyState_Down, this, &CPlayerDataComponent::SetPlayerAbilityChain);
 
 	m_AnimComp = m_Object->FindComponentFromType<CAnimationMeshComponent>();
+
+	// Player Melee Attack Check Collider
+	m_AttackCheckCollider = m_Object->FindComponentFromType<CPlayerNormalAttackCheckCollider>();
+	m_AttackCheckCollider->Enable(false);
 
 	// Player Animation Notify는 여기 추가
 	m_AnimComp->GetAnimationInstance()->AddNotify<CPlayerDataComponent>("PlayerSlashL", "PlayerSlashL", 3, this, &CPlayerDataComponent::SetTrueOnSlash);
@@ -160,6 +165,20 @@ bool CPlayerDataComponent::LoadOnly(FILE* File)
 	fread(&m_PlayerData, sizeof(PlayerData), 1, File);
 
 	return true;
+}
+
+inline void CPlayerDataComponent::SetTrueOnSlash()
+{
+	m_OnSlash = true;
+
+	m_AttackCheckCollider->Enable(true);
+}
+
+inline void CPlayerDataComponent::SetFalseOnSlash()
+{
+	m_OnSlash = false;
+
+	m_AttackCheckCollider->Enable(false);
 }
 
 CAnimationMeshComponent* CPlayerDataComponent::GetAnimationMeshComponent() const

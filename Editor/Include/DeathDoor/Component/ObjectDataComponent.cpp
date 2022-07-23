@@ -52,16 +52,6 @@ bool CObjectDataComponent::Init()
 
 void CObjectDataComponent::Update(float DeltaTime)
 {
-	if (m_IsHit && m_IsHitPrevFrame)
-	{
-		m_IsHit = false;
-		m_IsHitPrevFrame = false;
-	}
-
-	if (m_IsHit && !m_IsHitPrevFrame)
-	{
-		m_IsHitPrevFrame = true;
-	}
 }
 
 void CObjectDataComponent::PostUpdate(float DeltaTime)

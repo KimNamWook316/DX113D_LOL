@@ -25,6 +25,7 @@ StructuredBuffer<float> g_AvgLum : register(t11);
 Texture2D<float4> g_BloomTex : register(t12);
 Texture2DMS<float4> g_GBufferDepth : register(t13);
 Texture2D<float4> g_DownScaleTex : register(t14);
+Texture2DMS<float4> g_PlayerStencil : register(t15);
 
 #define NatrualE 2.71828
 
@@ -155,8 +156,14 @@ PSOutput_Single HDRRenderPS(VS_OUTPUT_HDR Input)
 	}
 
 	Output.Color = Color;
- //	Output.Color.rgb = Color.rgb;
- //	Output.Color.a = Alpha;
+
+	// 플레이어 가려진 경우 스텐실 처리
+	float PlayerStencilDepth = g_PlayerStencil.Load(TargetPos, 0).w;
+
+	if (PlayerStencilDepth > Depth.g + 3.f)
+	{
+		Output.Color = float4(0.7f, 0.7f, 0.7f, 1.f);
+	}
 
 	return Output;
 }

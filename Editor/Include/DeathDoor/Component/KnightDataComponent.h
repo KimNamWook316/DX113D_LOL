@@ -24,9 +24,7 @@ public:
 	virtual void Update(float DeltaTime) override;
 
 public:
-    void OnActiveMeleeAttackCollider();
-    void OnInActiveMeleeAttackCollider();
-    void OnHitMeleeAttack(const CollisionResult& Result);
+    virtual void OnActiveMeleeAttackCollider() override;
     void OnLookPlayerMove(float DeltaTime);
     void OnEndAnimJudgeContinueAttack();
     void OnEnableLookAndMove();
@@ -58,11 +56,6 @@ public:
     Knight_Attack_Rot_Type GetAttackRotationType() const
     {
         return m_AttackRot;
-    }
-
-    class CColliderBox3D* GetMeleeAttackCollider() const
-    {
-        return m_MeleeAttackCollider;
     }
 
     const Vector3& GetFinalTraceAxisZ()
@@ -113,7 +106,6 @@ protected:
     float m_JumpAttackRange;
 
     int m_MeleeAttackCount;
-    class CColliderBox3D* m_MeleeAttackCollider;
 
     bool m_PlayerEnterZone;
     class CColliderBox3D* m_PlayerEnterZoneTrigger;

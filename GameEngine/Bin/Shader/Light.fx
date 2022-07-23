@@ -28,6 +28,9 @@ Texture2DMS<float4> g_LightSpcTex : register(t19);
 Texture2DMS<float4> g_LightEmvTex : register(t20);
 
 Texture2DMS<float4> g_LightBlendTex : register(t21);
+Texture2DMS<float4> g_Depth			: register(t22);
+Texture2DMS<float4> g_PlayerStencil : register(t23);
+
 Texture2DMS<float4> g_ShadowMapTex : register(t22);
 
 TextureCube g_Sky : register(t23);
@@ -341,7 +344,7 @@ PSOutput_Single LightBlendPS(VS_OUTPUT_LIGHTACC input)
 	{
         if (ShadowPos.z - g_ShadowBias > ShadowMap.r * ShadowPos.w)
 		{
-			LightDiffuseColor.rgb *= 0.2f;
+			LightDiffuseColor.rgb *= 0.6f;
 			LightSpecularColor.rgb *= 0.f;
 		}
 	}
@@ -372,6 +375,14 @@ PSOutput_Single LightBlendRenderPS(VS_OUTPUT_LIGHTACC input)
         clip(-1);
 
 	output.Color = LightBlendColor;
+
+	float Depth = g_Depth.Load(TargetPos, 0).g;
+	float PlayerStencilDepth = g_PlayerStencil.Load(TargetPos, 0).w;
+
+	if (PlayerStencilDepth > Depth + 3.f)
+	{
+		output.Color = float4(0.7f, 0.7f, 0.7f, 1.f);
+	}
 
     return output;
 }

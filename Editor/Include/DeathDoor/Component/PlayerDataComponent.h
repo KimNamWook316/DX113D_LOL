@@ -18,6 +18,7 @@ private:
 	PlayerData m_PlayerData;
 	bool m_OnSlash;
 	class CAnimationMeshComponent* m_AnimComp;
+	class CPlayerNormalAttackCheckCollider* m_AttackCheckCollider;
 	class CColliderComponent* m_Body;
 	Vector3 m_AttackDir;
 	std::queue<char> m_KeyStateQueue;
@@ -43,15 +44,9 @@ public:
 	virtual bool LoadOnly(FILE* File) override;
 
 public:
-	void SetTrueOnSlash()
-	{
-		m_OnSlash = true;
-	}
+	void SetTrueOnSlash();
 
-	void SetFalseOnSlash()
-	{
-		m_OnSlash = false;
-	}
+	void SetFalseOnSlash();
 
 	void SetOnSlash(bool Slash)
 	{
@@ -157,5 +152,7 @@ public:
 	void OnRollEnd();
 
 	void ForceUpdateAttackDirection();
+	void OnEnableAttackCollider();
+	void OnDisableAttackCollider();
 };
 

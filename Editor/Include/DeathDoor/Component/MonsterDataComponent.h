@@ -2,11 +2,11 @@
 
 #include "ObjectDataComponent.h"
 
-#define HIT_EFFECT_FIRST	0x1
-#define HIT_EFFECT_SECOND	0x2
-#define HIT_EFFECT_THIRD	0x4
-#define HIT_EFFECT_FOURTH	0x8
-#define HIT_EFFECT_FIFTH	0xF
+#define HIT_EFFECT_FIRST	0x01
+#define HIT_EFFECT_SECOND	0x02
+#define HIT_EFFECT_THIRD	0x04
+#define HIT_EFFECT_FOURTH	0x08
+#define HIT_EFFECT_FIFTH	0x10
 
 class CMonsterDataComponent :
     public CObjectDataComponent
@@ -28,6 +28,9 @@ public:
 	void MoveZ(float DeltaTime);
 
 public:
+    virtual void OnActiveMeleeAttackCollider();
+    virtual void OnInActiveMeleeAttackCollider();
+    virtual void OnHitMeleeAttack(const CollisionResult& Result);
     void OnEndAnimPostAttackDelayOn();
 	void OnEndAnimPostAttackDelayOff();
     void OnEnableLookPlayer();
@@ -58,6 +61,11 @@ public:
 		return m_Data.RotateSpeedPerSec;
 	}
 
+    class CColliderBox3D* GetMeleeAttackCollider() const
+    {
+        return m_MeleeAttackCollider;
+    }
+
 	bool IsPostAttackDelaying() const
 	{
 		return m_PostAttackDelaying;
@@ -87,6 +95,7 @@ protected:
 	class CMonsterNavAgent* m_MonsterNavAgent;
 	class CAnimationMeshComponent* m_AnimMesh;
 	class CColliderBox3D* m_HitBox;
+	class CColliderBox3D* m_MeleeAttackCollider;
 	class CGameStateComponent* m_State;
 
 	bool m_PostAttackDelaying; // 공격 후딜레이 중인지 여부
