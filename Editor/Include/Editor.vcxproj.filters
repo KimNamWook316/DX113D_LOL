@@ -576,6 +576,9 @@
     <ClCompile Include="DeathDoor\Component\ArrowComponent.cpp">
       <Filter>06. DeathDoor\01. GameComponent\02. ObjectComponent\02. Projectile</Filter>
     </ClCompile>
+    <ClCompile Include="DeathDoor\Component\Node\UpdateInputQueue.cpp">
+      <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\02. Player</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EditorManager.h">
@@ -979,6 +982,9 @@
     </ClInclude>
     <ClInclude Include="DeathDoor\Component\ArrowComponent.h">
       <Filter>06. DeathDoor\01. GameComponent\02. ObjectComponent\02. Projectile</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\Node\UpdateInputQueue.h">
+      <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\02. Player</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

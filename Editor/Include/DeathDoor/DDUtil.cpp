@@ -96,6 +96,9 @@ std::string CDDUtil::DDConditionNodeTypeToString(DDConditionNode NodeType)
 
 	case DDConditionNode::RollInputCheck:
 		return "RollInputCheck";
+
+	case DDConditionNode::UpdateInputQueue:
+		return "UpdateInputQueue";
 	}
 
 	return "";
@@ -203,6 +206,10 @@ DDConditionNode CDDUtil::StringToDDConditionNodeType(const std::string& Str)
 	else if (Str == "RollInputCheck")
 	{
 		return DDConditionNode::RollInputCheck;
+	}
+	else if (Str == "UpdateInputQueue")
+	{
+	return DDConditionNode::UpdateInputQueue;
 	}
 
 	return DDConditionNode(-1);

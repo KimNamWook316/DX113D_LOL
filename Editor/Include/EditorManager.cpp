@@ -498,12 +498,6 @@ void CEditorManager::CreateKey()
 	//CInput::GetInst()->SetKeyCallback("Left", KeyState_Push, this, &CEditorManager::KeyboardLeft);
 	//CInput::GetInst()->SetKeyCallback("Right", KeyState_Push, this, &CEditorManager::KeyboardRight);
 
-	CInput::GetInst()->CreateKey("MoveForward", 'W');
-	CInput::GetInst()->CreateKey("MoveBack", 'S');
-	CInput::GetInst()->CreateKey("MoveLeft", 'A');
-	CInput::GetInst()->CreateKey("MoveRight", 'D');
-	CInput::GetInst()->CreateKey("Roll", VK_SPACE);
-
 	//CInput::GetInst()->CreateKey("SkillW", 'W');
 	//CInput::GetInst()->CreateKey("SkillE", 'E');
 	//CInput::GetInst()->CreateKey("SkillR", 'R');

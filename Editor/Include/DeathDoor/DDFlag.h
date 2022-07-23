@@ -57,6 +57,7 @@ enum class DDConditionNode
 	PathFindEnableCheck,
 	HitCheckNode,
 	RollInputCheck,
+	UpdateInputQueue,
 	// BossBetty
 	BossBettyCheckAttackDir,
 	BossBettyCheckFarAttackType,

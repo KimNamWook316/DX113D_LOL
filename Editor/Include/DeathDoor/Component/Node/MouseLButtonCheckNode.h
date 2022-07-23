@@ -18,6 +18,7 @@ public:
 private:
     int m_FrameCount;
 
+
 public:
     virtual NodeResult Invoke(float DeltaTime);
 

@@ -52,6 +52,7 @@
 #include "Node/BossKnightFinalAttackCheck.h"
 #include "Node/BossKnightJumpAttackRangeCheck.h"
 #include "Node/BossKnightPlayerEnterZoneCheck.h"
+#include "Node/UpdateInputQueue.h"
 
 // Boss - Betty
 #include "Node/BossBettyAngryAttackNode.h"
@@ -360,7 +361,6 @@ CNode* CGameBehaviorTree::LoadNode(CNode* Parent, size_t TypeID)
 	NewNode = MakeNode<CBossBettyThrowAttackCheck>(Parent, OwnerObject);
 	}
 
-
 	else if (TypeID == typeid(CHitCheckNode).hash_code())
 	{
 		NewNode = MakeNode<CHitCheckNode>(Parent, OwnerObject);
@@ -381,9 +381,10 @@ CNode* CGameBehaviorTree::LoadNode(CNode* Parent, size_t TypeID)
 		NewNode = MakeNode<CPlayerRoll>(Parent, OwnerObject);
 	}
 
-	else
+
+	else if (TypeID == typeid(CUpdateInputQueue).hash_code())
 	{
-		NewNode = MakeNode<CPlayerRoll>(Parent, OwnerObject);
+		NewNode = MakeNode<CUpdateInputQueue>(Parent, OwnerObject);
 	}
 
 	return NewNode;

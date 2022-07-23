@@ -1,6 +1,8 @@
 
 #include "MouseLButtonCheckNode.h"
 #include "Input.h"
+#include "../PlayerDataComponent.h"
+#include "../GameStateComponent.h"
 
 CMouseLButtonCheckNode::CMouseLButtonCheckNode()	:
 	m_FrameCount(0)
@@ -19,17 +21,21 @@ CMouseLButtonCheckNode::~CMouseLButtonCheckNode()
 
 NodeResult CMouseLButtonCheckNode::OnStart(float DeltaTime)
 {
-	++m_FrameCount;
-	bool Click = CInput::GetInst()->GetMouseLButtonClick();
+	CPlayerDataComponent* DataComp = dynamic_cast<CPlayerDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
 
-	if (m_FrameCount > 20 && Click)
+	if (!DataComp->IsKeyStateQueueEmpty())
 	{
-		m_FrameCount = 0;
-		return NodeResult::Node_True;
+		char Key = DataComp->GetFrontKeyState();
+
+		if (Key == VK_LBUTTON)
+		{
+			DataComp->PopKeyState();
+			return NodeResult::Node_True;
+		}
 	}
 
-	else
-		return NodeResult::Node_False;
+
+	return NodeResult::Node_False;
 }
 
 NodeResult CMouseLButtonCheckNode::OnUpdate(float DeltaTime)

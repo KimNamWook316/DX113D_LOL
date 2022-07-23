@@ -79,7 +79,7 @@ NodeResult CRotateAttackDirectionNode::OnStart(float DeltaTime)
 
 
 	CPlayerDataComponent* PlayerDataComp = dynamic_cast<CPlayerDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
-	PlayerDataComp->SetShootDir(m_DestForwardVector);
+	PlayerDataComp->SetAttackDir(m_DestForwardVector);
 
 	// CurretForwardVector기준 DestForwardVector로 반시계 방향으로 180도가 넘는다면
 	if (m_Over180)

@@ -70,6 +70,30 @@ bool CNavAgent::MoveOnNavMesh(const Vector3 EndPos)
 	}
 }
 
+bool CNavAgent::MoveOnNavMesh(const Vector3 Dir, float Speed)
+{
+	if (!m_Scene->GetNavigation3DManager()->GetNavMeshData())
+		return false;
+
+	m_Object->AddWorldPos(Dir * Speed);
+
+	float Height = 0.f;
+	bool Valid = m_Scene->GetNavigation3DManager()->CheckPlayerNavMeshPoly(Height);
+
+	if (Valid)
+	{
+		Vector3 Pos = m_Object->GetWorldPos();
+		m_Object->SetWorldPos(Pos.x, Height + 0.2f, Pos.z);
+		return true;
+	}
+
+	else
+	{
+		m_Object->SetWorldPos(m_Object->GetPrevFramePos());
+		return false;
+	}
+}
+
 const Vector3& CNavAgent::GetTargetPos() const
 {
 	if (!m_PathList.empty())

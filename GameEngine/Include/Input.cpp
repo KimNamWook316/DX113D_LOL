@@ -18,6 +18,7 @@ CInput::CInput()	:
 	m_LButtonClick(false),
 	m_RButtonClick(false),
 	m_RButtonUp(false),
+	m_LButtonUp(false),
 	m_CollisionWidget(false)
 {
 	m_vecKeyState.resize(256);
@@ -321,7 +322,16 @@ void CInput::UpdateKeyState()
 			m_LButtonClick = true;
 
 		else
+		{
+			// 만약 이전 프레임에 LButton이 Click됐는데 이번 프레임에 LButton이 Click되지 않았다면
+			// 이번 프레임에 LButton이 Up된 것이다
+			if (m_LButtonClick)
+				m_LButtonUp = true;
+			else
+				m_LButtonUp = false;
+
 			m_LButtonClick = false;
+		}
 
 		if (m_MouseState.rgbButtons[1] & 0x80)
 			m_RButtonClick = true;

@@ -47,6 +47,7 @@
 #include "../DeathDoor/Component/Node/BossKnightWalkNode.h"
 #include "../DeathDoor/Component/Node/BossKnightCutScenePlayNode.h"
 #include "../DeathDoor/Component/Node/BossKnightContinueAttackCheck.h"
+#include "../DeathDoor/Component/Node/UpdateInputQueue.h"
 // BossBetty
 #include "../DeathDoor/Component/Node/BossBettyAngryAttackNode.h"
 #include "../DeathDoor/Component/Node/BossBettyChangeAttackDirNode.h"
@@ -649,6 +650,9 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
             break;
         case DDConditionNode::RollInputCheck:
             NewTreeNode = m_StateComponent->CreateTreeNode<CRollInputCheck>(Name);
+            break;
+        case DDConditionNode::UpdateInputQueue:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CUpdateInputQueue>(Name);
             break;
         }
         break;
