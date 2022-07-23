@@ -33,21 +33,21 @@ void CBossKnightContinueAttackNode::Init()
 	AnimInst->AddNotify("SlamContinueFirst", "OnLookPlayer", 9, (CMonsterDataComponent*)Data, &CMonsterDataComponent::OnEnableLookPlayer);
 	AnimInst->AddNotify("SlamContinueFirst", "OnDisableLookPlayer", 9, (CMonsterDataComponent*)Data, &CMonsterDataComponent::OnDisableLookPlayer);
  	AnimInst->AddNotify("SlamContinueFirst", "HitBoxActive", 21, Data, &CKnightDataComponent::OnActiveMeleeAttackCollider);
- 	AnimInst->AddNotify("SlamContinueFirst", "HitBoxDisable", 25, Data, &CKnightDataComponent::OnInActiveMeleeAttackCollider);
+ 	AnimInst->AddNotify("SlamContinueFirst", "HitBoxDisable", 23, (CMonsterDataComponent*)Data, &CMonsterDataComponent::OnInActiveMeleeAttackCollider);
  	AnimInst->SetEndFunction("SlamContinueFirst", Data, &CKnightDataComponent::OnEndContinueAttack);
 
 	AnimInst->AddNotify("Slam180CW", "IncreaseCount", 0, Data, &CKnightDataComponent::IncreaseMeleeAttackCount);
 	AnimInst->AddNotify("Slam180CW", "OnLookPlayer", 5, (CMonsterDataComponent*)Data, &CMonsterDataComponent::OnEnableLookPlayer);
 	AnimInst->AddNotify("Slam180CW", "OnDisableLookPlayer", 10, (CMonsterDataComponent*)Data, &CMonsterDataComponent::OnDisableLookPlayer);
  	AnimInst->AddNotify("Slam180CW", "HitBoxActive", 16, Data, &CKnightDataComponent::OnActiveMeleeAttackCollider);
- 	AnimInst->AddNotify("Slam180CW", "HitBoxDisable", 21, Data, &CKnightDataComponent::OnInActiveMeleeAttackCollider);
+ 	AnimInst->AddNotify("Slam180CW", "HitBoxDisable", 18, (CMonsterDataComponent*)Data, &CMonsterDataComponent::OnInActiveMeleeAttackCollider);
  	AnimInst->SetEndFunction("Slam180CW", Data, &CKnightDataComponent::OnEndContinueAttack);
 
 	AnimInst->AddNotify("Slam180CCW", "IncreaseCount", 0, Data, &CKnightDataComponent::IncreaseMeleeAttackCount);
 	AnimInst->AddNotify("Slam180CCW", "OnLookPlayer", 5, (CMonsterDataComponent*)Data, &CMonsterDataComponent::OnEnableLookPlayer);
 	AnimInst->AddNotify("Slam180CCW", "OnDisableLookPlayer", 10, (CMonsterDataComponent*)Data, &CMonsterDataComponent::OnDisableLookPlayer);
  	AnimInst->AddNotify("Slam180CCW", "HitBoxActive", 16, Data, &CKnightDataComponent::OnActiveMeleeAttackCollider);
- 	AnimInst->AddNotify("Slam180CCW", "HitBoxDisable", 21, Data, &CKnightDataComponent::OnInActiveMeleeAttackCollider);
+ 	AnimInst->AddNotify("Slam180CCW", "HitBoxDisable", 18, (CMonsterDataComponent*)Data, &CMonsterDataComponent::OnInActiveMeleeAttackCollider);
  	AnimInst->SetEndFunction("Slam180CCW", Data, &CKnightDataComponent::OnEndContinueAttack);
 
 	m_RotatePerSec = Data->GetRotateSpeed();

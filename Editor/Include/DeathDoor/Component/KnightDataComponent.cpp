@@ -4,7 +4,6 @@
 #include "Component/CameraComponent.h"
 #include "GameObject/GameObject.h"
 #include "Scene/Scene.h"
-#include "../Component/PlayerDataComponent.h"
 
 CKnightDataComponent::CKnightDataComponent()	:
 	m_JumpAttackRange(0.f),
@@ -32,11 +31,9 @@ void CKnightDataComponent::Start()
 
 	m_JumpAttackRange = m_Data.JumpAttackRange;
 
-	m_MeleeAttackCollider = (CColliderBox3D*)m_Object->FindComponent("MeleeAttackCollider");
 	m_PlayerEnterZoneTrigger = (CColliderBox3D*)m_Object->FindComponent("PlayerEnterTrigger");
 	m_CutSceneCam = m_Object->FindComponentFromType<CCameraComponent>();
 
-	m_MeleeAttackCollider->AddCollisionCallback(Collision_State::Begin, this, &CKnightDataComponent::OnHitMeleeAttack);
 	m_PlayerEnterZoneTrigger->AddCollisionCallback(Collision_State::Begin, this, &CKnightDataComponent::OnPlayerEnterZone);
 	
 	m_MeleeAttackCollider->Enable(false);
@@ -45,31 +42,6 @@ void CKnightDataComponent::Start()
 void CKnightDataComponent::Update(float DeltaTime)
 {
 	CMonsterDataComponent::Update(DeltaTime);
-}
-
-void CKnightDataComponent::OnInActiveMeleeAttackCollider()
-{
-	m_MeleeAttackCollider->Enable(false);
-
-	// Player Hit False Ã³¸®
-	CGameObject* Player = m_Scene->GetPlayerObject();
-	if (Player)
-	{
-		CPlayerDataComponent* PlayerData = Player->FindComponentFromType<CPlayerDataComponent>();
-		PlayerData->SetIsHit(false);
-	}
-}
-
-void CKnightDataComponent::OnHitMeleeAttack(const CollisionResult& Result)
-{
-	CGameObject* Player = m_Scene->GetPlayerObject();
-
-	CPlayerDataComponent* PlayerData = Player->FindObjectComponentFromType<CPlayerDataComponent>();
-
-	if (PlayerData)
-	{
-		PlayerData->SetIsHit(true);
-	}
 }
 
 void CKnightDataComponent::OnLookPlayerMove(float DeltaTime)
@@ -199,14 +171,14 @@ void CKnightDataComponent::OnEndCutScenePlaying()
 
 void CKnightDataComponent::OnStartJumpAttackMove()
 {
-	m_CurMoveSpeed = m_Data.MoveSpeed * 3.f;
+	m_CurMoveSpeed = m_Data.MoveSpeed * 5.f;
 	m_MoveZ = true;
 	m_LookPlayer = true;
 }
 
 void CKnightDataComponent::OnEndJumpAttackMove()
 {
-	m_CurMoveSpeed = m_Data.MoveSpeed * 1.5f;
+	m_CurMoveSpeed = m_Data.MoveSpeed * 3.f;
 	m_LookPlayer = false;
 }
 
@@ -224,8 +196,8 @@ void CKnightDataComponent::OnEndContinueAttack()
 
 void CKnightDataComponent::OnActiveMeleeAttackCollider()
 {
-	// TODO : Boss Knight - Particle, Cam Shake
-	m_Scene->GetCameraManager()->ShakeCamera(0.5f, 2.f);
+	CMonsterDataComponent::OnActiveMeleeAttackCollider();
 
-	m_MeleeAttackCollider->Enable(true);
+	// TODO : Boss Knight - Particle
+	m_Scene->GetCameraManager()->ShakeCamera(0.5f, 2.f);
 }

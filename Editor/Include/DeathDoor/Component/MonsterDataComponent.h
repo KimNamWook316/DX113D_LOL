@@ -28,6 +28,9 @@ public:
 	void MoveZ(float DeltaTime);
 
 public:
+    virtual void OnActiveMeleeAttackCollider();
+    virtual void OnInActiveMeleeAttackCollider();
+    virtual void OnHitMeleeAttack(const CollisionResult& Result);
     void OnEndAnimPostAttackDelayOn();
 	void OnEndAnimPostAttackDelayOff();
     void OnEnableLookPlayer();
@@ -58,6 +61,11 @@ public:
 		return m_Data.RotateSpeedPerSec;
 	}
 
+    class CColliderBox3D* GetMeleeAttackCollider() const
+    {
+        return m_MeleeAttackCollider;
+    }
+
 	bool IsPostAttackDelaying() const
 	{
 		return m_PostAttackDelaying;
@@ -87,6 +95,7 @@ protected:
 	class CMonsterNavAgent* m_MonsterNavAgent;
 	class CAnimationMeshComponent* m_AnimMesh;
 	class CColliderBox3D* m_HitBox;
+	class CColliderBox3D* m_MeleeAttackCollider;
 	class CGameStateComponent* m_State;
 
 	bool m_PostAttackDelaying; // 공격 후딜레이 중인지 여부
