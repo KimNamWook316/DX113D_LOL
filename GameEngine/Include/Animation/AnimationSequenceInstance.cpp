@@ -618,7 +618,7 @@ void CAnimationSequenceInstance::Update(float DeltaTime)
 		float	AnimationTime = m_GlobalTime + m_CurrentAnimation->m_Sequence->m_StartTime;
 
 		int	StartFrame = 0;
-		int	EndFrame = m_CurrentAnimation->m_Sequence->m_FrameLength;
+		int	EndFrame = m_CurrentAnimation->m_Sequence->m_FrameLength - 1;
 
 		// 수정 전 코드
 		//int	FrameIndex = (int)(AnimationTime / m_CurrentAnimation->m_Sequence->m_FrameTime);
@@ -636,7 +636,7 @@ void CAnimationSequenceInstance::Update(float DeltaTime)
 
 		int	NextFrameIndex = FrameIndex + 1;
 
-		if (FrameIndex >= m_CurrentAnimation->m_Sequence->m_FrameLength)
+		if (FrameIndex >= m_CurrentAnimation->m_Sequence->m_FrameLength - 1)
 			FrameIndex = m_CurrentAnimation->m_Sequence->m_FrameLength - 1;
 
 		if (NextFrameIndex >= EndFrame)
@@ -673,11 +673,9 @@ void CAnimationSequenceInstance::Update(float DeltaTime)
 			m_AnimationUpdateCBuffer->SetRatio(1.f);
 		}
 
-		m_AnimationUpdateCBuffer->SetFrameCount(EndFrame);
-		m_AnimationUpdateCBuffer->SetCurrentFrame(NextFrameIndex);
-		m_AnimationUpdateCBuffer->SetNextFrame(FrameIndex);
- //		m_AnimationUpdateCBuffer->SetCurrentFrame(FrameIndex);
- //		m_AnimationUpdateCBuffer->SetNextFrame(NextFrameIndex);
+		m_AnimationUpdateCBuffer->SetFrameCount(m_CurrentAnimation->m_Sequence->GetFrameLength());
+		m_AnimationUpdateCBuffer->SetCurrentFrame(FrameIndex);
+		m_AnimationUpdateCBuffer->SetNextFrame(NextFrameIndex);
 		m_AnimationUpdateCBuffer->SetBoneCount((int)m_Skeleton->GetBoneCount());
 
 		size_t	Size = m_CurrentAnimation->m_vecNotify.size();

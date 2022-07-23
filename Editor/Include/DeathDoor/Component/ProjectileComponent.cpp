@@ -58,7 +58,7 @@ void CProjectileComponent::Update(float DeltaTime)
 
 		if (IsDestroy)
 		{
-			return;
+			m_Object->Destroy();
 		}
 
 		Vector3 Move;
@@ -89,6 +89,11 @@ void CProjectileComponent::PrevRender()
 void CProjectileComponent::Reset()
 {
 	CObjectComponent::Reset();
+
+	m_IsShoot = false;
+	m_LifeTimer = 0.f;
+	m_LifeTime = 0.f;
+	m_Speed = 0.f;
 }
 
 void CProjectileComponent::Render()
@@ -203,5 +208,5 @@ void CProjectileComponent::OnEnd()
 	}
 
 	// TODO : Projectile Destroy처리 확정된 이후 변경
-	Destroy();
+	m_Object->Destroy();
 }

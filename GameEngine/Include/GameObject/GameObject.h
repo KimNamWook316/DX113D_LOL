@@ -391,6 +391,7 @@ public:
 	virtual bool SaveOnly(CComponent* Component, const char* FullPath);
 	virtual bool SaveOnly(const std::string& ComponentName, const char* FullPath);
 	virtual bool LoadOnly(const char* FullPath, CComponent*& OutCom);
+	void Reset();
 
 public:
 	size_t GetChildObjectCount()	const

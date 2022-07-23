@@ -148,6 +148,20 @@ public:
 		return nullptr;
 	}
 
+	bool FindObject(CGameObject* Target)
+	{
+		auto	iter = m_ObjList.begin();
+		auto	iterEnd = m_ObjList.end();
+
+		for (; iter != iterEnd; ++iter)
+		{
+			if ((*iter) == Target)
+				return true;
+		}
+
+		return false;
+	}
+
 	bool EraseObjFromList(CGameObject* Target)
 	{
 		auto iter = m_ObjList.begin();

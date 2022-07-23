@@ -12,6 +12,7 @@
 CRotateAttackDirectionNode::CRotateAttackDirectionNode() :
 	m_Over180(false)
 {
+	m_Result = NodeResult::Node_True;
 	SetTypeID(typeid(CRotateAttackDirectionNode).hash_code());
 }
 
@@ -55,6 +56,7 @@ NodeResult CRotateAttackDirectionNode::OnStart(float DeltaTime)
 	{
 		m_PickingPoint = m_Object->GetWorldPos();
 		m_DestForwardVector = m_CurrentForwardVector;
+		m_Result = NodeResult::Node_False;
 		return NodeResult::Node_True;
 	}
 
@@ -66,6 +68,7 @@ NodeResult CRotateAttackDirectionNode::OnStart(float DeltaTime)
 	if (DotProduct > 0.99f)
 	{
 		m_IsEnd = true;
+		m_Result = NodeResult::Node_True;
 		return NodeResult::Node_True;
 	}
 
@@ -84,6 +87,7 @@ NodeResult CRotateAttackDirectionNode::OnStart(float DeltaTime)
 		m_Object->AddWorldRotationY(Degree);
 
 		m_IsEnd = true;
+		m_Result = NodeResult::Node_True;
 		return NodeResult::Node_True;
 	}
 
@@ -92,14 +96,17 @@ NodeResult CRotateAttackDirectionNode::OnStart(float DeltaTime)
 		m_Object->AddWorldRotationY(-Degree);
 
 		m_IsEnd = true;
+		m_Result = NodeResult::Node_True;
 		return NodeResult::Node_True;
 	}
 
+	return NodeResult::Node_True;
 }
 
 NodeResult CRotateAttackDirectionNode::OnUpdate(float DeltaTime)
 {
-	return NodeResult::Node_True;
+	//return NodeResult::Node_True;
+	return m_Result;
 }
 
 NodeResult CRotateAttackDirectionNode::OnEnd(float DeltaTime)

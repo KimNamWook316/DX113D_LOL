@@ -58,7 +58,6 @@ void CNavMeshComponent::SetNavMesh(const std::string& Name)
 void CNavMeshComponent::SetNavMesh(CNavMesh* NavMesh)
 {
 	m_NavMesh = NavMesh;
-
 	Vector3 Pos = m_Transform->GetWorldPos();
 
 	// 인자로 넣어주긴 하는데 안씀
