@@ -102,7 +102,6 @@ void CCameraComponent::CreateCustomResolutionProjMatrix(float Width, float Heigh
 
 void CCameraComponent::ComputeShadowView()
 {
-
 	CLightComponent* GlobalLight = m_Scene->GetLightManager()->GetGlobalLightComponent();
 
 	m_matShadowView.Identity();
@@ -152,7 +151,12 @@ void CCameraComponent::ComputeShadowView()
 		}
 	}
 
-	Pos += Add;
+	// 일렁거림 방지를 위해 일정 거리 이동시에만 적용
+	if (Add.Length() >= 50.f)
+	{
+		Pos += Add;
+	}
+
 	Pos *= -1.f;
 
 	for (int i = 0; i < AXIS::AXIS_MAX; ++i)

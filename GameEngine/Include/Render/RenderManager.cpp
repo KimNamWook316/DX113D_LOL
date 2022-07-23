@@ -29,7 +29,7 @@ CRenderManager::CRenderManager()	:
 	m_RenderStateManager(nullptr),
 	m_Standard2DCBuffer(nullptr),
 	m_Shadow(true),
-	m_ShadowLightDistance(100.f),
+	m_ShadowLightDistance(15.f),
 	m_ShadowCBuffer(nullptr),
 	m_DebugRender(false),
 	m_PostFXRenderer(nullptr),
