@@ -536,6 +536,12 @@ void CAnimationMeshComponent::Render()
 		m_vecMaterialSlot[i]->Reset();
 	}
 
+	// 플레이어 가려짐 처리
+	if (m_Object == m_Scene->GetPlayerObject())
+	{
+		CRenderManager::GetInst()->RenderPlayer(m_Mesh);
+	}
+
 	if (m_Animation)
 		m_Animation->ResetShader();
 }

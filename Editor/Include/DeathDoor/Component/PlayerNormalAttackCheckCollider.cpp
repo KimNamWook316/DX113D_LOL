@@ -15,7 +15,7 @@ CPlayerNormalAttackCheckCollider::CPlayerNormalAttackCheckCollider()
 
 	m_ColliderType = Collider_Type::Sphere;
 
-	AddCollisionCallback<CPlayerNormalAttackCheckCollider>(Collision_State::Stay, this, &CPlayerNormalAttackCheckCollider::AttackSuccess);
+	AddCollisionCallback<CPlayerNormalAttackCheckCollider>(Collision_State::Begin, this, &CPlayerNormalAttackCheckCollider::AttackSuccess);
 
 	SetCollisionProfile("PlayerAttack");
 }
@@ -99,29 +99,77 @@ void CPlayerNormalAttackCheckCollider::AttackSuccess(const CollisionResult& Resu
 	if (!PlayerDataComp)
 		return;
 
+	CGameObject* CollideObj = Result.Dest->GetGameObject();
+	CObjectDataComponent* DataComp = dynamic_cast<CObjectDataComponent*>(CollideObj->FindComponent("ObjectData"));
 
-	auto iter = m_PrevCollisionList.begin();
-	auto iterEnd = m_PrevCollisionList.end();
+	Vector3 Vec1 = (CollideObj->GetWorldPos() - m_Object->GetWorldPos());
+	Vec1.Normalize();
+	Vector3 Vec2 = m_Object->GetMoveDir();
 
-	for (; iter != iterEnd; ++iter)
+	// 공격 범위 안에 들어왔는지 판정
+	if (Vec1.Dot(Vec2) > 0.f && PlayerDataComp->GetOnSlash())
 	{
-		Vector3 Vec1 = ((*iter)->GetWorldPos() - m_Object->GetWorldPos());
-		Vec1.Normalize();
-		Vector3 Vec2 = m_Object->GetMoveDir();
-
-		if (Vec1.Dot(Vec2) > 0.f && PlayerDataComp->GetOnSlash())
+		if (DataComp)
 		{
-			CObjectDataComponent* Comp = (*iter)->GetGameObject()->FindObjectComponentFromType<CObjectDataComponent>();
+			// 이전 프레임들에서 충돌했던 경우 중복해서 넣지 않는다.
+			auto iter = m_CollisionObjDataList.begin();
+			auto iterEnd = m_CollisionObjDataList.end();
 
-			if(Comp)
-				Comp->SetIsHit(true);
+			bool InList = false;
+			for (; iter != iterEnd; ++iter)
+			{
+				if (DataComp == (*iter))
+				{
+					InList = true;
+					break;
+				}
+			}
+
+			// TODO : Player Attack Collider : 데미지 처리
+			if (!InList)
+			{
+				int Attack = PlayerDataComp->GetAttack();
+				DataComp->DecreaseHP(Attack);
+				DataComp->SetIsHit(true);
+				m_CollisionObjDataList.push_back(DataComp);
+			}
 		}
-
-		//if (!PlayerDataComp->GetOnSlash())
-		//{
-		//	(*iter)->GetGameObject()->SetHit(false);
-		//}
 	}
 
+ //	auto iter = m_PrevCollisionList.begin();
+ //	auto iterEnd = m_PrevCollisionList.end();
+ //
+ //	for (; iter != iterEnd; ++iter)
+ //	{
+ //			CObjectDataComponent* Comp = dynamic_cast<CObjectDataComponent*>((*iter)->GetGameObject()->FindComponent("ObjectData"));
+ //
+ //			if (Comp)
+ //			{
+ //				bool AlreadyHit = Comp->GetIsHit();
+ //				if (!AlreadyHit)
+ //				{
+ //					Comp->SetIsHit(true);
+ //				}
+ //			}
+ // 		}
+ //	}
+}
 
+void CPlayerNormalAttackCheckCollider::Enable(bool Enable)
+{
+	CColliderSphere::Enable(Enable);
+
+	// Enable False 처리하는 경우, 이전 프레임들에서 충돌한 Object Data들의 Hit 상태를 false로 되돌림
+	if (!Enable)
+	{
+		auto iter = m_CollisionObjDataList.begin();
+		auto iterEnd = m_CollisionObjDataList.end();
+
+		for (; iter != iterEnd; ++iter)
+		{
+			(*iter)->SetIsHit(false);
+		}
+
+		m_CollisionObjDataList.clear();
+	}
 }

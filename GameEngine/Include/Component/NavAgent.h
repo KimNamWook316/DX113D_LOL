@@ -39,6 +39,8 @@ public:
 	bool Move(const Vector3& EndPos);
 
 	bool MoveOnNavMesh(const Vector3 EndPos);
+	// 특정한 때(ex.평타 공격)에 특정 속도로 움직이고 싶은 경우
+	bool MoveOnNavMesh(const Vector3 Dir, float Speed);
 
 	void SetMoveSpeed(float Speed)
 	{

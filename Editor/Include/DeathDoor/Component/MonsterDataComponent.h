@@ -2,11 +2,11 @@
 
 #include "ObjectDataComponent.h"
 
-#define HIT_EFFECT_FIRST	0x1
-#define HIT_EFFECT_SECOND	0x2
-#define HIT_EFFECT_THIRD	0x4
-#define HIT_EFFECT_FOURTH	0x8
-#define HIT_EFFECT_FIFTH	0xF
+#define HIT_EFFECT_FIRST	0x01
+#define HIT_EFFECT_SECOND	0x02
+#define HIT_EFFECT_THIRD	0x04
+#define HIT_EFFECT_FOURTH	0x08
+#define HIT_EFFECT_FIFTH	0x10
 
 class CMonsterDataComponent :
     public CObjectDataComponent
@@ -28,8 +28,12 @@ public:
 	void RightLookPlayer(float DeltaTime);
 	void LeftLookPlayer(float DeltaTime);
 	void MoveZ(float DeltaTime);
+	void ChangeColorBossDeath(float DeltaTime);	// 죽을 때 색상 변화가 필요한 보스나 몬스터의 경우 이 함수를 Update에서 호출
 
 public:
+    virtual void OnActiveMeleeAttackCollider();
+    virtual void OnInActiveMeleeAttackCollider();
+    virtual void OnHitMeleeAttack(const CollisionResult& Result);
     void OnEndAnimPostAttackDelayOn();
 	void OnEndAnimPostAttackDelayOff();
     void OnEnableLookPlayer();
@@ -44,6 +48,9 @@ public:
 	{
 		m_CurMoveSpeed = 0.f;
 	}
+    virtual void OnDeadPaperBurnEnd();			// PaperBurn 종료시 호출
+    virtual void OnDeadAnimStart();				// Death Animation 시작시 호출
+    virtual void OnDeadAnimEnd();				// Death Animation 종료시 호출
 
 public:
 	virtual void SetIsHit(bool Hit) override;
@@ -79,6 +86,11 @@ public:
 		return m_CurMoveSpeed;
 	}
 
+    class CColliderBox3D* GetMeleeAttackCollider() const
+    {
+        return m_MeleeAttackCollider;
+    }
+
 	bool IsPostAttackDelaying() const
 	{
 		return m_PostAttackDelaying;
@@ -101,7 +113,7 @@ public:
 	virtual bool SaveOnly(FILE* File) override;
 	virtual bool LoadOnly(FILE* File) override;
 
-private:
+protected:
 	void ActiveHitEffect(float DeltaTime);
 	void ChangeHitColor(int EffectNum);
 
@@ -109,6 +121,7 @@ protected:
 	class CMonsterNavAgent* m_MonsterNavAgent;
 	class CAnimationMeshComponent* m_AnimMesh;
 	class CColliderBox3D* m_HitBox;
+	class CColliderBox3D* m_MeleeAttackCollider;
 	class CGameStateComponent* m_State;
 
 	bool m_PostAttackDelaying; // 공격 후딜레이 중인지 여부
@@ -132,6 +145,13 @@ protected:
 	bool m_LeftLookPlayer;
 	// 오른쪽으로만 무조건 돌아야 하는 순간
 	bool m_RightLookPlayer;
+
+    class CPaperBurnComponent* m_PaperBurn;
+    bool m_DeathColorChangeStart;
+    float m_DeathTimer;
+    float m_DeathColorChangeTimeMax;
+	Vector4 m_DeathColorStart;
+	Vector4	m_DeathColorEnd;
 
 public:
 	class CMonsterNavAgent* GetMonsterNavAgent()	const;

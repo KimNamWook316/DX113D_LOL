@@ -96,6 +96,9 @@ std::string CDDUtil::DDConditionNodeTypeToString(DDConditionNode NodeType)
 
 	case DDConditionNode::RollInputCheck:
 		return "RollInputCheck";
+
+	case DDConditionNode::UpdateInputQueue:
+		return "UpdateInputQueue";
 	}
 
 	return "";
@@ -203,6 +206,10 @@ DDConditionNode CDDUtil::StringToDDConditionNodeType(const std::string& Str)
 	else if (Str == "RollInputCheck")
 	{
 		return DDConditionNode::RollInputCheck;
+	}
+	else if (Str == "UpdateInputQueue")
+	{
+	return DDConditionNode::UpdateInputQueue;
 	}
 
 	return DDConditionNode(-1);
@@ -573,4 +580,11 @@ size_t CDDUtil::DDObjectComponentTypeToTypeID(DDObjectComponentType Type)
 		return typeid(CArrowComponent).hash_code();
 	}
 	return -1;
+}
+
+Vector4 CDDUtil::LerpColor(const Vector4& ColorStart, const Vector4& ColorEnd, float ElapsedTime, float MaxTime)
+{
+	float Ratio = ElapsedTime / MaxTime;
+
+	return (ColorStart * (1.f - Ratio) + ColorEnd * Ratio);
 }

@@ -62,23 +62,25 @@ void CBossBettyDataComponent::Start()
             this, &CBossBettyDataComponent::OnPreventGoingOutOfMapSurroundingCollider);
     }
 
-    m_BossBettyAttackDownCollider = dynamic_cast<CColliderBox3D*>((m_Object->FindComponent("BossBettyAttackCollider")));
+    m_MeleeAttackCollider = dynamic_cast<CColliderBox3D*>((m_Object->FindComponent("BossBettyAttackCollider")));
 
-    if (m_BossBettyAttackDownCollider)
+    if (m_MeleeAttackCollider)
     {
-        m_BossBettyAttackDownCollider->SetExtent(10.f, 10.f, 10.f);
+        m_MeleeAttackCollider->SetExtent(3.f, 3.f, 3.f);
 
-        m_BossBettyAttackDownCollider->Enable(false);
+        m_MeleeAttackCollider->Enable(false);
 
-        m_BossBettyAttackDownCollider->AddCollisionCallback(Collision_State::Begin,
-            this, &CBossBettyDataComponent::OnChangeFromSpinToSpinCollideWhenCollide);
+        m_MeleeAttackCollider->AddCollisionCallback(Collision_State::Begin,
+            (CMonsterDataComponent*)this, &CMonsterDataComponent::OnHitMeleeAttack);
+        
     }
 
     // 근거리 사정 거리 판별 Square Pos 위치 만들기 
     //  0: 왼쪽 하단, 1 : 왼쪽 상단, 2 : 오른쪽 상단, 3 : 오른쪽 하단
     const Vector3& ObjectWorldScale = m_Object->GetRootComponent()->GetWorldScale();
     const Vector3& MeshOriginScale = dynamic_cast<CAnimationMeshComponent*>(m_Object->GetRootComponent())->GetMeshSize();
-    const Vector3& FinalMeshScale = ObjectWorldScale * MeshOriginScale;
+    // const Vector3& FinalMeshScale = ObjectWorldScale * MeshOriginScale;
+    const Vector3& FinalMeshScale = Vector3(5.f, 0.f, 5.f);
 
     m_PunchLeftSquarePos[0] = Vector3(FinalMeshScale.x * -1 * 0.5f, 0.f, FinalMeshScale.z * 0.5f);
     m_PunchLeftSquarePos[1] = Vector3(FinalMeshScale.x * -1 * 0.5f, 0.f, FinalMeshScale.z);
@@ -122,11 +124,13 @@ void CBossBettyDataComponent::OnBossBettyGenerateTwoSideCloseAttackEffect()
 void CBossBettyDataComponent::OnBossBettyGenerateRightCloseAttackEffect()
 {
     // m_RelativePunchRightPos
+    m_MeleeAttackCollider->SetRelativePos(m_RelativePunchRightPos);
 }
 
 void CBossBettyDataComponent::OnBossBettyGenerateLeftCloseAttackEffect()
 {
     // m_RelativePunchLeftPos
+    m_MeleeAttackCollider->SetRelativePos(m_RelativePunchLeftPos);
 }
 
 void CBossBettyDataComponent::OnBossBettyRoarEffect(float DeltaTime)
@@ -209,7 +213,7 @@ void CBossBettyDataComponent::OnBossBettyResetOriginalMoveSpeed()
 
 void CBossBettyDataComponent::OnBossBettyNormalShakeCamera()
 {
-    m_Scene->GetCameraManager()->GetCurrentCamera()->Shake(0.01f, 1.f);
+    m_Scene->GetCameraManager()->GetCurrentCamera()->Shake(0.2f, 1.2f);
 }
 
 void CBossBettyDataComponent::OnBossBettyApplyOutOfMapSurroundingColliderMoveSpeed()
@@ -219,10 +223,14 @@ void CBossBettyDataComponent::OnBossBettyApplyOutOfMapSurroundingColliderMoveSpe
 
 void CBossBettyDataComponent::OnBossBettyEnableAttackCollider()
 {
-    m_BossBettyAttackDownCollider->Enable(true);
+    CMonsterDataComponent::OnActiveMeleeAttackCollider();
+
+    m_MeleeAttackCollider->Enable(true);
 }
 
 void CBossBettyDataComponent::OnBossBettyDisableAttackCollider()
 {
-    m_BossBettyAttackDownCollider->Enable(false);
+    CMonsterDataComponent::OnInActiveMeleeAttackCollider();
+
+    m_MeleeAttackCollider->Enable(false);
 }

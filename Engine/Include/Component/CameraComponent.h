@@ -33,6 +33,10 @@ protected:
 	float		m_ShakeAmount;
 	float		m_ShakeDecreaseTick;
 
+	bool		m_Init;
+	Vector3		m_OriginOffset;
+	Vector3		m_Offet;
+
 public:
 	void Shake(float Time, float Amount);
 

@@ -252,6 +252,7 @@
     <ClCompile Include="DeathDoor\Component\Node\RollInputCheck.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\RotateAttackDirectionNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\ShootNode.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\UpdateInputQueue.cpp" />
     <ClCompile Include="DeathDoor\Component\ObjectDataComponent.cpp" />
     <ClCompile Include="DeathDoor\Component\PlayerBowComponent.cpp" />
     <ClCompile Include="DeathDoor\Component\PlayerDataComponent.cpp" />
@@ -411,6 +412,7 @@
     <ClInclude Include="DeathDoor\Component\Node\RollInputCheck.h" />
     <ClInclude Include="DeathDoor\Component\Node\RotateAttackDirectionNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\ShootNode.h" />
+    <ClInclude Include="DeathDoor\Component\Node\UpdateInputQueue.h" />
     <ClInclude Include="DeathDoor\Component\ObjectDataComponent.h" />
     <ClInclude Include="DeathDoor\Component\PlayerBowComponent.h" />
     <ClInclude Include="DeathDoor\Component\PlayerDataComponent.h" />

@@ -35,7 +35,7 @@ void CBossKnightMeleeAttackNode::Init()
 	AnimInst->AddNotify(AnimName, "OnDisableTracePlayer", 4,
 		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnDisableLookPlayer);
 	AnimInst->AddNotify(AnimName, "HitBoxActive", 11 ,Data, &CKnightDataComponent::OnActiveMeleeAttackCollider);
-	AnimInst->AddNotify(AnimName, "HitBoxActive", 15, Data, &CKnightDataComponent::OnActiveMeleeAttackCollider);
+	AnimInst->AddNotify(AnimName, "HitBoxInActive", 13, (CMonsterDataComponent*)Data, &CMonsterDataComponent::OnInActiveMeleeAttackCollider);
 	AnimInst->SetEndFunction(AnimName, Data, &CKnightDataComponent::OnEndAnimJudgeContinueAttack);
 }
 

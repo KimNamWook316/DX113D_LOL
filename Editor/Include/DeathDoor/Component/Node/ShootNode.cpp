@@ -173,11 +173,14 @@ NodeResult CShootNode::OnUpdate(float DeltaTime)
 		{
 			CPlayerBowComponent* BowComp = m_Object->FindComponentFromType<CPlayerBowComponent>();
 
-			BowComp->ShootArrow(Dir);
+			if (BowComp)
+			{
+				BowComp->ShootArrow(Dir);
 
-			m_Owner->SetCurrentNode(this);
+				m_Owner->SetCurrentNode(this);
 
-			BowComp->HideBow();
+				BowComp->HideBow();
+			}
 
 			m_InRestoreCam = true;
 		}

@@ -62,6 +62,9 @@ private:
 	// Depth Buffer
 	class CRenderTarget* m_GBufferDepth;
 
+	// Player Stencil
+	class CRenderTarget* m_PlayerStencil;
+
 	// Shader
 	class CComputeShader* m_DownScaleFirstPassShader;
 	class CComputeShader* m_DownScaleSecondPassShader;
@@ -116,13 +119,5 @@ private:
 	bool  m_FirstFrame;
 	float m_AdaptationTimer;
 	float m_AdaptationTime;
-
-	// DEBUG SECTION
- //	ID3D11Buffer* m_Temp;
- //	ID3D11Buffer* m_Temp2;
- //	ID3D11UnorderedAccessView* m_Temp2UAV;
- //	float m_TempBuf[57];
- //	ID3D11Query* m_Query;
-	// DEBUG SECTION END
 };
 

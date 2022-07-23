@@ -34,7 +34,7 @@ void CBossKnightJumpAttackNode::Init()
 	AnimInst->AddNotify(AnimName, "OnEndJumpAttackMove", 11, Data, &CKnightDataComponent::OnEndJumpAttackMove);
 	AnimInst->AddNotify(AnimName, "OnEndJumpAttack", 19, Data, &CKnightDataComponent::OnEndJumpAttack);
 	AnimInst->AddNotify(AnimName, "OnHitBoxActive", 20, Data, &CKnightDataComponent::OnActiveMeleeAttackCollider);
-	AnimInst->AddNotify(AnimName, "OnHitBoxDisable", 20, Data, &CKnightDataComponent::OnInActiveMeleeAttackCollider);
+	AnimInst->AddNotify(AnimName, "OnHitBoxDisable", 22, (CMonsterDataComponent*)Data, &CMonsterDataComponent::OnInActiveMeleeAttackCollider);
 	AnimInst->SetEndFunction(AnimName, Data, &CKnightDataComponent::OnEndAnimJudgeContinueAttack);
 }
 

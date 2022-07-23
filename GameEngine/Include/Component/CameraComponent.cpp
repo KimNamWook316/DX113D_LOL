@@ -11,6 +11,7 @@ CCameraComponent::CCameraComponent()
 {
 	SetTypeID<CCameraComponent>();
 	m_Render = false;
+	m_Init = false;
 
 	m_CameraType = Camera_Type::Camera3D;
 	m_ViewAngle = 90.f;
@@ -78,7 +79,8 @@ void CCameraComponent::CreateProjectionMatrix()
 		break;
 	}
 
-	m_matShadowProj = XMMatrixPerspectiveFovLH(DegreeToRadian(m_ViewAngle), SHADOWMAP_WIDTH / SHADOWMAP_HEIGHT, 0.1f, m_Distance);
+	m_matShadowProj = XMMatrixOrthographicOffCenterLH(-SHADOWMAP_WIDTH / 50.f, SHADOWMAP_WIDTH / 50.f, -SHADOWMAP_HEIGHT / 50.f, SHADOWMAP_HEIGHT / 50.f, 0.f, 1000.f);
+	// m_matShadowProj = XMMatrixPerspectiveFovLH(DegreeToRadian(m_ViewAngle), SHADOWMAP_WIDTH / SHADOWMAP_HEIGHT, 0.1f, m_Distance);
 }
 
 void CCameraComponent::CreateCustomResolutionProjMatrix(float Width, float Height)
@@ -127,6 +129,33 @@ void CCameraComponent::ComputeShadowView()
 	float ShadowLightDistance = CRenderManager::GetInst()->GetShadowLightDistance();
 
 	Vector3 Pos = TargetPos - GlobalLight->GetWorldAxis(AXIS_Z) * ShadowLightDistance;
+
+	// 플레이어가 있을 경우 그림자 범위가 플레이어를 추적하도록
+	CGameObject* PlayerObj = m_Scene->GetPlayerObject();
+
+	Vector3 Add;
+
+	if (PlayerObj)
+	{
+		Vector3 PlayerPos = PlayerObj->GetWorldPos();
+
+		Vector3 Offset = Pos - PlayerPos;
+		if (!m_Init)
+		{
+			m_OriginOffset = Offset;
+			m_Init = true;
+		}
+		else
+		{
+			Add = m_OriginOffset - Offset;
+		}
+	}
+
+	// 일렁거림 방지를 위해 일정 거리 이동시에만 적용
+	if (Add.Length() >= 50.f)
+	{
+		Pos += Add;
+	}
 
 	Pos *= -1.f;
 

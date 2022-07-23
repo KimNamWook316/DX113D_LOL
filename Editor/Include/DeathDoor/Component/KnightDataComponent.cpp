@@ -2,6 +2,8 @@
 #include "../DataManager.h"
 #include "Component/ColliderBox3D.h"
 #include "Component/CameraComponent.h"
+#include "Component/PaperBurnComponent.h"
+#include "Component/AnimationMeshComponent.h"
 #include "GameObject/GameObject.h"
 #include "Scene/Scene.h"
 
@@ -31,11 +33,9 @@ void CKnightDataComponent::Start()
 
 	m_JumpAttackRange = m_Data.JumpAttackRange;
 
-	m_MeleeAttackCollider = (CColliderBox3D*)m_Object->FindComponent("MeleeAttackCollider");
 	m_PlayerEnterZoneTrigger = (CColliderBox3D*)m_Object->FindComponent("PlayerEnterTrigger");
 	m_CutSceneCam = m_Object->FindComponentFromType<CCameraComponent>();
 
-	m_MeleeAttackCollider->AddCollisionCallback(Collision_State::Begin, this, &CKnightDataComponent::OnHitMeleeAttack);
 	m_PlayerEnterZoneTrigger->AddCollisionCallback(Collision_State::Begin, this, &CKnightDataComponent::OnPlayerEnterZone);
 	
 	m_MeleeAttackCollider->Enable(false);
@@ -44,16 +44,11 @@ void CKnightDataComponent::Start()
 void CKnightDataComponent::Update(float DeltaTime)
 {
 	CMonsterDataComponent::Update(DeltaTime);
-}
 
-void CKnightDataComponent::OnInActiveMeleeAttackCollider()
-{
-	m_MeleeAttackCollider->Enable(false);
-}
-
-void CKnightDataComponent::OnHitMeleeAttack(const CollisionResult& Result)
-{
-	// TODO : Boss Knight - Player Hit 처리
+	if (m_DeathColorChangeStart)
+	{
+		ChangeColorBossDeath(DeltaTime);
+	}
 }
 
 void CKnightDataComponent::OnLookPlayerMove(float DeltaTime)
@@ -183,14 +178,14 @@ void CKnightDataComponent::OnEndCutScenePlaying()
 
 void CKnightDataComponent::OnStartJumpAttackMove()
 {
-	m_CurMoveSpeed = m_Data.MoveSpeed * 3.f;
+	m_CurMoveSpeed = m_Data.MoveSpeed * 5.f;
 	m_MoveZ = true;
 	m_LookPlayer = true;
 }
 
 void CKnightDataComponent::OnEndJumpAttackMove()
 {
-	m_CurMoveSpeed = m_Data.MoveSpeed * 1.5f;
+	m_CurMoveSpeed = m_Data.MoveSpeed * 3.f;
 	m_LookPlayer = false;
 }
 
@@ -206,10 +201,25 @@ void CKnightDataComponent::OnEndContinueAttack()
 	m_ContinueAttack = false;
 }
 
+void CKnightDataComponent::OnDeadAnimStart()
+{
+	CMonsterDataComponent::OnDeadAnimStart();
+
+	m_AnimMesh->GetAnimationInstance()->GetCurrentAnimation()->SetPlayScale(0.5f);
+	m_DeathColorChangeTimeMax = m_AnimMesh->GetAnimationInstance()->GetCurrentAnimation()->GetAnimationPlayTime() * 0.5f;
+}
+
+void CKnightDataComponent::OnDeadPaperBurnEnd()
+{
+	CMonsterDataComponent::OnDeadPaperBurnEnd();
+
+	// TODO : Boss Knight - 페이퍼번 완료되면 Portal On
+}
+
 void CKnightDataComponent::OnActiveMeleeAttackCollider()
 {
-	// TODO : Boss Knight - Particle, Cam Shake
-	m_Scene->GetCameraManager()->ShakeCamera(0.5f, 2.f);
+	CMonsterDataComponent::OnActiveMeleeAttackCollider();
 
-	m_MeleeAttackCollider->Enable(true);
+	// TODO : Boss Knight - Particle
+	m_Scene->GetCameraManager()->ShakeCamera(0.5f, 2.f);
 }
