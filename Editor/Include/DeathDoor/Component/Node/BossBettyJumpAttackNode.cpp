@@ -35,20 +35,23 @@ void CBossBettyJumpAttackNode::Init()
 	// >> Start
 	AnimInst->AddNotify(AnimName, "OnTracePlayer", 0,
 		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnEnableLookPlayer);
-	AnimInst->AddNotify(AnimName, "OnEnableSpinCollider", 0,
-		Data, &CBossBettyDataComponent::OnBossBettyEnableSpinCollider);
+
+	AnimInst->AddNotify(AnimName, "OnZMove", 0,
+		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnEnableMoveZ);
 	AnimInst->AddNotify(AnimName, "SlowMoveSpeed", 0,
-		this, &CBossBettyJumpAttackNode::OnBossBettySlowMoveSpeed);
+		Data, &CBossBettyDataComponent::OnBossBettyApplyOutOfMapSurroundingColliderMoveSpeed);
 
 	// >> 중간
+	AnimInst->AddNotify(AnimName, "SlowMoveSpeed", 6,
+		this, &CBossBettyJumpAttackNode::OnBossBettySlowMoveSpeed);
+	AnimInst->AddNotify(AnimName, "OnEnableSpinCollider", 10,
+		Data, &CBossBettyDataComponent::OnBossBettyEnableSpinCollider);
 	AnimInst->AddNotify(AnimName, "DisableLookPlayer", 10,
 		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnDisableLookPlayer);
-	AnimInst->AddNotify(AnimName, "OnZMove", 5,
-		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnEnableMoveZ);
-	AnimInst->AddNotify(AnimName, "DisableZMove", 24,
+	AnimInst->AddNotify(AnimName, "DisableZMove", 25,
 		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnDisableMoveZ);
-	AnimInst->AddNotify(AnimName, "ResetMoveSpeed", 26,
-		Data, &CBossBettyDataComponent::OnBossBettyResetOriginalMoveSpeed);
+	AnimInst->AddNotify(AnimName, "CameraShake", 25,
+		Data, &CBossBettyDataComponent::OnBossBettyNormalShakeCamera);
 
 	// >> End
 	// PunchDown Animation 이 끝나면 해당 위치에 2단 공격
@@ -58,6 +61,8 @@ void CBossBettyJumpAttackNode::Init()
 		Data, &CBossBettyDataComponent::IncFarAttackCount);
 	AnimInst->AddNotify(AnimName, "OnDisableSpinCollider", 45,
 		Data, &CBossBettyDataComponent::OnBossBettyDisableSpinCollider);
+	AnimInst->AddNotify(AnimName, "ResetMoveSpeed", 45,
+		Data, &CBossBettyDataComponent::OnBossBettyResetOriginalMoveSpeed);
 
 	AnimInst->SetEndFunction(AnimName,
 		Data, &CBossBettyDataComponent::OnBossBettySetCurrentNodeNullPtr);
@@ -90,7 +95,6 @@ NodeResult CBossBettyJumpAttackNode::OnEnd(float DeltaTime)
 void CBossBettyJumpAttackNode::OnBossBettySlowMoveSpeed()
 {
 	CBossBettyDataComponent* Data = dynamic_cast<CBossBettyDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
-
-	Data->SetCurMoveSpeed(Data->GetOriginMoveSpeed() * 0.8f);
-	// m_CurMoveSpeed = 0.f;
+	
+	Data->SetCurMoveSpeed(Data->GetOriginMoveSpeed() * 0.7f);
 }

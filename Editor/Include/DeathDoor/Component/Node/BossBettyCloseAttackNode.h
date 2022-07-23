@@ -42,6 +42,8 @@ private :
     void OnBossBettySlashRightEffect();
     void OnBossBettyEnableCloseAttackChangeAnim();
     void OnBossBettyDisableCloseAttackChangeAnim();
+
     void OnBossBettyCommonEndFunctionOfCloseAttack();
+    void OnBossBettyCommonStartFunctionOfCloseAttack();
 };
 

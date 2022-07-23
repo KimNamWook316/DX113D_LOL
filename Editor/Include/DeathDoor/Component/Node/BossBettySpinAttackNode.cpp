@@ -38,13 +38,14 @@ void CBossBettySpinAttackNode::Init()
 	AnimInst->AddNotify(AnimName, "EnableZMove", 0,
 		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnEnableMoveZ);
 	AnimInst->AddNotify(AnimName, "SlowMoveSpeed", 0,
-		this, &CBossBettySpinAttackNode::OnBossBettyApplyJumpSpinMoveSpeed);
+		Data, &CBossBettyDataComponent::OnBossBettyApplyOutOfMapSurroundingColliderMoveSpeed);
 
 	// End
 	// JumpSpin Animation 이 끝나면 바로 Spin Animation 으로 바꾼다.
 	AnimInst->SetEndFunction(AnimName,
 		this, &CBossBettySpinAttackNode::OnBossBettyChangeToSpinAnimation);
-
+	AnimInst->AddNotify(AnimName, "CameraShake", 17,
+		Data, &CBossBettyDataComponent::OnBossBettyNormalShakeCamera);
 
 	// 2) Spin
 	AnimName = "Spin";
@@ -74,6 +75,10 @@ void CBossBettySpinAttackNode::Init()
 	// 던지기 전까지 Player 방향으로 회전할 수 있도록 한다.
 	AnimInst->AddNotify(AnimName, "OnTracePlayer", 0,
 		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnEnableLookPlayer);
+
+	// 중간
+	AnimInst->AddNotify(AnimName, "CameraShake", 20,
+		Data, &CBossBettyDataComponent::OnBossBettyNormalShakeCamera);
 
 	// >> EndFunctions
 	AnimInst->AddNotify(AnimName, "DisablePlayerLook", 26,
@@ -132,11 +137,3 @@ void CBossBettySpinAttackNode::OnBossBettyDisableSpinChange()
 {
 	m_JumpSpinChangeEnable = false;
 }
-
-void CBossBettySpinAttackNode::OnBossBettyApplyJumpSpinMoveSpeed()
-{
-	CBossBettyDataComponent* Data = dynamic_cast<CBossBettyDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
-
-	Data->SetCurMoveSpeed(Data->GetOriginMoveSpeed() * 0.2f);
-}
-

@@ -95,6 +95,10 @@ public :
     void OnBossBettySetCurrentNodeNullPtr();
     // Move Speed 조정
     void OnBossBettyResetOriginalMoveSpeed();
+    // Camera Shake 기능
+    void OnBossBettyNormalShakeCamera();
+    // MapSurroundingCollider 로 부터 서서히 벗어나게 하기 위한 Speed 세팅
+    void OnBossBettyApplyOutOfMapSurroundingColliderMoveSpeed();
 
     // Setter 함수 ---
 public:

@@ -149,6 +149,9 @@ void CBossBettyDataComponent::OnChangeFromSpinToSpinCollideWhenCollide(const Col
         // 1. Spin Collider 로 Change
         AnimInst->ChangeAnimation("SpinCollide");
 
+        // 벽 충돌 -> Camera Shake 효과를 준다.
+        OnBossBettyNormalShakeCamera();
+
         // 2. 더이상의 움직임을 멈춘다.
         m_MoveZ = false;
 
@@ -191,4 +194,14 @@ void CBossBettyDataComponent::OnBossBettySetCurrentNodeNullPtr()
 void CBossBettyDataComponent::OnBossBettyResetOriginalMoveSpeed()
 {
     m_CurMoveSpeed = m_OriginMoveSpeed;
+}
+
+void CBossBettyDataComponent::OnBossBettyNormalShakeCamera()
+{
+    m_Scene->GetCameraManager()->GetCurrentCamera()->Shake(0.01f, 1.f);
+}
+
+void CBossBettyDataComponent::OnBossBettyApplyOutOfMapSurroundingColliderMoveSpeed()
+{
+   SetCurMoveSpeed(m_OriginMoveSpeed * 0.2f);
 }

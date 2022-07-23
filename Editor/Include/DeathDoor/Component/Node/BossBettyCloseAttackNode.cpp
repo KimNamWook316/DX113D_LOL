@@ -38,8 +38,10 @@ void CBossBettyCloseAttackNode::Init()
 	AnimInst->AddNotify(AnimName, "OnDisableTracePlayer", 20,
 		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnDisableLookPlayer);
 
-	AnimInst->AddNotify(AnimName, "OnSlashLeft", 18,
+	AnimInst->AddNotify(AnimName, "OnSlashLeft", 19,
 		this, &CBossBettyCloseAttackNode::OnBossBettySlashLeftEffect);
+	AnimInst->AddNotify(AnimName, "CameraShake", 19,
+		Data, &CBossBettyDataComponent::OnBossBettyNormalShakeCamera);
 
 	// >> End
 	AnimInst->SetEndFunction(AnimName, 
@@ -57,6 +59,8 @@ void CBossBettyCloseAttackNode::Init()
 
 	AnimInst->AddNotify(AnimName, "OnSlashRight", 18,
 		this, &CBossBettyCloseAttackNode::OnBossBettySlashRightEffect);
+	AnimInst->AddNotify(AnimName, "CameraShake", 18,
+		Data, &CBossBettyDataComponent::OnBossBettyNormalShakeCamera);
 
 	// >> End
 	AnimInst->SetEndFunction(AnimName,
@@ -67,6 +71,8 @@ void CBossBettyCloseAttackNode::Init()
 
 	AnimInst->AddNotify(AnimName, "OnPunchLeft", 18,
 		Data, &CBossBettyDataComponent::OnBossBettyGenerateLeftCloseAttackEffect);
+	AnimInst->AddNotify(AnimName, "CameraShake", 18,
+		Data, &CBossBettyDataComponent::OnBossBettyNormalShakeCamera);
 
 	AnimInst->SetEndFunction(AnimName,
 		this, &CBossBettyCloseAttackNode::OnBossBettyCommonEndFunctionOfCloseAttack);
@@ -76,6 +82,8 @@ void CBossBettyCloseAttackNode::Init()
 
 	AnimInst->AddNotify(AnimName, "OnPunchRight", 18,
 		Data, &CBossBettyDataComponent::OnBossBettyGenerateRightCloseAttackEffect);
+	AnimInst->AddNotify(AnimName, "CameraShake", 18,
+		Data, &CBossBettyDataComponent::OnBossBettyNormalShakeCamera);
 
 	AnimInst->SetEndFunction(AnimName,
 		this, &CBossBettyCloseAttackNode::OnBossBettyCommonEndFunctionOfCloseAttack);
@@ -85,6 +93,8 @@ void CBossBettyCloseAttackNode::Init()
 
 	AnimInst->AddNotify(AnimName, "OnFirstSlam", 20,
 		Data, &CBossBettyDataComponent::OnBossBettyGenerateTwoSideCloseAttackEffect);
+	AnimInst->AddNotify(AnimName, "CameraShake", 20,
+		Data, &CBossBettyDataComponent::OnBossBettyNormalShakeCamera);
 
 	AnimInst->SetEndFunction(AnimName,
 		this, &CBossBettyCloseAttackNode::OnBossBettyCommonEndFunctionOfCloseAttack);
@@ -260,4 +270,10 @@ void CBossBettyCloseAttackNode::OnBossBettyCommonEndFunctionOfCloseAttack()
 
 	// Current Node 를 nullptr 로 하여, 다른 Node 도 검사할 수 있게 한다.
 	m_Owner->SetCurrentNode(nullptr);
+}
+
+void CBossBettyCloseAttackNode::OnBossBettyCommonStartFunctionOfCloseAttack()
+{
+	CBossBettyDataComponent* Data = dynamic_cast<CBossBettyDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
+	Data->OnBossBettyNormalShakeCamera();
 }

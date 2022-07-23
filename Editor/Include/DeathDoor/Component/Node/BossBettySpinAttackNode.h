@@ -32,7 +32,6 @@ private:
     void OnBossBettyEnableSpinChange();
     void OnBossBettyDisableSpinChange();
 
-    void OnBossBettyApplyJumpSpinMoveSpeed();
 public :
     void SetJumpSpinChangeEnable(bool Enable)
     {
