@@ -94,6 +94,11 @@ public:
         return m_Max;
     }
 
+    void SetCollisionResultHitPoint(const Vector3& HitPoint)
+    {
+        m_Result.HitPoint = HitPoint;
+    }
+
     void SetCollisionResultSrc(CColliderComponent* Com)
     {
         m_Result.Src = Com;

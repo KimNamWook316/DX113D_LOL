@@ -203,6 +203,9 @@ bool CCollision::CollisionSphereToSphere(CColliderSphere* Src, CColliderSphere* 
 
 	if (CollisionSphereToSphere(srcResult, destResult, Src->GetInfo(), Dest->GetInfo()))
 	{
+		Src->SetCollisionResultHitPoint(srcResult.HitPoint);
+		Dest->SetCollisionResultHitPoint(srcResult.HitPoint);
+
 		return true;
 	}
 
@@ -774,8 +777,46 @@ bool CCollision::CollisionBox3DToBox3D(CollisionResult& SrcResult, CollisionResu
 
 bool CCollision::CollisionSphereToSphere(CollisionResult& SrcResult, CollisionResult& DestResult, const SphereInfo& SrcInfo, const SphereInfo& DestInfo)
 {
-	if (SrcInfo.Center.Distance(DestInfo.Center) <= SrcInfo.Radius + DestInfo.Radius)
+	float DistBetween = SrcInfo.Center.Distance(DestInfo.Center);
+
+	if (DistBetween <= SrcInfo.Radius + DestInfo.Radius)
+	{
+		float ExternalDiff = abs(DistBetween - (SrcInfo.Radius + DestInfo.Radius));
+
+		// 정확하게 2개의 구가, 한개의 지점에서 충돌했을 때 
+		// 즉, 구가 충돌하는 그 순간 (offset  은 0.01 정도 줄 것이다)
+		// HItPoint 정보를 세팅해준다. 
+		// 1) 외부의 구가 서로 충돌할 경우
+		// 그리고 HitPoint 위치는, 두개의 구, Center 사이의 거리, 그 중심점이 될 것이다.
+		if (ExternalDiff < 1.f)
+		{
+			SrcResult.HitPoint = (SrcInfo.Center + DestInfo.Center) / 2.f;
+			DestResult.HitPoint = (SrcInfo.Center + DestInfo.Center) / 2.f;
+		}
+
+		// 2) 한개의 구가, 다른 구의 내부에 존재한 상태에서, 정확하게 한 점에서 충돌할 경우
+		float MaxRadius = SrcInfo.Radius > DestInfo.Radius ? SrcInfo.Radius : DestInfo.Radius;
+		float MinRadius = SrcInfo.Radius < DestInfo.Radius ? SrcInfo.Radius : DestInfo.Radius;
+
+		Vector3 MaxSphereCenter = MaxRadius == SrcInfo.Radius ? SrcInfo.Center : DestInfo.Center;
+		Vector3 MinSphereCenter = MinRadius == SrcInfo.Radius ? SrcInfo.Center : DestInfo.Center;
+		
+		float InternalDiff = abs(DistBetween - (MaxRadius - MinRadius));
+
+		if (InternalDiff < 1.f)
+		{
+			// 큰 구 Center -> 작은 구 Center 방향
+			Vector3 Dir = (MinSphereCenter - MaxSphereCenter);
+			Dir.Normalize();
+
+			Vector3 HitPoint = MaxSphereCenter + Dir * MaxRadius;
+
+			SrcResult.HitPoint = HitPoint;
+			DestResult.HitPoint = HitPoint;
+		}
+
 		return true;
+	}
 
 	return false;
 }
