@@ -114,12 +114,16 @@ void CMonsterDataComponent::Update(float DeltaTime)
 			// 오른쪽으로 돌아야 하는데 왼쪽으로 도는 설정도 true 라면 오류
 			if (m_LeftLookPlayer)
 				assert(false);
+
+			RightLookPlayer(DeltaTime);
 		}
 		else  if (m_LeftLookPlayer)
 		{
 			// 오른쪽으로 돌아야 하는데 왼쪽으로 도는 설정도 true 라면 오류
 			if (m_RightLookPlayer)
 				assert(false);
+
+			LeftLookPlayer(DeltaTime);
 		}
 	}
 
@@ -281,7 +285,7 @@ void CMonsterDataComponent::OnDisableRightLookPlayer()
 
 void CMonsterDataComponent::OnEnableLeftLookPlayer()
 {
-	m_LeftLookPlayer = false;
+	m_LeftLookPlayer = true;
 }
 
 void CMonsterDataComponent::OnDisableLeftLookPlayer()

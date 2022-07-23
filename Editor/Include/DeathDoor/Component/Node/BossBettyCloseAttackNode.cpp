@@ -34,11 +34,14 @@ void CBossBettyCloseAttackNode::Init()
 	std::string AnimName = "SlashLeft";
 	CAnimationSequenceInstance* AnimInst = m_AnimationMeshComp->GetAnimationInstance();
 
-	AnimInst->AddNotify(AnimName, "OnTracePlayer", 13,
-		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnEnableLeftLookPlayer);
+	AnimInst->AddNotify(AnimName, "OnTracePlayer", 0,
+		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnDisableLookPlayer);
 
-	AnimInst->AddNotify(AnimName, "OnDisableTracePlayer", 20,
-		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnDisableLeftLookPlayer);
+	AnimInst->AddNotify(AnimName, "OnEnableRightLookPlayer", 13,
+		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnEnableRightLookPlayer);
+
+	AnimInst->AddNotify(AnimName, "OnDisableRightLookPlayer", 20,
+		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnDisableRightLookPlayer);
 
 	AnimInst->AddNotify(AnimName, "OnSlashLeft", 19,
 		this, &CBossBettyCloseAttackNode::OnBossBettySlashLeftEffect);
@@ -52,13 +55,17 @@ void CBossBettyCloseAttackNode::Init()
 	// 2) Slash Right
 	AnimName = "SlashRight";
 
-	AnimInst->AddNotify(AnimName, "OnTracePlayer", 13,
-		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnEnableRightLookPlayer);
+	AnimInst->AddNotify(AnimName, "OnTracePlayer", 0,
+		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnDisableLookPlayer);
 
-	AnimInst->AddNotify(AnimName, "OnDisableTracePlayer", 20,
-		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnDisableRightLookPlayer);
+	AnimInst->AddNotify(AnimName, "OnEnableLeftLookPlayer", 13,
+		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnEnableLeftLookPlayer);
 
+	AnimInst->AddNotify(AnimName, "OnDisableLeftLookPlayer", 20,
+		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnDisableLeftLookPlayer);
 
+	AnimInst->AddNotify(AnimName, "EnableAttackCollider", 18,
+		Data, &CBossBettyDataComponent::OnBossBettyEnableAttackCollider);
 	AnimInst->AddNotify(AnimName, "OnSlashRight", 18,
 		this, &CBossBettyCloseAttackNode::OnBossBettySlashRightEffect);
 	AnimInst->AddNotify(AnimName, "CameraShake", 18,
@@ -75,6 +82,8 @@ void CBossBettyCloseAttackNode::Init()
 		Data, &CBossBettyDataComponent::OnBossBettyGenerateLeftCloseAttackEffect);
 	AnimInst->AddNotify(AnimName, "CameraShake", 18,
 		Data, &CBossBettyDataComponent::OnBossBettyNormalShakeCamera);
+	AnimInst->AddNotify(AnimName, "EnableAttackCollider", 18,
+		Data, &CBossBettyDataComponent::OnBossBettyEnableAttackCollider);
 
 	AnimInst->SetEndFunction(AnimName,
 		this, &CBossBettyCloseAttackNode::OnBossBettyCommonEndFunctionOfCloseAttack);
@@ -86,6 +95,8 @@ void CBossBettyCloseAttackNode::Init()
 		Data, &CBossBettyDataComponent::OnBossBettyGenerateRightCloseAttackEffect);
 	AnimInst->AddNotify(AnimName, "CameraShake", 18,
 		Data, &CBossBettyDataComponent::OnBossBettyNormalShakeCamera);
+	AnimInst->AddNotify(AnimName, "EnableAttackCollider", 18,
+		Data, &CBossBettyDataComponent::OnBossBettyEnableAttackCollider);
 
 	AnimInst->SetEndFunction(AnimName,
 		this, &CBossBettyCloseAttackNode::OnBossBettyCommonEndFunctionOfCloseAttack);
@@ -97,6 +108,8 @@ void CBossBettyCloseAttackNode::Init()
 		Data, &CBossBettyDataComponent::OnBossBettyGenerateTwoSideCloseAttackEffect);
 	AnimInst->AddNotify(AnimName, "CameraShake", 20,
 		Data, &CBossBettyDataComponent::OnBossBettyNormalShakeCamera);
+	AnimInst->AddNotify(AnimName, "EnableAttackCollider", 18,
+		Data, &CBossBettyDataComponent::OnBossBettyEnableAttackCollider);
 
 	AnimInst->SetEndFunction(AnimName,
 		this, &CBossBettyCloseAttackNode::OnBossBettyCommonEndFunctionOfCloseAttack);
@@ -193,12 +206,12 @@ BossBettyCloseAttackType CBossBettyCloseAttackNode::DetermineBettyCloseAttackTyp
 	Vector2 Betty2DWorldPos = Vector2(WorldPos.x, WorldPos.z);
 
 	// 1) Box2DInfo m_PunchLeftSquareBox;
-	if (DistToPlayer < MeleeAttackRange * 0.5f && AnglePlayer < 45.f && Data->IsPlayerLeftBasedInLookDir() == false)
+	if (DistToPlayer < MeleeAttackRange * 0.8f && AnglePlayer < 45.f && Data->IsPlayerLeftBasedInLookDir() == false)
 	{
 		return BossBettyCloseAttackType::PunchLeft;
 	}
 	// 2) Box2DInfo m_PunchRightSquareBox;
-	else if (DistToPlayer < MeleeAttackRange * 0.5f && AnglePlayer < 45.f && Data->IsPlayerLeftBasedInLookDir())
+	else if (DistToPlayer < MeleeAttackRange * 0.8f && AnglePlayer < 45.f && Data->IsPlayerLeftBasedInLookDir())
 	{
 		return BossBettyCloseAttackType::PunchRight;
 	}
@@ -219,8 +232,8 @@ BossBettyCloseAttackType CBossBettyCloseAttackNode::DetermineBettyCloseAttackTyp
 		return BossBettyCloseAttackType::SlashLeft;
 	}
 	// 5) Two Down
-	else if (DistToPlayer < MeleeAttackRange &&
-		DistToPlayer >= MeleeAttackRange * 0.5f &&
+	else if (DistToPlayer < MeleeAttackRange * 1.2f &&
+		DistToPlayer >= MeleeAttackRange * 0.8f &&
 		AnglePlayer < 45.f)
 	{
 		return BossBettyCloseAttackType::TwoSideFront;
