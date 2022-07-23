@@ -344,7 +344,7 @@ PSOutput_Single LightBlendPS(VS_OUTPUT_LIGHTACC input)
 	{
         if (ShadowPos.z - g_ShadowBias > ShadowMap.r * ShadowPos.w)
 		{
-			LightDiffuseColor.rgb *= 0.2f;
+			LightDiffuseColor.rgb *= 0.6f;
 			LightSpecularColor.rgb *= 0.f;
 		}
 	}
