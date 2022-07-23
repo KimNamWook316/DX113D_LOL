@@ -26,6 +26,7 @@ public:
 public:
 	void LookPlayer(float DeltaTime);
 	void MoveZ(float DeltaTime);
+	void ChangeColorBossDeath(float DeltaTime);	// 죽을 때 색상 변화가 필요한 보스나 몬스터의 경우 이 함수를 Update에서 호출
 
 public:
     virtual void OnActiveMeleeAttackCollider();
@@ -39,6 +40,9 @@ public:
 	{
 		m_CurMoveSpeed = 0.f;
 	}
+    virtual void OnDeadPaperBurnEnd();			// PaperBurn 종료시 호출
+    virtual void OnDeadAnimStart();				// Death Animation 시작시 호출
+    virtual void OnDeadAnimEnd();				// Death Animation 종료시 호출
 
 public:
 	virtual void SetIsHit(bool Hit) override;
@@ -87,7 +91,7 @@ public:
 	virtual bool SaveOnly(FILE* File) override;
 	virtual bool LoadOnly(FILE* File) override;
 
-private:
+protected:
 	void ActiveHitEffect(float DeltaTime);
 	void ChangeHitColor(int EffectNum);
 
@@ -115,6 +119,13 @@ protected:
 	float m_CurMoveSpeed;
 	bool m_LookPlayer;
 	bool m_MoveZ;
+
+    class CPaperBurnComponent* m_PaperBurn;
+    bool m_DeathColorChangeStart;
+    float m_DeathTimer;
+    float m_DeathColorChangeTimeMax;
+	Vector4 m_DeathColorStart;
+	Vector4	m_DeathColorEnd;
 
 public:
 	class CMonsterNavAgent* GetMonsterNavAgent()	const;

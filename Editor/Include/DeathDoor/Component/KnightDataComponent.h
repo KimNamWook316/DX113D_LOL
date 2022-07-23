@@ -36,6 +36,8 @@ public:
     void OnEndJumpAttackMove();
     void OnEndJumpAttack();
     void OnEndContinueAttack();
+    virtual void OnDeadAnimStart() override;
+    virtual void OnDeadPaperBurnEnd() override;
 
 public:
     int GetMeleeAttackCount() const

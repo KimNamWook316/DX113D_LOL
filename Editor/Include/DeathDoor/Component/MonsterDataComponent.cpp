@@ -7,8 +7,10 @@
 #include "MonsterNavAgent.h"
 #include "Scene/Scene.h"
 #include "../Component/PlayerDataComponent.h"
+#include "Component/PaperBurnComponent.h"
+#include "../DDUtil.h"
 
-CMonsterDataComponent::CMonsterDataComponent()	:
+CMonsterDataComponent::CMonsterDataComponent() :
 	m_AnimMesh(nullptr),
 	m_HitBox(nullptr),
 	m_HitEffectFlag(0),
@@ -16,7 +18,9 @@ CMonsterDataComponent::CMonsterDataComponent()	:
 	m_HitEffectMax(0.15f),
 	m_IsCombat(false),
 	m_LookPlayer(false),
-	m_CurMoveSpeed(0.f)
+	m_CurMoveSpeed(0.f),
+	m_DeathColorStart(Vector4::Red),
+	m_DeathColorEnd(Vector4::White)
 {
 	SetTypeID<CMonsterDataComponent>();
 
@@ -64,6 +68,10 @@ void CMonsterDataComponent::Start()
 	if (vecCollider.size() == 1)
 	{
 		m_HitBox = vecCollider[0];
+	}
+	else
+	{
+		m_HitBox = vecCollider[0];
 		size_t Size = vecCollider.size();
 
 		for (size_t i = 0; i < Size; ++i)
@@ -101,6 +109,14 @@ void CMonsterDataComponent::Start()
 	{
 		m_MeleeAttackCollider->AddCollisionCallback(Collision_State::Begin, this, &CMonsterDataComponent::OnHitMeleeAttack);
 	}
+	
+	// PaperBurn 및 Death
+	m_PaperBurn = m_Object->FindComponentFromType<CPaperBurnComponent>();
+	m_PaperBurn->SetFinishCallback(this, &CMonsterDataComponent::OnDeadPaperBurnEnd);
+
+	CAnimationSequenceInstance* AnimInst = m_AnimMesh->GetAnimationInstance();
+	AnimInst->AddNotify("Death", "DeathStart", 0, this, &CMonsterDataComponent::OnDeadAnimStart);
+	AnimInst->SetEndFunction("Death", this, &CMonsterDataComponent::OnDeadAnimEnd);
 }
 
 void CMonsterDataComponent::Update(float DeltaTime)
@@ -158,11 +174,65 @@ void CMonsterDataComponent::MoveZ(float DeltaTime)
 	m_Object->AddWorldPosByLocalAxis(AXIS::AXIS_Z, -m_CurMoveSpeed * DeltaTime);
 }
 
+void CMonsterDataComponent::ChangeColorBossDeath(float DeltaTime)
+{
+	if (m_DeathColorChangeStart)
+	{
+		m_DeathTimer += DeltaTime;
+
+		// 컬러 선형 보간
+		Vector4 Color = CDDUtil::LerpColor(m_DeathColorStart, m_DeathColorEnd, m_DeathTimer, m_DeathColorChangeTimeMax);
+
+		for (size_t i = 0; i < m_MeshMatSize; ++i)
+		{
+			m_AnimMesh->SetMetallic(false, 0);
+
+			// Base
+			// m_AnimMesh->SetBaseColor(Color, i);
+
+			// Ambient
+			// m_AnimMesh->SetAmbientColor(Color, i);
+
+			// Specular
+			m_AnimMesh->SetSpecularColor(Vector4::Black, i);
+
+			// Emmisive
+			m_AnimMesh->SetEmissiveColor(Color, i);
+		}
+
+		if (m_DeathTimer >= m_DeathColorChangeTimeMax)
+		{
+			m_DeathColorChangeStart = false;
+		}
+	}
+}
+
 void CMonsterDataComponent::OnEndAnimPostAttackDelayOff()
 {
 	m_PostAttackDelaying = false;
 
 	SetCurrentNodeNull();
+}
+
+void CMonsterDataComponent::OnDeadPaperBurnEnd()
+{
+	// TODO : Monster Death 관련 -> 차후 Object Pool 몬스터에 대한 처리 필요
+	m_Object->Destroy();
+}
+
+void CMonsterDataComponent::OnDeadAnimStart()
+{
+	m_HitBox->Enable(false);
+	m_MeleeAttackCollider->Enable(false);
+
+	// DeathChangeColor() 를 사용하는 경우
+	m_DeathColorChangeStart = true;
+}
+
+void CMonsterDataComponent::OnDeadAnimEnd()
+{
+	// Death 애니메이션이 끝나면 PaperBurn을 켠다.
+	m_PaperBurn->StartPaperBurn();
 }
 
 void CMonsterDataComponent::SetIsHit(bool Hit)
@@ -205,13 +275,13 @@ void CMonsterDataComponent::OnInActiveMeleeAttackCollider()
 
 void CMonsterDataComponent::OnHitMeleeAttack(const CollisionResult& Result)
 {
-	// TODO : Monster Data : Player Damage 처리
 	CGameObject* Player = m_Scene->GetPlayerObject();
 
 	CPlayerDataComponent* PlayerData = Player->FindObjectComponentFromType<CPlayerDataComponent>();
 
 	if (PlayerData)
 	{
+		PlayerData->DecreaseHP(1);
 		PlayerData->SetIsHit(true);
 	}
 }

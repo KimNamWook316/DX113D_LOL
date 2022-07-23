@@ -2,6 +2,8 @@
 #include "../DataManager.h"
 #include "Component/ColliderBox3D.h"
 #include "Component/CameraComponent.h"
+#include "Component/PaperBurnComponent.h"
+#include "Component/AnimationMeshComponent.h"
 #include "GameObject/GameObject.h"
 #include "Scene/Scene.h"
 
@@ -42,6 +44,11 @@ void CKnightDataComponent::Start()
 void CKnightDataComponent::Update(float DeltaTime)
 {
 	CMonsterDataComponent::Update(DeltaTime);
+
+	if (m_DeathColorChangeStart)
+	{
+		ChangeColorBossDeath(DeltaTime);
+	}
 }
 
 void CKnightDataComponent::OnLookPlayerMove(float DeltaTime)
@@ -192,6 +199,21 @@ void CKnightDataComponent::OnEndContinueAttack()
 {
 	SetCurrentNodeNull();
 	m_ContinueAttack = false;
+}
+
+void CKnightDataComponent::OnDeadAnimStart()
+{
+	CMonsterDataComponent::OnDeadAnimStart();
+
+	m_AnimMesh->GetAnimationInstance()->GetCurrentAnimation()->SetPlayScale(0.5f);
+	m_DeathColorChangeTimeMax = m_AnimMesh->GetAnimationInstance()->GetCurrentAnimation()->GetAnimationPlayTime() * 0.5f;
+}
+
+void CKnightDataComponent::OnDeadPaperBurnEnd()
+{
+	CMonsterDataComponent::OnDeadPaperBurnEnd();
+
+	// TODO : Boss Knight - 페이퍼번 완료되면 Portal On
 }
 
 void CKnightDataComponent::OnActiveMeleeAttackCollider()

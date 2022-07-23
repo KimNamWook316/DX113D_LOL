@@ -128,6 +128,8 @@ void CPlayerNormalAttackCheckCollider::AttackSuccess(const CollisionResult& Resu
 			// TODO : Player Attack Collider : 데미지 처리
 			if (!InList)
 			{
+				int Attack = PlayerDataComp->GetAttack();
+				DataComp->DecreaseHP(Attack);
 				DataComp->SetIsHit(true);
 				m_CollisionObjDataList.push_back(DataComp);
 			}

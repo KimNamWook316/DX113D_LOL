@@ -41,6 +41,11 @@ public:
 		m_Data.HP = HP;
 	}
 
+	void DecreaseHP(int Amount)
+	{
+		m_Data.HP -= Amount;
+	}
+
 	void SetDetectRange(float Range)
 	{
 		m_Data.DetectRange = Range;
