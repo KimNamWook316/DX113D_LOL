@@ -17,29 +17,29 @@ CObjectPool::CObjectPool()
 
 CObjectPool::~CObjectPool()
 {
-	auto iter = m_mapProjectile.begin();
-	auto iterEnd = m_mapProjectile.end();
+	//auto iter = m_mapProjectile.begin();
+	//auto iterEnd = m_mapProjectile.end();
 
-	for (; iter != iterEnd; ++iter)
-	{
-		SAFE_DELETE(iter->second);
-	}
+	//for (; iter != iterEnd; ++iter)
+	//{
+	//	SAFE_RELEASE(iter->second);
+	//}
 
-	iter = m_mapMonster.begin();
-	iterEnd = m_mapMonster.end();
+	//iter = m_mapMonster.begin();
+	//iterEnd = m_mapMonster.end();
 
-	for (; iter != iterEnd; ++iter)
-	{
-		SAFE_DELETE(iter->second);
-	}
+	//for (; iter != iterEnd; ++iter)
+	//{
+	//	SAFE_RELEASE(iter->second);
+	//}
 
-	iter = m_mapParticle.begin();
-	iterEnd = m_mapParticle.end();
+	//iter = m_mapParticle.begin();
+	//iterEnd = m_mapParticle.end();
 
-	for (; iter != iterEnd; ++iter)
-	{
-		SAFE_DELETE(iter->second);
-	}
+	//for (; iter != iterEnd; ++iter)
+	//{
+	//	SAFE_RELEASE(iter->second);
+	//}
 }
 
 void CObjectPool::Init()
@@ -47,7 +47,7 @@ void CObjectPool::Init()
 
 }
 
-CGameObject* CObjectPool::GetProjectile(const std::string& Name)
+CGameObject* CObjectPool::GetProjectile(const std::string& Name, class CScene* Scene)
 {
 	auto iter = m_mapProjectile.find(Name);
 
@@ -56,12 +56,17 @@ CGameObject* CObjectPool::GetProjectile(const std::string& Name)
 
 	CGameObject* Object = iter->second;
 
+	Object->m_Active = true;
+
+	Scene->AddObject(Object);
+	Object->Start();
+
 	m_mapProjectile.erase(iter);
 
 	return Object;
 }
 
-CGameObject* CObjectPool::GetMonster(const std::string& Name)
+CGameObject* CObjectPool::GetMonster(const std::string& Name, class CScene* Scene)
 {
 	auto iter = m_mapMonster.find(Name);
 
@@ -70,12 +75,16 @@ CGameObject* CObjectPool::GetMonster(const std::string& Name)
 
 	CGameObject* Object = iter->second;
 
+	Object->m_Active = true;
+	Scene->AddObject(Object);
+	Object->Start();
+
 	m_mapMonster.erase(iter);
 
 	return Object;
 }
 
-CGameObject* CObjectPool::GetParticle(const std::string& Name)
+CGameObject* CObjectPool::GetParticle(const std::string& Name, class CScene* Scene)
 {
 	auto iter = m_mapParticle.find(Name);
 
@@ -83,6 +92,10 @@ CGameObject* CObjectPool::GetParticle(const std::string& Name)
 		return nullptr;
 
 	CGameObject* Object = iter->second;
+
+	Object->m_Active = true;
+	Scene->AddObject(Object);
+	Object->Start();
 
 	m_mapParticle.erase(iter);
 
@@ -149,31 +162,34 @@ void CObjectPool::CreatePoolObject(const std::string& PathName)
 
 		strcat_s(FullPath, FileName.c_str());
 
-		CGameObject* Object = new CGameObject;
-		Object->SetName(ObjectName);
-
-		bool Result = Object->Load(FullPath);
-
-		if (Result)
+		for (int j = 0; j < ObjectCount; ++j)
 		{
-			switch (Object->GetObjectType())
+			CGameObject* Object = new CGameObject;
+			Object->SetName(ObjectName);
+			Object->SetInPool(true);
+
+			bool Result = Object->LoadHierarchy(FullPath);
+
+			if (Result)
 			{
-			case Object_Type::Projectile:
-				m_mapProjectile.insert(std::make_pair(ObjectName, Object));
-				break;
-			case Object_Type::Particle:
-				m_mapParticle.insert(std::make_pair(ObjectName, Object));
-				break;
-			case Object_Type::Monster:
-				m_mapMonster.insert(std::make_pair(ObjectName, Object));
-				break;
+				switch (Object->GetObjectType())
+				{
+				case Object_Type::Projectile:
+					m_mapProjectile.insert(std::make_pair(ObjectName, Object));
+					break;
+				case Object_Type::Particle:
+					m_mapParticle.insert(std::make_pair(ObjectName, Object));
+					break;
+				case Object_Type::Monster:
+					m_mapMonster.insert(std::make_pair(ObjectName, Object));
+					break;
+				}
+
 			}
 
+			else
+				Object->Destroy();
 		}
-
-		else
-			Object->Destroy();
-
 
 
 		memset(FullPath, 0, MAX_PATH);

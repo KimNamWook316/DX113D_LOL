@@ -22,6 +22,7 @@ private:
     Vector3 m_CurrentForwardVector;
     bool m_Over180;
     Vector3 m_PickingPoint;
+    NodeResult m_Result;
 
 public:
     const Vector3 GetPickingPoint() const

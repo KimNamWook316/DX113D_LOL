@@ -4,7 +4,7 @@
 #include "Scene/Scene.h"
 #include "PlayerDataComponent.h"
 #include "ObjectPool.h"
-#include "ProjectileComponent.h"
+#include "ArrowComponent.h"
 
 CPlayerBowComponent::CPlayerBowComponent()	:
 	m_PlayerData(nullptr)
@@ -120,14 +120,40 @@ void CPlayerBowComponent::ShowBow(const Vector3& ShootDir)
 
 void CPlayerBowComponent::ShootArrow(const Vector3& ShootDir)
 {
-	CGameObject* Arrow = CObjectPool::GetInst()->GetProjectile("PlayerArrow");
+	Vector3 MyPos = m_Object->GetWorldPos();
+
+	CGameObject* Arrow = CObjectPool::GetInst()->GetProjectile("PlayerArrow", m_Scene);
 
 	if (!Arrow)
 		return;
 
-	CProjectileComponent* Comp = Arrow->FindObjectComponentFromType<CProjectileComponent>();
+	Arrow->SetWorldPos(MyPos.x + ShootDir.x, MyPos.y + 2.f, MyPos.z + ShootDir.z);
 
-	Comp->Shoot(GetWorldPos(), ShootDir, 10.f, 5.f);
+	CArrowComponent* Comp = Arrow->FindObjectComponentFromType<CArrowComponent>();
+
+	Vector3 InitialDir = Vector3(0.f, 0.f, 1.f);
+
+	float DotProduct = InitialDir.Dot(ShootDir);
+	
+	if (DotProduct > -0.99f && DotProduct < 0.99f)
+	{
+		float Degree = RadianToDegree(acosf(DotProduct));
+
+		Vector3 CrossVector = InitialDir.Cross(ShootDir);
+
+		if (CrossVector.y < 0.f)
+			Degree *= -1.f;
+
+		Arrow->SetWorldRotationY(Degree);
+
+	}
+
+	Comp->Shoot(MyPos, ShootDir, 20.f, 4.f);
+}
+
+void CPlayerBowComponent::HideBow()
+{
+	m_Render = false;
 }
 
 bool CPlayerBowComponent::Save(FILE* File)

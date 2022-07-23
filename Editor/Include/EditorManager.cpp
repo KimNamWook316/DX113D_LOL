@@ -38,6 +38,7 @@
 #include "DeathDoor\Component/MonsterNavAgent.h"
 #include "DeathDoor\Component/PlayerBowComponent.h"
 #include "DeathDoor\Component/ProjectileComponent.h"
+#include "DeathDoor\Component/ArrowComponent.h"
 // Window
 #include "Window/ObjectHierarchyWindow.h"
 #include "Window/SceneComponentHierarchyWindow.h"
@@ -87,7 +88,7 @@ CEditorManager::~CEditorManager()
 
 	CDataManager::DestroyInst();
 
-	//CObjectPool::DestroyInst();
+	CObjectPool::DestroyInst();
 
 	SAFE_DELETE(m_StateManager);
 }
@@ -162,10 +163,10 @@ bool CEditorManager::Init(HINSTANCE hInst)
 
 	CDataManager::GetInst()->Init();
 	
-	//CObjectPool::GetInst()->Init();
+	CObjectPool::GetInst()->Init();
 
-	//CObjectPool::GetInst()->LoadPoolData("ObjectPoolData.csv");
-	//CObjectPool::GetInst()->CreatePoolObject(OBJECT_PATH);
+	CObjectPool::GetInst()->LoadPoolData("ObjectPoolData.csv");
+	CObjectPool::GetInst()->CreatePoolObject(OBJECT_PATH);
 
 	return true;
 }
@@ -460,6 +461,12 @@ CComponent* CEditorManager::CreateComponent(CGameObject* Obj, size_t Type)
 	else if (Type == typeid(CBossBettyDataComponent).hash_code())
 		{
 		CBossBettyDataComponent* Component = Obj->LoadObjectComponent<CBossBettyDataComponent>();
+		return Component;
+	}
+
+	else if (Type == typeid(CArrowComponent).hash_code())
+	{
+		CArrowComponent* Component = Obj->LoadObjectComponent<CArrowComponent>();
 		return Component;
 	}
 
