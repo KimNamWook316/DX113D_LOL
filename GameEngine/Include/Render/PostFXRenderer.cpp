@@ -13,6 +13,7 @@
 
 CPostFXRenderer::CPostFXRenderer()	:
 	m_GBufferDepth(nullptr),
+	m_PlayerStencil(nullptr),
 	m_DownScaleFirstPassShader(nullptr),
 	m_DownScaleSecondPassShader(nullptr),
 	m_BloomShader(nullptr),
@@ -99,6 +100,7 @@ bool CPostFXRenderer::Init()
 
 	// Depth Buffer
 	m_GBufferDepth = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("GBuffer2");
+	m_PlayerStencil = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("PlayerTarget");
 
 	// 1. DownScale Luminance Buffer
 	D3D11_BUFFER_DESC DownScaleBufferDesc = {};
@@ -623,14 +625,15 @@ void CPostFXRenderer::RenderFinal(CRenderTarget* LDRTarget)
 	m_HDRRenderCBuffer->UpdateCBuffer();
 	m_FogCBuffer->UpdateCBuffer();
 
-	ID3D11ShaderResourceView* arrSRV[5] = {};
+	ID3D11ShaderResourceView* arrSRV[6] = {};
 	arrSRV[0] = LDRTarget->GetResource(0);				// HDR로 변환할 Final Screen (LDR 렌더타겟)
 	arrSRV[1] = m_LuminanceAverageBufferSRV;			// 평균 휘도
 	arrSRV[2] = m_BloomSRV;								// Blur 처리된 Bloom Texture
 	arrSRV[3] = m_GBufferDepth->GetResource(0);			// DOF 처리를 위한 씬 깊이 텍스쳐
 	arrSRV[4] = m_DownScaleRTSRV;						// DOF Blur를 위한 1 / 16 크기 씬
+	arrSRV[5] = m_PlayerStencil->GetResource(0);
 
-	Context->PSSetShaderResources(10, 5, arrSRV);
+	Context->PSSetShaderResources(10, 6, arrSRV);
 
 	m_HDRRenderShader->SetShader();
 	
@@ -648,11 +651,11 @@ void CPostFXRenderer::RenderFinal(CRenderTarget* LDRTarget)
 	m_DepthDisable->ResetState();
 	m_AlphaBlend->ResetState();
 
-	for (int i = 0; i < 5; ++i)
+	for (int i = 0; i < 6; ++i)
 	{
 		arrSRV[i] = nullptr;
 	}
-	Context->PSSetShaderResources(10, 5, arrSRV);
+	Context->PSSetShaderResources(10, 6, arrSRV);
 
 	// 현재 프레임 평균 휘도를 저장
 	ID3D11Buffer* TempBuffer = m_PrevFrameLumAverageBuffer;

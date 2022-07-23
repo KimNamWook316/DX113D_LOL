@@ -475,6 +475,10 @@ bool CRenderManager::Init()
 	m_ShadowMapTarget->SetScale(Vector3(100.f, 100.f, 1.f));
 	m_ShadowMapTarget->SetDebugRender(true);
 
+	// Player Target
+	CResourceManager::GetInst()->CreateTarget("PlayerTarget", RS.Width, RS.Height, DXGI_FORMAT_R32G32B32A32_FLOAT);
+	m_PlayerTarget = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("PlayerTarget");
+
 	m_LightBlendShader = CResourceManager::GetInst()->FindShader("LightBlendShader");
 	m_LightBlendRenderShader = CResourceManager::GetInst()->FindShader("LightBlendRenderShader");
 	m_Mesh3DNoLightRenderShader = CResourceManager::GetInst()->FindShader("Mesh3DNoLightShader");
@@ -1021,6 +1025,8 @@ void CRenderManager::RenderTransparent()
 void CRenderManager::RenderFinalScreen()
 {
 	m_FinalTarget->SetTargetShader(21);
+	m_vecGBuffer[2]->SetTargetShader(22);
+	m_PlayerTarget->SetTargetShader(23);
 
 	m_LightBlendRenderShader->SetShader();
 
@@ -1037,6 +1043,8 @@ void CRenderManager::RenderFinalScreen()
 	m_DepthDisable->ResetState();
 
 	m_FinalTarget->ResetTargetShader(21);
+	m_vecGBuffer[2]->ResetTargetShader(22);
+	m_PlayerTarget->ResetTargetShader(23);
 }
 
 void CRenderManager::RenderAnimationEditor()
@@ -1174,6 +1182,20 @@ void CRenderManager::RenderParticle()
 	m_vecGBuffer[2]->ResetShader(10, (int)Buffer_Shader_Type::Pixel, 0);
 
 	m_FinalTarget->ResetTarget();
+}
+
+void CRenderManager::RenderPlayer(CMesh* PlayerMesh)
+{
+	m_PlayerTarget->ClearTarget();
+
+	m_PlayerTarget->SetTarget();
+	m_DepthDisable->SetState();
+	m_ShadowMapShader->SetShader();
+
+	PlayerMesh->Render();
+
+	m_DepthDisable->ResetState();
+	m_PlayerTarget->ResetTarget();
 }
 
 void CRenderManager::SetBlendFactor(const std::string& Name, float r, float g,

@@ -132,6 +132,9 @@ private:
 	float m_ShadowLightDistance;
 	class CShadowCBuffer* m_ShadowCBuffer;
 
+	// Player
+	CSharedPtr<CRenderTarget> m_PlayerTarget;
+
 	// Debug Render
 	bool m_DebugRender;
 
@@ -259,6 +262,7 @@ public:
 public:
 	bool Init();
 	void Render(float DeltaTime);
+	void RenderPlayer(class CMesh* PlayerMesh);
 
 private:
 	void RenderSkyBox();
