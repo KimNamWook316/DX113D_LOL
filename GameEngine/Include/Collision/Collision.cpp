@@ -788,7 +788,7 @@ bool CCollision::CollisionSphereToSphere(CollisionResult& SrcResult, CollisionRe
 		// HItPoint 정보를 세팅해준다. 
 		// 1) 외부의 구가 서로 충돌할 경우
 		// 그리고 HitPoint 위치는, 두개의 구, Center 사이의 거리, 그 중심점이 될 것이다.
-		if (ExternalDiff < 1.f)
+		if (ExternalDiff < 3.f)
 		{
 			SrcResult.HitPoint = (SrcInfo.Center + DestInfo.Center) / 2.f;
 			DestResult.HitPoint = (SrcInfo.Center + DestInfo.Center) / 2.f;
@@ -803,7 +803,7 @@ bool CCollision::CollisionSphereToSphere(CollisionResult& SrcResult, CollisionRe
 		
 		float InternalDiff = abs(DistBetween - (MaxRadius - MinRadius));
 
-		if (InternalDiff < 1.f)
+		if (InternalDiff < 3.f)
 		{
 			// 큰 구 Center -> 작은 구 Center 방향
 			Vector3 Dir = (MinSphereCenter - MaxSphereCenter);

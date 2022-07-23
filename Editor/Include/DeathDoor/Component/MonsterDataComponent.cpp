@@ -290,6 +290,22 @@ Vector3 CMonsterDataComponent::ToPlayer()
 	return ToP;
 }
 
+float CMonsterDataComponent::DistToPlayer()
+{
+	CGameObject* PlayerObj = m_Scene->GetPlayerObject();
+
+	if (!PlayerObj)
+	{
+		return -1.f;
+	}
+
+	Vector3 MyPos = m_Object->GetWorldPos();
+	Vector3 PlayerPos = PlayerObj->GetWorldPos();
+	float Dist = MyPos.Distance(PlayerPos);
+
+	return MyPos.Distance(PlayerPos);;
+}
+
 bool CMonsterDataComponent::Save(FILE* File)
 {
 	CObjectDataComponent::Save(File);

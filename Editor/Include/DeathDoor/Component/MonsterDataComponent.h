@@ -52,12 +52,25 @@ public:
 		m_IsCombat = true;
 	}
 
+	void SetCurMoveSpeed(float Speed)
+	{
+		m_CurMoveSpeed = Speed;
+	}
+
 	void SetCurrentNodeNull();
 
 public:
 	float GetRotateSpeed() const
 	{
 		return m_Data.RotateSpeedPerSec;
+	}
+	float GetMeleeAttackRange() const
+	{
+		return m_Data.MeleeAttackRange;
+	}
+	float GetCurMoveSpeed() const
+	{
+		return m_CurMoveSpeed;
 	}
 
 	bool IsPostAttackDelaying() const
@@ -74,7 +87,8 @@ public:
 	bool IsPlayerLeftBasedInLookDir(); // 플레이어가 몬스터가 보는 방향 기준 왼쪽에 있는지 판별
 	bool IsPlayerInMeleeAttackRange();
 	Vector3	ToPlayer();
-
+	float DistToPlayer();
+		
 public:
 	virtual bool Save(FILE* File);
 	virtual bool Load(FILE* File);

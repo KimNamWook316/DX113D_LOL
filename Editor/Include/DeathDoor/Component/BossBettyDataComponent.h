@@ -37,6 +37,9 @@ private :
     // 원거리 공격 Type
     BossBettyFarAttackType m_FarAttackType;
 
+    // Origin MoveTime
+    float m_OriginMoveSpeed;
+
     // 60%, 30% 가 될 때마다, Angry Attack 중에서 첫번째 Attack 설정하기 
     BossBettyHPState m_BettyHPState;
 
@@ -82,14 +85,23 @@ public :
     void OnExplodeBettyThrowBallCallback();
     // Spin 중간에 벽에 부딪히면, Spin Collide Animation 으로 바꿔주는 함수 
     void OnChangeFromSpinToSpinCollideWhenCollide(const CollisionResult&);
+    // MapSurroundingCollider 밖으로 나가는 것을 방지해주는 함수
+    void OnPreventGoingOutOfMapSurroundingCollider(const CollisionResult&);
     // Spin Collider 비활성화
     void OnBossBettyDisableSpinCollider();
     // Spin Collider 활성화
     void OnBossBettyEnableSpinCollider();
+    // Current Node 를 nullptr 로 세팅하기
+    void OnBossBettySetCurrentNodeNullPtr();
+    // Move Speed 조정
+    void OnBossBettyResetOriginalMoveSpeed();
 
     // Setter 함수 ---
 public:
-
+    void SetOriginSpeed(float OriginSpeed)
+    {
+        m_OriginMoveSpeed = OriginSpeed;
+    }
     void SetBossBettyThrowObject(class CGameObject* Object)
     {
         m_BossBettyThrowObject = Object;
@@ -98,16 +110,16 @@ public:
     {
         m_BettyHPState = BossBettyHPState::None;
     }
-    void SetCloseAngryAttackEnable(bool Enable)
+    void SetThrowAttackEnable(bool Enable)
     {
         m_ThrowFarAttackEnable = Enable;
     }
 
-    void IncCloseSequentialAttackNum()
+    void IncCloseSequentialAttackCount()
     {
         ++m_CloseSequentialAttackNum;
     }
-    void IncFarAttackNum()
+    void IncFarAttackCount()
     {
         ++m_FarAttackAttackNum;
 
@@ -193,6 +205,10 @@ public:
     BossBettyFarAttackType GetBettyFarAttackType() const
     {
         return m_FarAttackType;
+    }
+    float GetOriginMoveSpeed() const
+    {
+        return m_OriginMoveSpeed;
     }
 };
 

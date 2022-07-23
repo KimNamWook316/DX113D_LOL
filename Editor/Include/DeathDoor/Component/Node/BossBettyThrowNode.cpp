@@ -31,19 +31,25 @@ void CBossBettyThrowNode::Init()
 	std::string AnimName = "Throw";
 	CAnimationSequenceInstance* AnimInst = m_AnimationMeshComp->GetAnimationInstance();
 
+	// Start
 	// 던지기 전까지 Player 방향으로 회전할 수 있도록 한다.
 	AnimInst->AddNotify(AnimName, "OnTracePlayer", 0,
 		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnEnableLookPlayer);
-	AnimInst->AddNotify(AnimName, "OnDisableTracePlayer", 26,
-		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnDisableLookPlayer);
 
+	// Middle
 	AnimInst->AddNotify(AnimName, "MakeSnowBallAttackObj", 9, this, &CBossBettyThrowNode::MakeSnowBallAttackObj);
+
+	// End
 	AnimInst->AddNotify(AnimName, "ThrowSnowBallAttackObj", 27, this, &CBossBettyThrowNode::ThrowSnowBallAttackObj);
+	AnimInst->SetEndFunction(AnimName, 
+		(CMonsterDataComponent*)Data, &CMonsterDataComponent::SetCurrentNodeNull);
 }
 
 NodeResult CBossBettyThrowNode::OnStart(float DeltaTime)
 {
 	m_AnimationMeshComp->GetAnimationInstance()->ChangeAnimation("Throw");
+
+	m_Owner->SetCurrentNode(this);
 
 	return NodeResult::Node_True;
 }
@@ -72,6 +78,12 @@ void CBossBettyThrowNode::MakeSnowBallAttackObj()
 // Snow Ball Attack Obj 를 Player 방향으로 던지기 
 void CBossBettyThrowNode::ThrowSnowBallAttackObj()
 {
+	CBossBettyDataComponent* Data = dynamic_cast<CBossBettyDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
+
 	// BossBettyDataComponent 로부터, BossThrowBall Object 를 가져오고
 	// 거기에 적절한 설정들을 여기에 해줄 것이다.
+
+
+	// Throw Attack Enable 을 다시 False 로 바꿔준다
+	Data->SetThrowAttackEnable(false);
 }
