@@ -62,10 +62,12 @@ void CBossBettyDataComponent::Start()
             this, &CBossBettyDataComponent::OnPreventGoingOutOfMapSurroundingCollider);
     }
 
-    m_BossBettyAttackDownCollider = (CColliderBox3D*)(m_Object->FindComponent("BossBettyAttackCollider"));
+    m_BossBettyAttackDownCollider = dynamic_cast<CColliderBox3D*>((m_Object->FindComponent("BossBettyAttackCollider")));
 
     if (m_BossBettyAttackDownCollider)
     {
+        m_BossBettyAttackDownCollider->SetExtent(10.f, 10.f, 10.f);
+
         m_BossBettyAttackDownCollider->Enable(false);
 
         m_BossBettyAttackDownCollider->AddCollisionCallback(Collision_State::Begin,
@@ -217,8 +219,10 @@ void CBossBettyDataComponent::OnBossBettyApplyOutOfMapSurroundingColliderMoveSpe
 
 void CBossBettyDataComponent::OnBossBettyEnableAttackCollider()
 {
+    m_BossBettyAttackDownCollider->Enable(true);
 }
 
 void CBossBettyDataComponent::OnBossBettyDisableAttackCollider()
 {
+    m_BossBettyAttackDownCollider->Enable(false);
 }
