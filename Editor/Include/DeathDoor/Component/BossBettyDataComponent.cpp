@@ -60,7 +60,16 @@ void CBossBettyDataComponent::Start()
 
         m_BossBettySpinCollider->AddCollisionCallback(Collision_State::Stay,
             this, &CBossBettyDataComponent::OnPreventGoingOutOfMapSurroundingCollider);
+    }
 
+    m_BossBettyAttackDownCollider = (CColliderBox3D*)(m_Object->FindComponent("BossBettyAttackCollider"));
+
+    if (m_BossBettyAttackDownCollider)
+    {
+        m_BossBettyAttackDownCollider->Enable(false);
+
+        m_BossBettyAttackDownCollider->AddCollisionCallback(Collision_State::Begin,
+            this, &CBossBettyDataComponent::OnChangeFromSpinToSpinCollideWhenCollide);
     }
 
     // 근거리 사정 거리 판별 Square Pos 위치 만들기 
@@ -204,4 +213,12 @@ void CBossBettyDataComponent::OnBossBettyNormalShakeCamera()
 void CBossBettyDataComponent::OnBossBettyApplyOutOfMapSurroundingColliderMoveSpeed()
 {
    SetCurMoveSpeed(m_OriginMoveSpeed * 0.2f);
+}
+
+void CBossBettyDataComponent::OnBossBettyEnableAttackCollider()
+{
+}
+
+void CBossBettyDataComponent::OnBossBettyDisableAttackCollider()
+{
 }

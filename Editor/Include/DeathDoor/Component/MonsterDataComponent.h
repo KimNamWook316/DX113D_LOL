@@ -25,6 +25,8 @@ public:
 
 public:
 	void LookPlayer(float DeltaTime);
+	void RightLookPlayer(float DeltaTime);
+	void LeftLookPlayer(float DeltaTime);
 	void MoveZ(float DeltaTime);
 
 public:
@@ -32,6 +34,10 @@ public:
 	void OnEndAnimPostAttackDelayOff();
     void OnEnableLookPlayer();
 	void OnDisableLookPlayer();
+	void OnEnableRightLookPlayer();
+	void OnDisableRightLookPlayer();
+	void OnEnableLeftLookPlayer();
+	void OnDisableLeftLookPlayer();
 	void OnEnableMoveZ();
 	void OnDisableMoveZ();
 	void OnSetMoveSpeedZero(float DeltaTime)
@@ -122,6 +128,10 @@ protected:
 	float m_CurMoveSpeed;
 	bool m_LookPlayer;
 	bool m_MoveZ;
+	// 왼쪽으로만 무조건 돌아야 하는 순간
+	bool m_LeftLookPlayer;
+	// 오른쪽으로만 무조건 돌아야 하는 순간
+	bool m_RightLookPlayer;
 
 public:
 	class CMonsterNavAgent* GetMonsterNavAgent()	const;

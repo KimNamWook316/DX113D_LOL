@@ -15,6 +15,8 @@ CMonsterDataComponent::CMonsterDataComponent()	:
 	m_HitEffectMax(0.6f),
 	m_IsCombat(false),
 	m_LookPlayer(false),
+	m_LeftLookPlayer(false),
+	m_RightLookPlayer(false),
 	m_CurMoveSpeed(0.f)
 {
 	SetTypeID<CMonsterDataComponent>();
@@ -105,6 +107,21 @@ void CMonsterDataComponent::Update(float DeltaTime)
 	{
 		LookPlayer(DeltaTime);
 	}
+	else
+	{
+		if (m_RightLookPlayer)
+		{
+			// 오른쪽으로 돌아야 하는데 왼쪽으로 도는 설정도 true 라면 오류
+			if (m_LeftLookPlayer)
+				assert(false);
+		}
+		else  if (m_LeftLookPlayer)
+		{
+			// 오른쪽으로 돌아야 하는데 왼쪽으로 도는 설정도 true 라면 오류
+			if (m_RightLookPlayer)
+				assert(false);
+		}
+	}
 
 	if (m_MoveZ)
 	{
@@ -140,6 +157,16 @@ void CMonsterDataComponent::LookPlayer(float DeltaTime)
 			MyObj->AddWorldRotationY(-1.f * m_Data.RotateSpeedPerSec * DeltaTime);
 		}
 	}
+}
+
+void CMonsterDataComponent::RightLookPlayer(float DeltaTime)
+{
+	m_Object->AddWorldRotationY(-1.f * m_Data.RotateSpeedPerSec * DeltaTime);
+}
+
+void CMonsterDataComponent::LeftLookPlayer(float DeltaTime)
+{
+	m_Object->AddWorldRotationY(m_Data.RotateSpeedPerSec * DeltaTime);
 }
 
 void CMonsterDataComponent::MoveZ(float DeltaTime)
@@ -240,6 +267,26 @@ void CMonsterDataComponent::OnEnableLookPlayer()
 void CMonsterDataComponent::OnDisableLookPlayer()
 {
 	m_LookPlayer = false;
+}
+
+void CMonsterDataComponent::OnEnableRightLookPlayer()
+{
+	m_RightLookPlayer = true;
+}
+
+void CMonsterDataComponent::OnDisableRightLookPlayer()
+{
+	m_RightLookPlayer = false;
+}
+
+void CMonsterDataComponent::OnEnableLeftLookPlayer()
+{
+	m_LeftLookPlayer = false;
+}
+
+void CMonsterDataComponent::OnDisableLeftLookPlayer()
+{
+	m_LeftLookPlayer = false;
 }
 
 void CMonsterDataComponent::OnEnableMoveZ()

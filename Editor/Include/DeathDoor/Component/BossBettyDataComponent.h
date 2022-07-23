@@ -62,6 +62,8 @@ private :
     // Spin 하는 중에 벽과 충돌했는지 여부를 추가적으로 계속 조사하기 위해서
     // ColliderBox3D 를 하나 더 둘 것이다.
     class CColliderComponent* m_BossBettySpinCollider;
+    // Attack 당시 활성화 시킬 Collider
+    class CColliderComponent* m_BossBettyAttackDownCollider;
 
     // Boss Betty Throw Ball 투사체 Object
     class CGameObject* m_BossBettyThrowObject;
@@ -99,6 +101,10 @@ public :
     void OnBossBettyNormalShakeCamera();
     // MapSurroundingCollider 로 부터 서서히 벗어나게 하기 위한 Speed 세팅
     void OnBossBettyApplyOutOfMapSurroundingColliderMoveSpeed();
+    // Betty 공격 Collider Enable 처리 여부
+    void OnBossBettyEnableAttackCollider();
+    void OnBossBettyDisableAttackCollider();
+
 
     // Setter 함수 ---
 public:

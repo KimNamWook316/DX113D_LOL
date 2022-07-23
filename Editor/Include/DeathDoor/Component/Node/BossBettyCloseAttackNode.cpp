@@ -7,8 +7,10 @@
 #include "Scene/Scene.h"
 #include "Scene/SceneManager.h"
 #include "../BossBettyDataComponent.h"
+#include "BossBettyChangeAttackDirNode.h"
 
-CBossBettyCloseAttackNode::CBossBettyCloseAttackNode()
+CBossBettyCloseAttackNode::CBossBettyCloseAttackNode() :
+	m_CloseAttackAnimChangeEnable(true)
 {
 	SetTypeID(typeid(CBossBettyCloseAttackNode).hash_code());
 }
@@ -33,10 +35,10 @@ void CBossBettyCloseAttackNode::Init()
 	CAnimationSequenceInstance* AnimInst = m_AnimationMeshComp->GetAnimationInstance();
 
 	AnimInst->AddNotify(AnimName, "OnTracePlayer", 13,
-		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnEnableLookPlayer);
+		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnEnableLeftLookPlayer);
 
 	AnimInst->AddNotify(AnimName, "OnDisableTracePlayer", 20,
-		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnDisableLookPlayer);
+		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnDisableLeftLookPlayer);
 
 	AnimInst->AddNotify(AnimName, "OnSlashLeft", 19,
 		this, &CBossBettyCloseAttackNode::OnBossBettySlashLeftEffect);
@@ -51,10 +53,10 @@ void CBossBettyCloseAttackNode::Init()
 	AnimName = "SlashRight";
 
 	AnimInst->AddNotify(AnimName, "OnTracePlayer", 13,
-		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnEnableLookPlayer);
+		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnEnableRightLookPlayer);
 
 	AnimInst->AddNotify(AnimName, "OnDisableTracePlayer", 20,
-		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnDisableLookPlayer);
+		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnDisableRightLookPlayer);
 
 
 	AnimInst->AddNotify(AnimName, "OnSlashRight", 18,
@@ -110,10 +112,10 @@ NodeResult CBossBettyCloseAttackNode::OnStart(float DeltaTime)
 	// 근거리 공격 타입을 체크한다.
 	m_CloseAttackType = DetermineBettyCloseAttackType();
 
-	m_Owner->SetCurrentNode(this);
-
 	if (!m_CloseAttackAnimChangeEnable)
 		return NodeResult::Node_True;
+
+	m_Owner->SetCurrentNode(this);
 
 	m_CloseAttackAnimChangeEnable = false;
 
@@ -125,12 +127,12 @@ NodeResult CBossBettyCloseAttackNode::OnStart(float DeltaTime)
 	}
 	break;
 	case BossBettyCloseAttackType::PunchRight:
-	{
+	{	
 		AnimInst->ChangeAnimation("PunchRight");
 	}
 	break;
 	case BossBettyCloseAttackType::SlashLeft:
-	{
+	{	
 		AnimInst->ChangeAnimation("SlashLeft");
 	}
 	break;
@@ -144,6 +146,17 @@ NodeResult CBossBettyCloseAttackNode::OnStart(float DeltaTime)
 		AnimInst->ChangeAnimation("FirstSlam");
 	}
 	break;
+	case BossBettyCloseAttackType::NotInCloseRange:
+	{
+		m_CloseAttackAnimChangeEnable = true;
+
+		m_Owner->SetCurrentNode(nullptr);
+
+		AnimInst->ChangeAnimation("BackUpStep");
+
+		m_Owner->SetCurrentNode(m_Owner->FindNodeByType<CBossBettyChangeAttackDirNode>());
+	}
+	break;
 	}
 
 	return NodeResult::Node_True;
@@ -151,15 +164,6 @@ NodeResult CBossBettyCloseAttackNode::OnStart(float DeltaTime)
 
 NodeResult CBossBettyCloseAttackNode::OnUpdate(float DeltaTime)
 {
-	if (m_CloseAttackType == BossBettyCloseAttackType::NotInCloseRange)
-	{
-		m_Owner->SetCurrentNode(nullptr);
-
-		m_CloseAttackAnimChangeEnable = true;
-
-		return NodeResult::Node_False;
-	}
-
 	return NodeResult::Node_True;
 }
 
@@ -265,11 +269,10 @@ void CBossBettyCloseAttackNode::OnBossBettyCommonEndFunctionOfCloseAttack()
 	CBossBettyDataComponent* Data = dynamic_cast<CBossBettyDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
 	Data->OnDisableLookPlayer();
 
-	// 연속해서 Close Attack Animation 으로 바뀔 수 있게 끔 IdleBeast Animation 을 Change 해준다.
-	// m_AnimationMeshComp->GetAnimationInstance()->ChangeAnimation("IdleBeast");
-
 	// Current Node 를 nullptr 로 하여, 다른 Node 도 검사할 수 있게 한다.
 	m_Owner->SetCurrentNode(nullptr);
+
+	m_CloseAttackAnimChangeEnable = true;
 }
 
 void CBossBettyCloseAttackNode::OnBossBettyCommonStartFunctionOfCloseAttack()

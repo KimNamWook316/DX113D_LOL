@@ -391,7 +391,7 @@ void CAnimationEditor::OnClearExistingAnimationSeqInfos()
 		return;
 
 	m_Animation->ClearAnimationSequenceFromAnimationEditor();
-
+	
 	// Animation Mesh Component 에서 다시 새롭게 Animation Instance 를 만들어낸다.
 	m_Animation = dynamic_cast<CAnimationMeshComponent*>(m_3DTestObject->GetRootComponent())->CreateBasicAnimationInstance();
 
@@ -533,8 +533,6 @@ void CAnimationEditor::OnLoadExcel()
 
 		// 기존 KeyName 의 복사본을 만든다.
 		std::string PrevExcelKeyName = m_ExcelKeyName;
-
-
 
 		m_ExcelKeyName = LoadedExcelKey;
 
@@ -932,7 +930,9 @@ void CAnimationEditor::OnLoadAnimationInstance()
 		else
 		{
 			// 기존 Animation List에 보여지던 , 즉, 현재 Animation에 Added 되었던 모든 Sequence 정보를 지워준다
-			OnClearExistingAnimationSeqInfos();
+			OnDeleteExisting3DObject();
+
+			OnCreateSample3DObject();
 		}
 
 		// TODO : Animation Instance 는 그냥 지워줘 버리면 안되나 ?
@@ -946,10 +946,6 @@ void CAnimationEditor::OnLoadAnimationInstance()
 			OnDeleteExisting3DObject();
 			return;
 		}
-
-		// const char* CurSeqFileName = m_Animation->GetCurrentAnimation()->GetAnimationSequence()->GetSequenceFileNameMultibyte();
-		// if (!LoadElementsForSqcLoading(CurSeqFileName))
-		// 	return;
 
 		std::pair<bool, std::string> LoadResult = CResourceManager::GetInst()->LoadMeshTextureBoneInfo(m_Animation);
 
