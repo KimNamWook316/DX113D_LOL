@@ -7,11 +7,15 @@
 #include "../DataManager.h"
 #include "GameStateComponent.h"
 #include "Component/ColliderComponent.h"
+#include "Scene/Navigation3DManager.h"
 
 CPlayerDataComponent::CPlayerDataComponent()	:
 	m_OnSlash(false),
 	m_AnimComp(nullptr),
-	m_Body(nullptr)
+	m_Body(nullptr),
+	m_FrameCount(0),
+	m_MouseLButtonDown(false)
+
 {
 	SetTypeID<CPlayerDataComponent>();
 	m_ComponentType = Component_Type::ObjectComponent;
@@ -33,6 +37,11 @@ void CPlayerDataComponent::Start()
 	CInput::GetInst()->CreateKey("WeaponArrow", '1');
 	CInput::GetInst()->CreateKey("WeaponFire", '2');
 	CInput::GetInst()->CreateKey("WeaponChain", '3');
+	CInput::GetInst()->CreateKey("MoveForward", 'W');
+	CInput::GetInst()->CreateKey("MoveBack", 'S');
+	CInput::GetInst()->CreateKey("MoveLeft", 'A');
+	CInput::GetInst()->CreateKey("MoveRight", 'D');
+	CInput::GetInst()->CreateKey("Roll", VK_SPACE);
 
 	CInput::GetInst()->SetKeyCallback("WeaponArrow", KeyState_Down, this, &CPlayerDataComponent::SetPlayerAbilityArrow);
 	CInput::GetInst()->SetKeyCallback("WeaponFire", KeyState_Down, this, &CPlayerDataComponent::SetPlayerAbilityFire);
@@ -52,8 +61,6 @@ void CPlayerDataComponent::Start()
 
 	m_Data = CDataManager::GetInst()->GetObjectData("Player");
 	m_Body = (CColliderComponent*)m_Object->FindComponent("Body");
-	//CGameStateComponent::Start가 PlayerDataComponent::Start보다 먼저 호출되면 GameStateComponent가 가지고 있는 m_Data는 데이터가 아무것도 들어있지 않게돼서 여기서 강제로 Set
-	//m_Object->FindObjectComponentFromType<CGameStateComponent>()->GetObjectDataComponent()->SetObjectData(m_Data);
 
 }
 
@@ -66,6 +73,36 @@ bool CPlayerDataComponent::Init()
 void CPlayerDataComponent::Update(float DeltaTime)
 {
 	//CObjectComponent::Update(DeltaTime);
+
+	//if (m_AttackCount > 3)
+	//	m_AttackCount = 0;
+
+	m_FrameCount = 0;
+
+	CGameStateComponent* Comp = m_Object->FindObjectComponentFromType<CGameStateComponent>();
+
+	if (Comp->IsTreeUpdate())
+	{
+		//++m_FrameCount;
+		bool LButtonDown = CInput::GetInst()->GetMouseLButtonClick();
+		bool LButtonUp = CInput::GetInst()->GetMouseLButtonUp();
+
+		// 
+		if (LButtonDown && !m_MouseLButtonDown && !LButtonUp)
+		{
+			m_MouseLButtonDown = true;
+
+			m_KeyStateQueue.push(VK_LBUTTON);
+
+			if (m_KeyStateQueue.size() > 1)
+				int a = 3;
+
+		}
+
+		if (LButtonUp)
+			m_MouseLButtonDown = false;
+
+	}
 }
 
 void CPlayerDataComponent::PostUpdate(float DeltaTime)
@@ -157,4 +194,78 @@ void CPlayerDataComponent::OnRoll()
 void CPlayerDataComponent::OnRollEnd()
 {
 	m_Body->Enable(true);
+}
+
+void CPlayerDataComponent::ForceUpdateAttackDirection()
+{
+	CNavigation3DManager* Manager = m_Object->GetScene()->GetNavigation3DManager();
+
+	Vector3 TargetPos;
+	Vector3 ZAxis = m_Object->GetWorldAxis(AXIS::AXIS_Z);
+
+	Vector3 CurrentForwardVector = Vector3(-ZAxis.x, 0.f, -ZAxis.z);
+	Vector3 DestForwardVector;
+	Vector3 PickingPoint;
+	Vector3 CrossVec;
+	bool Over180;
+
+	if (Manager->CheckNavMeshPickingPoint(PickingPoint))
+	{
+		Vector3 CurrentPos = m_Object->GetWorldPos();
+		DestForwardVector = Vector3(PickingPoint.x, 0.f, PickingPoint.z) - Vector3(CurrentPos.x, 0.f, CurrentPos.z);
+		DestForwardVector.Normalize();
+
+		CrossVec = Vector3(CurrentForwardVector.x, CurrentForwardVector.y, CurrentForwardVector.z).Cross(Vector3(DestForwardVector.x, DestForwardVector.y, -DestForwardVector.z));
+
+		// 반시계 방향으로 180도가 넘는다
+		if (CrossVec.y < 0)
+			Over180 = true;
+		else
+			Over180 = false;
+	}
+
+	else
+	{
+		PickingPoint = m_Object->GetWorldPos();
+		DestForwardVector = CurrentForwardVector;
+		return;
+	}
+
+	//////
+
+	Vector3 CurrentFowardYZero = Vector3(CurrentForwardVector.x, 0.f, CurrentForwardVector.z);
+	Vector3 DestForwardYZero = Vector3(DestForwardVector.x, 0.f, DestForwardVector.z);
+
+	CrossVec = Vector3(CurrentFowardYZero.x, 0.f, CurrentFowardYZero.z).Cross(Vector3(DestForwardYZero.x, 0.f, DestForwardYZero.z));
+
+	// 반시계 방향으로 180도가 넘는다
+	if (CrossVec.y < 0)
+		Over180 = true;
+	else
+		Over180 = false;
+
+	float DotProduct = CurrentFowardYZero.Dot(DestForwardYZero);
+
+	if (DotProduct > 0.99f || DotProduct < -0.99f)
+	{
+		return;
+	}
+
+	float Rad = acosf(DotProduct);
+	float Degree = RadianToDegree(Rad);
+
+	DestForwardVector.Normalize();
+
+	// CurretForwardVector기준 DestForwardVector로 시계 방향으로 180도가 넘는다면
+	if (Over180)
+	{
+		m_Object->AddWorldRotationY(-Degree);
+	}
+
+	else
+	{
+		m_Object->AddWorldRotationY(Degree);
+	}
+
+	m_AttackDir = DestForwardVector;
 }
