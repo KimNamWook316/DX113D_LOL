@@ -43,6 +43,9 @@ public:
     virtual void OnDeadPaperBurnEnd();			// PaperBurn 종료시 호출
     virtual void OnDeadAnimStart();				// Death Animation 시작시 호출
     virtual void OnDeadAnimEnd();				// Death Animation 종료시 호출
+    virtual void OnPlayerEnterZone(const CollisionResult& Result);		// Boss Cutscene Trigger
+	virtual void OnStartCutScene();
+    virtual void OnEndCutScene();
 
 public:
 	virtual void SetIsHit(bool Hit) override;
@@ -102,9 +105,10 @@ protected:
 	class CColliderBox3D* m_MeleeAttackCollider;
 	class CGameStateComponent* m_State;
 
-	bool m_PostAttackDelaying; // 공격 후딜레이 중인지 여부
-	bool m_IsCombat;
+	bool m_PostAttackDelaying;  // 공격 후딜레이 중인지 여부
+	bool m_IsCombat;			// 전투 시작 여부
 
+	// Hit Effect 관련 변수
 	bool m_HitEffectStart;
 	float m_HitEffectTimer;
 	float m_HitEffectMax;
@@ -116,16 +120,26 @@ protected:
 	std::vector<Vector4> m_vecOriginAmbient;
 	std::vector<Vector4> m_vecOriginEmissive;
 
+	// Move 관련 변수
 	float m_CurMoveSpeed;
 	bool m_LookPlayer;
 	bool m_MoveZ;
 
+	// Death Effect 관련 변수
     class CPaperBurnComponent* m_PaperBurn;
     bool m_DeathColorChangeStart;
     float m_DeathTimer;
     float m_DeathColorChangeTimeMax;
 	Vector4 m_DeathColorStart;
 	Vector4	m_DeathColorEnd;
+
+	// CutScene관련 변수
+    bool m_PlayerEnterZone;
+    class CColliderBox3D* m_PlayerEnterZoneTrigger;
+
+    bool m_IsCutScenePlaying;
+    class CCameraComponent* m_CutSceneCam;
+    Vector3 m_CutSceneBeforePlayerPos;
 
 public:
 	class CMonsterNavAgent* GetMonsterNavAgent()	const;
