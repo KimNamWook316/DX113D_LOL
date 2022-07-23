@@ -12,7 +12,7 @@ CMonsterDataComponent::CMonsterDataComponent()	:
 	m_HitBox(nullptr),
 	m_HitEffectFlag(0),
 	m_HitEffectTimer(0.f),
-	m_HitEffectMax(0.6f),
+	m_HitEffectMax(0.15f),
 	m_IsCombat(false),
 	m_LookPlayer(false),
 	m_CurMoveSpeed(0.f)
@@ -96,6 +96,8 @@ void CMonsterDataComponent::Start()
 
 void CMonsterDataComponent::Update(float DeltaTime)
 {
+	CObjectDataComponent::Update(DeltaTime);
+
 	if (m_HitEffectStart)
 	{
 		ActiveHitEffect(DeltaTime);
@@ -158,13 +160,15 @@ void CMonsterDataComponent::SetIsHit(bool Hit)
 {
 	CObjectDataComponent::SetIsHit(Hit);
 
-	if (m_HitEffectStart)
+	if (Hit)
 	{
-		m_HitEffectFlag = 0;
-		m_HitEffectTimer = 0.f;
+		if (!m_HitEffectStart)
+		{
+			m_HitEffectFlag = 0;
+			m_HitEffectTimer = 0.f;
+			m_HitEffectStart = true;
+		}
 	}
-
-	m_HitEffectStart = true;
 }
 
 void CMonsterDataComponent::SetCurrentNodeNull()
@@ -297,32 +301,37 @@ void CMonsterDataComponent::ActiveHitEffect(float DeltaTime)
 	m_HitEffectTimer += DeltaTime;
 
 	// 조건이 되었을 때 컬러 체인지를 한 번만 수행
-	if ((m_HitEffectFlag & HIT_EFFECT_FIRST) == 0 && (m_HitEffectTimer <= m_HitEffectMax / 5.f))
+	if ((m_HitEffectFlag & HIT_EFFECT_FIRST) == 0 && ((m_HitEffectTimer <= m_HitEffectMax / 5.f)))
 	{
 		m_HitEffectFlag |= HIT_EFFECT_FIRST;
 		ChangeHitColor(HIT_EFFECT_FIRST);
+		return;
 	}
-	else if ((m_HitEffectFlag & HIT_EFFECT_SECOND) == 0 && (m_HitEffectTimer <= (m_HitEffectMax / 5.f) * 2))
+	else if ((m_HitEffectFlag & HIT_EFFECT_SECOND) == 0 && (m_HitEffectTimer >= ((m_HitEffectMax * 2.f / 5.f))))
 	{
 		m_HitEffectFlag |= HIT_EFFECT_SECOND;
 		ChangeHitColor(HIT_EFFECT_SECOND);
+		return;
 	}
-	else if ((m_HitEffectFlag & HIT_EFFECT_THIRD) == 0  && (m_HitEffectTimer <= (m_HitEffectMax / 5.f) * 3))
+	else if ((m_HitEffectFlag & HIT_EFFECT_THIRD) == 0  && (m_HitEffectTimer >= ((m_HitEffectMax * 3.f / 5.f))))
 	{
 		m_HitEffectFlag |= HIT_EFFECT_THIRD;
 		ChangeHitColor(HIT_EFFECT_THIRD);
+		return;
 	}
-	else if ((m_HitEffectFlag & HIT_EFFECT_FOURTH) == 0 && m_HitEffectTimer <= (m_HitEffectMax / 5.f) * 4)
+	else if ((m_HitEffectFlag & HIT_EFFECT_FOURTH) == 0 && m_HitEffectTimer >= ((m_HitEffectMax * 4.f / 5.f)))
 	{
 		m_HitEffectFlag |= HIT_EFFECT_FOURTH;
 		ChangeHitColor(HIT_EFFECT_FOURTH);
+		return;
 	}
-	else if ((m_HitEffectFlag & HIT_EFFECT_FIFTH) == 0 && m_HitEffectMax >= m_HitEffectMax)
+	else if ((m_HitEffectFlag & HIT_EFFECT_FIFTH) == 0 && m_HitEffectTimer >= m_HitEffectMax)
 	{
 		m_HitEffectFlag |= HIT_EFFECT_FIFTH;
 		ChangeHitColor(HIT_EFFECT_FIFTH);
+		return;
 	}
-	else
+	else if (m_HitEffectTimer >= m_HitEffectMax + (m_HitEffectMax / 5.f))
 	{
 		m_HitEffectStart = false;
 		m_HitEffectTimer = 0.f;

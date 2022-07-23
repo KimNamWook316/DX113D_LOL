@@ -17,7 +17,6 @@ protected:
 protected:
 	ObjectData m_Data;
 	bool m_IsHit;
-	bool m_IsHitPrevFrame;
 	bool m_NoInterrupt;	// 다른 상태로 전환 불가능한 상태인지
 
 public:
@@ -29,7 +28,7 @@ public:
 	virtual void SetIsHit(bool Hit)
 	{
 		m_IsHit = Hit;
-		m_IsHitPrevFrame = false;
+		// m_IsHitPrevFrame = false;
 	}
 
 	bool GetIsHit()	const

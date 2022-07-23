@@ -2,11 +2,11 @@
 
 #include "ObjectDataComponent.h"
 
-#define HIT_EFFECT_FIRST	0x1
-#define HIT_EFFECT_SECOND	0x2
-#define HIT_EFFECT_THIRD	0x4
-#define HIT_EFFECT_FOURTH	0x8
-#define HIT_EFFECT_FIFTH	0xF
+#define HIT_EFFECT_FIRST	0x01
+#define HIT_EFFECT_SECOND	0x02
+#define HIT_EFFECT_THIRD	0x04
+#define HIT_EFFECT_FOURTH	0x08
+#define HIT_EFFECT_FIFTH	0x10
 
 class CMonsterDataComponent :
     public CObjectDataComponent

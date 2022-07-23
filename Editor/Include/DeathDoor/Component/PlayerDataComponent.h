@@ -17,6 +17,7 @@ private:
 	PlayerData m_PlayerData;
 	bool m_OnSlash;
 	class CAnimationMeshComponent* m_AnimComp;
+	class CPlayerNormalAttackCheckCollider* m_AttackCheckCollider;
 	class CColliderComponent* m_Body;
 	Vector3 m_ShootDir;
 
@@ -38,15 +39,9 @@ public:
 	virtual bool LoadOnly(FILE* File) override;
 
 public:
-	void SetTrueOnSlash()
-	{
-		m_OnSlash = true;
-	}
+	void SetTrueOnSlash();
 
-	void SetFalseOnSlash()
-	{
-		m_OnSlash = false;
-	}
+	void SetFalseOnSlash();
 
 	void SetOnSlash(bool Slash)
 	{
@@ -100,5 +95,7 @@ public:
 	void OnHitRecoverEnd();
 	void OnRoll();
 	void OnRollEnd();
+	void OnEnableAttackCollider();
+	void OnDisableAttackCollider();
 };
 

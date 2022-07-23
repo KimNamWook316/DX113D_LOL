@@ -4,6 +4,7 @@
 #include "Component/CameraComponent.h"
 #include "GameObject/GameObject.h"
 #include "Scene/Scene.h"
+#include "../Component/PlayerDataComponent.h"
 
 CKnightDataComponent::CKnightDataComponent()	:
 	m_JumpAttackRange(0.f),
@@ -49,11 +50,26 @@ void CKnightDataComponent::Update(float DeltaTime)
 void CKnightDataComponent::OnInActiveMeleeAttackCollider()
 {
 	m_MeleeAttackCollider->Enable(false);
+
+	// Player Hit False 贸府
+	CGameObject* Player = m_Scene->GetPlayerObject();
+	if (Player)
+	{
+		CPlayerDataComponent* PlayerData = Player->FindComponentFromType<CPlayerDataComponent>();
+		PlayerData->SetIsHit(false);
+	}
 }
 
 void CKnightDataComponent::OnHitMeleeAttack(const CollisionResult& Result)
 {
-	// TODO : Boss Knight - Player Hit 贸府
+	CGameObject* Player = m_Scene->GetPlayerObject();
+
+	CPlayerDataComponent* PlayerData = Player->FindObjectComponentFromType<CPlayerDataComponent>();
+
+	if (PlayerData)
+	{
+		PlayerData->SetIsHit(true);
+	}
 }
 
 void CKnightDataComponent::OnLookPlayerMove(float DeltaTime)

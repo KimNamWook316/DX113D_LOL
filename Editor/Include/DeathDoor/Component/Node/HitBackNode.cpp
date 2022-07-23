@@ -27,6 +27,7 @@ NodeResult CHitBackNode::OnStart(float DeltaTime)
 
 
 	m_AnimationMeshComp->GetAnimationInstance()->ChangeAnimation("PlayerHitBack");
+	Comp->SetFalseOnSlash();
 
 	Comp->SetNoInterrupt(true);
 
