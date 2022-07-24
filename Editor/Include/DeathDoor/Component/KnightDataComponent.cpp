@@ -4,6 +4,8 @@
 #include "Component/CameraComponent.h"
 #include "Component/PaperBurnComponent.h"
 #include "Component/AnimationMeshComponent.h"
+#include "../Component/PlayerDataComponent.h"
+#include "../Component/GameStateComponent.h"
 #include "GameObject/GameObject.h"
 #include "Scene/Scene.h"
 
@@ -32,11 +34,6 @@ void CKnightDataComponent::Start()
 	m_Data = CDataManager::GetInst()->GetObjectData("BossKnight");
 
 	m_JumpAttackRange = m_Data.JumpAttackRange;
-
-	m_PlayerEnterZoneTrigger = (CColliderBox3D*)m_Object->FindComponent("PlayerEnterTrigger");
-	m_CutSceneCam = m_Object->FindComponentFromType<CCameraComponent>();
-
-	m_PlayerEnterZoneTrigger->AddCollisionCallback(Collision_State::Begin, this, &CKnightDataComponent::OnPlayerEnterZone);
 	
 	m_MeleeAttackCollider->Enable(false);
 }
@@ -152,30 +149,6 @@ void CKnightDataComponent::OnWalk(float DeltaTime)
 	m_Object->AddWorldPosByLocalAxis(AXIS::AXIS_Z, -m_Data.MoveSpeed * DeltaTime);
 }
 
-void CKnightDataComponent::OnPlayerEnterZone(const CollisionResult& Result)
-{
-	m_PlayerEnterZoneTrigger->Enable(false);
-
-	m_PlayerEnterZone = true;
-
-	if (m_CutSceneCam)
-	{
-		m_Scene->GetCameraManager()->KeepCamera();
-		m_Scene->GetCameraManager()->SetCurrentCamera(m_CutSceneCam);
-	}
-}
-
-void CKnightDataComponent::OnEndCutScenePlaying()
-{
-	m_IsCutScenePlaying = false;
-	OnCombatStart();
-
-	if (m_CutSceneCam)
-	{
-		m_Scene->GetCameraManager()->ReturnCamera();
-	}
-}
-
 void CKnightDataComponent::OnStartJumpAttackMove()
 {
 	m_CurMoveSpeed = m_Data.MoveSpeed * 5.f;
@@ -199,6 +172,11 @@ void CKnightDataComponent::OnEndContinueAttack()
 {
 	SetCurrentNodeNull();
 	m_ContinueAttack = false;
+}
+
+void CKnightDataComponent::OnCutSceneSlamFloor()
+{
+	m_Scene->GetCameraManager()->ShakeCamera(0.5f, 2.f);
 }
 
 void CKnightDataComponent::OnDeadAnimStart()

@@ -123,6 +123,15 @@ void CMonsterDataComponent::Start()
 	CAnimationSequenceInstance* AnimInst = m_AnimMesh->GetAnimationInstance();
 	AnimInst->AddNotify("Death", "DeathStart", 0, this, &CMonsterDataComponent::OnDeadAnimStart);
 	AnimInst->SetEndFunction("Death", this, &CMonsterDataComponent::OnDeadAnimEnd);
+
+	// CutScene 관련 ( Enter Trigger, CutScene Cam, Collider CallBack)
+	m_CutSceneCam = m_Object->FindComponentFromType<CCameraComponent>();
+	m_PlayerEnterZoneTrigger = (CColliderBox3D*)m_Object->FindComponent("PlayerEnterTrigger");
+
+	if (m_PlayerEnterZoneTrigger)
+	{
+		m_PlayerEnterZoneTrigger->AddCollisionCallback(Collision_State::Begin, this, &CMonsterDataComponent::OnPlayerEnterZone);
+	}
 }
 
 void CMonsterDataComponent::Update(float DeltaTime)
@@ -268,6 +277,65 @@ void CMonsterDataComponent::OnDeadAnimEnd()
 {
 	// Death 애니메이션이 끝나면 PaperBurn을 켠다.
 	m_PaperBurn->StartPaperBurn();
+}
+
+void CMonsterDataComponent::OnPlayerEnterZone(const CollisionResult& Result)
+{
+	if (m_PlayerEnterZoneTrigger)
+	{
+		m_PlayerEnterZoneTrigger->Enable(false);
+	}
+
+	m_PlayerEnterZone = true;
+
+	if (m_CutSceneCam)
+	{
+		m_Scene->GetCameraManager()->KeepCamera();
+		m_Scene->GetCameraManager()->SetCurrentCamera(m_CutSceneCam);
+	}
+}
+
+void CMonsterDataComponent::OnStartCutScene()
+{
+	CGameObject* PlayerObj = m_Scene->GetPlayerObject();
+
+	// 플레이어 시야에서 사라지게 하고, 입력 받지 않게 함
+	if (PlayerObj)
+	{
+		m_CutSceneBeforePlayerPos = PlayerObj->GetWorldPos();
+		PlayerObj->SetWorldPos(-1000.f, -1000.f, -1000.f);
+
+		CGameStateComponent* PlayerState = PlayerObj->FindComponentFromType<CGameStateComponent>();
+
+		PlayerState->SetTreeUpdate(false);
+	}
+
+	m_IsCutScenePlaying = true;
+}
+
+void CMonsterDataComponent::OnEndCutScene()
+{
+	m_IsCutScenePlaying = false;
+
+	// 전투 상태 on
+	OnCombatStart();
+
+	if (m_CutSceneCam)
+	{
+		m_Scene->GetCameraManager()->ReturnCamera();
+	}
+
+	// 플레이어 다시 예전 위치로
+	CGameObject* PlayerObj = m_Scene->GetPlayerObject();
+
+	if (PlayerObj)
+	{
+		PlayerObj->SetWorldPos(m_CutSceneBeforePlayerPos);
+
+		CGameStateComponent* PlayerState = PlayerObj->FindComponentFromType<CGameStateComponent>();
+
+		PlayerState->SetTreeUpdate(true);
+	}
 }
 
 void CMonsterDataComponent::SetIsHit(bool Hit)
