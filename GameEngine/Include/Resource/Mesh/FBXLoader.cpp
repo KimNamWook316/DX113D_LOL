@@ -955,7 +955,7 @@ void CFBXLoader::LoadAniFile()
 	char FullPath[MAX_PATH] = {};
 
 	strcpy_s(FullPath, Info->PathMultibyte);
-	strcat_s(FullPath, "Player.ani");
+	strcat_s(FullPath, "Boss_Crow.ani");
 
 	fopen_s(&File, FullPath, "rb");
 

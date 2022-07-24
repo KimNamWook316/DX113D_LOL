@@ -186,6 +186,7 @@
     </ClCompile>
     <ClCompile Include="DeathDoor\Component\ArrowComponent.cpp" />
     <ClCompile Include="DeathDoor\Component\BossBettyDataComponent.cpp" />
+    <ClCompile Include="DeathDoor\Component\CrowBossDataComponent.cpp" />
     <ClCompile Include="DeathDoor\Component\EyeLaserComponent.cpp" />
     <ClCompile Include="DeathDoor\Component\GameBehaviorTree.cpp" />
     <ClCompile Include="DeathDoor\Component\GameStateComponent.cpp" />
@@ -346,6 +347,7 @@
     </ClInclude>
     <ClInclude Include="DeathDoor\Component\ArrowComponent.h" />
     <ClInclude Include="DeathDoor\Component\BossBettyDataComponent.h" />
+    <ClInclude Include="DeathDoor\Component\CrowBossDataComponent.h" />
     <ClInclude Include="DeathDoor\Component\EyeLaserComponent.h" />
     <ClInclude Include="DeathDoor\Component\GameBehaviorTree.h" />
     <ClInclude Include="DeathDoor\Component\GameStateComponent.h" />

@@ -83,6 +83,7 @@ enum class DDObjectComponentType
 	MonsterData,
 	KnightData,
 	BossBettyData,
+	CrowBossData,
 	LurkerData,
 	MonsterNavAgent,
 	ProjectileComponent,

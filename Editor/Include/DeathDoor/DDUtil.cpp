@@ -16,6 +16,7 @@
 #include "Component\PlayerBowComponent.h"
 #include "Component\ProjectileComponent.h"
 #include "Component\ArrowComponent.h"
+#include "Component\CrowBossDataComponent.h"
 
 std::string CDDUtil::DDConditionNodeTypeToString(DDConditionNode NodeType)
 {
@@ -492,6 +493,9 @@ std::string CDDUtil::DDObjectComponentTypeToString(DDObjectComponentType Type)
 	case DDObjectComponentType::BossBettyData:
 		return "BossBettyData";
 
+	case DDObjectComponentType::CrowBossData:
+		return "CrowBossData";
+
 	case DDObjectComponentType::LurkerData:
 		return "LurkerData";
 
@@ -534,6 +538,10 @@ DDObjectComponentType CDDUtil::StringToDDObjectComponentType(const std::string& 
 	{
 		return DDObjectComponentType::BossBettyData;
 	}
+	else if (Str == "CrowBossData")
+	{
+		return DDObjectComponentType::CrowBossData;
+	}
 	else if (Str == "LurkerData")
 	{
 		return DDObjectComponentType::LurkerData;
@@ -564,6 +572,8 @@ size_t CDDUtil::DDObjectComponentTypeToTypeID(DDObjectComponentType Type)
 		return typeid(CKnightDataComponent).hash_code();
 	case DDObjectComponentType::BossBettyData:
 		return typeid(CBossBettyDataComponent).hash_code();
+	case DDObjectComponentType::CrowBossData:
+		return typeid(CCrowBossDataComponent).hash_code();
 	case DDObjectComponentType::MonsterData:
 		return typeid(CMonsterDataComponent).hash_code();
 	case DDObjectComponentType::ObjectDataComponent:

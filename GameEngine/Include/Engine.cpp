@@ -40,7 +40,10 @@ CEngine::CEngine()	:
 #endif
 
 	//_CrtSetBreakAlloc(8951);
-	//m_ClearColor[1] = 1.f; 
+	m_ClearColor[0] = 0.88f; 
+	m_ClearColor[1] = 0.88f; 
+	m_ClearColor[2] = 0.88f; 
+	 
 	srand(unsigned int(GetTickCount()));
 	rand();
 }

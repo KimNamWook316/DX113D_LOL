@@ -69,6 +69,8 @@
 
 #include "GameStateComponent.h"
 
+
+
 CGameBehaviorTree::CGameBehaviorTree()
 {
 }
