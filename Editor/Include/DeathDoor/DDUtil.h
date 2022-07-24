@@ -24,5 +24,8 @@ public:
 	static std::string DDObjectComponentTypeToString(DDObjectComponentType Type);
 	static DDObjectComponentType StringToDDObjectComponentType(const std::string& Str);
 	static size_t DDObjectComponentTypeToTypeID(DDObjectComponentType Type);
+
+	// 두 컬러를 시간에 따라 보간해주는 함수
+	static Vector4 LerpColor(const Vector4& ColorStart, const Vector4& ColorEnd, float ElapsedTime, float MaxTime);
 };
 

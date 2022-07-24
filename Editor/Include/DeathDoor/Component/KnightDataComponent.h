@@ -30,12 +30,13 @@ public:
     void OnEnableLookAndMove();
     void OnDisableLookAndMove();
     void OnWalk(float DeltaTime);
-    void OnPlayerEnterZone(const CollisionResult& Result);
-    void OnEndCutScenePlaying();
     void OnStartJumpAttackMove();
     void OnEndJumpAttackMove();
     void OnEndJumpAttack();
     void OnEndContinueAttack();
+    void OnCutSceneSlamFloor();
+    virtual void OnDeadAnimStart() override;
+    virtual void OnDeadPaperBurnEnd() override;
 
 public:
     int GetMeleeAttackCount() const
@@ -94,11 +95,6 @@ public:
         m_AttackRot = Type;
     }
 
-    void OnStartCutScene()
-    {
-        m_IsCutScenePlaying = true;
-    }
-
 protected:
     Knight_Attack_Rot_Type m_AttackRot;
     Vector3 m_FinalTraceZAxis;
@@ -106,11 +102,5 @@ protected:
     float m_JumpAttackRange;
 
     int m_MeleeAttackCount;
-
-    bool m_PlayerEnterZone;
-    class CColliderBox3D* m_PlayerEnterZoneTrigger;
-
-    bool m_IsCutScenePlaying;
-    class CCameraComponent* m_CutSceneCam;
 };
 

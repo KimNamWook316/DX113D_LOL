@@ -591,3 +591,10 @@ size_t CDDUtil::DDObjectComponentTypeToTypeID(DDObjectComponentType Type)
 	}
 	return -1;
 }
+
+Vector4 CDDUtil::LerpColor(const Vector4& ColorStart, const Vector4& ColorEnd, float ElapsedTime, float MaxTime)
+{
+	float Ratio = ElapsedTime / MaxTime;
+
+	return (ColorStart * (1.f - Ratio) + ColorEnd * Ratio);
+}

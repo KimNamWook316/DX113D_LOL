@@ -254,6 +254,31 @@ CNode* CGameBehaviorTree::LoadNode(CNode* Parent, size_t TypeID)
 		NewNode = MakeNode<CPathFindEnableCheck>(Parent, OwnerObject);
 	}
 
+	else if (TypeID == typeid(CHitCheckNode).hash_code())
+	{
+		NewNode = MakeNode<CHitCheckNode>(Parent, OwnerObject);
+	}
+
+	else if (TypeID == typeid(CHitBackNode).hash_code())
+	{
+		NewNode = MakeNode<CHitBackNode>(Parent, OwnerObject);
+	}
+
+	else if (TypeID == typeid(CRollInputCheck).hash_code())
+	{
+		NewNode = MakeNode<CRollInputCheck>(Parent, OwnerObject);
+	}
+
+	else if (TypeID == typeid(CUpdateInputQueue).hash_code())
+	{
+		NewNode = MakeNode<CUpdateInputQueue>(Parent, OwnerObject);
+	}
+
+	else if (TypeID == typeid(CPlayerRoll).hash_code())
+	{
+		NewNode = MakeNode<CPlayerRoll>(Parent, OwnerObject);
+	}
+
 	// Boss Knight - Action
 	else if (TypeID == typeid(CBossKnightContinueAttackNode).hash_code())
 	{
@@ -361,32 +386,6 @@ CNode* CGameBehaviorTree::LoadNode(CNode* Parent, size_t TypeID)
 	else if (TypeID == typeid(CBossBettyThrowAttackCheck).hash_code())
 	{
 	NewNode = MakeNode<CBossBettyThrowAttackCheck>(Parent, OwnerObject);
-	}
-
-	else if (TypeID == typeid(CHitCheckNode).hash_code())
-	{
-		NewNode = MakeNode<CHitCheckNode>(Parent, OwnerObject);
-	}
-
-	else if (TypeID == typeid(CHitBackNode).hash_code())
-	{
-		NewNode = MakeNode<CHitBackNode>(Parent, OwnerObject);
-	}
-
-	else if (TypeID == typeid(CRollInputCheck).hash_code())
-	{
-		NewNode = MakeNode<CRollInputCheck>(Parent, OwnerObject);
-	}
-
-	else if (TypeID == typeid(CPlayerRoll).hash_code())
-	{
-		NewNode = MakeNode<CPlayerRoll>(Parent, OwnerObject);
-	}
-
-
-	else if (TypeID == typeid(CUpdateInputQueue).hash_code())
-	{
-		NewNode = MakeNode<CUpdateInputQueue>(Parent, OwnerObject);
 	}
 
 	return NewNode;

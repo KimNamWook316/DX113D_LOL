@@ -27,8 +27,6 @@ NodeResult CDeathNode::OnStart(float DeltaTime)
 
 	std::string SequenceName = "Death";
 
-	SequenceName = ObjectName + SequenceName;
-
 	if (m_AnimationMeshComp)
 	{
 		m_AnimationMeshComp->GetAnimationInstance()->ChangeAnimation(SequenceName);
@@ -36,7 +34,6 @@ NodeResult CDeathNode::OnStart(float DeltaTime)
 
 	CObjectDataComponent* Data = dynamic_cast<CObjectDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
 	Data->SetNoInterrupt(true);
-
 
 	return NodeResult::Node_True;
 }
