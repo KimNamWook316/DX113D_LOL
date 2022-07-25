@@ -75,6 +75,8 @@ public :
     // (아래 콜백 함수들은, 여러 Action Node 들에서 공통으로 사용하는 효과)
     // 땅을 내리칠때, 양쪽에 Attack 효과를 내기
     void OnBossBettyGenerateTwoSideCloseAttackEffect();
+    // Attack Collider 의 Relative Pos 를 0 으로 (Betty 몸통 위치로)
+    void OnSetBossBettyAttackColliderPosToBettyBody();
     // 땅 내리칠때 오른쪽에 Attack 효과를 내기 
     void OnBossBettyGenerateRightCloseAttackEffect();
     // 땅 내리칠 때 왼쪽에 Attack 효과를 내기 

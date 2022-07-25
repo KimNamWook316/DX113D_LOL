@@ -58,6 +58,10 @@ void CBossBettySpinAttackNode::Init()
 		Data, &CBossBettyDataComponent::OnBossBettyEnableSpinCollider);
 	AnimInst->AddNotify(AnimName, "ResetMoveSpeed", 0,
 		Data, &CBossBettyDataComponent::OnBossBettyResetOriginalMoveSpeed);
+	AnimInst->AddNotify(AnimName, "EnableAttackCollider", 2,
+		Data, &CBossBettyDataComponent::OnBossBettyEnableAttackCollider);
+	AnimInst->AddNotify(AnimName, "AttackColliderToOriginalPs", 0,
+		Data, &CBossBettyDataComponent::OnSetBossBettyAttackColliderPosToBettyBody);
 
 	// 2) Spin Collide
 	AnimName = "SpinCollide";
@@ -92,6 +96,9 @@ void CBossBettySpinAttackNode::Init()
 	// Jump Spin 으로의 전환을 허용한다.
 	AnimInst->AddNotify(AnimName, "EnableJumpSpinChange", 26,
 		this, &CBossBettySpinAttackNode::OnBossBettyEnableSpinChange);
+
+	AnimInst->AddNotify(AnimName, "DisableAttackCollider", 26,
+		Data, &CBossBettyDataComponent::OnBossBettyDisableAttackCollider);
 
 }
 

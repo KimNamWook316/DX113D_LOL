@@ -57,9 +57,9 @@ void CBossBettyJumpAttackNode::Init()
 	// PunchDown Animation 이 끝나면 해당 위치에 2단 공격
 	AnimInst->AddNotify(AnimName, "AttackDown", 35,
 		Data, &CBossBettyDataComponent::OnBossBettyGenerateTwoSideCloseAttackEffect);
-	AnimInst->AddNotify(AnimName, "EnableAttackCollider", 27,
+	AnimInst->AddNotify(AnimName, "EnableAttackCollider", 29,
 		Data, &CBossBettyDataComponent::OnBossBettyEnableAttackCollider);
-	AnimInst->AddNotify(AnimName, "DisableAttackCollider", 29,
+	AnimInst->AddNotify(AnimName, "DisableAttackCollider", 31,
 		Data, &CBossBettyDataComponent::OnBossBettyDisableAttackCollider);
 	AnimInst->AddNotify(AnimName, "AttackFarAttackCnt", 35,
 		Data, &CBossBettyDataComponent::IncFarAttackCount);

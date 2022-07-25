@@ -123,10 +123,16 @@ void CBossBettyDataComponent::OnBossBettyGenerateTwoSideCloseAttackEffect()
     const Vector3& XWorldAxis = m_MeleeAttackCollider->GetRelativeAxis(AXIS::AXIS_X) * -1.f;
     const Vector3& ZWorldAxis = m_MeleeAttackCollider->GetRelativeAxis(AXIS::AXIS_Z) * -1.f;
 
-    const Vector3& ColliderRelativePos = ZWorldAxis * 10.0f;
+    const Vector3& ColliderRelativePos = ZWorldAxis * 8.0f;
 
-    m_MeleeAttackCollider->SetExtent(6.f, 3.f, 3.f);
+    m_MeleeAttackCollider->SetExtent(6.f, 1.f, 3.f);
     m_MeleeAttackCollider->SetRelativePos(ColliderRelativePos);
+}
+
+void CBossBettyDataComponent::OnSetBossBettyAttackColliderPosToBettyBody()
+{
+    m_MeleeAttackCollider->SetExtent(3.f, 3.f, 3.f);
+    m_MeleeAttackCollider->SetRelativePos(Vector3(0.f, 0.f, 0.f));
 }
 
 void CBossBettyDataComponent::OnBossBettyGenerateRightCloseAttackEffect()
@@ -134,8 +140,8 @@ void CBossBettyDataComponent::OnBossBettyGenerateRightCloseAttackEffect()
     const Vector3& XWorldAxis = m_MeleeAttackCollider->GetRelativeAxis(AXIS::AXIS_X) * -1.f;
     const Vector3& ZWorldAxis = m_MeleeAttackCollider->GetRelativeAxis(AXIS::AXIS_Z) * -1.f;
 
-    const Vector3& ColliderRelativePos = XWorldAxis * 3.5f + ZWorldAxis * 5.0f;
-    m_MeleeAttackCollider->SetExtent(3.f, 3.f, 3.f);
+    const Vector3& ColliderRelativePos = XWorldAxis * 3.5f + ZWorldAxis * 7.0f;
+    m_MeleeAttackCollider->SetExtent(3.f, 6.f, 3.f);
     m_MeleeAttackCollider->SetRelativePos(ColliderRelativePos);
 }
 
@@ -144,8 +150,8 @@ void CBossBettyDataComponent::OnBossBettyGenerateLeftCloseAttackEffect()
     const Vector3& XWorldAxis = m_MeleeAttackCollider->GetRelativeAxis(AXIS::AXIS_X) * -1.f;
     const Vector3& ZWorldAxis = m_MeleeAttackCollider->GetRelativeAxis(AXIS::AXIS_Z) * -1.f;
 
-    const Vector3& ColliderRelativePos = XWorldAxis * 3.5f * -1.f + ZWorldAxis * 5.0f;
-    m_MeleeAttackCollider->SetExtent(3.f, 3.f, 3.f);
+    const Vector3& ColliderRelativePos = XWorldAxis * 3.5f * -1.f + ZWorldAxis * 7.0f;
+    m_MeleeAttackCollider->SetExtent(3.f, 6.f, 3.f);
     m_MeleeAttackCollider->SetRelativePos(ColliderRelativePos);
 }
 
