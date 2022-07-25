@@ -1266,14 +1266,14 @@ void CEffectEditor::OnSaveParticleClass()
         }
 
         // 현재 저장하는 Directory가 Bin/ParticleClass 인지 확인하기 => 아니라면, Save 방지
-        std::string PathInfoBeforeFileName;
-        CEngineUtil::GetPathInfoBeforeFileName(FileFullPathMultibyte, PathInfoBeforeFileName);
-
-        if (strcmp(ParticlePathInfo->PathMultibyte, PathInfoBeforeFileName.c_str()) != 0)
-        {
-            MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Particle Class 의 경우, 반드시 Bin/ParticleClass 에 저장"), NULL, MB_OK);
-            return;
-        }
+        // std::string PathInfoBeforeFileName;
+        // CEngineUtil::GetPathInfoBeforeFileName(FileFullPathMultibyte, PathInfoBeforeFileName);
+        // 
+        // if (strcmp(ParticlePathInfo->PathMultibyte, PathInfoBeforeFileName.c_str()) != 0)
+        // {
+        //     MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Particle Class 의 경우, 반드시 Bin/ParticleClass 에 저장"), NULL, MB_OK);
+        //     return;
+        // }
 
         // 해당 PARTICLE_PATH 에서 중복된 이름이 있는지 확인하기
         // .prtc 확장자 붙이기

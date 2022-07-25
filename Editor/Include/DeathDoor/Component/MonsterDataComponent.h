@@ -21,6 +21,7 @@ protected:
 public:
 	virtual void Start() override;
 	virtual void Update(float DeltaTime) override;
+	virtual void PostUpdate(float DeltaTime) override;
 	virtual CMonsterDataComponent* Clone();
 
 public:
@@ -78,9 +79,26 @@ public:
 	{
 		m_CurRotSpeed = Speed;
 	}
+	void SetAttackCoolDelayTimeMax(float Time)
+	{
+		m_AttackCoolDelayTimeMax = Time;
+	}
+	void SetAttackCoolDelayTimeEnable(bool Enable)
+	{
+		m_AttackCoolTimeEnable = Enable;
+
+		if (Enable)
+		{
+			m_AttackCoolDelayTime = m_AttackCoolDelayTimeMax;
+		}
+	}
 	void SetCurrentNodeNull();
 
 public:
+	bool IsAttackCoolTimeEnable() const
+	{
+		return m_AttackCoolTimeEnable;
+	}
 	float GetRotateSpeed() const
 	{
 		return m_Data.RotateSpeedPerSec;
@@ -146,6 +164,11 @@ protected:
 	std::vector<Vector4> m_vecOriginSpecluar;
 	std::vector<Vector4> m_vecOriginAmbient;
 	std::vector<Vector4> m_vecOriginEmissive;
+
+	// Attack Cool Time
+	bool m_AttackCoolTimeEnable;  // true 라면, 공격 X
+	float m_AttackCoolDelayTime;
+	float m_AttackCoolDelayTimeMax;
 
 	// Rot 
 	float m_CurRotSpeed;

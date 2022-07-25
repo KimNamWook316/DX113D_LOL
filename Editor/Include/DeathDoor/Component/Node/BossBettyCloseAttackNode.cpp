@@ -137,9 +137,7 @@ NodeResult CBossBettyCloseAttackNode::OnStart(float DeltaTime)
 	// 근거리 공격 타입을 체크한다.
 	m_CloseAttackType = DetermineBettyCloseAttackType();
 
-	if (!m_CloseAttackAnimChangeEnable ||
-		Data->IsPostAttackDelaying() == true
-		)
+	if (!m_CloseAttackAnimChangeEnable)
 	{
 		return NodeResult::Node_True;
 	}
@@ -152,11 +150,13 @@ NodeResult CBossBettyCloseAttackNode::OnStart(float DeltaTime)
 	{
 	case BossBettyCloseAttackType::PunchLeft:
 	{
+		m_Owner->GetAnimationMeshComp()->GetAnimationInstance()->ChangeAnimation("IdleBeast");
 		AnimInst->ChangeAnimation("PunchLeft");
 	}
 	break;
 	case BossBettyCloseAttackType::PunchRight:
 	{	
+		m_Owner->GetAnimationMeshComp()->GetAnimationInstance()->ChangeAnimation("IdleBeast");
 		AnimInst->ChangeAnimation("PunchRight");
 	}
 	break;
@@ -319,7 +319,7 @@ void CBossBettyCloseAttackNode::OnBossBettyCommonEndFunctionOfCloseAttack()
 	m_CloseAttackAnimChangeEnable = true;
 
 	// PosAttackDelay 상태에 둔다.
-	Data->SetPostAttckDelaying(true);
+	Data->SetAttackCoolDelayTimeEnable(true);
 
 	// m_Owner->GetAnimationMeshComp()->GetAnimationInstance()->ChangeAnimation("IdleBeast");
 }

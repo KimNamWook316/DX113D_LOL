@@ -33,6 +33,8 @@
 #include "../DeathDoor/Component/Node/IsCombatCheck.h"
 #include "../DeathDoor/Component/Node/DeathCheck.h"
 #include "../DeathDoor/Component/Node/PostAttackDelayCheck.h"
+#include "../DeathDoor/Component/Node/AttackCoolTimeCheck.h"
+// BossKnight
 #include "../DeathDoor/Component/Node/BossKnightContinueAttackNode.h"
 #include "../DeathDoor/Component/Node/BossKnightCutScenePlayCheck.h"
 #include "../DeathDoor/Component/Node/BossKnightCutScenePlayNode.h"
@@ -609,6 +611,9 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
             break;
         case DDConditionNode::PostAttackDelayCheck:
             NewTreeNode = m_StateComponent->CreateTreeNode<CPostAttackDelayCheck>(Name);
+            break;
+        case DDConditionNode::AttackCoolTimeCheck:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CAttackCoolTimeCheck>(Name);
             break;
         case DDConditionNode::BossKnightFinalAttackCheck:
             NewTreeNode = m_StateComponent->CreateTreeNode<CBossKnightFinalAttackCheck>(Name);

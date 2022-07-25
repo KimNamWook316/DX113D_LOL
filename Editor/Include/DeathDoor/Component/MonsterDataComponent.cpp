@@ -23,7 +23,8 @@ CMonsterDataComponent::CMonsterDataComponent() :
 	m_DeathColorEnd(Vector4::White),
 	m_LeftLookPlayer(false),
 	m_RightLookPlayer(false),
-	m_CurRotSpeed(0.f)
+	m_CurRotSpeed(0.f),
+	m_AttackCoolDelayTimeMax(0.5f)
 {
 	SetTypeID<CMonsterDataComponent>();
 
@@ -183,6 +184,21 @@ void CMonsterDataComponent::Update(float DeltaTime)
 	if (m_MoveZ)
 	{
 		MoveZ(DeltaTime);
+	}
+}
+
+void CMonsterDataComponent::PostUpdate(float DeltaTime)
+{
+	CObjectDataComponent::PostUpdate(DeltaTime);
+
+	if (m_AttackCoolTimeEnable)
+	{
+		m_AttackCoolDelayTime -= DeltaTime;
+
+		if (m_AttackCoolDelayTime < 0.f)
+		{
+			m_AttackCoolTimeEnable = false;
+		}
 	}
 }
 
