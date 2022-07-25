@@ -701,7 +701,7 @@ void CAnimationSequenceInstance::Update(float DeltaTime)
 
 		if (AnimEnd)
 		{
-			if (m_CurrentAnimation->m_EndFunction)
+			if (m_CurrentAnimation->m_EndFunction && !m_CurrentAnimation->m_EndFunctionCalled)
 			{
 				m_CurrentAnimation->m_EndFunctionCalled = true;
 				m_CurrentAnimation->m_EndFunction();

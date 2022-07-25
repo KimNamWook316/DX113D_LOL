@@ -46,6 +46,11 @@ std::string CDDUtil::DDConditionNodeTypeToString(DDConditionNode NodeType)
 	case DDConditionNode::CheckDetectRange:
 		return "CheckDetectRange";
 
+	case DDConditionNode::PlayerEnterZoneCheck:
+		return "PlayerEnterZoneCheck";
+	case DDConditionNode::PlayerEnterTriggerIsEnable:
+		return "PlayerEnterTriggerIsEnable";
+
 	case DDConditionNode::MeleeAttackRangeCheck:
 		return "MeleeAttackRangeCheck";
 
@@ -79,6 +84,21 @@ std::string CDDUtil::DDConditionNodeTypeToString(DDConditionNode NodeType)
 
 	case DDConditionNode::BossBettyCheckThrowAttack:
 		return "BossBettyCheckThrowAttack";
+
+	// Crow Boss
+	case DDConditionNode::CrowBossCutScenePlayCheck:
+		return "CrowBossCutScenePlayCheck";
+	case DDConditionNode::CrowBossDirectionCheck:
+		return "CrowBossDirectionCheck";
+	case DDConditionNode::CrowBossPhasePickNode:
+		return "CrowBossPhasePickNode";
+	case DDConditionNode::CrowBossBypassCheck:
+		return "CrowBossBypassCheck";
+	case DDConditionNode::CrowBossJumpStartCheck:
+		return "CrowBossJumpStartCheck";
+	case DDConditionNode::CrowBossLandingCheck:
+		return "CrowBossLandingCheck";
+
 
 	case DDConditionNode::HPCheck:
 		return "HPCheck";
@@ -143,6 +163,14 @@ DDConditionNode CDDUtil::StringToDDConditionNodeType(const std::string& Str)
 	{
 		return DDConditionNode::CheckDetectRange;
 	}
+	else if (Str == "PlayerEnterZoneCheck")
+	{
+		return DDConditionNode::PlayerEnterZoneCheck;
+	}
+	else if (Str == "PlayerEnterTriggerIsEnable")
+	{
+		return DDConditionNode::PlayerEnterTriggerIsEnable;
+	}
 	else if (Str == "BossKnightJumpAttackRangeCheck")
 	{
 		return DDConditionNode::BossKnightJumpAttackRangeCheck;
@@ -184,6 +212,29 @@ DDConditionNode CDDUtil::StringToDDConditionNodeType(const std::string& Str)
 	{
 		return DDConditionNode::BossBettyCheckThrowAttack;
 	}
+	// Crow Boss
+	else if (Str == "CrowBossCutScenePlayCheck")
+	{
+		return DDConditionNode::CrowBossCutScenePlayCheck;
+	}
+	else if (Str == "CrowBossDirectionCheck")
+	{
+		return DDConditionNode::CrowBossDirectionCheck;
+	}
+	else if (Str == "CrowBossPhasePickNode")
+	{
+		return DDConditionNode::CrowBossPhasePickNode;
+	}
+	else if (Str == "CrowBossJumpStartCheck")
+	{
+		return DDConditionNode::CrowBossJumpStartCheck;
+	}
+	else if (Str == "CrowBossLandingCheck")
+	{
+		return DDConditionNode::CrowBossLandingCheck;
+	}
+
+
 	else if (Str == "HPCheck")
 	{
 		return DDConditionNode::HPCheck;
@@ -290,6 +341,16 @@ std::string CDDUtil::DDActionNodeTypeToString(DDActionNode NodeType)
 		return "BossBettySpinAttack";
 	case DDActionNode::BossBettyThrowAttack:
 		return "BossBettyThrowAttack";
+
+	// Crow Boss
+	case DDActionNode::CrowBossCutScenePlayNode:
+		return "CrowBossCutScenePlayNode";
+	case DDActionNode::CrowBossRunNode:
+		return "CrowBossRunNode";
+	case DDActionNode::CrowBossSpinNode:
+		return "CrowBossSpinNode";
+	case DDActionNode::CrowBossJump:
+		return "CrowBossJump";
 
 	case DDActionNode::ClearPathList:
 		return "ClearPathList";
@@ -400,6 +461,25 @@ DDActionNode CDDUtil::StringToDDActionNodeType(const std::string& Str)
 	{
 		return DDActionNode::BossBettyThrowAttack;
 	}
+
+	// Crow Boss
+	else if (Str == "CrowBossCutScenePlayNode")
+	{
+		return DDActionNode::CrowBossCutScenePlayNode;
+	}
+	else if (Str == "CrowBossRunNode")
+	{
+		return DDActionNode::CrowBossRunNode;
+	}
+	else if (Str == "CrowBossSpinNode")
+	{
+		return DDActionNode::CrowBossSpinNode;
+	}
+	else if (Str == "CrowBossJump")
+	{
+		return DDActionNode::CrowBossJump;
+	}
+
 
 	else if (Str == "ClearPathList")
 	{

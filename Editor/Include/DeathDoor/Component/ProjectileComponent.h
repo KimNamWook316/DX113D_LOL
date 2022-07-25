@@ -84,5 +84,28 @@ private:
 
 	float	m_LifeTime;
 	float	m_LifeTimer;
+	bool	m_NoDestroy;
+	bool	m_NoUpdate;
+
+public:
+	void SetNoDestroy(bool NoDestroy)
+	{
+		m_NoDestroy = NoDestroy;
+	}
+
+	bool GetNoDestroy()	const
+	{
+		return m_NoDestroy;
+	}
+
+	void SetNoUpdate(bool Update)
+	{
+		m_NoUpdate = Update;
+	}
+
+	bool GetNoUpdate()	const
+	{
+		return m_NoUpdate;
+	}
 };
 

@@ -112,7 +112,8 @@ void CMonsterDataComponent::Start()
 	
 	// PaperBurn 및 Death
 	m_PaperBurn = m_Object->FindComponentFromType<CPaperBurnComponent>();
-	m_PaperBurn->SetFinishCallback(this, &CMonsterDataComponent::OnDeadPaperBurnEnd);
+	if(m_PaperBurn)
+		m_PaperBurn->SetFinishCallback(this, &CMonsterDataComponent::OnDeadPaperBurnEnd);
 
 	CAnimationSequenceInstance* AnimInst = m_AnimMesh->GetAnimationInstance();
 	AnimInst->AddNotify("Death", "DeathStart", 0, this, &CMonsterDataComponent::OnDeadAnimStart);
@@ -120,8 +121,12 @@ void CMonsterDataComponent::Start()
 
 	// CutScene 관련 ( Enter Trigger, CutScene Cam, Collider CallBack)
 	m_PlayerEnterZoneTrigger = (CColliderBox3D*)m_Object->FindComponent("PlayerEnterTrigger");
+	m_PlayerEnterZoneTrigger->Enable(true);
 	m_CutSceneCam = m_Object->FindComponentFromType<CCameraComponent>();
 	m_PlayerEnterZoneTrigger->AddCollisionCallback(Collision_State::Begin, this, &CMonsterDataComponent::OnPlayerEnterZone);
+
+	// MonsterNavAgent 관련
+	m_MonsterNavAgent = m_Object->FindObjectComponentFromType<CMonsterNavAgent>();
 }
 
 void CMonsterDataComponent::Update(float DeltaTime)

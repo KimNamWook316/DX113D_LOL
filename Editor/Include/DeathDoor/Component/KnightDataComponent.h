@@ -64,16 +64,6 @@ public:
         return m_FinalTraceZAxis;
     }
 
-    bool IsCutScenePlaying() const
-    {
-        return m_IsCutScenePlaying;
-    }
-
-    bool IsPlayerEnterZone() const
-    {
-        return m_PlayerEnterZone;
-    }
-
 public:
     void IncreaseMeleeAttackCount()
     {

@@ -62,6 +62,16 @@ public:
 
 	void SetCurrentNodeNull();
 
+	void SetPlayerEnterZone(bool Enter)
+	{
+		m_PlayerEnterZone = Enter;
+	}
+
+	void SetPlayerEnterZoneFalse()
+	{
+		m_PlayerEnterZone = false;
+	}
+
 public:
 	float GetRotateSpeed() const
 	{
@@ -73,6 +83,11 @@ public:
         return m_MeleeAttackCollider;
     }
 
+	CColliderBox3D* GetPlayerEnterZoneTrigger()	const
+	{
+		return m_PlayerEnterZoneTrigger;
+	}
+
 	bool IsPostAttackDelaying() const
 	{
 		return m_PostAttackDelaying;
@@ -81,6 +96,16 @@ public:
 	bool IsCombat() const
 	{
 		return m_IsCombat;
+	}
+
+	bool IsCutScenePlaying() const
+	{
+		return m_IsCutScenePlaying;
+	}
+
+	bool IsPlayerEnterZone() const
+	{
+		return m_PlayerEnterZone;
 	}
 
 	float GetAnglePlayer();

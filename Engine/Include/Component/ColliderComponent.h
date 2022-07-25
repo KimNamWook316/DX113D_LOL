@@ -32,6 +32,7 @@ protected:
     CSharedPtr<class CMesh> m_Mesh;
     CSharedPtr<class CShader> m_Shader;
     class CColliderConstantBuffer* m_CBuffer;
+    bool m_RigidCollisionIgnore;
 
 public:
     const std::vector<int>& GetCurrentSections()    const
@@ -72,6 +73,16 @@ public:
     void AddOffsetZ(float Offset)
     {
         m_Offset.z += Offset;
+    }
+
+    void SetRigidCollisionIgnore(bool Ignore)
+    {
+        m_RigidCollisionIgnore = Ignore;
+    }
+
+    bool GetRigidCollisionIgnore()  const
+    {
+        return m_RigidCollisionIgnore;
     }
 
     virtual void SetOffset(const Vector3& Offset)

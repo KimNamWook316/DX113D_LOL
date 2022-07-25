@@ -182,7 +182,12 @@ struct GraphEditorDelegate : public GraphEditor::Delegate
             }
         }
         
-        ((CCompositeNode*)ParentNode)->DeleteChild(ChildNode);
+
+        if (ParentNode->GetNodeType() == Node_Type::Decorator)
+            ((CDecoratorNode*)ParentNode)->SetChild(nullptr);
+
+        else
+            ((CCompositeNode*)ParentNode)->DeleteChild(ChildNode);
 
         mLinks.erase(mLinks.begin() + linkIndex);
     }
