@@ -148,7 +148,7 @@ void CParticleComponent::ApplyBazierMove(float DeltaTime)
 	{
 		case ParticleSpeedChangeMethod::Exponential :
 		{
-			m_ParticleMoveSpeed = CEngineUtil::CalculateRealTimeSpeedUsingExponential(m_ParticleMoveSpeedBottom, m_ParticleMoveAccTime, m_ParticleMoveInitSpeed);
+			m_ParticleMoveSpeed = CEngineUtil::CalculateRealTimeSpeedUsingExponentialWithBottom(m_ParticleMoveSpeedBottom, m_ParticleMoveAccTime, m_ParticleMoveInitSpeed);
 		}
 		break;
 	}

@@ -21,8 +21,15 @@ protected:
     virtual NodeResult OnStart(float DeltaTime);
     virtual NodeResult OnUpdate(float DeltaTime);
     virtual NodeResult OnEnd(float DeltaTime);
-
+private:
+    float m_JumpAccTime;
+    float m_JumpTotalTime;
+    float m_InitJumpStartSpeed;
+    bool m_CalRealTimeChangingSpeed;
 private :
+    void OnBossBettyStartJump();
+    void OnBossBettyEndJump();
     void OnBossBettySlowMoveSpeed();
+    void OnBossBettyCalJumpAttackTimeAndDist();
 };
 

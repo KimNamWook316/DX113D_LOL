@@ -37,6 +37,10 @@ private :
     // 원거리 공격 Type
     BossBettyFarAttackType m_FarAttackType;
 
+    // Origin Rot Speed
+    float m_OriginRotSpeed;
+    float m_CurRotSpeed;
+
     // Origin MoveTime
     float m_OriginMoveSpeed;
 
@@ -150,6 +154,10 @@ public:
     }
     // Getter 함수 ---
 public:
+    float GetOriginRotSpeed() const
+    {
+        return m_OriginRotSpeed;
+    }
     float GetBossBettyChangeDirLimitAngle() const
     {
         return m_ChangeDirLimitAngle;

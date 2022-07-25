@@ -22,7 +22,8 @@ CMonsterDataComponent::CMonsterDataComponent() :
 	m_DeathColorStart(Vector4::Red),
 	m_DeathColorEnd(Vector4::White),
 	m_LeftLookPlayer(false),
-	m_RightLookPlayer(false)
+	m_RightLookPlayer(false),
+	m_CurRotSpeed(0.f)
 {
 	SetTypeID<CMonsterDataComponent>();
 
@@ -167,6 +168,18 @@ void CMonsterDataComponent::Update(float DeltaTime)
 		}
 	}
 
+	if (m_MoveZEnableMaxTime > 0.f)
+	{
+		m_MoveZ = true;
+		m_MoveZEnableMaxTime -= DeltaTime;
+
+		if (m_MoveZEnableMaxTime < 0.f)
+		{
+			m_MoveZ = false;
+			m_MoveZEnableMaxTime = 0.f;
+		}
+	}
+
 	if (m_MoveZ)
 	{
 		MoveZ(DeltaTime);
@@ -185,20 +198,31 @@ void CMonsterDataComponent::LookPlayer(float DeltaTime)
 
 	CGameObject* MyObj = m_Object;
 
-	if (abs(AnglePlayer) < m_Data.RotateSpeedPerSec * DeltaTime)
+	float RotSpeed = m_Data.RotateSpeedPerSec;
+
+	// 만약 m_CurRotSpeed 를 별도로 세팅한 상태라면
+	if (m_CurRotSpeed != 0.f)
 	{
-		MyObj->AddWorldRotationY(AnglePlayer * DeltaTime);
+		RotSpeed = m_CurRotSpeed;
 	}
-	else
+
+	// (OBJ) 순간적으로 미세하게 떨리는 오류
+	// if (abs(AnglePlayer) < m_Data.RotateSpeedPerSec * DeltaTime)
+	if (abs(AnglePlayer) < 2.f)
+	{
+		// MyObj->AddWorldRotationY(AnglePlayer * DeltaTime);
+	}
+	else 
 	{
 		bool IsLeft = IsPlayerLeftBasedInLookDir();
+
 		if (IsLeft)
 		{
-			MyObj->AddWorldRotationY(m_Data.RotateSpeedPerSec * DeltaTime);
+			MyObj->AddWorldRotationY(RotSpeed * DeltaTime);
 		}
 		else
 		{
-			MyObj->AddWorldRotationY(-1.f * m_Data.RotateSpeedPerSec * DeltaTime);
+			MyObj->AddWorldRotationY(-1.f * RotSpeed * DeltaTime);
 		}
 	}
 }

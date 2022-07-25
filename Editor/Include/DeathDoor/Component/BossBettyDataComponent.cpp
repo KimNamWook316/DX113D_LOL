@@ -34,11 +34,19 @@ void CBossBettyDataComponent::Start()
 {
     CMonsterDataComponent::Start();
 
+    //  CMonsterDataComponent::Start(); 에서 HitBox Collider 를 찾았을 것이다.
+    // 해당 Collider 의 Extent 를 설정해준다.
+    m_HitBox->SetExtent(3.0f, 3.0f, 3.0f);
+
     m_Data = CDataManager::GetInst()->GetObjectData("BossBetty");
 
     // Move Speed 는 CSV OBJ Data 로 세팅한다.
     m_OriginMoveSpeed = m_Data.MoveSpeed;
     m_CurMoveSpeed = m_Data.MoveSpeed;
+
+    // Move Speed 는 CSV OBJ Data 로 세팅한다.
+    m_OriginRotSpeed = m_Data.RotateSpeedPerSec;
+    m_CurRotSpeed = m_OriginRotSpeed;
 
     // HitBox 에 콜백을 걸어준다.
 
@@ -125,7 +133,7 @@ void CBossBettyDataComponent::OnBossBettyGenerateTwoSideCloseAttackEffect()
 
     const Vector3& ColliderRelativePos = ZWorldAxis * 8.0f;
 
-    m_MeleeAttackCollider->SetExtent(6.f, 1.f, 3.f);
+    m_MeleeAttackCollider->SetExtent(5.f, 1.f, 3.f);
     m_MeleeAttackCollider->SetRelativePos(ColliderRelativePos);
 }
 
@@ -141,6 +149,7 @@ void CBossBettyDataComponent::OnBossBettyGenerateRightCloseAttackEffect()
     const Vector3& ZWorldAxis = m_MeleeAttackCollider->GetRelativeAxis(AXIS::AXIS_Z) * -1.f;
 
     const Vector3& ColliderRelativePos = XWorldAxis * 3.5f + ZWorldAxis * 7.0f;
+
     m_MeleeAttackCollider->SetExtent(3.f, 6.f, 3.f);
     m_MeleeAttackCollider->SetRelativePos(ColliderRelativePos);
 }
@@ -151,6 +160,7 @@ void CBossBettyDataComponent::OnBossBettyGenerateLeftCloseAttackEffect()
     const Vector3& ZWorldAxis = m_MeleeAttackCollider->GetRelativeAxis(AXIS::AXIS_Z) * -1.f;
 
     const Vector3& ColliderRelativePos = XWorldAxis * 3.5f * -1.f + ZWorldAxis * 7.0f;
+
     m_MeleeAttackCollider->SetExtent(3.f, 6.f, 3.f);
     m_MeleeAttackCollider->SetRelativePos(ColliderRelativePos);
 }

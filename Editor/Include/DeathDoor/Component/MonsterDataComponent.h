@@ -62,17 +62,22 @@ public:
 	{
 		m_PostAttackDelaying = Enable;
 	}
-
 	void OnCombatStart()
 	{
 		m_IsCombat = true;
 	}
-
+	void SetMoveZEnableMaxTime(float Time)
+	{
+		m_MoveZEnableMaxTime = Time;
+	}
 	void SetCurMoveSpeed(float Speed)
 	{
 		m_CurMoveSpeed = Speed;
+	}	
+	void SetCurRotSpeed(float Speed)
+	{
+		m_CurRotSpeed = Speed;
 	}
-
 	void SetCurrentNodeNull();
 
 public:
@@ -142,10 +147,15 @@ protected:
 	std::vector<Vector4> m_vecOriginAmbient;
 	std::vector<Vector4> m_vecOriginEmissive;
 
+	// Rot 
+	float m_CurRotSpeed;
+
 	// Move 관련 변수
 	float m_CurMoveSpeed;
 	bool m_LookPlayer;
 	bool m_MoveZ;
+	// 해당 시간 동안만 m_MoveZ 를 true 로 만들었다가, false 로 다시 세팅
+	float m_MoveZEnableMaxTime;
 	// 왼쪽으로만 무조건 돌아야 하는 순간
 	bool m_LeftLookPlayer;
 	// 오른쪽으로만 무조건 돌아야 하는 순간

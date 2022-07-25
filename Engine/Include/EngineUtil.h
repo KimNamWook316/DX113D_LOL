@@ -77,6 +77,11 @@ public:
 		const Vector2& V3, const Vector2& V4, const Vector2& TargetPos);
 
 	// 밑이 a 인 지수함수를 이용해서, 실시간으로 증가하는 지수 함수 형태의 값을 얻어내기
-	static float CalculateRealTimeSpeedUsingExponential(float Bottom, float CurTime, float InitSpeed);
+	static float CalculateRealTimeSpeedUsingExponentialWithBottom(float Bottom, float CurTime, float InitSpeed);
+
+	// 총 이동 시간, Init Speed, EndSpeed 를 이용하여, 실시간 변하는 속도 구하기
+	// (서서히 증가하다가, 확 증가)
+	// (서서히 감소하다가, 확 감소)
+	static float CalculateRealTimeSpeedUsingExponentialWithSpeed(float FullTime, float InitSpeed, float EndSpeed, float CurTime);
 };
 
