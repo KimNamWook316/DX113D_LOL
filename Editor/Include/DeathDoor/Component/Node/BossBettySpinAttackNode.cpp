@@ -8,7 +8,8 @@
 #include "Scene/SceneManager.h"
 #include "../BossBettyDataComponent.h"
 
-CBossBettySpinAttackNode::CBossBettySpinAttackNode()
+CBossBettySpinAttackNode::CBossBettySpinAttackNode() :
+	m_JumpSpinChangeEnable(true)
 {
 	SetTypeID(typeid(CBossBettySpinAttackNode).hash_code());
 }
@@ -32,9 +33,19 @@ void CBossBettySpinAttackNode::Init()
 	// 1) JumpSpin
 	std::string AnimName = "JumpSpin";
 
+	// 매우 느리게 앞으로 갈 수 있도록 한다.
+	// Move Speed 의 경우 BossDataComponent 에서 처리해주고 있다.
+	AnimInst->AddNotify(AnimName, "EnableZMove", 0,
+		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnEnableMoveZ);
+	AnimInst->AddNotify(AnimName, "SlowMoveSpeed", 0,
+		Data, &CBossBettyDataComponent::OnBossBettyApplyOutOfMapSurroundingColliderMoveSpeed);
+
+	// End
 	// JumpSpin Animation 이 끝나면 바로 Spin Animation 으로 바꾼다.
 	AnimInst->SetEndFunction(AnimName,
 		this, &CBossBettySpinAttackNode::OnBossBettyChangeToSpinAnimation);
+	AnimInst->AddNotify(AnimName, "CameraShake", 17,
+		Data, &CBossBettyDataComponent::OnBossBettyNormalShakeCamera);
 
 	// 2) Spin
 	AnimName = "Spin";
@@ -45,6 +56,8 @@ void CBossBettySpinAttackNode::Init()
 	// - 이를 다시 Enable 만 시켜주면 된다.
 	AnimInst->AddNotify(AnimName, "EnableSpinCollider", 0,
 		Data, &CBossBettyDataComponent::OnBossBettyEnableSpinCollider);
+	AnimInst->AddNotify(AnimName, "ResetMoveSpeed", 0,
+		Data, &CBossBettyDataComponent::OnBossBettyResetOriginalMoveSpeed);
 
 	// 2) Spin Collide
 	AnimName = "SpinCollide";
@@ -52,44 +65,75 @@ void CBossBettySpinAttackNode::Init()
 	// 처음 시작하는 순간, 다시 Spin Collide 를 비활성화 시킨다.
 	AnimInst->AddNotify(AnimName, "DisableSpinCollider", 0, 
 		Data, &CBossBettyDataComponent::OnBossBettyDisableSpinCollider);
-
+	// 앞으로 가는 것을 무효화
+	AnimInst->AddNotify(AnimName, "DisableZMove", 0,
+		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnDisableMoveZ);
+	// 원거리 공격 횟수 1 증가
+	AnimInst->AddNotify(AnimName, "AddFarAttakCount", 0,
+		Data, &CBossBettyDataComponent::IncFarAttackCount);
 	// 공중에서 Player 를 향해 서서히 돈다.
 	// 던지기 전까지 Player 방향으로 회전할 수 있도록 한다.
 	AnimInst->AddNotify(AnimName, "OnTracePlayer", 0,
 		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnEnableLookPlayer);
-	AnimInst->AddNotify(AnimName, "OnDisableTracePlayer", 16,
+
+	// 중간
+	AnimInst->AddNotify(AnimName, "CameraShake", 20,
+		Data, &CBossBettyDataComponent::OnBossBettyNormalShakeCamera);
+
+	// >> EndFunctions
+	AnimInst->AddNotify(AnimName, "DisablePlayerLook", 26,
 		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnDisableLookPlayer);
-
 	// 마지막 순간에 착지한 바닥을 공격한다.
-	AnimInst->SetEndFunction(AnimName,
+	AnimInst->AddNotify(AnimName, "AttackDown", 26,
 		Data, &CBossBettyDataComponent::OnBossBettyGenerateTwoSideCloseAttackEffect);
+	// 모든 Spin이 끝나고 나서야 비로소, CurrentNode 를 nullptr 로 세팅한다.
+	AnimInst->AddNotify(AnimName, "SetCurrentNodeNull", 26,
+		Data, &CBossBettyDataComponent::OnBossBettySetCurrentNodeNullPtr);
+	// Jump Spin 으로의 전환을 허용한다.
+	AnimInst->AddNotify(AnimName, "EnableJumpSpinChange", 26,
+		this, &CBossBettySpinAttackNode::OnBossBettyEnableSpinChange);
 
-	// 공중에서 회전하는 중간에 Player 쪽으로 서서히 방향을 튼다.
 }
 
 NodeResult CBossBettySpinAttackNode::OnStart(float DeltaTime)
 {
-	m_CallStart = true;
-
 	CAnimationSequenceInstance* AnimInst = m_AnimationMeshComp->GetAnimationInstance();
-	AnimInst->ChangeAnimation("JumpSpin");
+
+	// Spin 중이라면, Animation 을 바꿔서는 안된다.
+	if (m_JumpSpinChangeEnable)
+	{
+		AnimInst->ChangeAnimation("JumpSpin");
+		m_JumpSpinChangeEnable = false;
+	}
+
+	m_Owner->SetCurrentNode(this);
 
 	return NodeResult::Node_True;
 }
 
 NodeResult CBossBettySpinAttackNode::OnUpdate(float DeltaTime)
 {
-	return NodeResult();
+	return NodeResult::Node_True;
 }
 
 NodeResult CBossBettySpinAttackNode::OnEnd(float DeltaTime)
 {
-	return NodeResult();
+	return NodeResult::Node_True;
 }
 
 void CBossBettySpinAttackNode::OnBossBettyChangeToSpinAnimation()
 {
 	CAnimationSequenceInstance* AnimInst = m_AnimationMeshComp->GetAnimationInstance();
+
 	AnimInst->ChangeAnimation("Spin");
 }
 
+void CBossBettySpinAttackNode::OnBossBettyEnableSpinChange()
+{
+	m_JumpSpinChangeEnable = true;
+}
+
+void CBossBettySpinAttackNode::OnBossBettyDisableSpinChange()
+{
+	m_JumpSpinChangeEnable = false;
+}

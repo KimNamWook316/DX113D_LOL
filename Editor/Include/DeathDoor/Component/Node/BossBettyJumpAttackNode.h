@@ -22,7 +22,7 @@ protected:
     virtual NodeResult OnUpdate(float DeltaTime);
     virtual NodeResult OnEnd(float DeltaTime);
 
-private:
-    float m_RotatePerSec;
+private :
+    void OnBossBettySlowMoveSpeed();
 };
 

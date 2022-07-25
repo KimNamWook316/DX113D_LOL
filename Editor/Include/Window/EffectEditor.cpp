@@ -1501,9 +1501,9 @@ void CEffectEditor::SetGameObjectReady()
         m_BaseGroundObject->AddWorldRotationX(90.f);
         m_BaseGroundObject->AddWorldPos(0.f, -30.f, 0.f);
 
-        m_BaseGroundObject->ExcludeFromSceneSave();
         // Scene Change ½Ã¿¡ ÆÄ±« X
-        m_ParticleObject->SetNoDestroyOnSceneChange(true);
+        m_BaseGroundObject->ExcludeFromSceneSave();
+        m_BaseGroundObject->SetNoDestroyOnSceneChange(true);
 
         CSpriteComponent* BaseGroundComponent = dynamic_cast<CSpriteComponent*>(m_BaseGroundObject->GetRootComponent());
         BaseGroundComponent->SetMaterial(CResourceManager::GetInst()->FindMaterial("ParticleEditorBaseGround"));

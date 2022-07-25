@@ -25,6 +25,8 @@ public:
 
 public:
 	void LookPlayer(float DeltaTime);
+	void RightLookPlayer(float DeltaTime);
+	void LeftLookPlayer(float DeltaTime);
 	void MoveZ(float DeltaTime);
 	void ChangeColorBossDeath(float DeltaTime);	// 죽을 때 색상 변화가 필요한 보스나 몬스터의 경우 이 함수를 Update에서 호출
 
@@ -36,6 +38,12 @@ public:
 	void OnEndAnimPostAttackDelayOff();
     void OnEnableLookPlayer();
 	void OnDisableLookPlayer();
+	void OnEnableRightLookPlayer();
+	void OnDisableRightLookPlayer();
+	void OnEnableLeftLookPlayer();
+	void OnDisableLeftLookPlayer();
+	void OnEnableMoveZ();
+	void OnDisableMoveZ();
 	void OnSetMoveSpeedZero(float DeltaTime)
 	{
 		m_CurMoveSpeed = 0.f;
@@ -60,6 +68,11 @@ public:
 		m_IsCombat = true;
 	}
 
+	void SetCurMoveSpeed(float Speed)
+	{
+		m_CurMoveSpeed = Speed;
+	}
+
 	void SetCurrentNodeNull();
 
 	void SetPlayerEnterZone(bool Enter)
@@ -76,6 +89,14 @@ public:
 	float GetRotateSpeed() const
 	{
 		return m_Data.RotateSpeedPerSec;
+	}
+	float GetMeleeAttackRange() const
+	{
+		return m_Data.MeleeAttackRange;
+	}
+	float GetCurMoveSpeed() const
+	{
+		return m_CurMoveSpeed;
 	}
 
     class CColliderBox3D* GetMeleeAttackCollider() const
@@ -112,7 +133,8 @@ public:
 	bool IsPlayerLeftBasedInLookDir(); // 플레이어가 몬스터가 보는 방향 기준 왼쪽에 있는지 판별
 	bool IsPlayerInMeleeAttackRange();
 	Vector3	ToPlayer();
-
+	float DistToPlayer();
+		
 public:
 	virtual bool Save(FILE* File);
 	virtual bool Load(FILE* File);
@@ -149,6 +171,10 @@ protected:
 	float m_CurMoveSpeed;
 	bool m_LookPlayer;
 	bool m_MoveZ;
+	// 왼쪽으로만 무조건 돌아야 하는 순간
+	bool m_LeftLookPlayer;
+	// 오른쪽으로만 무조건 돌아야 하는 순간
+	bool m_RightLookPlayer;
 
 	// Death Effect 관련 변수
     class CPaperBurnComponent* m_PaperBurn;

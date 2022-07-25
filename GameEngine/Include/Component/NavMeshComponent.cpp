@@ -52,7 +52,7 @@ void CNavMeshComponent::SetNavMesh(const std::string& Name)
 	Vector3 Pos = m_Transform->GetWorldPos();
 
 	// 인자로 넣어주긴 하는데 안씀
-	OnUpdateWorld(Pos, Pos);
+	//OnUpdateWorld(Pos, Pos);
 }
 
 void CNavMeshComponent::SetNavMesh(CNavMesh* NavMesh)

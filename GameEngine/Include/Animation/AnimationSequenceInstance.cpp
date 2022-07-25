@@ -483,7 +483,8 @@ void CAnimationSequenceInstance::ClearAnimationSequenceFromAnimationEditor()
 
 		SAFE_DELETE(iter->second);
 	}
-	m_mapAnimation.clear();
+
+	// m_mapAnimation.clear();
 
 	// 현재 Animation은 null로
 	m_CurrentAnimation = nullptr;
