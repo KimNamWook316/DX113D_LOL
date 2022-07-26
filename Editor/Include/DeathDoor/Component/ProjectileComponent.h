@@ -31,12 +31,12 @@ public:
 	virtual bool LoadOnly(FILE* File) override;
 
 public:
-	void Shoot(const Vector3& StartPos, const Vector3& Dir, 
-		float Speed, const Vector3& TargetPos, bool Gravity = false,
-		class CGameObject* EndParticleObj = nullptr);
-	void Shoot(const Vector3& StartPos, const Vector3& Dir, 
+	void ShootByTargetPos(const Vector3& StartPos, float Speed, const Vector3& TargetPos, class CGameObject* EndParticleObj = nullptr);
+	void ShootByLifeTime(const Vector3& StartPos, const Vector3& Dir, 
 		float Speed, float LifeTime,
 		class CGameObject* EndParticleObj = nullptr);
+	void ShootByGravityTargetPos(const Vector3& StartPos, const Vector3& XZDir, float Angle,
+		const Vector3& TargetPos, class CGameObject* EndParticleObj = nullptr);
 
 	bool CheckDestroy();
 	void OnEnd();

@@ -23,7 +23,7 @@ CCrowBossPhasePickNode::~CCrowBossPhasePickNode()
 NodeResult CCrowBossPhasePickNode::OnStart(float DeltaTime)
 {
 	//int Phase = rand() % 4 + 2; // 2 ~ 5
-	int Phase = 2;
+	int Phase = 3;
 
 	CCrowBossDataComponent* Data = dynamic_cast<CCrowBossDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
 

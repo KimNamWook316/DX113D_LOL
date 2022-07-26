@@ -148,7 +148,7 @@ void CPlayerBowComponent::ShootArrow(const Vector3& ShootDir)
 
 	}
 
-	Comp->Shoot(MyPos, ShootDir, 20.f, 4.f);
+	Comp->ShootByLifeTime(MyPos, ShootDir, 20.f, 4.f);
 }
 
 void CPlayerBowComponent::HideBow()
