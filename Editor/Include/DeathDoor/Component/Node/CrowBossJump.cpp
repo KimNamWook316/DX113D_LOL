@@ -43,12 +43,12 @@ NodeResult CCrowBossJump::OnUpdate(float DeltaTime)
 
 	Vector3 Dir = PlayerPos - CurrentPos;
 	Dir.Normalize();
-	Dir.y = 0.9f;
+	Dir.y = 0.80f;
 	Dir.Normalize();
 
 	Projectile->SetNoDestroy(true);
 	Projectile->SetNoUpdate(false);
-	Projectile->Shoot(CurrentPos, Dir, 10.f, PlayerPos, true);
+	Projectile->ShootByGravityTargetPos(CurrentPos, Dir, 80.f, PlayerPos);
 
 	return NodeResult::Node_True;
 }

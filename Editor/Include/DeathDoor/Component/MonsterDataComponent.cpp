@@ -113,9 +113,10 @@ void CMonsterDataComponent::Start()
 	}
 	
 	// PaperBurn 및 Death
+	m_PaperBurn = m_Object->FindComponentFromType<CPaperBurnComponent>();
+	
 	if (m_PaperBurn)
 	{
-		m_PaperBurn = m_Object->FindComponentFromType<CPaperBurnComponent>();
 		m_PaperBurn->SetFinishCallback(this, &CMonsterDataComponent::OnDeadPaperBurnEnd);
 	}
 
@@ -290,29 +291,41 @@ void CMonsterDataComponent::OnPlayerEnterZone(const CollisionResult& Result)
 
 	m_PlayerEnterZone = true;
 
-	if (m_CutSceneCam)
-	{
-		m_Scene->GetCameraManager()->KeepCamera();
-		m_Scene->GetCameraManager()->SetCurrentCamera(m_CutSceneCam);
-	}
-}
+ //	if (m_CutSceneCam)
+ //	{
+ //		m_Scene->GetCameraManager()->KeepCamera();
+ //		m_Scene->GetCameraManager()->SetCurrentCamera(m_CutSceneCam);
+ //	}
+ }
 
 void CMonsterDataComponent::OnStartCutScene()
 {
 	CGameObject* PlayerObj = m_Scene->GetPlayerObject();
 
-	// 플레이어 시야에서 사라지게 하고, 입력 받지 않게 함
+	// 플레이어 입력 받지 않게 하고, 애니메이션 강제 변화
 	if (PlayerObj)
 	{
-		m_CutSceneBeforePlayerPos = PlayerObj->GetWorldPos();
-		PlayerObj->SetWorldPos(-1000.f, -1000.f, -1000.f);
-
 		CGameStateComponent* PlayerState = PlayerObj->FindComponentFromType<CGameStateComponent>();
+		CAnimationSequenceInstance* PlayerAnim = PlayerObj->FindComponentFromType<CAnimationMeshComponent>()->GetAnimationInstance();
 
+		PlayerAnim->ChangeAnimation("PlayerIdle");
 		PlayerState->SetTreeUpdate(false);
 	}
 
 	m_IsCutScenePlaying = true;
+
+	// 컷신 카메라에 이동 동선이 있는지
+	bool IsCutSceneMove = m_CutSceneCam->GetMoveDataCount() > 0 ? true : false;
+
+	if (IsCutSceneMove)
+	{
+		m_CutSceneCam->StartMove();
+	}
+	else
+	{
+		m_Scene->GetCameraManager()->KeepCamera();
+		m_Scene->GetCameraManager()->SetCurrentCamera(m_CutSceneCam);
+	}
 }
 
 void CMonsterDataComponent::OnEndCutScene()
@@ -327,13 +340,11 @@ void CMonsterDataComponent::OnEndCutScene()
 		m_Scene->GetCameraManager()->ReturnCamera();
 	}
 
-	// 플레이어 다시 예전 위치로
+	// 플레이어 조작 On
 	CGameObject* PlayerObj = m_Scene->GetPlayerObject();
 
 	if (PlayerObj)
 	{
-		PlayerObj->SetWorldPos(m_CutSceneBeforePlayerPos);
-
 		CGameStateComponent* PlayerState = PlayerObj->FindComponentFromType<CGameStateComponent>();
 
 		PlayerState->SetTreeUpdate(true);

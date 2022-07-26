@@ -1,16 +1,18 @@
 #include "CameraWidget.h"
-#include "Component/CameraComponent.h"
 #include "IMGUIText.h"
 #include "IMGUIInputFloat.h"
 #include "IMGUISeperator.h"
 #include "IMGUISameLine.h"
+#include "IMGUICheckBox.h"
 #include "IMGUIButton.h"
 #include "IMGUITree.h"
+#include "CameraMoveWidget.h"
 #include "Scene/Scene.h"
 #include "Scene/SceneManager.h"
 #include "Scene/CameraManager.h"
 
-CCameraWidget::CCameraWidget()
+CCameraWidget::CCameraWidget()	:
+	m_IsMoveEditMode(false)
 {
 }
 
@@ -31,11 +33,24 @@ bool CCameraWidget::Init()
 	m_ShakeTime = Tree->AddWidget<CIMGUIInputFloat>("Shake Time", 200.f);
 	m_ShakeAmount = Tree->AddWidget<CIMGUIInputFloat>("Shake Amount", 200.f);
 	m_Shake = Tree->AddWidget<CIMGUIButton>("Shake Test", 0.f, 0.f);
+
+	Tree = AddWidget<CIMGUITree>("Camera Move Data", 200.f);
+	m_MoveDataEditMode = Tree->AddWidget<CIMGUICheckBox>("EditMode", 200.f);
+	m_AddMoveData = Tree->AddWidget<CIMGUIButton>("Add MoveData", 0.f, 0.f);
+	m_MoveDataList = Tree->AddWidget<CIMGUIWidgetList>("Move Data List", 200.f, 200.f);
+	m_MoveTest = Tree->AddWidget<CIMGUIButton>("Move Test", 0.f, 0.f);
+	m_ClearMoveData = Tree->AddWidget<CIMGUIButton>("Data Clear", 0.f, 0.f);
 	AddWidget<CIMGUISeperator>("Sep");
 
+	m_MoveDataEditMode->AddCheckInfo("Move Data Edit Mode");
+
+	m_MoveDataEditMode->SetCallBackIdx(this, &CCameraWidget::OnCheckMoveDataEditMode);
 	m_ViewAngle->SetCallBack(this, &CCameraWidget::OnChangeViewAngle);
 	m_SetCurrent->SetClickCallback(this, &CCameraWidget::OnClickSetCurrent);
 	m_Shake->SetClickCallback(this, &CCameraWidget::OnClickShake);
+	m_AddMoveData->SetClickCallback(this, &CCameraWidget::OnClickAddMoveData);
+	m_MoveTest->SetClickCallback(this, &CCameraWidget::OnClickTestMove);
+	m_ClearMoveData->SetClickCallback(this, &CCameraWidget::OnClickClearMove);
 
 	return true;
 }
@@ -49,6 +64,19 @@ void CCameraWidget::SetSceneComponent(CSceneComponent* Com)
 	float ViewAngle = CamCom->GetViewAngle();
 
 	m_ViewAngle->SetVal(ViewAngle);
+
+	std::list<CamMoveData*> MoveDataList = CamCom->GetMoveData();
+
+	auto iter = MoveDataList.begin();
+	auto iterEnd = MoveDataList.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		CCameraMoveWidget* Widget = m_MoveDataList->AddWidget<CCameraMoveWidget>("MoveWidget");
+		Widget->SetCameraComponent(CamCom);
+		Widget->SetCamMoveData(*iter);
+		Widget->SetCameraWidget(this);
+	}
 }
 
 void CCameraWidget::OnChangeViewAngle(float Val)
@@ -99,3 +127,62 @@ void CCameraWidget::OnClickShake()
 
 	CurCam->Shake(Time, Amount);
 }
+
+void CCameraWidget::OnCheckMoveDataEditMode(int Idx, bool Enable)
+{
+	m_IsMoveEditMode = Enable;
+
+	if (Enable)
+	{
+		m_OriginCamPosRelative = m_Component->GetRelativePos();
+	}
+	else
+	{
+		m_Component->SetRelativePos(m_OriginCamPosRelative);
+	}
+}
+
+void CCameraWidget::OnClickAddMoveData()
+{
+	if (!m_IsMoveEditMode)
+	{
+		MessageBox(nullptr, TEXT("카메라 경로 입력 모드가 아님"), TEXT("Failed"), MB_OK);
+	}
+
+	CCameraComponent* CamCom = dynamic_cast<CCameraComponent*>(m_Component);
+
+	Vector3 CurCamPos = CamCom->GetWorldPos();
+	CamMoveData* Data = CamCom->AddMoveData(CurCamPos, 1.f);
+
+	CCameraMoveWidget* MoveWidget = m_MoveDataList->AddWidget<CCameraMoveWidget>("MoveData");
+	MoveWidget->SetCameraComponent(CamCom);
+	MoveWidget->SetCamMoveData(Data);
+	MoveWidget->SetCameraWidget(this);
+}
+
+void CCameraWidget::OnClickTestMove()
+{
+	CCameraComponent* CamCom = dynamic_cast<CCameraComponent*>(m_Component);
+
+	if (!m_IsMoveEditMode)
+	{
+		CamCom->StartTestMove();
+	}
+}
+
+void CCameraWidget::OnClickClearMove()
+{
+	CCameraComponent* CamCom = dynamic_cast<CCameraComponent*>(m_Component);
+
+	CamCom->ClearMoveData();
+	m_MoveDataList->ClearWidget();
+}
+
+void CCameraWidget::OnDeleteMoveData(CamMoveData* Data, CCameraMoveWidget* DeleteWidget)
+{
+	CCameraComponent* CamCom = dynamic_cast<CCameraComponent*>(m_Component);
+
+	CamCom->DeleteMoveData(Data);
+	m_MoveDataList->DeleteWidget(DeleteWidget);
+}
+

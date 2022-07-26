@@ -27,7 +27,7 @@ NodeResult CCrowBossLandingCheck::OnStart(float DeltaTime)
 
 	Vector3 MyPos = m_Object->GetWorldPos();
 
-	if (MyPos.y < 1.f && MyPos.y > -1.f)
+	if (MyPos.y < 0.f)
 	{
 		CProjectileComponent* Projectile = m_Object->FindObjectComponentFromType<CProjectileComponent>();
 		Projectile->SetNoUpdate(true);

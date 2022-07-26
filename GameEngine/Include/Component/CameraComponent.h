@@ -2,6 +2,22 @@
 
 #include "SceneComponent.h"
 
+// 카메라 무브 콜백이 언제 불릴 것인지
+enum class CamMoveCallBackCallType
+{
+	START_MOVE,						// 해당 포인트로 이동 시작하는 타이밍
+	REACHED_POINT,					// 해당 포인트에 도착했을 타이밍
+	Max
+};
+
+struct CamMoveData
+{
+	Vector3 DestPoint;
+	float	NextPointReachTime;
+	float	StayTime;
+	std::function<void()> CallBack[(int)CamMoveCallBackCallType::Max];
+};
+
 class CCameraComponent :
 	public CSceneComponent
 {
@@ -36,6 +52,21 @@ protected:
 	bool		m_Init;
 	Vector3		m_OriginOffset;
 	Vector3		m_Offet;
+
+	bool		m_StartMove;
+	Vector3		m_CurMoveDir;
+	float		m_CurMoveTick;
+	bool		m_StayStart;
+	float		m_StayTimer;
+	CamMoveData* m_CurMoveData;
+	std::list<CamMoveData*>	m_MoveDataList;
+	std::function<void()>	m_MoveEndCallBack;
+
+#ifdef _DEBUG
+	bool m_TestMove;
+	Vector3 m_TestOriginPos;
+	std::list<CamMoveData*>	m_TestMoveDataList;
+#endif // _DEBUG
 
 public:
 	void Shake(float Time, float Amount);
@@ -79,6 +110,18 @@ public:
 		LB.y = GetWorldPos().y;// - m_Ratio.y * m_RS.Height;
 
 		return LB;
+	}
+
+	const std::list<CamMoveData*>& GetMoveData() const
+	{
+		return m_MoveDataList;
+	}
+
+	CamMoveData* FindMoveData(int Index);
+
+	int GetMoveDataCount() const
+	{
+		return (int)m_MoveDataList.size();
 	}
 
 	float GetDistance() const
@@ -151,8 +194,28 @@ public :
 public:
 	void ComputeShadowView();
 
+public:
+	void StartMove();
+	void Move(float DeltaTime);
+	void ClearMoveData();
+	CamMoveData* AddMoveData(const Vector3& Point, float NextPointReachTime, float StayTime = 0.f);
+	bool DeleteMoveData(int Index);
+	bool DeleteMoveData(CamMoveData* Data);
+	void ChangeMoveData(int Index, const Vector3& Point, float NextPointReachTime, float StayTime = 0.f);
+	void ChangeMoveDestPoint(int Index, const Vector3& Point);
+	void ChangeMoveDestReachTime(int Index, float Time);
+	void ChangeMoveStayTime(int Index, float Time);
+
+#ifdef _DEBUG
+	void StartTestMove();
+	void TestMove(float DeltaTime);
+	void UpdateCurTestMoveData();
+#endif // _DEBUG
+
 private:
 	void CreateProjectionMatrix();
+	bool IsValidMoveDataIndex(int Index);
+	void UpdateCurMoveData();
 
 public:
 	virtual void Start();
@@ -165,5 +228,43 @@ public:
 	virtual CCameraComponent* Clone();
 	virtual bool Save(FILE* File);
 	virtual bool Load(FILE* File);
+
+public:
+	template<typename T>
+	void AddMoveEndCallBack(T* Obj, void(T::* Func)())
+	{
+		m_MoveEndCallBack = std::bind(Func, Obj);
+	}
+
+	template <typename T>
+	void AddMoveCallBack(CamMoveData* Data, CamMoveCallBackCallType CallBackType, T* Obj, void(T::* Func)())
+	{
+		if (!Data)
+		{
+			return;
+		}
+
+		std::function<void()> CallBack = std::bind(Func, Obj);
+		Data->CallBack[(int)CallBackType] = CallBack;
+	}
+
+	template <typename T>
+	void AddMoveCallBack(int Index, CamMoveCallBackCallType CallBackType, T* Obj, void(T::* Func)())
+	{
+		if (!IsValidMoveDataIndex(Index))
+		{
+			return;
+		}
+
+		CamMoveData* FoundData = FindMoveData(Index);
+
+		if (!FoundData)
+		{
+			return;
+		}
+
+		std::function<void()> CallBack = std::bind(Func, Obj);
+		FoundData->CallBack[(int)CallBackType] = CallBack;
+	}
 };
 

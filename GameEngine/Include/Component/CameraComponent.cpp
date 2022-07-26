@@ -5,6 +5,7 @@
 #include "../Scene/LightManager.h"
 #include "LightComponent.h"
 #include "../Render/RenderManager.h"
+#include "../Scene/CameraManager.h"
 #include "Arm.h"
 
 CCameraComponent::CCameraComponent()
@@ -36,6 +37,8 @@ CCameraComponent::CCameraComponent(const CCameraComponent& com) :
 CCameraComponent::~CCameraComponent()
 {
 	SAFE_DELETE(m_Frustum);
+
+	ClearMoveData();
 }
 
 void CCameraComponent::Shake(float Time, float Amount)
@@ -51,6 +54,33 @@ void CCameraComponent::Shake(float Time, float Amount)
 	m_ShakeAmount = Amount;
 	m_ShakeDecreaseTick = m_ShakeAmount / Time;
 	m_OriginRelavitePos = GetRelativePos();
+}
+
+CamMoveData* CCameraComponent::FindMoveData(int Index)
+{
+	if (!IsValidMoveDataIndex(Index))
+	{
+		return nullptr;
+	}
+
+	CamMoveData* Find = nullptr;
+
+	int Idx = 0;
+	auto iter = m_MoveDataList.begin();
+	auto iterEnd = m_MoveDataList.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		if (Index == Idx)
+		{
+			Find = (*iter);
+			break;
+		}
+		++Idx;
+	}
+
+
+	return Find;
 }
 
 bool CCameraComponent::FrustumInPoint(const Vector3& Point)
@@ -81,6 +111,34 @@ void CCameraComponent::CreateProjectionMatrix()
 
 	m_matShadowProj = XMMatrixOrthographicOffCenterLH(-SHADOWMAP_WIDTH / 50.f, SHADOWMAP_WIDTH / 50.f, -SHADOWMAP_HEIGHT / 50.f, SHADOWMAP_HEIGHT / 50.f, 0.f, 1000.f);
 	// m_matShadowProj = XMMatrixPerspectiveFovLH(DegreeToRadian(m_ViewAngle), SHADOWMAP_WIDTH / SHADOWMAP_HEIGHT, 0.1f, m_Distance);
+}
+
+bool CCameraComponent::IsValidMoveDataIndex(int Index)
+{
+	if (Index < 0 || Index >= m_MoveDataList.size())
+	{
+		return false;
+	}
+	return true;
+}
+
+void CCameraComponent::UpdateCurMoveData()
+{
+	m_CurMoveData = m_MoveDataList.front();
+
+	Vector3 ToMovePoint = m_CurMoveData->DestPoint - GetWorldPos();
+
+	m_CurMoveTick = ToMovePoint.Length() / m_CurMoveData->NextPointReachTime;
+	m_CurMoveDir = ToMovePoint;
+
+	m_CurMoveDir.Normalize();
+
+	m_MoveDataList.pop_front();
+
+	if (m_CurMoveData->CallBack[(int)CamMoveCallBackCallType::START_MOVE])
+	{
+		m_CurMoveData->CallBack[(int)CamMoveCallBackCallType::START_MOVE]();
+	}
 }
 
 void CCameraComponent::CreateCustomResolutionProjMatrix(float Width, float Height)
@@ -166,6 +224,304 @@ void CCameraComponent::ComputeShadowView()
 	}
 }
 
+void CCameraComponent::StartMove()
+{
+	if (m_MoveDataList.empty())
+	{
+		return;
+	}
+
+	m_StartMove = true;
+
+	UpdateCurMoveData();
+
+	SetWorldPos(m_CurMoveData->DestPoint);
+
+	m_Scene->GetCameraManager()->KeepCamera();
+	m_Scene->GetCameraManager()->SetCurrentCamera(this);
+}
+
+void CCameraComponent::Move(float DeltaTime)
+{
+	if (!m_CurMoveData)
+	{
+		UpdateCurMoveData();
+	}
+
+	Vector3 ToPoint = m_CurMoveData->DestPoint - GetWorldPos();
+
+	if (ToPoint.Dot(m_CurMoveDir) < 0)
+	{
+		SetWorldPos(m_CurMoveData->DestPoint);
+		m_StayStart = true;
+
+		return;
+	}
+
+	if (m_CurMoveData->NextPointReachTime == 0.f)
+	{
+		SetWorldPos(m_CurMoveData->DestPoint);
+		m_StayStart = true;
+	}
+
+	if (m_StayStart)
+	{
+		m_StayTimer += DeltaTime;
+
+		if (m_StayTimer >= m_CurMoveData->StayTime)
+		{
+			if (m_CurMoveData->CallBack[(int)CamMoveCallBackCallType::REACHED_POINT])
+			{
+				m_CurMoveData->CallBack[(int)CamMoveCallBackCallType::REACHED_POINT]();
+			}
+
+			m_StayStart = false;
+			SAFE_DELETE(m_CurMoveData);
+			m_CurMoveData = nullptr;
+			m_StayTimer = 0.f;
+
+			if (m_MoveDataList.empty())
+			{
+				if (m_MoveEndCallBack)
+				{
+					m_MoveEndCallBack();
+				}
+
+				m_StartMove = false;
+			}
+		}
+	}
+	else
+	{
+		AddWorldPos(m_CurMoveDir * m_CurMoveTick * DeltaTime);
+	}
+}
+
+void CCameraComponent::ClearMoveData()
+{
+	auto iter = m_MoveDataList.begin();
+	auto iterEnd = m_MoveDataList.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		SAFE_DELETE(*iter);
+	}
+
+	m_MoveDataList.clear();
+
+#ifdef _DEBUG
+	iter = m_TestMoveDataList.begin();
+	iterEnd = m_TestMoveDataList.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		SAFE_DELETE(*iter);
+	}
+
+	m_TestMoveDataList.clear();
+#endif // _DEBUG
+}
+
+CamMoveData* CCameraComponent::AddMoveData(const Vector3& Point, float NextPointReachTime, float StayTime)
+{
+	CamMoveData* Data = new CamMoveData;
+	Data->DestPoint = Point;
+	Data->NextPointReachTime = NextPointReachTime;
+	Data->StayTime = StayTime;
+
+	m_MoveDataList.push_back(Data);
+
+	return Data;
+}
+
+bool CCameraComponent::DeleteMoveData(int Index)
+{
+	if (!IsValidMoveDataIndex(Index))
+	{
+		return false;
+	}
+
+	auto iter = m_MoveDataList.begin();
+	auto iterEnd = m_MoveDataList.end();
+
+	for (int Idx = 0; iter != iterEnd; ++iter, ++Idx)
+	{
+		if (Index == Idx)
+		{
+			SAFE_DELETE((*iter));
+			m_MoveDataList.erase(iter);
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool CCameraComponent::DeleteMoveData(CamMoveData* Data)
+{
+	auto iter = m_MoveDataList.begin();
+	auto iterEnd = m_MoveDataList.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		if ((*iter) == Data)
+		{
+			SAFE_DELETE((*iter));
+			m_MoveDataList.erase(iter);
+			return true;
+		}
+	}
+
+	return false;
+}
+
+void CCameraComponent::ChangeMoveData(int Index, const Vector3& Point, float NextPointReachTime, float StayTime)
+{
+	if (!IsValidMoveDataIndex(Index))
+	{
+		return;
+	}
+
+	CamMoveData* Data = FindMoveData(Index);
+	Data->DestPoint = Point;
+	Data->NextPointReachTime = NextPointReachTime;
+	Data->StayTime = StayTime;
+}
+
+void CCameraComponent::ChangeMoveDestPoint(int Index, const Vector3& Point)
+{
+	if (!IsValidMoveDataIndex(Index))
+	{
+		return;
+	}
+
+	CamMoveData* Data = FindMoveData(Index);
+	Data->DestPoint = Point;
+}
+
+void CCameraComponent::ChangeMoveDestReachTime(int Index, float Time)
+{
+	if (!IsValidMoveDataIndex(Index))
+	{
+		return;
+	}
+
+	CamMoveData* Data = FindMoveData(Index);
+	Data->NextPointReachTime = Time;
+}
+
+void CCameraComponent::ChangeMoveStayTime(int Index, float Time)
+{
+	if (!IsValidMoveDataIndex(Index))
+	{
+		return;
+	}
+
+	CamMoveData* Data = FindMoveData(Index);
+	Data->StayTime = Time;
+}
+
+#ifdef _DEBUG
+
+void CCameraComponent::StartTestMove()
+{
+	if (m_MoveDataList.empty())
+	{
+		return;
+	}
+
+	m_TestMove = true;
+
+	m_TestOriginPos = GetRelativePos();
+
+	auto iter = m_MoveDataList.begin();
+	auto iterEnd = m_MoveDataList.end();
+
+	CamMoveData* TestData = nullptr;
+
+	for (; iter != iterEnd; ++iter)
+	{
+		TestData = new CamMoveData;
+		TestData->DestPoint = (*iter)->DestPoint;
+		TestData->NextPointReachTime = (*iter)->NextPointReachTime;
+		TestData->StayTime = (*iter)->StayTime;
+
+		m_TestMoveDataList.push_back(TestData);
+	}
+
+	UpdateCurTestMoveData();
+
+	SetWorldPos(m_CurMoveData->DestPoint);
+
+	m_Scene->GetCameraManager()->KeepCamera();
+	m_Scene->GetCameraManager()->SetCurrentCamera(this);
+}
+
+#endif // _DEBUG
+
+#ifdef _DEBUG
+
+void CCameraComponent::TestMove(float DeltaTime)
+{
+	if (!m_CurMoveData)
+	{
+		UpdateCurTestMoveData();
+	}
+
+	Vector3 ToPoint = m_CurMoveData->DestPoint - GetWorldPos();
+
+	if (ToPoint.Dot(m_CurMoveDir) < 0)
+	{
+		SetWorldPos(m_CurMoveData->DestPoint);
+		m_StayStart = true;
+
+		return;
+	}
+
+	if (m_CurMoveData->NextPointReachTime == 0.f)
+	{
+		SetWorldPos(m_CurMoveData->DestPoint);
+		m_StayStart = true;
+	}
+
+	if (m_StayStart)
+	{
+		m_StayTimer += DeltaTime;
+
+		if (m_StayTimer >= m_CurMoveData->StayTime)
+		{
+			m_StayStart = false;
+			SAFE_DELETE(m_CurMoveData);
+			m_CurMoveData = nullptr;
+			m_StayTimer = 0.f;
+
+			if (m_TestMoveDataList.empty())
+			{
+				SetRelativePos(m_TestOriginPos);
+				m_Scene->GetCameraManager()->ReturnCamera();
+				m_TestMove = false;
+				return;
+			}
+		}
+	}
+	else
+	{
+		AddWorldPos(m_CurMoveDir * m_CurMoveTick * DeltaTime);
+	}
+}
+
+void CCameraComponent::UpdateCurTestMoveData()
+{
+	m_CurMoveData = m_TestMoveDataList.front();
+	m_TestMoveDataList.pop_front();
+	Vector3 ToMovePoint = m_CurMoveData->DestPoint - GetWorldPos();
+	m_CurMoveTick = ToMovePoint.Length() / m_CurMoveData->NextPointReachTime;
+	m_CurMoveDir = ToMovePoint;
+	m_CurMoveDir.Normalize();
+}
+
+#endif // _DEBUG
+
 void CCameraComponent::Start()
 {
 	CSceneComponent::Start();
@@ -210,52 +566,23 @@ void CCameraComponent::Update(float DeltaTime)
 			y *= -1.f;
 		}
 
-		Vector3 Shake = Vector3(x * m_ShakeAmount, y * m_ShakeAmount, 0.f);
-		SetRelativePos(m_OriginRelavitePos + Shake);
+ 		Vector3 Shake = Vector3(x * m_ShakeAmount, y * m_ShakeAmount, 0.f);
+ 		SetRelativePos(m_OriginRelavitePos + Shake);
 
 		m_ShakeAmount -= m_ShakeDecreaseTick * DeltaTime;
 	}
 
-	/*
-	카메라가 뷰공간으로 변환이 되면 카메라를 구성하는 x, y, z 축은 월드의 축과 일치하게
-	된다. 즉, 축은 x : 1, 0, 0  y : 0, 1, 0  z : 0, 0, 1 로 구성이 된다는 것이다.
-	직교행렬 : 행렬을 구성하는 3개의 축이 모두 서로에 대해 정직교 하는 행렬을 말한다.
-	1 0 0
-	0 1 0
-	0 0 1
+	if (!m_Shake && m_StartMove)
+	{
+		Move(DeltaTime);
+	}
 
-	직교행렬은 전치 행렬과 역행렬이 같다.
-
-	카메라 X축 * 뷰행렬 = 1, 0, 0
-	카메라 y축 * 뷰행렬 = 0, 1, 0
-	카메라 z축 * 뷰행렬 = 0, 0, 1
-	x, y, z   0 0 0   1 0 0
-	x, y, z * 0 0 0 = 0 1 0
-	x, y, z	  0 0 0   0 0 1
-
-	뷰의 회전 행렬
-	Xx Yx Zx 0
-	Xy Yy Zy 0
-	Xz Yz Zz 0
-	0  0  0  1
-
-	뷰의 이동 행렬
-	1   0  0 0
-	0   1  0 0
-	0   0  1 0
-	-x -y -z 1
-
-	1   0  0 0   Xx Yx Zx 0
-	0   1  0 0 * Xy Yy Zy 0
-	0   0  1 0   Xz Yz Zz 0
-	-x -y -z 1   0  0  0  1
-
-	최종 뷰 행렬
-	Xx    Yx   Zx  0
-	Xy    Yy   Zy  0
-	Xz    Yz   Zz  0
-	-X.P -Y.P -Z.P 1
-	*/	
+#ifdef _DEBUG
+	if (m_TestMove)
+	{
+		TestMove(DeltaTime);
+	}
+#endif // _DEBUG
 }
 
 void CCameraComponent::PostUpdate(float DeltaTime)
@@ -347,6 +674,23 @@ bool CCameraComponent::Save(FILE* File)
 	fwrite(&m_ViewAngle, sizeof(float), 1, File);
 	fwrite(&m_Distance, sizeof(float), 1, File);
 	fwrite(&m_RS, sizeof(Resolution), 1, File);
+
+	int Length = (int)m_MoveDataList.size();
+	fwrite(&Length, sizeof(int), 1, File);
+
+	auto iter = m_MoveDataList.begin();
+	auto iterEnd = m_MoveDataList.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		Vector3 DestPoint = (*iter)->DestPoint;
+		float	NextPointReachTime = (*iter)->NextPointReachTime;
+		float	StayTime = (*iter)->StayTime;
+
+		fwrite(&DestPoint, sizeof(Vector3), 1, File);
+		fwrite(&NextPointReachTime, sizeof(float), 1, File);
+		fwrite(&StayTime, sizeof(float), 1, File);
+	}
 	
 	CSceneComponent::Save(File);
 
@@ -361,6 +705,27 @@ bool CCameraComponent::Load(FILE* File)
 	fread(&m_ViewAngle, sizeof(float), 1, File);
 	fread(&m_Distance, sizeof(float), 1, File);
 	fread(&m_RS, sizeof(Resolution), 1, File);
+
+ //	int Length = 0;
+ //	fread(&Length, sizeof(int), 1, File);
+ //
+ //	for (int i = 0; i < Length; ++i)
+ //	{
+ //		CamMoveData* Data = new CamMoveData;
+ //
+ //		Vector3 DestPoint;
+ //		float NextPointReachTime, StayTime;
+ //
+ //		fread(&DestPoint, sizeof(Vector3), 1, File);
+ //		fread(&NextPointReachTime, sizeof(float), 1, File);
+ //		fread(&StayTime, sizeof(float), 1, File);
+ //
+ //		Data->DestPoint = DestPoint;
+ //		Data->NextPointReachTime = NextPointReachTime;
+ //		Data->StayTime = StayTime;
+ //
+ //		m_MoveDataList.push_back(Data);
+ //	}
 
 	CSceneComponent::Load(File);
 

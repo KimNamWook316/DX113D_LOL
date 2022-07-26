@@ -37,6 +37,7 @@ public:
     void OnCutSceneSlamFloor();
     virtual void OnDeadAnimStart() override;
     virtual void OnDeadPaperBurnEnd() override;
+    void OnReachedCutSceneAnimPoint();
 
 public:
     int GetMeleeAttackCount() const
