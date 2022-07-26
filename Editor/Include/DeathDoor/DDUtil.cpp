@@ -98,6 +98,8 @@ std::string CDDUtil::DDConditionNodeTypeToString(DDConditionNode NodeType)
 		return "CrowBossJumpStartCheck";
 	case DDConditionNode::CrowBossLandingCheck:
 		return "CrowBossLandingCheck";
+	case DDConditionNode::CrowBossJumpAttackRangeCheck:
+		return "CrowBossJumpAttackRangeCheck";
 
 
 	case DDConditionNode::HPCheck:
@@ -233,7 +235,10 @@ DDConditionNode CDDUtil::StringToDDConditionNodeType(const std::string& Str)
 	{
 		return DDConditionNode::CrowBossLandingCheck;
 	}
-
+	else if (Str == "CrowBossJumpAttackRangeCheck")
+	{
+	return DDConditionNode::CrowBossJumpAttackRangeCheck;
+	}
 
 	else if (Str == "HPCheck")
 	{

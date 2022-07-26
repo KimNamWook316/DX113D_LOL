@@ -98,6 +98,10 @@ public:
 	{
 		return m_CurMoveSpeed;
 	}
+	float GetJumpAttackRange() const
+	{
+		return m_Data.JumpAttackRange;
+	}
 
     class CColliderBox3D* GetMeleeAttackCollider() const
     {

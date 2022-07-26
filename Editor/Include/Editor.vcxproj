@@ -232,12 +232,11 @@
     <ClCompile Include="DeathDoor\Component\Node\CrowBossCutScenePlayNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\CrowBossDirectionCheck.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\CrowBossJump.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\CrowBossJumpAttackRangeCheck.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\CrowBossJumpStartCheck.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\CrowBossLandingCheck.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\CrowBossPhasePickNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\CrowBossRunNode.cpp" />
-    <ClCompile Include="DeathDoor\Component\Node\CrowBossSliding.cpp" />
-    <ClCompile Include="DeathDoor\Component\Node\CrowBossSlidingNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\CrowBossSpinNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\CrowBossStartFlyingCheck.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\CrowBossStompStartCheck.cpp" />
@@ -410,12 +409,11 @@
     <ClInclude Include="DeathDoor\Component\Node\CrowBossCutScenePlayNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\CrowBossDirectionCheck.h" />
     <ClInclude Include="DeathDoor\Component\Node\CrowBossJump.h" />
+    <ClInclude Include="DeathDoor\Component\Node\CrowBossJumpAttackRangeCheck.h" />
     <ClInclude Include="DeathDoor\Component\Node\CrowBossJumpStartCheck.h" />
     <ClInclude Include="DeathDoor\Component\Node\CrowBossLandingCheck.h" />
     <ClInclude Include="DeathDoor\Component\Node\CrowBossPhasePickNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\CrowBossRunNode.h" />
-    <ClInclude Include="DeathDoor\Component\Node\CrowBossSliding.h" />
-    <ClInclude Include="DeathDoor\Component\Node\CrowBossSlidingNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\CrowBossSpinNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\CrowBossStartFlyingCheck.h" />
     <ClInclude Include="DeathDoor\Component\Node\CrowBossStompStartCheck.h" />

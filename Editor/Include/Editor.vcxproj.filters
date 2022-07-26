@@ -603,13 +603,7 @@
     <ClCompile Include="DeathDoor\Component\Node\CrowBossStompStartCheck.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="DeathDoor\Component\Node\CrowBossSliding.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="DeathDoor\Component\Node\CrowBossStartFlyingCheck.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="DeathDoor\Component\Node\CrowBossSlidingNode.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="DeathDoor\Component\Node\CrowBossRunNode.cpp">
@@ -640,6 +634,9 @@
       <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\04. CrowBoss</Filter>
     </ClCompile>
     <ClCompile Include="DeathDoor\Component\Node\CrowBossLandingCheck.cpp">
+      <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\04. CrowBoss</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Component\Node\CrowBossJumpAttackRangeCheck.cpp">
       <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\04. CrowBoss</Filter>
     </ClCompile>
   </ItemGroup>
@@ -1064,13 +1061,7 @@
     <ClInclude Include="DeathDoor\Component\Node\CrowBossStompStartCheck.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="DeathDoor\Component\Node\CrowBossSliding.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="DeathDoor\Component\Node\CrowBossStartFlyingCheck.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="DeathDoor\Component\Node\CrowBossSlidingNode.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="DeathDoor\Component\Node\CrowBossRunNode.h">
@@ -1101,6 +1092,9 @@
       <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\04. CrowBoss</Filter>
     </ClInclude>
     <ClInclude Include="DeathDoor\Component\Node\CrowBossLandingCheck.h">
+      <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\04. CrowBoss</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\Node\CrowBossJumpAttackRangeCheck.h">
       <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\04. CrowBoss</Filter>
     </ClInclude>
   </ItemGroup>

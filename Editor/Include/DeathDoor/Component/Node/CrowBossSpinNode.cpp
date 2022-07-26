@@ -11,7 +11,8 @@
 CCrowBossSpinNode::CCrowBossSpinNode()	:
 	m_AccRotation(0.f),
 	m_SpinDegree(0.f),
-	m_AccSlidingTime(0.f)
+	m_AccSlidingTime(0.f),
+	m_RotateCW(true)
 {
 	SetTypeID(typeid(CCrowBossSpinNode).hash_code());
 }
@@ -38,7 +39,10 @@ NodeResult CCrowBossSpinNode::OnStart(float DeltaTime)
 
 	Vector3 MyOriginPos = Data->GetMyOriginPos();
 	Vector3 PlayerOriginPos = Data->GetPlayerOriginPos();
+	CNavAgent* Agent = Data->GetMonsterNavAgent();
+	Vector3 FaceDir = Agent->GetCurrentFaceDir();
 	Vector3 OriginDir = PlayerOriginPos - MyOriginPos;
+
 	OriginDir.Normalize();
 
 	Vector3 MyCurrentPos = m_Object->GetWorldPos();
@@ -47,24 +51,24 @@ NodeResult CCrowBossSpinNode::OnStart(float DeltaTime)
 	Vector3 CurrentDir = PlayerCurrentPos - MyCurrentPos;
 	CurrentDir.Normalize();
 
-	Vector3 Cross = OriginDir.Cross(CurrentDir);
-	bool CW = true;
+	Vector3 Cross = FaceDir.Cross(CurrentDir);
 
+	m_RotateCW = true;
+	m_SpinDegree = 0.f;
 	if (Cross.y < 0)
 	{
-		CW = false;
+		m_RotateCW = false;
 	}
 
-	if (CW)
+	if (m_RotateCW)
 		m_AnimationMeshComp->GetAnimationInstance()->ChangeAnimation("RightSpin");
 	else
 		m_AnimationMeshComp->GetAnimationInstance()->ChangeAnimation("LeftSpin");
 
-	CNavAgent* Agent = Data->GetMonsterNavAgent();
-	Vector3 FaceDir = Agent->GetCurrentFaceDir();
-	
-	float DotProduct = FaceDir.Dot(CurrentDir);
-	m_SpinDegree = 0.f;
+	Vector3 SpinDir = MyOriginPos - PlayerCurrentPos;
+	SpinDir.Normalize();
+
+	float DotProduct = FaceDir.Dot(SpinDir);
 
 	if (DotProduct < 0.995f && DotProduct > -0.995f)
 	{
@@ -73,7 +77,7 @@ NodeResult CCrowBossSpinNode::OnStart(float DeltaTime)
 
 	else
 	{
-		if (CW)
+		if (m_RotateCW)
 			m_SpinDegree = 180.f;
 		else
 			m_SpinDegree = -180.f;
@@ -107,12 +111,15 @@ NodeResult CCrowBossSpinNode::OnUpdate(float DeltaTime)
 
 	if (abs(m_AccRotation - m_SpinDegree) < 3.f)
 	{
-		if (m_AccSlidingTime > 1.2f)
+		if (m_AccSlidingTime > 1.1f)
 		{
 			m_AccRotation = 0.f;
 			m_AccSlidingTime = 0.f;
 			m_Owner->SetCurrentNode(nullptr);
 			m_CallStart = false;
+
+			m_AnimationMeshComp->GetAnimationInstance()->ChangeAnimation("Run");
+
 			return NodeResult::Node_True;
 		}
 
@@ -130,16 +137,16 @@ NodeResult CCrowBossSpinNode::OnUpdate(float DeltaTime)
 	CNavAgent* Agent = Data->GetMonsterNavAgent();
 	Vector3 FaceDir = Agent->GetCurrentFaceDir();
 
-	if (m_SpinDegree < 0.f)
+	if (m_SpinDegree > 0.f)
 	{
-		m_Object->AddWorldRotationY(-180.f * DeltaTime);
-		m_AccRotation += -180.f * DeltaTime;
+		m_Object->AddWorldRotationY(180.f * DeltaTime);
+		m_AccRotation += 180.f * DeltaTime;
 	}
 
 	else
 	{
-		m_Object->AddWorldRotationY(180.f * DeltaTime);
-		m_AccRotation += 180.f * DeltaTime;
+		m_Object->AddWorldRotationY(-180.f * DeltaTime);
+		m_AccRotation += -180.f * DeltaTime;
 	}
 	
 

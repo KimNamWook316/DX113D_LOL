@@ -74,6 +74,7 @@
 #include "../DeathDoor/Component/Node/CrowBossJumpStartCheck.h"
 #include "../DeathDoor/Component/Node/CrowBossLandingCheck.h"
 #include "../DeathDoor/Component/Node/CrowBossJump.h"
+#include "../DeathDoor/Component/Node/CrowBossJumpAttackRangeCheck.h"
 
 #include "../DeathDoor/Component/Node/HitCheckNode.h"
 #include "../DeathDoor/Component/Node/HitBackNode.h"
@@ -702,7 +703,9 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
         case DDConditionNode::CrowBossLandingCheck:
             NewTreeNode = m_StateComponent->CreateTreeNode<CCrowBossLandingCheck>(Name);
             break;
-
+        case DDConditionNode::CrowBossJumpAttackRangeCheck:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CCrowBossJumpAttackRangeCheck>(Name);
+            break;
 
         case DDConditionNode::IsCombatCheck:
             NewTreeNode = m_StateComponent->CreateTreeNode<CIsCombatCheck>(Name);

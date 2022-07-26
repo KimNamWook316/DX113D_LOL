@@ -80,6 +80,7 @@
 #include "Node/CrowBossJumpStartCheck.h"
 #include "Node/CrowBossJump.h"
 #include "Node/CrowBossLandingCheck.h"
+#include "Node/CrowBossJumpAttackRangeCheck.h"
 
 #include "GameStateComponent.h"
 
@@ -437,6 +438,10 @@ CNode* CGameBehaviorTree::LoadNode(CNode* Parent, size_t TypeID)
 	else if (TypeID == typeid(CCrowBossLandingCheck).hash_code())
 	{
 		NewNode = MakeNode<CCrowBossLandingCheck>(Parent, OwnerObject);
+	}
+	else if (TypeID == typeid(CCrowBossJumpAttackRangeCheck).hash_code())
+	{
+		NewNode = MakeNode<CCrowBossJumpAttackRangeCheck>(Parent, OwnerObject);
 	}
 
 	// Boss Crow - Action

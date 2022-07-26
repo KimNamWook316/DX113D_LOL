@@ -3,6 +3,8 @@
 #include "../GameStateComponent.h"
 #include "../GameBehaviorTree.h"
 #include "../CrowBossDataComponent.h"
+#include "Scene/Scene.h"
+#include "../MonsterNavAgent.h"
 
 CCrowBossBypassCheck::CCrowBossBypassCheck()
 {
@@ -24,40 +26,47 @@ NodeResult CCrowBossBypassCheck::OnStart(float DeltaTime)
 	CCrowBossDataComponent* Data = dynamic_cast<CCrowBossDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
 
 	Vector3 PlayerOriginPos = Data->GetPlayerOriginPos();
+	Vector3 PlayerCurrentPos = m_Object->GetScene()->GetPlayerObject()->GetWorldPos();
 	Vector3 MyOriginPos = Data->GetMyOriginPos();
 	Vector3 MyCurrentPos = m_Object->GetWorldPos();
 
 	Vector3 Dir = PlayerOriginPos - MyOriginPos;
 	Dir.Normalize();
 
-	m_Object->AddWorldPos(Dir * 6.f * DeltaTime);
+	//Vector3 FaceDir = Data->GetMonsterNavAgent()->GetCurrentFaceDir();
+	//float Speed = Data->GetMoveSpeed();
+
+	//m_Object->AddWorldPos(FaceDir * Speed * DeltaTime);
 
 	Vector3 OriginDiff = PlayerOriginPos - MyOriginPos;
-	Vector3 CurrentDiff = PlayerOriginPos - MyCurrentPos;
+	Vector3 CurrentDiff = PlayerCurrentPos - MyCurrentPos;
 
-	if (OriginDiff.x < 0.f)
+	if (OriginDiff.x < 0.f && OriginDiff.z < 0.f)
 	{
-		if (CurrentDiff.x > 1.f)
+		if (CurrentDiff.x > 4.f && CurrentDiff.z > 4.f)
 			return NodeResult::Node_True;
 	}
 
-	else
+	else if (OriginDiff.x < 0.f && OriginDiff.z > 0.f)
 	{
-		if (CurrentDiff.x < -1.f)
+		if (CurrentDiff.x > 4.f && CurrentDiff.z < -4.f)
 			return NodeResult::Node_True;
 	}
 
-	if (OriginDiff.z < 0.f)
+
+	else if (OriginDiff.x > 0.f && OriginDiff.z > 0.f)
 	{
-		if (CurrentDiff.z > 1.f)
+		if (CurrentDiff.x < -4.f && CurrentDiff.z < -4.f)
 			return NodeResult::Node_True;
 	}
 
-	else
+	else if (OriginDiff.x > 0.f && OriginDiff.z < 0.f)
 	{
-		if (CurrentDiff.z < -1.f)
+		if (CurrentDiff.x < -4.f && CurrentDiff.z > 4.f)
 			return NodeResult::Node_True;
 	}
+
+
 	
 
 	return NodeResult::Node_False;

@@ -70,6 +70,7 @@ void CProjectileComponent::Update(float DeltaTime)
 
 		if (m_IsGravity)
 		{
+			Vector3 Pos = m_Object->GetWorldPos();
 			Move = Vector3(m_Dir.x * m_VelocityXZ * DeltaTime,
 				m_Dir.y * ((m_VelocityY - (GRAVITY * m_LifeTimer / 100.f)) * DeltaTime),
 				m_Dir.z * m_VelocityXZ * DeltaTime);

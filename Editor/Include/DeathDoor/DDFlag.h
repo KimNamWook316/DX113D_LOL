@@ -77,6 +77,7 @@ enum class DDConditionNode
 	CrowBossBypassCheck,
 	CrowBossJumpStartCheck,
 	CrowBossLandingCheck,
+	CrowBossJumpAttackRangeCheck,
 	Max
 };
 
