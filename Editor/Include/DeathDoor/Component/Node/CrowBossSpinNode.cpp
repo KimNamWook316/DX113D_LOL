@@ -7,9 +7,10 @@
 #include "../MonsterNavAgent.h"
 #include "Scene/Scene.h"
 
+
 CCrowBossSpinNode::CCrowBossSpinNode()	:
 	m_AccRotation(0.f),
-	m_Degree(0.f),
+	m_SpinDegree(0.f),
 	m_AccSlidingTime(0.f)
 {
 	SetTypeID(typeid(CCrowBossSpinNode).hash_code());
@@ -31,7 +32,6 @@ void CCrowBossSpinNode::Init()
 
 NodeResult CCrowBossSpinNode::OnStart(float DeltaTime)
 {
-
 	m_CallStart = true;
 
 	CCrowBossDataComponent* Data = dynamic_cast<CCrowBossDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
@@ -60,6 +60,25 @@ NodeResult CCrowBossSpinNode::OnStart(float DeltaTime)
 	else
 		m_AnimationMeshComp->GetAnimationInstance()->ChangeAnimation("LeftSpin");
 
+	CNavAgent* Agent = Data->GetMonsterNavAgent();
+	Vector3 FaceDir = Agent->GetCurrentFaceDir();
+	
+	float DotProduct = FaceDir.Dot(CurrentDir);
+	m_SpinDegree = 0.f;
+
+	if (DotProduct < 0.995f && DotProduct > -0.995f)
+	{
+		m_SpinDegree = RadianToDegree(acosf(DotProduct));
+	}
+
+	else
+	{
+		if (CW)
+			m_SpinDegree = 180.f;
+		else
+			m_SpinDegree = -180.f;
+	}
+
 	return NodeResult::Node_True;
 }
 
@@ -83,10 +102,10 @@ NodeResult CCrowBossSpinNode::OnUpdate(float DeltaTime)
 
 	Vector3 MyOriginPos = Data->GetMyOriginPos();
 	Vector3 PlayerOriginPos = Data->GetPlayerOriginPos();
-	Vector3 Dir = PlayerOriginPos - MyOriginPos;
-	Dir.Normalize();
+	Vector3 OriginDir = PlayerOriginPos - MyOriginPos;
+	OriginDir.Normalize();
 
-	if (m_AccRotation >= 180.f)
+	if (abs(m_AccRotation - m_SpinDegree) < 3.f)
 	{
 		if (m_AccSlidingTime > 1.2f)
 		{
@@ -100,15 +119,18 @@ NodeResult CCrowBossSpinNode::OnUpdate(float DeltaTime)
 		else
 		{
 			m_AccSlidingTime += DeltaTime;
-			m_Object->AddWorldPos(Dir * 6.f * DeltaTime);
+			m_Object->AddWorldPos(OriginDir * 6.f * DeltaTime);
 		}
 
 		return NodeResult::Node_True;
 	}
 
-	m_Object->AddWorldPos(Dir * 6.f * DeltaTime);
+	m_Object->AddWorldPos(OriginDir * 6.f * DeltaTime);
 
-	if (m_Degree < 0.f)
+	CNavAgent* Agent = Data->GetMonsterNavAgent();
+	Vector3 FaceDir = Agent->GetCurrentFaceDir();
+
+	if (m_SpinDegree < 0.f)
 	{
 		m_Object->AddWorldRotationY(-180.f * DeltaTime);
 		m_AccRotation += -180.f * DeltaTime;

@@ -37,25 +37,25 @@ NodeResult CCrowBossBypassCheck::OnStart(float DeltaTime)
 
 	if (OriginDiff.x < 0.f)
 	{
-		if (CurrentDiff.x > 0.f)
+		if (CurrentDiff.x > 1.f)
 			return NodeResult::Node_True;
 	}
 
 	else
 	{
-		if (CurrentDiff.x < 0.f)
+		if (CurrentDiff.x < -1.f)
 			return NodeResult::Node_True;
 	}
 
 	if (OriginDiff.z < 0.f)
 	{
-		if (CurrentDiff.z > 0.f)
+		if (CurrentDiff.z > 1.f)
 			return NodeResult::Node_True;
 	}
 
 	else
 	{
-		if (CurrentDiff.z < 0.f)
+		if (CurrentDiff.z < -1.f)
 			return NodeResult::Node_True;
 	}
 	

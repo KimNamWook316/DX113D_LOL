@@ -113,8 +113,11 @@ void CMonsterDataComponent::Start()
 	}
 	
 	// PaperBurn นื Death
-	m_PaperBurn = m_Object->FindComponentFromType<CPaperBurnComponent>();
-	m_PaperBurn->SetFinishCallback(this, &CMonsterDataComponent::OnDeadPaperBurnEnd);
+	if (m_PaperBurn)
+	{
+		m_PaperBurn = m_Object->FindComponentFromType<CPaperBurnComponent>();
+		m_PaperBurn->SetFinishCallback(this, &CMonsterDataComponent::OnDeadPaperBurnEnd);
+	}
 
 	CAnimationSequenceInstance* AnimInst = m_AnimMesh->GetAnimationInstance();
 	AnimInst->AddNotify("Death", "DeathStart", 0, this, &CMonsterDataComponent::OnDeadAnimStart);
@@ -123,7 +126,6 @@ void CMonsterDataComponent::Start()
 	// CutScene ฐüทร ( Enter Trigger, CutScene Cam, Collider CallBack)
 	m_PlayerEnterZoneTrigger = (CColliderBox3D*)m_Object->FindComponent("PlayerEnterTrigger");
 	m_CutSceneCam = m_Object->FindComponentFromType<CCameraComponent>();
-	m_PlayerEnterZoneTrigger = (CColliderBox3D*)m_Object->FindComponent("PlayerEnterTrigger");
 
 	if (m_PlayerEnterZoneTrigger)
 	{
