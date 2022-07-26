@@ -32,6 +32,7 @@ protected:
     CSharedPtr<class CMesh> m_Mesh;
     CSharedPtr<class CShader> m_Shader;
     class CColliderConstantBuffer* m_CBuffer;
+    bool m_RigidCollisionIgnore;
 
 public:
     const std::vector<int>& GetCurrentSections()    const
@@ -74,6 +75,16 @@ public:
         m_Offset.z += Offset;
     }
 
+    void SetRigidCollisionIgnore(bool Ignore)
+    {
+        m_RigidCollisionIgnore = Ignore;
+    }
+
+    bool GetRigidCollisionIgnore()  const
+    {
+        return m_RigidCollisionIgnore;
+    }
+
     virtual void SetOffset(const Vector3& Offset)
     {
         m_Offset = Offset;
@@ -92,6 +103,11 @@ public:
     Vector3 GetMax()    const
     {
         return m_Max;
+    }
+
+    void SetCollisionResultHitPoint(const Vector3& HitPoint)
+    {
+        m_Result.HitPoint = HitPoint;
     }
 
     void SetCollisionResultSrc(CColliderComponent* Com)

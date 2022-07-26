@@ -20,7 +20,9 @@ CMonsterDataComponent::CMonsterDataComponent() :
 	m_LookPlayer(false),
 	m_CurMoveSpeed(0.f),
 	m_DeathColorStart(Vector4::Red),
-	m_DeathColorEnd(Vector4::White)
+	m_DeathColorEnd(Vector4::White),
+	m_LeftLookPlayer(false),
+	m_RightLookPlayer(false)
 {
 	SetTypeID<CMonsterDataComponent>();
 
@@ -121,7 +123,15 @@ void CMonsterDataComponent::Start()
 	// CutScene 관련 ( Enter Trigger, CutScene Cam, Collider CallBack)
 	m_PlayerEnterZoneTrigger = (CColliderBox3D*)m_Object->FindComponent("PlayerEnterTrigger");
 	m_CutSceneCam = m_Object->FindComponentFromType<CCameraComponent>();
-	m_PlayerEnterZoneTrigger->AddCollisionCallback(Collision_State::Begin, this, &CMonsterDataComponent::OnPlayerEnterZone);
+	m_PlayerEnterZoneTrigger = (CColliderBox3D*)m_Object->FindComponent("PlayerEnterTrigger");
+
+	if (m_PlayerEnterZoneTrigger)
+	{
+		m_PlayerEnterZoneTrigger->AddCollisionCallback(Collision_State::Begin, this, &CMonsterDataComponent::OnPlayerEnterZone);
+	}
+
+	// MonsterNavAgent 관련
+	m_MonsterNavAgent = m_Object->FindObjectComponentFromType<CMonsterNavAgent>();
 }
 
 void CMonsterDataComponent::Update(float DeltaTime)
@@ -136,6 +146,25 @@ void CMonsterDataComponent::Update(float DeltaTime)
 	if (m_LookPlayer)
 	{
 		LookPlayer(DeltaTime);
+	}
+	else
+	{
+		if (m_RightLookPlayer)
+		{
+			// 오른쪽으로 돌아야 하는데 왼쪽으로 도는 설정도 true 라면 오류
+			if (m_LeftLookPlayer)
+				assert(false);
+
+			RightLookPlayer(DeltaTime);
+		}
+		else  if (m_LeftLookPlayer)
+		{
+			// 오른쪽으로 돌아야 하는데 왼쪽으로 도는 설정도 true 라면 오류
+			if (m_RightLookPlayer)
+				assert(false);
+
+			LeftLookPlayer(DeltaTime);
+		}
 	}
 
 	if (m_MoveZ)
@@ -169,9 +198,19 @@ void CMonsterDataComponent::LookPlayer(float DeltaTime)
 		}
 		else
 		{
-			MyObj->AddWorldRotationY(-m_Data.RotateSpeedPerSec * DeltaTime);
+			MyObj->AddWorldRotationY(-1.f * m_Data.RotateSpeedPerSec * DeltaTime);
 		}
 	}
+}
+
+void CMonsterDataComponent::RightLookPlayer(float DeltaTime)
+{
+	m_Object->AddWorldRotationY(-1.f * m_Data.RotateSpeedPerSec * DeltaTime);
+}
+
+void CMonsterDataComponent::LeftLookPlayer(float DeltaTime)
+{
+	m_Object->AddWorldRotationY(m_Data.RotateSpeedPerSec * DeltaTime);
 }
 
 void CMonsterDataComponent::MoveZ(float DeltaTime)
@@ -389,6 +428,22 @@ float CMonsterDataComponent::GetAnglePlayer()
 
 bool CMonsterDataComponent::IsPlayerLeftBasedInLookDir()
 {
+	/*
+	Vector3 vToPlayer = ToPlayer();
+	// Vector3 vWorldLook = m_Object->GetWorldAxis(AXIS::AXIS_Z) * -1.f;
+	Vector3 vLook = m_Object->GetWorldAxis(AXIS::AXIS_Z) * -1.f;
+	Vector3 vWorldLook = m_Object->GetWorldAxis(AXIS::AXIS_Z) * -1.f;
+	Vector3 vWorldRight = m_Object->GetWorldAxis(AXIS::AXIS_X) * -1.f;
+
+	// Monster 의 오른쪽에 Player 방향의 벡터를 투영
+	float ProjToMonsterWorldRight = vToPlayer.Dot(vWorldRight);
+
+	if (ProjToMonsterWorldRight < 0.f)
+		return true;
+	else
+		return false;
+		*/
+
 	Vector3 vToPlayer = ToPlayer();
 	Vector3 vLook = m_Object->GetWorldAxis(AXIS::AXIS_Z) * -1.f;
 
@@ -412,6 +467,36 @@ void CMonsterDataComponent::OnEnableLookPlayer()
 void CMonsterDataComponent::OnDisableLookPlayer()
 {
 	m_LookPlayer = false;
+}
+
+void CMonsterDataComponent::OnEnableRightLookPlayer()
+{
+	m_RightLookPlayer = true;
+}
+
+void CMonsterDataComponent::OnDisableRightLookPlayer()
+{
+	m_RightLookPlayer = false;
+}
+
+void CMonsterDataComponent::OnEnableLeftLookPlayer()
+{
+	m_LeftLookPlayer = true;
+}
+
+void CMonsterDataComponent::OnDisableLeftLookPlayer()
+{
+	m_LeftLookPlayer = false;
+}
+
+void CMonsterDataComponent::OnEnableMoveZ()
+{
+	m_MoveZ = true;
+}
+
+void CMonsterDataComponent::OnDisableMoveZ()
+{
+	m_MoveZ = false;
 }
 
 bool CMonsterDataComponent::IsPlayerInMeleeAttackRange()
@@ -450,6 +535,22 @@ Vector3 CMonsterDataComponent::ToPlayer()
 	Vector3 ToP = PlayerPos - MyPos;
 	ToP.Normalize();
 	return ToP;
+}
+
+float CMonsterDataComponent::DistToPlayer()
+{
+	CGameObject* PlayerObj = m_Scene->GetPlayerObject();
+
+	if (!PlayerObj)
+	{
+		return -1.f;
+	}
+
+	Vector3 MyPos = m_Object->GetWorldPos();
+	Vector3 PlayerPos = PlayerObj->GetWorldPos();
+	float Dist = MyPos.Distance(PlayerPos);
+
+	return MyPos.Distance(PlayerPos);;
 }
 
 bool CMonsterDataComponent::Save(FILE* File)
@@ -537,7 +638,7 @@ void CMonsterDataComponent::ChangeHitColor(int EffectNum)
 	// 흰
 	if (EffectNum == HIT_EFFECT_FIRST)
 	{
-		for (size_t i = 0; i < m_MeshMatSize; ++i)
+		for (int i = 0; i < m_MeshMatSize; ++i)
 		{
 			m_AnimMesh->GetMaterial(i)->SetEmissiveColor(Vector4::White);
 			m_AnimMesh->GetMaterial(i)->SetBaseColor(Vector4::Black);
@@ -548,9 +649,9 @@ void CMonsterDataComponent::ChangeHitColor(int EffectNum)
 	// 검
 	else if (EffectNum == HIT_EFFECT_SECOND || EffectNum == HIT_EFFECT_FOURTH)
 	{
-		for (size_t i = 0; i < m_MeshMatSize; ++i)
+		for (int i = 0; i < m_MeshMatSize; ++i)
 		{
-			m_AnimMesh->GetMaterial(i)->SetEmissiveColor(Vector4::Black);
+			m_AnimMesh->GetMaterial(i)->SetEmissiveColor(Vector4::Black); //
 			m_AnimMesh->GetMaterial(i)->SetBaseColor(Vector4::Black);
 			m_AnimMesh->GetMaterial(i)->SetAmbientColor(Vector4::Black);
 			m_AnimMesh->GetMaterial(i)->SetSpecularColor(Vector4::Black);
@@ -559,7 +660,7 @@ void CMonsterDataComponent::ChangeHitColor(int EffectNum)
 	// 빨
 	else if (EffectNum == HIT_EFFECT_THIRD || EffectNum == HIT_EFFECT_FIFTH)
 	{
-		for (size_t i = 0; i < m_MeshMatSize; ++i)
+		for (int i = 0; i < m_MeshMatSize; ++i)
 		{
 			m_AnimMesh->GetMaterial(i)->SetEmissiveColor(Vector4::Red);
 			m_AnimMesh->GetMaterial(i)->SetBaseColor(Vector4::Black);

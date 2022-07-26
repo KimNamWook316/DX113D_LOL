@@ -1,5 +1,6 @@
 
 #include "MonsterNavAgent.h"
+#include "GameObject/GameObject.h"
 
 CMonsterNavAgent::CMonsterNavAgent()	:
 	m_AccTime(0.f),

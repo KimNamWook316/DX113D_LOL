@@ -31,25 +31,33 @@ void CBossBettyChangeAttackDirNode::Init()
 
 	CAnimationSequenceInstance* AnimInst = m_AnimationMeshComp->GetAnimationInstance();
 	
-	AnimInst->AddNotify(AnimName, "OnTracePlayer", 0,
+	// Middle
+	AnimInst->AddNotify(AnimName, "OnTracePlayer", 6,
 		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnEnableLookPlayer);
-	AnimInst->AddNotify(AnimName, "OnDisableTracePlayer", 19,
+	AnimInst->AddNotify(AnimName, "NoTracePlayer", 20,
 		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnDisableLookPlayer);
+	AnimInst->AddNotify(AnimName, "SetCurrentNodeNull", 20,
+		(CMonsterDataComponent*)Data, &CMonsterDataComponent::SetCurrentNodeNull);
+
+	// End
+	AnimInst->SetEndFunction(AnimName, (CMonsterDataComponent*)Data, &CMonsterDataComponent::OnDisableLookPlayer);
 }
 
 NodeResult CBossBettyChangeAttackDirNode::OnStart(float DeltaTime)
 {
 	m_AnimationMeshComp->GetAnimationInstance()->ChangeAnimation("BackUpStep");
 
+	m_Owner->SetCurrentNode(this);
+		
 	return NodeResult::Node_True;
 }
 
 NodeResult CBossBettyChangeAttackDirNode::OnUpdate(float DeltaTime)
 {
-	return NodeResult();
+	return NodeResult::Node_True;
 }
 
 NodeResult CBossBettyChangeAttackDirNode::OnEnd(float DeltaTime)
 {
-	return NodeResult();
+	return NodeResult::Node_True;
 }

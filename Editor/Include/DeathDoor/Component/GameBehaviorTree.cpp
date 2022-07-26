@@ -35,6 +35,8 @@
 #include "Node/DeathCheck.h"
 #include "Node/IsCombatCheck.h"
 #include "Node/DeathNode.h"
+#include "Node/PlayerEnterZoneCheckNode.h"
+#include "Node/PlayerEnterTriggerIsEnable.h"
 
 // Boss - Knight
 #include "Node/BossKnightContinueAttackNode.h"
@@ -67,7 +69,21 @@
 #include "Node/BossBettyHPStateCheck.h"
 #include "Node/BossBettyThrowAttackCheck.h"
 
+// Boss - CrowBoss
+#include "Node/CrowBossCutScenePlayCheck.h"
+#include "Node/CrowBossCutScenePlayNode.h"
+#include "Node/CrowBossDirectionCheck.h"
+#include "Node/CrowBossSpinNode.h"
+#include "Node/CrowBossRunNode.h"
+#include "Node/CrowBossPhasePickNode.h"
+#include "Node/CrowBossBypassCheck.h"
+#include "Node/CrowBossJumpStartCheck.h"
+#include "Node/CrowBossJump.h"
+#include "Node/CrowBossLandingCheck.h"
+
 #include "GameStateComponent.h"
+
+
 
 CGameBehaviorTree::CGameBehaviorTree()
 {
@@ -277,6 +293,16 @@ CNode* CGameBehaviorTree::LoadNode(CNode* Parent, size_t TypeID)
 		NewNode = MakeNode<CPlayerRoll>(Parent, OwnerObject);
 	}
 
+	else if (TypeID == typeid(CPlayerEnterZoneCheckNode).hash_code())
+	{
+		NewNode = MakeNode<CPlayerEnterZoneCheckNode>(Parent, OwnerObject);
+	}
+
+	else if (TypeID == typeid(CPlayerEnterTriggerIsEnable).hash_code())
+	{
+		NewNode = MakeNode<CPlayerEnterTriggerIsEnable>(Parent, OwnerObject);
+	}
+
 	// Boss Knight - Action
 	else if (TypeID == typeid(CBossKnightContinueAttackNode).hash_code())
 	{
@@ -384,6 +410,51 @@ CNode* CGameBehaviorTree::LoadNode(CNode* Parent, size_t TypeID)
 	else if (TypeID == typeid(CBossBettyThrowAttackCheck).hash_code())
 	{
 	NewNode = MakeNode<CBossBettyThrowAttackCheck>(Parent, OwnerObject);
+	}
+
+
+	// Boss Crow - Condition
+	else if (TypeID == typeid(CCrowBossCutScenePlayCheck).hash_code())
+	{
+		NewNode = MakeNode<CCrowBossCutScenePlayCheck>(Parent, OwnerObject);
+	}
+	else if (TypeID == typeid(CCrowBossDirectionCheck).hash_code())
+	{
+		NewNode = MakeNode<CCrowBossDirectionCheck>(Parent, OwnerObject);
+	}
+	else if (TypeID == typeid(CCrowBossPhasePickNode).hash_code())
+	{
+		NewNode = MakeNode<CCrowBossPhasePickNode>(Parent, OwnerObject);
+	}
+	else if (TypeID == typeid(CCrowBossBypassCheck).hash_code())
+	{
+		NewNode = MakeNode<CCrowBossBypassCheck>(Parent, OwnerObject);
+	}
+	else if (TypeID == typeid(CCrowBossJumpStartCheck).hash_code())
+	{
+		NewNode = MakeNode<CCrowBossJumpStartCheck>(Parent, OwnerObject);
+	}
+	else if (TypeID == typeid(CCrowBossLandingCheck).hash_code())
+	{
+		NewNode = MakeNode<CCrowBossLandingCheck>(Parent, OwnerObject);
+	}
+
+	// Boss Crow - Action
+	else if (TypeID == typeid(CCrowBossCutScenePlayNode).hash_code())
+	{
+		NewNode = MakeNode<CCrowBossCutScenePlayNode>(Parent, OwnerObject);
+	}
+	else if (TypeID == typeid(CCrowBossSpinNode).hash_code())
+	{
+		NewNode = MakeNode<CCrowBossSpinNode>(Parent, OwnerObject);
+	}
+	else if (TypeID == typeid(CCrowBossRunNode).hash_code())
+	{
+		NewNode = MakeNode<CCrowBossRunNode>(Parent, OwnerObject);
+	}
+	else if (TypeID == typeid(CCrowBossJump).hash_code())
+	{
+		NewNode = MakeNode<CCrowBossJump>(Parent, OwnerObject);
 	}
 
 	return NewNode;

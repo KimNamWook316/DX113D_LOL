@@ -4,7 +4,9 @@
 #include "Component/ColliderSphere.h"
 #include "Component/ParticleComponent.h"
 
-CProjectileComponent::CProjectileComponent()
+CProjectileComponent::CProjectileComponent()	:
+	m_NoDestroy(false),
+	m_NoUpdate(false)
 {
 	SetTypeID<CProjectileComponent>();
 }
@@ -50,6 +52,9 @@ void CProjectileComponent::Start()
 
 void CProjectileComponent::Update(float DeltaTime)
 {
+	if (m_NoUpdate)
+		return;
+
 	if (m_IsShoot)
 	{
 		m_LifeTimer += DeltaTime;
@@ -66,7 +71,7 @@ void CProjectileComponent::Update(float DeltaTime)
 		if (m_IsGravity)
 		{
 			Move = Vector3(m_Dir.x * m_VelocityXZ * DeltaTime,
-				m_Dir.y * ((m_VelocityY - (GRAVITY * m_LifeTimer)) * DeltaTime),
+				m_Dir.y * ((m_VelocityY - (GRAVITY * m_LifeTimer / 100.f)) * DeltaTime),
 				m_Dir.z * m_VelocityXZ * DeltaTime);
 		}
 		else
@@ -177,6 +182,9 @@ bool CProjectileComponent::CheckDestroy()
 	{
 		if (m_LifeTimer >= m_LifeTime)
 		{
+			if (m_NoDestroy)
+				return false;
+
 			OnEnd();
 			return true;
 		}
@@ -184,6 +192,9 @@ bool CProjectileComponent::CheckDestroy()
 	// TargetPosition이 정해진 경우 TargetPosition보다 멀리 온 경우 파괴
 	else
 	{
+		if (m_NoDestroy)
+			return false;
+
 		Vector3 MyPos = m_Root->GetWorldPos();
 		Vector3 ToTarget = MyPos - m_TargetPos;
 

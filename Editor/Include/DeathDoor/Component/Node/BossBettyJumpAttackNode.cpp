@@ -32,23 +32,50 @@ void CBossBettyJumpAttackNode::Init()
 	// PunchDouble
 	std::string AnimName = "PunchDouble";
 
-	// JumpSpin Animation 이 끝나면 해당 위치에 2단 공격
-	AnimInst->SetEndFunction(AnimName,
-		Data, &CBossBettyDataComponent::OnBossBettyGenerateTwoSideCloseAttackEffect);
-
-	// 날아가는 중간에도, Player 를 향해 방향 회전하기 
-	AnimInst->AddNotify(AnimName, "OnTracePlayer", 9,
+	// >> Start
+	AnimInst->AddNotify(AnimName, "OnTracePlayer", 0,
 		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnEnableLookPlayer);
-	AnimInst->AddNotify(AnimName, "OnDisableTracePlayer", 22,
+
+	AnimInst->AddNotify(AnimName, "OnZMove", 0,
+		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnEnableMoveZ);
+	AnimInst->AddNotify(AnimName, "SlowMoveSpeed", 0,
+		Data, &CBossBettyDataComponent::OnBossBettyApplyOutOfMapSurroundingColliderMoveSpeed);
+
+	// >> 중간
+	AnimInst->AddNotify(AnimName, "SlowMoveSpeed", 6,
+		this, &CBossBettyJumpAttackNode::OnBossBettySlowMoveSpeed);
+	AnimInst->AddNotify(AnimName, "OnEnableSpinCollider", 10,
+		Data, &CBossBettyDataComponent::OnBossBettyEnableSpinCollider);
+	AnimInst->AddNotify(AnimName, "DisableLookPlayer", 10,
 		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnDisableLookPlayer);
+	AnimInst->AddNotify(AnimName, "DisableZMove", 25,
+		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnDisableMoveZ);
+	AnimInst->AddNotify(AnimName, "CameraShake", 25,
+		Data, &CBossBettyDataComponent::OnBossBettyNormalShakeCamera);
+
+	// >> End
+	// PunchDown Animation 이 끝나면 해당 위치에 2단 공격
+	AnimInst->AddNotify(AnimName, "AttackDown", 45,
+		Data, &CBossBettyDataComponent::OnBossBettyGenerateTwoSideCloseAttackEffect);
+	AnimInst->AddNotify(AnimName, "AttackFarAttackCnt", 45,
+		Data, &CBossBettyDataComponent::IncFarAttackCount);
+	AnimInst->AddNotify(AnimName, "OnDisableSpinCollider", 45,
+		Data, &CBossBettyDataComponent::OnBossBettyDisableSpinCollider);
+	AnimInst->AddNotify(AnimName, "ResetMoveSpeed", 45,
+		Data, &CBossBettyDataComponent::OnBossBettyResetOriginalMoveSpeed);
+
+	AnimInst->SetEndFunction(AnimName,
+		Data, &CBossBettyDataComponent::OnBossBettySetCurrentNodeNullPtr);
+
 }
 
 NodeResult CBossBettyJumpAttackNode::OnStart(float DeltaTime)
 {
-	m_CallStart = true;
-
 	CAnimationSequenceInstance* AnimInst = m_AnimationMeshComp->GetAnimationInstance();
+
 	AnimInst->ChangeAnimation("PunchDouble");
+
+	m_Owner->SetCurrentNode(this);
 
 	return NodeResult::Node_True;
 }
@@ -57,14 +84,17 @@ NodeResult CBossBettyJumpAttackNode::OnUpdate(float DeltaTime)
 {
 	CBossBettyDataComponent* Data = dynamic_cast<CBossBettyDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
 
-	// 자신의 앞 방향으로 날아가게 하기 
-	Vector3 MyAxisZ = m_Object->GetWorldAxis(AXIS::AXIS_Z) * -1.f;
-	m_Object->AddWorldPos(MyAxisZ * Data->GetMoveSpeed() * DeltaTime);
-
 	return NodeResult::Node_True;
 }
 
 NodeResult CBossBettyJumpAttackNode::OnEnd(float DeltaTime)
 {
-	return NodeResult();
+	return NodeResult::Node_True;
+}
+
+void CBossBettyJumpAttackNode::OnBossBettySlowMoveSpeed()
+{
+	CBossBettyDataComponent* Data = dynamic_cast<CBossBettyDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
+	
+	Data->SetCurMoveSpeed(Data->GetOriginMoveSpeed() * 0.7f);
 }

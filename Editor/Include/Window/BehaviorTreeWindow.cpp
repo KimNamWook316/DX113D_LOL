@@ -29,6 +29,8 @@
 #include "../DeathDoor/Component/Node/CheckDetectRangeNode.h"
 #include "../DeathDoor/Component/Node/FindPathNode.h"
 #include "../DeathDoor/Component/Node/ClearPathListNode.h"
+#include "../DeathDoor/Component/Node/PlayerEnterZoneCheckNode.h"
+#include "../DeathDoor/Component/Node/PlayerEnterTriggerIsEnable.h"
 #include "../DeathDoor/Component/Node/MeleeRangeCheckNode.h"
 #include "../DeathDoor/Component/Node/IsCombatCheck.h"
 #include "../DeathDoor/Component/Node/DeathCheck.h"
@@ -60,6 +62,18 @@
 #include "../DeathDoor/Component/Node/BossBettyFarAttackTypeCheck.h"
 #include "../DeathDoor/Component/Node/BossBettyHPStateCheck.h"
 #include "../DeathDoor/Component/Node/BossBettyThrowAttackCheck.h"
+
+// CrowBoss
+#include "../DeathDoor/Component/Node/CrowBossCutScenePlayCheck.h"
+#include "../DeathDoor/Component/Node/CrowBossCutScenePlayNode.h"
+#include "../DeathDoor/Component/Node/CrowBossDirectionCheck.h"
+#include "../DeathDoor/Component/Node/CrowBossRunNode.h"
+#include "../DeathDoor/Component/Node/CrowBossSpinNode.h"
+#include "../DeathDoor/Component/Node/CrowBossPhasePickNode.h"
+#include "../DeathDoor/Component/Node/CrowBossBypassCheck.h"
+#include "../DeathDoor/Component/Node/CrowBossJumpStartCheck.h"
+#include "../DeathDoor/Component/Node/CrowBossLandingCheck.h"
+#include "../DeathDoor/Component/Node/CrowBossJump.h"
 
 #include "../DeathDoor/Component/Node/HitCheckNode.h"
 #include "../DeathDoor/Component/Node/HitBackNode.h"
@@ -557,6 +571,29 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
             NewTreeNode = m_StateComponent->CreateTreeNode<CBossBettyThrowNode>(Name);
             break;
         }
+
+        // Crow Boss
+        case DDActionNode::CrowBossCutScenePlayNode:
+        {
+            NewTreeNode = m_StateComponent->CreateTreeNode<CCrowBossCutScenePlayNode>(Name);
+            break;
+        }
+        case DDActionNode::CrowBossRunNode:
+        {
+            NewTreeNode = m_StateComponent->CreateTreeNode<CCrowBossRunNode>(Name);
+            break;
+        }
+        case DDActionNode::CrowBossSpinNode:
+        {
+            NewTreeNode = m_StateComponent->CreateTreeNode<CCrowBossSpinNode>(Name);
+            break;
+        }
+        case DDActionNode::CrowBossJump:
+        {
+            NewTreeNode = m_StateComponent->CreateTreeNode<CCrowBossJump>(Name);
+            break;
+        }
+
 		}
         break;
     }
@@ -604,6 +641,13 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
         case DDConditionNode::CheckDetectRange:
             NewTreeNode = m_StateComponent->CreateTreeNode<CCheckDetectRangeNode>(Name);
             break;
+        case DDConditionNode::PlayerEnterZoneCheck:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CPlayerEnterZoneCheckNode>(Name);
+            break;
+        case DDConditionNode::PlayerEnterTriggerIsEnable:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CPlayerEnterTriggerIsEnable>(Name);
+            break;
+
         case DDConditionNode::MeleeAttackRangeCheck:
             NewTreeNode = m_StateComponent->CreateTreeNode<CMeleeRangeCheckNode>(Name);
             break;
@@ -638,6 +682,27 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
         case DDConditionNode::BossBettyCheckThrowAttack:
             NewTreeNode = m_StateComponent->CreateTreeNode<CBossBettyThrowAttackCheck>(Name);
             break;
+
+        // Crow Boss
+        case DDConditionNode::CrowBossCutScenePlayCheck:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CCrowBossCutScenePlayCheck>(Name);
+            break;
+        case DDConditionNode::CrowBossDirectionCheck:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CCrowBossDirectionCheck>(Name);
+            break;
+        case DDConditionNode::CrowBossPhasePickNode:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CCrowBossPhasePickNode>(Name);
+            break;
+        case DDConditionNode::CrowBossBypassCheck:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CCrowBossBypassCheck>(Name);
+            break;
+        case DDConditionNode::CrowBossJumpStartCheck:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CCrowBossJumpStartCheck>(Name);
+            break;
+        case DDConditionNode::CrowBossLandingCheck:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CCrowBossLandingCheck>(Name);
+            break;
+
 
         case DDConditionNode::IsCombatCheck:
             NewTreeNode = m_StateComponent->CreateTreeNode<CIsCombatCheck>(Name);

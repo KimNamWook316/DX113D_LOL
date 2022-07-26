@@ -151,12 +151,6 @@
     <Filter Include="06. DeathDoor\01. GameComponent\02. ObjectComponent\01. DataComponent\01. ObjectDataComponent\01. Monster\02. Lurker">
       <UniqueIdentifier>{4353b92d-d55b-405c-9baa-edf369c30942}</UniqueIdentifier>
     </Filter>
-    <Filter Include="06. DeathDoor\01. GameComponent\02. ObjectComponent\01. DataComponent\02. Player">
-      <UniqueIdentifier>{28cc70a6-3929-421b-adc4-679a96bea29e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="06. DeathDoor\01. GameComponent\02. ObjectComponent\03. NavAgent">
-      <UniqueIdentifier>{e05cfd74-b63c-421b-a83e-489c6e56a10c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="06. DeathDoor\01. GameComponent\02. ObjectComponent\04. State">
       <UniqueIdentifier>{f5a65822-0ab9-4c72-85c9-86857475155b}</UniqueIdentifier>
     </Filter>
@@ -169,17 +163,29 @@
     <Filter Include="06. DeathDoor\01. GameComponent\02. ObjectComponent\01. DataComponent\01. ObjectDataComponent\01. Monster\03. BossBetty">
       <UniqueIdentifier>{fc85b155-279d-4cba-914b-7a51c72aa633}</UniqueIdentifier>
     </Filter>
-    <Filter Include="06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\02. Player">
-      <UniqueIdentifier>{357e07a8-987f-4cf9-b34f-6e856f105095}</UniqueIdentifier>
-    </Filter>
     <Filter Include="06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\02. Player">
       <UniqueIdentifier>{a9e3b90e-3798-4b39-8ee5-ba9e8befbc40}</UniqueIdentifier>
     </Filter>
     <Filter Include="06. DeathDoor\01. GameComponent\01. SceneComponent\01. Player">
       <UniqueIdentifier>{4bfeae01-a66c-4c4f-8b72-042d1a312c1f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. Editor\02. Widget\01. Inspector\01. SceneComponent\01. CameraSubWidget">
-      <UniqueIdentifier>{d2c60ed8-5f84-4fe8-893b-373c92e6b919}</UniqueIdentifier>
+    <Filter Include="06. DeathDoor\01. GameComponent\02. ObjectComponent\01. DataComponent\01. ObjectDataComponent\01. Monster\04. CrowBoss">
+      <UniqueIdentifier>{d39e65d4-afdf-4656-9ede-7bc067c61086}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. DeathDoor\01. GameComponent\02. ObjectComponent\03. NavAgent">
+      <UniqueIdentifier>{e05cfd74-b63c-421b-a83e-489c6e56a10c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. DeathDoor\01. GameComponent\02. ObjectComponent\01. DataComponent\01. ObjectDataComponent\02. Player">
+      <UniqueIdentifier>{28cc70a6-3929-421b-adc4-679a96bea29e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\04. CrowBoss">
+      <UniqueIdentifier>{5d08d672-62d0-43ef-add2-88f6a9e7de07}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\03. Player">
+      <UniqueIdentifier>{357e07a8-987f-4cf9-b34f-6e856f105095}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\04. CrowBoss">
+      <UniqueIdentifier>{f2fe6744-8172-46d8-abb4-f83323b7259b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -463,7 +469,7 @@
       <Filter>06. DeathDoor\01. GameComponent\02. ObjectComponent\01. DataComponent\01. ObjectDataComponent\01. Monster\02. Lurker</Filter>
     </ClCompile>
     <ClCompile Include="DeathDoor\Component\PlayerDataComponent.cpp">
-      <Filter>06. DeathDoor\01. GameComponent\02. ObjectComponent\01. DataComponent\02. Player</Filter>
+      <Filter>06. DeathDoor\01. GameComponent\02. ObjectComponent\01. DataComponent\01. ObjectDataComponent\02. Player</Filter>
     </ClCompile>
     <ClCompile Include="DeathDoor\Component\MonsterNavAgent.cpp">
       <Filter>06. DeathDoor\01. GameComponent\02. ObjectComponent\03. NavAgent</Filter>
@@ -523,28 +529,28 @@
       <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\01. Public</Filter>
     </ClCompile>
     <ClCompile Include="DeathDoor\Component\Node\PlayerRoll.cpp">
-      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\02. Player</Filter>
+      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\03. Player</Filter>
     </ClCompile>
     <ClCompile Include="DeathDoor\Component\Node\CancleShootNode.cpp">
-      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\02. Player</Filter>
+      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\03. Player</Filter>
     </ClCompile>
     <ClCompile Include="DeathDoor\Component\Node\HitBackNode.cpp">
-      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\02. Player</Filter>
+      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\03. Player</Filter>
     </ClCompile>
     <ClCompile Include="DeathDoor\Component\Node\MoveNode.cpp">
-      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\02. Player</Filter>
+      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\03. Player</Filter>
     </ClCompile>
     <ClCompile Include="DeathDoor\Component\Node\NormalAttack.cpp">
-      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\02. Player</Filter>
+      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\03. Player</Filter>
     </ClCompile>
     <ClCompile Include="DeathDoor\Component\Node\ReadyToShoot.cpp">
-      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\02. Player</Filter>
+      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\03. Player</Filter>
     </ClCompile>
     <ClCompile Include="DeathDoor\Component\Node\RotateAttackDirectionNode.cpp">
-      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\02. Player</Filter>
+      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\03. Player</Filter>
     </ClCompile>
     <ClCompile Include="DeathDoor\Component\Node\ShootNode.cpp">
-      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\02. Player</Filter>
+      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\03. Player</Filter>
     </ClCompile>
     <ClCompile Include="DeathDoor\Component\Node\NoInterruptNode.cpp">
       <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\02. Player</Filter>
@@ -581,6 +587,60 @@
     </ClCompile>
     <ClCompile Include="DeathDoor\Component\Node\UpdateInputQueue.cpp">
       <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\02. Player</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Component\CrowBossDataComponent.cpp">
+      <Filter>06. DeathDoor\01. GameComponent\02. ObjectComponent\01. DataComponent\01. ObjectDataComponent\01. Monster\04. CrowBoss</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Component\Node\CrowBossCutScenePlayNode.cpp">
+      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\04. CrowBoss</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Component\Node\CrowBossCutScenePlayCheck.cpp">
+      <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\04. CrowBoss</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Component\Node\PlayerEnterZoneCheckNode.cpp">
+      <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\01. Public</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Component\Node\CrowBossStompStartCheck.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Component\Node\CrowBossSliding.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Component\Node\CrowBossStartFlyingCheck.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Component\Node\CrowBossSlidingNode.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Component\Node\CrowBossRunNode.cpp">
+      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\04. CrowBoss</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Component\Node\CrowBossSpinNode.cpp">
+      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\04. CrowBoss</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Component\Node\RunNode.cpp">
+      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\01. Public</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Component\Node\PlayerEnterTriggerIsEnable.cpp">
+      <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\01. Public</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Component\Node\CrowBossBypassCheck.cpp">
+      <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\04. CrowBoss</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Component\Node\CrowBossPhasePickNode.cpp">
+      <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\04. CrowBoss</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Component\Node\CrowBossDirectionCheck.cpp">
+      <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\04. CrowBoss</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Component\Node\CrowBossJump.cpp">
+      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\04. CrowBoss</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Component\Node\CrowBossJumpStartCheck.cpp">
+      <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\04. CrowBoss</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Component\Node\CrowBossLandingCheck.cpp">
+      <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\04. CrowBoss</Filter>
     </ClCompile>
     <ClCompile Include="Widget\CameraMoveWidget.cpp">
       <Filter>02. Editor\02. Widget\01. Inspector\01. SceneComponent\01. CameraSubWidget</Filter>
@@ -873,7 +933,7 @@
       <Filter>06. DeathDoor\01. GameComponent\02. ObjectComponent\01. DataComponent\01. ObjectDataComponent\01. Monster\02. Lurker</Filter>
     </ClInclude>
     <ClInclude Include="DeathDoor\Component\PlayerDataComponent.h">
-      <Filter>06. DeathDoor\01. GameComponent\02. ObjectComponent\01. DataComponent\02. Player</Filter>
+      <Filter>06. DeathDoor\01. GameComponent\02. ObjectComponent\01. DataComponent\01. ObjectDataComponent\02. Player</Filter>
     </ClInclude>
     <ClInclude Include="DeathDoor\Component\MonsterNavAgent.h">
       <Filter>06. DeathDoor\01. GameComponent\02. ObjectComponent\03. NavAgent</Filter>
@@ -930,28 +990,28 @@
       <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\01. Public</Filter>
     </ClInclude>
     <ClInclude Include="DeathDoor\Component\Node\PlayerRoll.h">
-      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\02. Player</Filter>
+      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\03. Player</Filter>
     </ClInclude>
     <ClInclude Include="DeathDoor\Component\Node\CancleShootNode.h">
-      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\02. Player</Filter>
+      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\03. Player</Filter>
     </ClInclude>
     <ClInclude Include="DeathDoor\Component\Node\HitBackNode.h">
-      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\02. Player</Filter>
+      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\03. Player</Filter>
     </ClInclude>
     <ClInclude Include="DeathDoor\Component\Node\MoveNode.h">
-      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\02. Player</Filter>
+      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\03. Player</Filter>
     </ClInclude>
     <ClInclude Include="DeathDoor\Component\Node\NormalAttack.h">
-      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\02. Player</Filter>
+      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\03. Player</Filter>
     </ClInclude>
     <ClInclude Include="DeathDoor\Component\Node\ReadyToShoot.h">
-      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\02. Player</Filter>
+      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\03. Player</Filter>
     </ClInclude>
     <ClInclude Include="DeathDoor\Component\Node\RotateAttackDirectionNode.h">
-      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\02. Player</Filter>
+      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\03. Player</Filter>
     </ClInclude>
     <ClInclude Include="DeathDoor\Component\Node\ShootNode.h">
-      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\02. Player</Filter>
+      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\03. Player</Filter>
     </ClInclude>
     <ClInclude Include="DeathDoor\Component\Node\NoInterruptNode.h">
       <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\02. Player</Filter>
@@ -991,6 +1051,60 @@
     </ClInclude>
     <ClInclude Include="DeathDoor\Component\Node\UpdateInputQueue.h">
       <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\02. Player</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\CrowBossDataComponent.h">
+      <Filter>06. DeathDoor\01. GameComponent\02. ObjectComponent\01. DataComponent\01. ObjectDataComponent\01. Monster\04. CrowBoss</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\Node\CrowBossCutScenePlayNode.h">
+      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\04. CrowBoss</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\Node\CrowBossCutScenePlayCheck.h">
+      <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\04. CrowBoss</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\Node\PlayerEnterZoneCheckNode.h">
+      <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\01. Public</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\Node\CrowBossStompStartCheck.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\Node\CrowBossSliding.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\Node\CrowBossStartFlyingCheck.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\Node\CrowBossSlidingNode.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\Node\CrowBossRunNode.h">
+      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\04. CrowBoss</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\Node\CrowBossSpinNode.h">
+      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\04. CrowBoss</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\Node\RunNode.h">
+      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\01. Public</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\Node\PlayerEnterTriggerIsEnable.h">
+      <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\01. Public</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\Node\CrowBossBypassCheck.h">
+      <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\04. CrowBoss</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\Node\CrowBossPhasePickNode.h">
+      <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\04. CrowBoss</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\Node\CrowBossDirectionCheck.h">
+      <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\04. CrowBoss</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\Node\CrowBossJump.h">
+      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\04. CrowBoss</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\Node\CrowBossJumpStartCheck.h">
+      <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\04. CrowBoss</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\Node\CrowBossLandingCheck.h">
+      <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\04. CrowBoss</Filter>
     </ClInclude>
     <ClInclude Include="Widget\CameraMoveWidget.h">
       <Filter>02. Editor\02. Widget\01. Inspector\01. SceneComponent\01. CameraSubWidget</Filter>

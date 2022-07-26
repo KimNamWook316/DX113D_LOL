@@ -253,6 +253,9 @@ void CMainSceneMode::CreateMaterial()
 
 void CMainSceneMode::CreateAnimationSequence()
 {
+
+	//CFBXLoader Loader;
+	//Loader.LoadAniFile();
 }
 
 void CMainSceneMode::CreateParticle()

@@ -34,6 +34,7 @@
 #include "DeathDoor\Component/MonsterPathFindCollider.h"
 #include "DeathDoor\Component/KnightDataComponent.h"
 #include "DeathDoor\Component/BossBettyDataComponent.h"
+#include "DeathDoor\Component/CrowBossDataComponent.h"
 #include "DeathDoor\Component/LurkerDataComponent.h"
 #include "DeathDoor\Component/MonsterNavAgent.h"
 #include "DeathDoor\Component/PlayerBowComponent.h"
@@ -461,6 +462,12 @@ CComponent* CEditorManager::CreateComponent(CGameObject* Obj, size_t Type)
 	else if (Type == typeid(CBossBettyDataComponent).hash_code())
 		{
 		CBossBettyDataComponent* Component = Obj->LoadObjectComponent<CBossBettyDataComponent>();
+		return Component;
+	}
+
+	else if (Type == typeid(CCrowBossDataComponent).hash_code())
+	{
+		CCrowBossDataComponent* Component = Obj->LoadObjectComponent<CCrowBossDataComponent>();
 		return Component;
 	}
 

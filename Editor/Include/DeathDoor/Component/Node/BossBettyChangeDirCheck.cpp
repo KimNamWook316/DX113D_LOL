@@ -26,7 +26,7 @@ NodeResult CBossBettyChangeDirCheck::OnStart(float DeltaTime)
 	float LimitAngle = BossBettyData->GetBossBettyChangeDirLimitAngle();
 	float PlayerAngle = MonsterData->GetAnglePlayer();
 
-	if (LimitAngle > PlayerAngle)
+	if (LimitAngle < PlayerAngle)
 		return NodeResult::Node_True;
 	else
 		return NodeResult::Node_False;

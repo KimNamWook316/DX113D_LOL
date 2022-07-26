@@ -20,13 +20,22 @@ public:
 
 public:
     virtual void Init() override;
-
+    
 protected:
     virtual NodeResult OnStart(float DeltaTime);
     virtual NodeResult OnUpdate(float DeltaTime);
     virtual NodeResult OnEnd(float DeltaTime);
-
+private :
+    bool m_JumpSpinChangeEnable;
 private:
     void OnBossBettyChangeToSpinAnimation();
+    void OnBossBettyEnableSpinChange();
+    void OnBossBettyDisableSpinChange();
+
+public :
+    void SetJumpSpinChangeEnable(bool Enable)
+    {
+        m_JumpSpinChangeEnable = Enable;
+    }
 };
 

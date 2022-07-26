@@ -87,12 +87,12 @@ NodeResult CBossBettyAngryAttackNode::OnStart(float DeltaTime)
 
 NodeResult CBossBettyAngryAttackNode::OnUpdate(float DeltaTime)
 {
-	return NodeResult();
+	return NodeResult::Node_True;
 }
 
 NodeResult CBossBettyAngryAttackNode::OnEnd(float DeltaTime)
 {
-	return NodeResult();
+	return NodeResult::Node_True;
 }
 
 void CBossBettyAngryAttackNode::OnBossBettyStartFallingSnowBallEffect()

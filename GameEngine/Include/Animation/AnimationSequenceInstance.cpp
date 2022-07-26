@@ -483,7 +483,8 @@ void CAnimationSequenceInstance::ClearAnimationSequenceFromAnimationEditor()
 
 		SAFE_DELETE(iter->second);
 	}
-	m_mapAnimation.clear();
+
+	// m_mapAnimation.clear();
 
 	// 현재 Animation은 null로
 	m_CurrentAnimation = nullptr;
@@ -701,7 +702,7 @@ void CAnimationSequenceInstance::Update(float DeltaTime)
 
 		if (AnimEnd)
 		{
-			if (m_CurrentAnimation->m_EndFunction)
+			if (m_CurrentAnimation->m_EndFunction && !m_CurrentAnimation->m_EndFunctionCalled)
 			{
 				m_CurrentAnimation->m_EndFunctionCalled = true;
 				m_CurrentAnimation->m_EndFunction();

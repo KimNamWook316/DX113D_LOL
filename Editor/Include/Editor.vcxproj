@@ -186,6 +186,7 @@
     </ClCompile>
     <ClCompile Include="DeathDoor\Component\ArrowComponent.cpp" />
     <ClCompile Include="DeathDoor\Component\BossBettyDataComponent.cpp" />
+    <ClCompile Include="DeathDoor\Component\CrowBossDataComponent.cpp" />
     <ClCompile Include="DeathDoor\Component\EyeLaserComponent.cpp" />
     <ClCompile Include="DeathDoor\Component\GameBehaviorTree.cpp" />
     <ClCompile Include="DeathDoor\Component\GameStateComponent.cpp" />
@@ -226,6 +227,20 @@
     <ClCompile Include="DeathDoor\Component\Node\CancleShootNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\CheckDetectRangeNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\ClearPathListNode.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\CrowBossBypassCheck.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\CrowBossCutScenePlayCheck.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\CrowBossCutScenePlayNode.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\CrowBossDirectionCheck.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\CrowBossJump.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\CrowBossJumpStartCheck.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\CrowBossLandingCheck.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\CrowBossPhasePickNode.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\CrowBossRunNode.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\CrowBossSliding.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\CrowBossSlidingNode.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\CrowBossSpinNode.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\CrowBossStartFlyingCheck.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\CrowBossStompStartCheck.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\DeathCheck.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\DeathNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\FindPathNode.cpp" />
@@ -246,11 +261,14 @@
     <ClCompile Include="DeathDoor\Component\Node\NoInterruptNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\NormalAttack.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\PathFindEnableCheck.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\PlayerEnterTriggerIsEnable.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\PlayerEnterZoneCheckNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\PlayerRoll.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\PostAttackDelayCheck.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\ReadyToShoot.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\RollInputCheck.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\RotateAttackDirectionNode.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\RunNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\ShootNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\UpdateInputQueue.cpp" />
     <ClCompile Include="DeathDoor\Component\ObjectDataComponent.cpp" />
@@ -347,6 +365,7 @@
     </ClInclude>
     <ClInclude Include="DeathDoor\Component\ArrowComponent.h" />
     <ClInclude Include="DeathDoor\Component\BossBettyDataComponent.h" />
+    <ClInclude Include="DeathDoor\Component\CrowBossDataComponent.h" />
     <ClInclude Include="DeathDoor\Component\EyeLaserComponent.h" />
     <ClInclude Include="DeathDoor\Component\GameBehaviorTree.h" />
     <ClInclude Include="DeathDoor\Component\GameStateComponent.h" />
@@ -387,6 +406,20 @@
     <ClInclude Include="DeathDoor\Component\Node\CancleShootNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\CheckDetectRangeNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\ClearPathListNode.h" />
+    <ClInclude Include="DeathDoor\Component\Node\CrowBossBypassCheck.h" />
+    <ClInclude Include="DeathDoor\Component\Node\CrowBossCutScenePlayCheck.h" />
+    <ClInclude Include="DeathDoor\Component\Node\CrowBossCutScenePlayNode.h" />
+    <ClInclude Include="DeathDoor\Component\Node\CrowBossDirectionCheck.h" />
+    <ClInclude Include="DeathDoor\Component\Node\CrowBossJump.h" />
+    <ClInclude Include="DeathDoor\Component\Node\CrowBossJumpStartCheck.h" />
+    <ClInclude Include="DeathDoor\Component\Node\CrowBossLandingCheck.h" />
+    <ClInclude Include="DeathDoor\Component\Node\CrowBossPhasePickNode.h" />
+    <ClInclude Include="DeathDoor\Component\Node\CrowBossRunNode.h" />
+    <ClInclude Include="DeathDoor\Component\Node\CrowBossSliding.h" />
+    <ClInclude Include="DeathDoor\Component\Node\CrowBossSlidingNode.h" />
+    <ClInclude Include="DeathDoor\Component\Node\CrowBossSpinNode.h" />
+    <ClInclude Include="DeathDoor\Component\Node\CrowBossStartFlyingCheck.h" />
+    <ClInclude Include="DeathDoor\Component\Node\CrowBossStompStartCheck.h" />
     <ClInclude Include="DeathDoor\Component\Node\DeathCheck.h" />
     <ClInclude Include="DeathDoor\Component\Node\DeathNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\FindPathNode.h" />
@@ -407,11 +440,14 @@
     <ClInclude Include="DeathDoor\Component\Node\NoInterruptNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\NormalAttack.h" />
     <ClInclude Include="DeathDoor\Component\Node\PathFindEnableCheck.h" />
+    <ClInclude Include="DeathDoor\Component\Node\PlayerEnterTriggerIsEnable.h" />
+    <ClInclude Include="DeathDoor\Component\Node\PlayerEnterZoneCheckNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\PlayerRoll.h" />
     <ClInclude Include="DeathDoor\Component\Node\PostAttackDelayCheck.h" />
     <ClInclude Include="DeathDoor\Component\Node\ReadyToShoot.h" />
     <ClInclude Include="DeathDoor\Component\Node\RollInputCheck.h" />
     <ClInclude Include="DeathDoor\Component\Node\RotateAttackDirectionNode.h" />
+    <ClInclude Include="DeathDoor\Component\Node\RunNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\ShootNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\UpdateInputQueue.h" />
     <ClInclude Include="DeathDoor\Component\ObjectDataComponent.h" />

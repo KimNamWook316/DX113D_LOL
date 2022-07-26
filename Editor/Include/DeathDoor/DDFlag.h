@@ -31,6 +31,11 @@ enum class DDActionNode
 	BossBettyJumpAttack,
 	BossBettySpinAttack,
 	BossBettyThrowAttack,
+	// CrowBoss
+	CrowBossCutScenePlayNode,
+	CrowBossRunNode,
+	CrowBossSpinNode,
+	CrowBossJump,
 	Max
 };
 
@@ -44,6 +49,8 @@ enum class DDConditionNode
 	MouseRButtonUpCheckNode,
 	Lockstone3TriggerBoxHitCheck,
 	CheckDetectRange,
+	PlayerEnterZoneCheck,
+	PlayerEnterTriggerIsEnable,
 	MeleeAttackRangeCheck,
 	PostAttackDelayCheck,
 	BossKnightFinalAttackCheck,
@@ -63,6 +70,13 @@ enum class DDConditionNode
 	BossBettyCheckFarAttackType,
 	BossBettyCheckHPState,
 	BossBettyCheckThrowAttack,
+	// CrowBoss
+	CrowBossCutScenePlayCheck,
+	CrowBossDirectionCheck,
+	CrowBossPhasePickNode,
+	CrowBossBypassCheck,
+	CrowBossJumpStartCheck,
+	CrowBossLandingCheck,
 	Max
 };
 
@@ -83,6 +97,7 @@ enum class DDObjectComponentType
 	MonsterData,
 	KnightData,
 	BossBettyData,
+	CrowBossData,
 	LurkerData,
 	MonsterNavAgent,
 	ProjectileComponent,

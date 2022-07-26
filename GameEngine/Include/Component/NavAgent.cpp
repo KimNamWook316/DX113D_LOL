@@ -11,6 +11,7 @@ CNavAgent::CNavAgent()	:
 	m_MoveSpeed(0.f),
 	m_ApplyNavMesh(true)
 {
+	m_CurrentFaceDir = Vector3(0.f, 0.f, 1.f);
 	SetTypeID<CNavAgent>();
 }
 
@@ -48,8 +49,12 @@ bool CNavAgent::Move(const Vector3& EndPos)
 
 bool CNavAgent::MoveOnNavMesh(const Vector3 EndPos)
 {
+	// NavMesh없으면 자유롭게 모든 곳 이동 가능하게 하기
 	if (!m_Scene->GetNavigation3DManager()->GetNavMeshData())
-		return false;
+	{
+		m_Object->AddWorldPos(EndPos);
+		return true;
+	}
 
 	m_Object->AddWorldPos(EndPos);
 
@@ -104,8 +109,6 @@ void CNavAgent::Start()
 {
 	if (!m_UpdateComponent)
 		m_UpdateComponent = m_Object->GetRootComponent();
-
-	
 }
 
 bool CNavAgent::Init()
@@ -163,6 +166,13 @@ void CNavAgent::Update(float DeltaTime)
 				}
 			}
 		}
+
+		Vector3 RotationVec = m_Object->GetWorldRot();
+
+		Matrix Rot;
+		Rot.Rotation(RotationVec);
+
+		m_CurrentFaceDir = Vector3(0.f, 0.f, -1.f).TransformCoord(Rot);
 	}
 
 	// NavAgent가 있는데 ApplyNavMesh가 false -> NavMesh를 적용 받지 않아서 아래로 떨어져야 하는 순간
