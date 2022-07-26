@@ -275,6 +275,7 @@
     <ClCompile Include="Scene\DefaultScene.cpp" />
     <ClCompile Include="Widget\AnimationMeshWidget.cpp" />
     <ClCompile Include="Widget\BehaviorTreeMenu.cpp" />
+    <ClCompile Include="Widget\CameraMoveWidget.cpp" />
     <ClCompile Include="Widget\CameraWidget.cpp" />
     <ClCompile Include="Widget\ColliderComponentWidget.cpp" />
     <ClCompile Include="Widget\ColliderSphereWidget.cpp" />
@@ -437,6 +438,7 @@
     <ClInclude Include="Scene\DefaultScene.h" />
     <ClInclude Include="Widget\AnimationMeshWidget.h" />
     <ClInclude Include="Widget\BehaviorTreeMenu.h" />
+    <ClInclude Include="Widget\CameraMoveWidget.h" />
     <ClInclude Include="Widget\CameraWidget.h" />
     <ClInclude Include="Widget\ColliderComponentWidget.h" />
     <ClInclude Include="Widget\ColliderSphereWidget.h" />

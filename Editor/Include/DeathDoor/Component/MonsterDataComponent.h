@@ -73,6 +73,11 @@ public:
         return m_MeleeAttackCollider;
     }
 
+	class CCameraComponent* GetCutSceneCam() const
+	{
+		return m_CutSceneCam;
+	}
+
 	bool IsPostAttackDelaying() const
 	{
 		return m_PostAttackDelaying;

@@ -178,6 +178,9 @@
     <Filter Include="06. DeathDoor\01. GameComponent\01. SceneComponent\01. Player">
       <UniqueIdentifier>{4bfeae01-a66c-4c4f-8b72-042d1a312c1f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. Editor\02. Widget\01. Inspector\01. SceneComponent\01. CameraSubWidget">
+      <UniqueIdentifier>{d2c60ed8-5f84-4fe8-893b-373c92e6b919}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EditorManager.cpp">
@@ -578,6 +581,9 @@
     </ClCompile>
     <ClCompile Include="DeathDoor\Component\Node\UpdateInputQueue.cpp">
       <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\02. Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Widget\CameraMoveWidget.cpp">
+      <Filter>02. Editor\02. Widget\01. Inspector\01. SceneComponent\01. CameraSubWidget</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -985,6 +991,9 @@
     </ClInclude>
     <ClInclude Include="DeathDoor\Component\Node\UpdateInputQueue.h">
       <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\02. Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Widget\CameraMoveWidget.h">
+      <Filter>02. Editor\02. Widget\01. Inspector\01. SceneComponent\01. CameraSubWidget</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
