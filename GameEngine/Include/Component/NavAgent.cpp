@@ -120,6 +120,17 @@ void CNavAgent::Update(float DeltaTime)
 {
 	if (m_UpdateComponent)
 	{
+		// NavAgent를 가지고 있는 모든 움직이는 오브젝트가 초기에 바라보는 방향은 -z 방향이라고 가정
+		Vector3 CurrentFaceDir = Vector3(0.f, 0.f, -1.f);
+		Vector3 Rot = m_UpdateComponent->GetWorldRot();
+
+		Matrix RotMat;
+
+		RotMat.Rotation(Rot);
+
+		CurrentFaceDir = CurrentFaceDir.TransformCoord(RotMat);
+		m_CurrentFaceDir = CurrentFaceDir;
+
 		if (!m_PathList.empty())
 		{
 			Vector3	TargetPos = m_PathList.back();
@@ -136,17 +147,6 @@ void CNavAgent::Update(float DeltaTime)
 			{
 				m_PathList.pop_back();
 			}
-
-			// NavAgent를 가지고 있는 모든 움직이는 오브젝트가 초기에 바라보는 방향은 -z 방향이라고 가정
-			Vector3 CurrentFaceDir = Vector3(0.f, 0.f, -1.f);
-			Vector3 Rot = m_UpdateComponent->GetWorldRot();
-
-			Matrix RotMat;
-
-			RotMat.Rotation(Rot);
-
-			CurrentFaceDir = CurrentFaceDir.TransformCoord(RotMat);
-			m_CurrentFaceDir = CurrentFaceDir;
 
 			float Dot = Vector3(Dir.x, 0.f, Dir.z).Dot(Vector3(CurrentFaceDir.x, 0.f, CurrentFaceDir.z));
 
@@ -166,13 +166,6 @@ void CNavAgent::Update(float DeltaTime)
 				}
 			}
 		}
-
-		Vector3 RotationVec = m_Object->GetWorldRot();
-
-		Matrix Rot;
-		Rot.Rotation(RotationVec);
-
-		m_CurrentFaceDir = Vector3(0.f, 0.f, -1.f).TransformCoord(Rot);
 	}
 
 	// NavAgent가 있는데 ApplyNavMesh가 false -> NavMesh를 적용 받지 않아서 아래로 떨어져야 하는 순간

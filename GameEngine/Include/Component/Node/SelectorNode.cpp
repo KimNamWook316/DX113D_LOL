@@ -34,7 +34,7 @@ NodeResult CSelectorNode::Invoke(float DeltaTime)
 
 	}
 
-	//SetChildrenCallStart(false);
+	SetChildrenCallStart(false);
 	return NodeResult::Node_False;
 }
 

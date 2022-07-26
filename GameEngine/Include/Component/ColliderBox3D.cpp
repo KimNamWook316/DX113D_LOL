@@ -71,7 +71,7 @@ bool CColliderBox3D::Init()
 	m_Info.Max.y = m_Info.Center.y + m_Info.Axis[1].y * m_Info.AxisLen[1];
 	m_Info.Max.z = m_Info.Center.z + m_Info.Axis[2].z * m_Info.AxisLen[2];
 
-	SetInheritRotZ(true);
+	//SetInheritRotZ(true);
 
 	SetWorldScale(m_Info.AxisLen[0] * 2.f, m_Info.AxisLen[1] * 2.f, m_Info.AxisLen[2] * 2.f);
 

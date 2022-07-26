@@ -43,5 +43,6 @@ void CCrowBossDataComponent::Start()
 void CCrowBossDataComponent::OnEndCrowBossJump()
 {
 	m_AnimMesh->GetAnimationInstance()->ChangeAnimation("Stomp");
+	m_StartJump = false;
 	m_StartStomp = true;
 }
