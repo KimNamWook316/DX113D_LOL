@@ -83,11 +83,6 @@ bool CColliderBox3D::Init()
 void CColliderBox3D::Update(float DeltaTime)
 {
 	CColliderComponent::Update(DeltaTime);
-}
-
-void CColliderBox3D::PostUpdate(float DeltaTime)
-{
-	CColliderComponent::PostUpdate(DeltaTime);
 
 	m_Info.Center.x = GetWorldPos().x + m_Offset.x;
 	m_Info.Center.y = GetWorldPos().y + m_Offset.y;
@@ -108,7 +103,11 @@ void CColliderBox3D::PostUpdate(float DeltaTime)
 	m_Info.AxisLen[0] = GetWorldScale().x / 2.f;
 	m_Info.AxisLen[1] = GetWorldScale().y / 2.f;
 	m_Info.AxisLen[2] = GetWorldScale().z / 2.f;
+}
 
+void CColliderBox3D::PostUpdate(float DeltaTime)
+{
+	CColliderComponent::PostUpdate(DeltaTime);
 }
 
 void CColliderBox3D::PrevRender()
