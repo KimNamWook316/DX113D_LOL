@@ -594,7 +594,8 @@ bool CCollision::CollisionBox3DToBox3D(CollisionResult& SrcResult, CollisionResu
 			existsParallelPair = true;
 	}
 
-	d[0] = diff.Dot(targetBox.Axis[0]);
+	//d[0] = diff.Dot(targetBox.Axis[0]);
+	d[0] = diff.Dot(boundingBox.Axis[0]);
 
 	r = abs(d[0]);
 	r0 = boundingBox.AxisLen[0];
@@ -615,7 +616,8 @@ bool CCollision::CollisionBox3DToBox3D(CollisionResult& SrcResult, CollisionResu
 			existsParallelPair = true;
 	}
 
-	d[1] = diff.Dot(targetBox.Axis[1]);
+	//d[1] = diff.Dot(targetBox.Axis[1]);
+	d[1] = diff.Dot(boundingBox.Axis[1]);
 
 	r = abs(d[1]);
 	r0 = boundingBox.AxisLen[1];
