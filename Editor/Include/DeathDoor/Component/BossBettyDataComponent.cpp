@@ -267,3 +267,24 @@ void CBossBettyDataComponent::OnBossBettyDisableAttackCollider()
 
     m_MeleeAttackCollider->Enable(false);
 }
+
+void CBossBettyDataComponent::IncFarAttackCount()
+{
+    ++m_FarAttackAttackNum;
+
+    // 3번 마자, Far Attack Type 을 다르게 해줄 것이다.
+    //  if (m_FarAttackAttackNum % 3 == 0)
+    if (m_FarAttackAttackNum % 2 == 0)
+    {
+        if (m_FarAttackType == BossBettyFarAttackType::Spin)
+            m_FarAttackType = BossBettyFarAttackType::JumpSmash;
+        else
+            m_FarAttackType = BossBettyFarAttackType::Spin;
+    }
+
+    if (m_FarAttackAttackNum == 4)
+    {
+        m_ThrowFarAttackEnable = true;
+        m_FarAttackAttackNum = 0;
+    }
+}

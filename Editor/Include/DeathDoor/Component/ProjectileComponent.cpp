@@ -228,6 +228,18 @@ void CProjectileComponent::OnEnd()
 	if (m_EndParticleObject)
 	{
 		m_EndParticleObject->Enable(true);
+
+		// 모든 ParticleComponent 들로 하여금 SetFollowRealTimeParticleComponentPos 를 true 로 세팅한다.
+		std::vector<CParticleComponent*> vecParticleComponents;
+		m_EndParticleObject->FindAllSceneComponentFromType(vecParticleComponents);
+
+		size_t vecSize = vecParticleComponents.size();
+
+		for (size_t i = 0; i < vecSize; ++i)
+		{
+			vecParticleComponents[i]->ResetParticleStructuredBufferInfo();
+			vecParticleComponents[i]->GetCBuffer()->SetFollowRealTimeParticleComponentPos(true);
+		}
 	}
 
 	// TODO : Projectile Destroy처리 확정된 이후 변경

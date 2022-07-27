@@ -567,20 +567,24 @@ bool CParticleComponent::SaveOnly(FILE* File)
 
 	// Particle
 	// m_Particle->Save(File);
-	std::string SaveParticleFileFullPath;
-	SaveParticleFileFullPath.reserve(100);
-
-	const PathInfo* Info = CPathManager::GetInst()->FindPath(PARTICLE_PATH);
-
-	if (Info)
-		SaveParticleFileFullPath = Info->PathMultibyte;
-	SaveParticleFileFullPath.append(m_Particle->GetName().c_str());
+	std::string SaveParticleFileFullName = m_Particle->GetName();
+	SaveParticleFileFullName.reserve(100);
 
 	// .ptrc 가 해당 Name에 있는지 확인 후, 없으면 Add
-	if (SaveParticleFileFullPath.find(".prtc") == std::string::npos)
-		SaveParticleFileFullPath.append(".prtc");
+	std::string StrExt = ".prtc";
 
-	m_Particle->SaveFile(SaveParticleFileFullPath.c_str());
+	auto iterFind = std::search(SaveParticleFileFullName.begin(), SaveParticleFileFullName.end(),
+		std::boyer_moore_searcher(StrExt.begin(), StrExt.end()));
+
+	if (iterFind == SaveParticleFileFullName.end())
+		SaveParticleFileFullName.append(".prtc");
+
+	auto LoadedFullPath = CEngineUtil::CheckAndExtractFullPathOfTargetFile(PARTICLE_PATH, SaveParticleFileFullName);
+
+	if (!LoadedFullPath.has_value())
+		assert(false);
+
+	m_Particle->SaveFile(LoadedFullPath.value().c_str());
 
 	fwrite(&m_BillBoardEffect, sizeof(bool), 1, File);
 	fwrite(&m_SpawnTimeMax, sizeof(float), 1, File);
@@ -609,40 +613,27 @@ bool CParticleComponent::LoadOnly(FILE* File)
 
 	// Particle
 	// m_Particle->Save(File);
-	std::string LoadParticleFileFullPath;
-	LoadParticleFileFullPath.reserve(100);
-
-	const PathInfo* Info = CPathManager::GetInst()->FindPath(PARTICLE_PATH);
-
-	if (Info)
-		LoadParticleFileFullPath = Info->PathMultibyte;
-	LoadParticleFileFullPath.append(LoadedParticleName);
+	std::string LoadParticleFileFullFileName = LoadedParticleName;
 
 	// .ptrc 가 해당 Name에 있는지 확인 후, 없으면 Add
-	if (LoadParticleFileFullPath.find(".prtc") == std::string::npos)
-		LoadParticleFileFullPath.append(".prtc");
+	std::string StrExt = ".prtc";
 
-	bool Result = m_Particle->LoadFile(LoadParticleFileFullPath.c_str());
+	auto iterFind = std::search(LoadParticleFileFullFileName.begin(), LoadParticleFileFullFileName.end(),
+		std::boyer_moore_searcher(StrExt.begin(), StrExt.end()));
+
+	if (iterFind == LoadParticleFileFullFileName.end())
+		LoadParticleFileFullFileName.append(".prtc");
+
+	auto LoadedFullPath = CEngineUtil::CheckAndExtractFullPathOfTargetFile(PARTICLE_PATH, LoadParticleFileFullFileName);
+
+	// 그래도 Load 가 안된다면, 아예 Load 할 prtc 파일 자체가 존재하지 않는다는 의미
+	if (!LoadedFullPath.has_value())
+		assert(false);
+
+	bool Result = m_Particle->LoadFile(LoadedFullPath.value().c_str());
 
 	if (!Result)
-	{
-		// 만약 없다면, Particle Path 전부를 뒤져서 찾는다.
-		// 해당 Dir 경로에, 해당 Name 으로 된 파일이 존재하는지 판단해주는 함수 + 존재할 시 FullPath 경로 리턴
-		std::string StrLoadParticleFileName = LoadedParticleName;
-		if (StrLoadParticleFileName.find(".prtc") == std::string::npos)
-			StrLoadParticleFileName.append(".prtc");
-
-		auto ExtraLoadResult = CEngineUtil::CheckAndExtractFullPathOfTargetFile(PARTICLE_PATH, StrLoadParticleFileName);
-
-		// 그래도 Load 가 안된다면, 아예 Load 할 prtc 파일 자체가 존재하지 않는다는 의미
-		if (!ExtraLoadResult.has_value())
-			assert(false);
-		
-		Result = m_Particle->LoadFile(ExtraLoadResult.value().c_str());
-
-		if (!Result)
-			assert(false);
-	}
+		assert(false);
 
 	m_ParticleName = m_Particle->GetName();
 
