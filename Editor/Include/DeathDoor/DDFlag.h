@@ -58,6 +58,7 @@ enum class DDConditionNode
 	PlayerEnterTriggerIsEnable,
 	MeleeAttackRangeCheck,
 	PostAttackDelayCheck,
+	AttackCoolTimeCheck,
 	BossKnightFinalAttackCheck,
 	BossKnightJumpAttackRangeCheck,
 	BossKnightCutScenePlayCheck,

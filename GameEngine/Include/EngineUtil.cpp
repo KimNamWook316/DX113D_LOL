@@ -709,8 +709,9 @@ Vector3 CEngineUtil::QuarternionToEulerAngles(const XMVECTOR& Qut)
 	q.Convert(Qut);
 
 	// roll (x-axis rotation)
+	// double sinr_cosp = 2 * (q.w * q.x + q.y * q.z);
 	float sinr_cosp = 2 * (q.w * q.x + q.y * q.z);
-	double cosr_cosp = 1 - 2 * (q.x * q.x + q.y * q.y);
+	float cosr_cosp = 1 - 2 * (q.x * q.x + q.y * q.y);
 	Angle.x = std::atan2(sinr_cosp, cosr_cosp);
 
 	// pitch (y-axis rotation)
@@ -721,8 +722,8 @@ Vector3 CEngineUtil::QuarternionToEulerAngles(const XMVECTOR& Qut)
 		Angle.y = std::asin(sinp);
 
 	// yaw (z-axis rotation)
-	double siny_cosp = 2 * (q.w * q.z + q.x * q.y);
-	double cosy_cosp = 1 - 2 * (q.y * q.y + q.z * q.z);
+	float siny_cosp = 2 * (q.w * q.z + q.x * q.y);
+	float cosy_cosp = 1 - 2 * (q.y * q.y + q.z * q.z);
 	Angle.z = std::atan2(siny_cosp, cosy_cosp);
 
 	return Angle;
@@ -752,13 +753,61 @@ bool CEngineUtil::CheckInsideSquare(const Vector2& V1, const Vector2& V2, const 
 	return true;
 }
 
-
-float CEngineUtil::CalculateRealTimeSpeedUsingExponential(float Bottom, float CurTime, float InitSpeed)
+float CEngineUtil::CalculateRealTimeSpeedUsingExponentialWithBottom(float Bottom, float CurTime, float InitSpeed)
 {
 	// 밑은 1 보다 큰 값이어야만 한다.
 	assert(Bottom > 1);
 
 	// Bottom ^ CurTime + InitSpeed
 	return pow(Bottom, CurTime) + InitSpeed;
+}
+
+float CEngineUtil::CalculateRealTimeSpeedUsingExponentialWithSpeed(float FullTime, float InitSpeed, float EndSpeed, float CurTime)
+{
+	// 속도가 0보다 작으면 안된다.
+	if (InitSpeed < 0.f || EndSpeed < 0.f)
+		assert(false);
+
+	// if (CurTime > FullTime)
+	// 	assert(false);
+
+	float Inclination = (EndSpeed - InitSpeed / FullTime);
+
+	// 서서히 증가
+	if (Inclination > 0.f)
+	{
+		float ExponentialBottom = pow(EndSpeed - InitSpeed, 1 / (FullTime * 0.5f));
+		return pow(ExponentialBottom, CurTime - FullTime * 0.5f) + InitSpeed;
+	}
+
+	// 서서히 감소
+	else if (Inclination < 0.f)
+	{
+		float ExponentialBottom = pow(-1 * (EndSpeed - InitSpeed), 1 / (FullTime * 0.5f));
+		float Speed = -1 * pow(ExponentialBottom, CurTime + 0.1f  - FullTime * 0.5f) + InitSpeed;
+
+		if (Speed < 10.f)
+		{
+			bool i = 1;
+		}
+		if (Speed <= EndSpeed)
+		{
+			bool i = 1;
+		}
+
+		// 지수 함수는 y 값이 무한대로 감소하므로, 0 아래로 내려가지는 않게 한다.
+		if (Speed < 0)
+		{
+			Speed = 0;
+		}
+
+		return Speed;
+	}
+
+	// 같은 속도
+	else if (Inclination == 0.f)
+	{
+		return InitSpeed;
+	}
 }
 

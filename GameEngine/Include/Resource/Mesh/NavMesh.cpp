@@ -156,7 +156,7 @@ bool CNavMesh::LoadMeshFullPathMultibyte(const char* FullPath)
 	
 
 	m_Scene->GetResource()->CreateNavMesh(this, "NavMesh",
-		&m_vecVertexPos[0], sizeof(Vector3), m_vecVertexPos.size(),
+		&m_vecVertexPos[0], sizeof(Vector3), (int)m_vecVertexPos.size(),
 		D3D11_USAGE_DEFAULT, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST,
 		&m_vecIndex[0], sizeof(int), (int)m_vecIndex.size(),
 		D3D11_USAGE_DEFAULT, DXGI_FORMAT_R32_UINT);
@@ -375,7 +375,7 @@ bool CNavMesh::LoadMesh(FILE* File)
 bool CNavMesh::CreateNavMesh(const std::string& Name)
 {
 	return CSceneManager::GetInst()->GetScene()->GetResource()->CreateNavMesh(this, Name,
-		&m_vecOriginVertexPos[0], sizeof(Vector3), m_vecVertexPos.size(),
+		&m_vecOriginVertexPos[0], sizeof(Vector3), (int)m_vecVertexPos.size(),
 		D3D11_USAGE_DEFAULT, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST,
 		&m_vecIndex[0], sizeof(int), (int)m_vecIndex.size(),
 		D3D11_USAGE_DEFAULT, DXGI_FORMAT_R32_UINT);

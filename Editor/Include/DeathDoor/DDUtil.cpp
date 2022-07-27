@@ -57,6 +57,9 @@ std::string CDDUtil::DDConditionNodeTypeToString(DDConditionNode NodeType)
 	case DDConditionNode::PostAttackDelayCheck:
 		return "PostAttackDelayCheck";
 
+	case DDConditionNode::AttackCoolTimeCheck:
+		return "AttackCoolTimeCheck";
+
 	case DDConditionNode::BossKnightFinalAttackCheck:
 		return "BossKnightFinalAttackCheck";
 
@@ -193,6 +196,11 @@ DDConditionNode CDDUtil::StringToDDConditionNodeType(const std::string& Str)
 	{
 		return DDConditionNode::PostAttackDelayCheck;
 	}
+	else if (Str == "AttackCoolTimeCheck")
+	{
+		return DDConditionNode::AttackCoolTimeCheck;
+	}
+	
 	else if (Str == "BossKnightCutScenePlayCheck")
 	{
 		return DDConditionNode::BossKnightCutScenePlayCheck;

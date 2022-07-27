@@ -34,11 +34,19 @@ void CBossBettyDataComponent::Start()
 {
     CMonsterDataComponent::Start();
 
+    //  CMonsterDataComponent::Start(); 에서 HitBox Collider 를 찾았을 것이다.
+    // 해당 Collider 의 Extent 를 설정해준다.
+    m_HitBox->SetExtent(3.0f, 3.0f, 3.0f);
+
     m_Data = CDataManager::GetInst()->GetObjectData("BossBetty");
 
     // Move Speed 는 CSV OBJ Data 로 세팅한다.
     m_OriginMoveSpeed = m_Data.MoveSpeed;
     m_CurMoveSpeed = m_Data.MoveSpeed;
+
+    // Move Speed 는 CSV OBJ Data 로 세팅한다.
+    m_OriginRotSpeed = m_Data.RotateSpeedPerSec;
+    m_CurRotSpeed = m_OriginRotSpeed;
 
     // HitBox 에 콜백을 걸어준다.
 
@@ -80,32 +88,32 @@ void CBossBettyDataComponent::Start()
     const Vector3& ObjectWorldScale = m_Object->GetRootComponent()->GetWorldScale();
     const Vector3& MeshOriginScale = dynamic_cast<CAnimationMeshComponent*>(m_Object->GetRootComponent())->GetMeshSize();
     // const Vector3& FinalMeshScale = ObjectWorldScale * MeshOriginScale;
-    const Vector3& FinalMeshScale = Vector3(5.f, 0.f, 5.f);
+    const Vector3& FinalMeshScale = Vector3(10.f, 0.f, 10.f);
 
-    m_PunchLeftSquarePos[0] = Vector3(FinalMeshScale.x * -1 * 0.5f, 0.f, FinalMeshScale.z * 0.5f);
-    m_PunchLeftSquarePos[1] = Vector3(FinalMeshScale.x * -1 * 0.5f, 0.f, FinalMeshScale.z);
+    m_PunchLeftSquarePos[0] = Vector3(FinalMeshScale.x * -1, 0.f, 0.f);
+    m_PunchLeftSquarePos[1] = Vector3(FinalMeshScale.x * -1, 0.f, FinalMeshScale.z);
     m_PunchLeftSquarePos[2] = Vector3(0.f, 0.f, FinalMeshScale.z);
-    m_PunchLeftSquarePos[3] = Vector3(0.f, 0.f, FinalMeshScale.z * 0.5f);
+    m_PunchLeftSquarePos[3] = Vector3(0.f, 0.f, 0.f);
 
-    m_PunchRightSquarePos[0] = Vector3(0.f, 0.f, FinalMeshScale.z * 0.5f);
+    m_PunchRightSquarePos[0] = Vector3(0.f, 0.f, 0.f);
     m_PunchRightSquarePos[1] = Vector3(0.f, 0.f, FinalMeshScale.z);
-    m_PunchRightSquarePos[2] = Vector3(FinalMeshScale.x * 0.5f, 0.f, FinalMeshScale.z);
-    m_PunchRightSquarePos[3] = Vector3(FinalMeshScale.x * 0.5f, 0.f, FinalMeshScale.z * 0.5f);
+    m_PunchRightSquarePos[2] = Vector3(FinalMeshScale.x, 0.f, FinalMeshScale.z);
+    m_PunchRightSquarePos[3] = Vector3(FinalMeshScale.x, 0.f, 0.f);
 
-    m_SlashLeftSquarePos[0] = Vector3(FinalMeshScale.x * -1 * 1.5f, 0.f, FinalMeshScale.z * -1.f);
+    m_SlashLeftSquarePos[0] = Vector3(FinalMeshScale.x * -1 * 1.5f, 0.f, FinalMeshScale.z * -1.5f);
     m_SlashLeftSquarePos[1] = Vector3(FinalMeshScale.x * -1 * 1.5f, 0.f, FinalMeshScale.z);
     m_SlashLeftSquarePos[2] = Vector3(FinalMeshScale.x * -1 * 0.5f, 0.f, FinalMeshScale.z);
-    m_SlashLeftSquarePos[3] = Vector3(FinalMeshScale.x * -1 * 0.5f, 0.f, FinalMeshScale.z * -1.f);
+    m_SlashLeftSquarePos[3] = Vector3(FinalMeshScale.x * -1 * 0.5f, 0.f, FinalMeshScale.z * -1.5f);
 
-    m_SlashRightSquarePos[0] = Vector3(FinalMeshScale.x * 0.5f, 0.f, FinalMeshScale.z * -1.f);
+    m_SlashRightSquarePos[0] = Vector3(FinalMeshScale.x * 0.5f, 0.f, FinalMeshScale.z * -1.5f);
     m_SlashRightSquarePos[1] = Vector3(FinalMeshScale.x * 0.5f, 0.f, FinalMeshScale.z);
     m_SlashRightSquarePos[2] = Vector3(FinalMeshScale.x * 1 * 1.5f, 0.f, FinalMeshScale.z);
-    m_SlashRightSquarePos[3] = Vector3(FinalMeshScale.x * -1 * 1.5f, 0.f, FinalMeshScale.z * -1.f);
+    m_SlashRightSquarePos[3] = Vector3(FinalMeshScale.x * 1 * 1.5f, 0.f, FinalMeshScale.z * -1.5f);
 
-    m_TwoSideFrontSquarePos[0] = Vector3(FinalMeshScale.x * -1 * 1.5f, 0.f, FinalMeshScale.z);
+    m_TwoSideFrontSquarePos[0] = Vector3(FinalMeshScale.x * -1 * 1.5f, 0.f, FinalMeshScale.z * 0.5f);
     m_TwoSideFrontSquarePos[1] = Vector3(FinalMeshScale.x * -1 * 1.5f, 0.f, FinalMeshScale.z * 1.5f);
     m_TwoSideFrontSquarePos[2] = Vector3(FinalMeshScale.x * 1 * 1.5f, 0.f, FinalMeshScale.z * 1.5f);
-    m_TwoSideFrontSquarePos[3] = Vector3(FinalMeshScale.x * 1 * 1.5f, 0.f, FinalMeshScale.z);
+    m_TwoSideFrontSquarePos[3] = Vector3(FinalMeshScale.x * 1 * 1.5f, 0.f, FinalMeshScale.z * 0.5f);
 
     m_RelativePunchRightPos = (m_PunchRightSquarePos[0] + m_PunchRightSquarePos[2]) / 2.f;
     m_RelativePunchLeftPos = (m_PunchLeftSquarePos[0] + m_PunchLeftSquarePos[2]) / 2.f;
@@ -119,18 +127,43 @@ void CBossBettyDataComponent::OnBossBettyGenerateTwoSideCloseAttackEffect()
 	// 양쪽에 
 	// 1) 충돌체 활성화
 	// 2) Particle 제작
+
+    const Vector3& XWorldAxis = m_MeleeAttackCollider->GetRelativeAxis(AXIS::AXIS_X) * -1.f;
+    const Vector3& ZWorldAxis = m_MeleeAttackCollider->GetRelativeAxis(AXIS::AXIS_Z) * -1.f;
+
+    const Vector3& ColliderRelativePos = ZWorldAxis * 8.0f;
+
+    m_MeleeAttackCollider->SetRelativePos(ColliderRelativePos);
+
+    m_MeleeAttackCollider->SetExtent(5.f, 1.f, 3.f);
+}
+
+void CBossBettyDataComponent::OnSetBossBettyAttackColliderPosToBettyBody()
+{
+    m_MeleeAttackCollider->SetRelativePos(Vector3(0.f, 0.f, 0.f));
+    m_MeleeAttackCollider->SetExtent(3.f, 3.f, 3.f);
 }
 
 void CBossBettyDataComponent::OnBossBettyGenerateRightCloseAttackEffect()
 {
-    // m_RelativePunchRightPos
-    m_MeleeAttackCollider->SetRelativePos(m_RelativePunchRightPos);
+    const Vector3& XWorldAxis = m_MeleeAttackCollider->GetRelativeAxis(AXIS::AXIS_X) * -1.f;
+    const Vector3& ZWorldAxis = m_MeleeAttackCollider->GetRelativeAxis(AXIS::AXIS_Z) * -1.f;
+
+    const Vector3& ColliderRelativePos = XWorldAxis * 3.0f + ZWorldAxis * 7.0f;
+
+    m_MeleeAttackCollider->SetRelativePos(ColliderRelativePos);
+    m_MeleeAttackCollider->SetExtent(3.f, 3.f, 5.f);
 }
 
 void CBossBettyDataComponent::OnBossBettyGenerateLeftCloseAttackEffect()
 {
-    // m_RelativePunchLeftPos
-    m_MeleeAttackCollider->SetRelativePos(m_RelativePunchLeftPos);
+    const Vector3& XWorldAxis = m_MeleeAttackCollider->GetRelativeAxis(AXIS::AXIS_X) * -1.f;
+    const Vector3& ZWorldAxis = m_MeleeAttackCollider->GetRelativeAxis(AXIS::AXIS_Z) * -1.f;
+
+    const Vector3& ColliderRelativePos = XWorldAxis * 3.5f * -1.f + ZWorldAxis * 7.0f;
+
+    m_MeleeAttackCollider->SetRelativePos(ColliderRelativePos);
+    m_MeleeAttackCollider->SetExtent(3.f, 3.f, 5.f);
 }
 
 void CBossBettyDataComponent::OnBossBettyRoarEffect(float DeltaTime)

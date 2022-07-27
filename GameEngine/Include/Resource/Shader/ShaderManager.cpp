@@ -44,6 +44,9 @@
 #include "WaterShader.h"
 #include "LaserShader.h"
 
+// ParticleInfo.h
+#include "../../ParticleInfo.h"
+
 CShaderManager::CShaderManager()
 {
 }
@@ -88,11 +91,11 @@ bool CShaderManager::Init()
 	if (!CreateShader<CNumberShader>("NumberShader"))
 		return false;
 
-	//if (!CreateShader<CParticleUpdateShader>("ParticleUpdateShader"))
-	//	return false;
+	if (!CreateShader<CParticleUpdateShader>("ParticleUpdateShader"))
+		return false;
 
-	//if (!CreateShader<CParticleRenderShader>("ParticleRenderShader"))
-	//	return false;
+	if (!CreateShader<CParticleRenderShader>("ParticleRenderShader"))
+		return false;
 
 	if (!CreateShader<CTileMapShader>("TileMapShader"))
 		return false;

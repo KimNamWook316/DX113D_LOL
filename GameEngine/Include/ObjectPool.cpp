@@ -17,13 +17,13 @@ CObjectPool::CObjectPool()
 
 CObjectPool::~CObjectPool()
 {
-	//auto iter = m_mapProjectile.begin();
-	//auto iterEnd = m_mapProjectile.end();
-
-	//for (; iter != iterEnd; ++iter)
-	//{
-	//	SAFE_RELEASE(iter->second);
-	//}
+	// auto iter = m_mapProjectile.begin();
+	// auto iterEnd = m_mapProjectile.end();
+	// 
+	// for (; iter != iterEnd; ++iter)
+	// {
+	// 	SAFE_RELEASE(iter->second);
+	// }
 
 	//iter = m_mapMonster.begin();
 	//iterEnd = m_mapMonster.end();
@@ -129,6 +129,8 @@ void CObjectPool::CreatePoolObject(const std::string& PathName)
 {
 	CExcelData* Data = CResourceManager::GetInst()->FindCSV(m_DataName);
 
+	const PathInfo* Info = CPathManager::GetInst()->FindPath(PathName);
+
 	std::vector<std::string> vecNames;
 	Data->GetRowNames(vecNames);
 
@@ -136,7 +138,6 @@ void CObjectPool::CreatePoolObject(const std::string& PathName)
 
 	for (size_t i = 0; i < Count; ++i)
 	{
-		const PathInfo* Info = CPathManager::GetInst()->FindPath(PathName);
 
 		char FullPath[MAX_PATH] = {};
 		strcpy_s(FullPath, Info->PathMultibyte);
@@ -146,7 +147,7 @@ void CObjectPool::CreatePoolObject(const std::string& PathName)
 		Row* row = Data->GetRow(ObjectName);
 
 		std::stringstream ss;
-		std::string FileName;
+		std::string FileName; 
 
 		ss << (*row)[0];
 
@@ -189,16 +190,13 @@ void CObjectPool::CreatePoolObject(const std::string& PathName)
 					m_mapMonster.insert(std::make_pair(ObjectName, Object));
 					break;
 				}
-
 			}
-
 			else
 			{
 				SAFE_DELETE(Object);
-				Object->Destroy();
+				// Object->Destroy();
 			}
 		}
-
 
 		memset(FullPath, 0, MAX_PATH);
 	}

@@ -188,9 +188,9 @@ bool CEffectEditor::Init()
 
     // UV Move
     Tree = AddWidget<CIMGUITree>("UV Move");
-    m_IsMoveEnableEdit = Tree->AddWidget<CIMGUICheckBox>("UV Move", 80.f);
-    m_IsMoveEnableEdit->AddCheckInfo("UVMove");
-    m_IsMoveEnableEdit->SetCallBackLabel<CEffectEditor>(this, &CEffectEditor::OnIsUVMoveEnableEdit);
+    m_IsUVMoveEnableEdit = Tree->AddWidget<CIMGUICheckBox>("UV Move", 80.f);
+    m_IsUVMoveEnableEdit->AddCheckInfo("UVMove");
+    m_IsUVMoveEnableEdit->SetCallBackLabel<CEffectEditor>(this, &CEffectEditor::OnIsUVMoveEnableEdit);
 
     Line = Tree->AddWidget<CIMGUISameLine>("Line");
     Line->SetOffsetX(100.f);
@@ -297,6 +297,13 @@ bool CEffectEditor::Init()
     m_IsGravityEdit = Tree->AddWidget<CIMGUICheckBox>("Gravity", 80.f);
     m_IsGravityEdit->AddCheckInfo("Gravity");
     m_IsGravityEdit->SetCallBackLabel<CEffectEditor>(this, &CEffectEditor::OnIsGravityEdit);
+
+    Line = Tree->AddWidget<CIMGUISameLine>("Line");
+    Line->SetOffsetX(180.f);
+
+    m_IsFollowComponentWorldPosEdit = Tree->AddWidget<CIMGUICheckBox>("Follow Component", 80.f);
+    m_IsFollowComponentWorldPosEdit->AddCheckInfo("Follow Component");
+    m_IsFollowComponentWorldPosEdit->SetCallBackLabel<CEffectEditor>(this, &CEffectEditor::OnIsFollowComponentPosEdit);
 
     // Spawn Time, Spawn Count
     Tree  = AddWidget<CIMGUITree>("Spawn Time, Disable Alive");
@@ -988,6 +995,15 @@ void CEffectEditor::OnIsMoveEdit(const char*, bool Enable)
     // m_ParticleComponent->GetCBuffer()->SetMove(Enable);
 }
 
+void CEffectEditor::OnIsFollowComponentPosEdit(const char*, bool Enable)
+{
+    if (!m_ParticleClass)
+        return;
+
+    m_ParticleClass->SetFollowRealTimeParticleComponentPos(Enable);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetFollowRealTimeParticleComponentPos(Enable);
+}
+
 void CEffectEditor::OnIsGravityEdit(const char*, bool Enable)
 {
     if (!m_ParticleClass)
@@ -1266,14 +1282,14 @@ void CEffectEditor::OnSaveParticleClass()
         }
 
         // 현재 저장하는 Directory가 Bin/ParticleClass 인지 확인하기 => 아니라면, Save 방지
-        std::string PathInfoBeforeFileName;
-        CEngineUtil::GetPathInfoBeforeFileName(FileFullPathMultibyte, PathInfoBeforeFileName);
-
-        if (strcmp(ParticlePathInfo->PathMultibyte, PathInfoBeforeFileName.c_str()) != 0)
-        {
-            MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Particle Class 의 경우, 반드시 Bin/ParticleClass 에 저장"), NULL, MB_OK);
-            return;
-        }
+        // std::string PathInfoBeforeFileName;
+        // CEngineUtil::GetPathInfoBeforeFileName(FileFullPathMultibyte, PathInfoBeforeFileName);
+        // 
+        // if (strcmp(ParticlePathInfo->PathMultibyte, PathInfoBeforeFileName.c_str()) != 0)
+        // {
+        //     MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Particle Class 의 경우, 반드시 Bin/ParticleClass 에 저장"), NULL, MB_OK);
+        //     return;
+        // }
 
         // 해당 PARTICLE_PATH 에서 중복된 이름이 있는지 확인하기
         // .prtc 확장자 붙이기
@@ -1409,6 +1425,7 @@ void CEffectEditor::OnSetBasicParticleMaterialSetting(CSceneComponent* Com)
     m_ParticleMaterial->AddTexture(0, (int)Buffer_Shader_Type::Pixel, "Bubble", TEXT("Particle/Bubbles99px.png"));
     m_ParticleMaterial->SetShader("ParticleRenderShader");
     m_ParticleMaterial->SetRenderState("AlphaBlend");
+    m_ParticleMaterial->SetRenderState("NoCull");
 
     // 2) Particle 제작
     CSceneManager::GetInst()->GetScene()->GetResource()->CreateParticle("BasicParticle");
@@ -1787,7 +1804,7 @@ void CEffectEditor::SetIMGUIReflectParticle(CParticle* Particle)
     m_GenerateRadius->SetValue(Particle->GetGenerateRadius());
 
     // UV Move 
-    m_IsMoveEnableEdit->SetCheck(0, Particle->GetUVMoveEnable());
+    m_IsUVMoveEnableEdit->SetCheck(0, Particle->GetUVMoveEnable());
     m_UVRowN->SetVal(Particle->GetUVRowN());
     m_UVColN->SetVal(Particle->GetUVColN());
 
@@ -1828,6 +1845,7 @@ void CEffectEditor::SetIMGUIReflectParticle(CParticle* Particle)
     // Movement
     m_IsGravityEdit->SetCheck(0, Particle->GetGravity());
     m_IsMoveEdit->SetCheck(0, Particle->GetMove());
+    m_IsFollowComponentWorldPosEdit->SetCheck(0, Particle->IsFollowRealTimeParticleComponentPos());
     // m_IsPauseResumeToggle->SetCheck(0, true); 사실상 거의 이제 쓸모가 없는 코드
 
     // Bounce
@@ -2644,7 +2662,7 @@ void CEffectEditor::OnXZSpreadGrassPreset()
 
     // Scale,
     OnScaleMinEdit(Vector3(1.f, 1.f, 1.f));
-    OnScaleMaxEdit(Vector3(20.f, 20.f, 1.f));
+    OnScaleMaxEdit(Vector3(15.f, 1.f, 1.f));
 
     // Start , End Pos
     OnStartMinEdit(Vector3(0.f, 0.f, 0.f));
@@ -2660,7 +2678,7 @@ void CEffectEditor::OnXZSpreadGrassPreset()
 
     // Speed
     OnSpeedStartEdit(1.f);
-    OnSpeedEndEdit(50.f);
+    OnSpeedEndEdit(5.f);
 
     // Life Time Linaer X
     m_ParticleClass->SetLifeTimeLinearFromCenter(false);
@@ -2670,9 +2688,9 @@ void CEffectEditor::OnXZSpreadGrassPreset()
     m_ParticleClass->SetAlphaLinearFromCenter(false);
     dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetAlphaLinearFromCenter(false);
 
-    // Rot To Dir False
-    m_ParticleClass->SetRotToDir(false);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetRotToDir(false);
+    // Rot To Dir True
+    m_ParticleClass->SetRotToDir(true);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetRotToDir(true);
 
 
     // Move Dir Type 

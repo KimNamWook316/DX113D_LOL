@@ -147,7 +147,7 @@ bool CNavigation3DManager::CheckPlayerNavMeshPoly(float& Height)
 			//Vector3 P2 = m_NavMeshComponent->GetVertexPos(i, 1);
 			//Vector3 P3 = m_NavMeshComponent->GetVertexPos(i, 2);
 			std::vector<Vector3> vecPos;
-			m_NavMeshComponent->GetNavPolgonVertexPos(i, vecPos);
+			m_NavMeshComponent->GetNavPolgonVertexPos((int)i, vecPos);
 			Vector3 P1 = vecPos[0];
 			Vector3 P2 = vecPos[1];
 			Vector3 P3 = vecPos[2];
@@ -172,7 +172,7 @@ bool CNavigation3DManager::CheckPlayerNavMeshPoly(float& Height)
 
 			if (Intersect)
 			{
-				m_PlayerPolyIndex = i;
+				m_PlayerPolyIndex = (int)i;
 				
 				float Dist1 = P1.Distance(PlayerPos);
 				float Dist2 = P2.Distance(PlayerPos);
@@ -315,7 +315,7 @@ bool CNavigation3DManager::CheckNavMeshPoly(const Vector3& Pos, float& Height, i
 	for (size_t i = 0; i < Count; ++i)
 	{
 		std::vector<Vector3> vecPos;
-		m_NavMeshComponent->GetNavPolgonVertexPos(i, vecPos);
+		m_NavMeshComponent->GetNavPolgonVertexPos((int)i, vecPos);
 
 		//Vector3 P1 = m_NavMeshComponent->GetVertexPos(i, 0);
 		//Vector3 P2 = m_NavMeshComponent->GetVertexPos(i, 1);
@@ -348,7 +348,7 @@ bool CNavigation3DManager::CheckNavMeshPoly(const Vector3& Pos, float& Height, i
 			// Weighted Average
 			Height = LerpVec.x * LerpVec.x * P1.y + LerpVec.y * LerpVec.y * P2.y + LerpVec.z * LerpVec.z * P3.y + 0.1f;
 
-			PolyIndex = i;
+			PolyIndex = (int)i;
 
 			return true;
 		}

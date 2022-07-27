@@ -37,7 +37,7 @@ CTextureManager::~CTextureManager()
 			iterEnd = m_mapTexture.end();
 		}
 
-		m_mapTexture.empty();
+		m_mapTexture.clear();
 	}
 }
 

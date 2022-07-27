@@ -1,4 +1,5 @@
 ObjectPoolData,,
 ,Count,Path
 PlayerArrow,5,PlayerArrow.gobj
+BossBettySnowAttack,15,Monster/BossBettySnowAttack.gobj
 TinyCrow,30,TinyCrow.gobj

@@ -1355,7 +1355,7 @@ void CRenderManager::UpdateInstancingList()
 				}
 
 				const std::list<class CSceneComponent*>& InstancingCompList = (*iter)->InstancingList;
-				int RecommendSBufferSize = InstancingCompList.size();
+				int RecommendSBufferSize = (int)InstancingCompList.size();
 
 				if ((*iter)->Mesh->GetMeshType() == Mesh_Type::Static)
 				{
@@ -1409,7 +1409,7 @@ void CRenderManager::UpdateInstancingList()
 					Layer->m_vecInstancing[Layer->InstancingIndex]->CBuffer->SetBoneCount(((CAnimationMesh*)(*iter)->Mesh)->GetBoneCount());
 				}
 
-				Layer->m_vecInstancing[Layer->InstancingIndex]->CBuffer->SetObjectCount((*iter)->InstancingList.size());
+				Layer->m_vecInstancing[Layer->InstancingIndex]->CBuffer->SetObjectCount((int)(*iter)->InstancingList.size());
 
 				++Layer->InstancingIndex;
 			}

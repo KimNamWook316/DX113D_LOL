@@ -319,7 +319,7 @@ bool CExcelData::SaveCSVFullPath(const char* fullPath)
 	size_t labelCount = m_vecLabel.size();
 	for (size_t i = 0; i < labelCount; ++i)
 	{
-		int length = m_vecLabel[i].length();
+		int length = (int)m_vecLabel[i].length();
 		strcpy_s(buf, length + 1, m_vecLabel[i].c_str());
 		if (i == labelCount - 1)
 		{
@@ -392,7 +392,7 @@ bool CExcelData::LoadCSVFullPath(const char* fullPath)
 	char name[64] = {};
 	fgets(name, 64, fp);
 
-	int len = strlen(name);
+	int len = (int)strlen(name);
 	name[len - 1] = '\0'; // , Á¦°Å
 	m_Name = name;
 

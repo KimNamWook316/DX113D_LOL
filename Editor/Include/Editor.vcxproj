@@ -201,6 +201,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="DeathDoor\Component\Node\AddFallingFloorCallbackNode.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\AttackCoolTimeCheck.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\BossBettyAngryAttackNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\BossBettyChangeAttackDirNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\BossBettyChangeDirCheck.cpp" />
@@ -387,6 +388,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="DeathDoor\Component\Node\AddFallingFloorCallbackNode.h" />
+    <ClInclude Include="DeathDoor\Component\Node\AttackCoolTimeCheck.h" />
     <ClInclude Include="DeathDoor\Component\Node\BossBettyAngryAttackNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\BossBettyChangeAttackDirNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\BossBettyChangeDirCheck.h" />

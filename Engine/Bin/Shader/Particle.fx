@@ -65,7 +65,10 @@ cbuffer	ParticleCBuffer : register(b7)
 	int g_ParticleApplyNoiseTexture; // Pixel Shader 에서 매순간 Noise Texture 로 부터, Sampling 을 해서 Color, Alpha 값 등을 바꾸는 것
 	float g_ParticleNoiseTextureApplyRatio; // Noise Texture 사라지는 효과 시작 비율
 	float g_ParticleExponentialAndLogFunctionXIntercept;
-	int g_ParticleEmpty2;
+	int g_ParticleFollowComponentPos;
+
+	float3 g_ParticleEmptyInfo1;
+	float3 g_ParticleEmptyInfo2;
 };
 
 #define	GRAVITY	9.8f
@@ -83,15 +86,21 @@ struct ParticleInfo
 	float	FallTime;
 	float	FallStartY;
 
-	// Alpha
+	// 각 Particle 의 처음 Alpha 시작 값
 	float AlphaDistinctStart;
 
+	// 1) Circle, Ring 등 Particle Shape
+	// 2) Linear Rot 때 세팅되는 값 
 	float CurrentParticleAngle;
 
 	float3 SeperateRotAngleOffset;
 	float3 FinalSeperateRotAngle;
 
-	float  InitWorldPosY;
+	float  InitLocalPosY;
+	float3 InitParticleComponentWorldPos;
+
+	float3 SingleEmptyInfo1;
+	float3 SingleEmptyInfo2;
 };
 
 struct ParticleInfoShared
@@ -125,6 +134,9 @@ struct ParticleInfoShared
 	int UVMoveEnable;
 	int UVRowN;
 	int UVColN;
+
+	float3 ShareEmptyInfo1;
+	float3 ShareEmptyInfo2;
 };
 
 RWStructuredBuffer<ParticleInfo>		g_ParticleArray	: register(u0);
@@ -281,6 +293,33 @@ void ApplyInitSpecialParticleGenerateShape(float RandomAngle, int ThreadID, floa
 		}
 	}
 	break;
+	// 3차원 구 생성하기
+	case 3:
+	{
+		// http://www.songho.ca/opengl/gl_sphere.html
+		float Rand2 = GetRandomNumber((Rand * 1000.f) % ThreadID);
+
+		float PI = 3.14159f;
+		int SectorCnt = 360;
+		int StackCnt = 180;
+		float X, Y, Z, XZ;
+
+		float SectorStep = 2 * 180 / SectorCnt;
+		float StackStep = 180 / StackCnt;
+		
+		float StackAngle = 180 - StackStep * (StackCnt * Rand);
+		XZ = FinalAppliedRadius * cos(StackAngle);
+		Y = FinalAppliedRadius * sin(StackAngle);
+
+		float SectorAngle = SectorStep * (SectorCnt * Rand2);
+		X = XZ * cos(SectorAngle);
+		Z = XZ * sin(SectorAngle);
+
+		float3 RingPos = float3(X,Y,Z);
+
+		g_ParticleArray[ThreadID.x].LocalPos = RingPos;
+	}
+	break;
 	}
 }
 
@@ -345,7 +384,6 @@ void ApplyInitParticleMove(float3 RandomPos, int ThreadID, float RandomAngle, fl
 		// float3x3 matRot = ComputeRotationMatrix(ConvertAngle);
 		float3x3 matRot = ComputeRotationMatrix(ConvertAngle + g_ParticleRotationAngle);
 
-		// 현재 Rot 상으로는, Particle Rotation 기능만 수행중이다.
 		float3 OriginDir = mul(g_ParticleMoveDir, matRot);
 
 		float3	Dir = normalize(mul(g_ParticleMoveDir, matRot));
@@ -621,7 +659,7 @@ void ApplyGravity(int ThreadID, float3 MovePos)
 		// Bounce 효과를 낸다면 
 		if (g_ParticleBounce == 1)
 		{
-			if (g_ParticleArray[ThreadID].InitWorldPosY >= g_ParticleArray[ThreadID].LocalPos.y)
+			if (g_ParticleArray[ThreadID].InitLocalPosY >= g_ParticleArray[ThreadID].LocalPos.y)
 			{
 				g_ParticleArray[ThreadID].FallTime = 0.f;
 				// g_ParticleArray[ThreadID.x].Speed *= 0.98f;
@@ -870,7 +908,11 @@ void ParticleUpdate(uint3 ThreadID : SV_DispatchThreadID)
 		g_ParticleArray[ThreadID.x].LocalPos.y = YRand * (g_ParticleStartMax.y - g_ParticleStartMin.y) + g_ParticleStartMin.y;
 		g_ParticleArray[ThreadID.x].LocalPos.z = ZRand * (g_ParticleStartMax.z - g_ParticleStartMin.z) + g_ParticleStartMin.z;
 
-		g_ParticleArray[ThreadID.x].InitWorldPosY = g_ParticleArray[ThreadID.x].LocalPos.y;
+		// 생성되는 시점의 Local Y Pos
+		g_ParticleArray[ThreadID.x].InitLocalPosY = g_ParticleArray[ThreadID.x].LocalPos.y;
+
+		// 생성되는 시점의 Particle Component WorldPos
+		g_ParticleArray[ThreadID.x].InitParticleComponentWorldPos = g_ParticleComponentWorldPos;
 
 		g_ParticleArray[ThreadID.x].FallTime = 0.f;
 		g_ParticleArray[ThreadID.x].FallStartY = g_ParticleArray[ThreadID.x].LocalPos.y;
@@ -1076,8 +1118,15 @@ void ParticleGS(point VertexParticleOutput input[1],
 		// g_ParticleArraySRV[InstanceID].WorldPos 는 Local Space 상에서의 
 		float3	WorldPos = g_ParticleArraySRV[InstanceID].LocalPos + mul(g_ParticleLocalPos[i] * Scale, matRot);
 
-		// Particle Component 의 World Post 도 더한다.
-		WorldPos += g_ParticleShareSRV[0].ParticleComponentWorldPos;
+		// Particle Component 의 World Pos 도 더한다.
+		if (g_ParticleFollowComponentPos == 1)
+		{
+			WorldPos += g_ParticleShareSRV[0].ParticleComponentWorldPos;
+		}
+		else
+		{
+			WorldPos += g_ParticleArraySRV[InstanceID].InitParticleComponentWorldPos;
+		}
 
 		OutputArray[i].ProjPos = mul(float4(WorldPos, 1.f), g_matVP);
 		// OutputArray[i].ProjPos.xyz = mul(OutputArray[i].ProjPos.xyz, matRot);
@@ -1120,7 +1169,8 @@ void ApplyLinearUVClipping(GeometryParticleOutput input)
 	// 해당 선이 왼쪽 -> 오른쪽, 오른쪽 -> 왼쪽. 으로 이동 하는 개념
 	if (g_ParticleUVClippingReflectingMoveDir == 1)
 	{
-		if (input.UV.x > 1 - input.LifeTimeRatio)
+		// if (input.UV.x > 1 - input.LifeTimeRatio)
+		if (input.UV.x < input.LifeTimeRatio)
 			clip(-1);
 		/*
 		if (input.LocalXPlusMoveDir == 1)
@@ -1151,7 +1201,7 @@ bool ApplyNoiseTextureDestroyEffect(float2 UV, float LifeTimeMax, float LifeTime
 		// ex) 총 100개 생성 -> 10번째 Instance => 0 ~ 0.1 사이의 UV 범위 참조하게 하기
 		float2 NoiseSmpUV = UV + (InstanceID / (g_ParticleSpawnCountMax * 0.1f));
 
-		float3 FinalColor = g_NoiseTexture.Sample(g_BaseSmp, NoiseSmpUV);
+		float4 FinalColor = g_NoiseTexture.Sample(g_BaseSmp, NoiseSmpUV);
 
 		// float ClipLimit = LifeTimeRatio;
 		float ClipLimit = (LifeTimeRatio - g_ParticleNoiseTextureApplyRatio) / (1 - g_ParticleNoiseTextureApplyRatio);

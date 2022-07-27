@@ -32,6 +32,7 @@
 // Public Nodes
 #include "Node/MeleeRangeCheckNode.h"
 #include "Node/PostAttackDelayCheck.h"
+#include "Node/AttackCoolTimeCheck.h"
 #include "Node/DeathCheck.h"
 #include "Node/IsCombatCheck.h"
 #include "Node/DeathNode.h"
@@ -252,7 +253,10 @@ CNode* CGameBehaviorTree::LoadNode(CNode* Parent, size_t TypeID)
 	{
 		NewNode = MakeNode<CPostAttackDelayCheck>(Parent, OwnerObject);
 	}
-
+	else if (TypeID == typeid(CAttackCoolTimeCheck).hash_code())
+	{
+		NewNode = MakeNode<CAttackCoolTimeCheck>(Parent, OwnerObject);
+	}
 	else if (TypeID == typeid(CIsCombatCheck).hash_code())
 	{
 		NewNode = MakeNode<CIsCombatCheck>(Parent, OwnerObject);

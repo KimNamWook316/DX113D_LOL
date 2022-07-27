@@ -146,7 +146,7 @@ void CStaticMeshComponent::AddMaterial(CMaterial* Material)
 {
 	m_vecMaterialSlot.push_back(Material->Clone());
 
-	int Index = m_vecMaterialSlot.size() - 1;
+	int Index = (int)m_vecMaterialSlot.size() - 1;
 	m_vecMaterialSlot[Index]->SetScene(m_Scene);
 }
 
@@ -561,7 +561,7 @@ bool CStaticMeshComponent::Load(FILE* File)
 			TCHAR FileNameTCHAR[MAX_PATH] = {};
 			strcpy_s(FileNameMB, FileName.c_str());
 
-			MultiByteToWideChar(CP_ACP, 0, FileNameMB, FileName.length(), FileNameTCHAR, FileName.length());
+			MultiByteToWideChar(CP_ACP, 0, FileNameMB, (int)FileName.length(), FileNameTCHAR, (int)FileName.length());
 
 			if(m_Scene)
 				m_Scene->GetResource()->LoadMesh(Mesh_Type::Static, MeshName, FileNameTCHAR, MESH_PATH);
@@ -867,7 +867,7 @@ void CStaticMeshComponent::OnCreateNewInstancingCheckCount()
 	for (size_t i = 0; i < SlotSize; ++i)
 	{
 		// Material별 Instancing Shader, Shader Paramerter 정보 저장
-		Mat = m_Mesh->GetMaterial(i);
+		Mat = m_Mesh->GetMaterial((int)i);
 		NoInstancingShader = Mat->GetShader();
 		InstancingShader = CResourceManager::GetInst()->FindInstancingShader(NoInstancingShader);
 		MatShaderParams = Mat->GetShaderParams();

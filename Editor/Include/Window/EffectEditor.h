@@ -1,5 +1,6 @@
 #pragma once
 #include "IMGUIWindow.h"
+#include "ParticleInfo.h"
 
 enum class ParticlePreset
 {
@@ -48,7 +49,8 @@ static const char* ParticlePresetNames[] = {
 static const char* ParticleShapeNames[] = {
     "YUpDirRing", // 위 방향을 향한 Ring
     "Circle", // Circle (일정 범위 이내 랜덤한 위치에 생성)
-    "ZMinusRing" // 사용자 측을 바라본 형태로 Ring 생성
+    "ZMinusRing", // 사용자 측을 바라본 형태로 Ring 생성
+    "Sphere"
 };
 
 static const char* ParticleMoveDirType[] = {
@@ -105,7 +107,7 @@ private:
     class CIMGUIInputFloat3* m_ScaleMaxEdit;
 
     // UV Move
-    class CIMGUICheckBox* m_IsMoveEnableEdit;
+    class CIMGUICheckBox* m_IsUVMoveEnableEdit;
     class CIMGUIInputInt*   m_UVRowN;
     class CIMGUIInputInt*   m_UVColN;
 
@@ -135,6 +137,7 @@ private:
     class CIMGUISliderFloat* m_GroundTextureScale;
 
     class CIMGUICheckBox* m_IsMoveEdit;
+    class CIMGUICheckBox* m_IsFollowComponentWorldPosEdit;
     class CIMGUICheckBox* m_IsGravityEdit;
     class CIMGUICheckBox* m_IsPauseResumeToggle;
 
@@ -283,6 +286,7 @@ private:
 
     // MoveMent
     void OnIsMoveEdit(const char*, bool);
+    void OnIsFollowComponentPosEdit(const char*, bool);
     void OnIsGravityEdit(const char*, bool);
     void OnPauseResumeToggle(const char*, bool);
 
