@@ -56,21 +56,21 @@ NodeResult CBossBettyChangeAttackDirNode::OnStart(float DeltaTime)
 	m_AnimationMeshComp->GetAnimationInstance()->ChangeAnimation("BackUpStep");
 
 	m_Owner->SetCurrentNode(this);
+
+	CBossBettyDataComponent* Data = dynamic_cast<CBossBettyDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
+
+	float AngleToPlayer = Data->GetAnglePlayer();
+
+	if (AngleToPlayer > 90.f)
+		Data->SetCurRotSpeed(Data->GetOriginRotSpeed() * 1.5f);
+	else
+		Data->SetCurRotSpeed(Data->GetOriginRotSpeed());
 		
 	return NodeResult::Node_True;
 }
 
 NodeResult CBossBettyChangeAttackDirNode::OnUpdate(float DeltaTime)
 {
-	CBossBettyDataComponent* Data = dynamic_cast<CBossBettyDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
-
-	float AngleToPlayer = Data->GetAnglePlayer();
-
-	if (AngleToPlayer > 90.f)
-		Data->SetCurRotSpeed(Data->GetOriginRotSpeed() * 2.f);
-	else
-		Data->SetCurRotSpeed(Data->GetOriginRotSpeed());
-
 	return NodeResult::Node_True;
 }
 

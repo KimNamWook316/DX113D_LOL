@@ -227,7 +227,7 @@ void CMonsterDataComponent::LookPlayer(float DeltaTime)
 
 	// (OBJ) 순간적으로 미세하게 떨리는 오류
 	// if (abs(AnglePlayer) < m_Data.RotateSpeedPerSec * DeltaTime)
-	if (abs(AnglePlayer) < 2.f)
+	if (abs(AnglePlayer) < 3.f)
 	{
 		// MyObj->AddWorldRotationY(AnglePlayer * DeltaTime);
 	}

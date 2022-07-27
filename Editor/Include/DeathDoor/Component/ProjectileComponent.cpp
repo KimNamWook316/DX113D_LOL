@@ -208,7 +208,7 @@ bool CProjectileComponent::CheckDestroy()
 			return false;
 
 		Vector3 MyPos = m_Root->GetWorldPos();
-		Vector3 ToTarget = MyPos - m_TargetPos;
+		Vector3 ToTarget = m_TargetPos - MyPos;
 
 		float Dot = ToTarget.Dot(m_Dir);
 

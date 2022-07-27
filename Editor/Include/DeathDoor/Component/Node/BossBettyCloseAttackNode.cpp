@@ -134,6 +134,15 @@ NodeResult CBossBettyCloseAttackNode::OnStart(float DeltaTime)
 
 	CAnimationSequenceInstance* AnimInst = m_AnimationMeshComp->GetAnimationInstance();
 
+	m_Owner->SetCurrentNode(this);
+
+	float AngleToPlayer = Data->GetAnglePlayer();
+
+	if (AngleToPlayer > 45.f)
+		Data->SetCurRotSpeed(Data->GetOriginRotSpeed() * 1.5f);
+	else
+		Data->SetCurRotSpeed(Data->GetOriginRotSpeed());
+
 	// 근거리 공격 타입을 체크한다.
 	m_CloseAttackType = DetermineBettyCloseAttackType();
 
@@ -184,6 +193,8 @@ NodeResult CBossBettyCloseAttackNode::OnStart(float DeltaTime)
 		AnimInst->ChangeAnimation("BackUpStep");
 
 		m_Owner->SetCurrentNode(m_Owner->FindNodeByType<CBossBettyChangeAttackDirNode>());
+
+		Data->SetCurRotSpeed(Data->GetOriginRotSpeed());
 	}
 	break;
 	}
@@ -198,6 +209,10 @@ NodeResult CBossBettyCloseAttackNode::OnUpdate(float DeltaTime)
 
 NodeResult CBossBettyCloseAttackNode::OnEnd(float DeltaTime)
 {
+	CBossBettyDataComponent* Data = dynamic_cast<CBossBettyDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
+
+	Data->SetCurRotSpeed(Data->GetOriginRotSpeed());
+
 	return NodeResult::Node_True;
 }
 

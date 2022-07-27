@@ -37,9 +37,6 @@ private :
     // 원거리 공격 Type
     BossBettyFarAttackType m_FarAttackType;
 
-    // Origin Rot Speed
-    float m_OriginRotSpeed;
-    float m_CurRotSpeed;
 
     // Origin MoveTime
     float m_OriginMoveSpeed;
@@ -112,6 +109,10 @@ public :
 
     // Setter 함수 ---
 public:
+    void SetBettyThrowBallObject(class CGameObject* Object)
+    {
+        m_BossBettyThrowObject = Object;
+    }
     void SetOriginSpeed(float OriginSpeed)
     {
         m_OriginMoveSpeed = OriginSpeed;
@@ -138,7 +139,8 @@ public:
         ++m_FarAttackAttackNum;
 
         // 3번 마자, Far Attack Type 을 다르게 해줄 것이다.
-        if (m_FarAttackAttackNum % 3 == 0)
+       //  if (m_FarAttackAttackNum % 3 == 0)
+        if (m_FarAttackAttackNum % 2 == 0)
         {
             if (m_FarAttackType == BossBettyFarAttackType::Spin)
                 m_FarAttackType = BossBettyFarAttackType::JumpSmash;

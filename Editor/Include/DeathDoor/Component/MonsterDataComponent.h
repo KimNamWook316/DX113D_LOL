@@ -205,6 +205,7 @@ protected:
 	float m_AttackCoolDelayTimeMax;
 
 	// Rot 
+	float m_OriginRotSpeed;
 	float m_CurRotSpeed;
 
 	// Move 관련 변수

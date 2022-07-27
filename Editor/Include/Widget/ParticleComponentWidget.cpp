@@ -377,7 +377,7 @@ void CParticleComponentWidget::SetParticleClassToParticleComponent(CParticle* Pa
 }
 void CParticleComponentWidget::ReflectParticleToIMGUI()
 {
-    if (!m_Component || m_ParticleClass)
+    if (!m_Component || !m_ParticleClass)
         return;
 
     CParticleComponent* MeshCom = (CParticleComponent*)m_Component;
