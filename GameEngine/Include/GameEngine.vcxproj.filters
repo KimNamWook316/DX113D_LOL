@@ -1871,6 +1871,9 @@
     <ClInclude Include="ObjectPool.h">
       <Filter>10. PoolManager</Filter>
     </ClInclude>
+    <ClInclude Include="ParticleInfo.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\Shader\ColorMesh.fx">

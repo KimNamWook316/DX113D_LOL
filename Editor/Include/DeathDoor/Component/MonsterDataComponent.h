@@ -94,6 +94,16 @@ public:
 	}
 	void SetCurrentNodeNull();
 
+	void SetPlayerEnterZone(bool Enter)
+	{
+		m_PlayerEnterZone = Enter;
+	}
+
+	void SetPlayerEnterZoneFalse()
+	{
+		m_PlayerEnterZone = false;
+	}
+
 public:
 	bool IsAttackCoolTimeEnable() const
 	{
@@ -111,11 +121,25 @@ public:
 	{
 		return m_CurMoveSpeed;
 	}
+	float GetJumpAttackRange() const
+	{
+		return m_Data.JumpAttackRange;
+	}
 
     class CColliderBox3D* GetMeleeAttackCollider() const
     {
         return m_MeleeAttackCollider;
     }
+
+	CColliderBox3D* GetPlayerEnterZoneTrigger()	const
+	{
+		return m_PlayerEnterZoneTrigger;
+	}
+
+	class CCameraComponent* GetCutSceneCam() const
+	{
+		return m_CutSceneCam;
+	}
 
 	bool IsPostAttackDelaying() const
 	{
@@ -125,6 +149,16 @@ public:
 	bool IsCombat() const
 	{
 		return m_IsCombat;
+	}
+
+	bool IsCutScenePlaying() const
+	{
+		return m_IsCutScenePlaying;
+	}
+
+	bool IsPlayerEnterZone() const
+	{
+		return m_PlayerEnterZone;
 	}
 
 	float GetAnglePlayer();

@@ -28,7 +28,7 @@ bool CDefaultScene::Init()
     CreateMaterial();
 
 
-
+    //CResourceManager::GetInst()->LoadAniFile();
 
     /*
     if (!LoadAnimationSequence2D())

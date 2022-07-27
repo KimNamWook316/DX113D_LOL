@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ConstantBufferBase.h"
+#include "../../ParticleInfo.h"
 
 class CParticleConstantBuffer :
     public CConstantBufferBase

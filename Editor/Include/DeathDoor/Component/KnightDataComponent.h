@@ -37,6 +37,7 @@ public:
     void OnCutSceneSlamFloor();
     virtual void OnDeadAnimStart() override;
     virtual void OnDeadPaperBurnEnd() override;
+    void OnReachedCutSceneAnimPoint();
 
 public:
     int GetMeleeAttackCount() const
@@ -62,16 +63,6 @@ public:
     const Vector3& GetFinalTraceAxisZ()
     {
         return m_FinalTraceZAxis;
-    }
-
-    bool IsCutScenePlaying() const
-    {
-        return m_IsCutScenePlaying;
-    }
-
-    bool IsPlayerEnterZone() const
-    {
-        return m_PlayerEnterZone;
     }
 
 public:

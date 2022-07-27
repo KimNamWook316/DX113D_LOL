@@ -16,7 +16,7 @@ CParticleManager::~CParticleManager()
 		iterEnd = m_mapParticle.end();
 	}
 
-	m_mapParticle.empty();
+	m_mapParticle.clear();
 }
 
 bool CParticleManager::Init()

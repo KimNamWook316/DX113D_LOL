@@ -97,7 +97,8 @@ class CFBXLoader
 	friend class CAnimationSequence;
 	friend class CMeshManager;
 
-private:
+//private:
+public:
 	CFBXLoader();
 	~CFBXLoader();
 

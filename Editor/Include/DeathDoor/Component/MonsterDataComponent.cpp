@@ -127,13 +127,16 @@ void CMonsterDataComponent::Start()
 	AnimInst->SetEndFunction("Death", this, &CMonsterDataComponent::OnDeadAnimEnd);
 
 	// CutScene 관련 ( Enter Trigger, CutScene Cam, Collider CallBack)
-	m_CutSceneCam = m_Object->FindComponentFromType<CCameraComponent>();
 	m_PlayerEnterZoneTrigger = (CColliderBox3D*)m_Object->FindComponent("PlayerEnterTrigger");
+	m_CutSceneCam = m_Object->FindComponentFromType<CCameraComponent>();
 
 	if (m_PlayerEnterZoneTrigger)
 	{
 		m_PlayerEnterZoneTrigger->AddCollisionCallback(Collision_State::Begin, this, &CMonsterDataComponent::OnPlayerEnterZone);
 	}
+
+	// MonsterNavAgent 관련
+	m_MonsterNavAgent = m_Object->FindObjectComponentFromType<CMonsterNavAgent>();
 }
 
 void CMonsterDataComponent::Update(float DeltaTime)
@@ -278,10 +281,10 @@ void CMonsterDataComponent::ChangeColorBossDeath(float DeltaTime)
 			// m_AnimMesh->SetAmbientColor(Color, i);
 
 			// Specular
-			m_AnimMesh->SetSpecularColor(Vector4::Black, i);
+			m_AnimMesh->SetSpecularColor(Vector4::Black, (int)i);
 
 			// Emmisive
-			m_AnimMesh->SetEmissiveColor(Color, i);
+			m_AnimMesh->SetEmissiveColor(Color, (int)i);
 		}
 
 		if (m_DeathTimer >= m_DeathColorChangeTimeMax)
@@ -328,29 +331,41 @@ void CMonsterDataComponent::OnPlayerEnterZone(const CollisionResult& Result)
 
 	m_PlayerEnterZone = true;
 
-	if (m_CutSceneCam)
-	{
-		m_Scene->GetCameraManager()->KeepCamera();
-		m_Scene->GetCameraManager()->SetCurrentCamera(m_CutSceneCam);
-	}
-}
+ //	if (m_CutSceneCam)
+ //	{
+ //		m_Scene->GetCameraManager()->KeepCamera();
+ //		m_Scene->GetCameraManager()->SetCurrentCamera(m_CutSceneCam);
+ //	}
+ }
 
 void CMonsterDataComponent::OnStartCutScene()
 {
 	CGameObject* PlayerObj = m_Scene->GetPlayerObject();
 
-	// 플레이어 시야에서 사라지게 하고, 입력 받지 않게 함
+	// 플레이어 입력 받지 않게 하고, 애니메이션 강제 변화
 	if (PlayerObj)
 	{
-		m_CutSceneBeforePlayerPos = PlayerObj->GetWorldPos();
-		PlayerObj->SetWorldPos(-1000.f, -1000.f, -1000.f);
-
 		CGameStateComponent* PlayerState = PlayerObj->FindComponentFromType<CGameStateComponent>();
+		CAnimationSequenceInstance* PlayerAnim = PlayerObj->FindComponentFromType<CAnimationMeshComponent>()->GetAnimationInstance();
 
+		PlayerAnim->ChangeAnimation("PlayerIdle");
 		PlayerState->SetTreeUpdate(false);
 	}
 
 	m_IsCutScenePlaying = true;
+
+	// 컷신 카메라에 이동 동선이 있는지
+	bool IsCutSceneMove = m_CutSceneCam->GetMoveDataCount() > 0 ? true : false;
+
+	if (IsCutSceneMove)
+	{
+		m_CutSceneCam->StartMove();
+	}
+	else
+	{
+		m_Scene->GetCameraManager()->KeepCamera();
+		m_Scene->GetCameraManager()->SetCurrentCamera(m_CutSceneCam);
+	}
 }
 
 void CMonsterDataComponent::OnEndCutScene()
@@ -365,13 +380,11 @@ void CMonsterDataComponent::OnEndCutScene()
 		m_Scene->GetCameraManager()->ReturnCamera();
 	}
 
-	// 플레이어 다시 예전 위치로
+	// 플레이어 조작 On
 	CGameObject* PlayerObj = m_Scene->GetPlayerObject();
 
 	if (PlayerObj)
 	{
-		PlayerObj->SetWorldPos(m_CutSceneBeforePlayerPos);
-
 		CGameStateComponent* PlayerState = PlayerObj->FindComponentFromType<CGameStateComponent>();
 
 		PlayerState->SetTreeUpdate(true);
@@ -653,7 +666,7 @@ void CMonsterDataComponent::ActiveHitEffect(float DeltaTime)
 		m_HitEffectFlag = 0;
 
 		// 원래 컬러로 돌아온다.
-		for (size_t i = 0; i < m_MeshMatSize; ++i)
+		for (int i = 0; i < m_MeshMatSize; ++i)
 		{
 			m_AnimMesh->GetMaterial(i)->SetBaseColor(m_vecOriginDiffuse[i]);
 			m_AnimMesh->GetMaterial(i)->SetAmbientColor(m_vecOriginAmbient[i]);

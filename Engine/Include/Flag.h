@@ -353,22 +353,6 @@ enum class ToonShaderType
 	Max
 };
 
-enum class ParitcleShapeType
-{
-	YUpDirRing = 0, // 위를 바라보는 형태로 즉, Y 를 바라보는 형태로 Ring 생성
-	Circle,
-	ZMinusDirRing, // 사용자 정면을 바라보는 형태로 Ring 생성
-	Sphere,
-	Max
-};
-
-enum class ParticleSpecialMoveDir
-{
-	XZSpread = 0, // xz 평명 방향으로 이동 y는 0
-	XYSpread, // xy 평명 방향으로 이동 z 는 0
-	Max
-};
-
 enum class PaperBurnEndEvent
 {
 	None,
@@ -388,14 +372,6 @@ enum class PaperBurnEndEvent
 //	CollisionEnd
 //};
 
-
-enum class ParticleSpeedChangeMethod
-{
-	Linear = 1,
-	Exponential,  // 속도 변화가 점점 크게
-	Log, /// 속도 변화가 점점 작게 
-	Max
-};
 
 enum NAVIMESH_CELL_LIST_TYPE
 {

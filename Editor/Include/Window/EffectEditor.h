@@ -1,5 +1,6 @@
 #pragma once
 #include "IMGUIWindow.h"
+#include "ParticleInfo.h"
 
 enum class ParticlePreset
 {

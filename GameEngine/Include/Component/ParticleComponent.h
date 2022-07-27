@@ -69,6 +69,7 @@ public :
 public:
 	virtual void Start();
 	virtual bool Init();
+	virtual void Reset();
 	virtual void Update(float DeltaTime);
 	virtual void PostUpdate(float DeltaTime);
 	virtual void PrevRender();

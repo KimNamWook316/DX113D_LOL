@@ -116,7 +116,8 @@ void CCollisionSection::Collision(float DeltaTime)
 						DestProfile->vecInteraction[(int)SrcProfile->Channel] ==
 						Collision_Interaction::CollisionRigid)
 					{
-						CollisionRigid(Src, Dest, DeltaTime);
+						if(!Src->GetRigidCollisionIgnore() && !Dest->GetRigidCollisionIgnore())
+							CollisionRigid(Src, Dest, DeltaTime);
 					}
 
 				}

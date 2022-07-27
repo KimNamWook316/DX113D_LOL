@@ -11,6 +11,7 @@ CNavAgent::CNavAgent()	:
 	m_MoveSpeed(0.f),
 	m_ApplyNavMesh(true)
 {
+	m_CurrentFaceDir = Vector3(0.f, 0.f, 1.f);
 	SetTypeID<CNavAgent>();
 }
 
@@ -48,8 +49,12 @@ bool CNavAgent::Move(const Vector3& EndPos)
 
 bool CNavAgent::MoveOnNavMesh(const Vector3 EndPos)
 {
+	// NavMesh없으면 자유롭게 모든 곳 이동 가능하게 하기
 	if (!m_Scene->GetNavigation3DManager()->GetNavMeshData())
-		return false;
+	{
+		m_Object->AddWorldPos(EndPos);
+		return true;
+	}
 
 	m_Object->AddWorldPos(EndPos);
 
@@ -104,8 +109,6 @@ void CNavAgent::Start()
 {
 	if (!m_UpdateComponent)
 		m_UpdateComponent = m_Object->GetRootComponent();
-
-	
 }
 
 bool CNavAgent::Init()
@@ -117,6 +120,17 @@ void CNavAgent::Update(float DeltaTime)
 {
 	if (m_UpdateComponent)
 	{
+		// NavAgent를 가지고 있는 모든 움직이는 오브젝트가 초기에 바라보는 방향은 -z 방향이라고 가정
+		Vector3 CurrentFaceDir = Vector3(0.f, 0.f, -1.f);
+		Vector3 Rot = m_UpdateComponent->GetWorldRot();
+
+		Matrix RotMat;
+
+		RotMat.Rotation(Rot);
+
+		CurrentFaceDir = CurrentFaceDir.TransformCoord(RotMat);
+		m_CurrentFaceDir = CurrentFaceDir;
+
 		if (!m_PathList.empty())
 		{
 			Vector3	TargetPos = m_PathList.back();
@@ -133,17 +147,6 @@ void CNavAgent::Update(float DeltaTime)
 			{
 				m_PathList.pop_back();
 			}
-
-			// NavAgent를 가지고 있는 모든 움직이는 오브젝트가 초기에 바라보는 방향은 -z 방향이라고 가정
-			Vector3 CurrentFaceDir = Vector3(0.f, 0.f, -1.f);
-			Vector3 Rot = m_UpdateComponent->GetWorldRot();
-
-			Matrix RotMat;
-
-			RotMat.Rotation(Rot);
-
-			CurrentFaceDir = CurrentFaceDir.TransformCoord(RotMat);
-			m_CurrentFaceDir = CurrentFaceDir;
 
 			float Dot = Vector3(Dir.x, 0.f, Dir.z).Dot(Vector3(CurrentFaceDir.x, 0.f, CurrentFaceDir.z));
 

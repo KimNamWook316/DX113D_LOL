@@ -561,7 +561,7 @@ bool CStaticMeshComponent::Load(FILE* File)
 			TCHAR FileNameTCHAR[MAX_PATH] = {};
 			strcpy_s(FileNameMB, FileName.c_str());
 
-			MultiByteToWideChar(CP_ACP, 0, FileNameMB, FileName.length(), FileNameTCHAR, (int)FileName.length());
+			MultiByteToWideChar(CP_ACP, 0, FileNameMB, (int)FileName.length(), FileNameTCHAR, (int)FileName.length());
 
 			if(m_Scene)
 				m_Scene->GetResource()->LoadMesh(Mesh_Type::Static, MeshName, FileNameTCHAR, MESH_PATH);

@@ -44,6 +44,9 @@
 #include "WaterShader.h"
 #include "LaserShader.h"
 
+// ParticleInfo.h
+#include "../../ParticleInfo.h"
+
 CShaderManager::CShaderManager()
 {
 }

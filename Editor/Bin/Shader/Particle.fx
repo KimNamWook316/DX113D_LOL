@@ -66,6 +66,9 @@ cbuffer	ParticleCBuffer : register(b7)
 	float g_ParticleNoiseTextureApplyRatio; // Noise Texture 사라지는 효과 시작 비율
 	float g_ParticleExponentialAndLogFunctionXIntercept;
 	int g_ParticleFollowComponentPos;
+
+	float3 g_ParticleEmptyInfo1;
+	float3 g_ParticleEmptyInfo2;
 };
 
 #define	GRAVITY	9.8f
@@ -83,15 +86,21 @@ struct ParticleInfo
 	float	FallTime;
 	float	FallStartY;
 
-	// Alpha
+	// 각 Particle 의 처음 Alpha 시작 값
 	float AlphaDistinctStart;
 
+	// 1) Circle, Ring 등 Particle Shape
+	// 2) Linear Rot 때 세팅되는 값 
 	float CurrentParticleAngle;
 
 	float3 SeperateRotAngleOffset;
 	float3 FinalSeperateRotAngle;
 
-	float  InitWorldPosY;
+	float  InitLocalPosY;
+	float3 InitParticleComponentWorldPos;
+
+	float3 SingleEmptyInfo1;
+	float3 SingleEmptyInfo2;
 };
 
 struct ParticleInfoShared
@@ -125,6 +134,9 @@ struct ParticleInfoShared
 	int UVMoveEnable;
 	int UVRowN;
 	int UVColN;
+
+	float3 ShareEmptyInfo1;
+	float3 ShareEmptyInfo2;
 };
 
 RWStructuredBuffer<ParticleInfo>		g_ParticleArray	: register(u0);
@@ -648,7 +660,7 @@ void ApplyGravity(int ThreadID, float3 MovePos)
 		// Bounce 효과를 낸다면 
 		if (g_ParticleBounce == 1)
 		{
-			if (g_ParticleArray[ThreadID].InitWorldPosY >= g_ParticleArray[ThreadID].LocalPos.y)
+			if (g_ParticleArray[ThreadID].InitLocalPosY >= g_ParticleArray[ThreadID].LocalPos.y)
 			{
 				g_ParticleArray[ThreadID].FallTime = 0.f;
 				// g_ParticleArray[ThreadID.x].Speed *= 0.98f;
@@ -897,7 +909,11 @@ void ParticleUpdate(uint3 ThreadID : SV_DispatchThreadID)
 		g_ParticleArray[ThreadID.x].LocalPos.y = YRand * (g_ParticleStartMax.y - g_ParticleStartMin.y) + g_ParticleStartMin.y;
 		g_ParticleArray[ThreadID.x].LocalPos.z = ZRand * (g_ParticleStartMax.z - g_ParticleStartMin.z) + g_ParticleStartMin.z;
 
-		g_ParticleArray[ThreadID.x].InitWorldPosY = g_ParticleArray[ThreadID.x].LocalPos.y;
+		// 생성되는 시점의 Local Y Pos
+		g_ParticleArray[ThreadID.x].InitLocalPosY = g_ParticleArray[ThreadID.x].LocalPos.y;
+
+		// 생성되는 시점의 Particle Component WorldPos
+		g_ParticleArray[ThreadID.x].InitParticleComponentWorldPos = g_ParticleComponentWorldPos;
 
 		g_ParticleArray[ThreadID.x].FallTime = 0.f;
 		g_ParticleArray[ThreadID.x].FallStartY = g_ParticleArray[ThreadID.x].LocalPos.y;
@@ -1108,6 +1124,10 @@ void ParticleGS(point VertexParticleOutput input[1],
 		{
 			WorldPos += g_ParticleShareSRV[0].ParticleComponentWorldPos;
 		}
+		else
+		{
+			WorldPos += g_ParticleArraySRV[InstanceID].InitParticleComponentWorldPos;
+		}
 
 		OutputArray[i].ProjPos = mul(float4(WorldPos, 1.f), g_matVP);
 		// OutputArray[i].ProjPos.xyz = mul(OutputArray[i].ProjPos.xyz, matRot);
@@ -1182,7 +1202,7 @@ bool ApplyNoiseTextureDestroyEffect(float2 UV, float LifeTimeMax, float LifeTime
 		// ex) 총 100개 생성 -> 10번째 Instance => 0 ~ 0.1 사이의 UV 범위 참조하게 하기
 		float2 NoiseSmpUV = UV + (InstanceID / (g_ParticleSpawnCountMax * 0.1f));
 
-		float3 FinalColor = g_NoiseTexture.Sample(g_BaseSmp, NoiseSmpUV);
+		float4 FinalColor = g_NoiseTexture.Sample(g_BaseSmp, NoiseSmpUV);
 
 		// float ClipLimit = LifeTimeRatio;
 		float ClipLimit = (LifeTimeRatio - g_ParticleNoiseTextureApplyRatio) / (1 - g_ParticleNoiseTextureApplyRatio);

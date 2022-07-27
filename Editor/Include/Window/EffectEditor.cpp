@@ -2661,7 +2661,7 @@ void CEffectEditor::OnXZSpreadGrassPreset()
 
     // Scale,
     OnScaleMinEdit(Vector3(1.f, 1.f, 1.f));
-    OnScaleMaxEdit(Vector3(20.f, 20.f, 1.f));
+    OnScaleMaxEdit(Vector3(15.f, 1.f, 1.f));
 
     // Start , End Pos
     OnStartMinEdit(Vector3(0.f, 0.f, 0.f));
@@ -2677,7 +2677,7 @@ void CEffectEditor::OnXZSpreadGrassPreset()
 
     // Speed
     OnSpeedStartEdit(1.f);
-    OnSpeedEndEdit(50.f);
+    OnSpeedEndEdit(5.f);
 
     // Life Time Linaer X
     m_ParticleClass->SetLifeTimeLinearFromCenter(false);

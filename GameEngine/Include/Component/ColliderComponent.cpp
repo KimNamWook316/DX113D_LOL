@@ -6,7 +6,8 @@
 #include "../Resource/Shader/ColliderConstantBuffer.h"
 #include "../Resource/Shader/TransformConstantBuffer.h"
 
-CColliderComponent::CColliderComponent()
+CColliderComponent::CColliderComponent()	:
+	m_RigidCollisionIgnore(false)
 {
 	SetTypeID<CColliderComponent>();
 	m_ComponentType = Component_Type::SceneComponent;

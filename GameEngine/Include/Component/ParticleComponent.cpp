@@ -93,8 +93,6 @@ void CParticleComponent::SetParticle(CParticle* Particle)
 		SAFE_DELETE(m_vecStructuredBuffer[i]);
 	}
 
-	SAFE_DELETE(m_CBuffer);
-
 	// SAFE_DELETE(m_NormalDistributionBuffer);
 
 	m_vecStructuredBuffer.clear();
@@ -245,6 +243,13 @@ bool CParticleComponent::Init()
 	m_Mesh = m_Scene->GetResource()->FindMesh("ParticlePointMesh");
 
 	return true;
+}
+
+void CParticleComponent::Reset()
+{
+	CSceneComponent::Reset();
+
+	ResetParticleStructuredBufferInfo();
 }
 
 void CParticleComponent::Update(float DeltaTime)
