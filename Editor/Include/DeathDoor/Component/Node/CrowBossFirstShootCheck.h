@@ -1,14 +1,13 @@
 #pragma once
-
 #include "Component/Node/ConditionNode.h"
 
-class CCrowBossDirectionCheck :
+class CCrowBossFirstShootCheck :
     public CConditionNode
 {
 public:
-    CCrowBossDirectionCheck();
-    CCrowBossDirectionCheck(const CCrowBossDirectionCheck& Node);
-    virtual ~CCrowBossDirectionCheck();
+    CCrowBossFirstShootCheck();
+    CCrowBossFirstShootCheck(const CCrowBossFirstShootCheck& Node);
+    virtual ~CCrowBossFirstShootCheck();
 
 public:
     virtual NodeResult OnStart(float DeltaTime) override;

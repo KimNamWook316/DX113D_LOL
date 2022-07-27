@@ -89,9 +89,6 @@ bool CObjectDataComponent::Load(FILE* File)
 {
 	CObjectComponent::Load(File);
 
-	// 추후에 fread로 읽지 않도록 이 코드 지우기
-	//fread(&m_Data, sizeof(ObjectData), 1, File);
-
 	if (m_Object->GetObjectType() == Object_Type::Player)
 	{
 		if(CSceneManager::GetInst()->GetNextScene())

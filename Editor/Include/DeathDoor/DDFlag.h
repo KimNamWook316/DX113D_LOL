@@ -36,6 +36,11 @@ enum class DDActionNode
 	CrowBossRunNode,
 	CrowBossSpinNode,
 	CrowBossJump,
+	CrowBossFly,
+	CrowBossMoveShootSpot,
+	CrowBossResetShootState,
+	CrowBossShoot,
+	CrowBossSlide,
 	Max
 };
 
@@ -72,12 +77,16 @@ enum class DDConditionNode
 	BossBettyCheckThrowAttack,
 	// CrowBoss
 	CrowBossCutScenePlayCheck,
-	CrowBossDirectionCheck,
 	CrowBossPhasePickNode,
 	CrowBossBypassCheck,
 	CrowBossJumpStartCheck,
 	CrowBossLandingCheck,
 	CrowBossJumpAttackRangeCheck,
+	CrowBossDoneCheck,
+	CrowBossFirstShootCheck,
+	CrowBossShootCheck,
+	CrowBossShootEndCheck,
+	CrowBossShootReadyCheck,
 	Max
 };
 
@@ -114,4 +123,16 @@ enum class HookResult
 	NoCollision,
 	Collision,
 	CollisionEnd
+};
+
+enum class CrowBossShootState
+{
+	Ready,
+	ReadyEnd,
+	Teleport,
+	Shoot,
+	ShootEnd,
+	Fly,
+	Done,
+	Max
 };

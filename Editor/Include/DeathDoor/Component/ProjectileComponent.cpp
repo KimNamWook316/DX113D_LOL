@@ -7,7 +7,7 @@
 #define FIXED_GRAVITY 9.8f 
 
 CProjectileComponent::CProjectileComponent()	:
-	m_NoDestroy(false),
+	m_Destroy(false),
 	m_NoUpdate(false)
 {
 	SetTypeID<CProjectileComponent>();
@@ -61,12 +61,7 @@ void CProjectileComponent::Update(float DeltaTime)
 	{
 		m_LifeTimer += DeltaTime;
 
-		bool IsDestroy = CheckDestroy();
-
-		if (IsDestroy)
-		{
-			m_Object->Destroy();
-		}
+		CheckDestroy();
 
 		Vector3 Move;
 
@@ -146,6 +141,7 @@ bool CProjectileComponent::LoadOnly(FILE* File)
 
 void CProjectileComponent::ShootByTargetPos(const Vector3& StartPos, float Speed, const Vector3& TargetPos, CGameObject* EndParticleObj)
 {
+	m_LifeTimer = 0.f;
 	m_IsShoot = true;
 	m_StartPos = StartPos;
 	m_Speed = Speed;
@@ -158,6 +154,7 @@ void CProjectileComponent::ShootByTargetPos(const Vector3& StartPos, float Speed
 
 void CProjectileComponent::ShootByLifeTime(const Vector3& StartPos, const Vector3& Dir, float Speed, float LifeTime, CGameObject* EndParticleObj)
 {
+	m_LifeTimer = 0.f;
 	m_IsShoot = true;
 	m_StartPos = StartPos;
 	m_Dir = Dir;	
@@ -170,6 +167,7 @@ void CProjectileComponent::ShootByLifeTime(const Vector3& StartPos, const Vector
 
 void CProjectileComponent::ShootByGravityTargetPos(const Vector3& StartPos, const Vector3& XZDir, float Angle, const Vector3& TargetPos, CGameObject* EndParticleObj)
 {
+	m_LifeTimer = 0.f;
 	m_IsShoot = true;
 	m_IsGravity = true;
 	m_StartPos = StartPos;
@@ -194,8 +192,8 @@ bool CProjectileComponent::CheckDestroy()
 	{
 		if (m_LifeTimer >= m_LifeTime)
 		{
-			if (m_NoDestroy)
-				return false;
+			//if (m_NoDestroy)
+			//	return false;
 
 			OnEnd();
 			return true;
@@ -204,7 +202,7 @@ bool CProjectileComponent::CheckDestroy()
 	// Target Position도착 여부로 삭제를 관리하는 경우
 	else
 	{
-		if (m_NoDestroy)
+		if (!m_Destroy)
 			return false;
 
 		Vector3 MyPos = m_Root->GetWorldPos();
@@ -231,5 +229,6 @@ void CProjectileComponent::OnEnd()
 	}
 
 	// TODO : Projectile Destroy처리 확정된 이후 변경
-	m_Object->Destroy();
+	if(m_Destroy)
+		m_Object->Destroy();
 }

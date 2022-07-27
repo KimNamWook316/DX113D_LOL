@@ -23,9 +23,17 @@ CCrowBossPhasePickNode::~CCrowBossPhasePickNode()
 NodeResult CCrowBossPhasePickNode::OnStart(float DeltaTime)
 {
 	//int Phase = rand() % 4 + 2; // 2 ~ 5
-	int Phase = 3;
 
 	CCrowBossDataComponent* Data = dynamic_cast<CCrowBossDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
+
+	int Phase;
+	if(Data->IsPhaseQueueEmpty())
+		Phase = rand() % 4 + 2;
+	else
+	{
+		Phase = Data->GetPhaseQueueFront();
+		Data->PopPhaseQueue();
+	}
 
 	Data->SetPhasePick(true);
 	Data->SetPhase(Phase);
@@ -52,6 +60,26 @@ NodeResult CCrowBossPhasePickNode::OnStart(float DeltaTime)
 		CNode* Phase3Node = ((CCompositeNode*)Parent->GetChild(1))->GetChild(1);
 
 		m_Owner->SetCurrentNode(Phase3Node);
+	}
+
+	else if (Phase == 4)
+	{
+		CCompositeNode* Parent = (CCompositeNode*)m_Parent;
+
+		CNode* Phase2Node = ((CCompositeNode*)Parent->GetChild(1))->GetChild(2);
+
+		m_Owner->SetCurrentNode(Phase2Node);
+	}
+
+	else if (Phase == 4)
+	{
+		CCompositeNode* Parent = (CCompositeNode*)m_Parent;
+
+		CNode* Phase2Node = ((CCompositeNode*)Parent->GetChild(1))->GetChild(3);
+
+		Data->SetSpittingStart(true);
+
+		m_Owner->SetCurrentNode(Phase2Node);
 	}
 
 	return NodeResult::Node_False;

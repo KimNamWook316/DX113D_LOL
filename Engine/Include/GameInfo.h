@@ -754,6 +754,7 @@ struct ObjectData
 	float MeleeAttackRange;
 	float JumpAttackRange;
 	float RotateSpeedPerSec;
+	float FlySpeed;
 };
 
 struct DownScaleCBuffer

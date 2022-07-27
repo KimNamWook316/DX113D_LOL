@@ -800,6 +800,8 @@ bool CGameObject::LoadOnly(const char* FullPath, CComponent*& OutCom)
 
 void CGameObject::Reset()
 {
+	m_Scene = nullptr;
+
 	size_t Size = m_vecObjectComponent.size();
 
 	for (size_t i = 0; i < Size; ++i)

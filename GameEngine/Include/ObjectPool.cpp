@@ -129,11 +129,6 @@ void CObjectPool::CreatePoolObject(const std::string& PathName)
 {
 	CExcelData* Data = CResourceManager::GetInst()->FindCSV(m_DataName);
 
-	const PathInfo* Info = CPathManager::GetInst()->FindPath(PathName);
-
-	char FullPath[MAX_PATH] = {};
-	strcpy_s(FullPath, Info->PathMultibyte);
-
 	std::vector<std::string> vecNames;
 	Data->GetRowNames(vecNames);
 
@@ -141,6 +136,11 @@ void CObjectPool::CreatePoolObject(const std::string& PathName)
 
 	for (size_t i = 0; i < Count; ++i)
 	{
+		const PathInfo* Info = CPathManager::GetInst()->FindPath(PathName);
+
+		char FullPath[MAX_PATH] = {};
+		strcpy_s(FullPath, Info->PathMultibyte);
+
 		std::string ObjectName = vecNames[i];
 
 		Row* row = Data->GetRow(ObjectName);
@@ -167,8 +167,13 @@ void CObjectPool::CreatePoolObject(const std::string& PathName)
 			CGameObject* Object = new CGameObject;
 			Object->SetName(ObjectName);
 			Object->SetInPool(true);
+			Object->SetScene(CSceneManager::GetInst()->GetScene());
+			Object->SetWorldScale(0.f, 0.f, 0.f);
+			Object->SetWorldPos(FLT_MAX, FLT_MAX, FLT_MAX);
 
 			bool Result = Object->LoadHierarchy(FullPath);
+
+			Object->GetRootComponent()->GetTransform()->ForceUpdateMat();
 
 			if (Result)
 			{
@@ -188,7 +193,10 @@ void CObjectPool::CreatePoolObject(const std::string& PathName)
 			}
 
 			else
+			{
+				SAFE_DELETE(Object);
 				Object->Destroy();
+			}
 		}
 
 
