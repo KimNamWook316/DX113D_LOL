@@ -1425,6 +1425,7 @@ void CEffectEditor::OnSetBasicParticleMaterialSetting(CSceneComponent* Com)
     m_ParticleMaterial->AddTexture(0, (int)Buffer_Shader_Type::Pixel, "Bubble", TEXT("Particle/Bubbles99px.png"));
     m_ParticleMaterial->SetShader("ParticleRenderShader");
     m_ParticleMaterial->SetRenderState("AlphaBlend");
+    m_ParticleMaterial->SetRenderState("NoCull");
 
     // 2) Particle Á¦ÀÛ
     CSceneManager::GetInst()->GetScene()->GetResource()->CreateParticle("BasicParticle");

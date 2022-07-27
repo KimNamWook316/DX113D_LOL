@@ -341,8 +341,26 @@ void CParticleComponent::PostUpdate(float DeltaTime)
 	m_CBuffer->SetStartMin(StartMin);
 	m_CBuffer->SetStartMax(StartMax);
 
+	// BillBoard 효과를 주게 되면, ParticleComponent 의 Y축만 회전시킨다. (카메라 방향으로)
+	float BillBoardYRotAngle = 0.f;
+
+	if (m_BillBoardEffect)
+	{
+		// 카메라를 계속 바라보게 만든다.
+		// 카메라의 위치를 얻어온다.
+		Vector3 CameraPos = m_Scene->GetCameraManager()->GetCurrentCamera()->GetWorldPos();
+
+		Vector3	View = CameraPos - GetWorldPos();
+		View.y = 0.f;
+
+		Vector3 OriginDir = m_Object->GetWorldAxis(AXIS::AXIS_Z) * -1.f;
+
+		BillBoardYRotAngle = OriginDir.Angle(View);
+	}
+
 	// Rotation Angle 정보를 세팅한다. Transform 의 정보로 만들어낼 것이다.
-	m_CBuffer->SetRotationAngle(GetWorldRot());
+	// m_CBuffer->SetRotationAngle(GetWorldRot());
+	m_CBuffer->SetRotationAngle(GetWorldRot() + Vector3(0.f, BillBoardYRotAngle, 0.f));
 	
 	// Relative Scale 정보를 세팅한다.
 	m_CBuffer->SetCommonWorldScale(GetWorldScale());

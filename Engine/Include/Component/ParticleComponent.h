@@ -91,6 +91,10 @@ public:
 	{
 		return m_InitActiveDelayTime;
 	}
+	bool IsBillBoardEffectEnable() const
+	{
+		return m_BillBoardEffect;
+	}
 	bool IsBazierMoveEnable() const
 	{
 		return m_BazierMoveEffect;

@@ -75,8 +75,10 @@ bool CParticleComponentWidget::Init()
     m_ResetParticleButton = m_RootTree->AddWidget<CIMGUIButton>("Reset Particle", 150.f, 20.f);
     m_ResetParticleButton->SetClickCallback<CParticleComponentWidget>(this, &CParticleComponentWidget::OnResetParticleInfo);
    
-    // Camera 세팅
-    // OnSetCameraSetting();
+    // BillBoard Effect
+    m_BillBoardEnableEdit = m_RootTree->AddWidget<CIMGUICheckBox>("BillBoard", 80.f);
+    m_BillBoardEnableEdit->AddCheckInfo("BillBoard");
+    m_BillBoardEnableEdit->SetCallBackLabel<CParticleComponentWidget>(this, &CParticleComponentWidget::OnSetBillBoardEffectEdit);
 
     /*
     // Particle Texture
@@ -322,6 +324,15 @@ void CParticleComponentWidget::OnResetParticleInfo()
 
    // dynamic_cast<CParticleComponent*>(m_Component)->ResetParticleStructuredBufferInfo();
 }
+void CParticleComponentWidget::OnSetBillBoardEffectEdit(const char*, bool Enable)
+{
+    if (!m_ParticleClass)
+        return;
+
+    CParticleComponent* MeshCom = (CParticleComponent*)m_Component;
+
+    MeshCom->SetBillBoardEffect(Enable);
+}
 void CParticleComponentWidget::ParticleLoadSuccessCallback(CParticle* LoadedParticle)
 {
     if (!LoadedParticle)
@@ -333,6 +344,9 @@ void CParticleComponentWidget::ParticleLoadSuccessCallback(CParticle* LoadedPart
 
     // Particle Manager 의 Map 에 추가하기
     CResourceManager::GetInst()->GetParticleManager()->AddParticle(m_ParticleClass);
+
+    // IMGUI 에 반영하기 
+    ReflectParticleToIMGUI();
 
     // Resource Display Window 세팅하기
     CEditorManager::GetInst()->GetResourceDisplayWindow()->RefreshLoadedTextureResources();
@@ -366,260 +380,7 @@ void CParticleComponentWidget::ReflectParticleToIMGUI()
     if (!m_Component || m_ParticleClass)
         return;
 
+    CParticleComponent* MeshCom = (CParticleComponent*)m_Component;
+
+    m_BillBoardEnableEdit->SetCheck(0, MeshCom->IsBillBoardEffectEnable());
 }
-/*
-void CParticleComponentWidget::OnSpawnTimeMaxEdit(float Num)
-{
-    dynamic_cast<CParticleComponent*>(m_Component)->SetSpawnTime(Num);
-}
-
-void CParticleComponentWidget::OnStartMinEdit(const Vector3& Pos)
-{
-   dynamic_cast<CParticleComponent*>(m_Component)->GetParticle()->SetStartMin(Pos);
-}
-
-void CParticleComponentWidget::OnStartMaxEdit(const Vector3& Pos)
-{
-    dynamic_cast<CParticleComponent*>(m_Component)->GetParticle()->SetStartMax(Pos);
-}
-
-void CParticleComponentWidget::OnSpawnCountMaxEdit(int Num)
-{
-    dynamic_cast<CParticleComponent*>(m_Component)->GetCBuffer()->SetSpawnCountMax(Num);
-}
-
-void CParticleComponentWidget::OnScaleMinEdit(const Vector3& Scale)
-{
-    dynamic_cast<CParticleComponent*>(m_Component)->GetCBuffer()->SetScaleMin(Scale);
-}
-
-void CParticleComponentWidget::OnScaleMaxEdit(const Vector3& Scale)
-{
-    dynamic_cast<CParticleComponent*>(m_Component)->GetCBuffer()->SetScaleMax(Scale);
-}
-
-void CParticleComponentWidget::OnLifeTimeMinEdit(float Num)
-{
-    dynamic_cast<CParticleComponent*>(m_Component)->GetCBuffer()->SetLifeTimeMin(Num);
-}
-
-void CParticleComponentWidget::OnLifeTimeMaxEdit(float Num)
-{
-    dynamic_cast<CParticleComponent*>(m_Component)->GetCBuffer()->SetLifeTimeMax(Num);
-}
-
-void CParticleComponentWidget::OnSpeedMinEdit(float Num)
-{
-    dynamic_cast<CParticleComponent*>(m_Component)->GetCBuffer()->SetSpeedMin(Num);
-}
-
-void CParticleComponentWidget::OnSpeedMaxEdit(float Num)
-{
-    dynamic_cast<CParticleComponent*>(m_Component)->GetCBuffer()->SetSpeedMax(Num);
-}
-
-void CParticleComponentWidget::OnColorMinEdit(const Vector4& Color)
-{
-    dynamic_cast<CParticleComponent*>(m_Component)->GetCBuffer()->SetColorMin(Color);
-}
-
-void CParticleComponentWidget::OnColorMaxEdit(const Vector4& Color)
-{
-    dynamic_cast<CParticleComponent*>(m_Component)->GetCBuffer()->SetColorMax(Color);
-}
-
-
-void CParticleComponentWidget::OnIsMoveEdit(const char*, bool Enable)
-{
-    dynamic_cast<CParticleComponent*>(m_Component)->GetCBuffer()->SetMove(Enable);
-}
-
-void CParticleComponentWidget::OnIsGravityEdit(const char*, bool Enable)
-{
-    dynamic_cast<CParticleComponent*>(m_Component)->GetCBuffer()->SetGravity(Enable);
-}
-
-void CParticleComponentWidget::OnIsRandomMoveEdit(const char*, bool Enable)
-{
-    // dynamic_cast<CParticleComponent*>(m_Component)->GetCBuffer()->SetApplyRandom(Enable);
-}
-
-void CParticleComponentWidget::OnMoveDirEdit(const Vector3& Dir)
-{
-    dynamic_cast<CParticleComponent*>(m_Component)->GetCBuffer()->SetMoveDir(Dir);
-}
-
-void CParticleComponentWidget::OnMoveAngleEdit(const Vector3& Angle)
-{
-    dynamic_cast<CParticleComponent*>(m_Component)->GetCBuffer()->SetMoveAngle(Angle);
-}
-
-
-void CParticleComponentWidget::OnSetParticleTexture()
-{
-    TCHAR FilePath[MAX_PATH] = {};
-
-    OPENFILENAME OpenFile = {};
-
-    OpenFile.lStructSize = sizeof(OPENFILENAME);
-    OpenFile.hwndOwner = CEngine::GetInst()->GetWindowHandle(); // handle to window that owns the dialog box
-    OpenFile.lpstrFilter =
-        TEXT("모든파일\0*.*\0DDSFile\0*.dds\0TGAFile\0*.tga\0PNGFile\0*.png\0JPGFile\0*.jpg\0JPEGFile\0*.jpeg\0BMPFile\0*.bmp");
-    OpenFile.lpstrFile = FilePath;
-    // buffer ! filename used to initialize the file name edit control -> 정상적으로 save,open할시 여기에 filePath 정보가 들어온다.
-    OpenFile.nMaxFile = MAX_PATH; // size of buffer, pointed to by lpstrFile
-    OpenFile.lpstrInitialDir = CPathManager::GetInst()->FindPath(TEXTURE_PATH)->Path; // Initial Directory
-
-    if (GetOpenFileName(&OpenFile) != 0) // NonZero --> specifies file name, clicks ok button
-    {
-        int   TextureIndex = 0;
-        TCHAR OriginFileName[MAX_PATH] = {};
-        TCHAR FileName[MAX_PATH] = {};
-        TCHAR Ext[_MAX_EXT] = {};
-        _wsplitpath_s(FilePath, nullptr, 0, nullptr, 0, FileName, MAX_PATH, Ext, _MAX_EXT);
-
-        lstrcpy(OriginFileName, FileName);
-
-        lstrcat(FileName, Ext);
-
-        // Texture 저장용
-        char ConvertFileName[MAX_PATH] = {};
-        int  Length = WideCharToMultiByte(CP_ACP, 0, OriginFileName, -1, nullptr, 0, nullptr, nullptr);
-        WideCharToMultiByte(CP_ACP, 0, OriginFileName, -1, ConvertFileName, Length, nullptr, nullptr);
-
-        CMaterial* Material = CSceneManager::GetInst()->GetScene()->GetResource()->FindMaterial("BasicParticleMaterial");
-
-        if (!Material)
-            return;
-
-        // m_ParticleTexture->SetTextureFullPath(ConvertFileName, FilePath);
-        m_ParticleTexture->SetTexture(ConvertFileName, FileName, PARTICLE_PATH);
-
-        // 실제 Particle 이 사용하는 Material 의 Texture 교체
-        Material->SetTexture(0, 0, (int)Buffer_Shader_Type::Pixel, ConvertFileName, FileName, PARTICLE_PATH);
-
-        // 바뀐 Particle 정보를 Clone 해서 다시 세팅한다.
-        dynamic_cast<CParticleComponent*>(m_Component)->SetParticle("BasicParticle");
-
-        // 기존 세팅 정보를 그대로 반영한다.
-        OnReflectCurrentParticleSetting();
-    }
-}
-*/
-
-/*
-void CParticleComponentWidget::OnSetParticleMaterialSetting(CSceneComponent* Com)
-{
-    // 기본 Particle Setting, 현재 Component 에 Particle Setting 하기
-    // 1) Particle Material 세팅
-    CSceneManager::GetInst()->GetScene()->GetResource()->CreateMaterial<CMaterial>("BasicParticleMaterial");
-    CMaterial* Material = CSceneManager::GetInst()->GetScene()->GetResource()->FindMaterial("BasicParticleMaterial");
-    Material->AddTexture(0, (int)Buffer_Shader_Type::Pixel, "Bubble", TEXT("Particle/Bubbles99px.png"));
-    Material->SetShader("ParticleRenderShader");
-    Material->SetRenderState("AlphaBlend");
-    Material->AddTexture(0, (int)Buffer_Shader_Type::Pixel, "Bubble", TEXT("Particle/Bubbles99px.png"));
-
-    // 2) Particle 제작
-    CSceneManager::GetInst()->GetScene()->GetResource()->CreateParticle("BasicParticle");
-    CParticle* Particle = CSceneManager::GetInst()->GetScene()->GetResource()->FindParticle("BasicParticle");
-    Material = CSceneManager::GetInst()->GetScene()->GetResource()->FindMaterial("BasicParticleMaterial");
-    Particle->SetMaterial(Material);
-
-    // 반드시 3D 로 세팅한다.
-    Particle->Set2D(false);
-
-    Particle->SetSpawnCountMax(1000);
-    m_SpawnCountMaxEdit->SetVal(Particle->GetSpawnCountMax());
-
-    Particle->SetLifeTimeMin(70.f);
-    m_LifeTimeMinEdit->SetVal(Particle->GetLifeTimeMin());
-
-    Particle->SetLifeTimeMax(80.f);
-    m_LifeTimeMaxEdit->SetVal(Particle->GetLifeTimeMax());
-
-    Particle->SetScaleMin(Vector3(20.f, 20.f, 1.f));
-    m_ScaleMinEdit->SetVal(Particle->GetScaleMin());
-
-    Particle->SetScaleMax(Vector3(50.f, 50.f, 1.f));
-    m_ScaleMaxEdit->SetVal(Particle->GetScaleMax());
-
-    Particle->SetSpeedMin(10.f);
-    m_SpeedMinEdit->SetVal(Particle->GetSpeedMin());
-
-    Particle->SetSpeedMax(30.f);
-    m_SpeedMaxEdit->SetVal(Particle->GetSpeedMax());
-
-    Particle->SetMoveDir(Vector3(0.f, 1.f, 1.f)); // Z 축 방향으로도 이동할 수 있게 세팅한다.
-    m_MoveDirEdit->SetVal(Particle->GetMoveDir());
-    
-    Particle->SetStartMin(Vector3(-30.f, -30.f, 0.f));
-    m_StartMinEdit->SetVal(Particle->GetStartMin());
-
-    Particle->SetStartMax(Vector3(30.f, 30.f, 0.f));
-    m_StartMaxEdit->SetVal(Particle->GetStartMax());
-
-    Particle->SetColorMin(Vector4(0.2f, 0.1f, 0.8f, 1.f));
-    m_ColorMinEdit->SetRGBA(Particle->GetColorMin());
-
-    Particle->SetColorMax(Vector4(0.2f, 0.1f, 0.8f, 1.f));
-    m_ColorMaxEdit->SetRGBA(Particle->GetColorMax());
-
-    Particle->SetMoveAngle(Vector3(0.f, 0.f, 30.f));
-    m_MoveAngleEdit->SetVal(Particle->GetMoveAngle());
-
-    Particle->SetGravity(true);
-    Particle->SetMove(true);
-
-    // 해당 정보들 UI 에 세팅하기
-
-    // Particle 세팅
-    dynamic_cast<CParticleComponent*>(Com)->SetParticle("BasicParticle");
-    dynamic_cast<CParticleComponent*>(Com)->SetBillBoardEffect(true);
-    dynamic_cast<CParticleComponent*>(Com)->SetSpawnTime(0.05f);
-    m_SpawnTimeMaxEdit->SetVal(0.05f);
-
-    // 기본 Z Pos 세팅
-    Com->SetWorldPos(Com->GetWorldPos().x, Com->GetWorldPos().y, 10.f);
-
-}
-*/
-
-/*
-void CParticleComponentWidget::OnReflectCurrentParticleSetting()
-{
-    dynamic_cast<CParticleComponent*>(m_Component)->GetParticle()->Set2D(false);
-
-    dynamic_cast<CParticleComponent*>(m_Component)->GetParticle()->SetSpawnCountMax(m_SpawnCountMaxEdit->GetVal());
-
-    dynamic_cast<CParticleComponent*>(m_Component)->GetParticle()->SetLifeTimeMin(m_LifeTimeMinEdit->GetVal());
-
-    dynamic_cast<CParticleComponent*>(m_Component)->GetParticle()->SetLifeTimeMax(m_LifeTimeMaxEdit->GetVal());
-
-    dynamic_cast<CParticleComponent*>(m_Component)->GetParticle()->SetScaleMin(m_ScaleMinEdit->GetValue());
-
-    dynamic_cast<CParticleComponent*>(m_Component)->GetParticle()->SetScaleMax(m_ScaleMaxEdit->GetValue());
-
-    dynamic_cast<CParticleComponent*>(m_Component)->GetParticle()->SetSpeedMin(m_SpeedMinEdit->GetVal());
-
-    dynamic_cast<CParticleComponent*>(m_Component)->GetParticle()->SetSpeedMax(m_SpeedMaxEdit->GetVal());
-
-    dynamic_cast<CParticleComponent*>(m_Component)->GetParticle()->SetMoveDir(m_MoveDirEdit->GetValue());
-
-    dynamic_cast<CParticleComponent*>(m_Component)->GetParticle()->SetStartMin(m_StartMinEdit->GetValue());
-
-    dynamic_cast<CParticleComponent*>(m_Component)->GetParticle()->SetStartMax(m_StartMaxEdit->GetValue());
-
-    dynamic_cast<CParticleComponent*>(m_Component)->GetParticle()->SetColorMin(m_ColorMinEdit->GetRGBA());
-
-    dynamic_cast<CParticleComponent*>(m_Component)->GetParticle()->SetColorMax(m_ColorMaxEdit->GetRGBA());
-
-    dynamic_cast<CParticleComponent*>(m_Component)->GetParticle()->SetMoveAngle(m_MoveAngleEdit->GetValue());
-
-    dynamic_cast<CParticleComponent*>(m_Component)->GetParticle()->SetGravity(m_IsGravityEdit->GetCheck(0));
-
-    dynamic_cast<CParticleComponent*>(m_Component)->GetParticle()->SetMove(m_IsMoveEdit->GetCheck(0));
-
-    // dynamic_cast<CParticleComponent*>(m_Component)->GetParticle()->SetApplyRandom(m_IsRandomMoveEdit->GetCheck(0));
-}
-*/
-

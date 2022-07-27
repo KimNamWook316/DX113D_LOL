@@ -384,7 +384,6 @@ void ApplyInitParticleMove(float3 RandomPos, int ThreadID, float RandomAngle, fl
 		// float3x3 matRot = ComputeRotationMatrix(ConvertAngle);
 		float3x3 matRot = ComputeRotationMatrix(ConvertAngle + g_ParticleRotationAngle);
 
-		// 현재 Rot 상으로는, Particle Rotation 기능만 수행중이다.
 		float3 OriginDir = mul(g_ParticleMoveDir, matRot);
 
 		float3	Dir = normalize(mul(g_ParticleMoveDir, matRot));

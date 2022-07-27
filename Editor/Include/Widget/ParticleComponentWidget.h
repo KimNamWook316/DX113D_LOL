@@ -18,6 +18,7 @@ private :
     class CIMGUITextInput* m_LoadedParticleFileName;
     class CIMGUIButton* m_LoadParticleButton;
     class CIMGUIButton* m_ResetParticleButton;
+    class CIMGUICheckBox* m_BillBoardEnableEdit;
 private:
     class CParticle* m_ParticleClass;
 private :
@@ -28,6 +29,7 @@ private :
     void OnDropParticleToParticleWidget(const std::string& InputName);
     // 다시 Particle 세팅하기
     void OnResetParticleInfo();
+    void OnSetBillBoardEffectEdit(const char*, bool Enable);
     // HelperFunction
 private :
     void ParticleLoadSuccessCallback(class CParticle* LoadedParticle);
