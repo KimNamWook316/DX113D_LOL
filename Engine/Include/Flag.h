@@ -358,6 +358,7 @@ enum class ParitcleShapeType
 	YUpDirRing = 0, // 위를 바라보는 형태로 즉, Y 를 바라보는 형태로 Ring 생성
 	Circle,
 	ZMinusDirRing, // 사용자 정면을 바라보는 형태로 Ring 생성
+	Sphere,
 	Max
 };
 

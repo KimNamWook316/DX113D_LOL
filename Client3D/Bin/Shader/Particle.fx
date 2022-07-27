@@ -65,7 +65,7 @@ cbuffer	ParticleCBuffer : register(b7)
 	int g_ParticleApplyNoiseTexture; // Pixel Shader 에서 매순간 Noise Texture 로 부터, Sampling 을 해서 Color, Alpha 값 등을 바꾸는 것
 	float g_ParticleNoiseTextureApplyRatio; // Noise Texture 사라지는 효과 시작 비율
 	float g_ParticleExponentialAndLogFunctionXIntercept;
-	int g_ParticleEmpty2;
+	int g_ParticleFollowComponentPos;
 };
 
 #define	GRAVITY	9.8f
@@ -279,6 +279,33 @@ void ApplyInitSpecialParticleGenerateShape(float RandomAngle, int ThreadID, floa
 			// 현재 Frame 에서 해당 Particle 이 놓인 각도 (중심 기준)
 			g_ParticleArray[ThreadID].CurrentParticleAngle = CurrentRingAngle;
 		}
+	}
+	break;
+	// 3차원 구 생성하기
+	case 3:
+	{
+		// http://www.songho.ca/opengl/gl_sphere.html
+		float Rand2 = GetRandomNumber((Rand * 1000.f) % ThreadID);
+
+		float PI = 3.14159f;
+		int SectorCnt = 360;
+		int StackCnt = 180;
+		float X, Y, Z, XZ;
+
+		float SectorStep = 2 * 180 / SectorCnt;
+		float StackStep = 180 / StackCnt;
+		
+		float StackAngle = 180 - StackStep * (StackCnt * Rand);
+		XZ = FinalAppliedRadius * cos(StackAngle);
+		Y = FinalAppliedRadius * sin(StackAngle);
+
+		float SectorAngle = SectorStep * (SectorCnt * Rand2);
+		X = XZ * cos(SectorAngle);
+		Z = XZ * sin(SectorAngle);
+
+		float3 RingPos = float3(X,Y,Z);
+
+		g_ParticleArray[ThreadID.x].LocalPos = RingPos;
 	}
 	break;
 	}
@@ -1076,8 +1103,11 @@ void ParticleGS(point VertexParticleOutput input[1],
 		// g_ParticleArraySRV[InstanceID].WorldPos 는 Local Space 상에서의 
 		float3	WorldPos = g_ParticleArraySRV[InstanceID].LocalPos + mul(g_ParticleLocalPos[i] * Scale, matRot);
 
-		// Particle Component 의 World Post 도 더한다.
-		WorldPos += g_ParticleShareSRV[0].ParticleComponentWorldPos;
+		// Particle Component 의 World Pos 도 더한다.
+		if (g_ParticleFollowComponentPos == 1)
+		{
+			WorldPos += g_ParticleShareSRV[0].ParticleComponentWorldPos;
+		}
 
 		OutputArray[i].ProjPos = mul(float4(WorldPos, 1.f), g_matVP);
 		// OutputArray[i].ProjPos.xyz = mul(OutputArray[i].ProjPos.xyz, matRot);
@@ -1120,7 +1150,8 @@ void ApplyLinearUVClipping(GeometryParticleOutput input)
 	// 해당 선이 왼쪽 -> 오른쪽, 오른쪽 -> 왼쪽. 으로 이동 하는 개념
 	if (g_ParticleUVClippingReflectingMoveDir == 1)
 	{
-		if (input.UV.x > 1 - input.LifeTimeRatio)
+		// if (input.UV.x > 1 - input.LifeTimeRatio)
+		if (input.UV.x < input.LifeTimeRatio)
 			clip(-1);
 		/*
 		if (input.LocalXPlusMoveDir == 1)

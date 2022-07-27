@@ -322,7 +322,16 @@ public:
 	{
 		return m_CBuffer->GetNoiseTextureApplyRatio();
 	}
+	int IsFollowRealTimeParticleComponentPos() const
+	{
+		return m_CBuffer->IsFollowRealTimeParticleComponentPos();
+	}
 public:
+	// Follod Particle Component Pos
+	void SetFollowRealTimeParticleComponentPos(bool Enable)
+	{
+		m_CBuffer->SetFollowRealTimeParticleComponentPos(Enable);
+	}
 	// Noise Texture
 	void SetApplyNoiseTextureSamplingEnable(bool Enable)
 	{

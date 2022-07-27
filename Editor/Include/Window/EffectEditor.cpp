@@ -188,9 +188,9 @@ bool CEffectEditor::Init()
 
     // UV Move
     Tree = AddWidget<CIMGUITree>("UV Move");
-    m_IsMoveEnableEdit = Tree->AddWidget<CIMGUICheckBox>("UV Move", 80.f);
-    m_IsMoveEnableEdit->AddCheckInfo("UVMove");
-    m_IsMoveEnableEdit->SetCallBackLabel<CEffectEditor>(this, &CEffectEditor::OnIsUVMoveEnableEdit);
+    m_IsUVMoveEnableEdit = Tree->AddWidget<CIMGUICheckBox>("UV Move", 80.f);
+    m_IsUVMoveEnableEdit->AddCheckInfo("UVMove");
+    m_IsUVMoveEnableEdit->SetCallBackLabel<CEffectEditor>(this, &CEffectEditor::OnIsUVMoveEnableEdit);
 
     Line = Tree->AddWidget<CIMGUISameLine>("Line");
     Line->SetOffsetX(100.f);
@@ -297,6 +297,13 @@ bool CEffectEditor::Init()
     m_IsGravityEdit = Tree->AddWidget<CIMGUICheckBox>("Gravity", 80.f);
     m_IsGravityEdit->AddCheckInfo("Gravity");
     m_IsGravityEdit->SetCallBackLabel<CEffectEditor>(this, &CEffectEditor::OnIsGravityEdit);
+
+    Line = Tree->AddWidget<CIMGUISameLine>("Line");
+    Line->SetOffsetX(180.f);
+
+    m_IsFollowComponentWorldPosEdit = Tree->AddWidget<CIMGUICheckBox>("Follow Component", 80.f);
+    m_IsFollowComponentWorldPosEdit->AddCheckInfo("Follow Component");
+    m_IsFollowComponentWorldPosEdit->SetCallBackLabel<CEffectEditor>(this, &CEffectEditor::OnIsFollowComponentPosEdit);
 
     // Spawn Time, Spawn Count
     Tree  = AddWidget<CIMGUITree>("Spawn Time, Disable Alive");
@@ -986,6 +993,15 @@ void CEffectEditor::OnIsMoveEdit(const char*, bool Enable)
     m_ParticleClass->SetMove(Enable);
     dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetMove(Enable);
     // m_ParticleComponent->GetCBuffer()->SetMove(Enable);
+}
+
+void CEffectEditor::OnIsFollowComponentPosEdit(const char*, bool Enable)
+{
+    if (!m_ParticleClass)
+        return;
+
+    m_ParticleClass->SetFollowRealTimeParticleComponentPos(Enable);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetFollowRealTimeParticleComponentPos(Enable);
 }
 
 void CEffectEditor::OnIsGravityEdit(const char*, bool Enable)
@@ -1787,7 +1803,7 @@ void CEffectEditor::SetIMGUIReflectParticle(CParticle* Particle)
     m_GenerateRadius->SetValue(Particle->GetGenerateRadius());
 
     // UV Move 
-    m_IsMoveEnableEdit->SetCheck(0, Particle->GetUVMoveEnable());
+    m_IsUVMoveEnableEdit->SetCheck(0, Particle->GetUVMoveEnable());
     m_UVRowN->SetVal(Particle->GetUVRowN());
     m_UVColN->SetVal(Particle->GetUVColN());
 
@@ -1828,6 +1844,7 @@ void CEffectEditor::SetIMGUIReflectParticle(CParticle* Particle)
     // Movement
     m_IsGravityEdit->SetCheck(0, Particle->GetGravity());
     m_IsMoveEdit->SetCheck(0, Particle->GetMove());
+    m_IsFollowComponentWorldPosEdit->SetCheck(0, Particle->IsFollowRealTimeParticleComponentPos());
     // m_IsPauseResumeToggle->SetCheck(0, true); 사실상 거의 이제 쓸모가 없는 코드
 
     // Bounce
@@ -2670,9 +2687,9 @@ void CEffectEditor::OnXZSpreadGrassPreset()
     m_ParticleClass->SetAlphaLinearFromCenter(false);
     dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetAlphaLinearFromCenter(false);
 
-    // Rot To Dir False
-    m_ParticleClass->SetRotToDir(false);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetRotToDir(false);
+    // Rot To Dir True
+    m_ParticleClass->SetRotToDir(true);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetRotToDir(true);
 
 
     // Move Dir Type 

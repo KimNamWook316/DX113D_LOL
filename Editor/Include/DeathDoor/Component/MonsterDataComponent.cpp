@@ -97,7 +97,7 @@ void CMonsterDataComponent::Start()
 		m_vecOriginSpecluar.resize(m_MeshMatSize);
 		m_vecOriginEmissive.resize(m_MeshMatSize);
 
-		for (size_t i = 0; i < m_MeshMatSize; ++i)
+		for (int i = 0; i < m_MeshMatSize; ++i)
 		{
 			m_vecOriginDiffuse[i] = m_AnimMesh->GetMaterial(i)->GetBaseColor();
 			m_vecOriginAmbient[i] = m_AnimMesh->GetMaterial(i)->GetAmbientColor();
