@@ -108,6 +108,8 @@ void CParticleComponent::SetParticle(CParticle* Particle)
 
 	m_UpdateShader = m_Particle->CloneUpdateShader();
 
+	SAFE_DELETE(m_CBuffer);
+
 	m_CBuffer = m_Particle->CloneConstantBuffer();
 
 	m_SpawnTimeMax = m_Particle->GetSpawnTimeMax();
