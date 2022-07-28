@@ -38,6 +38,8 @@ public:
     virtual void OnDeadAnimStart() override;
     virtual void OnDeadPaperBurnEnd() override;
     void OnReachedCutSceneAnimPoint();
+    virtual void OnStartCutScene() override;
+    virtual void OnEndCutScene() override;
 
 public:
     int GetMeleeAttackCount() const
@@ -91,6 +93,9 @@ protected:
     Vector3 m_FinalTraceZAxis;
     bool m_ContinueAttack;
     float m_JumpAttackRange;
+
+    float m_OriginDOFMin;
+    float m_OriginDOFMax;
 
     int m_MeleeAttackCount;
 };

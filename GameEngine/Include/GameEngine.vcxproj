@@ -175,6 +175,7 @@
     <ClCompile Include="Resource\Shader\DecalDebugShader.cpp" />
     <ClCompile Include="Resource\Shader\DecalShader.cpp" />
     <ClCompile Include="Resource\Shader\DownScaleCBuffer.cpp" />
+    <ClCompile Include="Resource\Shader\FadeCBuffer.cpp" />
     <ClCompile Include="Resource\Shader\FogCBuffer.cpp" />
     <ClCompile Include="Resource\Shader\GlobalConstantBuffer.cpp" />
     <ClCompile Include="Resource\Shader\GlobalLightCBuffer.cpp" />
@@ -428,6 +429,7 @@
     <ClInclude Include="Resource\Shader\DecalDebugShader.h" />
     <ClInclude Include="Resource\Shader\DecalShader.h" />
     <ClInclude Include="Resource\Shader\DownScaleCBuffer.h" />
+    <ClInclude Include="Resource\Shader\FadeCBuffer.h" />
     <ClInclude Include="Resource\Shader\FogCBuffer.h" />
     <ClInclude Include="Resource\Shader\GlobalConstantBuffer.h" />
     <ClInclude Include="Resource\Shader\GlobalLightCBuffer.h" />

@@ -27,6 +27,7 @@
 #include "IMGUITree.h"
 #include "Flag.h"
 #include "EngineUtil.h"
+#include "PathManager.h"
 
 namespace fs = std::filesystem;
 
@@ -466,6 +467,25 @@ bool CEditorUtil::IsFileExistInDir(const std::string& PathName, const std::strin
 	}
 
 	return false;
+}
+
+std::string CEditorUtil::ExtractFilePathFromFullPath(const std::string& FullPath, const std::string& PathName)
+{
+	const PathInfo* Info = nullptr;
+	Info = CPathManager::GetInst()->FindPath(PathName);
+
+	if (!Info)
+	{
+		return "";
+	}
+
+	std::string Path = Info->PathMultibyte;
+
+	int Length = FullPath.length() - Path.length() + 1;
+
+	std::string FilePath = FullPath.substr(Path.length(), Length);
+
+	return FilePath;
 }
 
 void CEditorUtil::GetAllKindsOfTransformedStringVersions(std::string OriginalString, 

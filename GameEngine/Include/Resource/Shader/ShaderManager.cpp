@@ -59,7 +59,7 @@ CShaderManager::~CShaderManager()
 		iterEnd = m_mapShader.end();
 	}
 
-	m_mapShader.empty();
+	m_mapShader.clear();
 }
 
 bool CShaderManager::Init()
@@ -283,7 +283,10 @@ bool CShaderManager::Init()
 		(int)Buffer_Shader_Type::Pixel);
 
 	CreateConstantBuffer("WaterCBuffer", sizeof(WaterCBuffer), 13,
-		(int)Buffer_Shader_Type::Pixel | (int)Buffer_Shader_Type::Vertex);
+		(int)Buffer_Shader_Type::Pixel);
+
+	CreateConstantBuffer("FadeCBuffer", sizeof(FadeCBuffer), 7,
+		(int)Buffer_Shader_Type::Pixel);
 
 	return true;
 }

@@ -291,6 +291,8 @@ void CPaperBurnComponent::Update(float DeltaTime)
 				break;
 			}
 
+			m_StartPaperBurn = false;
+			m_Filter = 0.f;
 		}
 
 		m_CBuffer->SetFilter(m_Filter);

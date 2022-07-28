@@ -29,6 +29,14 @@ private:
 public:
 	void SetMouseState(Mouse_State State);
 
+	void SetClearColor(const Vector4& Color)
+	{
+		m_ClearColor[0] = Color.x;
+		m_ClearColor[1] = Color.y;
+		m_ClearColor[2] = Color.z;
+		m_ClearColor[3] = Color.w;
+	}
+
 	void EnableEditMode()
 	{
 		m_EditMode = true;
@@ -87,6 +95,11 @@ public:
 	float GetDeltaTime()	const
 	{
 		return m_Timer->GetDeltaTime();
+	}
+
+	Vector4 GetClearColor() const
+	{
+		return Vector4(m_ClearColor[0], m_ClearColor[1], m_ClearColor[2], m_ClearColor[3]);
 	}
 
 public:

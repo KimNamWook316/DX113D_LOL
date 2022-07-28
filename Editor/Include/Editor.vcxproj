@@ -279,6 +279,9 @@
     <ClCompile Include="DeathDoor\Component\ProjectileComponent.cpp" />
     <ClCompile Include="DeathDoor\DataManager.cpp" />
     <ClCompile Include="DeathDoor\DDUtil.cpp" />
+    <ClCompile Include="DeathDoor\Scene\DDBossSceneMode.cpp" />
+    <ClCompile Include="DeathDoor\Scene\DDSceneMode.cpp" />
+    <ClCompile Include="DeathDoor\Thread\DDSceneLoadingThread.cpp" />
     <ClCompile Include="EditorManager.cpp" />
     <ClCompile Include="EditorUtil.cpp" />
     <ClCompile Include="GraphEditor.cpp" />
@@ -298,7 +301,9 @@
     <ClCompile Include="Widget\ColliderComponentWidget.cpp" />
     <ClCompile Include="Widget\ColliderSphereWidget.cpp" />
     <ClCompile Include="Widget\DataMenu.cpp" />
+    <ClCompile Include="Widget\DDSceneModeWidget.cpp" />
     <ClCompile Include="Widget\EyeLaserComponentWidget.cpp" />
+    <ClCompile Include="Widget\SceneMenu.cpp" />
     <ClCompile Include="Widget\NavMeshComponentWidget.cpp" />
     <ClCompile Include="Widget\PaperBurnWidget.cpp" />
     <ClCompile Include="Widget\ResourceMenu.cpp" />
@@ -340,6 +345,7 @@
     <ClCompile Include="Window\ResourceDisplayWindow.cpp" />
     <ClCompile Include="Window\SceneComponentCreateModal.cpp" />
     <ClCompile Include="Window\SceneComponentHierarchyWindow.cpp" />
+    <ClCompile Include="Window\SceneModeWindow.cpp" />
     <ClCompile Include="Window\SocketWindow.cpp" />
     <ClCompile Include="Window\ToolWindow.cpp" />
   </ItemGroup>
@@ -459,6 +465,9 @@
     <ClInclude Include="DeathDoor\DataManager.h" />
     <ClInclude Include="DeathDoor\DDFlag.h" />
     <ClInclude Include="DeathDoor\DDUtil.h" />
+    <ClInclude Include="DeathDoor\Scene\DDBossSceneMode.h" />
+    <ClInclude Include="DeathDoor\Scene\DDSceneMode.h" />
+    <ClInclude Include="DeathDoor\Thread\DDSceneLoadingThread.h" />
     <ClInclude Include="EditorInfo.h" />
     <ClInclude Include="EditorManager.h" />
     <ClInclude Include="EditorUtil.h" />
@@ -479,8 +488,10 @@
     <ClInclude Include="Widget\ColliderComponentWidget.h" />
     <ClInclude Include="Widget\ColliderSphereWidget.h" />
     <ClInclude Include="Widget\DataMenu.h" />
+    <ClInclude Include="Widget\DDSceneModeWidget.h" />
     <ClInclude Include="Widget\EyeLaserComponentWidget.h" />
     <ClInclude Include="Widget\GameObjectWidget.h" />
+    <ClInclude Include="Widget\SceneMenu.h" />
     <ClInclude Include="Widget\LandScapeWidget.h" />
     <ClInclude Include="Widget\LightComponentWidget.h" />
     <ClInclude Include="Widget\NavMeshComponentWidget.h" />
@@ -521,6 +532,7 @@
     <ClInclude Include="Window\ResourceDisplayWindow.h" />
     <ClInclude Include="Window\SceneComponentCreateModal.h" />
     <ClInclude Include="Window\SceneComponentHierarchyWindow.h" />
+    <ClInclude Include="Window\SceneModeWindow.h" />
     <ClInclude Include="Window\SocketWindow.h" />
     <ClInclude Include="Window\ToolWindow.h" />
   </ItemGroup>

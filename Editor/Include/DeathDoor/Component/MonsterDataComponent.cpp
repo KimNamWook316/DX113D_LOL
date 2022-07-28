@@ -9,6 +9,7 @@
 #include "../Component/PlayerDataComponent.h"
 #include "Component/PaperBurnComponent.h"
 #include "../DDUtil.h"
+#include "../Scene/DDSceneMode.h"
 
 CMonsterDataComponent::CMonsterDataComponent() :
 	m_AnimMesh(nullptr),
@@ -265,6 +266,9 @@ void CMonsterDataComponent::OnDeadPaperBurnEnd()
 {
 	// TODO : Monster Death 관련 -> 차후 Object Pool 몬스터에 대한 처리 필요
 	m_Object->Destroy();
+
+	CDDSceneMode* SceneMode = dynamic_cast<CDDSceneMode*>(m_Scene->GetSceneMode());
+	SceneMode->OnDieMonster();
 }
 
 void CMonsterDataComponent::OnDeadAnimStart()

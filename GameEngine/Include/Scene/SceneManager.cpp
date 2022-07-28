@@ -96,12 +96,12 @@ bool CSceneManager::LoadNewScene(const char* FileName, const std::string& PathNa
 
 	char FullPath[MAX_PATH] = {};
 
-	strcpy_s(FullPath, FileName);
-
 	if (Path)
 	{
-		strcat_s(FullPath, Path->PathMultibyte);
+		strcpy_s(FullPath, Path->PathMultibyte);
 	}
+
+	strcat_s(FullPath, FileName);
 
 	return LoadNewSceneFullPath(FullPath, ChangeNow);
 }

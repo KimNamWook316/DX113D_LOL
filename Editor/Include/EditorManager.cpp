@@ -59,6 +59,7 @@
 #include "Window/ResourceDisplayWindow.h"
 #include "Window/CollisionProfileEditor.h"
 #include "Window/SocketWindow.h"
+#include "Window/SceneModeWindow.h"
 // Object
 #include "Object/DragObject.h"
 #include "Object/SpriteEditObject.h"
@@ -69,6 +70,10 @@
 #include "Scene/Navigation3DManager.h"
 #include "DeathDoor\DataManager.h"
 #include "ObjectPool.h"
+
+// SceneMode
+#include "DeathDoor\Scene\DDSceneMode.h"
+#include "DeathDoor\Scene\DDBossSceneMode.h"
 
 #include <sstream>
 
@@ -254,9 +259,18 @@ void CEditorManager::KeyboardRight(float DeltaTime)
 
 void CEditorManager::CreateSceneMode(CScene* Scene, size_t Type)
 {
+	// TODO : DeathDoor Scene Mode Type 추가될 때마다 업데이트
 	if (Type == typeid(CDefaultScene).hash_code())
 	{
 		Scene->LoadSceneMode<CDefaultScene>();
+	}
+	else if (Type == typeid(CDDSceneMode).hash_code())
+	{
+		Scene->LoadSceneMode<CDDSceneMode>();
+	}
+	else if (Type == typeid(CDDBossSceneMode).hash_code())
+	{
+		Scene->LoadSceneMode<CDDBossSceneMode>();
 	}
 }
 
@@ -578,6 +592,9 @@ void CEditorManager::CreateWindows()
 
 	m_SocketWindow = CIMGUIManager::GetInst()->AddWindow<CSocketWindow>(SOCKET_WINDOW);
 	m_SocketWindow->Close();
+
+	m_SceneModeWindow = CIMGUIManager::GetInst()->AddWindow<CSceneModeWindow>(SCENEMODE_WINDOW);
+	m_SceneModeWindow->Close();
 }
 
 void CEditorManager::CreateEditorCamera()

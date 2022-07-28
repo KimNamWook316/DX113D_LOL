@@ -6,6 +6,7 @@
 #include "../Widget/ResourceMenu.h"
 #include "../Widget/UtilMenuBar.h"
 #include "../Widget/DataMenu.h"
+#include "../Widget/SceneMenu.h"
 
 CBaseMenuBar::CBaseMenuBar()
 {
@@ -29,6 +30,7 @@ bool CBaseMenuBar::Init()
 	m_ResourceBeginMenu = AddWidget<CResourceMenu>("Resource");
 	m_UtilBeginMenu = AddWidget<CUtilMenuBar>("Util");
 	m_DataBeginMenu = AddWidget<CDataMenu>("Data");
+	m_SceneBeginMenu = AddWidget<CSceneMenu>("Scene");
 
 	return true;
 }

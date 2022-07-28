@@ -134,6 +134,8 @@ public:
 		return m_Play;
 	}
 
+	int GetObjectCountByType(Object_Type Type);
+
 	CGameObject* FindObject(const std::string& Name)
 	{
 		auto	iter = m_ObjList.begin();
@@ -179,6 +181,22 @@ public:
 		return false;
 	}
 
+	CGameObject* FindObjectFromType(Object_Type Type)
+	{
+		auto iter = m_ObjList.begin();
+		auto iterEnd = m_ObjList.end();
+
+		for (; iter != iterEnd; ++iter)
+		{
+			if ((*iter)->GetObjectType() == Type)
+			{
+				return (*iter).Get();
+			}
+		}
+
+		return nullptr;
+	}
+
 public:
 	void Start();
 	void Update(float DeltaTime);
@@ -221,6 +239,8 @@ public:
 	bool RestoreCamera(float Speed, float DeltaTime);
 
 public:
+	bool SetSceneMode(size_t SceneModeTypeID);
+
 	template <typename T>
 	bool CreateSceneMode()
 	{

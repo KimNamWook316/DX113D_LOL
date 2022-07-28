@@ -14,6 +14,7 @@ private :
 	class CIMGUIBeginMenu* m_BehaviorTreeBeginMenu;
 	class CIMGUIBeginMenu* m_UtilBeginMenu;
 	class CIMGUIBeginMenu* m_DataBeginMenu;
+	class CIMGUIBeginMenu* m_SceneBeginMenu;
 
 public:
 	virtual bool Init() override;

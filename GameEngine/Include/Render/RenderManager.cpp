@@ -22,6 +22,7 @@
 #include "../GameObject/SkyObject.h"
 #include "../Resource/Shader/ConstantBuffer.h"
 #include "../Resource/ResourceManager.h"
+#include "../Resource/Shader/FadeCBuffer.h"
 
 DEFINITION_SINGLE(CRenderManager)
 
@@ -34,7 +35,8 @@ CRenderManager::CRenderManager()	:
 	m_DebugRender(false),
 	m_PostFXRenderer(nullptr),
 	m_PostProcessing(false),
-	m_RenderSkyBox(true)
+	m_RenderSkyBox(true),
+	m_FadeCBuffer(nullptr)
 {
 }
 
@@ -56,6 +58,18 @@ CRenderManager::~CRenderManager()
 	SAFE_DELETE(m_Standard2DCBuffer);
 	SAFE_DELETE(m_RenderStateManager);
 	SAFE_DELETE(m_PostFXRenderer);
+	SAFE_DELETE(m_FadeCBuffer);
+}
+
+void CRenderManager::StartFadeEffect(FadeEffecType Type)
+{
+	m_CurFadeEffectType = m_CurFadeEffectType;
+	m_FadeEffectStart = true;
+	m_FadeEffectTimer = 0.f;
+
+	m_FadeCBuffer->SetFadeStart(true);
+	m_FadeCBuffer->SetFadeStartColor(m_FadeInfo.StartColor);
+	m_FadeCBuffer->SetFadeEndColor(m_FadeInfo.EndColor);
 }
 
 float CRenderManager::GetMiddleGray() const
@@ -495,6 +509,13 @@ bool CRenderManager::Init()
 	// Toon Texture
 	m_ToonRampTex = CResourceManager::GetInst()->FindTexture("ToonRampTex");
 
+	// Fade in, out
+	m_FadeCBuffer = new CFadeCBuffer;
+	m_FadeCBuffer->Init();
+	m_FadeInfo.StartColor = Vector3(0.f, 0.f, 0.f);
+	m_FadeInfo.EndColor = Vector3(1.f, 1.f, 1.f);
+	m_FadeInfo.Time = 1.f;
+
 	return true;
 }
 
@@ -596,6 +617,9 @@ void CRenderManager::Render(float DeltaTime)
 	// 파티클 레이어
 	RenderParticle();
 
+	// Fade in out
+	UpdateFadeEffectInfo(DeltaTime);
+
 	if (m_PostProcessing)
 	{
 		// HDR, Bloom, Adaptation 등 PostEffect 처리
@@ -604,8 +628,11 @@ void CRenderManager::Render(float DeltaTime)
 	else
 	{
 		// 반투명 오브젝트 + 조명처리 + 외곽선 처리된 최종 화면을 백버퍼에 그려낸다.
-		RenderFinalScreen();
+		RenderFinalScreen(DeltaTime);
 	}
+
+	// Post-Particle Layer 출력
+	RenderPostParticle();
 
 	// Debug Mode 일때만 컴파일 + Editor 에서만 Render 되게 세팅
 #ifdef _DEBUG
@@ -615,9 +642,6 @@ void CRenderManager::Render(float DeltaTime)
 	// Particle Effect Editor 제작용 Render Target
 	RenderParticleEffectEditor();
 #endif
-
-	// Post-Particle Layer 출력
-	RenderPostParticle();
 
 	// Screen Widget 출력
 	auto iter = m_RenderLayerList[(int)RenderLayerType::ScreenWidgetComponent]->RenderList.begin();
@@ -1022,8 +1046,9 @@ void CRenderManager::RenderTransparent()
 	m_FinalTarget->ResetTarget();
 }
 
-void CRenderManager::RenderFinalScreen()
+void CRenderManager::RenderFinalScreen(float DeltaTime)
 {
+
 	m_FinalTarget->SetTargetShader(21);
 	m_vecGBuffer[2]->SetTargetShader(22);
 	m_PlayerTarget->SetTargetShader(23);
@@ -1188,14 +1213,35 @@ void CRenderManager::RenderPlayer(CMesh* PlayerMesh)
 {
 	m_PlayerTarget->ClearTarget();
 
-	m_PlayerTarget->SetTarget();
+	// GBuffer 타겟을 잠시 교체
+	std::vector<ID3D11RenderTargetView*>	vecPrevTarget;
+	ID3D11RenderTargetView* PlayerTarget = m_PlayerTarget->GetTargetView();
+	ID3D11DepthStencilView* PrevDepthTarget = nullptr;
+
+	size_t	GBufferSize = m_vecGBuffer.size();
+	vecPrevTarget.resize(GBufferSize);
+
+	CDevice::GetInst()->GetContext()->OMGetRenderTargets((unsigned int)GBufferSize,
+		&vecPrevTarget[0], &PrevDepthTarget);
+
+	CDevice::GetInst()->GetContext()->OMSetRenderTargets(1,
+		&PlayerTarget, PrevDepthTarget);
+
 	m_DepthDisable->SetState();
 	m_ShadowMapShader->SetShader();
 
 	PlayerMesh->Render();
 
 	m_DepthDisable->ResetState();
-	m_PlayerTarget->ResetTarget();
+
+	CDevice::GetInst()->GetContext()->OMSetRenderTargets((unsigned int)GBufferSize,
+		&vecPrevTarget[0], PrevDepthTarget);
+
+	SAFE_RELEASE(PrevDepthTarget);
+	for (size_t i = 0; i < GBufferSize; ++i)
+	{
+		SAFE_RELEASE(vecPrevTarget[i]);
+	}
 }
 
 void CRenderManager::SetBlendFactor(const std::string& Name, float r, float g,
@@ -1509,6 +1555,55 @@ void CRenderManager::UpdateInstancingInfo(int LayerIndex, bool UpdateShadow)
 			InstancingList->ShadowBuffer->UpdateBuffer(&vecShadowInfo[0],
 				(int)SBufferSize);
 		}
+	}
+}
+
+void CRenderManager::UpdateFadeEffectInfo(float DeltaTime)
+{
+	// 현재 페이드 이펙트에 등록된 스타트 콜백 호출
+	if (m_FadeEffectStart)
+	{
+		if (m_FadeEffectTimer == 0.f && m_FadeInfo.StartCallBack)
+		{
+			m_FadeInfo.StartCallBack();
+		}
+
+		m_FadeEffectTimer += DeltaTime;
+
+		if (DeltaTime >= (int)m_FadeInfo.Time)
+		{
+			m_FadeEffectTimer = 0.f;
+		}
+
+		float Ratio = 0.f;
+
+		// 페이드 인의 경우 End Color -> Start Color로
+		if (m_CurFadeEffectType == FadeEffecType::FADE_IN)
+		{
+			Ratio = m_FadeEffectTimer / m_FadeInfo.Time;
+		}
+		// 페이드 아웃의 경우 Start Color -> End Color로
+		else
+		{
+			Ratio = 1.f - (m_FadeEffectTimer / m_FadeInfo.Time);
+		}
+
+		m_FadeCBuffer->SetFadeRatio(Ratio);
+
+		// 페이드 이펙트 엔드 콜백 호출 및 페이드 종료
+		if (m_FadeEffectTimer >= m_FadeInfo.Time)
+		{
+			if (m_FadeInfo.EndCallBack)
+			{
+				m_FadeInfo.EndCallBack();
+			}
+
+			m_FadeEffectTimer = 0.f;
+			m_FadeEffectStart = false;
+			m_FadeCBuffer->SetFadeStart(false);
+		}
+
+		m_FadeCBuffer->UpdateCBuffer();
 	}
 }
 

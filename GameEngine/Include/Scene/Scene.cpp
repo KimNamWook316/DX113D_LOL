@@ -69,6 +69,23 @@ CNavigation3DManager* CScene::GetNavigation3DManager() const
 	return m_Nav3DManager;
 }
 
+int CScene::GetObjectCountByType(Object_Type Type)
+{
+	int Count = 0;
+
+	auto	iter = m_ObjList.begin();
+	auto	iterEnd = m_ObjList.end();
+	for (; iter != iterEnd; ++iter)
+	{
+		if ((*iter)->GetObjectType() == Type)
+		{
+			++Count;
+		}
+	}
+
+	return Count;
+}
+
 void CScene::Start()
 {
 	m_Mode->Start();
@@ -271,6 +288,8 @@ bool CScene::SaveFullPath(const char* FullPath)
 
 	fwrite(&SceneModeType, sizeof(size_t), 1, File);
 
+	m_Mode->Save(File);
+
 	size_t	ObjCount = m_ObjList.size();
 	int ExcludeObjectCount = GetSaveExcludeObjectCount();
 	ObjCount -= (size_t)ExcludeObjectCount;
@@ -362,6 +381,8 @@ bool CScene::LoadFullPath(const char* FullPath)
 
 	// SceneMode 생성
 	CSceneManager::GetInst()->CallCreateSceneMode(this, SceneModeType);
+
+	m_Mode->Load(File);
 
 	size_t	ObjCount = m_ObjList.size();
 
@@ -506,6 +527,14 @@ bool CScene::SaveSceneGlobalDataCSV(const char* FileName)
 	Data->AddLabel("RenderSkyBox");
 	Data->SetData("Data", "RenderSkyBox", RenderSkyBox);
 
+	Vector4 ClearColor = CEngine::GetInst()->GetClearColor();
+	Data->AddLabel("ClearColorR");
+	Data->SetData("Data", "ClearColorR", ClearColor.x);
+	Data->AddLabel("ClearColorG");
+	Data->SetData("Data", "ClearColorG", ClearColor.y);
+	Data->AddLabel("ClearColorB");
+	Data->SetData("Data", "ClearColorB", ClearColor.z);
+
 	// AAA.scn 로 scn 저장하면 -> AAA_GlobalData.csv 파일명 csv 파일 생성
 	// Excel/SceneGlobalData/ 경로에 저장한다
 	char CSVFileName[MAX_PATH] = {};
@@ -569,7 +598,11 @@ bool CScene::LoadSceneGlobalDataCSV(const char* FileName)
 	m_SceneGlobalData.GLightData.Color.y = Data->FindDataFloat("Data", "GlobalLightColorG");
 	m_SceneGlobalData.GLightData.Color.z = Data->FindDataFloat("Data", "GlobalLightColorB");
 	m_SceneGlobalData.GLightData.AmbientIntensity = Data->FindDataFloat("Data", "AmbientIntensity");
-	m_SceneGlobalData.RenderSkyBox = Data->FindDataBool("Data", "RenderSkyBox");
+	m_SceneGlobalData.BackGroundData.RenderSkyBox = Data->FindDataBool("Data", "RenderSkyBox");
+	m_SceneGlobalData.BackGroundData.ClearColor.x = Data->FindDataFloat("Data", "ClearColorR");
+	m_SceneGlobalData.BackGroundData.ClearColor.y = Data->FindDataFloat("Data", "ClearColorG");
+	m_SceneGlobalData.BackGroundData.ClearColor.z = Data->FindDataFloat("Data", "ClearColorB");
+	m_SceneGlobalData.BackGroundData.ClearColor.w = 1.f;
 	
 	// 메모리 해제
 	CResourceManager::GetInst()->DeleteCSV(outCSVKey);
@@ -658,7 +691,10 @@ void CScene::UpdateSceneGlobalData()
 	RenderMng->SetFogStart(m_SceneGlobalData.HDRData.FogStart);
 	RenderMng->SetFogEnd(m_SceneGlobalData.HDRData.FogEnd);
 	RenderMng->SetFogDensity(m_SceneGlobalData.HDRData.FogDensity);
-	RenderMng->SetRenderSkyBox(m_SceneGlobalData.RenderSkyBox);
+	RenderMng->SetRenderSkyBox(m_SceneGlobalData.BackGroundData.RenderSkyBox);
+
+	Vector4 ClearColor = m_SceneGlobalData.BackGroundData.ClearColor;
+	CEngine::GetInst()->SetClearColor(ClearColor);
 
 	CLightComponent* GLight = m_LightManager->GetGlobalLightComponent();
 	GLight->SetWorldRotation(m_SceneGlobalData.GLightData.Rot);
@@ -748,6 +784,28 @@ bool CScene::RestoreCamera(float Speed, float DeltaTime)
 
 
 	return false;
+}
+
+bool CScene::SetSceneMode(size_t SceneModeTypeID)
+{
+	size_t PrevSceneModeType = m_Mode->GetTypeID();
+
+	if (PrevSceneModeType == SceneModeTypeID)
+	{
+		return true;
+	}
+
+	CSceneManager::GetInst()->CallCreateSceneMode(this, SceneModeTypeID);
+
+	// 생성 실패
+	if (PrevSceneModeType == SceneModeTypeID)
+	{
+		return false;
+	}
+
+	// 새로운 모드 생성 성공하면 스타트하고 리턴
+	m_Mode->Start();
+	return true;
 }
 
 

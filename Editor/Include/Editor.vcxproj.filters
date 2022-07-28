@@ -187,6 +187,18 @@
     <Filter Include="06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\04. CrowBoss">
       <UniqueIdentifier>{f2fe6744-8172-46d8-abb4-f83323b7259b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="06. DeathDoor\06. Thread">
+      <UniqueIdentifier>{fc205c15-ae06-4c95-9b53-79495625be9b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Editor\01. Window\6. Scene">
+      <UniqueIdentifier>{446e8a24-07a0-42dc-8027-287843146afd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Editor\02. Widget\04. SceneMode">
+      <UniqueIdentifier>{ab6e255d-81be-4c0e-a14d-7421b2dbdf9b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. DeathDoor\05. SceneMode\01. BossMode">
+      <UniqueIdentifier>{73871478-707e-4728-bf90-a5bacb67e1d7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EditorManager.cpp">
@@ -644,6 +656,24 @@
     </ClCompile>
     <ClCompile Include="Widget\CameraMoveWidget.cpp">
       <Filter>02. Editor\02. Widget\01. Inspector\01. SceneComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Scene\DDSceneMode.cpp">
+      <Filter>06. DeathDoor\05. SceneMode</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Thread\DDSceneLoadingThread.cpp">
+      <Filter>06. DeathDoor\06. Thread</Filter>
+    </ClCompile>
+    <ClCompile Include="Window\SceneModeWindow.cpp">
+      <Filter>02. Editor\01. Window\6. Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Widget\DDSceneModeWidget.cpp">
+      <Filter>02. Editor\02. Widget\04. SceneMode</Filter>
+    </ClCompile>
+    <ClCompile Include="Widget\SceneMenu.cpp">
+      <Filter>02. Editor\02. Widget\03. MenuBar</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Scene\DDBossSceneMode.cpp">
+      <Filter>06. DeathDoor\05. SceneMode\01. BossMode</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1108,6 +1138,24 @@
     </ClInclude>
     <ClInclude Include="Widget\CameraMoveWidget.h">
       <Filter>02. Editor\02. Widget\01. Inspector\01. SceneComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Scene\DDSceneMode.h">
+      <Filter>06. DeathDoor\05. SceneMode</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Thread\DDSceneLoadingThread.h">
+      <Filter>06. DeathDoor\06. Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="Window\SceneModeWindow.h">
+      <Filter>02. Editor\01. Window\6. Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Widget\DDSceneModeWidget.h">
+      <Filter>02. Editor\02. Widget\04. SceneMode</Filter>
+    </ClInclude>
+    <ClInclude Include="Widget\SceneMenu.h">
+      <Filter>02. Editor\02. Widget\03. MenuBar</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Scene\DDBossSceneMode.h">
+      <Filter>06. DeathDoor\05. SceneMode\01. BossMode</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

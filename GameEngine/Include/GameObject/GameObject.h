@@ -44,6 +44,8 @@ public:
 		return m_IsEnemy;
 	}
 
+	virtual void Enable(bool Enable) override;
+
 	void SetEnemy(bool Enemy)
 	{
 		m_IsEnemy = Enemy;

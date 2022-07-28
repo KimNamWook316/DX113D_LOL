@@ -18,6 +18,10 @@
 #include "Component\ArrowComponent.h"
 #include "Component\CrowBossDataComponent.h"
 
+// TODO : Death Door SceneMode 추가시마다 업데이트
+#include "Scene/DDSceneMode.h"
+#include "Scene/DDBossSceneMode.h"
+
 std::string CDDUtil::DDConditionNodeTypeToString(DDConditionNode NodeType)
 {
 	switch (NodeType)
@@ -670,6 +674,44 @@ size_t CDDUtil::DDObjectComponentTypeToTypeID(DDObjectComponentType Type)
 		return typeid(CArrowComponent).hash_code();
 	}
 	return -1;
+}
+
+std::string CDDUtil::DDSceneModeTypeToString(DDSceneModeType Type)
+{
+	switch (Type)
+	{
+	case DDSceneModeType::DDSceneMode:
+		return "DDSceneMode";
+	case DDSceneModeType::DDBossSceneMode:
+		return "DDBossSceneMode";
+	}
+
+	return "";
+}
+
+DDSceneModeType CDDUtil::StringToDDSceneModeType(const std::string& Str)
+{
+	if (Str == "DDSceneMode")
+	{
+		return DDSceneModeType::DDSceneMode;
+	}
+	else if (Str == "DDBossSceneMode")
+	{
+		return DDSceneModeType::DDBossSceneMode;
+	}
+
+	return (DDSceneModeType)(-1);
+}
+
+size_t CDDUtil::DDSceneModeTypeToTypeID(DDSceneModeType Type)
+{
+	switch (Type)
+	{
+	case DDSceneModeType::DDSceneMode:
+		return typeid(CDDSceneMode).hash_code();
+	case DDSceneModeType::DDBossSceneMode:
+		return typeid(CDDBossSceneMode).hash_code();
+	}
 }
 
 Vector4 CDDUtil::LerpColor(const Vector4& ColorStart, const Vector4& ColorEnd, float ElapsedTime, float MaxTime)

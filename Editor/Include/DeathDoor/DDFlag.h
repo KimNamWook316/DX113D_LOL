@@ -114,3 +114,11 @@ enum class HookResult
 	Collision,
 	CollisionEnd
 };
+
+// TODO : Death Door SceneMode 추가시마다 업데이트
+enum class DDSceneModeType
+{
+	DDSceneMode,
+	DDBossSceneMode,
+	Max
+};
