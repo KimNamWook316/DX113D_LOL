@@ -39,6 +39,7 @@ void CBossBettyThrowNode::Init()
 	// 던지기 전까지 Player 방향으로 회전할 수 있도록 한다.
 	AnimInst->AddNotify(AnimName, "OnTracePlayer", 0,
 		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnEnableLookPlayer);
+
 	AnimInst->AddNotify(AnimName, "DisableZMove", 0,
 		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnDisableMoveZ);
 
@@ -46,9 +47,7 @@ void CBossBettyThrowNode::Init()
 	AnimInst->AddNotify(AnimName, "MakeSnowBallAttackObj", 9, this, &CBossBettyThrowNode::MakeSnowBallAttackObj);
 
 	// End
-	AnimInst->AddNotify(AnimName, "ThrowSnowBallAttackObj", 27, this, &CBossBettyThrowNode::ThrowSnowBallAttackObj);
-
-
+	AnimInst->AddNotify(AnimName, "ThrowSnowBallAttackObj", 26, this, &CBossBettyThrowNode::ThrowSnowBallAttackObj);
 
 	AnimInst->SetEndFunction(AnimName, 
 		(CMonsterDataComponent*)Data, &CMonsterDataComponent::SetCurrentNodeNull);
@@ -100,16 +99,16 @@ void CBossBettyThrowNode::MakeSnowBallAttackObj()
 	Vector3 ZLookDir = m_Object->GetWorldAxis(AXIS::AXIS_Z) * -1.f;
 	Vector3 YLookDir = m_Object->GetWorldAxis(AXIS::AXIS_Y);
 
-	const Vector3& InitBallPos = m_Object->GetWorldPos() + ZLookDir * 7.f + YLookDir * 2.f;
+	const Vector3& InitBallPos = m_Object->GetWorldPos() + ZLookDir * 6.f + YLookDir * 2.f;
 	ThrowBall->SetWorldPos(InitBallPos);
 
 	// Bazier 에 따라 이동할 수 있게 세팅한다.
-	const Vector3& D2 = m_Object->GetWorldPos() + ZLookDir * 8.f + YLookDir * 7.f;
-	const Vector3& D3 = m_Object->GetWorldPos() + ZLookDir * 4.5f + YLookDir * 13.f;
+	const Vector3& D2 = m_Object->GetWorldPos() + ZLookDir * 9.f + YLookDir * 8.f;
+	const Vector3& D3 = m_Object->GetWorldPos() + ZLookDir * 4.5f + YLookDir * 14.f;
 	const Vector3& D4 = m_Object->GetWorldPos() + YLookDir * 11.f;
 
-	ParticleComp->SetParticleMoveSpeed(75.f);
-	ParticleComp->SetBazierTargetPos(D2, D3, D4, 30);
+	ParticleComp->SetParticleMoveSpeed(95.f);
+	ParticleComp->SetBazierTargetPos(D2, D3, D4, 100);
 	ParticleComp->SetBazierMoveEffect(true);
 }
 
@@ -124,12 +123,12 @@ void CBossBettyThrowNode::ThrowSnowBallAttackObj()
 	CProjectileComponent* ProjTileComp = ThrowBall->FindComponentFromType<CProjectileComponent>();
 
 	CGameObject* AfterEffectParticle = CObjectPool::GetInst()->GetParticle("BettyAttackAfterEffect", CSceneManager::GetInst()->GetScene());
-	AfterEffectParticle->SetLifeSpan(5.f);
+	AfterEffectParticle->SetLifeSpan(1.f);
 	AfterEffectParticle->Enable(false);
 
 	const Vector3& PlayerPos = CSceneManager::GetInst()->GetScene()->GetPlayerObject()->GetWorldPos();
 
-	ProjTileComp->ShootByTargetPos(ThrowBall->GetWorldPos(), 70.f, PlayerPos, AfterEffectParticle);
+	ProjTileComp->ShootByTargetPos(ThrowBall->GetWorldPos(), 180.f, PlayerPos, AfterEffectParticle);
 		
 	// Throw Attack Enable 을 다시 False 로 바꿔준다
 	Data->SetThrowAttackEnable(false);

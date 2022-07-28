@@ -1,5 +1,3 @@
 ObjectPoolData,,
 ,Count,Path
 PlayerArrow,5,PlayerArrow.gobj
-BossBettySnowAttack,10,Monster\BossBetty\BossBettySnowAttack.gobj
-BettyAttackAfterEffect,10,Monster\BossBetty\BettyAttackAfterEffect.gobj

@@ -122,6 +122,9 @@ void CMonsterDataComponent::Start()
 		m_PaperBurn->SetFinishCallback(this, &CMonsterDataComponent::OnDeadPaperBurnEnd);
 	}
 
+	// Blood Particle
+	m_BloodParticle = (CParticleComponent*)m_Object->FindComponent("BloodParticle");
+
 	CAnimationSequenceInstance* AnimInst = m_AnimMesh->GetAnimationInstance();
 	AnimInst->AddNotify("Death", "DeathStart", 0, this, &CMonsterDataComponent::OnDeadAnimStart);
 	AnimInst->SetEndFunction("Death", this, &CMonsterDataComponent::OnDeadAnimEnd);

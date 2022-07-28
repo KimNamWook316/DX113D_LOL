@@ -126,6 +126,11 @@ public:
 		return m_Data.JumpAttackRange;
 	}
 
+	class CParticleComponent* GetBloodParticle() const
+	{
+		return m_BloodParticle;
+	}
+
     class CColliderBox3D* GetMeleeAttackCollider() const
     {
         return m_MeleeAttackCollider;
@@ -183,6 +188,7 @@ protected:
 	class CColliderBox3D* m_HitBox;
 	class CColliderBox3D* m_MeleeAttackCollider;
 	class CGameStateComponent* m_State;
+	class CParticleComponent* m_BloodParticle;
 
 	bool m_PostAttackDelaying;  // 공격 후딜레이 중인지 여부
 	bool m_IsCombat;			// 전투 시작 여부

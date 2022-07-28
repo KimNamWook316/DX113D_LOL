@@ -66,7 +66,10 @@ private :
 
     // Boss Betty Throw Ball 투사체 Object
     class CGameObject* m_BossBettyThrowObject;
+
     // Boss Betty Punch Down Particle
+    std::vector<CParticleComponent*> m_vecAttackAfterEffectParticle;
+
     // Boss Betty Slash Particle
     // Boss Betty Roar Particle
 
@@ -105,7 +108,8 @@ public :
     // Betty 공격 Collider Enable 처리 여부
     void OnBossBettyEnableAttackCollider();
     void OnBossBettyDisableAttackCollider();
-
+    // Betty Attack After Effect
+    void OnBossBettyActivateAfterEffect(const Vector3& WorldPos);
 
     // Setter 함수 ---
 public:
