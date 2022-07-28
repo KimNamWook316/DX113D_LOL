@@ -206,6 +206,13 @@ void CNavMeshComponent::OnUpdateWorld(const Vector3& World, const Vector3& Relat
 
 	m_NavMesh->m_Min = OriginMin.TransformCoord(WorldMat);
 	m_NavMesh->m_Max = OriginMax.TransformCoord(WorldMat);
+
+	if (m_NavMesh->m_Min.x > m_NavMesh->m_Max.x && m_NavMesh->m_Min.z > m_NavMesh->m_Max.z)
+	{
+		Vector3 Tmp = m_NavMesh->m_Min;
+		m_NavMesh->m_Min = m_NavMesh->m_Max;
+		m_NavMesh->m_Max = Tmp;
+	}
 }
 
 //void CNavMeshComponent::OnUpdateRotation(const Vector3& WorldRot, const Vector3& RelativeRot)

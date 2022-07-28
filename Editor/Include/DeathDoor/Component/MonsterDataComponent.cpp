@@ -2,6 +2,7 @@
 #include "MonsterDataComponent.h"
 #include "GameObject/GameObject.h"
 #include "Component/AnimationMeshComponent.h"
+#include "Component/ParticleComponent.h"
 #include "Component/ColliderBox3D.h"
 #include "../Component/GameStateComponent.h"
 #include "MonsterNavAgent.h"
@@ -122,6 +123,14 @@ void CMonsterDataComponent::Start()
 		m_PaperBurn->SetFinishCallback(this, &CMonsterDataComponent::OnDeadPaperBurnEnd);
 	}
 
+	// Blood Particle
+	m_BloodParticle = (CParticleComponent*)m_Object->FindComponent("BloodParticle");
+
+	if (m_BloodParticle)
+	{
+		m_BloodParticle->Enable(false);
+	}
+
 	CAnimationSequenceInstance* AnimInst = m_AnimMesh->GetAnimationInstance();
 	AnimInst->AddNotify("Death", "DeathStart", 0, this, &CMonsterDataComponent::OnDeadAnimStart);
 	AnimInst->SetEndFunction("Death", this, &CMonsterDataComponent::OnDeadAnimEnd);
@@ -227,7 +236,7 @@ void CMonsterDataComponent::LookPlayer(float DeltaTime)
 
 	// (OBJ) 순간적으로 미세하게 떨리는 오류
 	// if (abs(AnglePlayer) < m_Data.RotateSpeedPerSec * DeltaTime)
-	if (abs(AnglePlayer) < 2.f)
+	if (abs(AnglePlayer) < 3.f)
 	{
 		// MyObj->AddWorldRotationY(AnglePlayer * DeltaTime);
 	}

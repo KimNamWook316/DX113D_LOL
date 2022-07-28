@@ -613,8 +613,10 @@ void CSceneCollision::CheckColliderSection3D()
 		
 		if (m_Scene->GetNavigation3DManager()->GetNavMeshData())
 		{
-			Min -= m_NavMeshMin;
-			Max -= m_NavMeshMin;
+			//Min -= m_NavMeshMin;
+			//Max -= m_NavMeshMin;
+			Min -= m_Scene->GetNavigation3DManager()->GetNavMeshData()->GetNavMesh()->GetMin();
+			Max -= m_Scene->GetNavigation3DManager()->GetNavMeshData()->GetNavMesh()->GetMin();
 		}
 
 		int	IndexMinX, IndexMinZ;

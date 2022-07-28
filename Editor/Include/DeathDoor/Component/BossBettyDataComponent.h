@@ -37,9 +37,6 @@ private :
     // 원거리 공격 Type
     BossBettyFarAttackType m_FarAttackType;
 
-    // Origin Rot Speed
-    float m_OriginRotSpeed;
-    float m_CurRotSpeed;
 
     // Origin MoveTime
     float m_OriginMoveSpeed;
@@ -69,7 +66,10 @@ private :
 
     // Boss Betty Throw Ball 투사체 Object
     class CGameObject* m_BossBettyThrowObject;
+
     // Boss Betty Punch Down Particle
+    std::vector<CParticleComponent*> m_vecAttackAfterEffectParticle;
+
     // Boss Betty Slash Particle
     // Boss Betty Roar Particle
 
@@ -108,10 +108,15 @@ public :
     // Betty 공격 Collider Enable 처리 여부
     void OnBossBettyEnableAttackCollider();
     void OnBossBettyDisableAttackCollider();
-
+    // Betty Attack After Effect
+    void OnBossBettyActivateAfterEffect(const Vector3& WorldPos);
 
     // Setter 함수 ---
 public:
+    void SetBettyThrowBallObject(class CGameObject* Object)
+    {
+        m_BossBettyThrowObject = Object;
+    }
     void SetOriginSpeed(float OriginSpeed)
     {
         m_OriginMoveSpeed = OriginSpeed;
@@ -133,25 +138,7 @@ public:
     {
         ++m_CloseSequentialAttackNum;
     }
-    void IncFarAttackCount()
-    {
-        ++m_FarAttackAttackNum;
-
-        // 3번 마자, Far Attack Type 을 다르게 해줄 것이다.
-        if (m_FarAttackAttackNum % 3 == 0)
-        {
-            if (m_FarAttackType == BossBettyFarAttackType::Spin)
-                m_FarAttackType = BossBettyFarAttackType::JumpSmash;
-            else
-                m_FarAttackType = BossBettyFarAttackType::Spin;
-        }
-
-        if (m_FarAttackAttackNum == 6)
-        {
-            m_ThrowFarAttackEnable = true;
-            m_FarAttackAttackNum = 0;
-        }
-    }
+    void IncFarAttackCount();
     // Getter 함수 ---
 public:
     float GetOriginRotSpeed() const

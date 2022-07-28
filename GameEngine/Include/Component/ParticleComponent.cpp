@@ -15,7 +15,7 @@ CParticleComponent::CParticleComponent()	:
 	m_Info{},
 	m_BillBoardEffect(false),
 	m_BazierMoveEffect(false),
-	m_ParticleMoveSpeed(50.f),
+	m_ParticleMoveSpeed(20.f),
 	m_ParticleMoveSpeedBottom(3.5f),
 	m_InfoShared{},
 	m_SpeedChangeMethod(ParticleSpeedChangeMethod::Linear), // Particle Component 의 경우, Linear 설정이, 그냥 원본 Speed 유지 
@@ -156,7 +156,7 @@ void CParticleComponent::ApplyBazierMove(float DeltaTime)
 	// 위치 이동
 	float BazierMoveDist = (m_ParticleMoveDir * m_ParticleMoveSpeed * DeltaTime).Length();
 
-	AddWorldPos(m_ParticleMoveDir * m_ParticleMoveSpeed * DeltaTime);
+	m_Object->GetRootComponent()->AddWorldPos(m_ParticleMoveDir * m_ParticleMoveSpeed * DeltaTime);
 
 	m_BazierMoveCurDist += BazierMoveDist;
 
@@ -187,17 +187,17 @@ void CParticleComponent::ApplyBazierMove(float DeltaTime)
 			// 3. 뿐만 아니라, Particle 각각에 대한 Rot Angle 이 있다. 이것이 마치 Offset 각도 처럼 동작할 것이다.
 			// 4. 이전 Dir, 현재 Dir 간의 Angle 을 구하고, 이것만큼 Particle Dir 을 회전시킬 것이다.
 			// - 예를 들어, X 축 기준 오른쪽으로 가다가, Y 축 기준 위쪽으로 간다는 것은, 실제 Angle 이 Z 축 기준 90 도 회전
-			float RotAngle = m_ParticleMoveDir.Angle(PrevMoveDir);
-			const Vector3& RotAxis = PrevMoveDir.Cross(m_ParticleMoveDir);
-
-			if (XMVector3Equal(RotAxis.Convert(), XMVectorZero()) == false)
-			{
-				XMVECTOR Qut = XMQuaternionRotationAxis(RotAxis.Convert(), RotAngle);
-
-				const Vector3& EulerRotAngle = CEngineUtil::QuarternionToEulerAngles(Qut);
-
-				AddWorldRotation(EulerRotAngle);
-			}
+			// float RotAngle = m_ParticleMoveDir.Angle(PrevMoveDir);
+			// const Vector3& RotAxis = PrevMoveDir.Cross(m_ParticleMoveDir);
+			// 
+			// if (XMVector3Equal(RotAxis.Convert(), XMVectorZero()) == false)
+			// {
+			// 	XMVECTOR Qut = XMQuaternionRotationAxis(RotAxis.Convert(), RotAngle);
+			// 
+			// 	const Vector3& EulerRotAngle = CEngineUtil::QuarternionToEulerAngles(Qut);
+			// 
+			// 	AddWorldRotation(EulerRotAngle);
+			// }
 		}
 		else
 		{
@@ -342,7 +342,7 @@ void CParticleComponent::PostUpdate(float DeltaTime)
 	m_CBuffer->SetStartMax(StartMax);
 
 	// BillBoard 효과를 주게 되면, ParticleComponent 의 Y축만 회전시킨다. (카메라 방향으로)
-	float BillBoardYRotAngle = 0.f;
+	Vector3 BillBoardAngle;
 
 	if (m_BillBoardEffect)
 	{
@@ -350,17 +350,39 @@ void CParticleComponent::PostUpdate(float DeltaTime)
 		// 카메라의 위치를 얻어온다.
 		Vector3 CameraPos = m_Scene->GetCameraManager()->GetCurrentCamera()->GetWorldPos();
 
-		Vector3	View = CameraPos - GetWorldPos();
-		View.y = 0.f;
+		// x 축
+		{
+		}
 
-		Vector3 OriginDir = m_Object->GetWorldAxis(AXIS::AXIS_Z) * -1.f;
+		// y축
+		{
+			Vector3	View = CameraPos - GetWorldPos();
+			View.y = 0.f;
 
-		BillBoardYRotAngle = OriginDir.Angle(View);
+			Vector3 ZLookDir = m_Object->GetWorldAxis(AXIS::AXIS_Z) * -1.f;
+			Vector3 XLookDir = m_Object->GetWorldAxis(AXIS::AXIS_X) * -1.f;
+
+			float AngleBetween = ZLookDir.Angle(View);
+
+			// Object 기준 오른편에 있다면, 180 도를 넘어가는 것
+			// 하지만 acos 는 0 에서 180 도 사이의 값만을 리턴한다.
+			if (View.Dot(XLookDir) > 0)
+			{
+				AngleBetween = 180.f + (180.f - AngleBetween);
+			}
+
+			BillBoardAngle.y = AngleBetween;
+		}
+
+		// z 축
+		{
+		}
+		
 	}
 
 	// Rotation Angle 정보를 세팅한다. Transform 의 정보로 만들어낼 것이다.
 	// m_CBuffer->SetRotationAngle(GetWorldRot());
-	m_CBuffer->SetRotationAngle(GetWorldRot() + Vector3(0.f, BillBoardYRotAngle, 0.f));
+	m_CBuffer->SetRotationAngle(GetWorldRot() + BillBoardAngle);
 	
 	// Relative Scale 정보를 세팅한다.
 	m_CBuffer->SetCommonWorldScale(GetWorldScale());
@@ -545,20 +567,24 @@ bool CParticleComponent::SaveOnly(FILE* File)
 
 	// Particle
 	// m_Particle->Save(File);
-	std::string SaveParticleFileFullPath;
-	SaveParticleFileFullPath.reserve(100);
-
-	const PathInfo* Info = CPathManager::GetInst()->FindPath(PARTICLE_PATH);
-
-	if (Info)
-		SaveParticleFileFullPath = Info->PathMultibyte;
-	SaveParticleFileFullPath.append(m_Particle->GetName().c_str());
+	std::string SaveParticleFileFullName = m_Particle->GetName();
+	SaveParticleFileFullName.reserve(100);
 
 	// .ptrc 가 해당 Name에 있는지 확인 후, 없으면 Add
-	if (SaveParticleFileFullPath.find(".prtc") == std::string::npos)
-		SaveParticleFileFullPath.append(".prtc");
+	std::string StrExt = ".prtc";
 
-	m_Particle->SaveFile(SaveParticleFileFullPath.c_str());
+	auto iterFind = std::search(SaveParticleFileFullName.begin(), SaveParticleFileFullName.end(),
+		std::boyer_moore_searcher(StrExt.begin(), StrExt.end()));
+
+	if (iterFind == SaveParticleFileFullName.end())
+		SaveParticleFileFullName.append(".prtc");
+
+	auto LoadedFullPath = CEngineUtil::CheckAndExtractFullPathOfTargetFile(PARTICLE_PATH, SaveParticleFileFullName);
+
+	if (!LoadedFullPath.has_value())
+		assert(false);
+
+	m_Particle->SaveFile(LoadedFullPath.value().c_str());
 
 	fwrite(&m_BillBoardEffect, sizeof(bool), 1, File);
 	fwrite(&m_SpawnTimeMax, sizeof(float), 1, File);
@@ -573,7 +599,8 @@ bool CParticleComponent::LoadOnly(FILE* File)
 	int	Length = 0;
 	fread(&Length, sizeof(int), 1, File);
 	fread(MeshName, sizeof(char), Length, File);
-	m_Mesh = (CSpriteMesh*)m_Scene->GetResource()->FindMesh(MeshName);
+	// m_Mesh = (CSpriteMesh*)m_Scene->GetResource()->FindMesh(MeshName);
+	m_Mesh = (CSpriteMesh*)CSceneManager::GetInst()->GetScene()->GetResource()->FindMesh(MeshName);
 
 	// Particle 생성
 	m_Particle = CSceneManager::GetInst()->GetScene()->GetResource()->CreateParticleEmpty<CParticle>();
@@ -586,40 +613,27 @@ bool CParticleComponent::LoadOnly(FILE* File)
 
 	// Particle
 	// m_Particle->Save(File);
-	std::string LoadParticleFileFullPath;
-	LoadParticleFileFullPath.reserve(100);
-
-	const PathInfo* Info = CPathManager::GetInst()->FindPath(PARTICLE_PATH);
-
-	if (Info)
-		LoadParticleFileFullPath = Info->PathMultibyte;
-	LoadParticleFileFullPath.append(LoadedParticleName);
+	std::string LoadParticleFileFullFileName = LoadedParticleName;
 
 	// .ptrc 가 해당 Name에 있는지 확인 후, 없으면 Add
-	if (LoadParticleFileFullPath.find(".prtc") == std::string::npos)
-		LoadParticleFileFullPath.append(".prtc");
+	std::string StrExt = ".prtc";
 
-	bool Result = m_Particle->LoadFile(LoadParticleFileFullPath.c_str());
+	auto iterFind = std::search(LoadParticleFileFullFileName.begin(), LoadParticleFileFullFileName.end(),
+		std::boyer_moore_searcher(StrExt.begin(), StrExt.end()));
+
+	if (iterFind == LoadParticleFileFullFileName.end())
+		LoadParticleFileFullFileName.append(".prtc");
+
+	auto LoadedFullPath = CEngineUtil::CheckAndExtractFullPathOfTargetFile(PARTICLE_PATH, LoadParticleFileFullFileName);
+
+	// 그래도 Load 가 안된다면, 아예 Load 할 prtc 파일 자체가 존재하지 않는다는 의미
+	if (!LoadedFullPath.has_value())
+		assert(false);
+
+	bool Result = m_Particle->LoadFile(LoadedFullPath.value().c_str());
 
 	if (!Result)
-	{
-		// 만약 없다면, Particle Path 전부를 뒤져서 찾는다.
-		// 해당 Dir 경로에, 해당 Name 으로 된 파일이 존재하는지 판단해주는 함수 + 존재할 시 FullPath 경로 리턴
-		std::string StrLoadParticleFileName = LoadedParticleName;
-		if (StrLoadParticleFileName.find(".prtc") == std::string::npos)
-			StrLoadParticleFileName.append(".prtc");
-
-		auto ExtraLoadResult = CEngineUtil::CheckAndExtractFullPathOfTargetFile(PARTICLE_PATH, StrLoadParticleFileName);
-
-		// 그래도 Load 가 안된다면, 아예 Load 할 prtc 파일 자체가 존재하지 않는다는 의미
-		if (!ExtraLoadResult.has_value())
-			assert(false);
-		
-		Result = m_Particle->LoadFile(ExtraLoadResult.value().c_str());
-
-		if (!Result)
-			assert(false);
-	}
+		assert(false);
 
 	m_ParticleName = m_Particle->GetName();
 

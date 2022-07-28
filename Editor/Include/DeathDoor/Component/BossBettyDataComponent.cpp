@@ -2,6 +2,7 @@
 #include "GameBehaviorTree.h"
 #include "GameStateComponent.h"
 #include "Component/AnimationMeshComponent.h"
+#include "Component/ParticleComponent.h"
 #include "Component/ColliderBox3D.h"
 #include "Component/ColliderSphere.h"
 #include "Collision/Collision.h"
@@ -58,6 +59,7 @@ void CBossBettyDataComponent::Start()
     // - 그리고 Spin 중간에, Collide 시 Spin Collider Animation 으로 바꾸는 Callback도 세팅한다.
     // - 처음에는 비활성화 시킨다.
     m_BossBettySpinCollider = (CColliderBox3D*)(m_Object->FindComponent("BossBettySpinCollide"));
+    m_BossBettySpinCollider->Start();
 
     if (m_BossBettySpinCollider)
     {
@@ -71,6 +73,7 @@ void CBossBettyDataComponent::Start()
     }
 
     m_MeleeAttackCollider = dynamic_cast<CColliderBox3D*>((m_Object->FindComponent("BossBettyAttackCollider")));
+    // m_MeleeAttackCollider
 
     if (m_MeleeAttackCollider)
     {
@@ -80,8 +83,24 @@ void CBossBettyDataComponent::Start()
 
         m_MeleeAttackCollider->AddCollisionCallback(Collision_State::Begin,
             (CMonsterDataComponent*)this, &CMonsterDataComponent::OnHitMeleeAttack);
-        
     }
+
+    CParticleComponent* FoundParticle = (CParticleComponent*)(m_Object->FindComponent("AttackGrass"));
+    
+    if (FoundParticle)
+    {
+        FoundParticle->GetCBuffer()->SetFollowRealTimeParticleComponentPos(true);
+        m_vecAttackAfterEffectParticle.push_back(FoundParticle);
+    }
+
+    FoundParticle = (CParticleComponent*)(m_Object->FindComponent("AttackCircle"));
+    
+    if (FoundParticle)
+    {
+        FoundParticle->GetCBuffer()->SetFollowRealTimeParticleComponentPos(true);
+        m_vecAttackAfterEffectParticle.push_back(FoundParticle);
+    }
+
 
     // 근거리 사정 거리 판별 Square Pos 위치 만들기 
     //  0: 왼쪽 하단, 1 : 왼쪽 상단, 2 : 오른쪽 상단, 3 : 오른쪽 하단
@@ -136,6 +155,8 @@ void CBossBettyDataComponent::OnBossBettyGenerateTwoSideCloseAttackEffect()
     m_MeleeAttackCollider->SetRelativePos(ColliderRelativePos);
 
     m_MeleeAttackCollider->SetExtent(5.f, 1.f, 3.f);
+
+    OnBossBettyActivateAfterEffect(m_Object->GetWorldPos() + ColliderRelativePos);
 }
 
 void CBossBettyDataComponent::OnSetBossBettyAttackColliderPosToBettyBody()
@@ -149,10 +170,12 @@ void CBossBettyDataComponent::OnBossBettyGenerateRightCloseAttackEffect()
     const Vector3& XWorldAxis = m_MeleeAttackCollider->GetRelativeAxis(AXIS::AXIS_X) * -1.f;
     const Vector3& ZWorldAxis = m_MeleeAttackCollider->GetRelativeAxis(AXIS::AXIS_Z) * -1.f;
 
-    const Vector3& ColliderRelativePos = XWorldAxis * 3.0f + ZWorldAxis * 7.0f;
+    const Vector3& ColliderRelativePos = XWorldAxis * 3.0f + ZWorldAxis * 5.0f;
 
     m_MeleeAttackCollider->SetRelativePos(ColliderRelativePos);
-    m_MeleeAttackCollider->SetExtent(3.f, 3.f, 5.f);
+    m_MeleeAttackCollider->SetExtent(3.f, 3.f, 4.f);
+
+    OnBossBettyActivateAfterEffect(m_Object->GetWorldPos() + ColliderRelativePos);
 }
 
 void CBossBettyDataComponent::OnBossBettyGenerateLeftCloseAttackEffect()
@@ -160,10 +183,12 @@ void CBossBettyDataComponent::OnBossBettyGenerateLeftCloseAttackEffect()
     const Vector3& XWorldAxis = m_MeleeAttackCollider->GetRelativeAxis(AXIS::AXIS_X) * -1.f;
     const Vector3& ZWorldAxis = m_MeleeAttackCollider->GetRelativeAxis(AXIS::AXIS_Z) * -1.f;
 
-    const Vector3& ColliderRelativePos = XWorldAxis * 3.5f * -1.f + ZWorldAxis * 7.0f;
+    const Vector3& ColliderRelativePos = XWorldAxis * 3.5f * -1.f + ZWorldAxis * 5.0f;
 
     m_MeleeAttackCollider->SetRelativePos(ColliderRelativePos);
-    m_MeleeAttackCollider->SetExtent(3.f, 3.f, 5.f);
+    m_MeleeAttackCollider->SetExtent(3.f, 3.f, 4.f);
+
+    OnBossBettyActivateAfterEffect(m_Object->GetWorldPos() + ColliderRelativePos);
 }
 
 void CBossBettyDataComponent::OnBossBettyRoarEffect(float DeltaTime)
@@ -184,7 +209,7 @@ void CBossBettyDataComponent::OnChangeFromSpinToSpinCollideWhenCollide(const Col
 
     if (AnimInst->GetCurrentAnimation()->GetName() == "Spin")
     {
-        if (Result.Dest->GetGameObject()->GetName() != "MapSurroundCollider")
+        if (Result.Dest->GetGameObject()->GetName() != "MapSurrounding")
             return;
 
         // 구 ~ 구 충돌
@@ -212,7 +237,7 @@ void CBossBettyDataComponent::OnPreventGoingOutOfMapSurroundingCollider(const Co
 {
     CAnimationSequenceInstance* AnimInst = dynamic_cast<CAnimationMeshComponent*>(m_Object->GetRootComponent())->GetAnimationInstance();
     
-    if (Result.Dest->GetGameObject()->GetName() != "MapSurroundCollider")
+    if (Result.Dest->GetGameObject()->GetName() != "MapSurrounding")
         return;
 
     // 밖으로 나가는 순간, Z Move 를 비활성화 한다.
@@ -266,4 +291,36 @@ void CBossBettyDataComponent::OnBossBettyDisableAttackCollider()
     CMonsterDataComponent::OnInActiveMeleeAttackCollider();
 
     m_MeleeAttackCollider->Enable(false);
+}
+
+void CBossBettyDataComponent::OnBossBettyActivateAfterEffect(const Vector3& WorldPos)
+{
+    size_t EffectSize = m_vecAttackAfterEffectParticle.size();
+
+    for (size_t i = 0; i < EffectSize; ++i)
+    {
+        m_vecAttackAfterEffectParticle[i]->ResetParticleStructuredBufferInfo();
+        m_vecAttackAfterEffectParticle[i]->SetWorldPos(WorldPos);
+    }
+}
+
+void CBossBettyDataComponent::IncFarAttackCount()
+{
+    ++m_FarAttackAttackNum;
+
+    // 3번 마자, Far Attack Type 을 다르게 해줄 것이다.
+    //  if (m_FarAttackAttackNum % 3 == 0)
+    if (m_FarAttackAttackNum % 2 == 0)
+    {
+        if (m_FarAttackType == BossBettyFarAttackType::Spin)
+            m_FarAttackType = BossBettyFarAttackType::JumpSmash;
+        else
+            m_FarAttackType = BossBettyFarAttackType::Spin;
+    }
+
+    if (m_FarAttackAttackNum == 4)
+    {
+        m_ThrowFarAttackEnable = true;
+        m_FarAttackAttackNum = 0;
+    }
 }
