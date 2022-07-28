@@ -55,7 +55,8 @@ public:
     virtual void OnPlayerEnterZone(const CollisionResult& Result);		// Boss Cutscene Trigger
 	virtual void OnStartCutScene();
     virtual void OnEndCutScene();
-
+	// Blood Particle
+	virtual void OnActivateBloodParticle();
 public:
 	virtual void SetIsHit(bool Hit) override;
 

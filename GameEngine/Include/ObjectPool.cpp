@@ -172,6 +172,9 @@ void CObjectPool::CreatePoolObject(const std::string& PathName)
 			Object->SetWorldScale(0.f, 0.f, 0.f);
 			Object->SetWorldPos(FLT_MAX, FLT_MAX, FLT_MAX);
 
+			// 해당 Object 들은, Scene Save 가 안되게 해야 한다. (OBJ) 추가
+			Object->ExcludeFromSceneSave();
+
 			bool Result = Object->LoadHierarchy(FullPath);
 
 			Object->GetRootComponent()->GetTransform()->ForceUpdateMat();

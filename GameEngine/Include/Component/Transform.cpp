@@ -957,8 +957,11 @@ void CTransform::SetParticleEffectEditorTransform()
 
 	CCameraComponent* Camera = m_Scene->GetCameraManager()->GetParticleEffectEditorCamera();
 
-	m_CBuffer->SetViewMatrix(Camera->GetViewMatrix());
-	m_CBuffer->SetProjMatrix(Camera->GetProjMatrix());
+	if (Camera)
+	{
+		m_CBuffer->SetViewMatrix(Camera->GetViewMatrix());
+		m_CBuffer->SetProjMatrix(Camera->GetProjMatrix());
+	}
 
 	m_CBuffer->SetPivot(m_Pivot);
 	m_CBuffer->SetMeshSize(m_MeshSize);

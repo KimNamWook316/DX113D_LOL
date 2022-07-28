@@ -350,6 +350,7 @@ void CSceneComponentHierarchyWindow::OnSetSelectNode(CIMGUITree* Tree)
 void CSceneComponentHierarchyWindow::OnDeleteComponent()
 {
 	CSceneComponent* DeleteComp = (CSceneComponent*)FindSelectComponent();
+
 	CGameObject* Object = DeleteComp->GetGameObject();
 
 	// Inspector에서 Widget삭제

@@ -16,7 +16,8 @@
 CBossBettyDataComponent::CBossBettyDataComponent() :
 	m_ThrowFarAttackEnable(false),
 	m_FarAttackType(BossBettyFarAttackType::JumpSmash),
-    m_ChangeDirLimitAngle(5.f)
+    m_ChangeDirLimitAngle(10.f),
+    m_CloseAttackAnimChangeEnable(true)
 {
     m_ComponentType = Component_Type::ObjectComponent;
     SetTypeID<CBossBettyDataComponent>();
@@ -37,7 +38,7 @@ void CBossBettyDataComponent::Start()
 
     //  CMonsterDataComponent::Start(); 에서 HitBox Collider 를 찾았을 것이다.
     // 해당 Collider 의 Extent 를 설정해준다.
-    m_HitBox->SetExtent(3.0f, 3.0f, 3.0f);
+    m_HitBox->SetExtent(3.5f, 3.5f, 3.5f);
 
     m_Data = CDataManager::GetInst()->GetObjectData("BossBetty");
 
@@ -53,13 +54,12 @@ void CBossBettyDataComponent::Start()
 
     // Current Animation 은 Idle 로 세팅한다.
     CAnimationSequenceInstance* AnimInst = dynamic_cast<CAnimationMeshComponent*>(m_Object->GetRootComponent())->GetAnimationInstance();
-    AnimInst->ChangeAnimation("Idle");
+    // AnimInst->ChangeAnimation("Idle");
 
     // m_BossBettySpinCollider 를 Object 의 Component List 에 추가한다.
     // - 그리고 Spin 중간에, Collide 시 Spin Collider Animation 으로 바꾸는 Callback도 세팅한다.
     // - 처음에는 비활성화 시킨다.
     m_BossBettySpinCollider = (CColliderBox3D*)(m_Object->FindComponent("BossBettySpinCollide"));
-    m_BossBettySpinCollider->Start();
 
     if (m_BossBettySpinCollider)
     {
@@ -141,6 +141,18 @@ void CBossBettyDataComponent::Start()
     m_RelativeSlashLeftPos = (m_SlashRightSquarePos[0] + m_SlashRightSquarePos[2]) / 2.f;
 }
 
+void CBossBettyDataComponent::OnActivateBloodParticle()
+{
+    CMonsterDataComponent::OnActivateBloodParticle();
+
+    const Vector3& XWorldAxis = m_MeleeAttackCollider->GetRelativeAxis(AXIS::AXIS_X) * -1.f;
+    const Vector3& ZWorldAxis = m_MeleeAttackCollider->GetRelativeAxis(AXIS::AXIS_Z) * -1.f;
+
+    Vector3 RelativePos = ZWorldAxis * rand() * 3.f + Vector3(0.f, 2.f, 0.f);
+
+    m_BloodParticle->SetRelativePos(RelativePos);
+}
+
 void CBossBettyDataComponent::OnBossBettyGenerateTwoSideCloseAttackEffect()
 {
 	// 양쪽에 
@@ -154,7 +166,7 @@ void CBossBettyDataComponent::OnBossBettyGenerateTwoSideCloseAttackEffect()
 
     m_MeleeAttackCollider->SetRelativePos(ColliderRelativePos);
 
-    m_MeleeAttackCollider->SetExtent(5.f, 1.f, 3.f);
+    m_MeleeAttackCollider->SetExtent(4.f, 1.f, 2.f);
 
     OnBossBettyActivateAfterEffect(m_Object->GetWorldPos() + ColliderRelativePos);
 }
@@ -162,7 +174,7 @@ void CBossBettyDataComponent::OnBossBettyGenerateTwoSideCloseAttackEffect()
 void CBossBettyDataComponent::OnSetBossBettyAttackColliderPosToBettyBody()
 {
     m_MeleeAttackCollider->SetRelativePos(Vector3(0.f, 0.f, 0.f));
-    m_MeleeAttackCollider->SetExtent(3.f, 3.f, 3.f);
+    m_MeleeAttackCollider->SetExtent(2.5f, 2.5f, 2.5f);
 }
 
 void CBossBettyDataComponent::OnBossBettyGenerateRightCloseAttackEffect()
@@ -173,7 +185,7 @@ void CBossBettyDataComponent::OnBossBettyGenerateRightCloseAttackEffect()
     const Vector3& ColliderRelativePos = XWorldAxis * 3.0f + ZWorldAxis * 5.0f;
 
     m_MeleeAttackCollider->SetRelativePos(ColliderRelativePos);
-    m_MeleeAttackCollider->SetExtent(3.f, 3.f, 4.f);
+    m_MeleeAttackCollider->SetExtent(2.5f, 2.5f, 3.f);
 
     OnBossBettyActivateAfterEffect(m_Object->GetWorldPos() + ColliderRelativePos);
 }
@@ -186,7 +198,7 @@ void CBossBettyDataComponent::OnBossBettyGenerateLeftCloseAttackEffect()
     const Vector3& ColliderRelativePos = XWorldAxis * 3.5f * -1.f + ZWorldAxis * 5.0f;
 
     m_MeleeAttackCollider->SetRelativePos(ColliderRelativePos);
-    m_MeleeAttackCollider->SetExtent(3.f, 3.f, 4.f);
+    m_MeleeAttackCollider->SetExtent(2.5f, 2.5f, 3.f);
 
     OnBossBettyActivateAfterEffect(m_Object->GetWorldPos() + ColliderRelativePos);
 }
@@ -279,6 +291,12 @@ void CBossBettyDataComponent::OnBossBettyApplyOutOfMapSurroundingColliderMoveSpe
    SetCurMoveSpeed(m_OriginMoveSpeed * 0.2f);
 }
 
+void CBossBettyDataComponent::OnBossBettySetAttackColliderToBettyBodyPos()
+{
+    m_MeleeAttackCollider->SetExtent(3.f, 3.f, 3.f);
+    m_MeleeAttackCollider->SetWorldPos(m_Object->GetWorldPos());
+}
+
 void CBossBettyDataComponent::OnBossBettyEnableAttackCollider()
 {
     CMonsterDataComponent::OnActiveMeleeAttackCollider();
@@ -304,6 +322,16 @@ void CBossBettyDataComponent::OnBossBettyActivateAfterEffect(const Vector3& Worl
     }
 }
 
+void CBossBettyDataComponent::OnBossBettyEnableCloseAttackChangeAnim()
+{
+    m_CloseAttackAnimChangeEnable = true;
+}
+
+void CBossBettyDataComponent::OnBossBettyDisableCloseAttackChangeAnim()
+{
+    m_CloseAttackAnimChangeEnable = false;
+}
+
 void CBossBettyDataComponent::IncFarAttackCount()
 {
     ++m_FarAttackAttackNum;
@@ -318,7 +346,8 @@ void CBossBettyDataComponent::IncFarAttackCount()
             m_FarAttackType = BossBettyFarAttackType::Spin;
     }
 
-    if (m_FarAttackAttackNum == 4)
+    // if (m_FarAttackAttackNum == 4)
+    if (m_FarAttackAttackNum == 2)
     {
         m_ThrowFarAttackEnable = true;
         m_FarAttackAttackNum = 0;

@@ -37,6 +37,8 @@ private :
     // 원거리 공격 Type
     BossBettyFarAttackType m_FarAttackType;
 
+    // 근거리 공격 Animaion Change 가 가능한가 (여러 Close Attack 종류가 존재한다)
+    bool m_CloseAttackAnimChangeEnable;
 
     // Origin MoveTime
     float m_OriginMoveSpeed;
@@ -75,6 +77,7 @@ private :
 
 public:
     virtual void Start() override;
+    virtual void OnActivateBloodParticle() override;
 public :
     // (아래 콜백 함수들은, 여러 Action Node 들에서 공통으로 사용하는 효과)
     // 땅을 내리칠때, 양쪽에 Attack 효과를 내기
@@ -106,11 +109,14 @@ public :
     // MapSurroundingCollider 로 부터 서서히 벗어나게 하기 위한 Speed 세팅
     void OnBossBettyApplyOutOfMapSurroundingColliderMoveSpeed();
     // Betty 공격 Collider Enable 처리 여부
+    void OnBossBettySetAttackColliderToBettyBodyPos();
     void OnBossBettyEnableAttackCollider();
     void OnBossBettyDisableAttackCollider();
     // Betty Attack After Effect
     void OnBossBettyActivateAfterEffect(const Vector3& WorldPos);
-
+    // Close Attack Anim Change 여부 
+    void OnBossBettyEnableCloseAttackChangeAnim();
+    void OnBossBettyDisableCloseAttackChangeAnim();
     // Setter 함수 ---
 public:
     void SetBettyThrowBallObject(class CGameObject* Object)
@@ -133,7 +139,10 @@ public:
     {
         m_ThrowFarAttackEnable = Enable;
     }
-
+    void SetCloseAttackAnimChangeEnable(bool Enable)
+    {
+        m_CloseAttackAnimChangeEnable = Enable;
+    }
     void IncCloseSequentialAttackCount()
     {
         ++m_CloseSequentialAttackNum;
@@ -141,6 +150,10 @@ public:
     void IncFarAttackCount();
     // Getter 함수 ---
 public:
+    bool IsCloseAttackAnimChangeEnable() const
+    {
+        return m_CloseAttackAnimChangeEnable;
+    }
     float GetOriginRotSpeed() const
     {
         return m_OriginRotSpeed;

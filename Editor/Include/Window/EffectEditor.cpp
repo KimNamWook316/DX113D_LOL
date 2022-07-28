@@ -1085,31 +1085,31 @@ void CEffectEditor::OnSetBazierD3Pos(const Vector3& Pos)
 
 void CEffectEditor::OnClickStartBazierMove()
 {
-    if (!m_ParticleClass)
-        return;
-
-    bool BazierMoveEnable = dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->IsBazierMoveEnable();
-
-    if (BazierMoveEnable)
-    {
-        dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->SetBazierMoveEffect(false);
-    }
-    else
-    {
-        m_ParticleObject->SetWorldPos(0.f, 0.f, 0.f);
-
-        dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->SetBazierTargetPos(
-            m_BazierD1Pos, m_BazierD2Pos, m_BazierD3Pos, 300
-        );
-
-        // Particle Speed Settting
-        dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->SetParticleMoveSpeed(50.f);
-
-        // 급증하는 효과 주기 
-        dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->SetComponentSpeedChangeMethod(ParticleSpeedChangeMethod::Exponential);
-
-        dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->SetBazierMoveEffect(true);
-    }
+   // if (!m_ParticleClass)
+   //     return;
+   // 
+   // bool BazierMoveEnable = dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->IsBazierMoveEnable();
+   // 
+   // if (BazierMoveEnable)
+   // {
+   //     dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->SetBazierMoveEffect(false);
+   // }
+   // else
+   // {
+   //     m_ParticleObject->SetWorldPos(0.f, 0.f, 0.f);
+   // 
+   //     dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->SetBazierTargetPos(
+   //         m_BazierD1Pos, m_BazierD2Pos, m_BazierD3Pos, 300
+   //     );
+   // 
+   //     // Particle Speed Settting
+   //     dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->SetParticleMoveSpeed(50.f);
+   // 
+   //     // 급증하는 효과 주기 
+   //     dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->SetComponentSpeedChangeMethod(ParticleSpeedChangeMethod::Exponential);
+   // 
+   //     dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->SetBazierMoveEffect(true);
+   // }
 }
 
 

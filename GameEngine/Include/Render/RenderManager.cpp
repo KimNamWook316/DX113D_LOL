@@ -1186,16 +1186,16 @@ void CRenderManager::RenderParticle()
 
 void CRenderManager::RenderPlayer(CMesh* PlayerMesh)
 {
-	m_PlayerTarget->ClearTarget();
-
-	m_PlayerTarget->SetTarget();
-	m_DepthDisable->SetState();
-	m_ShadowMapShader->SetShader();
-
-	PlayerMesh->Render();
-
-	m_DepthDisable->ResetState();
-	m_PlayerTarget->ResetTarget();
+	// m_PlayerTarget->ClearTarget();
+	// 
+	// m_PlayerTarget->SetTarget();
+	// m_DepthDisable->SetState();
+	// m_ShadowMapShader->SetShader();
+	// 
+	// PlayerMesh->Render();
+	// 
+	// m_DepthDisable->ResetState();
+	// m_PlayerTarget->ResetTarget();
 }
 
 void CRenderManager::SetBlendFactor(const std::string& Name, float r, float g,

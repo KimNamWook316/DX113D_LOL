@@ -128,7 +128,11 @@ void CMonsterDataComponent::Start()
 
 	if (m_BloodParticle)
 	{
-		m_BloodParticle->Enable(false);
+		// m_BloodParticle->Enable(false);
+
+		// m_BloodParticle 은 Rot Y를 inherite 하게 세팅한다.
+		//그래야만, BillBoard 효과를 통해 Y축은 항상 카메라를 바라보게 할 수 있다.
+		m_BloodParticle->SetInheritRotY(true);
 	}
 
 	CAnimationSequenceInstance* AnimInst = m_AnimMesh->GetAnimationInstance();
@@ -236,7 +240,7 @@ void CMonsterDataComponent::LookPlayer(float DeltaTime)
 
 	// (OBJ) 순간적으로 미세하게 떨리는 오류
 	// if (abs(AnglePlayer) < m_Data.RotateSpeedPerSec * DeltaTime)
-	if (abs(AnglePlayer) < 3.f)
+	if (abs(AnglePlayer) < 6.f)
 	{
 		// MyObj->AddWorldRotationY(AnglePlayer * DeltaTime);
 	}
@@ -400,6 +404,16 @@ void CMonsterDataComponent::OnEndCutScene()
 	}
 }
 
+void CMonsterDataComponent::OnActivateBloodParticle()
+{
+	if (!m_BloodParticle)
+		return;
+
+	m_BloodParticle->GetCBuffer()->SetFollowRealTimeParticleComponentPos(true);
+	m_BloodParticle->Enable(true);
+	m_BloodParticle->ResetParticleStructuredBufferInfo();
+}
+
 void CMonsterDataComponent::SetIsHit(bool Hit)
 {
 	CObjectDataComponent::SetIsHit(Hit);
@@ -412,6 +426,9 @@ void CMonsterDataComponent::SetIsHit(bool Hit)
 			m_HitEffectTimer = 0.f;
 			m_HitEffectStart = true;
 		}
+
+		// Blood Particle 을 동작시킨다.
+		OnActivateBloodParticle();
 	}
 }
 
