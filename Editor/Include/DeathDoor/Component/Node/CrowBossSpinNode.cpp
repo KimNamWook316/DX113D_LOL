@@ -65,14 +65,19 @@ NodeResult CCrowBossSpinNode::OnStart(float DeltaTime)
 	else
 		m_AnimationMeshComp->GetAnimationInstance()->ChangeAnimation("LeftSpin");
 
-	Vector3 SpinDir = MyOriginPos - PlayerCurrentPos;
+	Vector3 SpinDir = PlayerCurrentPos - MyCurrentPos;
 	SpinDir.Normalize();
 
 	float DotProduct = FaceDir.Dot(SpinDir);
 
-	if (DotProduct < 0.995f && DotProduct > -0.995f)
+	if (DotProduct < 0.9999f && DotProduct > -0.9999f)
 	{
 		m_SpinDegree = RadianToDegree(acosf(DotProduct));
+
+		Vector3 CrossVec = FaceDir.Cross(SpinDir);
+
+		if (CrossVec.y < 0.f)
+			m_SpinDegree *= -1.f;
 	}
 
 	else
@@ -92,26 +97,14 @@ NodeResult CCrowBossSpinNode::OnUpdate(float DeltaTime)
 
 	CCrowBossDataComponent* Data = dynamic_cast<CCrowBossDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
 
-	//CMonsterNavAgent* Agent = Data->GetMonsterNavAgent();
-
-	//CGameObject* Player = m_Object->GetScene()->GetPlayerObject();
-	//CNavAgent* PlayerNavAgent = Player->FindObjectComponentFromType<CNavAgent>();
-
-	//Vector3 MyFaceDir = Agent->GetCurrentFaceDir();
-	//Vector3 PlayerFaceDir = PlayerNavAgent->GetCurrentFaceDir();
-
-	//float DotProduct = MyFaceDir.Dot(PlayerFaceDir);
-	//float Degree = DegreeToRadian(acosf(DotProduct));
-
-
 	Vector3 MyOriginPos = Data->GetMyOriginPos();
 	Vector3 PlayerOriginPos = Data->GetPlayerOriginPos();
 	Vector3 OriginDir = PlayerOriginPos - MyOriginPos;
 	OriginDir.Normalize();
 
-	if (abs(m_AccRotation - m_SpinDegree) < 3.f)
+	if (abs(m_AccRotation - m_SpinDegree) < 2.f)
 	{
-		if (m_AccSlidingTime > 1.1f)
+		if (m_AccSlidingTime > 1.f)
 		{
 			m_AccRotation = 0.f;
 			m_AccSlidingTime = 0.f;

@@ -25,6 +25,13 @@ NodeResult CCrowBossBypassCheck::OnStart(float DeltaTime)
 {
 	CCrowBossDataComponent* Data = dynamic_cast<CCrowBossDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
 
+	if (Data->IsAfterShoot())
+	{
+		Data->SetAfterShoot(false);
+		return NodeResult::Node_True;
+	}
+
+
 	Vector3 PlayerOriginPos = Data->GetPlayerOriginPos();
 	Vector3 PlayerCurrentPos = m_Object->GetScene()->GetPlayerObject()->GetWorldPos();
 	Vector3 MyOriginPos = Data->GetMyOriginPos();
@@ -33,15 +40,39 @@ NodeResult CCrowBossBypassCheck::OnStart(float DeltaTime)
 	Vector3 Dir = PlayerOriginPos - MyOriginPos;
 	Dir.Normalize();
 
-	//Vector3 FaceDir = Data->GetMonsterNavAgent()->GetCurrentFaceDir();
+	Vector3 FaceDir = Data->GetMonsterNavAgent()->GetCurrentFaceDir();
 	//float Speed = Data->GetMoveSpeed();
 
-	//m_Object->AddWorldPos(FaceDir * Speed * DeltaTime);
+	//m_Object->AddWorldPos(FaceDir * 4.f * DeltaTime);
 
 	Vector3 OriginDiff = PlayerOriginPos - MyOriginPos;
 	Vector3 CurrentDiff = PlayerCurrentPos - MyCurrentPos;
 
-	if (OriginDiff.x < 0.f && OriginDiff.z < 0.f)
+	if (MyOriginPos.x < PlayerOriginPos.x)
+	{
+		if (MyCurrentPos.x > PlayerCurrentPos.x + 4.f)
+			return NodeResult::Node_True;
+	}
+
+	if (MyOriginPos.x > PlayerOriginPos.x)
+	{
+		if (MyCurrentPos.x < PlayerCurrentPos.x - 4.f)
+			return NodeResult::Node_True;
+	}
+
+	if (MyOriginPos.z < PlayerOriginPos.z)
+	{
+		if (MyCurrentPos.z > PlayerCurrentPos.z + 4.f)
+			return NodeResult::Node_True;
+	}
+
+	if (MyOriginPos.z > PlayerOriginPos.z)
+	{
+		if (MyCurrentPos.z < PlayerCurrentPos.z - 4.f)
+			return NodeResult::Node_True;
+	}
+
+	/*if (OriginDiff.x < 0.f && OriginDiff.z < 0.f)
 	{
 		if (CurrentDiff.x > 4.f && CurrentDiff.z > 4.f)
 			return NodeResult::Node_True;
@@ -64,7 +95,7 @@ NodeResult CCrowBossBypassCheck::OnStart(float DeltaTime)
 	{
 		if (CurrentDiff.x < -4.f && CurrentDiff.z > 4.f)
 			return NodeResult::Node_True;
-	}
+	}*/
 
 
 	

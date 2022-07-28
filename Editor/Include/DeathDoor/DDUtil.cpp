@@ -91,8 +91,6 @@ std::string CDDUtil::DDConditionNodeTypeToString(DDConditionNode NodeType)
 	// Crow Boss
 	case DDConditionNode::CrowBossCutScenePlayCheck:
 		return "CrowBossCutScenePlayCheck";
-	case DDConditionNode::CrowBossDirectionCheck:
-		return "CrowBossDirectionCheck";
 	case DDConditionNode::CrowBossPhasePickNode:
 		return "CrowBossPhasePickNode";
 	case DDConditionNode::CrowBossBypassCheck:
@@ -103,6 +101,16 @@ std::string CDDUtil::DDConditionNodeTypeToString(DDConditionNode NodeType)
 		return "CrowBossLandingCheck";
 	case DDConditionNode::CrowBossJumpAttackRangeCheck:
 		return "CrowBossJumpAttackRangeCheck";
+	case DDConditionNode::CrowBossDoneCheck:
+		return "CrowBossDoneCheck";
+	case DDConditionNode::CrowBossFirstShootCheck:
+		return "CrowBossFirstShootCheck";
+	case DDConditionNode::CrowBossShootCheck:
+		return "CrowBossShootCheck";
+	case DDConditionNode::CrowBossShootEndCheck:
+		return "CrowBossShootEndCheck";
+	case DDConditionNode::CrowBossShootReadyCheck:
+		return "CrowBossShootReadyCheck";
 
 
 	case DDConditionNode::HPCheck:
@@ -226,10 +234,6 @@ DDConditionNode CDDUtil::StringToDDConditionNodeType(const std::string& Str)
 	else if (Str == "CrowBossCutScenePlayCheck")
 	{
 		return DDConditionNode::CrowBossCutScenePlayCheck;
-	}
-	else if (Str == "CrowBossDirectionCheck")
-	{
-		return DDConditionNode::CrowBossDirectionCheck;
 	}
 	else if (Str == "CrowBossPhasePickNode")
 	{
@@ -364,6 +368,16 @@ std::string CDDUtil::DDActionNodeTypeToString(DDActionNode NodeType)
 		return "CrowBossSpinNode";
 	case DDActionNode::CrowBossJump:
 		return "CrowBossJump";
+	case DDActionNode::CrowBossFly:
+		return "CrowBossFlyNode";
+	case DDActionNode::CrowBossMoveShootSpot:
+		return "CrowBossMoveShootSpot";
+	case DDActionNode::CrowBossResetShootState:
+		return "CrowBossResetShootState";
+	case DDActionNode::CrowBossShoot:
+		return "CrowBossShoot";
+	case DDActionNode::CrowBossSlide:
+		return "CrowBossSlide";
 
 	case DDActionNode::ClearPathList:
 		return "ClearPathList";
@@ -492,7 +506,26 @@ DDActionNode CDDUtil::StringToDDActionNodeType(const std::string& Str)
 	{
 		return DDActionNode::CrowBossJump;
 	}
-
+	else if (Str == "CrowBossFly")
+	{
+		return DDActionNode::CrowBossFly;
+	}
+	else if (Str == "CrowBossMoveShootSpot")
+	{
+		return DDActionNode::CrowBossMoveShootSpot;
+	}
+	else if (Str == "CrowBossResetShootState")
+	{
+		return DDActionNode::CrowBossResetShootState;
+	}
+	else if (Str == "CrowBossShoot")
+	{
+		return DDActionNode::CrowBossShoot;
+	}
+	else if (Str == "CrowBossSlide")
+	{
+	return DDActionNode::CrowBossSlide;
+	}
 
 	else if (Str == "ClearPathList")
 	{

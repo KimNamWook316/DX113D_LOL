@@ -138,6 +138,7 @@ void CObjectPool::CreatePoolObject(const std::string& PathName)
 
 	for (size_t i = 0; i < Count; ++i)
 	{
+
 		char FullPath[MAX_PATH] = {};
 		strcpy_s(FullPath, Info->PathMultibyte);
 
@@ -167,8 +168,13 @@ void CObjectPool::CreatePoolObject(const std::string& PathName)
 			CGameObject* Object = new CGameObject;
 			Object->SetName(ObjectName);
 			Object->SetInPool(true);
+			Object->SetScene(CSceneManager::GetInst()->GetScene());
+			Object->SetWorldScale(0.f, 0.f, 0.f);
+			Object->SetWorldPos(FLT_MAX, FLT_MAX, FLT_MAX);
 
 			bool Result = Object->LoadHierarchy(FullPath);
+
+			Object->GetRootComponent()->GetTransform()->ForceUpdateMat();
 
 			if (Result)
 			{

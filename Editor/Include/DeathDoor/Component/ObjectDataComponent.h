@@ -31,6 +31,11 @@ public:
 		// m_IsHitPrevFrame = false;
 	}
 
+	float GetFlySpeed()	const
+	{
+		return m_Data.FlySpeed;
+	}
+
 	bool GetIsHit()	const
 	{
 		return m_IsHit;
@@ -44,6 +49,11 @@ public:
 	void DecreaseHP(int Amount)
 	{
 		m_Data.HP -= Amount;
+	}
+
+	void SetFlySpeed(float Speed)
+	{
+		m_Data.FlySpeed = Speed;
 	}
 
 	void SetDetectRange(float Range)

@@ -59,6 +59,7 @@ void CBossBettyDataComponent::Start()
     // - 그리고 Spin 중간에, Collide 시 Spin Collider Animation 으로 바꾸는 Callback도 세팅한다.
     // - 처음에는 비활성화 시킨다.
     m_BossBettySpinCollider = (CColliderBox3D*)(m_Object->FindComponent("BossBettySpinCollide"));
+    m_BossBettySpinCollider->Start();
 
     if (m_BossBettySpinCollider)
     {
@@ -72,6 +73,7 @@ void CBossBettyDataComponent::Start()
     }
 
     m_MeleeAttackCollider = dynamic_cast<CColliderBox3D*>((m_Object->FindComponent("BossBettyAttackCollider")));
+    // m_MeleeAttackCollider
 
     if (m_MeleeAttackCollider)
     {
@@ -207,7 +209,7 @@ void CBossBettyDataComponent::OnChangeFromSpinToSpinCollideWhenCollide(const Col
 
     if (AnimInst->GetCurrentAnimation()->GetName() == "Spin")
     {
-        if (Result.Dest->GetGameObject()->GetName() != "MapSurroundCollider")
+        if (Result.Dest->GetGameObject()->GetName() != "MapSurrounding")
             return;
 
         // 구 ~ 구 충돌
@@ -235,7 +237,7 @@ void CBossBettyDataComponent::OnPreventGoingOutOfMapSurroundingCollider(const Co
 {
     CAnimationSequenceInstance* AnimInst = dynamic_cast<CAnimationMeshComponent*>(m_Object->GetRootComponent())->GetAnimationInstance();
     
-    if (Result.Dest->GetGameObject()->GetName() != "MapSurroundCollider")
+    if (Result.Dest->GetGameObject()->GetName() != "MapSurrounding")
         return;
 
     // 밖으로 나가는 순간, Z Move 를 비활성화 한다.

@@ -38,10 +38,10 @@ NodeResult CCrowBossRunNode::OnUpdate(float DeltaTime)
 	CCrowBossDataComponent* Data = dynamic_cast<CCrowBossDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
 
 	CNavAgent* Agent = Data->GetMonsterNavAgent();
-	Vector3 PlayerOriginPos = Data->GetPlayerOriginPos();
-	Vector3 MyOriginPos = Data->GetMyOriginPos();;
+	Vector3 PlayerCurrentPos = m_Object->GetScene()->GetPlayerObject()->GetWorldPos();
+	Vector3 MyCurrentPos = m_Object->GetWorldPos();
 
-	Vector3 RunDir = PlayerOriginPos - MyOriginPos;
+	Vector3 RunDir = PlayerCurrentPos - MyCurrentPos;
 	RunDir.Normalize();
 
 	Vector3 FaceDir = Agent->GetCurrentFaceDir();

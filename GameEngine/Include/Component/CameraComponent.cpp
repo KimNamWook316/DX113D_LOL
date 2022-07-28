@@ -706,26 +706,26 @@ bool CCameraComponent::Load(FILE* File)
 	fread(&m_Distance, sizeof(float), 1, File);
 	fread(&m_RS, sizeof(Resolution), 1, File);
 
-	int Length = 0;
-	fread(&Length, sizeof(int), 1, File);
-	
-	for (int i = 0; i < Length; ++i)
-	{
-		CamMoveData* Data = new CamMoveData;
-	
-		Vector3 DestPoint;
-		float NextPointReachTime, StayTime;
-	
-		fread(&DestPoint, sizeof(Vector3), 1, File);
-		fread(&NextPointReachTime, sizeof(float), 1, File);
-		fread(&StayTime, sizeof(float), 1, File);
-	
-		Data->DestPoint = DestPoint;
-		Data->NextPointReachTime = NextPointReachTime;
-		Data->StayTime = StayTime;
-	
-		m_MoveDataList.push_back(Data);
-	}
+ 	int Length = 0;
+ 	fread(&Length, sizeof(int), 1, File);
+ 
+ 	for (int i = 0; i < Length; ++i)
+ 	{
+ 		CamMoveData* Data = new CamMoveData;
+ 
+ 		Vector3 DestPoint;
+ 		float NextPointReachTime, StayTime;
+ 
+ 		fread(&DestPoint, sizeof(Vector3), 1, File);
+ 		fread(&NextPointReachTime, sizeof(float), 1, File);
+ 		fread(&StayTime, sizeof(float), 1, File);
+ 
+ 		Data->DestPoint = DestPoint;
+ 		Data->NextPointReachTime = NextPointReachTime;
+ 		Data->StayTime = StayTime;
+ 
+ 		m_MoveDataList.push_back(Data);
+ 	}
 
 	CSceneComponent::Load(File);
 

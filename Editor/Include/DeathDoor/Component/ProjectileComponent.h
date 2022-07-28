@@ -84,18 +84,18 @@ private:
 
 	float	m_LifeTime;
 	float	m_LifeTimer;
-	bool	m_NoDestroy;
+	bool	m_Destroy;
 	bool	m_NoUpdate;
 
 public:
-	void SetNoDestroy(bool NoDestroy)
+	void SetDestroy(bool NoDestroy)
 	{
-		m_NoDestroy = NoDestroy;
+		m_Destroy = NoDestroy;
 	}
 
-	bool GetNoDestroy()	const
+	bool GetDestroy()	const
 	{
-		return m_NoDestroy;
+		return m_Destroy;
 	}
 
 	void SetNoUpdate(bool Update)
@@ -106,6 +106,11 @@ public:
 	bool GetNoUpdate()	const
 	{
 		return m_NoUpdate;
+	}
+
+	void SetLifeTimer(float Timer)
+	{
+		m_LifeTimer = Timer;
 	}
 };
 

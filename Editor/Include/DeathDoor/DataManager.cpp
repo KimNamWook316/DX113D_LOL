@@ -106,6 +106,10 @@ const ObjectData& CDataManager::GetObjectData(const std::string& Key)
 		{
 			Data.RotateSpeedPerSec = (float)Frame;
 		}
+		else if (i == 7)
+		{
+			Data.FlySpeed = (float)Frame;
+		}
 	}
 
 	return Data;

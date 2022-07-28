@@ -2,6 +2,7 @@
 #include "MonsterDataComponent.h"
 #include "GameObject/GameObject.h"
 #include "Component/AnimationMeshComponent.h"
+#include "Component/ParticleComponent.h"
 #include "Component/ColliderBox3D.h"
 #include "../Component/GameStateComponent.h"
 #include "MonsterNavAgent.h"
@@ -124,6 +125,11 @@ void CMonsterDataComponent::Start()
 
 	// Blood Particle
 	m_BloodParticle = (CParticleComponent*)m_Object->FindComponent("BloodParticle");
+
+	if (m_BloodParticle)
+	{
+		m_BloodParticle->Enable(false);
+	}
 
 	CAnimationSequenceInstance* AnimInst = m_AnimMesh->GetAnimationInstance();
 	AnimInst->AddNotify("Death", "DeathStart", 0, this, &CMonsterDataComponent::OnDeadAnimStart);
