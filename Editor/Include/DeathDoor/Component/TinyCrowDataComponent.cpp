@@ -56,7 +56,6 @@ void CTinyCrowDataComponent::OnCollisionPlayer(const CollisionResult& Result)
 {
 	if (Result.Dest->GetGameObject()->GetObjectType() == Object_Type::Player)
 	{
-		m_Scene->GetCameraManager()->GetCurrentCamera()->Shake(0.2f, 0.2f);
 		m_Object->Destroy();
 
 		CGameObject* DestObject = Result.Dest->GetGameObject();
@@ -67,7 +66,6 @@ void CTinyCrowDataComponent::OnCollisionPlayer(const CollisionResult& Result)
 
 	else if (Result.Dest->GetCollisionProfile()->Name == "PlayerAttack")
 	{
-		m_Scene->GetCameraManager()->GetCurrentCamera()->Shake(0.2f, 0.2f);
 		m_Object->Destroy();
 	}
 }

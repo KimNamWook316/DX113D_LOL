@@ -10,6 +10,7 @@
 #include "../Component/PlayerDataComponent.h"
 #include "Component/PaperBurnComponent.h"
 #include "../DDUtil.h"
+#include "PlayerNormalAttackCheckCollider.h"
 
 CMonsterDataComponent::CMonsterDataComponent() :
 	m_AnimMesh(nullptr),
@@ -323,6 +324,13 @@ void CMonsterDataComponent::OnDeadAnimStart()
 
 	// DeathChangeColor() 를 사용하는 경우
 	m_DeathColorChangeStart = true;
+
+	CGameObject* Player = m_Object->GetScene()->GetPlayerObject();
+
+	// 플레이어의 공격에 맞은 오브젝트들의 DataComponent를 모아놓은 m_CollisionObjDataList에서 본인을 지운다
+	CPlayerNormalAttackCheckCollider* AttackCollider = Player->FindComponentFromType<CPlayerNormalAttackCheckCollider>();
+	AttackCollider->DeleteObjectData(this);
+
 }
 
 void CMonsterDataComponent::OnDeadAnimEnd()

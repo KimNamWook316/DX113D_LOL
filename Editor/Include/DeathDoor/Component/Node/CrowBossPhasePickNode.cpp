@@ -26,6 +26,12 @@ NodeResult CCrowBossPhasePickNode::OnStart(float DeltaTime)
 
 	CCrowBossDataComponent* Data = dynamic_cast<CCrowBossDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
 
+	if (Data->GetHP() <= 0)
+	{
+		Data->ClearPhaseQueue();
+		m_Owner->SetCurrentNode(nullptr);
+		m_Owner->GetOwner()->SetTreeUpdate(false);
+	}
 	int Phase;
 	if(Data->IsPhaseQueueEmpty())
 		Phase = rand() % 4 + 2;

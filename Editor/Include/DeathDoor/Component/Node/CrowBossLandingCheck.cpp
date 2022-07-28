@@ -36,7 +36,7 @@ NodeResult CCrowBossLandingCheck::OnStart(float DeltaTime)
 
 		Data->SetStartStomp(false);
 		Data->SetStartJump(false);
-		Data->GetHitBox()->Enable(true);
+		Data->GetMeleeAttackCollider()->Enable(true);
 
 		m_Object->SetWorldPos(MyPos.x, 0.f, MyPos.z);
 

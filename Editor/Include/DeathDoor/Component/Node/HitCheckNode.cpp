@@ -1,6 +1,7 @@
 
 #include "HitCheckNode.h"
 #include "../ObjectDataComponent.h"
+#include "../PlayerDataComponent.h"
 #include "../GameStateComponent.h"
 
 CHitCheckNode::CHitCheckNode()

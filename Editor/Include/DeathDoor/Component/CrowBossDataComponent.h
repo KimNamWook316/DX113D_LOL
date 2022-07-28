@@ -51,6 +51,12 @@ public:
 	virtual void Update(float DeltaTime);
 
 public:
+	void ClearPhaseQueue()
+	{
+		while (!m_PhaseQueue.empty())
+			m_PhaseQueue.pop();
+	}
+
 	void SetShootDirFixed(bool Fix)
 	{
 		m_ShootDirFixed = Fix;
@@ -223,10 +229,12 @@ public:
 
 public:
 	void OnEndCrowBossJump();
+	void OnCollision(const CollisionResult& Result);
+	virtual void OnDeadAnimStart() override;
+	virtual void OnDeadPaperBurnEnd() override;
 	void ShootChain(const Vector3& ShootDir, float DeltaTime);
 	void Fly(const Vector3& FlyDir, float DeltaTime);
 	void Teleport();
 	bool Spitting(float DeltaTime);
-	void OnCollision(const CollisionResult& Result);
 };
 

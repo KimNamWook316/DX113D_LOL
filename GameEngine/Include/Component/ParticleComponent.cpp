@@ -115,6 +115,42 @@ void CParticleComponent::SetParticle(CParticle* Particle)
 	m_ParticleName = m_Particle->GetName();
 }
 
+void CParticleComponent::SetParticleWithOutCloneShader(CParticle* Particle)
+{
+	m_Particle = Particle;
+
+	m_Material = m_Particle->CloneMaterial();
+
+	size_t   BufferCount = m_vecStructuredBuffer.size();
+
+	for (size_t i = 0; i < BufferCount; ++i)
+	{
+		SAFE_DELETE(m_vecStructuredBuffer[i]);
+	}
+
+	// SAFE_DELETE(m_NormalDistributionBuffer);
+
+	m_vecStructuredBuffer.clear();
+
+	m_Particle->CloneStructuredBuffer(m_vecStructuredBuffer);
+
+	// 정규 분포 정보의 경우, 딱 한번만 Update 해준다. (우선 사용 X)
+	// m_Particle->CloneNormalDistStructuredBuffer(m_NormalDistributionBuffer);
+	// std::vector<float> VecNormalDistVal = m_Particle->GetVecNormalDistVal();
+	// m_NormalDistributionBuffer->UpdateBuffer(&VecNormalDistVal[0], (int)VecNormalDistVal.size());
+
+	m_UpdateShader = m_Particle->GetUpdateShader();
+
+	SAFE_DELETE(m_CBuffer);
+
+	m_CBuffer = m_Particle->CloneConstantBuffer();
+
+	m_SpawnTimeMax = m_Particle->GetSpawnTimeMax();
+
+	m_ParticleName = m_Particle->GetName();
+
+}
+
 void CParticleComponent::SetSpawnTime(float Time)
 {
 	m_SpawnTimeMax = Time;
@@ -637,7 +673,7 @@ bool CParticleComponent::LoadOnly(FILE* File)
 
 	m_ParticleName = m_Particle->GetName();
 
-	SetParticle(m_Particle);
+	SetParticleWithOutCloneShader(m_Particle);
 
 	// Load 한 Particle 은 Particle Manager 에 추가해준다.
 	CResourceManager::GetInst()->GetParticleManager()->AddParticle(m_Particle);

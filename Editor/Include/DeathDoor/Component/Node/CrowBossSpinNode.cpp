@@ -37,6 +37,11 @@ NodeResult CCrowBossSpinNode::OnStart(float DeltaTime)
 
 	CCrowBossDataComponent* Data = dynamic_cast<CCrowBossDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
 
+	if (Data->GetHP() <= 0)
+	{
+		return NodeResult::Node_True;
+	}
+
 	Vector3 MyOriginPos = Data->GetMyOriginPos();
 	Vector3 PlayerOriginPos = Data->GetPlayerOriginPos();
 	CNavAgent* Agent = Data->GetMonsterNavAgent();
@@ -88,6 +93,8 @@ NodeResult CCrowBossSpinNode::OnStart(float DeltaTime)
 			m_SpinDegree = -180.f;
 	}
 
+	Data->GetMeleeAttackCollider()->Enable(false);
+
 	return NodeResult::Node_True;
 }
 
@@ -96,6 +103,13 @@ NodeResult CCrowBossSpinNode::OnUpdate(float DeltaTime)
 	m_Owner->SetCurrentNode(this);
 
 	CCrowBossDataComponent* Data = dynamic_cast<CCrowBossDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
+
+	if (Data->GetHP() <= 0)
+	{
+		m_AnimationMeshComp->GetAnimationInstance()->ChangeAnimation("Death");
+		m_Owner->SetCurrentNode(nullptr);
+		return NodeResult::Node_True;
+	}
 
 	Vector3 MyOriginPos = Data->GetMyOriginPos();
 	Vector3 PlayerOriginPos = Data->GetPlayerOriginPos();

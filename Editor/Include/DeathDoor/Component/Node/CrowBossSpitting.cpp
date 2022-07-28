@@ -20,6 +20,13 @@ CCrowBossSpitting::~CCrowBossSpitting()
 
 NodeResult CCrowBossSpitting::OnStart(float DeltaTime)
 {
+	CCrowBossDataComponent* Data = dynamic_cast<CCrowBossDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
+
+	if (Data->GetHP() <= 0)
+	{
+		return NodeResult::Node_True;
+	}
+
 	m_AnimationMeshComp->GetAnimationInstance()->ChangeAnimation("GuidedBullet");
 
 	m_CallStart = true;
@@ -29,6 +36,11 @@ NodeResult CCrowBossSpitting::OnStart(float DeltaTime)
 NodeResult CCrowBossSpitting::OnUpdate(float DeltaTime)
 {
 	CCrowBossDataComponent* Data = dynamic_cast<CCrowBossDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
+
+	if (Data->GetHP() <= 0)
+	{
+		return NodeResult::Node_True;
+	}
 
 	bool End = Data->Spitting(DeltaTime);
 

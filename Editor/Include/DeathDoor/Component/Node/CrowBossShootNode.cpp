@@ -23,6 +23,13 @@ CCrowBossShootNode::~CCrowBossShootNode()
 
 NodeResult CCrowBossShootNode::OnStart(float DeltaTime)
 {
+	CCrowBossDataComponent* Data = dynamic_cast<CCrowBossDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
+
+	if (Data->GetHP() <= 0)
+	{
+		return NodeResult::Node_True;
+	}
+
 	m_AnimationMeshComp->GetAnimationInstance()->ChangeAnimation("SlidingReady");
 
 	return NodeResult::Node_True;
@@ -31,6 +38,11 @@ NodeResult CCrowBossShootNode::OnStart(float DeltaTime)
 NodeResult CCrowBossShootNode::OnUpdate(float DeltaTime)
 {
 	CCrowBossDataComponent* Data = dynamic_cast<CCrowBossDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
+
+	if (Data->GetHP() <= 0)
+	{
+		return NodeResult::Node_True;
+	}
 
 	Vector3 FaceDir = Data->GetMonsterNavAgent()->GetCurrentFaceDir();
 

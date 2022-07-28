@@ -10,6 +10,7 @@
 #include "Component/ColliderHalfLine.h"
 #include "ObjectPool.h"
 #include "Component/ColliderBox3D.h"
+#include "PlayerDataComponent.h"
 
 CCrowBossDataComponent::CCrowBossDataComponent()	:
 	m_StartFlying(false),
@@ -51,7 +52,9 @@ void CCrowBossDataComponent::Start()
 {
 	CMonsterDataComponent::Start();
 
-	m_HitBox->Enable(false);
+	m_HitBox->Enable(true);
+	if(m_MeleeAttackCollider)
+		m_MeleeAttackCollider->Enable(false);
 
 	m_Data = CDataManager::GetInst()->GetObjectData("CrowBoss");
 
@@ -70,13 +73,14 @@ void CCrowBossDataComponent::Start()
 		m_PhaseQueue.push(2);
 	}
 
-
-	m_HitBox->AddCollisionCallback<CCrowBossDataComponent>(Collision_State::Begin, this, &CCrowBossDataComponent::OnCollision);
+	if(m_MeleeAttackCollider)
+		m_MeleeAttackCollider->AddCollisionCallback<CCrowBossDataComponent>(Collision_State::Begin, this, &CCrowBossDataComponent::OnCollision);
+	
 }
 
 void CCrowBossDataComponent::Update(float DeltaTime)
 {
-
+	CMonsterDataComponent::Update(DeltaTime);
 }
 
 
@@ -211,7 +215,7 @@ void CCrowBossDataComponent::Fly(const Vector3& FlyDir, float DeltaTime)
 		m_CurrentHookIndex = 0;
 		m_ClearHookIndex = 0;
 		m_ShootState = CrowBossShootState::Done;
-		m_HitBox->Enable(false);
+		m_MeleeAttackCollider->Enable(false);
 
 		size_t Count = m_vecHookChain.size();
 
@@ -359,8 +363,28 @@ void CCrowBossDataComponent::OnCollision(const CollisionResult& Result)
 {
 	CGameObject* DestObject = Result.Dest->GetGameObject();
 
-	CObjectDataComponent* Data = (CObjectDataComponent*)DestObject->FindComponent("ObjectData");
-	Data->SetIsHit(true);
+	if (DestObject->GetObjectType() == Object_Type::Player)
+	{
+		CPlayerDataComponent* Data = (CPlayerDataComponent*)DestObject->FindComponent("ObjectData");
 
-	m_Scene->GetCameraManager()->GetCurrentCamera()->Shake(0.2f, 0.2f);
+		if (!Data->IsUnbeatable())
+		{
+			Data->SetIsHit(true);
+		}
+	}
+}
+
+void CCrowBossDataComponent::OnDeadAnimStart()
+{
+	CMonsterDataComponent::OnDeadAnimStart();
+
+	m_AnimMesh->GetAnimationInstance()->GetCurrentAnimation()->SetPlayScale(0.5f);
+	m_DeathColorChangeTimeMax = m_AnimMesh->GetAnimationInstance()->GetCurrentAnimation()->GetAnimationPlayTime() * 0.5f;
+}
+
+void CCrowBossDataComponent::OnDeadPaperBurnEnd()
+{
+	CMonsterDataComponent::OnDeadPaperBurnEnd();
+
+	// TODO : Boss Knight - 페이퍼번 완료되면 Portal On
 }

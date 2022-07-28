@@ -81,6 +81,22 @@ NodeResult CPlayerRoll::OnUpdate(float DeltaTime)
 	MoveDir.y = 0.f;
 	MoveDir.Normalize();
 
+	if (m_AnimationMeshComp->GetAnimationInstance()->IsCurrentAnimEnd())
+	{
+		m_Owner->SetCurrentNode(nullptr);
+		m_CallStart = false;
+		m_IsEnd = true;
+		return NodeResult::Node_True;
+	}
+
+	if (MoveDir.x == 0.f && MoveDir.y == 0.f && MoveDir.z == 0.f)
+	{
+		m_Owner->SetCurrentNode(nullptr);
+		m_CallStart = false;
+		m_IsEnd = true;
+		return NodeResult::Node_True;
+	}
+
 	m_Object->SetMoveDir(MoveDir);
 
 	Vector3 CrossVector = Vector3(FrontVector.x, FrontVector.y, -FrontVector.z).Cross(Vector3(MoveDir.x, MoveDir.y, -MoveDir.z));
@@ -111,10 +127,11 @@ NodeResult CPlayerRoll::OnUpdate(float DeltaTime)
 	}
 
 	//m_Object->AddWorldPos(MoveDir.x * Speed * DeltaTime, 0.f, MoveDir.z * Speed * DeltaTime);
-	m_NavAgent->MoveOnNavMesh(Vector3(MoveDir.x * Speed * DeltaTime, 0.f, MoveDir.z * Speed * DeltaTime));
+	m_NavAgent->MoveOnNavMesh(Vector3(MoveDir.x * Speed * 1.8f * DeltaTime, 0.f, MoveDir.z * Speed * 1.8f * DeltaTime));
 
-	if (m_AnimationMeshComp->GetAnimationInstance()->IsCurrentAnimEnd())
-		m_IsEnd = true;
+	const keyState SpaceState = CInput::GetInst()->FindKeyState(VK_SPACE);
+
+	m_CallStart = false;
 
 	return NodeResult::Node_True;
 }
