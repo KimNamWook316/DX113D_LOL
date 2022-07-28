@@ -216,8 +216,8 @@ void CBossBettyThrowNode::ThrowSnowBallAttackObj()
 
 	// BossBettyDataComponent 로부터, BossThrowBall Object 를 가져오고
 	// 거기에 적절한 설정들을 여기에 해줄 것이다.
-	CGameObject* ThrowBall = Data->GetBossBettyThrowObject();
-	CProjectileComponent* ProjTileComp = ThrowBall->FindComponentFromType<CProjectileComponent>();
+	m_CurrentThrowBall = Data->GetBossBettyThrowObject();
+	CProjectileComponent* ProjTileComp = m_CurrentThrowBall->FindComponentFromType<CProjectileComponent>();
 
 	CGameObject* AfterEffectParticle = CObjectPool::GetInst()->GetParticle("BettyAttackAfterEffect", CSceneManager::GetInst()->GetScene());
 	AfterEffectParticle->Enable(false);
@@ -225,8 +225,11 @@ void CBossBettyThrowNode::ThrowSnowBallAttackObj()
 
 	const Vector3& PlayerPos = CSceneManager::GetInst()->GetScene()->GetPlayerObject()->GetWorldPos();
 
-	ProjTileComp->ShootByTargetPos(ThrowBall->GetWorldPos(), 0.f, PlayerPos, AfterEffectParticle);
+	ProjTileComp->ShootByTargetPos(m_CurrentThrowBall->GetWorldPos(), 60.f, PlayerPos, AfterEffectParticle);
 		
 	// Throw Attack Enable 을 다시 False 로 바꿔준다
 	Data->SetThrowAttackEnable(false);
+
+	// 더이상 ThrowBall 을 ThrowNode 내에서 움직이지 않게 한다.
+	m_CurrentThrowBall = nullptr;
 }

@@ -7,7 +7,8 @@
 #define FIXED_GRAVITY 9.8f 
 
 CProjectileComponent::CProjectileComponent()	:
-	m_Destroy(false),
+	// m_Destroy(false),
+	m_Destroy(true), // OBJ가 true 로 바꿈
 	m_NoUpdate(false)
 {
 	SetTypeID<CProjectileComponent>();
@@ -227,6 +228,8 @@ void CProjectileComponent::OnEnd()
 	{
 		m_EndParticleObject->Enable(true);
 
+		m_EndParticleObject->SetWorldPos(m_TargetPos);
+
 		// 모든 ParticleComponent 들로 하여금 SetFollowRealTimeParticleComponentPos 를 true 로 세팅한다.
 		std::vector<CParticleComponent*> vecParticleComponents;
 		m_EndParticleObject->FindAllSceneComponentFromType(vecParticleComponents);
@@ -236,7 +239,8 @@ void CProjectileComponent::OnEnd()
 		for (size_t i = 0; i < vecSize; ++i)
 		{
 			vecParticleComponents[i]->ResetParticleStructuredBufferInfo();
-			vecParticleComponents[i]->GetCBuffer()->SetFollowRealTimeParticleComponentPos(true);
+			// vecParticleComponents[i]->GetCBuffer()->SetFollowRealTimeParticleComponentPos(true);
+			vecParticleComponents[i]->GetCBuffer()->SetFollowRealTimeParticleComponentPos(false);
 		}
 	}
 
