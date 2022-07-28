@@ -367,6 +367,16 @@ bool CNavMesh::LoadMesh(FILE* File)
 	fread(&m_Min, sizeof(Vector3), 1, File);
 	fread(&m_Max, sizeof(Vector3), 1, File);
 
+	m_OriginMin = m_Min;
+	m_OriginMax = m_Max;
+
+	if (m_OriginMin.x > m_OriginMax.x && m_OriginMin.z > m_OriginMax.z)
+	{
+		Vector3 Tmp = m_OriginMin;
+		m_OriginMin = m_OriginMax;
+		m_OriginMax = Tmp;
+	}
+
 	CreateNavMesh(m_Name);
 
 	return true;
