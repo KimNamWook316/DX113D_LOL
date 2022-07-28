@@ -2,16 +2,13 @@
 
 #include "Component\Node\ActionNode.h"
 
-class CCrowBossShootNode :
+class CCrowBossSpitting :
     public CActionNode
 {
 public:
-    CCrowBossShootNode();
-    CCrowBossShootNode(const CCrowBossShootNode& Node);
-    virtual ~CCrowBossShootNode();
-
-private:
-    Vector3 m_ShootDir;
+    CCrowBossSpitting();
+    CCrowBossSpitting(const CCrowBossSpitting& Node);
+    virtual ~CCrowBossSpitting();
 
 public:
     virtual NodeResult OnStart(float DeltaTime) override;

@@ -86,6 +86,7 @@
 #include "../DeathDoor/Component/Node/CrowBossResetShootState.h"
 #include "../DeathDoor/Component/Node/CrowBossShootNode.h"
 #include "../DeathDoor/Component/Node/CrowBossSlide.h"
+#include "../DeathDoor/Component/Node/CrowBossSpitting.h"
 
 #include "../DeathDoor/Component/Node/HitCheckNode.h"
 #include "../DeathDoor/Component/Node/HitBackNode.h"
@@ -629,6 +630,11 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
         case DDActionNode::CrowBossSlide:
         {
             NewTreeNode = m_StateComponent->CreateTreeNode<CCrowBossSlide>(Name);
+            break;
+        }
+        case DDActionNode::CrowBossSpitting:
+        {
+            NewTreeNode = m_StateComponent->CreateTreeNode<CCrowBossSpitting>(Name);
             break;
         }
 

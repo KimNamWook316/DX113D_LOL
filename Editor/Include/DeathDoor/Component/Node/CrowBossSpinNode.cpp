@@ -6,7 +6,7 @@
 #include "../CrowBossDataComponent.h"
 #include "../MonsterNavAgent.h"
 #include "Scene/Scene.h"
-
+#include "Component/ColliderBox3D.h"
 
 CCrowBossSpinNode::CCrowBossSpinNode()	:
 	m_AccRotation(0.f),
@@ -119,7 +119,7 @@ NodeResult CCrowBossSpinNode::OnUpdate(float DeltaTime)
 		else
 		{
 			m_AccSlidingTime += DeltaTime;
-			m_Object->AddWorldPos(OriginDir * 6.f * DeltaTime);
+			m_Object->AddWorldPos(OriginDir * 4.f * DeltaTime);
 		}
 
 		return NodeResult::Node_True;

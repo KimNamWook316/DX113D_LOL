@@ -26,8 +26,6 @@ NodeResult CCrowBossJump::OnStart(float DeltaTime)
 {
 	m_AnimationMeshComp->GetAnimationInstance()->ChangeAnimation("Jump");
 
-
-
 	return NodeResult::Node_True;
 }
 

@@ -25,6 +25,7 @@
 #include "../DeathDoor/Component/MonsterNavAgent.h"
 #include "../DeathDoor/Component/ProjectileComponent.h"
 #include "../DeathDoor/Component/ArrowComponent.h"
+#include "../DeathDoor/Component/TinyCrowDataComponent.h"
 
 #include "../Window/InspectorWindow.h"
 #include "../EditorUtil.h"
@@ -181,6 +182,10 @@ void CObjectComponentCreateModal::OnCreateComponent()
 		else if (Typeid == typeid(CArrowComponent).hash_code())
 		{
 			Com = SelectObject->CreateComponent<CArrowComponent>(Name);
+		}
+		else if (Typeid == typeid(CTinyCrowDataComponent).hash_code())
+		{
+			Com = SelectObject->CreateComponent<CTinyCrowDataComponent>(Name);
 		}
 	}
 

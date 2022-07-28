@@ -8,6 +8,8 @@
 #include "Scene/SceneResource.h"
 #include "Component/StaticMeshComponent.h"
 #include "Component/ColliderHalfLine.h"
+#include "ObjectPool.h"
+#include "Component/ColliderBox3D.h"
 
 CCrowBossDataComponent::CCrowBossDataComponent()	:
 	m_StartFlying(false),
@@ -20,9 +22,12 @@ CCrowBossDataComponent::CCrowBossDataComponent()	:
 	m_ShootAccTime(0.f),
 	m_CurrentHookIndex(0),
 	m_ClearHookIndex(0),
-	m_HookChainTotal(75),
+	m_HookChainTotal(95),
 	m_AfterShoot(false),
-	m_SpittingStart(false)
+	m_SpittingStart(false),
+	m_SpittingAccTime(0.f),
+	m_CurrentTinyCrowIndex(0),
+	m_ShootDirFixed(false)
 {
 	SetTypeID<CCrowBossDataComponent>();
 
@@ -46,6 +51,8 @@ void CCrowBossDataComponent::Start()
 {
 	CMonsterDataComponent::Start();
 
+	m_HitBox->Enable(false);
+
 	m_Data = CDataManager::GetInst()->GetObjectData("CrowBoss");
 
 	if(m_MonsterNavAgent)
@@ -59,7 +66,12 @@ void CCrowBossDataComponent::Start()
 		m_PhaseQueue.push(3);
 		m_PhaseQueue.push(2);
 		m_PhaseQueue.push(2);
+		m_PhaseQueue.push(5);
+		m_PhaseQueue.push(2);
 	}
+
+
+	m_HitBox->AddCollisionCallback<CCrowBossDataComponent>(Collision_State::Begin, this, &CCrowBossDataComponent::OnCollision);
 }
 
 void CCrowBossDataComponent::Update(float DeltaTime)
@@ -105,7 +117,7 @@ void CCrowBossDataComponent::ShootChain(const Vector3& ShootDir, float DeltaTime
 
 	if (m_CurrentHookIndex < m_HookChainTotal)
 	{
-		if (m_ShootAccTime > 0.01f)
+		if (m_ShootAccTime > 0.007f)
 		{
 		
 			// 방향에 맞게 HookChain 회전시켜준다
@@ -161,6 +173,7 @@ void CCrowBossDataComponent::ShootChain(const Vector3& ShootDir, float DeltaTime
 
 		m_ShootState = CrowBossShootState::ShootEnd;
 		++m_CurrentShootCount;
+		m_ShootDirFixed = false;
 	}
 }
 
@@ -198,6 +211,7 @@ void CCrowBossDataComponent::Fly(const Vector3& FlyDir, float DeltaTime)
 		m_CurrentHookIndex = 0;
 		m_ClearHookIndex = 0;
 		m_ShootState = CrowBossShootState::Done;
+		m_HitBox->Enable(false);
 
 		size_t Count = m_vecHookChain.size();
 
@@ -218,23 +232,21 @@ void CCrowBossDataComponent::Teleport()
 	Vector3 PlayerPos = Player->GetWorldPos();
 	Vector3 MyPos = m_Object->GetWorldPos();
 
-	Vector3 TeleportPos;
-
-	Vector3 DiffVec = Vector3(MyPos.x, 0.f, MyPos.z) - Vector3(PlayerPos.x, 0.f, PlayerPos.z);
-	float DiffX = abs(PlayerPos.x - MyPos.x);
-	float DiffZ = abs(PlayerPos.z - MyPos.z);
-
-	int random = rand() % 360 - 180;
-
-	Matrix rotMat;
-	rotMat.Rotation(Vector3(0.f, (float)random, 0.f));
-
-	DiffVec = DiffVec.TransformCoord(rotMat);
-
-	TeleportPos = PlayerPos + DiffVec;
+	std::vector<Vector3> vecTeleportPos;
+	vecTeleportPos.push_back(Vector3(PlayerPos.x, 0.f, PlayerPos.z - 18.f));
+	vecTeleportPos.push_back(Vector3(PlayerPos.x, 0.f, PlayerPos.z + 18.f));
+	vecTeleportPos.push_back(Vector3(PlayerPos.x + 30.f, 0.f, PlayerPos.z));
+	vecTeleportPos.push_back(Vector3(PlayerPos.x - 30.f, 0.f, PlayerPos.z));
+	vecTeleportPos.push_back(Vector3(PlayerPos.x + 30.f, 0.f, PlayerPos.z - 18.f));
+	vecTeleportPos.push_back(Vector3(PlayerPos.x - 30.f, 0.f, PlayerPos.z - 18.f));
+	vecTeleportPos.push_back(Vector3(PlayerPos.x + 30.f, 0.f, PlayerPos.z + 18.f));
+	vecTeleportPos.push_back(Vector3(PlayerPos.x - 30.f, 0.f, PlayerPos.z + 18.f));
 
 
-	m_Object->SetWorldPos(TeleportPos);
+	int random = rand() % 8;
+
+
+	m_Object->SetWorldPos(vecTeleportPos[random]);
 
 
 	PlayerPos = Player->GetWorldPos();
@@ -270,7 +282,85 @@ void CCrowBossDataComponent::Teleport()
 	}
 }
 
-void CCrowBossDataComponent::Spitting()
+bool CCrowBossDataComponent::Spitting(float DeltaTime)
 {
+	m_SpittingAccTime += DeltaTime;
 
+	Vector3 FaceDir = m_MonsterNavAgent->GetCurrentFaceDir();
+	Vector3 CurrentPos = m_Object->GetWorldPos();
+
+	Vector3 TinyCrowDir = Vector3(0.f, 0.f, 1.f);
+
+	float DotProduct = FaceDir.Dot(TinyCrowDir);
+	float Angle = 0.f;
+	if (DotProduct < 0.9999999f && DotProduct > -0.99999999f)
+	{
+		Angle = RadianToDegree(acosf(DotProduct));
+
+		Vector3 CrossVec = FaceDir.Cross(TinyCrowDir);
+
+		if (CrossVec.y > 0)
+			Angle *= -1.f;
+	}
+	else
+	{
+		if (DotProduct > 0.f)
+		{
+			// 평행 & 같은 방향
+			Angle = 0.f;
+		}
+
+		else
+		{
+			// 평행 & 반대방향
+			Angle = 180.f;
+		}
+	}
+
+	if (m_CurrentTinyCrowIndex == 0)
+	{
+		if (m_SpittingAccTime > 1.f)
+		{
+			++m_CurrentTinyCrowIndex;
+			m_SpittingAccTime = 0.f;
+			CGameObject* TinyCrow = CObjectPool::GetInst()->GetMonster("TinyCrow", m_Object->GetScene());
+
+			int Random = rand() % 3 - 1;
+
+			TinyCrow->SetWorldPos(Vector3(CurrentPos.x + FaceDir.x + Random, 0.f, CurrentPos.z + FaceDir.z));
+			TinyCrow->SetWorldRotationY(Angle);
+			TinyCrow->SetWorldScale(0.005f, 0.005f, 0.005f);
+		}
+	}
+
+	else if (m_SpittingAccTime >= 0.05f)
+	{
+		if (m_CurrentTinyCrowIndex == 20)
+		{
+			if (m_SpittingAccTime >= 1.f)
+				return true;
+			else
+				return false;
+		}
+
+		++m_CurrentTinyCrowIndex;
+		m_SpittingAccTime = 0.f;
+		CGameObject* TinyCrow = CObjectPool::GetInst()->GetMonster("TinyCrow", m_Object->GetScene());
+
+		TinyCrow->SetWorldPos(CurrentPos + FaceDir);
+		TinyCrow->SetWorldRotationY(Angle);
+		TinyCrow->SetWorldScale(0.005f, 0.005f, 0.005f);
+	}
+
+	return false;
+}
+
+void CCrowBossDataComponent::OnCollision(const CollisionResult& Result)
+{
+	CGameObject* DestObject = Result.Dest->GetGameObject();
+
+	CObjectDataComponent* Data = (CObjectDataComponent*)DestObject->FindComponent("ObjectData");
+	Data->SetIsHit(true);
+
+	m_Scene->GetCameraManager()->GetCurrentCamera()->Shake(0.2f, 0.2f);
 }

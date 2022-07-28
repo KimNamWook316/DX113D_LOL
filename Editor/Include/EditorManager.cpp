@@ -40,6 +40,7 @@
 #include "DeathDoor\Component/PlayerBowComponent.h"
 #include "DeathDoor\Component/ProjectileComponent.h"
 #include "DeathDoor\Component/ArrowComponent.h"
+#include "DeathDoor\Component/TinyCrowDataComponent.h"
 // Window
 #include "Window/ObjectHierarchyWindow.h"
 #include "Window/SceneComponentHierarchyWindow.h"
@@ -474,6 +475,12 @@ CComponent* CEditorManager::CreateComponent(CGameObject* Obj, size_t Type)
 	else if (Type == typeid(CArrowComponent).hash_code())
 	{
 		CArrowComponent* Component = Obj->LoadObjectComponent<CArrowComponent>();
+		return Component;
+	}
+
+	else if (Type == typeid(CTinyCrowDataComponent).hash_code())
+	{
+		CTinyCrowDataComponent* Component = Obj->LoadObjectComponent<CTinyCrowDataComponent>();
 		return Component;
 	}
 

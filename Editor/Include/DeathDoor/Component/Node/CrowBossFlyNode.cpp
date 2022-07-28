@@ -4,6 +4,7 @@
 #include "../GameStateComponent.h"
 #include "../CrowBossDataComponent.h"
 #include "Component/AnimationMeshComponent.h"
+#include "Component/ColliderBox3D.h"
 
 CCrowBossFlyNode::CCrowBossFlyNode()
 {
@@ -30,7 +31,8 @@ NodeResult CCrowBossFlyNode::OnStart(float DeltaTime)
 NodeResult CCrowBossFlyNode::OnUpdate(float DeltaTime)
 {
 	CCrowBossDataComponent* Data = dynamic_cast<CCrowBossDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
-	
+	Data->GetHitBox()->Enable(true);
+
 	Data->Fly(Data->GetShootDir(), DeltaTime);
 
 	return NodeResult::Node_True;

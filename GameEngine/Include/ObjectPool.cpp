@@ -138,7 +138,6 @@ void CObjectPool::CreatePoolObject(const std::string& PathName)
 
 	for (size_t i = 0; i < Count; ++i)
 	{
-
 		char FullPath[MAX_PATH] = {};
 		strcpy_s(FullPath, Info->PathMultibyte);
 
@@ -174,10 +173,10 @@ void CObjectPool::CreatePoolObject(const std::string& PathName)
 
 			bool Result = Object->LoadHierarchy(FullPath);
 
-			Object->GetRootComponent()->GetTransform()->ForceUpdateMat();
-
 			if (Result)
 			{
+				Object->GetRootComponent()->GetTransform()->ForceUpdateMat();
+
 				switch (Object->GetObjectType())
 				{
 				case Object_Type::Projectile:
@@ -199,5 +198,32 @@ void CObjectPool::CreatePoolObject(const std::string& PathName)
 		}
 
 		memset(FullPath, 0, MAX_PATH);
+	}
+}
+
+void CObjectPool::RefreshNewScene(CScene* Scene)
+{
+	auto iter = m_mapMonster.begin();
+	auto iterEnd = m_mapMonster.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		iter->second->SetScene(Scene);
+	}
+
+	iter = m_mapParticle.begin();
+	iterEnd = m_mapParticle.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		iter->second->SetScene(Scene);
+	}
+
+	iter = m_mapProjectile.begin();
+	iterEnd = m_mapProjectile.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		iter->second->SetScene(Scene);
 	}
 }

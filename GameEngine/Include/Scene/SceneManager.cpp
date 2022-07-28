@@ -5,6 +5,7 @@
 #include "../PathManager.h"
 #include "../GameObject/SkyObject.h"
 #include "../GameObject/LightObj.h"
+#include "../ObjectPool.h"
 
 DEFINITION_SINGLE(CSceneManager)
 
@@ -118,6 +119,8 @@ bool CSceneManager::LoadNewSceneFullPath(const char* FullPath, bool ChangeNow)
 	}
 
 	m_NextScene->m_Play = false;
+
+	CObjectPool::GetInst()->RefreshNewScene(m_NextScene);
 
 	return LoadResult;
 }

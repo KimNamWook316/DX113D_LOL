@@ -41,6 +41,7 @@ enum class DDActionNode
 	CrowBossResetShootState,
 	CrowBossShoot,
 	CrowBossSlide,
+	CrowBossSpitting,
 	Max
 };
 
@@ -113,6 +114,7 @@ enum class DDObjectComponentType
 	MonsterNavAgent,
 	ProjectileComponent,
 	ArrowComponent,
+	TinyCrowDataComponent,
 	Max
 };
 

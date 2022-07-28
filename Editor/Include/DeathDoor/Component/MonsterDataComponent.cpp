@@ -717,3 +717,8 @@ CMonsterNavAgent* CMonsterDataComponent::GetMonsterNavAgent() const
 {
 	return m_MonsterNavAgent;
 }
+
+CColliderBox3D* CMonsterDataComponent::GetHitBox() const
+{
+	return m_HitBox;
+}

@@ -6,6 +6,7 @@
 #include "../CrowBossDataComponent.h"
 #include "../MonsterNavAgent.h"
 #include "Scene/Scene.h"
+#include "Component/ColliderBox3D.h"
 
 CCrowBossRunNode::CCrowBossRunNode()
 {
@@ -36,7 +37,7 @@ NodeResult CCrowBossRunNode::OnStart(float DeltaTime)
 NodeResult CCrowBossRunNode::OnUpdate(float DeltaTime)
 {
 	CCrowBossDataComponent* Data = dynamic_cast<CCrowBossDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
-
+	Data->GetHitBox()->Enable(false);
 	CNavAgent* Agent = Data->GetMonsterNavAgent();
 	Vector3 PlayerCurrentPos = m_Object->GetScene()->GetPlayerObject()->GetWorldPos();
 	Vector3 MyCurrentPos = m_Object->GetWorldPos();

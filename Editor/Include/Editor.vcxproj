@@ -248,6 +248,7 @@
     <ClCompile Include="DeathDoor\Component\Node\CrowBossShootReadyCheck.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\CrowBossSlide.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\CrowBossSpinNode.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\CrowBossSpitting.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\CrowBossStartFlyingCheck.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\DeathCheck.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\DeathNode.cpp" />
@@ -285,6 +286,7 @@
     <ClCompile Include="DeathDoor\Component\PlayerHookComponent.cpp" />
     <ClCompile Include="DeathDoor\Component\PlayerNormalAttackCheckCollider.cpp" />
     <ClCompile Include="DeathDoor\Component\ProjectileComponent.cpp" />
+    <ClCompile Include="DeathDoor\Component\TinyCrowDataComponent.cpp" />
     <ClCompile Include="DeathDoor\DataManager.cpp" />
     <ClCompile Include="DeathDoor\DDUtil.cpp" />
     <ClCompile Include="EditorManager.cpp" />
@@ -435,6 +437,7 @@
     <ClInclude Include="DeathDoor\Component\Node\CrowBossShootReadyCheck.h" />
     <ClInclude Include="DeathDoor\Component\Node\CrowBossSlide.h" />
     <ClInclude Include="DeathDoor\Component\Node\CrowBossSpinNode.h" />
+    <ClInclude Include="DeathDoor\Component\Node\CrowBossSpitting.h" />
     <ClInclude Include="DeathDoor\Component\Node\CrowBossStartFlyingCheck.h" />
     <ClInclude Include="DeathDoor\Component\Node\DeathCheck.h" />
     <ClInclude Include="DeathDoor\Component\Node\DeathNode.h" />
@@ -472,6 +475,7 @@
     <ClInclude Include="DeathDoor\Component\PlayerHookComponent.h" />
     <ClInclude Include="DeathDoor\Component\PlayerNormalAttackCheckCollider.h" />
     <ClInclude Include="DeathDoor\Component\ProjectileComponent.h" />
+    <ClInclude Include="DeathDoor\Component\TinyCrowDataComponent.h" />
     <ClInclude Include="DeathDoor\DataManager.h" />
     <ClInclude Include="DeathDoor\DDFlag.h" />
     <ClInclude Include="DeathDoor\DDUtil.h" />

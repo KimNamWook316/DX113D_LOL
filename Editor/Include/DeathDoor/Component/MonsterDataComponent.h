@@ -236,5 +236,8 @@ protected:
 
 public:
 	class CMonsterNavAgent* GetMonsterNavAgent()	const;
+
+public:
+	class CColliderBox3D* GetHitBox()	const;
 };
 

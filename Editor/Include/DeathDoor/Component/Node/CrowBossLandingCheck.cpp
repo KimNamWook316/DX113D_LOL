@@ -5,6 +5,7 @@
 #include "../CrowBossDataComponent.h"
 #include "../ProjectileComponent.h"
 #include "Scene/Scene.h"
+#include "Component/ColliderBox3D.h"
 
 CCrowBossLandingCheck::CCrowBossLandingCheck()
 {
@@ -28,13 +29,14 @@ NodeResult CCrowBossLandingCheck::OnStart(float DeltaTime)
 
 	Vector3 MyPos = m_Object->GetWorldPos();
 
-	if (MyPos.y < 0.f)
+	if (MyPos.y <= 0.f)
 	{
 		CProjectileComponent* Projectile = m_Object->FindObjectComponentFromType<CProjectileComponent>();
 		Projectile->SetNoUpdate(true);
 
 		Data->SetStartStomp(false);
 		Data->SetStartJump(false);
+		Data->GetHitBox()->Enable(true);
 
 		m_Object->SetWorldPos(MyPos.x, 0.f, MyPos.z);
 

@@ -34,36 +34,44 @@ NodeResult CCrowBossShootNode::OnUpdate(float DeltaTime)
 
 	Vector3 FaceDir = Data->GetMonsterNavAgent()->GetCurrentFaceDir();
 
-	CGameObject* Player = m_Object->GetScene()->GetPlayerObject();
-	Vector3 PlayerPos = Player->GetWorldPos();
-	Vector3 MyPos = m_Object->GetWorldPos();
-	Vector3 Dir = PlayerPos - MyPos;
-	Dir.Normalize();
 
-	float DotProduct = Dir.Dot(FaceDir);
-
-	if (DotProduct > -0.99999f && DotProduct < 0.99999f)
+	if (!Data->GetShootDirFixed())
 	{
-		float Degree = RadianToDegree(acosf(DotProduct));
-		if (Degree > 90.f || Degree < -90.f)
+		CGameObject* Player = m_Object->GetScene()->GetPlayerObject();
+		Vector3 PlayerPos = Player->GetWorldPos();
+		Vector3 MyPos = m_Object->GetWorldPos();
+		Vector3 Dir = PlayerPos - MyPos;
+		Dir.Normalize();
+
+		float DotProduct = Dir.Dot(FaceDir);
+
+		if (DotProduct > -0.99999f && DotProduct < 0.99999f)
 		{
-			Vector3 CrossVec = FaceDir.Cross(Dir);
-
-			if (CrossVec.y > 0.f)
+			float Degree = RadianToDegree(acosf(DotProduct));
+			if (Degree > 90.f || Degree < -90.f)
 			{
-				m_Object->AddWorldRotationY(Degree);
+				Vector3 CrossVec = FaceDir.Cross(Dir);
+
+				if (CrossVec.y > 0.f)
+				{
+					m_Object->AddWorldRotationY(Degree);
+				}
+
+				else
+				{
+					m_Object->AddWorldRotationY(-Degree);
+				}
+
+				Data->GetMonsterNavAgent()->ForceUpdateFaceDir();
 			}
 
-			else
-			{
-				m_Object->AddWorldRotationY(-Degree);
-			}
-
-			return NodeResult::Node_True;
 		}
 
+		Data->SetShootDirFixed(true);
 	}
 
+	// 회전했을수도 있으니 FaceDir 새로 갱신
+	FaceDir = Data->GetMonsterNavAgent()->GetCurrentFaceDir();
 	Data->SetShootState(CrowBossShootState::Shoot);
 	Data->ShootChain(FaceDir, DeltaTime);
 
