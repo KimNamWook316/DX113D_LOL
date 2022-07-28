@@ -228,7 +228,7 @@ void CProjectileComponent::OnEnd()
 	{
 		m_EndParticleObject->Enable(true);
 
-		m_EndParticleObject->SetWorldPos(m_TargetPos);
+		m_EndParticleObject->SetWorldPos(m_Root->GetWorldPos());
 
 		// 모든 ParticleComponent 들로 하여금 SetFollowRealTimeParticleComponentPos 를 true 로 세팅한다.
 		std::vector<CParticleComponent*> vecParticleComponents;

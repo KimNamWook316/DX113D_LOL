@@ -131,7 +131,7 @@ NodeResult CBossBettyThrowNode::OnUpdate(float DeltaTime)
 		}
 		else
 		{
-			m_BazierMoveEffect = false;
+			m_ParticleMoveDir = Vector3(0.f, 0.f, 0.f);
 		}
 	}
 
@@ -171,20 +171,22 @@ void CBossBettyThrowNode::MakeSnowBallAttackObj()
 	Vector3 ZLookDir = m_Object->GetWorldAxis(AXIS::AXIS_Z) * -1.f;
 	Vector3 YLookDir = m_Object->GetWorldAxis(AXIS::AXIS_Y);
 
-	const Vector3& InitBallPos = m_Object->GetWorldPos() + ZLookDir * 8.f + YLookDir * 5.f;
+	const Vector3& InitBallPos = m_Object->GetWorldPos() + ZLookDir * 7.f + YLookDir * 6.f;
 	m_CurrentThrowBall->SetWorldPos(InitBallPos);
 
 	// Bazier 에 따라 이동할 수 있게 세팅한다.
-	const Vector3& D2 = m_Object->GetWorldPos() + ZLookDir * 7.f + YLookDir * 12.f;
+	const Vector3& D2 = m_Object->GetWorldPos() + ZLookDir * 9.f + YLookDir * 10.f;
 	const Vector3& D3 = m_Object->GetWorldPos() + ZLookDir * 3.f + YLookDir * 16.f;
-	const Vector3& D4 = m_Object->GetWorldPos() + ZLookDir * 1.f + YLookDir * 12.f;
+	const Vector3& D4 = m_Object->GetWorldPos() - ZLookDir * 2.f + YLookDir * 14.f;
 
-	m_ParticleMoveSpeed = 130.f;
+	m_ParticleMoveSpeed = 30.f;
 	
+	m_BazierMoveEffect = true;
+
 	// ParticleComp->SetBazierTargetPos(D2, D3, D4, 100);
 	// ParticleComp->SetBazierMoveEffect(true);
 
-	CEngineUtil::CalculateBazierTargetPoses(m_CurrentThrowBall->GetWorldPos(), D2, D3, D4, m_queueBazierMovePos, 100);
+	CEngineUtil::CalculateBazierTargetPoses(m_CurrentThrowBall->GetWorldPos(), D2, D3, D4, m_queueBazierMovePos, 50);
 
 	// 처음 한개를 뽑아둔다.
 	if (!m_queueBazierMovePos.empty())
@@ -225,7 +227,7 @@ void CBossBettyThrowNode::ThrowSnowBallAttackObj()
 
 	const Vector3& PlayerPos = CSceneManager::GetInst()->GetScene()->GetPlayerObject()->GetWorldPos();
 
-	ProjTileComp->ShootByTargetPos(m_CurrentThrowBall->GetWorldPos(), 60.f, PlayerPos, AfterEffectParticle);
+	ProjTileComp->ShootByTargetPos(m_CurrentThrowBall->GetWorldPos(), 50.f, PlayerPos, AfterEffectParticle);
 		
 	// Throw Attack Enable 을 다시 False 로 바꿔준다
 	Data->SetThrowAttackEnable(false);
