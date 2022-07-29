@@ -409,9 +409,10 @@ void CMonsterDataComponent::OnActivateBloodParticle()
 	if (!m_BloodParticle)
 		return;
 
+	m_BloodParticle->SetWorldPos(m_Object->GetWorldPos());
 	m_BloodParticle->GetCBuffer()->SetFollowRealTimeParticleComponentPos(true);
 	m_BloodParticle->Enable(true);
-	m_BloodParticle->ResetParticleStructuredBufferInfo();
+	
 }
 
 void CMonsterDataComponent::SetIsHit(bool Hit)
