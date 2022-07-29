@@ -42,11 +42,26 @@ private:
 	bool m_AfterShoot;
 
 	bool m_SpittingStart;
+	float m_SpittingAccTime;
+	int m_CurrentTinyCrowIndex;
+
+	bool m_ShootDirFixed;
 
 public:
 	virtual void Update(float DeltaTime);
 
 public:
+	void ClearPhaseQueue()
+	{
+		while (!m_PhaseQueue.empty())
+			m_PhaseQueue.pop();
+	}
+
+	void SetShootDirFixed(bool Fix)
+	{
+		m_ShootDirFixed = Fix;
+	}
+
 	void SetShootState(const CrowBossShootState& State)
 	{
 		m_ShootState = State;
@@ -95,6 +110,11 @@ public:
 	bool IsAfterShoot()	const
 	{
 		return m_AfterShoot;
+	}
+
+	bool GetShootDirFixed() const
+	{
+		return m_ShootDirFixed;
 	}
 
 	size_t GetPhaseQueueSize()	const
@@ -177,16 +197,6 @@ public:
 		return m_PhasePick;
 	}
 
-	//int GetChainAttackCount() const
-	//{
-	//	return m_ChainAttackCount;
-	//}
-
-	//void SetChainAttackCount(int Count)
-	//{
-	//	m_ChainAttackCount = Count;
-	//}
-
 	void SetStartFlying(bool Start)
 	{
 		m_StartFlying = Start;
@@ -219,9 +229,12 @@ public:
 
 public:
 	void OnEndCrowBossJump();
+	void OnCollision(const CollisionResult& Result);
+	virtual void OnDeadAnimStart() override;
+	virtual void OnDeadPaperBurnEnd() override;
 	void ShootChain(const Vector3& ShootDir, float DeltaTime);
 	void Fly(const Vector3& FlyDir, float DeltaTime);
 	void Teleport();
-	void Spitting();
+	bool Spitting(float DeltaTime);
 };
 

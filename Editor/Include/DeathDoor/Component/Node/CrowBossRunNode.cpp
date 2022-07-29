@@ -6,6 +6,7 @@
 #include "../CrowBossDataComponent.h"
 #include "../MonsterNavAgent.h"
 #include "Scene/Scene.h"
+#include "Component/ColliderBox3D.h"
 
 CCrowBossRunNode::CCrowBossRunNode()
 {
@@ -28,6 +29,13 @@ void CCrowBossRunNode::Init()
 
 NodeResult CCrowBossRunNode::OnStart(float DeltaTime)
 {
+	CCrowBossDataComponent* Data = dynamic_cast<CCrowBossDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
+
+	if (Data->GetHP() <= 0)
+	{
+		return NodeResult::Node_True;
+	}
+
 	m_AnimationMeshComp->GetAnimationInstance()->ChangeAnimation("Run");
 
 	return NodeResult::Node_True;
@@ -37,6 +45,12 @@ NodeResult CCrowBossRunNode::OnUpdate(float DeltaTime)
 {
 	CCrowBossDataComponent* Data = dynamic_cast<CCrowBossDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
 
+	if (Data->GetHP() <= 0)
+	{
+		return NodeResult::Node_True;
+	}
+
+	Data->GetMeleeAttackCollider()->Enable(false);
 	CNavAgent* Agent = Data->GetMonsterNavAgent();
 	Vector3 PlayerCurrentPos = m_Object->GetScene()->GetPlayerObject()->GetWorldPos();
 	Vector3 MyCurrentPos = m_Object->GetWorldPos();

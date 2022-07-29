@@ -370,6 +370,9 @@
     <Filter Include="05. Component\01. SceneComponent\13. Water">
       <UniqueIdentifier>{42292487-7f75-49a7-a958-d1f9a9868a18}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. Resource\02. Shader\01. HLSL\1. Particle">
+      <UniqueIdentifier>{3b4ae84d-d944-45fe-b8a4-4e4ccb9bc1da}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Device.cpp">
@@ -1882,9 +1885,6 @@
     <FxCompile Include="..\Bin\Shader\Mesh2D.fx">
       <Filter>02. Resource\02. Shader\01. HLSL</Filter>
     </FxCompile>
-    <FxCompile Include="..\Bin\Shader\Particle.fx">
-      <Filter>02. Resource\02. Shader\01. HLSL</Filter>
-    </FxCompile>
     <FxCompile Include="..\Bin\Shader\ShaderInfo.fx">
       <Filter>02. Resource\02. Shader\01. HLSL</Filter>
     </FxCompile>
@@ -1959,6 +1959,15 @@
     </FxCompile>
     <FxCompile Include="..\Bin\Shader\Water.fx">
       <Filter>02. Resource\02. Shader\01. HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\Shader\ParticleUpdate.fx">
+      <Filter>02. Resource\02. Shader\01. HLSL\1. Particle</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\Shader\ParticleRender.fx">
+      <Filter>02. Resource\02. Shader\01. HLSL\1. Particle</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\Shader\ParticleData.fx">
+      <Filter>02. Resource\02. Shader\01. HLSL\1. Particle</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

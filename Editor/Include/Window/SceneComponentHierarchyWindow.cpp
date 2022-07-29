@@ -351,6 +351,9 @@ void CSceneComponentHierarchyWindow::OnDeleteComponent()
 {
 	CSceneComponent* DeleteComp = (CSceneComponent*)FindSelectComponent();
 
+	if (!DeleteComp)
+		return;
+
 	CGameObject* Object = DeleteComp->GetGameObject();
 
 	// Inspector에서 Widget삭제

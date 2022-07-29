@@ -17,6 +17,7 @@
 #include "Component\ProjectileComponent.h"
 #include "Component\ArrowComponent.h"
 #include "Component\CrowBossDataComponent.h"
+#include "Component\TinyCrowDataComponent.h"
 
 std::string CDDUtil::DDConditionNodeTypeToString(DDConditionNode NodeType)
 {
@@ -378,6 +379,9 @@ std::string CDDUtil::DDActionNodeTypeToString(DDActionNode NodeType)
 		return "CrowBossShoot";
 	case DDActionNode::CrowBossSlide:
 		return "CrowBossSlide";
+	case DDActionNode::CrowBossSpitting:
+		return "CrowBossSpitting";
+
 
 	case DDActionNode::ClearPathList:
 		return "ClearPathList";
@@ -524,8 +528,13 @@ DDActionNode CDDUtil::StringToDDActionNodeType(const std::string& Str)
 	}
 	else if (Str == "CrowBossSlide")
 	{
-	return DDActionNode::CrowBossSlide;
+		return DDActionNode::CrowBossSlide;
 	}
+	else if (Str == "CrowBossSpitting")
+	{
+	return DDActionNode::CrowBossSpitting;
+	}
+
 
 	else if (Str == "ClearPathList")
 	{
@@ -633,6 +642,9 @@ std::string CDDUtil::DDObjectComponentTypeToString(DDObjectComponentType Type)
 
 	case DDObjectComponentType::ArrowComponent:
 		return "ArrowComponent";
+
+	case DDObjectComponentType::TinyCrowDataComponent:
+		return "TinyCrowDataComponent";
 	}
 
 	return "";
@@ -714,6 +726,8 @@ size_t CDDUtil::DDObjectComponentTypeToTypeID(DDObjectComponentType Type)
 		return typeid(CProjectileComponent).hash_code();
 	case DDObjectComponentType::ArrowComponent:
 		return typeid(CArrowComponent).hash_code();
+	case DDObjectComponentType::TinyCrowDataComponent:
+		return typeid(CTinyCrowDataComponent).hash_code();
 	}
 	return -1;
 }

@@ -22,6 +22,7 @@ public:
 	void ReturnToPool(class CGameObject* Object);
 	void LoadPoolData(const char* FileName);
 	void CreatePoolObject(const std::string& PathName);
+	void RefreshNewScene(class CScene* Scene);
 
 	DECLARE_SINGLE(CObjectPool)
 };

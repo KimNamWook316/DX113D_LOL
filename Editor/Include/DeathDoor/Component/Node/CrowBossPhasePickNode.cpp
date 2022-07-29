@@ -26,6 +26,12 @@ NodeResult CCrowBossPhasePickNode::OnStart(float DeltaTime)
 
 	CCrowBossDataComponent* Data = dynamic_cast<CCrowBossDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
 
+	if (Data->GetHP() <= 0)
+	{
+		Data->ClearPhaseQueue();
+		m_Owner->SetCurrentNode(nullptr);
+		m_Owner->GetOwner()->SetTreeUpdate(false);
+	}
 	int Phase;
 	if(Data->IsPhaseQueueEmpty())
 		Phase = rand() % 4 + 2;
@@ -44,6 +50,7 @@ NodeResult CCrowBossPhasePickNode::OnStart(float DeltaTime)
 	Data->SetPlayerOriginPos(PlayerPos);
 	Data->SetMyOriginPos(m_Object->GetWorldPos());
 
+	// 뛰면서 주변 지나다니기
 	if (Phase == 2)
 	{
 		CCompositeNode* Parent = (CCompositeNode*)m_Parent;
@@ -53,6 +60,7 @@ NodeResult CCrowBossPhasePickNode::OnStart(float DeltaTime)
 		m_Owner->SetCurrentNode(Phase2Node);
 	}
 
+	// 점프 공격
 	else if (Phase == 3)
 	{
 		CCompositeNode* Parent = (CCompositeNode*)m_Parent;
@@ -62,24 +70,26 @@ NodeResult CCrowBossPhasePickNode::OnStart(float DeltaTime)
 		m_Owner->SetCurrentNode(Phase3Node);
 	}
 
+	// 쇠사슬
 	else if (Phase == 4)
 	{
 		CCompositeNode* Parent = (CCompositeNode*)m_Parent;
 
-		CNode* Phase2Node = ((CCompositeNode*)Parent->GetChild(1))->GetChild(2);
+		CNode* Phase4Node = ((CCompositeNode*)Parent->GetChild(1))->GetChild(2);
 
-		m_Owner->SetCurrentNode(Phase2Node);
+		m_Owner->SetCurrentNode(Phase4Node);
 	}
 
-	else if (Phase == 4)
+	// 새끼 까마귀
+	else if (Phase == 5)
 	{
 		CCompositeNode* Parent = (CCompositeNode*)m_Parent;
 
-		CNode* Phase2Node = ((CCompositeNode*)Parent->GetChild(1))->GetChild(3);
+		CNode* Phase5Node = ((CCompositeNode*)Parent->GetChild(1))->GetChild(3);
 
 		Data->SetSpittingStart(true);
 
-		m_Owner->SetCurrentNode(Phase2Node);
+		m_Owner->SetCurrentNode(Phase5Node);
 	}
 
 	return NodeResult::Node_False;

@@ -3,6 +3,7 @@
 #include "../PlayerDataComponent.h"
 #include "../GameStateComponent.h"
 #include "Component/AnimationMeshComponent.h"
+#include "Scene/Scene.h"
 
 CHitBackNode::CHitBackNode()
 {
@@ -28,6 +29,8 @@ NodeResult CHitBackNode::OnStart(float DeltaTime)
 
 	m_AnimationMeshComp->GetAnimationInstance()->ChangeAnimation("PlayerHitBack");
 	Comp->SetFalseOnSlash();
+
+	m_Object->GetScene()->GetCameraManager()->GetCurrentCamera()->Shake(0.2f, 0.2f);
 
 	Comp->SetNoInterrupt(true);
 

@@ -39,7 +39,7 @@ void CBossBettyCloseAttackNode::Init()
 	AnimInst->AddNotify(AnimName, "OnEnableRightLookPlayer", 13,
 		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnEnableRightLookPlayer);
 
-	AnimInst->AddNotify(AnimName, "OnSlashLeft", 15,
+	AnimInst->AddNotify(AnimName, "OnSlashLeft", 13,
 		this, &CBossBettyCloseAttackNode::OnBossBettySlashLeftEffect);
 
 	AnimInst->AddNotify(AnimName, "OnDisableRightLookPlayer", 20,
@@ -64,7 +64,7 @@ void CBossBettyCloseAttackNode::Init()
 		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnDisableLookPlayer);
 	AnimInst->AddNotify(AnimName, "OnEnableLeftLookPlayer", 13,
 		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnEnableLeftLookPlayer);
-	AnimInst->AddNotify(AnimName, "OnSlashRight", 15,
+	AnimInst->AddNotify(AnimName, "OnSlashRight", 13,
 		this, &CBossBettyCloseAttackNode::OnBossBettySlashRightEffect);
 	AnimInst->AddNotify(AnimName, "OnDisableLeftLookPlayer", 20,
 		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnDisableLeftLookPlayer);
@@ -288,7 +288,7 @@ void CBossBettyCloseAttackNode::OnBossBettySlashLeftEffect()
 
 	const Vector3& ColliderRelativePos = XWorldAxis * 6.0f * -1.f + ZWorldAxis;
 
-	Data->GetMeleeAttackCollider()->SetExtent(3.f, 3.f, 3.f);
+	Data->GetMeleeAttackCollider()->SetExtent(3.f, 3.f, 5.f);
 	Data->GetMeleeAttackCollider()->SetRelativePos(ColliderRelativePos);
 }
 
@@ -305,7 +305,7 @@ void CBossBettyCloseAttackNode::OnBossBettySlashRightEffect()
 
 	const Vector3& ColliderRelativePos = XWorldAxis * 6.0f + ZWorldAxis;
 
-	Data->GetMeleeAttackCollider()->SetExtent(3.f, 3.f, 3.f);
+	Data->GetMeleeAttackCollider()->SetExtent(3.f, 3.f, 5.f);
 	Data->GetMeleeAttackCollider()->SetRelativePos(ColliderRelativePos);
 }
 

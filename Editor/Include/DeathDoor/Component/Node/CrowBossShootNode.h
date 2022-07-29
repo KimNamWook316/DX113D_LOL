@@ -10,6 +10,9 @@ public:
     CCrowBossShootNode(const CCrowBossShootNode& Node);
     virtual ~CCrowBossShootNode();
 
+private:
+    Vector3 m_ShootDir;
+
 public:
     virtual NodeResult OnStart(float DeltaTime) override;
     virtual NodeResult OnUpdate(float DeltaTime) override;

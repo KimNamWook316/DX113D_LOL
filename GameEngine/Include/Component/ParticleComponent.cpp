@@ -339,7 +339,9 @@ void CParticleComponent::PostUpdate(float DeltaTime)
 	
 	// Relative Scale 정보를 세팅한다.
 	m_CBuffer->SetCommonWorldScale(GetWorldScale());
-	m_CBuffer->SetCommonParticleComponentWorldPos(GetWorldPos());
+
+	const Vector3& ParticleComponentWorldPos = GetWorldPos();
+	m_CBuffer->SetCommonParticleComponentWorldPos(ParticleComponentWorldPos);
 
 	m_CBuffer->UpdateCBuffer();
 

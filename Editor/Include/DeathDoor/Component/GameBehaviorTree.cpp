@@ -91,6 +91,7 @@
 #include "Node/CrowBossResetShootState.h"
 #include "Node/CrowBossShootNode.h"
 #include "Node/CrowBossSlide.h"
+#include "Node/CrowBossSpitting.h"
 
 #include "GameStateComponent.h"
 
@@ -509,6 +510,10 @@ CNode* CGameBehaviorTree::LoadNode(CNode* Parent, size_t TypeID)
 	else if (TypeID == typeid(CCrowBossSlide).hash_code())
 	{
 		NewNode = MakeNode<CCrowBossSlide>(Parent, OwnerObject);
+	}
+	else if (TypeID == typeid(CCrowBossSpitting).hash_code())
+	{
+		NewNode = MakeNode<CCrowBossSpitting>(Parent, OwnerObject);
 	}
 
 	return NewNode;

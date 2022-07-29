@@ -116,5 +116,6 @@ public:
 	bool FindPathExcept(class CSceneComponent* OwnerComponent, const Vector3& End, std::vector<Vector3>& vecExceptPos);
 	bool FindPathExcept(class CSceneComponent* OwnerComponent, const Vector3& End, std::vector<NavigationCell*>& vecExceptCell);
 	bool CheckStraightPath(const Vector3& StartPos, const Vector3& EndPos, std::vector<Vector3>& vecPath);
+	void ForceUpdateFaceDir();
 };
 
