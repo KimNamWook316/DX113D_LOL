@@ -382,7 +382,6 @@ bool CScene::LoadFullPath(const char* FullPath)
 	// SceneMode 积己
 	CSceneManager::GetInst()->CallCreateSceneMode(this, SceneModeType);
 	
-	// TODO : Save 捞饶 林籍 秦力
 	// m_Mode->Load(File);
 
 	size_t	ObjCount = m_ObjList.size();

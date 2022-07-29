@@ -189,6 +189,8 @@
     <ClCompile Include="DeathDoor\Component\CrackedBlockCollider.cpp" />
     <ClCompile Include="DeathDoor\Component\CrowBossDataComponent.cpp" />
     <ClCompile Include="DeathDoor\Component\EyeLaserComponent.cpp" />
+    <ClCompile Include="DeathDoor\Component\MonsterBulletData.cpp" />
+    <ClCompile Include="DeathDoor\Component\FirePlantDataComponent.cpp" />
     <ClCompile Include="DeathDoor\Component\GameBehaviorTree.cpp" />
     <ClCompile Include="DeathDoor\Component\GameStateComponent.cpp" />
     <ClCompile Include="DeathDoor\Component\KnightDataComponent.cpp" />
@@ -386,6 +388,8 @@
     <ClInclude Include="DeathDoor\Component\CrackedBlockCollider.h" />
     <ClInclude Include="DeathDoor\Component\CrowBossDataComponent.h" />
     <ClInclude Include="DeathDoor\Component\EyeLaserComponent.h" />
+    <ClInclude Include="DeathDoor\Component\MonsterBulletData.h" />
+    <ClInclude Include="DeathDoor\Component\FirePlantDataComponent.h" />
     <ClInclude Include="DeathDoor\Component\GameBehaviorTree.h" />
     <ClInclude Include="DeathDoor\Component\GameStateComponent.h" />
     <ClInclude Include="DeathDoor\Component\KnightDataComponent.h" />

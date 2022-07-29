@@ -157,6 +157,14 @@ void CMonsterDataComponent::Start()
 
 	// MonsterNavAgent 관련
 	m_MonsterNavAgent = m_Object->FindObjectComponentFromType<CMonsterNavAgent>();
+
+	// Player Data를 미리 들고 있는다
+	CGameObject* Player = m_Scene->GetPlayerObject();
+
+	if (Player)
+	{
+		m_PlayerData = Player->FindObjectComponentFromType<CPlayerDataComponent>();
+	}
 }
 
 void CMonsterDataComponent::Update(float DeltaTime)
@@ -337,7 +345,11 @@ void CMonsterDataComponent::OnDeadPaperBurnEnd()
 void CMonsterDataComponent::OnDeadAnimStart()
 {
 	m_HitBox->Enable(false);
-	m_MeleeAttackCollider->Enable(false);
+
+	if (m_MeleeAttackCollider)
+	{
+		m_MeleeAttackCollider->Enable(false);
+	}
 
 	// DeathChangeColor() 를 사용하는 경우
 	m_DeathColorChangeStart = true;
@@ -473,11 +485,9 @@ void CMonsterDataComponent::OnInActiveMeleeAttackCollider()
 	m_MeleeAttackCollider->Enable(false);
 
 	// Player Hit False 처리
-	CGameObject* Player = m_Scene->GetPlayerObject();
-	if (Player)
+	if (m_PlayerData)
 	{
-		CPlayerDataComponent* PlayerData = Player->FindComponentFromType<CPlayerDataComponent>();
-		PlayerData->SetIsHit(false);
+		m_PlayerData->SetIsHit(false);
 	}
 }
 
@@ -485,12 +495,10 @@ void CMonsterDataComponent::OnHitMeleeAttack(const CollisionResult& Result)
 {
 	CGameObject* Player = m_Scene->GetPlayerObject();
 
-	CPlayerDataComponent* PlayerData = Player->FindObjectComponentFromType<CPlayerDataComponent>();
-
-	if (PlayerData)
+	if (m_PlayerData)
 	{
-		PlayerData->DecreaseHP(1);
-		PlayerData->SetIsHit(true);
+		m_PlayerData->DecreaseHP(1);
+		m_PlayerData->SetIsHit(true);
 	}
 }
 

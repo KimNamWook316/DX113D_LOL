@@ -409,7 +409,7 @@ void CAnimationSequenceInstance::ChangeAnimation(const std::string& Name)
 	}
 
 	m_ChangeAnimation = FindAnimation(Name);
- 	m_ChangeAnimation->m_Time = 0.f;
+	m_ChangeAnimation->m_Time = 0.f;
 	m_ChangeAnimation->m_EndFunctionCalled = false;
 }
 

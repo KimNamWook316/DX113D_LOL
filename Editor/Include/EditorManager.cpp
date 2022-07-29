@@ -43,6 +43,8 @@
 #include "DeathDoor\Component/TinyCrowDataComponent.h"
 #include "DeathDoor\Component/SporeBoomerDataComponent.h"
 #include "DeathDoor\Component/CrackedBlockCollider.h"
+#include "DeathDoor\Component/FirePlantDataComponent.h"
+#include "DeathDoor\Component/MonsterBulletData.h"
 // Window
 #include "Window/ObjectHierarchyWindow.h"
 #include "Window/SceneComponentHierarchyWindow.h"
@@ -509,6 +511,18 @@ CComponent* CEditorManager::CreateComponent(CGameObject* Obj, size_t Type)
 	else if (Type == typeid(CCrackedBlockCollider).hash_code())
 	{
 		CCrackedBlockCollider* Component = Obj->LoadComponent<CCrackedBlockCollider>();
+		return Component;
+	}
+
+	else if (Type == typeid(CFirePlantDataComponent).hash_code())
+	{
+		CFirePlantDataComponent* Component = Obj->LoadObjectComponent<CFirePlantDataComponent>();
+		return Component;
+	}
+
+	else if (Type == typeid(CMonsterBulletData).hash_code())
+	{
+		CMonsterBulletData* Component = Obj->LoadObjectComponent<CMonsterBulletData>();
 		return Component;
 	}
 

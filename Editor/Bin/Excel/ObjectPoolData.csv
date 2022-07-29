@@ -4,3 +4,5 @@ PlayerArrow,5,PlayerArrow.gobj
 BettyAttackAfterEffect,1,Monster\BossBetty\BettyAttackAfterEffect.gobj
 BossBettySnowAttack,1,Monster\BossBetty\BossBettySnowAttack.gobj
 TinyCrow,30,TinyCrow.gobj
+SporeBomb,3,Static\SporeBomb.gobj
+FirePlantBullet,8,Static\FirePlantBullet.gobj

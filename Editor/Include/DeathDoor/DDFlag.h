@@ -119,6 +119,8 @@ enum class DDObjectComponentType
 	ArrowComponent,
 	TinyCrowDataComponent,
 	SporeBoomerData,
+	FirePlantData,
+	MonsterBulletData,
 	Max
 };
 

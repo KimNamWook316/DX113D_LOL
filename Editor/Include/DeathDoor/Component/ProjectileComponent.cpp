@@ -151,6 +151,7 @@ void CProjectileComponent::ShootByTargetPos(const Vector3& StartPos, float Speed
 	m_EndParticleObject = EndParticleObj;
 	m_Dir = TargetPos - StartPos;
 	m_Dir.Normalize();
+	m_Root->SetWorldPos(StartPos);
 }
 
 void CProjectileComponent::ShootByLifeTime(const Vector3& StartPos, const Vector3& Dir, float Speed, float LifeTime, CGameObject* EndParticleObj)
@@ -164,6 +165,7 @@ void CProjectileComponent::ShootByLifeTime(const Vector3& StartPos, const Vector
 	m_IsGravity = false;
 	m_EndParticleObject = EndParticleObj;
 	m_Dir.Normalize();
+	m_Root->SetWorldPos(StartPos);
 }
 
 void CProjectileComponent::ShootByGravityTargetPos(const Vector3& StartPos, const Vector3& XZDir, float Angle, const Vector3& TargetPos, CGameObject* EndParticleObj)
@@ -184,12 +186,22 @@ void CProjectileComponent::ShootByGravityTargetPos(const Vector3& StartPos, cons
 	m_VelocityXZ = Velocity * cosf(DegreeToRadian(Angle));
 	m_VelocityY = Velocity * sinf(DegreeToRadian(Angle));
 	m_LifeTime = (2 * Velocity * sinf(DegreeToRadian(Angle))) / FIXED_GRAVITY;
+	m_LifeTime += 0.5f;
 }
 
 bool CProjectileComponent::CheckDestroy()
 {
-	// LifeTime으로 삭제를 관리하는 경우 ( 중력이 적용된 경우에도 LifeTime으로 관리)
-	if (m_IsGravity || m_LifeTime != 0.f)
+	// 중력이 적용된 경우
+	if (m_IsGravity)
+	{
+		if (m_Root->GetWorldPos().y < m_TargetPos.y)
+		{
+			OnEnd();
+			return true;
+		}
+	}
+	// LifeTime으로 삭제를 관리하는 경우
+	else if (m_LifeTime != 0.f)
 	{
 		if (m_LifeTimer >= m_LifeTime)
 		{
@@ -243,6 +255,12 @@ void CProjectileComponent::OnEnd()
 			vecParticleComponents[i]->GetCBuffer()->SetFollowRealTimeParticleComponentPos(true);
 			// vecParticleComponents[i]->GetCBuffer()->SetFollowRealTimeParticleComponentPos(false);
 		}
+	}
+
+	if (m_EndCallBack)
+	{
+		Vector3 Pos = m_Root->GetWorldPos();
+		m_EndCallBack(Pos);
 	}
 
 	// TODO : Projectile Destroy처리 확정된 이후 변경
