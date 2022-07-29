@@ -16,6 +16,9 @@ public:
     virtual void Start() override;
     virtual void Update(float DeltaTime) override;
 
+public:
+    void OnCollideBomb(const CollisionResult& Result);
+
 private:
     bool m_Reverse;
     float m_Timer;

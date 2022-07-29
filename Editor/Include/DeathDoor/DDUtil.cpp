@@ -19,7 +19,9 @@
 #include "Component\CrowBossDataComponent.h"
 #include "Component\TinyCrowDataComponent.h"
 #include "Component\SporeBoomerDataComponent.h"
+#include "Component\FirePlantDataComponent.h"
 #include "Component\CrackedBlockCollider.h"
+#include "Component\MonsterBulletData.h"
 
 // TODO : Death Door SceneMode 추가시마다 업데이트
 #include "Scene/DDSceneMode.h"
@@ -666,6 +668,12 @@ std::string CDDUtil::DDObjectComponentTypeToString(DDObjectComponentType Type)
 
 	case DDObjectComponentType::SporeBoomerData:
 		return "SporeBoomerData";
+
+	case DDObjectComponentType::FirePlantData:
+		return "FirePlantData";
+
+	case DDObjectComponentType::MonsterBulletData:
+		return "MonsterBulletData";
 	}
 
 	return "";
@@ -721,6 +729,14 @@ DDObjectComponentType CDDUtil::StringToDDObjectComponentType(const std::string& 
 	{
 		return DDObjectComponentType::SporeBoomerData;
 	}
+	else if (Str == "FirePlantData")
+	{
+		return DDObjectComponentType::FirePlantData;
+	}
+	else if (Str == "MonsterData")
+	{
+		return DDObjectComponentType::MonsterData;
+	}
 
 	return DDObjectComponentType(-1);
 }
@@ -755,6 +771,10 @@ size_t CDDUtil::DDObjectComponentTypeToTypeID(DDObjectComponentType Type)
 		return typeid(CTinyCrowDataComponent).hash_code();
 	case DDObjectComponentType::SporeBoomerData:
 		return typeid(CSporeBoomerDataComponent).hash_code();
+	case DDObjectComponentType::FirePlantData:
+		return typeid(CFirePlantDataComponent).hash_code();
+	case DDObjectComponentType::MonsterBulletData:
+		return typeid(CMonsterBulletData).hash_code();
 	}
 	return -1;
 }

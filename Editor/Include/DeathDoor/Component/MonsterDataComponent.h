@@ -183,6 +183,7 @@ protected:
 	void ChangeHitColor(int EffectNum);
 
 protected:
+	class CPlayerDataComponent* m_PlayerData;
 	class CMonsterNavAgent* m_MonsterNavAgent;
 	class CAnimationMeshComponent* m_AnimMesh;
 	class CColliderBox3D* m_HitBox;

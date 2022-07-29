@@ -26,6 +26,8 @@ void CCrackedBlockCollider::Start()
 	CColliderBox3D::Start();
 
 	m_Mesh = m_Object->FindComponentFromType<CStaticMeshComponent>();
+
+	AddCollisionCallback(Collision_State::Begin, this, &CCrackedBlockCollider::OnCollideBomb);
 }
 
 void CCrackedBlockCollider::Update(float DeltaTime)
@@ -47,5 +49,13 @@ void CCrackedBlockCollider::Update(float DeltaTime)
 	{
 		m_Reverse = !m_Reverse;
 		m_Timer = 0.f;
+	}
+}
+
+void CCrackedBlockCollider::OnCollideBomb(const CollisionResult& Result)
+{
+	if (Result.Dest->GetCollisionProfile()->Channel == Collision_Channel::Custom16)
+	{
+		m_Object->Enable(false);
 	}
 }

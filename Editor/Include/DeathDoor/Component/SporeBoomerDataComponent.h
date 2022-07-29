@@ -14,8 +14,19 @@ private:
 
 public:
 	virtual void Start() override;
+    virtual void Update(float DeltaTime) override;
+
+public:
+    void OnBombGround(const Vector3& BombGroundPos);
+    void OnCollideBomb(const CollisionResult& Result);
 
 public:
     void OnShootBullet();
+
+private:
+    class CSceneComponent* m_FirePos;
+    class CColliderSphere* m_BombCollider;
+    bool m_BombColliderOn;
+    bool m_ColliderOnPrev;
 };
 

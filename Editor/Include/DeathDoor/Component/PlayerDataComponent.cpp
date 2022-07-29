@@ -235,6 +235,7 @@ void CPlayerDataComponent::OnRollEnd()
 {
 	//m_Body->Enable(true);
 	//m_Unbeatable = false;
+	m_Body->SetRigidCollisionIgnore(false);
 }
 
 void CPlayerDataComponent::ForceUpdateAttackDirection()
