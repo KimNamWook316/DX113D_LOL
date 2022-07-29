@@ -615,6 +615,13 @@ void ParticleUpdate(uint3 ThreadID : SV_DispatchThreadID)
 	if (g_ParticleSpawnCountMax <= ThreadID.x)
 		return;
 
+	if (g_DestroyAllExistingLivingParticles == 1)
+	{
+		g_ParticleArray[ThreadID.x].InitParticleComponentWorldPos = g_ParticleComponentWorldPos;
+		g_ParticleArray[ThreadID.x].Alive = 0;
+		return;
+	}
+
 	// 원래 기본 설정 처럼, SpawnTime 에 맞춰서 지속적으로 Particle을 생성하거나
 	// 일시적으로 Restart 버튼을 누른 것이라면
 	if (g_ParticleDisableNewAlive == 0 ||
@@ -734,7 +741,6 @@ void ParticleUpdate(uint3 ThreadID : SV_DispatchThreadID)
 		g_ParticleArray[ThreadID.x].LifeTimeMax = Rand * (ScaledLifeTimeMax - ScaledLifeTimeMin) + ScaledLifeTimeMin;
 
 		// Scale 크기도 그만큼 조정한다.
-
 		float FinalAppliedRadius = g_ParcticleGenerateRadius * ParticleComponentScaleRatio;
 
 		// Special 한 모양으로 Particle 을 만들고자 한다면

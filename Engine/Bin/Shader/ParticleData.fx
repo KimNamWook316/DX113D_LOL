@@ -1,4 +1,6 @@
-#pragma once
+
+
+
 #define PARTICLE_INIT_ANGLE 1000
 
 cbuffer	ParticleCBuffer : register(b7)
@@ -68,6 +70,8 @@ cbuffer	ParticleCBuffer : register(b7)
 
 	float3 g_ParticleEmptyInfo1;
 	float3 g_ParticleEmptyInfo2;
+	int g_DestroyAllExistingLivingParticles; // 기존에 살아있는 Particle 들을 모두 Alive False 로 만들어주기 
+	float ParticleInfo2;
 };
 
 
@@ -97,7 +101,9 @@ struct ParticleInfo
 	float  InitLocalPosY;
 	float3 InitParticleComponentWorldPos;
 
-	float3 SingleEmptyInfo1;
+	float DestroyedDuringAlive;
+	float SingleInfoEmpty1;
+	float SingleInfoEmpty2;
 	float3 SingleEmptyInfo2;
 };
 

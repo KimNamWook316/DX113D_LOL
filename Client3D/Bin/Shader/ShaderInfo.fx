@@ -1,5 +1,3 @@
-#pragma once
-
 struct PSOutput_Single
 {
 	float4	Color : SV_TARGET;
@@ -382,5 +380,3 @@ float GetRandomNumber(float key)
 	float	Rand = (RandomPos.x + RandomPos.y + RandomPos.z) / 3.f;
 	return Rand;
 }
-
-

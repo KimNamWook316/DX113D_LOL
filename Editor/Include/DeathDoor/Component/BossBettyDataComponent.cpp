@@ -50,6 +50,8 @@ void CBossBettyDataComponent::Start()
     m_OriginRotSpeed = m_Data.RotateSpeedPerSec;
     m_CurRotSpeed = m_OriginRotSpeed;
 
+    m_BettyHPMax = m_Data.HP;
+
     // HitBox 에 콜백을 걸어준다.
 
     // Current Animation 은 Idle 로 세팅한다.
@@ -148,9 +150,28 @@ void CBossBettyDataComponent::OnActivateBloodParticle()
    // const Vector3& XWorldAxis = m_MeleeAttackCollider->GetRelativeAxis(AXIS::AXIS_X) * -1.f;
    // const Vector3& ZWorldAxis = m_MeleeAttackCollider->GetRelativeAxis(AXIS::AXIS_Z) * -1.f;
    // 
-   // Vector3 RelativePos = ZWorldAxis * rand() * 3.f + Vector3(0.f, 2.f, 0.f);
+   // Vector3 RelativePos = ZWorldAxis * (rand() % 1) * 3.f + Vector3(0.f, 2.f, 0.f);
+   // 
+   //  m_BloodParticle->SetRelativePos(RelativePos);
+}
 
-    // m_BloodParticle->SetRelativePos(RelativePos);
+void CBossBettyDataComponent::DecreaseHP(int Amount)
+{
+    int PrevHP = m_Data.HP;
+
+    CObjectDataComponent::DecreaseHP(Amount);
+
+    int CurHP = m_Data.HP;
+
+    if (PrevHP >= m_BettyHPMax * 0.6f && CurHP < m_BettyHPMax * 0.6f)
+    {
+        m_BettyHPState = BossBettyHPState::Below60;
+    }
+
+    if (PrevHP >= m_BettyHPMax * 0.3f && CurHP < m_BettyHPMax * 0.3f)
+    {
+        m_BettyHPState = BossBettyHPState::Below30;
+    }
 }
 
 void CBossBettyDataComponent::OnBossBettyGenerateTwoSideCloseAttackEffect()

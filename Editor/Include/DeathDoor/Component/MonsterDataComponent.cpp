@@ -132,6 +132,9 @@ void CMonsterDataComponent::Start()
 		// BloodParticle 들의 Particle 은, Particle Component 의 WorldPos 를 따라가게 해야 한다.
 		m_BloodParticle->GetCBuffer()->SetFollowRealTimeParticleComponentPos(true);
 
+		// 처음에는 Enable False 처리를 해줄 것이다.
+		m_BloodParticle->Enable(false);
+
 		// m_BloodParticle 은 Rot 을 주지 않을 것이다. Rot 을 주는 순간 모양이 흐뜨러지게 되기 때문이다.
 		m_BloodParticle->SetInheritRotX(false);
 		m_BloodParticle->SetInheritRotY(false);
@@ -423,8 +426,10 @@ void CMonsterDataComponent::OnActivateBloodParticle()
 	const Vector3& ObjectWorldPos = m_Object->GetWorldPos();
 	m_BloodParticle->SetWorldPos(ObjectWorldPos + Vector3(0.f, 2.f, 0.f));
 
-	m_BloodParticle->ResetParticleStructuredBufferInfo();
+	// Enable True 로 만둘어줘서 다시 동작되게 한다.
 	m_BloodParticle->Enable(true);
+
+	m_BloodParticle->ResetParticleStructuredBufferInfo();
 }
 
 void CMonsterDataComponent::SetIsHit(bool Hit)

@@ -310,9 +310,9 @@ public:
 	{
 		return m_CBuffer->IsDisableNewAlive();
 	}
-	int IsUVClippingReflectingMoveDir() const
+	int IsLinearUVClippingEnabled() const
 	{
-		return m_CBuffer->IsUVClippingReflectingMoveDir();
+		return m_CBuffer->IsLinearUVClippingEnabled();
 	}
 	int IsNoiseTextureSamplingApplied()
 	{
@@ -342,9 +342,9 @@ public:
 		m_CBuffer->SetNoiseTextureApplyRatio(Ratio);
 	}
 	// UV Clipping
-	void SetUVClippingReflectingMoveDirEnable(bool Enable)
+	void SetLinearUVClippingEnable(bool Enable)
 	{
-		m_CBuffer->SetUVClippingReflectingMoveDirEnable(Enable);
+		m_CBuffer->SetLinearUVClippingEnable(Enable);
 	}
 	// Restart 기능 (구조화 버퍼 내의 특정 값을 초기화 해주는 것)
 	void SetResetParticleSharedInfoSumSpawnCnt(bool Enable)

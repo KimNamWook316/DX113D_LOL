@@ -111,8 +111,6 @@ void ParticleGS(point VertexParticleOutput input[1],
 		OutputArray[3].UV = float2(UVEndPos.x, UVEndPos.y);
 	}
 
-
-
 	float3	Scale = lerp(
 		g_ParticleShareSRV[0].ScaleMin * g_ParticleShareSRV[0].CommonWorldScale,
 		g_ParticleShareSRV[0].ScaleMax * g_ParticleShareSRV[0].CommonWorldScale,
@@ -143,6 +141,7 @@ void ParticleGS(point VertexParticleOutput input[1],
 		else
 		{
 			WorldPos += g_ParticleArraySRV[InstanceID].InitParticleComponentWorldPos;
+			// WorldPos += g_ParticleShareSRV[0].ParticleComponentWorldPos;
 		}
 
 		OutputArray[i].ProjPos = mul(float4(WorldPos, 1.f), g_matVP);
@@ -233,6 +232,14 @@ bool ApplyNoiseTextureDestroyEffect(float2 UV, float LifeTimeMax, float LifeTime
 PSOutput_Single ParticlePS(GeometryParticleOutput input)
 {
 	PSOutput_Single output = (PSOutput_Single)0;
+
+	// 기존에 Alive 되었던 Particle 들이 다시 생성되게 하기
+	// if (g_DestroyAllExistingLivingParticles == 1)
+	// {
+	// 	// 기존에 살아있다가, ParticleUpdate 에서 다시 생성되라고 한 Particle 은 그려내지 않을 것이다.
+	// 	if (g_ParticleArraySRV[input.InstanceID].DestroyedDuringAlive == 1)
+	// 		return output;
+	// }
 
 	float4 Color = g_BaseTexture.Sample(g_BaseSmp, input.UV);
 

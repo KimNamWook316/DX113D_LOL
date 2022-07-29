@@ -43,6 +43,9 @@ private :
     // Origin MoveTime
     float m_OriginMoveSpeed;
 
+    // HP Max
+    float m_BettyHPMax;
+
     // 60%, 30% 가 될 때마다, Angry Attack 중에서 첫번째 Attack 설정하기 
     BossBettyHPState m_BettyHPState;
 
@@ -78,6 +81,7 @@ private :
 public:
     virtual void Start() override;
     virtual void OnActivateBloodParticle() override;
+    virtual void DecreaseHP(int Amount);
 public :
     // (아래 콜백 함수들은, 여러 Action Node 들에서 공통으로 사용하는 효과)
     // 땅을 내리칠때, 양쪽에 Attack 효과를 내기
@@ -150,6 +154,10 @@ public:
     void IncFarAttackCount();
     // Getter 함수 ---
 public:
+    float GetBossBettyHPMax() const
+    {
+        return m_BettyHPMax;
+    }
     bool IsCloseAttackAnimChangeEnable() const
     {
         return m_CloseAttackAnimChangeEnable;

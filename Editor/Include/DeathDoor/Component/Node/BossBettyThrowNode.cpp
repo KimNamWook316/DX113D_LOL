@@ -135,6 +135,17 @@ NodeResult CBossBettyThrowNode::OnUpdate(float DeltaTime)
 		}
 	}
 
+	// Particle 정보 Render 전에 Update 마치기 
+	std::vector<CParticleComponent*> vecParticleComponents;
+	m_CurrentThrowBall->FindAllSceneComponentFromType(vecParticleComponents);
+
+	size_t vecSize = vecParticleComponents.size();
+	
+	for (size_t i = 0; i < vecSize; ++i)
+	{
+		vecParticleComponents[i]->Update(DeltaTime);
+		vecParticleComponents[i]->PostUpdate(DeltaTime);
+	}
 
 	return NodeResult::Node_True;
 }
@@ -160,15 +171,15 @@ void CBossBettyThrowNode::MakeSnowBallAttackObj()
 	m_CurrentThrowBall = CObjectPool::GetInst()->GetProjectile("BossBettySnowAttack", CurrentScene);
 
 	// m_CurrentThrowBall 을 
-	std::vector<CParticleComponent*> vecParticleComponents;
-	m_CurrentThrowBall->FindAllSceneComponentFromType(vecParticleComponents);
+	// std::vector<CParticleComponent*> vecParticleComponents;
+	// m_CurrentThrowBall->FindAllSceneComponentFromType(vecParticleComponents);
 
-	size_t vecSize = vecParticleComponents.size();
-
-	for (size_t i = 0; i < vecSize; ++i)
-	{
-		vecParticleComponents[i]->ResetParticleStructuredBufferInfo();
-	}
+	// size_t vecSize = vecParticleComponents.size();
+	// 
+	// for (size_t i = 0; i < vecSize; ++i)
+	// {
+	// 	vecParticleComponents[i]->GetCBuffer()->SetDestroyExstingAllLivingParticles(false);
+	// }
 
 	if (m_CurrentThrowBall == nullptr)
 		return;
@@ -197,7 +208,7 @@ void CBossBettyThrowNode::MakeSnowBallAttackObj()
 	// ParticleComp->SetBazierTargetPos(D2, D3, D4, 100);
 	// ParticleComp->SetBazierMoveEffect(true);
 
-	CEngineUtil::CalculateBazierTargetPoses(m_CurrentThrowBall->GetWorldPos(), D2, D3, D4, m_queueBazierMovePos, 50);
+	CEngineUtil::CalculateBazierTargetPoses(InitBallPos, D2, D3, D4, m_queueBazierMovePos, 50);
 
 	// 처음 한개를 뽑아둔다.
 	if (!m_queueBazierMovePos.empty())
@@ -233,7 +244,7 @@ void CBossBettyThrowNode::ThrowSnowBallAttackObj()
 	CProjectileComponent* ProjTileComp = m_CurrentThrowBall->FindComponentFromType<CProjectileComponent>();
 
 	CGameObject* AfterEffectParticle = CObjectPool::GetInst()->GetParticle("BettyAttackAfterEffect", CSceneManager::GetInst()->GetScene());
-	AfterEffectParticle->Enable(false);
+	AfterEffectParticle->Enable(true);
 	AfterEffectParticle->SetLifeSpan(1.f);
 
 	const Vector3& PlayerPos = CSceneManager::GetInst()->GetScene()->GetPlayerObject()->GetWorldPos();

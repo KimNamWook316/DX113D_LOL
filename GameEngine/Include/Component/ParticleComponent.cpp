@@ -16,11 +16,10 @@ CParticleComponent::CParticleComponent()	:
 	m_BillBoardEffect(false),
 	// m_BazierMoveEffect(false),
 	// m_ParticleMoveSpeed(20.f),
-	m_ParticleMoveSpeedBottom(3.5f),
 	m_TempCreateAccTimeMax(5.f),
 	m_InfoShared{},
-	m_SpeedChangeMethod(ParticleSpeedChangeMethod::Linear), // Particle Component 의 경우, Linear 설정이, 그냥 원본 Speed 유지 
-	m_CBuffer(nullptr)
+	m_CBuffer(nullptr),
+	m_DestroyExstingAllParticlesAccTimeMax(5.f)
 {
 	SetTypeID<CParticleComponent>();
 	m_Render = true;
@@ -159,6 +158,13 @@ void CParticleComponent::SetSpawnTime(float Time)
 	m_Particle->SetSpawnTimeMax(m_SpawnTimeMax);
 }
 
+void CParticleComponent::ExecuteComputeShader()
+{
+	int	GroupCount = m_Particle->GetSpawnCountMax() / 64 + 1;
+
+	m_UpdateShader->Excute(GroupCount, 1, 1);
+}
+
 void CParticleComponent::ApplyBillBoardEffect()
 {
 	Vector3 CameraPos = CSceneManager::GetInst()->GetScene()->GetCameraManager()->GetCurrentCamera()->GetWorldPos();
@@ -187,8 +193,32 @@ bool CParticleComponent::Init()
 void CParticleComponent::Reset()
 {
 	CSceneComponent::Reset();
+	
+	// ResetParticleStructuredBufferInfo();
 
-	ResetParticleStructuredBufferInfo();
+	// 현재 살아있던 Particle 들을 모두 Alive False 로 만들어줄 것이다.
+	m_CBuffer->SetDestroyExstingAllLivingParticles(true);
+
+	// m_CBuffer->UpdateCBuffer();
+	// 
+	// ExecuteComputeShader();
+
+	// size_t	BufferCount = m_vecStructuredBuffer.size();
+	// 
+	// for (size_t i = 0; i < BufferCount; ++i)
+	// {
+	// 	m_vecStructuredBuffer[i]->ResetShader();
+	// }
+	// 
+	// for (size_t i = 0; i < BufferCount; ++i)
+	// {
+	// 	m_vecStructuredBuffer[i]->ResetShader(30 + (int)i, (int)Buffer_Shader_Type::Geometry);
+	// }
+	// 
+	// if (m_Material)
+	// 	m_Material->Reset();
+
+	// m_DestroyExstingAllParticlesAccTime = m_DestroyExstingAllParticlesAccTimeMax;
 }
 
 void CParticleComponent::Update(float DeltaTime)
@@ -202,21 +232,39 @@ void CParticleComponent::Update(float DeltaTime)
 		return;
 	}
 
-	// 일시적으로 생성되는 Paritlcle 들은, 
+	CSceneComponent::Update(DeltaTime);
+
+	// 일시적으로 생성되는 Paritlcle 들은, ()
 	// 다시 Activate 하고 난 이후, 다시 Enable false 처리
-	if (m_TempCreateAccTime > 0.f)
+	if (m_TempCreateAccTime > 0.f && m_CBuffer->IsDisableNewAlive())
 	{
 		m_TempCreateAccTime -= DeltaTime;
 
 		if (m_TempCreateAccTime <= 0.f)
 		{
 			m_TempCreateAccTime = 0.f;
+
+			// 어차피 한번만 그려질 Particle 이므로 Enable False 처리해준다.
 			Enable(false);
+
 			return;
 		}
 	}
 
-	CSceneComponent::Update(DeltaTime);
+	// DestroyExsting All Particles (상수 버퍼) 변수가 true 로 세팅되고 난 이후
+	// 일정 시간 지나면 다시 false 로 만들어주기
+	// if (m_CBuffer->IsDestroyExstingAllLivingParticlesEnabled())
+	// {
+	// 	if (m_DestroyExstingAllParticlesAccTime > 0.f)
+	// 	{
+	// 		m_DestroyExstingAllParticlesAccTime -= DeltaTime;
+	// 
+	// 		if (m_DestroyExstingAllParticlesAccTime < 0.f)
+	// 		{
+	// 			m_CBuffer->SetDestroyExstingAllLivingParticles(false);
+	// 		}
+	// 	}
+	// };
 
 	m_SpawnTime += DeltaTime;
 
@@ -370,6 +418,7 @@ void CParticleComponent::PostUpdate(float DeltaTime)
 	{
 		m_vecStructuredBuffer[i]->ResetShader();
 	}
+
 	// 여기에서 Data를 CopyResource로 복제해서 테스트 해볼것.
 }
 
@@ -425,6 +474,10 @@ void CParticleComponent::Render()
 	if (m_InitActiveDelayTime > 0.f)
 		return;
 
+	// DeleteExstingParticle 이 True 라면, Render 는 다음 Frame 부터 해줄 것이다
+	if (m_CBuffer->IsDestroyExstingAllLivingParticlesEnabled())
+	 	return;
+
 	// 계산 셰이더 외에도, Render 과정에서도 상수 버퍼 정보를 사용할 수 있게 하는 것이다.
 	m_CBuffer->UpdateCBuffer();
 
@@ -464,6 +517,11 @@ void CParticleComponent::PostRender()
 	if (m_CBuffer)
 	{
 		m_CBuffer->SetResetParticleSharedInfoSumSpawnCnt(0);
+
+		if (m_CBuffer->IsDestroyExstingAllLivingParticlesEnabled())
+		{
+			m_CBuffer->SetDestroyExstingAllLivingParticles(false);
+		}
 	}
 }
 
@@ -496,9 +554,19 @@ void CParticleComponent::ResetParticleStructuredBufferInfo()
 	if (!m_Particle)
 		return;
 
-	m_CBuffer->SetResetParticleSharedInfoSumSpawnCnt(1);
+	// DiableNewAlive 가 true 인 Particle 에 대해서만 적용한다.
+	// DiableNewAlive 의 경우, 한번만 생성하고, 더이상 추가 생성하지 않는 Particle
 
-	m_TempCreateAccTime = m_TempCreateAccTimeMax;
+	if (m_CBuffer->IsDisableNewAlive())
+	{
+		m_CBuffer->SetResetParticleSharedInfoSumSpawnCnt(1);
+
+		m_TempCreateAccTime = m_TempCreateAccTimeMax;
+
+		// 다시 Update 되게끔 세팅한다.
+		Enable(true);
+	}
+	
 }
 
 bool CParticleComponent::SaveOnly(FILE* File)

@@ -808,8 +808,8 @@ void CEffectEditor::OnIsUVClippingReflectingMoveDirEdit(const char*, bool Enable
     if (!m_ParticleClass)
         return;
 
-    m_ParticleClass->SetUVClippingReflectingMoveDirEnable(Enable);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetUVClippingReflectingMoveDirEnable(Enable);
+    m_ParticleClass->SetLinearUVClippingEnable(Enable);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetLinearUVClippingEnable(Enable);
 }
 
 // StartMin, Max , SpawnCountMax 의 경우, Particle Component 에서 Particle 의 상수 버퍼로 부터 정보를 바로 얻어와서 Post Update 에서 계산
@@ -1866,7 +1866,7 @@ void CEffectEditor::SetIMGUIReflectParticle(CParticle* Particle)
     m_RotateAccordingToDir->SetCheck(0, Particle->IsSeperateLinearRotate());
 
     // UV Clip To Dir
-    m_UVClippingAccordingToDir->SetCheck(0, Particle->IsUVClippingReflectingMoveDir());
+    m_UVClippingAccordingToDir->SetCheck(0, Particle->IsLinearUVClippingEnabled());
 
     // Noise Texture
     m_ApplyNoiseTextureSampling->SetCheck(0, Particle->IsNoiseTextureSamplingApplied());
@@ -2943,8 +2943,8 @@ void CEffectEditor::OnBettyAttackSpreadDustPreset()
     dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetApplyNoiseTextureSamplingEnable(true);
 
     // Linaer UV Destroy X
-    m_ParticleClass->SetUVClippingReflectingMoveDirEnable(false);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetUVClippingReflectingMoveDirEnable(false);
+    m_ParticleClass->SetLinearUVClippingEnable(false);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetLinearUVClippingEnable(false);
 
     // IMGUI Update
     SetIMGUIReflectParticle(m_ParticleClass);
