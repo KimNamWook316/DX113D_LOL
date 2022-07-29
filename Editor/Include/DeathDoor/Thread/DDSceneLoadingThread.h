@@ -1,6 +1,6 @@
 #pragma once
 
-#include "D:\Study\DX3D_LOL\Engine\Include\Thread.h"
+#include "Thread.h"
 
 class CDDSceneLoadingThread :
     public CThread
