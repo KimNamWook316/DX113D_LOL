@@ -34,13 +34,21 @@ void CBossBettyChangeAttackDirNode::Init()
 	// Middle
 	AnimInst->AddNotify(AnimName, "OnTracePlayer", 6,
 		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnEnableLookPlayer);
-	AnimInst->AddNotify(AnimName, "NoTracePlayer", 20,
+	AnimInst->AddNotify(AnimName, "NoTracePlayer", 18,
 		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnDisableLookPlayer);
 	AnimInst->AddNotify(AnimName, "SetCurrentNodeNull", 20,
 		(CMonsterDataComponent*)Data, &CMonsterDataComponent::SetCurrentNodeNull);
+	AnimInst->AddNotify(AnimName, "DiableZMove", 20,
+		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnDisableMoveZ);
 
 	// End
 	AnimInst->SetEndFunction(AnimName, (CMonsterDataComponent*)Data, &CMonsterDataComponent::OnDisableLookPlayer);
+}
+
+void CBossBettyChangeAttackDirNode::OnResetOriginalRotSpeed()
+{
+	CBossBettyDataComponent* Data = dynamic_cast<CBossBettyDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
+	Data->SetCurRotSpeed(Data->GetOriginRotSpeed());
 }
 
 NodeResult CBossBettyChangeAttackDirNode::OnStart(float DeltaTime)
@@ -48,6 +56,15 @@ NodeResult CBossBettyChangeAttackDirNode::OnStart(float DeltaTime)
 	m_AnimationMeshComp->GetAnimationInstance()->ChangeAnimation("BackUpStep");
 
 	m_Owner->SetCurrentNode(this);
+
+	CBossBettyDataComponent* Data = dynamic_cast<CBossBettyDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
+
+	float AngleToPlayer = Data->GetAnglePlayer();
+
+	if (AngleToPlayer > 90.f)
+		Data->SetCurRotSpeed(Data->GetOriginRotSpeed() * 1.5f);
+	else
+		Data->SetCurRotSpeed(Data->GetOriginRotSpeed());
 		
 	return NodeResult::Node_True;
 }
@@ -59,5 +76,8 @@ NodeResult CBossBettyChangeAttackDirNode::OnUpdate(float DeltaTime)
 
 NodeResult CBossBettyChangeAttackDirNode::OnEnd(float DeltaTime)
 {
+	CBossBettyDataComponent* Data = dynamic_cast<CBossBettyDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
+	Data->SetCurRotSpeed(Data->GetOriginRotSpeed());
+
 	return NodeResult::Node_True;
 }

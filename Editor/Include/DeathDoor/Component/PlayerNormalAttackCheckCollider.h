@@ -29,6 +29,7 @@ public:
 public:
     void AttackSuccess(const CollisionResult& Result);
     virtual void Enable(bool Enable) override;
+    void DeleteObjectData(class CObjectDataComponent* Comp);
 
 private:
     std::list<class CObjectDataComponent*> m_CollisionObjDataList;

@@ -9,7 +9,8 @@ public:
     virtual ~CBossBettyChangeAttackDirNode();
 public:
     virtual void Init() override;
-
+private :
+    void OnResetOriginalRotSpeed();
 protected:
     virtual NodeResult OnStart(float DeltaTime);
     virtual NodeResult OnUpdate(float DeltaTime);

@@ -9,6 +9,9 @@ public:
     CRollInputCheck(const CRollInputCheck& Node);
     virtual ~CRollInputCheck();
 
+private:
+    int m_FrameCount;
+
 public:
     virtual NodeResult OnStart(float DeltaTime);
     virtual NodeResult OnUpdate(float DeltaTime);

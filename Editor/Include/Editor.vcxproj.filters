@@ -1,10 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="소스 파일">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
     <Filter Include="헤더 파일">
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
@@ -210,12 +206,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="EditorManager.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="main.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="Scene\DefaultScene.cpp">
       <Filter>01. Scene</Filter>
     </ClCompile>
@@ -621,18 +611,6 @@
     <ClCompile Include="DeathDoor\Component\Node\PlayerEnterZoneCheckNode.cpp">
       <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\01. Public</Filter>
     </ClCompile>
-    <ClCompile Include="DeathDoor\Component\Node\CrowBossStompStartCheck.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="DeathDoor\Component\Node\CrowBossSliding.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="DeathDoor\Component\Node\CrowBossStartFlyingCheck.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="DeathDoor\Component\Node\CrowBossSlidingNode.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="DeathDoor\Component\Node\CrowBossRunNode.cpp">
       <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\04. CrowBoss</Filter>
     </ClCompile>
@@ -651,9 +629,6 @@
     <ClCompile Include="DeathDoor\Component\Node\CrowBossPhasePickNode.cpp">
       <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\04. CrowBoss</Filter>
     </ClCompile>
-    <ClCompile Include="DeathDoor\Component\Node\CrowBossDirectionCheck.cpp">
-      <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\04. CrowBoss</Filter>
-    </ClCompile>
     <ClCompile Include="DeathDoor\Component\Node\CrowBossJump.cpp">
       <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\04. CrowBoss</Filter>
     </ClCompile>
@@ -663,8 +638,49 @@
     <ClCompile Include="DeathDoor\Component\Node\CrowBossLandingCheck.cpp">
       <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\04. CrowBoss</Filter>
     </ClCompile>
-    <ClCompile Include="Widget\CameraMoveWidget.cpp">
-      <Filter>02. Editor\02. Widget\01. Inspector\01. SceneComponent</Filter>
+    <ClCompile Include="DeathDoor\Component\Node\CrowBossJumpAttackRangeCheck.cpp">
+      <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\04. CrowBoss</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Component\Node\CrowBossFirstShootCheck.cpp">
+      <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\04. CrowBoss</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Component\Node\CrowBossShootReadyCheck.cpp">
+      <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\04. CrowBoss</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Component\Node\CrowBossDoneCheck.cpp">
+      <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\04. CrowBoss</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Component\Node\CrowBossShootEndCheck.cpp">
+      <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\04. CrowBoss</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Component\Node\CrowBossShootCheck.cpp">
+      <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\04. CrowBoss</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Component\Node\CrowBossFlyNode.cpp">
+      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\04. CrowBoss</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Component\Node\CrowBossMoveShootSpot.cpp">
+      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\04. CrowBoss</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Component\Node\CrowBossResetShootState.cpp">
+      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\04. CrowBoss</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Component\Node\CrowBossShootNode.cpp">
+      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\04. CrowBoss</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Component\Node\CrowBossSlide.cpp">
+      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\04. CrowBoss</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Component\Node\AttackCoolTimeCheck.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\CrowBossStartFlyingCheck.cpp" />
+    <ClCompile Include="EditorManager.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="Widget\CameraMoveWidget.cpp" />
+    <ClCompile Include="DeathDoor\Component\TinyCrowDataComponent.cpp">
+      <Filter>06. DeathDoor\01. GameComponent\02. ObjectComponent\01. DataComponent\01. ObjectDataComponent\01. Monster\04. CrowBoss\01. TinyCrow</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Component\Node\CrowBossSpitting.cpp">
+      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\04. CrowBoss</Filter>
     </ClCompile>
     <ClCompile Include="DeathDoor\Scene\DDSceneMode.cpp">
       <Filter>06. DeathDoor\05. SceneMode</Filter>
@@ -1112,16 +1128,7 @@
     <ClInclude Include="DeathDoor\Component\Node\PlayerEnterZoneCheckNode.h">
       <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\01. Public</Filter>
     </ClInclude>
-    <ClInclude Include="DeathDoor\Component\Node\CrowBossStompStartCheck.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="DeathDoor\Component\Node\CrowBossSliding.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="DeathDoor\Component\Node\CrowBossStartFlyingCheck.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="DeathDoor\Component\Node\CrowBossSlidingNode.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="DeathDoor\Component\Node\CrowBossRunNode.h">
@@ -1142,9 +1149,6 @@
     <ClInclude Include="DeathDoor\Component\Node\CrowBossPhasePickNode.h">
       <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\04. CrowBoss</Filter>
     </ClInclude>
-    <ClInclude Include="DeathDoor\Component\Node\CrowBossDirectionCheck.h">
-      <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\04. CrowBoss</Filter>
-    </ClInclude>
     <ClInclude Include="DeathDoor\Component\Node\CrowBossJump.h">
       <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\04. CrowBoss</Filter>
     </ClInclude>
@@ -1154,8 +1158,50 @@
     <ClInclude Include="DeathDoor\Component\Node\CrowBossLandingCheck.h">
       <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\04. CrowBoss</Filter>
     </ClInclude>
+    <ClInclude Include="DeathDoor\Component\Node\CrowBossJumpAttackRangeCheck.h">
+      <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\04. CrowBoss</Filter>
+    </ClInclude>
     <ClInclude Include="Widget\CameraMoveWidget.h">
-      <Filter>02. Editor\02. Widget\01. Inspector\01. SceneComponent</Filter>
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\Node\CrowBossFirstShootCheck.h">
+      <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\04. CrowBoss</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\Node\CrowBossShootReadyCheck.h">
+      <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\04. CrowBoss</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\Node\CrowBossDoneCheck.h">
+      <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\04. CrowBoss</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\Node\CrowBossShootEndCheck.h">
+      <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\04. CrowBoss</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\Node\CrowBossShootCheck.h">
+      <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\04. CrowBoss</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\Node\CrowBossFlyNode.h">
+      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\04. CrowBoss</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\Node\CrowBossMoveShootSpot.h">
+      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\04. CrowBoss</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\Node\CrowBossResetShootState.h">
+      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\04. CrowBoss</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\Node\CrowBossShootNode.h">
+      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\04. CrowBoss</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\Node\CrowBossSlide.h">
+      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\04. CrowBoss</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\Node\AttackCoolTimeCheck.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\TinyCrowDataComponent.h">
+      <Filter>06. DeathDoor\01. GameComponent\02. ObjectComponent\01. DataComponent\01. ObjectDataComponent\01. Monster\04. CrowBoss\01. TinyCrow</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\Node\CrowBossSpitting.h">
+      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\04. CrowBoss</Filter>
     </ClInclude>
     <ClInclude Include="DeathDoor\Scene\DDSceneMode.h">
       <Filter>06. DeathDoor\05. SceneMode</Filter>

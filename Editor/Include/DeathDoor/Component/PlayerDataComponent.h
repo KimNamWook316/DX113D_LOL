@@ -24,7 +24,11 @@ private:
 	std::queue<char> m_KeyStateQueue;
 	int m_FrameCount;
 	bool m_MouseLButtonDown;
-
+	bool m_Unbeatable; // 구르기상태에 순간적으로 무적 상태인지
+	float m_UnbeatableAccTime; // 구르기하고 무적시간 판정용 누적 시간 
+	// --> OnRollEnd에 m_Unbeatable = false로 해주면 m_Unbeatable = false가 먼저 되고 HitCheck가 되어서
+	// 구르기인데도 맞아 눕는 문제가 생길 수 있다
+	float m_UnbeatableTime; // 구르기하고 무적시간 
 
 public:
 	virtual void Start();
@@ -88,6 +92,11 @@ public:
 		m_AttackDir = Dir;
 	}
 
+	bool IsUnbeatable()	const
+	{
+		return m_Unbeatable;
+	}
+
 	const Vector3& GetAttackDir()	const
 	{
 		return m_AttackDir;
@@ -117,31 +126,6 @@ public:
 	{
 		return m_KeyStateQueue.size();
 	}
-
-	/*void SetConsecutiveAttack(bool Consecutive)
-	{
-		m_ConsecutiveAttack = Consecutive;
-	}
-
-	bool IsConsecutiveAttack()	const
-	{
-		return m_ConsecutiveAttack;
-	}
-
-	void AddConsecutiveAttackCount()
-	{
-		++m_ConsecutiveAttackCount;
-	}
-
-	int GetConsecutiveAttacCount()
-	{
-		return m_ConsecutiveAttackCount;
-	}
-
-	void SetConsecutiveAttackCount(int Count)
-	{
-		m_ConsecutiveAttackCount = Count;
-	}*/
 
 	class CAnimationMeshComponent* GetAnimationMeshComponent() const;
 

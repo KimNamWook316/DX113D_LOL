@@ -21,6 +21,7 @@ protected:
 public:
 	virtual void Start() override;
 	virtual void Update(float DeltaTime) override;
+	virtual void PostUpdate(float DeltaTime) override;
 	virtual CMonsterDataComponent* Clone();
 
 public:
@@ -62,17 +63,35 @@ public:
 	{
 		m_PostAttackDelaying = Enable;
 	}
-
 	void OnCombatStart()
 	{
 		m_IsCombat = true;
 	}
-
+	void SetMoveZEnableMaxTime(float Time)
+	{
+		m_MoveZEnableMaxTime = Time;
+	}
 	void SetCurMoveSpeed(float Speed)
 	{
 		m_CurMoveSpeed = Speed;
+	}	
+	void SetCurRotSpeed(float Speed)
+	{
+		m_CurRotSpeed = Speed;
 	}
+	void SetAttackCoolDelayTimeMax(float Time)
+	{
+		m_AttackCoolDelayTimeMax = Time;
+	}
+	void SetAttackCoolDelayTimeEnable(bool Enable)
+	{
+		m_AttackCoolTimeEnable = Enable;
 
+		if (Enable)
+		{
+			m_AttackCoolDelayTime = m_AttackCoolDelayTimeMax;
+		}
+	}
 	void SetCurrentNodeNull();
 
 	void SetPlayerEnterZone(bool Enter)
@@ -86,6 +105,10 @@ public:
 	}
 
 public:
+	bool IsAttackCoolTimeEnable() const
+	{
+		return m_AttackCoolTimeEnable;
+	}
 	float GetRotateSpeed() const
 	{
 		return m_Data.RotateSpeedPerSec;
@@ -97,6 +120,15 @@ public:
 	float GetCurMoveSpeed() const
 	{
 		return m_CurMoveSpeed;
+	}
+	float GetJumpAttackRange() const
+	{
+		return m_Data.JumpAttackRange;
+	}
+
+	class CParticleComponent* GetBloodParticle() const
+	{
+		return m_BloodParticle;
 	}
 
     class CColliderBox3D* GetMeleeAttackCollider() const
@@ -156,6 +188,7 @@ protected:
 	class CColliderBox3D* m_HitBox;
 	class CColliderBox3D* m_MeleeAttackCollider;
 	class CGameStateComponent* m_State;
+	class CParticleComponent* m_BloodParticle;
 
 	bool m_PostAttackDelaying;  // 공격 후딜레이 중인지 여부
 	bool m_IsCombat;			// 전투 시작 여부
@@ -172,10 +205,21 @@ protected:
 	std::vector<Vector4> m_vecOriginAmbient;
 	std::vector<Vector4> m_vecOriginEmissive;
 
+	// Attack Cool Time
+	bool m_AttackCoolTimeEnable;  // true 라면, 공격 X
+	float m_AttackCoolDelayTime;
+	float m_AttackCoolDelayTimeMax;
+
+	// Rot 
+	float m_OriginRotSpeed;
+	float m_CurRotSpeed;
+
 	// Move 관련 변수
 	float m_CurMoveSpeed;
 	bool m_LookPlayer;
 	bool m_MoveZ;
+	// 해당 시간 동안만 m_MoveZ 를 true 로 만들었다가, false 로 다시 세팅
+	float m_MoveZEnableMaxTime;
 	// 왼쪽으로만 무조건 돌아야 하는 순간
 	bool m_LeftLookPlayer;
 	// 오른쪽으로만 무조건 돌아야 하는 순간
@@ -199,5 +243,8 @@ protected:
 
 public:
 	class CMonsterNavAgent* GetMonsterNavAgent()	const;
+
+public:
+	class CColliderBox3D* GetHitBox()	const;
 };
 

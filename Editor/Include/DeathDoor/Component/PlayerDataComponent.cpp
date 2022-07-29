@@ -7,15 +7,19 @@
 #include "../DataManager.h"
 #include "GameStateComponent.h"
 #include "Component/ColliderComponent.h"
+#include "Component/ColliderBox3D.h"
 #include "../Component/PlayerNormalAttackCheckCollider.h"
 #include "Scene/Navigation3DManager.h"
 
-CPlayerDataComponent::CPlayerDataComponent()	:
+CPlayerDataComponent::CPlayerDataComponent() :
 	m_OnSlash(false),
 	m_AnimComp(nullptr),
 	m_Body(nullptr),
 	m_FrameCount(0),
-	m_MouseLButtonDown(false)
+	m_MouseLButtonDown(false),
+	m_Unbeatable(false),
+	m_UnbeatableAccTime(0.f),
+	m_UnbeatableTime(2.7f)
 
 {
 	SetTypeID<CPlayerDataComponent>();
@@ -55,8 +59,10 @@ void CPlayerDataComponent::Start()
 	m_AttackCheckCollider->Enable(false);
 
 	// Player Animation Notify는 여기 추가
-	m_AnimComp->GetAnimationInstance()->AddNotify<CPlayerDataComponent>("PlayerSlashL", "PlayerSlashL", 3, this, &CPlayerDataComponent::SetTrueOnSlash);
+	m_AnimComp->GetAnimationInstance()->AddNotify<CPlayerDataComponent>("PlayerSlashL", "PlayerSlashL", 2, this, &CPlayerDataComponent::SetTrueOnSlash);
 	m_AnimComp->GetAnimationInstance()->AddNotify<CPlayerDataComponent>("PlayerSlashL", "PlayerSlashL", 8, this, &CPlayerDataComponent::SetFalseOnSlash);
+	m_AnimComp->GetAnimationInstance()->AddNotify<CPlayerDataComponent>("PlayerSlashR", "PlayerSlashR", 2, this, &CPlayerDataComponent::SetTrueOnSlash);
+	m_AnimComp->GetAnimationInstance()->AddNotify<CPlayerDataComponent>("PlayerSlashR", "PlayerSlashR", 8, this, &CPlayerDataComponent::SetFalseOnSlash);
 	m_AnimComp->GetAnimationInstance()->AddNotify<CPlayerDataComponent>("PlayerHitBack", "PlayerHitBack", 0, this, &CPlayerDataComponent::OnHitBack);
 	m_AnimComp->GetAnimationInstance()->AddNotify<CPlayerDataComponent>("PlayerRoll", "PlayerRoll", 0, this, &CPlayerDataComponent::OnRoll);
 	
@@ -77,11 +83,6 @@ bool CPlayerDataComponent::Init()
 
 void CPlayerDataComponent::Update(float DeltaTime)
 {
-	//CObjectComponent::Update(DeltaTime);
-
-	//if (m_AttackCount > 3)
-	//	m_AttackCount = 0;
-
 	m_FrameCount = 0;
 
 	CGameStateComponent* Comp = m_Object->FindObjectComponentFromType<CGameStateComponent>();
@@ -99,15 +100,32 @@ void CPlayerDataComponent::Update(float DeltaTime)
 
 			m_KeyStateQueue.push(VK_LBUTTON);
 
-			if (m_KeyStateQueue.size() > 1)
-				int a = 3;
-
 		}
 
 		if (LButtonUp)
 			m_MouseLButtonDown = false;
 
+		if (m_Unbeatable)
+		{
+			if (m_UnbeatableAccTime > m_UnbeatableTime)
+			{
+				CColliderBox3D* BodyCollider = (CColliderBox3D*)m_Object->FindComponent("Body");
+
+				if (BodyCollider)
+					BodyCollider->SetRigidCollisionIgnore(false);
+
+				m_Unbeatable = false;
+				m_UnbeatableAccTime = 0.f;
+				return;
+			}
+
+			m_IsHit = false;
+
+			m_UnbeatableAccTime += DeltaTime;
+		}
 	}
+
+
 }
 
 void CPlayerDataComponent::PostUpdate(float DeltaTime)
@@ -207,12 +225,16 @@ void CPlayerDataComponent::OnHitRecoverEnd()
 
 void CPlayerDataComponent::OnRoll()
 {
-	m_Body->Enable(false);
+	//m_Body->Enable(false);
+	m_Unbeatable = true;
+
+	m_Body->SetRigidCollisionIgnore(true);
 }
 
 void CPlayerDataComponent::OnRollEnd()
 {
-	m_Body->Enable(true);
+	//m_Body->Enable(true);
+	//m_Unbeatable = false;
 }
 
 void CPlayerDataComponent::ForceUpdateAttackDirection()

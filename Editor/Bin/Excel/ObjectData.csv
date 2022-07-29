@@ -1,8 +1,8 @@
-ObjectData,,,,,,,
-,HP,DetectRange,MoveSpeed,Attack,MeleeAttackRange,JumpAttackRange,RotateSpeedPerSec
-Player,4,0,15,10,0,0,0
-Lurker,80,20,5,20,4,0,0
-BossKnight,50,20,3,1,10,20,360
-CrowBoss,100,20,6,1,20,5,10
-BossBetty,200,20,35,1,15,10,360
-SporeBoomer,9999999,0,0,1,0,0,0
+ObjectData,,,,,,,,
+,HP,DetectRange,MoveSpeed,Attack,MeleeAttackRange,JumpAttackRange,RotateSpeedPerSec,FlySpeed
+Player,4,0,10,10,0,0,0,0
+Lurker,80,20,5,20,4,0,0,0
+BossKnight,50,20,3,1,10,20,360,0
+CrowBoss,1,20,8,1,8,35,10,50
+BossBetty,200,20,35,1,15,10,180,0
+SporeBoomer,9999999,0,0,1,0,0,0,0

@@ -6,12 +6,13 @@
 #include "../CrowBossDataComponent.h"
 #include "../MonsterNavAgent.h"
 #include "Scene/Scene.h"
-
+#include "Component/ColliderBox3D.h"
 
 CCrowBossSpinNode::CCrowBossSpinNode()	:
 	m_AccRotation(0.f),
 	m_SpinDegree(0.f),
-	m_AccSlidingTime(0.f)
+	m_AccSlidingTime(0.f),
+	m_RotateCW(true)
 {
 	SetTypeID(typeid(CCrowBossSpinNode).hash_code());
 }
@@ -36,9 +37,17 @@ NodeResult CCrowBossSpinNode::OnStart(float DeltaTime)
 
 	CCrowBossDataComponent* Data = dynamic_cast<CCrowBossDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
 
+	if (Data->GetHP() <= 0)
+	{
+		return NodeResult::Node_True;
+	}
+
 	Vector3 MyOriginPos = Data->GetMyOriginPos();
 	Vector3 PlayerOriginPos = Data->GetPlayerOriginPos();
+	CNavAgent* Agent = Data->GetMonsterNavAgent();
+	Vector3 FaceDir = Agent->GetCurrentFaceDir();
 	Vector3 OriginDir = PlayerOriginPos - MyOriginPos;
+
 	OriginDir.Normalize();
 
 	Vector3 MyCurrentPos = m_Object->GetWorldPos();
@@ -47,37 +56,44 @@ NodeResult CCrowBossSpinNode::OnStart(float DeltaTime)
 	Vector3 CurrentDir = PlayerCurrentPos - MyCurrentPos;
 	CurrentDir.Normalize();
 
-	Vector3 Cross = OriginDir.Cross(CurrentDir);
-	bool CW = true;
+	Vector3 Cross = FaceDir.Cross(CurrentDir);
 
+	m_RotateCW = true;
+	m_SpinDegree = 0.f;
 	if (Cross.y < 0)
 	{
-		CW = false;
+		m_RotateCW = false;
 	}
 
-	if (CW)
+	if (m_RotateCW)
 		m_AnimationMeshComp->GetAnimationInstance()->ChangeAnimation("RightSpin");
 	else
 		m_AnimationMeshComp->GetAnimationInstance()->ChangeAnimation("LeftSpin");
 
-	CNavAgent* Agent = Data->GetMonsterNavAgent();
-	Vector3 FaceDir = Agent->GetCurrentFaceDir();
-	
-	float DotProduct = FaceDir.Dot(CurrentDir);
-	m_SpinDegree = 0.f;
+	Vector3 SpinDir = PlayerCurrentPos - MyCurrentPos;
+	SpinDir.Normalize();
 
-	if (DotProduct < 0.995f && DotProduct > -0.995f)
+	float DotProduct = FaceDir.Dot(SpinDir);
+
+	if (DotProduct < 0.9999f && DotProduct > -0.9999f)
 	{
 		m_SpinDegree = RadianToDegree(acosf(DotProduct));
+
+		Vector3 CrossVec = FaceDir.Cross(SpinDir);
+
+		if (CrossVec.y < 0.f)
+			m_SpinDegree *= -1.f;
 	}
 
 	else
 	{
-		if (CW)
+		if (m_RotateCW)
 			m_SpinDegree = 180.f;
 		else
 			m_SpinDegree = -180.f;
 	}
+
+	Data->GetMeleeAttackCollider()->Enable(false);
 
 	return NodeResult::Node_True;
 }
@@ -88,38 +104,36 @@ NodeResult CCrowBossSpinNode::OnUpdate(float DeltaTime)
 
 	CCrowBossDataComponent* Data = dynamic_cast<CCrowBossDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
 
-	//CMonsterNavAgent* Agent = Data->GetMonsterNavAgent();
-
-	//CGameObject* Player = m_Object->GetScene()->GetPlayerObject();
-	//CNavAgent* PlayerNavAgent = Player->FindObjectComponentFromType<CNavAgent>();
-
-	//Vector3 MyFaceDir = Agent->GetCurrentFaceDir();
-	//Vector3 PlayerFaceDir = PlayerNavAgent->GetCurrentFaceDir();
-
-	//float DotProduct = MyFaceDir.Dot(PlayerFaceDir);
-	//float Degree = DegreeToRadian(acosf(DotProduct));
-
+	if (Data->GetHP() <= 0)
+	{
+		m_AnimationMeshComp->GetAnimationInstance()->ChangeAnimation("Death");
+		m_Owner->SetCurrentNode(nullptr);
+		return NodeResult::Node_True;
+	}
 
 	Vector3 MyOriginPos = Data->GetMyOriginPos();
 	Vector3 PlayerOriginPos = Data->GetPlayerOriginPos();
 	Vector3 OriginDir = PlayerOriginPos - MyOriginPos;
 	OriginDir.Normalize();
 
-	if (abs(m_AccRotation - m_SpinDegree) < 3.f)
+	if (abs(m_AccRotation - m_SpinDegree) < 2.f)
 	{
-		if (m_AccSlidingTime > 1.2f)
+		if (m_AccSlidingTime > 1.f)
 		{
 			m_AccRotation = 0.f;
 			m_AccSlidingTime = 0.f;
 			m_Owner->SetCurrentNode(nullptr);
 			m_CallStart = false;
+
+			m_AnimationMeshComp->GetAnimationInstance()->ChangeAnimation("Run");
+
 			return NodeResult::Node_True;
 		}
 
 		else
 		{
 			m_AccSlidingTime += DeltaTime;
-			m_Object->AddWorldPos(OriginDir * 6.f * DeltaTime);
+			m_Object->AddWorldPos(OriginDir * 4.f * DeltaTime);
 		}
 
 		return NodeResult::Node_True;
@@ -130,16 +144,16 @@ NodeResult CCrowBossSpinNode::OnUpdate(float DeltaTime)
 	CNavAgent* Agent = Data->GetMonsterNavAgent();
 	Vector3 FaceDir = Agent->GetCurrentFaceDir();
 
-	if (m_SpinDegree < 0.f)
+	if (m_SpinDegree > 0.f)
 	{
-		m_Object->AddWorldRotationY(-180.f * DeltaTime);
-		m_AccRotation += -180.f * DeltaTime;
+		m_Object->AddWorldRotationY(180.f * DeltaTime);
+		m_AccRotation += 180.f * DeltaTime;
 	}
 
 	else
 	{
-		m_Object->AddWorldRotationY(180.f * DeltaTime);
-		m_AccRotation += 180.f * DeltaTime;
+		m_Object->AddWorldRotationY(-180.f * DeltaTime);
+		m_AccRotation += -180.f * DeltaTime;
 	}
 	
 

@@ -150,7 +150,7 @@ void CNavAgent::Update(float DeltaTime)
 
 			float Dot = Vector3(Dir.x, 0.f, Dir.z).Dot(Vector3(CurrentFaceDir.x, 0.f, CurrentFaceDir.z));
 
-			if (Dot < 0.999f && Dot > -0.999f)
+			if (Dot < 0.9999f && Dot > -0.9999f)
 			{
 				float Degree = RadianToDegree(acosf(Dot));
 				Vector3 CrossResult = Vector3(Dir.x, 0.f, Dir.z).Cross(Vector3(CurrentFaceDir.x, 0.f, CurrentFaceDir.z));
@@ -275,4 +275,17 @@ bool CNavAgent::FindPathExcept(CSceneComponent* OwnerComponent, const Vector3& E
 bool CNavAgent::CheckStraightPath(const Vector3& StartPos, const Vector3& EndPos, std::vector<Vector3>& vecPath)
 {
 	return CSceneManager::GetInst()->GetScene()->GetNavigation3DManager()->GetNavMeshData()->CheckStraightPath(StartPos, EndPos, vecPath);
+}
+
+void CNavAgent::ForceUpdateFaceDir()
+{
+	Vector3 CurrentFaceDir = Vector3(0.f, 0.f, -1.f);
+	Vector3 Rot = m_UpdateComponent->GetWorldRot();
+
+	Matrix RotMat;
+
+	RotMat.Rotation(Rot);
+
+	CurrentFaceDir = CurrentFaceDir.TransformCoord(RotMat);
+	m_CurrentFaceDir = CurrentFaceDir;
 }

@@ -35,6 +35,8 @@
 #include "../DeathDoor/Component/Node/IsCombatCheck.h"
 #include "../DeathDoor/Component/Node/DeathCheck.h"
 #include "../DeathDoor/Component/Node/PostAttackDelayCheck.h"
+#include "../DeathDoor/Component/Node/AttackCoolTimeCheck.h"
+// BossKnight
 #include "../DeathDoor/Component/Node/BossKnightContinueAttackNode.h"
 #include "../DeathDoor/Component/Node/BossKnightCutScenePlayCheck.h"
 #include "../DeathDoor/Component/Node/BossKnightCutScenePlayNode.h"
@@ -49,7 +51,7 @@
 #include "../DeathDoor/Component/Node/BossKnightWalkNode.h"
 #include "../DeathDoor/Component/Node/BossKnightCutScenePlayNode.h"
 #include "../DeathDoor/Component/Node/BossKnightContinueAttackCheck.h"
-#include "../DeathDoor/Component/Node/UpdateInputQueue.h"
+
 // BossBetty
 #include "../DeathDoor/Component/Node/BossBettyAngryAttackNode.h"
 #include "../DeathDoor/Component/Node/BossBettyChangeAttackDirNode.h"
@@ -66,7 +68,6 @@
 // CrowBoss
 #include "../DeathDoor/Component/Node/CrowBossCutScenePlayCheck.h"
 #include "../DeathDoor/Component/Node/CrowBossCutScenePlayNode.h"
-#include "../DeathDoor/Component/Node/CrowBossDirectionCheck.h"
 #include "../DeathDoor/Component/Node/CrowBossRunNode.h"
 #include "../DeathDoor/Component/Node/CrowBossSpinNode.h"
 #include "../DeathDoor/Component/Node/CrowBossPhasePickNode.h"
@@ -74,6 +75,18 @@
 #include "../DeathDoor/Component/Node/CrowBossJumpStartCheck.h"
 #include "../DeathDoor/Component/Node/CrowBossLandingCheck.h"
 #include "../DeathDoor/Component/Node/CrowBossJump.h"
+#include "../DeathDoor/Component/Node/CrowBossJumpAttackRangeCheck.h"
+#include "../DeathDoor/Component/Node/CrowBossDoneCheck.h"
+#include "../DeathDoor/Component/Node/CrowBossFirstShootCheck.h"
+#include "../DeathDoor/Component/Node/CrowBossShootCheck.h"
+#include "../DeathDoor/Component/Node/CrowBossShootEndCheck.h"
+#include "../DeathDoor/Component/Node/CrowBossShootReadyCheck.h"
+#include "../DeathDoor/Component/Node/CrowBossFlyNode.h"
+#include "../DeathDoor/Component/Node/CrowBossMoveShootSpot.h"
+#include "../DeathDoor/Component/Node/CrowBossResetShootState.h"
+#include "../DeathDoor/Component/Node/CrowBossShootNode.h"
+#include "../DeathDoor/Component/Node/CrowBossSlide.h"
+#include "../DeathDoor/Component/Node/CrowBossSpitting.h"
 
 // SporeBoomer
 #include "../DeathDoor/Component/Node/SporeBoomerShootNode.h"
@@ -82,6 +95,7 @@
 #include "../DeathDoor/Component/Node/HitBackNode.h"
 #include "../DeathDoor/Component/Node/RollInputCheck.h"
 #include "../DeathDoor/Component/Node/PlayerRoll.h"
+#include "../DeathDoor/Component/Node/UpdateInputQueue.h"
 
 #include "ObjectComponentWindow.h"
 #include "ObjectHierarchyWindow.h"
@@ -596,6 +610,36 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
             NewTreeNode = m_StateComponent->CreateTreeNode<CCrowBossJump>(Name);
             break;
         }
+        case DDActionNode::CrowBossFly:
+        {
+            NewTreeNode = m_StateComponent->CreateTreeNode<CCrowBossFlyNode>(Name);
+            break;
+        }
+        case DDActionNode::CrowBossMoveShootSpot:
+        {
+            NewTreeNode = m_StateComponent->CreateTreeNode<CCrowBossMoveShootSpot>(Name);
+            break;
+        }
+        case DDActionNode::CrowBossResetShootState:
+        {
+            NewTreeNode = m_StateComponent->CreateTreeNode<CCrowBossResetShootState>(Name);
+            break;
+        }
+        case DDActionNode::CrowBossShoot:
+        {
+            NewTreeNode = m_StateComponent->CreateTreeNode<CCrowBossShootNode>(Name);
+            break;
+        }
+        case DDActionNode::CrowBossSlide:
+        {
+            NewTreeNode = m_StateComponent->CreateTreeNode<CCrowBossSlide>(Name);
+            break;
+        }
+        case DDActionNode::CrowBossSpitting:
+        {
+            NewTreeNode = m_StateComponent->CreateTreeNode<CCrowBossSpitting>(Name);
+            break;
+        }
 
         // Spore Boomer
         case DDActionNode::SporeBoomerShoot:
@@ -664,6 +708,9 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
         case DDConditionNode::PostAttackDelayCheck:
             NewTreeNode = m_StateComponent->CreateTreeNode<CPostAttackDelayCheck>(Name);
             break;
+        case DDConditionNode::AttackCoolTimeCheck:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CAttackCoolTimeCheck>(Name);
+            break;
         case DDConditionNode::BossKnightFinalAttackCheck:
             NewTreeNode = m_StateComponent->CreateTreeNode<CBossKnightFinalAttackCheck>(Name);
             break;
@@ -697,9 +744,6 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
         case DDConditionNode::CrowBossCutScenePlayCheck:
             NewTreeNode = m_StateComponent->CreateTreeNode<CCrowBossCutScenePlayCheck>(Name);
             break;
-        case DDConditionNode::CrowBossDirectionCheck:
-            NewTreeNode = m_StateComponent->CreateTreeNode<CCrowBossDirectionCheck>(Name);
-            break;
         case DDConditionNode::CrowBossPhasePickNode:
             NewTreeNode = m_StateComponent->CreateTreeNode<CCrowBossPhasePickNode>(Name);
             break;
@@ -711,6 +755,24 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
             break;
         case DDConditionNode::CrowBossLandingCheck:
             NewTreeNode = m_StateComponent->CreateTreeNode<CCrowBossLandingCheck>(Name);
+            break;
+        case DDConditionNode::CrowBossJumpAttackRangeCheck:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CCrowBossJumpAttackRangeCheck>(Name);
+            break;
+        case DDConditionNode::CrowBossDoneCheck:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CCrowBossDoneCheck>(Name);
+            break;
+        case DDConditionNode::CrowBossFirstShootCheck:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CCrowBossFirstShootCheck>(Name);
+            break;
+        case DDConditionNode::CrowBossShootCheck:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CCrowBossShootCheck>(Name);
+            break;
+        case DDConditionNode::CrowBossShootEndCheck:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CCrowBossShootEndCheck>(Name);
+            break;
+        case DDConditionNode::CrowBossShootReadyCheck:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CCrowBossShootReadyCheck>(Name);
             break;
 
 

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ConstantBufferBase.h"
+#include "../../ParticleInfo.h"
 
 class CParticleConstantBuffer :
     public CConstantBufferBase
@@ -225,7 +226,16 @@ public:
 	{
 		return m_BufferData.ApplyNoiseTexture ? 1 : 0;
 	}
+	int IsFollowRealTimeParticleComponentPos() const
+	{
+		return m_BufferData.FollowRealTimeParticleComponentPos;
+	}
 public:
+	// Follod Particle Component Pos
+	void SetFollowRealTimeParticleComponentPos(bool Enable) 
+	{
+		m_BufferData.FollowRealTimeParticleComponentPos = Enable ? 1 : 0;
+	}
 	// Noise Texture
 	void SetApplyNoiseTextureSamplingEnable(bool Enable)
 	{

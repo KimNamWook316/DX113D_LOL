@@ -17,6 +17,7 @@
 #include "Component\ProjectileComponent.h"
 #include "Component\ArrowComponent.h"
 #include "Component\CrowBossDataComponent.h"
+#include "Component\TinyCrowDataComponent.h"
 #include "Component\SporeBoomerDataComponent.h"
 #include "Component\CrackedBlockCollider.h"
 
@@ -63,6 +64,9 @@ std::string CDDUtil::DDConditionNodeTypeToString(DDConditionNode NodeType)
 	case DDConditionNode::PostAttackDelayCheck:
 		return "PostAttackDelayCheck";
 
+	case DDConditionNode::AttackCoolTimeCheck:
+		return "AttackCoolTimeCheck";
+
 	case DDConditionNode::BossKnightFinalAttackCheck:
 		return "BossKnightFinalAttackCheck";
 
@@ -94,8 +98,6 @@ std::string CDDUtil::DDConditionNodeTypeToString(DDConditionNode NodeType)
 	// Crow Boss
 	case DDConditionNode::CrowBossCutScenePlayCheck:
 		return "CrowBossCutScenePlayCheck";
-	case DDConditionNode::CrowBossDirectionCheck:
-		return "CrowBossDirectionCheck";
 	case DDConditionNode::CrowBossPhasePickNode:
 		return "CrowBossPhasePickNode";
 	case DDConditionNode::CrowBossBypassCheck:
@@ -104,6 +106,18 @@ std::string CDDUtil::DDConditionNodeTypeToString(DDConditionNode NodeType)
 		return "CrowBossJumpStartCheck";
 	case DDConditionNode::CrowBossLandingCheck:
 		return "CrowBossLandingCheck";
+	case DDConditionNode::CrowBossJumpAttackRangeCheck:
+		return "CrowBossJumpAttackRangeCheck";
+	case DDConditionNode::CrowBossDoneCheck:
+		return "CrowBossDoneCheck";
+	case DDConditionNode::CrowBossFirstShootCheck:
+		return "CrowBossFirstShootCheck";
+	case DDConditionNode::CrowBossShootCheck:
+		return "CrowBossShootCheck";
+	case DDConditionNode::CrowBossShootEndCheck:
+		return "CrowBossShootEndCheck";
+	case DDConditionNode::CrowBossShootReadyCheck:
+		return "CrowBossShootReadyCheck";
 
 
 	case DDConditionNode::HPCheck:
@@ -189,6 +203,11 @@ DDConditionNode CDDUtil::StringToDDConditionNodeType(const std::string& Str)
 	{
 		return DDConditionNode::PostAttackDelayCheck;
 	}
+	else if (Str == "AttackCoolTimeCheck")
+	{
+		return DDConditionNode::AttackCoolTimeCheck;
+	}
+	
 	else if (Str == "BossKnightCutScenePlayCheck")
 	{
 		return DDConditionNode::BossKnightCutScenePlayCheck;
@@ -223,10 +242,6 @@ DDConditionNode CDDUtil::StringToDDConditionNodeType(const std::string& Str)
 	{
 		return DDConditionNode::CrowBossCutScenePlayCheck;
 	}
-	else if (Str == "CrowBossDirectionCheck")
-	{
-		return DDConditionNode::CrowBossDirectionCheck;
-	}
 	else if (Str == "CrowBossPhasePickNode")
 	{
 		return DDConditionNode::CrowBossPhasePickNode;
@@ -239,7 +254,10 @@ DDConditionNode CDDUtil::StringToDDConditionNodeType(const std::string& Str)
 	{
 		return DDConditionNode::CrowBossLandingCheck;
 	}
-
+	else if (Str == "CrowBossJumpAttackRangeCheck")
+	{
+	return DDConditionNode::CrowBossJumpAttackRangeCheck;
+	}
 
 	else if (Str == "HPCheck")
 	{
@@ -357,6 +375,19 @@ std::string CDDUtil::DDActionNodeTypeToString(DDActionNode NodeType)
 		return "CrowBossSpinNode";
 	case DDActionNode::CrowBossJump:
 		return "CrowBossJump";
+	case DDActionNode::CrowBossFly:
+		return "CrowBossFlyNode";
+	case DDActionNode::CrowBossMoveShootSpot:
+		return "CrowBossMoveShootSpot";
+	case DDActionNode::CrowBossResetShootState:
+		return "CrowBossResetShootState";
+	case DDActionNode::CrowBossShoot:
+		return "CrowBossShoot";
+	case DDActionNode::CrowBossSlide:
+		return "CrowBossSlide";
+	case DDActionNode::CrowBossSpitting:
+		return "CrowBossSpitting";
+
 
 	// Spore Boomer
 	case DDActionNode::SporeBoomerShoot:
@@ -489,6 +520,30 @@ DDActionNode CDDUtil::StringToDDActionNodeType(const std::string& Str)
 	{
 		return DDActionNode::CrowBossJump;
 	}
+	else if (Str == "CrowBossFly")
+	{
+		return DDActionNode::CrowBossFly;
+	}
+	else if (Str == "CrowBossMoveShootSpot")
+	{
+		return DDActionNode::CrowBossMoveShootSpot;
+	}
+	else if (Str == "CrowBossResetShootState")
+	{
+		return DDActionNode::CrowBossResetShootState;
+	}
+	else if (Str == "CrowBossShoot")
+	{
+		return DDActionNode::CrowBossShoot;
+	}
+	else if (Str == "CrowBossSlide")
+	{
+		return DDActionNode::CrowBossSlide;
+	}
+	else if (Str == "CrowBossSpitting")
+	{
+	return DDActionNode::CrowBossSpitting;
+	}
 
 
 	else if (Str == "ClearPathList")
@@ -606,6 +661,9 @@ std::string CDDUtil::DDObjectComponentTypeToString(DDObjectComponentType Type)
 	case DDObjectComponentType::ArrowComponent:
 		return "ArrowComponent";
 
+	case DDObjectComponentType::TinyCrowDataComponent:
+		return "TinyCrowDataComponent";
+
 	case DDObjectComponentType::SporeBoomerData:
 		return "SporeBoomerData";
 	}
@@ -693,6 +751,8 @@ size_t CDDUtil::DDObjectComponentTypeToTypeID(DDObjectComponentType Type)
 		return typeid(CProjectileComponent).hash_code();
 	case DDObjectComponentType::ArrowComponent:
 		return typeid(CArrowComponent).hash_code();
+	case DDObjectComponentType::TinyCrowDataComponent:
+		return typeid(CTinyCrowDataComponent).hash_code();
 	case DDObjectComponentType::SporeBoomerData:
 		return typeid(CSporeBoomerDataComponent).hash_code();
 	}

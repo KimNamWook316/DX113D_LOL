@@ -6,6 +6,7 @@
 #include "../CrowBossDataComponent.h"
 #include "../MonsterNavAgent.h"
 #include "Scene/Scene.h"
+#include "Component/ColliderBox3D.h"
 
 CCrowBossRunNode::CCrowBossRunNode()
 {
@@ -28,6 +29,13 @@ void CCrowBossRunNode::Init()
 
 NodeResult CCrowBossRunNode::OnStart(float DeltaTime)
 {
+	CCrowBossDataComponent* Data = dynamic_cast<CCrowBossDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
+
+	if (Data->GetHP() <= 0)
+	{
+		return NodeResult::Node_True;
+	}
+
 	m_AnimationMeshComp->GetAnimationInstance()->ChangeAnimation("Run");
 
 	return NodeResult::Node_True;
@@ -37,28 +45,41 @@ NodeResult CCrowBossRunNode::OnUpdate(float DeltaTime)
 {
 	CCrowBossDataComponent* Data = dynamic_cast<CCrowBossDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
 
+	if (Data->GetHP() <= 0)
+	{
+		return NodeResult::Node_True;
+	}
 
+	Data->GetMeleeAttackCollider()->Enable(false);
 	CNavAgent* Agent = Data->GetMonsterNavAgent();
-	Vector3 PlayerPos = m_Object->GetScene()->GetPlayerObject()->GetWorldPos();
-	Vector3 MyPos = m_Object->GetWorldPos();
-	Vector3 RunDir = PlayerPos - MyPos;
+	Vector3 PlayerCurrentPos = m_Object->GetScene()->GetPlayerObject()->GetWorldPos();
+	Vector3 MyCurrentPos = m_Object->GetWorldPos();
+
+	Vector3 RunDir = PlayerCurrentPos - MyCurrentPos;
 	RunDir.Normalize();
 
 	Vector3 FaceDir = Agent->GetCurrentFaceDir();
 
-
 	float DotProduct = FaceDir.Dot(RunDir);
 
-	if (DotProduct < 0.95f && DotProduct > -0.95f)
+	if (DotProduct < 0.999999f && DotProduct > -0.999999f)
 	{
 		float Degree = RadianToDegree(acosf(DotProduct));
 
 		Vector3 CrossVec = FaceDir.Cross(RunDir);
 
 		if(CrossVec.y > 0.f)
-			m_Object->AddWorldRotationY(60.f * DeltaTime);
+			m_Object->AddWorldRotationY(90.f * DeltaTime);
 		else
-			m_Object->AddWorldRotationY(-60.f * DeltaTime);
+			m_Object->AddWorldRotationY(-90.f * DeltaTime);
+	}
+	else
+	{
+		// 평행이고 같은 방향
+		if (DotProduct > 0.999999f)
+		{
+			m_Object->AddWorldRotationY(120.f * DeltaTime);
+		}
 	}
 
 	

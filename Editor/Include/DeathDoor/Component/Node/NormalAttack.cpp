@@ -105,7 +105,10 @@ NodeResult CNormalAttack::OnUpdate(float DeltaTime)
 			int Tmp = m_ConsecutiveAttackCount;
 
 			if (Tmp == 0)
+			{
 				m_ConsecutiveAttackCount = 2;
+				Data->ForceUpdateAttackDirection();
+			}
 			else if (Tmp == 2)
 			{
 				m_ConsecutiveAttackCount = 3;

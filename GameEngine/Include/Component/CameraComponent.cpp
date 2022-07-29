@@ -677,16 +677,16 @@ bool CCameraComponent::Save(FILE* File)
 
 	int Length = (int)m_MoveDataList.size();
 	fwrite(&Length, sizeof(int), 1, File);
-
+	
 	auto iter = m_MoveDataList.begin();
 	auto iterEnd = m_MoveDataList.end();
-
+	
 	for (; iter != iterEnd; ++iter)
 	{
 		Vector3 DestPoint = (*iter)->DestPoint;
 		float	NextPointReachTime = (*iter)->NextPointReachTime;
 		float	StayTime = (*iter)->StayTime;
-
+	
 		fwrite(&DestPoint, sizeof(Vector3), 1, File);
 		fwrite(&NextPointReachTime, sizeof(float), 1, File);
 		fwrite(&StayTime, sizeof(float), 1, File);

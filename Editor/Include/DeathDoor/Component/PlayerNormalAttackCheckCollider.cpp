@@ -173,3 +173,18 @@ void CPlayerNormalAttackCheckCollider::Enable(bool Enable)
 		m_CollisionObjDataList.clear();
 	}
 }
+
+void CPlayerNormalAttackCheckCollider::DeleteObjectData(CObjectDataComponent* Comp)
+{
+	auto iter = m_CollisionObjDataList.begin();
+	auto iterEnd = m_CollisionObjDataList.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		if ((*iter) == Comp)
+		{
+			m_CollisionObjDataList.erase(iter);
+			return;
+		}
+	}
+}

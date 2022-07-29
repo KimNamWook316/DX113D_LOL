@@ -54,10 +54,16 @@ void CBossBettySpinAttackNode::Init()
 	// - 벽 등과 충돌 시에 SpinCollide 로 바꿔야 한다.
 	// - 해당 ColliderBox 및, 콜백함수는 이미 BossBettyDataComponent 에서 세팅된 상태이다.
 	// - 이를 다시 Enable 만 시켜주면 된다.
+	AnimInst->AddNotify(AnimName, "DisalbeLookPlayer", 0,
+		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnDisableLookPlayer);
 	AnimInst->AddNotify(AnimName, "EnableSpinCollider", 0,
 		Data, &CBossBettyDataComponent::OnBossBettyEnableSpinCollider);
 	AnimInst->AddNotify(AnimName, "ResetMoveSpeed", 0,
 		Data, &CBossBettyDataComponent::OnBossBettyResetOriginalMoveSpeed);
+	AnimInst->AddNotify(AnimName, "EnableAttackCollider", 2,
+		Data, &CBossBettyDataComponent::OnBossBettyEnableAttackCollider);
+	AnimInst->AddNotify(AnimName, "AttackColliderToOriginalPs", 0,
+		Data, &CBossBettyDataComponent::OnSetBossBettyAttackColliderPosToBettyBody);
 
 	// 2) Spin Collide
 	AnimName = "SpinCollide";
@@ -81,7 +87,7 @@ void CBossBettySpinAttackNode::Init()
 		Data, &CBossBettyDataComponent::OnBossBettyNormalShakeCamera);
 
 	// >> EndFunctions
-	AnimInst->AddNotify(AnimName, "DisablePlayerLook", 26,
+	AnimInst->AddNotify(AnimName, "DisablePlayerLook", 24,
 		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnDisableLookPlayer);
 	// 마지막 순간에 착지한 바닥을 공격한다.
 	AnimInst->AddNotify(AnimName, "AttackDown", 26,
@@ -92,6 +98,9 @@ void CBossBettySpinAttackNode::Init()
 	// Jump Spin 으로의 전환을 허용한다.
 	AnimInst->AddNotify(AnimName, "EnableJumpSpinChange", 26,
 		this, &CBossBettySpinAttackNode::OnBossBettyEnableSpinChange);
+
+	AnimInst->AddNotify(AnimName, "DisableAttackCollider", 26,
+		Data, &CBossBettyDataComponent::OnBossBettyDisableAttackCollider);
 
 }
 

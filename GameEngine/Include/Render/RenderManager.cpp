@@ -1211,7 +1211,7 @@ void CRenderManager::RenderParticle()
 
 void CRenderManager::RenderPlayer(CMesh* PlayerMesh)
 {
-	m_PlayerTarget->ClearTarget();
+	//m_PlayerTarget->ClearTarget();
 
 	// GBuffer 타겟을 잠시 교체
 	std::vector<ID3D11RenderTargetView*>	vecPrevTarget;
@@ -1230,7 +1230,7 @@ void CRenderManager::RenderPlayer(CMesh* PlayerMesh)
 	m_DepthDisable->SetState();
 	m_ShadowMapShader->SetShader();
 
-	PlayerMesh->Render();
+	//PlayerMesh->Render();
 
 	m_DepthDisable->ResetState();
 
@@ -1401,7 +1401,7 @@ void CRenderManager::UpdateInstancingList()
 				}
 
 				const std::list<class CSceneComponent*>& InstancingCompList = (*iter)->InstancingList;
-				int RecommendSBufferSize = InstancingCompList.size();
+				int RecommendSBufferSize = (int)InstancingCompList.size();
 
 				if ((*iter)->Mesh->GetMeshType() == Mesh_Type::Static)
 				{
@@ -1455,7 +1455,7 @@ void CRenderManager::UpdateInstancingList()
 					Layer->m_vecInstancing[Layer->InstancingIndex]->CBuffer->SetBoneCount(((CAnimationMesh*)(*iter)->Mesh)->GetBoneCount());
 				}
 
-				Layer->m_vecInstancing[Layer->InstancingIndex]->CBuffer->SetObjectCount((*iter)->InstancingList.size());
+				Layer->m_vecInstancing[Layer->InstancingIndex]->CBuffer->SetObjectCount((int)(*iter)->InstancingList.size());
 
 				++Layer->InstancingIndex;
 			}

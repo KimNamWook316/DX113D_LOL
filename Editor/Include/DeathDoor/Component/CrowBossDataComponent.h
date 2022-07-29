@@ -1,6 +1,7 @@
 #pragma once
 
 #include "MonsterDataComponent.h"
+#include "../DDFlag.h"
 
 class CCrowBossDataComponent :
     public CMonsterDataComponent
@@ -16,19 +17,66 @@ public:
 	virtual void Start() override;
 
 private:
-	int m_ChainAttackCount;
+	//int m_ChainAttackCount;
 	bool m_StartFlying; // 쇠사슬타고 날아가기 시작했는데
 	bool m_StartJump; // 점프 시작했는지
 	bool m_InFlying;
 	bool m_StartStomp;
-	//float m_SpinAmount;
+	int m_CurrentShootCount;
+	CrowBossShootState m_ShootState;
 	int m_Phase;
 	bool m_PhasePick;
 	// Bypass하는 기준을 잡기 위해 플레이어의 순간적 위치를 설정한다
 	Vector3 m_PlayerOriginPos;
 	Vector3 m_MyOriginPos;
 
+	std::vector<class CStaticMeshComponent*> m_vecHookChain;
+	float m_ShootAccTime;
+	int m_CurrentHookIndex; 
+	int m_ClearHookIndex;
+	Vector2	m_UnitSize;
+	Vector3	m_ShootDir;
+	int m_HookChainTotal;
+
+	std::queue<int> m_PhaseQueue;
+	bool m_AfterShoot;
+
+	bool m_SpittingStart;
+	float m_SpittingAccTime;
+	int m_CurrentTinyCrowIndex;
+
+	bool m_ShootDirFixed;
+
 public:
+	virtual void Update(float DeltaTime);
+
+public:
+	void ClearPhaseQueue()
+	{
+		while (!m_PhaseQueue.empty())
+			m_PhaseQueue.pop();
+	}
+
+	void SetShootDirFixed(bool Fix)
+	{
+		m_ShootDirFixed = Fix;
+	}
+
+	void SetShootState(const CrowBossShootState& State)
+	{
+		m_ShootState = State;
+	}
+
+	void SetCurrentShootCount(int Count)
+	{
+		m_CurrentShootCount = Count;
+	}
+	
+	void AddCurrentShootCount()
+	{
+		++m_CurrentShootCount;
+	}
+
 	void SetPlayerOriginPos(const Vector3& Pos)
 	{
 		m_PlayerOriginPos = Pos;
@@ -54,6 +102,66 @@ public:
 		m_StartJump = Start;
 	}
 
+	void SetAfterShoot(bool Shoot)
+	{
+		m_AfterShoot = Shoot;
+	}
+
+	bool IsAfterShoot()	const
+	{
+		return m_AfterShoot;
+	}
+
+	bool GetShootDirFixed() const
+	{
+		return m_ShootDirFixed;
+	}
+
+	size_t GetPhaseQueueSize()	const
+	{
+		return m_PhaseQueue.size();
+	}
+
+	int GetPhaseQueueFront()
+	{
+		return m_PhaseQueue.front();
+	}
+	
+	bool IsSpittingStart()	const
+	{
+		return m_SpittingStart;
+	}
+
+	void PopPhaseQueue()
+	{
+		m_PhaseQueue.pop();
+	}
+
+	void PushPhaseQueue(int Phase)
+	{
+		m_PhaseQueue.push(Phase);
+	}
+
+	bool IsPhaseQueueEmpty()	const
+	{
+		return m_PhaseQueue.empty();
+	}
+
+	const CrowBossShootState& GetShootState()	const
+	{
+		return m_ShootState;
+	}
+
+	const Vector3& GetShootDir()	const
+	{
+		return m_ShootDir;
+	}
+
+	int GetCurrentShootCount()	const
+	{
+		return m_CurrentShootCount;
+	}
+
 	const Vector3& GetPlayerOriginPos()	const
 	{
 		return m_PlayerOriginPos;
@@ -74,9 +182,9 @@ public:
 		return m_StartStomp;
 	}
 
-	void AddChainAttackCount()
+	void SetSpittingStart(bool Start)
 	{
-		++m_ChainAttackCount;
+		m_SpittingStart = Start;
 	}
 
 	int GetPhase()	const
@@ -87,16 +195,6 @@ public:
 	bool GetPhasePick()	const
 	{
 		return m_PhasePick;
-	}
-
-	int GetChainAttackCount() const
-	{
-		return m_ChainAttackCount;
-	}
-
-	void SetChainAttackCount(int Count)
-	{
-		m_ChainAttackCount = Count;
 	}
 
 	void SetStartFlying(bool Start)
@@ -131,5 +229,12 @@ public:
 
 public:
 	void OnEndCrowBossJump();
+	void OnCollision(const CollisionResult& Result);
+	virtual void OnDeadAnimStart() override;
+	virtual void OnDeadPaperBurnEnd() override;
+	void ShootChain(const Vector3& ShootDir, float DeltaTime);
+	void Fly(const Vector3& FlyDir, float DeltaTime);
+	void Teleport();
+	bool Spitting(float DeltaTime);
 };
 

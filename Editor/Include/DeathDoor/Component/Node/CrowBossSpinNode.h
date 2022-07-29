@@ -17,6 +17,7 @@ private:
     float m_AccRotation;
     float m_AccSlidingTime;
     float m_SpinDegree;
+    bool m_RotateCW;
 
 public:
     virtual NodeResult OnStart(float DeltaTime) override;

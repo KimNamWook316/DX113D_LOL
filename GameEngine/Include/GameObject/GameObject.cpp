@@ -820,6 +820,11 @@ bool CGameObject::LoadOnly(const char* FullPath, CComponent*& OutCom)
 
 void CGameObject::Reset()
 {
+	m_Scene = nullptr;
+	SetWorldScale(0.f, 0.f, 0.f);
+	SetWorldPos(FLT_MAX, FLT_MAX, FLT_MAX);
+	m_RootComponent->GetTransform()->ForceUpdateMat();
+
 	size_t Size = m_vecObjectComponent.size();
 
 	for (size_t i = 0; i < Size; ++i)

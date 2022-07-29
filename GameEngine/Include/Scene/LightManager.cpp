@@ -190,7 +190,7 @@ void CLightManager::SetForwardRenderShader()
 {
 	size_t Size = m_LightList.size();
 
-	m_CBuffer->SetLightCount(Size);
+	m_CBuffer->SetLightCount((int)Size);
 	m_CBuffer->UpdateCBuffer();
 
 	// 전역 조명 상수버퍼 바인드

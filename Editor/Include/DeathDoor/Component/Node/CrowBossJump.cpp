@@ -26,8 +26,6 @@ NodeResult CCrowBossJump::OnStart(float DeltaTime)
 {
 	m_AnimationMeshComp->GetAnimationInstance()->ChangeAnimation("Jump");
 
-
-
 	return NodeResult::Node_True;
 }
 
@@ -40,15 +38,40 @@ NodeResult CCrowBossJump::OnUpdate(float DeltaTime)
 
 	Vector3 CurrentPos = m_Object->GetWorldPos();
 	Vector3 PlayerPos = m_Object->GetScene()->GetPlayerObject()->GetWorldPos();
+	Vector3 MyPos = m_Object->GetWorldPos();
 
 	Vector3 Dir = PlayerPos - CurrentPos;
 	Dir.Normalize();
-	Dir.y = 0.80f;
+	Dir.y = 0.7f;
 	Dir.Normalize();
 
-	Projectile->SetNoDestroy(true);
+
+	Projectile->SetDestroy(false);
 	Projectile->SetNoUpdate(false);
-	Projectile->ShootByGravityTargetPos(CurrentPos, Dir, 80.f, PlayerPos);
+
+	float ShootAngle = 50.f;
+	float Dist = CurrentPos.Distance(PlayerPos);
+
+	if (Dist > 30.f)
+	{
+		ShootAngle = 40.f;
+	}
+	else if (Dist > 20.f && Dist <= 30.f)
+	{
+		ShootAngle = 50.f;
+	}
+
+	else if (Dist > 10.f && Dist <= 20.f)
+	{
+		ShootAngle = 60.f;
+	}
+
+	else if (Dist <= 10.f)
+	{
+		ShootAngle = 70.f;
+	}
+
+	Projectile->ShootByGravityTargetPos(CurrentPos, Dir, ShootAngle, PlayerPos);
 
 	return NodeResult::Node_True;
 }

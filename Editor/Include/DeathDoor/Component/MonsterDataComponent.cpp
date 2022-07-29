@@ -2,6 +2,7 @@
 #include "MonsterDataComponent.h"
 #include "GameObject/GameObject.h"
 #include "Component/AnimationMeshComponent.h"
+#include "Component/ParticleComponent.h"
 #include "Component/ColliderBox3D.h"
 #include "../Component/GameStateComponent.h"
 #include "MonsterNavAgent.h"
@@ -9,6 +10,7 @@
 #include "../Component/PlayerDataComponent.h"
 #include "Component/PaperBurnComponent.h"
 #include "../DDUtil.h"
+#include "PlayerNormalAttackCheckCollider.h"
 #include "../Scene/DDSceneMode.h"
 
 CMonsterDataComponent::CMonsterDataComponent() :
@@ -23,7 +25,9 @@ CMonsterDataComponent::CMonsterDataComponent() :
 	m_DeathColorStart(Vector4::Red),
 	m_DeathColorEnd(Vector4::White),
 	m_LeftLookPlayer(false),
-	m_RightLookPlayer(false)
+	m_RightLookPlayer(false),
+	m_CurRotSpeed(0.f),
+	m_AttackCoolDelayTimeMax(0.5f)
 {
 	SetTypeID<CMonsterDataComponent>();
 
@@ -96,7 +100,7 @@ void CMonsterDataComponent::Start()
 		m_vecOriginSpecluar.resize(m_MeshMatSize);
 		m_vecOriginEmissive.resize(m_MeshMatSize);
 
-		for (size_t i = 0; i < m_MeshMatSize; ++i)
+		for (int i = 0; i < m_MeshMatSize; ++i)
 		{
 			m_vecOriginDiffuse[i] = m_AnimMesh->GetMaterial(i)->GetBaseColor();
 			m_vecOriginAmbient[i] = m_AnimMesh->GetMaterial(i)->GetAmbientColor();
@@ -119,6 +123,14 @@ void CMonsterDataComponent::Start()
 	if (m_PaperBurn)
 	{
 		m_PaperBurn->SetFinishCallback(this, &CMonsterDataComponent::OnDeadPaperBurnEnd);
+	}
+
+	// Blood Particle
+	m_BloodParticle = (CParticleComponent*)m_Object->FindComponent("BloodParticle");
+
+	if (m_BloodParticle)
+	{
+		m_BloodParticle->Enable(false);
 	}
 
 	CAnimationSequenceInstance* AnimInst = m_AnimMesh->GetAnimationInstance();
@@ -171,9 +183,36 @@ void CMonsterDataComponent::Update(float DeltaTime)
 		}
 	}
 
+	if (m_MoveZEnableMaxTime > 0.f)
+	{
+		m_MoveZ = true;
+		m_MoveZEnableMaxTime -= DeltaTime;
+
+		if (m_MoveZEnableMaxTime < 0.f)
+		{
+			m_MoveZ = false;
+			m_MoveZEnableMaxTime = 0.f;
+		}
+	}
+
 	if (m_MoveZ)
 	{
 		MoveZ(DeltaTime);
+	}
+}
+
+void CMonsterDataComponent::PostUpdate(float DeltaTime)
+{
+	CObjectDataComponent::PostUpdate(DeltaTime);
+
+	if (m_AttackCoolTimeEnable)
+	{
+		m_AttackCoolDelayTime -= DeltaTime;
+
+		if (m_AttackCoolDelayTime < 0.f)
+		{
+			m_AttackCoolTimeEnable = false;
+		}
 	}
 }
 
@@ -189,20 +228,31 @@ void CMonsterDataComponent::LookPlayer(float DeltaTime)
 
 	CGameObject* MyObj = m_Object;
 
-	if (abs(AnglePlayer) < m_Data.RotateSpeedPerSec * DeltaTime)
+	float RotSpeed = m_Data.RotateSpeedPerSec;
+
+	// 만약 m_CurRotSpeed 를 별도로 세팅한 상태라면
+	if (m_CurRotSpeed != 0.f)
 	{
-		MyObj->AddWorldRotationY(AnglePlayer * DeltaTime);
+		RotSpeed = m_CurRotSpeed;
 	}
-	else
+
+	// (OBJ) 순간적으로 미세하게 떨리는 오류
+	// if (abs(AnglePlayer) < m_Data.RotateSpeedPerSec * DeltaTime)
+	if (abs(AnglePlayer) < 3.f)
+	{
+		// MyObj->AddWorldRotationY(AnglePlayer * DeltaTime);
+	}
+	else 
 	{
 		bool IsLeft = IsPlayerLeftBasedInLookDir();
+
 		if (IsLeft)
 		{
-			MyObj->AddWorldRotationY(m_Data.RotateSpeedPerSec * DeltaTime);
+			MyObj->AddWorldRotationY(RotSpeed * DeltaTime);
 		}
 		else
 		{
-			MyObj->AddWorldRotationY(-1.f * m_Data.RotateSpeedPerSec * DeltaTime);
+			MyObj->AddWorldRotationY(-1.f * RotSpeed * DeltaTime);
 		}
 	}
 }
@@ -242,10 +292,10 @@ void CMonsterDataComponent::ChangeColorBossDeath(float DeltaTime)
 			// m_AnimMesh->SetAmbientColor(Color, i);
 
 			// Specular
-			m_AnimMesh->SetSpecularColor(Vector4::Black, i);
+			m_AnimMesh->SetSpecularColor(Vector4::Black, (int)i);
 
 			// Emmisive
-			m_AnimMesh->SetEmissiveColor(Color, i);
+			m_AnimMesh->SetEmissiveColor(Color, (int)i);
 		}
 
 		if (m_DeathTimer >= m_DeathColorChangeTimeMax)
@@ -278,6 +328,13 @@ void CMonsterDataComponent::OnDeadAnimStart()
 
 	// DeathChangeColor() 를 사용하는 경우
 	m_DeathColorChangeStart = true;
+
+	CGameObject* Player = m_Object->GetScene()->GetPlayerObject();
+
+	// 플레이어의 공격에 맞은 오브젝트들의 DataComponent를 모아놓은 m_CollisionObjDataList에서 본인을 지운다
+	CPlayerNormalAttackCheckCollider* AttackCollider = Player->FindComponentFromType<CPlayerNormalAttackCheckCollider>();
+	AttackCollider->DeleteObjectData(this);
+
 }
 
 void CMonsterDataComponent::OnDeadAnimEnd()
@@ -630,7 +687,7 @@ void CMonsterDataComponent::ActiveHitEffect(float DeltaTime)
 		m_HitEffectFlag = 0;
 
 		// 원래 컬러로 돌아온다.
-		for (size_t i = 0; i < m_MeshMatSize; ++i)
+		for (int i = 0; i < m_MeshMatSize; ++i)
 		{
 			m_AnimMesh->GetMaterial(i)->SetBaseColor(m_vecOriginDiffuse[i]);
 			m_AnimMesh->GetMaterial(i)->SetAmbientColor(m_vecOriginAmbient[i]);
@@ -680,4 +737,9 @@ void CMonsterDataComponent::ChangeHitColor(int EffectNum)
 CMonsterNavAgent* CMonsterDataComponent::GetMonsterNavAgent() const
 {
 	return m_MonsterNavAgent;
+}
+
+CColliderBox3D* CMonsterDataComponent::GetHitBox() const
+{
+	return m_HitBox;
 }

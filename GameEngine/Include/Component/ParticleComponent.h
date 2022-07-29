@@ -53,6 +53,7 @@ private :
 public:
 	void SetParticle(const std::string& Name);
 	void SetParticle(CParticle* Particle);
+	void SetParticleWithOutCloneShader(CParticle* Particle);
 	void SetSpawnTime(float Time);
 	// Particle 입자가 아니라, Particle Component 의 움직임 효과
 	void SetComponentSpeedChangeMethod(ParticleSpeedChangeMethod Method)
@@ -69,6 +70,7 @@ public :
 public:
 	virtual void Start();
 	virtual bool Init();
+	virtual void Reset();
 	virtual void Update(float DeltaTime);
 	virtual void PostUpdate(float DeltaTime);
 	virtual void PrevRender();
@@ -89,6 +91,10 @@ public:
 	float GetInitActiveDelayTime() const
 	{
 		return m_InitActiveDelayTime;
+	}
+	bool IsBillBoardEffectEnable() const
+	{
+		return m_BillBoardEffect;
 	}
 	bool IsBazierMoveEnable() const
 	{

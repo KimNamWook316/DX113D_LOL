@@ -32,6 +32,7 @@
 // Public Nodes
 #include "Node/MeleeRangeCheckNode.h"
 #include "Node/PostAttackDelayCheck.h"
+#include "Node/AttackCoolTimeCheck.h"
 #include "Node/DeathCheck.h"
 #include "Node/IsCombatCheck.h"
 #include "Node/DeathNode.h"
@@ -72,7 +73,6 @@
 // Boss - CrowBoss
 #include "Node/CrowBossCutScenePlayCheck.h"
 #include "Node/CrowBossCutScenePlayNode.h"
-#include "Node/CrowBossDirectionCheck.h"
 #include "Node/CrowBossSpinNode.h"
 #include "Node/CrowBossRunNode.h"
 #include "Node/CrowBossPhasePickNode.h"
@@ -80,6 +80,18 @@
 #include "Node/CrowBossJumpStartCheck.h"
 #include "Node/CrowBossJump.h"
 #include "Node/CrowBossLandingCheck.h"
+#include "Node/CrowBossJumpAttackRangeCheck.h"
+#include "Node/CrowBossDoneCheck.h"
+#include "Node/CrowBossFirstShootCheck.h"
+#include "Node/CrowBossShootCheck.h"
+#include "Node/CrowBossShootEndCheck.h"
+#include "Node/CrowBossShootReadyCheck.h"
+#include "Node/CrowBossFlyNode.h"
+#include "Node/CrowBossMoveShootSpot.h"
+#include "Node/CrowBossResetShootState.h"
+#include "Node/CrowBossShootNode.h"
+#include "Node/CrowBossSlide.h"
+#include "Node/CrowBossSpitting.h"
 
 // Monster - SporeBoomer
 #include "Node/SporeBoomerShootNode.h"
@@ -243,7 +255,10 @@ CNode* CGameBehaviorTree::LoadNode(CNode* Parent, size_t TypeID)
 	{
 		NewNode = MakeNode<CPostAttackDelayCheck>(Parent, OwnerObject);
 	}
-
+	else if (TypeID == typeid(CAttackCoolTimeCheck).hash_code())
+	{
+		NewNode = MakeNode<CAttackCoolTimeCheck>(Parent, OwnerObject);
+	}
 	else if (TypeID == typeid(CIsCombatCheck).hash_code())
 	{
 		NewNode = MakeNode<CIsCombatCheck>(Parent, OwnerObject);
@@ -419,10 +434,6 @@ CNode* CGameBehaviorTree::LoadNode(CNode* Parent, size_t TypeID)
 	{
 		NewNode = MakeNode<CCrowBossCutScenePlayCheck>(Parent, OwnerObject);
 	}
-	else if (TypeID == typeid(CCrowBossDirectionCheck).hash_code())
-	{
-		NewNode = MakeNode<CCrowBossDirectionCheck>(Parent, OwnerObject);
-	}
 	else if (TypeID == typeid(CCrowBossPhasePickNode).hash_code())
 	{
 		NewNode = MakeNode<CCrowBossPhasePickNode>(Parent, OwnerObject);
@@ -438,6 +449,30 @@ CNode* CGameBehaviorTree::LoadNode(CNode* Parent, size_t TypeID)
 	else if (TypeID == typeid(CCrowBossLandingCheck).hash_code())
 	{
 		NewNode = MakeNode<CCrowBossLandingCheck>(Parent, OwnerObject);
+	}
+	else if (TypeID == typeid(CCrowBossJumpAttackRangeCheck).hash_code())
+	{
+		NewNode = MakeNode<CCrowBossJumpAttackRangeCheck>(Parent, OwnerObject);
+	}
+	else if (TypeID == typeid(CCrowBossDoneCheck).hash_code())
+	{
+		NewNode = MakeNode<CCrowBossDoneCheck>(Parent, OwnerObject);
+	}
+	else if (TypeID == typeid(CCrowBossFirstShootCheck).hash_code())
+	{
+		NewNode = MakeNode<CCrowBossFirstShootCheck>(Parent, OwnerObject);
+	}
+	else if (TypeID == typeid(CCrowBossShootCheck).hash_code())
+	{
+		NewNode = MakeNode<CCrowBossShootCheck>(Parent, OwnerObject);
+	}
+	else if (TypeID == typeid(CCrowBossShootEndCheck).hash_code())
+	{
+		NewNode = MakeNode<CCrowBossShootEndCheck>(Parent, OwnerObject);
+	}
+	else if (TypeID == typeid(CCrowBossShootReadyCheck).hash_code())
+	{
+		NewNode = MakeNode<CCrowBossShootReadyCheck>(Parent, OwnerObject);
 	}
 
 	// Boss Crow - Action
@@ -456,6 +491,30 @@ CNode* CGameBehaviorTree::LoadNode(CNode* Parent, size_t TypeID)
 	else if (TypeID == typeid(CCrowBossJump).hash_code())
 	{
 		NewNode = MakeNode<CCrowBossJump>(Parent, OwnerObject);
+	}
+	else if (TypeID == typeid(CCrowBossFlyNode).hash_code())
+	{
+		NewNode = MakeNode<CCrowBossFlyNode>(Parent, OwnerObject);
+	}
+	else if (TypeID == typeid(CCrowBossMoveShootSpot).hash_code())
+	{
+		NewNode = MakeNode<CCrowBossMoveShootSpot>(Parent, OwnerObject);
+	}
+	else if (TypeID == typeid(CCrowBossResetShootState).hash_code())
+	{
+		NewNode = MakeNode<CCrowBossResetShootState>(Parent, OwnerObject);
+	}
+	else if (TypeID == typeid(CCrowBossShootNode).hash_code())
+	{
+		NewNode = MakeNode<CCrowBossShootNode>(Parent, OwnerObject);
+	}
+	else if (TypeID == typeid(CCrowBossSlide).hash_code())
+	{
+		NewNode = MakeNode<CCrowBossSlide>(Parent, OwnerObject);
+	}
+	else if (TypeID == typeid(CCrowBossSpitting).hash_code())
+	{
+		NewNode = MakeNode<CCrowBossSpitting>(Parent, OwnerObject);
 	}
 
 	// SporeBoomer - Action

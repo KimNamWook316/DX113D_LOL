@@ -17,13 +17,13 @@ CObjectPool::CObjectPool()
 
 CObjectPool::~CObjectPool()
 {
-	//auto iter = m_mapProjectile.begin();
-	//auto iterEnd = m_mapProjectile.end();
-
-	//for (; iter != iterEnd; ++iter)
-	//{
-	//	SAFE_RELEASE(iter->second);
-	//}
+	// auto iter = m_mapProjectile.begin();
+	// auto iterEnd = m_mapProjectile.end();
+	// 
+	// for (; iter != iterEnd; ++iter)
+	// {
+	// 	SAFE_RELEASE(iter->second);
+	// }
 
 	//iter = m_mapMonster.begin();
 	//iterEnd = m_mapMonster.end();
@@ -131,9 +131,6 @@ void CObjectPool::CreatePoolObject(const std::string& PathName)
 
 	const PathInfo* Info = CPathManager::GetInst()->FindPath(PathName);
 
-	char FullPath[MAX_PATH] = {};
-	strcpy_s(FullPath, Info->PathMultibyte);
-
 	std::vector<std::string> vecNames;
 	Data->GetRowNames(vecNames);
 
@@ -141,12 +138,15 @@ void CObjectPool::CreatePoolObject(const std::string& PathName)
 
 	for (size_t i = 0; i < Count; ++i)
 	{
+		char FullPath[MAX_PATH] = {};
+		strcpy_s(FullPath, Info->PathMultibyte);
+
 		std::string ObjectName = vecNames[i];
 
 		Row* row = Data->GetRow(ObjectName);
 
 		std::stringstream ss;
-		std::string FileName;
+		std::string FileName; 
 
 		ss << (*row)[0];
 
@@ -167,11 +167,16 @@ void CObjectPool::CreatePoolObject(const std::string& PathName)
 			CGameObject* Object = new CGameObject;
 			Object->SetName(ObjectName);
 			Object->SetInPool(true);
+			Object->SetScene(CSceneManager::GetInst()->GetScene());
+			Object->SetWorldScale(0.f, 0.f, 0.f);
+			Object->SetWorldPos(FLT_MAX, FLT_MAX, FLT_MAX);
 
 			bool Result = Object->LoadHierarchy(FullPath);
 
 			if (Result)
 			{
+				Object->GetRootComponent()->GetTransform()->ForceUpdateMat();
+
 				switch (Object->GetObjectType())
 				{
 				case Object_Type::Projectile:
@@ -184,14 +189,41 @@ void CObjectPool::CreatePoolObject(const std::string& PathName)
 					m_mapMonster.insert(std::make_pair(ObjectName, Object));
 					break;
 				}
-
 			}
-
 			else
-				Object->Destroy();
+			{
+				SAFE_DELETE(Object);
+				// Object->Destroy();
+			}
 		}
 
-
 		memset(FullPath, 0, MAX_PATH);
+	}
+}
+
+void CObjectPool::RefreshNewScene(CScene* Scene)
+{
+	auto iter = m_mapMonster.begin();
+	auto iterEnd = m_mapMonster.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		iter->second->SetScene(Scene);
+	}
+
+	iter = m_mapParticle.begin();
+	iterEnd = m_mapParticle.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		iter->second->SetScene(Scene);
+	}
+
+	iter = m_mapProjectile.begin();
+	iterEnd = m_mapProjectile.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		iter->second->SetScene(Scene);
 	}
 }

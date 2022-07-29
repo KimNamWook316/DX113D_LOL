@@ -32,6 +32,7 @@ protected:
     virtual NodeResult OnEnd(float DeltaTime);
 
 private:
+
     bool m_CloseAttackAnimChangeEnable;
     BossBettyCloseAttackType m_CloseAttackType;
     

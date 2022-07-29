@@ -61,6 +61,9 @@ CParticleConstantBuffer::CParticleConstantBuffer() :
 
 	// Noise Texture Apply Ratio -> 처음부터 적용 X
 	m_BufferData.NoiseTextureApplyRatio = 0.f;
+
+	// 처음에는 Particle Component 의 WorldPos 를 실시간으로 따라가지 않게 세팅한다.
+	m_BufferData.FollowRealTimeParticleComponentPos = 0;
 }
 
 CParticleConstantBuffer::CParticleConstantBuffer(const CParticleConstantBuffer& Buffer) :
