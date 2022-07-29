@@ -318,7 +318,11 @@ void CMonsterDataComponent::OnDeadPaperBurnEnd()
 	m_Object->Destroy();
 
 	CDDSceneMode* SceneMode = dynamic_cast<CDDSceneMode*>(m_Scene->GetSceneMode());
-	SceneMode->OnDieMonster();
+
+	if (SceneMode)
+	{
+		SceneMode->OnDieMonster();
+	}
 }
 
 void CMonsterDataComponent::OnDeadAnimStart()

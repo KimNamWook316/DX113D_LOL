@@ -250,7 +250,6 @@
     <ClCompile Include="DeathDoor\Component\Node\CrowBossSlide.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\CrowBossSpinNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\CrowBossSpitting.cpp" />
-    <ClCompile Include="DeathDoor\Component\Node\CrowBossStartFlyingCheck.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\DeathCheck.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\DeathNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\FindPathNode.cpp" />
@@ -448,7 +447,6 @@
     <ClInclude Include="DeathDoor\Component\Node\CrowBossSlide.h" />
     <ClInclude Include="DeathDoor\Component\Node\CrowBossSpinNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\CrowBossSpitting.h" />
-    <ClInclude Include="DeathDoor\Component\Node\CrowBossStartFlyingCheck.h" />
     <ClInclude Include="DeathDoor\Component\Node\DeathCheck.h" />
     <ClInclude Include="DeathDoor\Component\Node\DeathNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\FindPathNode.h" />

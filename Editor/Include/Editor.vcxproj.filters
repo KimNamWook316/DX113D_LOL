@@ -204,6 +204,9 @@
     <Filter Include="06. DeathDoor\01. GameComponent\01. SceneComponent\02. BlockObject">
       <UniqueIdentifier>{4d91abed-0373-4c6e-8a7d-cb91853c94c5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="06. DeathDoor\01. GameComponent\02. ObjectComponent\01. DataComponent\01. ObjectDataComponent\01. Monster\04. CrowBoss\01. TinyCrow">
+      <UniqueIdentifier>{931102fc-8b7f-4cc2-8251-96de58676df4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Scene\DefaultScene.cpp">
@@ -671,14 +674,8 @@
     <ClCompile Include="DeathDoor\Component\Node\CrowBossSlide.cpp">
       <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\04. CrowBoss</Filter>
     </ClCompile>
-    <ClCompile Include="DeathDoor\Component\Node\AttackCoolTimeCheck.cpp" />
-    <ClCompile Include="DeathDoor\Component\Node\CrowBossStartFlyingCheck.cpp" />
     <ClCompile Include="EditorManager.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Widget\CameraMoveWidget.cpp" />
-    <ClCompile Include="DeathDoor\Component\TinyCrowDataComponent.cpp">
-      <Filter>06. DeathDoor\01. GameComponent\02. ObjectComponent\01. DataComponent\01. ObjectDataComponent\01. Monster\04. CrowBoss\01. TinyCrow</Filter>
-    </ClCompile>
     <ClCompile Include="DeathDoor\Component\Node\CrowBossSpitting.cpp">
       <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\04. CrowBoss</Filter>
     </ClCompile>
@@ -708,6 +705,15 @@
     </ClCompile>
     <ClCompile Include="DeathDoor\Component\CrackedBlockCollider.cpp">
       <Filter>06. DeathDoor\01. GameComponent\01. SceneComponent\02. BlockObject</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Component\TinyCrowDataComponent.cpp">
+      <Filter>06. DeathDoor\01. GameComponent\02. ObjectComponent\01. DataComponent\01. ObjectDataComponent\01. Monster\04. CrowBoss\01. TinyCrow</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Component\Node\AttackCoolTimeCheck.cpp">
+      <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\01. Public</Filter>
+    </ClCompile>
+    <ClCompile Include="Widget\CameraMoveWidget.cpp">
+      <Filter>02. Editor\02. Widget\01. Inspector\01. SceneComponent</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1128,9 +1134,6 @@
     <ClInclude Include="DeathDoor\Component\Node\PlayerEnterZoneCheckNode.h">
       <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\01. Public</Filter>
     </ClInclude>
-    <ClInclude Include="DeathDoor\Component\Node\CrowBossStartFlyingCheck.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="DeathDoor\Component\Node\CrowBossRunNode.h">
       <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\04. CrowBoss</Filter>
     </ClInclude>
@@ -1160,9 +1163,6 @@
     </ClInclude>
     <ClInclude Include="DeathDoor\Component\Node\CrowBossJumpAttackRangeCheck.h">
       <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\04. CrowBoss</Filter>
-    </ClInclude>
-    <ClInclude Include="Widget\CameraMoveWidget.h">
-      <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="DeathDoor\Component\Node\CrowBossFirstShootCheck.h">
       <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\04. CrowBoss</Filter>
@@ -1194,12 +1194,6 @@
     <ClInclude Include="DeathDoor\Component\Node\CrowBossSlide.h">
       <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\04. CrowBoss</Filter>
     </ClInclude>
-    <ClInclude Include="DeathDoor\Component\Node\AttackCoolTimeCheck.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="DeathDoor\Component\TinyCrowDataComponent.h">
-      <Filter>06. DeathDoor\01. GameComponent\02. ObjectComponent\01. DataComponent\01. ObjectDataComponent\01. Monster\04. CrowBoss\01. TinyCrow</Filter>
-    </ClInclude>
     <ClInclude Include="DeathDoor\Component\Node\CrowBossSpitting.h">
       <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\04. CrowBoss</Filter>
     </ClInclude>
@@ -1229,6 +1223,15 @@
     </ClInclude>
     <ClInclude Include="DeathDoor\Component\CrackedBlockCollider.h">
       <Filter>06. DeathDoor\01. GameComponent\01. SceneComponent\02. BlockObject</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\TinyCrowDataComponent.h">
+      <Filter>06. DeathDoor\01. GameComponent\02. ObjectComponent\01. DataComponent\01. ObjectDataComponent\01. Monster\04. CrowBoss\01. TinyCrow</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\Node\AttackCoolTimeCheck.h">
+      <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\01. Public</Filter>
+    </ClInclude>
+    <ClInclude Include="Widget\CameraMoveWidget.h">
+      <Filter>02. Editor\02. Widget\01. Inspector\01. SceneComponent</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

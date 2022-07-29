@@ -1211,7 +1211,7 @@ void CRenderManager::RenderParticle()
 
 void CRenderManager::RenderPlayer(CMesh* PlayerMesh)
 {
-	//m_PlayerTarget->ClearTarget();
+	m_PlayerTarget->ClearTarget();
 
 	// GBuffer 타겟을 잠시 교체
 	std::vector<ID3D11RenderTargetView*>	vecPrevTarget;
@@ -1230,7 +1230,7 @@ void CRenderManager::RenderPlayer(CMesh* PlayerMesh)
 	m_DepthDisable->SetState();
 	m_ShadowMapShader->SetShader();
 
-	//PlayerMesh->Render();
+	PlayerMesh->Render();
 
 	m_DepthDisable->ResetState();
 
