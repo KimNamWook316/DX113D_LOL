@@ -199,6 +199,15 @@
     <Filter Include="06. DeathDoor\05. SceneMode\01. BossMode">
       <UniqueIdentifier>{73871478-707e-4728-bf90-a5bacb67e1d7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="06. DeathDoor\01. GameComponent\02. ObjectComponent\01. DataComponent\01. ObjectDataComponent\01. Monster\05. SporeBoomer">
+      <UniqueIdentifier>{c6416711-4096-4f45-80fb-2227387bfdf9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\05. SporeBoomer">
+      <UniqueIdentifier>{7962dedc-2b8b-4127-916c-b16da06d08d2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. DeathDoor\01. GameComponent\01. SceneComponent\02. BlockObject">
+      <UniqueIdentifier>{4d91abed-0373-4c6e-8a7d-cb91853c94c5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EditorManager.cpp">
@@ -674,6 +683,15 @@
     </ClCompile>
     <ClCompile Include="DeathDoor\Scene\DDBossSceneMode.cpp">
       <Filter>06. DeathDoor\05. SceneMode\01. BossMode</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Component\SporeBoomerDataComponent.cpp">
+      <Filter>06. DeathDoor\01. GameComponent\02. ObjectComponent\01. DataComponent\01. ObjectDataComponent\01. Monster\05. SporeBoomer</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Component\Node\SporeBoomerShootNode.cpp">
+      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\05. SporeBoomer</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Component\CrackedBlockCollider.cpp">
+      <Filter>06. DeathDoor\01. GameComponent\01. SceneComponent\02. BlockObject</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1156,6 +1174,15 @@
     </ClInclude>
     <ClInclude Include="DeathDoor\Scene\DDBossSceneMode.h">
       <Filter>06. DeathDoor\05. SceneMode\01. BossMode</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\SporeBoomerDataComponent.h">
+      <Filter>06. DeathDoor\01. GameComponent\02. ObjectComponent\01. DataComponent\01. ObjectDataComponent\01. Monster\05. SporeBoomer</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\Node\SporeBoomerShootNode.h">
+      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\05. SporeBoomer</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\CrackedBlockCollider.h">
+      <Filter>06. DeathDoor\01. GameComponent\01. SceneComponent\02. BlockObject</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

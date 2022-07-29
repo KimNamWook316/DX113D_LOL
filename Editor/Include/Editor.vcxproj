@@ -186,6 +186,7 @@
     </ClCompile>
     <ClCompile Include="DeathDoor\Component\ArrowComponent.cpp" />
     <ClCompile Include="DeathDoor\Component\BossBettyDataComponent.cpp" />
+    <ClCompile Include="DeathDoor\Component\CrackedBlockCollider.cpp" />
     <ClCompile Include="DeathDoor\Component\CrowBossDataComponent.cpp" />
     <ClCompile Include="DeathDoor\Component\EyeLaserComponent.cpp" />
     <ClCompile Include="DeathDoor\Component\GameBehaviorTree.cpp" />
@@ -270,6 +271,7 @@
     <ClCompile Include="DeathDoor\Component\Node\RotateAttackDirectionNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\RunNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\ShootNode.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\SporeBoomerShootNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\UpdateInputQueue.cpp" />
     <ClCompile Include="DeathDoor\Component\ObjectDataComponent.cpp" />
     <ClCompile Include="DeathDoor\Component\PlayerBowComponent.cpp" />
@@ -277,6 +279,7 @@
     <ClCompile Include="DeathDoor\Component\PlayerHookComponent.cpp" />
     <ClCompile Include="DeathDoor\Component\PlayerNormalAttackCheckCollider.cpp" />
     <ClCompile Include="DeathDoor\Component\ProjectileComponent.cpp" />
+    <ClCompile Include="DeathDoor\Component\SporeBoomerDataComponent.cpp" />
     <ClCompile Include="DeathDoor\DataManager.cpp" />
     <ClCompile Include="DeathDoor\DDUtil.cpp" />
     <ClCompile Include="DeathDoor\Scene\DDBossSceneMode.cpp" />
@@ -371,6 +374,7 @@
     </ClInclude>
     <ClInclude Include="DeathDoor\Component\ArrowComponent.h" />
     <ClInclude Include="DeathDoor\Component\BossBettyDataComponent.h" />
+    <ClInclude Include="DeathDoor\Component\CrackedBlockCollider.h" />
     <ClInclude Include="DeathDoor\Component\CrowBossDataComponent.h" />
     <ClInclude Include="DeathDoor\Component\EyeLaserComponent.h" />
     <ClInclude Include="DeathDoor\Component\GameBehaviorTree.h" />
@@ -455,6 +459,7 @@
     <ClInclude Include="DeathDoor\Component\Node\RotateAttackDirectionNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\RunNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\ShootNode.h" />
+    <ClInclude Include="DeathDoor\Component\Node\SporeBoomerShootNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\UpdateInputQueue.h" />
     <ClInclude Include="DeathDoor\Component\ObjectDataComponent.h" />
     <ClInclude Include="DeathDoor\Component\PlayerBowComponent.h" />
@@ -462,6 +467,7 @@
     <ClInclude Include="DeathDoor\Component\PlayerHookComponent.h" />
     <ClInclude Include="DeathDoor\Component\PlayerNormalAttackCheckCollider.h" />
     <ClInclude Include="DeathDoor\Component\ProjectileComponent.h" />
+    <ClInclude Include="DeathDoor\Component\SporeBoomerDataComponent.h" />
     <ClInclude Include="DeathDoor\DataManager.h" />
     <ClInclude Include="DeathDoor\DDFlag.h" />
     <ClInclude Include="DeathDoor\DDUtil.h" />

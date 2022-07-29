@@ -75,6 +75,9 @@
 #include "../DeathDoor/Component/Node/CrowBossLandingCheck.h"
 #include "../DeathDoor/Component/Node/CrowBossJump.h"
 
+// SporeBoomer
+#include "../DeathDoor/Component/Node/SporeBoomerShootNode.h"
+
 #include "../DeathDoor/Component/Node/HitCheckNode.h"
 #include "../DeathDoor/Component/Node/HitBackNode.h"
 #include "../DeathDoor/Component/Node/RollInputCheck.h"
@@ -591,6 +594,13 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
         case DDActionNode::CrowBossJump:
         {
             NewTreeNode = m_StateComponent->CreateTreeNode<CCrowBossJump>(Name);
+            break;
+        }
+
+        // Spore Boomer
+        case DDActionNode::SporeBoomerShoot:
+        {
+            NewTreeNode = m_StateComponent->CreateTreeNode<CSporeBoomerShootNode>(Name);
             break;
         }
 

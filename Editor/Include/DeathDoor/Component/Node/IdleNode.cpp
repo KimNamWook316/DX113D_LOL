@@ -36,8 +36,6 @@ NodeResult CIdleNode::OnStart(float DeltaTime)
 	}
 
 	CObjectDataComponent* Data = dynamic_cast<CObjectDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
-	//Data->SetNoInterrupt(false);
-
 
 	return NodeResult::Node_True;
 }

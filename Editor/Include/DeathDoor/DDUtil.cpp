@@ -17,6 +17,8 @@
 #include "Component\ProjectileComponent.h"
 #include "Component\ArrowComponent.h"
 #include "Component\CrowBossDataComponent.h"
+#include "Component\SporeBoomerDataComponent.h"
+#include "Component\CrackedBlockCollider.h"
 
 // TODO : Death Door SceneMode 추가시마다 업데이트
 #include "Scene/DDSceneMode.h"
@@ -356,6 +358,10 @@ std::string CDDUtil::DDActionNodeTypeToString(DDActionNode NodeType)
 	case DDActionNode::CrowBossJump:
 		return "CrowBossJump";
 
+	// Spore Boomer
+	case DDActionNode::SporeBoomerShoot:
+		return "SporeBoomerShoot";
+
 	case DDActionNode::ClearPathList:
 		return "ClearPathList";
 
@@ -513,6 +519,8 @@ std::string CDDUtil::DDSceneComponentTypeToString(DDSceneComponentType Type)
 		return "PlayerHookComponent";
 	case DDSceneComponentType::PlayerBowComponent:
 		return "PlayerBowComponent";
+	case DDSceneComponentType::CrackedBlockCollider:
+		return "CrackedBlockCollider";
 	}
 
 	return "";
@@ -531,6 +539,10 @@ DDSceneComponentType CDDUtil::StringToDDSceneComponentType(const std::string& St
 	else if (Str == "PlayerHookComponent")
 	{
 		return DDSceneComponentType::PlayerHookComponent;
+	}
+	else if (Str == "CrackedBlockCollider")
+	{
+		return DDSceneComponentType::CrackedBlockCollider;
 	}
 	//else if (Str == "MonsterPathFindCollider")
 	//{
@@ -551,6 +563,8 @@ size_t CDDUtil::DDSceneComponentTypeToTypeID(DDSceneComponentType Type)
 		return typeid(CPlayerHookComponent).hash_code();
 	case DDSceneComponentType::PlayerBowComponent:
 		return typeid(CPlayerBowComponent).hash_code();
+	case DDSceneComponentType::CrackedBlockCollider:
+		return typeid(CCrackedBlockCollider).hash_code();
 	}
 	return -1;
 }
@@ -591,6 +605,9 @@ std::string CDDUtil::DDObjectComponentTypeToString(DDObjectComponentType Type)
 
 	case DDObjectComponentType::ArrowComponent:
 		return "ArrowComponent";
+
+	case DDObjectComponentType::SporeBoomerData:
+		return "SporeBoomerData";
 	}
 
 	return "";
@@ -642,6 +659,10 @@ DDObjectComponentType CDDUtil::StringToDDObjectComponentType(const std::string& 
 	{
 		return DDObjectComponentType::ArrowComponent;
 	}
+	else if (Str == "SporeBoomerData")
+	{
+		return DDObjectComponentType::SporeBoomerData;
+	}
 
 	return DDObjectComponentType(-1);
 }
@@ -672,6 +693,8 @@ size_t CDDUtil::DDObjectComponentTypeToTypeID(DDObjectComponentType Type)
 		return typeid(CProjectileComponent).hash_code();
 	case DDObjectComponentType::ArrowComponent:
 		return typeid(CArrowComponent).hash_code();
+	case DDObjectComponentType::SporeBoomerData:
+		return typeid(CSporeBoomerDataComponent).hash_code();
 	}
 	return -1;
 }

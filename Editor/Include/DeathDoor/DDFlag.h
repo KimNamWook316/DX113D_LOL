@@ -36,6 +36,8 @@ enum class DDActionNode
 	CrowBossRunNode,
 	CrowBossSpinNode,
 	CrowBossJump,
+	// SporeBoomer
+	SporeBoomerShoot,
 	Max
 };
 
@@ -86,6 +88,7 @@ enum class DDSceneComponentType
 	EyeLaserComponent,
 	PlayerHookComponent,
 	PlayerBowComponent,
+	CrackedBlockCollider,
 	Max
 };
 
@@ -102,6 +105,7 @@ enum class DDObjectComponentType
 	MonsterNavAgent,
 	ProjectileComponent,
 	ArrowComponent,
+	SporeBoomerData,
 	Max
 };
 

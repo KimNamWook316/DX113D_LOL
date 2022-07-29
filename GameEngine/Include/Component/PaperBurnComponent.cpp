@@ -292,7 +292,16 @@ void CPaperBurnComponent::Update(float DeltaTime)
 			}
 
 			m_StartPaperBurn = false;
-			m_Filter = 0.f;
+
+			bool Inverse = m_CBuffer->IsInverse();
+			if (Inverse)
+			{
+				m_Filter = 1.f;
+			}
+			else
+			{
+				m_Filter = 0.f;
+			}
 		}
 
 		m_CBuffer->SetFilter(m_Filter);

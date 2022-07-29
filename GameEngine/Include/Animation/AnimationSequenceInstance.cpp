@@ -160,6 +160,8 @@ bool CAnimationSequenceInstance::EditCurrentSequenceKeyName(const std::string& N
 
 	CAnimationSequenceData* PrevAnim = iter->second;
 
+	PrevAnim->SetName(NewKey);
+
 	// 새로운 이름으로 넣어준다.
 	m_mapAnimation.insert(std::make_pair(NewKey, PrevAnim));
 
