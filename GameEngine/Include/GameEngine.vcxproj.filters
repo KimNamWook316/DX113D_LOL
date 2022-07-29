@@ -373,6 +373,9 @@
     <Filter Include="02. Resource\02. Shader\01. HLSL\1. Particle">
       <UniqueIdentifier>{3b4ae84d-d944-45fe-b8a4-4e4ccb9bc1da}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. Resource\02. Shader\03. ConstantBuffer\21. Fade">
+      <UniqueIdentifier>{36233a6e-4a2e-4fb9-a4a5-f6e274120fd8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Device.cpp">
@@ -1103,6 +1106,9 @@
     </ClCompile>
     <ClCompile Include="ObjectPool.cpp">
       <Filter>10. PoolManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\Shader\FadeCBuffer.cpp">
+      <Filter>02. Resource\02. Shader\03. ConstantBuffer\21. Fade</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1876,6 +1882,9 @@
     </ClInclude>
     <ClInclude Include="ParticleInfo.h">
       <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Shader\FadeCBuffer.h">
+      <Filter>02. Resource\02. Shader\03. ConstantBuffer\21. Fade</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

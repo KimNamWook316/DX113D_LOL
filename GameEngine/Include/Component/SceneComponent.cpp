@@ -114,6 +114,20 @@ float CSceneComponent::GetViewZ() const
 	return viewZ;
 }
 
+void CSceneComponent::Enable(bool Enable)
+{
+	m_Render = Enable;
+
+	m_Enable = Enable;
+
+	size_t Size = m_vecChild.size();
+
+	for (size_t i = 0; i < Size; ++i)
+	{
+		m_vecChild[i]->Enable(Enable);
+	}
+}
+
 void CSceneComponent::SetSceneComponent(CGameObject* Object)
 {
 	Object->AddSceneComponent(this);

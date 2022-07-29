@@ -23,6 +23,22 @@ enum class RenderLayerType
 #endif // _DEBUG
 };
 
+enum class FadeEffecType
+{
+	FADE_IN,
+	FADE_OUT,
+	NONE,
+};
+
+struct FadeEffectInfo
+{
+	float Time;
+	Vector3 StartColor;
+	Vector3 EndColor;
+	std::function<void()> StartCallBack;
+	std::function<void()> EndCallBack;
+};
+
 struct RenderInstancingList
 {
 	std::list<class CSceneComponent*> RenderList;
@@ -158,11 +174,20 @@ private:
 	// Post Processing Renderer
 	class CPostFXRenderer* m_PostFXRenderer;
 
+	// Fade Effect
+	class CFadeCBuffer* m_FadeCBuffer;
+	FadeEffecType m_CurFadeEffectType;
+	bool m_FadeEffectStart;
+	float m_FadeEffectTimer;
+	FadeEffectInfo m_FadeInfo;
+
 public :
 	CRenderStateManager* GetRenderStateManager() const
 	{
 		return m_RenderStateManager;
 	}
+
+	void StartFadeEffect(FadeEffecType Type);
 
 public:
 	float GetShadowLightDistance() const
@@ -249,6 +274,21 @@ public:
 		return m_RenderSkyBox;
 	}
 
+	void SetFadeTime(float Time)
+	{
+		m_FadeInfo.Time = Time;
+	}
+
+	void SetFadeStartColor(const Vector3& Color)
+	{
+		m_FadeInfo.StartColor = Color;
+	}
+
+	void SetFadeEndColor(const Vector3& Color)
+	{
+		m_FadeInfo.EndColor = Color;
+	}
+
 public:
 	void SetObjectList(const std::list<CSharedPtr<class CGameObject>>* List)
 	{
@@ -272,7 +312,7 @@ private:
 	void RenderLightAcc();
 	void RenderLightBlend();
 	void RenderTransparent();
-	void RenderFinalScreen();
+	void RenderFinalScreen(float DeltaTime);
 	void RenderAnimationEditor();
 	void RenderParticleEffectEditor();
 	void RenderPostParticle(); // π∞ Ω¶¿Ã¥ı µÓ
@@ -287,14 +327,29 @@ public:
 		D3D11_BLEND_OP BlendOpAlpha = D3D11_BLEND_OP_ADD,
 		UINT8 RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL);
 	bool CreateBlendState(const std::string& Name, bool AlphaToCoverageEnable, bool IndependentBlendEnable);
+
 public:
 	class CRenderState* FindRenderState(const std::string& Name);
+
+public:
+	template <typename T>
+	void SetFadeStartCallBack(T* Obj, void(T::* Func)())
+	{
+		m_FadeInfo.StartCallBack = std::bind(Func, Obj);
+	}
+
+	template <typename T>
+	void SetFadeEndCallBack(T* Obj, void(T::* Func)())
+	{
+		m_FadeInfo.EndCallBack = std::bind(Func, Obj);
+	}
 
 private:
 	void RenderDefaultInstancingShadow();
 	void RenderInstancing(int LayerIndex, bool AlphaBlend);
 	void UpdateInstancingList();
 	void UpdateInstancingInfo(int LayerIndex, bool UpdateShadow);
+	void UpdateFadeEffectInfo(float DeltaTime);
 
 private :
 	int GetRenderLayerIndex(const std::string& Name);

@@ -107,7 +107,7 @@ bool CSkyObject::SetSkyTextureFullPath(const char* FullPath)
 	// Scene Save Data에 Skybox 경로 업데이트
 	std::string FileName = CEngineUtil::FilterFileName(FullPath);
 	SceneSaveGlobalData GlobalData = m_Scene->GetSceneSaveGlobalData();
-	GlobalData.SkyBoxTexFileName = FileName;
+	GlobalData.BackGroundData.SkyBoxFileName = FileName;
 	m_Scene->SetSceneSaveGlobalData(GlobalData);
 
 	return Success;

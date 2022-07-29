@@ -61,6 +61,8 @@ public:
 	// 해당 Dir 경로에, 해당 Name 으로 된 파일이 존재하는지 판단해주는 함수
 	static bool IsFileExistInDir(const std::string& Path, const std::string& FileName);
 
+	static std::string ExtractFilePathFromFullPath(const std::string& FullPath, const std::string& PathName);
+
 	// 특정 문자열에 대해,
 	// 1. 문자 하나만 소문자인 문자열 set
 	// 2. 문자 하나만 대문자인 문자열 set

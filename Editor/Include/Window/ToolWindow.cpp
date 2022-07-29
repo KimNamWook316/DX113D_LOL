@@ -75,6 +75,7 @@ bool CToolWindow::Init()
 
 	// Render
 	m_RenderBlock = AddWidget<CIMGUICollapsingHeader>("Render", 200.f);
+	m_ClearColor = m_RenderBlock->AddWidget<CIMGUIColor3>("Clear Color", 200.f);
 	m_RenderSkyBox = m_RenderBlock->AddWidget<CIMGUICheckBox>("Render SkyBox");
 	m_DebugRender = m_RenderBlock->AddWidget<CIMGUICheckBox>("DebugRender");
 	m_PostProcessing = m_RenderBlock->AddWidget<CIMGUICheckBox>("PostProcessing(HDR)");
@@ -188,6 +189,9 @@ bool CToolWindow::Init()
 
 	m_FogColor->SetRGB(CRenderManager::GetInst()->GetFogColor());
 
+	Vector4 ClearColor = CEngine::GetInst()->GetClearColor();
+	m_ClearColor->SetRGB(Vector3(ClearColor.x, ClearColor.y, ClearColor.z));
+
 	switch (CurType)
 	{
 	case Fog_Type::Depth:
@@ -239,6 +243,7 @@ bool CToolWindow::Init()
 	m_GizmoOperationMode->SetCallBack(this, &CToolWindow::OnSelectGizmoOperationMode);
 	m_CameraSpeed->SetCallBack(this, &CToolWindow::OnChangeCameraSpeed);
 	m_DebugRender->SetCallBackLabel(this, &CToolWindow::OnCheckDebugRender);
+	m_ClearColor->SetCallBack(this, &CToolWindow::OnChangeClearColor);
 	m_PostProcessing->SetCallBackLabel(this, &CToolWindow::OnCheckPostProcessing);
 	m_Play->SetClickCallback(this, &CToolWindow::OnClickPlay);
 	m_Pause->SetClickCallback(this, &CToolWindow::OnClickPause);
@@ -371,6 +376,11 @@ void CToolWindow::OnChangeDOFMin(float Min)
 void CToolWindow::OnChangeDOFMax(float Max)
 {
 	CRenderManager::GetInst()->SetDOFMax(Max);
+}
+
+void CToolWindow::OnChangeClearColor(const Vector3& Color)
+{
+	CEngine::GetInst()->SetClearColor(Vector4(Color.x, Color.y, Color.z, 1.f));
 }
 
 void CToolWindow::OnSelectFogType(int Index, const char* Label)
@@ -646,7 +656,8 @@ void CToolWindow::RefreshGlobalSceneDataWidget()
 	m_GLightRotZ->SetValue(GlobalData.GLightData.Rot.z);
 	m_GLightColor->SetRGB(GlobalData.GLightData.Color);
 	m_GLightAmbIntensity->SetValue(GlobalData.GLightData.AmbientIntensity);
-	m_RenderSkyBox->SetCheck(0, GlobalData.RenderSkyBox);
+	m_RenderSkyBox->SetCheck(0, GlobalData.BackGroundData.RenderSkyBox);
+	m_ClearColor->SetRGB(Vector3(GlobalData.BackGroundData.ClearColor.x, GlobalData.BackGroundData.ClearColor.y, GlobalData.BackGroundData.ClearColor.z));
 }
 
 void CToolWindow::OnQDown(float DetlaTime)

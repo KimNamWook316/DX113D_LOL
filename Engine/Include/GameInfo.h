@@ -722,12 +722,18 @@ struct GlobalLightSceneSaveData
 	}
 };
 
+struct BackGroundSceneSaveData
+{
+	bool RenderSkyBox;
+	std::string SkyBoxFileName;
+	Vector4 ClearColor;
+};
+
 struct SceneSaveGlobalData
 {
 	HDRSceneSaveData			HDRData;
 	GlobalLightSceneSaveData	GLightData;
-	bool						RenderSkyBox;
-	std::string					SkyBoxTexFileName;
+	BackGroundSceneSaveData		BackGroundData;
 };
 
 struct NavMeshPolygon
@@ -784,4 +790,12 @@ struct NavigationCell
 
 		return _cell;
 	}
+};
+
+struct FadeCBuffer
+{
+	int FadeStart;
+	Vector3 StartColor;
+	float Ratio;
+	Vector3 EndColor;
 };

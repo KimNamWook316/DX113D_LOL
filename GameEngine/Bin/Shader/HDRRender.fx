@@ -165,5 +165,11 @@ PSOutput_Single HDRRenderPS(VS_OUTPUT_HDR Input)
 		Output.Color = float4(0.7f, 0.7f, 0.7f, 1.f);
 	}
 
+	if (g_FadeStart == 1)
+	{
+		float3 FadeColor = lerp(g_FadeStartColor, g_FadeEndColor, g_FadeRatio);
+		Output.Color.rgb *= FadeColor;
+	}
+
 	return Output;
 }

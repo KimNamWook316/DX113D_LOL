@@ -26,6 +26,7 @@
 #include "../DeathDoor/Component/ProjectileComponent.h"
 #include "../DeathDoor/Component/ArrowComponent.h"
 #include "../DeathDoor/Component/TinyCrowDataComponent.h"
+#include "../DeathDoor/Component/SporeBoomerDataComponent.h"
 
 #include "../Window/InspectorWindow.h"
 #include "../EditorUtil.h"
@@ -182,6 +183,10 @@ void CObjectComponentCreateModal::OnCreateComponent()
 		else if (Typeid == typeid(CArrowComponent).hash_code())
 		{
 			Com = SelectObject->CreateComponent<CArrowComponent>(Name);
+		}
+		else if (Typeid == typeid(CSporeBoomerDataComponent).hash_code())
+		{
+			Com = SelectObject->CreateComponent<CSporeBoomerDataComponent>(Name);
 		}
 		else if (Typeid == typeid(CTinyCrowDataComponent).hash_code())
 		{

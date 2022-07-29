@@ -59,6 +59,26 @@ CGameObject::~CGameObject()
 {
 }
 
+void CGameObject::Enable(bool Enable)
+{
+	if (m_RootComponent)
+	{
+		m_RootComponent->Enable(Enable);
+	}
+
+	size_t Size = m_vecObjectComponent.size();
+	for (size_t i = 0; i < Size; ++i)
+	{
+		m_vecObjectComponent[i]->Enable(Enable);
+	}
+
+	Size = m_vecChildObject.size();
+	for (size_t i = 0; i > Size; ++i)
+	{
+		m_vecChildObject[i]->Enable(Enable);
+	}
+}
+
 void CGameObject::SetScene(CScene* Scene)
 {
 	m_Scene = Scene;

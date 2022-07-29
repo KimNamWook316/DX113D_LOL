@@ -36,6 +36,7 @@ private:
 	class CFBXConvertWindow* m_FBXConvertWindow;
 	class CCollisionProfileEditor* m_CollisionProfileEditor;
 	class CSocketWindow* m_SocketWindow;
+	class CSceneModeWindow* m_SceneModeWindow;
 
 	bool				m_MousePush;
 	float				m_CameraMoveSpeed;
@@ -118,6 +119,10 @@ public:
 	class CToolWindow* GetToolWindow() const
 	{
 		return m_ToolWindow;
+	}
+	class CSceneModeWindow* GetSceneModeWindow() const
+	{
+		return m_SceneModeWindow;
 	}
 	EditMode GetEditMode()
 	{

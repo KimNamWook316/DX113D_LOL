@@ -25,6 +25,11 @@ public:
 	static DDObjectComponentType StringToDDObjectComponentType(const std::string& Str);
 	static size_t DDObjectComponentTypeToTypeID(DDObjectComponentType Type);
 
+	// TODO : Death Door SceneMode 추가시마다 업데이트
+	static std::string DDSceneModeTypeToString(DDSceneModeType Type);
+	static DDSceneModeType StringToDDSceneModeType(const std::string& Str);
+	static size_t DDSceneModeTypeToTypeID(DDSceneModeType Type);
+
 	// 두 컬러를 시간에 따라 보간해주는 함수
 	static Vector4 LerpColor(const Vector4& ColorStart, const Vector4& ColorEnd, float ElapsedTime, float MaxTime);
 };

@@ -11,7 +11,6 @@ struct PSOutput_GBuffer
     float4 GBuffer3 : SV_Target3;
     float4 GBuffer4 : SV_Target4;
     float4 GBuffer5 : SV_Target5;
-	// float4 GBufferOutline : SV_Target6;
 };
 
 cbuffer Transform : register(b0)
@@ -113,6 +112,14 @@ cbuffer GLightCBuffer : register(b11)
 {
 	float g_GLightAmbIntensity;
 	float3 g_GLightEmpty;
+}
+
+cbuffer FadeCBuffer : register(b7)
+{
+	int g_FadeStart;
+	float3 g_FadeStartColor;
+	float g_FadeRatio;
+	float3 g_FadeEndColor;
 }
 
 struct LightResult

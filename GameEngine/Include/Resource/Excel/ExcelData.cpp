@@ -494,19 +494,34 @@ const std::string& CExcelData::FindData(const std::string& name, const std::stri
 	std::vector<std::string>* row = GetRow(name);
 	int idx = getLabelIndex(label);
 
+	if (idx == -1)
+	{
+		return "";
+	}
+
 	return (*row)[idx];
 }
 
 float CExcelData::FindDataFloat(const std::string& name, const std::string& label)
 {
-	std::string Find = FindData(name, label);
+	const std::string& Find = FindData(name, label);
+
+	if (Find.empty())
+	{
+		return 1.f;
+	}
 
 	return std::stof(Find);
 }
 
 int CExcelData::FindDataInt(const std::string& name, const std::string& label)
 {
-	std::string Find = FindData(name, label);
+	const std::string& Find = FindData(name, label);
+
+	if (Find.empty())
+	{
+		return -1;
+	}
 
 	return std::stoi(Find);
 }
@@ -514,6 +529,11 @@ int CExcelData::FindDataInt(const std::string& name, const std::string& label)
 bool CExcelData::FindDataBool(const std::string& name, const std::string& label)
 {
 	std::string Find = FindData(name, label);
+
+	if (Find.empty())
+	{
+		return false;
+	}
 
 	bool Ret = CEngineUtil::StringToBool(Find);
 
