@@ -183,11 +183,38 @@
     <Filter Include="06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\04. CrowBoss">
       <UniqueIdentifier>{f2fe6744-8172-46d8-abb4-f83323b7259b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="06. DeathDoor\06. Thread">
+      <UniqueIdentifier>{fc205c15-ae06-4c95-9b53-79495625be9b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Editor\01. Window\6. Scene">
+      <UniqueIdentifier>{446e8a24-07a0-42dc-8027-287843146afd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Editor\02. Widget\04. SceneMode">
+      <UniqueIdentifier>{ab6e255d-81be-4c0e-a14d-7421b2dbdf9b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. DeathDoor\05. SceneMode\01. BossMode">
+      <UniqueIdentifier>{73871478-707e-4728-bf90-a5bacb67e1d7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. DeathDoor\01. GameComponent\02. ObjectComponent\01. DataComponent\01. ObjectDataComponent\01. Monster\05. SporeBoomer">
+      <UniqueIdentifier>{c6416711-4096-4f45-80fb-2227387bfdf9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\05. SporeBoomer">
+      <UniqueIdentifier>{7962dedc-2b8b-4127-916c-b16da06d08d2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. DeathDoor\01. GameComponent\01. SceneComponent\02. BlockObject">
+      <UniqueIdentifier>{4d91abed-0373-4c6e-8a7d-cb91853c94c5}</UniqueIdentifier>
+    </Filter>
     <Filter Include="06. DeathDoor\01. GameComponent\02. ObjectComponent\01. DataComponent\01. ObjectDataComponent\01. Monster\04. CrowBoss\01. TinyCrow">
-      <UniqueIdentifier>{99a48264-e5bd-40f7-862c-045373274ced}</UniqueIdentifier>
+      <UniqueIdentifier>{931102fc-8b7f-4cc2-8251-96de58676df4}</UniqueIdentifier>
     </Filter>
     <Filter Include="06. DeathDoor\01. GameComponent\01. SceneComponent\02. MapObject">
       <UniqueIdentifier>{f5206caa-74e3-4262-b4ce-3ceb12ed59af}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. DeathDoor\01. GameComponent\02. ObjectComponent\01. DataComponent\01. ObjectDataComponent\01. Monster\06. FirePlant">
+      <UniqueIdentifier>{d4832e2a-1363-488b-b4ea-327f5a5bd4af}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. DeathDoor\01. GameComponent\02. ObjectComponent\01. DataComponent\01. ObjectDataComponent\03. Object">
+      <UniqueIdentifier>{510b5814-a063-484d-89ca-49afd67a4050}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -650,12 +677,50 @@
     <ClCompile Include="DeathDoor\Component\Node\AttackCoolTimeCheck.cpp" />
     <ClCompile Include="EditorManager.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Widget\CameraMoveWidget.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\CrowBossSpitting.cpp">
+      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\04. CrowBoss</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Scene\DDSceneMode.cpp">
+      <Filter>06. DeathDoor\05. SceneMode</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Thread\DDSceneLoadingThread.cpp">
+      <Filter>06. DeathDoor\06. Thread</Filter>
+    </ClCompile>
+    <ClCompile Include="Window\SceneModeWindow.cpp">
+      <Filter>02. Editor\01. Window\6. Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="Widget\DDSceneModeWidget.cpp">
+      <Filter>02. Editor\02. Widget\04. SceneMode</Filter>
+    </ClCompile>
+    <ClCompile Include="Widget\SceneMenu.cpp">
+      <Filter>02. Editor\02. Widget\03. MenuBar</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Scene\DDBossSceneMode.cpp">
+      <Filter>06. DeathDoor\05. SceneMode\01. BossMode</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Component\SporeBoomerDataComponent.cpp">
+      <Filter>06. DeathDoor\01. GameComponent\02. ObjectComponent\01. DataComponent\01. ObjectDataComponent\01. Monster\05. SporeBoomer</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Component\Node\SporeBoomerShootNode.cpp">
+      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\05. SporeBoomer</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Component\CrackedBlockCollider.cpp">
+      <Filter>06. DeathDoor\01. GameComponent\01. SceneComponent\02. BlockObject</Filter>
+    </ClCompile>
     <ClCompile Include="DeathDoor\Component\TinyCrowDataComponent.cpp">
       <Filter>06. DeathDoor\01. GameComponent\02. ObjectComponent\01. DataComponent\01. ObjectDataComponent\01. Monster\04. CrowBoss\01. TinyCrow</Filter>
     </ClCompile>
-    <ClCompile Include="DeathDoor\Component\Node\CrowBossSpitting.cpp">
-      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\04. CrowBoss</Filter>
+    <ClCompile Include="DeathDoor\Component\Node\AttackCoolTimeCheck.cpp">
+      <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\01. Public</Filter>
+    </ClCompile>
+    <ClCompile Include="Widget\CameraMoveWidget.cpp">
+      <Filter>02. Editor\02. Widget\01. Inspector\01. SceneComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Component\FirePlantDataComponent.cpp">
+      <Filter>06. DeathDoor\01. GameComponent\02. ObjectComponent\01. DataComponent\01. ObjectDataComponent\01. Monster\06. FirePlant</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Component\MonsterBulletData.cpp">
+      <Filter>06. DeathDoor\01. GameComponent\02. ObjectComponent\01. DataComponent\01. ObjectDataComponent\03. Object</Filter>
     </ClCompile>
     <ClCompile Include="DeathDoor\Component\PlayerBombComponent.cpp">
       <Filter>06. DeathDoor\01. GameComponent\02. ObjectComponent\02. Projectile</Filter>
@@ -1157,9 +1222,6 @@
     <ClInclude Include="DeathDoor\Component\Node\CrowBossJumpAttackRangeCheck.h">
       <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\04. CrowBoss</Filter>
     </ClInclude>
-    <ClInclude Include="Widget\CameraMoveWidget.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="DeathDoor\Component\Node\CrowBossFirstShootCheck.h">
       <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\04. CrowBoss</Filter>
     </ClInclude>
@@ -1190,14 +1252,50 @@
     <ClInclude Include="DeathDoor\Component\Node\CrowBossSlide.h">
       <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\04. CrowBoss</Filter>
     </ClInclude>
-    <ClInclude Include="DeathDoor\Component\Node\AttackCoolTimeCheck.h">
-      <Filter>헤더 파일</Filter>
+    <ClInclude Include="DeathDoor\Component\Node\CrowBossSpitting.h">
+      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\04. CrowBoss</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Scene\DDSceneMode.h">
+      <Filter>06. DeathDoor\05. SceneMode</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Thread\DDSceneLoadingThread.h">
+      <Filter>06. DeathDoor\06. Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="Window\SceneModeWindow.h">
+      <Filter>02. Editor\01. Window\6. Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="Widget\DDSceneModeWidget.h">
+      <Filter>02. Editor\02. Widget\04. SceneMode</Filter>
+    </ClInclude>
+    <ClInclude Include="Widget\SceneMenu.h">
+      <Filter>02. Editor\02. Widget\03. MenuBar</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Scene\DDBossSceneMode.h">
+      <Filter>06. DeathDoor\05. SceneMode\01. BossMode</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\SporeBoomerDataComponent.h">
+      <Filter>06. DeathDoor\01. GameComponent\02. ObjectComponent\01. DataComponent\01. ObjectDataComponent\01. Monster\05. SporeBoomer</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\Node\SporeBoomerShootNode.h">
+      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\05. SporeBoomer</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\CrackedBlockCollider.h">
+      <Filter>06. DeathDoor\01. GameComponent\01. SceneComponent\02. BlockObject</Filter>
     </ClInclude>
     <ClInclude Include="DeathDoor\Component\TinyCrowDataComponent.h">
       <Filter>06. DeathDoor\01. GameComponent\02. ObjectComponent\01. DataComponent\01. ObjectDataComponent\01. Monster\04. CrowBoss\01. TinyCrow</Filter>
     </ClInclude>
-    <ClInclude Include="DeathDoor\Component\Node\CrowBossSpitting.h">
-      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\04. CrowBoss</Filter>
+    <ClInclude Include="DeathDoor\Component\Node\AttackCoolTimeCheck.h">
+      <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\01. Public</Filter>
+    </ClInclude>
+    <ClInclude Include="Widget\CameraMoveWidget.h">
+      <Filter>02. Editor\02. Widget\01. Inspector\01. SceneComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\FirePlantDataComponent.h">
+      <Filter>06. DeathDoor\01. GameComponent\02. ObjectComponent\01. DataComponent\01. ObjectDataComponent\01. Monster\06. FirePlant</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\MonsterBulletData.h">
+      <Filter>06. DeathDoor\01. GameComponent\02. ObjectComponent\01. DataComponent\01. ObjectDataComponent\03. Object</Filter>
     </ClInclude>
     <ClInclude Include="DeathDoor\Component\PlayerBombComponent.h">
       <Filter>06. DeathDoor\01. GameComponent\02. ObjectComponent\02. Projectile</Filter>

@@ -17,8 +17,16 @@
 #include "Component\ArrowComponent.h"
 #include "Component\CrowBossDataComponent.h"
 #include "Component\TinyCrowDataComponent.h"
+#include "Component\SporeBoomerDataComponent.h"
+#include "Component\FirePlantDataComponent.h"
+#include "Component\CrackedBlockCollider.h"
+#include "Component\MonsterBulletData.h"
 #include "Component\PlayerBombComponent.h"
 #include "Component\LadderCollider.h"
+
+// TODO : Death Door SceneMode 추가시마다 업데이트
+#include "Scene/DDSceneMode.h"
+#include "Scene/DDBossSceneMode.h"
 
 std::string CDDUtil::DDConditionNodeTypeToString(DDConditionNode NodeType)
 {
@@ -439,6 +447,10 @@ std::string CDDUtil::DDActionNodeTypeToString(DDActionNode NodeType)
 		return "CrowBossSpitting";
 
 
+	// Spore Boomer
+	case DDActionNode::SporeBoomerShoot:
+		return "SporeBoomerShoot";
+
 	case DDActionNode::ClearPathList:
 		return "ClearPathList";
 
@@ -638,6 +650,8 @@ std::string CDDUtil::DDSceneComponentTypeToString(DDSceneComponentType Type)
 		return "PlayerBowComponent";
 	case DDSceneComponentType::LadderCollider:
 		return "LadderCollider";
+	case DDSceneComponentType::CrackedBlockCollider:
+		return "CrackedBlockCollider";
 	}
 
 	return "";
@@ -661,6 +675,11 @@ DDSceneComponentType CDDUtil::StringToDDSceneComponentType(const std::string& St
 	{
 		return DDSceneComponentType::LadderCollider;
 	}
+	else if (Str == "CrackedBlockCollider")
+	{
+		return DDSceneComponentType::CrackedBlockCollider;
+	}
+
 	return DDSceneComponentType(-1);
 }
 
@@ -678,6 +697,8 @@ size_t CDDUtil::DDSceneComponentTypeToTypeID(DDSceneComponentType Type)
 		return typeid(CPlayerBowComponent).hash_code();
 	case DDSceneComponentType::LadderCollider:
 		return typeid(CLadderCollider).hash_code();
+	case DDSceneComponentType::CrackedBlockCollider:
+		return typeid(CCrackedBlockCollider).hash_code();
 	}
 	return -1;
 }
@@ -724,6 +745,15 @@ std::string CDDUtil::DDObjectComponentTypeToString(DDObjectComponentType Type)
 
 	case DDObjectComponentType::PlayerBombComponent:
 		return "PlayerBombComponent";
+
+	case DDObjectComponentType::SporeBoomerData:
+		return "SporeBoomerData";
+
+	case DDObjectComponentType::FirePlantData:
+		return "FirePlantData";
+
+	case DDObjectComponentType::MonsterBulletData:
+		return "MonsterBulletData";
 	}
 
 	return "";
@@ -779,6 +809,18 @@ DDObjectComponentType CDDUtil::StringToDDObjectComponentType(const std::string& 
 	{
 		return DDObjectComponentType::PlayerBombComponent;
 	}
+	else if (Str == "SporeBoomerData")
+	{
+		return DDObjectComponentType::SporeBoomerData;
+	}
+	else if (Str == "FirePlantData")
+	{
+		return DDObjectComponentType::FirePlantData;
+	}
+	else if (Str == "MonsterData")
+	{
+		return DDObjectComponentType::MonsterData;
+	}
 
 	return DDObjectComponentType(-1);
 }
@@ -813,8 +855,52 @@ size_t CDDUtil::DDObjectComponentTypeToTypeID(DDObjectComponentType Type)
 		return typeid(CTinyCrowDataComponent).hash_code();
 	case DDObjectComponentType::PlayerBombComponent:
 		return typeid(CPlayerBombComponent).hash_code();
+	case DDObjectComponentType::SporeBoomerData:
+		return typeid(CSporeBoomerDataComponent).hash_code();
+	case DDObjectComponentType::FirePlantData:
+		return typeid(CFirePlantDataComponent).hash_code();
+	case DDObjectComponentType::MonsterBulletData:
+		return typeid(CMonsterBulletData).hash_code();
 	}
 	return -1;
+}
+
+std::string CDDUtil::DDSceneModeTypeToString(DDSceneModeType Type)
+{
+	switch (Type)
+	{
+	case DDSceneModeType::DDSceneMode:
+		return "DDSceneMode";
+	case DDSceneModeType::DDBossSceneMode:
+		return "DDBossSceneMode";
+	}
+
+	return "";
+}
+
+DDSceneModeType CDDUtil::StringToDDSceneModeType(const std::string& Str)
+{
+	if (Str == "DDSceneMode")
+	{
+		return DDSceneModeType::DDSceneMode;
+	}
+	else if (Str == "DDBossSceneMode")
+	{
+		return DDSceneModeType::DDBossSceneMode;
+	}
+
+	return (DDSceneModeType)(-1);
+}
+
+size_t CDDUtil::DDSceneModeTypeToTypeID(DDSceneModeType Type)
+{
+	switch (Type)
+	{
+	case DDSceneModeType::DDSceneMode:
+		return typeid(CDDSceneMode).hash_code();
+	case DDSceneModeType::DDBossSceneMode:
+		return typeid(CDDBossSceneMode).hash_code();
+	}
 }
 
 Vector4 CDDUtil::LerpColor(const Vector4& ColorStart, const Vector4& ColorEnd, float ElapsedTime, float MaxTime)

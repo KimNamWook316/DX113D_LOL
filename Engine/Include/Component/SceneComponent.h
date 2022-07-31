@@ -151,6 +151,8 @@ public:
 		m_DrawShadow = Enable;
 	}
 
+	virtual void Enable(bool Enable) override;
+
 public:
 	void SetSceneComponent(class CGameObject* Object);
 	void GetAllSceneComponentsName(std::vector<FindComponentName>& vecNames);

@@ -60,6 +60,7 @@ CGameObject* CObjectPool::GetProjectile(const std::string& Name, class CScene* S
 
 	Scene->AddObject(Object);
 	Object->Start();
+	Object->Enable(true);
 
 	m_mapProjectile.erase(iter);
 
@@ -78,6 +79,7 @@ CGameObject* CObjectPool::GetMonster(const std::string& Name, class CScene* Scen
 	Object->m_Active = true;
 	Scene->AddObject(Object);
 	Object->Start();
+	Object->Enable(true);
 
 	m_mapMonster.erase(iter);
 
@@ -96,6 +98,7 @@ CGameObject* CObjectPool::GetParticle(const std::string& Name, class CScene* Sce
 	Object->m_Active = true;
 	Scene->AddObject(Object);
 	Object->Start();
+	Object->Enable(true);
 
 	m_mapParticle.erase(iter);
 
@@ -168,11 +171,12 @@ void CObjectPool::CreatePoolObject(const std::string& PathName)
 			Object->SetName(ObjectName);
 			Object->SetInPool(true);
 			Object->SetScene(CSceneManager::GetInst()->GetScene());
-			Object->SetWorldScale(0.f, 0.f, 0.f);
 			Object->SetWorldPos(FLT_MAX, FLT_MAX, FLT_MAX);
 			Object->Enable(false);
 
 			bool Result = Object->LoadHierarchy(FullPath);
+
+			Object->Enable(false);
 
 			if (Result)
 			{

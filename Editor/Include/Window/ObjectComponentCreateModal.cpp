@@ -27,6 +27,9 @@
 #include "../DeathDoor/Component/ArrowComponent.h"
 #include "../DeathDoor/Component/TinyCrowDataComponent.h"
 #include "../DeathDoor/Component/PlayerBombComponent.h"
+#include "../DeathDoor/Component/SporeBoomerDataComponent.h"
+#include "../DeathDoor/Component/FirePlantDataComponent.h"
+#include "../DeathDoor/Component/MonsterBulletData.h"
 
 #include "../Window/InspectorWindow.h"
 #include "../EditorUtil.h"
@@ -184,6 +187,10 @@ void CObjectComponentCreateModal::OnCreateComponent()
 		{
 			Com = SelectObject->CreateComponent<CArrowComponent>(Name);
 		}
+		else if (Typeid == typeid(CSporeBoomerDataComponent).hash_code())
+		{
+			Com = SelectObject->CreateComponent<CSporeBoomerDataComponent>(Name);
+		}
 		else if (Typeid == typeid(CTinyCrowDataComponent).hash_code())
 		{
 			Com = SelectObject->CreateComponent<CTinyCrowDataComponent>(Name);
@@ -191,6 +198,14 @@ void CObjectComponentCreateModal::OnCreateComponent()
 		else if (Typeid == typeid(CPlayerBombComponent).hash_code())
 		{
 			Com = SelectObject->CreateComponent<CPlayerBombComponent>(Name);
+		}
+		else if (Typeid == typeid(CFirePlantDataComponent).hash_code())
+		{
+			Com = SelectObject->CreateComponent<CFirePlantDataComponent>(Name);
+		}
+		else if (Typeid == typeid(CMonsterBulletData).hash_code())
+		{
+			Com = SelectObject->CreateComponent<CMonsterBulletData>(Name);
 		}
 	}
 

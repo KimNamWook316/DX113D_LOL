@@ -29,16 +29,12 @@ void CBossKnightCutScenePlayNode::Init()
 	CKnightDataComponent* Data = dynamic_cast<CKnightDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
 
 	AnimInst->AddNotify("MegaSlam", "CutSceneSlamShake", 36, Data, &CKnightDataComponent::OnCutSceneSlamFloor);
-
-	// AnimInst->AddNotify("MegaSlam", "CutSceneStart", 0, (CMonsterDataComponent*)Data, &CMonsterDataComponent::OnStartCutScene);
-	// AnimInst->SetEndFunction("MegaSlam",(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnEndCutScene);
 }
 
 NodeResult CBossKnightCutScenePlayNode::OnStart(float DeltaTime)
 {
 	CKnightDataComponent* Data = dynamic_cast<CKnightDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
 	Data->OnStartCutScene();
-	// m_AnimationMeshComp->GetAnimationInstance()->ChangeAnimation("MegaSlam");
 
 	return NodeResult::Node_True;
 }

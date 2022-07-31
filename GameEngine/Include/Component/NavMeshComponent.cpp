@@ -20,6 +20,8 @@ CNavMeshComponent::CNavMeshComponent()	:
 
 	m_LayerName = "Default";
 
+	m_DrawShadow = false;
+
 	m_Transform->AddChangePosCallBack<CNavMeshComponent>(this, &CNavMeshComponent::OnUpdateWorld);
 	m_Transform->AddChangeRotCallBack<CNavMeshComponent>(this, &CNavMeshComponent::OnUpdateWorld);
 	m_Transform->AddChangeScaleCallBack<CNavMeshComponent>(this, &CNavMeshComponent::OnUpdateWorld);

@@ -47,6 +47,7 @@ private:
 	void OnChangeBloomScale(float Scale);
 	void OnChangeDOFMin(float Min);
 	void OnChangeDOFMax(float Max);
+	void OnChangeClearColor(const Vector3& Color);
 	void OnSelectFogType(int Index, const char* Label);
 	void OnChageFogColor(const Vector3& Color);
 	void OnChangeFogStart(float Val);
@@ -83,6 +84,7 @@ private:
 	// Render
 	CIMGUICollapsingHeader* m_RenderBlock;
 	CIMGUICheckBox* m_RenderSkyBox;
+	CIMGUIColor3* m_ClearColor;
 	CIMGUICheckBox* m_DebugRender;
 	CIMGUICheckBox* m_PostProcessing;
 	CIMGUISliderFloat* m_ShadowBias;

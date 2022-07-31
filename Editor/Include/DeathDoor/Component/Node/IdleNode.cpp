@@ -24,12 +24,6 @@ NodeResult CIdleNode::OnStart(float DeltaTime)
 {
 	m_AnimationMeshComp = m_Owner->GetAnimationMeshComp();
 
-	std::string ObjectName = m_Object->GetName();
-
-	std::string SequenceName = "Idle";
-
-	SequenceName = ObjectName + SequenceName;
-
 	if (m_AnimationMeshComp)
 	{
 		CAnimationSequenceInstance* Instance = m_AnimationMeshComp->GetAnimationInstance();
@@ -38,8 +32,6 @@ NodeResult CIdleNode::OnStart(float DeltaTime)
 	}
 
 	CObjectDataComponent* Data = dynamic_cast<CObjectDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
-	//Data->SetNoInterrupt(false);
-
 
 	return NodeResult::Node_True;
 }

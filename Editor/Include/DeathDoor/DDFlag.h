@@ -49,6 +49,8 @@ enum class DDActionNode
 	CrowBossShoot,
 	CrowBossSlide,
 	CrowBossSpitting,
+	// SporeBoomer
+	SporeBoomerShoot,
 	Max
 };
 
@@ -115,6 +117,7 @@ enum class DDSceneComponentType
 	PlayerHookComponent,
 	PlayerBowComponent,
 	LadderCollider,
+	CrackedBlockCollider,
 	Max
 };
 
@@ -133,6 +136,9 @@ enum class DDObjectComponentType
 	ArrowComponent,
 	TinyCrowDataComponent,
 	PlayerBombComponent,
+	SporeBoomerData,
+	FirePlantData,
+	MonsterBulletData,
 	Max
 };
 
@@ -155,5 +161,13 @@ enum class CrowBossShootState
 	ShootEnd,
 	Fly,
 	Done,
+	Max
+};
+
+// TODO : Death Door SceneMode 추가시마다 업데이트
+enum class DDSceneModeType
+{
+	DDSceneMode,
+	DDBossSceneMode,
 	Max
 };

@@ -18,6 +18,7 @@
 #include "../Window/ResourceDisplayWindow.h"
 #include "../Window/ObjectCreateModal.h"
 #include "../Window/EffectEditor.h"
+#include "../Window/SceneModeWindow.h"
 #include "../EditorUtil.h"
 #include "../EditorManager.h"
 #include "../Object/3DParticleObject.h"
@@ -147,6 +148,11 @@ void CSaveLoadBeginMenu::OnLoadSceneMenuCallback()
 		std::vector<CGameObject*> vecObj;
 		CSceneManager::GetInst()->GetNextScene()->GetAllIncludeSaveObjectsPointer(vecObj);
 		RefreshSceneRelatedWindow(vecObj);
+
+		// Scene Mode Window °»½Å
+		CSceneModeWindow* SceneModeWindow = (CSceneModeWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(SCENEMODE_WINDOW);
+		CSceneMode* SceneMode = CSceneManager::GetInst()->GetNextScene()->GetSceneMode();
+		SceneModeWindow->OnRefreshSceneModeWidget(SceneMode);
 
 		// ToolWindow
 		CToolWindow* ToolWindow = (CToolWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(TOOL);

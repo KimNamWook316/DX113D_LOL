@@ -1,6 +1,6 @@
 AnimData_Player,,
 ,FrameStart,FrameEnd
-PlayerIdle,0,121
+Idle,0,121
 PlayerLadderDown,123,160
 PlayerLadderUp,162,199
 PlayerLadderFinish,201,223

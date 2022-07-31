@@ -8,6 +8,7 @@
 #include "../Component/GameStateComponent.h"
 #include "GameObject/GameObject.h"
 #include "Scene/Scene.h"
+#include "Render/RenderManager.h"
 
 CKnightDataComponent::CKnightDataComponent()	:
 	m_JumpAttackRange(0.f),
@@ -200,6 +201,25 @@ void CKnightDataComponent::OnDeadPaperBurnEnd()
 void CKnightDataComponent::OnReachedCutSceneAnimPoint()
 {
 	m_AnimMesh->GetAnimationInstance()->ChangeAnimation("MegaSlam");
+}
+
+void CKnightDataComponent::OnStartCutScene()
+{
+	CMonsterDataComponent::OnStartCutScene();
+
+	m_OriginDOFMin = CRenderManager::GetInst()->GetDOFMin();
+	m_OriginDOFMax = CRenderManager::GetInst()->GetDOFMax();
+
+	CRenderManager::GetInst()->SetDOFMin(8.f);
+	CRenderManager::GetInst()->SetDOFMax(60.f);
+}
+
+void CKnightDataComponent::OnEndCutScene()
+{
+	CMonsterDataComponent::OnEndCutScene();
+
+	CRenderManager::GetInst()->SetDOFMin(m_OriginDOFMin);
+	CRenderManager::GetInst()->SetDOFMax(m_OriginDOFMax);
 }
 
 void CKnightDataComponent::OnActiveMeleeAttackCollider()

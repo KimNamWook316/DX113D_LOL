@@ -110,9 +110,10 @@
 #include "Node/CrowBossSlide.h"
 #include "Node/CrowBossSpitting.h"
 
+// Monster - SporeBoomer
+#include "Node/SporeBoomerShootNode.h"
+
 #include "GameStateComponent.h"
-
-
 
 CGameBehaviorTree::CGameBehaviorTree()
 {
@@ -602,6 +603,12 @@ CNode* CGameBehaviorTree::LoadNode(CNode* Parent, size_t TypeID)
 	else if (TypeID == typeid(CCrowBossSpitting).hash_code())
 	{
 		NewNode = MakeNode<CCrowBossSpitting>(Parent, OwnerObject);
+	}
+
+	// SporeBoomer - Action
+	else if (TypeID == typeid(CSporeBoomerShootNode).hash_code())
+	{
+		NewNode = MakeNode<CSporeBoomerShootNode>(Parent, OwnerObject);
 	}
 
 	return NewNode;

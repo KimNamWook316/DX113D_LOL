@@ -82,6 +82,12 @@ public:
 		Shoot(StartPos, Dir, Speed, LifeTime, EndParticleObj);
 	}
 
+	template <typename T>
+	void SetEndCallBack(T* Obj, void(T::* Func)(const Vector3&))
+	{
+		m_EndCallBack = std::bind(Func, Obj, std::placeholders::_1);
+	}
+
 private:
 	class CSceneComponent* m_Root;
 	class CColliderComponent* m_Collider;
@@ -100,6 +106,8 @@ private:
 	float	m_LifeTimer;
 	bool	m_Destroy;
 	bool	m_NoUpdate;
+
+	std::function<void(const Vector3&)> m_EndCallBack;
 
 public:
 	void SetDestroy(bool NoDestroy)
