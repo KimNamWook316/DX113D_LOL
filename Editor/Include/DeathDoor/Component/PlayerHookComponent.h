@@ -23,6 +23,8 @@ private:
 	bool		m_InFlying;
 	Vector3		m_ShootDir;
 	Vector3		m_ShootDestPoint;
+	
+	float m_AccLastHookDelayTime;
 
 public:
 	virtual void Start();

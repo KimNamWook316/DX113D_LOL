@@ -4,7 +4,6 @@
 #include "Scene/SceneManager.h"
 #include "Scene/Navigation3DManager.h"
 #include "Component/BehaviorTree.h"	
-#include "../MonsterPathFindCollider.h"	
 #include "../MonsterDataComponent.h"
 #include "../GameStateComponent.h"
 #include "../MonsterNavAgent.h"

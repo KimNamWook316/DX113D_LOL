@@ -9,6 +9,7 @@
 #include "../PlayerDataComponent.h"
 #include "../PlayerHookComponent.h"
 #include "../PlayerBowComponent.h"
+#include "../PlayerBombComponent.h"
 #include "../../../Object/PlayerHook.h"
 #include "Component/Node/CompositeNode.h"
 
@@ -180,6 +181,44 @@ NodeResult CShootNode::OnUpdate(float DeltaTime)
 				m_Owner->SetCurrentNode(this);
 
 				BowComp->HideBow();
+			}
+
+			m_InRestoreCam = true;
+		}
+	}
+
+	else if (Ability == Player_Ability::Bomb)
+	{
+		if (m_InRestoreCam)
+		{
+			CScene* Scene = CSceneManager::GetInst()->GetScene();
+
+			bool RestoreEnd = Scene->RestoreCamera(50.f, DeltaTime);
+
+			if (RestoreEnd)
+			{
+				m_IsEnd = true;
+				m_CallStart = false;
+				m_Owner->SetCurrentNode(nullptr);
+				m_InRestoreCam = false;
+
+				return NodeResult::Node_True;
+			}
+
+			else
+			{
+				return NodeResult::Node_Running;
+			}
+		}
+
+		else
+		{
+			CPlayerBombComponent* BombComp = m_Object->FindObjectComponentFromType<CPlayerBombComponent>();
+			if (BombComp)
+			{
+				BombComp->ShootBomb(Dir);
+
+				m_Owner->SetCurrentNode(this);
 			}
 
 			m_InRestoreCam = true;

@@ -31,7 +31,6 @@
 #include "DeathDoor\Component/PlayerNormalAttackCheckCollider.h"
 #include "DeathDoor\Component/EyeLaserComponent.h"
 #include "DeathDoor\Component/PlayerHookComponent.h"
-#include "DeathDoor\Component/MonsterPathFindCollider.h"
 #include "DeathDoor\Component/KnightDataComponent.h"
 #include "DeathDoor\Component/BossBettyDataComponent.h"
 #include "DeathDoor\Component/CrowBossDataComponent.h"
@@ -41,6 +40,8 @@
 #include "DeathDoor\Component/ProjectileComponent.h"
 #include "DeathDoor\Component/ArrowComponent.h"
 #include "DeathDoor\Component/TinyCrowDataComponent.h"
+#include "DeathDoor\Component/PlayerBombComponent.h"
+#include "DeathDoor\Component/LadderCollider.h"
 // Window
 #include "Window/ObjectHierarchyWindow.h"
 #include "Window/SceneComponentHierarchyWindow.h"
@@ -411,6 +412,12 @@ CComponent* CEditorManager::CreateComponent(CGameObject* Obj, size_t Type)
 		return Component;
 	}
 
+	else if (Type == typeid(CLadderCollider).hash_code())
+	{
+		CLadderCollider* Component = Obj->LoadComponent<CLadderCollider>();
+		return Component;
+	}
+
 	else if (Type == typeid(CPlayerDataComponent).hash_code())
 	{
 		CPlayerDataComponent* Component = Obj->LoadObjectComponent<CPlayerDataComponent>();
@@ -481,6 +488,12 @@ CComponent* CEditorManager::CreateComponent(CGameObject* Obj, size_t Type)
 	else if (Type == typeid(CTinyCrowDataComponent).hash_code())
 	{
 		CTinyCrowDataComponent* Component = Obj->LoadObjectComponent<CTinyCrowDataComponent>();
+		return Component;
+	}
+
+	else if (Type == typeid(CPlayerBombComponent).hash_code())
+	{
+		CPlayerBombComponent* Component = Obj->LoadObjectComponent<CPlayerBombComponent>();
 		return Component;
 	}
 

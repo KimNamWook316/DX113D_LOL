@@ -36,6 +36,25 @@
 #include "../DeathDoor/Component/Node/DeathCheck.h"
 #include "../DeathDoor/Component/Node/PostAttackDelayCheck.h"
 #include "../DeathDoor/Component/Node/AttackCoolTimeCheck.h"
+
+#include "../DeathDoor/Component/Node/ClimbDown.h"
+#include "../DeathDoor/Component/Node/ClimbDownEnd.h"
+#include "../DeathDoor/Component/Node/ClimbDownStart.h"
+#include "../DeathDoor/Component/Node/ClimbUp.h"
+#include "../DeathDoor/Component/Node/ClimbUpStart.h"
+#include "../DeathDoor/Component/Node/ClimbUpEnd.h"
+#include "../DeathDoor/Component/Node/SKeyInputCheck.h"
+#include "../DeathDoor/Component/Node/WKeyInputCheck.h"
+#include "../DeathDoor/Component/Node/ClimbDownContinueCheck.h"
+#include "../DeathDoor/Component/Node/ClimbDownEndCheck.h"
+#include "../DeathDoor/Component/Node/ClimbDownStartCheck.h"
+#include "../DeathDoor/Component/Node/ClimbUpContinueCheck.h"
+#include "../DeathDoor/Component/Node/ClimbingUpStartCheck.h"
+#include "../DeathDoor/Component/Node/ClimbUpEndCheck.h"
+#include "../DeathDoor/Component/Node/ClimbPause.h"
+#include "../DeathDoor/Component/Node/IsClimbingCheck.h"
+#include "../DeathDoor/Component/Node/ClimbPause.h"
+
 // BossKnight
 #include "../DeathDoor/Component/Node/BossKnightContinueAttackNode.h"
 #include "../DeathDoor/Component/Node/BossKnightCutScenePlayCheck.h"
@@ -514,6 +533,42 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
             NewTreeNode = m_StateComponent->CreateTreeNode<CPlayerRoll>(Name);
             break;
         }
+        case DDActionNode::ClimbDown:
+        {
+            NewTreeNode = m_StateComponent->CreateTreeNode<CClimbDown>(Name);
+            break;
+        }
+        case DDActionNode::ClimbDownEnd:
+        {
+            NewTreeNode = m_StateComponent->CreateTreeNode<CClimbDownEnd>(Name);
+            break;
+        }        
+        case DDActionNode::ClimbDownStart:
+        {
+            NewTreeNode = m_StateComponent->CreateTreeNode<CClimbDownStart>(Name);
+            break;
+        }        
+        case DDActionNode::ClimbUp:
+        {
+            NewTreeNode = m_StateComponent->CreateTreeNode<CClimbUp>(Name);
+            break;
+        }        
+        case DDActionNode::ClimbUpStart:
+        {
+            NewTreeNode = m_StateComponent->CreateTreeNode<CClimbUpStart>(Name);
+            break;
+        }        
+        case DDActionNode::ClimbUpEnd:
+        {
+            NewTreeNode = m_StateComponent->CreateTreeNode<CClimbUpEnd>(Name);
+            break;
+        }
+        case DDActionNode::ClimbPause:
+        {
+            NewTreeNode = m_StateComponent->CreateTreeNode<CClimbPause>(Name);
+            break;
+        }
+
         case DDActionNode::BossKnightContinueAttack:
         {
             NewTreeNode = m_StateComponent->CreateTreeNode<CBossKnightContinueAttackNode>(Name);
@@ -679,6 +734,36 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
         case DDConditionNode::MouseRButtonUpCheckNode:
             NewTreeNode = m_StateComponent->CreateTreeNode<CMouseRButtonUpCheckNode>(Name);
             break;
+
+        case DDConditionNode::IsClimbingCheck:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CIsClimbingCheck>(Name);
+            break;
+        case DDConditionNode::SKeyInputCheck:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CSKeyInputCheck>(Name);
+            break;
+        case DDConditionNode::WKeyInputCheck:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CWKeyInputCheck>(Name);
+            break;
+        case DDConditionNode::ClimbDownContinueCheck:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CClimbDownContinueCheck>(Name);
+            break;
+        case DDConditionNode::ClimbDownEndCheck:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CClimbDownEndCheck>(Name);
+            break;
+        case DDConditionNode::ClimbDownStartCheck:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CClimbDownStartCheck>(Name);
+            break;
+        case DDConditionNode::ClimbUpContinueCheck:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CClimbUpContinueCheck>(Name);
+            break;
+        case DDConditionNode::ClimbUpStartCheck:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CClimbingUpStartCheck>(Name);
+            break;
+        case DDConditionNode::ClimbUpEndCheck:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CClimbUpEndCheck>(Name);
+            break;
+
+
         case DDConditionNode::Lockstone3TriggerBoxHitCheck:
             NewTreeNode = m_StateComponent->CreateTreeNode<CLockstone3TriggerBoxHitCheck>(Name);
             break;

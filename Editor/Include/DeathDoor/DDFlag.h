@@ -13,6 +13,13 @@ enum class DDActionNode
 	AddFallingFloorCallback,
 	Lockstone3TriggerBoxAction,
 	FindPath,
+	ClimbDown,
+	ClimbDownEnd,
+	ClimbDownStart,
+	ClimbUp,
+	ClimbUpEnd,
+	ClimbUpStart,
+	ClimbPause,
 	BossKnightContinueAttack,
 	BossKnightFinalAttack,
 	BossKnightJumpAttack,
@@ -72,6 +79,15 @@ enum class DDConditionNode
 	HitCheckNode,
 	RollInputCheck,
 	UpdateInputQueue,
+	SKeyInputCheck,
+	WKeyInputCheck,
+	IsClimbingCheck,
+	ClimbDownContinueCheck,
+	ClimbDownEndCheck,
+	ClimbDownStartCheck,
+	ClimbUpContinueCheck,
+	ClimbUpEndCheck,
+	ClimbUpStartCheck,
 	// BossBetty
 	BossBettyCheckAttackDir,
 	BossBettyCheckFarAttackType,
@@ -98,6 +114,7 @@ enum class DDSceneComponentType
 	EyeLaserComponent,
 	PlayerHookComponent,
 	PlayerBowComponent,
+	LadderCollider,
 	Max
 };
 
@@ -115,6 +132,7 @@ enum class DDObjectComponentType
 	ProjectileComponent,
 	ArrowComponent,
 	TinyCrowDataComponent,
+	PlayerBombComponent,
 	Max
 };
 

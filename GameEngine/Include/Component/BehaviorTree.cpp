@@ -116,16 +116,20 @@ void CBehaviorTree::DeleteNode(CNode* Node)
 		{
 			CCompositeNode* Parent = (CCompositeNode*)((*iter)->GetParent());
 
-			if (Parent->m_NodeType == Node_Type::Decorator)
+			if (Parent)
 			{
-				((CDecoratorNode*)Parent)->SetChild(nullptr);
+				if (Parent->m_NodeType == Node_Type::Decorator)
+				{
+					((CDecoratorNode*)Parent)->SetChild(nullptr);
+				}
+
+				else
+				{
+					if (Parent)
+						Parent->DeleteChild((*iter));
+				}
 			}
 			
-			else
-			{
-				if (Parent)
-					Parent->DeleteChild((*iter));
-			}
 
 			SAFE_DELETE(*iter);
 			m_NodeList.erase(iter);

@@ -12,7 +12,8 @@ CPlayerHookComponent::CPlayerHookComponent()	:
 	m_CurrentHookIndex(0),
 	m_ClearHookIndex(0),
 	m_AccTime(0.f),
-	m_InFlying(false)
+	m_InFlying(false),
+	m_AccLastHookDelayTime(0.f)
 {
 	SetTypeID<CPlayerHookComponent>();
 	m_ComponentType = Component_Type::SceneComponent;
@@ -87,14 +88,30 @@ HookResult CPlayerHookComponent::ShootHook(const Vector3& ShootDir, float DeltaT
 		strcpy_s(FullPath, Info->PathMultibyte);
 		strcat_s(FullPath, "Chain.msh");
 
-		m_Scene->GetResource()->LoadMeshFullPathMultibyte(Mesh_Type::Static, "HookChain", FullPath);
+		char FullPath2[MAX_PATH] = {};
+		strcpy_s(FullPath2, Info->PathMultibyte);
+		strcat_s(FullPath2, "HookHead.msh");
 
-		for (size_t i = 0; i < 20; ++i)
+		m_Scene->GetResource()->LoadMeshFullPathMultibyte(Mesh_Type::Static, "HookChain", FullPath);
+		m_Scene->GetResource()->LoadMeshFullPathMultibyte(Mesh_Type::Static, "HookHead", FullPath2);
+
+		for (size_t i = 0; i < 21; ++i)
 		{
-			CStaticMeshComponent* HookChain = m_Object->CreateComponent<CStaticMeshComponent>("HookChain");
+			CStaticMeshComponent* HookChain = m_Object->CreateComponent<CStaticMeshComponent>("Hook");
 			AddChild(HookChain);
 			HookChain->SetWorldPos(Vector3(FLT_MAX, FLT_MAX, FLT_MAX));
-			HookChain->SetMesh("HookChain");
+
+			if (i == 20)
+			{
+				HookChain->SetMesh("HookHead");
+
+			}
+
+			else
+			{
+				HookChain->SetMesh("HookChain");
+			}
+
 			HookChain->SetWorldScale(Vector3(0.05f, 0.05f, 0.05f));
 			HookChain->SetEmissiveColor(0.f, 1.f, 0.f, 1.f);
 
@@ -181,7 +198,7 @@ HookResult CPlayerHookComponent::ShootHook(const Vector3& ShootDir, float DeltaT
 
 	m_AccTime += DeltaTime;
 
-	if (m_CurrentHookIndex < 20)
+	if (m_CurrentHookIndex < 21)
 	{
 		if (m_AccTime > 0.02f)
 		{
@@ -200,8 +217,13 @@ HookResult CPlayerHookComponent::ShootHook(const Vector3& ShootDir, float DeltaT
 			m_Collider->SetWorldScale((Scale.x + 0.8f), 1.f, 1.f);
 
 			m_vecHookChain[m_CurrentHookIndex]->SetRender(true);
+			m_vecHookChain[m_CurrentHookIndex]->Enable(true);
 			m_vecHookChain[m_CurrentHookIndex]->SetWorldPos(HookPos);
-			m_vecHookChain[m_CurrentHookIndex]->SetWorldScale(Vector3(0.05f, 0.05f, 0.05f));
+
+			if(m_CurrentHookIndex != 20)
+				m_vecHookChain[m_CurrentHookIndex]->SetWorldScale(Vector3(0.05f, 0.05f, 0.05f));
+			else
+				m_vecHookChain[m_CurrentHookIndex]->SetWorldScale(Vector3(5.f, 5.f, 5.f));
 
 			Vector3 CrossVec = ShootDir.Cross(ChainZAxis);
 
@@ -223,12 +245,21 @@ HookResult CPlayerHookComponent::ShootHook(const Vector3& ShootDir, float DeltaT
 
 	else
 	{
-		if (m_CurrentHookIndex == m_vecHookChain.size())
-		{
-			ClearHookChain();
+		m_AccLastHookDelayTime += DeltaTime;
 
-			return HookResult::NoCollision;
+		if (m_AccLastHookDelayTime > 0.3f)
+		{
+			if (m_CurrentHookIndex == m_vecHookChain.size())
+			{
+				ClearHookChain();
+
+				m_AccLastHookDelayTime = 0.f;
+
+				return HookResult::NoCollision;
+			}
 		}
+
+		return HookResult::OnShoot;
 	}
 
 	return HookResult::OnShoot;

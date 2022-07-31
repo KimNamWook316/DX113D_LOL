@@ -32,7 +32,9 @@ NodeResult CIdleNode::OnStart(float DeltaTime)
 
 	if (m_AnimationMeshComp)
 	{
-		m_AnimationMeshComp->GetAnimationInstance()->ChangeAnimation(SequenceName);
+		CAnimationSequenceInstance* Instance = m_AnimationMeshComp->GetAnimationInstance();
+
+		Instance->ChangeAnimation(SequenceName);
 	}
 
 	CObjectDataComponent* Data = dynamic_cast<CObjectDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());

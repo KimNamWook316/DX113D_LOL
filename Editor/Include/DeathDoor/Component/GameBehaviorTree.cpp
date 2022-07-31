@@ -28,6 +28,23 @@
 #include "Node/HitCheckNode.h"
 #include "Node/RollInputCheck.h"
 #include "Node/PlayerRoll.h"
+#include "Node/ClimbDown.h"
+#include "Node/ClimbDownStart.h"
+#include "Node/ClimbDownEnd.h"
+#include "Node/ClimbUp.h"
+#include "Node/ClimbUpEnd.h"
+#include "Node/ClimbUpStart.h"
+
+#include "Node/IsClimbingCheck.h"
+#include "Node/SKeyInputCheck.h"
+#include "Node/WKeyInputCheck.h"
+#include "Node/ClimbDownContinueCheck.h"
+#include "Node/ClimbDownStartCheck.h"
+#include "Node/ClimbDownEndCheck.h"
+#include "Node/ClimbUpContinueCheck.h"
+#include "Node/ClimbUpEndCheck.h"
+#include "Node/ClimbingUpStartCheck.h"
+#include "Node/ClimbPause.h"
 
 // Public Nodes
 #include "Node/MeleeRangeCheckNode.h"
@@ -316,6 +333,77 @@ CNode* CGameBehaviorTree::LoadNode(CNode* Parent, size_t TypeID)
 	else if (TypeID == typeid(CPlayerEnterTriggerIsEnable).hash_code())
 	{
 		NewNode = MakeNode<CPlayerEnterTriggerIsEnable>(Parent, OwnerObject);
+	}
+	else if (TypeID == typeid(CIsClimbingCheck).hash_code())
+	{
+		NewNode = MakeNode<CIsClimbingCheck>(Parent, OwnerObject);
+	}
+	else if (TypeID == typeid(CSKeyInputCheck).hash_code())
+	{
+		NewNode = MakeNode<CSKeyInputCheck>(Parent, OwnerObject);
+	}
+	else if (TypeID == typeid(CWKeyInputCheck).hash_code())
+	{
+		NewNode = MakeNode<CWKeyInputCheck>(Parent, OwnerObject);
+	}
+	else if (TypeID == typeid(CClimbDownContinueCheck).hash_code())
+	{
+		NewNode = MakeNode<CClimbDownContinueCheck>(Parent, OwnerObject);
+	}
+	else if (TypeID == typeid(CClimbDownStartCheck).hash_code())
+	{
+		NewNode = MakeNode<CClimbDownStartCheck>(Parent, OwnerObject);
+	}
+	else if (TypeID == typeid(CClimbDownEndCheck).hash_code())
+	{
+		NewNode = MakeNode<CClimbDownEndCheck>(Parent, OwnerObject);
+	}
+	else if (TypeID == typeid(CClimbUpContinueCheck).hash_code())
+	{
+		NewNode = MakeNode<CClimbUpContinueCheck>(Parent, OwnerObject);
+	}
+	else if (TypeID == typeid(CClimbingUpStartCheck).hash_code())
+	{
+		NewNode = MakeNode<CClimbingUpStartCheck>(Parent, OwnerObject);
+	}
+	else if (TypeID == typeid(CClimbUpEndCheck).hash_code())
+	{
+		NewNode = MakeNode<CClimbUpEndCheck>(Parent, OwnerObject);
+	}
+	else if (TypeID == typeid(CClimbPause).hash_code())
+	{
+		NewNode = MakeNode<CClimbPause>(Parent, OwnerObject);
+	}
+
+	//
+	else if (TypeID == typeid(CClimbUp).hash_code())
+	{
+		NewNode = MakeNode<CClimbUp>(Parent, OwnerObject);
+	}
+
+	else if (TypeID == typeid(CClimbUpStart).hash_code())
+	{
+		NewNode = MakeNode<CClimbUpStart>(Parent, OwnerObject);
+	}
+
+	else if (TypeID == typeid(CClimbUpEnd).hash_code())
+	{
+		NewNode = MakeNode<CClimbUpEnd>(Parent, OwnerObject);
+	}
+
+	else if (TypeID == typeid(CClimbDown).hash_code())
+	{
+		NewNode = MakeNode<CClimbDown>(Parent, OwnerObject);
+	}
+
+	else if (TypeID == typeid(CClimbDownStart).hash_code())
+	{
+		NewNode = MakeNode<CClimbDownStart>(Parent, OwnerObject);
+	}
+
+	else if (TypeID == typeid(CClimbDownEnd).hash_code())
+	{
+		NewNode = MakeNode<CClimbDownEnd>(Parent, OwnerObject);
 	}
 
 	// Boss Knight - Action

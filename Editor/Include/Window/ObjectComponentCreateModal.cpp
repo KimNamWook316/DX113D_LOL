@@ -26,6 +26,7 @@
 #include "../DeathDoor/Component/ProjectileComponent.h"
 #include "../DeathDoor/Component/ArrowComponent.h"
 #include "../DeathDoor/Component/TinyCrowDataComponent.h"
+#include "../DeathDoor/Component/PlayerBombComponent.h"
 
 #include "../Window/InspectorWindow.h"
 #include "../EditorUtil.h"
@@ -186,6 +187,10 @@ void CObjectComponentCreateModal::OnCreateComponent()
 		else if (Typeid == typeid(CTinyCrowDataComponent).hash_code())
 		{
 			Com = SelectObject->CreateComponent<CTinyCrowDataComponent>(Name);
+		}
+		else if (Typeid == typeid(CPlayerBombComponent).hash_code())
+		{
+			Com = SelectObject->CreateComponent<CPlayerBombComponent>(Name);
 		}
 	}
 

@@ -170,6 +170,7 @@ void CObjectPool::CreatePoolObject(const std::string& PathName)
 			Object->SetScene(CSceneManager::GetInst()->GetScene());
 			Object->SetWorldScale(0.f, 0.f, 0.f);
 			Object->SetWorldPos(FLT_MAX, FLT_MAX, FLT_MAX);
+			Object->Enable(false);
 
 			bool Result = Object->LoadHierarchy(FullPath);
 
