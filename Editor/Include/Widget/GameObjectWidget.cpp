@@ -209,17 +209,16 @@ void CGameObjectWidget::CreateSceneComponentWidget(CSceneComponent* Com)
 	{
 		Widget = AddWidget<CLandScapeWidget>("LandScapeWidget");
 	}
-	else if (TypeID == typeid(CColliderBox3D).hash_code() || TypeID == typeid(CColliderHalfLine).hash_code() || TypeID == typeid(CColliderRay).hash_code() || TypeID == typeid(CLadderCollider).hash_code())
-	else if (TypeID == typeid(CColliderBox3D).hash_code() || 
+	else if (TypeID == typeid(CColliderBox3D).hash_code() ||
+		TypeID == typeid(CColliderBox3D).hash_code() || 
 		TypeID == typeid(CColliderHalfLine).hash_code() || 
-		TypeID == typeid(CColliderRay).hash_code() || 
+		TypeID == typeid(CColliderRay).hash_code() ||
+		TypeID == typeid(CLadderCollider).hash_code() ||
 		TypeID == typeid(CCrackedBlockCollider).hash_code())
 	{
 		Widget = AddWidget<CColliderComponentWidget>("ColliderComponentWidget");
 	}
-	else if (TypeID == typeid(CColliderSphere).hash_code() ||
-		TypeID == typeid(CPlayerNormalAttackCheckCollider).hash_code() || 
-		TypeID == typeid(CMonsterPathFindCollider).hash_code())
+
 	else if (TypeID == typeid(CColliderSphere).hash_code() ||  TypeID == typeid(CPlayerNormalAttackCheckCollider).hash_code())
 	{
 		Widget = AddWidget<CColliderSphereWidget>("ColliderSphereWidget");

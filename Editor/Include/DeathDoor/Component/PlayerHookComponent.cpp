@@ -121,7 +121,7 @@ HookResult CPlayerHookComponent::ShootHook(const Vector3& ShootDir, float DeltaT
 
 		m_Collider = m_Object->CreateComponent<CColliderHalfLine>("HookChain");
 		AddChild(m_Collider);
-		m_Collider->SetWorldPos(Vector3(HookHeadPos.x, HookHeadPos.y + 2.f, HookHeadPos.z));
+		m_Collider->SetWorldPos(Vector3(HookHeadPos.x, HookHeadPos.y + 1.f, HookHeadPos.z));
 		m_Collider->SetWorldRotationY(-90.f);
 		m_Collider->SetWorldScale(0.f, 0.f, 0.f);
 		m_Collider->SetRender(true);
@@ -141,13 +141,13 @@ HookResult CPlayerHookComponent::ShootHook(const Vector3& ShootDir, float DeltaT
 		Vector3 CurrentPos = m_Object->GetWorldPos();
 
 		float Dist = Vector3(CurrentPos.x, 0.f, CurrentPos.z).Distance(Vector3(m_ShootDestPoint.x, 0.f, m_ShootDestPoint.z));
-		if (Dist < 1.f)
+		if (Dist < 2.f)
 		{
 			CAnimationMeshComponent* Comp = m_Object->FindComponentFromType<CAnimationMeshComponent>();
 
 			if (Comp)
 			{
-				Comp->GetAnimationInstance()->ChangeAnimation("PlayerIdle");
+				Comp->GetAnimationInstance()->ChangeAnimation("Idle");
 			}
 			
 			m_InFlying = false;
@@ -209,12 +209,13 @@ HookResult CPlayerHookComponent::ShootHook(const Vector3& ShootDir, float DeltaT
 			Vector3 Scale = m_Collider->GetWorldScale();
 			Vector3 ObjectPos = m_Object->GetWorldPos();
 			Vector3 HookHeadPos = GetWorldPos();
-			Vector3 HookPos = Vector3(ObjectPos.x + (m_CurrentHookIndex + 1) * ShootDir.x * m_UnitSize.x, HookHeadPos.y + 2.f,
+			Vector3 HookPos = Vector3(ObjectPos.x + (m_CurrentHookIndex + 1) * ShootDir.x * m_UnitSize.x, HookHeadPos.y + 1.f,
 				ObjectPos.z + (m_CurrentHookIndex + 1) * ShootDir.z * m_UnitSize.y);
 
 			m_Collider->Enable(true);
 			m_Collider->SetRender(true);
-			m_Collider->SetWorldScale((Scale.x + 0.8f), 1.f, 1.f);
+
+			m_Collider->SetWorldScale((Scale.x + 0.85f), 1.f, 1.f);
 
 			m_vecHookChain[m_CurrentHookIndex]->SetRender(true);
 			m_vecHookChain[m_CurrentHookIndex]->Enable(true);
@@ -232,6 +233,9 @@ HookResult CPlayerHookComponent::ShootHook(const Vector3& ShootDir, float DeltaT
 
 			m_vecHookChain[m_CurrentHookIndex]->SetWorldRotationY(Angle);
 			m_Collider->SetWorldRotationY(-90.f + Angle);
+
+			// Rotation해서 Start/End Pos정보가 갱신됐을 수도 있으니 Refresh해준다
+			m_Collider->RefreshInfo();
 
 			++m_CurrentHookIndex;
 
@@ -267,6 +271,23 @@ HookResult CPlayerHookComponent::ShootHook(const Vector3& ShootDir, float DeltaT
 
 void CPlayerHookComponent::OnHookCollision(const CollisionResult& Result)
 {
+	CStaticMeshComponent* HookComp = m_vecHookChain[m_CurrentHookIndex - 1];
+	Vector3 LastHookPos = HookComp->GetWorldPos();
+	Vector3 LastHookRot = HookComp->GetWorldRot();
+	size_t Count = m_vecHookChain.size() - 1;
+
+	m_vecHookChain[Count]->Enable(true);
+	m_vecHookChain[Count]->SetRender(true);
+	m_vecHookChain[Count]->SetWorldScale(5.f, 5.f, 5.f);
+	m_vecHookChain[Count]->SetWorldRotation(LastHookRot);
+	m_vecHookChain[Count]->SetWorldPos(LastHookPos);
+	m_vecHookChain[Count]->GetTransform()->ForceUpdateMat();
+	
+	HookComp->SetWorldPos(FLT_MAX, FLT_MAX, FLT_MAX);
+	HookComp->SetRender(false);
+	HookComp->GetTransform()->ForceUpdateMat();
+
+
 	m_InFlying = true;
 	m_ShootDestPoint = Result.Dest->GetWorldPos();
 	CAnimationMeshComponent* Comp = m_Object->FindComponentFromType<CAnimationMeshComponent>();
@@ -276,7 +297,7 @@ void CPlayerHookComponent::OnHookCollision(const CollisionResult& Result)
 		Comp->GetAnimationInstance()->ChangeAnimation("PlayerHookFly");
 	}
 
-	m_Object->AddWorldPos(0.f, 3.f, 0.f);
+	//m_Object->AddWorldPos(0.f, 3.f, 0.f);
 
 	m_AccTime = 0.f;
 	m_Collider->Enable(false);
@@ -286,7 +307,7 @@ void CPlayerHookComponent::OnHookCollision(const CollisionResult& Result)
 	m_CurrentHookIndex = 0;
 	m_ClearHookIndex = 0;
 
-	size_t Count = m_vecHookChain.size();
+	Count = m_vecHookChain.size();
 
 	for (size_t i = 0; i < Count; ++i)
 	{
@@ -304,10 +325,13 @@ void CPlayerHookComponent::ClearHookChain()
 		m_vecHookChain[i]->SetRender(false);
 		m_vecHookChain[i]->Enable(false);
 		m_vecHookChain[i]->SetWorldScale(Vector3(0.f, 0.f, 0.f));
+		m_vecHookChain[i]->SetWorldRotation(0.f, 0.f, 0.f);
+		m_vecHookChain[i]->SetWorldPos(FLT_MAX, FLT_MAX, FLT_MAX);
 	}
 
 	m_Collider->SetRender(false);
 	m_Collider->SetWorldScale(Vector3(0.f, 0.f, 0.f));
+	m_Collider->SetWorldRotationY(-90.f);
 
 	m_CurrentHookIndex = 0;
 	m_AccTime = 0.f;

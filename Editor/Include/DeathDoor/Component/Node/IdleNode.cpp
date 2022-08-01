@@ -26,9 +26,7 @@ NodeResult CIdleNode::OnStart(float DeltaTime)
 
 	if (m_AnimationMeshComp)
 	{
-		CAnimationSequenceInstance* Instance = m_AnimationMeshComp->GetAnimationInstance();
-
-		Instance->ChangeAnimation(SequenceName);
+		m_AnimationMeshComp->GetAnimationInstance()->ChangeAnimation("Idle");
 	}
 
 	CObjectDataComponent* Data = dynamic_cast<CObjectDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());

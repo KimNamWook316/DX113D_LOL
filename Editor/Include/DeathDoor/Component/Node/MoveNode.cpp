@@ -116,7 +116,7 @@ NodeResult CMoveNode::OnUpdate(float DeltaTime)
 	{
 		if (Degree > 1.5f)
 		{
-			m_Object->AddWorldRotationY(360.f * DeltaTime);
+			m_Object->AddWorldRotationY(720.f * DeltaTime);
 		}
 	}
 
@@ -124,7 +124,7 @@ NodeResult CMoveNode::OnUpdate(float DeltaTime)
 	{
 		if (Degree > 1.5f)
 		{
-			m_Object->AddWorldRotationY(-360.f * DeltaTime);
+			m_Object->AddWorldRotationY(-720.f * DeltaTime);
 		}
 	}
 

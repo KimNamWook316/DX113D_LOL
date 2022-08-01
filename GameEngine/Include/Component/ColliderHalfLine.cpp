@@ -149,3 +149,22 @@ bool CColliderHalfLine::CollisionMouse(const Vector2& MousePos)
 {
 	return false;
 }
+
+void CColliderHalfLine::RefreshInfo()
+{
+	Matrix	matWorld;
+
+
+	Matrix	matScale, matRot, matTrans;
+
+	matScale.Scaling(GetWorldScale());
+	matRot.Rotation(GetWorldRot());
+	matTrans.Translation(GetWorldPos());
+
+	matWorld = matScale * matRot * matTrans;
+
+	m_Info.StartPos = GetWorldPos();
+	m_Info.EndPos = Vector3(1.f, 0.f, 0.f);
+
+	m_Info.EndPos = m_Info.EndPos.TransformCoord(matWorld);
+}

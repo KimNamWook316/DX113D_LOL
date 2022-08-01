@@ -34,5 +34,8 @@ public:
     virtual bool Load(FILE* File);
     virtual bool Collision(CColliderComponent* Dest);
     virtual bool CollisionMouse(const Vector2& MousePos);
+
+public:
+    void RefreshInfo();
 };
 

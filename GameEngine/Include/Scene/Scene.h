@@ -40,6 +40,8 @@ private:
 
 	std::list<class CSceneComponent*> m_RenderComponentList;
 	Vector3 m_OriginCamPos;
+	Vector3 m_RestoreCamDir;
+	bool m_RestoreCamDirFix;
 
 public:
 	CSceneMode* GetSceneMode()	const
