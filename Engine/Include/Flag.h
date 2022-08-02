@@ -341,7 +341,8 @@ enum class Player_Ability
 	Arrow,
 	Fire,
 	Hook,
-	Bomb
+	Bomb,
+	None
 };
 
 enum class ToonShaderType

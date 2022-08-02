@@ -121,6 +121,11 @@ public:
 		m_PlayerData.Abilty_Type = Player_Ability::Bomb;
 	}
 
+	void SetSkillNone(float DeltaTime)
+	{
+		m_PlayerData.Abilty_Type = Player_Ability::None;
+	}
+
 	Player_Ability GetPlayerAbility()	const
 	{
 		return m_PlayerData.Abilty_Type;

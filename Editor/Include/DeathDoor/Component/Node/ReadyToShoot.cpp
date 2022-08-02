@@ -55,7 +55,7 @@ NodeResult CReadyToShoot::OnStart(float DeltaTime)
 		SequenceName = ObjectName + "Bomb";
 	}
 
-	if (m_AnimationMeshComp)
+	if (m_AnimationMeshComp && Ability != Player_Ability::None)
 	{
 		CAnimationSequenceInstance* Instance = m_AnimationMeshComp->GetAnimationInstance();
 
@@ -97,8 +97,10 @@ NodeResult CReadyToShoot::OnStart(float DeltaTime)
 
 NodeResult CReadyToShoot::OnUpdate(float DeltaTime)
 {
-
 	Player_Ability Ability = m_PlayerDataComp->GetPlayerAbility();
+
+	if (Ability == Player_Ability::None)
+		return NodeResult::Node_True;
 
 	if (Ability == Player_Ability::Arrow)
 	{

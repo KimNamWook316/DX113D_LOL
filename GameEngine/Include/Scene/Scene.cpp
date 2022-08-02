@@ -55,6 +55,14 @@ CScene::CScene()
 
 CScene::~CScene()
 {
+	auto iter = m_ObjList.begin();
+	auto iterEnd = m_ObjList.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		(*iter)->SetScene(nullptr);
+	}
+
 	m_ObjList.clear();
 	SAFE_DELETE(m_NavManager)	
 	SAFE_DELETE(m_Nav3DManager);
@@ -384,7 +392,7 @@ bool CScene::LoadFullPath(const char* FullPath)
 	// SceneMode »ý¼º
 	CSceneManager::GetInst()->CallCreateSceneMode(this, SceneModeType);
 	
-	 m_Mode->Load(File);
+	//m_Mode->Load(File);
 
 	size_t	ObjCount = m_ObjList.size();
 

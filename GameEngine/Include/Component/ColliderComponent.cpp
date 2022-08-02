@@ -41,8 +41,12 @@ CColliderComponent::~CColliderComponent()
 	for (; iter != iterEnd; ++iter)
 	{
 		(*iter)->DeletePrevCollision(this);
-		(*iter)->CallCollisionCallback(Collision_State::End);
-		CallCollisionCallback(Collision_State::End);
+
+		if (m_Object->GetScene())
+		{
+			(*iter)->CallCollisionCallback(Collision_State::End);
+			CallCollisionCallback(Collision_State::End);
+		}
 	}
 }
 
