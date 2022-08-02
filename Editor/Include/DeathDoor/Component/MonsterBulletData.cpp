@@ -39,7 +39,7 @@ void CMonsterBulletData::OnCollide(const CollisionResult& Result)
 {
 	CGameObject* Player = m_Scene->GetPlayerObject();
 
-	if (Player == Result.Dest->GetGameObject())
+	if (m_PlayerData->IsUnbeatable() == false && Player == Result.Dest->GetGameObject())
 	{
 		m_PlayerData->DecreaseHP(1);
 		m_Collider->Enable(false);

@@ -173,3 +173,44 @@ PSOutput_Single HDRRenderPS(VS_OUTPUT_HDR Input)
 
 	return Output;
 }
+
+PSOutput_Single RenderBombEffect(VS_OUTPUT_HDR Input)
+{
+	PSOutput_Single Output = (PSOutput_Single)0;
+
+	float2 UV = (float2) 0;
+	UV.x = Input.ProjPos.x / Input.ProjPos.w * 0.5f + 0.5f;
+	UV.y = Input.ProjPos.y / Input.ProjPos.w * -0.5f + 0.5f;
+
+	int2 TargetPos = (int2) 0;
+	TargetPos.x = (int) (UV.x * g_Resolution.x);
+	TargetPos.y = (int) (UV.y * g_Resolution.y);
+
+	// 색상 샘플 계산
+	float4 Color = g_HDRTex.Load(TargetPos, 0);
+
+	// Bloom 분포 색상
+	float4 BloomColor = g_BloomTex.Sample(g_LinearSmp, UV);
+	BloomColor *= g_HDRBloomScale * BloomColor;
+
+	float4 Depth = g_GBufferDepth.Load(TargetPos, 0);
+
+	// 원래 픽셀에 Bloom 추가
+	Color += BloomColor;
+
+	// 휘도 계산해서 일정 휘도 이상인 경우에만 하얗게, 나머지는 까만 색상으로 렌더
+	float Lum = dot(Color.rgb, LUM_FACTOR.rgb);
+
+	if (Lum >= 0.3f)
+	{
+		Color = float4(1.f, 1.f, 1.f, 1.f);
+	}
+	else
+	{
+		Color = float4(0.f, 0.f, 0.f, 1.f);
+	}
+
+	Output.Color = Color;
+
+	return Output;
+}

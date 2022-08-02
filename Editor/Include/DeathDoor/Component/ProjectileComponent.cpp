@@ -188,6 +188,14 @@ void CProjectileComponent::ShootByGravityTargetPos(const Vector3& StartPos, cons
 	m_LifeTime += 0.5f;
 }
 
+void CProjectileComponent::ClearCollsionCallBack()
+{
+	if (m_Collider)
+	{
+		m_Collider->ClearCollisionCallBack();
+	}
+}
+
 bool CProjectileComponent::CheckDestroy()
 {
 	// 중력이 적용된 경우

@@ -50,13 +50,15 @@ public:
 	}
 
 public:
-	void Render(float DeltaTime, class CRenderTarget* LDRTarget);
+	void Render(float DeltaTime, class CRenderTarget* LDRTarget, bool BombEffect);
 
 private:
 	void ComputeHDR(class CRenderTarget* LDRTarget);
 	void ComputeBloom();
 	void Blur();
 	void RenderFinal(class CRenderTarget* LDRTarget);
+	void RenderBombEffect(class CRenderTarget* LDRTarget);
+	void SavePrevLum();
 
 private:
 	// Depth Buffer
@@ -72,6 +74,7 @@ private:
 	class CComputeShader* m_BlurVerticalShader;
 	class CComputeShader* m_BlurHorizontalShader;
 	class CShader* m_HDRRenderShader;
+	class CShader* m_BombEffectShader;
 	
 	// ConstantBuffer
 	class CDownScaleCBuffer* m_DownScaleCBuffer;

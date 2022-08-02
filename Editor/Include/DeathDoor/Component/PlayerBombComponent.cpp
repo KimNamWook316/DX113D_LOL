@@ -4,6 +4,8 @@
 #include "Scene/SceneManager.h"
 #include "EngineUtil.h"
 #include "Component/StaticMeshComponent.h"
+#include "Component/LightComponent.h"
+#include "Render/RenderManager.h"
 
 CPlayerBombComponent::CPlayerBombComponent()	:
 	m_Bomb(nullptr),
@@ -33,6 +35,7 @@ const Vector3& CPlayerBombComponent::GetBombPos() const
 
 void CPlayerBombComponent::Start()
 {
+	CObjectComponent::Start();
 
 }
 
@@ -47,14 +50,23 @@ void CPlayerBombComponent::Update(float DeltaTime)
 	if (m_Collision)
 	{
 		m_AccCollisionLifeTime += DeltaTime;
-		m_Bomb->SetWorldScale(Vector3(0.2f, 0.2f, 0.2f));
+		m_Bomb->SetWorldScale(Vector3(0.05f, 0.05f, 0.05f));
 
 		if (m_AccCollisionLifeTime >= m_CollisionLifeTime)
 		{
 			m_AccCollisionLifeTime = 0.f;
 			m_Collision = false;
-			m_Bomb->SetWorldScale(0.02f, 0.02f, 0.02f);
+			m_Bomb->SetWorldScale(0.005f, 0.005f, 0.005f);
+			m_Light->Enable(false);
 			m_Bomb->Destroy();
+			m_Bomb = nullptr;
+
+			while (!m_LiftBombPathQueue.empty())
+			{
+				m_LiftBombPathQueue.pop();
+			}
+
+			return;
 		}
 	}
 
@@ -123,6 +135,9 @@ void CPlayerBombComponent::LiftBomb()
 	if (m_Bomb == nullptr)
 		return;
 
+	m_Light = m_Bomb->FindComponentFromType<CLightComponent>();
+	m_Light->Enable(false);
+
 	// Betty 바로 앞에 생성한다.
 	Vector3 ZLookDir = m_Object->GetWorldAxis(AXIS::AXIS_Z) * -1.f;
 	Vector3 YLookDir = m_Object->GetWorldAxis(AXIS::AXIS_Y);
@@ -147,6 +162,7 @@ void CPlayerBombComponent::ShootBomb(const Vector3& ShootDir)
 
 	Vector3 BombPos = m_Bomb->GetWorldPos();
 
+	Proj->ClearCollsionCallBack();
 	Proj->ShootByLifeTimeCollision<CPlayerBombComponent>(this, &CPlayerBombComponent::OnCollision, Collision_State::Begin, 
 		BombPos, ShootDir, m_ShootSpeed, 3.f);
 	Proj->SetDestroy(true);
@@ -169,6 +185,13 @@ void CPlayerBombComponent::OnCollision(const CollisionResult& Result)
 	m_Bomb->SetWorldPos(DestPos);
 
 	m_Object->GetScene()->GetCameraManager()->ShakeCamera(0.4f, 0.7f);
+
+	// 폭탄 라이트 on, 쉐이더 변경
+	m_Light->Enable(true);
+	m_Light->SetAtt1(0.001f);
+	m_Light->SetDistance(1000.f);
+
+	CRenderManager::GetInst()->EnableBombEffect(m_CollisionLifeTime);
 }
 
 bool CPlayerBombComponent::Save(FILE* File)

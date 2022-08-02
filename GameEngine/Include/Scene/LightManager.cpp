@@ -50,7 +50,7 @@ void CLightManager::DeleteLight(CLightComponent* Light)
 		if (*iter == Light)
 		{
 			m_LightList.erase(iter);
-			return;
+			break;
 		}
 	}
 
@@ -71,7 +71,7 @@ void CLightManager::DeleteLight(const std::string& Name)
 		if ((*iter)->GetName() == Name)
 		{
 			m_LightList.erase(iter);
-			return;
+			break;
 		}
 	}
 

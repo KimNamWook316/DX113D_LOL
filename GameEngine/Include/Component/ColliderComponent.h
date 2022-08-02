@@ -202,6 +202,11 @@ public:
     virtual bool CollisionMouse(const Vector2& MousePos) = 0;
     virtual bool CollisionRay(const Ray& Ray);
     virtual void Destroy() override;
+    virtual void Reset() override;
+
+public:
+    void ClearCollisionCallBack();
+
 public:
     template <typename T>
     void AddCollisionCallback(Collision_State State, T* Obj, void(T::* Func)(const CollisionResult&))
