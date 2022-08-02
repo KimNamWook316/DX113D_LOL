@@ -50,6 +50,9 @@ void CColliderHalfLine::Update(float DeltaTime)
 
 void CColliderHalfLine::PostUpdate(float DeltaTime)
 {
+	//Vector3 Scale = GetWorldScale();
+	//SetWorldScale(Vector3(Scale.x, 1.f, 1.f));
+
 	CColliderComponent::PostUpdate(DeltaTime);
 }
 
@@ -78,8 +81,8 @@ void CColliderHalfLine::Render()
 
 	Matrix	matScale, matRot, matTrans;
 
-	//matScale.Scaling(m_Info.EndPos.x - m_Info.StartPos.x, m_Info.EndPos.y - m_Info.StartPos.y, m_Info.EndPos.y - m_Info.StartPos.y);
-	matScale.Scaling(GetWorldScale());
+	Vector3 Scale = GetWorldScale();
+	matScale.Scaling(Scale);
 	matRot.Rotation(GetWorldRot());
 	matTrans.Translation(GetWorldPos());
 	//matTrans.Translation(m_Info.StartPos);

@@ -191,7 +191,8 @@ void CCollisionSection::CollisionRigid(CColliderComponent* Src, CColliderCompone
 
 	if (Src->GetGameObject()->GetObjectType() == Object_Type::Player)
 	{
-		Vector3 PrevPos = SrcObject->GetPrevFramePos();
+		Vector3 SrcPrevPos = SrcObject->GetPrevFramePos();
+		Vector3 DestPrevPos = DestObject->GetPrevFramePos();
 
 		CNavAgent* Agent = SrcObject->FindObjectComponentFromType<CNavAgent>();
 		Vector3 FaceDir = Agent->GetCurrentFaceDir();
@@ -204,7 +205,8 @@ void CCollisionSection::CollisionRigid(CColliderComponent* Src, CColliderCompone
 
 		if (CurrentDist > NextFrameDist)
 		{
-			DestObject->SetWorldPos(PrevPos);
+			DestObject->SetWorldPos(DestPrevPos);
+			SrcObject->SetWorldPos(SrcPrevPos);
 			return;
 		}
 
@@ -212,7 +214,8 @@ void CCollisionSection::CollisionRigid(CColliderComponent* Src, CColliderCompone
 
 	else if (Dest->GetGameObject()->GetObjectType() == Object_Type::Player)
 	{
-		Vector3 PrevPos = DestObject->GetPrevFramePos();
+		Vector3 SrcPrevPos = SrcObject->GetPrevFramePos();
+		Vector3 DestPrevPos = DestObject->GetPrevFramePos();
 
 		CNavAgent* Agent = DestObject->FindObjectComponentFromType<CNavAgent>();
 		Vector3 FaceDir = Agent->GetCurrentFaceDir();
@@ -225,7 +228,8 @@ void CCollisionSection::CollisionRigid(CColliderComponent* Src, CColliderCompone
 
 		if (CurrentDist > NextFrameDist)
 		{
-			DestObject->SetWorldPos(PrevPos);
+			DestObject->SetWorldPos(DestPrevPos);
+			SrcObject->SetWorldPos(SrcPrevPos);
 			return;
 		}
 	}

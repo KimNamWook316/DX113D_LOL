@@ -1,7 +1,7 @@
 
 #include "EyeLaserComponent.h"
 #include "Component/AnimationMeshComponent.h"
-#include "Component/ColliderRay.h"
+#include "Component/ColliderHalfLine.h"
 #include "Animation/AnimationSequenceInstance.h"
 #include "GameObject/GameObject.h"
 #include "Scene/Scene.h"
@@ -12,7 +12,8 @@ CEyeLaserComponent::CEyeLaserComponent()	:
 	m_TriggerHitCount(0),
 	m_Player(nullptr),
 	m_RayCollider(nullptr),
-	m_FaceCameraOnce(false)
+	m_FaceCameraOnce(false),
+	m_LaserGenerator(nullptr)
 {
 	SetTypeID<CEyeLaserComponent>();
 	m_ComponentType = Component_Type::SceneComponent;
@@ -68,13 +69,16 @@ void CEyeLaserComponent::Start()
 	m_Material->SetOpacity(1.f);
 	m_Material->SetTransparency(true);
 
-	m_RayCollider = m_Object->FindComponentFromType<CColliderRay>();
-
+	m_RayCollider = m_Object->FindComponentFromType<CColliderHalfLine>();
 	if (m_RayCollider)
 	{
-		m_RayCollider->AddCollisionCallback<CEyeLaserComponent>(Collision_State::Begin, this, &CEyeLaserComponent::RaserCollision);
+		m_RayCollider->AddCollisionCallback<CEyeLaserComponent>(Collision_State::Begin, this, &CEyeLaserComponent::OnRaserCollisionBegin);
+		m_RayCollider->AddCollisionCallback<CEyeLaserComponent>(Collision_State::Stay, this, &CEyeLaserComponent::OnRaserCollisionStay);
+		m_RayCollider->AddCollisionCallback<CEyeLaserComponent>(Collision_State::End, this, &CEyeLaserComponent::OnRaserCollisionEnd);
+		m_RayCollider->Enable(false);
 	}
 
+	m_LaserGenerator = m_Scene->FindObject("LaserGenerator");
 }
 
 bool CEyeLaserComponent::Init()
@@ -101,7 +105,6 @@ void CEyeLaserComponent::Update(float DeltaTime)
 	{
 		// EyeLaser가 파괴
 	}
-
 }
 
 void CEyeLaserComponent::PostUpdate(float DeltaTime)
@@ -116,6 +119,7 @@ void CEyeLaserComponent::PrevRender()
 
 void CEyeLaserComponent::Render()
 {
+
 	if (m_TriggerHitCount == 1)
 	{
 		CSceneComponent::Render();
@@ -176,6 +180,8 @@ bool CEyeLaserComponent::LoadOnly(FILE* File)
 
 void CEyeLaserComponent::TrackPlayer(float DeltaTime)
 {
+	m_RayCollider->Enable(true);
+
 	// 원래 레이저가 바라보는 방향은 플레이어가 입장하는 문을 바라보는 방향. 
 	// 이때 플레이어가 레이저를 바라볼 때 오른쪽이 -x, 왼쪽이 +x이다
 	//m_CurrentLaserRot = Vector3(0.f, 0.f, 1.f);
@@ -217,60 +223,24 @@ void CEyeLaserComponent::TrackPlayer(float DeltaTime)
 		m_LaserLeftRightRotMatrix.RotationY(DeltaTime * 7.f);
 	}
 
-	//m_CurrentLaserUpDownDir = m_CurrentLaserUpDownDir.TransformCoord(m_LaserUpDownRotMatrix);
+	Vector3 AxisZ = m_LaserGenerator->GetWorldAxis(AXIS_Z);
+	AxisZ = Vector3(-1.f * AxisZ.x, -1.f * AxisZ.y, -1.f * AxisZ.z);
 
-	//Dir = Vector3(PlayerPos.x, PlayerPos.y + 1.f, PlayerPos.z) - LaserPos;
-	//Dir.x = 0.f;
-	//Dir.Normalize();
+	float DotProduct = m_CurrentLaserLeftRightDir.Dot(AxisZ);
+	float LaserDegree = 0.f;
 
-	//Rad = Dir.Dot(m_CurrentLaserUpDownDir);
-	//Degree = RadianToDegree(acosf(Rad));
+	if (DotProduct >= -0.99999999f && DotProduct <= 0.99999999f)
+	{
+		LaserDegree = RadianToDegree(acosf(DotProduct));
 
-	//CrossVector = Dir.Cross(m_CurrentLaserUpDownDir);
+		Vector3 CrossVec = m_CurrentLaserLeftRightDir.Cross(AxisZ);
 
-	//// 레이저가 위로 올라가야하는 상황
-	//if (CrossVector.x > 0.f)
-	//{
-	//	m_AnimComp->AddWorldRotationX(DeltaTime * 4.f);
-	//	if (m_RayCollider)
-	//		m_RayCollider->AddWorldRotationZ(DeltaTime * 4.f);
-	//	m_LaserUpDownRotMatrix.RotationX(-DeltaTime * 4.f);
+		if (CrossVec.y > 0.f)
+			LaserDegree *= -1.f;
 
-	//	float Angle = Vector3(0.f, 0.f, 1.f).Angle(Dir);
-	//	Vector3 Axis = Vector3(0.f, 0.f, 1.f).Cross(Dir);
-	//	Axis.Normalize();
-
-	//	// 레이저 위아래 회전 보류 -> 회전은 로컬축으로 회전하는데 회전하면 로컬축이 바뀌어서 월드X축으로 여기서 회전하기 힘듬
-	//	//Matrix RotMatDest = XMMatrixRotationAxis(Axis.Convert(), DegreeToRadian(-Angle));
-
-	//	//Vector3 CurrentPos = GetWorldPos();
-
-	//	//CurrentPos = CurrentPos.TransformCoord(RotMatDest);
-
-	//	//SetWorldPos(CurrentPos);
-	//}
-
-	//// 레이저가 아래 방향으로 내려가야하는 상황
-	//else if (CrossVector.x < 0.f)
-	//{
-	//	m_AnimComp->AddWorldRotationX(-DeltaTime * 4.f);
-	//	if (m_RayCollider)
-	//		m_RayCollider->AddWorldRotationZ(-DeltaTime * 4.f);
-	//	m_LaserUpDownRotMatrix.RotationX(DeltaTime * 4.f);
-
-	//	float Angle = Vector3(0.f, 0.f, 1.f).Angle(Dir);
-	//	Vector3 Axis = Vector3(0.f, 0.f, 1.f).Cross(Dir);
-	//	Axis.Normalize();
-
-	//	// 레이저 위아래 회전 보류 -> 회전은 로컬축으로 회전하는데 회전하면 로컬축이 바뀌어서 월드X축으로 여기서 회전하기 힘듬
-	//	//Matrix RotMatDest = XMMatrixRotationAxis(Axis.Convert(), DegreeToRadian(Angle));
-
-	//	//Vector3 CurrentPos = GetWorldPos();
-
-	//	//CurrentPos = CurrentPos.TransformCoord(RotMatDest);
-
-	//	//SetWorldPos(CurrentPos);
-	//}
+		if(abs(LaserDegree) > 1.f)
+			m_LaserGenerator->AddWorldRotationY(LaserDegree * DeltaTime);
+	}
 }
 
 void CEyeLaserComponent::ChangeToWakeAnimation()
@@ -291,36 +261,39 @@ void CEyeLaserComponent::FaceCamera()
 	Vector3 CameraPos = m_Scene->GetCameraManager()->GetCurrentCamera()->GetWorldPos();
 	Vector3 MyPos = GetWorldPos();
 
-	CameraPos.z = MyPos.z;
+	m_NormalDir.x = 0.f;
+	//CameraPos.x = MyPos.x;
 	Vector3	View = CameraPos - MyPos;
 
 	View.Normalize();
 
-	float Dist = m_NormalDir.Distance(View);
+	float Angle = 0.f;
+	float DotProduct = m_NormalDir.Dot(View);
 
-	if (Dist < 0.001f)
-		return;
+	if (DotProduct >= -0.9999999f && DotProduct <= 0.9999999f)
+	{
+		Angle = RadianToDegree(acosf(DotProduct));
 
-	float Angle = Vector3(0.f, 1.f, 0.f).Angle(View);
+		Vector3 RotDir = m_NormalDir.Cross(View);
+		RotDir.Normalize();
 
-	if (Angle < 0.1f)
-		return;
+		if (RotDir.x < 0.f)
+			Angle *= -1.f;
 
-	Vector3 RotDir = Vector3(0.f, 1.f, 0.f).Cross(View);
-	RotDir.Normalize();
+		SetWorldRotationZ(Angle);
 
-	if (RotDir.z < 0.f)
-		Angle *= -1.f;
 
-	//m_Transform->SetRotationAxis(m_NormalDir, View);
-	SetWorldRotationZ(Angle);
 
-	//Matrix MatRot = XMMatrixRotationAxis(RotDir.Convert(), DegreeToRadian(-Angle));
-	//m_NormalDir = m_NormalDir.TransformCoord(MatRot);
-	//m_NormalDir.Normalize();
+		Vector3 RotAngle = Vector3(Angle, 0.f, 0.f);
+
+		Matrix mat;
+		mat.Rotation(RotAngle);
+
+		m_NormalDir = m_NormalDir.TransformCoord(mat);
+	}
 }
 
-void CEyeLaserComponent::RaserCollision(const CollisionResult& Result)
+void CEyeLaserComponent::OnRaserCollisionBegin(const CollisionResult& Result)
 {
 	CGameObject* Object = Result.Dest->GetGameObject();
 
@@ -330,6 +303,26 @@ void CEyeLaserComponent::RaserCollision(const CollisionResult& Result)
 	{
 		Comp->SetIsHit(true);
 	}
+
+	Vector3 RayScale = m_RayCollider->GetWorldScale();
+	SetWorldScale(0.5f, 1.f, RayScale.x);
+
+}
+
+void CEyeLaserComponent::OnRaserCollisionStay(const CollisionResult& Result)
+{
+	Vector3 RayScale = m_RayCollider->GetWorldScale();
+	SetWorldScale(0.5f, 1.f, RayScale.x);
+}
+
+void CEyeLaserComponent::OnRaserCollisionEnd(const CollisionResult& Result)
+{
+	if (!Result.Src || !Result.Dest)
+		return;
+
+	m_RayCollider->SetWorldScale(500.f, 1.f, 1.f);
+	SetWorldScale(0.5f, 1.f, 500.f);
+
 }
 
 void CEyeLaserComponent::SetBaseColor(const Vector4& Color, int Index)

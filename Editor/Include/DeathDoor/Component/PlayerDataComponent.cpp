@@ -47,6 +47,7 @@ void CPlayerDataComponent::Start()
 	CInput::GetInst()->CreateKey("WeaponFire", '2');
 	CInput::GetInst()->CreateKey("WeaponChain", '3');
 	CInput::GetInst()->CreateKey("WeaponBomb", '4');
+	CInput::GetInst()->CreateKey("None", '5');
 
 	CInput::GetInst()->CreateKey("MoveForward", 'W');
 	CInput::GetInst()->CreateKey("MoveBack", 'S');
@@ -58,6 +59,7 @@ void CPlayerDataComponent::Start()
 	CInput::GetInst()->SetKeyCallback("WeaponFire", KeyState_Down, this, &CPlayerDataComponent::SetPlayerAbilityFire);
 	CInput::GetInst()->SetKeyCallback("WeaponChain", KeyState_Down, this, &CPlayerDataComponent::SetPlayerAbilityChain);
 	CInput::GetInst()->SetKeyCallback("WeaponBomb", KeyState_Down, this, &CPlayerDataComponent::SetPlayerAbilityBomb);
+	CInput::GetInst()->SetKeyCallback("None", KeyState_Down, this, &CPlayerDataComponent::SetSkillNone);
 
 	m_AnimComp = m_Object->FindComponentFromType<CAnimationMeshComponent>();
 
