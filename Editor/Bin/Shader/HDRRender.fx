@@ -201,7 +201,7 @@ PSOutput_Single RenderBombEffect(VS_OUTPUT_HDR Input)
 	// 휘도 계산해서 일정 휘도 이상인 경우에만 하얗게, 나머지는 까만 색상으로 렌더
 	float Lum = dot(Color.rgb, LUM_FACTOR.rgb);
 
-	if (Lum >= 0.3f)
+	if (Lum >= 0.25f)
 	{
 		Color = float4(1.f, 1.f, 1.f, 1.f);
 	}
