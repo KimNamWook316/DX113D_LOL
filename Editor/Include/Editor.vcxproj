@@ -327,6 +327,7 @@
     <ClCompile Include="Object\SpriteEditObject.cpp" />
     <ClCompile Include="Scene\DefaultScene.cpp" />
     <ClCompile Include="Widget\AnimationMeshWidget.cpp" />
+    <ClCompile Include="Widget\ArmComponentWidget.cpp" />
     <ClCompile Include="Widget\BehaviorTreeMenu.cpp" />
     <ClCompile Include="Widget\CameraMoveWidget.cpp" />
     <ClCompile Include="Widget\CameraWidget.cpp" />
@@ -547,6 +548,7 @@
     <ClInclude Include="resource.h" />
     <ClInclude Include="Scene\DefaultScene.h" />
     <ClInclude Include="Widget\AnimationMeshWidget.h" />
+    <ClInclude Include="Widget\ArmComponentWidget.h" />
     <ClInclude Include="Widget\BehaviorTreeMenu.h" />
     <ClInclude Include="Widget\CameraMoveWidget.h" />
     <ClInclude Include="Widget\CameraWidget.h" />

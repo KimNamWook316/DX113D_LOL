@@ -14,6 +14,7 @@
 #include "Component/StaticMeshComponent.h"
 #include "Component/CameraComponent.h"
 #include "Component/AnimationMeshComponent.h"
+#include "Component/Arm.h"
 #include "Component/LightComponent.h"
 #include "Component/ParticleComponent.h"
 #include "Component/LandScape.h"
@@ -43,6 +44,7 @@
 #include "../Widget/ColliderSphereWidget.h"
 #include "../Widget/WaterComponentWidget.h"
 #include "../Widget/CameraWidget.h"
+#include "../Widget/ArmComponentWidget.h"
 // ObjCompWidget
 #include "../Widget/PaperBurnWidget.h"
 #include "../Widget/EyeLaserComponentWidget.h"
@@ -196,6 +198,10 @@ void CGameObjectWidget::CreateSceneComponentWidget(CSceneComponent* Com)
 	else if (TypeID == typeid(CCameraComponent).hash_code())
 	{
 		Widget = AddWidget<CCameraWidget>("CameraWidget");
+	}
+	else if (TypeID == typeid(CArm).hash_code())
+	{
+		Widget = AddWidget<CArmComponentWidget>("ArmWidget");
 	}
 	else if (TypeID == typeid(CLightComponent).hash_code())
 	{

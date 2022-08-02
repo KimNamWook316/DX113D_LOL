@@ -184,7 +184,7 @@ void CPlayerBombComponent::OnCollision(const CollisionResult& Result)
 
 	m_Bomb->SetWorldPos(DestPos);
 
-	m_Object->GetScene()->GetCameraManager()->ShakeCamera(0.4f, 0.7f);
+	m_Object->GetScene()->GetCameraManager()->ShakeCamera(1.5f, 0.3f);
 
 	// ÆøÅº ¶óÀÌÆ® on, ½¦ÀÌ´õ º¯°æ
 	m_Light->Enable(true);

@@ -225,6 +225,9 @@
     <Filter Include="06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\03. Player">
       <UniqueIdentifier>{a9e3b90e-3798-4b39-8ee5-ba9e8befbc40}</UniqueIdentifier>
     </Filter>
+    <Filter Include="06. DeathDoor\05. SceneMode\02. InstanceMode">
+      <UniqueIdentifier>{ab923298-8dd0-427c-899c-5e70fab7955e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Scene\DefaultScene.cpp">
@@ -779,9 +782,6 @@
     <ClCompile Include="DeathDoor\Component\Node\HeadRollerStunCheck.cpp">
       <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\05. HeadRoller</Filter>
     </ClCompile>
-    <ClCompile Include="DeathDoor\Scene\DDInstanceSceneMode.cpp">
-      <Filter>06. DeathDoor\05. SceneMode\01. BossMode</Filter>
-    </ClCompile>
     <ClCompile Include="Widget\DDInstanceSceneModeWidget.cpp">
       <Filter>02. Editor\02. Widget\04. SceneMode</Filter>
     </ClCompile>
@@ -811,6 +811,12 @@
     </ClCompile>
     <ClCompile Include="DeathDoor\Component\Node\WKeyInputCheck.cpp">
       <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\03. Player</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Scene\DDInstanceSceneMode.cpp">
+      <Filter>06. DeathDoor\05. SceneMode\02. InstanceMode</Filter>
+    </ClCompile>
+    <ClCompile Include="Widget\ArmComponentWidget.cpp">
+      <Filter>02. Editor\02. Widget\01. Inspector\01. SceneComponent</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1375,9 +1381,6 @@
     <ClInclude Include="DeathDoor\Component\Node\HeadRollerStunCheck.h">
       <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\05. HeadRoller</Filter>
     </ClInclude>
-    <ClInclude Include="DeathDoor\Scene\DDInstanceSceneMode.h">
-      <Filter>06. DeathDoor\05. SceneMode\01. BossMode</Filter>
-    </ClInclude>
     <ClInclude Include="Widget\DDInstanceSceneModeWidget.h">
       <Filter>02. Editor\02. Widget\04. SceneMode</Filter>
     </ClInclude>
@@ -1407,6 +1410,12 @@
     </ClInclude>
     <ClInclude Include="DeathDoor\Component\Node\WKeyInputCheck.h">
       <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\03. Player</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Scene\DDInstanceSceneMode.h">
+      <Filter>06. DeathDoor\05. SceneMode\02. InstanceMode</Filter>
+    </ClInclude>
+    <ClInclude Include="Widget\ArmComponentWidget.h">
+      <Filter>02. Editor\02. Widget\01. Inspector\01. SceneComponent</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -174,6 +174,13 @@ void CDDSceneMode::OnFadeInStart()
 
 void CDDSceneMode::OnCollideExitCollider(const CollisionResult& Result)
 {
+	bool NextSceneExist = CSceneManager::GetInst()->GetNextScene() ? true : false;
+
+	if (!NextSceneExist)
+	{
+		return;
+	}
+
 	// 로드 되기 전까지는 대기
 	while (!m_NextSceneLoadComplete)
 	{

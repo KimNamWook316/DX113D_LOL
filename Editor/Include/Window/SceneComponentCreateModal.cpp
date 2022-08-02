@@ -14,6 +14,7 @@
 #include "IMGUITree.h"
 #include "ObjectHierarchyWindow.h"
 #include "Component/CameraComponent.h"
+#include "Component/Arm.h"
 #include "Component/AnimationMeshComponent.h"
 #include "Component/StaticMeshComponent.h"
 #include "Component/ParticleComponent.h"

@@ -28,6 +28,7 @@
 #include "Component/PaperBurnComponent.h"
 #include "Component/WaterComponent.h"
 #include "Component/PaperBurnComponent.h"
+#include "Component/Arm.h"
 #include "DeathDoor\Component/PlayerNormalAttackCheckCollider.h"
 #include "DeathDoor\Component/EyeLaserComponent.h"
 #include "DeathDoor\Component/PlayerHookComponent.h"
@@ -316,6 +317,11 @@ CComponent* CEditorManager::CreateComponent(CGameObject* Obj, size_t Type)
 	else if (Type == typeid(CSpriteComponent).hash_code())
 	{
 		CComponent* Component = Obj->LoadComponent<CSpriteComponent>();
+		return Component;
+	}
+	else if (Type == typeid(CArm).hash_code())
+	{
+		CComponent* Component = Obj->LoadComponent<CArm>();
 		return Component;
 	}
 	else if (Type == typeid(CStaticMeshComponent).hash_code())
