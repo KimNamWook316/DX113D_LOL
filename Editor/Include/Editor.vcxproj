@@ -195,15 +195,10 @@
     <ClCompile Include="DeathDoor\Component\GameBehaviorTree.cpp" />
     <ClCompile Include="DeathDoor\Component\GameStateComponent.cpp" />
     <ClCompile Include="DeathDoor\Component\KnightDataComponent.cpp" />
+    <ClCompile Include="DeathDoor\Component\LadderCollider.cpp" />
     <ClCompile Include="DeathDoor\Component\LurkerDataComponent.cpp" />
     <ClCompile Include="DeathDoor\Component\MonsterDataComponent.cpp" />
     <ClCompile Include="DeathDoor\Component\MonsterNavAgent.cpp" />
-    <ClCompile Include="DeathDoor\Component\MonsterPathFindCollider.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="DeathDoor\Component\Node\AddFallingFloorCallbackNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\AttackCoolTimeCheck.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\BossBettyAngryAttackNode.cpp" />
@@ -232,6 +227,19 @@
     <ClCompile Include="DeathDoor\Component\Node\CancleShootNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\CheckDetectRangeNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\ClearPathListNode.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\ClimbDown.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\ClimbDownContinueCheck.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\ClimbDownEnd.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\ClimbDownEndCheck.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\ClimbDownStart.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\ClimbDownStartCheck.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\ClimbingUpStartCheck.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\ClimbPause.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\ClimbUp.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\ClimbUpContinueCheck.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\ClimbUpEnd.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\ClimbUpEndCheck.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\ClimbUpStart.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\CrowBossBypassCheck.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\CrowBossCutScenePlayCheck.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\CrowBossCutScenePlayNode.cpp" />
@@ -263,6 +271,7 @@
     <ClCompile Include="DeathDoor\Component\Node\HitCheckNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\HPCheck.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\IdleNode.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\IsClimbingCheck.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\IsCombatCheck.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\Lockstone3TriggerBoxAction.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\Lockstone3TriggerBoxHitCheck.cpp" />
@@ -285,10 +294,13 @@
     <ClCompile Include="DeathDoor\Component\Node\RotateAttackDirectionNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\RunNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\ShootNode.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\SKeyInputCheck.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\SporeBoomerShootNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\StraightPathCheck.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\UpdateInputQueue.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\WKeyInputCheck.cpp" />
     <ClCompile Include="DeathDoor\Component\ObjectDataComponent.cpp" />
+    <ClCompile Include="DeathDoor\Component\PlayerBombComponent.cpp" />
     <ClCompile Include="DeathDoor\Component\PlayerBowComponent.cpp" />
     <ClCompile Include="DeathDoor\Component\PlayerDataComponent.cpp" />
     <ClCompile Include="DeathDoor\Component\PlayerHookComponent.cpp" />
@@ -401,15 +413,10 @@
     <ClInclude Include="DeathDoor\Component\GameBehaviorTree.h" />
     <ClInclude Include="DeathDoor\Component\GameStateComponent.h" />
     <ClInclude Include="DeathDoor\Component\KnightDataComponent.h" />
+    <ClInclude Include="DeathDoor\Component\LadderCollider.h" />
     <ClInclude Include="DeathDoor\Component\LurkerDataComponent.h" />
     <ClInclude Include="DeathDoor\Component\MonsterDataComponent.h" />
     <ClInclude Include="DeathDoor\Component\MonsterNavAgent.h" />
-    <ClInclude Include="DeathDoor\Component\MonsterPathFindCollider.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClInclude>
     <ClInclude Include="DeathDoor\Component\Node\AddFallingFloorCallbackNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\AttackCoolTimeCheck.h" />
     <ClInclude Include="DeathDoor\Component\Node\BossBettyAngryAttackNode.h" />
@@ -438,6 +445,19 @@
     <ClInclude Include="DeathDoor\Component\Node\CancleShootNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\CheckDetectRangeNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\ClearPathListNode.h" />
+    <ClInclude Include="DeathDoor\Component\Node\ClimbDown.h" />
+    <ClInclude Include="DeathDoor\Component\Node\ClimbDownContinueCheck.h" />
+    <ClInclude Include="DeathDoor\Component\Node\ClimbDownEnd.h" />
+    <ClInclude Include="DeathDoor\Component\Node\ClimbDownEndCheck.h" />
+    <ClInclude Include="DeathDoor\Component\Node\ClimbDownStart.h" />
+    <ClInclude Include="DeathDoor\Component\Node\ClimbDownStartCheck.h" />
+    <ClInclude Include="DeathDoor\Component\Node\ClimbingUpStartCheck.h" />
+    <ClInclude Include="DeathDoor\Component\Node\ClimbPause.h" />
+    <ClInclude Include="DeathDoor\Component\Node\ClimbUp.h" />
+    <ClInclude Include="DeathDoor\Component\Node\ClimbUpContinueCheck.h" />
+    <ClInclude Include="DeathDoor\Component\Node\ClimbUpEnd.h" />
+    <ClInclude Include="DeathDoor\Component\Node\ClimbUpEndCheck.h" />
+    <ClInclude Include="DeathDoor\Component\Node\ClimbUpStart.h" />
     <ClInclude Include="DeathDoor\Component\Node\CrowBossBypassCheck.h" />
     <ClInclude Include="DeathDoor\Component\Node\CrowBossCutScenePlayCheck.h" />
     <ClInclude Include="DeathDoor\Component\Node\CrowBossCutScenePlayNode.h" />
@@ -469,6 +489,7 @@
     <ClInclude Include="DeathDoor\Component\Node\HitCheckNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\HPCheck.h" />
     <ClInclude Include="DeathDoor\Component\Node\IdleNode.h" />
+    <ClInclude Include="DeathDoor\Component\Node\IsClimbingCheck.h" />
     <ClInclude Include="DeathDoor\Component\Node\IsCombatCheck.h" />
     <ClInclude Include="DeathDoor\Component\Node\Lockstone3TriggerBoxAction.h" />
     <ClInclude Include="DeathDoor\Component\Node\Lockstone3TriggerBoxHitCheck.h" />
@@ -491,10 +512,13 @@
     <ClInclude Include="DeathDoor\Component\Node\RotateAttackDirectionNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\RunNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\ShootNode.h" />
+    <ClInclude Include="DeathDoor\Component\Node\SKeyInputCheck.h" />
     <ClInclude Include="DeathDoor\Component\Node\SporeBoomerShootNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\StraightPathCheck.h" />
     <ClInclude Include="DeathDoor\Component\Node\UpdateInputQueue.h" />
+    <ClInclude Include="DeathDoor\Component\Node\WKeyInputCheck.h" />
     <ClInclude Include="DeathDoor\Component\ObjectDataComponent.h" />
+    <ClInclude Include="DeathDoor\Component\PlayerBombComponent.h" />
     <ClInclude Include="DeathDoor\Component\PlayerBowComponent.h" />
     <ClInclude Include="DeathDoor\Component\PlayerDataComponent.h" />
     <ClInclude Include="DeathDoor\Component\PlayerHookComponent.h" />

@@ -1,5 +1,7 @@
 
 #include "MoveInputCheckNode.h"
+#include "../PlayerDataComponent.h"
+#include "../GameStateComponent.h"
 #include "Input.h"
 
 CMoveInputCheckNode::CMoveInputCheckNode()
@@ -17,6 +19,13 @@ CMoveInputCheckNode::~CMoveInputCheckNode()
 
 NodeResult CMoveInputCheckNode::OnStart(float DeltaTime)
 {
+	CPlayerDataComponent* DataComp = dynamic_cast<CPlayerDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
+
+	if (DataComp->IsClimbingLadder())
+	{
+		return NodeResult::Node_False;
+	}
+
 	const keyState WState = CInput::GetInst()->FindKeyState('W');
 	const keyState AState = CInput::GetInst()->FindKeyState('A');
 	const keyState SState = CInput::GetInst()->FindKeyState('S');

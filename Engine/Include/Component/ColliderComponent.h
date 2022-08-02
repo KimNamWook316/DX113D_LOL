@@ -171,6 +171,21 @@ public:
         return m_PrevCollisionList;
     }
 
+    template <typename T>
+    bool CheckPrevCollisionFromType()
+    {
+        auto iter = m_PrevCollisionList.begin();
+        auto iterEnd = m_PrevCollisionList.end();
+
+        for (; iter != iterEnd; ++iter)
+        {
+            if ((*iter)->CheckType<T>())
+                return true;
+        }
+
+        return false;
+    }
+
 public:
     virtual void Start();
     virtual bool Init();

@@ -49,6 +49,8 @@ CScene::CScene()
 	m_SkyObject->SetScene(this);
 
 	m_SkyObject->Init();
+
+	m_RestoreCamDirFix = false;
 }
 
 CScene::~CScene()
@@ -382,7 +384,7 @@ bool CScene::LoadFullPath(const char* FullPath)
 	// SceneMode »ý¼º
 	CSceneManager::GetInst()->CallCreateSceneMode(this, SceneModeType);
 	
-	m_Mode->Load(File);
+	 m_Mode->Load(File);
 
 	size_t	ObjCount = m_ObjList.size();
 
@@ -770,16 +772,25 @@ bool CScene::RestoreCamera(float Speed, float DeltaTime)
 	CCameraComponent* CurrentCamera = m_CameraManager->GetCurrentCamera();
 
 	Vector3 CurrentCamPos = CurrentCamera->GetWorldPos();
-	Vector3 RestoreDir = m_OriginCamPos - CurrentCamPos;
-	RestoreDir.y = 0.f;
-	RestoreDir.Normalize();
+
+	if (!m_RestoreCamDirFix)
+	{
+		m_RestoreCamDir = m_OriginCamPos - CurrentCamPos;
+		m_RestoreCamDir.y = 0.f;
+		m_RestoreCamDir.Normalize();
+		m_RestoreCamDirFix = true;
+	}
 
 	if (Vector3(CurrentCamPos.x, 0.f, CurrentCamPos.z).Distance(Vector3(m_OriginCamPos.x, 0.f, m_OriginCamPos.z)) < 0.5f)
+	{
+		m_RestoreCamDirFix = false;
+		m_RestoreCamDir = Vector3(0.f, 0.f, 0.f);
 		return true;
+	}
 
 	else
 	{
-		CurrentCamera->AddRelativePos(RestoreDir.x * Speed * DeltaTime, 0.f, RestoreDir.z * Speed * DeltaTime);
+		CurrentCamera->AddWorldPos(m_RestoreCamDir.x * Speed * DeltaTime, 0.f, m_RestoreCamDir.z * Speed * DeltaTime);
 	}
 
 

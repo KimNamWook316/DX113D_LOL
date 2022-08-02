@@ -5,7 +5,6 @@
 #include "Component\KnightDataComponent.h"
 #include "Component\BossBettyDataComponent.h"
 #include "Component\MonsterDataComponent.h"
-#include "Component\MonsterPathFindCollider.h"
 #include "Component\ObjectDataComponent.h"
 #include "Component\GameStateComponent.h"
 #include "Component\PlayerDataComponent.h"
@@ -22,6 +21,8 @@
 #include "Component\FirePlantDataComponent.h"
 #include "Component\CrackedBlockCollider.h"
 #include "Component\MonsterBulletData.h"
+#include "Component\PlayerBombComponent.h"
+#include "Component\LadderCollider.h"
 #include "Component\HeadRollerDataComponent.h"
 
 // TODO : Death Door SceneMode 추가시마다 업데이트
@@ -64,6 +65,25 @@ std::string CDDUtil::DDConditionNodeTypeToString(DDConditionNode NodeType)
 
 	case DDConditionNode::MeleeAttackRangeCheck:
 		return "MeleeAttackRangeCheck";
+
+	case DDConditionNode::IsClimbingCheck:
+		return "IsClimbingCheck";
+	case DDConditionNode::SKeyInputCheck:
+		return "SKeyInputCheck";
+	case DDConditionNode::WKeyInputCheck:
+		return "WKeyInputCheck";
+	case DDConditionNode::ClimbDownContinueCheck:
+		return "ClimbDownContinueCheck";
+	case DDConditionNode::ClimbDownEndCheck:
+		return "ClimbDownEndCheck";
+	case DDConditionNode::ClimbDownStartCheck:
+		return "ClimbDownStartCheck";
+	case DDConditionNode::ClimbUpContinueCheck:
+		return "ClimbUpContinueCheck";
+	case DDConditionNode::ClimbUpEndCheck:
+		return "ClimbUpEndCheck";
+	case DDConditionNode::ClimbUpStartCheck:
+		return "ClimbUpStartCheck";
 
 	case DDConditionNode::PostAttackDelayCheck:
 		return "PostAttackDelayCheck";
@@ -185,6 +205,27 @@ DDConditionNode CDDUtil::StringToDDConditionNodeType(const std::string& Str)
 	{
 		return DDConditionNode::MouseRButtonUpCheckNode;
 	}
+
+	else if (Str == "IsClimbingCheck")
+		return DDConditionNode::IsClimbingCheck;
+	else if (Str == "SKeyInputCheck")
+		return DDConditionNode::SKeyInputCheck;
+	else if (Str == "WKeyInputCheck")
+		return DDConditionNode::WKeyInputCheck;
+	else if (Str == "ClimbDownContinueCheck")
+		return DDConditionNode::ClimbDownContinueCheck;
+	else if (Str == "ClimbDownStartCheck")
+		return DDConditionNode::ClimbDownStartCheck;
+	else if (Str == "ClimbDownEndCheck")
+		return DDConditionNode::ClimbDownEndCheck;
+	else if (Str == "ClimbUpContinueCheck")
+		return DDConditionNode::ClimbUpContinueCheck;
+	else if (Str == "ClimbUpStartCheck")
+		return DDConditionNode::ClimbUpStartCheck;
+	else if (Str == "ClimbUpEndCheck")
+		return DDConditionNode::ClimbUpEndCheck;
+
+
 	else if (Str == "Lockstone3TriggerBoxHitCheck")
 	{
 		return DDConditionNode::Lockstone3TriggerBoxHitCheck;
@@ -348,6 +389,21 @@ std::string CDDUtil::DDActionNodeTypeToString(DDActionNode NodeType)
 	case DDActionNode::FindPath:
 		return "FindPath";
 
+	case DDActionNode::ClimbUp:
+		return "ClimbUp";
+	case DDActionNode::ClimbUpEnd:
+		return "ClimbUpEnd";
+	case DDActionNode::ClimbUpStart:
+		return "ClimbUpStart";
+	case DDActionNode::ClimbDown:
+		return "ClimbDown";
+	case DDActionNode::ClimbDownEnd:
+		return "ClimbDownEnd";
+	case DDActionNode::ClimbDownStart:
+		return "ClimbDownStart";
+	case DDActionNode::ClimbPause:
+		return "ClimbPause";
+
 	case DDActionNode::BossKnightContinueAttack:
 		return "BossKnightContinueAttack";
 
@@ -469,6 +525,22 @@ DDActionNode CDDUtil::StringToDDActionNodeType(const std::string& Str)
 	{
 		return DDActionNode::CancleShootNode;
 	}
+
+	else if (Str == "ClimbDown")
+		return DDActionNode::ClimbDown;
+	else if (Str == "ClimbDownEnd")
+		return DDActionNode::ClimbDownEnd;
+	else if (Str == "ClimbDownStart")
+		return DDActionNode::ClimbDownStart;
+	else if (Str == "ClimbUp")
+		return DDActionNode::ClimbUp;
+	else if (Str == "ClimbUpEnd")
+		return DDActionNode::ClimbUpEnd;
+	else if (Str == "ClimbUpStart")
+		return DDActionNode::ClimbUpStart;
+	else if (Str == "ClimbPause")
+		return DDActionNode::ClimbPause;
+
 	else if (Str == "AddFallingFloorCallback")
 	{
 		return DDActionNode::AddFallingFloorCallback;
@@ -609,6 +681,8 @@ std::string CDDUtil::DDSceneComponentTypeToString(DDSceneComponentType Type)
 		return "PlayerHookComponent";
 	case DDSceneComponentType::PlayerBowComponent:
 		return "PlayerBowComponent";
+	case DDSceneComponentType::LadderCollider:
+		return "LadderCollider";
 	case DDSceneComponentType::CrackedBlockCollider:
 		return "CrackedBlockCollider";
 	}
@@ -630,14 +704,15 @@ DDSceneComponentType CDDUtil::StringToDDSceneComponentType(const std::string& St
 	{
 		return DDSceneComponentType::PlayerHookComponent;
 	}
+	else if (Str == "LadderCollider")
+	{
+		return DDSceneComponentType::LadderCollider;
+	}
 	else if (Str == "CrackedBlockCollider")
 	{
 		return DDSceneComponentType::CrackedBlockCollider;
 	}
-	//else if (Str == "MonsterPathFindCollider")
-	//{
-	//	return DDSceneComponentType::MonsterPathFindCollider;
-	//}
+
 	return DDSceneComponentType(-1);
 }
 
@@ -653,6 +728,8 @@ size_t CDDUtil::DDSceneComponentTypeToTypeID(DDSceneComponentType Type)
 		return typeid(CPlayerHookComponent).hash_code();
 	case DDSceneComponentType::PlayerBowComponent:
 		return typeid(CPlayerBowComponent).hash_code();
+	case DDSceneComponentType::LadderCollider:
+		return typeid(CLadderCollider).hash_code();
 	case DDSceneComponentType::CrackedBlockCollider:
 		return typeid(CCrackedBlockCollider).hash_code();
 	}
@@ -698,6 +775,9 @@ std::string CDDUtil::DDObjectComponentTypeToString(DDObjectComponentType Type)
 
 	case DDObjectComponentType::TinyCrowDataComponent:
 		return "TinyCrowDataComponent";
+
+	case DDObjectComponentType::PlayerBombComponent:
+		return "PlayerBombComponent";
 
 	case DDObjectComponentType::SporeBoomerData:
 		return "SporeBoomerData";
@@ -761,6 +841,10 @@ DDObjectComponentType CDDUtil::StringToDDObjectComponentType(const std::string& 
 	{
 		return DDObjectComponentType::ArrowComponent;
 	}
+	else if (Str == "PlayerBombComponent")
+	{
+		return DDObjectComponentType::PlayerBombComponent;
+	}
 	else if (Str == "SporeBoomerData")
 	{
 		return DDObjectComponentType::SporeBoomerData;
@@ -809,6 +893,8 @@ size_t CDDUtil::DDObjectComponentTypeToTypeID(DDObjectComponentType Type)
 		return typeid(CArrowComponent).hash_code();
 	case DDObjectComponentType::TinyCrowDataComponent:
 		return typeid(CTinyCrowDataComponent).hash_code();
+	case DDObjectComponentType::PlayerBombComponent:
+		return typeid(CPlayerBombComponent).hash_code();
 	case DDObjectComponentType::SporeBoomerData:
 		return typeid(CSporeBoomerDataComponent).hash_code();
 	case DDObjectComponentType::FirePlantData:

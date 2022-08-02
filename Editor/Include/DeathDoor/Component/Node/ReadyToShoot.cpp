@@ -5,6 +5,7 @@
 #include "Component/AnimationMeshComponent.h"
 #include "../../Component/PlayerDataComponent.h"
 #include "../../Component/PlayerBowComponent.h"
+#include "../../Component/PlayerBombComponent.h"
 #include "Animation/AnimationSequenceInstance.h"
 #include "../GameStateComponent.h"
 #include "Component/BehaviorTree.h"
@@ -49,6 +50,10 @@ NodeResult CReadyToShoot::OnStart(float DeltaTime)
 		SequenceName = ObjectName + "Hook";
 	}
 
+	else if (Ability == Player_Ability::Bomb)
+	{
+		SequenceName = ObjectName + "Bomb";
+	}
 
 	if (m_AnimationMeshComp)
 	{
@@ -80,7 +85,7 @@ NodeResult CReadyToShoot::OnStart(float DeltaTime)
 	Vector3 OriginCamPos = CurrentCamera->GetWorldPos();
 	CSceneManager::GetInst()->GetScene()->SetOriginCamPos(OriginCamPos);
 
-	m_CameraDestPos =  OriginCamPos + (PickingPoint - ObjectPos) / 2.f;
+	m_CameraDestPos =  OriginCamPos + (PickingPoint - ObjectPos) / 2.3f;
 	m_CameraDestPos.y = OriginCamPos.y;
 	m_CameraMoveDir = PickingPoint - ObjectPos;
 	m_CameraMoveDir.y = 0.f;
@@ -101,6 +106,11 @@ NodeResult CReadyToShoot::OnUpdate(float DeltaTime)
 
 		if (BowComp)
 			BowComp->ShowBow(m_CameraMoveDir);
+	}
+
+	else if (Ability == Player_Ability::Bomb)
+	{
+		// PlayerDataComponent에서 PlayerBomb의 Notify로 OnBomb를 한번 호출하도록 걸어놓음
 	}
 
 	if (!m_CameraMoveEnd)

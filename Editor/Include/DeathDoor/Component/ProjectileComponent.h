@@ -43,6 +43,20 @@ public:
 
 public:
 	template <typename T>
+	void ShootByLifeTimeCollision(T* Obj, void(T::* CollisionCallBack)(const CollisionResult&), Collision_State CollisionState,
+		const Vector3& StartPos, const Vector3& Dir,
+		float Speed, float LifeTime,
+		class CGameObject* EndParticleObj = nullptr)
+	{
+		if (m_Collider && CollisionCallBack)
+		{
+			m_Collider->AddCollisionCallback(CollisionState, Obj, CollisionCallBack);
+		}
+
+		ShootByLifeTime(StartPos, Dir, Speed, LifeTime, EndParticleObj);
+	}
+
+	template <typename T>
 	void Shoot(T* Obj, void(T::* CollisionCallBack)(const CollisionResult&), Collision_State CollsionState,
 		const Vector3& StartPos, const Vector3& Dir, float Speed,
 		const Vector3& TargetPos, bool Gravity = false, class CGameObject* EndParticleObj = nullptr)

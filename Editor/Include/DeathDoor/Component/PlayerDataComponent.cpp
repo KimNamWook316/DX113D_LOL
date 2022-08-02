@@ -9,6 +9,7 @@
 #include "Component/ColliderComponent.h"
 #include "Component/ColliderBox3D.h"
 #include "../Component/PlayerNormalAttackCheckCollider.h"
+#include "../Component/PlayerBombComponent.h"
 #include "Scene/Navigation3DManager.h"
 
 CPlayerDataComponent::CPlayerDataComponent() :
@@ -19,7 +20,10 @@ CPlayerDataComponent::CPlayerDataComponent() :
 	m_MouseLButtonDown(false),
 	m_Unbeatable(false),
 	m_UnbeatableAccTime(0.f),
-	m_UnbeatableTime(2.7f)
+	m_UnbeatableTime(2.7f),
+	m_LadderUpEnable(false),
+	m_LadderDownEnable(false),
+	m_IsClimbingLadder(false)
 
 {
 	SetTypeID<CPlayerDataComponent>();
@@ -42,6 +46,8 @@ void CPlayerDataComponent::Start()
 	CInput::GetInst()->CreateKey("WeaponArrow", '1');
 	CInput::GetInst()->CreateKey("WeaponFire", '2');
 	CInput::GetInst()->CreateKey("WeaponChain", '3');
+	CInput::GetInst()->CreateKey("WeaponBomb", '4');
+
 	CInput::GetInst()->CreateKey("MoveForward", 'W');
 	CInput::GetInst()->CreateKey("MoveBack", 'S');
 	CInput::GetInst()->CreateKey("MoveLeft", 'A');
@@ -51,6 +57,7 @@ void CPlayerDataComponent::Start()
 	CInput::GetInst()->SetKeyCallback("WeaponArrow", KeyState_Down, this, &CPlayerDataComponent::SetPlayerAbilityArrow);
 	CInput::GetInst()->SetKeyCallback("WeaponFire", KeyState_Down, this, &CPlayerDataComponent::SetPlayerAbilityFire);
 	CInput::GetInst()->SetKeyCallback("WeaponChain", KeyState_Down, this, &CPlayerDataComponent::SetPlayerAbilityChain);
+	CInput::GetInst()->SetKeyCallback("WeaponBomb", KeyState_Down, this, &CPlayerDataComponent::SetPlayerAbilityBomb);
 
 	m_AnimComp = m_Object->FindComponentFromType<CAnimationMeshComponent>();
 
@@ -64,6 +71,10 @@ void CPlayerDataComponent::Start()
 	m_AnimComp->GetAnimationInstance()->AddNotify<CPlayerDataComponent>("PlayerSlashR", "PlayerSlashR", 2, this, &CPlayerDataComponent::SetTrueOnSlash);
 	m_AnimComp->GetAnimationInstance()->AddNotify<CPlayerDataComponent>("PlayerSlashR", "PlayerSlashR", 8, this, &CPlayerDataComponent::SetFalseOnSlash);
 	m_AnimComp->GetAnimationInstance()->AddNotify<CPlayerDataComponent>("PlayerHitBack", "PlayerHitBack", 0, this, &CPlayerDataComponent::OnHitBack);
+
+	m_AnimComp->GetAnimationInstance()->AddNotify<CPlayerDataComponent>("PlayerBomb", "PlayerBomb", 3, this, &CPlayerDataComponent::OnBombLift);
+	m_AnimComp->GetAnimationInstance()->AddNotify<CPlayerDataComponent>("PlayerBomb", "PlayerBomb", 3, this, &CPlayerDataComponent::OnBombShoot);
+
 	m_AnimComp->GetAnimationInstance()->AddNotify<CPlayerDataComponent>("PlayerRoll", "PlayerRoll", 0, this, &CPlayerDataComponent::OnRoll);
 	
 	m_AnimComp->GetAnimationInstance()->SetEndFunction<CPlayerDataComponent>("PlayerHitBack", this, &CPlayerDataComponent::OnHitBackEnd);
@@ -235,7 +246,30 @@ void CPlayerDataComponent::OnRollEnd()
 {
 	//m_Body->Enable(true);
 	//m_Unbeatable = false;
+
 	m_Body->SetRigidCollisionIgnore(false);
+}
+
+void CPlayerDataComponent::OnBombLift()
+{
+	CPlayerBombComponent* BombComp = m_Object->FindObjectComponentFromType<CPlayerBombComponent>();
+
+	if (BombComp)
+	{
+		BombComp->SetLiftSpeed(0.1f);
+		BombComp->LiftBomb();
+	}
+}
+
+void CPlayerDataComponent::OnBombShoot()
+{
+	//CPlayerBombComponent* BombComp = m_Object->FindObjectComponentFromType<CPlayerBombComponent>();
+
+	//if (BombComp)
+	//{
+	//	BombComp->SetShootSpeed(40.f);
+	//	BombComp->ShootBomb();
+	//}
 }
 
 void CPlayerDataComponent::ForceUpdateAttackDirection()
