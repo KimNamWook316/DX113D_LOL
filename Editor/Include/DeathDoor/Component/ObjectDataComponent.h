@@ -46,7 +46,7 @@ public:
 		m_Data.HP = HP;
 	}
 
-	void DecreaseHP(int Amount)
+	virtual void DecreaseHP(int Amount)
 	{
 		m_Data.HP -= Amount;
 	}

@@ -127,6 +127,15 @@ public:
 		return m_KeyStateQueue.size();
 	}
 
+	virtual void DecreaseHP(int Amout)
+	{
+		if (!m_IsHit)
+		{
+			CObjectDataComponent::DecreaseHP(Amout);
+			m_IsHit = true;
+		}
+	}
+
 	class CAnimationMeshComponent* GetAnimationMeshComponent() const;
 
 	void OnHitBack();

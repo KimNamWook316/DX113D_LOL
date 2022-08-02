@@ -29,6 +29,7 @@
 #include "../DeathDoor/Component/SporeBoomerDataComponent.h"
 #include "../DeathDoor/Component/FirePlantDataComponent.h"
 #include "../DeathDoor/Component/MonsterBulletData.h"
+#include "../DeathDoor/Component/HeadRollerDataComponent.h"
 
 #include "../Window/InspectorWindow.h"
 #include "../EditorUtil.h"
@@ -201,6 +202,10 @@ void CObjectComponentCreateModal::OnCreateComponent()
 		else if (Typeid == typeid(CMonsterBulletData).hash_code())
 		{
 			Com = SelectObject->CreateComponent<CMonsterBulletData>(Name);
+		}
+		else if (Typeid == typeid(CHeadRollerDataComponent).hash_code())
+		{
+			Com = SelectObject->CreateComponent<CHeadRollerDataComponent>(Name);
 		}
 	}
 

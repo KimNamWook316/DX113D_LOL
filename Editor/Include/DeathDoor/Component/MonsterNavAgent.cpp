@@ -1,13 +1,18 @@
 
 #include "MonsterNavAgent.h"
 #include "GameObject/GameObject.h"
+#include "Scene/SceneManager.h"
+#include "Scene/Scene.h"
+#include "Scene/Navigation3DManager.h"
+#include "Component/NavMeshComponent.h"
 
 CMonsterNavAgent::CMonsterNavAgent()	:
 	m_AccTime(0.f),
 	m_PathFindCoolTime(2.f),
 	m_PathFindCoolStart(false),
 	m_PathFindEnable(true),
-	m_CoolStart(false)
+	m_CoolStart(false),
+	m_CurPolyIndex(-1)
 {
 	SetTypeID<CMonsterNavAgent>();
 
@@ -21,6 +26,32 @@ CMonsterNavAgent::CMonsterNavAgent(const CMonsterNavAgent& com)	:
 
 CMonsterNavAgent::~CMonsterNavAgent()
 {
+}
+
+bool CMonsterNavAgent::IsInNavMesh()
+{
+	CNavigation3DManager* Nav = CSceneManager::GetInst()->GetScene()->GetNavigation3DManager();
+
+	Vector3 MyPos = m_Object->GetWorldPos();
+
+	bool Found = false;
+
+	if (m_CurPolyIndex == -1)
+	{
+		Found = Nav->CheckNavMeshPoly(MyPos, MyPos.y, m_CurPolyIndex);
+	}
+	else
+	{
+		int NewPolyIndex = 0;
+		Found = Nav->CheckCurrentNavMeshPoly(MyPos, m_CurPolyIndex, MyPos.y, NewPolyIndex);
+
+		if (Found)
+		{
+			m_CurPolyIndex = NewPolyIndex;
+		}
+	}
+
+	return Found;
 }
 
 void CMonsterNavAgent::Start()

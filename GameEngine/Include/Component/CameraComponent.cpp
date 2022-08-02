@@ -210,7 +210,7 @@ void CCameraComponent::ComputeShadowView()
 	}
 
 	// 일렁거림 방지를 위해 일정 거리 이동시에만 적용
-	if (Add.Length() >= 50.f)
+	if (Add.Length() >= 10.f)
 	{
 		Pos += Add;
 	}

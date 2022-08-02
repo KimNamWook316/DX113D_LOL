@@ -328,7 +328,7 @@ void CEyeLaserComponent::RaserCollision(const CollisionResult& Result)
 
 	if (Comp)
 	{
-		Comp->SetIsHit(true);
+		Comp->DecreaseHP(1);
 	}
 }
 

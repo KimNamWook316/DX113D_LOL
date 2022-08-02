@@ -44,6 +44,9 @@ enum class DDActionNode
 	CrowBossSpitting,
 	// SporeBoomer
 	SporeBoomerShoot,
+	// HeadRoller
+	HeadRollerStun,
+	HeadRollerRoll,
 	Max
 };
 
@@ -74,6 +77,7 @@ enum class DDConditionNode
 	HitCheckNode,
 	RollInputCheck,
 	UpdateInputQueue,
+	StraightPathCheck,
 	// BossBetty
 	BossBettyCheckAttackDir,
 	BossBettyCheckFarAttackType,
@@ -91,6 +95,8 @@ enum class DDConditionNode
 	CrowBossShootCheck,
 	CrowBossShootEndCheck,
 	CrowBossShootReadyCheck,
+	// HeadRoller
+	HeadRollerStunCheck,
 	Max
 };
 
@@ -121,6 +127,7 @@ enum class DDObjectComponentType
 	SporeBoomerData,
 	FirePlantData,
 	MonsterBulletData,
+	HeadRollerData,
 	Max
 };
 
@@ -151,5 +158,6 @@ enum class DDSceneModeType
 {
 	DDSceneMode,
 	DDBossSceneMode,
+	DDInstanceSceneMode,
 	Max
 };

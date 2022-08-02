@@ -189,6 +189,7 @@
     <ClCompile Include="DeathDoor\Component\CrackedBlockCollider.cpp" />
     <ClCompile Include="DeathDoor\Component\CrowBossDataComponent.cpp" />
     <ClCompile Include="DeathDoor\Component\EyeLaserComponent.cpp" />
+    <ClCompile Include="DeathDoor\Component\HeadRollerDataComponent.cpp" />
     <ClCompile Include="DeathDoor\Component\MonsterBulletData.cpp" />
     <ClCompile Include="DeathDoor\Component\FirePlantDataComponent.cpp" />
     <ClCompile Include="DeathDoor\Component\GameBehaviorTree.cpp" />
@@ -255,6 +256,9 @@
     <ClCompile Include="DeathDoor\Component\Node\DeathCheck.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\DeathNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\FindPathNode.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\HeadRollerRollNode.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\HeadRollerStunCheck.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\HeadRollerStunNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\HitBackNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\HitCheckNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\HPCheck.cpp" />
@@ -282,6 +286,7 @@
     <ClCompile Include="DeathDoor\Component\Node\RunNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\ShootNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\SporeBoomerShootNode.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\StraightPathCheck.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\UpdateInputQueue.cpp" />
     <ClCompile Include="DeathDoor\Component\ObjectDataComponent.cpp" />
     <ClCompile Include="DeathDoor\Component\PlayerBowComponent.cpp" />
@@ -294,6 +299,7 @@
     <ClCompile Include="DeathDoor\DataManager.cpp" />
     <ClCompile Include="DeathDoor\DDUtil.cpp" />
     <ClCompile Include="DeathDoor\Scene\DDBossSceneMode.cpp" />
+    <ClCompile Include="DeathDoor\Scene\DDInstanceSceneMode.cpp" />
     <ClCompile Include="DeathDoor\Scene\DDSceneMode.cpp" />
     <ClCompile Include="DeathDoor\Thread\DDSceneLoadingThread.cpp" />
     <ClCompile Include="EditorManager.cpp" />
@@ -315,6 +321,7 @@
     <ClCompile Include="Widget\ColliderComponentWidget.cpp" />
     <ClCompile Include="Widget\ColliderSphereWidget.cpp" />
     <ClCompile Include="Widget\DataMenu.cpp" />
+    <ClCompile Include="Widget\DDInstanceSceneModeWidget.cpp" />
     <ClCompile Include="Widget\DDSceneModeWidget.cpp" />
     <ClCompile Include="Widget\EyeLaserComponentWidget.cpp" />
     <ClCompile Include="Widget\SceneMenu.cpp" />
@@ -388,6 +395,7 @@
     <ClInclude Include="DeathDoor\Component\CrackedBlockCollider.h" />
     <ClInclude Include="DeathDoor\Component\CrowBossDataComponent.h" />
     <ClInclude Include="DeathDoor\Component\EyeLaserComponent.h" />
+    <ClInclude Include="DeathDoor\Component\HeadRollerDataComponent.h" />
     <ClInclude Include="DeathDoor\Component\MonsterBulletData.h" />
     <ClInclude Include="DeathDoor\Component\FirePlantDataComponent.h" />
     <ClInclude Include="DeathDoor\Component\GameBehaviorTree.h" />
@@ -454,6 +462,9 @@
     <ClInclude Include="DeathDoor\Component\Node\DeathCheck.h" />
     <ClInclude Include="DeathDoor\Component\Node\DeathNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\FindPathNode.h" />
+    <ClInclude Include="DeathDoor\Component\Node\HeadRollerRollNode.h" />
+    <ClInclude Include="DeathDoor\Component\Node\HeadRollerStunCheck.h" />
+    <ClInclude Include="DeathDoor\Component\Node\HeadRollerStunNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\HitBackNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\HitCheckNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\HPCheck.h" />
@@ -481,6 +492,7 @@
     <ClInclude Include="DeathDoor\Component\Node\RunNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\ShootNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\SporeBoomerShootNode.h" />
+    <ClInclude Include="DeathDoor\Component\Node\StraightPathCheck.h" />
     <ClInclude Include="DeathDoor\Component\Node\UpdateInputQueue.h" />
     <ClInclude Include="DeathDoor\Component\ObjectDataComponent.h" />
     <ClInclude Include="DeathDoor\Component\PlayerBowComponent.h" />
@@ -494,6 +506,7 @@
     <ClInclude Include="DeathDoor\DDFlag.h" />
     <ClInclude Include="DeathDoor\DDUtil.h" />
     <ClInclude Include="DeathDoor\Scene\DDBossSceneMode.h" />
+    <ClInclude Include="DeathDoor\Scene\DDInstanceSceneMode.h" />
     <ClInclude Include="DeathDoor\Scene\DDSceneMode.h" />
     <ClInclude Include="DeathDoor\Thread\DDSceneLoadingThread.h" />
     <ClInclude Include="EditorInfo.h" />
@@ -516,6 +529,7 @@
     <ClInclude Include="Widget\ColliderComponentWidget.h" />
     <ClInclude Include="Widget\ColliderSphereWidget.h" />
     <ClInclude Include="Widget\DataMenu.h" />
+    <ClInclude Include="Widget\DDInstanceSceneModeWidget.h" />
     <ClInclude Include="Widget\DDSceneModeWidget.h" />
     <ClInclude Include="Widget\EyeLaserComponentWidget.h" />
     <ClInclude Include="Widget\GameObjectWidget.h" />

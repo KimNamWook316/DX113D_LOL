@@ -71,7 +71,6 @@ void CSporeBoomerDataComponent::OnCollideBomb(const CollisionResult& Result)
 	{
 		if (m_PlayerData)
 		{
-			m_PlayerData->SetIsHit(true);
 			m_PlayerData->DecreaseHP(1);
 		}
 	}

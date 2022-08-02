@@ -254,6 +254,67 @@ float AngleBetweenTwoVector(float3 V1, float3 V2)
 	return RotAngle;
 }
 
+float4 PaperBurn2DInstancing(float4 Color, float2 UV, int Inverse, float Filter, float InFilter, float CenterFilter,
+		float OutFilter, float4 InColor, float4 CenterColor, float4 OutColor)
+{
+    if (Color.a == 0.f)
+		return Color;
+
+    float4 BurnColor = g_PaperBurnTexture.Sample(g_LinearSmp, UV);
+
+	float4	result = Color;
+
+	if (Inverse == 0)
+	{
+		if (Filter >= BurnColor.r)
+		{
+			clip(-1);
+		}
+
+		else
+		{
+			if (Filter - OutFilter <= BurnColor.r &&
+				BurnColor.r <= Filter + OutFilter)
+				result = OutColor;
+
+			if (Filter - CenterFilter <= BurnColor.r &&
+				BurnColor.r <= Filter + CenterFilter)
+				result = CenterColor;
+
+			if (Filter - InFilter <= BurnColor.r &&
+				BurnColor.r <= Filter + InFilter)
+				result = InColor;
+		}
+	}
+
+	else
+	{
+		if (Filter < BurnColor.r)
+		{
+			clip(-1);
+		}
+
+		else
+		{
+			if (Filter - OutFilter <= BurnColor.r &&
+				BurnColor.r <= Filter + OutFilter)
+				result = OutColor;
+
+			if (Filter - CenterFilter <= BurnColor.r &&
+				BurnColor.r <= Filter + CenterFilter)
+				result = CenterColor;
+
+			if (Filter - InFilter <= BurnColor.r &&
+				BurnColor.r <= Filter + InFilter)
+				result = InColor;
+		}
+	}
+
+	result.a *= Color.a;
+
+	return result;
+}
+
 float4 PaperBurn2D(float4 Color, float2 UV)
 {
 	if (g_MtrlPaperBurnEnable == 0)
@@ -292,7 +353,9 @@ float4 PaperBurn2D(float4 Color, float2 UV)
 	else
 	{
 		if (g_PaperBurnFilter < BurnColor.r)
-			result.a = 0.f;
+		{
+			clip(-1);
+		}
 
 		else
 		{

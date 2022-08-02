@@ -20,7 +20,7 @@ public:
 	virtual bool Load(FILE* File) override;
 
 public:
-	void OnDieMonster();
+	virtual void OnDieMonster();
 	virtual void OnClearDungeon();
 
 public:

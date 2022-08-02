@@ -33,6 +33,7 @@ public:
 		Info->MtrlEmissiveTex = m_BufferData.EmissiveTex;
 		Info->MtrlReceiveDecal = m_BufferData.ReceiveDecal;
 		Info->MtrlMetallic = m_BufferData.Metallic;
+		Info->MtrlPaperBurnEnable = m_BufferData.PaperBurnEnable;
 		Info->UVScale = m_BufferData.UVScale;
 	}
 

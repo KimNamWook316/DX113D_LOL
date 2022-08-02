@@ -45,6 +45,7 @@
 #include "DeathDoor\Component/CrackedBlockCollider.h"
 #include "DeathDoor\Component/FirePlantDataComponent.h"
 #include "DeathDoor\Component/MonsterBulletData.h"
+#include "DeathDoor\Component/HeadRollerDataComponent.h"
 // Window
 #include "Window/ObjectHierarchyWindow.h"
 #include "Window/SceneComponentHierarchyWindow.h"
@@ -79,6 +80,7 @@
 // SceneMode
 #include "DeathDoor\Scene\DDSceneMode.h"
 #include "DeathDoor\Scene\DDBossSceneMode.h"
+#include "DeathDoor\Scene\DDInstanceSceneMode.h"
 
 #include <sstream>
 
@@ -276,6 +278,10 @@ void CEditorManager::CreateSceneMode(CScene* Scene, size_t Type)
 	else if (Type == typeid(CDDBossSceneMode).hash_code())
 	{
 		Scene->LoadSceneMode<CDDBossSceneMode>();
+	}
+	else if (Type == typeid(CDDInstanceSceneMode).hash_code())
+	{
+		Scene->LoadSceneMode<CDDInstanceSceneMode>();
 	}
 }
 
@@ -523,6 +529,12 @@ CComponent* CEditorManager::CreateComponent(CGameObject* Obj, size_t Type)
 	else if (Type == typeid(CMonsterBulletData).hash_code())
 	{
 		CMonsterBulletData* Component = Obj->LoadObjectComponent<CMonsterBulletData>();
+		return Component;
+	}
+
+	else if (Type == typeid(CHeadRollerDataComponent).hash_code())
+	{
+		CHeadRollerDataComponent* Component = Obj->LoadObjectComponent<CHeadRollerDataComponent>();
 		return Component;
 	}
 

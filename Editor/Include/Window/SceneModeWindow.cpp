@@ -5,8 +5,10 @@
 #include "Scene/SceneManager.h"
 #include "../DeathDoor/Scene/DDSceneMode.h"
 #include "../DeathDoor/Scene/DDBossSceneMode.h"
+#include "../DeathDoor/Scene/DDInstanceSceneMode.h"
 
 #include "../Widget/DDSceneModeWidget.h"
+#include "../Widget/DDInstanceSceneModeWidget.h"
 
 CSceneModeWindow::CSceneModeWindow()
 {
@@ -37,11 +39,6 @@ void CSceneModeWindow::OnRefreshSceneModeWidget(class CSceneMode* Mode)
 	if (!m_SceneModeWidget)
 	{
 		CreateModeWidget(Mode);
-	}
-
-	if (m_SceneModeWidget)
-	{
-		m_SceneModeWidget->RefreshWidgets();
 	}
 }
 
@@ -76,6 +73,10 @@ void CSceneModeWindow::CreateModeWidget(class CSceneMode* Mode)
 	else if (TypeID == typeid(CDDBossSceneMode).hash_code())
 	{
 		m_SceneModeWidget = AddWidget<CDDSceneModeWidget>("SceneModeWidget", 200.f);
+	}
+	else if (TypeID == typeid(CDDInstanceSceneMode).hash_code())
+	{
+		m_SceneModeWidget = AddWidget<CDDInstanceSceneModeWidget>("SceneModeWidget", 200.f);
 	}
 
 	if (m_SceneModeWidget)

@@ -49,6 +49,9 @@ CAnimationSequenceInstance::CAnimationSequenceInstance(const CAnimationSequenceI
 
 	m_Skeleton = Anim.m_Skeleton;
 
+	m_vecBoneMatrix.clear();
+	m_vecBoneMatrix.resize(m_Skeleton->GetBoneCount());
+
 	m_EditorStopAnimation = false;
 
 	m_mapAnimation.clear();
@@ -65,6 +68,8 @@ CAnimationSequenceInstance::CAnimationSequenceInstance(const CAnimationSequenceI
 		Data->m_Loop = iter->second->m_Loop;
 		Data->m_PlayTime = iter->second->m_PlayTime;
 		Data->m_PlayScale = iter->second->m_PlayScale;
+		Data->m_FrameTime = iter->second->m_FrameTime;
+		Data->m_Time = iter->second->m_Time;
 
 		if (Anim.m_CurrentAnimation->m_Name == Data->m_Name)
 			m_CurrentAnimation = Data;
