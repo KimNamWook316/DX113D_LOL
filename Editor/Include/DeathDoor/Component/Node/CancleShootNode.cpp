@@ -5,12 +5,15 @@
 #include "Component/BehaviorTree.h"
 #include "Scene/Scene.h"
 #include "Scene/SceneManager.h"
-//#include "../ObjectDataComponent.h"
-//#include "../GameStateComponent.h"
+#include "../PlayerDataComponent.h"
+#include "../PlayerBombComponent.h"
+#include "../GameStateComponent.h"
 
 CCancleShootNode::CCancleShootNode()
 {
 	SetTypeID(typeid(CCancleShootNode).hash_code());
+
+
 }
 
 CCancleShootNode::CCancleShootNode(const CCancleShootNode& Node) :
@@ -55,9 +58,22 @@ NodeResult CCancleShootNode::OnUpdate(float DeltaTime)
 
 	if (RestoreEnd)
 	{
-		//CObjectDataComponent* Data = dynamic_cast<CObjectDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
+		CPlayerDataComponent* Data = dynamic_cast<CPlayerDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
 
-		//Data->SetNoInterrupt(false);
+		Player_Ability Ability = Data->GetPlayerAbility();
+
+		if (Ability == Player_Ability::Bomb)
+		{
+			CPlayerBombComponent* BombComp = m_Object->FindObjectComponentFromType<CPlayerBombComponent>();
+
+			if (!BombComp->IsEmptyLiftPathQueue())
+			{
+				CGameObject* Bomb = BombComp->GetBomb();
+
+				BombComp->ResetInfo();
+				Bomb->Reset();
+			}
+		}
 
 		m_IsEnd = true;
 		m_CallStart = false;

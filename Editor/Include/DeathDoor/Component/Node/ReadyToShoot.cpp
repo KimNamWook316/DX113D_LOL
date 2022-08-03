@@ -14,7 +14,7 @@
 #include "Input.h"
 
 
-CReadyToShoot::CReadyToShoot()	:
+CReadyToShoot::CReadyToShoot() :
 	m_CameraMoveEnd(false)
 {
 	SetTypeID(typeid(CReadyToShoot).hash_code());
@@ -52,7 +52,37 @@ NodeResult CReadyToShoot::OnStart(float DeltaTime)
 
 	else if (Ability == Player_Ability::Bomb)
 	{
-		SequenceName = ObjectName + "Bomb";
+		CPlayerBombComponent* BombComp = m_Object->FindComponentFromType<CPlayerBombComponent>();
+
+		CGameObject* Bomb = BombComp->GetBomb();
+
+		// 이미 Lift & Shoot을 한번 이상 했는데 BombComp의 m_Bomb가 nullptr가 아니면
+		// 그 m_Bomb는 이미 폭탄 이펙트가 진행중이라는 의미이므로 Lift & Shoot을 하지 않는다
+		if (!BombComp->IsShootFirstTime() && Bomb)
+		{
+			m_IsEnd = true;
+			BombComp->SetCancleAction(true);
+
+			CProjectileComponent* Proj = Bomb->FindObjectComponentFromType<CProjectileComponent>();
+			if (Proj)
+			{
+				bool Shoot = Proj->IsShoot();
+				// Shoot이 안된채로 머리위에 멈춰있다면
+				if (!Shoot)
+				{
+					Bomb->Reset();
+					BombComp->ResetInfo();
+				}
+			}
+
+			return NodeResult::Node_True;
+		}
+
+		else
+		{
+			SequenceName = ObjectName + "Bomb";
+			BombComp->SetCancleAction(false);
+		}
 	}
 
 	if (m_AnimationMeshComp && Ability != Player_Ability::None)
@@ -110,13 +140,23 @@ NodeResult CReadyToShoot::OnUpdate(float DeltaTime)
 			BowComp->ShowBow(m_CameraMoveDir);
 	}
 
-	else if (Ability == Player_Ability::Bomb)
-	{
-		// PlayerDataComponent에서 PlayerBomb의 Notify로 OnBomb를 한번 호출하도록 걸어놓음
-	}
 
 	if (!m_CameraMoveEnd)
 	{
+		CPlayerBombComponent* BombComp = m_Object->FindComponentFromType<CPlayerBombComponent>();
+
+		if (Ability == Player_Ability::Bomb && BombComp->IsCancleAction())
+		{
+
+			m_IsEnd = true;
+			// OnStart에서 CancleAction을 True로 만들었으면 카메라 이동도 하지 않고 바로 리턴
+			// Node_False를 리턴해서 Sibling Node인 ShootNode로 넘어가지 않는다
+
+			// CancleAction을 다시 원래대로 false로 복귀
+			BombComp->SetCancleAction(false);
+			return NodeResult::Node_False;
+		}
+
 		m_CameraMoveEnd = CSceneManager::GetInst()->GetScene()->CameraMove(m_CameraMoveDir, m_CameraDestPos, 50.f, DeltaTime);
 
 		bool RButtonUp = CInput::GetInst()->GetMouseRButtonUp();
@@ -124,8 +164,20 @@ NodeResult CReadyToShoot::OnUpdate(float DeltaTime)
 		// 카메라가 화살쏘는 목표 지점으로 완전히 이동하기 전에 마우스RButton 을 때면
 		if (RButtonUp)
 		{
+			if (Ability == Player_Ability::Bomb)
+			{
+				// 카메라 이동이 아직 안끝났는데 RButton을 떼면
+				CGameObject* Bomb = BombComp->GetBomb();
+				if (Bomb && !BombComp->IsEmptyLiftPathQueue())
+				{
+					Bomb->Reset();
+					BombComp->ResetInfo();
+				}
+			}
+
 			m_CallStart = false;
 			m_Owner->SetCurrentNode(((CCompositeNode*)m_Parent->GetParent())->GetChild(1));
+			m_IsEnd = false;
 			m_CameraMoveEnd = false;
 
 			return NodeResult::Node_True;
@@ -144,8 +196,23 @@ NodeResult CReadyToShoot::OnUpdate(float DeltaTime)
 		bool RButtonUp = CInput::GetInst()->GetMouseRButtonUp();
 		if (RButtonUp)
 		{
+			if (Ability == Player_Ability::Bomb)
+			{
+				CPlayerBombComponent* BombComp = m_Object->FindComponentFromType<CPlayerBombComponent>();
+				CGameObject* Bomb = BombComp->GetBomb();
+
+				// Bomb Lift가 아직 안끝났는데 RButton을 떼면
+				if (Bomb && !BombComp->IsEmptyLiftPathQueue())
+				{
+					Bomb->Reset();
+					BombComp->ResetInfo();
+					BombComp->SetClearBomb(true);
+				}
+			}
+
 			m_CallStart = false;
 			m_Owner->SetCurrentNode(((CCompositeNode*)m_Parent)->GetChild(1));
+			m_IsEnd = false;
 			m_CameraMoveEnd = false;
 
 			return NodeResult::Node_True;
@@ -165,6 +232,7 @@ NodeResult CReadyToShoot::OnEnd(float DeltaTime)
 {
 	m_Owner->SetCurrentNode(nullptr);
 	m_IsEnd = false;
+	m_CallStart = false;
 
 	return NodeResult::Node_True;
 }

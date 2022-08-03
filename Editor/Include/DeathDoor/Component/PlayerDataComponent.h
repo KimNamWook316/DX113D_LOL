@@ -188,7 +188,6 @@ public:
 	void OnRoll();
 	void OnRollEnd();
 	void OnBombLift();
-	void OnBombShoot();
 
 	void ForceUpdateAttackDirection();
 	void OnEnableAttackCollider();

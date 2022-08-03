@@ -111,6 +111,11 @@ private:
 	std::function<void(const Vector3&)> m_EndCallBack;
 
 public:
+	bool IsShoot()	const
+	{
+		return m_IsShoot;
+	}
+
 	void SetDestroy(bool NoDestroy)
 	{
 		m_Destroy = NoDestroy;
@@ -134,6 +139,11 @@ public:
 	void SetLifeTimer(float Timer)
 	{
 		m_LifeTimer = Timer;
+	}
+
+	void SetSpeed(float Speed)
+	{
+		m_Speed = Speed;
 	}
 };
 

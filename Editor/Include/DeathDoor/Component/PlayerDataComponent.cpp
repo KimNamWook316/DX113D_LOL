@@ -24,7 +24,6 @@ CPlayerDataComponent::CPlayerDataComponent() :
 	m_LadderUpEnable(false),
 	m_LadderDownEnable(false),
 	m_IsClimbingLadder(false)
-
 {
 	SetTypeID<CPlayerDataComponent>();
 	m_ComponentType = Component_Type::ObjectComponent;
@@ -75,7 +74,6 @@ void CPlayerDataComponent::Start()
 	m_AnimComp->GetAnimationInstance()->AddNotify<CPlayerDataComponent>("PlayerHitBack", "PlayerHitBack", 0, this, &CPlayerDataComponent::OnHitBack);
 
 	m_AnimComp->GetAnimationInstance()->AddNotify<CPlayerDataComponent>("PlayerBomb", "PlayerBomb", 3, this, &CPlayerDataComponent::OnBombLift);
-	m_AnimComp->GetAnimationInstance()->AddNotify<CPlayerDataComponent>("PlayerBomb", "PlayerBomb", 3, this, &CPlayerDataComponent::OnBombShoot);
 
 	m_AnimComp->GetAnimationInstance()->AddNotify<CPlayerDataComponent>("PlayerRoll", "PlayerRoll", 0, this, &CPlayerDataComponent::OnRoll);
 	
@@ -263,16 +261,6 @@ void CPlayerDataComponent::OnBombLift()
 	}
 }
 
-void CPlayerDataComponent::OnBombShoot()
-{
-	//CPlayerBombComponent* BombComp = m_Object->FindObjectComponentFromType<CPlayerBombComponent>();
-
-	//if (BombComp)
-	//{
-	//	BombComp->SetShootSpeed(40.f);
-	//	BombComp->ShootBomb();
-	//}
-}
 
 void CPlayerDataComponent::ForceUpdateAttackDirection()
 {

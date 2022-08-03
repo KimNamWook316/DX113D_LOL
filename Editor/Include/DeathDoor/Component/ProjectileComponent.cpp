@@ -269,4 +269,6 @@ void CProjectileComponent::OnEnd()
 	// TODO : Projectile Destroy처리 확정된 이후 변경
 	if(m_Destroy)
 		m_Object->Destroy();
+
+	m_NoUpdate = false;
 }
