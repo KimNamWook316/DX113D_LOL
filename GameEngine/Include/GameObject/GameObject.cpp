@@ -824,6 +824,8 @@ void CGameObject::Reset()
 	SetWorldPos(FLT_MAX, FLT_MAX, FLT_MAX);
 	m_RootComponent->GetTransform()->ForceUpdateMat();
 
+
+
 	size_t Size = m_vecObjectComponent.size();
 
 	for (size_t i = 0; i < Size; ++i)

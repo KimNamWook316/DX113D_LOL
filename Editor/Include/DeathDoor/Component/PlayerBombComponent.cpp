@@ -4,12 +4,17 @@
 #include "Scene/SceneManager.h"
 #include "EngineUtil.h"
 #include "Component/StaticMeshComponent.h"
+#include "ProjectileComponent.h"
 
 CPlayerBombComponent::CPlayerBombComponent()	:
 	m_Bomb(nullptr),
 	m_CollisionLifeTime(0.5f),
 	m_AccCollisionLifeTime(0.f),
-	m_Collision(false)
+	m_Collision(false),
+	m_LiftSpeed(0.f),
+	m_ShootFirstTime(true),
+	m_CancleAction(false),
+	m_IsClearBomb(false)
 {
 	SetTypeID<CPlayerBombComponent>();
 
@@ -26,9 +31,33 @@ CPlayerBombComponent::~CPlayerBombComponent()
 {
 }
 
+void CPlayerBombComponent::SetBomb(CGameObject* Bomb)
+{
+	m_Bomb = Bomb;
+}
+
 const Vector3& CPlayerBombComponent::GetBombPos() const
 {
 	return m_Bomb->GetWorldPos();
+}
+
+CGameObject* CPlayerBombComponent::GetBomb() const
+{
+	return m_Bomb;
+}
+
+void CPlayerBombComponent::OnBombProjectileDestroy(const Vector3& Pos)
+{
+	m_Bomb = nullptr;
+
+	while (!m_LiftBombPathQueue.empty())
+		m_LiftBombPathQueue.pop();
+}
+
+void CPlayerBombComponent::ClearLiftPathQueue()
+{
+	while (!m_LiftBombPathQueue.empty())
+		m_LiftBombPathQueue.pop();
 }
 
 void CPlayerBombComponent::Start()
@@ -44,6 +73,9 @@ bool CPlayerBombComponent::Init()
 
 void CPlayerBombComponent::Update(float DeltaTime)
 {
+	if (!m_Bomb)
+		return;
+
 	if (m_Collision)
 	{
 		m_AccCollisionLifeTime += DeltaTime;
@@ -51,10 +83,7 @@ void CPlayerBombComponent::Update(float DeltaTime)
 
 		if (m_AccCollisionLifeTime >= m_CollisionLifeTime)
 		{
-			m_AccCollisionLifeTime = 0.f;
-			m_Collision = false;
-			m_Bomb->SetWorldScale(0.02f, 0.02f, 0.02f);
-			m_Bomb->Destroy();
+			ResetInfo();
 		}
 	}
 
@@ -103,10 +132,21 @@ void CPlayerBombComponent::PostRender()
 
 }
 
-void CPlayerBombComponent::Reset()
+void CPlayerBombComponent::ResetInfo()
 {
-	//m_Bomb->SetWorldScale(0.02f, 0.02f, 0.02f);
-	//m_Collision = false;
+	m_AccCollisionLifeTime = 0.f;
+	m_Collision = false;
+
+	CProjectileComponent* Proj = m_Bomb->FindObjectComponentFromType<CProjectileComponent>();
+
+	// NoUpdate를 true로 안하면 Reset에서 아무리 Bomb Object를 안보이는 곳에 배치해도 다시 Projectile에서 Move로 보이는곳에 옮겨놓기 때문에 NoUpdate를 True로 해주고
+	// LiftBomb 함수에서 다시 NoUpdate를 false로 되돌린다
+	Proj->SetNoUpdate(true);
+
+	m_Bomb->Destroy();
+	m_Bomb = nullptr;
+
+	ClearLiftPathQueue();
 }
 
 CPlayerBombComponent* CPlayerBombComponent::Clone()
@@ -116,14 +156,20 @@ CPlayerBombComponent* CPlayerBombComponent::Clone()
 
 void CPlayerBombComponent::LiftBomb()
 {
+	if (m_Bomb)
+	{
+		// 여기로 들어오면 폭탄이 충돌돼서 이펙트가 재생되고 있는 중에 또 폭탄을 쏘려 하는 것이므로 return
+		m_Bomb = nullptr;
+		return;
+	}
+
 	CScene* CurrentScene = CSceneManager::GetInst()->GetScene();
 
 	m_Bomb = CObjectPool::GetInst()->GetProjectile("PlayerBomb", CurrentScene);
 
-	if (m_Bomb == nullptr)
+	if (!m_Bomb)
 		return;
 
-	// Betty 바로 앞에 생성한다.
 	Vector3 ZLookDir = m_Object->GetWorldAxis(AXIS::AXIS_Z) * -1.f;
 	Vector3 YLookDir = m_Object->GetWorldAxis(AXIS::AXIS_Y);
 	Vector3 XLookDir = m_Object->GetWorldAxis(AXIS::AXIS_X);
@@ -131,7 +177,9 @@ void CPlayerBombComponent::LiftBomb()
 	Vector3 Tmp = m_Object->GetWorldPos() + ZLookDir / 2.f;
 	const Vector3& InitBombPos = Vector3(Tmp.x + XLookDir.x / 3.f, Tmp.y, Tmp.z);
 
+	m_Bomb->SetWorldScale(0.02f, 0.02f, 0.02f);
 	m_Bomb->SetWorldPos(InitBombPos);
+	m_Bomb->FindComponentFromType<CStaticMeshComponent>()->GetMaterial(0)->SetEmissiveColor(0.f, 0.f, 0.f, 0.f);
 
 	// Bazier 에 따라 이동할 수 있게 세팅한다.
 	const Vector3& D2 = m_Bomb->GetWorldPos() + ZLookDir * 1.1f + YLookDir + 0.5f;
@@ -139,17 +187,42 @@ void CPlayerBombComponent::LiftBomb()
 	const Vector3& D4 = m_Bomb->GetWorldPos() + YLookDir * 3.6f;
 
 	CEngineUtil::CalculateBazierTargetPoses(InitBombPos, D2, D3, D4, m_LiftBombPathQueue, 100);
+
+	CProjectileComponent* Proj = m_Bomb->FindObjectComponentFromType<CProjectileComponent>();
+	Proj->SetNoUpdate(false);
 }
 
 void CPlayerBombComponent::ShootBomb(const Vector3& ShootDir)
 {
+	if (!m_Bomb)
+	{
+		m_AccCollisionLifeTime = 0.f;
+		m_Collision = false;
+
+		return;
+	}
+
+	if (!m_LiftBombPathQueue.empty())
+	{
+		m_Bomb->Reset();
+		ResetInfo();
+
+		return;
+	}
+
+
 	CProjectileComponent* Proj = m_Bomb->FindObjectComponentFromType<CProjectileComponent>();
 
 	Vector3 BombPos = m_Bomb->GetWorldPos();
 
 	Proj->ShootByLifeTimeCollision<CPlayerBombComponent>(this, &CPlayerBombComponent::OnCollision, Collision_State::Begin, 
-		BombPos, ShootDir, m_ShootSpeed, 3.f);
+		BombPos, ShootDir, m_ShootSpeed, 2.f);
+
 	Proj->SetDestroy(true);
+	Proj->SetEndCallBack<CPlayerBombComponent>(this, &CPlayerBombComponent::OnBombProjectileDestroy);
+
+	if (m_ShootFirstTime)
+		m_ShootFirstTime = false;
 }
 
 void CPlayerBombComponent::HideBomb()
@@ -169,6 +242,8 @@ void CPlayerBombComponent::OnCollision(const CollisionResult& Result)
 	m_Bomb->SetWorldPos(DestPos);
 
 	m_Object->GetScene()->GetCameraManager()->ShakeCamera(0.4f, 0.7f);
+
+
 }
 
 bool CPlayerBombComponent::Save(FILE* File)

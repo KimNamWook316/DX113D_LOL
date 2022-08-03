@@ -20,6 +20,7 @@ protected:
 private:
     bool m_InRestoreCam;
 
+
 public:
     virtual NodeResult Invoke(float DeltaTime) override;
 };

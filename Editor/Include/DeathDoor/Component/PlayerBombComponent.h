@@ -22,8 +22,48 @@ private:
 	float m_CollisionLifeTime;// 충돌하고 크기가 커지다가 얼마 후에 터질것인지
 	float m_AccCollisionLifeTime;
 	bool m_Collision;
+	bool m_ShootFirstTime;	// 최초로 던지는 것인지 --> ReadyToShoot에서 이미 폭탄 이펙트가 재생되고 있는 중에 또 폭탄을 던지려고 할때 예외처리 해주기 위한 변수
+	bool m_CancleAction;	// 폭탄 이펙트가 재생중이거나 할 때 또 폭탄 던지려고 하면 true
+	bool m_IsClearBomb; // Lift하는 도중에 MouseRButton떼면 true
 
 public:
+	void SetBomb(class CGameObject* Bomb);
+
+	bool IsClearBomb()	const
+	{
+		return m_IsClearBomb;
+	}
+
+	bool IsCancleAction()	const
+	{
+		return m_CancleAction;
+	}
+
+	bool IsShootFirstTime()	const
+	{
+		return m_ShootFirstTime;
+	}
+
+	bool IsBombCollision()	const
+	{
+		return m_Collision;
+	}
+
+	float GetLiftSpeed()	const
+	{
+		return m_LiftSpeed;
+	}
+
+	void SetClearBomb(bool Clear)
+	{
+		m_IsClearBomb = Clear;
+	}
+
+	void SetCancleAction(bool Cancle)
+	{
+		m_CancleAction = Cancle;
+	}
+
 	void SetLiftSpeed(float Speed)
 	{
 		m_LiftSpeed = Speed;
@@ -34,7 +74,18 @@ public:
 		m_ShootSpeed = Speed;
 	}
 
+	bool IsEmptyLiftPathQueue()	const
+	{
+		return m_LiftBombPathQueue.empty();
+	}
+
 	const Vector3& GetBombPos()		const;
+
+	class CGameObject* GetBomb()	const;
+
+	void OnBombProjectileDestroy(const Vector3& Pos);
+
+	void ClearLiftPathQueue();
 
 public:
 	virtual void Start();
@@ -44,7 +95,6 @@ public:
 	virtual void PrevRender();
 	virtual void Render();
 	virtual void PostRender();
-	virtual void Reset();
 	virtual CPlayerBombComponent* Clone();
 
 public:
@@ -57,6 +107,7 @@ public:
 	void LiftBomb();
 	void ShootBomb(const Vector3& ShootDir);
 	void HideBomb();
+	void ResetInfo();
 	
 public:
 	void OnCollision(const CollisionResult& Result);

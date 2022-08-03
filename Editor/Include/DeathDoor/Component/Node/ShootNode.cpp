@@ -17,6 +17,7 @@ CShootNode::CShootNode()	:
 	m_InRestoreCam(false)
 {
 	SetTypeID(typeid(CShootNode).hash_code());
+
 }
 
 CShootNode::CShootNode(const CShootNode& Node) :
@@ -214,15 +215,25 @@ NodeResult CShootNode::OnUpdate(float DeltaTime)
 		else
 		{
 			CPlayerBombComponent* BombComp = m_Object->FindObjectComponentFromType<CPlayerBombComponent>();
-			if (BombComp)
+
+			// ReadyToShoot 노드에서 Bomb Lift가 아직 안끝났는데 RButton을 떼면 BombComponent와 Bomb Object를 reset 시키고 
+			// BombComponent의 m_IsClearBomb를 true로 만들어준다
+			if (BombComp->IsClearBomb())
+			{
+				BombComp->SetClearBomb(false);
+			}
+
+			else
 			{
 				BombComp->ShootBomb(Dir);
-
-				m_Owner->SetCurrentNode(this);
 			}
 
 			m_InRestoreCam = true;
+			m_Owner->SetCurrentNode(this);
+			m_IsEnd = false;
 		}
+
+		return NodeResult::Node_True;
 	}
 }
 
