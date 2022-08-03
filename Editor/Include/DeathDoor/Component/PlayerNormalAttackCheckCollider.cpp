@@ -104,7 +104,10 @@ void CPlayerNormalAttackCheckCollider::AttackSuccess(const CollisionResult& Resu
 
 	Vector3 Vec1 = (CollideObj->GetWorldPos() - m_Object->GetWorldPos());
 	Vec1.Normalize();
-	Vector3 Vec2 = m_Object->GetMoveDir();
+	Vec1.y = 0.f;
+	Vector3 Vec2 = m_Object->GetWorldAxis(AXIS_Z) * -1.f;
+	Vec2.Normalize();
+	Vec2.y = 0.f;
 
 	// 공격 범위 안에 들어왔는지 판정
 	if (Vec1.Dot(Vec2) > 0.f && PlayerDataComp->GetOnSlash())

@@ -186,7 +186,7 @@ void CPlayerBombComponent::LiftBomb()
 	Vector3 Tmp = m_Object->GetWorldPos() + ZLookDir / 2.f;
 	const Vector3& InitBombPos = Vector3(Tmp.x + XLookDir.x / 3.f, Tmp.y, Tmp.z);
 
-	m_Bomb->SetWorldScale(0.02f, 0.02f, 0.02f);
+	m_Bomb->SetWorldScale(0.005f, 0.005f, 0.005f);
 	m_Bomb->SetWorldPos(InitBombPos);
 	m_Bomb->FindComponentFromType<CStaticMeshComponent>()->GetMaterial(0)->SetEmissiveColor(0.f, 0.f, 0.f, 0.f);
 
@@ -251,7 +251,7 @@ void CPlayerBombComponent::OnCollision(const CollisionResult& Result)
 
 	m_Bomb->SetWorldPos(DestPos);
 
-	m_Object->GetScene()->GetCameraManager()->ShakeCamera(1.5f, 0.3f);
+	m_Object->GetScene()->GetCameraManager()->ShakeCamera(0.3f, 1.5f);
 
 	// ÆøÅº ¶óÀÌÆ® on, ½¦ÀÌ´õ º¯°æ
 	m_Light->Enable(true);
