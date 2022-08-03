@@ -61,7 +61,7 @@ void CTinyCrowDataComponent::OnCollisionPlayer(const CollisionResult& Result)
 		CGameObject* DestObject = Result.Dest->GetGameObject();
 
 		CObjectDataComponent* Data = (CObjectDataComponent*)DestObject->FindComponent("ObjectData");
-		Data->SetIsHit(true);
+		Data->DecreaseHP(1);
 	}
 
 	else if (Result.Dest->GetCollisionProfile()->Name == "PlayerAttack")

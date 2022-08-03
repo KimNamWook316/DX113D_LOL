@@ -442,7 +442,9 @@ void CToolWindow::OnCheckRenderSkyBox(const char* Label, bool Check)
 
 void CToolWindow::OnClickPlay()
 {
-	CSceneManager::GetInst()->GetScene()->Play();
+	CScene* CurScene = CSceneManager::GetInst()->GetScene();
+
+	CurScene->Play();
 
 	m_PlayState->SetText("Current State : Playing");
 
@@ -458,6 +460,18 @@ void CToolWindow::OnClickPlay()
 		if (Comp)
 		{
 			Comp->SetTreeUpdate(true);
+		}
+	}
+
+	CGameObject* Player = CurScene->GetPlayerObject();
+
+	if (Player)
+	{
+		CCameraComponent* Cam = Player->FindComponentFromType<CCameraComponent>();
+
+		if (Cam)
+		{
+			CurScene->GetCameraManager()->SetCurrentCamera(Cam);
 		}
 	}
 }
@@ -501,6 +515,15 @@ void CToolWindow::OnClickStop()
 
 		// Scene Global Data 로드때 세팅으로 변경
 		RefreshGlobalSceneDataWidget();
+
+		CGameObject* EditorCamObj = CEditorManager::GetInst()->Get3DCameraObject();
+
+		CCameraComponent* Cam = EditorCamObj->FindComponentFromType<CCameraComponent>();
+
+		if (Cam)
+		{
+			CSceneManager::GetInst()->GetNextScene()->GetCameraManager()->SetCurrentCamera(Cam);
+		}
 	}
 }
 

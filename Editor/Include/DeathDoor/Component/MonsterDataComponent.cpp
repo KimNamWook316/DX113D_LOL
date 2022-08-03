@@ -322,7 +322,6 @@ void CMonsterDataComponent::OnEndAnimPostAttackDelayOff()
 
 void CMonsterDataComponent::OnDeadPaperBurnEnd()
 {
-	// TODO : Monster Death 관련 -> 차후 Object Pool 몬스터에 대한 처리 필요
 	m_Object->Destroy();
 
 	CDDSceneMode* SceneMode = dynamic_cast<CDDSceneMode*>(m_Scene->GetSceneMode());
@@ -357,6 +356,13 @@ void CMonsterDataComponent::OnDeadAnimEnd()
 {
 	// Death 애니메이션이 끝나면 PaperBurn을 켠다.
 	m_PaperBurn->StartPaperBurn();
+
+	// Emissive
+	size_t Size = m_AnimMesh->GetMaterialSlotCount();
+	for (size_t i = 0; i < Size; ++i)
+	{
+		m_AnimMesh->GetMaterial(i)->SetEmissiveColor(1.f, 1.f, 1.f, 1.f);
+	}
 }
 
 void CMonsterDataComponent::OnPlayerEnterZone(const CollisionResult& Result)
@@ -385,7 +391,7 @@ void CMonsterDataComponent::OnStartCutScene()
 		CGameStateComponent* PlayerState = PlayerObj->FindComponentFromType<CGameStateComponent>();
 		CAnimationSequenceInstance* PlayerAnim = PlayerObj->FindComponentFromType<CAnimationMeshComponent>()->GetAnimationInstance();
 
-		PlayerAnim->ChangeAnimation("PlayerIdle");
+		PlayerAnim->ChangeAnimation("Idle");
 		PlayerState->SetTreeUpdate(false);
 	}
 
@@ -456,12 +462,6 @@ void CMonsterDataComponent::OnActiveMeleeAttackCollider()
 void CMonsterDataComponent::OnInActiveMeleeAttackCollider()
 {
 	m_MeleeAttackCollider->Enable(false);
-
-	// Player Hit False 처리
-	if (m_PlayerData)
-	{
-		m_PlayerData->SetIsHit(false);
-	}
 }
 
 void CMonsterDataComponent::OnHitMeleeAttack(const CollisionResult& Result)
@@ -471,7 +471,6 @@ void CMonsterDataComponent::OnHitMeleeAttack(const CollisionResult& Result)
 	if (m_PlayerData)
 	{
 		m_PlayerData->DecreaseHP(1);
-		m_PlayerData->SetIsHit(true);
 	}
 }
 

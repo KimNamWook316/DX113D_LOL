@@ -34,9 +34,10 @@ CRenderManager::CRenderManager()	:
 	m_ShadowCBuffer(nullptr),
 	m_DebugRender(false),
 	m_PostFXRenderer(nullptr),
-	m_PostProcessing(false),
+	m_PostProcessing(true),
 	m_RenderSkyBox(true),
-	m_FadeCBuffer(nullptr)
+	m_FadeCBuffer(nullptr),
+	m_BombEffect(false)
 {
 }
 
@@ -70,6 +71,24 @@ void CRenderManager::StartFadeEffect(FadeEffecType Type)
 	m_FadeCBuffer->SetFadeStart(true);
 	m_FadeCBuffer->SetFadeStartColor(m_FadeInfo.StartColor);
 	m_FadeCBuffer->SetFadeEndColor(m_FadeInfo.EndColor);
+}
+
+void CRenderManager::EnableBombEffect(float Time)
+{
+	CScene* Scene = CSceneManager::GetInst()->GetScene();
+
+	if (Scene)
+	{
+		// Àü¿ª±¤ ²ö´Ù
+		CLightComponent* GlobalLight = Scene->GetLightManager()->GetGlobalLightComponent();
+
+		m_OriginGLightColor = GlobalLight->GetLightColor();
+		GlobalLight->SetColor(Vector4::Black);
+
+		m_BombEffect = true;
+		m_BombEffectTime = Time;
+		m_BombEffectTimer = 0.f;
+	}
 }
 
 float CRenderManager::GetMiddleGray() const
@@ -620,10 +639,25 @@ void CRenderManager::Render(float DeltaTime)
 	// Fade in out
 	UpdateFadeEffectInfo(DeltaTime);
 
+	// Bomb Effect ½Ã°£ °è»ê
+	if (m_BombEffect)
+	{
+		m_BombEffectTimer += DeltaTime;
+		if (m_BombEffectTimer >= m_BombEffectTime)
+		{
+			m_BombEffect = false;
+			m_BombEffectTimer = 0.f;
+
+			// Àü¿ª±¤ ´Ù½Ã ÄÒ´Ù
+			CLightComponent* GlobalLight = Scene->GetLightManager()->GetGlobalLightComponent();
+			GlobalLight->SetColor(m_OriginGLightColor);
+		}
+	}
+
 	if (m_PostProcessing)
 	{
 		// HDR, Bloom, Adaptation µî PostEffect Ã³¸®
-		m_PostFXRenderer->Render(DeltaTime, m_FinalTarget);
+		m_PostFXRenderer->Render(DeltaTime, m_FinalTarget, m_BombEffect);
 	}
 	else
 	{

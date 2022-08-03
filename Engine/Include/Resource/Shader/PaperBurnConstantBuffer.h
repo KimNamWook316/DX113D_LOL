@@ -21,6 +21,7 @@ public:
 public:
 	void SetInstancingInfo(Instancing3DInfo* Info)
 	{
+		Info->MtrlPaperBurnEnable = true;
 		Info->PaperBurnInLineColor = m_BufferData.InLineColor;
 		Info->PaperBurnOutLineColor = m_BufferData.OutLineColor;
 		Info->PaperBurnCenterLineColor = m_BufferData.CenterLineColor;

@@ -301,7 +301,7 @@ void CEyeLaserComponent::OnRaserCollisionBegin(const CollisionResult& Result)
 
 	if (Comp)
 	{
-		Comp->SetIsHit(true);
+		Comp->DecreaseHP(1);
 	}
 
 	Vector3 RayScale = m_RayCollider->GetWorldScale();

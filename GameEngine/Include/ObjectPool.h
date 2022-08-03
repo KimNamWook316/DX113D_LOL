@@ -9,6 +9,7 @@ private:
 	std::unordered_multimap <std::string, CSharedPtr<CGameObject>> m_mapProjectile;
 	std::unordered_multimap <std::string, CSharedPtr<CGameObject>> m_mapMonster;
 	std::unordered_multimap <std::string, CSharedPtr<CGameObject>> m_mapParticle;
+	std::unordered_multimap <std::string, CSharedPtr<CGameObject>> m_mapMapObject;
 
 	std::string m_DataName;
 
@@ -18,11 +19,14 @@ public:
 	class CGameObject* GetProjectile(const std::string& Name, class CScene* Scene);
 	class CGameObject* GetMonster(const std::string& Name, class CScene* Scene);
 	class CGameObject* GetParticle(const std::string& Name, class CScene* Scene);
+	class CGameObject* GetMapObject(const std::string& Name, class CScene* Scene);
 
 	void ReturnToPool(class CGameObject* Object);
 	void LoadPoolData(const char* FileName);
 	void CreatePoolObject(const std::string& PathName);
 	void RefreshNewScene(class CScene* Scene);
+
+	void GetAllMonsterNames(std::vector<std::string>& OutNames);
 
 	DECLARE_SINGLE(CObjectPool)
 };

@@ -34,6 +34,7 @@
 #include "Node/ClimbUp.h"
 #include "Node/ClimbUpEnd.h"
 #include "Node/ClimbUpStart.h"
+#include "Node/StraightPathCheck.h"
 
 #include "Node/IsClimbingCheck.h"
 #include "Node/SKeyInputCheck.h"
@@ -112,6 +113,11 @@
 
 // Monster - SporeBoomer
 #include "Node/SporeBoomerShootNode.h"
+
+// Monster - HeadRoller 
+#include "Node/HeadRollerStunCheck.h"
+#include "Node/HeadRollerRollNode.h"
+#include "Node/HeadRollerStunNode.h"
 
 #include "GameStateComponent.h"
 
@@ -407,6 +413,11 @@ CNode* CGameBehaviorTree::LoadNode(CNode* Parent, size_t TypeID)
 		NewNode = MakeNode<CClimbDownEnd>(Parent, OwnerObject);
 	}
 
+	else if (TypeID == typeid(CStraightPathCheck).hash_code())
+	{
+		NewNode = MakeNode<CStraightPathCheck>(Parent, OwnerObject);
+	}
+
 	// Boss Knight - Action
 	else if (TypeID == typeid(CBossKnightContinueAttackNode).hash_code())
 	{
@@ -609,6 +620,21 @@ CNode* CGameBehaviorTree::LoadNode(CNode* Parent, size_t TypeID)
 	else if (TypeID == typeid(CSporeBoomerShootNode).hash_code())
 	{
 		NewNode = MakeNode<CSporeBoomerShootNode>(Parent, OwnerObject);
+	}
+
+	// HeadRoller - Condition 
+	else if (TypeID == typeid(CHeadRollerStunCheck).hash_code())
+	{
+		NewNode = MakeNode<CHeadRollerStunCheck>(Parent, OwnerObject);
+	}
+	// HeadRoller - Action
+	else if (TypeID == typeid(CHeadRollerRollNode).hash_code())
+	{
+		NewNode = MakeNode<CHeadRollerRollNode>(Parent, OwnerObject);
+	}
+	else if (TypeID == typeid(CHeadRollerStunNode).hash_code())
+	{
+		NewNode = MakeNode<CHeadRollerStunNode>(Parent, OwnerObject);
 	}
 
 	return NewNode;

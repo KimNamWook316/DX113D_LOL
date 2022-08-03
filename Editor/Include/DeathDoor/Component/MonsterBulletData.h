@@ -14,7 +14,6 @@ protected:
 
 public:
 	virtual void Start() override;
-	virtual void Update(float DeltaTime) override;
 	void OnCollide(const CollisionResult& Result);
 	
 public:
@@ -24,7 +23,5 @@ private:
 	class CColliderSphere* m_Collider;
 	class CProjectileComponent* m_Projectile;
 	class CPlayerDataComponent* m_PlayerData;
-	bool m_HitPlayer;
-	bool m_HitPlayerPrev;
 };
 

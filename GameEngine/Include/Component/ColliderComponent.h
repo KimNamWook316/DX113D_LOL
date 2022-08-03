@@ -202,7 +202,10 @@ public:
     virtual bool CollisionMouse(const Vector2& MousePos) = 0;
     virtual bool CollisionRay(const Ray& Ray);
     virtual void Destroy() override;
-    virtual void Reset();
+    virtual void Reset() override;
+
+public:
+    void ClearCollisionCallBack();
 
 public:
     template <typename T>

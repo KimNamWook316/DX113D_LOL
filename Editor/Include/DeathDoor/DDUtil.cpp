@@ -23,10 +23,12 @@
 #include "Component\MonsterBulletData.h"
 #include "Component\PlayerBombComponent.h"
 #include "Component\LadderCollider.h"
+#include "Component\HeadRollerDataComponent.h"
 
 // TODO : Death Door SceneMode 추가시마다 업데이트
 #include "Scene/DDSceneMode.h"
 #include "Scene/DDBossSceneMode.h"
+#include "Scene/DDInstanceSceneMode.h"
 
 std::string CDDUtil::DDConditionNodeTypeToString(DDConditionNode NodeType)
 {
@@ -89,6 +91,9 @@ std::string CDDUtil::DDConditionNodeTypeToString(DDConditionNode NodeType)
 	case DDConditionNode::AttackCoolTimeCheck:
 		return "AttackCoolTimeCheck";
 
+	case DDConditionNode::StraightPathCheck:
+		return "StraightPathCheck";
+
 	case DDConditionNode::BossKnightFinalAttackCheck:
 		return "BossKnightFinalAttackCheck";
 
@@ -141,6 +146,9 @@ std::string CDDUtil::DDConditionNodeTypeToString(DDConditionNode NodeType)
 	case DDConditionNode::CrowBossShootReadyCheck:
 		return "CrowBossShootReadyCheck";
 
+	// HeadRoller
+	case DDConditionNode::HeadRollerStunCheck:
+		return "HeadRollerStunCheck";
 
 	case DDConditionNode::HPCheck:
 		return "HPCheck";
@@ -250,6 +258,10 @@ DDConditionNode CDDUtil::StringToDDConditionNodeType(const std::string& Str)
 	{
 		return DDConditionNode::AttackCoolTimeCheck;
 	}
+	else if (Str == "StraightPathCheck")
+	{
+		return DDConditionNode::StraightPathCheck;
+	}
 	
 	else if (Str == "BossKnightCutScenePlayCheck")
 	{
@@ -299,7 +311,13 @@ DDConditionNode CDDUtil::StringToDDConditionNodeType(const std::string& Str)
 	}
 	else if (Str == "CrowBossJumpAttackRangeCheck")
 	{
-	return DDConditionNode::CrowBossJumpAttackRangeCheck;
+		return DDConditionNode::CrowBossJumpAttackRangeCheck;
+	}
+
+	// Head Roller
+	else if (Str == "HeadRollerStunCheck")
+	{
+		return DDConditionNode::HeadRollerStunCheck;
 	}
 
 	else if (Str == "HPCheck")
@@ -446,10 +464,15 @@ std::string CDDUtil::DDActionNodeTypeToString(DDActionNode NodeType)
 	case DDActionNode::CrowBossSpitting:
 		return "CrowBossSpitting";
 
-
 	// Spore Boomer
 	case DDActionNode::SporeBoomerShoot:
 		return "SporeBoomerShoot";
+
+	// Head Roller
+	case DDActionNode::HeadRollerStun:
+		return "HeadRollerStun";
+	case DDActionNode::HeadRollerRoll:
+		return "HeadRollerRoll";
 
 	case DDActionNode::ClearPathList:
 		return "ClearPathList";
@@ -616,7 +639,17 @@ DDActionNode CDDUtil::StringToDDActionNodeType(const std::string& Str)
 	}
 	else if (Str == "CrowBossSpitting")
 	{
-	return DDActionNode::CrowBossSpitting;
+		return DDActionNode::CrowBossSpitting;
+	}
+
+	// Head Roller
+	else if (Str == "HeadRollerStun")
+	{
+		return DDActionNode::HeadRollerStun;
+	}
+	else if (Str == "HeadRollerRoll")
+	{
+		return DDActionNode::HeadRollerRoll;
 	}
 
 
@@ -754,6 +787,9 @@ std::string CDDUtil::DDObjectComponentTypeToString(DDObjectComponentType Type)
 
 	case DDObjectComponentType::MonsterBulletData:
 		return "MonsterBulletData";
+
+	case DDObjectComponentType::HeadRollerData:
+		return "HeadRollerData";
 	}
 
 	return "";
@@ -817,9 +853,13 @@ DDObjectComponentType CDDUtil::StringToDDObjectComponentType(const std::string& 
 	{
 		return DDObjectComponentType::FirePlantData;
 	}
-	else if (Str == "MonsterData")
+	else if (Str == "MonsterBulletData")
 	{
-		return DDObjectComponentType::MonsterData;
+		return DDObjectComponentType::MonsterBulletData;
+	}
+	else if (Str == "HeadRollerData")
+	{
+		return DDObjectComponentType::HeadRollerData;
 	}
 
 	return DDObjectComponentType(-1);
@@ -861,6 +901,8 @@ size_t CDDUtil::DDObjectComponentTypeToTypeID(DDObjectComponentType Type)
 		return typeid(CFirePlantDataComponent).hash_code();
 	case DDObjectComponentType::MonsterBulletData:
 		return typeid(CMonsterBulletData).hash_code();
+	case DDObjectComponentType::HeadRollerData:
+		return typeid(CHeadRollerDataComponent).hash_code();
 	}
 	return -1;
 }
@@ -873,6 +915,8 @@ std::string CDDUtil::DDSceneModeTypeToString(DDSceneModeType Type)
 		return "DDSceneMode";
 	case DDSceneModeType::DDBossSceneMode:
 		return "DDBossSceneMode";
+	case DDSceneModeType::DDInstanceSceneMode:
+		return "DDInstanceSceneMode";
 	}
 
 	return "";
@@ -888,6 +932,10 @@ DDSceneModeType CDDUtil::StringToDDSceneModeType(const std::string& Str)
 	{
 		return DDSceneModeType::DDBossSceneMode;
 	}
+	else if (Str == "DDInstanceSceneMode")
+	{
+		return DDSceneModeType::DDInstanceSceneMode;
+	}
 
 	return (DDSceneModeType)(-1);
 }
@@ -900,6 +948,8 @@ size_t CDDUtil::DDSceneModeTypeToTypeID(DDSceneModeType Type)
 		return typeid(CDDSceneMode).hash_code();
 	case DDSceneModeType::DDBossSceneMode:
 		return typeid(CDDBossSceneMode).hash_code();
+	case DDSceneModeType::DDInstanceSceneMode:
+		return typeid(CDDInstanceSceneMode).hash_code();
 	}
 }
 

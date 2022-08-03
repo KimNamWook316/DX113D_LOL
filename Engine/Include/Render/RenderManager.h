@@ -181,6 +181,12 @@ private:
 	float m_FadeEffectTimer;
 	FadeEffectInfo m_FadeInfo;
 
+	// Bomb Effect
+	Vector4 m_OriginGLightColor;
+	bool m_BombEffect;
+	float m_BombEffectTime;
+	float m_BombEffectTimer;
+
 public :
 	CRenderStateManager* GetRenderStateManager() const
 	{
@@ -234,6 +240,8 @@ public:
 	{
 		return m_ShadowCBuffer;
 	}
+
+	void EnableBombEffect(float Time);
 
 	float GetMiddleGray() const;
 	float GetLumWhite() const;

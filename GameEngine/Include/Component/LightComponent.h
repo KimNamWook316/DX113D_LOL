@@ -122,6 +122,7 @@ public:
 	virtual void Start();
 	virtual bool Init();
 	virtual void Update(float DeltaTime);
+	virtual void Reset() override;
 	virtual void PostUpdate(float DeltaTime);
 	virtual void PrevRender();
 	virtual void Render();
@@ -131,6 +132,7 @@ public:
 	virtual bool Load(FILE* File);
     virtual bool SaveOnly(FILE* File) override;
     virtual bool LoadOnly(FILE* File) override;
+	virtual void Enable(bool Enable) override;
 
 public:
 	void SetShader();

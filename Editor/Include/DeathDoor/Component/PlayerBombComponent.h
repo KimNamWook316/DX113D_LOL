@@ -14,6 +14,7 @@ protected:
 
 private:
 	class CPlayerDataComponent* m_PlayerData;
+	class CLightComponent* m_Light;
 	std::queue<Vector3> m_LiftBombPathQueue;
 	class CGameObject* m_Bomb;
 	Vector3 m_LiftDir;

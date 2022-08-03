@@ -194,8 +194,6 @@ void CKnightDataComponent::OnDeadAnimStart()
 void CKnightDataComponent::OnDeadPaperBurnEnd()
 {
 	CMonsterDataComponent::OnDeadPaperBurnEnd();
-
-	// TODO : Boss Knight - 페이퍼번 완료되면 Portal On
 }
 
 void CKnightDataComponent::OnReachedCutSceneAnimPoint()

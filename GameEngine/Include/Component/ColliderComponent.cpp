@@ -365,6 +365,8 @@ void CColliderComponent::Destroy()
 
 void CColliderComponent::Reset()
 {
+	CSceneComponent::Reset();
+
 	m_Scene->GetCollision()->EraseCollider(this);
 
 	size_t Count = m_vecSectionIndex.size();
@@ -374,4 +376,9 @@ void CColliderComponent::Reset()
 		int Index = m_vecSectionIndex[i];
 		m_Scene->GetCollision()->DeleteColliderInSection(this, Index);
 	}
+}
+
+void CColliderComponent::ClearCollisionCallBack()
+{
+	m_CollisionCallback->clear();
 }

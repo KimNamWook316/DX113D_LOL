@@ -38,6 +38,7 @@ public:
 	void ShootByGravityTargetPos(const Vector3& StartPos, const Vector3& XZDir, float Angle,
 		const Vector3& TargetPos, class CGameObject* EndParticleObj = nullptr);
 
+	void ClearCollsionCallBack();
 	bool CheckDestroy();
 	void OnEnd();
 

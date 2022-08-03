@@ -28,6 +28,7 @@
 #include "Component/PaperBurnComponent.h"
 #include "Component/WaterComponent.h"
 #include "Component/PaperBurnComponent.h"
+#include "Component/Arm.h"
 #include "DeathDoor\Component/PlayerNormalAttackCheckCollider.h"
 #include "DeathDoor\Component/EyeLaserComponent.h"
 #include "DeathDoor\Component/PlayerHookComponent.h"
@@ -46,6 +47,7 @@
 #include "DeathDoor\Component/CrackedBlockCollider.h"
 #include "DeathDoor\Component/FirePlantDataComponent.h"
 #include "DeathDoor\Component/MonsterBulletData.h"
+#include "DeathDoor\Component/HeadRollerDataComponent.h"
 // Window
 #include "Window/ObjectHierarchyWindow.h"
 #include "Window/SceneComponentHierarchyWindow.h"
@@ -80,6 +82,7 @@
 // SceneMode
 #include "DeathDoor\Scene\DDSceneMode.h"
 #include "DeathDoor\Scene\DDBossSceneMode.h"
+#include "DeathDoor\Scene\DDInstanceSceneMode.h"
 
 #include <sstream>
 
@@ -278,6 +281,10 @@ void CEditorManager::CreateSceneMode(CScene* Scene, size_t Type)
 	{
 		Scene->LoadSceneMode<CDDBossSceneMode>();
 	}
+	else if (Type == typeid(CDDInstanceSceneMode).hash_code())
+	{
+		Scene->LoadSceneMode<CDDInstanceSceneMode>();
+	}
 }
 
 CGameObject* CEditorManager::CreateObject(CScene* Scene, size_t Type)
@@ -310,6 +317,11 @@ CComponent* CEditorManager::CreateComponent(CGameObject* Obj, size_t Type)
 	else if (Type == typeid(CSpriteComponent).hash_code())
 	{
 		CComponent* Component = Obj->LoadComponent<CSpriteComponent>();
+		return Component;
+	}
+	else if (Type == typeid(CArm).hash_code())
+	{
+		CComponent* Component = Obj->LoadComponent<CArm>();
 		return Component;
 	}
 	else if (Type == typeid(CStaticMeshComponent).hash_code())
@@ -536,6 +548,12 @@ CComponent* CEditorManager::CreateComponent(CGameObject* Obj, size_t Type)
 	else if (Type == typeid(CMonsterBulletData).hash_code())
 	{
 		CMonsterBulletData* Component = Obj->LoadObjectComponent<CMonsterBulletData>();
+		return Component;
+	}
+
+	else if (Type == typeid(CHeadRollerDataComponent).hash_code())
+	{
+		CHeadRollerDataComponent* Component = Obj->LoadObjectComponent<CHeadRollerDataComponent>();
 		return Component;
 	}
 

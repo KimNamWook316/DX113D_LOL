@@ -369,7 +369,7 @@ void CCrowBossDataComponent::OnCollision(const CollisionResult& Result)
 
 		if (!Data->IsUnbeatable())
 		{
-			Data->SetIsHit(true);
+			Data->DecreaseHP(1);
 		}
 	}
 }

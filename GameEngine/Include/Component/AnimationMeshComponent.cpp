@@ -73,6 +73,18 @@ void CAnimationMeshComponent::SetScene(CScene* Scene)
 	}
 }
 
+void CAnimationMeshComponent::SetAnimationInstance(CAnimationSequenceInstance* AnimInst)
+{
+	SAFE_DELETE(m_Animation);
+
+	m_Animation = AnimInst;
+
+	m_Animation->SetScene(m_Scene);
+	m_Animation->SetOwner(this);
+	m_Animation->SetSkeleton(m_Skeleton);
+	m_Animation->SetInstancingBoneBuffer(m_Mesh->GetBoneBuffer());
+}
+
 void CAnimationMeshComponent::SetMesh(const std::string& Name)
 {
 	CAnimationMesh* FoundMesh = (CAnimationMesh*)m_Scene->GetResource()->FindMesh(Name);

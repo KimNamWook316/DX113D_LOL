@@ -55,6 +55,8 @@
 #include "../DeathDoor/Component/Node/IsClimbingCheck.h"
 #include "../DeathDoor/Component/Node/ClimbPause.h"
 
+#include "../DeathDoor/Component/Node/StraightPathCheck.h"
+
 // BossKnight
 #include "../DeathDoor/Component/Node/BossKnightContinueAttackNode.h"
 #include "../DeathDoor/Component/Node/BossKnightCutScenePlayCheck.h"
@@ -109,6 +111,11 @@
 
 // SporeBoomer
 #include "../DeathDoor/Component/Node/SporeBoomerShootNode.h"
+
+// HeadRoller
+#include "../DeathDoor/Component/Node/HeadRollerStunCheck.h"
+#include "../DeathDoor/Component/Node/HeadRollerRollNode.h"
+#include "../DeathDoor/Component/Node/HeadRollerStunNode.h"
 
 #include "../DeathDoor/Component/Node/HitCheckNode.h"
 #include "../DeathDoor/Component/Node/HitBackNode.h"
@@ -703,6 +710,18 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
             break;
         }
 
+        // Head Roller
+        case DDActionNode::HeadRollerRoll:
+        {
+            NewTreeNode = m_StateComponent->CreateTreeNode<CHeadRollerRollNode>(Name);
+            break;
+        }
+        case DDActionNode::HeadRollerStun:
+        {
+            NewTreeNode = m_StateComponent->CreateTreeNode<CHeadRollerStunNode>(Name);
+            break;
+        }
+
 		}
         break;
     }
@@ -786,6 +805,9 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
         case DDConditionNode::PlayerEnterTriggerIsEnable:
             NewTreeNode = m_StateComponent->CreateTreeNode<CPlayerEnterTriggerIsEnable>(Name);
             break;
+        case DDConditionNode::StraightPathCheck:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CStraightPathCheck>(Name);
+            break;
 
         case DDConditionNode::MeleeAttackRangeCheck:
             NewTreeNode = m_StateComponent->CreateTreeNode<CMeleeRangeCheckNode>(Name);
@@ -860,6 +882,10 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
             NewTreeNode = m_StateComponent->CreateTreeNode<CCrowBossShootReadyCheck>(Name);
             break;
 
+		// HeadRoller
+        case DDConditionNode::HeadRollerStunCheck:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CHeadRollerStunCheck>(Name);
+            break;
 
         case DDConditionNode::IsCombatCheck:
             NewTreeNode = m_StateComponent->CreateTreeNode<CIsCombatCheck>(Name);

@@ -105,6 +105,25 @@ CGameObject* CObjectPool::GetParticle(const std::string& Name, class CScene* Sce
 	return Object;
 }
 
+CGameObject* CObjectPool::GetMapObject(const std::string& Name, CScene* Scene)
+{
+	auto iter = m_mapMapObject.find(Name);
+
+	if (iter == m_mapMapObject.end())
+		return nullptr;
+
+	CGameObject* Object = iter->second;
+
+	Object->m_Active = true;
+	Scene->AddObject(Object);
+	Object->Start();
+	Object->Enable(true);
+
+	m_mapMapObject.erase(iter);
+
+	return Object;
+}
+
 void CObjectPool::ReturnToPool(CGameObject* Object)
 {
 	if (Object->GetObjectType() == Object_Type::Particle)
@@ -120,6 +139,11 @@ void CObjectPool::ReturnToPool(CGameObject* Object)
 	else if (Object->GetObjectType() == Object_Type::Projectile)
 	{
 		m_mapProjectile.insert(std::make_pair(Object->GetName(), Object));
+	}
+
+	else if (Object->GetObjectType() == Object_Type::MapObject)
+	{
+		m_mapMapObject.insert(std::make_pair(Object->GetName(), Object));
 	}
 }
 
@@ -171,10 +195,11 @@ void CObjectPool::CreatePoolObject(const std::string& PathName)
 			Object->SetName(ObjectName);
 			Object->SetInPool(true);
 			Object->SetScene(CSceneManager::GetInst()->GetScene());
-			Object->SetWorldPos(FLT_MAX, FLT_MAX, FLT_MAX);
-			Object->Enable(false);
 
 			bool Result = Object->LoadHierarchy(FullPath);
+
+			Object->SetScene(CSceneManager::GetInst()->GetScene());
+			Object->SetWorldPos(FLT_MAX, FLT_MAX, FLT_MAX);
 
 			Object->Enable(false);
 
@@ -192,6 +217,9 @@ void CObjectPool::CreatePoolObject(const std::string& PathName)
 					break;
 				case Object_Type::Monster:
 					m_mapMonster.insert(std::make_pair(ObjectName, Object));
+					break;
+				case Object_Type::MapObject:
+					m_mapMapObject.insert(std::make_pair(ObjectName, Object));
 					break;
 				}
 			}
@@ -230,5 +258,29 @@ void CObjectPool::RefreshNewScene(CScene* Scene)
 	for (; iter != iterEnd; ++iter)
 	{
 		iter->second->SetScene(Scene);
+	}
+
+	iter = m_mapMapObject.begin();
+	iterEnd = m_mapMapObject.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		iter->second->SetScene(Scene);
+	}
+}
+
+void CObjectPool::GetAllMonsterNames(std::vector<std::string>& OutNames)
+{
+	auto iter = m_mapMonster.begin();
+	auto iterEnd = m_mapMonster.end();
+
+	std::string Name;
+	for (; iter != iterEnd; ++iter)
+	{
+		if (Name != iter->first)
+		{
+			OutNames.push_back(iter->first);
+			Name = iter->first;
+		}
 	}
 }

@@ -35,29 +35,15 @@ void CMonsterBulletData::Start()
 	}
 }
 
-void CMonsterBulletData::Update(float DeltaTime)
-{
-	if (m_HitPlayer && !m_HitPlayerPrev)
-	{
-		m_HitPlayerPrev = true;
-	}
-	else if (m_HitPlayerPrev)
-	{
-		m_Object->Destroy();
-		m_PlayerData->SetIsHit(false);
-	}
-}
-
 void CMonsterBulletData::OnCollide(const CollisionResult& Result)
 {
 	CGameObject* Player = m_Scene->GetPlayerObject();
 
-	if (Player == Result.Dest->GetGameObject())
+	if (m_PlayerData->IsUnbeatable() == false && Player == Result.Dest->GetGameObject())
 	{
-		m_PlayerData->SetIsHit(true);
 		m_PlayerData->DecreaseHP(1);
-		m_HitPlayer = true;
 		m_Collider->Enable(false);
+		m_Object->Destroy();
 	}
 }
 

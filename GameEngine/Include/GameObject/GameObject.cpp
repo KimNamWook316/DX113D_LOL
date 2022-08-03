@@ -61,6 +61,8 @@ CGameObject::~CGameObject()
 
 void CGameObject::Enable(bool Enable)
 {
+	CRef::Enable(Enable);
+
 	if (m_RootComponent)
 	{
 		m_RootComponent->Enable(Enable);

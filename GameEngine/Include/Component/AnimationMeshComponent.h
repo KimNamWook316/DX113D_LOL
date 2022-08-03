@@ -58,6 +58,8 @@ public:
 
     virtual void SetScene(class CScene* Scene) override;
 
+    void SetAnimationInstance(CAnimationSequenceInstance* AnimInst);
+
 public:
     void SetMesh(const std::string& Name);
     void SetMesh(CAnimationMesh* Mesh);

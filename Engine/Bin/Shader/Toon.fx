@@ -165,7 +165,11 @@ PSOutput_GBuffer ToonInstancingPS(Vertex3DOutputInstancing input)
 
 	if (g_InstancingInfoArray[InstancingIndex].g_MtrlPaperBurnEnable)
 	{
-		output.Diffuse = PaperBurn2D(output.Diffuse, ScaledUV);
+		output.Diffuse = PaperBurn2DInstancing(output.Diffuse, ScaledUV, g_InstancingInfoArray[InstancingIndex].g_PaperBurnInverse,
+        g_InstancingInfoArray[InstancingIndex].g_PaperBurnFilter, g_InstancingInfoArray[InstancingIndex].g_PaperBurnInFilter,
+        g_InstancingInfoArray[InstancingIndex].g_PaperBurnCenterFilter, g_InstancingInfoArray[InstancingIndex].g_PaperBurnOutFilter,
+        g_InstancingInfoArray[InstancingIndex].g_PaperBurnInLineColor, g_InstancingInfoArray[InstancingIndex].g_PaperBurnCenterLineColor,
+        g_InstancingInfoArray[InstancingIndex].g_PaperBurnOutLineColor);
 	}
 
 	return output;
