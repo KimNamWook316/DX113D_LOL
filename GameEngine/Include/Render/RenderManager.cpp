@@ -75,6 +75,11 @@ void CRenderManager::StartFadeEffect(FadeEffecType Type)
 
 void CRenderManager::EnableBombEffect(float Time)
 {
+	if (m_BombEffect)
+	{
+		return;
+	}
+
 	CScene* Scene = CSceneManager::GetInst()->GetScene();
 
 	if (Scene)
