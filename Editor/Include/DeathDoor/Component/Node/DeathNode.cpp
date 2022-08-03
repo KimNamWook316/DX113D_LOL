@@ -34,7 +34,7 @@ NodeResult CDeathNode::OnStart(float DeltaTime)
 
 	CObjectDataComponent* Data = dynamic_cast<CObjectDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
 	Data->SetNoInterrupt(true);
-	m_Owner->SetCurrentNode(nullptr);
+	m_Owner->SetCurrentNode(this);
 
 	return NodeResult::Node_True;
 }

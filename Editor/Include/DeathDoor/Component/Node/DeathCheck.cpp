@@ -1,7 +1,7 @@
 #include "DeathCheck.h"
 #include "../GameStateComponent.h"
 #include "../GameBehaviorTree.h"
-#include "../ObjectDataComponent.h"
+#include "../MonsterDataComponent.h"
 #include "Scene/Scene.h"
 
 CDeathCheck::CDeathCheck()
@@ -20,7 +20,7 @@ CDeathCheck::~CDeathCheck()
 
 NodeResult CDeathCheck::OnStart(float DeltaTime)
 {
-	CObjectDataComponent* Data = dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData();
+	CMonsterDataComponent* Data = (CMonsterDataComponent*)dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData();
 
 	int HP = Data->GetHP();
 

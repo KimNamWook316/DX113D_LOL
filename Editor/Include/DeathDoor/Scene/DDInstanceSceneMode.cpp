@@ -53,6 +53,15 @@ void CDDInstanceSceneMode::Start()
 	{
 		m_ExitPointObj->Enable(false);
 	}
+
+	// 모든 소환될 몬스터의 카운트 스폰 카운터에 추가
+	auto iter = m_SpawnPhaseList.begin();
+	auto iterEnd = m_SpawnPhaseList.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		m_MonsterCount += int((*iter)->SpawnList.size());
+	}
 }
 
 void CDDInstanceSceneMode::Update(float DeltaTime)
@@ -301,10 +310,10 @@ void CDDInstanceSceneMode::OnDieMonster()
 
 void CDDInstanceSceneMode::OnClearDungeon()
 {
+	CDDSceneMode::OnClearDungeon();
+
 	m_BlockerDownMoving = true;
 	m_BlockerUpMoving = false;
-
-	m_ExitPointObj->Enable(true);
 }
 
 void CDDInstanceSceneMode::AddSpawnPhase()

@@ -716,9 +716,6 @@ void CPostFXRenderer::RenderBombEffect(CRenderTarget* LDRTarget)
 	LDRTarget->ResetTargetShader(10);
 	Context->PSSetShaderResources(12, 1, &SRV);
 	Context->PSSetShaderResources(13, 1, &SRV);
-
-	// 현재 프레임 평균 휘도를 저장
-	SavePrevLum();
 }
 
 void CPostFXRenderer::SavePrevLum()

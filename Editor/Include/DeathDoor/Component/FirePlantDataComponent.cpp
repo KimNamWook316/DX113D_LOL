@@ -63,6 +63,7 @@ void CFirePlantDataComponent::OnShootBullet()
 	Vector3 MyPos = m_FirePos->GetWorldPos();
 
 	Vector3 ToPlayer = PlayerPos - MyPos;
+	ToPlayer.y = 0.f;
 	ToPlayer.Normalize();
 
 	if (Data)

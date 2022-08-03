@@ -189,7 +189,7 @@ void CSceneComponentHierarchyWindow::OnDragDropSrc(CIMGUITree* SrcTree)
 			// ObjectHierarchy Window에서 찾은 Object내에서 SceneComponent Hierarchy Window에서 Drag Drop의 Src에 해당하는 Component를 찾기
 			CSceneComponent * Comp = (CSceneComponent*)Obj->FindComponent(m_DragSrc->GetName());
 
-			Comp->ClearParent();
+			// Comp->ClearParent();
 		}
 	}
 }
@@ -212,7 +212,15 @@ void CSceneComponentHierarchyWindow::OnDragDropDest(CIMGUITree* DestTree, const 
 		if (Obj)
 		{
 			CSceneComponent* ParentComponent = (CSceneComponent*)Obj->FindComponent(ParentName);
-			CSceneComponent* ChildComponent = (CSceneComponent*)Obj->FindComponent(NewChildName);
+			CSharedPtr<CSceneComponent> ChildComponent = (CSceneComponent*)Obj->FindComponent(NewChildName);
+
+			// 원래 Child Component의 부모에게 이 오브젝트를 자식에서 제외하라고 알림
+			CSceneComponent* OriginChildRoot = ChildComponent->GetParent();
+
+			if (OriginChildRoot)
+			{
+				OriginChildRoot->DeleteChild(ChildComponent);
+			}
 
 			ParentComponent->AddChild(ChildComponent);
 		}
