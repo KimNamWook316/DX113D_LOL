@@ -14,9 +14,7 @@
 #include "Component/Node/CompositeNode.h"
 
 CShootNode::CShootNode()	:
-	m_InRestoreCam(false),
-	m_CameraMoveSpeed(50.f),
-	m_CameraMoveTime(0.f)
+	m_InRestoreCam(false)
 {
 	SetTypeID(typeid(CShootNode).hash_code());
 }
@@ -32,15 +30,12 @@ CShootNode::~CShootNode()
 
 NodeResult CShootNode::OnStart(float DeltaTime)
 {
-	m_CurrentCamPos = m_Object->GetScene()->GetCameraManager()->GetCurrentCamera()->GetWorldPos();
-
-	// Shoot방향으로 카메라가 움직이기 전에 ReadyToShoot 노드에서 저장해놓은 원래 카메라 위치
-	Vector3 CamOriginPos = m_Object->GetScene()->GetOriginCamPos();
-	float Dist = m_CurrentCamPos.Distance(CamOriginPos);
-
-	m_CameraMoveTime = Dist / m_CameraMoveSpeed;
-
 	m_CallStart = true;
+
+	// 카메라 복귀 시작
+	CCameraComponent* CurCam = m_Object->GetScene()->GetCameraManager()->GetCurrentCamera();
+	CurCam->SetMoveReverse(true);
+	CurCam->SetMoveFreeze(false);
 
 	return NodeResult::Node_True;
 }
@@ -58,14 +53,19 @@ NodeResult CShootNode::OnUpdate(float DeltaTime)
 	Vector3 Dir = Vector3(Point.x, 0.f, Point.z) - Vector3(ObjectPos.x, 0.f, ObjectPos.z);
 	Dir.Normalize();
 
+	CCameraComponent* CurCam = CSceneManager::GetInst()->GetScene()->GetCameraManager()->GetCurrentCamera();
+
+	bool IsCamMoving = CurCam->IsMoving();
+
 	if (Ability == Player_Ability::Hook)
 	{
+		// 카메라 복귀중
 		if (m_InRestoreCam)
 		{
-			CScene* Scene = CSceneManager::GetInst()->GetScene();
-			bool RestoreEnd = Scene->RestoreCamera(m_CameraMoveTime, m_CurrentCamPos, DeltaTime);
+			CurCam->SetMoveFreeze(false);
 
-			if (RestoreEnd)
+			// 카메라 복귀가 끝나면 노드에서 빠져나감
+			if (!IsCamMoving)
 			{
 				m_IsEnd = true;
 				m_CallStart = false;
@@ -75,10 +75,7 @@ NodeResult CShootNode::OnUpdate(float DeltaTime)
 				return NodeResult::Node_True;
 			}
 
-			else
-			{
-				return NodeResult::Node_Running;
-			}
+			return NodeResult::Node_Running;
 		}
 
 		CPlayerHookComponent* Comp = m_Object->FindComponentFromType<CPlayerHookComponent>();
@@ -89,37 +86,40 @@ NodeResult CShootNode::OnUpdate(float DeltaTime)
 
 			if (Result == HookResult::NoCollision)
 			{
+				// 충돌하지 않은 경우 카메라 복귀
+				CurCam->SetMoveReverse(true);
 				m_InRestoreCam = true;
 				return NodeResult::Node_Running;
 			}
 
 			else if (Result == HookResult::Collision)
 			{
+				// 날아가는 중 카메라 계속 그 자리에 프리즈
 				m_Owner->SetCurrentNode(this);
+				CurCam->SetMoveReverse(false);
+				CurCam->SetMoveFreeze(true);
 				return NodeResult::Node_Running;
 				// 충돌된 지점까지 플레이어가 날아가고 있는중
 			}
 
 			else if(Result == HookResult::OnShoot)
 			{
+				// 발사중 카메라 프리즈
 				m_Owner->SetCurrentNode(this);
+				CurCam->SetMoveReverse(false);
+				CurCam->SetMoveFreeze(true);
 				return NodeResult::Node_Running;
 			}
 
 			else if (Result == HookResult::CollisionEnd)
 			{
+				// 충돌하면 카메라 복귀시키지 않는다.
 				m_Owner->SetCurrentNode(nullptr);
+				CurCam->StopMove();
 				return NodeResult::Node_True;
 			}
 
 		}
-
-		else
-		{
-			// CancleShootNode를 CurrentNode로 만들어서 카메라 원래 위치로 복구
-			m_Owner->SetCurrentNode(((CCompositeNode*)m_Parent->GetParent())->GetChild(1));
-		}
-
 		m_CallStart = true;
 
 		return NodeResult::Node_True;
@@ -127,25 +127,14 @@ NodeResult CShootNode::OnUpdate(float DeltaTime)
 
 	else if (Ability == Player_Ability::Arrow)
 	{
-		if (m_InRestoreCam)
+		if (!IsCamMoving)
 		{
-			CScene* Scene = CSceneManager::GetInst()->GetScene();
-			bool RestoreEnd = Scene->RestoreCamera(m_CameraMoveTime, m_CurrentCamPos, DeltaTime);
+			m_IsEnd = true;
+			m_CallStart = false;
+			m_Owner->SetCurrentNode(nullptr);
+			m_InRestoreCam = false;
 
-			if (RestoreEnd)
-			{
-				m_IsEnd = true;
-				m_CallStart = false;
-				m_Owner->SetCurrentNode(nullptr);
-				m_InRestoreCam = false;
-
-				return NodeResult::Node_True;
-			}
-
-			else
-			{
-				return NodeResult::Node_Running;
-			}
+			return NodeResult::Node_True;
 		}
 
 		else
@@ -160,8 +149,6 @@ NodeResult CShootNode::OnUpdate(float DeltaTime)
 
 				BowComp->HideBow();
 			}
-
-			m_InRestoreCam = true;
 		}
 
 		m_CallStart = true;
@@ -171,26 +158,14 @@ NodeResult CShootNode::OnUpdate(float DeltaTime)
 
 	else if (Ability == Player_Ability::Bomb)
 	{
-		if (m_InRestoreCam)
+		if (!IsCamMoving)
 		{
-			CScene* Scene = CSceneManager::GetInst()->GetScene();
-			bool RestoreEnd = Scene->RestoreCamera(m_CameraMoveTime, m_CurrentCamPos, DeltaTime);
+			m_IsEnd = true;
+			m_CallStart = false;
+			m_Owner->SetCurrentNode(nullptr);
+			m_InRestoreCam = false;
 
-			if (RestoreEnd)
-			{
-				m_IsEnd = true;
-				m_CallStart = false;
-				m_Owner->SetCurrentNode(nullptr);
-				m_InRestoreCam = false;
-
-				return NodeResult::Node_True;
-			}
-
-			else
-			{
-				return NodeResult::Node_Running;
-			}
-
+			return NodeResult::Node_True;
 		}
 
 		else

@@ -38,7 +38,7 @@ CCameraComponent::~CCameraComponent()
 {
 	SAFE_DELETE(m_Frustum);
 
-	ClearMoveData();
+	ClearCutSceneMoveData();
 }
 
 void CCameraComponent::Shake(float Time, float Amount)
@@ -53,7 +53,30 @@ void CCameraComponent::Shake(float Time, float Amount)
 	m_ShakeMaxTime = Time;
 	m_ShakeAmount = Amount;
 	m_ShakeDecreaseTick = m_ShakeAmount / Time;
-	m_OriginRelavitePos = GetRelativePos();
+}
+
+void CCameraComponent::StartMove(const Vector3& StartPos, const Vector3& EndPos, float MoveTime, bool Reverse, bool MoveFreeze)
+{
+	if (m_LinearMove)
+	{
+		return;
+	}
+
+	m_LinearMove = true;
+	m_ReverseMove = Reverse;
+	m_MoveStartPos = StartPos;
+	m_MoveDestPos = EndPos;
+	m_MoveTime = MoveTime;
+	m_MoveFreeze = MoveFreeze;
+
+	if (m_ReverseMove)
+	{
+		m_MoveAccTime = 1.f;
+	}
+	else
+	{
+		m_MoveAccTime = 0.f;
+	}
 }
 
 CamMoveData* CCameraComponent::FindMoveData(int Index)
@@ -66,8 +89,8 @@ CamMoveData* CCameraComponent::FindMoveData(int Index)
 	CamMoveData* Find = nullptr;
 
 	int Idx = 0;
-	auto iter = m_MoveDataList.begin();
-	auto iterEnd = m_MoveDataList.end();
+	auto iter = m_CutSceneMoveDataList.begin();
+	auto iterEnd = m_CutSceneMoveDataList.end();
 
 	for (; iter != iterEnd; ++iter)
 	{
@@ -115,7 +138,7 @@ void CCameraComponent::CreateProjectionMatrix()
 
 bool CCameraComponent::IsValidMoveDataIndex(int Index)
 {
-	if (Index < 0 || Index >= m_MoveDataList.size())
+	if (Index < 0 || Index >= m_CutSceneMoveDataList.size())
 	{
 		return false;
 	}
@@ -124,20 +147,20 @@ bool CCameraComponent::IsValidMoveDataIndex(int Index)
 
 void CCameraComponent::UpdateCurMoveData()
 {
-	m_CurMoveData = m_MoveDataList.front();
+	m_CurCutSceneMoveData = m_CutSceneMoveDataList.front();
 
-	Vector3 ToMovePoint = m_CurMoveData->DestPoint - GetWorldPos();
+	Vector3 ToMovePoint = m_CurCutSceneMoveData->DestPoint - GetWorldPos();
 
-	m_CurMoveTick = ToMovePoint.Length() / m_CurMoveData->NextPointReachTime;
-	m_CurMoveDir = ToMovePoint;
+	m_CurCutSceneMoveTick = ToMovePoint.Length() / m_CurCutSceneMoveData->NextPointReachTime;
+	m_CurCutSceneMoveDir = ToMovePoint;
 
-	m_CurMoveDir.Normalize();
+	m_CurCutSceneMoveDir.Normalize();
 
-	m_MoveDataList.pop_front();
+	m_CutSceneMoveDataList.pop_front();
 
-	if (m_CurMoveData->CallBack[(int)CamMoveCallBackCallType::START_MOVE])
+	if (m_CurCutSceneMoveData->CallBack[(int)CamMoveCallBackCallType::START_MOVE])
 	{
-		m_CurMoveData->CallBack[(int)CamMoveCallBackCallType::START_MOVE]();
+		m_CurCutSceneMoveData->CallBack[(int)CamMoveCallBackCallType::START_MOVE]();
 	}
 }
 
@@ -224,90 +247,90 @@ void CCameraComponent::ComputeShadowView()
 	}
 }
 
-void CCameraComponent::StartMove()
+void CCameraComponent::StartCutSceneMove()
 {
-	if (m_MoveDataList.empty())
+	if (m_CutSceneMoveDataList.empty())
 	{
 		return;
 	}
 
-	m_StartMove = true;
+	m_StartCutSceneMove = true;
 
 	UpdateCurMoveData();
 
-	SetWorldPos(m_CurMoveData->DestPoint);
+	SetWorldPos(m_CurCutSceneMoveData->DestPoint);
 
 	m_Scene->GetCameraManager()->KeepCamera();
 	m_Scene->GetCameraManager()->SetCurrentCamera(this);
 }
 
-void CCameraComponent::Move(float DeltaTime)
+void CCameraComponent::CutSceneMove(float DeltaTime)
 {
-	if (!m_CurMoveData)
+	if (!m_CurCutSceneMoveData)
 	{
 		UpdateCurMoveData();
 	}
 
-	Vector3 ToPoint = m_CurMoveData->DestPoint - GetWorldPos();
+	Vector3 ToPoint = m_CurCutSceneMoveData->DestPoint - GetWorldPos();
 
-	if (ToPoint.Dot(m_CurMoveDir) < 0)
+	if (ToPoint.Dot(m_CurCutSceneMoveDir) < 0)
 	{
-		SetWorldPos(m_CurMoveData->DestPoint);
-		m_StayStart = true;
+		SetWorldPos(m_CurCutSceneMoveData->DestPoint);
+		m_CutSceneStayStart = true;
 
 		return;
 	}
 
-	if (m_CurMoveData->NextPointReachTime == 0.f)
+	if (m_CurCutSceneMoveData->NextPointReachTime == 0.f)
 	{
-		SetWorldPos(m_CurMoveData->DestPoint);
-		m_StayStart = true;
+		SetWorldPos(m_CurCutSceneMoveData->DestPoint);
+		m_CutSceneStayStart = true;
 	}
 
-	if (m_StayStart)
+	if (m_CutSceneStayStart)
 	{
-		m_StayTimer += DeltaTime;
+		m_CutSceneStayTimer += DeltaTime;
 
-		if (m_StayTimer >= m_CurMoveData->StayTime)
+		if (m_CutSceneStayTimer >= m_CurCutSceneMoveData->StayTime)
 		{
-			if (m_CurMoveData->CallBack[(int)CamMoveCallBackCallType::REACHED_POINT])
+			if (m_CurCutSceneMoveData->CallBack[(int)CamMoveCallBackCallType::REACHED_POINT])
 			{
-				m_CurMoveData->CallBack[(int)CamMoveCallBackCallType::REACHED_POINT]();
+				m_CurCutSceneMoveData->CallBack[(int)CamMoveCallBackCallType::REACHED_POINT]();
 			}
 
-			m_StayStart = false;
-			SAFE_DELETE(m_CurMoveData);
-			m_CurMoveData = nullptr;
-			m_StayTimer = 0.f;
+			m_CutSceneStayStart = false;
+			SAFE_DELETE(m_CurCutSceneMoveData);
+			m_CurCutSceneMoveData = nullptr;
+			m_CutSceneStayTimer = 0.f;
 
-			if (m_MoveDataList.empty())
+			if (m_CutSceneMoveDataList.empty())
 			{
-				if (m_MoveEndCallBack)
+				if (m_CutSceneMoveEndCallBack)
 				{
-					m_MoveEndCallBack();
+					m_CutSceneMoveEndCallBack();
 				}
 
-				m_StartMove = false;
+				m_StartCutSceneMove = false;
 			}
 		}
 	}
 	else
 	{
-		AddWorldPos(m_CurMoveDir * m_CurMoveTick * DeltaTime);
+		AddWorldPos(m_CurCutSceneMoveDir * m_CurCutSceneMoveTick * DeltaTime);
 	}
 }
 
-void CCameraComponent::ClearMoveData()
+void CCameraComponent::ClearCutSceneMoveData()
 {
-	auto iter = m_MoveDataList.begin();
-	auto iterEnd = m_MoveDataList.end();
+	auto iter = m_CutSceneMoveDataList.begin();
+	auto iterEnd = m_CutSceneMoveDataList.end();
 
 	for (; iter != iterEnd; ++iter)
 	{
 		SAFE_DELETE(*iter);
 	}
 
-	m_MoveDataList.clear();
+	m_CutSceneMoveDataList.clear();
 
 #ifdef _DEBUG
 	iter = m_TestMoveDataList.begin();
@@ -322,34 +345,34 @@ void CCameraComponent::ClearMoveData()
 #endif // _DEBUG
 }
 
-CamMoveData* CCameraComponent::AddMoveData(const Vector3& Point, float NextPointReachTime, float StayTime)
+CamMoveData* CCameraComponent::AddCutSceneMoveData(const Vector3& Point, float NextPointReachTime, float StayTime)
 {
 	CamMoveData* Data = new CamMoveData;
 	Data->DestPoint = Point;
 	Data->NextPointReachTime = NextPointReachTime;
 	Data->StayTime = StayTime;
 
-	m_MoveDataList.push_back(Data);
+	m_CutSceneMoveDataList.push_back(Data);
 
 	return Data;
 }
 
-bool CCameraComponent::DeleteMoveData(int Index)
+bool CCameraComponent::DeleteCutSceneMoveData(int Index)
 {
 	if (!IsValidMoveDataIndex(Index))
 	{
 		return false;
 	}
 
-	auto iter = m_MoveDataList.begin();
-	auto iterEnd = m_MoveDataList.end();
+	auto iter = m_CutSceneMoveDataList.begin();
+	auto iterEnd = m_CutSceneMoveDataList.end();
 
 	for (int Idx = 0; iter != iterEnd; ++iter, ++Idx)
 	{
 		if (Index == Idx)
 		{
 			SAFE_DELETE((*iter));
-			m_MoveDataList.erase(iter);
+			m_CutSceneMoveDataList.erase(iter);
 			return true;
 		}
 	}
@@ -357,17 +380,17 @@ bool CCameraComponent::DeleteMoveData(int Index)
 	return false;
 }
 
-bool CCameraComponent::DeleteMoveData(CamMoveData* Data)
+bool CCameraComponent::DeleteCutSceneMoveData(CamMoveData* Data)
 {
-	auto iter = m_MoveDataList.begin();
-	auto iterEnd = m_MoveDataList.end();
+	auto iter = m_CutSceneMoveDataList.begin();
+	auto iterEnd = m_CutSceneMoveDataList.end();
 
 	for (; iter != iterEnd; ++iter)
 	{
 		if ((*iter) == Data)
 		{
 			SAFE_DELETE((*iter));
-			m_MoveDataList.erase(iter);
+			m_CutSceneMoveDataList.erase(iter);
 			return true;
 		}
 	}
@@ -375,7 +398,7 @@ bool CCameraComponent::DeleteMoveData(CamMoveData* Data)
 	return false;
 }
 
-void CCameraComponent::ChangeMoveData(int Index, const Vector3& Point, float NextPointReachTime, float StayTime)
+void CCameraComponent::ChangeCutSceneMoveData(int Index, const Vector3& Point, float NextPointReachTime, float StayTime)
 {
 	if (!IsValidMoveDataIndex(Index))
 	{
@@ -388,7 +411,7 @@ void CCameraComponent::ChangeMoveData(int Index, const Vector3& Point, float Nex
 	Data->StayTime = StayTime;
 }
 
-void CCameraComponent::ChangeMoveDestPoint(int Index, const Vector3& Point)
+void CCameraComponent::ChangeCutSceneMoveDestPoint(int Index, const Vector3& Point)
 {
 	if (!IsValidMoveDataIndex(Index))
 	{
@@ -399,7 +422,7 @@ void CCameraComponent::ChangeMoveDestPoint(int Index, const Vector3& Point)
 	Data->DestPoint = Point;
 }
 
-void CCameraComponent::ChangeMoveDestReachTime(int Index, float Time)
+void CCameraComponent::ChangeCutSceneMoveDestReachTime(int Index, float Time)
 {
 	if (!IsValidMoveDataIndex(Index))
 	{
@@ -410,7 +433,7 @@ void CCameraComponent::ChangeMoveDestReachTime(int Index, float Time)
 	Data->NextPointReachTime = Time;
 }
 
-void CCameraComponent::ChangeMoveStayTime(int Index, float Time)
+void CCameraComponent::ChangeCutSceneMoveStayTime(int Index, float Time)
 {
 	if (!IsValidMoveDataIndex(Index))
 	{
@@ -425,7 +448,7 @@ void CCameraComponent::ChangeMoveStayTime(int Index, float Time)
 
 void CCameraComponent::StartTestMove()
 {
-	if (m_MoveDataList.empty())
+	if (m_CutSceneMoveDataList.empty())
 	{
 		return;
 	}
@@ -434,8 +457,8 @@ void CCameraComponent::StartTestMove()
 
 	m_TestOriginPos = GetRelativePos();
 
-	auto iter = m_MoveDataList.begin();
-	auto iterEnd = m_MoveDataList.end();
+	auto iter = m_CutSceneMoveDataList.begin();
+	auto iterEnd = m_CutSceneMoveDataList.end();
 
 	CamMoveData* TestData = nullptr;
 
@@ -451,7 +474,7 @@ void CCameraComponent::StartTestMove()
 
 	UpdateCurTestMoveData();
 
-	SetWorldPos(m_CurMoveData->DestPoint);
+	SetWorldPos(m_CurCutSceneMoveData->DestPoint);
 
 	m_Scene->GetCameraManager()->KeepCamera();
 	m_Scene->GetCameraManager()->SetCurrentCamera(this);
@@ -463,37 +486,37 @@ void CCameraComponent::StartTestMove()
 
 void CCameraComponent::TestMove(float DeltaTime)
 {
-	if (!m_CurMoveData)
+	if (!m_CurCutSceneMoveData)
 	{
 		UpdateCurTestMoveData();
 	}
 
-	Vector3 ToPoint = m_CurMoveData->DestPoint - GetWorldPos();
+	Vector3 ToPoint = m_CurCutSceneMoveData->DestPoint - GetWorldPos();
 
-	if (ToPoint.Dot(m_CurMoveDir) < 0)
+	if (ToPoint.Dot(m_CurCutSceneMoveDir) < 0)
 	{
-		SetWorldPos(m_CurMoveData->DestPoint);
-		m_StayStart = true;
+		SetWorldPos(m_CurCutSceneMoveData->DestPoint);
+		m_CutSceneStayStart = true;
 
 		return;
 	}
 
-	if (m_CurMoveData->NextPointReachTime == 0.f)
+	if (m_CurCutSceneMoveData->NextPointReachTime == 0.f)
 	{
-		SetWorldPos(m_CurMoveData->DestPoint);
-		m_StayStart = true;
+		SetWorldPos(m_CurCutSceneMoveData->DestPoint);
+		m_CutSceneStayStart = true;
 	}
 
-	if (m_StayStart)
+	if (m_CutSceneStayStart)
 	{
-		m_StayTimer += DeltaTime;
+		m_CutSceneStayTimer += DeltaTime;
 
-		if (m_StayTimer >= m_CurMoveData->StayTime)
+		if (m_CutSceneStayTimer >= m_CurCutSceneMoveData->StayTime)
 		{
-			m_StayStart = false;
-			SAFE_DELETE(m_CurMoveData);
-			m_CurMoveData = nullptr;
-			m_StayTimer = 0.f;
+			m_CutSceneStayStart = false;
+			SAFE_DELETE(m_CurCutSceneMoveData);
+			m_CurCutSceneMoveData = nullptr;
+			m_CutSceneStayTimer = 0.f;
 
 			if (m_TestMoveDataList.empty())
 			{
@@ -506,18 +529,18 @@ void CCameraComponent::TestMove(float DeltaTime)
 	}
 	else
 	{
-		AddWorldPos(m_CurMoveDir * m_CurMoveTick * DeltaTime);
+		AddWorldPos(m_CurCutSceneMoveDir * m_CurCutSceneMoveTick * DeltaTime);
 	}
 }
 
 void CCameraComponent::UpdateCurTestMoveData()
 {
-	m_CurMoveData = m_TestMoveDataList.front();
+	m_CurCutSceneMoveData = m_TestMoveDataList.front();
 	m_TestMoveDataList.pop_front();
-	Vector3 ToMovePoint = m_CurMoveData->DestPoint - GetWorldPos();
-	m_CurMoveTick = ToMovePoint.Length() / m_CurMoveData->NextPointReachTime;
-	m_CurMoveDir = ToMovePoint;
-	m_CurMoveDir.Normalize();
+	Vector3 ToMovePoint = m_CurCutSceneMoveData->DestPoint - GetWorldPos();
+	m_CurCutSceneMoveTick = ToMovePoint.Length() / m_CurCutSceneMoveData->NextPointReachTime;
+	m_CurCutSceneMoveDir = ToMovePoint;
+	m_CurCutSceneMoveDir.Normalize();
 }
 
 #endif // _DEBUG
@@ -539,6 +562,8 @@ bool CCameraComponent::Init()
 void CCameraComponent::Update(float DeltaTime)
 {
 	CSceneComponent::Update(DeltaTime);
+
+	Vector3 Shake = Vector3::Zero;
 
 	if (m_Shake)
 	{
@@ -570,17 +595,74 @@ void CCameraComponent::Update(float DeltaTime)
 			y *= -1.f;
 		}
 
- 		Vector3 Shake = Vector3(x * m_ShakeAmount, y * m_ShakeAmount, 0.f);
- 		SetRelativePos(PrevRelativePos + Shake);
+ 		Shake = Vector3(x * m_ShakeAmount, y * m_ShakeAmount, 0.f);
 
 		m_PrevShakeAmount = Shake;
 
 		m_ShakeAmount -= m_ShakeDecreaseTick * DeltaTime;
 	}
 
-	if (!m_Shake && m_StartMove)
+	if (m_LinearMove)
 	{
-		Move(DeltaTime);
+		if (m_ReverseMove)
+		{
+			m_MoveAccTime -= DeltaTime;
+		}
+		else
+		{
+			m_MoveAccTime += DeltaTime;
+		}
+
+		if (m_ReverseMove)
+		{
+			if (m_MoveAccTime <= 0.f)
+			{
+				m_MoveAccTime = 0.f;
+			}
+		}
+		else
+		{
+			if (m_MoveAccTime >= m_MoveTime)
+			{
+				m_MoveAccTime = m_MoveTime;
+			}
+		}
+
+		float Ratio = m_MoveAccTime / m_MoveTime;
+
+		if (!m_ReverseMove)
+		{
+			if (Ratio == 1.f)
+			{
+				if (!m_MoveFreeze)
+				{
+					m_LinearMove = false;
+				}
+			}
+		}
+		else
+		{
+			if (Ratio == 0.f)
+			{
+				Ratio = 0.f;
+
+				if (!m_MoveFreeze)
+				{
+					m_LinearMove = false;
+				}
+			}
+		}
+
+		Vector3 CurrentPos = m_MoveStartPos * (1.f - Ratio) + m_MoveDestPos * Ratio;
+
+		SetWorldPos(CurrentPos);
+	}
+
+	AddRelativePos(Shake);
+
+	if (!m_Shake && m_StartCutSceneMove)
+	{
+		CutSceneMove(DeltaTime);
 	}
 
 #ifdef _DEBUG
@@ -681,11 +763,11 @@ bool CCameraComponent::Save(FILE* File)
 	fwrite(&m_Distance, sizeof(float), 1, File);
 	fwrite(&m_RS, sizeof(Resolution), 1, File);
 
-	int Length = (int)m_MoveDataList.size();
+	int Length = (int)m_CutSceneMoveDataList.size();
 	fwrite(&Length, sizeof(int), 1, File);
 	
-	auto iter = m_MoveDataList.begin();
-	auto iterEnd = m_MoveDataList.end();
+	auto iter = m_CutSceneMoveDataList.begin();
+	auto iterEnd = m_CutSceneMoveDataList.end();
 	
 	for (; iter != iterEnd; ++iter)
 	{
@@ -730,7 +812,7 @@ bool CCameraComponent::Load(FILE* File)
 		Data->NextPointReachTime = NextPointReachTime;
 		Data->StayTime = StayTime;
 
-		m_MoveDataList.push_back(Data);
+		m_CutSceneMoveDataList.push_back(Data);
 	}
 
 	CSceneComponent::Load(File);

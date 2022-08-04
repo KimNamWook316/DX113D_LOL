@@ -34,10 +34,10 @@ void CDodgerDataComponent::Start()
 
 	CAnimationSequenceInstance* AnimInst = m_AnimMesh->GetAnimationInstance();
 
-	AnimInst->AddNotify("AttackReady", "OnAttackReady", 0, (CMonsterDataComponent*)this, &CMonsterDataComponent::OnEnableLeftLookPlayer);
+	AnimInst->AddNotify("AttackReady", "OnAttackReady", 0, (CMonsterDataComponent*)this, &CMonsterDataComponent::OnEnableLookPlayer);
 	AnimInst->SetEndFunction("AttackReady", this, &CDodgerDataComponent::OnAttack1ReadyEnd);
-	AnimInst->AddNotify("AttackReady2", "OnAttackReady2", 0, (CMonsterDataComponent*)this, &CMonsterDataComponent::OnEnableLeftLookPlayer);
-	AnimInst->SetEndFunction("AttackReady2", this, &CDodgerDataComponent::OnAttack1ReadyEnd);
+	AnimInst->AddNotify("AttackReady2", "OnAttackReady2", 0, (CMonsterDataComponent*)this, &CMonsterDataComponent::OnEnableLookPlayer);
+	AnimInst->SetEndFunction("AttackReady2", this, &CDodgerDataComponent::OnAttack2ReadyEnd);
 
 	AnimInst->AddNotify("Attack", "OnAttackMove", 0, this, &CDodgerDataComponent::OnAttackMoveStart);
 	AnimInst->AddNotify("Attack", "OnAttackMove1End", 5, this, &CDodgerDataComponent::OnAttackMove1End);

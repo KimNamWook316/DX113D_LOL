@@ -413,7 +413,7 @@ void CMonsterDataComponent::OnStartCutScene()
 
 	if (IsCutSceneMove)
 	{
-		m_CutSceneCam->StartMove();
+		m_CutSceneCam->StartCutSceneMove();
 	}
 	else
 	{

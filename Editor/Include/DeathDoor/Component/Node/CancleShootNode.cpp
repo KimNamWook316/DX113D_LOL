@@ -38,6 +38,10 @@ NodeResult CCancleShootNode::OnStart(float DeltaTime)
 
 	m_CameraMoveTime = Dist / m_CameraMoveSpeed;
 
+	CCameraComponent* CurCam = m_Object->GetScene()->GetCameraManager()->GetCurrentCamera();
+	CurCam->SetMoveReverse(true);
+	CurCam->SetMoveFreeze(false);
+
 	return NodeResult::Node_True;
 }
 
@@ -45,11 +49,13 @@ NodeResult CCancleShootNode::OnUpdate(float DeltaTime)
 {
 	CScene* Scene = CSceneManager::GetInst()->GetScene();
 
+	CCameraComponent* CurCam = CSceneManager::GetInst()->GetScene()->GetCameraManager()->GetCurrentCamera();
+	bool IsCamMoving = CurCam->IsMoving();
+
 	bool RestoreEnd = Scene->RestoreCamera(m_CameraMoveTime, m_CurrentCamPos, DeltaTime);
 
-	if (RestoreEnd)
+	if (!IsCamMoving)
 	{
-
 		CPlayerDataComponent* Data = dynamic_cast<CPlayerDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
 
 		Player_Ability Ability = Data->GetPlayerAbility();
@@ -83,7 +89,45 @@ NodeResult CCancleShootNode::OnUpdate(float DeltaTime)
 		m_Owner->SetCurrentNode(nullptr);
 
 		return NodeResult::Node_True;
+
 	}
+
+ //	if (RestoreEnd)
+ //	{
+ //		CPlayerDataComponent* Data = dynamic_cast<CPlayerDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
+ //
+ //		Player_Ability Ability = Data->GetPlayerAbility();
+ //
+ //		if (Ability == Player_Ability::Bomb)
+ //		{
+ //			CPlayerBombComponent* BombComp = m_Object->FindObjectComponentFromType<CPlayerBombComponent>();
+ //
+ //			if (BombComp)
+ //			{
+ //				BombComp->ResetInfo();
+ //
+ //				CGameObject* Bomb = BombComp->GetBomb();
+ //
+ //				if (Bomb)
+ //				{
+ //					Bomb->Reset();
+ //				}
+ //			}
+ //		}
+ //
+ //		else if (Ability == Player_Ability::Arrow)
+ //		{
+ //			CPlayerBowComponent* BowComp = m_Object->FindComponentFromType<CPlayerBowComponent>();
+ //
+ //			BowComp->HideBow();
+ //		}
+ //
+ //		m_IsEnd = true;
+ //		m_CallStart = false;
+ //		m_Owner->SetCurrentNode(nullptr);
+ //
+ //		return NodeResult::Node_True;
+ //	}
 
 	else
 	{
