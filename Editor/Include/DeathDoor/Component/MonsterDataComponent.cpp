@@ -162,6 +162,16 @@ void CMonsterDataComponent::Update(float DeltaTime)
 {
 	CObjectDataComponent::Update(DeltaTime);
 
+	if (m_Data.HP <= 0)
+	{
+		SetCurrentNodeNull();
+
+		m_MoveZ = false;
+		m_LookPlayer = false;
+		m_RightLookPlayer = false;
+		m_LeftLookPlayer = false;
+	}
+
 	if (m_HitEffectStart)
 	{
 		ActiveHitEffect(DeltaTime);
@@ -340,6 +350,7 @@ void CMonsterDataComponent::OnDeadAnimStart()
 	{
 		m_MeleeAttackCollider->Enable(false);
 	}
+
 
 	// DeathChangeColor() 를 사용하는 경우
 	m_DeathColorChangeStart = true;

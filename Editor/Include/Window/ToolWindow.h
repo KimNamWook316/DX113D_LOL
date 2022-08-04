@@ -68,6 +68,7 @@ private:
 	void ClearSceneRelatedWindows();
 	void RefreshSceneRelatedWindow(class CGameObject* Object);
 	void RefreshSceneRelatedWindow(const std::vector<CGameObject*>& vecObj);
+	void OnClickSetEditorCam();
 
 private:
 	// Gizmo
@@ -79,6 +80,7 @@ private:
 
 	// Camera
 	CIMGUICollapsingHeader* m_EditorCameraBlock;
+	CIMGUIButton* m_SetCam;
 	CIMGUISliderFloat* m_CameraSpeed;
 
 	// Render

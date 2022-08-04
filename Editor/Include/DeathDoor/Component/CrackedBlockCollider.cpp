@@ -54,7 +54,7 @@ void CCrackedBlockCollider::Update(float DeltaTime)
 
 void CCrackedBlockCollider::OnCollideBomb(const CollisionResult& Result)
 {
-	if (Result.Dest->GetCollisionProfile()->Channel == Collision_Channel::Custom16)
+	if (Result.Dest->GetCollisionProfile()->Channel == Collision_Channel::Custom15)
 	{
 		m_Object->Enable(false);
 	}

@@ -77,7 +77,25 @@ void CDDSceneMode::Start()
 
 	// Fade In 
 	CRenderManager::GetInst()->SetFadeStartCallBack(this, &CDDSceneMode::OnFadeInStart);
-	CRenderManager::GetInst()->StartFadeEffect(FadeEffecType::FADE_IN);
+	CRenderManager::GetInst()->StartFadeEffect(FadeEffecType::FADE_IN, false);
+
+	// Play
+	m_Scene->Play();
+
+	std::vector<CGameObject*> vecObject;
+	CSceneManager::GetInst()->GetScene()->GetAllObjectsPointer(vecObject);
+
+	size_t Count = vecObject.size();
+
+	for (size_t i = 0; i < Count; ++i)
+	{
+		CGameStateComponent* Comp = vecObject[i]->FindObjectComponentFromType<CGameStateComponent>();
+
+		if (Comp)
+		{
+			Comp->SetTreeUpdate(true);
+		}
+	}
 }
 
 bool CDDSceneMode::Save(FILE* File)
@@ -149,7 +167,7 @@ void CDDSceneMode::OnDieMonster()
 	}
 }
 
-void CDDSceneMode::OnFadeOutStart()
+void CDDSceneMode::OnFadeOutEnd()
 {
 	// Scene Change
 	CSceneManager::GetInst()->ChangeNextScene();
@@ -188,6 +206,6 @@ void CDDSceneMode::OnCollideExitCollider(const CollisionResult& Result)
 	}
 
 	// Fade Out
-	CRenderManager::GetInst()->SetFadeStartCallBack(this, &CDDSceneMode::OnFadeOutStart);
-	CRenderManager::GetInst()->StartFadeEffect(FadeEffecType::FADE_OUT);
+	CRenderManager::GetInst()->SetFadeEndCallBack(this, &CDDSceneMode::OnFadeOutEnd);
+	CRenderManager::GetInst()->StartFadeEffect(FadeEffecType::FADE_OUT, true);
 }

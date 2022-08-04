@@ -46,7 +46,7 @@ public:
 		m_NextSceneLoadComplete = true;
 	}
 
-	virtual void OnFadeOutStart();
+	virtual void OnFadeOutEnd();
 	virtual void OnFadeInStart();
 
 public:
