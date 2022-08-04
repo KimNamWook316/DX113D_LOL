@@ -166,6 +166,9 @@ public:
 	void GatherSequenceNames(std::vector<std::string>& vecString);
 	void AddAnimationSequenceToSceneResource();
 	int GetCurrentAnimationOrder();
+	float GetAnimationFrameTime(const std::string& Name);
+	int GetAnimationFrameLength(const std::string& Name);
+
 public:
 	virtual void Start();
 	virtual bool Init();
@@ -178,11 +181,9 @@ public:
 	bool SaveAnimationFullPath(const char* FullPath);
 	bool LoadAnimationFullPath(const char* FullPath);
 	bool LoadAnimation(const char* FileName);
+
 private:
 	CAnimationSequenceData* FindAnimation(const std::string& Name);
-
-public:
-	
 
 public:
 	template <typename T>

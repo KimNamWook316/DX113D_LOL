@@ -43,6 +43,7 @@ protected:
 	class CFrustum* m_Frustum;
 
 	Vector3		m_OriginRelavitePos;
+	Vector3		m_PrevShakeAmount;
 	bool		m_Shake;
 	float		m_ShakeTimer;
 	float		m_ShakeMaxTime;

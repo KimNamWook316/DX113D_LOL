@@ -9,7 +9,9 @@
 
 CNavAgent::CNavAgent()	:
 	m_MoveSpeed(0.f),
-	m_ApplyNavMesh(true)
+	m_RotationSpeed(360.f),
+	m_ApplyNavMesh(true),
+	m_Rotaiting(false)
 {
 	m_CurrentFaceDir = Vector3(0.f, 0.f, 1.f);
 	SetTypeID<CNavAgent>();
@@ -157,13 +159,19 @@ void CNavAgent::Update(float DeltaTime)
 
 				if (CrossResult.y > 0.f)
 				{
-					m_UpdateComponent->AddWorldRotationY(-360.f * DeltaTime);
+					m_UpdateComponent->AddWorldRotationY(-m_RotationSpeed * DeltaTime);
 				}
 
 				else
 				{
-					m_UpdateComponent->AddWorldRotationY(360.f * DeltaTime);
+					m_UpdateComponent->AddWorldRotationY(m_RotationSpeed * DeltaTime);
 				}
+
+				m_Rotaiting = true;
+			}
+			else
+			{
+				m_Rotaiting = false;
 			}
 		}
 	}

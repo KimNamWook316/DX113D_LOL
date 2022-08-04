@@ -228,6 +228,15 @@
     <Filter Include="06. DeathDoor\05. SceneMode\02. InstanceMode">
       <UniqueIdentifier>{ab923298-8dd0-427c-899c-5e70fab7955e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="06. DeathDoor\01. GameComponent\02. ObjectComponent\01. DataComponent\01. ObjectDataComponent\01. Monster\08. Dodger">
+      <UniqueIdentifier>{ce7b01e9-5474-4922-9ccb-da042a6515d2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\06. Dodger">
+      <UniqueIdentifier>{a1e04f18-7d1d-4310-aceb-7f80580898be}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\07. Dodger">
+      <UniqueIdentifier>{4feb520f-176f-47e8-b0ae-752e19e6f2af}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Scene\DefaultScene.cpp">
@@ -817,6 +826,30 @@
     </ClCompile>
     <ClCompile Include="Widget\ArmComponentWidget.cpp">
       <Filter>02. Editor\02. Widget\01. Inspector\01. SceneComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Component\DodgerDataComponent.cpp">
+      <Filter>06. DeathDoor\01. GameComponent\02. ObjectComponent\01. DataComponent\01. ObjectDataComponent\01. Monster\08. Dodger</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Component\Node\DodgerSecondAttackCheck.cpp">
+      <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\06. Dodger</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Component\Node\DodgerFirstAttackNode.cpp">
+      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\07. Dodger</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Component\Node\DodgerSecondAttackNode.cpp">
+      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\07. Dodger</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Component\Node\DodgerPostAttackNode.cpp">
+      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\07. Dodger</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Component\Node\ChasePlayerNode.cpp">
+      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\01. Public</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Component\Node\DodgerDashCheck.cpp">
+      <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\06. Dodger</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Component\Node\DodgerDashNode.cpp">
+      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\07. Dodger</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1416,6 +1449,30 @@
     </ClInclude>
     <ClInclude Include="Widget\ArmComponentWidget.h">
       <Filter>02. Editor\02. Widget\01. Inspector\01. SceneComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\DodgerDataComponent.h">
+      <Filter>06. DeathDoor\01. GameComponent\02. ObjectComponent\01. DataComponent\01. ObjectDataComponent\01. Monster\08. Dodger</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\Node\DodgerSecondAttackCheck.h">
+      <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\06. Dodger</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\Node\DodgerFirstAttackNode.h">
+      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\07. Dodger</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\Node\DodgerSecondAttackNode.h">
+      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\07. Dodger</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\Node\DodgerPostAttackNode.h">
+      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\07. Dodger</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\Node\ChasePlayerNode.h">
+      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\01. Public</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\Node\DodgerDashCheck.h">
+      <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\06. Dodger</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\Node\DodgerDashNode.h">
+      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\07. Dodger</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

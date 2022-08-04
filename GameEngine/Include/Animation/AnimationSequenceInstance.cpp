@@ -540,6 +540,31 @@ int CAnimationSequenceInstance::GetCurrentAnimationOrder()
 	return Idx;
 	return 0;
 }
+
+float CAnimationSequenceInstance::GetAnimationFrameTime(const std::string& Name)
+{
+	CAnimationSequenceData* Data = FindAnimation(Name);
+
+	if (!Data)
+	{
+		return 0.f;
+	}
+
+	return Data->m_FrameTime;
+}
+
+int CAnimationSequenceInstance::GetAnimationFrameLength(const std::string& Name)
+{
+	CAnimationSequenceData* Data = FindAnimation(Name);
+
+	if (!Data)
+	{
+		return 0.f;
+	}
+
+	return Data->m_Sequence->GetFrameLength();
+}
+
 void CAnimationSequenceInstance::Start()
 {
 	if (m_Scene)
