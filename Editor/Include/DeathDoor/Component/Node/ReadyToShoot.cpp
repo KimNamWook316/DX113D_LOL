@@ -15,7 +15,9 @@
 
 
 CReadyToShoot::CReadyToShoot() :
-	m_CameraMoveEnd(false)
+	m_CameraMoveEnd(false),
+	m_CameraMoveSpeed(50.f),
+	m_CameraMoveTime(0.f)
 {
 	SetTypeID(typeid(CReadyToShoot).hash_code());
 }
@@ -56,6 +58,8 @@ NodeResult CReadyToShoot::OnStart(float DeltaTime)
 
 		CGameObject* Bomb = BombComp->GetBomb();
 
+		BombComp->SetBeforeLift(true);
+
 		// 이미 Lift & Shoot을 한번 이상 했는데 BombComp의 m_Bomb가 nullptr가 아니면
 		// 그 m_Bomb는 이미 폭탄 이펙트가 진행중이라는 의미이므로 Lift & Shoot을 하지 않는다
 		if (!BombComp->IsShootFirstTime() && Bomb)
@@ -66,13 +70,8 @@ NodeResult CReadyToShoot::OnStart(float DeltaTime)
 			CProjectileComponent* Proj = Bomb->FindObjectComponentFromType<CProjectileComponent>();
 			if (Proj)
 			{
-				bool Shoot = Proj->IsShoot();
-				// Shoot이 안된채로 머리위에 멈춰있다면
-				if (!Shoot)
-				{
-					Bomb->Reset();
-					BombComp->ResetInfo();
-				}
+				Bomb->Reset();
+				BombComp->ResetInfo();
 			}
 
 			return NodeResult::Node_True;
@@ -115,8 +114,12 @@ NodeResult CReadyToShoot::OnStart(float DeltaTime)
 	Vector3 OriginCamPos = CurrentCamera->GetWorldPos();
 	CSceneManager::GetInst()->GetScene()->SetOriginCamPos(OriginCamPos);
 
-	m_CameraDestPos =  OriginCamPos + (PickingPoint - ObjectPos) / 2.3f;
+	m_CameraDestPos =  OriginCamPos + (PickingPoint - ObjectPos) / 2.f;
 	m_CameraDestPos.y = OriginCamPos.y;
+	
+	float Dist = OriginCamPos.Distance(m_CameraDestPos);
+	m_CameraMoveTime = Dist / m_CameraMoveSpeed;
+
 	m_CameraMoveDir = PickingPoint - ObjectPos;
 	m_CameraMoveDir.y = 0.f;
 	m_CameraMoveDir.Normalize();
@@ -154,10 +157,11 @@ NodeResult CReadyToShoot::OnUpdate(float DeltaTime)
 
 			// CancleAction을 다시 원래대로 false로 복귀
 			BombComp->SetCancleAction(false);
+
 			return NodeResult::Node_False;
 		}
 
-		m_CameraMoveEnd = CSceneManager::GetInst()->GetScene()->CameraMove(m_CameraMoveDir, m_CameraDestPos, 50.f, DeltaTime);
+		m_CameraMoveEnd = CSceneManager::GetInst()->GetScene()->CameraMove(m_CameraMoveTime, m_CameraDestPos, DeltaTime);
 
 		bool RButtonUp = CInput::GetInst()->GetMouseRButtonUp();
 
@@ -177,8 +181,10 @@ NodeResult CReadyToShoot::OnUpdate(float DeltaTime)
 
 			m_CallStart = false;
 			m_Owner->SetCurrentNode(((CCompositeNode*)m_Parent->GetParent())->GetChild(1));
+
 			m_IsEnd = false;
 			m_CameraMoveEnd = false;
+
 
 			return NodeResult::Node_True;
 		}
@@ -194,6 +200,31 @@ NodeResult CReadyToShoot::OnUpdate(float DeltaTime)
 	else
 	{
 		bool RButtonUp = CInput::GetInst()->GetMouseRButtonUp();
+
+		// 카메라 이동은 끝났고 투사체를 쏘려고 준비중일때 몬스터에게 맞았다면
+		bool IsHit = m_PlayerDataComp->GetIsHit();
+
+		if (IsHit)
+		{
+			m_PlayerDataComp->GetAnimationMeshComponent()->GetAnimationInstance()->ChangeAnimation("PlayerHitBack");
+			m_PlayerDataComp->SetFalseOnSlash();
+
+			m_Object->GetScene()->GetCameraManager()->GetCurrentCamera()->Shake(0.2f, 0.2f);
+
+			m_PlayerDataComp->SetNoInterrupt(true);
+
+			if (Ability == Player_Ability::Bomb)
+			{
+				CPlayerBombComponent* BombComp = m_Object->FindComponentFromType<CPlayerBombComponent>();
+				CGameObject* Bomb = BombComp->GetBomb();
+
+				Bomb->Reset();
+				BombComp->ResetInfo();
+			}
+
+			RButtonUp = true;
+		}
+
 		if (RButtonUp)
 		{
 			if (Ability == Player_Ability::Bomb)
@@ -208,6 +239,7 @@ NodeResult CReadyToShoot::OnUpdate(float DeltaTime)
 					BombComp->ResetInfo();
 					BombComp->SetClearBomb(true);
 				}
+
 			}
 
 			m_CallStart = false;

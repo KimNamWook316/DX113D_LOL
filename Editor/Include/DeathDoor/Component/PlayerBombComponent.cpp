@@ -7,6 +7,7 @@
 #include "Component/LightComponent.h"
 #include "Render/RenderManager.h"
 #include "ProjectileComponent.h"
+#include "Component/ColliderSphere.h"
 
 CPlayerBombComponent::CPlayerBombComponent()	:
 	m_Bomb(nullptr),
@@ -22,6 +23,9 @@ CPlayerBombComponent::CPlayerBombComponent()	:
 
 	m_ComponentType = Component_Type::ObjectComponent;
 	m_ShootSpeed = 70.f;
+
+
+	m_BeforeLift = true;
 }
 
 CPlayerBombComponent::CPlayerBombComponent(const CPlayerBombComponent& com)	:
@@ -140,16 +144,21 @@ void CPlayerBombComponent::ResetInfo()
 	m_AccCollisionLifeTime = 0.f;
 	m_Collision = false;
 
-	CProjectileComponent* Proj = m_Bomb->FindObjectComponentFromType<CProjectileComponent>();
+	if(m_Light)
+		m_Light->Enable(false);
 
-	// NoUpdate를 true로 안하면 Reset에서 아무리 Bomb Object를 안보이는 곳에 배치해도 다시 Projectile에서 Move로 보이는곳에 옮겨놓기 때문에 NoUpdate를 True로 해주고
-	// LiftBomb 함수에서 다시 NoUpdate를 false로 되돌린다
-	Proj->SetNoUpdate(true);
+	if (m_Bomb)
+	{
+		CProjectileComponent* Proj = m_Bomb->FindObjectComponentFromType<CProjectileComponent>();
 
-	m_Light->Enable(false);
-	m_Bomb->SetWorldScale(0.005f, 0.005f, 0.005f);
-	m_Bomb->Destroy();
-	m_Bomb = nullptr;
+		// NoUpdate를 true로 안하면 Reset에서 아무리 Bomb Object를 안보이는 곳에 배치해도 다시 Projectile에서 Move로 보이는곳에 옮겨놓기 때문에 NoUpdate를 True로 해주고
+		// LiftBomb 함수에서 다시 NoUpdate를 false로 되돌린다
+		Proj->SetNoUpdate(true);
+
+		m_Bomb->SetWorldScale(0.005f, 0.005f, 0.005f);
+		m_Bomb->Destroy();
+		m_Bomb = nullptr;
+	}
 
 	ClearLiftPathQueue();
 }
@@ -161,6 +170,8 @@ CPlayerBombComponent* CPlayerBombComponent::Clone()
 
 void CPlayerBombComponent::LiftBomb()
 {
+	m_BeforeLift = false;
+
 	if (m_Bomb)
 	{
 		// 여기로 들어오면 폭탄이 충돌돼서 이펙트가 재생되고 있는 중에 또 폭탄을 쏘려 하는 것이므로 return
@@ -199,6 +210,10 @@ void CPlayerBombComponent::LiftBomb()
 
 	CProjectileComponent* Proj = m_Bomb->FindObjectComponentFromType<CProjectileComponent>();
 	Proj->SetNoUpdate(false);
+
+	CColliderComponent* BombCollider = m_Bomb->FindComponentFromType<CColliderSphere>();
+	BombCollider->Enable(false);
+
 }
 
 void CPlayerBombComponent::ShootBomb(const Vector3& ShootDir)
@@ -216,6 +231,7 @@ void CPlayerBombComponent::ShootBomb(const Vector3& ShootDir)
 		m_Bomb->Reset();
 		ResetInfo();
 
+
 		return;
 	}
 
@@ -231,8 +247,12 @@ void CPlayerBombComponent::ShootBomb(const Vector3& ShootDir)
 	Proj->SetDestroy(true);
 	Proj->SetEndCallBack<CPlayerBombComponent>(this, &CPlayerBombComponent::OnBombProjectileDestroy);
 
+
 	if (m_ShootFirstTime)
 		m_ShootFirstTime = false;
+
+	CColliderComponent* BombCollider = m_Bomb->FindComponentFromType<CColliderSphere>();
+	BombCollider->Enable(true);
 }
 
 void CPlayerBombComponent::HideBomb()

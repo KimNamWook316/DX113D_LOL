@@ -14,6 +14,8 @@ protected:
 
 private:
 	class CPlayerDataComponent* m_PlayerData;
+	class CGameObject* m_Arrow;
+	bool m_Destroy;
 
 public:
 	virtual void Start();
@@ -29,6 +31,7 @@ public:
 	void ShowBow(const Vector3& ShootDir);
 	void ShootArrow(const Vector3& ShootDir);
 	void HideBow();
+	void OnCollision(const CollisionResult& Result);
 
 public:
 	virtual bool Save(FILE* File);

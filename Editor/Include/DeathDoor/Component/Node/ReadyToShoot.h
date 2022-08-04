@@ -23,6 +23,8 @@ private:
     Vector3 m_OriginCameraPos;
     bool m_CameraMoveEnd;
     class CPlayerDataComponent* m_PlayerDataComp;
+    float m_CameraMoveSpeed;
+    double m_CameraMoveTime;
 
 public:
     const Vector3& GetOriginCameraPos()  const
