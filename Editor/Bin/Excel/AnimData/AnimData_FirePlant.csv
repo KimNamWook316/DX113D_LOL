@@ -1,6 +1,0 @@
-AnimData_FirePlant,,
-,FrameStart,FrameEnd
-Idle,0,61
-Fire,62,144
-Death,145,204
-Hit,205,219
