@@ -1,0 +1,13 @@
+AnimData_Lurker,,
+,FrameStart,FrameEnd
+LurkerArmatureWalkforward,0,23
+LurkerArmatureWalkleft,23,46
+LurkerArmatureWalkright,46,69
+LurkerArmatureWalkbackwards,69,92
+LurkerArmatureIdle,92,125
+LurkerArmatureAttackprep,125,153
+LurkerArmatureAttack,153,180
+LurkerArmatureHop,180,200
+LurkerArmatureHopDodge,200,220
+LurkerArmatureDie,220,247
+LurkerArmatureBirth,247,250
