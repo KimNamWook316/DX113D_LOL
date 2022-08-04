@@ -26,9 +26,15 @@ private:
 	bool m_ShootFirstTime;	// 최초로 던지는 것인지 --> ReadyToShoot에서 이미 폭탄 이펙트가 재생되고 있는 중에 또 폭탄을 던지려고 할때 예외처리 해주기 위한 변수
 	bool m_CancleAction;	// 폭탄 이펙트가 재생중이거나 할 때 또 폭탄 던지려고 하면 true
 	bool m_IsClearBomb; // Lift하는 도중에 MouseRButton떼면 true
+	bool m_BeforeLift;	// Lift하기 전인지 후인지
 
 public:
 	void SetBomb(class CGameObject* Bomb);
+
+	bool IsBeforeLift()	const
+	{
+		return m_BeforeLift;
+	}
 
 	bool IsClearBomb()	const
 	{
@@ -53,6 +59,11 @@ public:
 	float GetLiftSpeed()	const
 	{
 		return m_LiftSpeed;
+	}
+
+	void SetBeforeLift(bool Lift)
+	{
+		m_BeforeLift = Lift;
 	}
 
 	void SetClearBomb(bool Clear)

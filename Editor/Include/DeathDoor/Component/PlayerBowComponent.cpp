@@ -5,9 +5,12 @@
 #include "PlayerDataComponent.h"
 #include "ObjectPool.h"
 #include "ArrowComponent.h"
+#include "Component/ColliderSphere.h"
 
 CPlayerBowComponent::CPlayerBowComponent()	:
-	m_PlayerData(nullptr)
+	m_PlayerData(nullptr),
+	m_Arrow(nullptr),
+	m_Destroy(false)
 {
 	m_ComponentType = Component_Type::SceneComponent;
 	SetTypeID<CPlayerBowComponent>();
@@ -69,6 +72,12 @@ void CPlayerBowComponent::PostUpdate(float DeltaTime)
 void CPlayerBowComponent::PrevRender()
 {
 	CStaticMeshComponent::PrevRender();
+
+	if (m_Destroy)
+	{
+		m_Arrow->Destroy();
+		m_Destroy = false;
+	}
 }
 
 void CPlayerBowComponent::Render()
@@ -101,13 +110,21 @@ void CPlayerBowComponent::ShowBow(const Vector3& ShootDir)
 	float DotProduct = ShootDir.Dot(Vector3(1.f, 0.f, 0.f));
 	float YDegree = 0.f;
 
-	if (DotProduct < 0.99f && DotProduct > -0.99f)
+	if (DotProduct < 0.999999999f && DotProduct > -0.999999999f)
 	{
 		float Degree = RadianToDegree(acosf(DotProduct));
 		YDegree = Degree;
 
 		if (ShootDir.Cross(Vector3(1.f, 0.f, 0.f)).y > 0.f)
 			YDegree *= -1.f;
+	}
+
+	else
+	{
+		if (ShootDir.x > 0.f)
+			YDegree = 0.f;
+		else
+			YDegree = 180.f;
 	}
 
 	SetWorldPos(BowPos);
@@ -122,20 +139,20 @@ void CPlayerBowComponent::ShootArrow(const Vector3& ShootDir)
 {
 	Vector3 MyPos = m_Object->GetWorldPos();
 
-	CGameObject* Arrow = CObjectPool::GetInst()->GetProjectile("PlayerArrow", m_Scene);
+	m_Arrow = CObjectPool::GetInst()->GetProjectile("PlayerArrow", m_Scene);
 
-	if (!Arrow)
+	if (!m_Arrow)
 		return;
 
-	Arrow->SetWorldPos(MyPos.x + ShootDir.x, MyPos.y + 2.f, MyPos.z + ShootDir.z);
+	m_Arrow->SetWorldPos(MyPos.x + ShootDir.x, MyPos.y + 2.f, MyPos.z + ShootDir.z);
 
-	CArrowComponent* Comp = Arrow->FindObjectComponentFromType<CArrowComponent>();
+	CArrowComponent* Comp = m_Arrow->FindObjectComponentFromType<CArrowComponent>();
 
 	Vector3 InitialDir = Vector3(0.f, 0.f, 1.f);
 
 	float DotProduct = InitialDir.Dot(ShootDir);
 	
-	if (DotProduct > -0.99f && DotProduct < 0.99f)
+	if (DotProduct >= -0.999999f && DotProduct <= 0.999999f)
 	{
 		float Degree = RadianToDegree(acosf(DotProduct));
 
@@ -144,16 +161,31 @@ void CPlayerBowComponent::ShootArrow(const Vector3& ShootDir)
 		if (CrossVector.y < 0.f)
 			Degree *= -1.f;
 
-		Arrow->SetWorldRotationY(Degree);
+		m_Arrow->SetWorldRotationY(Degree);
 
 	}
 
-	Comp->ShootByLifeTime(MyPos, ShootDir, 20.f, 4.f);
+	Vector3 ArrowStartPos = m_Arrow->GetWorldPos();
+	//Comp->ShootByLifeTime(MyPos, ShootDir, 20.f, 2.5f);
+	Comp->ClearCollsionCallBack();
+	Comp->ShootByLifeTimeCollision<CPlayerBowComponent>(this, &CPlayerBowComponent::OnCollision, Collision_State::Begin, ArrowStartPos, ShootDir, 10.f, 2.5f);
+	Comp->SetDestroy(true);
+	
 }
 
 void CPlayerBowComponent::HideBow()
 {
 	m_Render = false;
+}
+
+void CPlayerBowComponent::OnCollision(const CollisionResult& Result)
+{
+	m_Object->GetScene()->GetCameraManager()->ShakeCamera(0.4f, 1.f);
+
+	// OnCollision에서 바로 Destroy하면 CCollisionSection::Collision에서 m_vecCollider의 size가 갑자기 바뀌어서 문제가 되므로
+	// m_Destroy = true로 만들어줬다가 PrevRender 함수에서 m_Destroy가 true면 Destroy
+	m_Destroy = true;
+	//m_Arrow->Destroy();
 }
 
 bool CPlayerBowComponent::Save(FILE* File)

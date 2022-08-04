@@ -519,6 +519,9 @@ bool CNavigation3DManager::CheckNavMeshPickingPoint(Vector3& OutPos)
 		XMVECTOR _P2 = P2.Convert();
 		XMVECTOR _P3 = P3.Convert();
 
+		if (P1 == P2 || P2 == P3 || P1 == P3)
+			return false;
+
 		float Dist = 0.f;
 
 		bool Intersect = DirectX::TriangleTests::Intersects(_RayStartPos, _RayDir, _P1, _P2, _P3, Dist);

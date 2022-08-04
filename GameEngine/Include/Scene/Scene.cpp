@@ -51,6 +51,8 @@ CScene::CScene()
 	m_SkyObject->Init();
 
 	m_RestoreCamDirFix = false;
+
+	m_AccTime = 0.f;
 }
 
 CScene::~CScene()
@@ -775,6 +777,30 @@ bool CScene::CameraMove(const Vector3& Direction, const Vector3& DestPos, float 
 	return false;
 }
 
+bool CScene::CameraMove(double Time, const Vector3& DestPos, float DeltaTime)
+{
+	float TimeRatio = m_AccTime / Time;
+
+	if (TimeRatio > 1.f)
+		TimeRatio = 1.f;
+
+	Vector3 LerpPos = m_OriginCamPos * (1 - TimeRatio) + DestPos * TimeRatio;
+
+	CCameraComponent* CurrentCamera = m_CameraManager->GetCurrentCamera();
+
+	CurrentCamera->SetWorldPos(LerpPos);
+
+	m_AccTime += DeltaTime;
+
+	if (TimeRatio == 1.f)
+	{
+		m_AccTime = 0.f;
+		return true;
+	}
+
+	return false;
+}
+
 bool CScene::RestoreCamera(float Speed, float DeltaTime)
 {
 	CCameraComponent* CurrentCamera = m_CameraManager->GetCurrentCamera();
@@ -801,6 +827,30 @@ bool CScene::RestoreCamera(float Speed, float DeltaTime)
 		CurrentCamera->AddWorldPos(m_RestoreCamDir.x * Speed * DeltaTime, 0.f, m_RestoreCamDir.z * Speed * DeltaTime);
 	}
 
+
+	return false;
+}
+
+bool CScene::RestoreCamera(double Time, const Vector3 CurrentCamPos, float DeltaTime)
+{
+	CCameraComponent* CurrentCamera = m_CameraManager->GetCurrentCamera();
+
+	float TimeRatio = m_AccTime / Time;
+
+	if (TimeRatio > 1.f)
+		TimeRatio = 1.f;
+
+	Vector3 LerpPos = m_OriginCamPos * TimeRatio + CurrentCamPos * (1.f - TimeRatio);
+
+	CurrentCamera->SetWorldPos(LerpPos);
+
+	m_AccTime += DeltaTime;
+
+	if (TimeRatio == 1.f)
+	{
+		m_AccTime = 0.f;
+		return true;
+	}
 
 	return false;
 }

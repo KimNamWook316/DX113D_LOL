@@ -14,10 +14,11 @@
 #include "Component/Node/CompositeNode.h"
 
 CShootNode::CShootNode()	:
-	m_InRestoreCam(false)
+	m_InRestoreCam(false),
+	m_CameraMoveSpeed(50.f),
+	m_CameraMoveTime(0.f)
 {
 	SetTypeID(typeid(CShootNode).hash_code());
-
 }
 
 CShootNode::CShootNode(const CShootNode& Node) :
@@ -31,39 +32,15 @@ CShootNode::~CShootNode()
 
 NodeResult CShootNode::OnStart(float DeltaTime)
 {
-	/*CPlayerDataComponent* Comp = m_Object->FindObjectComponentFromType<CPlayerDataComponent>();
+	m_CurrentCamPos = m_Object->GetScene()->GetCameraManager()->GetCurrentCamera()->GetWorldPos();
 
-	Player_Ability Ability = Comp->GetPlayerAbility();*/
+	// Shoot방향으로 카메라가 움직이기 전에 ReadyToShoot 노드에서 저장해놓은 원래 카메라 위치
+	Vector3 CamOriginPos = m_Object->GetScene()->GetOriginCamPos();
+	float Dist = m_CurrentCamPos.Distance(CamOriginPos);
 
-	m_AnimationMeshComp = m_Owner->GetAnimationMeshComp();
+	m_CameraMoveTime = Dist / m_CameraMoveSpeed;
 
-	//std::string ObjectName = m_Object->GetName();
-
-	//std::string SequenceName;
-
-	//if (Ability == Player_Ability::Hook)
-	//	SequenceName = ObjectName + "Hook";
-	//else if (Ability == Player_Ability::Arrow)
-	//	SequenceName == ObjectName + "Arrow";
-
-	//if (m_AnimationMeshComp)
-	//{
-	//	CAnimationSequenceInstance* Instance = m_AnimationMeshComp->GetAnimationInstance();
-
-	//	// AnimationSequenceInstance에서 m_ChangeTime이 있기 때문에, 바로 애니메이션이 바뀌는게 아니라 m_ChangeTime에 걸쳐서 애니메이션이 바뀌는데
-	//	// CurrentAnimation은 ShootNode이라서 ChangeAnimation해도 아무것도 안하고 바로 return되고 ChangeAnimation은 Idle같은 시퀀스로 설정되어 있는 상태에서
-	//	// 이 상태에서 OnUpdate로 들어가고 Idle로 완전히 Sequence가 바뀐 상태에서 ShootNode::OnUpdate에서 CurrentAnimation은 ShootNode이라고 생각하지만
-	//	// CurrentAnimation은 결국 Idle로 될 것이고, ChangeAnimation은 nullptr가 될 것이므로 OnUpdate의 else에만 계속 들어오게 되는 문제가 생기므로
-	//	// 이런 상황에서는 KeepAnimation을 호출해서 ChangeAnimation을 지우고 CurrentAnimation은 Attack으로 유지시켜준다
-	//	if (Instance->GetChangeAnimation() && Instance->GetCurrentAnimation()->GetName() == SequenceName)
-	//		Instance->KeepCurrentAnimation();
-
-	//	else
-	//		Instance->ChangeAnimation(SequenceName);
-	//}
-
-	//m_Object->SetNoInterrupt(false);
-	//m_CallStart = true;
+	m_CallStart = true;
 
 	return NodeResult::Node_True;
 }
@@ -86,8 +63,7 @@ NodeResult CShootNode::OnUpdate(float DeltaTime)
 		if (m_InRestoreCam)
 		{
 			CScene* Scene = CSceneManager::GetInst()->GetScene();
-
-			bool RestoreEnd = Scene->RestoreCamera(50.f, DeltaTime);
+			bool RestoreEnd = Scene->RestoreCamera(m_CameraMoveTime, m_CurrentCamPos, DeltaTime);
 
 			if (RestoreEnd)
 			{
@@ -144,6 +120,8 @@ NodeResult CShootNode::OnUpdate(float DeltaTime)
 			m_Owner->SetCurrentNode(((CCompositeNode*)m_Parent->GetParent())->GetChild(1));
 		}
 
+		m_CallStart = true;
+
 		return NodeResult::Node_True;
 	}
 
@@ -152,8 +130,7 @@ NodeResult CShootNode::OnUpdate(float DeltaTime)
 		if (m_InRestoreCam)
 		{
 			CScene* Scene = CSceneManager::GetInst()->GetScene();
-
-			bool RestoreEnd = Scene->RestoreCamera(50.f, DeltaTime);
+			bool RestoreEnd = Scene->RestoreCamera(m_CameraMoveTime, m_CurrentCamPos, DeltaTime);
 
 			if (RestoreEnd)
 			{
@@ -186,6 +163,10 @@ NodeResult CShootNode::OnUpdate(float DeltaTime)
 
 			m_InRestoreCam = true;
 		}
+
+		m_CallStart = true;
+
+		return NodeResult::Node_True;
 	}
 
 	else if (Ability == Player_Ability::Bomb)
@@ -193,8 +174,7 @@ NodeResult CShootNode::OnUpdate(float DeltaTime)
 		if (m_InRestoreCam)
 		{
 			CScene* Scene = CSceneManager::GetInst()->GetScene();
-
-			bool RestoreEnd = Scene->RestoreCamera(50.f, DeltaTime);
+			bool RestoreEnd = Scene->RestoreCamera(m_CameraMoveTime, m_CurrentCamPos, DeltaTime);
 
 			if (RestoreEnd)
 			{
@@ -210,6 +190,7 @@ NodeResult CShootNode::OnUpdate(float DeltaTime)
 			{
 				return NodeResult::Node_Running;
 			}
+
 		}
 
 		else
@@ -221,17 +202,27 @@ NodeResult CShootNode::OnUpdate(float DeltaTime)
 			if (BombComp->IsClearBomb())
 			{
 				BombComp->SetClearBomb(false);
+
 			}
 
-			else
+			else if(!BombComp->IsBeforeLift())
 			{
 				BombComp->ShootBomb(Dir);
 			}
 
 			m_InRestoreCam = true;
+
+			if (BombComp->IsBeforeLift())
+			{
+				m_InRestoreCam = false;
+			}
+
 			m_Owner->SetCurrentNode(this);
+
 			m_IsEnd = false;
 		}
+
+		m_CallStart = true;
 
 		return NodeResult::Node_True;
 	}
