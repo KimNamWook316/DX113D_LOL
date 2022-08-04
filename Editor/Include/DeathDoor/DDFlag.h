@@ -31,6 +31,7 @@ enum class DDActionNode
 	ClearPathList,
 	HitBack,
 	PlayerRoll,
+	ChasePlayer,
 	// BossBetty
 	BossBettyAngryAttack,
 	BossBettyChangeAttackDir,
@@ -54,6 +55,10 @@ enum class DDActionNode
 	// HeadRoller
 	HeadRollerStun,
 	HeadRollerRoll,
+	// Dodger
+	DodgerFirstAttack,
+	DodgerSecondAttack,
+	DodgerPostAttack,
 	Max
 };
 
@@ -113,6 +118,8 @@ enum class DDConditionNode
 	CrowBossShootReadyCheck,
 	// HeadRoller
 	HeadRollerStunCheck,
+	// Dodger
+	DodgerSecondAttackCheck,
 	Max
 };
 
@@ -146,6 +153,7 @@ enum class DDObjectComponentType
 	FirePlantData,
 	MonsterBulletData,
 	HeadRollerData,
+	DodgerData,
 	Max
 };
 

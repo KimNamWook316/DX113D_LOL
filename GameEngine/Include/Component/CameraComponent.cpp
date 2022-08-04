@@ -544,10 +544,14 @@ void CCameraComponent::Update(float DeltaTime)
 	{
 		m_ShakeTimer += DeltaTime;
 
+		Vector3 PrevRelativePos = GetRelativePos();
+		PrevRelativePos -= m_PrevShakeAmount;
+
+		SetRelativePos(PrevRelativePos);
+
 		if (m_ShakeTimer >= m_ShakeMaxTime)
 		{
 			m_Shake = false;
-			SetRelativePos(m_OriginRelavitePos);
 			return;
 		}
 
@@ -567,7 +571,9 @@ void CCameraComponent::Update(float DeltaTime)
 		}
 
  		Vector3 Shake = Vector3(x * m_ShakeAmount, y * m_ShakeAmount, 0.f);
- 		SetRelativePos(m_OriginRelavitePos + Shake);
+ 		SetRelativePos(PrevRelativePos + Shake);
+
+		m_PrevShakeAmount = Shake;
 
 		m_ShakeAmount -= m_ShakeDecreaseTick * DeltaTime;
 	}

@@ -188,6 +188,7 @@
     <ClCompile Include="DeathDoor\Component\BossBettyDataComponent.cpp" />
     <ClCompile Include="DeathDoor\Component\CrackedBlockCollider.cpp" />
     <ClCompile Include="DeathDoor\Component\CrowBossDataComponent.cpp" />
+    <ClCompile Include="DeathDoor\Component\DodgerDataComponent.cpp" />
     <ClCompile Include="DeathDoor\Component\EyeLaserComponent.cpp" />
     <ClCompile Include="DeathDoor\Component\HeadRollerDataComponent.cpp" />
     <ClCompile Include="DeathDoor\Component\MonsterBulletData.cpp" />
@@ -225,6 +226,7 @@
     <ClCompile Include="DeathDoor\Component\Node\BossKnightSlamEnd.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\BossKnightWalkNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\CancleShootNode.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\ChasePlayerNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\CheckDetectRangeNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\ClearPathListNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\ClimbDown.cpp" />
@@ -263,6 +265,12 @@
     <ClCompile Include="DeathDoor\Component\Node\CrowBossSpitting.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\DeathCheck.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\DeathNode.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\DodgerDashNode.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\DodgerFirstAttackNode.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\DodgerDashCheck.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\DodgerPostAttackNode.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\DodgerSecondAttackCheck.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\DodgerSecondAttackNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\FindPathNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\HeadRollerRollNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\HeadRollerStunCheck.cpp" />
@@ -407,6 +415,7 @@
     <ClInclude Include="DeathDoor\Component\BossBettyDataComponent.h" />
     <ClInclude Include="DeathDoor\Component\CrackedBlockCollider.h" />
     <ClInclude Include="DeathDoor\Component\CrowBossDataComponent.h" />
+    <ClInclude Include="DeathDoor\Component\DodgerDataComponent.h" />
     <ClInclude Include="DeathDoor\Component\EyeLaserComponent.h" />
     <ClInclude Include="DeathDoor\Component\HeadRollerDataComponent.h" />
     <ClInclude Include="DeathDoor\Component\MonsterBulletData.h" />
@@ -444,6 +453,7 @@
     <ClInclude Include="DeathDoor\Component\Node\BossKnightSlamEnd.h" />
     <ClInclude Include="DeathDoor\Component\Node\BossKnightWalkNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\CancleShootNode.h" />
+    <ClInclude Include="DeathDoor\Component\Node\ChasePlayerNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\CheckDetectRangeNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\ClearPathListNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\ClimbDown.h" />
@@ -482,6 +492,12 @@
     <ClInclude Include="DeathDoor\Component\Node\CrowBossSpitting.h" />
     <ClInclude Include="DeathDoor\Component\Node\DeathCheck.h" />
     <ClInclude Include="DeathDoor\Component\Node\DeathNode.h" />
+    <ClInclude Include="DeathDoor\Component\Node\DodgerDashNode.h" />
+    <ClInclude Include="DeathDoor\Component\Node\DodgerFirstAttackNode.h" />
+    <ClInclude Include="DeathDoor\Component\Node\DodgerDashCheck.h" />
+    <ClInclude Include="DeathDoor\Component\Node\DodgerPostAttackNode.h" />
+    <ClInclude Include="DeathDoor\Component\Node\DodgerSecondAttackCheck.h" />
+    <ClInclude Include="DeathDoor\Component\Node\DodgerSecondAttackNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\FindPathNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\HeadRollerRollNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\HeadRollerStunCheck.h" />
