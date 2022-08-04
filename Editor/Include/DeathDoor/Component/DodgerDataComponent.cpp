@@ -5,6 +5,7 @@
 #include "PlayerDataComponent.h"
 #include "Component/ColliderBox3D.h"
 #include "Component/AnimationMeshComponent.h"
+#include "MonsterNavAgent.h"
 
 CDodgerDataComponent::CDodgerDataComponent()	:
 	m_AttackCount(0),
@@ -55,6 +56,19 @@ void CDodgerDataComponent::Update(float DeltaTime)
 	if (m_DashRotaiting)
 	{
 		m_Object->AddWorldRotationY(m_CurRotSpeed * DeltaTime);
+	}
+
+	if (m_Dash)
+	{
+		bool In = m_MonsterNavAgent->IsInNavMesh();
+
+		if (!In)
+		{
+			m_CurMoveSpeed = 0.f;
+			Vector3 PrevPos = m_Object->GetPrevFramePos();
+			m_Object->SetWorldPos(PrevPos);
+			m_Dash = false;
+		}
 	}
 }
 
@@ -137,7 +151,17 @@ void CDodgerDataComponent::OnDashStart()
 {
 	m_HitBox->Enable(false);
 
-	m_CurMoveSpeed = m_Data.MoveSpeed * 3.f;
+	// 대시 애니메이션 프레임 시간을 통해 이동 스피드를 결정함
+	Vector3 MyPos = m_Object->GetWorldPos();
+	CAnimationSequenceInstance* AnimInst = m_AnimMesh->GetAnimationInstance();
+
+	int DashFrameLength = AnimInst->GetAnimationFrameLength("Dash") - 8 - 1;
+	float FrameTime = AnimInst->GetAnimationFrameTime("Dash");
+	float DashTime = (float)DashFrameLength * FrameTime;
+	float ToDashPointLength = (m_DashDest - MyPos).Length();
+
+	m_CurMoveSpeed = ToDashPointLength / DashTime;
+
 	m_MoveZ = true;
 	m_Dash = true;
 

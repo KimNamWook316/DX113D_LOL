@@ -31,6 +31,7 @@ enum class DDActionNode
 	ClearPathList,
 	HitBack,
 	PlayerRoll,
+	// Monster
 	ChasePlayer,
 	// BossBetty
 	BossBettyAngryAttack,
@@ -59,6 +60,7 @@ enum class DDActionNode
 	DodgerFirstAttack,
 	DodgerSecondAttack,
 	DodgerPostAttack,
+	DodgerDash,
 	Max
 };
 
@@ -119,6 +121,7 @@ enum class DDConditionNode
 	// HeadRoller
 	HeadRollerStunCheck,
 	// Dodger
+	DodgerDashCheck,
 	DodgerSecondAttackCheck,
 	Max
 };

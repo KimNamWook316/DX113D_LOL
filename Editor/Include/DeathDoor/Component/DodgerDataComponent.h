@@ -54,5 +54,6 @@ private:
     bool m_Dash;
     Vector3 m_PrevPlayerPos;
     Vector3 m_DashDest;
+    Vector3 m_DashMovePerSec;
 };
 
