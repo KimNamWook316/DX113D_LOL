@@ -14,11 +14,22 @@ protected:
 
 protected:
     HalfLineInfo   m_Info;
+    Vector3 m_IntersectPoint;
 
 public:
     HalfLineInfo GetInfo()  const
     {
         return m_Info;
+    }
+
+    const Vector3& GetIntersectPoint()  const
+    {
+        return m_IntersectPoint;
+    }
+
+    void SetIntersectPoint(const Vector3& Point)
+    {
+        m_IntersectPoint = Point;
     }
 
 public:
@@ -34,5 +45,8 @@ public:
     virtual bool Load(FILE* File);
     virtual bool Collision(CColliderComponent* Dest);
     virtual bool CollisionMouse(const Vector2& MousePos);
+
+public:
+    void RefreshInfo();
 };
 

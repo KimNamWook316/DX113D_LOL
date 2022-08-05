@@ -270,6 +270,8 @@ void CPaperBurnComponent::Update(float DeltaTime)
 		{
 			m_Filter = 1.f;
 
+			m_StartPaperBurn = false;
+
 			if (m_FinishCallback)
 			{
 				m_FinishCallback();
@@ -290,8 +292,6 @@ void CPaperBurnComponent::Update(float DeltaTime)
 				ResetPaperBurn();
 				break;
 			}
-
-			m_StartPaperBurn = false;
 
 			bool Inverse = m_CBuffer->IsInverse();
 			if (Inverse)

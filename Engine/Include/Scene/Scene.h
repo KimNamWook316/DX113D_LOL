@@ -40,6 +40,9 @@ private:
 
 	std::list<class CSceneComponent*> m_RenderComponentList;
 	Vector3 m_OriginCamPos;
+	Vector3 m_RestoreCamDir;
+	bool m_RestoreCamDirFix;
+	float m_AccTime;
 
 public:
 	CSceneMode* GetSceneMode()	const
@@ -236,7 +239,9 @@ public:
 public:
 	// 카메라 이동이 끝나면 true 리턴
 	bool CameraMove(const Vector3& Direction, const Vector3& DestPos, float Speed, float DeltaTime);
+	bool CameraMove(double Time, const Vector3& DestPos, float DeltaTime);
 	bool RestoreCamera(float Speed, float DeltaTime);
+	bool RestoreCamera(double Time, const Vector3 CurrentCamPos, float DeltaTime);
 
 public:
 	bool SetSceneMode(size_t SceneModeTypeID);

@@ -30,6 +30,10 @@ private:
 	// 구르기인데도 맞아 눕는 문제가 생길 수 있다
 	float m_UnbeatableTime; // 구르기하고 무적시간 
 
+	bool m_LadderUpEnable;
+	bool m_LadderDownEnable;
+	bool m_IsClimbingLadder;
+
 public:
 	virtual void Start();
 	virtual bool Init();
@@ -48,6 +52,36 @@ public:
 	virtual bool LoadOnly(FILE* File) override;
 
 public:
+	void SetLadderUpEnable(bool Enable)
+	{
+		m_LadderUpEnable = Enable;
+	}
+
+	bool IsLadderUpEnable()	const
+	{
+		return m_LadderUpEnable;
+	}
+
+	void SetLadderDownEnable(bool Enable)
+	{
+		m_LadderDownEnable = Enable;
+	}
+
+	bool IsLadderDownEnable()	const
+	{
+		return m_LadderDownEnable;
+	}
+
+	void SetClimbingLadder(bool Enable)
+	{
+		m_IsClimbingLadder = Enable;
+	}
+
+	bool IsClimbingLadder()	const
+	{
+		return m_IsClimbingLadder;
+	}
+
 	void SetTrueOnSlash();
 
 	void SetFalseOnSlash();
@@ -80,6 +114,16 @@ public:
 	void SetPlayerAbilityChain(float DeltaTime)
 	{
 		m_PlayerData.Abilty_Type = Player_Ability::Hook;
+	}
+
+	void SetPlayerAbilityBomb(float DeltaTime)
+	{
+		m_PlayerData.Abilty_Type = Player_Ability::Bomb;
+	}
+
+	void SetSkillNone(float DeltaTime)
+	{
+		m_PlayerData.Abilty_Type = Player_Ability::None;
 	}
 
 	Player_Ability GetPlayerAbility()	const
@@ -127,6 +171,15 @@ public:
 		return m_KeyStateQueue.size();
 	}
 
+	virtual void DecreaseHP(int Amout)
+	{
+		if (!m_IsHit)
+		{
+			CObjectDataComponent::DecreaseHP(Amout);
+			m_IsHit = true;
+		}
+	}
+
 	class CAnimationMeshComponent* GetAnimationMeshComponent() const;
 
 	void OnHitBack();
@@ -134,6 +187,7 @@ public:
 	void OnHitRecoverEnd();
 	void OnRoll();
 	void OnRollEnd();
+	void OnBombLift();
 
 	void ForceUpdateAttackDirection();
 	void OnEnableAttackCollider();

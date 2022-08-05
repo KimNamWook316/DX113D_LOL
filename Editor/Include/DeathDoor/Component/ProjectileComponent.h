@@ -38,10 +38,25 @@ public:
 	void ShootByGravityTargetPos(const Vector3& StartPos, const Vector3& XZDir, float Angle,
 		const Vector3& TargetPos, class CGameObject* EndParticleObj = nullptr);
 
+	void ClearCollsionCallBack();
 	bool CheckDestroy();
 	void OnEnd();
 
 public:
+	template <typename T>
+	void ShootByLifeTimeCollision(T* Obj, void(T::* CollisionCallBack)(const CollisionResult&), Collision_State CollisionState,
+		const Vector3& StartPos, const Vector3& Dir,
+		float Speed, float LifeTime,
+		class CGameObject* EndParticleObj = nullptr)
+	{
+		if (m_Collider && CollisionCallBack)
+		{
+			m_Collider->AddCollisionCallback(CollisionState, Obj, CollisionCallBack);
+		}
+
+		ShootByLifeTime(StartPos, Dir, Speed, LifeTime, EndParticleObj);
+	}
+
 	template <typename T>
 	void Shoot(T* Obj, void(T::* CollisionCallBack)(const CollisionResult&), Collision_State CollsionState,
 		const Vector3& StartPos, const Vector3& Dir, float Speed,
@@ -96,6 +111,11 @@ private:
 	std::function<void(const Vector3&)> m_EndCallBack;
 
 public:
+	bool IsShoot()	const
+	{
+		return m_IsShoot;
+	}
+
 	void SetDestroy(bool NoDestroy)
 	{
 		m_Destroy = NoDestroy;
@@ -119,6 +139,11 @@ public:
 	void SetLifeTimer(float Timer)
 	{
 		m_LifeTimer = Timer;
+	}
+
+	void SetSpeed(float Speed)
+	{
+		m_Speed = Speed;
 	}
 };
 

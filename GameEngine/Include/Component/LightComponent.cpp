@@ -21,11 +21,14 @@ CLightComponent::CLightComponent(const CLightComponent& com) :
 
 CLightComponent::~CLightComponent()
 {
-	CLightManager* LightManager = m_Scene->GetLightManager();
-
-	if (LightManager)
+	if (m_Object->IsInPool() == false && m_Scene)
 	{
-		LightManager->DeleteLight(this);
+		CLightManager* LightManager = m_Scene->GetLightManager();
+
+		if (LightManager)
+		{
+			LightManager->DeleteLight(this);
+		}
 	}
 
 	SAFE_DELETE(m_CBuffer);
@@ -50,6 +53,18 @@ bool CLightComponent::Init()
 void CLightComponent::Update(float DeltaTime)
 {
 	CSceneComponent::Update(DeltaTime);
+}
+
+void CLightComponent::Reset()
+{
+	CSceneComponent::Reset();
+
+	CLightManager* LightManager = m_Scene->GetLightManager();
+
+	if (LightManager)
+	{
+		LightManager->DeleteLight(this);
+	}
 }
 
 void CLightComponent::PostUpdate(float DeltaTime)
@@ -225,6 +240,22 @@ bool CLightComponent::LoadOnly(FILE* File)
 	m_CBuffer->SetAtt1(Att3);
 
 	return true;
+}
+
+void CLightComponent::Enable(bool Enable)
+{
+	CSceneComponent::Enable(Enable);
+
+	CLightManager* LightManager = m_Scene->GetLightManager();
+
+	if (Enable)
+	{
+		LightManager->AddLight(this);
+	}
+	else
+	{
+		LightManager->DeleteLight(this);
+	}
 }
 
 void CLightComponent::SetShader()

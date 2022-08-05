@@ -171,6 +171,21 @@ public:
         return m_PrevCollisionList;
     }
 
+    template <typename T>
+    bool CheckPrevCollisionFromType()
+    {
+        auto iter = m_PrevCollisionList.begin();
+        auto iterEnd = m_PrevCollisionList.end();
+
+        for (; iter != iterEnd; ++iter)
+        {
+            if ((*iter)->CheckType<T>())
+                return true;
+
+            return false;
+        }
+    }
+
 public:
     virtual void Start();
     virtual bool Init();
@@ -186,7 +201,11 @@ public:
     virtual bool Collision(CColliderComponent* Dest) = 0;
     virtual bool CollisionMouse(const Vector2& MousePos) = 0;
     virtual bool CollisionRay(const Ray& Ray);
-    virtual void Destroy() override;
+    virtual void Reset() override;
+
+public:
+    void ClearCollisionCallBack();
+
 public:
     template <typename T>
     void AddCollisionCallback(Collision_State State, T* Obj, void(T::* Func)(const CollisionResult&))

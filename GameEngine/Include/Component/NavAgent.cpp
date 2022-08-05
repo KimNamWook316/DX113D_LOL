@@ -9,7 +9,9 @@
 
 CNavAgent::CNavAgent()	:
 	m_MoveSpeed(0.f),
-	m_ApplyNavMesh(true)
+	m_RotationSpeed(360.f),
+	m_ApplyNavMesh(true),
+	m_Rotaiting(false)
 {
 	m_CurrentFaceDir = Vector3(0.f, 0.f, 1.f);
 	SetTypeID<CNavAgent>();
@@ -149,21 +151,32 @@ void CNavAgent::Update(float DeltaTime)
 			}
 
 			float Dot = Vector3(Dir.x, 0.f, Dir.z).Dot(Vector3(CurrentFaceDir.x, 0.f, CurrentFaceDir.z));
+			float Angle = Vector3(Dir.x, 0.f, Dir.z).Angle(Vector3(CurrentFaceDir.x, 0.f, CurrentFaceDir.z));
 
-			if (Dot < 0.9999f && Dot > -0.9999f)
+			if (abs(Angle) > 1.f)
 			{
 				float Degree = RadianToDegree(acosf(Dot));
 				Vector3 CrossResult = Vector3(Dir.x, 0.f, Dir.z).Cross(Vector3(CurrentFaceDir.x, 0.f, CurrentFaceDir.z));
 
 				if (CrossResult.y > 0.f)
 				{
-					m_UpdateComponent->AddWorldRotationY(-360.f * DeltaTime);
+					m_UpdateComponent->AddWorldRotationY(-m_RotationSpeed * DeltaTime);
 				}
 
 				else
 				{
-					m_UpdateComponent->AddWorldRotationY(360.f * DeltaTime);
+					m_UpdateComponent->AddWorldRotationY(m_RotationSpeed * DeltaTime);
 				}
+
+				m_Rotaiting = true;
+			}
+			else
+			{
+				if (!isnan(Angle))
+				{
+					m_UpdateComponent->AddWorldRotationY(Angle);
+				}
+				m_Rotaiting = false;
 			}
 		}
 	}

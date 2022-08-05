@@ -233,6 +233,9 @@ PSOutput_Single ParticlePS(GeometryParticleOutput input)
 {
 	PSOutput_Single output = (PSOutput_Single)0;
 
+	if (g_DestroyAllExistingLivingParticles == 1)
+		clip(-1);
+
 	// 기존에 Alive 되었던 Particle 들이 다시 생성되게 하기
 	// if (g_DestroyAllExistingLivingParticles == 1)
 	// {

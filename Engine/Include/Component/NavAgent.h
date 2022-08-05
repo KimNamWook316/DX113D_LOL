@@ -17,7 +17,9 @@ protected:
 private:
 	CSharedPtr<class CSceneComponent> m_UpdateComponent;
 	float					m_MoveSpeed;
+	float					m_RotationSpeed;
 	bool					m_ApplyNavMesh;
+	bool					m_Rotaiting;
 	Vector3					m_CurrentFaceDir;
 
 protected:
@@ -45,6 +47,11 @@ public:
 	void SetMoveSpeed(float Speed)
 	{
 		m_MoveSpeed = Speed;
+	}
+
+	void SetRotationSpeed(float Speed)
+	{
+		m_RotationSpeed = Speed;
 	}
 
 	void SetApplyNavMesh(bool Apply)
@@ -83,6 +90,11 @@ public:
 	bool IsEmptyPathList()	const
 	{
 		return m_PathList.empty();
+	}
+
+	bool IsRotaiting() const
+	{
+		return m_Rotaiting;
 	}
 
 	size_t GetPathListCount()	const

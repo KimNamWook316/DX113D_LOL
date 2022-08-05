@@ -34,9 +34,10 @@ CRenderManager::CRenderManager()	:
 	m_ShadowCBuffer(nullptr),
 	m_DebugRender(false),
 	m_PostFXRenderer(nullptr),
-	m_PostProcessing(false),
+	m_PostProcessing(true),
 	m_RenderSkyBox(true),
-	m_FadeCBuffer(nullptr)
+	m_FadeCBuffer(nullptr),
+	m_BombEffect(false)
 {
 }
 
@@ -61,15 +62,39 @@ CRenderManager::~CRenderManager()
 	SAFE_DELETE(m_FadeCBuffer);
 }
 
-void CRenderManager::StartFadeEffect(FadeEffecType Type)
+void CRenderManager::StartFadeEffect(FadeEffecType Type, bool Stay)
 {
-	m_CurFadeEffectType = m_CurFadeEffectType;
+	m_CurFadeEffectType = Type;
 	m_FadeEffectStart = true;
 	m_FadeEffectTimer = 0.f;
 
 	m_FadeCBuffer->SetFadeStart(true);
 	m_FadeCBuffer->SetFadeStartColor(m_FadeInfo.StartColor);
 	m_FadeCBuffer->SetFadeEndColor(m_FadeInfo.EndColor);
+	m_FadeInfo.Stay = Stay;
+}
+
+void CRenderManager::EnableBombEffect(float Time)
+{
+	if (m_BombEffect)
+	{
+		return;
+	}
+
+	CScene* Scene = CSceneManager::GetInst()->GetScene();
+
+	if (Scene)
+	{
+		// 전역광 끈다
+		CLightComponent* GlobalLight = Scene->GetLightManager()->GetGlobalLightComponent();
+
+		m_OriginGLightColor = GlobalLight->GetLightColor();
+		GlobalLight->SetColor(Vector4::Black);
+
+		m_BombEffect = true;
+		m_BombEffectTime = Time;
+		m_BombEffectTimer = 0.f;
+	}
 }
 
 float CRenderManager::GetMiddleGray() const
@@ -620,10 +645,25 @@ void CRenderManager::Render(float DeltaTime)
 	// Fade in out
 	UpdateFadeEffectInfo(DeltaTime);
 
+	// Bomb Effect 시간 계산
+	if (m_BombEffect)
+	{
+		m_BombEffectTimer += DeltaTime;
+		if (m_BombEffectTimer >= m_BombEffectTime)
+		{
+			m_BombEffect = false;
+			m_BombEffectTimer = 0.f;
+
+			// 전역광 다시 켠다
+			CLightComponent* GlobalLight = Scene->GetLightManager()->GetGlobalLightComponent();
+			GlobalLight->SetColor(m_OriginGLightColor);
+		}
+	}
+
 	if (m_PostProcessing)
 	{
 		// HDR, Bloom, Adaptation 등 PostEffect 처리
-		m_PostFXRenderer->Render(DeltaTime, m_FinalTarget);
+		m_PostFXRenderer->Render(DeltaTime, m_FinalTarget, m_BombEffect);
 	}
 	else
 	{
@@ -1566,6 +1606,7 @@ void CRenderManager::UpdateFadeEffectInfo(float DeltaTime)
 		if (m_FadeEffectTimer == 0.f && m_FadeInfo.StartCallBack)
 		{
 			m_FadeInfo.StartCallBack();
+			m_FadeInfo.StartCallBack = nullptr;
 		}
 
 		m_FadeEffectTimer += DeltaTime;
@@ -1583,7 +1624,7 @@ void CRenderManager::UpdateFadeEffectInfo(float DeltaTime)
 			Ratio = m_FadeEffectTimer / m_FadeInfo.Time;
 		}
 		// 페이드 아웃의 경우 Start Color -> End Color로
-		else
+		else if (m_CurFadeEffectType == FadeEffecType::FADE_OUT)
 		{
 			Ratio = 1.f - (m_FadeEffectTimer / m_FadeInfo.Time);
 		}
@@ -1596,11 +1637,20 @@ void CRenderManager::UpdateFadeEffectInfo(float DeltaTime)
 			if (m_FadeInfo.EndCallBack)
 			{
 				m_FadeInfo.EndCallBack();
+				m_FadeInfo.EndCallBack = nullptr;
 			}
 
-			m_FadeEffectTimer = 0.f;
-			m_FadeEffectStart = false;
-			m_FadeCBuffer->SetFadeStart(false);
+			// Stay 상태라면, Effect를 종료하지 않고, 현재 컬러를 유지한다.
+			if (m_FadeInfo.Stay)
+			{
+				m_FadeEffectTimer = 1.f;
+			}
+			else
+			{
+				m_FadeEffectTimer = 0.f;
+				m_FadeEffectStart = false;
+				m_FadeCBuffer->SetFadeStart(false);
+			}
 		}
 
 		m_FadeCBuffer->UpdateCBuffer();

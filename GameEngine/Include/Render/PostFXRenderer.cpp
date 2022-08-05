@@ -305,6 +305,7 @@ bool CPostFXRenderer::Init()
 	m_BlurVerticalShader = (CComputeShader*)CResourceManager::GetInst()->FindShader("BlurVerticalShader");
 	m_BlurHorizontalShader = (CComputeShader*)CResourceManager::GetInst()->FindShader("BlurHorizontalShader");
 	m_HDRRenderShader = CResourceManager::GetInst()->FindShader("HDRRenderShader");
+	m_BombEffectShader = CResourceManager::GetInst()->FindShader("BombShader");
 
 	// RenderState
 	m_DepthDisable = CRenderManager::GetInst()->GetRenderStateManager()->FindRenderState("DepthDisable");
@@ -448,7 +449,7 @@ float CPostFXRenderer::GetFogDensity() const
 	return m_FogCBuffer->GetFogDensity();
 }
 
-void CPostFXRenderer::Render(float DeltaTime, CRenderTarget* LDRTarget)
+void CPostFXRenderer::Render(float DeltaTime, CRenderTarget* LDRTarget, bool BombEffect)
 {
 	// 적응 계수 계산
 	ComputeAdaptation(DeltaTime);
@@ -462,8 +463,15 @@ void CPostFXRenderer::Render(float DeltaTime, CRenderTarget* LDRTarget)
 	// Blur 처리
 	Blur();
 
-	// 백버퍼 렌더
-	RenderFinal(LDRTarget);
+	if (BombEffect)
+	{
+		RenderBombEffect(LDRTarget);
+	}
+	else
+	{
+		// 백버퍼 렌더
+		RenderFinal(LDRTarget);
+	}
 }
 
 void CPostFXRenderer::ComputeHDR(CRenderTarget* LDRTarget)
@@ -658,17 +666,7 @@ void CPostFXRenderer::RenderFinal(CRenderTarget* LDRTarget)
 	Context->PSSetShaderResources(10, 6, arrSRV);
 
 	// 현재 프레임 평균 휘도를 저장
-	ID3D11Buffer* TempBuffer = m_PrevFrameLumAverageBuffer;
-	ID3D11UnorderedAccessView* TempUAV = m_PrevFrameLumAverageBufferUAV;
-	ID3D11ShaderResourceView* TempSRV = m_PrevFrameLumAverageBufferSRV;
-
-	m_PrevFrameLumAverageBuffer = m_LuminanceAverageBuffer;
-	m_PrevFrameLumAverageBufferUAV = m_LuminanceAverageBufferUAV;
-	m_PrevFrameLumAverageBufferSRV = m_LuminanceAverageBufferSRV;
-
-	m_LuminanceAverageBuffer = TempBuffer;
-	m_LuminanceAverageBufferUAV = TempUAV;
-	m_LuminanceAverageBufferSRV = TempSRV;
+	SavePrevLum();
 
  //	D3D11_MAPPED_SUBRESOURCE Map = {};
  //	float CurLumAv;
@@ -686,4 +684,52 @@ void CPostFXRenderer::RenderFinal(CRenderTarget* LDRTarget)
  //	{
  //		int a = 0;
  //	}
+}
+
+void CPostFXRenderer::RenderBombEffect(CRenderTarget* LDRTarget)
+{
+	ID3D11DeviceContext* Context = CDevice::GetInst()->GetContext();
+
+	m_HDRRenderCBuffer->UpdateCBuffer();
+	m_FogCBuffer->UpdateCBuffer();
+
+	LDRTarget->SetTargetShader(10);
+	Context->PSSetShaderResources(12, 1, &m_BloomSRV);
+	ID3D11ShaderResourceView* DepthSrv = m_GBufferDepth->GetResource(0);
+	Context->PSSetShaderResources(13, 1, &DepthSrv);
+
+	m_BombEffectShader->SetShader();
+	
+	m_DepthDisable->SetState();
+
+	// Null Buffer 출력
+	UINT Offset = 0;
+	Context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+	Context->IASetVertexBuffers(0, 0, nullptr, nullptr, &Offset);
+	Context->IASetIndexBuffer(nullptr, DXGI_FORMAT_UNKNOWN, 0);
+	Context->Draw(4, 0);
+
+	// Reset 
+	m_DepthDisable->ResetState();
+
+	ID3D11ShaderResourceView* SRV = nullptr;
+	LDRTarget->ResetTargetShader(10);
+	Context->PSSetShaderResources(12, 1, &SRV);
+	Context->PSSetShaderResources(13, 1, &SRV);
+}
+
+void CPostFXRenderer::SavePrevLum()
+{
+	// 현재 프레임 평균 휘도를 저장
+	ID3D11Buffer* TempBuffer = m_PrevFrameLumAverageBuffer;
+	ID3D11UnorderedAccessView* TempUAV = m_PrevFrameLumAverageBufferUAV;
+	ID3D11ShaderResourceView* TempSRV = m_PrevFrameLumAverageBufferSRV;
+
+	m_PrevFrameLumAverageBuffer = m_LuminanceAverageBuffer;
+	m_PrevFrameLumAverageBufferUAV = m_LuminanceAverageBufferUAV;
+	m_PrevFrameLumAverageBufferSRV = m_LuminanceAverageBufferSRV;
+
+	m_LuminanceAverageBuffer = TempBuffer;
+	m_LuminanceAverageBufferUAV = TempUAV;
+	m_LuminanceAverageBufferSRV = TempSRV;
 }

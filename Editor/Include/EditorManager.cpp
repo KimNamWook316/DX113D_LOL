@@ -28,10 +28,10 @@
 #include "Component/PaperBurnComponent.h"
 #include "Component/WaterComponent.h"
 #include "Component/PaperBurnComponent.h"
+#include "Component/Arm.h"
 #include "DeathDoor\Component/PlayerNormalAttackCheckCollider.h"
 #include "DeathDoor\Component/EyeLaserComponent.h"
 #include "DeathDoor\Component/PlayerHookComponent.h"
-#include "DeathDoor\Component/MonsterPathFindCollider.h"
 #include "DeathDoor\Component/KnightDataComponent.h"
 #include "DeathDoor\Component/BossBettyDataComponent.h"
 #include "DeathDoor\Component/CrowBossDataComponent.h"
@@ -41,10 +41,14 @@
 #include "DeathDoor\Component/ProjectileComponent.h"
 #include "DeathDoor\Component/ArrowComponent.h"
 #include "DeathDoor\Component/TinyCrowDataComponent.h"
+#include "DeathDoor\Component/PlayerBombComponent.h"
+#include "DeathDoor\Component/LadderCollider.h"
 #include "DeathDoor\Component/SporeBoomerDataComponent.h"
 #include "DeathDoor\Component/CrackedBlockCollider.h"
 #include "DeathDoor\Component/FirePlantDataComponent.h"
 #include "DeathDoor\Component/MonsterBulletData.h"
+#include "DeathDoor\Component/HeadRollerDataComponent.h"
+#include "DeathDoor\Component/DodgerDataComponent.h"
 // Window
 #include "Window/ObjectHierarchyWindow.h"
 #include "Window/SceneComponentHierarchyWindow.h"
@@ -79,6 +83,8 @@
 // SceneMode
 #include "DeathDoor\Scene\DDSceneMode.h"
 #include "DeathDoor\Scene\DDBossSceneMode.h"
+#include "DeathDoor\Scene\DDInstanceSceneMode.h"
+#include "DeathDoor\Scene\DDPuzzleSceneMode.h"
 
 #include <sstream>
 
@@ -277,6 +283,14 @@ void CEditorManager::CreateSceneMode(CScene* Scene, size_t Type)
 	{
 		Scene->LoadSceneMode<CDDBossSceneMode>();
 	}
+	else if (Type == typeid(CDDInstanceSceneMode).hash_code())
+	{
+		Scene->LoadSceneMode<CDDInstanceSceneMode>();
+	}
+	else if (Type == typeid(CDDPuzzleSceneMode).hash_code())
+	{
+		Scene->LoadSceneMode<CDDPuzzleSceneMode>();
+	}
 }
 
 CGameObject* CEditorManager::CreateObject(CScene* Scene, size_t Type)
@@ -309,6 +323,11 @@ CComponent* CEditorManager::CreateComponent(CGameObject* Obj, size_t Type)
 	else if (Type == typeid(CSpriteComponent).hash_code())
 	{
 		CComponent* Component = Obj->LoadComponent<CSpriteComponent>();
+		return Component;
+	}
+	else if (Type == typeid(CArm).hash_code())
+	{
+		CComponent* Component = Obj->LoadComponent<CArm>();
 		return Component;
 	}
 	else if (Type == typeid(CStaticMeshComponent).hash_code())
@@ -429,6 +448,12 @@ CComponent* CEditorManager::CreateComponent(CGameObject* Obj, size_t Type)
 		return Component;
 	}
 
+	else if (Type == typeid(CLadderCollider).hash_code())
+	{
+		CLadderCollider* Component = Obj->LoadComponent<CLadderCollider>();
+		return Component;
+	}
+
 	else if (Type == typeid(CPlayerDataComponent).hash_code())
 	{
 		CPlayerDataComponent* Component = Obj->LoadObjectComponent<CPlayerDataComponent>();
@@ -502,6 +527,12 @@ CComponent* CEditorManager::CreateComponent(CGameObject* Obj, size_t Type)
 		return Component;
 	}
 
+	else if (Type == typeid(CPlayerBombComponent).hash_code())
+	{
+		CPlayerBombComponent* Component = Obj->LoadObjectComponent<CPlayerBombComponent>();
+		return Component;
+	}
+
 	else if (Type == typeid(CSporeBoomerDataComponent).hash_code())
 	{
 		CSporeBoomerDataComponent* Component = Obj->LoadObjectComponent<CSporeBoomerDataComponent>();
@@ -523,6 +554,18 @@ CComponent* CEditorManager::CreateComponent(CGameObject* Obj, size_t Type)
 	else if (Type == typeid(CMonsterBulletData).hash_code())
 	{
 		CMonsterBulletData* Component = Obj->LoadObjectComponent<CMonsterBulletData>();
+		return Component;
+	}
+
+	else if (Type == typeid(CHeadRollerDataComponent).hash_code())
+	{
+		CHeadRollerDataComponent* Component = Obj->LoadObjectComponent<CHeadRollerDataComponent>();
+		return Component;
+	}
+
+	else if (Type == typeid(CDodgerDataComponent).hash_code())
+	{
+		CDodgerDataComponent* Component = Obj->LoadObjectComponent<CDodgerDataComponent>();
 		return Component;
 	}
 

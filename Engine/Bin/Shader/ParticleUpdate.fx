@@ -603,6 +603,13 @@ void ParticleUpdate(uint3 ThreadID : SV_DispatchThreadID)
 	g_ParticleShare[0].UVRowN = g_ParticleUVRowN;
 	g_ParticleShare[0].UVColN = g_ParticleUVColN;
 
+	// ObjectPool 에 들어갈 때, Reset 호출
+	// 기존에 살아있던 Particle들을 다 Alive False 로 만들어서 Reset 시켜줄 것이다.
+	if (g_DestroyAllExistingLivingParticles == 1)
+	{
+		g_ParticleArray[ThreadID.x].Alive = 0;
+		return;
+	}
 
 	// 매번 초기화 해줄 것이다.
 	g_ParticleArray[ThreadID.x].SeperateRotAngleOffset = float3(0.f, 0.f, 0.f);
@@ -773,13 +780,6 @@ void ParticleUpdate(uint3 ThreadID : SV_DispatchThreadID)
 	// if (g_ParticleDisableNewAlive == 1 || g_ParticleArray[ThreadID.x].Alive == 0)
 	else
 	{
-		if (g_DestroyAllExistingLivingParticles == 1)
-		{
-			g_ParticleArray[ThreadID.x].InitParticleComponentWorldPos = g_ParticleComponentWorldPos;
-			g_ParticleArray[ThreadID.x].Alive = 0;
-			return;
-		}
-
 		g_ParticleArray[ThreadID.x].LifeTime += g_DeltaTime;
 
 		// 아래 함수를 사용하기 전에 LifeTime 을 시간에 맞게 증가시켜야 한다.

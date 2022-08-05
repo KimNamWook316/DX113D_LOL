@@ -13,6 +13,13 @@ enum class DDActionNode
 	AddFallingFloorCallback,
 	Lockstone3TriggerBoxAction,
 	FindPath,
+	ClimbDown,
+	ClimbDownEnd,
+	ClimbDownStart,
+	ClimbUp,
+	ClimbUpEnd,
+	ClimbUpStart,
+	ClimbPause,
 	BossKnightContinueAttack,
 	BossKnightFinalAttack,
 	BossKnightJumpAttack,
@@ -24,6 +31,8 @@ enum class DDActionNode
 	ClearPathList,
 	HitBack,
 	PlayerRoll,
+	// Monster
+	ChasePlayer,
 	// BossBetty
 	BossBettyAngryAttack,
 	BossBettyChangeAttackDir,
@@ -44,6 +53,14 @@ enum class DDActionNode
 	CrowBossSpitting,
 	// SporeBoomer
 	SporeBoomerShoot,
+	// HeadRoller
+	HeadRollerStun,
+	HeadRollerRoll,
+	// Dodger
+	DodgerFirstAttack,
+	DodgerSecondAttack,
+	DodgerPostAttack,
+	DodgerDash,
 	Max
 };
 
@@ -74,6 +91,16 @@ enum class DDConditionNode
 	HitCheckNode,
 	RollInputCheck,
 	UpdateInputQueue,
+	SKeyInputCheck,
+	WKeyInputCheck,
+	IsClimbingCheck,
+	ClimbDownContinueCheck,
+	ClimbDownEndCheck,
+	ClimbDownStartCheck,
+	ClimbUpContinueCheck,
+	ClimbUpEndCheck,
+	ClimbUpStartCheck,
+	StraightPathCheck,
 	// BossBetty
 	BossBettyCheckAttackDir,
 	BossBettyCheckFarAttackType,
@@ -91,6 +118,11 @@ enum class DDConditionNode
 	CrowBossShootCheck,
 	CrowBossShootEndCheck,
 	CrowBossShootReadyCheck,
+	// HeadRoller
+	HeadRollerStunCheck,
+	// Dodger
+	DodgerDashCheck,
+	DodgerSecondAttackCheck,
 	Max
 };
 
@@ -100,6 +132,7 @@ enum class DDSceneComponentType
 	EyeLaserComponent,
 	PlayerHookComponent,
 	PlayerBowComponent,
+	LadderCollider,
 	CrackedBlockCollider,
 	Max
 };
@@ -118,9 +151,12 @@ enum class DDObjectComponentType
 	ProjectileComponent,
 	ArrowComponent,
 	TinyCrowDataComponent,
+	PlayerBombComponent,
 	SporeBoomerData,
 	FirePlantData,
 	MonsterBulletData,
+	HeadRollerData,
+	DodgerData,
 	Max
 };
 
@@ -151,5 +187,7 @@ enum class DDSceneModeType
 {
 	DDSceneMode,
 	DDBossSceneMode,
+	DDInstanceSceneMode,
+	DDPuzzleSceneMode,
 	Max
 };

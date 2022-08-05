@@ -17,6 +17,7 @@ private:
 	float	m_PathFindCoolStart;
 	bool	m_PathFindEnable;
 	bool	m_CoolStart;
+	int		m_CurPolyIndex;
 
 public:
 	bool IsCoolStart()	const
@@ -38,6 +39,9 @@ public:
 	{
 		return m_PathFindEnable;
 	}
+
+public:
+	bool IsInNavMesh();
 
 public:
 	virtual void Start();

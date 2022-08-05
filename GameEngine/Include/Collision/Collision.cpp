@@ -9,6 +9,7 @@
 
 #define EPSILON 0.00001f
 
+
 bool CCollision::CollisionBox2DToBox2D(CColliderBox2D* Src, CColliderBox2D* Dest)
 {
 	CollisionResult	srcResult, destResult;
@@ -152,31 +153,10 @@ bool CCollision::CollisionBox3DToBox3D(CColliderBox3D* Src, CColliderBox3D* Dest
 
 bool CCollision::CollisionRayToBox3D(CColliderRay* Src, CColliderBox3D* Dest)
 {
-	Vector3 HitPoint;
+	float HitPointDist = -1.f;
 
-	if (CollisionRayToBox3D(HitPoint, Src->GetInfo(), Dest->GetInfo()))
+	if (CollisionRayToBox3D(HitPointDist, Src->GetInfo(), Dest->GetInfo()))
 	{
-		float Step = 0.1f;
-		Vector3 CheckPoint;
-
-		Dest->UpdateMinMax();
-
-		Ray ray = Src->GetInfo();
-		Box3DInfo Box = Dest->GetInfo();
-
-		//while (true)
-		//{
-		//	CheckPoint = ray.Pos + (ray.Dir.x * Step, ray.Dir.y * Step, ray.Dir.z * Step);
-		//	bool Intersect = CheckPointInBox(CheckPoint, Box);
-
-		//	if (Intersect)
-		//		break;
-
-		//	Step += 0.1f;
-		//}
-
-		HitPoint = CheckPoint;
-
 		return true;
 	}
 
@@ -185,12 +165,15 @@ bool CCollision::CollisionRayToBox3D(CColliderRay* Src, CColliderBox3D* Dest)
 
 bool CCollision::CollisionBox3DToHalfLine(CColliderBox3D* Src, CColliderHalfLine* Dest)
 {
-	Vector3	Result;
+	float Scale = -1.f;
 
 	Src->UpdateMinMax();
 
-	if (CollisionBox3DToHalfLine(Result, Src->GetInfo(), Dest->GetInfo(), Src))
+	if (CollisionBox3DToHalfLine(Scale, Src->GetInfo(), Dest->GetInfo(), Src))
 	{
+
+		Dest->SetWorldScale(Scale + 0.05f, 1.f, 1.f);
+
 		return true;
 	}
 
@@ -864,15 +847,15 @@ bool CCollision::CollisionRayToSphere(Vector3& HitPoint, const Ray& ray, const S
 	return true;
 }
 
-bool CCollision::CollisionRayToBox3D(Vector3& HitPoint, const Ray& ray, const Box3DInfo& Box)
+bool CCollision::CollisionRayToBox3D(float& Scale, const Ray& ray, const Box3DInfo& Box)
 {
 
 	float tMin = 0;
 	float tMax = FLT_MAX;
 
+	Scale = 1000.f;
+
 	Vector3 Delta = Box.Center - ray.Pos;
-	//float D1;
-	//float D2;
 
 	Vector3 n = Box.Axis[0];
 
@@ -963,22 +946,40 @@ bool CCollision::CollisionRayToBox3D(Vector3& HitPoint, const Ray& ray, const Bo
 	if (tMax < tMin)
 		return false;
 
+	/*  
+	******** 여기서 tMin은 o + td 라는 Ray가 있을 때 Box와 최초로 만나게 될 때의 t값이므로 o가 Ray의 StartPos, o + td가 EndPos가 되므로 ********
+	******** StartPos와 EndPos를 알게 됐으니 충돌 지점까지만 뻗어 나가게 해야 할 때 필요한 Scale을 구할 수 있다 ********
+	*/
+	
+	Vector3 Start = ray.Pos;
+	Vector3 End = (ray.Pos + ray.Dir * tMin);
+	
+	float Dist = Start.Distance(End);
+
+	Scale = Dist;
+
 	return true;
 }
 
-bool CCollision::CollisionBox3DToHalfLine(Vector3& HitPoint, const Box3DInfo& Box, const HalfLineInfo& HalfLineInfo, CColliderBox3D* BoxCollider)
+bool CCollision::CollisionBox3DToHalfLine(float& Scale, const Box3DInfo& Box, const HalfLineInfo& HalfLineInfo, CColliderBox3D* BoxCollider)
 {
 	if (Box.Min.x <= HalfLineInfo.EndPos.x && Box.Max.x >= HalfLineInfo.EndPos.x &&
 		Box.Min.y <= HalfLineInfo.EndPos.y && Box.Max.y >= HalfLineInfo.EndPos.y &&
 		Box.Min.z <= HalfLineInfo.EndPos.z && Box.Max.z >= HalfLineInfo.EndPos.z)
+	{
+
+		float Dist = HalfLineInfo.StartPos.Distance(HalfLineInfo.EndPos);
+		Scale = Dist;
+
 		return true;
+	}
 
 	Ray ray;
 	ray.Dir = Vector3(HalfLineInfo.EndPos - HalfLineInfo.StartPos);
 	ray.Dir.Normalize();
 	ray.Pos = HalfLineInfo.StartPos;
 
-	bool Intersect = CollisionRayToBox3D(HitPoint, ray, Box);
+	bool Intersect = CollisionRayToBox3D(Scale, ray, Box);
 
 	if (Intersect)
 	{

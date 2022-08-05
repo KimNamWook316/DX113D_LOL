@@ -49,10 +49,22 @@ CScene::CScene()
 	m_SkyObject->SetScene(this);
 
 	m_SkyObject->Init();
+
+	m_RestoreCamDirFix = false;
+
+	m_AccTime = 0.f;
 }
 
 CScene::~CScene()
 {
+	auto iter = m_ObjList.begin();
+	auto iterEnd = m_ObjList.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		(*iter)->SetScene(nullptr);
+	}
+
 	m_ObjList.clear();
 	SAFE_DELETE(m_NavManager)	
 	SAFE_DELETE(m_Nav3DManager);
@@ -780,23 +792,80 @@ bool CScene::CameraMove(const Vector3& Direction, const Vector3& DestPos, float 
 	return false;
 }
 
+bool CScene::CameraMove(double Time, const Vector3& DestPos, float DeltaTime)
+{
+	float TimeRatio = m_AccTime / Time;
+
+	if (TimeRatio > 1.f)
+		TimeRatio = 1.f;
+
+	Vector3 LerpPos = m_OriginCamPos * (1 - TimeRatio) + DestPos * TimeRatio;
+
+	CCameraComponent* CurrentCamera = m_CameraManager->GetCurrentCamera();
+
+	CurrentCamera->SetWorldPos(LerpPos);
+
+	m_AccTime += DeltaTime;
+
+	if (TimeRatio == 1.f)
+	{
+		m_AccTime = 0.f;
+		return true;
+	}
+
+	return false;
+}
+
 bool CScene::RestoreCamera(float Speed, float DeltaTime)
 {
 	CCameraComponent* CurrentCamera = m_CameraManager->GetCurrentCamera();
 
 	Vector3 CurrentCamPos = CurrentCamera->GetWorldPos();
-	Vector3 RestoreDir = m_OriginCamPos - CurrentCamPos;
-	RestoreDir.y = 0.f;
-	RestoreDir.Normalize();
+
+	if (!m_RestoreCamDirFix)
+	{
+		m_RestoreCamDir = m_OriginCamPos - CurrentCamPos;
+		m_RestoreCamDir.y = 0.f;
+		m_RestoreCamDir.Normalize();
+		m_RestoreCamDirFix = true;
+	}
 
 	if (Vector3(CurrentCamPos.x, 0.f, CurrentCamPos.z).Distance(Vector3(m_OriginCamPos.x, 0.f, m_OriginCamPos.z)) < 0.5f)
+	{
+		m_RestoreCamDirFix = false;
+		m_RestoreCamDir = Vector3(0.f, 0.f, 0.f);
 		return true;
+	}
 
 	else
 	{
-		CurrentCamera->AddRelativePos(RestoreDir.x * Speed * DeltaTime, 0.f, RestoreDir.z * Speed * DeltaTime);
+		CurrentCamera->AddWorldPos(m_RestoreCamDir.x * Speed * DeltaTime, 0.f, m_RestoreCamDir.z * Speed * DeltaTime);
 	}
 
+
+	return false;
+}
+
+bool CScene::RestoreCamera(double Time, const Vector3 CurrentCamPos, float DeltaTime)
+{
+	CCameraComponent* CurrentCamera = m_CameraManager->GetCurrentCamera();
+
+	float TimeRatio = m_AccTime / Time;
+
+	if (TimeRatio > 1.f)
+		TimeRatio = 1.f;
+
+	Vector3 LerpPos = m_OriginCamPos * TimeRatio + CurrentCamPos * (1.f - TimeRatio);
+
+	CurrentCamera->SetWorldPos(LerpPos);
+
+	m_AccTime += DeltaTime;
+
+	if (TimeRatio == 1.f)
+	{
+		m_AccTime = 0.f;
+		return true;
+	}
 
 	return false;
 }

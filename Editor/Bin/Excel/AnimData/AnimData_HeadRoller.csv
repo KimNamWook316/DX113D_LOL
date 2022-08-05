@@ -1,4 +1,4 @@
-﻿AnimData_HeadRoller,,
+AnimData_HeadRoller,,
 ,FrameStart,FrameEnd
 Idle,0,239
 RollStart,240,263
@@ -7,3 +7,4 @@ Stun,330,388
 Walk,476,508
 Run,509,535
 StartHop,536,556
+Death,330,356

@@ -9,6 +9,7 @@
 #include "../PlayerDataComponent.h"
 #include "../PlayerHookComponent.h"
 #include "../PlayerBowComponent.h"
+#include "../PlayerBombComponent.h"
 #include "../../../Object/PlayerHook.h"
 #include "Component/Node/CompositeNode.h"
 
@@ -29,39 +30,12 @@ CShootNode::~CShootNode()
 
 NodeResult CShootNode::OnStart(float DeltaTime)
 {
-	/*CPlayerDataComponent* Comp = m_Object->FindObjectComponentFromType<CPlayerDataComponent>();
+	m_CallStart = true;
 
-	Player_Ability Ability = Comp->GetPlayerAbility();*/
-
-	m_AnimationMeshComp = m_Owner->GetAnimationMeshComp();
-
-	//std::string ObjectName = m_Object->GetName();
-
-	//std::string SequenceName;
-
-	//if (Ability == Player_Ability::Hook)
-	//	SequenceName = ObjectName + "Hook";
-	//else if (Ability == Player_Ability::Arrow)
-	//	SequenceName == ObjectName + "Arrow";
-
-	//if (m_AnimationMeshComp)
-	//{
-	//	CAnimationSequenceInstance* Instance = m_AnimationMeshComp->GetAnimationInstance();
-
-	//	// AnimationSequenceInstance에서 m_ChangeTime이 있기 때문에, 바로 애니메이션이 바뀌는게 아니라 m_ChangeTime에 걸쳐서 애니메이션이 바뀌는데
-	//	// CurrentAnimation은 ShootNode이라서 ChangeAnimation해도 아무것도 안하고 바로 return되고 ChangeAnimation은 Idle같은 시퀀스로 설정되어 있는 상태에서
-	//	// 이 상태에서 OnUpdate로 들어가고 Idle로 완전히 Sequence가 바뀐 상태에서 ShootNode::OnUpdate에서 CurrentAnimation은 ShootNode이라고 생각하지만
-	//	// CurrentAnimation은 결국 Idle로 될 것이고, ChangeAnimation은 nullptr가 될 것이므로 OnUpdate의 else에만 계속 들어오게 되는 문제가 생기므로
-	//	// 이런 상황에서는 KeepAnimation을 호출해서 ChangeAnimation을 지우고 CurrentAnimation은 Attack으로 유지시켜준다
-	//	if (Instance->GetChangeAnimation() && Instance->GetCurrentAnimation()->GetName() == SequenceName)
-	//		Instance->KeepCurrentAnimation();
-
-	//	else
-	//		Instance->ChangeAnimation(SequenceName);
-	//}
-
-	//m_Object->SetNoInterrupt(false);
-	//m_CallStart = true;
+	// 카메라 복귀 시작
+	CCameraComponent* CurCam = m_Object->GetScene()->GetCameraManager()->GetCurrentCamera();
+	CurCam->SetMoveReverse(true);
+	CurCam->SetMoveFreeze(false);
 
 	return NodeResult::Node_True;
 }
@@ -79,15 +53,19 @@ NodeResult CShootNode::OnUpdate(float DeltaTime)
 	Vector3 Dir = Vector3(Point.x, 0.f, Point.z) - Vector3(ObjectPos.x, 0.f, ObjectPos.z);
 	Dir.Normalize();
 
+	CCameraComponent* CurCam = CSceneManager::GetInst()->GetScene()->GetCameraManager()->GetCurrentCamera();
+
+	bool IsCamMoving = CurCam->IsMoving();
+
 	if (Ability == Player_Ability::Hook)
 	{
+		// 카메라 복귀중
 		if (m_InRestoreCam)
 		{
-			CScene* Scene = CSceneManager::GetInst()->GetScene();
+			CurCam->SetMoveFreeze(false);
 
-			bool RestoreEnd = Scene->RestoreCamera(50.f, DeltaTime);
-
-			if (RestoreEnd)
+			// 카메라 복귀가 끝나면 노드에서 빠져나감
+			if (!IsCamMoving)
 			{
 				m_IsEnd = true;
 				m_CallStart = false;
@@ -97,10 +75,7 @@ NodeResult CShootNode::OnUpdate(float DeltaTime)
 				return NodeResult::Node_True;
 			}
 
-			else
-			{
-				return NodeResult::Node_Running;
-			}
+			return NodeResult::Node_Running;
 		}
 
 		CPlayerHookComponent* Comp = m_Object->FindComponentFromType<CPlayerHookComponent>();
@@ -111,62 +86,55 @@ NodeResult CShootNode::OnUpdate(float DeltaTime)
 
 			if (Result == HookResult::NoCollision)
 			{
+				// 충돌하지 않은 경우 카메라 복귀
+				CurCam->SetMoveReverse(true);
 				m_InRestoreCam = true;
 				return NodeResult::Node_Running;
 			}
 
 			else if (Result == HookResult::Collision)
 			{
+				// 날아가는 중 카메라 계속 그 자리에 프리즈
 				m_Owner->SetCurrentNode(this);
+				CurCam->SetMoveReverse(false);
+				CurCam->SetMoveFreeze(true);
 				return NodeResult::Node_Running;
 				// 충돌된 지점까지 플레이어가 날아가고 있는중
 			}
 
 			else if(Result == HookResult::OnShoot)
 			{
+				// 발사중 카메라 프리즈
 				m_Owner->SetCurrentNode(this);
+				CurCam->SetMoveReverse(false);
+				CurCam->SetMoveFreeze(true);
 				return NodeResult::Node_Running;
 			}
 
 			else if (Result == HookResult::CollisionEnd)
 			{
+				// 충돌하면 카메라 복귀시키지 않는다.
 				m_Owner->SetCurrentNode(nullptr);
+				CurCam->StopMove();
 				return NodeResult::Node_True;
 			}
 
 		}
-
-		else
-		{
-			// CancleShootNode를 CurrentNode로 만들어서 카메라 원래 위치로 복구
-			m_Owner->SetCurrentNode(((CCompositeNode*)m_Parent->GetParent())->GetChild(1));
-		}
+		m_CallStart = true;
 
 		return NodeResult::Node_True;
 	}
 
 	else if (Ability == Player_Ability::Arrow)
 	{
-		if (m_InRestoreCam)
+		if (!IsCamMoving)
 		{
-			CScene* Scene = CSceneManager::GetInst()->GetScene();
+			m_IsEnd = true;
+			m_CallStart = false;
+			m_Owner->SetCurrentNode(nullptr);
+			m_InRestoreCam = false;
 
-			bool RestoreEnd = Scene->RestoreCamera(50.f, DeltaTime);
-
-			if (RestoreEnd)
-			{
-				m_IsEnd = true;
-				m_CallStart = false;
-				m_Owner->SetCurrentNode(nullptr);
-				m_InRestoreCam = false;
-
-				return NodeResult::Node_True;
-			}
-
-			else
-			{
-				return NodeResult::Node_Running;
-			}
+			return NodeResult::Node_True;
 		}
 
 		else
@@ -181,9 +149,57 @@ NodeResult CShootNode::OnUpdate(float DeltaTime)
 
 				BowComp->HideBow();
 			}
+		}
+
+		m_CallStart = true;
+
+		return NodeResult::Node_True;
+	}
+
+	else if (Ability == Player_Ability::Bomb)
+	{
+		if (!IsCamMoving)
+		{
+			m_IsEnd = true;
+			m_CallStart = false;
+			m_Owner->SetCurrentNode(nullptr);
+			m_InRestoreCam = false;
+
+			return NodeResult::Node_True;
+		}
+
+		else
+		{
+			CPlayerBombComponent* BombComp = m_Object->FindObjectComponentFromType<CPlayerBombComponent>();
+
+			// ReadyToShoot 노드에서 Bomb Lift가 아직 안끝났는데 RButton을 떼면 BombComponent와 Bomb Object를 reset 시키고 
+			// BombComponent의 m_IsClearBomb를 true로 만들어준다
+			if (BombComp->IsClearBomb())
+			{
+				BombComp->SetClearBomb(false);
+
+			}
+
+			else if(!BombComp->IsBeforeLift())
+			{
+				BombComp->ShootBomb(Dir);
+			}
 
 			m_InRestoreCam = true;
+
+			if (BombComp->IsBeforeLift())
+			{
+				m_InRestoreCam = false;
+			}
+
+			m_Owner->SetCurrentNode(this);
+
+			m_IsEnd = false;
 		}
+
+		m_CallStart = true;
+
+		return NodeResult::Node_True;
 	}
 }
 

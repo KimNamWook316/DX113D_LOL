@@ -32,6 +32,7 @@ enum class FadeEffecType
 
 struct FadeEffectInfo
 {
+	bool Stay;								// Fade 끝 상태에서 기다릴 것인지
 	float Time;
 	Vector3 StartColor;
 	Vector3 EndColor;
@@ -181,13 +182,19 @@ private:
 	float m_FadeEffectTimer;
 	FadeEffectInfo m_FadeInfo;
 
+	// Bomb Effect
+	Vector4 m_OriginGLightColor;
+	bool m_BombEffect;
+	float m_BombEffectTime;
+	float m_BombEffectTimer;
+
 public :
 	CRenderStateManager* GetRenderStateManager() const
 	{
 		return m_RenderStateManager;
 	}
 
-	void StartFadeEffect(FadeEffecType Type);
+	void StartFadeEffect(FadeEffecType Type, bool Stay = false);
 
 public:
 	float GetShadowLightDistance() const
@@ -234,6 +241,8 @@ public:
 	{
 		return m_ShadowCBuffer;
 	}
+
+	void EnableBombEffect(float Time);
 
 	float GetMiddleGray() const;
 	float GetLumWhite() const;
@@ -287,6 +296,11 @@ public:
 	void SetFadeEndColor(const Vector3& Color)
 	{
 		m_FadeInfo.EndColor = Color;
+	}
+
+	void SetFadeStay(bool Stay)
+	{
+		m_FadeInfo.Stay = Stay;
 	}
 
 public:

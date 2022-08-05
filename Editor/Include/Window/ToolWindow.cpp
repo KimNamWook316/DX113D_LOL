@@ -72,6 +72,7 @@ bool CToolWindow::Init()
 	// Camera
 	m_EditorCameraBlock = AddWidget<CIMGUICollapsingHeader>("Editor Camera", 200.f);
 	m_CameraSpeed = m_EditorCameraBlock->AddWidget<CIMGUISliderFloat>("Speed");
+	m_SetCam = m_EditorCameraBlock->AddWidget<CIMGUIButton>("Set FreeCam", 0.f, 0.f);
 
 	// Render
 	m_RenderBlock = AddWidget<CIMGUICollapsingHeader>("Render", 200.f);
@@ -268,6 +269,7 @@ bool CToolWindow::Init()
 	m_GLightAmbIntensity->SetCallBack(this, &CToolWindow::OnChangeGLightAmbIntensity);
 	m_LoadSkyBoxTex->SetClickCallback(this, &CToolWindow::OnClickLoadSkyBoxTexture);
 	m_RenderSkyBox->SetCallBackLabel(this, &CToolWindow::OnCheckRenderSkyBox);
+	m_SetCam->SetClickCallback(this, &CToolWindow::OnClickSetEditorCam);
 
 	// 디버그용 임시 키
 	CInput::GetInst()->CreateKey("Z", 'Z');
@@ -442,7 +444,9 @@ void CToolWindow::OnCheckRenderSkyBox(const char* Label, bool Check)
 
 void CToolWindow::OnClickPlay()
 {
-	CSceneManager::GetInst()->GetScene()->Play();
+	CScene* CurScene = CSceneManager::GetInst()->GetScene();
+
+	CurScene->Play();
 
 	m_PlayState->SetText("Current State : Playing");
 
@@ -458,6 +462,18 @@ void CToolWindow::OnClickPlay()
 		if (Comp)
 		{
 			Comp->SetTreeUpdate(true);
+		}
+	}
+
+	CGameObject* Player = CurScene->GetPlayerObject();
+
+	if (Player)
+	{
+		CCameraComponent* Cam = Player->FindComponentFromType<CCameraComponent>();
+
+		if (Cam)
+		{
+			CurScene->GetCameraManager()->SetCurrentCamera(Cam);
 		}
 	}
 }
@@ -501,6 +517,15 @@ void CToolWindow::OnClickStop()
 
 		// Scene Global Data 로드때 세팅으로 변경
 		RefreshGlobalSceneDataWidget();
+
+		CGameObject* EditorCamObj = CEditorManager::GetInst()->Get3DCameraObject();
+
+		CCameraComponent* Cam = EditorCamObj->FindComponentFromType<CCameraComponent>();
+
+		if (Cam)
+		{
+			CSceneManager::GetInst()->GetNextScene()->GetCameraManager()->SetCurrentCamera(Cam);
+		}
 	}
 }
 
@@ -631,6 +656,21 @@ void CToolWindow::RefreshSceneRelatedWindow(const std::vector<CGameObject*>& vec
 	{
 		RefreshSceneRelatedWindow(vecObj[i]);
 	}
+}
+
+void CToolWindow::OnClickSetEditorCam()
+{
+	CCameraManager* CamMng = CSceneManager::GetInst()->GetScene()->GetCameraManager();
+
+	C3DCameraObject* CamObj = CEditorManager::GetInst()->Get3DCameraObject();
+	CCameraComponent* CamCom = CamObj->FindComponentFromType<CCameraComponent>();
+
+	if (CamMng->GetCurrentCamera() == CamCom)
+	{
+		return;
+	}
+
+	CamMng->SetCurrentCamera(CamCom);
 }
 
 void CToolWindow::RefreshGlobalSceneDataWidget()

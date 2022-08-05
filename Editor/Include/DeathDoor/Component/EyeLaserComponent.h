@@ -16,6 +16,7 @@ private:
 	// TriggerBox를 플레이어가 타격한 횟수 -> 1개만 하면 EyeLaser깨어남, 4개 모두 부시면 EyeLaser도 파괴
 	int m_TriggerHitCount;
 	class CGameObject* m_Player;
+	class CGameObject* m_LaserGenerator;
 	Vector3 m_CurrentLaserLeftRightDir;
 	Vector3 m_CurrentLaserUpDownDir;
 	Vector3 m_CurrentLaserDir;
@@ -28,9 +29,10 @@ private:
 	CSharedPtr<CMesh> m_LaserPlaneMesh;
 	CSharedPtr<CMaterial>	m_Material;
 
-	class CColliderRay* m_RayCollider;
+	class CColliderHalfLine* m_RayCollider;
 
 	bool m_FaceCameraOnce;
+
 
 public:
 	CMesh* GetMesh()	const
@@ -83,7 +85,9 @@ private:
 	void ChangeToDieAnimation();
 	void ChangeToIdleAnimation();
 	void FaceCamera();
-	void RaserCollision(const CollisionResult& Result);
+	void OnRaserCollisionBegin(const CollisionResult& Result);
+	void OnRaserCollisionStay(const CollisionResult& Result);
+	void OnRaserCollisionEnd(const CollisionResult& Result);
 
 public:
 	void SetBaseColor(const Vector4& Color, int Index = 0);

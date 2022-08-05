@@ -41,14 +41,16 @@ void CFirePlantDataComponent::OnAttackCoolEnable()
 {
 	SetAttackCoolDelayTimeEnable(true);
 
-	m_LookPlayer = true;
+	SetCurrentNodeNull();
+
+	m_LookPlayer = false;
 }
 
 void CFirePlantDataComponent::OnAttackCoolDisable()
 {
 	SetAttackCoolDelayTimeEnable(false);
 
-	m_LookPlayer = false;
+	m_LookPlayer = true;
 }
 
 void CFirePlantDataComponent::OnShootBullet()
@@ -61,11 +63,12 @@ void CFirePlantDataComponent::OnShootBullet()
 	Vector3 MyPos = m_FirePos->GetWorldPos();
 
 	Vector3 ToPlayer = PlayerPos - MyPos;
+	ToPlayer.y = 0.f;
 	ToPlayer.Normalize();
 
 	if (Data)
 	{
 		// TODO : FierPlnat - End Particle
-		Data->ShootBulletLifeTime(MyPos, ToPlayer, 10.f, 10.f, nullptr);
+		Data->ShootBulletLifeTime(MyPos, ToPlayer, 10.f, 5.f, nullptr);
 	}
 }

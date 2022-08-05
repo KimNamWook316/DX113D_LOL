@@ -17,7 +17,13 @@ protected:
     virtual NodeResult OnUpdate(float DeltaTime);
     virtual NodeResult OnEnd(float DeltaTime);
 
+private:
+    float m_CameraMoveSpeed;
+    double m_CameraMoveTime;
+    Vector3 m_CurrentCamPos;
+
 public:
     virtual NodeResult Invoke(float DeltaTime) override;
+
 };
 

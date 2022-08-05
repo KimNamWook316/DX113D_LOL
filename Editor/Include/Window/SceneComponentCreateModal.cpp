@@ -14,6 +14,7 @@
 #include "IMGUITree.h"
 #include "ObjectHierarchyWindow.h"
 #include "Component/CameraComponent.h"
+#include "Component/Arm.h"
 #include "Component/AnimationMeshComponent.h"
 #include "Component/StaticMeshComponent.h"
 #include "Component/ParticleComponent.h"
@@ -25,6 +26,7 @@
 #include "Component/WaterComponent.h"
 #include "Component/Arm.h"
 #include "Component/LandScape.h"
+#include "../DeathDoor/Component/LadderCollider.h"
 
 // TODO : DeathDoor Scene Component 추가될 때마다 업데이트
 //#include "../DeathDoor/Component/MonsterPathFindCollider.h"
@@ -196,6 +198,10 @@ void CSceneComponentCreateModal::OnCreateComponent()
 		else if (Typeid == typeid(CPlayerBowComponent).hash_code())
 		{
 			Com = SelectObject->CreateComponentAddChild<CPlayerBowComponent>(Name);
+		}
+		else if (Typeid == typeid(CLadderCollider).hash_code())
+		{
+			Com = SelectObject->CreateComponentAddChild<CLadderCollider>(Name);
 		}
 		else if (Typeid == typeid(CCrackedBlockCollider).hash_code())
 		{

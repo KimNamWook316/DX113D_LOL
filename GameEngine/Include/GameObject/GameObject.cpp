@@ -61,6 +61,8 @@ CGameObject::~CGameObject()
 
 void CGameObject::Enable(bool Enable)
 {
+	CRef::Enable(Enable);
+
 	if (m_RootComponent)
 	{
 		m_RootComponent->Enable(Enable);
@@ -823,6 +825,8 @@ void CGameObject::Reset()
 	m_Scene = nullptr;
 	SetWorldPos(FLT_MAX, FLT_MAX, FLT_MAX);
 	m_RootComponent->GetTransform()->ForceUpdateMat();
+
+
 
 	size_t Size = m_vecObjectComponent.size();
 

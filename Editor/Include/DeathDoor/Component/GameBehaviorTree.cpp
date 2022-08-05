@@ -28,6 +28,24 @@
 #include "Node/HitCheckNode.h"
 #include "Node/RollInputCheck.h"
 #include "Node/PlayerRoll.h"
+#include "Node/ClimbDown.h"
+#include "Node/ClimbDownStart.h"
+#include "Node/ClimbDownEnd.h"
+#include "Node/ClimbUp.h"
+#include "Node/ClimbUpEnd.h"
+#include "Node/ClimbUpStart.h"
+#include "Node/StraightPathCheck.h"
+
+#include "Node/IsClimbingCheck.h"
+#include "Node/SKeyInputCheck.h"
+#include "Node/WKeyInputCheck.h"
+#include "Node/ClimbDownContinueCheck.h"
+#include "Node/ClimbDownStartCheck.h"
+#include "Node/ClimbDownEndCheck.h"
+#include "Node/ClimbUpContinueCheck.h"
+#include "Node/ClimbUpEndCheck.h"
+#include "Node/ClimbingUpStartCheck.h"
+#include "Node/ClimbPause.h"
 
 // Public Nodes
 #include "Node/MeleeRangeCheckNode.h"
@@ -38,6 +56,7 @@
 #include "Node/DeathNode.h"
 #include "Node/PlayerEnterZoneCheckNode.h"
 #include "Node/PlayerEnterTriggerIsEnable.h"
+#include "Node/ChasePlayerNode.h"
 
 // Boss - Knight
 #include "Node/BossKnightContinueAttackNode.h"
@@ -95,6 +114,19 @@
 
 // Monster - SporeBoomer
 #include "Node/SporeBoomerShootNode.h"
+
+// Monster - HeadRoller 
+#include "Node/HeadRollerStunCheck.h"
+#include "Node/HeadRollerRollNode.h"
+#include "Node/HeadRollerStunNode.h"
+
+// Monster - Dodger
+#include "Node/DodgerDashCheck.h"
+#include "Node/DodgerDashNode.h"
+#include "Node/DodgerFirstAttackNode.h"
+#include "Node/DodgerPostAttackNode.h"
+#include "Node/DodgerSecondAttackCheck.h"
+#include "Node/DodgerSecondAttackNode.h"
 
 #include "GameStateComponent.h"
 
@@ -318,6 +350,87 @@ CNode* CGameBehaviorTree::LoadNode(CNode* Parent, size_t TypeID)
 	{
 		NewNode = MakeNode<CPlayerEnterTriggerIsEnable>(Parent, OwnerObject);
 	}
+	else if (TypeID == typeid(CIsClimbingCheck).hash_code())
+	{
+		NewNode = MakeNode<CIsClimbingCheck>(Parent, OwnerObject);
+	}
+	else if (TypeID == typeid(CSKeyInputCheck).hash_code())
+	{
+		NewNode = MakeNode<CSKeyInputCheck>(Parent, OwnerObject);
+	}
+	else if (TypeID == typeid(CWKeyInputCheck).hash_code())
+	{
+		NewNode = MakeNode<CWKeyInputCheck>(Parent, OwnerObject);
+	}
+	else if (TypeID == typeid(CClimbDownContinueCheck).hash_code())
+	{
+		NewNode = MakeNode<CClimbDownContinueCheck>(Parent, OwnerObject);
+	}
+	else if (TypeID == typeid(CClimbDownStartCheck).hash_code())
+	{
+		NewNode = MakeNode<CClimbDownStartCheck>(Parent, OwnerObject);
+	}
+	else if (TypeID == typeid(CClimbDownEndCheck).hash_code())
+	{
+		NewNode = MakeNode<CClimbDownEndCheck>(Parent, OwnerObject);
+	}
+	else if (TypeID == typeid(CClimbUpContinueCheck).hash_code())
+	{
+		NewNode = MakeNode<CClimbUpContinueCheck>(Parent, OwnerObject);
+	}
+	else if (TypeID == typeid(CClimbingUpStartCheck).hash_code())
+	{
+		NewNode = MakeNode<CClimbingUpStartCheck>(Parent, OwnerObject);
+	}
+	else if (TypeID == typeid(CClimbUpEndCheck).hash_code())
+	{
+		NewNode = MakeNode<CClimbUpEndCheck>(Parent, OwnerObject);
+	}
+	else if (TypeID == typeid(CClimbPause).hash_code())
+	{
+		NewNode = MakeNode<CClimbPause>(Parent, OwnerObject);
+	}
+
+	//
+	else if (TypeID == typeid(CClimbUp).hash_code())
+	{
+		NewNode = MakeNode<CClimbUp>(Parent, OwnerObject);
+	}
+
+	else if (TypeID == typeid(CClimbUpStart).hash_code())
+	{
+		NewNode = MakeNode<CClimbUpStart>(Parent, OwnerObject);
+	}
+
+	else if (TypeID == typeid(CClimbUpEnd).hash_code())
+	{
+		NewNode = MakeNode<CClimbUpEnd>(Parent, OwnerObject);
+	}
+
+	else if (TypeID == typeid(CClimbDown).hash_code())
+	{
+		NewNode = MakeNode<CClimbDown>(Parent, OwnerObject);
+	}
+
+	else if (TypeID == typeid(CClimbDownStart).hash_code())
+	{
+		NewNode = MakeNode<CClimbDownStart>(Parent, OwnerObject);
+	}
+
+	else if (TypeID == typeid(CClimbDownEnd).hash_code())
+	{
+		NewNode = MakeNode<CClimbDownEnd>(Parent, OwnerObject);
+	}
+
+	else if (TypeID == typeid(CStraightPathCheck).hash_code())
+	{
+		NewNode = MakeNode<CStraightPathCheck>(Parent, OwnerObject);
+	}
+
+	else if (TypeID == typeid(CChasePlayerNode).hash_code())
+	{
+		NewNode = MakeNode<CChasePlayerNode>(Parent, OwnerObject);
+	}
 
 	// Boss Knight - Action
 	else if (TypeID == typeid(CBossKnightContinueAttackNode).hash_code())
@@ -521,6 +634,47 @@ CNode* CGameBehaviorTree::LoadNode(CNode* Parent, size_t TypeID)
 	else if (TypeID == typeid(CSporeBoomerShootNode).hash_code())
 	{
 		NewNode = MakeNode<CSporeBoomerShootNode>(Parent, OwnerObject);
+	}
+
+	// HeadRoller - Condition 
+	else if (TypeID == typeid(CHeadRollerStunCheck).hash_code())
+	{
+		NewNode = MakeNode<CHeadRollerStunCheck>(Parent, OwnerObject);
+	}
+	// HeadRoller - Action
+	else if (TypeID == typeid(CHeadRollerRollNode).hash_code())
+	{
+		NewNode = MakeNode<CHeadRollerRollNode>(Parent, OwnerObject);
+	}
+	else if (TypeID == typeid(CHeadRollerStunNode).hash_code())
+	{
+		NewNode = MakeNode<CHeadRollerStunNode>(Parent, OwnerObject);
+	}
+
+	// Dodger
+	else if (TypeID == typeid(CDodgerDashCheck).hash_code())
+	{
+		NewNode = MakeNode<CDodgerDashCheck>(Parent, OwnerObject);
+	}
+	else if (TypeID == typeid(CDodgerSecondAttackCheck).hash_code())
+	{
+		NewNode = MakeNode<CDodgerSecondAttackCheck>(Parent, OwnerObject);
+	}
+	else if (TypeID == typeid(CDodgerDashNode).hash_code())
+	{
+		NewNode = MakeNode<CDodgerDashNode>(Parent, OwnerObject);
+	}
+	else if (TypeID == typeid(CDodgerFirstAttackNode).hash_code())
+	{
+		NewNode = MakeNode<CDodgerFirstAttackNode>(Parent, OwnerObject);
+	}
+	else if (TypeID == typeid(CDodgerPostAttackNode).hash_code())
+	{
+		NewNode = MakeNode<CDodgerPostAttackNode>(Parent, OwnerObject);
+	}
+	else if (TypeID == typeid(CDodgerSecondAttackNode).hash_code())
+	{
+		NewNode = MakeNode<CDodgerSecondAttackNode>(Parent, OwnerObject);
 	}
 
 	return NewNode;

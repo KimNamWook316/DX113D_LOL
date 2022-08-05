@@ -127,7 +127,7 @@ NodeResult CPlayerRoll::OnUpdate(float DeltaTime)
 	}
 
 	//m_Object->AddWorldPos(MoveDir.x * Speed * DeltaTime, 0.f, MoveDir.z * Speed * DeltaTime);
-	m_NavAgent->MoveOnNavMesh(Vector3(MoveDir.x * Speed * 1.8f * DeltaTime, 0.f, MoveDir.z * Speed * 1.8f * DeltaTime));
+	m_NavAgent->MoveOnNavMesh(Vector3(MoveDir.x * Speed * 3.f * DeltaTime, 0.f, MoveDir.z * Speed * 3.f * DeltaTime));
 
 	const keyState SpaceState = CInput::GetInst()->FindKeyState(VK_SPACE);
 

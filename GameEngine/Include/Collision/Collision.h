@@ -2,6 +2,26 @@
 
 #include "../GameInfo.h"
 
+
+struct DVector3
+{
+	double x, y, z;
+
+
+	DVector3() :
+		x(0.f),
+		y(0.f),
+		z(0.f)
+	{}
+
+	DVector3(double _x, double _y, double _z)
+	{
+		x = _x;
+		y = _y;
+		z = _z;
+	}
+};
+
 class CCollision
 {
 public:
@@ -42,9 +62,9 @@ public:
 		const SphereInfo& SrcInfo, const SphereInfo& DestInfo);
 
 	static bool CollisionRayToSphere(Vector3& HitPoint, const Ray& ray, const SphereInfo& Sphere);
-	static bool CollisionRayToBox3D(Vector3& HitPoint, const Ray& ray, const Box3DInfo& Box);
-	static bool CollisionBox3DToHalfLine(Vector3& HitPoint, const Box3DInfo& Box, const HalfLineInfo& HalfLineInfo, class CColliderBox3D* BoxCollider);
-	static bool CollisionBox3DToSphere(Vector3& HitPoint, class CColliderBox3D* Src, const Box3DInfo& Box, const SphereInfo& Sphere);
+	static bool CollisionRayToBox3D(float& Scale, const Ray& ray, const Box3DInfo& Box);
+	static bool CollisionBox3DToHalfLine(float& Scale, const Box3DInfo& Box, const HalfLineInfo& HalfLineInfo, class CColliderBox3D* BoxCollider);
+	static bool CollisionBox3DToSphere(Vector3& Scale, class CColliderBox3D* Src, const Box3DInfo& Box, const SphereInfo& Sphere);
 
 
 

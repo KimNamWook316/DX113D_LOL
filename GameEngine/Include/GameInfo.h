@@ -60,7 +60,7 @@
 #define GRAVITY 9.8f
 
 #define SHADOWMAP_WIDTH		2560.f
-#define SHADOWMAP_HEIGHT	1440.f
+#define SHADOWMAP_HEIGHT	2560.f
 
 #define	ROOT_PATH		"Root"
 #define	SHADER_PATH		"Shader"

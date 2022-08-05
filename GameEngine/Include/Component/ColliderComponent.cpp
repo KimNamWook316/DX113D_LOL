@@ -41,8 +41,12 @@ CColliderComponent::~CColliderComponent()
 	for (; iter != iterEnd; ++iter)
 	{
 		(*iter)->DeletePrevCollision(this);
-		(*iter)->CallCollisionCallback(Collision_State::End);
-		CallCollisionCallback(Collision_State::End);
+
+		if (m_Object->GetScene())
+		{
+			(*iter)->CallCollisionCallback(Collision_State::End);
+			CallCollisionCallback(Collision_State::End);
+		}
 	}
 }
 
@@ -346,15 +350,14 @@ bool CColliderComponent::CollisionRay(const Ray& Ray)
 	return false;
 }
 
-void CColliderComponent::Destroy()
+void CColliderComponent::Reset()
 {
-	m_Scene->GetCollision()->EraseCollider(this);
+	CSceneComponent::Reset();
 
-	size_t Count = m_vecSectionIndex.size();
+	Enable(false);
+}
 
-	for (size_t i = 0; i < Count; ++i)
-	{
-		int Index = m_vecSectionIndex[i];
-		m_Scene->GetCollision()->DeleteColliderInSection(this, Index);
-	}
+void CColliderComponent::ClearCollisionCallBack()
+{
+	m_CollisionCallback->clear();
 }

@@ -197,16 +197,25 @@ void CParticleComponent::Reset()
 	
 	// 현재 살아있던 Particle 들을 모두 Alive False 로 만들어줄 것이다.
 	m_CBuffer->SetDestroyExstingAllLivingParticles(true);
+	
+	// 구조화 버퍼 정보 Update
+	m_CBuffer->UpdateCBuffer();
 
-	// Structure Buffer 정보를 다시 Clear 해준다. (Particle 원본 구조화 버퍼를 다시 Clone 한다)
 	size_t	BufferCount = m_vecStructuredBuffer.size();
 
 	for (size_t i = 0; i < BufferCount; ++i)
 	{
-		ZeroMemory(m_vecStructuredBuffer[i]->GetBuffer(), sizeof(m_vecStructuredBuffer[i]->GetBuffer()));
+		m_vecStructuredBuffer[i]->SetShader();
 	}
 
-	// m_Particle->CloneStructuredBuffer(m_vecStructuredBuffer);
+	int	GroupCount = m_Particle->GetSpawnCountMax() / 64 + 1;
+
+	m_UpdateShader->Excute(GroupCount, 1, 1);
+
+	for (size_t i = 0; i < BufferCount; ++i)
+	{
+		m_vecStructuredBuffer[i]->ResetShader();
+	}
 }
 
 void CParticleComponent::Update(float DeltaTime)
@@ -285,13 +294,6 @@ void CParticleComponent::Update(float DeltaTime)
 	{
 		ApplyBillBoardEffect();
 	}
-
-	// Bazier 방식으로 움직이게 할 것인다
-	// if (m_BazierMoveEffect)
-	// {
-	// 	// Bazier 에 저장된 위치 정보로 이동할 것인다.
-	// 	ApplyBazierMove(DeltaTime);
-	// }
 }
 
 void CParticleComponent::PostUpdate(float DeltaTime)

@@ -5,7 +5,6 @@
 #include "Component\KnightDataComponent.h"
 #include "Component\BossBettyDataComponent.h"
 #include "Component\MonsterDataComponent.h"
-#include "Component\MonsterPathFindCollider.h"
 #include "Component\ObjectDataComponent.h"
 #include "Component\GameStateComponent.h"
 #include "Component\PlayerDataComponent.h"
@@ -22,10 +21,16 @@
 #include "Component\FirePlantDataComponent.h"
 #include "Component\CrackedBlockCollider.h"
 #include "Component\MonsterBulletData.h"
+#include "Component\PlayerBombComponent.h"
+#include "Component\LadderCollider.h"
+#include "Component\HeadRollerDataComponent.h"
+#include "Component\DodgerDataComponent.h"
 
 // TODO : Death Door SceneMode 추가시마다 업데이트
 #include "Scene/DDSceneMode.h"
 #include "Scene/DDBossSceneMode.h"
+#include "Scene/DDInstanceSceneMode.h"
+#include "Scene/DDPuzzleSceneMode.h"
 
 std::string CDDUtil::DDConditionNodeTypeToString(DDConditionNode NodeType)
 {
@@ -55,6 +60,27 @@ std::string CDDUtil::DDConditionNodeTypeToString(DDConditionNode NodeType)
 	case DDConditionNode::CheckDetectRange:
 		return "CheckDetectRange";
 
+	case DDConditionNode::HPCheck:
+		return "HPCheck";
+
+	case DDConditionNode::DeathCheck:
+		return "DeathCheck";
+
+	case DDConditionNode::IsCombatCheck:
+		return "IsCombatCheck";
+
+	case DDConditionNode::PathFindEnableCheck:
+		return "PathFindEnableCheck";
+
+	case DDConditionNode::HitCheckNode:
+		return "HitCheckNode";
+
+	case DDConditionNode::RollInputCheck:
+		return "RollInputCheck";
+
+	case DDConditionNode::UpdateInputQueue:
+		return "UpdateInputQueue";
+
 	case DDConditionNode::PlayerEnterZoneCheck:
 		return "PlayerEnterZoneCheck";
 	case DDConditionNode::PlayerEnterTriggerIsEnable:
@@ -63,12 +89,35 @@ std::string CDDUtil::DDConditionNodeTypeToString(DDConditionNode NodeType)
 	case DDConditionNode::MeleeAttackRangeCheck:
 		return "MeleeAttackRangeCheck";
 
+	case DDConditionNode::IsClimbingCheck:
+		return "IsClimbingCheck";
+	case DDConditionNode::SKeyInputCheck:
+		return "SKeyInputCheck";
+	case DDConditionNode::WKeyInputCheck:
+		return "WKeyInputCheck";
+	case DDConditionNode::ClimbDownContinueCheck:
+		return "ClimbDownContinueCheck";
+	case DDConditionNode::ClimbDownEndCheck:
+		return "ClimbDownEndCheck";
+	case DDConditionNode::ClimbDownStartCheck:
+		return "ClimbDownStartCheck";
+	case DDConditionNode::ClimbUpContinueCheck:
+		return "ClimbUpContinueCheck";
+	case DDConditionNode::ClimbUpEndCheck:
+		return "ClimbUpEndCheck";
+	case DDConditionNode::ClimbUpStartCheck:
+		return "ClimbUpStartCheck";
+
 	case DDConditionNode::PostAttackDelayCheck:
 		return "PostAttackDelayCheck";
 
 	case DDConditionNode::AttackCoolTimeCheck:
 		return "AttackCoolTimeCheck";
 
+	case DDConditionNode::StraightPathCheck:
+		return "StraightPathCheck";
+
+	// Boss Knight
 	case DDConditionNode::BossKnightFinalAttackCheck:
 		return "BossKnightFinalAttackCheck";
 
@@ -121,27 +170,15 @@ std::string CDDUtil::DDConditionNodeTypeToString(DDConditionNode NodeType)
 	case DDConditionNode::CrowBossShootReadyCheck:
 		return "CrowBossShootReadyCheck";
 
-
-	case DDConditionNode::HPCheck:
-		return "HPCheck";
-
-	case DDConditionNode::DeathCheck:
-		return "DeathCheck";
-
-	case DDConditionNode::IsCombatCheck:
-		return "IsCombatCheck";
-
-	case DDConditionNode::PathFindEnableCheck:
-		return "PathFindEnableCheck";
-
-	case DDConditionNode::HitCheckNode:
-		return "HitCheckNode";
-
-	case DDConditionNode::RollInputCheck:
-		return "RollInputCheck";
-
-	case DDConditionNode::UpdateInputQueue:
-		return "UpdateInputQueue";
+	// HeadRoller
+	case DDConditionNode::HeadRollerStunCheck:
+		return "HeadRollerStunCheck";
+		
+	// Dodger
+	case DDConditionNode::DodgerDashCheck:
+		return "DodgerDashCheck";
+	case DDConditionNode::DodgerSecondAttackCheck:
+		return "DodgerSecondAttackCheck";
 	}
 
 	return "";
@@ -177,6 +214,55 @@ DDConditionNode CDDUtil::StringToDDConditionNodeType(const std::string& Str)
 	{
 		return DDConditionNode::MouseRButtonUpCheckNode;
 	}
+	else if (Str == "HPCheck")
+	{
+		return DDConditionNode::HPCheck;
+	}
+	else if (Str == "DeathCheck")
+	{
+		return DDConditionNode::DeathCheck;
+	}
+	else if (Str == "IsCombatCheck")
+	{
+		return DDConditionNode::IsCombatCheck;
+	}
+	else if (Str == "PathFindEnableCheck")
+	{
+		return DDConditionNode::PathFindEnableCheck;
+	}
+	else if (Str == "HitCheckNode")
+	{
+		return DDConditionNode::HitCheckNode;
+	}
+	else if (Str == "RollInputCheck")
+	{
+		return DDConditionNode::RollInputCheck;
+	}
+	else if (Str == "UpdateInputQueue")
+	{
+		return DDConditionNode::UpdateInputQueue;
+	}
+
+	else if (Str == "IsClimbingCheck")
+		return DDConditionNode::IsClimbingCheck;
+	else if (Str == "SKeyInputCheck")
+		return DDConditionNode::SKeyInputCheck;
+	else if (Str == "WKeyInputCheck")
+		return DDConditionNode::WKeyInputCheck;
+	else if (Str == "ClimbDownContinueCheck")
+		return DDConditionNode::ClimbDownContinueCheck;
+	else if (Str == "ClimbDownStartCheck")
+		return DDConditionNode::ClimbDownStartCheck;
+	else if (Str == "ClimbDownEndCheck")
+		return DDConditionNode::ClimbDownEndCheck;
+	else if (Str == "ClimbUpContinueCheck")
+		return DDConditionNode::ClimbUpContinueCheck;
+	else if (Str == "ClimbUpStartCheck")
+		return DDConditionNode::ClimbUpStartCheck;
+	else if (Str == "ClimbUpEndCheck")
+		return DDConditionNode::ClimbUpEndCheck;
+
+
 	else if (Str == "Lockstone3TriggerBoxHitCheck")
 	{
 		return DDConditionNode::Lockstone3TriggerBoxHitCheck;
@@ -208,6 +294,10 @@ DDConditionNode CDDUtil::StringToDDConditionNodeType(const std::string& Str)
 	else if (Str == "AttackCoolTimeCheck")
 	{
 		return DDConditionNode::AttackCoolTimeCheck;
+	}
+	else if (Str == "StraightPathCheck")
+	{
+		return DDConditionNode::StraightPathCheck;
 	}
 	
 	else if (Str == "BossKnightCutScenePlayCheck")
@@ -258,36 +348,23 @@ DDConditionNode CDDUtil::StringToDDConditionNodeType(const std::string& Str)
 	}
 	else if (Str == "CrowBossJumpAttackRangeCheck")
 	{
-	return DDConditionNode::CrowBossJumpAttackRangeCheck;
+		return DDConditionNode::CrowBossJumpAttackRangeCheck;
 	}
 
-	else if (Str == "HPCheck")
+	// Head Roller
+	else if (Str == "HeadRollerStunCheck")
 	{
-		return DDConditionNode::HPCheck;
+		return DDConditionNode::HeadRollerStunCheck;
 	}
-	else if (Str == "DeathCheck")
+
+	// Dodger
+	else if (Str == "DodgerDashCheck")
 	{
-		return DDConditionNode::DeathCheck;
+		return DDConditionNode::DodgerDashCheck;
 	}
-	else if (Str == "IsCombatCheck")
+	else if (Str == "DodgerSecondAttackCheck")
 	{
-		return DDConditionNode::IsCombatCheck;
-	}
-	else if (Str == "PathFindEnableCheck")
-	{
-		return DDConditionNode::PathFindEnableCheck;
-	}
-	else if (Str == "HitCheckNode")
-	{
-		return DDConditionNode::HitCheckNode;
-	}
-	else if (Str == "RollInputCheck")
-	{
-		return DDConditionNode::RollInputCheck;
-	}
-	else if (Str == "UpdateInputQueue")
-	{
-	return DDConditionNode::UpdateInputQueue;
+		return DDConditionNode::DodgerSecondAttackCheck;
 	}
 
 	return DDConditionNode(-1);
@@ -329,6 +406,34 @@ std::string CDDUtil::DDActionNodeTypeToString(DDActionNode NodeType)
 
 	case DDActionNode::FindPath:
 		return "FindPath";
+
+	case DDActionNode::ClearPathList:
+		return "ClearPathList";
+
+	case DDActionNode::HitBack:
+		return "HitBack";
+
+	case DDActionNode::PlayerRoll:
+		return "PlayerRoll";
+
+	case DDActionNode::ChasePlayer:
+		return "ChasePlayer";
+
+
+	case DDActionNode::ClimbUp:
+		return "ClimbUp";
+	case DDActionNode::ClimbUpEnd:
+		return "ClimbUpEnd";
+	case DDActionNode::ClimbUpStart:
+		return "ClimbUpStart";
+	case DDActionNode::ClimbDown:
+		return "ClimbDown";
+	case DDActionNode::ClimbDownEnd:
+		return "ClimbDownEnd";
+	case DDActionNode::ClimbDownStart:
+		return "ClimbDownStart";
+	case DDActionNode::ClimbPause:
+		return "ClimbPause";
 
 	case DDActionNode::BossKnightContinueAttack:
 		return "BossKnightContinueAttack";
@@ -390,19 +495,25 @@ std::string CDDUtil::DDActionNodeTypeToString(DDActionNode NodeType)
 	case DDActionNode::CrowBossSpitting:
 		return "CrowBossSpitting";
 
-
 	// Spore Boomer
 	case DDActionNode::SporeBoomerShoot:
 		return "SporeBoomerShoot";
 
-	case DDActionNode::ClearPathList:
-		return "ClearPathList";
+	// Head Roller
+	case DDActionNode::HeadRollerStun:
+		return "HeadRollerStun";
+	case DDActionNode::HeadRollerRoll:
+		return "HeadRollerRoll";
 
-	case DDActionNode::HitBack:
-		return "HitBack";
-
-	case DDActionNode::PlayerRoll:
-		return "PlayerRoll";
+	// Dodger
+	case DDActionNode::DodgerFirstAttack:
+		return "DodgerFirstAttack";
+	case DDActionNode::DodgerSecondAttack:
+		return "DodgerSecondAttack";
+	case DDActionNode::DodgerPostAttack:
+		return "DodgerPostAttack";
+	case DDActionNode::DodgerDash:
+		return "DodgerDash";
 	}
 
 	return "";
@@ -446,6 +557,38 @@ DDActionNode CDDUtil::StringToDDActionNodeType(const std::string& Str)
 	{
 		return DDActionNode::CancleShootNode;
 	}
+	else if (Str == "ClearPathList")
+	{
+		return DDActionNode::ClearPathList;
+	}
+	else if (Str == "HitBack")
+	{
+		return DDActionNode::HitBack;
+	}
+	else if (Str == "PlayerRoll")
+	{
+		return DDActionNode::PlayerRoll;
+	}
+	else if (Str == "ChasePlayer")
+	{
+		return DDActionNode::ChasePlayer;
+	}
+
+	else if (Str == "ClimbDown")
+		return DDActionNode::ClimbDown;
+	else if (Str == "ClimbDownEnd")
+		return DDActionNode::ClimbDownEnd;
+	else if (Str == "ClimbDownStart")
+		return DDActionNode::ClimbDownStart;
+	else if (Str == "ClimbUp")
+		return DDActionNode::ClimbUp;
+	else if (Str == "ClimbUpEnd")
+		return DDActionNode::ClimbUpEnd;
+	else if (Str == "ClimbUpStart")
+		return DDActionNode::ClimbUpStart;
+	else if (Str == "ClimbPause")
+		return DDActionNode::ClimbPause;
+
 	else if (Str == "AddFallingFloorCallback")
 	{
 		return DDActionNode::AddFallingFloorCallback;
@@ -544,22 +687,37 @@ DDActionNode CDDUtil::StringToDDActionNodeType(const std::string& Str)
 	}
 	else if (Str == "CrowBossSpitting")
 	{
-	return DDActionNode::CrowBossSpitting;
+		return DDActionNode::CrowBossSpitting;
 	}
 
+	// Head Roller
+	else if (Str == "HeadRollerStun")
+	{
+		return DDActionNode::HeadRollerStun;
+	}
+	else if (Str == "HeadRollerRoll")
+	{
+		return DDActionNode::HeadRollerRoll;
+	}
 
-	else if (Str == "ClearPathList")
+	// Dodger
+	else if (Str == "DodgerFirstAttack")
 	{
-		return DDActionNode::ClearPathList;
+		return DDActionNode::DodgerFirstAttack;
 	}
-	else if (Str == "HitBack")
+	else if (Str == "DodgerSecondAttack")
 	{
-		return DDActionNode::HitBack;
+		return DDActionNode::DodgerSecondAttack;
 	}
-	else if (Str == "PlayerRoll")
+	else if (Str == "DodgerPostAttack")
 	{
-		return DDActionNode::PlayerRoll;
+		return DDActionNode::DodgerPostAttack;
 	}
+	else if (Str == "DodgerDash")
+	{
+		return DDActionNode::DodgerDash;
+	}
+
 
 	return DDActionNode(-1);
 }
@@ -576,6 +734,8 @@ std::string CDDUtil::DDSceneComponentTypeToString(DDSceneComponentType Type)
 		return "PlayerHookComponent";
 	case DDSceneComponentType::PlayerBowComponent:
 		return "PlayerBowComponent";
+	case DDSceneComponentType::LadderCollider:
+		return "LadderCollider";
 	case DDSceneComponentType::CrackedBlockCollider:
 		return "CrackedBlockCollider";
 	}
@@ -597,14 +757,15 @@ DDSceneComponentType CDDUtil::StringToDDSceneComponentType(const std::string& St
 	{
 		return DDSceneComponentType::PlayerHookComponent;
 	}
+	else if (Str == "LadderCollider")
+	{
+		return DDSceneComponentType::LadderCollider;
+	}
 	else if (Str == "CrackedBlockCollider")
 	{
 		return DDSceneComponentType::CrackedBlockCollider;
 	}
-	//else if (Str == "MonsterPathFindCollider")
-	//{
-	//	return DDSceneComponentType::MonsterPathFindCollider;
-	//}
+
 	return DDSceneComponentType(-1);
 }
 
@@ -620,6 +781,8 @@ size_t CDDUtil::DDSceneComponentTypeToTypeID(DDSceneComponentType Type)
 		return typeid(CPlayerHookComponent).hash_code();
 	case DDSceneComponentType::PlayerBowComponent:
 		return typeid(CPlayerBowComponent).hash_code();
+	case DDSceneComponentType::LadderCollider:
+		return typeid(CLadderCollider).hash_code();
 	case DDSceneComponentType::CrackedBlockCollider:
 		return typeid(CCrackedBlockCollider).hash_code();
 	}
@@ -666,6 +829,9 @@ std::string CDDUtil::DDObjectComponentTypeToString(DDObjectComponentType Type)
 	case DDObjectComponentType::TinyCrowDataComponent:
 		return "TinyCrowDataComponent";
 
+	case DDObjectComponentType::PlayerBombComponent:
+		return "PlayerBombComponent";
+
 	case DDObjectComponentType::SporeBoomerData:
 		return "SporeBoomerData";
 
@@ -674,6 +840,12 @@ std::string CDDUtil::DDObjectComponentTypeToString(DDObjectComponentType Type)
 
 	case DDObjectComponentType::MonsterBulletData:
 		return "MonsterBulletData";
+
+	case DDObjectComponentType::HeadRollerData:
+		return "HeadRollerData";
+
+	case DDObjectComponentType::DodgerData:
+		return "DodgerData";
 	}
 
 	return "";
@@ -725,6 +897,10 @@ DDObjectComponentType CDDUtil::StringToDDObjectComponentType(const std::string& 
 	{
 		return DDObjectComponentType::ArrowComponent;
 	}
+	else if (Str == "PlayerBombComponent")
+	{
+		return DDObjectComponentType::PlayerBombComponent;
+	}
 	else if (Str == "SporeBoomerData")
 	{
 		return DDObjectComponentType::SporeBoomerData;
@@ -733,9 +909,17 @@ DDObjectComponentType CDDUtil::StringToDDObjectComponentType(const std::string& 
 	{
 		return DDObjectComponentType::FirePlantData;
 	}
-	else if (Str == "MonsterData")
+	else if (Str == "MonsterBulletData")
 	{
-		return DDObjectComponentType::MonsterData;
+		return DDObjectComponentType::MonsterBulletData;
+	}
+	else if (Str == "HeadRollerData")
+	{
+		return DDObjectComponentType::HeadRollerData;
+	}
+	else if (Str == "DodgerData")
+	{
+		return DDObjectComponentType::DodgerData;
 	}
 
 	return DDObjectComponentType(-1);
@@ -769,12 +953,18 @@ size_t CDDUtil::DDObjectComponentTypeToTypeID(DDObjectComponentType Type)
 		return typeid(CArrowComponent).hash_code();
 	case DDObjectComponentType::TinyCrowDataComponent:
 		return typeid(CTinyCrowDataComponent).hash_code();
+	case DDObjectComponentType::PlayerBombComponent:
+		return typeid(CPlayerBombComponent).hash_code();
 	case DDObjectComponentType::SporeBoomerData:
 		return typeid(CSporeBoomerDataComponent).hash_code();
 	case DDObjectComponentType::FirePlantData:
 		return typeid(CFirePlantDataComponent).hash_code();
 	case DDObjectComponentType::MonsterBulletData:
 		return typeid(CMonsterBulletData).hash_code();
+	case DDObjectComponentType::HeadRollerData:
+		return typeid(CHeadRollerDataComponent).hash_code();
+	case DDObjectComponentType::DodgerData:
+		return typeid(CDodgerDataComponent).hash_code();
 	}
 	return -1;
 }
@@ -787,6 +977,10 @@ std::string CDDUtil::DDSceneModeTypeToString(DDSceneModeType Type)
 		return "DDSceneMode";
 	case DDSceneModeType::DDBossSceneMode:
 		return "DDBossSceneMode";
+	case DDSceneModeType::DDInstanceSceneMode:
+		return "DDInstanceSceneMode";
+	case DDSceneModeType::DDPuzzleSceneMode:
+		return "DDPuzzleSceneMode";
 	}
 
 	return "";
@@ -802,6 +996,14 @@ DDSceneModeType CDDUtil::StringToDDSceneModeType(const std::string& Str)
 	{
 		return DDSceneModeType::DDBossSceneMode;
 	}
+	else if (Str == "DDInstanceSceneMode")
+	{
+		return DDSceneModeType::DDInstanceSceneMode;
+	}
+	else if (Str == "DDPuzzleSceneMode")
+	{
+		return DDSceneModeType::DDPuzzleSceneMode;
+	}
 
 	return (DDSceneModeType)(-1);
 }
@@ -814,6 +1016,10 @@ size_t CDDUtil::DDSceneModeTypeToTypeID(DDSceneModeType Type)
 		return typeid(CDDSceneMode).hash_code();
 	case DDSceneModeType::DDBossSceneMode:
 		return typeid(CDDBossSceneMode).hash_code();
+	case DDSceneModeType::DDInstanceSceneMode:
+		return typeid(CDDInstanceSceneMode).hash_code();
+	case DDSceneModeType::DDPuzzleSceneMode:
+		return typeid(CDDPuzzleSceneMode).hash_code();
 	}
 }
 

@@ -14,6 +14,7 @@
 #include "Component/StaticMeshComponent.h"
 #include "Component/CameraComponent.h"
 #include "Component/AnimationMeshComponent.h"
+#include "Component/Arm.h"
 #include "Component/LightComponent.h"
 #include "Component/ParticleComponent.h"
 #include "Component/LandScape.h"
@@ -23,6 +24,7 @@
 #include "Component/ColliderRay.h"
 #include "Component/NavMeshComponent.h"
 #include "Component/WaterComponent.h"
+#include "../DeathDoor/Component/LadderCollider.h"
 #include "../DeathDoor/Component/CrackedBlockCollider.h"
 // ObjectComponent
 #include "Component/PaperBurnComponent.h"
@@ -30,7 +32,6 @@
 #include "../DeathDoor/Component/PlayerHookComponent.h"
 #include "../DeathDoor/Component/EyeLaserComponent.h"
 #include "../DeathDoor/Component/PlayerNormalAttackCheckCollider.h"
-#include "../DeathDoor/Component/MonsterPathFindCollider.h"
 #include "../Widget/StaticMeshComponentWidget.h"
 #include "../Widget/LightComponentWidget.h"
 #include "../Widget/ObjectComponentWidget.h"
@@ -43,6 +44,7 @@
 #include "../Widget/ColliderSphereWidget.h"
 #include "../Widget/WaterComponentWidget.h"
 #include "../Widget/CameraWidget.h"
+#include "../Widget/ArmComponentWidget.h"
 // ObjCompWidget
 #include "../Widget/PaperBurnWidget.h"
 #include "../Widget/EyeLaserComponentWidget.h"
@@ -197,6 +199,10 @@ void CGameObjectWidget::CreateSceneComponentWidget(CSceneComponent* Com)
 	{
 		Widget = AddWidget<CCameraWidget>("CameraWidget");
 	}
+	else if (TypeID == typeid(CArm).hash_code())
+	{
+		Widget = AddWidget<CArmComponentWidget>("ArmWidget");
+	}
 	else if (TypeID == typeid(CLightComponent).hash_code())
 	{
 	 	Widget = AddWidget<CLightComponentWidget>("LightWidget");
@@ -209,16 +215,17 @@ void CGameObjectWidget::CreateSceneComponentWidget(CSceneComponent* Com)
 	{
 		Widget = AddWidget<CLandScapeWidget>("LandScapeWidget");
 	}
-	else if (TypeID == typeid(CColliderBox3D).hash_code() || 
+	else if (TypeID == typeid(CColliderBox3D).hash_code() ||
+		TypeID == typeid(CColliderBox3D).hash_code() || 
 		TypeID == typeid(CColliderHalfLine).hash_code() || 
-		TypeID == typeid(CColliderRay).hash_code() || 
+		TypeID == typeid(CColliderRay).hash_code() ||
+		TypeID == typeid(CLadderCollider).hash_code() ||
 		TypeID == typeid(CCrackedBlockCollider).hash_code())
 	{
 		Widget = AddWidget<CColliderComponentWidget>("ColliderComponentWidget");
 	}
-	else if (TypeID == typeid(CColliderSphere).hash_code() ||
-		TypeID == typeid(CPlayerNormalAttackCheckCollider).hash_code() || 
-		TypeID == typeid(CMonsterPathFindCollider).hash_code())
+
+	else if (TypeID == typeid(CColliderSphere).hash_code() ||  TypeID == typeid(CPlayerNormalAttackCheckCollider).hash_code())
 	{
 		Widget = AddWidget<CColliderSphereWidget>("ColliderSphereWidget");
 	}

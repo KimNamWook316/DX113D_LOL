@@ -36,6 +36,34 @@
 #include "../DeathDoor/Component/Node/DeathCheck.h"
 #include "../DeathDoor/Component/Node/PostAttackDelayCheck.h"
 #include "../DeathDoor/Component/Node/AttackCoolTimeCheck.h"
+
+#include "../DeathDoor/Component/Node/ClimbDown.h"
+#include "../DeathDoor/Component/Node/ClimbDownEnd.h"
+#include "../DeathDoor/Component/Node/ClimbDownStart.h"
+#include "../DeathDoor/Component/Node/ClimbUp.h"
+#include "../DeathDoor/Component/Node/ClimbUpStart.h"
+#include "../DeathDoor/Component/Node/ClimbUpEnd.h"
+#include "../DeathDoor/Component/Node/SKeyInputCheck.h"
+#include "../DeathDoor/Component/Node/WKeyInputCheck.h"
+#include "../DeathDoor/Component/Node/ClimbDownContinueCheck.h"
+#include "../DeathDoor/Component/Node/ClimbDownEndCheck.h"
+#include "../DeathDoor/Component/Node/ClimbDownStartCheck.h"
+#include "../DeathDoor/Component/Node/ClimbUpContinueCheck.h"
+#include "../DeathDoor/Component/Node/ClimbingUpStartCheck.h"
+#include "../DeathDoor/Component/Node/ClimbUpEndCheck.h"
+#include "../DeathDoor/Component/Node/ClimbPause.h"
+#include "../DeathDoor/Component/Node/IsClimbingCheck.h"
+#include "../DeathDoor/Component/Node/ClimbPause.h"
+
+#include "../DeathDoor/Component/Node/HitCheckNode.h"
+#include "../DeathDoor/Component/Node/HitBackNode.h"
+#include "../DeathDoor/Component/Node/RollInputCheck.h"
+#include "../DeathDoor/Component/Node/PlayerRoll.h"
+#include "../DeathDoor/Component/Node/UpdateInputQueue.h"
+
+#include "../DeathDoor/Component/Node/StraightPathCheck.h"
+#include "../DeathDoor/Component/Node/ChasePlayerNode.h"
+
 // BossKnight
 #include "../DeathDoor/Component/Node/BossKnightContinueAttackNode.h"
 #include "../DeathDoor/Component/Node/BossKnightCutScenePlayCheck.h"
@@ -91,11 +119,18 @@
 // SporeBoomer
 #include "../DeathDoor/Component/Node/SporeBoomerShootNode.h"
 
-#include "../DeathDoor/Component/Node/HitCheckNode.h"
-#include "../DeathDoor/Component/Node/HitBackNode.h"
-#include "../DeathDoor/Component/Node/RollInputCheck.h"
-#include "../DeathDoor/Component/Node/PlayerRoll.h"
-#include "../DeathDoor/Component/Node/UpdateInputQueue.h"
+// HeadRoller
+#include "../DeathDoor/Component/Node/HeadRollerStunCheck.h"
+#include "../DeathDoor/Component/Node/HeadRollerRollNode.h"
+#include "../DeathDoor/Component/Node/HeadRollerStunNode.h"
+
+// Dodger
+#include "../DeathDoor/Component/Node/DodgerDashCheck.h"
+#include "../DeathDoor/Component/Node/DodgerDashNode.h"
+#include "../DeathDoor/Component/Node/DodgerFirstAttackNode.h"
+#include "../DeathDoor/Component/Node/DodgerPostAttackNode.h"
+#include "../DeathDoor/Component/Node/DodgerSecondAttackCheck.h"
+#include "../DeathDoor/Component/Node/DodgerSecondAttackNode.h"
 
 #include "ObjectComponentWindow.h"
 #include "ObjectHierarchyWindow.h"
@@ -517,6 +552,48 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
             NewTreeNode = m_StateComponent->CreateTreeNode<CPlayerRoll>(Name);
             break;
         }
+        case DDActionNode::ClimbDown:
+        {
+            NewTreeNode = m_StateComponent->CreateTreeNode<CClimbDown>(Name);
+            break;
+        }
+        case DDActionNode::ClimbDownEnd:
+        {
+            NewTreeNode = m_StateComponent->CreateTreeNode<CClimbDownEnd>(Name);
+            break;
+        }        
+        case DDActionNode::ClimbDownStart:
+        {
+            NewTreeNode = m_StateComponent->CreateTreeNode<CClimbDownStart>(Name);
+            break;
+        }        
+        case DDActionNode::ClimbUp:
+        {
+            NewTreeNode = m_StateComponent->CreateTreeNode<CClimbUp>(Name);
+            break;
+        }        
+        case DDActionNode::ClimbUpStart:
+        {
+            NewTreeNode = m_StateComponent->CreateTreeNode<CClimbUpStart>(Name);
+            break;
+        }        
+        case DDActionNode::ClimbUpEnd:
+        {
+            NewTreeNode = m_StateComponent->CreateTreeNode<CClimbUpEnd>(Name);
+            break;
+        }
+        case DDActionNode::ClimbPause:
+        {
+            NewTreeNode = m_StateComponent->CreateTreeNode<CClimbPause>(Name);
+            break;
+        }
+        case DDActionNode::ChasePlayer:
+        {
+            NewTreeNode = m_StateComponent->CreateTreeNode<CChasePlayerNode>(Name);
+            break;
+        }
+
+        // Boss Knight
         case DDActionNode::BossKnightContinueAttack:
         {
             NewTreeNode = m_StateComponent->CreateTreeNode<CBossKnightContinueAttackNode>(Name);
@@ -648,6 +725,40 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
             break;
         }
 
+        // Head Roller
+        case DDActionNode::HeadRollerRoll:
+        {
+            NewTreeNode = m_StateComponent->CreateTreeNode<CHeadRollerRollNode>(Name);
+            break;
+        }
+        case DDActionNode::HeadRollerStun:
+        {
+            NewTreeNode = m_StateComponent->CreateTreeNode<CHeadRollerStunNode>(Name);
+            break;
+        }
+
+        // Dodger
+        case DDActionNode::DodgerDash:
+        {
+            NewTreeNode = m_StateComponent->CreateTreeNode<CDodgerDashNode>(Name);
+            break;
+        }
+        case DDActionNode::DodgerFirstAttack:
+        {
+            NewTreeNode = m_StateComponent->CreateTreeNode<CDodgerFirstAttackNode>(Name);
+            break;
+        }
+        case DDActionNode::DodgerSecondAttack:
+        {
+            NewTreeNode = m_StateComponent->CreateTreeNode<CDodgerSecondAttackNode>(Name);
+            break;
+        }
+        case DDActionNode::DodgerPostAttack:
+        {
+            NewTreeNode = m_StateComponent->CreateTreeNode<CDodgerPostAttackNode>(Name);
+            break;
+        }
+
 		}
         break;
     }
@@ -689,6 +800,33 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
         case DDConditionNode::MouseRButtonUpCheckNode:
             NewTreeNode = m_StateComponent->CreateTreeNode<CMouseRButtonUpCheckNode>(Name);
             break;
+        case DDConditionNode::IsClimbingCheck:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CIsClimbingCheck>(Name);
+            break;
+        case DDConditionNode::SKeyInputCheck:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CSKeyInputCheck>(Name);
+            break;
+        case DDConditionNode::WKeyInputCheck:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CWKeyInputCheck>(Name);
+            break;
+        case DDConditionNode::ClimbDownContinueCheck:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CClimbDownContinueCheck>(Name);
+            break;
+        case DDConditionNode::ClimbDownEndCheck:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CClimbDownEndCheck>(Name);
+            break;
+        case DDConditionNode::ClimbDownStartCheck:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CClimbDownStartCheck>(Name);
+            break;
+        case DDConditionNode::ClimbUpContinueCheck:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CClimbUpContinueCheck>(Name);
+            break;
+        case DDConditionNode::ClimbUpStartCheck:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CClimbingUpStartCheck>(Name);
+            break;
+        case DDConditionNode::ClimbUpEndCheck:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CClimbUpEndCheck>(Name);
+            break;
         case DDConditionNode::Lockstone3TriggerBoxHitCheck:
             NewTreeNode = m_StateComponent->CreateTreeNode<CLockstone3TriggerBoxHitCheck>(Name);
             break;
@@ -701,7 +839,9 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
         case DDConditionNode::PlayerEnterTriggerIsEnable:
             NewTreeNode = m_StateComponent->CreateTreeNode<CPlayerEnterTriggerIsEnable>(Name);
             break;
-
+        case DDConditionNode::StraightPathCheck:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CStraightPathCheck>(Name);
+            break;
         case DDConditionNode::MeleeAttackRangeCheck:
             NewTreeNode = m_StateComponent->CreateTreeNode<CMeleeRangeCheckNode>(Name);
             break;
@@ -711,6 +851,23 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
         case DDConditionNode::AttackCoolTimeCheck:
             NewTreeNode = m_StateComponent->CreateTreeNode<CAttackCoolTimeCheck>(Name);
             break;
+        case DDConditionNode::IsCombatCheck:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CIsCombatCheck>(Name);
+            break;
+        case DDConditionNode::DeathCheck:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CDeathCheck>(Name);
+            break;
+        case DDConditionNode::HitCheckNode:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CHitCheckNode>(Name);
+            break;
+        case DDConditionNode::RollInputCheck:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CRollInputCheck>(Name);
+            break;
+        case DDConditionNode::UpdateInputQueue:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CUpdateInputQueue>(Name);
+            break;
+
+        // Boss Knight
         case DDConditionNode::BossKnightFinalAttackCheck:
             NewTreeNode = m_StateComponent->CreateTreeNode<CBossKnightFinalAttackCheck>(Name);
             break;
@@ -726,6 +883,7 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
         case DDConditionNode::BossKnightContinueAttackCheck:
             NewTreeNode = m_StateComponent->CreateTreeNode<CBossKnightContinueAttackCheck>(Name);
             break;
+
         // BossBetty
         case DDConditionNode::BossBettyCheckAttackDir:
             NewTreeNode = m_StateComponent->CreateTreeNode<CBossBettyChangeDirCheck>(Name);
@@ -775,22 +933,19 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
             NewTreeNode = m_StateComponent->CreateTreeNode<CCrowBossShootReadyCheck>(Name);
             break;
 
+		// HeadRoller
+        case DDConditionNode::HeadRollerStunCheck:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CHeadRollerStunCheck>(Name);
+            break;
 
-        case DDConditionNode::IsCombatCheck:
-            NewTreeNode = m_StateComponent->CreateTreeNode<CIsCombatCheck>(Name);
+        // Dodger
+        case DDConditionNode::DodgerDashCheck:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CDodgerDashCheck>(Name);
             break;
-        case DDConditionNode::DeathCheck:
-            NewTreeNode = m_StateComponent->CreateTreeNode<CDeathCheck>(Name);
+        case DDConditionNode::DodgerSecondAttackCheck:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CDodgerSecondAttackCheck>(Name);
             break;
-        case DDConditionNode::HitCheckNode:
-            NewTreeNode = m_StateComponent->CreateTreeNode<CHitCheckNode>(Name);
-            break;
-        case DDConditionNode::RollInputCheck:
-            NewTreeNode = m_StateComponent->CreateTreeNode<CRollInputCheck>(Name);
-            break;
-        case DDConditionNode::UpdateInputQueue:
-            NewTreeNode = m_StateComponent->CreateTreeNode<CUpdateInputQueue>(Name);
-            break;
+
         }
         break;
     }

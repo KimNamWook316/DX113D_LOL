@@ -49,6 +49,9 @@ CAnimationSequenceInstance::CAnimationSequenceInstance(const CAnimationSequenceI
 
 	m_Skeleton = Anim.m_Skeleton;
 
+	m_vecBoneMatrix.clear();
+	m_vecBoneMatrix.resize(m_Skeleton->GetBoneCount());
+
 	m_EditorStopAnimation = false;
 
 	m_mapAnimation.clear();
@@ -65,6 +68,8 @@ CAnimationSequenceInstance::CAnimationSequenceInstance(const CAnimationSequenceI
 		Data->m_Loop = iter->second->m_Loop;
 		Data->m_PlayTime = iter->second->m_PlayTime;
 		Data->m_PlayScale = iter->second->m_PlayScale;
+		Data->m_FrameTime = iter->second->m_FrameTime;
+		Data->m_Time = iter->second->m_Time;
 
 		if (Anim.m_CurrentAnimation->m_Name == Data->m_Name)
 			m_CurrentAnimation = Data;
@@ -218,6 +223,18 @@ std::optional<std::string>CAnimationSequenceInstance::GetCurrentAnimationKeyName
 	}
 
 	return std::nullopt;
+}
+
+bool CAnimationSequenceInstance::IsAnimExist(const std::string& Name)
+{
+	CAnimationSequenceData* Data = FindAnimation(Name);
+
+	if (Data)
+	{
+		return true;
+	}
+
+	return false;
 }
 
 void CAnimationSequenceInstance::AddAnimation(const std::string& SequenceName,
@@ -535,6 +552,31 @@ int CAnimationSequenceInstance::GetCurrentAnimationOrder()
 	return Idx;
 	return 0;
 }
+
+float CAnimationSequenceInstance::GetAnimationFrameTime(const std::string& Name)
+{
+	CAnimationSequenceData* Data = FindAnimation(Name);
+
+	if (!Data)
+	{
+		return 0.f;
+	}
+
+	return Data->m_FrameTime;
+}
+
+int CAnimationSequenceInstance::GetAnimationFrameLength(const std::string& Name)
+{
+	CAnimationSequenceData* Data = FindAnimation(Name);
+
+	if (!Data)
+	{
+		return 0.f;
+	}
+
+	return Data->m_Sequence->GetFrameLength();
+}
+
 void CAnimationSequenceInstance::Start()
 {
 	if (m_Scene)

@@ -346,12 +346,48 @@ bool CNavigation3DManager::CheckNavMeshPoly(const Vector3& Pos, float& Height, i
 			LerpVec.Normalize();
 
 			// Weighted Average
-			Height = LerpVec.x * LerpVec.x * P1.y + LerpVec.y * LerpVec.y * P2.y + LerpVec.z * LerpVec.z * P3.y + 0.1f;
+			Height = LerpVec.x * LerpVec.x * P1.y + LerpVec.y * LerpVec.y * P2.y + LerpVec.z * LerpVec.z * P3.y + 0.05f;
 
 			PolyIndex = (int)i;
 
 			return true;
 		}
+	}
+
+	return false;
+}
+
+bool CNavigation3DManager::RefreshPlayerNavMeshPoly(const Vector3& Pos)
+{
+	size_t Count = m_NavMeshComponent->GetNavMesh()->GetNavMeshPolygonCount();
+
+	for (size_t i = 0; i < Count; ++i)
+	{
+		std::vector<Vector3> vecPos;
+		m_NavMeshComponent->GetNavPolgonVertexPos((int)i, vecPos);
+		Vector3 P1 = vecPos[0];
+		Vector3 P2 = vecPos[1];
+		Vector3 P3 = vecPos[2];
+
+
+		XMVECTOR v1 = Pos.Convert();
+
+		XMVECTOR Dir = Vector3(0.f, -1.f, 0.f).Convert();
+		XMVECTOR _P1 = P1.Convert();
+		XMVECTOR _P2 = P2.Convert();
+		XMVECTOR _P3 = P3.Convert();
+
+		float Dist = 0.f;
+
+		bool Intersect = DirectX::TriangleTests::Intersects(v1, Dir, _P1, _P2, _P3, Dist);
+
+		if (Intersect)
+		{
+			m_PlayerPolyIndex = (int)i;
+
+			return true;
+		}
+
 	}
 
 	return false;
@@ -482,6 +518,9 @@ bool CNavigation3DManager::CheckNavMeshPickingPoint(Vector3& OutPos)
 		XMVECTOR _P1 = P1.Convert();
 		XMVECTOR _P2 = P2.Convert();
 		XMVECTOR _P3 = P3.Convert();
+
+		if (P1 == P2 || P2 == P3 || P1 == P3)
+			return false;
 
 		float Dist = 0.f;
 

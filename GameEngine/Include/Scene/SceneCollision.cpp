@@ -85,7 +85,7 @@ void CSceneCollision::Collision(float DeltaTime)
 
 	for (; iter != iterEnd; ++iter)
 	{
-		if ((*iter)->GetCurrentSectionCheck())
+		if ((*iter)->IsEnable() == false || (*iter)->GetCurrentSectionCheck())
 			continue;
 
 		(*iter)->CurrentSectionCheck();

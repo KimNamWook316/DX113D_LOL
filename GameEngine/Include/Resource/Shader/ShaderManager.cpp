@@ -43,6 +43,7 @@
 #include "ToonShader.h"
 #include "WaterShader.h"
 #include "LaserShader.h"
+#include "BombShader.h"
 
 // ParticleInfo.h
 #include "../../ParticleInfo.h"
@@ -213,6 +214,12 @@ bool CShaderManager::Init()
 	}
 
 	if (!CreateShader<CLaserShader>("LaserShader"))
+	{
+		assert(false);
+		return false;
+	}
+
+	if (!CreateShader<CBombShader>("BombShader"))
 	{
 		assert(false);
 		return false;

@@ -52,6 +52,8 @@ public:
 	bool CheckPlayerNavMeshPoly(float& Height);
 	// 높이와 Polygon Index를 리턴
 	bool CheckNavMeshPoly(const Vector3& Pos, float& Height, int& PolyIndex);
+	// 현재 위치 기준으로 m_PlayerPolyIndex를 갱신
+	bool RefreshPlayerNavMeshPoly(const Vector3& Pos);
 
 	// CurrentPolyIndex에 존재하는지 체크 후, 존재하지 않는다면 인접 Polygon을 탐색해서 OutPolyIndex에 반환해준다
 	bool CheckCurrentNavMeshPoly(const Vector3& Pos, int CurrentPolyIndex, float& Height, int& OutPolyIndex);

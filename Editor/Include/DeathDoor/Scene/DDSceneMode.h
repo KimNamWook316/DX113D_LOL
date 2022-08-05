@@ -20,7 +20,7 @@ public:
 	virtual bool Load(FILE* File) override;
 
 public:
-	void OnDieMonster();
+	virtual void OnDieMonster();
 	virtual void OnClearDungeon();
 
 public:
@@ -46,7 +46,7 @@ public:
 		m_NextSceneLoadComplete = true;
 	}
 
-	virtual void OnFadeOutStart();
+	virtual void OnFadeOutEnd();
 	virtual void OnFadeInStart();
 
 public:
