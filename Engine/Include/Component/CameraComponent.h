@@ -60,6 +60,7 @@ protected:
 	float		m_MoveTime;
 	Vector3		m_MoveStartPos;
 	Vector3		m_MoveDestPos;
+	std::function<void()> m_MoveEndCallBack;
 
 	// CutScene Data
 	bool		m_StartCutSceneMove;
@@ -79,7 +80,7 @@ protected:
 
 public:
 	void Shake(float Time, float Amount);
-	void StartMove(const Vector3& StartPos, const Vector3& EndPos, 
+	void StartMove(const Vector3& StartPos, const Vector3& EndPos,
 		float MoveTime, bool Reverse = false, bool MoveFreeze = false);
 
 public:
@@ -154,7 +155,7 @@ public:
 	{
 		return m_MoveStartPos;
 	}
-	
+
 	const Vector3& GetMoveDestPos() const
 	{
 		return m_MoveDestPos;
@@ -228,7 +229,7 @@ public:
 	bool FrustumInPoint(const Vector3& Point);
 	bool FrustumInSphere(const SphereInfo& Sphere);
 
-public :
+public:
 	// 원하는 Width, Height에 맞춰서 Projection Matrix 를 만들어내는 함수
 	void CreateCustomResolutionProjMatrix(float Width, float Height);
 
@@ -272,13 +273,13 @@ public:
 
 public:
 	template<typename T>
-	void AddMoveEndCallBack(T* Obj, void(T::* Func)())
+	void AddCutSceneMoveEndCallBack(T* Obj, void(T::* Func)())
 	{
 		m_CutSceneMoveEndCallBack = std::bind(Func, Obj);
 	}
 
 	template <typename T>
-	void AddMoveCallBack(CamMoveData* Data, CamMoveCallBackCallType CallBackType, T* Obj, void(T::* Func)())
+	void AddCutSceneMoveCallBack(CamMoveData* Data, CamMoveCallBackCallType CallBackType, T* Obj, void(T::* Func)())
 	{
 		if (!Data)
 		{
@@ -290,7 +291,7 @@ public:
 	}
 
 	template <typename T>
-	void AddMoveCallBack(int Index, CamMoveCallBackCallType CallBackType, T* Obj, void(T::* Func)())
+	void AddCutSceneMoveCallBack(int Index, CamMoveCallBackCallType CallBackType, T* Obj, void(T::* Func)())
 	{
 		if (!IsValidMoveDataIndex(Index))
 		{
@@ -306,6 +307,17 @@ public:
 
 		std::function<void()> CallBack = std::bind(Func, Obj);
 		FoundData->CallBack[(int)CallBackType] = CallBack;
+	}
+
+	template <typename T>
+	void SetMoveEndCallBack(T* Obj, void(T::* Func)())
+	{
+		if (m_MoveEndCallBack)
+		{
+			m_MoveEndCallBack = nullptr;
+		}
+
+		m_MoveEndCallBack = std::bind(Func, Obj);
 	}
 };
 

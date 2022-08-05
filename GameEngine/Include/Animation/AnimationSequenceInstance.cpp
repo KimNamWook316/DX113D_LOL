@@ -225,6 +225,18 @@ std::optional<std::string>CAnimationSequenceInstance::GetCurrentAnimationKeyName
 	return std::nullopt;
 }
 
+bool CAnimationSequenceInstance::IsAnimExist(const std::string& Name)
+{
+	CAnimationSequenceData* Data = FindAnimation(Name);
+
+	if (Data)
+	{
+		return true;
+	}
+
+	return false;
+}
+
 void CAnimationSequenceInstance::AddAnimation(const std::string& SequenceName,
 	const std::string& Name, bool Loop, float PlayScale)
 {

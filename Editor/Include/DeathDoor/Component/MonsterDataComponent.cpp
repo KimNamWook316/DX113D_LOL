@@ -164,7 +164,10 @@ void CMonsterDataComponent::Update(float DeltaTime)
 
 	if (m_Data.HP <= 0)
 	{
-		SetCurrentNodeNull();
+		if (m_State)
+		{
+			SetCurrentNodeNull();
+		}
 
 		m_MoveZ = false;
 		m_LookPlayer = false;

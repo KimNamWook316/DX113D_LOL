@@ -237,6 +237,9 @@
     <Filter Include="06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\07. Dodger">
       <UniqueIdentifier>{4feb520f-176f-47e8-b0ae-752e19e6f2af}</UniqueIdentifier>
     </Filter>
+    <Filter Include="06. DeathDoor\05. SceneMode\03. PuzzleMode">
+      <UniqueIdentifier>{0035fce2-b29e-43b4-9563-6f7dd0ac6810}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Scene\DefaultScene.cpp">
@@ -850,6 +853,12 @@
     </ClCompile>
     <ClCompile Include="DeathDoor\Component\Node\DodgerDashNode.cpp">
       <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\07. Dodger</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Scene\DDPuzzleSceneMode.cpp">
+      <Filter>06. DeathDoor\05. SceneMode\03. PuzzleMode</Filter>
+    </ClCompile>
+    <ClCompile Include="Widget\DDPuzzleSceneModeWidet.cpp">
+      <Filter>02. Editor\02. Widget\04. SceneMode</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1473,6 +1482,12 @@
     </ClInclude>
     <ClInclude Include="DeathDoor\Component\Node\DodgerDashNode.h">
       <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\07. Dodger</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Scene\DDPuzzleSceneMode.h">
+      <Filter>06. DeathDoor\05. SceneMode\03. PuzzleMode</Filter>
+    </ClInclude>
+    <ClInclude Include="Widget\DDPuzzleSceneModeWidet.h">
+      <Filter>02. Editor\02. Widget\04. SceneMode</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

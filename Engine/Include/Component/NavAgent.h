@@ -94,7 +94,7 @@ public:
 
 	bool IsRotaiting() const
 	{
-		return m_RotationSpeed;
+		return m_Rotaiting;
 	}
 
 	size_t GetPathListCount()	const

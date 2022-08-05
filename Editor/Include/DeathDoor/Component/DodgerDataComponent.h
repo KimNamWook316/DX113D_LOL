@@ -22,9 +22,12 @@ public:
     void OnAttackMoveStart();
     void OnAttackMove1End();
     void OnAttackMove2End();
+    void OnAttackHit();
     void OnDashReady();
     void OnDashStart();
     void OnDashEnd();
+    void OnPostAttackStart();
+    void OnPostAttackEnd();
 
 public:
     void OnIncreaseAttackCount()

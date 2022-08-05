@@ -6,9 +6,11 @@
 #include "../DeathDoor/Scene/DDSceneMode.h"
 #include "../DeathDoor/Scene/DDBossSceneMode.h"
 #include "../DeathDoor/Scene/DDInstanceSceneMode.h"
+#include "../DeathDoor/Scene/DDPuzzleSceneMode.h"
 
 #include "../Widget/DDSceneModeWidget.h"
 #include "../Widget/DDInstanceSceneModeWidget.h"
+#include "../Widget/DDPuzzleSceneModeWidet.h"
 
 CSceneModeWindow::CSceneModeWindow()
 {
@@ -77,6 +79,10 @@ void CSceneModeWindow::CreateModeWidget(class CSceneMode* Mode)
 	else if (TypeID == typeid(CDDInstanceSceneMode).hash_code())
 	{
 		m_SceneModeWidget = AddWidget<CDDInstanceSceneModeWidget>("SceneModeWidget", 200.f);
+	}
+	else if (TypeID == typeid(CDDPuzzleSceneMode).hash_code())
+	{
+		m_SceneModeWidget = AddWidget<CDDPuzzleSceneModeWidet>("SceneModeWidget", 200.f);
 	}
 
 	if (m_SceneModeWidget)

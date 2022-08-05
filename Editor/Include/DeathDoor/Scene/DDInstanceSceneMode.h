@@ -117,7 +117,7 @@ private:
     void OnSpawnDoorPaperBurnEnd();
     void OnSpawnDoorDestroy();
 
-private:
+protected:
     std::string m_EnterTriggerObjectName;
     class CColliderBox3D* m_EnterTrigger;
 

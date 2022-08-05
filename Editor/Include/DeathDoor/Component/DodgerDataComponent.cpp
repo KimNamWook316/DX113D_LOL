@@ -40,13 +40,24 @@ void CDodgerDataComponent::Start()
 	AnimInst->SetEndFunction("AttackReady2", this, &CDodgerDataComponent::OnAttack2ReadyEnd);
 
 	AnimInst->AddNotify("Attack", "OnAttackMove", 0, this, &CDodgerDataComponent::OnAttackMoveStart);
+	AnimInst->AddNotify("Attack", "OnAttackHit", 2, this, &CDodgerDataComponent::OnAttackHit);
+	AnimInst->AddNotify("Attack", "OnAttackHit", 3, this, &CDodgerDataComponent::OnAttackHit);
+	AnimInst->AddNotify("Attack", "OnAttackHit", 4, this, &CDodgerDataComponent::OnAttackHit);
+	AnimInst->AddNotify("Attack", "OnAttackHit", 5, this, &CDodgerDataComponent::OnAttackHit);
 	AnimInst->AddNotify("Attack", "OnAttackMove1End", 5, this, &CDodgerDataComponent::OnAttackMove1End);
 	AnimInst->AddNotify("Attack2", "OnAttackMove", 0, this, &CDodgerDataComponent::OnAttackMoveStart);
+	AnimInst->AddNotify("Attack2", "OnAttackHit", 2, this, &CDodgerDataComponent::OnAttackHit);
+	AnimInst->AddNotify("Attack2", "OnAttackHit", 3, this, &CDodgerDataComponent::OnAttackHit);
+	AnimInst->AddNotify("Attack2", "OnAttackHit", 4, this, &CDodgerDataComponent::OnAttackHit);
+	AnimInst->AddNotify("Attack2", "OnAttackHit", 5, this, &CDodgerDataComponent::OnAttackHit);
 	AnimInst->AddNotify("Attack2", "OnAttackMove2End", 5, this, &CDodgerDataComponent::OnAttackMove2End);
+
+	AnimInst->AddNotify("AttackEnd", "OnAttackEnd", 0, this, &CDodgerDataComponent::OnPostAttackStart);
+	AnimInst->SetEndFunction("AttackEnd", this, &CDodgerDataComponent::OnPostAttackEnd);
 
 	AnimInst->AddNotify("Dash", "OnDashReady", 0, this, &CDodgerDataComponent::OnDashReady);
 	AnimInst->AddNotify("Dash", "OnDashStart", 8, this, &CDodgerDataComponent::OnDashStart);
-	AnimInst->SetEndFunction("Dash", this, &CDodgerDataComponent::OnDashEnd);
+	AnimInst->AddNotify("Dash", "OnDashEnd", 20, this, &CDodgerDataComponent::OnDashEnd);
 }
 
 void CDodgerDataComponent::Update(float DeltaTime)
@@ -90,15 +101,7 @@ void CDodgerDataComponent::OnAttack2ReadyEnd()
 
 void CDodgerDataComponent::OnAttackMoveStart()
 {
-	m_CurMoveSpeed = m_Data.MoveSpeed / 2.f;
-
-	// 공격 시점의 플레이어 위치를 기억해서, 대쉬 방향을 판별
-	CGameObject* Player = m_Scene->GetPlayerObject();
-
-	if (Player)
-	{
-		m_PrevPlayerPos = Player->GetWorldPos();
-	}
+	m_CurMoveSpeed = m_Data.MoveSpeed * 2.f;
 
 	OnEnableMoveZ();
 }
@@ -107,16 +110,67 @@ void CDodgerDataComponent::OnAttackMove1End()
 {
 	m_CurMoveSpeed = 0.f;
 
+	++m_AttackCount;
+
 	OnDisableMoveZ();
+
+	SetCurrentNodeNull();
+
+	bool PlayerInRange = IsPlayerInMeleeAttackRange();
+
+	if (PlayerInRange)
+	{
+		m_PostAttackDelaying = false;
+	}
+	else
+	{
+		m_PostAttackDelaying = true;
+	}
 }
 
 void CDodgerDataComponent::OnAttackMove2End()
 {
 	m_CurMoveSpeed = 0.f;
 
+	m_AttackCount = 0;
+
 	OnDisableMoveZ();
 
 	m_DashReady = true;
+
+	SetCurrentNodeNull();
+
+	// 공격 시점의 플레이어 위치를 기억해서, 대쉬 방향을 판별
+	CGameObject* Player = m_Scene->GetPlayerObject();
+
+	if (Player)
+	{
+		m_PrevPlayerPos = Player->GetWorldPos();
+	}
+}
+
+void CDodgerDataComponent::OnAttackHit()
+{
+	if (m_PlayerData->IsUnbeatable())
+	{
+		return;
+	}
+
+	Vector3 MyLookDir = m_Object->GetWorldAxis(AXIS::AXIS_Z) * -1.f;
+
+	Vector3 MyPos = m_Object->GetWorldPos();
+	Vector3 PlayerPos = m_PlayerData->GetGameObject()->GetWorldPos();
+
+	Vector3 ToPlayer = PlayerPos - MyPos;
+	ToPlayer.y = 0.f;
+	ToPlayer.Normalize();
+
+	float Angle = MyLookDir.Angle(ToPlayer);
+
+	if (Angle <= 45.f && Angle >= -45.f)
+	{
+		m_PlayerData->DecreaseHP(1);
+	}
 }
 
 void CDodgerDataComponent::OnDashReady()
@@ -128,11 +182,20 @@ void CDodgerDataComponent::OnDashReady()
 	if (Player)
 	{
 		Vector3 PlayerPos = Player->GetWorldPos();
+		Vector3 DashDir = (PlayerPos - m_PrevPlayerPos);
+		DashDir.y = 0.f;
 
-		Vector3 DashDir = PlayerPos - m_PrevPlayerPos;
 		Vector3 MyPos = m_Object->GetWorldPos();
 
-		m_DashDest = MyPos + DashDir;
+		if (DashDir.Length() == 0.f)
+		{
+			DashDir = m_PrevPlayerPos - MyPos;
+			DashDir.y = 0.f;
+		}
+
+		DashDir.Normalize();
+
+		m_DashDest = MyPos + (DashDir * 7.f);
 
 		// 내가 바라보는 방향과 현재 대쉬해야 할 방향의 각도를 통해, 애니메이션 프레임동안 회전 속도를 결정함
 		Vector3 MyLookDir = m_Object->GetWorldAxis(AXIS::AXIS_Z) * -1.f;
@@ -141,7 +204,7 @@ void CDodgerDataComponent::OnDashReady()
 		CAnimationSequenceInstance* AnimInst = m_AnimMesh->GetAnimationInstance();
 		float FrameTime = AnimInst->GetAnimationFrameTime("Dash");
 
-		m_CurRotSpeed = Angle / FrameTime;
+		m_CurRotSpeed = Angle / (FrameTime * 8);
 
 		m_DashRotaiting = true;
 	}
@@ -155,9 +218,8 @@ void CDodgerDataComponent::OnDashStart()
 	Vector3 MyPos = m_Object->GetWorldPos();
 	CAnimationSequenceInstance* AnimInst = m_AnimMesh->GetAnimationInstance();
 
-	int DashFrameLength = AnimInst->GetAnimationFrameLength("Dash") - 8 - 1;
 	float FrameTime = AnimInst->GetAnimationFrameTime("Dash");
-	float DashTime = (float)DashFrameLength * FrameTime;
+	float DashTime = 12 * FrameTime;
 	float ToDashPointLength = (m_DashDest - MyPos).Length();
 
 	m_CurMoveSpeed = ToDashPointLength / DashTime;
@@ -180,6 +242,19 @@ void CDodgerDataComponent::OnDashEnd()
 
 	m_DashReady = false;
 	m_Dash = false;
+
+	SetCurrentNodeNull();
+}
+
+void CDodgerDataComponent::OnPostAttackStart()
+{
+	m_PostAttackDelaying = true;
+}
+
+void CDodgerDataComponent::OnPostAttackEnd()
+{
+	m_AttackCount = 0;
+	m_PostAttackDelaying = false;
 
 	SetCurrentNodeNull();
 }

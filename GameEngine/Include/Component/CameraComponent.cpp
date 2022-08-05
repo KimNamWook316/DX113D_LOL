@@ -617,6 +617,11 @@ void CCameraComponent::Update(float DeltaTime)
 		{
 			if (m_MoveAccTime <= 0.f)
 			{
+				if (m_MoveEndCallBack)
+				{
+					m_MoveEndCallBack();
+					m_MoveEndCallBack = nullptr;
+				}
 				m_MoveAccTime = 0.f;
 			}
 		}
@@ -624,6 +629,11 @@ void CCameraComponent::Update(float DeltaTime)
 		{
 			if (m_MoveAccTime >= m_MoveTime)
 			{
+				if (m_MoveEndCallBack)
+				{
+					m_MoveEndCallBack();
+					m_MoveEndCallBack = nullptr;
+				}
 				m_MoveAccTime = m_MoveTime;
 			}
 		}

@@ -38,8 +38,8 @@ void CKnightDataComponent::Start()
 	
 	m_MeleeAttackCollider->Enable(false);
 
-	m_CutSceneCam->AddMoveCallBack(3, CamMoveCallBackCallType::REACHED_POINT, this, &CKnightDataComponent::OnReachedCutSceneAnimPoint);
-	m_CutSceneCam->AddMoveEndCallBack<CKnightDataComponent>(this, &CKnightDataComponent::OnEndCutScene);
+	m_CutSceneCam->AddCutSceneMoveCallBack(3, CamMoveCallBackCallType::REACHED_POINT, this, &CKnightDataComponent::OnReachedCutSceneAnimPoint);
+	m_CutSceneCam->AddCutSceneMoveEndCallBack<CKnightDataComponent>(this, &CKnightDataComponent::OnEndCutScene);
 }
 
 void CKnightDataComponent::Update(float DeltaTime)

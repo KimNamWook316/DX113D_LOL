@@ -151,8 +151,9 @@ void CNavAgent::Update(float DeltaTime)
 			}
 
 			float Dot = Vector3(Dir.x, 0.f, Dir.z).Dot(Vector3(CurrentFaceDir.x, 0.f, CurrentFaceDir.z));
+			float Angle = Vector3(Dir.x, 0.f, Dir.z).Angle(Vector3(CurrentFaceDir.x, 0.f, CurrentFaceDir.z));
 
-			if (Dot < 0.9999f && Dot > -0.9999f)
+			if (abs(Angle) > 1.f)
 			{
 				float Degree = RadianToDegree(acosf(Dot));
 				Vector3 CrossResult = Vector3(Dir.x, 0.f, Dir.z).Cross(Vector3(CurrentFaceDir.x, 0.f, CurrentFaceDir.z));
@@ -171,6 +172,10 @@ void CNavAgent::Update(float DeltaTime)
 			}
 			else
 			{
+				if (!isnan(Angle))
+				{
+					m_UpdateComponent->AddWorldRotationY(Angle);
+				}
 				m_Rotaiting = false;
 			}
 		}
