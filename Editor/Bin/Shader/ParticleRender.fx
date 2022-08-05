@@ -52,7 +52,7 @@ static float3	g_ParticleLocalPos[4] =
 void ParticleGS(point VertexParticleOutput input[1],
 	inout TriangleStream<GeometryParticleOutput> output)
 {
-	// 점을 사각형으로 확장한다.
+	// 점을 사각형으로 확장한다. (점 스프라이트)
 	uint	InstanceID = input[0].InstanceID;
 
 	if (g_ParticleArraySRV[InstanceID].Alive == 0)

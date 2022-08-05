@@ -615,13 +615,6 @@ void ParticleUpdate(uint3 ThreadID : SV_DispatchThreadID)
 	if (g_ParticleSpawnCountMax <= ThreadID.x)
 		return;
 
-	if (g_DestroyAllExistingLivingParticles == 1)
-	{
-		g_ParticleArray[ThreadID.x].InitParticleComponentWorldPos = g_ParticleComponentWorldPos;
-		g_ParticleArray[ThreadID.x].Alive = 0;
-		return;
-	}
-
 	// 원래 기본 설정 처럼, SpawnTime 에 맞춰서 지속적으로 Particle을 생성하거나
 	// 일시적으로 Restart 버튼을 누른 것이라면
 	if (g_ParticleDisableNewAlive == 0 ||
@@ -674,7 +667,9 @@ void ParticleUpdate(uint3 ThreadID : SV_DispatchThreadID)
 
 		// g_ParticleDisableNewAlive 에 따라서, 공유 구조화 버퍼에 CurrentSpawnCountSum 세팅하기 
 		if (g_ParticleDisableNewAlive == 1)
+		{
 			g_ParticleShare[0].CurrentSpawnCountSum += 1;
+		}
 		else
 		{
 			// SpawnTime 에 맞춰서 지속적으로 생성하게끔 하려면 
@@ -778,6 +773,13 @@ void ParticleUpdate(uint3 ThreadID : SV_DispatchThreadID)
 	// if (g_ParticleDisableNewAlive == 1 || g_ParticleArray[ThreadID.x].Alive == 0)
 	else
 	{
+		if (g_DestroyAllExistingLivingParticles == 1)
+		{
+			g_ParticleArray[ThreadID.x].InitParticleComponentWorldPos = g_ParticleComponentWorldPos;
+			g_ParticleArray[ThreadID.x].Alive = 0;
+			return;
+		}
+
 		g_ParticleArray[ThreadID.x].LifeTime += g_DeltaTime;
 
 		// 아래 함수를 사용하기 전에 LifeTime 을 시간에 맞게 증가시켜야 한다.

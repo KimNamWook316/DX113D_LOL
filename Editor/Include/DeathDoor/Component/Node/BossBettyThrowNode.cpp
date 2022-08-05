@@ -170,17 +170,6 @@ void CBossBettyThrowNode::MakeSnowBallAttackObj()
 
 	m_CurrentThrowBall = CObjectPool::GetInst()->GetProjectile("BossBettySnowAttack", CurrentScene);
 
-	// m_CurrentThrowBall À» 
-	// std::vector<CParticleComponent*> vecParticleComponents;
-	// m_CurrentThrowBall->FindAllSceneComponentFromType(vecParticleComponents);
-
-	// size_t vecSize = vecParticleComponents.size();
-	// 
-	// for (size_t i = 0; i < vecSize; ++i)
-	// {
-	// 	vecParticleComponents[i]->GetCBuffer()->SetDestroyExstingAllLivingParticles(false);
-	// }
-
 	if (m_CurrentThrowBall == nullptr)
 		return;
 
@@ -204,9 +193,6 @@ void CBossBettyThrowNode::MakeSnowBallAttackObj()
 	m_ParticleMoveSpeed = 27.f;
 	
 	m_BazierMoveEffect = true;
-
-	// ParticleComp->SetBazierTargetPos(D2, D3, D4, 100);
-	// ParticleComp->SetBazierMoveEffect(true);
 
 	CEngineUtil::CalculateBazierTargetPoses(InitBallPos, D2, D3, D4, m_queueBazierMovePos, 50);
 

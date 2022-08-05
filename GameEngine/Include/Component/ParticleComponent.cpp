@@ -1,5 +1,6 @@
 
 #include "ParticleComponent.h"
+#include "../Device.h"
 #include "../Scene/Scene.h"
 #include "../Scene/SceneResource.h"
 #include "../Scene/SceneManager.h"
@@ -194,31 +195,18 @@ void CParticleComponent::Reset()
 {
 	CSceneComponent::Reset();
 	
-	// ResetParticleStructuredBufferInfo();
-
 	// 현재 살아있던 Particle 들을 모두 Alive False 로 만들어줄 것이다.
 	m_CBuffer->SetDestroyExstingAllLivingParticles(true);
 
-	// m_CBuffer->UpdateCBuffer();
-	// 
-	// ExecuteComputeShader();
+	// Structure Buffer 정보를 다시 Clear 해준다. (Particle 원본 구조화 버퍼를 다시 Clone 한다)
+	size_t	BufferCount = m_vecStructuredBuffer.size();
 
-	// size_t	BufferCount = m_vecStructuredBuffer.size();
-	// 
-	// for (size_t i = 0; i < BufferCount; ++i)
-	// {
-	// 	m_vecStructuredBuffer[i]->ResetShader();
-	// }
-	// 
-	// for (size_t i = 0; i < BufferCount; ++i)
-	// {
-	// 	m_vecStructuredBuffer[i]->ResetShader(30 + (int)i, (int)Buffer_Shader_Type::Geometry);
-	// }
-	// 
-	// if (m_Material)
-	// 	m_Material->Reset();
+	for (size_t i = 0; i < BufferCount; ++i)
+	{
+		ZeroMemory(m_vecStructuredBuffer[i]->GetBuffer(), sizeof(m_vecStructuredBuffer[i]->GetBuffer()));
+	}
 
-	// m_DestroyExstingAllParticlesAccTime = m_DestroyExstingAllParticlesAccTimeMax;
+	// m_Particle->CloneStructuredBuffer(m_vecStructuredBuffer);
 }
 
 void CParticleComponent::Update(float DeltaTime)
@@ -475,8 +463,8 @@ void CParticleComponent::Render()
 		return;
 
 	// DeleteExstingParticle 이 True 라면, Render 는 다음 Frame 부터 해줄 것이다
-	if (m_CBuffer->IsDestroyExstingAllLivingParticlesEnabled())
-	 	return;
+	// if (m_CBuffer->IsDestroyExstingAllLivingParticlesEnabled())
+	//  	return;
 
 	// 계산 셰이더 외에도, Render 과정에서도 상수 버퍼 정보를 사용할 수 있게 하는 것이다.
 	m_CBuffer->UpdateCBuffer();
@@ -520,7 +508,7 @@ void CParticleComponent::PostRender()
 
 		if (m_CBuffer->IsDestroyExstingAllLivingParticlesEnabled())
 		{
-			m_CBuffer->SetDestroyExstingAllLivingParticles(false);
+			// m_CBuffer->SetDestroyExstingAllLivingParticles(false);
 		}
 	}
 }

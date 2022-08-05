@@ -161,7 +161,9 @@ void CTransform::InheritRotation(bool Current)
 	}
 
 	ConvertRot = m_WorldRot.ConvertAngle();
+
 	Qut = XMQuaternionRotationRollPitchYaw(ConvertRot.x, ConvertRot.y, ConvertRot.z);
+
 	matRot.RotationQuaternion(Qut);
 
 	for (int i = 0; i < AXIS_MAX; ++i)
@@ -218,9 +220,10 @@ void CTransform::InheritParentRotationPos(bool Current)
 
 			m_WorldPos = m_RelativePos.TransformCoord(matRot);
 		}
-
 		else
+		{
 			m_WorldPos = m_RelativePos + m_Parent->GetWorldPos();
+		}
 	}
 
 	m_UpdatePos = true;
