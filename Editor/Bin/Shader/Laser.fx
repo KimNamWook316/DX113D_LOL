@@ -4,10 +4,10 @@
 Vertex3DOutput LaserVS(Vertex3D input)
 {
     Vertex3DOutput output = (Vertex3DOutput) 0;
-    
+
     float2 RandomUV = float2(g_AccTime, g_AccTime);
     float4 Random = g_NoiseTexture.SampleLevel(g_PointSmp, RandomUV, 0);
-    
+
     input.Pos.x = input.Pos.x * Random.r / 2.f;
     
     output.Pos = mul(float4(input.Pos, 1.f), g_matWVP);
