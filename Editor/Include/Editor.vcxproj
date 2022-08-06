@@ -236,6 +236,7 @@
     <ClCompile Include="DeathDoor\Component\Node\ClimbDownStart.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\ClimbDownStartCheck.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\ClimbingUpStartCheck.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\ClimbKeyEnableCheck.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\ClimbPause.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\ClimbUp.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\ClimbUpContinueCheck.cpp" />
@@ -283,6 +284,7 @@
     <ClCompile Include="DeathDoor\Component\Node\IsCombatCheck.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\Lockstone3TriggerBoxAction.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\Lockstone3TriggerBoxHitCheck.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\MeleeAttackNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\MeleeRangeCheckNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\MouseLButtonCheckNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\MouseRButtonCheckNode.cpp" />
@@ -293,6 +295,7 @@
     <ClCompile Include="DeathDoor\Component\Node\NoInterruptNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\NormalAttack.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\PathFindEnableCheck.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\PlagueKnightShootNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\PlayerEnterTriggerIsEnable.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\PlayerEnterZoneCheckNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\PlayerRoll.cpp" />
@@ -308,6 +311,7 @@
     <ClCompile Include="DeathDoor\Component\Node\UpdateInputQueue.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\WKeyInputCheck.cpp" />
     <ClCompile Include="DeathDoor\Component\ObjectDataComponent.cpp" />
+    <ClCompile Include="DeathDoor\Component\PlagueKnightDataComponent.cpp" />
     <ClCompile Include="DeathDoor\Component\PlayerBombComponent.cpp" />
     <ClCompile Include="DeathDoor\Component\PlayerBowComponent.cpp" />
     <ClCompile Include="DeathDoor\Component\PlayerDataComponent.cpp" />
@@ -316,6 +320,7 @@
     <ClCompile Include="DeathDoor\Component\ProjectileComponent.cpp" />
     <ClCompile Include="DeathDoor\Component\TinyCrowDataComponent.cpp" />
     <ClCompile Include="DeathDoor\Component\SporeBoomerDataComponent.cpp" />
+    <ClCompile Include="DeathDoor\Component\TriggerBoxData.cpp" />
     <ClCompile Include="DeathDoor\DataManager.cpp" />
     <ClCompile Include="DeathDoor\DDUtil.cpp" />
     <ClCompile Include="DeathDoor\Scene\DDBossSceneMode.cpp" />
@@ -362,6 +367,7 @@
     <ClCompile Include="Widget\StaticMeshComponentWidget.cpp" />
     <ClCompile Include="Widget\ToonShaderWidget.cpp" />
     <ClCompile Include="Widget\TransformWidget.cpp" />
+    <ClCompile Include="Widget\TriggerBoxDataWidget.cpp" />
     <ClCompile Include="Widget\UtilMenuBar.cpp" />
     <ClCompile Include="Widget\WaterComponentWidget.cpp" />
     <ClCompile Include="Window\AnimationDisplayWindow.cpp" />
@@ -465,6 +471,7 @@
     <ClInclude Include="DeathDoor\Component\Node\ClimbDownStart.h" />
     <ClInclude Include="DeathDoor\Component\Node\ClimbDownStartCheck.h" />
     <ClInclude Include="DeathDoor\Component\Node\ClimbingUpStartCheck.h" />
+    <ClInclude Include="DeathDoor\Component\Node\ClimbKeyEnableCheck.h" />
     <ClInclude Include="DeathDoor\Component\Node\ClimbPause.h" />
     <ClInclude Include="DeathDoor\Component\Node\ClimbUp.h" />
     <ClInclude Include="DeathDoor\Component\Node\ClimbUpContinueCheck.h" />
@@ -512,6 +519,7 @@
     <ClInclude Include="DeathDoor\Component\Node\IsCombatCheck.h" />
     <ClInclude Include="DeathDoor\Component\Node\Lockstone3TriggerBoxAction.h" />
     <ClInclude Include="DeathDoor\Component\Node\Lockstone3TriggerBoxHitCheck.h" />
+    <ClInclude Include="DeathDoor\Component\Node\MeleeAttackNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\MeleeRangeCheckNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\MouseLButtonCheckNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\MouseRButtonCheckNode.h" />
@@ -522,6 +530,7 @@
     <ClInclude Include="DeathDoor\Component\Node\NoInterruptNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\NormalAttack.h" />
     <ClInclude Include="DeathDoor\Component\Node\PathFindEnableCheck.h" />
+    <ClInclude Include="DeathDoor\Component\Node\PlagueKnightShootNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\PlayerEnterTriggerIsEnable.h" />
     <ClInclude Include="DeathDoor\Component\Node\PlayerEnterZoneCheckNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\PlayerRoll.h" />
@@ -537,6 +546,7 @@
     <ClInclude Include="DeathDoor\Component\Node\UpdateInputQueue.h" />
     <ClInclude Include="DeathDoor\Component\Node\WKeyInputCheck.h" />
     <ClInclude Include="DeathDoor\Component\ObjectDataComponent.h" />
+    <ClInclude Include="DeathDoor\Component\PlagueKnightDataComponent.h" />
     <ClInclude Include="DeathDoor\Component\PlayerBombComponent.h" />
     <ClInclude Include="DeathDoor\Component\PlayerBowComponent.h" />
     <ClInclude Include="DeathDoor\Component\PlayerDataComponent.h" />
@@ -545,6 +555,7 @@
     <ClInclude Include="DeathDoor\Component\ProjectileComponent.h" />
     <ClInclude Include="DeathDoor\Component\TinyCrowDataComponent.h" />
     <ClInclude Include="DeathDoor\Component\SporeBoomerDataComponent.h" />
+    <ClInclude Include="DeathDoor\Component\TriggerBoxData.h" />
     <ClInclude Include="DeathDoor\DataManager.h" />
     <ClInclude Include="DeathDoor\DDFlag.h" />
     <ClInclude Include="DeathDoor\DDUtil.h" />
@@ -593,6 +604,7 @@
     <ClInclude Include="Widget\StaticMeshComponentWidget.h" />
     <ClInclude Include="Widget\ToonShaderWidget.h" />
     <ClInclude Include="Widget\TransformWidget.h" />
+    <ClInclude Include="Widget\TriggerBoxDataWidget.h" />
     <ClInclude Include="Widget\UtilMenuBar.h" />
     <ClInclude Include="Widget\WaterComponentWidget.h" />
     <ClInclude Include="Window\AnimationDisplayWindow.h" />

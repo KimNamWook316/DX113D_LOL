@@ -179,7 +179,13 @@ void CObjectHierarchyWindow::OnDeleteObject()
 	std::string SelectObjName = Window->GetSelectNode()->GetName();
 
 	CGameObject* Obj = CSceneManager::GetInst()->GetScene()->FindObject(SelectObjName);
+
+	if (!Obj)
+		return;
+
 	CSceneComponent* Root = Obj->GetRootComponent();
+
+	
 
 	// GUI상에서 노드 제거
 	if (Root)

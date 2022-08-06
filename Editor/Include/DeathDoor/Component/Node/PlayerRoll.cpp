@@ -42,10 +42,12 @@ NodeResult CPlayerRoll::OnUpdate(float DeltaTime)
 	if (!m_NavAgent)
 		return NodeResult::Node_False;
 
-	const keyState WState = CInput::GetInst()->FindKeyState('W');
-	const keyState AState = CInput::GetInst()->FindKeyState('A');
-	const keyState SState = CInput::GetInst()->FindKeyState('S');
-	const keyState DState = CInput::GetInst()->FindKeyState('D');
+	//const keyState WState = CInput::GetInst()->FindKeyState('W');
+	//const keyState AState = CInput::GetInst()->FindKeyState('A');
+	//const keyState SState = CInput::GetInst()->FindKeyState('S');
+	//const keyState DState = CInput::GetInst()->FindKeyState('D');
+
+	int Dir = (int)Data->GetRollDirection();
 
 	float Speed = Data->GetMoveSpeed();
 
@@ -56,29 +58,38 @@ NodeResult CPlayerRoll::OnUpdate(float DeltaTime)
 	Vector3 FrontVector = Vector3(-ZAxis.x, -ZAxis.y, -ZAxis.z);
 
 	Vector3 MoveDir;
-	Matrix matRot = CurrentCam->GetTransform()->GetRotationMatrix();
+	Vector3 CamRot = CurrentCam->GetTransform()->GetWorldRot();
+	CamRot.x = 0.f;
+	CamRot.z = 0.f;
+	Matrix matRot;
+	matRot.Rotation(CamRot);
 
-	if (WState.State[0] || WState.State[1])
+	if (Dir & (int)DDPlayerRollDirection::Up)
 	{
-		MoveDir += Vector3(0.f, 0.f, 1.f).TransformCoord(matRot);
+		MoveDir += Vector3(0.f, 0.f, 1.f);
+
 	}
 
-	if (AState.State[0] || AState.State[1])
+	if (Dir & (int)DDPlayerRollDirection::Left)
 	{
-		MoveDir += Vector3(-1.f, 0.f, 0.f).TransformCoord(matRot);
+		MoveDir += Vector3(-1.f, 0.f, 0.f);
+
 	}
 
-	if (SState.State[1])
+	if (Dir & (int)DDPlayerRollDirection::Down)
 	{
-		MoveDir += Vector3(0.f, 0.f, -1.f).TransformCoord(matRot);
+		MoveDir += Vector3(0.f, 0.f, -1.f);
+
 	}
 
-	if (DState.State[1])
+	if (Dir & (int)DDPlayerRollDirection::Right)
 	{
-		MoveDir += Vector3(1.f, 0.f, 0.f).TransformCoord(matRot);
+		MoveDir += Vector3(1.f, 0.f, 0.f);
+
 	}
 
-	MoveDir.y = 0.f;
+
+	MoveDir = MoveDir.TransformCoord(matRot);
 	MoveDir.Normalize();
 
 	if (m_AnimationMeshComp->GetAnimationInstance()->IsCurrentAnimEnd())

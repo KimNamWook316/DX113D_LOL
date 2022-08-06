@@ -33,6 +33,7 @@ enum class DDActionNode
 	PlayerRoll,
 	// Monster
 	ChasePlayer,
+	MeleeAttack,
 	// BossBetty
 	BossBettyAngryAttack,
 	BossBettyChangeAttackDir,
@@ -61,6 +62,8 @@ enum class DDActionNode
 	DodgerSecondAttack,
 	DodgerPostAttack,
 	DodgerDash,
+	// PlagueKnight
+	PlagueKnightShoot,
 	Max
 };
 
@@ -100,6 +103,7 @@ enum class DDConditionNode
 	ClimbUpContinueCheck,
 	ClimbUpEndCheck,
 	ClimbUpStartCheck,
+	ClimbKeyEnableCheck,
 	StraightPathCheck,
 	// BossBetty
 	BossBettyCheckAttackDir,
@@ -157,6 +161,8 @@ enum class DDObjectComponentType
 	MonsterBulletData,
 	HeadRollerData,
 	DodgerData,
+	TriggerBoxData,
+	PlagueKnightData,
 	Max
 };
 
@@ -190,4 +196,14 @@ enum class DDSceneModeType
 	DDInstanceSceneMode,
 	DDPuzzleSceneMode,
 	Max
+};
+
+enum DDPlayerRollDirection
+{
+	None = 0x0,
+	Left = 0x1,
+	Right = 0x2,
+	Up = 0x4,
+	Down = 0x8,
+	Max = 0x10
 };

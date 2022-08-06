@@ -33,7 +33,13 @@ NodeResult CCrowBossRunNode::OnStart(float DeltaTime)
 
 	if (Data->GetHP() <= 0)
 	{
-		return NodeResult::Node_True;
+		Data->ClearPhaseQueue();
+
+		m_AnimationMeshComp->GetAnimationInstance()->ChangeAnimation("Death");
+
+		m_Owner->GetOwner()->SetTreeUpdate(false);
+
+		return NodeResult::Node_False;
 	}
 
 	m_AnimationMeshComp->GetAnimationInstance()->ChangeAnimation("Run");
@@ -47,7 +53,13 @@ NodeResult CCrowBossRunNode::OnUpdate(float DeltaTime)
 
 	if (Data->GetHP() <= 0)
 	{
-		return NodeResult::Node_True;
+		Data->ClearPhaseQueue();
+
+		m_AnimationMeshComp->GetAnimationInstance()->ChangeAnimation("Death");
+
+		m_Owner->GetOwner()->SetTreeUpdate(false);
+
+		return NodeResult::Node_False;
 	}
 
 	Data->GetMeleeAttackCollider()->Enable(false);
@@ -85,7 +97,14 @@ NodeResult CCrowBossRunNode::OnUpdate(float DeltaTime)
 	
 	float Speed = Data->GetMoveSpeed();
 
+	int Frame = m_AnimationMeshComp->GetAnimationInstance()->GetCurrentAnimation()->GetAnimationSequence()->GetCurrentFrameIdx();
+
+	if (Frame >= 8 && Frame <= 17)
+		Speed *= 2.f;
+
 	m_Object->AddWorldPos(FaceDir * Speed * DeltaTime);
+
+	Data->GetMeleeAttackCollider()->Enable(true);
 
 	return NodeResult::Node_True;
 }

@@ -128,7 +128,8 @@ void CGameObject::AddChildObject(CGameObject* Obj, const std::string& SocketName
 	Obj->m_Parent = this;
 	m_vecChildObject.push_back(Obj);
 
-	m_RootComponent->AddChild(Obj, SocketName);
+	if(m_RootComponent)
+		m_RootComponent->AddChild(Obj, SocketName);
 
 	/*Obj->GetRootComponent()->m_Parent = GetRootComponent();
 
@@ -148,8 +149,8 @@ void CGameObject::DeleteObj()
 	else
 	{
 		m_SceneComponentList.clear();
-		m_Parent->DeleteChildObj(m_Name);
-		Destroy();
+		m_Parent->DeleteChildObj(this);
+		//Destroy();
 	}
 }
 
@@ -188,6 +189,47 @@ bool CGameObject::DeleteChildObj(const std::string& Name)
 		}
 
 		if (m_vecChildObject[i]->DeleteChildObj(Name))
+			return true;
+	}
+
+	return false;
+}
+
+bool CGameObject::DeleteChildObj(CGameObject* Child)
+{
+	size_t	Size = m_vecChildObject.size();
+
+	for (size_t i = 0; i < Size; ++i)
+	{
+		if (m_vecChildObject[i] == Child)
+		{
+			CGameObject* DeleteTarget = m_vecChildObject[i];
+
+			auto	iter = m_vecChildObject.begin() + i;
+
+			if ((*iter)->m_vecChildObject.size() > 0)
+			{
+				auto FirstChildIter = (*iter)->m_vecChildObject.begin();
+
+				CGameObject* FirstChildObj = (*iter)->m_vecChildObject[0];
+
+				(*iter)->m_vecChildObject.erase(FirstChildIter);
+
+				m_vecChildObject[i] = nullptr;
+
+				FirstChildObj->m_Parent = this;
+				m_vecChildObject[i] = FirstChildObj;
+			}
+
+			else
+				m_vecChildObject.erase(iter);
+
+			m_Scene->EraseObjFromList(DeleteTarget);
+
+			return true;
+		}
+
+		if (m_vecChildObject[i]->DeleteChildObj(Child))
 			return true;
 	}
 
@@ -634,6 +676,9 @@ bool CGameObject::LoadHierarchy(FILE* File, CScene* NextScene)
 			NextScene->AddObject(Child);
 			Child->LoadHierarchy(File, NextScene);
 		}
+
+		Child->m_Parent = this;
+		m_vecChildObject.push_back(Child);
 	}
 
 
@@ -691,8 +736,8 @@ bool CGameObject::LoadHierarchy(FILE* File, CScene* NextScene)
 		}
 	}
 
-	if(Child)
-		AddChildObject(Child);
+	//if(Child)
+	//	AddChildObject(Child);
 
 	CSceneManager::GetInst()->CallObjectDataSet(this, m_Name);
 

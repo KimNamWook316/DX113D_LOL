@@ -170,6 +170,7 @@ public:
 	void AddChildObject(CGameObject* Obj, const std::string& SocketName = "");
 	void DeleteObj();
 	bool DeleteChildObj(const std::string& Name);
+	bool DeleteChildObj(class CGameObject* Child);
 	// 실제로 지우진 않고, 나는 부모를 nullptr로 만들고, 부모에게 내 자신을 자식 목록에서 지우게 함
 	void ClearParent();
 	CGameObject* GetParentObject()	const

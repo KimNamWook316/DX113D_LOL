@@ -114,6 +114,8 @@ void CSceneCollision::Collision(float DeltaTime)
 	{
 		(*iter)->ClearFrame();
 	}
+
+	m_ColliderList.clear();
 }
 
 void CSceneCollision::CollisionMouse(float DeltaTime)
@@ -378,7 +380,19 @@ void CSceneCollision::Clear()
 
 void CSceneCollision::AddCollider(CColliderComponent* Collider)
 {
-	m_ColliderList.push_back(Collider);
+	auto iter = m_ColliderList.begin();
+	auto iterEnd = m_ColliderList.end();
+	
+	bool Find = false;
+
+	for (; iter != iterEnd; ++iter)
+	{
+		if ((*iter) == Collider)
+			Find = true;
+	}
+
+	if(!Find)
+		m_ColliderList.push_back(Collider);
 }
 
 int CSceneCollision::GetSectionIndex(const Vector3& Pos)
@@ -636,7 +650,17 @@ void CSceneCollision::CheckColliderSection3D()
 		IndexMaxX = IndexMaxX >= m_Section->CountX ? m_Section->CountX - 1 : IndexMaxX;
 		//IndexMaxY = IndexMaxY >= m_Section->CountY ? m_Section->CountY - 1 : IndexMaxY;
 		IndexMaxZ = IndexMaxZ >= m_Section->CountZ ? m_Section->CountZ - 1 : IndexMaxZ;
+	
+		if (IndexMaxX < 0)
+			IndexMaxX = 0;
+		if (IndexMaxZ < 0)
+			IndexMaxZ = 0;
 
+		if (IndexMinX >= m_Section->CountX)
+			IndexMinX = m_Section->CountX - 1;
+
+		if (IndexMinZ >= m_Section->CountZ)
+			IndexMinZ = m_Section->CountZ - 1;
 
 		for (int z = IndexMinZ; z <= IndexMaxZ; ++z)
 		{

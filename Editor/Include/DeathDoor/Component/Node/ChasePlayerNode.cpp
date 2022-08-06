@@ -59,9 +59,11 @@ NodeResult CChasePlayerNode::OnStart(float DeltaTime)
 
 NodeResult CChasePlayerNode::OnUpdate(float DeltaTime)
 {
-	bool InMeleeAttackRange = m_DataComp->IsPlayerInMeleeAttackRange();
+	// 기본적으로 MonsterDataComponent에서 추적 종료 거리는 MeleeAttack으로 설정되어 있음
+	// 다른 거리값으로 변경해야 하는 경우, 각 몬스터 데이터에서 MonsterData의 m_StopChaseRange 변수를 변경하여 사용하면 됨
+	bool InStopChaseRange = m_DataComp->IsPlayerInStopChaseRange();
 
-	if (InMeleeAttackRange)
+	if (InStopChaseRange)
 	{
 		m_DataComp->SetCurrentNodeNull();
 		m_Nav->ClearPathList();

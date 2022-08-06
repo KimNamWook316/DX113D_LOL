@@ -8,6 +8,8 @@
 #include "Render/RenderManager.h"
 #include "ProjectileComponent.h"
 #include "Component/ColliderSphere.h"
+#include "MonsterDataComponent.h"
+#include "PlayerDataComponent.h"
 
 CPlayerBombComponent::CPlayerBombComponent()	:
 	m_Bomb(nullptr),
@@ -253,6 +255,7 @@ void CPlayerBombComponent::ShootBomb(const Vector3& ShootDir)
 
 	CColliderComponent* BombCollider = m_Bomb->FindComponentFromType<CColliderSphere>();
 	BombCollider->Enable(true);
+
 }
 
 void CPlayerBombComponent::HideBomb()
@@ -263,7 +266,8 @@ void CPlayerBombComponent::OnCollision(const CollisionResult& Result)
 {
 	m_Collision = true;
 
-	Vector3 DestPos = Result.Dest->GetGameObject()->GetWorldPos();
+	CGameObject* DestObject = Result.Dest->GetGameObject();
+	Vector3 DestPos = DestObject->GetWorldPos();
 
 	m_Bomb->FindObjectComponentFromType<CProjectileComponent>()->SetNoUpdate(true);
 
@@ -279,6 +283,15 @@ void CPlayerBombComponent::OnCollision(const CollisionResult& Result)
 	m_Light->SetDistance(1000.f);
 
 	CRenderManager::GetInst()->EnableBombEffect(m_CollisionLifeTime);
+
+	CMonsterDataComponent* Data = (CMonsterDataComponent*)DestObject->FindObjectComponent("ObjectData");
+
+	if (DestObject->GetObjectType() == Object_Type::Monster && Data)
+	{
+		Data->SetIsHit(true);
+		Data->DecreaseHP(2);
+		Data->SetIsHit(false);
+	}
 }
 
 bool CPlayerBombComponent::Save(FILE* File)

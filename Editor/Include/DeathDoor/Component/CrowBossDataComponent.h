@@ -46,11 +46,14 @@ private:
 	int m_CurrentTinyCrowIndex;
 
 	bool m_ShootDirFixed;
+	std::list<class CGameObject*> m_TinyCrowList;
 
 public:
 	virtual void Update(float DeltaTime);
-
+	
 public:
+	void ClearTinyCrow();
+
 	void ClearPhaseQueue()
 	{
 		while (!m_PhaseQueue.empty())

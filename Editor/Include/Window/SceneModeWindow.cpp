@@ -3,6 +3,8 @@
 #include "IMGUIComboBox.h"
 #include "../DeathDoor/DDUtil.h"
 #include "Scene/SceneManager.h"
+#include "../EditorManager.h"
+#include "../Window/ToolWindow.h"
 #include "../DeathDoor/Scene/DDSceneMode.h"
 #include "../DeathDoor/Scene/DDBossSceneMode.h"
 #include "../DeathDoor/Scene/DDInstanceSceneMode.h"
@@ -58,10 +60,13 @@ void CSceneModeWindow::OnSelectSceneType(int Idx, const char* Label)
 		return;
 	}
 	
-	SAFE_DELETE(m_SceneModeWidget);
+	DeleteWidget("SceneModeWidget");
 
 	CSceneMode* Mode = CurScene->GetSceneMode();
 	CreateModeWidget(Mode);
+
+	// Tool Window¸¦ ÅëÇØ Pause
+	CEditorManager::GetInst()->GetToolWindow()->OnClickPause();
 }
 
 void CSceneModeWindow::CreateModeWidget(class CSceneMode* Mode)

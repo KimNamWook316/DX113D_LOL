@@ -63,6 +63,7 @@
 
 #include "../DeathDoor/Component/Node/StraightPathCheck.h"
 #include "../DeathDoor/Component/Node/ChasePlayerNode.h"
+#include "../DeathDoor/Component/Node/MeleeAttackNode.h"
 
 // BossKnight
 #include "../DeathDoor/Component/Node/BossKnightContinueAttackNode.h"
@@ -131,6 +132,9 @@
 #include "../DeathDoor/Component/Node/DodgerPostAttackNode.h"
 #include "../DeathDoor/Component/Node/DodgerSecondAttackCheck.h"
 #include "../DeathDoor/Component/Node/DodgerSecondAttackNode.h"
+
+// Plauge Knight
+#include "../DeathDoor/Component/Node/PlagueKnightShootNode.h"
 
 #include "ObjectComponentWindow.h"
 #include "ObjectHierarchyWindow.h"
@@ -592,6 +596,11 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
             NewTreeNode = m_StateComponent->CreateTreeNode<CChasePlayerNode>(Name);
             break;
         }
+        case DDActionNode::MeleeAttack:
+        {
+            NewTreeNode = m_StateComponent->CreateTreeNode<CMeleeAttackNode>(Name);
+            break;
+        }
 
         // Boss Knight
         case DDActionNode::BossKnightContinueAttack:
@@ -759,6 +768,13 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
             break;
         }
 
+        // Plauge Knight
+        case DDActionNode::PlagueKnightShoot:
+        {
+            NewTreeNode = m_StateComponent->CreateTreeNode<CPlagueKnightShootNode>(Name);
+            break;
+        }
+
 		}
         break;
     }
@@ -827,6 +843,11 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
         case DDConditionNode::ClimbUpEndCheck:
             NewTreeNode = m_StateComponent->CreateTreeNode<CClimbUpEndCheck>(Name);
             break;
+        case DDConditionNode::ClimbKeyEnableCheck:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CClimbKeyEnableCheck>(Name);
+            break;
+
+
         case DDConditionNode::Lockstone3TriggerBoxHitCheck:
             NewTreeNode = m_StateComponent->CreateTreeNode<CLockstone3TriggerBoxHitCheck>(Name);
             break;

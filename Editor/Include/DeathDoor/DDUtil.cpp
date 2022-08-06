@@ -25,6 +25,9 @@
 #include "Component\LadderCollider.h"
 #include "Component\HeadRollerDataComponent.h"
 #include "Component\DodgerDataComponent.h"
+#include "Component\PlagueKnightDataComponent.h"
+#include "Component\DodgerDataComponent.h"
+#include "Component\TriggerBoxData.h"
 
 // TODO : Death Door SceneMode 추가시마다 업데이트
 #include "Scene/DDSceneMode.h"
@@ -107,6 +110,8 @@ std::string CDDUtil::DDConditionNodeTypeToString(DDConditionNode NodeType)
 		return "ClimbUpEndCheck";
 	case DDConditionNode::ClimbUpStartCheck:
 		return "ClimbUpStartCheck";
+	case DDConditionNode::ClimbKeyEnableCheck:
+		return "ClimbKeyEnableCheck";
 
 	case DDConditionNode::PostAttackDelayCheck:
 		return "PostAttackDelayCheck";
@@ -261,7 +266,8 @@ DDConditionNode CDDUtil::StringToDDConditionNodeType(const std::string& Str)
 		return DDConditionNode::ClimbUpStartCheck;
 	else if (Str == "ClimbUpEndCheck")
 		return DDConditionNode::ClimbUpEndCheck;
-
+	else if (Str == "ClimbKeyEnableCheck")
+		return DDConditionNode::ClimbKeyEnableCheck;
 
 	else if (Str == "Lockstone3TriggerBoxHitCheck")
 	{
@@ -419,6 +425,8 @@ std::string CDDUtil::DDActionNodeTypeToString(DDActionNode NodeType)
 	case DDActionNode::ChasePlayer:
 		return "ChasePlayer";
 
+	case DDActionNode::MeleeAttack:
+		return "MeleeAttack";
 
 	case DDActionNode::ClimbUp:
 		return "ClimbUp";
@@ -514,6 +522,10 @@ std::string CDDUtil::DDActionNodeTypeToString(DDActionNode NodeType)
 		return "DodgerPostAttack";
 	case DDActionNode::DodgerDash:
 		return "DodgerDash";
+
+	// PlaugeKnight
+	case DDActionNode::PlagueKnightShoot:
+		return "PlagueKnightShoot";
 	}
 
 	return "";
@@ -572,6 +584,10 @@ DDActionNode CDDUtil::StringToDDActionNodeType(const std::string& Str)
 	else if (Str == "ChasePlayer")
 	{
 		return DDActionNode::ChasePlayer;
+	}
+	else if (Str == "MeleeAttack")
+	{
+		return DDActionNode::MeleeAttack;
 	}
 
 	else if (Str == "ClimbDown")
@@ -718,6 +734,12 @@ DDActionNode CDDUtil::StringToDDActionNodeType(const std::string& Str)
 		return DDActionNode::DodgerDash;
 	}
 
+	// Plague Knight
+	else if (Str == "PlagueKnightShoot")
+	{
+		return DDActionNode::PlagueKnightShoot;
+	}
+
 
 	return DDActionNode(-1);
 }
@@ -846,6 +868,15 @@ std::string CDDUtil::DDObjectComponentTypeToString(DDObjectComponentType Type)
 
 	case DDObjectComponentType::DodgerData:
 		return "DodgerData";
+
+	case DDObjectComponentType::TriggerBoxData:
+		return "TriggerBoxData";
+
+	case DDObjectComponentType::DodgerData:
+		return "DodgerData";
+
+	case DDObjectComponentType::PlagueKnightData:
+		return "PlagueKnightData";
 	}
 
 	return "";
@@ -921,6 +952,14 @@ DDObjectComponentType CDDUtil::StringToDDObjectComponentType(const std::string& 
 	{
 		return DDObjectComponentType::DodgerData;
 	}
+	else if (Str == "TriggerBoxData")
+	{
+		return DDObjectComponentType::TriggerBoxData;
+	}
+	else if (Str == "DodgerData")
+	{
+		return DDObjectComponentType::DodgerData;
+	}
 
 	return DDObjectComponentType(-1);
 }
@@ -963,8 +1002,12 @@ size_t CDDUtil::DDObjectComponentTypeToTypeID(DDObjectComponentType Type)
 		return typeid(CMonsterBulletData).hash_code();
 	case DDObjectComponentType::HeadRollerData:
 		return typeid(CHeadRollerDataComponent).hash_code();
+	case DDObjectComponentType::TriggerBoxData:
+		return typeid(CTriggerBoxData).hash_code();
 	case DDObjectComponentType::DodgerData:
 		return typeid(CDodgerDataComponent).hash_code();
+	case DDObjectComponentType::PlagueKnightData:
+		return typeid(CPlagueKnightDataComponent).hash_code();
 	}
 	return -1;
 }

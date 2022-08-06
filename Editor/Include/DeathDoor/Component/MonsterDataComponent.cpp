@@ -114,6 +114,7 @@ void CMonsterDataComponent::Start()
 
 	if (m_MeleeAttackCollider)
 	{
+		m_MeleeAttackCollider->Enable(false);
 		m_MeleeAttackCollider->AddCollisionCallback(Collision_State::Begin, this, &CMonsterDataComponent::OnHitMeleeAttack);
 	}
 	
@@ -148,9 +149,12 @@ void CMonsterDataComponent::Start()
 		m_BloodParticle->SetInheritRotZ(false);
 	}
 
-	CAnimationSequenceInstance* AnimInst = m_AnimMesh->GetAnimationInstance();
-	AnimInst->AddNotify("Death", "DeathStart", 0, this, &CMonsterDataComponent::OnDeadAnimStart);
-	AnimInst->SetEndFunction("Death", this, &CMonsterDataComponent::OnDeadAnimEnd);
+	if (m_AnimMesh)
+	{
+		CAnimationSequenceInstance* AnimInst = m_AnimMesh->GetAnimationInstance();
+		AnimInst->AddNotify("Death", "DeathStart", 0, this, &CMonsterDataComponent::OnDeadAnimStart);
+		AnimInst->SetEndFunction("Death", this, &CMonsterDataComponent::OnDeadAnimEnd);
+	}
 
 	// CutScene 관련 ( Enter Trigger, CutScene Cam, Collider CallBack)
 	m_PlayerEnterZoneTrigger = (CColliderBox3D*)m_Object->FindComponent("PlayerEnterTrigger");
@@ -518,7 +522,7 @@ void CMonsterDataComponent::OnHitMeleeAttack(const CollisionResult& Result)
 
 	if (m_PlayerData)
 	{
-		m_PlayerData->DecreaseHP(1);
+ 		m_PlayerData->DecreaseHP(1);
 	}
 }
 
@@ -674,6 +678,29 @@ float CMonsterDataComponent::DistToPlayer()
 	float Dist = MyPos.Distance(PlayerPos);
 
 	return MyPos.Distance(PlayerPos);;
+}
+
+bool CMonsterDataComponent::IsPlayerInStopChaseRange()
+{
+	CGameObject* PlayerObj = m_Scene->GetPlayerObject();
+
+	if (!PlayerObj)
+	{
+		return false;
+	}
+
+	Vector3 MyPos = m_Object->GetWorldPos();
+	Vector3 PlayerPos = PlayerObj->GetWorldPos();
+	float Dist = MyPos.Distance(PlayerPos);
+
+	// 기본적으로 Start에서 StopChaseRange는 MeleeAttackRange로 설정
+	// ChasePlyerNode에서 사용
+	if (Dist <= m_StopChaseRange)
+	{
+		return true;
+	}
+
+	return false;
 }
 
 bool CMonsterDataComponent::Save(FILE* File)

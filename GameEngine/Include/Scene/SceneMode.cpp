@@ -2,7 +2,8 @@
 #include "SceneMode.h"
 #include "../GameObject/GameObject.h"
 
-CSceneMode::CSceneMode()
+CSceneMode::CSceneMode()	:
+	m_Start(false)
 {
 	SetTypeID<CSceneMode>();
 }
@@ -18,6 +19,10 @@ void CSceneMode::SetPlayerObject(CGameObject* Obj)
 
 void CSceneMode::Start()
 {
+	if (!m_Start)
+	{
+		m_Start = true;
+	}
 }
 
 bool CSceneMode::Init()
