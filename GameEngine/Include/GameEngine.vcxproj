@@ -691,9 +691,6 @@
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">ParticleVS</EntryPointName>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Effect</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
-      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">ParticleVS</EntryPointName>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Effect</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="..\Bin\Shader\ParticleUpdate.fx">
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">ParticleVS</EntryPointName>

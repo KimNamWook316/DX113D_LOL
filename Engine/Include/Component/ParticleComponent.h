@@ -35,15 +35,13 @@ protected:
 	Vector3 m_ParticleRotOffset;
 	// 등장 Delay Time -> ex. 0.5초 후에 해당 위치에 나타가게 하기
 	float m_InitActiveDelayTime;
-	// 일시적으로 생성되고 사라지는 Pariticle 들을 위한 값
+	// 일시적으로 생성되고 사라지는 Pariticle 들을 위한 값 (해당 시간 이후 Enable False 처리해준다)
 	float m_TempCreateAccTime;
 	float m_TempCreateAccTimeMax;
-	// DestroyExstingAllParticles 변수가 true 로 세팅되고 난 이후 일정 시간 지나면 다시 false 로 바꿔주기
-	float m_DestroyExstingAllParticlesAccTime;
-	float m_DestroyExstingAllParticlesAccTimeMax;
 private :
 	std::string m_ParticleName;
 public:
+	void StartParticle(const Vector3& StartPos);
 	void SetParticle(const std::string& Name);
 	void SetParticle(CParticle* Particle);
 	void SetParticleWithOutCloneShader(CParticle* Particle);

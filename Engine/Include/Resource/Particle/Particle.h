@@ -211,10 +211,10 @@ public:
 		return m_CBuffer->GetMoveDir();
 	}
 
-	bool Is2D()
-	{
-		return m_CBuffer->Is2D();
-	}
+	// bool Is2D()
+	// {
+	// 	return m_CBuffer->Is2D();
+	// }
 
 	int GetSpecialMoveDirType()
 	{
@@ -559,11 +559,11 @@ public:
 	// 	m_CBuffer->SetApplyRandom(Enable);
 	// }
 
-	void Set2D(bool Is2D)
-	{
-		m_2D = Is2D;
-		m_CBuffer->Set2D(Is2D);
-	}
+	// void Set2D(bool Is2D)
+	// {
+	// 	m_2D = Is2D;
+	// 	m_CBuffer->Set2D(Is2D);
+	// }
 
 	void SetMoveAngle(const Vector3& MoveAngle)
 	{

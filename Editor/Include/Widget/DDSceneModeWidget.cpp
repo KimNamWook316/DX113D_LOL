@@ -9,6 +9,7 @@
 #include "PathManager.h"
 #include "Engine.h"
 #include "../EditorUtil.h"
+#include "EngineUtil.h"
 
 #include "../DeathDoor/Scene/DDSceneMode.h"
 
@@ -161,7 +162,7 @@ void CDDSceneModeWidget::OnClickSetNextScene()
 		int ConvertLength = WideCharToMultiByte(CP_ACP, 0, FileFullPath, -1, 0, 0, 0, 0);
 		WideCharToMultiByte(CP_ACP, 0, FileFullPath, -1, FilePathMultibyte, ConvertLength, 0, 0);
 
-		std::string SceneFileName = CEditorUtil::ExtractFilePathFromFullPath(FilePathMultibyte, SCENE_PATH);
+		std::string SceneFileName = CEngineUtil::ExtractFilePathFromFullPath(FilePathMultibyte, SCENE_PATH);
 
 		CDDSceneMode* CurSceneMode = (CDDSceneMode*)CSceneManager::GetInst()->GetScene()->GetSceneMode();
 		CurSceneMode->SetNextSceneFileName(SceneFileName);

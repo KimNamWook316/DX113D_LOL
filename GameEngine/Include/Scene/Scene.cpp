@@ -10,6 +10,8 @@
 #include "../Render/RenderManager.h"
 #include "../EngineUtil.h"
 #include "../ObjectPool.h"
+#include "../GameObject/SkyObject.h"
+#include "../GameObject/GameObject.h"
 
 CScene::CScene()
 {
@@ -575,6 +577,10 @@ bool CScene::SaveSceneGlobalDataCSV(const char* FileName)
 	Data->AddLabel("ClearColorB");
 	Data->SetData("Data", "ClearColorB", ClearColor.z);
 
+	Data->AddLabel("SkyBoxTexturePath");
+	std::string SkyBoxTexPath = m_SceneGlobalData.BackGroundData.SkyBoxFileName;
+	Data->SetData("Data", "SkyBoxTexturePath", SkyBoxTexPath);
+
 	// AAA.scn 로 scn 저장하면 -> AAA_GlobalData.csv 파일명 csv 파일 생성
 	// Excel/SceneGlobalData/ 경로에 저장한다
 	char CSVFileName[MAX_PATH] = {};
@@ -643,6 +649,7 @@ bool CScene::LoadSceneGlobalDataCSV(const char* FileName)
 	m_SceneGlobalData.BackGroundData.ClearColor.y = Data->FindDataFloat("Data", "ClearColorG");
 	m_SceneGlobalData.BackGroundData.ClearColor.z = Data->FindDataFloat("Data", "ClearColorB");
 	m_SceneGlobalData.BackGroundData.ClearColor.w = 1.f;
+	m_SceneGlobalData.BackGroundData.SkyBoxFileName = Data->FindData("Data", "SkyBoxTexturePath");
 	
 	// 메모리 해제
 	CResourceManager::GetInst()->DeleteCSV(outCSVKey);
@@ -743,6 +750,11 @@ void CScene::UpdateSceneGlobalData()
 		m_SceneGlobalData.GLightData.Color.y, m_SceneGlobalData.GLightData.Color.z, 1.f);
 	GLight->SetColor(Col);
 	m_LightManager->SetGlogbalLightAmbientIntensity(m_SceneGlobalData.GLightData.AmbientIntensity);
+
+	if (!m_SceneGlobalData.BackGroundData.SkyBoxFileName.empty())
+	{
+		dynamic_cast<CSkyObject*>(m_SkyObject.Get())->SetSkyTexture(m_SceneGlobalData.BackGroundData.SkyBoxFileName.c_str());
+	}
 }
 
 void CScene::GetAllObjectsPointer(std::vector<CGameObject*>& vecOutObj)

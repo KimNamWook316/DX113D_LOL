@@ -137,6 +137,15 @@ void CMonsterDataComponent::Start()
 		// 처음에는 Enable False 처리를 해줄 것이다.
 		m_BloodParticle->Enable(false);
 
+		// BillBoard 효과는 주지 않을 것이다 (Rotation 영향을 받기 때문에)
+		m_BloodParticle->SetBillBoardEffect(false);
+
+		// 혹시 모르니 WorldRot 은 모두 0으로 맞춰준다.
+		m_BloodParticle->SetWorldRotation(0.f, 0.f, 0.f);
+
+		// Blood 는 딱 한번만 생성될 수 있게 세팅한다. 
+		m_BloodParticle->GetCBuffer()->SetDisableNewAlive(true);
+
 		// m_BloodParticle 은 Rot 을 주지 않을 것이다. Rot 을 주는 순간 모양이 흐뜨러지게 되기 때문이다.
 		m_BloodParticle->SetInheritRotX(false);
 		m_BloodParticle->SetInheritRotY(false);
@@ -386,7 +395,8 @@ void CMonsterDataComponent::OnDeadAnimEnd()
 
 	// Emissive
 	size_t Size = m_AnimMesh->GetMaterialSlotCount();
-	for (size_t i = 0; i < Size; ++i)
+
+	for (int i = 0; i < Size; ++i)
 	{
 		m_AnimMesh->GetMaterial(i)->SetEmissiveColor(1.f, 1.f, 1.f, 1.f);
 	}

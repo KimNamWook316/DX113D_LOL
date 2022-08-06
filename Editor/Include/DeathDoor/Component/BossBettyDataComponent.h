@@ -73,7 +73,7 @@ private :
     class CGameObject* m_BossBettyThrowObject;
 
     // Boss Betty Punch Down Particle
-    std::vector<CParticleComponent*> m_vecAttackAfterEffectParticle;
+    // std::vector<CParticleComponent*> m_vecAttackAfterEffectParticle;
 
     // Boss Betty Slash Particle
     // Boss Betty Roar Particle

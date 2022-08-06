@@ -1,6 +1,7 @@
 #include "ShaderInfo.fx"
 #include "ParticleData.fx"
 
+
 struct VertexParticle
 {
 	float3	Pos	: POSITION;

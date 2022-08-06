@@ -23,7 +23,7 @@ struct	ParticleCBuffer
 	int		Gravity;		// 중력 적용을 받는지 안받는지
 
 	Vector3	MoveDir;		// 이동을 한다면 기준이 될 이동 방향
-	int		Is2D;			// 2D용 파티클인지
+	int		DestroyExistingAllLivingParticles;			// 2D용 파티클인지
 
 	Vector3	MoveAngle;	// 이동을 한다면 기준이 될 방향으로부터 x, y, z 에 저장된 각도만큼 틀어진 랜덤한 방향을 구한다.
 	int ParticleBounce;
@@ -74,7 +74,7 @@ struct	ParticleCBuffer
 
 	Vector3 ParticleEmptyInfo1;
 	Vector3 ParticleEmptyInfo2;
-	int DestroyExistingAllLivingParticles; // 현재 살아있는 Particle 들을 모두 Alive False 로 만들어주기 
+	int ParticleInfo1; // 현재 살아있는 Particle 들을 모두 Alive False 로 만들어주기 
 	float ParticleInfo2;
 };
 

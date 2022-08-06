@@ -151,10 +151,10 @@ public:
 	{
 		return m_BufferData.IsLifeTimeLinearFromCenter == 1 ? true : false;
 	}
-	bool Is2D()
-	{
-		return m_BufferData.Is2D == 1 ? true : false;
-	}
+	// bool Is2D()
+	// {
+	// 	return m_BufferData.Is2D == 1 ? true : false;
+	// }
 
 	// Linear Rotate
 	// Linaer Iterate 할때의 최초 Rot Angle
@@ -472,10 +472,10 @@ public:
 		m_BufferData.MoveDir = MoveDir;
 	}
 
-	void Set2D(bool Is2D)
-	{
-		m_BufferData.Is2D = Is2D ? 1 : 0;
-	}
+	// void Set2D(bool Is2D)
+	// {
+	// 	m_BufferData.Is2D = Is2D ? 1 : 0;
+	// }
 
 	void SetMoveAngle(const Vector3& MoveAngle)
 	{
