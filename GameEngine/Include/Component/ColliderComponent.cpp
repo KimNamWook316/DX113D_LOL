@@ -17,6 +17,7 @@ CColliderComponent::CColliderComponent()	:
 	m_Profile = nullptr;
 	m_MouseCollision = false;
 	m_CBuffer = nullptr;
+	m_LayerName = "Collider";
 }
 
 CColliderComponent::CColliderComponent(const CColliderComponent& com) :
@@ -204,12 +205,7 @@ void CColliderComponent::ClearFrame()
 
 void CColliderComponent::Start()
 {
-	m_Enable = true;
-
 	CSceneComponent::Start();
-
-	if(m_Scene)
-		m_Scene->GetCollision()->AddCollider(this);
 }
 
 bool CColliderComponent::Init()
@@ -234,14 +230,16 @@ bool CColliderComponent::Init()
 void CColliderComponent::Update(float DeltaTime)
 {
 	CSceneComponent::Update(DeltaTime);
-
-	if (m_Enable)
-		m_Scene->GetCollision()->AddCollider(this);
 }
 
 void CColliderComponent::PostUpdate(float DeltaTime)
 {
 	CSceneComponent::PostUpdate(DeltaTime);
+
+	if (m_Enable)
+	{
+		m_Scene->GetCollision()->AddCollider(this);
+	}
 }
 
 void CColliderComponent::CheckCollision()
@@ -251,7 +249,6 @@ void CColliderComponent::CheckCollision()
 
 void CColliderComponent::PrevRender()
 {
-	m_LayerName = "Collider";
 	CSceneComponent::PrevRender();
 }
 

@@ -16,10 +16,13 @@ public:
     virtual void RefreshWidgets() override;
 
 private:
+    void OnCheckClearCamMove(int Idx, bool Enable);
     void OnClickFindBlokcerObj();
     void OnClickFindLadderObj();
 
 private:
+    class CIMGUICheckBox* m_ClearCamMove;
+
     class CIMGUITextInput* m_BlockerObjName;
     class CIMGUITextInput* m_BlockerObjNameInput;
     class CIMGUIButton* m_FindBlockerObj;

@@ -23,9 +23,9 @@ void CDDBossSceneMode::Start()
 		m_PortalPaperBurn = m_ExitPointObj->FindObjectComponentFromType<CPaperBurnComponent>();
 	}
 
-	if (m_ExitPointCollider)
+	if (m_ExitPointObj)
 	{
-		m_ExitPointCollider->Enable(false);
+		m_ExitPointObj->Enable(false);
 	}
 }
 

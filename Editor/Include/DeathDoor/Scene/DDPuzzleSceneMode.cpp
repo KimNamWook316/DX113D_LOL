@@ -7,7 +7,8 @@
 #include "Component/CameraComponent.h"
 #include "Component/StaticMeshComponent.h"
 
-CDDPuzzleSceneMode::CDDPuzzleSceneMode()
+CDDPuzzleSceneMode::CDDPuzzleSceneMode() : 
+	m_ClearCamMove(false)
 {
 	SetTypeID<CDDPuzzleSceneMode>();
 }
@@ -73,32 +74,51 @@ void CDDPuzzleSceneMode::OnClearDungeon()
 {
 	CDDSceneMode::OnClearDungeon();
 
-	// 카메라 Puzzle 위치로 이동하고, 이동 끝나면 창살이나 사다리 오브젝트 움직임 시작한다.
-	CCameraComponent* Cam = m_Scene->GetCameraManager()->GetCurrentCamera();
-
-	m_ClearOriginCamPos = Cam->GetWorldPos();
-
-	Vector3 MoveDest;
-	if (m_BlockerObj)
+	if (m_ClearCamMove)
 	{
-		MoveDest = m_BlockerObj->GetWorldPos();
+		// 카메라 Puzzle 위치로 이동하고, 이동 끝나면 창살이나 사다리 오브젝트 움직임 시작한다.
+		CCameraComponent* Cam = m_Scene->GetCameraManager()->GetCurrentCamera();
+
+		m_ClearOriginCamPos = Cam->GetWorldPos();
+
+		Vector3 MoveDest;
+		if (m_BlockerObj)
+		{
+			MoveDest = m_BlockerObj->GetWorldPos();
+		}
+
+		else if (m_LadderObj)
+		{
+			MoveDest = m_LadderObj->GetWorldPos();
+		}
+
+		MoveDest.y = m_ClearOriginCamPos.y;
+
+		Cam->StartMove(m_ClearOriginCamPos, MoveDest, 1.f, false, true);
+		Cam->SetMoveEndCallBack<CDDPuzzleSceneMode>(this, &CDDPuzzleSceneMode::OnClearCamMoveToClearObjectEnd);
+
+		// 플레이어 잠깐 조작 불가, 히트박스 없앰
+		CGameStateComponent* State = m_PlayerObject->FindObjectComponentFromType<CGameStateComponent>();
+		State->SetTreeUpdate(false);
+		CColliderBox3D* HitBox = (CColliderBox3D*)m_PlayerObject->FindComponent("Body");
+		HitBox->Enable(false);
+	}
+	else
+	{
+		if (m_BlockerObj)
+		{
+			m_BlockerDownMoving = true;
+		}
+
+		else if (m_LadderObj)
+		{
+			m_LadderPaperBurn->SetEndEvent(PaperBurnEndEvent::None);
+			m_LadderPaperBurn->SetInverse(true);
+			m_LadderPaperBurn->StartPaperBurn();
+			m_LadderPaperBurn->SetFinishCallback(this, &CDDPuzzleSceneMode::OnClearObjectEventEnd);
+		}
 	}
 
-	else if (m_LadderObj)
-	{
-		MoveDest = m_LadderObj->GetWorldPos();
-	}
-
-	MoveDest.y = m_ClearOriginCamPos.y;
-
-	Cam->StartMove(m_ClearOriginCamPos, MoveDest, 1.f, false, true);
-	Cam->SetMoveEndCallBack<CDDPuzzleSceneMode>(this, &CDDPuzzleSceneMode::OnClearCamMoveToClearObjectEnd);
-
-	// 플레이어 잠깐 조작 불가, 히트박스 없앰
-	CGameStateComponent* State = m_PlayerObject->FindObjectComponentFromType<CGameStateComponent>();
-	State->SetTreeUpdate(false);
-	CColliderBox3D* HitBox = (CColliderBox3D*)m_PlayerObject->FindComponent("Body");
-	HitBox->Enable(false);
 }
 
 void CDDPuzzleSceneMode::OnClearCamMoveToClearObjectEnd()
@@ -120,15 +140,17 @@ void CDDPuzzleSceneMode::OnClearCamMoveToClearObjectEnd()
 
 void CDDPuzzleSceneMode::OnClearObjectEventEnd()
 {
-	// 클리어 오브젝트 이벤트 끝나면, 캠 복구
-	CCameraComponent* Cam = m_Scene->GetCameraManager()->GetCurrentCamera();
+	if (m_ClearCamMove)
+	{
+		// 클리어 오브젝트 이벤트 끝나면, 캠 복구
+		CCameraComponent* Cam = m_Scene->GetCameraManager()->GetCurrentCamera();
 
-	Cam->SetMoveFreeze(false);
-	Cam->SetMoveReverse(true);
-	Cam->SetMoveEndCallBack<CDDPuzzleSceneMode>(this, &CDDPuzzleSceneMode::OnClearCamRestoreEnd);
+		Cam->SetMoveFreeze(false);
+		Cam->SetMoveReverse(true);
+		Cam->SetMoveEndCallBack<CDDPuzzleSceneMode>(this, &CDDPuzzleSceneMode::OnClearCamRestoreEnd);
+	}
 
 	// 사다리 오브젝트 활성화
-
 	if (m_LadderObj)
 	{
 		m_LadderObj->Enable(true);
@@ -148,6 +170,8 @@ bool CDDPuzzleSceneMode::Save(FILE* File)
 {
 	CDDSceneMode::Save(File);
 
+	fwrite(&m_ClearCamMove, sizeof(bool), 1, File);
+
 	int Length = m_BlockerObjectName.length();
 	fwrite(&Length, sizeof(int), 1, File);
 	fwrite(m_BlockerObjectName.c_str(), sizeof(char), Length, File);
@@ -162,6 +186,8 @@ bool CDDPuzzleSceneMode::Save(FILE* File)
 bool CDDPuzzleSceneMode::Load(FILE* File)
 {
 	CDDSceneMode::Load(File);
+
+	fread(&m_ClearCamMove, sizeof(bool), 1, File);
 
 	int Length = 0;
 	char Buf[128] = {};
