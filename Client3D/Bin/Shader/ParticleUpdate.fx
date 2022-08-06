@@ -615,8 +615,8 @@ void ParticleUpdate(uint3 ThreadID : SV_DispatchThreadID)
 
 	// 원래 기본 설정 처럼, SpawnTime 에 맞춰서 지속적으로 Particle을 생성하거나
 	// 일시적으로 Restart 버튼을 누른 것이라면
-	if (g_ParticleDisableNewAlive == 0 ||
-		g_ParticleResetSharedInfoSpawnCntSum == 1)
+	// if (g_ParticleDisableNewAlive == 0 || g_ParticleResetSharedInfoSpawnCntSum == 1)
+	if (g_ParticleResetSharedInfoSpawnCntSum == 1)
 	{
 		// SpawnTime 에 맞춰서 지속적으로 생성하게끔 하려면 
 		// g_ParticleDisableNewAlive == 1 일때, 즉, 한번에 확 생성하고, 지금까지 누적 생성된 Particle 개수가
@@ -624,6 +624,7 @@ void ParticleUpdate(uint3 ThreadID : SV_DispatchThreadID)
 		// 이를 무효화 하기 위해서, 
 		// 지금까지 누적 생성된 Particle 개수를 계속 0이 되게 할 것이다.
 		g_ParticleShare[0].CurrentSpawnCountSum = 0;
+		return;
 	}
 
 	// 파티클이 살아있는 파티클인지 판단한다.

@@ -319,7 +319,7 @@ void CParticleComponentWidget::OnResetParticleInfo()
         if (!CurParticleComponent)
             return;
     
-        CurParticleComponent->ResetParticleStructuredBufferInfo();
+        CurParticleComponent->RecreateOnlyOnceCreatedParticle();
     }
 
    // dynamic_cast<CParticleComponent*>(m_Component)->ResetParticleStructuredBufferInfo();

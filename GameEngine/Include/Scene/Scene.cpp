@@ -241,6 +241,8 @@ void CScene::PostUpdate(float DeltaTime)
 
 	m_RenderComponentList.clear();
 
+	iter = m_ObjList.begin();
+
 	for (; iter != iterEnd; ++iter)
 	{
 		(*iter)->AddCollision();

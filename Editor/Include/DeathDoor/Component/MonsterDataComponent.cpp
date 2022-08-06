@@ -478,12 +478,13 @@ void CMonsterDataComponent::OnActivateBloodParticle()
 
 	// y 축으로 살짝 위에 생성되게 한다.
 	const Vector3& ObjectWorldPos = m_Object->GetWorldPos();
+
 	m_BloodParticle->SetWorldPos(ObjectWorldPos + Vector3(0.f, 2.f, 0.f));
 
 	// Enable True 로 만둘어줘서 다시 동작되게 한다.
 	m_BloodParticle->Enable(true);
 
-	m_BloodParticle->ResetParticleStructuredBufferInfo();
+	m_BloodParticle->RecreateOnlyOnceCreatedParticle();
 }
 
 void CMonsterDataComponent::SetIsHit(bool Hit)
