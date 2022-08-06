@@ -218,8 +218,7 @@ void CBossBettyThrowNode::ThrowSnowBallAttackObj()
 	CProjectileComponent* ProjTileComp = m_CurrentThrowBall->FindComponentFromType<CProjectileComponent>();
 
 	CGameObject* AfterEffectParticle = CObjectPool::GetInst()->GetParticle("BettyAttackAfterEffect", CSceneManager::GetInst()->GetScene());
-	AfterEffectParticle->Enable(true);
-	AfterEffectParticle->SetLifeSpan(1.f);
+	// AfterEffectParticle->SetLifeSpan(1.f);
 
 	const Vector3& PlayerPos = CSceneManager::GetInst()->GetScene()->GetPlayerObject()->GetWorldPos();
 

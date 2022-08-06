@@ -338,7 +338,20 @@ void CBossBettyDataComponent::OnBossBettyActivateAfterEffect(const Vector3& Worl
     CGameObject* AfterEffectParticle = CObjectPool::GetInst()->GetParticle("BettyAttackAfterEffect", CSceneManager::GetInst()->GetScene());
     AfterEffectParticle->Enable(true);
     AfterEffectParticle->SetWorldPos(WorldPos);
-    AfterEffectParticle->SetLifeSpan(1.f);
+
+    // 모든 ParticleComponent 들로 하여금 SetFollowRealTimeParticleComponentPos 를 true 로 세팅한다.
+// 그래야만, 현재 위치에서 Particle 이 생성된다.
+    std::vector<CParticleComponent*> vecParticleComponents;
+    AfterEffectParticle->FindAllSceneComponentFromType(vecParticleComponents);
+
+    size_t vecSize = vecParticleComponents.size();
+
+    for (size_t i = 0; i < vecSize; ++i)
+    {
+        vecParticleComponents[i]->RecreateOnlyOnceCreatedParticle();
+    }
+
+    // AfterEffectParticle->SetLifeSpan(1.f);
 }
 
 void CBossBettyDataComponent::OnBossBettyEnableCloseAttackChangeAnim()

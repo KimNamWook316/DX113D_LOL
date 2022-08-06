@@ -197,7 +197,7 @@ void CParticleComponent::Reset()
 	// 현재 살아있던 Particle 들을 모두 Alive False 로 만들어줄 것이다.
 	m_CBuffer->SetDestroyExstingAllLivingParticles(true);
 
-	// m_CBuffer->Set2D(true);
+	m_TempCreateAccTimeMax = 0.f;
 	
 	// 구조화 버퍼 정보 Update
 	m_CBuffer->UpdateCBuffer();
@@ -243,8 +243,16 @@ void CParticleComponent::Update(float DeltaTime)
 			m_TempCreateAccTime = 0.f;
 
 			// 어차피 한번만 그려질 Particle 이므로 Enable False 처리해준다.
-			Enable(false);
+			// Enable(false);
+			// 단, 자식 Component 들을 모두 Enable false 처리해주는 것이 아니라
+			// - 해당 Component만을 Enable False 처리해줘야 한다.
+			CRef::Enable(false);
 
+			// 1. Object Pool 에서 가져온 Particle일 경우 Destroy 시켜서 다시 Pool 에 되돌릴 것이다.
+			if (m_Object->IsInPool())
+			{
+				m_Object->Destroy();
+			}
 			return;
 		}
 	}
@@ -540,29 +548,13 @@ bool CParticleComponent::Load(FILE* File)
 }
 
 // Shader 측에 넘겨진 구조화 버퍼 정보를 초기화 해주는 코드이다.
-void CParticleComponent::ResetParticleStructuredBufferInfo()
+void CParticleComponent::RecreateOnlyOnceCreatedParticle()
 {
 	if (!m_Particle)
 		return;
 
-	// DiableNewAlive 가 true 인 Particle 에 대해서만 적용한다.
-	// DiableNewAlive 의 경우, 한번만 생성하고, 더이상 추가 생성하지 않는 Particle
-
-	if (m_CBuffer->IsDisableNewAlive())
-	{
-		m_CBuffer->SetResetParticleSharedInfoSumSpawnCnt(true);
-
-		m_TempCreateAccTime = m_TempCreateAccTimeMax;
-
-		// 다시 Update 되게끔 세팅한다.
-		Enable(true);
-	}
-	
-	// 혹시 모르니 기존에 생성되었던 Particle 들은 모두 지워준다.
-	m_CBuffer->SetDestroyExstingAllLivingParticles(true);
-
-	// 계산셰이더를 실행한다.
-	m_CBuffer->UpdateCBuffer(); 
+	if (m_CBuffer->IsDisableNewAlive() == 0)
+		return;
 
 	size_t	BufferCount = m_vecStructuredBuffer.size();
 
@@ -573,6 +565,18 @@ void CParticleComponent::ResetParticleStructuredBufferInfo()
 
 	int	GroupCount = m_Particle->GetSpawnCountMax() / 64 + 1;
 
+	// DiableNewAlive 가 true 인 Particle 에 대해서만 적용한다.
+	// DiableNewAlive 의 경우, 한번만 생성하고, 더이상 추가 생성하지 않는 Particle
+	m_CBuffer->SetResetParticleSharedInfoSumSpawnCnt(true);
+
+	// 해당 AccTime 이후 Enable False 가 된다.
+	m_TempCreateAccTime = m_TempCreateAccTimeMax;
+
+	// 상수 버퍼 정보를 Update
+	m_CBuffer->UpdateCBuffer();
+
+	// 계산 셰이더 한번 더 호출
+	// m_UpdateShader->Excute(GroupCount, 1, 1);
 	m_UpdateShader->Excute(GroupCount, 1, 1);
 
 	for (size_t i = 0; i < BufferCount; ++i)

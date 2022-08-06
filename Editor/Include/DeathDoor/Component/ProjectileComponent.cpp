@@ -259,9 +259,7 @@ void CProjectileComponent::OnEnd()
 
 		for (size_t i = 0; i < vecSize; ++i)
 		{
-			vecParticleComponents[i]->ResetParticleStructuredBufferInfo();
-			vecParticleComponents[i]->GetCBuffer()->SetFollowRealTimeParticleComponentPos(true);
-			// vecParticleComponents[i]->GetCBuffer()->SetFollowRealTimeParticleComponentPos(false);
+			vecParticleComponents[i]->RecreateOnlyOnceCreatedParticle();
 		}
 	}
 
