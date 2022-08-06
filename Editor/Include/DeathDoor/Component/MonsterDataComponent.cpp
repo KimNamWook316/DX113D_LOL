@@ -137,6 +137,9 @@ void CMonsterDataComponent::Start()
 		// 처음에는 Enable False 처리를 해줄 것이다.
 		m_BloodParticle->Enable(false);
 
+		// BillBoard 효과는 주지 않을 것이다 (Rotation 영향을 받기 때문에)
+		m_BloodParticle->SetBillBoardEffect(false);
+
 		// 혹시 모르니 WorldRot 은 모두 0으로 맞춰준다.
 		m_BloodParticle->SetWorldRotation(0.f, 0.f, 0.f);
 

@@ -558,29 +558,22 @@ void CParticleComponent::ResetParticleStructuredBufferInfo()
 		Enable(true);
 	}
 	
+	// 혹시 모르니 기존에 생성되었던 Particle 들은 모두 지워준다.
+	m_CBuffer->SetDestroyExstingAllLivingParticles(true);
+
 	// 계산셰이더를 실행한다.
 	m_CBuffer->UpdateCBuffer(); 
 
 	size_t	BufferCount = m_vecStructuredBuffer.size();
-
-	// Normal Dist 구조화 버퍼 정보를 넘겨준다.
-	// m_NormalDistributionBuffer->SetShader();
 
 	for (size_t i = 0; i < BufferCount; ++i)
 	{
 		m_vecStructuredBuffer[i]->SetShader();
 	}
 
-	// UpdateShader의 Thread는 64, 1, 1을 사용하고 있다.
-	// 생성되야할 파티클의 전체 수에서 64개를 나눈다. 만약 64개를 최대파티클 수로 지정해주었다면
-	// 필요한 그룹의 수는 1개이다. 하지만 64개 미만이라면 64를 나눌 경우 0이 나오므로 여기에 1을 더해주어야 한다.
-	// 100개일 경우 그룹은 2개가 생성된다. 이때 스레드는 128개가 되므로 100개를 제외한 나머지 28개는 처리가 안되게
-	// 막아주면 되는것이다.
 	int	GroupCount = m_Particle->GetSpawnCountMax() / 64 + 1;
 
 	m_UpdateShader->Excute(GroupCount, 1, 1);
-
-	// m_NormalDistributionBuffer->ResetShader();
 
 	for (size_t i = 0; i < BufferCount; ++i)
 	{

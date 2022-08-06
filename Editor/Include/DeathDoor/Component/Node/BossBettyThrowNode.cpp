@@ -135,18 +135,6 @@ NodeResult CBossBettyThrowNode::OnUpdate(float DeltaTime)
 		}
 	}
 
-	// Particle 정보 Render 전에 Update 마치기 
-	// std::vector<CParticleComponent*> vecParticleComponents;
-	// m_CurrentThrowBall->FindAllSceneComponentFromType(vecParticleComponents);
-	// 
-	// size_t vecSize = vecParticleComponents.size();
-	// 
-	// for (size_t i = 0; i < vecSize; ++i)
-	// {
-	// 	vecParticleComponents[i]->Update(DeltaTime);
-	// 	vecParticleComponents[i]->PostUpdate(DeltaTime);
-	// }
-
 	return NodeResult::Node_True;
 }
 
