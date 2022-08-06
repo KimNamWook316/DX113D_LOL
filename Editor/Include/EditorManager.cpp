@@ -50,6 +50,9 @@
 #include "DeathDoor\Component/HeadRollerDataComponent.h"
 #include "DeathDoor\Component/DodgerDataComponent.h"
 #include "DeathDoor\Component/PlagueKnightDataComponent.h"
+#include "DeathDoor\Component/DodgerDataComponent.h"
+#include "DeathDoor\Component/TriggerBoxData.h"
+
 // Window
 #include "Window/ObjectHierarchyWindow.h"
 #include "Window/SceneComponentHierarchyWindow.h"
@@ -561,6 +564,18 @@ CComponent* CEditorManager::CreateComponent(CGameObject* Obj, size_t Type)
 	else if (Type == typeid(CHeadRollerDataComponent).hash_code())
 	{
 		CHeadRollerDataComponent* Component = Obj->LoadObjectComponent<CHeadRollerDataComponent>();
+		return Component;
+	}
+
+	else if (Type == typeid(CDodgerDataComponent).hash_code())
+	{
+		CDodgerDataComponent* Component = Obj->LoadObjectComponent<CDodgerDataComponent>();
+		return Component;
+	}
+
+	else if (Type == typeid(CTriggerBoxData).hash_code())
+	{
+		CTriggerBoxData* Component = Obj->LoadObjectComponent<CTriggerBoxData>();
 		return Component;
 	}
 

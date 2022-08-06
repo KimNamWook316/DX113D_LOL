@@ -23,8 +23,8 @@ void CLadderCollider::Start()
 {
 	CColliderBox3D::Start();
 
-	AddCollisionCallback<CLadderCollider>(Collision_State::Begin, this, &CLadderCollider::OnPlayerLadderEnable);
-	AddCollisionCallback<CLadderCollider>(Collision_State::End, this, &CLadderCollider::OnPlayerLadderUpDownEnableSet);
+	AddCollisionCallback<CLadderCollider>(Collision_State::Begin, this, &CLadderCollider::OnPlayerLadderColliderBegin);
+	AddCollisionCallback<CLadderCollider>(Collision_State::End, this, &CLadderCollider::OnPlayerLadderColliderEnd);
 }
 
 bool CLadderCollider::Init()
@@ -85,7 +85,7 @@ bool CLadderCollider::LoadOnly(FILE* File)
 	return true;
 }
 
-void CLadderCollider::OnPlayerLadderEnable(const CollisionResult& Result)
+void CLadderCollider::OnPlayerLadderColliderBegin(const CollisionResult& Result)
 {
 	CGameObject* Player = m_Object->GetScene()->GetPlayerObject();
 	
@@ -94,6 +94,8 @@ void CLadderCollider::OnPlayerLadderEnable(const CollisionResult& Result)
 	Vector3 PlayerPos = Player->GetWorldPos();
 
 	CPlayerDataComponent* Comp = Player->FindObjectComponentFromType<CPlayerDataComponent>();
+
+	Comp->SetClimbingStartEnable(true);
 
 	// 사다리에 타고 있지 않을때 LadderCollider와 충돌
 	if (!Comp->IsClimbingLadder())
@@ -131,7 +133,7 @@ void CLadderCollider::OnPlayerLadderDisable(const CollisionResult& Result)
 {
 }
 
-void CLadderCollider::OnPlayerLadderUpDownEnableSet(const CollisionResult& Result)
+void CLadderCollider::OnPlayerLadderColliderEnd(const CollisionResult& Result)
 {
 	if (!m_Object)
 		return;
@@ -143,6 +145,8 @@ void CLadderCollider::OnPlayerLadderUpDownEnableSet(const CollisionResult& Resul
 	CGameObject* Player = m_Object->GetScene()->GetPlayerObject();
 
 	CPlayerDataComponent* Comp = Player->FindObjectComponentFromType<CPlayerDataComponent>();
+
+	Comp->SetClimbingStartEnable(false);
 
 	Vector3 LadderPos = m_Object->GetWorldPos();
 	Vector3 LadderColliderPos = GetWorldPos();

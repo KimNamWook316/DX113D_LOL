@@ -854,6 +854,15 @@
     <ClCompile Include="DeathDoor\Component\Node\DodgerDashNode.cpp">
       <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\07. Dodger</Filter>
     </ClCompile>
+    <ClCompile Include="DeathDoor\Component\TriggerBoxData.cpp">
+      <Filter>06. DeathDoor\01. GameComponent\02. ObjectComponent\01. DataComponent\01. ObjectDataComponent\03. Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Widget\TriggerBoxDataWidget.cpp">
+      <Filter>02. Editor\02. Widget\01. Inspector\02. ObjectComponent</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Component\Node\ClimbKeyEnableCheck.cpp">
+      <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\03. Player</Filter>
+    </ClCompile>
     <ClCompile Include="DeathDoor\Scene\DDPuzzleSceneMode.cpp">
       <Filter>06. DeathDoor\05. SceneMode\03. PuzzleMode</Filter>
     </ClCompile>
@@ -1491,6 +1500,15 @@
     </ClInclude>
     <ClInclude Include="DeathDoor\Component\Node\DodgerDashNode.h">
       <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\07. Dodger</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\TriggerBoxData.h">
+      <Filter>06. DeathDoor\01. GameComponent\02. ObjectComponent\01. DataComponent\01. ObjectDataComponent\03. Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Widget\TriggerBoxDataWidget.h">
+      <Filter>02. Editor\02. Widget\01. Inspector\02. ObjectComponent</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\Node\ClimbKeyEnableCheck.h">
+      <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\03. Player</Filter>
     </ClInclude>
     <ClInclude Include="DeathDoor\Scene\DDPuzzleSceneMode.h">
       <Filter>06. DeathDoor\05. SceneMode\03. PuzzleMode</Filter>

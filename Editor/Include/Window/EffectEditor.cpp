@@ -1534,7 +1534,7 @@ void CEffectEditor::SetGameObjectReady()
 void CEffectEditor::SetBasicDefaultParticleInfos(CParticle* Particle)
 {
     // 반드시 3D 로 세팅한다.
-    Particle->Set2D(false);
+    // Particle->Set2D(false);
 
     // Spawn Count
     Particle->SetSpawnCountMax(1000);
@@ -1798,7 +1798,7 @@ void CEffectEditor::SetIMGUIReflectParticle(CParticle* Particle)
     }
 
     // 반드시 3D 로 세팅한다.
-    Particle->Set2D(false);
+    // Particle->Set2D(false);
 
     // Radius
     m_GenerateRadius->SetValue(Particle->GetGenerateRadius());

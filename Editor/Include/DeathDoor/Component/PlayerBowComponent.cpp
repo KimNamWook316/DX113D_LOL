@@ -6,6 +6,7 @@
 #include "ObjectPool.h"
 #include "ArrowComponent.h"
 #include "Component/ColliderSphere.h"
+#include "MonsterDataComponent.h"
 
 CPlayerBowComponent::CPlayerBowComponent()	:
 	m_PlayerData(nullptr),
@@ -168,7 +169,7 @@ void CPlayerBowComponent::ShootArrow(const Vector3& ShootDir)
 	Vector3 ArrowStartPos = m_Arrow->GetWorldPos();
 	//Comp->ShootByLifeTime(MyPos, ShootDir, 20.f, 2.5f);
 	Comp->ClearCollsionCallBack();
-	Comp->ShootByLifeTimeCollision<CPlayerBowComponent>(this, &CPlayerBowComponent::OnCollision, Collision_State::Begin, ArrowStartPos, ShootDir, 10.f, 2.5f);
+	Comp->ShootByLifeTimeCollision<CPlayerBowComponent>(this, &CPlayerBowComponent::OnCollision, Collision_State::Begin, ArrowStartPos, ShootDir, 60.f, 2.5f);
 	Comp->SetDestroy(true);
 	
 }
@@ -185,6 +186,18 @@ void CPlayerBowComponent::OnCollision(const CollisionResult& Result)
 	// OnCollision에서 바로 Destroy하면 CCollisionSection::Collision에서 m_vecCollider의 size가 갑자기 바뀌어서 문제가 되므로
 	// m_Destroy = true로 만들어줬다가 PrevRender 함수에서 m_Destroy가 true면 Destroy
 	m_Destroy = true;
+
+	CGameObject* DestObject = Result.Dest->GetGameObject();
+
+	CMonsterDataComponent* Data = (CMonsterDataComponent*)DestObject->FindObjectComponent("ObjectData");
+
+	if (DestObject->GetObjectType() == Object_Type::Monster && Data)
+	{
+		Data->SetIsHit(true);
+		Data->DecreaseHP(2);
+		Data->SetIsHit(false);
+	}
+
 	//m_Arrow->Destroy();
 }
 

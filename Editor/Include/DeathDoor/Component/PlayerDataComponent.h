@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ObjectDataComponent.h"
-
+#include "../DDFlag.h"
 #include "GameObject/GameObject.h"
 
 class CPlayerDataComponent :
@@ -33,6 +33,9 @@ private:
 	bool m_LadderUpEnable;
 	bool m_LadderDownEnable;
 	bool m_IsClimbingLadder;
+	bool m_ClimbingStartEnable;
+
+	DDPlayerRollDirection m_RollDirection;
 
 public:
 	virtual void Start();
@@ -52,6 +55,16 @@ public:
 	virtual bool LoadOnly(FILE* File) override;
 
 public:
+	void SetRollDirection(DDPlayerRollDirection Dir)
+	{
+		m_RollDirection = Dir;
+	}
+
+	void SetClimbingStartEnable(bool Enable)
+	{
+		m_ClimbingStartEnable = Enable;
+	}
+
 	void SetLadderUpEnable(bool Enable)
 	{
 		m_LadderUpEnable = Enable;
@@ -82,6 +95,11 @@ public:
 		return m_IsClimbingLadder;
 	}
 
+	bool IsClimbingStartEnable()	const
+	{
+		return m_ClimbingStartEnable;
+	}
+
 	void SetTrueOnSlash();
 
 	void SetFalseOnSlash();
@@ -89,6 +107,11 @@ public:
 	void SetOnSlash(bool Slash)
 	{
 		m_OnSlash = Slash;
+	}
+
+	DDPlayerRollDirection GetRollDirection()	const
+	{
+		return m_RollDirection;
 	}
 
 	bool GetOnSlash()	const

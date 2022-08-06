@@ -91,7 +91,9 @@ void CColliderComponent::CheckPrevColliderSection()
 		if (!Check)
 		{
 			CallCollisionCallback(Collision_State::End);
-			(*iter)->CallCollisionCallback(Collision_State::End);
+
+			if((*iter)->IsEnable())
+				(*iter)->CallCollisionCallback(Collision_State::End);
 
 			// 서로 이전 충돌목록에서 제거해준다.
 			(*iter)->DeletePrevCollision(this);
@@ -191,6 +193,10 @@ void CColliderComponent::CallCollisionMouseCallback(Collision_State State)
 
 void CColliderComponent::ClearFrame()
 {
+	if (!m_Enable)
+	{
+		m_PrevCollisionList.clear();
+	}
 	m_vecSectionIndex.clear();
 	m_CurrentCollisionList.clear();
 	m_CurrentSectionCheck = false;
@@ -198,6 +204,8 @@ void CColliderComponent::ClearFrame()
 
 void CColliderComponent::Start()
 {
+	m_Enable = true;
+
 	CSceneComponent::Start();
 
 	if(m_Scene)
@@ -226,6 +234,9 @@ bool CColliderComponent::Init()
 void CColliderComponent::Update(float DeltaTime)
 {
 	CSceneComponent::Update(DeltaTime);
+
+	if (m_Enable)
+		m_Scene->GetCollision()->AddCollider(this);
 }
 
 void CColliderComponent::PostUpdate(float DeltaTime)

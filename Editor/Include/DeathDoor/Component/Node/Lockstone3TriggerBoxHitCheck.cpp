@@ -2,7 +2,7 @@
 #include "Lockstone3TriggerBoxHitCheck.h"
 #include "Component/BehaviorTree.h"
 #include "../GameStateComponent.h"
-#include "../ObjectDataComponent.h"
+#include "../TriggerBoxData.h"
 
 CLockstone3TriggerBoxHitCheck::CLockstone3TriggerBoxHitCheck()
 {
@@ -20,9 +20,9 @@ CLockstone3TriggerBoxHitCheck::~CLockstone3TriggerBoxHitCheck()
 
 NodeResult CLockstone3TriggerBoxHitCheck::OnStart(float DeltaTime)
 {
-	CObjectDataComponent* Data = dynamic_cast<CObjectDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
+	CTriggerBoxData* Data = dynamic_cast<CTriggerBoxData*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
 
-	if (Data->GetIsHit())
+	if (Data && Data->GetIsHit() && Data->IsCurrentActive())
 	{
 		m_Owner->GetOwner()->SetTreeUpdate(false);
 		return NodeResult::Node_True;

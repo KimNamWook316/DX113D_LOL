@@ -12,6 +12,7 @@
 #include "../DataManager.h"
 #include "Component/CameraComponent.h"
 #include "GameObject/GameObject.h"
+#include "ObjectPool.h"
 
 CBossBettyDataComponent::CBossBettyDataComponent() :
 	m_ThrowFarAttackEnable(false),
@@ -50,7 +51,7 @@ void CBossBettyDataComponent::Start()
     m_OriginRotSpeed = m_Data.RotateSpeedPerSec;
     m_CurRotSpeed = m_OriginRotSpeed;
 
-    m_BettyHPMax = m_Data.HP;
+    m_BettyHPMax = (float)m_Data.HP;
 
     // HitBox 에 콜백을 걸어준다.
 
@@ -87,21 +88,21 @@ void CBossBettyDataComponent::Start()
             (CMonsterDataComponent*)this, &CMonsterDataComponent::OnHitMeleeAttack);
     }
 
-    CParticleComponent* FoundParticle = (CParticleComponent*)(m_Object->FindComponent("AttackGrass"));
-    
-    if (FoundParticle)
-    {
-        FoundParticle->GetCBuffer()->SetFollowRealTimeParticleComponentPos(true);
-        m_vecAttackAfterEffectParticle.push_back(FoundParticle);
-    }
-
-    FoundParticle = (CParticleComponent*)(m_Object->FindComponent("AttackCircle"));
-    
-    if (FoundParticle)
-    {
-        FoundParticle->GetCBuffer()->SetFollowRealTimeParticleComponentPos(true);
-        m_vecAttackAfterEffectParticle.push_back(FoundParticle);
-    }
+    // CParticleComponent* FoundParticle = (CParticleComponent*)(m_Object->FindComponent("AttackGrass"));
+    // 
+    // if (FoundParticle)
+    // {
+    //     FoundParticle->GetCBuffer()->SetFollowRealTimeParticleComponentPos(true);
+    //     m_vecAttackAfterEffectParticle.push_back(FoundParticle);
+    // }
+    // 
+    // FoundParticle = (CParticleComponent*)(m_Object->FindComponent("AttackCircle"));
+    // 
+    // if (FoundParticle)
+    // {
+    //     FoundParticle->GetCBuffer()->SetFollowRealTimeParticleComponentPos(true);
+    //     m_vecAttackAfterEffectParticle.push_back(FoundParticle);
+    // }
 
 
     // 근거리 사정 거리 판별 Square Pos 위치 만들기 
@@ -334,13 +335,10 @@ void CBossBettyDataComponent::OnBossBettyDisableAttackCollider()
 
 void CBossBettyDataComponent::OnBossBettyActivateAfterEffect(const Vector3& WorldPos)
 {
-    size_t EffectSize = m_vecAttackAfterEffectParticle.size();
-
-    for (size_t i = 0; i < EffectSize; ++i)
-    {
-        m_vecAttackAfterEffectParticle[i]->ResetParticleStructuredBufferInfo();
-        m_vecAttackAfterEffectParticle[i]->SetWorldPos(WorldPos);
-    }
+    CGameObject* AfterEffectParticle = CObjectPool::GetInst()->GetParticle("BettyAttackAfterEffect", CSceneManager::GetInst()->GetScene());
+    AfterEffectParticle->Enable(true);
+    AfterEffectParticle->SetWorldPos(WorldPos);
+    AfterEffectParticle->SetLifeSpan(1.f);
 }
 
 void CBossBettyDataComponent::OnBossBettyEnableCloseAttackChangeAnim()

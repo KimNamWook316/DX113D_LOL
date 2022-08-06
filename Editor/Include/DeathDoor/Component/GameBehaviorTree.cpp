@@ -46,6 +46,7 @@
 #include "Node/ClimbUpEndCheck.h"
 #include "Node/ClimbingUpStartCheck.h"
 #include "Node/ClimbPause.h"
+#include "Node/ClimbKeyEnableCheck.h"
 
 // Public Nodes
 #include "Node/MeleeRangeCheckNode.h"
@@ -393,6 +394,10 @@ CNode* CGameBehaviorTree::LoadNode(CNode* Parent, size_t TypeID)
 	else if (TypeID == typeid(CClimbPause).hash_code())
 	{
 		NewNode = MakeNode<CClimbPause>(Parent, OwnerObject);
+	}
+	else if (TypeID == typeid(CClimbKeyEnableCheck).hash_code())
+	{
+		NewNode = MakeNode<CClimbKeyEnableCheck>(Parent, OwnerObject);
 	}
 
 	//

@@ -19,8 +19,7 @@ CParticleComponent::CParticleComponent()	:
 	// m_ParticleMoveSpeed(20.f),
 	m_TempCreateAccTimeMax(5.f),
 	m_InfoShared{},
-	m_CBuffer(nullptr),
-	m_DestroyExstingAllParticlesAccTimeMax(5.f)
+	m_CBuffer(nullptr)
 {
 	SetTypeID<CParticleComponent>();
 	m_Render = true;
@@ -203,6 +202,8 @@ void CParticleComponent::Reset()
 	
 	// 현재 살아있던 Particle 들을 모두 Alive False 로 만들어줄 것이다.
 	m_CBuffer->SetDestroyExstingAllLivingParticles(true);
+
+	// m_CBuffer->Set2D(true);
 	
 	// 구조화 버퍼 정보 Update
 	m_CBuffer->UpdateCBuffer();
@@ -389,10 +390,10 @@ void CParticleComponent::PostUpdate(float DeltaTime)
 
 	m_CBuffer->UpdateCBuffer();
 
+	size_t	BufferCount = m_vecStructuredBuffer.size();
+
 	// Normal Dist 구조화 버퍼 정보를 넘겨준다.
 	// m_NormalDistributionBuffer->SetShader();
-
-	size_t	BufferCount = m_vecStructuredBuffer.size();
 
 	for (size_t i = 0; i < BufferCount; ++i)
 	{
@@ -431,13 +432,13 @@ void CParticleComponent::RenderParticleEffectEditor()
 	if (!m_CBuffer)
 		return;
 
-	// 상수 버퍼를 다시 한번 Setting 해준다.
-	// 계산 셰이더 외에도, Render 과정에서도 상수 버퍼 정보를 사용할 수 있게 하는 것이다.
-	m_CBuffer->UpdateCBuffer();
+	size_t	BufferCount = m_vecStructuredBuffer.size();
 
 	CSceneComponent::RenderParticleEffectEditor();
 
-	size_t	BufferCount = m_vecStructuredBuffer.size();
+	// 상수 버퍼를 다시 한번 Setting 해준다.
+	// 계산 셰이더 외에도, Render 과정에서도 상수 버퍼 정보를 사용할 수 있게 하는 것이다.
+	m_CBuffer->UpdateCBuffer();
 
 	for (size_t i = 0; i < BufferCount; ++i)
 	{
@@ -469,10 +470,6 @@ void CParticleComponent::Render()
 
 	if (m_InitActiveDelayTime > 0.f)
 		return;
-
-	// DeleteExstingParticle 이 True 라면, Render 는 다음 Frame 부터 해줄 것이다
-	// if (m_CBuffer->IsDestroyExstingAllLivingParticlesEnabled())
-	//  	return;
 
 	// 계산 셰이더 외에도, Render 과정에서도 상수 버퍼 정보를 사용할 수 있게 하는 것이다.
 	m_CBuffer->UpdateCBuffer();
@@ -512,11 +509,15 @@ void CParticleComponent::PostRender()
 	// 위에서 Render 혹은 PostUpdate 에서 넘겨주고 여기서 세팅
 	if (m_CBuffer)
 	{
-		m_CBuffer->SetResetParticleSharedInfoSumSpawnCnt(0);
-
-		if (m_CBuffer->IsDestroyExstingAllLivingParticlesEnabled())
+		// 아래 코드를 세팅해주어야 딱 한번만 다시 생성되게 될 것이다.
+		if (m_CBuffer->IsDisableNewAlive())
 		{
-			// m_CBuffer->SetDestroyExstingAllLivingParticles(false);
+			m_CBuffer->SetResetParticleSharedInfoSumSpawnCnt(false);
+		}
+
+		if (m_CBuffer->IsDestroyExstingAllLivingParticlesEnabled() == 1)
+		{
+			m_CBuffer->SetDestroyExstingAllLivingParticles(false);
 		}
 	}
 }
@@ -555,7 +556,7 @@ void CParticleComponent::ResetParticleStructuredBufferInfo()
 
 	if (m_CBuffer->IsDisableNewAlive())
 	{
-		m_CBuffer->SetResetParticleSharedInfoSumSpawnCnt(1);
+		m_CBuffer->SetResetParticleSharedInfoSumSpawnCnt(true);
 
 		m_TempCreateAccTime = m_TempCreateAccTimeMax;
 
@@ -563,6 +564,27 @@ void CParticleComponent::ResetParticleStructuredBufferInfo()
 		Enable(true);
 	}
 	
+	// 혹시 모르니 기존에 생성되었던 Particle 들은 모두 지워준다.
+	m_CBuffer->SetDestroyExstingAllLivingParticles(true);
+
+	// 계산셰이더를 실행한다.
+	m_CBuffer->UpdateCBuffer(); 
+
+	size_t	BufferCount = m_vecStructuredBuffer.size();
+
+	for (size_t i = 0; i < BufferCount; ++i)
+	{
+		m_vecStructuredBuffer[i]->SetShader();
+	}
+
+	int	GroupCount = m_Particle->GetSpawnCountMax() / 64 + 1;
+
+	m_UpdateShader->Excute(GroupCount, 1, 1);
+
+	for (size_t i = 0; i < BufferCount; ++i)
+	{
+		m_vecStructuredBuffer[i]->ResetShader();
+	}
 }
 
 bool CParticleComponent::SaveOnly(FILE* File)

@@ -105,6 +105,11 @@ public:
 		m_PlayerEnterZone = false;
 	}
 
+	void SetCutScenePlaying(bool Playing)
+	{
+		m_IsCutScenePlaying = Playing;
+	}
+
 public:
 	bool IsAttackCoolTimeEnable() const
 	{

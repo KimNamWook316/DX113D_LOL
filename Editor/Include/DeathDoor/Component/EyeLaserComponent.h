@@ -32,6 +32,8 @@ private:
 	class CColliderHalfLine* m_RayCollider;
 
 	bool m_FaceCameraOnce;
+	float m_AccTime;
+	float m_LaserGenTime;
 
 
 public:

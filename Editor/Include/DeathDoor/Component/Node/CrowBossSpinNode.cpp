@@ -7,6 +7,7 @@
 #include "../MonsterNavAgent.h"
 #include "Scene/Scene.h"
 #include "Component/ColliderBox3D.h"
+#include "DeathNode.h"
 
 CCrowBossSpinNode::CCrowBossSpinNode()	:
 	m_AccRotation(0.f),
@@ -39,7 +40,13 @@ NodeResult CCrowBossSpinNode::OnStart(float DeltaTime)
 
 	if (Data->GetHP() <= 0)
 	{
-		return NodeResult::Node_True;
+		Data->ClearPhaseQueue();
+
+		m_AnimationMeshComp->GetAnimationInstance()->ChangeAnimation("Death");
+
+		m_Owner->GetOwner()->SetTreeUpdate(false);
+
+		return NodeResult::Node_False;
 	}
 
 	Vector3 MyOriginPos = Data->GetMyOriginPos();
@@ -93,7 +100,7 @@ NodeResult CCrowBossSpinNode::OnStart(float DeltaTime)
 			m_SpinDegree = -180.f;
 	}
 
-	Data->GetMeleeAttackCollider()->Enable(false);
+	Data->GetMeleeAttackCollider()->Enable(true);
 
 	return NodeResult::Node_True;
 }
@@ -106,9 +113,13 @@ NodeResult CCrowBossSpinNode::OnUpdate(float DeltaTime)
 
 	if (Data->GetHP() <= 0)
 	{
+		Data->ClearPhaseQueue();
+
 		m_AnimationMeshComp->GetAnimationInstance()->ChangeAnimation("Death");
-		m_Owner->SetCurrentNode(nullptr);
-		return NodeResult::Node_True;
+
+		m_Owner->GetOwner()->SetTreeUpdate(false);
+
+		return NodeResult::Node_False;
 	}
 
 	Vector3 MyOriginPos = Data->GetMyOriginPos();

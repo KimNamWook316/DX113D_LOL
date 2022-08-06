@@ -686,6 +686,7 @@ size_t CEditorUtil::ObjectComponentTypeIndexToTypeid(int TypeIndex)
 
 	case (int)ObjectComponent3DType::NavAgent:
 		return typeid(CNavAgent).hash_code();
+
 	}
 
 	return -1;

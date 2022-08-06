@@ -141,7 +141,7 @@ HookResult CPlayerHookComponent::ShootHook(const Vector3& ShootDir, float DeltaT
 		Vector3 CurrentPos = m_Object->GetWorldPos();
 
 		float Dist = Vector3(CurrentPos.x, 0.f, CurrentPos.z).Distance(Vector3(m_ShootDestPoint.x, 0.f, m_ShootDestPoint.z));
-		if (Dist < 2.f)
+		if (Dist < 2.5f)
 		{
 			CAnimationMeshComponent* Comp = m_Object->FindComponentFromType<CAnimationMeshComponent>();
 
@@ -289,7 +289,8 @@ void CPlayerHookComponent::OnHookCollision(const CollisionResult& Result)
 
 
 	m_InFlying = true;
-	m_ShootDestPoint = Result.Dest->GetWorldPos();
+	//m_ShootDestPoint = Result.Dest->GetWorldPos();
+	m_ShootDestPoint = m_Collider->GetInfo().EndPos;
 	CAnimationMeshComponent* Comp = m_Object->FindComponentFromType<CAnimationMeshComponent>();
 
 	if (Comp)

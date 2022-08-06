@@ -32,6 +32,5 @@ public:
 	virtual bool SaveOnly(FILE* File) override;
 	virtual bool LoadOnly(FILE* File) override;
 
-
 };
 

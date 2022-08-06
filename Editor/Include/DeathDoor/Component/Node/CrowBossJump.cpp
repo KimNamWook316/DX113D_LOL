@@ -7,6 +7,7 @@
 #include "../MonsterNavAgent.h"
 #include "../ProjectileComponent.h"
 #include "Scene/Scene.h"
+#include "Component/ColliderBox3D.h"
 
 CCrowBossJump::CCrowBossJump()
 {
@@ -35,6 +36,7 @@ NodeResult CCrowBossJump::OnUpdate(float DeltaTime)
 
 	CCrowBossDataComponent* Data = dynamic_cast<CCrowBossDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
 	Data->SetStartJump(true);
+	Data->GetHitBox()->SetRigidCollisionIgnore(false);
 
 	Vector3 CurrentPos = m_Object->GetWorldPos();
 	Vector3 PlayerPos = m_Object->GetScene()->GetPlayerObject()->GetWorldPos();

@@ -13,7 +13,9 @@ CEyeLaserComponent::CEyeLaserComponent()	:
 	m_Player(nullptr),
 	m_RayCollider(nullptr),
 	m_FaceCameraOnce(false),
-	m_LaserGenerator(nullptr)
+	m_LaserGenerator(nullptr),
+	m_LaserGenTime(1.f),
+	m_AccTime(0.f)
 {
 	SetTypeID<CEyeLaserComponent>();
 	m_ComponentType = Component_Type::SceneComponent;
@@ -49,19 +51,10 @@ void CEyeLaserComponent::Start()
 
 	// Notify(ex. Wake 애니메이션 끝나면 TrackPlayer 함수 호출) 세팅
 
-	
+
+	SetWorldScale(0.3f, 1.f, 500.f);
+
 	m_LaserPlaneMesh = CResourceManager::GetInst()->FindMesh("PlaneMesh");
-
-	CMaterial* LaserMat = m_Scene->GetResource()->FindMaterial("LaserMaterial");
-
-	if (!LaserMat)
-	{
-		m_Scene->GetResource()->CreateMaterial<CMaterial>("LaserMaterial");
-		m_Material = m_Scene->GetResource()->FindMaterial("LaserMaterial");
-	}
-
-	else
-		m_Material = LaserMat;
 
 	m_Material->SetShader("LaserShader");
 	m_Material->AddTexture(0, (int)Buffer_Shader_Type::Pixel,
@@ -96,7 +89,7 @@ void CEyeLaserComponent::Update(float DeltaTime)
 
 	FaceCamera();
 
-	if (m_TriggerHitCount == 1)
+	if (m_TriggerHitCount > 0 && m_TriggerHitCount < 4)
 	{
 		TrackPlayer(DeltaTime);
 	}
@@ -120,7 +113,7 @@ void CEyeLaserComponent::PrevRender()
 void CEyeLaserComponent::Render()
 {
 
-	if (m_TriggerHitCount == 1)
+	if (m_TriggerHitCount > 0 && m_TriggerHitCount != 4)
 	{
 		CSceneComponent::Render();
 
@@ -180,8 +173,10 @@ bool CEyeLaserComponent::LoadOnly(FILE* File)
 
 void CEyeLaserComponent::TrackPlayer(float DeltaTime)
 {
-	m_RayCollider->Enable(true);
-
+	if (!m_RayCollider->IsEnable())
+	{
+		m_RayCollider->Enable(true);
+	}
 	// 원래 레이저가 바라보는 방향은 플레이어가 입장하는 문을 바라보는 방향. 
 	// 이때 플레이어가 레이저를 바라볼 때 오른쪽이 -x, 왼쪽이 +x이다
 	//m_CurrentLaserRot = Vector3(0.f, 0.f, 1.f);
@@ -199,6 +194,7 @@ void CEyeLaserComponent::TrackPlayer(float DeltaTime)
 	float Degree = RadianToDegree(acosf(Rad));
 
 	Vector3 CrossVector = Dir.Cross(m_CurrentLaserLeftRightDir);
+	float Angle = DeltaTime * 7.f;
 
 	// Player가 레이저를 바라봤을때, Player의 위치가 레이저 쏘는 위치보다 오른쪽에 존재
 	// 로컬축 기준으로 회전하니까 Z방향으로 회전해야함
@@ -206,10 +202,10 @@ void CEyeLaserComponent::TrackPlayer(float DeltaTime)
 	{
 		// 회전은 로컬축 기준이라 Z축 회전을 하지만 World기준은 Y방향이므로 Matrix는 Y축 회전 Matrix를 만든다
 		//m_AnimComp->AddWorldRotationZ(-DeltaTime * 7.f);
-		AddWorldRotationY(-DeltaTime * 7.f);
+		AddWorldRotationY(-Angle);
 		if (m_RayCollider)
-			m_RayCollider->AddWorldRotationY(-DeltaTime * 7.f);
-		m_LaserLeftRightRotMatrix.RotationY(-DeltaTime * 7.f);
+			m_RayCollider->AddWorldRotationY(-Angle);
+		m_LaserLeftRightRotMatrix.RotationY(-Angle);
 	}
 
 	// Player가 레이저를 바라봤을때, Player의 위치가 레이저 쏘는 위치보다 왼쪽에 존재
@@ -217,10 +213,10 @@ void CEyeLaserComponent::TrackPlayer(float DeltaTime)
 	{
 		// 회전은 로컬축 기준이라 Z축 회전을 하지만 World기준은 Y방향이므로 Matrix는 Y축 회전 Matrix를 만든다
 		//m_AnimComp->AddWorldRotationZ(DeltaTime * 7.f);
-		AddWorldRotationY(DeltaTime * 7.f);
+		AddWorldRotationY(Angle);
 		if(m_RayCollider)
-			m_RayCollider->AddWorldRotationY(DeltaTime * 7.f);
-		m_LaserLeftRightRotMatrix.RotationY(DeltaTime * 7.f);
+			m_RayCollider->AddWorldRotationY(Angle);
+		m_LaserLeftRightRotMatrix.RotationY(Angle);
 	}
 
 	Vector3 AxisZ = m_LaserGenerator->GetWorldAxis(AXIS_Z);
@@ -236,10 +232,10 @@ void CEyeLaserComponent::TrackPlayer(float DeltaTime)
 		Vector3 CrossVec = m_CurrentLaserLeftRightDir.Cross(AxisZ);
 
 		if (CrossVec.y > 0.f)
-			LaserDegree *= -1.f;
+			Angle *= -1.f;
 
 		if(abs(LaserDegree) > 1.f)
-			m_LaserGenerator->AddWorldRotationY(LaserDegree * DeltaTime);
+			m_LaserGenerator->AddWorldRotationY(Angle);
 	}
 }
 
@@ -261,35 +257,41 @@ void CEyeLaserComponent::FaceCamera()
 	Vector3 CameraPos = m_Scene->GetCameraManager()->GetCurrentCamera()->GetWorldPos();
 	Vector3 MyPos = GetWorldPos();
 
-	m_NormalDir.x = 0.f;
+	Vector3 NormalDir = Vector3(0.f, 1.f, 0.f);
+
+	//m_NormalDir.z = 0.f;
 	//CameraPos.x = MyPos.x;
 	Vector3	View = CameraPos - MyPos;
-
+	View.z = 0.f;
 	View.Normalize();
 
 	float Angle = 0.f;
-	float DotProduct = m_NormalDir.Dot(View);
+	float DotProduct = View.Dot(NormalDir);
 
 	if (DotProduct >= -0.9999999f && DotProduct <= 0.9999999f)
 	{
-		Angle = RadianToDegree(acosf(DotProduct));
+		Vector3 ViewXZPlaneVec = Vector3(View.x, 0.f, View.z);
+		Vector3 LaserRot = GetWorldRot();
+		Vector3 LaserXZPlaneVec = Vector3(LaserRot.x, 0.f, LaserRot.z);
 
-		Vector3 RotDir = m_NormalDir.Cross(View);
-		RotDir.Normalize();
+		float DotProduct2 = ViewXZPlaneVec.Dot(LaserXZPlaneVec);
+		if (DotProduct2 >= -0.9999999f && DotProduct2 <= 0.9999999f)
+		{
+			float Angle2 = RadianToDegree(acosf(DotProduct2));
 
-		if (RotDir.x < 0.f)
-			Angle *= -1.f;
+			if (Angle2 != 0.f)
+			{
+				Angle = RadianToDegree(acosf(DotProduct));
 
-		SetWorldRotationZ(Angle);
+				Vector3 RotDir = View.Cross(NormalDir);
+				RotDir.Normalize();
 
+				if (RotDir.z > 0.f)
+					Angle *= -1.f;
 
-
-		Vector3 RotAngle = Vector3(Angle, 0.f, 0.f);
-
-		Matrix mat;
-		mat.Rotation(RotAngle);
-
-		m_NormalDir = m_NormalDir.TransformCoord(mat);
+				SetWorldRotationZ(Angle);
+			}
+		}
 	}
 }
 
@@ -305,14 +307,14 @@ void CEyeLaserComponent::OnRaserCollisionBegin(const CollisionResult& Result)
 	}
 
 	Vector3 RayScale = m_RayCollider->GetWorldScale();
-	SetWorldScale(0.5f, 1.f, RayScale.x);
+	SetWorldScale(0.3f, 1.f, RayScale.x);
 
 }
 
 void CEyeLaserComponent::OnRaserCollisionStay(const CollisionResult& Result)
 {
 	Vector3 RayScale = m_RayCollider->GetWorldScale();
-	SetWorldScale(0.5f, 1.f, RayScale.x);
+	SetWorldScale(0.3f, 1.f, RayScale.x);
 }
 
 void CEyeLaserComponent::OnRaserCollisionEnd(const CollisionResult& Result)
@@ -321,7 +323,7 @@ void CEyeLaserComponent::OnRaserCollisionEnd(const CollisionResult& Result)
 		return;
 
 	m_RayCollider->SetWorldScale(500.f, 1.f, 1.f);
-	SetWorldScale(0.5f, 1.f, 500.f);
+	SetWorldScale(0.3f, 1.f, 500.f);
 
 }
 

@@ -33,6 +33,7 @@ NodeResult CCrowBossFlyNode::OnUpdate(float DeltaTime)
 	CCrowBossDataComponent* Data = dynamic_cast<CCrowBossDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
 	Data->GetMeleeAttackCollider()->Enable(true);
 
+	Data->GetHitBox()->SetRigidCollisionIgnore(true);
 	Data->Fly(Data->GetShootDir(), DeltaTime);
 
 	return NodeResult::Node_True;

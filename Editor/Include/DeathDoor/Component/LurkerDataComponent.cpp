@@ -10,7 +10,8 @@ CLurkerDataComponent::CLurkerDataComponent()
 	m_ComponentType = Component_Type::ObjectComponent;
 }
 
-CLurkerDataComponent::CLurkerDataComponent(const CLurkerDataComponent& com)
+CLurkerDataComponent::CLurkerDataComponent(const CLurkerDataComponent& com)	:
+	CMonsterDataComponent(com)
 {
 }
 

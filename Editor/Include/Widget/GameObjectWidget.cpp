@@ -28,6 +28,7 @@
 #include "../DeathDoor/Component/CrackedBlockCollider.h"
 // ObjectComponent
 #include "Component/PaperBurnComponent.h"
+#include "../DeathDoor/Component/TriggerBoxData.h"
 // SceneCompWidget
 #include "../DeathDoor/Component/PlayerHookComponent.h"
 #include "../DeathDoor/Component/EyeLaserComponent.h"
@@ -45,9 +46,11 @@
 #include "../Widget/WaterComponentWidget.h"
 #include "../Widget/CameraWidget.h"
 #include "../Widget/ArmComponentWidget.h"
+
 // ObjCompWidget
 #include "../Widget/PaperBurnWidget.h"
 #include "../Widget/EyeLaserComponentWidget.h"
+#include "../Widget/TriggerBoxDataWidget.h"
 #include "IMGUIManager.h"
 #include "../EditorInfo.h"
 
@@ -126,6 +129,9 @@ void CGameObjectWidget::ClearComponentWidget()
 
 void CGameObjectWidget::SetGameObject(CGameObject* Obj)
 {
+	if (!Obj)
+		return;
+
 	m_Object = Obj;
 
 	if (m_Object->IsEnemy())
@@ -263,6 +269,12 @@ void CGameObjectWidget::CreateObjectComponentWidget(CObjectComponent* Com)
 	{
 		Widget = AddWidget<CPaperBurnWidget>("PaperBurnWidget");
 	}
+
+	else if (TypeID == typeid(CTriggerBoxData).hash_code())
+	{
+		Widget = AddWidget<CTriggerBoxDataWidget>("TriggerBoxDataWidget");
+	}
+
 	else
 	{
 		Widget = AddWidget<CObjectComponentWidget>("DefaultObjCompWidget");
