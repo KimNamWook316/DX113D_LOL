@@ -336,6 +336,13 @@ void CBossBettyDataComponent::OnBossBettyDisableAttackCollider()
 void CBossBettyDataComponent::OnBossBettyActivateAfterEffect(const Vector3& WorldPos)
 {
     CGameObject* AfterEffectParticle = CObjectPool::GetInst()->GetParticle("BettyAttackAfterEffect", CSceneManager::GetInst()->GetScene());
+
+    if (!AfterEffectParticle)
+    {
+        bool True = false;
+        AfterEffectParticle = CObjectPool::GetInst()->GetParticle("BettyAttackAfterEffect", CSceneManager::GetInst()->GetScene());
+    }
+
     AfterEffectParticle->Enable(true);
     AfterEffectParticle->SetWorldPos(WorldPos);
 

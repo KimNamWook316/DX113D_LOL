@@ -197,7 +197,7 @@ void CParticleComponent::Reset()
 	// 현재 살아있던 Particle 들을 모두 Alive False 로 만들어줄 것이다.
 	m_CBuffer->SetDestroyExstingAllLivingParticles(true);
 
-	m_TempCreateAccTimeMax = 0.f;
+	m_TempCreateAccTime = 0.f;
 	
 	// 구조화 버퍼 정보 Update
 	m_CBuffer->UpdateCBuffer();
@@ -248,29 +248,9 @@ void CParticleComponent::Update(float DeltaTime)
 			// - 해당 Component만을 Enable False 처리해줘야 한다.
 			CRef::Enable(false);
 
-			// 1. Object Pool 에서 가져온 Particle일 경우 Destroy 시켜서 다시 Pool 에 되돌릴 것이다.
-			if (m_Object->IsInPool())
-			{
-				m_Object->Destroy();
-			}
 			return;
 		}
 	}
-
-	// DestroyExsting All Particles (상수 버퍼) 변수가 true 로 세팅되고 난 이후
-	// 일정 시간 지나면 다시 false 로 만들어주기
-	// if (m_CBuffer->IsDestroyExstingAllLivingParticlesEnabled())
-	// {
-	// 	if (m_DestroyExstingAllParticlesAccTime > 0.f)
-	// 	{
-	// 		m_DestroyExstingAllParticlesAccTime -= DeltaTime;
-	// 
-	// 		if (m_DestroyExstingAllParticlesAccTime < 0.f)
-	// 		{
-	// 			m_CBuffer->SetDestroyExstingAllLivingParticles(false);
-	// 		}
-	// 	}
-	// };
 
 	m_SpawnTime += DeltaTime;
 
@@ -582,6 +562,13 @@ void CParticleComponent::RecreateOnlyOnceCreatedParticle()
 	for (size_t i = 0; i < BufferCount; ++i)
 	{
 		m_vecStructuredBuffer[i]->ResetShader();
+	}
+
+	// Object Pool 에서 가져온 Particle일 경우 Destroy 시켜서 다시 Pool 에 되돌릴 것이다.
+	// -  m_TempCreateAccTimeMax 만큼 LifeTime 을 세팅해줄 것이다.
+	if (m_Object->IsInPool())
+	{
+		m_Object->SetLifeSpan(m_TempCreateAccTimeMax);
 	}
 }
 

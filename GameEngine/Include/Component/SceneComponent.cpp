@@ -529,6 +529,10 @@ void CSceneComponent::Update(float DeltaTime)
 
 	for (size_t i = 0; i < Size; ++i)
 	{
+		// (OBJ가 추가)
+		if (m_vecChild[i]->IsEnable() == false)
+			continue;
+
 		m_vecChild[i]->Update(DeltaTime);
 	}
 }
@@ -541,6 +545,10 @@ void CSceneComponent::PostUpdate(float DeltaTime)
 
 	for (size_t i = 0; i < Size; ++i)
 	{
+		// (OBJ가 추가)
+		if (m_vecChild[i]->IsEnable() == false)
+			continue;
+
 		m_vecChild[i]->PostUpdate(DeltaTime);
 	}
 }

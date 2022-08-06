@@ -101,6 +101,7 @@ void CGameObject::SetScene(CScene* Scene)
 void CGameObject::Destroy()
 {
 	CRef::Destroy();
+
 	if (m_InPool)
 	{
 		Reset();
