@@ -75,6 +75,12 @@ CParticleComponent::~CParticleComponent()
 	SAFE_DELETE(m_CBuffer);
 }
 
+void CParticleComponent::StartParticle(const Vector3& StartPos)
+{
+	SetWorldPos(StartPos);
+	ResetParticleStructuredBufferInfo();
+}
+
 void CParticleComponent::SetParticle(const std::string& Name)
 {
 	SetParticle(m_Scene->GetResource()->FindParticle(Name));

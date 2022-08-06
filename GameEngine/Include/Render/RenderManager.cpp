@@ -1533,7 +1533,10 @@ void CRenderManager::UpdateInstancingInfo(int LayerIndex, bool UpdateShadow)
 
 		vecInfo.reserve(SBufferSize);
 
-		if (UpdateShadow)
+		// 그림자 적용 여부 
+		bool DrawShadow = RenderComponent->IsDrawShadow();
+
+		if (DrawShadow)
 		{
 			// ShadowBuffer
 			vecShadowInfo.reserve(SBufferSize);
@@ -1580,7 +1583,7 @@ void CRenderManager::UpdateInstancingInfo(int LayerIndex, bool UpdateShadow)
 				(*iter)->SetInstancingShadowInfo(&ShadowInfo);
 				Material->GetCBuffer()->SetInstancingInfo(&ShadowInfo);
 
-				if (UpdateShadow)
+				if (DrawShadow)
 				{
 					vecShadowInfo.push_back(ShadowInfo);
 				}
@@ -1590,7 +1593,7 @@ void CRenderManager::UpdateInstancingInfo(int LayerIndex, bool UpdateShadow)
 		InstancingList->Buffer->UpdateBuffer(&vecInfo[0],
 			(int)SBufferSize);
 
-		if (UpdateShadow)
+		if (DrawShadow)
 		{
 			InstancingList->ShadowBuffer->UpdateBuffer(&vecShadowInfo[0],
 				(int)SBufferSize);
@@ -1664,6 +1667,13 @@ void CRenderManager::RenderDefaultInstancingShadow()
 	for (int i = 0; i < InstancingIndex; ++i)
 	{
 		RenderInstancingList* InstancingList = m_RenderLayerList[(int)RenderLayerType::Default]->m_vecInstancing[i];
+
+		bool DrawShadow = InstancingList->RenderList.front()->IsDrawShadow();
+
+		if (!DrawShadow)
+		{
+			continue;
+		}
 
 		// Material Slot 수만큼 반복한다.
 		int	SlotCount = 0;

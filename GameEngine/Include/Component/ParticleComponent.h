@@ -41,6 +41,7 @@ protected:
 private :
 	std::string m_ParticleName;
 public:
+	void StartParticle(const Vector3& StartPos);
 	void SetParticle(const std::string& Name);
 	void SetParticle(CParticle* Particle);
 	void SetParticleWithOutCloneShader(CParticle* Particle);

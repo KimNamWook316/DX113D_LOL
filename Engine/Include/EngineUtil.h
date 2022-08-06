@@ -22,6 +22,9 @@ public:
 	// 해당 Dir 경로에, 해당 Name 으로 된 파일이 존재하는지 판단해주는 함수 + 존재할 시 FullPath 경로 리턴
 	static std::optional<std::string> CheckAndExtractFullPathOfTargetFile(std::string_view Path, std::string_view FileName);
 
+	// FullPath로부터 매크로로 정의된 PathName을 제외한 FileName을 리턴
+	static std::string ExtractFilePathFromFullPath(const std::string& FullPath, const std::string& PathName);
+
 	// 혹시나 "\\"가 경로에 있다면, 맨처음 경로부터 "\\" 까지의 정보를 뽑아내주는 함수
 	// C::Program\\OBJ\\Material\\Hello.mtrl ? => C::Program\\OBJ\\Material\\ 까지의 정보를 뽑아와준다.
 	static bool GetPathInfoBeforeFileName(const std::string& FilePath, std::string& ExtractedPathInfo);
