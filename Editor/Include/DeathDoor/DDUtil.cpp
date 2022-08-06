@@ -25,6 +25,7 @@
 #include "Component\LadderCollider.h"
 #include "Component\HeadRollerDataComponent.h"
 #include "Component\DodgerDataComponent.h"
+#include "Component\PlagueKnightDataComponent.h"
 
 // TODO : Death Door SceneMode 추가시마다 업데이트
 #include "Scene/DDSceneMode.h"
@@ -419,6 +420,8 @@ std::string CDDUtil::DDActionNodeTypeToString(DDActionNode NodeType)
 	case DDActionNode::ChasePlayer:
 		return "ChasePlayer";
 
+	case DDActionNode::MeleeAttack:
+		return "MeleeAttack";
 
 	case DDActionNode::ClimbUp:
 		return "ClimbUp";
@@ -514,6 +517,10 @@ std::string CDDUtil::DDActionNodeTypeToString(DDActionNode NodeType)
 		return "DodgerPostAttack";
 	case DDActionNode::DodgerDash:
 		return "DodgerDash";
+
+	// PlaugeKnight
+	case DDActionNode::PlagueKnightShoot:
+		return "PlagueKnightShoot";
 	}
 
 	return "";
@@ -572,6 +579,10 @@ DDActionNode CDDUtil::StringToDDActionNodeType(const std::string& Str)
 	else if (Str == "ChasePlayer")
 	{
 		return DDActionNode::ChasePlayer;
+	}
+	else if (Str == "MeleeAttack")
+	{
+		return DDActionNode::MeleeAttack;
 	}
 
 	else if (Str == "ClimbDown")
@@ -718,6 +729,12 @@ DDActionNode CDDUtil::StringToDDActionNodeType(const std::string& Str)
 		return DDActionNode::DodgerDash;
 	}
 
+	// Plague Knight
+	else if (Str == "PlagueKnightShoot")
+	{
+		return DDActionNode::PlagueKnightShoot;
+	}
+
 
 	return DDActionNode(-1);
 }
@@ -846,6 +863,9 @@ std::string CDDUtil::DDObjectComponentTypeToString(DDObjectComponentType Type)
 
 	case DDObjectComponentType::DodgerData:
 		return "DodgerData";
+
+	case DDObjectComponentType::PlagueKnightData:
+		return "PlagueKnightData";
 	}
 
 	return "";
@@ -965,6 +985,8 @@ size_t CDDUtil::DDObjectComponentTypeToTypeID(DDObjectComponentType Type)
 		return typeid(CHeadRollerDataComponent).hash_code();
 	case DDObjectComponentType::DodgerData:
 		return typeid(CDodgerDataComponent).hash_code();
+	case DDObjectComponentType::PlagueKnightData:
+		return typeid(CPlagueKnightDataComponent).hash_code();
 	}
 	return -1;
 }

@@ -33,6 +33,7 @@ enum class DDActionNode
 	PlayerRoll,
 	// Monster
 	ChasePlayer,
+	MeleeAttack,
 	// BossBetty
 	BossBettyAngryAttack,
 	BossBettyChangeAttackDir,
@@ -61,6 +62,8 @@ enum class DDActionNode
 	DodgerSecondAttack,
 	DodgerPostAttack,
 	DodgerDash,
+	// PlagueKnight
+	PlagueKnightShoot,
 	Max
 };
 
@@ -157,6 +160,7 @@ enum class DDObjectComponentType
 	MonsterBulletData,
 	HeadRollerData,
 	DodgerData,
+	PlagueKnightData,
 	Max
 };
 

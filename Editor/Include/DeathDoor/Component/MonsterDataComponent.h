@@ -171,6 +171,7 @@ public:
 	bool IsPlayerInMeleeAttackRange();
 	Vector3	ToPlayer();
 	float DistToPlayer();
+	bool IsPlayerInStopChaseRange();	// 길찾기를 종료해야 하는 범위에 있는지 (기본적으로 MeleeAttackRange)
 		
 public:
 	virtual bool Save(FILE* File);
@@ -241,6 +242,9 @@ protected:
     bool m_IsCutScenePlaying;
     class CCameraComponent* m_CutSceneCam;
     Vector3 m_CutSceneBeforePlayerPos;
+
+	// 길찾기 종료하는 거리
+	float m_StopChaseRange;
 
 public:
 	class CMonsterNavAgent* GetMonsterNavAgent()	const;

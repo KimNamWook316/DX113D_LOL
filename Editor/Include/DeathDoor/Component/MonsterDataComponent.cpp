@@ -114,6 +114,7 @@ void CMonsterDataComponent::Start()
 
 	if (m_MeleeAttackCollider)
 	{
+		m_MeleeAttackCollider->Enable(false);
 		m_MeleeAttackCollider->AddCollisionCallback(Collision_State::Begin, this, &CMonsterDataComponent::OnHitMeleeAttack);
 	}
 	
@@ -640,6 +641,29 @@ float CMonsterDataComponent::DistToPlayer()
 	float Dist = MyPos.Distance(PlayerPos);
 
 	return MyPos.Distance(PlayerPos);;
+}
+
+bool CMonsterDataComponent::IsPlayerInStopChaseRange()
+{
+	CGameObject* PlayerObj = m_Scene->GetPlayerObject();
+
+	if (!PlayerObj)
+	{
+		return false;
+	}
+
+	Vector3 MyPos = m_Object->GetWorldPos();
+	Vector3 PlayerPos = PlayerObj->GetWorldPos();
+	float Dist = MyPos.Distance(PlayerPos);
+
+	// 기본적으로 Start에서 StopChaseRange는 MeleeAttackRange로 설정
+	// ChasePlyerNode에서 사용
+	if (Dist <= m_StopChaseRange)
+	{
+		return true;
+	}
+
+	return false;
 }
 
 bool CMonsterDataComponent::Save(FILE* File)

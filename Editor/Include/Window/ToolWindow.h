@@ -35,7 +35,7 @@ public:
 	void OnWDown(float DetlaTime);
 	void OnEDown(float DetlaTime);
 
-private:
+public:
 	void OnSelectGizmoOperationMode(const char* Label, bool Check);
 	void OnSelectGizmoTransformMode(const char* Label, bool Check);
 	void OnChangeCameraSpeed(float Speed);

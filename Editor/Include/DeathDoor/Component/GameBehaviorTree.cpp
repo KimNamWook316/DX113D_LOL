@@ -57,6 +57,7 @@
 #include "Node/PlayerEnterZoneCheckNode.h"
 #include "Node/PlayerEnterTriggerIsEnable.h"
 #include "Node/ChasePlayerNode.h"
+#include "Node/MeleeAttackNode.h"
 
 // Boss - Knight
 #include "Node/BossKnightContinueAttackNode.h"
@@ -127,6 +128,9 @@
 #include "Node/DodgerPostAttackNode.h"
 #include "Node/DodgerSecondAttackCheck.h"
 #include "Node/DodgerSecondAttackNode.h"
+
+// Monster - Plauge Knight
+#include "Node/PlagueKnightShootNode.h"
 
 #include "GameStateComponent.h"
 
@@ -432,6 +436,11 @@ CNode* CGameBehaviorTree::LoadNode(CNode* Parent, size_t TypeID)
 		NewNode = MakeNode<CChasePlayerNode>(Parent, OwnerObject);
 	}
 
+	else if (TypeID == typeid(CMeleeAttackNode).hash_code())
+	{
+		NewNode = MakeNode<CMeleeAttackNode>(Parent, OwnerObject);
+	}
+
 	// Boss Knight - Action
 	else if (TypeID == typeid(CBossKnightContinueAttackNode).hash_code())
 	{
@@ -675,6 +684,12 @@ CNode* CGameBehaviorTree::LoadNode(CNode* Parent, size_t TypeID)
 	else if (TypeID == typeid(CDodgerSecondAttackNode).hash_code())
 	{
 		NewNode = MakeNode<CDodgerSecondAttackNode>(Parent, OwnerObject);
+	}
+
+	// Plague Knight
+	else if (TypeID == typeid(CPlagueKnightShootNode).hash_code())
+	{
+		NewNode = MakeNode<CPlagueKnightShootNode>(Parent, OwnerObject);
 	}
 
 	return NewNode;

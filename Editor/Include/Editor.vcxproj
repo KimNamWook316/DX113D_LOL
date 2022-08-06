@@ -283,6 +283,7 @@
     <ClCompile Include="DeathDoor\Component\Node\IsCombatCheck.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\Lockstone3TriggerBoxAction.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\Lockstone3TriggerBoxHitCheck.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\MeleeAttackNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\MeleeRangeCheckNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\MouseLButtonCheckNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\MouseRButtonCheckNode.cpp" />
@@ -293,6 +294,7 @@
     <ClCompile Include="DeathDoor\Component\Node\NoInterruptNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\NormalAttack.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\PathFindEnableCheck.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\PlagueKnightShootNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\PlayerEnterTriggerIsEnable.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\PlayerEnterZoneCheckNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\PlayerRoll.cpp" />
@@ -308,6 +310,7 @@
     <ClCompile Include="DeathDoor\Component\Node\UpdateInputQueue.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\WKeyInputCheck.cpp" />
     <ClCompile Include="DeathDoor\Component\ObjectDataComponent.cpp" />
+    <ClCompile Include="DeathDoor\Component\PlagueKnightDataComponent.cpp" />
     <ClCompile Include="DeathDoor\Component\PlayerBombComponent.cpp" />
     <ClCompile Include="DeathDoor\Component\PlayerBowComponent.cpp" />
     <ClCompile Include="DeathDoor\Component\PlayerDataComponent.cpp" />
@@ -512,6 +515,7 @@
     <ClInclude Include="DeathDoor\Component\Node\IsCombatCheck.h" />
     <ClInclude Include="DeathDoor\Component\Node\Lockstone3TriggerBoxAction.h" />
     <ClInclude Include="DeathDoor\Component\Node\Lockstone3TriggerBoxHitCheck.h" />
+    <ClInclude Include="DeathDoor\Component\Node\MeleeAttackNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\MeleeRangeCheckNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\MouseLButtonCheckNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\MouseRButtonCheckNode.h" />
@@ -522,6 +526,7 @@
     <ClInclude Include="DeathDoor\Component\Node\NoInterruptNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\NormalAttack.h" />
     <ClInclude Include="DeathDoor\Component\Node\PathFindEnableCheck.h" />
+    <ClInclude Include="DeathDoor\Component\Node\PlagueKnightShootNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\PlayerEnterTriggerIsEnable.h" />
     <ClInclude Include="DeathDoor\Component\Node\PlayerEnterZoneCheckNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\PlayerRoll.h" />
@@ -537,6 +542,7 @@
     <ClInclude Include="DeathDoor\Component\Node\UpdateInputQueue.h" />
     <ClInclude Include="DeathDoor\Component\Node\WKeyInputCheck.h" />
     <ClInclude Include="DeathDoor\Component\ObjectDataComponent.h" />
+    <ClInclude Include="DeathDoor\Component\PlagueKnightDataComponent.h" />
     <ClInclude Include="DeathDoor\Component\PlayerBombComponent.h" />
     <ClInclude Include="DeathDoor\Component\PlayerBowComponent.h" />
     <ClInclude Include="DeathDoor\Component\PlayerDataComponent.h" />

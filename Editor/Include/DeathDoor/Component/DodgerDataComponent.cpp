@@ -32,6 +32,8 @@ void CDodgerDataComponent::Start()
 
 	m_Data = CDataManager::GetInst()->GetObjectData("Dodger");
 
+	m_StopChaseRange = m_Data.MeleeAttackRange;
+
 	CAnimationSequenceInstance* AnimInst = m_AnimMesh->GetAnimationInstance();
 
 	AnimInst->AddNotify("AttackReady", "OnAttackReady", 0, (CMonsterDataComponent*)this, &CMonsterDataComponent::OnEnableLookPlayer);

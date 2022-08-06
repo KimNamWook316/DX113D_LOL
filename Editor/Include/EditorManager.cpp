@@ -49,6 +49,7 @@
 #include "DeathDoor\Component/MonsterBulletData.h"
 #include "DeathDoor\Component/HeadRollerDataComponent.h"
 #include "DeathDoor\Component/DodgerDataComponent.h"
+#include "DeathDoor\Component/PlagueKnightDataComponent.h"
 // Window
 #include "Window/ObjectHierarchyWindow.h"
 #include "Window/SceneComponentHierarchyWindow.h"
@@ -273,23 +274,23 @@ void CEditorManager::CreateSceneMode(CScene* Scene, size_t Type)
 	// TODO : DeathDoor Scene Mode Type 추가될 때마다 업데이트
 	if (Type == typeid(CDefaultScene).hash_code())
 	{
-		Scene->LoadSceneMode<CDefaultScene>();
+		Scene->CreateSceneMode<CDefaultScene>();
 	}
 	else if (Type == typeid(CDDSceneMode).hash_code())
 	{
-		Scene->LoadSceneMode<CDDSceneMode>();
+		Scene->CreateSceneMode<CDDSceneMode>();
 	}
 	else if (Type == typeid(CDDBossSceneMode).hash_code())
 	{
-		Scene->LoadSceneMode<CDDBossSceneMode>();
+		Scene->CreateSceneMode<CDDBossSceneMode>();
 	}
 	else if (Type == typeid(CDDInstanceSceneMode).hash_code())
 	{
-		Scene->LoadSceneMode<CDDInstanceSceneMode>();
+		Scene->CreateSceneMode<CDDInstanceSceneMode>();
 	}
 	else if (Type == typeid(CDDPuzzleSceneMode).hash_code())
 	{
-		Scene->LoadSceneMode<CDDPuzzleSceneMode>();
+		Scene->CreateSceneMode<CDDPuzzleSceneMode>();
 	}
 }
 
@@ -566,6 +567,12 @@ CComponent* CEditorManager::CreateComponent(CGameObject* Obj, size_t Type)
 	else if (Type == typeid(CDodgerDataComponent).hash_code())
 	{
 		CDodgerDataComponent* Component = Obj->LoadObjectComponent<CDodgerDataComponent>();
+		return Component;
+	}
+
+	else if (Type == typeid(CPlagueKnightDataComponent).hash_code())
+	{
+		CPlagueKnightDataComponent* Component = Obj->LoadObjectComponent<CPlagueKnightDataComponent>();
 		return Component;
 	}
 
