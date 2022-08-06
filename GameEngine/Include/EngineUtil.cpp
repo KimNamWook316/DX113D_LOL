@@ -259,6 +259,26 @@ bool CEngineUtil::GetPathInfoBeforeFileName(const std::string& FilePath, std::st
 	return true;
 }
 
+std::string CEngineUtil::ExtractFilePathFromFullPath(const std::string& FullPath, const std::string& PathName)
+{
+	const PathInfo* Info = nullptr;
+	Info = CPathManager::GetInst()->FindPath(PathName);
+
+	if (!Info)
+	{
+		return "";
+	}
+
+	std::string Path = Info->PathMultibyte;
+
+	int Length = (int)FullPath.length() - (int)Path.length() + 1;
+
+	std::string FilePath = FullPath.substr(Path.length(), Length);
+
+	return FilePath;
+}
+
+
 bool CEngineUtil::GetFileNameAfterSlash(const std::string& FilePath, std::string& ExtractedFileName)
 {
 	int FilePathLength = (int)FilePath.size();
