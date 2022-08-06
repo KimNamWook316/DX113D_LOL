@@ -631,7 +631,7 @@ void ParticleUpdate(uint3 ThreadID : SV_DispatchThreadID)
 	{
 		// SpawnCount 만큼 한번에 생성해버리고, 
 		// 차후 새로운 Particle 은 생성하지 않으려고 한다면
-		if (g_ParticleShare[0].CurrentSpawnCountSum >= g_ParticleSpawnCountMax &&
+		if (g_ParticleShare[0].CurrentSpawnCountSum + 1 >= g_ParticleSpawnCountMax &&
 			g_ParticleDisableNewAlive == 1)
 		{
 			// if (g_ParticleShare[0].CurrentSpawnCountSum > g_ParticleSpawnCountMax && g_ParticleDisableNewAlive == 1) -> 한개가 더 생성됨
@@ -668,7 +668,14 @@ void ParticleUpdate(uint3 ThreadID : SV_DispatchThreadID)
 		// g_ParticleDisableNewAlive 에 따라서, 공유 구조화 버퍼에 CurrentSpawnCountSum 세팅하기 
 		if (g_ParticleDisableNewAlive == 1)
 		{
-			g_ParticleShare[0].CurrentSpawnCountSum += 1;
+			if (g_ParticleResetSharedInfoSpawnCntSum == 1)
+			{
+				g_ParticleShare[0].CurrentSpawnCountSum = 0;
+			}
+			else
+			{
+				g_ParticleShare[0].CurrentSpawnCountSum += 1;
+			}
 		}
 		else
 		{

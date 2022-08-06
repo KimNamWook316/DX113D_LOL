@@ -50,7 +50,7 @@ void CBossBettyDataComponent::Start()
     m_OriginRotSpeed = m_Data.RotateSpeedPerSec;
     m_CurRotSpeed = m_OriginRotSpeed;
 
-    m_BettyHPMax = m_Data.HP;
+    m_BettyHPMax = (float)m_Data.HP;
 
     // HitBox 에 콜백을 걸어준다.
 

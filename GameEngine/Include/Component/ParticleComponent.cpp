@@ -19,8 +19,7 @@ CParticleComponent::CParticleComponent()	:
 	// m_ParticleMoveSpeed(20.f),
 	m_TempCreateAccTimeMax(5.f),
 	m_InfoShared{},
-	m_CBuffer(nullptr),
-	m_DestroyExstingAllParticlesAccTimeMax(5.f)
+	m_CBuffer(nullptr)
 {
 	SetTypeID<CParticleComponent>();
 	m_Render = true;
@@ -244,7 +243,7 @@ void CParticleComponent::Update(float DeltaTime)
 			m_TempCreateAccTime = 0.f;
 
 			// 어차피 한번만 그려질 Particle 이므로 Enable False 처리해준다.
-			// Enable(false);
+			Enable(false);
 
 			return;
 		}
@@ -507,13 +506,11 @@ void CParticleComponent::PostRender()
 		// 아래 코드를 세팅해주어야 딱 한번만 다시 생성되게 될 것이다.
 		if (m_CBuffer->IsDisableNewAlive())
 		{
-			m_CBuffer->SetResetParticleSharedInfoSumSpawnCnt(0);
+			m_CBuffer->SetResetParticleSharedInfoSumSpawnCnt(false);
 		}
 
 		if (m_CBuffer->IsDestroyExstingAllLivingParticlesEnabled() == 1)
-		// if (m_CBuffer->Is2D())
 		{
-			// m_CBuffer->Set2D(false);
 			m_CBuffer->SetDestroyExstingAllLivingParticles(false);
 		}
 	}
@@ -553,7 +550,7 @@ void CParticleComponent::ResetParticleStructuredBufferInfo()
 
 	if (m_CBuffer->IsDisableNewAlive())
 	{
-		m_CBuffer->SetResetParticleSharedInfoSumSpawnCnt(1);
+		m_CBuffer->SetResetParticleSharedInfoSumSpawnCnt(true);
 
 		m_TempCreateAccTime = m_TempCreateAccTimeMax;
 
@@ -561,6 +558,34 @@ void CParticleComponent::ResetParticleStructuredBufferInfo()
 		Enable(true);
 	}
 	
+	// 계산셰이더를 실행한다.
+	m_CBuffer->UpdateCBuffer(); 
+
+	size_t	BufferCount = m_vecStructuredBuffer.size();
+
+	// Normal Dist 구조화 버퍼 정보를 넘겨준다.
+	// m_NormalDistributionBuffer->SetShader();
+
+	for (size_t i = 0; i < BufferCount; ++i)
+	{
+		m_vecStructuredBuffer[i]->SetShader();
+	}
+
+	// UpdateShader의 Thread는 64, 1, 1을 사용하고 있다.
+	// 생성되야할 파티클의 전체 수에서 64개를 나눈다. 만약 64개를 최대파티클 수로 지정해주었다면
+	// 필요한 그룹의 수는 1개이다. 하지만 64개 미만이라면 64를 나눌 경우 0이 나오므로 여기에 1을 더해주어야 한다.
+	// 100개일 경우 그룹은 2개가 생성된다. 이때 스레드는 128개가 되므로 100개를 제외한 나머지 28개는 처리가 안되게
+	// 막아주면 되는것이다.
+	int	GroupCount = m_Particle->GetSpawnCountMax() / 64 + 1;
+
+	m_UpdateShader->Excute(GroupCount, 1, 1);
+
+	// m_NormalDistributionBuffer->ResetShader();
+
+	for (size_t i = 0; i < BufferCount; ++i)
+	{
+		m_vecStructuredBuffer[i]->ResetShader();
+	}
 }
 
 bool CParticleComponent::SaveOnly(FILE* File)
