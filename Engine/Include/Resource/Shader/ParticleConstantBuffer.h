@@ -218,9 +218,9 @@ public:
 	{
 		return m_BufferData.DisableNewAlive;
 	}
-	int IsUVClippingReflectingMoveDir() const
+	int IsLinearUVClippingEnabled() const
 	{
-		return m_BufferData.UVClippingReflectingMoveDir;
+		return m_BufferData.LinearUVClippingEnable;
 	}
 	int IsNoiseTextureSamplingApplied() const
 	{
@@ -230,7 +230,15 @@ public:
 	{
 		return m_BufferData.FollowRealTimeParticleComponentPos;
 	}
+	int IsDestroyExstingAllLivingParticlesEnabled() const
+	{
+		return m_BufferData.DestroyExistingAllLivingParticles ? 1 : 0;
+	}
 public:
+	void SetDestroyExstingAllLivingParticles(bool Enable)
+	{
+		m_BufferData.DestroyExistingAllLivingParticles = Enable ? 1 : 0;
+	}
 	// Follod Particle Component Pos
 	void SetFollowRealTimeParticleComponentPos(bool Enable) 
 	{
@@ -243,9 +251,9 @@ public:
 	}
 
 	// UV Clipping
-	void SetUVClippingReflectingMoveDirEnable(bool Enable)
+	void SetLinearUVClippingEnable(bool Enable)
 	{
-		m_BufferData.UVClippingReflectingMoveDir = Enable ? 1 : 0;
+		m_BufferData.LinearUVClippingEnable = Enable ? 1 : 0;
 	}
 
 	// Restart 버튼 ( 설명은 생성자 참고)

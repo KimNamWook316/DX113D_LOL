@@ -40,6 +40,8 @@ void CBossBettyChangeAttackDirNode::Init()
 		(CMonsterDataComponent*)Data, &CMonsterDataComponent::SetCurrentNodeNull);
 	AnimInst->AddNotify(AnimName, "DiableZMove", 20,
 		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnDisableMoveZ);
+	AnimInst->AddNotify(AnimName, "EnableCloseAttackChangeAnim", 20,
+		Data, &CBossBettyDataComponent::OnBossBettyEnableCloseAttackChangeAnim);
 
 	// End
 	AnimInst->SetEndFunction(AnimName, (CMonsterDataComponent*)Data, &CMonsterDataComponent::OnDisableLookPlayer);
@@ -60,6 +62,8 @@ NodeResult CBossBettyChangeAttackDirNode::OnStart(float DeltaTime)
 	CBossBettyDataComponent* Data = dynamic_cast<CBossBettyDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
 
 	float AngleToPlayer = Data->GetAnglePlayer();
+
+
 
 	if (AngleToPlayer > 90.f)
 		Data->SetCurRotSpeed(Data->GetOriginRotSpeed() * 1.5f);

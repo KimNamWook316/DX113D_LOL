@@ -131,7 +131,16 @@ void CMonsterDataComponent::Start()
 
 	if (m_BloodParticle)
 	{
+		// BloodParticle 들의 Particle 은, Particle Component 의 WorldPos 를 따라가게 해야 한다.
+		m_BloodParticle->GetCBuffer()->SetFollowRealTimeParticleComponentPos(true);
+
+		// 처음에는 Enable False 처리를 해줄 것이다.
 		m_BloodParticle->Enable(false);
+
+		// m_BloodParticle 은 Rot 을 주지 않을 것이다. Rot 을 주는 순간 모양이 흐뜨러지게 되기 때문이다.
+		m_BloodParticle->SetInheritRotX(false);
+		m_BloodParticle->SetInheritRotY(false);
+		m_BloodParticle->SetInheritRotZ(false);
 	}
 
 	CAnimationSequenceInstance* AnimInst = m_AnimMesh->GetAnimationInstance();
@@ -260,7 +269,7 @@ void CMonsterDataComponent::LookPlayer(float DeltaTime)
 
 	// (OBJ) 순간적으로 미세하게 떨리는 오류
 	// if (abs(AnglePlayer) < m_Data.RotateSpeedPerSec * DeltaTime)
-	if (abs(AnglePlayer) < 3.f)
+	if (abs(AnglePlayer) < 6.f)
 	{
 		// MyObj->AddWorldRotationY(AnglePlayer * DeltaTime);
 	}
@@ -449,6 +458,21 @@ void CMonsterDataComponent::OnEndCutScene()
 	}
 }
 
+void CMonsterDataComponent::OnActivateBloodParticle()
+{
+	if (!m_BloodParticle)
+		return;
+
+	// y 축으로 살짝 위에 생성되게 한다.
+	const Vector3& ObjectWorldPos = m_Object->GetWorldPos();
+	m_BloodParticle->SetWorldPos(ObjectWorldPos + Vector3(0.f, 2.f, 0.f));
+
+	// Enable True 로 만둘어줘서 다시 동작되게 한다.
+	m_BloodParticle->Enable(true);
+
+	m_BloodParticle->ResetParticleStructuredBufferInfo();
+}
+
 void CMonsterDataComponent::SetIsHit(bool Hit)
 {
 	CObjectDataComponent::SetIsHit(Hit);
@@ -461,6 +485,9 @@ void CMonsterDataComponent::SetIsHit(bool Hit)
 			m_HitEffectTimer = 0.f;
 			m_HitEffectStart = true;
 		}
+
+		// Blood Particle 을 동작시킨다.
+		OnActivateBloodParticle();
 	}
 }
 

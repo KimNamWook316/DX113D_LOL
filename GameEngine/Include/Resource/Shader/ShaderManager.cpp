@@ -295,7 +295,7 @@ bool CShaderManager::Init()
 	CreateConstantBuffer("WaterCBuffer", sizeof(WaterCBuffer), 13,
 		(int)Buffer_Shader_Type::Pixel);
 
-	CreateConstantBuffer("FadeCBuffer", sizeof(FadeCBuffer), 7,
+	CreateConstantBuffer("FadeCBuffer", sizeof(FadeCBuffer), 8,
 		(int)Buffer_Shader_Type::Pixel);
 
 	return true;

@@ -9,8 +9,7 @@
 #include "../BossBettyDataComponent.h"
 #include "BossBettyChangeAttackDirNode.h"
 
-CBossBettyCloseAttackNode::CBossBettyCloseAttackNode() :
-	m_CloseAttackAnimChangeEnable(true)
+CBossBettyCloseAttackNode::CBossBettyCloseAttackNode()
 {
 	SetTypeID(typeid(CBossBettyCloseAttackNode).hash_code());
 }
@@ -40,7 +39,7 @@ void CBossBettyCloseAttackNode::Init()
 	AnimInst->AddNotify(AnimName, "OnEnableRightLookPlayer", 13,
 		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnEnableRightLookPlayer);
 
-	AnimInst->AddNotify(AnimName, "OnSlashLeft", 15,
+	AnimInst->AddNotify(AnimName, "OnSlashLeft", 13,
 		this, &CBossBettyCloseAttackNode::OnBossBettySlashLeftEffect);
 
 	AnimInst->AddNotify(AnimName, "OnDisableRightLookPlayer", 20,
@@ -65,7 +64,7 @@ void CBossBettyCloseAttackNode::Init()
 		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnDisableLookPlayer);
 	AnimInst->AddNotify(AnimName, "OnEnableLeftLookPlayer", 13,
 		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnEnableLeftLookPlayer);
-	AnimInst->AddNotify(AnimName, "OnSlashRight", 15,
+	AnimInst->AddNotify(AnimName, "OnSlashRight", 13,
 		this, &CBossBettyCloseAttackNode::OnBossBettySlashRightEffect);
 	AnimInst->AddNotify(AnimName, "OnDisableLeftLookPlayer", 20,
 		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnDisableLeftLookPlayer);
@@ -136,6 +135,15 @@ NodeResult CBossBettyCloseAttackNode::OnStart(float DeltaTime)
 
 	m_Owner->SetCurrentNode(this);
 
+	// 근거리 공격 타입을 체크한다.
+	m_CloseAttackType = DetermineBettyCloseAttackType();
+
+	// 원래는 별도의 Condition Node 로 들어가야 하는 것
+	if (!Data->IsCloseAttackAnimChangeEnable())
+	{
+		return NodeResult::Node_True;
+	}
+
 	float AngleToPlayer = Data->GetAnglePlayer();
 
 	if (AngleToPlayer > 45.f)
@@ -143,17 +151,9 @@ NodeResult CBossBettyCloseAttackNode::OnStart(float DeltaTime)
 	else
 		Data->SetCurRotSpeed(Data->GetOriginRotSpeed());
 
-	// 근거리 공격 타입을 체크한다.
-	m_CloseAttackType = DetermineBettyCloseAttackType();
-
-	if (!m_CloseAttackAnimChangeEnable)
-	{
-		return NodeResult::Node_True;
-	}
-
 	m_Owner->SetCurrentNode(this);
 
-	m_CloseAttackAnimChangeEnable = false;
+	Data->SetCloseAttackAnimChangeEnable(false);
 
 	switch (m_CloseAttackType)
 	{
@@ -186,7 +186,7 @@ NodeResult CBossBettyCloseAttackNode::OnStart(float DeltaTime)
 	break;
 	case BossBettyCloseAttackType::NotInCloseRange:
 	{
-		m_CloseAttackAnimChangeEnable = true;
+		Data->SetCloseAttackAnimChangeEnable(true);
 
 		m_Owner->SetCurrentNode(nullptr);
 
@@ -288,7 +288,7 @@ void CBossBettyCloseAttackNode::OnBossBettySlashLeftEffect()
 
 	const Vector3& ColliderRelativePos = XWorldAxis * 6.0f * -1.f + ZWorldAxis;
 
-	Data->GetMeleeAttackCollider()->SetExtent(3.f, 3.f, 3.f);
+	Data->GetMeleeAttackCollider()->SetExtent(3.f, 3.f, 5.f);
 	Data->GetMeleeAttackCollider()->SetRelativePos(ColliderRelativePos);
 }
 
@@ -305,33 +305,22 @@ void CBossBettyCloseAttackNode::OnBossBettySlashRightEffect()
 
 	const Vector3& ColliderRelativePos = XWorldAxis * 6.0f + ZWorldAxis;
 
-	Data->GetMeleeAttackCollider()->SetExtent(3.f, 3.f, 3.f);
+	Data->GetMeleeAttackCollider()->SetExtent(3.f, 3.f, 5.f);
 	Data->GetMeleeAttackCollider()->SetRelativePos(ColliderRelativePos);
-}
-
-void CBossBettyCloseAttackNode::OnBossBettyEnableCloseAttackChangeAnim()
-{
-	m_CloseAttackAnimChangeEnable = true;
-}
-
-void CBossBettyCloseAttackNode::OnBossBettyDisableCloseAttackChangeAnim()
-{
-	m_CloseAttackAnimChangeEnable = false;
 }
 
 void CBossBettyCloseAttackNode::OnBossBettyCommonEndFunctionOfCloseAttack()
 {
+	CBossBettyDataComponent* Data = dynamic_cast<CBossBettyDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
+	
 	// Close Attack Anim 전환
-	OnBossBettyEnableCloseAttackChangeAnim();
+	Data->OnBossBettyEnableCloseAttackChangeAnim();
 
 	// Player 를 향해 회전하는 것 방지
-	CBossBettyDataComponent* Data = dynamic_cast<CBossBettyDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
 	Data->OnDisableLookPlayer();
 
 	// Current Node 를 nullptr 로 하여, 다른 Node 도 검사할 수 있게 한다.
 	m_Owner->SetCurrentNode(nullptr);
-
-	m_CloseAttackAnimChangeEnable = true;
 
 	// PosAttackDelay 상태에 둔다.
 	Data->SetAttackCoolDelayTimeEnable(true);

@@ -80,7 +80,7 @@ protected:
 
 public:
 	void Shake(float Time, float Amount);
-	void StartMove(const Vector3& StartPos, const Vector3& EndPos,
+	void StartMove(const Vector3& StartPos, const Vector3& EndPos, 
 		float MoveTime, bool Reverse = false, bool MoveFreeze = false);
 
 public:
@@ -155,7 +155,7 @@ public:
 	{
 		return m_MoveStartPos;
 	}
-
+	
 	const Vector3& GetMoveDestPos() const
 	{
 		return m_MoveDestPos;
@@ -229,7 +229,7 @@ public:
 	bool FrustumInPoint(const Vector3& Point);
 	bool FrustumInSphere(const SphereInfo& Sphere);
 
-public:
+public :
 	// 원하는 Width, Height에 맞춰서 Projection Matrix 를 만들어내는 함수
 	void CreateCustomResolutionProjMatrix(float Width, float Height);
 

@@ -35,17 +35,26 @@ void CBossBettySpinAttackNode::Init()
 
 	// 매우 느리게 앞으로 갈 수 있도록 한다.
 	// Move Speed 의 경우 BossDataComponent 에서 처리해주고 있다.
+	// 이제 Close Attack 은 가능하게 해야 한다. Far Attack 이 진행중이므로
+	AnimInst->AddNotify(AnimName, "EnableCloseAttackChangeAnim", 0,
+		Data, &CBossBettyDataComponent::OnBossBettyEnableCloseAttackChangeAnim);
 	AnimInst->AddNotify(AnimName, "EnableZMove", 0,
 		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnEnableMoveZ);
 	AnimInst->AddNotify(AnimName, "SlowMoveSpeed", 0,
 		Data, &CBossBettyDataComponent::OnBossBettyApplyOutOfMapSurroundingColliderMoveSpeed);
+	AnimInst->AddNotify(AnimName, "AttackColliderToOriginalPs", 0,
+		Data, &CBossBettyDataComponent::OnSetBossBettyAttackColliderPosToBettyBody);
 
 	// End
+	AnimInst->AddNotify(AnimName, "CameraShake", 17,
+		Data, &CBossBettyDataComponent::OnBossBettyNormalShakeCamera);
+
+	AnimInst->AddNotify(AnimName, "SetAttackColliderToBettyBodyPos", 17,
+		Data, &CBossBettyDataComponent::OnBossBettySetAttackColliderToBettyBodyPos);
+
 	// JumpSpin Animation 이 끝나면 바로 Spin Animation 으로 바꾼다.
 	AnimInst->SetEndFunction(AnimName,
 		this, &CBossBettySpinAttackNode::OnBossBettyChangeToSpinAnimation);
-	AnimInst->AddNotify(AnimName, "CameraShake", 17,
-		Data, &CBossBettyDataComponent::OnBossBettyNormalShakeCamera);
 
 	// 2) Spin
 	AnimName = "Spin";
@@ -57,13 +66,12 @@ void CBossBettySpinAttackNode::Init()
 	AnimInst->AddNotify(AnimName, "DisalbeLookPlayer", 0,
 		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnDisableLookPlayer);
 	AnimInst->AddNotify(AnimName, "EnableSpinCollider", 0,
-		Data, &CBossBettyDataComponent::OnBossBettyEnableSpinCollider);
+		Data, &CBossBettyDataComponent::OnBossBettyEnableSpinCollider);	
 	AnimInst->AddNotify(AnimName, "ResetMoveSpeed", 0,
 		Data, &CBossBettyDataComponent::OnBossBettyResetOriginalMoveSpeed);
 	AnimInst->AddNotify(AnimName, "EnableAttackCollider", 2,
 		Data, &CBossBettyDataComponent::OnBossBettyEnableAttackCollider);
-	AnimInst->AddNotify(AnimName, "AttackColliderToOriginalPs", 0,
-		Data, &CBossBettyDataComponent::OnSetBossBettyAttackColliderPosToBettyBody);
+
 
 	// 2) Spin Collide
 	AnimName = "SpinCollide";

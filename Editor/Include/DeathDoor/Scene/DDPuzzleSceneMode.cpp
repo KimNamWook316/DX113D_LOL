@@ -218,4 +218,6 @@ bool CDDPuzzleSceneMode::SetLadderObjectName(const std::string& Name)
 	}
 
 	m_LadderObjectName = Name;
+
+	return true;
 }

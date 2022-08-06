@@ -62,7 +62,7 @@ struct	ParticleCBuffer
 	// Particle Component 상에서 적용하는 Scale 정보
 	Vector3 CommonWorldScale;
 	// 진행 방향으로 점점 UV Clipping 되는 효과 구현하기 
-	int UVClippingReflectingMoveDir;
+	int LinearUVClippingEnable;
 
 	Vector3 CommonParticleComponentWorldPos;
 	int SpeedChangeMethod; // Linear, 지수 분포
@@ -74,7 +74,7 @@ struct	ParticleCBuffer
 
 	Vector3 ParticleEmptyInfo1;
 	Vector3 ParticleEmptyInfo2;
-	float ParticleInfo1;
+	int DestroyExistingAllLivingParticles; // 현재 살아있는 Particle 들을 모두 Alive False 로 만들어주기 
 	float ParticleInfo2;
 };
 
@@ -103,8 +103,10 @@ struct ParticleInfo
 	float  InitLocalPosY;
 	Vector3 InitParticleComponentWorldPos;
 
-	Vector3 SingleEmptyInfo1;
-	Vector3 SingleEmptyInfo2;
+	float DestroyedDuringAlive;
+	float SingleInfoEmpty1;
+	float SingleInfoEmpty2;
+	Vector3 SingleEmptyInfo3;
 };
 
 struct ParticleInfoShared

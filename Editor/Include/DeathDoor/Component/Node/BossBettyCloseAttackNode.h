@@ -32,18 +32,12 @@ protected:
     virtual NodeResult OnEnd(float DeltaTime);
 
 private:
-
-    bool m_CloseAttackAnimChangeEnable;
     BossBettyCloseAttackType m_CloseAttackType;
-    
 private :
     BossBettyCloseAttackType DetermineBettyCloseAttackType();
 private :
     void OnBossBettySlashLeftEffect();
     void OnBossBettySlashRightEffect();
-    void OnBossBettyEnableCloseAttackChangeAnim();
-    void OnBossBettyDisableCloseAttackChangeAnim();
-
     void OnBossBettyCommonEndFunctionOfCloseAttack();
     void OnBossBettyCommonStartFunctionOfCloseAttack();
 };

@@ -442,6 +442,21 @@ bool CScene::LoadFullPath(const char* FullPath)
 
 	fclose(File);
 
+	auto iter = m_ObjList.begin();
+	auto iterEnd = m_ObjList.end();
+
+	for (; iter != iterEnd;)
+	{
+		if ((*iter)->GetName() == "BossBettySnowAttack" ||
+			(*iter)->GetName() == "BettyAttackAfterEffect")
+		{
+			iter = m_ObjList.erase(iter);
+			iterEnd = m_ObjList.end();
+			continue;
+		}
+		++iter;
+	}
+
 	return true;
 }
 
