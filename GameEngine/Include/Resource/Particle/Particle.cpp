@@ -12,7 +12,7 @@
 // Libraray
 #include <random>
 
-CParticle::CParticle()	:
+CParticle::CParticle() :
 	m_CBuffer(nullptr),
 	m_SpawnTimeMax(0.001f),
 	m_2D(true),

@@ -8,7 +8,6 @@ RWStructuredBuffer<ParticleInfoShared> g_ParticleShare : register(u1);
 
 StructuredBuffer<float>		g_ParticleNormalDistValArray	: register(t20);
 
-
 void ApplyInitSpecialParticleGenerateShape(float RandomAngle, int ThreadID, float FinalAppliedRadius,
 	float Rand)
 {
@@ -603,14 +602,6 @@ void ParticleUpdate(uint3 ThreadID : SV_DispatchThreadID)
 	g_ParticleShare[0].UVRowN = g_ParticleUVRowN;
 	g_ParticleShare[0].UVColN = g_ParticleUVColN;
 
-	// ObjectPool 에 들어갈 때, Reset 호출
-	// 기존에 살아있던 Particle들을 다 Alive False 로 만들어서 Reset 시켜줄 것이다.
-	if (g_DestroyAllExistingLivingParticles == 1)
-	{
-		g_ParticleArray[ThreadID.x].Alive = 0;
-		return;
-	}
-
 	// 매번 초기화 해줄 것이다.
 	g_ParticleArray[ThreadID.x].SeperateRotAngleOffset = float3(0.f, 0.f, 0.f);
 
@@ -642,8 +633,10 @@ void ParticleUpdate(uint3 ThreadID : SV_DispatchThreadID)
 		// 차후 새로운 Particle 은 생성하지 않으려고 한다면
 		if (g_ParticleShare[0].CurrentSpawnCountSum >= g_ParticleSpawnCountMax &&
 			g_ParticleDisableNewAlive == 1)
+		{
 			// if (g_ParticleShare[0].CurrentSpawnCountSum > g_ParticleSpawnCountMax && g_ParticleDisableNewAlive == 1) -> 한개가 더 생성됨
 			return;
+		}
 
 		int	SpawnEnable = g_ParticleShare[0].SpawnEnable;
 		int	Exchange = 0;
@@ -780,6 +773,16 @@ void ParticleUpdate(uint3 ThreadID : SV_DispatchThreadID)
 	// if (g_ParticleDisableNewAlive == 1 || g_ParticleArray[ThreadID.x].Alive == 0)
 	else
 	{
+		// ObjectPool 에 들어갈 때, Reset 호출
+		// 기존에 살아있던 Particle들을 다 Alive False 로 만들어서 Reset 시켜줄 것이다.
+		if (g_DestroyAllExistingLivingParticles == 1)
+		// if (g_Particle2D == 1)
+		{
+			g_ParticleArray[ThreadID.x].LifeTime = g_ParticleArray[ThreadID.x].LifeTimeMax;
+			g_ParticleArray[ThreadID.x].Alive = 0;
+			return;
+		}
+
 		g_ParticleArray[ThreadID.x].LifeTime += g_DeltaTime;
 
 		// 아래 함수를 사용하기 전에 LifeTime 을 시간에 맞게 증가시켜야 한다.
@@ -794,5 +797,7 @@ void ParticleUpdate(uint3 ThreadID : SV_DispatchThreadID)
 			g_ParticleArray[ThreadID.x].Alive = 0;
 		}
 	}
-
 }
+
+
+

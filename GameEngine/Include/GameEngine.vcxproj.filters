@@ -1981,10 +1981,10 @@
     <FxCompile Include="..\Bin\Shader\ParticleUpdate.fx">
       <Filter>02. Resource\02. Shader\01. HLSL\1. Particle</Filter>
     </FxCompile>
-    <FxCompile Include="..\Bin\Shader\ParticleRender.fx">
+    <FxCompile Include="..\Bin\Shader\ParticleData.fx">
       <Filter>02. Resource\02. Shader\01. HLSL\1. Particle</Filter>
     </FxCompile>
-    <FxCompile Include="..\Bin\Shader\ParticleData.fx">
+    <FxCompile Include="..\Bin\Shader\ParticleRender.fx">
       <Filter>02. Resource\02. Shader\01. HLSL\1. Particle</Filter>
     </FxCompile>
   </ItemGroup>

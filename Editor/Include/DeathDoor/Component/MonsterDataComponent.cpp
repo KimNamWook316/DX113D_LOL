@@ -134,12 +134,14 @@ void CMonsterDataComponent::Start()
 		m_BloodParticle->GetCBuffer()->SetFollowRealTimeParticleComponentPos(true);
 
 		// 처음에는 Enable False 처리를 해줄 것이다.
-		m_BloodParticle->Enable(false);
+		m_BloodParticle->Enable(true);
+
+		m_BloodParticle->GetCBuffer()->SetDisableNewAlive(true);
 
 		// m_BloodParticle 은 Rot 을 주지 않을 것이다. Rot 을 주는 순간 모양이 흐뜨러지게 되기 때문이다.
-		m_BloodParticle->SetInheritRotX(false);
-		m_BloodParticle->SetInheritRotY(false);
-		m_BloodParticle->SetInheritRotZ(false);
+		// m_BloodParticle->SetInheritRotX(false);
+		// m_BloodParticle->SetInheritRotY(false);
+		// m_BloodParticle->SetInheritRotZ(false);
 	}
 
 	CAnimationSequenceInstance* AnimInst = m_AnimMesh->GetAnimationInstance();
