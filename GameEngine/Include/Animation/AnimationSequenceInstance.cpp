@@ -571,7 +571,7 @@ int CAnimationSequenceInstance::GetAnimationFrameLength(const std::string& Name)
 
 	if (!Data)
 	{
-		return 0.f;
+		return 0;
 	}
 
 	return Data->m_Sequence->GetFrameLength();
