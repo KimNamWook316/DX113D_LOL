@@ -69,23 +69,6 @@ void CColliderSphere::PostUpdate(float DeltaTime)
 
 	SetMeshSize(m_Max - m_Min);
 	m_SphereInfo.Center = m_Info.Center;
-}
-
-void CColliderSphere::PrevRender()
-{
-	CColliderComponent::PrevRender();
-}
-
-void CColliderSphere::Render()
-{
-	bool DebugRender = CRenderManager::GetInst()->IsDebugRender();
-
-	if (!DebugRender)
-	{
-		return;
-	}
-
-	CColliderComponent::Render();
 
 	CCameraComponent* Camera = m_Scene->GetCameraManager()->GetCurrentCamera();
 
@@ -116,6 +99,23 @@ void CColliderSphere::Render()
 
 	if (m_MouseCollision)
 		m_CBuffer->SetColliderColor(Vector4(1.f, 0.f, 0.f, 1.f));
+}
+
+void CColliderSphere::PrevRender()
+{
+	CColliderComponent::PrevRender();
+}
+
+void CColliderSphere::Render()
+{
+	bool DebugRender = CRenderManager::GetInst()->IsDebugRender();
+
+	if (!DebugRender)
+	{
+		return;
+	}
+
+	CColliderComponent::Render();
 
 	m_CBuffer->UpdateCBuffer();
 

@@ -11,6 +11,7 @@
 #include "ObjectPool.h"
 #include "Component/ColliderBox3D.h"
 #include "PlayerDataComponent.h"
+#include "TinyCrowDataComponent.h"
 
 CCrowBossDataComponent::CCrowBossDataComponent()	:
 	m_StartFlying(false),
@@ -23,7 +24,7 @@ CCrowBossDataComponent::CCrowBossDataComponent()	:
 	m_ShootAccTime(0.f),
 	m_CurrentHookIndex(0),
 	m_ClearHookIndex(0),
-	m_HookChainTotal(95),
+	m_HookChainTotal(100),
 	m_AfterShoot(false),
 	m_SpittingStart(false),
 	m_SpittingAccTime(0.f),
@@ -81,8 +82,17 @@ void CCrowBossDataComponent::Start()
 void CCrowBossDataComponent::Update(float DeltaTime)
 {
 	CMonsterDataComponent::Update(DeltaTime);
+
+	if (m_DeathColorChangeStart)
+	{
+		ChangeColorBossDeath(DeltaTime);
+	}
 }
 
+void CCrowBossDataComponent::ClearTinyCrow()
+{
+	m_TinyCrowList.clear();
+}
 
 void CCrowBossDataComponent::OnEndCrowBossJump()
 {
@@ -111,6 +121,7 @@ void CCrowBossDataComponent::ShootChain(const Vector3& ShootDir, float DeltaTime
 			HookChain->SetWorldPos(Vector3(FLT_MAX, FLT_MAX, FLT_MAX));
 			HookChain->SetMesh("HookChain");
 			HookChain->SetWorldScale(Vector3(0.f, 0.f, 0.f));
+			HookChain->GetMaterial(0)->SetEmissiveColor(0.f, 0.f, 0.f, 1.f);
 			HookChain->SetRender(false);
 
 			m_vecHookChain.push_back(HookChain);
@@ -138,7 +149,7 @@ void CCrowBossDataComponent::ShootChain(const Vector3& ShootDir, float DeltaTime
 			m_vecHookChain[m_CurrentHookIndex]->SetRender(true);
 			m_vecHookChain[m_CurrentHookIndex]->SetWorldPos(HookPos);
 			m_vecHookChain[m_CurrentHookIndex]->SetWorldScale(Vector3(0.06f, 0.06f, 0.06f));
-			m_vecHookChain[m_CurrentHookIndex]->GetMaterial(0)->SetBaseColor(0.34f, 0.34f, 0.34f, 1.f);
+			m_vecHookChain[m_CurrentHookIndex]->GetMaterial(0)->SetBaseColor(0.44f, 0.44f, 0.44f, 1.f);
 
 			Vector3 CrossVec = ShootDir.Cross(ChainZAxis);
 
@@ -237,14 +248,14 @@ void CCrowBossDataComponent::Teleport()
 	Vector3 MyPos = m_Object->GetWorldPos();
 
 	std::vector<Vector3> vecTeleportPos;
-	vecTeleportPos.push_back(Vector3(PlayerPos.x, 0.f, PlayerPos.z - 18.f));
-	vecTeleportPos.push_back(Vector3(PlayerPos.x, 0.f, PlayerPos.z + 18.f));
-	vecTeleportPos.push_back(Vector3(PlayerPos.x + 30.f, 0.f, PlayerPos.z));
-	vecTeleportPos.push_back(Vector3(PlayerPos.x - 30.f, 0.f, PlayerPos.z));
-	vecTeleportPos.push_back(Vector3(PlayerPos.x + 30.f, 0.f, PlayerPos.z - 18.f));
-	vecTeleportPos.push_back(Vector3(PlayerPos.x - 30.f, 0.f, PlayerPos.z - 18.f));
-	vecTeleportPos.push_back(Vector3(PlayerPos.x + 30.f, 0.f, PlayerPos.z + 18.f));
-	vecTeleportPos.push_back(Vector3(PlayerPos.x - 30.f, 0.f, PlayerPos.z + 18.f));
+	vecTeleportPos.push_back(Vector3(PlayerPos.x, 0.f, PlayerPos.z - 20.f));
+	vecTeleportPos.push_back(Vector3(PlayerPos.x, 0.f, PlayerPos.z + 20.f));
+	vecTeleportPos.push_back(Vector3(PlayerPos.x + 35.f, 0.f, PlayerPos.z));
+	vecTeleportPos.push_back(Vector3(PlayerPos.x - 35.f, 0.f, PlayerPos.z));
+	vecTeleportPos.push_back(Vector3(PlayerPos.x + 35.f, 0.f, PlayerPos.z - 20.f));
+	vecTeleportPos.push_back(Vector3(PlayerPos.x - 35.f, 0.f, PlayerPos.z - 20.f));
+	vecTeleportPos.push_back(Vector3(PlayerPos.x + 35.f, 0.f, PlayerPos.z + 20.f));
+	vecTeleportPos.push_back(Vector3(PlayerPos.x - 35.f, 0.f, PlayerPos.z + 20.f));
 
 
 	int random = rand() % 8;
@@ -321,6 +332,9 @@ bool CCrowBossDataComponent::Spitting(float DeltaTime)
 		}
 	}
 
+	int Random = rand() % 3 - 1;
+	int RandomAngle = rand() % 20 - 10;
+
 	if (m_CurrentTinyCrowIndex == 0)
 	{
 		if (m_SpittingAccTime > 1.f)
@@ -329,20 +343,29 @@ bool CCrowBossDataComponent::Spitting(float DeltaTime)
 			m_SpittingAccTime = 0.f;
 			CGameObject* TinyCrow = CObjectPool::GetInst()->GetMonster("TinyCrow", m_Object->GetScene());
 
-			int Random = rand() % 3 - 1;
-
-			TinyCrow->SetWorldPos(Vector3(CurrentPos.x + FaceDir.x + Random, 0.f, CurrentPos.z + FaceDir.z));
-			TinyCrow->SetWorldRotationY(Angle);
+			TinyCrow->SetWorldPos(Vector3(CurrentPos.x + FaceDir.x + Random, 1.f, CurrentPos.z + FaceDir.z));
+			TinyCrow->SetWorldRotationY(Angle + RandomAngle);
 			TinyCrow->SetWorldScale(0.005f, 0.005f, 0.005f);
+
+			CTinyCrowDataComponent* Comp = TinyCrow->FindObjectComponentFromType<CTinyCrowDataComponent>();
+
+			Comp->SetCrowOwner(m_Object);
+
+			//m_TinyCrowList.push_back(TinyCrow);
 		}
 	}
 
-	else if (m_SpittingAccTime >= 0.05f)
+	else if (m_SpittingAccTime >= 0.1f)
 	{
-		if (m_CurrentTinyCrowIndex == 20)
+		if (m_CurrentTinyCrowIndex == 15)
 		{
 			if (m_SpittingAccTime >= 1.f)
+			{
+				m_CurrentTinyCrowIndex = 0;
+				m_SpittingAccTime = 0.f;
+
 				return true;
+			}
 			else
 				return false;
 		}
@@ -351,9 +374,12 @@ bool CCrowBossDataComponent::Spitting(float DeltaTime)
 		m_SpittingAccTime = 0.f;
 		CGameObject* TinyCrow = CObjectPool::GetInst()->GetMonster("TinyCrow", m_Object->GetScene());
 
-		TinyCrow->SetWorldPos(CurrentPos + FaceDir);
-		TinyCrow->SetWorldRotationY(Angle);
+		TinyCrow->SetWorldPos(Vector3(CurrentPos.x + FaceDir.x + Random, 1.f, CurrentPos.z + FaceDir.z));
+		TinyCrow->SetWorldRotationY(Angle + RandomAngle);
 		TinyCrow->SetWorldScale(0.005f, 0.005f, 0.005f);
+
+		CTinyCrowDataComponent* Comp = TinyCrow->FindObjectComponentFromType<CTinyCrowDataComponent>();
+		Comp->SetCrowOwner(m_Object);
 	}
 
 	return false;
@@ -378,7 +404,7 @@ void CCrowBossDataComponent::OnDeadAnimStart()
 {
 	CMonsterDataComponent::OnDeadAnimStart();
 
-	m_AnimMesh->GetAnimationInstance()->GetCurrentAnimation()->SetPlayScale(0.5f);
+	m_AnimMesh->GetAnimationInstance()->GetCurrentAnimation()->SetPlayScale(0.25f);
 	m_DeathColorChangeTimeMax = m_AnimMesh->GetAnimationInstance()->GetCurrentAnimation()->GetAnimationPlayTime() * 0.5f;
 }
 

@@ -133,9 +133,12 @@ void CMonsterDataComponent::Start()
 		m_BloodParticle->Enable(false);
 	}
 
-	CAnimationSequenceInstance* AnimInst = m_AnimMesh->GetAnimationInstance();
-	AnimInst->AddNotify("Death", "DeathStart", 0, this, &CMonsterDataComponent::OnDeadAnimStart);
-	AnimInst->SetEndFunction("Death", this, &CMonsterDataComponent::OnDeadAnimEnd);
+	if (m_AnimMesh)
+	{
+		CAnimationSequenceInstance* AnimInst = m_AnimMesh->GetAnimationInstance();
+		AnimInst->AddNotify("Death", "DeathStart", 0, this, &CMonsterDataComponent::OnDeadAnimStart);
+		AnimInst->SetEndFunction("Death", this, &CMonsterDataComponent::OnDeadAnimEnd);
+	}
 
 	// CutScene ฐüทร ( Enter Trigger, CutScene Cam, Collider CallBack)
 	m_PlayerEnterZoneTrigger = (CColliderBox3D*)m_Object->FindComponent("PlayerEnterTrigger");
@@ -481,7 +484,7 @@ void CMonsterDataComponent::OnHitMeleeAttack(const CollisionResult& Result)
 
 	if (m_PlayerData)
 	{
-		m_PlayerData->DecreaseHP(1);
+ 		m_PlayerData->DecreaseHP(1);
 	}
 }
 

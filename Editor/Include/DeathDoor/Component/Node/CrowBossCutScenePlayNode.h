@@ -13,6 +13,10 @@ public:
 public:
     virtual void Init() override;
 
+private:
+    float m_AccTime;
+    float m_CutScenePrevDelay;
+
 public:
     virtual NodeResult OnStart(float DeltaTime) override;
     virtual NodeResult OnUpdate(float DeltaTime) override;

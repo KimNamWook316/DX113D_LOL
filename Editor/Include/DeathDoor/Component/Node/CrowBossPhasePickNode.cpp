@@ -5,6 +5,7 @@
 #include "../CrowBossDataComponent.h"
 #include "Scene/Scene.h"
 #include "Component/Node/CompositeNode.h"
+#include "Component/AnimationMeshComponent.h"
 
 CCrowBossPhasePickNode::CCrowBossPhasePickNode()
 {
@@ -28,10 +29,13 @@ NodeResult CCrowBossPhasePickNode::OnStart(float DeltaTime)
 
 	if (Data->GetHP() <= 0)
 	{
-		Data->ClearPhaseQueue();
-		m_Owner->SetCurrentNode(nullptr);
+		m_AnimationMeshComp->GetAnimationInstance()->ChangeAnimation("Death");
+
 		m_Owner->GetOwner()->SetTreeUpdate(false);
+
+		return NodeResult::Node_False;
 	}
+
 	int Phase;
 	if(Data->IsPhaseQueueEmpty())
 		Phase = rand() % 4 + 2;

@@ -236,6 +236,7 @@
     <ClCompile Include="DeathDoor\Component\Node\ClimbDownStart.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\ClimbDownStartCheck.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\ClimbingUpStartCheck.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\ClimbKeyEnableCheck.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\ClimbPause.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\ClimbUp.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\ClimbUpContinueCheck.cpp" />
@@ -316,6 +317,7 @@
     <ClCompile Include="DeathDoor\Component\ProjectileComponent.cpp" />
     <ClCompile Include="DeathDoor\Component\TinyCrowDataComponent.cpp" />
     <ClCompile Include="DeathDoor\Component\SporeBoomerDataComponent.cpp" />
+    <ClCompile Include="DeathDoor\Component\TriggerBoxData.cpp" />
     <ClCompile Include="DeathDoor\DataManager.cpp" />
     <ClCompile Include="DeathDoor\DDUtil.cpp" />
     <ClCompile Include="DeathDoor\Scene\DDBossSceneMode.cpp" />
@@ -360,6 +362,7 @@
     <ClCompile Include="Widget\StaticMeshComponentWidget.cpp" />
     <ClCompile Include="Widget\ToonShaderWidget.cpp" />
     <ClCompile Include="Widget\TransformWidget.cpp" />
+    <ClCompile Include="Widget\TriggerBoxDataWidget.cpp" />
     <ClCompile Include="Widget\UtilMenuBar.cpp" />
     <ClCompile Include="Widget\WaterComponentWidget.cpp" />
     <ClCompile Include="Window\AnimationDisplayWindow.cpp" />
@@ -463,6 +466,7 @@
     <ClInclude Include="DeathDoor\Component\Node\ClimbDownStart.h" />
     <ClInclude Include="DeathDoor\Component\Node\ClimbDownStartCheck.h" />
     <ClInclude Include="DeathDoor\Component\Node\ClimbingUpStartCheck.h" />
+    <ClInclude Include="DeathDoor\Component\Node\ClimbKeyEnableCheck.h" />
     <ClInclude Include="DeathDoor\Component\Node\ClimbPause.h" />
     <ClInclude Include="DeathDoor\Component\Node\ClimbUp.h" />
     <ClInclude Include="DeathDoor\Component\Node\ClimbUpContinueCheck.h" />
@@ -543,6 +547,7 @@
     <ClInclude Include="DeathDoor\Component\ProjectileComponent.h" />
     <ClInclude Include="DeathDoor\Component\TinyCrowDataComponent.h" />
     <ClInclude Include="DeathDoor\Component\SporeBoomerDataComponent.h" />
+    <ClInclude Include="DeathDoor\Component\TriggerBoxData.h" />
     <ClInclude Include="DeathDoor\DataManager.h" />
     <ClInclude Include="DeathDoor\DDFlag.h" />
     <ClInclude Include="DeathDoor\DDUtil.h" />
@@ -589,6 +594,7 @@
     <ClInclude Include="Widget\StaticMeshComponentWidget.h" />
     <ClInclude Include="Widget\ToonShaderWidget.h" />
     <ClInclude Include="Widget\TransformWidget.h" />
+    <ClInclude Include="Widget\TriggerBoxDataWidget.h" />
     <ClInclude Include="Widget\UtilMenuBar.h" />
     <ClInclude Include="Widget\WaterComponentWidget.h" />
     <ClInclude Include="Window\AnimationDisplayWindow.h" />

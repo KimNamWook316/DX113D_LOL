@@ -36,6 +36,8 @@ void CArrowComponent::Start()
 	}
 
 	CProjectileComponent::Start();
+
+
 }
 
 void CArrowComponent::Reset()
@@ -93,3 +95,4 @@ bool CArrowComponent::LoadOnly(FILE* File)
 {
 	return CProjectileComponent::LoadOnly(File);
 }
+

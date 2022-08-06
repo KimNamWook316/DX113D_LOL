@@ -12,6 +12,10 @@ private:
 
 private:
 	float m_AccTime;
+	class CGameObject* m_CrowOwner;
+
+public:
+	void SetCrowOwner(class CGameObject* Owner);
 
 public:
 	virtual void Start() override;

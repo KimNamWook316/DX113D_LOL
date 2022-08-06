@@ -142,6 +142,7 @@ public:
 
     void ClearPrevSectionIndex()
     {
+
         m_vecPrevSectionIndex.clear();
     }
 

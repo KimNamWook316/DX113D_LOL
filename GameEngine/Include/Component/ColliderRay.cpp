@@ -58,21 +58,6 @@ void CColliderRay::Update(float DeltaTime)
 void CColliderRay::PostUpdate(float DeltaTime)
 {
 	CColliderComponent::PostUpdate(DeltaTime);
-}
-
-void CColliderRay::PrevRender()
-{
-	CColliderComponent::PrevRender();
-}
-
-void CColliderRay::Render()
-{
-	bool DebugRender = CRenderManager::GetInst()->IsDebugRender();
-
-	if (!DebugRender)
-	{
-		return;
-	}
 
 	CColliderComponent::Render();
 
@@ -109,6 +94,22 @@ void CColliderRay::Render()
 
 	if (m_MouseCollision)
 		m_CBuffer->SetColliderColor(Vector4(1.f, 0.f, 0.f, 1.f));
+
+}
+
+void CColliderRay::PrevRender()
+{
+	CColliderComponent::PrevRender();
+}
+
+void CColliderRay::Render()
+{
+	bool DebugRender = CRenderManager::GetInst()->IsDebugRender();
+
+	if (!DebugRender)
+	{
+		return;
+	}
 
 	m_CBuffer->UpdateCBuffer();
 

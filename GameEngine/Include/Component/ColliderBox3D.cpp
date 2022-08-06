@@ -108,23 +108,6 @@ void CColliderBox3D::Update(float DeltaTime)
 void CColliderBox3D::PostUpdate(float DeltaTime)
 {
 	CColliderComponent::PostUpdate(DeltaTime);
-}
-
-void CColliderBox3D::PrevRender()
-{
-	CColliderComponent::PrevRender();
-}
-
-void CColliderBox3D::Render()
-{
-	bool DebugRender = CRenderManager::GetInst()->IsDebugRender();
-
-	if (!DebugRender)
-	{
-		return;
-	}
-
-	CColliderComponent::Render();
 
 	CCameraComponent* Camera = m_Scene->GetCameraManager()->GetCurrentCamera();
 
@@ -155,6 +138,24 @@ void CColliderBox3D::Render()
 
 	if (m_MouseCollision)
 		m_CBuffer->SetColliderColor(Vector4(1.f, 0.f, 0.f, 1.f));
+}
+
+void CColliderBox3D::PrevRender()
+{
+	CColliderComponent::PrevRender();
+}
+
+void CColliderBox3D::Render()
+{
+	bool DebugRender = CRenderManager::GetInst()->IsDebugRender();
+
+	if (!DebugRender)
+	{
+		return;
+	}
+
+	CColliderComponent::Render();
+
 
 	m_CBuffer->UpdateCBuffer();
 

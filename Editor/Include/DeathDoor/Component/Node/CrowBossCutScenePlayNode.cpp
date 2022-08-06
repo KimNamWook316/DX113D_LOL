@@ -8,7 +8,9 @@
 #include "Scene/CameraManager.h"
 #include "../CrowBossDataComponent.h"
 
-CCrowBossCutScenePlayNode::CCrowBossCutScenePlayNode()
+CCrowBossCutScenePlayNode::CCrowBossCutScenePlayNode() :
+	m_AccTime(0.f),
+	m_CutScenePrevDelay(0.3f)
 {
 	SetTypeID(typeid(CCrowBossCutScenePlayNode).hash_code());
 }
@@ -39,14 +41,44 @@ void CCrowBossCutScenePlayNode::Init()
 
 NodeResult CCrowBossCutScenePlayNode::OnStart(float DeltaTime)
 {
-	m_AnimationMeshComp->GetAnimationInstance()->ChangeAnimation("CutScene");
-
 	CCrowBossDataComponent* Data = dynamic_cast<CCrowBossDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
 
-	Data->SetPlayerEnterZone(false);
-	Data->OnStartCutScene();
+	if (m_AccTime >= m_CutScenePrevDelay)
+	{
+		m_AnimationMeshComp->GetAnimationInstance()->ChangeAnimation("CutScene");
 
-	return NodeResult::Node_True;
+		Data->SetPlayerEnterZone(false);
+		Data->SetCutScenePlaying(true);
+
+		return NodeResult::Node_True;
+	}
+
+	else
+	{
+		if (m_AccTime == 0.f)
+		{
+			CGameObject* PlayerObj = m_Object->GetScene()->GetPlayerObject();
+
+			// 플레이어 입력 받지 않게 하고, 애니메이션 강제 변화
+			if (PlayerObj)
+			{
+				CGameStateComponent* PlayerState = PlayerObj->FindComponentFromType<CGameStateComponent>();
+				CAnimationSequenceInstance* PlayerAnim = PlayerObj->FindComponentFromType<CAnimationMeshComponent>()->GetAnimationInstance();
+
+				PlayerAnim->ChangeAnimation("Idle");
+				PlayerState->SetTreeUpdate(false);
+				Data->GetPlayerEnterZoneTrigger()->Enable(false);
+			}
+
+			m_Object->GetScene()->GetCameraManager()->KeepCamera();
+			m_Object->GetScene()->GetCameraManager()->SetCurrentCamera(Data->GetCutSceneCam());
+		}
+
+		m_CallStart = false;
+		m_AccTime += DeltaTime;
+
+		return NodeResult::Node_False;
+	}
 }
 
 NodeResult CCrowBossCutScenePlayNode::OnUpdate(float DeltaTime)

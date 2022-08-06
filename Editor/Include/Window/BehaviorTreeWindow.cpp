@@ -54,7 +54,7 @@
 #include "../DeathDoor/Component/Node/ClimbPause.h"
 #include "../DeathDoor/Component/Node/IsClimbingCheck.h"
 #include "../DeathDoor/Component/Node/ClimbPause.h"
-
+#include "../DeathDoor/Component/Node/ClimbKeyEnableCheck.h"
 #include "../DeathDoor/Component/Node/StraightPathCheck.h"
 
 // BossKnight
@@ -790,6 +790,9 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
             break;
         case DDConditionNode::ClimbUpEndCheck:
             NewTreeNode = m_StateComponent->CreateTreeNode<CClimbUpEndCheck>(Name);
+            break;
+        case DDConditionNode::ClimbKeyEnableCheck:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CClimbKeyEnableCheck>(Name);
             break;
 
 

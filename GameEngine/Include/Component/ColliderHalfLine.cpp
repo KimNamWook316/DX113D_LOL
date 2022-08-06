@@ -50,27 +50,7 @@ void CColliderHalfLine::Update(float DeltaTime)
 
 void CColliderHalfLine::PostUpdate(float DeltaTime)
 {
-	//Vector3 Scale = GetWorldScale();
-	//SetWorldScale(Vector3(Scale.x, 1.f, 1.f));
-
 	CColliderComponent::PostUpdate(DeltaTime);
-}
-
-void CColliderHalfLine::PrevRender()
-{
-	CColliderComponent::PrevRender();
-}
-
-void CColliderHalfLine::Render()
-{
-	bool DebugRender = CRenderManager::GetInst()->IsDebugRender();
-
-	if (!DebugRender)
-	{
-		return;
-	}
-
-	CColliderComponent::Render();
 
 	CCameraComponent* Camera = m_Scene->GetCameraManager()->GetCurrentCamera();
 
@@ -109,6 +89,23 @@ void CColliderHalfLine::Render()
 
 	if (m_MouseCollision)
 		m_CBuffer->SetColliderColor(Vector4(1.f, 0.f, 0.f, 1.f));
+}
+
+void CColliderHalfLine::PrevRender()
+{
+	CColliderComponent::PrevRender();
+}
+
+void CColliderHalfLine::Render()
+{
+	bool DebugRender = CRenderManager::GetInst()->IsDebugRender();
+
+	if (!DebugRender)
+	{
+		return;
+	}
+
+	CColliderComponent::Render();
 
 	m_CBuffer->UpdateCBuffer();
 

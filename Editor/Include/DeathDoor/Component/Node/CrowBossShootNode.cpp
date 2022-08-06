@@ -6,6 +6,7 @@
 #include "Component/AnimationMeshComponent.h"
 #include "../MonsterNavAgent.h"
 #include "Scene/Scene.h"
+#include "DeathNode.h"
 
 CCrowBossShootNode::CCrowBossShootNode()
 {
@@ -27,7 +28,13 @@ NodeResult CCrowBossShootNode::OnStart(float DeltaTime)
 
 	if (Data->GetHP() <= 0)
 	{
-		return NodeResult::Node_True;
+		Data->ClearPhaseQueue();
+
+		m_AnimationMeshComp->GetAnimationInstance()->ChangeAnimation("Death");
+
+		m_Owner->GetOwner()->SetTreeUpdate(false);
+
+		return NodeResult::Node_False;
 	}
 
 	m_AnimationMeshComp->GetAnimationInstance()->ChangeAnimation("SlidingReady");
@@ -41,7 +48,13 @@ NodeResult CCrowBossShootNode::OnUpdate(float DeltaTime)
 
 	if (Data->GetHP() <= 0)
 	{
-		return NodeResult::Node_True;
+		Data->ClearPhaseQueue();
+
+		m_AnimationMeshComp->GetAnimationInstance()->ChangeAnimation("Death");
+
+		m_Owner->GetOwner()->SetTreeUpdate(false);
+
+		return NodeResult::Node_False;
 	}
 
 	Vector3 FaceDir = Data->GetMonsterNavAgent()->GetCurrentFaceDir();

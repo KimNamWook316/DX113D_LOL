@@ -24,6 +24,8 @@
 #include "Component\PlayerBombComponent.h"
 #include "Component\LadderCollider.h"
 #include "Component\HeadRollerDataComponent.h"
+#include "Component\DodgerDataComponent.h"
+#include "Component\TriggerBoxData.h"
 
 // TODO : Death Door SceneMode 추가시마다 업데이트
 #include "Scene/DDSceneMode.h"
@@ -84,6 +86,8 @@ std::string CDDUtil::DDConditionNodeTypeToString(DDConditionNode NodeType)
 		return "ClimbUpEndCheck";
 	case DDConditionNode::ClimbUpStartCheck:
 		return "ClimbUpStartCheck";
+	case DDConditionNode::ClimbKeyEnableCheck:
+		return "ClimbKeyEnableCheck";
 
 	case DDConditionNode::PostAttackDelayCheck:
 		return "PostAttackDelayCheck";
@@ -224,7 +228,8 @@ DDConditionNode CDDUtil::StringToDDConditionNodeType(const std::string& Str)
 		return DDConditionNode::ClimbUpStartCheck;
 	else if (Str == "ClimbUpEndCheck")
 		return DDConditionNode::ClimbUpEndCheck;
-
+	else if (Str == "ClimbKeyEnableCheck")
+		return DDConditionNode::ClimbKeyEnableCheck;
 
 	else if (Str == "Lockstone3TriggerBoxHitCheck")
 	{
@@ -790,6 +795,12 @@ std::string CDDUtil::DDObjectComponentTypeToString(DDObjectComponentType Type)
 
 	case DDObjectComponentType::HeadRollerData:
 		return "HeadRollerData";
+
+	case DDObjectComponentType::DodgerData:
+		return "DodgerData";
+
+	case DDObjectComponentType::TriggerBoxData:
+		return "TriggerBoxData";
 	}
 
 	return "";
@@ -861,6 +872,14 @@ DDObjectComponentType CDDUtil::StringToDDObjectComponentType(const std::string& 
 	{
 		return DDObjectComponentType::HeadRollerData;
 	}
+	else if (Str == "DodgerData")
+	{
+		return DDObjectComponentType::DodgerData;
+	}
+	else if (Str == "TriggerBoxData")
+	{
+		return DDObjectComponentType::TriggerBoxData;
+	}
 
 	return DDObjectComponentType(-1);
 }
@@ -903,6 +922,8 @@ size_t CDDUtil::DDObjectComponentTypeToTypeID(DDObjectComponentType Type)
 		return typeid(CMonsterBulletData).hash_code();
 	case DDObjectComponentType::HeadRollerData:
 		return typeid(CHeadRollerDataComponent).hash_code();
+	case DDObjectComponentType::TriggerBoxData:
+		return typeid(CTriggerBoxData).hash_code();
 	}
 	return -1;
 }

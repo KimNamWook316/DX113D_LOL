@@ -98,6 +98,7 @@ enum class DDConditionNode
 	ClimbUpContinueCheck,
 	ClimbUpEndCheck,
 	ClimbUpStartCheck,
+	ClimbKeyEnableCheck,
 	StraightPathCheck,
 	// BossBetty
 	BossBettyCheckAttackDir,
@@ -154,6 +155,7 @@ enum class DDObjectComponentType
 	MonsterBulletData,
 	HeadRollerData,
 	DodgerData,
+	TriggerBoxData,
 	Max
 };
 
@@ -186,4 +188,14 @@ enum class DDSceneModeType
 	DDBossSceneMode,
 	DDInstanceSceneMode,
 	Max
+};
+
+enum DDPlayerRollDirection
+{
+	None = 0x0,
+	Left = 0x1,
+	Right = 0x2,
+	Up = 0x4,
+	Down = 0x8,
+	Max = 0x10
 };
