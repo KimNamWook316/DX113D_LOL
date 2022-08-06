@@ -54,6 +54,7 @@
 #include "../DeathDoor/Component/Node/ClimbPause.h"
 #include "../DeathDoor/Component/Node/IsClimbingCheck.h"
 #include "../DeathDoor/Component/Node/ClimbPause.h"
+#include "../DeathDoor/Component/Node/ClimbKeyEnableCheck.h"
 
 #include "../DeathDoor/Component/Node/HitCheckNode.h"
 #include "../DeathDoor/Component/Node/HitBackNode.h"

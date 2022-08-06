@@ -872,9 +872,6 @@ std::string CDDUtil::DDObjectComponentTypeToString(DDObjectComponentType Type)
 	case DDObjectComponentType::TriggerBoxData:
 		return "TriggerBoxData";
 
-	case DDObjectComponentType::DodgerData:
-		return "DodgerData";
-
 	case DDObjectComponentType::PlagueKnightData:
 		return "PlagueKnightData";
 	}

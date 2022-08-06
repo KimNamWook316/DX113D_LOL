@@ -421,6 +421,9 @@ bool CScene::LoadFullPath(const char* FullPath)
 
 		//Success = Obj->Load(File);
 		// 여기서 NextScene 포인터를 Obj->LoadHierarchy안으로 넘겨줘야 한다
+		if (!Obj)
+			continue;
+
 		Success = Obj->LoadHierarchy(File, this);
 
 		CSceneManager::GetInst()->CallObjectDataSet(Obj, Obj->GetName());

@@ -46,13 +46,16 @@ NodeResult CLockstone3TriggerBoxAction::OnStart(float DeltaTime)
 
 			int TriggerBoxOrder = TriggerBoxData->GetBoxOrder();
 
-			// 내가 1번 Box면, 2번 Box를 활성화 시켜야하니 Parent Object의 vecChildObject의 1번 Index에 있는 Child를 활성화 해준다
-			CGameObject* NextTriggerBox = m_Object->GetParentObject()->GetChildObject(TriggerBoxOrder);
-
-			if (NextTriggerBox)
+			if (TriggerBoxOrder < 4)
 			{
-				CTriggerBoxData* NextTriggerBoxData = NextTriggerBox->FindObjectComponentFromType<CTriggerBoxData>();
-				NextTriggerBoxData->SetCurrentActive(true);
+				// 내가 1번 Box면, 2번 Box를 활성화 시켜야하니 Parent Object의 vecChildObject의 1번 Index에 있는 Child를 활성화 해준다
+				CGameObject* NextTriggerBox = m_Object->GetParentObject()->GetChildObject(TriggerBoxOrder);
+
+				if (NextTriggerBox)
+				{
+					CTriggerBoxData* NextTriggerBoxData = NextTriggerBox->FindObjectComponentFromType<CTriggerBoxData>();
+					NextTriggerBoxData->SetCurrentActive(true);
+				}
 			}
 
 		}
