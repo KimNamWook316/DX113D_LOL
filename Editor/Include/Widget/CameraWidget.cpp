@@ -152,7 +152,7 @@ void CCameraWidget::OnClickAddMoveData()
 	CCameraComponent* CamCom = dynamic_cast<CCameraComponent*>(m_Component);
 
 	Vector3 CurCamPos = CamCom->GetWorldPos();
-	CamMoveData* Data = CamCom->AddMoveData(CurCamPos, 1.f);
+	CamMoveData* Data = CamCom->AddCutSceneMoveData(CurCamPos, 1.f);
 
 	CCameraMoveWidget* MoveWidget = m_MoveDataList->AddWidget<CCameraMoveWidget>("MoveData");
 	MoveWidget->SetCameraComponent(CamCom);
@@ -174,7 +174,7 @@ void CCameraWidget::OnClickClearMove()
 {
 	CCameraComponent* CamCom = dynamic_cast<CCameraComponent*>(m_Component);
 
-	CamCom->ClearMoveData();
+	CamCom->ClearCutSceneMoveData();
 	m_MoveDataList->ClearWidget();
 }
 
@@ -182,7 +182,7 @@ void CCameraWidget::OnDeleteMoveData(CamMoveData* Data, CCameraMoveWidget* Delet
 {
 	CCameraComponent* CamCom = dynamic_cast<CCameraComponent*>(m_Component);
 
-	CamCom->DeleteMoveData(Data);
+	CamCom->DeleteCutSceneMoveData(Data);
 	m_MoveDataList->DeleteWidget(DeleteWidget);
 }
 

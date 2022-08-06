@@ -196,6 +196,9 @@ void CObjectPool::CreatePoolObject(const std::string& PathName)
 			Object->SetInPool(true);
 			Object->SetScene(CSceneManager::GetInst()->GetScene());
 
+			// 해당 Object 들은, Scene Save 가 안되게 해야 한다. (OBJ) 추가
+			Object->ExcludeFromSceneSave();
+
 			bool Result = Object->LoadHierarchy(FullPath);
 
 			Object->SetScene(CSceneManager::GetInst()->GetScene());

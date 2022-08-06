@@ -1,7 +1,7 @@
 #include "BossKnightJumpAttackRangeCheck.h"
 #include "../GameStateComponent.h"
 #include "../GameBehaviorTree.h"
-#include "../KnightDataComponent.h"
+#include "../MonsterDataComponent.h"
 #include "Scene/Scene.h"
 
 CBossKnightJumpAttackRangeCheck::CBossKnightJumpAttackRangeCheck()
@@ -20,7 +20,7 @@ CBossKnightJumpAttackRangeCheck::~CBossKnightJumpAttackRangeCheck()
 
 NodeResult CBossKnightJumpAttackRangeCheck::OnStart(float DeltaTime)
 {
-	CKnightDataComponent* Data = dynamic_cast<CKnightDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
+	CMonsterDataComponent* Data = dynamic_cast<CMonsterDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
 
 	float JumpAttackRange = Data->GetJumpAttackRange();
 

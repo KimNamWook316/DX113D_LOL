@@ -26,11 +26,12 @@ void CChasePlayerNode::Init()
 {
 	m_AnimationMeshComp = m_Owner->GetAnimationMeshComp();
 
-	m_DataComp = (dynamic_cast<CMonsterDataComponent*>(m_Owner->GetOwner()));
+	m_DataComp = dynamic_cast<CMonsterDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
 	m_Nav = m_DataComp->GetMonsterNavAgent();
 
 	m_MoveSpeed = m_DataComp->GetMoveSpeed();
 	m_RotationSpeed = m_DataComp->GetRotateSpeed();
+	m_RootComp = m_Owner->GetOwner()->GetGameObject()->GetRootComponent();
 
 	CScene* Scene = m_Owner->GetOwner()->GetScene();
 	m_PlayerObj = Scene->GetPlayerObject();
@@ -38,30 +39,35 @@ void CChasePlayerNode::Init()
 
 NodeResult CChasePlayerNode::OnStart(float DeltaTime)
 {
-	m_Owner->SetCurrentNode(this);
+	if (m_Owner->GetCurrentNode() != this)
+	{
+		m_Owner->SetCurrentNode(this);
 
-	CAnimationSequenceInstance* AnimInst = m_AnimationMeshComp->GetAnimationInstance();
-	AnimInst->ChangeAnimation("Run");
+		m_Nav->SetMoveSpeed(m_MoveSpeed);
+		m_Nav->SetRotationSpeed(m_RotationSpeed);
 
-	m_RootComp = m_Owner->GetOwner()->GetGameObject()->GetRootComponent();
-	Vector3 PlayerPos = m_PlayerObj->GetWorldPos();
+		m_DataComp->OnCombatStart();
 
-	m_Nav->FindPath(m_RootComp, PlayerPos);
-	m_Nav->SetMoveSpeed(m_MoveSpeed);
-	m_Nav->SetRotationSpeed(m_RotationSpeed);
+		CAnimationSequenceInstance* AnimInst = m_AnimationMeshComp->GetAnimationInstance();
+		AnimInst->ChangeAnimation("Run");
+
+		FindPath();
+	}
 
 	return NodeResult::Node_True;
 }
 
 NodeResult CChasePlayerNode::OnUpdate(float DeltaTime)
 {
-	bool InMeleeAttackRange = m_DataComp->IsPlayerInMeleeAttackRange();
+	// 기본적으로 MonsterDataComponent에서 추적 종료 거리는 MeleeAttack으로 설정되어 있음
+	// 다른 거리값으로 변경해야 하는 경우, 각 몬스터 데이터에서 MonsterData의 m_StopChaseRange 변수를 변경하여 사용하면 됨
+	bool InStopChaseRange = m_DataComp->IsPlayerInStopChaseRange();
 
-	if (InMeleeAttackRange)
+	if (InStopChaseRange)
 	{
 		m_DataComp->SetCurrentNodeNull();
 		m_Nav->ClearPathList();
-		m_DataComp->SetMoveSpeed(0.f);
+		m_DataComp->SetCurMoveSpeed(0.f);
 		m_DataComp->SetCurRotSpeed(0.f);
 
 		return NodeResult::Node_True;
@@ -92,8 +98,7 @@ NodeResult CChasePlayerNode::OnUpdate(float DeltaTime)
 	else
 	{
 		// 쿨타임마다 다시 찾는다.
-		Vector3 PlayerPos = m_PlayerObj->GetWorldPos();
-		m_Nav->FindPath(m_RootComp, PlayerPos);
+		FindPath();
 	}
 
 	return NodeResult::Node_True;
@@ -102,4 +107,24 @@ NodeResult CChasePlayerNode::OnUpdate(float DeltaTime)
 NodeResult CChasePlayerNode::OnEnd(float DeltaTime)
 {
 	return NodeResult();
+}
+
+void CChasePlayerNode::FindPath()
+{
+	Vector3 PlayerPos = m_PlayerObj->GetWorldPos();
+
+	m_Nav->ClearPathList();
+
+	CSceneComponent* Root = m_Object->GetRootComponent();
+	std::vector<Vector3> vecPath;
+	bool Straight = m_Nav->CheckStraightPath(Root->GetWorldPos(), PlayerPos, vecPath);
+
+	if (Straight)
+	{
+		m_Nav->AddPath(PlayerPos);
+	}
+	else
+	{
+		m_Nav->FindPath(Root, PlayerPos);
+	}
 }

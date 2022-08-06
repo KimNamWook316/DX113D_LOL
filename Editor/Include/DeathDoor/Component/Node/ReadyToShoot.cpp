@@ -110,20 +110,27 @@ NodeResult CReadyToShoot::OnStart(float DeltaTime)
 
 	CCameraComponent* CurrentCamera = CSceneManager::GetInst()->GetScene()->GetCameraManager()->GetCurrentCamera();
 
-	Vector3 ObjectPos = m_Object->GetWorldPos();
-	Vector3 OriginCamPos = CurrentCamera->GetWorldPos();
-	CSceneManager::GetInst()->GetScene()->SetOriginCamPos(OriginCamPos);
+	// 카메라 이동중이지 않을 때만 새로운 카메라 이동을 수행한다.
+	bool IsMoving = CurrentCamera->IsMoving();
 
-	m_CameraDestPos =  OriginCamPos + (PickingPoint - ObjectPos) / 2.f;
-	m_CameraDestPos.y = OriginCamPos.y;
-	
-	float Dist = OriginCamPos.Distance(m_CameraDestPos);
-	m_CameraMoveTime = Dist / m_CameraMoveSpeed;
+	if (!IsMoving)
+	{
+		Vector3 ObjectPos = m_Object->GetWorldPos();
+		Vector3 OriginCamPos = CurrentCamera->GetWorldPos();
+		CSceneManager::GetInst()->GetScene()->SetOriginCamPos(OriginCamPos);
 
-	m_CameraMoveDir = PickingPoint - ObjectPos;
-	m_CameraMoveDir.y = 0.f;
-	m_CameraMoveDir.Normalize();
+		m_CameraDestPos =  OriginCamPos + (PickingPoint - ObjectPos) / 2.f;
+		m_CameraDestPos.y = OriginCamPos.y;
+		
+		float Dist = OriginCamPos.Distance(m_CameraDestPos);
+		m_CameraMoveTime = Dist / m_CameraMoveSpeed;
 
+		m_CameraMoveDir = PickingPoint - ObjectPos;
+		m_CameraMoveDir.y = 0.f;
+		m_CameraMoveDir.Normalize();
+
+		CurrentCamera->StartMove(OriginCamPos, m_CameraDestPos, m_CameraMoveTime, false, true);
+	}
 
 	return NodeResult::Node_True;
 }
@@ -143,8 +150,12 @@ NodeResult CReadyToShoot::OnUpdate(float DeltaTime)
 			BowComp->ShowBow(m_CameraMoveDir);
 	}
 
+	CCameraComponent* CurCam = CSceneManager::GetInst()->GetScene()->GetCameraManager()->GetCurrentCamera();
 
-	if (!m_CameraMoveEnd)
+	bool IsCamMoving = CurCam->IsMoving();
+
+	// 카메라 이동이 끝난 경우
+	if (!IsCamMoving)
 	{
 		CPlayerBombComponent* BombComp = m_Object->FindComponentFromType<CPlayerBombComponent>();
 
@@ -160,8 +171,6 @@ NodeResult CReadyToShoot::OnUpdate(float DeltaTime)
 
 			return NodeResult::Node_False;
 		}
-
-		m_CameraMoveEnd = CSceneManager::GetInst()->GetScene()->CameraMove(m_CameraMoveTime, m_CameraDestPos, DeltaTime);
 
 		bool RButtonUp = CInput::GetInst()->GetMouseRButtonUp();
 
@@ -183,8 +192,10 @@ NodeResult CReadyToShoot::OnUpdate(float DeltaTime)
 			m_Owner->SetCurrentNode(((CCompositeNode*)m_Parent->GetParent())->GetChild(1));
 
 			m_IsEnd = false;
-			m_CameraMoveEnd = false;
 
+			// 카메라 이동 역으로
+			CurCam->SetMoveReverse(true);
+			CurCam->SetMoveFreeze(false);
 
 			return NodeResult::Node_True;
 		}
@@ -197,6 +208,7 @@ NodeResult CReadyToShoot::OnUpdate(float DeltaTime)
 		}
 	}
 
+	// 카메라 이동중
 	else
 	{
 		bool RButtonUp = CInput::GetInst()->GetMouseRButtonUp();
@@ -223,6 +235,11 @@ NodeResult CReadyToShoot::OnUpdate(float DeltaTime)
 			}
 
 			RButtonUp = true;
+
+			// 카메라 이동 반대로
+			CurCam->SetMoveReverse(true);
+			CurCam->SetMoveFreeze(false);
+
 		}
 
 		if (RButtonUp)
@@ -245,7 +262,10 @@ NodeResult CReadyToShoot::OnUpdate(float DeltaTime)
 			m_CallStart = false;
 			m_Owner->SetCurrentNode(((CCompositeNode*)m_Parent)->GetChild(1));
 			m_IsEnd = false;
-			m_CameraMoveEnd = false;
+
+			// 카메라 이동 반대로
+			CurCam->SetMoveReverse(true);
+			CurCam->SetMoveFreeze(false);
 
 			return NodeResult::Node_True;
 		}

@@ -33,7 +33,7 @@ NodeResult CDodgerSecondAttackNode::OnStart(float DeltaTime)
 	{
 		m_Owner->SetCurrentNode(this);
 
-		m_AnimationMeshComp->GetAnimationInstance()->ChangeAnimation("Dash");
+		m_AnimationMeshComp->GetAnimationInstance()->ChangeAnimation("AttackReady2");
 	}
 
 	return NodeResult::Node_True;

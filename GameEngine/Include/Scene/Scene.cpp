@@ -76,6 +76,16 @@ CScene::~CScene()
 	SAFE_DELETE(m_LightManager);
 }
 
+void CScene::Play()
+{
+	m_Play = true;
+
+	if (!m_Mode->IsStart())
+	{
+		m_Mode->Start();
+	}
+}
+
 CNavigation3DManager* CScene::GetNavigation3DManager() const
 {
 	return m_Nav3DManager;
@@ -431,6 +441,21 @@ bool CScene::LoadFullPath(const char* FullPath)
 	Success = LoadSceneGlobalDataCSV(FileName.c_str());
 
 	fclose(File);
+
+	auto iter = m_ObjList.begin();
+	auto iterEnd = m_ObjList.end();
+
+	for (; iter != iterEnd;)
+	{
+		if ((*iter)->GetName() == "BossBettySnowAttack" ||
+			(*iter)->GetName() == "BettyAttackAfterEffect")
+		{
+			iter = m_ObjList.erase(iter);
+			iterEnd = m_ObjList.end();
+			continue;
+		}
+		++iter;
+	}
 
 	return true;
 }
@@ -872,8 +897,6 @@ bool CScene::SetSceneMode(size_t SceneModeTypeID)
 		return false;
 	}
 
-	// 새로운 모드 생성 성공하면 스타트하고 리턴
-	m_Mode->Start();
 	return true;
 }
 

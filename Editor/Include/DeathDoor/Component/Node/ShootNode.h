@@ -19,9 +19,6 @@ protected:
 
 private:
     bool m_InRestoreCam;
-    Vector3 m_CurrentCamPos;
-    float   m_CameraMoveSpeed;
-    double   m_CameraMoveTime;
 
 public:
     virtual NodeResult Invoke(float DeltaTime) override;

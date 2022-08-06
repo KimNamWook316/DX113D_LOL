@@ -67,10 +67,7 @@ public:
 		m_Change = Change;
 	}
 
-	void Play()
-	{
-		m_Play = true;
-	}
+	void Play();
 
 	void Pause()
 	{

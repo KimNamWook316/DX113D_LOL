@@ -49,7 +49,7 @@ CParticleConstantBuffer::CParticleConstantBuffer() :
 	m_BufferData.ResetParticleSharedInfoSumSpawnCnt = 0;
 
 	// 처음에는 UV Clipping 처리를 하지 않는다.
-	m_BufferData.UVClippingReflectingMoveDir = 0;
+	m_BufferData.LinearUVClippingEnable = 0;
 
 	// 처음에는 Speed St, End 사이에 랜덤한 Speed 가 세팅되도록 한다.
 	// 1) 해당 값이 1 일 경우, Linear 
@@ -64,6 +64,9 @@ CParticleConstantBuffer::CParticleConstantBuffer() :
 
 	// 처음에는 Particle Component 의 WorldPos 를 실시간으로 따라가지 않게 세팅한다.
 	m_BufferData.FollowRealTimeParticleComponentPos = 0;
+
+	// 아래의 값은 Object Pool 에서 Particle 을 당겨서 끌어와서 사용할 때 적용한다.
+	m_BufferData.DestroyExistingAllLivingParticles = 0;
 }
 
 CParticleConstantBuffer::CParticleConstantBuffer(const CParticleConstantBuffer& Buffer) :

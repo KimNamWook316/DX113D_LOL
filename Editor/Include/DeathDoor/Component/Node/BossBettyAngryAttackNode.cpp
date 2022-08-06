@@ -5,6 +5,10 @@
 #include "Component/ColliderBox3D.h"
 #include "Scene/Scene.h"
 #include "../BossBettyDataComponent.h"
+#include "Scene/SceneManager.h"
+#include "Scene/Scene.h"
+#include "EngineUtil.h"
+#include "ObjectPool.h"
 
 CBossBettyAngryAttackNode::CBossBettyAngryAttackNode()
 {
@@ -67,16 +71,23 @@ void CBossBettyAngryAttackNode::Init()
 	// 울부짖기
 	AnimInst->AddNotifyDeltaTimeFrameRange(AnimName, "OnBettyRoar", 100, 120,
 		Data, &CBossBettyDataComponent::OnBossBettyRoarEffect);
+
+	// End
+	AnimInst->AddNotify(AnimName, "ResetHPState", 121,
+		Data, &CBossBettyDataComponent::ResetBettyHPState);
+
+	AnimInst->AddNotify(AnimName, "ResetCurrentNode", 121,
+		(CMonsterDataComponent*)Data, &CMonsterDataComponent::SetCurrentNodeNull);
 }
 
 NodeResult CBossBettyAngryAttackNode::OnStart(float DeltaTime)
 {
-	m_CallStart = true;
-
 	CBossBettyDataComponent* Data = dynamic_cast<CBossBettyDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
 	
 	// HP State 를 다시 None 으로 
 	Data->ResetBettyHPState();
+
+	m_Owner->SetCurrentNode(this);
 
 	CAnimationSequenceInstance* AnimInst = m_AnimationMeshComp->GetAnimationInstance();
 
@@ -97,8 +108,17 @@ NodeResult CBossBettyAngryAttackNode::OnEnd(float DeltaTime)
 
 void CBossBettyAngryAttackNode::OnBossBettyStartFallingSnowBallEffect()
 {
+	CBossBettyDataComponent* Data = dynamic_cast<CBossBettyDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
+
+	CScene* CurrentScene = CSceneManager::GetInst()->GetScene();
+
 	// 사방에서 투사체 눈덩이가 떨어지게 한다.
 	// 1. 특정 위치에 투사체 눈덩이 Object 를 생성
+
+	for (int i = 0; i < 10; ++i)
+	{
+		CGameObject* Object = CObjectPool::GetInst()->GetProjectile("BossBettySnowAttack", CurrentScene);
+	}
 
 	// 2. 각각에 대해서, 충돌시 동작시킬 콜백들을 세팅한다.
 	// - 투사체의 경우, ThrowNode, AngryAttackNode 둘 다에서 동작하기 때문에 

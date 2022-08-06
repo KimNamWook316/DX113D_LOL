@@ -35,6 +35,8 @@ void CBossBettyJumpAttackNode::Init()
 	std::string AnimName = "PunchDouble";
 
 	// >> Start
+	AnimInst->AddNotify(AnimName, "EnableCloseAttackChangeAnim", 0,
+		Data, &CBossBettyDataComponent::OnBossBettyEnableCloseAttackChangeAnim);
 	AnimInst->AddNotify(AnimName, "OnTracePlayer", 0,
 		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnEnableLookPlayer);
 	AnimInst->AddNotify(AnimName, "OnZMove", 0,
@@ -127,7 +129,6 @@ void CBossBettyJumpAttackNode::OnBossBettyStartJump()
 	float DistToPlayer = Data->DistToPlayer();
 
 	m_InitJumpStartSpeed = (DistToPlayer - 1.f) / m_JumpTotalTime;
-
 }
 
 void CBossBettyJumpAttackNode::OnBossBettyEndJump()

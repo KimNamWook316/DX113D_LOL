@@ -5,6 +5,7 @@
 class CDodgerDashCheck :
     public CConditionNode
 {
+public:
     CDodgerDashCheck();
     CDodgerDashCheck(const CDodgerDashCheck& Node);
     virtual ~CDodgerDashCheck();

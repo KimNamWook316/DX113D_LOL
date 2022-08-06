@@ -2,8 +2,6 @@
 #include "../DodgerDataComponent.h"
 #include "../GameStateComponent.h"
 #include "../GameBehaviorTree.h"
-#include "../MonsterNavAgent.h"
-#include "Scene/Scene.h"
 
 CDodgerDashCheck::CDodgerDashCheck()
 {

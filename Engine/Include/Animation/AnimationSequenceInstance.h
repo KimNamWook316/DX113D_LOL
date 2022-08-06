@@ -147,6 +147,7 @@ public:
 	bool EditCurrentSequenceKeyName(const std::string& NewKey, const std::string& PrevKey);
 	void DeleteCurrentAnimation();
 	std::optional<std::string> GetCurrentAnimationKeyName();
+	bool IsAnimExist(const std::string& Name);
 
 public:
 	void AddAnimation(const std::string& SequenceName, const std::string& Name, bool Loop = true, float PlayScale = 1.f);

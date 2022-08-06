@@ -42,7 +42,6 @@ protected:
 	Vector2		m_Ratio;
 	class CFrustum* m_Frustum;
 
-	Vector3		m_OriginRelavitePos;
 	Vector3		m_PrevShakeAmount;
 	bool		m_Shake;
 	float		m_ShakeTimer;
@@ -54,14 +53,24 @@ protected:
 	Vector3		m_OriginOffset;
 	Vector3		m_Offet;
 
-	bool		m_StartMove;
-	Vector3		m_CurMoveDir;
-	float		m_CurMoveTick;
-	bool		m_StayStart;
-	float		m_StayTimer;
-	CamMoveData* m_CurMoveData;
-	std::list<CamMoveData*>	m_MoveDataList;
-	std::function<void()>	m_MoveEndCallBack;
+	bool		m_LinearMove;
+	bool		m_MoveFreeze;
+	bool		m_ReverseMove;
+	float		m_MoveAccTime;
+	float		m_MoveTime;
+	Vector3		m_MoveStartPos;
+	Vector3		m_MoveDestPos;
+	std::function<void()> m_MoveEndCallBack;
+
+	// CutScene Data
+	bool		m_StartCutSceneMove;
+	Vector3		m_CurCutSceneMoveDir;
+	float		m_CurCutSceneMoveTick;
+	bool		m_CutSceneStayStart;
+	float		m_CutSceneStayTimer;
+	CamMoveData* m_CurCutSceneMoveData;
+	std::list<CamMoveData*>	m_CutSceneMoveDataList;
+	std::function<void()>	m_CutSceneMoveEndCallBack;
 
 #ifdef _DEBUG
 	bool m_TestMove;
@@ -71,6 +80,8 @@ protected:
 
 public:
 	void Shake(float Time, float Amount);
+	void StartMove(const Vector3& StartPos, const Vector3& EndPos, 
+		float MoveTime, bool Reverse = false, bool MoveFreeze = false);
 
 public:
 	Resolution GetResolution()	const
@@ -115,14 +126,14 @@ public:
 
 	const std::list<CamMoveData*>& GetMoveData() const
 	{
-		return m_MoveDataList;
+		return m_CutSceneMoveDataList;
 	}
 
 	CamMoveData* FindMoveData(int Index);
 
 	int GetMoveDataCount() const
 	{
-		return (int)m_MoveDataList.size();
+		return (int)m_CutSceneMoveDataList.size();
 	}
 
 	float GetDistance() const
@@ -133,6 +144,21 @@ public:
 	float GetViewAngle() const
 	{
 		return m_ViewAngle;
+	}
+
+	bool IsMoving() const
+	{
+		return m_LinearMove;
+	}
+
+	const Vector3& GetMoveStartPos() const
+	{
+		return m_MoveStartPos;
+	}
+	
+	const Vector3& GetMoveDestPos() const
+	{
+		return m_MoveDestPos;
 	}
 
 public:
@@ -184,6 +210,21 @@ public:
 		}
 	}
 
+	void SetMoveReverse(bool Reverse)
+	{
+		m_ReverseMove = Reverse;
+	}
+
+	void SetMoveFreeze(bool Freeze)
+	{
+		m_MoveFreeze = Freeze;
+	}
+
+	void StopMove()
+	{
+		m_LinearMove = false;
+	}
+
 public:
 	bool FrustumInPoint(const Vector3& Point);
 	bool FrustumInSphere(const SphereInfo& Sphere);
@@ -196,16 +237,16 @@ public:
 	void ComputeShadowView();
 
 public:
-	void StartMove();
-	void Move(float DeltaTime);
-	void ClearMoveData();
-	CamMoveData* AddMoveData(const Vector3& Point, float NextPointReachTime, float StayTime = 0.f);
-	bool DeleteMoveData(int Index);
-	bool DeleteMoveData(CamMoveData* Data);
-	void ChangeMoveData(int Index, const Vector3& Point, float NextPointReachTime, float StayTime = 0.f);
-	void ChangeMoveDestPoint(int Index, const Vector3& Point);
-	void ChangeMoveDestReachTime(int Index, float Time);
-	void ChangeMoveStayTime(int Index, float Time);
+	void StartCutSceneMove();
+	void CutSceneMove(float DeltaTime);
+	void ClearCutSceneMoveData();
+	CamMoveData* AddCutSceneMoveData(const Vector3& Point, float NextPointReachTime, float StayTime = 0.f);
+	bool DeleteCutSceneMoveData(int Index);
+	bool DeleteCutSceneMoveData(CamMoveData* Data);
+	void ChangeCutSceneMoveData(int Index, const Vector3& Point, float NextPointReachTime, float StayTime = 0.f);
+	void ChangeCutSceneMoveDestPoint(int Index, const Vector3& Point);
+	void ChangeCutSceneMoveDestReachTime(int Index, float Time);
+	void ChangeCutSceneMoveStayTime(int Index, float Time);
 
 #ifdef _DEBUG
 	void StartTestMove();
@@ -232,13 +273,13 @@ public:
 
 public:
 	template<typename T>
-	void AddMoveEndCallBack(T* Obj, void(T::* Func)())
+	void AddCutSceneMoveEndCallBack(T* Obj, void(T::* Func)())
 	{
-		m_MoveEndCallBack = std::bind(Func, Obj);
+		m_CutSceneMoveEndCallBack = std::bind(Func, Obj);
 	}
 
 	template <typename T>
-	void AddMoveCallBack(CamMoveData* Data, CamMoveCallBackCallType CallBackType, T* Obj, void(T::* Func)())
+	void AddCutSceneMoveCallBack(CamMoveData* Data, CamMoveCallBackCallType CallBackType, T* Obj, void(T::* Func)())
 	{
 		if (!Data)
 		{
@@ -250,7 +291,7 @@ public:
 	}
 
 	template <typename T>
-	void AddMoveCallBack(int Index, CamMoveCallBackCallType CallBackType, T* Obj, void(T::* Func)())
+	void AddCutSceneMoveCallBack(int Index, CamMoveCallBackCallType CallBackType, T* Obj, void(T::* Func)())
 	{
 		if (!IsValidMoveDataIndex(Index))
 		{
@@ -266,6 +307,17 @@ public:
 
 		std::function<void()> CallBack = std::bind(Func, Obj);
 		FoundData->CallBack[(int)CallBackType] = CallBack;
+	}
+
+	template <typename T>
+	void SetMoveEndCallBack(T* Obj, void(T::* Func)())
+	{
+		if (m_MoveEndCallBack)
+		{
+			m_MoveEndCallBack = nullptr;
+		}
+
+		m_MoveEndCallBack = std::bind(Func, Obj);
 	}
 };
 

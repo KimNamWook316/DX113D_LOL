@@ -1,4 +1,3 @@
-
 struct PSOutput_Single
 {
 	float4	Color : SV_TARGET;
@@ -115,7 +114,7 @@ cbuffer GLightCBuffer : register(b11)
 	float3 g_GLightEmpty;
 }
 
-cbuffer FadeCBuffer : register(b7)
+cbuffer FadeCBuffer : register(b8)
 {
 	int g_FadeStart;
 	float3 g_FadeStartColor;
@@ -451,5 +450,3 @@ float GetRandomNumber(float key)
 	float	Rand = (RandomPos.x + RandomPos.y + RandomPos.z) / 3.f;
 	return Rand;
 }
-
-

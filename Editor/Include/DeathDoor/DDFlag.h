@@ -31,7 +31,9 @@ enum class DDActionNode
 	ClearPathList,
 	HitBack,
 	PlayerRoll,
+	// Monster
 	ChasePlayer,
+	MeleeAttack,
 	// BossBetty
 	BossBettyAngryAttack,
 	BossBettyChangeAttackDir,
@@ -59,6 +61,9 @@ enum class DDActionNode
 	DodgerFirstAttack,
 	DodgerSecondAttack,
 	DodgerPostAttack,
+	DodgerDash,
+	// PlagueKnight
+	PlagueKnightShoot,
 	Max
 };
 
@@ -120,6 +125,7 @@ enum class DDConditionNode
 	// HeadRoller
 	HeadRollerStunCheck,
 	// Dodger
+	DodgerDashCheck,
 	DodgerSecondAttackCheck,
 	Max
 };
@@ -156,6 +162,7 @@ enum class DDObjectComponentType
 	HeadRollerData,
 	DodgerData,
 	TriggerBoxData,
+	PlagueKnightData,
 	Max
 };
 
@@ -187,6 +194,7 @@ enum class DDSceneModeType
 	DDSceneMode,
 	DDBossSceneMode,
 	DDInstanceSceneMode,
+	DDPuzzleSceneMode,
 	Max
 };
 

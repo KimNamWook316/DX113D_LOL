@@ -155,6 +155,8 @@ bool CDDSceneMode::SetExitPointObj(CGameObject* Obj)
 	m_ExitPointObjName = Obj->GetName();
 	m_ExitPointObj = Obj;
 	m_ExitPointCollider = Collider;
+
+	return true;
 }
 
 void CDDSceneMode::OnDieMonster()

@@ -481,7 +481,7 @@ std::string CEditorUtil::ExtractFilePathFromFullPath(const std::string& FullPath
 
 	std::string Path = Info->PathMultibyte;
 
-	int Length = FullPath.length() - Path.length() + 1;
+	int Length = (int)FullPath.length() - (int)Path.length() + 1;
 
 	std::string FilePath = FullPath.substr(Path.length(), Length);
 

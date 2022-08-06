@@ -359,6 +359,8 @@ bool CDDInstanceSceneMode::AddSpawnInfo(int PhaseIndex, const std::string& Monst
 	Phase->SpawnList.push_back(Info);
 
 	++m_MonsterCount;
+
+	return true;
 }
 
 bool CDDInstanceSceneMode::DeleteSpawnPhaseInfo(int PhaseIndex)

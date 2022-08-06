@@ -19,6 +19,9 @@ protected:
     virtual NodeResult OnEnd(float DeltaTime);
 
 private:
+    void FindPath();
+
+private:
     class CMonsterDataComponent* m_DataComp;
     class CMonsterNavAgent* m_Nav;
     class CSceneComponent* m_RootComp;

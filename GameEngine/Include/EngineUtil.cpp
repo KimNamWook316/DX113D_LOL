@@ -619,7 +619,7 @@ void CEngineUtil::CalculateBazierTargetPoses(const Vector3& D1, const Vector3& D
 		queuePoses.pop();
 	}
 
-	for (int i = 0; i < DetailNum; ++i)
+	for (int i = 1; i < DetailNum; ++i)
 	{
 		float amt = i / (float)DetailNum;
 
@@ -663,7 +663,7 @@ void CEngineUtil::CalculateBazierTargetPoses(const Vector3& D1, const Vector3& D
 	// 먼저 기존에 채워져있던 Pos 정보를 전부 지워준다.
 	vecPoses.clear();
 
-	for (int i = 0; i < DetailNum; ++i)
+	for (int i = 1; i < DetailNum; ++i)
 	{
 		float amt = i / (float)DetailNum;
 

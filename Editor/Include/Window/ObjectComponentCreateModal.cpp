@@ -33,6 +33,8 @@
 #include "../DeathDoor/Component/HeadRollerDataComponent.h"
 #include "../DeathDoor/Component/DodgerDataComponent.h"
 #include "../DeathDoor/Component/TriggerBoxData.h"
+#include "../DeathDoor/Component/DodgerDataComponent.h"
+#include "../DeathDoor/Component/PlagueKnightDataComponent.h"
 
 #include "../Window/InspectorWindow.h"
 #include "../EditorUtil.h"
@@ -225,6 +227,14 @@ void CObjectComponentCreateModal::OnCreateComponent()
 		else if (Typeid == typeid(CTriggerBoxData).hash_code())
 		{
 			Com = SelectObject->CreateComponent<CTriggerBoxData>(Name);
+		}
+		else if (Typeid == typeid(CDodgerDataComponent).hash_code())
+		{
+			Com = SelectObject->CreateComponent<CDodgerDataComponent>(Name);
+		}
+		else if (Typeid == typeid(CPlagueKnightDataComponent).hash_code())
+		{
+			Com = SelectObject->CreateComponent<CPlagueKnightDataComponent>(Name);
 		}
 	}
 

@@ -57,6 +57,8 @@
 #include "Node/DeathNode.h"
 #include "Node/PlayerEnterZoneCheckNode.h"
 #include "Node/PlayerEnterTriggerIsEnable.h"
+#include "Node/ChasePlayerNode.h"
+#include "Node/MeleeAttackNode.h"
 
 // Boss - Knight
 #include "Node/BossKnightContinueAttackNode.h"
@@ -119,6 +121,17 @@
 #include "Node/HeadRollerStunCheck.h"
 #include "Node/HeadRollerRollNode.h"
 #include "Node/HeadRollerStunNode.h"
+
+// Monster - Dodger
+#include "Node/DodgerDashCheck.h"
+#include "Node/DodgerDashNode.h"
+#include "Node/DodgerFirstAttackNode.h"
+#include "Node/DodgerPostAttackNode.h"
+#include "Node/DodgerSecondAttackCheck.h"
+#include "Node/DodgerSecondAttackNode.h"
+
+// Monster - Plauge Knight
+#include "Node/PlagueKnightShootNode.h"
 
 #include "GameStateComponent.h"
 
@@ -423,6 +436,16 @@ CNode* CGameBehaviorTree::LoadNode(CNode* Parent, size_t TypeID)
 		NewNode = MakeNode<CStraightPathCheck>(Parent, OwnerObject);
 	}
 
+	else if (TypeID == typeid(CChasePlayerNode).hash_code())
+	{
+		NewNode = MakeNode<CChasePlayerNode>(Parent, OwnerObject);
+	}
+
+	else if (TypeID == typeid(CMeleeAttackNode).hash_code())
+	{
+		NewNode = MakeNode<CMeleeAttackNode>(Parent, OwnerObject);
+	}
+
 	// Boss Knight - Action
 	else if (TypeID == typeid(CBossKnightContinueAttackNode).hash_code())
 	{
@@ -640,6 +663,38 @@ CNode* CGameBehaviorTree::LoadNode(CNode* Parent, size_t TypeID)
 	else if (TypeID == typeid(CHeadRollerStunNode).hash_code())
 	{
 		NewNode = MakeNode<CHeadRollerStunNode>(Parent, OwnerObject);
+	}
+
+	// Dodger
+	else if (TypeID == typeid(CDodgerDashCheck).hash_code())
+	{
+		NewNode = MakeNode<CDodgerDashCheck>(Parent, OwnerObject);
+	}
+	else if (TypeID == typeid(CDodgerSecondAttackCheck).hash_code())
+	{
+		NewNode = MakeNode<CDodgerSecondAttackCheck>(Parent, OwnerObject);
+	}
+	else if (TypeID == typeid(CDodgerDashNode).hash_code())
+	{
+		NewNode = MakeNode<CDodgerDashNode>(Parent, OwnerObject);
+	}
+	else if (TypeID == typeid(CDodgerFirstAttackNode).hash_code())
+	{
+		NewNode = MakeNode<CDodgerFirstAttackNode>(Parent, OwnerObject);
+	}
+	else if (TypeID == typeid(CDodgerPostAttackNode).hash_code())
+	{
+		NewNode = MakeNode<CDodgerPostAttackNode>(Parent, OwnerObject);
+	}
+	else if (TypeID == typeid(CDodgerSecondAttackNode).hash_code())
+	{
+		NewNode = MakeNode<CDodgerSecondAttackNode>(Parent, OwnerObject);
+	}
+
+	// Plague Knight
+	else if (TypeID == typeid(CPlagueKnightShootNode).hash_code())
+	{
+		NewNode = MakeNode<CPlagueKnightShootNode>(Parent, OwnerObject);
 	}
 
 	return NewNode;
