@@ -234,14 +234,14 @@ bool CColliderComponent::Init()
 void CColliderComponent::Update(float DeltaTime)
 {
 	CSceneComponent::Update(DeltaTime);
-
-	if (m_Enable)
-		m_Scene->GetCollision()->AddCollider(this);
 }
 
 void CColliderComponent::PostUpdate(float DeltaTime)
 {
 	CSceneComponent::PostUpdate(DeltaTime);
+
+	if (m_Enable)
+		m_Scene->GetCollision()->AddCollider(this);
 }
 
 void CColliderComponent::CheckCollision()
