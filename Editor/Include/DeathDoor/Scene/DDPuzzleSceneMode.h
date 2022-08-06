@@ -29,7 +29,7 @@ public:
 public:
     bool SetBlockerObjectName(const std::string& Name);
     bool SetLadderObjectName(const std::string& Name);
-    bool SetClearCamMove(bool Move)
+    void SetClearCamMove(bool Move)
     {
         m_ClearCamMove = Move;
     }
