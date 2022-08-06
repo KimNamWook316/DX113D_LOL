@@ -27,6 +27,7 @@ bool CTriggerBoxDataWidget::Init()
 	m_SelectOrder->AddItem("2");
 	m_SelectOrder->AddItem("3");
 	m_SelectOrder->AddItem("4");
+	m_SelectOrder->AddItem("5");
 
 	m_SelectOrder->SetSelectCallback<CTriggerBoxDataWidget>(this, &CTriggerBoxDataWidget::OnSelectOrder);
 	m_CurrentActive->SetCallBackIdx<CTriggerBoxDataWidget>(this, &CTriggerBoxDataWidget::OnSetCurrentActive);

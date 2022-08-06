@@ -64,26 +64,16 @@ NodeResult CAddFallingFloorCallbackNode::OnUpdate(float DeltaTime)
 				m_PlayerFall = true;
 			}
 
-			else
-				int a = 3;
 		}
 
+		m_BoxCollider->Enable(false);
 		m_Object->AddWorldPos(0.f, -15.f * DeltaTime, 0.f);
 	}
 
 	else if (m_AccTime > 2.5f)
 	{
 		m_Object->SetWorldPos(m_OriginPos);
-		// PaperBurn 효과 시작 하는 코드, PaperBurn 끝나면 m_AccTime = 0.f, m_CollisionStart = false로 만드는 코드, 플레이어 스폰 위치로 스폰하는 코드 추가
-		
-		//CPaperBurnComponent* Comp = m_Object->FindObjectComponentFromType<CPaperBurnComponent>();
-		//Comp->SetInverse(true);
 
-		////Comp->SetMaterial();
-		//Comp->SetFinishCallback<CAddFallingFloorCallbackNode>(this, &CAddFallingFloorCallbackNode::ResetFallingBlock);
-
-		//if (Comp)
-		//	Comp->StartPaperBurn();
 
 		if (m_PlayerFall)
 		{
@@ -133,6 +123,8 @@ void CAddFallingFloorCallbackNode::ResetFallingBlock()
 	m_AccTime = 0.f;
 	m_CollisionStart = false;
 	m_PlayerFall = false;
+
+	m_BoxCollider->Enable(true); 
 
 	CPaperBurnComponent* PaperBurn = m_Object->FindObjectComponentFromType<CPaperBurnComponent>();
 

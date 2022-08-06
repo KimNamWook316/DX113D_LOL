@@ -221,3 +221,8 @@ bool CDDPuzzleSceneMode::SetLadderObjectName(const std::string& Name)
 
 	return true;
 }
+
+CGameObject* CDDPuzzleSceneMode::GetBlockerObject() const
+{
+	return m_BlockerObj;
+}

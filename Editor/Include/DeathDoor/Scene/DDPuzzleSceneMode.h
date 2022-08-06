@@ -40,6 +40,8 @@ public:
         return m_LadderObjectName;
     }
 
+    class CGameObject* GetBlockerObject()   const;
+
 protected:
     std::string m_BlockerObjectName;
     class CGameObject* m_BlockerObj;

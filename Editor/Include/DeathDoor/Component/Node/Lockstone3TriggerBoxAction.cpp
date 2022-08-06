@@ -7,6 +7,7 @@
 #include "Scene/SceneManager.h"
 #include "Component/StaticMeshComponent.h"
 #include "../GameStateComponent.h"
+#include "../../Scene/DDPuzzleSceneMode.h"
 
 CLockstone3TriggerBoxAction::CLockstone3TriggerBoxAction()
 {
@@ -46,7 +47,7 @@ NodeResult CLockstone3TriggerBoxAction::OnStart(float DeltaTime)
 
 			int TriggerBoxOrder = TriggerBoxData->GetBoxOrder();
 
-			if (TriggerBoxOrder < 4)
+			if (TriggerBoxOrder < 5)
 			{
 				// 내가 1번 Box면, 2번 Box를 활성화 시켜야하니 Parent Object의 vecChildObject의 1번 Index에 있는 Child를 활성화 해준다
 				CGameObject* NextTriggerBox = m_Object->GetParentObject()->GetChildObject(TriggerBoxOrder);
@@ -56,6 +57,12 @@ NodeResult CLockstone3TriggerBoxAction::OnStart(float DeltaTime)
 					CTriggerBoxData* NextTriggerBoxData = NextTriggerBox->FindObjectComponentFromType<CTriggerBoxData>();
 					NextTriggerBoxData->SetCurrentActive(true);
 				}
+			}
+
+			else if (TriggerBoxOrder == 5)
+			{
+				CDDPuzzleSceneMode* PuzzleScene = (CDDPuzzleSceneMode*)m_Object->GetScene()->GetSceneMode();
+				PuzzleScene->OnClearDungeon();
 			}
 
 		}

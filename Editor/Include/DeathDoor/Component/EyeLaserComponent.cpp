@@ -89,14 +89,17 @@ void CEyeLaserComponent::Update(float DeltaTime)
 	if (m_TriggerHitCount == 0)
 		m_RayCollider->Enable(false);
 
-	FaceCamera();
+	if (m_TriggerHitCount >= 0 && m_TriggerHitCount < 4)
+	{
+		FaceCamera();
+	}
 
 	if (m_TriggerHitCount > 0 && m_TriggerHitCount < 4)
 	{
 		TrackPlayer(DeltaTime);
 	}
 
-	else if (m_TriggerHitCount == 4)
+	else if (m_TriggerHitCount >= 4)
 	{
 		m_RayCollider->Enable(false);
 	}
@@ -115,7 +118,7 @@ void CEyeLaserComponent::PrevRender()
 void CEyeLaserComponent::Render()
 {
 
-	if (m_TriggerHitCount > 0 && m_TriggerHitCount != 4)
+	if (m_TriggerHitCount > 0 && m_TriggerHitCount < 4)
 	{
 		CSceneComponent::Render();
 
