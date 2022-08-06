@@ -77,8 +77,9 @@ CParticleComponent::~CParticleComponent()
 
 void CParticleComponent::StartParticle(const Vector3& StartPos)
 {
+	Enable(true);
 	SetWorldPos(StartPos);
-	ResetParticleStructuredBufferInfo();
+	RecreateOnlyOnceCreatedParticle();
 }
 
 void CParticleComponent::SetParticle(const std::string& Name)

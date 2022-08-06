@@ -5,6 +5,7 @@
 #include "../Scene/Navigation3DManager.h"
 #include "../PathManager.h"
 #include "../Component/NavAgent.h"
+#include "../Component/ParticleComponent.h"
 #include "../Component/PaperBurnComponent.h"
 #include "../ObjectPool.h"
 
@@ -883,6 +884,23 @@ void CGameObject::Reset()
 
 	if (m_RootComponent)
 		m_RootComponent->Reset();
+}
+
+void CGameObject::StartParticle(const Vector3& WorldPos)
+{
+	Enable(true);
+
+	SetWorldPos(WorldPos);
+
+	std::vector<CParticleComponent*> vecParticleComponents;
+	FindAllSceneComponentFromType(vecParticleComponents);
+
+	size_t vecSize = vecParticleComponents.size();
+
+	for (size_t i = 0; i < vecSize; ++i)
+	{
+		vecParticleComponents[i]->StartParticle(WorldPos);
+	}
 }
 
 void CGameObject::Move(const Vector3& EndPos)

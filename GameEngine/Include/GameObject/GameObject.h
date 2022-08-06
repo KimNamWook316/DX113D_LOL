@@ -406,7 +406,9 @@ public:
 	{
 		return m_vecChildObject[Index];
 	}
-
+public:
+	// Particle Object 의 경우 호출하는 함수
+	void StartParticle(const Vector3& WorldPos);
 public:
 	// NavAgent가 있을 경우에 동작한다.
 	void Move(const Vector3& EndPos);

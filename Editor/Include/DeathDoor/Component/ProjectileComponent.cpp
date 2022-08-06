@@ -246,21 +246,7 @@ void CProjectileComponent::OnEnd()
 	// End Effect가 있는 경우
 	if (m_EndParticleObject)
 	{
-		m_EndParticleObject->Enable(true);
-
-		m_EndParticleObject->SetWorldPos(m_Root->GetWorldPos());
-
-		// 모든 ParticleComponent 들로 하여금 SetFollowRealTimeParticleComponentPos 를 true 로 세팅한다.
-		// 그래야만, 현재 위치에서 Particle 이 생성된다.
-		std::vector<CParticleComponent*> vecParticleComponents;
-		m_EndParticleObject->FindAllSceneComponentFromType(vecParticleComponents);
-
-		size_t vecSize = vecParticleComponents.size();
-
-		for (size_t i = 0; i < vecSize; ++i)
-		{
-			vecParticleComponents[i]->RecreateOnlyOnceCreatedParticle();
-		}
+		m_EndParticleObject->StartParticle(m_Root->GetWorldPos());
 	}
 
 	if (m_EndCallBack)
