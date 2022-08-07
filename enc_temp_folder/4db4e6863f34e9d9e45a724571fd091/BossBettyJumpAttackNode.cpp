@@ -74,7 +74,7 @@ void CBossBettyJumpAttackNode::Init()
 		Data, &CBossBettyDataComponent::IncFarAttackCount);
 	AnimInst->AddNotify(AnimName, "OnDisableSpinCollider", 35,
 		Data, &CBossBettyDataComponent::OnBossBettyDisableSpinCollider);
-	AnimInst->AddNotify(AnimName, "BackToOriginalSpeed", 35,
+	AnimInst->AddNotify(AnimName, "JumpEnd", 35,
 		Data, &CBossBettyDataComponent::OnBossBettyResetOriginalMoveSpeed);
 	AnimInst->AddNotify(AnimName, "EndJump", 35,
 		this, &CBossBettyJumpAttackNode::OnBossBettyEndJump);

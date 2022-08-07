@@ -181,8 +181,8 @@ void CBossBettyDataComponent::OnBossBettyGenerateTwoSideCloseAttackEffect()
 	// 1) 충돌체 활성화
 	// 2) Particle 제작
 
-    const Vector3& XWorldAxis = m_MeleeAttackCollider->GetRelativeAxis(AXIS::AXIS_X) * -1.f;
-    const Vector3& ZWorldAxis = m_MeleeAttackCollider->GetRelativeAxis(AXIS::AXIS_Z) * -1.f;
+    const Vector3& XWorldAxis = m_MeleeAttackCollider->GetWorldAxis(AXIS::AXIS_X) * -1.f;
+    const Vector3& ZWorldAxis = m_MeleeAttackCollider->GetWorldAxis(AXIS::AXIS_Z) * -1.f;
 
     const Vector3& ColliderRelativePos = ZWorldAxis * 6.0f;
 
@@ -201,8 +201,8 @@ void CBossBettyDataComponent::OnSetBossBettyAttackColliderPosToBettyBody()
 
 void CBossBettyDataComponent::OnBossBettyGenerateRightCloseAttackEffect()
 {
-    const Vector3& XWorldAxis = m_MeleeAttackCollider->GetRelativeAxis(AXIS::AXIS_X) * -1.f;
-    const Vector3& ZWorldAxis = m_MeleeAttackCollider->GetRelativeAxis(AXIS::AXIS_Z) * -1.f;
+    const Vector3& XWorldAxis = m_MeleeAttackCollider->GetWorldAxis(AXIS::AXIS_X) * -1.f;
+    const Vector3& ZWorldAxis = m_MeleeAttackCollider->GetWorldAxis(AXIS::AXIS_Z) * -1.f;
 
     const Vector3& ColliderRelativePos = XWorldAxis * 3.0f + ZWorldAxis * 3.0f;
 
@@ -214,8 +214,8 @@ void CBossBettyDataComponent::OnBossBettyGenerateRightCloseAttackEffect()
 
 void CBossBettyDataComponent::OnBossBettyGenerateLeftCloseAttackEffect()
 {
-    const Vector3& XWorldAxis = m_MeleeAttackCollider->GetRelativeAxis(AXIS::AXIS_X) * -1.f;
-    const Vector3& ZWorldAxis = m_MeleeAttackCollider->GetRelativeAxis(AXIS::AXIS_Z) * -1.f;
+    const Vector3& XWorldAxis = m_MeleeAttackCollider->GetWorldAxis(AXIS::AXIS_X) * -1.f;
+    const Vector3& ZWorldAxis = m_MeleeAttackCollider->GetWorldAxis(AXIS::AXIS_Z) * -1.f;
 
     const Vector3& ColliderRelativePos = XWorldAxis * 3.5f * -1.f + ZWorldAxis * 3.0f;
 
@@ -336,6 +336,11 @@ void CBossBettyDataComponent::OnBossBettyDisableAttackCollider()
 void CBossBettyDataComponent::OnBossBettyActivateAfterEffect(const Vector3& WorldPos)
 {
     CGameObject* AfterEffectParticle = CObjectPool::GetInst()->GetParticle("BettyAttackAfterEffect", CSceneManager::GetInst()->GetScene());
+
+    CColliderComponent* Collider3D = AfterEffectParticle->FindComponentFromType<CColliderBox3D>();
+
+    Collider3D->AddCollisionCallback(Collision_State::Begin, (CMonsterDataComponent*)this, &CMonsterDataComponent::OnHitMeleeAttack);
+
     AfterEffectParticle->StartParticle(WorldPos);
 }
 

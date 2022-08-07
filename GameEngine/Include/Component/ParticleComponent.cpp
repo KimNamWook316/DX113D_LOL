@@ -543,6 +543,30 @@ void CParticleComponent::RecreateOnlyOnceCreatedParticle()
 	if (m_CBuffer->IsDisableNewAlive() == 0)
 		return;
 
+	RecreateOnlyOnceCreatedParticleWithOutLifeTimeSetting();
+
+	// Object Pool 에서 가져온 Particle일 경우 Destroy 시켜서 다시 Pool 에 되돌릴 것이다.
+	// -  m_TempCreateAccTimeMax 만큼 LifeTime 을 세팅해줄 것이다.
+	if (m_Object->IsInPool())
+	{
+		// m_Object->SetLifeSpan(m_TempCreateAccTimeMax);
+		float MaxLifeSpan = m_Object->GetLifeSpan();
+		float ParticleLifeSpan = m_CBuffer->GetLifeTimeMax() + 0.1f;
+
+		m_Object->SetLifeSpan(MaxLifeSpan > ParticleLifeSpan ? MaxLifeSpan : ParticleLifeSpan);
+	}
+}
+
+void CParticleComponent::RecreateOnlyOnceCreatedParticleWithOutLifeTimeSetting()
+{
+	if (!m_Particle)
+		return;
+
+	if (m_CBuffer->IsDisableNewAlive() == 0)
+		return;
+
+	CRef::Enable(true);
+
 	size_t	BufferCount = m_vecStructuredBuffer.size();
 
 	for (size_t i = 0; i < BufferCount; ++i)
@@ -557,7 +581,8 @@ void CParticleComponent::RecreateOnlyOnceCreatedParticle()
 	m_CBuffer->SetResetParticleSharedInfoSumSpawnCnt(true);
 
 	// 해당 AccTime 이후 Enable False 가 된다.
-	m_TempCreateAccTime = m_TempCreateAccTimeMax;
+	// m_TempCreateAccTime = m_TempCreateAccTimeMax;
+	m_TempCreateAccTime = m_CBuffer->GetLifeTimeMax() + 0.1f;
 
 	// 상수 버퍼 정보를 Update
 	m_CBuffer->UpdateCBuffer();
@@ -569,13 +594,6 @@ void CParticleComponent::RecreateOnlyOnceCreatedParticle()
 	for (size_t i = 0; i < BufferCount; ++i)
 	{
 		m_vecStructuredBuffer[i]->ResetShader();
-	}
-
-	// Object Pool 에서 가져온 Particle일 경우 Destroy 시켜서 다시 Pool 에 되돌릴 것이다.
-	// -  m_TempCreateAccTimeMax 만큼 LifeTime 을 세팅해줄 것이다.
-	if (m_Object->IsInPool())
-	{
-		m_Object->SetLifeSpan(m_TempCreateAccTimeMax);
 	}
 }
 

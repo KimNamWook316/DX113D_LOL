@@ -65,10 +65,10 @@ void CBossBettySpinAttackNode::Init()
 	// - 이를 다시 Enable 만 시켜주면 된다.
 	AnimInst->AddNotify(AnimName, "DisalbeLookPlayer", 0,
 		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnDisableLookPlayer);
-	AnimInst->AddNotify(AnimName, "EnableSpinCollider", 0,
-		Data, &CBossBettyDataComponent::OnBossBettyEnableSpinCollider);	
 	AnimInst->AddNotify(AnimName, "ResetMoveSpeed", 0,
 		Data, &CBossBettyDataComponent::OnBossBettyResetOriginalMoveSpeed);
+	AnimInst->AddNotify(AnimName, "EnableSpinCollider", 0,
+		Data, &CBossBettyDataComponent::OnBossBettyEnableSpinCollider);	
 	AnimInst->AddNotify(AnimName, "EnableAttackCollider", 2,
 		Data, &CBossBettyDataComponent::OnBossBettyEnableAttackCollider);
 

@@ -66,6 +66,7 @@ public :
 	// Editor 에서 Test 용으로 특정 Button을 누르면 처음부터 다시 생성하게 하는 기능
 public :
 	void RecreateOnlyOnceCreatedParticle();
+	void RecreateOnlyOnceCreatedParticleWithOutLifeTimeSetting();
 private :
 	virtual bool SaveOnly(FILE* File);
 	virtual bool LoadOnly(FILE* File);
