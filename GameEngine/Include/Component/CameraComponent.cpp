@@ -668,7 +668,10 @@ void CCameraComponent::Update(float DeltaTime)
 		SetWorldPos(CurrentPos);
 	}
 
-	AddRelativePos(Shake);
+	if (m_Shake)
+	{
+		AddRelativePos(Shake);
+	}
 
 	if (!m_Shake && m_StartCutSceneMove)
 	{
