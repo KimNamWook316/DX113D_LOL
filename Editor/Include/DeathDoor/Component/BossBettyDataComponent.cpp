@@ -187,8 +187,7 @@ void CBossBettyDataComponent::OnBossBettyGenerateTwoSideCloseAttackEffect()
     const Vector3& ColliderRelativePos = ZWorldAxis * 6.0f;
 
     m_MeleeAttackCollider->SetRelativePos(ColliderRelativePos);
-
-    m_MeleeAttackCollider->SetExtent(4.f, 1.f, 4.f);
+    m_MeleeAttackCollider->SetExtent(4.f, 2.5f, 2.5f);
 
     OnBossBettyActivateAfterEffect(m_Object->GetWorldPos() + ColliderRelativePos);
 }
@@ -311,12 +310,6 @@ void CBossBettyDataComponent::OnBossBettyNormalShakeCamera()
 void CBossBettyDataComponent::OnBossBettyApplyOutOfMapSurroundingColliderMoveSpeed()
 {
    SetCurMoveSpeed(m_OriginMoveSpeed * 0.2f);
-}
-
-void CBossBettyDataComponent::OnBossBettySetAttackColliderToBettyBodyPos()
-{
-    m_MeleeAttackCollider->SetExtent(3.f, 3.f, 3.f);
-    m_MeleeAttackCollider->SetWorldPos(m_Object->GetWorldPos());
 }
 
 void CBossBettyDataComponent::OnBossBettyEnableAttackCollider()

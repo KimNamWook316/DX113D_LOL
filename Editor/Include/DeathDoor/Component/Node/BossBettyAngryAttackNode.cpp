@@ -118,9 +118,9 @@ void CBossBettyAngryAttackNode::OnBossBettyStartFallingSnowBallEffect()
 	CGameObject* MapSurroundingObject = CurrentScene->FindObject("MapSurrounding");
 	// Result.Dest->GetGameObject()->GetName() != "MapSurrounding")
 
-	float XRand = rand() % 10;
-	float YRand = rand() % 10 + 10.f;
-	float ZRand = rand() % 10;
+	int XRand = rand() % 10;
+	int YRand = rand() % 10 + 10.f;
+	int ZRand = rand() % 10;
 
 	for (int i = 0; i < 10; ++i)
 	{
