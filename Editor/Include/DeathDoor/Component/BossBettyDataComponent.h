@@ -25,6 +25,12 @@ private:
     virtual ~CBossBettyDataComponent();
 
 private :
+    // Init Idle (처음에는 계속 Idle Animation 만 진행한다.)
+    bool m_IsInitIdle;
+
+    // 그러다가 CutScene 에서 Intro 로 변경한다.
+    bool m_IsIntroAnimation;
+
     // 근거리 연속 공격 횟수
     int m_CloseSequentialAttackNum;
 
@@ -120,6 +126,12 @@ public :
     // Close Attack Anim Change 여부 
     void OnBossBettyEnableCloseAttackChangeAnim();
     void OnBossBettyDisableCloseAttackChangeAnim();
+    // IntroAnimation 끝난 이후 Game Start 
+    void OnBossBettyEndIntroAndStartGame();
+    void OnBossBettyStartIntroAnimation();
+    // CutScene Camera 시작
+    void OnBossBettyStartCutSceneCamera(const CollisionResult& Result);
+
     // Setter 함수 ---
 public:
     void SetBettyThrowBallObject(class CGameObject* Object)
@@ -151,8 +163,25 @@ public:
         ++m_CloseSequentialAttackNum;
     }
     void IncFarAttackCount();
-    // Getter 함수 ---
+    
+    void SetInitIdleEnable(bool Enable)
+    {
+        m_IsInitIdle = Enable;
+    }
+    void SetIntroAnimationEnable(bool Enable)
+    {
+        m_IsIntroAnimation = Enable;
+    }
+  
 public:
+    bool IsInitIdle() const
+    {
+        return m_IsInitIdle;
+    }
+    bool IsIntroAnimation() const
+    {
+        return m_IsIntroAnimation;
+    }
     float GetBossBettyHPMax() const
     {
         return m_BettyHPMax;

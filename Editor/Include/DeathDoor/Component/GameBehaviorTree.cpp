@@ -85,11 +85,15 @@
 #include "Node/BossBettyJumpAttackNode.h"
 #include "Node/BossBettySpinAttackNode.h"
 #include "Node/BossBettyThrowNode.h"
+#include "Node/BossBettyIntroNode.h"
+#include "Node/BossBettyIdleBeastNode.h"
 
 #include "Node/BossBettyChangeDirCheck.h"
 #include "Node/BossBettyFarAttackTypeCheck.h"
 #include "Node/BossBettyHPStateCheck.h"
 #include "Node/BossBettyThrowAttackCheck.h"
+#include "Node/BossBettyIdleAnimCheck.h"
+#include "Node/BossBettyIntroAnimCheck.h"
 
 // Boss - CrowBoss
 #include "Node/CrowBossCutScenePlayCheck.h"
@@ -537,6 +541,14 @@ CNode* CGameBehaviorTree::LoadNode(CNode* Parent, size_t TypeID)
 	{
 	NewNode = MakeNode<CBossBettyThrowNode>(Parent, OwnerObject);
 	}
+	else if (TypeID == typeid(CBossBettyIntroNode).hash_code())
+	{
+	NewNode = MakeNode<CBossBettyIntroNode>(Parent, OwnerObject);
+	}
+	else if (TypeID == typeid(CBossBettyIdleBeastNode).hash_code())
+	{
+	NewNode = MakeNode<CBossBettyIdleBeastNode>(Parent, OwnerObject);
+	}
 	// Boss Betty Condition
 	else if (TypeID == typeid(CBossBettyChangeDirCheck).hash_code())
 	{
@@ -553,6 +565,14 @@ CNode* CGameBehaviorTree::LoadNode(CNode* Parent, size_t TypeID)
 	else if (TypeID == typeid(CBossBettyThrowAttackCheck).hash_code())
 	{
 	NewNode = MakeNode<CBossBettyThrowAttackCheck>(Parent, OwnerObject);
+	}
+	else if (TypeID == typeid(CBossBettyIdleAnimCheck).hash_code())
+	{
+	NewNode = MakeNode<CBossBettyIdleAnimCheck>(Parent, OwnerObject);
+	}
+	else if (TypeID == typeid(CBossBettyIntroAnimCheck).hash_code())
+	{
+	NewNode = MakeNode<CBossBettyIntroAnimCheck>(Parent, OwnerObject);
 	}
 
 

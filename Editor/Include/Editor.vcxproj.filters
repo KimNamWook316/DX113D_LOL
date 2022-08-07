@@ -698,6 +698,7 @@
     <ClCompile Include="DeathDoor\Component\Node\CrowBossSlide.cpp">
       <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\04. CrowBoss</Filter>
     </ClCompile>
+    <ClCompile Include="DeathDoor\Component\Node\AttackCoolTimeCheck.cpp" />
     <ClCompile Include="EditorManager.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\CrowBossSpitting.cpp">
@@ -878,8 +879,17 @@
       <Filter>06. DeathDoor\01. GameComponent\02. ObjectComponent\01. DataComponent\01. Monster\09. PlaugeKnight</Filter>
     </ClCompile>
     <ClCompile Include="DeathDoor\Component\TriggerBoxData.cpp" />
-    <ClCompile Include="DeathDoor\Component\Node\AttackCoolTimeCheck.cpp">
-      <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\01. Public</Filter>
+    <ClCompile Include="DeathDoor\Component\Node\BossBettyIdleAnimCheck.cpp">
+      <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\02. BossBetty</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Component\Node\BossBettyIntroAnimCheck.cpp">
+      <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\02. BossBetty</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Component\Node\BossBettyIntroNode.cpp">
+      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\02. BossBetty</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Component\Node\BossBettyIdleBeastNode.cpp">
+      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\02. BossBetty</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1527,6 +1537,18 @@
     </ClInclude>
     <ClInclude Include="DeathDoor\Component\TriggerBoxData.h">
       <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\Node\BossBettyIdleAnimCheck.h">
+      <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\02. BossBetty</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\Node\BossBettyIntroAnimCheck.h">
+      <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\02. BossBetty</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\Node\BossBettyIntroNode.h">
+      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\02. BossBetty</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\Node\BossBettyIdleBeastNode.h">
+      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\02. BossBetty</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

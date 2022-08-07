@@ -18,7 +18,9 @@ CBossBettyDataComponent::CBossBettyDataComponent() :
 	m_ThrowFarAttackEnable(false),
 	m_FarAttackType(BossBettyFarAttackType::JumpSmash),
     m_ChangeDirLimitAngle(10.f),
-    m_CloseAttackAnimChangeEnable(true)
+    m_CloseAttackAnimChangeEnable(true),
+    m_IsInitIdle(true),
+    m_IsIntroAnimation(false)
 {
     m_ComponentType = Component_Type::ObjectComponent;
     SetTypeID<CBossBettyDataComponent>();
@@ -90,7 +92,31 @@ void CBossBettyDataComponent::Start()
 
     if (m_PlayerEnterZoneTrigger)
     {
-        m_PlayerEnterZoneTrigger->SetExtent(30.f, 30.f, 30.f);
+        const Vector3& ZWorldAxis = m_MeleeAttackCollider->GetWorldAxis(AXIS::AXIS_Z) * -1.f;
+
+        m_PlayerEnterZoneTrigger->Enable(true);
+
+        // BossBetty 맨 앞 쪽에 세팅해둔다.
+        m_PlayerEnterZoneTrigger->SetExtent(15.f, 2.f, 5.f);
+        m_PlayerEnterZoneTrigger->SetInheritRotY(true);
+        // m_PlayerEnterZoneTrigger->SetRelativePos(ZWorldAxis * 12.0f);
+
+        m_PlayerEnterZoneTrigger->AddCollisionCallback(Collision_State::Begin,
+            this, &CBossBettyDataComponent::OnBossBettyStartCutSceneCamera);
+    }
+
+    // 카메라 Component 1번째 Index 에서 Idle 을 false 로 만들고, Intro 를 true 로 만들어서
+    // Intro Animation이 진행되게끔 세팅할 것이다
+    if (m_CutSceneCam)
+    {
+        // 혹시 모르니 Player의 카메라를 Current Camera 로 세팅할 것이다
+        // CCameraComponent* PlayerCamera = m_Scene->GetPlayerObject()->FindComponentFromType<CCameraComponent>();
+        // CSceneManager::GetInst()->GetScene()->GetCameraManager()->SetCurrentCamera(PlayerCamera);
+
+        m_CutSceneCam->AddCutSceneMoveCallBack(1, CamMoveCallBackCallType::REACHED_POINT, this,
+            &CBossBettyDataComponent::OnBossBettyStartIntroAnimation);
+
+        m_CutSceneCam->AddCutSceneMoveEndCallBack<CMonsterDataComponent>((CMonsterDataComponent*)this, &CMonsterDataComponent::OnEndCutScene);
     }
  
     // 근거리 사정 거리 판별 Square Pos 위치 만들기 
@@ -338,6 +364,31 @@ void CBossBettyDataComponent::OnBossBettyEnableCloseAttackChangeAnim()
 void CBossBettyDataComponent::OnBossBettyDisableCloseAttackChangeAnim()
 {
     m_CloseAttackAnimChangeEnable = false;
+}
+
+void CBossBettyDataComponent::OnBossBettyEndIntroAndStartGame()
+{
+    m_IsInitIdle = false;
+    m_IsIntroAnimation = false;
+}
+
+void CBossBettyDataComponent::OnBossBettyStartIntroAnimation()
+{
+    OnBossBettySetCurrentNodeNullPtr();
+
+    m_IsInitIdle = false;
+    m_IsIntroAnimation = true;
+}
+
+void CBossBettyDataComponent::OnBossBettyStartCutSceneCamera(const CollisionResult& Result)
+{
+    CMonsterDataComponent::OnStartCutScene();
+
+    // CCameraComponent* BettyCamera = m_Object->FindComponentFromType<CCameraComponent>();
+    // BettyCamera->StartCutSceneMove();
+
+    // 이후 Player Trigger 는 Enable False 처리해준다. -> Monster Data Component 에서 처리해주고 있다.
+    // m_PlayerEnterZoneTrigger->Enable(false);
 }
 
 void CBossBettyDataComponent::IncFarAttackCount()

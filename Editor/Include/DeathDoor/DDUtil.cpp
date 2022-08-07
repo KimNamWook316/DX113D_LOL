@@ -151,6 +151,11 @@ std::string CDDUtil::DDConditionNodeTypeToString(DDConditionNode NodeType)
 	case DDConditionNode::BossBettyCheckThrowAttack:
 		return "BossBettyCheckThrowAttack";
 
+	case DDConditionNode::BossBettyCheckIdle:
+		return "BossBettyCheckIdle";
+
+	case DDConditionNode::BossBettyCheckIntro:
+		return "BossBettyCheckIntro";
 	// Crow Boss
 	case DDConditionNode::CrowBossCutScenePlayCheck:
 		return "CrowBossCutScenePlayCheck";
@@ -335,6 +340,15 @@ DDConditionNode CDDUtil::StringToDDConditionNodeType(const std::string& Str)
 	{
 		return DDConditionNode::BossBettyCheckThrowAttack;
 	}
+	else if (Str == "BossBettyCheckIdle")
+	{
+		return DDConditionNode::BossBettyCheckIdle;
+	}
+	else if (Str == "BossBettyCheckIntro")
+	{
+		return DDConditionNode::BossBettyCheckIntro;
+	}
+	
 	// Crow Boss
 	else if (Str == "CrowBossCutScenePlayCheck")
 	{
@@ -480,7 +494,11 @@ std::string CDDUtil::DDActionNodeTypeToString(DDActionNode NodeType)
 		return "BossBettySpinAttack";
 	case DDActionNode::BossBettyThrowAttack:
 		return "BossBettyThrowAttack";
-
+	case DDActionNode::BossBettyIntro:
+		return "BossBettyIntro";
+	case DDActionNode::BossBettyIdleBeast:
+		return "BossBettyIdleBeast";
+		
 	// Crow Boss
 	case DDActionNode::CrowBossCutScenePlayNode:
 		return "CrowBossCutScenePlayNode";
@@ -662,6 +680,14 @@ DDActionNode CDDUtil::StringToDDActionNodeType(const std::string& Str)
 	else if (Str == "BossBettyThrowAttack")
 	{
 		return DDActionNode::BossBettyThrowAttack;
+	}
+	else if (Str == "BossBettyIntro")
+	{
+		return DDActionNode::BossBettyIntro;
+	}
+	else if (Str == "BossBettyIdleBeast")
+	{
+		return DDActionNode::BossBettyIdleBeast;
 	}
 
 	// Crow Boss

@@ -89,11 +89,15 @@
 #include "../DeathDoor/Component/Node/BossBettyJumpAttackNode.h"
 #include "../DeathDoor/Component/Node/BossBettySpinAttackNode.h"
 #include "../DeathDoor/Component/Node/BossBettyThrowNode.h"
+#include "../DeathDoor/Component/Node/BossBettyIntroNode.h"
+#include "../DeathDoor/Component/Node/BossBettyIdleBeastNode.h"
 
 #include "../DeathDoor/Component/Node/BossBettyChangeDirCheck.h"
 #include "../DeathDoor/Component/Node/BossBettyFarAttackTypeCheck.h"
 #include "../DeathDoor/Component/Node/BossBettyHPStateCheck.h"
 #include "../DeathDoor/Component/Node/BossBettyThrowAttackCheck.h"
+#include "../DeathDoor/Component/Node/BossBettyIdleAnimCheck.h"
+#include "../DeathDoor/Component/Node/BossBettyIntroAnimCheck.h"
 
 // CrowBoss
 #include "../DeathDoor/Component/Node/CrowBossCutScenePlayCheck.h"
@@ -675,7 +679,16 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
             NewTreeNode = m_StateComponent->CreateTreeNode<CBossBettyThrowNode>(Name);
             break;
         }
-
+        case DDActionNode::BossBettyIntro:
+        {
+            NewTreeNode = m_StateComponent->CreateTreeNode<CBossBettyIntroNode>(Name);
+            break;
+        }
+        case DDActionNode::BossBettyIdleBeast:
+        {
+            NewTreeNode = m_StateComponent->CreateTreeNode<CBossBettyIdleBeastNode>(Name);
+            break;
+        }
         // Crow Boss
         case DDActionNode::CrowBossCutScenePlayNode:
         {
@@ -918,6 +931,12 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
             break;
         case DDConditionNode::BossBettyCheckThrowAttack:
             NewTreeNode = m_StateComponent->CreateTreeNode<CBossBettyThrowAttackCheck>(Name);
+            break;
+        case DDConditionNode::BossBettyCheckIdle:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CBossBettyIdleAnimCheck>(Name);
+            break;
+        case DDConditionNode::BossBettyCheckIntro:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CBossBettyIntroAnimCheck>(Name);
             break;
 
         // Crow Boss

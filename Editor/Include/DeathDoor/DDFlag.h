@@ -41,6 +41,8 @@ enum class DDActionNode
 	BossBettyJumpAttack,
 	BossBettySpinAttack,
 	BossBettyThrowAttack,
+	BossBettyIntro,
+	BossBettyIdleBeast,
 	// CrowBoss
 	CrowBossCutScenePlayNode,
 	CrowBossRunNode,
@@ -110,6 +112,8 @@ enum class DDConditionNode
 	BossBettyCheckFarAttackType,
 	BossBettyCheckHPState,
 	BossBettyCheckThrowAttack,
+	BossBettyCheckIdle,
+	BossBettyCheckIntro,
 	// CrowBoss
 	CrowBossCutScenePlayCheck,
 	CrowBossPhasePickNode,
