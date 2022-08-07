@@ -88,23 +88,11 @@ void CBossBettyDataComponent::Start()
             (CMonsterDataComponent*)this, &CMonsterDataComponent::OnHitMeleeAttack);
     }
 
-    // CParticleComponent* FoundParticle = (CParticleComponent*)(m_Object->FindComponent("AttackGrass"));
-    // 
-    // if (FoundParticle)
-    // {
-    //     FoundParticle->GetCBuffer()->SetFollowRealTimeParticleComponentPos(true);
-    //     m_vecAttackAfterEffectParticle.push_back(FoundParticle);
-    // }
-    // 
-    // FoundParticle = (CParticleComponent*)(m_Object->FindComponent("AttackCircle"));
-    // 
-    // if (FoundParticle)
-    // {
-    //     FoundParticle->GetCBuffer()->SetFollowRealTimeParticleComponentPos(true);
-    //     m_vecAttackAfterEffectParticle.push_back(FoundParticle);
-    // }
-
-
+    if (m_PlayerEnterZoneTrigger)
+    {
+        m_PlayerEnterZoneTrigger->SetExtent(30.f, 30.f, 30.f);
+    }
+ 
     // 근거리 사정 거리 판별 Square Pos 위치 만들기 
     //  0: 왼쪽 하단, 1 : 왼쪽 상단, 2 : 오른쪽 상단, 3 : 오른쪽 하단
     const Vector3& ObjectWorldScale = m_Object->GetRootComponent()->GetWorldScale();
@@ -186,6 +174,7 @@ void CBossBettyDataComponent::OnBossBettyGenerateTwoSideCloseAttackEffect()
 
     const Vector3& ColliderRelativePos = ZWorldAxis * 6.0f;
 
+    m_MeleeAttackCollider->SetWorldPos(m_Object->GetWorldPos());
     m_MeleeAttackCollider->SetRelativePos(ColliderRelativePos);
     m_MeleeAttackCollider->SetExtent(4.f, 2.5f, 2.5f);
 
@@ -195,6 +184,7 @@ void CBossBettyDataComponent::OnBossBettyGenerateTwoSideCloseAttackEffect()
 void CBossBettyDataComponent::OnSetBossBettyAttackColliderPosToBettyBody()
 {
     m_MeleeAttackCollider->SetRelativePos(Vector3(0.f, 0.f, 0.f));
+    m_MeleeAttackCollider->SetWorldPos(m_Object->GetWorldPos());
     m_MeleeAttackCollider->SetExtent(2.5f, 2.5f, 2.5f);
 }
 
@@ -205,6 +195,7 @@ void CBossBettyDataComponent::OnBossBettyGenerateRightCloseAttackEffect()
 
     const Vector3& ColliderRelativePos = XWorldAxis * 3.0f + ZWorldAxis * 3.0f;
 
+    m_MeleeAttackCollider->SetWorldPos(m_Object->GetWorldPos());
     m_MeleeAttackCollider->SetRelativePos(ColliderRelativePos);
     m_MeleeAttackCollider->SetExtent(2.5f, 2.5f, 5.f);
 
@@ -330,9 +321,11 @@ void CBossBettyDataComponent::OnBossBettyActivateAfterEffect(const Vector3& Worl
 {
     CGameObject* AfterEffectParticle = CObjectPool::GetInst()->GetParticle("BettyAttackAfterEffect", CSceneManager::GetInst()->GetScene());
 
-    CColliderComponent* Collider3D = AfterEffectParticle->FindComponentFromType<CColliderBox3D>();
+    CColliderBox3D* Collider3D = AfterEffectParticle->FindComponentFromType<CColliderBox3D>();
 
     Collider3D->AddCollisionCallback(Collision_State::Begin, (CMonsterDataComponent*)this, &CMonsterDataComponent::OnHitMeleeAttack);
+
+    Collider3D->SetExtent(2.5f, 2.f, 2.5f);
 
     AfterEffectParticle->StartParticle(WorldPos);
 }

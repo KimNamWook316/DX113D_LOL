@@ -221,9 +221,11 @@ void CBossBettyThrowNode::ThrowSnowBallAttackObj()
 	// Attack After Effect
 	CGameObject* AfterEffectParticle = CObjectPool::GetInst()->GetParticle("BettyAttackAfterEffect", CSceneManager::GetInst()->GetScene());
 	
-	CColliderComponent* Collider3D = AfterEffectParticle->FindComponentFromType<CColliderBox3D>();
+	CColliderBox3D* Collider3D = AfterEffectParticle->FindComponentFromType<CColliderBox3D>();
 
 	Collider3D->AddCollisionCallback(Collision_State::Begin, (CMonsterDataComponent*)Data, &CMonsterDataComponent::OnHitMeleeAttack);
+
+	Collider3D->SetExtent(2.5f, 2.f, 2.5f);
 
 	const Vector3& PlayerPos = CSceneManager::GetInst()->GetScene()->GetPlayerObject()->GetWorldPos();
 
