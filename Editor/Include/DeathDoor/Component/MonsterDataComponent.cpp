@@ -522,7 +522,11 @@ void CMonsterDataComponent::OnInActiveMeleeAttackCollider()
 
 void CMonsterDataComponent::OnHitMeleeAttack(const CollisionResult& Result)
 {
+	// OBJ가 추가 (Result 의 Dest 의 Object 가 PlayerObject 일때만 해당 CallBack을 통해서 Player 에게 Damage를 주어야 한다.)
 	CGameObject* Player = m_Scene->GetPlayerObject();
+
+	if (Result.Dest->GetGameObject() != Player)
+		return;
 
 	if (m_PlayerData)
 	{

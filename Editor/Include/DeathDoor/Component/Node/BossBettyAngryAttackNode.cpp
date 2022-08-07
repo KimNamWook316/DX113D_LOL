@@ -2,6 +2,7 @@
 #include "../GameBehaviorTree.h"
 #include "../GameStateComponent.h"
 #include "Component/AnimationMeshComponent.h"
+#include "../ProjectileComponent.h"
 #include "Component/ColliderBox3D.h"
 #include "Scene/Scene.h"
 #include "../BossBettyDataComponent.h"
@@ -114,10 +115,26 @@ void CBossBettyAngryAttackNode::OnBossBettyStartFallingSnowBallEffect()
 
 	// 사방에서 투사체 눈덩이가 떨어지게 한다.
 	// 1. 특정 위치에 투사체 눈덩이 Object 를 생성
+	CGameObject* MapSurroundingObject = CurrentScene->FindObject("MapSurrounding");
+	// Result.Dest->GetGameObject()->GetName() != "MapSurrounding")
+
+	int XRand = rand() % 10;
+	int YRand = rand() % 10 + 10.f;
+	int ZRand = rand() % 10;
 
 	for (int i = 0; i < 10; ++i)
 	{
-		CGameObject* Object = CObjectPool::GetInst()->GetProjectile("BossBettySnowAttack", CurrentScene);
+		CGameObject* SnowFallingObject = CObjectPool::GetInst()->GetProjectile("BossBettySnowAttack", CurrentScene);
+
+		SnowFallingObject->SetWorldPos(Data->GetGameObject()->GetWorldPos() + Vector3(XRand, YRand, ZRand));
+			
+		CProjectileComponent* ProjTileComp = SnowFallingObject->FindComponentFromType<CProjectileComponent>();
+
+		CGameObject* AfterEffectParticle = CObjectPool::GetInst()->GetParticle("BettyAttackAfterEffect", CSceneManager::GetInst()->GetScene());
+
+		const Vector3& PlayerPos = CSceneManager::GetInst()->GetScene()->GetPlayerObject()->GetWorldPos();
+
+		ProjTileComp->ShootByTargetPos(SnowFallingObject->GetWorldPos(), 50.f, PlayerPos, AfterEffectParticle);
 	}
 
 	// 2. 각각에 대해서, 충돌시 동작시킬 콜백들을 세팅한다.

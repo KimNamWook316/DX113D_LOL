@@ -44,13 +44,9 @@ void CBossBettySpinAttackNode::Init()
 		Data, &CBossBettyDataComponent::OnBossBettyApplyOutOfMapSurroundingColliderMoveSpeed);
 	AnimInst->AddNotify(AnimName, "AttackColliderToOriginalPs", 0,
 		Data, &CBossBettyDataComponent::OnSetBossBettyAttackColliderPosToBettyBody);
-
 	// End
 	AnimInst->AddNotify(AnimName, "CameraShake", 17,
 		Data, &CBossBettyDataComponent::OnBossBettyNormalShakeCamera);
-
-	AnimInst->AddNotify(AnimName, "SetAttackColliderToBettyBodyPos", 17,
-		Data, &CBossBettyDataComponent::OnBossBettySetAttackColliderToBettyBodyPos);
 
 	// JumpSpin Animation 이 끝나면 바로 Spin Animation 으로 바꾼다.
 	AnimInst->SetEndFunction(AnimName,
@@ -65,10 +61,10 @@ void CBossBettySpinAttackNode::Init()
 	// - 이를 다시 Enable 만 시켜주면 된다.
 	AnimInst->AddNotify(AnimName, "DisalbeLookPlayer", 0,
 		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnDisableLookPlayer);
-	AnimInst->AddNotify(AnimName, "EnableSpinCollider", 0,
-		Data, &CBossBettyDataComponent::OnBossBettyEnableSpinCollider);	
 	AnimInst->AddNotify(AnimName, "ResetMoveSpeed", 0,
 		Data, &CBossBettyDataComponent::OnBossBettyResetOriginalMoveSpeed);
+	AnimInst->AddNotify(AnimName, "EnableSpinCollider", 1,
+		Data, &CBossBettyDataComponent::OnBossBettyEnableSpinCollider);	
 	AnimInst->AddNotify(AnimName, "EnableAttackCollider", 2,
 		Data, &CBossBettyDataComponent::OnBossBettyEnableAttackCollider);
 
@@ -98,7 +94,7 @@ void CBossBettySpinAttackNode::Init()
 	AnimInst->AddNotify(AnimName, "DisablePlayerLook", 24,
 		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnDisableLookPlayer);
 	// 마지막 순간에 착지한 바닥을 공격한다.
-	AnimInst->AddNotify(AnimName, "AttackDown", 26,
+	AnimInst->AddNotify(AnimName, "AttackDown", 25,
 		Data, &CBossBettyDataComponent::OnBossBettyGenerateTwoSideCloseAttackEffect);
 	// 모든 Spin이 끝나고 나서야 비로소, CurrentNode 를 nullptr 로 세팅한다.
 	AnimInst->AddNotify(AnimName, "SetCurrentNodeNull", 26,
