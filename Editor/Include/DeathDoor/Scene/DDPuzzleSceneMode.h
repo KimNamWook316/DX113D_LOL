@@ -44,6 +44,11 @@ public:
         return m_LadderObjectName;
     }
 
+    bool IsClearCamMove() const
+    {
+        return m_ClearCamMove;
+    }
+
 protected:
     bool m_ClearCamMove;
 

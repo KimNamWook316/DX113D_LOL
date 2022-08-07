@@ -75,7 +75,7 @@ void CDDBossSceneMode::OnClearDungeon()
 		m_ExitPointObj->SetWorldPos(m_OriginExitPos);
 		m_ExitPointObj->Enable(true);
 		m_PortalPaperBurn->SetInverse(true);
-		m_PortalPaperBurn->SetEndEvent(PaperBurnEndEvent::None);
+		m_PortalPaperBurn->SetEndEvent(PaperBurnEndEvent::Reset);
 		m_PortalPaperBurn->StartPaperBurn();
 	}
 }

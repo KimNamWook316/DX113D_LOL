@@ -55,6 +55,8 @@ void CDDPuzzleSceneModeWidet::RefreshWidgets()
 
 	CDDPuzzleSceneMode* SceneMode = dynamic_cast<CDDPuzzleSceneMode*>(m_SceneMode);
 
+	bool ClearCamMove = SceneMode->IsClearCamMove();
+	m_ClearCamMove->SetCheck(0, ClearCamMove);
 	m_BlockerObjName->SetText(SceneMode->GetBlockerObjName().c_str());
 	m_LadderObjName->SetText(SceneMode->GetLadderObjName().c_str());
 }
