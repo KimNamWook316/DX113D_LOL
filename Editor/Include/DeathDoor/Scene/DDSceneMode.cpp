@@ -6,6 +6,7 @@
 #include "../Thread/DDSceneLoadingThread.h"
 #include "Render/RenderManager.h"
 #include "../Component/GameStateComponent.h"
+#include "Engine.h"
 
 CDDSceneMode::CDDSceneMode()	:
 	m_ExitPointCollider(nullptr),
@@ -68,6 +69,7 @@ void CDDSceneMode::Start()
 
 		if (!m_NextSceneFileName.empty())
 		{
+			m_NextSceneLoadingThread->Init();
 			m_NextSceneLoadingThread->Load(m_NextSceneFileName, this);
 		}
 	}
@@ -80,7 +82,10 @@ void CDDSceneMode::Start()
 	CRenderManager::GetInst()->StartFadeEffect(FadeEffecType::FADE_IN, false);
 
 	// Play
-	m_Scene->Play();
+	if (!CEngine::GetInst()->GetEditMode())
+	{
+		m_Scene->Play();
+	}
 
 	std::vector<CGameObject*> vecObject;
 	CSceneManager::GetInst()->GetScene()->GetAllObjectsPointer(vecObject);

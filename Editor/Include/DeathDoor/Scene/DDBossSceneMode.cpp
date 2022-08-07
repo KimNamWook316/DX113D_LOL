@@ -23,9 +23,9 @@ void CDDBossSceneMode::Start()
 		m_PortalPaperBurn = m_ExitPointObj->FindObjectComponentFromType<CPaperBurnComponent>();
 	}
 
-	if (m_ExitPointCollider)
+	if (m_ExitPointObj)
 	{
-		m_ExitPointCollider->Enable(false);
+		m_ExitPointObj->Enable(false);
 	}
 }
 
@@ -56,6 +56,8 @@ void CDDBossSceneMode::OnFadeInStart()
 		// 잠깐 ExitPoint Object를 시작 지점으로 옮기고, 포탈 생성 효과를 준다.
 		// Collider는 Start에서 false 된 상태
 		// End Event를 Disable로 처리해 효과가 끝나면 오브젝트를 Disable처리함
+		m_ExitPointObj->Enable(true);
+		m_ExitPointCollider->Enable(false);
 		m_ExitPointObj->SetWorldPos(m_EntryPoint);
 		m_PortalPaperBurn->SetInverse(false);
 		m_PortalPaperBurn->SetEndEvent(PaperBurnEndEvent::Disable);
@@ -73,7 +75,7 @@ void CDDBossSceneMode::OnClearDungeon()
 		m_ExitPointObj->SetWorldPos(m_OriginExitPos);
 		m_ExitPointObj->Enable(true);
 		m_PortalPaperBurn->SetInverse(true);
-		m_PortalPaperBurn->SetEndEvent(PaperBurnEndEvent::None);
+		m_PortalPaperBurn->SetEndEvent(PaperBurnEndEvent::Reset);
 		m_PortalPaperBurn->StartPaperBurn();
 	}
 }

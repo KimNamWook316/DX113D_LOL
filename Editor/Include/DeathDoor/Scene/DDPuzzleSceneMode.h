@@ -29,6 +29,10 @@ public:
 public:
     bool SetBlockerObjectName(const std::string& Name);
     bool SetLadderObjectName(const std::string& Name);
+    void SetClearCamMove(bool Move)
+    {
+        m_ClearCamMove = Move;
+    }
 
     const std::string& GetBlockerObjName()
     {
@@ -40,7 +44,14 @@ public:
         return m_LadderObjectName;
     }
 
+    bool IsClearCamMove() const
+    {
+        return m_ClearCamMove;
+    }
+
 protected:
+    bool m_ClearCamMove;
+
     std::string m_BlockerObjectName;
     class CGameObject* m_BlockerObj;
     float m_BlockerOriginY;
