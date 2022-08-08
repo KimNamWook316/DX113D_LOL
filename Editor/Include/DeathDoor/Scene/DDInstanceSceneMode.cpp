@@ -21,6 +21,14 @@ CDDInstanceSceneMode::~CDDInstanceSceneMode()
 	}
 
 	m_SpawnPhaseList.clear();
+
+	while (!m_PaperBurnEndSpawnQueue.empty())
+	{
+		DDSpawnObjectSet Set = m_PaperBurnEndSpawnQueue.front();
+		m_DoorPaperburnQueue.pop();
+
+		SAFE_DELETE(Set.Info);
+	}
 }
 
 void CDDInstanceSceneMode::Start()
