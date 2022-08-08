@@ -49,8 +49,10 @@ void CBossBettyJumpAttackNode::Init()
 	AnimInst->AddNotify(AnimName, "StartJump", 6,
 		this, &CBossBettyJumpAttackNode::OnBossBettyStartJump);
 
-	AnimInst->AddNotify(AnimName, "OnEnableSpinCollider", 10,
-		Data, &CBossBettyDataComponent::OnBossBettyEnableSpinCollider);
+	// JumpAttackNode 의 경우, Spin Collider 를 별도로 세팅할 필요가 없다.
+	//AnimInst->AddNotify(AnimName, "OnEnableSpinCollider", 10,
+	//	Data, &CBossBettyDataComponent::OnBossBettyEnableSpinCollider);
+
 	AnimInst->AddNotify(AnimName, "DisableLookPlayer", 10,
 		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnDisableLookPlayer);
 
@@ -61,17 +63,18 @@ void CBossBettyJumpAttackNode::Init()
 
 	// >> End
 	// PunchDown Animation 이 끝나면 해당 위치에 2단 공격
-	AnimInst->AddNotify(AnimName, "AttackDown", 35,
+	AnimInst->AddNotify(AnimName, "AttackDown", 25,
 		Data, &CBossBettyDataComponent::OnBossBettyGenerateTwoSideCloseAttackEffect);
 	AnimInst->AddNotify(AnimName, "EnableAttackCollider", 27,
 		Data, &CBossBettyDataComponent::OnBossBettyEnableAttackCollider);
-	AnimInst->AddNotify(AnimName, "DisableAttackCollider", 29,
+	AnimInst->AddNotify(AnimName, "DisableAttackCollider", 28,
 		Data, &CBossBettyDataComponent::OnBossBettyDisableAttackCollider);
+	//AnimInst->AddNotify(AnimName, "OnDisableSpinCollider", 29,
+	//	Data, &CBossBettyDataComponent::OnBossBettyDisableSpinCollider);
+
 	AnimInst->AddNotify(AnimName, "AttackFarAttackCnt", 35,
 		Data, &CBossBettyDataComponent::IncFarAttackCount);
-	AnimInst->AddNotify(AnimName, "OnDisableSpinCollider", 35,
-		Data, &CBossBettyDataComponent::OnBossBettyDisableSpinCollider);
-	AnimInst->AddNotify(AnimName, "JumpEnd", 35,
+	AnimInst->AddNotify(AnimName, "BackToOriginalSpeed", 35,
 		Data, &CBossBettyDataComponent::OnBossBettyResetOriginalMoveSpeed);
 	AnimInst->AddNotify(AnimName, "EndJump", 35,
 		this, &CBossBettyJumpAttackNode::OnBossBettyEndJump);

@@ -46,6 +46,11 @@ public:
 
     class CGameObject* GetBlockerObject()   const;
 
+    bool IsClearCamMove() const
+    {
+        return m_ClearCamMove;
+    }
+
 protected:
     bool m_ClearCamMove;
 

@@ -215,13 +215,19 @@ void CBossBettyThrowNode::ThrowSnowBallAttackObj()
 	// BossBettyDataComponent 로부터, BossThrowBall Object 를 가져오고
 	// 거기에 적절한 설정들을 여기에 해줄 것이다.
 	m_CurrentThrowBall = Data->GetBossBettyThrowObject();
+
 	CProjectileComponent* ProjTileComp = m_CurrentThrowBall->FindComponentFromType<CProjectileComponent>();
 
+	// Attack After Effect
 	CGameObject* AfterEffectParticle = CObjectPool::GetInst()->GetParticle("BettyAttackAfterEffect", CSceneManager::GetInst()->GetScene());
-	// AfterEffectParticle->SetLifeSpan(1.f);
+	
+	CColliderComponent* Collider3D = AfterEffectParticle->FindComponentFromType<CColliderBox3D>();
+
+	Collider3D->AddCollisionCallback(Collision_State::Begin, (CMonsterDataComponent*)Data, &CMonsterDataComponent::OnHitMeleeAttack);
 
 	const Vector3& PlayerPos = CSceneManager::GetInst()->GetScene()->GetPlayerObject()->GetWorldPos();
 
+	// Throw Particlee
 	ProjTileComp->ShootByTargetPos(m_CurrentThrowBall->GetWorldPos(), 50.f, PlayerPos, AfterEffectParticle);
 		
 	// Throw Attack Enable 을 다시 False 로 바꿔준다

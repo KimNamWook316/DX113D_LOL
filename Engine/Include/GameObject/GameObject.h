@@ -125,6 +125,10 @@ protected:
 	std::list<CGameObject*> m_AttackTargetList;	// 광역스킬처럼 여러 오브젝트가 맞는 공격을 했을때 맞은 오브젝트들
 
 public:
+	float GetLifeSpan() const
+	{
+		return m_LifeSpan;
+	}
 	const Vector3& GetPrevFramePos()	const
 	{
 		return m_PrevFramePos;
@@ -412,11 +416,9 @@ public:
 public:
 	// NavAgent가 있을 경우에 동작한다.
 	void Move(const Vector3& EndPos);
-
 	// m_NavAgent의 m_PathList에 TargetPos를 추가해준다
 	void AddPath(const Vector3& TargetPos);
 	void ClearPath();
-	
 public:
 	void SetNavAgent(CNavAgent* Agent)
 	{

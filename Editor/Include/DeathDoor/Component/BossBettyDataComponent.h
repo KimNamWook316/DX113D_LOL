@@ -113,7 +113,6 @@ public :
     // MapSurroundingCollider 로 부터 서서히 벗어나게 하기 위한 Speed 세팅
     void OnBossBettyApplyOutOfMapSurroundingColliderMoveSpeed();
     // Betty 공격 Collider Enable 처리 여부
-    void OnBossBettySetAttackColliderToBettyBodyPos();
     void OnBossBettyEnableAttackCollider();
     void OnBossBettyDisableAttackCollider();
     // Betty Attack After Effect
