@@ -7,6 +7,7 @@
 #include "../MonsterDataComponent.h"
 #include "../GameStateComponent.h"
 #include "../MonsterNavAgent.h"
+#include "Component/AnimationMeshComponent.h"
 
 CFindPathNode::CFindPathNode()	:
 	m_NavAgent(nullptr)
@@ -29,7 +30,7 @@ NodeResult CFindPathNode::OnStart(float DeltaTime)
 
 	CGameObject* Player = Scene->GetPlayerObject();
 
-	CObjectDataComponent* DataComp = (dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner()))->GetData();
+	CMonsterDataComponent* DataComp = dynamic_cast<CMonsterDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
 	m_NavAgent = (dynamic_cast<CMonsterDataComponent*>(DataComp))->GetMonsterNavAgent();
 
 	if (m_NavAgent)
@@ -46,7 +47,12 @@ NodeResult CFindPathNode::OnStart(float DeltaTime)
 
 		else
 			m_NavAgent->FindPath(Root, PlayerPos);
+
+		DataComp->SetPahtFindExecute(true);
 	}
+
+	
+	m_AnimationMeshComp->GetAnimationInstance()->ChangeAnimation("Run");
 
 	return NodeResult::Node_True;
 }

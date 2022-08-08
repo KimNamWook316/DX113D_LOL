@@ -82,8 +82,8 @@ void CStateComponent::Update(float DeltaTime)
 			++iter;
 	}
 
-	if(m_TreeUpdate)
-		m_BehaviorTree->Update(DeltaTime);
+	//if(m_TreeUpdate)
+	//	m_BehaviorTree->Update(DeltaTime);
 }
 
 void CStateComponent::PostUpdate(float DeltaTime)

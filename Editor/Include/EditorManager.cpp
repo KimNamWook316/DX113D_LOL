@@ -52,6 +52,7 @@
 #include "DeathDoor\Component/PlagueKnightDataComponent.h"
 #include "DeathDoor\Component/DodgerDataComponent.h"
 #include "DeathDoor\Component/TriggerBoxData.h"
+#include "DeathDoor\Component/BatDataComponent.h"
 
 // Window
 #include "Window/ObjectHierarchyWindow.h"
@@ -588,6 +589,12 @@ CComponent* CEditorManager::CreateComponent(CGameObject* Obj, size_t Type)
 	else if (Type == typeid(CPlagueKnightDataComponent).hash_code())
 	{
 		CPlagueKnightDataComponent* Component = Obj->LoadObjectComponent<CPlagueKnightDataComponent>();
+		return Component;
+	}
+
+	else if (Type == typeid(CBatDataComponent).hash_code())
+	{
+		CBatDataComponent* Component = Obj->LoadObjectComponent<CBatDataComponent>();
 		return Component;
 	}
 

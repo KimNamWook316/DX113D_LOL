@@ -30,23 +30,26 @@ NodeResult CClimbDownStart::OnStart(float DeltaTime)
 	Vector3 PlayerPos = m_Object->GetWorldPos();
 
 	// 플레이어가 사다리를 바라보도록 Rotation, 사다리 중앙에 오도록 x축 교정,  
-	CGameObject* Ladder = m_Object->GetScene()->FindObject("Ladder");
+	CGameObject* Ladder = DataComp->GetAdjLadder();
 
 	if (Ladder)
 	{
-		// 플레이어가 사다리를 바라보도록 Rotation, 사다리 중앙에 오도록 x축 교정,  
-		Vector3 LadderZAxis = Ladder->GetWorldAxis(AXIS_Z);
-		LadderZAxis.z *= 1.f;
+		// 플레이어가 바라보는 방향
+		Vector3 PlayerLookDir = m_Object->GetWorldAxis(AXIS_Z);
+		PlayerLookDir *= -1.f;
+		PlayerLookDir.y = 0.f;
 
-		Vector3 PlayerZAxis = m_Object->GetWorldAxis(AXIS_Z);
+		// 사다리가 벽쪽으로 바라보는 방향
+		Vector3 LadderLookDir = Ladder->GetWorldAxis(AXIS_Z);
+		LadderLookDir.y = 0.f;
 
-		float DotProduct = PlayerZAxis.Dot(LadderZAxis);
+		float DotProduct = PlayerLookDir.Dot(LadderLookDir);
 		float Degree = 0.f;
 		if (DotProduct >= -0.99999999f && DotProduct <= 0.99999999f)
 		{
 			Degree = RadianToDegree(acosf(DotProduct));
 
-			Vector3 CrossVec = PlayerZAxis.Cross(LadderZAxis);
+			Vector3 CrossVec = PlayerLookDir.Cross(LadderLookDir);
 
 			if (CrossVec.y < 0.f)
 				Degree *= -1.f;
@@ -54,8 +57,12 @@ NodeResult CClimbDownStart::OnStart(float DeltaTime)
 			m_Object->AddWorldRotationY(Degree);
 		}
 
+		PlayerLookDir = m_Object->GetWorldAxis(AXIS_Z);
+		PlayerLookDir *= -1.f;
+		PlayerLookDir.y = 0.f;
+
 		Vector3 LadderPos = Ladder->GetWorldPos();
-		m_Object->SetWorldPos(LadderPos.x - 0.3f, PlayerPos.y * 0.58f + LadderPos.y * 0.42f, LadderPos.z + LadderZAxis.z);
+		m_Object->SetWorldPos(LadderPos.x - PlayerLookDir.x, PlayerPos.y * 0.58f + LadderPos.y * 0.42f, LadderPos.z - PlayerLookDir.z + 0.2f);
 	}
 
 

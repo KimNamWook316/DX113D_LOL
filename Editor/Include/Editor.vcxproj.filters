@@ -243,6 +243,21 @@
     <Filter Include="06. DeathDoor\01. GameComponent\02. ObjectComponent\01. DataComponent\01. Monster\09. PlaugeKnight">
       <UniqueIdentifier>{7249cf9b-085b-42dd-8ab9-c0ed3b543591}</UniqueIdentifier>
     </Filter>
+    <Filter Include="06. DeathDoor\01. GameComponent\02. ObjectComponent\01. DataComponent\01. Monster\10. Bat">
+      <UniqueIdentifier>{07d0e3c0-c78d-46c7-b7e1-c0d0c4bba0cb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\07. Bat">
+      <UniqueIdentifier>{b98923c0-1e6b-4b0d-a6c5-c81bbdf4f3ec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\09. Bat">
+      <UniqueIdentifier>{05eeb2fa-0278-41d6-b785-91aea1473859}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\08. Lurker">
+      <UniqueIdentifier>{9f9d429c-c3f8-4c2d-a747-ecd63c23dd93}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\10. Lurker">
+      <UniqueIdentifier>{7e345823-e3c2-4808-baab-58d4450a2b91}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Scene\DefaultScene.cpp">
@@ -877,8 +892,37 @@
     <ClCompile Include="DeathDoor\Component\PlagueKnightDataComponent.cpp">
       <Filter>06. DeathDoor\01. GameComponent\02. ObjectComponent\01. DataComponent\01. Monster\09. PlaugeKnight</Filter>
     </ClCompile>
-    <ClCompile Include="DeathDoor\Component\TriggerBoxData.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\AttackCoolTimeCheck.cpp">
+      <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\01. Public</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Component\BatDataComponent.cpp">
+      <Filter>06. DeathDoor\01. GameComponent\02. ObjectComponent\01. DataComponent\01. Monster\10. Bat</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Component\TriggerBoxData.cpp">
+      <Filter>06. DeathDoor\01. GameComponent\02. ObjectComponent\01. DataComponent\03. Object</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Component\Node\BatRecognizeEndCheck.cpp">
+      <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\07. Bat</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Component\Node\BatRecognizeStartCheck.cpp">
+      <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\07. Bat</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Component\Node\BatRecognize.cpp">
+      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\09. Bat</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Component\Node\PathFindExecuteCheck.cpp">
+      <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\01. Public</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Component\Node\LurkerMeleeAttackPrep.cpp">
+      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\10. Lurker</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Component\Node\LurkerHop.cpp">
+      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\10. Lurker</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Component\Node\LurkerHopStartCheck.cpp">
+      <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\08. Lurker</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Component\Node\PathListEmptyCheck.cpp">
       <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\01. Public</Filter>
     </ClCompile>
   </ItemGroup>
@@ -1525,8 +1569,35 @@
     <ClInclude Include="DeathDoor\Component\PlagueKnightDataComponent.h">
       <Filter>06. DeathDoor\01. GameComponent\02. ObjectComponent\01. DataComponent\01. Monster\09. PlaugeKnight</Filter>
     </ClInclude>
+    <ClInclude Include="DeathDoor\Component\BatDataComponent.h">
+      <Filter>06. DeathDoor\01. GameComponent\02. ObjectComponent\01. DataComponent\01. Monster\10. Bat</Filter>
+    </ClInclude>
     <ClInclude Include="DeathDoor\Component\TriggerBoxData.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>06. DeathDoor\01. GameComponent\02. ObjectComponent\01. DataComponent\03. Object</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\Node\BatRecognizeEndCheck.h">
+      <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\07. Bat</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\Node\BatRecognizeStartCheck.h">
+      <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\07. Bat</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\Node\BatRecognize.h">
+      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\09. Bat</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\Node\PathFindExecuteCheck.h">
+      <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\01. Public</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\Node\LurkerMeleeAttackPrep.h">
+      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\10. Lurker</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\Node\LurkerHop.h">
+      <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\10. Lurker</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\Node\LurkerHopStartCheck.h">
+      <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\08. Lurker</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\Node\PathListEmptyCheck.h">
+      <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\01. Public</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

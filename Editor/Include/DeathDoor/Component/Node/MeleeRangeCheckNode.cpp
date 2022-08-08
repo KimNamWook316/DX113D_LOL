@@ -32,6 +32,7 @@ NodeResult CMeleeRangeCheckNode::OnStart(float DeltaTime)
 
 	else
 	{
+		Data->SetPahtFindExecute(false);
 		return NodeResult::Node_False;
 	}
 }

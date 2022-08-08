@@ -119,7 +119,9 @@ void CScene::Start()
 
 	for (; iter != iterEnd; ++iter)
 	{
-		(*iter)->Start();
+		// Pool에서 꺼낸 오브젝트들은 GetXXX 함수 호출해서 Start를 호출할 것이다
+		if(!(*iter)->IsInPool())
+			(*iter)->Start();
 	}
 
 	m_Start = true;
