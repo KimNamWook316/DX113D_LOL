@@ -29,28 +29,29 @@ NodeResult CClimbDownEnd::OnStart(float DeltaTime)
 	//m_AnimationMeshComp->GetAnimationInstance()->ChangeAnimation("PlayerLadderFinish");
 
 	Vector3 PlayerPos = m_Object->GetWorldPos();
-	Vector3 PlayerZAxis = m_Object->GetWorldAxis(AXIS_Z);
+	// 플레이어의 등 방향
+	Vector3 PlayerBackDir = m_Object->GetWorldAxis(AXIS_Z);
 
 	float Height = 0.f;
 	int PolyIndex = 0;
 
-	bool Result1 = m_Object->GetScene()->GetNavigation3DManager()->CheckNavMeshPoly(PlayerPos, Height, PolyIndex);
-	if (Result1)
-	{
-		m_Object->GetScene()->GetNavigation3DManager()->RefreshPlayerNavMeshPoly(PlayerPos);
-		DataComp->SetLadderDownEnable(false);
-		DataComp->SetClimbingLadder(false);
+	//bool Result1 = m_Object->GetScene()->GetNavigation3DManager()->CheckNavMeshPoly(PlayerPos, Height, PolyIndex);
+	//if (Result1)
+	//{
+	//	m_Object->GetScene()->GetNavigation3DManager()->RefreshPlayerNavMeshPoly(Vector3(PlayerPos.x, Height, PlayerPos.z));
+	//	DataComp->SetLadderDownEnable(false);
+	//	DataComp->SetClimbingLadder(false);
 
-		return NodeResult::Node_True;
-	}
+	//	return NodeResult::Node_True;
+	//}
 
-	PlayerPos = Vector3(PlayerPos.x, PlayerPos.y, PlayerPos.z + PlayerZAxis.z);
+	PlayerPos = Vector3(PlayerPos.x + PlayerBackDir.x, PlayerPos.y, PlayerPos.z + PlayerBackDir.z);
 
 	bool Result2 = m_Object->GetScene()->GetNavigation3DManager()->CheckNavMeshPoly(PlayerPos, Height, PolyIndex);
 
 	if (Result2)
 	{
-		m_Object->GetScene()->GetNavigation3DManager()->RefreshPlayerNavMeshPoly(PlayerPos);
+		m_Object->GetScene()->GetNavigation3DManager()->RefreshPlayerNavMeshPoly(Vector3(PlayerPos.x, Height, PlayerPos.z));
 
 		DataComp->SetLadderDownEnable(false);
 		DataComp->SetClimbingLadder(false);
@@ -58,13 +59,13 @@ NodeResult CClimbDownEnd::OnStart(float DeltaTime)
 		return NodeResult::Node_True;
 	}
 
-	PlayerPos = Vector3(PlayerPos.x, PlayerPos.y, PlayerPos.z + PlayerZAxis.z);
+	PlayerPos = Vector3(PlayerPos.x + PlayerBackDir.x * 2.f, PlayerPos.y, PlayerPos.z + PlayerBackDir.z * 2.f);
 
 	bool Result3 = m_Object->GetScene()->GetNavigation3DManager()->CheckNavMeshPoly(PlayerPos, Height, PolyIndex);
 
 	if (Result3)
 	{
-		m_Object->GetScene()->GetNavigation3DManager()->RefreshPlayerNavMeshPoly(PlayerPos);
+		m_Object->GetScene()->GetNavigation3DManager()->RefreshPlayerNavMeshPoly(Vector3(PlayerPos.x, Height, PlayerPos.z));
 
 		DataComp->SetLadderDownEnable(false);
 		DataComp->SetClimbingLadder(false);

@@ -134,7 +134,6 @@ void CCrowBossDataComponent::ShootChain(const Vector3& ShootDir, float DeltaTime
 	{
 		if (m_ShootAccTime > 0.007f)
 		{
-		
 			// 방향에 맞게 HookChain 회전시켜준다
 			Vector3 ChainZAxis = m_vecHookChain[m_CurrentHookIndex]->GetWorldAxis(AXIS::AXIS_Z);
 			float Angle = ShootDir.Angle(ChainZAxis);
@@ -147,8 +146,12 @@ void CCrowBossDataComponent::ShootChain(const Vector3& ShootDir, float DeltaTime
 				ObjectPos.z + (m_CurrentHookIndex + 1) * ShootDir.z * m_UnitSize.y);
 
 			m_vecHookChain[m_CurrentHookIndex]->SetRender(true);
+			m_vecHookChain[m_CurrentHookIndex]->Enable(true);
 			m_vecHookChain[m_CurrentHookIndex]->SetWorldPos(HookPos);
 			m_vecHookChain[m_CurrentHookIndex]->SetWorldScale(Vector3(0.06f, 0.06f, 0.06f));
+			m_vecHookChain[m_CurrentHookIndex]->GetTransform()->ForceUpdateMat();
+
+
 			m_vecHookChain[m_CurrentHookIndex]->GetMaterial(0)->SetBaseColor(0.44f, 0.44f, 0.44f, 1.f);
 
 			Vector3 CrossVec = ShootDir.Cross(ChainZAxis);
@@ -215,6 +218,8 @@ void CCrowBossDataComponent::Fly(const Vector3& FlyDir, float DeltaTime)
 				m_vecHookChain[j]->SetRender(false);
 				m_vecHookChain[j]->Enable(false);
 				m_vecHookChain[j]->SetWorldScale(Vector3(0.f, 0.f, 0.f));
+				m_vecHookChain[j]->SetWorldPos(Vector3(FLT_MAX, FLT_MAX, FLT_MAX));
+				m_vecHookChain[j]->GetTransform()->ForceUpdateMat();
 			}
 
 			++m_ClearHookIndex;

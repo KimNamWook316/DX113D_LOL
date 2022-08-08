@@ -11,7 +11,8 @@
 
 CAddFallingFloorCallbackNode::CAddFallingFloorCallbackNode()	:
 	m_CollisionStart(false),
-	m_AccTime(0.f)
+	m_AccTime(0.f),
+	m_PlayerFall(false)
 {
 	SetTypeID(typeid(CAddFallingFloorCallbackNode).hash_code());
 }
@@ -38,6 +39,8 @@ NodeResult CAddFallingFloorCallbackNode::OnStart(float DeltaTime)
 		m_BoxCollider->AddCollisionCallback<CAddFallingFloorCallbackNode>(Collision_State::Begin, this, &CAddFallingFloorCallbackNode::Trigger);
 	}
 
+	m_PlayerFall = false;
+
 	return NodeResult::Node_True;
 }
 
@@ -46,7 +49,7 @@ NodeResult CAddFallingFloorCallbackNode::OnUpdate(float DeltaTime)
 	if (!m_CollisionStart)
 		return NodeResult::Node_True;
 
-	if (m_AccTime > 1.f)
+	if (m_AccTime > 1.f && m_AccTime <= 2.5f)
 	{
 		auto iter = m_BoxCollider->GerPrevCollisionList().begin();
 		auto iterEnd = m_BoxCollider->GerPrevCollisionList().end();
@@ -55,42 +58,37 @@ NodeResult CAddFallingFloorCallbackNode::OnUpdate(float DeltaTime)
 		{
 			CNavAgent* Agent = (*iter)->GetGameObject()->FindObjectComponentFromType<CNavAgent>();
 
-			if (Agent)
+			if (Agent && (*iter)->GetGameObject()->GetObjectType() == Object_Type::Player)
 			{
 				Agent->SetApplyNavMesh(false);
+				m_PlayerFall = true;
 			}
+
 		}
 
+		m_BoxCollider->Enable(false);
 		m_Object->AddWorldPos(0.f, -15.f * DeltaTime, 0.f);
 	}
 
-	if (m_AccTime > 2.5f)
+	else if (m_AccTime > 2.5f)
 	{
 		m_Object->SetWorldPos(m_OriginPos);
-		// PaperBurn 효과 시작 하는 코드, PaperBurn 끝나면 m_AccTime = 0.f, m_CollisionStart = false로 만드는 코드, 플레이어 스폰 위치로 스폰하는 코드 추가
-		
-		//CPaperBurnComponent* Comp = m_Object->FindObjectComponentFromType<CPaperBurnComponent>();
-		//Comp->SetInverse(true);
-
-		////Comp->SetMaterial();
-		//Comp->SetFinishCallback<CAddFallingFloorCallbackNode>(this, &CAddFallingFloorCallbackNode::ResetFallingBlock);
-
-		//if (Comp)
-		//	Comp->StartPaperBurn();
-		CNavigation3DManager* Manager = CSceneManager::GetInst()->GetScene()->GetNavigation3DManager();
-		Vector3 Pos = Manager->GetNavMeshData()->GetPlayerSpawnPos();
-		CGameObject* Player = CSceneManager::GetInst()->GetScene()->GetPlayerObject();
 
 
-		Player->SetWorldPos(Pos);
-		CNavAgent* Agent = Player->FindObjectComponentFromType<CNavAgent>();
+		if (m_PlayerFall)
+		{
+			CNavigation3DManager* Manager = CSceneManager::GetInst()->GetScene()->GetNavigation3DManager();
+			Vector3 Pos = m_Object->GetScene()->FindObject("PlayerSpawnPos")->GetWorldPos();
+			CGameObject* Player = CSceneManager::GetInst()->GetScene()->GetPlayerObject();
 
-		if (Agent)
-			Agent->SetApplyNavMesh(true);
+			Player->SetWorldPos(Pos);
+			CNavAgent* Agent = Player->FindObjectComponentFromType<CNavAgent>();
 
-		int Idx = Manager->GetNavMeshData()->GetPlayerSpawnPolyIndex();
+			if (Agent)
+				Agent->SetApplyNavMesh(true);
 
-		Manager->SetPlayerPolyIndex(Idx);
+			Manager->RefreshPlayerNavMeshPoly(Pos);
+		}
 
 		// 원래는 PaperBurn 끝나고 EndCallback으로 호출할 함수
 		ResetFallingBlock();
@@ -124,4 +122,15 @@ void CAddFallingFloorCallbackNode::ResetFallingBlock()
 {
 	m_AccTime = 0.f;
 	m_CollisionStart = false;
+	m_PlayerFall = false;
+
+	m_BoxCollider->Enable(true); 
+
+	CPaperBurnComponent* PaperBurn = m_Object->FindObjectComponentFromType<CPaperBurnComponent>();
+
+	PaperBurn->StartPaperBurn();
+}
+
+void CAddFallingFloorCallbackNode::OnPaperburnEnd()
+{
 }

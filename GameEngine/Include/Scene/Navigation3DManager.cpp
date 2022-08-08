@@ -170,6 +170,15 @@ bool CNavigation3DManager::CheckPlayerNavMeshPoly(float& Height)
 
 			bool Intersect = DirectX::TriangleTests::Intersects(v1, Dir, _P1, _P2, _P3, Dist);
 
+			Vector3 CandidatePoly = (P1 + P2 + P3) / 3.f;
+			float PolyHeight = CandidatePoly.y;
+
+			// 갑자기 아래로 꺼진다면 아래 층에 네비메쉬 폴리곤을 Intersect Check한 가능성이 높다
+			if (PolyHeight + 6.f < PlayerPos.y)
+			{
+				Intersect = false;
+			}
+
 			if (Intersect)
 			{
 				m_PlayerPolyIndex = (int)i;
@@ -336,6 +345,15 @@ bool CNavigation3DManager::CheckNavMeshPoly(const Vector3& Pos, float& Height, i
 
 		bool Intersect = DirectX::TriangleTests::Intersects(v1, Dir, _P1, _P2, _P3, Dist);
 
+		Vector3 CandidatePoly = (P1 + P2 + P3) / 3.f;
+		float PolyHeight = CandidatePoly.y;
+
+		// 갑자기 아래로 꺼진다면 아래 층에 네비메쉬 폴리곤을 Intersect Check한 가능성이 높다
+		if (PolyHeight + 6.f < Pos.y)
+		{
+			Intersect = false;
+		}
+
 		if (Intersect)
 		{
 			float Dist1 = P1.Distance(Pos);
@@ -346,7 +364,7 @@ bool CNavigation3DManager::CheckNavMeshPoly(const Vector3& Pos, float& Height, i
 			LerpVec.Normalize();
 
 			// Weighted Average
-			Height = LerpVec.x * LerpVec.x * P1.y + LerpVec.y * LerpVec.y * P2.y + LerpVec.z * LerpVec.z * P3.y + 0.05f;
+			Height = LerpVec.x * LerpVec.x * P1.y + LerpVec.y * LerpVec.y * P2.y + LerpVec.z * LerpVec.z * P3.y + 0.15f;
 
 			PolyIndex = (int)i;
 
@@ -380,6 +398,15 @@ bool CNavigation3DManager::RefreshPlayerNavMeshPoly(const Vector3& Pos)
 		float Dist = 0.f;
 
 		bool Intersect = DirectX::TriangleTests::Intersects(v1, Dir, _P1, _P2, _P3, Dist);
+
+		Vector3 CandidatePoly = (P1 + P2 + P3) / 3.f;
+		float PolyHeight = CandidatePoly.y;
+
+		// 갑자기 아래로 꺼진다면 아래 층에 네비메쉬 폴리곤을 Intersect Check한 가능성이 높다
+		if (PolyHeight + 6.f < Pos.y)
+		{
+			Intersect = false;
+		}
 
 		if (Intersect)
 		{

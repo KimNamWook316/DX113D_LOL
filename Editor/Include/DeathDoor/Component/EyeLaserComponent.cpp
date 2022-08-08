@@ -20,7 +20,7 @@ CEyeLaserComponent::CEyeLaserComponent()	:
 	SetTypeID<CEyeLaserComponent>();
 	m_ComponentType = Component_Type::SceneComponent;
 
-	m_CurrentLaserLeftRightDir = Vector3(0.f, 0.f, -1.f);
+	m_CurrentLaserLeftRightDir = Vector3(0.f, 0.f, 1.f);
 	//m_CurrentLaserUpDownDir = Vector3(0.f, 0.f, 1.f);
 	m_NormalDir = Vector3(0.f, 1.f, 0.f);
 
@@ -85,18 +85,23 @@ bool CEyeLaserComponent::Init()
 void CEyeLaserComponent::Update(float DeltaTime)
 {
 	CSceneComponent::Update(DeltaTime);
+	
+	if (m_TriggerHitCount == 0)
+		m_RayCollider->Enable(false);
 
-
-	FaceCamera();
+	if (m_TriggerHitCount >= 0 && m_TriggerHitCount < 4)
+	{
+		FaceCamera();
+	}
 
 	if (m_TriggerHitCount > 0 && m_TriggerHitCount < 4)
 	{
 		TrackPlayer(DeltaTime);
 	}
 
-	else if (m_TriggerHitCount == 4)
+	else if (m_TriggerHitCount >= 4)
 	{
-		// EyeLaser°¡ ÆÄ±«
+		m_RayCollider->Enable(false);
 	}
 }
 
@@ -113,7 +118,7 @@ void CEyeLaserComponent::PrevRender()
 void CEyeLaserComponent::Render()
 {
 
-	if (m_TriggerHitCount > 0 && m_TriggerHitCount != 4)
+	if (m_TriggerHitCount > 0 && m_TriggerHitCount < 4)
 	{
 		CSceneComponent::Render();
 

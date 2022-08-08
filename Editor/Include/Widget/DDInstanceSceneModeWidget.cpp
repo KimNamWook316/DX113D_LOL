@@ -125,6 +125,7 @@ void CDDInstanceSceneModeWidget::RefreshWidgets()
 
 	m_PhaseList->Clear();
 
+	// TODO : GetNextScene 함수가 nullptr 리턴
 	CScene* Scene = CSceneManager::GetInst()->GetNextScene();
 
 	size_t Size = SceneMode->GetPhaseListSize();
@@ -401,7 +402,8 @@ void CDDInstanceSceneModeWidget::OnClickDeleteSpawnInfo()
 	SetGizmoNull();
 
 	// 오브젝트 삭제
-	SampleMonster->Destroy();
+	if(SampleMonster)
+		SampleMonster->Destroy();
 
 	m_CurSpawnInfo = nullptr;
 }
@@ -566,7 +568,7 @@ CGameObject* CDDInstanceSceneModeWidget::CreatePhaseMonsterSample(int PhaseIdx, 
 		return nullptr;
 	}
 
-	CGameObject* PoolMonster = CObjectPool::GetInst()->GetMonster(Info->MonsterName, Scene);
+	CGameObject* PoolMonster = CObjectPool::GetInst()->GetMonster(Info->MonsterName, Scene, false);
 
 	CAnimationMeshComponent* AnimMesh = PoolMonster->FindComponentFromType<CAnimationMeshComponent>();
 

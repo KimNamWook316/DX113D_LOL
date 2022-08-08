@@ -23,7 +23,8 @@ CPlayerDataComponent::CPlayerDataComponent() :
 	m_UnbeatableTime(2.7f),
 	m_LadderUpEnable(false),
 	m_LadderDownEnable(false),
-	m_IsClimbingLadder(false)
+	m_IsClimbingLadder(false),
+	m_AdjLadder(nullptr)
 {
 	SetTypeID<CPlayerDataComponent>();
 	m_ComponentType = Component_Type::ObjectComponent;
@@ -196,6 +197,11 @@ bool CPlayerDataComponent::LoadOnly(FILE* File)
 	return true;
 }
 
+void CPlayerDataComponent::SetAdjLadder(CGameObject* Ladder)
+{
+	m_AdjLadder = Ladder;
+}
+
 inline void CPlayerDataComponent::SetTrueOnSlash()
 {
 	m_OnSlash = true;
@@ -208,6 +214,11 @@ inline void CPlayerDataComponent::SetFalseOnSlash()
 	m_OnSlash = false;
 
 	m_AttackCheckCollider->Enable(false);
+}
+
+CGameObject* CPlayerDataComponent::GetAdjLadder() const
+{
+	return m_AdjLadder;
 }
 
 CAnimationMeshComponent* CPlayerDataComponent::GetAnimationMeshComponent() const

@@ -28,6 +28,7 @@
 #include "Component\PlagueKnightDataComponent.h"
 #include "Component\DodgerDataComponent.h"
 #include "Component\TriggerBoxData.h"
+#include "Component\BatDataComponent.h"
 
 // TODO : Death Door SceneMode 추가시마다 업데이트
 #include "Scene/DDSceneMode.h"
@@ -75,6 +76,9 @@ std::string CDDUtil::DDConditionNodeTypeToString(DDConditionNode NodeType)
 	case DDConditionNode::PathFindEnableCheck:
 		return "PathFindEnableCheck";
 
+	case DDConditionNode::PathListEmptyCheck:
+		return "PathListEmptyCheck";
+
 	case DDConditionNode::HitCheckNode:
 		return "HitCheckNode";
 
@@ -91,6 +95,8 @@ std::string CDDUtil::DDConditionNodeTypeToString(DDConditionNode NodeType)
 
 	case DDConditionNode::MeleeAttackRangeCheck:
 		return "MeleeAttackRangeCheck";
+	case DDConditionNode::PathFindExecuteCheck:
+		return "PathFindExecuteCheck";
 
 	case DDConditionNode::IsClimbingCheck:
 		return "IsClimbingCheck";
@@ -184,6 +190,16 @@ std::string CDDUtil::DDConditionNodeTypeToString(DDConditionNode NodeType)
 		return "DodgerDashCheck";
 	case DDConditionNode::DodgerSecondAttackCheck:
 		return "DodgerSecondAttackCheck";
+
+	// Bat
+	case DDConditionNode::BatRecognizeStartCheck:
+		return "BatRecognizeStartCheck";
+	case DDConditionNode::BatRecognizeEndCheck:
+		return "BatRecognizeEndCheck";
+
+	// Lurker
+	case DDConditionNode::LurkerHopStartCheck:
+		return "LurkerHopStartCheck";
 	}
 
 	return "";
@@ -231,10 +247,6 @@ DDConditionNode CDDUtil::StringToDDConditionNodeType(const std::string& Str)
 	{
 		return DDConditionNode::IsCombatCheck;
 	}
-	else if (Str == "PathFindEnableCheck")
-	{
-		return DDConditionNode::PathFindEnableCheck;
-	}
 	else if (Str == "HitCheckNode")
 	{
 		return DDConditionNode::HitCheckNode;
@@ -246,6 +258,18 @@ DDConditionNode CDDUtil::StringToDDConditionNodeType(const std::string& Str)
 	else if (Str == "UpdateInputQueue")
 	{
 		return DDConditionNode::UpdateInputQueue;
+	}
+	else if (Str == "PathFindEnableCheck")
+	{
+		return DDConditionNode::PathFindEnableCheck;
+	}
+	else if (Str == "PathFindExecuteCheck")
+	{
+		return DDConditionNode::PathFindExecuteCheck;
+	}
+	else if (Str == "PathListEmptyCheck")
+	{
+		return DDConditionNode::PathListEmptyCheck;
 	}
 
 	else if (Str == "IsClimbingCheck")
@@ -371,6 +395,22 @@ DDConditionNode CDDUtil::StringToDDConditionNodeType(const std::string& Str)
 	else if (Str == "DodgerSecondAttackCheck")
 	{
 		return DDConditionNode::DodgerSecondAttackCheck;
+	}
+
+	// Bat
+	else if (Str == "BatRecognizeStartCheck")
+	{
+		return DDConditionNode::BatRecognizeStartCheck;
+	}
+	else if (Str == "BatRecognizeEndCheck")
+	{
+		return DDConditionNode::BatRecognizeEndCheck;
+	}
+
+	// Lurker
+	else if (Str == "LurkerHopStartCheck")
+	{
+		return DDConditionNode::LurkerHopStartCheck;
 	}
 
 	return DDConditionNode(-1);
@@ -526,6 +566,16 @@ std::string CDDUtil::DDActionNodeTypeToString(DDActionNode NodeType)
 	// PlaugeKnight
 	case DDActionNode::PlagueKnightShoot:
 		return "PlagueKnightShoot";
+
+	// Bat
+	case DDActionNode::BatRecognize:
+		return "BatRecognize";
+
+	// Lurker
+	case DDActionNode::LurkerHop:
+		return "LurkerHop";
+	case DDActionNode::LurkerMeleeAttackPrep:
+		return "LurkerMeleeAttackPrep";
 	}
 
 	return "";
@@ -740,6 +790,21 @@ DDActionNode CDDUtil::StringToDDActionNodeType(const std::string& Str)
 		return DDActionNode::PlagueKnightShoot;
 	}
 
+	// Bat
+	else if (Str == "BatRecognize")
+	{
+		return DDActionNode::BatRecognize;
+	}
+
+	// Lurker
+	else if (Str == "LurkerHop")
+	{
+		return DDActionNode::LurkerHop;
+	}
+	else if (Str == "LurkerMeleeAttackPrep")
+	{
+		return DDActionNode::LurkerMeleeAttackPrep;
+	}
 
 	return DDActionNode(-1);
 }
@@ -874,6 +939,9 @@ std::string CDDUtil::DDObjectComponentTypeToString(DDObjectComponentType Type)
 
 	case DDObjectComponentType::PlagueKnightData:
 		return "PlagueKnightData";
+
+	case DDObjectComponentType::BatData:
+		return "BatData";
 	}
 
 	return "";
@@ -957,6 +1025,10 @@ DDObjectComponentType CDDUtil::StringToDDObjectComponentType(const std::string& 
 	{
 		return DDObjectComponentType::DodgerData;
 	}
+	else if (Str == "BatData")
+	{
+		return DDObjectComponentType::BatData;
+	}
 
 	return DDObjectComponentType(-1);
 }
@@ -1005,6 +1077,8 @@ size_t CDDUtil::DDObjectComponentTypeToTypeID(DDObjectComponentType Type)
 		return typeid(CDodgerDataComponent).hash_code();
 	case DDObjectComponentType::PlagueKnightData:
 		return typeid(CPlagueKnightDataComponent).hash_code();
+	case DDObjectComponentType::BatData:
+		return typeid(CBatDataComponent).hash_code();
 	}
 	return -1;
 }

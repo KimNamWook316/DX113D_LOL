@@ -8,7 +8,7 @@
 
 CMonsterNavAgent::CMonsterNavAgent()	:
 	m_AccTime(0.f),
-	m_PathFindCoolTime(2.f),
+	m_PathFindCoolTime(1.2f),
 	m_PathFindCoolStart(false),
 	m_PathFindEnable(true),
 	m_CoolStart(false),

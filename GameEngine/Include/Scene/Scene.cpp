@@ -119,7 +119,9 @@ void CScene::Start()
 
 	for (; iter != iterEnd; ++iter)
 	{
-		(*iter)->Start();
+		// Pool에서 꺼낸 오브젝트들은 GetXXX 함수 호출해서 Start를 호출할 것이다
+		if(!(*iter)->IsInPool())
+			(*iter)->Start();
 	}
 
 	m_Start = true;
@@ -425,6 +427,9 @@ bool CScene::LoadFullPath(const char* FullPath)
 
 		//Success = Obj->Load(File);
 		// 여기서 NextScene 포인터를 Obj->LoadHierarchy안으로 넘겨줘야 한다
+		if (!Obj)
+			continue;
+
 		Success = Obj->LoadHierarchy(File, this);
 
 		CSceneManager::GetInst()->CallObjectDataSet(Obj, Obj->GetName());

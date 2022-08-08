@@ -16,10 +16,11 @@ private:
 public:
 	virtual void Init();
 
-	class CGameObject* GetProjectile(const std::string& Name, class CScene* Scene);
-	class CGameObject* GetMonster(const std::string& Name, class CScene* Scene);
-	class CGameObject* GetParticle(const std::string& Name, class CScene* Scene);
-	class CGameObject* GetMapObject(const std::string& Name, class CScene* Scene);
+	class CGameObject* GetProjectile(const std::string& Name, class CScene* Scene, bool CallStart = true);
+	class CGameObject* GetMonster(const std::string& Name, class CScene* Scene, bool CallStart = true);
+	class CGameObject* GetParticle(const std::string& Name, class CScene* Scene, bool CallStart = true);
+	class CGameObject* GetMapObject(const std::string& Name, class CScene* Scene, bool CallStart = true);
+
 
 	void ReturnToPool(class CGameObject* Object);
 	void LoadPoolData(const char* FileName);

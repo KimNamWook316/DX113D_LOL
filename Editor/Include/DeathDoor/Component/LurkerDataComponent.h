@@ -12,7 +12,49 @@ private:
 	CLurkerDataComponent(const CLurkerDataComponent& com);
 	virtual ~CLurkerDataComponent();
 
+private:
+	bool m_HopStart;
+	Vector3 m_PrevAttackPos;
+	bool m_DeathAnimStart;
+
+public:
+	void SetPrevAttackPos(const Vector3& Pos)
+	{
+		m_PrevAttackPos = Pos;
+	}
+
+	void SetHopStart(bool Start)
+	{
+		m_HopStart = Start;
+	}
+
+	const Vector3& GetPrevAttackPos()	const
+	{
+		return m_PrevAttackPos;
+	}
+
+	bool IsHopStart()	const
+	{
+		return m_HopStart;
+	}
+
 public:
 	virtual void Start() override;
+	virtual void Update(float DeltaTime) override;
+
+public:
+	virtual void SetIsHit(bool Hit) override;
+
+public:
+	void OnHopEnd();
+	void OnEndMeleeAttackPrep();
+	void OnEndMeleeAttack();
+	void OnMeleeAttackColliderEnable();
+	void OnMeleeAttackColliderDisable();
+	void OnMeleeAttackRush();
+	void OnRestorePrevAttackPos();
+	
+public:
+	void LookPlayer();
 };
 

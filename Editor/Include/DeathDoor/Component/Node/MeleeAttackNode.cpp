@@ -36,6 +36,9 @@ NodeResult CMeleeAttackNode::OnStart(float DeltaTime)
 		AnimInst->ChangeAnimation("MeleeAttack");
 	}
 
+	//CMonsterDataComponent* Data = dynamic_cast<CMonsterDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
+	//Data->SetPahtFindExecute(true);
+
 	return NodeResult::Node_True;
 }
 
