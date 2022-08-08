@@ -13,3 +13,4 @@ PlayerBomb,4,PlayerBomb.gobj
 PlagueKnightBullet,10,Static\PlagueKnightBullet.gobj
 Lurker,5,Monster\Lurker\Lurker.gobj
 Bat,10,Monster\Bat\Bat.gobj
+BossKnightImpact,5,Particle\BossKnightImpact.gobj
