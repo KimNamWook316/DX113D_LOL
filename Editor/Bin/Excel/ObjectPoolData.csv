@@ -12,4 +12,4 @@ SpawnDoor,10,Static\SpawnDoor.gobj
 PlayerBomb,4,PlayerBomb.gobj
 PlagueKnightBullet,10,Static\PlagueKnightBullet.gobj
 Lurker,5,Monster\Lurker\Lurker.gobj
-Bat,5,Monster\Bat\Bat.gobj
+Bat,10,Monster\Bat\Bat.gobj

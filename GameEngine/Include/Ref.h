@@ -42,6 +42,10 @@ public:
 
 	void AddRef()
 	{
+		if (m_Name == "Bat")
+		{
+			int a = 0;
+		}
 		++m_RefCount;
 	}
 

@@ -15,7 +15,7 @@ protected:
 	virtual ~CNavAgent();
 
 private:
-	CSharedPtr<class CSceneComponent> m_UpdateComponent;
+	class CSceneComponent* m_UpdateComponent;
 	float					m_MoveSpeed;
 	float					m_RotationSpeed;
 	bool					m_ApplyNavMesh;

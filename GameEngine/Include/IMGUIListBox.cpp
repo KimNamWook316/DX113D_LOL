@@ -9,6 +9,8 @@ CIMGUIListBox::CIMGUIListBox()  :
 
 CIMGUIListBox::~CIMGUIListBox()
 {
+    m_vecItem.clear();
+    m_vecItemUTF8.clear();
 }
 
 bool CIMGUIListBox::Init()

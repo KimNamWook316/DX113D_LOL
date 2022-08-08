@@ -42,6 +42,10 @@ public:
 
 	void AddRef()
 	{
+		if (m_Name == "AnimComp")
+		{
+			int a = 0;
+		}
 		++m_RefCount;
 	}
 
