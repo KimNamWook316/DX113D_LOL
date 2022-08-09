@@ -117,9 +117,11 @@ NodeResult CBossBettySpinAttackNode::OnStart(float DeltaTime)
 	CAnimationSequenceInstance* AnimInst = m_AnimationMeshComp->GetAnimationInstance();
 
 	// 1. Spin 중이라면, Animation 을 바꿔서는 안된다.
-	// 2. 혹은, m_JumpSpinChangeEnable 가 false 이지만, 현재 현재 JumpSpin Animation 이 아니라면
+	// 2. 혹은, m_JumpSpinChangeEnable 가 false 이지만, 현재 현재 Spin, SpinCollide Animation 이 아니라면
 	if (m_JumpSpinChangeEnable || 
-		(!m_JumpSpinChangeEnable && AnimInst->GetCurrentAnimation()->GetName() == "JumpSpin"))
+		(!m_JumpSpinChangeEnable && 
+			AnimInst->GetCurrentAnimation()->GetName() != "Spin" &&
+			AnimInst->GetCurrentAnimation()->GetName() != "SpinCollide"))
 	{
 		AnimInst->ChangeAnimation("JumpSpin");
 		m_JumpSpinChangeEnable = false;

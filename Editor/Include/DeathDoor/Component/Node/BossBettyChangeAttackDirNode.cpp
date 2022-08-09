@@ -39,7 +39,7 @@ void CBossBettyChangeAttackDirNode::Init()
 		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnEnableLookPlayer);
 	AnimInst->AddNotify(AnimName, "NoTracePlayer", 18,
 		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnDisableLookPlayer);
-	AnimInst->AddNotify(AnimName, "SetCurrentNodeNull", 18,
+	AnimInst->AddNotify(AnimName, "SetCurrentNodeNull", 20,
 		(CMonsterDataComponent*)Data, &CMonsterDataComponent::SetCurrentNodeNull);
 	AnimInst->AddNotify(AnimName, "EnableCloseAttackChangeAnim", 20,
 		Data, &CBossBettyDataComponent::OnBossBettyEnableCloseAttackChangeAnim);

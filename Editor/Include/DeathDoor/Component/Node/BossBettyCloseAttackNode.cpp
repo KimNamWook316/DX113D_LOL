@@ -42,7 +42,7 @@ void CBossBettyCloseAttackNode::Init()
 	AnimInst->AddNotify(AnimName, "OnSlashLeft", 13,
 		this, &CBossBettyCloseAttackNode::OnBossBettySlashLeftEffect);
 
-	AnimInst->AddNotify(AnimName, "OnDisableRightLookPlayer", 20,
+	AnimInst->AddNotify(AnimName, "OnDisableRightLookPlayer", 22,
 		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnDisableRightLookPlayer);
 
 	AnimInst->AddNotify(AnimName, "CameraShake", 19,
@@ -66,7 +66,7 @@ void CBossBettyCloseAttackNode::Init()
 		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnEnableLeftLookPlayer);
 	AnimInst->AddNotify(AnimName, "OnSlashRight", 13,
 		this, &CBossBettyCloseAttackNode::OnBossBettySlashRightEffect);
-	AnimInst->AddNotify(AnimName, "OnDisableLeftLookPlayer", 20,
+	AnimInst->AddNotify(AnimName, "OnDisableLeftLookPlayer", 22,
 		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnDisableLeftLookPlayer);
 
 	AnimInst->AddNotify(AnimName, "EnableAttackCollider", 14,
@@ -83,12 +83,8 @@ void CBossBettyCloseAttackNode::Init()
 	// 3) PunchLeft
 	AnimName = "PunchLeft";
 
-	AnimInst->AddNotify(AnimName, "EnableLook", 5,
-		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnEnableLookPlayer);
-
-	AnimInst->AddNotify(AnimName, "DisableLook", 7,
+	AnimInst->AddNotify(AnimName, "DisableLook", 0,
 		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnDisableLookPlayer);
-
 	AnimInst->AddNotify(AnimName, "OnPunchLeft", 15,
 		Data, &CBossBettyDataComponent::OnBossBettyGenerateLeftCloseAttackEffect);
 	AnimInst->AddNotify(AnimName, "CameraShake", 18,
@@ -104,12 +100,8 @@ void CBossBettyCloseAttackNode::Init()
 	// 4) PunchRight
 	AnimName = "PunchRight";
 
-	AnimInst->AddNotify(AnimName, "EnableLook", 5,
-		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnEnableLookPlayer);
-
-	AnimInst->AddNotify(AnimName, "DisableLook", 7,
+	AnimInst->AddNotify(AnimName, "DisableLook", 0,
 		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnDisableLookPlayer);
-
 	AnimInst->AddNotify(AnimName, "OnPunchRight", 15,
 		Data, &CBossBettyDataComponent::OnBossBettyGenerateRightCloseAttackEffect);
 	AnimInst->AddNotify(AnimName, "CameraShake", 18,
@@ -125,6 +117,8 @@ void CBossBettyCloseAttackNode::Init()
 	// 5) Two Side Attack
 	AnimName = "FirstSlam";
 
+	AnimInst->AddNotify(AnimName, "DisableLook", 0,
+		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnDisableLookPlayer);
 	AnimInst->AddNotify(AnimName, "OnFirstSlam", 17,
 		Data, &CBossBettyDataComponent::OnBossBettyGenerateTwoSideCloseAttackEffect);
 	AnimInst->AddNotify(AnimName, "CameraShake", 20,
@@ -158,12 +152,10 @@ NodeResult CBossBettyCloseAttackNode::OnStart(float DeltaTime)
 
 	float AngleToPlayer = Data->GetAnglePlayer();
 
-	if (AngleToPlayer > 45.f)
+	if (AngleToPlayer > 35.f)
 		Data->SetCurRotSpeed(Data->GetOriginRotSpeed() * 1.5f);
 	else
 		Data->SetCurRotSpeed(Data->GetOriginRotSpeed());
-
-	m_Owner->SetCurrentNode(this);
 
 	Data->SetCloseAttackAnimChangeEnable(false);
 

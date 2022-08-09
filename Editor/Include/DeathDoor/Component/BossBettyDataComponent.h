@@ -83,6 +83,7 @@ private :
 
     // Boss Betty Slash Particle
     // Boss Betty Roar Particle
+    class CParticleComponent* m_BossBettyRoarParticle;
 
 public:
     virtual void Start() override;
@@ -133,7 +134,9 @@ public :
     void OnBossBettyForceCheckHPState();
     // CutScene Camera 시작
     void OnBossBettyStartCutSceneCamera(const CollisionResult& Result);
-
+    // Roar Particle Effect
+    void OnBossBettyActivateRoarParticle();
+    
     // Setter 함수 ---
 public:
     void SetBettyThrowBallObject(class CGameObject* Object)
@@ -176,6 +179,10 @@ public:
     }
   
 public:
+    class CParticleComponent* GetBettyRoarParticle() const
+    {
+        return m_BossBettyRoarParticle;
+    }
     bool IsInitIdle() const
     {
         return m_IsInitIdle;

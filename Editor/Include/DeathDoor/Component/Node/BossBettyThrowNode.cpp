@@ -53,6 +53,9 @@ void CBossBettyThrowNode::Init()
 	// End
 	AnimInst->AddNotify(AnimName, "ThrowSnowBallAttackObj", 26, this, &CBossBettyThrowNode::ThrowSnowBallAttackObj);
 
+	AnimInst->AddNotify(AnimName, "DisableLookPlayer", 26,
+		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnDisableLookPlayer);
+
 	AnimInst->SetEndFunction(AnimName, 
 		(CMonsterDataComponent*)Data, &CMonsterDataComponent::SetCurrentNodeNull);
 }

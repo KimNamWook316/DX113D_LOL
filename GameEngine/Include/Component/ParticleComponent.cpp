@@ -209,6 +209,9 @@ void CParticleComponent::Reset()
 	// 구조화 버퍼 정보 Update
 	m_CBuffer->UpdateCBuffer();
 
+	// Init Delay Time 을 0으로 준다.
+	m_InitActiveDelayTime = 0.f;
+
 	size_t	BufferCount = m_vecStructuredBuffer.size();
 
 	for (size_t i = 0; i < BufferCount; ++i)
@@ -566,6 +569,8 @@ void CParticleComponent::RecreateOnlyOnceCreatedParticleWithOutLifeTimeSetting()
 		return;
 
 	CRef::Enable(true);
+
+	m_Render = true;
 
 	size_t	BufferCount = m_vecStructuredBuffer.size();
 

@@ -54,9 +54,14 @@ void CBossBettyDataComponent::Start()
     m_OriginRotSpeed = m_Data.RotateSpeedPerSec;
     m_CurRotSpeed = m_OriginRotSpeed;
 
+    // HP Setting
     m_BettyHPMax = (float)m_Data.HP;
 
-    // HitBox 에 콜백을 걸어준다.
+    // Move Z Diable
+    CMonsterDataComponent::OnDisableMoveZ();
+
+    // Look Player Disable
+    CMonsterDataComponent::OnDisableLookPlayer();
 
     // Current Animation 은 Idle 로 세팅한다.
     CAnimationSequenceInstance* AnimInst = dynamic_cast<CAnimationMeshComponent*>(m_Object->GetRootComponent())->GetAnimationInstance();
@@ -121,6 +126,14 @@ void CBossBettyDataComponent::Start()
             &CBossBettyDataComponent::OnBossBettyNormalShakeCamera);
 
         m_CutSceneCam->AddCutSceneMoveEndCallBack<CMonsterDataComponent>((CMonsterDataComponent*)this, &CMonsterDataComponent::OnEndCutScene);
+    }
+
+    // Roar Particle
+    m_BossBettyRoarParticle = dynamic_cast<CParticleComponent*>((m_Object->FindComponent("BettyRoar")));
+
+    if (m_BossBettyRoarParticle)
+    {
+        m_BossBettyRoarParticle->Enable(false);
     }
  
     // 근거리 사정 거리 판별 Square Pos 위치 만들기 
@@ -352,6 +365,8 @@ void CBossBettyDataComponent::OnBossBettyActivateAfterEffect(const Vector3& Worl
 {
     CGameObject* AfterEffectParticle = CObjectPool::GetInst()->GetParticle("BettyAttackAfterEffect", CSceneManager::GetInst()->GetScene());
 
+    AfterEffectParticle->Enable(true);
+
     CColliderBox3D* Collider3D = AfterEffectParticle->FindComponentFromType<CColliderBox3D>();
 
     Collider3D->AddCollisionCallback(Collision_State::Begin, (CMonsterDataComponent*)this, &CMonsterDataComponent::OnHitMeleeAttack);
@@ -405,6 +420,11 @@ void CBossBettyDataComponent::OnBossBettyStartCutSceneCamera(const CollisionResu
 
     // 이후 Player Trigger 는 Enable False 처리해준다. -> Monster Data Component 에서 처리해주고 있다.
     // m_PlayerEnterZoneTrigger->Enable(false);
+}
+
+void CBossBettyDataComponent::OnBossBettyActivateRoarParticle()
+{
+    m_BossBettyRoarParticle->StartParticle(m_Object->GetWorldPos());
 }
 
 void CBossBettyDataComponent::IncFarAttackCount()

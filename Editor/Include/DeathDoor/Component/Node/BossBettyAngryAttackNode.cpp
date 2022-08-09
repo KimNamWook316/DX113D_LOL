@@ -42,7 +42,11 @@ void CBossBettyAngryAttackNode::Init()
 	AnimInst->AddNotify(AnimName, "OnDisableTracePlayer", 5,
 		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnDisableLookPlayer);
 
+
 	// Snow Ball Falling
+	AnimInst->AddNotify(AnimName, "CameraShake", 9,
+		Data, &CBossBettyDataComponent::OnBossBettyNormalShakeCamera);
+
 	AnimInst->AddNotify(AnimName, "OnStartFallingSnowBallEffect", 9, 
 		this, &CBossBettyAngryAttackNode::OnBossBettyStartFallingSnowBallEffect);
 
@@ -74,9 +78,15 @@ void CBossBettyAngryAttackNode::Init()
 	AnimInst->AddNotifyDeltaTimeFrameRange(AnimName, "OnBettyRoar", 100, 120,
 		Data, &CBossBettyDataComponent::OnBossBettyRoarEffect);
 
+	AnimInst->AddNotify(AnimName, "ActivateRoarParticle", 100,
+		Data, &CBossBettyDataComponent::OnBossBettyActivateRoarParticle);
+	
+	AnimInst->AddNotify(AnimName, "CameraShake", 100,
+		Data, &CBossBettyDataComponent::OnBossBettyNormalShakeCamera);
+
 	// End
-	// AnimInst->AddNotify(AnimName, "ResetHPState", 121,
-	// 	Data, &CBossBettyDataComponent::ResetBettyHPState);
+	AnimInst->AddNotify(AnimName, "ResetHPState", 121,
+	 	Data, &CBossBettyDataComponent::ResetBettyHPState);
 
 	AnimInst->AddNotify(AnimName, "ResetCurrentNode", 121,
 		(CMonsterDataComponent*)Data, &CMonsterDataComponent::SetCurrentNodeNull);
@@ -89,8 +99,6 @@ NodeResult CBossBettyAngryAttackNode::OnStart(float DeltaTime)
 	m_Owner->SetCurrentNode(this);
 
 	CAnimationSequenceInstance* AnimInst = m_AnimationMeshComp->GetAnimationInstance();
-
-	Data->ResetBettyHPState();
 
 	AnimInst->ChangeAnimation("FirstSlamAnger");
 
@@ -125,10 +133,10 @@ void CBossBettyAngryAttackNode::OnBossBettyStartFallingSnowBallEffect()
 
 	const Vector3& PlayerPos = CSceneManager::GetInst()->GetScene()->GetPlayerObject()->GetWorldPos();
 
-	for (int i = 0; i < 10; ++i)
+	for (int i = 0; i < 8; ++i)
 	{
 		int XRand = rand() % SphereRadius;
-		int YRand = SphereRadius + rand() % (SphereRadius * 3);
+		int YRand = SphereRadius + rand() % (SphereRadius * 2);
 		int ZRand = rand() % SphereRadius;
 
 		float RandV = ((double)rand() / (RAND_MAX)) + 1;
@@ -145,7 +153,7 @@ void CBossBettyAngryAttackNode::OnBossBettyStartFallingSnowBallEffect()
 
 		const Vector3& SnowObjectWorldPos = SnowFallingObject->GetWorldPos();
 
-		ProjTileComp->ShootByTargetPos(SnowObjectWorldPos, 20.f + rand() % 20, 
+		ProjTileComp->ShootByTargetPos(SnowObjectWorldPos, 30.f + rand() % 10, 
 			Vector3(SnowObjectWorldPos.x, PlayerPos.y + 2.f, SnowObjectWorldPos.z), AfterEffectParticle);
 	}
 
