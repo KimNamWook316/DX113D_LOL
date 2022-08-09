@@ -19,7 +19,8 @@ CPlayerBombComponent::CPlayerBombComponent()	:
 	m_LiftSpeed(0.f),
 	m_ShootFirstTime(true),
 	m_CancleAction(false),
-	m_IsClearBomb(false)
+	m_IsClearBomb(false),
+	Count(0)
 {
 	SetTypeID<CPlayerBombComponent>();
 
@@ -37,6 +38,14 @@ CPlayerBombComponent::CPlayerBombComponent(const CPlayerBombComponent& com)	:
 
 CPlayerBombComponent::~CPlayerBombComponent()
 {
+}
+
+void CPlayerBombComponent::ResetCount()
+{
+	if (Count > 1)
+		int a = 3;
+
+	Count = 0;
 }
 
 void CPlayerBombComponent::SetBomb(CGameObject* Bomb)
@@ -177,7 +186,8 @@ void CPlayerBombComponent::LiftBomb()
 	if (m_Bomb)
 	{
 		// 여기로 들어오면 폭탄이 충돌돼서 이펙트가 재생되고 있는 중에 또 폭탄을 쏘려 하는 것이므로 return
-		m_Bomb = nullptr;
+		m_Bomb->Reset();
+		ResetInfo();
 		return;
 	}
 
@@ -191,7 +201,6 @@ void CPlayerBombComponent::LiftBomb()
 	m_Light = m_Bomb->FindComponentFromType<CLightComponent>();
 	m_Light->Enable(false);
 
-	// Betty 바로 앞에 생성한다.
 	Vector3 ZLookDir = m_Object->GetWorldAxis(AXIS::AXIS_Z) * -1.f;
 	Vector3 YLookDir = m_Object->GetWorldAxis(AXIS::AXIS_Y);
 	Vector3 XLookDir = m_Object->GetWorldAxis(AXIS::AXIS_X);
@@ -215,7 +224,6 @@ void CPlayerBombComponent::LiftBomb()
 
 	CColliderComponent* BombCollider = m_Bomb->FindComponentFromType<CColliderSphere>();
 	BombCollider->Enable(false);
-
 }
 
 void CPlayerBombComponent::ShootBomb(const Vector3& ShootDir)
@@ -232,7 +240,6 @@ void CPlayerBombComponent::ShootBomb(const Vector3& ShootDir)
 	{
 		m_Bomb->Reset();
 		ResetInfo();
-
 
 		return;
 	}

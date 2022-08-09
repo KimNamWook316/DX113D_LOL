@@ -530,6 +530,10 @@ bool CNavigation3DManager::CheckNavMeshPickingPoint(Vector3& OutPos)
 	Ray ray = CInput::GetInst()->GetRay(ViewMat);
 	Vector3 RayDir = ray.Dir;
 	Vector3 RayStartPos = ray.Pos;
+
+	if (isnan(RayDir.x) || isnan(RayDir.y) || isnan(RayDir.z))
+		return false;
+
 	XMVECTOR _RayDir = RayDir.Convert();
 	XMVECTOR _RayStartPos = RayStartPos.Convert();
 	size_t Count = m_NavMeshComponent->GetNavMesh()->GetNavMeshPolygonCount();
@@ -547,7 +551,11 @@ bool CNavigation3DManager::CheckNavMeshPickingPoint(Vector3& OutPos)
 		XMVECTOR _P3 = P3.Convert();
 
 		if (P1 == P2 || P2 == P3 || P1 == P3)
-			return false;
+			continue;
+
+		float Dist1 = P1.Distance(P2);
+		float Dist2 = P2.Distance(P3);
+		float Dist3 = P3.Distance(P1);
 
 		float Dist = 0.f;
 

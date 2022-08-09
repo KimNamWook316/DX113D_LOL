@@ -25,6 +25,7 @@ private:
     class CPlayerDataComponent* m_PlayerDataComp;
     float m_CameraMoveSpeed;
     double m_CameraMoveTime;
+    bool m_LiftStart;
 
 public:
     const Vector3& GetOriginCameraPos()  const
