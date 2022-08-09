@@ -100,6 +100,8 @@ void CLadderCollider::OnPlayerLadderColliderBegin(const CollisionResult& Result)
 	// 사다리에 타고 있지 않을때 LadderCollider와 충돌
 	if (!Comp->IsClimbingLadder())
 	{
+		Comp->SetAdjLadder(m_Object);
+
 		// 하단 Ladder Collider와 충돌
 		if (LadderPos.y > LadderColliderPos.y)
 		{

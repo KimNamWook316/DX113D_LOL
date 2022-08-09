@@ -157,11 +157,15 @@ void CBossBettyThrowNode::MakeSnowBallAttackObj()
 	CScene* CurrentScene = CSceneManager::GetInst()->GetScene();
 
 	m_CurrentThrowBall = CObjectPool::GetInst()->GetProjectile("BossBettySnowAttack", CurrentScene);
-
+	
+	// Debug 용
 	if (m_CurrentThrowBall == nullptr)
+	{
+		m_CurrentThrowBall = CObjectPool::GetInst()->GetProjectile("BossBettySnowAttack", CurrentScene);
 		return;
+	}
 
-	Data->SetBettyThrowBallObject(m_CurrentThrowBall);
+	// Data->SetBettyThrowBallObject(m_CurrentThrowBall);
 
 	m_CurrentThrowBall->Enable(true);
 
@@ -220,7 +224,7 @@ void CBossBettyThrowNode::ThrowSnowBallAttackObj()
 
 	// BossBettyDataComponent 로부터, BossThrowBall Object 를 가져오고
 	// 거기에 적절한 설정들을 여기에 해줄 것이다.
-	m_CurrentThrowBall = Data->GetBossBettyThrowObject();
+	// m_CurrentThrowBall = Data->GetBossBettyThrowObject();
 
 	CProjectileComponent* ProjTileComp = m_CurrentThrowBall->FindComponentFromType<CProjectileComponent>();
 

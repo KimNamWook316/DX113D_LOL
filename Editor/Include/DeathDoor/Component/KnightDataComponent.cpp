@@ -9,6 +9,7 @@
 #include "GameObject/GameObject.h"
 #include "Scene/Scene.h"
 #include "Render/RenderManager.h"
+#include "ObjectPool.h"
 
 CKnightDataComponent::CKnightDataComponent()	:
 	m_JumpAttackRange(0.f),
@@ -225,5 +226,10 @@ void CKnightDataComponent::OnActiveMeleeAttackCollider()
 	CMonsterDataComponent::OnActiveMeleeAttackCollider();
 
 	// TODO : Boss Knight - Particle
+	CGameObject* Particle = CObjectPool::GetInst()->GetParticle("BossKnightImpact", m_Scene);
+
+	Vector3 Pos = m_MeleeAttackCollider->GetWorldPos();
+	Particle->SetWorldPos(Pos);
+
 	m_Scene->GetCameraManager()->ShakeCamera(0.5f, 2.f);
 }

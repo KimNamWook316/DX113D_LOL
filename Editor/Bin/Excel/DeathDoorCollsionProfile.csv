@@ -5,8 +5,9 @@ Object,Object,Collision,Collision,Collision,Collision,Collision,Collision,Collis
 Player,Player,Collision,Ignore,CollisionRigid,Ignore,Collision,CollisionRigid,Collision,Collision,Collision,Collision,Collision,Collision,Collision,Collision,Collision,Collision,Collision,Collision,Collision,Ignore,Collision
 Monster,Monster,Collision,CollisionRigid,CollisionRigid,Collision,Ignore,Collision,Collision,Collision,Collision,Collision,Collision,Collision,Collision,Collision,Collision,Collision,Collision,Collision,Collision,Collision,Collision
 MonsterAttack,MonsterAttack,Collision,Collision,Ignore,Ignore,Ignore,Collision,Collision,Collision,Collision,Collision,Collision,Collision,Collision,Collision,Collision,Collision,Collision,Collision,Collision,Ignore,Collision
-PlayerAttack,PlayerAttack,Collision,Ignore,Collision,Ignore,Ignore,Collision,Collision,Collision,Collision,Collision,Collision,Collision,Collision,Collision,Collision,Collision,Collision,Collision,Collision,Collision,Collision
+PlayerAttack,PlayerAttack,Collision,Ignore,Collision,Ignore,Ignore,Ignore,Collision,Collision,Collision,Collision,Collision,Collision,Collision,Collision,Collision,Collision,Collision,Collision,Ignore,Collision,Collision
 EnterTrigger,MapObject,Ignore,Collision,Ignore,Ignore,Ignore,Ignore,Ignore,Ignore,Ignore,Ignore,Ignore,Ignore,Ignore,Ignore,Ignore,Ignore,Ignore,Ignore,Ignore,Ignore,Ignore
 Wall,Object,Ignore,CollisionRigid,CollisionRigid,Ignore,Ignore,Ignore,Ignore,Ignore,Ignore,Ignore,Ignore,Ignore,Ignore,Ignore,Ignore,Ignore,Ignore,Ignore,Ignore,Ignore,Ignore
 MapObject,MapObject,Ignore,CollisionRigid,CollisionRigid,Collision,Collision,Ignore,Ignore,Ignore,Ignore,Ignore,Ignore,Ignore,Ignore,Ignore,Ignore,Ignore,Ignore,Ignore,Ignore,Ignore,Collision
 PlayerBomb,Custom15,Ignore,Ignore,Collision,Ignore,Ignore,Collision,Ignore,Ignore,Ignore,Ignore,Ignore,Ignore,Ignore,Ignore,Ignore,Ignore,Ignore,Ignore,Ignore,Ignore,Ignore
+FallingFloor,Custom14,Ignore,Collision,Ignore,Ignore,Ignore,Ignore,Ignore,Ignore,Ignore,Ignore,Ignore,Ignore,Ignore,Ignore,Ignore,Ignore,Ignore,Ignore,Ignore,Ignore,Ignore

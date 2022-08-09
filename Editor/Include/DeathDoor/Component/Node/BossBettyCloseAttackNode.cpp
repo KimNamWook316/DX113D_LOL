@@ -86,7 +86,7 @@ void CBossBettyCloseAttackNode::Init()
 	AnimInst->AddNotify(AnimName, "EnableLook", 5,
 		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnEnableLookPlayer);
 
-	AnimInst->AddNotify(AnimName, "DisableLook", 10,
+	AnimInst->AddNotify(AnimName, "DisableLook", 7,
 		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnDisableLookPlayer);
 
 	AnimInst->AddNotify(AnimName, "OnPunchLeft", 15,
@@ -107,7 +107,7 @@ void CBossBettyCloseAttackNode::Init()
 	AnimInst->AddNotify(AnimName, "EnableLook", 5,
 		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnEnableLookPlayer);
 
-	AnimInst->AddNotify(AnimName, "DisableLook", 10,
+	AnimInst->AddNotify(AnimName, "DisableLook", 7,
 		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnDisableLookPlayer);
 
 	AnimInst->AddNotify(AnimName, "OnPunchRight", 15,
@@ -171,13 +171,13 @@ NodeResult CBossBettyCloseAttackNode::OnStart(float DeltaTime)
 	{
 	case BossBettyCloseAttackType::PunchLeft:
 	{
-		m_Owner->GetAnimationMeshComp()->GetAnimationInstance()->ChangeAnimation("IdleBeast");
+		// m_Owner->GetAnimationMeshComp()->GetAnimationInstance()->ChangeAnimation("IdleBeast");
 		AnimInst->ChangeAnimation("PunchLeft");
 	}
 	break;
 	case BossBettyCloseAttackType::PunchRight:
 	{	
-		m_Owner->GetAnimationMeshComp()->GetAnimationInstance()->ChangeAnimation("IdleBeast");
+		// m_Owner->GetAnimationMeshComp()->GetAnimationInstance()->ChangeAnimation("IdleBeast");
 		AnimInst->ChangeAnimation("PunchRight");
 	}
 	break;
@@ -337,7 +337,8 @@ void CBossBettyCloseAttackNode::OnBossBettyCommonEndFunctionOfCloseAttack()
 	// PosAttackDelay 상태에 둔다.
 	Data->SetAttackCoolDelayTimeEnable(true);
 
-	// m_Owner->GetAnimationMeshComp()->GetAnimationInstance()->ChangeAnimation("IdleBeast");
+	// HP State 를 한번 더 체크할 수 있도록 한다.
+	Data->OnBossBettyForceCheckHPState();
 }
 
 void CBossBettyCloseAttackNode::OnBossBettyCommonStartFunctionOfCloseAttack()

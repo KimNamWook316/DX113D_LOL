@@ -36,6 +36,9 @@
 #include "../DeathDoor/Component/Node/DeathCheck.h"
 #include "../DeathDoor/Component/Node/PostAttackDelayCheck.h"
 #include "../DeathDoor/Component/Node/AttackCoolTimeCheck.h"
+#include "../DeathDoor/Component/Node/PathFindExecuteCheck.h"
+#include "../DeathDoor/Component/Node/PathFindEnableCheck.h"
+#include "../DeathDoor/Component/Node/PathListEmptyCheck.h"
 
 #include "../DeathDoor/Component/Node/ClimbDown.h"
 #include "../DeathDoor/Component/Node/ClimbDownEnd.h"
@@ -55,16 +58,18 @@
 #include "../DeathDoor/Component/Node/ClimbPause.h"
 #include "../DeathDoor/Component/Node/IsClimbingCheck.h"
 #include "../DeathDoor/Component/Node/ClimbPause.h"
+#include "../DeathDoor/Component/Node/ClimbKeyEnableCheck.h"
 
 #include "../DeathDoor/Component/Node/HitCheckNode.h"
 #include "../DeathDoor/Component/Node/HitBackNode.h"
 #include "../DeathDoor/Component/Node/RollInputCheck.h"
 #include "../DeathDoor/Component/Node/PlayerRoll.h"
 #include "../DeathDoor/Component/Node/UpdateInputQueue.h"
-
+#include "../DeathDoor/Component/Node/PathFindExecuteCheck.h"
 #include "../DeathDoor/Component/Node/StraightPathCheck.h"
 #include "../DeathDoor/Component/Node/ChasePlayerNode.h"
 #include "../DeathDoor/Component/Node/MeleeAttackNode.h"
+#include "../DeathDoor/Component/Node/PathListEmptyCheck.h"
 
 // BossKnight
 #include "../DeathDoor/Component/Node/BossKnightContinueAttackNode.h"
@@ -140,6 +145,16 @@
 
 // Plauge Knight
 #include "../DeathDoor/Component/Node/PlagueKnightShootNode.h"
+
+// Bat
+#include "../DeathDoor/Component/Node/BatRecognizeStartCheck.h"
+#include "../DeathDoor/Component/Node/BatRecognizeEndCheck.h"
+#include "../DeathDoor/Component/Node/BatRecognize.h"
+
+// Lurker
+#include "../DeathDoor/Component/Node/LurkerHopStartCheck.h"
+#include "../DeathDoor/Component/Node/LurkerHop.h"
+#include "../DeathDoor/Component/Node/LurkerMeleeAttackPrep.h"
 
 #include "ObjectComponentWindow.h"
 #include "ObjectHierarchyWindow.h"
@@ -789,6 +804,25 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
             break;
         }
 
+        // Bat
+        case DDActionNode::BatRecognize:
+        {
+            NewTreeNode = m_StateComponent->CreateTreeNode<CBatRecognize>(Name);
+            break;
+        }
+
+        // Lurker
+        case DDActionNode::LurkerHop:
+        {
+            NewTreeNode = m_StateComponent->CreateTreeNode<CLurkerHop>(Name);
+            break;
+        }
+        case DDActionNode::LurkerMeleeAttackPrep:
+        {
+            NewTreeNode = m_StateComponent->CreateTreeNode<CLurkerMeleeAttackPrep>(Name);
+            break;
+        }
+
 		}
         break;
     }
@@ -880,6 +914,16 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
         case DDConditionNode::MeleeAttackRangeCheck:
             NewTreeNode = m_StateComponent->CreateTreeNode<CMeleeRangeCheckNode>(Name);
             break;
+        case DDConditionNode::PathFindExecuteCheck:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CPathFindExecuteCheck>(Name);
+            break;
+        case DDConditionNode::PathFindEnableCheck:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CPathFindEnableCheck>(Name);
+            break;
+
+        case DDConditionNode::PathListEmptyCheck:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CPathListEmptyCheck>(Name);
+            break;
         case DDConditionNode::PostAttackDelayCheck:
             NewTreeNode = m_StateComponent->CreateTreeNode<CPostAttackDelayCheck>(Name);
             break;
@@ -901,6 +945,7 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
         case DDConditionNode::UpdateInputQueue:
             NewTreeNode = m_StateComponent->CreateTreeNode<CUpdateInputQueue>(Name);
             break;
+
 
         // Boss Knight
         case DDConditionNode::BossKnightFinalAttackCheck:
@@ -987,6 +1032,19 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
             NewTreeNode = m_StateComponent->CreateTreeNode<CDodgerSecondAttackCheck>(Name);
             break;
 
+        // Bat
+        case DDConditionNode::BatRecognizeStartCheck:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CBatRecognizeStartCheck>(Name);
+            break;
+        case DDConditionNode::BatRecognizeEndCheck:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CBatRecognizeEndCheck>(Name);
+            break;
+
+        // Lurker
+        case DDConditionNode::LurkerHopStartCheck:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CLurkerHopStartCheck>(Name);
+            break;
+
         }
         break;
     }
@@ -994,7 +1052,8 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
     case 4:
     {
         enum DecoratorNode NodeDecoratorClass;
-        NodeDecoratorClass = static_cast<DecoratorNode>(ActionIndex);
+        NodeDecoratorClass = static_cast<DecoratorNode>(0);
+        //NodeDecoratorClass = static_cast<DecoratorNode>(ActionIndex);
 
         // TODO : Decorator Node 종류 추가될 때 마다 추가
         switch (NodeDecoratorClass)

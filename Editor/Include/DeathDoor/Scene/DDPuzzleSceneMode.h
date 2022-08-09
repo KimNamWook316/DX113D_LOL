@@ -44,6 +44,8 @@ public:
         return m_LadderObjectName;
     }
 
+    class CGameObject* GetBlockerObject()   const;
+
     bool IsClearCamMove() const
     {
         return m_ClearCamMove;

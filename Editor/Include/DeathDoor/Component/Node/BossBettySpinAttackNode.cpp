@@ -100,6 +100,7 @@ void CBossBettySpinAttackNode::Init()
 	// 모든 Spin이 끝나고 나서야 비로소, CurrentNode 를 nullptr 로 세팅한다.
 	AnimInst->AddNotify(AnimName, "SetCurrentNodeNull", 25,
 		Data, &CBossBettyDataComponent::OnBossBettySetCurrentNodeNullPtr);
+
 	// Jump Spin 으로의 전환을 허용한다.
 	AnimInst->AddNotify(AnimName, "EnableJumpSpinChange", 25,
 		this, &CBossBettySpinAttackNode::OnBossBettyEnableSpinChange);
@@ -107,20 +108,24 @@ void CBossBettySpinAttackNode::Init()
 	AnimInst->AddNotify(AnimName, "DisableAttackCollider", 25,
 		Data, &CBossBettyDataComponent::OnBossBettyDisableAttackCollider);
 
+	// AnimInst->AddNotify(AnimName, "ForceHPStateCheck", 25,
+	// 	Data, &CBossBettyDataComponent::OnBossBettyForceCheckHPState);
 }
 
 NodeResult CBossBettySpinAttackNode::OnStart(float DeltaTime)
 {
 	CAnimationSequenceInstance* AnimInst = m_AnimationMeshComp->GetAnimationInstance();
 
-	// Spin 중이라면, Animation 을 바꿔서는 안된다.
-	if (m_JumpSpinChangeEnable)
+	// 1. Spin 중이라면, Animation 을 바꿔서는 안된다.
+	// 2. 혹은, m_JumpSpinChangeEnable 가 false 이지만, 현재 현재 JumpSpin Animation 이 아니라면
+	if (m_JumpSpinChangeEnable || 
+		(!m_JumpSpinChangeEnable && AnimInst->GetCurrentAnimation()->GetName() == "JumpSpin"))
 	{
-		m_Owner->SetCurrentNode(this);
 		AnimInst->ChangeAnimation("JumpSpin");
 		m_JumpSpinChangeEnable = false;
 	}
 
+	m_Owner->SetCurrentNode(this);
 	// CAnimationSequenceData* CurAnim = AnimInst->GetCurrentAnimation();
 	// 
 	// if (CurAnim->GetName() != "Spin" && CurAnim->GetName() != "SpinCollide")
@@ -133,7 +138,6 @@ NodeResult CBossBettySpinAttackNode::OnStart(float DeltaTime)
 	// 	AnimInst->ChangeAnimation("JumpSpin");
 	// 	m_JumpSpinChangeEnable = false;
 	// }
-
 
 	return NodeResult::Node_True;
 }

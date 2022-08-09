@@ -110,6 +110,11 @@ public:
 		m_IsCutScenePlaying = Playing;
 	}
 
+	void SetPahtFindExecute(bool Execute)
+	{
+		m_PathFindExecute = Execute;
+	}
+
 public:
 	bool IsAttackCoolTimeEnable() const
 	{
@@ -170,6 +175,11 @@ public:
 	bool IsPlayerEnterZone() const
 	{
 		return m_PlayerEnterZone;
+	}
+
+	bool IsPathFindExecute()	const
+	{
+		return m_PathFindExecute;
 	}
 
 	float GetAnglePlayer();
@@ -251,6 +261,9 @@ protected:
 
 	// 길찾기 종료하는 거리
 	float m_StopChaseRange;
+
+
+	bool m_PathFindExecute;
 
 public:
 	class CMonsterNavAgent* GetMonsterNavAgent()	const;

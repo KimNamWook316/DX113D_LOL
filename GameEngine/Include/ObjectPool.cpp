@@ -47,7 +47,7 @@ void CObjectPool::Init()
 
 }
 
-CGameObject* CObjectPool::GetProjectile(const std::string& Name, class CScene* Scene)
+CGameObject* CObjectPool::GetProjectile(const std::string& Name, class CScene* Scene, bool CallStart)
 {
 	auto iter = m_mapProjectile.find(Name);
 
@@ -59,7 +59,10 @@ CGameObject* CObjectPool::GetProjectile(const std::string& Name, class CScene* S
 	Object->m_Active = true;
 
 	Scene->AddObject(Object);
-	Object->Start();
+
+	if(CallStart)
+		Object->Start();
+
 	Object->Enable(true);
 
 	m_mapProjectile.erase(iter);
@@ -67,7 +70,7 @@ CGameObject* CObjectPool::GetProjectile(const std::string& Name, class CScene* S
 	return Object;
 }
 
-CGameObject* CObjectPool::GetMonster(const std::string& Name, class CScene* Scene)
+CGameObject* CObjectPool::GetMonster(const std::string& Name, class CScene* Scene, bool CallStart)
 {
 	auto iter = m_mapMonster.find(Name);
 
@@ -78,7 +81,10 @@ CGameObject* CObjectPool::GetMonster(const std::string& Name, class CScene* Scen
 
 	Object->m_Active = true;
 	Scene->AddObject(Object);
-	Object->Start();
+
+	if(CallStart)
+		Object->Start();
+
 	Object->Enable(true);
 
 	m_mapMonster.erase(iter);
@@ -86,7 +92,7 @@ CGameObject* CObjectPool::GetMonster(const std::string& Name, class CScene* Scen
 	return Object;
 }
 
-CGameObject* CObjectPool::GetParticle(const std::string& Name, class CScene* Scene)
+CGameObject* CObjectPool::GetParticle(const std::string& Name, class CScene* Scene, bool CallStart)
 {
 	auto iter = m_mapParticle.find(Name);
 
@@ -97,7 +103,10 @@ CGameObject* CObjectPool::GetParticle(const std::string& Name, class CScene* Sce
 
 	Object->m_Active = true;
 	Scene->AddObject(Object);
-	Object->Start();
+
+	if (CallStart)
+		Object->Start();
+
 	Object->Enable(true);
 
 	m_mapParticle.erase(iter);
@@ -105,7 +114,7 @@ CGameObject* CObjectPool::GetParticle(const std::string& Name, class CScene* Sce
 	return Object;
 }
 
-CGameObject* CObjectPool::GetMapObject(const std::string& Name, CScene* Scene)
+CGameObject* CObjectPool::GetMapObject(const std::string& Name, CScene* Scene, bool CallStart)
 {
 	auto iter = m_mapMapObject.find(Name);
 
@@ -116,7 +125,10 @@ CGameObject* CObjectPool::GetMapObject(const std::string& Name, CScene* Scene)
 
 	Object->m_Active = true;
 	Scene->AddObject(Object);
-	Object->Start();
+
+	if (CallStart)
+		Object->Start();
+
 	Object->Enable(true);
 
 	m_mapMapObject.erase(iter);

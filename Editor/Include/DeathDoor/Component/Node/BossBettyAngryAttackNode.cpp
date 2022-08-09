@@ -75,8 +75,8 @@ void CBossBettyAngryAttackNode::Init()
 		Data, &CBossBettyDataComponent::OnBossBettyRoarEffect);
 
 	// End
-	AnimInst->AddNotify(AnimName, "ResetHPState", 121,
-		Data, &CBossBettyDataComponent::ResetBettyHPState);
+	// AnimInst->AddNotify(AnimName, "ResetHPState", 121,
+	// 	Data, &CBossBettyDataComponent::ResetBettyHPState);
 
 	AnimInst->AddNotify(AnimName, "ResetCurrentNode", 121,
 		(CMonsterDataComponent*)Data, &CMonsterDataComponent::SetCurrentNodeNull);
@@ -89,6 +89,8 @@ NodeResult CBossBettyAngryAttackNode::OnStart(float DeltaTime)
 	m_Owner->SetCurrentNode(this);
 
 	CAnimationSequenceInstance* AnimInst = m_AnimationMeshComp->GetAnimationInstance();
+
+	Data->ResetBettyHPState();
 
 	AnimInst->ChangeAnimation("FirstSlamAnger");
 
@@ -115,21 +117,27 @@ void CBossBettyAngryAttackNode::OnBossBettyStartFallingSnowBallEffect()
 	// 1. 특정 위치에 투사체 눈덩이 Object 를 생성
 	CGameObject* MapSurroundingObject = CurrentScene->FindObject("MapSurrounding");
 
+	const Vector3& MapSurroundingObjectWorldPos = MapSurroundingObject->GetWorldPos();
+
 	CColliderSphere* ColliderSphere = MapSurroundingObject->FindComponentFromType<CColliderSphere>();
 
-	int SphereRadius = (int)ColliderSphere->GetSphereInfo().Radius;
+	int SphereRadius = (int)ColliderSphere->GetInfo().Radius;
 
 	const Vector3& PlayerPos = CSceneManager::GetInst()->GetScene()->GetPlayerObject()->GetWorldPos();
 
-	int XRand = rand() % SphereRadius;
-	int YRand = SphereRadius + rand() % (SphereRadius * 3);
-	int ZRand = rand() % SphereRadius;
-
 	for (int i = 0; i < 10; ++i)
 	{
+		int XRand = rand() % SphereRadius;
+		int YRand = SphereRadius + rand() % (SphereRadius * 3);
+		int ZRand = rand() % SphereRadius;
+
+		float RandV = ((double)rand() / (RAND_MAX)) + 1;
+		float RandomAngle = 360.f * RandV;
+
 		CGameObject* SnowFallingObject = CObjectPool::GetInst()->GetProjectile("BossBettySnowAttack", CurrentScene);
 
-		SnowFallingObject->SetWorldPos(PlayerPos + Vector3(XRand, YRand, ZRand));
+		SnowFallingObject->SetWorldPos(MapSurroundingObjectWorldPos + Vector3(
+			XRand * cos(RandomAngle), YRand, ZRand * sin(RandomAngle)));
 			
 		CProjectileComponent* ProjTileComp = SnowFallingObject->FindComponentFromType<CProjectileComponent>();
 
@@ -137,7 +145,7 @@ void CBossBettyAngryAttackNode::OnBossBettyStartFallingSnowBallEffect()
 
 		const Vector3& SnowObjectWorldPos = SnowFallingObject->GetWorldPos();
 
-		ProjTileComp->ShootByTargetPos(SnowObjectWorldPos, 50.f + rand() % 20, 
+		ProjTileComp->ShootByTargetPos(SnowObjectWorldPos, 20.f + rand() % 20, 
 			Vector3(SnowObjectWorldPos.x, PlayerPos.y + 2.f, SnowObjectWorldPos.z), AfterEffectParticle);
 	}
 

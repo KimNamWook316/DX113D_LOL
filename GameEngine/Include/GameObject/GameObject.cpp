@@ -58,6 +58,7 @@ CGameObject::CGameObject(const CGameObject& obj)
 
 CGameObject::~CGameObject()
 {
+
 }
 
 void CGameObject::Enable(bool Enable)
@@ -360,6 +361,7 @@ void CGameObject::Update(float DeltaTime)
 
 		if (m_LifeSpan <= 0.f)
 		{
+			m_LifeSpan = 0.f;
 			Destroy();
 			return;
 		}
@@ -779,7 +781,9 @@ bool CGameObject::LoadHierarchy(const char* FullPath)
 
 	fclose(File);
 
-	Start();
+	// Pool에서 꺼낸 오브젝트들은 CObjectPool::GetXXX 함수 호출해서 Start를 호출할 것이다
+	if (!m_InPool)
+		Start();
 
 	return true;
 }

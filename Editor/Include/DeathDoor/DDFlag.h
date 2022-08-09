@@ -66,6 +66,11 @@ enum class DDActionNode
 	DodgerDash,
 	// PlagueKnight
 	PlagueKnightShoot,
+	// Bat
+	BatRecognize,
+	// Lurker
+	LurkerHop,
+	LurkerMeleeAttackPrep,
 	Max
 };
 
@@ -84,6 +89,7 @@ enum class DDConditionNode
 	MeleeAttackRangeCheck,
 	PostAttackDelayCheck,
 	AttackCoolTimeCheck,
+	PathFindExecuteCheck,
 	BossKnightFinalAttackCheck,
 	BossKnightJumpAttackRangeCheck,
 	BossKnightCutScenePlayCheck,
@@ -93,6 +99,7 @@ enum class DDConditionNode
 	DeathCheck,
 	IsCombatCheck,
 	PathFindEnableCheck,
+	PathListEmptyCheck,
 	HitCheckNode,
 	RollInputCheck,
 	UpdateInputQueue,
@@ -131,6 +138,11 @@ enum class DDConditionNode
 	// Dodger
 	DodgerDashCheck,
 	DodgerSecondAttackCheck,
+	// Bat
+	BatRecognizeStartCheck,
+	BatRecognizeEndCheck,
+	// Bat
+	LurkerHopStartCheck,
 	Max
 };
 
@@ -167,6 +179,7 @@ enum class DDObjectComponentType
 	DodgerData,
 	TriggerBoxData,
 	PlagueKnightData,
+	BatData,
 	Max
 };
 

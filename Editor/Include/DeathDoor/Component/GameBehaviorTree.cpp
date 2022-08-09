@@ -77,6 +77,8 @@
 #include "Node/BossKnightJumpAttackRangeCheck.h"
 #include "Node/BossKnightPlayerEnterZoneCheck.h"
 #include "Node/UpdateInputQueue.h"
+#include "Node/PathFindExecuteCheck.h"
+#include "Node/PathListEmptyCheck.h"
 
 // Boss - Betty
 #include "Node/BossBettyAngryAttackNode.h"
@@ -136,6 +138,16 @@
 
 // Monster - Plauge Knight
 #include "Node/PlagueKnightShootNode.h"
+
+// Monster - Bat
+#include "Node/BatRecognizeStartCheck.h"
+#include "Node/BatRecognizeEndCheck.h"
+#include "Node/BatRecognize.h"
+
+// Monster - Lurker
+#include "Node/LurkerHopStartCheck.h"
+#include "Node/LurkerHop.h"
+#include "Node/LurkerMeleeAttackPrep.h"
 
 #include "GameStateComponent.h"
 
@@ -343,6 +355,16 @@ CNode* CGameBehaviorTree::LoadNode(CNode* Parent, size_t TypeID)
 	else if (TypeID == typeid(CUpdateInputQueue).hash_code())
 	{
 		NewNode = MakeNode<CUpdateInputQueue>(Parent, OwnerObject);
+	}
+
+	else if (TypeID == typeid(CPathFindExecuteCheck).hash_code())
+	{
+		NewNode = MakeNode<CPathFindExecuteCheck>(Parent, OwnerObject);
+	}
+
+	else if (TypeID == typeid(CPathListEmptyCheck).hash_code())
+	{
+		NewNode = MakeNode<CPathListEmptyCheck>(Parent, OwnerObject);
 	}
 
 	else if (TypeID == typeid(CPlayerRoll).hash_code())
@@ -715,6 +737,34 @@ CNode* CGameBehaviorTree::LoadNode(CNode* Parent, size_t TypeID)
 	else if (TypeID == typeid(CPlagueKnightShootNode).hash_code())
 	{
 		NewNode = MakeNode<CPlagueKnightShootNode>(Parent, OwnerObject);
+	}
+
+	// Bat
+	else if (TypeID == typeid(CBatRecognizeStartCheck).hash_code())
+	{
+		NewNode = MakeNode<CBatRecognizeStartCheck>(Parent, OwnerObject);
+	}
+	else if (TypeID == typeid(CBatRecognizeEndCheck).hash_code())
+	{
+		NewNode = MakeNode<CBatRecognizeEndCheck>(Parent, OwnerObject);
+	}
+	else if (TypeID == typeid(CBatRecognize).hash_code())
+	{
+		NewNode = MakeNode<CBatRecognize>(Parent, OwnerObject);
+	}
+
+	// Lurker
+	else if (TypeID == typeid(CLurkerHopStartCheck).hash_code())
+	{
+		NewNode = MakeNode<CLurkerHopStartCheck>(Parent, OwnerObject);
+	}
+	else if (TypeID == typeid(CLurkerHop).hash_code())
+	{
+		NewNode = MakeNode<CLurkerHop>(Parent, OwnerObject);
+	}
+	else if (TypeID == typeid(CLurkerMeleeAttackPrep).hash_code())
+	{
+		NewNode = MakeNode<CLurkerMeleeAttackPrep>(Parent, OwnerObject);
 	}
 
 	return NewNode;

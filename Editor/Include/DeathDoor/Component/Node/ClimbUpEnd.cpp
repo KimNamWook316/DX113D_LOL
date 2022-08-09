@@ -32,15 +32,39 @@ NodeResult CClimbUpEnd::OnStart(float DeltaTime)
 
 	Vector3 PlayerPos = m_Object->GetWorldPos();
 	Vector3 PlayerFaceDir = m_Object->GetWorldAxis(AXIS_Z);
+
 	PlayerFaceDir = Vector3(PlayerFaceDir.x *-1.f, PlayerFaceDir.y * -1.f, PlayerFaceDir.z * -1.f);
 
 	float Height = 0.f;
 	int PolyIndex = 0;
 
-	bool Result1 = m_Object->GetScene()->GetNavigation3DManager()->CheckNavMeshPoly(Vector3(PlayerPos.x, PlayerPos.y + 5.f, PlayerPos.z + PlayerFaceDir.z * 2.f), Height, PolyIndex);
-	if (Result1)
+	/*bool Result1 = m_Object->GetScene()->GetNavigation3DManager()->CheckNavMeshPoly(Vector3(PlayerPos.x + PlayerFaceDir.x * 2.f, PlayerPos.y + 5.f, PlayerPos.z + PlayerFaceDir.z * 2.f), Height, PolyIndex);
+	if (Result1 && Height + 1.5f >= PlayerPos.y)
 	{
-		PlayerPos = Vector3(PlayerPos.x, Height, PlayerPos.z + PlayerFaceDir.z * 2.f);
+
+		PlayerPos = Vector3(PlayerPos.x + PlayerFaceDir.x * 2.f, Height, PlayerPos.z + PlayerFaceDir.z * 2.f);
+		m_Object->SetWorldPos(PlayerPos);
+		m_Object->GetScene()->GetNavigation3DManager()->RefreshPlayerNavMeshPoly(PlayerPos);
+
+		DataComp->SetLadderUpEnable(false);
+
+		CColliderComponent* Body = (CColliderComponent*)m_Object->FindComponent("Body");
+
+		bool Collision = Body->CheckPrevCollisionFromType<CLadderCollider>();
+
+		if (!Collision)
+			DataComp->SetLadderDownEnable(false);
+
+		DataComp->SetClimbingLadder(false);
+
+		return NodeResult::Node_True;
+	}*/
+
+	bool Result2 = m_Object->GetScene()->GetNavigation3DManager()->CheckNavMeshPoly(Vector3(PlayerPos.x + PlayerFaceDir.x * 3.f, PlayerPos.y + 5.f, PlayerPos.z + PlayerFaceDir.z * 3.f), Height, PolyIndex);
+
+	if (Result2 && Height + 1.5f >= PlayerPos.y)
+	{
+		PlayerPos = Vector3(PlayerPos.x + PlayerFaceDir.x * 3.f, Height, PlayerPos.z + PlayerFaceDir.z * 3.f);
 		m_Object->SetWorldPos(PlayerPos);
 		m_Object->GetScene()->GetNavigation3DManager()->RefreshPlayerNavMeshPoly(PlayerPos);
 
@@ -58,34 +82,12 @@ NodeResult CClimbUpEnd::OnStart(float DeltaTime)
 		return NodeResult::Node_True;
 	}
 
-	bool Result2 = m_Object->GetScene()->GetNavigation3DManager()->CheckNavMeshPoly(Vector3(PlayerPos.x, PlayerPos.y + 5.f, PlayerPos.z + PlayerFaceDir.z * 3.f), Height, PolyIndex);
 
-	if (Result2)
+	bool Result3 = m_Object->GetScene()->GetNavigation3DManager()->CheckNavMeshPoly(Vector3(PlayerPos.x + PlayerFaceDir.x * 4.f, PlayerPos.y + 5.f, PlayerPos.z + PlayerFaceDir.z * 4.f), Height, PolyIndex);
+
+	if (Result3 && Height + 1.5f >= PlayerPos.y)
 	{
-		PlayerPos = Vector3(PlayerPos.x, Height, PlayerPos.z + PlayerFaceDir.z * 3.f);
-		m_Object->SetWorldPos(PlayerPos);
-		m_Object->GetScene()->GetNavigation3DManager()->RefreshPlayerNavMeshPoly(PlayerPos);
-
-		DataComp->SetLadderUpEnable(false);
-
-		CColliderComponent* Body = (CColliderComponent*)m_Object->FindComponent("Body");
-
-		bool Collision = Body->CheckPrevCollisionFromType<CLadderCollider>();
-
-		if (!Collision)
-			DataComp->SetLadderDownEnable(false);
-
-		DataComp->SetClimbingLadder(false);
-
-		return NodeResult::Node_True;
-	}
-
-
-	bool Result3 = m_Object->GetScene()->GetNavigation3DManager()->CheckNavMeshPoly(Vector3(PlayerPos.x, PlayerPos.y + 5.f, PlayerPos.z + PlayerFaceDir.z * 4.f), Height, PolyIndex);
-
-	if (Result3)
-	{
-		PlayerPos = Vector3(PlayerPos.x, Height, PlayerPos.z + PlayerFaceDir.z * 4.f);
+		PlayerPos = Vector3(PlayerPos.x + PlayerFaceDir.x * 4.f, Height, PlayerPos.z + PlayerFaceDir.z * 4.f);
 		m_Object->SetWorldPos(PlayerPos);
 		m_Object->GetScene()->GetNavigation3DManager()->RefreshPlayerNavMeshPoly(PlayerPos);
 

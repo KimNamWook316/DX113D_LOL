@@ -552,7 +552,7 @@ void CParticleComponent::RecreateOnlyOnceCreatedParticle()
 		// m_Object->SetLifeSpan(m_TempCreateAccTimeMax);
 		float MaxLifeSpan = m_Object->GetLifeSpan();
 		float ParticleLifeSpan = m_CBuffer->GetLifeTimeMax() + 0.1f;
-
+	
 		m_Object->SetLifeSpan(MaxLifeSpan > ParticleLifeSpan ? MaxLifeSpan : ParticleLifeSpan);
 	}
 }

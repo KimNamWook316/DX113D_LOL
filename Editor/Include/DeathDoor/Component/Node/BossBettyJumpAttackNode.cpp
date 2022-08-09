@@ -80,7 +80,8 @@ void CBossBettyJumpAttackNode::Init()
 		this, &CBossBettyJumpAttackNode::OnBossBettyEndJump);
 	AnimInst->AddNotify(AnimName, "SetCurrentNodeNullptr", 35,
 		Data, &CBossBettyDataComponent::OnBossBettySetCurrentNodeNullPtr);
-
+	// AnimInst->AddNotify(AnimName, "ForceHPStateCheck", 35,
+	// 	Data, &CBossBettyDataComponent::OnBossBettyForceCheckHPState);
 }
 
 NodeResult CBossBettyJumpAttackNode::OnStart(float DeltaTime)

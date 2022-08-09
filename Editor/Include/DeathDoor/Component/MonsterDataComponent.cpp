@@ -358,7 +358,7 @@ void CMonsterDataComponent::OnEndAnimPostAttackDelayOff()
 
 void CMonsterDataComponent::OnDeadPaperBurnEnd()
 {
-	m_Object->Destroy();
+ 	m_Object->Destroy();
 
 	CDDSceneMode* SceneMode = dynamic_cast<CDDSceneMode*>(m_Scene->GetSceneMode());
 

@@ -19,9 +19,11 @@ protected:
 
 private:
     bool m_CollisionStart;
+    bool m_PlayerFall;
     float m_AccTime;
     Vector3 m_OriginPos;
     class CColliderBox3D* m_BoxCollider;
+
 
 public:
     virtual NodeResult Invoke(float DeltaTime) override;
@@ -29,5 +31,6 @@ public:
 public:
     void Trigger(const CollisionResult& Result);
     void ResetFallingBlock();
+    void OnPaperburnEnd();
 };
 

@@ -37,6 +37,8 @@ private:
 
 	DDPlayerRollDirection m_RollDirection;
 
+	class CGameObject* m_AdjLadder;
+
 public:
 	virtual void Start();
 	virtual bool Init();
@@ -55,6 +57,8 @@ public:
 	virtual bool LoadOnly(FILE* File) override;
 
 public:
+	void SetAdjLadder(class CGameObject* Ladder);
+
 	void SetRollDirection(DDPlayerRollDirection Dir)
 	{
 		m_RollDirection = Dir;
@@ -202,6 +206,8 @@ public:
 			m_IsHit = true;
 		}
 	}
+
+	class CGameObject* GetAdjLadder() const;
 
 	class CAnimationMeshComponent* GetAnimationMeshComponent() const;
 
