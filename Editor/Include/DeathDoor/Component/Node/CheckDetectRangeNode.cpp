@@ -27,6 +27,11 @@ NodeResult CCheckDetectRangeNode::OnStart(float DeltaTime)
 	m_DetectRange = Data->GetDetectRange();
 	m_Player = m_Object->GetScene()->GetPlayerObject();
 
+	if (!m_Player)
+	{
+		return NodeResult::Node_True;
+	}
+
 	Vector3 PlayerPos = m_Player->GetWorldPos();
 	Vector3 MyPos = m_Object->GetWorldPos();
 
