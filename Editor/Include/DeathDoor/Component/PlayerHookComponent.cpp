@@ -141,7 +141,7 @@ HookResult CPlayerHookComponent::ShootHook(const Vector3& ShootDir, float DeltaT
 		Vector3 CurrentPos = m_Object->GetWorldPos();
 
 		float Dist = Vector3(CurrentPos.x, 0.f, CurrentPos.z).Distance(Vector3(m_ShootDestPoint.x, 0.f, m_ShootDestPoint.z));
-		if (Dist < 2.5f)
+		if (Dist < 2.2f)
 		{
 			CAnimationMeshComponent* Comp = m_Object->FindComponentFromType<CAnimationMeshComponent>();
 
@@ -217,7 +217,7 @@ HookResult CPlayerHookComponent::ShootHook(const Vector3& ShootDir, float DeltaT
 			m_Collider->Enable(true);
 			m_Collider->SetRender(true);
 
-			m_Collider->SetWorldScale((Scale.x + 0.85f), 1.f, 1.f);
+			m_Collider->SetWorldScale((Scale.x + 0.9f), 1.f, 1.f);
 
 			m_vecHookChain[m_CurrentHookIndex]->SetRender(true);
 			m_vecHookChain[m_CurrentHookIndex]->Enable(true);

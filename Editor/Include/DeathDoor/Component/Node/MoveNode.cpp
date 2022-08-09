@@ -26,10 +26,8 @@ CMoveNode::~CMoveNode()
 
 NodeResult CMoveNode::OnStart(float DeltaTime)
 {
-	CNavAgent* Agent = m_Object->FindObjectComponentFromType<CNavAgent>();
-
-	if (Agent)
-		m_NavAgent = Agent;
+	m_NavAgent = m_Object->FindObjectComponentFromType<CNavAgent>();
+	CPlayerDataComponent* Data = dynamic_cast<CPlayerDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
 
 	 m_AnimationMeshComp = m_Owner->GetAnimationMeshComp();
 
@@ -42,10 +40,10 @@ NodeResult CMoveNode::OnStart(float DeltaTime)
 	{
 		m_AnimationMeshComp->GetAnimationInstance()->ChangeAnimation(SequenceName);
 	}
+	
+	Data->GetSword()->GetAnimationInstance()->ChangeAnimation(SequenceName);
 
 	//m_CallStart = true;
-
-	m_NavAgent =  m_Object->FindObjectComponentFromType<CNavAgent>();
 
 	return NodeResult::Node_True;
 }

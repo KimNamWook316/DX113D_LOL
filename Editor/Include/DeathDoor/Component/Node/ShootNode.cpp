@@ -185,7 +185,7 @@ NodeResult CShootNode::OnUpdate(float DeltaTime)
 
 			}
 
-			else if(!BombComp->IsBeforeLift())
+			else if(!BombComp->IsBeforeLift() && !m_Throw)
 			{
 				BombComp->ShootBomb(Dir);
 				m_Throw = true;

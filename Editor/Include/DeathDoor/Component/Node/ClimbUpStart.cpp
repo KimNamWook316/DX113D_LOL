@@ -67,6 +67,7 @@ NodeResult CClimbUpStart::OnStart(float DeltaTime)
 
 
 	m_AnimationMeshComp->GetAnimationInstance()->ChangeAnimation("PlayerLadderUp");
+	DataComp->GetSword()->GetAnimationInstance()->ChangeAnimation("PlayerLadderUp");
 
 	return NodeResult::Node_True;
 }

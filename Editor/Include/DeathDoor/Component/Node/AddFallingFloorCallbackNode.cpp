@@ -49,7 +49,7 @@ NodeResult CAddFallingFloorCallbackNode::OnUpdate(float DeltaTime)
 	if (!m_CollisionStart)
 		return NodeResult::Node_True;
 
-	if (m_AccTime > 1.f && m_AccTime <= 2.5f)
+	if (m_AccTime > 1.5f && m_AccTime <= 2.5f)
 	{
 		auto iter = m_BoxCollider->GerPrevCollisionList().begin();
 		auto iterEnd = m_BoxCollider->GerPrevCollisionList().end();
@@ -67,7 +67,7 @@ NodeResult CAddFallingFloorCallbackNode::OnUpdate(float DeltaTime)
 		}
 
 		m_BoxCollider->Enable(false);
-		m_Object->AddWorldPos(0.f, -15.f * DeltaTime, 0.f);
+		m_Object->AddWorldPos(0.f, -18.f * DeltaTime, 0.f);
 	}
 
 	else if (m_AccTime > 2.5f)

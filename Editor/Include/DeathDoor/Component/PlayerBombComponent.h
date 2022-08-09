@@ -28,7 +28,11 @@ private:
 	bool m_IsClearBomb; // Lift하는 도중에 MouseRButton떼면 true
 	bool m_BeforeLift;	// Lift하기 전인지 후인지
 
+	int Count;
+
 public:
+	void ResetCount();
+
 	void SetBomb(class CGameObject* Bomb);
 
 	bool IsBeforeLift()	const

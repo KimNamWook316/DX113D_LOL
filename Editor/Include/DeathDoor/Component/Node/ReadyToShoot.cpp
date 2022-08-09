@@ -17,7 +17,8 @@
 CReadyToShoot::CReadyToShoot() :
 	m_CameraMoveEnd(false),
 	m_CameraMoveSpeed(50.f),
-	m_CameraMoveTime(0.f)
+	m_CameraMoveTime(0.f),
+	m_LiftStart(false)
 {
 	SetTypeID(typeid(CReadyToShoot).hash_code());
 }
@@ -103,6 +104,7 @@ NodeResult CReadyToShoot::OnStart(float DeltaTime)
 	//m_Object->SetNoInterrupt(true);
 	m_CallStart = true;
 
+	m_PlayerDataComp->GetSword()->GetAnimationInstance()->ChangeAnimation(SequenceName);
 
 	CRotateAttackDirectionNode* Node = (CRotateAttackDirectionNode*)((CCompositeNode*)m_Parent->GetParent()->GetParent())->FindChildByType<CRotateAttackDirectionNode>();
 
@@ -181,6 +183,7 @@ NodeResult CReadyToShoot::OnUpdate(float DeltaTime)
 			{
 				// 카메라 이동이 아직 안끝났는데 RButton을 떼면
 				CGameObject* Bomb = BombComp->GetBomb();
+
 				if (Bomb && !BombComp->IsEmptyLiftPathQueue())
 				{
 					Bomb->Reset();

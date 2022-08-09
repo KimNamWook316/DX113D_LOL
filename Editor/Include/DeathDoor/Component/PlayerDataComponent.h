@@ -222,6 +222,7 @@ public:
 	void OnRoll();
 	void OnRollEnd();
 	void OnBombLift();
+	void OnBombCountReset();
 
 	void ForceUpdateAttackDirection();
 	void OnEnableAttackCollider();
