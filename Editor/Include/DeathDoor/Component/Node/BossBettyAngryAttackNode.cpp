@@ -4,6 +4,7 @@
 #include "Component/AnimationMeshComponent.h"
 #include "../ProjectileComponent.h"
 #include "Component/ColliderBox3D.h"
+#include "Component/ColliderSphere.h"
 #include "Scene/Scene.h"
 #include "../BossBettyDataComponent.h"
 #include "Scene/SceneManager.h"
@@ -85,9 +86,6 @@ NodeResult CBossBettyAngryAttackNode::OnStart(float DeltaTime)
 {
 	CBossBettyDataComponent* Data = dynamic_cast<CBossBettyDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
 	
-	// HP State 를 다시 None 으로 
-	Data->ResetBettyHPState();
-
 	m_Owner->SetCurrentNode(this);
 
 	CAnimationSequenceInstance* AnimInst = m_AnimationMeshComp->GetAnimationInstance();
@@ -116,25 +114,31 @@ void CBossBettyAngryAttackNode::OnBossBettyStartFallingSnowBallEffect()
 	// 사방에서 투사체 눈덩이가 떨어지게 한다.
 	// 1. 특정 위치에 투사체 눈덩이 Object 를 생성
 	CGameObject* MapSurroundingObject = CurrentScene->FindObject("MapSurrounding");
-	// Result.Dest->GetGameObject()->GetName() != "MapSurrounding")
 
-	int XRand = rand() % 10;
-	int YRand = rand() % 10 + 10.f;
-	int ZRand = rand() % 10;
+	CColliderSphere* ColliderSphere = MapSurroundingObject->FindComponentFromType<CColliderSphere>();
+
+	int SphereRadius = (int)ColliderSphere->GetSphereInfo().Radius;
+
+	const Vector3& PlayerPos = CSceneManager::GetInst()->GetScene()->GetPlayerObject()->GetWorldPos();
+
+	int XRand = rand() % SphereRadius;
+	int YRand = SphereRadius + rand() % (SphereRadius * 3);
+	int ZRand = rand() % SphereRadius;
 
 	for (int i = 0; i < 10; ++i)
 	{
 		CGameObject* SnowFallingObject = CObjectPool::GetInst()->GetProjectile("BossBettySnowAttack", CurrentScene);
 
-		SnowFallingObject->SetWorldPos(Data->GetGameObject()->GetWorldPos() + Vector3(XRand, YRand, ZRand));
+		SnowFallingObject->SetWorldPos(PlayerPos + Vector3(XRand, YRand, ZRand));
 			
 		CProjectileComponent* ProjTileComp = SnowFallingObject->FindComponentFromType<CProjectileComponent>();
 
 		CGameObject* AfterEffectParticle = CObjectPool::GetInst()->GetParticle("BettyAttackAfterEffect", CSceneManager::GetInst()->GetScene());
 
-		const Vector3& PlayerPos = CSceneManager::GetInst()->GetScene()->GetPlayerObject()->GetWorldPos();
+		const Vector3& SnowObjectWorldPos = SnowFallingObject->GetWorldPos();
 
-		ProjTileComp->ShootByTargetPos(SnowFallingObject->GetWorldPos(), 50.f, PlayerPos, AfterEffectParticle);
+		ProjTileComp->ShootByTargetPos(SnowObjectWorldPos, 50.f + rand() % 20, 
+			Vector3(SnowObjectWorldPos.x, PlayerPos.y + 2.f, SnowObjectWorldPos.z), AfterEffectParticle);
 	}
 
 	// 2. 각각에 대해서, 충돌시 동작시킬 콜백들을 세팅한다.

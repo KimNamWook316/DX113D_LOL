@@ -33,7 +33,7 @@ void CBossBettyCloseAttackNode::Init()
 	std::string AnimName = "SlashLeft";
 	CAnimationSequenceInstance* AnimInst = m_AnimationMeshComp->GetAnimationInstance();
 
-	AnimInst->AddNotify(AnimName, "OnTracePlayer", 0,
+	AnimInst->AddNotify(AnimName, "DisableLook", 0,
 		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnDisableLookPlayer);
 
 	AnimInst->AddNotify(AnimName, "OnEnableRightLookPlayer", 13,
@@ -48,9 +48,9 @@ void CBossBettyCloseAttackNode::Init()
 	AnimInst->AddNotify(AnimName, "CameraShake", 19,
 		Data, &CBossBettyDataComponent::OnBossBettyNormalShakeCamera);
 	// AnimInst->AddNotify(AnimName, "EnableAttackCollider", 18,
-	AnimInst->AddNotify(AnimName, "EnableAttackCollider", 15,
+	AnimInst->AddNotify(AnimName, "EnableAttackCollider", 14,
 		Data, &CBossBettyDataComponent::OnBossBettyEnableAttackCollider);
-	AnimInst->AddNotify(AnimName, "DisableAttackCollider", 19,
+	AnimInst->AddNotify(AnimName, "DisableAttackCollider", 20,
 		Data, &CBossBettyDataComponent::OnBossBettyDisableAttackCollider);
 
 	// >> End
@@ -60,7 +60,7 @@ void CBossBettyCloseAttackNode::Init()
 	// 2) Slash Right
 	AnimName = "SlashRight";
 
-	AnimInst->AddNotify(AnimName, "OnTracePlayer", 0,
+	AnimInst->AddNotify(AnimName, "DisableLook", 0,
 		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnDisableLookPlayer);
 	AnimInst->AddNotify(AnimName, "OnEnableLeftLookPlayer", 13,
 		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnEnableLeftLookPlayer);
@@ -69,9 +69,9 @@ void CBossBettyCloseAttackNode::Init()
 	AnimInst->AddNotify(AnimName, "OnDisableLeftLookPlayer", 20,
 		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnDisableLeftLookPlayer);
 
-	AnimInst->AddNotify(AnimName, "EnableAttackCollider", 15,
+	AnimInst->AddNotify(AnimName, "EnableAttackCollider", 14,
 		Data, &CBossBettyDataComponent::OnBossBettyEnableAttackCollider);
-	AnimInst->AddNotify(AnimName, "DisableAttackCollider", 19,
+	AnimInst->AddNotify(AnimName, "DisableAttackCollider", 20,
 		Data, &CBossBettyDataComponent::OnBossBettyDisableAttackCollider);
 	AnimInst->AddNotify(AnimName, "CameraShake", 18,
 		Data, &CBossBettyDataComponent::OnBossBettyNormalShakeCamera);
@@ -83,28 +83,40 @@ void CBossBettyCloseAttackNode::Init()
 	// 3) PunchLeft
 	AnimName = "PunchLeft";
 
-	AnimInst->AddNotify(AnimName, "OnPunchLeft", 16,
+	AnimInst->AddNotify(AnimName, "EnableLook", 5,
+		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnEnableLookPlayer);
+
+	AnimInst->AddNotify(AnimName, "DisableLook", 10,
+		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnDisableLookPlayer);
+
+	AnimInst->AddNotify(AnimName, "OnPunchLeft", 15,
 		Data, &CBossBettyDataComponent::OnBossBettyGenerateLeftCloseAttackEffect);
 	AnimInst->AddNotify(AnimName, "CameraShake", 18,
 		Data, &CBossBettyDataComponent::OnBossBettyNormalShakeCamera);
 	AnimInst->AddNotify(AnimName, "EnableAttackCollider", 17,
 		Data, &CBossBettyDataComponent::OnBossBettyEnableAttackCollider);
-	AnimInst->AddNotify(AnimName, "DisableAttackCollider", 18,
+	AnimInst->AddNotify(AnimName, "DisableAttackCollider", 22,
 		Data, &CBossBettyDataComponent::OnBossBettyDisableAttackCollider);
 
 	AnimInst->SetEndFunction(AnimName,
 		this, &CBossBettyCloseAttackNode::OnBossBettyCommonEndFunctionOfCloseAttack);
 
-	// 4) PunchLeft
+	// 4) PunchRight
 	AnimName = "PunchRight";
 
-	AnimInst->AddNotify(AnimName, "OnPunchRight", 16,
+	AnimInst->AddNotify(AnimName, "EnableLook", 5,
+		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnEnableLookPlayer);
+
+	AnimInst->AddNotify(AnimName, "DisableLook", 10,
+		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnDisableLookPlayer);
+
+	AnimInst->AddNotify(AnimName, "OnPunchRight", 15,
 		Data, &CBossBettyDataComponent::OnBossBettyGenerateRightCloseAttackEffect);
 	AnimInst->AddNotify(AnimName, "CameraShake", 18,
 		Data, &CBossBettyDataComponent::OnBossBettyNormalShakeCamera);
 	AnimInst->AddNotify(AnimName, "EnableAttackCollider", 17,
 		Data, &CBossBettyDataComponent::OnBossBettyEnableAttackCollider);
-	AnimInst->AddNotify(AnimName, "DisableAttackCollider", 18,
+	AnimInst->AddNotify(AnimName, "DisableAttackCollider", 22,
 		Data, &CBossBettyDataComponent::OnBossBettyDisableAttackCollider);
 
 	AnimInst->SetEndFunction(AnimName,
@@ -113,13 +125,13 @@ void CBossBettyCloseAttackNode::Init()
 	// 5) Two Side Attack
 	AnimName = "FirstSlam";
 
-	AnimInst->AddNotify(AnimName, "OnFirstSlam", 18,
+	AnimInst->AddNotify(AnimName, "OnFirstSlam", 17,
 		Data, &CBossBettyDataComponent::OnBossBettyGenerateTwoSideCloseAttackEffect);
 	AnimInst->AddNotify(AnimName, "CameraShake", 20,
 		Data, &CBossBettyDataComponent::OnBossBettyNormalShakeCamera);
 	AnimInst->AddNotify(AnimName, "EnableAttackCollider", 18,
 		Data, &CBossBettyDataComponent::OnBossBettyEnableAttackCollider);
-	AnimInst->AddNotify(AnimName, "DisableAttackCollider", 19,
+	AnimInst->AddNotify(AnimName, "DisableAttackCollider", 24,
 		Data, &CBossBettyDataComponent::OnBossBettyDisableAttackCollider);
 
 	AnimInst->SetEndFunction(AnimName,
@@ -288,7 +300,7 @@ void CBossBettyCloseAttackNode::OnBossBettySlashLeftEffect()
 
 	const Vector3& ColliderRelativePos = XWorldAxis * 6.0f * -1.f + ZWorldAxis;
 
-	Data->GetMeleeAttackCollider()->SetExtent(3.f, 3.f, 5.f);
+	Data->GetMeleeAttackCollider()->SetExtent(2.f, 3.f, 5.f);
 	Data->GetMeleeAttackCollider()->SetRelativePos(ColliderRelativePos);
 }
 
@@ -305,7 +317,7 @@ void CBossBettyCloseAttackNode::OnBossBettySlashRightEffect()
 
 	const Vector3& ColliderRelativePos = XWorldAxis * 6.0f + ZWorldAxis;
 
-	Data->GetMeleeAttackCollider()->SetExtent(3.f, 3.f, 5.f);
+	Data->GetMeleeAttackCollider()->SetExtent(2.f, 3.f, 5.f);
 	Data->GetMeleeAttackCollider()->SetRelativePos(ColliderRelativePos);
 }
 

@@ -2,6 +2,7 @@
 #include "GameBehaviorTree.h"
 #include "GameStateComponent.h"
 #include "Component/AnimationMeshComponent.h"
+#include "Node/BossBettyHPStateCheck.h"
 #include "Component/ParticleComponent.h"
 #include "Component/ColliderBox3D.h"
 #include "Component/ColliderSphere.h"
@@ -113,8 +114,11 @@ void CBossBettyDataComponent::Start()
         // CCameraComponent* PlayerCamera = m_Scene->GetPlayerObject()->FindComponentFromType<CCameraComponent>();
         // CSceneManager::GetInst()->GetScene()->GetCameraManager()->SetCurrentCamera(PlayerCamera);
 
-        m_CutSceneCam->AddCutSceneMoveCallBack(1, CamMoveCallBackCallType::REACHED_POINT, this,
+        m_CutSceneCam->AddCutSceneMoveCallBack(1, CamMoveCallBackCallType::START_MOVE, this,
             &CBossBettyDataComponent::OnBossBettyStartIntroAnimation);
+
+        m_CutSceneCam->AddCutSceneMoveCallBack(0, CamMoveCallBackCallType::REACHED_POINT, this,
+            &CBossBettyDataComponent::OnBossBettyNormalShakeCamera);
 
         m_CutSceneCam->AddCutSceneMoveEndCallBack<CMonsterDataComponent>((CMonsterDataComponent*)this, &CMonsterDataComponent::OnEndCutScene);
     }
@@ -194,50 +198,49 @@ void CBossBettyDataComponent::OnBossBettyGenerateTwoSideCloseAttackEffect()
 	// 양쪽에 
 	// 1) 충돌체 활성화
 	// 2) Particle 제작
-
-    const Vector3& XWorldAxis = m_MeleeAttackCollider->GetWorldAxis(AXIS::AXIS_X) * -1.f;
-    const Vector3& ZWorldAxis = m_MeleeAttackCollider->GetWorldAxis(AXIS::AXIS_Z) * -1.f;
-
+    const Vector3& XWorldAxis = m_MeleeAttackCollider->GetRelativeAxis(AXIS::AXIS_X) * -1.f;
+    const Vector3& ZWorldAxis = m_MeleeAttackCollider->GetRelativeAxis(AXIS::AXIS_Z) * -1.f;
+    
     const Vector3& ColliderRelativePos = ZWorldAxis * 6.0f;
-
-    m_MeleeAttackCollider->SetWorldPos(m_Object->GetWorldPos());
+    
     m_MeleeAttackCollider->SetRelativePos(ColliderRelativePos);
     m_MeleeAttackCollider->SetExtent(4.f, 2.5f, 2.5f);
-
+    
     OnBossBettyActivateAfterEffect(m_Object->GetWorldPos() + ColliderRelativePos);
+
+    // OnBossBettyActivateAfterEffect(m_Object->GetWorldPos());
 }
 
 void CBossBettyDataComponent::OnSetBossBettyAttackColliderPosToBettyBody()
 {
     m_MeleeAttackCollider->SetRelativePos(Vector3(0.f, 0.f, 0.f));
-    m_MeleeAttackCollider->SetWorldPos(m_Object->GetWorldPos());
     m_MeleeAttackCollider->SetExtent(2.5f, 2.5f, 2.5f);
 }
 
 void CBossBettyDataComponent::OnBossBettyGenerateRightCloseAttackEffect()
 {
-    const Vector3& XWorldAxis = m_MeleeAttackCollider->GetWorldAxis(AXIS::AXIS_X) * -1.f;
-    const Vector3& ZWorldAxis = m_MeleeAttackCollider->GetWorldAxis(AXIS::AXIS_Z) * -1.f;
-
-    const Vector3& ColliderRelativePos = XWorldAxis * 3.0f + ZWorldAxis * 3.0f;
-
-    m_MeleeAttackCollider->SetWorldPos(m_Object->GetWorldPos());
+    const Vector3& XWorldAxis = m_MeleeAttackCollider->GetRelativeAxis(AXIS::AXIS_X) * -1.f;
+    const Vector3& ZWorldAxis = m_MeleeAttackCollider->GetRelativeAxis(AXIS::AXIS_Z) * -1.f;
+    
+    const Vector3& ColliderRelativePos = XWorldAxis * 3.0f + ZWorldAxis * 4.0f;
+    
     m_MeleeAttackCollider->SetRelativePos(ColliderRelativePos);
-    m_MeleeAttackCollider->SetExtent(2.5f, 2.5f, 5.f);
-
+    m_MeleeAttackCollider->SetExtent(3.5f, 2.5f, 5.f);
+    
     OnBossBettyActivateAfterEffect(m_Object->GetWorldPos() + ColliderRelativePos);
+
 }
 
 void CBossBettyDataComponent::OnBossBettyGenerateLeftCloseAttackEffect()
 {
-    const Vector3& XWorldAxis = m_MeleeAttackCollider->GetWorldAxis(AXIS::AXIS_X) * -1.f;
-    const Vector3& ZWorldAxis = m_MeleeAttackCollider->GetWorldAxis(AXIS::AXIS_Z) * -1.f;
-
-    const Vector3& ColliderRelativePos = XWorldAxis * 3.5f * -1.f + ZWorldAxis * 3.0f;
-
+    const Vector3& XWorldAxis = m_MeleeAttackCollider->GetRelativeAxis(AXIS::AXIS_X) * -1.f;
+    const Vector3& ZWorldAxis = m_MeleeAttackCollider->GetRelativeAxis(AXIS::AXIS_Z) * -1.f;
+    
+    const Vector3& ColliderRelativePos = XWorldAxis * 3.5f * -1.f + ZWorldAxis * 4.0f;
+    
     m_MeleeAttackCollider->SetRelativePos(ColliderRelativePos);
-    m_MeleeAttackCollider->SetExtent(2.5f, 2.5f, 5.f);
-
+    m_MeleeAttackCollider->SetExtent(3.5f, 2.5f, 5.f);
+    
     OnBossBettyActivateAfterEffect(m_Object->GetWorldPos() + ColliderRelativePos);
 }
 
@@ -305,6 +308,8 @@ void CBossBettyDataComponent::OnBossBettyDisableSpinCollider()
 void CBossBettyDataComponent::OnBossBettyEnableSpinCollider()
 {
     m_BossBettySpinCollider->Enable(true);
+
+    m_BossBettySpinCollider->SetRelativePos(0.f, 0.f, 0.f);
 }
 
 void CBossBettyDataComponent::OnBossBettySetCurrentNodeNullPtr()
@@ -354,6 +359,8 @@ void CBossBettyDataComponent::OnBossBettyActivateAfterEffect(const Vector3& Worl
     Collider3D->SetExtent(2.5f, 2.f, 2.5f);
 
     AfterEffectParticle->StartParticle(WorldPos);
+
+    Collider3D->SetEnablePossibleTime(AfterEffectParticle->GetLifeSpan() * 0.5f);
 }
 
 void CBossBettyDataComponent::OnBossBettyEnableCloseAttackChangeAnim()
@@ -378,6 +385,15 @@ void CBossBettyDataComponent::OnBossBettyStartIntroAnimation()
 
     m_IsInitIdle = false;
     m_IsIntroAnimation = true;
+}
+
+void CBossBettyDataComponent::OnBossBettyForceCheckHPState()
+{
+    CNode* HPStateCheckNode = m_State->GetBehaviorTree()->FindNodeByType<CBossBettyHPStateCheck>();
+
+    CNode* HPRelatedCheckNodeTop = HPStateCheckNode->GetParent()->GetParent();
+
+    m_State->GetBehaviorTree()->SetCurrentNode(HPRelatedCheckNodeTop);
 }
 
 void CBossBettyDataComponent::OnBossBettyStartCutSceneCamera(const CollisionResult& Result)

@@ -161,6 +161,7 @@ void CMonsterDataComponent::Start()
 
 	// CutScene ฐüทร ( Enter Trigger, CutScene Cam, Collider CallBack)
 	m_PlayerEnterZoneTrigger = (CColliderBox3D*)m_Object->FindComponent("PlayerEnterTrigger");
+
 	m_CutSceneCam = m_Object->FindComponentFromType<CCameraComponent>();
 
 	if (m_PlayerEnterZoneTrigger)

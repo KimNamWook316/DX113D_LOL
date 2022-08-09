@@ -129,6 +129,8 @@ public :
     // IntroAnimation 끝난 이후 Game Start 
     void OnBossBettyEndIntroAndStartGame();
     void OnBossBettyStartIntroAnimation();
+    // HPState 를 강제로 Check 하도록 해당 Node 를 Current Node 로 세팅해주는 함수
+    void OnBossBettyForceCheckHPState();
     // CutScene Camera 시작
     void OnBossBettyStartCutSceneCamera(const CollisionResult& Result);
 

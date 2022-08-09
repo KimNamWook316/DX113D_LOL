@@ -163,6 +163,11 @@ void CBossBettyThrowNode::MakeSnowBallAttackObj()
 
 	Data->SetBettyThrowBallObject(m_CurrentThrowBall);
 
+	m_CurrentThrowBall->Enable(true);
+
+	if (m_CurrentThrowBall->GetLifeSpan() > 0.f)
+		assert(false);
+		
 	// Particle Component 를 찾아서, Bazier 이동을 시킨다.
 	CParticleComponent* ParticleComp = m_CurrentThrowBall->FindComponentFromType<CParticleComponent>();
 
@@ -171,6 +176,7 @@ void CBossBettyThrowNode::MakeSnowBallAttackObj()
 	Vector3 YLookDir = m_Object->GetWorldAxis(AXIS::AXIS_Y);
 
 	const Vector3& InitBallPos = m_Object->GetWorldPos() + ZLookDir * 7.f + YLookDir * 6.f;
+
 	m_CurrentThrowBall->SetWorldPos(InitBallPos);
 
 	// Bazier 에 따라 이동할 수 있게 세팅한다.
@@ -220,6 +226,8 @@ void CBossBettyThrowNode::ThrowSnowBallAttackObj()
 
 	// Attack After Effect
 	CGameObject* AfterEffectParticle = CObjectPool::GetInst()->GetParticle("BettyAttackAfterEffect", CSceneManager::GetInst()->GetScene());
+
+	AfterEffectParticle->Enable(false);
 	
 	CColliderBox3D* Collider3D = AfterEffectParticle->FindComponentFromType<CColliderBox3D>();
 
@@ -227,10 +235,12 @@ void CBossBettyThrowNode::ThrowSnowBallAttackObj()
 
 	Collider3D->SetExtent(2.5f, 2.f, 2.5f);
 
+	Collider3D->SetEnablePossibleTime(AfterEffectParticle->GetLifeSpan() * 0.2f);
+
 	const Vector3& PlayerPos = CSceneManager::GetInst()->GetScene()->GetPlayerObject()->GetWorldPos();
 
 	// Throw Particlee
-	ProjTileComp->ShootByTargetPos(m_CurrentThrowBall->GetWorldPos(), 50.f, PlayerPos, AfterEffectParticle);
+	ProjTileComp->ShootByTargetPos(m_CurrentThrowBall->GetWorldPos(), 50.f, PlayerPos + Vector3(0.f, 2.f, 0.f), AfterEffectParticle);
 		
 	// Throw Attack Enable 을 다시 False 로 바꿔준다
 	Data->SetThrowAttackEnable(false);
