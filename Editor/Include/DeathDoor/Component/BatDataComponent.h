@@ -15,7 +15,7 @@ private:
 private:
 	bool m_RecognizeStart;
 	bool m_RecognizeEnd;
-
+	bool m_DeathAnimStart;
 
 public:
 
@@ -44,6 +44,7 @@ public:
 public:
 	virtual void Start() override;
 	virtual void Update(float DeltaTime) override;
+	virtual void OnHitMeleeAttack(const CollisionResult& Result);
 
 public:
 	virtual void SetIsHit(bool Hit) override;

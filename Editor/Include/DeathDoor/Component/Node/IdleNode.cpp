@@ -3,7 +3,7 @@
 #include "Component/AnimationMeshComponent.h"
 #include "Animation/AnimationSequenceInstance.h"
 #include "Component/BehaviorTree.h"
-#include "../ObjectDataComponent.h"
+#include "../PlayerDataComponent.h"
 #include "../GameStateComponent.h"
 
 CIdleNode::CIdleNode()
@@ -29,7 +29,15 @@ NodeResult CIdleNode::OnStart(float DeltaTime)
 		m_AnimationMeshComp->GetAnimationInstance()->ChangeAnimation("Idle");
 	}
 
-	CObjectDataComponent* Data = dynamic_cast<CObjectDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
+	if (m_Object->GetObjectType() == Object_Type::Player)
+	{
+		CPlayerDataComponent* Data = dynamic_cast<CPlayerDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
+
+		CAnimationMeshComponent* Sword = Data->GetSword();
+		if(Sword)
+			Sword->GetAnimationInstance()->ChangeAnimation("Idle");
+	}
+
 
 	return NodeResult::Node_True;
 }

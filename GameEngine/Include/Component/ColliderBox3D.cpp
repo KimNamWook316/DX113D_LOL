@@ -42,12 +42,43 @@ void CColliderBox3D::UpdateTransform(const Vector3& World, const Vector3& Relati
 	UpdateMinMax();
 }
 
+void CColliderBox3D::ForceUpdateCBuffer()
+{
+	CCameraComponent* Camera = m_Scene->GetCameraManager()->GetCurrentCamera();
+
+	Matrix	matWorld, matView, matProj, matWVP;
+
+	matView = Camera->GetViewMatrix();
+	matProj = Camera->GetProjMatrix();
+
+	Matrix	matScale, matRot, matTrans;
+
+	matScale.Scaling(m_Info.AxisLen[0] * 2.f, m_Info.AxisLen[1] * 2.f, m_Info.AxisLen[2] * 2.f);
+	matRot.Rotation(GetWorldRot());
+	matTrans.Translation(m_Info.Center);
+
+	matWorld = matScale * matRot * matTrans;
+
+	matWVP = matWorld * matView * matProj;
+
+	matWVP.Transpose();
+
+	m_CBuffer->SetWVP(matWVP);
+
+	if (m_PrevCollisionList.empty())
+		m_CBuffer->SetColliderColor(Vector4(0.f, 1.f, 0.f, 1.f));
+
+	else
+		m_CBuffer->SetColliderColor(Vector4(1.f, 0.f, 0.f, 1.f));
+}
+
 
 void CColliderBox3D::Start()
 {
 	CColliderComponent::Start();
 
 	UpdateMinMax();
+
 }
 
 bool CColliderBox3D::Init()
@@ -103,6 +134,11 @@ void CColliderBox3D::Update(float DeltaTime)
 	m_Info.AxisLen[0] = GetWorldScale().x / 2.f;
 	m_Info.AxisLen[1] = GetWorldScale().y / 2.f;
 	m_Info.AxisLen[2] = GetWorldScale().z / 2.f;
+
+	// Scale이 변할 수 도 있으니 매 프레임마다 해준다. 
+	// Start에서 한번만 MeshSize를 설정해주면 Pool에서 꺼내 오는 경우 GetXXX함수를 호출하고 난 뒤 얻은 Object로 Transform을 수정하는데
+	// 그렇게 되면 MeshSize를 (x, y, z) = (FLT_MAX, FLT_MAX, FLT_MAX)인 상태로 MeshSize를 설정하고 난 뒤에 Transform을 수정하게 되어 버리기 때문에 Update에서 해줌
+	SetMeshSize(m_Info.Max - m_Info.Min);
 }
 
 void CColliderBox3D::PostUpdate(float DeltaTime)

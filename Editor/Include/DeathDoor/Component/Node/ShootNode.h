@@ -19,6 +19,7 @@ protected:
 
 private:
     bool m_InRestoreCam;
+    bool m_Throw;
 
 public:
     virtual NodeResult Invoke(float DeltaTime) override;

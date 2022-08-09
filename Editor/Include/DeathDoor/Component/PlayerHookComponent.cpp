@@ -187,6 +187,8 @@ HookResult CPlayerHookComponent::ShootHook(const Vector3& ShootDir, float DeltaT
 					m_vecHookChain[j]->SetRender(false);
 					m_vecHookChain[j]->Enable(false);
 					m_vecHookChain[j]->SetWorldScale(Vector3(0.f, 0.f, 0.f));
+					m_vecHookChain[j]->SetWorldPos(FLT_MAX, FLT_MAX, FLT_MAX);
+					m_vecHookChain[j]->GetTransform()->ForceUpdateMat();
 				}
 				++m_ClearHookIndex;
 			}
@@ -328,6 +330,7 @@ void CPlayerHookComponent::ClearHookChain()
 		m_vecHookChain[i]->SetWorldScale(Vector3(0.f, 0.f, 0.f));
 		m_vecHookChain[i]->SetWorldRotation(0.f, 0.f, 0.f);
 		m_vecHookChain[i]->SetWorldPos(FLT_MAX, FLT_MAX, FLT_MAX);
+		m_vecHookChain[i]->GetTransform()->ForceUpdateMat();
 	}
 
 	m_Collider->SetRender(false);

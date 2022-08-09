@@ -560,7 +560,7 @@ bool CNavMeshComponent::CheckStraightPath(const Vector3& StartPos, const Vector3
 	int dx = DestPosX - CurrentPosX;
 	int dz = DestPosZ - CurrentPosZ;
 
-	vecPath.push_back(Vector3((float)CurrentPosX, 1000.f, (float)CurrentPosZ));
+	vecPath.push_back(Vector3((float)CurrentPosX, EndPos.y, (float)CurrentPosZ));
 
 	int Absdx = (int)abs(dx);
 	int Absdz = (int)abs(dz);
@@ -597,7 +597,7 @@ bool CNavMeshComponent::CheckStraightPath(const Vector3& StartPos, const Vector3
 				pi = pi + 2 * (Absdx);
 			}
 			
-			vecPath.push_back(Vector3(CurrentPosX, 1000.f, CurrentPosZ));
+			vecPath.push_back(Vector3(CurrentPosX, EndPos.y, CurrentPosZ));
 
 			if (CurrentPosX == DestPosX && CurrentPosZ == DestPosZ)
 				break;
@@ -634,7 +634,7 @@ bool CNavMeshComponent::CheckStraightPath(const Vector3& StartPos, const Vector3
 				pi = pi + 2 * Absdz;
 			}
 
-			vecPath.push_back(Vector3(CurrentPosX, 1000.f, CurrentPosZ));
+			vecPath.push_back(Vector3(CurrentPosX, EndPos.y, CurrentPosZ));
 
 			if (CurrentPosX == DestPosX && CurrentPosZ == DestPosZ)
 				break;

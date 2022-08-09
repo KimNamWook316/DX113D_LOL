@@ -46,10 +46,13 @@ NodeResult CNormalAttack::OnStart(float DeltaTime)
 		CPlayerDataComponent* Data = dynamic_cast<CPlayerDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
 		
 
-		if(CurrentSequence.find("SlashL") != std::string::npos)
+		if (CurrentSequence.find("SlashL") != std::string::npos)
 			SequenceName = ObjectName + "SlashR";
+
 		else
 			SequenceName = ObjectName + "SlashL";
+
+		Data->GetSword()->GetAnimationInstance()->ChangeAnimation(SequenceName);
 		
 	}
 

@@ -556,7 +556,7 @@ bool CStaticMeshComponent::Load(FILE* File)
 
 		if (!LoadCheck)
 		{
-			std::string FileName = CEngineUtil::FilterFileName(MeshFullPath);
+			std::string FileName = CEngineUtil::ExtractFilePathFromFullPath(MeshFullPath, MESH_PATH);
 
 			char FileNameMB[MAX_PATH] = {};
 			TCHAR FileNameTCHAR[MAX_PATH] = {};

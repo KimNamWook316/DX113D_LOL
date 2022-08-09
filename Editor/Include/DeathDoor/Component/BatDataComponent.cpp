@@ -8,7 +8,8 @@
 
 CBatDataComponent::CBatDataComponent() :
 	m_RecognizeStart(false),
-	m_RecognizeEnd(false)
+	m_RecognizeEnd(false),
+	m_DeathAnimStart(false)
 {
 	SetTypeID<CBatDataComponent>();
 
@@ -58,6 +59,28 @@ void CBatDataComponent::Update(float DeltaTime)
 	{
 		m_MeleeAttackCollider->Enable(false);
 	}
+
+	if (m_Data.HP <= 0.f && !m_DeathAnimStart)
+	{
+		m_MonsterNavAgent->ClearPathList();
+		m_MonsterNavAgent->SetPathFindEnable(false);
+		m_Object->FindObjectComponentFromType<CGameStateComponent>()->SetTreeUpdate(false);
+		m_DeathAnimStart = true;
+	}
+}
+
+void CBatDataComponent::OnHitMeleeAttack(const CollisionResult& Result)
+{
+	Vector3 Vec1 = (Result.Dest->GetGameObject()->GetWorldPos() - m_Object->GetWorldPos());
+	Vec1.Normalize();
+	Vec1.y = 0.f;
+	Vector3 Vec2 = m_Object->GetWorldAxis(AXIS_Z) * -1.f;
+	Vec2.Normalize();
+	Vec2.y = 0.f;
+
+	// 공격 방향에 존재하는지 판정
+	if (Vec1.Dot(Vec2) > 0.f)
+		CMonsterDataComponent::OnHitMeleeAttack(Result);
 }
 
 void CBatDataComponent::SetIsHit(bool Hit)

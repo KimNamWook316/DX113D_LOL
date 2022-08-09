@@ -41,9 +41,8 @@ public:
 public:
 	virtual void Start() override;
 	virtual void Update(float DeltaTime) override;
+	virtual void OnHitMeleeAttack(const CollisionResult& Result);
 
-public:
-	virtual void SetIsHit(bool Hit) override;
 
 public:
 	void OnHopEnd();

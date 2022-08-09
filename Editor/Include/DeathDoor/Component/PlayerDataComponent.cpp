@@ -11,6 +11,8 @@
 #include "../Component/PlayerNormalAttackCheckCollider.h"
 #include "../Component/PlayerBombComponent.h"
 #include "Scene/Navigation3DManager.h"
+#include "Component/StaticMeshComponent.h"
+#include "Component/AnimationMeshComponent.h"
 
 CPlayerDataComponent::CPlayerDataComponent() :
 	m_OnSlash(false),
@@ -24,7 +26,9 @@ CPlayerDataComponent::CPlayerDataComponent() :
 	m_LadderUpEnable(false),
 	m_LadderDownEnable(false),
 	m_IsClimbingLadder(false),
-	m_AdjLadder(nullptr)
+	m_AdjLadder(nullptr),
+	m_Slash(nullptr),
+	m_Sword(nullptr)
 {
 	SetTypeID<CPlayerDataComponent>();
 	m_ComponentType = Component_Type::ObjectComponent;
@@ -85,6 +89,13 @@ void CPlayerDataComponent::Start()
 	m_Data = CDataManager::GetInst()->GetObjectData("Player");
 	m_Body = (CColliderComponent*)m_Object->FindComponent("Body");
 
+	m_Slash = (CStaticMeshComponent*)m_Object->FindComponent("Slash");
+	if(m_Slash)
+		m_Slash->Enable(false);
+	m_SlashDir = m_Object->GetWorldAxis(AXIS_Z);
+	m_SlashDir *= 1.f;
+
+	m_Sword = (CAnimationMeshComponent*)m_Object->FindComponent("SwordAnim");
 }
 
 bool CPlayerDataComponent::Init()
@@ -207,6 +218,35 @@ inline void CPlayerDataComponent::SetTrueOnSlash()
 	m_OnSlash = true;
 
 	m_AttackCheckCollider->Enable(true);
+	m_Slash->Enable(true);
+
+	Vector3 AxisZ = m_Object->GetWorldAxis(AXIS_Z);
+
+	float Angle = 0.f;
+	float DotProduct = m_SlashDir.Dot(AxisZ);
+	Vector3 CrossVec = m_SlashDir.Cross(AxisZ);
+
+	if (DotProduct >= -0.99999999999f && DotProduct <= 0.99999999999f)
+	{
+		Angle = RadianToDegree(acosf(DotProduct));
+
+		if (CrossVec.y < 0)
+			Angle *= -1.f;
+	}
+
+	else
+	{
+		if (DotProduct == -1.f)
+			Angle = 180.f;
+	}
+
+	m_Slash->AddRelativeRotationY(Angle);
+
+	Matrix mat;
+	mat.Rotation(Vector3(0.f, Angle, 0.f));
+
+	m_SlashDir = m_SlashDir.TransformCoord(mat);
+	
 }
 
 inline void CPlayerDataComponent::SetFalseOnSlash()
@@ -214,6 +254,12 @@ inline void CPlayerDataComponent::SetFalseOnSlash()
 	m_OnSlash = false;
 
 	m_AttackCheckCollider->Enable(false);
+	m_Slash->Enable(false);
+}
+
+CAnimationMeshComponent* CPlayerDataComponent::GetSword() const
+{
+	return m_Sword;
 }
 
 CGameObject* CPlayerDataComponent::GetAdjLadder() const

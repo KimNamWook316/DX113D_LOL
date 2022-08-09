@@ -76,7 +76,8 @@ void CPlayerBowComponent::PrevRender()
 
 	if (m_Destroy)
 	{
-		m_Arrow->Destroy();
+		if(m_Arrow)
+			m_Arrow->Destroy();
 		m_Destroy = false;
 	}
 }
@@ -172,7 +173,6 @@ void CPlayerBowComponent::ShootArrow(const Vector3& ShootDir)
 	Comp->ShootByLifeTimeCollision<CPlayerBowComponent>(this, &CPlayerBowComponent::OnCollision, Collision_State::Begin, 
 		ArrowStartPos, ShootDir, 60.f, 2.5f);
 	Comp->SetDestroy(true);
-	
 }
 
 void CPlayerBowComponent::HideBow()
@@ -199,7 +199,11 @@ void CPlayerBowComponent::OnCollision(const CollisionResult& Result)
 		Data->SetIsHit(false);
 	}
 
-	//m_Arrow->Destroy();
+	if (m_Arrow)
+		m_Arrow->Destroy();
+
+	else
+		int a = 3;
 }
 
 bool CPlayerBowComponent::Save(FILE* File)
