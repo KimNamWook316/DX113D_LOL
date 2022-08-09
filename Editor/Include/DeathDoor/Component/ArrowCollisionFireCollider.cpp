@@ -73,7 +73,7 @@ void CArrowCollisionFireCollider::OnCollidePlayerArrow(const CollisionResult& Re
 
 	if (Result.Dest->GetGameObject()->GetName() == "PlayerArrow")
 	{
-		// Arrow 가 불이 붙어있고, 내가 아직 Arrow 와 충돌하지 않았다면
+		// Arrow 가 불이 붙어있고, 내가 아직 Arrow 와 충돌하지 않았다면 (불이 붙어있지 않다면)
 		// 나는 불을 붙일 것이다.
 		CArrowComponent* PlayerArrow = Result.Dest->GetGameObject()->FindComponentFromType<CArrowComponent>();
 

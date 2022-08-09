@@ -148,6 +148,17 @@ void CPlayerBowComponent::ShootArrow(const Vector3& ShootDir)
 	if (!m_Arrow)
 		return;
 
+	// Particle, Light Component 는 모두 False 로 처리해준다.
+	std::vector<CParticleComponent*> vecArrowParticles;
+	m_Arrow->FindAllSceneComponentFromType<CParticleComponent>(vecArrowParticles);
+
+	size_t ParticleSize = vecArrowParticles.size();
+
+	for (size_t i = 0; i < ParticleSize; ++i)
+	{
+		vecArrowParticles[i]->Enable(false);
+	}
+
 	m_Arrow->SetWorldPos(MyPos.x + ShootDir.x, MyPos.y + 2.f, MyPos.z + ShootDir.z);
 
 	CArrowComponent* Comp = m_Arrow->FindObjectComponentFromType<CArrowComponent>();
