@@ -43,7 +43,9 @@ void CCrackedBlockCollider::Update(float DeltaTime)
 	}
 
 	float Ratio = Time / m_ColorChangeTimer;
-	m_Mesh->SetSpecularColor(Vector4(Ratio, Ratio, Ratio, Ratio));
+
+	if (m_Mesh)
+		m_Mesh->SetSpecularColor(Vector4(Ratio, Ratio, Ratio, Ratio));
 
 	if (m_Timer >= m_ColorChangeTimer)
 	{

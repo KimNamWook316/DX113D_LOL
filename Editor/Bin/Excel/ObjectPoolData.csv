@@ -14,3 +14,5 @@ PlagueKnightBullet,10,Static\PlagueKnightBullet.gobj
 Lurker,5,Monster\Lurker\Lurker.gobj
 Bat,10,Monster\Bat\Bat.gobj
 BossKnightImpact,5,Particle\BossKnightImpact.gobj
+Dodger,5,Monster\Dodger\Dodger.gobj
+PlagueKnight,5,Monster\PlagueKnight\PlagueKnight.gobj

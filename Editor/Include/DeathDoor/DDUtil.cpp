@@ -20,6 +20,7 @@
 #include "Component\SporeBoomerDataComponent.h"
 #include "Component\FirePlantDataComponent.h"
 #include "Component\CrackedBlockCollider.h"
+#include "Component\ArrowCollisionFireCollider.h"
 #include "Component\MonsterBulletData.h"
 #include "Component\PlayerBombComponent.h"
 #include "Component\LadderCollider.h"
@@ -851,6 +852,8 @@ std::string CDDUtil::DDSceneComponentTypeToString(DDSceneComponentType Type)
 		return "LadderCollider";
 	case DDSceneComponentType::CrackedBlockCollider:
 		return "CrackedBlockCollider";
+	case DDSceneComponentType::ArrowCollisionFireCollider:
+		return "ArrowCollisionFireCollider";
 	}
 
 	return "";
@@ -878,6 +881,10 @@ DDSceneComponentType CDDUtil::StringToDDSceneComponentType(const std::string& St
 	{
 		return DDSceneComponentType::CrackedBlockCollider;
 	}
+	else if (Str == "ArrowCollisionFireCollider")
+	{
+		return DDSceneComponentType::ArrowCollisionFireCollider;
+	}
 
 	return DDSceneComponentType(-1);
 }
@@ -898,6 +905,8 @@ size_t CDDUtil::DDSceneComponentTypeToTypeID(DDSceneComponentType Type)
 		return typeid(CLadderCollider).hash_code();
 	case DDSceneComponentType::CrackedBlockCollider:
 		return typeid(CCrackedBlockCollider).hash_code();
+	case DDSceneComponentType::ArrowCollisionFireCollider:
+		return typeid(CArrowCollisionFireCollider).hash_code();
 	}
 	return -1;
 }

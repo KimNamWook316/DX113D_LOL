@@ -575,6 +575,7 @@ void CRenderManager::Render(float DeltaTime)
 		}	
 	}
 
+	m_PlayerTarget->ClearTarget();
 	m_FinalTarget->ClearTarget();
 
 	// 인스턴싱 리스트 업데이트
@@ -1251,8 +1252,6 @@ void CRenderManager::RenderParticle()
 
 void CRenderManager::RenderPlayer(CMesh* PlayerMesh)
 {
-	m_PlayerTarget->ClearTarget();
-
 	// GBuffer 타겟을 잠시 교체
 	std::vector<ID3D11RenderTargetView*>	vecPrevTarget;
 	ID3D11RenderTargetView* PlayerTarget = m_PlayerTarget->GetTargetView();

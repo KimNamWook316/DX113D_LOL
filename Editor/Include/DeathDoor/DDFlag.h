@@ -154,6 +154,7 @@ enum class DDSceneComponentType
 	PlayerBowComponent,
 	LadderCollider,
 	CrackedBlockCollider,
+	ArrowCollisionFireCollider,
 	Max
 };
 

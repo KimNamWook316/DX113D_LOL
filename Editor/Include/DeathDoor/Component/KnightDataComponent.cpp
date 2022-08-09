@@ -35,6 +35,8 @@ void CKnightDataComponent::Start()
 
 	m_Data = CDataManager::GetInst()->GetObjectData("BossKnight");
 
+	m_ParticlePos = (CSceneComponent*)m_Object->FindComponent("ParticlePos");
+
 	m_JumpAttackRange = m_Data.JumpAttackRange;
 	
 	m_MeleeAttackCollider->Enable(false);
@@ -228,7 +230,7 @@ void CKnightDataComponent::OnActiveMeleeAttackCollider()
 	// TODO : Boss Knight - Particle
 	CGameObject* Particle = CObjectPool::GetInst()->GetParticle("BossKnightImpact", m_Scene);
 
-	Vector3 Pos = m_MeleeAttackCollider->GetWorldPos();
+	Vector3 Pos = m_ParticlePos->GetWorldPos();
 	Particle->SetWorldPos(Pos);
 
 	m_Scene->GetCameraManager()->ShakeCamera(0.5f, 2.f);

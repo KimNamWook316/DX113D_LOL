@@ -89,6 +89,7 @@ public:
     }
 
 protected:
+    class CSceneComponent* m_ParticlePos;
     Knight_Attack_Rot_Type m_AttackRot;
     Vector3 m_FinalTraceZAxis;
     bool m_ContinueAttack;
