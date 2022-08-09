@@ -34,6 +34,7 @@
 #include "DeathDoor\Component/PlayerHookComponent.h"
 #include "DeathDoor\Component/KnightDataComponent.h"
 #include "DeathDoor\Component/BossBettyDataComponent.h"
+#include "DeathDoor\Component/GruntCommonDataComponent.h"
 #include "DeathDoor\Component/CrowBossDataComponent.h"
 #include "DeathDoor\Component/LurkerDataComponent.h"
 #include "DeathDoor\Component/MonsterNavAgent.h"
@@ -45,6 +46,7 @@
 #include "DeathDoor\Component/LadderCollider.h"
 #include "DeathDoor\Component/SporeBoomerDataComponent.h"
 #include "DeathDoor\Component/CrackedBlockCollider.h"
+#include "DeathDoor\Component/ArrowCollisionFireCollider.h"
 #include "DeathDoor\Component/FirePlantDataComponent.h"
 #include "DeathDoor\Component/MonsterBulletData.h"
 #include "DeathDoor\Component/HeadRollerDataComponent.h"
@@ -597,6 +599,20 @@ CComponent* CEditorManager::CreateComponent(CGameObject* Obj, size_t Type)
 		CBatDataComponent* Component = Obj->LoadObjectComponent<CBatDataComponent>();
 		return Component;
 	}
+
+	else if (Type == typeid(CGruntCommonDataComponent).hash_code())
+	{
+	CGruntCommonDataComponent* Component = Obj->LoadObjectComponent<CGruntCommonDataComponent>();
+	return Component;
+	}
+
+
+	else if (Type == typeid(CArrowCollisionFireCollider).hash_code())
+	{
+		CArrowCollisionFireCollider* Component = Obj->LoadObjectComponent<CArrowCollisionFireCollider>();
+		return Component;
+	}
+
 
 	return nullptr;
 }

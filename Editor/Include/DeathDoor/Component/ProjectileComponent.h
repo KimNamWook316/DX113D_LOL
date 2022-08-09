@@ -111,6 +111,10 @@ private:
 	std::function<void(const Vector3&)> m_EndCallBack;
 
 public:
+	const Vector3& GetMoveDir() const
+	{
+		return m_Dir;
+	}
 	bool IsShoot()	const
 	{
 		return m_IsShoot;

@@ -5,7 +5,8 @@
 #include "Component/ColliderBox3D.h"
 
 CArrowComponent::CArrowComponent()	:
-	m_Collider(nullptr)
+	m_Collider(nullptr),
+	m_OnFire(false)
 {
 	SetTypeID<CArrowComponent>();
 

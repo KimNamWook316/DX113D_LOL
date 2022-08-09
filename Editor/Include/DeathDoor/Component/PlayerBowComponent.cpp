@@ -6,7 +6,9 @@
 #include "ObjectPool.h"
 #include "ArrowComponent.h"
 #include "Component/ColliderSphere.h"
+#include "Component/ParticleComponent.h"
 #include "MonsterDataComponent.h"
+#include "ArrowCollisionFireCollider.h"
 
 CPlayerBowComponent::CPlayerBowComponent()	:
 	m_PlayerData(nullptr),
@@ -182,28 +184,88 @@ void CPlayerBowComponent::HideBow()
 
 void CPlayerBowComponent::OnCollision(const CollisionResult& Result)
 {
-	m_Object->GetScene()->GetCameraManager()->ShakeCamera(0.4f, 1.f);
-
-	// OnCollision에서 바로 Destroy하면 CCollisionSection::Collision에서 m_vecCollider의 size가 갑자기 바뀌어서 문제가 되므로
-	// m_Destroy = true로 만들어줬다가 PrevRender 함수에서 m_Destroy가 true면 Destroy
-	m_Destroy = true;
-
-	CGameObject* DestObject = Result.Dest->GetGameObject();
-
-	CMonsterDataComponent* Data = (CMonsterDataComponent*)DestObject->FindObjectComponent("ObjectData");
-
-	if (DestObject->GetObjectType() == Object_Type::Monster && Data)
+	// ArrowCollisionFireCollider 를 통과할 때는, Destroy 되는 것이 아니라, Fire Particle들을 활성화 시켜야 한다.
+	if (Result.Dest->GetTypeID() == typeid(CArrowCollisionFireCollider).hash_code())
 	{
-		Data->SetIsHit(true);
-		Data->DecreaseHP(2);
-		Data->SetIsHit(false);
+		CArrowCollisionFireCollider* ArrowFireCollider = dynamic_cast<CArrowCollisionFireCollider*>(Result.Dest);
+
+		if (m_Arrow)
+		{
+			CArrowComponent* ArrowComp = m_Arrow->FindObjectComponentFromType<CArrowComponent>();
+
+			bool IsArrowOnFire = ArrowComp->IsArrowOnFire();
+
+			// 1. Arrow 가 불이 붙지 않았다면
+			// 1) 장작에 불이 붙어있지 않다면 아무일 X
+			// 2) 장작에 불이 붙었다면, Arrow 에 불을 붙인다.
+			if (IsArrowOnFire == false && ArrowFireCollider->IsFireOnByArrow())
+			{
+				// 1. 장작에 불이 붙어있다면 -> Arrow 에 불을 붙일 것이다.
+				m_Arrow->StartParticle(m_Object->GetWorldPos());
+
+				// >> Arrow 들의 Particle 들을 Arrow 진행 방향에 맞게 Y 축 기준 회전시킬 것이다.
+				const Vector3& BaseDir = Vector3(0.f, 0.f, -1.f);
+				const Vector3& LeftDir  = Vector3(-1.f, 0.f, 0.f);
+
+				const Vector3& ArrowDir = ArrowComp->GetMoveDir();
+
+				float YRotAngle = ArrowDir.Angle(BaseDir);
+				
+				// 회전 각도 180도 이상
+				if (ArrowDir.Dot(LeftDir))
+				{
+					YRotAngle = 180 + (180 - YRotAngle);
+				}
+
+				std::vector<CParticleComponent*> vecArrowParticles;
+				m_Arrow->FindAllSceneComponentFromType<CParticleComponent>(vecArrowParticles);
+
+				size_t ParticleSize = vecArrowParticles.size();
+
+				for (size_t i = 0; i < ParticleSize; ++i)
+				{
+					vecArrowParticles[i]->AddWorldRotationY(YRotAngle);
+				}
+
+				CLightComponent* ArrowLight = m_Arrow->FindComponentFromType<CLightComponent>();
+
+				if (ArrowLight)
+					ArrowLight->CRef::Enable(true);
+
+				// >> Arrow Comp 가 Fire 이 붙었다고 표시하기 
+				ArrowComp->SetArrowOnFireEnable(true);
+
+				m_Destroy = true;
+			}
+		}
+	}
+	else
+	{
+		m_Object->GetScene()->GetCameraManager()->ShakeCamera(0.4f, 1.f);
+
+		// OnCollision에서 바로 Destroy하면 CCollisionSection::Collision에서 m_vecCollider의 size가 갑자기 바뀌어서 문제가 되므로
+		// m_Destroy = true로 만들어줬다가 PrevRender 함수에서 m_Destroy가 true면 Destroy
+		m_Destroy = true;
+
+		CGameObject* DestObject = Result.Dest->GetGameObject();
+
+		CMonsterDataComponent* Data = (CMonsterDataComponent*)DestObject->FindObjectComponent("ObjectData");
+
+		if (DestObject->GetObjectType() == Object_Type::Monster && Data)
+		{
+			Data->SetIsHit(true);
+			Data->DecreaseHP(2);
+			Data->SetIsHit(false);
+		}
+
+		if (m_Arrow)
+			m_Arrow->Destroy();
+
+		else
+			int a = 3;
 	}
 
-	if (m_Arrow)
-		m_Arrow->Destroy();
-
-	else
-		int a = 3;
+	
 }
 
 bool CPlayerBowComponent::Save(FILE* File)
