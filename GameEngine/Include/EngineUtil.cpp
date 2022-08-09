@@ -271,9 +271,75 @@ std::string CEngineUtil::ExtractFilePathFromFullPath(const std::string& FullPath
 
 	std::string Path = Info->PathMultibyte;
 
-	int Length = (int)FullPath.length() - (int)Path.length() + 1;
+	// Path에서 가장 말단 폴더 이름을 찾는다.
+	// Ex) Editor\\Mesh\\ -> Mesh를 찾음
+	std::string EndDir;
+	int PathSize = Path.length();
 
-	std::string FilePath = FullPath.substr(Path.length(), Length);
+	int EndDirStrStart;
+	for (int i = PathSize - 3; i >= 0; --i)
+	{
+		if (Path[i] == '\\' || Path[i] == '\/')
+		{
+			EndDirStrStart = i + 1;
+			break;
+		}
+	}
+
+	// \\ 를 제외한 문자열만 추출 (ex) Mesh\\ -> Mesh)
+	EndDir = Path.substr(EndDirStrStart, PathSize - 1 - EndDirStrStart);
+
+	int FullPathLen = FullPath.length();
+	int SlashCount = 0;
+	int DirIndcies[2] = {};
+	std::string SameDirName;
+
+	// FullPath에서 \\ 와 \\ 사이의 폴더 혹은 파일 이름만 검색해서
+	// 위에서 추출한 말단 디렉토리와 같은 이름의 디렉토리가 있는 경우 그 뒤를 파일 이름으로 추출
+	int FilePathStartIdx = 0;
+	for (int i = FullPathLen - 1; i >= 0; --i)
+	{
+		if (FullPath[i] == '\\' || FullPath[i] == '\/')
+		{
+			if (SlashCount == 1)
+			{
+				DirIndcies[1] = i + 1;
+				SlashCount = 0;
+
+				if (FullPath[i - 1] == '\\' || FullPath[i - 1] == '\/')
+				{
+					--i;
+				}
+
+				SameDirName = FullPath.substr(DirIndcies[1], DirIndcies[0] - DirIndcies[1] + 1);
+
+				if (SameDirName == EndDir)
+				{
+					if (FullPath[DirIndcies[0] + 1] != '\\' && FullPath[DirIndcies[0] + 1] != '\/')
+					{
+						FilePathStartIdx = DirIndcies[0] + 1;
+					}
+					else
+					{
+						FilePathStartIdx = DirIndcies[0] + 2;
+					}
+
+					break;
+				}
+			}
+			else
+			{
+				if (FullPath[i - 1] == '\\' || FullPath[i - 1] == '\/')
+				{
+					--i;
+				}
+				DirIndcies[0] = i - 1;
+				++SlashCount;
+			}
+		}
+	}
+
+	std::string FilePath = FullPath.substr(FilePathStartIdx, FullPathLen - FilePathStartIdx + 1);
 
 	return FilePath;
 }
