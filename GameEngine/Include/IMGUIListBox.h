@@ -144,6 +144,11 @@ public:
 		}
 	}
 
+	void SetSelectIndex(int Idx)
+	{
+		m_SelectIndex = Idx;
+	}
+
 public:
 	virtual bool Init();
 	virtual void Render();

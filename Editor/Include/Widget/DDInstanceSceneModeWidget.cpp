@@ -301,6 +301,8 @@ void CDDInstanceSceneModeWidget::OnClickDeletePhase()
 	m_CurSelectPhaseIdx = -1;
 
 	m_CurSpawnInfo = nullptr;
+
+	m_PhaseList->SetSelectIndex(-1);
 }
 
 void CDDInstanceSceneModeWidget::OnChangePhaseInterval(float Val)
@@ -406,6 +408,8 @@ void CDDInstanceSceneModeWidget::OnClickDeleteSpawnInfo()
 		SampleMonster->Destroy();
 
 	m_CurSpawnInfo = nullptr;
+
+	m_SpawnList->SetSelectIndex(-1);
 }
 
 void CDDInstanceSceneModeWidget::OnChangeSetSpawnPoint(const Vector3& Val)
