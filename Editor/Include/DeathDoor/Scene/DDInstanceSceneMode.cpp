@@ -46,6 +46,7 @@ void CDDInstanceSceneMode::Start()
 	if (m_BlockerObj)
 	{
 		m_BlockerObj->Enable(false);
+		m_BlockerObj->FindComponentFromType<CColliderBox3D>()->ForceUpdateCBuffer();
 		m_BlockerOriginY = m_BlockerObj->GetWorldPos().y;
 	}
 

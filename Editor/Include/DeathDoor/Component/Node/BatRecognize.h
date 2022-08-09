@@ -10,6 +10,7 @@ public:
     CBatRecognize(const CBatRecognize& Node);
     virtual ~CBatRecognize();
 
+
 protected:
     virtual NodeResult OnStart(float DeltaTime);
     virtual NodeResult OnUpdate(float DeltaTime);

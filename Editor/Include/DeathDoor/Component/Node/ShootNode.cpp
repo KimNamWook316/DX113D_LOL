@@ -14,7 +14,8 @@
 #include "Component/Node/CompositeNode.h"
 
 CShootNode::CShootNode()	:
-	m_InRestoreCam(false)
+	m_InRestoreCam(false),
+	m_Throw(false)
 {
 	SetTypeID(typeid(CShootNode).hash_code());
 }
@@ -133,6 +134,7 @@ NodeResult CShootNode::OnUpdate(float DeltaTime)
 			m_CallStart = false;
 			m_Owner->SetCurrentNode(nullptr);
 			m_InRestoreCam = false;
+			m_Throw = false;
 
 			return NodeResult::Node_True;
 		}
@@ -141,13 +143,15 @@ NodeResult CShootNode::OnUpdate(float DeltaTime)
 		{
 			CPlayerBowComponent* BowComp = m_Object->FindComponentFromType<CPlayerBowComponent>();
 
-			if (BowComp)
+			if (BowComp && !m_Throw)
 			{
 				BowComp->ShootArrow(Dir);
 
 				m_Owner->SetCurrentNode(this);
 
 				BowComp->HideBow();
+
+				m_Throw = true;
 			}
 		}
 
@@ -164,6 +168,7 @@ NodeResult CShootNode::OnUpdate(float DeltaTime)
 			m_CallStart = false;
 			m_Owner->SetCurrentNode(nullptr);
 			m_InRestoreCam = false;
+			m_Throw = false;
 
 			return NodeResult::Node_True;
 		}
@@ -183,6 +188,7 @@ NodeResult CShootNode::OnUpdate(float DeltaTime)
 			else if(!BombComp->IsBeforeLift())
 			{
 				BombComp->ShootBomb(Dir);
+				m_Throw = true;
 			}
 
 			m_InRestoreCam = true;

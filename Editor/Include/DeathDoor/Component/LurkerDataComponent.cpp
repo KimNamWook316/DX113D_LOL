@@ -104,9 +104,18 @@ void CLurkerDataComponent::Update(float DeltaTime)
 	}
 }
 
-void CLurkerDataComponent::SetIsHit(bool Hit)
+void CLurkerDataComponent::OnHitMeleeAttack(const CollisionResult& Result)
 {
-	CMonsterDataComponent::SetIsHit(Hit);
+	Vector3 Vec1 = (Result.Dest->GetGameObject()->GetWorldPos() - m_Object->GetWorldPos());
+	Vec1.Normalize();
+	Vec1.y = 0.f;
+	Vector3 Vec2 = m_Object->GetWorldAxis(AXIS_Z) * -1.f;
+	Vec2.Normalize();
+	Vec2.y = 0.f;
+
+	// 공격 방향에 존재하는지 판정
+	if (Vec1.Dot(Vec2) > 0.f)
+		CMonsterDataComponent::OnHitMeleeAttack(Result);
 }
 
 void CLurkerDataComponent::OnHopEnd()

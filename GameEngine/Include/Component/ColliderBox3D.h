@@ -27,6 +27,7 @@ public:
     }
 
     void UpdateTransform(const Vector3& World, const Vector3& Relative);
+    void ForceUpdateCBuffer();
 
 public:
     virtual void SetOffset(const Vector3& Offset)

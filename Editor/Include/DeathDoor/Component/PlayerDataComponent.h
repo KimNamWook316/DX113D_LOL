@@ -38,6 +38,9 @@ private:
 	DDPlayerRollDirection m_RollDirection;
 
 	class CGameObject* m_AdjLadder;
+	class CStaticMeshComponent* m_Slash;
+	class CAnimationMeshComponent* m_Sword;
+	Vector3 m_SlashDir;
 
 public:
 	virtual void Start();
@@ -112,6 +115,8 @@ public:
 	{
 		m_OnSlash = Slash;
 	}
+
+	class CAnimationMeshComponent* GetSword()	const;
 
 	DDPlayerRollDirection GetRollDirection()	const
 	{
