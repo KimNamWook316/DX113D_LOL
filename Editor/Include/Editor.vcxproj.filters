@@ -228,6 +228,11 @@
     <ClCompile Include="Window\SocketWindow.cpp" />
     <ClCompile Include="Window\ToolWindow.cpp" />
     <ClCompile Include="DeathDoor\Component\ArrowCollisionFireCollider.cpp" />
+    <ClCompile Include="DeathDoor\Component\GruntCommonDataComponent.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\GruntCommonAttackNode.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\GruntCommonHitNode.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\GruntCommonWalkNode.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\GruntCommonTraceNode.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimationInstanceConvertThread.h" />
@@ -459,6 +464,11 @@
     <ClInclude Include="Window\SocketWindow.h" />
     <ClInclude Include="Window\ToolWindow.h" />
     <ClInclude Include="DeathDoor\Component\ArrowCollisionFireCollider.h" />
+    <ClInclude Include="DeathDoor\Component\GruntCommonDataComponent.h" />
+    <ClInclude Include="DeathDoor\Component\Node\GruntCommonAttackNode.h" />
+    <ClInclude Include="DeathDoor\Component\Node\GruntCommonHitNode.h" />
+    <ClInclude Include="DeathDoor\Component\Node\GruntCommonWalkNode.h" />
+    <ClInclude Include="DeathDoor\Component\Node\GruntCommonTraceNode.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Editor.rc" />

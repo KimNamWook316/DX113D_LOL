@@ -71,6 +71,11 @@ enum class DDActionNode
 	// Lurker
 	LurkerHop,
 	LurkerMeleeAttackPrep,
+	// Grunt Monster Common
+	GruntCommonAttack,
+	GruntCommonWalk,
+	GruntCommonTrace,
+	GruntCommonHit,
 	Max
 };
 
@@ -166,6 +171,7 @@ enum class DDObjectComponentType
 	MonsterData,
 	KnightData,
 	BossBettyData,
+	GruntCommonData,
 	CrowBossData,
 	LurkerData,
 	MonsterNavAgent,

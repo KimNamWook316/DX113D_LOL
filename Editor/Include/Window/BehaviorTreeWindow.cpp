@@ -156,6 +156,12 @@
 #include "../DeathDoor/Component/Node/LurkerHop.h"
 #include "../DeathDoor/Component/Node/LurkerMeleeAttackPrep.h"
 
+// Grunt Common
+#include "../DeathDoor/Component/Node/GruntCommonHitNode.h"
+#include "../DeathDoor/Component/Node/GruntCommonTraceNode.h"
+#include "../DeathDoor/Component/Node/GruntCommonWalkNode.h"
+#include "../DeathDoor/Component/Node/GruntCommonAttackNode.h"
+
 #include "ObjectComponentWindow.h"
 #include "ObjectHierarchyWindow.h"
 #include "../EditorInfo.h"
@@ -820,6 +826,28 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
         case DDActionNode::LurkerMeleeAttackPrep:
         {
             NewTreeNode = m_StateComponent->CreateTreeNode<CLurkerMeleeAttackPrep>(Name);
+            break;
+        }
+
+        // Grunt Common
+        case DDActionNode::GruntCommonAttack:
+        {
+            NewTreeNode = m_StateComponent->CreateTreeNode<CGruntCommonAttackNode>(Name);
+            break;
+        }
+        case DDActionNode::GruntCommonHit:
+        {
+            NewTreeNode = m_StateComponent->CreateTreeNode<CGruntCommonHitNode>(Name);
+            break;
+        }
+        case DDActionNode::GruntCommonTrace:
+        {
+            NewTreeNode = m_StateComponent->CreateTreeNode<CGruntCommonTraceNode>(Name);
+            break;
+        }
+        case DDActionNode::GruntCommonWalk:
+        {
+            NewTreeNode = m_StateComponent->CreateTreeNode<CGruntCommonWalkNode>(Name);
             break;
         }
 

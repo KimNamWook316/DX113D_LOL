@@ -30,6 +30,7 @@
 #include "Component\DodgerDataComponent.h"
 #include "Component\TriggerBoxData.h"
 #include "Component\BatDataComponent.h"
+#include "Component\GruntCommonDataComponent.h"
 
 // TODO : Death Door SceneMode 추가시마다 업데이트
 #include "Scene/DDSceneMode.h"
@@ -595,6 +596,16 @@ std::string CDDUtil::DDActionNodeTypeToString(DDActionNode NodeType)
 		return "LurkerHop";
 	case DDActionNode::LurkerMeleeAttackPrep:
 		return "LurkerMeleeAttackPrep";
+
+	// Grunt Common
+	case DDActionNode::GruntCommonAttack:
+		return "GruntCommonAttack";
+	case DDActionNode::GruntCommonWalk:
+		return "GruntCommonWalk";
+	case DDActionNode::GruntCommonTrace:
+		return "GruntCommonTrace";
+	case DDActionNode::GruntCommonHit:
+		return "GruntCommonHit";
 	}
 
 	return "";
@@ -833,6 +844,24 @@ DDActionNode CDDUtil::StringToDDActionNodeType(const std::string& Str)
 		return DDActionNode::LurkerMeleeAttackPrep;
 	}
 
+	// Grunt Common
+	else if (Str == "GruntCommonAttack")
+	{
+	return DDActionNode::GruntCommonAttack;
+	}
+	else if (Str == "GruntCommonWalk")
+	{
+	return DDActionNode::GruntCommonWalk;
+	}
+	else if (Str == "GruntCommonTrace")
+	{
+	return DDActionNode::GruntCommonTrace;
+	}
+	else if (Str == "GruntCommonHit")
+	{
+	return DDActionNode::GruntCommonHit;
+	}
+
 	return DDActionNode(-1);
 }
 
@@ -933,6 +962,9 @@ std::string CDDUtil::DDObjectComponentTypeToString(DDObjectComponentType Type)
 	case DDObjectComponentType::BossBettyData:
 		return "BossBettyData";
 
+	case DDObjectComponentType::GruntCommonData:
+		return "GruntCommonData";
+
 	case DDObjectComponentType::CrowBossData:
 		return "CrowBossData";
 
@@ -1007,6 +1039,10 @@ DDObjectComponentType CDDUtil::StringToDDObjectComponentType(const std::string& 
 	else if (Str == "BossBettyData")
 	{
 		return DDObjectComponentType::BossBettyData;
+	}
+	else if (Str == "GruntCommonData")
+	{
+		return DDObjectComponentType::GruntCommonData;
 	}
 	else if (Str == "CrowBossData")
 	{
@@ -1114,6 +1150,8 @@ size_t CDDUtil::DDObjectComponentTypeToTypeID(DDObjectComponentType Type)
 		return typeid(CPlagueKnightDataComponent).hash_code();
 	case DDObjectComponentType::BatData:
 		return typeid(CBatDataComponent).hash_code();
+	case DDObjectComponentType::GruntCommonData:
+		return typeid(CGruntCommonDataComponent).hash_code();
 	}
 	return -1;
 }

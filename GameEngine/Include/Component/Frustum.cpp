@@ -78,6 +78,7 @@ bool CFrustum::FrustumInSphere(const SphereInfo& Sphere)
 {
 	for (int i = 0; i < (int)Frustum_Plane_Dir::Max; ++i)
 	{
+		// 평면과 구의 중심 사이의 거리 
 		float	Dot = XMVectorGetX(XMPlaneDotCoord(m_Plane[i].Convert(), Sphere.Center.Convert()));
 
 		// 평면과 구의 중심의 거리가 구의 반지름보다 클 경우, 바깥에 있음
