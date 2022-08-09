@@ -59,6 +59,13 @@ void CFirePlantDataComponent::OnShootBullet()
 
 	CMonsterBulletData* Data = Projectile->FindObjectComponentFromType<CMonsterBulletData>();
 
+	if (!m_PlayerData)
+	{
+		return;
+	}
+
+	CGameObject* Player = m_PlayerData->GetGameObject();
+
 	Vector3 PlayerPos = m_PlayerData->GetGameObject()->GetWorldPos();
 	Vector3 MyPos = m_FirePos->GetWorldPos();
 
