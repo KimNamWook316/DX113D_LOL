@@ -13,6 +13,7 @@
 #include "Scene/Navigation3DManager.h"
 #include "Component/StaticMeshComponent.h"
 #include "Component/AnimationMeshComponent.h"
+#include "Component/ParticleComponent.h"
 
 CPlayerDataComponent::CPlayerDataComponent() :
 	m_OnSlash(false),
@@ -28,7 +29,8 @@ CPlayerDataComponent::CPlayerDataComponent() :
 	m_IsClimbingLadder(false),
 	m_AdjLadder(nullptr),
 	m_Slash(nullptr),
-	m_Sword(nullptr)
+	m_Sword(nullptr),
+	m_CurrentDustIndex(0)
 {
 	SetTypeID<CPlayerDataComponent>();
 	m_ComponentType = Component_Type::ObjectComponent;
@@ -83,6 +85,9 @@ void CPlayerDataComponent::Start()
 	m_AnimComp->GetAnimationInstance()->AddNotify<CPlayerDataComponent>("PlayerBomb", "PlayerBomb", 3, this, &CPlayerDataComponent::OnBombLift);
 	m_AnimComp->GetAnimationInstance()->AddNotify<CPlayerDataComponent>("PlayerBomb", "PlayerBombCountRest", 4, this, &CPlayerDataComponent::OnBombCountReset);
 
+	m_AnimComp->GetAnimationInstance()->AddNotify<CPlayerDataComponent>("PlayerRun", "MoveDustOn", 10, this, &CPlayerDataComponent::OnResetDustParticle);
+	m_AnimComp->GetAnimationInstance()->AddNotify<CPlayerDataComponent>("PlayerRun", "MoveDustOn", 30, this, &CPlayerDataComponent::OnResetDustParticle);
+
 	m_AnimComp->GetAnimationInstance()->AddNotify<CPlayerDataComponent>("PlayerRoll", "PlayerRoll", 0, this, &CPlayerDataComponent::OnRoll);
 	
 	m_AnimComp->GetAnimationInstance()->SetEndFunction<CPlayerDataComponent>("PlayerHitBack", this, &CPlayerDataComponent::OnHitBackEnd);
@@ -99,6 +104,8 @@ void CPlayerDataComponent::Start()
 	m_SlashDir *= 1.f;
 
 	m_Sword = (CAnimationMeshComponent*)m_Object->FindComponent("SwordAnim");
+
+	m_Object->FindAllSceneComponentFromTypeName<CParticleComponent>("Dust", m_vecMoveDust);
 }
 
 bool CPlayerDataComponent::Init()
@@ -404,4 +411,20 @@ void CPlayerDataComponent::ForceUpdateAttackDirection()
 	}
 
 	m_AttackDir = DestForwardVector;
+}
+
+void CPlayerDataComponent::OnResetDustParticle()
+{
+	Vector3 ObjectPos = m_Object->GetWorldPos();
+	Vector3 ZDir = m_Object->GetWorldAxis(AXIS_Z);
+
+	m_vecMoveDust[m_CurrentDustIndex]->SetWorldPos(ObjectPos.x + ZDir.x, ObjectPos.y + 1.f, ObjectPos.z + ZDir.z);
+
+	if (m_vecMoveDust[m_CurrentDustIndex])
+		m_vecMoveDust[m_CurrentDustIndex]->RecreateOnlyOnceCreatedParticleWithOutLifeTimeSetting();
+
+	++m_CurrentDustIndex;
+
+	if (m_CurrentDustIndex >= m_vecMoveDust.size())
+		m_CurrentDustIndex = 0;
 }

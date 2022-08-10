@@ -340,6 +340,7 @@
     <ClCompile Include="DeathDoor\Component\TinyCrowDataComponent.cpp" />
     <ClCompile Include="DeathDoor\Component\SporeBoomerDataComponent.cpp" />
     <ClCompile Include="DeathDoor\Component\TriggerBoxData.cpp" />
+    <ClCompile Include="DeathDoor\Component\TriggerFireLamp.cpp" />
     <ClCompile Include="DeathDoor\DataManager.cpp" />
     <ClCompile Include="DeathDoor\DDUtil.cpp" />
     <ClCompile Include="DeathDoor\Scene\DDBossSceneMode.cpp" />
@@ -594,6 +595,7 @@
     <ClInclude Include="DeathDoor\Component\TinyCrowDataComponent.h" />
     <ClInclude Include="DeathDoor\Component\SporeBoomerDataComponent.h" />
     <ClInclude Include="DeathDoor\Component\TriggerBoxData.h" />
+    <ClInclude Include="DeathDoor\Component\TriggerFireLamp.h" />
     <ClInclude Include="DeathDoor\DataManager.h" />
     <ClInclude Include="DeathDoor\DDFlag.h" />
     <ClInclude Include="DeathDoor\DDUtil.h" />

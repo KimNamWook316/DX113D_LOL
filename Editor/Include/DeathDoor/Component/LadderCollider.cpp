@@ -38,6 +38,8 @@ bool CLadderCollider::Init()
 void CLadderCollider::Update(float DeltaTime)
 {
 	CColliderBox3D::Update(DeltaTime);
+
+	
 }
 
 void CLadderCollider::PostUpdate(float DeltaTime)

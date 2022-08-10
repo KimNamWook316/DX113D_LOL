@@ -120,8 +120,6 @@ bool CSceneManager::LoadNewSceneFullPath(const char* FullPath, bool ChangeNow)
 
 	m_NextScene->m_Play = false;
 
-	CObjectPool::GetInst()->RefreshNewScene(m_NextScene);
-
 	return LoadResult;
 }
 
@@ -150,6 +148,8 @@ bool CSceneManager::ChangeScene()
 			}
 
 			CRenderManager::GetInst()->SetObjectList(&m_Scene->m_ObjList);
+
+			CObjectPool::GetInst()->RefreshNewScene(m_Scene);
 
 			m_Scene->Start();
 

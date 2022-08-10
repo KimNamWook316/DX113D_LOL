@@ -348,6 +348,20 @@ public:
 	}
 
 	template <typename T>
+	void FindAllSceneComponentFromTypeName(const std::string& Name, std::vector<T*>& vecComp)
+	{
+		auto	iter1 = m_SceneComponentList.begin();
+		auto	iter1End = m_SceneComponentList.end();
+
+		for (; iter1 != iter1End; ++iter1)
+		{
+			if ((*iter1)->GetName().find(Name) != std::string::npos && (*iter1)->CheckType<T>())
+				vecComp.push_back((T*)(*iter1));
+		}
+
+	}
+
+	template <typename T>
 	void FindAllObjectComponentFromType(std::vector<T*>& vecComp)
 	{
 		auto	iter1 = m_vecObjectComponent.begin();
@@ -401,6 +415,11 @@ public:
 	void Reset();
 
 public:
+	const std::vector<CSharedPtr<CGameObject>>& GetVecChildObjects() const
+	{
+		return m_vecChildObject;
+	}
+
 	size_t GetChildObjectCount()	const
 	{
 		return m_vecChildObject.size();

@@ -83,7 +83,7 @@ public:
 	static float CalculateRealTimeSpeedUsingExponentialWithBottom(float Bottom, float CurTime, float InitSpeed);
 
 	// 총 이동 시간, Init Speed, EndSpeed 를 이용하여, 실시간 변하는 속도 구하기
-	// (서서히 증가하다가, 확 증가)
+	// (확 증가하다가, 서서히 증가)
 	// (서서히 감소하다가, 확 감소)
 	static float CalculateRealTimeSpeedUsingExponentialWithSpeed(float FullTime, float InitSpeed, float EndSpeed, float CurTime);
 };

@@ -1331,6 +1331,11 @@ void CRenderManager::RenderInstancing(int LayerIndex, bool AlphaBlend)
 		// Material Slot 수만큼 반복한다.
 		int	SlotCount = 0;
 
+		if (InstancingList->RenderList.empty())
+		{
+			continue;
+		}
+
 		if (InstancingList->Mesh->GetMeshType() == Mesh_Type::Static)
 		{
 			SlotCount = ((CStaticMeshComponent*)InstancingList->RenderList.back())->GetMaterialSlotCount();
@@ -1476,12 +1481,21 @@ void CRenderManager::UpdateInstancingList()
 					Layer->m_vecInstancing[Layer->InstancingIndex]->BufferCount = Count;
 				}
 
+				CScene* CurScene = CSceneManager::GetInst()->GetScene();
+
 				auto	iter1 = (*iter)->InstancingList.begin();
 				auto	iter1End = (*iter)->InstancingList.end();
 
+				int ObjCount = 0;
 				for (; iter1 != iter1End; ++iter1)
 				{
+					if (CurScene != (*iter1)->GetScene())
+					{
+						continue;
+					}
+
 					Layer->m_vecInstancing[Layer->InstancingIndex]->RenderList.push_back(*iter1);
+					++ObjCount;
 				}
 
 				Layer->m_vecInstancing[Layer->InstancingIndex]->Mesh = (*iter)->Mesh;
@@ -1494,7 +1508,7 @@ void CRenderManager::UpdateInstancingList()
 					Layer->m_vecInstancing[Layer->InstancingIndex]->CBuffer->SetBoneCount(((CAnimationMesh*)(*iter)->Mesh)->GetBoneCount());
 				}
 
-				Layer->m_vecInstancing[Layer->InstancingIndex]->CBuffer->SetObjectCount((int)(*iter)->InstancingList.size());
+				Layer->m_vecInstancing[Layer->InstancingIndex]->CBuffer->SetObjectCount(ObjCount);
 
 				++Layer->InstancingIndex;
 			}
@@ -1509,6 +1523,11 @@ void CRenderManager::UpdateInstancingInfo(int LayerIndex, bool UpdateShadow)
 	for (int i = 0; i < InstancingIndex; ++i)
 	{
 		RenderInstancingList* InstancingList = m_RenderLayerList[LayerIndex]->m_vecInstancing[i];
+
+		if (InstancingList->RenderList.empty())
+		{
+			continue;
+		}
 
 		CSceneComponent* RenderComponent = InstancingList->RenderList.back();
 
@@ -1667,7 +1686,12 @@ void CRenderManager::RenderDefaultInstancingShadow()
 	{
 		RenderInstancingList* InstancingList = m_RenderLayerList[(int)RenderLayerType::Default]->m_vecInstancing[i];
 
-		bool DrawShadow = InstancingList->RenderList.front()->IsDrawShadow();
+		if (InstancingList->RenderList.empty())
+		{
+			continue;
+		}
+
+		bool DrawShadow = InstancingList->RenderList.back()->IsDrawShadow();
 
 		if (!DrawShadow)
 		{

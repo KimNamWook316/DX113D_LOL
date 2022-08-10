@@ -179,6 +179,16 @@ void CMonsterDataComponent::Start()
 	{
 		m_PlayerData = Player->FindObjectComponentFromType<CPlayerDataComponent>();
 	}
+
+	size_t Size = m_AnimMesh->GetMaterialSlotCount();
+
+	m_OriginEmissive.clear();
+
+	m_OriginEmissive.resize(Size);
+	for (int i = 0; i < Size; ++i)
+	{
+		m_OriginEmissive[i] = m_AnimMesh->GetMaterial(i)->GetEmissiveColor();
+	}
 }
 
 void CMonsterDataComponent::Update(float DeltaTime)
@@ -257,6 +267,21 @@ void CMonsterDataComponent::PostUpdate(float DeltaTime)
 		{
 			m_AttackCoolTimeEnable = false;
 		}
+	}
+}
+
+void CMonsterDataComponent::Reset()
+{
+	if (!m_AnimMesh)
+	{
+		return;
+	}
+
+	size_t Size = m_AnimMesh->GetMaterialSlotCount();
+
+	for (int i = 0; i < Size; ++i)
+	{
+		m_AnimMesh->GetMaterial(i)->SetEmissiveColor(m_OriginEmissive[i]);
 	}
 }
 

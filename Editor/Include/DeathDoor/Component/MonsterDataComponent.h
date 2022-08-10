@@ -22,6 +22,7 @@ public:
 	virtual void Start() override;
 	virtual void Update(float DeltaTime) override;
 	virtual void PostUpdate(float DeltaTime) override;
+	virtual void Reset() override;
 	virtual CMonsterDataComponent* Clone();
 
 public:
@@ -250,6 +251,7 @@ protected:
     float m_DeathColorChangeTimeMax;
 	Vector4 m_DeathColorStart;
 	Vector4	m_DeathColorEnd;
+	std::vector<Vector4> m_OriginEmissive;
 
 	// CutScene관련 변수
     bool m_PlayerEnterZone;

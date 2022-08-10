@@ -47,8 +47,7 @@ NodeResult CHeadRollerRollNode::OnUpdate(float DeltaTime)
 	if (!In)
 	{
 		m_Data->OnRollEnd();
-
-		return NodeResult::Node_False;
+		return NodeResult::Node_True;
 	}
 	return NodeResult::Node_True;
 }

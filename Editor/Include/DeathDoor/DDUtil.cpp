@@ -29,6 +29,7 @@
 #include "Component\PlagueKnightDataComponent.h"
 #include "Component\DodgerDataComponent.h"
 #include "Component\TriggerBoxData.h"
+#include "Component\TriggerFireLamp.h"
 #include "Component\BatDataComponent.h"
 #include "Component\GruntCommonDataComponent.h"
 
@@ -1004,6 +1005,9 @@ std::string CDDUtil::DDObjectComponentTypeToString(DDObjectComponentType Type)
 	case DDObjectComponentType::TriggerBoxData:
 		return "TriggerBoxData";
 
+	case DDObjectComponentType::TriggerFireLamp:
+		return "TriggerFireLamp";
+
 	case DDObjectComponentType::PlagueKnightData:
 		return "PlagueKnightData";
 
@@ -1092,6 +1096,10 @@ DDObjectComponentType CDDUtil::StringToDDObjectComponentType(const std::string& 
 	{
 		return DDObjectComponentType::TriggerBoxData;
 	}
+	else if (Str == "TriggerFireLamp")
+	{
+		return DDObjectComponentType::TriggerFireLamp;
+	}
 	else if (Str == "DodgerData")
 	{
 		return DDObjectComponentType::DodgerData;
@@ -1144,6 +1152,8 @@ size_t CDDUtil::DDObjectComponentTypeToTypeID(DDObjectComponentType Type)
 		return typeid(CHeadRollerDataComponent).hash_code();
 	case DDObjectComponentType::TriggerBoxData:
 		return typeid(CTriggerBoxData).hash_code();
+	case DDObjectComponentType::TriggerFireLamp:
+		return typeid(CTriggerFireLamp).hash_code();
 	case DDObjectComponentType::DodgerData:
 		return typeid(CDodgerDataComponent).hash_code();
 	case DDObjectComponentType::PlagueKnightData:

@@ -73,6 +73,10 @@ cbuffer	ParticleCBuffer : register(b7)
 	float ParticleInfo2;
 };
 
+cbuffer	ParticleTempElemCBuffer : register(b9)
+{
+	float3 g_CompRelativeAxis;
+}
 
 struct ParticleInfo
 {

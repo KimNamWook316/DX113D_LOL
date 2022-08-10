@@ -63,6 +63,26 @@ void CDDInstanceSceneMode::Start()
 		m_ExitPointObj->Enable(false);
 	}
 
+	if (!m_vecEndEventObjName.empty())
+	{
+		size_t Size = m_vecEndEventObjName.size();
+		m_vecEndEventObj.reserve(Size);
+
+		for (size_t i = 0; i < Size; ++i)
+		{
+			CGameObject* Obj = m_Scene->FindObject(m_vecEndEventObjName[i]);
+			CPaperBurnComponent* PaperBurn = Obj->FindObjectComponentFromType<CPaperBurnComponent>();
+
+			DDInstanceEndEventObj EndObj = {};
+			EndObj.Obj = Obj;
+			EndObj.PaperBurnComp = PaperBurn;
+
+			m_vecEndEventObj.push_back(EndObj);
+
+			Obj->Enable(false);
+		}
+	}
+
 	// 모든 소환될 몬스터의 카운트 스폰 카운터에 추가
 	auto iter = m_SpawnPhaseList.begin();
 	auto iterEnd = m_SpawnPhaseList.end();
@@ -226,6 +246,15 @@ bool CDDInstanceSceneMode::Save(FILE* File)
 	fwrite(&Length, sizeof(int), 1, File);
 	fwrite(m_BlockerObjectName.c_str(), sizeof(char), Length, File);
 
+	int EndEventObjNameCount = (int)m_vecEndEventObjName.size();
+	fwrite(&EndEventObjNameCount, sizeof(int), 1, File);
+	for (int i = 0; i < EndEventObjNameCount; ++i)
+	{
+		Length = m_vecEndEventObjName[i].length();
+		fwrite(&Length, sizeof(int), 1, File);
+		fwrite(m_vecEndEventObjName[i].c_str(), sizeof(char), Length, File);
+	}
+
 	int PhaseCount = (int)m_SpawnPhaseList.size();
 	PhaseCount = (int)m_SpawnPhaseList.size();
 	fwrite(&PhaseCount, sizeof(int), 1, File);
@@ -272,6 +301,18 @@ bool CDDInstanceSceneMode::Load(FILE* File)
 	fread(&Length, sizeof(int), 1, File);
 	fread(Buf, sizeof(char), Length, File);
 	m_BlockerObjectName = Buf;
+
+	int EndEventObjNameCount = 0;
+	fread(&EndEventObjNameCount, sizeof(int), 1, File);
+	m_vecEndEventObjName.resize(EndEventObjNameCount);
+
+	for (int i = 0; i < EndEventObjNameCount; ++i)
+	{
+		ZeroMemory(Buf, Length);
+		fread(&Length, sizeof(int), 1, File);
+		fread(Buf, sizeof(char), Length, File);
+		m_vecEndEventObjName[i] = Buf;
+	}
 
 	int PhaseCount = 0;
 	fread(&PhaseCount, sizeof(int), 1, File);
@@ -323,6 +364,15 @@ void CDDInstanceSceneMode::OnClearDungeon()
 
 	m_BlockerDownMoving = true;
 	m_BlockerUpMoving = false;
+
+	size_t Size = m_vecEndEventObj.size();
+	for (size_t i = 0; i < Size; ++i)
+	{
+		m_vecEndEventObj[i].Obj->Enable(true);
+		m_vecEndEventObj[i].PaperBurnComp->SetInverse(true);
+		m_vecEndEventObj[i].PaperBurnComp->SetEndEvent(PaperBurnEndEvent::Reset);
+		m_vecEndEventObj[i].PaperBurnComp->StartPaperBurn();
+	}
 }
 
 void CDDInstanceSceneMode::AddSpawnPhase()
@@ -554,6 +604,32 @@ size_t CDDInstanceSceneMode::GetSpawnListSize(int PhaseIdx)
 	return PhaseInfo->SpawnList.size();
 }
 
+bool CDDInstanceSceneMode::AddEndEventObjName(const std::string& Name)
+{
+	CGameObject* ExistObj = m_Scene->FindObject(Name);
+
+	if (!ExistObj)
+	{
+		return false;
+	}
+
+	CPaperBurnComponent* PaperBurn = ExistObj->FindComponentFromType<CPaperBurnComponent>();
+
+	if (!PaperBurn)
+	{
+		return false;
+	}
+
+	m_vecEndEventObjName.push_back(Name);
+
+	return true;
+}
+
+void CDDInstanceSceneMode::ClearEndEventObj()
+{
+	m_vecEndEventObj.clear();
+}
+
 bool CDDInstanceSceneMode::IsValidPhaseIndex(int Index)
 {
 	if (Index <= -1 || m_SpawnPhaseList.size() - 1 < Index)
@@ -676,8 +752,6 @@ void CDDInstanceSceneMode::OnSpawnDoorPaperBurnEnd()
 	CGameObject* Monster = CObjectPool::GetInst()->GetMonster(Set.Info->MonsterName, m_Scene);
 	Monster->SetWorldPos(Set.Info->SpawnPosition);
 	Monster->SetWorldRotation(Set.Info->SpawnRotation);
-	// GetMonster에서 Start이미 해주고 있음
-	//Monster->Start();
 
 	CGameStateComponent* State = Monster->FindObjectComponentFromType<CGameStateComponent>();
 	State->SetTreeUpdate(true);

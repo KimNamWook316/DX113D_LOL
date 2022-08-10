@@ -98,14 +98,6 @@ public:
 		return m_Material;
 	}
 public:
-	// void SetGravityEffect(bool Enable)
-	// {
-	// 	m_ParticleMoveSpeed = Enable;
-	// }
-	// void SetParticleMoveSpeed(float Speed)
-	// {
-	// 	m_ParticleMoveSpeed = Speed;
-	// }
 	void SetParticleClassFileName(const std::string& ParticleFileName)
 	{
 		m_ParticleName = ParticleFileName;
@@ -114,14 +106,7 @@ public:
 	{
 		m_Material = Material;
 	}
-	void SetBillBoardEffect(bool Enable)
-	{
-		m_BillBoardEffect = Enable;
-	}
-	// void SetBazierMoveEffect(bool Enable)
-	// {
-	// 	m_BazierMoveEffect = Enable;
-	// }
+	void SetBillBoardEffect(bool Enable);
 	void SetInitActiveDelayTime(float Time)
 	{
 		m_InitActiveDelayTime = Time;

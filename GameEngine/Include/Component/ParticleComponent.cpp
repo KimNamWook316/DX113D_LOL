@@ -723,3 +723,11 @@ bool CParticleComponent::LoadOnly(FILE* File)
 
 	return true;
 }
+
+void CParticleComponent::SetBillBoardEffect(bool Enable)
+{
+	m_BillBoardEffect = Enable;
+
+	m_InitBillBoardXLookDir = Vector3(0.f, 0.f, 0.f);
+	m_InitBillBoardZLookDir = Vector3(0.f, 0.f, 0.f);
+}

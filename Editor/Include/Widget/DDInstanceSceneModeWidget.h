@@ -30,6 +30,8 @@ private:
     void OnChangeSetSpawnRot(const Vector3& Val);
     void OnChangeSpawnInterval(float Val);
     void OnClickSetMonster();
+    void OnClickAddEndEventObj();
+    void OnClickClearEndEventObj();
 
     void OnChangeSpawnMonsterPos(const Vector3& WorldPos, const Vector3& RelativePos);
     void OnChangeSpawnMonsterRot(const Vector3& WorldRot, const Vector3& RelativeRot);
@@ -54,6 +56,11 @@ private:
     class CIMGUITextInput* m_BlockerObjName;
     class CIMGUITextInput* m_BlockerObjNameInput;
     class CIMGUIButton* m_FindBlockerObj;
+
+    class CIMGUIListBox* m_EndEventObjList;
+    class CIMGUITextInput* m_EndEventObjNameInput;
+    class CIMGUIButton* m_AddEndEventObj;
+    class CIMGUIButton* m_ClearEndEventObj;
 
     class CIMGUIListBox* m_PhaseList;
     class CIMGUIButton* m_AddPhase;

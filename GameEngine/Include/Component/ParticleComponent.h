@@ -114,10 +114,8 @@ public:
 	{
 		m_Material = Material;
 	}
-	void SetBillBoardEffect(bool Enable)
-	{
-		m_BillBoardEffect = Enable;
-	}
+	void SetBillBoardEffect(bool Enable);
+	
 	// void SetBazierMoveEffect(bool Enable)
 	// {
 	// 	m_BazierMoveEffect = Enable;
