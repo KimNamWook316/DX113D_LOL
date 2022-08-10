@@ -16,6 +16,7 @@ protected:
 
 protected:
 	CLightConstantBuffer* m_CBuffer;
+	bool				m_Add;
 
 public:
 	Light_Type GetLightType()	const
@@ -124,6 +125,7 @@ public:
 	virtual void Update(float DeltaTime);
 	virtual void Reset() override;
 	virtual void PostUpdate(float DeltaTime);
+	virtual void CheckCollision() override;
 	virtual void PrevRender();
 	virtual void Render();
 	virtual void PostRender();

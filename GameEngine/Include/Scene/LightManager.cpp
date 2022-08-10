@@ -164,10 +164,15 @@ void CLightManager::Render()
 
 	bool	SendTransform = false;
 
+	int CullCount = 0;
+
 	for (; iter != iterEnd; ++iter)
 	{
-		if (!(*iter)->IsEnable())
+		if (!(*iter)->IsEnable() || (*iter)->GetCulling())
+		{
+			++CullCount;
 			continue;
+		}
 
 		if (!SendTransform)
 		{

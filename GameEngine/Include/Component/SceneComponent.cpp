@@ -595,10 +595,14 @@ void CSceneComponent::CheckCollision()
 
 void CSceneComponent::PrevRender()
 {
-	if (m_Render && !m_Culling && !m_Instancing)
+	if (m_Render && !m_Instancing)
 	{
 		CRenderManager::GetInst()->AddRenderList(this);
 	}
+ //	if (m_Render && !m_Culling && !m_Instancing)
+ //	{
+ //		CRenderManager::GetInst()->AddRenderList(this);
+ //	}
 
 	size_t	Size = m_vecChild.size();
 
