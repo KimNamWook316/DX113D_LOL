@@ -41,8 +41,16 @@ bool CDDInstanceSceneModeWidget::Init()
 	AddWidget<CIMGUISameLine>("Line");
 	m_FindBlockerObj = AddWidget<CIMGUIButton>("Find", 0.f, 0.f);
 
+	CIMGUIText* Text = AddWidget<CIMGUIText>("Text");
+	Text->SetText("End Event ObjList (PaperBurn)");
+	m_EndEventObjList = AddWidget<CIMGUIListBox>("EndEventObjList", 200.f);
+	m_EndEventObjNameInput = AddWidget<CIMGUITextInput>("End Event Obj Name", 200.f);
+	m_AddEndEventObj = AddWidget<CIMGUIButton>("Add", 0.f, 0.f);
+	AddWidget<CIMGUISameLine>("Line");
+	m_ClearEndEventObj = AddWidget<CIMGUIButton>("Clear", 0.f, 0.f);
+
 	AddWidget<CIMGUISeperator>("Sep");
-	CIMGUIText* Text = AddWidget<CIMGUIText>("Phase List");
+	Text = AddWidget<CIMGUIText>("Phase List");
 	Text->SetText("Instance Dungeon Spawn Info");
 
 	CIMGUIChild* Block = AddWidget<CIMGUIChild>("PhaseBlock", 400.f, 400.f);
@@ -87,6 +95,8 @@ bool CDDInstanceSceneModeWidget::Init()
 	m_EnterColliderObjNameInput->SetHintText("Put Name");
 	m_BlockerObjName->ReadOnly(true);
 	m_BlockerObjNameInput->SetHintText("Put Name");
+	m_EndEventObjList->SetPageItemCount(5);
+	m_EndEventObjList->SetHideName(true);
 
 	std::vector<std::string> vecPoolMonsterNames;
 	CObjectPool::GetInst()->GetAllMonsterNames(vecPoolMonsterNames);
@@ -110,6 +120,8 @@ bool CDDInstanceSceneModeWidget::Init()
 	m_SpawnRotation->SetCallBack(this, &CDDInstanceSceneModeWidget::OnChangeSetSpawnRot);
 	m_SpawnInterval->SetCallBack(this, &CDDInstanceSceneModeWidget::OnChangeSpawnInterval);
 	m_SetPoolMonster->SetClickCallback(this, &CDDInstanceSceneModeWidget::OnClickSetMonster);
+	m_AddEndEventObj->SetClickCallback(this, &CDDInstanceSceneModeWidget::OnClickAddEndEventObj);
+	m_ClearEndEventObj->SetClickCallback(this, &CDDInstanceSceneModeWidget::OnClickClearEndEventObj);
 
 	return true;
 }
@@ -549,6 +561,36 @@ void CDDInstanceSceneModeWidget::OnClickSetMonster()
 
 	// 원본 오브젝트는 씬에서 삭제
 	PoolMonster->Destroy();
+}
+
+void CDDInstanceSceneModeWidget::OnClickAddEndEventObj()
+{
+	std::string InputObjName = m_EndEventObjNameInput->GetTextMultibyte();
+
+	if (InputObjName.empty())
+	{
+		return;
+	}
+
+	CDDInstanceSceneMode* SceneMode = dynamic_cast<CDDInstanceSceneMode*>(m_SceneMode);
+
+	bool IsValidObj = SceneMode->AddEndEventObjName(InputObjName);
+
+	if (!IsValidObj)
+	{
+		MessageBox(nullptr, TEXT("오브젝트 형식과 맞지 않음 (Paperburn Component 있어야 함"), TEXT("Error"), MB_OK);
+		return;
+	}
+	
+	m_EndEventObjList->AddItem(InputObjName);
+}
+
+void CDDInstanceSceneModeWidget::OnClickClearEndEventObj()
+{
+	CDDInstanceSceneMode* SceneMode = dynamic_cast<CDDInstanceSceneMode*>(m_SceneMode);
+
+	SceneMode->ClearEndEventObj();
+	m_EndEventObjList->Clear();
 }
 
 void CDDInstanceSceneModeWidget::OnChangeSpawnMonsterPos(const Vector3& WorldPos, const Vector3& RelativePos)

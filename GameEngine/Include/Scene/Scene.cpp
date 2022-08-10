@@ -110,6 +110,20 @@ int CScene::GetObjectCountByType(Object_Type Type)
 	return Count;
 }
 
+void CScene::GetObjectsByType(Object_Type Type, std::vector<class CGameObject*>& outVecObj)
+{
+	auto	iter = m_ObjList.begin();
+	auto	iterEnd = m_ObjList.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		if ((*iter)->GetObjectType() == Type)
+		{
+			outVecObj.push_back(*iter);
+		}
+	}
+}
+
 void CScene::Start()
 {
 	m_Mode->Start();
