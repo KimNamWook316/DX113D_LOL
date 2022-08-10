@@ -7,7 +7,8 @@
 #include "GameObject/GameObject.h"
 #include "../DDUtil.h"
 
-CArrowCollisionFireCollider::CArrowCollisionFireCollider()
+CArrowCollisionFireCollider::CArrowCollisionFireCollider() :
+	m_FirstManagedChildByTriggerLamp(false)
 {
 	SetTypeID<CArrowCollisionFireCollider>();
 }
@@ -15,7 +16,7 @@ CArrowCollisionFireCollider::CArrowCollisionFireCollider()
 CArrowCollisionFireCollider::CArrowCollisionFireCollider(const CArrowCollisionFireCollider& com) :
 	CColliderSphere(com)
 {
-	ClearCollisionCallBack();
+	// ClearCollisionCallBack();
 	AddCollisionCallback(Collision_State::Begin, this, &CArrowCollisionFireCollider::OnCollidePlayerArrow);
 }
 
@@ -27,7 +28,7 @@ void CArrowCollisionFireCollider::Start()
 {
 	CColliderSphere::Start();
 
-	ClearCollisionCallBack();
+	// ClearCollisionCallBack();
 
 	AddCollisionCallback(Collision_State::Begin, this, &CArrowCollisionFireCollider::OnCollidePlayerArrow);
 
@@ -52,6 +53,12 @@ void CArrowCollisionFireCollider::Start()
 
 	// Light Component 또한 Enable False 처리 한다.
 	CLightComponent* Light = m_Object->FindComponentFromType<CLightComponent>();
+
+	std::vector<CParticleComponent*> vecLightComponents;
+	m_Object->FindAllSceneComponentFromType<CParticleComponent>(vecLightComponents);
+
+	if (vecLightComponents.size() > 0)
+		assert(false);
 
 	if (Light)
 		Light->CRef::Enable(m_FirstManagedChildByTriggerLamp);

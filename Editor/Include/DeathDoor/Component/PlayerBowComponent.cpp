@@ -216,7 +216,7 @@ void CPlayerBowComponent::OnCollision(const CollisionResult& Result)
 			if (IsArrowOnFire == false && ArrowFireCollider->IsFireOnByArrow())
 			{
 				// 1. 장작에 불이 붙어있다면 -> Arrow 에 불을 붙일 것이다.
-				m_Arrow->StartParticle(m_Object->GetWorldPos());
+				m_Arrow->StartParticle(m_Arrow->GetWorldPos());
 
 				// >> Arrow 들의 Particle 들을 Arrow 진행 방향에 맞게 Y 축 기준 회전시킬 것이다.
 				const Vector3& BaseDir = Vector3(0.f, 0.f, -1.f);
@@ -232,6 +232,7 @@ void CPlayerBowComponent::OnCollision(const CollisionResult& Result)
 					YRotAngle = 180 + (180 - YRotAngle);
 				}
 
+				// Particle 들을 회전 시켜줄 것이다.
 				std::vector<CParticleComponent*> vecArrowParticles;
 				m_Arrow->FindAllSceneComponentFromType<CParticleComponent>(vecArrowParticles);
 
@@ -239,10 +240,11 @@ void CPlayerBowComponent::OnCollision(const CollisionResult& Result)
 
 				for (size_t i = 0; i < ParticleSize; ++i)
 				{
-					vecArrowParticles[i]->CRef::Enable(true);
+					// vecArrowParticles[i]->CRef::Enable(true);
 					vecArrowParticles[i]->AddWorldRotationY(YRotAngle);
 				}
 
+				// Light Component 를 활성화 시켜줄 것이다.
 				CLightComponent* ArrowLight = m_Arrow->FindComponentFromType<CLightComponent>();
 
 				if (ArrowLight)
