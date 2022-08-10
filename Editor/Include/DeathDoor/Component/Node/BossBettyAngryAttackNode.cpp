@@ -4,6 +4,7 @@
 #include "Component/AnimationMeshComponent.h"
 #include "../ProjectileComponent.h"
 #include "Component/ColliderBox3D.h"
+#include "Component/ColliderSphere.h"
 #include "Scene/Scene.h"
 #include "../BossBettyDataComponent.h"
 #include "Scene/SceneManager.h"
@@ -41,7 +42,11 @@ void CBossBettyAngryAttackNode::Init()
 	AnimInst->AddNotify(AnimName, "OnDisableTracePlayer", 5,
 		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnDisableLookPlayer);
 
+
 	// Snow Ball Falling
+	AnimInst->AddNotify(AnimName, "CameraShake", 9,
+		Data, &CBossBettyDataComponent::OnBossBettyNormalShakeCamera);
+
 	AnimInst->AddNotify(AnimName, "OnStartFallingSnowBallEffect", 9, 
 		this, &CBossBettyAngryAttackNode::OnBossBettyStartFallingSnowBallEffect);
 
@@ -73,9 +78,15 @@ void CBossBettyAngryAttackNode::Init()
 	AnimInst->AddNotifyDeltaTimeFrameRange(AnimName, "OnBettyRoar", 100, 120,
 		Data, &CBossBettyDataComponent::OnBossBettyRoarEffect);
 
+	AnimInst->AddNotify(AnimName, "ActivateRoarParticle", 100,
+		Data, &CBossBettyDataComponent::OnBossBettyActivateRoarParticle);
+	
+	AnimInst->AddNotify(AnimName, "CameraShake", 100,
+		Data, &CBossBettyDataComponent::OnBossBettyNormalShakeCamera);
+
 	// End
 	AnimInst->AddNotify(AnimName, "ResetHPState", 121,
-		Data, &CBossBettyDataComponent::ResetBettyHPState);
+	 	Data, &CBossBettyDataComponent::ResetBettyHPState);
 
 	AnimInst->AddNotify(AnimName, "ResetCurrentNode", 121,
 		(CMonsterDataComponent*)Data, &CMonsterDataComponent::SetCurrentNodeNull);
@@ -85,9 +96,6 @@ NodeResult CBossBettyAngryAttackNode::OnStart(float DeltaTime)
 {
 	CBossBettyDataComponent* Data = dynamic_cast<CBossBettyDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
 	
-	// HP State 를 다시 None 으로 
-	Data->ResetBettyHPState();
-
 	m_Owner->SetCurrentNode(this);
 
 	CAnimationSequenceInstance* AnimInst = m_AnimationMeshComp->GetAnimationInstance();
@@ -116,25 +124,37 @@ void CBossBettyAngryAttackNode::OnBossBettyStartFallingSnowBallEffect()
 	// 사방에서 투사체 눈덩이가 떨어지게 한다.
 	// 1. 특정 위치에 투사체 눈덩이 Object 를 생성
 	CGameObject* MapSurroundingObject = CurrentScene->FindObject("MapSurrounding");
-	// Result.Dest->GetGameObject()->GetName() != "MapSurrounding")
 
-	int XRand = rand() % 10;
-	int YRand = rand() % 10 + 10.f;
-	int ZRand = rand() % 10;
+	const Vector3& MapSurroundingObjectWorldPos = MapSurroundingObject->GetWorldPos();
 
-	for (int i = 0; i < 10; ++i)
+	CColliderSphere* ColliderSphere = MapSurroundingObject->FindComponentFromType<CColliderSphere>();
+
+	int SphereRadius = (int)ColliderSphere->GetInfo().Radius;
+
+	const Vector3& PlayerPos = CSceneManager::GetInst()->GetScene()->GetPlayerObject()->GetWorldPos();
+
+	for (int i = 0; i < 8; ++i)
 	{
+		int XRand = rand() % SphereRadius;
+		int YRand = SphereRadius + rand() % (SphereRadius * 2);
+		int ZRand = rand() % SphereRadius;
+
+		float RandV = ((double)rand() / (RAND_MAX)) + 1;
+		float RandomAngle = 360.f * RandV;
+
 		CGameObject* SnowFallingObject = CObjectPool::GetInst()->GetProjectile("BossBettySnowAttack", CurrentScene);
 
-		SnowFallingObject->SetWorldPos(Data->GetGameObject()->GetWorldPos() + Vector3(XRand, YRand, ZRand));
+		SnowFallingObject->SetWorldPos(MapSurroundingObjectWorldPos + Vector3(
+			XRand * cos(RandomAngle), YRand, ZRand * sin(RandomAngle)));
 			
 		CProjectileComponent* ProjTileComp = SnowFallingObject->FindComponentFromType<CProjectileComponent>();
 
 		CGameObject* AfterEffectParticle = CObjectPool::GetInst()->GetParticle("BettyAttackAfterEffect", CSceneManager::GetInst()->GetScene());
 
-		const Vector3& PlayerPos = CSceneManager::GetInst()->GetScene()->GetPlayerObject()->GetWorldPos();
+		const Vector3& SnowObjectWorldPos = SnowFallingObject->GetWorldPos();
 
-		ProjTileComp->ShootByTargetPos(SnowFallingObject->GetWorldPos(), 50.f, PlayerPos, AfterEffectParticle);
+		ProjTileComp->ShootByTargetPos(SnowObjectWorldPos, 30.f + rand() % 10, 
+			Vector3(SnowObjectWorldPos.x, PlayerPos.y + 2.f, SnowObjectWorldPos.z), AfterEffectParticle);
 	}
 
 	// 2. 각각에 대해서, 충돌시 동작시킬 콜백들을 세팅한다.

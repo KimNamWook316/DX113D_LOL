@@ -105,6 +105,7 @@ const Vector3& CNavAgent::GetTargetPos() const
 {
 	if (!m_PathList.empty())
 		return m_PathList.back();
+
 }
 
 void CNavAgent::Start()

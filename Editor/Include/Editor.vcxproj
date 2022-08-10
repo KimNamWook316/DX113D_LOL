@@ -184,6 +184,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="DeathDoor\Component\ArrowCollisionFireCollider.cpp" />
     <ClCompile Include="DeathDoor\Component\ArrowComponent.cpp" />
     <ClCompile Include="DeathDoor\Component\BatDataComponent.cpp" />
     <ClCompile Include="DeathDoor\Component\BossBettyDataComponent.cpp" />
@@ -191,6 +192,7 @@
     <ClCompile Include="DeathDoor\Component\CrowBossDataComponent.cpp" />
     <ClCompile Include="DeathDoor\Component\DodgerDataComponent.cpp" />
     <ClCompile Include="DeathDoor\Component\EyeLaserComponent.cpp" />
+    <ClCompile Include="DeathDoor\Component\GruntCommonDataComponent.cpp" />
     <ClCompile Include="DeathDoor\Component\HeadRollerDataComponent.cpp" />
     <ClCompile Include="DeathDoor\Component\MonsterBulletData.cpp" />
     <ClCompile Include="DeathDoor\Component\FirePlantDataComponent.cpp" />
@@ -212,6 +214,10 @@
     <ClCompile Include="DeathDoor\Component\Node\BossBettyCloseAttackNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\BossBettyFarAttackTypeCheck.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\BossBettyHPStateCheck.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\BossBettyIdleAnimCheck.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\BossBettyIdleBeastNode.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\BossBettyIntroAnimCheck.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\BossBettyIntroNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\BossBettySpinAttackNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\BossBettyJumpAttackNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\BossBettyThrowAttackCheck.cpp" />
@@ -277,6 +283,10 @@
     <ClCompile Include="DeathDoor\Component\Node\DodgerSecondAttackCheck.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\DodgerSecondAttackNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\FindPathNode.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\GruntCommonAttackNode.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\GruntCommonHitNode.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\GruntCommonTraceNode.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\GruntCommonWalkNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\HeadRollerRollNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\HeadRollerStunCheck.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\HeadRollerStunNode.cpp" />
@@ -428,6 +438,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClInclude>
+    <ClInclude Include="DeathDoor\Component\ArrowCollisionFireCollider.h" />
     <ClInclude Include="DeathDoor\Component\ArrowComponent.h" />
     <ClInclude Include="DeathDoor\Component\BatDataComponent.h" />
     <ClInclude Include="DeathDoor\Component\BossBettyDataComponent.h" />
@@ -435,6 +446,7 @@
     <ClInclude Include="DeathDoor\Component\CrowBossDataComponent.h" />
     <ClInclude Include="DeathDoor\Component\DodgerDataComponent.h" />
     <ClInclude Include="DeathDoor\Component\EyeLaserComponent.h" />
+    <ClInclude Include="DeathDoor\Component\GruntCommonDataComponent.h" />
     <ClInclude Include="DeathDoor\Component\HeadRollerDataComponent.h" />
     <ClInclude Include="DeathDoor\Component\MonsterBulletData.h" />
     <ClInclude Include="DeathDoor\Component\FirePlantDataComponent.h" />
@@ -456,6 +468,10 @@
     <ClInclude Include="DeathDoor\Component\Node\BossBettyCloseAttackNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\BossBettyFarAttackTypeCheck.h" />
     <ClInclude Include="DeathDoor\Component\Node\BossBettyHPStateCheck.h" />
+    <ClInclude Include="DeathDoor\Component\Node\BossBettyIdleAnimCheck.h" />
+    <ClInclude Include="DeathDoor\Component\Node\BossBettyIdleBeastNode.h" />
+    <ClInclude Include="DeathDoor\Component\Node\BossBettyIntroAnimCheck.h" />
+    <ClInclude Include="DeathDoor\Component\Node\BossBettyIntroNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\BossBettySpinAttackNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\BossBettyJumpAttackNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\BossBettyThrowAttackCheck.h" />
@@ -521,6 +537,10 @@
     <ClInclude Include="DeathDoor\Component\Node\DodgerSecondAttackCheck.h" />
     <ClInclude Include="DeathDoor\Component\Node\DodgerSecondAttackNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\FindPathNode.h" />
+    <ClInclude Include="DeathDoor\Component\Node\GruntCommonAttackNode.h" />
+    <ClInclude Include="DeathDoor\Component\Node\GruntCommonHitNode.h" />
+    <ClInclude Include="DeathDoor\Component\Node\GruntCommonTraceNode.h" />
+    <ClInclude Include="DeathDoor\Component\Node\GruntCommonWalkNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\HeadRollerRollNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\HeadRollerStunCheck.h" />
     <ClInclude Include="DeathDoor\Component\Node\HeadRollerStunNode.h" />

@@ -245,7 +245,14 @@ void CProjectileComponent::OnEnd()
 	// End Effect가 있는 경우
 	if (m_EndParticleObject)
 	{
-		m_EndParticleObject->StartParticle(m_Root->GetWorldPos());
+		if (m_TargetPos.x > 0.f)
+		{
+			m_EndParticleObject->StartParticle(m_Root->GetWorldPos());
+		}
+		else
+		{
+			m_EndParticleObject->StartParticle(m_Root->GetWorldPos());
+		}
 	}
 
 	if (m_EndCallBack)

@@ -33,7 +33,8 @@ protected:
     CSharedPtr<class CShader> m_Shader;
     class CColliderConstantBuffer* m_CBuffer;
     bool m_RigidCollisionIgnore;
-
+    // OBJ가 추가 (일정시간동안만 Enable 되었다가 다시 Enable False 
+    float m_EnablePossibleTime;
 public:
     const std::vector<int>& GetCurrentSections()    const
     {
@@ -113,6 +114,11 @@ public:
     void SetCollisionResultSrc(CColliderComponent* Com)
     {
         m_Result.Src = Com;
+    }
+
+    void SetEnablePossibleTime(float Time)
+    {
+        m_EnablePossibleTime = Time;
     }
 
     void SetCollisionResultDest(CColliderComponent* Com)

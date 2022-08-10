@@ -317,7 +317,7 @@ void CParticleComponentWidget::OnResetParticleInfo()
         CParticleComponent* CurParticleComponent = dynamic_cast<CParticleComponent*>((*iter));
     
         if (!CurParticleComponent)
-            return;
+            continue;
     
         // CurParticleComponent->RecreateOnlyOnceCreatedParticle();
         CurParticleComponent->RecreateOnlyOnceCreatedParticleWithOutLifeTimeSetting();

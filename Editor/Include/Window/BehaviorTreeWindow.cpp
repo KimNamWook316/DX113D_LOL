@@ -94,11 +94,15 @@
 #include "../DeathDoor/Component/Node/BossBettyJumpAttackNode.h"
 #include "../DeathDoor/Component/Node/BossBettySpinAttackNode.h"
 #include "../DeathDoor/Component/Node/BossBettyThrowNode.h"
+#include "../DeathDoor/Component/Node/BossBettyIntroNode.h"
+#include "../DeathDoor/Component/Node/BossBettyIdleBeastNode.h"
 
 #include "../DeathDoor/Component/Node/BossBettyChangeDirCheck.h"
 #include "../DeathDoor/Component/Node/BossBettyFarAttackTypeCheck.h"
 #include "../DeathDoor/Component/Node/BossBettyHPStateCheck.h"
 #include "../DeathDoor/Component/Node/BossBettyThrowAttackCheck.h"
+#include "../DeathDoor/Component/Node/BossBettyIdleAnimCheck.h"
+#include "../DeathDoor/Component/Node/BossBettyIntroAnimCheck.h"
 
 // CrowBoss
 #include "../DeathDoor/Component/Node/CrowBossCutScenePlayCheck.h"
@@ -151,6 +155,12 @@
 #include "../DeathDoor/Component/Node/LurkerHopStartCheck.h"
 #include "../DeathDoor/Component/Node/LurkerHop.h"
 #include "../DeathDoor/Component/Node/LurkerMeleeAttackPrep.h"
+
+// Grunt Common
+#include "../DeathDoor/Component/Node/GruntCommonHitNode.h"
+#include "../DeathDoor/Component/Node/GruntCommonTraceNode.h"
+#include "../DeathDoor/Component/Node/GruntCommonWalkNode.h"
+#include "../DeathDoor/Component/Node/GruntCommonAttackNode.h"
 
 #include "ObjectComponentWindow.h"
 #include "ObjectHierarchyWindow.h"
@@ -690,7 +700,16 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
             NewTreeNode = m_StateComponent->CreateTreeNode<CBossBettyThrowNode>(Name);
             break;
         }
-
+        case DDActionNode::BossBettyIntro:
+        {
+            NewTreeNode = m_StateComponent->CreateTreeNode<CBossBettyIntroNode>(Name);
+            break;
+        }
+        case DDActionNode::BossBettyIdleBeast:
+        {
+            NewTreeNode = m_StateComponent->CreateTreeNode<CBossBettyIdleBeastNode>(Name);
+            break;
+        }
         // Crow Boss
         case DDActionNode::CrowBossCutScenePlayNode:
         {
@@ -807,6 +826,28 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
         case DDActionNode::LurkerMeleeAttackPrep:
         {
             NewTreeNode = m_StateComponent->CreateTreeNode<CLurkerMeleeAttackPrep>(Name);
+            break;
+        }
+
+        // Grunt Common
+        case DDActionNode::GruntCommonAttack:
+        {
+            NewTreeNode = m_StateComponent->CreateTreeNode<CGruntCommonAttackNode>(Name);
+            break;
+        }
+        case DDActionNode::GruntCommonHit:
+        {
+            NewTreeNode = m_StateComponent->CreateTreeNode<CGruntCommonHitNode>(Name);
+            break;
+        }
+        case DDActionNode::GruntCommonTrace:
+        {
+            NewTreeNode = m_StateComponent->CreateTreeNode<CGruntCommonTraceNode>(Name);
+            break;
+        }
+        case DDActionNode::GruntCommonWalk:
+        {
+            NewTreeNode = m_StateComponent->CreateTreeNode<CGruntCommonWalkNode>(Name);
             break;
         }
 
@@ -963,6 +1004,12 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
             break;
         case DDConditionNode::BossBettyCheckThrowAttack:
             NewTreeNode = m_StateComponent->CreateTreeNode<CBossBettyThrowAttackCheck>(Name);
+            break;
+        case DDConditionNode::BossBettyCheckIdle:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CBossBettyIdleAnimCheck>(Name);
+            break;
+        case DDConditionNode::BossBettyCheckIntro:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CBossBettyIntroAnimCheck>(Name);
             break;
 
         // Crow Boss

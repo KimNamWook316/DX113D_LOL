@@ -30,6 +30,9 @@ void CBossBettyChangeAttackDirNode::Init()
 	std::string AnimName = "BackUpStep";
 
 	CAnimationSequenceInstance* AnimInst = m_AnimationMeshComp->GetAnimationInstance();
+
+	AnimInst->AddNotify(AnimName, "DiableZMove", 0,
+		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnDisableMoveZ);
 	
 	// Middle
 	AnimInst->AddNotify(AnimName, "OnTracePlayer", 6,
@@ -38,13 +41,14 @@ void CBossBettyChangeAttackDirNode::Init()
 		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnDisableLookPlayer);
 	AnimInst->AddNotify(AnimName, "SetCurrentNodeNull", 20,
 		(CMonsterDataComponent*)Data, &CMonsterDataComponent::SetCurrentNodeNull);
-	AnimInst->AddNotify(AnimName, "DiableZMove", 20,
-		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnDisableMoveZ);
 	AnimInst->AddNotify(AnimName, "EnableCloseAttackChangeAnim", 20,
 		Data, &CBossBettyDataComponent::OnBossBettyEnableCloseAttackChangeAnim);
 
 	// End
-	AnimInst->SetEndFunction(AnimName, (CMonsterDataComponent*)Data, &CMonsterDataComponent::OnDisableLookPlayer);
+	AnimInst->AddNotify(AnimName, "DisableLookPlayer", 20,
+		(CMonsterDataComponent*)Data, & CMonsterDataComponent::OnDisableLookPlayer);
+
+	AnimInst->SetEndFunction(AnimName, Data, &CBossBettyDataComponent::OnBossBettyForceCheckHPState);
 }
 
 void CBossBettyChangeAttackDirNode::OnResetOriginalRotSpeed()
@@ -55,18 +59,19 @@ void CBossBettyChangeAttackDirNode::OnResetOriginalRotSpeed()
 
 NodeResult CBossBettyChangeAttackDirNode::OnStart(float DeltaTime)
 {
-	m_AnimationMeshComp->GetAnimationInstance()->ChangeAnimation("BackUpStep");
+	if (m_Owner->GetCurrentNode() != this)
+	{
+		m_AnimationMeshComp->GetAnimationInstance()->ChangeAnimation("BackUpStep");
 
-	m_Owner->SetCurrentNode(this);
+		m_Owner->SetCurrentNode(this);
+	}
 
 	CBossBettyDataComponent* Data = dynamic_cast<CBossBettyDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
 
 	float AngleToPlayer = Data->GetAnglePlayer();
 
-
-
 	if (AngleToPlayer > 90.f)
-		Data->SetCurRotSpeed(Data->GetOriginRotSpeed() * 1.5f);
+		Data->SetCurRotSpeed(Data->GetOriginRotSpeed() * 2.5f);
 	else
 		Data->SetCurRotSpeed(Data->GetOriginRotSpeed());
 		

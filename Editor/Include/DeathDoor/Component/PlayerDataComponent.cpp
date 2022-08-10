@@ -32,6 +32,8 @@ CPlayerDataComponent::CPlayerDataComponent() :
 {
 	SetTypeID<CPlayerDataComponent>();
 	m_ComponentType = Component_Type::ObjectComponent;
+
+	m_PlayerData.Abilty_Type = Player_Ability::Arrow;
 }
 
 CPlayerDataComponent::CPlayerDataComponent(const CPlayerDataComponent& com)	:
@@ -48,7 +50,7 @@ void CPlayerDataComponent::Start()
 	m_Scene->GetSceneMode()->SetPlayerObject(m_Object);
 
 	CInput::GetInst()->CreateKey("WeaponArrow", '1');
-	CInput::GetInst()->CreateKey("WeaponFire", '2');
+	//CInput::GetInst()->CreateKey("WeaponFire", '2');
 	CInput::GetInst()->CreateKey("WeaponChain", '3');
 	CInput::GetInst()->CreateKey("WeaponBomb", '4');
 	CInput::GetInst()->CreateKey("None", '5');
@@ -79,6 +81,7 @@ void CPlayerDataComponent::Start()
 	m_AnimComp->GetAnimationInstance()->AddNotify<CPlayerDataComponent>("PlayerHitBack", "PlayerHitBack", 0, this, &CPlayerDataComponent::OnHitBack);
 
 	m_AnimComp->GetAnimationInstance()->AddNotify<CPlayerDataComponent>("PlayerBomb", "PlayerBomb", 3, this, &CPlayerDataComponent::OnBombLift);
+	m_AnimComp->GetAnimationInstance()->AddNotify<CPlayerDataComponent>("PlayerBomb", "PlayerBombCountRest", 4, this, &CPlayerDataComponent::OnBombCountReset);
 
 	m_AnimComp->GetAnimationInstance()->AddNotify<CPlayerDataComponent>("PlayerRoll", "PlayerRoll", 0, this, &CPlayerDataComponent::OnRoll);
 	
@@ -315,6 +318,16 @@ void CPlayerDataComponent::OnBombLift()
 	{
 		BombComp->SetLiftSpeed(0.1f);
 		BombComp->LiftBomb();
+	}
+}
+
+void CPlayerDataComponent::OnBombCountReset()
+{
+	CPlayerBombComponent* BombComp = m_Object->FindObjectComponentFromType<CPlayerBombComponent>();
+
+	if (BombComp)
+	{
+		BombComp->ResetCount();
 	}
 }
 

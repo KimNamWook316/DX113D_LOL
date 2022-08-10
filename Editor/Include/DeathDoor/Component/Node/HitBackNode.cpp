@@ -28,6 +28,7 @@ NodeResult CHitBackNode::OnStart(float DeltaTime)
 
 
 	m_AnimationMeshComp->GetAnimationInstance()->ChangeAnimation("PlayerHitBack");
+	Comp->GetSword()->GetAnimationInstance()->ChangeAnimation("PlayerHitBack");
 	Comp->SetFalseOnSlash();
 
 	m_Object->GetScene()->GetCameraManager()->GetCurrentCamera()->Shake(0.2f, 0.2f);

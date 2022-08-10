@@ -170,7 +170,8 @@ void CPlayerBowComponent::ShootArrow(const Vector3& ShootDir)
 	Vector3 ArrowStartPos = m_Arrow->GetWorldPos();
 	//Comp->ShootByLifeTime(MyPos, ShootDir, 20.f, 2.5f);
 	Comp->ClearCollsionCallBack();
-	Comp->ShootByLifeTimeCollision<CPlayerBowComponent>(this, &CPlayerBowComponent::OnCollision, Collision_State::Begin, ArrowStartPos, ShootDir, 60.f, 2.5f);
+	Comp->ShootByLifeTimeCollision<CPlayerBowComponent>(this, &CPlayerBowComponent::OnCollision, Collision_State::Begin, 
+		ArrowStartPos, ShootDir, 60.f, 2.5f);
 	Comp->SetDestroy(true);
 }
 

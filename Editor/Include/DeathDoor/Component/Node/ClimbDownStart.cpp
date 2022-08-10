@@ -67,6 +67,7 @@ NodeResult CClimbDownStart::OnStart(float DeltaTime)
 
 
 	m_AnimationMeshComp->GetAnimationInstance()->ChangeAnimation("PlayerLadderDown");
+	DataComp->GetSword()->GetAnimationInstance()->ChangeAnimation("PlayerLadderDown");
 
 	return NodeResult::Node_True;
 }

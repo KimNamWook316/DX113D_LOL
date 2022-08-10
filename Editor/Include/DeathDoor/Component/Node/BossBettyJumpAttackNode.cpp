@@ -63,11 +63,11 @@ void CBossBettyJumpAttackNode::Init()
 
 	// >> End
 	// PunchDown Animation 이 끝나면 해당 위치에 2단 공격
-	AnimInst->AddNotify(AnimName, "AttackDown", 25,
+	AnimInst->AddNotify(AnimName, "AttackDown", 24,
 		Data, &CBossBettyDataComponent::OnBossBettyGenerateTwoSideCloseAttackEffect);
-	AnimInst->AddNotify(AnimName, "EnableAttackCollider", 27,
+	AnimInst->AddNotify(AnimName, "EnableAttackCollider", 25,
 		Data, &CBossBettyDataComponent::OnBossBettyEnableAttackCollider);
-	AnimInst->AddNotify(AnimName, "DisableAttackCollider", 28,
+	AnimInst->AddNotify(AnimName, "DisableAttackCollider", 29,
 		Data, &CBossBettyDataComponent::OnBossBettyDisableAttackCollider);
 	//AnimInst->AddNotify(AnimName, "OnDisableSpinCollider", 29,
 	//	Data, &CBossBettyDataComponent::OnBossBettyDisableSpinCollider);
@@ -78,10 +78,10 @@ void CBossBettyJumpAttackNode::Init()
 		Data, &CBossBettyDataComponent::OnBossBettyResetOriginalMoveSpeed);
 	AnimInst->AddNotify(AnimName, "EndJump", 35,
 		this, &CBossBettyJumpAttackNode::OnBossBettyEndJump);
-
-	AnimInst->SetEndFunction(AnimName,
+	AnimInst->AddNotify(AnimName, "SetCurrentNodeNullptr", 35,
 		Data, &CBossBettyDataComponent::OnBossBettySetCurrentNodeNullPtr);
-
+	// AnimInst->AddNotify(AnimName, "ForceHPStateCheck", 35,
+	// 	Data, &CBossBettyDataComponent::OnBossBettyForceCheckHPState);
 }
 
 NodeResult CBossBettyJumpAttackNode::OnStart(float DeltaTime)

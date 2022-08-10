@@ -17,7 +17,8 @@
 CReadyToShoot::CReadyToShoot() :
 	m_CameraMoveEnd(false),
 	m_CameraMoveSpeed(50.f),
-	m_CameraMoveTime(0.f)
+	m_CameraMoveTime(0.f),
+	m_LiftStart(false)
 {
 	SetTypeID(typeid(CReadyToShoot).hash_code());
 }
@@ -56,9 +57,15 @@ NodeResult CReadyToShoot::OnStart(float DeltaTime)
 	{
 		CPlayerBombComponent* BombComp = m_Object->FindComponentFromType<CPlayerBombComponent>();
 
-		CGameObject* Bomb = BombComp->GetBomb();
+		// OBJ가 임시 추가 -> Bomb가 없는데도 실행하려고 해서 계속 런타임 에러
+		if (!BombComp)
+		{
+			return NodeResult::Node_True;;
+		}
 
 		BombComp->SetBeforeLift(true);
+
+		CGameObject* Bomb = BombComp->GetBomb();
 
 		// 이미 Lift & Shoot을 한번 이상 했는데 BombComp의 m_Bomb가 nullptr가 아니면
 		// 그 m_Bomb는 이미 폭탄 이펙트가 진행중이라는 의미이므로 Lift & Shoot을 하지 않는다
@@ -103,6 +110,7 @@ NodeResult CReadyToShoot::OnStart(float DeltaTime)
 	//m_Object->SetNoInterrupt(true);
 	m_CallStart = true;
 
+	m_PlayerDataComp->GetSword()->GetAnimationInstance()->ChangeAnimation(SequenceName);
 
 	CRotateAttackDirectionNode* Node = (CRotateAttackDirectionNode*)((CCompositeNode*)m_Parent->GetParent()->GetParent())->FindChildByType<CRotateAttackDirectionNode>();
 
@@ -181,6 +189,7 @@ NodeResult CReadyToShoot::OnUpdate(float DeltaTime)
 			{
 				// 카메라 이동이 아직 안끝났는데 RButton을 떼면
 				CGameObject* Bomb = BombComp->GetBomb();
+
 				if (Bomb && !BombComp->IsEmptyLiftPathQueue())
 				{
 					Bomb->Reset();

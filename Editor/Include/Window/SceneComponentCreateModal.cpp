@@ -35,6 +35,7 @@
 #include "../DeathDoor/Component/EyeLaserComponent.h"
 #include "../DeathDoor/Component/PlayerBowComponent.h"
 #include "../DeathDoor/Component/CrackedBlockCollider.h"
+#include "../DeathDoor/Component/ArrowCollisionFireCollider.h"
 
 #include "Resource/Particle/Particle.h"
 #include "ToolWindow.h"
@@ -206,6 +207,10 @@ void CSceneComponentCreateModal::OnCreateComponent()
 		else if (Typeid == typeid(CCrackedBlockCollider).hash_code())
 		{
 			Com = SelectObject->CreateComponentAddChild<CCrackedBlockCollider>(Name);
+		}
+		else if (Typeid == typeid(CArrowCollisionFireCollider).hash_code())
+		{
+			Com = SelectObject->CreateComponentAddChild<CArrowCollisionFireCollider>(Name);
 		}
 	}
 

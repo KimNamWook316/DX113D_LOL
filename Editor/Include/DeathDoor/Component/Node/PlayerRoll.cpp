@@ -22,7 +22,11 @@ CPlayerRoll::~CPlayerRoll()
 
 NodeResult CPlayerRoll::OnStart(float DeltaTime)
 {
+	CPlayerDataComponent* Data = dynamic_cast<CPlayerDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
+
 	m_AnimationMeshComp->GetAnimationInstance()->ChangeAnimation("PlayerRoll");
+
+	Data->GetSword()->GetAnimationInstance()->ChangeAnimation("PlayerRoll");
 
 	m_NavAgent = m_Object->FindObjectComponentFromType<CNavAgent>();
 

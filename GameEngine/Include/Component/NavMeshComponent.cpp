@@ -183,7 +183,7 @@ void CNavMeshComponent::OnUpdateWorld(const Vector3& World, const Vector3& Relat
 	m_Transform->ForceUpdateMat();
 	Matrix WorldMat = m_Transform->GetWorldMatrix();
 
-	for (size_t i = 0; i < Count; ++i)
+	for (int i = 0; i < Count; ++i)
 	{
 		Vector3 Pos1 = m_NavMesh->GetNavMeshPolygon(i).m_vecVertexOriginPos[0];
 		Vector3 Pos2 = m_NavMesh->GetNavMeshPolygon(i).m_vecVertexOriginPos[1];
