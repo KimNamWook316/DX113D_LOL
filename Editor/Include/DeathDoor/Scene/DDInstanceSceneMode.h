@@ -45,6 +45,12 @@ struct DDSpawnObjectSet
     DDInstanceSpawnInfo* Info;
 };
 
+struct DDInstanceEndEventObj
+{
+    class CGameObject* Obj;
+    class CPaperBurnComponent* PaperBurnComp;
+};
+
 class CDDInstanceSceneMode :
     public CDDSceneMode
 {
@@ -108,6 +114,8 @@ public:
     {
         return m_BlockerObjectName;
     }
+    bool AddEndEventObjName(const std::string& Name);
+    void ClearEndEventObj();
 
 private:
     bool IsValidPhaseIndex(int Index);
@@ -120,6 +128,9 @@ private:
 protected:
     std::string m_EnterTriggerObjectName;
     class CColliderBox3D* m_EnterTrigger;
+
+    std::vector<std::string> m_vecEndEventObjName;
+    std::vector<DDInstanceEndEventObj> m_vecEndEventObj;
 
     std::string m_BlockerObjectName;
     class CGameObject* m_BlockerObj;

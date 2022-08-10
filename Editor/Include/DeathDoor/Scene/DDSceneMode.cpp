@@ -75,7 +75,19 @@ void CDDSceneMode::Start()
 	}
 
 	// 몬스터 카운트 체크
-	m_MonsterCount = m_Scene->GetObjectCountByType(Object_Type::Monster);
+	std::vector<CGameObject*> vecMonsterObj;
+	m_Scene->GetObjectsByType(Object_Type::Monster, vecMonsterObj);
+
+	size_t Size = vecMonsterObj.size();
+	for (size_t i = 0; i < Size; ++i)
+	{
+		if (vecMonsterObj[i]->IsInPool())
+		{
+			continue;
+		}
+
+		++m_MonsterCount;
+	}
 
 	// Fade In 
 	CRenderManager::GetInst()->SetFadeStartCallBack(this, &CDDSceneMode::OnFadeInStart);
