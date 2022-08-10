@@ -93,7 +93,9 @@ void CSporeBoomerDataComponent::OnShootBullet()
 	Vector3 XZ = PlayerPos - MyPos;
 	XZ.y = 0.f;
 
-	ProjComp->ShootByGravityTargetPos(MyPos, XZ, 60.f, PlayerPos, 50.f);
+	 CGameObject* EndParticle = CObjectPool::GetInst()->GetParticle("SporeBoomerParticle", m_Scene);
+
+	ProjComp->ShootByGravityTargetPos(MyPos, XZ, 60.f, PlayerPos, 50.f, EndParticle);
 	ProjComp->SetEndCallBack(this, &CSporeBoomerDataComponent::OnBombGround);
 	ProjComp->SetDestroy(true);
 }

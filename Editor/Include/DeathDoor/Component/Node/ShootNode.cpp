@@ -12,6 +12,7 @@
 #include "../PlayerBombComponent.h"
 #include "../../../Object/PlayerHook.h"
 #include "Component/Node/CompositeNode.h"
+#include "../GameStateComponent.h"
 
 CShootNode::CShootNode()	:
 	m_InRestoreCam(false),
@@ -117,6 +118,7 @@ NodeResult CShootNode::OnUpdate(float DeltaTime)
 				// 충돌하면 카메라 복귀시키지 않는다.
 				m_Owner->SetCurrentNode(nullptr);
 				CurCam->StopMove();
+				CurCam->SetRelativePos(0.f, 0.f, 0.f);
 				return NodeResult::Node_True;
 			}
 

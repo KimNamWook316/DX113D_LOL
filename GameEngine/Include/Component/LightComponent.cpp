@@ -5,7 +5,8 @@
 #include "../Scene/CameraManager.h"
 #include "CameraComponent.h"
 
-CLightComponent::CLightComponent()
+CLightComponent::CLightComponent()	:
+	m_Add(false)
 {
 	SetTypeID<CLightComponent>();
 	m_Render = false;
@@ -17,6 +18,7 @@ CLightComponent::CLightComponent(const CLightComponent& com) :
 	CSceneComponent(com)
 {
 	m_CBuffer = com.m_CBuffer->Clone();
+	m_Add = false;
 }
 
 CLightComponent::~CLightComponent()
@@ -38,7 +40,12 @@ void CLightComponent::Start()
 {
 	CSceneComponent::Start();
 
-	m_Scene->GetLightManager()->AddLight(this);
+	if (!m_Add)
+	{
+		m_Scene->GetLightManager()->AddLight(this);
+	}
+
+	m_Add = true;
 }
 
 bool CLightComponent::Init()
@@ -95,6 +102,38 @@ void CLightComponent::PostUpdate(float DeltaTime)
 		Dir.Normalize();
 
 		m_CBuffer->SetDir(Dir);
+	}
+}
+
+void CLightComponent::CheckCollision()
+{
+	Light_Type Type = m_CBuffer->GetLightType();
+	switch (Type)
+	{
+	case Light_Type::Dir:
+		m_Culling = false;
+		break;
+	case Light_Type::Point:
+	{
+		m_SphereInfo.Center = GetWorldPos();
+		m_SphereInfo.Radius = m_CBuffer->GetLightDistance();
+		m_SphereInfo.Radius /= 2.f;
+
+		CCameraComponent* Cam = m_Scene->GetCameraManager()->GetCurrentCamera();
+
+		m_Culling = Cam->FrustumInSphere(m_SphereInfo);
+		break;
+	}
+	case Light_Type::Spot:
+		m_Culling = false;
+		break;
+	}
+
+	size_t	Size = m_vecChild.size();
+
+	for (size_t i = 0; i < Size; ++i)
+	{
+		m_vecChild[i]->CheckCollision();
 	}
 }
 
@@ -250,11 +289,16 @@ void CLightComponent::Enable(bool Enable)
 
 	if (Enable)
 	{
-		LightManager->AddLight(this);
+		if (!m_Add)
+		{
+			LightManager->AddLight(this);
+		}
+		m_Add = true;
 	}
 	else
 	{
 		LightManager->DeleteLight(this);
+		m_Add = false;
 	}
 }
 

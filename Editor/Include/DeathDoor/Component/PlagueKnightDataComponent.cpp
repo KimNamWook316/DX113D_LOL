@@ -103,7 +103,7 @@ void CPlagueKnightDataComponent::OnShoot()
 
 	// TODO : Plauge Knight - Projectile Particle
 	Proj->SetEndCallBack(this, &CPlagueKnightDataComponent::OnBulletGround);
-	Proj->ShootByGravityTargetPos(FirePos, XZ, 60.f, PlayerPos);
+	Proj->ShootByGravityTargetPos(FirePos, XZ, 60.f, PlayerPos, 30.f);
 	Proj->SetDestroy(true);
 }
 

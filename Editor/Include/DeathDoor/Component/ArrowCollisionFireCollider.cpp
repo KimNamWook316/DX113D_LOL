@@ -53,13 +53,6 @@ void CArrowCollisionFireCollider::Start()
 
 	// Light Component 또한 Enable False 처리 한다.
 	CLightComponent* Light = m_Object->FindComponentFromType<CLightComponent>();
-
-	std::vector<CParticleComponent*> vecLightComponents;
-	m_Object->FindAllSceneComponentFromType<CParticleComponent>(vecLightComponents);
-
-	if (vecLightComponents.size() > 0)
-		assert(false);
-
 	if (Light)
 		Light->CRef::Enable(m_FirstManagedChildByTriggerLamp);
 }

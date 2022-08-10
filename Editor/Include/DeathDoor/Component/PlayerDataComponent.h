@@ -44,6 +44,8 @@ private:
 	int m_CurrentDustIndex;
 	Vector3 m_SlashDir;
 
+	Vector3 m_CamRelativePos;
+
 public:
 	virtual void Start();
 	virtual bool Init();
@@ -212,6 +214,11 @@ public:
 			CObjectDataComponent::DecreaseHP(Amout);
 			m_IsHit = true;
 		}
+	}
+
+	const Vector3& GetCamRelativePos() const
+	{
+		return m_CamRelativePos;
 	}
 
 	class CGameObject* GetAdjLadder() const;

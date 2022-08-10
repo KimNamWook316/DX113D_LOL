@@ -106,6 +106,11 @@ void CPlayerDataComponent::Start()
 	m_Sword = (CAnimationMeshComponent*)m_Object->FindComponent("SwordAnim");
 
 	m_Object->FindAllSceneComponentFromTypeName<CParticleComponent>("Dust", m_vecMoveDust);
+
+	CCameraComponent* Cam = m_Object->FindComponentFromType<CCameraComponent>();
+	Vector3 RootPos = m_AnimComp->GetWorldPos();
+	Vector3 CamPos = Cam->GetWorldPos();
+	m_CamRelativePos = CamPos - RootPos;
 }
 
 bool CPlayerDataComponent::Init()
