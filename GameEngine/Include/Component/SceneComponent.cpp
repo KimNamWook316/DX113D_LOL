@@ -565,11 +565,18 @@ void CSceneComponent::CheckCollision()
 		Radius.x = GetMeshSize().Length();
 		Radius.y = GetMeshSize().Length();
 		Radius.z = GetMeshSize().Length();
-		Radius = Radius.TransformCoord(GetWorldMatrix());
+
+		// (OBJ 수정)
+		// 원본
+		// Radius = Radius.TransformCoord(GetWorldMatrix());
+		Radius = Radius * GetWorldScale();
 
 		Info.Radius = Radius.x > Radius.y ? Radius.x : Radius.y;
 		Info.Radius = Info.Radius > Radius.z ? Info.Radius : Radius.z;
 		Info.Radius /= 2.f;
+
+		if (Info.Radius < 0.f)
+			assert(false);
 
 		m_SphereInfo.Radius = Info.Radius;
 

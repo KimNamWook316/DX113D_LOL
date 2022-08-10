@@ -361,6 +361,7 @@ void CGameObject::Update(float DeltaTime)
 
 		if (m_LifeSpan <= 0.f)
 		{
+			m_LifeSpan = 0.f;
 			Destroy();
 			return;
 		}
@@ -876,7 +877,7 @@ void CGameObject::Reset()
 	SetWorldPos(FLT_MAX, FLT_MAX, FLT_MAX);
 	m_RootComponent->GetTransform()->ForceUpdateMat();
 
-
+	m_LifeSpan = 0.f;
 
 	size_t Size = m_vecObjectComponent.size();
 

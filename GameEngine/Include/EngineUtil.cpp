@@ -274,7 +274,7 @@ std::string CEngineUtil::ExtractFilePathFromFullPath(const std::string& FullPath
 	// Path에서 가장 말단 폴더 이름을 찾는다.
 	// Ex) Editor\\Mesh\\ -> Mesh를 찾음
 	std::string EndDir;
-	int PathSize = Path.length();
+	int PathSize = (int)Path.length();
 
 	int EndDirStrStart;
 	for (int i = PathSize - 3; i >= 0; --i)
@@ -325,6 +325,11 @@ std::string CEngineUtil::ExtractFilePathFromFullPath(const std::string& FullPath
 					}
 
 					break;
+				}
+				else
+				{
+					DirIndcies[0] = DirIndcies[1] - 2;
+					SlashCount = 1;
 				}
 			}
 			else
@@ -801,7 +806,7 @@ Vector3 CEngineUtil::QuarternionToEulerAngles(const XMVECTOR& Qut)
 	Angle.x = std::atan2(sinr_cosp, cosr_cosp);
 
 	// pitch (y-axis rotation)
-	double sinp = 2 * (q.w * q.y - q.z * q.x);
+	float sinp = 2 * (q.w * q.y - q.z * q.x);
 	if (std::abs(sinp) >= 1)
 		Angle.y = std::copysign(3.14159 / 2, sinp); // use 90 degrees if out of range
 	else

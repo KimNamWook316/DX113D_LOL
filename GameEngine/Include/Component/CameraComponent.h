@@ -162,6 +162,10 @@ public:
 	}
 
 public:
+	void SetStartCutSceneMoveEnable(bool Enable)
+	{
+		m_StartCutSceneMove = Enable;
+	}
 	void SetViewAngle(float Angle)
 	{
 		m_ViewAngle = Angle;

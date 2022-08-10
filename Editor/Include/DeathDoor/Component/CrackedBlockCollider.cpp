@@ -43,7 +43,7 @@ void CCrackedBlockCollider::Update(float DeltaTime)
 	}
 
 	float Ratio = Time / m_ColorChangeTimer;
-	m_Mesh->SetSpecularColor(Vector4(Ratio, Ratio, Ratio, Ratio));
+	m_Mesh->SetSpecularColor(Vector4(Ratio + 0.01f, Ratio + 0.01f, Ratio + 0.01f, Ratio + 0.01f));
 
 	if (m_Timer >= m_ColorChangeTimer)
 	{
@@ -54,7 +54,8 @@ void CCrackedBlockCollider::Update(float DeltaTime)
 
 void CCrackedBlockCollider::OnCollideBomb(const CollisionResult& Result)
 {
-	if (Result.Dest->GetCollisionProfile()->Channel == Collision_Channel::Custom15)
+	if (Result.Dest->GetCollisionProfile()->Channel == Collision_Channel::Custom15 ||
+		Result.Dest->GetCollisionProfile()->Channel == Collision_Channel::Custom16)
 	{
 		m_Object->Enable(false);
 	}

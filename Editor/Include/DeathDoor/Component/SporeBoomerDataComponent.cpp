@@ -6,6 +6,7 @@
 #include "ProjectileComponent.h"
 #include "Scene/Scene.h"
 #include "Component/ColliderSphere.h"
+#include "Component/CameraComponent.h"
 
 CSporeBoomerDataComponent::CSporeBoomerDataComponent()
 {
@@ -60,6 +61,10 @@ void CSporeBoomerDataComponent::OnBombGround(const Vector3& BombGroundPos)
 
 	m_BombColliderOn = true;
 	m_ColliderOnPrev = false;
+
+	// Shake
+	CCameraComponent* Cam = m_Scene->GetCameraManager()->GetCurrentCamera();
+	Cam->Shake(0.3f, 1.5f);
 }
 
 void CSporeBoomerDataComponent::OnCollideBomb(const CollisionResult& Result)
@@ -88,7 +93,7 @@ void CSporeBoomerDataComponent::OnShootBullet()
 	Vector3 XZ = PlayerPos - MyPos;
 	XZ.y = 0.f;
 
-	ProjComp->ShootByGravityTargetPos(MyPos, XZ, 60.f, PlayerPos);
+	ProjComp->ShootByGravityTargetPos(MyPos, XZ, 60.f, PlayerPos, 50.f);
 	ProjComp->SetEndCallBack(this, &CSporeBoomerDataComponent::OnBombGround);
 	ProjComp->SetDestroy(true);
 }

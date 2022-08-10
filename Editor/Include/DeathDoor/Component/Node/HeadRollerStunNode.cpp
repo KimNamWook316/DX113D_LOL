@@ -30,6 +30,9 @@ NodeResult CHeadRollerStunNode::OnStart(float DeltaTime)
 	{
 		m_Owner->SetCurrentNode(this);
 
+		CHeadRollerDataComponent* Data = (CHeadRollerDataComponent*)(((CGameStateComponent*)m_Owner->GetOwner())->GetData());
+		Data->OnRollEnd();
+
 		CAnimationSequenceInstance* AnimInst = m_AnimationMeshComp->GetAnimationInstance();
 		AnimInst->ChangeAnimation("Stun");
 	}

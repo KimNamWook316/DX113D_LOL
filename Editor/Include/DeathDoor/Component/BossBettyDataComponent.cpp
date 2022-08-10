@@ -2,6 +2,7 @@
 #include "GameBehaviorTree.h"
 #include "GameStateComponent.h"
 #include "Component/AnimationMeshComponent.h"
+#include "Node/BossBettyHPStateCheck.h"
 #include "Component/ParticleComponent.h"
 #include "Component/ColliderBox3D.h"
 #include "Component/ColliderSphere.h"
@@ -18,7 +19,9 @@ CBossBettyDataComponent::CBossBettyDataComponent() :
 	m_ThrowFarAttackEnable(false),
 	m_FarAttackType(BossBettyFarAttackType::JumpSmash),
     m_ChangeDirLimitAngle(10.f),
-    m_CloseAttackAnimChangeEnable(true)
+    m_CloseAttackAnimChangeEnable(true),
+    m_IsInitIdle(true),
+    m_IsIntroAnimation(false)
 {
     m_ComponentType = Component_Type::ObjectComponent;
     SetTypeID<CBossBettyDataComponent>();
@@ -51,9 +54,14 @@ void CBossBettyDataComponent::Start()
     m_OriginRotSpeed = m_Data.RotateSpeedPerSec;
     m_CurRotSpeed = m_OriginRotSpeed;
 
+    // HP Setting
     m_BettyHPMax = (float)m_Data.HP;
 
-    // HitBox 에 콜백을 걸어준다.
+    // Move Z Diable
+    CMonsterDataComponent::OnDisableMoveZ();
+
+    // Look Player Disable
+    CMonsterDataComponent::OnDisableLookPlayer();
 
     // Current Animation 은 Idle 로 세팅한다.
     CAnimationSequenceInstance* AnimInst = dynamic_cast<CAnimationMeshComponent*>(m_Object->GetRootComponent())->GetAnimationInstance();
@@ -88,23 +96,46 @@ void CBossBettyDataComponent::Start()
             (CMonsterDataComponent*)this, &CMonsterDataComponent::OnHitMeleeAttack);
     }
 
-    // CParticleComponent* FoundParticle = (CParticleComponent*)(m_Object->FindComponent("AttackGrass"));
-    // 
-    // if (FoundParticle)
-    // {
-    //     FoundParticle->GetCBuffer()->SetFollowRealTimeParticleComponentPos(true);
-    //     m_vecAttackAfterEffectParticle.push_back(FoundParticle);
-    // }
-    // 
-    // FoundParticle = (CParticleComponent*)(m_Object->FindComponent("AttackCircle"));
-    // 
-    // if (FoundParticle)
-    // {
-    //     FoundParticle->GetCBuffer()->SetFollowRealTimeParticleComponentPos(true);
-    //     m_vecAttackAfterEffectParticle.push_back(FoundParticle);
-    // }
+    if (m_PlayerEnterZoneTrigger)
+    {
+        const Vector3& ZWorldAxis = m_MeleeAttackCollider->GetWorldAxis(AXIS::AXIS_Z) * -1.f;
 
+        m_PlayerEnterZoneTrigger->Enable(true);
 
+        // BossBetty 맨 앞 쪽에 세팅해둔다.
+        m_PlayerEnterZoneTrigger->SetExtent(15.f, 2.f, 5.f);
+        m_PlayerEnterZoneTrigger->SetInheritRotY(true);
+        // m_PlayerEnterZoneTrigger->SetRelativePos(ZWorldAxis * 12.0f);
+
+        m_PlayerEnterZoneTrigger->AddCollisionCallback(Collision_State::Begin,
+            this, &CBossBettyDataComponent::OnBossBettyStartCutSceneCamera);
+    }
+
+    // 카메라 Component 1번째 Index 에서 Idle 을 false 로 만들고, Intro 를 true 로 만들어서
+    // Intro Animation이 진행되게끔 세팅할 것이다
+    if (m_CutSceneCam)
+    {
+        // 혹시 모르니 Player의 카메라를 Current Camera 로 세팅할 것이다
+        // CCameraComponent* PlayerCamera = m_Scene->GetPlayerObject()->FindComponentFromType<CCameraComponent>();
+        // CSceneManager::GetInst()->GetScene()->GetCameraManager()->SetCurrentCamera(PlayerCamera);
+
+        m_CutSceneCam->AddCutSceneMoveCallBack(1, CamMoveCallBackCallType::START_MOVE, this,
+            &CBossBettyDataComponent::OnBossBettyStartIntroAnimation);
+
+        m_CutSceneCam->AddCutSceneMoveCallBack(0, CamMoveCallBackCallType::REACHED_POINT, this,
+            &CBossBettyDataComponent::OnBossBettyNormalShakeCamera);
+
+        m_CutSceneCam->AddCutSceneMoveEndCallBack<CMonsterDataComponent>((CMonsterDataComponent*)this, &CMonsterDataComponent::OnEndCutScene);
+    }
+
+    // Roar Particle
+    m_BossBettyRoarParticle = dynamic_cast<CParticleComponent*>((m_Object->FindComponent("BettyRoar")));
+
+    if (m_BossBettyRoarParticle)
+    {
+        m_BossBettyRoarParticle->Enable(false);
+    }
+ 
     // 근거리 사정 거리 판별 Square Pos 위치 만들기 
     //  0: 왼쪽 하단, 1 : 왼쪽 상단, 2 : 오른쪽 상단, 3 : 오른쪽 하단
     const Vector3& ObjectWorldScale = m_Object->GetRootComponent()->GetWorldScale();
@@ -180,16 +211,17 @@ void CBossBettyDataComponent::OnBossBettyGenerateTwoSideCloseAttackEffect()
 	// 양쪽에 
 	// 1) 충돌체 활성화
 	// 2) Particle 제작
-
-    const Vector3& XWorldAxis = m_MeleeAttackCollider->GetWorldAxis(AXIS::AXIS_X) * -1.f;
-    const Vector3& ZWorldAxis = m_MeleeAttackCollider->GetWorldAxis(AXIS::AXIS_Z) * -1.f;
-
+    const Vector3& XWorldAxis = m_MeleeAttackCollider->GetRelativeAxis(AXIS::AXIS_X) * -1.f;
+    const Vector3& ZWorldAxis = m_MeleeAttackCollider->GetRelativeAxis(AXIS::AXIS_Z) * -1.f;
+    
     const Vector3& ColliderRelativePos = ZWorldAxis * 6.0f;
-
+    
     m_MeleeAttackCollider->SetRelativePos(ColliderRelativePos);
     m_MeleeAttackCollider->SetExtent(4.f, 2.5f, 2.5f);
-
+    
     OnBossBettyActivateAfterEffect(m_Object->GetWorldPos() + ColliderRelativePos);
+
+    // OnBossBettyActivateAfterEffect(m_Object->GetWorldPos());
 }
 
 void CBossBettyDataComponent::OnSetBossBettyAttackColliderPosToBettyBody()
@@ -200,27 +232,28 @@ void CBossBettyDataComponent::OnSetBossBettyAttackColliderPosToBettyBody()
 
 void CBossBettyDataComponent::OnBossBettyGenerateRightCloseAttackEffect()
 {
-    const Vector3& XWorldAxis = m_MeleeAttackCollider->GetWorldAxis(AXIS::AXIS_X) * -1.f;
-    const Vector3& ZWorldAxis = m_MeleeAttackCollider->GetWorldAxis(AXIS::AXIS_Z) * -1.f;
-
-    const Vector3& ColliderRelativePos = XWorldAxis * 3.0f + ZWorldAxis * 3.0f;
-
+    const Vector3& XWorldAxis = m_MeleeAttackCollider->GetRelativeAxis(AXIS::AXIS_X) * -1.f;
+    const Vector3& ZWorldAxis = m_MeleeAttackCollider->GetRelativeAxis(AXIS::AXIS_Z) * -1.f;
+    
+    const Vector3& ColliderRelativePos = XWorldAxis * 3.0f + ZWorldAxis * 4.0f;
+    
     m_MeleeAttackCollider->SetRelativePos(ColliderRelativePos);
-    m_MeleeAttackCollider->SetExtent(2.5f, 2.5f, 5.f);
-
+    m_MeleeAttackCollider->SetExtent(3.5f, 2.5f, 5.f);
+    
     OnBossBettyActivateAfterEffect(m_Object->GetWorldPos() + ColliderRelativePos);
+
 }
 
 void CBossBettyDataComponent::OnBossBettyGenerateLeftCloseAttackEffect()
 {
-    const Vector3& XWorldAxis = m_MeleeAttackCollider->GetWorldAxis(AXIS::AXIS_X) * -1.f;
-    const Vector3& ZWorldAxis = m_MeleeAttackCollider->GetWorldAxis(AXIS::AXIS_Z) * -1.f;
-
-    const Vector3& ColliderRelativePos = XWorldAxis * 3.5f * -1.f + ZWorldAxis * 3.0f;
-
+    const Vector3& XWorldAxis = m_MeleeAttackCollider->GetRelativeAxis(AXIS::AXIS_X) * -1.f;
+    const Vector3& ZWorldAxis = m_MeleeAttackCollider->GetRelativeAxis(AXIS::AXIS_Z) * -1.f;
+    
+    const Vector3& ColliderRelativePos = XWorldAxis * 3.5f * -1.f + ZWorldAxis * 4.0f;
+    
     m_MeleeAttackCollider->SetRelativePos(ColliderRelativePos);
-    m_MeleeAttackCollider->SetExtent(2.5f, 2.5f, 5.f);
-
+    m_MeleeAttackCollider->SetExtent(3.5f, 2.5f, 5.f);
+    
     OnBossBettyActivateAfterEffect(m_Object->GetWorldPos() + ColliderRelativePos);
 }
 
@@ -288,6 +321,8 @@ void CBossBettyDataComponent::OnBossBettyDisableSpinCollider()
 void CBossBettyDataComponent::OnBossBettyEnableSpinCollider()
 {
     m_BossBettySpinCollider->Enable(true);
+
+    m_BossBettySpinCollider->SetRelativePos(0.f, 0.f, 0.f);
 }
 
 void CBossBettyDataComponent::OnBossBettySetCurrentNodeNullPtr()
@@ -330,11 +365,17 @@ void CBossBettyDataComponent::OnBossBettyActivateAfterEffect(const Vector3& Worl
 {
     CGameObject* AfterEffectParticle = CObjectPool::GetInst()->GetParticle("BettyAttackAfterEffect", CSceneManager::GetInst()->GetScene());
 
-    CColliderComponent* Collider3D = AfterEffectParticle->FindComponentFromType<CColliderBox3D>();
+    AfterEffectParticle->Enable(true);
+
+    CColliderBox3D* Collider3D = AfterEffectParticle->FindComponentFromType<CColliderBox3D>();
 
     Collider3D->AddCollisionCallback(Collision_State::Begin, (CMonsterDataComponent*)this, &CMonsterDataComponent::OnHitMeleeAttack);
 
+    Collider3D->SetExtent(2.5f, 2.f, 2.5f);
+
     AfterEffectParticle->StartParticle(WorldPos);
+
+    Collider3D->SetEnablePossibleTime(AfterEffectParticle->GetLifeSpan() * 0.5f);
 }
 
 void CBossBettyDataComponent::OnBossBettyEnableCloseAttackChangeAnim()
@@ -345,6 +386,45 @@ void CBossBettyDataComponent::OnBossBettyEnableCloseAttackChangeAnim()
 void CBossBettyDataComponent::OnBossBettyDisableCloseAttackChangeAnim()
 {
     m_CloseAttackAnimChangeEnable = false;
+}
+
+void CBossBettyDataComponent::OnBossBettyEndIntroAndStartGame()
+{
+    m_IsInitIdle = false;
+    m_IsIntroAnimation = false;
+}
+
+void CBossBettyDataComponent::OnBossBettyStartIntroAnimation()
+{
+    OnBossBettySetCurrentNodeNullPtr();
+
+    m_IsInitIdle = false;
+    m_IsIntroAnimation = true;
+}
+
+void CBossBettyDataComponent::OnBossBettyForceCheckHPState()
+{
+    CNode* HPStateCheckNode = m_State->GetBehaviorTree()->FindNodeByType<CBossBettyHPStateCheck>();
+
+    CNode* HPRelatedCheckNodeTop = HPStateCheckNode->GetParent()->GetParent();
+
+    m_State->GetBehaviorTree()->SetCurrentNode(HPRelatedCheckNodeTop);
+}
+
+void CBossBettyDataComponent::OnBossBettyStartCutSceneCamera(const CollisionResult& Result)
+{
+    CMonsterDataComponent::OnStartCutScene();
+
+    // CCameraComponent* BettyCamera = m_Object->FindComponentFromType<CCameraComponent>();
+    // BettyCamera->StartCutSceneMove();
+
+    // 이후 Player Trigger 는 Enable False 처리해준다. -> Monster Data Component 에서 처리해주고 있다.
+    // m_PlayerEnterZoneTrigger->Enable(false);
+}
+
+void CBossBettyDataComponent::OnBossBettyActivateRoarParticle()
+{
+    m_BossBettyRoarParticle->StartParticle(m_Object->GetWorldPos());
 }
 
 void CBossBettyDataComponent::IncFarAttackCount()

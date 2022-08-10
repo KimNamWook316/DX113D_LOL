@@ -41,6 +41,8 @@ enum class DDActionNode
 	BossBettyJumpAttack,
 	BossBettySpinAttack,
 	BossBettyThrowAttack,
+	BossBettyIntro,
+	BossBettyIdleBeast,
 	// CrowBoss
 	CrowBossCutScenePlayNode,
 	CrowBossRunNode,
@@ -69,6 +71,11 @@ enum class DDActionNode
 	// Lurker
 	LurkerHop,
 	LurkerMeleeAttackPrep,
+	// Grunt Monster Common
+	GruntCommonAttack,
+	GruntCommonWalk,
+	GruntCommonTrace,
+	GruntCommonHit,
 	Max
 };
 
@@ -117,6 +124,8 @@ enum class DDConditionNode
 	BossBettyCheckFarAttackType,
 	BossBettyCheckHPState,
 	BossBettyCheckThrowAttack,
+	BossBettyCheckIdle,
+	BossBettyCheckIntro,
 	// CrowBoss
 	CrowBossCutScenePlayCheck,
 	CrowBossPhasePickNode,
@@ -150,6 +159,7 @@ enum class DDSceneComponentType
 	PlayerBowComponent,
 	LadderCollider,
 	CrackedBlockCollider,
+	ArrowCollisionFireCollider,
 	Max
 };
 
@@ -161,6 +171,7 @@ enum class DDObjectComponentType
 	MonsterData,
 	KnightData,
 	BossBettyData,
+	GruntCommonData,
 	CrowBossData,
 	LurkerData,
 	MonsterNavAgent,

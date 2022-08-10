@@ -25,10 +25,17 @@ NodeResult CBossBettyHPStateCheck::OnStart(float DeltaTime)
 	if (BettyHPState == BossBettyHPState::Below30 ||
 		BettyHPState == BossBettyHPState::Below60)
 	{
+		// ChangeAttackDirNode 에서 끝나고 나서, 강제로 HPStateCheck의 Node의 Parent, Parent Node 를 
+		// CurrentNode 로 세팅해주고 있다.
+		// HPState 를 한번 체크하고 나면 다시 Null 로 되돌려준다w sdddddddddd.
+		m_Owner->SetCurrentNode(nullptr);
+
 		return NodeResult::Node_True;
 	}
 	else
 	{
+		m_Owner->SetCurrentNode(nullptr);
+
 		return NodeResult::Node_False;
 	}
 }

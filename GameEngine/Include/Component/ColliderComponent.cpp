@@ -230,6 +230,18 @@ bool CColliderComponent::Init()
 void CColliderComponent::Update(float DeltaTime)
 {
 	CSceneComponent::Update(DeltaTime);
+
+	// if (m_EnablePossibleTime > 0.f && IsEnable())
+	// {
+	// 	m_EnablePossibleTime -= DeltaTime;
+	// 
+	// 	if (m_EnablePossibleTime <= 0.f)
+	// 	{
+	// 		CRef::Enable(false);
+	// 
+	// 		m_EnablePossibleTime = 0.f;
+	// 	}
+	// }
 }
 
 void CColliderComponent::PostUpdate(float DeltaTime)
@@ -361,6 +373,8 @@ bool CColliderComponent::CollisionRay(const Ray& Ray)
 void CColliderComponent::Reset()
 {
 	CSceneComponent::Reset();
+
+	m_EnablePossibleTime = 0.f;
 
 	Enable(false);
 }
