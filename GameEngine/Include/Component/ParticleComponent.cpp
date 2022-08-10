@@ -282,12 +282,13 @@ void CParticleComponent::Update(float DeltaTime)
 	{
 		m_SpawnTime -= m_SpawnTimeMax;
 		m_CBuffer->SetSpawnEnable(1);
+		m_SpawnTime = 0.f;
 
 		// SpawnTime 은 0으로 만든다.
-		if (m_CBuffer->IsDisableNewAlive() == 1)
-		{
-			m_SpawnTime = 0.f;
-		}
+		// if (m_CBuffer->IsDisableNewAlive() == 1)
+		// {
+		// 	m_SpawnTime = 0.f;
+		// }
 	}
 	else
 	{

@@ -786,6 +786,12 @@ void CEffectEditor::OnDisableNewAlive(const char*, bool Enable)
 
     m_ParticleClass->SetDisableNewAlive(Enable);
     dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetDisableNewAlive(Enable);
+
+    // 기존에 세팅해둔 SpawnTimeMax 값으로 다시 세팅한다.
+    if (Enable == false)
+    {
+        OnSpawnTimeMaxEdit(m_SpawnTimeMaxEdit->GetVal());
+    }
 }
 
 void CEffectEditor::OnIsUVClippingReflectingMoveDirEdit(const char*, bool Enable)

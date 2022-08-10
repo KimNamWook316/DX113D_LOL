@@ -47,7 +47,7 @@ void CArrowComponent::Reset()
 
 	m_Object->SetWorldRotation(0.f, 0.f, 0.f);
 
-	m_OnFire = true;
+	m_OnFire = false;
 }
 
 void CArrowComponent::Update(float DeltaTime)

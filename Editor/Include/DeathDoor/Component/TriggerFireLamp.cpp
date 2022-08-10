@@ -1,5 +1,6 @@
 #include "TriggerFireLamp.h"
 #include "ArrowCollisionFireCollider.h"
+#include "Component/LightComponent.h"
 
 // ArrowCollisionFireCollider 들을 관리하는 Object Data Component
 CTriggerFireLamp::CTriggerFireLamp() :
@@ -12,7 +13,7 @@ CTriggerFireLamp::~CTriggerFireLamp()
 {
 }
 
-void CTriggerFireLamp::InActiveCount()
+void CTriggerFireLamp::IncActiveCount()
 {
 	m_NumCurActiveFireLamp += 1;
 
@@ -33,7 +34,7 @@ void CTriggerFireLamp::Start()
 	size_t ChildCount = m_Object->GetChildObjectCount();
 
 	m_NumFullActiveFireLamp = 0;
-	m_NumCurActiveFireLamp = 0;
+	m_NumCurActiveFireLamp = 1; // 처음에는 한개가 켜질 것이다.
 	m_CurrentActive = false;
 
 	for (size_t i = 0; i < ChildCount; ++i)
@@ -44,5 +45,13 @@ void CTriggerFireLamp::Start()
 		{
 			m_NumFullActiveFireLamp += 1;
 		}
+
+		// 첫번째 Fire 는 켜지게 한다.
+		// if (i == 0)
+		if (VecChildObject[i]->GetName() == "FireBowl")
+		{
+			Component->SetFirstManagedChildByTriggerLamp(true);
+		}
 	}
+
 }

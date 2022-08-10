@@ -1,4 +1,5 @@
 #include "ArrowCollisionFireCollider.h"
+#include "TriggerFireLamp.h"
 #include "Component/StaticMeshComponent.h"
 #include "Component/ParticleComponent.h"
 #include "Component/LightComponent.h"
@@ -38,6 +39,7 @@ void CArrowCollisionFireCollider::Start()
 	SetCollisionProfile("Monster");
 
 	// 모든 Particle Component 들을 Enable False 처리해둔다.
+	// 단, 첫번째에 해당하는 불은, m_FirstManagedChildByTriggerLamp 를 true 로 세팅해줄 것이다.
 	std::vector<CParticleComponent*> vecParticleComponents;
 	m_Object->FindAllSceneComponentFromType<CParticleComponent>(vecParticleComponents);
 
@@ -45,14 +47,14 @@ void CArrowCollisionFireCollider::Start()
 
 	for (size_t i = 0; i < ComponentSize; ++i)
 	{
-		vecParticleComponents[i]->CRef::Enable(false);
+		vecParticleComponents[i]->CRef::Enable(m_FirstManagedChildByTriggerLamp);
 	}
 
 	// Light Component 또한 Enable False 처리 한다.
 	CLightComponent* Light = m_Object->FindComponentFromType<CLightComponent>();
 
 	if (Light)
-		Light->CRef::Enable(false);
+		Light->CRef::Enable(m_FirstManagedChildByTriggerLamp);
 }
 
 void CArrowCollisionFireCollider::Update(float DeltaTime)
@@ -85,6 +87,16 @@ void CArrowCollisionFireCollider::OnCollidePlayerArrow(const CollisionResult& Re
 
 			if (Light)
 				Light->CRef::Enable(true);
+
+			// 부모 Object 의 TriggerFireLamp Component 에게 하나 켜졌다고 알려준다.
+			CGameObject* ParentObject = m_Object->GetParentObject();
+
+			if (ParentObject)
+			{
+				CTriggerFireLamp* FireLampManager = ParentObject->FindComponentFromType<CTriggerFireLamp>();
+
+				FireLampManager->IncActiveCount();
+			}
 		}
 	}
 }

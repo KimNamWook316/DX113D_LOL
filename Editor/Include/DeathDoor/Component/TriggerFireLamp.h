@@ -25,7 +25,7 @@ public:
 		return m_CurrentActive;
 	}
 
-	void InActiveCount();
+	void IncActiveCount();
 
 public:
 	virtual void Start() override;
