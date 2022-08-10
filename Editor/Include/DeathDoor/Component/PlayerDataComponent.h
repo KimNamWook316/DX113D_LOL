@@ -40,6 +40,8 @@ private:
 	class CGameObject* m_AdjLadder;
 	class CStaticMeshComponent* m_Slash;
 	class CAnimationMeshComponent* m_Sword;
+	std::vector<class CParticleComponent*> m_vecMoveDust;
+	int m_CurrentDustIndex;
 	Vector3 m_SlashDir;
 
 public:
@@ -227,5 +229,6 @@ public:
 	void ForceUpdateAttackDirection();
 	void OnEnableAttackCollider();
 	void OnDisableAttackCollider();
+	void OnResetDustParticle();
 };
 
