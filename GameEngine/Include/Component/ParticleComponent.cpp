@@ -15,6 +15,7 @@ CParticleComponent::CParticleComponent()	:
 	m_SpawnTimeMax(0.01f),
 	m_Info{},
 	m_BillBoardEffect(false),
+	m_UpdateInitBillBoardDir(false),
 	// m_BazierMoveEffect(false),
 	// m_ParticleMoveSpeed(20.f),
 	m_TempCreateAccTimeMax(5.f),
@@ -77,12 +78,11 @@ CParticleComponent::~CParticleComponent()
 
 void CParticleComponent::StartParticle(const Vector3& StartPos)
 {
-	Enable(true);
+	CRef::Enable(true);
 	SetWorldPos(StartPos);
 	RecreateOnlyOnceCreatedParticle();
 
-	m_InitBillBoardZLookDir = Vector3(0.f, 0.f, 0.f);
-	m_InitBillBoardXLookDir = Vector3(0.f, 0.f, 0.f);
+	m_UpdateInitBillBoardDir = true;
 }
 
 void CParticleComponent::SetParticle(const std::string& Name)
@@ -342,17 +342,19 @@ void CParticleComponent::PostUpdate(float DeltaTime)
 
 	if (m_BillBoardEffect)
 	{
-		Vector3 ZLookDir = m_Object->GetWorldAxis(AXIS::AXIS_Z) * -1.f;
-		Vector3 XLookDir = m_Object->GetWorldAxis(AXIS::AXIS_X) * -1.f;
+		// Particle Component 자체가 Rotation Inherit 을 하지 않는 상태일 수 있다.
+		// Vector3 ZLookDir = m_Object->GetWorldAxis(AXIS::AXIS_Z) * -1.f;
+		// Vector3 XLookDir = m_Object->GetWorldAxis(AXIS::AXIS_X) * -1.f;
+		Vector3 ZLookDir = GetWorldAxis(AXIS::AXIS_Z) * -1.f;
+		Vector3 XLookDir = GetWorldAxis(AXIS::AXIS_X) * -1.f;
 
-		// 처음 만들어지는 순간의 ZLookDir, XLookDir 을 세팅해준다.
-		if (m_InitBillBoardZLookDir.x == 0.f)
+		// 처음 만들어지는 순간의 ZLookDir, XLoosdkDir 을 세팅해준다.
+		if (m_UpdateInitBillBoardDir)
 		{
 			m_InitBillBoardZLookDir = ZLookDir;
-		}
-		if (m_InitBillBoardXLookDir.x == 0.f)
-		{
 			m_InitBillBoardXLookDir = XLookDir;
+
+			m_UpdateInitBillBoardDir = false;
 		}
 
 		// 카메라를 계속 바라보게 만든다.
@@ -369,10 +371,12 @@ void CParticleComponent::PostUpdate(float DeltaTime)
 			View.y = 0.f;
 
 			float AngleBetween = m_InitBillBoardZLookDir.Angle(View);
+			// float AngleBetween = ZLookDir.Angle(View);
 
 			// Object 기준 오른편에 있다면, 180 도를 넘어가는 것
 			// 하지만 acos 는 0 에서 180 도 사이의 값만을 리턴한다.
 			if (View.Dot(m_InitBillBoardXLookDir) > 0)
+			// if (View.Dot(XLookDir) > 0)
 			{
 				AngleBetween = 180.f + (180.f - AngleBetween);
 			}
@@ -586,6 +590,7 @@ void CParticleComponent::RecreateOnlyOnceCreatedParticleWithOutLifeTimeSetting()
 
 	CRef::Enable(true);
 
+	// Render 가 되도록 세팅한다.
 	m_Render = true;
 
 	size_t	BufferCount = m_vecStructuredBuffer.size();
@@ -721,6 +726,9 @@ bool CParticleComponent::LoadOnly(FILE* File)
 	fread(&m_BillBoardEffect, sizeof(bool), 1, File);
 	fread(&m_SpawnTimeMax, sizeof(float), 1, File);
 
+	// Update Bill Board Dir 을 할 수 있도록 체크한다.
+	m_UpdateInitBillBoardDir = true;
+
 	return true;
 }
 
@@ -728,6 +736,5 @@ void CParticleComponent::SetBillBoardEffect(bool Enable)
 {
 	m_BillBoardEffect = Enable;
 
-	m_InitBillBoardXLookDir = Vector3(0.f, 0.f, 0.f);
-	m_InitBillBoardZLookDir = Vector3(0.f, 0.f, 0.f);
+	m_UpdateInitBillBoardDir = true;
 }

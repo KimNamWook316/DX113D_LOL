@@ -31,6 +31,7 @@ protected:
 	float									m_SpawnTimeMax;
 	// BillBoard
 	bool  m_BillBoardEffect;
+	bool m_UpdateInitBillBoardDir;
 	Vector3 m_InitBillBoardZLookDir;
 	Vector3 m_InitBillBoardXLookDir;
 	// Move

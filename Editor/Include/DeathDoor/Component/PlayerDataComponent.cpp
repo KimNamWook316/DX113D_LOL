@@ -415,16 +415,18 @@ void CPlayerDataComponent::ForceUpdateAttackDirection()
 
 void CPlayerDataComponent::OnResetDustParticle()
 {
-	Vector3 ObjectPos = m_Object->GetWorldPos();
-	Vector3 ZDir = m_Object->GetWorldAxis(AXIS_Z);
+	if (m_vecMoveDust.size() > 0)
+	{
+		Vector3 ObjectPos = m_Object->GetWorldPos();
+		Vector3 ZDir = m_Object->GetWorldAxis(AXIS_Z);
 
-	m_vecMoveDust[m_CurrentDustIndex]->SetWorldPos(ObjectPos.x + ZDir.x, ObjectPos.y + 1.f, ObjectPos.z + ZDir.z);
+		if (m_vecMoveDust[m_CurrentDustIndex])
+			m_vecMoveDust[m_CurrentDustIndex]->StartParticle(Vector3(ObjectPos.x + ZDir.x, ObjectPos.y + 1.f, ObjectPos.z + ZDir.z));
+		// m_vecMoveDust[m_CurrentDustIndex]->RecreateOnlyOnceCreatedParticleWithOutLifeTimeSetting();
 
-	if (m_vecMoveDust[m_CurrentDustIndex])
-		m_vecMoveDust[m_CurrentDustIndex]->RecreateOnlyOnceCreatedParticleWithOutLifeTimeSetting();
+		++m_CurrentDustIndex;
 
-	++m_CurrentDustIndex;
-
-	if (m_CurrentDustIndex >= m_vecMoveDust.size())
-		m_CurrentDustIndex = 0;
+		if (m_CurrentDustIndex >= m_vecMoveDust.size())
+			m_CurrentDustIndex = 0;
+	}
 }

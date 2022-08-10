@@ -31,6 +31,7 @@ protected:
 	float									m_SpawnTimeMax;
 	// BillBoard
 	bool  m_BillBoardEffect;
+	bool m_UpdateInitBillBoardDir;
 	Vector3 m_InitBillBoardZLookDir;
 	Vector3 m_InitBillBoardXLookDir;
 	// Move
@@ -98,6 +99,14 @@ public:
 		return m_Material;
 	}
 public:
+	// void SetGravityEffect(bool Enable)
+	// {
+	// 	m_ParticleMoveSpeed = Enable;
+	// }
+	// void SetParticleMoveSpeed(float Speed)
+	// {
+	// 	m_ParticleMoveSpeed = Speed;
+	// }
 	void SetParticleClassFileName(const std::string& ParticleFileName)
 	{
 		m_ParticleName = ParticleFileName;
@@ -107,6 +116,11 @@ public:
 		m_Material = Material;
 	}
 	void SetBillBoardEffect(bool Enable);
+	
+	// void SetBazierMoveEffect(bool Enable)
+	// {
+	// 	m_BazierMoveEffect = Enable;
+	// }
 	void SetInitActiveDelayTime(float Time)
 	{
 		m_InitActiveDelayTime = Time;
