@@ -80,6 +80,9 @@ void CParticleComponent::StartParticle(const Vector3& StartPos)
 	Enable(true);
 	SetWorldPos(StartPos);
 	RecreateOnlyOnceCreatedParticle();
+
+	m_InitBillBoardZLookDir = Vector3(0.f, 0.f, 0.f);
+	m_InitBillBoardXLookDir = Vector3(0.f, 0.f, 0.f);
 }
 
 void CParticleComponent::SetParticle(const std::string& Name)
@@ -227,6 +230,9 @@ void CParticleComponent::Reset()
 	{
 		m_vecStructuredBuffer[i]->ResetShader();
 	}
+
+	m_InitBillBoardZLookDir = Vector3(0.f, 0.f, 0.f);
+	m_InitBillBoardXLookDir = Vector3(0.f, 0.f, 0.f);
 }
 
 void CParticleComponent::Update(float DeltaTime)
@@ -336,6 +342,19 @@ void CParticleComponent::PostUpdate(float DeltaTime)
 
 	if (m_BillBoardEffect)
 	{
+		Vector3 ZLookDir = m_Object->GetWorldAxis(AXIS::AXIS_Z) * -1.f;
+		Vector3 XLookDir = m_Object->GetWorldAxis(AXIS::AXIS_X) * -1.f;
+
+		// 처음 만들어지는 순간의 ZLookDir, XLookDir 을 세팅해준다.
+		if (m_InitBillBoardZLookDir.x == 0.f)
+		{
+			m_InitBillBoardZLookDir = ZLookDir;
+		}
+		if (m_InitBillBoardXLookDir.x == 0.f)
+		{
+			m_InitBillBoardXLookDir = XLookDir;
+		}
+
 		// 카메라를 계속 바라보게 만든다.
 		// 카메라의 위치를 얻어온다.
 		Vector3 CameraPos = m_Scene->GetCameraManager()->GetCurrentCamera()->GetWorldPos();
@@ -349,14 +368,11 @@ void CParticleComponent::PostUpdate(float DeltaTime)
 			Vector3	View = CameraPos - GetWorldPos();
 			View.y = 0.f;
 
-			Vector3 ZLookDir = m_Object->GetWorldAxis(AXIS::AXIS_Z) * -1.f;
-			Vector3 XLookDir = m_Object->GetWorldAxis(AXIS::AXIS_X) * -1.f;
-
-			float AngleBetween = ZLookDir.Angle(View);
+			float AngleBetween = m_InitBillBoardZLookDir.Angle(View);
 
 			// Object 기준 오른편에 있다면, 180 도를 넘어가는 것
 			// 하지만 acos 는 0 에서 180 도 사이의 값만을 리턴한다.
-			if (View.Dot(XLookDir) > 0)
+			if (View.Dot(m_InitBillBoardXLookDir) > 0)
 			{
 				AngleBetween = 180.f + (180.f - AngleBetween);
 			}

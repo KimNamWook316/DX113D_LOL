@@ -67,7 +67,7 @@ void CArrowCollisionFireCollider::OnCollidePlayerArrow(const CollisionResult& Re
 	// 2) 장작에 불이 붙었다면, Arrow 에 불을 붙인다.
 
 	// 2. Arrow 가 불이 붙어있다면 
-	// 1) 장작에 불이 붙어있지 않다면, 장작에 불을 붙인다 (CArrowCollisionFireCollider 에서 해주는 일)
+	// 1) 장작에 불이 붙어있지 않다면, 장작에 불을 붙인다 (CArrowCollisionFireCollider 에서 해주는 일)aw1
 	// 2) 장작에 불이 붙어 있다면, 아무 일도 없게 한다.
 
 	if (Result.Dest->GetGameObject()->GetName() == "PlayerArrow")

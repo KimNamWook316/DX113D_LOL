@@ -156,9 +156,13 @@ void CPlayerBowComponent::ShootArrow(const Vector3& ShootDir)
 
 	for (size_t i = 0; i < ParticleSize; ++i)
 	{
-		vecArrowParticles[i]->Enable(false);
+		vecArrowParticles[i]->CRef::Enable(false);
 	}
 
+	CLightComponent* ArrowLight = m_Arrow->FindComponentFromType<CLightComponent>();
+	ArrowLight->CRef::Enable(false);
+
+	// Arrow 발사
 	m_Arrow->SetWorldPos(MyPos.x + ShootDir.x, MyPos.y + 2.f, MyPos.z + ShootDir.z);
 
 	CArrowComponent* Comp = m_Arrow->FindObjectComponentFromType<CArrowComponent>();
@@ -235,6 +239,7 @@ void CPlayerBowComponent::OnCollision(const CollisionResult& Result)
 
 				for (size_t i = 0; i < ParticleSize; ++i)
 				{
+					vecArrowParticles[i]->CRef::Enable(true);
 					vecArrowParticles[i]->AddWorldRotationY(YRotAngle);
 				}
 
@@ -245,8 +250,22 @@ void CPlayerBowComponent::OnCollision(const CollisionResult& Result)
 
 				// >> Arrow Comp 가 Fire 이 붙었다고 표시하기 
 				ArrowComp->SetArrowOnFireEnable(true);
+			}
+			
+			// Arrow 에 불이 붙은 상태이고
+			// 장작에는 불이 붙지 않은 상태라면
+			// 장작에 불을 붙이고 (이것은 ArrowCollisionFireCollider 에서 해준다.)
+			// Arrow 는 Destroy 시킨다.
+			else if (IsArrowOnFire && ArrowFireCollider->IsFireOnByArrow() == false)
+			{
+				m_Object->GetScene()->GetCameraManager()->ShakeCamera(0.4f, 1.f);
 
+				// OnCollision에서 바로 Destroy하면 CCollisionSection::Collision에서 m_vecCollider의 size가 갑자기 바뀌어서 문제가 되므로
+				// m_Destroy = true로 만들어줬다가 PrevRender 함수에서 m_Destroy가 true면 Destroy
 				m_Destroy = true;
+
+				if (m_Arrow)
+					m_Arrow->Destroy();
 			}
 		}
 	}

@@ -111,6 +111,15 @@ private:
 	bool	m_NoUpdate;
 
 	std::function<void(const Vector3&)> m_EndCallBack;
+
+	// Speed Change
+	float m_InitSpeed;
+
+	// Bazier
+	bool m_MoveBazier;
+	float m_BazierMoveTargetDist;
+	float m_BazierMoveCurAccDist;
+	float m_BazierMoveAccTime;
 	std::queue<Vector3> m_queueBazierMovePos;
 
 public:
