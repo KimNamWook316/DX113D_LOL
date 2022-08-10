@@ -4,8 +4,6 @@
 #include "Component/ColliderSphere.h"
 #include "Component/ParticleComponent.h"
 
-#define FIXED_GRAVITY 9.8f 
-
 CProjectileComponent::CProjectileComponent()	:
 	// m_Destroy(false),
 	m_Destroy(true), // OBJ°¡ true ·Î ¹Ù²Þ
@@ -69,7 +67,7 @@ void CProjectileComponent::Update(float DeltaTime)
 		if (m_IsGravity)
 		{
 			Move = Vector3(m_Dir.x * m_VelocityXZ * m_LifeTimer,
-				(((m_VelocityY * m_LifeTimer) - ((FIXED_GRAVITY * m_LifeTimer * m_LifeTimer) / 2.f))),
+				(((m_VelocityY * m_LifeTimer) - ((m_Gravity * m_LifeTimer * m_LifeTimer) / 2.f))),
 				m_Dir.z * m_VelocityXZ * m_LifeTimer);
 			m_Root->SetWorldPos(m_StartPos + Move);
 		}
@@ -168,7 +166,7 @@ void CProjectileComponent::ShootByLifeTime(const Vector3& StartPos, const Vector
 	m_Root->SetWorldPos(StartPos);
 }
 
-void CProjectileComponent::ShootByGravityTargetPos(const Vector3& StartPos, const Vector3& XZDir, float Angle, const Vector3& TargetPos, CGameObject* EndParticleObj)
+void CProjectileComponent::ShootByGravityTargetPos(const Vector3& StartPos, const Vector3& XZDir, float Angle, const Vector3& TargetPos, float Gravity, CGameObject* EndParticleObj)
 {
 	m_LifeTimer = 0.f;
 	m_IsShoot = true;
@@ -177,15 +175,16 @@ void CProjectileComponent::ShootByGravityTargetPos(const Vector3& StartPos, cons
 	m_Dir = XZDir;	
 	m_TargetPos = TargetPos;
 	m_EndParticleObject = EndParticleObj;
+	m_Gravity = Gravity;
 	m_Dir.Normalize();
 
 	Vector3 StartXZ = Vector3(StartPos.x, 0.f, StartPos.z);
 	Vector3 TargetXZ = Vector3(TargetPos.x, 0.f, TargetPos.z);
 	float DistanceXZ = StartXZ.Distance(TargetXZ);
-	float Velocity = sqrtf((DistanceXZ * FIXED_GRAVITY) / sinf(DegreeToRadian(2.f * Angle)));
+	float Velocity = sqrtf((DistanceXZ * Gravity) / sinf(DegreeToRadian(2.f * Angle)));
 	m_VelocityXZ = Velocity * cosf(DegreeToRadian(Angle));
 	m_VelocityY = Velocity * sinf(DegreeToRadian(Angle));
-	m_LifeTime = (2 * Velocity * sinf(DegreeToRadian(Angle))) / FIXED_GRAVITY;
+	m_LifeTime = (2 * Velocity * sinf(DegreeToRadian(Angle))) / Gravity;
 	m_LifeTime += 0.5f;
 }
 

@@ -676,8 +676,6 @@ void CDDInstanceSceneMode::OnSpawnDoorPaperBurnEnd()
 	CGameObject* Monster = CObjectPool::GetInst()->GetMonster(Set.Info->MonsterName, m_Scene);
 	Monster->SetWorldPos(Set.Info->SpawnPosition);
 	Monster->SetWorldRotation(Set.Info->SpawnRotation);
-	// GetMonster에서 Start이미 해주고 있음
-	//Monster->Start();
 
 	CGameStateComponent* State = Monster->FindObjectComponentFromType<CGameStateComponent>();
 	State->SetTreeUpdate(true);

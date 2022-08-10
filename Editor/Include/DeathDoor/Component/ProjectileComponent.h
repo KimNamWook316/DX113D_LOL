@@ -36,7 +36,7 @@ public:
 		float Speed, float LifeTime,
 		class CGameObject* EndParticleObj = nullptr);
 	void ShootByGravityTargetPos(const Vector3& StartPos, const Vector3& XZDir, float Angle,
-		const Vector3& TargetPos, class CGameObject* EndParticleObj = nullptr);
+		const Vector3& TargetPos, float Gravity = 9.8f, class CGameObject* EndParticleObj = nullptr);
 
 	void ClearCollsionCallBack();
 	bool CheckDestroy();
@@ -100,6 +100,7 @@ private:
 	bool	m_IsShoot;
 
 	bool	m_IsGravity;
+	float	m_Gravity;
 	float	m_VelocityXZ;
 	float	m_VelocityY;
 

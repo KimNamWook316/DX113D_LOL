@@ -326,6 +326,11 @@ std::string CEngineUtil::ExtractFilePathFromFullPath(const std::string& FullPath
 
 					break;
 				}
+				else
+				{
+					DirIndcies[0] = DirIndcies[1] - 2;
+					SlashCount = 1;
+				}
 			}
 			else
 			{

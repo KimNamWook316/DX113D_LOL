@@ -96,8 +96,16 @@ void CHeadRollerDataComponent::OnRollEnd()
 {
 	SetCurrentNodeNull();
 
+	Vector3 WorldPos = m_Object->GetWorldPos();
 	Vector3 PrevPos = m_Object->GetPrevFramePos();
+
 	m_Object->SetWorldPos(PrevPos);
+
+	if (PrevPos == Vector3::Zero)
+	{
+		m_Object->SetWorldPos(WorldPos);
+	}
+
 	m_MoveZ = false;
 	m_CurMoveSpeed = 0.f;
 	m_Rolling = false;
