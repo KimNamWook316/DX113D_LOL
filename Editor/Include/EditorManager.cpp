@@ -442,12 +442,6 @@ CComponent* CEditorManager::CreateComponent(CGameObject* Obj, size_t Type)
 		return Component;
 	}
 
-	else if (Type == typeid(CObjectDataComponent).hash_code())
-	{
-		CObjectDataComponent* Component = Obj->LoadObjectComponent<CObjectDataComponent>();
-
-		return Component;
-	}
 
 	else if (Type == typeid(CLightComponent).hash_code())
 	{
@@ -461,6 +455,19 @@ CComponent* CEditorManager::CreateComponent(CGameObject* Obj, size_t Type)
 		return Component;
 	}
 
+	else if (Type == typeid(CArrowCollisionFireCollider).hash_code())
+	{
+		CArrowCollisionFireCollider* Component = Obj->LoadComponent<CArrowCollisionFireCollider>();
+		return Component;
+	}
+
+	// 아래로는 Object Data Component =================
+	else if (Type == typeid(CObjectDataComponent).hash_code())
+	{
+	CObjectDataComponent* Component = Obj->LoadObjectComponent<CObjectDataComponent>();
+
+	return Component;
+	}
 	else if (Type == typeid(CPlayerDataComponent).hash_code())
 	{
 		CPlayerDataComponent* Component = Obj->LoadObjectComponent<CPlayerDataComponent>();
@@ -607,11 +614,7 @@ CComponent* CEditorManager::CreateComponent(CGameObject* Obj, size_t Type)
 	}
 
 
-	else if (Type == typeid(CArrowCollisionFireCollider).hash_code())
-	{
-		CArrowCollisionFireCollider* Component = Obj->LoadObjectComponent<CArrowCollisionFireCollider>();
-		return Component;
-	}
+
 
 
 	return nullptr;

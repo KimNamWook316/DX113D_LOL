@@ -438,9 +438,10 @@ void CMaterialEditor::OnSetTextureBtn()
 		}
 
 		// FullPath 추출
-		const char* FileFullPathMultibyte = CEditorUtil::ChangeTCHARTextToMultibyte(FileFullPath);
 		char FileFullPathMultibyteCopy[MAX_PATH] = {};
-		strcpy_s(FileFullPathMultibyteCopy, FileFullPathMultibyte);
+
+		int ConvertLength = WideCharToMultiByte(CP_ACP, 0, FileFullPath, -1, 0, 0, 0, 0);
+		WideCharToMultiByte(CP_ACP, 0, FileFullPath, -1, FileFullPathMultibyteCopy, ConvertLength, 0, 0);
 
 		// 파일 이름 추출
 		std::string FileName;
@@ -562,9 +563,10 @@ void CMaterialEditor::OnAddTextureBtn()
 	if (GetOpenFileName(&OpenFile) != 0)
 	{
 		// FullPath 추출
-		const char* FileFullPathMultibyte = CEditorUtil::ChangeTCHARTextToMultibyte(FileFullPath);
 		char FileFullPathMultibyteCopy[MAX_PATH] = {};
-		strcpy_s(FileFullPathMultibyteCopy, FileFullPathMultibyte);
+
+		int ConvertLength = WideCharToMultiByte(CP_ACP, 0, FileFullPath, -1, 0, 0, 0, 0);
+		WideCharToMultiByte(CP_ACP, 0, FileFullPath, -1, FileFullPathMultibyteCopy, ConvertLength, 0, 0);
 
 		// 파일 이름 추출
 		std::string FileName;
@@ -716,10 +718,15 @@ void CMaterialEditor::OnSaveMaterial()
 
 		// Initial Name => Material 의 Name 으로 설정
 		TCHAR TCHARInitFilename[MAX_PATH] = {};
-		lstrcpy(TCHARInitFilename, CEditorUtil::ChangeMultibyteTextToTCHAR(m_SelectedMaterial->GetName()));
 
+		int ConvertLength = MultiByteToWideChar(CP_ACP, 0, m_SelectedMaterial->GetName().c_str(), -1, 0, 0);
+		MultiByteToWideChar(CP_ACP, 0, m_SelectedMaterial->GetName().c_str(), -1, TCHARInitFilename, ConvertLength);
+
+		// File Path
 		char FileFullPathMultibyte[MAX_PATH] = {};
-		strcpy_s(FileFullPathMultibyte, CEditorUtil::ChangeTCHARTextToMultibyte(FileFullPath));
+
+		ConvertLength = WideCharToMultiByte(CP_ACP, 0, FileFullPath, -1, 0, 0, 0, 0);
+		WideCharToMultiByte(CP_ACP, 0, FileFullPath, -1, FileFullPathMultibyte, ConvertLength, 0, 0);
 
 		CEditorUtil::ExtractFileNameAndExtFromPath(FileFullPathMultibyte, FileName, FileExt);
 

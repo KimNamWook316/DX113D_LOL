@@ -195,7 +195,9 @@ void CParticleComponentWidget::OnLoadParticleClass()
         std::string FileName;
 
         char FilePathMultibyteCopy[MAX_PATH] = {};
-        strcpy_s(FilePathMultibyteCopy, CEditorUtil::ChangeTCHARTextToMultibyte(FileFullPath));
+
+        int ConvertLength = WideCharToMultiByte(CP_ACP, 0, FileFullPath, -1, 0, 0, 0, 0);
+        WideCharToMultiByte(CP_ACP, 0, FileFullPath, -1, FilePathMultibyteCopy, ConvertLength, 0, 0);
 
         // 현재 Load하는 Directory가  Bin//ParticleClass 인지 확인하기 => 아니라면, Load
         std::string PathInfoBeforeFileName;
