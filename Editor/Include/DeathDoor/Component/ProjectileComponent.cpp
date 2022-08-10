@@ -3,6 +3,8 @@
 #include "Component/ColliderBox3D.h"
 #include "Component/ColliderSphere.h"
 #include "Component/ParticleComponent.h"
+#include "EngineUtil.h"
+
 
 #define FIXED_GRAVITY 9.8f 
 
@@ -188,6 +190,13 @@ void CProjectileComponent::ShootByGravityTargetPos(const Vector3& StartPos, cons
 	m_LifeTime = (2 * Velocity * sinf(DegreeToRadian(Angle))) / FIXED_GRAVITY;
 	m_LifeTime += 0.5f;
 }
+
+void CProjectileComponent::ShootByTargetPosWithBazierMove(const Vector3& StartPos, const Vector3& D2, const Vector3& D3, const Vector3& TargetPos, float InitSpeed, CGameObject* EndParticleObj)
+{
+	// m_queueBazierMovePos
+	CEngineUtil::CalculateBazierTargetPoses(StartPos, D2, D3, TargetPos, m_queueBazierMovePos, 100);
+}
+
 
 void CProjectileComponent::ClearCollsionCallBack()
 {

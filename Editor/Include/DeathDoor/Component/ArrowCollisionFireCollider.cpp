@@ -18,6 +18,7 @@ CArrowCollisionFireCollider::CArrowCollisionFireCollider(const CArrowCollisionFi
 
 	// m_Mesh = m_Object->FindComponentFromType<CStaticMeshComponent>();
 
+	ClearCollisionCallBack();
 	AddCollisionCallback(Collision_State::Begin, this, &CArrowCollisionFireCollider::OnCollidePlayerArrow);
 }
 
@@ -28,6 +29,8 @@ CArrowCollisionFireCollider::~CArrowCollisionFireCollider()
 void CArrowCollisionFireCollider::Start()
 {
 	CColliderSphere::Start();
+
+	ClearCollisionCallBack();
 
 	AddCollisionCallback(Collision_State::Begin, this, &CArrowCollisionFireCollider::OnCollidePlayerArrow);
 

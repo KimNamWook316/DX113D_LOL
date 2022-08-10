@@ -2,6 +2,7 @@
 
 CGruntCommonDataComponent::CGruntCommonDataComponent()
 {
+	SetTypeID<CGruntCommonDataComponent>();
 }
 
 CGruntCommonDataComponent::CGruntCommonDataComponent(const CGruntCommonDataComponent& com)

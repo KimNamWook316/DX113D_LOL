@@ -435,31 +435,16 @@ bool CEffectEditor::Init()
     m_UVClippingAccordingToDir->AddCheckInfo("Linear UV Clip");
     m_UVClippingAccordingToDir->SetCallBackLabel<CEffectEditor>(this, &CEffectEditor::OnIsUVClippingReflectingMoveDirEdit);
 
+    m_UVClippingDirReverse = Tree->AddWidget<CIMGUICheckBox>("UV Dir Rev", 80.f);
+    m_UVClippingDirReverse->AddCheckInfo("UV Dir Rev");
+    m_UVClippingDirReverse->SetCallBackLabel<CEffectEditor>(this, &CEffectEditor::OnUVClippingDirReverse);
+
     m_ApplyNoiseTextureSampling = Tree->AddWidget<CIMGUICheckBox>("Noise Texture", 80.f);
     m_ApplyNoiseTextureSampling->AddCheckInfo("Noise Texture");
     m_ApplyNoiseTextureSampling->SetCallBackLabel<CEffectEditor>(this, &CEffectEditor::OnApplyNoiseTextureSamplingEdit);
 
     m_NoiseTextureApplyRatio = Tree->AddWidget<CIMGUIInputFloat>("Noise Start Ratio", 150.f, 20.f);
     m_NoiseTextureApplyRatio->SetCallBack<CEffectEditor>(this, &CEffectEditor::OnSetNoiseTextureApplyRatio);
-
-    // Bazier Move Test
-    Tree = AddWidget<CIMGUITree>("Bazier Test");
-
-    m_BazierD1Input = Tree->AddWidget<CIMGUIInputFloat3>("D1Pos", 150.f);
-    m_BazierD1Input->SetCallBack<CEffectEditor>(this, &CEffectEditor::OnSetBazierD1Pos);
-
-    m_BazierD2Input = Tree->AddWidget<CIMGUIInputFloat3>("D2Pos", 150.f);
-    m_BazierD2Input->SetCallBack<CEffectEditor>(this, &CEffectEditor::OnSetBazierD2Pos);
-
-    m_BazierD3Input = Tree->AddWidget<CIMGUIInputFloat3>("D3Pos", 150.f);
-    m_BazierD3Input->SetCallBack<CEffectEditor>(this, &CEffectEditor::OnSetBazierD3Pos);
-
-    m_StartTestBazier = Tree->AddWidget<CIMGUIButton>("Start Bazier", 80.f, 20.f);
-    m_StartTestBazier->SetClickCallback<CEffectEditor>(this, &CEffectEditor::OnClickStartBazierMove);
-  //  class CIMGUIInputFloat3 m_BazierD1;
-  //  class CIMGUIInputFloat3 m_BazierD2;
-  //  class CIMGUIInputFloat3 m_BazierD3;
-  //  class CIMGUIButton* m_StartTestBazier;
 
     // GameObject 생성
     SetGameObjectReady();
@@ -812,6 +797,15 @@ void CEffectEditor::OnIsUVClippingReflectingMoveDirEdit(const char*, bool Enable
     dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetLinearUVClippingEnable(Enable);
 }
 
+void CEffectEditor::OnUVClippingDirReverse(const char*, bool Enable)
+{
+    if (!m_ParticleClass)
+        return;
+
+    m_ParticleClass->SetLinearUVClippingDirReverseEnable(Enable);
+    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetLinearUVClippingDirReverseEnable(Enable);
+}
+
 // StartMin, Max , SpawnCountMax 의 경우, Particle Component 에서 Particle 의 상수 버퍼로 부터 정보를 바로 얻어와서 Post Update 에서 계산
 // 따라서 Particle 의 상수 버퍼 정보를 바꿔주면 된다.
 void CEffectEditor::OnStartMinEdit(const Vector3& Pos)
@@ -1058,60 +1052,6 @@ void CEffectEditor::OnIsLinearRot(const char*, bool Enable)
     m_ParticleClass->SetRotToDir(Enable);
     dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetRotToDir(Enable);
 }
-
-void CEffectEditor::OnSetBazierD1Pos(const Vector3& Pos)
-{
-    if (!m_ParticleClass)
-        return;
-
-    m_BazierD1Pos = Pos;
-}
-
-void CEffectEditor::OnSetBazierD2Pos(const Vector3& Pos)
-{
-    if (!m_ParticleClass)
-        return;
-
-    m_BazierD2Pos = Pos;
-}
-
-void CEffectEditor::OnSetBazierD3Pos(const Vector3& Pos)
-{
-    if (!m_ParticleClass)
-        return;
-
-    m_BazierD3Pos = Pos;
-}
-
-void CEffectEditor::OnClickStartBazierMove()
-{
-   // if (!m_ParticleClass)
-   //     return;
-   // 
-   // bool BazierMoveEnable = dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->IsBazierMoveEnable();
-   // 
-   // if (BazierMoveEnable)
-   // {
-   //     dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->SetBazierMoveEffect(false);
-   // }
-   // else
-   // {
-   //     m_ParticleObject->SetWorldPos(0.f, 0.f, 0.f);
-   // 
-   //     dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->SetBazierTargetPos(
-   //         m_BazierD1Pos, m_BazierD2Pos, m_BazierD3Pos, 300
-   //     );
-   // 
-   //     // Particle Speed Settting
-   //     dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->SetParticleMoveSpeed(50.f);
-   // 
-   //     // 급증하는 효과 주기 
-   //     dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->SetComponentSpeedChangeMethod(ParticleSpeedChangeMethod::Exponential);
-   // 
-   //     dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->SetBazierMoveEffect(true);
-   // }
-}
-
 
 void CEffectEditor::OnIsLifeTimeLinearFromCenter(const char*, bool Enable)
 {
@@ -1867,6 +1807,7 @@ void CEffectEditor::SetIMGUIReflectParticle(CParticle* Particle)
 
     // UV Clip To Dir
     m_UVClippingAccordingToDir->SetCheck(0, Particle->IsLinearUVClippingEnabled());
+    m_UVClippingDirReverse->SetCheck(0, Particle->IsLinearUVClippingDirReversed());
 
     // Noise Texture
     m_ApplyNoiseTextureSampling->SetCheck(0, Particle->IsNoiseTextureSamplingApplied());

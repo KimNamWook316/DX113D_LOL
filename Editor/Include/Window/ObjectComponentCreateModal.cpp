@@ -36,6 +36,7 @@
 #include "../DeathDoor/Component/DodgerDataComponent.h"
 #include "../DeathDoor/Component/PlagueKnightDataComponent.h"
 #include "../DeathDoor/Component/BatDataComponent.h"
+#include "../DeathDoor/Component/GruntCommonDataComponent.h"
 
 #include "../Window/InspectorWindow.h"
 #include "../EditorUtil.h"
@@ -245,6 +246,11 @@ void CObjectComponentCreateModal::OnCreateComponent()
 		{
 			Com = SelectObject->CreateComponent<CBatDataComponent>(Name);
 		}
+		else if (Typeid == typeid(CGruntCommonDataComponent).hash_code())
+		{
+			Com = SelectObject->CreateComponent<CGruntCommonDataComponent>(Name);
+		}
+		
 	}
 
 	CObjectComponentWindow* ComponentWindow = (CObjectComponentWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(OBJECTCOMPONENT_LIST);

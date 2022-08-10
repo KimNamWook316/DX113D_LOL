@@ -184,11 +184,20 @@ void ApplyLinearUVClipping(GeometryParticleOutput input)
 	// 핵심은, 향하는 방향의 끝점 부분만 계속 남아있게 하는 것이다.
 	// UV 좌표 0 ~ 1. 상에서, 가상의 세로 선이 존재한다고 가정
 	// 해당 선이 왼쪽 -> 오른쪽, 오른쪽 -> 왼쪽. 으로 이동 하는 개념
-	if (g_ParticleUVClippingReflectingMoveDir == 1)
+	if (g_ParticleLinearUVClipping == 1)
 	{
-		// if (input.UV.x > 1 - input.LifeTimeRatio)
-		if (input.UV.x < input.LifeTimeRatio)
-			clip(-1);
+		if (g_ParticleLinearClippingReverseDir == 0)
+		{
+			if (input.UV.x < input.LifeTimeRatio)
+				clip(-1);
+		}
+		else
+		{
+			// if (input.UV.x < input.LifeTimeRatio)
+			if (input.UV.x > 1 - input.LifeTimeRatio)
+				clip(-1);
+		}
+
 		/*
 		if (input.LocalXPlusMoveDir == 1)
 		{

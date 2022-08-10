@@ -37,6 +37,8 @@ public:
 		class CGameObject* EndParticleObj = nullptr);
 	void ShootByGravityTargetPos(const Vector3& StartPos, const Vector3& XZDir, float Angle,
 		const Vector3& TargetPos, class CGameObject* EndParticleObj = nullptr);
+	void ShootByTargetPosWithBazierMove(const Vector3& StartPos, const Vector3& D2, const Vector3& D3, const Vector3& TargetPos,
+		float InitSpeed, class CGameObject* EndParticleObj = nullptr);
 
 	void ClearCollsionCallBack();
 	bool CheckDestroy();
@@ -109,6 +111,7 @@ private:
 	bool	m_NoUpdate;
 
 	std::function<void(const Vector3&)> m_EndCallBack;
+	std::queue<Vector3> m_queueBazierMovePos;
 
 public:
 	const Vector3& GetMoveDir() const
