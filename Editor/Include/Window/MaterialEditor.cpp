@@ -562,9 +562,16 @@ void CMaterialEditor::OnAddTextureBtn()
 	if (GetOpenFileName(&OpenFile) != 0)
 	{
 		// FullPath 추출
-		const char* FileFullPathMultibyte = CEditorUtil::ChangeTCHARTextToMultibyte(FileFullPath);
+		//const char* FileFullPathMultibyte = CEditorUtil::ChangeTCHARTextToMultibyte(FileFullPath);
+
+		char FilePathMultibyte[MAX_PATH] = {};
+
+		int ConvertLength = WideCharToMultiByte(CP_ACP, 0, FileFullPath, -1, 0, 0, 0, 0);
+		WideCharToMultiByte(CP_ACP, 0, FileFullPath, -1, FilePathMultibyte, ConvertLength, 0, 0);
+
+
 		char FileFullPathMultibyteCopy[MAX_PATH] = {};
-		strcpy_s(FileFullPathMultibyteCopy, FileFullPathMultibyte);
+		strcpy_s(FileFullPathMultibyteCopy, FilePathMultibyte);
 
 		// 파일 이름 추출
 		std::string FileName;
