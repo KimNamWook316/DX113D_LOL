@@ -40,6 +40,8 @@ NodeResult CClimbUpStart::OnStart(float DeltaTime)
 		Vector3 LadderLookDir = Ladder->GetWorldAxis(AXIS_Z);
 		LadderLookDir.y = 0.f;
 
+		LadderLookDir *= -1.f;
+
 		PlayerLookDir.Normalize();
 		LadderLookDir.Normalize();
 
@@ -62,7 +64,7 @@ NodeResult CClimbUpStart::OnStart(float DeltaTime)
 		PlayerLookDir.y = 0.f;
 
 		Vector3 LadderPos = Ladder->GetWorldPos();
-		m_Object->SetWorldPos(LadderPos.x - PlayerLookDir.x, PlayerPos.y, LadderPos.z - PlayerLookDir.z + 0.2f);
+		m_Object->SetWorldPos(LadderPos.x, PlayerPos.y, LadderPos.z);
 	}
 
 

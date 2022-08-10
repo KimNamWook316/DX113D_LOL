@@ -93,5 +93,6 @@ protected:
 	class CColliderBox3D* m_ExitPointCollider;
 	std::string	m_NextSceneFileName;
 	class CDDSceneLoadingThread* m_NextSceneLoadingThread;
+
 };
 

@@ -718,10 +718,12 @@ void CMaterialEditor::OnSaveMaterial()
 		TCHAR TCHARInitFilename[MAX_PATH] = {};
 		lstrcpy(TCHARInitFilename, CEditorUtil::ChangeMultibyteTextToTCHAR(m_SelectedMaterial->GetName()));
 
-		char FileFullPathMultibyte[MAX_PATH] = {};
-		strcpy_s(FileFullPathMultibyte, CEditorUtil::ChangeTCHARTextToMultibyte(FileFullPath));
+		char FilePathMultibyte[MAX_PATH] = {};
 
-		CEditorUtil::ExtractFileNameAndExtFromPath(FileFullPathMultibyte, FileName, FileExt);
+		int ConvertLength = WideCharToMultiByte(CP_ACP, 0, FileFullPath, -1, 0, 0, 0, 0);
+		WideCharToMultiByte(CP_ACP, 0, FileFullPath, -1, FilePathMultibyte, ConvertLength, 0, 0);
+
+		CEditorUtil::ExtractFileNameAndExtFromPath(FilePathMultibyte, FileName, FileExt);
 
 		// 현재 저장하는 Material 의 파일 이름과, Material 의 이름이 같은지를 확인한다.
 		if (strcmp(FileName, m_SelectedMaterial->GetName().c_str()) != 0)
@@ -736,7 +738,7 @@ void CMaterialEditor::OnSaveMaterial()
 		// (아래의 코드는 기존 Particle Material 용도로만 사용한다는 가정하에 작성, 이제는 다른 Material 범용으로 사용하므로 아래코드 지우기)
 		// 현재 저장하는 Directory가 Bin/Material/ParticleMaterial 인지 확인하기 => 아니라면, Save 방지
 		std::string PathInfoBeforeFileName;
-		CEngineUtil::GetPathInfoBeforeFileName(FileFullPathMultibyte, PathInfoBeforeFileName);
+		CEngineUtil::GetPathInfoBeforeFileName(FilePathMultibyte, PathInfoBeforeFileName);
 
 		// if (strcmp(MaterialPathInfo->PathMultibyte, PathInfoBeforeFileName.c_str()) != 0)
 		// {
@@ -764,7 +766,7 @@ void CMaterialEditor::OnSaveMaterial()
 			return;
 		}
 
-		m_SelectedMaterial->SaveFullPath(FileFullPathMultibyte);
+		m_SelectedMaterial->SaveFullPath(FilePathMultibyte);
 
 		MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Material Save Success"), TEXT("Success"), NULL);
 	}
