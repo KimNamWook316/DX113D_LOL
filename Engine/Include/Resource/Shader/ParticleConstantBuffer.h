@@ -238,7 +238,15 @@ public:
 	{
 		return m_BufferData.LinearClippingReverseDir == 1 ? true : false;
 	}
+	bool IsApplySpawnTimeDuringDisableNewAlive() const
+	{
+		return m_BufferData.ApplySpawnTimeDuringDisableNewAlive == 1 ? true : false;
+	}
 public:
+	void SetApplySpawnTimeDuringDisableNewAlive(bool Enable)
+	{
+		m_BufferData.ApplySpawnTimeDuringDisableNewAlive = Enable ? 1 : 0;
+	}
 	void SetLinearUVClippingDirReverseEnable(bool Enable)
 	{
 		m_BufferData.LinearClippingReverseDir = Enable ? 1 : 0;

@@ -758,8 +758,11 @@ void ParticleUpdate(uint3 ThreadID : SV_DispatchThreadID)
 		// '=' 가 아니라 '+=' 를 해줘야 한다.
 		// ApplySpecialParticleGenerateShape 에서 일부 미리 FinalSeperateRotAngle 값에 
 		// 회전할 Offset 값을 더해놓은 상태이기 때문이다.
-		// g_ParticleArray[ThreadID.x].FinalSeperateRotAngle += ((g_ParticleSeperateRotAngleMax - g_ParticleSeperateRotAngleMin) * Rand + g_ParticleSeperateRotAngleMin);
-		g_ParticleArray[ThreadID.x].FinalSeperateRotAngle = (g_ParticleSeperateRotAngleMax - g_ParticleSeperateRotAngleMin) * Rand + g_ParticleSeperateRotAngleMin;
+		// (Rand * 1000.f) % ThreadID
+		g_ParticleArray[ThreadID.x].FinalSeperateRotAngle += ((g_ParticleSeperateRotAngleMax - g_ParticleSeperateRotAngleMin) * GetRandValForParticle(float2(XRand, YRand)) + g_ParticleSeperateRotAngleMin);
+		// g_ParticleArray[ThreadID.x].FinalSeperateRotAngle.x = (g_ParticleSeperateRotAngleMax.x - g_ParticleSeperateRotAngleMin.x) * XRand + g_ParticleSeperateRotAngleMin.x;
+		// g_ParticleArray[ThreadID.x].FinalSeperateRotAngle.y = (g_ParticleSeperateRotAngleMax.y - g_ParticleSeperateRotAngleMin.y) * YRand + g_ParticleSeperateRotAngleMin.y;
+		// g_ParticleArray[ThreadID.x].FinalSeperateRotAngle.z = (g_ParticleSeperateRotAngleMax.y - g_ParticleSeperateRotAngleMin.z) * ZRand + g_ParticleSeperateRotAngleMin.z;
 
 		// 자신의 진행 방향에 따른 회전을 추가한다.
 		ApplyInitRotationAccordingToDir(ThreadID.x);

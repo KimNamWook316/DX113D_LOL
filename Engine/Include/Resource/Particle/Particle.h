@@ -330,8 +330,16 @@ public:
 	{
 		return m_CBuffer->IsLinearUVClippingDirReversed();
 	}
+	bool IsApplySpawnTimeDuringDisableNewAlive() const
+	{
+		return m_CBuffer->IsApplySpawnTimeDuringDisableNewAlive();
+	}
 public:
-	// Follod Particle Component Pos
+	void SetApplySpawnTimeDuringDisableNewAlive(bool Enable)
+	{
+		m_CBuffer->SetApplySpawnTimeDuringDisableNewAlive(Enable);
+	}
+	// Follow Particle Component Pos
 	void SetFollowRealTimeParticleComponentPos(bool Enable)
 	{
 		m_CBuffer->SetFollowRealTimeParticleComponentPos(Enable);

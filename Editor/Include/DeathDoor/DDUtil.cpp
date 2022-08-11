@@ -208,7 +208,12 @@ std::string CDDUtil::DDConditionNodeTypeToString(DDConditionNode NodeType)
 	// Lurker
 	case DDConditionNode::LurkerHopStartCheck:
 		return "LurkerHopStartCheck";
+
+	// Grunt Common
+	case DDConditionNode::GruntCommonSpawnCheck:
+		return "GruntCommonSpawnCheck";
 	}
+
 
 	return "";
 }
@@ -423,11 +428,16 @@ DDConditionNode CDDUtil::StringToDDConditionNodeType(const std::string& Str)
 	{
 		return DDConditionNode::BatRecognizeEndCheck;
 	}
-
 	// Lurker
 	else if (Str == "LurkerHopStartCheck")
 	{
 		return DDConditionNode::LurkerHopStartCheck;
+	}
+
+	// Grunt Common
+	else if (Str == "GruntCommonSpawnCheck")
+	{
+		return DDConditionNode::GruntCommonSpawnCheck;
 	}
 
 	return DDConditionNode(-1);
@@ -607,6 +617,8 @@ std::string CDDUtil::DDActionNodeTypeToString(DDActionNode NodeType)
 		return "GruntCommonTrace";
 	case DDActionNode::GruntCommonHit:
 		return "GruntCommonHit";
+	case DDActionNode::GruntCommonSpawn:
+		return "GruntCommonSpawn";
 	}
 
 	return "";
@@ -862,6 +874,11 @@ DDActionNode CDDUtil::StringToDDActionNodeType(const std::string& Str)
 	{
 	return DDActionNode::GruntCommonHit;
 	}
+	else if (Str == "GruntCommonSpawn")
+	{
+	return DDActionNode::GruntCommonSpawn;
+	}
+	
 
 	return DDActionNode(-1);
 }

@@ -67,10 +67,10 @@ cbuffer	ParticleCBuffer : register(b7)
 	int g_ParticleFollowComponentPos;
 
 	// 여기 아래는 Particle Constant Buffer 의 크기 제한으로 인해 안먹힐 것이다.
-	float3 g_ParticleEmptyInfo1;
-	float3 g_ParticleEmptyInfo2;
 	int ParticleInfo1;   // 기존에 살아있는 Particle 들을 모두 Alive False 로 만들어주기 
 	float ParticleInfo2;
+	float3 g_ParticleEmptyInfo1;
+	float3 g_ParticleEmptyInfo2;
 };
 
 cbuffer	ParticleTempElemCBuffer : register(b9)
@@ -200,4 +200,8 @@ float3x3 ComputeRotationMatrix(float3 Angle)
 	matRot = mul(matRot, matRotZ);
 
 	return matRot;
+}
+
+float GetRandValForParticle(float2 co) {
+	return(frac(sin(dot(co.xy, float2(12.9898, 78.233))) * 43758.5453)) * 1;
 }

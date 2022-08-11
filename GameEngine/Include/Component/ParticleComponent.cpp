@@ -274,7 +274,10 @@ void CParticleComponent::Update(float DeltaTime)
 	// 이 방법 중 하나는 m_SpawnTimeMax 를 0으로 만들어버리는 것
 	if (m_CBuffer->IsDisableNewAlive() == 1)
 	{
-		m_SpawnTimeMax = 0.f;
+		if (m_CBuffer->IsApplySpawnTimeDuringDisableNewAlive() == false)
+		{
+			m_SpawnTimeMax = 0.f;
+		}
 	}
 
 	// Spawn Time 정보

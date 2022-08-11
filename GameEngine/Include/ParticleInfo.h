@@ -72,10 +72,10 @@ struct	ParticleCBuffer
 	int LinearClippingReverseDir; // Liner UV Clipping 방향 반대
 	int FollowRealTimeParticleComponentPos; // 실시간으로 Particle Component 의 위치를 따라가게 할 것인가 
 
+	int ApplySpawnTimeDuringDisableNewAlive; // 현재 살아있는 Particle 들을 모두 Alive False 로 만들어주기 
+	float ParticleInfo2;
 	Vector3 ParticleEmptyInfo1;
 	Vector3 ParticleEmptyInfo2;
-	int ParticleInfo1; // 현재 살아있는 Particle 들을 모두 Alive False 로 만들어주기 
-	float ParticleInfo2;
 };
 
 struct ParticleInfo

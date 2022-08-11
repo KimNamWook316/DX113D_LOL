@@ -42,6 +42,9 @@ CParticleConstantBuffer::CParticleConstantBuffer() :
 	// 그리고, 한번에 SpawnCount 만큼 생성해버리기 
 	m_BufferData.DisableNewAlive = 0;
 
+	// DisableNewAlive 중에도 Spawn Time 을 적용시키기 
+	m_BufferData.ApplySpawnTimeDuringDisableNewAlive = 0;
+
 	// Restart 버튼을 위한 것
 	// 공유 ParticleShareInfo 구조화 버퍼에서 CurrentSpawnCntSum 정보를 0으로 만들어줘 ! 라고 GPU 측에 메세지를 보내는 것
 	// Restart 버튼을 누르게 되면, 해당 값이 1로 바뀐다.
