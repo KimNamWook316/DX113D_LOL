@@ -326,6 +326,10 @@ public:
 	{
 		return m_CBuffer->IsFollowRealTimeParticleComponentPos();
 	}
+	bool IsLinearUVClippingDirReversed() const
+	{
+		return m_CBuffer->IsLinearUVClippingDirReversed();
+	}
 public:
 	// Follod Particle Component Pos
 	void SetFollowRealTimeParticleComponentPos(bool Enable)
@@ -342,6 +346,11 @@ public:
 		m_CBuffer->SetNoiseTextureApplyRatio(Ratio);
 	}
 	// UV Clipping
+	void SetLinearUVClippingDirReverseEnable(bool Enable)
+	{
+		m_CBuffer->SetLinearUVClippingDirReverseEnable(Enable);
+	}
+
 	void SetLinearUVClippingEnable(bool Enable)
 	{
 		m_CBuffer->SetLinearUVClippingEnable(Enable);

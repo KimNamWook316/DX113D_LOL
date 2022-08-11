@@ -6,12 +6,12 @@ CFrustum::CFrustum()
 	m_Pos[0] = Vector3(-1.f, 1.f, 0.f);
 	m_Pos[1] = Vector3(1.f, 1.f, 0.f);
 	m_Pos[2] = Vector3(-1.f, -1.f, 0.f);
-	m_Pos[3] = Vector3(1.f, 1.f, 0.f);
+	m_Pos[3] = Vector3(1.f, -1.f, 0.f);
 
 	m_Pos[4] = Vector3(-1.f, 1.f, 1.f);
 	m_Pos[5] = Vector3(1.f, 1.f, 1.f);
 	m_Pos[6] = Vector3(-1.f, -1.f, 1.f);
-	m_Pos[7] = Vector3(1.f, 1.f, 1.f);
+	m_Pos[7] = Vector3(1.f, -1.f, 1.f);
 }
 
 CFrustum::~CFrustum()

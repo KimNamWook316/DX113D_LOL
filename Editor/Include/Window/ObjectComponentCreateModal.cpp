@@ -33,9 +33,11 @@
 #include "../DeathDoor/Component/HeadRollerDataComponent.h"
 #include "../DeathDoor/Component/DodgerDataComponent.h"
 #include "../DeathDoor/Component/TriggerBoxData.h"
+#include "../DeathDoor/Component/TriggerFireLamp.h"
 #include "../DeathDoor/Component/DodgerDataComponent.h"
 #include "../DeathDoor/Component/PlagueKnightDataComponent.h"
 #include "../DeathDoor/Component/BatDataComponent.h"
+#include "../DeathDoor/Component/GruntCommonDataComponent.h"
 
 #include "../Window/InspectorWindow.h"
 #include "../EditorUtil.h"
@@ -229,6 +231,10 @@ void CObjectComponentCreateModal::OnCreateComponent()
 		{
 			Com = SelectObject->CreateComponent<CTriggerBoxData>(Name);
 		}
+		else if (Typeid == typeid(CTriggerFireLamp).hash_code())
+		{
+			Com = SelectObject->CreateComponent<CTriggerFireLamp>(Name);
+		}
 		else if (Typeid == typeid(CDodgerDataComponent).hash_code())
 		{
 			Com = SelectObject->CreateComponent<CDodgerDataComponent>(Name);
@@ -245,6 +251,11 @@ void CObjectComponentCreateModal::OnCreateComponent()
 		{
 			Com = SelectObject->CreateComponent<CBatDataComponent>(Name);
 		}
+		else if (Typeid == typeid(CGruntCommonDataComponent).hash_code())
+		{
+			Com = SelectObject->CreateComponent<CGruntCommonDataComponent>(Name);
+		}
+		
 	}
 
 	CObjectComponentWindow* ComponentWindow = (CObjectComponentWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(OBJECTCOMPONENT_LIST);

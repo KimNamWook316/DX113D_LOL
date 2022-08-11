@@ -13,6 +13,7 @@ protected:
 	virtual ~CArrowComponent();
 
 private:
+	bool m_OnFire;
 	class CColliderComponent* m_Collider;
 
 public:
@@ -32,5 +33,15 @@ public:
 	virtual bool SaveOnly(FILE* File) override;
 	virtual bool LoadOnly(FILE* File) override;
 
+public :
+	bool IsArrowOnFire() const
+	{
+		return m_OnFire;
+	}
+public :
+	void SetArrowOnFireEnable(bool Enable)
+	{
+		m_OnFire = Enable;
+	}
 };
 

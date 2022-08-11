@@ -75,7 +75,7 @@ void CFirePlantDataComponent::OnShootBullet()
 
 	if (Data)
 	{
-		// TODO : FierPlnat - End Particle
-		Data->ShootBulletLifeTime(MyPos, ToPlayer, 10.f, 5.f, nullptr);
+		CGameObject* EndParticle = CObjectPool::GetInst()->GetParticle("FirePlantBulletDust", m_Scene);
+		Data->ShootBulletLifeTime(MyPos, ToPlayer, 10.f, 5.f, EndParticle);
 	}
 }

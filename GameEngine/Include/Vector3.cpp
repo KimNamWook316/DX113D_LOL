@@ -39,6 +39,7 @@ Vector3::Vector3(const XMVECTOR& v)
 
 Vector3& Vector3::operator=(const Vector3& v)
 {
+
 	x = v.x;
 	y = v.y;
 	z = v.z;

@@ -289,7 +289,7 @@ std::string CEngineUtil::ExtractFilePathFromFullPath(const std::string& FullPath
 	// \\ 를 제외한 문자열만 추출 (ex) Mesh\\ -> Mesh)
 	EndDir = Path.substr(EndDirStrStart, PathSize - 1 - EndDirStrStart);
 
-	int FullPathLen = FullPath.length();
+	int FullPathLen = (int)FullPath.length();
 	int SlashCount = 0;
 	int DirIndcies[2] = {};
 	std::string SameDirName;
@@ -808,7 +808,7 @@ Vector3 CEngineUtil::QuarternionToEulerAngles(const XMVECTOR& Qut)
 	// pitch (y-axis rotation)
 	float sinp = 2 * (q.w * q.y - q.z * q.x);
 	if (std::abs(sinp) >= 1)
-		Angle.y = std::copysign(3.14159 / 2, sinp); // use 90 degrees if out of range
+		Angle.y = std::copysign(3.14159f / 2, sinp); // use 90 degrees if out of range
 	else
 		Angle.y = std::asin(sinp);
 
@@ -896,7 +896,8 @@ float CEngineUtil::CalculateRealTimeSpeedUsingExponentialWithSpeed(float FullTim
 	}
 
 	// 같은 속도
-	else if (Inclination == 0.f)
+	// else if (Inclination == 0.f)
+	else 
 	{
 		return InitSpeed;
 	}

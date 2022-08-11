@@ -745,6 +745,10 @@ void CCameraComponent::PostUpdate(float DeltaTime)
 
 		m_matView[3][i] = Pos.Dot(Axis);
 	}
+
+	Matrix matVP = m_matView * m_matProj;
+
+	m_Frustum->Update(matVP);
 }
 
 void CCameraComponent::PrevRender()

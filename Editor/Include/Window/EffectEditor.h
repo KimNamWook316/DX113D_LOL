@@ -183,6 +183,7 @@ private:
 
     // 방햐엥 따른 UV Clipping
     class CIMGUICheckBox* m_UVClippingAccordingToDir;
+    class CIMGUICheckBox* m_UVClippingDirReverse;
 
     // Noise Texture
     class CIMGUICheckBox* m_ApplyNoiseTextureSampling;
@@ -190,16 +191,6 @@ private:
 
     // Particle 이 사용하는 Material Texture
     class CIMGUIImage* m_ParticleTexture;
-
-    // Particle Bazier Move Test
-    class CIMGUIInputFloat3* m_BazierD1Input;
-    class CIMGUIInputFloat3* m_BazierD2Input;
-    class CIMGUIInputFloat3* m_BazierD3Input;
-    class CIMGUIButton* m_StartTestBazier;
-
-    Vector3 m_BazierD1Pos;
-    Vector3 m_BazierD2Pos;
-    Vector3 m_BazierD3Pos;
 
 private :
     class CParticle* m_ParticleClass;
@@ -253,6 +244,7 @@ private:
 
     // UVClipping
     void OnIsUVClippingReflectingMoveDirEdit(const char*, bool);
+    void OnUVClippingDirReverse(const char*, bool);
 
     // StartMin,Max
     void OnStartMinEdit(const Vector3&);
@@ -318,12 +310,6 @@ private:
     // Linear Rot
     void OnIsLinearRot(const char*, bool);
 
-    // Baziear Move Test
-    void OnSetBazierD1Pos(const Vector3& Pos);
-    void OnSetBazierD2Pos(const Vector3& Pos);
-    void OnSetBazierD3Pos(const Vector3& Pos);
-    void OnClickStartBazierMove();
-    
     // Save, Load
     void OnSaveParticleClass();
     void OnLoadParticleClass();
@@ -331,7 +317,6 @@ private:
     // Particle 기본 세팅
     void OnSetBasicParticleMaterialSetting(class CSceneComponent* Com);
     void OnReflectCurrentParticleSetting();
-
 
     // 기본 Particle 정보 세팅하기
     void SetBasicDefaultParticleInfos(class CParticle* Particle);

@@ -96,6 +96,10 @@ void CObjectComponentWindow::Clear()
 
 void CObjectComponentWindow::OnDeleteComponent()
 {
+	// 선택되지 않았을 때
+	if (m_SelectIndex == -1)
+		return;
+
 	CObjectHierarchyWindow* Window = (CObjectHierarchyWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(OBJECT_HIERARCHY);
 
 	CGameObject* Obj = Window->GetSelectObject();

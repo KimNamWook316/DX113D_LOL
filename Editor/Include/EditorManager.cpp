@@ -34,6 +34,7 @@
 #include "DeathDoor\Component/PlayerHookComponent.h"
 #include "DeathDoor\Component/KnightDataComponent.h"
 #include "DeathDoor\Component/BossBettyDataComponent.h"
+#include "DeathDoor\Component/GruntCommonDataComponent.h"
 #include "DeathDoor\Component/CrowBossDataComponent.h"
 #include "DeathDoor\Component/LurkerDataComponent.h"
 #include "DeathDoor\Component/MonsterNavAgent.h"
@@ -45,6 +46,7 @@
 #include "DeathDoor\Component/LadderCollider.h"
 #include "DeathDoor\Component/SporeBoomerDataComponent.h"
 #include "DeathDoor\Component/CrackedBlockCollider.h"
+#include "DeathDoor\Component/ArrowCollisionFireCollider.h"
 #include "DeathDoor\Component/FirePlantDataComponent.h"
 #include "DeathDoor\Component/MonsterBulletData.h"
 #include "DeathDoor\Component/HeadRollerDataComponent.h"
@@ -52,6 +54,7 @@
 #include "DeathDoor\Component/PlagueKnightDataComponent.h"
 #include "DeathDoor\Component/DodgerDataComponent.h"
 #include "DeathDoor\Component/TriggerBoxData.h"
+#include "DeathDoor\Component/TriggerFireLamp.h"
 #include "DeathDoor\Component/BatDataComponent.h"
 
 // Window
@@ -440,12 +443,6 @@ CComponent* CEditorManager::CreateComponent(CGameObject* Obj, size_t Type)
 		return Component;
 	}
 
-	else if (Type == typeid(CObjectDataComponent).hash_code())
-	{
-		CObjectDataComponent* Component = Obj->LoadObjectComponent<CObjectDataComponent>();
-
-		return Component;
-	}
 
 	else if (Type == typeid(CLightComponent).hash_code())
 	{
@@ -459,6 +456,19 @@ CComponent* CEditorManager::CreateComponent(CGameObject* Obj, size_t Type)
 		return Component;
 	}
 
+	else if (Type == typeid(CArrowCollisionFireCollider).hash_code())
+	{
+		CArrowCollisionFireCollider* Component = Obj->LoadComponent<CArrowCollisionFireCollider>();
+		return Component;
+	}
+
+	// 아래로는 Object Data Component =================
+	else if (Type == typeid(CObjectDataComponent).hash_code())
+	{
+	CObjectDataComponent* Component = Obj->LoadObjectComponent<CObjectDataComponent>();
+
+	return Component;
+	}
 	else if (Type == typeid(CPlayerDataComponent).hash_code())
 	{
 		CPlayerDataComponent* Component = Obj->LoadObjectComponent<CPlayerDataComponent>();
@@ -580,6 +590,12 @@ CComponent* CEditorManager::CreateComponent(CGameObject* Obj, size_t Type)
 		return Component;
 	}
 
+	else if (Type == typeid(CTriggerFireLamp).hash_code())
+	{
+	CTriggerFireLamp* Component = Obj->LoadObjectComponent<CTriggerFireLamp>();
+	return Component;
+	}
+
 	else if (Type == typeid(CDodgerDataComponent).hash_code())
 	{
 		CDodgerDataComponent* Component = Obj->LoadObjectComponent<CDodgerDataComponent>();
@@ -597,6 +613,16 @@ CComponent* CEditorManager::CreateComponent(CGameObject* Obj, size_t Type)
 		CBatDataComponent* Component = Obj->LoadObjectComponent<CBatDataComponent>();
 		return Component;
 	}
+
+	else if (Type == typeid(CGruntCommonDataComponent).hash_code())
+	{
+	CGruntCommonDataComponent* Component = Obj->LoadObjectComponent<CGruntCommonDataComponent>();
+	return Component;
+	}
+
+
+
+
 
 	return nullptr;
 }

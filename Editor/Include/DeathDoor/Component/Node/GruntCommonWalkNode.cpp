@@ -2,6 +2,7 @@
 
 CGruntCommonWalkNode::CGruntCommonWalkNode()
 {
+	SetTypeID(typeid(CGruntCommonWalkNode).hash_code());
 }
 
 CGruntCommonWalkNode::CGruntCommonWalkNode(const CGruntCommonWalkNode& Node)

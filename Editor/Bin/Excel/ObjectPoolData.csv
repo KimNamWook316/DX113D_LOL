@@ -16,3 +16,5 @@ Bat,10,Monster\Bat\Bat.gobj
 BossKnightImpact,5,Particle\BossKnightImpact.gobj
 Dodger,5,Monster\Dodger\Dodger.gobj
 PlagueKnight,5,Monster\PlagueKnight\PlagueKnight.gobj
+SporeBoomerParticle,3,Particle\SporeBoomerParticle.gobj
+FirePlantBulletDust,10,Particle\FirePlantBulletDust.gobj

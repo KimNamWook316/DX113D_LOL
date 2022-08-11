@@ -23,7 +23,6 @@ void CMonsterBulletData::Start()
 	CObjectComponent::Start();
 
 	m_Collider = m_Object->FindComponentFromType<CColliderSphere>();
-	m_Collider->AddCollisionCallback(Collision_State::Begin, this, &CMonsterBulletData::OnCollide);
 
 	m_Projectile = m_Object->FindComponentFromType<CProjectileComponent>();
 
@@ -41,14 +40,15 @@ void CMonsterBulletData::OnCollide(const CollisionResult& Result)
 
 	if (m_PlayerData->IsUnbeatable() == false && Player == Result.Dest->GetGameObject())
 	{
+		m_Projectile->OnEnd();
 		m_PlayerData->DecreaseHP(1);
 		m_Collider->Enable(false);
-		m_Object->Destroy();
 	}
 }
 
 void CMonsterBulletData::ShootBulletLifeTime(const Vector3& StartPos, const Vector3& Dir, float Speed, float LifeTime, CGameObject* EndParticle)
 {
-	m_Projectile->ShootByLifeTime(StartPos, Dir, Speed, LifeTime, EndParticle);
+	m_Projectile->ShootByLifeTimeCollision(this, &CMonsterBulletData::OnCollide, Collision_State::Begin,
+		StartPos, Dir, Speed, LifeTime, EndParticle);
 	m_Projectile->SetDestroy(true);
 }

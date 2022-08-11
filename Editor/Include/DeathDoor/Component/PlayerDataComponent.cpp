@@ -106,6 +106,11 @@ void CPlayerDataComponent::Start()
 	m_Sword = (CAnimationMeshComponent*)m_Object->FindComponent("SwordAnim");
 
 	m_Object->FindAllSceneComponentFromTypeName<CParticleComponent>("Dust", m_vecMoveDust);
+
+	CCameraComponent* Cam = m_Object->FindComponentFromType<CCameraComponent>();
+	Vector3 RootPos = m_AnimComp->GetWorldPos();
+	Vector3 CamPos = Cam->GetWorldPos();
+	m_CamRelativePos = CamPos - RootPos;
 }
 
 bool CPlayerDataComponent::Init()
@@ -415,16 +420,18 @@ void CPlayerDataComponent::ForceUpdateAttackDirection()
 
 void CPlayerDataComponent::OnResetDustParticle()
 {
-	//Vector3 ObjectPos = m_Object->GetWorldPos();
-	//Vector3 ZDir = m_Object->GetWorldAxis(AXIS_Z);
+	if (m_vecMoveDust.size() > 0)
+	{
+		Vector3 ObjectPos = m_Object->GetWorldPos();
+		Vector3 ZDir = m_Object->GetWorldAxis(AXIS_Z);
 
-	//m_vecMoveDust[m_CurrentDustIndex]->SetWorldPos(ObjectPos.x + ZDir.x, ObjectPos.y + 1.f, ObjectPos.z + ZDir.z);
+		if (m_vecMoveDust[m_CurrentDustIndex])
+			m_vecMoveDust[m_CurrentDustIndex]->StartParticle(Vector3(ObjectPos.x + ZDir.x, ObjectPos.y + 1.f, ObjectPos.z + ZDir.z));
+		// m_vecMoveDust[m_CurrentDustIndex]->RecreateOnlyOnceCreatedParticleWithOutLifeTimeSetting();
 
-	//if (m_vecMoveDust[m_CurrentDustIndex])
-	//	m_vecMoveDust[m_CurrentDustIndex]->RecreateOnlyOnceCreatedParticleWithOutLifeTimeSetting();
+		++m_CurrentDustIndex;
 
-	//++m_CurrentDustIndex;
-
-	//if (m_CurrentDustIndex >= m_vecMoveDust.size())
-	//	m_CurrentDustIndex = 0;
+		if (m_CurrentDustIndex >= m_vecMoveDust.size())
+			m_CurrentDustIndex = 0;
+	}
 }
