@@ -23,7 +23,9 @@ private:
     float m_AccTime;
     Vector3 m_OriginPos;
     class CColliderBox3D* m_BoxCollider;
-
+    float m_PrevXVibFactor;
+    float m_PrevZVibFactor;
+    int m_FrameCount;
 
 public:
     virtual NodeResult Invoke(float DeltaTime) override;
@@ -32,5 +34,6 @@ public:
     void Trigger(const CollisionResult& Result);
     void ResetFallingBlock();
     void OnPaperburnEnd();
+    void Vibrate(float DeltaTime);
 };
 

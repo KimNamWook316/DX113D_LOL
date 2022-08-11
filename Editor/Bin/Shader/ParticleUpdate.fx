@@ -759,7 +759,7 @@ void ParticleUpdate(uint3 ThreadID : SV_DispatchThreadID)
 		// ApplySpecialParticleGenerateShape 에서 일부 미리 FinalSeperateRotAngle 값에 
 		// 회전할 Offset 값을 더해놓은 상태이기 때문이다.
 		// g_ParticleArray[ThreadID.x].FinalSeperateRotAngle += ((g_ParticleSeperateRotAngleMax - g_ParticleSeperateRotAngleMin) * Rand + g_ParticleSeperateRotAngleMin);
-		g_ParticleArray[ThreadID.x].FinalSeperateRotAngle = (g_ParticleSeperateRotAngleMax - g_ParticleSeperateRotAngleMin) * Rand + g_ParticleSeperateRotAngleMin;
+        g_ParticleArray[ThreadID.x].FinalSeperateRotAngle = (g_ParticleSeperateRotAngleMax - g_ParticleSeperateRotAngleMin) * GetRandValForParticle(float2(XRand, YRand)) + g_ParticleSeperateRotAngleMin;
 
 		// 자신의 진행 방향에 따른 회전을 추가한다.
 		ApplyInitRotationAccordingToDir(ThreadID.x);

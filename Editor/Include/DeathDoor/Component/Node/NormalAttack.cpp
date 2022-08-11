@@ -52,7 +52,8 @@ NodeResult CNormalAttack::OnStart(float DeltaTime)
 		else
 			SequenceName = ObjectName + "SlashL";
 
-		Data->GetSword()->GetAnimationInstance()->ChangeAnimation(SequenceName);
+		if(Data->GetSword())
+			Data->GetSword()->GetAnimationInstance()->ChangeAnimation(SequenceName);
 		
 	}
 
