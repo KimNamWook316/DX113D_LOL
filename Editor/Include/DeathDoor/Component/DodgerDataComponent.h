@@ -51,6 +51,8 @@ public:
     }
 
 private:
+    class CStaticMeshComponent* m_SlashLine;
+    class CPaperBurnComponent* m_SlashLinePaperBurn;
     int m_AttackCount;
     bool m_DashRotaiting;
     bool m_DashReady;

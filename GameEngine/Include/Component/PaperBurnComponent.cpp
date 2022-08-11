@@ -112,6 +112,7 @@ bool CPaperBurnComponent::SetPaperBurnComponent(CSceneComponent* Comp)
 	if (Ret)
 	{
 		m_PaperBurnComponentName = Comp->GetName();
+		m_PaperBurnComponent = Comp;
 	}
 
 	return Ret;
@@ -280,10 +281,26 @@ void CPaperBurnComponent::Update(float DeltaTime)
 			switch (m_EndEvent)
 			{
 			case PaperBurnEndEvent::Destroy:
-				m_Object->Destroy();
+			{
+				if (m_Object->GetRootComponent() == m_PaperBurnComponent)
+				{
+					m_Object->Destroy();
+				}
+				else
+				{
+					m_PaperBurnComponent->Destroy();
+				}
+			}
 				break;
 			case PaperBurnEndEvent::Disable:
-				m_Object->Enable(false);
+				if (m_Object->GetRootComponent() == m_PaperBurnComponent)
+				{
+					m_Object->Enable(false);
+				}
+				else
+				{
+					m_PaperBurnComponent->Enable(false);
+				}
 				break;
 			case PaperBurnEndEvent::Return:
 				// TODO : Object Pool에 Return 해야 하는 경우
