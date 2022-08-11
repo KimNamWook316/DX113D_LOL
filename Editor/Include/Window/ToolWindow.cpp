@@ -14,7 +14,7 @@
 #include "../Window/SceneComponentHierarchyWindow.h"
 #include "../Window/ObjectHierarchyWindow.h"
 #include "IMGUIManager.h"
-#include "../EditorInfo.h":
+#include "../EditorInfo.h"
 #include "EngineUtil.h"
 #include "PathManager.h"
 #include "../EditorUtil.h"

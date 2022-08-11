@@ -55,7 +55,7 @@ cbuffer	ParticleCBuffer : register(b7)
 
 	// Particle Component Relative Scale
 	float3 g_ParticleCommonWorldScale;
-	int g_ParticleUVClippingReflectingMoveDir;
+	int g_ParticleLinearUVClipping;
 
 	// Particle Component WorldPos
 	float3 g_ParticleComponentWorldPos;
@@ -63,15 +63,20 @@ cbuffer	ParticleCBuffer : register(b7)
 
 	int g_ParticleApplyNoiseTexture; // Pixel Shader 에서 매순간 Noise Texture 로 부터, Sampling 을 해서 Color, Alpha 값 등을 바꾸는 것
 	float g_ParticleNoiseTextureApplyRatio; // Noise Texture 사라지는 효과 시작 비율
-	float g_ParticleExponentialAndLogFunctionXIntercept;
+	int g_ParticleLinearClippingReverseDir;
 	int g_ParticleFollowComponentPos;
 
+	// 여기 아래는 Particle Constant Buffer 의 크기 제한으로 인해 안먹힐 것이다.
 	float3 g_ParticleEmptyInfo1;
 	float3 g_ParticleEmptyInfo2;
 	int ParticleInfo1;   // 기존에 살아있는 Particle 들을 모두 Alive False 로 만들어주기 
 	float ParticleInfo2;
 };
 
+cbuffer	ParticleTempElemCBuffer : register(b9)
+{
+	float3 g_CompRelativeAxis;
+}
 
 struct ParticleInfo
 {

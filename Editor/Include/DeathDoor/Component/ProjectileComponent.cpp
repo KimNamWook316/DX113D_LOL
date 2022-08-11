@@ -3,11 +3,15 @@
 #include "Component/ColliderBox3D.h"
 #include "Component/ColliderSphere.h"
 #include "Component/ParticleComponent.h"
+#include "EngineUtil.h"
+#include "../../EditorInfo.h"
 
 CProjectileComponent::CProjectileComponent()	:
 	// m_Destroy(false),
 	m_Destroy(true), // OBJ가 true 로 바꿈
-	m_NoUpdate(false)
+	m_NoUpdate(false),
+	m_MoveBazier(false),
+	m_SpeedChangeMethod(ProjectTileSpeedChangeMethod::None)
 {
 	SetTypeID<CProjectileComponent>();
 }
@@ -58,6 +62,8 @@ void CProjectileComponent::Update(float DeltaTime)
 
 	if (m_IsShoot)
 	{
+		UpdateSpeed();
+
 		m_LifeTimer += DeltaTime;
 
 		CheckDestroy();
@@ -69,7 +75,33 @@ void CProjectileComponent::Update(float DeltaTime)
 			Move = Vector3(m_Dir.x * m_VelocityXZ * m_LifeTimer,
 				(((m_VelocityY * m_LifeTimer) - ((m_Gravity * m_LifeTimer * m_LifeTimer) / 2.f))),
 				m_Dir.z * m_VelocityXZ * m_LifeTimer);
+
 			m_Root->SetWorldPos(m_StartPos + Move);
+		}
+		else if (m_MoveBazier)
+		{
+			float BazierMoveDist = (m_Dir * m_Speed * DeltaTime).Length();
+			m_Root->AddWorldPos(Move);
+
+			const Vector3& CurrentPos = m_Root->GetWorldPos();
+
+			m_BazierMoveCurAccDist += BazierMoveDist;
+
+			// 새롭게 Bazier 에서 뽑아낸다.
+			if (m_BazierMoveTargetDist <= m_BazierMoveCurAccDist)
+			{
+				Vector3 NextPos = m_queueBazierMovePos.front();
+				m_queueBazierMovePos.pop();
+
+				Vector3 PrevMoveDir = m_Dir;
+
+				m_Dir = NextPos - CurrentPos;
+				m_Dir.Normalize();
+
+				m_BazierMoveTargetDist = NextPos.Distance(CurrentPos);
+
+				m_BazierMoveCurAccDist = 0.f;
+			}
 		}
 		else
 		{
@@ -166,7 +198,8 @@ void CProjectileComponent::ShootByLifeTime(const Vector3& StartPos, const Vector
 	m_Root->SetWorldPos(StartPos);
 }
 
-void CProjectileComponent::ShootByGravityTargetPos(const Vector3& StartPos, const Vector3& XZDir, float Angle, const Vector3& TargetPos, float Gravity, CGameObject* EndParticleObj)
+void CProjectileComponent::ShootByGravityTargetPos(const Vector3& StartPos, const Vector3& XZDir, float Angle, 
+	const Vector3& TargetPos, float Gravity, CGameObject* EndParticleObj)
 {
 	m_LifeTimer = 0.f;
 	m_IsShoot = true;
@@ -188,6 +221,43 @@ void CProjectileComponent::ShootByGravityTargetPos(const Vector3& StartPos, cons
 	m_LifeTime += 0.5f;
 }
 
+void CProjectileComponent::ShootByTargetPosWithBazierMove(const Vector3& StartPos, const Vector3& D2, 
+	const Vector3& D3, const Vector3& TargetPos, float InitSpeed, CGameObject* EndParticleObj)
+{
+	m_LifeTimer = 0.f;
+	m_IsShoot = true;
+	m_StartPos = StartPos;
+	m_Speed = InitSpeed;
+	m_TargetPos = TargetPos;
+	m_IsGravity = false;
+	m_EndParticleObject = EndParticleObj;
+
+	m_Root->SetWorldPos(StartPos);
+
+	m_MoveBazier = true;
+
+	// m_queueBazierMovePos
+	CEngineUtil::CalculateBazierTargetPoses(StartPos, D2, D3, TargetPos, m_queueBazierMovePos, 100);
+
+	if (!m_queueBazierMovePos.empty())
+	{
+		Vector3 NextPos = m_queueBazierMovePos.front();
+		m_queueBazierMovePos.pop();
+
+		m_Dir = NextPos - StartPos;
+		m_Dir.Normalize();
+
+		m_BazierMoveTargetDist = NextPos.Distance(StartPos);
+
+		m_BazierMoveCurAccDist = 0.f;
+
+		m_BazierMoveAccTime = 0.f;
+
+		// m_InitSpeed = m_Speed;
+	}
+}
+
+
 void CProjectileComponent::ClearCollsionCallBack()
 {
 	if (m_Collider)
@@ -203,6 +273,17 @@ bool CProjectileComponent::CheckDestroy()
 	{
 		if (m_Root->GetWorldPos().y < m_TargetPos.y)
 		{
+			OnEnd();
+			return true;
+		}
+	}
+	// Bazier 로 이동시키는 경우
+	else if (m_MoveBazier)
+	{
+		if (m_queueBazierMovePos.empty())
+		{
+			// 더이상 움직이지 않게 한다.
+			m_Dir = Vector3(0.f, 0.f, 0.f);
 			OnEnd();
 			return true;
 		}
@@ -266,4 +347,19 @@ void CProjectileComponent::OnEnd()
 		m_Object->Destroy();
 
 	m_NoUpdate = false;
+}
+
+void CProjectileComponent::UpdateSpeed()
+{
+	switch (m_SpeedChangeMethod)
+	{
+	case ProjectTileSpeedChangeMethod::Exponential :
+	{
+		// m_Speed = CEngineUtil::CalculateRealTimeSpeedUsingExponentialWithSpeed();
+	}
+	break;
+
+	default:
+		break;
+	}
 }

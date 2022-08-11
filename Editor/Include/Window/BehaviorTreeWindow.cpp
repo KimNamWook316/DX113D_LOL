@@ -493,9 +493,9 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
         enum ActionNode NodeActionClass;
         NodeActionClass = static_cast<ActionNode>(ActionIndex);
 
-        switch (NodeActionClass)
-        {
-        }
+        // switch (NodeActionClass)
+        // {
+        // }
 
         if (NewTreeNode)
         {

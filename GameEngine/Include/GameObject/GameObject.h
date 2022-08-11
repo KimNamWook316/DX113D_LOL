@@ -415,6 +415,11 @@ public:
 	void Reset();
 
 public:
+	const std::vector<CSharedPtr<CGameObject>>& GetVecChildObjects() const
+	{
+		return m_vecChildObject;
+	}
+
 	size_t GetChildObjectCount()	const
 	{
 		return m_vecChildObject.size();

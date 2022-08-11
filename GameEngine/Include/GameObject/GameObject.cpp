@@ -712,6 +712,7 @@ bool CGameObject::LoadHierarchy(FILE* File, CScene* NextScene)
 
 	fread(&ObjComponentCount, sizeof(int), 1, File);
 
+
 	for (int i = 0; i < ObjComponentCount; ++i)
 	{
 		size_t	TypeID = 0;
@@ -739,6 +740,7 @@ bool CGameObject::LoadHierarchy(FILE* File, CScene* NextScene)
 			break;
 		}
 	}
+	
 
 	//if(Child)
 	//	AddChildObject(Child);

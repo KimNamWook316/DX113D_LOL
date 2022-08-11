@@ -264,6 +264,9 @@
     <Filter Include="06. DeathDoor\01. GameComponent\02. ObjectComponent\01. DataComponent\01. Monster\11. Grunt">
       <UniqueIdentifier>{f9d298e3-7c5d-4cca-94d2-bc8604a09d91}</UniqueIdentifier>
     </Filter>
+    <Filter Include="06. DeathDoor\01. GameComponent\01. SceneComponent\04. ArrowFire">
+      <UniqueIdentifier>{8a9460f9-34ee-4174-8d7c-108dcaffd61a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Scene\DefaultScene.cpp">
@@ -931,9 +934,6 @@
     <ClCompile Include="DeathDoor\Component\Node\PathListEmptyCheck.cpp">
       <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\01. Public</Filter>
     </ClCompile>
-    <ClCompile Include="DeathDoor\Component\ArrowCollisionFireCollider.cpp">
-      <Filter>06. DeathDoor\01. GameComponent\01. SceneComponent\02. MapObject</Filter>
-    </ClCompile>
     <ClCompile Include="DeathDoor\Component\Node\BossBettyIdleAnimCheck.cpp">
       <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\02. BossBetty</Filter>
     </ClCompile>
@@ -960,6 +960,12 @@
     </ClCompile>
     <ClCompile Include="DeathDoor\Component\GruntCommonDataComponent.cpp">
       <Filter>06. DeathDoor\01. GameComponent\02. ObjectComponent\01. DataComponent\01. Monster\11. Grunt</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Component\ArrowCollisionFireCollider.cpp">
+      <Filter>06. DeathDoor\01. GameComponent\01. SceneComponent\04. ArrowFire</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Component\TriggerFireLamp.cpp">
+      <Filter>06. DeathDoor\01. GameComponent\02. ObjectComponent\01. DataComponent\03. Object</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1635,9 +1641,6 @@
     <ClInclude Include="DeathDoor\Component\Node\PathListEmptyCheck.h">
       <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\01. Public</Filter>
     </ClInclude>
-    <ClInclude Include="DeathDoor\Component\ArrowCollisionFireCollider.h">
-      <Filter>06. DeathDoor\01. GameComponent\01. SceneComponent\02. MapObject</Filter>
-    </ClInclude>
     <ClInclude Include="DeathDoor\Component\Node\BossBettyIdleAnimCheck.h">
       <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\02. BossBetty</Filter>
     </ClInclude>
@@ -1664,6 +1667,12 @@
     </ClInclude>
     <ClInclude Include="DeathDoor\Component\GruntCommonDataComponent.h">
       <Filter>06. DeathDoor\01. GameComponent\02. ObjectComponent\01. DataComponent\01. Monster\11. Grunt</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\ArrowCollisionFireCollider.h">
+      <Filter>06. DeathDoor\01. GameComponent\01. SceneComponent\04. ArrowFire</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\TriggerFireLamp.h">
+      <Filter>06. DeathDoor\01. GameComponent\02. ObjectComponent\01. DataComponent\03. Object</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

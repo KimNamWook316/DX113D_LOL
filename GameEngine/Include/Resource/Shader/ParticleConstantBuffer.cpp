@@ -51,6 +51,9 @@ CParticleConstantBuffer::CParticleConstantBuffer() :
 	// 처음에는 UV Clipping 처리를 하지 않는다.
 	m_BufferData.LinearUVClippingEnable = 0;
 
+	// Linear UV Clipping 방향 반대 
+	m_BufferData.LinearClippingReverseDir = 0;
+
 	// 처음에는 Speed St, End 사이에 랜덤한 Speed 가 세팅되도록 한다.
 	// 1) 해당 값이 1 일 경우, Linear 
 	// 2) 해당 값이 2 일 경우, 지수 

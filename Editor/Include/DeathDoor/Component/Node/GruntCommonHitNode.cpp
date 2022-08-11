@@ -2,6 +2,7 @@
 
 CGruntCommonHitNode::CGruntCommonHitNode()
 {
+	SetTypeID(typeid(CGruntCommonHitNode).hash_code());
 }
 
 CGruntCommonHitNode::CGruntCommonHitNode(const CGruntCommonHitNode& Node)

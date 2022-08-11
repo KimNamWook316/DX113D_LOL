@@ -31,6 +31,9 @@ protected:
 	float									m_SpawnTimeMax;
 	// BillBoard
 	bool  m_BillBoardEffect;
+	bool m_UpdateInitBillBoardDir;
+	Vector3 m_InitBillBoardZLookDir;
+	Vector3 m_InitBillBoardXLookDir;
 	// Move
 	Vector3 m_ParticleRotOffset;
 	// 등장 Delay Time -> ex. 0.5초 후에 해당 위치에 나타가게 하기
@@ -112,10 +115,8 @@ public:
 	{
 		m_Material = Material;
 	}
-	void SetBillBoardEffect(bool Enable)
-	{
-		m_BillBoardEffect = Enable;
-	}
+	void SetBillBoardEffect(bool Enable);
+	
 	// void SetBazierMoveEffect(bool Enable)
 	// {
 	// 	m_BazierMoveEffect = Enable;

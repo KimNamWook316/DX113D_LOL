@@ -234,7 +234,16 @@ public:
 	{
 		return m_BufferData.DestroyExistingAllLivingParticles ? 1 : 0;
 	}
+	bool IsLinearUVClippingDirReversed() const
+	{
+		return m_BufferData.LinearClippingReverseDir == 1 ? true : false;
+	}
 public:
+	void SetLinearUVClippingDirReverseEnable(bool Enable)
+	{
+		m_BufferData.LinearClippingReverseDir = Enable ? 1 : 0;
+	}
+
 	void SetDestroyExstingAllLivingParticles(bool Enable)
 	{
 		m_BufferData.DestroyExistingAllLivingParticles = Enable ? 1 : 0;

@@ -2,6 +2,8 @@
 
 CGruntCommonTraceNode::CGruntCommonTraceNode()
 {
+	SetTypeID(typeid(CGruntCommonTraceNode).hash_code());
+
 }
 
 CGruntCommonTraceNode::CGruntCommonTraceNode(const CGruntCommonTraceNode& Node)

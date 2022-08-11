@@ -137,7 +137,7 @@ NodeResult CReadyToShoot::OnStart(float DeltaTime)
 		m_CameraMoveDir.y = 0.f;
 		m_CameraMoveDir.Normalize();
 
-		CurrentCamera->StartMove(OriginCamPos, m_CameraDestPos, m_CameraMoveTime, false, true);
+		CurrentCamera->StartMove(OriginCamPos, m_CameraDestPos, (float)m_CameraMoveTime, false, true);
 	}
 
 	return NodeResult::Node_True;

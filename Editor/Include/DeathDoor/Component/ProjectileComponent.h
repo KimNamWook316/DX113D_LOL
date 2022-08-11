@@ -2,6 +2,7 @@
 
 #include "Component/ObjectComponent.h"
 #include "Component/ColliderComponent.h"
+#include "../../EditorInfo.h"
 
 class CProjectileComponent :
     public CObjectComponent
@@ -36,11 +37,14 @@ public:
 		float Speed, float LifeTime,
 		class CGameObject* EndParticleObj = nullptr);
 	void ShootByGravityTargetPos(const Vector3& StartPos, const Vector3& XZDir, float Angle,
-		const Vector3& TargetPos, float Gravity = 9.8f, class CGameObject* EndParticleObj = nullptr);
+		const Vector3& TargetPos, float Gravity = 9.8f, CGameObject* EndParticleObj = nullptr);
+	void ShootByTargetPosWithBazierMove(const Vector3& StartPos, const Vector3& D2, const Vector3& D3, const Vector3& TargetPos,
+		float InitSpeed, class CGameObject* EndParticleObj = nullptr);
 
 	void ClearCollsionCallBack();
 	bool CheckDestroy();
 	void OnEnd();
+	void UpdateSpeed();
 
 public:
 	template <typename T>
@@ -111,7 +115,22 @@ private:
 
 	std::function<void(const Vector3&)> m_EndCallBack;
 
+	// Speed Change
+	float m_InitSpeed;
+	ProjectTileSpeedChangeMethod m_SpeedChangeMethod;
+
+	// Bazier
+	bool m_MoveBazier;
+	float m_BazierMoveTargetDist;
+	float m_BazierMoveCurAccDist;
+	float m_BazierMoveAccTime;
+	std::queue<Vector3> m_queueBazierMovePos;
+
 public:
+	const Vector3& GetMoveDir() const
+	{
+		return m_Dir;
+	}
 	bool IsShoot()	const
 	{
 		return m_IsShoot;
@@ -145,6 +164,10 @@ public:
 	void SetSpeed(float Speed)
 	{
 		m_Speed = Speed;
+	}
+	void SetSpeedChangeMethod(ProjectTileSpeedChangeMethod Method)
+	{
+		m_SpeedChangeMethod = Method;
 	}
 };
 

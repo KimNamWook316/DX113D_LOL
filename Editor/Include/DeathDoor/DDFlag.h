@@ -185,6 +185,7 @@ enum class DDObjectComponentType
 	HeadRollerData,
 	DodgerData,
 	TriggerBoxData,
+	TriggerFireLamp,
 	PlagueKnightData,
 	BatData,
 	Max

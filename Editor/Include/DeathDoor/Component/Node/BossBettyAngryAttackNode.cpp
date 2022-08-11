@@ -139,13 +139,13 @@ void CBossBettyAngryAttackNode::OnBossBettyStartFallingSnowBallEffect()
 		int YRand = SphereRadius + rand() % (SphereRadius * 2);
 		int ZRand = rand() % SphereRadius;
 
-		float RandV = ((double)rand() / (RAND_MAX)) + 1;
+		float RandV = ((float)rand() / (RAND_MAX)) + 1;
 		float RandomAngle = 360.f * RandV;
 
 		CGameObject* SnowFallingObject = CObjectPool::GetInst()->GetProjectile("BossBettySnowAttack", CurrentScene);
 
 		SnowFallingObject->SetWorldPos(MapSurroundingObjectWorldPos + Vector3(
-			XRand * cos(RandomAngle), YRand, ZRand * sin(RandomAngle)));
+			XRand * cos(RandomAngle), (float)YRand, ZRand * sin(RandomAngle)));
 			
 		CProjectileComponent* ProjTileComp = SnowFallingObject->FindComponentFromType<CProjectileComponent>();
 
