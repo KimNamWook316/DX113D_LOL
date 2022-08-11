@@ -29,7 +29,8 @@ void CPlagueKnightDataComponent::Start()
 
 	m_Data = CDataManager::GetInst()->GetObjectData("PlagueKnight");
 
-	m_FirePos = m_Object->FindComponentFromType<CSceneComponent>();
+	m_FirePos = (CSceneComponent*)m_Object->FindComponent("FirePos");
+	m_MeleeParticlePos = (CSceneComponent*)m_Object->FindComponent("MeleeParticlePos");
 	m_ExplodeCollider = m_Object->FindComponentFromType<CColliderSphere>();
 
 	if (m_ExplodeCollider)
@@ -101,10 +102,13 @@ void CPlagueKnightDataComponent::OnShoot()
 	XZ.y = 0.f;
 	XZ.Normalize();
 
-	// TODO : Plauge Knight - Projectile Particle
+	CGameObject* EndParticle = CObjectPool::GetInst()->GetParticle("PlagueKnightParticle", m_Scene);
 	Proj->SetEndCallBack(this, &CPlagueKnightDataComponent::OnBulletGround);
-	Proj->ShootByGravityTargetPos(FirePos, XZ, 60.f, PlayerPos, 30.f);
+	Proj->ShootByGravityTargetPos(FirePos, XZ, 60.f, PlayerPos, 30.f, EndParticle);
 	Proj->SetDestroy(true);
+
+	CCameraComponent* CurCam = m_Object->GetScene()->GetCameraManager()->GetCurrentCamera();
+	CurCam->Shake(0.1f, 0.3f);
 }
 
 void CPlagueKnightDataComponent::OnShootAnimEnd()
@@ -116,6 +120,9 @@ void CPlagueKnightDataComponent::OnBulletGround(const Vector3& Pos)
 {
 	m_ExplodeCollider->Enable(true);
 	m_ExplodeCollider->SetWorldPos(Pos);
+
+	CCameraComponent* CurCam = m_Object->GetScene()->GetCameraManager()->GetCurrentCamera();
+	CurCam->Shake(0.3f, 0.8f);
 }
 
 void CPlagueKnightDataComponent::OnCollideExplode(const CollisionResult& Result)
@@ -127,4 +134,17 @@ void CPlagueKnightDataComponent::OnCollideExplode(const CollisionResult& Result)
 			m_PlayerData->DecreaseHP(1);
 		}
 	}
+}
+
+void CPlagueKnightDataComponent::OnActiveMeleeAttackCollider()
+{
+	CMonsterDataComponent::OnActiveMeleeAttackCollider();
+
+	CGameObject* Particle = CObjectPool::GetInst()->GetParticle("BossKnightImpact", m_Scene);
+
+	Vector3 ParticlePos = m_MeleeParticlePos->GetWorldPos();
+	Particle->StartParticle(ParticlePos);
+
+	CCameraComponent* CurCam = m_Object->GetScene()->GetCameraManager()->GetCurrentCamera();
+	CurCam->Shake(0.3f, 0.8f);
 }

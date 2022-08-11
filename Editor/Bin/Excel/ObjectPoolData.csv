@@ -18,3 +18,4 @@ Dodger,5,Monster\Dodger\Dodger.gobj
 PlagueKnight,5,Monster\PlagueKnight\PlagueKnight.gobj
 SporeBoomerParticle,3,Particle\SporeBoomerParticle.gobj
 FirePlantBulletDust,10,Particle\FirePlantBulletDust.gobj
+PlagueKnightParticle,5,Particle\PlagueKnightParticle.gobj

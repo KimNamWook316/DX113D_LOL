@@ -33,6 +33,7 @@ public:
     void OnCollide(const CollisionResult& Result);
 
 private:
+    class CParticleComponent* m_RollParticle;
     bool m_Rolling;
     bool m_Stun;
 };

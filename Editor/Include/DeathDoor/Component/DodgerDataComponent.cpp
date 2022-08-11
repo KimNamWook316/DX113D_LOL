@@ -5,6 +5,8 @@
 #include "PlayerDataComponent.h"
 #include "Component/ColliderBox3D.h"
 #include "Component/AnimationMeshComponent.h"
+#include "Component/StaticMeshComponent.h"
+#include "Component/PaperBurnComponent.h"
 #include "MonsterNavAgent.h"
 
 CDodgerDataComponent::CDodgerDataComponent()	:
@@ -33,6 +35,15 @@ void CDodgerDataComponent::Start()
 	m_Data = CDataManager::GetInst()->GetObjectData("Dodger");
 
 	m_StopChaseRange = m_Data.MeleeAttackRange;
+
+	m_SlashLine = m_Object->FindComponentFromType<CStaticMeshComponent>();
+	m_SlashLine->SetDrawShadow(false);
+	m_SlashLinePaperBurn = (CPaperBurnComponent*)m_Object->FindComponent("SlashPaperBurn1");
+
+	if (m_SlashLine)
+	{
+		m_SlashLine->Enable(false);
+	}
 
 	CAnimationSequenceInstance* AnimInst = m_AnimMesh->GetAnimationInstance();
 
@@ -103,6 +114,10 @@ void CDodgerDataComponent::OnAttack2ReadyEnd()
 
 void CDodgerDataComponent::OnAttackMoveStart()
 {
+	m_SlashLine->Enable(true);
+	m_SlashLinePaperBurn->SetEndEvent(PaperBurnEndEvent::Disable);
+	m_SlashLinePaperBurn->StartPaperBurn();
+
 	m_CurMoveSpeed = m_Data.MoveSpeed * 2.f;
 
 	OnEnableMoveZ();

@@ -5,6 +5,7 @@
 #include "PlayerDataComponent.h"
 #include "Component/ColliderBox3D.h"
 #include "Component/AnimationMeshComponent.h"
+#include "Component/ParticleComponent.h"
 
 CHeadRollerDataComponent::CHeadRollerDataComponent()
 {
@@ -25,6 +26,9 @@ void CHeadRollerDataComponent::Start()
 	CMonsterDataComponent::Start();
 
 	m_Data = CDataManager::GetInst()->GetObjectData("HeadRoller");
+
+	m_RollParticle = m_Object->FindComponentFromType<CParticleComponent>();
+	m_RollParticle->Enable(false);
 
 	m_HitBox->AddCollisionCallback(Collision_State::Begin, this, &CHeadRollerDataComponent::OnCollide);
 
@@ -90,6 +94,8 @@ void CHeadRollerDataComponent::OnRollStart()
 	m_CurMoveSpeed = m_Data.MoveSpeed;
 	m_Rolling = true;
 	m_Stun = false;
+
+	m_RollParticle->Enable(true);
 }
 
 void CHeadRollerDataComponent::OnRollEnd()
@@ -110,6 +116,8 @@ void CHeadRollerDataComponent::OnRollEnd()
 	m_CurMoveSpeed = 0.f;
 	m_Rolling = false;
 	m_Stun = true;
+
+	m_RollParticle->Enable(false);
 }
 
 void CHeadRollerDataComponent::OnStunEnd()
