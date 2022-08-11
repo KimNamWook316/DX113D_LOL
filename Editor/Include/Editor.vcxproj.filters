@@ -976,6 +976,9 @@
     <ClCompile Include="DeathDoor\Component\Node\GruntCommonSpawnNode.cpp">
       <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\11. Grunt</Filter>
     </ClCompile>
+    <ClCompile Include="DeathDoor\Component\Node\GruntCommonMoveStartCheckNode.cpp">
+      <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\09. GruntCommon</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EditorManager.h">
@@ -1688,6 +1691,9 @@
     </ClInclude>
     <ClInclude Include="DeathDoor\Component\Node\GruntCommonSpawnNode.h">
       <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\00. Specific\11. Grunt</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\Node\GruntCommonMoveStartCheckNode.h">
+      <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\09. GruntCommon</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

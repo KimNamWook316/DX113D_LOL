@@ -1116,6 +1116,9 @@
     <ClCompile Include="Resource\Shader\BombShader.cpp">
       <Filter>02. Resource\02. Shader\02. ShaderClass\26. Bomb</Filter>
     </ClCompile>
+    <ClCompile Include="Resource\Shader\ParticleTempValConstantBuffer.cpp">
+      <Filter>02. Resource\02. Shader\03. ConstantBuffer\08. Particle</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Device.h">
@@ -1894,6 +1897,9 @@
     </ClInclude>
     <ClInclude Include="Resource\Shader\BombShader.h">
       <Filter>02. Resource\02. Shader\02. ShaderClass\26. Bomb</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\Shader\ParticleTempValConstantBuffer.h">
+      <Filter>02. Resource\02. Shader\03. ConstantBuffer\08. Particle</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

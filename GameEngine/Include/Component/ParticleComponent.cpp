@@ -74,6 +74,7 @@ CParticleComponent::~CParticleComponent()
 	}
 
 	SAFE_DELETE(m_CBuffer);
+	SAFE_DELETE(m_TempVCBuffer);
 }
 
 void CParticleComponent::StartParticle(const Vector3& StartPos)
@@ -124,6 +125,13 @@ void CParticleComponent::SetParticle(CParticle* Particle)
 	m_SpawnTimeMax = m_Particle->GetSpawnTimeMax();
 
 	m_ParticleName = m_Particle->GetName();
+
+	SAFE_DELETE(m_TempVCBuffer);
+
+	m_TempVCBuffer = new CParticleTempValConstantBuffer;
+
+	if (!m_TempVCBuffer->Init())
+		assert(false);
 }
 
 void CParticleComponent::SetParticleWithOutCloneShader(CParticle* Particle)
@@ -159,6 +167,23 @@ void CParticleComponent::SetParticleWithOutCloneShader(CParticle* Particle)
 	m_SpawnTimeMax = m_Particle->GetSpawnTimeMax();
 
 	m_ParticleName = m_Particle->GetName();
+
+
+	// Disable New Alive 의 경우,
+	// Scene 시작 시에 한번 보이게 되는 문제가 있다. 이를 방지해야 한다.
+	// 따라서 Enable False 를 시켜줄 것이다.
+	if (m_CBuffer->IsDisableNewAlive())
+	{
+		CRef::Enable(false);
+	}
+
+	SAFE_DELETE(m_TempVCBuffer);
+
+	m_TempVCBuffer = new CParticleTempValConstantBuffer;
+	
+	if (!m_TempVCBuffer->Init())
+		assert(false);
+
 }
 
 void CParticleComponent::SetSpawnTime(float Time)
@@ -191,6 +216,7 @@ void CParticleComponent::ApplyBillBoardEffect()
 void CParticleComponent::Start()
 {
 	CSceneComponent::Start();
+
 }
 
 bool CParticleComponent::Init()
@@ -274,10 +300,10 @@ void CParticleComponent::Update(float DeltaTime)
 	// 이 방법 중 하나는 m_SpawnTimeMax 를 0으로 만들어버리는 것
 	if (m_CBuffer->IsDisableNewAlive() == 1)
 	{
-		if (m_CBuffer->IsApplySpawnTimeDuringDisableNewAlive() == false)
-		{
-			m_SpawnTimeMax = 0.f;
-		}
+		// if (m_CBuffer->IsApplySpawnTimeDuringDisableNewAlive() == false)
+		// {
+		// 	m_SpawnTimeMax = 0.f;
+		// }
 	}
 
 	// Spawn Time 정보
@@ -398,13 +424,20 @@ void CParticleComponent::PostUpdate(float DeltaTime)
 	// m_CBuffer->SetRotationAngle(GetWorldRot());
 	m_CBuffer->SetRotationAngle(GetWorldRot() + BillBoardAngle);
 	
-	// Relative Scale 정보를 세팅한다.
-	m_CBuffer->SetCommonWorldScale(GetWorldScale());
+	// (아래 값들은 이제 m_TempVCBuffer 을 통해 세팅해준다.)
+	//m_CBuffer->SetCommonWorldScale(GetWorldScale());
+	//m_CBuffer->SetCommonParticleComponentWorldPos(ParticleComponentWorldPos);
 
 	const Vector3& ParticleComponentWorldPos = GetWorldPos();
-	m_CBuffer->SetCommonParticleComponentWorldPos(ParticleComponentWorldPos);
+	const Vector3& ParticleCommonWorldScale = GetWorldScale();
 
 	m_CBuffer->UpdateCBuffer();
+
+	// 임시 Val 로 사용되는 Particle Value 넘겨주기
+	m_TempVCBuffer->SetCommonWorldScale(ParticleCommonWorldScale);
+	m_TempVCBuffer->SetCommonParticleComponentWorldPos(ParticleComponentWorldPos);
+
+	m_TempVCBuffer->UpdateCBuffer();
 
 	size_t	BufferCount = m_vecStructuredBuffer.size();
 
@@ -455,6 +488,7 @@ void CParticleComponent::RenderParticleEffectEditor()
 	// 상수 버퍼를 다시 한번 Setting 해준다.
 	// 계산 셰이더 외에도, Render 과정에서도 상수 버퍼 정보를 사용할 수 있게 하는 것이다.
 	m_CBuffer->UpdateCBuffer();
+	m_TempVCBuffer->UpdateCBuffer();
 
 	for (size_t i = 0; i < BufferCount; ++i)
 	{
@@ -489,6 +523,7 @@ void CParticleComponent::Render()
 
 	// 계산 셰이더 외에도, Render 과정에서도 상수 버퍼 정보를 사용할 수 있게 하는 것이다.
 	m_CBuffer->UpdateCBuffer();
+	m_TempVCBuffer->UpdateCBuffer();
 
 	CSceneComponent::Render();
 
@@ -528,7 +563,8 @@ void CParticleComponent::PostRender()
 		// 아래 코드를 세팅해주어야 딱 한번만 다시 생성되게 될 것이다.
 		if (m_CBuffer->IsDisableNewAlive())
 		{
-			m_CBuffer->SetResetParticleSharedInfoSumSpawnCnt(false);
+			// m_CBuffer->SetResetParticleSharedInfoSumSpawnCnt(false);
+			m_TempVCBuffer->SetResetParticleSharedInfoSumSpawnCnt(false);
 		}
 
 		if (m_CBuffer->IsDestroyExstingAllLivingParticlesEnabled() == 1)
@@ -608,7 +644,8 @@ void CParticleComponent::RecreateOnlyOnceCreatedParticleWithOutLifeTimeSetting()
 
 	// DiableNewAlive 가 true 인 Particle 에 대해서만 적용한다.
 	// DiableNewAlive 의 경우, 한번만 생성하고, 더이상 추가 생성하지 않는 Particle
-	m_CBuffer->SetResetParticleSharedInfoSumSpawnCnt(true);
+	// m_CBuffer->SetResetParticleSharedInfoSumSpawnCnt(true);
+	m_TempVCBuffer->SetResetParticleSharedInfoSumSpawnCnt(true);
 
 	// 해당 AccTime 이후 Enable False 가 된다.
 	// m_TempCreateAccTime = m_TempCreateAccTimeMax;

@@ -285,6 +285,7 @@
     <ClCompile Include="DeathDoor\Component\Node\FindPathNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\GruntCommonAttackNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\GruntCommonHitNode.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\GruntCommonMoveStartCheckNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\GruntCommonSpawnCheckNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\GruntCommonSpawnNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\GruntCommonTraceNode.cpp" />
@@ -542,6 +543,7 @@
     <ClInclude Include="DeathDoor\Component\Node\FindPathNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\GruntCommonAttackNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\GruntCommonHitNode.h" />
+    <ClInclude Include="DeathDoor\Component\Node\GruntCommonMoveStartCheckNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\GruntCommonSpawnCheckNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\GruntCommonSpawnNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\GruntCommonTraceNode.h" />

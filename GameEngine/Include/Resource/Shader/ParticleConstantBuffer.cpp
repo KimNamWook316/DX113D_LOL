@@ -43,13 +43,13 @@ CParticleConstantBuffer::CParticleConstantBuffer() :
 	m_BufferData.DisableNewAlive = 0;
 
 	// DisableNewAlive 중에도 Spawn Time 을 적용시키기 
-	m_BufferData.ApplySpawnTimeDuringDisableNewAlive = 0;
+	// m_BufferData.ApplySpawnTimeDuringDisableNewAlive = 0;
 
 	// Restart 버튼을 위한 것
 	// 공유 ParticleShareInfo 구조화 버퍼에서 CurrentSpawnCntSum 정보를 0으로 만들어줘 ! 라고 GPU 측에 메세지를 보내는 것
 	// Restart 버튼을 누르게 되면, 해당 값이 1로 바뀐다.
 	// 단, 다음 Frame 에서는 다시 0으로 세팅해준다.
-	m_BufferData.ResetParticleSharedInfoSumSpawnCnt = 0;
+	// m_BufferData.ResetParticleSharedInfoSumSpawnCnt = 0;
 
 	// 처음에는 UV Clipping 처리를 하지 않는다.
 	m_BufferData.LinearUVClippingEnable = 0;
@@ -73,6 +73,9 @@ CParticleConstantBuffer::CParticleConstantBuffer() :
 
 	// 아래의 값은 Object Pool 에서 Particle 을 당겨서 끌어와서 사용할 때 적용한다.
 	m_BufferData.DestroyExistingAllLivingParticles = 0;
+
+	// Linear Emissive Change 는 처음에는 반영하지 않는다
+	// m_BufferData.ApplyLinearEmissiveChange = 0;
 }
 
 CParticleConstantBuffer::CParticleConstantBuffer(const CParticleConstantBuffer& Buffer) :

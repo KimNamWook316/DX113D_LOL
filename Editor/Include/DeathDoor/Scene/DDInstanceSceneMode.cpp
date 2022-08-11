@@ -238,11 +238,11 @@ bool CDDInstanceSceneMode::Save(FILE* File)
 {
 	CDDSceneMode::Save(File);
 
-	int Length = m_EnterTriggerObjectName.length();
+	int Length = (int)m_EnterTriggerObjectName.length();
 	fwrite(&Length, sizeof(int), 1, File);
 	fwrite(m_EnterTriggerObjectName.c_str(), sizeof(char), Length, File);
 
-	Length = m_BlockerObjectName.length();
+	Length = (int)m_BlockerObjectName.length();
 	fwrite(&Length, sizeof(int), 1, File);
 	fwrite(m_BlockerObjectName.c_str(), sizeof(char), Length, File);
 
@@ -250,7 +250,7 @@ bool CDDInstanceSceneMode::Save(FILE* File)
 	fwrite(&EndEventObjNameCount, sizeof(int), 1, File);
 	for (int i = 0; i < EndEventObjNameCount; ++i)
 	{
-		Length = m_vecEndEventObjName[i].length();
+		Length = (int)m_vecEndEventObjName[i].length();
 		fwrite(&Length, sizeof(int), 1, File);
 		fwrite(m_vecEndEventObjName[i].c_str(), sizeof(char), Length, File);
 	}
@@ -275,7 +275,7 @@ bool CDDInstanceSceneMode::Save(FILE* File)
 
 		for (; iterSpawnInfo != iterSpawnInfoEnd; ++iterSpawnInfo)
 		{
-			Length = (*iterSpawnInfo)->MonsterName.length();
+			Length = (int)(*iterSpawnInfo)->MonsterName.length();
 			fwrite(&Length, sizeof(int), 1, File);
 			fwrite((*iterSpawnInfo)->MonsterName.c_str(), sizeof(char), Length, File);
 			fwrite(&(*iterSpawnInfo)->SpawnPosition, sizeof(Vector3), 1, File);

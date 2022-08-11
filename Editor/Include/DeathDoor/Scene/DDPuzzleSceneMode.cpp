@@ -172,11 +172,11 @@ bool CDDPuzzleSceneMode::Save(FILE* File)
 
 	fwrite(&m_ClearCamMove, sizeof(bool), 1, File);
 
-	int Length = m_BlockerObjectName.length();
+	int Length = (int)m_BlockerObjectName.length();
 	fwrite(&Length, sizeof(int), 1, File);
 	fwrite(m_BlockerObjectName.c_str(), sizeof(char), Length, File);
 
-	Length = m_LadderObjectName.length();
+	Length = (int)m_LadderObjectName.length();
 	fwrite(&Length, sizeof(int), 1, File);
 	fwrite(m_LadderObjectName.c_str(), sizeof(char), Length, File);
 

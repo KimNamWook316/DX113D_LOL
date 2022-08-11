@@ -317,11 +317,10 @@ bool CEffectEditor::Init()
     m_DisableNewAliveEdit->SetCallBackLabel<CEffectEditor>(this, &CEffectEditor::OnDisableNewAlive);
     m_DisableNewAliveEdit->SetCheck(0, false); // 처음에는 false 로 세팅되어 있다.
 
-
-    m_ApplyDuringDisableNewAliveEdit = Tree->AddWidget<CIMGUICheckBox>("Apply Spawn Time While Disabled", 250.f);
-    m_ApplyDuringDisableNewAliveEdit->AddCheckInfo("Apply Spawn Time While Disabled");
-    m_ApplyDuringDisableNewAliveEdit->SetCallBackLabel<CEffectEditor>(this, &CEffectEditor::OnApplySpawnTimeWhileDisableNewAlive);
-    m_ApplyDuringDisableNewAliveEdit->SetCheck(0, false); // 처음에는 false 로 세팅되어 있다.
+    // _ApplyDuringDisableNewAliveEdit = Tree->AddWidget<CIMGUICheckBox>("Apply Spawn Time While Disabled", 250.f);
+    // _ApplyDuringDisableNewAliveEdit->AddCheckInfo("Apply Spawn Time While Disabled");
+    // _ApplyDuringDisableNewAliveEdit->SetCallBackLabel<CEffectEditor>(this, &CEffectEditor::OnApplySpawnTimeWhileDisableNewAlive);
+    // _ApplyDuringDisableNewAliveEdit->SetCheck(0, false); // 처음에는 false 로 세팅되어 있다.
 
     // Start Min, Start Max
     Tree = AddWidget<CIMGUITree>("Start Min, Max");
@@ -805,8 +804,8 @@ void CEffectEditor::OnApplySpawnTimeWhileDisableNewAlive(const char*, bool Enabl
     if (!m_ParticleClass)
         return;
 
-    m_ParticleClass->SetApplySpawnTimeDuringDisableNewAlive(Enable);
-    dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetApplySpawnTimeDuringDisableNewAlive(Enable);
+    // m_ParticleClass->SetApplySpawnTimeDuringDisableNewAlive(Enable);
+    // dynamic_cast<CParticleComponent*>(m_ParticleObject->GetRootComponent())->GetCBuffer()->SetApplySpawnTimeDuringDisableNewAlive(Enable);
 }
 
 void CEffectEditor::OnIsUVClippingReflectingMoveDirEdit(const char*, bool Enable)
@@ -1775,7 +1774,7 @@ void CEffectEditor::SetIMGUIReflectParticle(CParticle* Particle)
 
     // Disable New Alive
     m_DisableNewAliveEdit->SetCheck(0, Particle->IsDisableNewAlive());
-    m_ApplyDuringDisableNewAliveEdit->SetCheck(0, Particle->IsApplySpawnTimeDuringDisableNewAlive());
+    // m_ApplyDuringDisableNewAliveEdit->SetCheck(0, Particle->IsApplySpawnTimeDuringDisableNewAlive());
 
     // LifeTime
     m_LifeTimeMinEdit->SetVal(Particle->GetLifeTimeMin());

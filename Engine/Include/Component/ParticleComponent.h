@@ -6,6 +6,7 @@
 #include "../Resource/Shader/ParticleUpdateShader.h"
 #include "../Resource/Shader/ParticleRenderShader.h"
 #include "../Resource/Shader/ParticleConstantBuffer.h"
+#include "../Resource/Shader/ParticleTempValConstantBuffer.h"
 #include "../Resource/Material/Material.h"
 
 class CParticleComponent :
@@ -25,6 +26,7 @@ protected:
 	CSharedPtr<CMaterial>					m_Material;
 	CSharedPtr<CParticleUpdateShader>		m_UpdateShader;
 	CParticleConstantBuffer*				m_CBuffer;
+	CParticleTempValConstantBuffer*				m_TempVCBuffer;
 	ParticleInfo							m_Info;
 	ParticleInfoShared						m_InfoShared;
 	float									m_SpawnTime;

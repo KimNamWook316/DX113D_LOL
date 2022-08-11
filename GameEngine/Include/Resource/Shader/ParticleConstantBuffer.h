@@ -4,7 +4,7 @@
 #include "../../ParticleInfo.h"
 
 class CParticleConstantBuffer :
-    public CConstantBufferBase
+	public CConstantBufferBase
 {
 public:
 	CParticleConstantBuffer();
@@ -18,7 +18,7 @@ public:
 	virtual bool Init();
 	virtual void UpdateCBuffer();
 	virtual CParticleConstantBuffer* Clone();
-public  :
+public:
 	virtual void Save(FILE* File);
 	virtual void Load(FILE* File);
 public:
@@ -156,6 +156,25 @@ public:
 	// 	return m_BufferData.Is2D == 1 ? true : false;
 	// }
 
+	// Linear Emissive 
+	int IsLinearEmissiveChangeEnable() const
+	{
+		// return m_BufferData.ApplyLinearEmissiveChange;
+		return true;
+	}
+
+	const Vector3& GetStartEmissiveColor() const
+	{
+		// return m_BufferData.StartEmissiveColor;
+		return Vector3();
+	}
+
+	const Vector3& GetEndEmissiveColor() const
+	{
+		// return m_BufferData.EndEmissiveColor;
+		return Vector3();
+	}
+
 	// Linear Rotate
 	// Linaer Iterate 할때의 최초 Rot Angle
 	int IsSeperateLinearRotate()
@@ -179,7 +198,7 @@ public:
 	{
 		return m_BufferData.ParticleBounce;
 	}
-	
+
 	float GetParticleBounceResist() const
 	{
 		return m_BufferData.ParticleBounceResistance;
@@ -238,29 +257,39 @@ public:
 	{
 		return m_BufferData.LinearClippingReverseDir == 1 ? true : false;
 	}
-	bool IsApplySpawnTimeDuringDisableNewAlive() const
-	{
-		return m_BufferData.ApplySpawnTimeDuringDisableNewAlive == 1 ? true : false;
-	}
-public:
-	void SetApplySpawnTimeDuringDisableNewAlive(bool Enable)
-	{
-		m_BufferData.ApplySpawnTimeDuringDisableNewAlive = Enable ? 1 : 0;
-	}
-	void SetLinearUVClippingDirReverseEnable(bool Enable)
-	{
-		m_BufferData.LinearClippingReverseDir = Enable ? 1 : 0;
-	}
 
+public:
 	void SetDestroyExstingAllLivingParticles(bool Enable)
 	{
 		m_BufferData.DestroyExistingAllLivingParticles = Enable ? 1 : 0;
 	}
-	// Follod Particle Component Pos
-	void SetFollowRealTimeParticleComponentPos(bool Enable) 
+
+	void SetLinearUVClippingDirReverseEnable(bool Enable)
+	{
+		m_BufferData.LinearClippingReverseDir = Enable ? 1 : 0;
+	}
+	void SetFollowRealTimeParticleComponentPos(bool Enable)
 	{
 		m_BufferData.FollowRealTimeParticleComponentPos = Enable ? 1 : 0;
 	}
+	// Linear Emissive Change
+	void SetLinearEmissiveChangeEnable(bool Enable)
+	{
+		m_BufferData.ApplyLinearEmissiveChange = Enable ? 1 : 0;
+	}
+
+	// Start Emissive Color
+	void SetStartEmissiveColor(const Vector3& Color)
+	{
+		m_BufferData.StartEmissiveColor = Color;
+	}
+
+	// End Emissive Color
+	void SetEndEmissiveColor(const Vector3& Color)
+	{
+		m_BufferData.EndEmissiveColor = Color;
+	}
+
 	// Noise Texture
 	void SetApplyNoiseTextureSamplingEnable(bool Enable)
 	{
@@ -274,10 +303,10 @@ public:
 	}
 
 	// Restart 버튼 ( 설명은 생성자 참고)
-	void SetResetParticleSharedInfoSumSpawnCnt(bool Enable)
-	{
-		m_BufferData.ResetParticleSharedInfoSumSpawnCnt = Enable ? 1 : 0;
-	}
+	// void SetResetParticleSharedInfoSumSpawnCnt(bool Enable)
+	// {
+	// 	m_BufferData.ResetParticleSharedInfoSumSpawnCnt = Enable ? 1 : 0;
+	// }
 	// 되살리는 효과 무효화 하기
 	void SetDisableNewAlive(bool Enable)
 	{
@@ -292,22 +321,22 @@ public:
 	}
 
 	// Particle Component 의 Relative Scale 반영하기 
-	void SetCommonWorldScale(const Vector3& Scale)
-	{
-		m_BufferData.CommonWorldScale = Scale;
-	}
+	// void SetCommonWorldScale(const Vector3& Scale)
+	// {
+	// 	m_BufferData.CommonWorldScale = Scale;
+	// }
 
 	// Particle Component 의 World Pos 반영
-	void SetCommonParticleComponentWorldPos(const Vector3& WorldPos)
-	{
-		m_BufferData.CommonParticleComponentWorldPos = WorldPos;
-	}
+	// void SetCommonParticleComponentWorldPos(const Vector3& WorldPos)
+	// {
+	// 	m_BufferData.CommonParticleComponentWorldPos = WorldPos;
+	// }
 	// UV Move
-	void SetUVMoveEnable(bool Enable) 
+	void SetUVMoveEnable(bool Enable)
 	{
-		m_BufferData.UVMoveEnable = Enable ? 1: 0;
+		m_BufferData.UVMoveEnable = Enable ? 1 : 0;
 	}
-	void SetUVRowN(int Row) 
+	void SetUVRowN(int Row)
 	{
 		m_BufferData.UVRowN = Row;
 	}
@@ -441,12 +470,12 @@ public:
 		m_BufferData.ColorMax = Vector4(r, g, b, a);
 	}
 
-	void SetSpeedChangeMethod(ParticleSpeedChangeMethod Method) 
+	void SetSpeedChangeMethod(ParticleSpeedChangeMethod Method)
 	{
 		m_BufferData.SpeedChangeMethod = (int)Method;
 	}
 
-	void SetSpeedChangeMethod(int Method) 
+	void SetSpeedChangeMethod(int Method)
 	{
 		if (Method > (int)ParticleSpeedChangeMethod::Max)
 			assert(false);

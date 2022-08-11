@@ -121,11 +121,11 @@ bool CDDSceneMode::Save(FILE* File)
 
 	fwrite(&m_InitialScene, sizeof(bool), 1, File);
 	fwrite(&m_EntryPoint, sizeof(Vector3), 1, File);
-	int Length = m_NextSceneFileName.length();
+	int Length = (int)m_NextSceneFileName.length();
 	fwrite(&Length, sizeof(int), 1, File);
 	fwrite(m_NextSceneFileName.c_str(), sizeof(char), Length, File);
 
-	Length = m_ExitPointObjName.length();
+	Length = (int)m_ExitPointObjName.length();
 	fwrite(&Length, sizeof(int), 1, File);
 	fwrite(m_ExitPointObjName.c_str(), sizeof(char), Length, File);
 

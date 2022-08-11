@@ -138,6 +138,7 @@ void ParticleGS(point VertexParticleOutput input[1],
 		if (g_ParticleFollowComponentPos == 1)
 		{
 			WorldPos += g_ParticleShareSRV[0].ParticleComponentWorldPos;
+			// WorldPos += g_TVParticleComponentWorldPos;
 		}
 		else
 		{
@@ -197,19 +198,6 @@ void ApplyLinearUVClipping(GeometryParticleOutput input)
 			if (input.UV.x > 1 - input.LifeTimeRatio)
 				clip(-1);
 		}
-
-		/*
-		if (input.LocalXPlusMoveDir == 1)
-		{
-			if (input.UV.x > 1 - input.LifeTimeRatio)
-				clip(-1);
-		}
-		else
-		{
-			if (input.UV.x > 1 - input.LifeTimeRatio)
-				clip(-1);
-		}
-		*/
 	}
 }
 
@@ -239,6 +227,23 @@ bool ApplyNoiseTextureDestroyEffect(float2 UV, float LifeTimeMax, float LifeTime
 	return true;
 }
 
+float4 ApplyLinearEmissiveColorChangeEffect(float LifeTimeRatio, float4 OriginEmissive)
+{
+	if (g_ParticleApplyLinearEmissiveChange == 1)
+	{
+		float4 ReturnColor;
+		ReturnColor.a = OriginEmissive.a;
+
+		ReturnColor.rgb = lerp(g_ParticleStartEmissiveColor,
+			g_ParticleEndEmissiveColor, float3(LifeTimeRatio, LifeTimeRatio, LifeTimeRatio));
+
+		return ReturnColor;
+	}
+
+	return OriginEmissive;
+}
+
+
 PSOutput_Single ParticlePS(GeometryParticleOutput input)
 {
 	PSOutput_Single output = (PSOutput_Single)0;
@@ -254,14 +259,14 @@ PSOutput_Single ParticlePS(GeometryParticleOutput input)
 	// 		return output;
 	// }
 
-	float4 Color = g_BaseTexture.Sample(g_BaseSmp, input.UV);
+	float4 BaseMaterialColor = g_BaseTexture.Sample(g_BaseSmp, input.UV);
 
 	ApplyLinearUVClipping(input);
 
 	if (ApplyNoiseTextureDestroyEffect(input.UV, input.LifeTimeMax, input.LifeTimeRatio, input.InstanceID) == false)
 		clip(-1);
 
-	if (Color.a == 0.f || input.Color.a == 0.f)
+	if (BaseMaterialColor.a == 0.f || input.Color.a == 0.f)
 		clip(-1);
 
 	float2 ScreenUV = input.ProjPos.xy / input.ProjPos.w;
@@ -286,11 +291,17 @@ PSOutput_Single ParticlePS(GeometryParticleOutput input)
 	// 일단은, Geometry Shader 에서 구현해줄 것이다.
 
 	// Paper Burn
-	Color = PaperBurn2D(Color * input.Color, input.UV);
+	BaseMaterialColor = PaperBurn2D(BaseMaterialColor * input.Color, input.UV);
+
+	float4 EmissiveColor = g_MtrlEmissiveColor.xyzw;
+	EmissiveColor = ApplyLinearEmissiveColorChangeEffect(input.LifeTimeRatio, EmissiveColor);
 
 	// output.Color = Color;
-	output.Color = Color * input.Color;
-	output.Color.a = Color.a * g_MtrlOpacity * Alpha;
+	output.Color.rgb = (BaseMaterialColor * input.Color).rgb + EmissiveColor.rgb;
+
+	// output.Color = Color;
+	// output.Color = Color * input.Color;
+	output.Color.a = BaseMaterialColor.a * g_MtrlOpacity * Alpha;
 
 	return output;
 }
