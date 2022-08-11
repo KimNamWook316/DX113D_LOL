@@ -75,7 +75,7 @@ CParticleConstantBuffer::CParticleConstantBuffer() :
 	m_BufferData.DestroyExistingAllLivingParticles = 0;
 
 	// Linear Emissive Change 는 처음에는 반영하지 않는다
-	// m_BufferData.ApplyLinearEmissiveChange = 0;
+	m_BufferData.ApplyLinearEmissiveChange = 0;
 }
 
 CParticleConstantBuffer::CParticleConstantBuffer(const CParticleConstantBuffer& Buffer) :

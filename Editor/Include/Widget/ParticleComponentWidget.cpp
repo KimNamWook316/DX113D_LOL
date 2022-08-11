@@ -88,9 +88,6 @@ bool CParticleComponentWidget::Init()
     m_BaseColorEdit = m_RootTree->AddWidget<CIMGUIColor3>("BaseColor", 200.f);
     m_BaseColorEdit->SetCallBack(this, &CParticleComponentWidget::OnEditBaseColor);
     
-    m_EmissiveColorEdit = m_RootTree->AddWidget<CIMGUIColor3>("EmissiveColor", 200.f);
-    m_EmissiveColorEdit->SetCallBack(this, &CParticleComponentWidget::OnEditEmissiveColor);
-    
     m_ApplyLinearEmissiveChangeEdit = m_RootTree->AddWidget<CIMGUICheckBox>("Emissive Linear", 100.f);
     m_ApplyLinearEmissiveChangeEdit->AddCheckInfo("Emissive Linear");
     m_ApplyLinearEmissiveChangeEdit->SetCallBackLabel<CParticleComponentWidget>(this, &CParticleComponentWidget::OnEditEmissiveLinearCheck);
@@ -131,14 +128,7 @@ void CParticleComponentWidget::OnEditBaseColor(const Vector3& Color)
     m_ParticleClass->GetMaterial()->SetBaseColor(Color.x, Color.y, Color.z, 1.f);
     dynamic_cast<CParticleComponent*>(m_Component)->GetMaterial()->SetBaseColor(Color.x, Color.y, Color.z, 1.f);
 }
-void CParticleComponentWidget::OnEditEmissiveColor(const Vector3& Color)
-{
-    if (!m_ParticleClass || !m_ParticleClass->GetMaterial())
-        return;
 
-    m_ParticleClass->GetMaterial()->SetEmissiveColor(Color.x, Color.y, Color.z, 1.f);
-    dynamic_cast<CParticleComponent*>(m_Component)->GetMaterial()->SetEmissiveColor(Color.x, Color.y, Color.z, 1.f);
-}
 void CParticleComponentWidget::OnEditStartEmissiveColor(const Vector3& Color)
 {
     if (!m_ParticleClass)
@@ -428,9 +418,6 @@ void CParticleComponentWidget::ReflectParticleToIMGUI()
    
    const Vector4& BaseColor = ParticleMaterial->GetBaseColor();
    m_BaseColorEdit->SetRGB(BaseColor.x, BaseColor.y, BaseColor.z);
-   
-   const Vector4& EmissiveColor = ParticleMaterial->GetEmissiveColor();
-   m_EmissiveColorEdit->SetRGB(EmissiveColor.x, EmissiveColor.y, EmissiveColor.z);
    
    const Vector3& StEmissiveColor = m_ParticleClass->GetStartEmissiveColor();
    m_StartEmissiveColorEdit->SetRGB(StEmissiveColor.x, StEmissiveColor.y, StEmissiveColor.z);

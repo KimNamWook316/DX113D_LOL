@@ -227,12 +227,11 @@ bool ApplyNoiseTextureDestroyEffect(float2 UV, float LifeTimeMax, float LifeTime
 	return true;
 }
 
-float4 ApplyLinearEmissiveColorChangeEffect(float LifeTimeRatio, float4 OriginEmissive)
+float3 ApplyLinearEmissiveColorChangeEffect(float LifeTimeRatio, float3 OriginEmissive)
 {
 	if (g_ParticleApplyLinearEmissiveChange == 1)
 	{
-		float4 ReturnColor;
-		ReturnColor.a = OriginEmissive.a;
+		float3 ReturnColor;
 
 		ReturnColor.rgb = lerp(g_ParticleStartEmissiveColor,
 			g_ParticleEndEmissiveColor, float3(LifeTimeRatio, LifeTimeRatio, LifeTimeRatio));
@@ -293,12 +292,13 @@ PSOutput_Single ParticlePS(GeometryParticleOutput input)
 	// Paper Burn
 	BaseMaterialColor = PaperBurn2D(BaseMaterialColor * input.Color, input.UV);
 
-	float4 EmissiveColor = g_MtrlEmissiveColor.xyzw;
+	// float3 EmissiveColor = g_MtrlEmissiveColor.xyz;
+	float3 EmissiveColor = g_ParticleStartEmissiveColor.xyz;
 	EmissiveColor = ApplyLinearEmissiveColorChangeEffect(input.LifeTimeRatio, EmissiveColor);
 
 	// output.Color = Color;
-	output.Color.rgb = (BaseMaterialColor * input.Color).rgb + EmissiveColor.rgb;
-
+	output.Color.rgb = (BaseMaterialColor * input.Color).rgb +EmissiveColor.rgb;
+	
 	// output.Color = Color;
 	// output.Color = Color * input.Color;
 	output.Color.a = BaseMaterialColor.a * g_MtrlOpacity * Alpha;
