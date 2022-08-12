@@ -1,0 +1,5 @@
+DeathDoor_Sound,,,
+,Channel_GroupName,Loop,Path
+LockstoneBGM,BGM,1,BGM\lockstoneBGM.mp3
+CrowBossBGM,BGM,1,BGM\CrowBossBGM.mp3
+PlayerRoll,Effect,0,Effect\Player\PlayerRoll.ogg

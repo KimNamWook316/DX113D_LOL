@@ -14,6 +14,7 @@
 #include "Component/StaticMeshComponent.h"
 #include "Component/AnimationMeshComponent.h"
 #include "Component/ParticleComponent.h"
+#include "Component/PaperBurnComponent.h"
 
 CPlayerDataComponent::CPlayerDataComponent() :
 	m_OnSlash(false),
@@ -30,7 +31,8 @@ CPlayerDataComponent::CPlayerDataComponent() :
 	m_AdjLadder(nullptr),
 	m_Slash(nullptr),
 	m_Sword(nullptr),
-	m_CurrentDustIndex(0)
+	m_CurrentDustIndex(0),
+	m_SlashPaperBurn(nullptr)
 {
 	SetTypeID<CPlayerDataComponent>();
 	m_ComponentType = Component_Type::ObjectComponent;
@@ -100,8 +102,15 @@ void CPlayerDataComponent::Start()
 	m_Slash = (CStaticMeshComponent*)m_Object->FindComponent("Slash");
 	if(m_Slash)
 		m_Slash->Enable(false);
+
+
 	m_SlashDir = m_Object->GetWorldAxis(AXIS_Z);
 	m_SlashDir *= 1.f;
+	// x는 xz평면에 평행하게 하려고 100.f으로 맞춘거고 나머지 y,z의 초기 설정값을 0으로 relative rotation을 맞춰줘야한다
+	m_Slash->SetRelativeRotation(100.f, 0.f, 0.f);
+
+
+
 
 	m_Sword = (CAnimationMeshComponent*)m_Object->FindComponent("SwordAnim");
 
@@ -111,6 +120,8 @@ void CPlayerDataComponent::Start()
 	Vector3 RootPos = m_AnimComp->GetWorldPos();
 	Vector3 CamPos = Cam->GetWorldPos();
 	m_CamRelativePos = CamPos - RootPos;
+
+	m_SlashPaperBurn = m_Object->FindObjectComponentFromType<CPaperBurnComponent>();
 }
 
 bool CPlayerDataComponent::Init()
@@ -163,7 +174,7 @@ void CPlayerDataComponent::Update(float DeltaTime)
 		}
 	}
 
-
+	m_SlashPaperBurn = m_Object->FindObjectComponentFromType<CPaperBurnComponent>();
 }
 
 void CPlayerDataComponent::PostUpdate(float DeltaTime)
@@ -234,34 +245,37 @@ inline void CPlayerDataComponent::SetTrueOnSlash()
 
 	m_AttackCheckCollider->Enable(true);
 	m_Slash->Enable(true);
+	m_SlashPaperBurn->SetEndEvent(PaperBurnEndEvent::Disable);
+	m_SlashPaperBurn->StartPaperBurn();
 
-	Vector3 AxisZ = m_Object->GetWorldAxis(AXIS_Z);
+	//Vector3 AxisZ = m_Object->GetWorldAxis(AXIS_Z);
+	//AxisZ *= -1.f;
 
-	float Angle = 0.f;
-	float DotProduct = m_SlashDir.Dot(AxisZ);
-	Vector3 CrossVec = m_SlashDir.Cross(AxisZ);
+	//float Angle = 0.f;
+	//float DotProduct = m_SlashDir.Dot(AxisZ);
+	//Vector3 CrossVec = m_SlashDir.Cross(AxisZ);
 
-	if (DotProduct >= -0.99999999999f && DotProduct <= 0.99999999999f)
-	{
-		Angle = RadianToDegree(acosf(DotProduct));
+	//if (DotProduct >= -0.99999999999f && DotProduct <= 0.99999999999f)
+	//{
+	//	Angle = RadianToDegree(acosf(DotProduct));
 
-		if (CrossVec.y < 0)
-			Angle *= -1.f;
-	}
+	//	if (CrossVec.y < 0)
+	//		Angle *= -1.f;
+	//}
 
-	else
-	{
-		if (DotProduct == -1.f)
-			Angle = 180.f;
-	}
+	//else
+	//{
+	//	if (DotProduct == -1.f)
+	//		Angle = 180.f;
+	//}
 
-	m_Slash->AddRelativeRotationY(Angle);
+	//m_Slash->AddRelativeRotationY(Angle);
 
-	Matrix mat;
-	mat.Rotation(Vector3(0.f, Angle, 0.f));
+	//Matrix mat;
+	//mat.Rotation(Vector3(0.f, Angle, 0.f));
 
-	m_SlashDir = m_SlashDir.TransformCoord(mat);
-	
+	//m_SlashDir = m_SlashDir.TransformCoord(mat);
+
 }
 
 inline void CPlayerDataComponent::SetFalseOnSlash()
@@ -269,7 +283,7 @@ inline void CPlayerDataComponent::SetFalseOnSlash()
 	m_OnSlash = false;
 
 	m_AttackCheckCollider->Enable(false);
-	m_Slash->Enable(false);
+	//m_Slash->Enable(false);
 }
 
 CAnimationMeshComponent* CPlayerDataComponent::GetSword() const
@@ -426,8 +440,10 @@ void CPlayerDataComponent::OnResetDustParticle()
 		Vector3 ZDir = m_Object->GetWorldAxis(AXIS_Z);
 
 		if (m_vecMoveDust[m_CurrentDustIndex])
+		{
 			m_vecMoveDust[m_CurrentDustIndex]->StartParticle(Vector3(ObjectPos.x + ZDir.x, ObjectPos.y + 1.f, ObjectPos.z + ZDir.z));
-		// m_vecMoveDust[m_CurrentDustIndex]->RecreateOnlyOnceCreatedParticleWithOutLifeTimeSetting();
+			//m_vecMoveDust[m_CurrentDustIndex]->RecreateOnlyOnceCreatedParticleWithOutLifeTimeSetting();
+		}
 
 		++m_CurrentDustIndex;
 

@@ -81,7 +81,7 @@ void CCrowBossDataComponent::Start()
 
 
 	m_FeatherParticle = m_Object->FindComponentFromType<CParticleComponent>();
-	
+	m_FeatherParticle->Enable(false);
 }
 
 void CCrowBossDataComponent::Update(float DeltaTime)
@@ -230,8 +230,9 @@ void CCrowBossDataComponent::Fly(const Vector3& FlyDir, float DeltaTime)
 			++m_ClearHookIndex;
 		}
 
-		if (m_ClearHookIndex % 6 == 0 && m_FeatherParticle)
+		if (m_ClearHookIndex % 5 == 0 && m_FeatherParticle)
 		{
+			m_FeatherParticle->Enable(true);
 			m_FeatherParticle->RecreateOnlyOnceCreatedParticle();
 		}
 	}

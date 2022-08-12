@@ -82,6 +82,11 @@ bool CSoundManager::LoadSound(const std::string& ChannelGroupName, bool Loop,
 	return true;
 }
 
+bool CSoundManager::LoadSoundExcel(const char* FullPath)
+{
+	return true;
+}
+
 bool CSoundManager::CreateSoundChannelGroup(const std::string& Name)
 {
 	FMOD::ChannelGroup* Group = FindChannelGroup(Name);

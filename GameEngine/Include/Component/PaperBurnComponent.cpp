@@ -367,7 +367,7 @@ bool CPaperBurnComponent::Save(FILE* File)
 	fwrite(&m_FinishTime, sizeof(float), 1, File);
 	fwrite(&m_EndEvent, sizeof(PaperBurnEndEvent), 1, File);
 
-	int Length = (int)m_PaperBurnComponentName.length();
+	size_t Length = (int)m_PaperBurnComponentName.length();
 	fwrite(&Length, sizeof(int), 1, File);
 	fwrite(m_PaperBurnComponentName.c_str(), sizeof(char), Length, File);
 

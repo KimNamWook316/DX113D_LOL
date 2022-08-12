@@ -45,6 +45,7 @@ private:
 	Vector3 m_SlashDir;
 
 	Vector3 m_CamRelativePos;
+	class CPaperBurnComponent* m_SlashPaperBurn;
 
 public:
 	virtual void Start();

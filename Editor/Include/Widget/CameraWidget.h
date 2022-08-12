@@ -25,7 +25,9 @@ private:
 	void OnClickShake();
 	void OnCheckMoveDataEditMode(int Idx, bool Enable);
 	void OnClickAddMoveData();
+#ifdef _DEBUG
 	void OnClickTestMove();
+#endif // DEBUG
 	void OnClickClearMove();
 
 private:

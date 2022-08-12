@@ -73,7 +73,7 @@ NodeResult CCrowBossJump::OnUpdate(float DeltaTime)
 		ShootAngle = 70.f;
 	}
 
-	Projectile->ShootByGravityTargetPos(CurrentPos, Dir, ShootAngle, PlayerPos);
+	Projectile->ShootByGravityTargetPos(CurrentPos, Dir, ShootAngle, PlayerPos, 13.f);
 
 	return NodeResult::Node_True;
 }

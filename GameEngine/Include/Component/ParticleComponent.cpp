@@ -274,7 +274,7 @@ void CParticleComponent::Update(float DeltaTime)
 	// 이 방법 중 하나는 m_SpawnTimeMax 를 0으로 만들어버리는 것
 	if (m_CBuffer->IsDisableNewAlive() == 1)
 	{
-		m_SpawnTimeMax = 0.f;
+		//m_SpawnTimeMax = 0.f;
 	}
 
 	// Spawn Time 정보
@@ -609,9 +609,10 @@ void CParticleComponent::RecreateOnlyOnceCreatedParticleWithOutLifeTimeSetting()
 
 	// 해당 AccTime 이후 Enable False 가 된다.
 	// m_TempCreateAccTime = m_TempCreateAccTimeMax;
-	m_TempCreateAccTime = m_CBuffer->GetLifeTimeMax() + 0.1f;
+	m_TempCreateAccTimeMax = m_CBuffer->GetLifeTimeMax() + 0.1f;
 
 	// 상수 버퍼 정보를 Update
+	m_CBuffer->SetCommonParticleComponentWorldPos(GetWorldPos());
 	m_CBuffer->UpdateCBuffer();
 
 	// 계산 셰이더 한번 더 호출
