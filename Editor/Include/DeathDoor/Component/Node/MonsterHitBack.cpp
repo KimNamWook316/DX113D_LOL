@@ -31,8 +31,16 @@ NodeResult CMonsterHitBack::OnStart(float DeltaTime)
 	std::string AnimName = "HitImplace";
 	CAnimationSequenceInstance* AnimInst = m_AnimationMeshComp->GetAnimationInstance();
 
+	AnimInst->AddNotify(AnimName, "DisableLookPlayer", 0,
+		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnDisableLookPlayer);
+	AnimInst->AddNotify(AnimName, "DisableMoveZ", 0,
+		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnDisableMoveZ);
+
 	AnimInst->AddNotify(AnimName, "SetCurrentNodeNull", 16,
 		(CMonsterDataComponent*)Data, &CMonsterDataComponent::SetCurrentNodeNull);
+
+	AnimInst->AddNotify(AnimName, "EnableMoveZ", 16,
+		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnDisableMoveZ);
 
 	return NodeResult::Node_True;
 }

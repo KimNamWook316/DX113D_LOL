@@ -33,7 +33,10 @@ void CGruntCommonDataComponent::Start()
 {
 	CMonsterDataComponent::Start();
 
-	m_HitBox->SetExtent(1.5f, 2.5f, 1.5f);
+	if (m_HitBox)
+	{
+		m_HitBox->SetExtent(1.5f, 2.5f, 1.5f);
+	}
 
 	m_Data = CDataManager::GetInst()->GetObjectData("BossBetty");
 

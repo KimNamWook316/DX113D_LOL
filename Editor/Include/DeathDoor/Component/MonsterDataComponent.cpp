@@ -81,7 +81,7 @@ void CMonsterDataComponent::Start()
 	{
 		m_HitBox = vecCollider[0];
 		size_t Size = vecCollider.size();
-
+		
 		for (size_t i = 0; i < Size; ++i)
 		{
 			if ("HitBox" == vecCollider[i]->GetName())
@@ -553,6 +553,14 @@ void CMonsterDataComponent::OnActivateSpawnParticle()
 	const Vector3& ObjectWorldPos = m_Object->GetWorldPos();
 
 	m_SpawnParticle->StartParticle(ObjectWorldPos);
+}
+
+void CMonsterDataComponent::OnInActivateSpawnParticle()
+{
+	if (!m_SpawnParticle)
+		return;
+
+	m_SpawnParticle->CRef::Enable(false);
 }
 
 void CMonsterDataComponent::SetIsHit(bool Hit)

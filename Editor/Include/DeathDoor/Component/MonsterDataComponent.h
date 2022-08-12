@@ -61,6 +61,7 @@ public:
 	virtual void OnActivateBloodParticle();
 	// Spawn Particle
 	virtual void OnActivateSpawnParticle();
+	virtual void OnInActivateSpawnParticle();
 public:
 	virtual void SetIsHit(bool Hit) override;
 
