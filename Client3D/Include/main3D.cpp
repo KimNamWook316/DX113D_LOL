@@ -23,7 +23,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 		return 0;
 	}
 
-	CClientManager3D::GetInst()->CreateDefaultSceneMode();
+	CClientManager3D::GetInst()->LoadInitialScene();
 
 	int Ret = CClientManager3D::GetInst()->Run();
 

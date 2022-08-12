@@ -44,7 +44,8 @@ cbuffer	ParticleCBuffer : register(b7)
 	int g_ParticleUVMoveEnable;
 	int g_ParticleUVRowN;
 	int g_ParticleUVColN;
-	int g_ParticleResetSharedInfoSpawnCntSum;
+	// int g_ParticleResetSharedInfoSpawnCntSum;
+	int g_ParticleApplyLinearEmissiveChange;
 
 	// 각 Particle 별로 다르게 Rotation Angle을 주는 경우
 	float3 g_ParticleSeperateRotAngleMin;
@@ -54,11 +55,13 @@ cbuffer	ParticleCBuffer : register(b7)
 	int g_ParticleAlphaLinearFromCenter;
 
 	// Particle Component Relative Scale
-	float3 g_ParticleCommonWorldScale;
+	// float3 g_ParticleCommonWorldScale;
+	float3 g_ParticleStartEmissiveColor;
 	int g_ParticleLinearUVClipping;
 
 	// Particle Component WorldPos
-	float3 g_ParticleComponentWorldPos;
+	// float3 g_ParticleComponentWorldPos;
+	float3 g_ParticleEndEmissiveColor;
 	int g_ParticleSpeedChangeMethod;
 
 	int g_ParticleApplyNoiseTexture; // Pixel Shader 에서 매순간 Noise Texture 로 부터, Sampling 을 해서 Color, Alpha 값 등을 바꾸는 것
@@ -67,15 +70,21 @@ cbuffer	ParticleCBuffer : register(b7)
 	int g_ParticleFollowComponentPos;
 
 	// 여기 아래는 Particle Constant Buffer 의 크기 제한으로 인해 안먹힐 것이다.
-	float3 g_ParticleEmptyInfo1;
-	float3 g_ParticleEmptyInfo2;
-	int ParticleInfo1;   // 기존에 살아있는 Particle 들을 모두 Alive False 로 만들어주기 
-	float ParticleInfo2;
+	float3 ParticleEmpty1;
+	float3 ParticleEmpty2;
+	int ParticleEmpty3;   // 기존에 살아있는 Particle 들을 모두 Alive False 로 만들어주기 
+	float ParticleEmpty4;
 };
 
 cbuffer	ParticleTempElemCBuffer : register(b9)
 {
-	float3 g_CompRelativeAxis;
+	// float3 g_CompRelativeAxis;
+	// TV : Temporary Value
+	float3 g_TVParticleCommonWorldScale;
+	int g_TVResetParticleSharedInfoSumSpawnCnt;
+
+	float3 g_TVParticleComponentWorldPos;
+	int ParticleTempValEmpty1;
 }
 
 struct ParticleInfo
@@ -202,7 +211,6 @@ float3x3 ComputeRotationMatrix(float3 Angle)
 	return matRot;
 }
 
-float GetRandValForParticle(float2 co)
-{
-    return (frac(sin(dot(co.xy, float2(12.9898, 78.233))) * 43758.5453)) * 1;
+float GetRandValForParticle(float2 co) {
+	return(frac(sin(dot(co.xy, float2(12.9898, 78.233))) * 43758.5453)) * 1;
 }

@@ -38,9 +38,6 @@ void CBossBettyThrowNode::Init()
 
 	// Start
 	// 던지기 전까지 Player 방향으로 회전할 수 있도록 한다.
-	AnimInst->AddNotify(AnimName, "EnableCloseAttackChangeAnim", 0,
-		Data, &CBossBettyDataComponent::OnBossBettyEnableCloseAttackChangeAnim);
-
 	AnimInst->AddNotify(AnimName, "OnTracePlayer", 0,
 		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnEnableLookPlayer);
 
@@ -55,6 +52,9 @@ void CBossBettyThrowNode::Init()
 
 	AnimInst->AddNotify(AnimName, "DisableLookPlayer", 26,
 		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnDisableLookPlayer);
+
+	// AnimInst->AddNotify(AnimName, "EnableCloseAttackChangeAnim", 0,
+	// 	Data, &CBossBettyDataComponent::OnBossBettyEnableCloseAttackChangeAnim);
 
 	AnimInst->SetEndFunction(AnimName, 
 		(CMonsterDataComponent*)Data, &CMonsterDataComponent::SetCurrentNodeNull);

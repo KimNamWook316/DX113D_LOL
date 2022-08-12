@@ -17,15 +17,25 @@ private :
     class CIMGUITextInput* m_LoadedParticleName;
     class CIMGUITextInput* m_LoadedParticleFileName;
     class CIMGUIButton* m_LoadParticleButton;
+    class CIMGUIButton* m_SaveParticleButton;
     class CIMGUIButton* m_ResetParticleButton;
+private: // Material Emissive 수정
+    class CIMGUIColor3* m_BaseColorEdit;
+private : // 시간에 따른 Emissive 변화 정보 수정 기능
+    class CIMGUIColor3* m_StartEmissiveColorEdit;
+    class CIMGUIColor3* m_EndEmissiveColorEdit;
+    class CIMGUICheckBox* m_ApplyLinearEmissiveChangeEdit;
     class CIMGUICheckBox* m_BillBoardEnableEdit;
 private:
     class CParticle* m_ParticleClass;
 private :
-    void OnSaveParticleObjectButton();
-    void OnLoadParticleObjectButton();
+    void OnEditBaseColor(const Vector3& Color);
+    void OnEditStartEmissiveColor(const Vector3& Color);
+    void OnEditEndEmissiveColor(const Vector3& Color);
+    void OnEditEmissiveLinearCheck(const char*, bool Check);
 private :
     void OnLoadParticleClass();
+    void OnSaveParticleClass();
     void OnDropParticleToParticleWidget(const std::string& InputName);
     // 다시 Particle 세팅하기
     void OnResetParticleInfo();

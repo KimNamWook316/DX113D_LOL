@@ -145,6 +145,9 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <PostBuildEvent>
+      <Command>call $(SolutionDir)Copy.bat</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -163,6 +166,9 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <PostBuildEvent>
+      <Command>call $(SolutionDir)Copy.bat</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AnimationInstanceConvertThread.cpp" />
@@ -267,6 +273,9 @@
     <ClCompile Include="DeathDoor\Component\Node\FindPathNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\GruntCommonAttackNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\GruntCommonHitNode.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\GruntCommonMoveStartCheckNode.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\GruntCommonSpawnCheckNode.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\GruntCommonSpawnNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\GruntCommonTraceNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\GruntCommonWalkNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\HeadRollerRollNode.cpp" />
@@ -504,6 +513,9 @@
     <ClInclude Include="DeathDoor\Component\Node\FindPathNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\GruntCommonAttackNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\GruntCommonHitNode.h" />
+    <ClInclude Include="DeathDoor\Component\Node\GruntCommonMoveStartCheckNode.h" />
+    <ClInclude Include="DeathDoor\Component\Node\GruntCommonSpawnCheckNode.h" />
+    <ClInclude Include="DeathDoor\Component\Node\GruntCommonSpawnNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\GruntCommonTraceNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\GruntCommonWalkNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\HeadRollerRollNode.h" />
@@ -650,6 +662,9 @@
     <ProjectReference Include="..\..\GameEngine\Include\GameEngine.vcxproj">
       <Project>{6aebf8c5-6304-4b0f-b2a4-3208a366bb25}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Copy.bat" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

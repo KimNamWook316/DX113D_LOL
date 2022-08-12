@@ -322,6 +322,21 @@ public:
 	{
 		return m_CBuffer->GetNoiseTextureApplyRatio();
 	}
+	// Linear Emissive 
+	int IsLinearEmissiveChangeEnable() const
+	{
+		return m_CBuffer->IsLinearEmissiveChangeEnable();
+	}
+
+	const Vector3& GetStartEmissiveColor() const
+	{
+		return m_CBuffer->GetStartEmissiveColor();
+	}
+
+	const Vector3& GetEndEmissiveColor() const
+	{
+		return  m_CBuffer->GetEndEmissiveColor();
+	}
 	int IsFollowRealTimeParticleComponentPos() const
 	{
 		return m_CBuffer->IsFollowRealTimeParticleComponentPos();
@@ -331,7 +346,7 @@ public:
 		return m_CBuffer->IsLinearUVClippingDirReversed();
 	}
 public:
-	// Follod Particle Component Pos
+	// Follow Particle Component Pos
 	void SetFollowRealTimeParticleComponentPos(bool Enable)
 	{
 		m_CBuffer->SetFollowRealTimeParticleComponentPos(Enable);
@@ -356,10 +371,10 @@ public:
 		m_CBuffer->SetLinearUVClippingEnable(Enable);
 	}
 	// Restart 기능 (구조화 버퍼 내의 특정 값을 초기화 해주는 것)
-	void SetResetParticleSharedInfoSumSpawnCnt(bool Enable)
-	{
-		m_CBuffer->SetResetParticleSharedInfoSumSpawnCnt(Enable);
-	}
+	// void SetResetParticleSharedInfoSumSpawnCnt(bool Enable)
+	// {
+	// 	m_CBuffer->SetResetParticleSharedInfoSumSpawnCnt(Enable);
+	// }
 	void SetDisableNewAlive(bool Enable)
 	{
 		m_CBuffer->SetDisableNewAlive(Enable);
@@ -371,6 +386,23 @@ public:
 		m_CBuffer->SetRotToDir(Enable);
 	}
 
+	void SetLinearEmissiveChangeEnable(bool Enable)
+	{
+		m_CBuffer->SetLinearEmissiveChangeEnable(Enable);
+	}
+
+	// Linear Emissive
+	void SetStartEmissiveColor(const Vector3& Color)
+	{
+		m_CBuffer->SetStartEmissiveColor(Color);
+	}
+
+	// End Emissive Color
+	void SetEndEmissiveColor(const Vector3& Color)
+	{
+		m_CBuffer->SetEndEmissiveColor(Color);
+	}
+
 	// Alpha Linear
 	void SetAlphaLinearFromCenter(bool Enable)
 	{
@@ -378,10 +410,10 @@ public:
 	}
 
 	// Component 의 Relative Scale 반영학
-	void SetCommonWorldScale(const Vector3& Scale)
-	{
-		m_CBuffer->SetCommonWorldScale(Scale);
-	}
+	// void SetCommonWorldScale(const Vector3& Scale)
+	// {
+	// 	m_CBuffer->SetCommonWorldScale(Scale);
+	// }
 	// Set  Particle Type
 	void SetParticleShapeType(ParitcleShapeType Type)
 	{

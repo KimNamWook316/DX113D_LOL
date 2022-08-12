@@ -148,7 +148,7 @@ void CDDInstanceSceneModeWidget::RefreshWidgets()
 		// 샘플 오브젝트를 생성한다.
 		m_vecSpawnMonster.push_back(std::vector<CGameObject*>());
 
-		DDInstanceSpawnPhaseInfo* Phase = SceneMode->GetPhaseInfo(i);
+		DDInstanceSpawnPhaseInfo* Phase = SceneMode->GetPhaseInfo((int)i);
 
 		auto iter = Phase->SpawnList.begin();
 		auto iterEnd = Phase->SpawnList.end();

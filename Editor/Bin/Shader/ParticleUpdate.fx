@@ -110,7 +110,7 @@ void ApplyInitSpecialParticleGenerateShape(float RandomAngle, int ThreadID, floa
 
 		float SectorStep = 2 * 180 / SectorCnt;
 		float StackStep = 180 / StackCnt;
-		
+
 		float StackAngle = 180 - StackStep * (StackCnt * Rand);
 		XZ = FinalAppliedRadius * cos(StackAngle);
 		Y = FinalAppliedRadius * sin(StackAngle);
@@ -119,7 +119,7 @@ void ApplyInitSpecialParticleGenerateShape(float RandomAngle, int ThreadID, floa
 		X = XZ * cos(SectorAngle);
 		Z = XZ * sin(SectorAngle);
 
-		float3 RingPos = float3(X,Y,Z);
+		float3 RingPos = float3(X, Y, Z);
 
 		g_ParticleArray[ThreadID.x].LocalPos = RingPos;
 	}
@@ -178,7 +178,7 @@ void ApplyInitParticleMove(float3 RandomPos, int ThreadID, float RandomAngle, fl
 	// Move 하는 Particle 이라면, Speed 와 Dir 를 세팅한다.
 	if (g_ParticleMove == 1)
 	{
-		float ParticleComponentScaleRatio = (g_ParticleCommonWorldScale.x / 3.f + g_ParticleCommonWorldScale.y / 3.f + g_ParticleCommonWorldScale.z / 3.f);
+		float ParticleComponentScaleRatio = (g_TVParticleCommonWorldScale.x / 3.f + g_TVParticleCommonWorldScale.y / 3.f + g_TVParticleCommonWorldScale.z / 3.f);
 
 		// RandomPos.xyz 는 각각 0 에서 1 사이의 값 --> -1 에서 1 사이의 값으로 바꾼다.
 		// ex) 360도 => -180 ~ 180 도 사이의 랜덤한 각도로 회전을 한다고 생각하면 된다.
@@ -214,7 +214,7 @@ void ApplyInitParticleMove(float3 RandomPos, int ThreadID, float RandomAngle, fl
 float3 ApplyAliveParticleMove(int ThreadID)
 {
 	// Speed 에 Particle Component의 Scale 변화도 반영
-	float ParticleComponentScaleRatio = (g_ParticleCommonWorldScale.x / 3.f + g_ParticleCommonWorldScale.y / 3.f + g_ParticleCommonWorldScale.z / 3.f);
+	float ParticleComponentScaleRatio = (g_TVParticleCommonWorldScale.x / 3.f + g_TVParticleCommonWorldScale.y / 3.f + g_TVParticleCommonWorldScale.z / 3.f);
 
 	float ScaledSpeedStart = g_ParticleSpeedStart * ParticleComponentScaleRatio;
 	float ScaledSpeedEnd = g_ParticleSpeedEnd * ParticleComponentScaleRatio;
@@ -540,7 +540,7 @@ void ApplyLinearEffect(int ThreadID)
 	float DistFromCenter = distance(g_ParticleArray[ThreadID].LocalPos, float3(0.f, 0.f, 0.f));
 	float MaxDistFromCenter = g_ParticleShare[0].MaxDistFromCenter;
 
-	float ParticleComponentScaleRatio = (g_ParticleCommonWorldScale.x / 3.f + g_ParticleCommonWorldScale.y / 3.f + g_ParticleCommonWorldScale.z / 3.f);
+	float ParticleComponentScaleRatio = (g_TVParticleCommonWorldScale.x / 3.f + g_TVParticleCommonWorldScale.y / 3.f + g_TVParticleCommonWorldScale.z / 3.f);
 
 	if (MaxDistFromCenter == 0)
 		MaxDistFromCenter = DistFromCenter;
@@ -590,8 +590,8 @@ void ParticleUpdate(uint3 ThreadID : SV_DispatchThreadID)
 	g_ParticleShare[0].ColorEnd = g_ParticleColorMax;
 	g_ParticleShare[0].ColorEnd.a = g_ParticleAlphaEnd;
 
-	g_ParticleShare[0].CommonWorldScale = g_ParticleCommonWorldScale;
-	g_ParticleShare[0].ParticleComponentWorldPos = g_ParticleComponentWorldPos;
+	g_ParticleShare[0].CommonWorldScale = g_TVParticleCommonWorldScale;
+	g_ParticleShare[0].ParticleComponentWorldPos = g_TVParticleComponentWorldPos;
 
 	g_ParticleShare[0].GravityEnable = g_ParticleGravity;
 	g_ParticleShare[0].RotationAngle = g_ParticleRotationAngle;
@@ -615,8 +615,8 @@ void ParticleUpdate(uint3 ThreadID : SV_DispatchThreadID)
 
 	// 원래 기본 설정 처럼, SpawnTime 에 맞춰서 지속적으로 Particle을 생성하거나
 	// 일시적으로 Restart 버튼을 누른 것이라면
-	// if (g_ParticleDisableNewAlive == 0 || g_ParticleResetSharedInfoSpawnCntSum == 1)
-	if (g_ParticleResetSharedInfoSpawnCntSum == 1)
+	// if (g_ParticleDisableNewAlive == 0 || g_TVResetParticleSharedInfoSumSpawnCnt == 1)
+	if (g_TVResetParticleSharedInfoSumSpawnCnt == 1)
 	{
 		// SpawnTime 에 맞춰서 지속적으로 생성하게끔 하려면 
 		// g_ParticleDisableNewAlive == 1 일때, 즉, 한번에 확 생성하고, 지금까지 누적 생성된 Particle 개수가
@@ -632,7 +632,7 @@ void ParticleUpdate(uint3 ThreadID : SV_DispatchThreadID)
 	{
 		// SpawnCount 만큼 한번에 생성해버리고, 
 		// 차후 새로운 Particle 은 생성하지 않으려고 한다면
-		if (g_ParticleShare[0].CurrentSpawnCountSum>= g_ParticleSpawnCountMax &&
+		if (g_ParticleShare[0].CurrentSpawnCountSum >= g_ParticleSpawnCountMax &&
 			g_ParticleDisableNewAlive == 1)
 		{
 			// if (g_ParticleShare[0].CurrentSpawnCountSum > g_ParticleSpawnCountMax && g_ParticleDisableNewAlive == 1) -> 한개가 더 생성됨
@@ -669,7 +669,7 @@ void ParticleUpdate(uint3 ThreadID : SV_DispatchThreadID)
 		// g_ParticleDisableNewAlive 에 따라서, 공유 구조화 버퍼에 CurrentSpawnCountSum 세팅하기 
 		if (g_ParticleDisableNewAlive == 1)
 		{
-			if (g_ParticleResetSharedInfoSpawnCntSum == 1)
+			if (g_TVResetParticleSharedInfoSumSpawnCnt == 1)
 			{
 				g_ParticleShare[0].CurrentSpawnCountSum = 0;
 			}
@@ -727,15 +727,15 @@ void ParticleUpdate(uint3 ThreadID : SV_DispatchThreadID)
 		g_ParticleArray[ThreadID.x].InitLocalPosY = g_ParticleArray[ThreadID.x].LocalPos.y;
 
 		// 생성되는 시점의 Particle Component WorldPos
-		g_ParticleArray[ThreadID.x].InitParticleComponentWorldPos = g_ParticleComponentWorldPos;
+		g_ParticleArray[ThreadID.x].InitParticleComponentWorldPos = g_TVParticleComponentWorldPos;
 
 		g_ParticleArray[ThreadID.x].FallTime = 0.f;
 		g_ParticleArray[ThreadID.x].FallStartY = g_ParticleArray[ThreadID.x].LocalPos.y;
 
 		// x,y,z 의 Relative Scale 의 중간 비율만큼 세팅해준다.
 	// 아래 코드처럼 하면, 너무 Dramatic 하게 변한다.
-	// float ParticleComponentScaleRatio = g_ParticleCommonWorldScale.x * g_ParticleCommonWorldScale.y * g_ParticleCommonWorldScale.z;
-		float ParticleComponentScaleRatio = (g_ParticleCommonWorldScale.x / 3.f + g_ParticleCommonWorldScale.y / 3.f + g_ParticleCommonWorldScale.z / 3.f);
+	// float ParticleComponentScaleRatio = g_TVParticleCommonWorldScale.x * g_TVParticleCommonWorldScale.y * g_TVParticleCommonWorldScale.z;
+		float ParticleComponentScaleRatio = (g_TVParticleCommonWorldScale.x / 3.f + g_TVParticleCommonWorldScale.y / 3.f + g_TVParticleCommonWorldScale.z / 3.f);
 
 		float ScaledLifeTimeMax = g_ParticleLifeTimeMax * ParticleComponentScaleRatio;
 		float ScaledLifeTimeMin = g_ParticleLifeTimeMin * ParticleComponentScaleRatio;
@@ -759,7 +759,8 @@ void ParticleUpdate(uint3 ThreadID : SV_DispatchThreadID)
 		// ApplySpecialParticleGenerateShape 에서 일부 미리 FinalSeperateRotAngle 값에 
 		// 회전할 Offset 값을 더해놓은 상태이기 때문이다.
 		// g_ParticleArray[ThreadID.x].FinalSeperateRotAngle += ((g_ParticleSeperateRotAngleMax - g_ParticleSeperateRotAngleMin) * Rand + g_ParticleSeperateRotAngleMin);
-        g_ParticleArray[ThreadID.x].FinalSeperateRotAngle = (g_ParticleSeperateRotAngleMax - g_ParticleSeperateRotAngleMin) * GetRandValForParticle(float2(XRand, YRand)) + g_ParticleSeperateRotAngleMin;
+		float RandRotValue = GetRandValForParticle(float2(XRand, YRand));
+		g_ParticleArray[ThreadID.x].FinalSeperateRotAngle = (g_ParticleSeperateRotAngleMax - g_ParticleSeperateRotAngleMin) * RandRotValue + g_ParticleSeperateRotAngleMin;
 
 		// 자신의 진행 방향에 따른 회전을 추가한다.
 		ApplyInitRotationAccordingToDir(ThreadID.x);
@@ -784,7 +785,7 @@ void ParticleUpdate(uint3 ThreadID : SV_DispatchThreadID)
 		// ObjectPool 에 들어갈 때, Reset 호출
 		// 기존에 살아있던 Particle들을 다 Alive False 로 만들어서 Reset 시켜줄 것이다.
 		if (g_DestroyAllExistingLivingParticles == 1)
-		// if (g_Particle2D == 1)
+			// if (g_Particle2D == 1)
 		{
 			g_ParticleArray[ThreadID.x].LifeTime = g_ParticleArray[ThreadID.x].LifeTimeMax;
 			g_ParticleArray[ThreadID.x].Alive = 0;
@@ -806,6 +807,3 @@ void ParticleUpdate(uint3 ThreadID : SV_DispatchThreadID)
 		}
 	}
 }
-
-
-
