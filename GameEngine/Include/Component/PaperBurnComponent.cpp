@@ -86,7 +86,14 @@ void CPaperBurnComponent::ResetPaperBurn()
 		(*iter)->SetPaperBurn(false);
 	}
 
-	m_Object->GetRootComponent()->SetDrawShadow(true);
+	if (m_PaperBurnComponent)
+	{
+		m_PaperBurnComponent->SetDrawShadow(true);
+	}
+	else
+	{
+		m_Object->GetRootComponent()->SetDrawShadow(true);
+	}
 }
 
 void CPaperBurnComponent::SetInverse(bool Enable)
@@ -263,7 +270,14 @@ void CPaperBurnComponent::Update(float DeltaTime)
 {
 	if (m_StartPaperBurn)
 	{
-		m_Object->GetRootComponent()->SetDrawShadow(false);
+		if (m_PaperBurnComponent)
+		{
+			m_PaperBurnComponent->SetDrawShadow(false);
+		}
+		else
+		{
+			m_Object->GetRootComponent()->SetDrawShadow(false);
+		}
 
 		m_Filter += DeltaTime / m_FinishTime;
 

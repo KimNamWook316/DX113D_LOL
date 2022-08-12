@@ -60,10 +60,10 @@ CGameObject* CObjectPool::GetProjectile(const std::string& Name, class CScene* S
 
 	Scene->AddObject(Object);
 
+	Object->Enable(true);
+
 	if(CallStart)
 		Object->Start();
-
-	Object->Enable(true);
 
 	m_mapProjectile.erase(iter);
 
@@ -82,10 +82,10 @@ CGameObject* CObjectPool::GetMonster(const std::string& Name, class CScene* Scen
 	Object->m_Active = true;
 	Scene->AddObject(Object);
 
+	Object->Enable(true);
+
 	if(CallStart)
 		Object->Start();
-
-	Object->Enable(true);
 
 	m_mapMonster.erase(iter);
 
@@ -104,10 +104,10 @@ CGameObject* CObjectPool::GetParticle(const std::string& Name, class CScene* Sce
 	Object->m_Active = true;
 	Scene->AddObject(Object);
 
+	Object->Enable(true);
+
 	if (CallStart)
 		Object->Start();
-
-	Object->Enable(true);
 
 	m_mapParticle.erase(iter);
 
@@ -126,10 +126,10 @@ CGameObject* CObjectPool::GetMapObject(const std::string& Name, CScene* Scene, b
 	Object->m_Active = true;
 	Scene->AddObject(Object);
 
+	Object->Enable(true);
+
 	if (CallStart)
 		Object->Start();
-
-	Object->Enable(true);
 
 	m_mapMapObject.erase(iter);
 

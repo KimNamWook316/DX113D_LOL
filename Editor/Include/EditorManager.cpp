@@ -17,18 +17,18 @@
 #include "Component/ParticleComponent.h"
 #include "Component/AnimationMeshComponent.h"
 #include "Component/LandScape.h"
-#include "DeathDoor/Component\GameStateComponent.h"
 #include "Component/ColliderBox3D.h"
 #include "Component/ColliderSphere.h"
 #include "Component/ColliderHalfLine.h"
 #include "Component/ColliderRay.h"
-#include "DeathDoor/Component/ObjectDataComponent.h"
-#include "DeathDoor/Component/PlayerDataComponent.h"
 #include "Component/NavMeshComponent.h"
 #include "Component/PaperBurnComponent.h"
 #include "Component/WaterComponent.h"
 #include "Component/PaperBurnComponent.h"
 #include "Component/Arm.h"
+#include "DeathDoor/Component/ObjectDataComponent.h"
+#include "DeathDoor/Component/PlayerDataComponent.h"
+#include "DeathDoor/Component\GameStateComponent.h"
 #include "DeathDoor\Component/PlayerNormalAttackCheckCollider.h"
 #include "DeathDoor\Component/EyeLaserComponent.h"
 #include "DeathDoor\Component/PlayerHookComponent.h"
@@ -309,13 +309,6 @@ CGameObject* CEditorManager::CreateObject(CScene* Scene, size_t Type)
 
 		return Obj;
 	}
-
-	//else if (Type == typeid(CPlayerHook).hash_code())
-	//{
-	//	CPlayerHook* Obj = Scene->LoadGameObject<CPlayerHook>();
-
-	//	return Obj;
-	//}
 
 	return nullptr;
 }
