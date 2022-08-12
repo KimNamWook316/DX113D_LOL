@@ -99,6 +99,7 @@ private:
 
     class CIMGUIInputFloat* m_SpawnTimeMaxEdit;
     class CIMGUICheckBox* m_DisableNewAliveEdit;
+    class CIMGUICheckBox* m_ApplyDuringDisableNewAliveEdit;
 
     class CIMGUIInputFloat3* m_StartMinEdit;
     class CIMGUIInputFloat3* m_StartMaxEdit;
@@ -241,6 +242,7 @@ private:
 
     // Diable Alive
     void OnDisableNewAlive(const char*, bool);
+    void OnApplySpawnTimeWhileDisableNewAlive(const char*, bool);
 
     // UVClipping
     void OnIsUVClippingReflectingMoveDirEdit(const char*, bool);

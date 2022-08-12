@@ -161,6 +161,9 @@
 #include "../DeathDoor/Component/Node/GruntCommonTraceNode.h"
 #include "../DeathDoor/Component/Node/GruntCommonWalkNode.h"
 #include "../DeathDoor/Component/Node/GruntCommonAttackNode.h"
+#include "../DeathDoor/Component/Node/GruntCommonSpawnNode.h"
+
+#include "../DeathDoor/Component/Node/GruntCommonSpawnCheckNode.h"
 
 #include "ObjectComponentWindow.h"
 #include "ObjectHierarchyWindow.h"
@@ -850,6 +853,12 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
             NewTreeNode = m_StateComponent->CreateTreeNode<CGruntCommonWalkNode>(Name);
             break;
         }
+        case DDActionNode::GruntCommonSpawn:
+        {
+            NewTreeNode = m_StateComponent->CreateTreeNode<CGruntCommonSpawnNode>(Name);
+            break;
+        }
+        
 
 		}
         break;
@@ -1073,6 +1082,10 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
             NewTreeNode = m_StateComponent->CreateTreeNode<CLurkerHopStartCheck>(Name);
             break;
 
+        // Grunt Common
+        case DDConditionNode::GruntCommonSpawnCheck:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CGruntCommonSpawnCheckNode>(Name);
+            break;
         }
         break;
     }

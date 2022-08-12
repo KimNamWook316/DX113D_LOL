@@ -1,6 +1,8 @@
 #include "TriggerFireLamp.h"
 #include "ArrowCollisionFireCollider.h"
 #include "Component/LightComponent.h"
+#include "Scene/Scene.h"
+#include "../Scene/DDPuzzleSceneMode.h"
 
 // ArrowCollisionFireCollider 들을 관리하는 Object Data Component
 CTriggerFireLamp::CTriggerFireLamp() :
@@ -22,6 +24,10 @@ void CTriggerFireLamp::IncActiveCount()
 		m_CurrentActive = true;
 
 		// 여기에서 SceneMode 에 다 끝났다고 알려주기 
+		CDDPuzzleSceneMode* PuzzleSceneMode = dynamic_cast<CDDPuzzleSceneMode*>(m_Scene->GetSceneMode());
+		PuzzleSceneMode->OnClearDungeon();
+
+		//  m_Scene->GetSceneMode() -> OnClearDungeon
 	}
 }
 

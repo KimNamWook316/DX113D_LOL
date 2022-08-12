@@ -260,7 +260,9 @@ bool CShaderManager::Init()
 	// (왜냐하면, Pixel Shader 에서도 사용가능해야 하기 때문이다.)
 	CreateConstantBuffer("ParticleCBuffer", sizeof(ParticleCBuffer), 7,
 		(int)Buffer_Shader_Type::All);
-		// (int)Buffer_Shader_Type::Compute);
+
+	CreateConstantBuffer("ParticleTempValCBuffer", sizeof(ParticleTempValCBuffer), 9,
+		(int)Buffer_Shader_Type::All);
 
 	CreateConstantBuffer("TileMapCBuffer", sizeof(TileMapCBuffer), 11,
 		(int)Buffer_Shader_Type::Graphic);

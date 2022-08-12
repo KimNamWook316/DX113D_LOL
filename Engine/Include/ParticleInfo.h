@@ -48,7 +48,7 @@ struct	ParticleCBuffer
 	int UVMoveEnable;
 	int UVRowN;
 	int UVColN;
-	int ResetParticleSharedInfoSumSpawnCnt;
+	int ApplyLinearEmissiveChange;
 
 	// 각 Particle 별로 다르게 Rotation Angle을 주는 경우
 	Vector3 MinSeperateRotAngle;
@@ -60,11 +60,13 @@ struct	ParticleCBuffer
 	int AlphaLinearFromCenter;
 
 	// Particle Component 상에서 적용하는 Scale 정보
-	Vector3 CommonWorldScale;
+	// Vector3 CommonWorldScale;
+	Vector3 StartEmissiveColor;
 	// 진행 방향으로 점점 UV Clipping 되는 효과 구현하기 
 	int LinearUVClippingEnable;
 
-	Vector3 CommonParticleComponentWorldPos;
+	// Vector3 CommonParticleComponentWorldPos;
+	Vector3 EndEmissiveColor;
 	int SpeedChangeMethod; // Linear, 지수 분포
 
 	int ApplyNoiseTexture; // Pixel Shader 에서 매순간 Noise Texture 로 부터, Sampling 을 해서 Color, Alpha 값 등을 바꾸는 것
@@ -76,6 +78,15 @@ struct	ParticleCBuffer
 	Vector3 ParticleEmptyInfo2;
 	int ParticleInfo1; // 현재 살아있는 Particle 들을 모두 Alive False 로 만들어주기 
 	float ParticleInfo2;
+};
+
+struct	ParticleTempValCBuffer
+{
+	Vector3 CommonWorldScale;
+	int ResetParticleSharedInfoSumSpawnCnt;
+
+	Vector3 CommonParticleComponentWorldPos; //
+	int ParticleEmpty1;
 };
 
 struct ParticleInfo

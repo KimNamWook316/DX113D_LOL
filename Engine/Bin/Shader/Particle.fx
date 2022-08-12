@@ -65,6 +65,13 @@ cbuffer	ParticleCBuffer : register(b7)
 	int g_ParticleApplyNoiseTexture; // Pixel Shader 에서 매순간 Noise Texture 로 부터, Sampling 을 해서 Color, Alpha 값 등을 바꾸는 것
 	float g_ParticleNoiseTextureApplyRatio; // Noise Texture 사라지는 효과 시작 비율
 	float g_ParticleExponentialAndLogFunctionXIntercept;
+	int g_ParticleApplyLinearEmissiveChange;
+
+	float3 g_ParticleStartEmissiveColor;
+	int g_ParticleEmpty1;
+
+	float3 g_ParticleEndEmissiveColor;
+	int ParticleEmpty2;
 	int g_ParticleFollowComponentPos;
 
 	float3 g_ParticleEmptyInfo1;
@@ -769,6 +776,8 @@ void ApplyLinearEffect(int ThreadID)
 
 		g_ParticleArray[ThreadID].AlphaDistinctStart = AlphaTimeRatio * (g_ParticleAlphaEnd - g_ParticleAlphaStart) + g_ParticleAlphaStart;
 	}
+
+	// EmissiveColor
 }
 
 [numthreads(64, 1, 1)]	// 스레드 그룹 스레드 수를 지정한다.
@@ -1159,7 +1168,7 @@ void ParticleGS(point VertexParticleOutput input[1],
 }
 
 // LifeTime 비율에 따라서, (Texture 기준) 오른쪽에서, 왼쪽 방향으로 점점 사라지게 하기
-void ApplyLinearUVClipping(GeometryParticleOutput input)
+void ApplyPSLinearUVClipping(GeometryParticleOutput input)
 {
 	// UV Cllipping 효과
 	// 오른쪽 부터, 왼쪽 방향으로 서서히 사라지는 효과를 줄 것이다.
@@ -1188,7 +1197,7 @@ void ApplyLinearUVClipping(GeometryParticleOutput input)
 }
 
 // Apply Noise Texture 
-bool ApplyNoiseTextureDestroyEffect(float2 UV, float LifeTimeMax, float LifeTimeRatio, int InstanceID)
+bool ApplyPSNoiseTextureDestroyEffect(float2 UV, float LifeTimeMax, float LifeTimeRatio, int InstanceID)
 {
 	// g_ParticleNoiseTextureEffectFilter 는 1초이상으로 올라가지 않게 될 것이다. (cpu 에서 해당 시간을 제한 중이다)
 	if (g_ParticleApplyNoiseTexture == 1)
@@ -1213,18 +1222,35 @@ bool ApplyNoiseTextureDestroyEffect(float2 UV, float LifeTimeMax, float LifeTime
 	return true;
 }
 
+float4 ApplyPSLinearEmissiveColorChangeEffect(float LifeTimeRatio, float4 OriginEmissive)
+{
+	if (g_ParticleApplyLinearEmissiveChange == 1)
+	{
+		float4 ReturnColor;
+		ReturnColor.a = OriginEmissive.a;
+
+		ReturnColor.rgb = lerp(g_ParticleStartEmissiveColor, 
+			g_ParticleEndEmissiveColor, float3(LifeTimeRatio, LifeTimeRatio, LifeTimeRatio));
+
+		return ReturnColor;
+	}
+
+	return OriginEmissive;
+}
+
 PSOutput_Single ParticlePS(GeometryParticleOutput input)
 {
 	PSOutput_Single output = (PSOutput_Single)0;
 
-	float4 Color = g_BaseTexture.Sample(g_BaseSmp, input.UV);
+	float4 BaseMaterialColor = g_BaseTexture.Sample(g_BaseSmp, input.UV);
 
-	ApplyLinearUVClipping(input);
+	ApplyPSLinearUVClipping(input);
 
-	if (ApplyNoiseTextureDestroyEffect(input.UV, input.LifeTimeMax, input.LifeTimeRatio, input.InstanceID) == false)
+	if (ApplyPSNoiseTextureDestroyEffect(input.UV, input.LifeTimeMax, 
+		input.LifeTimeRatio, input.InstanceID) == false)
 		clip(-1);
 
-	if (Color.a == 0.f || input.Color.a == 0.f)
+	if (BaseMaterialColor.a == 0.f || input.Color.a == 0.f)
 		clip(-1);
 
 	float2 ScreenUV = input.ProjPos.xy / input.ProjPos.w;
@@ -1244,16 +1270,16 @@ PSOutput_Single ParticlePS(GeometryParticleOutput input)
 
 	Alpha = clamp(Alpha, 0.f, 1.f);
 
-	// UV Clipping
-	// 오른쪽 Texture 부터, 왼쪽 방향으로, 서서히 사라지는 느낌
-	// 일단은, Geometry Shader 에서 구현해줄 것이다.
-
 	// Paper Burn
-	Color = PaperBurn2D(Color * input.Color, input.UV);
+	BaseMaterialColor = PaperBurn2D(BaseMaterialColor * input.Color, input.UV);
+
+	// Emssive Color
+	float4 EmissiveColor = g_MtrlEmissiveColor.xyzw;
+	EmissiveColor = ApplyPSLinearEmissiveColorChangeEffect(input.LifeTimeRatio, EmissiveColor);
 
 	// output.Color = Color;
-	output.Color = Color * input.Color;
-	output.Color.a = Color.a * g_MtrlOpacity * Alpha;
+	output.Color.rgb = (BaseMaterialColor * input.Color).rgb + EmissiveColor.rgb;
+	output.Color.a = BaseMaterialColor.a * g_MtrlOpacity * Alpha;
 
 	return output;
 }
