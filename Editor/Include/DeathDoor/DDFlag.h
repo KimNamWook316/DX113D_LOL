@@ -34,6 +34,7 @@ enum class DDActionNode
 	// Monster
 	ChasePlayer,
 	MeleeAttack,
+	MonsterHitBack,
 	// BossBetty
 	BossBettyAngryAttack,
 	BossBettyChangeAttackDir,
@@ -151,6 +152,7 @@ enum class DDConditionNode
 	LurkerHopStartCheck,
 	// Grunt Common
 	GruntCommonSpawnCheck,
+	GruntCommonStartActCheck,
 	Max
 };
 

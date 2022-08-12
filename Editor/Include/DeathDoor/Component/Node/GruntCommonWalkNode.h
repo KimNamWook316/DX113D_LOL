@@ -11,7 +11,9 @@ public:
 
 public:
     virtual void Init() override;
-
+private :
+    float m_RotateChangeTime;
+    float m_RotateChangeTimeMax;
 public:
     virtual NodeResult OnStart(float DeltaTime) override;
     virtual NodeResult OnUpdate(float DeltaTime) override;

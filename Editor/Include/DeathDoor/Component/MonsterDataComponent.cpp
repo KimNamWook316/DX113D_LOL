@@ -15,6 +15,7 @@
 
 CMonsterDataComponent::CMonsterDataComponent() :
 	m_AnimMesh(nullptr),
+	m_RotateToRandom(false),
 	m_HitBox(nullptr),
 	m_HitEffectFlag(0),
 	m_HitEffectTimer(0.f),
@@ -152,6 +153,31 @@ void CMonsterDataComponent::Start()
 		m_BloodParticle->SetInheritRotZ(false);
 	}
 
+	// Spawn Particle
+	m_SpawnParticle = (CParticleComponent*)m_Object->FindComponent("SpawnParticle");
+
+	if (m_SpawnParticle)
+	{
+		m_SpawnParticle->GetCBuffer()->SetFollowRealTimeParticleComponentPos(true);
+
+		// 처음에는 Enable False 처리를 해줄 것이다.
+		m_SpawnParticle->Enable(false);
+
+		// BillBoard 효과는 주지 않을 것이다 (Rotation 영향을 받기 때문에)
+		m_SpawnParticle->SetBillBoardEffect(false);
+
+		// 혹시 모르니 WorldRot 은 모두 0으로 맞춰준다.
+		m_SpawnParticle->SetWorldRotation(0.f, 0.f, 0.f);
+
+		// Blood 는 딱 한번만 생성될 수 있게 세팅한다. 
+		m_SpawnParticle->GetCBuffer()->SetDisableNewAlive(true);
+
+		// m_BloodParticle 은 Rot 을 주지 않을 것이다. Rot 을 주는 순간 모양이 흐뜨러지게 되기 때문이다.
+		m_SpawnParticle->SetInheritRotX(false);
+		m_SpawnParticle->SetInheritRotY(false);
+		m_SpawnParticle->SetInheritRotZ(false);
+	}
+
 	if (m_AnimMesh)
 	{
 		CAnimationSequenceInstance* AnimInst = m_AnimMesh->GetAnimationInstance();
@@ -252,6 +278,11 @@ void CMonsterDataComponent::Update(float DeltaTime)
 	if (m_MoveZ)
 	{
 		MoveZ(DeltaTime);
+	}
+
+	if (m_RotateToRandom)
+	{
+		RotateRandomly(DeltaTime);
 	}
 }
 
@@ -505,12 +536,23 @@ void CMonsterDataComponent::OnActivateBloodParticle()
 	// y 축으로 살짝 위에 생성되게 한다.
 	const Vector3& ObjectWorldPos = m_Object->GetWorldPos();
 
-	m_BloodParticle->SetWorldPos(ObjectWorldPos + Vector3(0.f, 2.f, 0.f));
+	// m_BloodParticle->SetWorldPos(ObjectWorldPos + Vector3(0.f, 2.f, 0.f));
+	// 
+	// // Enable True 로 만둘어줘서 다시 동작되게 한다.
+	// m_BloodParticle->Enable(true);
+	// 
+	// m_BloodParticle->RecreateOnlyOnceCreatedParticle();
+	m_BloodParticle->StartParticle(ObjectWorldPos);
+}
 
-	// Enable True 로 만둘어줘서 다시 동작되게 한다.
-	m_BloodParticle->Enable(true);
+void CMonsterDataComponent::OnActivateSpawnParticle()
+{
+	if (!m_SpawnParticle)
+		return;
 
-	m_BloodParticle->RecreateOnlyOnceCreatedParticle();
+	const Vector3& ObjectWorldPos = m_Object->GetWorldPos();
+
+	m_SpawnParticle->StartParticle(ObjectWorldPos);
 }
 
 void CMonsterDataComponent::SetIsHit(bool Hit)
@@ -584,6 +626,7 @@ float CMonsterDataComponent::GetAnglePlayer()
 	Vector3 MyAxisZ = m_Object->GetWorldAxis(AXIS::AXIS_Z) * -1.f;
 
 	float Angle = ToPlayer.Angle(MyAxisZ);
+
 	return Angle;
 }
 
@@ -658,6 +701,11 @@ void CMonsterDataComponent::OnEnableMoveZ()
 void CMonsterDataComponent::OnDisableMoveZ()
 {
 	m_MoveZ = false;
+}
+
+void CMonsterDataComponent::OnEnableRandomRotate()
+{
+	m_RotateToRandom = true;
 }
 
 bool CMonsterDataComponent::IsPlayerInMeleeAttackRange()
@@ -735,6 +783,55 @@ bool CMonsterDataComponent::IsPlayerInStopChaseRange()
 	}
 
 	return false;
+}
+
+void CMonsterDataComponent::SetRotateRandom()
+{
+	m_RotateToRandom = true;
+
+	// Rotate 하는 동안에는 움직이지 않도록 세팅할 것이다.
+	float RandX = m_Object->GetWorldPos().x + ((float)(rand()) / RAND_MAX) * 3;
+	float RandZ = m_Object->GetWorldPos().z + ((float)(rand()) / RAND_MAX) * 3;
+
+	m_RotateRandomTargetPos = m_Object->GetWorldPos() + Vector3(RandX, 0.f, RandZ);
+}
+
+void CMonsterDataComponent::RotateRandomly(float DeltaTime)
+{
+	Vector3 MyPos = m_Object->GetWorldPos();
+
+	Vector3 ToRandomRotateTargetPos = m_RotateRandomTargetPos - MyPos;
+
+	Vector3 MyAxisZ = m_Object->GetWorldAxis(AXIS::AXIS_Z) * -1.f;
+	Vector3 MyAxisX = m_Object->GetWorldAxis(AXIS::AXIS_X) * -1.f;
+
+	float RotateAngle = ToRandomRotateTargetPos.Angle(MyAxisZ);
+
+	if (ToRandomRotateTargetPos.Dot(MyAxisX) > 0.f)
+	{
+		RotateAngle = 180 + (180 - RotateAngle);
+	}
+
+	// 목표 위치까지 모두 회전했다면, 더이상 회전 X
+	// 다시 Z Move 를 true 로 만들어준다.
+	if (RotateAngle < 1.f)
+	{
+		m_RotateToRandom = false;
+
+		m_MoveZ = true;
+
+		return;
+	}
+
+	float RotSpeed = m_Data.RotateSpeedPerSec;
+
+	// 만약 m_CurRotSpeed 를 별도로 세팅한 상태라면
+	if (m_CurRotSpeed != 0.f)
+	{
+		RotSpeed = m_CurRotSpeed;
+	}
+
+	m_Object->AddWorldRotationY(RotSpeed * DeltaTime);
 }
 
 bool CMonsterDataComponent::Save(FILE* File)

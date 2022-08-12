@@ -68,6 +68,7 @@
 #include "../DeathDoor/Component/Node/PathFindExecuteCheck.h"
 #include "../DeathDoor/Component/Node/StraightPathCheck.h"
 #include "../DeathDoor/Component/Node/ChasePlayerNode.h"
+#include "../DeathDoor/Component/Node/MonsterHitBack.h"
 #include "../DeathDoor/Component/Node/MeleeAttackNode.h"
 #include "../DeathDoor/Component/Node/PathListEmptyCheck.h"
 
@@ -164,6 +165,7 @@
 #include "../DeathDoor/Component/Node/GruntCommonSpawnNode.h"
 
 #include "../DeathDoor/Component/Node/GruntCommonSpawnCheckNode.h"
+#include "../DeathDoor/Component/Node/GruntCommonMoveStartCheckNode.h"
 
 #include "ObjectComponentWindow.h"
 #include "ObjectHierarchyWindow.h"
@@ -623,6 +625,11 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
         case DDActionNode::ChasePlayer:
         {
             NewTreeNode = m_StateComponent->CreateTreeNode<CChasePlayerNode>(Name);
+            break;
+        }
+        case DDActionNode::MonsterHitBack:
+        {
+            NewTreeNode = m_StateComponent->CreateTreeNode<CMonsterHitBack>(Name);
             break;
         }
         case DDActionNode::MeleeAttack:
@@ -1085,6 +1092,9 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
         // Grunt Common
         case DDConditionNode::GruntCommonSpawnCheck:
             NewTreeNode = m_StateComponent->CreateTreeNode<CGruntCommonSpawnCheckNode>(Name);
+            break;
+        case DDConditionNode::GruntCommonStartActCheck:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CGruntCommonMoveStartCheckNode>(Name);
             break;
         }
         break;

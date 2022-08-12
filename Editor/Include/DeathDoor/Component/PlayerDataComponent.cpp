@@ -109,8 +109,12 @@ void CPlayerDataComponent::Start()
 
 	CCameraComponent* Cam = m_Object->FindComponentFromType<CCameraComponent>();
 	Vector3 RootPos = m_AnimComp->GetWorldPos();
-	Vector3 CamPos = Cam->GetWorldPos();
-	m_CamRelativePos = CamPos - RootPos;
+
+	if (Cam)
+	{
+		Vector3 CamPos = Cam->GetWorldPos();
+		m_CamRelativePos = CamPos - RootPos;
+	}
 }
 
 bool CPlayerDataComponent::Init()

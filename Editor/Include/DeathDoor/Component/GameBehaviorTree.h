@@ -22,6 +22,8 @@ public:
 
 public:
     virtual CNode* LoadNode(CNode* Parent, size_t TypeID);
+   CNode* LoadConditionNode(CNode* Parent, size_t TypeID);
+   CNode* LoadActionNode(CNode* Parent, size_t TypeID);
 
 public:
     template <typename T>

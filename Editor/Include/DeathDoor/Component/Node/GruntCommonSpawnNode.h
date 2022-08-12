@@ -12,6 +12,9 @@ public:
 public:
     virtual void Init() override;
 
+private :
+    bool m_SpawnComplete;
+
 public:
     virtual NodeResult OnStart(float DeltaTime) override;
     virtual NodeResult OnUpdate(float DeltaTime) override;

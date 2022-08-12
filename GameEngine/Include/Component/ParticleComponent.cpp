@@ -168,22 +168,12 @@ void CParticleComponent::SetParticleWithOutCloneShader(CParticle* Particle)
 
 	m_ParticleName = m_Particle->GetName();
 
-
-	// Disable New Alive 의 경우,
-	// Scene 시작 시에 한번 보이게 되는 문제가 있다. 이를 방지해야 한다.
-	// 따라서 Enable False 를 시켜줄 것이다.
-	if (m_CBuffer->IsDisableNewAlive())
-	{
-		CRef::Enable(false);
-	}
-
 	SAFE_DELETE(m_TempVCBuffer);
 
 	m_TempVCBuffer = new CParticleTempValConstantBuffer;
 	
 	if (!m_TempVCBuffer->Init())
 		assert(false);
-
 }
 
 void CParticleComponent::SetSpawnTime(float Time)
@@ -289,6 +279,9 @@ void CParticleComponent::Update(float DeltaTime)
 			// 단, 자식 Component 들을 모두 Enable false 처리해주는 것이 아니라
 			// - 해당 Component만을 Enable False 처리해줘야 한다.
 			CRef::Enable(false);
+
+			// 보이지 않게 할 것이다.
+			m_Render = false;
 
 			return;
 		}
@@ -649,6 +642,7 @@ void CParticleComponent::RecreateOnlyOnceCreatedParticleWithOutLifeTimeSetting()
 
 	// 해당 AccTime 이후 Enable False 가 된다.
 	// m_TempCreateAccTime = m_TempCreateAccTimeMax;
+	// m_TempCreateAccTimeMax = m_CBuffer->GetLifeTimeMax() + 0.1f;
 	m_TempCreateAccTime = m_CBuffer->GetLifeTimeMax() + 0.1f;
 
 	// 상수 버퍼 정보를 Update
