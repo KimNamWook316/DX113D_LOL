@@ -10,7 +10,7 @@ SporeBoomerFire,Effect,0,Effect\SporeBoomer\SporeBoomerFire.mp3
 SporeBoomerHit,Effect,0,Effect\SporeBoomer\SporeBoomerHit.mp3
 HeadRollerStun,Effect,0,Effect\HeadRoller\HeadRollerBash1.mp3
 HeadRollerDeath,Effect,0,Effect\HeadRoller\HeadRollerDeath1.mp3
-HeadRollerRoll,Effect,0,Effect\HeadRoller\HeadRollerRoll.mp3
+HeadRollerRoll,Effect,1,Effect\HeadRoller\HeadRollerRoll.mp3
 FirePlantCharge,Effect,0,Effect\FirePlant\FirePlantCharge1.mp3
 FirePlantHit,Effect,0,Effect\FirePlant\FirePlantDamageNew1.mp3
 FirePlantDeath,Effect,0,Effect\FirePlant\FirePlantDeath1.mp3
@@ -37,3 +37,8 @@ DodgerJump,Effect,0,Effect\Dodger\ChunkyDodgerJumpWoosh1.mp3
 DodgerLand,Effect,0,Effect\Dodger\ChunkyDodgerLand1.mp3
 DodgerHit,Effect,0,Effect\Dodger\ChunkyDodgerTakeDamage1.mp3
 InstanceDungeonBGM,BGM,1,BGM\InstanceDungeonBGM.mp3
+CrackedBlockBreak,Effect,0,Effect\MushroomDungeon\CrackedBlock1.mp3
+BlockerUp,Effect,0,Effect\InstanceDungeon\SwampSpikeDoor.mp3
+EnemySpawn,Effect,0,Effect\InstanceDungeon\EnemySpawn3.mp3
+SpawnDoorAppear,Effect,0,Effect\InstanceDungeon\MoonDoorAppear.mp3
+SpawnDoorDisappear,Effect,0,Effect\InstanceDungeon\MoonDoorDisappear.mp3

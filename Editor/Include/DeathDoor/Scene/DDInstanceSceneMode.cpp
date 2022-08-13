@@ -4,6 +4,7 @@
 #include "Component/PaperBurnComponent.h"
 #include "../Component/GameStateComponent.h"
 #include "ObjectPool.h"
+#include "Resource/ResourceManager.h"
 
 CDDInstanceSceneMode::CDDInstanceSceneMode()
 {
@@ -163,6 +164,7 @@ void CDDInstanceSceneMode::Update(float DeltaTime)
 
 				if (SpawnDoor)
 				{
+					CResourceManager::GetInst()->SoundPlay("SpawnDoorAppear");
 					SpawnDoor->Start();
 					CPaperBurnComponent* DoorPaperBurn = SpawnDoor->FindObjectComponentFromType<CPaperBurnComponent>();
 					DoorPaperBurn->SetFinishCallback(this, &CDDInstanceSceneMode::OnSpawnDoorPaperBurnEnd);
@@ -749,6 +751,7 @@ void CDDInstanceSceneMode::OnCollideEnterTrigger(const CollisionResult& Result)
 
 		if (m_BlockerObj)
 		{
+			CResourceManager::GetInst()->SoundPlay("BlockerUp");
 			m_BlockerObj->Enable(true);
 		}
 
@@ -773,15 +776,24 @@ void CDDInstanceSceneMode::OnSpawnDoorPaperBurnEnd()
 	DDSpawnObjectSet Set = m_PaperBurnEndSpawnQueue.front();
 	m_PaperBurnEndSpawnQueue.pop();
 
+	Vector3 SpawnPos = Set.Info->SpawnPosition;
+
 	// 몬스터를 소환한다.
 	CGameObject* Monster = CObjectPool::GetInst()->GetMonster(Set.Info->MonsterName, m_Scene);
-	Monster->SetWorldPos(Set.Info->SpawnPosition);
+	Monster->SetWorldPos(SpawnPos);
 	Monster->SetWorldRotation(Set.Info->SpawnRotation);
+	CResourceManager::GetInst()->SoundPlay("EnemySpawn");
+
+	// Spawn Particle
+	CGameObject* Particle = CObjectPool::GetInst()->GetParticle("SpawnEffect", m_Scene);
+	SpawnPos.y += 2.f;
+	Particle->StartParticle(SpawnPos);
 
 	CGameStateComponent* State = Monster->FindObjectComponentFromType<CGameStateComponent>();
 	State->SetTreeUpdate(true);
 
 	// 페이퍼번 정재생 한 뒤 파괴하기 위해 큐에 넣는다.
+	CResourceManager::GetInst()->SoundPlay("SpawnDoorDisappear");
 	Set.DoorPaperBurn->SetInverse(false);
 	Set.DoorPaperBurn->SetFinishCallback(this, &CDDInstanceSceneMode::OnSpawnDoorDestroy);
 	Set.DoorPaperBurn->StartPaperBurn();

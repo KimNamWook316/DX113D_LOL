@@ -66,6 +66,8 @@ void CLightComponent::Reset()
 {
 	CSceneComponent::Reset();
 
+	m_Add = false;
+
 	CLightManager* LightManager = m_Scene->GetLightManager();
 
 	if (LightManager)
