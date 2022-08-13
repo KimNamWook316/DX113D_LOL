@@ -6,6 +6,7 @@
 #include "GameObject/GameObject.h"
 #include "Input.h"
 #include "ObjectDataComponent.h"
+#include "Scene/Scene.h"
 
 CPlayerNormalAttackCheckCollider::CPlayerNormalAttackCheckCollider()
 {
@@ -135,6 +136,21 @@ void CPlayerNormalAttackCheckCollider::AttackSuccess(const CollisionResult& Resu
 				DataComp->DecreaseHP(Attack);
 				DataComp->SetIsHit(true);
 				m_CollisionObjDataList.push_back(DataComp);
+
+				int Count = PlayerDataComp->GetConsecutiveAttackCount();
+				switch (Count)
+				{
+				case 0:
+				case 1:
+					m_Object->GetScene()->GetResource()->SoundPlay("EnemyHit1");
+					break;
+				case 2:
+					m_Object->GetScene()->GetResource()->SoundPlay("EnemyHit2");
+					break;
+				case 3:
+					m_Object->GetScene()->GetResource()->SoundPlay("EnemyHit3");
+					break;
+				}
 			}
 		}
 	}

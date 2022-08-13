@@ -50,6 +50,10 @@ private:
 
 	class CParticleComponent* m_FeatherParticle;
 
+	bool m_FlySoundPlayed;
+	bool m_ShootSoundPlayed;
+	bool m_StepSoundPlayed;
+
 public:
 	virtual void Update(float DeltaTime);
 	
@@ -110,6 +114,11 @@ public:
 	void SetAfterShoot(bool Shoot)
 	{
 		m_AfterShoot = Shoot;
+	}
+
+	void SetStepSoundPlayed(bool Played)
+	{
+		m_StepSoundPlayed = Played;
 	}
 
 	bool IsAfterShoot()	const
@@ -232,14 +241,26 @@ public:
 		return m_StartStomp;
 	}
 
+	bool GetStepSoundPlayed()	const
+	{
+		return m_StepSoundPlayed;
+	}
+
 public:
 	void OnEndCrowBossJump();
 	void OnCollision(const CollisionResult& Result);
+	void OnScreamSoundPlay();
+	void OnFlySoundPlay();
+	void OnStepSoundPlay();
 	virtual void OnDeadAnimStart() override;
 	virtual void OnDeadPaperBurnEnd() override;
+
+public:
+	virtual void SetIsHit(bool Hit) override;
 	void ShootChain(const Vector3& ShootDir, float DeltaTime);
 	void Fly(const Vector3& FlyDir, float DeltaTime);
 	void Teleport();
 	bool Spitting(float DeltaTime);
+
 };
 

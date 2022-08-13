@@ -152,6 +152,8 @@ NodeResult CShootNode::OnUpdate(float DeltaTime)
 
 				BowComp->HideBow();
 
+				m_Object->GetScene()->GetResource()->SoundPlay("ArrowFire");
+
 				m_Throw = true;
 			}
 		}

@@ -60,7 +60,6 @@ void CDataManager::LoadSoundData()
 	{
 		Row* row = iter->second;
 		std::stringstream ss;
-		std::string ChannelName;
 		std::string StrFileName;
 		std::string ChannelGroup;
 		std::string Key = iter->first;
@@ -94,7 +93,7 @@ void CDataManager::LoadSoundData()
 			ss.str("");
 		}
 
-		CResourceManager::GetInst()->LoadSound(ChannelName, Loop, Key, FileName);
+		CResourceManager::GetInst()->LoadSound(ChannelGroup, Loop, Key, FileName);
 		++Index;
 	}
 

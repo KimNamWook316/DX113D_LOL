@@ -4,6 +4,7 @@
 #include "../../DDFlag.h"
 #include "../PlayerDataComponent.h"
 #include "../GameStateComponent.h"
+#include "Component/AnimationMeshComponent.h"
 
 CRollInputCheck::CRollInputCheck()	:
 	m_FrameCount(0)
@@ -54,6 +55,13 @@ NodeResult CRollInputCheck::OnStart(float DeltaTime)
 
 	if (m_FrameCount >= 10 && SpaceState.State[KeyState_Down] || SpaceState.State[KeyState_Push])
 	{
+		bool IsPlaying = m_AnimationMeshComp->GetAnimationInstance()->CheckCurrentAnimation("PlayerRoll");
+
+		if (IsPlaying)
+		{
+			return NodeResult::Node_False;
+		}
+
 		m_FrameCount = 0;
 		CPlayerDataComponent* DataComp = dynamic_cast<CPlayerDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
 

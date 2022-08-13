@@ -16,6 +16,18 @@ private:
 	class CPlayerDataComponent* m_PlayerData;
 	class CGameObject* m_Arrow;
 	bool m_Destroy;
+	bool m_ShowBow;
+
+public:
+	void SetShowBow(bool Show)
+	{
+		m_ShowBow = Show;
+	}
+
+	bool GetShowBow()	const
+	{
+		return m_ShowBow;
+	}
 
 public:
 	virtual void Start();

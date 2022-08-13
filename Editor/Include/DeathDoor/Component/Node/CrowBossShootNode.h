@@ -12,6 +12,7 @@ public:
 
 private:
     Vector3 m_ShootDir;
+    int TestCount;
 
 public:
     virtual NodeResult OnStart(float DeltaTime) override;

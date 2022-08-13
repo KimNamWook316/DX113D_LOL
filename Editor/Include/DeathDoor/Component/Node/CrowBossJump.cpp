@@ -27,6 +27,8 @@ NodeResult CCrowBossJump::OnStart(float DeltaTime)
 {
 	m_AnimationMeshComp->GetAnimationInstance()->ChangeAnimation("Jump");
 
+	m_Object->GetScene()->GetResource()->SoundPlay("OldCrow_Jump");
+
 	return NodeResult::Node_True;
 }
 
@@ -73,7 +75,7 @@ NodeResult CCrowBossJump::OnUpdate(float DeltaTime)
 		ShootAngle = 70.f;
 	}
 
-	Projectile->ShootByGravityTargetPos(CurrentPos, Dir, ShootAngle, PlayerPos, 13.f);
+	Projectile->ShootByGravityTargetPos(CurrentPos, Dir, ShootAngle, PlayerPos, 16.f);
 
 	return NodeResult::Node_True;
 }

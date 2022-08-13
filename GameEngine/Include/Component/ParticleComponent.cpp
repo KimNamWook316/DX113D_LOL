@@ -652,7 +652,6 @@ void CParticleComponent::RecreateOnlyOnceCreatedParticleWithOutLifeTimeSetting()
 	m_TempCreateAccTimeMax = m_CBuffer->GetLifeTimeMax() + 0.1f;
 
 	// 상수 버퍼 정보를 Update
-	m_CBuffer->SetCommonParticleComponentWorldPos(GetWorldPos());
 	m_CBuffer->UpdateCBuffer();
 
 	// 계산 셰이더 한번 더 호출
