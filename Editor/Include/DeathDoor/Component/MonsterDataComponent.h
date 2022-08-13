@@ -46,6 +46,8 @@ public:
 	void OnDisableLeftLookPlayer();
 	void OnEnableMoveZ();
 	void OnDisableMoveZ();
+	void OnResetPrevMoveZ();
+	void OnKeepPrevMoveZ();
 	void OnEnableRandomRotate();
 	void OnSetMoveSpeedZero(float DeltaTime)
 	{
@@ -62,6 +64,9 @@ public:
 	// Spawn Particle
 	virtual void OnActivateSpawnParticle();
 	virtual void OnInActivateSpawnParticle();
+	// AttackCoolTime
+	void EnableAttackCoolDelay();
+
 public:
 	virtual void SetIsHit(bool Hit) override;
 
@@ -207,6 +212,8 @@ public:
 	virtual bool LoadOnly(FILE* File) override;
 
 protected:
+	// Hit 시 호출할 함수
+	virtual void ActivateHitSubEffect();
 	void ActiveHitEffect(float DeltaTime);
 	void ChangeHitColor(int EffectNum);
 
@@ -248,6 +255,7 @@ protected:
 	float m_CurMoveSpeed;
 	bool m_LookPlayer;
 	bool m_MoveZ;
+	bool m_PrevMoveZ;
 	// 해당 시간 동안만 m_MoveZ 를 true 로 만들었다가, false 로 다시 세팅
 	float m_MoveZEnableMaxTime;
 	// 왼쪽으로만 무조건 돌아야 하는 순간
@@ -278,6 +286,8 @@ protected:
 
 	// Monster 가 랜덤한 방향으로 회전
 	bool m_RotateToRandom;
+	bool m_RandomRotatePrevMoveZ;
+	float m_RotateRandomAngle;
 	Vector3 m_RotateRandomTargetPos; // 어떤 벡터 쪽으로 회전할 것인지
 
 public:

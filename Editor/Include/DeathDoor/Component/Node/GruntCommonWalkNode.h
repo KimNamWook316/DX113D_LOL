@@ -14,6 +14,8 @@ public:
 private :
     float m_RotateChangeTime;
     float m_RotateChangeTimeMax;
+private:
+    class CMonsterNavAgent* m_NavAgent;
 public:
     virtual NodeResult OnStart(float DeltaTime) override;
     virtual NodeResult OnUpdate(float DeltaTime) override;

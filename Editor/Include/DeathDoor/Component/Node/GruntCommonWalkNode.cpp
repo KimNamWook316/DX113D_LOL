@@ -23,10 +23,6 @@ CGruntCommonWalkNode::~CGruntCommonWalkNode()
 
 void CGruntCommonWalkNode::Init()
 {
-}
-
-NodeResult CGruntCommonWalkNode::OnStart(float DeltaTime)
-{
 	CGruntCommonDataComponent* Data = dynamic_cast<CGruntCommonDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
 
 	// Animation CallBack
@@ -35,10 +31,17 @@ NodeResult CGruntCommonWalkNode::OnStart(float DeltaTime)
 	std::string AnimName = "WalkAgressive";
 	CAnimationSequenceInstance* AnimInst = m_AnimationMeshComp->GetAnimationInstance();
 
+	AnimInst->AddNotify(AnimName, "DisableAttackCollider", 0,
+		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnInActiveMeleeAttackCollider);
 	AnimInst->AddNotify(AnimName, "DisableLook", 0,
 		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnDisableLookPlayer);
 	AnimInst->AddNotify(AnimName, "EnableZMove", 0,
-		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnDisableRightLookPlayer);
+		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnEnableMoveZ);
+}
+
+NodeResult CGruntCommonWalkNode::OnStart(float DeltaTime)
+{
+	m_Owner->GetAnimationMeshComp()->GetAnimationInstance()->ChangeAnimation("WalkAgressive");
 
 	return NodeResult::Node_True;
 }
@@ -54,7 +57,7 @@ NodeResult CGruntCommonWalkNode::OnUpdate(float DeltaTime)
 
 		CGruntCommonDataComponent* Data = dynamic_cast<CGruntCommonDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
 
-		Data->OnEnableRandomRotate();
+		Data->SetRotateRandom();
 	}
 
 	return NodeResult::Node_True;

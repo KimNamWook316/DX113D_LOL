@@ -20,7 +20,10 @@ private :
 public:
     virtual void Start() override;
 public :
+    virtual void ActivateHitSubEffect();
+    virtual void OnActiveMeleeAttackCollider();
     void OnResetOriginalMoveSpeed();
+    
     // Getter
 public:
     float GetGruntOriginSpeed() const

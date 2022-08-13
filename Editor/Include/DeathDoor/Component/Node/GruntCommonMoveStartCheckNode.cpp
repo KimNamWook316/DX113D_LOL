@@ -28,12 +28,12 @@ NodeResult CGruntCommonMoveStartCheckNode::OnStart(float DeltaTime)
 	// Player 와의 거리를 확인한다
 	CGameObject* PlayerObject = CSceneManager::GetInst()->GetScene()->GetPlayerObject();
 
-	if (PlayerObject)
+	if (PlayerObject && IsStartEnable == false)
 	{
 		Vector3 PlayerPos = PlayerObject->GetWorldPos();
 		Vector3 MyPos = m_Object->GetWorldPos();
 
-		if (PlayerPos.Distance(MyPos) <= Data->GetDetectRange())
+		if (PlayerPos.Distance(MyPos) <= Data->GetMeleeAttackRange())
 		{
 			// 특정 거리 이내라면 StartActEnable 처리를 해준다.
 			Data->SetStartActEnable(true);
@@ -53,10 +53,10 @@ NodeResult CGruntCommonMoveStartCheckNode::OnStart(float DeltaTime)
 
 NodeResult CGruntCommonMoveStartCheckNode::OnUpdate(float DeltaTime)
 {
-	return NodeResult();
+	return NodeResult::Node_True;
 }
 
 NodeResult CGruntCommonMoveStartCheckNode::OnEnd(float DeltaTime)
 {
-	return NodeResult();
+	return NodeResult::Node_True;
 }

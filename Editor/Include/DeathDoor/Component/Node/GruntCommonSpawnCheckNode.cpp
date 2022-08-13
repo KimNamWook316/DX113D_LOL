@@ -37,10 +37,10 @@ NodeResult CGruntCommonSpawnCheckNode::OnStart(float DeltaTime)
 
 NodeResult CGruntCommonSpawnCheckNode::OnUpdate(float DeltaTime)
 {
-	return NodeResult();
+	return NodeResult::Node_True;
 }
 
 NodeResult CGruntCommonSpawnCheckNode::OnEnd(float DeltaTime)
 {
-	return NodeResult();
+	return NodeResult::Node_True;
 }

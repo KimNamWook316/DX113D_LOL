@@ -12,6 +12,7 @@
 #include "Component/CameraComponent.h"
 #include "GameObject/GameObject.h"
 #include "ObjectPool.h"
+#include "Node/MonsterHitBack.h"
 
 CGruntCommonDataComponent::CGruntCommonDataComponent() :
 	m_StartAct(false),
@@ -35,14 +36,49 @@ void CGruntCommonDataComponent::Start()
 
 	if (m_HitBox)
 	{
-		m_HitBox->SetExtent(1.5f, 2.5f, 1.5f);
+		m_HitBox->SetExtent(1.0f, 2.0f, 1.0f);
 	}
 
-	m_Data = CDataManager::GetInst()->GetObjectData("BossBetty");
+	m_Data = CDataManager::GetInst()->GetObjectData("GruntNormal");
 
 	// MoveSpeed
 	m_OriginMoveSpeed = m_Data.MoveSpeed;
 	m_CurMoveSpeed = m_Data.MoveSpeed;
+
+	m_MeleeAttackCollider = dynamic_cast<CColliderBox3D*>((m_Object->FindComponent("AttackCollider")));
+
+
+	if (m_MeleeAttackCollider)
+	{
+		m_MeleeAttackCollider->SetExtent(0.5f, 0.5f, 0.5f);
+
+		m_MeleeAttackCollider->Enable(false);
+
+		m_MeleeAttackCollider->AddCollisionCallback(Collision_State::Begin,
+			(CMonsterDataComponent*)this, &CMonsterDataComponent::OnHitMeleeAttack);
+	}
+
+	// Change Range
+	m_StopChaseRange = m_Data.MeleeAttackRange;
+
+	// Attack Cool Time Check
+	m_AttackCoolDelayTimeMax = 1.0f;
+}
+
+void CGruntCommonDataComponent::ActivateHitSubEffect()
+{
+	// MonsterHitBack Node 를 Current Node 로 세팅하기
+	// CNode* MonsterHitBackNode = m_State->GetBehaviorTree()->FindNodeByType<CMonsterHitBack>();
+	// m_State->GetBehaviorTree()->SetCurrentNode(MonsterHitBackNode);
+}
+
+void CGruntCommonDataComponent::OnActiveMeleeAttackCollider()
+{
+	CMonsterDataComponent::OnActiveMeleeAttackCollider();
+
+	const Vector3& ZDir = m_Object->GetWorldAxis(AXIS::AXIS_Z) * -1.f ;
+
+	m_MeleeAttackCollider->SetRelativePos(ZDir * 2.f);
 }
 
 void CGruntCommonDataComponent::OnResetOriginalMoveSpeed()

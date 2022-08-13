@@ -1,8 +1,8 @@
 #pragma once
-#include "Component\Node\ActionNode.h"
+#include "Component\Node\ConditionNode.h"
 
 class CGruntCommonSpawnCheckNode :
-    public CActionNode
+    public CConditionNode
 {
 public:
     CGruntCommonSpawnCheckNode();

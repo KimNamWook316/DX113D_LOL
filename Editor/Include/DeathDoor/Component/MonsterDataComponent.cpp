@@ -28,6 +28,7 @@ CMonsterDataComponent::CMonsterDataComponent() :
 	m_LeftLookPlayer(false),
 	m_RightLookPlayer(false),
 	m_CurRotSpeed(0.f),
+	m_AttackCoolTimeEnable(false), // OBJ가 추가 
 	m_AttackCoolDelayTimeMax(0.5f)
 {
 	SetTypeID<CMonsterDataComponent>();
@@ -163,8 +164,8 @@ void CMonsterDataComponent::Start()
 		// 처음에는 Enable False 처리를 해줄 것이다.
 		m_SpawnParticle->Enable(false);
 
-		// BillBoard 효과는 주지 않을 것이다 (Rotation 영향을 받기 때문에)
-		m_SpawnParticle->SetBillBoardEffect(false);
+		// BillBoard 효과는 줄것이다.
+		m_SpawnParticle->SetBillBoardEffect(true);
 
 		// 혹시 모르니 WorldRot 은 모두 0으로 맞춰준다.
 		m_SpawnParticle->SetWorldRotation(0.f, 0.f, 0.f);
@@ -563,6 +564,13 @@ void CMonsterDataComponent::OnInActivateSpawnParticle()
 	m_SpawnParticle->CRef::Enable(false);
 }
 
+void CMonsterDataComponent::EnableAttackCoolDelay()
+{
+	m_AttackCoolTimeEnable = true;
+
+	m_AttackCoolDelayTime = m_AttackCoolDelayTimeMax;
+}
+
 void CMonsterDataComponent::SetIsHit(bool Hit)
 {
 	CObjectDataComponent::SetIsHit(Hit);
@@ -578,6 +586,8 @@ void CMonsterDataComponent::SetIsHit(bool Hit)
 
 		// Blood Particle 을 동작시킨다.
 		OnActivateBloodParticle();
+
+		// 추가적으로 Hit 시 호출할 함수를 호출
 	}
 }
 
@@ -711,6 +721,16 @@ void CMonsterDataComponent::OnDisableMoveZ()
 	m_MoveZ = false;
 }
 
+void CMonsterDataComponent::OnResetPrevMoveZ()
+{
+	m_MoveZ = m_PrevMoveZ;
+}
+
+void CMonsterDataComponent::OnKeepPrevMoveZ()
+{
+	m_PrevMoveZ = m_MoveZ;
+}
+
 void CMonsterDataComponent::OnEnableRandomRotate()
 {
 	m_RotateToRandom = true;
@@ -797,39 +817,19 @@ void CMonsterDataComponent::SetRotateRandom()
 {
 	m_RotateToRandom = true;
 
-	// Rotate 하는 동안에는 움직이지 않도록 세팅할 것이다.
-	float RandX = m_Object->GetWorldPos().x + ((float)(rand()) / RAND_MAX) * 3;
-	float RandZ = m_Object->GetWorldPos().z + ((float)(rand()) / RAND_MAX) * 3;
+	// 이전 MoveZ 정보를 저장해둔다.
+	m_RandomRotatePrevMoveZ = m_MoveZ;
 
-	m_RotateRandomTargetPos = m_Object->GetWorldPos() + Vector3(RandX, 0.f, RandZ);
+	// Rotate 하는 동안에는 MoveZ 를 False 로 만들어줄 것이다
+	m_MoveZ = false;
+
+	// Rotate 하는 동안에는 움직이지 않도록 세팅할 것이다.
+	m_RotateRandomAngle = ((float)(rand()) / RAND_MAX) * 360.f;
 }
 
 void CMonsterDataComponent::RotateRandomly(float DeltaTime)
 {
 	Vector3 MyPos = m_Object->GetWorldPos();
-
-	Vector3 ToRandomRotateTargetPos = m_RotateRandomTargetPos - MyPos;
-
-	Vector3 MyAxisZ = m_Object->GetWorldAxis(AXIS::AXIS_Z) * -1.f;
-	Vector3 MyAxisX = m_Object->GetWorldAxis(AXIS::AXIS_X) * -1.f;
-
-	float RotateAngle = ToRandomRotateTargetPos.Angle(MyAxisZ);
-
-	if (ToRandomRotateTargetPos.Dot(MyAxisX) > 0.f)
-	{
-		RotateAngle = 180 + (180 - RotateAngle);
-	}
-
-	// 목표 위치까지 모두 회전했다면, 더이상 회전 X
-	// 다시 Z Move 를 true 로 만들어준다.
-	if (RotateAngle < 1.f)
-	{
-		m_RotateToRandom = false;
-
-		m_MoveZ = true;
-
-		return;
-	}
 
 	float RotSpeed = m_Data.RotateSpeedPerSec;
 
@@ -839,7 +839,20 @@ void CMonsterDataComponent::RotateRandomly(float DeltaTime)
 		RotSpeed = m_CurRotSpeed;
 	}
 
-	m_Object->AddWorldRotationY(RotSpeed * DeltaTime);
+	float RotAmount = RotSpeed * DeltaTime;
+
+	m_RotateRandomAngle -= RotAmount;
+
+	if (m_RotateRandomAngle < 0.f)
+	{
+		m_RotateToRandom = false;
+
+		m_MoveZ = m_RandomRotatePrevMoveZ;
+
+		return;
+	}
+
+	m_Object->AddWorldRotationY(RotAmount);
 }
 
 bool CMonsterDataComponent::Save(FILE* File)
@@ -868,6 +881,10 @@ bool CMonsterDataComponent::LoadOnly(FILE* File)
 	CObjectDataComponent::LoadOnly(File);
 
 	return true;
+}
+
+void CMonsterDataComponent::ActivateHitSubEffect()
+{
 }
 
 void CMonsterDataComponent::ActiveHitEffect(float DeltaTime)

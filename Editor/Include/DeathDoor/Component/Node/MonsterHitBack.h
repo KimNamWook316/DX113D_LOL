@@ -9,13 +9,11 @@ public:
     CMonsterHitBack();
     CMonsterHitBack(const CMonsterHitBack& Node);
     virtual ~CMonsterHitBack();
-
+public:
+    virtual void Init() override;
 protected:
     virtual NodeResult OnStart(float DeltaTime);
     virtual NodeResult OnUpdate(float DeltaTime);
     virtual NodeResult OnEnd(float DeltaTime);
-
-public:
-    virtual NodeResult Invoke(float DeltaTime) override;
 };
 

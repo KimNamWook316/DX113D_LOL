@@ -14,7 +14,7 @@ public:
 
 private :
     bool m_SpawnComplete;
-
+    void SetWorldPosYUp();
 public:
     virtual NodeResult OnStart(float DeltaTime) override;
     virtual NodeResult OnUpdate(float DeltaTime) override;

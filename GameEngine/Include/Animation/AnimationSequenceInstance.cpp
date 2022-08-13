@@ -402,6 +402,10 @@ void CAnimationSequenceInstance::SetCurrentAnimation(const std::string& Name)
 
 void CAnimationSequenceInstance::ChangeAnimation(const std::string& Name)
 {
+	// (OBJ) Ãß°¡ 
+	if (Name == "")
+		return;
+
 	if (m_CurrentAnimation->m_Name == Name)
 		return;
 

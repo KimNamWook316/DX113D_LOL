@@ -15,7 +15,8 @@ CParticleComponent::CParticleComponent()	:
 	m_SpawnTimeMax(0.01f),
 	m_Info{},
 	m_BillBoardEffect(false),
-	m_UpdateInitBillBoardDir(false),
+	// m_UpdateInitBillBoardDir(false),
+	m_UpdateInitBillBoardDir(true),
 	// m_BazierMoveEffect(false),
 	// m_ParticleMoveSpeed(20.f),
 	m_TempCreateAccTimeMax(5.f),
@@ -192,16 +193,16 @@ void CParticleComponent::ExecuteComputeShader()
 
 void CParticleComponent::ApplyBillBoardEffect()
 {
-	Vector3 CameraPos = CSceneManager::GetInst()->GetScene()->GetCameraManager()->GetCurrentCamera()->GetWorldPos();
-
-	Vector3 View = CameraPos - GetWorldPos();
-
-	View.Normalize();
-
-	// float 
-	Vector3 OriginDir = Vector3(0.f, 0.f, -1.f);
-
-	m_Transform->SetRotationAxis(OriginDir, View);
+	// Vector3 CameraPos = CSceneManager::GetInst()->GetScene()->GetCameraManager()->GetCurrentCamera()->GetWorldPos();
+	// 
+	// Vector3 View = CameraPos - GetWorldPos();
+	// 
+	// View.Normalize();
+	// 
+	// // float 
+	// Vector3 OriginDir = Vector3(0.f, 0.f, -1.f);
+	// 
+	// m_Transform->SetRotationAxis(OriginDir, View);
 }
 void CParticleComponent::Start()
 {
@@ -318,10 +319,10 @@ void CParticleComponent::Update(float DeltaTime)
 	}
 
 	// 추가 : Particle 도 BillBoard 를 적용하기위해 OBJ 가 추가
-	if (m_BillBoardEffect)
-	{
-		ApplyBillBoardEffect();
-	}
+	// if (m_BillBoardEffect)
+	// {
+	// 	ApplyBillBoardEffect();
+	// }
 }
 
 void CParticleComponent::PostUpdate(float DeltaTime)
@@ -643,9 +644,10 @@ void CParticleComponent::RecreateOnlyOnceCreatedParticleWithOutLifeTimeSetting()
 	// 해당 AccTime 이후 Enable False 가 된다.
 	// m_TempCreateAccTime = m_TempCreateAccTimeMax;
 	// m_TempCreateAccTimeMax = m_CBuffer->GetLifeTimeMax() + 0.1f;
-	m_TempCreateAccTime = m_CBuffer->GetLifeTimeMax() + 0.1f;
+	m_TempCreateAccTime = m_CBuffer->GetLifeTimeMax() + 0.01f;
 
 	// 상수 버퍼 정보를 Update
+	m_TempVCBuffer->SetCommonParticleComponentWorldPos(GetWorldPos());
 	m_CBuffer->UpdateCBuffer();
 
 	// 계산 셰이더 한번 더 호출
