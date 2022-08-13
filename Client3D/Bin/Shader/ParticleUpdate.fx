@@ -139,6 +139,7 @@ void ApplyInitSpecialMoveDirType(int ThreadID, float RandomAngle, float3 OriginD
 		MoveTowardAngle = g_ParticleArray[ThreadID].CurrentParticleAngle;
 	}
 
+	// -1 이라면, 아무것도 세팅하지 않은 것
 	switch (g_ParticleSpecialMoveDirType)
 	{
 	case 0:

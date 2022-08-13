@@ -13,7 +13,8 @@
 CPlayerBowComponent::CPlayerBowComponent()	:
 	m_PlayerData(nullptr),
 	m_Arrow(nullptr),
-	m_Destroy(false)
+	m_Destroy(false),
+	m_ShowBow(false)
 {
 	m_ComponentType = Component_Type::SceneComponent;
 	SetTypeID<CPlayerBowComponent>();
@@ -137,6 +138,7 @@ void CPlayerBowComponent::ShowBow(const Vector3& ShootDir)
 	SetEmissiveColor(1.f, 0.f, 0.f, 1.f);
 
 	m_Render = true;
+	m_ShowBow = true;
 }
 
 void CPlayerBowComponent::ShootArrow(const Vector3& ShootDir)
@@ -195,6 +197,8 @@ void CPlayerBowComponent::ShootArrow(const Vector3& ShootDir)
 void CPlayerBowComponent::HideBow()
 {
 	m_Render = false;
+
+	m_ShowBow = false;
 }
 
 void CPlayerBowComponent::OnCollision(const CollisionResult& Result)
@@ -227,7 +231,7 @@ void CPlayerBowComponent::OnCollision(const CollisionResult& Result)
 				float YRotAngle = ArrowDir.Angle(BaseDir);
 				
 				// 회전 각도 180도 이상
-				if (ArrowDir.Dot(LeftDir))
+				if (ArrowDir.Dot(LeftDir) > 0)
 				{
 					YRotAngle = 180 + (180 - YRotAngle);
 				}
@@ -241,7 +245,7 @@ void CPlayerBowComponent::OnCollision(const CollisionResult& Result)
 				for (size_t i = 0; i < ParticleSize; ++i)
 				{
 					// vecArrowParticles[i]->CRef::Enable(true);
-					vecArrowParticles[i]->AddWorldRotationY(YRotAngle);
+					vecArrowParticles[i]->SetWorldRotationY(YRotAngle);
 				}
 
 				// Light Component 를 활성화 시켜줄 것이다.
@@ -299,6 +303,13 @@ void CPlayerBowComponent::OnCollision(const CollisionResult& Result)
 			Data->SetIsHit(true);
 			Data->DecreaseHP(5);
 			Data->SetIsHit(false);
+
+			m_Object->GetScene()->GetResource()->SoundPlay("ArrowHitEnemy");
+		}
+
+		else
+		{
+			m_Object->GetScene()->GetResource()->SoundPlay("ArrowHitWall");
 		}
 
 		if (m_Arrow)

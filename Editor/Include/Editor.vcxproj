@@ -294,6 +294,7 @@
     <ClCompile Include="DeathDoor\Component\Node\LurkerMeleeAttackPrep.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\MeleeAttackNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\MeleeRangeCheckNode.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\MonsterHitBack.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\MouseLButtonCheckNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\MouseRButtonCheckNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\MouseRButtonUpCheckNode.cpp" />
@@ -534,6 +535,7 @@
     <ClInclude Include="DeathDoor\Component\Node\LurkerMeleeAttackPrep.h" />
     <ClInclude Include="DeathDoor\Component\Node\MeleeAttackNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\MeleeRangeCheckNode.h" />
+    <ClInclude Include="DeathDoor\Component\Node\MonsterHitBack.h" />
     <ClInclude Include="DeathDoor\Component\Node\MouseLButtonCheckNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\MouseRButtonCheckNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\MouseRButtonUpCheckNode.h" />

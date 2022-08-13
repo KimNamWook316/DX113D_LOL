@@ -1236,7 +1236,6 @@ void CRenderManager::RenderParticle()
 
 	for (; iter != iterEnd; ++iter)
 	{
-		// OBJ가 추가 (Particle Mesh Widget 에서 Enable false 처리)
 		if ((*iter)->IsEnable() == false)
 			continue;
 

@@ -13,7 +13,9 @@ CPlayerHookComponent::CPlayerHookComponent()	:
 	m_ClearHookIndex(0),
 	m_AccTime(0.f),
 	m_InFlying(false),
-	m_AccLastHookDelayTime(0.f)
+	m_AccLastHookDelayTime(0.f),
+	m_PlayFireSound(false),
+	m_PlayInShootSound(false)
 {
 	SetTypeID<CPlayerHookComponent>();
 	m_ComponentType = Component_Type::SceneComponent;
@@ -202,6 +204,18 @@ HookResult CPlayerHookComponent::ShootHook(const Vector3& ShootDir, float DeltaT
 
 	if (m_CurrentHookIndex < 21)
 	{
+		if (m_CurrentHookIndex == 0 && !m_PlayFireSound)
+		{
+			m_Object->GetScene()->GetResource()->SoundPlay("HookShotFire");
+			m_PlayFireSound = true;
+		}
+
+		else if (m_CurrentHookIndex > 0 &&  m_CurrentHookIndex % 7 == 0)
+		{
+			//m_Object->GetScene()->GetResource()->SoundStop("HookShotBeginReturn");
+			m_Object->GetScene()->GetResource()->SoundPlay("HookShotBeginReturn");
+		}
+
 		if (m_AccTime > 0.02f)
 		{
 			// 방향에 맞게 HookChain 회전시켜준다
@@ -261,6 +275,9 @@ HookResult CPlayerHookComponent::ShootHook(const Vector3& ShootDir, float DeltaT
 
 				m_AccLastHookDelayTime = 0.f;
 
+				m_PlayFireSound = false;
+				m_PlayInShootSound = false;
+
 				return HookResult::NoCollision;
 			}
 		}
@@ -316,7 +333,14 @@ void CPlayerHookComponent::OnHookCollision(const CollisionResult& Result)
 	{
 		m_vecHookChain[i]->GetTransform()->SetFixTransform(true);
 	}
+
 	m_Collider->GetTransform()->SetFixTransform(true);
+
+	m_Object->GetScene()->GetResource()->SoundStop("HookShotBeginReturn");
+	m_Object->GetScene()->GetResource()->SoundPlay("HookShotCollison");
+
+	m_PlayFireSound = false;
+	m_PlayInShootSound = false;
 }
 
 void CPlayerHookComponent::ClearHookChain()
@@ -343,6 +367,8 @@ void CPlayerHookComponent::ClearHookChain()
 
 	m_ShootDestPoint = Vector3(0.f, 0.f, 0.f);
 	m_ShootDir = Vector3(0.f, 0.f, 0.f);
+
+	m_Object->GetScene()->GetResource()->SoundStop("HookShotBeginReturn");
 }
 
 

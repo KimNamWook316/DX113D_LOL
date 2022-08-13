@@ -82,6 +82,7 @@ void CDDPuzzleSceneMode::OnClearDungeon()
 		m_ClearOriginCamPos = Cam->GetWorldPos();
 
 		Vector3 MoveDest;
+
 		if (m_BlockerObj)
 		{
 			MoveDest = m_BlockerObj->GetWorldPos();

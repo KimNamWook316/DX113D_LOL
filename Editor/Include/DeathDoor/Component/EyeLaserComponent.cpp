@@ -324,8 +324,10 @@ void CEyeLaserComponent::OnRaserCollisionStay(const CollisionResult& Result)
 
 void CEyeLaserComponent::OnRaserCollisionEnd(const CollisionResult& Result)
 {
-	if (!Result.Src || !Result.Dest)
-		return;
+	int a = 3;
+
+	//if (!Result.Src || !Result.Dest)
+	//	return;
 
 	m_RayCollider->SetWorldScale(500.f, 1.f, 1.f);
 	SetWorldScale(0.3f, 1.f, 500.f);

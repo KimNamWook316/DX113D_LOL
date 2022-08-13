@@ -46,6 +46,9 @@ public:
 	void OnDisableLeftLookPlayer();
 	void OnEnableMoveZ();
 	void OnDisableMoveZ();
+	void OnResetPrevMoveZ();
+	void OnKeepPrevMoveZ();
+	void OnEnableRandomRotate();
 	void OnSetMoveSpeedZero(float DeltaTime)
 	{
 		m_CurMoveSpeed = 0.f;
@@ -58,6 +61,12 @@ public:
     virtual void OnEndCutScene();
 	// Blood Particle
 	virtual void OnActivateBloodParticle();
+	// Spawn Particle
+	virtual void OnActivateSpawnParticle();
+	virtual void OnInActivateSpawnParticle();
+	// AttackCoolTime
+	void EnableAttackCoolDelay();
+
 public:
 	virtual void SetIsHit(bool Hit) override;
 
@@ -143,6 +152,11 @@ public:
 		return m_BloodParticle;
 	}
 
+	class CParticleComponent* GetSpawnParticle() const
+	{
+		return m_SpawnParticle;
+	}
+
     class CColliderBox3D* GetMeleeAttackCollider() const
     {
         return m_MeleeAttackCollider;
@@ -189,7 +203,8 @@ public:
 	Vector3	ToPlayer();
 	float DistToPlayer();
 	bool IsPlayerInStopChaseRange();	// 길찾기를 종료해야 하는 범위에 있는지 (기본적으로 MeleeAttackRange)
-		
+	void SetRotateRandom();
+	void RotateRandomly(float DeltaTime);
 public:
 	virtual bool Save(FILE* File);
 	virtual bool Load(FILE* File);
@@ -197,6 +212,8 @@ public:
 	virtual bool LoadOnly(FILE* File) override;
 
 protected:
+	// Hit 시 호출할 함수
+	virtual void ActivateHitSubEffect();
 	void ActiveHitEffect(float DeltaTime);
 	void ChangeHitColor(int EffectNum);
 
@@ -208,6 +225,7 @@ protected:
 	class CColliderBox3D* m_MeleeAttackCollider;
 	class CGameStateComponent* m_State;
 	class CParticleComponent* m_BloodParticle;
+	class CParticleComponent* m_SpawnParticle;
 
 	bool m_PostAttackDelaying;  // 공격 후딜레이 중인지 여부
 	bool m_IsCombat;			// 전투 시작 여부
@@ -237,6 +255,7 @@ protected:
 	float m_CurMoveSpeed;
 	bool m_LookPlayer;
 	bool m_MoveZ;
+	bool m_PrevMoveZ;
 	// 해당 시간 동안만 m_MoveZ 를 true 로 만들었다가, false 로 다시 세팅
 	float m_MoveZEnableMaxTime;
 	// 왼쪽으로만 무조건 돌아야 하는 순간
@@ -263,9 +282,13 @@ protected:
 
 	// 길찾기 종료하는 거리
 	float m_StopChaseRange;
-
-
 	bool m_PathFindExecute;
+
+	// Monster 가 랜덤한 방향으로 회전
+	bool m_RotateToRandom;
+	bool m_RandomRotatePrevMoveZ;
+	float m_RotateRandomAngle;
+	Vector3 m_RotateRandomTargetPos; // 어떤 벡터 쪽으로 회전할 것인지
 
 public:
 	class CMonsterNavAgent* GetMonsterNavAgent()	const;

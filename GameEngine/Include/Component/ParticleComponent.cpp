@@ -15,7 +15,8 @@ CParticleComponent::CParticleComponent()	:
 	m_SpawnTimeMax(0.01f),
 	m_Info{},
 	m_BillBoardEffect(false),
-	m_UpdateInitBillBoardDir(false),
+	// m_UpdateInitBillBoardDir(false),
+	m_UpdateInitBillBoardDir(true),
 	// m_BazierMoveEffect(false),
 	// m_ParticleMoveSpeed(20.f),
 	m_TempCreateAccTimeMax(5.f),
@@ -80,7 +81,12 @@ CParticleComponent::~CParticleComponent()
 void CParticleComponent::StartParticle(const Vector3& StartPos)
 {
 	CRef::Enable(true);
+
+	// 해당 코드의 위치로 인해서 문제가 발생할 수 있다.
+	Reset();
+
 	SetWorldPos(StartPos);
+
 	RecreateOnlyOnceCreatedParticle();
 
 	m_UpdateInitBillBoardDir = true;
@@ -168,22 +174,12 @@ void CParticleComponent::SetParticleWithOutCloneShader(CParticle* Particle)
 
 	m_ParticleName = m_Particle->GetName();
 
-
-	// Disable New Alive 의 경우,
-	// Scene 시작 시에 한번 보이게 되는 문제가 있다. 이를 방지해야 한다.
-	// 따라서 Enable False 를 시켜줄 것이다.
-	if (m_CBuffer->IsDisableNewAlive())
-	{
-		CRef::Enable(false);
-	}
-
 	SAFE_DELETE(m_TempVCBuffer);
 
 	m_TempVCBuffer = new CParticleTempValConstantBuffer;
 	
 	if (!m_TempVCBuffer->Init())
 		assert(false);
-
 }
 
 void CParticleComponent::SetSpawnTime(float Time)
@@ -202,16 +198,16 @@ void CParticleComponent::ExecuteComputeShader()
 
 void CParticleComponent::ApplyBillBoardEffect()
 {
-	Vector3 CameraPos = CSceneManager::GetInst()->GetScene()->GetCameraManager()->GetCurrentCamera()->GetWorldPos();
-
-	Vector3 View = CameraPos - GetWorldPos();
-
-	View.Normalize();
-
-	// float 
-	Vector3 OriginDir = Vector3(0.f, 0.f, -1.f);
-
-	m_Transform->SetRotationAxis(OriginDir, View);
+	// Vector3 CameraPos = CSceneManager::GetInst()->GetScene()->GetCameraManager()->GetCurrentCamera()->GetWorldPos();
+	// 
+	// Vector3 View = CameraPos - GetWorldPos();
+	// 
+	// View.Normalize();
+	// 
+	// // float 
+	// Vector3 OriginDir = Vector3(0.f, 0.f, -1.f);
+	// 
+	// m_Transform->SetRotationAxis(OriginDir, View);
 }
 void CParticleComponent::Start()
 {
@@ -290,6 +286,12 @@ void CParticleComponent::Update(float DeltaTime)
 			// - 해당 Component만을 Enable False 처리해줘야 한다.
 			CRef::Enable(false);
 
+			// 보이지 않게 할 것이다.
+			// m_Render = false;
+
+			// 해당 코드의 위치로 인해 문제가 발생할 수 있다.
+			// Reset();
+
 			return;
 		}
 	}
@@ -325,10 +327,10 @@ void CParticleComponent::Update(float DeltaTime)
 	}
 
 	// 추가 : Particle 도 BillBoard 를 적용하기위해 OBJ 가 추가
-	if (m_BillBoardEffect)
-	{
-		ApplyBillBoardEffect();
-	}
+	// if (m_BillBoardEffect)
+	// {
+	// 	ApplyBillBoardEffect();
+	// }
 }
 
 void CParticleComponent::PostUpdate(float DeltaTime)
@@ -381,8 +383,8 @@ void CParticleComponent::PostUpdate(float DeltaTime)
 		// 처음 만들어지는 순간의 ZLookDir, XLoosdkDir 을 세팅해준다.
 		if (m_UpdateInitBillBoardDir)
 		{
-			m_InitBillBoardZLookDir = ZLookDir;
-			m_InitBillBoardXLookDir = XLookDir;
+			m_InitBillBoardZLookDir = Vector3(ZLookDir.x, 0.f, ZLookDir.z);
+			m_InitBillBoardXLookDir = Vector3(XLookDir.x, 0.f, XLookDir.z);
 
 			m_UpdateInitBillBoardDir = false;
 		}
@@ -649,7 +651,8 @@ void CParticleComponent::RecreateOnlyOnceCreatedParticleWithOutLifeTimeSetting()
 
 	// 해당 AccTime 이후 Enable False 가 된다.
 	// m_TempCreateAccTime = m_TempCreateAccTimeMax;
-	m_TempCreateAccTimeMax = m_CBuffer->GetLifeTimeMax() + 0.1f;
+	// m_TempCreateAccTimeMax = m_CBuffer->GetLifeTimeMax() + 0.1f;
+	m_TempCreateAccTime = m_CBuffer->GetLifeTimeMax() + 0.01f;
 
 	// 상수 버퍼 정보를 Update
 	m_TempVCBuffer->SetCommonParticleComponentWorldPos(GetWorldPos());
