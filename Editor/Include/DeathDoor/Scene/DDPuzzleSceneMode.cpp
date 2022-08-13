@@ -113,6 +113,7 @@ void CDDPuzzleSceneMode::OnClearDungeon()
 
 		else if (m_LadderObj)
 		{
+			m_LadderObj->Enable(true);
 			m_LadderPaperBurn->SetEndEvent(PaperBurnEndEvent::None);
 			m_LadderPaperBurn->SetInverse(true);
 			m_LadderPaperBurn->StartPaperBurn();
@@ -132,6 +133,7 @@ void CDDPuzzleSceneMode::OnClearCamMoveToClearObjectEnd()
 
 	else if (m_LadderObj)
 	{
+		m_LadderObj->Enable(true);
 		m_LadderPaperBurn->SetEndEvent(PaperBurnEndEvent::None);
 		m_LadderPaperBurn->SetInverse(true);
 		m_LadderPaperBurn->StartPaperBurn();
@@ -149,12 +151,6 @@ void CDDPuzzleSceneMode::OnClearObjectEventEnd()
 		Cam->SetMoveFreeze(false);
 		Cam->SetMoveReverse(true);
 		Cam->SetMoveEndCallBack<CDDPuzzleSceneMode>(this, &CDDPuzzleSceneMode::OnClearCamRestoreEnd);
-	}
-
-	// 사다리 오브젝트 활성화
-	if (m_LadderObj)
-	{
-		m_LadderObj->Enable(true);
 	}
 }
 
