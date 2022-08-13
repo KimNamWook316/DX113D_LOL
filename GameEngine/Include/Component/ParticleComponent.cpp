@@ -284,6 +284,8 @@ void CParticleComponent::Update(float DeltaTime)
 			// 보이지 않게 할 것이다.
 			m_Render = false;
 
+			Reset();
+
 			return;
 		}
 	}

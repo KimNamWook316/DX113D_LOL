@@ -48,6 +48,8 @@ private:
 	bool m_ShootDirFixed;
 	std::list<class CGameObject*> m_TinyCrowList;
 
+	class CParticleComponent* m_FeatherParticle;
+
 public:
 	virtual void Update(float DeltaTime);
 	

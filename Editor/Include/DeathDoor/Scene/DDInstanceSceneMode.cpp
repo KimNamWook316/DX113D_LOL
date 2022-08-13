@@ -4,6 +4,7 @@
 #include "Component/PaperBurnComponent.h"
 #include "../Component/GameStateComponent.h"
 #include "ObjectPool.h"
+#include "Resource/ResourceManager.h"
 
 CDDInstanceSceneMode::CDDInstanceSceneMode()
 {
@@ -60,6 +61,8 @@ void CDDInstanceSceneMode::Start()
 
 	if (m_ExitPointObj)
 	{
+		m_ExitPaperBurn = m_ExitPointObj->FindObjectComponentFromType<CPaperBurnComponent>();
+
 		m_ExitPointObj->Enable(false);
 	}
 
@@ -161,6 +164,7 @@ void CDDInstanceSceneMode::Update(float DeltaTime)
 
 				if (SpawnDoor)
 				{
+					CResourceManager::GetInst()->SoundPlay("SpawnDoorAppear");
 					SpawnDoor->Start();
 					CPaperBurnComponent* DoorPaperBurn = SpawnDoor->FindObjectComponentFromType<CPaperBurnComponent>();
 					DoorPaperBurn->SetFinishCallback(this, &CDDInstanceSceneMode::OnSpawnDoorPaperBurnEnd);
@@ -362,6 +366,13 @@ void CDDInstanceSceneMode::OnClearDungeon()
 {
 	CDDSceneMode::OnClearDungeon();
 
+	if (m_ExitPaperBurn)
+	{
+		m_ExitPaperBurn->SetInverse(true);
+		m_ExitPaperBurn->SetEndEvent(PaperBurnEndEvent::Reset);
+		m_ExitPaperBurn->StartPaperBurn();
+	}
+
 	m_BlockerDownMoving = true;
 	m_BlockerUpMoving = false;
 
@@ -373,6 +384,10 @@ void CDDInstanceSceneMode::OnClearDungeon()
 		m_vecEndEventObj[i].PaperBurnComp->SetEndEvent(PaperBurnEndEvent::Reset);
 		m_vecEndEventObj[i].PaperBurnComp->StartPaperBurn();
 	}
+
+	// 다시 BGM 재생
+	CResourceManager::GetInst()->SoundStop("InstanceDungeonBGM");
+	CResourceManager::GetInst()->SoundPlay(m_ReturnMusic);
 }
 
 void CDDInstanceSceneMode::AddSpawnPhase()
@@ -736,10 +751,23 @@ void CDDInstanceSceneMode::OnCollideEnterTrigger(const CollisionResult& Result)
 
 		if (m_BlockerObj)
 		{
+			CResourceManager::GetInst()->SoundPlay("BlockerUp");
 			m_BlockerObj->Enable(true);
 		}
 
 		m_EnterTrigger->GetGameObject()->Enable(false);
+
+		// 현재 BGM 잠깐 멈추고 인스턴스 던전 BGM으로 변경
+		m_ReturnMusic= m_Scene->GetSceneSaveGlobalData().BackGroundData.MusicKeyName;
+
+		if (m_ReturnMusic.empty())
+		{
+			m_ReturnMusic = m_Scene->GetSceneSaveGlobalData().BackGroundData.PrevMusicKeyName;
+		}
+
+		CResourceManager::GetInst()->SoundPause(m_ReturnMusic);
+
+		CResourceManager::GetInst()->SoundPlay("InstanceDungeonBGM");
 	}
 }
 
@@ -748,15 +776,24 @@ void CDDInstanceSceneMode::OnSpawnDoorPaperBurnEnd()
 	DDSpawnObjectSet Set = m_PaperBurnEndSpawnQueue.front();
 	m_PaperBurnEndSpawnQueue.pop();
 
+	Vector3 SpawnPos = Set.Info->SpawnPosition;
+
 	// 몬스터를 소환한다.
 	CGameObject* Monster = CObjectPool::GetInst()->GetMonster(Set.Info->MonsterName, m_Scene);
-	Monster->SetWorldPos(Set.Info->SpawnPosition);
+	Monster->SetWorldPos(SpawnPos);
 	Monster->SetWorldRotation(Set.Info->SpawnRotation);
+	CResourceManager::GetInst()->SoundPlay("EnemySpawn");
+
+	// Spawn Particle
+	CGameObject* Particle = CObjectPool::GetInst()->GetParticle("SpawnEffect", m_Scene);
+	SpawnPos.y += 2.f;
+	Particle->StartParticle(SpawnPos);
 
 	CGameStateComponent* State = Monster->FindObjectComponentFromType<CGameStateComponent>();
 	State->SetTreeUpdate(true);
 
 	// 페이퍼번 정재생 한 뒤 파괴하기 위해 큐에 넣는다.
+	CResourceManager::GetInst()->SoundPlay("SpawnDoorDisappear");
 	Set.DoorPaperBurn->SetInverse(false);
 	Set.DoorPaperBurn->SetFinishCallback(this, &CDDInstanceSceneMode::OnSpawnDoorDestroy);
 	Set.DoorPaperBurn->StartPaperBurn();

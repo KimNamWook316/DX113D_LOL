@@ -13,9 +13,10 @@ PlayerBomb,4,PlayerBomb.gobj
 PlagueKnightBullet,10,Static\PlagueKnightBullet.gobj
 Lurker,5,Monster\Lurker\Lurker.gobj
 Bat,10,Monster\Bat\Bat.gobj
-BossKnightImpact,5,Particle\BossKnightImpact.gobj
+BossKnightImpact,10,Particle\BossKnightImpact.gobj
 Dodger,5,Monster\Dodger\Dodger.gobj
-PlagueKnight,5,Monster\PlagueKnight\PlagueKnight.gobj
+PlagueKnight,3,Monster\PlagueKnight\PlagueKnight.gobj
 SporeBoomerParticle,3,Particle\SporeBoomerParticle.gobj
 FirePlantBulletDust,10,Particle\FirePlantBulletDust.gobj
 PlagueKnightParticle,5,Particle\PlagueKnightParticle.gobj
+SpawnEffect,3,Particle\SpawnEffect.gobj

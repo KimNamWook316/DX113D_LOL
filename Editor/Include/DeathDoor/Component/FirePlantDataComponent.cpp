@@ -37,6 +37,20 @@ void CFirePlantDataComponent::Start()
 	AnimInst->SetEndFunction("Fire", this, &CFirePlantDataComponent::OnAttackCoolEnable);
 }
 
+void CFirePlantDataComponent::SetIsHit(bool Hit)
+{
+	CMonsterDataComponent::SetIsHit(Hit);
+
+	CResourceManager::GetInst()->SoundPlay("FirePlantHit");
+}
+
+void CFirePlantDataComponent::OnDeadAnimStart()
+{
+	CMonsterDataComponent::OnDeadAnimStart();
+
+	CResourceManager::GetInst()->SoundPlay("FirePlantDeath");
+}
+
 void CFirePlantDataComponent::OnAttackCoolEnable()
 {
 	SetAttackCoolDelayTimeEnable(true);
@@ -51,6 +65,8 @@ void CFirePlantDataComponent::OnAttackCoolDisable()
 	SetAttackCoolDelayTimeEnable(false);
 
 	m_LookPlayer = true;
+
+	CResourceManager::GetInst()->SoundPlay("FirePlantCharge");
 }
 
 void CFirePlantDataComponent::OnShootBullet()
@@ -78,4 +94,6 @@ void CFirePlantDataComponent::OnShootBullet()
 		CGameObject* EndParticle = CObjectPool::GetInst()->GetParticle("FirePlantBulletDust", m_Scene);
 		Data->ShootBulletLifeTime(MyPos, ToPlayer, 10.f, 5.f, EndParticle);
 	}
+
+	CResourceManager::GetInst()->SoundPlay("FirePlantFire");
 }

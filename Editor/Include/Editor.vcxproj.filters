@@ -120,9 +120,6 @@
     <Filter Include="06. DeathDoor\02. BehaviorTree\03. DecoratorNode">
       <UniqueIdentifier>{6b5bccd5-4cff-4d30-abcc-8ca89762bc38}</UniqueIdentifier>
     </Filter>
-    <Filter Include="06. DeathDoor\03. State">
-      <UniqueIdentifier>{f5f2078b-48ac-417b-aaf6-d8d7501769f2}</UniqueIdentifier>
-    </Filter>
     <Filter Include="06. DeathDoor\04. Util">
       <UniqueIdentifier>{98ea6d63-93a8-4eb2-a578-5220028d96e5}</UniqueIdentifier>
     </Filter>
@@ -409,15 +406,6 @@
     </ClCompile>
     <ClCompile Include="Window\CollisionProfileEditor.cpp">
       <Filter>02. Editor\01. Window\5. CollisionProfile</Filter>
-    </ClCompile>
-    <ClCompile Include="Component\State\AirBorneState.cpp">
-      <Filter>06. DeathDoor\03. State</Filter>
-    </ClCompile>
-    <ClCompile Include="Component\State\DamageState.cpp">
-      <Filter>06. DeathDoor\03. State</Filter>
-    </ClCompile>
-    <ClCompile Include="Component\State\GameStateManager.cpp">
-      <Filter>06. DeathDoor\03. State</Filter>
     </ClCompile>
     <ClCompile Include="Object\PlayerHook.cpp">
       <Filter>03. Object\02. 3D</Filter>
@@ -1122,15 +1110,6 @@
     <ClInclude Include="Widget\UtilMenuBar.h">
       <Filter>02. Editor\02. Widget\03. MenuBar</Filter>
     </ClInclude>
-    <ClInclude Include="Component\State\AirBorneState.h">
-      <Filter>06. DeathDoor\03. State</Filter>
-    </ClInclude>
-    <ClInclude Include="Component\State\DamageState.h">
-      <Filter>06. DeathDoor\03. State</Filter>
-    </ClInclude>
-    <ClInclude Include="Component\State\GameStateManager.h">
-      <Filter>06. DeathDoor\03. State</Filter>
-    </ClInclude>
     <ClInclude Include="Window\EffectDisplayWindow.h">
       <Filter>02. Editor\01. Window</Filter>
     </ClInclude>
@@ -1711,5 +1690,8 @@
     <Image Include="icon1.ico">
       <Filter>리소스 파일</Filter>
     </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Copy.bat" />
   </ItemGroup>
 </Project>

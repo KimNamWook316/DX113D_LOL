@@ -61,15 +61,5 @@ struct LoadingMessage
 	std::string Message;
 };
 
-enum class ProjectTileSpeedChangeMethod
-{
-	None,
-	Linear = 1,
-	Exponential,  // 속도 변화가 점점 크게
-	Log, /// 속도 변화가 점점 작게 
-	Max
-};
-
-
 static const float ParticleEditorWidth = 600.f;
 static const float ParticleEditorHeight = 600.f;

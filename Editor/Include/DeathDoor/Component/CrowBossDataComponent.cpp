@@ -12,6 +12,7 @@
 #include "Component/ColliderBox3D.h"
 #include "PlayerDataComponent.h"
 #include "TinyCrowDataComponent.h"
+#include "Component/ParticleComponent.h"
 
 CCrowBossDataComponent::CCrowBossDataComponent()	:
 	m_StartFlying(false),
@@ -29,7 +30,8 @@ CCrowBossDataComponent::CCrowBossDataComponent()	:
 	m_SpittingStart(false),
 	m_SpittingAccTime(0.f),
 	m_CurrentTinyCrowIndex(0),
-	m_ShootDirFixed(false)
+	m_ShootDirFixed(false),
+	m_FeatherParticle(nullptr)
 {
 	SetTypeID<CCrowBossDataComponent>();
 
@@ -76,7 +78,10 @@ void CCrowBossDataComponent::Start()
 
 	if(m_MeleeAttackCollider)
 		m_MeleeAttackCollider->AddCollisionCallback<CCrowBossDataComponent>(Collision_State::Begin, this, &CCrowBossDataComponent::OnCollision);
-	
+
+
+	m_FeatherParticle = m_Object->FindComponentFromType<CParticleComponent>();
+	m_FeatherParticle->Enable(false);
 }
 
 void CCrowBossDataComponent::Update(float DeltaTime)
@@ -223,6 +228,12 @@ void CCrowBossDataComponent::Fly(const Vector3& FlyDir, float DeltaTime)
 			}
 
 			++m_ClearHookIndex;
+		}
+
+		if (m_ClearHookIndex % 5 == 0 && m_FeatherParticle)
+		{
+			m_FeatherParticle->Enable(true);
+			m_FeatherParticle->RecreateOnlyOnceCreatedParticle();
 		}
 	}
 

@@ -64,9 +64,18 @@ bool CSoundManager::LoadSound(const std::string& ChannelGroupName, bool Loop,
 
 	FMOD::ChannelGroup* Group = FindChannelGroup(ChannelGroupName);
 
+	if (!Group)
+	{
+		CreateSoundChannelGroup(ChannelGroupName);
+	}
+
+	Group = FindChannelGroup(ChannelGroupName);
+
 	Sound = new CSound;
 
-	if (!Sound->LoadSound(m_System, Group, Loop, Name, FileName, PathName))
+	bool Result = Sound->LoadSound(m_System, Group, Loop, Name, FileName, PathName);
+
+	if (!Result)
 	{
 		SAFE_RELEASE(Sound);
 		return false;

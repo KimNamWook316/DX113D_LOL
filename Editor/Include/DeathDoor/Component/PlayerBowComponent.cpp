@@ -297,15 +297,12 @@ void CPlayerBowComponent::OnCollision(const CollisionResult& Result)
 		if (DestObject->GetObjectType() == Object_Type::Monster && Data)
 		{
 			Data->SetIsHit(true);
-			Data->DecreaseHP(2);
+			Data->DecreaseHP(5);
 			Data->SetIsHit(false);
 		}
 
 		if (m_Arrow)
 			m_Arrow->Destroy();
-
-		else
-			int a = 3;
 	}
 
 	

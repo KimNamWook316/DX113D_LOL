@@ -86,7 +86,14 @@ void CPaperBurnComponent::ResetPaperBurn()
 		(*iter)->SetPaperBurn(false);
 	}
 
-	m_Object->GetRootComponent()->SetDrawShadow(true);
+	if (m_PaperBurnComponent)
+	{
+		m_PaperBurnComponent->SetDrawShadow(true);
+	}
+	else
+	{
+		m_Object->GetRootComponent()->SetDrawShadow(true);
+	}
 }
 
 void CPaperBurnComponent::SetInverse(bool Enable)
@@ -263,7 +270,14 @@ void CPaperBurnComponent::Update(float DeltaTime)
 {
 	if (m_StartPaperBurn)
 	{
-		m_Object->GetRootComponent()->SetDrawShadow(false);
+		if (m_PaperBurnComponent)
+		{
+			m_PaperBurnComponent->SetDrawShadow(false);
+		}
+		else
+		{
+			m_Object->GetRootComponent()->SetDrawShadow(false);
+		}
 
 		m_Filter += DeltaTime / m_FinishTime;
 
@@ -367,7 +381,7 @@ bool CPaperBurnComponent::Save(FILE* File)
 	fwrite(&m_FinishTime, sizeof(float), 1, File);
 	fwrite(&m_EndEvent, sizeof(PaperBurnEndEvent), 1, File);
 
-	int Length = (int)m_PaperBurnComponentName.length();
+	size_t Length = (int)m_PaperBurnComponentName.length();
 	fwrite(&Length, sizeof(int), 1, File);
 	fwrite(m_PaperBurnComponentName.c_str(), sizeof(char), Length, File);
 

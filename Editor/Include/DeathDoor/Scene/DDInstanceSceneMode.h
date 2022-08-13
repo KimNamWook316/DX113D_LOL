@@ -126,6 +126,8 @@ private:
     void OnSpawnDoorDestroy();
 
 protected:
+    class CPaperBurnComponent* m_ExitPaperBurn;
+
     std::string m_EnterTriggerObjectName;
     class CColliderBox3D* m_EnterTrigger;
 
@@ -148,5 +150,7 @@ protected:
     std::list<DDInstanceSpawnPhaseInfo*> m_SpawnPhaseList;
     std::queue<DDSpawnObjectSet> m_PaperBurnEndSpawnQueue;
     std::queue<class CPaperBurnComponent*> m_DoorPaperburnQueue;
+
+    std::string m_ReturnMusic;
 };
 

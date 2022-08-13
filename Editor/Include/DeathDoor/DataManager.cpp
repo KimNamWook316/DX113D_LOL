@@ -23,9 +23,7 @@ CDataManager::~CDataManager()
 void CDataManager::Init()
 {
 	ReadObjectData();
-	//ReadPoolData();
-
-	//CSceneManager::GetInst()->SetObjectDataSetFunction(this, &CDataManager::SetObjectData);
+	LoadSoundData();
 }
 
 void CDataManager::ReadObjectData()
@@ -40,17 +38,67 @@ void CDataManager::ReadObjectData()
 	}
 }
 
-//void CDataManager::ReadPoolData()
-//{
-//	CResourceManager::GetInst()->LoadCSV("ObjectPoolData.csv");
-//
-//	CExcelData* Data = CResourceManager::GetInst()->FindCSV("ObjectPoolData");
-//
-//	if (Data)
-//	{
-//		m_mapData.insert(std::make_pair("ObjectPoolData", Data));
-//	}
-//}
+void CDataManager::LoadSoundData()
+{
+	CResourceManager::GetInst()->LoadCSV("Sound.csv");
+
+	CExcelData* Excel = CResourceManager::GetInst()->FindCSV("DeathDoor_Sound");
+
+	if (Excel)
+	{
+		m_mapData.insert(std::make_pair("SoundData", Excel));
+	}
+
+	const Table& table = Excel->GetTable();
+	size_t LabelCount = Excel->GetLabels().size();
+	size_t Index = 0;
+
+	auto iter = table.begin();
+	auto iterEnd = table.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		Row* row = iter->second;
+		std::stringstream ss;
+		std::string StrFileName;
+		std::string ChannelGroup;
+		std::string Key = iter->first;
+
+		char FileName[MAX_PATH] = {};
+		bool Loop = false;
+
+		for (size_t i = 0; i < LabelCount; ++i)
+		{
+			ss << (*row)[i];
+
+			if (i == 0)
+			{
+				ChannelGroup = ss.str();
+			}
+
+			else if (i == 1)
+			{
+				std::string IsLoop = ss.str();
+
+				if (IsLoop == "1")
+					Loop = true;
+			}
+
+			else if (i == 2)
+			{
+				StrFileName = ss.str();
+				strcpy_s(FileName, StrFileName.c_str());
+			}
+
+			ss.str("");
+		}
+
+		CResourceManager::GetInst()->LoadSound(ChannelGroup, Loop, Key, FileName);
+		++Index;
+	}
+
+}
+
 
 // TODO : 데이터 추가될 때마다 함수 업데이트 할 것
 const ObjectData& CDataManager::GetObjectData(const std::string& Key)

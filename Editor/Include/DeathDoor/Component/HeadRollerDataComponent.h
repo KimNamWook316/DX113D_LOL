@@ -29,6 +29,7 @@ public:
     void OnRollReadyStart();
     void OnRollStart();
     void OnRollEnd();
+    void OnStunStart();
     void OnStunEnd();
     void OnCollide(const CollisionResult& Result);
 

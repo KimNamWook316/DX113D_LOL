@@ -49,7 +49,9 @@ bool CCameraWidget::Init()
 	m_SetCurrent->SetClickCallback(this, &CCameraWidget::OnClickSetCurrent);
 	m_Shake->SetClickCallback(this, &CCameraWidget::OnClickShake);
 	m_AddMoveData->SetClickCallback(this, &CCameraWidget::OnClickAddMoveData);
+#ifdef _DEBUG
 	m_MoveTest->SetClickCallback(this, &CCameraWidget::OnClickTestMove);
+#endif // DEBUG
 	m_ClearMoveData->SetClickCallback(this, &CCameraWidget::OnClickClearMove);
 
 	return true;
@@ -159,7 +161,7 @@ void CCameraWidget::OnClickAddMoveData()
 	MoveWidget->SetCamMoveData(Data);
 	MoveWidget->SetCameraWidget(this);
 }
-
+#ifdef _DEBUG
 void CCameraWidget::OnClickTestMove()
 {
 	CCameraComponent* CamCom = dynamic_cast<CCameraComponent*>(m_Component);
@@ -169,6 +171,7 @@ void CCameraWidget::OnClickTestMove()
 		CamCom->StartTestMove();
 	}
 }
+#endif // DEBUG
 
 void CCameraWidget::OnClickClearMove()
 {

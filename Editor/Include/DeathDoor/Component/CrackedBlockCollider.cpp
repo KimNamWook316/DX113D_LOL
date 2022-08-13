@@ -2,6 +2,7 @@
 #include "Component/StaticMeshComponent.h"
 #include "GameObject/GameObject.h"
 #include "../DDUtil.h"
+#include "Resource/ResourceManager.h"
 
 CCrackedBlockCollider::CCrackedBlockCollider()	:
 	m_Reverse(false),
@@ -57,6 +58,7 @@ void CCrackedBlockCollider::OnCollideBomb(const CollisionResult& Result)
 	if (Result.Dest->GetCollisionProfile()->Channel == Collision_Channel::Custom15 ||
 		Result.Dest->GetCollisionProfile()->Channel == Collision_Channel::Custom16)
 	{
+		CResourceManager::GetInst()->SoundPlay("CrackedBlockBreak");
 		m_Object->Enable(false);
 	}
 }
