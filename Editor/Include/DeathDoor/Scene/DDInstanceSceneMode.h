@@ -150,5 +150,7 @@ protected:
     std::list<DDInstanceSpawnPhaseInfo*> m_SpawnPhaseList;
     std::queue<DDSpawnObjectSet> m_PaperBurnEndSpawnQueue;
     std::queue<class CPaperBurnComponent*> m_DoorPaperburnQueue;
+
+    std::string m_ReturnMusic;
 };
 

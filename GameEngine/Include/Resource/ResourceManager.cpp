@@ -588,11 +588,6 @@ bool CResourceManager::LoadSound(const std::string& ChannelGroupName, bool Loop,
 	return m_SoundManager->LoadSound(ChannelGroupName, Loop, Name, FileName, PathName);
 }
 
-bool CResourceManager::LoadSoundExcel(const char* FullPath)
-{
-	return m_SoundManager->LoadSoundExcel(FullPath);
-}
-
 bool CResourceManager::CreateSoundChannelGroup(const std::string& Name)
 {
 	return m_SoundManager->CreateSoundChannelGroup(Name);

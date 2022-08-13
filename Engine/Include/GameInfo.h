@@ -727,6 +727,8 @@ struct BackGroundSceneSaveData
 	bool RenderSkyBox;
 	std::string SkyBoxFileName;
 	Vector4 ClearColor;
+	std::string PrevMusicKeyName;
+	std::string MusicKeyName;
 };
 
 struct SceneSaveGlobalData

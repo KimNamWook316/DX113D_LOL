@@ -382,6 +382,10 @@ void CDDInstanceSceneMode::OnClearDungeon()
 		m_vecEndEventObj[i].PaperBurnComp->SetEndEvent(PaperBurnEndEvent::Reset);
 		m_vecEndEventObj[i].PaperBurnComp->StartPaperBurn();
 	}
+
+	// 다시 BGM 재생
+	CResourceManager::GetInst()->SoundStop("InstanceDungeonBGM");
+	CResourceManager::GetInst()->SoundPlay(m_ReturnMusic);
 }
 
 void CDDInstanceSceneMode::AddSpawnPhase()
@@ -749,6 +753,18 @@ void CDDInstanceSceneMode::OnCollideEnterTrigger(const CollisionResult& Result)
 		}
 
 		m_EnterTrigger->GetGameObject()->Enable(false);
+
+		// 현재 BGM 잠깐 멈추고 인스턴스 던전 BGM으로 변경
+		m_ReturnMusic= m_Scene->GetSceneSaveGlobalData().BackGroundData.MusicKeyName;
+
+		if (m_ReturnMusic.empty())
+		{
+			m_ReturnMusic = m_Scene->GetSceneSaveGlobalData().BackGroundData.PrevMusicKeyName;
+		}
+
+		CResourceManager::GetInst()->SoundPause(m_ReturnMusic);
+
+		CResourceManager::GetInst()->SoundPlay("InstanceDungeonBGM");
 	}
 }
 
