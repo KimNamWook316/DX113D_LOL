@@ -35,6 +35,10 @@ private:
 	bool m_IsClimbingLadder;
 	bool m_ClimbingStartEnable;
 
+	bool m_HitBackUnbeatable;
+	float m_HitBackUnbeatableAccTime;
+	float m_HitBackUnbeatableTime;
+
 	DDPlayerRollDirection m_RollDirection;
 
 	class CGameObject* m_AdjLadder;
@@ -46,6 +50,7 @@ private:
 
 	Vector3 m_CamRelativePos;
 	class CPaperBurnComponent* m_SlashPaperBurn;
+	int m_ConsecutiveAttackCount;
 
 public:
 	virtual void Start();
@@ -65,6 +70,11 @@ public:
 	virtual bool LoadOnly(FILE* File) override;
 
 public:
+	void SetConsecutiveAttackCount(int Count)
+	{
+		m_ConsecutiveAttackCount = Count;
+	}
+
 	void SetAdjLadder(class CGameObject* Ladder);
 
 	void SetRollDirection(DDPlayerRollDirection Dir)
@@ -168,6 +178,11 @@ public:
 		return m_PlayerData.Abilty_Type;
 	}
 
+	int GetConsecutiveAttackCount()	const
+	{
+		return m_ConsecutiveAttackCount;
+	}
+
 	void SetAttackDir(const Vector3& Dir)
 	{
 		m_AttackDir = Dir;
@@ -238,5 +253,6 @@ public:
 	void OnEnableAttackCollider();
 	void OnDisableAttackCollider();
 	void OnResetDustParticle();
+	void OnLadderStepSoundPlay();
 };
 

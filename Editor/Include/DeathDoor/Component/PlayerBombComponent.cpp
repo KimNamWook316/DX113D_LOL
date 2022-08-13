@@ -224,6 +224,8 @@ void CPlayerBombComponent::LiftBomb()
 
 	CColliderComponent* BombCollider = m_Bomb->FindComponentFromType<CColliderSphere>();
 	BombCollider->Enable(false);
+
+	m_Object->GetScene()->GetResource()->SoundPlay("BombCharge");
 }
 
 void CPlayerBombComponent::ShootBomb(const Vector3& ShootDir)
@@ -263,6 +265,7 @@ void CPlayerBombComponent::ShootBomb(const Vector3& ShootDir)
 	CColliderComponent* BombCollider = m_Bomb->FindComponentFromType<CColliderSphere>();
 	BombCollider->Enable(true);
 
+	m_Object->GetScene()->GetResource()->SoundPlay("BombFire");
 }
 
 void CPlayerBombComponent::HideBomb()
@@ -296,9 +299,11 @@ void CPlayerBombComponent::OnCollision(const CollisionResult& Result)
 	if (DestObject->GetObjectType() == Object_Type::Monster && Data)
 	{
 		Data->SetIsHit(true);
-		Data->DecreaseHP(2);
+		Data->DecreaseHP(30);
 		Data->SetIsHit(false);
 	}
+
+	m_Object->GetScene()->GetResource()->SoundPlay("BombHit");
 }
 
 bool CPlayerBombComponent::Save(FILE* File)

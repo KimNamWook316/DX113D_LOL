@@ -9,6 +9,7 @@ public:
     CCrowBossRunNode(const CCrowBossRunNode& Node);
     virtual ~CCrowBossRunNode();
 
+
 public:
     virtual void Init() override;
 

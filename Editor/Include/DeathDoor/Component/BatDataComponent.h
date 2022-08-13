@@ -55,5 +55,8 @@ public:
 	void OnMeleeAttackColliderEnable();
 	void OnMeleeAttackColliderDisable();
 	void OnCollision(const CollisionResult& Result);
+	void OnAttackSoundPlay();
+	void OnDeathSoundPlay();
+	void OnFlapSoundPlay();
 };
 

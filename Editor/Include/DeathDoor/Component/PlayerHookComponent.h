@@ -23,6 +23,8 @@ private:
 	bool		m_InFlying;
 	Vector3		m_ShootDir;
 	Vector3		m_ShootDestPoint;
+	bool		m_PlayFireSound;
+	bool		m_PlayInShootSound;
 	
 	float m_AccLastHookDelayTime;
 

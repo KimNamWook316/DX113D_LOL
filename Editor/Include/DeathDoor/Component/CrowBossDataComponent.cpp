@@ -31,7 +31,10 @@ CCrowBossDataComponent::CCrowBossDataComponent()	:
 	m_SpittingAccTime(0.f),
 	m_CurrentTinyCrowIndex(0),
 	m_ShootDirFixed(false),
-	m_FeatherParticle(nullptr)
+	m_FeatherParticle(nullptr),
+	m_FlySoundPlayed(false),
+	m_ShootSoundPlayed(false),
+	m_StepSoundPlayed(false)
 {
 	SetTypeID<CCrowBossDataComponent>();
 
@@ -63,6 +66,12 @@ void CCrowBossDataComponent::Start()
 
 	if(m_MonsterNavAgent)
 		m_MonsterNavAgent->SetMoveSpeed(m_Data.MoveSpeed);
+
+	m_AnimMesh->GetAnimationInstance()->AddNotify<CCrowBossDataComponent>("GuidedBullet", "ScreamSoundPlay", 25, this, &CCrowBossDataComponent::OnScreamSoundPlay);
+	m_AnimMesh->GetAnimationInstance()->AddNotify<CCrowBossDataComponent>("CutScene", "CutSceneScreamSoundPlay", 64, this, &CCrowBossDataComponent::OnScreamSoundPlay);
+	m_AnimMesh->GetAnimationInstance()->AddNotify<CCrowBossDataComponent>("Sliding", "FlySoundPlay", 1, this, &CCrowBossDataComponent::OnFlySoundPlay);
+	m_AnimMesh->GetAnimationInstance()->AddNotify<CCrowBossDataComponent>("Run", "StepSoundPlay", 1, this, &CCrowBossDataComponent::OnStepSoundPlay);
+
 
 	m_AnimMesh->GetAnimationInstance()->SetEndFunction<CCrowBossDataComponent>("Jump", this, &CCrowBossDataComponent::OnEndCrowBossJump);
 
@@ -105,6 +114,13 @@ void CCrowBossDataComponent::OnEndCrowBossJump()
 	m_StartStomp = true;
 }
 
+void CCrowBossDataComponent::SetIsHit(bool Hit)
+{
+	CMonsterDataComponent::SetIsHit(Hit);
+
+	m_Object->GetScene()->GetResource()->SoundPlay("OldCrow_TakeDamage");
+}
+
 void CCrowBossDataComponent::ShootChain(const Vector3& ShootDir, float DeltaTime)
 {
 	m_ShootState = CrowBossShootState::Shoot;
@@ -139,6 +155,27 @@ void CCrowBossDataComponent::ShootChain(const Vector3& ShootDir, float DeltaTime
 	{
 		if (m_ShootAccTime > 0.007f)
 		{
+			if (m_CurrentHookIndex == 0 && !m_ShootSoundPlayed)
+			{
+				switch (m_CurrentShootCount)
+				{
+				case 0:
+					m_Object->GetScene()->GetResource()->SoundPlay("OldCrow_Chain1");
+					break;
+				case 1:
+					m_Object->GetScene()->GetResource()->SoundPlay("OldCrow_Chain2");
+					break;
+				case 2:
+					m_Object->GetScene()->GetResource()->SoundPlay("OldCrow_Chain3");
+					break;
+				case 3:
+					m_Object->GetScene()->GetResource()->SoundPlay("OldCrow_Chain4");
+					break;
+				}
+
+				m_ShootSoundPlayed = true;
+			}
+
 			// 방향에 맞게 HookChain 회전시켜준다
 			Vector3 ChainZAxis = m_vecHookChain[m_CurrentHookIndex]->GetWorldAxis(AXIS::AXIS_Z);
 			float Angle = ShootDir.Angle(ChainZAxis);
@@ -197,6 +234,8 @@ void CCrowBossDataComponent::ShootChain(const Vector3& ShootDir, float DeltaTime
 		m_ShootState = CrowBossShootState::ShootEnd;
 		++m_CurrentShootCount;
 		m_ShootDirFixed = false;
+
+		m_ShootSoundPlayed = false;
 	}
 }
 
@@ -232,8 +271,10 @@ void CCrowBossDataComponent::Fly(const Vector3& FlyDir, float DeltaTime)
 
 		if (m_ClearHookIndex % 5 == 0 && m_FeatherParticle)
 		{
-			m_FeatherParticle->Enable(true);
-			m_FeatherParticle->RecreateOnlyOnceCreatedParticle();
+			//m_FeatherParticle->Enable(true);
+			Vector3 CrowPos = m_Object->GetWorldPos();
+			Vector3 ZAxis = m_Object->GetWorldAxis(AXIS_Z);
+			m_FeatherParticle->StartParticle(CrowPos + ZAxis);
 		}
 	}
 
@@ -251,6 +292,8 @@ void CCrowBossDataComponent::Fly(const Vector3& FlyDir, float DeltaTime)
 			m_vecHookChain[i]->GetTransform()->SetFixTransform(false);
 			m_vecHookChain[i]->SetWorldRotationY(0.f);
 		}
+
+		m_FlySoundPlayed = false;
 	}
 
 }
@@ -416,9 +459,59 @@ void CCrowBossDataComponent::OnCollision(const CollisionResult& Result)
 	}
 }
 
+void CCrowBossDataComponent::OnScreamSoundPlay()
+{
+	m_Object->GetScene()->GetResource()->SoundPlay("OldCrow_Scream");
+}
+
+void CCrowBossDataComponent::OnFlySoundPlay()
+{
+	if (m_FlySoundPlayed)
+		return;
+
+	switch (m_CurrentShootCount)
+	{
+	case 1:
+		m_Object->GetScene()->GetResource()->SoundPlay("OldCrowChainDash1");
+		break;
+	case 2:
+		m_Object->GetScene()->GetResource()->SoundPlay("OldCrowChainDash2");
+		break;
+	case 3:
+		m_Object->GetScene()->GetResource()->SoundPlay("OldCrowChainDash3");
+		break;
+	case 4:
+		m_Object->GetScene()->GetResource()->SoundPlay("OldCrowChainDash4");
+		break;
+	}
+	
+	m_FlySoundPlayed = true;
+}
+
+void CCrowBossDataComponent::OnStepSoundPlay()
+{
+
+	m_Object->GetScene()->GetResource()->SoundPlay("OldCrow_Step");
+}
+
+
 void CCrowBossDataComponent::OnDeadAnimStart()
 {
 	CMonsterDataComponent::OnDeadAnimStart();
+
+	size_t Count = m_vecHookChain.size();
+	for (size_t i = 0; i < Count; ++i)
+	{
+		for (size_t j = 0; j <= i; ++j)
+		{
+			m_vecHookChain[j]->SetRender(false);
+			m_vecHookChain[j]->Enable(false);
+			m_vecHookChain[j]->SetWorldScale(Vector3(0.f, 0.f, 0.f));
+			m_vecHookChain[j]->SetWorldPos(Vector3(FLT_MAX, FLT_MAX, FLT_MAX));
+			m_vecHookChain[j]->GetTransform()->ForceUpdateMat();
+		}
+	}
+
 
 	m_AnimMesh->GetAnimationInstance()->GetCurrentAnimation()->SetPlayScale(0.25f);
 	m_DeathColorChangeTimeMax = m_AnimMesh->GetAnimationInstance()->GetCurrentAnimation()->GetAnimationPlayTime() * 0.5f;

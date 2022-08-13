@@ -5,6 +5,7 @@
 #include "../CrowBossDataComponent.h"
 #include "Component/AnimationMeshComponent.h"
 #include "Component/ColliderBox3D.h"
+#include "Scene/Scene.h"
 
 CCrowBossFlyNode::CCrowBossFlyNode()
 {
@@ -35,6 +36,7 @@ NodeResult CCrowBossFlyNode::OnUpdate(float DeltaTime)
 
 	Data->GetHitBox()->SetRigidCollisionIgnore(true);
 	Data->Fly(Data->GetShootDir(), DeltaTime);
+
 
 	return NodeResult::Node_True;
 }
