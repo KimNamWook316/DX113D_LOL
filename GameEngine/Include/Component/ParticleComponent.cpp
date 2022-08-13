@@ -81,7 +81,12 @@ CParticleComponent::~CParticleComponent()
 void CParticleComponent::StartParticle(const Vector3& StartPos)
 {
 	CRef::Enable(true);
+
+	// 해당 코드의 위치로 인해서 문제가 발생할 수 있다.
+	Reset();
+
 	SetWorldPos(StartPos);
+
 	RecreateOnlyOnceCreatedParticle();
 
 	m_UpdateInitBillBoardDir = true;
@@ -282,9 +287,10 @@ void CParticleComponent::Update(float DeltaTime)
 			CRef::Enable(false);
 
 			// 보이지 않게 할 것이다.
-			m_Render = false;
+			// m_Render = false;
 
-			Reset();
+			// 해당 코드의 위치로 인해 문제가 발생할 수 있다.
+			// Reset();
 
 			return;
 		}
