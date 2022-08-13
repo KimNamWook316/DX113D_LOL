@@ -40,7 +40,9 @@ bool CSound::LoadSound(FMOD::System* System, FMOD::ChannelGroup* Group, bool Loo
 	if (m_Loop)
 		Mode = FMOD_LOOP_NORMAL;
 
-	if (m_System->createSound(FullPath, Mode, nullptr, &m_Sound) != FMOD_OK)
+	FMOD_RESULT Result = m_System->createSound(FullPath, Mode, nullptr, &m_Sound);
+
+	if (Result != FMOD_OK)
 		return false;
 
 	return true;

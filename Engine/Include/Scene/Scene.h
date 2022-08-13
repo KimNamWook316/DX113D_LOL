@@ -134,6 +134,11 @@ public:
 		return m_Play;
 	}
 
+	void SetPrevSceneMusicKeyName(const std::string& Name)
+	{
+		m_SceneGlobalData.BackGroundData.PrevMusicKeyName = Name;
+	}
+
 	int GetObjectCountByType(Object_Type Type);
 	void GetObjectsByType(Object_Type Type, std::vector<class CGameObject*>& outVecObj);
 

@@ -134,6 +134,13 @@ bool CSceneManager::ChangeScene()
 			std::list<CSharedPtr<CGameObject>> NoDestroyObjectCloneList;
 			m_Scene->CloneAllNoDestroyObjects(NoDestroyObjectCloneList);
 
+			std::string PrevMusicKeyName = m_Scene->GetSceneSaveGlobalData().BackGroundData.MusicKeyName;
+
+			if (PrevMusicKeyName.empty())
+			{
+				PrevMusicKeyName = m_Scene->GetSceneSaveGlobalData().BackGroundData.PrevMusicKeyName;
+			}
+
 			SAFE_DELETE(m_Scene);
 			m_Scene = m_NextScene;
 			m_NextScene = nullptr;
@@ -151,6 +158,7 @@ bool CSceneManager::ChangeScene()
 
 			CObjectPool::GetInst()->RefreshNewScene(m_Scene);
 
+			m_Scene->SetPrevSceneMusicKeyName(PrevMusicKeyName);
 			m_Scene->Start();
 
 			// HDR 렌더 설정, 전역 라이트 설정 등 로드

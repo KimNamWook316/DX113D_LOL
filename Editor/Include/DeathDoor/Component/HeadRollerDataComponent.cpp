@@ -33,6 +33,7 @@ void CHeadRollerDataComponent::Start()
 	m_HitBox->AddCollisionCallback(Collision_State::Begin, this, &CHeadRollerDataComponent::OnCollide);
 
 	CAnimationSequenceInstance* AnimInst = m_AnimMesh->GetAnimationInstance();
+	AnimInst->AddNotify("Stun", "OnStunStart", 0, this, &CHeadRollerDataComponent::OnStunStart);
 	AnimInst->SetEndFunction("Stun", this, &CHeadRollerDataComponent::OnStunEnd);
 	AnimInst->AddNotify("RollStart", "OnRollStart", 0, this,&CHeadRollerDataComponent::OnRollReadyStart);
 	AnimInst->SetEndFunction("RollStart", this, &CHeadRollerDataComponent::OnRollStart);
@@ -67,16 +68,13 @@ void CHeadRollerDataComponent::SetIsHit(bool Enable)
 
 void CHeadRollerDataComponent::DecreaseHP(int Amount)
 {
- //	Vector3 PlayerZAxis = m_Scene->GetPlayerObject()->GetWorldAxis(AXIS::AXIS_Z);
- //	Vector3 MyZAxis = m_Object->GetWorldAxis(AXIS::AXIS_Z);
- //
- //	float Dot = MyZAxis.Dot(PlayerZAxis);
- //
- //	// 플레이어를 등지고 있을 경우 히트되지 않는다.
- //	if (Dot > 0)
- //	{
-		CMonsterDataComponent::DecreaseHP(Amount);
-	// }
+	CMonsterDataComponent::DecreaseHP(Amount);
+
+	if (m_Data.HP <= 0)
+	{
+		CResourceManager::GetInst()->SoundStop("HeadRollerRoll");
+		CResourceManager::GetInst()->SoundPlay("HeadRollerDeath");
+	}
 }
 
 void CHeadRollerDataComponent::OnRollReadyStart()
@@ -86,6 +84,8 @@ void CHeadRollerDataComponent::OnRollReadyStart()
 
 void CHeadRollerDataComponent::OnRollStart()
 {
+	CResourceManager::GetInst()->SoundPlay("HeadRollerRoll");
+
 	CAnimationSequenceInstance* AnimInst = m_AnimMesh->GetAnimationInstance();
 	AnimInst->ChangeAnimation("RollLoop");
 
@@ -100,6 +100,8 @@ void CHeadRollerDataComponent::OnRollStart()
 
 void CHeadRollerDataComponent::OnRollEnd()
 {
+	CResourceManager::GetInst()->SoundStop("HeadRollerRoll");
+
 	SetCurrentNodeNull();
 
 	Vector3 WorldPos = m_Object->GetWorldPos();
@@ -120,9 +122,17 @@ void CHeadRollerDataComponent::OnRollEnd()
 	m_RollParticle->Enable(false);
 }
 
+void CHeadRollerDataComponent::OnStunStart()
+{
+	CResourceManager::GetInst()->SoundStop("HeadRollerRoll");
+	CResourceManager::GetInst()->SoundPlay("HeadRollerStun");
+}
+
 void CHeadRollerDataComponent::OnStunEnd()
 {
 	SetCurrentNodeNull();
+
+	CResourceManager::GetInst()->SoundStop("HeadRollerStun");
 
 	m_Stun = false;
 }
@@ -136,6 +146,7 @@ void CHeadRollerDataComponent::OnCollide(const CollisionResult& Result)
 			m_PlayerData->DecreaseHP(1);
 		}
 
+		CResourceManager::GetInst()->SoundStop("HeadRollerRoll");
 		OnRollEnd();
 	}
 }

@@ -128,6 +128,18 @@ void CScene::Start()
 {
 	m_Mode->Start();
 
+	std::string CurBGM = m_SceneGlobalData.BackGroundData.MusicKeyName;
+	if (!CurBGM.empty())
+	{
+		std::string PrevBGM = m_SceneGlobalData.BackGroundData.PrevMusicKeyName;
+		if (!PrevBGM.empty() && PrevBGM != CurBGM)
+		{
+			CResourceManager::GetInst()->SoundStop(PrevBGM);
+		}
+
+		CResourceManager::GetInst()->SoundPlay(CurBGM);
+	}
+
 	auto	iter = m_ObjList.begin();
 	auto	iterEnd = m_ObjList.end();
 
@@ -668,6 +680,7 @@ bool CScene::LoadSceneGlobalDataCSV(const char* FileName)
 	m_SceneGlobalData.BackGroundData.ClearColor.z = Data->FindDataFloat("Data", "ClearColorB");
 	m_SceneGlobalData.BackGroundData.ClearColor.w = 1.f;
 	m_SceneGlobalData.BackGroundData.SkyBoxFileName = Data->FindData("Data", "SkyBoxTexturePath");
+	m_SceneGlobalData.BackGroundData.MusicKeyName = Data->FindData("Data", "MusicKeyName");
 	
 	// 메모리 해제
 	CResourceManager::GetInst()->DeleteCSV(outCSVKey);
@@ -769,7 +782,8 @@ void CScene::UpdateSceneGlobalData()
 	GLight->SetColor(Col);
 	m_LightManager->SetGlogbalLightAmbientIntensity(m_SceneGlobalData.GLightData.AmbientIntensity);
 
-	if (!m_SceneGlobalData.BackGroundData.SkyBoxFileName.empty())
+	std::string SkyBoxFileName = m_SceneGlobalData.BackGroundData.SkyBoxFileName;
+	if (!SkyBoxFileName.empty() || SkyBoxFileName == "NONE")
 	{
 		dynamic_cast<CSkyObject*>(m_SkyObject.Get())->SetSkyTexture(m_SceneGlobalData.BackGroundData.SkyBoxFileName.c_str());
 	}

@@ -7,6 +7,7 @@
 #include "Render/RenderManager.h"
 #include "../Component/GameStateComponent.h"
 #include "Engine.h"
+#include "Resource/Sound/Sound.h"
 
 CDDSceneMode::CDDSceneMode()	:
 	m_ExitPointCollider(nullptr),
