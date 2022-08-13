@@ -377,8 +377,8 @@ void CParticleComponent::PostUpdate(float DeltaTime)
 		// 처음 만들어지는 순간의 ZLookDir, XLoosdkDir 을 세팅해준다.
 		if (m_UpdateInitBillBoardDir)
 		{
-			m_InitBillBoardZLookDir = ZLookDir;
-			m_InitBillBoardXLookDir = XLookDir;
+			m_InitBillBoardZLookDir = Vector3(ZLookDir.x, 0.f, ZLookDir.z);
+			m_InitBillBoardXLookDir = Vector3(XLookDir.x, 0.f, XLookDir.z);
 
 			m_UpdateInitBillBoardDir = false;
 		}
