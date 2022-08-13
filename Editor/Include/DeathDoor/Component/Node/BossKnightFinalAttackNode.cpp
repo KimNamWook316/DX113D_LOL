@@ -45,6 +45,8 @@ NodeResult CBossKnightFinalAttackNode::OnStart(float DeltaTime)
 	{
 		m_Owner->SetCurrentNode(this);
 
+		CResourceManager::GetInst()->SoundPlay("BossKnightJump");
+
 		std::string AnimName = "SlamContinueJump";
 		CAnimationSequenceInstance* AnimInst = m_AnimationMeshComp->GetAnimationInstance();
 		AnimInst->ChangeAnimation(AnimName);

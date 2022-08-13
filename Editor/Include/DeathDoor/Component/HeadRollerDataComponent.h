@@ -27,6 +27,7 @@ public:
 
 public:
     void OnRollReadyStart();
+    void OnPlayStunRecoverSound();
     void OnRollStart();
     void OnRollEnd();
     void OnStunStart();

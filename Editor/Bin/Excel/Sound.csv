@@ -42,3 +42,9 @@ BlockerUp,Effect,0,Effect\InstanceDungeon\SwampSpikeDoor.mp3
 EnemySpawn,Effect,0,Effect\InstanceDungeon\EnemySpawn3.mp3
 SpawnDoorAppear,Effect,0,Effect\InstanceDungeon\MoonDoorAppear.mp3
 SpawnDoorDisappear,Effect,0,Effect\InstanceDungeon\MoonDoorDisappear.mp3
+BossKnightAmbientBGM,BGM,0,BGM\BossKnightAmbientBGM.mp3
+BossKnightPrep180,Effect,0,Effect\BossKnight\KnightPrep180Slam1.mp3
+BossKnightCutsceneSlam,Effect,0,Effect\BossKnight\KnightCutsceneSlam.mp3
+HeadRollerHit,Effect,0,Effect\HeadRoller\HeadRollerTakeDamage1.mp3
+HeadRollerGetUp,Effect,0,Effect\HeadRoller\HeadRollerGetUp3.mp3
+HeadRollerRollReady,Effect,0,Effect\HeadRoller\HeadRollerPrepRollWoosh.mp3

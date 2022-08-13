@@ -34,6 +34,7 @@ void CHeadRollerDataComponent::Start()
 
 	CAnimationSequenceInstance* AnimInst = m_AnimMesh->GetAnimationInstance();
 	AnimInst->AddNotify("Stun", "OnStunStart", 0, this, &CHeadRollerDataComponent::OnStunStart);
+	AnimInst->AddNotify("Stun", "OnStunStart", 40, this, &CHeadRollerDataComponent::OnPlayStunRecoverSound);
 	AnimInst->SetEndFunction("Stun", this, &CHeadRollerDataComponent::OnStunEnd);
 	AnimInst->AddNotify("RollStart", "OnRollStart", 0, this,&CHeadRollerDataComponent::OnRollReadyStart);
 	AnimInst->SetEndFunction("RollStart", this, &CHeadRollerDataComponent::OnRollStart);
@@ -72,8 +73,12 @@ void CHeadRollerDataComponent::DecreaseHP(int Amount)
 
 	if (m_Data.HP <= 0)
 	{
-		CResourceManager::GetInst()->SoundStop("HeadRollerRoll");
 		CResourceManager::GetInst()->SoundPlay("HeadRollerDeath");
+		CResourceManager::GetInst()->SoundPause("HeadRollerRoll");
+	}
+	else
+	{
+		CResourceManager::GetInst()->SoundPlay("HeadRollerHit");
 	}
 }
 
@@ -82,9 +87,17 @@ void CHeadRollerDataComponent::OnRollReadyStart()
 	m_LookPlayer = true;
 }
 
+void CHeadRollerDataComponent::OnPlayStunRecoverSound()
+{
+	CResourceManager::GetInst()->SoundPlay("HeadRollerGetUp");
+}
+
 void CHeadRollerDataComponent::OnRollStart()
 {
-	CResourceManager::GetInst()->SoundPlay("HeadRollerRoll");
+	CSound* Sound = CResourceManager::GetInst()->FindSound("HeadRollerRoll");
+
+	Sound->Stop();
+	Sound->Play();
 
 	CAnimationSequenceInstance* AnimInst = m_AnimMesh->GetAnimationInstance();
 	AnimInst->ChangeAnimation("RollLoop");
@@ -100,7 +113,7 @@ void CHeadRollerDataComponent::OnRollStart()
 
 void CHeadRollerDataComponent::OnRollEnd()
 {
-	CResourceManager::GetInst()->SoundStop("HeadRollerRoll");
+	CResourceManager::GetInst()->SoundPause("HeadRollerRoll");
 
 	SetCurrentNodeNull();
 
@@ -124,7 +137,6 @@ void CHeadRollerDataComponent::OnRollEnd()
 
 void CHeadRollerDataComponent::OnStunStart()
 {
-	CResourceManager::GetInst()->SoundStop("HeadRollerRoll");
 	CResourceManager::GetInst()->SoundPlay("HeadRollerStun");
 }
 
@@ -146,7 +158,6 @@ void CHeadRollerDataComponent::OnCollide(const CollisionResult& Result)
 			m_PlayerData->DecreaseHP(1);
 		}
 
-		CResourceManager::GetInst()->SoundStop("HeadRollerRoll");
 		OnRollEnd();
 	}
 }
