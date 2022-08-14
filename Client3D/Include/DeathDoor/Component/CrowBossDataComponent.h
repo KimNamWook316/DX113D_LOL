@@ -4,7 +4,7 @@
 #include "../DDFlag.h"
 
 class CCrowBossDataComponent :
-    public CMonsterDataComponent
+	public CMonsterDataComponent
 {
 	friend class CGameObject;
 
@@ -32,7 +32,7 @@ private:
 
 	std::vector<class CStaticMeshComponent*> m_vecHookChain;
 	float m_ShootAccTime;
-	int m_CurrentHookIndex; 
+	int m_CurrentHookIndex;
 	int m_ClearHookIndex;
 	Vector2	m_UnitSize;
 	Vector3	m_ShootDir;
@@ -48,9 +48,15 @@ private:
 	bool m_ShootDirFixed;
 	std::list<class CGameObject*> m_TinyCrowList;
 
+	class CParticleComponent* m_FeatherParticle;
+
+	bool m_FlySoundPlayed;
+	bool m_ShootSoundPlayed;
+	bool m_StepSoundPlayed;
+
 public:
 	virtual void Update(float DeltaTime);
-	
+
 public:
 	void ClearTinyCrow();
 
@@ -74,7 +80,7 @@ public:
 	{
 		m_CurrentShootCount = Count;
 	}
-	
+
 	void AddCurrentShootCount()
 	{
 		++m_CurrentShootCount;
@@ -110,6 +116,11 @@ public:
 		m_AfterShoot = Shoot;
 	}
 
+	void SetStepSoundPlayed(bool Played)
+	{
+		m_StepSoundPlayed = Played;
+	}
+
 	bool IsAfterShoot()	const
 	{
 		return m_AfterShoot;
@@ -129,7 +140,7 @@ public:
 	{
 		return m_PhaseQueue.front();
 	}
-	
+
 	bool IsSpittingStart()	const
 	{
 		return m_SpittingStart;
@@ -230,14 +241,25 @@ public:
 		return m_StartStomp;
 	}
 
+	bool GetStepSoundPlayed()	const
+	{
+		return m_StepSoundPlayed;
+	}
+
 public:
 	void OnEndCrowBossJump();
 	void OnCollision(const CollisionResult& Result);
+	void OnScreamSoundPlay();
+	void OnFlySoundPlay();
+	void OnStepSoundPlay();
 	virtual void OnDeadAnimStart() override;
 	virtual void OnDeadPaperBurnEnd() override;
+
+public:
+	virtual void SetIsHit(bool Hit) override;
 	void ShootChain(const Vector3& ShootDir, float DeltaTime);
 	void Fly(const Vector3& FlyDir, float DeltaTime);
 	void Teleport();
 	bool Spitting(float DeltaTime);
-};
 
+};

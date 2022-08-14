@@ -14,6 +14,7 @@ private:
 	std::function<void (CGameObject* , const std::string& )>	m_ObjectDataSetCallback;
 	std::function<class CComponent* (CGameObject* Obj, size_t Type)>	m_CreateComponentCallback;
 	std::function<void(class CSpriteComponent* Sprite, size_t Type)>	m_CreateAnimInstanceCallback;
+	std::function<bool(class CScene* CurScene, class CScene* NextScene)> m_IsKeepUICallBack;
 	CStateManager* m_StateManager;
 
 	char m_LoadedSceneFullPath[MAX_PATH];
@@ -141,6 +142,12 @@ public:
 	void SetCreateAnimInstanceFunction(T* Obj, void (T::* Func)(CSpriteComponent*, size_t))
 	{
 		m_CreateAnimInstanceCallback = std::bind(Func, Obj, std::placeholders::_1, std::placeholders::_2);
+	}
+
+	template <typename T>
+	void SetIsKeepUIFunction(T* Obj, bool(T::* Func)(CScene*, CScene*))
+	{
+		m_IsKeepUICallBack = std::bind(Func, Obj, std::placeholders::_1, std::placeholders::_2);
 	}
 
 	DECLARE_SINGLE(CSceneManager)

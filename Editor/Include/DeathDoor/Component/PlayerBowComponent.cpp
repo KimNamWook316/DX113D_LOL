@@ -231,7 +231,7 @@ void CPlayerBowComponent::OnCollision(const CollisionResult& Result)
 				float YRotAngle = ArrowDir.Angle(BaseDir);
 				
 				// 회전 각도 180도 이상
-				if (ArrowDir.Dot(LeftDir))
+				if (ArrowDir.Dot(LeftDir) > 0)
 				{
 					YRotAngle = 180 + (180 - YRotAngle);
 				}
@@ -245,7 +245,7 @@ void CPlayerBowComponent::OnCollision(const CollisionResult& Result)
 				for (size_t i = 0; i < ParticleSize; ++i)
 				{
 					// vecArrowParticles[i]->CRef::Enable(true);
-					vecArrowParticles[i]->AddWorldRotationY(YRotAngle);
+					vecArrowParticles[i]->SetWorldRotationY(YRotAngle);
 				}
 
 				// Light Component 를 활성화 시켜줄 것이다.

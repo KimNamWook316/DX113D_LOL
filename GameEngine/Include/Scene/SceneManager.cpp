@@ -141,8 +141,19 @@ bool CSceneManager::ChangeScene()
 				PrevMusicKeyName = m_Scene->GetSceneSaveGlobalData().BackGroundData.PrevMusicKeyName;
 			}
 
-			// 이전 Scene의 viewport가 갖고 있는 WindowList를 파괴전에 받아두고
-			std::list<CSharedPtr<CWidgetWindow>> WindowList = m_Scene->GetViewport()->GetWindowList();
+			// 이전 씬의 UI가 파괴되지 않아야 할 경우
+			bool KeepUI = false;
+			std::list<CSharedPtr<CWidgetWindow>> WindowList;
+
+			if (m_IsKeepUICallBack)
+			{
+				KeepUI = m_IsKeepUICallBack(m_Scene, m_NextScene);
+
+				if (KeepUI)
+				{
+					WindowList = m_Scene->GetViewport()->GetWindowList();
+				}
+			}
 
 			SAFE_DELETE(m_Scene);
 			m_Scene = m_NextScene;
@@ -158,6 +169,11 @@ bool CSceneManager::ChangeScene()
 			for (; iter != iterEnd; ++iter)
 			{
 				m_Scene->AddObject((*iter).Get());
+			}
+
+			if (KeepUI)
+			{
+				m_Scene->GetViewport()->SetWindowList(WindowList);
 			}
 
 			CRenderManager::GetInst()->SetObjectList(&m_Scene->m_ObjList);

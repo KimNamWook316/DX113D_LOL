@@ -68,6 +68,7 @@
 #include "../DeathDoor/Component/Node/PathFindExecuteCheck.h"
 #include "../DeathDoor/Component/Node/StraightPathCheck.h"
 #include "../DeathDoor/Component/Node/ChasePlayerNode.h"
+#include "../DeathDoor/Component/Node/MonsterHitBack.h"
 #include "../DeathDoor/Component/Node/MeleeAttackNode.h"
 #include "../DeathDoor/Component/Node/PathListEmptyCheck.h"
 
@@ -164,6 +165,7 @@
 #include "../DeathDoor/Component/Node/GruntCommonSpawnNode.h"
 
 #include "../DeathDoor/Component/Node/GruntCommonSpawnCheckNode.h"
+#include "../DeathDoor/Component/Node/GruntCommonMoveStartCheckNode.h"
 
 #include "ObjectComponentWindow.h"
 #include "ObjectHierarchyWindow.h"
@@ -234,17 +236,21 @@ void CBehaviorTreeWindow::Update(float DeltaTime)
     if (ObjWindow && ObjCompWindow)
     {
         CGameObject* SelectObj = ObjWindow->GetSelectObject();
-        CGameStateComponent* State = SelectObj->FindComponentFromType<CGameStateComponent>();
 
-        if (State)
+        // OBJ가 추가
+        if (SelectObj)
         {
-            // 만약 Object가 Load되고 처음 Behavior Tree를 열었다면 State Component가 갖고 있는 Behavior Tree안에 노드들이 Graph Editor에 하나도 나오지 않을테니
-            // Behavior Tree안에 노드들을 Graph Editor에 출력되게 해야한다
-            if (State->GetBehaviorTree()->GetRootNode() && m_Delegate.GetNodeCount() == 0)
-            {
-                UpdateLoadNode((CCompositeNode*)(State->GetBehaviorTree()->GetRootNode()));
-            }
+            CGameStateComponent* State = SelectObj->FindComponentFromType<CGameStateComponent>();
 
+            if (State)
+            {
+                // 만약 Object가 Load되고 처음 Behavior Tree를 열었다면 State Component가 갖고 있는 Behavior Tree안에 노드들이 Graph Editor에 하나도 나오지 않을테니
+                // Behavior Tree안에 노드들을 Graph Editor에 출력되게 해야한다
+                if (State->GetBehaviorTree()->GetRootNode() && m_Delegate.GetNodeCount() == 0)
+                {
+                    UpdateLoadNode((CCompositeNode*)(State->GetBehaviorTree()->GetRootNode()));
+                }
+            }
         }
     }
 
@@ -623,6 +629,11 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
         case DDActionNode::ChasePlayer:
         {
             NewTreeNode = m_StateComponent->CreateTreeNode<CChasePlayerNode>(Name);
+            break;
+        }
+        case DDActionNode::MonsterHitBack:
+        {
+            NewTreeNode = m_StateComponent->CreateTreeNode<CMonsterHitBack>(Name);
             break;
         }
         case DDActionNode::MeleeAttack:
@@ -1085,6 +1096,9 @@ void CBehaviorTreeWindow::OnAddNodeButton(const char* Name, int TypeIndex, int A
         // Grunt Common
         case DDConditionNode::GruntCommonSpawnCheck:
             NewTreeNode = m_StateComponent->CreateTreeNode<CGruntCommonSpawnCheckNode>(Name);
+            break;
+        case DDConditionNode::GruntCommonStartActCheck:
+            NewTreeNode = m_StateComponent->CreateTreeNode<CGruntCommonMoveStartCheckNode>(Name);
             break;
         }
         break;

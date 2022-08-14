@@ -272,9 +272,12 @@ inline void CPlayerDataComponent::SetTrueOnSlash()
 
 	m_AttackCheckCollider->Enable(true);
 	m_Slash->Enable(true);
-	m_SlashPaperBurn->SetEndEvent(PaperBurnEndEvent::Disable);
-	m_SlashPaperBurn->StartPaperBurn();
 
+	if (m_SlashPaperBurn)
+	{
+		m_SlashPaperBurn->SetEndEvent(PaperBurnEndEvent::Disable);
+		m_SlashPaperBurn->StartPaperBurn();
+	}
 }
 
 inline void CPlayerDataComponent::SetFalseOnSlash()

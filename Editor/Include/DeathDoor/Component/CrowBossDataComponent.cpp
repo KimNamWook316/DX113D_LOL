@@ -275,7 +275,26 @@ void CCrowBossDataComponent::Fly(const Vector3& FlyDir, float DeltaTime)
 		{
 			//m_FeatherParticle->Enable(true);
 			Vector3 CrowPos = m_Object->GetWorldPos();
+
 			Vector3 ZAxis = m_Object->GetWorldAxis(AXIS_Z);
+
+			// 진행 방향에 맞게 회전할 것이다.
+			// >> Arrow 들의 Particle 들을 Arrow 진행 방향에 맞게 Y 축 기준 회전시킬 것이다.
+			const Vector3& ParticleBaseDir = Vector3(0.f, 0.f, -1.f);
+			const Vector3& ParticleRightDir = Vector3(1.f, 0.f, 0.f);
+
+			Vector3 MoveTowardZAxis = m_Object->GetWorldAxis(AXIS_Z) * -1.f;
+			MoveTowardZAxis.y = 0.f;
+
+			float YRotAngle = MoveTowardZAxis.Angle(ParticleBaseDir);
+
+			// 회전 각도 180도 이상
+			if (MoveTowardZAxis.Dot(ParticleRightDir))
+			{
+				YRotAngle = 180 + (180 - YRotAngle);
+			}
+
+			m_FeatherParticle->AddWorldRotationY(YRotAngle);
 			m_FeatherParticle->StartParticle(CrowPos + ZAxis);
 		}
 	}
