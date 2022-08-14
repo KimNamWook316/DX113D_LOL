@@ -341,7 +341,7 @@
     <ClCompile Include="DeathDoor\Scene\DDSceneMode.cpp" />
     <ClCompile Include="DeathDoor\Thread\DDSceneLoadingThread.cpp" />
     <ClCompile Include="DeathDoor\UI\UIManager.cpp" />
-    <ClCompile Include="DeathDoor\UI\DDMouseWidget.cpp" />
+    <ClCompile Include="DeathDoor\UI\DDMouseWidgetWindow.cpp" />
     <ClCompile Include="EditorManager.cpp" />
     <ClCompile Include="EditorUtil.cpp" />
     <ClCompile Include="GraphEditor.cpp" />
@@ -585,7 +585,7 @@
     <ClInclude Include="DeathDoor\Scene\DDSceneMode.h" />
     <ClInclude Include="DeathDoor\Thread\DDSceneLoadingThread.h" />
     <ClInclude Include="DeathDoor\UI\UIManager.h" />
-    <ClInclude Include="DeathDoor\UI\DDMouseWidget.h" />
+    <ClInclude Include="DeathDoor\UI\DDMouseWidgetWindow.h" />
     <ClInclude Include="EditorInfo.h" />
     <ClInclude Include="EditorManager.h" />
     <ClInclude Include="EditorUtil.h" />

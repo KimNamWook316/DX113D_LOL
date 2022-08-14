@@ -4,6 +4,9 @@
 #include "Widget/Image.h"
 #include "Resource/ResourceManager.h"
 #include "PathManager.h"
+#include "Scene/SceneManager.h"
+#include "../Scene/DDSceneMode.h"
+#include "../UI/DDMouseWidgetWindow.h"
 
 #include <sstream>
 
@@ -15,12 +18,16 @@ CUIManager::CUIManager()	:
 	m_AbilityBoxOriginSize(Vector2(85.f, 85.f)),
 	m_Window(nullptr)
 {
-
 }
 
 CUIManager::~CUIManager()
 {
 
+}
+
+void CUIManager::Init()
+{
+	CSceneManager::GetInst()->SetIsKeepUIFunction(this, &CUIManager::OnSceneChangeKeepUI);
 }
 
 void CUIManager::ActivateAbility(Player_Ability Ability)
@@ -77,6 +84,20 @@ void CUIManager::ActivateAbility(Player_Ability Ability)
 		break;
 	}
 	}
+}
+
+bool CUIManager::OnSceneChangeKeepUI(CScene* CurScene, CScene* NextScene)
+{
+	CDDSceneMode* CurSceneMode = dynamic_cast<CDDSceneMode*>(CurScene->GetSceneMode());
+	CDDSceneMode* NextSceneMode = dynamic_cast<CDDSceneMode*>(NextScene->GetSceneMode());
+
+	// 현재 씬과 다음 씬이 하나라도 DDSceneMode가 아니라면
+	if (!CurSceneMode || !NextSceneMode)
+	{
+		return false;
+	}
+
+	return true;
 }
 
 void CUIManager::CreateDeathDoorUI()
@@ -186,7 +207,7 @@ void CUIManager::CreateDeathDoorUI()
 		Widget->SetPos(PosX, PosY);
 		Widget->SetSize(SizeX, SizeY);
 		Widget->SetZOrder(ZOrder);
-
 	} 
 
+	CEngine::GetInst()->CreateMouse<CDDMouseWidgetWindow>(Mouse_State::Normal, "DeathDoorMouse");
 }

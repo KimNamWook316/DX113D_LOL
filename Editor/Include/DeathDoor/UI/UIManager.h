@@ -5,15 +5,17 @@
 
 class CUIManager
 {
-
 private:
 	CViewport* m_Viewport;
 	Vector2 m_AbilityIconOriginSize;
 	Vector2 m_AbilityBoxOriginSize;
 	class CWidgetWindow* m_Window;
+	class CWidgetWindow* m_MouseWindow;
 
 public:
+	void Init();
 	void ActivateAbility(Player_Ability Ability);
+	bool OnSceneChangeKeepUI(class CScene* CurScene, class CScene* NextScene);
 
 public:
 	void CreateDeathDoorUI();
@@ -35,8 +37,6 @@ public:
 	{
 		m_Viewport = Viewport;
 	}
-
-
 
 	DECLARE_SINGLE(CUIManager)
 };

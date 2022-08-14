@@ -83,6 +83,11 @@ public:
 		m_Size = Vector2(x, y);
 	}
 
+	void SetViewPort(class CViewport* ViewPort)
+	{
+		m_Viewport = ViewPort;
+	}
+
 public:
 	virtual void Start();
 	virtual bool Init();

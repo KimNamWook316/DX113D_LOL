@@ -849,7 +849,7 @@ void CMonsterDataComponent::RotateRandomly(float DeltaTime)
 
 void CMonsterDataComponent::DecreaseHP(int Amount)
 {
-	CMonsterDataComponent::DecreaseHP(Amount);
+	CObjectDataComponent::DecreaseHP(Amount);
 
 	if (m_Data.HP <= 0)
 	{

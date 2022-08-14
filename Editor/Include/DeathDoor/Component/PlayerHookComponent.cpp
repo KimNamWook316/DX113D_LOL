@@ -115,7 +115,7 @@ HookResult CPlayerHookComponent::ShootHook(const Vector3& ShootDir, float DeltaT
 			}
 
 			HookChain->SetWorldScale(Vector3(0.05f, 0.05f, 0.05f));
-			HookChain->SetEmissiveColor(0.f, 1.f, 0.f, 1.f);
+			HookChain->SetEmissiveColor(0.f, 0.6f, 0.f, 1.f);
 
 			m_vecHookChain.push_back(HookChain);
 		}

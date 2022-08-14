@@ -86,9 +86,9 @@ LaserLoop,Effect,1,Effect\Lockstone\LaserLoop.ogg,100
 FallingPlatformFall,Effect,0,Effect\Lockstone\FallingPlatformFall.mp3,100
 FallingPlatformTouch,Effect,0,Effect\Lockstone\FallingPlatformTouch.mp3,70
 TimedPlatformReturn,Effect,0,Effect\Lockstone\TimedPlatformReturn.mp3,70
-BossKnightAmbientBGM,BGM,0,BGM\BossKnightAmbientBGM.mp3
-BossKnightPrep180,Effect,0,Effect\BossKnight\KnightPrep180Slam1.mp3
-BossKnightCutsceneSlam,Effect,0,Effect\BossKnight\KnightCutsceneSlam.mp3
-HeadRollerHit,Effect,0,Effect\HeadRoller\HeadRollerTakeDamage1.mp3
-HeadRollerGetUp,Effect,0,Effect\HeadRoller\HeadRollerGetUp3.mp3
-HeadRollerRollReady,Effect,0,Effect\HeadRoller\HeadRollerPrepRollWoosh.mp3
+BossKnightAmbientBGM,BGM,0,BGM\BossKnightAmbientBGM.mp3,100
+BossKnightPrep180,Effect,0,Effect\BossKnight\KnightPrep180Slam1.mp3,100
+BossKnightCutsceneSlam,Effect,0,Effect\BossKnight\KnightCutsceneSlam.mp3,100
+HeadRollerHit,Effect,0,Effect\HeadRoller\HeadRollerTakeDamage1.mp3,100
+HeadRollerGetUp,Effect,0,Effect\HeadRoller\HeadRollerGetUp3.mp3,100
+HeadRollerRollReady,Effect,0,Effect\HeadRoller\HeadRollerPrepRollWoosh.mp3,100

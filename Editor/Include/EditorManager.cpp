@@ -194,6 +194,8 @@ bool CEditorManager::Init(HINSTANCE hInst)
 	
 	CObjectPool::GetInst()->Init();
 
+	CUIManager::GetInst()->Init();
+
 	CObjectPool::GetInst()->LoadPoolData("ObjectPoolData.csv");
 	CObjectPool::GetInst()->CreatePoolObject(OBJECT_PATH);
 
