@@ -26,6 +26,9 @@ private:
     float m_PrevXVibFactor;
     float m_PrevZVibFactor;
     int m_FrameCount;
+    bool m_VibrateSoundPlayed;
+    bool m_FallingSoundPlayed;
+
 
 public:
     virtual NodeResult Invoke(float DeltaTime) override;

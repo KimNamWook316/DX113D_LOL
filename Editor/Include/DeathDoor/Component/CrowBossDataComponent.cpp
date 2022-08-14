@@ -25,7 +25,7 @@ CCrowBossDataComponent::CCrowBossDataComponent()	:
 	m_ShootAccTime(0.f),
 	m_CurrentHookIndex(0),
 	m_ClearHookIndex(0),
-	m_HookChainTotal(100),
+	m_HookChainTotal(115),
 	m_AfterShoot(false),
 	m_SpittingStart(false),
 	m_SpittingAccTime(0.f),
@@ -91,6 +91,8 @@ void CCrowBossDataComponent::Start()
 
 	m_FeatherParticle = m_Object->FindComponentFromType<CParticleComponent>();
 	m_FeatherParticle->Enable(false);
+
+	m_Object->GetScene()->GetResource()->SoundStop("LockstoneBGM");
 }
 
 void CCrowBossDataComponent::Update(float DeltaTime)
@@ -269,7 +271,6 @@ void CCrowBossDataComponent::Fly(const Vector3& FlyDir, float DeltaTime)
 			++m_ClearHookIndex;
 		}
 
-		// if (m_ClearHookIndex == 0 && m_FeatherParticle)
 		if (m_ClearHookIndex == 0 && m_FeatherParticle)
 		{
 			//m_FeatherParticle->Enable(true);
@@ -535,6 +536,8 @@ void CCrowBossDataComponent::OnDeadAnimStart()
 
 	m_AnimMesh->GetAnimationInstance()->GetCurrentAnimation()->SetPlayScale(0.25f);
 	m_DeathColorChangeTimeMax = m_AnimMesh->GetAnimationInstance()->GetCurrentAnimation()->GetAnimationPlayTime() * 0.5f;
+
+
 }
 
 void CCrowBossDataComponent::OnDeadPaperBurnEnd()
@@ -542,4 +545,13 @@ void CCrowBossDataComponent::OnDeadPaperBurnEnd()
 	CMonsterDataComponent::OnDeadPaperBurnEnd();
 
 	// TODO : Boss Knight - 페이퍼번 완료되면 Portal On
+
+	m_Object->GetScene()->GetResource()->SoundStop("CrowBossBGM");
+}
+
+void CCrowBossDataComponent::OnEndCutScene()
+{
+	CMonsterDataComponent::OnEndCutScene();
+
+	m_Object->GetScene()->GetResource()->SoundPlay("CrowBossBGM");
 }

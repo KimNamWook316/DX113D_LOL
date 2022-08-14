@@ -63,6 +63,7 @@ void CDataManager::LoadSoundData()
 		std::string StrFileName;
 		std::string ChannelGroup;
 		std::string Key = iter->first;
+		int Volume = 0;
 
 		char FileName[MAX_PATH] = {};
 		bool Loop = false;
@@ -90,10 +91,18 @@ void CDataManager::LoadSoundData()
 				strcpy_s(FileName, StrFileName.c_str());
 			}
 
+			else if (i == 3)
+			{
+				ss >> Volume;
+			}
+
 			ss.str("");
 		}
 
 		CResourceManager::GetInst()->LoadSound(ChannelGroup, Loop, Key, FileName);
+		CSound* Sound = CResourceManager::GetInst()->FindSound(Key);
+		Sound->SetVolume(Volume);
+
 		++Index;
 	}
 

@@ -268,10 +268,7 @@
       <UniqueIdentifier>{8e4bf60b-cf83-4169-a5f4-1c07d7093e47}</UniqueIdentifier>
     </Filter>
     <Filter Include="06. DeathDoor\07. UI">
-      <UniqueIdentifier>{2cef803d-54ff-4c7f-a604-90d8716e7ca2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="06. DeathDoor\07. UI\01. Mouse">
-      <UniqueIdentifier>{a59d4c15-9241-415a-8337-b76159399017}</UniqueIdentifier>
+      <UniqueIdentifier>{de0813d5-7113-4065-9db9-7a00ff2f7862}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -975,6 +972,9 @@
     </ClCompile>
     <ClCompile Include="DeathDoor\Component\Node\MonsterHitBack.cpp">
       <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\01. Public</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\UI\UIManager.cpp">
+      <Filter>06. DeathDoor\07. UI</Filter>
     </ClCompile>
     <ClCompile Include="DeathDoor\UI\DDMouseWidget.cpp">
       <Filter>06. DeathDoor\07. UI\01. Mouse</Filter>
@@ -1685,6 +1685,9 @@
     </ClInclude>
     <ClInclude Include="DeathDoor\Component\Node\GruntCommonMoveStartCheckNode.h">
       <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\09. GruntCommon</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\UI\UIManager.h">
+      <Filter>06. DeathDoor\07. UI</Filter>
     </ClInclude>
     <ClInclude Include="DeathDoor\Component\Node\MonsterHitBack.h">
       <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\01. Public</Filter>
