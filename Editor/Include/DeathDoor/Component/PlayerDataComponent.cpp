@@ -113,24 +113,32 @@ void CPlayerDataComponent::Start()
 	m_Body = (CColliderComponent*)m_Object->FindComponent("Body");
 
 	m_Slash = (CStaticMeshComponent*)m_Object->FindComponent("Slash");
+
 	if(m_Slash)
 		m_Slash->Enable(false);
 
 
 	m_SlashDir = m_Object->GetWorldAxis(AXIS_Z);
 	m_SlashDir *= 1.f;
-	// x는 xz평면에 평행하게 하려고 100.f으로 맞춘거고 나머지 y,z의 초기 설정값을 0으로 relative rotation을 맞춰줘야한다
-	m_Slash->SetRelativeRotation(100.f, 0.f, 0.f);
 
+	if (m_Slash)
+	{
+		// x는 xz평면에 평행하게 하려고 100.f으로 맞춘거고 나머지 y,z의 초기 설정값을 0으로 relative rotation을 맞춰줘야한다
+		m_Slash->SetRelativeRotation(100.f, 0.f, 0.f);
+	}
 
 	m_Sword = (CAnimationMeshComponent*)m_Object->FindComponent("SwordAnim");
 
 	m_Object->FindAllSceneComponentFromTypeName<CParticleComponent>("Dust", m_vecMoveDust);
 
 	CCameraComponent* Cam = m_Object->FindComponentFromType<CCameraComponent>();
-	Vector3 RootPos = m_AnimComp->GetWorldPos();
-	Vector3 CamPos = Cam->GetWorldPos();
-	m_CamRelativePos = CamPos - RootPos;
+
+	if (Cam)
+	{
+		Vector3 RootPos = m_AnimComp->GetWorldPos();
+		Vector3 CamPos = Cam->GetWorldPos();
+		m_CamRelativePos = CamPos - RootPos;
+	}
 
 	m_SlashPaperBurn = m_Object->FindObjectComponentFromType<CPaperBurnComponent>();
 }

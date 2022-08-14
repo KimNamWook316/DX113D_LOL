@@ -39,6 +39,7 @@ cbuffer	ParticleCBuffer : register(b7)
 	float g_ParticleAlphaEnd;
 	float g_ParticleAlphaStart;
 	int g_ParticleLifeTimeLinear;
+	// int g_RotAccordingToDir; // 자신의 진행 방향 대로 회전시킬 것인가. g_ParticleSpecialMoveDirType 을 지정해야 한다. 회전 중심 축을 잡아야 하므로
 	int g_SeperateLinerRotate; // 자신의 진행 방향 대로 회전시킬 것인가. g_ParticleSpecialMoveDirType 을 지정해야 한다. 회전 중심 축을 잡아야 하므로
 
 	int g_ParticleUVMoveEnable;
@@ -71,8 +72,9 @@ cbuffer	ParticleCBuffer : register(b7)
 
 	// 여기 아래는 Particle Constant Buffer 의 크기 제한으로 인해 안먹힐 것이다.
 	float3 ParticleEmpty1;
+	int ParticleEmpty3;
+	// 기존에 살아있는 Particle 들을 모두 Alive False 로 만들어주기 
 	float3 ParticleEmpty2;
-	int ParticleEmpty3;   // 기존에 살아있는 Particle 들을 모두 Alive False 로 만들어주기 
 	float ParticleEmpty4;
 };
 
@@ -236,10 +238,45 @@ void RotateAboutAxisWithDegrees(float3 In, float3 Axis, float Rotation, out floa
 
 	// DX 의 경우, Transpose 를 시켜줘야 한다.
 	// 좌표계가 다르기 때문이다.
+	// float3x3 rot_mat =
+	// { one_minus_c * Axis.x * Axis.x + c, one_minus_c * Axis.x * Axis.y - Axis.z * s, one_minus_c * Axis.z * Axis.x + Axis.y * s,
+	// 	one_minus_c * Axis.x * Axis.y + Axis.z * s, one_minus_c * Axis.y * Axis.y + c, one_minus_c * Axis.y * Axis.z - Axis.x * s,
+	// 	one_minus_c * Axis.z * Axis.x - Axis.y * s, one_minus_c * Axis.y * Axis.z + Axis.x * s, one_minus_c * Axis.z * Axis.z + c
+	// };
+
 	float3x3 rot_mat =
-	{ one_minus_c * Axis.x * Axis.x + c, one_minus_c * Axis.x * Axis.y - Axis.z * s, one_minus_c * Axis.z * Axis.x + Axis.y * s,
-		one_minus_c * Axis.x * Axis.y + Axis.z * s, one_minus_c * Axis.y * Axis.y + c, one_minus_c * Axis.y * Axis.z - Axis.x * s,
-		one_minus_c * Axis.z * Axis.x - Axis.y * s, one_minus_c * Axis.y * Axis.z + Axis.x * s, one_minus_c * Axis.z * Axis.z + c
+	{ one_minus_c * Axis.x * Axis.x + c,				one_minus_c * Axis.x * Axis.y + Axis.z * s,			one_minus_c * Axis.z * Axis.x - Axis.y * s,
+		one_minus_c* Axis.x* Axis.y - Axis.z * s,		one_minus_c * Axis.y * Axis.y + c,					one_minus_c* Axis.y* Axis.z + Axis.x * s,
+		one_minus_c* Axis.z* Axis.x + Axis.y * s,	one_minus_c* Axis.y* Axis.z - Axis.x * s,		one_minus_c * Axis.z * Axis.z + c
 	};
+
 	Out = mul(rot_mat, In);
+}
+
+// Rotation : 각도
+void GetRotationMatrixAboutAxisWithDegrees(float3 Axis, float Rotation, out float3x3 Out)
+{
+	Rotation = radians(Rotation);
+	float s = sin(Rotation);
+	float c = cos(Rotation);
+	float one_minus_c = 1.0 - c;
+
+	Axis = normalize(Axis);
+
+	// DX 의 경우, Transpose 를 시켜줘야 한다.
+	// 좌표계가 다르기 때문이다.
+	// float3x3 rot_mat =
+	// { one_minus_c * Axis.x * Axis.x + c, one_minus_c * Axis.x * Axis.y - Axis.z * s, one_minus_c * Axis.z * Axis.x + Axis.y * s,
+	// 	one_minus_c * Axis.x * Axis.y + Axis.z * s, one_minus_c * Axis.y * Axis.y + c, one_minus_c * Axis.y * Axis.z - Axis.x * s,
+	// 	one_minus_c * Axis.z * Axis.x - Axis.y * s, one_minus_c * Axis.y * Axis.z + Axis.x * s, one_minus_c * Axis.z * Axis.z + c
+	// };
+
+	float3x3 rotMat = { one_minus_c * Axis.x * Axis.x + c,				one_minus_c * Axis.x * Axis.y + Axis.z * s,			one_minus_c * Axis.z * Axis.x - Axis.y * s,
+		one_minus_c * Axis.x * Axis.y - Axis.z * s,		one_minus_c * Axis.y * Axis.y + c,					one_minus_c * Axis.y * Axis.z + Axis.x * s,
+		one_minus_c * Axis.z * Axis.x + Axis.y * s,	one_minus_c * Axis.y * Axis.z - Axis.x * s,		one_minus_c * Axis.z * Axis.z + c
+	};
+
+	Out = rotMat;
+
+	// Out = mul(rot_mat, In);
 }

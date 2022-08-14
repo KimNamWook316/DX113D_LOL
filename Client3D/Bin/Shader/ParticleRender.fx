@@ -124,53 +124,15 @@ void ParticleGS(point VertexParticleOutput input[1],
 		float4(Ratio, Ratio, Ratio, Ratio));
 
 	// 회전 (전체 회전 + 각 Particle 회전 정도)
-	// (수정 -> 문제가 될 수도 있음)
-	// float3 FinalRotAngle = g_ParticleShareSRV[0].RotationAngle + g_ParticleArraySRV[InstanceID].FinalSeperateRotAngle;
+	float3 FinalRotAngle = g_ParticleShareSRV[0].RotationAngle + g_ParticleArraySRV[InstanceID].FinalSeperateRotAngle;
 
-	// float3x3 matRot = ComputeRotationMatrix(FinalRotAngle);
-	float3x3 ParticleComponentRot = ComputeRotationMatrix(g_ParticleShareSRV[0].RotationAngle);
+	float3x3 matRot = ComputeRotationMatrix(FinalRotAngle);
 
 	// 4개의 최종 정점정보를 만들어준다.
 	for (int i = 0; i < 4; ++i)
 	{
-
-
-		// Scale         : Scale
-		// Rot            : matRot
-		// Translation : FinalLocalPos
-		float3 RotatedScaledLocalPos = g_ParticleLocalPos[i] * Scale;
-		RotatedScaledLocalPos = mul(RotatedScaledLocalPos, ParticleComponentRot);
-
-		// g_ParticleLocalPos[i]가 실질적으로 Particle 입자의 모양을 구성하게 된다.
-		// 이후 Particle 각각의 회전을 적용해야 한다.
-		// 이때, Particle Component 의 Rot을 적용한 회전축에 대해서 적용해야 한다.
-		// X축
-		if (g_ParticleArraySRV[InstanceID].FinalSeperateRotAngle.x > 0)
-		{
-			float3 XRotatedPos;
-			RotateAboutAxisWithDegrees(RotatedScaledLocalPos, g_TVParticleRotatedAxisX, g_ParticleArraySRV[InstanceID].FinalSeperateRotAngle.x, XRotatedPos);
-			RotatedScaledLocalPos = XRotatedPos;
-		}
-
-		// Y축
-		if (g_ParticleArraySRV[InstanceID].FinalSeperateRotAngle.y > 0)
-		{
-			float3 YRotatedPos;
-			RotateAboutAxisWithDegrees(RotatedScaledLocalPos, g_TVParticleRotatedAxisY, g_ParticleArraySRV[InstanceID].FinalSeperateRotAngle.y, YRotatedPos);
-			RotatedScaledLocalPos = YRotatedPos;
-		}
-
-		// Z축
-		if (g_ParticleArraySRV[InstanceID].FinalSeperateRotAngle.z > 0)
-		{
-			float3 ZRotatedPos;
-			RotateAboutAxisWithDegrees(RotatedScaledLocalPos, g_TVParticleRotatedAxisZ, g_ParticleArraySRV[InstanceID].FinalSeperateRotAngle.z, ZRotatedPos);
-			RotatedScaledLocalPos = ZRotatedPos;
-		}
-		
-		// float3	WorldPos = g_ParticleArraySRV[InstanceID].LocalPos + mul(g_ParticleLocalPos[i] * Scale, matRot);
-		float3	WorldPos = g_ParticleArraySRV[InstanceID].LocalPos + RotatedScaledLocalPos;
-
+		// g_ParticleArraySRV[InstanceID].WorldPos 는 Local Space 상에서의 
+		float3	WorldPos = g_ParticleArraySRV[InstanceID].LocalPos + mul(g_ParticleLocalPos[i] * Scale, matRot);
 
 		// Particle Component 의 World Pos 도 더한다.
 		if (g_ParticleFollowComponentPos == 1)
@@ -335,8 +297,8 @@ PSOutput_Single ParticlePS(GeometryParticleOutput input)
 	EmissiveColor = ApplyLinearEmissiveColorChangeEffect(input.LifeTimeRatio, EmissiveColor);
 
 	// output.Color = Color;
-	output.Color.rgb = (BaseMaterialColor * input.Color).rgb +EmissiveColor.rgb;
-	
+	output.Color.rgb = (BaseMaterialColor * input.Color).rgb + EmissiveColor.rgb;
+
 	// output.Color = Color;
 	// output.Color = Color * input.Color;
 	output.Color.a = BaseMaterialColor.a * g_MtrlOpacity * Alpha;

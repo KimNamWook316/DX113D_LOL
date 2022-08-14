@@ -133,6 +133,7 @@ void CBossBettyDataComponent::Start()
 
     if (m_BossBettyRoarParticle)
     {
+        m_BossBettyRoarParticle->SetRelativePos(0.f, 4.f, 0.f);
         m_BossBettyRoarParticle->Enable(false);
     }
  
@@ -211,8 +212,8 @@ void CBossBettyDataComponent::OnBossBettyGenerateTwoSideCloseAttackEffect()
 	// 양쪽에 
 	// 1) 충돌체 활성화
 	// 2) Particle 제작
-    const Vector3& XWorldAxis = m_MeleeAttackCollider->GetRelativeAxis(AXIS::AXIS_X) * -1.f;
-    const Vector3& ZWorldAxis = m_MeleeAttackCollider->GetRelativeAxis(AXIS::AXIS_Z) * -1.f;
+    const Vector3& XWorldAxis = m_Object->GetWorldAxis(AXIS::AXIS_X) * -1.f;
+    const Vector3& ZWorldAxis = m_Object->GetWorldAxis(AXIS::AXIS_Z) * -1.f;
     
     const Vector3& ColliderRelativePos = ZWorldAxis * 6.0f;
     
@@ -222,6 +223,9 @@ void CBossBettyDataComponent::OnBossBettyGenerateTwoSideCloseAttackEffect()
     OnBossBettyActivateAfterEffect(m_Object->GetWorldPos() + ColliderRelativePos);
 
     // OnBossBettyActivateAfterEffect(m_Object->GetWorldPos());
+
+    // 임의로 주기 
+    OnBossBettyActivateRoarParticle();
 }
 
 void CBossBettyDataComponent::OnSetBossBettyAttackColliderPosToBettyBody()
@@ -232,13 +236,13 @@ void CBossBettyDataComponent::OnSetBossBettyAttackColliderPosToBettyBody()
 
 void CBossBettyDataComponent::OnBossBettyGenerateRightCloseAttackEffect()
 {
-    const Vector3& XWorldAxis = m_MeleeAttackCollider->GetRelativeAxis(AXIS::AXIS_X) * -1.f;
-    const Vector3& ZWorldAxis = m_MeleeAttackCollider->GetRelativeAxis(AXIS::AXIS_Z) * -1.f;
+    const Vector3& XWorldAxis = m_Object->GetRelativeAxis(AXIS::AXIS_X) * -1.f;
+    const Vector3& ZWorldAxis = m_Object->GetRelativeAxis(AXIS::AXIS_Z) * -1.f;
     
     const Vector3& ColliderRelativePos = XWorldAxis * 3.0f + ZWorldAxis * 4.0f;
     
     m_MeleeAttackCollider->SetRelativePos(ColliderRelativePos);
-    m_MeleeAttackCollider->SetExtent(3.5f, 2.5f, 5.f);
+    m_MeleeAttackCollider->SetExtent(2.5f, 2.5f, 4.f);
     
     OnBossBettyActivateAfterEffect(m_Object->GetWorldPos() + ColliderRelativePos);
 
@@ -246,13 +250,13 @@ void CBossBettyDataComponent::OnBossBettyGenerateRightCloseAttackEffect()
 
 void CBossBettyDataComponent::OnBossBettyGenerateLeftCloseAttackEffect()
 {
-    const Vector3& XWorldAxis = m_MeleeAttackCollider->GetRelativeAxis(AXIS::AXIS_X) * -1.f;
-    const Vector3& ZWorldAxis = m_MeleeAttackCollider->GetRelativeAxis(AXIS::AXIS_Z) * -1.f;
+    const Vector3& XWorldAxis = m_Object->GetRelativeAxis(AXIS::AXIS_X) * -1.f;
+    const Vector3& ZWorldAxis = m_Object->GetRelativeAxis(AXIS::AXIS_Z) * -1.f;
     
     const Vector3& ColliderRelativePos = XWorldAxis * 3.5f * -1.f + ZWorldAxis * 4.0f;
     
     m_MeleeAttackCollider->SetRelativePos(ColliderRelativePos);
-    m_MeleeAttackCollider->SetExtent(3.5f, 2.5f, 5.f);
+    m_MeleeAttackCollider->SetExtent(2.5f, 2.5f, 4.f);
     
     OnBossBettyActivateAfterEffect(m_Object->GetWorldPos() + ColliderRelativePos);
 }
