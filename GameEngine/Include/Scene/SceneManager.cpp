@@ -141,9 +141,15 @@ bool CSceneManager::ChangeScene()
 				PrevMusicKeyName = m_Scene->GetSceneSaveGlobalData().BackGroundData.PrevMusicKeyName;
 			}
 
+			// 이전 Scene의 viewport가 갖고 있는 WindowList를 파괴전에 받아두고
+			std::list<CSharedPtr<CWidgetWindow>> WindowList = m_Scene->GetViewport()->GetWindowList();
+
 			SAFE_DELETE(m_Scene);
 			m_Scene = m_NextScene;
 			m_NextScene = nullptr;
+
+			// 다음 Scene의 viewport에게 이전 Scene의 viewport 갖고 있던 WindowList를 전달
+			m_Scene->GetViewport()->SetWindowList(WindowList);
 
 			// 씬이 바뀌어도 파괴되지 않는 오브젝트들을 새로운 씬으로 옮김
 			auto iter = NoDestroyObjectCloneList.begin();
@@ -163,6 +169,7 @@ bool CSceneManager::ChangeScene()
 
 			// HDR 렌더 설정, 전역 라이트 설정 등 로드
 			m_Scene->UpdateSceneGlobalData();
+			
 
 			return true;
 		}

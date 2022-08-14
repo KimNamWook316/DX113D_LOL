@@ -1,9 +1,9 @@
 ObjectData,,,,,,,,
 ,HP,DetectRange,MoveSpeed,Attack,MeleeAttackRange,JumpAttackRange,RotateSpeedPerSec,FlySpeed
 Player,4,0,7,10,0,0,0,0
-Lurker,30,30,4,20,4,0,0,0
+Lurker,30,30,4,20,3,0,0,0
 BossKnight,50,20,3,1,10,20,360,0
-CrowBoss,100,20,6,1,8,35,10,60
+CrowBoss,100,20,6,1,8,35,10,65
 BossBetty,100,20,35,1,15,10,180,0
 SporeBoomer,9999999,0,0,1,0,0,0,0
 FirePlant,30,30,0,1,0,0,90,0

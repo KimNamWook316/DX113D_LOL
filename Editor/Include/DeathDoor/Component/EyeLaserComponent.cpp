@@ -15,7 +15,8 @@ CEyeLaserComponent::CEyeLaserComponent()	:
 	m_FaceCameraOnce(false),
 	m_LaserGenerator(nullptr),
 	m_LaserGenTime(1.f),
-	m_AccTime(0.f)
+	m_AccTime(0.f),
+	m_LaserShootSoundPlay(false)
 {
 	SetTypeID<CEyeLaserComponent>();
 	m_ComponentType = Component_Type::SceneComponent;
@@ -97,10 +98,17 @@ void CEyeLaserComponent::Update(float DeltaTime)
 	if (m_TriggerHitCount > 0 && m_TriggerHitCount < 4)
 	{
 		TrackPlayer(DeltaTime);
+
+		if (!m_LaserShootSoundPlay)
+		{
+			m_Object->GetScene()->GetResource()->SoundPlay("LaserLoop");
+			m_LaserShootSoundPlay = true;
+		}
 	}
 
 	else if (m_TriggerHitCount >= 4)
 	{
+		m_Object->GetScene()->GetResource()->SoundStop("LaserLoop");
 		m_RayCollider->Enable(false);
 	}
 }
@@ -199,7 +207,7 @@ void CEyeLaserComponent::TrackPlayer(float DeltaTime)
 	float Degree = RadianToDegree(acosf(Rad));
 
 	Vector3 CrossVector = Dir.Cross(m_CurrentLaserLeftRightDir);
-	float Angle = DeltaTime * 7.f;
+	float Angle = DeltaTime * 10.f;
 
 	// Player가 레이저를 바라봤을때, Player의 위치가 레이저 쏘는 위치보다 오른쪽에 존재
 	// 로컬축 기준으로 회전하니까 Z방향으로 회전해야함

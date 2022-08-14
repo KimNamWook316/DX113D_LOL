@@ -8,7 +8,8 @@ CSound::CSound()	:
 	m_Group(nullptr),
 	m_Channel(nullptr),
 	m_Play(false),
-	m_Loop(false)
+	m_Loop(false),
+	m_Volume(100)
 {
 }
 
@@ -51,6 +52,7 @@ bool CSound::LoadSound(FMOD::System* System, FMOD::ChannelGroup* Group, bool Loo
 void CSound::Play()
 {
 	m_System->playSound(m_Sound, m_Group, false, &m_Channel);
+
 	m_Play = true;
 }
 

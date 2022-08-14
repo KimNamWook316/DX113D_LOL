@@ -53,7 +53,14 @@ NodeResult CAddFallingFloorCallbackNode::OnUpdate(float DeltaTime)
 		return NodeResult::Node_True;
 
 	if (m_AccTime > 0.5f && m_AccTime < 1.5f)
+	{
+		if (!m_VibrateSoundPlayed)
+		{
+			m_Object->GetScene()->GetResource()->SoundPlay("FallingPlatformTouch");
+			m_VibrateSoundPlayed = true;
+		}
 		Vibrate(DeltaTime);
+	}
 
 	if (m_AccTime > 1.5f && m_AccTime <= 2.5f)
 	{
@@ -76,6 +83,12 @@ NodeResult CAddFallingFloorCallbackNode::OnUpdate(float DeltaTime)
 		m_Object->SetWorldRotationX(0.f);
 		m_Object->SetWorldRotationZ(0.f);
 		m_Object->AddWorldPos(0.f, -18.f * DeltaTime, 0.f);
+
+		if (!m_FallingSoundPlayed)
+		{
+			m_Object->GetScene()->GetResource()->SoundPlay("FallingPlatformFall");
+			m_FallingSoundPlayed = true;
+		}
 	}
 
 	else if (m_AccTime > 2.5f)
@@ -131,12 +144,16 @@ void CAddFallingFloorCallbackNode::ResetFallingBlock()
 	m_AccTime = 0.f;
 	m_CollisionStart = false;
 	m_PlayerFall = false;
+	m_VibrateSoundPlayed = false;
+	m_FallingSoundPlayed = false;
 
 	m_BoxCollider->Enable(true); 
 
 	CPaperBurnComponent* PaperBurn = m_Object->FindObjectComponentFromType<CPaperBurnComponent>();
 
 	PaperBurn->StartPaperBurn();
+
+	m_Object->GetScene()->GetResource()->SoundPlay("TimedPlatformReturn");
 }
 
 void CAddFallingFloorCallbackNode::OnPaperburnEnd()

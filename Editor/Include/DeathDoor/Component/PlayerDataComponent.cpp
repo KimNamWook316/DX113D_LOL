@@ -89,7 +89,7 @@ void CPlayerDataComponent::Start()
 	m_AnimComp->GetAnimationInstance()->AddNotify<CPlayerDataComponent>("PlayerHitBack", "PlayerHitBack", 0, this, &CPlayerDataComponent::OnHitBack);
 
 	m_AnimComp->GetAnimationInstance()->AddNotify<CPlayerDataComponent>("PlayerBomb", "PlayerBomb", 3, this, &CPlayerDataComponent::OnBombLift);
-	m_AnimComp->GetAnimationInstance()->AddNotify<CPlayerDataComponent>("PlayerBomb", "PlayerBombCountRest", 4, this, &CPlayerDataComponent::OnBombCountReset);
+	m_AnimComp->GetAnimationInstance()->AddNotify<CPlayerDataComponent>("PlayerBomb", "PlayerBombCountReset", 4, this, &CPlayerDataComponent::OnBombCountReset);
 
 	m_AnimComp->GetAnimationInstance()->AddNotify<CPlayerDataComponent>("PlayerRun", "MoveDustOn", 10, this, &CPlayerDataComponent::OnResetDustParticle);
 	m_AnimComp->GetAnimationInstance()->AddNotify<CPlayerDataComponent>("PlayerRun", "MoveDustOn", 30, this, &CPlayerDataComponent::OnResetDustParticle);
@@ -106,7 +106,6 @@ void CPlayerDataComponent::Start()
 	m_AnimComp->GetAnimationInstance()->SetEndFunction<CPlayerDataComponent>("PlayerHitBack", this, &CPlayerDataComponent::OnHitBackEnd);
 	m_AnimComp->GetAnimationInstance()->SetEndFunction<CPlayerDataComponent>("PlayerHitRecover", this, &CPlayerDataComponent::OnHitRecoverEnd);
 	m_AnimComp->GetAnimationInstance()->SetEndFunction<CPlayerDataComponent>("PlayerRoll", this, &CPlayerDataComponent::OnRollEnd);
-
 
 
 	m_Data = CDataManager::GetInst()->GetObjectData("Player");

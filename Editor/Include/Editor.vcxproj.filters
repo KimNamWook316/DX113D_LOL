@@ -267,6 +267,9 @@
     <Filter Include="06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\09. GruntCommon">
       <UniqueIdentifier>{8e4bf60b-cf83-4169-a5f4-1c07d7093e47}</UniqueIdentifier>
     </Filter>
+    <Filter Include="06. DeathDoor\07. UI">
+      <UniqueIdentifier>{de0813d5-7113-4065-9db9-7a00ff2f7862}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Scene\DefaultScene.cpp">
@@ -966,6 +969,9 @@
     </ClCompile>
     <ClCompile Include="DeathDoor\Component\Node\GruntCommonMoveStartCheckNode.cpp">
       <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\09. GruntCommon</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\UI\UIManager.cpp">
+      <Filter>06. DeathDoor\07. UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1673,6 +1679,9 @@
     </ClInclude>
     <ClInclude Include="DeathDoor\Component\Node\GruntCommonMoveStartCheckNode.h">
       <Filter>06. DeathDoor\02. BehaviorTree\01. ConditionNode\00. Specific\09. GruntCommon</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\UI\UIManager.h">
+      <Filter>06. DeathDoor\07. UI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

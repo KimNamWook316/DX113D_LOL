@@ -3,6 +3,7 @@
 #include "ObjectDataComponent.h"
 #include "../DDFlag.h"
 #include "GameObject/GameObject.h"
+#include "../UI/UIManager.h"
 
 class CPlayerDataComponent :
     public CObjectDataComponent
@@ -147,7 +148,7 @@ public:
 	{
 		m_PlayerData.Abilty_Type = Player_Ability::Arrow;
 
-		//m_PlayerHook->Enable(false);
+		CUIManager::GetInst()->ActivateAbility(Player_Ability::Arrow);
 
 	}
 
@@ -161,11 +162,15 @@ public:
 	void SetPlayerAbilityChain(float DeltaTime)
 	{
 		m_PlayerData.Abilty_Type = Player_Ability::Hook;
+
+		CUIManager::GetInst()->ActivateAbility(Player_Ability::Hook);
 	}
 
 	void SetPlayerAbilityBomb(float DeltaTime)
 	{
 		m_PlayerData.Abilty_Type = Player_Ability::Bomb;
+
+		CUIManager::GetInst()->ActivateAbility(Player_Ability::Bomb);
 	}
 
 	void SetSkillNone(float DeltaTime)

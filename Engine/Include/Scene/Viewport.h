@@ -13,6 +13,7 @@ protected:
 
 private:
 	class CScene* m_Scene;
+	std::list<CSharedPtr<CWidgetWindow>>	m_WindowList;
 
 public:
 	class CScene* GetScene()	const
@@ -20,8 +21,15 @@ public:
 		return m_Scene;
 	}
 
-private:
-	std::list<CSharedPtr<CWidgetWindow>>	m_WindowList;
+	std::list<CSharedPtr<CWidgetWindow>>& GetWindowList()
+	{
+		return m_WindowList;
+	}
+
+	void SetWindowList(const std::list<CSharedPtr<CWidgetWindow>>& WindowList)
+	{
+		m_WindowList = WindowList;
+	}
 
 public:
 	void Start();

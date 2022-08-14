@@ -94,6 +94,8 @@
 #include "DeathDoor\Scene\DDInstanceSceneMode.h"
 #include "DeathDoor\Scene\DDPuzzleSceneMode.h"
 
+#include "DeathDoor/UI/UIManager.h"
+
 #include <sstream>
 
 DEFINITION_SINGLE(CEditorManager)
@@ -114,6 +116,8 @@ CEditorManager::~CEditorManager()
 	CDataManager::DestroyInst();
 
 	CObjectPool::DestroyInst();
+
+	CUIManager::DestroyInst();
 
 	SAFE_DELETE(m_StateManager);
 }
@@ -192,6 +196,7 @@ bool CEditorManager::Init(HINSTANCE hInst)
 
 	CObjectPool::GetInst()->LoadPoolData("ObjectPoolData.csv");
 	CObjectPool::GetInst()->CreatePoolObject(OBJECT_PATH);
+
 
 	return true;
 }

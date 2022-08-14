@@ -73,6 +73,8 @@ bool CSoundManager::LoadSound(const std::string& ChannelGroupName, bool Loop,
 
 	Sound = new CSound;
 
+	Sound->m_ChannelGroupName = ChannelGroupName;
+
 	bool Result = Sound->LoadSound(m_System, Group, Loop, Name, FileName, PathName);
 
 	if (!Result)
@@ -136,6 +138,7 @@ bool CSoundManager::SoundPlay(const std::string& Name)
 	if (!Sound)
 		return false;
 
+	SetVolume(Sound->m_ChannelGroupName, Sound->GetVolume());
 	Sound->Play();
 
 	return true;
