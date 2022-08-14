@@ -461,7 +461,7 @@ NavigationCell* CNavMeshComponent::FindCell(const Vector3& Pos)
 
 void CNavMeshComponent::AddCellCloseList(NavigationCell* Cell, NavigationCell* End)
 {
-	NavigationCell* CheckCell = FindCell(Cell->Polygon.m_Index);
+ 	NavigationCell* CheckCell = FindCell(Cell->Polygon.m_Index);
 
 	if (!CheckCell->Enable)
 		return;

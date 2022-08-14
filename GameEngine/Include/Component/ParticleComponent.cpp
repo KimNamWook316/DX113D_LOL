@@ -83,35 +83,7 @@ void CParticleComponent::StartParticle(const Vector3& StartPos)
 	CRef::Enable(true);
 
 	// 해당 코드의 위치로 인해서 문제가 발생할 수 있다.
-	// 현재 살아있던 Particle 들을 모두 Alive False 로 만들어줄 것이다.
-	m_CBuffer->SetDestroyExstingAllLivingParticles(true);
-
-	m_TempCreateAccTime = 0.f;
-	
-	// 구조화 버퍼 정보 Update
-	m_CBuffer->UpdateCBuffer();
-
-	// Init Delay Time 을 0으로 준다.
-	m_InitActiveDelayTime = 0.f;
-
-	size_t	BufferCount = m_vecStructuredBuffer.size();
-
-	for (size_t i = 0; i < BufferCount; ++i)
-	{
-		m_vecStructuredBuffer[i]->SetShader();
-	}
-
-	int	GroupCount = m_Particle->GetSpawnCountMax() / 64 + 1;
-
-	m_UpdateShader->Excute(GroupCount, 1, 1);
-
-	for (size_t i = 0; i < BufferCount; ++i)
-	{
-		m_vecStructuredBuffer[i]->ResetShader();
-	}
-
-	m_InitBillBoardZLookDir = Vector3(0.f, 0.f, 0.f);
-	m_InitBillBoardXLookDir = Vector3(0.f, 0.f, 0.f);
+	DestroyExistingParticles();
 
 	SetWorldPos(StartPos);
 
@@ -254,34 +226,9 @@ bool CParticleComponent::Init()
 void CParticleComponent::Reset()
 {
 	CSceneComponent::Reset();
-	
-	// 현재 살아있던 Particle 들을 모두 Alive False 로 만들어줄 것이다.
-	m_CBuffer->SetDestroyExstingAllLivingParticles(true);
 
-	m_TempCreateAccTime = 0.f;
-	
-	// 구조화 버퍼 정보 Update
-	m_CBuffer->UpdateCBuffer();
-
-	// Init Delay Time 을 0으로 준다.
-	m_InitActiveDelayTime = 0.f;
-
-	size_t	BufferCount = m_vecStructuredBuffer.size();
-
-	for (size_t i = 0; i < BufferCount; ++i)
-	{
-		m_vecStructuredBuffer[i]->SetShader();
-	}
-
-	int	GroupCount = m_Particle->GetSpawnCountMax() / 64 + 1;
-
-	m_UpdateShader->Excute(GroupCount, 1, 1);
-
-	for (size_t i = 0; i < BufferCount; ++i)
-	{
-		m_vecStructuredBuffer[i]->ResetShader();
-	}
-
+	DestroyExistingParticles();
+		
 	m_InitBillBoardZLookDir = Vector3(0.f, 0.f, 0.f);
 	m_InitBillBoardXLookDir = Vector3(0.f, 0.f, 0.f);
 }
@@ -598,10 +545,9 @@ void CParticleComponent::PostRender()
 			m_TempVCBuffer->SetResetParticleSharedInfoSumSpawnCnt(false);
 		}
 
-		if (m_CBuffer->IsDestroyExstingAllLivingParticlesEnabled() == 1)
-		{
-			m_CBuffer->SetDestroyExstingAllLivingParticles(false);
-		}
+		// 해당 값은 Render 에서까지는 true 로 세팅되어 있다고 하더라도 
+		// 새로 생성되는 녀석들을 Destroy 한다.
+		m_CBuffer->SetDestroyExstingAllLivingParticles(false);
 	}
 }
 
@@ -626,6 +572,36 @@ bool CParticleComponent::Load(FILE* File)
 	LoadOnly(File);
 
 	return true;
+}
+
+void CParticleComponent::DestroyExistingParticles()
+{
+	// 현재 살아있던 Particle 들을 모두 Alive False 로 만들어줄 것이다.
+	m_CBuffer->SetDestroyExstingAllLivingParticles(true);
+
+	m_TempCreateAccTime = 0.f;
+
+	// 구조화 버퍼 정보 Update
+	m_CBuffer->UpdateCBuffer();
+
+	// Init Delay Time 을 0으로 준다.
+	m_InitActiveDelayTime = 0.f;
+
+	size_t	BufferCount = m_vecStructuredBuffer.size();
+
+	for (size_t i = 0; i < BufferCount; ++i)
+	{
+		m_vecStructuredBuffer[i]->SetShader();
+	}
+
+	int	GroupCount = m_Particle->GetSpawnCountMax() / 64 + 1;
+
+	m_UpdateShader->Excute(GroupCount, 1, 1);
+
+	for (size_t i = 0; i < BufferCount; ++i)
+	{
+		m_vecStructuredBuffer[i]->ResetShader();
+	}
 }
 
 // Shader 측에 넘겨진 구조화 버퍼 정보를 초기화 해주는 코드이다.
@@ -685,6 +661,8 @@ void CParticleComponent::RecreateOnlyOnceCreatedParticleWithOutLifeTimeSetting()
 
 	// 상수 버퍼 정보를 Update
 	m_TempVCBuffer->SetCommonParticleComponentWorldPos(GetWorldPos());
+
+	m_TempVCBuffer->UpdateCBuffer();
 	m_CBuffer->UpdateCBuffer();
 
 	// 계산 셰이더 한번 더 호출
