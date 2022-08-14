@@ -90,6 +90,7 @@ void CParticleComponent::StartParticle(const Vector3& StartPos)
 	RecreateOnlyOnceCreatedParticle();
 
 	m_UpdateInitBillBoardDir = true;
+	m_Render = true;
 }
 
 void CParticleComponent::SetParticle(const std::string& Name)

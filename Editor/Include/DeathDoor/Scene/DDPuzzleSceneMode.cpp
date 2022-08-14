@@ -114,7 +114,7 @@ void CDDPuzzleSceneMode::OnClearDungeon()
 		else if (m_LadderObj)
 		{
 			m_LadderObj->Enable(true);
-			m_LadderPaperBurn->SetEndEvent(PaperBurnEndEvent::None);
+			m_LadderPaperBurn->SetEndEvent(PaperBurnEndEvent::Reset);
 			m_LadderPaperBurn->SetInverse(true);
 			m_LadderPaperBurn->StartPaperBurn();
 			m_LadderPaperBurn->SetFinishCallback(this, &CDDPuzzleSceneMode::OnClearObjectEventEnd);

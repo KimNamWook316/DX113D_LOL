@@ -27,6 +27,7 @@ protected:
 	bool		m_NoDestroyFromSceneChange;
 	Vector3		m_MoveDir;
 	bool		m_InPool;
+	bool		m_StartCalled;
 
 public:
 	void SetMoveDir(const Vector3& Dir)
@@ -94,6 +95,11 @@ public:
 	bool IsInPool()	const
 	{
 		return m_InPool;
+	}
+
+	bool IsStartCalled() const
+	{
+		return m_StartCalled;
 	}
 
 public:
