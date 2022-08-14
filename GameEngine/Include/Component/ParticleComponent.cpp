@@ -408,12 +408,18 @@ void CParticleComponent::PostUpdate(float DeltaTime)
 
 	const Vector3& ParticleComponentWorldPos = GetWorldPos();
 	const Vector3& ParticleCommonWorldScale = GetWorldScale();
+	const Vector3& RotateXAxis = GetWorldAxis(AXIS::AXIS_X);
+	const Vector3& RotateYAxis = GetWorldAxis(AXIS::AXIS_Y);
+	const Vector3& RotateZAxis = GetWorldAxis(AXIS::AXIS_Z);
 
 	m_CBuffer->UpdateCBuffer();
 
 	// 임시 Val 로 사용되는 Particle Value 넘겨주기
 	m_TempVCBuffer->SetCommonWorldScale(ParticleCommonWorldScale);
 	m_TempVCBuffer->SetCommonParticleComponentWorldPos(ParticleComponentWorldPos);
+	m_TempVCBuffer->SetRotatedXAxis(RotateXAxis);
+	m_TempVCBuffer->SetRotatedYAxis(RotateYAxis);
+	m_TempVCBuffer->SetRotatedZAxis(RotateZAxis);
 
 	m_TempVCBuffer->UpdateCBuffer();
 

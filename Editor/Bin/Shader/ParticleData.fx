@@ -85,6 +85,15 @@ cbuffer	ParticleTempElemCBuffer : register(b9)
 
 	float3 g_TVParticleComponentWorldPos;
 	int ParticleTempValEmpty1;
+
+	float3 g_TVParticleRotatedAxisX;
+	int ParticleTempEmpty2;
+
+	float3 g_TVParticleRotatedAxisY;
+	int ParticleTempEmpty3;
+
+	float3 g_TVParticleRotatedAxisZ;
+	int ParticleTempEmpty4;
 }
 
 struct ParticleInfo
@@ -213,4 +222,24 @@ float3x3 ComputeRotationMatrix(float3 Angle)
 
 float GetRandValForParticle(float2 co) {
 	return(frac(sin(dot(co.xy, float2(12.9898, 78.233))) * 43758.5453)) * 1;
+}
+
+// Rotation : 각도
+void RotateAboutAxisWithDegrees(float3 In, float3 Axis, float Rotation, out float3 Out)
+{
+	Rotation = radians(Rotation);
+	float s = sin(Rotation);
+	float c = cos(Rotation);
+	float one_minus_c = 1.0 - c;
+
+	Axis = normalize(Axis);
+
+	// DX 의 경우, Transpose 를 시켜줘야 한다.
+	// 좌표계가 다르기 때문이다.
+	float3x3 rot_mat =
+	{ one_minus_c * Axis.x * Axis.x + c, one_minus_c * Axis.x * Axis.y - Axis.z * s, one_minus_c * Axis.z * Axis.x + Axis.y * s,
+		one_minus_c * Axis.x * Axis.y + Axis.z * s, one_minus_c * Axis.y * Axis.y + c, one_minus_c * Axis.y * Axis.z - Axis.x * s,
+		one_minus_c * Axis.z * Axis.x - Axis.y * s, one_minus_c * Axis.y * Axis.z + Axis.x * s, one_minus_c * Axis.z * Axis.z + c
+	};
+	Out = mul(rot_mat, In);
 }
