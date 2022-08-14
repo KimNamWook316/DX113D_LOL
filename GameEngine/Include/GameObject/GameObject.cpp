@@ -337,6 +337,8 @@ void CGameObject::GetAllObjectComponentsPointer(std::vector<CObjectComponent*>& 
 
 void CGameObject::Start()
 {
+	m_StartCalled = true;
+
 	if (m_RootComponent)
 		m_RootComponent->Start();
 

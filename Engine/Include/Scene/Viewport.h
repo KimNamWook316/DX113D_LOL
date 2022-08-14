@@ -20,6 +20,16 @@ public:
 		return m_Scene;
 	}
 
+	std::list<CSharedPtr<CWidgetWindow>>& GetWindowList()
+	{
+		return m_WindowList;
+	}
+
+	void SetWindowList(const std::list<CSharedPtr<CWidgetWindow>>& WindowList)
+	{
+		m_WindowList = WindowList;
+	}
+
 private:
 	std::list<CSharedPtr<CWidgetWindow>>	m_WindowList;
 

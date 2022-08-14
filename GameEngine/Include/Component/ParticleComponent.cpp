@@ -83,13 +83,42 @@ void CParticleComponent::StartParticle(const Vector3& StartPos)
 	CRef::Enable(true);
 
 	// 해당 코드의 위치로 인해서 문제가 발생할 수 있다.
-	Reset();
+	// 현재 살아있던 Particle 들을 모두 Alive False 로 만들어줄 것이다.
+	m_CBuffer->SetDestroyExstingAllLivingParticles(true);
+
+	m_TempCreateAccTime = 0.f;
+	
+	// 구조화 버퍼 정보 Update
+	m_CBuffer->UpdateCBuffer();
+
+	// Init Delay Time 을 0으로 준다.
+	m_InitActiveDelayTime = 0.f;
+
+	size_t	BufferCount = m_vecStructuredBuffer.size();
+
+	for (size_t i = 0; i < BufferCount; ++i)
+	{
+		m_vecStructuredBuffer[i]->SetShader();
+	}
+
+	int	GroupCount = m_Particle->GetSpawnCountMax() / 64 + 1;
+
+	m_UpdateShader->Excute(GroupCount, 1, 1);
+
+	for (size_t i = 0; i < BufferCount; ++i)
+	{
+		m_vecStructuredBuffer[i]->ResetShader();
+	}
+
+	m_InitBillBoardZLookDir = Vector3(0.f, 0.f, 0.f);
+	m_InitBillBoardXLookDir = Vector3(0.f, 0.f, 0.f);
 
 	SetWorldPos(StartPos);
 
 	RecreateOnlyOnceCreatedParticle();
 
 	m_UpdateInitBillBoardDir = true;
+	m_Render = true;
 }
 
 void CParticleComponent::SetParticle(const std::string& Name)

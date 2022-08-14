@@ -146,8 +146,18 @@ void CScene::Start()
 	for (; iter != iterEnd; ++iter)
 	{
 		// Pool에서 꺼낸 오브젝트들은 GetXXX 함수 호출해서 Start를 호출할 것이다
-		if(!(*iter)->IsInPool())
-			(*iter)->Start();
+		if ((*iter)->IsInPool())
+		{
+			continue;
+		}
+
+		// 플레이어는 Start를 단 한번만 호출
+		if ((*iter)->GetObjectType() == Object_Type::Player && (*iter)->IsStartCalled())
+		{
+			continue;
+		}
+
+		(*iter)->Start();
 	}
 
 	m_Start = true;
