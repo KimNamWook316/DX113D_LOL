@@ -756,11 +756,12 @@ void ParticleUpdate(uint3 ThreadID : SV_DispatchThreadID)
 
 		// 생성되는 순간 각 Particle 의 Rot 정도를 세팅한다.
 		// 최종 각각의 Particle 회전 정도 세팅
-		// '=' 가 아니라 '+=' 를 해줘야 한다.
+		// '=' 가 아니라 '+=' 를 해줘야 한다. (그런데 기존에 
 		// ApplySpecialParticleGenerateShape 에서 일부 미리 FinalSeperateRotAngle 값에 
 		// 회전할 Offset 값을 더해놓은 상태이기 때문이다.
 		// g_ParticleArray[ThreadID.x].FinalSeperateRotAngle += ((g_ParticleSeperateRotAngleMax - g_ParticleSeperateRotAngleMin) * Rand + g_ParticleSeperateRotAngleMin);
 		float RandRotValue = GetRandValForParticle(float2(XRand, YRand));
+		// '=' 를 '+=' 로 수정 (기존 Particle 에 문제가 발생할 수 있다)
 		g_ParticleArray[ThreadID.x].FinalSeperateRotAngle = (g_ParticleSeperateRotAngleMax - g_ParticleSeperateRotAngleMin) * RandRotValue + g_ParticleSeperateRotAngleMin;
 
 		// 자신의 진행 방향에 따른 회전을 추가한다.

@@ -124,7 +124,9 @@ void ParticleGS(point VertexParticleOutput input[1],
 		float4(Ratio, Ratio, Ratio, Ratio));
 
 	// 회전 (전체 회전 + 각 Particle 회전 정도)
+	// (수정 -> 문제가 될 수도 있음)
 	float3 FinalRotAngle = g_ParticleShareSRV[0].RotationAngle + g_ParticleArraySRV[InstanceID].FinalSeperateRotAngle;
+	// float3 FinalRotAngle = g_ParticleRotationAngle + g_ParticleArraySRV[InstanceID].FinalSeperateRotAngle;
 
 	float3x3 matRot = ComputeRotationMatrix(FinalRotAngle);
 
