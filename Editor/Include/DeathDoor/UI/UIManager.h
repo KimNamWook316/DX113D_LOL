@@ -9,6 +9,7 @@ private:
 	CViewport* m_Viewport;
 	Vector2 m_AbilityIconOriginSize;
 	Vector2 m_AbilityBoxOriginSize;
+	class CWidgetWindow* m_LogoWindow;
 	class CWidgetWindow* m_Window;
 	class CWidgetWindow* m_MouseWindow;
 
@@ -18,6 +19,7 @@ public:
 	bool OnSceneChangeKeepUI(class CScene* CurScene, class CScene* NextScene);
 
 public:
+	void CreateLogoUI(class CDDLogoScene* LogoScene);
 	void CreateDeathDoorUI();
 
 	template <typename T>

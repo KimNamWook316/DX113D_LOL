@@ -273,6 +273,9 @@
     <Filter Include="06. DeathDoor\07. UI\01. Widget">
       <UniqueIdentifier>{dfc539da-61ac-4e4f-8ed6-022e43fb1383}</UniqueIdentifier>
     </Filter>
+    <Filter Include="06. DeathDoor\05. SceneMode\04. Logo">
+      <UniqueIdentifier>{e8cb6c76-e282-4a62-8448-ef36079cb707}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Scene\DefaultScene.cpp">
@@ -981,6 +984,9 @@
     </ClCompile>
     <ClCompile Include="DeathDoor\UI\DDMouseWidgetWindow.cpp">
       <Filter>06. DeathDoor\07. UI\01. Widget</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Scene\DDLogoScene.cpp">
+      <Filter>06. DeathDoor\05. SceneMode\04. Logo</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1697,6 +1703,9 @@
     </ClInclude>
     <ClInclude Include="DeathDoor\UI\DDMouseWidgetWindow.h">
       <Filter>06. DeathDoor\07. UI\01. Widget</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Scene\DDLogoScene.h">
+      <Filter>06. DeathDoor\05. SceneMode\04. Logo</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

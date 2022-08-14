@@ -337,6 +337,7 @@
     <ClCompile Include="DeathDoor\DDUtil.cpp" />
     <ClCompile Include="DeathDoor\Scene\DDBossSceneMode.cpp" />
     <ClCompile Include="DeathDoor\Scene\DDInstanceSceneMode.cpp" />
+    <ClCompile Include="DeathDoor\Scene\DDLogoScene.cpp" />
     <ClCompile Include="DeathDoor\Scene\DDPuzzleSceneMode.cpp" />
     <ClCompile Include="DeathDoor\Scene\DDSceneMode.cpp" />
     <ClCompile Include="DeathDoor\Thread\DDSceneLoadingThread.cpp" />
@@ -581,6 +582,7 @@
     <ClInclude Include="DeathDoor\DDUtil.h" />
     <ClInclude Include="DeathDoor\Scene\DDBossSceneMode.h" />
     <ClInclude Include="DeathDoor\Scene\DDInstanceSceneMode.h" />
+    <ClInclude Include="DeathDoor\Scene\DDLogoScene.h" />
     <ClInclude Include="DeathDoor\Scene\DDPuzzleSceneMode.h" />
     <ClInclude Include="DeathDoor\Scene\DDSceneMode.h" />
     <ClInclude Include="DeathDoor\Thread\DDSceneLoadingThread.h" />

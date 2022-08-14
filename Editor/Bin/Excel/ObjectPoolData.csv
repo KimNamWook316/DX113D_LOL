@@ -19,4 +19,4 @@ PlagueKnight,3,Monster\PlagueKnight\PlagueKnight.gobj
 SporeBoomerParticle,3,Particle\SporeBoomerParticle.gobj
 FirePlantBulletDust,10,Particle\FirePlantBulletDust.gobj
 PlagueKnightParticle,5,Particle\PlagueKnightParticle.gobj
-SpawnEffect,3,Particle\SpawnEffect.gobj
+SpawnEffect,4,Particle\SpawnEffect.gobj

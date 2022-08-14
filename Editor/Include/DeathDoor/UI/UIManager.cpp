@@ -2,10 +2,12 @@
 #include "UIManager.h"
 #include "Widget/WidgetWindow.h"
 #include "Widget/Image.h"
+#include "Widget/Button.h"
 #include "Resource/ResourceManager.h"
 #include "PathManager.h"
 #include "Scene/SceneManager.h"
 #include "../Scene/DDSceneMode.h"
+#include "../Scene/DDLogoScene.h"
 #include "../UI/DDMouseWidgetWindow.h"
 
 #include <sstream>
@@ -98,6 +100,28 @@ bool CUIManager::OnSceneChangeKeepUI(CScene* CurScene, CScene* NextScene)
 	}
 
 	return true;
+}
+
+void CUIManager::CreateLogoUI(class CDDLogoScene* LogoScene)
+{
+	m_LogoWindow = m_Viewport->CreateWidgetWindow<CWidgetWindow>("LogoWindow");
+	m_Window->SetPos(0.f, 0.f);
+
+	CImage* Widget = m_LogoWindow->CreateWidget<CImage>("BackGround");
+	Widget->SetTexture("BackGroundTex", TEXT("UI/DDBackGround.jpg"));
+	Widget->SetPos(0.f, 0.f);
+	Widget->SetSize(1280.f, 720.f);
+	Widget->SetZOrder(0);
+
+	CButton* Button = m_LogoWindow->CreateWidget<CButton>("StartButton");
+	Button->SetTexture(Button_State::Normal, "StartButton", TEXT("UI/Start.png"));
+	Button->SetTexture(Button_State::Click, "StartButton", TEXT("UI/Start.png"));
+	Button->SetTexture(Button_State::MouseOn, "StartButton", TEXT("UI/Start.png"));
+	Button->SetPos(512.f, 296.f);
+	Button->SetSize(256.f, 128.f);
+	Button->ButtonEnable(true);
+	Button->SetZOrder(1);
+	LogoScene->SetStartCallBack(Button);
 }
 
 void CUIManager::CreateDeathDoorUI()
@@ -200,7 +224,6 @@ void CUIManager::CreateDeathDoorUI()
 		TCHAR FileNameTChar[MAX_PATH] = {};
 
 		MultiByteToWideChar(CP_ACP, MB_PRECOMPOSED, FileName, strlen(FileName), FileNameTChar, MAX_PATH);
-
 
 		CImage* Widget = m_Window->CreateWidget<CImage>(Key);
 		Widget->SetTexture(Key, FileNameTChar);
