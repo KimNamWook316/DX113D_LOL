@@ -36,6 +36,8 @@ void CBossBettySpinAttackNode::Init()
 	// 매우 느리게 앞으로 갈 수 있도록 한다.
 	// Move Speed 의 경우 BossDataComponent 에서 처리해주고 있다.
 	// 이제 Close Attack 은 가능하게 해야 한다. Far Attack 이 진행중이므로
+	AnimInst->AddNotify(AnimName, "JumpStartSound", 0,
+		Data, &CBossBettyDataComponent::OnBossBettyJumpStartSound);
 	AnimInst->AddNotify(AnimName, "EnableCloseAttackChangeAnim", 0,
 		Data, &CBossBettyDataComponent::OnBossBettyEnableCloseAttackChangeAnim);
 	AnimInst->AddNotify(AnimName, "EnableZMove", 0,
@@ -74,6 +76,9 @@ void CBossBettySpinAttackNode::Init()
 	AnimName = "SpinCollide";
 
 	// 처음 시작하는 순간, 다시 Spin Collide 를 비활성화 시킨다.
+	AnimInst->AddNotify(AnimName, "CollideWithWallSound", 0,
+		Data, &CBossBettyDataComponent::OnBossBettyCollideWithWallSound);
+
 	AnimInst->AddNotify(AnimName, "DisableSpinCollider", 0, 
 		Data, &CBossBettyDataComponent::OnBossBettyDisableSpinCollider);
 	// 앞으로 가는 것을 무효화
@@ -94,6 +99,9 @@ void CBossBettySpinAttackNode::Init()
 	// >> EndFunctions
 	AnimInst->AddNotify(AnimName, "DisablePlayerLook", 24,
 		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnDisableLookPlayer);
+	// Sound
+	AnimInst->AddNotify(AnimName, "JumpLandSound", 25,
+		Data, &CBossBettyDataComponent::OnBossBettyLandAfterJumpSound);
 	// 마지막 순간에 착지한 바닥을 공격한다.
 	AnimInst->AddNotify(AnimName, "AttackDown", 25,
 		Data, &CBossBettyDataComponent::OnBossBettyGenerateTwoSideCloseAttackEffect);
@@ -159,6 +167,10 @@ void CBossBettySpinAttackNode::OnBossBettyChangeToSpinAnimation()
 	CAnimationSequenceInstance* AnimInst = m_AnimationMeshComp->GetAnimationInstance();
 
 	AnimInst->ChangeAnimation("Spin");
+
+	CBossBettyDataComponent* Data = dynamic_cast<CBossBettyDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
+
+	Data->OnBossBettyRollStartSound();
 }
 
 void CBossBettySpinAttackNode::OnBossBettyEnableSpinChange()

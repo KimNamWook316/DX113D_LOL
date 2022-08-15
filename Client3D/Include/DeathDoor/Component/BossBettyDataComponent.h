@@ -138,10 +138,21 @@ public :
     void OnBossBettyActivateRoarParticle();
 
     // Sound
-    void OnBossBettyIntroSound();
+    void OnBossBettyAttackDownSound();
+    void OnBossBettyThrowBallSound();
+    void OnBossBettyMakeBallSound();
+    void OnBossBettyIntroStartSound();
+    void OnBossBettyThrowBallLandSound(const Vector3&);
+    void OnBossBettyThrowBallFallStartSound();
+    void OnBossBettyLandAfterJumpSound();
+    void OnBossBettyRollStartSound();
+    void OnBossBettyJumpStartSound();
+    void OnBossBettySlashSound();
+    void OnBossBettyChangeAttackDirJumpSound();
+    void OnBossBettyCollideWithWallSound();
     void OnBossBettyRoarSound();
-    void OnBossBettyJumpAttackStartSound();
-    void OnBossBettyThrowSound();
+    virtual void OnDeadPaperBurnEnd() override;
+
     
     // Setter ÇÔ¼ö ---
 public:

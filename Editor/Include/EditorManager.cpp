@@ -626,13 +626,9 @@ CComponent* CEditorManager::CreateComponent(CGameObject* Obj, size_t Type)
 
 	else if (Type == typeid(CGruntCommonDataComponent).hash_code())
 	{
-	CGruntCommonDataComponent* Component = Obj->LoadObjectComponent<CGruntCommonDataComponent>();
-	return Component;
+		CGruntCommonDataComponent* Component = Obj->LoadObjectComponent<CGruntCommonDataComponent>();
+		return Component;
 	}
-
-
-
-
 
 	return nullptr;
 }

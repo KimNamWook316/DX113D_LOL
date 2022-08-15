@@ -31,7 +31,9 @@ void CDDLogoScene::Start()
 
 	m_NextSceneLoadingThread = new CDDSceneLoadingThread;
 	m_NextSceneLoadingThread->Init();
-	m_NextSceneLoadingThread->Load<CDDLogoScene>(this, "MapScene/MushroomDungeon/Sequencial/Mushroom_Init.scn", &CDDLogoScene::OnLoadEnd);
+	m_NextSceneLoadingThread->Load<CDDLogoScene>(this, "MapScene/BossBetty_Final/BossBetty_F2.scn", &CDDLogoScene::OnLoadEnd);
+
+	m_Scene->Play();
 }
 
 void CDDLogoScene::SetStartCallBack(CButton* Button)

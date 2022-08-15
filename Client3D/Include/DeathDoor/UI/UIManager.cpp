@@ -35,6 +35,11 @@ void CUIManager::Init()
 
 void CUIManager::ActivateAbility(Player_Ability Ability)
 {
+	if (!m_Window)
+	{
+		return;
+	}
+
 	switch (Ability)
 	{
 	case Player_Ability::Arrow:
@@ -106,19 +111,21 @@ bool CUIManager::OnSceneChangeKeepUI(CScene* CurScene, CScene* NextScene)
 void CUIManager::CreateLogoUI(class CDDLogoScene* LogoScene)
 {
 	m_LogoWindow = m_Viewport->CreateWidgetWindow<CWidgetWindow>("LogoWindow");
-	m_Window->SetPos(0.f, 0.f);
+	m_LogoWindow->SetPos(0.f, 0.f);
+	m_LogoWindow->SetSize(1280.f, 720.f);
 
 	CImage* Widget = m_LogoWindow->CreateWidget<CImage>("BackGround");
 	Widget->SetTexture("BackGroundTex", TEXT("UI/DDBackGround.jpg"));
 	Widget->SetPos(0.f, 0.f);
 	Widget->SetSize(1280.f, 720.f);
 	Widget->SetZOrder(0);
+	Widget->SetCollsionMouseEnable(false);
 
 	CButton* Button = m_LogoWindow->CreateWidget<CButton>("StartButton");
 	Button->SetTexture(Button_State::Normal, "StartButton", TEXT("UI/Start.png"));
 	Button->SetTexture(Button_State::Click, "StartButton", TEXT("UI/Start.png"));
 	Button->SetTexture(Button_State::MouseOn, "StartButton", TEXT("UI/Start.png"));
-	Button->SetPos(512.f, 296.f);
+	Button->SetPos(512.f, 100.f);
 	Button->SetSize(256.f, 128.f);
 	Button->ButtonEnable(true);
 	Button->SetZOrder(1);
@@ -133,11 +140,16 @@ void CUIManager::DecreaseHP()
 		return;
 
 	CPlayerDataComponent* Comp = Player->FindObjectComponentFromType<CPlayerDataComponent>();
-	
+
 	int HP = Comp->GetHP();
 
 	if (HP == 0)
 		return;
+
+	if (HP == 5)
+	{
+		return;
+	}
 
 	//CTexture* EmptyHPBox = CResourceManager::GetInst()->FindTexture("HPBoxWrapper");
 

@@ -2,7 +2,7 @@ ObjectPoolData,,
 ,Count,Path
 PlayerArrow,5,PlayerArrow.gobj
 BettyAttackAfterEffect,20,Monster\BossBetty\BettyAttackAfterEffect.gobj
-BossBettySnowAttack,15,Monster\BossBetty\BossBettySnowAttack.gobj
+BossBettySnowAttackParticle,20,Monster\BossBetty\BossBettySnowAttack.gobj
 TinyCrow,30,TinyCrow.gobj
 SporeBomb,10,Static\SporeBomb.gobj
 FirePlantBullet,20,Static\FirePlantBullet.gobj
@@ -14,7 +14,7 @@ PlagueKnightBullet,10,Static\PlagueKnightBullet.gobj
 Lurker,5,Monster\Lurker\Lurker.gobj
 Bat,10,Monster\Bat\Bat.gobj
 BossKnightImpact,10,Particle\BossKnightImpact.gobj
-Dodger,5,Monster\Dodger\Dodger.gobj
+Dodger,3,Monster\Dodger\Dodger.gobj
 PlagueKnight,3,Monster\PlagueKnight\PlagueKnight.gobj
 SporeBoomerParticle,3,Particle\SporeBoomerParticle.gobj
 FirePlantBulletDust,10,Particle\FirePlantBulletDust.gobj

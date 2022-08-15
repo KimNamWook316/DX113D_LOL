@@ -62,34 +62,45 @@ void CBossBettyAngryAttackNode::Init()
 		Data, &CBossBettyDataComponent::OnBossBettyGenerateLeftCloseAttackEffect);
 	AnimInst->AddNotify(AnimName, "AttackSound", 34,
 		Data, &CBossBettyDataComponent::OnBossBettyAttackDownSound);
-
+	AnimInst->AddNotify(AnimName, "CameraShake", 34,
+		Data, &CBossBettyDataComponent::OnBossBettyNormalShakeCamera);
 	// 오른쪽
 	AnimInst->AddNotify(AnimName, "OnRightAttackDownEffect", 43, 
 		Data, &CBossBettyDataComponent::OnBossBettyGenerateRightCloseAttackEffect);
 	AnimInst->AddNotify(AnimName, "AttackSound", 43,
 		Data, &CBossBettyDataComponent::OnBossBettyAttackDownSound);
+	AnimInst->AddNotify(AnimName, "OnRightAttackDownEffect", 43, 
+		Data, &CBossBettyDataComponent::OnBossBettyNormalShakeCamera);
 
 	// 왼쪽
 	AnimInst->AddNotify(AnimName, "OnLeftAttackDownEffect", 52, 
 		Data, &CBossBettyDataComponent::OnBossBettyGenerateLeftCloseAttackEffect);
 	AnimInst->AddNotify(AnimName, "AttackSound", 52,
 		Data, &CBossBettyDataComponent::OnBossBettyAttackDownSound);
+	AnimInst->AddNotify(AnimName, "OnLeftAttackDownEffect", 52, 
+		Data, &CBossBettyDataComponent::OnBossBettyNormalShakeCamera);
 
 	// 오른쪽
 	AnimInst->AddNotify(AnimName, "OnRightAttackDownEffect", 62,
 		Data, &CBossBettyDataComponent::OnBossBettyGenerateRightCloseAttackEffect);
 	AnimInst->AddNotify(AnimName, "AttackSound", 63,
 		Data, &CBossBettyDataComponent::OnBossBettyAttackDownSound);
+	AnimInst->AddNotify(AnimName, "OnRightAttackDownEffect", 62,
+		Data, &CBossBettyDataComponent::OnBossBettyNormalShakeCamera);
 
 	// 양쪽
 	AnimInst->AddNotify(AnimName, "OnTwoSideCloseAttackEffect", 78,
 		Data, &CBossBettyDataComponent::OnBossBettyGenerateTwoSideCloseAttackEffect);
 	AnimInst->AddNotify(AnimName, "AttackSound", 73,
 		Data, &CBossBettyDataComponent::OnBossBettyAttackDownSound);
+	AnimInst->AddNotify(AnimName, "OnTwoSideCloseAttackEffect", 78,
+		Data, &CBossBettyDataComponent::OnBossBettyNormalShakeCamera);
 
 	// 울부짖기
 	AnimInst->AddNotifyDeltaTimeFrameRange(AnimName, "OnBettyRoar", 100, 120,
 		Data, &CBossBettyDataComponent::OnBossBettyRoarEffect);
+	AnimInst->AddNotify(AnimName, "OnBettyRoar", 100,
+		Data, &CBossBettyDataComponent::OnBossBettyNormalShakeCamera);
 
 	AnimInst->AddNotify(AnimName, "RoarSound", 100,
 		Data, &CBossBettyDataComponent::OnBossBettyRoarSound);
@@ -158,7 +169,7 @@ void CBossBettyAngryAttackNode::OnBossBettyStartFallingSnowBallEffect()
 		float RandV = ((float)rand() / (RAND_MAX)) + 1;
 		float RandomAngle = 360.f * RandV;
 
-		CGameObject* SnowFallingObject = CObjectPool::GetInst()->GetProjectile("BossBettySnowAttack", CurrentScene);
+		CGameObject* SnowFallingObject = CObjectPool::GetInst()->GetProjectile("BossBettySnowAttackParticle", CurrentScene);
 
 		SnowFallingObject->SetWorldPos(MapSurroundingObjectWorldPos + Vector3(
 			XRand * cos(RandomAngle), (float)YRand, ZRand * sin(RandomAngle)));

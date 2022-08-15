@@ -140,11 +140,16 @@ void CUIManager::DecreaseHP()
 		return;
 
 	CPlayerDataComponent* Comp = Player->FindObjectComponentFromType<CPlayerDataComponent>();
-	
+
 	int HP = Comp->GetHP();
 
 	if (HP == 0)
 		return;
+
+	if (HP == 5)
+	{
+		return;
+	}
 
 	//CTexture* EmptyHPBox = CResourceManager::GetInst()->FindTexture("HPBoxWrapper");
 

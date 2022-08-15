@@ -342,7 +342,6 @@ void CPlayerDataComponent::OnHitBack()
 
 	m_Object->GetScene()->GetResource()->SoundPlay("EnemyHit1");
 
-	CUIManager::GetInst()->DecreaseHP();
 	m_HPChargeTimeStart = true;
 }
 

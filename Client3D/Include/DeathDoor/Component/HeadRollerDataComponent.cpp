@@ -74,7 +74,7 @@ void CHeadRollerDataComponent::DecreaseHP(int Amount)
 	if (m_Data.HP <= 0)
 	{
 		CResourceManager::GetInst()->SoundPlay("HeadRollerDeath");
-		CResourceManager::GetInst()->SoundPause("HeadRollerRoll");
+		// CResourceManager::GetInst()->SoundPause("HeadRollerRoll");
 	}
 	else
 	{
@@ -94,10 +94,10 @@ void CHeadRollerDataComponent::OnPlayStunRecoverSound()
 
 void CHeadRollerDataComponent::OnRollStart()
 {
-	CSound* Sound = CResourceManager::GetInst()->FindSound("HeadRollerRoll");
+	// CSound* Sound = CResourceManager::GetInst()->FindSound("HeadRollerRoll");
 
-	Sound->Stop();
-	Sound->Play();
+	// Sound->Stop();
+	// Sound->Play();
 
 	CAnimationSequenceInstance* AnimInst = m_AnimMesh->GetAnimationInstance();
 	AnimInst->ChangeAnimation("RollLoop");

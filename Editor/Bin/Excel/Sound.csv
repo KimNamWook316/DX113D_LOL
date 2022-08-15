@@ -110,3 +110,4 @@ GruntSpawn,Effect,0,Effect\Grunt\GruntSpawn.mp3,80
 BettySlashSound,Effect,0,Effect\Betty\BettyImpactLandLayer2.mp3,80
 BettyChangeAttackJump,Effect,0,Effect\Betty\BettySmallJump1.mp3,80
 BettyCollideWithWall,Effect,0,Effect\Betty\BettySnowBallHitWall2.mp3,80
+BettyBGM,BGM,1,BGM\BettyBGM.mp3,80

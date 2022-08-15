@@ -151,6 +151,7 @@ public :
     void OnBossBettyChangeAttackDirJumpSound();
     void OnBossBettyCollideWithWallSound();
     void OnBossBettyRoarSound();
+    virtual void OnDeadPaperBurnEnd() override;
 
     
     // Setter ÇÔ¼ö ---

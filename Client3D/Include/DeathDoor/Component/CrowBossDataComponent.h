@@ -4,7 +4,7 @@
 #include "../DDFlag.h"
 
 class CCrowBossDataComponent :
-	public CMonsterDataComponent
+    public CMonsterDataComponent
 {
 	friend class CGameObject;
 
@@ -32,7 +32,7 @@ private:
 
 	std::vector<class CStaticMeshComponent*> m_vecHookChain;
 	float m_ShootAccTime;
-	int m_CurrentHookIndex;
+	int m_CurrentHookIndex; 
 	int m_ClearHookIndex;
 	Vector2	m_UnitSize;
 	Vector3	m_ShootDir;
@@ -56,7 +56,7 @@ private:
 
 public:
 	virtual void Update(float DeltaTime);
-
+	
 public:
 	void ClearTinyCrow();
 
@@ -80,7 +80,7 @@ public:
 	{
 		m_CurrentShootCount = Count;
 	}
-
+	
 	void AddCurrentShootCount()
 	{
 		++m_CurrentShootCount;
@@ -140,7 +140,7 @@ public:
 	{
 		return m_PhaseQueue.front();
 	}
-
+	
 	bool IsSpittingStart()	const
 	{
 		return m_SpittingStart;
@@ -264,3 +264,4 @@ public:
 	bool Spitting(float DeltaTime);
 
 };
+

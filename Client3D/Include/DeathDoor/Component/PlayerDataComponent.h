@@ -255,8 +255,11 @@ public:
 	{
 		if (!m_IsHit)
 		{
-			if(m_Data.HP > 0 && !m_Unbeatable && !m_HitBackUnbeatable)
+			if (m_Data.HP > 0 && !m_Unbeatable && !m_HitBackUnbeatable)
+			{
 				CObjectDataComponent::DecreaseHP(Amout);
+				CUIManager::GetInst()->DecreaseHP();
+			}
 
 			m_IsHit = true;
 		}

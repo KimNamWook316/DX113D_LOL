@@ -13,6 +13,7 @@
 #include "GameObject/GameObject.h"
 #include "ObjectPool.h"
 #include "Node/MonsterHitBack.h"
+#include "Resource/ResourceManager.h"
 
 CGruntCommonDataComponent::CGruntCommonDataComponent() :
 	m_StartAct(false),
@@ -58,6 +59,8 @@ void CGruntCommonDataComponent::Start()
 			(CMonsterDataComponent*)this, &CMonsterDataComponent::OnHitMeleeAttack);
 	}
 
+	m_BloodParticle = nullptr;
+
 	// Change Range
 	m_StopChaseRange = m_Data.MeleeAttackRange;
 
@@ -84,4 +87,16 @@ void CGruntCommonDataComponent::OnActiveMeleeAttackCollider()
 void CGruntCommonDataComponent::OnResetOriginalMoveSpeed()
 {
 	m_CurMoveSpeed = m_OriginMoveSpeed;
+}
+
+void CGruntCommonDataComponent::OnGruntAttackSound()
+{
+	// GruntAttack
+	CResourceManager::GetInst()->SoundPlay("GruntAttack");
+
+}
+
+void CGruntCommonDataComponent::OnGruntSpawnSound()
+{
+	CResourceManager::GetInst()->SoundPlay("GruntSpawn");
 }

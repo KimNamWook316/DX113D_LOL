@@ -14,7 +14,6 @@
 #include "Component/CameraComponent.h"
 #include "GameObject/GameObject.h"
 #include "ObjectPool.h"
-#include "Resource/ResourceManager.h"
 
 CBossBettyDataComponent::CBossBettyDataComponent() :
 	m_ThrowFarAttackEnable(false),
@@ -40,6 +39,8 @@ CBossBettyDataComponent::~CBossBettyDataComponent()
 void CBossBettyDataComponent::Start()
 {
     CMonsterDataComponent::Start();
+
+    CResourceManager::GetInst()->SoundStop("CeramicPalace");
 
     //  CMonsterDataComponent::Start(); 에서 HitBox Collider 를 찾았을 것이다.
     // 해당 Collider 의 Extent 를 설정해준다.
@@ -130,13 +131,18 @@ void CBossBettyDataComponent::Start()
     }
 
     // Roar Particle
-   //m_BossBettyRoarParticle = dynamic_cast<CParticleComponent*>((m_Object->FindComponent("BettyRoar")));
-   //
-   //if (m_BossBettyRoarParticle)
-   //{
-   //    m_BossBettyRoarParticle->Enable(false);
-   //}
- 
+    //m_BossBettyRoarParticle = dynamic_cast<CParticleComponent*>((m_Object->FindComponent("BettyRoar")));
+    //
+    //if (m_BossBettyRoarParticle)
+    //{
+    //    m_BossBettyRoarParticle->SetRelativePos(0.f, 4.f, 0.f);
+    //    m_BossBettyRoarParticle->Enable(false);
+    //}
+
+
+    // Blood Particle
+    m_BloodParticle = nullptr;
+    
     // 근거리 사정 거리 판별 Square Pos 위치 만들기 
     //  0: 왼쪽 하단, 1 : 왼쪽 상단, 2 : 오른쪽 상단, 3 : 오른쪽 하단
     const Vector3& ObjectWorldScale = m_Object->GetRootComponent()->GetWorldScale();
@@ -217,12 +223,16 @@ void CBossBettyDataComponent::OnBossBettyGenerateTwoSideCloseAttackEffect()
     
     const Vector3& ColliderRelativePos = ZWorldAxis * 6.0f;
     
-    m_MeleeAttackCollider->SetRelativePos(ColliderRelativePos);
+    m_MeleeAttackCollider->SetRelativePos(0.f, 0.f, 0.f);
+    m_MeleeAttackCollider->SetWorldPos(m_Object->GetWorldPos());
     m_MeleeAttackCollider->SetExtent(4.f, 2.5f, 2.5f);
     
     OnBossBettyActivateAfterEffect(m_Object->GetWorldPos() + ColliderRelativePos);
 
     // OnBossBettyActivateAfterEffect(m_Object->GetWorldPos());
+
+    // 임의로 주기 
+    OnBossBettyActivateRoarParticle();
 }
 
 void CBossBettyDataComponent::OnSetBossBettyAttackColliderPosToBettyBody()
@@ -233,13 +243,14 @@ void CBossBettyDataComponent::OnSetBossBettyAttackColliderPosToBettyBody()
 
 void CBossBettyDataComponent::OnBossBettyGenerateRightCloseAttackEffect()
 {
-    const Vector3& XWorldAxis = m_Object->GetWorldAxis(AXIS::AXIS_X) * -1.f;
-    const Vector3& ZWorldAxis = m_Object->GetWorldAxis(AXIS::AXIS_Z) * -1.f;
+    const Vector3& XWorldAxis = m_Object->GetRelativeAxis(AXIS::AXIS_X) * -1.f;
+    const Vector3& ZWorldAxis = m_Object->GetRelativeAxis(AXIS::AXIS_Z) * -1.f;
     
     const Vector3& ColliderRelativePos = XWorldAxis * 3.0f + ZWorldAxis * 4.0f;
     
-    m_MeleeAttackCollider->SetRelativePos(ColliderRelativePos);
-    m_MeleeAttackCollider->SetExtent(3.5f, 2.5f, 5.f);
+    m_MeleeAttackCollider->SetRelativePos(0.f, 0.f, 0.f);
+    m_MeleeAttackCollider->SetWorldPos(m_Object->GetWorldPos() + ColliderRelativePos);
+    m_MeleeAttackCollider->SetExtent(2.5f, 2.5f, 4.f);
     
     OnBossBettyActivateAfterEffect(m_Object->GetWorldPos() + ColliderRelativePos);
 
@@ -247,13 +258,14 @@ void CBossBettyDataComponent::OnBossBettyGenerateRightCloseAttackEffect()
 
 void CBossBettyDataComponent::OnBossBettyGenerateLeftCloseAttackEffect()
 {
-    const Vector3& XWorldAxis = m_Object->GetWorldAxis(AXIS::AXIS_X) * -1.f;
-    const Vector3& ZWorldAxis = m_Object->GetWorldAxis(AXIS::AXIS_Z) * -1.f;
+    const Vector3& XWorldAxis = m_Object->GetRelativeAxis(AXIS::AXIS_X) * -1.f;
+    const Vector3& ZWorldAxis = m_Object->GetRelativeAxis(AXIS::AXIS_Z) * -1.f;
     
     const Vector3& ColliderRelativePos = XWorldAxis * 3.5f * -1.f + ZWorldAxis * 4.0f;
     
-    m_MeleeAttackCollider->SetRelativePos(ColliderRelativePos);
-    m_MeleeAttackCollider->SetExtent(3.5f, 2.5f, 5.f);
+    m_MeleeAttackCollider->SetRelativePos(0.f, 0.f, 0.f);
+    m_MeleeAttackCollider->SetWorldPos(m_Object->GetWorldPos() + ColliderRelativePos);
+    m_MeleeAttackCollider->SetExtent(2.5f, 2.5f, 4.f);
     
     OnBossBettyActivateAfterEffect(m_Object->GetWorldPos() + ColliderRelativePos);
 }
@@ -425,23 +437,81 @@ void CBossBettyDataComponent::OnBossBettyStartCutSceneCamera(const CollisionResu
 
 void CBossBettyDataComponent::OnBossBettyActivateRoarParticle()
 {
-    // m_BossBettyRoarParticle->StartParticle(m_Object->GetWorldPos());
+   // m_BossBettyRoarParticle->StartParticle(m_Object->GetWorldPos());
 }
 
-void CBossBettyDataComponent::OnBossBettyIntroSound()
+void CBossBettyDataComponent::OnDeadPaperBurnEnd()
 {
+    CMonsterDataComponent::OnDeadPaperBurnEnd();
+
+    CResourceManager::GetInst()->SoundStop("BettyBGM");
+}
+
+void CBossBettyDataComponent::OnBossBettyAttackDownSound()
+{
+    CResourceManager::GetInst()->SoundPlay("BettyAttackDown");
+}
+
+void CBossBettyDataComponent::OnBossBettyThrowBallSound()
+{
+    CResourceManager::GetInst()->SoundPlay("BettyThrow");
+}
+
+void CBossBettyDataComponent::OnBossBettyMakeBallSound()
+{
+    CResourceManager::GetInst()->SoundPlay("BettyMakeBall");
+}
+
+void CBossBettyDataComponent::OnBossBettyIntroStartSound()
+{
+    CResourceManager::GetInst()->SoundPlay("BettyIntroRoarStart");
+    CResourceManager::GetInst()->SoundPlay("BettyIntroMusicStart");
+    CResourceManager::GetInst()->SoundPlay("BettyBGM");
+}
+
+void CBossBettyDataComponent::OnBossBettyThrowBallLandSound(const Vector3&)
+{
+    CResourceManager::GetInst()->SoundPlay("BettySnowBallLand");
+}
+
+void CBossBettyDataComponent::OnBossBettyThrowBallFallStartSound()
+{
+    CResourceManager::GetInst()->SoundPlay("BettySnowFall");
+}
+
+void CBossBettyDataComponent::OnBossBettyLandAfterJumpSound()
+{
+    CResourceManager::GetInst()->SoundPlay("BettyCollideFloorAfterJump");
+}
+
+void CBossBettyDataComponent::OnBossBettyRollStartSound()
+{
+    CResourceManager::GetInst()->SoundPlay("BettyRollStart");
+}
+
+void CBossBettyDataComponent::OnBossBettyJumpStartSound()
+{
+    CResourceManager::GetInst()->SoundPlay("BettyJumpStart");
+}
+
+void CBossBettyDataComponent::OnBossBettySlashSound()
+{
+    CResourceManager::GetInst()->SoundPlay("BettySlashSound");
+}
+
+void CBossBettyDataComponent::OnBossBettyChangeAttackDirJumpSound()
+{
+    CResourceManager::GetInst()->SoundPlay("BettyChangeAttackJump");
+}
+
+void CBossBettyDataComponent::OnBossBettyCollideWithWallSound()
+{
+    CResourceManager::GetInst()->SoundPlay("BettyCollideWithWall");
 }
 
 void CBossBettyDataComponent::OnBossBettyRoarSound()
 {
-}
-
-void CBossBettyDataComponent::OnBossBettyJumpAttackStartSound()
-{
-}
-
-void CBossBettyDataComponent::OnBossBettyThrowSound()
-{
+     CResourceManager::GetInst()->SoundPlay("BettyRoar");
 }
 
 void CBossBettyDataComponent::IncFarAttackCount()

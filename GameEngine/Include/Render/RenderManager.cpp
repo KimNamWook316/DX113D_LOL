@@ -356,13 +356,11 @@ bool CRenderManager::Init()
 
 	m_RenderLayerList.push_back(Layer);
 
-#ifdef _DEBUG
 	Layer = new RenderLayer;
 	Layer->Name = "Collider";
 	Layer->LayerPriority = (int)RenderLayerType::Collider;
 
 	m_RenderLayerList.push_back(Layer);
-#endif // _DEBUG
 
 	m_DepthDisable = m_RenderStateManager->FindRenderState("DepthDisable");
 	m_AlphaBlend = m_RenderStateManager->FindRenderState("AlphaBlend");

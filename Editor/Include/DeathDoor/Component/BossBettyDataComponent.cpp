@@ -40,6 +40,8 @@ void CBossBettyDataComponent::Start()
 {
     CMonsterDataComponent::Start();
 
+    CResourceManager::GetInst()->SoundStop("CeramicPalace");
+
     //  CMonsterDataComponent::Start(); 에서 HitBox Collider 를 찾았을 것이다.
     // 해당 Collider 의 Extent 를 설정해준다.
     m_HitBox->SetExtent(3.5f, 3.5f, 3.5f);
@@ -438,6 +440,13 @@ void CBossBettyDataComponent::OnBossBettyActivateRoarParticle()
    // m_BossBettyRoarParticle->StartParticle(m_Object->GetWorldPos());
 }
 
+void CBossBettyDataComponent::OnDeadPaperBurnEnd()
+{
+    CMonsterDataComponent::OnDeadPaperBurnEnd();
+
+    CResourceManager::GetInst()->SoundStop("BettyBGM");
+}
+
 void CBossBettyDataComponent::OnBossBettyAttackDownSound()
 {
     CResourceManager::GetInst()->SoundPlay("BettyAttackDown");
@@ -457,6 +466,7 @@ void CBossBettyDataComponent::OnBossBettyIntroStartSound()
 {
     CResourceManager::GetInst()->SoundPlay("BettyIntroRoarStart");
     CResourceManager::GetInst()->SoundPlay("BettyIntroMusicStart");
+    CResourceManager::GetInst()->SoundPlay("BettyBGM");
 }
 
 void CBossBettyDataComponent::OnBossBettyThrowBallLandSound(const Vector3&)

@@ -159,12 +159,12 @@ void CBossBettyThrowNode::MakeSnowBallAttackObj()
 	// - 그것을, 가져올 것이다. (해당 정보는 BossBettyDataComponent 에 들고 있게 할 것이다)
 	CScene* CurrentScene = CSceneManager::GetInst()->GetScene();
 
-	m_CurrentThrowBall = CObjectPool::GetInst()->GetProjectile("BossBettySnowAttack", CurrentScene);
+	m_CurrentThrowBall = CObjectPool::GetInst()->GetProjectile("BossBettySnowAttackParticle", CurrentScene);
 	
 	// Debug 용
 	if (m_CurrentThrowBall == nullptr)
 	{
-		m_CurrentThrowBall = CObjectPool::GetInst()->GetProjectile("BossBettySnowAttack", CurrentScene);
+		m_CurrentThrowBall = CObjectPool::GetInst()->GetProjectile("BossBettySnowAttackParticle", CurrentScene);
 		return;
 	}
 

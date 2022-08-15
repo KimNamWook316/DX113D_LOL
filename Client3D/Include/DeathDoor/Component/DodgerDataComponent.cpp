@@ -39,11 +39,7 @@ void CDodgerDataComponent::Start()
 	m_SlashLine = m_Object->FindComponentFromType<CStaticMeshComponent>();
 	m_SlashLine->SetDrawShadow(false);
 	m_SlashLinePaperBurn = (CPaperBurnComponent*)m_Object->FindComponent("SlashPaperBurn1");
-
-	if (m_SlashLine)
-	{
-		m_SlashLine->Enable(false);
-	}
+	m_SlashLine->Enable(false);
 
 	CAnimationSequenceInstance* AnimInst = m_AnimMesh->GetAnimationInstance();
 

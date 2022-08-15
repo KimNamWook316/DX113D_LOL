@@ -118,7 +118,7 @@ bool CSceneManager::LoadNewSceneFullPath(const char* FullPath, bool ChangeNow)
 		strcpy_s(m_LoadedSceneFullPath, FullPath);
 	}
 
-	m_NextScene->m_Play = false;
+	m_NextScene->m_Play = true;
 
 	return LoadResult;
 }

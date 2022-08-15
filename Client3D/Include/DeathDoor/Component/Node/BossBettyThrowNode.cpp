@@ -159,12 +159,12 @@ void CBossBettyThrowNode::MakeSnowBallAttackObj()
 	// - 그것을, 가져올 것이다. (해당 정보는 BossBettyDataComponent 에 들고 있게 할 것이다)
 	CScene* CurrentScene = CSceneManager::GetInst()->GetScene();
 
-	m_CurrentThrowBall = CObjectPool::GetInst()->GetProjectile("BossBettySnowAttack", CurrentScene);
+	m_CurrentThrowBall = CObjectPool::GetInst()->GetProjectile("BossBettySnowAttackParticle", CurrentScene);
 	
 	// Debug 용
 	if (m_CurrentThrowBall == nullptr)
 	{
-		m_CurrentThrowBall = CObjectPool::GetInst()->GetProjectile("BossBettySnowAttack", CurrentScene);
+		m_CurrentThrowBall = CObjectPool::GetInst()->GetProjectile("BossBettySnowAttackParticle", CurrentScene);
 		return;
 	}
 
@@ -218,6 +218,9 @@ void CBossBettyThrowNode::MakeSnowBallAttackObj()
 
 		m_ParticleMoveInitSpeed = m_ParticleMoveSpeed;
 	}
+
+	// Sound
+	Data->OnBossBettyMakeBallSound();
 }
 
 // Snow Ball Attack Obj 를 Player 방향으로 던지기 
@@ -248,10 +251,16 @@ void CBossBettyThrowNode::ThrowSnowBallAttackObj()
 
 	// Throw Particlee
 	ProjTileComp->ShootByTargetPos(m_CurrentThrowBall->GetWorldPos(), 50.f, PlayerPos + Vector3(0.f, 2.f, 0.f), AfterEffectParticle);
+
+	// CallBack Sound
+	ProjTileComp->SetEndCallBack(Data, &CBossBettyDataComponent::OnBossBettyThrowBallLandSound);
 		
 	// Throw Attack Enable 을 다시 False 로 바꿔준다
 	Data->SetThrowAttackEnable(false);
 
 	// 더이상 ThrowBall 을 ThrowNode 내에서 움직이지 않게 한다.
 	m_CurrentThrowBall = nullptr;
+
+	// Sound
+	Data->OnBossBettyThrowBallSound();
 }

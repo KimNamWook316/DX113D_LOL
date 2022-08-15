@@ -18,9 +18,7 @@ enum class RenderLayerType
 	ScreenWidgetComponent,
 	AnimationEditor,
 	ParticleEditor,
-#ifdef _DEBUG
 	Collider
-#endif // _DEBUG
 };
 
 enum class FadeEffecType

@@ -5,7 +5,7 @@
 #include "Input.h"
 #include "Resource/ResourceManager.h"
 #include "Collision/CollisionManager.h"
-#include "UI/UIManager.h"
+#include "DeathDoor/UI/UIManager.h"
 
 // Component
 #include "Component/CameraComponent.h"
@@ -59,6 +59,8 @@
 #include "DeathDoor\Scene\DDBossSceneMode.h"
 #include "DeathDoor\Scene\DDInstanceSceneMode.h"
 #include "DeathDoor\Scene\DDPuzzleSceneMode.h"
+#include "DeathDoor\Scene\DDLogoScene.h"
+#include "DeathDoor\Scene\EndingScene.h"
 
 #include "Scene/Navigation3DManager.h"
 #include "DeathDoor\DataManager.h"
@@ -97,6 +99,9 @@ bool CClientManager3D::Init(HINSTANCE hInst)
 	
 	// Data Manager
 	CDataManager::GetInst()->Init();
+
+	// UI Manager
+	CUIManager::GetInst()->Init();
 	
 	// Object Pool
 	CObjectPool::GetInst()->Init();
@@ -116,7 +121,7 @@ void CClientManager3D::CreateDefaultSceneMode()
 void CClientManager3D::LoadInitialScene()
 {
 	// TODO : Initial Scene ±³Ã¼
-	CSceneManager::GetInst()->LoadNewScene("MapScene/MushroomDungeon/Sequencial/Mushroom_Init.scn", SCENE_PATH, true);
+	CSceneManager::GetInst()->LoadNewScene("MapScene/Logo.scn", SCENE_PATH, true);
 }
 
 int CClientManager3D::Run()
@@ -141,6 +146,14 @@ void CClientManager3D::CreateSceneMode(CScene* Scene, size_t Type)
 	else if (Type == typeid(CDDPuzzleSceneMode).hash_code())
 	{
 		Scene->CreateSceneMode<CDDPuzzleSceneMode>();
+	}
+	else if (Type == typeid(CEndingScene).hash_code())
+	{
+		Scene->CreateSceneMode<CEndingScene>();
+	}
+	else if (Type == typeid(CDDLogoScene).hash_code())
+	{
+		Scene->CreateSceneMode<CDDLogoScene>();
 	}
 }
 
