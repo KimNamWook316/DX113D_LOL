@@ -19,9 +19,8 @@ PlagueKnight,3,Monster\PlagueKnight\PlagueKnight.gobj
 SporeBoomerParticle,3,Particle\SporeBoomerParticle.gobj
 FirePlantBulletDust,10,Particle\FirePlantBulletDust.gobj
 PlagueKnightParticle,5,Particle\PlagueKnightParticle.gobj
-SpawnEffect,4,Particle\SpawnEffect.gobj
+SpawnEffect,3,Particle\SpawnEffect.gobj
 GruntNormal,5,Monster\GruntMonster\NormalGrunt\NormalGrunt_Final.gobj
 GruntPot,5,Monster\GruntMonster\GruntPot\GruntPot.gobj
 GruntRedemeer,5,Monster\GruntMonster\GruntRedemeer\GruntRedemeer.gobj
-GruntNormal_Stand,9,Monster\GruntMonster\GruntStartStand\GruntNormal_Stand.gobj
-GruntPot_Stand,9,Monster\GruntMonster\GruntStartStand\GruntPot_Stand.gobj
+BettySlash,15,Particle\BettySlash.gobj

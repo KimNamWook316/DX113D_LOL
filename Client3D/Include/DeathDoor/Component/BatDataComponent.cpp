@@ -5,6 +5,7 @@
 #include "Component/AnimationMeshComponent.h"
 #include "MonsterNavAgent.h"
 #include "GameStateComponent.h"
+#include "Scene/Scene.h"
 
 CBatDataComponent::CBatDataComponent() :
 	m_RecognizeStart(false),
@@ -38,6 +39,11 @@ void CBatDataComponent::Start()
 
 	m_AnimMesh->GetAnimationInstance()->AddNotify<CBatDataComponent>("MeleeAttack", "MeleeAttackStart", 19, this, &CBatDataComponent::OnMeleeAttackColliderEnable);
 	m_AnimMesh->GetAnimationInstance()->AddNotify<CBatDataComponent>("MeleeAttack", "MeleeAttackEnd", 32, this, &CBatDataComponent::OnMeleeAttackColliderDisable);
+
+	m_AnimMesh->GetAnimationInstance()->AddNotify<CBatDataComponent>("MeleeAttack", "MeleeAttackSoundPlay", 18, this, &CBatDataComponent::OnAttackSoundPlay);
+	m_AnimMesh->GetAnimationInstance()->AddNotify<CBatDataComponent>("Death", "DeathSoundPlay", 32, this, &CBatDataComponent::OnDeathSoundPlay);
+	m_AnimMesh->GetAnimationInstance()->AddNotify<CBatDataComponent>("Run", "FlapSoundPlay", 10, this, &CBatDataComponent::OnFlapSoundPlay);
+	m_AnimMesh->GetAnimationInstance()->AddNotify<CBatDataComponent>("Run", "FlapSoundPlay", 30, this, &CBatDataComponent::OnFlapSoundPlay);
 
 
 	if (m_MonsterNavAgent)
@@ -136,4 +142,19 @@ void CBatDataComponent::OnCollision(const CollisionResult& Result)
 
 		Data->DecreaseHP(Attack);
 	}
+}
+
+void CBatDataComponent::OnAttackSoundPlay()
+{
+	m_Object->GetScene()->GetResource()->SoundPlay("BatAttack");
+}
+
+void CBatDataComponent::OnDeathSoundPlay()
+{
+	m_Object->GetScene()->GetResource()->SoundPlay("BatDeath");
+}
+
+void CBatDataComponent::OnFlapSoundPlay()
+{
+	m_Object->GetScene()->GetResource()->SoundPlay("BatFlap");
 }

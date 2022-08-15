@@ -4,6 +4,7 @@
 #include "Component/PaperBurnComponent.h"
 #include "../Component/GameStateComponent.h"
 #include "ObjectPool.h"
+#include "Resource/ResourceManager.h"
 
 CDDInstanceSceneMode::CDDInstanceSceneMode()
 {
@@ -163,6 +164,7 @@ void CDDInstanceSceneMode::Update(float DeltaTime)
 
 				if (SpawnDoor)
 				{
+					CResourceManager::GetInst()->SoundPlay("SpawnDoorAppear");
 					SpawnDoor->Start();
 					CPaperBurnComponent* DoorPaperBurn = SpawnDoor->FindObjectComponentFromType<CPaperBurnComponent>();
 					DoorPaperBurn->SetFinishCallback(this, &CDDInstanceSceneMode::OnSpawnDoorPaperBurnEnd);
@@ -240,11 +242,11 @@ bool CDDInstanceSceneMode::Save(FILE* File)
 {
 	CDDSceneMode::Save(File);
 
-	int Length = m_EnterTriggerObjectName.length();
+	int Length = (int)m_EnterTriggerObjectName.length();
 	fwrite(&Length, sizeof(int), 1, File);
 	fwrite(m_EnterTriggerObjectName.c_str(), sizeof(char), Length, File);
 
-	Length = m_BlockerObjectName.length();
+	Length = (int)m_BlockerObjectName.length();
 	fwrite(&Length, sizeof(int), 1, File);
 	fwrite(m_BlockerObjectName.c_str(), sizeof(char), Length, File);
 
@@ -252,7 +254,7 @@ bool CDDInstanceSceneMode::Save(FILE* File)
 	fwrite(&EndEventObjNameCount, sizeof(int), 1, File);
 	for (int i = 0; i < EndEventObjNameCount; ++i)
 	{
-		Length = m_vecEndEventObjName[i].length();
+		Length = (int)m_vecEndEventObjName[i].length();
 		fwrite(&Length, sizeof(int), 1, File);
 		fwrite(m_vecEndEventObjName[i].c_str(), sizeof(char), Length, File);
 	}
@@ -277,7 +279,7 @@ bool CDDInstanceSceneMode::Save(FILE* File)
 
 		for (; iterSpawnInfo != iterSpawnInfoEnd; ++iterSpawnInfo)
 		{
-			Length = (*iterSpawnInfo)->MonsterName.length();
+			Length = (int)(*iterSpawnInfo)->MonsterName.length();
 			fwrite(&Length, sizeof(int), 1, File);
 			fwrite((*iterSpawnInfo)->MonsterName.c_str(), sizeof(char), Length, File);
 			fwrite(&(*iterSpawnInfo)->SpawnPosition, sizeof(Vector3), 1, File);
@@ -382,6 +384,10 @@ void CDDInstanceSceneMode::OnClearDungeon()
 		m_vecEndEventObj[i].PaperBurnComp->SetEndEvent(PaperBurnEndEvent::Reset);
 		m_vecEndEventObj[i].PaperBurnComp->StartPaperBurn();
 	}
+
+	// 다시 BGM 재생
+	CResourceManager::GetInst()->SoundStop("InstanceDungeonBGM");
+	CResourceManager::GetInst()->SoundPlay(m_ReturnMusic);
 }
 
 void CDDInstanceSceneMode::AddSpawnPhase()
@@ -745,10 +751,22 @@ void CDDInstanceSceneMode::OnCollideEnterTrigger(const CollisionResult& Result)
 
 		if (m_BlockerObj)
 		{
+			CResourceManager::GetInst()->SoundPlay("BlockerUp");
 			m_BlockerObj->Enable(true);
 		}
 
 		m_EnterTrigger->GetGameObject()->Enable(false);
+
+		// 현재 BGM 잠깐 멈추고 인스턴스 던전 BGM으로 변경
+		m_ReturnMusic= m_Scene->GetSceneSaveGlobalData().BackGroundData.MusicKeyName;
+
+		if (m_ReturnMusic.empty())
+		{
+			m_ReturnMusic = m_Scene->GetSceneSaveGlobalData().BackGroundData.PrevMusicKeyName;
+		}
+
+		CResourceManager::GetInst()->SoundStop(m_ReturnMusic);
+		CResourceManager::GetInst()->SoundPlay("InstanceDungeonBGM");
 	}
 }
 
@@ -757,15 +775,24 @@ void CDDInstanceSceneMode::OnSpawnDoorPaperBurnEnd()
 	DDSpawnObjectSet Set = m_PaperBurnEndSpawnQueue.front();
 	m_PaperBurnEndSpawnQueue.pop();
 
+	Vector3 SpawnPos = Set.Info->SpawnPosition;
+
 	// 몬스터를 소환한다.
 	CGameObject* Monster = CObjectPool::GetInst()->GetMonster(Set.Info->MonsterName, m_Scene);
-	Monster->SetWorldPos(Set.Info->SpawnPosition);
+	Monster->SetWorldPos(SpawnPos);
 	Monster->SetWorldRotation(Set.Info->SpawnRotation);
+	CResourceManager::GetInst()->SoundPlay("EnemySpawn");
+
+	// Spawn Particle
+	CGameObject* Particle = CObjectPool::GetInst()->GetParticle("SpawnEffect", m_Scene);
+	SpawnPos.y += 2.f;
+	Particle->StartParticle(SpawnPos);
 
 	CGameStateComponent* State = Monster->FindObjectComponentFromType<CGameStateComponent>();
 	State->SetTreeUpdate(true);
 
 	// 페이퍼번 정재생 한 뒤 파괴하기 위해 큐에 넣는다.
+	CResourceManager::GetInst()->SoundPlay("SpawnDoorDisappear");
 	Set.DoorPaperBurn->SetInverse(false);
 	Set.DoorPaperBurn->SetFinishCallback(this, &CDDInstanceSceneMode::OnSpawnDoorDestroy);
 	Set.DoorPaperBurn->StartPaperBurn();

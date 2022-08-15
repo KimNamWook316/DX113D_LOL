@@ -137,6 +137,7 @@ void CKnightDataComponent::OnEndAnimJudgeContinueAttack()
 
 void CKnightDataComponent::OnEnableLookAndMove()
 {
+	OnPlayWalkSound();
 	m_MoveZ = true;
 	m_LookPlayer = true;
 	m_CurMoveSpeed = m_Data.MoveSpeed;
@@ -165,6 +166,7 @@ void CKnightDataComponent::OnStartJumpAttackMove()
 
 void CKnightDataComponent::OnEndJumpAttackMove()
 {
+	CResourceManager::GetInst()->SoundPlay("BossKnightJump");
 	m_CurMoveSpeed = m_Data.MoveSpeed * 3.f;
 	m_LookPlayer = false;
 }
@@ -183,6 +185,7 @@ void CKnightDataComponent::OnEndContinueAttack()
 
 void CKnightDataComponent::OnCutSceneSlamFloor()
 {
+	CResourceManager::GetInst()->SoundPlay("BossKnightCutsceneSlam");
 	m_Scene->GetCameraManager()->ShakeCamera(0.5f, 2.f);
 }
 
@@ -190,12 +193,15 @@ void CKnightDataComponent::OnDeadAnimStart()
 {
 	CMonsterDataComponent::OnDeadAnimStart();
 
+	CResourceManager::GetInst()->SoundPlay("BossKnightDeath");
+
 	m_AnimMesh->GetAnimationInstance()->GetCurrentAnimation()->SetPlayScale(0.5f);
 	m_DeathColorChangeTimeMax = m_AnimMesh->GetAnimationInstance()->GetCurrentAnimation()->GetAnimationPlayTime() * 0.5f;
 }
 
 void CKnightDataComponent::OnDeadPaperBurnEnd()
 {
+	CResourceManager::GetInst()->SoundStop("KnightBossBattleBGM");
 	CMonsterDataComponent::OnDeadPaperBurnEnd();
 }
 
@@ -221,17 +227,38 @@ void CKnightDataComponent::OnEndCutScene()
 
 	CRenderManager::GetInst()->SetDOFMin(m_OriginDOFMin);
 	CRenderManager::GetInst()->SetDOFMax(m_OriginDOFMax);
+
+	CResourceManager::GetInst()->SoundPlay("KnightBossBattleBGM");
+}
+
+void CKnightDataComponent::OnPlayerEnterZone(const CollisionResult& Result)
+{
+	CMonsterDataComponent::OnPlayerEnterZone(Result);
+
+	CResourceManager::GetInst()->SoundStop("MushroomDungeonBGM");
+	CResourceManager::GetInst()->SoundPlay("BossKnightAmbientBGM");
 }
 
 void CKnightDataComponent::OnActiveMeleeAttackCollider()
 {
 	CMonsterDataComponent::OnActiveMeleeAttackCollider();
 
-	// TODO : Boss Knight - Particle
+	int Rand = rand() % 5;
+	std::string Key = "BossKnightSlam" + std::to_string(Rand);
+	CResourceManager::GetInst()->SoundPlay(Key);
+
 	CGameObject* Particle = CObjectPool::GetInst()->GetParticle("BossKnightImpact", m_Scene);
 
 	Vector3 Pos = m_ParticlePos->GetWorldPos();
-	Particle->SetWorldPos(Pos);
+	Particle->StartParticle(Pos);
 
 	m_Scene->GetCameraManager()->ShakeCamera(0.5f, 2.f);
+}
+
+void CKnightDataComponent::OnPlayWalkSound()
+{
+	int WalkSound = m_WalkSoundCount % 2;
+	std::string Key = "BossKnightStep" + std::to_string(WalkSound);
+	CResourceManager::GetInst()->SoundPlay(Key);
+	++m_WalkSoundCount;
 }

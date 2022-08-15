@@ -14,6 +14,7 @@
 #include "Component/CameraComponent.h"
 #include "GameObject/GameObject.h"
 #include "ObjectPool.h"
+#include "Resource/ResourceManager.h"
 
 CBossBettyDataComponent::CBossBettyDataComponent() :
 	m_ThrowFarAttackEnable(false),
@@ -425,6 +426,22 @@ void CBossBettyDataComponent::OnBossBettyStartCutSceneCamera(const CollisionResu
 void CBossBettyDataComponent::OnBossBettyActivateRoarParticle()
 {
     // m_BossBettyRoarParticle->StartParticle(m_Object->GetWorldPos());
+}
+
+void CBossBettyDataComponent::OnBossBettyIntroSound()
+{
+}
+
+void CBossBettyDataComponent::OnBossBettyRoarSound()
+{
+}
+
+void CBossBettyDataComponent::OnBossBettyJumpAttackStartSound()
+{
+}
+
+void CBossBettyDataComponent::OnBossBettyThrowSound()
+{
 }
 
 void CBossBettyDataComponent::IncFarAttackCount()

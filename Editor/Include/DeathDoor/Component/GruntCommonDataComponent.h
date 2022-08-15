@@ -23,6 +23,10 @@ public :
     virtual void ActivateHitSubEffect();
     virtual void OnActiveMeleeAttackCollider();
     void OnResetOriginalMoveSpeed();
+
+public :
+    void OnGruntAttackSound();
+    void OnGruntSpawnSound();
     
     // Getter
 public:

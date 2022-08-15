@@ -154,8 +154,13 @@ NodeResult CReadyToShoot::OnUpdate(float DeltaTime)
 	{
 		CPlayerBowComponent* BowComp = m_Object->FindComponentFromType<CPlayerBowComponent>();
 
-		if (BowComp)
+		if (BowComp && !BowComp->GetShowBow())
+		{
 			BowComp->ShowBow(m_CameraMoveDir);
+
+			m_Object->GetScene()->GetResource()->SoundPlay("ArrowCharge");
+			BowComp->SetShowBow(true);
+		}
 	}
 
 	CCameraComponent* CurCam = CSceneManager::GetInst()->GetScene()->GetCameraManager()->GetCurrentCamera();

@@ -35,6 +35,7 @@ private:
 	float m_AccTime;
 	float m_LaserGenTime;
 
+	bool m_LaserShootSoundPlay;
 
 public:
 	CMesh* GetMesh()	const

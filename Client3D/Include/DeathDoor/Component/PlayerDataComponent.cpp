@@ -14,6 +14,7 @@
 #include "Component/StaticMeshComponent.h"
 #include "Component/AnimationMeshComponent.h"
 #include "Component/ParticleComponent.h"
+#include "Component/PaperBurnComponent.h"
 
 CPlayerDataComponent::CPlayerDataComponent() :
 	m_OnSlash(false),
@@ -30,7 +31,14 @@ CPlayerDataComponent::CPlayerDataComponent() :
 	m_AdjLadder(nullptr),
 	m_Slash(nullptr),
 	m_Sword(nullptr),
-	m_CurrentDustIndex(0)
+	m_CurrentDustIndex(0),
+	m_SlashPaperBurn(nullptr),
+	m_ConsecutiveAttackCount(0),
+	m_HitBackUnbeatable(false),
+	m_HitBackUnbeatableTime(1.2f),
+	m_HitBackUnbeatableAccTime(0.f),
+	m_AccHPChargeTime(0.f),
+	m_HPChargeTime(3.f)
 {
 	SetTypeID<CPlayerDataComponent>();
 	m_ComponentType = Component_Type::ObjectComponent;
@@ -49,6 +57,7 @@ CPlayerDataComponent::~CPlayerDataComponent()
 
 void CPlayerDataComponent::Start()
 {
+
 	m_Scene->GetSceneMode()->SetPlayerObject(m_Object);
 
 	CInput::GetInst()->CreateKey("WeaponArrow", '1');
@@ -76,23 +85,31 @@ void CPlayerDataComponent::Start()
 	m_AttackCheckCollider->Enable(false);
 
 	// Player Animation Notify는 여기 추가
-	m_AnimComp->GetAnimationInstance()->AddNotify<CPlayerDataComponent>("PlayerSlashL", "PlayerSlashL", 2, this, &CPlayerDataComponent::SetTrueOnSlash);
-	m_AnimComp->GetAnimationInstance()->AddNotify<CPlayerDataComponent>("PlayerSlashL", "PlayerSlashL", 8, this, &CPlayerDataComponent::SetFalseOnSlash);
-	m_AnimComp->GetAnimationInstance()->AddNotify<CPlayerDataComponent>("PlayerSlashR", "PlayerSlashR", 2, this, &CPlayerDataComponent::SetTrueOnSlash);
-	m_AnimComp->GetAnimationInstance()->AddNotify<CPlayerDataComponent>("PlayerSlashR", "PlayerSlashR", 8, this, &CPlayerDataComponent::SetFalseOnSlash);
+	m_AnimComp->GetAnimationInstance()->AddNotify<CPlayerDataComponent>("PlayerSlashL", "PlayerSlashL", 1, this, &CPlayerDataComponent::SetTrueOnSlash);
+	m_AnimComp->GetAnimationInstance()->AddNotify<CPlayerDataComponent>("PlayerSlashL", "PlayerSlashL", 7, this, &CPlayerDataComponent::SetFalseOnSlash);
+	m_AnimComp->GetAnimationInstance()->AddNotify<CPlayerDataComponent>("PlayerSlashR", "PlayerSlashR", 1, this, &CPlayerDataComponent::SetTrueOnSlash);
+	m_AnimComp->GetAnimationInstance()->AddNotify<CPlayerDataComponent>("PlayerSlashR", "PlayerSlashR", 7, this, &CPlayerDataComponent::SetFalseOnSlash);
 	m_AnimComp->GetAnimationInstance()->AddNotify<CPlayerDataComponent>("PlayerHitBack", "PlayerHitBack", 0, this, &CPlayerDataComponent::OnHitBack);
 
 	m_AnimComp->GetAnimationInstance()->AddNotify<CPlayerDataComponent>("PlayerBomb", "PlayerBomb", 3, this, &CPlayerDataComponent::OnBombLift);
-	m_AnimComp->GetAnimationInstance()->AddNotify<CPlayerDataComponent>("PlayerBomb", "PlayerBombCountRest", 4, this, &CPlayerDataComponent::OnBombCountReset);
+	m_AnimComp->GetAnimationInstance()->AddNotify<CPlayerDataComponent>("PlayerBomb", "PlayerBombCountReset", 4, this, &CPlayerDataComponent::OnBombCountReset);
 
 	m_AnimComp->GetAnimationInstance()->AddNotify<CPlayerDataComponent>("PlayerRun", "MoveDustOn", 10, this, &CPlayerDataComponent::OnResetDustParticle);
 	m_AnimComp->GetAnimationInstance()->AddNotify<CPlayerDataComponent>("PlayerRun", "MoveDustOn", 30, this, &CPlayerDataComponent::OnResetDustParticle);
 
 	m_AnimComp->GetAnimationInstance()->AddNotify<CPlayerDataComponent>("PlayerRoll", "PlayerRoll", 0, this, &CPlayerDataComponent::OnRoll);
+
+	m_AnimComp->GetAnimationInstance()->AddNotify<CPlayerDataComponent>("PlayerLadderUp", "PlayerLadderUpStepSoundPlay1", 6, this, &CPlayerDataComponent::OnLadderStepSoundPlay);
+	m_AnimComp->GetAnimationInstance()->AddNotify<CPlayerDataComponent>("PlayerLadderUp", "PlayerLadderUpStepSoundPlay2", 25, this, &CPlayerDataComponent::OnLadderStepSoundPlay);
+	//m_AnimComp->GetAnimationInstance()->AddNotify<CPlayerDataComponent>("PlayerLadderUp", "PlayerLadderUpStepSoundPlay3", 28, this, &CPlayerDataComponent::OnLadderStepSoundPlay);
+	m_AnimComp->GetAnimationInstance()->AddNotify<CPlayerDataComponent>("PlayerLadderDown", "PlayerLadderDownStepSoundPlay1", 6, this, &CPlayerDataComponent::OnLadderStepSoundPlay);
+	m_AnimComp->GetAnimationInstance()->AddNotify<CPlayerDataComponent>("PlayerLadderDown", "PlayerLadderDownStepSoundPlay2", 25, this, &CPlayerDataComponent::OnLadderStepSoundPlay);
+	//m_AnimComp->GetAnimationInstance()->AddNotify<CPlayerDataComponent>("PlayerLadderDown", "PlayerLadderDownStepSoundPlay3", 25, this, &CPlayerDataComponent::OnLadderStepSoundPlay);
 	
 	m_AnimComp->GetAnimationInstance()->SetEndFunction<CPlayerDataComponent>("PlayerHitBack", this, &CPlayerDataComponent::OnHitBackEnd);
 	m_AnimComp->GetAnimationInstance()->SetEndFunction<CPlayerDataComponent>("PlayerHitRecover", this, &CPlayerDataComponent::OnHitRecoverEnd);
 	m_AnimComp->GetAnimationInstance()->SetEndFunction<CPlayerDataComponent>("PlayerRoll", this, &CPlayerDataComponent::OnRollEnd);
+
 
 	m_Data = CDataManager::GetInst()->GetObjectData("Player");
 	m_Body = (CColliderComponent*)m_Object->FindComponent("Body");
@@ -100,8 +117,13 @@ void CPlayerDataComponent::Start()
 	m_Slash = (CStaticMeshComponent*)m_Object->FindComponent("Slash");
 	if(m_Slash)
 		m_Slash->Enable(false);
+
+
 	m_SlashDir = m_Object->GetWorldAxis(AXIS_Z);
 	m_SlashDir *= 1.f;
+	// x는 xz평면에 평행하게 하려고 100.f으로 맞춘거고 나머지 y,z의 초기 설정값을 0으로 relative rotation을 맞춰줘야한다
+	m_Slash->SetRelativeRotation(100.f, 0.f, 0.f);
+
 
 	m_Sword = (CAnimationMeshComponent*)m_Object->FindComponent("SwordAnim");
 
@@ -111,11 +133,14 @@ void CPlayerDataComponent::Start()
 	Vector3 RootPos = m_AnimComp->GetWorldPos();
 	Vector3 CamPos = Cam->GetWorldPos();
 	m_CamRelativePos = CamPos - RootPos;
+
+	m_SlashPaperBurn = m_Object->FindObjectComponentFromType<CPaperBurnComponent>();
+
+	SetPlayerAbilityArrow(0.f);
 }
 
 bool CPlayerDataComponent::Init()
 {
-
 	return true;
 }
 
@@ -161,9 +186,47 @@ void CPlayerDataComponent::Update(float DeltaTime)
 
 			m_UnbeatableAccTime += DeltaTime;
 		}
+
+		else if (m_HitBackUnbeatable)
+		{
+			if (m_HitBackUnbeatableAccTime > m_HitBackUnbeatableTime)
+			{
+				m_Body->Enable(true);
+
+				m_IsHit = false;
+
+				m_HitBackUnbeatable = false;
+				m_HitBackUnbeatableAccTime = 0.f;
+				return;
+			}
+
+			m_IsHit = false;
+
+			m_HitBackUnbeatableAccTime += DeltaTime;
+		}
 	}
 
+	if (m_HPChargeTimeStart)
+	{
+		if (m_AccHPChargeTime >= m_HPChargeTime)
+		{
+			CUIManager::GetInst()->IncreaseHP();
 
+			int HP = m_Data.HP;
+			++HP;
+			m_Data.HP = HP;
+
+			m_AccHPChargeTime = 0.f;
+			m_HPChargeTimeStart = false;
+
+			if (m_Data.HP < 5)
+				m_HPChargeTimeStart = true;
+		}
+
+		m_AccHPChargeTime += DeltaTime;
+	}
+
+	m_SlashPaperBurn = m_Object->FindObjectComponentFromType<CPaperBurnComponent>();
 }
 
 void CPlayerDataComponent::PostUpdate(float DeltaTime)
@@ -235,33 +298,11 @@ inline void CPlayerDataComponent::SetTrueOnSlash()
 	m_AttackCheckCollider->Enable(true);
 	m_Slash->Enable(true);
 
-	Vector3 AxisZ = m_Object->GetWorldAxis(AXIS_Z);
-
-	float Angle = 0.f;
-	float DotProduct = m_SlashDir.Dot(AxisZ);
-	Vector3 CrossVec = m_SlashDir.Cross(AxisZ);
-
-	if (DotProduct >= -0.99999999999f && DotProduct <= 0.99999999999f)
+	if (m_SlashPaperBurn)
 	{
-		Angle = RadianToDegree(acosf(DotProduct));
-
-		if (CrossVec.y < 0)
-			Angle *= -1.f;
+		m_SlashPaperBurn->SetEndEvent(PaperBurnEndEvent::Disable);
+		m_SlashPaperBurn->StartPaperBurn();
 	}
-
-	else
-	{
-		if (DotProduct == -1.f)
-			Angle = 180.f;
-	}
-
-	m_Slash->AddRelativeRotationY(Angle);
-
-	Matrix mat;
-	mat.Rotation(Vector3(0.f, Angle, 0.f));
-
-	m_SlashDir = m_SlashDir.TransformCoord(mat);
-	
 }
 
 inline void CPlayerDataComponent::SetFalseOnSlash()
@@ -269,7 +310,7 @@ inline void CPlayerDataComponent::SetFalseOnSlash()
 	m_OnSlash = false;
 
 	m_AttackCheckCollider->Enable(false);
-	m_Slash->Enable(false);
+	//m_Slash->Enable(false);
 }
 
 CAnimationMeshComponent* CPlayerDataComponent::GetSword() const
@@ -291,19 +332,26 @@ void CPlayerDataComponent::OnHitBack()
 {
 	m_Body->Enable(false);
 	m_NoInterrupt = true;
+
+	m_Object->GetScene()->GetResource()->SoundPlay("EnemyHit1");
+
+	CUIManager::GetInst()->DecreaseHP();
+	m_HPChargeTimeStart = true;
 }
 
 void CPlayerDataComponent::OnHitBackEnd()
 {
 	m_AnimComp->GetAnimationInstance()->ChangeAnimation("PlayerHitRecover");
+	m_HitBackUnbeatable = true;
 }
 
 void CPlayerDataComponent::OnHitRecoverEnd()
 {
-	m_Body->Enable(true);
+	//m_Body->Enable(true);
 
-	m_NoInterrupt = false;
+	//m_NoInterrupt = false;
 	m_IsHit = false;
+	m_NoInterrupt = false;
 }
 
 void CPlayerDataComponent::OnRoll()
@@ -426,12 +474,19 @@ void CPlayerDataComponent::OnResetDustParticle()
 		Vector3 ZDir = m_Object->GetWorldAxis(AXIS_Z);
 
 		if (m_vecMoveDust[m_CurrentDustIndex])
+		{
 			m_vecMoveDust[m_CurrentDustIndex]->StartParticle(Vector3(ObjectPos.x + ZDir.x, ObjectPos.y + 1.f, ObjectPos.z + ZDir.z));
-		// m_vecMoveDust[m_CurrentDustIndex]->RecreateOnlyOnceCreatedParticleWithOutLifeTimeSetting();
+			//m_vecMoveDust[m_CurrentDustIndex]->RecreateOnlyOnceCreatedParticleWithOutLifeTimeSetting();
+		}
 
 		++m_CurrentDustIndex;
 
 		if (m_CurrentDustIndex >= m_vecMoveDust.size())
 			m_CurrentDustIndex = 0;
 	}
+}
+
+void CPlayerDataComponent::OnLadderStepSoundPlay()
+{
+	m_Object->GetScene()->GetResource()->SoundPlay("LadderStep");
 }

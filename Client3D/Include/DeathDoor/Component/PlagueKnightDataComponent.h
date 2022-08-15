@@ -15,8 +15,10 @@ private:
 public:
 	virtual void Start() override;
     virtual void Update(float DeltaTime) override;
+    virtual void DecreaseHP(int Amount) override;
 
 public:
+    void OnShootReadyAnimStart();
     void OnShootReadyAnimEnd();
     void OnChargeAnimEnd();
     void OnShoot();

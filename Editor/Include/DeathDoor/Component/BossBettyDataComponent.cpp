@@ -136,7 +136,11 @@ void CBossBettyDataComponent::Start()
     //    m_BossBettyRoarParticle->SetRelativePos(0.f, 4.f, 0.f);
     //    m_BossBettyRoarParticle->Enable(false);
     //}
- 
+
+
+    // Blood Particle
+    m_BloodParticle = nullptr;
+    
     // 근거리 사정 거리 판별 Square Pos 위치 만들기 
     //  0: 왼쪽 하단, 1 : 왼쪽 상단, 2 : 오른쪽 상단, 3 : 오른쪽 하단
     const Vector3& ObjectWorldScale = m_Object->GetRootComponent()->GetWorldScale();
@@ -432,6 +436,72 @@ void CBossBettyDataComponent::OnBossBettyStartCutSceneCamera(const CollisionResu
 void CBossBettyDataComponent::OnBossBettyActivateRoarParticle()
 {
    // m_BossBettyRoarParticle->StartParticle(m_Object->GetWorldPos());
+}
+
+void CBossBettyDataComponent::OnBossBettyAttackDownSound()
+{
+    CResourceManager::GetInst()->SoundPlay("BettyAttackDown");
+}
+
+void CBossBettyDataComponent::OnBossBettyThrowBallSound()
+{
+    CResourceManager::GetInst()->SoundPlay("BettyThrow");
+}
+
+void CBossBettyDataComponent::OnBossBettyMakeBallSound()
+{
+    CResourceManager::GetInst()->SoundPlay("BettyMakeBall");
+}
+
+void CBossBettyDataComponent::OnBossBettyIntroStartSound()
+{
+    CResourceManager::GetInst()->SoundPlay("BettyIntroRoarStart");
+    CResourceManager::GetInst()->SoundPlay("BettyIntroMusicStart");
+}
+
+void CBossBettyDataComponent::OnBossBettyThrowBallLandSound(const Vector3&)
+{
+    CResourceManager::GetInst()->SoundPlay("BettySnowBallLand");
+}
+
+void CBossBettyDataComponent::OnBossBettyThrowBallFallStartSound()
+{
+    CResourceManager::GetInst()->SoundPlay("BettySnowFall");
+}
+
+void CBossBettyDataComponent::OnBossBettyLandAfterJumpSound()
+{
+    CResourceManager::GetInst()->SoundPlay("BettyCollideFloorAfterJump");
+}
+
+void CBossBettyDataComponent::OnBossBettyRollStartSound()
+{
+    CResourceManager::GetInst()->SoundPlay("BettyRollStart");
+}
+
+void CBossBettyDataComponent::OnBossBettyJumpStartSound()
+{
+    CResourceManager::GetInst()->SoundPlay("BettyJumpStart");
+}
+
+void CBossBettyDataComponent::OnBossBettySlashSound()
+{
+    CResourceManager::GetInst()->SoundPlay("BettySlashSound");
+}
+
+void CBossBettyDataComponent::OnBossBettyChangeAttackDirJumpSound()
+{
+    CResourceManager::GetInst()->SoundPlay("BettyChangeAttackJump");
+}
+
+void CBossBettyDataComponent::OnBossBettyCollideWithWallSound()
+{
+    CResourceManager::GetInst()->SoundPlay("BettyCollideWithWall");
+}
+
+void CBossBettyDataComponent::OnBossBettyRoarSound()
+{
+     CResourceManager::GetInst()->SoundPlay("BettyRoar");
 }
 
 void CBossBettyDataComponent::IncFarAttackCount()

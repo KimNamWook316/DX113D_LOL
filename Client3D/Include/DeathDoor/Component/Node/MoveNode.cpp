@@ -109,20 +109,23 @@ NodeResult CMoveNode::OnUpdate(float DeltaTime)
 	float Degree = FrontVector.Dot(MoveDir);
 	Degree = RadianToDegree(acosf(Degree));
 
-	// 180도 넘으면 반시계로 회전
-	if (Over180)
+	if (abs(Degree) > 1.5f)
 	{
-		if (Degree > 1.5f)
+		// 180도 넘으면 반시계로 회전
+		if (Over180)
 		{
-			m_Object->AddWorldRotationY(720.f * DeltaTime);
+			if (Degree > 1.5f)
+			{
+				m_Object->AddWorldRotationY(720.f * DeltaTime);
+			}
 		}
-	}
 
-	else
-	{
-		if (Degree > 1.5f)
+		else
 		{
-			m_Object->AddWorldRotationY(-720.f * DeltaTime);
+			if (Degree > 1.5f)
+			{
+				m_Object->AddWorldRotationY(-720.f * DeltaTime);
+			}
 		}
 	}
 

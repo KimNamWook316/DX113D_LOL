@@ -58,6 +58,7 @@
 #include "Node/PlayerEnterZoneCheckNode.h"
 #include "Node/PlayerEnterTriggerIsEnable.h"
 #include "Node/ChasePlayerNode.h"
+#include "Node/MonsterHitBack.h"
 #include "Node/MeleeAttackNode.h"
 
 // Boss - Knight
@@ -148,6 +149,17 @@
 #include "Node/LurkerHopStartCheck.h"
 #include "Node/LurkerHop.h"
 #include "Node/LurkerMeleeAttackPrep.h"
+
+// Monster - Grunt - Condition
+#include "Node/GruntCommonMoveStartCheckNode.h"
+#include "Node/GruntCommonSpawnCheckNode.h"
+
+// Monster - Grunt - Action
+#include "Node/GruntCommonAttackNode.h"
+#include "Node/GruntCommonHitNode.h"
+#include "Node/GruntCommonSpawnNode.h"
+#include "Node/GruntCommonTraceNode.h"
+#include "Node/GruntCommonWalkNode.h"
 
 #include "GameStateComponent.h"
 
@@ -467,6 +479,11 @@ CNode* CGameBehaviorTree::LoadNode(CNode* Parent, size_t TypeID)
 		NewNode = MakeNode<CChasePlayerNode>(Parent, OwnerObject);
 	}
 
+	else if (TypeID == typeid(CMonsterHitBack).hash_code())
+	{
+	NewNode = MakeNode<CMonsterHitBack>(Parent, OwnerObject);
+	}
+
 	else if (TypeID == typeid(CMeleeAttackNode).hash_code())
 	{
 		NewNode = MakeNode<CMeleeAttackNode>(Parent, OwnerObject);
@@ -538,66 +555,7 @@ CNode* CGameBehaviorTree::LoadNode(CNode* Parent, size_t TypeID)
 	{
 		NewNode = MakeNode<CBossKnightPlayerEnterZoneCheck>(Parent, OwnerObject);
 	}
-	// Boss Betty Action
-	else if (TypeID == typeid(CBossBettyAngryAttackNode).hash_code())
-	{
-	NewNode = MakeNode<CBossBettyAngryAttackNode>(Parent, OwnerObject);
-	}
-	else if (TypeID == typeid(CBossBettyChangeAttackDirNode).hash_code())
-	{
-	NewNode = MakeNode<CBossBettyChangeAttackDirNode>(Parent, OwnerObject);
-	}
-	else if (TypeID == typeid(CBossBettyCloseAttackNode).hash_code())
-	{
-	NewNode = MakeNode<CBossBettyCloseAttackNode>(Parent, OwnerObject);
-	}
-	else if (TypeID == typeid(CBossBettyJumpAttackNode).hash_code())
-	{
-	NewNode = MakeNode<CBossBettyJumpAttackNode>(Parent, OwnerObject);
-	}
-	else if (TypeID == typeid(CBossBettySpinAttackNode).hash_code())
-	{
-	NewNode = MakeNode<CBossBettySpinAttackNode>(Parent, OwnerObject);
-	}
-	else if (TypeID == typeid(CBossBettyThrowNode).hash_code())
-	{
-	NewNode = MakeNode<CBossBettyThrowNode>(Parent, OwnerObject);
-	}
-	else if (TypeID == typeid(CBossBettyIntroNode).hash_code())
-	{
-	NewNode = MakeNode<CBossBettyIntroNode>(Parent, OwnerObject);
-	}
-	else if (TypeID == typeid(CBossBettyIdleBeastNode).hash_code())
-	{
-	NewNode = MakeNode<CBossBettyIdleBeastNode>(Parent, OwnerObject);
-	}
-	// Boss Betty Condition
-	else if (TypeID == typeid(CBossBettyChangeDirCheck).hash_code())
-	{
-	NewNode = MakeNode<CBossBettyChangeDirCheck>(Parent, OwnerObject);
-	}
-	else if (TypeID == typeid(CBossBettyFarAttackTypeCheck).hash_code())
-	{
-	NewNode = MakeNode<CBossBettyFarAttackTypeCheck>(Parent, OwnerObject);
-	}
-	else if (TypeID == typeid(CBossBettyHPStateCheck).hash_code())
-	{
-	NewNode = MakeNode<CBossBettyHPStateCheck>(Parent, OwnerObject);
-	}
-	else if (TypeID == typeid(CBossBettyThrowAttackCheck).hash_code())
-	{
-	NewNode = MakeNode<CBossBettyThrowAttackCheck>(Parent, OwnerObject);
-	}
-	else if (TypeID == typeid(CBossBettyIdleAnimCheck).hash_code())
-	{
-	NewNode = MakeNode<CBossBettyIdleAnimCheck>(Parent, OwnerObject);
-	}
-	else if (TypeID == typeid(CBossBettyIntroAnimCheck).hash_code())
-	{
-	NewNode = MakeNode<CBossBettyIntroAnimCheck>(Parent, OwnerObject);
-	}
-
-
+	
 	// Boss Crow - Condition
 	else if (TypeID == typeid(CCrowBossCutScenePlayCheck).hash_code())
 	{
@@ -766,6 +724,145 @@ CNode* CGameBehaviorTree::LoadNode(CNode* Parent, size_t TypeID)
 	{
 		NewNode = MakeNode<CLurkerMeleeAttackPrep>(Parent, OwnerObject);
 	}
+	else if (TypeID == typeid(CLurkerMeleeAttackPrep).hash_code())
+	{
+	NewNode = MakeNode<CLurkerMeleeAttackPrep>(Parent, OwnerObject);
+	}
+
+	// BossBetty
+	{
+		// Boss Betty Action
+		if (TypeID == typeid(CBossBettyAngryAttackNode).hash_code())
+		{
+		NewNode = MakeNode<CBossBettyAngryAttackNode>(Parent, OwnerObject);
+		}
+		else if (TypeID == typeid(CBossBettyChangeAttackDirNode).hash_code())
+		{
+		NewNode = MakeNode<CBossBettyChangeAttackDirNode>(Parent, OwnerObject);
+		}
+		else if (TypeID == typeid(CBossBettyCloseAttackNode).hash_code())
+		{
+		NewNode = MakeNode<CBossBettyCloseAttackNode>(Parent, OwnerObject);
+		}
+		else if (TypeID == typeid(CBossBettyJumpAttackNode).hash_code())
+		{
+		NewNode = MakeNode<CBossBettyJumpAttackNode>(Parent, OwnerObject);
+		}
+		else if (TypeID == typeid(CBossBettySpinAttackNode).hash_code())
+		{
+		NewNode = MakeNode<CBossBettySpinAttackNode>(Parent, OwnerObject);
+		}
+		else if (TypeID == typeid(CBossBettyThrowNode).hash_code())
+		{
+		NewNode = MakeNode<CBossBettyThrowNode>(Parent, OwnerObject);
+		}
+		else if (TypeID == typeid(CBossBettyIntroNode).hash_code())
+		{
+		NewNode = MakeNode<CBossBettyIntroNode>(Parent, OwnerObject);
+		}
+		else if (TypeID == typeid(CBossBettyIdleBeastNode).hash_code())
+		{
+		NewNode = MakeNode<CBossBettyIdleBeastNode>(Parent, OwnerObject);
+		}
+		// Boss Betty Condition
+		else if (TypeID == typeid(CBossBettyChangeDirCheck).hash_code())
+		{
+		NewNode = MakeNode<CBossBettyChangeDirCheck>(Parent, OwnerObject);
+		}
+		else if (TypeID == typeid(CBossBettyFarAttackTypeCheck).hash_code())
+		{
+		NewNode = MakeNode<CBossBettyFarAttackTypeCheck>(Parent, OwnerObject);
+		}
+		else if (TypeID == typeid(CBossBettyHPStateCheck).hash_code())
+		{
+		NewNode = MakeNode<CBossBettyHPStateCheck>(Parent, OwnerObject);
+		}
+		else if (TypeID == typeid(CBossBettyThrowAttackCheck).hash_code())
+		{
+		NewNode = MakeNode<CBossBettyThrowAttackCheck>(Parent, OwnerObject);
+		}
+		else if (TypeID == typeid(CBossBettyIdleAnimCheck).hash_code())
+		{
+		NewNode = MakeNode<CBossBettyIdleAnimCheck>(Parent, OwnerObject);
+		}
+		else if (TypeID == typeid(CBossBettyIntroAnimCheck).hash_code())
+		{
+		NewNode = MakeNode<CBossBettyIntroAnimCheck>(Parent, OwnerObject);
+		}
+	}
+	// Grunt Normal
+	{
+		if (TypeID == typeid(CGruntCommonSpawnCheckNode).hash_code())
+		{
+			NewNode = MakeNode<CGruntCommonSpawnCheckNode>(Parent, OwnerObject);
+		}
+		else if (TypeID == typeid(CGruntCommonMoveStartCheckNode).hash_code())
+		{
+			NewNode = MakeNode<CGruntCommonMoveStartCheckNode>(Parent, OwnerObject);
+		}
+		else if (TypeID == typeid(CGruntCommonAttackNode).hash_code())
+		{
+			NewNode = MakeNode<CGruntCommonAttackNode>(Parent, OwnerObject);
+		}
+		else if (TypeID == typeid(CGruntCommonHitNode).hash_code())
+		{
+			NewNode = MakeNode<CGruntCommonHitNode>(Parent, OwnerObject);
+		}
+		else if (TypeID == typeid(CGruntCommonSpawnNode).hash_code())
+		{
+			NewNode = MakeNode<CGruntCommonSpawnNode>(Parent, OwnerObject);
+		}
+		else if (TypeID == typeid(CGruntCommonTraceNode).hash_code())
+		{
+			NewNode = MakeNode<CGruntCommonTraceNode>(Parent, OwnerObject);
+		}
+		else if (TypeID == typeid(CGruntCommonWalkNode).hash_code())
+		{
+			NewNode = MakeNode<CGruntCommonWalkNode>(Parent, OwnerObject);
+		}
+	}
 
 	return NewNode;
+ }
+
+	// GruntNormal
+	//else if (TypeID == typeid(CGruntCommonMoveStartCheckNode).hash_code())
+	//{
+	//NewNode = MakeNode<CGruntCommonMoveStartCheckNode>(Parent, OwnerObject);
+	//}
+	/*
+	else if (TypeID == typeid(CGruntCommonSpawnCheckNode).hash_code())
+	{
+	NewNode = MakeNode<CGruntCommonSpawnCheckNode>(Parent, OwnerObject);
+	}
+	else if (TypeID == typeid(CGruntCommonAttackNode).hash_code())
+	{
+	NewNode = MakeNode<CGruntCommonAttackNode>(Parent, OwnerObject);
+	}
+	else if (TypeID == typeid(CGruntCommonHitNode).hash_code())
+	{
+	NewNode = MakeNode<CGruntCommonHitNode>(Parent, OwnerObject);
+	}
+	else if (TypeID == typeid(CGruntCommonSpawnNode).hash_code())
+	{
+	NewNode = MakeNode<CGruntCommonSpawnNode>(Parent, OwnerObject);
+	}
+	else if (TypeID == typeid(CGruntCommonTraceNode).hash_code())
+	{
+	NewNode = MakeNode<CGruntCommonTraceNode>(Parent, OwnerObject);
+	}
+	else if (TypeID == typeid(CGruntCommonWalkNode).hash_code())
+	{
+	NewNode = MakeNode<CGruntCommonWalkNode>(Parent, OwnerObject);
+	}
+	*/
+
+CNode* CGameBehaviorTree::LoadConditionNode(CNode* Parent, size_t TypeID)
+{
+	return nullptr;
+}
+
+CNode* CGameBehaviorTree::LoadActionNode(CNode* Parent, size_t TypeID)
+{
+	return nullptr;
 }

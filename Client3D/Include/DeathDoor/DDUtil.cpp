@@ -208,7 +208,14 @@ std::string CDDUtil::DDConditionNodeTypeToString(DDConditionNode NodeType)
 	// Lurker
 	case DDConditionNode::LurkerHopStartCheck:
 		return "LurkerHopStartCheck";
+
+	// Grunt Common
+	case DDConditionNode::GruntCommonSpawnCheck:
+		return "GruntCommonSpawnCheck";
+	case DDConditionNode::GruntCommonStartActCheck:
+		return "GruntCommonStartActCheck";
 	}
+
 
 	return "";
 }
@@ -423,11 +430,20 @@ DDConditionNode CDDUtil::StringToDDConditionNodeType(const std::string& Str)
 	{
 		return DDConditionNode::BatRecognizeEndCheck;
 	}
-
 	// Lurker
 	else if (Str == "LurkerHopStartCheck")
 	{
 		return DDConditionNode::LurkerHopStartCheck;
+	}
+
+	// Grunt Common
+	else if (Str == "GruntCommonSpawnCheck")
+	{
+		return DDConditionNode::GruntCommonSpawnCheck;
+	}
+	else if (Str == "GruntCommonStartActCheck")
+	{
+	return DDConditionNode::GruntCommonStartActCheck;
 	}
 
 	return DDConditionNode(-1);
@@ -479,9 +495,11 @@ std::string CDDUtil::DDActionNodeTypeToString(DDActionNode NodeType)
 	case DDActionNode::PlayerRoll:
 		return "PlayerRoll";
 
+		// Monster
 	case DDActionNode::ChasePlayer:
 		return "ChasePlayer";
-
+	case DDActionNode::MonsterHitBack:
+		return "MonsterHitBack";
 	case DDActionNode::MeleeAttack:
 		return "MeleeAttack";
 
@@ -607,6 +625,8 @@ std::string CDDUtil::DDActionNodeTypeToString(DDActionNode NodeType)
 		return "GruntCommonTrace";
 	case DDActionNode::GruntCommonHit:
 		return "GruntCommonHit";
+	case DDActionNode::GruntCommonSpawn:
+		return "GruntCommonSpawn";
 	}
 
 	return "";
@@ -665,6 +685,10 @@ DDActionNode CDDUtil::StringToDDActionNodeType(const std::string& Str)
 	else if (Str == "ChasePlayer")
 	{
 		return DDActionNode::ChasePlayer;
+	}
+	else if (Str == "MonsterHitBack")
+	{
+		return DDActionNode::MonsterHitBack;
 	}
 	else if (Str == "MeleeAttack")
 	{
@@ -862,6 +886,11 @@ DDActionNode CDDUtil::StringToDDActionNodeType(const std::string& Str)
 	{
 	return DDActionNode::GruntCommonHit;
 	}
+	else if (Str == "GruntCommonSpawn")
+	{
+	return DDActionNode::GruntCommonSpawn;
+	}
+	
 
 	return DDActionNode(-1);
 }

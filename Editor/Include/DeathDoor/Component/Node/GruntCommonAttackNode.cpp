@@ -46,6 +46,9 @@ void CGruntCommonAttackNode::Init()
 
 	// 2. Attack Main
 	AnimName = "AttackMain";
+	AnimInst->AddNotify(AnimName, "AttackStartSound", 0,
+		Data, &CGruntCommonDataComponent::OnGruntAttackSound);
+
 	AnimInst->AddNotify(AnimName, "SpeedInc", 0,
 		this, &CGruntCommonAttackNode::IncMoveSpeed);
 	AnimInst->AddNotify(AnimName, "DisableLookPlayer", 0,

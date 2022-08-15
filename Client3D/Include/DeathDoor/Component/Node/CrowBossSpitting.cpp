@@ -4,6 +4,7 @@
 #include "../CrowBossDataComponent.h"
 #include "Component/AnimationMeshComponent.h"
 #include "DeathNode.h"
+#include "Scene/Scene.h"
 
 CCrowBossSpitting::CCrowBossSpitting()
 {
@@ -30,6 +31,8 @@ NodeResult CCrowBossSpitting::OnStart(float DeltaTime)
 		m_AnimationMeshComp->GetAnimationInstance()->ChangeAnimation("Death");
 
 		m_Owner->GetOwner()->SetTreeUpdate(false);
+
+		m_Object->GetScene()->GetResource()->SoundPlay("OldCrow_Death");
 
 		return NodeResult::Node_False;
 	}

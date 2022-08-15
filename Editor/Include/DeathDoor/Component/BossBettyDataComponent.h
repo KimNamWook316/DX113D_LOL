@@ -136,6 +136,22 @@ public :
     void OnBossBettyStartCutSceneCamera(const CollisionResult& Result);
     // Roar Particle Effect
     void OnBossBettyActivateRoarParticle();
+
+    // Sound
+    void OnBossBettyAttackDownSound();
+    void OnBossBettyThrowBallSound();
+    void OnBossBettyMakeBallSound();
+    void OnBossBettyIntroStartSound();
+    void OnBossBettyThrowBallLandSound(const Vector3&);
+    void OnBossBettyThrowBallFallStartSound();
+    void OnBossBettyLandAfterJumpSound();
+    void OnBossBettyRollStartSound();
+    void OnBossBettyJumpStartSound();
+    void OnBossBettySlashSound();
+    void OnBossBettyChangeAttackDirJumpSound();
+    void OnBossBettyCollideWithWallSound();
+    void OnBossBettyRoarSound();
+
     
     // Setter ÇÔ¼ö ---
 public:
