@@ -75,8 +75,9 @@ struct	ParticleCBuffer
 	int FollowRealTimeParticleComponentPos; // 실시간으로 Particle Component 의 위치를 따라가게 할 것인가 
 
 	Vector3 ParticleEmptyInfo1;
+	int RotateXYDistFromCenter; // 원뿔 모양을 만들어내기 위해서, 가운데 생성 지점으로부터 떨어져 있는 구간을 고려해서 Rotate 시켜주기 
+
 	Vector3 ParticleEmptyInfo2;
-	int ParticleInfo1; // 현재 살아있는 Particle 들을 모두 Alive False 로 만들어주기 
 	float ParticleInfo2;
 };
 
@@ -193,6 +194,5 @@ enum class ParticleSpecialMoveDir
 {
 	XZSpread = 0, // xz 평명 방향으로 이동 y는 0
 	XYSpread, // xy 평명 방향으로 이동 z 는 0
-	CornSpread, // 원뿔 형태로 퍼져나가게 하기 
 	Max
 };

@@ -794,7 +794,7 @@ void CScene::UpdateSceneGlobalData()
 	m_LightManager->SetGlogbalLightAmbientIntensity(m_SceneGlobalData.GLightData.AmbientIntensity);
 
 	std::string SkyBoxFileName = m_SceneGlobalData.BackGroundData.SkyBoxFileName;
-	if (!SkyBoxFileName.empty() || SkyBoxFileName == "NONE")
+	if (!SkyBoxFileName.empty() && SkyBoxFileName != "NONE")
 	{
 		dynamic_cast<CSkyObject*>(m_SkyObject.Get())->SetSkyTexture(m_SceneGlobalData.BackGroundData.SkyBoxFileName.c_str());
 	}

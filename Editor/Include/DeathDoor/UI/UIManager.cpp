@@ -35,6 +35,11 @@ void CUIManager::Init()
 
 void CUIManager::ActivateAbility(Player_Ability Ability)
 {
+	if (!m_Window)
+	{
+		return;
+	}
+
 	switch (Ability)
 	{
 	case Player_Ability::Arrow:
