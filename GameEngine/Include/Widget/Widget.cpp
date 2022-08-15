@@ -7,6 +7,7 @@
 #include "../Resource/Shader/WidgetConstantBuffer.h"
 #include "../Resource/ResourceManager.h"
 #include "../Scene/SceneManager.h"
+#include "../Device.h"
 
 CWidget::CWidget()	:
 	m_Owner(nullptr),
@@ -61,18 +62,8 @@ void CWidget::Start()
 
 bool CWidget::Init()
 {
-	if (m_Owner->GetViewport())
-		m_Shader = m_Owner->GetViewport()->GetScene()->GetResource()->FindShader("WidgetShader");
-
-	else
-		m_Shader = CResourceManager::GetInst()->FindShader("WidgetShader");
-
-
-	if (m_Owner->GetViewport())
-		m_Mesh = m_Owner->GetViewport()->GetScene()->GetResource()->FindMesh("WidgetMesh");
-
-	else
-		m_Mesh = CResourceManager::GetInst()->FindMesh("WidgetMesh");
+	m_Shader = CResourceManager::GetInst()->FindShader("WidgetShader");
+	m_Mesh = CResourceManager::GetInst()->FindMesh("WidgetMesh");
 
 	m_CBuffer = new CWidgetConstantBuffer;
 
@@ -136,16 +127,18 @@ bool CWidget::CollisionMouse(const Vector2& MousePos)
 	if (!m_CollisionMouseEnable)
 		return false;
 
+	Resolution RS = CDevice::GetInst()->GetResolution();
+
 	if (m_RenderPos.x > MousePos.x)
 		return false;
 
 	else if (m_RenderPos.x + m_Size.x < MousePos.x)
 		return false;
 
-	else if (m_RenderPos.y > MousePos.y)
+	else if (m_RenderPos.y > RS.Height - MousePos.y)
 		return false;
 
-	else if (m_RenderPos.y + m_Size.y < MousePos.y)
+	else if (m_RenderPos.y + m_Size.y < RS.Height - MousePos.y)
 		return false;
 
 	return true;

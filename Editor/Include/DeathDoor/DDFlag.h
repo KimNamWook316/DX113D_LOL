@@ -225,6 +225,7 @@ enum class DDSceneModeType
 	DDBossSceneMode,
 	DDInstanceSceneMode,
 	DDPuzzleSceneMode,
+	DDLogoSceneMode,
 	Max
 };
 
