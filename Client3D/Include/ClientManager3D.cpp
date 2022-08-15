@@ -101,6 +101,9 @@ bool CClientManager3D::Init(HINSTANCE hInst)
 	CObjectPool::GetInst()->LoadPoolData("ObjectPoolData.csv");
 	CObjectPool::GetInst()->CreatePoolObject(OBJECT_PATH);
 
+	CInput::GetInst()->CreateKey("DebugRender", 0);
+	CInput::GetInst()->SetKeyCallback("DebugRender", KeyState_Down, this, &CClientManager3D::SetDebugRender);
+
 	return true;
 }
 
@@ -442,4 +445,14 @@ CComponent* CClientManager3D::CreateComponent(CGameObject* Obj, size_t Type)
 	}
 
 	return nullptr;
+}
+
+void CClientManager3D::SetDebugRender(float DeltaTime)
+{
+	bool Debug = CRenderManager::GetInst()->GetDebugRender();
+
+	if (Debug)
+		CRenderManager::GetInst()->SetDebugRender(false);
+	else
+		CRenderManager::GetInst()->SetDebugRender(true);
 }

@@ -427,14 +427,6 @@ void CMonsterDataComponent::OnDeadPaperBurnEnd()
 
 void CMonsterDataComponent::OnDeadAnimStart()
 {
-	m_HitBox->Enable(false);
-
-	if (m_MeleeAttackCollider)
-	{
-		m_MeleeAttackCollider->Enable(false);
-	}
-
-
 	// DeathChangeColor() 를 사용하는 경우
 	m_DeathColorChangeStart = true;
 
@@ -853,6 +845,21 @@ void CMonsterDataComponent::RotateRandomly(float DeltaTime)
 	}
 
 	m_Object->AddWorldRotationY(RotAmount);
+}
+
+void CMonsterDataComponent::DecreaseHP(int Amount)
+{
+	CObjectDataComponent::DecreaseHP(Amount);
+
+	if (m_Data.HP <= 0)
+	{
+		m_HitBox->Enable(false);
+
+		if (m_MeleeAttackCollider)
+		{
+			m_MeleeAttackCollider->Enable(false);
+		}
+	}
 }
 
 bool CMonsterDataComponent::Save(FILE* File)

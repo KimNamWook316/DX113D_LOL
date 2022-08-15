@@ -329,7 +329,8 @@ bool CEngine::Update(float DeltaTime)
 			}
 		}
 
-		Pos.y -= m_MouseWidget[(int)m_MouseState]->GetWindowSize().y;
+		// Pos.y -= m_MouseWidget[(int)m_MouseState]->GetWindowSize().y;
+		Pos.y = m_RS.Height - Pos.y;
 
 		m_MouseWidget[(int)m_MouseState]->SetPos(Pos);
 

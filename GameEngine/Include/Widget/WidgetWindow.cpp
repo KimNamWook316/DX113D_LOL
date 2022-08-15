@@ -52,6 +52,8 @@ void CWidgetWindow::Start()
 	{
 		m_Viewport = m_OwnerComponent->GetScene()->GetViewport();
 	}
+
+	m_WidgetList.sort(CWidgetWindow::SortWidget);
 }
 
 bool CWidgetWindow::Init()

@@ -765,9 +765,8 @@ void CDDInstanceSceneMode::OnCollideEnterTrigger(const CollisionResult& Result)
 			m_ReturnMusic = m_Scene->GetSceneSaveGlobalData().BackGroundData.PrevMusicKeyName;
 		}
 
-		CResourceManager::GetInst()->SoundPause(m_ReturnMusic);
-
-		// CResourceManager::GetInst()->SoundPlay("InstanceDungeonBGM");
+		CResourceManager::GetInst()->SoundStop(m_ReturnMusic);
+		CResourceManager::GetInst()->SoundPlay("InstanceDungeonBGM");
 	}
 }
 

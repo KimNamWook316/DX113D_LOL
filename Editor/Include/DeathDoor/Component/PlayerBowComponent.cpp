@@ -8,7 +8,9 @@
 #include "Component/ColliderSphere.h"
 #include "Component/ParticleComponent.h"
 #include "MonsterDataComponent.h"
+#include "Component/AnimationMeshComponent.h"
 #include "ArrowCollisionFireCollider.h"
+#include "../DDUtil.h"
 
 CPlayerBowComponent::CPlayerBowComponent()	:
 	m_PlayerData(nullptr),
@@ -53,6 +55,13 @@ void CPlayerBowComponent::Start()
 	}
 
 	m_PlayerData = m_Object->FindObjectComponentFromType<CPlayerDataComponent>();
+
+	CAnimationSequenceInstance* AnimInst = dynamic_cast<CAnimationMeshComponent*>(m_Object->GetRootComponent())->GetAnimationInstance();
+
+	float FrameTime = AnimInst->GetAnimationFrameTime("PlayerArrow");
+	float FrameLength = AnimInst->GetAnimationFrameLength("PlayerArrow");
+
+	m_EmvMaxTime = FrameTime * FrameLength;
 }
 
 bool CPlayerBowComponent::Init()
@@ -66,6 +75,19 @@ bool CPlayerBowComponent::Init()
 void CPlayerBowComponent::Update(float DeltaTime)
 {
 	CStaticMeshComponent::Update(DeltaTime);
+
+	if (m_Render)
+	{
+		m_EmvTimer += DeltaTime;
+
+		if (m_EmvTimer >= m_EmvMaxTime)
+		{
+			m_EmvTimer = m_EmvMaxTime;
+		}
+
+		Vector4 Emv = CDDUtil::LerpColor(Vector4(0.f, 0.f, 0.f, 1.f), Vector4(1.f, 0.f, 0.f, 1.f), m_EmvTimer, m_EmvMaxTime);
+		SetEmissiveColor(Emv);
+	}
 }
 
 void CPlayerBowComponent::PostUpdate(float DeltaTime)
@@ -135,7 +157,6 @@ void CPlayerBowComponent::ShowBow(const Vector3& ShootDir)
 	SetWorldPos(BowPos);
 	SetWorldScale(Vector3(0.06f, 0.06f, 0.06f));
 	SetWorldRotation(90.f, YDegree, -180.f);
-	SetEmissiveColor(1.f, 0.f, 0.f, 1.f);
 
 	m_Render = true;
 	m_ShowBow = true;
@@ -192,6 +213,8 @@ void CPlayerBowComponent::ShootArrow(const Vector3& ShootDir)
 	Comp->ShootByLifeTimeCollision<CPlayerBowComponent>(this, &CPlayerBowComponent::OnCollision, Collision_State::Begin, 
 		ArrowStartPos, ShootDir, 60.f, 2.5f);
 	Comp->SetDestroy(true);
+
+	m_EmvTimer = 0.f;
 }
 
 void CPlayerBowComponent::HideBow()

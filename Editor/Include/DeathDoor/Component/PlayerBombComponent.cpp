@@ -42,9 +42,6 @@ CPlayerBombComponent::~CPlayerBombComponent()
 
 void CPlayerBombComponent::ResetCount()
 {
-	if (Count > 1)
-		int a = 3;
-
 	Count = 0;
 }
 

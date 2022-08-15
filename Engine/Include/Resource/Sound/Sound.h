@@ -18,6 +18,8 @@ private:
     FMOD::Channel* m_Channel;
     bool        m_Play;
     bool        m_Loop;
+    int         m_Volume;
+    std::string m_ChannelGroupName;
 
 public:
     bool IsPlay()   const
@@ -28,6 +30,21 @@ public:
     bool IsLoop()   const
     {
         return m_Loop;
+    }
+
+    void SetVolume(int Volume)
+    {
+        m_Volume = Volume;
+    }
+
+    int GetVolume() const
+    {
+        return m_Volume;
+    }
+
+    const std::string& GetChannelGroupName()    const
+    {
+        return m_ChannelGroupName;
     }
 
 public:

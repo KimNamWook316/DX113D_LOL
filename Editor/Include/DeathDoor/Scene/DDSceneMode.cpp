@@ -8,6 +8,7 @@
 #include "../Component/GameStateComponent.h"
 #include "Engine.h"
 #include "Resource/Sound/Sound.h"
+#include "../UI/UIManager.h"
 
 CDDSceneMode::CDDSceneMode()	:
 	m_ExitPointCollider(nullptr),
@@ -113,6 +114,13 @@ void CDDSceneMode::Start()
 		{
 			Comp->SetTreeUpdate(true);
 		}
+	}
+
+
+	if (m_InitialScene)
+	{
+		CUIManager::GetInst()->SetViewport(m_Scene->GetViewport());
+		CUIManager::GetInst()->CreateDeathDoorUI();
 	}
 }
 

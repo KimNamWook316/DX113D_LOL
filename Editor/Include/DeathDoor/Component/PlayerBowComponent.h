@@ -17,6 +17,8 @@ private:
 	class CGameObject* m_Arrow;
 	bool m_Destroy;
 	bool m_ShowBow;
+	float m_EmvTimer;
+	float m_EmvMaxTime;
 
 public:
 	void SetShowBow(bool Show)

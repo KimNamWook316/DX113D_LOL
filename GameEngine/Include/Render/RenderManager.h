@@ -256,6 +256,7 @@ public:
 	float GetFogEnd() const;
 	float GetFogDensity() const;
 	float GetShadowBias() const;
+	bool GetDebugRender() const;
 
 	void SetMiddleGray(float Gray);
 	void SetLumWhite(float White);

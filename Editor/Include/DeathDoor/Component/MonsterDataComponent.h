@@ -205,6 +205,8 @@ public:
 	bool IsPlayerInStopChaseRange();	// 길찾기를 종료해야 하는 범위에 있는지 (기본적으로 MeleeAttackRange)
 	void SetRotateRandom();
 	void RotateRandomly(float DeltaTime);
+	virtual void DecreaseHP(int Amount) override;
+
 public:
 	virtual bool Save(FILE* File);
 	virtual bool Load(FILE* File);

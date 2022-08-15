@@ -35,8 +35,10 @@ CPlayerDataComponent::CPlayerDataComponent() :
 	m_SlashPaperBurn(nullptr),
 	m_ConsecutiveAttackCount(0),
 	m_HitBackUnbeatable(false),
-	m_HitBackUnbeatableTime(1.5f),
-	m_HitBackUnbeatableAccTime(0.f)
+	m_HitBackUnbeatableTime(1.2f),
+	m_HitBackUnbeatableAccTime(0.f),
+	m_AccHPChargeTime(0.f),
+	m_HPChargeTime(3.f)
 {
 	SetTypeID<CPlayerDataComponent>();
 	m_ComponentType = Component_Type::ObjectComponent;
@@ -89,7 +91,7 @@ void CPlayerDataComponent::Start()
 	m_AnimComp->GetAnimationInstance()->AddNotify<CPlayerDataComponent>("PlayerHitBack", "PlayerHitBack", 0, this, &CPlayerDataComponent::OnHitBack);
 
 	m_AnimComp->GetAnimationInstance()->AddNotify<CPlayerDataComponent>("PlayerBomb", "PlayerBomb", 3, this, &CPlayerDataComponent::OnBombLift);
-	m_AnimComp->GetAnimationInstance()->AddNotify<CPlayerDataComponent>("PlayerBomb", "PlayerBombCountRest", 4, this, &CPlayerDataComponent::OnBombCountReset);
+	m_AnimComp->GetAnimationInstance()->AddNotify<CPlayerDataComponent>("PlayerBomb", "PlayerBombCountReset", 4, this, &CPlayerDataComponent::OnBombCountReset);
 
 	m_AnimComp->GetAnimationInstance()->AddNotify<CPlayerDataComponent>("PlayerRun", "MoveDustOn", 10, this, &CPlayerDataComponent::OnResetDustParticle);
 	m_AnimComp->GetAnimationInstance()->AddNotify<CPlayerDataComponent>("PlayerRun", "MoveDustOn", 30, this, &CPlayerDataComponent::OnResetDustParticle);
@@ -106,7 +108,6 @@ void CPlayerDataComponent::Start()
 	m_AnimComp->GetAnimationInstance()->SetEndFunction<CPlayerDataComponent>("PlayerHitBack", this, &CPlayerDataComponent::OnHitBackEnd);
 	m_AnimComp->GetAnimationInstance()->SetEndFunction<CPlayerDataComponent>("PlayerHitRecover", this, &CPlayerDataComponent::OnHitRecoverEnd);
 	m_AnimComp->GetAnimationInstance()->SetEndFunction<CPlayerDataComponent>("PlayerRoll", this, &CPlayerDataComponent::OnRollEnd);
-
 
 
 	m_Data = CDataManager::GetInst()->GetObjectData("Player");
@@ -141,6 +142,8 @@ void CPlayerDataComponent::Start()
 	}
 
 	m_SlashPaperBurn = m_Object->FindObjectComponentFromType<CPaperBurnComponent>();
+
+	SetPlayerAbilityArrow(0.f);
 }
 
 bool CPlayerDataComponent::Init()
@@ -208,6 +211,26 @@ void CPlayerDataComponent::Update(float DeltaTime)
 
 			m_HitBackUnbeatableAccTime += DeltaTime;
 		}
+	}
+
+	if (m_HPChargeTimeStart)
+	{
+		if (m_AccHPChargeTime >= m_HPChargeTime)
+		{
+			CUIManager::GetInst()->IncreaseHP();
+
+			int HP = m_Data.HP;
+			++HP;
+			m_Data.HP = HP;
+
+			m_AccHPChargeTime = 0.f;
+			m_HPChargeTimeStart = false;
+
+			if (m_Data.HP < 5)
+				m_HPChargeTimeStart = true;
+		}
+
+		m_AccHPChargeTime += DeltaTime;
 	}
 
 	m_SlashPaperBurn = m_Object->FindObjectComponentFromType<CPaperBurnComponent>();
@@ -318,6 +341,9 @@ void CPlayerDataComponent::OnHitBack()
 	m_NoInterrupt = true;
 
 	m_Object->GetScene()->GetResource()->SoundPlay("EnemyHit1");
+
+	CUIManager::GetInst()->DecreaseHP();
+	m_HPChargeTimeStart = true;
 }
 
 void CPlayerDataComponent::OnHitBackEnd()
