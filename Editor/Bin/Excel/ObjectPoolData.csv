@@ -23,4 +23,4 @@ SpawnEffect,3,Particle\SpawnEffect.gobj
 GruntNormal,5,Monster\GruntMonster\NormalGrunt\NormalGrunt_Final.gobj
 GruntPot,5,Monster\GruntMonster\GruntPot\GruntPot.gobj
 GruntRedemeer,5,Monster\GruntMonster\GruntRedemeer\GruntRedemeer.gobj
-BettySlash,9,Particle\BettySlash.gobj
+BettySlash,15,Particle\BettySlash.gobj

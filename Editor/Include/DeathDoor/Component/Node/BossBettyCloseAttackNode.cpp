@@ -311,7 +311,13 @@ void CBossBettyCloseAttackNode::OnBossBettySlashLeftEffect()
 
 	// Slash Effect SlashParticle
 	CGameObject* AfterEffectParticle = CObjectPool::GetInst()->GetParticle("BettySlash", CSceneManager::GetInst()->GetScene());
-	AfterEffectParticle->StartParticle(m_Object->GetWorldPos() + XWorldAxis * 6.0f * -1.f);
+	AfterEffectParticle->StartParticle(MeleeAttackColliderWorldPos);
+
+	AfterEffectParticle = CObjectPool::GetInst()->GetParticle("BettySlash", CSceneManager::GetInst()->GetScene());
+	AfterEffectParticle->StartParticle(MeleeAttackColliderWorldPos + ZWorldAxis * 3.f);
+
+	AfterEffectParticle = CObjectPool::GetInst()->GetParticle("BettySlash", CSceneManager::GetInst()->GetScene());
+	AfterEffectParticle->StartParticle(MeleeAttackColliderWorldPos - ZWorldAxis * 3.f);
 }
 
 void CBossBettyCloseAttackNode::OnBossBettySlashRightEffect()
@@ -334,7 +340,13 @@ void CBossBettyCloseAttackNode::OnBossBettySlashRightEffect()
 
 	// Slash Effect SlashParticle
 	CGameObject* AfterEffectParticle = CObjectPool::GetInst()->GetParticle("BettySlash", CSceneManager::GetInst()->GetScene());
-	AfterEffectParticle->StartParticle(m_Object->GetWorldPos() + XWorldAxis * 6.0f);
+	AfterEffectParticle->StartParticle(MeleeAttackColliderWorldPos);
+
+	AfterEffectParticle = CObjectPool::GetInst()->GetParticle("BettySlash", CSceneManager::GetInst()->GetScene());
+	AfterEffectParticle->StartParticle(MeleeAttackColliderWorldPos + ZWorldAxis * 3.f);
+
+	AfterEffectParticle = CObjectPool::GetInst()->GetParticle("BettySlash", CSceneManager::GetInst()->GetScene());
+	AfterEffectParticle->StartParticle(MeleeAttackColliderWorldPos - ZWorldAxis * 3.f);
 
 	//AfterEffectParticle = CObjectPool::GetInst()->GetParticle("BettySlash", CSceneManager::GetInst()->GetScene());
 	//AfterEffectParticle->StartParticle(MeleeAttackColliderWorldPos + ZWorldAxis * 2.f);
