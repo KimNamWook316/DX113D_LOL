@@ -38,6 +38,7 @@
 #include "Scene/DDBossSceneMode.h"
 #include "Scene/DDInstanceSceneMode.h"
 #include "Scene/DDPuzzleSceneMode.h"
+#include "Scene/DDLogoScene.h"
 
 std::string CDDUtil::DDConditionNodeTypeToString(DDConditionNode NodeType)
 {
@@ -1207,6 +1208,8 @@ std::string CDDUtil::DDSceneModeTypeToString(DDSceneModeType Type)
 		return "DDInstanceSceneMode";
 	case DDSceneModeType::DDPuzzleSceneMode:
 		return "DDPuzzleSceneMode";
+	case DDSceneModeType::DDLogoSceneMode:
+		return "DDLogoSceneMode";
 	}
 
 	return "";
@@ -1230,6 +1233,10 @@ DDSceneModeType CDDUtil::StringToDDSceneModeType(const std::string& Str)
 	{
 		return DDSceneModeType::DDPuzzleSceneMode;
 	}
+	else if (Str == "DDLogoSceneMode")
+	{
+		return DDSceneModeType::DDLogoSceneMode;
+	}
 
 	return (DDSceneModeType)(-1);
 }
@@ -1246,6 +1253,8 @@ size_t CDDUtil::DDSceneModeTypeToTypeID(DDSceneModeType Type)
 		return typeid(CDDInstanceSceneMode).hash_code();
 	case DDSceneModeType::DDPuzzleSceneMode:
 		return typeid(CDDPuzzleSceneMode).hash_code();
+	case DDSceneModeType::DDLogoSceneMode:
+		return typeid(CDDLogoScene).hash_code();
 	}
 }
 

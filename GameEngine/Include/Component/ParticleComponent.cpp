@@ -328,10 +328,10 @@ void CParticleComponent::PostUpdate(float DeltaTime)
 	// 3) Translation은 처리하지 않는다. StartMin, Max 는, Local Space 상에서의 Min, Max 를 의미하게 할 것이다.
 	// ( Rot  -> Translation )
 	Vector3	StartMin = CBuffer->GetStartMin() * GetWorldScale();
-	StartMin.TransformCoord(GetRotationMatrix());
+	StartMin = StartMin.TransformCoord(GetRotationMatrix());
 
 	Vector3	StartMax = CBuffer->GetStartMax() * GetWorldScale();
-	StartMax.TransformCoord(GetRotationMatrix());
+	StartMax = StartMax.TransformCoord(GetRotationMatrix());
 	
 	// StartMin, Max 는, World Pos 를 더해주지 않고 넘겨줄 것이다.
 	// 그저 Particle Component Local Space 상에서의 Min, Max 값 만을 세팅해줄 것이다.
@@ -400,7 +400,8 @@ void CParticleComponent::PostUpdate(float DeltaTime)
 
 	// Rotation Angle 정보를 세팅한다. Transform 의 정보로 만들어낼 것이다.
 	// m_CBuffer->SetRotationAngle(GetWorldRot());
-	m_CBuffer->SetRotationAngle(GetWorldRot() + BillBoardAngle);
+	const Vector3& ParticleWorldRot = GetWorldRot();
+	m_CBuffer->SetRotationAngle(ParticleWorldRot + BillBoardAngle);
 	
 	// (아래 값들은 이제 m_TempVCBuffer 을 통해 세팅해준다.)
 	//m_CBuffer->SetCommonWorldScale(GetWorldScale());

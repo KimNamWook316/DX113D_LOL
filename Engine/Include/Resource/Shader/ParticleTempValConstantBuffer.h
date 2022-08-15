@@ -31,5 +31,17 @@ public :
 	{
 		m_BufferData.ResetParticleSharedInfoSumSpawnCnt = Enable ? 1 : 0;
 	}
+	void SetRotatedXAxis(const Vector3& Axis)
+	{
+		m_BufferData.RotatedAxisX = Axis;
+	}
+	void SetRotatedYAxis(const Vector3& Axis)
+	{
+		m_BufferData.RotatedAxisY = Axis;
+	}
+	void SetRotatedZAxis(const Vector3& Axis)
+	{
+		m_BufferData.RotatedAxisZ = Axis;
+	}
 };
 

@@ -283,12 +283,13 @@ void CPlayerBowComponent::OnCollision(const CollisionResult& Result)
 			// 바로 Destroy  시켜준다.
 			else if (IsArrowOnFire)
 			{
-				m_Object->GetScene()->GetCameraManager()->ShakeCamera(0.4f, 1.f);
-
-				m_Destroy = true;
-
-				if (m_Arrow)
-					m_Arrow->Destroy();
+				// 아무것도 안해준다.
+				//m_Object->GetScene()->GetCameraManager()->ShakeCamera(0.4f, 1.f);
+				//
+				//m_Destroy = true;
+				//
+				//if (m_Arrow)
+				//	m_Arrow->Destroy();
 			}
 			
 			// Arrow 에 불이 붙은 상태이고

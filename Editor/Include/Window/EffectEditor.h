@@ -55,7 +55,8 @@ static const char* ParticleShapeNames[] = {
 
 static const char* ParticleMoveDirType[] = {
     "XZSpread", //  xz 평명 방향으로 이동 y는 0
-    "XYSpread" //  xy 평명 방향으로 이동 z 는 0
+    "XYSpread", //  xy 평명 방향으로 이동 z 는 0
+    "CornSpread"
 };
 
 static const char* ParticleSpeedChangeType[] = {

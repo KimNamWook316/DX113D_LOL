@@ -129,6 +129,11 @@ public:
 		m_Angle = Angle;
 	}
 
+	void SetCollsionMouseEnable(bool Enable)
+	{
+		m_CollisionMouseEnable = Enable;
+	}
+
 	void SetShader(const std::string& Name);
 	void SetUseTexture(bool Use);
 

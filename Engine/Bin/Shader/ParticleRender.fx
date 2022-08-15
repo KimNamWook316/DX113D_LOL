@@ -297,8 +297,8 @@ PSOutput_Single ParticlePS(GeometryParticleOutput input)
 	EmissiveColor = ApplyLinearEmissiveColorChangeEffect(input.LifeTimeRatio, EmissiveColor);
 
 	// output.Color = Color;
-	output.Color.rgb = (BaseMaterialColor * input.Color).rgb +EmissiveColor.rgb;
-	
+	output.Color.rgb = (BaseMaterialColor * input.Color).rgb + EmissiveColor.rgb;
+
 	// output.Color = Color;
 	// output.Color = Color * input.Color;
 	output.Color.a = BaseMaterialColor.a * g_MtrlOpacity * Alpha;

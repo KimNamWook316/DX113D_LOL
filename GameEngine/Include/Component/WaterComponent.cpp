@@ -32,7 +32,7 @@ void CWaterComponent::Start()
 
 	if (!m_Mesh)
 	{
-		m_Mesh = m_Scene->GetResource()->FindMesh("DefaultPlane");
+		m_Mesh = CResourceManager::GetInst()->FindMesh("DefaultPlane");
 	}
 }
 
@@ -40,7 +40,7 @@ bool CWaterComponent::Init()
 {
 	CSceneComponent::Init();
 
-	m_Mesh = m_Scene->GetResource()->FindMesh("DefaultPlane");
+	m_Mesh = CResourceManager::GetInst()->FindMesh("DefaultPlane");
 
 	return true;
 }

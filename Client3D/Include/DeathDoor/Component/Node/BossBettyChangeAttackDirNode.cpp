@@ -45,8 +45,8 @@ void CBossBettyChangeAttackDirNode::Init()
 		Data, &CBossBettyDataComponent::OnBossBettyEnableCloseAttackChangeAnim);
 
 	// End
-	AnimInst->AddNotify(AnimName, "DisableLookPlayer", 20,
-		(CMonsterDataComponent*)Data, & CMonsterDataComponent::OnDisableLookPlayer);
+	//AnimInst->AddNotify(AnimName, "DisableLookPlayer", 20,5
+	//	(CMonsterDataComponent*)Data, & CMonsterDataComponent::OnDisableLookPlayer);
 
 	AnimInst->SetEndFunction(AnimName, Data, &CBossBettyDataComponent::OnBossBettyForceCheckHPState);
 }

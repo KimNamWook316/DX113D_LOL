@@ -12,6 +12,7 @@ CDDLogoScene::CDDLogoScene()
 
 CDDLogoScene::~CDDLogoScene()
 {
+	SAFE_DELETE(m_NextSceneLoadingThread);
 }
 
 bool CDDLogoScene::Init()
@@ -24,6 +25,9 @@ bool CDDLogoScene::Init()
 void CDDLogoScene::Start()
 {
 	CSceneMode::Start();
+
+	CUIManager::GetInst()->SetViewport(m_Scene->GetViewport());
+	CUIManager::GetInst()->CreateLogoUI(this);
 
 	m_NextSceneLoadingThread = new CDDSceneLoadingThread;
 	m_NextSceneLoadingThread->Init();

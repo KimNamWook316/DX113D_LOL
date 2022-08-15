@@ -204,7 +204,6 @@ void CPlayerBowComponent::ShootArrow(const Vector3& ShootDir)
 			Degree *= -1.f;
 
 		m_Arrow->SetWorldRotationY(Degree);
-
 	}
 
 	Vector3 ArrowStartPos = m_Arrow->GetWorldPos();
@@ -281,32 +280,16 @@ void CPlayerBowComponent::OnCollision(const CollisionResult& Result)
 				ArrowComp->SetArrowOnFireEnable(true);
 			}
 			// 바로 Destroy  시켜준다.
-			else if (IsArrowOnFire)
+			else if (IsArrowOnFire && ArrowFireCollider->IsFireOnByArrow() == false)
 			{
-				m_Object->GetScene()->GetCameraManager()->ShakeCamera(0.4f, 1.f);
-
-				m_Destroy = true;
-
-				if (m_Arrow)
-					m_Arrow->Destroy();
+				// 그냥 계속 진행시킨다.
+				//m_Object->GetScene()->GetCameraManager()->ShakeCamera(0.4f, 1.f);
+				//
+				//m_Destroy = true;
+				//
+				//if (m_Arrow)
+				//	m_Arrow->Destroy();
 			}
-			
-			// Arrow 에 불이 붙은 상태이고
-			// 장작에는 불이 붙지 않은 상태라면
-			// 장작에 불을 붙이고 (이것은 ArrowCollisionFireCollider 에서 해준다.)
-			// Arrow 는 Destroy 시킨다.
-			// (아래의 코드는 먹히지 않는다. 왜냐하면 ArrowCollisionFireCollider 의 CallBack 이 호출된 상태, 따라서 ArrowFireCollider->IsFireOnByArrow() 가 true 로 바뀐 상태
-			// else if (IsArrowOnFire && ArrowFireCollider->IsFireOnByArrow() == false)
-			// {
-			// 	m_Object->GetScene()->GetCameraManager()->ShakeCamera(0.4f, 1.f);
-			// 
-			// 	// OnCollision에서 바로 Destroy하면 CCollisionSection::Collision에서 m_vecCollider의 size가 갑자기 바뀌어서 문제가 되므로
-			// 	// m_Destroy = true로 만들어줬다가 PrevRender 함수에서 m_Destroy가 true면 Destroy
-			// 	m_Destroy = true;
-			// 
-			// 	if (m_Arrow)
-			// 		m_Arrow->Destroy();
-			// }
 		}
 	}
 	else
