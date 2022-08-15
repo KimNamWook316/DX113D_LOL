@@ -92,3 +92,4 @@ BossKnightCutsceneSlam,Effect,0,Effect\BossKnight\KnightCutsceneSlam.mp3,100
 HeadRollerHit,Effect,0,Effect\HeadRoller\HeadRollerTakeDamage1.mp3,100
 HeadRollerGetUp,Effect,0,Effect\HeadRoller\HeadRollerGetUp3.mp3,100
 HeadRollerRollReady,Effect,0,Effect\HeadRoller\HeadRollerPrepRollWoosh.mp3,100
+Ending,BGM,1,BGM\Ending.mp3,70

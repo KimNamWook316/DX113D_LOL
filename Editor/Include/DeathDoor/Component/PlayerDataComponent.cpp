@@ -35,8 +35,10 @@ CPlayerDataComponent::CPlayerDataComponent() :
 	m_SlashPaperBurn(nullptr),
 	m_ConsecutiveAttackCount(0),
 	m_HitBackUnbeatable(false),
-	m_HitBackUnbeatableTime(1.5f),
-	m_HitBackUnbeatableAccTime(0.f)
+	m_HitBackUnbeatableTime(1.2f),
+	m_HitBackUnbeatableAccTime(0.f),
+	m_AccHPChargeTime(0.f),
+	m_HPChargeTime(3.f)
 {
 	SetTypeID<CPlayerDataComponent>();
 	m_ComponentType = Component_Type::ObjectComponent;
@@ -132,6 +134,8 @@ void CPlayerDataComponent::Start()
 	m_CamRelativePos = CamPos - RootPos;
 
 	m_SlashPaperBurn = m_Object->FindObjectComponentFromType<CPaperBurnComponent>();
+
+	SetPlayerAbilityArrow(0.f);
 }
 
 bool CPlayerDataComponent::Init()
@@ -199,6 +203,26 @@ void CPlayerDataComponent::Update(float DeltaTime)
 
 			m_HitBackUnbeatableAccTime += DeltaTime;
 		}
+	}
+
+	if (m_HPChargeTimeStart)
+	{
+		if (m_AccHPChargeTime >= m_HPChargeTime)
+		{
+			CUIManager::GetInst()->IncreaseHP();
+
+			int HP = m_Data.HP;
+			++HP;
+			m_Data.HP = HP;
+
+			m_AccHPChargeTime = 0.f;
+			m_HPChargeTimeStart = false;
+
+			if (m_Data.HP < 5)
+				m_HPChargeTimeStart = true;
+		}
+
+		m_AccHPChargeTime += DeltaTime;
 	}
 
 	m_SlashPaperBurn = m_Object->FindObjectComponentFromType<CPaperBurnComponent>();
@@ -309,6 +333,9 @@ void CPlayerDataComponent::OnHitBack()
 	m_NoInterrupt = true;
 
 	m_Object->GetScene()->GetResource()->SoundPlay("EnemyHit1");
+
+	CUIManager::GetInst()->DecreaseHP();
+	m_HPChargeTimeStart = true;
 }
 
 void CPlayerDataComponent::OnHitBackEnd()

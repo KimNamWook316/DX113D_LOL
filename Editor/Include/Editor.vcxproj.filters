@@ -276,6 +276,9 @@
     <Filter Include="06. DeathDoor\05. SceneMode\04. Logo">
       <UniqueIdentifier>{e8cb6c76-e282-4a62-8448-ef36079cb707}</UniqueIdentifier>
     </Filter>
+    <Filter Include="06. DeathDoor\05. SceneMode\05. Ending">
+      <UniqueIdentifier>{402d2d12-0952-4742-99ab-fe7c3f5c82cc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Scene\DefaultScene.cpp">
@@ -987,6 +990,9 @@
     </ClCompile>
     <ClCompile Include="DeathDoor\Scene\DDLogoScene.cpp">
       <Filter>06. DeathDoor\05. SceneMode\04. Logo</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Scene\EndingScene.cpp">
+      <Filter>06. DeathDoor\05. SceneMode\04. Ending</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1706,6 +1712,9 @@
     </ClInclude>
     <ClInclude Include="DeathDoor\Scene\DDLogoScene.h">
       <Filter>06. DeathDoor\05. SceneMode\04. Logo</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Scene\EndingScene.h">
+      <Filter>06. DeathDoor\05. SceneMode\04. Ending</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
