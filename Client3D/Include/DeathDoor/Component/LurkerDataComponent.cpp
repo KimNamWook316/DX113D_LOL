@@ -54,6 +54,12 @@ void CLurkerDataComponent::Start()
 	Instance->AddNotify<CLurkerDataComponent>("MeleeAttack", "MeleeAttackColliderEnable", 15, this, &CLurkerDataComponent::OnRestorePrevAttackPos);
 	Instance->AddNotify<CLurkerDataComponent>("MeleeAttackprep", "MeleeAttackprepRotate", 0, this, &CLurkerDataComponent::LookPlayer);
 
+	Instance->AddNotify<CLurkerDataComponent>("MeleeAttackprep", "MeleeAttackprepSoundPlay", 0, this, &CLurkerDataComponent::OnPrepAttackSoundPlay);
+	Instance->AddNotify<CLurkerDataComponent>("MeleeAttack", "MeleeAttackSoundPlay", 0, this, &CLurkerDataComponent::OnAttackSoundPlay);
+	Instance->AddNotify<CLurkerDataComponent>("Death", "DeathSoundPlay", 0, this, &CLurkerDataComponent::OnDeathSoundPlay);
+	Instance->AddNotify<CLurkerDataComponent>("Run", "RunSoundPlay", 2, this, &CLurkerDataComponent::OnStepSoundPlay);
+	Instance->AddNotify<CLurkerDataComponent>("Run", "RunSoundPlay", 12, this, &CLurkerDataComponent::OnStepSoundPlay);
+
 	Instance->SetEndFunction<CLurkerDataComponent>("MeleeAttackprep", this, &CLurkerDataComponent::OnEndMeleeAttackPrep);
 	Instance->SetEndFunction<CLurkerDataComponent>("MeleeAttack", this, &CLurkerDataComponent::OnEndMeleeAttack);
 	Instance->SetEndFunction<CLurkerDataComponent>("Hop", this, &CLurkerDataComponent::OnHopEnd);
@@ -118,6 +124,13 @@ void CLurkerDataComponent::OnHitMeleeAttack(const CollisionResult& Result)
 		CMonsterDataComponent::OnHitMeleeAttack(Result);
 }
 
+void CLurkerDataComponent::SetIsHit(bool Hit)
+{
+	CMonsterDataComponent::SetIsHit(Hit);
+
+	m_Object->GetScene()->GetResource()->SoundPlay("LurkerTakeDamage");
+}
+
 void CLurkerDataComponent::OnHopEnd()
 {
 	m_HopStart = true;
@@ -169,6 +182,26 @@ void CLurkerDataComponent::OnRestorePrevAttackPos()
 	ZDir *= -1.f;
 
 	m_Object->SetWorldPos(m_PrevAttackPos - ZDir / 5.f);
+}
+
+void CLurkerDataComponent::OnAttackSoundPlay()
+{
+	m_Object->GetScene()->GetResource()->SoundPlay("LurkerAttack");
+}
+
+void CLurkerDataComponent::OnDeathSoundPlay()
+{
+	m_Object->GetScene()->GetResource()->SoundPlay("LurkerDeath");
+}
+
+void CLurkerDataComponent::OnPrepAttackSoundPlay()
+{
+	m_Object->GetScene()->GetResource()->SoundPlay("LurkerPrepAttack");
+}
+
+void CLurkerDataComponent::OnStepSoundPlay()
+{
+	m_Object->GetScene()->GetResource()->SoundPlay("LurkerStep");
 }
 
 void CLurkerDataComponent::LookPlayer()

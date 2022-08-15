@@ -23,6 +23,11 @@ private:
     float m_AccTime;
     Vector3 m_OriginPos;
     class CColliderBox3D* m_BoxCollider;
+    float m_PrevXVibFactor;
+    float m_PrevZVibFactor;
+    int m_FrameCount;
+    bool m_VibrateSoundPlayed;
+    bool m_FallingSoundPlayed;
 
 
 public:
@@ -32,5 +37,6 @@ public:
     void Trigger(const CollisionResult& Result);
     void ResetFallingBlock();
     void OnPaperburnEnd();
+    void Vibrate(float DeltaTime);
 };
 

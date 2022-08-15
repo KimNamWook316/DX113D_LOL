@@ -13,6 +13,8 @@ public:
 private:
     class CNavAgent* m_NavAgent;
 
+    bool m_SoundPlay;
+
 public:
     virtual NodeResult OnStart(float DeltaTime);
     virtual NodeResult OnUpdate(float DeltaTime);

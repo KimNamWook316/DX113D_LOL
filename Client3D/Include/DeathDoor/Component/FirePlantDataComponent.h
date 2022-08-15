@@ -14,6 +14,8 @@ private:
 
 public:
 	virtual void Start() override;
+    virtual void SetIsHit(bool Hit) override;
+    virtual void OnDeadAnimStart() override;
 
 public:
     void OnAttackCoolEnable();

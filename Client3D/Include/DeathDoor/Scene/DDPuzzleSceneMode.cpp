@@ -82,6 +82,7 @@ void CDDPuzzleSceneMode::OnClearDungeon()
 		m_ClearOriginCamPos = Cam->GetWorldPos();
 
 		Vector3 MoveDest;
+
 		if (m_BlockerObj)
 		{
 			MoveDest = m_BlockerObj->GetWorldPos();
@@ -112,7 +113,8 @@ void CDDPuzzleSceneMode::OnClearDungeon()
 
 		else if (m_LadderObj)
 		{
-			m_LadderPaperBurn->SetEndEvent(PaperBurnEndEvent::None);
+			m_LadderObj->Enable(true);
+			m_LadderPaperBurn->SetEndEvent(PaperBurnEndEvent::Reset);
 			m_LadderPaperBurn->SetInverse(true);
 			m_LadderPaperBurn->StartPaperBurn();
 			m_LadderPaperBurn->SetFinishCallback(this, &CDDPuzzleSceneMode::OnClearObjectEventEnd);
@@ -131,6 +133,7 @@ void CDDPuzzleSceneMode::OnClearCamMoveToClearObjectEnd()
 
 	else if (m_LadderObj)
 	{
+		m_LadderObj->Enable(true);
 		m_LadderPaperBurn->SetEndEvent(PaperBurnEndEvent::None);
 		m_LadderPaperBurn->SetInverse(true);
 		m_LadderPaperBurn->StartPaperBurn();
@@ -149,12 +152,6 @@ void CDDPuzzleSceneMode::OnClearObjectEventEnd()
 		Cam->SetMoveReverse(true);
 		Cam->SetMoveEndCallBack<CDDPuzzleSceneMode>(this, &CDDPuzzleSceneMode::OnClearCamRestoreEnd);
 	}
-
-	// 사다리 오브젝트 활성화
-	if (m_LadderObj)
-	{
-		m_LadderObj->Enable(true);
-	}
 }
 
 void CDDPuzzleSceneMode::OnClearCamRestoreEnd()
@@ -172,11 +169,11 @@ bool CDDPuzzleSceneMode::Save(FILE* File)
 
 	fwrite(&m_ClearCamMove, sizeof(bool), 1, File);
 
-	int Length = m_BlockerObjectName.length();
+	int Length = (int)m_BlockerObjectName.length();
 	fwrite(&Length, sizeof(int), 1, File);
 	fwrite(m_BlockerObjectName.c_str(), sizeof(char), Length, File);
 
-	Length = m_LadderObjectName.length();
+	Length = (int)m_LadderObjectName.length();
 	fwrite(&Length, sizeof(int), 1, File);
 	fwrite(m_LadderObjectName.c_str(), sizeof(char), Length, File);
 

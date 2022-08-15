@@ -52,9 +52,33 @@ NodeResult CNormalAttack::OnStart(float DeltaTime)
 		else
 			SequenceName = ObjectName + "SlashL";
 
-		Data->GetSword()->GetAnimationInstance()->ChangeAnimation(SequenceName);
+		CAnimationSequenceInstance* Instance = m_AnimationMeshComp->GetAnimationInstance();
+
+		bool IsPlaying = Instance->CheckCurrentAnimation(SequenceName);
+
+		if (!IsPlaying)
+		{
+			switch (Data->GetConsecutiveAttackCount())
+			{
+			case 0:
+			case 1:
+				m_Object->GetScene()->GetResource()->SoundPlay("SwordSwing1");
+				break;
+			case 2:
+				m_Object->GetScene()->GetResource()->SoundPlay("SwordSwing2");
+				break;
+			case 3:
+				m_Object->GetScene()->GetResource()->SoundPlay("SwordSwing3");
+				break;
+			}
+		}
+
+		if(Data->GetSword())
+			Data->GetSword()->GetAnimationInstance()->ChangeAnimation(SequenceName);
 		
 	}
+
+	
 
 	m_AnimationMeshComp->GetAnimationInstance()->ChangeAnimation(SequenceName);
 
@@ -86,15 +110,19 @@ NodeResult CNormalAttack::OnStart(float DeltaTime)
 
 NodeResult CNormalAttack::OnUpdate(float DeltaTime)
 {
+	CPlayerDataComponent* Data = dynamic_cast<CPlayerDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
+
+	int ConsecutiveCount = Data->GetConsecutiveAttackCount();
+
 	if (m_ConsecutiveAttackCount > 3)
 	{
 		m_ConsecutiveAttackCount = 0;
+		Data->SetConsecutiveAttackCount(0);
 		m_IsEnd = true;
 		return NodeResult::Node_False;
 	}
 
 	CAnimationSequenceInstance* Instance = m_AnimationMeshComp->GetAnimationInstance();
-	CPlayerDataComponent* Data = dynamic_cast<CPlayerDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
 
 	if (!Data->IsKeyStateQueueEmpty())
 	{
@@ -110,18 +138,23 @@ NodeResult CNormalAttack::OnUpdate(float DeltaTime)
 			if (Tmp == 0)
 			{
 				m_ConsecutiveAttackCount = 2;
+				Data->SetConsecutiveAttackCount(2);
 				Data->ForceUpdateAttackDirection();
 			}
+
 			else if (Tmp == 2)
 			{
 				m_ConsecutiveAttackCount = 3;
+				Data->SetConsecutiveAttackCount(3);
 				Data->ForceUpdateAttackDirection();
 			}
+
 			else if (Tmp == 3)
 			{
 				if (!Instance->IsCurrentAnimLoop() && Instance->IsCurrentAnimEnd())
 				{
 					m_ConsecutiveAttackCount = 0;
+					Data->SetConsecutiveAttackCount(0);
 
 					m_IsEnd = true;
 
@@ -157,6 +190,7 @@ NodeResult CNormalAttack::OnUpdate(float DeltaTime)
 	else if (!Instance->IsCurrentAnimLoop() && Instance->IsCurrentAnimEnd())
 	{
 		m_ConsecutiveAttackCount = 0;
+		Data->SetConsecutiveAttackCount(0);
 
 		m_IsEnd = true;
 
@@ -168,7 +202,9 @@ NodeResult CNormalAttack::OnUpdate(float DeltaTime)
 		m_Owner->SetCurrentNode(this);
 
 		Vector3 AttackDir = Data->GetAttackDir();
-		Vector3 ForwardDir = AttackDir / 10.f;
+		Vector3 ZAxis = m_Object->GetWorldAxis(AXIS_Z);
+		ZAxis *= -1.f;
+		Vector3 ForwardDir = ZAxis / 10.f;
 
 		if (m_AccDistance < 2.f)
 			m_NavAgent->MoveOnNavMesh(ForwardDir);

@@ -19,7 +19,15 @@ void CDDSceneLoadingThread::Run()
 		assert(false);
 	}
 
-	m_Owner->OnNextSceneLoadComplete();
+	if (m_Owner)
+	{
+		m_Owner->OnNextSceneLoadComplete();
+	}
+
+	if (m_EndFunction)
+	{
+		m_EndFunction();
+	}
 }
 
 void CDDSceneLoadingThread::Load(const std::string& SceneFileName, class CDDSceneMode* Owner)

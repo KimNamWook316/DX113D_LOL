@@ -42,7 +42,7 @@ public:
 	virtual void Start() override;
 	virtual void Update(float DeltaTime) override;
 	virtual void OnHitMeleeAttack(const CollisionResult& Result);
-
+	virtual void SetIsHit(bool Hit) override;
 
 public:
 	void OnHopEnd();
@@ -52,7 +52,11 @@ public:
 	void OnMeleeAttackColliderDisable();
 	void OnMeleeAttackRush();
 	void OnRestorePrevAttackPos();
-	
+	void OnAttackSoundPlay();
+	void OnDeathSoundPlay();
+	void OnPrepAttackSoundPlay();
+	void OnStepSoundPlay();
+
 public:
 	void LookPlayer();
 };

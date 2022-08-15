@@ -110,7 +110,7 @@ void CDataManager::LoadSoundData()
 
 
 // TODO : 데이터 추가될 때마다 함수 업데이트 할 것
-const ObjectData& CDataManager::GetObjectData(const std::string& Key)
+ObjectData CDataManager::GetObjectData(const std::string& Key)
 {
 	ObjectData Data = {};
 

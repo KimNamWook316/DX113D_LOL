@@ -992,7 +992,7 @@
       <Filter>06. DeathDoor\05. SceneMode\04. Logo</Filter>
     </ClCompile>
     <ClCompile Include="DeathDoor\Scene\EndingScene.cpp">
-      <Filter>06. DeathDoor\05. SceneMode\04. Ending</Filter>
+      <Filter>06. DeathDoor\05. SceneMode\05. Ending</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1714,7 +1714,7 @@
       <Filter>06. DeathDoor\05. SceneMode\04. Logo</Filter>
     </ClInclude>
     <ClInclude Include="DeathDoor\Scene\EndingScene.h">
-      <Filter>06. DeathDoor\05. SceneMode\04. Ending</Filter>
+      <Filter>06. DeathDoor\05. SceneMode\05. Ending</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

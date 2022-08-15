@@ -265,6 +265,9 @@
     <ClInclude Include="DeathDoor\Component\Node\FindPathNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\GruntCommonAttackNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\GruntCommonHitNode.h" />
+    <ClInclude Include="DeathDoor\Component\Node\GruntCommonMoveStartCheckNode.h" />
+    <ClInclude Include="DeathDoor\Component\Node\GruntCommonSpawnCheckNode.h" />
+    <ClInclude Include="DeathDoor\Component\Node\GruntCommonSpawnNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\GruntCommonTraceNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\GruntCommonWalkNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\HeadRollerRollNode.h" />
@@ -283,6 +286,7 @@
     <ClInclude Include="DeathDoor\Component\Node\LurkerMeleeAttackPrep.h" />
     <ClInclude Include="DeathDoor\Component\Node\MeleeAttackNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\MeleeRangeCheckNode.h" />
+    <ClInclude Include="DeathDoor\Component\Node\MonsterHitBack.h" />
     <ClInclude Include="DeathDoor\Component\Node\MouseLButtonCheckNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\MouseRButtonCheckNode.h" />
     <ClInclude Include="DeathDoor\Component\Node\MouseRButtonUpCheckNode.h" />
@@ -327,9 +331,12 @@
     <ClInclude Include="DeathDoor\DDUtil.h" />
     <ClInclude Include="DeathDoor\Scene\DDBossSceneMode.h" />
     <ClInclude Include="DeathDoor\Scene\DDInstanceSceneMode.h" />
+    <ClInclude Include="DeathDoor\Scene\DDLogoScene.h" />
     <ClInclude Include="DeathDoor\Scene\DDPuzzleSceneMode.h" />
     <ClInclude Include="DeathDoor\Scene\DDSceneMode.h" />
     <ClInclude Include="DeathDoor\Thread\DDSceneLoadingThread.h" />
+    <ClInclude Include="DeathDoor\UI\DDMouseWidgetWindow.h" />
+    <ClInclude Include="DeathDoor\UI\UIManager.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
@@ -443,6 +450,9 @@
     <ClCompile Include="DeathDoor\Component\Node\FindPathNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\GruntCommonAttackNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\GruntCommonHitNode.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\GruntCommonMoveStartCheckNode.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\GruntCommonSpawnCheckNode.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\GruntCommonSpawnNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\GruntCommonTraceNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\GruntCommonWalkNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\HeadRollerRollNode.cpp" />
@@ -461,6 +471,7 @@
     <ClCompile Include="DeathDoor\Component\Node\LurkerMeleeAttackPrep.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\MeleeAttackNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\MeleeRangeCheckNode.cpp" />
+    <ClCompile Include="DeathDoor\Component\Node\MonsterHitBack.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\MouseLButtonCheckNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\MouseRButtonCheckNode.cpp" />
     <ClCompile Include="DeathDoor\Component\Node\MouseRButtonUpCheckNode.cpp" />
@@ -503,9 +514,12 @@
     <ClCompile Include="DeathDoor\DDUtil.cpp" />
     <ClCompile Include="DeathDoor\Scene\DDBossSceneMode.cpp" />
     <ClCompile Include="DeathDoor\Scene\DDInstanceSceneMode.cpp" />
+    <ClCompile Include="DeathDoor\Scene\DDLogoScene.cpp" />
     <ClCompile Include="DeathDoor\Scene\DDPuzzleSceneMode.cpp" />
     <ClCompile Include="DeathDoor\Scene\DDSceneMode.cpp" />
     <ClCompile Include="DeathDoor\Thread\DDSceneLoadingThread.cpp" />
+    <ClCompile Include="DeathDoor\UI\DDMouseWidgetWindow.cpp" />
+    <ClCompile Include="DeathDoor\UI\UIManager.cpp" />
     <ClCompile Include="main3D.cpp" />
   </ItemGroup>
   <ItemGroup>

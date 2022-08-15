@@ -12,7 +12,10 @@
 CAddFallingFloorCallbackNode::CAddFallingFloorCallbackNode()	:
 	m_CollisionStart(false),
 	m_AccTime(0.f),
-	m_PlayerFall(false)
+	m_PlayerFall(false),
+	m_PrevXVibFactor(15.f),
+	m_PrevZVibFactor(15.f),
+	m_FrameCount(0)
 {
 	SetTypeID(typeid(CAddFallingFloorCallbackNode).hash_code());
 }
@@ -49,6 +52,16 @@ NodeResult CAddFallingFloorCallbackNode::OnUpdate(float DeltaTime)
 	if (!m_CollisionStart)
 		return NodeResult::Node_True;
 
+	if (m_AccTime > 0.5f && m_AccTime < 1.5f)
+	{
+		if (!m_VibrateSoundPlayed)
+		{
+			m_Object->GetScene()->GetResource()->SoundPlay("FallingPlatformTouch");
+			m_VibrateSoundPlayed = true;
+		}
+		Vibrate(DeltaTime);
+	}
+
 	if (m_AccTime > 1.5f && m_AccTime <= 2.5f)
 	{
 		auto iter = m_BoxCollider->GerPrevCollisionList().begin();
@@ -67,7 +80,15 @@ NodeResult CAddFallingFloorCallbackNode::OnUpdate(float DeltaTime)
 		}
 
 		m_BoxCollider->Enable(false);
+		m_Object->SetWorldRotationX(0.f);
+		m_Object->SetWorldRotationZ(0.f);
 		m_Object->AddWorldPos(0.f, -18.f * DeltaTime, 0.f);
+
+		if (!m_FallingSoundPlayed)
+		{
+			m_Object->GetScene()->GetResource()->SoundPlay("FallingPlatformFall");
+			m_FallingSoundPlayed = true;
+		}
 	}
 
 	else if (m_AccTime > 2.5f)
@@ -123,14 +144,34 @@ void CAddFallingFloorCallbackNode::ResetFallingBlock()
 	m_AccTime = 0.f;
 	m_CollisionStart = false;
 	m_PlayerFall = false;
+	m_VibrateSoundPlayed = false;
+	m_FallingSoundPlayed = false;
 
 	m_BoxCollider->Enable(true); 
 
 	CPaperBurnComponent* PaperBurn = m_Object->FindObjectComponentFromType<CPaperBurnComponent>();
 
 	PaperBurn->StartPaperBurn();
+
+	m_Object->GetScene()->GetResource()->SoundPlay("TimedPlatformReturn");
 }
 
 void CAddFallingFloorCallbackNode::OnPaperburnEnd()
 {
+}
+
+void CAddFallingFloorCallbackNode::Vibrate(float DeltaTime)
+{
+	++m_FrameCount;
+
+	if (m_FrameCount < 4)
+		return;
+
+	m_PrevXVibFactor *= -1.f;
+	m_PrevZVibFactor *= -1.f;
+
+	m_Object->AddWorldPos(m_PrevXVibFactor * DeltaTime, 0.f, 0.f);
+	m_Object->AddWorldPos(0.f, 0.f, m_PrevZVibFactor * DeltaTime);
+
+	m_FrameCount = 0;
 }

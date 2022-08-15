@@ -254,6 +254,7 @@ public:
 	void OnStepSoundPlay();
 	virtual void OnDeadAnimStart() override;
 	virtual void OnDeadPaperBurnEnd() override;
+	virtual void OnEndCutScene();
 
 public:
 	virtual void SetIsHit(bool Hit) override;

@@ -46,6 +46,8 @@ NodeResult CCrowBossSpinNode::OnStart(float DeltaTime)
 
 		m_Owner->GetOwner()->SetTreeUpdate(false);
 
+		m_Object->GetScene()->GetResource()->SoundPlay("OldCrow_Death");
+
 		return NodeResult::Node_False;
 	}
 

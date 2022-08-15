@@ -57,12 +57,14 @@ NodeResult CLockstone3TriggerBoxAction::OnStart(float DeltaTime)
 					CTriggerBoxData* NextTriggerBoxData = NextTriggerBox->FindObjectComponentFromType<CTriggerBoxData>();
 					NextTriggerBoxData->SetCurrentActive(true);
 				}
+
 			}
 
 			else if (TriggerBoxOrder == 5)
 			{
 				CDDPuzzleSceneMode* PuzzleScene = (CDDPuzzleSceneMode*)m_Object->GetScene()->GetSceneMode();
 				PuzzleScene->OnClearDungeon();
+				m_Object->GetScene()->GetResource()->SoundPlay("BlockerUp");
 			}
 
 		}

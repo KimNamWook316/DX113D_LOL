@@ -8,12 +8,15 @@
 #include "Component/ColliderSphere.h"
 #include "Component/ParticleComponent.h"
 #include "MonsterDataComponent.h"
+#include "Component/AnimationMeshComponent.h"
 #include "ArrowCollisionFireCollider.h"
+#include "../DDUtil.h"
 
 CPlayerBowComponent::CPlayerBowComponent()	:
 	m_PlayerData(nullptr),
 	m_Arrow(nullptr),
-	m_Destroy(false)
+	m_Destroy(false),
+	m_ShowBow(false)
 {
 	m_ComponentType = Component_Type::SceneComponent;
 	SetTypeID<CPlayerBowComponent>();
@@ -52,6 +55,13 @@ void CPlayerBowComponent::Start()
 	}
 
 	m_PlayerData = m_Object->FindObjectComponentFromType<CPlayerDataComponent>();
+
+	CAnimationSequenceInstance* AnimInst = dynamic_cast<CAnimationMeshComponent*>(m_Object->GetRootComponent())->GetAnimationInstance();
+
+	float FrameTime = AnimInst->GetAnimationFrameTime("PlayerArrow");
+	float FrameLength = AnimInst->GetAnimationFrameLength("PlayerArrow");
+
+	m_EmvMaxTime = FrameTime * FrameLength;
 }
 
 bool CPlayerBowComponent::Init()
@@ -65,6 +75,19 @@ bool CPlayerBowComponent::Init()
 void CPlayerBowComponent::Update(float DeltaTime)
 {
 	CStaticMeshComponent::Update(DeltaTime);
+
+	if (m_Render)
+	{
+		m_EmvTimer += DeltaTime;
+
+		if (m_EmvTimer >= m_EmvMaxTime)
+		{
+			m_EmvTimer = m_EmvMaxTime;
+		}
+
+		Vector4 Emv = CDDUtil::LerpColor(Vector4(0.f, 0.f, 0.f, 1.f), Vector4(1.f, 0.f, 0.f, 1.f), m_EmvTimer, m_EmvMaxTime);
+		SetEmissiveColor(Emv);
+	}
 }
 
 void CPlayerBowComponent::PostUpdate(float DeltaTime)
@@ -134,9 +157,9 @@ void CPlayerBowComponent::ShowBow(const Vector3& ShootDir)
 	SetWorldPos(BowPos);
 	SetWorldScale(Vector3(0.06f, 0.06f, 0.06f));
 	SetWorldRotation(90.f, YDegree, -180.f);
-	SetEmissiveColor(1.f, 0.f, 0.f, 1.f);
 
 	m_Render = true;
+	m_ShowBow = true;
 }
 
 void CPlayerBowComponent::ShootArrow(const Vector3& ShootDir)
@@ -189,11 +212,15 @@ void CPlayerBowComponent::ShootArrow(const Vector3& ShootDir)
 	Comp->ShootByLifeTimeCollision<CPlayerBowComponent>(this, &CPlayerBowComponent::OnCollision, Collision_State::Begin, 
 		ArrowStartPos, ShootDir, 60.f, 2.5f);
 	Comp->SetDestroy(true);
+
+	m_EmvTimer = 0.f;
 }
 
 void CPlayerBowComponent::HideBow()
 {
 	m_Render = false;
+
+	m_ShowBow = false;
 }
 
 void CPlayerBowComponent::OnCollision(const CollisionResult& Result)
@@ -226,7 +253,7 @@ void CPlayerBowComponent::OnCollision(const CollisionResult& Result)
 				float YRotAngle = ArrowDir.Angle(BaseDir);
 				
 				// 회전 각도 180도 이상
-				if (ArrowDir.Dot(LeftDir))
+				if (ArrowDir.Dot(LeftDir) > 0)
 				{
 					YRotAngle = 180 + (180 - YRotAngle);
 				}
@@ -240,7 +267,7 @@ void CPlayerBowComponent::OnCollision(const CollisionResult& Result)
 				for (size_t i = 0; i < ParticleSize; ++i)
 				{
 					// vecArrowParticles[i]->CRef::Enable(true);
-					vecArrowParticles[i]->AddWorldRotationY(YRotAngle);
+					vecArrowParticles[i]->SetWorldRotationY(YRotAngle);
 				}
 
 				// Light Component 를 활성화 시켜줄 것이다.
@@ -280,15 +307,19 @@ void CPlayerBowComponent::OnCollision(const CollisionResult& Result)
 		if (DestObject->GetObjectType() == Object_Type::Monster && Data)
 		{
 			Data->SetIsHit(true);
-			Data->DecreaseHP(2);
+			Data->DecreaseHP(5);
 			Data->SetIsHit(false);
+
+			m_Object->GetScene()->GetResource()->SoundPlay("ArrowHitEnemy");
+		}
+
+		else
+		{
+			m_Object->GetScene()->GetResource()->SoundPlay("ArrowHitWall");
 		}
 
 		if (m_Arrow)
 			m_Arrow->Destroy();
-
-		else
-			int a = 3;
 	}
 
 	

@@ -7,6 +7,7 @@
 #include "Scene/Scene.h"
 #include "Component/ColliderSphere.h"
 #include "Component/CameraComponent.h"
+#include "Resource/Sound/SoundManager.h"
 
 CSporeBoomerDataComponent::CSporeBoomerDataComponent()
 {
@@ -65,6 +66,8 @@ void CSporeBoomerDataComponent::OnBombGround(const Vector3& BombGroundPos)
 	// Shake
 	CCameraComponent* Cam = m_Scene->GetCameraManager()->GetCurrentCamera();
 	Cam->Shake(0.3f, 1.5f);
+
+	CResourceManager::GetInst()->SoundPlay("SporeBoomerBombGround");
 }
 
 void CSporeBoomerDataComponent::OnCollideBomb(const CollisionResult& Result)
@@ -79,6 +82,13 @@ void CSporeBoomerDataComponent::OnCollideBomb(const CollisionResult& Result)
 			m_PlayerData->DecreaseHP(1);
 		}
 	}
+}
+
+void CSporeBoomerDataComponent::SetIsHit(bool Hit)
+{
+	CMonsterDataComponent::SetIsHit(Hit);
+
+	CResourceManager::GetInst()->SoundPlay("SporeBoomerHit");
 }
 
 void CSporeBoomerDataComponent::OnShootBullet()
@@ -98,4 +108,6 @@ void CSporeBoomerDataComponent::OnShootBullet()
 	ProjComp->ShootByGravityTargetPos(MyPos, XZ, 60.f, PlayerPos, 50.f, EndParticle);
 	ProjComp->SetEndCallBack(this, &CSporeBoomerDataComponent::OnBombGround);
 	ProjComp->SetDestroy(true);
+
+	CResourceManager::GetInst()->SoundPlay("SporeBoomerFire");
 }

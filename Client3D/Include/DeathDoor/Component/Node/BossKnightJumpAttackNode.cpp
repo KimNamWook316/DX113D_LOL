@@ -30,6 +30,10 @@ void CBossKnightJumpAttackNode::Init()
 	std::string AnimName = "DashSlam";
 	CAnimationSequenceInstance* AnimInst = m_AnimationMeshComp->GetAnimationInstance();
 	AnimInst->AddNotify(AnimName, "IncreaseMeleeCount", 0, Data, &CKnightDataComponent::IncreaseMeleeAttackCount);
+	AnimInst->AddNotify(AnimName, "OnWalkSoundPlay", 2, Data, &CKnightDataComponent::OnPlayWalkSound);
+	AnimInst->AddNotify(AnimName, "OnWalkSoundPlay", 4, Data, &CKnightDataComponent::OnPlayWalkSound);
+	AnimInst->AddNotify(AnimName, "OnWalkSoundPlay", 8, Data, &CKnightDataComponent::OnPlayWalkSound);
+	AnimInst->AddNotify(AnimName, "OnWalkSoundPlay", 10, Data, &CKnightDataComponent::OnPlayWalkSound);
 	AnimInst->AddNotify(AnimName, "OnStartJumpAttackMove", 0, Data, &CKnightDataComponent::OnStartJumpAttackMove);
 	AnimInst->AddNotify(AnimName, "OnEndJumpAttackMove", 11, Data, &CKnightDataComponent::OnEndJumpAttackMove);
 	AnimInst->AddNotify(AnimName, "OnEndJumpAttack", 19, Data, &CKnightDataComponent::OnEndJumpAttack);

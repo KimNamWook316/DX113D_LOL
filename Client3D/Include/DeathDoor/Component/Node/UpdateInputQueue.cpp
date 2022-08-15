@@ -26,12 +26,10 @@ NodeResult CUpdateInputQueue::OnStart(float DeltaTime)
 	++m_FrameCount;
 	bool KeyInput = CInput::GetInst()->GetMouseLButtonClick();
 
-	if (m_FrameCount > 5 && KeyInput)
+	if (m_FrameCount > 10 && KeyInput)
 	{
 		m_DataComp->PushKeyState(VK_LBUTTON);
 
-		if (m_DataComp->GetInputQueueSize() > 1)
-			int a = 3;
 		m_FrameCount = 0;
 	}
 
