@@ -35,6 +35,9 @@ void CBossBettyChangeAttackDirNode::Init()
 		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnDisableMoveZ);
 	
 	// Middle
+	AnimInst->AddNotify(AnimName, "JumpSound", 4,
+		Data, &CBossBettyDataComponent::OnBossBettyChangeAttackDirJumpSound);
+
 	AnimInst->AddNotify(AnimName, "OnTracePlayer", 6,
 		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnEnableLookPlayer);
 	AnimInst->AddNotify(AnimName, "NoTracePlayer", 18,

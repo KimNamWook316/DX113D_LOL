@@ -34,6 +34,9 @@ void CGruntCommonSpawnNode::Init()
 	AnimInst->AddNotify(AnimName, "SetWorldPosUp", 1,
 		this, &CGruntCommonSpawnNode::SetWorldPosYUp);
 
+	AnimInst->AddNotify(AnimName, "SpawnSound", 2,
+		Data, &CGruntCommonDataComponent::OnGruntSpawnSound);
+	
 	// 42 : ¸¶Áö¸· Node
 	AnimInst->AddNotify(AnimName, "SetCurrentNodeNull", 40,
 		(CMonsterDataComponent*)Data, &CMonsterDataComponent::SetCurrentNodeNull);

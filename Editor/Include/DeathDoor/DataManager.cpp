@@ -98,7 +98,7 @@ void CDataManager::LoadSoundData()
 
 			ss.str("");
 		}
-
+	
 		CResourceManager::GetInst()->LoadSound(ChannelGroup, Loop, Key, FileName);
 		CSound* Sound = CResourceManager::GetInst()->FindSound(Key);
 		Sound->SetVolume(Volume);

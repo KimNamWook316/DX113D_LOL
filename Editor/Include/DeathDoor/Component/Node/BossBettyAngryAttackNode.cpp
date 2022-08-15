@@ -41,7 +41,8 @@ void CBossBettyAngryAttackNode::Init()
 		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnEnableLookPlayer);
 	AnimInst->AddNotify(AnimName, "OnDisableTracePlayer", 5,
 		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnDisableLookPlayer);
-
+	AnimInst->AddNotify(AnimName, "RoarSound", 0,
+		Data, &CBossBettyDataComponent::OnBossBettyRoarSound);
 
 	// Snow Ball Falling
 	AnimInst->AddNotify(AnimName, "CameraShake", 9,
@@ -53,30 +54,45 @@ void CBossBettyAngryAttackNode::Init()
 	// 양쪽
 	AnimInst->AddNotify(AnimName, "OnTwoSideCloseAttackEffect", 25, 
 		Data, &CBossBettyDataComponent::OnBossBettyGenerateTwoSideCloseAttackEffect);
+	AnimInst->AddNotify(AnimName, "AttackSound", 25,
+		Data, &CBossBettyDataComponent::OnBossBettyAttackDownSound);
 
 	// 왼쪽
 	AnimInst->AddNotify(AnimName, "OnLeftAttackDownEffect", 34, 
 		Data, &CBossBettyDataComponent::OnBossBettyGenerateLeftCloseAttackEffect);
+	AnimInst->AddNotify(AnimName, "AttackSound", 34,
+		Data, &CBossBettyDataComponent::OnBossBettyAttackDownSound);
 
 	// 오른쪽
 	AnimInst->AddNotify(AnimName, "OnRightAttackDownEffect", 43, 
 		Data, &CBossBettyDataComponent::OnBossBettyGenerateRightCloseAttackEffect);
+	AnimInst->AddNotify(AnimName, "AttackSound", 43,
+		Data, &CBossBettyDataComponent::OnBossBettyAttackDownSound);
 
 	// 왼쪽
 	AnimInst->AddNotify(AnimName, "OnLeftAttackDownEffect", 52, 
 		Data, &CBossBettyDataComponent::OnBossBettyGenerateLeftCloseAttackEffect);
+	AnimInst->AddNotify(AnimName, "AttackSound", 52,
+		Data, &CBossBettyDataComponent::OnBossBettyAttackDownSound);
 
 	// 오른쪽
 	AnimInst->AddNotify(AnimName, "OnRightAttackDownEffect", 62,
 		Data, &CBossBettyDataComponent::OnBossBettyGenerateRightCloseAttackEffect);
+	AnimInst->AddNotify(AnimName, "AttackSound", 63,
+		Data, &CBossBettyDataComponent::OnBossBettyAttackDownSound);
 
 	// 양쪽
 	AnimInst->AddNotify(AnimName, "OnTwoSideCloseAttackEffect", 78,
 		Data, &CBossBettyDataComponent::OnBossBettyGenerateTwoSideCloseAttackEffect);
+	AnimInst->AddNotify(AnimName, "AttackSound", 73,
+		Data, &CBossBettyDataComponent::OnBossBettyAttackDownSound);
 
 	// 울부짖기
 	AnimInst->AddNotifyDeltaTimeFrameRange(AnimName, "OnBettyRoar", 100, 120,
 		Data, &CBossBettyDataComponent::OnBossBettyRoarEffect);
+
+	AnimInst->AddNotify(AnimName, "RoarSound", 100,
+		Data, &CBossBettyDataComponent::OnBossBettyRoarSound);
 
 	AnimInst->AddNotify(AnimName, "ActivateRoarParticle", 100,
 		Data, &CBossBettyDataComponent::OnBossBettyActivateRoarParticle);
@@ -161,6 +177,12 @@ void CBossBettyAngryAttackNode::OnBossBettyStartFallingSnowBallEffect()
 
 		ProjTileComp->ShootByTargetPos(SnowObjectWorldPos, 20.f + rand() % 10, 
 			Vector3(SnowObjectWorldPos.x, PlayerPos.y + 2.f, SnowObjectWorldPos.z), AfterEffectParticle);
+
+		// CallBack Sound
+		ProjTileComp->SetEndCallBack(Data, &CBossBettyDataComponent::OnBossBettyThrowBallLandSound);
+
+		//Sound
+		Data->OnBossBettyThrowBallFallStartSound();
 	}
 
 	// 2. 각각에 대해서, 충돌시 동작시킬 콜백들을 세팅한다.

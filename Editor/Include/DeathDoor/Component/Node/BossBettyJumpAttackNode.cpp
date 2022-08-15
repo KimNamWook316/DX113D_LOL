@@ -48,6 +48,8 @@ void CBossBettyJumpAttackNode::Init()
 	// >> 중간
 	AnimInst->AddNotify(AnimName, "StartJump", 6,
 		this, &CBossBettyJumpAttackNode::OnBossBettyStartJump);
+	AnimInst->AddNotify(AnimName, "JumpStartSound", 6,
+		Data, &CBossBettyDataComponent::OnBossBettyJumpStartSound);
 
 	// JumpAttackNode 의 경우, Spin Collider 를 별도로 세팅할 필요가 없다.
 	//AnimInst->AddNotify(AnimName, "OnEnableSpinCollider", 10,
@@ -62,6 +64,8 @@ void CBossBettyJumpAttackNode::Init()
 		Data, &CBossBettyDataComponent::OnBossBettyNormalShakeCamera);
 
 	// >> End
+	AnimInst->AddNotify(AnimName, "JumpEndSound", 24,
+		Data, &CBossBettyDataComponent::OnBossBettyLandAfterJumpSound);
 	// PunchDown Animation 이 끝나면 해당 위치에 2단 공격
 	AnimInst->AddNotify(AnimName, "AttackDown", 24,
 		Data, &CBossBettyDataComponent::OnBossBettyGenerateTwoSideCloseAttackEffect);

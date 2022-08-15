@@ -8,6 +8,7 @@
 #include "Scene/SceneManager.h"
 #include "../BossBettyDataComponent.h"
 #include "BossBettyChangeAttackDirNode.h"
+#include "ObjectPool.h"
 
 CBossBettyCloseAttackNode::CBossBettyCloseAttackNode()
 {
@@ -39,6 +40,9 @@ void CBossBettyCloseAttackNode::Init()
 	AnimInst->AddNotify(AnimName, "OnEnableRightLookPlayer", 13,
 		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnEnableRightLookPlayer);
 
+	AnimInst->AddNotify(AnimName, "SlashSound", 13,
+		Data, &CBossBettyDataComponent::OnBossBettySlashSound);
+
 	AnimInst->AddNotify(AnimName, "OnSlashLeft", 13,
 		this, &CBossBettyCloseAttackNode::OnBossBettySlashLeftEffect);
 
@@ -64,6 +68,8 @@ void CBossBettyCloseAttackNode::Init()
 		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnDisableLookPlayer);
 	AnimInst->AddNotify(AnimName, "OnEnableLeftLookPlayer", 13,
 		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnEnableLeftLookPlayer);
+	AnimInst->AddNotify(AnimName, "SlashSound", 13,
+		Data, &CBossBettyDataComponent::OnBossBettySlashSound);
 	AnimInst->AddNotify(AnimName, "OnSlashRight", 13,
 		this, &CBossBettyCloseAttackNode::OnBossBettySlashRightEffect);
 	AnimInst->AddNotify(AnimName, "OnDisableLeftLookPlayer", 22,
@@ -87,6 +93,8 @@ void CBossBettyCloseAttackNode::Init()
 		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnDisableLookPlayer);
 	AnimInst->AddNotify(AnimName, "OnPunchLeft", 15,
 		Data, &CBossBettyDataComponent::OnBossBettyGenerateLeftCloseAttackEffect);
+	AnimInst->AddNotify(AnimName, "AttackDownSound", 15,
+		Data, &CBossBettyDataComponent::OnBossBettyAttackDownSound);
 	AnimInst->AddNotify(AnimName, "CameraShake", 18,
 		Data, &CBossBettyDataComponent::OnBossBettyNormalShakeCamera);
 	AnimInst->AddNotify(AnimName, "EnableAttackCollider", 17,
@@ -104,6 +112,8 @@ void CBossBettyCloseAttackNode::Init()
 		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnDisableLookPlayer);
 	AnimInst->AddNotify(AnimName, "OnPunchRight", 15,
 		Data, &CBossBettyDataComponent::OnBossBettyGenerateRightCloseAttackEffect);
+	AnimInst->AddNotify(AnimName, "AttackDownSound", 15,
+		Data, &CBossBettyDataComponent::OnBossBettyAttackDownSound);
 	AnimInst->AddNotify(AnimName, "CameraShake", 18,
 		Data, &CBossBettyDataComponent::OnBossBettyNormalShakeCamera);
 	AnimInst->AddNotify(AnimName, "EnableAttackCollider", 17,
@@ -123,6 +133,8 @@ void CBossBettyCloseAttackNode::Init()
 		Data, &CBossBettyDataComponent::OnBossBettyGenerateTwoSideCloseAttackEffect);
 	AnimInst->AddNotify(AnimName, "CameraShake", 20,
 		Data, &CBossBettyDataComponent::OnBossBettyNormalShakeCamera);
+	AnimInst->AddNotify(AnimName, "AttackDownSound", 17,
+		Data, &CBossBettyDataComponent::OnBossBettyAttackDownSound);
 	AnimInst->AddNotify(AnimName, "EnableAttackCollider", 18,
 		Data, &CBossBettyDataComponent::OnBossBettyEnableAttackCollider);
 	AnimInst->AddNotify(AnimName, "DisableAttackCollider", 24,
@@ -294,6 +306,12 @@ void CBossBettyCloseAttackNode::OnBossBettySlashLeftEffect()
 
 	Data->GetMeleeAttackCollider()->SetExtent(2.f, 3.f, 5.f);
 	Data->GetMeleeAttackCollider()->SetRelativePos(ColliderRelativePos);
+
+	const Vector3& MeleeAttackColliderWorldPos = Data->GetMeleeAttackCollider()->GetWorldPos();
+
+	// Slash Effect SlashParticle
+	CGameObject* AfterEffectParticle = CObjectPool::GetInst()->GetParticle("BettySlash", CSceneManager::GetInst()->GetScene());
+	AfterEffectParticle->StartParticle(m_Object->GetWorldPos() + XWorldAxis * 6.0f * -1.f);
 }
 
 void CBossBettyCloseAttackNode::OnBossBettySlashRightEffect()
@@ -311,6 +329,18 @@ void CBossBettyCloseAttackNode::OnBossBettySlashRightEffect()
 
 	Data->GetMeleeAttackCollider()->SetExtent(2.f, 3.f, 5.f);
 	Data->GetMeleeAttackCollider()->SetRelativePos(ColliderRelativePos);
+
+	const Vector3& MeleeAttackColliderWorldPos = Data->GetMeleeAttackCollider()->GetWorldPos();
+
+	// Slash Effect SlashParticle
+	CGameObject* AfterEffectParticle = CObjectPool::GetInst()->GetParticle("BettySlash", CSceneManager::GetInst()->GetScene());
+	AfterEffectParticle->StartParticle(m_Object->GetWorldPos() + XWorldAxis * 6.0f);
+
+	//AfterEffectParticle = CObjectPool::GetInst()->GetParticle("BettySlash", CSceneManager::GetInst()->GetScene());
+	//AfterEffectParticle->StartParticle(MeleeAttackColliderWorldPos + ZWorldAxis * 2.f);
+	//
+	//AfterEffectParticle = CObjectPool::GetInst()->GetParticle("BettySlash", CSceneManager::GetInst()->GetScene());
+	//AfterEffectParticle->StartParticle(MeleeAttackColliderWorldPos - ZWorldAxis * 2.f);
 }
 
 void CBossBettyCloseAttackNode::OnBossBettyCommonEndFunctionOfCloseAttack()

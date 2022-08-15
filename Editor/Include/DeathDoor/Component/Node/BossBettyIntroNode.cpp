@@ -33,6 +33,9 @@ void CBossBettyIntroNode::Init()
 	std::string AnimName = "Intro";
 	CAnimationSequenceInstance* AnimInst = m_AnimationMeshComp->GetAnimationInstance();
 
+	AnimInst->AddNotify(AnimName, "IntroSound", 0,
+		Data, &CBossBettyDataComponent::OnBossBettyIntroStartSound);
+
 	// >> End
 	AnimInst->AddNotify(AnimName, "SetCurrentNodeNull", 151,
 		Data, &CBossBettyDataComponent::OnBossBettySetCurrentNodeNullPtr);
