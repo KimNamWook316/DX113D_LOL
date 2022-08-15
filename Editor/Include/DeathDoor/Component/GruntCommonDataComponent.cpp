@@ -59,6 +59,8 @@ void CGruntCommonDataComponent::Start()
 			(CMonsterDataComponent*)this, &CMonsterDataComponent::OnHitMeleeAttack);
 	}
 
+	m_BloodParticle = nullptr;
+
 	// Change Range
 	m_StopChaseRange = m_Data.MeleeAttackRange;
 

@@ -139,7 +139,7 @@ void CBossBettyDataComponent::Start()
 
 
     // Blood Particle
-    
+    m_BloodParticle = nullptr;
     
     // 근거리 사정 거리 판별 Square Pos 위치 만들기 
     //  0: 왼쪽 하단, 1 : 왼쪽 상단, 2 : 오른쪽 상단, 3 : 오른쪽 하단
