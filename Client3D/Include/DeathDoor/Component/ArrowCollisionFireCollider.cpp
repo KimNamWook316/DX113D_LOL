@@ -49,6 +49,7 @@ void CArrowCollisionFireCollider::Start()
 	for (size_t i = 0; i < ComponentSize; ++i)
 	{
 		vecParticleComponents[i]->CRef::Enable(m_FirstManagedChildByTriggerLamp);
+		vecParticleComponents[i]->SetRelativePos(0.f, 1.f, 0.f);
 	}
 
 	// Light Component 또한 Enable False 처리 한다.

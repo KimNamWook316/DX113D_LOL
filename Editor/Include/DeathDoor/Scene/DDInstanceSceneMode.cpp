@@ -779,7 +779,11 @@ void CDDInstanceSceneMode::OnSpawnDoorPaperBurnEnd()
 	Vector3 SpawnPos = Set.Info->SpawnPosition;
 
 	// 몬스터를 소환한다.
-	CGameObject* Monster = CObjectPool::GetInst()->GetMonster(Set.Info->MonsterName, m_Scene);
+ 	CGameObject* Monster = CObjectPool::GetInst()->GetMonster(Set.Info->MonsterName, m_Scene);
+
+	// OBJ 추가 (혹시 모르니 Enable True 를 시켜준다)
+	Monster->Enable(true);
+
 	Monster->SetWorldPos(SpawnPos);
 	Monster->SetWorldRotation(Set.Info->SpawnRotation);
 	CResourceManager::GetInst()->SoundPlay("EnemySpawn");

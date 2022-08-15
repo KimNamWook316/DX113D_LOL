@@ -181,7 +181,6 @@ void CPlayerBowComponent::ShootArrow(const Vector3& ShootDir)
 			Degree *= -1.f;
 
 		m_Arrow->SetWorldRotationY(Degree);
-
 	}
 
 	Vector3 ArrowStartPos = m_Arrow->GetWorldPos();

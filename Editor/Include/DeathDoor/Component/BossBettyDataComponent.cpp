@@ -217,7 +217,8 @@ void CBossBettyDataComponent::OnBossBettyGenerateTwoSideCloseAttackEffect()
     
     const Vector3& ColliderRelativePos = ZWorldAxis * 6.0f;
     
-    m_MeleeAttackCollider->SetRelativePos(ColliderRelativePos);
+    m_MeleeAttackCollider->SetRelativePos(0.f, 0.f, 0.f);
+    m_MeleeAttackCollider->SetWorldPos(m_Object->GetWorldPos());
     m_MeleeAttackCollider->SetExtent(4.f, 2.5f, 2.5f);
     
     OnBossBettyActivateAfterEffect(m_Object->GetWorldPos() + ColliderRelativePos);
@@ -241,7 +242,8 @@ void CBossBettyDataComponent::OnBossBettyGenerateRightCloseAttackEffect()
     
     const Vector3& ColliderRelativePos = XWorldAxis * 3.0f + ZWorldAxis * 4.0f;
     
-    m_MeleeAttackCollider->SetRelativePos(ColliderRelativePos);
+    m_MeleeAttackCollider->SetRelativePos(0.f, 0.f, 0.f);
+    m_MeleeAttackCollider->SetWorldPos(m_Object->GetWorldPos() + ColliderRelativePos);
     m_MeleeAttackCollider->SetExtent(2.5f, 2.5f, 4.f);
     
     OnBossBettyActivateAfterEffect(m_Object->GetWorldPos() + ColliderRelativePos);
@@ -255,7 +257,8 @@ void CBossBettyDataComponent::OnBossBettyGenerateLeftCloseAttackEffect()
     
     const Vector3& ColliderRelativePos = XWorldAxis * 3.5f * -1.f + ZWorldAxis * 4.0f;
     
-    m_MeleeAttackCollider->SetRelativePos(ColliderRelativePos);
+    m_MeleeAttackCollider->SetRelativePos(0.f, 0.f, 0.f);
+    m_MeleeAttackCollider->SetWorldPos(m_Object->GetWorldPos() + ColliderRelativePos);
     m_MeleeAttackCollider->SetExtent(2.5f, 2.5f, 4.f);
     
     OnBossBettyActivateAfterEffect(m_Object->GetWorldPos() + ColliderRelativePos);
