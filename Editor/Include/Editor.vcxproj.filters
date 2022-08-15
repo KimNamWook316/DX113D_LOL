@@ -270,7 +270,13 @@
     <Filter Include="06. DeathDoor\07. UI">
       <UniqueIdentifier>{de0813d5-7113-4065-9db9-7a00ff2f7862}</UniqueIdentifier>
     </Filter>
-    <Filter Include="06. DeathDoor\05. SceneMode\04. Ending">
+    <Filter Include="06. DeathDoor\07. UI\01. Widget">
+      <UniqueIdentifier>{dfc539da-61ac-4e4f-8ed6-022e43fb1383}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. DeathDoor\05. SceneMode\04. Logo">
+      <UniqueIdentifier>{e8cb6c76-e282-4a62-8448-ef36079cb707}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. DeathDoor\05. SceneMode\05. Ending">
       <UniqueIdentifier>{402d2d12-0952-4742-99ab-fe7c3f5c82cc}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -978,6 +984,12 @@
     </ClCompile>
     <ClCompile Include="DeathDoor\UI\UIManager.cpp">
       <Filter>06. DeathDoor\07. UI</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\UI\DDMouseWidgetWindow.cpp">
+      <Filter>06. DeathDoor\07. UI\01. Widget</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Scene\DDLogoScene.cpp">
+      <Filter>06. DeathDoor\05. SceneMode\04. Logo</Filter>
     </ClCompile>
     <ClCompile Include="DeathDoor\Scene\EndingScene.cpp">
       <Filter>06. DeathDoor\05. SceneMode\04. Ending</Filter>
@@ -1694,6 +1706,12 @@
     </ClInclude>
     <ClInclude Include="DeathDoor\Component\Node\MonsterHitBack.h">
       <Filter>06. DeathDoor\02. BehaviorTree\02. ActionNode\01. Public</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\UI\DDMouseWidgetWindow.h">
+      <Filter>06. DeathDoor\07. UI\01. Widget</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Scene\DDLogoScene.h">
+      <Filter>06. DeathDoor\05. SceneMode\04. Logo</Filter>
     </ClInclude>
     <ClInclude Include="DeathDoor\Scene\EndingScene.h">
       <Filter>06. DeathDoor\05. SceneMode\04. Ending</Filter>

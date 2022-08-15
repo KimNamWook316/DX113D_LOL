@@ -235,6 +235,7 @@ void CKnightDataComponent::OnPlayerEnterZone(const CollisionResult& Result)
 {
 	CMonsterDataComponent::OnPlayerEnterZone(Result);
 
+	CResourceManager::GetInst()->SoundStop("MushroomDungeonBGM");
 	CResourceManager::GetInst()->SoundPlay("BossKnightAmbientBGM");
 }
 

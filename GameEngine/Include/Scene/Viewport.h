@@ -26,10 +26,7 @@ public:
 		return m_WindowList;
 	}
 
-	void SetWindowList(const std::list<CSharedPtr<CWidgetWindow>>& WindowList)
-	{
-		m_WindowList = WindowList;
-	}
+	void SetWindowList(const std::list<CSharedPtr<CWidgetWindow>>& WindowList);
 
 public:
 	void Start();

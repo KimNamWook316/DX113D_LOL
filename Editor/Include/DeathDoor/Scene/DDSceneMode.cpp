@@ -28,7 +28,6 @@ bool CDDSceneMode::Init()
 {
 	CSceneMode::Init();
 
-
 	return true;
 }
 

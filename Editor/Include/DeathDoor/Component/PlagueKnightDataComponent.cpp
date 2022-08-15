@@ -76,6 +76,8 @@ void CPlagueKnightDataComponent::Update(float DeltaTime)
 
 void CPlagueKnightDataComponent::DecreaseHP(int Amount)
 {
+	CMonsterDataComponent::DecreaseHP(Amount);
+
 	CResourceManager::GetInst()->SoundPlay("PlagueKnightDeath");
 }
 
