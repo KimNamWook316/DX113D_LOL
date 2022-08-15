@@ -181,7 +181,6 @@ void CPlayerBowComponent::ShootArrow(const Vector3& ShootDir)
 			Degree *= -1.f;
 
 		m_Arrow->SetWorldRotationY(Degree);
-
 	}
 
 	Vector3 ArrowStartPos = m_Arrow->GetWorldPos();
@@ -254,15 +253,16 @@ void CPlayerBowComponent::OnCollision(const CollisionResult& Result)
 				ArrowComp->SetArrowOnFireEnable(true);
 			}
 			// 바로 Destroy  시켜준다.
-			//else if (IsArrowOnFire)
-			//{
-			//	m_Object->GetScene()->GetCameraManager()->ShakeCamera(0.4f, 1.f);
-			//
-			//	m_Destroy = true;
-			//
-			//	if (m_Arrow)
-			//		m_Arrow->Destroy();
-			//}
+			else if (IsArrowOnFire && ArrowFireCollider->IsFireOnByArrow() == false)
+			{
+				// 그냥 계속 진행시킨다.
+				//m_Object->GetScene()->GetCameraManager()->ShakeCamera(0.4f, 1.f);
+				//
+				//m_Destroy = true;
+				//
+				//if (m_Arrow)
+				//	m_Arrow->Destroy();
+			}
 		}
 	}
 	else

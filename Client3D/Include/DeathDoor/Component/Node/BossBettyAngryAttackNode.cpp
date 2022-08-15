@@ -133,7 +133,7 @@ void CBossBettyAngryAttackNode::OnBossBettyStartFallingSnowBallEffect()
 
 	const Vector3& PlayerPos = CSceneManager::GetInst()->GetScene()->GetPlayerObject()->GetWorldPos();
 
-	for (int i = 0; i < 8; ++i)
+	for (int i = 0; i < 7; ++i)
 	{
 		int XRand = rand() % SphereRadius;
 		int YRand = SphereRadius + rand() % (SphereRadius * 2);

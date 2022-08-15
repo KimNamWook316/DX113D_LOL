@@ -129,12 +129,13 @@ void CBossBettyDataComponent::Start()
     }
 
     // Roar Particle
-    m_BossBettyRoarParticle = dynamic_cast<CParticleComponent*>((m_Object->FindComponent("BettyRoar")));
-
-    if (m_BossBettyRoarParticle)
-    {
-        m_BossBettyRoarParticle->Enable(false);
-    }
+    //m_BossBettyRoarParticle = dynamic_cast<CParticleComponent*>((m_Object->FindComponent("BettyRoar")));
+    //
+    //if (m_BossBettyRoarParticle)
+    //{
+    //    m_BossBettyRoarParticle->SetRelativePos(0.f, 4.f, 0.f);
+    //    m_BossBettyRoarParticle->Enable(false);
+    //}
  
     // 근거리 사정 거리 판별 Square Pos 위치 만들기 
     //  0: 왼쪽 하단, 1 : 왼쪽 상단, 2 : 오른쪽 상단, 3 : 오른쪽 하단
@@ -211,17 +212,21 @@ void CBossBettyDataComponent::OnBossBettyGenerateTwoSideCloseAttackEffect()
 	// 양쪽에 
 	// 1) 충돌체 활성화
 	// 2) Particle 제작
-    const Vector3& XWorldAxis = m_MeleeAttackCollider->GetRelativeAxis(AXIS::AXIS_X) * -1.f;
-    const Vector3& ZWorldAxis = m_MeleeAttackCollider->GetRelativeAxis(AXIS::AXIS_Z) * -1.f;
+    const Vector3& XWorldAxis = m_Object->GetWorldAxis(AXIS::AXIS_X) * -1.f;
+    const Vector3& ZWorldAxis = m_Object->GetWorldAxis(AXIS::AXIS_Z) * -1.f;
     
     const Vector3& ColliderRelativePos = ZWorldAxis * 6.0f;
     
-    m_MeleeAttackCollider->SetRelativePos(ColliderRelativePos);
+    m_MeleeAttackCollider->SetRelativePos(0.f, 0.f, 0.f);
+    m_MeleeAttackCollider->SetWorldPos(m_Object->GetWorldPos());
     m_MeleeAttackCollider->SetExtent(4.f, 2.5f, 2.5f);
     
     OnBossBettyActivateAfterEffect(m_Object->GetWorldPos() + ColliderRelativePos);
 
     // OnBossBettyActivateAfterEffect(m_Object->GetWorldPos());
+
+    // 임의로 주기 
+    OnBossBettyActivateRoarParticle();
 }
 
 void CBossBettyDataComponent::OnSetBossBettyAttackColliderPosToBettyBody()
@@ -232,13 +237,14 @@ void CBossBettyDataComponent::OnSetBossBettyAttackColliderPosToBettyBody()
 
 void CBossBettyDataComponent::OnBossBettyGenerateRightCloseAttackEffect()
 {
-    const Vector3& XWorldAxis = m_MeleeAttackCollider->GetRelativeAxis(AXIS::AXIS_X) * -1.f;
-    const Vector3& ZWorldAxis = m_MeleeAttackCollider->GetRelativeAxis(AXIS::AXIS_Z) * -1.f;
+    const Vector3& XWorldAxis = m_Object->GetRelativeAxis(AXIS::AXIS_X) * -1.f;
+    const Vector3& ZWorldAxis = m_Object->GetRelativeAxis(AXIS::AXIS_Z) * -1.f;
     
     const Vector3& ColliderRelativePos = XWorldAxis * 3.0f + ZWorldAxis * 4.0f;
     
-    m_MeleeAttackCollider->SetRelativePos(ColliderRelativePos);
-    m_MeleeAttackCollider->SetExtent(3.5f, 2.5f, 5.f);
+    m_MeleeAttackCollider->SetRelativePos(0.f, 0.f, 0.f);
+    m_MeleeAttackCollider->SetWorldPos(m_Object->GetWorldPos() + ColliderRelativePos);
+    m_MeleeAttackCollider->SetExtent(2.5f, 2.5f, 4.f);
     
     OnBossBettyActivateAfterEffect(m_Object->GetWorldPos() + ColliderRelativePos);
 
@@ -246,13 +252,14 @@ void CBossBettyDataComponent::OnBossBettyGenerateRightCloseAttackEffect()
 
 void CBossBettyDataComponent::OnBossBettyGenerateLeftCloseAttackEffect()
 {
-    const Vector3& XWorldAxis = m_MeleeAttackCollider->GetRelativeAxis(AXIS::AXIS_X) * -1.f;
-    const Vector3& ZWorldAxis = m_MeleeAttackCollider->GetRelativeAxis(AXIS::AXIS_Z) * -1.f;
+    const Vector3& XWorldAxis = m_Object->GetRelativeAxis(AXIS::AXIS_X) * -1.f;
+    const Vector3& ZWorldAxis = m_Object->GetRelativeAxis(AXIS::AXIS_Z) * -1.f;
     
     const Vector3& ColliderRelativePos = XWorldAxis * 3.5f * -1.f + ZWorldAxis * 4.0f;
     
-    m_MeleeAttackCollider->SetRelativePos(ColliderRelativePos);
-    m_MeleeAttackCollider->SetExtent(3.5f, 2.5f, 5.f);
+    m_MeleeAttackCollider->SetRelativePos(0.f, 0.f, 0.f);
+    m_MeleeAttackCollider->SetWorldPos(m_Object->GetWorldPos() + ColliderRelativePos);
+    m_MeleeAttackCollider->SetExtent(2.5f, 2.5f, 4.f);
     
     OnBossBettyActivateAfterEffect(m_Object->GetWorldPos() + ColliderRelativePos);
 }
@@ -424,7 +431,7 @@ void CBossBettyDataComponent::OnBossBettyStartCutSceneCamera(const CollisionResu
 
 void CBossBettyDataComponent::OnBossBettyActivateRoarParticle()
 {
-    m_BossBettyRoarParticle->StartParticle(m_Object->GetWorldPos());
+   // m_BossBettyRoarParticle->StartParticle(m_Object->GetWorldPos());
 }
 
 void CBossBettyDataComponent::IncFarAttackCount()

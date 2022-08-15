@@ -35,24 +35,31 @@ void CGruntCommonSpawnNode::Init()
 		this, &CGruntCommonSpawnNode::SetWorldPosYUp);
 
 	// 42 : 마지막 Node
-	AnimInst->AddNotify(AnimName, "SetCurrentNodeNull", 41,
+	AnimInst->AddNotify(AnimName, "SetCurrentNodeNull", 40,
 		(CMonsterDataComponent*)Data, &CMonsterDataComponent::SetCurrentNodeNull);
 
 	// 어차피 한번 Enable 되고 안될 것이다.
-	AnimInst->AddNotify(AnimName, "SpawnEnableFalse", 41,
+	AnimInst->AddNotify(AnimName, "SpawnEnableFalse", 40,
 		Data, &CGruntCommonDataComponent::DisableSpawnEnable);
 
 }
 
 void CGruntCommonSpawnNode::SetWorldPosYUp()
 {
+	CGruntCommonDataComponent* Data = dynamic_cast<CGruntCommonDataComponent*>(dynamic_cast<CGameStateComponent*>(m_Owner->GetOwner())->GetData());
+
+	// Player 와의 거리를 확인한다
+	CGameObject* PlayerObject = CSceneManager::GetInst()->GetScene()->GetPlayerObject();
+
 	// 처음에는 World Pos Y를 자신의 MeshSize 만큼 아래로 내려가 있다가,
 	// 이후에 올라올 것이다.
 	if (m_Object->GetWorldPos().y < -2.f)
 	{
 		const Vector3& WorldPos = m_Object->GetWorldPos();
 
-		m_Object->SetWorldPos(WorldPos.x, -2.f, WorldPos.z);
+		CGameObject* PlayerObject = CSceneManager::GetInst()->GetScene()->GetPlayerObject();
+
+		m_Object->SetWorldPos(WorldPos.x, PlayerObject->GetWorldPos().y, WorldPos.z);
 	}
 }
 

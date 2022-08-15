@@ -437,7 +437,12 @@ void CDDInstanceSceneModeWidget::OnChangeSetSpawnPoint(const Vector3& Val)
 	CDDInstanceSceneMode* SceneMode = dynamic_cast<CDDInstanceSceneMode*>(m_SceneMode);
 
 	SceneMode->SetSpawnPoint(SelectPhaseIdx, SelectSpawnIdx, Val);
-	m_vecSpawnMonster[SelectPhaseIdx][SelectSpawnIdx]->SetWorldPos(Val);
+
+	// OBJ Ãß°¡
+	if (m_vecSpawnMonster[SelectPhaseIdx][SelectSpawnIdx])
+	{
+		m_vecSpawnMonster[SelectPhaseIdx][SelectSpawnIdx]->SetWorldPos(Val);
+	}
 }
 
 void CDDInstanceSceneModeWidget::OnChangeSetSpawnRot(const Vector3& Val)

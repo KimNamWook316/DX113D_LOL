@@ -41,14 +41,17 @@ void CBossBettyChangeAttackDirNode::Init()
 		(CMonsterDataComponent*)Data, &CMonsterDataComponent::OnDisableLookPlayer);
 	AnimInst->AddNotify(AnimName, "SetCurrentNodeNull", 20,
 		(CMonsterDataComponent*)Data, &CMonsterDataComponent::SetCurrentNodeNull);
-	AnimInst->AddNotify(AnimName, "EnableCloseAttackChangeAnim", 20,
-		Data, &CBossBettyDataComponent::OnBossBettyEnableCloseAttackChangeAnim);
+
+
+	//AnimInst->AddNotify(AnimName, "EnableCloseAttackChangeAnim", 20,
+	//	Data, &CBossBettyDataComponent::OnBossBettyEnableCloseAttackChangeAnim);
 
 	// End
 	AnimInst->AddNotify(AnimName, "DisableLookPlayer", 20,
 		(CMonsterDataComponent*)Data, & CMonsterDataComponent::OnDisableLookPlayer);
 
-	AnimInst->SetEndFunction(AnimName, Data, &CBossBettyDataComponent::OnBossBettyForceCheckHPState);
+	// ForceCheck를 하지 않는다.
+	// AnimInst->SetEndFunction(AnimName, Data, &CBossBettyDataComponent::OnBossBettyForceCheckHPState);
 }
 
 void CBossBettyChangeAttackDirNode::OnResetOriginalRotSpeed()

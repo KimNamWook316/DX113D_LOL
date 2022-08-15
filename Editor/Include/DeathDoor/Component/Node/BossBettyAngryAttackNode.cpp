@@ -133,10 +133,10 @@ void CBossBettyAngryAttackNode::OnBossBettyStartFallingSnowBallEffect()
 
 	const Vector3& PlayerPos = CSceneManager::GetInst()->GetScene()->GetPlayerObject()->GetWorldPos();
 
-	for (int i = 0; i < 8; ++i)
+	for (int i = 0; i < 6; ++i)
 	{
 		int XRand = rand() % SphereRadius;
-		int YRand = SphereRadius + rand() % (SphereRadius * 2);
+		int YRand = SphereRadius + rand() % (SphereRadius * 3);
 		int ZRand = rand() % SphereRadius;
 
 		float RandV = ((float)rand() / (RAND_MAX)) + 1;
@@ -151,9 +151,15 @@ void CBossBettyAngryAttackNode::OnBossBettyStartFallingSnowBallEffect()
 
 		CGameObject* AfterEffectParticle = CObjectPool::GetInst()->GetParticle("BettyAttackAfterEffect", CSceneManager::GetInst()->GetScene());
 
+		CColliderBox3D* Collider3D = AfterEffectParticle->FindComponentFromType<CColliderBox3D>();
+
+		Collider3D->AddCollisionCallback(Collision_State::Begin, (CMonsterDataComponent*)Data, &CMonsterDataComponent::OnHitMeleeAttack);
+
+		Collider3D->SetExtent(1.5f, 1.f, 1.5f);
+
 		const Vector3& SnowObjectWorldPos = SnowFallingObject->GetWorldPos();
 
-		ProjTileComp->ShootByTargetPos(SnowObjectWorldPos, 30.f + rand() % 10, 
+		ProjTileComp->ShootByTargetPos(SnowObjectWorldPos, 20.f + rand() % 10, 
 			Vector3(SnowObjectWorldPos.x, PlayerPos.y + 2.f, SnowObjectWorldPos.z), AfterEffectParticle);
 	}
 
