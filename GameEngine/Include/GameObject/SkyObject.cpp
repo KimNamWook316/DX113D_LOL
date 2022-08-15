@@ -97,7 +97,9 @@ bool CSkyObject::SetSkyTextureFullPath(const char* FullPath)
 	
 	bool Success = Resource->CreateMaterial<CMaterial>("SkyMaterial");
 	Mat = Resource->FindMaterial("SkyMaterial");
-	Mat->AddTextureFullPath(20, (int)Buffer_Shader_Type::Pixel, "DefaultSky", FullPathWideChar);
+	CResourceManager::GetInst()->ReleaseTexture("NewSky");
+	Mat->ClearTexture();
+	Mat->AddTextureFullPath(20, (int)Buffer_Shader_Type::Pixel, "NewSky", FullPathWideChar);
 	Mat->SetRenderState("FrontFaceCull");
 	Mat->SetRenderState("SkyDepth");
 	Mat->SetShader("SkyShader");

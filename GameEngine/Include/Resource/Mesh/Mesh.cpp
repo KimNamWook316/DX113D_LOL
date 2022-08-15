@@ -667,6 +667,7 @@ bool CMesh::LoadMesh(FILE* File)
 
 		m_vecMaterialSlot.push_back(Material);
 
+		Material->SetScene(m_Scene);
 		Material->Load(File);
 
 		// 혹시나 Texture 정보를 제대로 Load 하지 못한 경우를 대비해야 한다.
