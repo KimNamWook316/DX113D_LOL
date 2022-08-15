@@ -51,17 +51,6 @@ void CGruntCommonSpawnNode::SetWorldPosYUp()
 	// Player 와의 거리를 확인한다
 	CGameObject* PlayerObject = CSceneManager::GetInst()->GetScene()->GetPlayerObject();
 
-	if (PlayerObject)
-	{
-		Vector3 PlayerPos = PlayerObject->GetWorldPos();
-		Vector3 MyPos = m_Object->GetWorldPos();
-
-		if (PlayerPos.Distance(MyPos) > Data->GetMeleeAttackRange())
-		{
-			return;
-		}
-	}
-
 	// 처음에는 World Pos Y를 자신의 MeshSize 만큼 아래로 내려가 있다가,
 	// 이후에 올라올 것이다.
 	if (m_Object->GetWorldPos().y < -2.f)

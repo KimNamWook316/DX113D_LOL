@@ -129,6 +129,7 @@ void CScene::Start()
 	m_Mode->Start();
 
 	std::string CurBGM = m_SceneGlobalData.BackGroundData.MusicKeyName;
+
 	if (!CurBGM.empty())
 	{
 		std::string PrevBGM = m_SceneGlobalData.BackGroundData.PrevMusicKeyName;

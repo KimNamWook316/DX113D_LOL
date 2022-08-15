@@ -129,13 +129,13 @@ void CBossBettyDataComponent::Start()
     }
 
     // Roar Particle
-    m_BossBettyRoarParticle = dynamic_cast<CParticleComponent*>((m_Object->FindComponent("BettyRoar")));
-
-    if (m_BossBettyRoarParticle)
-    {
-        m_BossBettyRoarParticle->SetRelativePos(0.f, 4.f, 0.f);
-        m_BossBettyRoarParticle->Enable(false);
-    }
+    //m_BossBettyRoarParticle = dynamic_cast<CParticleComponent*>((m_Object->FindComponent("BettyRoar")));
+    //
+    //if (m_BossBettyRoarParticle)
+    //{
+    //    m_BossBettyRoarParticle->SetRelativePos(0.f, 4.f, 0.f);
+    //    m_BossBettyRoarParticle->Enable(false);
+    //}
  
     // 근거리 사정 거리 판별 Square Pos 위치 만들기 
     //  0: 왼쪽 하단, 1 : 왼쪽 상단, 2 : 오른쪽 상단, 3 : 오른쪽 하단
@@ -431,7 +431,7 @@ void CBossBettyDataComponent::OnBossBettyStartCutSceneCamera(const CollisionResu
 
 void CBossBettyDataComponent::OnBossBettyActivateRoarParticle()
 {
-    m_BossBettyRoarParticle->StartParticle(m_Object->GetWorldPos());
+   // m_BossBettyRoarParticle->StartParticle(m_Object->GetWorldPos());
 }
 
 void CBossBettyDataComponent::IncFarAttackCount()
