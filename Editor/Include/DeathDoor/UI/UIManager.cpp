@@ -4,6 +4,9 @@
 #include "Widget/Image.h"
 #include "Resource/ResourceManager.h"
 #include "PathManager.h"
+#include "Scene/SceneManager.h"
+#include "Scene/Scene.h"
+#include "../Component/PlayerDataComponent.h"
 
 #include <sstream>
 
@@ -15,7 +18,6 @@ CUIManager::CUIManager()	:
 	m_AbilityBoxOriginSize(Vector2(85.f, 85.f)),
 	m_Window(nullptr)
 {
-
 }
 
 CUIManager::~CUIManager()
@@ -77,6 +79,84 @@ void CUIManager::ActivateAbility(Player_Ability Ability)
 		break;
 	}
 	}
+}
+
+void CUIManager::DecreaseHP()
+{
+	CGameObject* Player = CSceneManager::GetInst()->GetScene()->GetPlayerObject();
+
+	if (!Player)
+		return;
+
+	CPlayerDataComponent* Comp = Player->FindObjectComponentFromType<CPlayerDataComponent>();
+	
+	int HP = Comp->GetHP();
+
+	if (HP == 0)
+		return;
+
+	//CTexture* EmptyHPBox = CResourceManager::GetInst()->FindTexture("HPBoxWrapper");
+
+	CImage* CurrentHPBox = FindCurrentHPBox(HP);
+
+	CurrentHPBox->SetOpacity(0.f);
+}
+
+void CUIManager::IncreaseHP()
+{
+	CGameObject* Player = CSceneManager::GetInst()->GetScene()->GetPlayerObject();
+
+	if (!Player)
+		return;
+
+	CPlayerDataComponent* Comp = Player->FindObjectComponentFromType<CPlayerDataComponent>();
+
+	int HP = Comp->GetHP();
+
+	if (HP > 4 || HP < 0)
+		return;
+
+	//CTexture* HPBoxTexture = CResourceManager::GetInst()->FindTexture("HPBoxValid1");
+
+	CImage* CurrentHPBox = FindCurrentHPBox(HP);
+
+	//CurrentHPBox->SetTexture(HPBoxTexture);
+	//CurrentHPBox->SetUseTexture(true);
+	CurrentHPBox->SetOpacity(1.f);
+}
+
+CImage* CUIManager::FindCurrentHPBox(int Index)
+{
+	std::string BoxName = "HPBoxValid";
+
+	switch (Index)
+	{
+	case 0:
+		BoxName += "1";
+		break;
+	case 1:
+		BoxName += "2";
+		break;
+	case 2:
+		BoxName += "3";
+		break;
+	case 3:
+		BoxName += "4";
+		break;
+	case 4:
+		BoxName += "5";
+		break;
+	}
+
+	size_t Count = m_vecHPBox.size();
+
+	for (size_t i = 0; i < Count; ++i)
+	{
+		if (m_vecHPBox[i]->GetName() == BoxName)
+			return m_vecHPBox[i];
+	}
+
+	return nullptr;
 }
 
 void CUIManager::CreateDeathDoorUI()
@@ -186,6 +266,11 @@ void CUIManager::CreateDeathDoorUI()
 		Widget->SetPos(PosX, PosY);
 		Widget->SetSize(SizeX, SizeY);
 		Widget->SetZOrder(ZOrder);
+
+		if (Key.find("HPBoxValid") != std::string::npos)
+		{
+			m_vecHPBox.push_back(Widget);
+		}
 
 	} 
 

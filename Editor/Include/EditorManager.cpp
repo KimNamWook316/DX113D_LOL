@@ -93,6 +93,7 @@
 #include "DeathDoor\Scene\DDBossSceneMode.h"
 #include "DeathDoor\Scene\DDInstanceSceneMode.h"
 #include "DeathDoor\Scene\DDPuzzleSceneMode.h"
+#include "DeathDoor/Scene/EndingScene.h"
 
 #include "DeathDoor/UI/UIManager.h"
 
@@ -303,6 +304,10 @@ void CEditorManager::CreateSceneMode(CScene* Scene, size_t Type)
 	else if (Type == typeid(CDDPuzzleSceneMode).hash_code())
 	{
 		Scene->CreateSceneMode<CDDPuzzleSceneMode>();
+	}
+	else if (Type == typeid(CEndingScene).hash_code())
+	{
+		Scene->CreateSceneMode<CEndingScene>();
 	}
 }
 

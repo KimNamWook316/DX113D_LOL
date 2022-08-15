@@ -53,6 +53,10 @@ private:
 	class CPaperBurnComponent* m_SlashPaperBurn;
 	int m_ConsecutiveAttackCount;
 
+	bool m_HPChargeTimeStart;
+	float m_AccHPChargeTime;
+	float m_HPChargeTime;
+
 public:
 	virtual void Start();
 	virtual bool Init();
@@ -71,6 +75,16 @@ public:
 	virtual bool LoadOnly(FILE* File) override;
 
 public:
+	void AddHP(int HP)
+	{
+		m_Data.HP += HP;
+	}
+
+	void SetHPChargeTimeStart(bool Start)
+	{
+		m_HPChargeTimeStart = Start;
+	}
+
 	void SetConsecutiveAttackCount(int Count)
 	{
 		m_ConsecutiveAttackCount = Count;
@@ -146,9 +160,12 @@ public:
 
 	void SetPlayerAbilityArrow(float DeltaTime)
 	{
-		m_PlayerData.Abilty_Type = Player_Ability::Arrow;
+		if (m_PlayerData.Abilty_Type == Player_Ability::Arrow)
+			return;
 
 		CUIManager::GetInst()->ActivateAbility(Player_Ability::Arrow);
+
+		m_PlayerData.Abilty_Type = Player_Ability::Arrow;
 
 	}
 
@@ -161,6 +178,9 @@ public:
 
 	void SetPlayerAbilityChain(float DeltaTime)
 	{
+		if (m_PlayerData.Abilty_Type == Player_Ability::Hook)
+			return;
+
 		m_PlayerData.Abilty_Type = Player_Ability::Hook;
 
 		CUIManager::GetInst()->ActivateAbility(Player_Ability::Hook);
@@ -168,6 +188,9 @@ public:
 
 	void SetPlayerAbilityBomb(float DeltaTime)
 	{
+		if (m_PlayerData.Abilty_Type == Player_Ability::Bomb)
+			return;
+
 		m_PlayerData.Abilty_Type = Player_Ability::Bomb;
 
 		CUIManager::GetInst()->ActivateAbility(Player_Ability::Bomb);
@@ -232,7 +255,9 @@ public:
 	{
 		if (!m_IsHit)
 		{
-			CObjectDataComponent::DecreaseHP(Amout);
+			if(m_Data.HP > 0 && !m_Unbeatable && !m_HitBackUnbeatable)
+				CObjectDataComponent::DecreaseHP(Amout);
+
 			m_IsHit = true;
 		}
 	}

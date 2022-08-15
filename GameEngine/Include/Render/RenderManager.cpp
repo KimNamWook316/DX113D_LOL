@@ -157,6 +157,11 @@ float CRenderManager::GetShadowBias() const
 	return m_ShadowCBuffer->GetBias();
 }
 
+bool CRenderManager::GetDebugRender() const
+{
+	return m_DebugRender;
+}
+
 void CRenderManager::SetMiddleGray(float Gray)
 {
 	m_PostFXRenderer->SetMiddleGray(Gray);

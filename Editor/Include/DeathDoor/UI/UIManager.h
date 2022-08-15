@@ -11,9 +11,13 @@ private:
 	Vector2 m_AbilityIconOriginSize;
 	Vector2 m_AbilityBoxOriginSize;
 	class CWidgetWindow* m_Window;
+	std::vector<class CImage*> m_vecHPBox;
 
 public:
 	void ActivateAbility(Player_Ability Ability);
+	void DecreaseHP();
+	void IncreaseHP();
+	class CImage* FindCurrentHPBox(int Index);
 
 public:
 	void CreateDeathDoorUI();
