@@ -5,6 +5,8 @@
 #include "Input.h"
 #include "Resource/ResourceManager.h"
 #include "Collision/CollisionManager.h"
+#include "UI/UIManager.h"
+
 // Component
 #include "Component/CameraComponent.h"
 #include "Component/SpriteComponent.h"
@@ -101,7 +103,9 @@ bool CClientManager3D::Init(HINSTANCE hInst)
 	CObjectPool::GetInst()->LoadPoolData("ObjectPoolData.csv");
 	CObjectPool::GetInst()->CreatePoolObject(OBJECT_PATH);
 
-	CInput::GetInst()->CreateKey("DebugRender", 0);
+	CUIManager::GetInst()->Init();
+
+	CInput::GetInst()->CreateKey("DebugRender", '0');
 	CInput::GetInst()->SetKeyCallback("DebugRender", KeyState_Down, this, &CClientManager3D::SetDebugRender);
 
 	return true;
