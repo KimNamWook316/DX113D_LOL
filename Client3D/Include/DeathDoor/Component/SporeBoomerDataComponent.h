@@ -19,6 +19,7 @@ public:
 public:
     void OnBombGround(const Vector3& BombGroundPos);
     void OnCollideBomb(const CollisionResult& Result);
+    virtual void SetIsHit(bool Hit) override;
 
 public:
     void OnShootBullet();

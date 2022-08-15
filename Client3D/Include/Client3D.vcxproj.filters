@@ -39,9 +39,6 @@
     <ClInclude Include="ClientManager3D.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="DeathDoor\DataManager.h">
-      <Filter>01. DeathDoor</Filter>
-    </ClInclude>
     <ClInclude Include="DeathDoor\DDFlag.h">
       <Filter>01. DeathDoor</Filter>
     </ClInclude>
@@ -49,9 +46,6 @@
       <Filter>01. DeathDoor</Filter>
     </ClInclude>
     <ClInclude Include="DeathDoor\Component\PlayerBowComponent.h">
-      <Filter>01. DeathDoor\01. Component</Filter>
-    </ClInclude>
-    <ClInclude Include="DeathDoor\Component\PlayerDataComponent.h">
       <Filter>01. DeathDoor\01. Component</Filter>
     </ClInclude>
     <ClInclude Include="DeathDoor\Component\PlayerHookComponent.h">
@@ -147,26 +141,35 @@
     <ClInclude Include="DeathDoor\Component\PlayerBombComponent.h">
       <Filter>01. DeathDoor\01. Component</Filter>
     </ClInclude>
-    <ClInclude Include="DeathDoor\Component\Node\RunNode.h">
-      <Filter>01. DeathDoor\01. Component\01. Node</Filter>
+    <ClInclude Include="DeathDoor\Scene\DDPuzzleSceneMode.h">
+      <Filter>01. DeathDoor\02. Scene</Filter>
     </ClInclude>
-    <ClInclude Include="DeathDoor\Component\Node\ShootNode.h">
-      <Filter>01. DeathDoor\01. Component\01. Node</Filter>
+    <ClInclude Include="DeathDoor\Scene\DDSceneMode.h">
+      <Filter>01. DeathDoor\02. Scene</Filter>
     </ClInclude>
-    <ClInclude Include="DeathDoor\Component\Node\SKeyInputCheck.h">
-      <Filter>01. DeathDoor\01. Component\01. Node</Filter>
+    <ClInclude Include="DeathDoor\Scene\DDBossSceneMode.h">
+      <Filter>01. DeathDoor\02. Scene</Filter>
     </ClInclude>
-    <ClInclude Include="DeathDoor\Component\Node\SporeBoomerShootNode.h">
-      <Filter>01. DeathDoor\01. Component\01. Node</Filter>
+    <ClInclude Include="DeathDoor\Scene\DDInstanceSceneMode.h">
+      <Filter>01. DeathDoor\02. Scene</Filter>
     </ClInclude>
-    <ClInclude Include="DeathDoor\Component\Node\StraightPathCheck.h">
-      <Filter>01. DeathDoor\01. Component\01. Node</Filter>
+    <ClInclude Include="DeathDoor\Thread\DDSceneLoadingThread.h">
+      <Filter>01. DeathDoor\03. Thread</Filter>
     </ClInclude>
-    <ClInclude Include="DeathDoor\Component\Node\UpdateInputQueue.h">
-      <Filter>01. DeathDoor\01. Component\01. Node</Filter>
+    <ClInclude Include="DeathDoor\UI\UIManager.h">
+      <Filter>01. DeathDoor</Filter>
     </ClInclude>
-    <ClInclude Include="DeathDoor\Component\Node\WKeyInputCheck.h">
-      <Filter>01. DeathDoor\01. Component\01. Node</Filter>
+    <ClInclude Include="DeathDoor\Scene\DDLogoScene.h">
+      <Filter>01. DeathDoor</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\UI\DDMouseWidgetWindow.h">
+      <Filter>01. DeathDoor</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\DataManager.h">
+      <Filter>01. DeathDoor</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\PlayerDataComponent.h">
+      <Filter>01. DeathDoor\01. Component</Filter>
     </ClInclude>
     <ClInclude Include="DeathDoor\Component\Node\AddFallingFloorCallbackNode.h">
       <Filter>01. DeathDoor\01. Component\01. Node</Filter>
@@ -420,6 +423,15 @@
     <ClInclude Include="DeathDoor\Component\Node\GruntCommonHitNode.h">
       <Filter>01. DeathDoor\01. Component\01. Node</Filter>
     </ClInclude>
+    <ClInclude Include="DeathDoor\Component\Node\GruntCommonMoveStartCheckNode.h">
+      <Filter>01. DeathDoor\01. Component\01. Node</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\Node\GruntCommonSpawnCheckNode.h">
+      <Filter>01. DeathDoor\01. Component\01. Node</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\Node\GruntCommonSpawnNode.h">
+      <Filter>01. DeathDoor\01. Component\01. Node</Filter>
+    </ClInclude>
     <ClInclude Include="DeathDoor\Component\Node\GruntCommonTraceNode.h">
       <Filter>01. DeathDoor\01. Component\01. Node</Filter>
     </ClInclude>
@@ -472,6 +484,9 @@
       <Filter>01. DeathDoor\01. Component\01. Node</Filter>
     </ClInclude>
     <ClInclude Include="DeathDoor\Component\Node\MeleeRangeCheckNode.h">
+      <Filter>01. DeathDoor\01. Component\01. Node</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\Node\MonsterHitBack.h">
       <Filter>01. DeathDoor\01. Component\01. Node</Filter>
     </ClInclude>
     <ClInclude Include="DeathDoor\Component\Node\MouseLButtonCheckNode.h">
@@ -531,20 +546,26 @@
     <ClInclude Include="DeathDoor\Component\Node\RotateAttackDirectionNode.h">
       <Filter>01. DeathDoor\01. Component\01. Node</Filter>
     </ClInclude>
-    <ClInclude Include="DeathDoor\Scene\DDPuzzleSceneMode.h">
-      <Filter>01. DeathDoor\02. Scene</Filter>
+    <ClInclude Include="DeathDoor\Component\Node\RunNode.h">
+      <Filter>01. DeathDoor\01. Component\01. Node</Filter>
     </ClInclude>
-    <ClInclude Include="DeathDoor\Scene\DDSceneMode.h">
-      <Filter>01. DeathDoor\02. Scene</Filter>
+    <ClInclude Include="DeathDoor\Component\Node\ShootNode.h">
+      <Filter>01. DeathDoor\01. Component\01. Node</Filter>
     </ClInclude>
-    <ClInclude Include="DeathDoor\Scene\DDBossSceneMode.h">
-      <Filter>01. DeathDoor\02. Scene</Filter>
+    <ClInclude Include="DeathDoor\Component\Node\SKeyInputCheck.h">
+      <Filter>01. DeathDoor\01. Component\01. Node</Filter>
     </ClInclude>
-    <ClInclude Include="DeathDoor\Scene\DDInstanceSceneMode.h">
-      <Filter>01. DeathDoor\02. Scene</Filter>
+    <ClInclude Include="DeathDoor\Component\Node\SporeBoomerShootNode.h">
+      <Filter>01. DeathDoor\01. Component\01. Node</Filter>
     </ClInclude>
-    <ClInclude Include="DeathDoor\Thread\DDSceneLoadingThread.h">
-      <Filter>01. DeathDoor\03. Thread</Filter>
+    <ClInclude Include="DeathDoor\Component\Node\StraightPathCheck.h">
+      <Filter>01. DeathDoor\01. Component\01. Node</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\Node\UpdateInputQueue.h">
+      <Filter>01. DeathDoor\01. Component\01. Node</Filter>
+    </ClInclude>
+    <ClInclude Include="DeathDoor\Component\Node\WKeyInputCheck.h">
+      <Filter>01. DeathDoor\01. Component\01. Node</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -564,16 +585,10 @@
     <ClCompile Include="main3D.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="DeathDoor\DataManager.cpp">
-      <Filter>01. DeathDoor</Filter>
-    </ClCompile>
     <ClCompile Include="DeathDoor\DDUtil.cpp">
       <Filter>01. DeathDoor</Filter>
     </ClCompile>
     <ClCompile Include="DeathDoor\Component\PlayerBowComponent.cpp">
-      <Filter>01. DeathDoor\01. Component</Filter>
-    </ClCompile>
-    <ClCompile Include="DeathDoor\Component\PlayerDataComponent.cpp">
       <Filter>01. DeathDoor\01. Component</Filter>
     </ClCompile>
     <ClCompile Include="DeathDoor\Component\PlayerHookComponent.cpp">
@@ -663,26 +678,35 @@
     <ClCompile Include="DeathDoor\Component\PlayerBombComponent.cpp">
       <Filter>01. DeathDoor\01. Component</Filter>
     </ClCompile>
-    <ClCompile Include="DeathDoor\Component\Node\RunNode.cpp">
-      <Filter>01. DeathDoor\01. Component\01. Node</Filter>
+    <ClCompile Include="DeathDoor\Scene\DDSceneMode.cpp">
+      <Filter>01. DeathDoor\02. Scene</Filter>
     </ClCompile>
-    <ClCompile Include="DeathDoor\Component\Node\ShootNode.cpp">
-      <Filter>01. DeathDoor\01. Component\01. Node</Filter>
+    <ClCompile Include="DeathDoor\Scene\DDBossSceneMode.cpp">
+      <Filter>01. DeathDoor\02. Scene</Filter>
     </ClCompile>
-    <ClCompile Include="DeathDoor\Component\Node\SKeyInputCheck.cpp">
-      <Filter>01. DeathDoor\01. Component\01. Node</Filter>
+    <ClCompile Include="DeathDoor\Scene\DDInstanceSceneMode.cpp">
+      <Filter>01. DeathDoor\02. Scene</Filter>
     </ClCompile>
-    <ClCompile Include="DeathDoor\Component\Node\SporeBoomerShootNode.cpp">
-      <Filter>01. DeathDoor\01. Component\01. Node</Filter>
+    <ClCompile Include="DeathDoor\Scene\DDPuzzleSceneMode.cpp">
+      <Filter>01. DeathDoor\02. Scene</Filter>
     </ClCompile>
-    <ClCompile Include="DeathDoor\Component\Node\StraightPathCheck.cpp">
-      <Filter>01. DeathDoor\01. Component\01. Node</Filter>
+    <ClCompile Include="DeathDoor\Thread\DDSceneLoadingThread.cpp">
+      <Filter>01. DeathDoor\03. Thread</Filter>
     </ClCompile>
-    <ClCompile Include="DeathDoor\Component\Node\UpdateInputQueue.cpp">
-      <Filter>01. DeathDoor\01. Component\01. Node</Filter>
+    <ClCompile Include="DeathDoor\UI\UIManager.cpp">
+      <Filter>01. DeathDoor</Filter>
     </ClCompile>
-    <ClCompile Include="DeathDoor\Component\Node\WKeyInputCheck.cpp">
-      <Filter>01. DeathDoor\01. Component\01. Node</Filter>
+    <ClCompile Include="DeathDoor\Scene\DDLogoScene.cpp">
+      <Filter>01. DeathDoor</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\UI\DDMouseWidgetWindow.cpp">
+      <Filter>01. DeathDoor</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\DataManager.cpp">
+      <Filter>01. DeathDoor</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Component\PlayerDataComponent.cpp">
+      <Filter>01. DeathDoor\01. Component</Filter>
     </ClCompile>
     <ClCompile Include="DeathDoor\Component\Node\AddFallingFloorCallbackNode.cpp">
       <Filter>01. DeathDoor\01. Component\01. Node</Filter>
@@ -936,6 +960,15 @@
     <ClCompile Include="DeathDoor\Component\Node\GruntCommonHitNode.cpp">
       <Filter>01. DeathDoor\01. Component\01. Node</Filter>
     </ClCompile>
+    <ClCompile Include="DeathDoor\Component\Node\GruntCommonMoveStartCheckNode.cpp">
+      <Filter>01. DeathDoor\01. Component\01. Node</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Component\Node\GruntCommonSpawnCheckNode.cpp">
+      <Filter>01. DeathDoor\01. Component\01. Node</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Component\Node\GruntCommonSpawnNode.cpp">
+      <Filter>01. DeathDoor\01. Component\01. Node</Filter>
+    </ClCompile>
     <ClCompile Include="DeathDoor\Component\Node\GruntCommonTraceNode.cpp">
       <Filter>01. DeathDoor\01. Component\01. Node</Filter>
     </ClCompile>
@@ -988,6 +1021,9 @@
       <Filter>01. DeathDoor\01. Component\01. Node</Filter>
     </ClCompile>
     <ClCompile Include="DeathDoor\Component\Node\MeleeRangeCheckNode.cpp">
+      <Filter>01. DeathDoor\01. Component\01. Node</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Component\Node\MonsterHitBack.cpp">
       <Filter>01. DeathDoor\01. Component\01. Node</Filter>
     </ClCompile>
     <ClCompile Include="DeathDoor\Component\Node\MouseLButtonCheckNode.cpp">
@@ -1047,20 +1083,26 @@
     <ClCompile Include="DeathDoor\Component\Node\RotateAttackDirectionNode.cpp">
       <Filter>01. DeathDoor\01. Component\01. Node</Filter>
     </ClCompile>
-    <ClCompile Include="DeathDoor\Scene\DDSceneMode.cpp">
-      <Filter>01. DeathDoor\02. Scene</Filter>
+    <ClCompile Include="DeathDoor\Component\Node\RunNode.cpp">
+      <Filter>01. DeathDoor\01. Component\01. Node</Filter>
     </ClCompile>
-    <ClCompile Include="DeathDoor\Scene\DDBossSceneMode.cpp">
-      <Filter>01. DeathDoor\02. Scene</Filter>
+    <ClCompile Include="DeathDoor\Component\Node\ShootNode.cpp">
+      <Filter>01. DeathDoor\01. Component\01. Node</Filter>
     </ClCompile>
-    <ClCompile Include="DeathDoor\Scene\DDInstanceSceneMode.cpp">
-      <Filter>01. DeathDoor\02. Scene</Filter>
+    <ClCompile Include="DeathDoor\Component\Node\SKeyInputCheck.cpp">
+      <Filter>01. DeathDoor\01. Component\01. Node</Filter>
     </ClCompile>
-    <ClCompile Include="DeathDoor\Scene\DDPuzzleSceneMode.cpp">
-      <Filter>01. DeathDoor\02. Scene</Filter>
+    <ClCompile Include="DeathDoor\Component\Node\SporeBoomerShootNode.cpp">
+      <Filter>01. DeathDoor\01. Component\01. Node</Filter>
     </ClCompile>
-    <ClCompile Include="DeathDoor\Thread\DDSceneLoadingThread.cpp">
-      <Filter>01. DeathDoor\03. Thread</Filter>
+    <ClCompile Include="DeathDoor\Component\Node\StraightPathCheck.cpp">
+      <Filter>01. DeathDoor\01. Component\01. Node</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Component\Node\UpdateInputQueue.cpp">
+      <Filter>01. DeathDoor\01. Component\01. Node</Filter>
+    </ClCompile>
+    <ClCompile Include="DeathDoor\Component\Node\WKeyInputCheck.cpp">
+      <Filter>01. DeathDoor\01. Component\01. Node</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

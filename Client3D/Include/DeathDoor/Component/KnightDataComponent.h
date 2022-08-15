@@ -25,6 +25,7 @@ public:
 
 public:
     virtual void OnActiveMeleeAttackCollider() override;
+    void OnPlayWalkSound();
     void OnLookPlayerMove(float DeltaTime);
     void OnEndAnimJudgeContinueAttack();
     void OnEnableLookAndMove();
@@ -40,6 +41,7 @@ public:
     void OnReachedCutSceneAnimPoint();
     virtual void OnStartCutScene() override;
     virtual void OnEndCutScene() override;
+    virtual void OnPlayerEnterZone(const CollisionResult& Result) override;
 
 public:
     int GetMeleeAttackCount() const
@@ -99,5 +101,6 @@ protected:
     float m_OriginDOFMax;
 
     int m_MeleeAttackCount;
+    int m_WalkSoundCount;
 };
 

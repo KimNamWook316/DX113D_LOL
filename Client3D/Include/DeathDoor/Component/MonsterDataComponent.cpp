@@ -15,6 +15,7 @@
 
 CMonsterDataComponent::CMonsterDataComponent() :
 	m_AnimMesh(nullptr),
+	m_RotateToRandom(false),
 	m_HitBox(nullptr),
 	m_HitEffectFlag(0),
 	m_HitEffectTimer(0.f),
@@ -27,6 +28,7 @@ CMonsterDataComponent::CMonsterDataComponent() :
 	m_LeftLookPlayer(false),
 	m_RightLookPlayer(false),
 	m_CurRotSpeed(0.f),
+	m_AttackCoolTimeEnable(false), // OBJ가 추가 
 	m_AttackCoolDelayTimeMax(0.5f)
 {
 	SetTypeID<CMonsterDataComponent>();
@@ -80,7 +82,7 @@ void CMonsterDataComponent::Start()
 	{
 		m_HitBox = vecCollider[0];
 		size_t Size = vecCollider.size();
-
+		
 		for (size_t i = 0; i < Size; ++i)
 		{
 			if ("HitBox" == vecCollider[i]->GetName())
@@ -150,6 +152,31 @@ void CMonsterDataComponent::Start()
 		m_BloodParticle->SetInheritRotX(false);
 		m_BloodParticle->SetInheritRotY(false);
 		m_BloodParticle->SetInheritRotZ(false);
+	}
+
+	// Spawn Particle
+	m_SpawnParticle = (CParticleComponent*)m_Object->FindComponent("SpawnParticle");
+
+	if (m_SpawnParticle)
+	{
+		m_SpawnParticle->GetCBuffer()->SetFollowRealTimeParticleComponentPos(true);
+
+		// 처음에는 Enable False 처리를 해줄 것이다.
+		m_SpawnParticle->Enable(false);
+
+		// BillBoard 효과는 줄것이다.
+		m_SpawnParticle->SetBillBoardEffect(true);
+
+		// 혹시 모르니 WorldRot 은 모두 0으로 맞춰준다.
+		m_SpawnParticle->SetWorldRotation(0.f, 0.f, 0.f);
+
+		// Blood 는 딱 한번만 생성될 수 있게 세팅한다. 
+		m_SpawnParticle->GetCBuffer()->SetDisableNewAlive(true);
+
+		// m_BloodParticle 은 Rot 을 주지 않을 것이다. Rot 을 주는 순간 모양이 흐뜨러지게 되기 때문이다.
+		m_SpawnParticle->SetInheritRotX(false);
+		m_SpawnParticle->SetInheritRotY(false);
+		m_SpawnParticle->SetInheritRotZ(false);
 	}
 
 	if (m_AnimMesh)
@@ -252,6 +279,11 @@ void CMonsterDataComponent::Update(float DeltaTime)
 	if (m_MoveZ)
 	{
 		MoveZ(DeltaTime);
+	}
+
+	if (m_RotateToRandom)
+	{
+		RotateRandomly(DeltaTime);
 	}
 }
 
@@ -395,14 +427,6 @@ void CMonsterDataComponent::OnDeadPaperBurnEnd()
 
 void CMonsterDataComponent::OnDeadAnimStart()
 {
-	m_HitBox->Enable(false);
-
-	if (m_MeleeAttackCollider)
-	{
-		m_MeleeAttackCollider->Enable(false);
-	}
-
-
 	// DeathChangeColor() 를 사용하는 경우
 	m_DeathColorChangeStart = true;
 
@@ -505,12 +529,38 @@ void CMonsterDataComponent::OnActivateBloodParticle()
 	// y 축으로 살짝 위에 생성되게 한다.
 	const Vector3& ObjectWorldPos = m_Object->GetWorldPos();
 
-	m_BloodParticle->SetWorldPos(ObjectWorldPos + Vector3(0.f, 2.f, 0.f));
+	// m_BloodParticle->SetWorldPos(ObjectWorldPos + Vector3(0.f, 2.f, 0.f));
+	// 
+	// // Enable True 로 만둘어줘서 다시 동작되게 한다.
+	// m_BloodParticle->Enable(true);
+	// 
+	// m_BloodParticle->RecreateOnlyOnceCreatedParticle();
+	m_BloodParticle->StartParticle(ObjectWorldPos);
+}
 
-	// Enable True 로 만둘어줘서 다시 동작되게 한다.
-	m_BloodParticle->Enable(true);
+void CMonsterDataComponent::OnActivateSpawnParticle()
+{
+	if (!m_SpawnParticle)
+		return;
 
-	m_BloodParticle->RecreateOnlyOnceCreatedParticle();
+	const Vector3& ObjectWorldPos = m_Object->GetWorldPos();
+
+	m_SpawnParticle->StartParticle(ObjectWorldPos);
+}
+
+void CMonsterDataComponent::OnInActivateSpawnParticle()
+{
+	if (!m_SpawnParticle)
+		return;
+
+	m_SpawnParticle->CRef::Enable(false);
+}
+
+void CMonsterDataComponent::EnableAttackCoolDelay()
+{
+	m_AttackCoolTimeEnable = true;
+
+	m_AttackCoolDelayTime = m_AttackCoolDelayTimeMax;
 }
 
 void CMonsterDataComponent::SetIsHit(bool Hit)
@@ -528,6 +578,8 @@ void CMonsterDataComponent::SetIsHit(bool Hit)
 
 		// Blood Particle 을 동작시킨다.
 		OnActivateBloodParticle();
+
+		// 추가적으로 Hit 시 호출할 함수를 호출
 	}
 }
 
@@ -584,6 +636,7 @@ float CMonsterDataComponent::GetAnglePlayer()
 	Vector3 MyAxisZ = m_Object->GetWorldAxis(AXIS::AXIS_Z) * -1.f;
 
 	float Angle = ToPlayer.Angle(MyAxisZ);
+
 	return Angle;
 }
 
@@ -658,6 +711,21 @@ void CMonsterDataComponent::OnEnableMoveZ()
 void CMonsterDataComponent::OnDisableMoveZ()
 {
 	m_MoveZ = false;
+}
+
+void CMonsterDataComponent::OnResetPrevMoveZ()
+{
+	m_MoveZ = m_PrevMoveZ;
+}
+
+void CMonsterDataComponent::OnKeepPrevMoveZ()
+{
+	m_PrevMoveZ = m_MoveZ;
+}
+
+void CMonsterDataComponent::OnEnableRandomRotate()
+{
+	m_RotateToRandom = true;
 }
 
 bool CMonsterDataComponent::IsPlayerInMeleeAttackRange()
@@ -737,6 +805,63 @@ bool CMonsterDataComponent::IsPlayerInStopChaseRange()
 	return false;
 }
 
+void CMonsterDataComponent::SetRotateRandom()
+{
+	m_RotateToRandom = true;
+
+	// 이전 MoveZ 정보를 저장해둔다.
+	m_RandomRotatePrevMoveZ = m_MoveZ;
+
+	// Rotate 하는 동안에는 MoveZ 를 False 로 만들어줄 것이다
+	m_MoveZ = false;
+
+	// Rotate 하는 동안에는 움직이지 않도록 세팅할 것이다.
+	m_RotateRandomAngle = ((float)(rand()) / RAND_MAX) * 360.f;
+}
+
+void CMonsterDataComponent::RotateRandomly(float DeltaTime)
+{
+	Vector3 MyPos = m_Object->GetWorldPos();
+
+	float RotSpeed = m_Data.RotateSpeedPerSec;
+
+	// 만약 m_CurRotSpeed 를 별도로 세팅한 상태라면
+	if (m_CurRotSpeed != 0.f)
+	{
+		RotSpeed = m_CurRotSpeed;
+	}
+
+	float RotAmount = RotSpeed * DeltaTime;
+
+	m_RotateRandomAngle -= RotAmount;
+
+	if (m_RotateRandomAngle < 0.f)
+	{
+		m_RotateToRandom = false;
+
+		m_MoveZ = m_RandomRotatePrevMoveZ;
+
+		return;
+	}
+
+	m_Object->AddWorldRotationY(RotAmount);
+}
+
+void CMonsterDataComponent::DecreaseHP(int Amount)
+{
+	CObjectDataComponent::DecreaseHP(Amount);
+
+	if (m_Data.HP <= 0)
+	{
+		m_HitBox->Enable(false);
+
+		if (m_MeleeAttackCollider)
+		{
+			m_MeleeAttackCollider->Enable(false);
+		}
+	}
+}
+
 bool CMonsterDataComponent::Save(FILE* File)
 {
 	CObjectDataComponent::Save(File);
@@ -763,6 +888,10 @@ bool CMonsterDataComponent::LoadOnly(FILE* File)
 	CObjectDataComponent::LoadOnly(File);
 
 	return true;
+}
+
+void CMonsterDataComponent::ActivateHitSubEffect()
+{
 }
 
 void CMonsterDataComponent::ActiveHitEffect(float DeltaTime)

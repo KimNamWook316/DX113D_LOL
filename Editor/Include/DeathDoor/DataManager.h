@@ -16,7 +16,7 @@ private:
 	void LoadSoundData();
 
 public:
-	const ObjectData& GetObjectData(const std::string& Key);
+	ObjectData GetObjectData(const std::string& Key);
 	
 	class CExcelData* FindData(const std::string& Name);
 

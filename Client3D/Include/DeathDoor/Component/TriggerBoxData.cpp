@@ -28,7 +28,7 @@ void CTriggerBoxData::Start()
 
 	if (m_CurrentActive)
 	{
-		Comp->SetEmissiveColor(Vector4(0.f, 1.f, 0.f, 1.f));
+		Comp->SetEmissiveColor(Vector4(0.4f, 0.2f, 0.35f, 1.f));
 	}
 
 	else
@@ -45,7 +45,7 @@ void CTriggerBoxData::Update(float DeltaTime)
 
 	if (m_CurrentActive)
 	{
-		Comp->SetEmissiveColor(Vector4(0.f, 1.f, 0.f, 1.f));
+		Comp->SetEmissiveColor(Vector4(0.4f, 0.2f, 0.35f, 1.f));
 	}
 
 	else

@@ -698,8 +698,7 @@ void CRenderManager::Render(float DeltaTime)
 		(*iter)->Render();
 	}
 
-#ifdef _DEBUG
-	if (CEngine::GetInst()->GetEditMode())
+	if (m_DebugRender)
 	{
 		// Collider Layer Ãâ·Â
 		iter = m_RenderLayerList[(int)RenderLayerType::Collider]->RenderList.begin();
@@ -710,7 +709,6 @@ void CRenderManager::Render(float DeltaTime)
 			(*iter)->Render();
 		}
 	}
-#endif // _DEBUG
 
 	{
 		auto	iter1 = m_RenderLayerList.begin();

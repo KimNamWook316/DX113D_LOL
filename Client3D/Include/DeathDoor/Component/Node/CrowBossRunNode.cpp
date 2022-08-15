@@ -39,6 +39,8 @@ NodeResult CCrowBossRunNode::OnStart(float DeltaTime)
 
 		m_Owner->GetOwner()->SetTreeUpdate(false);
 
+		m_Object->GetScene()->GetResource()->SoundPlay("OldCrow_Death");
+
 		return NodeResult::Node_False;
 	}
 
@@ -100,7 +102,9 @@ NodeResult CCrowBossRunNode::OnUpdate(float DeltaTime)
 	int Frame = m_AnimationMeshComp->GetAnimationInstance()->GetCurrentAnimation()->GetAnimationSequence()->GetCurrentFrameIdx();
 
 	if (Frame >= 8 && Frame <= 17)
+	{
 		Speed *= 2.f;
+	}
 
 	m_Object->AddWorldPos(FaceDir * Speed * DeltaTime);
 

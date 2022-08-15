@@ -48,11 +48,16 @@ void CArrowCollisionFireCollider::Start()
 
 	for (size_t i = 0; i < ComponentSize; ++i)
 	{
+		// Disable New Alive 가 False 인 녀석들은 Enable False 처리해주어야 한다.
 		vecParticleComponents[i]->CRef::Enable(m_FirstManagedChildByTriggerLamp);
+
+		if (vecParticleComponents[i]->GetCBuffer()->IsDisableNewAlive() == 1)
+			vecParticleComponents[i]->CRef::Enable(false);
 	}
 
 	// Light Component 또한 Enable False 처리 한다.
 	CLightComponent* Light = m_Object->FindComponentFromType<CLightComponent>();
+
 	if (Light)
 		Light->CRef::Enable(m_FirstManagedChildByTriggerLamp);
 }

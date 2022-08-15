@@ -6,7 +6,8 @@
 #include "../PlayerDataComponent.h"
 #include "Input.h"
 
-CPlayerRoll::CPlayerRoll()
+CPlayerRoll::CPlayerRoll()	:
+	m_SoundPlay(false)
 {
 	SetTypeID(typeid(CPlayerRoll).hash_code());
 }
@@ -29,6 +30,8 @@ NodeResult CPlayerRoll::OnStart(float DeltaTime)
 	Data->GetSword()->GetAnimationInstance()->ChangeAnimation("PlayerRoll");
 
 	m_NavAgent = m_Object->FindObjectComponentFromType<CNavAgent>();
+
+
 
 	m_CallStart = true;
 	m_Owner->SetCurrentNode(this);
@@ -92,6 +95,12 @@ NodeResult CPlayerRoll::OnUpdate(float DeltaTime)
 
 	}
 
+	if (!m_SoundPlay)
+	{
+		m_Object->GetScene()->GetResource()->SoundPlay("PlayerRoll");
+		m_SoundPlay = true;
+	}
+
 
 	MoveDir = MoveDir.TransformCoord(matRot);
 	MoveDir.Normalize();
@@ -101,6 +110,8 @@ NodeResult CPlayerRoll::OnUpdate(float DeltaTime)
 		m_Owner->SetCurrentNode(nullptr);
 		m_CallStart = false;
 		m_IsEnd = true;
+		m_SoundPlay = false;
+
 		return NodeResult::Node_True;
 	}
 

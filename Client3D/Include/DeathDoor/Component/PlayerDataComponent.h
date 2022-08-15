@@ -3,6 +3,7 @@
 #include "ObjectDataComponent.h"
 #include "../DDFlag.h"
 #include "GameObject/GameObject.h"
+#include "../UI/UIManager.h"
 
 class CPlayerDataComponent :
     public CObjectDataComponent
@@ -35,6 +36,10 @@ private:
 	bool m_IsClimbingLadder;
 	bool m_ClimbingStartEnable;
 
+	bool m_HitBackUnbeatable;
+	float m_HitBackUnbeatableAccTime;
+	float m_HitBackUnbeatableTime;
+
 	DDPlayerRollDirection m_RollDirection;
 
 	class CGameObject* m_AdjLadder;
@@ -45,6 +50,12 @@ private:
 	Vector3 m_SlashDir;
 
 	Vector3 m_CamRelativePos;
+	class CPaperBurnComponent* m_SlashPaperBurn;
+	int m_ConsecutiveAttackCount;
+
+	bool m_HPChargeTimeStart;
+	float m_AccHPChargeTime;
+	float m_HPChargeTime;
 
 public:
 	virtual void Start();
@@ -64,6 +75,21 @@ public:
 	virtual bool LoadOnly(FILE* File) override;
 
 public:
+	void AddHP(int HP)
+	{
+		m_Data.HP += HP;
+	}
+
+	void SetHPChargeTimeStart(bool Start)
+	{
+		m_HPChargeTimeStart = Start;
+	}
+
+	void SetConsecutiveAttackCount(int Count)
+	{
+		m_ConsecutiveAttackCount = Count;
+	}
+
 	void SetAdjLadder(class CGameObject* Ladder);
 
 	void SetRollDirection(DDPlayerRollDirection Dir)
@@ -134,9 +160,12 @@ public:
 
 	void SetPlayerAbilityArrow(float DeltaTime)
 	{
-		m_PlayerData.Abilty_Type = Player_Ability::Arrow;
+		if (m_PlayerData.Abilty_Type == Player_Ability::Arrow)
+			return;
 
-		//m_PlayerHook->Enable(false);
+		CUIManager::GetInst()->ActivateAbility(Player_Ability::Arrow);
+
+		m_PlayerData.Abilty_Type = Player_Ability::Arrow;
 
 	}
 
@@ -149,12 +178,22 @@ public:
 
 	void SetPlayerAbilityChain(float DeltaTime)
 	{
+		if (m_PlayerData.Abilty_Type == Player_Ability::Hook)
+			return;
+
 		m_PlayerData.Abilty_Type = Player_Ability::Hook;
+
+		CUIManager::GetInst()->ActivateAbility(Player_Ability::Hook);
 	}
 
 	void SetPlayerAbilityBomb(float DeltaTime)
 	{
+		if (m_PlayerData.Abilty_Type == Player_Ability::Bomb)
+			return;
+
 		m_PlayerData.Abilty_Type = Player_Ability::Bomb;
+
+		CUIManager::GetInst()->ActivateAbility(Player_Ability::Bomb);
 	}
 
 	void SetSkillNone(float DeltaTime)
@@ -165,6 +204,11 @@ public:
 	Player_Ability GetPlayerAbility()	const
 	{
 		return m_PlayerData.Abilty_Type;
+	}
+
+	int GetConsecutiveAttackCount()	const
+	{
+		return m_ConsecutiveAttackCount;
 	}
 
 	void SetAttackDir(const Vector3& Dir)
@@ -211,7 +255,9 @@ public:
 	{
 		if (!m_IsHit)
 		{
-			CObjectDataComponent::DecreaseHP(Amout);
+			if(m_Data.HP > 0 && !m_Unbeatable && !m_HitBackUnbeatable)
+				CObjectDataComponent::DecreaseHP(Amout);
+
 			m_IsHit = true;
 		}
 	}
@@ -237,5 +283,6 @@ public:
 	void OnEnableAttackCollider();
 	void OnDisableAttackCollider();
 	void OnResetDustParticle();
+	void OnLadderStepSoundPlay();
 };
 

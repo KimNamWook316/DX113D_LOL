@@ -101,7 +101,7 @@ bool CClientManager3D::Init(HINSTANCE hInst)
 	CObjectPool::GetInst()->LoadPoolData("ObjectPoolData.csv");
 	CObjectPool::GetInst()->CreatePoolObject(OBJECT_PATH);
 
-	CInput::GetInst()->CreateKey("DebugRender", 0);
+	CInput::GetInst()->CreateKey("DebugRender", '0');
 	CInput::GetInst()->SetKeyCallback("DebugRender", KeyState_Down, this, &CClientManager3D::SetDebugRender);
 
 	return true;

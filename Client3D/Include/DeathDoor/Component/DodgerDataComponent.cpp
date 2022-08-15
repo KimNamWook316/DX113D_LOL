@@ -96,12 +96,34 @@ void CDodgerDataComponent::Update(float DeltaTime)
 	}
 }
 
+void CDodgerDataComponent::SetIsHit(bool Hit)
+{
+	CMonsterDataComponent::SetIsHit(Hit);
+
+	if (Hit)
+	{
+		CResourceManager::GetInst()->SoundPlay("DodgerHit");
+	}
+}
+
+void CDodgerDataComponent::DecreaseHP(int Amount)
+{
+	CMonsterDataComponent::DecreaseHP(Amount);
+
+	if (m_Data.HP <= 0)
+	{
+		CResourceManager::GetInst()->SoundPlay("DodgerDeath");
+	}
+}
+
 void CDodgerDataComponent::OnAttack1ReadyEnd()
 {
 	OnDisableLookPlayer();
 
 	CAnimationSequenceInstance* AnimInst = m_AnimMesh->GetAnimationInstance();
 	AnimInst->ChangeAnimation("Attack");
+
+	CResourceManager::GetInst()->SoundPlay("DodgerAttackReady1");
 }
 
 void CDodgerDataComponent::OnAttack2ReadyEnd()
@@ -110,10 +132,18 @@ void CDodgerDataComponent::OnAttack2ReadyEnd()
 
 	CAnimationSequenceInstance* AnimInst = m_AnimMesh->GetAnimationInstance();
 	AnimInst->ChangeAnimation("Attack2");
+
+	CResourceManager::GetInst()->SoundPlay("DodgerAttackReady2");
 }
 
 void CDodgerDataComponent::OnAttackMoveStart()
 {
+	int Rand = rand() % 2;
+
+	std::string SoundKey = "DodgerAttack" + std::to_string(Rand);
+
+	CResourceManager::GetInst()->SoundPlay(SoundKey);
+
 	m_SlashLine->Enable(true);
 	m_SlashLinePaperBurn->SetEndEvent(PaperBurnEndEvent::Disable);
 	m_SlashLinePaperBurn->StartPaperBurn();
@@ -229,6 +259,8 @@ void CDodgerDataComponent::OnDashReady()
 
 void CDodgerDataComponent::OnDashStart()
 {
+	CResourceManager::GetInst()->SoundPlay("DodgerJump");
+
 	m_HitBox->Enable(false);
 
 	// 대시 애니메이션 프레임 시간을 통해 이동 스피드를 결정함
@@ -250,6 +282,8 @@ void CDodgerDataComponent::OnDashStart()
 
 void CDodgerDataComponent::OnDashEnd()
 {
+	CResourceManager::GetInst()->SoundPlay("DodgerLand");
+
 	m_HitBox->Enable(true);
 
 	m_CurMoveSpeed = 0.f;

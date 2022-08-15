@@ -44,6 +44,7 @@ void CPlagueKnightDataComponent::Start()
 
 	CAnimationSequenceInstance* AnimInst = m_AnimMesh->GetAnimationInstance();
 
+	AnimInst->AddNotify("StartShoot", "OnReadyShoot", 0, this, &CPlagueKnightDataComponent::OnShootReadyAnimStart);
 	AnimInst->SetEndFunction("StartShoot", this, &CPlagueKnightDataComponent::OnShootReadyAnimEnd);
 	AnimInst->SetEndFunction("ChargeShoot", this, &CPlagueKnightDataComponent::OnChargeAnimEnd);
 	AnimInst->AddNotify("Shoot", "OnShoot", 0, this, &CPlagueKnightDataComponent::OnShoot);
@@ -73,12 +74,24 @@ void CPlagueKnightDataComponent::Update(float DeltaTime)
 	}
 }
 
+void CPlagueKnightDataComponent::DecreaseHP(int Amount)
+{
+	CMonsterDataComponent::DecreaseHP(Amount);
+
+	CResourceManager::GetInst()->SoundPlay("PlagueKnightDeath");
+}
+
+void CPlagueKnightDataComponent::OnShootReadyAnimStart()
+{
+	CResourceManager::GetInst()->SoundPlay("PlagueKnightCharge");
+
+	m_LookPlayer = true;
+}
+
 void CPlagueKnightDataComponent::OnShootReadyAnimEnd()
 {
 	CAnimationSequenceInstance* AnimInst = m_AnimMesh->GetAnimationInstance();
 	AnimInst->ChangeAnimation("ChargeShoot");
-
-	m_LookPlayer = true;
 }
 
 void CPlagueKnightDataComponent::OnChargeAnimEnd()
@@ -91,6 +104,8 @@ void CPlagueKnightDataComponent::OnChargeAnimEnd()
 
 void CPlagueKnightDataComponent::OnShoot()
 {
+	CResourceManager::GetInst()->SoundPlay("PlagueKnightFire");
+
 	CGameObject* Bullet = CObjectPool::GetInst()->GetProjectile("PlagueKnightBullet", m_Scene);
 
 	CProjectileComponent* Proj = Bullet->FindObjectComponentFromType<CProjectileComponent>();
@@ -118,6 +133,8 @@ void CPlagueKnightDataComponent::OnShootAnimEnd()
 
 void CPlagueKnightDataComponent::OnBulletGround(const Vector3& Pos)
 {
+	CResourceManager::GetInst()->SoundPlay("PlagueKnightExplosion");
+
 	m_ExplodeCollider->Enable(true);
 	m_ExplodeCollider->SetWorldPos(Pos);
 
@@ -138,6 +155,8 @@ void CPlagueKnightDataComponent::OnCollideExplode(const CollisionResult& Result)
 
 void CPlagueKnightDataComponent::OnActiveMeleeAttackCollider()
 {
+	CResourceManager::GetInst()->SoundPlay("PlagueKnightSlam");
+
 	CMonsterDataComponent::OnActiveMeleeAttackCollider();
 
 	CGameObject* Particle = CObjectPool::GetInst()->GetParticle("BossKnightImpact", m_Scene);

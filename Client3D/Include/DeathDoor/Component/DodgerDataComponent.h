@@ -15,6 +15,8 @@ private:
 public:
 	virtual void Start() override;
     virtual void Update(float DeltaTime) override;
+    virtual void SetIsHit(bool Hit) override;
+    virtual void DecreaseHP(int Amount) override;
 
 public:
     void OnAttack1ReadyEnd();
