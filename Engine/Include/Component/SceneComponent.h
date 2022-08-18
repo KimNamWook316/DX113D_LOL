@@ -151,6 +151,8 @@ public:
 		m_DrawShadow = Enable;
 	}
 
+	virtual void Enable(bool Enable) override;
+
 public:
 	void SetSceneComponent(class CGameObject* Object);
 	void GetAllSceneComponentsName(std::vector<FindComponentName>& vecNames);
@@ -187,6 +189,7 @@ public:
 	virtual void RenderShadowMap();
 	virtual void RenderDebug();
 	virtual void PostRender();
+	virtual void Reset() override;
 	virtual CSceneComponent* Clone();
 	virtual bool Save(FILE* File);
 	virtual bool Load(FILE* File);
@@ -402,6 +405,12 @@ public:
 	{
 		return m_Transform->GetRotationMatrix();
 	}
+
+	const Matrix& GetScaleMatrix() const
+	{
+		return m_Transform->GetRotationMatrix();
+	}
+
 	Vector3 GetWorldScale()	const
 	{
 		return m_Transform->GetWorldScale();

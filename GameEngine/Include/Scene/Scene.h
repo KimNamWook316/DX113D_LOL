@@ -40,6 +40,9 @@ private:
 
 	std::list<class CSceneComponent*> m_RenderComponentList;
 	Vector3 m_OriginCamPos;
+	Vector3 m_RestoreCamDir;
+	bool m_RestoreCamDirFix;
+	float m_AccTime;
 
 public:
 	CSceneMode* GetSceneMode()	const
@@ -64,10 +67,7 @@ public:
 		m_Change = Change;
 	}
 
-	void Play()
-	{
-		m_Play = true;
-	}
+	void Play();
 
 	void Pause()
 	{
@@ -134,6 +134,14 @@ public:
 		return m_Play;
 	}
 
+	void SetPrevSceneMusicKeyName(const std::string& Name)
+	{
+		m_SceneGlobalData.BackGroundData.PrevMusicKeyName = Name;
+	}
+
+	int GetObjectCountByType(Object_Type Type);
+	void GetObjectsByType(Object_Type Type, std::vector<class CGameObject*>& outVecObj);
+
 	CGameObject* FindObject(const std::string& Name)
 	{
 		auto	iter = m_ObjList.begin();
@@ -146,6 +154,20 @@ public:
 		}
 
 		return nullptr;
+	}
+
+	bool FindObject(CGameObject* Target)
+	{
+		auto	iter = m_ObjList.begin();
+		auto	iterEnd = m_ObjList.end();
+
+		for (; iter != iterEnd; ++iter)
+		{
+			if ((*iter) == Target)
+				return true;
+		}
+
+		return false;
 	}
 
 	bool EraseObjFromList(CGameObject* Target)
@@ -163,6 +185,22 @@ public:
 		}
 
 		return false;
+	}
+
+	CGameObject* FindObjectFromType(Object_Type Type)
+	{
+		auto iter = m_ObjList.begin();
+		auto iterEnd = m_ObjList.end();
+
+		for (; iter != iterEnd; ++iter)
+		{
+			if ((*iter)->GetObjectType() == Type)
+			{
+				return (*iter).Get();
+			}
+		}
+
+		return nullptr;
 	}
 
 public:
@@ -193,8 +231,8 @@ public:
 
 	CGameObject* CreateEmtpyObject()
 	{
-		//CGameObject* Obj = new CGameObject;
-		CGameObject* Obj = CObjectPoolManager::GetInst()->Allocate();
+		CGameObject* Obj = new CGameObject;
+		//CGameObject* Obj = CObjectPoolManager::GetInst()->Allocate();
 		Obj->SetScene(this);
 		m_ObjList.push_back(Obj);
 		return Obj;
@@ -204,9 +242,13 @@ public:
 public:
 	// 카메라 이동이 끝나면 true 리턴
 	bool CameraMove(const Vector3& Direction, const Vector3& DestPos, float Speed, float DeltaTime);
+	bool CameraMove(double Time, const Vector3& DestPos, float DeltaTime);
 	bool RestoreCamera(float Speed, float DeltaTime);
+	bool RestoreCamera(double Time, const Vector3 CurrentCamPos, float DeltaTime);
 
 public:
+	bool SetSceneMode(size_t SceneModeTypeID);
+
 	template <typename T>
 	bool CreateSceneMode()
 	{
@@ -250,7 +292,8 @@ public:
 
 		if (typeid(T).hash_code() == typeid(CGameObject).hash_code())
 		{
-			CGameObject* Obj = CObjectPoolManager::GetInst()->Allocate();
+			//CGameObject* Obj = CObjectPoolManager::GetInst()->Allocate();
+			CGameObject* Obj = new CGameObject;
 
 			Obj->SetName(Name);
 			Obj->SetScene(this);
@@ -296,7 +339,8 @@ public:
 
 		if (typeid(T).hash_code() == typeid(CGameObject).hash_code())
 		{
-			CGameObject* Obj = CObjectPoolManager::GetInst()->Allocate();
+			//CGameObject* Obj = CObjectPoolManager::GetInst()->Allocate();
+			CGameObject* Obj = new CGameObject;
 
 			Obj->SetScene(this);
 

@@ -114,6 +114,20 @@ float CSceneComponent::GetViewZ() const
 	return viewZ;
 }
 
+void CSceneComponent::Enable(bool Enable)
+{
+	m_Render = Enable;
+
+	m_Enable = Enable;
+
+	size_t Size = m_vecChild.size();
+
+	for (size_t i = 0; i < Size; ++i)
+	{
+		m_vecChild[i]->Enable(Enable);
+	}
+}
+
 void CSceneComponent::SetSceneComponent(CGameObject* Object)
 {
 	Object->AddSceneComponent(this);
@@ -515,6 +529,10 @@ void CSceneComponent::Update(float DeltaTime)
 
 	for (size_t i = 0; i < Size; ++i)
 	{
+		// (OBJ가 추가)
+		if (m_vecChild[i]->IsEnable() == false)
+			continue;
+
 		m_vecChild[i]->Update(DeltaTime);
 	}
 }
@@ -527,6 +545,10 @@ void CSceneComponent::PostUpdate(float DeltaTime)
 
 	for (size_t i = 0; i < Size; ++i)
 	{
+		// (OBJ가 추가)
+		if (m_vecChild[i]->IsEnable() == false)
+			continue;
+
 		m_vecChild[i]->PostUpdate(DeltaTime);
 	}
 }
@@ -543,11 +565,18 @@ void CSceneComponent::CheckCollision()
 		Radius.x = GetMeshSize().Length();
 		Radius.y = GetMeshSize().Length();
 		Radius.z = GetMeshSize().Length();
-		Radius = Radius.TransformCoord(GetWorldMatrix());
+
+		// (OBJ 수정)
+		// 원본
+		// Radius = Radius.TransformCoord(GetWorldMatrix());
+		Radius = Radius * GetWorldScale();
 
 		Info.Radius = Radius.x > Radius.y ? Radius.x : Radius.y;
 		Info.Radius = Info.Radius > Radius.z ? Info.Radius : Radius.z;
 		Info.Radius /= 2.f;
+
+		if (Info.Radius < 0.f)
+			assert(false);
 
 		m_SphereInfo.Radius = Info.Radius;
 
@@ -566,10 +595,14 @@ void CSceneComponent::CheckCollision()
 
 void CSceneComponent::PrevRender()
 {
-	if (m_Render && !m_Culling && !m_Instancing)
+	if (m_Render && !m_Instancing)
 	{
 		CRenderManager::GetInst()->AddRenderList(this);
 	}
+ //	if (m_Render && !m_Culling && !m_Instancing)
+ //	{
+ //		CRenderManager::GetInst()->AddRenderList(this);
+ //	}
 
 	size_t	Size = m_vecChild.size();
 
@@ -602,6 +635,16 @@ void CSceneComponent::RenderDebug()
 
 void CSceneComponent::PostRender()
 {
+}
+
+void CSceneComponent::Reset()
+{
+	size_t	Size = m_vecChild.size();
+
+	for (size_t i = 0; i < Size; ++i)
+	{
+		m_vecChild[i]->Reset();
+	}
 }
 
 CSceneComponent* CSceneComponent::Clone()

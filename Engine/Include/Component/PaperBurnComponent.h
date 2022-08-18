@@ -23,6 +23,7 @@ private:
 	float					m_Filter;
 	PaperBurnEndEvent		m_EndEvent;
 	std::string				m_PaperBurnComponentName;
+	class CSceneComponent*	m_PaperBurnComponent;
 	std::vector<CSharedPtr<class CMaterial>> m_vecMaterial;
 
 public:

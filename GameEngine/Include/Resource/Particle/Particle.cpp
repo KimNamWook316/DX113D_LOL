@@ -12,7 +12,7 @@
 // Libraray
 #include <random>
 
-CParticle::CParticle()	:
+CParticle::CParticle() :
 	m_CBuffer(nullptr),
 	m_SpawnTimeMax(0.001f),
 	m_2D(true),
@@ -84,32 +84,39 @@ bool CParticle::Save(FILE* File)
 
 	fwrite(&m_SaveLoadStruct, sizeof(ParticleSaveLoadStruct), 1, File);
 
-	// 실제 저장할 폴더 위치는 Bin//Material//ParticleMaterial 폴더 이다.
-	// 해당 폴더가 없다면 만들어줘야 한다.
-	const PathInfo* ParticleMaterialPath = CPathManager::GetInst()->FindPath(MATERIAL_PARTICLE_PATH);
-	CEngineUtil::CheckAndMakeDirectory(ParticleMaterialPath);
-
 	// 현재 저장할 Material 이 Particle 에 있다면
 	// if (m_SaveLoadStruct.MaterialEnable && MtrlFileExist == false) => 기존 Particle 용 Material 을 덮어써야 하는 경우도 있다.
 	if (m_SaveLoadStruct.MaterialEnable)
 	{
-		// Material 을 Bin/Material/ParticleMaterial Path 에 저장하기
-		char MaterialBinPathMutlibyte[MAX_PATH] = {};
-
-		// if (MaterialPath)
-		if (ParticleMaterialPath)
-			strcpy_s(MaterialBinPathMutlibyte, ParticleMaterialPath->PathMultibyte);
-
-		strcat_s(MaterialBinPathMutlibyte, m_Material->GetName().c_str());
-
-		std::string MaterialPathString = MaterialBinPathMutlibyte;
+		std::string MaterialFullFileName = m_Material->GetName();
 
 		// .mtrl 여부를 확인한다. 없으면 붙여준다.
-		if (MaterialPathString.find(".mtrl") == std::string::npos)
-			MaterialPathString.append(".mtrl");
+		std::string MtrlExt = ".mtrl";
+
+		auto iterFind = std::search(MaterialFullFileName.begin(), MaterialFullFileName.end(),
+			std::boyer_moore_searcher(MtrlExt.begin(), MtrlExt.end()));
+
+		if (iterFind == MaterialFullFileName.end())
+			MaterialFullFileName.append(".mtrl");
+
+		auto FoundResult = CEngineUtil::CheckAndExtractFullPathOfTargetFile(MATERIAL_PARTICLE_PATH, MaterialFullFileName);
+
+		// 만약 Material/Particle 에 존재하지 않는다면
+		// Material/Particle 경로에 저장한다.
+		if (!FoundResult.has_value())
+		{
+			const PathInfo* ParticleMaterialPath = CPathManager::GetInst()->FindPath(MATERIAL_PARTICLE_PATH);
+
+			// Material 을 Bin/Material/ParticleMaterial Path 에 저장하기
+			std::string MaterialBinPathMutlibyte = ParticleMaterialPath->PathMultibyte;
+
+			MaterialBinPathMutlibyte.append(m_Material->GetName().c_str());
+
+			m_Material->SaveFullPath(MaterialBinPathMutlibyte.c_str());
+		}
 
 		// .mtrl 확장자가 붙어서 저장되도록 세팅해야 한다.
-		m_Material->SaveFullPath(MaterialPathString.c_str());
+		m_Material->SaveFullPath(FoundResult.value().c_str());
 	}
 
 	// 4번째 Save, Load : 상수 버퍼 저장 
@@ -135,13 +142,6 @@ bool CParticle::Load(FILE* File)
 	if (!m_Material)
 	{
 		bool FileFound = false;
-
-		// 3_2_a) 제일 우선적으로 Bin//Material//ParticleMaterial Path 에서 찾아준다.
-
-		// 이를 위해서는 Bin//Material//ParticleMaterial 을 먼저 하드디스크 상에 만들어줘야 한다.
-		const PathInfo* ParticleMaterialPathInfo = CPathManager::GetInst()->FindPath(MATERIAL_PARTICLE_PATH);
-
-		CEngineUtil::CheckAndMakeDirectory(ParticleMaterialPathInfo);
 
 		std::string StrParticleFileName;
 

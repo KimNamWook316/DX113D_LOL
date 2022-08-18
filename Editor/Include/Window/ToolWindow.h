@@ -35,7 +35,7 @@ public:
 	void OnWDown(float DetlaTime);
 	void OnEDown(float DetlaTime);
 
-private:
+public:
 	void OnSelectGizmoOperationMode(const char* Label, bool Check);
 	void OnSelectGizmoTransformMode(const char* Label, bool Check);
 	void OnChangeCameraSpeed(float Speed);
@@ -47,6 +47,7 @@ private:
 	void OnChangeBloomScale(float Scale);
 	void OnChangeDOFMin(float Min);
 	void OnChangeDOFMax(float Max);
+	void OnChangeClearColor(const Vector3& Color);
 	void OnSelectFogType(int Index, const char* Label);
 	void OnChageFogColor(const Vector3& Color);
 	void OnChangeFogStart(float Val);
@@ -67,6 +68,7 @@ private:
 	void ClearSceneRelatedWindows();
 	void RefreshSceneRelatedWindow(class CGameObject* Object);
 	void RefreshSceneRelatedWindow(const std::vector<CGameObject*>& vecObj);
+	void OnClickSetEditorCam();
 
 private:
 	// Gizmo
@@ -78,11 +80,13 @@ private:
 
 	// Camera
 	CIMGUICollapsingHeader* m_EditorCameraBlock;
+	CIMGUIButton* m_SetCam;
 	CIMGUISliderFloat* m_CameraSpeed;
 
 	// Render
 	CIMGUICollapsingHeader* m_RenderBlock;
 	CIMGUICheckBox* m_RenderSkyBox;
+	CIMGUIColor3* m_ClearColor;
 	CIMGUICheckBox* m_DebugRender;
 	CIMGUICheckBox* m_PostProcessing;
 	CIMGUISliderFloat* m_ShadowBias;

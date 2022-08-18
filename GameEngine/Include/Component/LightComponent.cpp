@@ -5,7 +5,8 @@
 #include "../Scene/CameraManager.h"
 #include "CameraComponent.h"
 
-CLightComponent::CLightComponent()
+CLightComponent::CLightComponent()	:
+	m_Add(false)
 {
 	SetTypeID<CLightComponent>();
 	m_Render = false;
@@ -17,15 +18,19 @@ CLightComponent::CLightComponent(const CLightComponent& com) :
 	CSceneComponent(com)
 {
 	m_CBuffer = com.m_CBuffer->Clone();
+	m_Add = false;
 }
 
 CLightComponent::~CLightComponent()
 {
-	CLightManager* LightManager = m_Scene->GetLightManager();
-
-	if (LightManager)
+	if (m_Object->IsInPool() == false && m_Scene)
 	{
-		LightManager->DeleteLight(this);
+		CLightManager* LightManager = m_Scene->GetLightManager();
+
+		if (LightManager)
+		{
+			LightManager->DeleteLight(this);
+		}
 	}
 
 	SAFE_DELETE(m_CBuffer);
@@ -35,7 +40,12 @@ void CLightComponent::Start()
 {
 	CSceneComponent::Start();
 
-	m_Scene->GetLightManager()->AddLight(this);
+	if (!m_Add)
+	{
+		m_Scene->GetLightManager()->AddLight(this);
+	}
+
+	m_Add = true;
 }
 
 bool CLightComponent::Init()
@@ -50,6 +60,20 @@ bool CLightComponent::Init()
 void CLightComponent::Update(float DeltaTime)
 {
 	CSceneComponent::Update(DeltaTime);
+}
+
+void CLightComponent::Reset()
+{
+	CSceneComponent::Reset();
+
+	m_Add = false;
+
+	CLightManager* LightManager = m_Scene->GetLightManager();
+
+	if (LightManager)
+	{
+		LightManager->DeleteLight(this);
+	}
 }
 
 void CLightComponent::PostUpdate(float DeltaTime)
@@ -80,6 +104,38 @@ void CLightComponent::PostUpdate(float DeltaTime)
 		Dir.Normalize();
 
 		m_CBuffer->SetDir(Dir);
+	}
+}
+
+void CLightComponent::CheckCollision()
+{
+	Light_Type Type = m_CBuffer->GetLightType();
+	switch (Type)
+	{
+	case Light_Type::Dir:
+		m_Culling = false;
+		break;
+	case Light_Type::Point:
+	{
+		m_SphereInfo.Center = GetWorldPos();
+		m_SphereInfo.Radius = m_CBuffer->GetLightDistance();
+		m_SphereInfo.Radius /= 2.f;
+
+		CCameraComponent* Cam = m_Scene->GetCameraManager()->GetCurrentCamera();
+
+		m_Culling = Cam->FrustumInSphere(m_SphereInfo);
+		break;
+	}
+	case Light_Type::Spot:
+		m_Culling = false;
+		break;
+	}
+
+	size_t	Size = m_vecChild.size();
+
+	for (size_t i = 0; i < Size; ++i)
+	{
+		m_vecChild[i]->CheckCollision();
 	}
 }
 
@@ -225,6 +281,27 @@ bool CLightComponent::LoadOnly(FILE* File)
 	m_CBuffer->SetAtt1(Att3);
 
 	return true;
+}
+
+void CLightComponent::Enable(bool Enable)
+{
+	CSceneComponent::Enable(Enable);
+
+	CLightManager* LightManager = m_Scene->GetLightManager();
+
+	if (Enable)
+	{
+		if (!m_Add)
+		{
+			LightManager->AddLight(this);
+		}
+		m_Add = true;
+	}
+	else
+	{
+		LightManager->DeleteLight(this);
+		m_Add = false;
+	}
 }
 
 void CLightComponent::SetShader()

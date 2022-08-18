@@ -78,21 +78,23 @@ bool CParticleComponentWidget::Init()
     m_ResetParticleButton = m_RootTree->AddWidget<CIMGUIButton>("Reset Particle", 150.f, 20.f);
     m_ResetParticleButton->SetClickCallback<CParticleComponentWidget>(this, &CParticleComponentWidget::OnResetParticleInfo);
    
+
+    // BillBoard Effect
+    m_BillBoardEnableEdit = m_RootTree->AddWidget<CIMGUICheckBox>("BillBoard", 80.f);
+    m_BillBoardEnableEdit->AddCheckInfo("BillBoard");
+    m_BillBoardEnableEdit->SetCallBackLabel<CParticleComponentWidget>(this, &CParticleComponentWidget::OnSetBillBoardEffectEdit);
+    
     // Color Setting
     m_BaseColorEdit = m_RootTree->AddWidget<CIMGUIColor3>("BaseColor", 200.f);
     m_BaseColorEdit->SetCallBack(this, &CParticleComponentWidget::OnEditBaseColor);
-
-    m_EmissiveColorEdit = m_RootTree->AddWidget<CIMGUIColor3>("EmissiveColor", 200.f);
-    m_EmissiveColorEdit->SetCallBack(this, &CParticleComponentWidget::OnEditEmissiveColor);
-
-    // Emissive Linear Change
+    
     m_ApplyLinearEmissiveChangeEdit = m_RootTree->AddWidget<CIMGUICheckBox>("Emissive Linear", 100.f);
     m_ApplyLinearEmissiveChangeEdit->AddCheckInfo("Emissive Linear");
     m_ApplyLinearEmissiveChangeEdit->SetCallBackLabel<CParticleComponentWidget>(this, &CParticleComponentWidget::OnEditEmissiveLinearCheck);
-
+    
     m_StartEmissiveColorEdit = m_RootTree->AddWidget<CIMGUIColor3>("StartEmissive", 200.f);
     m_StartEmissiveColorEdit->SetCallBack(this, &CParticleComponentWidget::OnEditStartEmissiveColor);
-
+    
     m_EndEmissiveColorEdit = m_RootTree->AddWidget<CIMGUIColor3>("EndEmissive", 200.f);
     m_EndEmissiveColorEdit->SetCallBack(this, &CParticleComponentWidget::OnEditEndEmissiveColor);
 
@@ -126,14 +128,7 @@ void CParticleComponentWidget::OnEditBaseColor(const Vector3& Color)
     m_ParticleClass->GetMaterial()->SetBaseColor(Color.x, Color.y, Color.z, 1.f);
     dynamic_cast<CParticleComponent*>(m_Component)->GetMaterial()->SetBaseColor(Color.x, Color.y, Color.z, 1.f);
 }
-void CParticleComponentWidget::OnEditEmissiveColor(const Vector3& Color)
-{
-    if (!m_ParticleClass || !m_ParticleClass->GetMaterial())
-        return;
 
-    m_ParticleClass->GetMaterial()->SetEmissiveColor(Color.x, Color.y, Color.z, 1.f);
-    dynamic_cast<CParticleComponent*>(m_Component)->GetMaterial()->SetEmissiveColor(Color.x, Color.y, Color.z, 1.f);
-}
 void CParticleComponentWidget::OnEditStartEmissiveColor(const Vector3& Color)
 {
     if (!m_ParticleClass)
@@ -181,19 +176,23 @@ void CParticleComponentWidget::OnLoadParticleClass()
         std::string FileExt;
         std::string FileName;
 
-        const char* FilePathMultibyte = CEditorUtil::ChangeTCHARTextToMultibyte(FileFullPath);
+        //const char* FilePathMultibyte = CEditorUtil::ChangeTCHARTextToMultibyte(FileFullPath);
         char FilePathMultibyteCopy[MAX_PATH] = {};
-        strcpy_s(FilePathMultibyteCopy, FilePathMultibyte);
+
+        int ConvertLength = WideCharToMultiByte(CP_ACP, 0, FileFullPath, -1, 0, 0, 0, 0);
+        WideCharToMultiByte(CP_ACP, 0, FileFullPath, -1, FilePathMultibyteCopy, ConvertLength, 0, 0);
+
+        //strcpy_s(FilePathMultibyteCopy, FilePathMultibyte);
 
         // 현재 Load하는 Directory가  Bin//ParticleClass 인지 확인하기 => 아니라면, Load
         std::string PathInfoBeforeFileName;
         CEngineUtil::GetPathInfoBeforeFileName(FilePathMultibyteCopy, PathInfoBeforeFileName);
 
-        if (strcmp(ParticleClassPathInfo->PathMultibyte, PathInfoBeforeFileName.c_str()) != 0)
-        {
-            MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Particle 의 경우 Bin/ParticleClass 로부터 Load 해야 한다."), NULL, MB_OK);
-            return;
-        }
+        //if (strcmp(ParticleClassPathInfo->PathMultibyte, PathInfoBeforeFileName.c_str()) != 0)
+        //{
+        //    MessageBox(CEngine::GetInst()->GetWindowHandle(), TEXT("Particle 의 경우 Bin/ParticleClass 로부터 Load 해야 한다."), NULL, MB_OK);
+        //    return;
+        //}
 
         CEditorUtil::ExtractFileNameAndExtFromPath(FilePathMultibyteCopy, FileName, FileExt);
 
@@ -351,12 +350,22 @@ void CParticleComponentWidget::OnResetParticleInfo()
         CParticleComponent* CurParticleComponent = dynamic_cast<CParticleComponent*>((*iter));
     
         if (!CurParticleComponent)
-            return;
+            continue;
     
-        CurParticleComponent->ResetParticleStructuredBufferInfo();
+        // CurParticleComponent->RecreateOnlyOnceCreatedParticle();
+        CurParticleComponent->RecreateOnlyOnceCreatedParticleWithOutLifeTimeSetting();
     }
 
    // dynamic_cast<CParticleComponent*>(m_Component)->ResetParticleStructuredBufferInfo();
+}
+void CParticleComponentWidget::OnSetBillBoardEffectEdit(const char*, bool Enable)
+{
+    if (!m_ParticleClass)
+        return;
+
+    CParticleComponent* MeshCom = (CParticleComponent*)m_Component;
+
+    MeshCom->SetBillBoardEffect(Enable);
 }
 void CParticleComponentWidget::ParticleLoadSuccessCallback(CParticle* LoadedParticle)
 {
@@ -370,6 +379,7 @@ void CParticleComponentWidget::ParticleLoadSuccessCallback(CParticle* LoadedPart
     // Particle Manager 의 Map 에 추가하기
     CResourceManager::GetInst()->GetParticleManager()->AddParticle(m_ParticleClass);
 
+    // IMGUI 에 반영하기 
     ReflectParticleToIMGUI();
 
     // Resource Display Window 세팅하기
@@ -404,21 +414,20 @@ void CParticleComponentWidget::ReflectParticleToIMGUI()
     if (!m_Component || !m_ParticleClass || !m_ParticleClass->GetMaterial())
         return;
 
-    CMaterial* ParticleMaterial = m_ParticleClass->GetMaterial();
+   CMaterial* ParticleMaterial = m_ParticleClass->GetMaterial();
+   
+   const Vector4& BaseColor = ParticleMaterial->GetBaseColor();
+   m_BaseColorEdit->SetRGB(BaseColor.x, BaseColor.y, BaseColor.z);
+   
+   const Vector3& StEmissiveColor = m_ParticleClass->GetStartEmissiveColor();
+   m_StartEmissiveColorEdit->SetRGB(StEmissiveColor.x, StEmissiveColor.y, StEmissiveColor.z);
+   
+   const Vector3& EdEmissiveColor = m_ParticleClass->GetEndEmissiveColor();
+   m_EndEmissiveColorEdit->SetRGB(EdEmissiveColor.x, EdEmissiveColor.y, EdEmissiveColor.z);
+   
+   bool IsLinearEmissiveEnable = m_ParticleClass->IsLinearEmissiveChangeEnable();
+   m_ApplyLinearEmissiveChangeEdit->SetCheck(0, IsLinearEmissiveEnable);
 
-    const Vector4& BaseColor = ParticleMaterial->GetBaseColor();
-    m_BaseColorEdit->SetRGB(BaseColor.x, BaseColor.y, BaseColor.z);
-
-    const Vector4& EmissiveColor = ParticleMaterial->GetEmissiveColor();
-    m_EmissiveColorEdit->SetRGB(EmissiveColor.x, EmissiveColor.y, EmissiveColor.z);
-
-    const Vector3& StEmissiveColor = m_ParticleClass->GetStartEmissiveColor();
-    m_StartEmissiveColorEdit->SetRGB(StEmissiveColor.x, StEmissiveColor.y, StEmissiveColor.z);
-
-    const Vector3& EdEmissiveColor = m_ParticleClass->GetEndEmissiveColor();
-    m_EndEmissiveColorEdit->SetRGB(EdEmissiveColor.x, EdEmissiveColor.y, EdEmissiveColor.z);
-
-    bool IsLinearEmissiveEnable = m_ParticleClass->IsLinearEmissiveChangeEnable();
-    m_ApplyLinearEmissiveChangeEdit->SetCheck(0, IsLinearEmissiveEnable);
-
+    CParticleComponent* MeshCom = (CParticleComponent*)m_Component;
+    m_BillBoardEnableEdit->SetCheck(0, MeshCom->IsBillBoardEffectEnable());
 }

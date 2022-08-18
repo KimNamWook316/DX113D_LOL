@@ -32,7 +32,9 @@ protected:
     CSharedPtr<class CMesh> m_Mesh;
     CSharedPtr<class CShader> m_Shader;
     class CColliderConstantBuffer* m_CBuffer;
-
+    bool m_RigidCollisionIgnore;
+    // OBJ가 추가 (일정시간동안만 Enable 되었다가 다시 Enable False 
+    float m_EnablePossibleTime;
 public:
     const std::vector<int>& GetCurrentSections()    const
     {
@@ -74,6 +76,16 @@ public:
         m_Offset.z += Offset;
     }
 
+    void SetRigidCollisionIgnore(bool Ignore)
+    {
+        m_RigidCollisionIgnore = Ignore;
+    }
+
+    bool GetRigidCollisionIgnore()  const
+    {
+        return m_RigidCollisionIgnore;
+    }
+
     virtual void SetOffset(const Vector3& Offset)
     {
         m_Offset = Offset;
@@ -94,9 +106,19 @@ public:
         return m_Max;
     }
 
+    void SetCollisionResultHitPoint(const Vector3& HitPoint)
+    {
+        m_Result.HitPoint = HitPoint;
+    }
+
     void SetCollisionResultSrc(CColliderComponent* Com)
     {
         m_Result.Src = Com;
+    }
+
+    void SetEnablePossibleTime(float Time)
+    {
+        m_EnablePossibleTime = Time;
     }
 
     void SetCollisionResultDest(CColliderComponent* Com)
@@ -126,6 +148,7 @@ public:
 
     void ClearPrevSectionIndex()
     {
+
         m_vecPrevSectionIndex.clear();
     }
 
@@ -155,6 +178,21 @@ public:
         return m_PrevCollisionList;
     }
 
+    template <typename T>
+    bool CheckPrevCollisionFromType()
+    {
+        auto iter = m_PrevCollisionList.begin();
+        auto iterEnd = m_PrevCollisionList.end();
+
+        for (; iter != iterEnd; ++iter)
+        {
+            if ((*iter)->CheckType<T>())
+                return true;
+
+            return false;
+        }
+    }
+
 public:
     virtual void Start();
     virtual bool Init();
@@ -170,7 +208,11 @@ public:
     virtual bool Collision(CColliderComponent* Dest) = 0;
     virtual bool CollisionMouse(const Vector2& MousePos) = 0;
     virtual bool CollisionRay(const Ray& Ray);
-    virtual void Destroy() override;
+    virtual void Reset() override;
+
+public:
+    void ClearCollisionCallBack();
+
 public:
     template <typename T>
     void AddCollisionCallback(Collision_State State, T* Obj, void(T::* Func)(const CollisionResult&))

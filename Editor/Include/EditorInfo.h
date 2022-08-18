@@ -21,6 +21,7 @@
 #define BEHAVIORTREE_WINDOW					"BehaviorTreeWindow"
 #define	COLLISION_PROFILE					"CollisionProfileWindow"
 #define SOCKET_WINDOW						"SocketWindow"
+#define SCENEMODE_WINDOW					"SceneModeWindow"
 
 #define DIRECTORY_IMAGE						"DirectoryImage"
 #define FILE_IMAGE							"FileImage"

@@ -211,10 +211,10 @@ public:
 		return m_CBuffer->GetMoveDir();
 	}
 
-	bool Is2D()
-	{
-		return m_CBuffer->Is2D();
-	}
+	// bool Is2D()
+	// {
+	// 	return m_CBuffer->Is2D();
+	// }
 
 	int GetSpecialMoveDirType()
 	{
@@ -310,9 +310,9 @@ public:
 	{
 		return m_CBuffer->IsDisableNewAlive();
 	}
-	int IsUVClippingReflectingMoveDir() const
+	int IsLinearUVClippingEnabled() const
 	{
-		return m_CBuffer->IsUVClippingReflectingMoveDir();
+		return m_CBuffer->IsLinearUVClippingEnabled();
 	}
 	int IsNoiseTextureSamplingApplied()
 	{
@@ -337,7 +337,20 @@ public:
 	{
 		return  m_CBuffer->GetEndEmissiveColor();
 	}
+	int IsFollowRealTimeParticleComponentPos() const
+	{
+		return m_CBuffer->IsFollowRealTimeParticleComponentPos();
+	}
+	bool IsLinearUVClippingDirReversed() const
+	{
+		return m_CBuffer->IsLinearUVClippingDirReversed();
+	}
 public:
+	// Follow Particle Component Pos
+	void SetFollowRealTimeParticleComponentPos(bool Enable)
+	{
+		m_CBuffer->SetFollowRealTimeParticleComponentPos(Enable);
+	}
 	// Noise Texture
 	void SetApplyNoiseTextureSamplingEnable(bool Enable)
 	{
@@ -348,15 +361,20 @@ public:
 		m_CBuffer->SetNoiseTextureApplyRatio(Ratio);
 	}
 	// UV Clipping
-	void SetUVClippingReflectingMoveDirEnable(bool Enable)
+	void SetLinearUVClippingDirReverseEnable(bool Enable)
 	{
-		m_CBuffer->SetUVClippingReflectingMoveDirEnable(Enable);
+		m_CBuffer->SetLinearUVClippingDirReverseEnable(Enable);
+	}
+
+	void SetLinearUVClippingEnable(bool Enable)
+	{
+		m_CBuffer->SetLinearUVClippingEnable(Enable);
 	}
 	// Restart 기능 (구조화 버퍼 내의 특정 값을 초기화 해주는 것)
-	void SetResetParticleSharedInfoSumSpawnCnt(bool Enable)
-	{
-		m_CBuffer->SetResetParticleSharedInfoSumSpawnCnt(Enable);
-	}
+	// void SetResetParticleSharedInfoSumSpawnCnt(bool Enable)
+	// {
+	// 	m_CBuffer->SetResetParticleSharedInfoSumSpawnCnt(Enable);
+	// }
 	void SetDisableNewAlive(bool Enable)
 	{
 		m_CBuffer->SetDisableNewAlive(Enable);
@@ -392,10 +410,10 @@ public:
 	}
 
 	// Component 의 Relative Scale 반영학
-	void SetCommonWorldScale(const Vector3& Scale)
-	{
-		m_CBuffer->SetCommonWorldScale(Scale);
-	}
+	// void SetCommonWorldScale(const Vector3& Scale)
+	// {
+	// 	m_CBuffer->SetCommonWorldScale(Scale);
+	// }
 	// Set  Particle Type
 	void SetParticleShapeType(ParitcleShapeType Type)
 	{
@@ -582,11 +600,11 @@ public:
 	// 	m_CBuffer->SetApplyRandom(Enable);
 	// }
 
-	void Set2D(bool Is2D)
-	{
-		m_2D = Is2D;
-		m_CBuffer->Set2D(Is2D);
-	}
+	// void Set2D(bool Is2D)
+	// {
+	// 	m_2D = Is2D;
+	// 	m_CBuffer->Set2D(Is2D);
+	// }
 
 	void SetMoveAngle(const Vector3& MoveAngle)
 	{

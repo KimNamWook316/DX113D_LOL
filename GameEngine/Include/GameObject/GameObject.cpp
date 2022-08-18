@@ -5,7 +5,9 @@
 #include "../Scene/Navigation3DManager.h"
 #include "../PathManager.h"
 #include "../Component/NavAgent.h"
+#include "../Component/ParticleComponent.h"
 #include "../Component/PaperBurnComponent.h"
+#include "../ObjectPool.h"
 
 CGameObject::CGameObject() :
 	m_Scene(nullptr),
@@ -13,9 +15,9 @@ CGameObject::CGameObject() :
 	m_LifeSpan(0.f),
 	m_NavAgent(nullptr),
 	m_IsEnemy(false),
-	m_NoInterrupt(false),
 	m_ExcludeSceneSave(false),
-	m_NoDestroyFromSceneChange(false)
+	m_NoDestroyFromSceneChange(false),
+	m_InPool(false)
 {
 	SetTypeID<CGameObject>();
 	m_ObjectType = Object_Type::None;
@@ -56,6 +58,29 @@ CGameObject::CGameObject(const CGameObject& obj)
 
 CGameObject::~CGameObject()
 {
+
+}
+
+void CGameObject::Enable(bool Enable)
+{
+	CRef::Enable(Enable);
+
+	if (m_RootComponent)
+	{
+		m_RootComponent->Enable(Enable);
+	}
+
+	size_t Size = m_vecObjectComponent.size();
+	for (size_t i = 0; i < Size; ++i)
+	{
+		m_vecObjectComponent[i]->Enable(Enable);
+	}
+
+	Size = m_vecChildObject.size();
+	for (size_t i = 0; i > Size; ++i)
+	{
+		m_vecChildObject[i]->Enable(Enable);
+	}
 }
 
 void CGameObject::SetScene(CScene* Scene)
@@ -79,14 +104,25 @@ void CGameObject::Destroy()
 {
 	CRef::Destroy();
 
-	if (m_RootComponent)
-		m_RootComponent->Destroy();
-
-	size_t	Size = m_vecObjectComponent.size();
-
-	for (size_t i = 0; i < Size; ++i)
+	if (m_InPool)
 	{
-		m_vecObjectComponent[i]->Destroy();
+		Reset();
+		//CObjectPool::GetInst()->ReturnToPool(this);
+	}
+
+	else
+	{
+		CRef::Destroy();
+
+		if (m_RootComponent)
+			m_RootComponent->Destroy();
+
+		size_t	Size = m_vecObjectComponent.size();
+
+		for (size_t i = 0; i < Size; ++i)
+		{
+			m_vecObjectComponent[i]->Destroy();
+		}
 	}
 }
 
@@ -95,7 +131,8 @@ void CGameObject::AddChildObject(CGameObject* Obj, const std::string& SocketName
 	Obj->m_Parent = this;
 	m_vecChildObject.push_back(Obj);
 
-	m_RootComponent->AddChild(Obj, SocketName);
+	if(m_RootComponent)
+		m_RootComponent->AddChild(Obj, SocketName);
 
 	/*Obj->GetRootComponent()->m_Parent = GetRootComponent();
 
@@ -115,8 +152,8 @@ void CGameObject::DeleteObj()
 	else
 	{
 		m_SceneComponentList.clear();
-		m_Parent->DeleteChildObj(m_Name);
-		Destroy();
+		m_Parent->DeleteChildObj(this);
+		//Destroy();
 	}
 }
 
@@ -155,6 +192,47 @@ bool CGameObject::DeleteChildObj(const std::string& Name)
 		}
 
 		if (m_vecChildObject[i]->DeleteChildObj(Name))
+			return true;
+	}
+
+	return false;
+}
+
+bool CGameObject::DeleteChildObj(CGameObject* Child)
+{
+	size_t	Size = m_vecChildObject.size();
+
+	for (size_t i = 0; i < Size; ++i)
+	{
+		if (m_vecChildObject[i] == Child)
+		{
+			CGameObject* DeleteTarget = m_vecChildObject[i];
+
+			auto	iter = m_vecChildObject.begin() + i;
+
+			if ((*iter)->m_vecChildObject.size() > 0)
+			{
+				auto FirstChildIter = (*iter)->m_vecChildObject.begin();
+
+				CGameObject* FirstChildObj = (*iter)->m_vecChildObject[0];
+
+				(*iter)->m_vecChildObject.erase(FirstChildIter);
+
+				m_vecChildObject[i] = nullptr;
+
+				FirstChildObj->m_Parent = this;
+				m_vecChildObject[i] = FirstChildObj;
+			}
+
+			else
+				m_vecChildObject.erase(iter);
+
+			m_Scene->EraseObjFromList(DeleteTarget);
+
+			return true;
+		}
+
+		if (m_vecChildObject[i]->DeleteChildObj(Child))
 			return true;
 	}
 
@@ -259,6 +337,8 @@ void CGameObject::GetAllObjectComponentsPointer(std::vector<CObjectComponent*>& 
 
 void CGameObject::Start()
 {
+	m_StartCalled = true;
+
 	if (m_RootComponent)
 		m_RootComponent->Start();
 
@@ -283,6 +363,7 @@ void CGameObject::Update(float DeltaTime)
 
 		if (m_LifeSpan <= 0.f)
 		{
+			m_LifeSpan = 0.f;
 			Destroy();
 			return;
 		}
@@ -601,6 +682,9 @@ bool CGameObject::LoadHierarchy(FILE* File, CScene* NextScene)
 			NextScene->AddObject(Child);
 			Child->LoadHierarchy(File, NextScene);
 		}
+
+		Child->m_Parent = this;
+		m_vecChildObject.push_back(Child);
 	}
 
 
@@ -630,6 +714,7 @@ bool CGameObject::LoadHierarchy(FILE* File, CScene* NextScene)
 
 	fread(&ObjComponentCount, sizeof(int), 1, File);
 
+
 	for (int i = 0; i < ObjComponentCount; ++i)
 	{
 		size_t	TypeID = 0;
@@ -657,9 +742,10 @@ bool CGameObject::LoadHierarchy(FILE* File, CScene* NextScene)
 			break;
 		}
 	}
+	
 
-	if(Child)
-		AddChildObject(Child);
+	//if(Child)
+	//	AddChildObject(Child);
 
 	CSceneManager::GetInst()->CallObjectDataSet(this, m_Name);
 
@@ -699,7 +785,9 @@ bool CGameObject::LoadHierarchy(const char* FullPath)
 
 	fclose(File);
 
-	Start();
+	// Pool에서 꺼낸 오브젝트들은 CObjectPool::GetXXX 함수 호출해서 Start를 호출할 것이다
+	if (!m_InPool)
+		Start();
 
 	return true;
 }
@@ -785,6 +873,42 @@ bool CGameObject::LoadOnly(const char* FullPath, CComponent*& OutCom)
 	fclose(File);
 
 	return Ret;
+}
+
+void CGameObject::Reset()
+{
+	m_Scene = nullptr;
+	SetWorldPos(FLT_MAX, FLT_MAX, FLT_MAX);
+	m_RootComponent->GetTransform()->ForceUpdateMat();
+
+	m_LifeSpan = 0.f;
+
+	size_t Size = m_vecObjectComponent.size();
+
+	for (size_t i = 0; i < Size; ++i)
+	{
+		m_vecObjectComponent[i]->Reset();
+	}
+
+	if (m_RootComponent)
+		m_RootComponent->Reset();
+}
+
+void CGameObject::StartParticle(const Vector3& WorldPos)
+{
+	Enable(true);
+
+	SetWorldPos(WorldPos);
+
+	std::vector<CParticleComponent*> vecParticleComponents;
+	FindAllSceneComponentFromType(vecParticleComponents);
+
+	size_t vecSize = vecParticleComponents.size();
+
+	for (size_t i = 0; i < vecSize; ++i)
+	{
+		vecParticleComponents[i]->StartParticle(WorldPos);
+	}
 }
 
 void CGameObject::Move(const Vector3& EndPos)

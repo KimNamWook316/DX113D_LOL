@@ -36,7 +36,7 @@ private:
     bool MakeShaderWidget(class CMaterial* Mat, const std::string& ShaderName);
 
 private:
-    class CIMGUITree* m_ShaderWidgetTree;
+    class CIMGUICollapsingHeader* m_ShaderWidgetTree;
     class CShaderWidget* m_ShaderWidget;
     class CIMGUITextInput* m_MeshName;
     class CIMGUIButton* m_LoadMeshButton;

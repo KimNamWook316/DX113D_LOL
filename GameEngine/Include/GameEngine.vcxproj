@@ -125,6 +125,7 @@
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="Matrix.cpp" />
     <ClCompile Include="Navigation3D.cpp" />
+    <ClCompile Include="ObjectPool.cpp" />
     <ClCompile Include="ObjectPoolManager.cpp" />
     <ClCompile Include="PathManager.cpp" />
     <ClCompile Include="Ref.cpp" />
@@ -164,6 +165,7 @@
     <ClCompile Include="Resource\Shader\BloomShader.cpp" />
     <ClCompile Include="Resource\Shader\BlurHorizontalShader.cpp" />
     <ClCompile Include="Resource\Shader\BlurVerticalShader.cpp" />
+    <ClCompile Include="Resource\Shader\BombShader.cpp" />
     <ClCompile Include="Resource\Shader\ColliderConstantBuffer.cpp" />
     <ClCompile Include="Resource\Shader\ColliderPixelShader.cpp" />
     <ClCompile Include="Resource\Shader\ColliderShader.cpp" />
@@ -174,6 +176,7 @@
     <ClCompile Include="Resource\Shader\DecalDebugShader.cpp" />
     <ClCompile Include="Resource\Shader\DecalShader.cpp" />
     <ClCompile Include="Resource\Shader\DownScaleCBuffer.cpp" />
+    <ClCompile Include="Resource\Shader\FadeCBuffer.cpp" />
     <ClCompile Include="Resource\Shader\FogCBuffer.cpp" />
     <ClCompile Include="Resource\Shader\GlobalConstantBuffer.cpp" />
     <ClCompile Include="Resource\Shader\GlobalLightCBuffer.cpp" />
@@ -201,6 +204,7 @@
     <ClCompile Include="Resource\Shader\PaperBurnConstantBuffer.cpp" />
     <ClCompile Include="Resource\Shader\ParticleConstantBuffer.cpp" />
     <ClCompile Include="Resource\Shader\ParticleRenderShader.cpp" />
+    <ClCompile Include="Resource\Shader\ParticleTempValConstantBuffer.cpp" />
     <ClCompile Include="Resource\Shader\ParticleUpdateShader.cpp" />
     <ClCompile Include="Resource\Shader\PosMeshShader.cpp" />
     <ClCompile Include="Resource\Shader\ProgressBarConstantBuffer.cpp" />
@@ -376,7 +380,9 @@
     <ClInclude Include="Input.h" />
     <ClInclude Include="Matrix.h" />
     <ClInclude Include="Navigation3D.h" />
+    <ClInclude Include="ObjectPool.h" />
     <ClInclude Include="ObjectPoolManager.h" />
+    <ClInclude Include="ParticleInfo.h" />
     <ClInclude Include="PathManager.h" />
     <ClInclude Include="Ref.h" />
     <ClInclude Include="Render\BlendState.h" />
@@ -416,6 +422,7 @@
     <ClInclude Include="Resource\Shader\BloomShader.h" />
     <ClInclude Include="Resource\Shader\BlurHorizontalShader.h" />
     <ClInclude Include="Resource\Shader\BlurVerticalShader.h" />
+    <ClInclude Include="Resource\Shader\BombShader.h" />
     <ClInclude Include="Resource\Shader\ColliderConstantBuffer.h" />
     <ClInclude Include="Resource\Shader\ColliderPixelShader.h" />
     <ClInclude Include="Resource\Shader\ColliderShader.h" />
@@ -426,6 +433,7 @@
     <ClInclude Include="Resource\Shader\DecalDebugShader.h" />
     <ClInclude Include="Resource\Shader\DecalShader.h" />
     <ClInclude Include="Resource\Shader\DownScaleCBuffer.h" />
+    <ClInclude Include="Resource\Shader\FadeCBuffer.h" />
     <ClInclude Include="Resource\Shader\FogCBuffer.h" />
     <ClInclude Include="Resource\Shader\GlobalConstantBuffer.h" />
     <ClInclude Include="Resource\Shader\GlobalLightCBuffer.h" />
@@ -453,6 +461,7 @@
     <ClInclude Include="Resource\Shader\PaperBurnConstantBuffer.h" />
     <ClInclude Include="Resource\Shader\ParticleConstantBuffer.h" />
     <ClInclude Include="Resource\Shader\ParticleRenderShader.h" />
+    <ClInclude Include="Resource\Shader\ParticleTempValConstantBuffer.h" />
     <ClInclude Include="Resource\Shader\ParticleUpdateShader.h" />
     <ClInclude Include="Resource\Shader\PosMeshShader.h" />
     <ClInclude Include="Resource\Shader\ProgressBarConstantBuffer.h" />
@@ -539,6 +548,12 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">BillboardVS</EntryPointName>
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">BillboardVS</EntryPointName>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">BillboardVS</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">BillboardVS</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="..\Bin\Shader\Bloom.fx">
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">BrightPass</EntryPointName>
@@ -547,6 +562,12 @@
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">BrightPass</EntryPointName>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Effect</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">BrightPass</EntryPointName>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">BrightPass</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="..\Bin\Shader\Blur.fx">
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">VerticalFilter</EntryPointName>
@@ -555,6 +576,12 @@
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">VerticalFilter</EntryPointName>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Effect</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">VerticalFilter</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">VerticalFilter</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="..\Bin\Shader\Collider.fx">
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">ColliderMeshVS</EntryPointName>
@@ -591,6 +618,12 @@
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">DecalVS</EntryPointName>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Effect</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">DecalVS</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">DecalVS</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="..\Bin\Shader\Gray.fx">
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">GrayVS</EntryPointName>
@@ -599,6 +632,12 @@
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">GrayVS</EntryPointName>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Effect</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">GrayVS</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">GrayVS</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="..\Bin\Shader\HDRDownScale.fx">
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">DownScaleFirstPass</EntryPointName>
@@ -607,6 +646,12 @@
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">DownScaleFirstPass</EntryPointName>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Effect</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">DownScaleFirstPass</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">DownScaleFirstPass</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="..\Bin\Shader\HDRDownScaleSecond.fx">
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">DownScaleSecondPass</EntryPointName>
@@ -615,6 +660,12 @@
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">DownScaleSecondPass</EntryPointName>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Effect</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">DownScaleSecondPass</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">DownScaleSecondPass</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="..\Bin\Shader\HDRRender.fx">
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">HDRRenderVS</EntryPointName>
@@ -623,6 +674,12 @@
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">HDRRenderVS</EntryPointName>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Effect</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">HDRRenderVS</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">HDRRenderVS</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="..\Bin\Shader\LandScape.fx">
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">LandScapeVS</EntryPointName>
@@ -631,6 +688,12 @@
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">LandScapeVS</EntryPointName>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Effect</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">LandScapeVS</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">LandScapeVS</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="..\Bin\Shader\Laser.fx">
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">LaserVS</EntryPointName>
@@ -653,6 +716,12 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Effect</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">LightAccVS</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">LightAccVS</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="..\Bin\Shader\Mesh2D.fx">
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Mesh2DVS</EntryPointName>
@@ -675,18 +744,42 @@
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">OutlineVS</EntryPointName>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Effect</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">OutlineVS</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">OutlineVS</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
     </FxCompile>
-    <FxCompile Include="..\Bin\Shader\Particle.fx">
+    <FxCompile Include="..\Bin\Shader\ParticleData.fx">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="..\Bin\Shader\ParticleRender.fx">
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">ParticleVS</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">ParticleVS</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">ParticleVS</EntryPointName>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Effect</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">ParticleVS</EntryPointName>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Effect</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
-      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">ParticleVS</EntryPointName>
+    </FxCompile>
+    <FxCompile Include="..\Bin\Shader\ParticleUpdate.fx">
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">ParticleUpdate</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">ParticleUpdate</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">ParticleUpdate</EntryPointName>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Effect</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
-      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">ParticleVS</EntryPointName>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">ParticleUpdate</EntryPointName>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Effect</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
     </FxCompile>
@@ -703,6 +796,12 @@
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Standard3DShadowMapVS</EntryPointName>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Effect</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Standard3DShadowMapVS</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Standard3DShadowMapVS</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="..\Bin\Shader\Sky.fx">
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">SkyVS</EntryPointName>
@@ -711,6 +810,12 @@
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">SkyVS</EntryPointName>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Effect</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">SkyVS</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">SkyVS</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="..\Bin\Shader\Standard3D.fx">
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Standard3DVS</EntryPointName>
@@ -753,6 +858,12 @@
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">ToonVS</EntryPointName>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Effect</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">ToonVS</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">ToonVS</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="..\Bin\Shader\Transparent3D.fx">
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Transparent3DVS</EntryPointName>
@@ -761,6 +872,12 @@
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Transparent3DVS</EntryPointName>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Effect</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Transparent3DVS</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Transparent3DVS</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="..\Bin\Shader\TransparentInfo.fx">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
@@ -773,6 +890,12 @@
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">WaterVS</EntryPointName>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Effect</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">WaterVS</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">WaterVS</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Effect</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
     </FxCompile>
     <FxCompile Include="..\Bin\Shader\Widget.fx">
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">WidgetVS</EntryPointName>

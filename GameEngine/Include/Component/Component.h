@@ -44,6 +44,7 @@ public:
 public:
     virtual void Start();
     virtual bool Init();
+    virtual void Reset() = 0;
     virtual void Update(float DeltaTime) = 0;
     virtual void PostUpdate(float DeltaTime) = 0;
     virtual void PrevRender() = 0;

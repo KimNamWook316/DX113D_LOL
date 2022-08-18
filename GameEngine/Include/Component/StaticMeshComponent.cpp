@@ -4,6 +4,7 @@
 #include "../Scene/SceneResource.h"
 #include "../Render/RenderManager.h"
 #include "../Resource/Shader/Standard2DConstantBuffer.h"
+#include "../EngineUtil.h"
 
 CStaticMeshComponent::CStaticMeshComponent()
 {
@@ -44,11 +45,15 @@ bool CStaticMeshComponent::IsTransparent() const
 
 void CStaticMeshComponent::SetMesh(const std::string& Name)
 {
-	m_Mesh = (CStaticMesh*)m_Scene->GetResource()->FindMesh(Name);
+	if(m_Scene)
+		m_Mesh = (CStaticMesh*)m_Scene->GetResource()->FindMesh(Name);
 
 	if (!m_Mesh)
 	{
-		return;
+		m_Mesh = (CStaticMesh*)CResourceManager::GetInst()->FindMesh(Name);
+
+		if(!m_Mesh)
+			return;
 	}
 
 	SetMesh(m_Mesh);
@@ -141,7 +146,7 @@ void CStaticMeshComponent::AddMaterial(CMaterial* Material)
 {
 	m_vecMaterialSlot.push_back(Material->Clone());
 
-	int Index = m_vecMaterialSlot.size() - 1;
+	int Index = (int)m_vecMaterialSlot.size() - 1;
 	m_vecMaterialSlot[Index]->SetScene(m_Scene);
 }
 
@@ -412,9 +417,6 @@ void CStaticMeshComponent::PrevRender()
 
 void CStaticMeshComponent::Render()
 {
-	if (m_Name.find("Hook") != std::string::npos)
-		int a = 3;
-
 	CSceneComponent::Render();
 
 	if (!m_Mesh)
@@ -446,6 +448,7 @@ void CStaticMeshComponent::RenderShadowMap()
 	size_t Size = m_vecMaterialSlot.size();
 	for (size_t i = 0; i < Size; ++i)
 	{
+		m_vecMaterialSlot[i]->UpdateCBuffer();
 		m_Mesh->Render((int)i);
 	}
 }
@@ -540,7 +543,32 @@ bool CStaticMeshComponent::Load(FILE* File)
 		fread(&Length, sizeof(int), 1, File);
 		fread(&MeshFullPath, sizeof(char), Length, File);
 
-		m_Scene->GetResource()->LoadMeshFullPathMultibyte(Mesh_Type::Static, MeshName, MeshFullPath);
+		if(m_Scene)
+			m_Scene->GetResource()->LoadMeshFullPathMultibyte(Mesh_Type::Static, MeshName, MeshFullPath);
+		else
+			CResourceManager::GetInst()->LoadMeshFullPathMultibyte(Mesh_Type::Static, MeshName, MeshFullPath);
+
+		CMesh* LoadCheck = nullptr;
+		if(m_Scene)
+			LoadCheck = m_Scene->GetResource()->FindMesh(MeshName);
+		else
+			LoadCheck = CResourceManager::GetInst()->FindMesh(MeshName);
+
+		if (!LoadCheck)
+		{
+			std::string FileName = CEngineUtil::ExtractFilePathFromFullPath(MeshFullPath, MESH_PATH);
+
+			char FileNameMB[MAX_PATH] = {};
+			TCHAR FileNameTCHAR[MAX_PATH] = {};
+			strcpy_s(FileNameMB, FileName.c_str());
+
+			MultiByteToWideChar(CP_ACP, 0, FileNameMB, (int)FileName.length(), FileNameTCHAR, (int)FileName.length());
+
+			if(m_Scene)
+				m_Scene->GetResource()->LoadMesh(Mesh_Type::Static, MeshName, FileNameTCHAR, MESH_PATH);
+			else
+				CResourceManager::GetInst()->LoadMesh(Mesh_Type::Static, MeshName, FileNameTCHAR, MESH_PATH);
+		}
 	}
 
 	SetMesh(MeshName);
@@ -840,7 +868,7 @@ void CStaticMeshComponent::OnCreateNewInstancingCheckCount()
 	for (size_t i = 0; i < SlotSize; ++i)
 	{
 		// Material별 Instancing Shader, Shader Paramerter 정보 저장
-		Mat = m_Mesh->GetMaterial(i);
+		Mat = m_Mesh->GetMaterial((int)i);
 		NoInstancingShader = Mat->GetShader();
 		InstancingShader = CResourceManager::GetInst()->FindInstancingShader(NoInstancingShader);
 		MatShaderParams = Mat->GetShaderParams();

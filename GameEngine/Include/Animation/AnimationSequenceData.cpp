@@ -8,7 +8,8 @@ CAnimationSequenceData::CAnimationSequenceData() :
 	m_FrameTime(0.f),
 	m_PlayTime(0.f),
 	m_PlayScale(1.f),
-	m_Loop(0)
+	m_Loop(0),
+	m_EndFunctionCalled(false)
 {
 }
 

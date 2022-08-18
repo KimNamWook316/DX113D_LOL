@@ -22,6 +22,7 @@
 #include "../GameObject/SkyObject.h"
 #include "../Resource/Shader/ConstantBuffer.h"
 #include "../Resource/ResourceManager.h"
+#include "../Resource/Shader/FadeCBuffer.h"
 
 DEFINITION_SINGLE(CRenderManager)
 
@@ -29,12 +30,14 @@ CRenderManager::CRenderManager()	:
 	m_RenderStateManager(nullptr),
 	m_Standard2DCBuffer(nullptr),
 	m_Shadow(true),
-	m_ShadowLightDistance(100.f),
+	m_ShadowLightDistance(15.f),
 	m_ShadowCBuffer(nullptr),
 	m_DebugRender(false),
 	m_PostFXRenderer(nullptr),
-	m_PostProcessing(false),
-	m_RenderSkyBox(true)
+	m_PostProcessing(true),
+	m_RenderSkyBox(true),
+	m_FadeCBuffer(nullptr),
+	m_BombEffect(false)
 {
 }
 
@@ -56,6 +59,42 @@ CRenderManager::~CRenderManager()
 	SAFE_DELETE(m_Standard2DCBuffer);
 	SAFE_DELETE(m_RenderStateManager);
 	SAFE_DELETE(m_PostFXRenderer);
+	SAFE_DELETE(m_FadeCBuffer);
+}
+
+void CRenderManager::StartFadeEffect(FadeEffecType Type, bool Stay)
+{
+	m_CurFadeEffectType = Type;
+	m_FadeEffectStart = true;
+	m_FadeEffectTimer = 0.f;
+
+	m_FadeCBuffer->SetFadeStart(true);
+	m_FadeCBuffer->SetFadeStartColor(m_FadeInfo.StartColor);
+	m_FadeCBuffer->SetFadeEndColor(m_FadeInfo.EndColor);
+	m_FadeInfo.Stay = Stay;
+}
+
+void CRenderManager::EnableBombEffect(float Time)
+{
+	if (m_BombEffect)
+	{
+		return;
+	}
+
+	CScene* Scene = CSceneManager::GetInst()->GetScene();
+
+	if (Scene)
+	{
+		// 전역광 끈다
+		CLightComponent* GlobalLight = Scene->GetLightManager()->GetGlobalLightComponent();
+
+		m_OriginGLightColor = GlobalLight->GetLightColor();
+		GlobalLight->SetColor(Vector4::Black);
+
+		m_BombEffect = true;
+		m_BombEffectTime = Time;
+		m_BombEffectTimer = 0.f;
+	}
 }
 
 float CRenderManager::GetMiddleGray() const
@@ -116,6 +155,11 @@ float CRenderManager::GetFogDensity() const
 float CRenderManager::GetShadowBias() const
 {
 	return m_ShadowCBuffer->GetBias();
+}
+
+bool CRenderManager::GetDebugRender() const
+{
+	return m_DebugRender;
 }
 
 void CRenderManager::SetMiddleGray(float Gray)
@@ -312,13 +356,11 @@ bool CRenderManager::Init()
 
 	m_RenderLayerList.push_back(Layer);
 
-#ifdef _DEBUG
 	Layer = new RenderLayer;
 	Layer->Name = "Collider";
 	Layer->LayerPriority = (int)RenderLayerType::Collider;
 
 	m_RenderLayerList.push_back(Layer);
-#endif // _DEBUG
 
 	m_DepthDisable = m_RenderStateManager->FindRenderState("DepthDisable");
 	m_AlphaBlend = m_RenderStateManager->FindRenderState("AlphaBlend");
@@ -475,6 +517,10 @@ bool CRenderManager::Init()
 	m_ShadowMapTarget->SetScale(Vector3(100.f, 100.f, 1.f));
 	m_ShadowMapTarget->SetDebugRender(true);
 
+	// Player Target
+	CResourceManager::GetInst()->CreateTarget("PlayerTarget", RS.Width, RS.Height, DXGI_FORMAT_R32G32B32A32_FLOAT);
+	m_PlayerTarget = (CRenderTarget*)CResourceManager::GetInst()->FindTexture("PlayerTarget");
+
 	m_LightBlendShader = CResourceManager::GetInst()->FindShader("LightBlendShader");
 	m_LightBlendRenderShader = CResourceManager::GetInst()->FindShader("LightBlendRenderShader");
 	m_Mesh3DNoLightRenderShader = CResourceManager::GetInst()->FindShader("Mesh3DNoLightShader");
@@ -490,6 +536,13 @@ bool CRenderManager::Init()
 
 	// Toon Texture
 	m_ToonRampTex = CResourceManager::GetInst()->FindTexture("ToonRampTex");
+
+	// Fade in, out
+	m_FadeCBuffer = new CFadeCBuffer;
+	m_FadeCBuffer->Init();
+	m_FadeInfo.StartColor = Vector3(0.f, 0.f, 0.f);
+	m_FadeInfo.EndColor = Vector3(1.f, 1.f, 1.f);
+	m_FadeInfo.Time = 1.f;
 
 	return true;
 }
@@ -525,6 +578,7 @@ void CRenderManager::Render(float DeltaTime)
 		}	
 	}
 
+	m_PlayerTarget->ClearTarget();
 	m_FinalTarget->ClearTarget();
 
 	// 인스턴싱 리스트 업데이트
@@ -592,16 +646,37 @@ void CRenderManager::Render(float DeltaTime)
 	// 파티클 레이어
 	RenderParticle();
 
+	// Fade in out
+	UpdateFadeEffectInfo(DeltaTime);
+
+	// Bomb Effect 시간 계산
+	if (m_BombEffect)
+	{
+		m_BombEffectTimer += DeltaTime;
+		if (m_BombEffectTimer >= m_BombEffectTime)
+		{
+			m_BombEffect = false;
+			m_BombEffectTimer = 0.f;
+
+			// 전역광 다시 켠다
+			CLightComponent* GlobalLight = Scene->GetLightManager()->GetGlobalLightComponent();
+			GlobalLight->SetColor(m_OriginGLightColor);
+		}
+	}
+
 	if (m_PostProcessing)
 	{
 		// HDR, Bloom, Adaptation 등 PostEffect 처리
-		m_PostFXRenderer->Render(DeltaTime, m_FinalTarget);
+		m_PostFXRenderer->Render(DeltaTime, m_FinalTarget, m_BombEffect);
 	}
 	else
 	{
 		// 반투명 오브젝트 + 조명처리 + 외곽선 처리된 최종 화면을 백버퍼에 그려낸다.
-		RenderFinalScreen();
+		RenderFinalScreen(DeltaTime);
 	}
+
+	// Post-Particle Layer 출력
+	RenderPostParticle();
 
 	// Debug Mode 일때만 컴파일 + Editor 에서만 Render 되게 세팅
 #ifdef _DEBUG
@@ -612,9 +687,6 @@ void CRenderManager::Render(float DeltaTime)
 	RenderParticleEffectEditor();
 #endif
 
-	// Post-Particle Layer 출력
-	RenderPostParticle();
-
 	// Screen Widget 출력
 	auto iter = m_RenderLayerList[(int)RenderLayerType::ScreenWidgetComponent]->RenderList.begin();
 	auto iterEnd = m_RenderLayerList[(int)RenderLayerType::ScreenWidgetComponent]->RenderList.end();
@@ -624,8 +696,7 @@ void CRenderManager::Render(float DeltaTime)
 		(*iter)->Render();
 	}
 
-#ifdef _DEBUG
-	if (CEngine::GetInst()->GetEditMode())
+	if (m_DebugRender)
 	{
 		// Collider Layer 출력
 		iter = m_RenderLayerList[(int)RenderLayerType::Collider]->RenderList.begin();
@@ -636,7 +707,6 @@ void CRenderManager::Render(float DeltaTime)
 			(*iter)->Render();
 		}
 	}
-#endif // _DEBUG
 
 	{
 		auto	iter1 = m_RenderLayerList.begin();
@@ -1018,9 +1088,12 @@ void CRenderManager::RenderTransparent()
 	m_FinalTarget->ResetTarget();
 }
 
-void CRenderManager::RenderFinalScreen()
+void CRenderManager::RenderFinalScreen(float DeltaTime)
 {
+
 	m_FinalTarget->SetTargetShader(21);
+	m_vecGBuffer[2]->SetTargetShader(22);
+	m_PlayerTarget->SetTargetShader(23);
 
 	m_LightBlendRenderShader->SetShader();
 
@@ -1037,6 +1110,8 @@ void CRenderManager::RenderFinalScreen()
 	m_DepthDisable->ResetState();
 
 	m_FinalTarget->ResetTargetShader(21);
+	m_vecGBuffer[2]->ResetTargetShader(22);
+	m_PlayerTarget->ResetTargetShader(23);
 }
 
 void CRenderManager::RenderAnimationEditor()
@@ -1162,7 +1237,6 @@ void CRenderManager::RenderParticle()
 
 	for (; iter != iterEnd; ++iter)
 	{
-		// OBJ가 추가 (Particle Mesh Widget 에서 Enable false 처리)
 		if ((*iter)->IsEnable() == false)
 			continue;
 
@@ -1174,6 +1248,39 @@ void CRenderManager::RenderParticle()
 	m_vecGBuffer[2]->ResetShader(10, (int)Buffer_Shader_Type::Pixel, 0);
 
 	m_FinalTarget->ResetTarget();
+}
+
+void CRenderManager::RenderPlayer(CMesh* PlayerMesh)
+{
+	// GBuffer 타겟을 잠시 교체
+	std::vector<ID3D11RenderTargetView*>	vecPrevTarget;
+	ID3D11RenderTargetView* PlayerTarget = m_PlayerTarget->GetTargetView();
+	ID3D11DepthStencilView* PrevDepthTarget = nullptr;
+
+	size_t	GBufferSize = m_vecGBuffer.size();
+	vecPrevTarget.resize(GBufferSize);
+
+	CDevice::GetInst()->GetContext()->OMGetRenderTargets((unsigned int)GBufferSize,
+		&vecPrevTarget[0], &PrevDepthTarget);
+
+	CDevice::GetInst()->GetContext()->OMSetRenderTargets(1,
+		&PlayerTarget, PrevDepthTarget);
+
+	m_DepthDisable->SetState();
+	m_ShadowMapShader->SetShader();
+
+	PlayerMesh->Render();
+
+	m_DepthDisable->ResetState();
+
+	CDevice::GetInst()->GetContext()->OMSetRenderTargets((unsigned int)GBufferSize,
+		&vecPrevTarget[0], PrevDepthTarget);
+
+	SAFE_RELEASE(PrevDepthTarget);
+	for (size_t i = 0; i < GBufferSize; ++i)
+	{
+		SAFE_RELEASE(vecPrevTarget[i]);
+	}
 }
 
 void CRenderManager::SetBlendFactor(const std::string& Name, float r, float g,
@@ -1223,6 +1330,11 @@ void CRenderManager::RenderInstancing(int LayerIndex, bool AlphaBlend)
 		RenderInstancingList* InstancingList = m_RenderLayerList[LayerIndex]->m_vecInstancing[i];
 		// Material Slot 수만큼 반복한다.
 		int	SlotCount = 0;
+
+		if (InstancingList->RenderList.empty())
+		{
+			continue;
+		}
 
 		if (InstancingList->Mesh->GetMeshType() == Mesh_Type::Static)
 		{
@@ -1333,7 +1445,7 @@ void CRenderManager::UpdateInstancingList()
 				}
 
 				const std::list<class CSceneComponent*>& InstancingCompList = (*iter)->InstancingList;
-				int RecommendSBufferSize = InstancingCompList.size();
+				int RecommendSBufferSize = (int)InstancingCompList.size();
 
 				if ((*iter)->Mesh->GetMeshType() == Mesh_Type::Static)
 				{
@@ -1369,12 +1481,21 @@ void CRenderManager::UpdateInstancingList()
 					Layer->m_vecInstancing[Layer->InstancingIndex]->BufferCount = Count;
 				}
 
+				CScene* CurScene = CSceneManager::GetInst()->GetScene();
+
 				auto	iter1 = (*iter)->InstancingList.begin();
 				auto	iter1End = (*iter)->InstancingList.end();
 
+				int ObjCount = 0;
 				for (; iter1 != iter1End; ++iter1)
 				{
+					if (CurScene != (*iter1)->GetScene())
+					{
+						continue;
+					}
+
 					Layer->m_vecInstancing[Layer->InstancingIndex]->RenderList.push_back(*iter1);
+					++ObjCount;
 				}
 
 				Layer->m_vecInstancing[Layer->InstancingIndex]->Mesh = (*iter)->Mesh;
@@ -1387,7 +1508,7 @@ void CRenderManager::UpdateInstancingList()
 					Layer->m_vecInstancing[Layer->InstancingIndex]->CBuffer->SetBoneCount(((CAnimationMesh*)(*iter)->Mesh)->GetBoneCount());
 				}
 
-				Layer->m_vecInstancing[Layer->InstancingIndex]->CBuffer->SetObjectCount((*iter)->InstancingList.size());
+				Layer->m_vecInstancing[Layer->InstancingIndex]->CBuffer->SetObjectCount(ObjCount);
 
 				++Layer->InstancingIndex;
 			}
@@ -1402,6 +1523,11 @@ void CRenderManager::UpdateInstancingInfo(int LayerIndex, bool UpdateShadow)
 	for (int i = 0; i < InstancingIndex; ++i)
 	{
 		RenderInstancingList* InstancingList = m_RenderLayerList[LayerIndex]->m_vecInstancing[i];
+
+		if (InstancingList->RenderList.empty())
+		{
+			continue;
+		}
 
 		CSceneComponent* RenderComponent = InstancingList->RenderList.back();
 
@@ -1425,7 +1551,10 @@ void CRenderManager::UpdateInstancingInfo(int LayerIndex, bool UpdateShadow)
 
 		vecInfo.reserve(SBufferSize);
 
-		if (UpdateShadow)
+		// 그림자 적용 여부 
+		bool DrawShadow = RenderComponent->IsDrawShadow();
+
+		if (DrawShadow)
 		{
 			// ShadowBuffer
 			vecShadowInfo.reserve(SBufferSize);
@@ -1472,7 +1601,7 @@ void CRenderManager::UpdateInstancingInfo(int LayerIndex, bool UpdateShadow)
 				(*iter)->SetInstancingShadowInfo(&ShadowInfo);
 				Material->GetCBuffer()->SetInstancingInfo(&ShadowInfo);
 
-				if (UpdateShadow)
+				if (DrawShadow)
 				{
 					vecShadowInfo.push_back(ShadowInfo);
 				}
@@ -1482,11 +1611,70 @@ void CRenderManager::UpdateInstancingInfo(int LayerIndex, bool UpdateShadow)
 		InstancingList->Buffer->UpdateBuffer(&vecInfo[0],
 			(int)SBufferSize);
 
-		if (UpdateShadow)
+		if (DrawShadow)
 		{
 			InstancingList->ShadowBuffer->UpdateBuffer(&vecShadowInfo[0],
 				(int)SBufferSize);
 		}
+	}
+}
+
+void CRenderManager::UpdateFadeEffectInfo(float DeltaTime)
+{
+	// 현재 페이드 이펙트에 등록된 스타트 콜백 호출
+	if (m_FadeEffectStart)
+	{
+		if (m_FadeEffectTimer == 0.f && m_FadeInfo.StartCallBack)
+		{
+			m_FadeInfo.StartCallBack();
+			m_FadeInfo.StartCallBack = nullptr;
+		}
+
+		m_FadeEffectTimer += DeltaTime;
+
+		if (DeltaTime >= (int)m_FadeInfo.Time)
+		{
+			m_FadeEffectTimer = 0.f;
+		}
+
+		float Ratio = 0.f;
+
+		// 페이드 인의 경우 End Color -> Start Color로
+		if (m_CurFadeEffectType == FadeEffecType::FADE_IN)
+		{
+			Ratio = m_FadeEffectTimer / m_FadeInfo.Time;
+		}
+		// 페이드 아웃의 경우 Start Color -> End Color로
+		else if (m_CurFadeEffectType == FadeEffecType::FADE_OUT)
+		{
+			Ratio = 1.f - (m_FadeEffectTimer / m_FadeInfo.Time);
+		}
+
+		m_FadeCBuffer->SetFadeRatio(Ratio);
+
+		// 페이드 이펙트 엔드 콜백 호출 및 페이드 종료
+		if (m_FadeEffectTimer >= m_FadeInfo.Time)
+		{
+			if (m_FadeInfo.EndCallBack)
+			{
+				m_FadeInfo.EndCallBack();
+				m_FadeInfo.EndCallBack = nullptr;
+			}
+
+			// Stay 상태라면, Effect를 종료하지 않고, 현재 컬러를 유지한다.
+			if (m_FadeInfo.Stay)
+			{
+				m_FadeEffectTimer = 1.f;
+			}
+			else
+			{
+				m_FadeEffectTimer = 0.f;
+				m_FadeEffectStart = false;
+				m_FadeCBuffer->SetFadeStart(false);
+			}
+		}
+
+		m_FadeCBuffer->UpdateCBuffer();
 	}
 }
 
@@ -1497,6 +1685,18 @@ void CRenderManager::RenderDefaultInstancingShadow()
 	for (int i = 0; i < InstancingIndex; ++i)
 	{
 		RenderInstancingList* InstancingList = m_RenderLayerList[(int)RenderLayerType::Default]->m_vecInstancing[i];
+
+		if (InstancingList->RenderList.empty())
+		{
+			continue;
+		}
+
+		bool DrawShadow = InstancingList->RenderList.back()->IsDrawShadow();
+
+		if (!DrawShadow)
+		{
+			continue;
+		}
 
 		// Material Slot 수만큼 반복한다.
 		int	SlotCount = 0;

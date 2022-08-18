@@ -161,7 +161,9 @@ void CTransform::InheritRotation(bool Current)
 	}
 
 	ConvertRot = m_WorldRot.ConvertAngle();
+
 	Qut = XMQuaternionRotationRollPitchYaw(ConvertRot.x, ConvertRot.y, ConvertRot.z);
+
 	matRot.RotationQuaternion(Qut);
 
 	for (int i = 0; i < AXIS_MAX; ++i)
@@ -218,9 +220,10 @@ void CTransform::InheritParentRotationPos(bool Current)
 
 			m_WorldPos = m_RelativePos.TransformCoord(matRot);
 		}
-
 		else
+		{
 			m_WorldPos = m_RelativePos + m_Parent->GetWorldPos();
+		}
 	}
 
 	m_UpdatePos = true;
@@ -957,8 +960,11 @@ void CTransform::SetParticleEffectEditorTransform()
 
 	CCameraComponent* Camera = m_Scene->GetCameraManager()->GetParticleEffectEditorCamera();
 
-	m_CBuffer->SetViewMatrix(Camera->GetViewMatrix());
-	m_CBuffer->SetProjMatrix(Camera->GetProjMatrix());
+	if (Camera)
+	{
+		m_CBuffer->SetViewMatrix(Camera->GetViewMatrix());
+		m_CBuffer->SetProjMatrix(Camera->GetProjMatrix());
+	}
 
 	m_CBuffer->SetPivot(m_Pivot);
 	m_CBuffer->SetMeshSize(m_MeshSize);

@@ -36,6 +36,7 @@ private:
 	float	m_PlayTime;
 	float	m_PlayScale;		// 재생 비율
 	bool	m_Loop;
+	bool	m_EndFunctionCalled;
 	std::function<void()>	m_EndFunction;
 	std::vector<AnimationNotify*>	m_vecNotify;
 public:
@@ -153,7 +154,7 @@ public:
 
 		if (StartFrame < 0)
 		{
-			StartFrame == 0;
+			StartFrame = 0;
 		}
 
 		int SeqEndFrame = m_Sequence->GetEndFrame();

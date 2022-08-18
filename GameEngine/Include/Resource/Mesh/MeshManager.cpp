@@ -138,7 +138,7 @@ bool CMeshManager::Init()
 	}
 
 	CreateMesh(Mesh_Type ::Static, "SpherePos",
-		&vecSpherePos[0], sizeof(Vector3), SphereSize,
+		&vecSpherePos[0], sizeof(Vector3), (int)SphereSize,
 		D3D11_USAGE_DEFAULT, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST,
 		&vecSphereIndex[0], sizeof(int), vecSphereIndex.size(),
 		D3D11_USAGE_DEFAULT, DXGI_FORMAT_R32_UINT);
@@ -284,22 +284,22 @@ bool CMeshManager::Init()
 	{
 		Vector3(-0.5f, 0.f, 0.f),
 		Vector3(0.5f, 0.f, 0.f),
-		Vector3(0.5f, 0.f, 1.f),
-		Vector3(-0.5f, 0.f, 1.f)
+		Vector3(0.5f, 0.f, -1.f),
+		Vector3(-0.5f, 0.f, -1.f)
 	};
 	
 	for (size_t i = 0; i < 4; ++i)
 		vecPlaneVertex[i].Pos = PlaneMeshPos[i];
 
-	vecPlaneVertex[0].UV = Vector2(0.f, 0.f);
-	vecPlaneVertex[1].UV = Vector2(1.f, 0.f);
-	vecPlaneVertex[2].UV = Vector2(1.f, 1.f);
-	vecPlaneVertex[3].UV = Vector2(0.f, 1.f);
+	vecPlaneVertex[0].UV = Vector2(0.f, 1.f);
+	vecPlaneVertex[1].UV = Vector2(0.f, 0.f);
+	vecPlaneVertex[2].UV = Vector2(1.f, 0.f);
+	vecPlaneVertex[3].UV = Vector2(1.f, 1.f);
 
-	vecPlaneVertex[0].Normal = Vector3(0.f, 0.f, -1.f);
-	vecPlaneVertex[1].Normal = Vector3(0.f, 0.f, -1.f);
-	vecPlaneVertex[2].Normal = Vector3(0.f, 0.f, -1.f);
-	vecPlaneVertex[3].Normal = Vector3(0.f, 0.f, -1.f);
+	vecPlaneVertex[0].Normal = Vector3(0.f, 1.f, 0.f);
+	vecPlaneVertex[1].Normal = Vector3(0.f, 1.f, 0.f);
+	vecPlaneVertex[2].Normal = Vector3(0.f, 1.f, 0.f);
+	vecPlaneVertex[3].Normal = Vector3(0.f, 1.f, 0.f);
 
 	int PlaneMeshIndex[6] = { 0, 1, 2, 0, 2, 3 };
 

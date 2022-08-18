@@ -8,6 +8,7 @@
 #include "../Scene/Scene.h"
 #include "../Scene/CameraManager.h"
 #include "CameraComponent.h"
+#include "../Render/RenderManager.h"
 
 CColliderSphere::CColliderSphere()
 {
@@ -52,6 +53,11 @@ bool CColliderSphere::Init()
 void CColliderSphere::Update(float DeltaTime)
 {
 	CColliderComponent::Update(DeltaTime);
+
+	// Scale이 변할 수 도 있으니 매 프레임마다 해준다. 
+	// Start에서 한번만 MeshSize를 설정해주면 Pool에서 꺼내 오는 경우 GetXXX함수를 호출하고 난 뒤 얻은 Object로 Transform을 수정하는데
+	// 그렇게 되면 MeshSize를 (x, y, z) = (FLT_MAX, FLT_MAX, FLT_MAX)인 상태로 MeshSize를 설정하고 난 뒤에 Transform을 수정하게 되어 버리기 때문에 Update에서 해줌
+	SetMeshSize(m_Info.Max - m_Info.Min);
 }
 
 void CColliderSphere::PostUpdate(float DeltaTime)
@@ -68,16 +74,6 @@ void CColliderSphere::PostUpdate(float DeltaTime)
 
 	SetMeshSize(m_Max - m_Min);
 	m_SphereInfo.Center = m_Info.Center;
-}
-
-void CColliderSphere::PrevRender()
-{
-	CColliderComponent::PrevRender();
-}
-
-void CColliderSphere::Render()
-{
-	CColliderComponent::Render();
 
 	CCameraComponent* Camera = m_Scene->GetCameraManager()->GetCurrentCamera();
 
@@ -108,6 +104,23 @@ void CColliderSphere::Render()
 
 	if (m_MouseCollision)
 		m_CBuffer->SetColliderColor(Vector4(1.f, 0.f, 0.f, 1.f));
+}
+
+void CColliderSphere::PrevRender()
+{
+	CColliderComponent::PrevRender();
+}
+
+void CColliderSphere::Render()
+{
+	bool DebugRender = CRenderManager::GetInst()->IsDebugRender();
+
+	if (!DebugRender)
+	{
+		return;
+	}
+
+	CColliderComponent::Render();
 
 	m_CBuffer->UpdateCBuffer();
 

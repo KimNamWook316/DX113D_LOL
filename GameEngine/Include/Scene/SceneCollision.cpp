@@ -8,6 +8,8 @@
 #include "CollisionSection.h"
 #include "../Component/ColliderComponent.h"
 #include "../Component/ColliderBox3D.h"
+#include "../Component/ColliderRay.h"
+#include "../Component/ColliderHalfLine.h"
 #include "../Input.h"
 #include "Viewport.h"
 #include "Scene.h"
@@ -75,7 +77,7 @@ void CSceneCollision::Collision(float DeltaTime)
 
 	// 충돌체들을 각 자의 영역으로 포함시켜주도록 한다.
 	//CheckColliderSection();
-	//CheckColliderSection3D();
+	CheckColliderSection3D();
 
 	// 현재 충돌 영역이 겹치는지 판단한다.
 	iter = m_ColliderList.begin();
@@ -83,7 +85,7 @@ void CSceneCollision::Collision(float DeltaTime)
 
 	for (; iter != iterEnd; ++iter)
 	{
-		if ((*iter)->GetCurrentSectionCheck())
+		if ((*iter)->IsEnable() == false || (*iter)->GetCurrentSectionCheck())
 			continue;
 
 		(*iter)->CurrentSectionCheck();
@@ -112,6 +114,8 @@ void CSceneCollision::Collision(float DeltaTime)
 	{
 		(*iter)->ClearFrame();
 	}
+
+	m_ColliderList.clear();
 }
 
 void CSceneCollision::CollisionMouse(float DeltaTime)
@@ -376,7 +380,19 @@ void CSceneCollision::Clear()
 
 void CSceneCollision::AddCollider(CColliderComponent* Collider)
 {
-	m_ColliderList.push_back(Collider);
+	auto iter = m_ColliderList.begin();
+	auto iterEnd = m_ColliderList.end();
+	
+	bool Find = false;
+
+	for (; iter != iterEnd; ++iter)
+	{
+		if ((*iter) == Collider)
+			Find = true;
+	}
+
+	if(!Find)
+		m_ColliderList.push_back(Collider);
 }
 
 int CSceneCollision::GetSectionIndex(const Vector3& Pos)
@@ -554,11 +570,69 @@ void CSceneCollision::CheckColliderSection3D()
 		Vector3	Min = Collider->GetMin();
 		Vector3	Max = Collider->GetMax();
 
+		if (Collider->CheckType<CColliderRay>())
+		{
+			Vector3 StartPos = ((CColliderRay*)Collider)->GetStartPos();
+			Vector3 EndPos = ((CColliderRay*)Collider)->GetEndPos();
+
+			if (StartPos.x < EndPos.x)
+				Min.x = StartPos.x;
+			else
+				Min.x = EndPos.x;
+
+			if (StartPos.z < EndPos.z)
+				Min.z = StartPos.z;
+			else
+				Min.z = EndPos.z;
+
+			if (StartPos.x > EndPos.x)
+				Max.x = StartPos.x;
+			else
+				Max.x = EndPos.x;
+
+			if (StartPos.z > EndPos.z)
+				Max.z = StartPos.z;
+			else
+				Max.z = EndPos.z;
+		}
+
+		else if (Collider->CheckType<CColliderHalfLine>())
+		{
+			Vector3 StartPos = ((CColliderHalfLine*)Collider)->GetInfo().StartPos;
+			Vector3 EndPos = ((CColliderHalfLine*)Collider)->GetInfo().EndPos;
+
+			if (StartPos.x < EndPos.x)
+				Min.x = StartPos.x;
+			else
+				Min.x = EndPos.x;
+
+			if (StartPos.z < EndPos.z)
+				Min.z = StartPos.z;
+			else
+				Min.z = EndPos.z;
+
+			if (StartPos.x > EndPos.x)
+				Max.x = StartPos.x;
+			else
+				Max.x = EndPos.x;
+
+			if (StartPos.z > EndPos.z)
+				Max.z = StartPos.z;
+			else
+				Max.z = EndPos.z;
+		}
+
 		Min -= m_Section->Min;
 		Max -= m_Section->Min;
-
-		Min -= m_NavMeshMin;
-		Max -= m_NavMeshMin;
+		
+		CNavMeshComponent* NavMesh = m_Scene->GetNavigation3DManager()->GetNavMeshData();
+		if (NavMesh && NavMesh->GetNavMesh())
+		{
+			//Min -= m_NavMeshMin;
+			//Max -= m_NavMeshMin;
+			Min -= m_Scene->GetNavigation3DManager()->GetNavMeshData()->GetNavMesh()->GetMin();
+			Max -= m_Scene->GetNavigation3DManager()->GetNavMeshData()->GetNavMesh()->GetMin();
+		}
 
 		int	IndexMinX, IndexMinZ;
 		int	IndexMaxX, IndexMaxZ;
@@ -576,7 +650,17 @@ void CSceneCollision::CheckColliderSection3D()
 		IndexMaxX = IndexMaxX >= m_Section->CountX ? m_Section->CountX - 1 : IndexMaxX;
 		//IndexMaxY = IndexMaxY >= m_Section->CountY ? m_Section->CountY - 1 : IndexMaxY;
 		IndexMaxZ = IndexMaxZ >= m_Section->CountZ ? m_Section->CountZ - 1 : IndexMaxZ;
+	
+		if (IndexMaxX < 0)
+			IndexMaxX = 0;
+		if (IndexMaxZ < 0)
+			IndexMaxZ = 0;
 
+		if (IndexMinX >= m_Section->CountX)
+			IndexMinX = m_Section->CountX - 1;
+
+		if (IndexMinZ >= m_Section->CountZ)
+			IndexMinZ = m_Section->CountZ - 1;
 
 		for (int z = IndexMinZ; z <= IndexMaxZ; ++z)
 		{

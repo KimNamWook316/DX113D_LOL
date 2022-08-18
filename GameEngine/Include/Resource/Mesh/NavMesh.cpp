@@ -150,9 +150,13 @@ bool CNavMesh::LoadMeshFullPathMultibyte(const char* FullPath)
 
 	m_Min = m_Min - Middle;
 	m_Max = m_Max - Middle;
+	m_OriginMin = m_Min;
+	m_OriginMax = m_Max;
+
+	
 
 	m_Scene->GetResource()->CreateNavMesh(this, "NavMesh",
-		&m_vecVertexPos[0], sizeof(Vector3), m_vecVertexPos.size(),
+		&m_vecVertexPos[0], sizeof(Vector3), (int)m_vecVertexPos.size(),
 		D3D11_USAGE_DEFAULT, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST,
 		&m_vecIndex[0], sizeof(int), (int)m_vecIndex.size(),
 		D3D11_USAGE_DEFAULT, DXGI_FORMAT_R32_UINT);
@@ -195,6 +199,12 @@ void CNavMesh::CreatePolygonInfo()
 
 		++PolyIndex;
 	}
+
+	int a = 3;
+}
+
+void CNavMesh::ReCreateVertexPos()
+{
 }
 
 void CNavMesh::CheckAdjInfo()
@@ -357,6 +367,16 @@ bool CNavMesh::LoadMesh(FILE* File)
 	fread(&m_Min, sizeof(Vector3), 1, File);
 	fread(&m_Max, sizeof(Vector3), 1, File);
 
+	m_OriginMin = m_Min;
+	m_OriginMax = m_Max;
+
+	if (m_OriginMin.x > m_OriginMax.x && m_OriginMin.z > m_OriginMax.z)
+	{
+		Vector3 Tmp = m_OriginMin;
+		m_OriginMin = m_OriginMax;
+		m_OriginMax = Tmp;
+	}
+
 	CreateNavMesh(m_Name);
 
 	return true;
@@ -365,7 +385,7 @@ bool CNavMesh::LoadMesh(FILE* File)
 bool CNavMesh::CreateNavMesh(const std::string& Name)
 {
 	return CSceneManager::GetInst()->GetScene()->GetResource()->CreateNavMesh(this, Name,
-		&m_vecOriginVertexPos[0], sizeof(Vector3), m_vecVertexPos.size(),
+		&m_vecOriginVertexPos[0], sizeof(Vector3), (int)m_vecVertexPos.size(),
 		D3D11_USAGE_DEFAULT, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST,
 		&m_vecIndex[0], sizeof(int), (int)m_vecIndex.size(),
 		D3D11_USAGE_DEFAULT, DXGI_FORMAT_R32_UINT);

@@ -77,7 +77,6 @@ bool CSkyObject::SetSkyTexture(const char* FileName, const std::string& PathName
 
 bool CSkyObject::SetSkyTextureFullPath(const char* FullPath)
 {
-	// TODO : Skybox 제작할것인지, 제외할것인지
 	CSceneResource* Resource = m_Scene->GetResource();
 
 	// 기존 Sky Material과 Texture 삭제
@@ -98,16 +97,18 @@ bool CSkyObject::SetSkyTextureFullPath(const char* FullPath)
 	
 	bool Success = Resource->CreateMaterial<CMaterial>("SkyMaterial");
 	Mat = Resource->FindMaterial("SkyMaterial");
-	Mat->AddTextureFullPath(20, (int)Buffer_Shader_Type::Pixel, "DefaultSky", FullPathWideChar);
+	CResourceManager::GetInst()->ReleaseTexture("NewSky");
+	Mat->ClearTexture();
+	Mat->AddTextureFullPath(20, (int)Buffer_Shader_Type::Pixel, "NewSky", FullPathWideChar);
 	Mat->SetRenderState("FrontFaceCull");
 	Mat->SetRenderState("SkyDepth");
 	Mat->SetShader("SkyShader");
 	m_Mesh->AddMaterial(Mat);
 
 	// Scene Save Data에 Skybox 경로 업데이트
-	std::string FileName = CEngineUtil::FilterFileName(FullPath);
+	std::string FileName = CEngineUtil::ExtractFilePathFromFullPath(FullPath, TEXTURE_PATH);
 	SceneSaveGlobalData GlobalData = m_Scene->GetSceneSaveGlobalData();
-	GlobalData.SkyBoxTexFileName = FileName;
+	GlobalData.BackGroundData.SkyBoxFileName = FileName;
 	m_Scene->SetSceneSaveGlobalData(GlobalData);
 
 	return Success;

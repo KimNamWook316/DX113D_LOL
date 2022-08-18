@@ -50,6 +50,7 @@ private:
 	bool		m_LButtonClick;
 	bool		m_RButtonClick;
 	bool		m_RButtonUp;
+	bool		m_LButtonUp;
 	short		m_WheelDir;
 
 private:
@@ -97,6 +98,11 @@ public:
 	bool GetMouseRButtonUp() const
 	{
 		return m_RButtonUp;
+	}
+
+	bool GetMouseLButtonUp() const
+	{
+		return m_LButtonUp;
 	}
 
 	Vector2 GetMousePos()	const

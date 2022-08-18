@@ -1,14 +1,16 @@
+
 #include "DefaultScene.h"
 #include "Scene/Scene.h"
 #include "Scene/SceneResource.h"
 #include "Resource/Material/Material.h"
 #include "Component/StateComponent.h"
 #include "Component/Node/SequenceNode.h"
-#include "../Component/Node/MoveInputCheckNode.h"
+#include "../DeathDoor/Component/Node/MoveInputCheckNode.h"
+
 #include "Component/AnimationMeshComponent.h"
 #include "Component/StaticMeshComponent.h"
 
-#include "../DataManager.h"
+#include "../DeathDoor/DataManager.h"
 
 
 CDefaultScene::CDefaultScene()  :
@@ -27,7 +29,7 @@ bool CDefaultScene::Init()
     CreateMaterial();
 
 
-
+    //CResourceManager::GetInst()->LoadAniFile();
 
     /*
     if (!LoadAnimationSequence2D())

@@ -40,7 +40,10 @@ CEngine::CEngine()	:
 #endif
 
 	//_CrtSetBreakAlloc(8951);
-	//m_ClearColor[1] = 1.f; 
+	m_ClearColor[0] = 0.88f; 
+	m_ClearColor[1] = 0.88f; 
+	m_ClearColor[2] = 0.88f; 
+	 
 	srand(unsigned int(GetTickCount()));
 	rand();
 }
@@ -326,7 +329,8 @@ bool CEngine::Update(float DeltaTime)
 			}
 		}
 
-		Pos.y -= m_MouseWidget[(int)m_MouseState]->GetWindowSize().y;
+		// Pos.y -= m_MouseWidget[(int)m_MouseState]->GetWindowSize().y;
+		Pos.y = m_RS.Height - Pos.y;
 
 		m_MouseWidget[(int)m_MouseState]->SetPos(Pos);
 

@@ -112,18 +112,15 @@ bool CDevice::Init(HWND hWnd, unsigned int Width,
 	SAFE_RELEASE(Adapter);
 	SAFE_RELEASE(Factory);
 
-	// SwapChain�� ������ �ִ� ����۸� ���´�.
 	ID3D11Texture2D* BackBuffer = nullptr;
 
 	m_SwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D),
 		(void**)&BackBuffer);
 
-	// BackBuffer�� ����� RenderTargetView�� �����Ѵ�.
 	m_Device->CreateRenderTargetView(BackBuffer, nullptr, &m_TargetView);
 
 	SAFE_RELEASE(BackBuffer);
 
-	// ���̹��۸� �����.
 	D3D11_TEXTURE2D_DESC	DepthDesc = {};
 
 	DepthDesc.Width = Width;
@@ -153,16 +150,13 @@ bool CDevice::Init(HWND hWnd, unsigned int Width,
 
 	m_Context->RSSetViewports(1, &VP);
 
-	// 2D Factory ����
 	if (FAILED(D2D1CreateFactory(D2D1_FACTORY_TYPE_MULTI_THREADED, &m_2DFactory)))
 		return false;
 
-	// 3D BackBuffer�� Surface�� ���´�.
 	IDXGISurface* BackSurface = nullptr;
 
 	m_SwapChain->GetBuffer(0, IID_PPV_ARGS(&BackSurface));
 
-	// 2D�� ����Ÿ���� ������ش�.
 	D2D1_RENDER_TARGET_PROPERTIES	props = D2D1::RenderTargetProperties(
 		D2D1_RENDER_TARGET_TYPE_HARDWARE,
 		D2D1::PixelFormat(DXGI_FORMAT_UNKNOWN, D2D1_ALPHA_MODE_PREMULTIPLIED));

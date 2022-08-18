@@ -24,6 +24,11 @@ private:
 	bool			m_Dynamic;
 
 public:
+	ID3D11UnorderedAccessView* GetUAV() const
+	{
+		return m_UAV;
+	}
+
 	ID3D11Buffer* GetBuffer()	const
 	{
 		return m_Buffer;

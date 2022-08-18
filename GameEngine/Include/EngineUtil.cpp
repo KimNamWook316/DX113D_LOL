@@ -259,6 +259,97 @@ bool CEngineUtil::GetPathInfoBeforeFileName(const std::string& FilePath, std::st
 	return true;
 }
 
+std::string CEngineUtil::ExtractFilePathFromFullPath(const std::string& FullPath, const std::string& PathName)
+{
+	const PathInfo* Info = nullptr;
+	Info = CPathManager::GetInst()->FindPath(PathName);
+
+	if (!Info)
+	{
+		return "";
+	}
+
+	std::string Path = Info->PathMultibyte;
+
+	// Path에서 가장 말단 폴더 이름을 찾는다.
+	// Ex) Editor\\Mesh\\ -> Mesh를 찾음
+	std::string EndDir;
+	int PathSize = (int)Path.length();
+
+	int EndDirStrStart;
+	for (int i = PathSize - 3; i >= 0; --i)
+	{
+		if (Path[i] == '\\' || Path[i] == '\/')
+		{
+			EndDirStrStart = i + 1;
+			break;
+		}
+	}
+
+	// \\ 를 제외한 문자열만 추출 (ex) Mesh\\ -> Mesh)
+	EndDir = Path.substr(EndDirStrStart, PathSize - 1 - EndDirStrStart);
+
+	int FullPathLen = (int)FullPath.length();
+	int SlashCount = 0;
+	int DirIndcies[2] = {};
+	std::string SameDirName;
+
+	// FullPath에서 \\ 와 \\ 사이의 폴더 혹은 파일 이름만 검색해서
+	// 위에서 추출한 말단 디렉토리와 같은 이름의 디렉토리가 있는 경우 그 뒤를 파일 이름으로 추출
+	int FilePathStartIdx = 0;
+	for (int i = FullPathLen - 1; i >= 0; --i)
+	{
+		if (FullPath[i] == '\\' || FullPath[i] == '\/')
+		{
+			if (SlashCount == 1)
+			{
+				DirIndcies[1] = i + 1;
+				SlashCount = 0;
+
+				if (FullPath[i - 1] == '\\' || FullPath[i - 1] == '\/')
+				{
+					--i;
+				}
+
+				SameDirName = FullPath.substr(DirIndcies[1], DirIndcies[0] - DirIndcies[1] + 1);
+
+				if (SameDirName == EndDir)
+				{
+					if (FullPath[DirIndcies[0] + 1] != '\\' && FullPath[DirIndcies[0] + 1] != '\/')
+					{
+						FilePathStartIdx = DirIndcies[0] + 1;
+					}
+					else
+					{
+						FilePathStartIdx = DirIndcies[0] + 2;
+					}
+
+					break;
+				}
+				else
+				{
+					DirIndcies[0] = DirIndcies[1] - 2;
+					SlashCount = 1;
+				}
+			}
+			else
+			{
+				if (FullPath[i - 1] == '\\' || FullPath[i - 1] == '\/')
+				{
+					--i;
+				}
+				DirIndcies[0] = i - 1;
+				++SlashCount;
+			}
+		}
+	}
+
+	std::string FilePath = FullPath.substr(FilePathStartIdx, FullPathLen - FilePathStartIdx + 1);
+
+	return FilePath;
+}
+
+
 bool CEngineUtil::GetFileNameAfterSlash(const std::string& FilePath, std::string& ExtractedFileName)
 {
 	int FilePathLength = (int)FilePath.size();
@@ -421,8 +512,8 @@ std::string CEngineUtil::CollisionChannelToString(Collision_Channel eChannnel)
 	case Collision_Channel::MapObject:
 		Out = "MapObject";
 		break;
-	case Collision_Channel::MonsterPathFind:
-		Out = "MonsterPathFind";
+	case Collision_Channel::Custom2:
+		Out = "Custom2";
 		break;
 	case Collision_Channel::Custom3:
 		Out = "Custom3";
@@ -500,10 +591,10 @@ Collision_Channel CEngineUtil::StringToCollisionChannel(const std::string& Strin
 	{
 		return Collision_Channel::MapObject;
 	}
-	else if (String == "MonsterPathFind")
-	{
-		return Collision_Channel::MonsterPathFind;
-	}
+	//else if (String == "MonsterPathFind")
+	//{
+	//	return Collision_Channel::MonsterPathFind;
+	//}
 	else if (String == "Custom3")
 	{
 		return Collision_Channel::Custom3;
@@ -565,14 +656,33 @@ Collision_Channel CEngineUtil::StringToCollisionChannel(const std::string& Strin
 
 Collision_Interaction CEngineUtil::StringToCollisionInteraction(const std::string& String)
 {
-	if (String == "TRUE")
+	if (String == "Collision")
 	{
 		return Collision_Interaction::Collision;
+	}
+	else if (String == "CollisionRigid")
+	{
+		return Collision_Interaction::CollisionRigid;
 	}
 	else
 	{
 		return Collision_Interaction::Ignore;
 	}
+}
+
+std::string CEngineUtil::CollisionInteractionToString(Collision_Interaction eInteraction)
+{
+	switch (eInteraction)
+	{
+	case Collision_Interaction::Ignore:
+		return "Ignore";
+	case Collision_Interaction::Collision:
+		return "Collision";
+	case Collision_Interaction::CollisionRigid:
+		return "CollisionRigid";
+	}
+
+	return "";
 }
 
 std::string CEngineUtil::BoolToString(bool Bool)
@@ -600,7 +710,7 @@ void CEngineUtil::CalculateBazierTargetPoses(const Vector3& D1, const Vector3& D
 		queuePoses.pop();
 	}
 
-	for (int i = 0; i < DetailNum; ++i)
+	for (int i = 1; i < DetailNum; ++i)
 	{
 		float amt = i / (float)DetailNum;
 
@@ -644,7 +754,7 @@ void CEngineUtil::CalculateBazierTargetPoses(const Vector3& D1, const Vector3& D
 	// 먼저 기존에 채워져있던 Pos 정보를 전부 지워준다.
 	vecPoses.clear();
 
-	for (int i = 0; i < DetailNum; ++i)
+	for (int i = 1; i < DetailNum; ++i)
 	{
 		float amt = i / (float)DetailNum;
 
@@ -682,13 +792,114 @@ if (!m_queueBazierMovePos.empty())
 */
 }
 
+Vector3 CEngineUtil::QuarternionToEulerAngles(const XMVECTOR& Qut)
+{
+	Vector3 Angle;
 
-float CEngineUtil::CalculateRealTimeSpeedUsingExponential(float Bottom, float CurTime, float InitSpeed)
+	Vector4 q;
+	q.Convert(Qut);
+
+	// roll (x-axis rotation)
+	// double sinr_cosp = 2 * (q.w * q.x + q.y * q.z);
+	float sinr_cosp = 2 * (q.w * q.x + q.y * q.z);
+	float cosr_cosp = 1 - 2 * (q.x * q.x + q.y * q.y);
+	Angle.x = std::atan2(sinr_cosp, cosr_cosp);
+
+	// pitch (y-axis rotation)
+	float sinp = 2 * (q.w * q.y - q.z * q.x);
+	if (std::abs(sinp) >= 1)
+		Angle.y = std::copysign(3.14159f / 2, sinp); // use 90 degrees if out of range
+	else
+		Angle.y = std::asin(sinp);
+
+	// yaw (z-axis rotation)
+	float siny_cosp = 2 * (q.w * q.z + q.x * q.y);
+	float cosy_cosp = 1 - 2 * (q.y * q.y + q.z * q.z);
+	Angle.z = std::atan2(siny_cosp, cosy_cosp);
+
+	return Angle;
+}
+
+
+// V1 : 왼쪽 하단 (x,y 둘다 가장 작은 값 )
+// V2 : 왼쪽 상단
+// V3 : 오른쪽 상단 (x,y 둘다 가장 큰 값)
+// V4: 오른쪽 하단
+bool CEngineUtil::CheckInsideSquare(const Vector2& V1, const Vector2& V2, const Vector2& V3, const Vector2& V4, const Vector2& TargetPos)
+{
+	// x 축 (가로 비교)
+	if (TargetPos.x < V1.x)
+		return false;
+
+	if (TargetPos.x > V3.x)
+		return false;
+	
+	// y 축 (세로 비교)
+	if (TargetPos.y > V2.y)
+		return false;
+
+	if (TargetPos.y < V1.y)
+		return false;
+
+	return true;
+}
+
+float CEngineUtil::CalculateRealTimeSpeedUsingExponentialWithBottom(float Bottom, float CurTime, float InitSpeed)
 {
 	// 밑은 1 보다 큰 값이어야만 한다.
 	assert(Bottom > 1);
 
 	// Bottom ^ CurTime + InitSpeed
 	return pow(Bottom, CurTime) + InitSpeed;
+}
+
+float CEngineUtil::CalculateRealTimeSpeedUsingExponentialWithSpeed(float FullTime, float InitSpeed, float EndSpeed, float CurTime)
+{
+	// 속도가 0보다 작으면 안된다.
+	if (InitSpeed < 0.f || EndSpeed < 0.f)
+		assert(false);
+
+	// if (CurTime > FullTime)
+	// 	assert(false);
+
+	float Inclination = (EndSpeed - InitSpeed / FullTime);
+
+	// 서서히 증가
+	if (Inclination > 0.f)
+	{
+		float ExponentialBottom = pow(EndSpeed - InitSpeed, 1 / (FullTime * 0.5f));
+		return pow(ExponentialBottom, CurTime - FullTime * 0.5f) + InitSpeed;
+	}
+
+	// 서서히 감소
+	else if (Inclination < 0.f)
+	{
+		float ExponentialBottom = pow(-1 * (EndSpeed - InitSpeed), 1 / (FullTime * 0.5f));
+		float Speed = -1 * pow(ExponentialBottom, CurTime + 0.1f  - FullTime * 0.5f) + InitSpeed;
+
+		if (Speed < 10.f)
+		{
+			bool i = 1;
+		}
+		if (Speed <= EndSpeed)
+		{
+			bool i = 1;
+		}
+
+		// 지수 함수는 y 값이 무한대로 감소하므로, 0 아래로 내려가지는 않게 한다.
+		if (Speed < 0)
+		{
+			Speed = 0;
+		}
+
+		return Speed;
+	}
+
+	// 같은 속도
+	// else if (Inclination == 0.f)
+	else 
+	{
+		return InitSpeed;
+	}
 }
 

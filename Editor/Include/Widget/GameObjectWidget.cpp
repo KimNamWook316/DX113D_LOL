@@ -12,7 +12,9 @@
 #include "IMGUIComboBox.h"
 // SceneComponent
 #include "Component/StaticMeshComponent.h"
+#include "Component/CameraComponent.h"
 #include "Component/AnimationMeshComponent.h"
+#include "Component/Arm.h"
 #include "Component/LightComponent.h"
 #include "Component/ParticleComponent.h"
 #include "Component/LandScape.h"
@@ -22,13 +24,15 @@
 #include "Component/ColliderRay.h"
 #include "Component/NavMeshComponent.h"
 #include "Component/WaterComponent.h"
+#include "../DeathDoor/Component/LadderCollider.h"
+#include "../DeathDoor/Component/CrackedBlockCollider.h"
 // ObjectComponent
 #include "Component/PaperBurnComponent.h"
+#include "../DeathDoor/Component/TriggerBoxData.h"
 // SceneCompWidget
-#include "../Component/PlayerHookComponent.h"
-#include "../Component/EyeLaserComponent.h"
-#include "../Component/PlayerNormalAttackCheckCollider.h"
-#include "../Component/MonsterPathFindCollider.h"
+#include "../DeathDoor/Component/PlayerHookComponent.h"
+#include "../DeathDoor/Component/EyeLaserComponent.h"
+#include "../DeathDoor/Component/PlayerNormalAttackCheckCollider.h"
 #include "../Widget/StaticMeshComponentWidget.h"
 #include "../Widget/LightComponentWidget.h"
 #include "../Widget/ObjectComponentWidget.h"
@@ -40,9 +44,13 @@
 #include "../Widget/ColliderComponentWidget.h"
 #include "../Widget/ColliderSphereWidget.h"
 #include "../Widget/WaterComponentWidget.h"
+#include "../Widget/CameraWidget.h"
+#include "../Widget/ArmComponentWidget.h"
+
 // ObjCompWidget
 #include "../Widget/PaperBurnWidget.h"
 #include "../Widget/EyeLaserComponentWidget.h"
+#include "../Widget/TriggerBoxDataWidget.h"
 #include "IMGUIManager.h"
 #include "../EditorInfo.h"
 
@@ -80,6 +88,8 @@ bool CGameObjectWidget::Init()
 	m_ObjectTypeCombo->AddItem("Player");
 	m_ObjectTypeCombo->AddItem("Monster");
 	m_ObjectTypeCombo->AddItem("MapObject");
+	m_ObjectTypeCombo->AddItem("Particle");
+	m_ObjectTypeCombo->AddItem("Projectile");
 
 	AddWidget<CIMGUISeperator>("Sep");
 
@@ -119,6 +129,9 @@ void CGameObjectWidget::ClearComponentWidget()
 
 void CGameObjectWidget::SetGameObject(CGameObject* Obj)
 {
+	if (!Obj)
+		return;
+
 	m_Object = Obj;
 
 	if (m_Object->IsEnemy())
@@ -163,6 +176,12 @@ void CGameObjectWidget::SetGameObject(CGameObject* Obj)
 		case Object_Type::MapObject:
 			m_ObjectTypeCombo->SetSelectIndex(2);
 			break;
+		case Object_Type::Particle:
+			m_ObjectTypeCombo->SetSelectIndex(3);
+			break;
+		case Object_Type::Projectile:
+			m_ObjectTypeCombo->SetSelectIndex(4);
+			break;
 		}
 	}
 }
@@ -182,6 +201,14 @@ void CGameObjectWidget::CreateSceneComponentWidget(CSceneComponent* Com)
 	{
 		Widget = AddWidget<CAnimationMeshWidget>("AnimationMeshWidget");
 	}
+	else if (TypeID == typeid(CCameraComponent).hash_code())
+	{
+		Widget = AddWidget<CCameraWidget>("CameraWidget");
+	}
+	else if (TypeID == typeid(CArm).hash_code())
+	{
+		Widget = AddWidget<CArmComponentWidget>("ArmWidget");
+	}
 	else if (TypeID == typeid(CLightComponent).hash_code())
 	{
 	 	Widget = AddWidget<CLightComponentWidget>("LightWidget");
@@ -194,11 +221,17 @@ void CGameObjectWidget::CreateSceneComponentWidget(CSceneComponent* Com)
 	{
 		Widget = AddWidget<CLandScapeWidget>("LandScapeWidget");
 	}
-	else if (TypeID == typeid(CColliderBox3D).hash_code() || TypeID == typeid(CColliderHalfLine).hash_code() || TypeID == typeid(CColliderRay).hash_code())
+	else if (TypeID == typeid(CColliderBox3D).hash_code() ||
+		TypeID == typeid(CColliderBox3D).hash_code() || 
+		TypeID == typeid(CColliderHalfLine).hash_code() || 
+		TypeID == typeid(CColliderRay).hash_code() ||
+		TypeID == typeid(CLadderCollider).hash_code() ||
+		TypeID == typeid(CCrackedBlockCollider).hash_code())
 	{
 		Widget = AddWidget<CColliderComponentWidget>("ColliderComponentWidget");
 	}
-	else if (TypeID == typeid(CColliderSphere).hash_code() ||  TypeID == typeid(CPlayerNormalAttackCheckCollider).hash_code() || TypeID == typeid(CMonsterPathFindCollider).hash_code())
+
+	else if (TypeID == typeid(CColliderSphere).hash_code() ||  TypeID == typeid(CPlayerNormalAttackCheckCollider).hash_code())
 	{
 		Widget = AddWidget<CColliderSphereWidget>("ColliderSphereWidget");
 	}
@@ -236,6 +269,12 @@ void CGameObjectWidget::CreateObjectComponentWidget(CObjectComponent* Com)
 	{
 		Widget = AddWidget<CPaperBurnWidget>("PaperBurnWidget");
 	}
+
+	else if (TypeID == typeid(CTriggerBoxData).hash_code())
+	{
+		Widget = AddWidget<CTriggerBoxDataWidget>("TriggerBoxDataWidget");
+	}
+
 	else
 	{
 		Widget = AddWidget<CObjectComponentWidget>("DefaultObjCompWidget");
@@ -329,8 +368,18 @@ void CGameObjectWidget::OnSelectObjectType(int Idx, const char* label)
 		m_Object->SetObjectType(Object_Type::Monster);
 	}
 
-	if (ObjectType == "MapObject")
+	else if (ObjectType == "MapObject")
 	{
 		m_Object->SetObjectType(Object_Type::MapObject);
+	}
+
+	else if (ObjectType == "Particle")
+	{
+		m_Object->SetObjectType(Object_Type::Particle);
+	}
+
+	else if (ObjectType == "Projectile")
+	{
+		m_Object->SetObjectType(Object_Type::Projectile);
 	}
 }

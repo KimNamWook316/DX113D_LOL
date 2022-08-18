@@ -1,5 +1,7 @@
 #pragma once
+
 #include "Node.h"
+
 class CDecoratorNode :
     public CNode
 {

@@ -73,6 +73,18 @@ void CAnimationMeshComponent::SetScene(CScene* Scene)
 	}
 }
 
+void CAnimationMeshComponent::SetAnimationInstance(CAnimationSequenceInstance* AnimInst)
+{
+	SAFE_DELETE(m_Animation);
+
+	m_Animation = AnimInst;
+
+	m_Animation->SetScene(m_Scene);
+	m_Animation->SetOwner(this);
+	m_Animation->SetSkeleton(m_Skeleton);
+	m_Animation->SetInstancingBoneBuffer(m_Mesh->GetBoneBuffer());
+}
+
 void CAnimationMeshComponent::SetMesh(const std::string& Name)
 {
 	CAnimationMesh* FoundMesh = (CAnimationMesh*)m_Scene->GetResource()->FindMesh(Name);
@@ -534,6 +546,12 @@ void CAnimationMeshComponent::Render()
 		m_Mesh->Render((int)i);
 
 		m_vecMaterialSlot[i]->Reset();
+	}
+
+	// 플레이어 가려짐 처리
+	if (m_Object == m_Scene->GetPlayerObject())
+	{
+		CRenderManager::GetInst()->RenderPlayer(m_Mesh);
 	}
 
 	if (m_Animation)

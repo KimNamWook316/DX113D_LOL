@@ -83,6 +83,9 @@ public:
 
 	static size_t SceneComponentTypeIndexToTypeid(int TypeIndex);
 	static size_t ObjectComponentTypeIndexToTypeid(int TypeIndex);
+	
+	static std::string ActioNodeTypeToString(ActionNode Type);
+	static std::string ConditionNodeTypeToString(ConditionNode Type);
 
 public:
 	static bool CompareExt(const char* FullPath, const char ExtFilter[_MAX_EXT]);

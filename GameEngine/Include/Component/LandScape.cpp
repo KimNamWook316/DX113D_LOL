@@ -334,9 +334,9 @@ void CLandScape::CreateLandScape(const std::string& Name,
     // 사각형 수 * 2
     m_vecFaceNormal.resize((m_CountX - 1) * (m_CountZ - 1) * 2);
 
-    for (unsigned int i = 0; i < m_CountZ - 1; ++i)
+    for (unsigned int i = 0; i < (unsigned int)m_CountZ - 1; ++i)
     {
-        for (unsigned int j = 0; j < m_CountX - 1; ++j)
+        for (unsigned int j = 0; j < (unsigned int)m_CountX - 1; ++j)
         {
             unsigned int   Index = i * m_CountX + j;
 
@@ -771,7 +771,7 @@ bool CLandScape::Save(FILE* File)
 {
     CSceneComponent::Save(File);
 
-    int Length = m_MeshName.length();
+    int Length = (int)m_MeshName.length();
     fwrite(&Length, sizeof(int), 1, File);
     fwrite(m_MeshName.c_str(), sizeof(char), Length, File);
 

@@ -23,6 +23,9 @@ private :
 	CSharedPtr<CCameraComponent>	m_ParticleEffectEditorCamera;
 
 public:
+	void ShakeCamera(float Time, float Amount);
+
+public:
 	CCameraComponent* GetCurrentCamera()	const
 	{
 		return m_CurrentCamera;

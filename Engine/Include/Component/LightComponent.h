@@ -16,6 +16,7 @@ protected:
 
 protected:
 	CLightConstantBuffer* m_CBuffer;
+	bool				m_Add;
 
 public:
 	Light_Type GetLightType()	const
@@ -122,7 +123,9 @@ public:
 	virtual void Start();
 	virtual bool Init();
 	virtual void Update(float DeltaTime);
+	virtual void Reset() override;
 	virtual void PostUpdate(float DeltaTime);
+	virtual void CheckCollision() override;
 	virtual void PrevRender();
 	virtual void Render();
 	virtual void PostRender();
@@ -131,6 +134,7 @@ public:
 	virtual bool Load(FILE* File);
     virtual bool SaveOnly(FILE* File) override;
     virtual bool LoadOnly(FILE* File) override;
+	virtual void Enable(bool Enable) override;
 
 public:
 	void SetShader();

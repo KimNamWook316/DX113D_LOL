@@ -15,26 +15,19 @@
 #include "Component/LandScape.h"
 #include "Component/AnimationMeshComponent.h"
 #include "Component/StaticMeshComponent.h"
+#include "Component/CameraComponent.h"
 #include "Component/PaperBurnComponent.h"
 #include "Component/ParticleComponent.h"
-#include "Component/GameStateComponent.h"
 #include "Component/ColliderBox3D.h"
 #include "Component/ColliderSphere.h"
 #include "Component/ColliderHalfLine.h"
 #include "Component/ColliderRay.h"
-#include "Component/ObjectDataComponent.h"
-#include "Component/PlayerDataComponent.h"
 #include "Component/NavMeshComponent.h"
 #include "Component/WaterComponent.h"
-#include "Component/EyeLaserComponent.h"
-#include "Component/PlayerNormalAttackCheckCollider.h"
-#include "Component/PlayerHookComponent.h"
-#include "Component/MonsterPathFindCollider.h"
-#include "Component/LurkerDataComponent.h"
-#include "Component/MonsterNavAgent.h"
 #include "IMGUITree.h"
 #include "Flag.h"
 #include "EngineUtil.h"
+#include "PathManager.h"
 
 namespace fs = std::filesystem;
 
@@ -571,6 +564,8 @@ std::string CEditorUtil::SceneComponent3DTypeToString(SceneComponent3DType Type)
 		return "AnimationMeshComponent";
 	case SceneComponent3DType::StaticMeshComponent:
 		return "StaticMeshComponent";
+	case SceneComponent3DType::CameraComponent:
+		return "CameraComponent";
 	case SceneComponent3DType::LandScapeComponent:
 		return "LandScapeComponent";
 	case SceneComponent3DType::ArmComponent:
@@ -593,14 +588,6 @@ std::string CEditorUtil::SceneComponent3DTypeToString(SceneComponent3DType Type)
 		return "NavMeshComponent";
 	case SceneComponent3DType::WaterComponent:
 		return "WaterComponent";
-	case SceneComponent3DType::PlayerNormalAttackCheckCollider:
-		return "PlayerNormalAttackCheckCollider";
-	case SceneComponent3DType::EyeLaserComponent:
-		return "EyeLaserComponent";
-	case SceneComponent3DType::PlayerHookComponent:
-		return "PlayerHookComponent";
-	case SceneComponent3DType::MonsterPathFindCollider:
-		return "MonsterPathFindCollider";
 	}
 
 	return "";
@@ -612,18 +599,8 @@ std::string CEditorUtil::ObjectComponent3DTypeToString(ObjectComponent3DType Typ
 	{
 	case ObjectComponent3DType::PaperBurnComponent:
 		return "PaperBurnComponent";
-	case ObjectComponent3DType::GameStateComponent:
-		return "GameStateComponent";
 	case ObjectComponent3DType::NavAgent:
 		return "NavAgent";
-	case ObjectComponent3DType::ObjectDataComponent:
-		return "ObjectDataComponent";
-	case ObjectComponent3DType::PlayerDataComponent:
-		return "PlayerDataComponent";
-	case ObjectComponent3DType::LurkerDataComponent:
-		return "LurkerDataComponent";
-	case ObjectComponent3DType::MonsterNavAgent:
-		return "MonsterNavAgent";
 	}
 
 	return "";
@@ -653,40 +630,47 @@ size_t CEditorUtil::SceneComponentTypeIndexToTypeid(int TypeIndex)
 	// TODO : SceneComponent Type 추가될 때 마다 추가
 	switch (TypeIndex)
 	{
-	case 0:
+	case (int)SceneComponent3DType::AnimationMeshComponent:
 		return typeid(CAnimationMeshComponent).hash_code();
-	case 1:
+
+	case (int)SceneComponent3DType::StaticMeshComponent:
 		return typeid(CStaticMeshComponent).hash_code();
-	case 2:
+
+	case (int)SceneComponent3DType::LandScapeComponent:
 		return typeid(CLandScape).hash_code();
-	case 3:
+
+	case (int)SceneComponent3DType::ArmComponent:
 		return typeid(CArm).hash_code();
-	case 4:
+
+	case (int)SceneComponent3DType::LightComponent:
 		return typeid(CLightComponent).hash_code();
-	case 5:
+
+	case (int)SceneComponent3DType::SceneComponent:
 		return typeid(CSceneComponent).hash_code();
-	case 6:
+
+	case (int)SceneComponent3DType::ParticleComponent:
 		return typeid(CParticleComponent).hash_code();
-	case 7:
+
+	case (int)SceneComponent3DType::ColliderBox3D:
 		return typeid(CColliderBox3D).hash_code();
-	case 8:
+
+	case (int)SceneComponent3DType::ColliderSphere:
 		return typeid(CColliderSphere).hash_code();
-	case 9:
+
+	case (int)SceneComponent3DType::ColliderHalfLine:
 		return typeid(CColliderHalfLine).hash_code();
-	case 10:
+
+	case (int)SceneComponent3DType::ColliderRay:
 		return typeid(CColliderRay).hash_code();
-	case 11:
+
+	case (int)SceneComponent3DType::NavMeshComponent:
 		return typeid(CNavMeshComponent).hash_code();
-	case 12:
+
+	case (int)SceneComponent3DType::WaterComponent:
 		return typeid(CWaterComponent).hash_code();
-	case 13:
-		return typeid(CPlayerNormalAttackCheckCollider).hash_code();
-	case 14:
-		return typeid(CEyeLaserComponent).hash_code();
-	case 15:
-		return typeid(CPlayerHookComponent).hash_code();
-	case 16:
-		return typeid(CMonsterPathFindCollider).hash_code();
+
+	case (int)SceneComponent3DType::CameraComponent:
+		return typeid(CCameraComponent).hash_code();
 	}
 
 	return -1;
@@ -697,23 +681,41 @@ size_t CEditorUtil::ObjectComponentTypeIndexToTypeid(int TypeIndex)
 {
 	switch (TypeIndex)
 	{
-	case 0:
+	case (int)ObjectComponent3DType::PaperBurnComponent:
 		return typeid(CPaperBurnComponent).hash_code();
-	case 1:
-		return typeid(CGameStateComponent).hash_code();
-	case 2:
+
+	case (int)ObjectComponent3DType::NavAgent:
 		return typeid(CNavAgent).hash_code();
-	case 3:
-		return typeid(CObjectDataComponent).hash_code();
-	case 4:
-		return typeid(CPlayerDataComponent).hash_code();
-	case 5:
-		return typeid(CLurkerDataComponent).hash_code();
-	case 6:
-		return typeid(CMonsterNavAgent).hash_code();
+
 	}
 
 	return -1;
+}
+
+std::string CEditorUtil::ActioNodeTypeToString(ActionNode Type)
+{
+	std::string str = "";
+
+	switch (Type)
+	{
+	case ActionNodeMax:
+		break;
+	}
+
+	return str;
+}
+
+std::string CEditorUtil::ConditionNodeTypeToString(ConditionNode Type)
+{
+	std::string str = "";
+
+	switch (Type)
+	{
+	case ConditionNodeMax:
+		break;
+	}
+
+	return str;
 }
 
 bool CEditorUtil::CompareExt(const char* FullPath, const char ExtFilter[_MAX_EXT])

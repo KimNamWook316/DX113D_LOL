@@ -40,6 +40,8 @@ bool CObjectComponentWidget::Init()
 	AddWidget<CIMGUISameLine>("Line");
 	m_RenameButton = AddWidget<CIMGUIButton>("Rename", 0.f, 0.f);
 
+	AddWidget<CIMGUISeperator>("Sep");
+
 	// CallBack
 	m_RenameButton->SetClickCallback(this, &CObjectComponentWidget::OnClickRenameButton);
 	m_EnableCheckBox->SetCallBackIdx(this, &CObjectComponentWidget::OnCheckEnableCheckBox);

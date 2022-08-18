@@ -104,7 +104,7 @@ enum class Collision_Channel
 	PlayerAttack,
 	MonsterAttack,
 	MapObject,
-	MonsterPathFind,
+	Custom2,
 	Custom3,
 	Custom4,
 	Custom5,
@@ -125,7 +125,8 @@ enum class Collision_Channel
 enum class Collision_Interaction
 {
 	Ignore,
-	Collision
+	Collision,
+	CollisionRigid
 };
 
 enum class Collision_State
@@ -268,22 +269,14 @@ enum class SceneComponent3DType
 	ColliderRay,
 	NavMeshComponent,
 	WaterComponent,
-	PlayerNormalAttackCheckCollider,
-	EyeLaserComponent,
-	PlayerHookComponent,
-	MonsterPathFindCollider,
+	CameraComponent,
 	Max
 };
 
 enum class ObjectComponent3DType
 {
 	PaperBurnComponent,
-	GameStateComponent,
 	NavAgent,
-	ObjectDataComponent,
-	PlayerDataComponent,
-	LurkerDataComponent,
-	MonsterNavAgent,
 	Max
 };
 
@@ -304,31 +297,12 @@ enum class NodeResult
 
 enum ConditionNode
 {
-	MoveInputCheckNode,
-	MouseLButtonCheckNode,
-	NoInterruptNode,
-	MouseRButtonCheckNode,
-	MouseRButtonUpCheckNode,
-	Lockstone3TriggerBoxHitCheck,
-	CheckDetectRange,
-	MeleeRangeCheck,
-	PathFindEnableCheck
+	ConditionNodeMax
 };
 
 enum ActionNode
 {
-	Move,
-	Idle,
-	NormalAttack,
-	Death,
-	RotateAttackDirection,
-	ReadyToShoot,
-	ShootNode,
-	CancleShootNode,
-	AddFallingFloorCallback,
-	Lockstone3TriggerBoxAction,
-	FindPath,
-	ClearPathList
+	ActionNodeMax
 };
 
 enum DecoratorNode
@@ -350,6 +324,8 @@ enum class Object_Type
 	Player,
 	Monster,
 	MapObject,
+	Particle,
+	Projectile,
 	None
 };
 
@@ -365,7 +341,9 @@ enum class Player_Ability
 	Arrow,
 	Fire,
 	Hook,
-	Photon
+	Photon,
+	Bomb,
+	None
 };
 
 enum class ToonShaderType
@@ -374,21 +352,6 @@ enum class ToonShaderType
 	Easy,
 	Light,
 	Warm,
-	Max
-};
-
-enum class ParitcleShapeType
-{
-	YUpDirRing = 0, // 위를 바라보는 형태로 즉, Y 를 바라보는 형태로 Ring 생성
-	Circle,
-	ZMinusDirRing, // 사용자 정면을 바라보는 형태로 Ring 생성
-	Max
-};
-
-enum class ParticleSpecialMoveDir
-{
-	XZSpread = 0, // xz 평명 방향으로 이동 y는 0
-	XYSpread, // xy 평명 방향으로 이동 z 는 0
 	Max
 };
 
@@ -402,23 +365,15 @@ enum class PaperBurnEndEvent
 	Max	
 };
 
-enum class HookResult
-{
-	// 날아가고 있는중
-	OnShoot,
-	NoCollision,
-	Collision,
-	CollisionEnd
-};
+//enum class HookResult
+//{
+//	// 날아가고 있는중
+//	OnShoot,
+//	NoCollision,
+//	Collision,
+//	CollisionEnd
+//};
 
-
-enum class ParticleSpeedChangeMethod
-{
-	Linear = 1,
-	Exponential,  // 속도 변화가 점점 크게
-	Log, /// 속도 변화가 점점 작게 
-	Max
-};
 
 enum NAVIMESH_CELL_LIST_TYPE
 {

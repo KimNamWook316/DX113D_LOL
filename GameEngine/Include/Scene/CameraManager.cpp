@@ -9,6 +9,11 @@ CCameraManager::~CCameraManager()
 {
 }
 
+void CCameraManager::ShakeCamera(float Time, float Amount)
+{
+	m_CurrentCamera->Shake(Time, Amount);
+}
+
 void CCameraManager::Start()
 {
 	if (m_CurrentCamera->GetName() == "DefaultCamera")

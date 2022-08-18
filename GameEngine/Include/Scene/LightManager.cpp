@@ -50,7 +50,7 @@ void CLightManager::DeleteLight(CLightComponent* Light)
 		if (*iter == Light)
 		{
 			m_LightList.erase(iter);
-			return;
+			break;
 		}
 	}
 
@@ -71,7 +71,7 @@ void CLightManager::DeleteLight(const std::string& Name)
 		if ((*iter)->GetName() == Name)
 		{
 			m_LightList.erase(iter);
-			return;
+			break;
 		}
 	}
 
@@ -164,10 +164,15 @@ void CLightManager::Render()
 
 	bool	SendTransform = false;
 
+	int CullCount = 0;
+
 	for (; iter != iterEnd; ++iter)
 	{
-		if (!(*iter)->IsEnable())
+		if (!(*iter)->IsEnable() || (*iter)->GetCulling())
+		{
+			++CullCount;
 			continue;
+		}
 
 		if (!SendTransform)
 		{
@@ -190,7 +195,7 @@ void CLightManager::SetForwardRenderShader()
 {
 	size_t Size = m_LightList.size();
 
-	m_CBuffer->SetLightCount(Size);
+	m_CBuffer->SetLightCount((int)Size);
 	m_CBuffer->UpdateCBuffer();
 
 	// 전역 조명 상수버퍼 바인드

@@ -18,7 +18,7 @@ CSceneResource::~CSceneResource()
 
 			iter = m_mapMesh.erase(iter);
 
-			//CResourceManager::GetInst()->ReleaseMesh(Name);
+			CResourceManager::GetInst()->ReleaseMesh(Name);
 		}
 	}
 
@@ -46,7 +46,7 @@ CSceneResource::~CSceneResource()
 
 			iter = m_mapTexture.erase(iter);
 
-			//CResourceManager::GetInst()->ReleaseTexture(Name);
+			CResourceManager::GetInst()->ReleaseTexture(Name);
 		}
 	}
 
@@ -60,7 +60,7 @@ CSceneResource::~CSceneResource()
 
 			iter = m_mapMaterial.erase(iter);
 
-			//CResourceManager::GetInst()->ReleaseMaterial(Name);
+			CResourceManager::GetInst()->ReleaseMaterial(Name);
 		}
 	}
 
@@ -88,7 +88,7 @@ CSceneResource::~CSceneResource()
 
 			iter = m_mapSequence.erase(iter);
 
-			//CResourceManager::GetInst()->ReleaseAnimationSequence3D(Name);
+			CResourceManager::GetInst()->ReleaseAnimationSequence3D(Name);
 		}
 	}
 
@@ -102,7 +102,7 @@ CSceneResource::~CSceneResource()
 
 			iter = m_mapParticle.erase(iter);
 
-			//CResourceManager::GetInst()->ReleaseParticle(Name);
+			CResourceManager::GetInst()->ReleaseParticle(Name);
 		}
 	}
 
@@ -116,7 +116,7 @@ CSceneResource::~CSceneResource()
 
 			iter = m_mapSkeleton.erase(iter);
 
-			//CResourceManager::GetInst()->ReleaseParticle(Name);
+			CResourceManager::GetInst()->ReleaseSkeleton(Name);
 		}
 	}
 

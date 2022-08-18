@@ -19,6 +19,8 @@ private:
 	std::vector<int>					m_vecIndex;
 	Vector3								m_Min;
 	Vector3								m_Max;
+	Vector3								m_OriginMin;
+	Vector3								m_OriginMax;
 
 	int m_PolyCount;
 
@@ -31,6 +33,16 @@ public:
 	const Vector3& GetMax()	const
 	{
 		return m_Max;
+	}
+
+	const Vector3& GetOriginMin()	const
+	{
+		return m_OriginMin;
+	}
+
+	const Vector3& GetOriginMax()	const
+	{
+		return m_OriginMax;
 	}
 
 	size_t GetNavMeshPolygonCount() const
@@ -59,6 +71,11 @@ public:
 		return m_vecOriginVertexPos[Index];
 	}
 
+	void SetVertexPos(int Index, const Vector3& Pos)
+	{
+		m_vecVertexPos[Index] = Pos;
+	}
+
 	// m_mapIndex에 이미 Vertex가 존재하면 그 Vertex의 Index를 리턴하고 없으면 -1을 리턴해서
 	// 그 Vertex에게 새로운 Index를 부여
 	int CheckAndAssignIndex(const Vector3& Vertex);
@@ -78,6 +95,7 @@ private:
 	int CheckPointIndex(const Vector3& Point);
 	void SplitByDelimit(std::string Input, char delimit, std::vector<std::string>& vecOut);
 	void CreatePolygonInfo();
+	void ReCreateVertexPos();
 	void CheckAdjInfo();
 	bool CheckAdjVector(int PolyIndex, int CheckIndex);
 };

@@ -5,6 +5,7 @@
 #include "../Scene/SceneResource.h"
 #include "../Resource/Shader/ColliderConstantBuffer.h"
 #include "../Collision/Collision.h"
+#include "../Render/RenderManager.h"
 
 CColliderRay::CColliderRay()
 {
@@ -47,20 +48,17 @@ bool CColliderRay::Init()
 void CColliderRay::Update(float DeltaTime)
 {
 	CColliderComponent::Update(DeltaTime);
+
+	Matrix MatWorld = m_Transform->GetWorldMatrix();
+	m_EndPos = Vector3(1.f, 0.f, 0.f).TransformCoord(MatWorld);
+	m_StartPos = m_RayInfo.Pos;
+
 }
 
 void CColliderRay::PostUpdate(float DeltaTime)
 {
 	CColliderComponent::PostUpdate(DeltaTime);
-}
 
-void CColliderRay::PrevRender()
-{
-	CColliderComponent::PrevRender();
-}
-
-void CColliderRay::Render()
-{
 	CColliderComponent::Render();
 
 	CCameraComponent* Camera = m_Scene->GetCameraManager()->GetCurrentCamera();
@@ -96,6 +94,22 @@ void CColliderRay::Render()
 
 	if (m_MouseCollision)
 		m_CBuffer->SetColliderColor(Vector4(1.f, 0.f, 0.f, 1.f));
+
+}
+
+void CColliderRay::PrevRender()
+{
+	CColliderComponent::PrevRender();
+}
+
+void CColliderRay::Render()
+{
+	bool DebugRender = CRenderManager::GetInst()->IsDebugRender();
+
+	if (!DebugRender)
+	{
+		return;
+	}
 
 	m_CBuffer->UpdateCBuffer();
 

@@ -50,17 +50,22 @@ public:
 	}
 
 public:
-	void Render(float DeltaTime, class CRenderTarget* LDRTarget);
+	void Render(float DeltaTime, class CRenderTarget* LDRTarget, bool BombEffect);
 
 private:
 	void ComputeHDR(class CRenderTarget* LDRTarget);
 	void ComputeBloom();
 	void Blur();
 	void RenderFinal(class CRenderTarget* LDRTarget);
+	void RenderBombEffect(class CRenderTarget* LDRTarget);
+	void SavePrevLum();
 
 private:
 	// Depth Buffer
 	class CRenderTarget* m_GBufferDepth;
+
+	// Player Stencil
+	class CRenderTarget* m_PlayerStencil;
 
 	// Shader
 	class CComputeShader* m_DownScaleFirstPassShader;
@@ -69,6 +74,7 @@ private:
 	class CComputeShader* m_BlurVerticalShader;
 	class CComputeShader* m_BlurHorizontalShader;
 	class CShader* m_HDRRenderShader;
+	class CShader* m_BombEffectShader;
 	
 	// ConstantBuffer
 	class CDownScaleCBuffer* m_DownScaleCBuffer;
@@ -116,13 +122,5 @@ private:
 	bool  m_FirstFrame;
 	float m_AdaptationTimer;
 	float m_AdaptationTime;
-
-	// DEBUG SECTION
- //	ID3D11Buffer* m_Temp;
- //	ID3D11Buffer* m_Temp2;
- //	ID3D11UnorderedAccessView* m_Temp2UAV;
- //	float m_TempBuf[57];
- //	ID3D11Query* m_Query;
-	// DEBUG SECTION END
 };
 

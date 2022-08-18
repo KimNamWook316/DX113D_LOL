@@ -391,7 +391,7 @@ void CAnimationEditor::OnClearExistingAnimationSeqInfos()
 		return;
 
 	m_Animation->ClearAnimationSequenceFromAnimationEditor();
-
+	
 	// Animation Mesh Component 에서 다시 새롭게 Animation Instance 를 만들어낸다.
 	m_Animation = dynamic_cast<CAnimationMeshComponent*>(m_3DTestObject->GetRootComponent())->CreateBasicAnimationInstance();
 
@@ -534,13 +534,6 @@ void CAnimationEditor::OnLoadExcel()
 		// 기존 KeyName 의 복사본을 만든다.
 		std::string PrevExcelKeyName = m_ExcelKeyName;
 
-		// 같은 Excel 을 Load 한 것 
-		// 따라서, 그냥 바로 return 시킨다.
-		if (PrevExcelKeyName == LoadedExcelKey)
-		{
-			return;
-		}
-
 		m_ExcelKeyName = LoadedExcelKey;
 
 		CExcelData* LoadedExcelData = CResourceManager::GetInst()->GetExcelManager()->FindCSV(LoadedExcelKey);
@@ -550,9 +543,13 @@ void CAnimationEditor::OnLoadExcel()
 
 		m_LoadedExcelFileName->SetText(LoadedExcelName.c_str());
 
-		// Excel Data 내용 새롭게 세팅
-		// Excel Manager 에서 기존 Excel 내용을 지운다.
-		CResourceManager::GetInst()->GetExcelManager()->DeleteCSV(PrevExcelKeyName);
+		// 같은 Excel 을 Load 한 게 아니라면, 기존의 것은 지운다
+		if (PrevExcelKeyName != LoadedExcelKey)
+		{
+			// Excel Data 내용 새롭게 세팅
+			// Excel Manager 에서 기존 Excel 내용을 지운다.
+			CResourceManager::GetInst()->GetExcelManager()->DeleteCSV(PrevExcelKeyName);
+		}
 
 		m_LoadedExcelData = LoadedExcelData;
 	}
@@ -740,6 +737,8 @@ void CAnimationEditor::OnMakeAnimInstByExcel()
 
 	CIMGUIText* Text = nullptr;
 
+	bool DummyAnimationMadeSuccess = true;
+
 	for (size_t i = 0; i < Size; ++i)
 	{
 		// Grunt_Idle 과 같이, '_' 뒤에 Excel 에 해당하는 Lable 이 놓일 것이다.
@@ -761,6 +760,8 @@ void CAnimationEditor::OnMakeAnimInstByExcel()
 
 		std::string NewLableKeyName;
 
+		bool LabelFound = false;
+
 		for (; iterSqc != iterSqcEnd; ++iterSqc)
 		{
 			// ex) Idle
@@ -768,15 +769,25 @@ void CAnimationEditor::OnMakeAnimInstByExcel()
 
 			if (AddedKeyNameAfterLowDash.data() == DataLable)
 			{
+				LabelFound = true;
 				NewLableKeyName = DataLable;
 				break;
 			}
+		}
+
+		if (!LabelFound)
+		{
+			m_AnimInstanceConvertLog->ClearWidget();
+			DummyAnimationMadeSuccess = false;
+			MessageBox(nullptr, TEXT("Label 이름에 '_' 이 포함되지 않게 하세요. 혹은, 기존에 만든 sqc 들을 다 지워주고 다시 시도하세요"), TEXT("실패"), MB_OK);
+			break;
 		}
 
 		// Dummy Animation 을 통해 찾아야 한다.
 		// Dummy Animation 상에서 KeyName 을 수정한다.
 		if (!m_DummyAnimation->EditCurrentSequenceKeyName(NewLableKeyName.c_str(), AddedKeyName))
 		{
+			DummyAnimationMadeSuccess = false;
 			assert(false);
 			return;
 		}
@@ -793,14 +804,20 @@ void CAnimationEditor::OnMakeAnimInstByExcel()
 
 	}
 
+	if (DummyAnimationMadeSuccess == false)
+	{
+		m_AnimInstanceConvertLog->ClearWidget();
+		SAFE_DELETE(m_DummyAnimation);
+		MessageBox(nullptr, TEXT("Instance Create 실패"), TEXT("실패"), MB_OK);
+		return;
+	}
+
 	m_AnimInstanceProgressBar->SetPercent(100.f);
 
 	Text = m_AnimInstanceConvertLog->AddWidget<CIMGUIText>("OK");
 	Text->SetText("Complete!");
 
 	// Dummy Animation Intance 를 저장한다.
-	if (!m_DummyAnimation)
-		return;
 
 	const PathInfo* Path = CPathManager::GetInst()->FindPath(ANIMATION_PATH);
 
@@ -913,7 +930,9 @@ void CAnimationEditor::OnLoadAnimationInstance()
 		else
 		{
 			// 기존 Animation List에 보여지던 , 즉, 현재 Animation에 Added 되었던 모든 Sequence 정보를 지워준다
-			OnClearExistingAnimationSeqInfos();
+			OnDeleteExisting3DObject();
+
+			OnCreateSample3DObject();
 		}
 
 		// TODO : Animation Instance 는 그냥 지워줘 버리면 안되나 ?
@@ -927,10 +946,6 @@ void CAnimationEditor::OnLoadAnimationInstance()
 			OnDeleteExisting3DObject();
 			return;
 		}
-
-		// const char* CurSeqFileName = m_Animation->GetCurrentAnimation()->GetAnimationSequence()->GetSequenceFileNameMultibyte();
-		// if (!LoadElementsForSqcLoading(CurSeqFileName))
-		// 	return;
 
 		std::pair<bool, std::string> LoadResult = CResourceManager::GetInst()->LoadMeshTextureBoneInfo(m_Animation);
 
@@ -1594,6 +1609,11 @@ void CAnimationEditor::OnEditStartEndFrame()
 	{
 		SaveEditedSqcFile(FiileFullPath, ExistingSequence, m_StartFrameEditInput->GetValueInt(), m_EndFrameEditInput->GetValueInt());
 	}
+}
+
+CAnimationSequence* CAnimationEditor::NewlyEditSqcFile(const TCHAR* FileSavedFullPath, CAnimationSequence* ExistingSequence, int StartFrame, int EndFrame)
+{
+	return nullptr;
 }
 
 bool CAnimationEditor::SaveEditedSqcFile(const TCHAR* FileSavedFullPath, CAnimationSequence* ExistingSequence, 

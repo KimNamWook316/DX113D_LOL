@@ -1,5 +1,6 @@
 #pragma once
 #include "IMGUIWindow.h"
+#include "ParticleInfo.h"
 
 enum class ParticlePreset
 {
@@ -48,12 +49,14 @@ static const char* ParticlePresetNames[] = {
 static const char* ParticleShapeNames[] = {
     "YUpDirRing", // 위 방향을 향한 Ring
     "Circle", // Circle (일정 범위 이내 랜덤한 위치에 생성)
-    "ZMinusRing" // 사용자 측을 바라본 형태로 Ring 생성
+    "ZMinusRing", // 사용자 측을 바라본 형태로 Ring 생성
+    "Sphere"
 };
 
 static const char* ParticleMoveDirType[] = {
     "XZSpread", //  xz 평명 방향으로 이동 y는 0
-    "XYSpread" //  xy 평명 방향으로 이동 z 는 0
+    "XYSpread", //  xy 평명 방향으로 이동 z 는 0
+    "CornSpread"
 };
 
 static const char* ParticleSpeedChangeType[] = {
@@ -97,6 +100,7 @@ private:
 
     class CIMGUIInputFloat* m_SpawnTimeMaxEdit;
     class CIMGUICheckBox* m_DisableNewAliveEdit;
+    class CIMGUICheckBox* m_ApplyDuringDisableNewAliveEdit;
 
     class CIMGUIInputFloat3* m_StartMinEdit;
     class CIMGUIInputFloat3* m_StartMaxEdit;
@@ -105,7 +109,7 @@ private:
     class CIMGUIInputFloat3* m_ScaleMaxEdit;
 
     // UV Move
-    class CIMGUICheckBox* m_IsMoveEnableEdit;
+    class CIMGUICheckBox* m_IsUVMoveEnableEdit;
     class CIMGUIInputInt*   m_UVRowN;
     class CIMGUIInputInt*   m_UVColN;
 
@@ -135,6 +139,7 @@ private:
     class CIMGUISliderFloat* m_GroundTextureScale;
 
     class CIMGUICheckBox* m_IsMoveEdit;
+    class CIMGUICheckBox* m_IsFollowComponentWorldPosEdit;
     class CIMGUICheckBox* m_IsGravityEdit;
     class CIMGUICheckBox* m_IsPauseResumeToggle;
 
@@ -180,6 +185,7 @@ private:
 
     // 방햐엥 따른 UV Clipping
     class CIMGUICheckBox* m_UVClippingAccordingToDir;
+    class CIMGUICheckBox* m_UVClippingDirReverse;
 
     // Noise Texture
     class CIMGUICheckBox* m_ApplyNoiseTextureSampling;
@@ -187,16 +193,6 @@ private:
 
     // Particle 이 사용하는 Material Texture
     class CIMGUIImage* m_ParticleTexture;
-
-    // Particle Bazier Move Test
-    class CIMGUIInputFloat3* m_BazierD1Input;
-    class CIMGUIInputFloat3* m_BazierD2Input;
-    class CIMGUIInputFloat3* m_BazierD3Input;
-    class CIMGUIButton* m_StartTestBazier;
-
-    Vector3 m_BazierD1Pos;
-    Vector3 m_BazierD2Pos;
-    Vector3 m_BazierD3Pos;
 
 private :
     class CParticle* m_ParticleClass;
@@ -247,9 +243,11 @@ private:
 
     // Diable Alive
     void OnDisableNewAlive(const char*, bool);
+    void OnApplySpawnTimeWhileDisableNewAlive(const char*, bool);
 
     // UVClipping
     void OnIsUVClippingReflectingMoveDirEdit(const char*, bool);
+    void OnUVClippingDirReverse(const char*, bool);
 
     // StartMin,Max
     void OnStartMinEdit(const Vector3&);
@@ -283,6 +281,7 @@ private:
 
     // MoveMent
     void OnIsMoveEdit(const char*, bool);
+    void OnIsFollowComponentPosEdit(const char*, bool);
     void OnIsGravityEdit(const char*, bool);
     void OnPauseResumeToggle(const char*, bool);
 
@@ -314,12 +313,6 @@ private:
     // Linear Rot
     void OnIsLinearRot(const char*, bool);
 
-    // Baziear Move Test
-    void OnSetBazierD1Pos(const Vector3& Pos);
-    void OnSetBazierD2Pos(const Vector3& Pos);
-    void OnSetBazierD3Pos(const Vector3& Pos);
-    void OnClickStartBazierMove();
-    
     // Save, Load
     void OnSaveParticleClass();
     void OnLoadParticleClass();
@@ -327,7 +320,6 @@ private:
     // Particle 기본 세팅
     void OnSetBasicParticleMaterialSetting(class CSceneComponent* Com);
     void OnReflectCurrentParticleSetting();
-
 
     // 기본 Particle 정보 세팅하기
     void SetBasicDefaultParticleInfos(class CParticle* Particle);

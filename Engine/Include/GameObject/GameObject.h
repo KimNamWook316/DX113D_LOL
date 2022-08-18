@@ -12,6 +12,7 @@ class CGameObject :
 	friend class CScene;
 	friend class CSceneManager;
 	friend class CObjectPoolManager;
+	friend class CObjectPool;
 
 protected:
 	CGameObject();
@@ -20,12 +21,13 @@ protected:
 
 protected:
 	class CScene* m_Scene;
-	bool		m_NoInterrupt;	// 다른 State로 전환 불가능한 상태인지(ex. 특정 스킬 사용중에 다른 스킬을 쓸 수 없다)
 	Object_Type m_ObjectType;
 	bool		m_IsEnemy;
 	bool		m_ExcludeSceneSave;
 	bool		m_NoDestroyFromSceneChange;
 	Vector3		m_MoveDir;
+	bool		m_InPool;
+	bool		m_StartCalled;
 
 public:
 	void SetMoveDir(const Vector3& Dir)
@@ -42,6 +44,8 @@ public:
 	{
 		return m_IsEnemy;
 	}
+
+	virtual void Enable(bool Enable) override;
 
 	void SetEnemy(bool Enemy)
 	{
@@ -63,16 +67,6 @@ public:
 		return m_Scene;
 	}
 
-	bool IsNoInterrupt()	const
-	{
-		return m_NoInterrupt;
-	}
-
-	void SetNoInterrupt(bool Enable)
-	{
-		m_NoInterrupt = Enable;
-	}
-
 	void ExcludeFromSceneSave()
 	{
 		m_ExcludeSceneSave = true;
@@ -91,6 +85,21 @@ public:
 	bool IsNoDestroyFromSceneChange() const
 	{
 		return m_NoDestroyFromSceneChange;
+	}
+
+	void SetInPool(bool InPool)
+	{
+		m_InPool = InPool;
+	}
+
+	bool IsInPool()	const
+	{
+		return m_InPool;
+	}
+
+	bool IsStartCalled() const
+	{
+		return m_StartCalled;
 	}
 
 public:
@@ -122,6 +131,10 @@ protected:
 	std::list<CGameObject*> m_AttackTargetList;	// 광역스킬처럼 여러 오브젝트가 맞는 공격을 했을때 맞은 오브젝트들
 
 public:
+	float GetLifeSpan() const
+	{
+		return m_LifeSpan;
+	}
 	const Vector3& GetPrevFramePos()	const
 	{
 		return m_PrevFramePos;
@@ -167,6 +180,7 @@ public:
 	void AddChildObject(CGameObject* Obj, const std::string& SocketName = "");
 	void DeleteObj();
 	bool DeleteChildObj(const std::string& Name);
+	bool DeleteChildObj(class CGameObject* Child);
 	// 실제로 지우진 않고, 나는 부모를 nullptr로 만들고, 부모에게 내 자신을 자식 목록에서 지우게 함
 	void ClearParent();
 	CGameObject* GetParentObject()	const
@@ -295,6 +309,20 @@ public:
 		return nullptr;
 	}
 
+	CComponent* FindObjectComponent(const std::string& Name)
+	{
+		auto	iter = m_vecObjectComponent.begin();
+		auto	iterEnd = m_vecObjectComponent.end();
+
+		for (; iter != iterEnd; ++iter)
+		{
+			if ((*iter)->GetName() == Name)
+				return (*iter);
+		}
+
+		return nullptr;
+	}
+
 	template <typename T>
 	T* FindObjectComponentFromType()
 	{
@@ -320,6 +348,20 @@ public:
 		for (; iter1 != iter1End; ++iter1)
 		{
 			if ((*iter1)->CheckType<T>())
+				vecComp.push_back((T*)(*iter1));
+		}
+
+	}
+
+	template <typename T>
+	void FindAllSceneComponentFromTypeName(const std::string& Name, std::vector<T*>& vecComp)
+	{
+		auto	iter1 = m_SceneComponentList.begin();
+		auto	iter1End = m_SceneComponentList.end();
+
+		for (; iter1 != iter1End; ++iter1)
+		{
+			if ((*iter1)->GetName().find(Name) != std::string::npos && (*iter1)->CheckType<T>())
 				vecComp.push_back((T*)(*iter1));
 		}
 
@@ -376,8 +418,14 @@ public:
 	virtual bool SaveOnly(CComponent* Component, const char* FullPath);
 	virtual bool SaveOnly(const std::string& ComponentName, const char* FullPath);
 	virtual bool LoadOnly(const char* FullPath, CComponent*& OutCom);
+	void Reset();
 
 public:
+	const std::vector<CSharedPtr<CGameObject>>& GetVecChildObjects() const
+	{
+		return m_vecChildObject;
+	}
+
 	size_t GetChildObjectCount()	const
 	{
 		return m_vecChildObject.size();
@@ -387,15 +435,15 @@ public:
 	{
 		return m_vecChildObject[Index];
 	}
-
+public:
+	// Particle Object 의 경우 호출하는 함수
+	void StartParticle(const Vector3& WorldPos);
 public:
 	// NavAgent가 있을 경우에 동작한다.
 	void Move(const Vector3& EndPos);
-
 	// m_NavAgent의 m_PathList에 TargetPos를 추가해준다
 	void AddPath(const Vector3& TargetPos);
 	void ClearPath();
-	
 public:
 	void SetNavAgent(CNavAgent* Agent)
 	{

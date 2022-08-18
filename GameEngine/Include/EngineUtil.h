@@ -22,6 +22,9 @@ public:
 	// 해당 Dir 경로에, 해당 Name 으로 된 파일이 존재하는지 판단해주는 함수 + 존재할 시 FullPath 경로 리턴
 	static std::optional<std::string> CheckAndExtractFullPathOfTargetFile(std::string_view Path, std::string_view FileName);
 
+	// FullPath로부터 매크로로 정의된 PathName을 제외한 FileName을 리턴
+	static std::string ExtractFilePathFromFullPath(const std::string& FullPath, const std::string& PathName);
+
 	// 혹시나 "\\"가 경로에 있다면, 맨처음 경로부터 "\\" 까지의 정보를 뽑아내주는 함수
 	// C::Program\\OBJ\\Material\\Hello.mtrl ? => C::Program\\OBJ\\Material\\ 까지의 정보를 뽑아와준다.
 	static bool GetPathInfoBeforeFileName(const std::string& FilePath, std::string& ExtractedPathInfo);
@@ -57,6 +60,7 @@ public:
 	static std::string CollisionChannelToString(Collision_Channel eChannnel);
 	static Collision_Channel StringToCollisionChannel(const std::string& String);
 	static Collision_Interaction StringToCollisionInteraction(const std::string& String);
+	static std::string CollisionInteractionToString(Collision_Interaction eInteraction);
 
 	// String
 	static std::string BoolToString(bool Bool);
@@ -68,7 +72,19 @@ public:
 	static void CalculateBazierTargetPoses(const Vector3& D1, const Vector3& D2, const Vector3& D3, const Vector3& D4,
 		std::vector<Vector3>& vecPoses, int DetailNum);
 
+	// Quaternion To Euler Angle
+	static Vector3 QuarternionToEulerAngles(const XMVECTOR& Qut);
+
+	// 사각형을 정의하는 4개의 정점 -> 해당 사각형 안에, 특정 Vector 가 위치하는지 확인하기 (2차원)
+	static bool CheckInsideSquare(const Vector2& V1, const Vector2& V2,
+		const Vector2& V3, const Vector2& V4, const Vector2& TargetPos);
+
 	// 밑이 a 인 지수함수를 이용해서, 실시간으로 증가하는 지수 함수 형태의 값을 얻어내기
-	static float CalculateRealTimeSpeedUsingExponential(float Bottom, float CurTime, float InitSpeed);
+	static float CalculateRealTimeSpeedUsingExponentialWithBottom(float Bottom, float CurTime, float InitSpeed);
+
+	// 총 이동 시간, Init Speed, EndSpeed 를 이용하여, 실시간 변하는 속도 구하기
+	// (확 증가하다가, 서서히 증가)
+	// (서서히 감소하다가, 확 감소)
+	static float CalculateRealTimeSpeedUsingExponentialWithSpeed(float FullTime, float InitSpeed, float EndSpeed, float CurTime);
 };
 

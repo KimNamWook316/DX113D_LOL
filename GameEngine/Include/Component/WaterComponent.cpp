@@ -32,7 +32,7 @@ void CWaterComponent::Start()
 
 	if (!m_Mesh)
 	{
-		m_Mesh = m_Scene->GetResource()->FindMesh("DefaultPlane");
+		m_Mesh = CResourceManager::GetInst()->FindMesh("DefaultPlane");
 	}
 }
 
@@ -40,7 +40,7 @@ bool CWaterComponent::Init()
 {
 	CSceneComponent::Init();
 
-	m_Mesh = m_Scene->GetResource()->FindMesh("DefaultPlane");
+	m_Mesh = CResourceManager::GetInst()->FindMesh("DefaultPlane");
 
 	return true;
 }
@@ -108,6 +108,13 @@ bool CWaterComponent::Load(FILE* File)
 	fread(&Length, sizeof(int), 1, File);
 	fread(MatName, sizeof(char), Length, File);
 
+	m_Material = m_Scene->GetResource()->FindMaterial(MatName);
+
+	if (m_Material)
+	{
+		m_Material->ClearTexture();
+	}
+
 	bool Success = m_Scene->GetResource()->CreateMaterial<CMaterial>(MatName);
 
 	if (!Success)
@@ -142,7 +149,6 @@ bool CWaterComponent::SaveOnly(FILE* File)
 	fwrite(MaterialName.c_str(), sizeof(char), Length, File);
 
 	m_Material->Save(File);
-
 
 	return true;
 }

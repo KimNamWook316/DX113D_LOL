@@ -1,9 +1,10 @@
 #pragma once
 
 #include "ConstantBufferBase.h"
+#include "../../ParticleInfo.h"
 
 class CParticleConstantBuffer :
-    public CConstantBufferBase
+	public CConstantBufferBase
 {
 public:
 	CParticleConstantBuffer();
@@ -17,7 +18,7 @@ public:
 	virtual bool Init();
 	virtual void UpdateCBuffer();
 	virtual CParticleConstantBuffer* Clone();
-public  :
+public:
 	virtual void Save(FILE* File);
 	virtual void Load(FILE* File);
 public:
@@ -150,25 +151,28 @@ public:
 	{
 		return m_BufferData.IsLifeTimeLinearFromCenter == 1 ? true : false;
 	}
-	bool Is2D()
-	{
-		return m_BufferData.Is2D == 1 ? true : false;
-	}
+	// bool Is2D()
+	// {
+	// 	return m_BufferData.Is2D == 1 ? true : false;
+	// }
 
 	// Linear Emissive 
 	int IsLinearEmissiveChangeEnable() const
 	{
-		return m_BufferData.ApplyLinearEmissiveChange;
+		// return m_BufferData.ApplyLinearEmissiveChange;
+		return true;
 	}
 
 	const Vector3& GetStartEmissiveColor() const
 	{
-		return m_BufferData.StartEmissiveColor;
+		// return m_BufferData.StartEmissiveColor;
+		return Vector3();
 	}
 
 	const Vector3& GetEndEmissiveColor() const
 	{
-		return m_BufferData.EndEmissiveColor;
+		// return m_BufferData.EndEmissiveColor;
+		return Vector3();
 	}
 
 	// Linear Rotate
@@ -194,7 +198,7 @@ public:
 	{
 		return m_BufferData.ParticleBounce;
 	}
-	
+
 	float GetParticleBounceResist() const
 	{
 		return m_BufferData.ParticleBounceResistance;
@@ -233,15 +237,41 @@ public:
 	{
 		return m_BufferData.DisableNewAlive;
 	}
-	int IsUVClippingReflectingMoveDir() const
+	int IsLinearUVClippingEnabled() const
 	{
-		return m_BufferData.UVClippingReflectingMoveDir;
+		return m_BufferData.LinearUVClippingEnable;
 	}
 	int IsNoiseTextureSamplingApplied() const
 	{
 		return m_BufferData.ApplyNoiseTexture ? 1 : 0;
 	}
+	int IsFollowRealTimeParticleComponentPos() const
+	{
+		return m_BufferData.FollowRealTimeParticleComponentPos;
+	}
+	int IsDestroyExstingAllLivingParticlesEnabled() const
+	{
+		return m_BufferData.DestroyExistingAllLivingParticles ? 1 : 0;
+	}
+	bool IsLinearUVClippingDirReversed() const
+	{
+		return m_BufferData.LinearClippingReverseDir == 1 ? true : false;
+	}
+
 public:
+	void SetDestroyExstingAllLivingParticles(bool Enable)
+	{
+		m_BufferData.DestroyExistingAllLivingParticles = Enable ? 1 : 0;
+	}
+
+	void SetLinearUVClippingDirReverseEnable(bool Enable)
+	{
+		m_BufferData.LinearClippingReverseDir = Enable ? 1 : 0;
+	}
+	void SetFollowRealTimeParticleComponentPos(bool Enable)
+	{
+		m_BufferData.FollowRealTimeParticleComponentPos = Enable ? 1 : 0;
+	}
 	// Linear Emissive Change
 	void SetLinearEmissiveChangeEnable(bool Enable)
 	{
@@ -267,16 +297,16 @@ public:
 	}
 
 	// UV Clipping
-	void SetUVClippingReflectingMoveDirEnable(bool Enable)
+	void SetLinearUVClippingEnable(bool Enable)
 	{
-		m_BufferData.UVClippingReflectingMoveDir = Enable ? 1 : 0;
+		m_BufferData.LinearUVClippingEnable = Enable ? 1 : 0;
 	}
 
 	// Restart 버튼 ( 설명은 생성자 참고)
-	void SetResetParticleSharedInfoSumSpawnCnt(bool Enable)
-	{
-		m_BufferData.ResetParticleSharedInfoSumSpawnCnt = Enable ? 1 : 0;
-	}
+	// void SetResetParticleSharedInfoSumSpawnCnt(bool Enable)
+	// {
+	// 	m_BufferData.ResetParticleSharedInfoSumSpawnCnt = Enable ? 1 : 0;
+	// }
 	// 되살리는 효과 무효화 하기
 	void SetDisableNewAlive(bool Enable)
 	{
@@ -291,22 +321,22 @@ public:
 	}
 
 	// Particle Component 의 Relative Scale 반영하기 
-	void SetCommonWorldScale(const Vector3& Scale)
-	{
-		m_BufferData.CommonWorldScale = Scale;
-	}
+	// void SetCommonWorldScale(const Vector3& Scale)
+	// {
+	// 	m_BufferData.CommonWorldScale = Scale;
+	// }
 
 	// Particle Component 의 World Pos 반영
-	void SetCommonParticleComponentWorldPos(const Vector3& WorldPos)
-	{
-		m_BufferData.CommonParticleComponentWorldPos = WorldPos;
-	}
+	// void SetCommonParticleComponentWorldPos(const Vector3& WorldPos)
+	// {
+	// 	m_BufferData.CommonParticleComponentWorldPos = WorldPos;
+	// }
 	// UV Move
-	void SetUVMoveEnable(bool Enable) 
+	void SetUVMoveEnable(bool Enable)
 	{
-		m_BufferData.UVMoveEnable = Enable ? 1: 0;
+		m_BufferData.UVMoveEnable = Enable ? 1 : 0;
 	}
-	void SetUVRowN(int Row) 
+	void SetUVRowN(int Row)
 	{
 		m_BufferData.UVRowN = Row;
 	}
@@ -440,12 +470,12 @@ public:
 		m_BufferData.ColorMax = Vector4(r, g, b, a);
 	}
 
-	void SetSpeedChangeMethod(ParticleSpeedChangeMethod Method) 
+	void SetSpeedChangeMethod(ParticleSpeedChangeMethod Method)
 	{
 		m_BufferData.SpeedChangeMethod = (int)Method;
 	}
 
-	void SetSpeedChangeMethod(int Method) 
+	void SetSpeedChangeMethod(int Method)
 	{
 		if (Method > (int)ParticleSpeedChangeMethod::Max)
 			assert(false);
@@ -488,10 +518,10 @@ public:
 		m_BufferData.MoveDir = MoveDir;
 	}
 
-	void Set2D(bool Is2D)
-	{
-		m_BufferData.Is2D = Is2D ? 1 : 0;
-	}
+	// void Set2D(bool Is2D)
+	// {
+	// 	m_BufferData.Is2D = Is2D ? 1 : 0;
+	// }
 
 	void SetMoveAngle(const Vector3& MoveAngle)
 	{

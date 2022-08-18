@@ -15,9 +15,11 @@ protected:
 	virtual ~CNavAgent();
 
 private:
-	CSharedPtr<class CSceneComponent> m_UpdateComponent;
+	class CSceneComponent* m_UpdateComponent;
 	float					m_MoveSpeed;
+	float					m_RotationSpeed;
 	bool					m_ApplyNavMesh;
+	bool					m_Rotaiting;
 	Vector3					m_CurrentFaceDir;
 
 protected:
@@ -29,15 +31,27 @@ public:
 		return m_CurrentFaceDir;
 	}
 
+	void SetCurrentFaceDir(const Vector3& Dir)
+	{
+		m_CurrentFaceDir = Dir;
+	}
+
 	void SetUpdateComponent(class CSceneComponent* UpdateComponent);
 
 	bool Move(const Vector3& EndPos);
 
 	bool MoveOnNavMesh(const Vector3 EndPos);
+	// 특정한 때(ex.평타 공격)에 특정 속도로 움직이고 싶은 경우
+	bool MoveOnNavMesh(const Vector3 Dir, float Speed);
 
 	void SetMoveSpeed(float Speed)
 	{
 		m_MoveSpeed = Speed;
+	}
+
+	void SetRotationSpeed(float Speed)
+	{
+		m_RotationSpeed = Speed;
 	}
 
 	void SetApplyNavMesh(bool Apply)
@@ -78,6 +92,11 @@ public:
 		return m_PathList.empty();
 	}
 
+	bool IsRotaiting() const
+	{
+		return m_Rotaiting;
+	}
+
 	size_t GetPathListCount()	const
 	{
 		return m_PathList.size();
@@ -109,5 +128,6 @@ public:
 	bool FindPathExcept(class CSceneComponent* OwnerComponent, const Vector3& End, std::vector<Vector3>& vecExceptPos);
 	bool FindPathExcept(class CSceneComponent* OwnerComponent, const Vector3& End, std::vector<NavigationCell*>& vecExceptCell);
 	bool CheckStraightPath(const Vector3& StartPos, const Vector3& EndPos, std::vector<Vector3>& vecPath);
+	void ForceUpdateFaceDir();
 };
 

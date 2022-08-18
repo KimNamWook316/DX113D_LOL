@@ -182,7 +182,12 @@ struct GraphEditorDelegate : public GraphEditor::Delegate
             }
         }
         
-        ((CCompositeNode*)ParentNode)->DeleteChild(ChildNode);
+
+        if (ParentNode->GetNodeType() == Node_Type::Decorator)
+            ((CDecoratorNode*)ParentNode)->SetChild(nullptr);
+
+        else
+            ((CCompositeNode*)ParentNode)->DeleteChild(ChildNode);
 
         mLinks.erase(mLinks.begin() + linkIndex);
     }
@@ -518,6 +523,10 @@ private:
         Length = WideCharToMultiByte(CP_UTF8, 0, m_wHintText, -1, 0, 0, 0, 0);
         WideCharToMultiByte(CP_UTF8, 0, m_wHintText, -1, m_HintTextUTF8, Length, 0, 0);
     }
+
+private:
+    void PrintActionNodes();
+    void PrintConditionNodes();
 
 public:
     // GameObject가 로드됐을때 Graph Editor상에 노드들 갱신

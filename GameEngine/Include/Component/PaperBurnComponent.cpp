@@ -86,7 +86,14 @@ void CPaperBurnComponent::ResetPaperBurn()
 		(*iter)->SetPaperBurn(false);
 	}
 
-	m_Object->GetRootComponent()->SetDrawShadow(true);
+	if (m_PaperBurnComponent)
+	{
+		m_PaperBurnComponent->SetDrawShadow(true);
+	}
+	else
+	{
+		m_Object->GetRootComponent()->SetDrawShadow(true);
+	}
 }
 
 void CPaperBurnComponent::SetInverse(bool Enable)
@@ -112,6 +119,7 @@ bool CPaperBurnComponent::SetPaperBurnComponent(CSceneComponent* Comp)
 	if (Ret)
 	{
 		m_PaperBurnComponentName = Comp->GetName();
+		m_PaperBurnComponent = Comp;
 	}
 
 	return Ret;
@@ -262,13 +270,22 @@ void CPaperBurnComponent::Update(float DeltaTime)
 {
 	if (m_StartPaperBurn)
 	{
-		m_Object->GetRootComponent()->SetDrawShadow(false);
+		if (m_PaperBurnComponent)
+		{
+			m_PaperBurnComponent->SetDrawShadow(false);
+		}
+		else
+		{
+			m_Object->GetRootComponent()->SetDrawShadow(false);
+		}
 
 		m_Filter += DeltaTime / m_FinishTime;
 
 		if (m_Filter >= 1.f)
 		{
 			m_Filter = 1.f;
+
+			m_StartPaperBurn = false;
 
 			if (m_FinishCallback)
 			{
@@ -278,10 +295,26 @@ void CPaperBurnComponent::Update(float DeltaTime)
 			switch (m_EndEvent)
 			{
 			case PaperBurnEndEvent::Destroy:
-				m_Object->Destroy();
+			{
+				if (m_Object->GetRootComponent() == m_PaperBurnComponent)
+				{
+					m_Object->Destroy();
+				}
+				else
+				{
+					m_PaperBurnComponent->Destroy();
+				}
+			}
 				break;
 			case PaperBurnEndEvent::Disable:
-				m_Object->Enable(false);
+				if (m_Object->GetRootComponent() == m_PaperBurnComponent)
+				{
+					m_Object->Enable(false);
+				}
+				else
+				{
+					m_PaperBurnComponent->Enable(false);
+				}
 				break;
 			case PaperBurnEndEvent::Return:
 				// TODO : Object Pool에 Return 해야 하는 경우
@@ -291,6 +324,9 @@ void CPaperBurnComponent::Update(float DeltaTime)
 				break;
 			}
 
+			bool Inverse = m_CBuffer->IsInverse();
+
+				m_Filter = 0.f;
 		}
 
 		m_CBuffer->SetFilter(m_Filter);
@@ -345,12 +381,12 @@ bool CPaperBurnComponent::Save(FILE* File)
 	fwrite(&m_FinishTime, sizeof(float), 1, File);
 	fwrite(&m_EndEvent, sizeof(PaperBurnEndEvent), 1, File);
 
-	int Length = m_PaperBurnComponentName.length();
+	size_t Length = (int)m_PaperBurnComponentName.length();
 	fwrite(&Length, sizeof(int), 1, File);
 	fwrite(m_PaperBurnComponentName.c_str(), sizeof(char), Length, File);
 
 	std::string TexName = m_BurnTexture->GetName();
-	Length = TexName.length();
+	Length = (int)TexName.length();
 	fwrite(&Length, sizeof(int), 1, File);
 	fwrite(TexName.c_str(), sizeof(char), Length, File);
 
@@ -460,10 +496,11 @@ bool CPaperBurnComponent::Load(FILE* File)
 		}
 
 		m_BurnTexture = m_Scene->GetResource()->FindTexture(TexName);
-		for (size_t i = 0; i < Size; ++i)
-		{
-			SAFE_DELETE_ARRAY(vecFullPath[i]);
-		}
+	}
+
+	for (size_t i = 0; i < Size; ++i)
+	{
+		SAFE_DELETE_ARRAY(vecFullPath[i]);
 	}
 
 	return true;
@@ -611,10 +648,11 @@ bool CPaperBurnComponent::LoadOnly(FILE* File)
 		}
 
 		m_BurnTexture = m_Scene->GetResource()->FindTexture(TexName);
-		for (size_t i = 0; i < Size; ++i)
-		{
-			SAFE_DELETE_ARRAY(vecFullPath[i]);
-		}
+	}
+
+	for (size_t i = 0; i < Size; ++i)
+	{
+		SAFE_DELETE_ARRAY(vecFullPath[i]);
 	}
 
 	return true;

@@ -31,30 +31,25 @@ bool CCollisionManager::Init()
 	CreateProfile("Monster", Collision_Channel::Monster, true);
 	CreateProfile("PlayerAttack", Collision_Channel::PlayerAttack, true);
 	CreateProfile("MonsterAttack", Collision_Channel::MonsterAttack, true);
-	CreateProfile("MonsterPathFind", Collision_Channel::MonsterPathFind, true);
+	//CreateProfile("MonsterPathFind", Collision_Channel::MonsterPathFind, true);
 	//CreateProfile("MinionNormalAttack", Collision_Channel::Monster, true);
 	//CreateProfile("MapObject", Collision_Channel::MapObject, true);
 
 	SetCollisionState("Player", Collision_Channel::Player, Collision_Interaction::Ignore);
 	SetCollisionState("Player", Collision_Channel::PlayerAttack, Collision_Interaction::Ignore);
+	SetCollisionState("Player", Collision_Channel::Monster, Collision_Interaction::CollisionRigid);
 
-	SetCollisionState("Monster", Collision_Channel::Monster, Collision_Interaction::Ignore);
+	SetCollisionState("Monster", Collision_Channel::Monster, Collision_Interaction::CollisionRigid);
 	SetCollisionState("Monster", Collision_Channel::MonsterAttack, Collision_Interaction::Ignore);
+	SetCollisionState("Monster", Collision_Channel::Player, Collision_Interaction::CollisionRigid);
 
 	SetCollisionState("PlayerAttack", Collision_Channel::Player, Collision_Interaction::Ignore);
 	SetCollisionState("PlayerAttack", Collision_Channel::PlayerAttack, Collision_Interaction::Ignore);
 	SetCollisionState("PlayerAttack", Collision_Channel::MonsterAttack, Collision_Interaction::Ignore);
-	SetCollisionState("PlayerAttack", Collision_Channel::MonsterPathFind, Collision_Interaction::Ignore);
 
 	SetCollisionState("MonsterAttack", Collision_Channel::Monster, Collision_Interaction::Ignore);
 	SetCollisionState("MonsterAttack", Collision_Channel::PlayerAttack, Collision_Interaction::Ignore);
 	SetCollisionState("MonsterAttack", Collision_Channel::MonsterAttack, Collision_Interaction::Ignore);
-
-	SetCollisionState("MonsterPathFind", Collision_Channel::Monster, Collision_Interaction::Ignore);
-	SetCollisionState("MonsterPathFind", Collision_Channel::PlayerAttack, Collision_Interaction::Ignore);
-	SetCollisionState("MonsterPathFind", Collision_Channel::MonsterAttack, Collision_Interaction::Ignore);
-	SetCollisionState("MonsterPathFind", Collision_Channel::MonsterPathFind, Collision_Interaction::Collision);
-	SetCollisionState("MonsterPathFind", Collision_Channel::Player, Collision_Interaction::Collision);
 
 	//SetCollisionState("MapObject", Collision_Channel::MapObject, Collision_Interaction::Ignore);
 	//SetCollisionState("MapObject", Collision_Channel::PlayerAttack, Collision_Interaction::Ignore);
@@ -195,7 +190,7 @@ bool CCollisionManager::SaveAsCSVFullPath(const char* FullPath)
 
 		for (int i = 0; i < (int)Collision_Channel::Max; ++i)
 		{
-			ProfileData.push_back(CEngineUtil::BoolToString((bool)iter->second->vecInteraction[i]));
+			ProfileData.push_back(CEngineUtil::CollisionInteractionToString(iter->second->vecInteraction[i]));
 		}
 
 		Data->SetData(iter->first, ProfileData);
@@ -244,7 +239,7 @@ bool CCollisionManager::LoadProfileFromCSVFullPath(const char* FullPath)
 
 	m_mapProfile.clear();
 
-	std::string CSVName;
+	std::string CSVName = "";
 	bool Success = CResourceManager::GetInst()->LoadCSVFullPath(CSVName, FullPath);
 
 	if (!Success)

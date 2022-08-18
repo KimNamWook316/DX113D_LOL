@@ -18,9 +18,24 @@ enum class RenderLayerType
 	ScreenWidgetComponent,
 	AnimationEditor,
 	ParticleEditor,
-#ifdef _DEBUG
 	Collider
-#endif // _DEBUG
+};
+
+enum class FadeEffecType
+{
+	FADE_IN,
+	FADE_OUT,
+	NONE,
+};
+
+struct FadeEffectInfo
+{
+	bool Stay;								// Fade 끝 상태에서 기다릴 것인지
+	float Time;
+	Vector3 StartColor;
+	Vector3 EndColor;
+	std::function<void()> StartCallBack;
+	std::function<void()> EndCallBack;
 };
 
 struct RenderInstancingList
@@ -132,6 +147,9 @@ private:
 	float m_ShadowLightDistance;
 	class CShadowCBuffer* m_ShadowCBuffer;
 
+	// Player
+	CSharedPtr<CRenderTarget> m_PlayerTarget;
+
 	// Debug Render
 	bool m_DebugRender;
 
@@ -155,11 +173,26 @@ private:
 	// Post Processing Renderer
 	class CPostFXRenderer* m_PostFXRenderer;
 
+	// Fade Effect
+	class CFadeCBuffer* m_FadeCBuffer;
+	FadeEffecType m_CurFadeEffectType;
+	bool m_FadeEffectStart;
+	float m_FadeEffectTimer;
+	FadeEffectInfo m_FadeInfo;
+
+	// Bomb Effect
+	Vector4 m_OriginGLightColor;
+	bool m_BombEffect;
+	float m_BombEffectTime;
+	float m_BombEffectTimer;
+
 public :
 	CRenderStateManager* GetRenderStateManager() const
 	{
 		return m_RenderStateManager;
 	}
+
+	void StartFadeEffect(FadeEffecType Type, bool Stay = false);
 
 public:
 	float GetShadowLightDistance() const
@@ -207,6 +240,8 @@ public:
 		return m_ShadowCBuffer;
 	}
 
+	void EnableBombEffect(float Time);
+
 	float GetMiddleGray() const;
 	float GetLumWhite() const;
 	float GetBloomThreshold() const;
@@ -219,6 +254,7 @@ public:
 	float GetFogEnd() const;
 	float GetFogDensity() const;
 	float GetShadowBias() const;
+	bool GetDebugRender() const;
 
 	void SetMiddleGray(float Gray);
 	void SetLumWhite(float White);
@@ -246,6 +282,26 @@ public:
 		return m_RenderSkyBox;
 	}
 
+	void SetFadeTime(float Time)
+	{
+		m_FadeInfo.Time = Time;
+	}
+
+	void SetFadeStartColor(const Vector3& Color)
+	{
+		m_FadeInfo.StartColor = Color;
+	}
+
+	void SetFadeEndColor(const Vector3& Color)
+	{
+		m_FadeInfo.EndColor = Color;
+	}
+
+	void SetFadeStay(bool Stay)
+	{
+		m_FadeInfo.Stay = Stay;
+	}
+
 public:
 	void SetObjectList(const std::list<CSharedPtr<class CGameObject>>* List)
 	{
@@ -259,6 +315,7 @@ public:
 public:
 	bool Init();
 	void Render(float DeltaTime);
+	void RenderPlayer(class CMesh* PlayerMesh);
 
 private:
 	void RenderSkyBox();
@@ -268,7 +325,7 @@ private:
 	void RenderLightAcc();
 	void RenderLightBlend();
 	void RenderTransparent();
-	void RenderFinalScreen();
+	void RenderFinalScreen(float DeltaTime);
 	void RenderAnimationEditor();
 	void RenderParticleEffectEditor();
 	void RenderPostParticle(); // 물 쉐이더 등
@@ -283,14 +340,29 @@ public:
 		D3D11_BLEND_OP BlendOpAlpha = D3D11_BLEND_OP_ADD,
 		UINT8 RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL);
 	bool CreateBlendState(const std::string& Name, bool AlphaToCoverageEnable, bool IndependentBlendEnable);
+
 public:
 	class CRenderState* FindRenderState(const std::string& Name);
+
+public:
+	template <typename T>
+	void SetFadeStartCallBack(T* Obj, void(T::* Func)())
+	{
+		m_FadeInfo.StartCallBack = std::bind(Func, Obj);
+	}
+
+	template <typename T>
+	void SetFadeEndCallBack(T* Obj, void(T::* Func)())
+	{
+		m_FadeInfo.EndCallBack = std::bind(Func, Obj);
+	}
 
 private:
 	void RenderDefaultInstancingShadow();
 	void RenderInstancing(int LayerIndex, bool AlphaBlend);
 	void UpdateInstancingList();
 	void UpdateInstancingInfo(int LayerIndex, bool UpdateShadow);
+	void UpdateFadeEffectInfo(float DeltaTime);
 
 private :
 	int GetRenderLayerIndex(const std::string& Name);

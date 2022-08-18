@@ -13,6 +13,8 @@
 #include "InspectorWindow.h"
 #include "IMGUITree.h"
 #include "ObjectHierarchyWindow.h"
+#include "Component/CameraComponent.h"
+#include "Component/Arm.h"
 #include "Component/AnimationMeshComponent.h"
 #include "Component/StaticMeshComponent.h"
 #include "Component/ParticleComponent.h"
@@ -22,14 +24,22 @@
 #include "Component/ColliderRay.h"
 #include "Component/NavMeshComponent.h"
 #include "Component/WaterComponent.h"
-#include "../Component/MonsterPathFindCollider.h"
-#include "../Component/PlayerHookComponent.h"
-#include "../Component/PlayerNormalAttackCheckCollider.h"
-#include "Resource/Particle/Particle.h"
 #include "Component/Arm.h"
 #include "Component/LandScape.h"
-#include "../Component/EyeLaserComponent.h"
+#include "../DeathDoor/Component/LadderCollider.h"
+
+// TODO : DeathDoor Scene Component 추가될 때마다 업데이트
+//#include "../DeathDoor/Component/MonsterPathFindCollider.h"
+#include "../DeathDoor/Component/PlayerHookComponent.h"
+#include "../DeathDoor/Component/PlayerNormalAttackCheckCollider.h"
+#include "../DeathDoor/Component/EyeLaserComponent.h"
+#include "../DeathDoor/Component/PlayerBowComponent.h"
+#include "../DeathDoor/Component/CrackedBlockCollider.h"
+#include "../DeathDoor/Component/ArrowCollisionFireCollider.h"
+
+#include "Resource/Particle/Particle.h"
 #include "ToolWindow.h"
+#include "../DeathDoor/DDUtil.h"
 
 CSceneComponentCreateModal::CSceneComponentCreateModal() :
 	//m_SceneComponentCreatePopUp(nullptr),
@@ -56,6 +66,13 @@ bool CSceneComponentCreateModal::Init()
 		SceneComponent3DType foo = static_cast<SceneComponent3DType>(i);
 		std::string StrSceneComponent = CEditorUtil::SceneComponent3DTypeToString(foo);
 		m_ComponentCombo->AddItem(StrSceneComponent);
+	}
+
+	for (int i = 0; i < (int)DDSceneComponentType::Max; ++i)
+	{
+		DDSceneComponentType DDType = (DDSceneComponentType)i;
+		std::string TypeName = CDDUtil::DDSceneComponentTypeToString(DDType);
+		m_ComponentCombo->AddItem(TypeName);
 	}
 
 	m_NameTextInput = AddWidget<CIMGUITextInput>("SceneComponent Name");
@@ -125,6 +142,9 @@ void CSceneComponentCreateModal::OnCreateComponent()
 	else if (Typeid == typeid(CLandScape).hash_code())
 		Com = SelectObject->CreateComponentAddChild<CLandScape>(Name);
 
+	else if (Typeid == typeid(CCameraComponent).hash_code())
+		Com = SelectObject->CreateComponentAddChild<CCameraComponent>(Name);
+
 	else if (Typeid == typeid(CArm).hash_code())
 		Com = SelectObject->CreateComponentAddChild<CArm>(Name);
 
@@ -155,17 +175,44 @@ void CSceneComponentCreateModal::OnCreateComponent()
 	else if (Typeid == typeid(CWaterComponent).hash_code())
 		Com = SelectObject->CreateComponentAddChild<CWaterComponent>(Name);
 
-	else if (Typeid == typeid(CPlayerNormalAttackCheckCollider).hash_code())
-		Com = SelectObject->CreateComponentAddChild<CPlayerNormalAttackCheckCollider>(Name);
+	// 위에서 생성되지 않았다면 클라이언트 단에서 정의된 컴포넌트임
+	// TODO : Death Door Scene Component 추가될 때마다 업데이트
+	if (!Com)
+	{
+		Index -= (int)SceneComponent3DType::Max;
+		DDSceneComponentType DDSceneType = (DDSceneComponentType)Index;
 
-	else if (Typeid == typeid(CEyeLaserComponent).hash_code())
-		Com = SelectObject->CreateComponentAddChild<CEyeLaserComponent>(Name);
+		Typeid = CDDUtil::DDSceneComponentTypeToTypeID(DDSceneType);
 
-	else if (Typeid == typeid(CPlayerHookComponent).hash_code())
-		Com = SelectObject->CreateComponentAddChild<CPlayerHookComponent>(Name);
-
-	else if (Typeid == typeid(CMonsterPathFindCollider).hash_code())
-		Com = SelectObject->CreateComponentAddChild<CMonsterPathFindCollider>(Name);
+		if (Typeid == typeid(CPlayerNormalAttackCheckCollider).hash_code())
+		{
+			Com = SelectObject->CreateComponentAddChild<CPlayerNormalAttackCheckCollider>(Name);
+		}
+		else if (Typeid == typeid(CEyeLaserComponent).hash_code())
+		{
+			Com = SelectObject->CreateComponentAddChild<CEyeLaserComponent>(Name);
+		}
+		else if (Typeid == typeid(CPlayerHookComponent).hash_code())
+		{
+			Com = SelectObject->CreateComponentAddChild<CPlayerHookComponent>(Name);
+		}
+		else if (Typeid == typeid(CPlayerBowComponent).hash_code())
+		{
+			Com = SelectObject->CreateComponentAddChild<CPlayerBowComponent>(Name);
+		}
+		else if (Typeid == typeid(CLadderCollider).hash_code())
+		{
+			Com = SelectObject->CreateComponentAddChild<CLadderCollider>(Name);
+		}
+		else if (Typeid == typeid(CCrackedBlockCollider).hash_code())
+		{
+			Com = SelectObject->CreateComponentAddChild<CCrackedBlockCollider>(Name);
+		}
+		else if (Typeid == typeid(CArrowCollisionFireCollider).hash_code())
+		{
+			Com = SelectObject->CreateComponentAddChild<CArrowCollisionFireCollider>(Name);
+		}
+	}
 
 	// Window 갱신
 	CSceneComponentHierarchyWindow* ComponentWindow = (CSceneComponentHierarchyWindow*)CIMGUIManager::GetInst()->FindIMGUIWindow(SCENECOMPONENT_HIERARCHY);

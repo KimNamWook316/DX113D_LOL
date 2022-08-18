@@ -32,6 +32,7 @@ public:
 	//void AddPrevCollider(class CColliderComponent* Collider);
 	void Collision(float DeltaTime);
 	class CColliderComponent* CollisionMouse(bool Is2D, float DeltaTime);
+	void CollisionRigid(class CColliderComponent* Src, class CColliderComponent* Dest, float DeltaTime);
 
 public:
 	size_t GetColliderSize()	const

@@ -9,8 +9,11 @@
 
 CNavAgent::CNavAgent()	:
 	m_MoveSpeed(0.f),
-	m_ApplyNavMesh(true)
+	m_RotationSpeed(360.f),
+	m_ApplyNavMesh(true),
+	m_Rotaiting(false)
 {
+	m_CurrentFaceDir = Vector3(0.f, 0.f, 1.f);
 	SetTypeID<CNavAgent>();
 }
 
@@ -48,8 +51,12 @@ bool CNavAgent::Move(const Vector3& EndPos)
 
 bool CNavAgent::MoveOnNavMesh(const Vector3 EndPos)
 {
+	// NavMesh없으면 자유롭게 모든 곳 이동 가능하게 하기
 	if (!m_Scene->GetNavigation3DManager()->GetNavMeshData())
-		return false;
+	{
+		m_Object->AddWorldPos(EndPos);
+		return true;
+	}
 
 	m_Object->AddWorldPos(EndPos);
 
@@ -59,7 +66,31 @@ bool CNavAgent::MoveOnNavMesh(const Vector3 EndPos)
 	if (Valid)
 	{
 		Vector3 Pos = m_Object->GetWorldPos();
-		m_Object->SetWorldPos(Pos.x, Height, Pos.z);
+		m_Object->SetWorldPos(Pos.x, Height + 0.3f, Pos.z);
+		return true;
+	}
+
+	else
+	{
+		m_Object->SetWorldPos(m_Object->GetPrevFramePos());
+		return false;
+	}
+}
+
+bool CNavAgent::MoveOnNavMesh(const Vector3 Dir, float Speed)
+{
+	if (!m_Scene->GetNavigation3DManager()->GetNavMeshData())
+		return false;
+
+	m_Object->AddWorldPos(Dir * Speed);
+
+	float Height = 0.f;
+	bool Valid = m_Scene->GetNavigation3DManager()->CheckPlayerNavMeshPoly(Height);
+
+	if (Valid)
+	{
+		Vector3 Pos = m_Object->GetWorldPos();
+		m_Object->SetWorldPos(Pos.x, Height + 0.2f, Pos.z);
 		return true;
 	}
 
@@ -74,14 +105,13 @@ const Vector3& CNavAgent::GetTargetPos() const
 {
 	if (!m_PathList.empty())
 		return m_PathList.back();
+
 }
 
 void CNavAgent::Start()
 {
 	if (!m_UpdateComponent)
 		m_UpdateComponent = m_Object->GetRootComponent();
-
-	
 }
 
 bool CNavAgent::Init()
@@ -93,6 +123,17 @@ void CNavAgent::Update(float DeltaTime)
 {
 	if (m_UpdateComponent)
 	{
+		// NavAgent를 가지고 있는 모든 움직이는 오브젝트가 초기에 바라보는 방향은 -z 방향이라고 가정
+		Vector3 CurrentFaceDir = Vector3(0.f, 0.f, -1.f);
+		Vector3 Rot = m_UpdateComponent->GetWorldRot();
+
+		Matrix RotMat;
+
+		RotMat.Rotation(Rot);
+
+		CurrentFaceDir = CurrentFaceDir.TransformCoord(RotMat);
+		m_CurrentFaceDir = CurrentFaceDir;
+
 		if (!m_PathList.empty())
 		{
 			Vector3	TargetPos = m_PathList.back();
@@ -110,33 +151,33 @@ void CNavAgent::Update(float DeltaTime)
 				m_PathList.pop_back();
 			}
 
-			// NavAgent를 가지고 있는 모든 움직이는 오브젝트가 초기에 바라보는 방향은 -z 방향이라고 가정
-			Vector3 CurrentFaceDir = Vector3(0.f, 0.f, -1.f);
-			Vector3 Rot = m_UpdateComponent->GetWorldRot();
-
-			Matrix RotMat;
-
-			RotMat.Rotation(Rot);
-
-			CurrentFaceDir = CurrentFaceDir.TransformCoord(RotMat);
-			m_CurrentFaceDir = CurrentFaceDir;
-
 			float Dot = Vector3(Dir.x, 0.f, Dir.z).Dot(Vector3(CurrentFaceDir.x, 0.f, CurrentFaceDir.z));
+			float Angle = Vector3(Dir.x, 0.f, Dir.z).Angle(Vector3(CurrentFaceDir.x, 0.f, CurrentFaceDir.z));
 
-			if (Dot < 0.999f && Dot > -0.999f)
+			if (abs(Angle) > 1.f)
 			{
 				float Degree = RadianToDegree(acosf(Dot));
 				Vector3 CrossResult = Vector3(Dir.x, 0.f, Dir.z).Cross(Vector3(CurrentFaceDir.x, 0.f, CurrentFaceDir.z));
 
 				if (CrossResult.y > 0.f)
 				{
-					m_UpdateComponent->AddWorldRotationY(-360.f * DeltaTime);
+					m_UpdateComponent->AddWorldRotationY(-m_RotationSpeed * DeltaTime);
 				}
 
 				else
 				{
-					m_UpdateComponent->AddWorldRotationY(360.f * DeltaTime);
+					m_UpdateComponent->AddWorldRotationY(m_RotationSpeed * DeltaTime);
 				}
+
+				m_Rotaiting = true;
+			}
+			else
+			{
+				if (!isnan(Angle))
+				{
+					m_UpdateComponent->AddWorldRotationY(Angle);
+				}
+				m_Rotaiting = false;
 			}
 		}
 	}
@@ -248,4 +289,17 @@ bool CNavAgent::FindPathExcept(CSceneComponent* OwnerComponent, const Vector3& E
 bool CNavAgent::CheckStraightPath(const Vector3& StartPos, const Vector3& EndPos, std::vector<Vector3>& vecPath)
 {
 	return CSceneManager::GetInst()->GetScene()->GetNavigation3DManager()->GetNavMeshData()->CheckStraightPath(StartPos, EndPos, vecPath);
+}
+
+void CNavAgent::ForceUpdateFaceDir()
+{
+	Vector3 CurrentFaceDir = Vector3(0.f, 0.f, -1.f);
+	Vector3 Rot = m_UpdateComponent->GetWorldRot();
+
+	Matrix RotMat;
+
+	RotMat.Rotation(Rot);
+
+	CurrentFaceDir = CurrentFaceDir.TransformCoord(RotMat);
+	m_CurrentFaceDir = CurrentFaceDir;
 }

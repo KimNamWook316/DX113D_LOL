@@ -319,7 +319,7 @@ bool CExcelData::SaveCSVFullPath(const char* fullPath)
 	size_t labelCount = m_vecLabel.size();
 	for (size_t i = 0; i < labelCount; ++i)
 	{
-		int length = m_vecLabel[i].length();
+		int length = (int)m_vecLabel[i].length();
 		strcpy_s(buf, length + 1, m_vecLabel[i].c_str());
 		if (i == labelCount - 1)
 		{
@@ -392,7 +392,7 @@ bool CExcelData::LoadCSVFullPath(const char* fullPath)
 	char name[64] = {};
 	fgets(name, 64, fp);
 
-	int len = strlen(name);
+	int len = (int)strlen(name);
 	name[len - 1] = '\0'; // , Á¦°Å
 	m_Name = name;
 
@@ -494,19 +494,34 @@ const std::string& CExcelData::FindData(const std::string& name, const std::stri
 	std::vector<std::string>* row = GetRow(name);
 	int idx = getLabelIndex(label);
 
+	if (idx == -1)
+	{
+		return "";
+	}
+
 	return (*row)[idx];
 }
 
 float CExcelData::FindDataFloat(const std::string& name, const std::string& label)
 {
-	std::string Find = FindData(name, label);
+	const std::string& Find = FindData(name, label);
+
+	if (Find.empty())
+	{
+		return 1.f;
+	}
 
 	return std::stof(Find);
 }
 
 int CExcelData::FindDataInt(const std::string& name, const std::string& label)
 {
-	std::string Find = FindData(name, label);
+	const std::string& Find = FindData(name, label);
+
+	if (Find.empty())
+	{
+		return -1;
+	}
 
 	return std::stoi(Find);
 }
@@ -514,6 +529,11 @@ int CExcelData::FindDataInt(const std::string& name, const std::string& label)
 bool CExcelData::FindDataBool(const std::string& name, const std::string& label)
 {
 	std::string Find = FindData(name, label);
+
+	if (Find.empty())
+	{
+		return false;
+	}
 
 	bool Ret = CEngineUtil::StringToBool(Find);
 

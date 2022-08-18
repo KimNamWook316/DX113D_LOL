@@ -67,7 +67,7 @@ PSOutput_Single WaterPS(Vertex3DOutput Input)
 	float3 NoiseColor = g_BaseTexture.Sample(g_BaseSmp, MoveUV).rgb;
 
 	MoveUV = (Input.UV * 6.f) + float2(g_AccTime, g_AccTime) * g_WaterSpeed * 0.2f;
-	float NoiseColor2 = g_BaseTexture.Sample(g_BaseSmp, MoveUV).rgb;
+	float3 NoiseColor2 = g_BaseTexture.Sample(g_BaseSmp, MoveUV).rgb;
 
 	NoiseColor += NoiseColor2;
 	NoiseColor *= 0.5f;

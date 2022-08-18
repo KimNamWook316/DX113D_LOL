@@ -21,6 +21,7 @@
 #include "ToonShaderWidget.h"
 #include "IMGUITextInput.h"
 #include "Resource/Shader/ToonShader.h"
+#include "IMGUICollapsingHeader.h"
 
 CStaticMeshComponentWidget::CStaticMeshComponentWidget()	:
 	m_MeshName(nullptr),
@@ -62,7 +63,7 @@ bool CStaticMeshComponentWidget::Init()
 	m_RootTree->AddWidget<CIMGUISameLine>("Line");
 	m_LoadMtrlButton = m_RootTree->AddWidget<CIMGUIButton>("Load & Add Material", 0.f, 0.f);
 	m_ShaderName = m_RootTree->AddWidget<CIMGUITextInput>("Shader", 200.f);
-	m_ShaderWidgetTree = m_RootTree->AddWidget<CIMGUITree>("Shader Params", 200.f);
+	m_ShaderWidgetTree = m_RootTree->AddWidget<CIMGUICollapsingHeader>("Shader Params", 200.f);
 	m_UVScale = m_RootTree->AddWidget<CIMGUIInputFloat2>("UV Scale", 200.f);
 	m_BaseColorEdit = m_RootTree->AddWidget<CIMGUIColor3>("BaseColor", 200.f);
 	m_AmbientColorEdit = m_RootTree->AddWidget<CIMGUIColor3>("Ambient", 200.f);
@@ -137,7 +138,9 @@ void CStaticMeshComponentWidget::OnClickLoadMesh()
 
 		CMesh* Mesh = CSceneManager::GetInst()->GetScene()->GetResource()->FindMesh(MeshName);
 
-		static_cast<CStaticMeshComponent*>(m_Component)->SetMesh((CStaticMesh*)Mesh);
+		//static_cast<CStaticMeshComponent*>(m_Component)->SetMesh((CStaticMesh*)Mesh);
+		CStaticMeshComponent* StaticComp = static_cast<CStaticMeshComponent*>(m_Component);
+		StaticComp->SetMesh((CStaticMesh*)Mesh);
 
 		RefreshMeshWidget(Mesh);
 	}
@@ -412,8 +415,7 @@ void CStaticMeshComponentWidget::RefreshMeshWidget(CMesh* Mesh)
 
 bool CStaticMeshComponentWidget::MakeShaderWidget(class CMaterial* Mat, const std::string& ShaderName)
 {
-	SAFE_DELETE(m_ShaderWidget);
-	m_ShaderWidgetTree->DeleteHierarchy();
+	m_ShaderWidgetTree->DeleteWidget(m_ShaderWidget);
 
 	CShader* Shader = CResourceManager::GetInst()->FindShader(ShaderName);
 	size_t TypeID = Shader->GetTypeID();

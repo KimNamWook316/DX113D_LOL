@@ -25,6 +25,7 @@ StructuredBuffer<float> g_AvgLum : register(t11);
 Texture2D<float4> g_BloomTex : register(t12);
 Texture2DMS<float4> g_GBufferDepth : register(t13);
 Texture2D<float4> g_DownScaleTex : register(t14);
+Texture2DMS<float4> g_PlayerStencil : register(t15);
 
 #define NatrualE 2.71828
 
@@ -155,8 +156,61 @@ PSOutput_Single HDRRenderPS(VS_OUTPUT_HDR Input)
 	}
 
 	Output.Color = Color;
- //	Output.Color.rgb = Color.rgb;
- //	Output.Color.a = Alpha;
+
+	// 플레이어 가려진 경우 스텐실 처리
+	float PlayerStencilDepth = g_PlayerStencil.Load(TargetPos, 0).w;
+
+	if (PlayerStencilDepth > Depth.g + 3.f)
+	{
+		Output.Color = float4(0.7f, 0.7f, 0.7f, 1.f);
+	}
+
+	if (g_FadeStart == 1)
+	{
+		float3 FadeColor = lerp(g_FadeStartColor, g_FadeEndColor, g_FadeRatio);
+		Output.Color.rgb *= FadeColor;
+	}
+
+	return Output;
+}
+
+PSOutput_Single RenderBombEffect(VS_OUTPUT_HDR Input)
+{
+	PSOutput_Single Output = (PSOutput_Single)0;
+
+	float2 UV = (float2) 0;
+	UV.x = Input.ProjPos.x / Input.ProjPos.w * 0.5f + 0.5f;
+	UV.y = Input.ProjPos.y / Input.ProjPos.w * -0.5f + 0.5f;
+
+	int2 TargetPos = (int2) 0;
+	TargetPos.x = (int) (UV.x * g_Resolution.x);
+	TargetPos.y = (int) (UV.y * g_Resolution.y);
+
+	// 색상 샘플 계산
+	float4 Color = g_HDRTex.Load(TargetPos, 0);
+
+	// Bloom 분포 색상
+	float4 BloomColor = g_BloomTex.Sample(g_LinearSmp, UV);
+	BloomColor *= g_HDRBloomScale * BloomColor;
+
+	float4 Depth = g_GBufferDepth.Load(TargetPos, 0);
+
+	// 원래 픽셀에 Bloom 추가
+	Color += BloomColor;
+
+	// 휘도 계산해서 일정 휘도 이상인 경우에만 하얗게, 나머지는 까만 색상으로 렌더
+	float Lum = dot(Color.rgb, LUM_FACTOR.rgb);
+
+	if (Lum >= 0.15f)
+	{
+		Color = float4(1.f, 1.f, 1.f, 1.f);
+	}
+	else
+	{
+		Color = float4(0.f, 0.f, 0.f, 1.f);
+	}
+
+	Output.Color = Color;
 
 	return Output;
 }

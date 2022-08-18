@@ -42,6 +42,11 @@ public:
 
 	void AddRef()
 	{
+		if (m_Name == "MT_MushRoomInit-mat0-_MainTex-atlas-0")
+		{
+			int a = 0;
+		}
+
 		++m_RefCount;
 	}
 
@@ -52,6 +57,11 @@ public:
 
 	int Release()
 	{
+		if (m_Name == "MT_MushRoomInit-mat0-_MainTex-atlas-0")
+		{
+			int a = 0;
+		}
+
 		--m_RefCount;
 
 		if (m_RefCount <= 0)

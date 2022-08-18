@@ -20,7 +20,11 @@ CNavMeshComponent::CNavMeshComponent()	:
 
 	m_LayerName = "Default";
 
-	m_Transform->AddChangePosCallBack<CNavMeshComponent>(this, &CNavMeshComponent::OnUpdatePos);
+	m_DrawShadow = false;
+
+	m_Transform->AddChangePosCallBack<CNavMeshComponent>(this, &CNavMeshComponent::OnUpdateWorld);
+	m_Transform->AddChangeRotCallBack<CNavMeshComponent>(this, &CNavMeshComponent::OnUpdateWorld);
+	m_Transform->AddChangeScaleCallBack<CNavMeshComponent>(this, &CNavMeshComponent::OnUpdateWorld);
 }
 
 CNavMeshComponent::CNavMeshComponent(const CNavMeshComponent& com)	:
@@ -46,11 +50,20 @@ void CNavMeshComponent::SetNavMesh(const std::string& Name)
 	m_NavMesh = (CNavMesh*)CResourceManager::GetInst()->FindMesh("NavMesh");
 
 	m_Scene->GetNavigation3DManager()->SetNavMeshData(this);
+
+	Vector3 Pos = m_Transform->GetWorldPos();
+
+	// 인자로 넣어주긴 하는데 안씀
+	//OnUpdateWorld(Pos, Pos);
 }
 
 void CNavMeshComponent::SetNavMesh(CNavMesh* NavMesh)
 {
 	m_NavMesh = NavMesh;
+	Vector3 Pos = m_Transform->GetWorldPos();
+
+	// 인자로 넣어주긴 하는데 안씀
+	OnUpdateWorld(Pos, Pos);
 }
 
 void CNavMeshComponent::Start()
@@ -61,21 +74,21 @@ void CNavMeshComponent::Start()
 	{
 		CSceneManager::GetInst()->GetScene()->GetCollision()->SetNavMeshMin(m_NavMesh->GetMin());
 		CSceneManager::GetInst()->GetScene()->GetCollision()->SetNavMeshMax(m_NavMesh->GetMax());
-	}
 
-	size_t Count = m_NavMesh->GetNavMeshPolygonCount();
+		size_t Count = m_NavMesh->GetNavMeshPolygonCount();
 
-	for (size_t i = 0; i < Count; ++i)
-	{
-		NavigationCell* Cell = new NavigationCell;
-		NavMeshPolygon Polygon = m_NavMesh->GetNavMeshPolygon(i);
-		Vector3 P1 = Polygon.m_vecVertexPos[0];
-		Vector3 P2 = Polygon.m_vecVertexPos[1];
-		Vector3 P3 = Polygon.m_vecVertexPos[2];
-		Cell->Center = (P1 + P2 + P3) / 3.f;
-		Cell->Polygon = Polygon;
-		m_UseCellList.push_back(Cell);
-		m_mapCell.insert(std::make_pair(Polygon.m_Index, Cell));
+		for (size_t i = 0; i < Count; ++i)
+		{
+			NavigationCell* Cell = new NavigationCell;
+			NavMeshPolygon Polygon = m_NavMesh->GetNavMeshPolygon(i);
+			Vector3 P1 = Polygon.m_vecVertexPos[0];
+			Vector3 P2 = Polygon.m_vecVertexPos[1];
+			Vector3 P3 = Polygon.m_vecVertexPos[2];
+			Cell->Center = (P1 + P2 + P3) / 3.f;
+			Cell->Polygon = Polygon;
+			m_UseCellList.push_back(Cell);
+			m_mapCell.insert(std::make_pair(Polygon.m_Index, Cell));
+		}
 	}
 }
 
@@ -163,19 +176,22 @@ const Vector3& CNavMeshComponent::GetVertexPos(int PolyIndex, int VertexIndex)
 	return m_NavMesh->GetNavMeshPolygon(PolyIndex).m_vecVertexPos[VertexIndex];
 }
 
-void CNavMeshComponent::OnUpdatePos(const Vector3& WorldPos, const Vector3& RelativePos)
+void CNavMeshComponent::OnUpdateWorld(const Vector3& World, const Vector3& Relative)
 {
 	size_t Count = m_NavMesh->GetNavMeshPolygonCount();
 
-	for (size_t i = 0; i < Count; ++i)
+	m_Transform->ForceUpdateMat();
+	Matrix WorldMat = m_Transform->GetWorldMatrix();
+
+	for (int i = 0; i < Count; ++i)
 	{
 		Vector3 Pos1 = m_NavMesh->GetNavMeshPolygon(i).m_vecVertexOriginPos[0];
 		Vector3 Pos2 = m_NavMesh->GetNavMeshPolygon(i).m_vecVertexOriginPos[1];
 		Vector3 Pos3 = m_NavMesh->GetNavMeshPolygon(i).m_vecVertexOriginPos[2];
 
-		m_NavMesh->GetNavMeshPolygon(i).m_vecVertexPos[0] = Pos1 + WorldPos;
-		m_NavMesh->GetNavMeshPolygon(i).m_vecVertexPos[1] = Pos2 + WorldPos;
-		m_NavMesh->GetNavMeshPolygon(i).m_vecVertexPos[2] = Pos3 + WorldPos;
+		m_NavMesh->GetNavMeshPolygon(i).m_vecVertexPos[0] = Pos1.TransformCoord(WorldMat);
+		m_NavMesh->GetNavMeshPolygon(i).m_vecVertexPos[1] = Pos2.TransformCoord(WorldMat);
+		m_NavMesh->GetNavMeshPolygon(i).m_vecVertexPos[2] = Pos3.TransformCoord(WorldMat);
 	}
 
 	Count = m_NavMesh->GetVertexPosCount();
@@ -184,9 +200,105 @@ void CNavMeshComponent::OnUpdatePos(const Vector3& WorldPos, const Vector3& Rela
 	{
 		Vector3 Pos = m_NavMesh->GetVertexOriginPos(i);
 
-		m_NavMesh->GetVertexPos(i) = Pos + WorldPos;
+		m_NavMesh->GetVertexPos(i) = Pos.TransformCoord(WorldMat);
+	}
+
+	Vector3 OriginMin = m_NavMesh->GetOriginMin();
+	Vector3 OriginMax = m_NavMesh->GetOriginMax();
+
+	m_NavMesh->m_Min = OriginMin.TransformCoord(WorldMat);
+	m_NavMesh->m_Max = OriginMax.TransformCoord(WorldMat);
+
+	if (m_NavMesh->m_Min.x > m_NavMesh->m_Max.x && m_NavMesh->m_Min.z > m_NavMesh->m_Max.z)
+	{
+		Vector3 Tmp = m_NavMesh->m_Min;
+		m_NavMesh->m_Min = m_NavMesh->m_Max;
+		m_NavMesh->m_Max = Tmp;
 	}
 }
+
+//void CNavMeshComponent::OnUpdateRotation(const Vector3& WorldRot, const Vector3& RelativeRot)
+//{
+//	size_t Count = m_NavMesh->GetNavMeshPolygonCount();
+//
+//	Matrix Rot;
+//	Rot.Rotation(WorldRot);
+//
+//	for (size_t i = 0; i < Count; ++i)
+//	{
+//		Vector3 Pos1 = m_NavMesh->GetNavMeshPolygon(i).m_vecVertexOriginPos[0];
+//		Vector3 Pos2 = m_NavMesh->GetNavMeshPolygon(i).m_vecVertexOriginPos[1];
+//		Vector3 Pos3 = m_NavMesh->GetNavMeshPolygon(i).m_vecVertexOriginPos[2];
+//
+//		m_NavMesh->GetNavMeshPolygon(i).m_vecVertexPos[0] = Pos1.TransformCoord(Rot);
+//		m_NavMesh->GetNavMeshPolygon(i).m_vecVertexPos[1] = Pos2.TransformCoord(Rot);
+//		m_NavMesh->GetNavMeshPolygon(i).m_vecVertexPos[2] = Pos3.TransformCoord(Rot);
+//	}
+//
+//	Count = m_NavMesh->GetVertexPosCount();
+//
+//	for (size_t i = 0; i < Count; ++i)
+//	{
+//		Vector3 Pos = m_NavMesh->GetVertexOriginPos(i);
+//		Vector3 NewPos = Pos.TransformCoord(Rot);
+//
+//		m_NavMesh->SetVertexPos(i, NewPos);
+//	}
+//
+//	Vector3 OriginMin = m_NavMesh->GetOriginMin();
+//	Vector3 OriginMax = m_NavMesh->GetOriginMax();
+//
+//	OriginMin.TransformCoord(Rot);
+//	OriginMax.TransformCoord(Rot);
+//
+//	m_NavMesh->m_Min = OriginMin;
+//	m_NavMesh->m_Max = OriginMax;
+//}
+//
+//void CNavMeshComponent::OnUpdateScale(const Vector3& WorldScale, const Vector3& RelativeScale)
+//{
+//	size_t Count = m_NavMesh->GetNavMeshPolygonCount();
+//
+//	Matrix MatScale;
+//	MatScale.Scaling(WorldScale);
+//
+//	for (size_t i = 0; i < Count; ++i)
+//	{
+//		Vector3 Pos1 = m_NavMesh->GetNavMeshPolygon(i).m_vecVertexOriginPos[0];
+//		Vector3 Pos2 = m_NavMesh->GetNavMeshPolygon(i).m_vecVertexOriginPos[1];
+//		Vector3 Pos3 = m_NavMesh->GetNavMeshPolygon(i).m_vecVertexOriginPos[2];
+//
+//		Vector3 NewPos1 = Pos1.TransformCoord(MatScale);
+//		Vector3 NewPos2 = Pos2.TransformCoord(MatScale);
+//		Vector3 NewPos3 = Pos3.TransformCoord(MatScale);
+//
+//		m_NavMesh->GetNavMeshPolygon(i).m_vecVertexPos[0] = NewPos1;
+//		m_NavMesh->GetNavMeshPolygon(i).m_vecVertexPos[1] = NewPos2;
+//		m_NavMesh->GetNavMeshPolygon(i).m_vecVertexPos[2] = NewPos3;
+//
+//		if (i == 1536)
+//			int a = 3;
+//	}
+//
+//	Count = m_NavMesh->GetVertexPosCount();
+//
+//	for (size_t i = 0; i < Count; ++i)
+//	{
+//		Vector3 Pos = m_NavMesh->GetVertexOriginPos(i);
+//		Vector3 NewPos = Pos.TransformCoord(MatScale);
+//
+//		m_NavMesh->SetVertexPos(i, NewPos);
+//	}
+//
+//	Vector3 OriginMin = m_NavMesh->GetOriginMin();
+//	Vector3 OriginMax = m_NavMesh->GetOriginMax();
+//
+//	OriginMin.TransformCoord(MatScale);
+//	OriginMax.TransformCoord(MatScale);
+//
+//	m_NavMesh->m_Min = OriginMin;
+//	m_NavMesh->m_Max = OriginMax;
+//}
 
 
 bool CNavMeshComponent::Save(FILE* File)
@@ -349,7 +461,7 @@ NavigationCell* CNavMeshComponent::FindCell(const Vector3& Pos)
 
 void CNavMeshComponent::AddCellCloseList(NavigationCell* Cell, NavigationCell* End)
 {
-	NavigationCell* CheckCell = FindCell(Cell->Polygon.m_Index);
+ 	NavigationCell* CheckCell = FindCell(Cell->Polygon.m_Index);
 
 	if (!CheckCell->Enable)
 		return;
@@ -448,7 +560,7 @@ bool CNavMeshComponent::CheckStraightPath(const Vector3& StartPos, const Vector3
 	int dx = DestPosX - CurrentPosX;
 	int dz = DestPosZ - CurrentPosZ;
 
-	vecPath.push_back(Vector3(CurrentPosX, 1000.f, CurrentPosZ));
+	vecPath.push_back(Vector3((float)CurrentPosX, EndPos.y, (float)CurrentPosZ));
 
 	int Absdx = (int)abs(dx);
 	int Absdz = (int)abs(dz);
@@ -485,7 +597,7 @@ bool CNavMeshComponent::CheckStraightPath(const Vector3& StartPos, const Vector3
 				pi = pi + 2 * (Absdx);
 			}
 			
-			vecPath.push_back(Vector3(CurrentPosX, 1000.f, CurrentPosZ));
+			vecPath.push_back(Vector3(CurrentPosX, EndPos.y, CurrentPosZ));
 
 			if (CurrentPosX == DestPosX && CurrentPosZ == DestPosZ)
 				break;
@@ -522,7 +634,7 @@ bool CNavMeshComponent::CheckStraightPath(const Vector3& StartPos, const Vector3
 				pi = pi + 2 * Absdz;
 			}
 
-			vecPath.push_back(Vector3(CurrentPosX, 1000.f, CurrentPosZ));
+			vecPath.push_back(Vector3((float)CurrentPosX, (float)EndPos.y, (float)CurrentPosZ));
 
 			if (CurrentPosX == DestPosX && CurrentPosZ == DestPosZ)
 				break;

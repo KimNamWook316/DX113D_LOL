@@ -9,6 +9,9 @@
 #include "Navigation3DManager.h"
 #include "../Render/RenderManager.h"
 #include "../EngineUtil.h"
+#include "../ObjectPool.h"
+#include "../GameObject/SkyObject.h"
+#include "../GameObject/GameObject.h"
 
 CScene::CScene()
 {
@@ -48,10 +51,22 @@ CScene::CScene()
 	m_SkyObject->SetScene(this);
 
 	m_SkyObject->Init();
+
+	m_RestoreCamDirFix = false;
+
+	m_AccTime = 0.f;
 }
 
 CScene::~CScene()
 {
+	auto iter = m_ObjList.begin();
+	auto iterEnd = m_ObjList.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		(*iter)->SetScene(nullptr);
+	}
+
 	m_ObjList.clear();
 	SAFE_DELETE(m_NavManager)	
 	SAFE_DELETE(m_Nav3DManager);
@@ -63,20 +78,86 @@ CScene::~CScene()
 	SAFE_DELETE(m_LightManager);
 }
 
+void CScene::Play()
+{
+	m_Play = true;
+
+	if (!m_Mode->IsStart())
+	{
+		m_Mode->Start();
+	}
+}
+
 CNavigation3DManager* CScene::GetNavigation3DManager() const
 {
 	return m_Nav3DManager;
+}
+
+int CScene::GetObjectCountByType(Object_Type Type)
+{
+	int Count = 0;
+
+	auto	iter = m_ObjList.begin();
+	auto	iterEnd = m_ObjList.end();
+	for (; iter != iterEnd; ++iter)
+	{
+		if ((*iter)->GetObjectType() == Type)
+		{
+			++Count;
+		}
+	}
+
+	return Count;
+}
+
+void CScene::GetObjectsByType(Object_Type Type, std::vector<class CGameObject*>& outVecObj)
+{
+	auto	iter = m_ObjList.begin();
+	auto	iterEnd = m_ObjList.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		if ((*iter)->GetObjectType() == Type)
+		{
+			outVecObj.push_back(*iter);
+		}
+	}
 }
 
 void CScene::Start()
 {
 	m_Mode->Start();
 
+	std::string CurBGM = m_SceneGlobalData.BackGroundData.MusicKeyName;
+
+	if (!CurBGM.empty())
+	{
+		std::string PrevBGM = m_SceneGlobalData.BackGroundData.PrevMusicKeyName;
+		if (!PrevBGM.empty() && PrevBGM != CurBGM)
+		{
+			CResourceManager::GetInst()->SoundStop(PrevBGM);
+		}
+
+		CResourceManager::GetInst()->SoundPlay(CurBGM);
+	}
+
 	auto	iter = m_ObjList.begin();
 	auto	iterEnd = m_ObjList.end();
 
 	for (; iter != iterEnd; ++iter)
 	{
+		// Pool에서 꺼낸 오브젝트들은 GetXXX 함수 호출해서 Start를 호출할 것이다
+		if ((*iter)->IsInPool())
+		{
+			continue;
+		}
+
+		// 플레이어는 Start를 단 한번만 호출
+		if ((*iter)->GetObjectType() == Object_Type::Player && (*iter)->IsStartCalled())
+		{
+			continue;
+		}
+
 		(*iter)->Start();
 	}
 
@@ -112,9 +193,8 @@ void CScene::Update(float DeltaTime)
 
 	m_Mode->Update(DeltaTime);
 
-	// State에서 각 Collision Section별로 Collider를 얻어와야 하는 경우가 있어서 (ex. CheckTurretAttackTarget)
-	// CComponent::Update하기 전에 이걸 먼저 해주도록 수정
-	m_Collision->CheckColliderSection3D();
+	//CSceneCollision::Collision에서 CheckColliderSection3D 호출해주고 있음
+	//m_Collision->CheckColliderSection3D();
 
 	auto	iter = m_ObjList.begin();
 	auto	iterEnd = m_ObjList.end();
@@ -123,6 +203,9 @@ void CScene::Update(float DeltaTime)
 	{
 		if (!(*iter)->IsActive())
 		{
+			if ((*iter)->IsInPool())
+				CObjectPool::GetInst()->ReturnToPool(*iter);
+
 			iter = m_ObjList.erase(iter);
 			iterEnd = m_ObjList.end();
 			continue;
@@ -169,6 +252,9 @@ void CScene::PostUpdate(float DeltaTime)
 	{
 		if (!(*iter)->IsActive())
 		{
+			if((*iter)->IsInPool())
+				CObjectPool::GetInst()->ReturnToPool(*iter);
+
 			iter = m_ObjList.erase(iter);
 			iterEnd = m_ObjList.end();
 			continue;
@@ -182,8 +268,6 @@ void CScene::PostUpdate(float DeltaTime)
 
 		(*iter)->PostUpdate(DeltaTime);
 
-		(*iter)->m_PrevFramePos = (*iter)->GetWorldPos();
-
 		++iter;
 	}
 
@@ -195,6 +279,8 @@ void CScene::PostUpdate(float DeltaTime)
 	}
 
 	m_RenderComponentList.clear();
+
+	iter = m_ObjList.begin();
 
 	for (; iter != iterEnd; ++iter)
 	{
@@ -230,6 +316,14 @@ void CScene::PostUpdate(float DeltaTime)
 	{
 		m_Collision->ClearAll();
 	}
+
+	iter = m_ObjList.begin();
+	iterEnd = m_ObjList.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		(*iter)->m_PrevFramePos = (*iter)->GetWorldPos();
+	}
 }
 
 bool CScene::Save(const char* FileName, const std::string& PathName)
@@ -258,6 +352,8 @@ bool CScene::SaveFullPath(const char* FullPath)
 	size_t	SceneModeType = m_Mode->GetTypeID();
 
 	fwrite(&SceneModeType, sizeof(size_t), 1, File);
+
+	m_Mode->Save(File);
 
 	size_t	ObjCount = m_ObjList.size();
 	int ExcludeObjectCount = GetSaveExcludeObjectCount();
@@ -350,6 +446,8 @@ bool CScene::LoadFullPath(const char* FullPath)
 
 	// SceneMode 생성
 	CSceneManager::GetInst()->CallCreateSceneMode(this, SceneModeType);
+	
+	m_Mode->Load(File);
 
 	size_t	ObjCount = m_ObjList.size();
 
@@ -366,6 +464,9 @@ bool CScene::LoadFullPath(const char* FullPath)
 
 		//Success = Obj->Load(File);
 		// 여기서 NextScene 포인터를 Obj->LoadHierarchy안으로 넘겨줘야 한다
+		if (!Obj)
+			continue;
+
 		Success = Obj->LoadHierarchy(File, this);
 
 		CSceneManager::GetInst()->CallObjectDataSet(Obj, Obj->GetName());
@@ -386,6 +487,21 @@ bool CScene::LoadFullPath(const char* FullPath)
 	Success = LoadSceneGlobalDataCSV(FileName.c_str());
 
 	fclose(File);
+
+	auto iter = m_ObjList.begin();
+	auto iterEnd = m_ObjList.end();
+
+	for (; iter != iterEnd;)
+	{
+		if ((*iter)->GetName() == "BossBettySnowAttack" ||
+			(*iter)->GetName() == "BettyAttackAfterEffect")
+		{
+			iter = m_ObjList.erase(iter);
+			iterEnd = m_ObjList.end();
+			continue;
+		}
+		++iter;
+	}
 
 	return true;
 }
@@ -494,6 +610,18 @@ bool CScene::SaveSceneGlobalDataCSV(const char* FileName)
 	Data->AddLabel("RenderSkyBox");
 	Data->SetData("Data", "RenderSkyBox", RenderSkyBox);
 
+	Vector4 ClearColor = CEngine::GetInst()->GetClearColor();
+	Data->AddLabel("ClearColorR");
+	Data->SetData("Data", "ClearColorR", ClearColor.x);
+	Data->AddLabel("ClearColorG");
+	Data->SetData("Data", "ClearColorG", ClearColor.y);
+	Data->AddLabel("ClearColorB");
+	Data->SetData("Data", "ClearColorB", ClearColor.z);
+
+	Data->AddLabel("SkyBoxTexturePath");
+	std::string SkyBoxTexPath = m_SceneGlobalData.BackGroundData.SkyBoxFileName;
+	Data->SetData("Data", "SkyBoxTexturePath", SkyBoxTexPath);
+
 	// AAA.scn 로 scn 저장하면 -> AAA_GlobalData.csv 파일명 csv 파일 생성
 	// Excel/SceneGlobalData/ 경로에 저장한다
 	char CSVFileName[MAX_PATH] = {};
@@ -557,7 +685,13 @@ bool CScene::LoadSceneGlobalDataCSV(const char* FileName)
 	m_SceneGlobalData.GLightData.Color.y = Data->FindDataFloat("Data", "GlobalLightColorG");
 	m_SceneGlobalData.GLightData.Color.z = Data->FindDataFloat("Data", "GlobalLightColorB");
 	m_SceneGlobalData.GLightData.AmbientIntensity = Data->FindDataFloat("Data", "AmbientIntensity");
-	m_SceneGlobalData.RenderSkyBox = Data->FindDataBool("Data", "RenderSkyBox");
+	m_SceneGlobalData.BackGroundData.RenderSkyBox = Data->FindDataBool("Data", "RenderSkyBox");
+	m_SceneGlobalData.BackGroundData.ClearColor.x = Data->FindDataFloat("Data", "ClearColorR");
+	m_SceneGlobalData.BackGroundData.ClearColor.y = Data->FindDataFloat("Data", "ClearColorG");
+	m_SceneGlobalData.BackGroundData.ClearColor.z = Data->FindDataFloat("Data", "ClearColorB");
+	m_SceneGlobalData.BackGroundData.ClearColor.w = 1.f;
+	m_SceneGlobalData.BackGroundData.SkyBoxFileName = Data->FindData("Data", "SkyBoxTexturePath");
+	m_SceneGlobalData.BackGroundData.MusicKeyName = Data->FindData("Data", "MusicKeyName");
 	
 	// 메모리 해제
 	CResourceManager::GetInst()->DeleteCSV(outCSVKey);
@@ -646,7 +780,10 @@ void CScene::UpdateSceneGlobalData()
 	RenderMng->SetFogStart(m_SceneGlobalData.HDRData.FogStart);
 	RenderMng->SetFogEnd(m_SceneGlobalData.HDRData.FogEnd);
 	RenderMng->SetFogDensity(m_SceneGlobalData.HDRData.FogDensity);
-	RenderMng->SetRenderSkyBox(m_SceneGlobalData.RenderSkyBox);
+	RenderMng->SetRenderSkyBox(m_SceneGlobalData.BackGroundData.RenderSkyBox);
+
+	Vector4 ClearColor = m_SceneGlobalData.BackGroundData.ClearColor;
+	CEngine::GetInst()->SetClearColor(ClearColor);
 
 	CLightComponent* GLight = m_LightManager->GetGlobalLightComponent();
 	GLight->SetWorldRotation(m_SceneGlobalData.GLightData.Rot);
@@ -655,6 +792,12 @@ void CScene::UpdateSceneGlobalData()
 		m_SceneGlobalData.GLightData.Color.y, m_SceneGlobalData.GLightData.Color.z, 1.f);
 	GLight->SetColor(Col);
 	m_LightManager->SetGlogbalLightAmbientIntensity(m_SceneGlobalData.GLightData.AmbientIntensity);
+
+	std::string SkyBoxFileName = m_SceneGlobalData.BackGroundData.SkyBoxFileName;
+	if (!SkyBoxFileName.empty() && SkyBoxFileName != "NONE")
+	{
+		dynamic_cast<CSkyObject*>(m_SkyObject.Get())->SetSkyTexture(m_SceneGlobalData.BackGroundData.SkyBoxFileName.c_str());
+	}
 }
 
 void CScene::GetAllObjectsPointer(std::vector<CGameObject*>& vecOutObj)
@@ -717,25 +860,102 @@ bool CScene::CameraMove(const Vector3& Direction, const Vector3& DestPos, float 
 	return false;
 }
 
+bool CScene::CameraMove(double Time, const Vector3& DestPos, float DeltaTime)
+{
+	float TimeRatio = m_AccTime / Time;
+
+	if (TimeRatio > 1.f)
+		TimeRatio = 1.f;
+
+	Vector3 LerpPos = m_OriginCamPos * (1 - TimeRatio) + DestPos * TimeRatio;
+
+	CCameraComponent* CurrentCamera = m_CameraManager->GetCurrentCamera();
+
+	CurrentCamera->SetWorldPos(LerpPos);
+
+	m_AccTime += DeltaTime;
+
+	if (TimeRatio == 1.f)
+	{
+		m_AccTime = 0.f;
+		return true;
+	}
+
+	return false;
+}
+
 bool CScene::RestoreCamera(float Speed, float DeltaTime)
 {
 	CCameraComponent* CurrentCamera = m_CameraManager->GetCurrentCamera();
 
 	Vector3 CurrentCamPos = CurrentCamera->GetWorldPos();
-	Vector3 RestoreDir = m_OriginCamPos - CurrentCamPos;
-	RestoreDir.y = 0.f;
-	RestoreDir.Normalize();
+
+	if (!m_RestoreCamDirFix)
+	{
+		m_RestoreCamDir = m_OriginCamPos - CurrentCamPos;
+		m_RestoreCamDir.y = 0.f;
+		m_RestoreCamDir.Normalize();
+		m_RestoreCamDirFix = true;
+	}
 
 	if (Vector3(CurrentCamPos.x, 0.f, CurrentCamPos.z).Distance(Vector3(m_OriginCamPos.x, 0.f, m_OriginCamPos.z)) < 0.5f)
+	{
+		m_RestoreCamDirFix = false;
+		m_RestoreCamDir = Vector3(0.f, 0.f, 0.f);
 		return true;
+	}
 
 	else
 	{
-		CurrentCamera->AddRelativePos(RestoreDir.x * Speed * DeltaTime, 0.f, RestoreDir.z * Speed * DeltaTime);
+		CurrentCamera->AddWorldPos(m_RestoreCamDir.x * Speed * DeltaTime, 0.f, m_RestoreCamDir.z * Speed * DeltaTime);
 	}
 
 
 	return false;
+}
+
+bool CScene::RestoreCamera(double Time, const Vector3 CurrentCamPos, float DeltaTime)
+{
+	CCameraComponent* CurrentCamera = m_CameraManager->GetCurrentCamera();
+
+	float TimeRatio = m_AccTime / Time;
+
+	if (TimeRatio > 1.f)
+		TimeRatio = 1.f;
+
+	Vector3 LerpPos = m_OriginCamPos * TimeRatio + CurrentCamPos * (1.f - TimeRatio);
+
+	CurrentCamera->SetWorldPos(LerpPos);
+
+	m_AccTime += DeltaTime;
+
+	if (TimeRatio == 1.f)
+	{
+		m_AccTime = 0.f;
+		return true;
+	}
+
+	return false;
+}
+
+bool CScene::SetSceneMode(size_t SceneModeTypeID)
+{
+	size_t PrevSceneModeType = m_Mode->GetTypeID();
+
+	if (PrevSceneModeType == SceneModeTypeID)
+	{
+		return true;
+	}
+
+	CSceneManager::GetInst()->CallCreateSceneMode(this, SceneModeTypeID);
+
+	// 생성 실패
+	if (PrevSceneModeType == SceneModeTypeID)
+	{
+		return false;
+	}
+
+	return true;
 }
 
 

@@ -632,8 +632,8 @@ bool CAnimationSequence::CreateSequence(bool bLoop,
 	}
 
 	// FBXANIMATIONCLIP에 있는 starttime 과 endtime 을 이용하여 keyframe 을 얻어온다.
-	m_StartFrame = pClip->tStart.GetFrameCount(pClip->eTimeMode);
-	m_EndFrame = pClip->tEnd.GetFrameCount(pClip->eTimeMode);
+	m_StartFrame = (int)pClip->tStart.GetFrameCount(pClip->eTimeMode);
+	m_EndFrame = (int)pClip->tEnd.GetFrameCount(pClip->eTimeMode);
 	m_FrameLength = m_EndFrame - m_StartFrame + 1;
 
 	// 시간 정보를 저장해준다.

@@ -1,5 +1,6 @@
 
 #include "ParticleComponent.h"
+#include "../Device.h"
 #include "../Scene/Scene.h"
 #include "../Scene/SceneResource.h"
 #include "../Scene/SceneManager.h"
@@ -14,11 +15,12 @@ CParticleComponent::CParticleComponent()	:
 	m_SpawnTimeMax(0.01f),
 	m_Info{},
 	m_BillBoardEffect(false),
-	m_BazierMoveEffect(false),
-	m_ParticleMoveSpeed(50.f),
-	m_ParticleMoveSpeedBottom(3.5f),
+	// m_UpdateInitBillBoardDir(false),
+	m_UpdateInitBillBoardDir(true),
+	// m_BazierMoveEffect(false),
+	// m_ParticleMoveSpeed(20.f),
+	m_TempCreateAccTimeMax(5.f),
 	m_InfoShared{},
-	m_SpeedChangeMethod(ParticleSpeedChangeMethod::Linear), // Particle Component 의 경우, Linear 설정이, 그냥 원본 Speed 유지 
 	m_CBuffer(nullptr)
 {
 	SetTypeID<CParticleComponent>();
@@ -29,7 +31,7 @@ CParticleComponent::CParticleComponent()	:
 	// 처음에는 Particle Component 의 Dir 를 (0, 0, -1) 로 세팅
 	// 왜냐하면, Particle Component 자체는, z 축 기준 -1 방향으로 향하면서
 	// 사용자 측을 바라보고 있기 때문이다.
-	m_ParticleMoveDir = Vector3(0, 0, -1);
+	// m_ParticleMoveDir = Vector3(0, 0, -1);
 }
 
 CParticleComponent::CParticleComponent(const CParticleComponent& com) :
@@ -73,6 +75,22 @@ CParticleComponent::~CParticleComponent()
 	}
 
 	SAFE_DELETE(m_CBuffer);
+	SAFE_DELETE(m_TempVCBuffer);
+}
+
+void CParticleComponent::StartParticle(const Vector3& StartPos)
+{
+	CRef::Enable(true);
+
+	// 해당 코드의 위치로 인해서 문제가 발생할 수 있다.
+	DestroyExistingParticles();
+
+	SetWorldPos(StartPos);
+
+	RecreateOnlyOnceCreatedParticle();
+
+	m_UpdateInitBillBoardDir = true;
+	m_Render = true;
 }
 
 void CParticleComponent::SetParticle(const std::string& Name)
@@ -93,7 +111,48 @@ void CParticleComponent::SetParticle(CParticle* Particle)
 		SAFE_DELETE(m_vecStructuredBuffer[i]);
 	}
 
+	// SAFE_DELETE(m_NormalDistributionBuffer);
+
+	m_vecStructuredBuffer.clear();
+
+	m_Particle->CloneStructuredBuffer(m_vecStructuredBuffer);
+
+	// 정규 분포 정보의 경우, 딱 한번만 Update 해준다. (우선 사용 X)
+	// m_Particle->CloneNormalDistStructuredBuffer(m_NormalDistributionBuffer);
+	// std::vector<float> VecNormalDistVal = m_Particle->GetVecNormalDistVal();
+	// m_NormalDistributionBuffer->UpdateBuffer(&VecNormalDistVal[0], (int)VecNormalDistVal.size());
+
+	// m_UpdateShader = m_Particle->GetUpdateShader();
+	m_UpdateShader = m_Particle->CloneUpdateShader();
+
 	SAFE_DELETE(m_CBuffer);
+
+	m_CBuffer = m_Particle->CloneConstantBuffer();
+
+	m_SpawnTimeMax = m_Particle->GetSpawnTimeMax();
+
+	m_ParticleName = m_Particle->GetName();
+
+	SAFE_DELETE(m_TempVCBuffer);
+
+	m_TempVCBuffer = new CParticleTempValConstantBuffer;
+
+	if (!m_TempVCBuffer->Init())
+		assert(false);
+}
+
+void CParticleComponent::SetParticleWithOutCloneShader(CParticle* Particle)
+{
+	m_Particle = Particle;
+
+	m_Material = m_Particle->CloneMaterial();
+
+	size_t	BufferCount = m_vecStructuredBuffer.size();
+
+	for (size_t i = 0; i < BufferCount; ++i)
+	{
+		SAFE_DELETE(m_vecStructuredBuffer[i]);
+	}
 
 	// SAFE_DELETE(m_NormalDistributionBuffer);
 
@@ -106,13 +165,22 @@ void CParticleComponent::SetParticle(CParticle* Particle)
 	// std::vector<float> VecNormalDistVal = m_Particle->GetVecNormalDistVal();
 	// m_NormalDistributionBuffer->UpdateBuffer(&VecNormalDistVal[0], (int)VecNormalDistVal.size());
 
-	m_UpdateShader = m_Particle->CloneUpdateShader();
+	m_UpdateShader = m_Particle->GetUpdateShader();
+
+	SAFE_DELETE(m_CBuffer);
 
 	m_CBuffer = m_Particle->CloneConstantBuffer();
 
 	m_SpawnTimeMax = m_Particle->GetSpawnTimeMax();
 
 	m_ParticleName = m_Particle->GetName();
+
+	SAFE_DELETE(m_TempVCBuffer);
+
+	m_TempVCBuffer = new CParticleTempValConstantBuffer;
+	
+	if (!m_TempVCBuffer->Init())
+		assert(false);
 }
 
 void CParticleComponent::SetSpawnTime(float Time)
@@ -122,111 +190,30 @@ void CParticleComponent::SetSpawnTime(float Time)
 	m_Particle->SetSpawnTimeMax(m_SpawnTimeMax);
 }
 
+void CParticleComponent::ExecuteComputeShader()
+{
+	int	GroupCount = m_Particle->GetSpawnCountMax() / 64 + 1;
+
+	m_UpdateShader->Excute(GroupCount, 1, 1);
+}
+
 void CParticleComponent::ApplyBillBoardEffect()
 {
-	Vector3 CameraPos = CSceneManager::GetInst()->GetScene()->GetCameraManager()->GetCurrentCamera()->GetWorldPos();
-
-	Vector3 View = CameraPos - GetWorldPos();
-
-	View.Normalize();
-
-	// float 
-	Vector3 OriginDir = Vector3(0.f, 0.f, -1.f);
-
-	m_Transform->SetRotationAxis(OriginDir, View);
+	// Vector3 CameraPos = CSceneManager::GetInst()->GetScene()->GetCameraManager()->GetCurrentCamera()->GetWorldPos();
+	// 
+	// Vector3 View = CameraPos - GetWorldPos();
+	// 
+	// View.Normalize();
+	// 
+	// // float 
+	// Vector3 OriginDir = Vector3(0.f, 0.f, -1.f);
+	// 
+	// m_Transform->SetRotationAxis(OriginDir, View);
 }
-
-void CParticleComponent::ApplyBazierMove(float DeltaTime)
-{
-	if (!m_BazierMoveEffect)
-		return;
-
-	m_ParticleMoveAccTime += DeltaTime;
-
-	// 급증하는 효과 주기 
-	switch (m_SpeedChangeMethod)
-	{
-		case ParticleSpeedChangeMethod::Exponential :
-		{
-			m_ParticleMoveSpeed = CEngineUtil::CalculateRealTimeSpeedUsingExponential(m_ParticleMoveSpeedBottom, m_ParticleMoveAccTime, m_ParticleMoveInitSpeed);
-		}
-		break;
-	}
-
-	// 위치 이동
-	float BazierMoveDist = (m_ParticleMoveDir * m_ParticleMoveSpeed * DeltaTime).Length();
-
-	AddWorldPos(m_ParticleMoveDir * m_ParticleMoveSpeed * DeltaTime);
-
-	m_BazierMoveCurDist += BazierMoveDist;
-
-	// 목표 위치로 거의 이동했다면, 다음 위치를 뽑아서 해당 위치로 이동한다.
-	const Vector3& CurrentWorldPos = GetWorldPos();
-
-	if (m_BazierMoveTargetDist <= m_BazierMoveCurDist)
-	{
-		if (!m_queueBazierMovePos.empty())
-		{
-			Vector3 NextPos = m_queueBazierMovePos.front();
-			m_queueBazierMovePos.pop();
-			m_ParticleNextMovePos = NextPos;
-
-			const Vector3& PrevMoveDir = m_ParticleMoveDir;
-
-			m_ParticleMoveDir = m_ParticleNextMovePos - GetWorldPos();
-			m_ParticleMoveDir.Normalize();
-
-			m_BazierMoveTargetDist = m_ParticleNextMovePos.Distance(CurrentWorldPos);
-
-			m_BazierMoveCurDist = 0.f;
-
-			// >> 이동 방향에 따라, Rotation 적용해준다.
-			// 1. 실제 Particle Component 가 바라보는 방향은, (0, 0, -1) 이다.
-			// 2. 하지만, 실제 처음 Particle Component 들이 향하는 방향은, y 축 1 방향 (0, 1, 0)
-			// - 따라서, 기본적으로 m_ParticleMoveDir 에 대해서, X 축 기준, 90도 회전을 기본적으로 해줘야 한다.
-			// 3. 뿐만 아니라, Particle 각각에 대한 Rot Angle 이 있다. 이것이 마치 Offset 각도 처럼 동작할 것이다.
-			// 4. 이전 Dir, 현재 Dir 간의 Angle 을 구하고, 이것만큼 Particle Dir 을 회전시킬 것이다.
-			// - 예를 들어, X 축 기준 오른쪽으로 가다가, Y 축 기준 위쪽으로 간다는 것은, 실제 Angle 이 Z 축 기준 90 도 회전
-			// const Vector3& ChangedMoveAngle = m_ParticleMoveDir.Angle(PrevMoveDir);
-
-		}
-		else
-		{
-			m_BazierMoveEffect = false;
-		}
-	}
-}
-
-void CParticleComponent::SetBazierTargetPos(const Vector3& D2, const Vector3& D3, const Vector3& D4, int DetailNum)
-{
-	CEngineUtil::CalculateBazierTargetPoses(GetWorldPos(), D2, D3, D4, m_queueBazierMovePos, 100);
-
-	// 처음 한개를 뽑아둔다.
-	if (!m_queueBazierMovePos.empty())
-	{
-		Vector3 NextPos = m_queueBazierMovePos.front();
-		m_queueBazierMovePos.pop();
-
-		m_ParticleNextMovePos = NextPos;
-
-		m_ParticleMoveDir = m_ParticleNextMovePos - GetWorldPos();
-		m_ParticleMoveDir.Normalize();
-
-		const Vector3& CurrentWorldPos = GetWorldPos();
-
-		m_BazierMoveTargetDist = m_ParticleNextMovePos.Distance(CurrentWorldPos);
-
-		m_BazierMoveCurDist = 0.f;
-
-		m_ParticleMoveAccTime = 0.f;
-
-		m_ParticleMoveInitSpeed = m_ParticleMoveSpeed;
-	}
-}
-
 void CParticleComponent::Start()
 {
 	CSceneComponent::Start();
+
 }
 
 bool CParticleComponent::Init()
@@ -236,12 +223,54 @@ bool CParticleComponent::Init()
 	return true;
 }
 
+void CParticleComponent::Reset()
+{
+	CSceneComponent::Reset();
+
+	DestroyExistingParticles();
+		
+	m_InitBillBoardZLookDir = Vector3(0.f, 0.f, 0.f);
+	m_InitBillBoardXLookDir = Vector3(0.f, 0.f, 0.f);
+}
+
 void CParticleComponent::Update(float DeltaTime)
 {
 	if (!m_CBuffer)
 		return;
 
+	if (m_InitActiveDelayTime > 0.f)
+	{
+		m_InitActiveDelayTime -= DeltaTime;
+		return;
+	}
+
 	CSceneComponent::Update(DeltaTime);
+
+	// 일시적으로 생성되는 Paritlcle 들은, ()
+	// 다시 Activate 하고 난 이후, 다시 Enable false 처리
+	if (m_TempCreateAccTime > 0.f && m_CBuffer->IsDisableNewAlive())
+	{
+		m_TempCreateAccTime -= DeltaTime;
+
+		if (m_TempCreateAccTime <= 0.f)
+		{
+			m_TempCreateAccTime = 0.f;
+
+			// 어차피 한번만 그려질 Particle 이므로 Enable False 처리해준다.
+			// Enable(false);
+			// 단, 자식 Component 들을 모두 Enable false 처리해주는 것이 아니라
+			// - 해당 Component만을 Enable False 처리해줘야 한다.
+			CRef::Enable(false);
+
+			// 보이지 않게 할 것이다.
+			// m_Render = false;
+
+			// 해당 코드의 위치로 인해 문제가 발생할 수 있다.
+			// Reset();
+
+			return;
+		}
+	}
 
 	m_SpawnTime += DeltaTime;
 
@@ -249,7 +278,10 @@ void CParticleComponent::Update(float DeltaTime)
 	// 이 방법 중 하나는 m_SpawnTimeMax 를 0으로 만들어버리는 것
 	if (m_CBuffer->IsDisableNewAlive() == 1)
 	{
-		m_SpawnTimeMax = 0.f;
+		// if (m_CBuffer->IsApplySpawnTimeDuringDisableNewAlive() == false)
+		// {
+		// 	m_SpawnTimeMax = 0.f;
+		// }
 	}
 
 	// Spawn Time 정보
@@ -257,12 +289,13 @@ void CParticleComponent::Update(float DeltaTime)
 	{
 		m_SpawnTime -= m_SpawnTimeMax;
 		m_CBuffer->SetSpawnEnable(1);
+		m_SpawnTime = 0.f;
 
 		// SpawnTime 은 0으로 만든다.
-		if (m_CBuffer->IsDisableNewAlive() == 1)
-		{
-			m_SpawnTime = 0.f;
-		}
+		// if (m_CBuffer->IsDisableNewAlive() == 1)
+		// {
+		// 	m_SpawnTime = 0.f;
+		// }
 	}
 	else
 	{
@@ -270,22 +303,18 @@ void CParticleComponent::Update(float DeltaTime)
 	}
 
 	// 추가 : Particle 도 BillBoard 를 적용하기위해 OBJ 가 추가
-	if (m_BillBoardEffect)
-	{
-		ApplyBillBoardEffect();
-	}
-
-	// Bazier 방식으로 움직이게 할 것인다
-	if (m_BazierMoveEffect)
-	{
-		// Bazier 에 저장된 위치 정보로 이동할 것인다.
-		ApplyBazierMove(DeltaTime);
-	}
+	// if (m_BillBoardEffect)
+	// {
+	// 	ApplyBillBoardEffect();
+	// }
 }
 
 void CParticleComponent::PostUpdate(float DeltaTime)
 {
 	if (!m_CBuffer)
+		return;
+
+	if (m_InitActiveDelayTime > 0.f)
 		return;
 
 	CSceneComponent::PostUpdate(DeltaTime);
@@ -299,10 +328,10 @@ void CParticleComponent::PostUpdate(float DeltaTime)
 	// 3) Translation은 처리하지 않는다. StartMin, Max 는, Local Space 상에서의 Min, Max 를 의미하게 할 것이다.
 	// ( Rot  -> Translation )
 	Vector3	StartMin = CBuffer->GetStartMin() * GetWorldScale();
-	StartMin.TransformCoord(GetRotationMatrix());
+	StartMin = StartMin.TransformCoord(GetRotationMatrix());
 
 	Vector3	StartMax = CBuffer->GetStartMax() * GetWorldScale();
-	StartMax.TransformCoord(GetRotationMatrix());
+	StartMax = StartMax.TransformCoord(GetRotationMatrix());
 	
 	// StartMin, Max 는, World Pos 를 더해주지 않고 넘겨줄 것이다.
 	// 그저 Particle Component Local Space 상에서의 Min, Max 값 만을 세팅해줄 것이다.
@@ -316,19 +345,83 @@ void CParticleComponent::PostUpdate(float DeltaTime)
 	m_CBuffer->SetStartMin(StartMin);
 	m_CBuffer->SetStartMax(StartMax);
 
+	// BillBoard 효과를 주게 되면, ParticleComponent 의 Y축만 회전시킨다. (카메라 방향으로)
+	Vector3 BillBoardAngle;
+
+	if (m_BillBoardEffect)
+	{
+		// Particle Component 자체가 Rotation Inherit 을 하지 않는 상태일 수 있다.
+		// Vector3 ZLookDir = m_Object->GetWorldAxis(AXIS::AXIS_Z) * -1.f;
+		// Vector3 XLookDir = m_Object->GetWorldAxis(AXIS::AXIS_X) * -1.f;
+		Vector3 ZLookDir = GetWorldAxis(AXIS::AXIS_Z) * -1.f;
+		Vector3 XLookDir = GetWorldAxis(AXIS::AXIS_X) * -1.f;
+
+		// 처음 만들어지는 순간의 ZLookDir, XLoosdkDir 을 세팅해준다.
+		if (m_UpdateInitBillBoardDir)
+		{
+			m_InitBillBoardZLookDir = Vector3(ZLookDir.x, 0.f, ZLookDir.z);
+			m_InitBillBoardXLookDir = Vector3(XLookDir.x, 0.f, XLookDir.z);
+
+			m_UpdateInitBillBoardDir = false;
+		}
+
+		// 카메라를 계속 바라보게 만든다.
+		// 카메라의 위치를 얻어온다.
+		Vector3 CameraPos = m_Scene->GetCameraManager()->GetCurrentCamera()->GetWorldPos();
+
+		// x 축
+		{
+		}
+
+		// y축
+		{
+			Vector3	View = CameraPos - GetWorldPos();
+			View.y = 0.f;
+
+			float AngleBetween = m_InitBillBoardZLookDir.Angle(View);
+			// float AngleBetween = ZLookDir.Angle(View);
+
+			// Object 기준 오른편에 있다면, 180 도를 넘어가는 것
+			// 하지만 acos 는 0 에서 180 도 사이의 값만을 리턴한다.
+			if (View.Dot(m_InitBillBoardXLookDir) > 0)
+			// if (View.Dot(XLookDir) > 0)
+			{
+				AngleBetween = 180.f + (180.f - AngleBetween);
+			}
+
+			BillBoardAngle.y = AngleBetween;
+		}
+
+		// z 축
+		{
+		}
+		
+	}
+
 	// Rotation Angle 정보를 세팅한다. Transform 의 정보로 만들어낼 것이다.
-	m_CBuffer->SetRotationAngle(GetWorldRot());
+	// m_CBuffer->SetRotationAngle(GetWorldRot());
+	const Vector3& ParticleWorldRot = GetWorldRot();
+	m_CBuffer->SetRotationAngle(ParticleWorldRot + BillBoardAngle);
 	
-	// Relative Scale 정보를 세팅한다.
-	m_CBuffer->SetCommonWorldScale(GetWorldScale());
-	m_CBuffer->SetCommonParticleComponentWorldPos(GetWorldPos());
+	// (아래 값들은 이제 m_TempVCBuffer 을 통해 세팅해준다.)
+	//m_CBuffer->SetCommonWorldScale(GetWorldScale());
+	//m_CBuffer->SetCommonParticleComponentWorldPos(ParticleComponentWorldPos);
+
+	const Vector3& ParticleComponentWorldPos = GetWorldPos();
+	const Vector3& ParticleCommonWorldScale = GetWorldScale();
 
 	m_CBuffer->UpdateCBuffer();
 
-	// Normal Dist 구조화 버퍼 정보를 넘겨준다.
-	// m_NormalDistributionBuffer->SetShader();
+	// 임시 Val 로 사용되는 Particle Value 넘겨주기
+	m_TempVCBuffer->SetCommonWorldScale(ParticleCommonWorldScale);
+	m_TempVCBuffer->SetCommonParticleComponentWorldPos(ParticleComponentWorldPos);
+
+	m_TempVCBuffer->UpdateCBuffer();
 
 	size_t	BufferCount = m_vecStructuredBuffer.size();
+
+	// Normal Dist 구조화 버퍼 정보를 넘겨준다.
+	// m_NormalDistributionBuffer->SetShader();
 
 	for (size_t i = 0; i < BufferCount; ++i)
 	{
@@ -350,11 +443,15 @@ void CParticleComponent::PostUpdate(float DeltaTime)
 	{
 		m_vecStructuredBuffer[i]->ResetShader();
 	}
+
 	// 여기에서 Data를 CopyResource로 복제해서 테스트 해볼것.
 }
 
 void CParticleComponent::PrevRender()
 {
+	if (m_InitActiveDelayTime > 0.f)
+		return;
+
 	CSceneComponent::PrevRender();
 }
 
@@ -363,13 +460,14 @@ void CParticleComponent::RenderParticleEffectEditor()
 	if (!m_CBuffer)
 		return;
 
-	// 상수 버퍼를 다시 한번 Setting 해준다.
-	// 계산 셰이더 외에도, Render 과정에서도 상수 버퍼 정보를 사용할 수 있게 하는 것이다.
-	m_CBuffer->UpdateCBuffer();
+	size_t	BufferCount = m_vecStructuredBuffer.size();
 
 	CSceneComponent::RenderParticleEffectEditor();
 
-	size_t	BufferCount = m_vecStructuredBuffer.size();
+	// 상수 버퍼를 다시 한번 Setting 해준다.
+	// 계산 셰이더 외에도, Render 과정에서도 상수 버퍼 정보를 사용할 수 있게 하는 것이다.
+	m_CBuffer->UpdateCBuffer();
+	m_TempVCBuffer->UpdateCBuffer();
 
 	for (size_t i = 0; i < BufferCount; ++i)
 	{
@@ -399,8 +497,12 @@ void CParticleComponent::Render()
 	if (!m_CBuffer)
 		return;
 
+	if (m_InitActiveDelayTime > 0.f)
+		return;
+
 	// 계산 셰이더 외에도, Render 과정에서도 상수 버퍼 정보를 사용할 수 있게 하는 것이다.
 	m_CBuffer->UpdateCBuffer();
+	m_TempVCBuffer->UpdateCBuffer();
 
 	CSceneComponent::Render();
 
@@ -437,7 +539,16 @@ void CParticleComponent::PostRender()
 	// 위에서 Render 혹은 PostUpdate 에서 넘겨주고 여기서 세팅
 	if (m_CBuffer)
 	{
-		m_CBuffer->SetResetParticleSharedInfoSumSpawnCnt(0);
+		// 아래 코드를 세팅해주어야 딱 한번만 다시 생성되게 될 것이다.
+		if (m_CBuffer->IsDisableNewAlive())
+		{
+			// m_CBuffer->SetResetParticleSharedInfoSumSpawnCnt(false);
+			m_TempVCBuffer->SetResetParticleSharedInfoSumSpawnCnt(false);
+		}
+
+		// 해당 값은 Render 에서까지는 true 로 세팅되어 있다고 하더라도 
+		// 새로 생성되는 녀석들을 Destroy 한다.
+		m_CBuffer->SetDestroyExstingAllLivingParticles(false);
 	}
 }
 
@@ -464,13 +575,105 @@ bool CParticleComponent::Load(FILE* File)
 	return true;
 }
 
+void CParticleComponent::DestroyExistingParticles()
+{
+	// 현재 살아있던 Particle 들을 모두 Alive False 로 만들어줄 것이다.
+	m_CBuffer->SetDestroyExstingAllLivingParticles(true);
+
+	m_TempCreateAccTime = 0.f;
+
+	// 구조화 버퍼 정보 Update
+	m_CBuffer->UpdateCBuffer();
+
+	// Init Delay Time 을 0으로 준다.
+	m_InitActiveDelayTime = 0.f;
+
+	size_t	BufferCount = m_vecStructuredBuffer.size();
+
+	for (size_t i = 0; i < BufferCount; ++i)
+	{
+		m_vecStructuredBuffer[i]->SetShader();
+	}
+
+	int	GroupCount = m_Particle->GetSpawnCountMax() / 64 + 1;
+
+	m_UpdateShader->Excute(GroupCount, 1, 1);
+
+	for (size_t i = 0; i < BufferCount; ++i)
+	{
+		m_vecStructuredBuffer[i]->ResetShader();
+	}
+}
+
 // Shader 측에 넘겨진 구조화 버퍼 정보를 초기화 해주는 코드이다.
-void CParticleComponent::ResetParticleStructuredBufferInfo()
+void CParticleComponent::RecreateOnlyOnceCreatedParticle()
 {
 	if (!m_Particle)
 		return;
 
-	m_CBuffer->SetResetParticleSharedInfoSumSpawnCnt(1);
+	if (m_CBuffer->IsDisableNewAlive() == 0)
+		return;
+
+	RecreateOnlyOnceCreatedParticleWithOutLifeTimeSetting();
+
+	// Object Pool 에서 가져온 Particle일 경우 Destroy 시켜서 다시 Pool 에 되돌릴 것이다.
+	// -  m_TempCreateAccTimeMax 만큼 LifeTime 을 세팅해줄 것이다.
+	if (m_Object->IsInPool())
+	{
+		// m_Object->SetLifeSpan(m_TempCreateAccTimeMax);
+		float MaxLifeSpan = m_Object->GetLifeSpan();
+		float ParticleLifeSpan = m_CBuffer->GetLifeTimeMax() + 0.1f;
+	
+		m_Object->SetLifeSpan(MaxLifeSpan > ParticleLifeSpan ? MaxLifeSpan : ParticleLifeSpan);
+	}
+}
+
+void CParticleComponent::RecreateOnlyOnceCreatedParticleWithOutLifeTimeSetting()
+{
+	if (!m_Particle)
+		return;
+
+	if (m_CBuffer->IsDisableNewAlive() == 0)
+		return;
+
+	CRef::Enable(true);
+
+	// Render 가 되도록 세팅한다.
+	m_Render = true;
+
+	size_t	BufferCount = m_vecStructuredBuffer.size();
+
+	for (size_t i = 0; i < BufferCount; ++i)
+	{
+		m_vecStructuredBuffer[i]->SetShader();
+	}
+
+	int	GroupCount = m_Particle->GetSpawnCountMax() / 64 + 1;
+
+	// DiableNewAlive 가 true 인 Particle 에 대해서만 적용한다.
+	// DiableNewAlive 의 경우, 한번만 생성하고, 더이상 추가 생성하지 않는 Particle
+	// m_CBuffer->SetResetParticleSharedInfoSumSpawnCnt(true);
+	m_TempVCBuffer->SetResetParticleSharedInfoSumSpawnCnt(true);
+
+	// 해당 AccTime 이후 Enable False 가 된다.
+	// m_TempCreateAccTime = m_TempCreateAccTimeMax;
+	// m_TempCreateAccTimeMax = m_CBuffer->GetLifeTimeMax() + 0.1f;
+	m_TempCreateAccTime = m_CBuffer->GetLifeTimeMax() + 0.01f;
+
+	// 상수 버퍼 정보를 Update
+	m_TempVCBuffer->SetCommonParticleComponentWorldPos(GetWorldPos());
+
+	m_TempVCBuffer->UpdateCBuffer();
+	m_CBuffer->UpdateCBuffer();
+
+	// 계산 셰이더 한번 더 호출
+	// m_UpdateShader->Excute(GroupCount, 1, 1);
+	m_UpdateShader->Excute(GroupCount, 1, 1);
+
+	for (size_t i = 0; i < BufferCount; ++i)
+	{
+		m_vecStructuredBuffer[i]->ResetShader();
+	}
 }
 
 bool CParticleComponent::SaveOnly(FILE* File)
@@ -496,20 +699,24 @@ bool CParticleComponent::SaveOnly(FILE* File)
 
 	// Particle
 	// m_Particle->Save(File);
-	std::string SaveParticleFileFullPath;
-	SaveParticleFileFullPath.reserve(100);
-
-	const PathInfo* Info = CPathManager::GetInst()->FindPath(PARTICLE_PATH);
-
-	if (Info)
-		SaveParticleFileFullPath = Info->PathMultibyte;
-	SaveParticleFileFullPath.append(m_Particle->GetName().c_str());
+	std::string SaveParticleFileFullName = m_Particle->GetName();
+	SaveParticleFileFullName.reserve(100);
 
 	// .ptrc 가 해당 Name에 있는지 확인 후, 없으면 Add
-	if (SaveParticleFileFullPath.find(".prtc") == std::string::npos)
-		SaveParticleFileFullPath.append(".prtc");
+	std::string StrExt = ".prtc";
 
-	m_Particle->SaveFile(SaveParticleFileFullPath.c_str());
+	auto iterFind = std::search(SaveParticleFileFullName.begin(), SaveParticleFileFullName.end(),
+		std::boyer_moore_searcher(StrExt.begin(), StrExt.end()));
+
+	if (iterFind == SaveParticleFileFullName.end())
+		SaveParticleFileFullName.append(".prtc");
+
+	auto LoadedFullPath = CEngineUtil::CheckAndExtractFullPathOfTargetFile(PARTICLE_PATH, SaveParticleFileFullName);
+
+	if (!LoadedFullPath.has_value())
+		assert(false);
+
+	m_Particle->SaveFile(LoadedFullPath.value().c_str());
 
 	fwrite(&m_BillBoardEffect, sizeof(bool), 1, File);
 	fwrite(&m_SpawnTimeMax, sizeof(float), 1, File);
@@ -524,7 +731,9 @@ bool CParticleComponent::LoadOnly(FILE* File)
 	int	Length = 0;
 	fread(&Length, sizeof(int), 1, File);
 	fread(MeshName, sizeof(char), Length, File);
-	m_Mesh = (CSpriteMesh*)m_Scene->GetResource()->FindMesh(MeshName);
+
+	// m_Mesh = (CSpriteMesh*)m_Scene->GetResource()->FindMesh(MeshName);
+	m_Mesh = (CSpriteMesh*)CSceneManager::GetInst()->GetScene()->GetResource()->FindMesh(MeshName);
 
 	// Particle 생성
 	m_Particle = CSceneManager::GetInst()->GetScene()->GetResource()->CreateParticleEmpty<CParticle>();
@@ -537,44 +746,32 @@ bool CParticleComponent::LoadOnly(FILE* File)
 
 	// Particle
 	// m_Particle->Save(File);
-	std::string LoadParticleFileFullPath;
-	LoadParticleFileFullPath.reserve(100);
-
-	const PathInfo* Info = CPathManager::GetInst()->FindPath(PARTICLE_PATH);
-
-	if (Info)
-		LoadParticleFileFullPath = Info->PathMultibyte;
-	LoadParticleFileFullPath.append(LoadedParticleName);
+	std::string LoadParticleFileFullFileName = LoadedParticleName;
 
 	// .ptrc 가 해당 Name에 있는지 확인 후, 없으면 Add
-	if (LoadParticleFileFullPath.find(".prtc") == std::string::npos)
-		LoadParticleFileFullPath.append(".prtc");
+	std::string StrExt = ".prtc";
 
-	bool Result = m_Particle->LoadFile(LoadParticleFileFullPath.c_str());
+	auto iterFind = std::search(LoadParticleFileFullFileName.begin(), LoadParticleFileFullFileName.end(),
+		std::boyer_moore_searcher(StrExt.begin(), StrExt.end()));
+
+	if (iterFind == LoadParticleFileFullFileName.end())
+		LoadParticleFileFullFileName.append(".prtc");
+
+	auto LoadedFullPath = CEngineUtil::CheckAndExtractFullPathOfTargetFile(PARTICLE_PATH, LoadParticleFileFullFileName);
+
+	// 그래도 Load 가 안된다면, 아예 Load 할 prtc 파일 자체가 존재하지 않는다는 의미
+	if (!LoadedFullPath.has_value())
+		assert(false);
+
+	bool Result = m_Particle->LoadFile(LoadedFullPath.value().c_str());
 
 	if (!Result)
-	{
-		// 만약 없다면, Particle Path 전부를 뒤져서 찾는다.
-		// 해당 Dir 경로에, 해당 Name 으로 된 파일이 존재하는지 판단해주는 함수 + 존재할 시 FullPath 경로 리턴
-		std::string StrLoadParticleFileName = LoadedParticleName;
-		if (StrLoadParticleFileName.find(".prtc") == std::string::npos)
-			StrLoadParticleFileName.append(".prtc");
-
-		auto ExtraLoadResult = CEngineUtil::CheckAndExtractFullPathOfTargetFile(PARTICLE_PATH, StrLoadParticleFileName);
-
-		// 그래도 Load 가 안된다면, 아예 Load 할 prtc 파일 자체가 존재하지 않는다는 의미
-		if (!ExtraLoadResult.has_value())
-			assert(false);
-		
-		Result = m_Particle->LoadFile(ExtraLoadResult.value().c_str());
-
-		if (!Result)
-			assert(false);
-	}
+		assert(false);
 
 	m_ParticleName = m_Particle->GetName();
 
-	SetParticle(m_Particle);
+	// SetParticle(m_Particle);
+	SetParticleWithOutCloneShader(m_Particle);
 
 	// Load 한 Particle 은 Particle Manager 에 추가해준다.
 	CResourceManager::GetInst()->GetParticleManager()->AddParticle(m_Particle);
@@ -582,5 +779,15 @@ bool CParticleComponent::LoadOnly(FILE* File)
 	fread(&m_BillBoardEffect, sizeof(bool), 1, File);
 	fread(&m_SpawnTimeMax, sizeof(float), 1, File);
 
+	// Update Bill Board Dir 을 할 수 있도록 체크한다.
+	m_UpdateInitBillBoardDir = true;
+
 	return true;
+}
+
+void CParticleComponent::SetBillBoardEffect(bool Enable)
+{
+	m_BillBoardEffect = Enable;
+
+	m_UpdateInitBillBoardDir = true;
 }

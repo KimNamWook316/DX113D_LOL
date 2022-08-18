@@ -6,7 +6,8 @@
 #include "../Resource/Shader/ColliderConstantBuffer.h"
 #include "../Resource/Shader/TransformConstantBuffer.h"
 
-CColliderComponent::CColliderComponent()
+CColliderComponent::CColliderComponent()	:
+	m_RigidCollisionIgnore(false)
 {
 	SetTypeID<CColliderComponent>();
 	m_ComponentType = Component_Type::SceneComponent;
@@ -16,6 +17,7 @@ CColliderComponent::CColliderComponent()
 	m_Profile = nullptr;
 	m_MouseCollision = false;
 	m_CBuffer = nullptr;
+	m_LayerName = "Collider";
 }
 
 CColliderComponent::CColliderComponent(const CColliderComponent& com) :
@@ -40,8 +42,12 @@ CColliderComponent::~CColliderComponent()
 	for (; iter != iterEnd; ++iter)
 	{
 		(*iter)->DeletePrevCollision(this);
-		(*iter)->CallCollisionCallback(Collision_State::End);
-		CallCollisionCallback(Collision_State::End);
+
+		if (m_Object->GetScene())
+		{
+			(*iter)->CallCollisionCallback(Collision_State::End);
+			CallCollisionCallback(Collision_State::End);
+		}
 	}
 }
 
@@ -86,7 +92,9 @@ void CColliderComponent::CheckPrevColliderSection()
 		if (!Check)
 		{
 			CallCollisionCallback(Collision_State::End);
-			(*iter)->CallCollisionCallback(Collision_State::End);
+
+			if((*iter)->IsEnable())
+				(*iter)->CallCollisionCallback(Collision_State::End);
 
 			// 서로 이전 충돌목록에서 제거해준다.
 			(*iter)->DeletePrevCollision(this);
@@ -186,6 +194,10 @@ void CColliderComponent::CallCollisionMouseCallback(Collision_State State)
 
 void CColliderComponent::ClearFrame()
 {
+	if (!m_Enable)
+	{
+		m_PrevCollisionList.clear();
+	}
 	m_vecSectionIndex.clear();
 	m_CurrentCollisionList.clear();
 	m_CurrentSectionCheck = false;
@@ -194,7 +206,6 @@ void CColliderComponent::ClearFrame()
 void CColliderComponent::Start()
 {
 	CSceneComponent::Start();
-	m_Scene->GetCollision()->AddCollider(this);
 }
 
 bool CColliderComponent::Init()
@@ -219,11 +230,28 @@ bool CColliderComponent::Init()
 void CColliderComponent::Update(float DeltaTime)
 {
 	CSceneComponent::Update(DeltaTime);
+
+	// if (m_EnablePossibleTime > 0.f && IsEnable())
+	// {
+	// 	m_EnablePossibleTime -= DeltaTime;
+	// 
+	// 	if (m_EnablePossibleTime <= 0.f)
+	// 	{
+	// 		CRef::Enable(false);
+	// 
+	// 		m_EnablePossibleTime = 0.f;
+	// 	}
+	// }
 }
 
 void CColliderComponent::PostUpdate(float DeltaTime)
 {
 	CSceneComponent::PostUpdate(DeltaTime);
+
+	if (m_Enable)
+	{
+		m_Scene->GetCollision()->AddCollider(this);
+	}
 }
 
 void CColliderComponent::CheckCollision()
@@ -233,12 +261,12 @@ void CColliderComponent::CheckCollision()
 
 void CColliderComponent::PrevRender()
 {
-	m_LayerName = "Collider";
 	CSceneComponent::PrevRender();
 }
 
 void CColliderComponent::Render()
 {
+
 	CSceneComponent::Render();
 }
 
@@ -342,15 +370,16 @@ bool CColliderComponent::CollisionRay(const Ray& Ray)
 	return false;
 }
 
-void CColliderComponent::Destroy()
+void CColliderComponent::Reset()
 {
-	m_Scene->GetCollision()->EraseCollider(this);
+	CSceneComponent::Reset();
 
-	size_t Count = m_vecSectionIndex.size();
+	m_EnablePossibleTime = 0.f;
 
-	for (size_t i = 0; i < Count; ++i)
-	{
-		int Index = m_vecSectionIndex[i];
-		m_Scene->GetCollision()->DeleteColliderInSection(this, Index);
-	}
+	Enable(false);
+}
+
+void CColliderComponent::ClearCollisionCallBack()
+{
+	m_CollisionCallback->clear();
 }

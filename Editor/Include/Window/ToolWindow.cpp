@@ -14,13 +14,13 @@
 #include "../Window/SceneComponentHierarchyWindow.h"
 #include "../Window/ObjectHierarchyWindow.h"
 #include "IMGUIManager.h"
-#include "../EditorInfo.h":
+#include "../EditorInfo.h"
 #include "EngineUtil.h"
 #include "PathManager.h"
 #include "../EditorUtil.h"
 #include "GameObject/SkyObject.h"
 #include "IMGUITextInput.h"
-#include "../Component/GameStateComponent.h"
+#include "../DeathDoor/Component/GameStateComponent.h"
 
 CToolWindow::CToolWindow()	:
 	m_GizmoBlock(nullptr),
@@ -72,9 +72,11 @@ bool CToolWindow::Init()
 	// Camera
 	m_EditorCameraBlock = AddWidget<CIMGUICollapsingHeader>("Editor Camera", 200.f);
 	m_CameraSpeed = m_EditorCameraBlock->AddWidget<CIMGUISliderFloat>("Speed");
+	m_SetCam = m_EditorCameraBlock->AddWidget<CIMGUIButton>("Set FreeCam", 0.f, 0.f);
 
 	// Render
 	m_RenderBlock = AddWidget<CIMGUICollapsingHeader>("Render", 200.f);
+	m_ClearColor = m_RenderBlock->AddWidget<CIMGUIColor3>("Clear Color", 200.f);
 	m_RenderSkyBox = m_RenderBlock->AddWidget<CIMGUICheckBox>("Render SkyBox");
 	m_DebugRender = m_RenderBlock->AddWidget<CIMGUICheckBox>("DebugRender");
 	m_PostProcessing = m_RenderBlock->AddWidget<CIMGUICheckBox>("PostProcessing(HDR)");
@@ -188,6 +190,9 @@ bool CToolWindow::Init()
 
 	m_FogColor->SetRGB(CRenderManager::GetInst()->GetFogColor());
 
+	Vector4 ClearColor = CEngine::GetInst()->GetClearColor();
+	m_ClearColor->SetRGB(Vector3(ClearColor.x, ClearColor.y, ClearColor.z));
+
 	switch (CurType)
 	{
 	case Fog_Type::Depth:
@@ -239,6 +244,7 @@ bool CToolWindow::Init()
 	m_GizmoOperationMode->SetCallBack(this, &CToolWindow::OnSelectGizmoOperationMode);
 	m_CameraSpeed->SetCallBack(this, &CToolWindow::OnChangeCameraSpeed);
 	m_DebugRender->SetCallBackLabel(this, &CToolWindow::OnCheckDebugRender);
+	m_ClearColor->SetCallBack(this, &CToolWindow::OnChangeClearColor);
 	m_PostProcessing->SetCallBackLabel(this, &CToolWindow::OnCheckPostProcessing);
 	m_Play->SetClickCallback(this, &CToolWindow::OnClickPlay);
 	m_Pause->SetClickCallback(this, &CToolWindow::OnClickPause);
@@ -263,6 +269,7 @@ bool CToolWindow::Init()
 	m_GLightAmbIntensity->SetCallBack(this, &CToolWindow::OnChangeGLightAmbIntensity);
 	m_LoadSkyBoxTex->SetClickCallback(this, &CToolWindow::OnClickLoadSkyBoxTexture);
 	m_RenderSkyBox->SetCallBackLabel(this, &CToolWindow::OnCheckRenderSkyBox);
+	m_SetCam->SetClickCallback(this, &CToolWindow::OnClickSetEditorCam);
 
 	// 디버그용 임시 키
 	CInput::GetInst()->CreateKey("Z", 'Z');
@@ -373,6 +380,11 @@ void CToolWindow::OnChangeDOFMax(float Max)
 	CRenderManager::GetInst()->SetDOFMax(Max);
 }
 
+void CToolWindow::OnChangeClearColor(const Vector3& Color)
+{
+	CEngine::GetInst()->SetClearColor(Vector4(Color.x, Color.y, Color.z, 1.f));
+}
+
 void CToolWindow::OnSelectFogType(int Index, const char* Label)
 {
 	Fog_Type Type = (Fog_Type)Index;
@@ -432,7 +444,9 @@ void CToolWindow::OnCheckRenderSkyBox(const char* Label, bool Check)
 
 void CToolWindow::OnClickPlay()
 {
-	CSceneManager::GetInst()->GetScene()->Play();
+	CScene* CurScene = CSceneManager::GetInst()->GetScene();
+
+	CurScene->Play();
 
 	m_PlayState->SetText("Current State : Playing");
 
@@ -448,6 +462,18 @@ void CToolWindow::OnClickPlay()
 		if (Comp)
 		{
 			Comp->SetTreeUpdate(true);
+		}
+	}
+
+	CGameObject* Player = CurScene->GetPlayerObject();
+
+	if (Player)
+	{
+		CCameraComponent* Cam = Player->FindComponentFromType<CCameraComponent>();
+
+		if (Cam)
+		{
+			CurScene->GetCameraManager()->SetCurrentCamera(Cam);
 		}
 	}
 }
@@ -491,6 +517,15 @@ void CToolWindow::OnClickStop()
 
 		// Scene Global Data 로드때 세팅으로 변경
 		RefreshGlobalSceneDataWidget();
+
+		CGameObject* EditorCamObj = CEditorManager::GetInst()->Get3DCameraObject();
+
+		CCameraComponent* Cam = EditorCamObj->FindComponentFromType<CCameraComponent>();
+
+		if (Cam)
+		{
+			CSceneManager::GetInst()->GetNextScene()->GetCameraManager()->SetCurrentCamera(Cam);
+		}
 	}
 }
 
@@ -623,6 +658,21 @@ void CToolWindow::RefreshSceneRelatedWindow(const std::vector<CGameObject*>& vec
 	}
 }
 
+void CToolWindow::OnClickSetEditorCam()
+{
+	CCameraManager* CamMng = CSceneManager::GetInst()->GetScene()->GetCameraManager();
+
+	C3DCameraObject* CamObj = CEditorManager::GetInst()->Get3DCameraObject();
+	CCameraComponent* CamCom = CamObj->FindComponentFromType<CCameraComponent>();
+
+	if (CamMng->GetCurrentCamera() == CamCom)
+	{
+		return;
+	}
+
+	CamMng->SetCurrentCamera(CamCom);
+}
+
 void CToolWindow::RefreshGlobalSceneDataWidget()
 {
 	// 현재 씬 Change 되지 않은 프레임이기 때문에 NextScene에서 데이터를 받아온다.
@@ -646,7 +696,8 @@ void CToolWindow::RefreshGlobalSceneDataWidget()
 	m_GLightRotZ->SetValue(GlobalData.GLightData.Rot.z);
 	m_GLightColor->SetRGB(GlobalData.GLightData.Color);
 	m_GLightAmbIntensity->SetValue(GlobalData.GLightData.AmbientIntensity);
-	m_RenderSkyBox->SetCheck(0, GlobalData.RenderSkyBox);
+	m_RenderSkyBox->SetCheck(0, GlobalData.BackGroundData.RenderSkyBox);
+	m_ClearColor->SetRGB(Vector3(GlobalData.BackGroundData.ClearColor.x, GlobalData.BackGroundData.ClearColor.y, GlobalData.BackGroundData.ClearColor.z));
 }
 
 void CToolWindow::OnQDown(float DetlaTime)

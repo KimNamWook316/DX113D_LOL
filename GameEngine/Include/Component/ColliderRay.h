@@ -14,11 +14,23 @@ protected:
 
 protected:
     Ray   m_RayInfo;
+    Vector3 m_StartPos;
+    Vector3 m_EndPos;
 
 public:
     const Ray& GetInfo()  const
     {
         return m_RayInfo;
+    }
+
+    const Vector3& GetStartPos()    const
+    {
+        return m_StartPos;
+    }
+
+    const Vector3& GetEndPos()    const
+    {
+        return m_EndPos;
     }
 
 public:

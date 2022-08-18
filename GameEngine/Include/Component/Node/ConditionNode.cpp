@@ -25,5 +25,8 @@ NodeResult CConditionNode::Invoke(float DeltaTime)
 	else if (Result == NodeResult::Node_True)
 		return NodeResult::Node_True;
 
+	else if (Result == NodeResult::Node_Running)
+		return NodeResult::Node_Running;
+
 	return NodeResult::Node_False;
 }

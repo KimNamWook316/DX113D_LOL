@@ -1,6 +1,6 @@
 
 #include "EyeLaserComponentWidget.h"
-#include "../Component/EyeLaserComponent.h"
+#include "../DeathDoor/Component/EyeLaserComponent.h"
 #include "IMGUITextInput.h"
 #include "IMGUIText.h"
 #include "IMGUIButton.h"

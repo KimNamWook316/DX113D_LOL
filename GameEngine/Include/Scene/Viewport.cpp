@@ -10,6 +10,19 @@ CViewport::~CViewport()
 {
 }
 
+void CViewport::SetWindowList(const std::list<CSharedPtr<CWidgetWindow>>& WindowList)
+{
+	m_WindowList = WindowList;
+
+	auto iter = m_WindowList.begin();
+	auto iterEnd = m_WindowList.end();
+
+	for (; iter != iterEnd; ++iter)
+	{
+		(*iter)->SetViewPort(this);
+	}
+}
+
 void CViewport::Start()
 {
 	auto	iter = m_WindowList.begin();

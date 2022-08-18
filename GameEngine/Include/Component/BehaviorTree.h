@@ -34,7 +34,6 @@ public:
     class CNode* GetRootNode()    const;
     void SetRoot(class CNode* Node);
     CNode* FindNode(const std::string& Name);
-    //CNode* FindNode(class CNode* Node);
 
     template <typename T>
     CNode* FindNodeByType()
