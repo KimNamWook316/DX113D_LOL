@@ -341,7 +341,6 @@ enum class Player_Ability
 	Arrow,
 	Fire,
 	Hook,
-	Photon,
 	Bomb,
 	None
 };
